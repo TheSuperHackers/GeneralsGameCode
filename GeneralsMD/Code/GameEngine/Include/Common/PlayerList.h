@@ -24,12 +24,12 @@
 
 // FILE: PlayerList.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -43,9 +43,6 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef _PLAYERLIST_H_
-#define _PLAYERLIST_H_
 
 #include "Common/SubsystemInterface.h"
 #include "Common/GameCommon.h"
@@ -64,7 +61,7 @@ enum AllowPlayerRelationship CPP_11(: Int)
 {
 	ALLOW_SAME_PLAYER			= 0x01,		///< allow only objects of the same player as m_obj
 	ALLOW_ALLIES					= 0x02,		///< allow objects that m_obj considers allies
-	ALLOW_ENEMIES					= 0x04,		///< allow objects that m_obj considers enemy 
+	ALLOW_ENEMIES					= 0x04,		///< allow objects that m_obj considers enemy
 	ALLOW_NEUTRAL					= 0x08		///< allow objects that m_obj considers neutral
 };
 
@@ -83,12 +80,12 @@ public:
 	~PlayerList();
 
 	// subsystem methods
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
+	virtual void init();
+	virtual void reset();
+	virtual void update();
 
-	virtual void newGame( void ); // called during GameLogic::startNewGame()
-	virtual void newMap( void );	 // Called after a new map is loaded.
+	virtual void newGame(); // called during GameLogic::startNewGame()
+	virtual void newMap();	 // Called after a new map is loaded.
 
 	void teamAboutToBeDeleted(Team* team);
 
@@ -109,10 +106,10 @@ public:
 		all other players (this is so that everything can be associated with a nonnull
 		Player, to simplify the universe). This will never return null.
 	*/
-	Player *getNeutralPlayer() { DEBUG_ASSERTCRASH(m_players[0] != NULL, ("null neutral")); return m_players[0]; }
+	Player *getNeutralPlayer() { DEBUG_ASSERTCRASH(m_players[0] != nullptr, ("null neutral")); return m_players[0]; }
 
 	/**
-		return the Player with the given internal name, or null if none found. 
+		return the Player with the given internal name, or null if none found.
 	*/
 	Player *findPlayerWithNameKey(NameKeyType key);
 
@@ -120,7 +117,7 @@ public:
 		Return the "local" player (ie, the human playing the game).
 		This will never return null.
 	*/
-	inline Player *getLocalPlayer() { DEBUG_ASSERTCRASH(m_local != NULL, ("null m_local")); return m_local; }
+	inline Player *getLocalPlayer() { DEBUG_ASSERTCRASH(m_local != nullptr, ("null m_local")); return m_local; }
 
 	/**
 		Set the local player. You cannot set it to null; if you pass null, you'll
@@ -132,7 +129,7 @@ public:
 		Return the player matching the player mask
 	*/
 	Player *getPlayerFromMask( PlayerMaskType mask );
-	
+
 	/**
 		Get each player in numerical order that this mask represents.
 		Note that maskToAdjust will be adjusted by removing the associated player's mask from it.
@@ -144,11 +141,11 @@ public:
 	/**
 		a convenience routine to quickly clear the entered/exited flags on all teams.
 	*/
-	void updateTeamStates(void);
+	void updateTeamStates();
 
 	/**
-		a convenience routine to return the players who srcPlayer considers to have one of the 
-		relationships specified in allowedRelationships. Note that allowedRelationships should be 
+		a convenience routine to return the players who srcPlayer considers to have one of the
+		relationships specified in allowedRelationships. Note that allowedRelationships should be
 		a bitwise OR of AllowPlayerRelationship flags.
 	*/
 	PlayerMaskType getPlayersWithRelationship( Int srcPlayerIndex, UnsignedInt allowedRelationships );
@@ -158,7 +155,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 
@@ -171,5 +168,3 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 extern PlayerList *ThePlayerList;	///< singleton instance of PlayerList
-
-#endif // _PLAYERLIST_H_

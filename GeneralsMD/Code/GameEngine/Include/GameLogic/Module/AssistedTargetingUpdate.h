@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _ASSISTED_TARGETING_UPDATE_H
-#define _ASSISTED_TARGETING_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -69,7 +66,7 @@ public:
 	AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update() override;
 
 	Bool isFreeToAssist() const;
 	void assistAttack( const Object *requestingObject, Object *victimObject );
@@ -82,6 +79,3 @@ private:
 
 
 };
-
-#endif 
-

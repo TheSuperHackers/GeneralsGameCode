@@ -16,44 +16,39 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*************************************************************************** 
- ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     *** 
- *************************************************************************** 
- *                                                                         * 
- *                 Project Name : G                                        * 
- *                                                                         * 
- *                     $Archive:: /Commando/Code/ww3d2/pointgr.h          $* 
- *                                                                         * 
- *                      $Author:: Naty_h                                  $* 
- *                                                                         * 
- *                     $Modtime:: 8/02/01 8:34p                           $* 
- *                                                                         * 
- *                    $Revision:: 10                                      $* 
- *                                                                         * 
- *-------------------------------------------------------------------------* 
- * Functions:                                                              * 
+/***************************************************************************
+ ***    C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S     ***
+ ***************************************************************************
+ *                                                                         *
+ *                 Project Name : G                                        *
+ *                                                                         *
+ *                     $Archive:: /Commando/Code/ww3d2/pointgr.h          $*
+ *                                                                         *
+ *                      $Author:: Naty_h                                  $*
+ *                                                                         *
+ *                     $Modtime:: 8/02/01 8:34p                           $*
+ *                                                                         *
+ *                    $Revision:: 10                                      $*
+ *                                                                         *
+ *-------------------------------------------------------------------------*
+ * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef POINTGR_H
-#define POINTGR_H
 
 #include "sharebuf.h"
 #include "shader.h"
 #include "vector4.h"
 #include "vector3.h"
 #include "vector2.h"
-#include "Vector.H"
+#include "Vector.h"
 
 class VertexMaterialClass;
 class RenderInfoClass;
 class TextureClass;
 
 /*
-** PointGroupClass -- a custom object for rendering 
+** PointGroupClass -- a custom object for rendering
 ** groups of points (such as particle systems).
 ** It is possible to change mode/number of points/shader/etc. but these
 ** changes tend to be expensive if done often. Expected usage is to set the
@@ -62,7 +57,7 @@ class TextureClass;
 ** NOTE: Currently it is implemented using general triangles (1 or 2 per
 ** point), so it is probably suboptimal for software rasterization devices
 ** (which would probably perform better with some kind of blit/sprite code).
-*/ 
+*/
 class PointGroupClass
 {
 public:
@@ -77,50 +72,50 @@ public:
 		TRANSFORM,	// transform points w. modelview matrix (worldspace points)
 	};
 
-	PointGroupClass(void);
-	virtual ~PointGroupClass(void);
+	PointGroupClass();
+	virtual ~PointGroupClass();
 	PointGroupClass & operator = (const PointGroupClass & that);
 
 	// PointGroupClass interface:
 	void						Set_Arrays(ShareBufferClass<Vector3> *locs,
-									ShareBufferClass<Vector4> *diffuse = NULL,																		
-									ShareBufferClass<unsigned int> *apt = NULL,
-									ShareBufferClass<float> *sizes = NULL,
-									ShareBufferClass<unsigned char> *orientations = NULL,
-									ShareBufferClass<unsigned char> *frames = NULL,
+									ShareBufferClass<Vector4> *diffuse = nullptr,
+									ShareBufferClass<unsigned int> *apt = nullptr,
+									ShareBufferClass<float> *sizes = nullptr,
+									ShareBufferClass<unsigned char> *orientations = nullptr,
+									ShareBufferClass<unsigned char> *frames = nullptr,
 									int active_point_count = -1,
 									float vpxmin = 0.0f, float vpymin = 0.0f,
 									float vpxmax = 0.0f, float vpymax = 0.0f);
 	void						Set_Point_Size(float size);
-	float						Get_Point_Size(void);
+	float						Get_Point_Size();
 	void						Set_Point_Color(Vector3 color);
-	Vector3					Get_Point_Color(void);
+	Vector3					Get_Point_Color();
 	void						Set_Point_Alpha(float alpha);
-	float						Get_Point_Alpha(void);
+	float						Get_Point_Alpha();
 	void						Set_Point_Orientation(unsigned char orientation);
-	unsigned char		Get_Point_Orientation(void);
+	unsigned char		Get_Point_Orientation();
 	void						Set_Point_Frame(unsigned char frame);
-	unsigned char		Get_Point_Frame(void);
+	unsigned char		Get_Point_Frame();
 	void						Set_Point_Mode(PointModeEnum mode);
-	PointModeEnum		Get_Point_Mode(void);
+	PointModeEnum		Get_Point_Mode();
 	void						Set_Flag(FlagsType flag, bool onoff);
 	int							Get_Flag(FlagsType flag);
 	void						Set_Texture(TextureClass* texture);
-	TextureClass * 	Get_Texture(void);
-	TextureClass * 	Peek_Texture(void);
+	TextureClass * 	Get_Texture();
+	TextureClass * 	Peek_Texture();
 	void						Set_Shader(ShaderClass shader);
-	ShaderClass			Get_Shader(void);
+	ShaderClass			Get_Shader();
 	void						Set_Billboard(bool shouldBillboard);
-	bool						Get_Billboard(void);
+	bool						Get_Billboard();
 
 	// The frame property is taken from a set of possible frames. The rows/columns in the frame
 	// texture determine the number of possible frames. Since it must be a power of 2, we represent
 	// it as its log base 2. This number cannot be greater than 4 (which corresponds to a 16x16
 	// square of frames, i.e. 256 frames).
-	unsigned char			Get_Frame_Row_Column_Count_Log2(void);
+	unsigned char			Get_Frame_Row_Column_Count_Log2();
 	void						Set_Frame_Row_Column_Count_Log2(unsigned char frccl2);
 
-	int						Get_Polygon_Count(void);
+	int						Get_Polygon_Count();
 
 	void						Render(RenderInfoClass &rinfo);
 	void						RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int depth);
@@ -128,18 +123,18 @@ public:
 protected:
 	// Update arrays.
 	void						Update_Arrays(Vector3 *point_loc,
-									Vector4 *point_diffuse,									
+									Vector4 *point_diffuse,
 									float *point_size,
 									unsigned char *point_orientation,
-									unsigned char *point_frame, 
+									unsigned char *point_frame,
 									int active_points,
-									int total_points, 
-									int &vnum, 
+									int total_points,
+									int &vnum,
 									int &pnum);
 
 	// These shared buffers are used for communication to the point group - to
 	// pass point locations, colors and enables. The location and color arrays
-	// are 'compressed' using the active point table (if present) and then 
+	// are 'compressed' using the active point table (if present) and then
 	// are processed into other arrays which are passed to the GERD.
 	// SR rather than WWMath types are used so Vector Processors can be used.
 	// The arrays override the default value if present.
@@ -156,11 +151,11 @@ protected:
 	// number of possible frames must be a power of two - for this reason the number of frame rows
 	// and columns, orientations, etc. are represented as the log base 2 of the actual number.
 	ShareBufferClass<Vector3> *			PointLoc;	// World/cameraspace point locs
-	ShareBufferClass<Vector4> *			PointDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<unsigned int> *		APT;			// (NULL if not used) active point table
-	ShareBufferClass<float> *				PointSize;	// (NULL if not used) size override table
-	ShareBufferClass<unsigned char> *	PointOrientation; // (NULL if not used) orientation indices
-	ShareBufferClass<unsigned char> *	PointFrame; // (NULL if not used) frame indices
+	ShareBufferClass<Vector4> *			PointDiffuse; // (null if not used) RGBA values
+	ShareBufferClass<unsigned int> *		APT;			// (null if not used) active point table
+	ShareBufferClass<float> *				PointSize;	// (null if not used) size override table
+	ShareBufferClass<unsigned char> *	PointOrientation; // (null if not used) orientation indices
+	ShareBufferClass<unsigned char> *	PointFrame; // (null if not used) frame indices
 	int											PointCount;	// Active (if APT) or total point count
 
 	// See comments for Get/Set_Frame_Row_Column_Count_Log2 above
@@ -175,7 +170,7 @@ protected:
 	unsigned int			Flags;						// operation control flags
 	float						DefaultPointSize;			// point size (size array overrides if present)
 	Vector3					DefaultPointColor;		// point color (color array overrides if present)
-	float						DefaultPointAlpha;		// point alpha (alpha array overrides if present)	
+	float						DefaultPointAlpha;		// point alpha (alpha array overrides if present)
 	unsigned char			DefaultPointOrientation;// point orientation (orientation array overrides if present)
 	unsigned char			DefaultPointFrame;		// point texture frame (frame array overrides if present)
 
@@ -208,8 +203,8 @@ protected:
 	// arrays, and the Shutdown function (which is called by WW3D::Shutdown()
 	// releases them.
 public:
-	static void				_Init(void);
-	static void				_Shutdown(void);
+	static void				_Init();
+	static void				_Shutdown();
 
 private:
 	static Vector3 _TriVertexLocationOrientationTable[256][3];
@@ -232,11 +227,7 @@ private:
 class SegmentGroupClass : public PointGroupClass
 {
 public:
-	SegmentGroupClass(void);
-	virtual ~SegmentGroupClass(void);
+	SegmentGroupClass();
+	virtual ~SegmentGroupClass();
 
 };
-
-
-
-#endif

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ParachuteContain_H_
-#define __ParachuteContain_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/OpenContain.h"
 
@@ -63,31 +60,31 @@ public:
 	ParachuteContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDrawableBoundToObject();
+	virtual void onDrawableBoundToObject() override;
 
-	virtual Bool isValidContainerFor( const Object* obj, bool checkCapacity) const;
-	virtual Bool isEnclosingContainerFor( const Object *obj ) const { return FALSE; }	///< Does this type of Contain Visibly enclose its contents?
-	virtual Bool isSpecialZeroSlotContainer() const { return true; }
+	virtual Bool isValidContainerFor( const Object* obj, bool checkCapacity) const override;
+	virtual Bool isEnclosingContainerFor( const Object *obj ) const override { return FALSE; }	///< Does this type of Contain Visibly enclose its contents?
+	virtual Bool isSpecialZeroSlotContainer() const override { return true; }
 
-	virtual void onContaining( Object *obj );		///< object now contains 'obj'
-	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
+	virtual void onContaining( Object *obj ) override;		///< object now contains 'obj'
+	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
 
-	virtual UpdateSleepTime update();							///< called once per frame
+	virtual UpdateSleepTime update() override;							///< called once per frame
 
-	virtual void containReactToTransformChange();
+	virtual void containReactToTransformChange() override;
 
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	virtual void onDie( const DamageInfo * damageInfo );
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
+	virtual void onDie( const DamageInfo * damageInfo ) override;
 
-	virtual void setOverrideDestination( const Coord3D *override ); ///< Instead of falling peacefully towards a clear spot, I will now aim here
+	virtual void setOverrideDestination( const Coord3D *dest ) override; ///< Instead of falling peacefully towards a clear spot, I will now aim here
 
 protected:
 
 	virtual Bool isFullyEnclosingContainer() const { return false; }
-	virtual void positionContainedObjectsRelativeToContainer();
+	virtual void positionContainedObjectsRelativeToContainer() override;
 
 private:
-	
+
 	void positionRider(Object* obj);
 	void updateBonePositions();
 	void updateOffsetsFromBones();
@@ -113,6 +110,3 @@ private:
 	Bool m_needToUpdateParaBones;
 	Bool m_opened;
 };
-
-#endif // __ParachuteContain_H_
-

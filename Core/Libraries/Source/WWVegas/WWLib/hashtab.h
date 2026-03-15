@@ -34,8 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef HASHTAB_H
-#define HASHTAB_H
+#pragma once
 
 #if 0
 
@@ -45,13 +44,13 @@ template <class Object,class Key> class NamedObjectHashTableClass
 public:
 
 	HashTableClass(int initialsize,int growthrate,HashCalculatorClass<Key> * hasher);
-	~HashTableClass(void);
+	~HashTableClass();
 
 	void				Add(Object * new_item,Key * key);
 	void				Remove(Object * item,Key * key);
 
-	int				Count(void) const								{ return Items.Count(); }
-	Object *			Find(const Key & key) const						
+	int				Count() const								{ return Items.Count(); }
+	Object *			Find(const Key & key) const
 
 private:
 
@@ -66,7 +65,7 @@ private:
 		bool operator == (const HashItem & that) { return ((Item == that.Item) && (NextHashIndex == that.NextHashIndex)); }
 		bool operator != (const HashItem & that) { return !(*this == that); }
 	};
-		
+
 	// Dynamic Vector of the unique items:
 	DynamicVectorClass<HashItem>		Items;
 
@@ -95,7 +94,7 @@ HashTableClass<Object,Key>::HashTableClass
 }
 
 template <class Object,class Key>
-HashTableClass<Object,Key>::~HashTableClass(void)
+HashTableClass<Object,Key>::~HashTableClass()
 {
 
 }
@@ -117,11 +116,7 @@ Object *	HashTableClass<Object,Key>::Find(Key * key) const
 	}
 
 	// couldn't find it
-	return NULL;
+	return nullptr;
 }
 
 #endif
-
-
-#endif
-

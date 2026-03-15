@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_VETERANCY_NAMES
 #include "Common/Upgrade.h"
@@ -38,15 +38,16 @@
 #include "GameClient/Image.h"
 
 
-const char *TheUpgradeTypeNames[] = 
+const char *const TheUpgradeTypeNames[] =
 {
 	"PLAYER",
 	"OBJECT",
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(TheUpgradeTypeNames) == NUM_UPGRADE_TYPES + 1, "Incorrect array size");
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
-class UpgradeCenter *TheUpgradeCenter = NULL;
+class UpgradeCenter *TheUpgradeCenter = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UPGRADE ////////////////////////////////////////////////////////////////////////////////////////
@@ -59,17 +60,17 @@ Upgrade::Upgrade( const UpgradeTemplate *upgradeTemplate )
 
 	m_template = upgradeTemplate;
 	m_status = UPGRADE_STATUS_INVALID;
-	m_next = NULL;
-	m_prev = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
 
-}  // end Upgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Upgrade::~Upgrade( void )
+Upgrade::~Upgrade()
 {
 
-}  // end ~Upgrade
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -77,7 +78,7 @@ Upgrade::~Upgrade( void )
 void Upgrade::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -95,15 +96,15 @@ void Upgrade::xfer( Xfer *xfer )
 	// status
 	xfer->xferUser( &m_status, sizeof( UpgradeStatusType ) );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void Upgrade::loadPostProcess( void )
+void Upgrade::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UPGRADE TEMPLATE ///////////////////////////////////////////////////////////////////////////////
@@ -111,52 +112,49 @@ void Upgrade::loadPostProcess( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] = 
+const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 {
 
-	{ "DisplayName",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_displayNameLabel ) },
+	{ "DisplayName",				INI::parseAsciiString,		nullptr, offsetof( UpgradeTemplate, m_displayNameLabel ) },
 	{ "Type",								INI::parseIndexList,			TheUpgradeTypeNames, offsetof( UpgradeTemplate, m_type ) },
-	{ "BuildTime",					INI::parseReal,						NULL, offsetof( UpgradeTemplate, m_buildTime ) },
-	{ "BuildCost",					INI::parseInt,						NULL, offsetof( UpgradeTemplate, m_cost ) },
-	{ "ButtonImage",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_buttonImageName ) },
-	{ "ResearchSound",			INI::parseAudioEventRTS,	NULL, offsetof( UpgradeTemplate, m_researchSound ) }, 
-	{ "UnitSpecificSound",	INI::parseAudioEventRTS,	NULL, offsetof( UpgradeTemplate, m_unitSpecificSound ) }, 
+	{ "BuildTime",					INI::parseReal,						nullptr, offsetof( UpgradeTemplate, m_buildTime ) },
+	{ "BuildCost",					INI::parseInt,						nullptr, offsetof( UpgradeTemplate, m_cost ) },
+	{ "ButtonImage",				INI::parseAsciiString,		nullptr, offsetof( UpgradeTemplate, m_buttonImageName ) },
+	{ "ResearchSound",			INI::parseAudioEventRTS,	nullptr, offsetof( UpgradeTemplate, m_researchSound ) },
+	{ "UnitSpecificSound",	INI::parseAudioEventRTS,	nullptr, offsetof( UpgradeTemplate, m_unitSpecificSound ) },
 	{ "AcademyClassify",		INI::parseIndexList,			TheAcademyClassificationTypeNames, offsetof( UpgradeTemplate, m_academyClassificationType ) },
-	{ NULL,						NULL,												 NULL, 0 }  // keep this last
+	{ nullptr,						nullptr,												 nullptr, 0 }
 
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeTemplate::UpgradeTemplate( void )
+UpgradeTemplate::UpgradeTemplate()
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_cost = 0;
-	//
 	m_type = UPGRADE_TYPE_PLAYER;
 	m_nameKey = NAMEKEY_INVALID;
 	m_buildTime = 0.0f;
-	m_next = NULL;
-	m_prev = NULL;
-	m_buttonImage = NULL;
+	m_next = nullptr;
+	m_prev = nullptr;
+	m_buttonImage = nullptr;
 	m_academyClassificationType = ACT_NONE;
 
-}  // end UpgradeTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeTemplate::~UpgradeTemplate( void )
+UpgradeTemplate::~UpgradeTemplate()
 {
 
-}  // end ~UpgradeTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Calculate the time it takes (in logic frames) for a player to build this UpgradeTemplate */
 //-------------------------------------------------------------------------------------------------
 Int UpgradeTemplate::calcTimeToBuild( Player *player ) const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( player->buildsInstantly() )
 	{
 		return 1;
@@ -166,7 +164,7 @@ Int UpgradeTemplate::calcTimeToBuild( Player *player ) const
 	///@todo modify this by power state of player
 	return m_buildTime * LOGICFRAMES_PER_SECOND;
 
-}  // end calcTimeToBuild
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Calculate the cost takes this player to build this upgrade */
@@ -177,7 +175,7 @@ Int UpgradeTemplate::calcCostToBuild( Player *player ) const
 	///@todo modify this by any player handicaps
 	return m_cost;
 
-}  // end calcCostToBuild
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -222,20 +220,20 @@ void UpgradeTemplate::cacheButtonImage()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeCenter::UpgradeCenter( void )
+UpgradeCenter::UpgradeCenter()
 {
 
-	m_upgradeList = NULL;
+	m_upgradeList = nullptr;
 	m_nextTemplateMaskBit = 0;
 	buttonImagesCached = FALSE;
 
-}  // end UpgradeCenter
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpgradeCenter::~UpgradeCenter( void )
+UpgradeCenter::~UpgradeCenter()
 {
-	
+
 	// delete all the upgrades loaded from the INI database
 	UpgradeTemplate *next;
 	while( m_upgradeList )
@@ -250,17 +248,17 @@ UpgradeCenter::~UpgradeCenter( void )
 		// set head to next element
 		m_upgradeList = next;
 
-	}  // end while
+	}
 
-}  // end ~UpgradeCenter
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Upgrade center initialization */
 //-------------------------------------------------------------------------------------------------
-void UpgradeCenter::init( void )
+void UpgradeCenter::init()
 {
 	UpgradeTemplate* up;
-	
+
 	// name will be overridden by friend_makeVeterancyUpgrade
 
 // no, there ISN'T an upgrade for this one...
@@ -281,7 +279,7 @@ void UpgradeCenter::init( void )
 //-------------------------------------------------------------------------------------------------
 /** Upgrade center system reset */
 //-------------------------------------------------------------------------------------------------
-void UpgradeCenter::reset( void )
+void UpgradeCenter::reset()
 {
 	if( TheMappedImageCollection && !buttonImagesCached )
 	{
@@ -295,7 +293,7 @@ void UpgradeCenter::reset( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by veterancy level */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level ) const
 {
@@ -304,7 +302,7 @@ const UpgradeTemplate *UpgradeCenter::findVeterancyUpgrade( VeterancyLevel level
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by name key */
 //-------------------------------------------------------------------------------------------------
 UpgradeTemplate *UpgradeCenter::findNonConstUpgradeByKey( NameKeyType key )
 {
@@ -316,22 +314,22 @@ UpgradeTemplate *UpgradeCenter::findNonConstUpgradeByKey( NameKeyType key )
 			return upgrade;
 
 	// item not found
-	return NULL;
+	return nullptr;
 
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Return the first upgrade template */
 // ------------------------------------------------------------------------------------------------
-UpgradeTemplate *UpgradeCenter::firstUpgradeTemplate( void )
+UpgradeTemplate *UpgradeCenter::firstUpgradeTemplate()
 {
-	
+
 	return m_upgradeList;
 
-}  // end firstUpgradeTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name key */
+/** Find upgrade by name key */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 {
@@ -343,18 +341,24 @@ const UpgradeTemplate *UpgradeCenter::findUpgradeByKey( NameKeyType key ) const
 			return upgrade;
 
 	// item not found
-	return NULL;
+	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Find upgrade matching name */
+/** Find upgrade by name */
 //-------------------------------------------------------------------------------------------------
 const UpgradeTemplate *UpgradeCenter::findUpgrade( const AsciiString& name ) const
 {
-
 	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
+}
 
-}  // end findUpgrade
+//-------------------------------------------------------------------------------------------------
+/** Find upgrade by name */
+//-------------------------------------------------------------------------------------------------
+const UpgradeTemplate *UpgradeCenter::findUpgrade( const char* name ) const
+{
+	return findUpgradeByKey( TheNameKeyGenerator->nameToKey( name ) );
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Allocate a new upgrade template */
@@ -387,7 +391,7 @@ UpgradeTemplate *UpgradeCenter::newUpgrade( const AsciiString& name )
 	// return new upgrade
 	return newUpgrade;
 
-}  // end newUnlinkedUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Link an upgrade to our list */
@@ -396,17 +400,17 @@ void UpgradeCenter::linkUpgrade( UpgradeTemplate *upgrade )
 {
 
 	// sanity
-	if( upgrade == NULL )
+	if( upgrade == nullptr )
 		return;
 
 	// link
-	upgrade->friend_setPrev( NULL );
+	upgrade->friend_setPrev( nullptr );
 	upgrade->friend_setNext( m_upgradeList );
 	if( m_upgradeList )
 		m_upgradeList->friend_setPrev( upgrade );
 	m_upgradeList = upgrade;
 
-}  // end linkUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Unlink an upgrade from our list */
@@ -415,7 +419,7 @@ void UpgradeCenter::unlinkUpgrade( UpgradeTemplate *upgrade )
 {
 
 	// sanity
-	if( upgrade == NULL )
+	if( upgrade == nullptr )
 		return;
 
 	if( upgrade->friend_getNext() )
@@ -425,16 +429,16 @@ void UpgradeCenter::unlinkUpgrade( UpgradeTemplate *upgrade )
 	else
 		m_upgradeList = upgrade->friend_getNext();
 
-}  // end unlinkUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** does this player have all the necessary things to make this upgrade */
 //-------------------------------------------------------------------------------------------------
 Bool UpgradeCenter::canAffordUpgrade( Player *player, const UpgradeTemplate *upgradeTemplate, Bool displayReason ) const
 {
- 
+
 	// sanity
-	if( player == NULL || upgradeTemplate == NULL )
+	if( player == nullptr || upgradeTemplate == nullptr )
 		return FALSE;
 
 	// money check
@@ -453,12 +457,12 @@ Bool UpgradeCenter::canAffordUpgrade( Player *player, const UpgradeTemplate *upg
 
 	return TRUE;  // all is well
 
-}  // end canAffordUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 /** generate a list of upgrade names for WorldBuilder */
 //-------------------------------------------------------------------------------------------------
-std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
+std::vector<AsciiString> UpgradeCenter::getUpgradeNames() const
 {
 	std::vector<AsciiString> upgradeNames;
 
@@ -467,7 +471,7 @@ std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
 
 	return upgradeNames;
 
-}  // end getUpgradeNames
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse an upgrade definition */
@@ -475,21 +479,20 @@ std::vector<AsciiString> UpgradeCenter::getUpgradeNames( void ) const
 void UpgradeCenter::parseUpgradeDefinition( INI *ini )
 {
 	// read the name
-	const char* c = ini->getNextToken();
-	AsciiString name = c;	
+	const char* name = ini->getNextToken();
 
 	// find existing item if present
 	UpgradeTemplate* upgrade = TheUpgradeCenter->findNonConstUpgradeByKey( NAMEKEY(name) );
-	if( upgrade == NULL )
+	if( upgrade == nullptr )
 	{
 
 		// allocate a new item
 		upgrade = TheUpgradeCenter->newUpgrade( name );
 
-	}  // end if
+	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( upgrade, ("parseUpgradeDefinition: Unable to allocate upgrade '%s'", name) );
 
 	// parse the ini definition
 	ini->initFromINI( upgrade, upgrade->getFieldParse() );

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 
 #include "GameLogic/Module/BattleBusSlowDeathBehavior.h"
@@ -44,11 +44,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 enum
 {
@@ -62,20 +57,20 @@ enum
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void )
+BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData()
 {
 
-	m_fxStartUndeath = NULL;
-	m_oclStartUndeath = NULL;
+	m_fxStartUndeath = nullptr;
+	m_oclStartUndeath = nullptr;
 
-	m_fxHitGround = NULL;
-	m_oclHitGround = NULL;
+	m_fxHitGround = nullptr;
+	m_oclHitGround = nullptr;
 
 	m_throwForce = 1.0f;
 	m_percentDamageToPassengers = 0.0f;
 	m_emptyHulkDestructionDelay = 0;
 
-}  // end BattleBusSlowDeathBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -83,26 +78,26 @@ BattleBusSlowDeathBehaviorModuleData::BattleBusSlowDeathBehaviorModuleData( void
 {
   SlowDeathBehaviorModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 
-		{ "FXStartUndeath",	INI::parseFXList,	NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxStartUndeath ) },
-		{ "OCLStartUndeath", INI::parseObjectCreationList, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclStartUndeath ) },
+		{ "FXStartUndeath",	INI::parseFXList,	nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxStartUndeath ) },
+		{ "OCLStartUndeath", INI::parseObjectCreationList, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclStartUndeath ) },
 
-		{ "FXHitGround",	INI::parseFXList,	NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxHitGround ) },
-		{ "OCLHitGround", INI::parseObjectCreationList, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclHitGround ) },
+		{ "FXHitGround",	INI::parseFXList,	nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_fxHitGround ) },
+		{ "OCLHitGround", INI::parseObjectCreationList, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_oclHitGround ) },
 
-		{ "ThrowForce", INI::parseReal, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_throwForce ) },
-		{ "PercentDamageToPassengers", INI::parsePercentToReal, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_percentDamageToPassengers ) },
-		{ "EmptyHulkDestructionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( BattleBusSlowDeathBehaviorModuleData, m_emptyHulkDestructionDelay ) },
+		{ "ThrowForce", INI::parseReal, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_throwForce ) },
+		{ "PercentDamageToPassengers", INI::parsePercentToReal, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_percentDamageToPassengers ) },
+		{ "EmptyHulkDestructionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( BattleBusSlowDeathBehaviorModuleData, m_emptyHulkDestructionDelay ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 
 	};
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,15 +113,15 @@ BattleBusSlowDeathBehavior::BattleBusSlowDeathBehavior( Thing *thing, const Modu
 	m_isInFirstDeath = FALSE;
 	m_groundCheckFrame = 0;
 	m_penaltyDeathFrame = 0;
-}  // end BattleBusSlowDeathBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BattleBusSlowDeathBehavior::~BattleBusSlowDeathBehavior( void )
+BattleBusSlowDeathBehavior::~BattleBusSlowDeathBehavior()
 {
 
-}  // end ~BattleBusSlowDeathBehavior
- 
+}
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void BattleBusSlowDeathBehavior::onDie( const DamageInfo *damageInfo )
@@ -135,7 +130,7 @@ void BattleBusSlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	m_isInFirstDeath = FALSE; // and clear this incase we died while in the alternate death
 
 	SlowDeathBehavior::onDie(damageInfo);
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -151,7 +146,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 		// First do the special effects
 		FXList::doFXObj(data->m_fxStartUndeath, me );
-		ObjectCreationList::create(data->m_oclStartUndeath, me, NULL );
+		ObjectCreationList::create(data->m_oclStartUndeath, me, nullptr );
 
 		if( me->getAI() )
 		{
@@ -164,7 +159,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 			// Then stop physically
 			me->getPhysics()->clearAcceleration();
 			me->getPhysics()->scrubVelocity2D(0);
-			
+
 			// Then get chucked in the air
 			Coord3D throwForce;
 			throwForce.x = 0;
@@ -177,7 +172,7 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		// And finally hit those inside for some damage
 		if( me->getContain() )
 			me->getContain()->processDamageToContained(data->m_percentDamageToPassengers);
-		
+
 		setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 	}
 	else
@@ -186,11 +181,11 @@ void BattleBusSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 		SlowDeathBehavior::beginSlowDeath( damageInfo );
 	}
 
-}  // end beginSlowDeath
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
+UpdateSleepTime BattleBusSlowDeathBehavior::update()
 {
 	Object *me = getObject();
 	const BattleBusSlowDeathBehaviorModuleData * data = getBattleBusSlowDeathBehaviorModuleData();
@@ -205,7 +200,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 
 			// Do the special FX
 			FXList::doFXObj(data->m_fxHitGround, me );
-			ObjectCreationList::create(data->m_oclHitGround, me, NULL );
+			ObjectCreationList::create(data->m_oclHitGround, me, nullptr );
 			me->setModelConditionState(MODELCONDITION_SECOND_LIFE);
 
 			// And stop us forever
@@ -242,7 +237,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 
 		const ContainModuleInterface *contain = me->getContain();
 		// Safety, no need to be awake if no special case to wait for
-		if( contain == NULL )
+		if( contain == nullptr )
 			return UPDATE_SLEEP_FOREVER;
 
 		if( m_penaltyDeathFrame != 0 )
@@ -275,7 +270,7 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 			return UPDATE_SLEEP(EMPTY_HULK_CHECK_DELAY);// Stay awake regardless
 		}
 	}
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -283,10 +278,10 @@ UpdateSleepTime BattleBusSlowDeathBehavior::update( void )
 void BattleBusSlowDeathBehavior::crc( Xfer *xfer )
 {
 
-	// extend base class 
+	// extend base class
 	SlowDeathBehavior::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -312,15 +307,15 @@ void BattleBusSlowDeathBehavior::xfer( Xfer *xfer )
 
 	xfer->xferUnsignedInt( &m_penaltyDeathFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BattleBusSlowDeathBehavior::loadPostProcess( void )
+void BattleBusSlowDeathBehavior::loadPostProcess()
 {
 
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
-}  // end loadPostProcess
+}

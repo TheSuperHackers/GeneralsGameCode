@@ -38,8 +38,8 @@ IMPLEMENT_DYNCREATE(CBabylonDlgAutoProxy, CCmdTarget)
 CBabylonDlgAutoProxy::CBabylonDlgAutoProxy()
 {
 	EnableAutomation();
-	
-	// To keep the application running as long as an automation 
+
+	// To keep the application running as long as an automation
 	//	object is active, the constructor calls AfxOleLockApp.
 	AfxOleLockApp();
 
@@ -47,7 +47,7 @@ CBabylonDlgAutoProxy::CBabylonDlgAutoProxy()
 	//  main window pointer.  Set the proxy's internal pointer
 	//  to point to the dialog, and set the dialog's back pointer to
 	//  this proxy.
-	ASSERT (AfxGetApp()->m_pMainWnd != NULL);
+	ASSERT (AfxGetApp()->m_pMainWnd != nullptr);
 	ASSERT_VALID (AfxGetApp()->m_pMainWnd);
 	ASSERT_KINDOF(CBabylonDlg, AfxGetApp()->m_pMainWnd);
 	m_pDialog = (CBabylonDlg*) AfxGetApp()->m_pMainWnd;
@@ -59,8 +59,8 @@ CBabylonDlgAutoProxy::~CBabylonDlgAutoProxy()
 	// To terminate the application when all objects created with
 	// 	with automation, the destructor calls AfxOleUnlockApp.
 	//  Among other things, this will destroy the main dialog
-	if (m_pDialog != NULL)
-		m_pDialog->m_pAutoProxy = NULL;
+	if (m_pDialog != nullptr)
+		m_pDialog->m_pAutoProxy = nullptr;
 	AfxOleUnlockApp();
 }
 
@@ -87,7 +87,7 @@ BEGIN_DISPATCH_MAP(CBabylonDlgAutoProxy, CCmdTarget)
 END_DISPATCH_MAP()
 
 // Note: we add support for IID_IBabylon to support typesafe binding
-//  from VBA.  This IID must match the GUID that is attached to the 
+//  from VBA.  This IID must match the GUID that is attached to the
 //  dispinterface in the .ODL file.
 
 // {2BF31248-3BA1-11D3-B9DA-006097B90D93}

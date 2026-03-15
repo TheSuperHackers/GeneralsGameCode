@@ -24,12 +24,12 @@
 
 // FILE: HotKey.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Sep 2002
@@ -37,8 +37,8 @@
 //	Filename: 	HotKey.cpp
 //
 //	author:		Chris Huybregts
-//	
-//	purpose:	
+//
+//	purpose:
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 
 	if ( t == GameMessage::MSG_RAW_KEY_UP)
 	{
-		
+
 		//char key = msg->getArgument(0)->integer;
 		Int keyState = msg->getArgument(1)->integer;
 
@@ -98,7 +98,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 		}
 		if(newModState != 0)
 			return disp;
-		WideChar key = TheKeyboard->getPrintableKey(msg->getArgument(0)->integer, 0);
+		WideChar key = TheKeyboard->getPrintableKey((KeyDefType)msg->getArgument(0)->integer, 0);
 		UnicodeString uKey;
 		uKey.concat(key);
 		AsciiString aKey;
@@ -112,33 +112,30 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 //-----------------------------------------------------------------------------
 HotKey::HotKey()
 {
-	m_win = NULL;
-	//Added By Sadullah Nader
-	//Initializations missing and needed
+	m_win = nullptr;
 	m_key.clear();
-	//
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager::HotKeyManager( void )
+HotKeyManager::HotKeyManager()
 {
 
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager::~HotKeyManager( void )
-{
-	m_hotKeyMap.clear();
-}
-	
-//-----------------------------------------------------------------------------
-void HotKeyManager::init( void )
+HotKeyManager::~HotKeyManager()
 {
 	m_hotKeyMap.clear();
 }
 
 //-----------------------------------------------------------------------------
-void HotKeyManager::reset( void )
+void HotKeyManager::init()
+{
+	m_hotKeyMap.clear();
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::reset()
 {
 	m_hotKeyMap.clear();
 }
@@ -151,7 +148,7 @@ void HotKeyManager::addHotKey( GameWindow *win, const AsciiString& keyIn)
 	HotKeyMap::iterator it = m_hotKeyMap.find(key);
 	if( it != m_hotKeyMap.end() )
 	{
-		DEBUG_ASSERTCRASH(FALSE,("Hotkey %s is already mapped to window %s, current window is %s", key.str(), it->second.m_win->winGetInstanceData()->m_decoratedNameString.str(), win->winGetInstanceData()->m_decoratedNameString.str()));
+		DEBUG_CRASH(("Hotkey %s is already mapped to window %s, current window is %s", key.str(), it->second.m_win->winGetInstanceData()->m_decoratedNameString.str(), win->winGetInstanceData()->m_decoratedNameString.str()));
 		return;
 	}
 	HotKey newHK;
@@ -176,14 +173,14 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) )
  		{
  			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
- 
+
  			// here we make the same click sound that the GUI uses when you click a button
  			AudioEventRTS buttonClick("GUIClick");
- 
+
  			if( TheAudio )
  			{
  				TheAudio->addAudioEvent( &buttonClick );
- 			}  // end if
+ 			}
 			return TRUE;
  		}
 
@@ -222,11 +219,11 @@ AsciiString HotKeyManager::searchHotKey( const UnicodeString& uStr )
 		}
 		marker++;
 	}
-	return AsciiString::TheEmptyString;	
+	return AsciiString::TheEmptyString;
 }
 
 //-----------------------------------------------------------------------------
-HotKeyManager *TheHotKeyManager = NULL;
+HotKeyManager *TheHotKeyManager = nullptr;
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////

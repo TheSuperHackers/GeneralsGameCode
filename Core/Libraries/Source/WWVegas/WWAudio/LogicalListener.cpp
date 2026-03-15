@@ -77,7 +77,7 @@ enum
 //	LogicalListenerClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalListenerClass::LogicalListenerClass (void)
+LogicalListenerClass::LogicalListenerClass ()
 	:	m_Scale (1),
 		m_TypeMask (0),
 		m_Position (0, 0, 0),
@@ -92,7 +92,7 @@ LogicalListenerClass::LogicalListenerClass (void)
 //	~LogicalListenerClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-LogicalListenerClass::~LogicalListenerClass (void)
+LogicalListenerClass::~LogicalListenerClass ()
 {
 	return ;
 }
@@ -107,13 +107,13 @@ void
 LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 {
 	SoundSceneClass *scene = WWAudioClass::Get_Instance ()->Get_Sound_Scene ();
-	if ((scene != NULL) && (m_Scene == NULL)) {
-		
+	if ((scene != nullptr) && (m_Scene == nullptr)) {
+
 		//
 		//	Add this listener to the culling system
 		//
 		m_Scene = scene;
-		scene->Add_Logical_Listener (this);		
+		scene->Add_Logical_Listener (this);
 	}
 
 	return ;
@@ -126,16 +126,16 @@ LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-LogicalListenerClass::Remove_From_Scene (void)
+LogicalListenerClass::Remove_From_Scene ()
 {
-	if (m_Scene != NULL) {
+	if (m_Scene != nullptr) {
 
 		//
 		//	Remove this listener from the culling system
 		//
 		m_Scene->Remove_Logical_Listener (this);
-		m_Scene = NULL;
-		m_PhysWrapper = NULL;
+		m_Scene = nullptr;
+		m_PhysWrapper = nullptr;
 	}
 
 	return ;
@@ -148,7 +148,7 @@ LogicalListenerClass::Remove_From_Scene (void)
 //
 /////////////////////////////////////////////////////////////////////////////////
 const PersistFactoryClass &
-LogicalListenerClass::Get_Factory (void) const
+LogicalListenerClass::Get_Factory () const
 {
 	return _LogicalListenerPersistFactory;
 }
@@ -166,7 +166,7 @@ LogicalListenerClass::Save (ChunkSaveClass &csave)
 		SoundSceneObjClass::Save (csave);
 	csave.End_Chunk ();
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);		
+	csave.Begin_Chunk (CHUNKID_VARIABLES);
 
 		WRITE_MICRO_CHUNK (csave, VARID_SCALE, m_Scale);
 		WRITE_MICRO_CHUNK (csave, VARID_TYPE_MASK, m_TypeMask);
@@ -185,7 +185,7 @@ LogicalListenerClass::Save (ChunkSaveClass &csave)
 bool
 LogicalListenerClass::Load (ChunkLoadClass &cload)
 {
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_BASE_CLASS:

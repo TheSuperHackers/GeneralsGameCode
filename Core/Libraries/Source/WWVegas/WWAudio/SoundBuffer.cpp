@@ -36,7 +36,7 @@
 
 
 #include "SoundBuffer.h"
-#include "RAWFILE.H"
+#include "RAWFILE.h"
 #include "wwdebug.h"
 #include "Utils.h"
 #include "ffactory.h"
@@ -52,7 +52,7 @@ class FileMappingClass
 public:
 	StringClass			Filename;
 	HANDLE				FileMapping;
-	int					RefCount;	
+	int					RefCount;
 
 	bool operator== (const FileMappingClass &src)	{ return false; }
 	bool operator!= (const FileMappingClass &src)	{ return false; }
@@ -66,10 +66,10 @@ static DynamicVectorClass<FileMappingClass> MappingList;
 //
 //	SoundBufferClass
 //
-SoundBufferClass::SoundBufferClass (void)
-	: m_Buffer (NULL),
+SoundBufferClass::SoundBufferClass ()
+	: m_Buffer (nullptr),
 	  m_Length (0),
-	  m_Filename (NULL),
+	  m_Filename (nullptr),
 	  m_Duration (0),
 	  m_Rate (0),
 	  m_Bits (0),
@@ -84,7 +84,7 @@ SoundBufferClass::SoundBufferClass (void)
 //
 //	~SoundBufferClass
 //
-SoundBufferClass::~SoundBufferClass (void)
+SoundBufferClass::~SoundBufferClass ()
 {
 	SAFE_FREE (m_Filename);
 	Free_Buffer ();
@@ -97,13 +97,11 @@ SoundBufferClass::~SoundBufferClass (void)
 //	Free_Buffer
 //
 void
-SoundBufferClass::Free_Buffer (void)
+SoundBufferClass::Free_Buffer ()
 {
 	// Free the buffer's memory
-	if (m_Buffer != NULL) {
-		delete [] m_Buffer;
-		m_Buffer = NULL;
-	}
+	delete [] m_Buffer;
+	m_Buffer = nullptr;
 
 	// Make sure we reset the length
 	m_Length = 0L;
@@ -128,7 +126,7 @@ SoundBufferClass::Determine_Stats (unsigned char *buffer)
 
 	// Attempt to get statistical information about this sound
 	AILSOUNDINFO info = { 0 };
-	if ((buffer != NULL) && (::AIL_WAV_info (buffer, &info) != 0)) {
+	if ((buffer != nullptr) && (::AIL_WAV_info (buffer, &info) != 0)) {
 
 		// Cache this information
 		m_Rate = info.rate;
@@ -153,7 +151,7 @@ void
 SoundBufferClass::Set_Filename (const char *name)
 {
 	SAFE_FREE (m_Filename);
-	if (name != NULL) {
+	if (name != nullptr) {
 		m_Filename = ::strdup (name);
 	}
 
@@ -172,8 +170,8 @@ SoundBufferClass::Load_From_File (const char *filename)
 	bool retval = false;
 
 	// Param OK?
-	WWASSERT (filename != NULL);
-	if (filename != NULL) {
+	WWASSERT (filename != nullptr);
+	if (filename != nullptr) {
 
 		// Create a file object and pass it onto the appropriate function
 		FileClass *file=_TheFileFactory->Get_File(filename);
@@ -181,7 +179,7 @@ SoundBufferClass::Load_From_File (const char *filename)
 			retval = Load_From_File(*file);
 			_TheFileFactory->Return_File(file);
 		}
-		file=NULL;
+		file=nullptr;
 	}
 
 	// Return the true/false result code
@@ -259,9 +257,9 @@ SoundBufferClass::Load_From_Memory
 	Set_Filename ("unknown.wav");
 
 	// Params OK?
-	WWASSERT (mem_buffer != NULL);
+	WWASSERT (mem_buffer != nullptr);
 	WWASSERT (size > 0L);
-	if ((mem_buffer != NULL) && (size > 0L)) {
+	if ((mem_buffer != nullptr) && (size > 0L)) {
 
 		// Allocate a new buffer of the correct length and copy the contents
 		// into the buffer
@@ -286,7 +284,7 @@ SoundBufferClass::Load_From_Memory
 //
 //	StreamSoundBufferClass
 //
-StreamSoundBufferClass::StreamSoundBufferClass (void)	:
+StreamSoundBufferClass::StreamSoundBufferClass ()	:
 	  SoundBufferClass ()
 {
 	return ;
@@ -297,7 +295,7 @@ StreamSoundBufferClass::StreamSoundBufferClass (void)	:
 //
 //	~StreamSoundBufferClass
 //
-StreamSoundBufferClass::~StreamSoundBufferClass (void)
+StreamSoundBufferClass::~StreamSoundBufferClass ()
 {
 	return ;
 }
@@ -308,7 +306,7 @@ StreamSoundBufferClass::~StreamSoundBufferClass (void)
 //	Free_Buffer
 //
 void
-StreamSoundBufferClass::Free_Buffer (void)
+StreamSoundBufferClass::Free_Buffer ()
 {
 	return ;
 }

@@ -274,7 +274,7 @@ void ShaderClass::Init_From_Material3(const W3dMaterial3Struct & mat3)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:																												  *
- *		05/02/00    IML : Created.																					  *	
+ *		05/02/00    IML : Created.																					  *
  *=============================================================================================*/
 
 void ShaderClass::Enable_Fog (const char *source)
@@ -287,12 +287,12 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_WHITE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 
 		case ShaderClass::SRCBLEND_ONE:
 			switch (Get_Dst_Blend_Func()) {
-				
+
 				case ShaderClass::DSTBLEND_ZERO:							// Opaque.
 					Set_Fog_Func (ShaderClass::FOG_ENABLE);
 					break;
@@ -313,7 +313,7 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_ENABLE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 
 		case ShaderClass::SRCBLEND_ONE_MINUS_SRC_ALPHA:
@@ -321,14 +321,14 @@ void ShaderClass::Enable_Fog (const char *source)
 				Set_Fog_Func (ShaderClass::FOG_ENABLE);
 			} else {
 				Report_Unable_To_Fog (source);
-			}	
+			}
 			break;
 	}
 }
 
 
 /***********************************************************************************************
- * ShaderClass::Report_Unable_To_Fog --																		  *	
+ * ShaderClass::Report_Unable_To_Fog --																		  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -337,15 +337,15 @@ void ShaderClass::Enable_Fog (const char *source)
  * WARNINGS:                                                                                   *
  *                                                                                             *
  * HISTORY:																												  *
- *		10/04/00    IML : Created.																					  *	
+ *		10/04/00    IML : Created.																					  *
  *=============================================================================================*/
 void ShaderClass::Report_Unable_To_Fog (const char *source)
 {
 	#ifdef WWDEBUG
 	static unsigned _reportcount = 0;
 
-	const char		*unabletofogtext		= "WARNING: Unable to fog shader in %s with given blending mode.\r\n";
-	const char		*unabletofogmoretext = "WARNING: Unable to fog additional shaders (further warnings will be suppressed).\r\n";
+	const char		*unabletofogtext		= "WARNING: Unable to fog shader in %s with given blending mode.";
+	const char		*unabletofogmoretext = "WARNING: Unable to fog additional shaders (further warnings will be suppressed).";
 	const unsigned  maxreportcount		= 10;
 
 	// Limit the no. of warning messages to some practical maximum. Suppress all subsequent warnings.
@@ -375,7 +375,7 @@ public:
 	bool		useAlpha;
 };
 
-const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] = 
+const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -383,7 +383,7 @@ const Blend srcBlendLUT[ShaderClass::SRCBLEND_MAX] =
  	Blend(D3DBLEND_DESTCOLOR, true)
 };
 
-const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] = 
+const Blend dstBlendLUT[ShaderClass::DSTBLEND_MAX] =
 {
 	Blend(D3DBLEND_ZERO, false),
 	Blend(D3DBLEND_ONE, false),
@@ -467,7 +467,7 @@ void ShaderClass::Apply()
 		if(Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE)
 		{
 			unsigned char alphareference = 0x60;	// Alpha reference value that produces best results with mip-mapped textures.
-			
+
 			if(sf == D3DBLEND_INVSRCALPHA)
 			{
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0xff - alphareference);
@@ -496,14 +496,14 @@ void ShaderClass::Apply()
 
 			BOOL fm = FALSE;
 			D3DCOLOR fogColor = DX8Wrapper::Get_Fog_Color();
-			
+
 			switch(Get_Fog_Func())
 			{
 			case ShaderClass::FOG_ENABLE:
 				fm = TRUE;
 				break;
 			case ShaderClass::FOG_SCALE_FRAGMENT:
-				fogColor = 0;	
+				fogColor = 0;
 				fm = TRUE;
 				break;
 			case ShaderClass::FOG_WHITE:
@@ -525,19 +525,19 @@ void ShaderClass::Apply()
 		} else {
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_FOGENABLE,FALSE);
 		}
-		
+
 		diff &= ~(ShaderClass::MASK_FOG);
 		if(!diff)
 			return;
 	}
 
 	// Defaults
-	
+
 	D3DTEXTUREOP	PricOp	= D3DTOP_SELECTARG1;
 	DWORD				PricArg1 = D3DTA_DIFFUSE;
 	DWORD				PricArg2 = D3DTA_DIFFUSE;
 
-	D3DTEXTUREOP	PriaOp	 = D3DTOP_SELECTARG1;	
+	D3DTEXTUREOP	PriaOp	 = D3DTOP_SELECTARG1;
 	DWORD			PriaArg1 = D3DTA_DIFFUSE;
 	DWORD			PriaArg2 = D3DTA_DIFFUSE;
 
@@ -579,7 +579,7 @@ void ShaderClass::Apply()
 				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			case ShaderClass::GRADIENT_ADD:
-				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))	
+				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))
 					PricOp = D3DTOP_MODULATE;
 				else
 					PricOp = D3DTOP_ADD;
@@ -615,17 +615,17 @@ void ShaderClass::Apply()
 				}
 				break;
 
-			// Bump map is a hack currently as we only have two stages in use!
-			case ShaderClass::GRADIENT_DOTPRODUCT3:
-				if(TextureOpCaps & D3DTEXOPCAPS_DOTPRODUCT3)
-				{
-					PricOp = D3DTOP_DOTPRODUCT3;
-					PricArg1 = D3DTA_TEXTURE;
-					PricArg2 = D3DTA_DIFFUSE;
-					PriaOp = D3DTOP_DISABLE;
-					PriaArg1 = D3DTA_TEXTURE;
-					PriaArg2 = D3DTA_CURRENT;
-				}
+			case ShaderClass::GRADIENT_MODULATE2X:
+				//Modulate Alpha
+				if(!(TextureOpCaps & D3DTOP_MODULATE2X))
+					PricOp = D3DTOP_MODULATE;
+				else
+					PricOp = D3DTOP_MODULATE2X;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_MODULATE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			}
 		}
@@ -835,7 +835,7 @@ void ShaderClass::Apply()
 	}
 
 	// Enable/disable alpha test
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));	
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,BOOL(Get_Alpha_Test()));
 
 	// Enable/disable stencil test
 	// Not supported yet
@@ -880,7 +880,7 @@ void ShaderClass::Invert_Backface_Culling(bool onoff)
  * HISTORY:                                                                                    *
  *   7/13/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category(void) const
+ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category() const
 {
 	// category: Opaque
 	if ( (ALPHATEST_DISABLE==Get_Alpha_Test()) && (DSTBLEND_ZERO==Get_Dst_Blend_Func()) )
@@ -915,7 +915,7 @@ ShaderClass::StaticSortCategoryType ShaderClass::Get_SS_Category(void) const
  * HISTORY:                                                                                    *
  *   8/27/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-int ShaderClass::Guess_Sort_Level(void) const
+int ShaderClass::Guess_Sort_Level() const
 {
 	int sort_level;
 	StaticSortCategoryType scat=Get_SS_Category();
@@ -948,7 +948,7 @@ int ShaderClass::Guess_Sort_Level(void) const
  * HISTORY:                                                                                    *
  *   4/24/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-bool ShaderClass::Is_Backface_Culling_Inverted(void)
+bool ShaderClass::Is_Backface_Culling_Inverted()
 {
 	return (_PolygonCullMode == D3DCULL_CCW);
 }
@@ -999,7 +999,7 @@ const StringClass& ShaderClass::Get_Description(StringClass& str) const
 	case GRADIENT_ADD: str+="GRADIENT_ADD | "; break;
 	case GRADIENT_BUMPENVMAP: str+="GRADIENT_BUMPENVMAP | "; break;
 	case GRADIENT_BUMPENVMAPLUMINANCE: str+="GRADIENT_BUMPENVMAPLUMINANCE | "; break;
-	case GRADIENT_DOTPRODUCT3: str+="GRADIENT_DOTPRODUCT3 | "; break;
+	case GRADIENT_MODULATE2X: str+="GRADIENT_MODULATE2X | "; break;
 	}
 
 	switch (Get_Secondary_Gradient()) {

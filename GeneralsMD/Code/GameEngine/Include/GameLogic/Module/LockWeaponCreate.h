@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LOCKWEAPONCREATE_H_
-#define __LOCKWEAPONCREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -65,12 +62,9 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the create method
-	virtual void onCreate( void );
-	virtual void onBuildComplete();	///< This is called when you are a finished game object
+	virtual void onCreate() override;
+	virtual void onBuildComplete() override;	///< This is called when you are a finished game object
 
 protected:
 
 };
-
-#endif
-

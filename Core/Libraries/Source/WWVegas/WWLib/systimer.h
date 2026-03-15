@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
+
 #ifndef _SYSTIMER_H
 
 #include "always.h"
@@ -47,10 +48,10 @@
 #else
 #include <sys/time.h>
 
-inline unsigned long systimerGetMS(void)
+inline unsigned long systimerGetMS()
 {
 	struct timeval tv;
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, nullptr);
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 
@@ -68,25 +69,25 @@ class SysTimeClass
 
 	public:
 
-		SysTimeClass(void);	//default constructor
+		SysTimeClass();	//default constructor
 		~SysTimeClass();	//default destructor
 
 		/*
 		** Get. Use everywhere you would use timeGetTime
 		*/
-		WWINLINE unsigned long Get(void);
-		WWINLINE unsigned long operator () (void) {return(Get());}
-		WWINLINE operator unsigned long(void) {return(Get());}
+		WWINLINE unsigned long Get();
+		WWINLINE unsigned long operator () () {return(Get());}
+		WWINLINE operator unsigned long() {return(Get());}
 
 		/*
 		** Use periodically (like every few days!) to make sure the timer doesn't wrap.
 		*/
-		void Reset(void);
+		void Reset();
 
 		/*
 		** See if the timer is about to wrap.
 		*/
-		bool Is_Getting_Late(void);
+		bool Is_Getting_Late();
 
 	private:
 
@@ -119,7 +120,7 @@ extern SysTimeClass SystemTime;
  * HISTORY:                                                                                    *
  *   10/25/2001 1:38PM ST : Created                                                            *
  *=============================================================================================*/
-WWINLINE unsigned long SysTimeClass::Get(void)
+WWINLINE unsigned long SysTimeClass::Get()
 {
 	/*
 	** This has to be static here since we don't know if we will get called in a global constructor of another object before our

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SWAYCLIENTUPDATE_H_
-#define __SWAYCLIENTUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -53,23 +50,20 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate( void );
+	virtual void clientUpdate();
 
-	void stopSway( void ) { m_swaying = false; }
+	void stopSway() { m_swaying = false; }
 
 protected:
 
 	Real			m_curValue;
 	Real			m_curAngle;
-	Real			m_curDelta;	 
+	Real			m_curDelta;
 	Real			m_curAngleLimit;
 	Real			m_leanAngle;							///<Angle that the tree leans away from the wind.
 	Short			m_curVersion;
 	Bool			m_swaying;
 	Bool			m_unused;
 
-	void updateSway(void);
+	void updateSway();
 };
-
-#endif // __SWAYCLIENTUPDATE_H_
-

@@ -36,16 +36,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef DX8INDEXBUFFER_H
-#define DX8INDEXBUFFER_H
 
 #include "always.h"
 #include "wwdebug.h"
-#include "refcount.h"
 #include "sphere.h"
 
 class DX8Wrapper;
@@ -68,13 +62,13 @@ public:
 	void Copy(unsigned int* indices,unsigned start_index,unsigned index_count);
 	void Copy(unsigned short* indices,unsigned start_index,unsigned index_count);
 
-	inline unsigned short Get_Index_Count() const { return index_count; }
+	unsigned short Get_Index_Count() const { return index_count; }
 
-	inline unsigned Type() const { return type; }
+	unsigned Type() const { return type; }
 
 	void Add_Engine_Ref() const;
 	void Release_Engine_Ref() const;
-	inline unsigned Engine_Refs() const { return engine_refs; }
+	unsigned Engine_Refs() const { return engine_refs; }
 
 	class WriteLockClass
 	{
@@ -119,7 +113,7 @@ class DynamicIBAccessClass : public W3DMPO
 	friend SortingRendererClass;
 
 	unsigned Type;
-	unsigned short IndexCount;	
+	unsigned short IndexCount;
 	unsigned short IndexBufferOffset;
 	IndexBufferClass* IndexBuffer;
 
@@ -137,14 +131,14 @@ public:
 	// the recycled dynamic index buffer.
 	static void _Deinit();
 	static void _Reset(bool frame_changed);
-	static unsigned short Get_Default_Index_Count(void);	///<current size of dynamic index buffer
+	static unsigned short Get_Default_Index_Count();	///<current size of dynamic index buffer
 
 	// To lock the index buffer, create instance of this write class locally.
 	// The buffer is automatically unlocked when you exit the scope.
 	class WriteLockClass
 	{
 		DynamicIBAccessClass* DynamicIBAccess;
-		unsigned short* Indices;		
+		unsigned short* Indices;
 	public:
 		WriteLockClass(DynamicIBAccessClass* ib_access);
 		~WriteLockClass();
@@ -179,8 +173,8 @@ public:
 	void Copy(unsigned int* indices,unsigned start_index,unsigned index_count);
 	void Copy(unsigned short* indices,unsigned start_index,unsigned index_count);
 
-	inline IDirect3DIndexBuffer8* Get_DX8_Index_Buffer()	{ return index_buffer; }
-	
+	IDirect3DIndexBuffer8* Get_DX8_Index_Buffer()	{ return index_buffer; }
+
 private:
 	IDirect3DIndexBuffer8*	index_buffer;		// actual dx8 index buffer
 };
@@ -203,6 +197,3 @@ public:
 protected:
 	unsigned short* index_buffer;
 };
-
-#endif //DX8INDEXBUFFER_H
-

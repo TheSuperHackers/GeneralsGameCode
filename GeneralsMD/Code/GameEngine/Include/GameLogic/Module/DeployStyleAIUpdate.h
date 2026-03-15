@@ -24,13 +24,10 @@
 
 // DeployStyleAIUpdate.h ////////////
 // Author: Kris Morness, August 2002
-// Desc:   State machine that allows deploying/undeploying to control the AI. 
+// Desc:   State machine that allows deploying/undeploying to control the AI.
 //         When deployed, you can't move, when undeployed, you can't attack.
 
 #pragma once
-
-#ifndef __DEPLOY_STYLE_AI_UPDATE_H
-#define __DEPLOY_STYLE_AI_UPDATE_H
 
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -50,8 +47,8 @@ class DeployStyleAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
 	UnsignedInt			m_unpackTime;
-	UnsignedInt			m_packTime;		
-	Bool						m_resetTurretBeforePacking;	
+	UnsignedInt			m_packTime;
+	Bool						m_resetTurretBeforePacking;
 	Bool						m_turretsFunctionOnlyWhenDeployed;
 	Bool						m_turretsMustCenterBeforePacking;
 	Bool						m_manualDeployAnimations;
@@ -62,10 +59,7 @@ public:
 		m_packTime = 0;
 		m_resetTurretBeforePacking = false;
 		m_turretsFunctionOnlyWhenDeployed = false;
-		// Added By Sadullah Nader
-		// Initialization necessary 
 		m_turretsMustCenterBeforePacking = FALSE;
-		// End Add
 		m_manualDeployAnimations = FALSE;
 	}
 
@@ -73,14 +67,14 @@ public:
 	{
 		AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( DeployStyleAIUpdateModuleData, m_unpackTime ) },
-			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( DeployStyleAIUpdateModuleData, m_packTime ) },
-			{ "ResetTurretBeforePacking", INI::parseBool,						NULL, offsetof( DeployStyleAIUpdateModuleData, m_resetTurretBeforePacking ) },
-			{ "TurretsFunctionOnlyWhenDeployed", INI::parseBool,		NULL, offsetof( DeployStyleAIUpdateModuleData, m_turretsFunctionOnlyWhenDeployed ) },
-			{ "TurretsMustCenterBeforePacking", INI::parseBool,			NULL, offsetof( DeployStyleAIUpdateModuleData, m_turretsMustCenterBeforePacking ) },
-			{ "ManualDeployAnimations",	INI::parseBool,							NULL, offsetof( DeployStyleAIUpdateModuleData, m_manualDeployAnimations ) },
+			{ "UnpackTime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( DeployStyleAIUpdateModuleData, m_unpackTime ) },
+			{ "PackTime",						INI::parseDurationUnsignedInt,	nullptr, offsetof( DeployStyleAIUpdateModuleData, m_packTime ) },
+			{ "ResetTurretBeforePacking", INI::parseBool,						nullptr, offsetof( DeployStyleAIUpdateModuleData, m_resetTurretBeforePacking ) },
+			{ "TurretsFunctionOnlyWhenDeployed", INI::parseBool,		nullptr, offsetof( DeployStyleAIUpdateModuleData, m_turretsFunctionOnlyWhenDeployed ) },
+			{ "TurretsMustCenterBeforePacking", INI::parseBool,			nullptr, offsetof( DeployStyleAIUpdateModuleData, m_turretsMustCenterBeforePacking ) },
+			{ "ManualDeployAnimations",	INI::parseBool,							nullptr, offsetof( DeployStyleAIUpdateModuleData, m_manualDeployAnimations ) },
 			{ 0, 0, 0, 0 }
 		};
 		p.add(dataFieldParse);
@@ -101,9 +95,9 @@ public:
 	DeployStyleAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
-	virtual Bool isIdle() const;
-	virtual UpdateSleepTime update();
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual Bool isIdle() const override;
+	virtual UpdateSleepTime update() override;
 
 	UnsignedInt getUnpackTime()					const { return getDeployStyleAIUpdateModuleData()->m_unpackTime; }
 	UnsignedInt getPackTime()						const { return getDeployStyleAIUpdateModuleData()->m_packTime; }
@@ -116,6 +110,3 @@ protected:
 	DeployStateTypes				m_state;
 	UnsignedInt							m_frameToWaitForDeploy;
 };
-
-#endif
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __CONTROLBAR_H_
-#define __CONTROLBAR_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/GameType.h"
@@ -99,12 +96,10 @@ enum CommandOption CPP_11(: Int)
 	SCRIPT_ONLY									= 0x00080000, // Only a script can use this command (not by users)
 	IGNORES_UNDERPOWERED				= 0x00100000, // this button isn't disabled if its object is merely underpowered
 	USES_MINE_CLEARING_WEAPONSET= 0x00200000,	// uses the special mine-clearing weaponset, even if not current
-
-	NUM_COMMAND_OPTIONS						// keep this last
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
-static const char *TheCommandOptionNames[] = 
+static const char *const TheCommandOptionNames[] =
 {
 	"NEED_TARGET_ENEMY_OBJECT",
 	"NEED_TARGET_NEUTRAL_OBJECT",
@@ -133,12 +128,12 @@ static const char *TheCommandOptionNames[] =
 	"IGNORES_UNDERPOWERED",
 	"USES_MINE_CLEARING_WEAPONSET",
 
-	NULL
+	nullptr
 };
 #endif  // end DEFINE_COMMAND_OPTION_NAMES
 
 // convenient bit masks to group some command options together
-const UnsignedInt COMMAND_OPTION_NEED_TARGET = 
+const UnsignedInt COMMAND_OPTION_NEED_TARGET =
 					NEED_TARGET_ENEMY_OBJECT |
 					NEED_TARGET_NEUTRAL_OBJECT |
 					NEED_TARGET_ALLY_OBJECT |
@@ -156,7 +151,7 @@ const UnsignedInt COMMAND_OPTION_NEED_OBJECT_TARGET =
 	* on all units, in fact, many commands are for a particular single command.  It will
 	* be up to the command GUI to translate the command assigned to a button into the
 	* appropriate game command and get it across the network to the game logic to perform the
-	* actual command logic 
+	* actual command logic
 	*
 	* IMPORTANT: Make sure the GUICommandType enum and the TheGuiCommandNames[] have the same
 	*						 entries in the same order */
@@ -208,11 +203,11 @@ enum GUICommandType CPP_11(: Int)
 
 	// add more commands here, don't forget to update the string command list below too ...
 
-	GUI_COMMAND_NUM_COMMANDS							// keep this last
+	GUI_COMMAND_NUM_COMMANDS
 };
 
-#ifdef DEFINE_GUI_COMMMAND_NAMES
-static const char *TheGuiCommandNames[] = 
+#ifdef DEFINE_GUI_COMMAND_NAMES
+static const char *const TheGuiCommandNames[] =
 {
 	"NONE",
 	"DOZER_CONSTRUCT",
@@ -252,8 +247,9 @@ static const char *TheGuiCommandNames[] =
 	"PLACE_BEACON",
 	"SPECIAL_POWER_FROM_COMMAND_CENTER",
 
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(TheGuiCommandNames) == GUI_COMMAND_NUM_COMMANDS + 1, "Incorrect array size");
 #endif  // end DEFINE_GUI_COMMAND_NAMES
 
 enum CommandButtonMappedBorderType CPP_11(: Int)
@@ -264,21 +260,22 @@ enum CommandButtonMappedBorderType CPP_11(: Int)
 	COMMAND_BUTTON_BORDER_ACTION,
 	COMMAND_BUTTON_BORDER_SYSTEM,
 
-	COMMAND_BUTTON_BORDER_COUNT // keep this last
+	COMMAND_BUTTON_BORDER_COUNT
 };
 
-static const LookupListRec CommandButtonMappedBorderTypeNames[] = 
+static const LookupListRec CommandButtonMappedBorderTypeNames[] =
 {
 	{ "NONE",					COMMAND_BUTTON_BORDER_NONE },
 	{ "BUILD",				COMMAND_BUTTON_BORDER_BUILD },
 	{ "UPGRADE",			COMMAND_BUTTON_BORDER_UPGRADE },
 	{ "ACTION",				COMMAND_BUTTON_BORDER_ACTION },
 	{ "SYSTEM",				COMMAND_BUTTON_BORDER_SYSTEM },
-	
-	{ NULL, 0	}// keep this last!
+
+	{ nullptr, 0	}
 };
+static_assert(ARRAY_SIZE(CommandButtonMappedBorderTypeNames) == COMMAND_BUTTON_BORDER_COUNT + 1, "Incorrect array size");
 //-------------------------------------------------------------------------------------------------
-/** Command buttons are used to load the buttons we place on throughout the command bar 
+/** Command buttons are used to load the buttons we place on throughout the command bar
 	* interface in different context sensitive windows depending on the situation and
 	* type of the object selected */
 //-------------------------------------------------------------------------------------------------
@@ -289,7 +286,7 @@ class CommandButton : public Overridable
 
 public:
 
-	CommandButton( void );
+	CommandButton();
 	// virtual destructor prototype provided by MemoryPoolObject
 
 	/// INI parsing
@@ -302,8 +299,8 @@ public:
 	Bool isValidObjectTarget(const Player* sourcePlayer, const Object* targetObj) const;
 	Bool isValidObjectTarget(const Object* sourceObj, const Object* targetObj) const;
 	Bool isValidObjectTarget(const Drawable* source, const Drawable* target) const;
-	
-	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be NULL.
+
+	// Note: It is perfectly valid for either (or both!) of targetObj and targetLocation to be nullptr.
 	// This is a convenience function to make several calls to other functions.
 	Bool isValidToUseOn(const Object *sourceObj, const Object *targetObj, const Coord3D *targetLocation, CommandSourceType commandSource) const;
 	Bool isReady(const Object *sourceObj) const;
@@ -341,20 +338,20 @@ public:
 
 	// bleah. shouldn't be const, but is. sue me. (srj)
 	void copyImagesFrom( const CommandButton *button, Bool markUIDirtyIfChanged ) const;
-	
+
 	// bleah. shouldn't be const, but is. sue me. (Kris) -snork!
 	void copyButtonTextFrom( const CommandButton *button, Bool shortcutButton, Bool markUIDirtyIfChanged ) const;
 
 	// bleah. shouldn't be const, but is. sue me. (srj)
 	void setFlashCount(Int c) const { m_flashCount = c; }
-	
+
 	// only for ControlBar!
 	void friend_addToList(CommandButton** list) {	m_next = *list;	*list = this; }
 	CommandButton* friend_getNext() { return m_next; }
 
 private:
 	AsciiString										m_name;												///< template name
-	GUICommandType								m_command;										///< type of command this button 
+	GUICommandType								m_command;										///< type of command this button
 	CommandButton*								m_next;
 	UnsignedInt										m_options;										///< command options (see CommandOption enum)
 	const ThingTemplate*					m_thingTemplate;							///< for commands that use thing templates in command data
@@ -367,7 +364,7 @@ private:
 	// bleah. shouldn't be mutable, but is. sue me. (Kris) -snork!
 	mutable AsciiString										m_textLabel;									///< string manager text label
 	mutable AsciiString										m_descriptionLabel;						///< The description of the current command, read in from the ini
-	
+
 	AsciiString										m_purchasedLabel;							///< Description for the current command if it has already been purchased.
 	AsciiString										m_conflictingLabel;						///< Description for the current command if it can't be selected due to multually-exclusive choice.
 	WeaponSlotType								m_weaponSlot;									///< for commands that refer to a weapon slot
@@ -391,7 +388,7 @@ private:
 //-------------------------------------------------------------------------------------------------
 enum { MAX_COMMANDS_PER_SET = 12 };  // user interface max button limit for commands
 enum { MAX_RIGHT_HUD_UPGRADE_CAMEOS = 5};
-enum { 
+enum {
 			 MAX_PURCHASE_SCIENCE_RANK_1 = 3,
 			 MAX_PURCHASE_SCIENCE_RANK_3 = 12,
 			 MAX_PURCHASE_SCIENCE_RANK_8 = 1,
@@ -435,41 +432,38 @@ private:
 class SideSelectWindowData
 {
 public:
-	SideSelectWindowData(void)
+	SideSelectWindowData()
 	{
-		//Added By Sadullah Nader
-		//Initializations
-		generalSpeak = NULL;
+		generalSpeak = nullptr;
 		m_currColor = 0;
-		m_gereralsNameWin = NULL;
+		m_gereralsNameWin = nullptr;
 		m_lastTime = 0;
-		m_pTemplate = NULL;
-		m_sideNameWin = NULL;
+		m_pTemplate = nullptr;
+		m_sideNameWin = nullptr;
 		m_startTime = 0;
 		m_state = 0;
-		m_upgradeImage1 = NULL;
-		m_upgradeImage1Win = NULL;
-		m_upgradeImage2 = NULL;
-		m_upgradeImage2Win = NULL;
-		m_upgradeImage3 = NULL;
-		m_upgradeImage3Win = NULL;
-		m_upgradeImage4 = NULL;
-		m_upgradeImage4Win = NULL;
+		m_upgradeImage1 = nullptr;
+		m_upgradeImage1Win = nullptr;
+		m_upgradeImage2 = nullptr;
+		m_upgradeImage2Win = nullptr;
+		m_upgradeImage3 = nullptr;
+		m_upgradeImage3Win = nullptr;
+		m_upgradeImage4 = nullptr;
+		m_upgradeImage4Win = nullptr;
 		m_upgradeImageSize.x = m_upgradeImageSize.y = 0;
 
-		m_upgradeLabel1Win = NULL;
-		m_upgradeLabel2Win = NULL;
-		m_upgradeLabel3Win = NULL;
-		m_upgradeLabel4Win = NULL;
-		sideWindow = NULL;
-		//
+		m_upgradeLabel1Win = nullptr;
+		m_upgradeLabel2Win = nullptr;
+		m_upgradeLabel3Win = nullptr;
+		m_upgradeLabel4Win = nullptr;
+		sideWindow = nullptr;
 	}
-	~SideSelectWindowData(void);
-	
+	~SideSelectWindowData();
+
 	void init( ScienceType science, GameWindow *control );
-	void reset( void );
-	void update( void );
-	void draw( void );
+	void reset();
+	void update();
+	void draw();
 
 	GameWindow *sideWindow;
 	GameWindow *m_animWindowWin;
@@ -491,7 +485,7 @@ private:
 	GameWindow *m_gereralsNameWin;
 	GameWindow *m_sideNameWin;
 
-	
+
 	GameWindow *m_upgradeLabel1Win;
 	GameWindow *m_upgradeLabel2Win;
 	GameWindow *m_upgradeLabel3Win;
@@ -501,7 +495,7 @@ private:
 	GameWindow *m_upgradeImage2Win;
 	GameWindow *m_upgradeImage3Win;
 	GameWindow *m_upgradeImage4Win;
-	
+
 	Image *m_upgradeImage1;
 	Image *m_upgradeImage2;
 	Image *m_upgradeImage3;
@@ -509,7 +503,7 @@ private:
 
 	IRegion2D m_leftLineFromButton;
 	IRegion2D m_rightLineFromButton;
-	
+
 	IRegion2D m_upgradeLine1a;
 	IRegion2D m_upgradeLine2a;
 	IRegion2D m_upgradeLine3a;
@@ -519,7 +513,7 @@ private:
 	IRegion2D m_upgradeLine2;
 	IRegion2D m_upgradeLine3;
 	IRegion2D m_upgradeLine4;
-	
+
 	IRegion2D m_upgradeLine1MidReg;
 	IRegion2D m_upgradeLine2MidReg;
 	IRegion2D m_upgradeLine3MidReg;
@@ -534,12 +528,12 @@ private:
 	ICoord2D m_line1End;
 	ICoord2D m_line2End;
 
-	
+
 	ICoord2D m_upgradeLine1Mid;
 	ICoord2D m_upgradeLine2Mid;
 	ICoord2D m_upgradeLine3Mid;
 	ICoord2D m_upgradeLine4Mid;
-	
+
 	ICoord2D m_upgradeLine1End;
 	ICoord2D m_upgradeLine2End;
 	ICoord2D m_upgradeLine3End;
@@ -574,8 +568,6 @@ enum ControlBarContext CPP_11(: Int)
 	CB_CONTEXT_OBSERVER_INFO,					///< for when we want to populate the player info
 	CB_CONTEXT_OBSERVER_LIST,					///< for when we want to update the observer list
 	CB_CONTEXT_OCL_TIMER,							///< Countdown for OCL spewers
-
-	NUM_CB_CONTEXTS
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -628,7 +620,7 @@ enum ControlBarStages CPP_11(: Int)
 	CONTROL_BAR_STAGE_SQUISHED,				///< squished just for expeirenced players
 	CONTROL_BAR_STAGE_LOW,						///< control bar a la minimalist
 	CONTROL_BAR_STAGE_HIDDEN,					///< yo, where be da control bar at?
-	
+
 	MAX_CONTROL_BAR_STAGES
 };
 
@@ -639,15 +631,15 @@ class ControlBar : public SubsystemInterface
 
 public:
 
-	ControlBar( void );
-	virtual ~ControlBar( void );
+	ControlBar();
+	virtual ~ControlBar();
 
-	virtual void init( void );					///< from subsystem interface
-	virtual void reset( void );					///< from subsystem interface
-	virtual void update( void );				///< from subsystem interface
+	virtual void init();					///< from subsystem interface
+	virtual void reset();					///< from subsystem interface
+	virtual void update();				///< from subsystem interface
 
 	/// mark the UI as dirty so the context of everything is re-evaluated
-	void markUIDirty( void );
+	void markUIDirty();
 
 	/// a drawable has just become selected
 	void onDrawableSelected( Drawable *draw );
@@ -660,14 +652,14 @@ public:
 
 	/** if this button is part of the context sensitive command system, process a button click
 	the gadgetMessage is either a GBM_SELECTED or GBM_SELECTED_RIGHT */
-	CBCommandStatus processContextSensitiveButtonClick( GameWindow *button, 
+	CBCommandStatus processContextSensitiveButtonClick( GameWindow *button,
 																											GadgetGameMessage gadgetMessage );
 
 	/** if this button is part of the context sensitive command system, process the Transition
 	gadgetMessage is either a GBM_MOUSE_LEAVING or GBM_MOUSE_ENTERING */
-	CBCommandStatus processContextSensitiveButtonTransition( GameWindow *button, 
+	CBCommandStatus processContextSensitiveButtonTransition( GameWindow *button,
 																											GadgetGameMessage gadgetMessage );
-	
+
 
 	/// is the drawable the currently selected drawable for the context sensitive UI?
 	Bool isDrivingContextUI( Drawable *draw ) const { return draw == m_currentSelectedDrawable; }
@@ -683,17 +675,19 @@ public:
 	/// find existing command set
 	const CommandSet *findCommandSet( const AsciiString& name );
 
-	void showPurchaseScience( void );
-	void hidePurchaseScience( void );
-	void togglePurchaseScience( void );
+	void showPurchaseScience();
+	void hidePurchaseScience();
+	void togglePurchaseScience();
 
-	void showSpecialPowerShortcut( void );
-	void hideSpecialPowerShortcut( void );
+	void showSpecialPowerShortcut();
+	void hideSpecialPowerShortcut();
 	void animateSpecialPowerShortcut( Bool isOn );
-	
+
+	void setFullViewportHeight();
+	void setScaledViewportHeight();
 
 	/// set the control bar to the proper scheme based off a player template that's passed in
-	ControlBarSchemeManager *getControlBarSchemeManager( void ) { return m_controlBarSchemeManager; }
+	ControlBarSchemeManager *getControlBarSchemeManager() { return m_controlBarSchemeManager; }
 	void setControlBarSchemeByPlayer(Player *p);
 	void setControlBarSchemeByName(const AsciiString& name);
 	void setControlBarSchemeByPlayerTemplate(const PlayerTemplate *pt);
@@ -703,7 +697,7 @@ public:
 
 	/// We need to sometime change what the images look like depending on what scheme we're using
 	void updateRightHUDImage( const Image *image );
-	
+
 	/// We need to be able to update the command marker image based on which scheme we're using.
 	void updateCommandMarkerImage( const Image *image );
 	void updateSlotExitImage( const Image *image);
@@ -718,26 +712,35 @@ public:
 	WindowVideoManager *m_videoManager;						///< Video manager to take care of all animations on screen.
 	AnimateWindowManager *m_animateWindowManager; ///< The animate window manager
 	AnimateWindowManager *m_animateWindowManagerForGenShortcuts; ///< The animate window manager
-	void updatePurchaseScience( void );
+	void updatePurchaseScience();
 	AnimateWindowManager *m_generalsScreenAnimate; ///< The animate window manager
 
 	// Initialize the Observer controls Must be called after we've already loaded the window
-	void initObserverControls( void );
-	void setObserverLookAtPlayer (Player *p) { m_observerLookAtPlayer = p;}
-	Player *getObserverLookAtPlayer (void ) { return m_observerLookAtPlayer;}
-	void populateObserverInfoWindow ( void );
-	void populateObserverList( void );
-	Bool isObserverControlBarOn( void ) { return m_isObserverCommandBar;}
-	
-//	ControlBarResizer *getControlBarResizer( void ) {return m_controlBarResizer;}
+	void initObserverControls();
+	void populateObserverInfoWindow ();
+	void populateObserverList();
+	Bool isObserverControlBarOn() { return m_isObserverCommandBar;}
+
+	void setObserverLookAtPlayer (Player *player); ///< Sets the looked at player. Used to present information about the player.
+	Player *getObserverLookAtPlayer () const { return m_observerLookAtPlayer; } ///< Returns the looked at player. Can return null.
+
+	void setObservedPlayer(Player *player); ///< Sets the observed player. Used to present the game world as if that player was the local player.
+	Player *getObservedPlayer() const { return m_observedPlayer; } ///< Return the observed player. Can return null.
+
+	/// Returns the currently viewed player. May return nullptr if no player is selected while observing.
+	Player* getCurrentlyViewedPlayer();
+	/// Returns the relationship with the currently viewed player. May return NEUTRAL if no player is selected while observing.
+	Relationship getCurrentlyViewedPlayerRelationship(const Team* team);
+
+//	ControlBarResizer *getControlBarResizer() {return m_controlBarResizer;}
 
 	// Functions for repositioning/resizing the control bar
 	void switchControlBarStage( ControlBarStages stage );
-	void toggleControlBarStage( void );
+	void toggleControlBarStage();
 
-	const Image *getStarImage( void );
+	const Image *getStarImage();
 
-	Color getBorderColor( void ){return m_commandBarBorderColor;}
+	Color getBorderColor(){return m_commandBarBorderColor;}
 	void updateBorderColor( Color color) {m_commandBarBorderColor = color;	}
 
 	/// set the command data into the button
@@ -750,24 +753,24 @@ public:
 	static void parseCommandSetDefinition( INI *ini );
 	static void parseCommandButtonDefinition( INI *ini );
 
-	void drawTransitionHandler( void );
-	const Image *getArrowImage( void ){ return m_genArrow;	}
+	void drawTransitionHandler();
+	const Image *getArrowImage(){ return m_genArrow;	}
 	void setArrowImage( const Image *arrowImage ){ m_genArrow = arrowImage;	}
-	
+
 	void initSpecialPowershortcutBar( Player *player);
 
-	void triggerRadarAttackGlow( void );
+	void triggerRadarAttackGlow();
 protected:
-	void updateRadarAttackGlow ( void );
-	
-	void setDefaultControlBarConfig( void );
-	void setSquishedControlBarConfig( void );
-	void setLowControlBarConfig( void );
-	void setHiddenControlBar( void );
+	void updateRadarAttackGlow ();
+
+	void setDefaultControlBarConfig();
+	void setSquishedControlBarConfig();
+	void setLowControlBarConfig();
+	void setHiddenControlBar();
 
 	/// find existing command button if present
 	CommandButton* findNonConstCommandButton( const AsciiString& name );
-	
+
 	/// allocate a new command button, link to list, initialize to default, and return
 	CommandButton *newCommandButton( const AsciiString& name );
 	CommandButton *newCommandButtonOverride( CommandButton *buttonToOverride );
@@ -778,7 +781,7 @@ protected:
 
 
 	/// evaluate what the user should see based on what selected drawables we have in our UI
-	void evaluateContextUI( void );
+	void evaluateContextUI();
 
 	/// add the common commands of this drawable to the common command set
 	void addCommonCommands( Drawable *draw, Bool firstDrawable );
@@ -796,22 +799,22 @@ protected:
 	/// show/hide the portrait window image using the image from the object
 	void setPortraitByObject( Object *obj );
 
-	/// show rally point at world location, a NULL location will hide any visible rally point marker
+	/// show rally point at world location, a nullptr location will hide any visible rally point marker
 	void showRallyPoint( const Coord3D *loc );
 
 	/// post process step, after all commands and command sets are loaded
-	void postProcessCommands( void );
+	void postProcessCommands();
 
-	// the following methods are for resetting data for vaious contexts
-	void resetCommonCommandData( void );	/// reset shared command data
-	void resetContainData( void );			/// reset container data we use to tie controls to objects IDs for containment
-	void resetBuildQueueData( void );			/// reset the build queue data we use to die queue entires to control
+	// the following methods are for resetting data for various contexts
+	void resetCommonCommandData();	/// reset shared command data
+	void resetContainData();			/// reset container data we use to tie controls to objects IDs for containment
+	void resetBuildQueueData();			/// reset the build queue data we use to die queue entires to control
 
 	// the following methods are for populating the context GUI controls for a particular context
 	static void populateButtonProc( Object *obj, void *userData );
 	void populatePurchaseScience(Player* player);
 	void populateCommand( Object *obj );
-	void populateMultiSelect( void );
+	void populateMultiSelect();
 	void populateBuildQueue( Object *producer );
 	void populateStructureInventory( Object *building );
 	void populateBeacon( Object *beacon );
@@ -822,19 +825,19 @@ protected:
 
 	// the following methods are for updating the currently showing context
 	CommandAvailability getCommandAvailability( const CommandButton *command, Object *obj, GameWindow *win, Bool forceDisabledEvaluation = FALSE ) const;
-	void updateContextMultiSelect( void );
-	void updateContextPurchaseScience( void );
-	void updateContextCommand( void );
-	void updateContextStructureInventory( void );
-	void updateContextBeacon( void );
-	void updateContextUnderConstruction( void );
-	void updateContextOCLTimer( void );
-	
+	void updateContextMultiSelect();
+	void updateContextPurchaseScience();
+	void updateContextCommand();
+	void updateContextStructureInventory();
+	void updateContextBeacon();
+	void updateContextUnderConstruction();
+	void updateContextOCLTimer();
+
 	// the following methods are for the special power shortcut window
 
 	void populateSpecialPowerShortcut( Player *player);
-	void updateSpecialPowerShortcut( void );
-	
+	void updateSpecialPowerShortcut();
+
 	static const Image* calculateVeterancyOverlayForThing( const ThingTemplate *thingTemplate );
 	static const Image* calculateVeterancyOverlayForObject( const Object *obj );
 
@@ -846,13 +849,13 @@ protected:
 	void updateConstructionTextDisplay( Object *obj );
 	void updateOCLTimerTextDisplay( UnsignedInt totalSeconds, Real percent );
 
-	void setUpDownImages( void );
+	void setUpDownImages();
 		// methods for flashing cameos
 public:
 	void setFlash( Bool b ) { m_flash = b; }
 
 	// get method for list of commandbuttons
-	const CommandButton *getCommandButtons( void ) { return m_commandButtons; }
+	const CommandButton *getCommandButtons() { return m_commandButtons; }
 
 protected:
 
@@ -870,7 +873,7 @@ protected:
 	Drawable *m_currentSelectedDrawable;					///< currently selected drawable for the context sensitive interface
 	ControlBarContext m_currContext;							///< our current displayed context
 
-	DrawableID m_rallyPointDrawableID;						///< rally point drawable for visual rally point 
+	DrawableID m_rallyPointDrawableID;						///< rally point drawable for visual rally point
 
 	Real m_displayedConstructPercent;							///< construct percent last displayed to user
 	UnsignedInt m_displayedOCLTimerSeconds;				///< OCL Timer seconds remaining last displayed to user
@@ -883,7 +886,7 @@ protected:
 	GameWindow *m_rightHUDUnitSelectParent;
 
 	GameWindow *m_communicatorButton;             ///< button for the communicator
-	
+
 	WindowLayout *m_scienceLayout;								///< the Science window layout
 	GameWindow *m_sciencePurchaseWindowsRank1[ MAX_PURCHASE_SCIENCE_RANK_1 ];			///< command window controls for easy access
 	GameWindow *m_sciencePurchaseWindowsRank3[ MAX_PURCHASE_SCIENCE_RANK_3 ];			///< command window controls for easy access
@@ -900,9 +903,9 @@ protected:
 	const CommandButton *m_commonCommands[ MAX_COMMANDS_PER_SET ];	///< shared commands we will use for multi-selection
 
 		// removed from multiplayer branch
-	//GameWindow *m_commandMarkers[ MAX_COMMANDS_PER_SET ];			///< When we don't have a command, they want to show an image	
+	//GameWindow *m_commandMarkers[ MAX_COMMANDS_PER_SET ];			///< When we don't have a command, they want to show an image
 // removed from multiplayer branch
-	//void showCommandMarkers( void );													///< function that compare's what's being shown in m_commandWindows and shows the ones that are hidden.
+	//void showCommandMarkers();													///< function that compare's what's being shown in m_commandWindows and shows the ones that are hidden.
 
 
 public:
@@ -944,18 +947,19 @@ protected:
 
 	Color m_buildUpClockColor;
 
-	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly differnt
+	Bool m_isObserverCommandBar;												///< If this is true, the command bar behaves greatly different
 	Player *m_observerLookAtPlayer;											///< The current player we're looking at, Null if we're not looking at anyone.
+	Player *m_observedPlayer;														///< The current player we're observing, Null if we're not observing anyone.
 
 	WindowLayout *m_buildToolTipLayout;										///< The window that will slide on/display tooltips
-	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we aregoing to continue showing this or not.
+	Bool m_showBuildToolTipLayout;											///< every frame we test to see if we are going to continue showing this or not.
 public:
 	void showBuildTooltipLayout( GameWindow *cmdButton );
-	void hideBuildTooltipLayout( void );
-	void deleteBuildTooltipLayout( void );
-	Bool getShowBuildTooltipLayout( void ){return m_showBuildToolTipLayout;	}
-	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = NULL );
-	void repopulateBuildTooltipLayout( void );
+	void hideBuildTooltipLayout();
+	void deleteBuildTooltipLayout();
+	Bool getShowBuildTooltipLayout(){return m_showBuildToolTipLayout;	}
+	void populateBuildTooltipLayout( const CommandButton *commandButton, GameWindow *tooltipWin = nullptr );
+	void repopulateBuildTooltipLayout();
 private:
 
 
@@ -964,12 +968,12 @@ private:
 	Color m_commandButtonBorderActionColor;
 	Color m_commandButtonBorderUpgradeColor;
 	Color m_commandButtonBorderSystemColor;
-	
+
 	Color m_commandBarBorderColor;
 
 	void setCommandBarBorder( GameWindow *button, CommandButtonMappedBorderType type);
 public:
-	void updateCommanBarBorderColors(Color build, Color action, Color upgrade, Color system );
+	void updateCommandBarBorderColors(Color build, Color action, Color upgrade, Color system );
 
 private:
 
@@ -999,24 +1003,21 @@ private:
 
 	Bool m_genStarFlash;
 	Int m_lastFlashedAtPointValue;
-	
+
 	ICoord2D m_controlBarForegroundMarkerPos;
 	ICoord2D m_controlBarBackgroundMarkerPos;
-	
+
 	Bool m_radarAttackGlowOn;
 	Int m_remainingRadarAttackGlowFrames;
 	GameWindow *m_radarAttackGlowWindow;
 
-#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+#if defined(RTS_DEBUG)
 	UnsignedInt m_lastFrameMarkedDirty;
 	UnsignedInt m_consecutiveDirtyFrames;
 #endif
 //	ControlBarResizer *m_controlBarResizer;
 
-}; 
+};
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern ControlBar *TheControlBar;
-
-#endif  // end __CONTROLBAR_H_
-

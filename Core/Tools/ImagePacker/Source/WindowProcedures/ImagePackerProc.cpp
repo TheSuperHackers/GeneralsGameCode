@@ -18,12 +18,12 @@
 
 // FILE: ImagePackerProc.cpp //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -78,14 +78,14 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 		{
 
 			// we must have our program interface to continue
-			if( TheImagePacker == NULL )
+			if( TheImagePacker == nullptr )
 			{
 
-				MessageBox( NULL, "Internal Error, 'TheImagePacker' not initialized",
+				MessageBox( nullptr, "Internal Error, 'TheImagePacker' not initialized",
 										"Internal Error", MB_OK );
 				EndDialog( hWndDialog, FALSE );
 
-			}  // end if
+			}
 
 			// save our window handlw
 			TheImagePacker->setWindowHandle( hWndDialog );
@@ -103,7 +103,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 			size.y = rect.bottom - rect.top;
 
 			// center dialog on screen
-			MoveWindow( hWndDialog, 
+			MoveWindow( hWndDialog,
 									(x / 2) - (size.x / 2),
 									(y / 2) - (size.y / 2),
 									size.x,
@@ -115,7 +115,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 			// set gutter size
 			SetDlgItemInt( hWndDialog, EDIT_GUTTER, TheImagePacker->getGutter(), FALSE );
-									
+
 			// set alpha check
 			if( TheImagePacker->getOutputAlpha() )
 				CheckDlgButton( hWndDialog, CHECK_ALPHA, BST_CHECKED );
@@ -154,7 +154,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 			return TRUE;
 
-		}  // end init dialog
+		}
 
 		// ------------------------------------------------------------------------
 		case WM_COMMAND:
@@ -176,14 +176,14 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					{
 
 						page--;
-						TheImagePacker->setTargetPreviewPage( page );				
+						TheImagePacker->setTargetPreviewPage( page );
 						UpdatePreviewWindow();
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end previous
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_NEXT:
@@ -194,14 +194,14 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					{
 
 						page++;
-						TheImagePacker->setTargetPreviewPage( page );				
+						TheImagePacker->setTargetPreviewPage( page );
 						UpdatePreviewWindow();
 
-					}  // end if
+					}
 
 					break;
 
-				}  // end next
+				}
 
 				// --------------------------------------------------------------------
 				case CHECK_BITMAP_PREVIEW:
@@ -218,7 +218,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					break;
 
-				}  // end preview using image
+				}
 
 				// --------------------------------------------------------------------
 				case CHECK_GAP_GUTTER:
@@ -233,7 +233,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					break;
 
-				}  // end transparent gutter
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_PREVIEW:
@@ -245,10 +245,10 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 						// delete test display window
 						DestroyWindow( preview );
-						TheImagePacker->setPreviewWindow( NULL );
+						TheImagePacker->setPreviewWindow( nullptr );
 						SetDlgItemText( hWndDialog, BUTTON_PREVIEW, "Open Preview" );
 
-					}  // end if
+					}
 					else
 					{
 						HWND preview = MakePreviewDisplay();
@@ -260,13 +260,13 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 							UpdatePreviewWindow();
 							SetDlgItemText( hWndDialog, BUTTON_PREVIEW, "Close Preview" );
 
-						}  // end if
+						}
 
-					}  // end else
+					}
 
 					break;
 
-				}  // end test
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_ADD_FOLDER:
@@ -275,11 +275,11 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					// bring up the add directory dialog
 					DialogBox( ApplicationHInstance,
 										 (LPCTSTR)DIRECTORY_SELECT_DIALOG,
-										 TheImagePacker->getWindowHandle(), 
+										 TheImagePacker->getWindowHandle(),
 										 (DLGPROC)DirectorySelectProc );
 					break;
 
-				}  // end add folder
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_REMOVE_FOLDER:
@@ -288,8 +288,8 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					// get the directory listbox
 					folderList = GetDlgItem( hWndDialog, LIST_FOLDERS );
-					if( folderList == NULL )
-						break;;
+					if( folderList == nullptr )
+						break;
 
 					// get the selected item in the folder listbox
 					Int selCount;
@@ -297,11 +297,11 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					if( selCount == 0 )
 					{
 
-						MessageBox( NULL, "You must first select a folder to remove it",
+						MessageBox( nullptr, "You must first select a folder to remove it",
 												"Select Folder First", MB_OK | MB_ICONINFORMATION );
 						break;
 
-					}  // end if
+					}
 
 					//
 					// start at the end of the listbox, delete any items that
@@ -314,7 +314,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					break;
 
-				}  // end remove folder
+				}
 
 				// --------------------------------------------------------------------
 				case RADIO_128X128:
@@ -334,7 +334,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					break;
 
-				}  // end target image size radio buttons
+				}
 
 				// --------------------------------------------------------------------
 				case EDIT_WIDTH:
@@ -357,14 +357,14 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 							SetDlgItemText( hWndDialog, EDIT_HEIGHT, buffer );
 
 							break;
-															
-						}  // end update
 
-					}  // end switch
+						}
+
+					}
 
 					break;
 
-				}  // end user defined width
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_START:
@@ -380,7 +380,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 					break;
 
-				}  // end execute
+				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_EXIT:
@@ -390,18 +390,18 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					EndDialog( hWndDialog, TRUE );
 					break;
 
-				}  // end exit
+				}
 
-			}  // end switch
+			}
 
 			return 0;
 
-		}  // end command
+		}
 
-	}  // end switch
+	}
 
 	return 0;
 
-}  // end ImagePackerProc
+}
 
 

@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __LASER_UPDATE_H
-#define __LASER_UPDATE_H
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ClientUpdateModule.h"
 
@@ -48,14 +45,14 @@ class LaserUpdateModuleData : public ClientUpdateModuleData
 public:
 	AsciiString m_particleSystemName;  ///< Used for the muzzle flare while laser active.
 	AsciiString m_parentFireBoneName;  ///< Used to fire laser at specified parent bone position.
-	Bool m_parentFireBoneOnTurret;			///< And used to specifiy where to look for the bone.
+	Bool m_parentFireBoneOnTurret;			///< And used to specify where to look for the bone.
 
 	AsciiString m_targetParticleSystemName;  ///< Used for the target effect while laser active.
 
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -105,14 +102,14 @@ public:
 
 	const Coord3D* getStartPos() const { return &m_startPos; }
 	const Coord3D* getEndPos() const { return &m_endPos; }
- 
+
 	Real getTemplateLaserRadius() const;
 	Real getCurrentLaserRadius() const;
 
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
 	Bool isDirty() const { return m_dirty; }
 
-	virtual void clientUpdate();
+	virtual void clientUpdate() override;
 
 protected:
 
@@ -125,7 +122,3 @@ protected:
 
 	LaserRadiusUpdate m_laserRadius;
 };
-
-
-#endif
-

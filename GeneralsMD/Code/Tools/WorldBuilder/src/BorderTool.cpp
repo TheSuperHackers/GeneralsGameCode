@@ -27,9 +27,9 @@
 
 const long BOUNDARY_PICK_DISTANCE = 5.0f;
 
-BorderTool::BorderTool() : Tool(ID_BORDERTOOL, IDC_POINTER), 
+BorderTool::BorderTool() : Tool(ID_BORDERTOOL, IDC_POINTER),
 													 m_mouseDown(false),
-													 m_addingNewBorder(false), 
+													 m_addingNewBorder(false),
 													 m_modifyBorderNdx(-1)
 
 { }
@@ -93,15 +93,15 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		switch (m_modificationType)
 		{
 			case MOD_TYPE_INVALID: m_modifyBorderNdx = -1; return;
-			case MOD_TYPE_UP:	
-				currentBorder.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f); 
+			case MOD_TYPE_UP:
+				currentBorder.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
 				break;
-			case MOD_TYPE_RIGHT: 
-				currentBorder.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f); 
+			case MOD_TYPE_RIGHT:
+				currentBorder.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
 				break;
-			case MOD_TYPE_FREE: 
-				currentBorder.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f); 
-				currentBorder.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f); 
+			case MOD_TYPE_FREE:
+				currentBorder.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
+				currentBorder.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
 				break;
 		}
 
@@ -125,12 +125,12 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	}
 
 	//static Coord3D zero = {0.0f, 0.0f, 0.0f};
-	
+
 	Coord3D groundPt;
 	pView->viewToDocCoords(viewPt, &groundPt);
 	if (groundPt.length() < BOUNDARY_PICK_DISTANCE) {
 		m_addingNewBorder = true;
-		
+
 		ICoord2D initialBoundary = { 1, 1 };
 		pDoc->addBoundary(&initialBoundary);
 		return;
@@ -138,9 +138,9 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 
 	Int motion;
 	pDoc->findBoundaryNear(&groundPt, BOUNDARY_PICK_DISTANCE, &m_modifyBorderNdx, &motion);
-	
+
 	// if bottom left boundary grabbed
-	if (motion == 0) 
+	if (motion == 0)
 	{
 		// modifying the bottom left is not allowed.
 		m_modifyBorderNdx = -1;
@@ -150,10 +150,10 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	{
 		// add a boundary
 		m_addingNewBorder = true;
-		
+
 		ICoord2D initialBoundary = { 1, 1 };
 		pDoc->addBoundary(&initialBoundary);
-	} 
+	}
 	else
 	{
 		m_modificationType = (ModificationType) motion;

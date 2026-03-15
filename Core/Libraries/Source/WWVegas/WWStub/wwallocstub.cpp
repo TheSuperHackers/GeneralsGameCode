@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers 
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,7 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TheSuperHackers @compile feliwir 15/04/2025 Simple allocator implementation useful for tools
+// TheSuperHackers @build feliwir 15/04/2025 Simple allocator implementation useful for tools
+
 #include "always.h"
 #include <stdlib.h>
 
@@ -31,7 +32,7 @@ void *operator new[](size_t size)
 {
 	return malloc(size);
 }
- 
+
 void operator delete(void *p)
 {
 	free(p);
@@ -66,7 +67,7 @@ void operator delete[](void * p, const char *, int)
 
 void* createW3DMemPool(const char *poolName, int allocationSize)
 {
-	return NULL;
+	return nullptr;
 }
 
 void* allocateFromW3DMemPool(void* pool, int allocationSize)

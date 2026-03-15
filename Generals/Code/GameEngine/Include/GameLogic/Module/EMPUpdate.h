@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __EMPUPDATE_H_
-#define __EMPUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -39,7 +36,7 @@
 class EMPUpdateModuleData : public UpdateModuleData
 {
 public:
-	UnsignedInt m_lifeFrames;	
+	UnsignedInt m_lifeFrames;
 	UnsignedInt m_startFadeFrame;
 	UnsignedInt m_disabledDuration;
 	Real				m_startScale; ///< how big I start drawing
@@ -55,34 +52,34 @@ public:
 	{
 		m_lifeFrames = 1;
 		m_startFadeFrame = 0;
-		m_startScale = 1.0f; 
+		m_startScale = 1.0f;
 		m_targetScaleMax = 1.0f;
 		m_targetScaleMin = 1.0f;
 		m_startColor.setFromInt(0xffffffff);
 		m_endColor.setFromInt  (0x00000000);
 		//m_spinRateMax = 0.0f;
 		m_disabledDuration = 0;
-		m_disableFXParticleSystem = NULL;
+		m_disableFXParticleSystem = nullptr;
 		m_sparksPerCubicFoot = 0.001f;
 
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "Lifetime",	INI::parseDurationUnsignedInt,		NULL, offsetof( EMPUpdateModuleData, m_lifeFrames ) },
-			{ "StartFadeTime",	INI::parseDurationUnsignedInt,		NULL, offsetof( EMPUpdateModuleData, m_startFadeFrame ) },
-			{ "StartScale",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_startScale ) },
-			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	NULL, offsetof( EMPUpdateModuleData, m_disabledDuration ) },
-			//{ "SpinRateMax",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
-			{ "TargetScaleMax",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_targetScaleMax ) },
-			{ "TargetScaleMin",	INI::parseReal,										NULL, offsetof( EMPUpdateModuleData, m_targetScaleMin ) },
-			{ "StartColor",	INI::parseRGBColor,			NULL, offsetof( EMPUpdateModuleData, m_startColor ) },
-			{ "EndColor",	INI::parseRGBColor,				NULL, offsetof( EMPUpdateModuleData, m_endColor ) },
-			{ "DisableFXParticleSystem",		INI::parseParticleSystemTemplate, NULL, offsetof( EMPUpdateModuleData, m_disableFXParticleSystem ) },
-			{ "SparksPerCubicFoot",		INI::parseReal, NULL, offsetof( EMPUpdateModuleData, m_sparksPerCubicFoot ) },
+			{ "Lifetime",	INI::parseDurationUnsignedInt,		nullptr, offsetof( EMPUpdateModuleData, m_lifeFrames ) },
+			{ "StartFadeTime",	INI::parseDurationUnsignedInt,		nullptr, offsetof( EMPUpdateModuleData, m_startFadeFrame ) },
+			{ "StartScale",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_startScale ) },
+			{ "DisabledDuration",	INI::parseDurationUnsignedInt,	nullptr, offsetof( EMPUpdateModuleData, m_disabledDuration ) },
+			//{ "SpinRateMax",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_spinRateMax ) },
+			{ "TargetScaleMax",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_targetScaleMax ) },
+			{ "TargetScaleMin",	INI::parseReal,										nullptr, offsetof( EMPUpdateModuleData, m_targetScaleMin ) },
+			{ "StartColor",	INI::parseRGBColor,			nullptr, offsetof( EMPUpdateModuleData, m_startColor ) },
+			{ "EndColor",	INI::parseRGBColor,				nullptr, offsetof( EMPUpdateModuleData, m_endColor ) },
+			{ "DisableFXParticleSystem",		INI::parseParticleSystemTemplate, nullptr, offsetof( EMPUpdateModuleData, m_disableFXParticleSystem ) },
+			{ "SparksPerCubicFoot",		INI::parseReal, nullptr, offsetof( EMPUpdateModuleData, m_sparksPerCubicFoot ) },
 
 
 			{ 0, 0, 0, 0 }
@@ -106,8 +103,8 @@ public:
 
 	UnsignedInt getDieFrame() { return m_dieFrame; }
 
-	virtual UpdateSleepTime update( void );
-	void doDisableAttack( void );
+	virtual UpdateSleepTime update() override;
+	void doDisableAttack();
 
 protected:
 
@@ -123,6 +120,3 @@ protected:
 
 
 };
-
-#endif // __EMPUPDATE_H_
-

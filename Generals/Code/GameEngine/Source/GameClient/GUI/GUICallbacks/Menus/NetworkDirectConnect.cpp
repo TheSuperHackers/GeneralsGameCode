@@ -29,12 +29,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "gamespy/peer/peer.h"
 
 #include "Common/QuotedPrintable.h"
-#include "Common/UserPreferences.h"
+#include "Common/OptionPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
@@ -50,11 +50,6 @@
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/LANAPICallbacks.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // window ids ------------------------------------------------------------------------------
 
@@ -75,12 +70,12 @@ static NameKeyType editPlayerNameID = NAMEKEY_INVALID;
 static NameKeyType comboboxRemoteIPID = NAMEKEY_INVALID;
 static NameKeyType staticLocalIPID = NAMEKEY_INVALID;
 
-static GameWindow *buttonBack = NULL;
-static GameWindow *buttonHost = NULL;
-static GameWindow *buttonJoin = NULL;
-static GameWindow *editPlayerName = NULL;
-static GameWindow *comboboxRemoteIP = NULL;
-static GameWindow *staticLocalIP = NULL;
+static GameWindow *buttonBack = nullptr;
+static GameWindow *buttonHost = nullptr;
+static GameWindow *buttonJoin = nullptr;
+static GameWindow *editPlayerName = nullptr;
+static GameWindow *comboboxRemoteIP = nullptr;
+static GameWindow *staticLocalIP = nullptr;
 
 void PopulateRemoteIPComboBox()
 {
@@ -118,7 +113,7 @@ void UpdateRemoteIPList()
 //	UnicodeString newEntry = prefs.getRemoteIPEntry(0);
 	UnicodeString newEntry = unisel;
 	UnicodeString newIP;
-	newEntry.nextToken(&newIP, UnicodeString(L":"));
+	newEntry.nextToken(&newIP, L":");
 	Int numFields = swscanf(newIP.str(), L"%d.%d.%d.%d", &(n1[0]), &(n1[1]), &(n1[2]), &(n1[3]));
 
 	if (numFields != 4) {
@@ -145,7 +140,7 @@ void UpdateRemoteIPList()
 			{
 				UnicodeString oldEntry = uni;
 				UnicodeString oldIP;
-				oldEntry.nextToken(&oldIP, UnicodeString(L":"));
+				oldEntry.nextToken(&oldIP, L":");
 
 				swscanf(oldIP.str(), L"%d.%d.%d.%d", &(n2[0]), &(n2[1]), &(n2[2]), &(n2[3]));
 
@@ -185,7 +180,7 @@ void UpdateRemoteIPList()
 void HostDirectConnectGame()
 {
 	// Init LAN API Singleton
-	DEBUG_ASSERTCRASH(TheLAN != NULL, ("TheLAN is NULL!"));
+	DEBUG_ASSERTCRASH(TheLAN != nullptr, ("TheLAN is null!"));
 	if (!TheLAN)
 	{
 		TheLAN = NEW LANAPI();
@@ -202,8 +197,7 @@ void HostDirectConnectGame()
 	prefs["UserName"] = UnicodeStringToQuotedPrintable(name);
 	prefs.write();
 
-	while (name.getLength() > g_lanPlayerNameLength)
-		name.removeLastChar();
+	name.truncateTo(g_lanPlayerNameLength);
 	TheLAN->RequestSetName(name);
 	TheLAN->RequestGameCreate(localIPString, TRUE);
 }
@@ -225,13 +219,11 @@ void JoinDirectConnectGame()
 	AsciiString ipstring;
 	asciientry.nextToken(&ipstring, "(");
 
-	char ipstr[16];
-	strcpy(ipstr, ipstring.str());
-
 	Int ip1, ip2, ip3, ip4;
-	sscanf(ipstr, "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+	Int numFields = sscanf(ipstring.str(), "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+	(void)numFields; DEBUG_ASSERTCRASH(numFields == 4, ("JoinDirectConnectGame - invalid IP address format: %s", ipstring.str()));
 
-	DEBUG_LOG(("JoinDirectConnectGame - joining at %d.%d.%d.%d\n", ip1, ip2, ip3, ip4));
+	DEBUG_LOG(("JoinDirectConnectGame - joining at %d.%d.%d.%d", ip1, ip2, ip3, ip4));
 
 	ipaddress = (ip1 << 24) + (ip2 << 16) + (ip3 << 8) + ip4;
 //	ipaddress = htonl(ipaddress);
@@ -246,8 +238,7 @@ void JoinDirectConnectGame()
 	UpdateRemoteIPList();
 	PopulateRemoteIPComboBox();
 
-	while (name.getLength() > g_lanPlayerNameLength)
-		name.removeLastChar();
+	name.truncateTo(g_lanPlayerNameLength);
 	TheLAN->RequestSetName(name);
 
 	TheLAN->RequestGameJoinDirectConnect(ipaddress);
@@ -261,7 +252,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	LANbuttonPushed = false;
 	LANisShuttingDown = false;
 
-	if (TheLAN == NULL)
+	if (TheLAN == nullptr)
 	{
 		TheLAN = NEW LANAPI();
 		TheLAN->init();
@@ -271,19 +262,19 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	buttonPushed = false;
 	isShuttingDown = false;
 	TheShell->showShellMap(TRUE);
-	buttonBackID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonBack" ) );
-	buttonHostID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonHost" ) );
-	buttonJoinID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ButtonJoin" ) );
-	editPlayerNameID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:EditPlayerName" ) );
-	comboboxRemoteIPID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:ComboboxRemoteIP" ) );
-	staticLocalIPID = TheNameKeyGenerator->nameToKey( AsciiString( "NetworkDirectConnect.wnd:StaticLocalIP" ) );
+	buttonBackID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonBack" );
+	buttonHostID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonHost" );
+	buttonJoinID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ButtonJoin" );
+	editPlayerNameID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:EditPlayerName" );
+	comboboxRemoteIPID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:ComboboxRemoteIP" );
+	staticLocalIPID = TheNameKeyGenerator->nameToKey( "NetworkDirectConnect.wnd:StaticLocalIP" );
 
-	buttonBack = TheWindowManager->winGetWindowFromId( NULL,  buttonBackID);
-	buttonHost = TheWindowManager->winGetWindowFromId( NULL,	buttonHostID);
-	buttonJoin = TheWindowManager->winGetWindowFromId( NULL,	buttonJoinID);
-	editPlayerName = TheWindowManager->winGetWindowFromId( NULL,	editPlayerNameID);
-	comboboxRemoteIP = TheWindowManager->winGetWindowFromId( NULL,	comboboxRemoteIPID);
-	staticLocalIP = TheWindowManager->winGetWindowFromId( NULL, staticLocalIPID);
+	buttonBack = TheWindowManager->winGetWindowFromId( nullptr,  buttonBackID);
+	buttonHost = TheWindowManager->winGetWindowFromId( nullptr,	buttonHostID);
+	buttonJoin = TheWindowManager->winGetWindowFromId( nullptr,	buttonJoinID);
+	editPlayerName = TheWindowManager->winGetWindowFromId( nullptr,	editPlayerNameID);
+	comboboxRemoteIP = TheWindowManager->winGetWindowFromId( nullptr,	comboboxRemoteIPID);
+	staticLocalIP = TheWindowManager->winGetWindowFromId( nullptr, staticLocalIPID);
 
 //	// animate controls
 //	TheShell->registerWithAnimateManager(buttonBack, WIN_ANIMATION_SLIDE_LEFT, TRUE, 800);
@@ -294,7 +285,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	UnicodeString name;
 	name = userprefs.getUserName();
 
-	if (name.getLength() == 0)
+	if (name.isEmpty())
 	{
 		name = TheGameText->fetch("GUI:Player");
 	}
@@ -306,15 +297,15 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	UnicodeString ipstr;
 
 	delete TheLAN;
-	TheLAN = NULL;
+	TheLAN = nullptr;
 
-	if (TheLAN == NULL) {
-//		DEBUG_ASSERTCRASH(TheLAN != NULL, ("TheLAN is null initializing the direct connect screen."));
+	if (TheLAN == nullptr) {
+//		DEBUG_ASSERTCRASH(TheLAN != nullptr, ("TheLAN is null initializing the direct connect screen."));
 		TheLAN = NEW LANAPI();
 
 		OptionPreferences prefs;
 		UnsignedInt IP = prefs.getOnlineIPAddress();
-		
+
 		IPEnumeration IPs;
 
 //		if (!IP)
@@ -328,7 +319,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 
 			Bool foundIP = FALSE;
 			EnumeratedIP *tempIP = IPlist;
-			while ((tempIP != NULL) && (foundIP == FALSE)) {
+			while ((tempIP != nullptr) && (foundIP == FALSE)) {
 				if (IP == tempIP->getIP()) {
 					foundIP = TRUE;
 				}
@@ -356,7 +347,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	TheTransitionHandler->setGroup("NetworkDirectConnectFade");
 
 
-} // NetworkDirectConnectInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** This is called when a shutdown is complete for this menu */
@@ -372,7 +363,7 @@ static void shutdownComplete( WindowLayout *layout )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // end if
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu shutdown method */
@@ -389,12 +380,12 @@ void NetworkDirectConnectShutdown( WindowLayout *layout, void *userData )
 		shutdownComplete( layout );
 		return;
 
-	}  //end if
+	}
 
 	TheShell->reverseAnimatewindow();
 
 	TheTransitionHandler->reverse("NetworkDirectConnectFade");
-}  // NetworkDirectConnectShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -402,10 +393,10 @@ void NetworkDirectConnectShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void NetworkDirectConnectUpdate( WindowLayout * layout, void *userData)
 {
-	// We'll only be successful if we've requested to 
+	// We'll only be successful if we've requested to
 	if(isShuttingDown && TheShell->isAnimFinished() && TheTransitionHandler->isFinished())
 		shutdownComplete(layout);
-}// NetworkDirectConnectUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu input callback */
@@ -413,7 +404,7 @@ void NetworkDirectConnectUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType NetworkDirectConnectInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -430,63 +421,63 @@ WindowMsgHandledType NetworkDirectConnectInput( GameWindow *window, UnsignedInt 
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																							(WindowMsgData)buttonBack, buttonBackID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
-}// NetworkDirectConnectInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Welcome Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -505,14 +496,13 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 					prefs["UserName"] = UnicodeStringToQuotedPrintable(name);
 					prefs.write();
 
-					while (name.getLength() > g_lanPlayerNameLength)
-						name.removeLastChar();
+					name.truncateTo(g_lanPlayerNameLength);
 					TheLAN->RequestSetName(name);
 
 					buttonPushed = true;
 					LANbuttonPushed = true;
 					TheShell->pop();
-				} //if ( controlID == buttonBack )
+				}
 				else if (controlID == buttonHostID)
 				{
 					HostDirectConnectGame();
@@ -522,8 +512,8 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 					JoinDirectConnectGame();
 				}
 				break;
-			}// case GBM_SELECTED:
-	
+			}
+
 		case GEM_EDIT_DONE:
 			{
 				break;
@@ -531,7 +521,7 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// NetworkDirectConnectSystem
+}

@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
  *                    $Revision:: 24                                                          $*
@@ -37,12 +37,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef DX8CAPS_H
-#define DX8CAPS_H
 
 #include "always.h"
 #include "ww3dformat.h"
@@ -69,7 +64,10 @@ public:
 		VENDOR_3DFX,
 		VENDOR_3DLABS,
 		VENDOR_CIRRUSLOGIC,
-		VENDOR_RENDITION
+		VENDOR_RENDITION,
+		VENDOR_VMWARE,
+
+		VENDOR_COUNT
 	};
 
 	enum DeviceTypeATI {
@@ -208,16 +206,17 @@ public:
 
 
 	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
-	static void Shutdown(void);
+	static void Shutdown();
 
 	void Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
-	bool Support_TnL() const { return SupportTnL; };	
+	bool Support_TnL() const { return SupportTnL; };
 	bool Support_DXTC() const { return SupportDXTC; }
 	bool Support_Gamma() const { return supportGamma; }
 	bool Support_NPatches() const { return SupportNPatches; }
 	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
 	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
 	bool Support_Dot3() const { return SupportDot3; }
+	bool Support_PointSprites() const { return SupportPointSprites; }
 	int Get_Max_Textures_Per_Pass() const { return MaxTexturesPerPass; }
 
 	// -------------------------------------------------------------------------
@@ -268,7 +267,7 @@ private:
 
 	D3DCAPS8 hwVPCaps;
 	D3DCAPS8 swVPCaps;
-	bool SupportTnL;	
+	bool SupportTnL;
 	bool SupportDXTC;
 	bool supportGamma;
 	bool SupportNPatches;
@@ -278,12 +277,10 @@ private:
 	bool SupportRenderToTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportDepthStencilFormat[WW3D_ZFORMAT_COUNT];
 	bool SupportDot3;
+	bool SupportPointSprites;
 	int MaxTexturesPerPass;
 	int VertexShaderVersion;
 	int PixelShaderVersion;
 	int MaxSimultaneousTextures;
 	IDirect3D8* Direct3D; // warning XDK name conflict KJM
 };
-
-
-#endif

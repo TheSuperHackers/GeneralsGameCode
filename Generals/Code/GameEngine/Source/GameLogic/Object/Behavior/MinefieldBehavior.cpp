@@ -29,7 +29,7 @@
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_RELATIONSHIP_NAMES
 #include "Common/GameState.h"
 #include "Common/RandomValue.h"
@@ -45,11 +45,6 @@
 #include "GameLogic/Module/AutoHealBehavior.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // detonation never puts our health below this, since we probably auto-regen
 const Real MIN_HEALTH = 0.1f;
@@ -58,7 +53,7 @@ const Real MIN_HEALTH = 0.1f;
 // ------------------------------------------------------------------------------------------------
 MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 {
-	m_detonationWeapon = NULL;
+	m_detonationWeapon = nullptr;
 	m_detonatedBy = (1 << ENEMIES) | (1 << NEUTRAL);
 	m_stopsRegenAfterCreatorDies = true;
 	m_regenerates = false;
@@ -72,29 +67,29 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-/*static*/ void MinefieldBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p ) 
+/*static*/ void MinefieldBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "DetonationWeapon", INI::parseWeaponTemplate,	NULL, offsetof( MinefieldBehaviorModuleData, m_detonationWeapon ) },
+		{ "DetonationWeapon", INI::parseWeaponTemplate,	nullptr, offsetof( MinefieldBehaviorModuleData, m_detonationWeapon ) },
 		{ "DetonatedBy", INI::parseBitString32, TheRelationshipNames, offsetof( MinefieldBehaviorModuleData, m_detonatedBy ) },
-		{ "StopsRegenAfterCreatorDies", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_stopsRegenAfterCreatorDies ) },
-		{ "Regenerates", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_regenerates ) },
-		{ "WorkersDetonate", INI::parseBool, NULL, offsetof( MinefieldBehaviorModuleData, m_workersDetonate ) },
-		{ "CreatorDeathCheckRate", INI::parseDurationUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_creatorDeathCheckRate ) },
-		{ "ScootFromStartingPointTime", INI::parseDurationUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_scootFromStartingPointTime ) },
-		{ "NumVirtualMines", INI::parseUnsignedInt, NULL, offsetof( MinefieldBehaviorModuleData, m_numVirtualMines ) },
-		{ "RepeatDetonateMoveThresh", INI::parseReal, NULL, offsetof( MinefieldBehaviorModuleData, m_repeatDetonateMoveThresh ) },
-		{ "DegenPercentPerSecondAfterCreatorDies", INI::parsePercentToReal,	NULL, offsetof( MinefieldBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
-		{ 0, 0, 0, 0 }
+		{ "StopsRegenAfterCreatorDies", INI::parseBool, nullptr, offsetof( MinefieldBehaviorModuleData, m_stopsRegenAfterCreatorDies ) },
+		{ "Regenerates", INI::parseBool, nullptr, offsetof( MinefieldBehaviorModuleData, m_regenerates ) },
+		{ "WorkersDetonate", INI::parseBool, nullptr, offsetof( MinefieldBehaviorModuleData, m_workersDetonate ) },
+		{ "CreatorDeathCheckRate", INI::parseDurationUnsignedInt, nullptr, offsetof( MinefieldBehaviorModuleData, m_creatorDeathCheckRate ) },
+		{ "ScootFromStartingPointTime", INI::parseDurationUnsignedInt, nullptr, offsetof( MinefieldBehaviorModuleData, m_scootFromStartingPointTime ) },
+		{ "NumVirtualMines", INI::parseUnsignedInt, nullptr, offsetof( MinefieldBehaviorModuleData, m_numVirtualMines ) },
+		{ "RepeatDetonateMoveThresh", INI::parseReal, nullptr, offsetof( MinefieldBehaviorModuleData, m_repeatDetonateMoveThresh ) },
+		{ "DegenPercentPerSecondAfterCreatorDies", INI::parsePercentToReal,	nullptr, offsetof( MinefieldBehaviorModuleData, m_healthPercentToDrainPerSecond ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
 
-} 
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +97,7 @@ MinefieldBehaviorModuleData::MinefieldBehaviorModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData ) 
+MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData )
 								 : UpdateModule( thing, moduleData )
 {
 	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
@@ -220,10 +215,10 @@ UpdateSleepTime MinefieldBehavior::update()
 		if (m_immunes[i].id == INVALID_ID)
 			continue;
 
-		if (TheGameLogic->findObjectByID(m_immunes[i].id) == NULL ||
+		if (TheGameLogic->findObjectByID(m_immunes[i].id) == nullptr ||
 				now > m_immunes[i].collideTime + 2)
 		{
-			//DEBUG_LOG(("expiring an immunity %d\n",m_immunes[i].id));
+			//DEBUG_LOG(("expiring an immunity %d",m_immunes[i].id));
 			m_immunes[i].id = INVALID_ID;	// he's dead, jim.
 			m_immunes[i].collideTime = 0;
 		}
@@ -242,7 +237,7 @@ UpdateSleepTime MinefieldBehavior::update()
 			if (producerID != INVALID_ID)
 			{
 				Object* producer = TheGameLogic->findObjectByID(producerID);
-				if (producer == NULL || producer->isEffectivelyDead())
+				if (producer == nullptr || producer->isEffectivelyDead())
 				{
 					m_regenerates = false;
 					m_draining = true;
@@ -336,7 +331,7 @@ static Real calcDistSquared(const Coord3D& a, const Coord3D& b)
 //-------------------------------------------------------------------------------------------------
 void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal )
 {
-	if (other == NULL || other->isEffectivelyDead())
+	if (other == nullptr || other->isEffectivelyDead())
 		return;
 
 	if (m_virtualMinesRemaining == 0)
@@ -352,7 +347,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	{
 		if (m_immunes[i].id == other->getID())
 		{
-			//DEBUG_LOG(("ignoring due to immunity %d\n",m_immunes[i].id));
+			//DEBUG_LOG(("ignoring due to immunity %d",m_immunes[i].id));
 			m_immunes[i].collideTime = now;
 			return;
 		}
@@ -382,7 +377,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	// have a real mine they area trying to clear... it's possible they could be trying to
 	// clear a position where there is no mine, in which case we grant them no immunity, muwahahaha)
 	AIUpdateInterface* otherAI = other->getAI();
-	if (otherAI && otherAI->isClearingMines() && otherAI->getGoalObject() != NULL)
+	if (otherAI && otherAI->isClearingMines() && otherAI->getGoalObject() != nullptr)
 	{
 		// mine-clearers are granted immunity to us for as long as they continuously
 		// collide, even if no longer clearing mines. (this prevents the problem
@@ -392,7 +387,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 		{
 			if (m_immunes[i].id == INVALID_ID || m_immunes[i].id == other->getID())
 			{
-				//DEBUG_LOG(("add/update immunity %d\n",m_immunes[i].id));
+				//DEBUG_LOG(("add/update immunity %d",m_immunes[i].id));
 				m_immunes[i].id = other->getID();
 				m_immunes[i].collideTime = now;
 
@@ -449,13 +444,13 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 
 	const MinefieldBehaviorModuleData* d = getMinefieldBehaviorModuleData();
 
-	// detonate as many times as neccessary for our virtual mine count to match our health
+	// detonate as many times as necessary for our virtual mine count to match our health
 	BodyModuleInterface* body = getObject()->getBodyModule();
 
 	for (;;)
 	{
 		Real virtualMinesExpectedF = ((Real)d->m_numVirtualMines * body->getHealth() / body->getMaxHealth());
-		Int virtualMinesExpected = 
+		Int virtualMinesExpected =
 			damageInfo->in.m_damageType == DAMAGE_HEALING ?
 			REAL_TO_INT_FLOOR(virtualMinesExpectedF) :
 			REAL_TO_INT_CEIL(virtualMinesExpectedF);
@@ -467,7 +462,7 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 		}
 		else if (m_virtualMinesRemaining > virtualMinesExpected)
 		{
-			if (m_draining && 
+			if (m_draining &&
 						damageInfo->in.m_sourceID == getObject()->getID() &&
 						damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE)
 			{
@@ -487,7 +482,7 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 
 	if (m_virtualMinesRemaining == 0)
 	{
-		// oops, if someone did weapon damage they may have nuked our health to zero, 
+		// oops, if someone did weapon damage they may have nuked our health to zero,
 		// which would be bad if we regen. prevent this. (srj)
 		if (m_regenerates && body->getHealth() < MIN_HEALTH)
 		{
@@ -623,7 +618,7 @@ void MinefieldBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -667,10 +662,10 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 	if( maxImmunity != MAX_IMMUNITY )
 	{
 
-		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message\n" ));
+		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message" ));
 		throw SC_INVALID_DATA;
 
-	}  // end if
+	}
 	for( UnsignedByte i = 0; i < maxImmunity; ++i )
 	{
 
@@ -680,20 +675,20 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 		// collide time
 		xfer->xferUnsignedInt( &m_immunes[ i ].collideTime );
 
-	}  // end for, i
+	}
 
 	if( xfer->getXferMode() == XFER_LOAD )
 		m_detonators.clear();
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void MinefieldBehavior::loadPostProcess( void )
+void MinefieldBehavior::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

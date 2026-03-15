@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -43,16 +43,12 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_DEBUGDISPLAY_H
-#define __GAMECLIENT_DEBUGDISPLAY_H
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "Lib/BaseType.h"
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 
 //----------------------------------------------------------------------------
@@ -67,7 +63,7 @@
 
 
 //===============================
-// DebugDisplayInterface 
+// DebugDisplayInterface
 //===============================
 
 class DebugDisplayInterface
@@ -83,21 +79,20 @@ class DebugDisplayInterface
 			RED,
 			GREEN,
 			BLUE,
-			NUM_COLORS
 		};
 
 		virtual ~DebugDisplayInterface() {};
 
 		virtual void	printf( const Char *format, ...) = 0;			///< Print formatted text at current cursor position
 		virtual void	setCursorPos( Int x, Int y ) = 0;		///< Set new cursor position
-		virtual Int		getCursorXPos( void ) = 0;					///< Get current X position of cursor
-		virtual Int		getCursorYPos( void ) = 0;					///< Get current Y position of cursor
-		virtual Int		getWidth( void ) = 0;								///< Get character width of display
-		virtual Int		getHeight( void ) = 0;							///< Get character height of display
+		virtual Int		getCursorXPos() = 0;					///< Get current X position of cursor
+		virtual Int		getCursorYPos() = 0;					///< Get current Y position of cursor
+		virtual Int		getWidth() = 0;								///< Get character width of display
+		virtual Int		getHeight() = 0;							///< Get character height of display
 		virtual void	setTextColor( Color color ) = 0;		///< Set text color
 		virtual void	setRightMargin( Int rightPos ) = 0;	///< Set right margin position
 		virtual void	setLeftMargin( Int leftPos ) = 0;		///< Set left margin position
-		virtual void	reset( void ) = 0;									///< Reset back to default settings
+		virtual void	reset() = 0;									///< Reset back to default settings
 
 	protected:
 
@@ -106,7 +101,7 @@ class DebugDisplayInterface
 
 
 //===============================
-// DebugDisplay 
+// DebugDisplay
 //===============================
 
 class DebugDisplay : public DebugDisplayInterface
@@ -119,14 +114,14 @@ class DebugDisplay : public DebugDisplayInterface
 
 		virtual void	printf( const Char *format, ...);			///< Print formatted text at current cursor position
 		virtual void	setCursorPos( Int x, Int y );		///< Set new cursor position
-		virtual Int		getCursorXPos( void );					///< Get current X position of cursor
-		virtual Int		getCursorYPos( void );					///< Get current Y position of cursor
-		virtual Int		getWidth( void );								///< Get character width of display
-		virtual Int		getHeight( void );							///< Get character height of display
+		virtual Int		getCursorXPos();					///< Get current X position of cursor
+		virtual Int		getCursorYPos();					///< Get current Y position of cursor
+		virtual Int		getWidth();								///< Get character width of display
+		virtual Int		getHeight();							///< Get character height of display
 		virtual void	setTextColor( Color color );		///< set text color
 		virtual void	setRightMargin( Int rightPos );	///< set right margin position
 		virtual void	setLeftMargin( Int leftPos );		///< set left margin position
-		virtual void	reset( void );									///< Reset back to default settings
+		virtual void	reset();									///< Reset back to default settings
 
 	protected:
 
@@ -142,15 +137,11 @@ class DebugDisplay : public DebugDisplayInterface
 
 // displayers
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 extern void AudioDebugDisplay( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
 #endif
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __GAMECLIENT_DEBUGDISPLAY_H

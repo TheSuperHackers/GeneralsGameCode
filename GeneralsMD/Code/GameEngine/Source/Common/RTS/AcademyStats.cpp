@@ -24,12 +24,12 @@
 
 // FILE: AcademyStats.cpp //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Los Angeles                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Los Angeles
+//
+//                       Confidential Information
+//                Copyright (C) 2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -38,12 +38,12 @@
 //
 // Created:    Kris Morness, July 2003
 //
-// Desc:			 Keeps track of various statistics in order to provide advice to 
+// Desc:			 Keeps track of various statistics in order to provide advice to
 //             the player about how to improve playing.
 //
 //-----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/AcademyStats.h"
 #include "Common/Energy.h"
@@ -62,19 +62,15 @@
 
 #include "GameLogic/Module/ContainModule.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
-const char *TheAcademyClassificationTypeNames[] = 
+const char *const TheAcademyClassificationTypeNames[] =
 {
 	"ACT_NONE",
 	"ACT_UPGRADE_RADAR",
 	"ACT_SUPERPOWER",
-	NULL
+	nullptr
 };
+static_assert(ARRAY_SIZE(TheAcademyClassificationTypeNames) == ACT_COUNT + 1, "Incorrect array size");
 
 #define FRAMES_BETWEEN_UPDATES 30
 
@@ -101,7 +97,7 @@ void findDozerCommandSet( Object *object, void *userData )
 //------------------------------------------------------------------------------------------------
 void AcademyStats::init( const Player *player )
 {
-	if( !TheGameLogic ) 
+	if( !TheGameLogic )
 	{
 		return; // GUIEdit crashes on this, so bail
 	}
@@ -126,11 +122,11 @@ void AcademyStats::init( const Player *player )
 
 	//Find the command set for our dozer... so we can extract information about things
 	//we can build.
-	m_dozerCommandSet = NULL;
+	m_dozerCommandSet = nullptr;
 	player->iterateObjects( findDozerCommandSet, (void*)m_dozerCommandSet );
 
-	m_commandCenterTemplate = NULL;
-	m_supplyCenterTemplate = NULL;
+	m_commandCenterTemplate = nullptr;
+	m_supplyCenterTemplate = nullptr;
 
 	if( m_dozerCommandSet )
 	{
@@ -209,7 +205,7 @@ void AcademyStats::init( const Player *player )
 	//13) Extra gatherers built?
 	m_gatherersBuilt = 0;
 
-	//14) Heros built?
+	//14) Heroes built?
 	m_heroesBuilt = 0;
 
 	//+------------------------------+
@@ -235,10 +231,10 @@ void AcademyStats::init( const Player *player )
 
 	//20) Did the Player pick up salvage (as GLA)?
 	m_salvageCollected = 0;
-	
+
 	//21) Did the player ever use the "Guard" ability?
 	m_guardAbilityUsedCount = 0;
-		
+
 	//22) Did the player build more than one Supply Center (that is, did he expand out)?
 	//Uses m_supplyCentersBuilt!
 
@@ -249,7 +245,7 @@ void AcademyStats::init( const Player *player )
 	//25) Did the player use the new alternate interface in the options?
 	//Uses TheGlobalData->m_useAlternateMouse
 
-	//26) Player did not use the new "double click location attack move/guard" 
+	//26) Player did not use the new "double click location attack move/guard"
 	m_doubleClickAttackMoveOrdersGiven = 0;
 
   //27) Built barracks within 5 minutes?
@@ -295,7 +291,7 @@ static void updateAcademyStats( Object *obj, void *userData )
 
 	if( academy->isFirstUpdate() )
 	{
-		academy->recordProduction( obj, NULL );
+		academy->recordProduction( obj, nullptr );
 	}
 }
 
@@ -308,7 +304,7 @@ void AcademyStats::update()
 	}
 
 	UnsignedInt now = TheGameLogic->getFrame();
-	
+
 	if( m_nextUpdateFrame >= now )
 	{
 		m_nextUpdateFrame = now + FRAMES_BETWEEN_UPDATES;
@@ -353,17 +349,17 @@ void AcademyStats::update()
 				m_hadPowerLastCheck = hasPower;
 			}
 		}
-	
+
 		if( isFirstUpdate() )
 		{
 			setFirstUpdate( FALSE );
 		}
-	
+
 	}
 }
 
 //------------------------------------------------------------------------------------------------
-void AcademyStats::recordProduction( const Object *obj, const Object *constructer )
+void AcademyStats::recordProduction( const Object *obj, const Object *constructor )
 {
 	UnsignedInt now = TheGameLogic->getFrame();
 
@@ -405,7 +401,7 @@ void AcademyStats::recordProduction( const Object *obj, const Object *constructe
 		m_gatherersBuilt++;
 	}
 
-	//14) Heros built?
+	//14) Heroes built?
 	if( obj->isKindOf( KINDOF_HERO ) )
 	{
 		m_heroesBuilt++;
@@ -457,7 +453,7 @@ void AcademyStats::recordProduction( const Object *obj, const Object *constructe
 	}
 
 	//33) Did the player ever build a "disguisable" unit and never used the disguise ability?
-	if( obj->isKindOf( KINDOF_DISGUISER ) ) 
+	if( obj->isKindOf( KINDOF_DISGUISER ) )
 	{
 		m_disguisableVehiclesBuilt++;
 	}
@@ -507,7 +503,7 @@ void AcademyStats::recordIncome()
 void AcademyStats::evaluateTier1Advice( AcademyAdviceInfo *info, Int numAvailableTips )
 {
 	UnsignedInt maxAdviceTips = MAX_ADVICE_TIPS;
-	
+
 	//-allAdvice feature
 	//if( !TheGlobalData->m_allAdvice )
 	//{
@@ -691,7 +687,7 @@ void AcademyStats::evaluateTier1Advice( AcademyAdviceInfo *info, Int numAvailabl
 		numAvailableTips--;
 	}
 
-	//13) Extra gatherers built? 
+	//13) Extra gatherers built?
 	if( !m_gatherersBuilt )
 	{
 		//Don't count free ones that come with supply centers!
@@ -706,7 +702,7 @@ void AcademyStats::evaluateTier1Advice( AcademyAdviceInfo *info, Int numAvailabl
 		numAvailableTips--;
 	}
 
-	//14) Heros built?
+	//14) Heroes built?
 	if( !m_heroesBuilt )
 	{
 		availableTips++;
@@ -732,7 +728,7 @@ void AcademyStats::evaluateTier1Advice( AcademyAdviceInfo *info, Int numAvailabl
 void AcademyStats::evaluateTier2Advice( AcademyAdviceInfo *info, Int numAvailableTips )
 {
 	UnsignedInt maxAdviceTips = MAX_ADVICE_TIPS;
-	
+
 	//-allAdvice feature
 	//if( !TheGlobalData->m_allAdvice )
 	//{
@@ -878,7 +874,7 @@ void AcademyStats::evaluateTier2Advice( AcademyAdviceInfo *info, Int numAvailabl
 void AcademyStats::evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailableTips )
 {
 	UnsignedInt maxAdviceTips = MAX_ADVICE_TIPS;
-	
+
 	//-allAdvice feature
 	//if( !TheGlobalData->m_allAdvice )
 	//{
@@ -886,14 +882,14 @@ void AcademyStats::evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailabl
 	//}
 
 	UnsignedInt now = TheGameLogic->getFrame();
-	
+
 	//numAvailableTips is used to determine if we are going to randomly choose a tip
 	//or determine if a tip is available (if -1)
 	Bool choosing = numAvailableTips != -1;
 	Int availableTips = 0;
 
 	//25) Did the player use the new alternate interface in the options?
-	if( !TheGlobalData->m_useAlternateMouse ) 
+	if( !TheGlobalData->m_useAlternateMouse )
 	{
 		availableTips++;
 		Int rand = GameClientRandomValue( 0, numAvailableTips - 1 );
@@ -906,8 +902,8 @@ void AcademyStats::evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailabl
 		numAvailableTips--;
 	}
 
-	//26) Player did not use the new "double click location attack move/guard" 
-	if( !m_doubleClickAttackMoveOrdersGiven ) 
+	//26) Player did not use the new "double click location attack move/guard"
+	if( !m_doubleClickAttackMoveOrdersGiven )
 	{
 		availableTips++;
 		Int rand = GameClientRandomValue( 0, numAvailableTips - 1 );
@@ -1013,7 +1009,7 @@ void AcademyStats::evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailabl
 	}
 
 	//33) Did the player ever build a "disguisable" unit and never used the disguise ability?
-	if( m_disguisableVehiclesBuilt ) 
+	if( m_disguisableVehiclesBuilt )
 	{
 		if( !m_vehiclesDisguised )
 		{
@@ -1058,7 +1054,7 @@ void AcademyStats::evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailabl
 Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 {
 	UnsignedInt maxAdviceTips = MAX_ADVICE_TIPS;
-	
+
 	//-allAdvice feature
 	//if( !TheGlobalData->m_allAdvice )
 	//{
@@ -1073,7 +1069,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	//Sanity
 	if( !info )
 	{
-		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in NULL AcademyAdviceInfo.") );
+		DEBUG_CRASH( ("AcademyStats::calculateAcademyAdvice() was passed in null AcademyAdviceInfo.") );
 		return FALSE;
 	}
 
@@ -1083,7 +1079,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	//Build the header for each string.
 	for( UnsignedInt i = 0; i < maxAdviceTips; i++ )
 	{
-		info->advice[ i ].format( UnicodeString( L"\n\n" ) );
+		info->advice[ i ].format( L"\n\n" );
 	}
 
 	//First look at tier 1 basic advice and pick any advice we could benefit from.
@@ -1106,12 +1102,12 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 }
 
 //------------------------------------------------------------------------------------------------
-// CRC 
+// CRC
 //------------------------------------------------------------------------------------------------
 void AcademyStats::crc( Xfer *xfer )
 {
 
-}  // end crc
+}
 
 //------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1178,7 +1174,7 @@ void AcademyStats::xfer( Xfer *xfer )
 	//13) Extra gathers built?
 	xfer->xferUnsignedInt( &m_gatherersBuilt );
 
-	//14) Heros built?
+	//14) Heroes built?
 	xfer->xferUnsignedInt( &m_heroesBuilt );
 
 	//+------------------------------+
@@ -1224,7 +1220,7 @@ void AcademyStats::xfer( Xfer *xfer )
 	//25) Did the player use the new alternate interface in the options?
 	//Uses TheGlobalData->m_useAlternateMouse
 
-	//26) Player did not use the new "double click location attack move/guard" 
+	//26) Player did not use the new "double click location attack move/guard"
 	xfer->xferUnsignedInt( &m_doubleClickAttackMoveOrdersGiven );
 
   //27) Built barracks within 5 minutes?
@@ -1258,12 +1254,12 @@ void AcademyStats::xfer( Xfer *xfer )
 	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
 	xfer->xferUnsignedInt( &m_firestormsCreated );
 
-}  // end xfer
+}
 
 //------------------------------------------------------------------------------------------------
 // Load post process
 //------------------------------------------------------------------------------------------------
-void AcademyStats::loadPostProcess( void )
+void AcademyStats::loadPostProcess()
 {
 
-}  // end loadPostProcess
+}

@@ -24,8 +24,8 @@
 
 // FILE: W3DGameClient.h ///////////////////////////////////////////////////
 //
-// W3D implementation of the game interface.  The GameClient is 
-// responsible for maintaining our drawbles, handling our GUI, and creating
+// W3D implementation of the game interface.  The GameClient is
+// responsible for maintaining our drawables, handling our GUI, and creating
 // the display ... basically the Client if this were a Client/Server game.
 //
 // Author: Colin Day, April 2001
@@ -33,9 +33,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGAMEINTERFACE_H_
-#define __W3DGAMEINTERFACE_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -78,12 +75,12 @@ public:
 	virtual ~W3DGameClient();
 
 	/// given a type, create a drawable
-	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatus statusBits = DRAWABLE_STATUS_NONE );
+	virtual Drawable *friend_createDrawable( const ThingTemplate *thing, DrawableStatusBits statusBits = DRAWABLE_STATUS_DEFAULT );
 
-	virtual void init( void );		///< initialize resources
-	virtual void update( void );  ///< per frame update
-	virtual void reset( void );   ///< reset system
-		
+	virtual void init();		///< initialize resources
+	virtual void update();  ///< per frame update
+	virtual void reset();   ///< reset system
+
 	virtual void addScorch(const Coord3D *pos, Real radius, Scorches type);
 	virtual void createRayEffectByTemplate( const Coord3D *start, const Coord3D *end, const ThingTemplate* tmpl );  ///< create effect needing start and end location
 	//virtual Bool getBonePos(Drawable *draw, AsciiString boneName, Coord3D* pos, Matrix3D* transform) const;
@@ -92,50 +89,48 @@ public:
 
 	//---------------------------------------------------------------------------
 	virtual void setTeamColor( Int red, Int green, Int blue );  ///< @todo superhack for demo, remove!!!
-	virtual void adjustLOD( Int adj ); ///< @todo hack for evaluation, remove.
+	virtual void setTextureLOD( Int level );
 	virtual void notifyTerrainObjectMoved(Object *obj);
 
 protected:
 
-	virtual Keyboard *createKeyboard( void );								///< factory for the keyboard
-	virtual Mouse *createMouse( void );											///< factory for the mouse
+	virtual Keyboard *createKeyboard();								///< factory for the keyboard
+	virtual Mouse *createMouse();											///< factory for the mouse
 
 	/// factory for creating TheDisplay
-	virtual Display *createGameDisplay( void ) { return NEW W3DDisplay; }
+	virtual Display *createGameDisplay() { return NEW W3DDisplay; }
 
 	/// factory for creating TheInGameUI
-	virtual InGameUI *createInGameUI( void ) { return NEW W3DInGameUI; }	
+	virtual InGameUI *createInGameUI() { return NEW W3DInGameUI; }
 
 	/// factory for creating the window manager
-	virtual GameWindowManager *createWindowManager( void ) { return NEW W3DGameWindowManager; }
+	virtual GameWindowManager *createWindowManager() { return NEW W3DGameWindowManager; }
 
 	/// factory for creating the font library
-	virtual FontLibrary *createFontLibrary( void ) { return NEW W3DFontLibrary; }
+	virtual FontLibrary *createFontLibrary() { return NEW W3DFontLibrary; }
 
   /// Manager for display strings
-	virtual DisplayStringManager *createDisplayStringManager( void ) { return NEW W3DDisplayStringManager; }
+	virtual DisplayStringManager *createDisplayStringManager() { return NEW W3DDisplayStringManager; }
 #ifdef RTS_HAS_FFMPEG
-	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW FFmpegVideoPlayer; }
+	virtual VideoPlayerInterface *createVideoPlayer() { return NEW FFmpegVideoPlayer; }
 #else
-	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
+	virtual VideoPlayerInterface *createVideoPlayer() { return NEW BinkVideoPlayer; }
 #endif
 	/// factory for creating the TerrainVisual
-	virtual TerrainVisual *createTerrainVisual( void ) { return NEW W3DTerrainVisual; }
+	virtual TerrainVisual *createTerrainVisual() { return NEW W3DTerrainVisual; }
 
 	/// factory for creating the snow manager
-	virtual SnowManager *createSnowManager( void ) { return NEW W3DSnowManager; }
+	virtual SnowManager *createSnowManager() { return NEW W3DSnowManager; }
 
 	virtual void setFrameRate(Real msecsPerFrame) { TheW3DFrameLengthInMsec = msecsPerFrame; }
 
-};  // end class W3DGameClient
+};
 
-inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW DirectInputKeyboard; }
-inline Mouse *W3DGameClient::createMouse( void )
+inline Keyboard *W3DGameClient::createKeyboard() { return NEW DirectInputKeyboard; }
+inline Mouse *W3DGameClient::createMouse()
 {
 	//return new DirectInputMouse;
 	Win32Mouse * mouse = NEW W3DMouse;
 	TheWin32Mouse = mouse;   ///< global cheat for the WndProc()
 	return mouse;
 }
-
-#endif  // end __W3DGAMEINTERFACE_H_

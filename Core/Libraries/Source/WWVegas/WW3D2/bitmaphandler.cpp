@@ -26,7 +26,7 @@ void Bitmap_Assert(bool condition)
 }
 
 void BitmapHandlerClass::Create_Mipmap_B8G8R8A8(
-	unsigned char* dest_surface, 
+	unsigned char* dest_surface,
 	unsigned dest_surface_pitch,
 	unsigned char* src_surface,
 	unsigned src_surface_pitch,
@@ -113,16 +113,16 @@ void BitmapHandlerClass::Copy_Image_Generate_Mipmap(
 		unsigned b8g8r8a8_10;
 		unsigned b8g8r8a8_11;
 		for (unsigned x=0;x<width/2;x++,dest_ptr+=dest_bpp*2,src_ptr+=src_bpp*2,mip_ptr+=dest_bpp) {
-			Read_B8G8R8A8(b8g8r8a8_00,src_ptr,src_format,NULL,0);
+			Read_B8G8R8A8(b8g8r8a8_00,src_ptr,src_format,nullptr,0);
 			Write_B8G8R8A8(dest_ptr,dest_format,b8g8r8a8_00);
 
-			Read_B8G8R8A8(b8g8r8a8_01,src_ptr+src_bpp,src_format,NULL,0);
+			Read_B8G8R8A8(b8g8r8a8_01,src_ptr+src_bpp,src_format,nullptr,0);
 			Write_B8G8R8A8(dest_ptr+dest_bpp,dest_format,b8g8r8a8_01);
 
-			Read_B8G8R8A8(b8g8r8a8_10,src_ptr+src_pitch,src_format,NULL,0);
+			Read_B8G8R8A8(b8g8r8a8_10,src_ptr+src_pitch,src_format,nullptr,0);
 			Write_B8G8R8A8(dest_ptr+dest_pitch,dest_format,b8g8r8a8_10);
 
-			Read_B8G8R8A8(b8g8r8a8_11,src_ptr+src_bpp+src_pitch,src_format,NULL,0);
+			Read_B8G8R8A8(b8g8r8a8_11,src_ptr+src_bpp+src_pitch,src_format,nullptr,0);
 			Write_B8G8R8A8(dest_ptr+dest_bpp+dest_pitch,dest_format,b8g8r8a8_11);
 
 			unsigned b8g8r8a8=Combine_A8R8G8B8(b8g8r8a8_00,b8g8r8a8_01,b8g8r8a8_10,b8g8r8a8_11);
@@ -145,7 +145,7 @@ void BitmapHandlerClass::Copy_Image_Generate_Mipmap(
 // ----------------------------------------------------------------------------
 
 void BitmapHandlerClass::Copy_Image(
-	unsigned char* dest_surface, 
+	unsigned char* dest_surface,
 	unsigned dest_surface_width,
 	unsigned dest_surface_height,
 	unsigned dest_surface_pitch,
@@ -190,11 +190,11 @@ void BitmapHandlerClass::Copy_Image(
 				unsigned pixel10;
 				unsigned pixel1M;
 
-				Read_B8G8R8A8(pixel00,src_ptr_mid,src_surface_format,NULL,0);
-				Read_B8G8R8A8(pixel01,src_ptr_mid+src_bpp,src_surface_format,NULL,0);
-				Read_B8G8R8A8(pixelM1,src_ptr_mid-src_bpp,src_surface_format,NULL,0);
-				Read_B8G8R8A8(pixel10,src_ptr_prev_line,src_surface_format,NULL,0);
-				Read_B8G8R8A8(pixel1M,src_ptr_next_line,src_surface_format,NULL,0);
+				Read_B8G8R8A8(pixel00,src_ptr_mid,src_surface_format,nullptr,0);
+				Read_B8G8R8A8(pixel01,src_ptr_mid+src_bpp,src_surface_format,nullptr,0);
+				Read_B8G8R8A8(pixelM1,src_ptr_mid-src_bpp,src_surface_format,nullptr,0);
+				Read_B8G8R8A8(pixel10,src_ptr_prev_line,src_surface_format,nullptr,0);
+				Read_B8G8R8A8(pixel1M,src_ptr_next_line,src_surface_format,nullptr,0);
 
 				// Convert to luminance
 				unsigned char bv00;
@@ -329,7 +329,7 @@ void BitmapHandlerClass::Copy_Image(
 			}
 		}
 		else {
-			
+
 			// For now do only point-sampling
 			for (unsigned y=0;y<dest_surface_height;++y) {
 				unsigned* dest_ptr=(unsigned*)dest_surface;
@@ -423,7 +423,7 @@ void BitmapHandlerClass::Copy_Image(
 		}
 	}
 	else {
-		
+
 		// For now do only point-sampling
 		for (unsigned y=0;y<dest_surface_height;++y) {
 			unsigned char* dest_ptr=dest_surface+y*dest_surface_pitch;

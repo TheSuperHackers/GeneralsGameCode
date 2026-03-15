@@ -17,22 +17,22 @@
 */
 
 /* $Header: /VSS_Sync/ww3d2/mesh.cpp 56    8/29/01 9:50p Vss_sync $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MESH.CPP                                                     * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/11/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 12, 1997 [GH]                                           * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MESH.cpp                                                     *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/11/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 12, 1997 [GH]                                           *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   MeshClass::MeshClass -- Constructor for MeshClass                                         *
  *   MeshClass::MeshClass -- Copy Constructor for MeshClass                                    *
  *	  MeshClass::operator == -- assignment operator for MeshClass                               *
@@ -47,7 +47,7 @@
  *   MeshClass::Scale -- Scales the mesh                                                       *
  *   MeshClass::Scale -- Scales the mesh                                                       *
  *   MeshClass::Init -- Init the mesh from a MeshBuilder object                                *
- *   MeshClass::Load -- creates a mesh out of a mesh chunk in a .w3d file                      * 
+ *   MeshClass::Load -- creates a mesh out of a mesh chunk in a .w3d file                      *
  *   MeshClass::Cast_Ray -- compute a ray intersection with this mesh                          *
  *   MeshClass::Cast_AABox -- cast an AABox against this mesh                                  *
  *   MeshClass::Cast_OBBox -- Cast an obbox against this mesh                                  *
@@ -55,18 +55,18 @@
  *   MeshClass::Intersect_OBBox -- test for intersection with the given OBBox                  *
  *   MeshClass::Generate_Culling_Tree -- Generates a hierarchical culling tree for the mesh    *
  *   MeshClass::Direct_Load -- read the w3d file directly into this mesh object                *
- *   MeshClass::read_chunks -- read all of the chunks from the .wtm file                       * 
- *	  MeshClass::read_vertices -- reads the vertex chunk                                        * 
+ *   MeshClass::read_chunks -- read all of the chunks from the .wtm file                       *
+ *	  MeshClass::read_vertices -- reads the vertex chunk                                        *
  *   MeshClass::read_texcoords -- read in the texture coordinates chunk                        *
  *   MeshClass::install_texture_coordinates -- installs the given u-v's in each channel that is*
- *   MeshClass::read_vertex_normals -- reads a surrender normal chunk from the wtm file        * 
+ *   MeshClass::read_vertex_normals -- reads a surrender normal chunk from the wtm file        *
  *   MeshClass::read_v3_materials -- Reads in version 3 materials.                             *
  *   MeshClass::read_map -- Reads definition of a texture map from the file                    *
  *   MeshClass::read_triangles -- read the triangles chunk                                     *
  *   MeshClass::read_per_tri_materials -- read the material indices for each triangle          *
- *   MeshClass::read_user_text -- read in the user text chunk                                  * 
- *   MeshClass::read_vertex_colors -- read in the vertex colors chunk                          * 
- *   MeshClass::read_vertex_influences -- read in the vertex influences chunk                  * 
+ *   MeshClass::read_user_text -- read in the user text chunk                                  *
+ *   MeshClass::read_vertex_colors -- read in the vertex colors chunk                          *
+ *   MeshClass::read_vertex_influences -- read in the vertex influences chunk                  *
  *   MeshClass::Get_Material_Info -- returns a pointer to the material info                    *
  *   MeshClass::Create_Decal -- creates a decal on this mesh                                   *
  *   MeshClass::Delete_Decal -- removes a decal from this mesh                                 *
@@ -88,7 +88,6 @@
 
 #include "mesh.h"
 #include <assert.h>
-#include <string.h>
 #include "w3d_file.h"
 #include "assetmgr.h"
 #include "w3derr.h"
@@ -118,7 +117,6 @@
 #include "dx8renderer.h"
 #include "visrasterizer.h"
 #include "wwmemlog.h"
-#include <stdio.h>
 #include <wwprofile.h>
 
 
@@ -126,7 +124,7 @@ bool MeshClass::Legacy_Meshes_Fogged = true;
 
 /*
 ** This #define causes the collision code to always recompute the triangle normals rather
-** than using the ones in the model. 
+** than using the ones in the model.
 ** TODO: ensure that the models have unit normals and start re-using them again or write
 ** collision code to handle non-unit normals!
 */
@@ -155,12 +153,12 @@ static DynamicVectorClass<Vector3>	_TempVertexBuffer;
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshClass::MeshClass(void) :
-	Model(NULL),
-	DecalMesh(NULL),
-	LightEnvironment(NULL),
+MeshClass::MeshClass() :
+	Model(nullptr),
+	DecalMesh(nullptr),
+	LightEnvironment(nullptr),
 	BaseVertexOffset(0),
-	NextVisibleSkin(NULL),
+	NextVisibleSkin(nullptr),
 	m_alphaOverride(1.0f),
 	m_materialPassAlphaOverride(1.0f),
 	m_materialPassEmissiveOverride(1.0f)
@@ -183,11 +181,11 @@ MeshClass::MeshClass(void) :
  *=============================================================================================*/
 MeshClass::MeshClass(const MeshClass & that) :
 	RenderObjClass(that),
-	Model(NULL),
-	DecalMesh(NULL),
-	LightEnvironment(NULL),
+	Model(nullptr),
+	DecalMesh(nullptr),
+	LightEnvironment(nullptr),
 	BaseVertexOffset(that.BaseVertexOffset),
-	NextVisibleSkin(NULL),
+	NextVisibleSkin(nullptr),
 	m_alphaOverride(1.0f),
 	m_materialPassAlphaOverride(1.0f),
 	m_materialPassEmissiveOverride(1.0f)
@@ -219,7 +217,7 @@ MeshClass & MeshClass::operator = (const MeshClass & that)
 
 		// just dont copy the decals or light environment
 		REF_PTR_RELEASE(DecalMesh);
-		LightEnvironment = NULL;
+		LightEnvironment = nullptr;
 	}
 	return * this;
 }
@@ -237,7 +235,7 @@ MeshClass & MeshClass::operator = (const MeshClass & that)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshClass::~MeshClass(void) 
+MeshClass::~MeshClass()
 {
 	Free();
 }
@@ -277,7 +275,7 @@ bool MeshClass::Contains(const Vector3 &point)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-void MeshClass::Free(void)
+void MeshClass::Free()
 {
 	REF_PTR_RELEASE(Model);
 	REF_PTR_RELEASE(DecalMesh);
@@ -296,7 +294,7 @@ void MeshClass::Free(void)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * MeshClass::Clone(void) const
+RenderObjClass * MeshClass::Clone() const
 {
 	return NEW_REF( MeshClass, (*this));
 }
@@ -314,9 +312,9 @@ RenderObjClass * MeshClass::Clone(void) const
  * HISTORY:                                                                                    *
  *   5/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-const char * MeshClass::Get_Name(void) const
-{ 
-	return Model->Get_Name(); 
+const char * MeshClass::Get_Name() const
+{
+	return Model->Get_Name();
 }
 
 
@@ -349,9 +347,9 @@ void MeshClass::Set_Name(const char * name)
  * HISTORY:                                                                                    *
  *   5/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-uint32 MeshClass::Get_W3D_Flags(void)
-{ 
-	return Model->W3dAttributes; 
+uint32 MeshClass::Get_W3D_Flags()
+{
+	return Model->W3dAttributes;
 }
 
 
@@ -367,10 +365,10 @@ uint32 MeshClass::Get_W3D_Flags(void)
  * HISTORY:                                                                                    *
  *   5/15/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-const char * MeshClass::Get_User_Text(void) const
-{ 
-	return Model->Get_User_Text(); 
-}		
+const char * MeshClass::Get_User_Text() const
+{
+	return Model->Get_User_Text();
+}
 
 
 /***********************************************************************************************
@@ -385,15 +383,15 @@ const char * MeshClass::Get_User_Text(void) const
  * HISTORY:                                                                                    *
  *   5/20/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-MaterialInfoClass * MeshClass::Get_Material_Info(void)
-{ 
+MaterialInfoClass * MeshClass::Get_Material_Info()
+{
 	if (Model) {
 		if (Model->MatInfo) {
 			Model->MatInfo->Add_Ref();
-			return Model->MatInfo; 
+			return Model->MatInfo;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -409,9 +407,9 @@ MaterialInfoClass * MeshClass::Get_Material_Info(void)
  * HISTORY:                                                                                    *
  *   2/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-MeshModelClass * MeshClass::Get_Model(void)
+MeshModelClass * MeshClass::Get_Model()
 {
-	if (Model != NULL) {
+	if (Model != nullptr) {
 		Model->Add_Ref();
 	}
 	return Model;
@@ -437,7 +435,7 @@ void MeshClass::Scale(float scale)
 	Make_Unique();
 	Model->Make_Geometry_Unique();
 	Model->Scale(sc);
-	
+
    Invalidate_Cached_Bounding_Volumes();
 
    // Now update the object space bounding volumes of this object's container:
@@ -469,7 +467,7 @@ void MeshClass::Scale(float scalex, float scaley, float scalez)
 	Make_Unique();
 	Model->Make_Geometry_Unique();
 	Model->Scale(sc);
-	
+
    Invalidate_Cached_Bounding_Volumes();
 
    // Now update the object space bounding volumes of this object's container:
@@ -512,8 +510,8 @@ void	MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert, Vector3 *dst_norm)
 void MeshClass::Get_Deformed_Vertices(Vector3 *dst_vert)
 {
 	WWASSERT(Model->Get_Flag(MeshGeometryClass::SKIN));
-	WWASSERT(Container != NULL);
-	WWASSERT(Container->Get_HTree() != NULL);
+	WWASSERT(Container != nullptr);
+	WWASSERT(Container->Get_HTree() != nullptr);
 
 	Model->get_deformed_vertices(dst_vert,Container->Get_HTree());
 }
@@ -551,9 +549,9 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 	if (Is_Translucent() && (generator->Is_Applied_To_Translucent_Meshes() == false)) {
 		return;
 	}
-	
+
 	if (!Model->Get_Flag(MeshGeometryClass::SKIN)) {
-		
+
 		// Rigid mesh
 		Matrix3D modeltm_inv;
 		OBBoxClass localbox;
@@ -564,17 +562,17 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 		// generate apt, if it is not empty, add a decal.
 		SimpleDynVecClass<uint32> temp_apt;
 		Model->Generate_Rigid_APT(localbox, temp_apt);
-		
+
 		if (temp_apt.Count() > 0) {
-			if (DecalMesh == NULL) {
+			if (DecalMesh == nullptr) {
 				DecalMesh =		NEW_REF(RigidDecalMeshClass, (this, generator->Peek_Decal_System()));
 			}
 			DecalMesh->Create_Decal(generator, localbox, temp_apt);
 		}
 
 	} else {
-		
-		WWDEBUG_SAY(("PERFORMANCE WARNING: Decal being applied to a SKIN mesh!\r\n"));
+
+		WWDEBUG_SAY(("PERFORMANCE WARNING: Decal being applied to a SKIN mesh!"));
 
 		// Skin
 		// The deformed worldspace vertices are used both for the APT and in Create_Decal() to
@@ -591,10 +589,10 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 
 		// We compare the worldspace box vs. the worldspace vertices
 		Model->Generate_Skin_APT(worldbox, temp_apt, dst_vert);
-		
+
 		// if it is not empty, add a decal
 		if (temp_apt.Count() > 0) {
-			if (DecalMesh == NULL) {
+			if (DecalMesh == nullptr) {
 				DecalMesh = NEW_REF(SkinDecalMeshClass, (this, generator->Peek_Decal_System()));
 			}
 			DecalMesh->Create_Decal(generator, worldbox, temp_apt, &_TempVertexBuffer);
@@ -617,7 +615,7 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
  *=============================================================================================*/
 void MeshClass::Delete_Decal(uint32 decal_id)
 {
-	if (DecalMesh != NULL) {
+	if (DecalMesh != nullptr) {
 		DecalMesh->Delete_Decal(decal_id);
 	}
 }
@@ -635,7 +633,7 @@ void MeshClass::Delete_Decal(uint32 decal_id)
  * HISTORY:                                                                                    *
  *   1/6/98     GTH : Created.                                                                 *
  *=============================================================================================*/
-int MeshClass::Get_Num_Polys(void) const
+int MeshClass::Get_Num_Polys() const
 {
 	if (Model) {
 		return Model->Get_Polygon_Count();
@@ -682,10 +680,10 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 		const FrustumClass & frustum=rinfo.Camera.Get_Frustum();
 
 		if (	Model->Get_Flag(MeshGeometryClass::SKIN) ||
-				CollisionMath::Overlap_Test(frustum,Get_Bounding_Box())!=CollisionMath::OUTSIDE ) 
+				CollisionMath::Overlap_Test(frustum,Get_Bounding_Box())!=CollisionMath::OUTSIDE )
 		{
 			bool rendered_something = false;
-			
+
 			/*
 			** If this mesh model has never been rendered, we need to generate the DX8 datastructures
 			*/
@@ -737,7 +735,7 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 			** for rendering
 			*/
 			for (int i=0; i<rinfo.Additional_Pass_Count(); i++) {
-				
+
 				MaterialPassClass * matpass = rinfo.Peek_Additional_Pass(i);
 
 				if ((!Is_Translucent()) || (matpass->Is_Enabled_On_Translucent_Meshes())) {
@@ -751,14 +749,14 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 			** to tell the mesh rendering system to process this skin
 			*/
 			if (rendered_something && Model->Get_Flag(MeshGeometryClass::SKIN)) {
-				//WWASSERT(dynamic_cast<DX8SkinFVFCategoryContainer *>(fvf_container) != NULL);
+				//WWASSERT(dynamic_cast<DX8SkinFVFCategoryContainer *>(fvf_container) != nullptr);
 				static_cast<DX8SkinFVFCategoryContainer*>(fvf_container)->Add_Visible_Skin(this);
 			}
 
 			/*
 			** If we have a decal mesh, link it into the mesh rendering system
 			*/
-			if (DecalMesh != NULL) {
+			if (DecalMesh != nullptr) {
 				const SphereClass & ws_sphere = Get_Bounding_Sphere();
 				Vector3 cam_space_sphere_center;
 				rinfo.Camera.Transform_To_View_Space(cam_space_sphere_center,ws_sphere.Center);
@@ -790,7 +788,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 	float oldOpacity=-1.0f;
 	Vector3 oldEmissive(-1,-1,-1);
 
-	if (LightEnvironment != NULL) {
+	if (LightEnvironment != nullptr) {
 		DX8Wrapper::Set_Light_Environment(LightEnvironment);
 	}
 
@@ -818,7 +816,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		pass->Install_Materials();
 		DX8Wrapper::Set_Index_Buffer(ib,0);
 
-		SNAPSHOT_SAY(("Set_World_Identity\n"));
+		SNAPSHOT_SAY(("Set_World_Identity"));
 		DX8Wrapper::Set_World_Identity();
 
 		DX8PolygonRendererListIterator it(&Model->PolygonRendererList);
@@ -841,30 +839,30 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		//MW: Need uninstall custom materials in case they leave D3D in unknown state
 		pass->UnInstall_Materials();
 
-	} else if ((pass->Get_Cull_Volume() != NULL) && (MaterialPassClass::Is_Per_Polygon_Culling_Enabled())) {
-		
+	} else if ((pass->Get_Cull_Volume() != nullptr) && (MaterialPassClass::Is_Per_Polygon_Culling_Enabled())) {
+
 		/*
-		** Generate the APT 
+		** Generate the APT
 		*/
 		static SimpleDynVecClass<uint32> temp_apt;
 		temp_apt.Delete_All(false);
-			
+
 		Matrix3D modeltminv;
 		Get_Transform().Get_Orthogonal_Inverse(modeltminv);
-		
+
 		OBBoxClass localbox;
 		OBBoxClass::Transform(modeltminv,*(pass->Get_Cull_Volume()),&localbox);
 
 		Vector3 view_dir;
 		localbox.Basis.Get_Z_Vector(&view_dir);
 		view_dir = -view_dir;
-			
+
 		if (Model->Has_Cull_Tree()) {
 			Model->Generate_Rigid_APT(localbox,view_dir,temp_apt);
 		} else {
 			Model->Generate_Rigid_APT(view_dir,temp_apt);
 		}
-	
+
 		if (temp_apt.Count() > 0) {
 
 			int buftype = BUFFER_TYPE_DYNAMIC_DX8;
@@ -909,7 +907,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 			*/
 			int vertex_offset = Model->PolygonRendererList.Peek_Head()->Get_Vertex_Offset();
 			pass->Install_Materials();
-			
+
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,Get_Transform());
 			DX8Wrapper::Set_Index_Buffer(dynamic_ib,vertex_offset);
 
@@ -921,8 +919,8 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 			//MW: Need uninstall custom materials in case they leave D3D in unknown state
 			pass->UnInstall_Materials();
 		}
-	} else {		
-		
+	} else {
+
 		/*
 		** Normal mesh case, render polys with this mesh's transform
 		*/
@@ -945,7 +943,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		pass->Install_Materials();
 		DX8Wrapper::Set_Index_Buffer(ib,0);
 
-		SNAPSHOT_SAY(("Set_World_Transform\n"));
+		SNAPSHOT_SAY(("Set_World_Transform"));
 		DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
 
 		DX8PolygonRendererListIterator it(&Model->PolygonRendererList);
@@ -955,7 +953,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 				it.Peek_Obj()->Render(BaseVertexOffset);
 			it.Next();
 		}
-		
+
 		if (oldOpacity >= 0)
 		{	//opacity was modified for this mesh instance, so need to restore the material setting which may be shared
 			//among other instances.
@@ -989,10 +987,10 @@ void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	if ((Is_Not_Hidden_At_All() == false) && (rinfo.RenderType != SpecialRenderInfoClass::RENDER_SHADOW)) {
 		return;
 	}
-	
+
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_VIS) {
-	
-		WWASSERT(rinfo.VisRasterizer != NULL);
+
+		WWASSERT(rinfo.VisRasterizer != nullptr);
 		if (Model->Get_Flag(MeshModelClass::SKIN) == 0) {
 
 			rinfo.VisRasterizer->Set_Model_Transform(Transform);
@@ -1018,8 +1016,8 @@ void MeshClass::Special_Render(SpecialRenderInfoClass & rinfo)
 	}
 
 	if (rinfo.RenderType == SpecialRenderInfoClass::RENDER_SHADOW) {
-		const HTreeClass * htree = NULL;
-		if (Container!=NULL) {
+		const HTreeClass * htree = nullptr;
+		if (Container!=nullptr) {
 			htree = Container->Get_HTree();
 		}
 		Model->Shadow_Render(rinfo,Transform,htree);
@@ -1081,17 +1079,17 @@ void MeshClass::Make_Unique(bool force_meshmdl_clone)
 	REF_PTR_RELEASE(newmesh);
 }
 
-/*********************************************************************************************** 
- * MeshClass::Load -- creates a mesh out of a mesh chunk in a .w3d file                        * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * 																														  * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/12/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * MeshClass::Load -- creates a mesh out of a mesh chunk in a .w3d file                        *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * 																														  *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/12/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 {
@@ -1106,8 +1104,8 @@ WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 	** Create empty MaterialInfo and Model
 	*/
 	Model = NEW_REF(MeshModelClass,());
-	if (Model == NULL) {
-		WWDEBUG_SAY(("MeshClass::Load - Failed to allocate model\r\n"));
+	if (Model == nullptr) {
+		WWDEBUG_SAY(("MeshClass::Load - Failed to allocate model"));
 		return WW3D_ERROR_LOAD_FAILED;
 	}
 
@@ -1125,7 +1123,7 @@ WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 	int col_bits = (Model->W3dAttributes & W3D_MESH_FLAG_COLLISION_TYPE_MASK) >> W3D_MESH_FLAG_COLLISION_TYPE_SHIFT;
 	Set_Collision_Type( col_bits << 1 );
 	Set_Hidden(Model->W3dAttributes & W3D_MESH_FLAG_HIDDEN);
-	
+
 	/*
 	** Indicate whether this mesh is translucent.  The mesh is considered translucent
 	** if sorting has been enabled (alpha blending on pass 0) or if pass0 contains alpha-test.
@@ -1189,7 +1187,7 @@ bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 			Vector3 mesh_position;
 			world.Get_Translation(&mesh_position);
 			world.Obj_Look_At(mesh_position,mesh_position - raytest.Ray.Get_Dir(),0.0f);
-	} else if (Model->Get_Flag(MeshModelClass::ORIENTED)) {		
+	} else if (Model->Get_Flag(MeshModelClass::ORIENTED)) {
 			Vector3 mesh_position;
 			world.Get_Translation(&mesh_position);
 			world.Obj_Look_At(mesh_position,raytest.Ray.Get_P0(),0.0f);
@@ -1199,9 +1197,9 @@ bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 	RayCollisionTestClass objray(raytest,world_to_obj);
 
 	WWASSERT(Model);
-	
+
 	bool hit = Model->Cast_Ray(objray);
-	
+
 	// transform result back into original coordinate system
 	if (hit) {
 		raytest.CollidedRenderObj = this;
@@ -1210,7 +1208,7 @@ bool MeshClass::Cast_Ray(RayCollisionTestClass & raytest)
 			Matrix3D::Transform_Vector(world,raytest.Result->ContactPoint, &(raytest.Result->ContactPoint));
 		}
 	}
-	
+
 	return hit;
 }
 
@@ -1233,7 +1231,7 @@ bool MeshClass::Cast_AABox(AABoxCollisionTestClass & boxtest)
 
 	WWASSERT(Model);
 
-	// This function analyses the tranform to call optimized functions in certain cases
+	// This function analyses the transform to call optimized functions in certain cases
 	bool hit = Model->Cast_World_Space_AABox(boxtest, Get_Transform());
 
 	if (hit) {
@@ -1399,7 +1397,7 @@ void MeshClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   6/18/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void MeshClass::Generate_Culling_Tree(void)
+void MeshClass::Generate_Culling_Tree()
 {
 	Model->Generate_Culling_Tree();
 }
@@ -1427,22 +1425,22 @@ void MeshClass::Add_Dependencies_To_List
 	// Get a pointer to this mesh's material information object
 	//
 	MaterialInfoClass *material = Get_Material_Info ();
-	if (material != NULL) {
-		
+	if (material != nullptr) {
+
 		//
 		// Loop through all the textures and add their filenames to our list
 		//
 		for (int index = 0; index < material->Texture_Count (); index ++) {
-			
+
 			//
 			//	Add this texture's filename to the list
 			//
 			TextureClass *texture = material->Peek_Texture (index);
-			if (texture != NULL) {
+			if (texture != nullptr) {
 				file_list.Add (texture->Get_Full_Path ());
 			}
 		}
-		
+
 		//
 		// Release our hold on the material information object
 		//
@@ -1466,7 +1464,7 @@ void MeshClass::Add_Dependencies_To_List
  * HISTORY:                                                                                    *
  *   5/14/2001    NH : Created.                                                                *
  *=============================================================================================*/
-void MeshClass::Update_Cached_Bounding_Volumes(void) const
+void MeshClass::Update_Cached_Bounding_Volumes() const
 {
 	Get_Obj_Space_Bounding_Sphere(CachedBoundingSphere);
 
@@ -1515,32 +1513,32 @@ void Set_MeshModel_Flag(RenderObjClass *robj, int flag, int onoff)
 	}
 }
 
-int MeshClass::Get_Sort_Level(void) const
-{ 
+int MeshClass::Get_Sort_Level() const
+{
 	if (Model) {
 		return (Model->Get_Sort_Level());
 	}
 	return(SORT_LEVEL_NONE);
-}	
+}
 
 void MeshClass::Set_Sort_Level(int level)
-{ 
+{
 	if (Model) {
 		Model->Set_Sort_Level(level);
 	}
 }
 
-int MeshClass::Get_Draw_Call_Count(void) const
+int MeshClass::Get_Draw_Call_Count() const
 {
-	if (Model != NULL) {
+	if (Model != nullptr) {
 		// Prefer to return the number of polygon renderers
 		int prcount = Model->PolygonRendererList.Count();
 		if (prcount > 0) {
 			return prcount;
 		}
-		
+
 		// Otherwise if we have textures, return the number of textures (e.g. dont have prs when sorting)
-		if ((Model->MatInfo != NULL) && (Model->MatInfo->Texture_Count() > 0)) {
+		if ((Model->MatInfo != nullptr) && (Model->MatInfo->Texture_Count() > 0)) {
 			return Model->MatInfo->Texture_Count();
 		}
 

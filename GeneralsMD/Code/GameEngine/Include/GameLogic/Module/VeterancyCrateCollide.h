@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef VETERANCY_CRATE_COLLIDE_H_
-#define VETERANCY_CRATE_COLLIDE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
 #include "GameLogic/Module/CrateCollide.h"
@@ -54,15 +51,15 @@ public:
 		m_isPilot = false;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "EffectRange",	INI::parseUnsignedInt,	NULL, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
-			{ "AddsOwnerVeterancy",	INI::parseBool,	NULL, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
-			{ "IsPilot", INI::parseBool, NULL, offsetof( VeterancyCrateCollideModuleData, m_isPilot ) },
+			{ "EffectRange",	INI::parseUnsignedInt,	nullptr, offsetof( VeterancyCrateCollideModuleData, m_rangeOfEffect ) },
+			{ "AddsOwnerVeterancy",	INI::parseBool,	nullptr, offsetof( VeterancyCrateCollideModuleData, m_addsOwnerVeterancy ) },
+			{ "IsPilot", INI::parseBool, nullptr, offsetof( VeterancyCrateCollideModuleData, m_isPilot ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -85,13 +82,11 @@ public:
 protected:
 
 	/// This allows specific vetoes to certain types of crates and their data
-	virtual Bool isValidToExecute( const Object *other ) const;
+	virtual Bool isValidToExecute( const Object *other ) const override;
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other );
+	virtual Bool executeCrateBehavior( Object *other ) override;
 
 	Int getLevelsToGain() const;
 
 };
-
-#endif

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -49,10 +49,10 @@
 //-------------------------------------------------------------------------------------------------
 FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdateModuleData() : DynamicGeometryInfoUpdateModuleData()
 {
-	
+
 	for( Int i = 0; i < MAX_FIRESTORM_SYSTEMS; i++ )
-		m_particleSystem[ i ] = NULL;
-	m_fxList = NULL;
+		m_particleSystem[ i ] = nullptr;
+	m_fxList = nullptr;
 	m_particleOffsetZ = 0.0f;
 	m_scorchSize = 0.0f;
 	m_delayBetweenDamageFrames = 0.0f;
@@ -66,31 +66,31 @@ FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdate
 {
 	DynamicGeometryInfoUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "DelayBetweenDamageFrames", INI::parseDurationReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_delayBetweenDamageFrames ) },
-		{ "DamageAmount", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_damageAmount ) },
-		{ "MaxHeightForDamage", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_maxHeightForDamage ) },
-		{ "ParticleSystem1", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 0 ] ) },
-		{ "ParticleSystem2", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 1 ] ) },
-		{ "ParticleSystem3", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 2 ] ) },
-		{ "ParticleSystem4", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 3 ] ) },
-		{ "ParticleSystem5", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 4 ] ) },
-		{ "ParticleSystem6", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 5 ] ) },
-		{ "ParticleSystem7", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 6 ] ) },
-		{ "ParticleSystem8", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 7 ] ) },
-		{ "ParticleSystem9", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 8 ] ) },
-		{ "ParticleSystem10", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 9 ] ) },
-		{ "ParticleSystem11", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 10 ] ) },
-		{ "ParticleSystem12", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 11 ] ) },
-		{ "ParticleSystem13", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 12 ] ) },
-		{ "ParticleSystem14", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 13 ] ) },
-		{ "ParticleSystem15", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 14 ] ) },
-		{ "ParticleSystem16", INI::parseParticleSystemTemplate, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 15 ] ) },
-		{ "FXList",		INI::parseFXList, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_fxList ) },
-		{ "ParticleOffsetZ", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleOffsetZ ) },
-		{ "ScorchSize", INI::parseReal, NULL, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_scorchSize ) },
-		{ 0, 0, 0, 0 }
+		{ "DelayBetweenDamageFrames", INI::parseDurationReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_delayBetweenDamageFrames ) },
+		{ "DamageAmount", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_damageAmount ) },
+		{ "MaxHeightForDamage", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_maxHeightForDamage ) },
+		{ "ParticleSystem1", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 0 ] ) },
+		{ "ParticleSystem2", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 1 ] ) },
+		{ "ParticleSystem3", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 2 ] ) },
+		{ "ParticleSystem4", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 3 ] ) },
+		{ "ParticleSystem5", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 4 ] ) },
+		{ "ParticleSystem6", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 5 ] ) },
+		{ "ParticleSystem7", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 6 ] ) },
+		{ "ParticleSystem8", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 7 ] ) },
+		{ "ParticleSystem9", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 8 ] ) },
+		{ "ParticleSystem10", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 9 ] ) },
+		{ "ParticleSystem11", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 10 ] ) },
+		{ "ParticleSystem12", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 11 ] ) },
+		{ "ParticleSystem13", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 12 ] ) },
+		{ "ParticleSystem14", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 13 ] ) },
+		{ "ParticleSystem15", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 14 ] ) },
+		{ "ParticleSystem16", INI::parseParticleSystemTemplate, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleSystem[ 15 ] ) },
+		{ "FXList",		INI::parseFXList, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_fxList ) },
+		{ "ParticleOffsetZ", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_particleOffsetZ ) },
+		{ "ScorchSize", INI::parseReal, nullptr, offsetof( FirestormDynamicGeometryInfoUpdateModuleData, m_scorchSize ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -98,27 +98,27 @@ FirestormDynamicGeometryInfoUpdateModuleData::FirestormDynamicGeometryInfoUpdate
 //-------------------------------------------------------------------------------------------------
 FirestormDynamicGeometryInfoUpdate::FirestormDynamicGeometryInfoUpdate( Thing *thing, const ModuleData* moduleData ) : DynamicGeometryInfoUpdate( thing, moduleData )
 {
-	
+
 	for( Int i = 0; i < MAX_FIRESTORM_SYSTEMS; i++ )
 		m_myParticleSystemID[ i ] = INVALID_PARTICLE_SYSTEM_ID;
 	m_effectsFired = FALSE;
 	m_scorchPlaced = FALSE;
 	m_lastDamageFrame = 0;
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FirestormDynamicGeometryInfoUpdate::~FirestormDynamicGeometryInfoUpdate( void )
+FirestormDynamicGeometryInfoUpdate::~FirestormDynamicGeometryInfoUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
+UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update()
 {
-	
+
 	// extend functionality
 	DynamicGeometryInfoUpdate::update();
 
@@ -135,7 +135,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		ParticleSystem *sys;
 
 		//
-		// construct a position to play the particle effects ... that is on the ground, but 
+		// construct a position to play the particle effects ... that is on the ground, but
 		// note that we add a small amount to it to avoid particles from the system (especially
 		// flat XY particles) from popping up through the terrain
 		//
@@ -155,9 +155,9 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 				sys->setPosition( &pos );
 				m_myParticleSystemID[ i ] = sys->getSystemID();
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
 		// do the FX list
 		FXList::doFXObj( modData->m_fxList, getObject() );
@@ -179,7 +179,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		if( m_myParticleSystemID[ i ] )
 		{
 			ParticleSystem *sys = TheParticleSystemManager->findParticleSystem( m_myParticleSystemID[ i ] );
-		
+
 			if( sys )
 			{
 				ParticleSystemInfo::EmissionVolumeType type = sys->getEmisionVolumeType();
@@ -189,18 +189,18 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 				else if( type == ParticleSystemInfo::EmissionVolumeType::CYLINDER )
 					sys->setEmissionVolumeCylinderRadius( getObject()->getGeometryInfo().getMajorRadius() );
 
-			}  // end if
+			}
 			else
 			{
 
 				// this system not found (it probably died)... stop trying to find it in the future
 				m_myParticleSystemID[ i ] = INVALID_PARTICLE_SYSTEM_ID;
 
-			}  // end else
+			}
 
-		}  // end if
+		}
 
-	}  // end for, i
+	}
 
 	// when we first start running backward ... make a scorch mark
 	if( m_switchedDirections == TRUE && m_scorchPlaced == FALSE )
@@ -209,7 +209,7 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		TheGameClient->addScorch( getObject()->getPosition(), modData->m_scorchSize, SCORCH_1 );
 		m_scorchPlaced = TRUE;
 
-	}  // end if
+	}
 
 	// scan and do some damage every once in a while
 	if( TheGameLogic->getFrame() - m_lastDamageFrame >= modData->m_delayBetweenDamageFrames )
@@ -218,14 +218,14 @@ UpdateSleepTime FirestormDynamicGeometryInfoUpdate::update( void )
 		doDamageScan();
 		m_lastDamageFrame = TheGameLogic->getFrame();
 
-	}  // end if
+	}
 
 	return UPDATE_SLEEP_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void FirestormDynamicGeometryInfoUpdate::doDamageScan( void )
+void FirestormDynamicGeometryInfoUpdate::doDamageScan()
 {
 
 	// get the module data
@@ -250,8 +250,8 @@ void FirestormDynamicGeometryInfoUpdate::doDamageScan( void )
 	{
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( firestormPos,
 																																			 boundingCircle,
-																																			 FROM_BOUNDINGSPHERE_2D, 
-																																			 NULL );
+																																			 FROM_BOUNDINGSPHERE_2D,
+																																			 nullptr );
 		MemoryPoolObjectHolder hold( iter );
 		Object *other;
 		for( other = iter->first(); other; other = iter->next() )
@@ -263,11 +263,11 @@ void FirestormDynamicGeometryInfoUpdate::doDamageScan( void )
 			// do damage
 			other->attemptDamage( &damageInfo );
 
-		}  // end for, other
+		}
 
-	}  // end if, an boundingCircle radius exists
+	}
 
-}  // end doDamageScan
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -278,7 +278,7 @@ void FirestormDynamicGeometryInfoUpdate::crc( Xfer *xfer )
 	// extend base class
 	DynamicGeometryInfoUpdate::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -308,15 +308,15 @@ void FirestormDynamicGeometryInfoUpdate::xfer( Xfer *xfer )
 	// last damage frame
 	xfer->xferUnsignedInt( &m_lastDamageFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FirestormDynamicGeometryInfoUpdate::loadPostProcess( void )
+void FirestormDynamicGeometryInfoUpdate::loadPostProcess()
 {
 
 	// extend base class
 	DynamicGeometryInfoUpdate::loadPostProcess();
 
-}  // end loadPostProcess
+}

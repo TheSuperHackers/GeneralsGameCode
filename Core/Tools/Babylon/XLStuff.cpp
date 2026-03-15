@@ -22,7 +22,7 @@
 //
 #include "StdAfx.h"
 #include "Babylon.h"
-#include "resource.h"				 
+#include "resource.h"
 #include <stdio.h>
 #include "XLStuff.h"
 #include <assert.h>
@@ -32,11 +32,11 @@ static const int xlWorkbookNormal = -4143;
 static const int xlNoChange = 1;
 static const int xlLocalSessionChanges = 2;
 static const int xlWBATWorksheet = -4167;
-static _Workbook *workbook = NULL;
-static _Application *xl = NULL;
-static Workbooks *wbs = NULL;
-static Range *range = NULL;
-static _Worksheet *ws = NULL;
+static _Workbook *workbook = nullptr;
+static _Application *xl = nullptr;
+static Workbooks *wbs = nullptr;
+static Range *range = nullptr;
+static _Worksheet *ws = nullptr;
 static OLECHAR buffer[100*1024];
 
 static VARIANT no, yes, dummy, dummy0, nullstring, empty;
@@ -70,7 +70,7 @@ static VARIANT GetCell ( int row, int column )
 		goto error;
 	}
 
- 
+
 	range->AttachDispatch ( dispatch );
 	result = range->GetValue ();
 	range->ReleaseDispatch ( );
@@ -111,7 +111,7 @@ int PutCell ( int row, int column, const OLECHAR *string, int val )
 	}
 
 	range->AttachDispatch ( dispatch );
- 
+
 	if ( string )
 	{
 		V_VT ( &newValue ) = VT_BSTR;
@@ -165,8 +165,8 @@ int PutSeparator ( int row )
 //        .ColorIndex = xlAutomatic
 //    End With
 	int ok = FALSE;
-	Border *border = NULL;
-	Borders *borders = NULL;
+	Border *border = nullptr;
+	Borders *borders = nullptr;
 	LPDISPATCH dispatch;
 	OLECHAR cellname1[20];
 	OLECHAR cellname2[20];
@@ -223,15 +223,8 @@ error:
 
 	range->ReleaseDispatch ( );
 
-	if ( borders )
-	{
-		delete borders ;
-	}
-
-	if ( border )
-	{
-		delete border ;
-	}
+	delete borders;
+	delete border;
 
 	VariantClear ( &cell1 );
 	VariantClear ( &cell2 );
@@ -244,15 +237,15 @@ int PutSection ( int row, OLECHAR *title )
 {
 
 	int ok = FALSE;
-	Range *range = NULL;
-	Border *border = NULL;
-	Borders *borders = NULL;
-	Interior *interior = NULL;
+	Range *range = nullptr;
+	Border *border = nullptr;
+	Borders *borders = nullptr;
+	Interior *interior = nullptr;
 	LPDISPATCH dispatch;
 	OLECHAR cellname1[20];
 	OLECHAR cellname2[20];
 	VARIANT cell1,cell2;
-	_Worksheet *ws = NULL;
+	_Worksheet *ws = nullptr;
 
   if ( !ws )
   {
@@ -300,7 +293,7 @@ int PutSection ( int row, OLECHAR *title )
 	border->SetWeight ( thin );
 
 	delete border;
-	border = NULL;
+	border = nullptr;
 
 	dispatch = borders->GetItem ( xlEdgeTop );
 
@@ -316,7 +309,7 @@ int PutSection ( int row, OLECHAR *title )
 	border->SetWeight ( medium );
 
 	delete border;
-	border = NULL;
+	border = nullptr;
 
 	dispatch = borders->GetItem ( xlEdgeRight );
 
@@ -330,7 +323,7 @@ int PutSection ( int row, OLECHAR *title )
 	border->SetLineStyle ( none );
 
 	delete border;
-	border = NULL;
+	border = nullptr;
 
 	dispatch = borders->GetItem ( xlEdgeLeft );
 
@@ -364,15 +357,8 @@ error:
 
 	range->ReleaseDispatch ( );
 
-	if ( borders )
-	{
-		delete borders ;
-	}
-
-	if ( border )
-	{
-		delete border ;
-	}
+	delete borders;
+	delete border;
 
 	VariantClear ( &cell1 );
 	VariantClear ( &cell2 );
@@ -421,7 +407,7 @@ int OpenExcel ( void )
 	if ( !wbs )
 	{
 		return FALSE;
-	}							
+	}
 
 	if ( ! (ws = new _Worksheet ()))
 	{
@@ -475,23 +461,17 @@ void CloseExcel ( void )
 {
 	CloseWorkBook ();
 
-	if ( range )
-	{
-		delete range;
-		range = NULL;
-	}
+	delete range;
+	range = nullptr;
 
-	if ( ws )
-	{
-		delete ws;
-		ws = NULL;
-	}
+	delete ws;
+	ws = nullptr;
 
 	if ( wbs )
 	{
 		wbs->Close();
 		delete wbs;
-		wbs = NULL;
+		wbs = nullptr;
 	}
 
 	if ( xl )
@@ -499,7 +479,7 @@ void CloseExcel ( void )
 		xl->Quit();
 		xl->ReleaseDispatch ();
 		delete xl;
-		xl = NULL;
+		xl = nullptr;
 	}
 
 	VariantClear ( &nullstring );
@@ -509,8 +489,8 @@ void CloseExcel ( void )
 int OpenWorkBook ( const char *filename )
 {
 	LPDISPATCH dispatch;
- 
-	dispatch = wbs->Open ((LPCTSTR) filename, dummy0, yes, dummy, nullstring, nullstring, yes, dummy, dummy, no, no, dummy, no ); 
+
+	dispatch = wbs->Open ((LPCTSTR) filename, dummy0, yes, dummy, nullstring, nullstring, yes, dummy, dummy, no, no, dummy, no );
 
 	if ( dispatch )
 	{
@@ -546,9 +526,9 @@ int NewWorkBook ( const char *path )
 		{
 			*p = 0;
 		}
-		
+
 		strcpy ( p, ".xlt" );
-		
+
 		if ( (handle = FindFirstFile ( tfile, &finfo)) != INVALID_HANDLE_VALUE )
 		{
 			if ( !(finfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
@@ -557,7 +537,7 @@ int NewWorkBook ( const char *path )
 				V_VT ( &temp ) = VT_BSTR;
 				V_BSTR ( &temp ) = SysAllocString ( buffer );
 			}
-		
+
 			FindClose ( handle );
 		}
 	}
@@ -573,7 +553,7 @@ int NewWorkBook ( const char *path )
 
 	if ( !workbook )
 	{
-		return FALSE;					
+		return FALSE;
 	}
 	SelectActiveSheet ( );
 	return TRUE;
@@ -603,7 +583,7 @@ int SaveWorkBook ( const char *filename, int protect )
 		ws->Protect ( password, yes, yes, yes, no );
 		VariantClear ( &password );
 	}
-	workbook->SaveAs ( name, fileformat, nullstring, nullstring, no, no, 
+	workbook->SaveAs ( name, fileformat, nullstring, nullstring, no, no,
 					xlNoChange, rc, no, empty, empty );
 
 	VariantClear ( &name );
@@ -619,7 +599,7 @@ void CloseWorkBook ( void )
 		workbook->SetSaved ( TRUE );
 		workbook->Close ( no, nullstring, no );
 		delete workbook;
-		workbook = NULL;
+		workbook = nullptr;
 	}
 
 }
@@ -635,7 +615,7 @@ void SelectActiveSheet ( void )
 
 	ws->ReleaseDispatch ( );
 	ws->AttachDispatch ( dispatch );
-} 
+}
 
 int GetInt ( int row, int cell )
 {

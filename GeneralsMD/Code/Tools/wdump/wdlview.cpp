@@ -76,23 +76,23 @@ void CWDumpListView::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView message handlers
 
-void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
+void CWDumpListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	CListCtrl &list = GetListCtrl();
 	CWdumpDoc *doc= (CWdumpDoc *) GetDocument();
 	ChunkItem *item = doc->m_ChunkItem;
-	list.DeleteAllItems();	
+	list.DeleteAllItems();
 
 
-	if((item != 0) && (item->Type != 0) && (item->Type->Callback != 0)) {
+	if((item != nullptr) && (item->Type != nullptr) && (item->Type->Callback != nullptr)) {
 		(*item->Type->Callback)(item, &list);
 	}
 }
 
-void CWDumpListView::OnInitialUpdate() 
+void CWDumpListView::OnInitialUpdate()
 {
 	CListView::OnInitialUpdate();
-	
+
 	CListCtrl &list = GetListCtrl();
 	long flags = list.GetStyle();
 	flags |= LVS_REPORT;

@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef _H_SelectionXlat
-#define _H_SelectionXlat
-
 #include "GameClient/InGameUI.h"
 
 class ThingTemplate;
@@ -61,27 +58,23 @@ private:
 	Bool selectFriends( Drawable *draw, GameMessage *createTeamMsg, Bool dragSelecting );
 	Bool killThemKillThemAll( Drawable *draw, GameMessage *killThemAllMsg );
 
-  
+
 
 public:
 	SelectionTranslator();
 	~SelectionTranslator();
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-
-	//Added By Sadullah Nader
 	//added for fix to the drag selection when entering control bar
 	//changes the mode of drag selecting to it's opposite
 	void setDragSelecting(Bool dragSelect);
 	void setLeftMouseButton(Bool state);
-  
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   Bool m_HandOfGodSelectionMode;
-  Bool isHandOfGodSelectionMode( void) { return m_HandOfGodSelectionMode; };
+  Bool isHandOfGodSelectionMode() { return m_HandOfGodSelectionMode; };
 #endif
 
-};	
+};
 
 Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting );
 extern SelectionTranslator *TheSelectionTranslator;
-
-#endif

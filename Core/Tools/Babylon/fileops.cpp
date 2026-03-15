@@ -69,7 +69,7 @@ static void make_bk_name ( char *bkname, const char *filename )
 	char *ext1;
 
 	strcpy ( bkname, filename );
-	
+
 	ext = strchr ( filename, '.' );
 	ext1 = strchr ( bkname, '.' );
 
@@ -88,7 +88,7 @@ static void make_bk_name ( char *bkname, const char *filename )
 void	MakeBackupFile ( const char *filename )
 {
 	char bkname[256];
-	
+
 	make_bk_name ( bkname, filename );
 
 	CopyFile ( filename, bkname, FALSE );
@@ -98,7 +98,7 @@ void	MakeBackupFile ( const char *filename )
 void	RestoreBackupFile ( const char *filename )
 {
 	char bkname[256];
-	
+
 	make_bk_name ( bkname, filename );
 
 	if ( FileExists ( bkname ))

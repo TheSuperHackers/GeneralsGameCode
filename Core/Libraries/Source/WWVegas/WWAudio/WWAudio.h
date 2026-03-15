@@ -34,19 +34,14 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __WWAUDIO_H
-#define __WWAUDIO_H
 
 #include "always.h"
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
 
-#include "Vector.H"
+#include "Vector.h"
 #include "SoundBuffer.h"
 #include "AudioEvents.h"
 #include "wwstring.h"
@@ -165,13 +160,13 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////////
-	WWAudioClass (void);
-	virtual ~WWAudioClass (void);
+	WWAudioClass ();
+	virtual ~WWAudioClass ();
 
 	//////////////////////////////////////////////////////////////////////
 	//	Static methods
 	//////////////////////////////////////////////////////////////////////
-	static WWAudioClass *	Get_Instance (void)		{ return _theInstance; }
+	static WWAudioClass *	Get_Instance ()		{ return _theInstance; }
 
 	//////////////////////////////////////////////////////////////////////
 	//	Initialization methods
@@ -179,7 +174,7 @@ public:
 
 	//
 	//	Note:  After call Initialize () you can begin using the library, you don't
-	// need to explicity call Open_2D_Device () or Select_3D_Device ().  Those
+	// need to explicitly call Open_2D_Device () or Select_3D_Device ().  Those
 	// methods were provided as a means of opening devices other than the default.
 	//
 	//	The Initialize () method defaults to a stereo, 16bit, 44100hz 2D DirectSound
@@ -188,31 +183,31 @@ public:
 	//
 	void					Initialize (bool stereo = true, int bits = 16, int hertz = 44100);
 	void					Initialize (const char *registry_subkey_name);
-	void					Shutdown (void);
+	void					Shutdown ();
 
 	//////////////////////////////////////////////////////////////////////
 	//	Driver methods
 	//////////////////////////////////////////////////////////////////////
-	HDIGDRIVER			Get_2D_Driver (void) const	{ return m_Driver2D; }
-	HPROVIDER			Get_3D_Driver (void) const	{ return m_Driver3D; }
-	HPROVIDER			Get_Reverb_Filter (void) const { return m_ReverbFilter; }
+	HDIGDRIVER			Get_2D_Driver () const	{ return m_Driver2D; }
+	HPROVIDER			Get_3D_Driver () const	{ return m_Driver3D; }
+	HPROVIDER			Get_Reverb_Filter () const { return m_ReverbFilter; }
 
 	//////////////////////////////////////////////////////////////////////
 	//	2D Hardware/driver selection methods
 	//////////////////////////////////////////////////////////////////////
-	DRIVER_TYPE_2D		Open_2D_Device (LPWAVEFORMAT format = NULL);
+	DRIVER_TYPE_2D		Open_2D_Device (LPWAVEFORMAT format = nullptr);
 	DRIVER_TYPE_2D		Open_2D_Device (bool stereo, int bits, int hertz);
-	bool					Close_2D_Device (void);
-	int					Get_Playback_Rate (void) const		{ return m_PlaybackRate; }
-	int					Get_Playback_Bits (void) const		{ return m_PlaybackBits; }
-	bool					Get_Playback_Stereo (void) const		{ return m_PlaybackStereo; }
+	bool					Close_2D_Device ();
+	int					Get_Playback_Rate () const		{ return m_PlaybackRate; }
+	int					Get_Playback_Bits () const		{ return m_PlaybackBits; }
+	bool					Get_Playback_Stereo () const		{ return m_PlaybackStereo; }
 
 	//////////////////////////////////////////////////////////////////////
 	//	3D Hardware/driver selection methods
 	//////////////////////////////////////////////////////////////////////
 
 	// Device information
-	int					Get_3D_Device_Count (void) const								{ return m_Driver3DList.Count (); }
+	int					Get_3D_Device_Count () const								{ return m_Driver3DList.Count (); }
 	bool					Get_3D_Device (int index, DRIVER_INFO_STRUCT **info)	{ (*info) = m_Driver3DList[index]; return true; }
 	bool					Is_3D_Device_Available (DRIVER_TYPE_3D type)				{ return Find_3D_Device (type) >= 0; }
 	int					Find_3D_Device (DRIVER_TYPE_3D type);
@@ -246,36 +241,36 @@ public:
 	//	Preference settings methods
 	//////////////////////////////////////////////////////////////////////
 	bool					Set_Max_2D_Sample_Count (int count = DEF_2D_SAMPLE_COUNT);
-	int					Get_Max_2D_Sample_Count (void) const;
-	int					Get_Avail_2D_Sample_Count (void) const;
+	int					Get_Max_2D_Sample_Count () const;
+	int					Get_Avail_2D_Sample_Count () const;
 
 	bool					Set_Max_3D_Sample_Count (int count = DEF_3D_SAMPLE_COUNT);
-	int					Get_Max_3D_Sample_Count (void) const;
-	int					Get_Avail_3D_Sample_Count (void) const;
+	int					Get_Max_3D_Sample_Count () const;
+	int					Get_Avail_3D_Sample_Count () const;
 
 	//
 	//	Reverb Support:  Only works with Create Labs EAX chipset.
 	//
-	float					Get_Effects_Level (void)	{ return m_EffectsLevel; }
+	float					Get_Effects_Level ()	{ return m_EffectsLevel; }
 
-	//	See ENVIRONMENT_ defines in MSS.H for a list of possible values.
-	int					Get_Reverb_Room_Type (void)		{ return m_ReverbRoomType; }
+	//	See ENVIRONMENT_ defines in MSS.h for a list of possible values.
+	int					Get_Reverb_Room_Type ()		{ return m_ReverbRoomType; }
 	void					Set_Reverb_Room_Type (int type);
 
 	//////////////////////////////////////////////////////////////////////
 	//	Volume methods
 	//////////////////////////////////////////////////////////////////////
 	void					Set_Sound_Effects_Volume (float volume = DEF_SFX_VOL);
-	float					Get_Sound_Effects_Volume (void) const						{ return m_SoundVolume; }
+	float					Get_Sound_Effects_Volume () const						{ return m_SoundVolume; }
 
 	void					Set_Music_Volume (float volume = DEF_MUSIC_VOL);
-	float					Get_Music_Volume (void) const									{ return m_MusicVolume; }
+	float					Get_Music_Volume () const									{ return m_MusicVolume; }
 
 	void					Allow_Sound_Effects (bool onoff = true);
-	bool					Are_Sound_Effects_On (void) const							{ return m_AreSoundEffectsEnabled; }
+	bool					Are_Sound_Effects_On () const							{ return m_AreSoundEffectsEnabled; }
 
 	void					Allow_Music (bool onoff = true);
-	bool					Is_Music_On (void) const										{ return m_IsMusicEnabled; }
+	bool					Is_Music_On () const										{ return m_IsMusicEnabled; }
 
 	//////////////////////////////////////////////////////////////////////
 	//	Update methods
@@ -343,15 +338,15 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//	Logical-sound related methods
 	//////////////////////////////////////////////////////////////////////
-	LogicalSoundClass *		Create_Logical_Sound (void);
-	LogicalListenerClass *	Create_Logical_Listener (void);
+	LogicalSoundClass *		Create_Logical_Sound ();
+	LogicalListenerClass *	Create_Logical_Listener ();
 
 	//
 	//	Logical type identification for use with the definition system
 	//
 	void							Add_Logical_Type (int id, LPCTSTR display_name);
-	void							Reset_Logical_Types (void);
-	int							Get_Logical_Type_Count (void) const	{ return m_LogicalTypes.Count (); }
+	void							Reset_Logical_Types ();
+	int							Get_Logical_Type_Count () const	{ return m_LogicalTypes.Count (); }
 	int							Get_Logical_Type (int index, StringClass &name);
 
 	//////////////////////////////////////////////////////////////////////
@@ -361,12 +356,12 @@ public:
 	//
 	//	Sound creation methods
 	//
-	int						Create_Instant_Sound (int definition_id, const Matrix3D &tm, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	int						Create_Instant_Sound (const char *def_name, const Matrix3D &tm, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Continuous_Sound (int definition_id, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Continuous_Sound (const char *def_name, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Sound (int definition_id, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
-	AudibleSoundClass *	Create_Sound (const char *def_name, RefCountClass *user_obj = NULL, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	int						Create_Instant_Sound (int definition_id, const Matrix3D &tm, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	int						Create_Instant_Sound (const char *def_name, const Matrix3D &tm, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Continuous_Sound (int definition_id, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Continuous_Sound (const char *def_name, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Sound (int definition_id, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
+	AudibleSoundClass *	Create_Sound (const char *def_name, RefCountClass *user_obj = nullptr, uint32 user_data = 0, int classid_hint = CLASSID_3D);
 
 	//////////////////////////////////////////////////////////////////////
 	//	Sound object lookup
@@ -376,7 +371,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//	Sound scene methods (for 3D sounds)
 	//////////////////////////////////////////////////////////////////////
-	SoundSceneClass *	Get_Sound_Scene (void) const		{ return m_SoundScene; }
+	SoundSceneClass *	Get_Sound_Scene () const		{ return m_SoundScene; }
 
 	//////////////////////////////////////////////////////////////////////
 	//	Cache methods
@@ -387,8 +382,8 @@ public:
 	// is currently set to 1MB.
 	//
 	void					Set_Cache_Size (int kbytes = DEF_CACHE_SIZE)	{ m_MaxCacheSize = (kbytes * 1024); }
-	int					Get_Cache_Size (void) const						{ return m_MaxCacheSize / 1024; }
-	int					Get_Current_Cache_Size (void) const				{ return m_CurrentCacheSize; }
+	int					Get_Cache_Size () const						{ return m_MaxCacheSize / 1024; }
+	int					Get_Current_Cache_Size () const				{ return m_CurrentCacheSize; }
 
 	//
 	// This settings determines whether a sound buffer is loaded
@@ -412,10 +407,10 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	bool						Add_To_Playlist (AudibleSoundClass *sound);
 	bool						Remove_From_Playlist (AudibleSoundClass *sound);
-	int						Get_Playlist_Count (void) const			{ return m_Playlist.Count (); }
+	int						Get_Playlist_Count () const			{ return m_Playlist.Count (); }
 	AudibleSoundClass *	Get_Playlist_Entry (int index) const;
 	AudibleSoundClass *	Peek_Playlist_Entry (int index) const	{ return m_Playlist[index]; }
-	void						Flush_Playlist (void);
+	void						Flush_Playlist ();
 	bool						Is_Sound_In_Playlist (AudibleSoundClass *sound_obj);
 
 	//////////////////////////////////////////////////////////////////////
@@ -429,27 +424,27 @@ public:
 	//		ADPCM or MP3 decompression
 	//		System buffer fills
 	//
-	float					Get_Digital_CPU_Percent (void) const;
+	float					Get_Digital_CPU_Percent () const;
 
 	//////////////////////////////////////////////////////////////////////
 	//	Debug methods
 	//////////////////////////////////////////////////////////////////////
-	bool					Is_Disabled (void) const;
+	bool					Is_Disabled () const;
 
 	// Um somtimes you need to get rid of all the completed sounds without
 	// being in the update render function and without totally shutting down
 	// the sound system.  This is primarily because completed (non static) sounds
 	// still may have a reference to the object they're attached to.
-	void					Free_Completed_Sounds (void);
+	void					Free_Completed_Sounds ();
 
 protected:
 
 	//////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	//////////////////////////////////////////////////////////////////////
-	void						Build_3D_Driver_List (void);
-	void						Free_3D_Driver_List (void);
-	void						Reprioritize_Playlist (void);
+	void						Build_3D_Driver_List ();
+	void						Free_3D_Driver_List ();
+	void						Reprioritize_Playlist ();
 	bool						Validate_3D_Sound_Buffer (SoundBufferClass *buffer);
 	FileClass *				Get_File (LPCTSTR filename);
 	void						Return_File (FileClass *file);
@@ -457,17 +452,17 @@ protected:
 	//////////////////////////////////////////////////////////////////////
 	//	Handle management
 	//////////////////////////////////////////////////////////////////////
-	void						Allocate_2D_Handles (void);
-	void						Release_2D_Handles (void);
-	void						Allocate_3D_Handles (void);
-	void						Release_3D_Handles (void);
+	void						Allocate_2D_Handles ();
+	void						Release_2D_Handles ();
+	void						Allocate_3D_Handles ();
+	void						Release_3D_Handles ();
 	HSAMPLE					Get_2D_Sample (const AudibleSoundClass &sound_obj);
 	H3DSAMPLE				Get_3D_Sample (const Sound3DClass &sound_obj);
-	H3DPOBJECT				Get_Listener_Handle (void);
-	void						ReAssign_2D_Handles (void);
-	void						ReAssign_3D_Handles (void);
-	void						Remove_2D_Sound_Handles (void);
-	void						Remove_3D_Sound_Handles (void);
+	H3DPOBJECT				Get_Listener_Handle ();
+	void						ReAssign_2D_Handles ();
+	void						ReAssign_3D_Handles ();
+	void						Remove_2D_Sound_Handles ();
+	void						Remove_3D_Sound_Handles ();
 	bool						Is_OK_To_Give_Handle (const AudibleSoundClass &sound_obj);
 
 	//////////////////////////////////////////////////////////////////////
@@ -480,15 +475,15 @@ protected:
 	SoundBufferClass *	Create_Sound_Buffer (unsigned char *file_image, unsigned long bytes, const char *string_id, bool is_3d);
 	bool						Cache_Buffer (SoundBufferClass *buffer, const char *string_id);
 	bool						Free_Cache_Space (int bytes);
-	void						Flush_Cache (void);
+	void						Flush_Cache ();
 
 	//////////////////////////////////////////////////////////////////////
 	//	Miles File Callbacks
 	//////////////////////////////////////////////////////////////////////
-	static U32 AILCALLBACK	File_Open_Callback (char const *filename, U32 *file_handle);
-	static void AILCALLBACK	File_Close_Callback (U32 file_handle);
-	static S32 AILCALLBACK	File_Seek_Callback (U32 file_handle, S32 offset, U32 type);
-	static U32 AILCALLBACK	File_Read_Callback (U32 file_handle, void *buffer, U32 bytes);
+	static U32 AILCALLBACK	File_Open_Callback (char const *filename, void **file_handle);
+	static void AILCALLBACK	File_Close_Callback (void *file_handle);
+	static S32 AILCALLBACK	File_Seek_Callback (void *file_handle, S32 offset, U32 type);
+	static U32 AILCALLBACK	File_Read_Callback (void *file_handle, void *buffer, U32 bytes);
 
 private:
 
@@ -506,8 +501,8 @@ private:
 		char *					string_id;
 		SoundBufferClass *	buffer;
 
-		_CACHE_ENTRY_STRUCT (void)
-			: string_id (0), buffer (NULL) {}
+		_CACHE_ENTRY_STRUCT ()
+			: string_id (0), buffer (nullptr) {}
 
 		_CACHE_ENTRY_STRUCT &operator= (const _CACHE_ENTRY_STRUCT &src) { string_id = ::strdup (src.string_id); REF_PTR_SET (buffer, src.buffer); return *this; }
 		bool operator== (const _CACHE_ENTRY_STRUCT &src) { return false; }
@@ -520,7 +515,7 @@ private:
 		StringClass				display_name;
 		int						id;
 
-		_LOGICAL_TYPE_STRUCT (void)
+		_LOGICAL_TYPE_STRUCT ()
 			: id (0) {}
 
 		_LOGICAL_TYPE_STRUCT (int _id, LPCTSTR name)
@@ -565,11 +560,11 @@ private:
 	DynamicVectorClass<HSAMPLE>					m_2DSampleHandles;
 	DynamicVectorClass<H3DSAMPLE>					m_3DSampleHandles;
 
-	// Playlist managment
+	// Playlist management
 	DynamicVectorClass<AudibleSoundClass *>	m_Playlist;
 	DynamicVectorClass<AudibleSoundClass *>	m_CompletedSounds;
 
-	// Buffer caching		
+	// Buffer caching
 	DynamicVectorClass<CACHE_ENTRY_STRUCT>		m_CachedBuffers[MAX_CACHE_HASH];
 	int													m_MaxCacheSize;
 	int													m_CurrentCacheSize;
@@ -581,6 +576,3 @@ private:
 	float													m_EffectsLevel;
 	int													m_ReverbRoomType;
 };
-
-
-#endif //__WWAUDIO_H

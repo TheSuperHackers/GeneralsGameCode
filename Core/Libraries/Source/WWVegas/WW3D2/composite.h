@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef COMPOSITE_H
-#define COMPOSITE_H
 
 #include "rendobj.h"
 #include "wwstring.h"
@@ -56,18 +50,18 @@ class CompositeRenderObjClass : public RenderObjClass
 {
 public:
 
-	CompositeRenderObjClass(void);
+	CompositeRenderObjClass();
 	CompositeRenderObjClass(const CompositeRenderObjClass & that);
-	virtual ~CompositeRenderObjClass(void);
+	virtual ~CompositeRenderObjClass();
 	CompositeRenderObjClass & operator = (const CompositeRenderObjClass & that);
 
-	virtual void					Restart(void);
+	virtual void					Restart();
 
-	virtual const char *			Get_Name(void) const;
+	virtual const char *			Get_Name() const;
 	virtual void					Set_Name(const char * name);
-	virtual const char *			Get_Base_Model_Name (void) const;
+	virtual const char *			Get_Base_Model_Name () const;
 	virtual void					Set_Base_Model_Name (const char *name);
-	virtual int						Get_Num_Polys(void) const;
+	virtual int						Get_Num_Polys() const;
 	virtual void					Notify_Added(SceneClass * scene);
 	virtual void					Notify_Removed(SceneClass * scene);
 
@@ -82,7 +76,7 @@ public:
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass	& sphere) const { sphere = ObjSphere; }
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const { box = ObjBox; }
-	virtual void					Update_Obj_Space_Bounding_Volumes(void);
+	virtual void					Update_Obj_Space_Bounding_Volumes();
 
 	virtual void					Set_User_Data(void *value, bool recursive = false);
 
@@ -93,7 +87,3 @@ protected:
 	SphereClass						ObjSphere;				// object-space bounding sphere
 	AABoxClass						ObjBox;					// object-space bounding box
 };
-
-
-
-#endif

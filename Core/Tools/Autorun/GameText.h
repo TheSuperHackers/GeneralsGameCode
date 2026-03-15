@@ -17,12 +17,12 @@
 */
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    RTS 3
@@ -35,12 +35,8 @@
 
 #pragma once
 
-#ifndef __GAMECLIENT_GAMETEXT_H_
-#define __GAMECLIENT_GAMETEXT_H_
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
@@ -52,7 +48,7 @@
 //----------------------------------------------------------------------------
 
 //===============================
-// GameTextInterface 
+// GameTextInterface
 //===============================
 /** Game text interface object for localised text.
 	*/
@@ -75,8 +71,5 @@ extern GameTextInterface *TheGameText;
 extern GameTextInterface* CreateGameTextInterface( void );
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-#endif // __GAMECLIENT_GAMETEXT_H_

@@ -24,12 +24,12 @@
 
 // FILE: W3DDebugIcons.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 
 #include "W3DDevice/GameClient/W3DDebugIcons.h"
@@ -53,7 +53,7 @@
 #include "Common/MapObject.h"
 #include "WW3D2/dx8wrapper.h"
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
 #define SC_OPAQUE ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
@@ -93,20 +93,21 @@ struct DebugIcon {
 	Int			endFrame; // Frame when this disappears.
 };
 
-DebugIcon	*W3DDebugIcons::m_debugIcons = NULL;
+DebugIcon	*W3DDebugIcons::m_debugIcons = nullptr;
 Int				 W3DDebugIcons::m_numDebugIcons = 0;
+Int				 W3DDebugIcons::m_maxDebugIcons = 0;
 
-W3DDebugIcons::~W3DDebugIcons(void)
+W3DDebugIcons::~W3DDebugIcons()
 {
 	REF_PTR_RELEASE(m_vertexMaterialClass);
-	if (m_debugIcons) delete m_debugIcons;
-	m_debugIcons = NULL;
+	delete[] m_debugIcons;
+	m_debugIcons = nullptr;
 	m_numDebugIcons = 0;
 }
 
-W3DDebugIcons::W3DDebugIcons(void) 
-
+W3DDebugIcons::W3DDebugIcons(Int mapWidth, Int mapHeight)
 {
+	m_maxDebugIcons = mapWidth * mapHeight;
 	//go with a preset material for now.
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	allocateIconsArray();
@@ -116,7 +117,7 @@ W3DDebugIcons::W3DDebugIcons(void)
 bool W3DDebugIcons::Cast_Ray(RayCollisionTestClass & raytest)
 {
 
-	return false;	
+	return false;
 
 }
 
@@ -137,7 +138,7 @@ void W3DDebugIcons::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
 	Vector3	ObjSpaceCenter(TheGlobalData->m_waterExtentX,TheGlobalData->m_waterExtentY,50*MAP_XY_FACTOR);
 	float length = ObjSpaceCenter.Length();
-	
+
 	sphere.Init(ObjSpaceCenter, length);
 }
 
@@ -148,25 +149,26 @@ void W3DDebugIcons::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Init(minPt,maxPt);
 }
 
-Int W3DDebugIcons::Class_ID(void) const
+Int W3DDebugIcons::Class_ID() const
 {
 	return RenderObjClass::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * W3DDebugIcons::Clone(void) const
+RenderObjClass * W3DDebugIcons::Clone() const
 {
 	return NEW W3DDebugIcons(*this);	// poolify
 }
 
 
-void W3DDebugIcons::allocateIconsArray(void) 
+void W3DDebugIcons::allocateIconsArray()
 {
-	m_debugIcons = NEW DebugIcon[MAX_ICONS];
-	m_numDebugIcons = 0; 
+	DEBUG_ASSERTCRASH(m_debugIcons == nullptr, ("debugIcons array already allocated!"));
+	m_debugIcons = NEW DebugIcon[m_maxDebugIcons];
+	m_numDebugIcons = 0;
 }
 
 
-void W3DDebugIcons::compressIconsArray(void) 
+void W3DDebugIcons::compressIconsArray()
 {
 	if (m_debugIcons && m_numDebugIcons > 0) {
 		Int newNum = 0;
@@ -185,16 +187,16 @@ static Int maxIcons = 0;
 
 void W3DDebugIcons::addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color)
 {
-	if (pos==NULL) {
+	if (pos==nullptr) {
 		if (m_numDebugIcons > maxIcons) {
-			DEBUG_LOG(("Max icons %d\n", m_numDebugIcons));
+			DEBUG_LOG(("Max icons %d", m_numDebugIcons));
 			maxIcons = m_numDebugIcons;
 		}
 		m_numDebugIcons = 0;
 		return;
 	}
-	if (m_numDebugIcons>= MAX_ICONS) return;
-	if (m_debugIcons==NULL) return;
+	if (m_numDebugIcons>= m_maxDebugIcons) return;
+	if (m_debugIcons==nullptr) return;
 	m_debugIcons[m_numDebugIcons].position = *pos;
 	m_debugIcons[m_numDebugIcons].width = width;
 	m_debugIcons[m_numDebugIcons].color = color;
@@ -216,7 +218,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Apply_Render_State_Changes();
 
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
-	DX8Wrapper::Set_Texture(0, NULL);
+	DX8Wrapper::Set_Texture(0, nullptr);
 	DX8Wrapper::Apply_Render_State_Changes();
 
 	Matrix3D tm(Transform);
@@ -228,7 +230,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	if (numRect > MAX_RECT) numRect = MAX_RECT;
 	offset+= 0.5f;
 	Int k;
-	for (k=0; k<m_numDebugIcons;) {	
+	for (k=0; k<m_numDebugIcons;) {
 		Int curIndex = 0;
 		Int	numVertex = 0;
 		DynamicVBAccessClass vb_access(BUFFER_TYPE_DYNAMIC_DX8,DX8_FVF_XYZNDUV2,numRect*4);
@@ -262,28 +264,28 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 			Real halfWidth = m_debugIcons[k].width/2;
 			Int diffuse = clr.getAsInt() | ((int)theAlpha << 24);
 			Coord3D pt1 = m_debugIcons[k].position;
-			vb->x=	pt1.x-halfWidth;	 
+			vb->x=	pt1.x-halfWidth;
 			vb->y=	pt1.y-halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
 			vb->u1=0 ;
 			vb->v1=0 ;
 			vb++;
-			vb->x=	pt1.x+halfWidth;	 
+			vb->x=	pt1.x+halfWidth;
 			vb->y=	pt1.y-halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
 			vb->u1=0 ;
 			vb->v1=0 ;
 			vb++;
-			vb->x=	pt1.x+halfWidth;	 
+			vb->x=	pt1.x+halfWidth;
 			vb->y=	pt1.y+halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
 			vb->u1=0 ;
 			vb->v1=0 ;
 			vb++;
-			vb->x=	pt1.x-halfWidth;	 
+			vb->x=	pt1.x-halfWidth;
 			vb->y=	pt1.y+halfWidth;
 			vb->z=  pt1.z;
 			vb->diffuse=diffuse;	 // b g<<8 r<<16 a<<24.
@@ -299,7 +301,7 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 			curIndex += 6;
 			numVertex += 4;
 		}
-		}	
+		}
 		if (numVertex == 0) break;
 		DX8Wrapper::Set_Shader(ShaderClass(SC_ALPHA));
 		DX8Wrapper::Set_Index_Buffer(ib_access,0);
@@ -312,4 +314,4 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	}
 }
 
-#endif // RTS_DEBUG or RTS_INTERNAL
+#endif // RTS_DEBUG

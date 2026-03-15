@@ -26,16 +26,15 @@
 //
 // Function level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef INTERNAL_FUNCLEVEL_H // Include guard
-#define INTERNAL_FUNCLEVEL_H
+
+#pragma once
+
+#include <windows.h>
 
 class ProfileFuncLevelTracer
 {
   friend class ProfileCmdInterface;
-  
+
   // can't copy this
   ProfileFuncLevelTracer(const ProfileFuncLevelTracer&);
   ProfileFuncLevelTracer& operator=(const ProfileFuncLevelTracer&);
@@ -75,10 +74,10 @@ public:
     void _Insert(unsigned at, unsigned val, int countAdd);
 
   public:
-    UnsignedMap(void);
+    UnsignedMap();
     ~UnsignedMap();
 
-    void Clear(void);
+    void Clear();
     void Insert(unsigned val, int countAdd);
     unsigned Enumerate(int index);
     unsigned GetCount(int index);
@@ -137,7 +136,7 @@ public:
     List *root,**tail;
 
   public:
-    ProfileMap(void);
+    ProfileMap();
     ~ProfileMap();
 
     Profile *Find(int frame);
@@ -150,7 +149,7 @@ public:
   {
     /// address of this function
     unsigned addr;
-    
+
     /// global profile
     Profile glob;
 
@@ -177,12 +176,12 @@ public:
       glob.tracer=tr;
       for (int k=0;k<MAX_FRAME_RECORDS;k++)
         cur[k].tracer=tr;
-      funcSource=funcName=NULL;
+      funcSource=funcName=nullptr;
       funcLine=0;
     }
   };
 
-  ProfileFuncLevelTracer(void);
+  ProfileFuncLevelTracer();
   ~ProfileFuncLevelTracer();
 
   /**
@@ -207,12 +206,12 @@ public:
   /**
     Shutdown function.
   */
-  static void Shutdown(void);
+  static void Shutdown();
 
   /**
     Starts frame based profiling, starts a new frame.
   */
-  static int FrameStart(void);
+  static int FrameStart();
 
   /**
     Ends frame based profiling.
@@ -222,14 +221,14 @@ public:
   /**
     Clears all total values.
   */
-  static void ClearTotals(void);
+  static void ClearTotals();
 
   /**
     Retrieves the first function level tracer.
 
     \return first function level tracer
   */
-  static ProfileFuncLevelTracer *GetFirst(void)
+  static ProfileFuncLevelTracer *GetFirst()
   {
     return head;
   }
@@ -237,13 +236,13 @@ public:
   /**
     Retrieves next function level tracer.
 
-    \return next function level tracer, NULL if none
+    \return next function level tracer, nullptr if none
   */
-  ProfileFuncLevelTracer *GetNext(void)
+  ProfileFuncLevelTracer *GetNext()
   {
     return next;
   }
-  
+
   Function *FindFunction(unsigned addr)
   {
     return func.Find(addr);
@@ -258,7 +257,7 @@ private:
   /// single stack entry
   struct StackEntry
   {
-    /// function 
+    /// function
     Function *func;
 
     /// ESP value
@@ -296,7 +295,7 @@ private:
     Entry *hash[HASH_SIZE];
 
   public:
-    FunctionMap(void);
+    FunctionMap();
     ~FunctionMap();
 
     Function *Find(unsigned addr);
@@ -356,7 +355,5 @@ inline ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Fi
   for (Entry *e=hash[(addr/16)%HASH_SIZE];e;e=e->next)
     if (e->funcPtr->addr==addr)
       return e->funcPtr;
-  return NULL;
+  return nullptr;
 }
-
-#endif // INTERNAL_FUNCLEVEL_H

@@ -36,12 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef LINEGRP_H
-#define LINEGRP_H
 
 #include "shader.h"
 #include "vector4.h"
@@ -52,11 +47,11 @@ class RenderInfoClass;
 class TextureClass;
 
 template <class T> class ShareBufferClass;
- 
+
 /*
-** LineGroupClass -- a custom object for rendering 
+** LineGroupClass -- a custom object for rendering
 ** groups of lines (such as motion blurred particle systems).
-*/ 
+*/
 class LineGroupClass
 {
 public:
@@ -70,40 +65,40 @@ public:
 		PRISM
 	};
 
-	LineGroupClass(void);
-	virtual ~LineGroupClass(void);	
+	LineGroupClass();
+	virtual ~LineGroupClass();
 
 	// LineGroupClass interface:
 	void						Set_Arrays(
 									ShareBufferClass<Vector3> *startlocs,
 									ShareBufferClass<Vector3> *endlocs,
-									ShareBufferClass<Vector4> *diffuse = NULL,
-									ShareBufferClass<Vector4> *taildiffuse = NULL,
-									ShareBufferClass<unsigned int> *alt = NULL,
-									ShareBufferClass<float> *sizes = NULL,
-									ShareBufferClass<float> *ucoords = NULL,
+									ShareBufferClass<Vector4> *diffuse = nullptr,
+									ShareBufferClass<Vector4> *taildiffuse = nullptr,
+									ShareBufferClass<unsigned int> *alt = nullptr,
+									ShareBufferClass<float> *sizes = nullptr,
+									ShareBufferClass<float> *ucoords = nullptr,
 									int active_line_count = -1
 									);
 	void						Set_Line_Size(float size);
-	float						Get_Line_Size(void);
+	float						Get_Line_Size();
 	void						Set_Line_Color(const Vector3 &color);
-	Vector3					Get_Line_Color(void);
+	Vector3					Get_Line_Color();
 	void						Set_Tail_Diffuse(const Vector4 &tdiffuse);
-	Vector4					Get_Tail_Diffuse(void);
+	Vector4					Get_Tail_Diffuse();
 	void						Set_Line_Alpha(float alpha);
-	float						Get_Line_Alpha(void);
+	float						Get_Line_Alpha();
 	void						Set_Line_UCoord(float ucoord);
-	float						Get_Line_UCoord(void);
+	float						Get_Line_UCoord();
 	void						Set_Flag(FlagsType flag, bool on);
 	int						Get_Flag(FlagsType flag);
 	void						Set_Texture(TextureClass* texture);
-	TextureClass * 		Get_Texture(void);
-	TextureClass * 		Peek_Texture(void);
+	TextureClass * 		Get_Texture();
+	TextureClass * 		Peek_Texture();
 	void						Set_Shader(const ShaderClass &shader);
-	ShaderClass				Get_Shader(void);
+	ShaderClass				Get_Shader();
 	void						Set_Line_Mode(LineModeType linemode);
-	LineModeType			Get_Line_Mode(void);
-	int						Get_Polygon_Count(void);
+	LineModeType			Get_Line_Mode();
+	int						Get_Polygon_Count();
 
 	void						Render(RenderInfoClass &rinfo);
 
@@ -111,11 +106,11 @@ protected:
 
 	ShareBufferClass<Vector3> *			StartLineLoc;	// World/cameraspace point locs
 	ShareBufferClass<Vector3> *			EndLineLoc;	// World/cameraspace point locs
-	ShareBufferClass<Vector4> *			LineDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<Vector4> *			TailDiffuse; // (NULL if not used) RGBA values
-	ShareBufferClass<unsigned int> *		ALT;			// (NULL if not used) active line table
-	ShareBufferClass<float> *				LineSize;	// (NULL if not used) size override table	
-	ShareBufferClass<float> *				LineUCoord; // (NULL if not used) U coordinates
+	ShareBufferClass<Vector4> *			LineDiffuse; // (null if not used) RGBA values
+	ShareBufferClass<Vector4> *			TailDiffuse; // (null if not used) RGBA values
+	ShareBufferClass<unsigned int> *		ALT;			// (null if not used) active line table
+	ShareBufferClass<float> *				LineSize;	// (null if not used) size override table
+	ShareBufferClass<float> *				LineUCoord; // (null if not used) U coordinates
 	int											LineCount;	// Active (if ALT) or total point count
 
 	TextureClass*			Texture;
@@ -125,10 +120,8 @@ protected:
 	unsigned int			Flags;						// operation control flags
 	float						DefaultLineSize;			// Line size (size array overrides if present)
 	Vector3					DefaultLineColor;		// Line color (color array overrides if present)
-	float						DefaultLineAlpha;		// Line alpha (alpha array overrides if present)	
+	float						DefaultLineAlpha;		// Line alpha (alpha array overrides if present)
 	float						DefaultLineUCoord;	// Line texture Ucoord (ucoord array overrides if present)
 	Vector4					DefaultTailDiffuse;	// Tail diffuse RGBA
 	LineModeType			LineMode;
 };
-
-#endif

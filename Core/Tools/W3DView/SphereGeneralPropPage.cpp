@@ -95,16 +95,16 @@ END_MESSAGE_MAP()
 void
 SphereGeneralPropPageClass::Initialize (void)
 {
-	if (m_RenderObj != NULL) {
+	if (m_RenderObj != nullptr) {
 
 		//
 		// Get the object's texture
 		//
 		TextureClass *texture = m_RenderObj->Peek_Texture ();
-		if (texture != NULL) {
+		if (texture != nullptr) {
 			m_TextureFilename = texture->Get_Texture_Name();
 		}
-		
+
 		//
 		//	Get the other misc data we care about
 		//
@@ -155,7 +155,7 @@ SphereGeneralPropPageClass::Add_Shader_To_Combo
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereGeneralPropPageClass::OnInitDialog (void) 
+SphereGeneralPropPageClass::OnInitDialog (void)
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -166,13 +166,13 @@ SphereGeneralPropPageClass::OnInitDialog (void)
 	Add_Shader_To_Combo (ShaderClass::_PresetAdditiveShader, "Additive");
 	Add_Shader_To_Combo (ShaderClass::_PresetAlphaShader, "Alpha");
 	Add_Shader_To_Combo (ShaderClass::_PresetOpaqueShader, "Opaque");
-	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeShader, "Multiplicative");	
-	
+	Add_Shader_To_Combo (ShaderClass::_PresetMultiplicativeShader, "Multiplicative");
+
 	CheckDlgButton (IDC_CAMERA_ALIGNED_CHECK, (m_RenderObj->Get_Flags () & SphereRenderObjClass::USE_CAMERA_ALIGN) != 0);
-	CheckDlgButton (IDC_LOOPING_CHECK, (m_RenderObj->Get_Flags () & SphereRenderObjClass::USE_ANIMATION_LOOP) != 0);	
+	CheckDlgButton (IDC_LOOPING_CHECK, (m_RenderObj->Get_Flags () & SphereRenderObjClass::USE_ANIMATION_LOOP) != 0);
 
 	//
-	// Fill the edit controls with the default values	
+	// Fill the edit controls with the default values
 	//
 	SetDlgItemText (IDC_NAME_EDIT, m_Name);
 	SetDlgItemText (IDC_FILENAME_EDIT, m_TextureFilename);
@@ -204,7 +204,7 @@ SphereGeneralPropPageClass::OnApply (void)
 	int index = SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETCURSEL);
 	if (index != CB_ERR) {
 		ShaderClass *shader = (ShaderClass *)SendDlgItemMessage (IDC_SHADER_COMBO, CB_GETITEMDATA, (WPARAM)index);
-		if (shader != NULL) {
+		if (shader != nullptr) {
 			m_Shader = (*shader);
 		}
 	}
@@ -219,7 +219,7 @@ SphereGeneralPropPageClass::OnApply (void)
 		//
 		//	Create a texture and pass it onto the object
 		//
-		TextureClass *texture = NULL;		
+		TextureClass *texture = nullptr;
 		if (m_TextureFilename.GetLength () > 0) {
 			texture = WW3DAssetManager::Get_Instance ()->Get_Texture (::Get_Filename_From_Path (m_TextureFilename));
 		}
@@ -234,12 +234,12 @@ SphereGeneralPropPageClass::OnApply (void)
 		m_RenderObj->Set_Animation_Duration (m_Lifetime);
 		m_RenderObj->Set_Flag (SphereRenderObjClass::USE_CAMERA_ALIGN, IsDlgButtonChecked (IDC_CAMERA_ALIGNED_CHECK) != 0);
 		m_RenderObj->Set_Flag (SphereRenderObjClass::USE_ANIMATION_LOOP, IsDlgButtonChecked (IDC_LOOPING_CHECK) != 0);
-		
+
 		// Allow the base class to process this message
 		retval = CPropertyPage::OnApply ();
 		m_bValid = true;
 	}
-	
+
 	// Return the TRUE/FALSE result code
 	return retval;
 }
@@ -251,11 +251,11 @@ SphereGeneralPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnBrowseButton (void) 
+SphereGeneralPropPageClass::OnBrowseButton (void)
 {
 	CFileDialog dialog (	TRUE,
 								".tga",
-								NULL,
+								nullptr,
 								OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
 								"Textures files (*.tga)|*.tga||",
 								::AfxGetMainWnd ());
@@ -266,7 +266,7 @@ SphereGeneralPropPageClass::OnBrowseButton (void)
 		SetModified ();
 	}
 
-	return ;	
+	return ;
 }
 
 
@@ -313,8 +313,8 @@ SphereGeneralPropPageClass::OnNotify
 	//	Update the spinner control if necessary
 	//
 	NMHDR *header = (NMHDR *)lParam;
-	if ((header != NULL) && (header->code == UDN_DELTAPOS)) {
-		LPNMUPDOWN updown = (LPNMUPDOWN)lParam;		
+	if ((header != nullptr) && (header->code == UDN_DELTAPOS)) {
+		LPNMUPDOWN updown = (LPNMUPDOWN)lParam;
 		::Update_Spinner_Buddy (header->hwndFrom, updown->iDelta);
 	}
 
@@ -329,7 +329,7 @@ SphereGeneralPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnChangeLifetimeEdit (void) 
+SphereGeneralPropPageClass::OnChangeLifetimeEdit (void)
 {
 	SetModified ();
 	return ;
@@ -362,7 +362,7 @@ SphereGeneralPropPageClass::OnCommand
 )
 {
 	switch (LOWORD (wParam))
-	{		
+	{
 		case IDC_FILENAME_EDIT:
 		case IDC_NAME_EDIT:
 		case IDC_LIFETIME_EDIT:

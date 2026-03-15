@@ -23,14 +23,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: DrawModule.h /////////////////////////////////////////////////////////////////////////////////
-// Author: 
-// Desc:	 
+// Author:
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DRAWMODULE_H_
-#define __DRAWMODULE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameType.h"
@@ -41,6 +38,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Matrix3D;
 class RenderCost;
+class OBBoxClass;
 
 // TYPES //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,18 +64,18 @@ class DrawModule : public DrawableModule
 	MAKE_STANDARD_MODULE_MACRO_ABC( DrawModule )
 
 public:
-	
+
 	DrawModule( Thing *thing, const ModuleData* moduleData );
 	static ModuleType getModuleType() { return MODULETYPE_DRAW; }
 	static Int getInterfaceMask() { return MODULEINTERFACE_DRAW; }
-	
+
 	virtual void doDrawModule(const Matrix3D* transformMtx) = 0;
 
 	virtual void setShadowsEnabled(Bool enable) = 0;
-	virtual void releaseShadows(void) = 0;	///< frees all shadow resources used by this module - used by Options screen.
-	virtual void allocateShadows(void) = 0; ///< create shadow resources if not already present. Used by Options screen.
+	virtual void releaseShadows() = 0;	///< frees all shadow resources used by this module - used by Options screen.
+	virtual void allocateShadows() = 0; ///< create shadow resources if not already present. Used by Options screen.
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)
 	virtual void getRenderCost(RenderCost & rc) const { };  ///< estimates the render cost of this draw module
 #endif
 
@@ -86,29 +84,29 @@ public:
 	virtual void setTerrainDecalOpacity(Real o) {};
 
 	virtual void setFullyObscuredByShroud(Bool fullyObscured) = 0;
-	
+
 	virtual Bool isVisible() const { return true; }	///< for limiting tree sway, etc to visible objects
 
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) = 0;
 	virtual void reactToGeometryChange() = 0;
-	
+
 	virtual Bool isLaser() const { return false; }
 
 	// interface acquisition
-	virtual ObjectDrawInterface* getObjectDrawInterface() { return NULL; }
-	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return NULL; }
+	virtual ObjectDrawInterface* getObjectDrawInterface() { return nullptr; }
+	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return nullptr; }
 
-	virtual DebrisDrawInterface* getDebrisDrawInterface() { return NULL; }
-	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return NULL; }
+	virtual DebrisDrawInterface* getDebrisDrawInterface() { return nullptr; }
+	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return nullptr; }
 
-	virtual TracerDrawInterface* getTracerDrawInterface() { return NULL; }
-	virtual const TracerDrawInterface* getTracerDrawInterface() const { return NULL; }
+	virtual TracerDrawInterface* getTracerDrawInterface() { return nullptr; }
+	virtual const TracerDrawInterface* getTracerDrawInterface() const { return nullptr; }
 
-	virtual RopeDrawInterface* getRopeDrawInterface() { return NULL; }
-	virtual const RopeDrawInterface* getRopeDrawInterface() const { return NULL; }
+	virtual RopeDrawInterface* getRopeDrawInterface() { return nullptr; }
+	virtual const RopeDrawInterface* getRopeDrawInterface() const { return nullptr; }
 
-	virtual LaserDrawInterface* getLaserDrawInterface() { return NULL; }
-	virtual const LaserDrawInterface* getLaserDrawInterface() const { return NULL; }
+	virtual LaserDrawInterface* getLaserDrawInterface() { return nullptr; }
+	virtual const LaserDrawInterface* getLaserDrawInterface() const { return nullptr; }
 
 };
 inline DrawModule::DrawModule( Thing *thing, const ModuleData* moduleData ) : DrawableModule( thing, moduleData ) { }
@@ -125,7 +123,7 @@ class DebrisDrawInterface
 {
 public:
 	virtual void setModelName(AsciiString name, Color color, ShadowType t) = 0;
-	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString final, const FXList* finalFX) = 0;
+	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX) = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -157,12 +155,16 @@ public:
 
 	// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
 	virtual Bool clientOnly_getRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform) const = 0;
+
+	// (gth) C&C3 adding these accessors to render object properties
+	virtual Bool clientOnly_getRenderObjBoundBox(OBBoxClass * boundbox) const = 0;
+	virtual Bool clientOnly_getRenderObjBoneTransform(const AsciiString & boneName,Matrix3D * set_tm) const = 0;
 	/**
 		Find the bone(s) with the given name and return their positions and/or transforms in the given arrays.
 		We look for a bone named "boneNamePrefixQQ", where QQ is 01, 02, 03, etc, starting at the
 		value of "startIndex". Want to look for just a specific boneName with no numeric suffix?
-		just pass zero (0) for startIndex. (no, we never look for "boneNamePrefix00".) 
-		We copy up to 'maxBones' into the array(s), and return the total count found. 
+		just pass zero (0) for startIndex. (no, we never look for "boneNamePrefix00".)
+		We copy up to 'maxBones' into the array(s), and return the total count found.
 
 		NOTE: this returns the positions and transform for the "ideal" model... that is,
 		at its default rotation and scale, located at (0,0,0). You'll have to concatenate
@@ -176,7 +178,7 @@ public:
 	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos) const = 0;
 	virtual void updateProjectileClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ) = 0; ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
 	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ) = 0; ///< This will do visual feedback on Supplies carried
-	virtual void notifyDrawModuleDependencyCleared( ) = 0; ///< if you were waiting for something before you drew, it's ready now
+	virtual void notifyDrawModuleDependencyCleared() = 0; ///< if you were waiting for something before you drew, it's ready now
 
 	virtual void setHidden(Bool h) = 0;
 	virtual void replaceModelConditionState(const ModelConditionFlags& a) = 0;
@@ -187,7 +189,7 @@ public:
 	virtual void setSelectable(Bool selectable) = 0;
 
 	/**
-		This call says, "I want the current animation (if any) to take n frames to complete a single cycle". 
+		This call says, "I want the current animation (if any) to take n frames to complete a single cycle".
 		If it's a looping anim, each loop will take n frames. someday, we may want to add the option to insert
 		"pad" frames at the start and/or end, but for now, we always just "stretch" the animation to fit.
 		Note that you must call this AFTER setting the condition codes.
@@ -196,12 +198,12 @@ public:
 
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",
-		and is smart about transition states... if there is a transition state 
-		"inbetween", it is included in the completion time.
+		and is smart about transition states... if there is a transition state
+		"in between", it is included in the completion time.
 	*/
 	virtual void setAnimationCompletionTime(UnsignedInt numFrames) = 0;
-	virtual Bool updateBonesForClientParticleSystems( void ) = 0;///< this will reposition particle systems on the fly ML
-	
+	virtual Bool updateBonesForClientParticleSystems() = 0;///< this will reposition particle systems on the fly ML
+
 	/**
 	  This call is used to pause or resume an animation.
 	*/
@@ -211,11 +213,11 @@ public:
 	virtual void showSubObject( const AsciiString& name, Bool show ) = 0;
 
 	/**
-		This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f". 
+		This call asks, "In the current animation (if any) how far along are you, from 0.0f to 1.0f".
 	*/
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
-	virtual Real getAnimationScrubScalar( void ) const { return 0.0f;};
+	virtual Real getAnimationScrubScalar() const { return 0.0f;};
 #endif
 };
 
@@ -224,21 +226,21 @@ public:
 class RenderCost
 {
 public:
-	RenderCost(void) { clear(); }
-	~RenderCost(void) { }
+	RenderCost() { clear(); }
+	~RenderCost() { }
 
-	void	clear(void) { m_drawCallCount = m_sortedMeshCount = m_boneCount = m_skinMeshCount = m_shadowDrawCount = 0; }
+	void	clear() { m_drawCallCount = m_sortedMeshCount = m_boneCount = m_skinMeshCount = m_shadowDrawCount = 0; }
 	void	addDrawCalls(int count) { m_drawCallCount += count; }
 	void	addSortedMeshes(int count) { m_sortedMeshCount += count; }
 	void	addSkinMeshes(int count) { m_skinMeshCount += count; }
 	void	addBones(int count) { m_boneCount += count; }
 	void	addShadowDrawCalls(int count) { m_shadowDrawCount += count; }
 
-	int		getDrawCallCount(void) { return m_drawCallCount; }
-	int		getSortedMeshCount(void) { return m_sortedMeshCount; }
-	int		getSkinMeshCount(void) { return m_skinMeshCount; }
-	int		getBoneCount(void) { return m_boneCount; }
-	int		getShadowDrawCount(void) { return m_shadowDrawCount; }
+	int		getDrawCallCount() { return m_drawCallCount; }
+	int		getSortedMeshCount() { return m_sortedMeshCount; }
+	int		getSkinMeshCount() { return m_skinMeshCount; }
+	int		getBoneCount() { return m_boneCount; }
+	int		getShadowDrawCount() { return m_shadowDrawCount; }
 
 protected:
 
@@ -248,7 +250,3 @@ protected:
 	int		m_boneCount;
 	int		m_shadowDrawCount;
 };
-
-
-#endif // __DRAWMODULE_H_
-

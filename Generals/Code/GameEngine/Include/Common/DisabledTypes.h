@@ -25,12 +25,9 @@
 // FILE: DisabledTypes.h //////////////////////////////////////////////////////////////////////////
 // Author: Kris Morness, September 2002
 // Desc:  Defines all the types of disabled statii any given object can have.
-///////////////////////////////////////////////////////////////////////////////////////////////////	
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DISABLED_TYPES_H_
-#define __DISABLED_TYPES_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
@@ -48,10 +45,10 @@ enum DisabledType CPP_11(: Int)
 	DISABLED_HELD,	      //Special case -- held means it can fire and isHeld checks to make sure ONLY held is set!
 	DISABLED_PARALYZED,   //Battle plans have changed, and unit is confused/paralyzed
 	DISABLED_UNMANNED,		//Vehicle is unmanned
-	DISABLED_UNDERPOWERED,//Seperate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
+	DISABLED_UNDERPOWERED,//Separate from ScriptUnderpowered, the owning player has insufficient power.  Energy status controls this
 	DISABLED_FREEFALL,    //This unit has been disabled via being in free fall
 
-	//These ones are specificially for scripts to enable/reenable!
+	//These ones are specifically for scripts to enable/reenable!
 	DISABLED_SCRIPT_DISABLED,
 	DISABLED_SCRIPT_UNDERPOWERED,
 
@@ -66,13 +63,13 @@ typedef BitFlags<DISABLED_COUNT>	DisabledMaskType;
 #define MAKE_DISABLED_MASK4(k,a,b,c) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c))
 #define MAKE_DISABLED_MASK5(k,a,b,c,d) DisabledMaskType(DisabledMaskType::kInit, (k), (a), (b), (c), (d))
 
-inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t) 
-{ 
-	return m.test(t); 
+inline Bool TEST_DISABLEDMASK(const DisabledMaskType& m, DisabledType t)
+{
+	return m.test(t);
 }
 
-inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask) 
-{ 
+inline Bool TEST_DISABLEDMASK_ANY(const DisabledMaskType& m, const DisabledMaskType& mask)
+{
 	return m.anyIntersectionWith(mask);
 }
 
@@ -81,14 +78,14 @@ inline Bool TEST_DISABLEDMASK_MULTI(const DisabledMaskType& m, const DisabledMas
 	return m.testSetAndClear(mustBeSet, mustBeClear);
 }
 
-inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m) 
-{ 
-	return m.any(); 
+inline Bool DISABLEDMASK_ANY_SET(const DisabledMaskType& m)
+{
+	return m.any();
 }
 
-inline void CLEAR_DISABLEDMASK(DisabledMaskType& m) 
-{ 
-	m.clear(); 
+inline void CLEAR_DISABLEDMASK(DisabledMaskType& m)
+{
+	m.clear();
 }
 
 inline void SET_ALL_DISABLEDMASK_BITS(DisabledMaskType& m)
@@ -108,7 +105,3 @@ inline void FLIP_DISABLEDMASK(DisabledMaskType& m)
 extern const char *TheDisabledNames[];
 extern DisabledMaskType DISABLEDMASK_NONE;	// inits to all zeroes
 extern DisabledMaskType DISABLEDMASK_ALL;		// inits to all bits set.
-void initDisabledMasks();
-
-#endif	// __DISABLED_TYPES_H_
-

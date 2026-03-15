@@ -92,11 +92,11 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CHierarchyPropPage::OnInitDialog (void) 
+CHierarchyPropPage::OnInitDialog (void)
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog();
-	
+
     if (m_stringHierarchyName.GetLength () > 0)
     {
         // Get a pointer to the hierarchy object from the asset manager
@@ -106,7 +106,7 @@ CHierarchyPropPage::OnInitDialog (void)
         if (pCHierarchy)
         {
             CString stringDesc;
-            stringDesc.Format (IDS_HIERARCHY_PROP_DESC, m_stringHierarchyName);
+            stringDesc.Format (IDS_HIERARCHY_PROP_DESC, static_cast<const char*>(m_stringHierarchyName));
 
             // Put the description onto the dialog
             SetDlgItemText (IDC_DESCRIPTION, stringDesc);
@@ -120,7 +120,7 @@ CHierarchyPropPage::OnInitDialog (void)
 
             // Add the name column to the list control
             m_subObjectListCtrl.InsertColumn (0, "Name");
-            
+
             // Loop through all the subobjects and add them to the list control
             for (int iObject = 0;
                  iObject < iSubObjects;
@@ -135,7 +135,7 @@ CHierarchyPropPage::OnInitDialog (void)
 
                     // Free this object
                     pCSubObject->Release_Ref ();
-                    pCSubObject = NULL;
+                    pCSubObject = nullptr;
                 }
             }
 
@@ -144,12 +144,12 @@ CHierarchyPropPage::OnInitDialog (void)
 
             // Free the object
             pCHierarchy->Release_Ref ();
-            pCHierarchy = NULL;
-        }        
+            pCHierarchy = nullptr;
+        }
 	}
 
     GetParent ()->GetDlgItem (IDOK)->ShowWindow (SW_HIDE);
-    GetParent ()->GetDlgItem (IDCANCEL)->SetWindowText ("Close");	
+    GetParent ()->GetDlgItem (IDCANCEL)->SetWindowText ("Close");
     return TRUE;
 }
 
@@ -163,11 +163,11 @@ CHierarchyPropPage::OnDblclkSubObjectList
     NMHDR* pNMHDR,
     LRESULT* pResult
 )
-{    
+{
     // Get the currently selected item
     int iIndex = m_subObjectListCtrl.GetNextItem (-1, LVNI_ALL | LVNI_SELECTED);
     if (iIndex != -1)
-    {    
+    {
         // Create a one-page property sheet that will display property information
         // for the mesh
         CMeshPropPage meshPropPage (m_subObjectListCtrl.GetItemText (iIndex, 0));
@@ -176,7 +176,7 @@ CHierarchyPropPage::OnDblclkSubObjectList
         // Show the property sheet
         propertySheet.DoModal ();
     }
-	
+
 	(*pResult) = 0;
     return ;
 }

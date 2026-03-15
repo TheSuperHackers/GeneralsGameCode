@@ -38,7 +38,6 @@
 #include "aabtreecull.h"
 #include "chunkio.h"
 #include "iostruct.h"
-#include <string.h>
 #include "sphere.h"
 #include "colmath.h"
 #include "colmathinlines.h"
@@ -61,7 +60,7 @@ const uint32 AABTREE_CURRENT_VERSION = 0x00010000;
 /*
 ** Chunk Id's used by the aabtree code to save itself into a file
 */
-enum 
+enum
 {
 	AABTREE_CHUNK_VERSION					= 0x00000001,	// version wrapper, contains 32bit version #
 	AABTREE_CHUNK_AABNODE					= 0x00000101,	// generic aab-node wrapper
@@ -98,7 +97,7 @@ struct IOAABNodeStruct
 *************************************************************************/
 static inline CullableClass * get_first_object(AABTreeNodeClass * node)
 {
-	return node->Object;		
+	return node->Object;
 }
 
 static inline CullableClass * get_next_object(CullableClass * obj)
@@ -112,16 +111,16 @@ static inline CullableClass * get_next_object(CullableClass * obj)
 ** AABTreeCullSystemClass Implementation
 **
 *************************************************************************/
-AABTreeCullSystemClass::AABTreeCullSystemClass(void) :
+AABTreeCullSystemClass::AABTreeCullSystemClass() :
 	ObjectCount(0),
 	NodeCount(0),
-	IndexedNodes(NULL)
+	IndexedNodes(nullptr)
 {
 	RootNode = new AABTreeNodeClass;
 	Re_Index_Nodes();
 }
 
-AABTreeCullSystemClass::~AABTreeCullSystemClass(void)
+AABTreeCullSystemClass::~AABTreeCullSystemClass()
 {
 	// Delete all links and release-ref all cullables:
 	int nidx;
@@ -133,10 +132,8 @@ AABTreeCullSystemClass::~AABTreeCullSystemClass(void)
 	delete RootNode;
 
 	// Delete indexed node pointer array
-	if (IndexedNodes) {
-		delete[] IndexedNodes;
-		IndexedNodes = NULL;
-	}
+	delete[] IndexedNodes;
+	IndexedNodes = nullptr;
 }
 
 
@@ -144,7 +141,7 @@ void AABTreeCullSystemClass::Add_Object_Internal(CullableClass * obj,int node_in
 {
 	WWASSERT_PRINT
 	(
-		(obj->Get_Culling_System() == NULL),
+		(obj->Get_Culling_System() == nullptr),
 		"AABTreeCullSystemClass::Add -- Object is already in another culling system!\n"
 	);
 
@@ -175,10 +172,10 @@ void AABTreeCullSystemClass::Remove_Object_Internal(CullableClass * obj)
 	WWASSERT(node);
 
 	node->Remove_Object(obj);
-	link->Set_Culling_System(NULL);
+	link->Set_Culling_System(nullptr);
 	delete link;
-	obj->Set_Cull_Link(NULL);
-	
+	obj->Set_Cull_Link(nullptr);
+
 	ObjectCount--;
 	WWASSERT(ObjectCount >= 0);
 	obj->Release_Ref();
@@ -228,19 +225,19 @@ void AABTreeCullSystemClass::Collect_Objects(const SphereClass & sphere)
 	Collect_Objects_Recursive(RootNode,sphere);
 }
 
-int AABTreeCullSystemClass::Partition_Node_Count(void) const
+int AABTreeCullSystemClass::Partition_Node_Count() const
 {
 	return Partition_Node_Count_Recursive(RootNode);
 }
 
-int AABTreeCullSystemClass::Partition_Tree_Depth(void) const
+int AABTreeCullSystemClass::Partition_Tree_Depth() const
 {
 	int get_max_depth = 0;
 	Partition_Tree_Depth_Recursive(RootNode,0,get_max_depth);
 	return get_max_depth;
 }
 
-int AABTreeCullSystemClass::Object_Count(void) const
+int AABTreeCullSystemClass::Object_Count() const
 {
 	return ObjectCount;
 }
@@ -265,7 +262,7 @@ void AABTreeCullSystemClass::Partition_Tree_Depth_Recursive(AABTreeNodeClass * n
 	}
 	if (node->Front) {
 		Partition_Tree_Depth_Recursive(node->Front,cur_depth,max_depth);
-	} 
+	}
 	if (node->Back) {
 		Partition_Tree_Depth_Recursive(node->Back,cur_depth,max_depth);
 	}
@@ -282,7 +279,7 @@ void AABTreeCullSystemClass::Add_Object_Recursive(AABTreeNodeClass * node,Cullab
 		big_child = small_child;
 		small_child = tmp;
 	}
-	
+
 	// Can we fit in the smaller child?
 	if (small_child && small_child->Box.Contains(obj->Get_Cull_Box())) {
 		Add_Object_Recursive(small_child,obj);
@@ -307,7 +304,7 @@ void AABTreeCullSystemClass::Add_Loaded_Object(AABTreeNodeClass * node,CullableC
 
 	WWASSERT_PRINT
 	(
-		(obj->Get_Culling_System() == NULL),
+		(obj->Get_Culling_System() == nullptr),
 		"AABTreeCullSystemClass::Add_Loaded_Object -- Object is already in another culling system!\n"
 	);
 
@@ -319,7 +316,7 @@ void AABTreeCullSystemClass::Add_Loaded_Object(AABTreeNodeClass * node,CullableC
 	obj->Add_Ref();
 }
 
-void AABTreeCullSystemClass::Re_Partition(void)
+void AABTreeCullSystemClass::Re_Partition()
 {
 	/*
 	** transfer all objects to a temporary node
@@ -384,7 +381,7 @@ void AABTreeCullSystemClass::Re_Partition(const AABoxClass & bounds,SimpleDynVec
 	*/
 	dummy_node->Box.Extent.Set(0,0,0);
 	CullableClass * obj = get_first_object(dummy_node);
-	while (obj != NULL) {
+	while (obj != nullptr) {
 		Update_Culling(obj);
 		obj = get_first_object(dummy_node);
 	}
@@ -397,12 +394,12 @@ void AABTreeCullSystemClass::Re_Partition(const AABoxClass & bounds,SimpleDynVec
 	RootNode->Box.Extent.Set(FLT_MAX,FLT_MAX,FLT_MAX);
 }
 
-void AABTreeCullSystemClass::Update_Bounding_Boxes(void)
+void AABTreeCullSystemClass::Update_Bounding_Boxes()
 {
 	Update_Bounding_Boxes_Recursive(RootNode);
 }
 
-const AABoxClass & AABTreeCullSystemClass::Get_Bounding_Box(void)
+const AABoxClass & AABTreeCullSystemClass::Get_Bounding_Box()
 {
 	WWASSERT(RootNode);
 	return RootNode->Box;
@@ -417,7 +414,7 @@ void AABTreeCullSystemClass::Get_Node_Bounds(int node_id,AABoxClass * set_bounds
 	}
 }
 
-void AABTreeCullSystemClass::Reset_Statistics(void)
+void AABTreeCullSystemClass::Reset_Statistics()
 {
 	Stats.NodeCount = NodeCount;
 	Stats.NodesAccepted = 0;
@@ -425,7 +422,7 @@ void AABTreeCullSystemClass::Reset_Statistics(void)
 	Stats.NodesRejected = 0;
 }
 
-const AABTreeCullSystemClass::StatsStruct & AABTreeCullSystemClass::Get_Statistics(void)
+const AABTreeCullSystemClass::StatsStruct & AABTreeCullSystemClass::Get_Statistics()
 {
 	return Stats;
 }
@@ -468,7 +465,7 @@ void AABTreeCullSystemClass::Collect_Objects_Recursive(AABTreeNodeClass * node,c
 	if (node->Box.Contains(point) == false) {
 		NODE_REJECTED();
 		return;
-	} 
+	}
 
 	NODE_ACCEPTED();
 
@@ -512,7 +509,7 @@ void AABTreeCullSystemClass::Collect_Objects_Recursive(AABTreeNodeClass * node,c
 		Collect_Objects_Recursive(node);
 		return;
 	}
-	
+
 	NODE_ACCEPTED();
 
 	/*
@@ -556,7 +553,7 @@ void AABTreeCullSystemClass::Collect_Objects_Recursive(AABTreeNodeClass * node,c
 		Collect_Objects_Recursive(node);
 		return;
 	}
-	
+
 	NODE_ACCEPTED();
 
 	/*
@@ -604,7 +601,7 @@ void AABTreeCullSystemClass::Collect_Objects_Recursive
 	}
 
 	NODE_ACCEPTED();
-	
+
 	/*
 	** Test any objects in this node
 	*/
@@ -634,7 +631,7 @@ void AABTreeCullSystemClass::Collect_Objects_Recursive(AABTreeNodeClass * node,c
 {
 	/*
 	** Is the point inside this volume?
-	*/	
+	*/
 	if (CollisionMath::Overlap_Test (node->Box, sphere) == CollisionMath::OUTSIDE) {
 		NODE_REJECTED();
 		return;
@@ -698,8 +695,8 @@ void AABTreeCullSystemClass::Update_Bounding_Boxes_Recursive(AABTreeNodeClass * 
 
 void AABTreeCullSystemClass::Load(ChunkLoadClass & cload)
 {
-	WWASSERT_PRINT(Object_Count() == 0, "Remove all objects from AAB-Culling system before loading!\n"); 
-	
+	WWASSERT_PRINT(Object_Count() == 0, "Remove all objects from AAB-Culling system before loading!");
+
 	delete RootNode;
 	RootNode = new AABTreeNodeClass;
 
@@ -736,15 +733,15 @@ void AABTreeCullSystemClass::Load_Nodes(AABTreeNodeClass * node,ChunkLoadClass &
 	// Open the node description
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == AABTREE_CHUNK_AABNODE);
-	
-	// Load the node description.  
+
+	// Load the node description.
 	// Older files will contain a chunk named AABTREE_CHUNK_AABNODE_INFO while newer
 	// files will contain AABTREE_CHUNK_AABNODE_VARIABLES which contains the IOAABNodeStruct
 	// in a micro-chunk.
 	IOAABNodeStruct node_desc;
 	memset(&node_desc,0,sizeof(IOAABNodeStruct));
-	
-	cload.Open_Chunk(); 
+
+	cload.Open_Chunk();
 	if (cload.Cur_Chunk_ID() == AABTREE_CHUNK_AABNODE_INFO) {
 
 		// Loading the legacy format...
@@ -752,14 +749,14 @@ void AABTreeCullSystemClass::Load_Nodes(AABTreeNodeClass * node,ChunkLoadClass &
 		cload.Read(&node_desc,sizeof(node_desc));
 
 	} else if (cload.Cur_Chunk_ID() == AABTREE_CHUNK_AABNODE_VARIABLES) {
-	
+
 		// Loading the new format, contains micro chunks...
 		while (cload.Open_Micro_Chunk()) {
 			switch(cload.Cur_Micro_Chunk_ID()) {
 				READ_MICRO_CHUNK(cload,AABTREE_VARIABLE_NODESTRUCT,node_desc);
 				READ_MICRO_CHUNK(cload,AABTREE_VARIABLE_USERDATA,node->UserData);
 			}
-			cload.Close_Micro_Chunk();	
+			cload.Close_Micro_Chunk();
 		}
 	}
 	cload.Close_Chunk();
@@ -780,19 +777,19 @@ void AABTreeCullSystemClass::Load_Nodes(AABTreeNodeClass * node,ChunkLoadClass &
 	cload.Close_Chunk();
 
 	// Close the node description
-	cload.Close_Chunk(); 
+	cload.Close_Chunk();
 
 	// if we are supposed to have a front child, load it
 	if (node_desc.Attributes & AABNODE_ATTRIBUTE_FRONT_CHILD) {
-		WWASSERT(node->Front == NULL);
+		WWASSERT(node->Front == nullptr);
 		node->Front = new AABTreeNodeClass();
 		node->Front->Parent = node;
 		Load_Nodes(node->Front,cload);
 	}
-	
+
 	// if we have a back child, load it
 	if (node_desc.Attributes & AABNODE_ATTRIBUTE_BACK_CHILD) {
-		WWASSERT(node->Back == NULL);
+		WWASSERT(node->Back == nullptr);
 		node->Back = new AABTreeNodeClass();
 		node->Back->Parent = node;
 		Load_Nodes(node->Back,cload);
@@ -833,7 +830,7 @@ void AABTreeCullSystemClass::Save_Nodes(AABTreeNodeClass * node,ChunkSaveClass &
 	if (node->Back) {
 		node_desc.Attributes |= AABNODE_ATTRIBUTE_BACK_CHILD;
 	}
-	
+
 	WRITE_MICRO_CHUNK(csave,AABTREE_VARIABLE_NODESTRUCT,node_desc);
 	WRITE_MICRO_CHUNK(csave,AABTREE_VARIABLE_USERDATA,node->UserData);
 	csave.End_Chunk();
@@ -882,16 +879,15 @@ void AABTreeCullSystemClass::Save_Object_Linkage(ChunkSaveClass & csave,Cullable
 }
 
 
-void AABTreeCullSystemClass::Re_Index_Nodes(void)
+void AABTreeCullSystemClass::Re_Index_Nodes()
 {
-	if (IndexedNodes != NULL) {
-		delete[] IndexedNodes;
-		IndexedNodes = NULL;
-	}
+	delete[] IndexedNodes;
+	IndexedNodes = nullptr;
+
 	NodeCount = Partition_Node_Count();
 	WWASSERT(NodeCount > 0);
 	IndexedNodes = new AABTreeNodeClass *[NodeCount];
-	
+
 	int counter = 0;
 	Re_Index_Nodes_Recursive(RootNode,counter);
 	WWASSERT(counter == NodeCount);
@@ -919,34 +915,31 @@ void AABTreeCullSystemClass::Re_Index_Nodes_Recursive(AABTreeNodeClass * node,in
 ** AABTreeNodeClass Implementation
 **
 *************************************************************************/
-AABTreeNodeClass::AABTreeNodeClass(void) :
-	Index(0),	
+AABTreeNodeClass::AABTreeNodeClass() :
+	Index(0),
 	Box(Vector3(0,0,0),Vector3(0,0,0)),
-	Parent(NULL),
-	Front(NULL),
-	Back(NULL),
-	Object(NULL),
+	Parent(nullptr),
+	Front(nullptr),
+	Back(nullptr),
+	Object(nullptr),
 	UserData(0)
 {
 }
 
-AABTreeNodeClass::~AABTreeNodeClass(void)
+AABTreeNodeClass::~AABTreeNodeClass()
 {
 	// objects should be removed before deleting the partition tree
-	WWASSERT(Object == NULL);
-	
+	WWASSERT(Object == nullptr);
+
 	// delete our children
-	if (Front) {
-		delete Front;
-		Front = NULL;
-	}
-	if (Back) {
-		delete Back;
-		Back = NULL;
-	}
+	delete Front;
+	Front = nullptr;
+
+	delete Back;
+	Back = nullptr;
 }
 
-void AABTreeNodeClass::Compute_Bounding_Box(void)
+void AABTreeNodeClass::Compute_Bounding_Box()
 {
 	/*
 	** make the children update their boxes first
@@ -955,20 +948,20 @@ void AABTreeNodeClass::Compute_Bounding_Box(void)
 		Front->Compute_Bounding_Box();
 	}
 
-	if (Back) { 
+	if (Back) {
 		Back->Compute_Bounding_Box();
 	}
 
 	Compute_Local_Bounding_Box();
 }
 
-void AABTreeNodeClass::Compute_Local_Bounding_Box(void)
+void AABTreeNodeClass::Compute_Local_Bounding_Box()
 {
 	/*
 	** Now make sure we bound our children
 	*/
 	MinMaxAABoxClass box(Vector3(FLT_MAX,FLT_MAX,FLT_MAX),Vector3(-FLT_MAX,-FLT_MAX,-FLT_MAX));
-	
+
 	if (Front) {
 		box.Add_Box(Front->Box);
 	}
@@ -990,7 +983,7 @@ void AABTreeNodeClass::Compute_Local_Bounding_Box(void)
 	Box.Init(box);
 }
 
-float AABTreeNodeClass::Compute_Volume(void)
+float AABTreeNodeClass::Compute_Volume()
 {
 	return Box.Volume();
 }
@@ -999,15 +992,15 @@ void AABTreeNodeClass::Add_Object(CullableClass * obj,bool update_bounds)
 {
 	AABTreeLinkClass * link = (AABTreeLinkClass *)obj->Get_Cull_Link();
 	WWASSERT(link);
-	
+
 	link->Node = this;
 	link->NextObject = Object;
 	Object = obj;
 
 	if (update_bounds) {
-		// if this is the only object and we have no children, just copy 
+		// if this is the only object and we have no children, just copy
 		// the object's bounding box, otherwise, add it to what we have
-		if ((Object_Count() == 1) && (Front == NULL) && (Back == NULL)) {
+		if ((Object_Count() == 1) && (Front == nullptr) && (Back == nullptr)) {
 			Box = obj->Get_Cull_Box();
 		} else {
 			Box.Add_Box(obj->Get_Cull_Box());
@@ -1020,9 +1013,9 @@ void AABTreeNodeClass::Remove_Object(CullableClass * obj)
 	WWASSERT(obj);
 
 	// find the given object in our linked list
-	CullableClass * prevobj = NULL;
+	CullableClass * prevobj = nullptr;
 	CullableClass * curobj = Object;
-	
+
 	while (curobj) {
 
 		AABTreeLinkClass * link = (AABTreeLinkClass *)curobj->Get_Cull_Link();
@@ -1036,8 +1029,8 @@ void AABTreeNodeClass::Remove_Object(CullableClass * obj)
 				Object = link->NextObject;
 			}
 
-			link->NextObject = NULL;
-			link->Node = NULL;
+			link->NextObject = nullptr;
+			link->Node = nullptr;
 			return;
 		}
 
@@ -1060,13 +1053,13 @@ void AABTreeNodeClass::Transfer_Objects(AABTreeNodeClass * dummy_node)
 	if (Front) {
 		Front->Transfer_Objects(dummy_node);
 	}
-	
+
 	if (Back) {
 		Back->Transfer_Objects(dummy_node);
 	}
 }
 
-int AABTreeNodeClass::Object_Count(void)
+int AABTreeNodeClass::Object_Count()
 {
 	CullableClass * obj = Object;
 	int count = 0;
@@ -1083,10 +1076,10 @@ CullableClass * AABTreeNodeClass::Peek_Object(int index)
 {
 	int count = 0;
 	CullableClass * obj = Object;
-	WWASSERT(obj != NULL);
+	WWASSERT(obj != nullptr);
 
 	while (obj && (count != index)) {
-		count++;				
+		count++;
 		obj = ((AABTreeLinkClass *)obj->Get_Cull_Link())->NextObject;
 	}
 	WWASSERT(count == index);
@@ -1101,7 +1094,7 @@ CullableClass * AABTreeNodeClass::Peek_Object(int index)
 **
 ******************************************************************************************/
 
-void AABTreeNodeClass::Partition(void)
+void AABTreeNodeClass::Partition()
 {
 	/*
 	** if we're down to only 2 objects, we're done
@@ -1114,8 +1107,8 @@ void AABTreeNodeClass::Partition(void)
 	*/
 	SimpleDynVecClass<AABoxClass> boxes(obj_count);
 	CullableClass * obj = Object;
-	while (obj != NULL) {
-		boxes.Add(obj->Get_Cull_Box());		
+	while (obj != nullptr) {
+		boxes.Add(obj->Get_Cull_Box());
 		obj = get_next_object(obj);
 	}
 
@@ -1126,7 +1119,7 @@ void AABTreeNodeClass::Partition(void)
 	SplitChoiceStruct sc;
 	Select_Splitting_Plane(&sc,boxes);
 	boxes.Resize(0);
-	
+
 	/*
 	** If there was no good split, just leave all of
 	** the objects in this node
@@ -1136,7 +1129,7 @@ void AABTreeNodeClass::Partition(void)
 	}
 
 	/*
-	** Split the tiles 
+	** Split the tiles
 	*/
 	AABTreeNodeClass * front = new AABTreeNodeClass;
 	AABTreeNodeClass * back = new AABTreeNodeClass;
@@ -1151,11 +1144,11 @@ void AABTreeNodeClass::Partition(void)
 		Front->Partition();
 	} else {
 		delete front;
-		front = NULL;
+		front = nullptr;
 	}
-	
+
 	/*
-	** Build a back tree if necessary. 
+	** Build a back tree if necessary.
 	*/
 	if (back->Object_Count() > 0) {
 		Back = back;
@@ -1163,7 +1156,7 @@ void AABTreeNodeClass::Partition(void)
 		Back->Partition();
 	} else {
 		delete back;
-		back = NULL;
+		back = nullptr;
 	}
 }
 
@@ -1172,21 +1165,21 @@ void AABTreeNodeClass::Partition(void)
 void AABTreeNodeClass::Split_Objects(const AABTreeNodeClass::SplitChoiceStruct & sc,AABTreeNodeClass * front,AABTreeNodeClass * back)
 {
 	// This function assumes that this node is a leaf
-	WWASSERT(Front == NULL);
-	WWASSERT(Back == NULL);
+	WWASSERT(Front == nullptr);
+	WWASSERT(Back == nullptr);
 	WWASSERT(Object_Count() == sc.FrontCount + sc.BackCount);
 
 	int fcount = 0;
 	int bcount = 0;
-	
+
 	// unlink all of our objects, relinking them to the appropriate node
 	while (Object) {
-		
+
 		// pull the object out of this node
 		CullableClass * obj = Object;
 		Remove_Object(Object);
-		
-		// decide which node to add the object to, 
+
+		// decide which node to add the object to,
 		// NOTE: we have to use the same convention as Compute_Score!
 		const AABoxClass & box = obj->Get_Cull_Box();
 
@@ -1209,7 +1202,7 @@ void AABTreeNodeClass::Split_Objects(const AABTreeNodeClass::SplitChoiceStruct &
 	back->Box = sc.BackBox;
 	back->Box.Extent += Vector3(WWMATH_EPSILON,WWMATH_EPSILON,WWMATH_EPSILON);
 
-	// when we are all done, the counts should match. 
+	// when we are all done, the counts should match.
 	WWASSERT(fcount == sc.FrontCount);
 	WWASSERT(bcount == sc.BackCount);
 }
@@ -1236,7 +1229,7 @@ void AABTreeNodeClass::Partition(const AABoxClass & bounds,SimpleDynVecClass<AAB
 	*/
 	SplitChoiceStruct sc;
 	Select_Splitting_Plane(&sc,boxes);
-	
+
 	/*
 	** If there was no good split, just leave all of
 	** the objects in this node
@@ -1262,18 +1255,18 @@ void AABTreeNodeClass::Partition(const AABoxClass & bounds,SimpleDynVecClass<AAB
 		Front->Parent = this;
 		Front->Partition(sc.FrontBox,frontboxes);
 	} else {
-		Front = NULL;
+		Front = nullptr;
 	}
-	
+
 	/*
-	** Build a back tree if necessary. 
+	** Build a back tree if necessary.
 	*/
 	if (backboxes.Count() > 0) {
 		Back = new AABTreeNodeClass;
 		Back->Parent = this;
 		Back->Partition(sc.BackBox,backboxes);
 	} else {
-		Back = NULL;
+		Back = nullptr;
 	}
 }
 
@@ -1289,7 +1282,7 @@ void AABTreeNodeClass::Split_Boxes
 
 	// copy each box in the input array into the appropriate output array
 	for (int i=0; i<boxes.Count(); i++) {
-		
+
 		const AABoxClass & box = boxes[i];
 
 		if (CollisionMath::Overlap_Test(sc.Plane,box.Center) == CollisionMath::FRONT) {
@@ -1303,7 +1296,7 @@ void AABTreeNodeClass::Split_Boxes
 		}
 	}
 
-	// when we are all done, the counts should match. 
+	// when we are all done, the counts should match.
 	WWASSERT(frontboxes.Count() == sc.FrontCount);
 	WWASSERT(backboxes.Count() == sc.BackCount);
 }
@@ -1324,18 +1317,18 @@ void AABTreeNodeClass::Select_Splitting_Plane
 	SimpleDynVecClass<AABoxClass> & boxes
 )
 {
-	const int NUM_TRYS = 300;
+	const int NUM_TRIES = 300;
 
 	/*
 	** Try putting axis-aligned planes through some random vertices
 	*/
-	int objcount = boxes.Count();	
-	int trys = 0;
-	for (trys = 0; trys < MIN(NUM_TRYS,objcount); trys++) {
+	int objcount = boxes.Count();
+	int tries = 0;
+	for (tries = 0; tries < MIN(NUM_TRIES,objcount); tries++) {
 
 		int obj_index;
 		SplitChoiceStruct test;
-		
+
 		/*
 		** Select a random object
 		*/
@@ -1368,7 +1361,7 @@ void AABTreeNodeClass::Select_Splitting_Plane
 	/*
 	** Still haven't found a valid splitting plane, uh-oh.
 	*/
-	if ((trys >= MIN(NUM_TRYS,objcount)) && (sc->Cost == FLT_MAX)) {
+	if ((tries >= MIN(NUM_TRIES,objcount)) && (sc->Cost == FLT_MAX)) {
 		Select_Splitting_Plane_Brute_Force(sc,boxes);
 		return;
 	}
@@ -1379,18 +1372,18 @@ void AABTreeNodeClass::Select_Splitting_Plane_Brute_Force
 	AABTreeNodeClass::SplitChoiceStruct * sc,
 	SimpleDynVecClass<AABoxClass> & boxes
 )
-{ 
+{
 	/*
 	** Try putting axis-aligned planes along each face of each box
 	*/
-	int objcount = boxes.Count();	
+	int objcount = boxes.Count();
 	for (int obj_index = 0; obj_index < objcount; obj_index++) {
 
 		AAPlaneClass plane;
 		const AABoxClass & box = boxes[obj_index];
 
 		/*
-		** Try each face of this box 
+		** Try each face of this box
 		*/
 		for (int plane_index = 0; plane_index < 6; plane_index++) {
 			SplitChoiceStruct test;
@@ -1420,8 +1413,8 @@ void AABTreeNodeClass::Select_Splitting_Plane_Brute_Force
 	** Notify user that we couldn't split this node
 	*/
 #ifdef WWDEBUG
-	if (sc->Cost == FLT_MAX) {		
-		WWDEBUG_SAY(("Unable to split node!  objcount = %d. (%.2f,%.2f,%.2f)\r\n",objcount,Box.Center.X, Box.Center.Y, Box.Center.Z));
+	if (sc->Cost == FLT_MAX) {
+		WWDEBUG_SAY(("Unable to split node!  objcount = %d. (%.2f,%.2f,%.2f)",objcount,Box.Center.X, Box.Center.Y, Box.Center.Z));
 	}
 #endif
 }
@@ -1443,13 +1436,13 @@ void AABTreeNodeClass::Compute_Score
 
 		if (CollisionMath::Overlap_Test(sc->Plane,box.Center) == CollisionMath::FRONT) {
 
-			sc->FrontCount++;	
-			sc->FrontBox.Add_Box(box);	
+			sc->FrontCount++;
+			sc->FrontBox.Add_Box(box);
 
 		} else {
-			
-			sc->BackCount++;	
-			sc->BackBox.Add_Box(box);	
+
+			sc->BackCount++;
+			sc->BackBox.Add_Box(box);
 
 		}
 	}
@@ -1459,9 +1452,9 @@ void AABTreeNodeClass::Compute_Score
 	*/
 	float back_cost = sc->BackBox.Volume() * sc->BackCount;
 	float front_cost = sc->FrontBox.Volume() * sc->FrontCount;
-	
+
 	sc->Cost = front_cost + back_cost;
-	
+
 	if ((sc->FrontCount == 0) || (sc->BackCount == 0)) {
 		sc->Cost = FLT_MAX;
 	}
@@ -1480,15 +1473,15 @@ AABTreeIterator::AABTreeIterator(AABTreeCullSystemClass * tree) :
 	Tree(tree),
 	CurNodeIndex(0)
 {
-	WWASSERT(Tree != NULL);
+	WWASSERT(Tree != nullptr);
 }
-	
-void AABTreeIterator::Reset(void)
+
+void AABTreeIterator::Reset()
 {
 	CurNodeIndex = 0;
 }
 
-bool AABTreeIterator::Enter_Parent(void)						
+bool AABTreeIterator::Enter_Parent()
 {
 	validate();
 	if (CurNodeIndex != 0) {
@@ -1499,11 +1492,11 @@ bool AABTreeIterator::Enter_Parent(void)
 	}
 }
 
-bool AABTreeIterator::Enter_Sibling(void)
+bool AABTreeIterator::Enter_Sibling()
 {
 	validate();
 	if (CurNodeIndex != 0) {
-		
+
 		/*
 		** find which child of our parent we are
 		*/
@@ -1514,7 +1507,7 @@ bool AABTreeIterator::Enter_Sibling(void)
 		/*
 		** if our parent doesn't have two children, we don't have a sibling
 		*/
-		if ((parent_front == NULL) || (parent_back == NULL)) {
+		if ((parent_front == nullptr) || (parent_back == nullptr)) {
 			return false;
 		}
 
@@ -1537,13 +1530,13 @@ bool AABTreeIterator::Enter_Sibling(void)
 	return false;
 }
 
-bool AABTreeIterator::Has_Front_Child(void)
+bool AABTreeIterator::Has_Front_Child()
 {
 	validate();
-	return (Tree->IndexedNodes[CurNodeIndex]->Front != NULL);
+	return (Tree->IndexedNodes[CurNodeIndex]->Front != nullptr);
 }
 
-bool AABTreeIterator::Enter_Front_Child(void)
+bool AABTreeIterator::Enter_Front_Child()
 {
 	validate();
 	if (Has_Front_Child()) {
@@ -1553,13 +1546,13 @@ bool AABTreeIterator::Enter_Front_Child(void)
 	return false;
 }
 
-bool AABTreeIterator::Has_Back_Child(void)
+bool AABTreeIterator::Has_Back_Child()
 {
 	validate();
-	return (Tree->IndexedNodes[CurNodeIndex]->Back != NULL);
+	return (Tree->IndexedNodes[CurNodeIndex]->Back != nullptr);
 }
 
-bool AABTreeIterator::Enter_Back_Child(void)
+bool AABTreeIterator::Enter_Back_Child()
 {
 	if (Has_Back_Child()) {
 		CurNodeIndex = Tree->IndexedNodes[CurNodeIndex]->Back->Index;
@@ -1568,17 +1561,17 @@ bool AABTreeIterator::Enter_Back_Child(void)
 	return false;
 }
 
-int AABTreeIterator::Get_Current_Node_Index(void)
+int AABTreeIterator::Get_Current_Node_Index()
 {
 	return CurNodeIndex;
 }
 
 void AABTreeIterator::Get_Current_Box(AABoxClass * set_box)
 {
-	Tree->Get_Node_Bounds(CurNodeIndex,set_box);	
+	Tree->Get_Node_Bounds(CurNodeIndex,set_box);
 }
 
-void AABTreeIterator::validate(void)
+void AABTreeIterator::validate()
 {
 	if ((CurNodeIndex < 0) || (CurNodeIndex >= Tree->NodeCount)) {
 		CurNodeIndex = 0;
@@ -1610,7 +1603,7 @@ void AABTreeIterator::validate(void)
 	uint16					BackIndex;
 	CullableClass *		Object;
 	uint32					UserData;
-	
+
 	Total Size:				28 bytes
 
 */

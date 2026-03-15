@@ -40,8 +40,8 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) 
-{ 
+TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData )
+{
 	m_currentBonus = WEAPONBONUSCONDITION_INVALID;
 	m_frameToRemove = 0;
 
@@ -50,7 +50,7 @@ TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *mo
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TempWeaponBonusHelper::~TempWeaponBonusHelper( void )
+TempWeaponBonusHelper::~TempWeaponBonusHelper()
 {
 
 }
@@ -115,7 +115,7 @@ void TempWeaponBonusHelper::crc( Xfer *xfer )
 	// object helper crc
 	ObjectHelper::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -136,16 +136,16 @@ void TempWeaponBonusHelper::xfer( Xfer *xfer )
 	xfer->xferUser( &m_currentBonus, sizeof(WeaponBonusConditionType) );// an enum
 	xfer->xferUnsignedInt( &m_frameToRemove );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::loadPostProcess( void )
+void TempWeaponBonusHelper::loadPostProcess()
 {
 
 	// object helper base class
 	ObjectHelper::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

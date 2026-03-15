@@ -26,7 +26,7 @@
 // Author: Graham Smallwood, September 2002
 // Desc:	 UpgradeModule that sets a new override string for Command Set look ups
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/Player.h"
@@ -36,16 +36,16 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "CommandSet",			INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
-		{ "CommandSetAlt",	INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_newCommandSetAlt ) },
-		{ "TriggerAlt",			INI::parseAsciiString,	NULL, offsetof( CommandSetUpgradeModuleData, m_triggerAlt ) },
-		{ 0, 0, 0, 0 }
+		{ "CommandSet",			INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_newCommandSet ) },
+		{ "CommandSetAlt",	INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_newCommandSetAlt ) },
+		{ "TriggerAlt",			INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_triggerAlt ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -58,28 +58,28 @@ CommandSetUpgrade::CommandSetUpgrade( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CommandSetUpgrade::~CommandSetUpgrade( void )
+CommandSetUpgrade::~CommandSetUpgrade()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void CommandSetUpgrade::upgradeImplementation( )
+void CommandSetUpgrade::upgradeImplementation()
 {
-	Object *obj = getObject();	
+	Object *obj = getObject();
 
-	const char * upgradeAlt = getCommandSetUpgradeModuleData()->m_triggerAlt.str();
+	const AsciiString& upgradeAlt = getCommandSetUpgradeModuleData()->m_triggerAlt;
 	const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( upgradeAlt );
-	
+
 	if (upgradeTemplate)
 	{
-		UpgradeMaskType upgradeMask = upgradeTemplate->getUpgradeMask();
+		const UpgradeMaskType& upgradeMask = upgradeTemplate->getUpgradeMask();
 
 		// See if upgrade is found in the player completed upgrades
 		Player *player = obj->getControllingPlayer();
 		if (player)
 		{
-			UpgradeMaskType playerMask = player->getCompletedUpgradeMask();
+			const UpgradeMaskType& playerMask = player->getCompletedUpgradeMask();
 			if (playerMask.testForAny(upgradeMask))
 			{
 				obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSetAlt );
@@ -89,7 +89,7 @@ void CommandSetUpgrade::upgradeImplementation( )
 		}
 
 		// See if upgrade is found in the object completed upgrades
-		UpgradeMaskType objMask = obj->getObjectCompletedUpgradeMask();
+		const UpgradeMaskType& objMask = obj->getObjectCompletedUpgradeMask();
 		if (objMask.testForAny(upgradeMask))
 		{
 			obj->setCommandSetStringOverride( getCommandSetUpgradeModuleData()->m_newCommandSetAlt );
@@ -111,7 +111,7 @@ void CommandSetUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -129,15 +129,15 @@ void CommandSetUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CommandSetUpgrade::loadPostProcess( void )
+void CommandSetUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

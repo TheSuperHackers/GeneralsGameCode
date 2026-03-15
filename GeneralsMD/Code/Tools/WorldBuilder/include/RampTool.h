@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: RampTool.h 
+// FILE: RampTool.h
 /*---------------------------------------------------------------------------*/
 /* EA Pacific                                                                */
 /* Confidential Information	                                                 */
@@ -32,8 +32,6 @@
 /*---------------------------------------------------------------------------*/
 
 #pragma once
-#ifndef _H_RAMPTOOL_
-#define _H_RAMPTOOL_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////
 #include "Tool.h"
@@ -41,14 +39,14 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
 
-class RampTool : public Tool 
+class RampTool : public Tool
 {
 	Coord3D mStartPoint;
 	Coord3D mEndPoint;
 	Coord3D mCurvePoint;
 
 	Bool mIsMouseDown;
-	
+
 	public:
 		RampTool();
 		virtual void activate();
@@ -64,6 +62,3 @@ class RampTool : public Tool
 		void drawFeedback(Coord3D* endPoint);
 		void applyRamp(CWorldBuilderDoc* pDoc);
 };
-
-
-#endif /* _H_RAMPTOOL_ */

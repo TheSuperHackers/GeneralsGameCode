@@ -16,8 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _TARGA_H_
-#define _TARGA_H_
+#pragma once
+
 /****************************************************************************
 *
 *         C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S
@@ -26,7 +26,7 @@
 *
 * FILE
 *     Targa.h
-* 
+*
 * DESCRIPTION
 *     Targa image file class definitions.
 *
@@ -197,13 +197,13 @@ typedef struct _TGA2Ratio
  *                 TGA2Footer.
  *
  * ExtSize     - Extension area size. (495 bytes for 2.0)
- * AuthName    - Name of the person who created image (NULL terminated ASCII)
- * AuthComment - Comments of the author (NULL terminated ASCII)
+ * AuthName    - Name of the person who created image (null-terminated ASCII)
+ * AuthComment - Comments of the author (null-terminated ASCII)
  * DateStamp   - Date the file was created. (See TGA2DateStamp)
  * TimeStamp   - Time the file was created. (See TGA2TimeStamp)
- * JobName     - Name of job image belongs to (NULL terminated ASCII)
+ * JobName     - Name of job image belongs to (null-terminated ASCII)
  * JobTime     - Elapsed time of the job.
- * SoftID      - ID of software used to create image (NULL terminated ASCII)
+ * SoftID      - ID of software used to create image (null-terminated ASCII)
  * SoftVer     - Version number of software used.
  * KeyColor    - Tranparent color value.
  * Aspect      - Pixel aspect ratio.
@@ -260,29 +260,29 @@ class Targa
 	{
 	public:
 		/* Constructor/destructor */
-		Targa(void);
+		Targa();
 		~Targa();
 
 		/* Function prototypes. */
 		long Open(const char* name, long mode);
-		void Close(void);
+		void Close();
 
 		long Load(const char* name, char* palette, char* image,bool invert_image=true);
 		long Load(const char* name, long flags, bool invert_image=true);
 		long Save(const char* name, long flags, bool addextension = false);
-		
-		void XFlip(void);
-		void YFlip(void);
+
+		void XFlip();
+		void YFlip();
 
 		char* SetImage(char* buffer);
-		char* GetImage(void) const {return (mImage);}
-		
-		char* SetPalette(char* buffer);
-		char* GetPalette(void) const {return (mPalette);}
-		
-		bool IsCompressed(void);
+		char* GetImage() const {return (mImage);}
 
-		TGA2Extension* GetExtension(void);
+		char* SetPalette(char* buffer);
+		char* GetPalette() const {return (mPalette);}
+
+		bool IsCompressed();
+
+		TGA2Extension* GetExtension();
 
 		TGAHeader Header;
 
@@ -300,14 +300,14 @@ class Targa
 
 	private:
 		// Utility functions
-		long DecodeImage(void);
-		long EncodeImage(void);
-		void InvertImage(void);
+		long DecodeImage();
+		long EncodeImage();
+		void InvertImage();
 
 		// These functions are for ease of ifdef'ing between standard io calls
 		// and FileClass.
-		void Clear_File(void);
-		bool Is_File_Open(void);
+		void Clear_File();
+		bool Is_File_Open();
 		bool File_Open_Read(const char* name);
 		bool File_Open_Write(const char* name);
 		bool File_Open_ReadWrite(const char* name);
@@ -315,6 +315,3 @@ class Targa
 		int File_Read(void *buffer, int size);
 		int File_Write(void *buffer, int size);
 	};
-
-#endif /* _TARGA_H_ */
-

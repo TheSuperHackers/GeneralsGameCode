@@ -24,12 +24,12 @@
 
 // FILE: W3DTabControl.cpp ///////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -115,17 +115,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabZero( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabZero( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 0 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabZero( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabZero( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabZero( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabZero( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -149,17 +149,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabOne( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabOne( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 1 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabOne( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabOne( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabOne( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabOne( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -183,17 +183,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabTwo( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabTwo( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 2 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabTwo( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabTwo( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabTwo( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabTwo( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -217,17 +217,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabThree( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabThree( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 3 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabThree( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabThree( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabThree( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabThree( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -251,17 +251,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabFour( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabFour( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 4 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabFour( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabFour( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabFour( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabFour( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -285,17 +285,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabFive( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabFive( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 5 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabFive( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabFive( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabFive( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabFive( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -319,17 +319,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabSix( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabSix( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 6 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabSix( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabSix( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabSix( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabSix( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -353,17 +353,17 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		{//Disabled
 			color			= GadgetTabControlGetDisabledColorTabSeven( tabControl );
 			border		= GadgetTabControlGetDisabledBorderColorTabSeven( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 7 )
 		{//Hilited/Active
 			color			= GadgetTabControlGetHiliteColorTabSeven( tabControl );
 			border		= GadgetTabControlGetHiliteBorderColorTabSeven( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			color			= GadgetTabControlGetEnabledColorTabSeven( tabControl );
 			border		= GadgetTabControlGetEnabledBorderColorTabSeven( tabControl );
-		} 
+		}
 
 		// box and border
 		if( border != WIN_COLOR_UNDEFINED )
@@ -378,12 +378,12 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 		}
 	}
 
-}  // end W3DGadgetTabControlDraw
+}
 
 // W3DGadgetRadioButtonImageDraw ==============================================
 /** Draw tabs with user supplied images */
 //=============================================================================
-void W3DGadgetTabControlImageDraw( GameWindow *tabControl, 
+void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 																	WinInstanceData *instData )
 {
 	ICoord2D origin, size;
@@ -418,30 +418,30 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		tabDeltaY = tabHeight;
 	}
 
-	const Image *image = NULL;
+	const Image *image = nullptr;
 
 	if( tabData->tabCount >= 1 )//Does exist
 	{
 		if( tabData->subPaneDisabled[0] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabZero( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 0 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabZero( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabZero( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -454,23 +454,23 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[1] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabOne( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 1 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabOne( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabOne( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -483,23 +483,23 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[2] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabTwo( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 2 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabTwo( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabTwo( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -512,23 +512,23 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[3] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabThree( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 3 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabThree( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabThree( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -541,23 +541,23 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[4] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabFour( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 4 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabFour( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabFour( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -570,23 +570,23 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[5] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabFive( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 5 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabFive( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabFive( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -599,23 +599,23 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[6] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabSix( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 6 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabSix( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabSix( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
@@ -628,25 +628,25 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 		if( tabData->subPaneDisabled[7] )
 		{//Disabled
 			image			= GadgetTabControlGetDisabledImageTabSeven( tabControl );
-		}  
+		}
 		else if( tabData->activeTab == 7 )
 		{//Hilited/Active
 			image			= GadgetTabControlGetHiliteImageTabSeven( tabControl );
-		}  
+		}
 		else
 		{//Just enabled
 			image			= GadgetTabControlGetEnabledImageTabSeven( tabControl );
-		} 
+		}
 
-		if( image != NULL )
+		if( image != nullptr )
 		{
 			TheWindowManager->winDrawImage( image,
 																			tabX,
 																			tabY,
 																			tabX + tabWidth,
-																			tabY + tabHeight 
+																			tabY + tabHeight
 																			);
 		}
 	}
 
-}  // end W3DGadgetTabControlImageDraw
+}

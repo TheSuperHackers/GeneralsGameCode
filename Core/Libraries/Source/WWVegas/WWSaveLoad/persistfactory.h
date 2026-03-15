@@ -34,16 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-
-
-#ifndef PERSISTFACTORY_H
-#define PERSISTFACTORY_H
 
 #include "always.h"
 #include "bittype.h"
@@ -64,10 +55,10 @@ class PersistFactoryClass
 {
 public:
 
-	PersistFactoryClass(void);
-	virtual ~PersistFactoryClass(void);
+	PersistFactoryClass();
+	virtual ~PersistFactoryClass();
 
-	virtual uint32				Chunk_ID(void) const												= 0;
+	virtual uint32				Chunk_ID() const												= 0;
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const	 						= 0;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj)	const	= 0;
 
@@ -90,14 +81,14 @@ template <class T,int CHUNKID> class SimplePersistFactoryClass : public PersistF
 {
 public:
 
-	virtual uint32				Chunk_ID(void) const										{ return CHUNKID; }
+	virtual uint32				Chunk_ID() const										{ return CHUNKID; }
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj) const;
 
 	/*
 	** Internal chunk id's
 	*/
-	enum 
+	enum
 	{
 		SIMPLEFACTORY_CHUNKID_OBJPOINTER		=	 0x00100100,
 		SIMPLEFACTORY_CHUNKID_OBJDATA
@@ -105,11 +96,11 @@ public:
 };
 
 
-template<class T, int CHUNKID> PersistClass * 
-SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const 
+template<class T, int CHUNKID> PersistClass *
+SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 {
 	T * new_obj = W3DNEW T;
-	T * old_obj = NULL;
+	T * old_obj = nullptr;
 
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == SIMPLEFACTORY_CHUNKID_OBJPOINTER);
@@ -127,7 +118,7 @@ SimplePersistFactoryClass<T,CHUNKID>::Load(ChunkLoadClass & cload) const
 
 
 template<class T, int CHUNKID> void
-SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass * obj) const 
+SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass * obj) const
 {
 	uint32 objptr = (uint32)obj;
 	csave.Begin_Chunk(SIMPLEFACTORY_CHUNKID_OBJPOINTER);
@@ -138,6 +129,3 @@ SimplePersistFactoryClass<T,CHUNKID>::Save(ChunkSaveClass & csave,PersistClass *
 	obj->Save(csave);
 	csave.End_Chunk();
 }
-
-
-#endif

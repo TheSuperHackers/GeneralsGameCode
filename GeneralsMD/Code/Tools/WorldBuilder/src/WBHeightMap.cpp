@@ -18,12 +18,12 @@
 
 // FILE: Heightmap.cpp ////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -37,7 +37,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-//         Includes                                                      
+//         Includes
 //-----------------------------------------------------------------------------
 #include "WBHeightMap.h"
 #include "Common/GlobalData.h"
@@ -47,7 +47,7 @@
 
 #define dontUSE_FLAT_HEIGHT_MAP
 //-----------------------------------------------------------------------------
-//         Private Data                                                     
+//         Private Data
 //-----------------------------------------------------------------------------
 
 //=============================================================================
@@ -71,7 +71,7 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 #ifndef USE_FLAT_HEIGHT_MAP
 		m_originX = 0;
 		m_originY = 0;
- 		updateBlock(0, 0, m_x-1, m_y-1, m_map, NULL);
+ 		updateBlock(0, 0, m_x-1, m_y-1, m_map, nullptr);
 #endif
 	}
 }
@@ -91,13 +91,10 @@ void WBHeightMap::flattenHeights(void) {
 	for (j=0; j<m_numVBTilesY; j++)
 		for (i=0; i<m_numVBTilesX; i++)
 		{
-			static int count = 0;
-			count++;
-			Int numVertex = (VERTEX_BUFFER_TILE_LENGTH*2)*(VERTEX_BUFFER_TILE_LENGTH*2);
-			DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexBufferTiles[j*m_numVBTilesX+i]);
+			DX8VertexBufferClass::WriteLockClass lockVtxBuffer(getVertexBufferTile(i, j));
 			VERTEX_FORMAT *vbHardware = (VERTEX_FORMAT*)lockVtxBuffer.Get_Vertex_Array();
 			Int vtx;
-			for (vtx=0; vtx<numVertex; vtx++) {
+			for (vtx=0; vtx<HEIGHTMAP_VERTEX_NUM; vtx++) {
 				vbHardware->z = theZ;
 				vbHardware++;
 			}
@@ -172,7 +169,7 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 	Int EndCellY;
 	const Int overhang = 2*32; // Allow picking past the edge for scrolling & objects.
  	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
-	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang), 
+	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang),
 		MAP_XY_FACTOR*(m_map->getYExtent()+overhang), MAP_HEIGHT_SCALE*m_map->getMaxHeightValue()+MAP_XY_FACTOR);
 	MinMaxAABoxClass mmbox(minPt, maxPt);
 	hbox.Init(mmbox);
@@ -232,7 +229,7 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 
 	Int offset;
 	for (offset = 1; offset < 5; offset *= 3) {
-		for (Y=StartCellY-offset; Y<=EndCellY+offset; Y++) { 
+		for (Y=StartCellY-offset; Y<=EndCellY+offset; Y++) {
 			//if (Y<0) continue;
 			//if (Y>=m_map->getYExtent()-1) continue;
 
@@ -262,10 +259,10 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 				P3.Z=THE_Z;
 
 
-				tri.V[0] = &P0; 
+				tri.V[0] = &P0;
 				tri.V[1] = &P1;
 				tri.V[2] = &P2;
-				
+
 				tri.N = &normal;
 
 				tri.Compute_Normal();
@@ -276,10 +273,10 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 					return true;
 
 				//top triangle
-				tri.V[0] = &P2; 
+				tri.V[0] = &P2;
 				tri.V[1] = &P3;
 				tri.V[2] = &P0;
-				
+
 				tri.N = &normal;
 
 				tri.Compute_Normal();
@@ -311,7 +308,7 @@ void WBHeightMap::Render(RenderInfoClass & rinfo)
 	FlatHeightMapRenderObjClass::Render(rinfo);
 #else
 	HeightMapRenderObjClass::Render(rinfo);
-#endif 
+#endif
 }
 
 

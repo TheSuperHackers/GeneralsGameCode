@@ -24,12 +24,12 @@
 
 // FILE: GadgetComboBox.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,9 +44,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __GADGETCOMBOBOX_H_
-#define __GADGETCOMBOBOX_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -75,7 +72,7 @@ extern void *GadgetComboBoxGetItemData( GameWindow *comboBox, Int index );
 extern Int  GadgetComboBoxGetLength( GameWindow *comboBox );
 
 extern void GadgetComboBoxHideList( GameWindow *comboBox );
-// Functions that set the ComboBoxData Paramaters
+// Functions that set the ComboBoxData Parameters
 extern void GadgetComboBoxSetAsciiOnly(GameWindow *comboBox, Bool isAsciiOnly  );
 extern void GadgetComboBoxSetLettersAndNumbersOnly(GameWindow *comboBox, Bool isLettersAndNumbersOnly  );
 extern void GadgetComboBoxSetMaxChars( GameWindow *comboBox, Int maxChars );
@@ -94,17 +91,17 @@ extern void GadgetComboBoxSetIMECompositeTextColors( GameWindow *comboBox, Color
 // and those slider buttons and thumb as well as the drop down button and edit box.
 //
 extern void GadgetComboBoxSetColors( GameWindow *comboBox,
-																	  Color enabledColor, 
+																	  Color enabledColor,
 																	  Color enabledBorderColor,
-																	  Color enabledSelectedItemColor, 
+																	  Color enabledSelectedItemColor,
 																	  Color enabledSelectedItemBorderColor,
-																	  Color disabledColor, 
+																	  Color disabledColor,
 																	  Color disabledBorderColor,
-																	  Color disabledSelectedItemColor, 
+																	  Color disabledSelectedItemColor,
 																	  Color disabledSelectedItemBorderColor,
-																	  Color hiliteColor, 
+																	  Color hiliteColor,
 																	  Color hiliteBorderColor,
-																	  Color hiliteSelectedItemColor, 
+																	  Color hiliteSelectedItemColor,
 																	  Color hiliteSelectedItemBorderColor );
 
 inline void GadgetComboBoxSetEnabledImage( GameWindow *g, const Image *image )													{ g->winSetEnabledImage( 0, image ); }
@@ -170,7 +167,7 @@ inline GameWindow *GadgetComboBoxGetDropDownButton( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->dropDownButton )
 		return comboBoxData->dropDownButton;
-	return NULL;
+	return nullptr;
 }
 inline GameWindow *GadgetComboBoxGetListBox( GameWindow *g )
 {
@@ -178,7 +175,7 @@ inline GameWindow *GadgetComboBoxGetListBox( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->listBox)
 		return comboBoxData->listBox;
-	return NULL;
+	return nullptr;
 
 }
 
@@ -188,11 +185,8 @@ inline GameWindow *GadgetComboBoxGetEditBox( GameWindow *g )
 
 	if( comboBoxData && comboBoxData->editBox)
 		return comboBoxData->editBox;
-	return NULL;
+	return nullptr;
 
 }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __GADGETLISTBOX_H_
-

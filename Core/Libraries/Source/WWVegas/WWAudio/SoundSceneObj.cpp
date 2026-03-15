@@ -44,7 +44,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 //	Save/Load constants
 //////////////////////////////////////////////////////////////////////////////////
-enum 
+enum
 {
 	CHUNKID_VARIABLES			= 0x03270459,
 	CHUNKID_BASE_CLASS
@@ -69,14 +69,14 @@ CriticalSectionClass	SoundSceneObjClass::m_IDListMutex;
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//	Mutex managment
+//	Mutex management
 //////////////////////////////////////////////////////////////////////////////////
 /*
 class HandleMgrClass
 {
 public:
-	HandleMgrClass (void)	{ SoundSceneObjClass::m_IDListMutex = ::CreateMutex (NULL, FALSE, NULL); }
-	~HandleMgrClass (void)	{ ::CloseHandle (SoundSceneObjClass::m_IDListMutex); }
+	HandleMgrClass ()	{ SoundSceneObjClass::m_IDListMutex = ::CreateMutex (nullptr, FALSE, nullptr); }
+	~HandleMgrClass ()	{ ::CloseHandle (SoundSceneObjClass::m_IDListMutex); }
 
 };
 
@@ -88,13 +88,13 @@ HandleMgrClass _GlobalMutexHandleMgr;
 //	SoundSceneObjClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-SoundSceneObjClass::SoundSceneObjClass (void)
-	:	m_Scene (NULL),
-		m_PhysWrapper (NULL),
-		m_pCallback (NULL),
-		m_AttachedObject (NULL),
+SoundSceneObjClass::SoundSceneObjClass ()
+	:	m_Scene (nullptr),
+		m_PhysWrapper (nullptr),
+		m_pCallback (nullptr),
+		m_AttachedObject (nullptr),
 		m_UserData (0),
-		m_UserObj (NULL),
+		m_UserObj (nullptr),
 		m_ID (SOUND_OBJ_DEFAULT_ID),
 		m_RegisteredEvents (AudioCallbackClass::EVENT_NONE)
 {
@@ -111,12 +111,12 @@ SoundSceneObjClass::SoundSceneObjClass (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
-	:	m_Scene (NULL),
-		m_PhysWrapper (NULL),
-		m_pCallback (NULL),
-		m_AttachedObject (NULL),
+	:	m_Scene (nullptr),
+		m_PhysWrapper (nullptr),
+		m_pCallback (nullptr),
+		m_AttachedObject (nullptr),
 		m_UserData (0),
-		m_UserObj (NULL),
+		m_UserObj (nullptr),
 		m_ID (SOUND_OBJ_DEFAULT_ID),
 		m_RegisteredEvents (AudioCallbackClass::EVENT_NONE)
 {
@@ -133,7 +133,7 @@ SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
 //	~SoundSceneObjClass
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-SoundSceneObjClass::~SoundSceneObjClass (void)
+SoundSceneObjClass::~SoundSceneObjClass ()
 {
 	REF_PTR_RELEASE (m_UserObj);
 	REF_PTR_RELEASE (m_AttachedObject);
@@ -155,7 +155,7 @@ SoundSceneObjClass::operator= (const SoundSceneObjClass &src)
 	m_RegisteredEvents	= src.m_RegisteredEvents;
 
 	Attach_To_Object (src.m_AttachedObject, src.m_AttachedBone);
-	
+
 	PersistClass::operator= ((const PersistClass &)src);
 	return (*this);
 }
@@ -175,7 +175,7 @@ SoundSceneObjClass::Attach_To_Object
 {
 	REF_PTR_SET (m_AttachedObject, render_obj);
 
-	if (m_AttachedObject != NULL && bone_name != NULL) {
+	if (m_AttachedObject != nullptr && bone_name != nullptr) {
 		m_AttachedBone = m_AttachedObject->Get_Bone_Index (bone_name);
 	} else {
 		m_AttachedBone = -1;
@@ -198,7 +198,7 @@ SoundSceneObjClass::Attach_To_Object
 )
 {
 	if (m_AttachedObject != render_obj || m_AttachedBone != bone_index) {
-		
+
 		//
 		//	Record the attachment
 		//
@@ -221,23 +221,23 @@ SoundSceneObjClass::Attach_To_Object
 //
 //////////////////////////////////////////////////////////////////////////////
 void
-SoundSceneObjClass::Apply_Auto_Position (void)
+SoundSceneObjClass::Apply_Auto_Position ()
 {
 	// If the sound is attached to an object, then update its transform
 	// based on this link.
-	if (m_AttachedObject != NULL) {
-		
+	if (m_AttachedObject != nullptr) {
+
 		// Determine which transform to use
-		Matrix3D transform (1);		
+		Matrix3D transform (1);
 		if (m_AttachedBone >= 0) {
 			transform = m_AttachedObject->Get_Bone_Transform (m_AttachedBone);
 		} else {
 			transform = m_AttachedObject->Get_Transform ();
-		
+
 			//
 			//	Convert the camera's transform to an object transform
 			//
-			if (m_AttachedObject->Class_ID () == RenderObjClass::CLASSID_CAMERA) {				
+			if (m_AttachedObject->Class_ID () == RenderObjClass::CLASSID_CAMERA) {
 				Matrix3D cam_to_world (Vector3 (0, 0, -1), Vector3 (-1, 0, 0), Vector3 (0, 1, 0), Vector3 (0, 0, 0));
 #ifdef ALLOW_TEMPORARIES
 				transform = transform * cam_to_world;
@@ -267,12 +267,12 @@ SoundSceneObjClass::Save (ChunkSaveClass &csave)
 		PersistClass::Save (csave);
 	csave.End_Chunk ();
 
-	csave.Begin_Chunk (CHUNKID_VARIABLES);		
+	csave.Begin_Chunk (CHUNKID_VARIABLES);
 		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_OBJ, m_AttachedObject);
-		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_BONE, m_AttachedBone);		
+		WRITE_MICRO_CHUNK (csave, VARID_ATTACHED_BONE, m_AttachedBone);
 		WRITE_MICRO_CHUNK (csave, VARID_USER_DATA, m_UserData);
 		WRITE_MICRO_CHUNK (csave, VARID_USER_OBJ, m_UserObj);
-		WRITE_MICRO_CHUNK (csave, VARID_ID, m_ID);		
+		WRITE_MICRO_CHUNK (csave, VARID_ID, m_ID);
 	csave.End_Chunk ();
 	return true;
 }
@@ -288,7 +288,7 @@ SoundSceneObjClass::Load (ChunkLoadClass &cload)
 {
 	uint32 id = SOUND_OBJ_DEFAULT_ID;
 
-	while (cload.Open_Chunk ()) {		
+	while (cload.Open_Chunk ()) {
 		switch (cload.Cur_Chunk_ID ()) {
 
 			case CHUNKID_BASE_CLASS:
@@ -336,10 +336,10 @@ SoundSceneObjClass::Load (ChunkLoadClass &cload)
 	//	We need to 'swizzle' the attached object pointer.  We saved the pointer's
 	// value, and need to map it (hopefully) to the new value.
 	//
-	if (m_AttachedObject != NULL) {
+	if (m_AttachedObject != nullptr) {
 		SaveLoadSystemClass::Request_Ref_Counted_Pointer_Remap ((RefCountClass **)&m_AttachedObject);
 	}
-	
+
 	return true;
 }
 
@@ -377,7 +377,7 @@ SoundSceneObjClass::Set_ID (uint32 id)
 
 	//
 	//	Reinsert the sound object in our sorted list
-	//	
+	//
 	Register_Sound_Object (this);
 	return ;
 }
@@ -390,7 +390,7 @@ SoundSceneObjClass::Set_ID (uint32 id)
 //////////////////////////////////////////////////////////////////////////////////
 void
 SoundSceneObjClass::Register_Sound_Object (SoundSceneObjClass *sound_obj)
-{	
+{
 	int sound_id = sound_obj->Get_ID ();
 	CriticalSectionClass::LockClass lock(m_IDListMutex);
 
@@ -409,7 +409,7 @@ SoundSceneObjClass::Register_Sound_Object (SoundSceneObjClass *sound_obj)
 
 			//
 			//	Insert the object into the list
-			//			
+			//
 			m_GlobalSoundList.Insert (index, sound_obj);
 		}
 	}
@@ -433,7 +433,7 @@ SoundSceneObjClass::Unregister_Sound_Object (SoundSceneObjClass *sound_obj)
 	//
 	int index = 0;
 	if (Find_Sound_Object (sound_obj->Get_ID (), &index)) {
-	
+
 		//
 		//	Remove the object from the list
 		//
@@ -454,11 +454,11 @@ SoundSceneObjClass::Find_Sound_Object (uint32 id_to_find, int *index)
 {
 	CriticalSectionClass::LockClass lock(m_IDListMutex);
 
-	bool found		= false;	
+	bool found		= false;
 	(*index)			= 0;
 	int min_index	= 0;
-	int max_index	= m_GlobalSoundList.Count () - 1;		
-	
+	int max_index	= m_GlobalSoundList.Count () - 1;
+
 	//
 	//	Keep looping until we've closed the window of possiblity
 	//

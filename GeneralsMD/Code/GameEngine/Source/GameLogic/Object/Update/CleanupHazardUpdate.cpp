@@ -46,11 +46,6 @@
 #include "GameLogic/WeaponSet.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -66,12 +61,12 @@ CleanupHazardUpdateModuleData::CleanupHazardUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "WeaponSlot",						INI::parseLookupList,						TheWeaponSlotTypeNamesLookupList, offsetof( CleanupHazardUpdateModuleData, m_weaponSlot ) },
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	NULL, offsetof( CleanupHazardUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									NULL, offsetof( CleanupHazardUpdateModuleData, m_scanRange ) },
-		{ 0, 0, 0, 0 }
+		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( CleanupHazardUpdateModuleData, m_scanFrames ) },
+		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( CleanupHazardUpdateModuleData, m_scanRange ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -83,15 +78,15 @@ CleanupHazardUpdate::CleanupHazardUpdate( Thing *thing, const ModuleData* module
 	m_nextScanFrames						= 0;
 	m_nextShotAvailableInFrames = 0;
 	m_inRange  									= false;
-	m_weaponTemplate						= NULL;
+	m_weaponTemplate						= nullptr;
 	m_moveRange									= 0.0f;
 	m_pos.zero();
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CleanupHazardUpdate::~CleanupHazardUpdate( void )
+CleanupHazardUpdate::~CleanupHazardUpdate()
 {
 
 }
@@ -102,13 +97,13 @@ void CleanupHazardUpdate::onObjectCreated()
 {
 	const CleanupHazardUpdateModuleData *data = getCleanupHazardUpdateModuleData();
 	Object *self = getObject();
-	
+
 	//Make sure we have a weapon template
 	self->setWeaponSetFlag( WEAPONSET_VETERAN );
 	Weapon *weapon = self->getWeaponInWeaponSlot( data->m_weaponSlot );
 	if( !weapon )
 	{
-		DEBUG_CRASH( ("CleanupHazardUpdate for %s doesn't have a valid weapon template", 
+		DEBUG_CRASH( ("CleanupHazardUpdate for %s doesn't have a valid weapon template",
 			getObject()->getTemplate()->getName().str() ) );
 		return;
 	}
@@ -129,7 +124,7 @@ void CleanupHazardUpdate::onObjectCreated()
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime CleanupHazardUpdate::update()
-{	
+{
 /// @todo srj use SLEEPY_UPDATE here
 	const CleanupHazardUpdateModuleData *data = getCleanupHazardUpdateModuleData();
 	Object *obj = getObject();
@@ -172,7 +167,7 @@ UpdateSleepTime CleanupHazardUpdate::update()
 	}
 	else if( m_moveRange )
 	{
-		//There's nothing nearby, so if we are cleaning up an area versus hazards 
+		//There's nothing nearby, so if we are cleaning up an area versus hazards
 		//immediately in range, set the AI to idle so it can advance to the next script!
 		AIUpdateInterface *ai = obj->getAI();
 		if( ai && (ai->isIdle() || ai->isBusy()) )
@@ -219,7 +214,7 @@ void CleanupHazardUpdate::fireWhenReady()
 		{
 			if( m_inRange )
 			{
-				//We were in range last frame, but the target has moved out of firing range, so 
+				//We were in range last frame, but the target has moved out of firing range, so
 				//re-evaluate by forcing a new scan.
 				m_nextScanFrames = GameLogicRandomValue( 0, 3 );
 				m_bestTargetID = INVALID_ID;
@@ -227,7 +222,7 @@ void CleanupHazardUpdate::fireWhenReady()
 				{
 					scanClosestTarget();
 					m_nextScanFrames = data->m_scanFrames;
-					target = NULL; //Set target to NULL so we don't shoot at it (might be out of range)
+					target = nullptr; //Set target to nullptr so we don't shoot at it (might be out of range)
 				}
 			}
 			else
@@ -237,7 +232,7 @@ void CleanupHazardUpdate::fireWhenReady()
 			}
 		}
 	}
-	
+
 	if( m_nextShotAvailableInFrames > 0 )
 	{
 		//We can't fire this frame.
@@ -266,12 +261,12 @@ Object* CleanupHazardUpdate::scanClosestTarget()
 {
 	const CleanupHazardUpdateModuleData *data = getCleanupHazardUpdateModuleData();
 	Object *me = getObject();
-	Object *bestTargetInRange = NULL;
+	Object *bestTargetInRange = nullptr;
 	m_bestTargetID = INVALID_ID;
 
 	PartitionFilterAcceptByKindOf kindFilter(MAKE_KINDOF_MASK(KINDOF_CLEANUP_HAZARD), KINDOFMASK_NONE);
 	PartitionFilterSameMapStatus filterMapStatus(getObject());
-	PartitionFilter* filters[] = { &kindFilter, &filterMapStatus, NULL };
+	PartitionFilter* filters[] = { &kindFilter, &filterMapStatus, nullptr };
 
 	if( m_moveRange > 0.0f )
 	{
@@ -285,7 +280,7 @@ Object* CleanupHazardUpdate::scanClosestTarget()
 		bestTargetInRange = ThePartitionManager->getClosestObject( me->getPosition(), data->m_scanRange, FROM_CENTER_2D, filters );
 	}
 
-	if( bestTargetInRange ) 
+	if( bestTargetInRange )
 	{
 		m_bestTargetID = bestTargetInRange->getID();
 	}
@@ -310,7 +305,7 @@ void CleanupHazardUpdate::setCleanupAreaParameters( const Coord3D *pos, Real ran
 		//CMD_FROM_AI important because it'll abort when other types are used -- like if a player
 		//or script orders the unit to do something else, we need a way to cancel this passive
 		//situation.
-		ai->aiMoveToPosition( pos, CMD_FROM_AI ); 
+		ai->aiMoveToPosition( pos, CMD_FROM_AI );
 	}
 }
 
@@ -323,7 +318,7 @@ void CleanupHazardUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -362,15 +357,15 @@ void CleanupHazardUpdate::xfer( Xfer *xfer )
 	// move range
 	xfer->xferReal( &m_moveRange );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CleanupHazardUpdate::loadPostProcess( void )
+void CleanupHazardUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

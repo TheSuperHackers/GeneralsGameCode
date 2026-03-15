@@ -30,9 +30,6 @@
 
 #pragma once
 
-#ifndef __REBUILD_HOLE_EXPOSE_DIE_H_
-#define __REBUILD_HOLE_EXPOSE_DIE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/INI.h"
 #include "GameLogic/Module/DieModule.h"
@@ -46,7 +43,7 @@ class RebuildHoleExposeDieModuleData : public DieModuleData
 
 public:
 
-	RebuildHoleExposeDieModuleData( void );
+	RebuildHoleExposeDieModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -69,9 +66,6 @@ public:
 	RebuildHoleExposeDie( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDie( const DamageInfo *damageInfo ); 
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 };
-
-
-#endif  // end __REBUILD_HOLE_EXPOSE_DIE_H_

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : MeshDeformPanel.cpp                                          * 
- *                                                                                             * 
- *                   Programmer : Patrick Smith                                                * 
- *                                                                                             * 
- *                   Start Date : 04/22/99                                                     * 
- *                                                                                             * 
- *                  Last Update : 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : MeshDeformPanel.cpp                                          *
+ *                                                                                             *
+ *                   Programmer : Patrick Smith                                                *
+ *                                                                                             *
+ *                   Start Date : 04/22/99                                                     *
+ *                                                                                             *
+ *                  Last Update :
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
@@ -63,7 +63,7 @@ MeshDeformPanelClass::Message_Proc
 )
 {
 	// Lookup the controlling object for this panel
-	MeshDeformPanelClass *panel_obj = MeshDeformPanelClass::Get_Object (hwnd);	
+	MeshDeformPanelClass *panel_obj = MeshDeformPanelClass::Get_Object (hwnd);
 	BOOL result = FALSE;
 
 	switch (message)
@@ -82,7 +82,7 @@ MeshDeformPanelClass::Message_Proc
 	}
 
 	// Pass the message onto the controlling panel-object
-	if (panel_obj != NULL) {
+	if (panel_obj != nullptr) {
 		result = panel_obj->On_Message (message, wparam, lparam);
 	}
 
@@ -98,7 +98,7 @@ MeshDeformPanelClass::Message_Proc
 ///////////////////////////////////////////////////////////////////////////
 MeshDeformPanelClass *
 MeshDeformPanelClass::Get_Object (HWND hwnd)
-{	
+{
 	return (MeshDeformPanelClass *)::GetProp (hwnd, PANEL_OBJ_PROP);
 }
 
@@ -122,7 +122,7 @@ MeshDeformPanelClass::On_Message
 			m_pColorSwatch		= ::GetIColorSwatch (::GetDlgItem (m_hWnd, IDC_VERTEX_COLOR), RGB (0, 0, 0), "Vertex Color");
 			m_pMaxSetsEdit		= ::GetICustEdit (::GetDlgItem (m_hWnd, IDC_MAX_SETS_EDIT));
 			m_pMaxSetsSpin		= ::GetISpinner (::GetDlgItem (m_hWnd, IDC_MAX_SETS_SPIN));
-			m_pLockSetsButton = ::GetICustButton (::GetDlgItem (m_hWnd, IDC_LOCK_SETS));		
+			m_pLockSetsButton = ::GetICustButton (::GetDlgItem (m_hWnd, IDC_LOCK_SETS));
 
 			//
 			//	Setup the 'max-sets' controls
@@ -154,8 +154,8 @@ MeshDeformPanelClass::On_Message
 			//
 			//	Ensure the sliders are repainted
 			//
-			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_STATE_SLIDER), NULL, TRUE);
-			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_CURRENT_SET_SLIDER), NULL, TRUE);
+			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_STATE_SLIDER), nullptr, TRUE);
+			//::InvalidateRect (::GetDlgItem (m_hWnd, IDC_CURRENT_SET_SLIDER), nullptr, TRUE);
 			break;
 
 		case WM_DESTROY:
@@ -163,10 +163,10 @@ MeshDeformPanelClass::On_Message
 			::ReleaseICustEdit (m_pMaxSetsEdit);
 			::ReleaseISpinner (m_pMaxSetsSpin);
 			//::ReleaseICustButton (m_pEditButton);
-			m_pColorSwatch = NULL;
-			m_pMaxSetsEdit = NULL;
-			m_pMaxSetsSpin = NULL;
-			//m_pEditButton = NULL;
+			m_pColorSwatch = nullptr;
+			m_pMaxSetsEdit = nullptr;
+			m_pMaxSetsSpin = nullptr;
+			//m_pEditButton = nullptr;
 			break;
 
 		case WM_COMMAND:
@@ -268,7 +268,7 @@ MeshDeformPanelClass::Set_Deformer (MeshDeformClass *obj)
 		// Set the slider position based on the current state of the deformer
 		float state = m_pMeshDeformer->Get_Deform_State ();
 		::SendDlgItemMessage (m_hWnd, IDC_STATE_SLIDER, TBM_SETPOS, (WPARAM)TRUE, LPARAM(state * 10.0F));
-		
+
 		// Now update the current vertex color
 		Update_Vertex_Color ();
 	}
@@ -285,7 +285,7 @@ MeshDeformPanelClass::Set_Deformer (MeshDeformClass *obj)
 void
 MeshDeformPanelClass::Update_Vertex_Color (void)
 {
-	if (m_pMeshDeformer != NULL) {
+	if (m_pMeshDeformer != nullptr) {
 
 		// Update the color swatch with data from the deformer
 		Point3 color;
@@ -310,17 +310,17 @@ MeshDeformPanelClass::Set_Max_Sets
 )
 {
 	// Update the UI
-	::SendDlgItemMessage (m_hWnd, IDC_CURRENT_SET_SLIDER, TBM_SETRANGE, (WPARAM)TRUE, MAKELONG (1, max));	
+	::SendDlgItemMessage (m_hWnd, IDC_CURRENT_SET_SLIDER, TBM_SETRANGE, (WPARAM)TRUE, MAKELONG (1, max));
 	::SetDlgItemInt (m_hWnd, IDC_CURRENT_SET_STATIC, max, TRUE);
 
 	if (notify == false) {
 		m_pMaxSetsSpin->SetValue (max, TRUE);
-	} else if (m_pMeshDeformer != NULL) {
-		
+	} else if (m_pMeshDeformer != nullptr) {
+
 		// Update the deformer
 		m_pMeshDeformer->Set_Max_Deform_Sets (max);
 	}
-		
+
 	return ;
 }
 
@@ -337,17 +337,17 @@ MeshDeformPanelClass::Set_Current_Set
 	bool notify
 )
 {
-	// Update the UI	
+	// Update the UI
 	::SetDlgItemInt (m_hWnd, IDC_CURRENT_SET_STATIC, set + 1, TRUE);
 
 	if (notify == false) {
 		::SendDlgItemMessage (m_hWnd, IDC_CURRENT_SET_SLIDER, TBM_SETPOS, (WPARAM)TRUE, set + 1);
-	} else if (m_pMeshDeformer != NULL) {
-		
+	} else if (m_pMeshDeformer != nullptr) {
+
 		// Update the deformer
 		m_pMeshDeformer->Set_Current_Set (set, true);
 	}
-	
+
 	return ;
 }
 

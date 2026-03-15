@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_WAREHOUSE_CREATE_H_
-#define _SUPPLY_WAREHOUSE_CREATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/CreateModule.h"
 
@@ -51,11 +48,8 @@ public:
 	SupplyWarehouseCreate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onCreate( void );
+	virtual void onCreate() override;
 
 protected:
 
 };
-
-#endif
-

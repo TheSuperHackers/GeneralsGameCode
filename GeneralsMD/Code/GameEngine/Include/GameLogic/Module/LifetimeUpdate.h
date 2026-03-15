@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __LIFETIMEUPDATE_H_
-#define __LIFETIMEUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 
@@ -48,13 +45,13 @@ public:
 		m_maxFrames = 0.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "MinLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( LifetimeUpdateModuleData, m_minFrames ) },
-			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( LifetimeUpdateModuleData, m_maxFrames ) },
+			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_minFrames ) },
+			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( LifetimeUpdateModuleData, m_maxFrames ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -77,7 +74,7 @@ public:
 	void setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames );
 	UnsignedInt getDieFrame() const { return m_dieFrame; }
 
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update() override;
 
 private:
 
@@ -85,6 +82,3 @@ private:
 
 	UnsignedInt m_dieFrame;
 };
-
-#endif // __LIFETIMEUPDATE_H_
-

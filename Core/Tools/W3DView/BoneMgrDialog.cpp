@@ -28,7 +28,7 @@
 #include "MainFrm.h"
 #include "W3DViewDoc.h"
 #include "DataTreeView.h"
-//#include "HModel.H"
+//#include "HModel.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
@@ -47,7 +47,7 @@ BoneMgrDialogClass::BoneMgrDialogClass
 	CWnd *pparent
 )
 	: m_pBaseModel (prender_obj),
-	  m_pBackupModel (NULL),
+	  m_pBackupModel (nullptr),
 	  m_bAttach (true),
 	  CDialog (BoneMgrDialogClass::IDD, pparent)
 {
@@ -120,20 +120,20 @@ BoneMgrDialogClass::OnInitDialog (void)
 
 	// Get the hierarchy tree for this model so we can enumerate bone's
 	// and subobjects.
-	HTREEITEM hfirst_item = NULL;
+	HTREEITEM hfirst_item = nullptr;
 
 	// Loop through all the bones in this model
 	int bone_count = m_pBaseModel->Get_Num_Bones ();
 	int index = 0;
-	for (; index < bone_count; index ++) {			
+	for (; index < bone_count; index ++) {
 		const char *pbone_name = m_pBaseModel->Get_Bone_Name (index);
 
 		// Add this bone to the tree control
 		HTREEITEM hbone_item = m_BoneTree.InsertItem (pbone_name, 0, 0);
-		Fill_Bone_Item (hbone_item, index);			
+		Fill_Bone_Item (hbone_item, index);
 
 		// Is this the first item we've added to the tree?
-		if (hfirst_item == NULL) {
+		if (hfirst_item == nullptr) {
 			hfirst_item = hbone_item;
 		}
 	}
@@ -145,7 +145,7 @@ BoneMgrDialogClass::OnInitDialog (void)
 
 	// Build a list of all the render objects currently loaded
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)((CMainFrame *)::AfxGetMainWnd())->GetActiveDocument ();
-	CDataTreeView *pdata_tree = pdoc->GetDataTreeView ();	
+	CDataTreeView *pdata_tree = pdoc->GetDataTreeView ();
 	DynamicVectorClass <CString> asset_list;
 	pdata_tree->Build_Render_Object_List (asset_list);
 
@@ -156,7 +156,7 @@ BoneMgrDialogClass::OnInitDialog (void)
 
 	// Select the first entry in the combobox
 	m_ObjectCombo.SetCurSel (0);
-	OnSelchangeObjectCombo ();	
+	OnSelchangeObjectCombo ();
 
 	// Select the first item in the tree
 	m_BoneTree.SelectItem (hfirst_item);
@@ -179,7 +179,7 @@ BoneMgrDialogClass::Fill_Bone_Item
 	// to compare with the supplied hmodel and determine
 	// which 'bones-models' are new.
 	const char *orig_model_name = m_pBaseModel->Get_Base_Model_Name ();
-	orig_model_name = (orig_model_name == NULL) ? m_pBaseModel->Get_Name () : orig_model_name;
+	orig_model_name = (orig_model_name == nullptr) ? m_pBaseModel->Get_Name () : orig_model_name;
 	RenderObjClass *porig_model = WW3DAssetManager::Get_Instance()->Create_Render_Obj (orig_model_name);
 
 	// Build a list of nodes that are contained in the vanilla model
@@ -189,7 +189,7 @@ BoneMgrDialogClass::Fill_Bone_Item
 		  index < porig_model->Get_Num_Sub_Objects_On_Bone (bone_index);
 		  index ++) {
 		RenderObjClass *psubobj = porig_model->Get_Sub_Object_On_Bone (index, bone_index);
-		if (psubobj != NULL) {
+		if (psubobj != nullptr) {
 			orig_node_list.Add (psubobj);
 		}
 	}
@@ -200,21 +200,21 @@ BoneMgrDialogClass::Fill_Bone_Item
 		  index < m_pBaseModel->Get_Num_Sub_Objects_On_Bone (bone_index);
 		  index ++) {
 		RenderObjClass *psubobj = m_pBaseModel->Get_Sub_Object_On_Bone (index, bone_index);
-		if (psubobj != NULL) {
+		if (psubobj != nullptr) {
 			node_list.Add (psubobj);
 		}
 	}
 
 	if (node_list.Count () > 0) {
-		
+
 		// Add the subobjects to the tree control
 		for (int node_index = 0; node_index < node_list.Count (); node_index ++) {
 			RenderObjClass *psubobject = node_list[node_index];
-			ASSERT (psubobject != NULL);
-			
+			ASSERT (psubobject != nullptr);
+
 			// Is this subobject new?  (i.e. not in a 'vanilla' instance?)
-			if (psubobject != NULL &&
-				 (Is_Object_In_List (psubobject->Get_Name (), orig_node_list) == false)) {				
+			if (psubobject != nullptr &&
+				 (Is_Object_In_List (psubobject->Get_Name (), orig_node_list) == false)) {
 				m_BoneTree.InsertItem (psubobject->Get_Name (), 1, 1, hbone_item);
 			}
 		}
@@ -222,15 +222,15 @@ BoneMgrDialogClass::Fill_Bone_Item
 
 	// Free our hold on the render objs in the original node list
 	for (index = 0; index < orig_node_list.Count (); index ++) {
-		MEMBER_RELEASE (orig_node_list[index]);
+		REF_PTR_RELEASE (orig_node_list[index]);
 	}
 
 	// Free our hold on the render objs in the node list
 	for (index = 0; index < node_list.Count (); index ++) {
-		MEMBER_RELEASE (node_list[index]);
+		REF_PTR_RELEASE (node_list[index]);
 	}
-	
-	MEMBER_RELEASE (porig_model);
+
+	REF_PTR_RELEASE (porig_model);
 	return ;
 }
 
@@ -253,13 +253,13 @@ BoneMgrDialogClass::Is_Object_In_List
 	// were are looking for.
 	for (int node_index = 0; (node_index < node_list.Count ()) && (retval == false); node_index ++) {
 		RenderObjClass *prender_obj = node_list[node_index];
-		
+
 		// Is this the render object we were looking for?
-		if (prender_obj != NULL &&
+		if (prender_obj != nullptr &&
 		    ::lstrcmpi (prender_obj->Get_Name (), passet_name) == 0) {
 			retval = true;
 		}
-	}	
+	}
 
 	// Return the true/false result code
 	return retval;
@@ -324,14 +324,14 @@ BoneMgrDialogClass::Is_Render_Obj_Already_Attached (const CString &name)
 
 	HTREEITEM htree_item = m_BoneTree.GetSelectedItem ();
 	HTREEITEM hparent_item = m_BoneTree.GetParentItem (htree_item);
-	htree_item = (hparent_item != NULL) ? hparent_item : htree_item;
-	if (htree_item != NULL) {
-		
+	htree_item = (hparent_item != nullptr) ? hparent_item : htree_item;
+	if (htree_item != nullptr) {
+
 		// Loop through all the children of this bone
 		for (HTREEITEM hchild_item = m_BoneTree.GetChildItem (htree_item);
-			  (hchild_item != NULL) && (retval == false);
+			  (hchild_item != nullptr) && (retval == false);
 			  hchild_item = m_BoneTree.GetNextSiblingItem (hchild_item)) {
-			
+
 			// Is this the render object we were looking for?
 			CString child_name = m_BoneTree.GetItemText (hchild_item);
 			if (name.CompareNoCase (child_name) == 0) {
@@ -354,7 +354,7 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 {
 	// Get the name of the currently selected item
 	CString name = m_BoneTree.GetItemText (selected_item);
-	bool bis_bone = (m_BoneTree.GetParentItem (selected_item) == NULL);
+	bool bis_bone = (m_BoneTree.GetParentItem (selected_item) == nullptr);
 
 	// Did the user select a bone name?
 	if (bis_bone) {
@@ -363,7 +363,7 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 
 		// Select this render object in the combobox
 		int index = m_ObjectCombo.FindStringExact (-1, name);
-		m_ObjectCombo.SetCurSel ((index != CB_ERR) ? index : 0);		
+		m_ObjectCombo.SetCurSel ((index != CB_ERR) ? index : 0);
 
 		// The bone name is the name of the parent item of the selected item.
 		m_BoneName = m_BoneTree.GetItemText (m_BoneTree.GetParentItem (selected_item));
@@ -373,7 +373,7 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 
 	// Change the text of the group box to reflect the bone name
 	CString text;
-	text.Format ("Bone: %s", m_BoneName);
+	text.Format ("Bone: %s", static_cast<const char*>(m_BoneName));
 	SetDlgItemText (IDC_BONE_GROUPBOX, text);
 	return ;
 }
@@ -385,12 +385,12 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 //
 void
 BoneMgrDialogClass::OnDestroy (void)
-{		
+{
 	// Free the state image list we associated with the control
 	CImageList *pimagelist = m_BoneTree.GetImageList (TVSIL_NORMAL);
-	m_BoneTree.SetImageList (NULL, TVSIL_NORMAL);
+	m_BoneTree.SetImageList (nullptr, TVSIL_NORMAL);
 	SAFE_DELETE (pimagelist);
-	
+
 	// Allow the base class to process this message
 	CDialog::OnDestroy ();
 	return ;
@@ -405,8 +405,8 @@ void
 BoneMgrDialogClass::OnOK (void)
 {
 	// Simply forget about the backup we made
-	MEMBER_RELEASE (m_pBackupModel);
-	
+	REF_PTR_RELEASE (m_pBackupModel);
+
 	// Update the hierarchy's cached information to reflect the new settings
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)((CMainFrame *)::AfxGetMainWnd())->GetActiveDocument ();
 	pdoc->Update_Aggregate_Prototype (*m_pBaseModel);
@@ -441,7 +441,7 @@ BoneMgrDialogClass::OnCancel (void)
 //	OnAttachButton
 //
 void
-BoneMgrDialogClass::OnAttachButton (void) 
+BoneMgrDialogClass::OnAttachButton (void)
 {
 	// Get the name of the currently selected render object
 	CString name;
@@ -453,13 +453,13 @@ BoneMgrDialogClass::OnAttachButton (void)
 
 	// Should we attach or remove the render object?
 	if (m_bAttach) {
-		
+
 		// Create an instance of the render object and attach it to the bone
 		RenderObjClass *prender_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj (name);
-		if (prender_obj != NULL) {
+		if (prender_obj != nullptr) {
 			m_pBaseModel->Add_Sub_Object_To_Bone (prender_obj, m_BoneName);
 			m_BoneTree.InsertItem (name, 1, 1, hbone_item);
-			MEMBER_RELEASE (prender_obj);
+			REF_PTR_RELEASE (prender_obj);
 		}
 
 	} else {
@@ -469,27 +469,27 @@ BoneMgrDialogClass::OnAttachButton (void)
 		int bone_index = m_pBaseModel->Get_Bone_Index (m_BoneName);
 		int count = m_pBaseModel->Get_Num_Sub_Objects_On_Bone (bone_index);
 		for (int index = 0; (index < count) && !found; index ++) {
-			
+
 			// Is this the subobject we were looking for?
 			RenderObjClass *psub_obj = m_pBaseModel->Get_Sub_Object_On_Bone (index, bone_index);
-			if ((psub_obj != NULL) &&
+			if ((psub_obj != nullptr) &&
 				 (::lstrcmpi (psub_obj->Get_Name (), name) == 0)) {
-				
+
 				// Remove this subobject from the bone
 				m_pBaseModel->Remove_Sub_Object (psub_obj);
 				found = true;
 			}
 
 			// Release our hold on this pointer
-			MEMBER_RELEASE (psub_obj);
+			REF_PTR_RELEASE (psub_obj);
 		}
-		
+
 		// Remove the object from our UI
 		Remove_Object_From_Bone (hbone_item, name);
 	}
 
 	// Refresh the UI state
-	m_BoneTree.InvalidateRect (NULL, TRUE);
+	m_BoneTree.InvalidateRect (nullptr, TRUE);
 	m_BoneTree.UpdateWindow ();
 	Update_Controls (hbone_item);
 	return ;
@@ -506,9 +506,9 @@ BoneMgrDialogClass::Get_Current_Bone_Item (void)
 	// Get the currently selected item and its parent
 	HTREEITEM htree_item = m_BoneTree.GetSelectedItem ();
 	HTREEITEM hparent_item = m_BoneTree.GetParentItem (htree_item);
-	
+
 	// Return the bone item
-	return (hparent_item != NULL) ? hparent_item : htree_item;
+	return (hparent_item != nullptr) ? hparent_item : htree_item;
 }
 
 
@@ -525,17 +525,17 @@ BoneMgrDialogClass::Remove_Object_From_Bone
 {
 	// Loop through all the children of this bone
 	for (HTREEITEM hchild_item = m_BoneTree.GetChildItem (bone_item);
-		  (hchild_item != NULL);
+		  (hchild_item != nullptr);
 		  hchild_item = m_BoneTree.GetNextSiblingItem (hchild_item)) {
-		
+
 		// Is this the render object we were looking for?
 		CString child_name = m_BoneTree.GetItemText (hchild_item);
 		if (name.CompareNoCase (child_name) == 0) {
 			m_BoneTree.DeleteItem (hchild_item);
 			break ;
-		}		
+		}
 	}
-		
+
 	return ;
 }
 

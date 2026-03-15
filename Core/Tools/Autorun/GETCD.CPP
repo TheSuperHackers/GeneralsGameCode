@@ -20,7 +20,7 @@
  *****	C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S	*****
  ****************************************************************************
  *                 Project Name:: Command & Conquer							*
- *                     $Archive:: /Renegade Setup/Autorun/GETCD.CPP              $Author:: Steve_t									*
+ *                     $Archive:: /Renegade Setup/Autorun/GETCD.cpp              $Author:: Steve_t									*
  *                     $Modtime:: 1/28/02 10:54a                  $Revision:: 20										*
  *--------------------------------------------------------------------------*
  * Functions:																*
@@ -37,7 +37,7 @@
 //#include	"timer.h"
 #include	"Wnd_File.h"
 //#include	"missiondisk.h"
-#include	"WinFix.H"
+#include	"WinFix.h"
 
 #ifndef ROR_NOT_READY
 #define ROR_NOT_READY		21
@@ -184,23 +184,23 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 				(char const *)buffer,
 				&volume_name[0],
 				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
+				(unsigned long *)nullptr,
 				(unsigned long *)&filename_length,
 				(unsigned long *)&misc_dword,
-				(char *)NULL,
+				(char *)nullptr,
 				(unsigned long)0 )) {
 
 			//---------------------------------------------------------------------
-			// Windows '95 appears to have a volume name limit of 11 characters. 
-			// I cannot find a Win32 call that will return the maximum volume name 
-			// length so the value '11' is hard-coded here and the assumption made 
+			// Windows '95 appears to have a volume name limit of 11 characters.
+			// I cannot find a Win32 call that will return the maximum volume name
+			// length so the value '11' is hard-coded here and the assumption made
 			// that all OS's have this length or better.
 			//---------------------------------------------------------------------
 			if( WinVersion.Is_Win95()) {
 				volume_name[11] = '\0';
 			}
 
-			if ( !_stricmp( volume_label, volume_name )) {
+			if ( _stricmp( volume_label, volume_name ) == 0) {
 				return( cd_drive );
 			}
 
@@ -208,16 +208,16 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 
 #if RTS_DEBUG
 			LPVOID lpMsgBuf;
-			FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
+			FormatMessage(
+				FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				FORMAT_MESSAGE_FROM_SYSTEM |
 				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
+				nullptr,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 				(LPTSTR) &lpMsgBuf,
 				0,
-				NULL 
+				nullptr
 			);
 			Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
 			LocalFree( lpMsgBuf );
@@ -270,8 +270,8 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	unsigned		filename_length;
 	static char		volume_label[ MAX_PATH ] = "";	// [OYO] add static
 
-	if ( path == NULL || volume_name == NULL ) {
-		return( NULL );
+	if ( path == nullptr || volume_name == nullptr ) {
+		return( nullptr );
 	}
 
 	memset( volume_name, '\0', sizeof( volume_name ));
@@ -281,10 +281,10 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 			(char const *)buffer,
 			&volume_label[0],
 			(unsigned long)sizeof(volume_label)-1,
-			(unsigned long *)NULL,
+			(unsigned long *)nullptr,
 			(unsigned long *)&filename_length,
 			(unsigned long *)&misc_dword,
-			(char *)NULL,
+			(char *)nullptr,
 			(unsigned long)0 )) {
 
 		strcpy( volume_name, volume_label );
@@ -292,16 +292,16 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	} else {
 
 		LPVOID lpMsgBuf;
-		FormatMessage( 
-		    FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-		    FORMAT_MESSAGE_FROM_SYSTEM | 
+		FormatMessage(
+		    FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		    FORMAT_MESSAGE_FROM_SYSTEM |
 		    FORMAT_MESSAGE_IGNORE_INSERTS,
-		    NULL,
+		    nullptr,
 		    GetLastError(),
 		    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 		    (LPTSTR) &lpMsgBuf,
 		    0,
-		    NULL 
+		    nullptr
 		);
 		Msg( __LINE__, __FILE__, (LPTSTR)lpMsgBuf );
 		LocalFree( lpMsgBuf );
@@ -310,9 +310,9 @@ const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *v
 	}
 
 	//-------------------------------------------------------------------------
-	// Windows '95 appears to have a volume name limit of 11 characters. 
-	// I cannot find a Win32 call that will return the maximum volume name 
-	// length so the value '11' is hard-coded here and the assumption made 
+	// Windows '95 appears to have a volume name limit of 11 characters.
+	// I cannot find a Win32 call that will return the maximum volume name
+	// length so the value '11' is hard-coded here and the assumption made
 	// that all OS's have this length or better.
 	//-------------------------------------------------------------------------
 	bool winversion = WinVersion.Is_Win95();
@@ -347,7 +347,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 	unsigned	filename_length;
 
 	/***************************************************************************
-	** Get the volume label. If we get a 'not ready' error then retry for the 
+	** Get the volume label. If we get a 'not ready' error then retry for the
 	** timeout period.
 	*/
 	for (;;) {
@@ -361,10 +361,10 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				(char const *)buffer,
 				&volume_name[0],
 				(unsigned long)sizeof(volume_name)-1,
-				(unsigned long *)NULL,
+				(unsigned long *)nullptr,
 				(unsigned long *)&filename_length,
 				(unsigned long *)&misc_dword,
-				(char *)NULL,
+				(char *)nullptr,
 				(unsigned long)0 )) {
 
 			/******************************************************************
@@ -372,20 +372,20 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 			*/
 
 			//---------------------------------------------------------------------
-			// Windows '95 appears to have a volume name limit of 11 characters. 
-			// I cannot find a Win32 call that will return the maximum volume name 
-			// length so the value '11' is hard-coded here and the assumption made 
+			// Windows '95 appears to have a volume name limit of 11 characters.
+			// I cannot find a Win32 call that will return the maximum volume name
+			// length so the value '11' is hard-coded here and the assumption made
 			// that all OS's have this length or better.
 			//---------------------------------------------------------------------
 			if( WinVersion.Is_Win95()) {
 				volume_name[11] = '\0';
 			}
 
-			if ( volume_label != NULL ) {
+			if ( volume_label != nullptr ) {
 				strncpy( volume_label, volume_name, 128 );
 			}
 
-			if ( !_stricmp( volume_to_find, volume_name )) {
+			if ( _stricmp( volume_to_find, volume_name ) == 0) {
 				return TRUE;
 			}
 
@@ -393,7 +393,7 @@ bool CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_
 				count++;
 			} else {
 				return FALSE;
-			} 
+			}
 
 		} else {
 

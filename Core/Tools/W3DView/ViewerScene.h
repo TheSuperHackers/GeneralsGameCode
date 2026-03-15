@@ -34,14 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-
-#ifndef __VIEWER_SCENE_H
-#define __VIEWER_SCENE_H
 
 #include "scene.h"
 #include "aabox.h"
@@ -67,7 +60,7 @@ class ViewerSceneClass : public SimpleSceneClass
 
 		virtual ~ViewerSceneClass (void)		{ }
 
-		
+
 		///////////////////////////////////////////////////////////////////
 		//
 		//	Public methods
@@ -77,7 +70,7 @@ class ViewerSceneClass : public SimpleSceneClass
 		//	Overrides from SimpleSceneClass
 		//
 		virtual void				Visibility_Check (CameraClass *pcamera);
-		virtual void				Add_Render_Object(RenderObjClass * obj);	
+		virtual void				Add_Render_Object(RenderObjClass * obj);
 		virtual void				Customized_Render(RenderInfoClass & rinfo);
 
 		//
@@ -113,6 +106,3 @@ class ViewerSceneClass : public SimpleSceneClass
 		RefRenderObjListClass	LineUpList;
 		RefRenderObjListClass	LightList;
 };
-
-
-#endif //__VIEWER_SCENE_H

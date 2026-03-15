@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAILED_TRANSPORT_AI_UPDATE_H_
-#define __RAILED_TRANSPORT_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -45,7 +42,7 @@ class RailedTransportAIUpdateModuleData : public AIUpdateModuleData
 
 public:
 
-	RailedTransportAIUpdateModuleData( void );
+	RailedTransportAIUpdateModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
@@ -67,19 +64,19 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// AIUpdate interface methods
-	virtual void aiDoCommand( const AICommandParms *parms );
-	virtual UpdateSleepTime update( void );
+	virtual void aiDoCommand( const AICommandParms *parms ) override;
+	virtual UpdateSleepTime update() override;
 
 protected:
 
 	// ai module methods
-	virtual void privateExecuteRailedTransport( CommandSourceType cmdSource );
-	virtual void privateEvacuate( Int exposeStealthUnits, CommandSourceType cmdSource );
+	virtual void privateExecuteRailedTransport( CommandSourceType cmdSource ) override;
+	virtual void privateEvacuate( Int exposeStealthUnits, CommandSourceType cmdSource ) override;
 
 	// our methods
 	void setInTransit( Bool inTransit );
-	void loadWaypointData( void );
-	void pickAndMoveToInitialLocation( void );
+	void loadWaypointData();
+	void pickAndMoveToInitialLocation();
 
 	// our data
 	Bool m_inTransit;								///< in transit
@@ -96,7 +93,3 @@ protected:
 	Bool m_waypointDataLoaded;		///< TRUE once we've searched the map to load m_path
 
 };
-
-
-#endif  // end __RAILED_TRANSPORT_AI_UPDATE_H_
-

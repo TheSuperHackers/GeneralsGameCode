@@ -21,18 +21,13 @@
 //      are changed infrequently
 //
 
-#if !defined(AFX_STDAFX_H__2BB39E2D_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_STDAFX_H__2BB39E2D_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 #include "always.h"
 
-// TheSuperHackers @compile jlallas384 05/04/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
+// TheSuperHackers @build jlallas384 05/04/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
 #define _d3d9TYPES_H_
 
 #include <afxwin.h>         // MFC core and standard components
@@ -43,5 +38,3 @@
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__2BB39E2D_5D3A_11D2_9FC6_00104B791122__INCLUDED_)

@@ -21,7 +21,7 @@
 #include <string.h>
 #include <assert.h>
 #include "gimex.h"      /* for file and memory IO only */
-#include "locale.h" 
+#include "locale.h"
 #include "Wnd_File.h"
 
 /*************************************************************************/
@@ -91,7 +91,7 @@ typedef struct
     INDEX*  pIndex[LOCALE_BANK_COUNT]; /* array of string indices */
 } LOCALE_INSTANCE;
 
-static LOCALE_INSTANCE	*lx			= NULL;
+static LOCALE_INSTANCE	*lx			= nullptr;
 
 /*************************************************************************/
 /* initialization/restore                                                */
@@ -100,10 +100,10 @@ static LOCALE_INSTANCE	*lx			= NULL;
 /* helper function to make assertions for initialization clearer */
 int LOCALE_isinitialized( void )
 {
-    if ( lx == NULL ) {
+    if ( lx == nullptr ) {
 //        TRACE("LOCALE API is not initialized - call LOCALE_init before calling LOCALE functions\n");
 	}
-    return( lx != NULL );
+    return( lx != nullptr );
 }
 
 /*
@@ -121,7 +121,7 @@ int LOCALE_isinitialized( void )
 ;
 ; DESCRIPTION
 ;
-; Initilizes everything needed to use the locale API.  Can only be called 
+; Initilizes everything needed to use the locale API.  Can only be called
 ; once until LOCALE_restore is called.
 ;
 ; Returns non-zero if everything went ok.
@@ -148,11 +148,11 @@ int LOCALE_init(void)
     int ok = 0;
 
     /* ensure locale module is NOT already initialized */
-    ASSERT(lx == NULL); /* can only call LOCALE_init after a restore or once, cannot double init locale API */
+    ASSERT(lx == nullptr); /* can only call LOCALE_init after a restore or once, cannot double init locale API */
 
     /* allocate instance */
     lx = (LOCALE_INSTANCE*)galloc(sizeof(LOCALE_INSTANCE));
-    if (lx != NULL) {
+    if (lx != nullptr) {
         memset(lx, 0, sizeof(LOCALE_INSTANCE));
         ok = 1;
     }
@@ -198,10 +198,10 @@ void LOCALE_restore(void)
 {
     int i;
 
-	if( lx != NULL ) {
+	if( lx != nullptr ) {
 
 	    ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-		ASSERT(lx != NULL);
+		ASSERT(lx != nullptr);
 
 		/* free any language tables */
 		for (i = 0; i < LOCALE_BANK_COUNT; i++) {
@@ -213,7 +213,7 @@ void LOCALE_restore(void)
 
 		/* free instance */
 		gfree(lx);
-		lx = NULL;
+		lx = nullptr;
 	}
 }
 
@@ -415,7 +415,7 @@ int LOCALE_getbankstringcount(void)
 ; DESCRIPTION
 ;
 ; Loads the specified language from the string file into the
-; current bank.  Returns non zero if the operation was succesful.
+; current bank.  Returns non-zero if the operation was successful.
 ; The bank must be free before you can call LOCALE_loadtable.  To
 ; free a bank use the LOCALE_freetable function.  To determine
 ; if the bank is free use the LOCALE_getbankstringcount function.
@@ -508,7 +508,7 @@ static int readheader( GSTREAM* g )
 
 static int readstrings( GSTREAM* g, int LanguageID )
 {
-	Msg( __LINE__, __FILE__, "readstrings:: g ok? %d.", ((g!= NULL)?1:0));
+	Msg( __LINE__, __FILE__, "readstrings:: g ok? %d.", ((g!= nullptr)?1:0));
 
     int ok = 0;
 
@@ -531,10 +531,10 @@ static int readstrings( GSTREAM* g, int LanguageID )
 //	VERIFY(gread(g, &LanguageChunkSize, 4) == 4);
     if( !gseek( g, LanguageChunkPos + 4 )) {
 		return ok;
-	}   
+	}
 	if( gread( g, &LanguageChunkSize, 4 ) != 4 ) {
 		return ok;
-	}   
+	}
 
 	Msg( __LINE__, __FILE__, "readstrings::LanguageChunkOffsetPos = %d.", LanguageChunkOffsetPos );
 	Msg( __LINE__, __FILE__, "readstrings::LanguageChunkPos = %d.", LanguageChunkPos );
@@ -550,11 +550,11 @@ static int readstrings( GSTREAM* g, int LanguageID )
 //		VERIFY(gread(g, lx->pBank[lx->BankIndex], LanguageChunkSize) == LanguageChunkSize);
 		if( !gseek( g, LanguageChunkPos )) {
 			return ok;
-		}   
+		}
 		if( gread( g, lx->pBank[lx->BankIndex], LanguageChunkSize ) != LanguageChunkSize ) {
 			return ok;
-		}   
-        
+		}
+
 		ASSERT(lx->pBank[lx->BankIndex]->ChunkID == LOCALEFILE_LANGUAGECHUNKID);
         ok = 1;
     }
@@ -567,11 +567,11 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
     GSTREAM* g;
 
     ASSERT(LOCALE_isinitialized());             /* must call LOCALE_init before calling this function */
-    ASSERT(lx->pBank[lx->BankIndex] == NULL);   /* bank must be empty before loading a new table */
-    ASSERT(lx->pIndex[lx->BankIndex] == NULL);  /* bank must be empty before loading a new table */
+    ASSERT(lx->pBank[lx->BankIndex] == nullptr);   /* bank must be empty before loading a new table */
+    ASSERT(lx->pIndex[lx->BankIndex] == nullptr);  /* bank must be empty before loading a new table */
 
     g = gopen( PathName );
-    if( g != NULL ) {
+    if( g != nullptr ) {
 
 		Msg( __LINE__, __FILE__, "LOCALE_loadtable-- file opened." );
 
@@ -592,7 +592,7 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 ;
 ; ABSTRACT
 ;
-; LOCALE_purgetable - OBSOLETE 
+; LOCALE_purgetable - OBSOLETE
 ;
 ; Make all references to LOCALE_freetable
 ;
@@ -637,19 +637,19 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 
 void LOCALE_freetable(void)
 {
-	if( lx != NULL ) {
+	if( lx != nullptr ) {
 
 		ASSERT(LOCALE_isinitialized());			/* must call LOCALE_init before calling this function */
 		ASSERT(lx->pBank[lx->BankIndex]);       /* table must be loaded before calling this function  */
 
 	    /* free string bank */
 		gfree(lx->pBank[lx->BankIndex]);
-	    lx->pBank[lx->BankIndex] = NULL;
+	    lx->pBank[lx->BankIndex] = nullptr;
 
 		/* if the bank has an index loaded, free that as well */
 	    if (lx->pIndex[lx->BankIndex]) {
 		    gfree(lx->pIndex[lx->BankIndex]);
-			lx->pIndex[lx->BankIndex] = NULL;
+			lx->pIndex[lx->BankIndex] = nullptr;
 	    }
 	}
 }
@@ -679,7 +679,7 @@ void LOCALE_freetable(void)
 ; valid integer in the range 0..65535.  If no index was created
 ; with the .loc file StringID will be a zero based array index.
 ;
-; String is returned by const for a reason.  Bad things will happen 
+; String is returned by const for a reason.  Bad things will happen
 ; if you modify it.  You have been warned.
 ;
 ; SEE ALSO
@@ -714,12 +714,12 @@ static int getstringbyindex( unsigned short key, const INDEX* pIndex )
     unsigned char*  base;   /* pointer to base of string id table */
 
     ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-    ASSERT(pIndex != NULL); /* index not loaded - .loc file must have index created (use -i option) */
+    ASSERT(pIndex != nullptr); /* index not loaded - .loc file must have index created (use -i option) */
 
     base	= ((unsigned char*)pIndex) + LOCALEFILE_INDEXCHUNK_STRINGID_OFFSET;
     result	= (unsigned short*)bsearch((unsigned char *)&key, base, pIndex->StringCount, 4, compare);
 
-    if (result != NULL) {
+    if (result != nullptr) {
         /* index is the second unsigned short */
         ++result;
         index = *result;
@@ -731,14 +731,14 @@ static int getstringbyindex( unsigned short key, const INDEX* pIndex )
 
 const char* LOCALE_getstring( int StringID )
 {
-    const char* p;							/* pointer to string, NULL if string cannot be found */
+    const char* p;							/* pointer to string, nullptr if string cannot be found */
 
 	Msg( __LINE__, __FILE__, "Locale_getstring::( %d ).", StringID );
 
     ASSERT( LOCALE_isinitialized());		/* must call LOCALE_init before calling this function */
 
     /* get string array index from the index if it exists */
-    if ( lx->pIndex[ lx->BankIndex ] != NULL ) {
+    if ( lx->pIndex[ lx->BankIndex ] != nullptr ) {
         StringID = getstringbyindex((unsigned short)StringID, lx->pIndex[lx->BankIndex]);
     }
 
@@ -766,7 +766,7 @@ const char* LOCALE_getstring( int StringID )
 
 
     } else {
-        p = NULL;
+        p = nullptr;
     }
 
 	Msg( __LINE__, __FILE__, L"%s", 1252, (wchar_t *)p );
@@ -792,9 +792,9 @@ const char* LOCALE_getstring( int StringID )
 ;
 ; DESCRIPTION
 ;
-; Returns the string identified by stringid from the specified 
-; .loc file.  Use the string ID specified in the header file created 
-; by Locomoto.  Note that the string pointer is a const pointer.  Do 
+; Returns the string identified by stringid from the specified
+; .loc file.  Use the string ID specified in the header file created
+; by Locomoto.  Note that the string pointer is a const pointer.  Do
 ; not modify the string or the Locale library may return invalid results.
 ;
 ; If your strings are Unicode strings, cast the result to a const USTR *.
@@ -803,7 +803,7 @@ const char* LOCALE_getstring( int StringID )
 ; valid integer in the range 0..65535.  If no index was created
 ; with the .loc file stringid will be a zero based array index.
 ;
-; String is returned by const for a reason.  Bad things will happen 
+; String is returned by const for a reason.  Bad things will happen
 ; if you modify it.  You have been warned.
 ;
 ; SEE ALSO
@@ -823,12 +823,12 @@ int LOCALElanguageid = 0;
 
 const char* LOCALE_getstr( const void* pLocFile, int StringID )
 {
-	const char* p; /* pointer to string, NULL if string cannot be found */
+	const char* p; /* pointer to string, nullptr if string cannot be found */
 
     HEADER* pHeader;
     BANK*   pBank;
 
-    ASSERT(pLocFile != NULL);
+    ASSERT(pLocFile != nullptr);
 
     pHeader = (LOCALEFILE_HEADERCHUNK*)(pLocFile);
     ASSERT(pHeader->ChunkID == LOCALEFILE_HEADERCHUNKID);
@@ -843,10 +843,10 @@ const char* LOCALE_getstr( const void* pLocFile, int StringID )
 
     /* get pointer to string bank */
     {
-        int offset = *((int*)(pLocFile) + 4 + LOCALElanguageid); 
+        int offset = *((int*)(pLocFile) + 4 + LOCALElanguageid);
         pBank = (BANK*)((unsigned char*)(pLocFile) + offset);
     }
-    
+
     if ((StringID >= 0) && (StringID < (int)(pBank->StringCount))) {
 
         unsigned int offset;
@@ -856,7 +856,7 @@ const char* LOCALE_getstr( const void* pLocFile, int StringID )
         p += offset;
 
     } else {
-        p = NULL;
+        p = nullptr;
     }
 
     return p;

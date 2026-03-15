@@ -24,12 +24,12 @@
 
 // FILE: W3DGameWindow.h //////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -38,15 +38,12 @@
 //
 // Created:    Colin Day, June 2001
 //
-// Desc:       W3D implemenations for the game windowing system
+// Desc:       W3D implementations for the game windowing system
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DGAMEWINDOW_H_
-#define __W3DGAMEWINDOW_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -59,29 +56,29 @@
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
 // W3DGameWindow --------------------------------------------------------------
-/** W3D implemenation for a game window */
+/** W3D implementation for a game window */
 // ----------------------------------------------------------------------------
 class W3DGameWindow : public GameWindow
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DGameWindow, "W3DGameWindow")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(W3DGameWindow, "W3DGameWindow")
 
 public:
 
-	W3DGameWindow( void );
+	W3DGameWindow();
 	// already defined by MPO.
-	//~W3DGameWindow( void );
+	//~W3DGameWindow();
 
 	/// draw borders for this window only, NO child windows or anything else
-	void winDrawBorder( void );
+	void winDrawBorder();
 
 	Int winSetPosition( Int x, Int y );  ///< set window position
-	Int winSetText( UnicodeString newText );  ///< set text string	
+	Int winSetText( UnicodeString newText );  ///< set text string
 	void winSetFont( GameFont *font );  ///< set font for window
 
 	void getTextSize( Int *width, Int *height );  ///< get size of text
 	void setTextLoc( Int x, Int y );  ///< set text screen coord loc
 	void drawText( Color color );  ///< draw text in the text renderer
-		
+
 protected:
 
 	/// helper function to draw borders
@@ -93,13 +90,10 @@ protected:
 	Bool m_needPolyDraw;  ///< TRUE need to redo the text polys
 	Bool m_newTextPos;  ///< TRUE when our window has moved and we need a new text pos
 
-};  // end class W3DGameWindow
+};
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern void W3DGameWinDefaultDraw( GameWindow *window, 
+extern void W3DGameWinDefaultDraw( GameWindow *window,
 																	 WinInstanceData *instData );
-
-#endif // __W3DGAMEWINDOW_H_
-

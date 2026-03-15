@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __VIEWER_ASSETMGR_H
-#define __VIEWER_ASSETMGR_H
 
 #include "assetmgr.h"
 
@@ -58,7 +53,7 @@ public:
 	///////////////////////////////////////////////////
 	ViewerAssetMgrClass (void) {}
 	virtual ~ViewerAssetMgrClass (void) {}
-	
+
 	///////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////
@@ -89,6 +84,3 @@ private:
 	///////////////////////////////////////////////////
 	DynamicVectorClass<CString>	m_MissingTextureList;
 };
-
-
-#endif //__VIEWER_ASSETMGR_H

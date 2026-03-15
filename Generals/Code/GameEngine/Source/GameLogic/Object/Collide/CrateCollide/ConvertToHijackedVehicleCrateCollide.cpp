@@ -23,19 +23,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-//	
-// FILE: ConvertToHijackedVehicleCrateCollide.cpp 
+//
+// FILE: ConvertToHijackedVehicleCrateCollide.cpp
 // Author: Mark Lorenzen, July 2002
-// Desc:   A crate (actually a terrorist - mobile crate) that makes the target vehicle switch 
+// Desc:   A crate (actually a terrorist - mobile crate) that makes the target vehicle switch
 //				 sides, and kills its driver
 //	@todo	 Needs to set the science of that vehicle (dozer) so still can build same stuff as always
-//	
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
 
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Radar.h"
@@ -56,23 +56,18 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ConvertToHijackedVehicleCrateCollide::ConvertToHijackedVehicleCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide( void )
+ConvertToHijackedVehicleCrateCollide::~ConvertToHijackedVehicleCrateCollide()
 {
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -149,11 +144,11 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 
 	//Before the actual defection takes place, play the "vehicle stolen" EVA
 	//event if the local player is the victim!
-	if( other->isLocallyControlled() )
+	if( other->isLocallyViewed() )
 	{
 		TheEva->setShouldPlay( EVA_VehicleStolen );
 	}
-	
+
 	other->setTeam( obj->getControllingPlayer()->getDefaultTeam() );
 	other->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_HIJACKED ) );// I claim this car in the name of the GLA
 
@@ -167,10 +162,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 	DozerAIInterface * dozerAI = targetAI->getDozerAIInterface();
 	if ( dozerAI )
 	{
-		for (UnsignedInt task = DOZER_TASK_FIRST; task < DOZER_NUM_TASKS; ++task)
-		{
-			dozerAI->cancelTask( (DozerTask)task );
-		}
+		dozerAI->cancelAllTasks();
 	}
 
 	AudioEventRTS hijackEvent( "HijackDriver", obj->getID() );
@@ -191,7 +183,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 
 
 	Bool targetCanEject = FALSE;
-	BehaviorModule **dmi = NULL;
+	BehaviorModule **dmi = nullptr;
 	for( dmi = other->getBehaviorModules(); *dmi; ++dmi )
 	{
 		if( (*dmi)->getEjectPilotDieInterface() )
@@ -199,12 +191,12 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 			targetCanEject = TRUE;
 			break;
 		}
-	}  // end for dmi
+	}
 
 	if ( ! targetCanEject )
 	{
 		TheGameLogic->destroyObject( obj );
-		return TRUE; 
+		return TRUE;
 	}
 
 	// I we have made it this far, we are going to ride in this vehicle for a while
@@ -243,7 +235,7 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 		obj->getDrawable()->setDrawableHidden( true );
 
 	// By returning FALSE, we will not remove the object (Hijacker)
-	return FALSE; 
+	return FALSE;
 //	return TRUE;
 }
 
@@ -256,7 +248,7 @@ void ConvertToHijackedVehicleCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -274,15 +266,15 @@ void ConvertToHijackedVehicleCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConvertToHijackedVehicleCrateCollide::loadPostProcess( void )
+void ConvertToHijackedVehicleCrateCollide::loadPostProcess()
 {
 
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

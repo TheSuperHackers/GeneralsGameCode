@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMINIT_HEADER
-#define COMINIT_HEADER
+#pragma once
 
 namespace patchget
 {
@@ -35,5 +34,3 @@ class ComInit
 };
 
 } // namespace patchget
-
-#endif

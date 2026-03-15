@@ -41,7 +41,7 @@
 #define TAB_CONTROL_PROPERTIES_DIALOG   153
 #define COMBO_BOX_PROPERTIES_DIALOG     154
 #define CHECK_SEE_THRU                  1004
-#define CHECK_DRAGABLE                  1005
+#define CHECK_DRAGGABLE                 1005
 #define CHECK_ENABLED                   1006
 #define CHECK_HIDDEN                    1007
 #define CHECK_NO_INPUT                  1008
@@ -194,7 +194,7 @@
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        155

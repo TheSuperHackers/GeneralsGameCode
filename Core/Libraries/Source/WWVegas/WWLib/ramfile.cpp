@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/ramfile.cpp                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/ramfile.cpp                            $*
+ *                                                                                             *
  *                      $Author:: Ian_l                                                       $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 10/31/01 2:36p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   RAMFileClass::Close -- This will 'close' the ram file.                                    *
  *   RAMFileClass::Create -- Effectively clears the buffer of data.                            *
  *   RAMFileClass::Delete -- Effectively clears the buffer of data.                            *
@@ -48,8 +48,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"RAMFILE.H"
-#include	<string.h>
+#include "RAMFILE.h"
 
 
 /***********************************************************************************************
@@ -63,7 +62,7 @@
  *                                                                                             *
  * INPUT:   buffer   -- Pointer to the buffer to use for this file. The buffer will already    *
  *                      contain data if the file is opened for READ. It will be considered     *
- *                      a scratch buffer if opened for WRITE. If the buffer pointer is NULL    *
+ *                      a scratch buffer if opened for WRITE. If the buffer pointer is nullptr    *
  *                      but the length parameter is not, then a buffer will be allocated       *
  *                      of the specified length. This case is only useful for opening the      *
  *                      file for WRITE.                                                        *
@@ -86,7 +85,7 @@ RAMFileClass::RAMFileClass(void * buffer, int len) :
 	IsOpen(false),
 	IsAllocated(false)
 {
-	if (buffer == NULL && len > 0) {
+	if (buffer == nullptr && len > 0) {
 		Buffer = W3DNEWARRAY char[len];
 		IsAllocated = true;
 	}
@@ -107,12 +106,12 @@ RAMFileClass::RAMFileClass(void * buffer, int len) :
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-RAMFileClass::~RAMFileClass(void)
+RAMFileClass::~RAMFileClass()
 {
 	Close();
 	if (IsAllocated) {
 		delete [] Buffer;
-		Buffer = NULL;
+		Buffer = nullptr;
 		IsAllocated = false;
 	}
 }
@@ -133,7 +132,7 @@ RAMFileClass::~RAMFileClass(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RAMFileClass::Create(void)
+int RAMFileClass::Create()
 {
 	if (!Is_Open()) {
 		Length = 0;
@@ -158,7 +157,7 @@ int RAMFileClass::Create(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RAMFileClass::Delete(void)
+int RAMFileClass::Delete()
 {
 	if (!Is_Open()) {
 		Length = 0;
@@ -202,7 +201,7 @@ bool RAMFileClass::Is_Available(int )
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool RAMFileClass::Is_Open(void) const
+bool RAMFileClass::Is_Open() const
 {
 	return(IsOpen);
 }
@@ -251,7 +250,7 @@ int RAMFileClass::Open(char const *, int access)
  *=============================================================================================*/
 int RAMFileClass::Open(int access)
 {
-	if (Buffer == NULL || Is_Open()) {
+	if (Buffer == nullptr || Is_Open()) {
 		return(false);
 	}
 
@@ -298,7 +297,7 @@ int RAMFileClass::Open(int access)
  *=============================================================================================*/
 int RAMFileClass::Read(void * buffer, int size)
 {
-	if (Buffer == NULL || buffer == NULL || size == 0) {
+	if (Buffer == nullptr || buffer == nullptr || size == 0) {
 		return(0);
 	}
 
@@ -347,7 +346,7 @@ int RAMFileClass::Read(void * buffer, int size)
  *=============================================================================================*/
 int RAMFileClass::Seek(int pos, int dir)
 {
-	if (Buffer == NULL || !Is_Open()) {
+	if (Buffer == nullptr || !Is_Open()) {
 		return(Offset);
 	}
 
@@ -397,7 +396,7 @@ int RAMFileClass::Seek(int pos, int dir)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RAMFileClass::Size(void)
+int RAMFileClass::Size()
 {
 	return(Length);
 }
@@ -423,7 +422,7 @@ int RAMFileClass::Size(void)
  *=============================================================================================*/
 int RAMFileClass::Write(void const * buffer, int size)
 {
-	if (Buffer == NULL || buffer == NULL || size == 0) {
+	if (Buffer == nullptr || buffer == nullptr || size == 0) {
 		return(0);
 	}
 
@@ -468,14 +467,14 @@ int RAMFileClass::Write(void const * buffer, int size)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RAMFileClass::Close(void)
+void RAMFileClass::Close()
 {
 	IsOpen = false;
 }
 
 
 /***********************************************************************************************
- * RAMFileClass::Bias --																							  *	
+ * RAMFileClass::Bias --																							  *
  *                                                                                             *
  *                                                                                             *
  * INPUT:   none                                                                               *

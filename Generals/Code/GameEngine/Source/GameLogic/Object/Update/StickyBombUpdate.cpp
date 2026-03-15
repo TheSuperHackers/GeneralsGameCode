@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -50,16 +50,13 @@ StickyBombUpdate::StickyBombUpdate( Thing *thing, const ModuleData *moduleData )
 {
 	m_targetID		= INVALID_ID;
 	m_dieFrame		= 0;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_nextPingFrame = 0;
-	//
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StickyBombUpdate::~StickyBombUpdate( void )
+StickyBombUpdate::~StickyBombUpdate()
 {
 }
 
@@ -81,7 +78,7 @@ void StickyBombUpdate::onObjectCreated()
 			Object *target = ai->getGoalObject();
 			if( target )
 			{
-				init( target, NULL);
+				init( target, nullptr);
 			}
 		}
 	}
@@ -104,7 +101,7 @@ void StickyBombUpdate::init( const Object *target, const Object *bomber)
 	{
 		//we are a timer bomb
 		m_dieFrame = update->getDieFrame();
-	
+
 		//Calculate the number of seconds (rounded down)
 		UnsignedInt pings = (m_dieFrame - now) / LOGICFRAMES_PER_SECOND;
 		//Now determine the next frame we will make a "ping" sound.
@@ -141,7 +138,7 @@ void StickyBombUpdate::init( const Object *target, const Object *bomber)
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime StickyBombUpdate::update( void )
+UpdateSleepTime StickyBombUpdate::update()
 {
 	// Continually reset position of stickybomb to match the position of the target.
 	const Object *target = getTargetObject();
@@ -220,7 +217,7 @@ void StickyBombUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -247,15 +244,15 @@ void StickyBombUpdate::xfer( Xfer *xfer )
 	//Next frame that a ping sound will play.
 	xfer->xferUnsignedInt( &m_nextPingFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StickyBombUpdate::loadPostProcess( void )
+void StickyBombUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

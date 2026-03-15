@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __PILOT_FIND_VEHICLE_UPDATE_H_
-#define __PILOT_FIND_VEHICLE_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/UpdateModule.h"
@@ -53,7 +50,7 @@ public:
 	PilotFindVehicleUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -71,15 +68,11 @@ public:
 	PilotFindVehicleUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual UpdateSleepTime update() override;
 
 	Object* scanClosestTarget();
 
 protected:
 	Bool		m_didMoveToBase;
 };
-
-
-#endif
-

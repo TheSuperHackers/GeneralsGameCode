@@ -9,9 +9,8 @@ set_target_properties(core_texturecompress PROPERTIES OUTPUT_NAME texturecompres
 target_sources(core_texturecompress PRIVATE ${TEXTURECOMPRESS_SRC})
 
 target_link_libraries(core_texturecompress PRIVATE
-    core_config
-    core_utility
     core_wwlib
+    corei_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

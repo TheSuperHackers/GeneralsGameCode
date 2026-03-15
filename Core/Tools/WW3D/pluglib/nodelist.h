@@ -17,27 +17,25 @@
 */
 
 /* $Header: /Commando/Code/Tools/pluglib/nodelist.h 7     1/02/01 6:31p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G                                                 * 
- *                                                                                             * 
- *                    File Name : NODELIST.H                                                   * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/09/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 9, 1997 [GH]                                            * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G                                                 *
+ *                                                                                             *
+ *                    File Name : NODELIST.h                                                   *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/09/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 9, 1997 [GH]                                            *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef NODELIST_H
-#define NODELIST_H
+#pragma once
 
 #include "always.h"
 #include <max.h>
@@ -62,10 +60,10 @@ class INodeListClass : public ITreeEnumProc
 {
 public:
 
-	INodeListClass(TimeValue time,INodeFilterClass * nodefilter = NULL);
-	INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * nodefilter = NULL);
-	INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter = NULL);
-	INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter = NULL);
+	INodeListClass(TimeValue time,INodeFilterClass * nodefilter = nullptr);
+	INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * nodefilter = nullptr);
+	INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter = nullptr);
+	INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter = nullptr);
 	~INodeListClass();
 
 	void			Set_Filter(INodeFilterClass * inodefilter) { INodeFilter = inodefilter; }
@@ -97,6 +95,3 @@ public:
 	// returns >0 if nodea > node b.
 	virtual int operator() (INode * nodea,INode * nodeb) const = 0;
 };
-
-
-#endif /*NODELIST_H*/

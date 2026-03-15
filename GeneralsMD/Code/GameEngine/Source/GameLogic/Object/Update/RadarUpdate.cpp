@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Xfer.h"
@@ -39,12 +39,12 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpdateModuleData::RadarUpdateModuleData( void )
+RadarUpdateModuleData::RadarUpdateModuleData()
 {
 
 	m_radarExtendTime = 0.0f;
 
-}  // end RadarUpdateModuleData
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,18 +60,18 @@ RadarUpdate::RadarUpdate( Thing *thing, const ModuleData *moduleData )
 	m_extendDoneFrame = 0;
 	m_extendComplete = FALSE;
 
-}  // end RadarUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpdate::~RadarUpdate( void )
+RadarUpdate::~RadarUpdate()
 {
 
-}  // end RadarUpdate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpdate::extendRadar( void )
+void RadarUpdate::extendRadar()
 {
 	const RadarUpdateModuleData *modData = getRadarUpdateModuleData();
 
@@ -86,11 +86,11 @@ void RadarUpdate::extendRadar( void )
 	//Change this to make the radar active after extension...
 	m_radarActive = true;
 
-}  // end extendRadar
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime RadarUpdate::update( void )
+UpdateSleepTime RadarUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
@@ -110,17 +110,17 @@ UpdateSleepTime RadarUpdate::update( void )
 		m_extendComplete = TRUE;
 		m_extendDoneFrame = 0;  // just to be clean
 
-		// remove the extending condition and set the extened condition
+		// remove the extending condition and set the extended condition
 		Drawable *draw = getObject()->getDrawable();
 		if( draw )
 			draw->clearAndSetModelConditionState( MODELCONDITION_RADAR_EXTENDING,
 																						MODELCONDITION_RADAR_UPGRADED );
 
-	}  // end if
-	
+	}
+
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -131,7 +131,7 @@ void RadarUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -158,16 +158,16 @@ void RadarUpdate::xfer( Xfer *xfer )
 	// radar active
 	xfer->xferBool( &m_radarActive );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadarUpdate::loadPostProcess( void )
+void RadarUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

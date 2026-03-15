@@ -27,7 +27,7 @@
 // Desc:   A chance to create a crate on death according to certain condition checks
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -51,7 +51,7 @@ CreateCrateDie::CreateCrateDie( Thing *thing, const ModuleData* moduleData ) : D
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateCrateDie::~CreateCrateDie( void )
+CreateCrateDie::~CreateCrateDie()
 {
 }
 
@@ -72,7 +72,7 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 	if (!isDieApplicable(damageInfo))
 		return;
 
-	CrateTemplate const *currentCrateData = NULL;
+	CrateTemplate const *currentCrateData = nullptr;
 	Object *killer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 	Object *me = getObject();
 
@@ -95,7 +95,7 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 
 			if( KINDOFMASK_ANY_SET(currentCrateData->m_killedByTypeKindof) && !testKillerType( currentCrateData, killer ) )
 				continue; //If this is set up to test and it fails
-			
+
 			if( (currentCrateData->m_killerScience != SCIENCE_INVALID)  &&  !testKillerScience( currentCrateData, killer ) )
 				continue; //If this is set up to test and it fails
 
@@ -108,14 +108,14 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 					crate->setTeam( me->getControllingPlayer()->getDefaultTeam() );
 				}
 
-				if (killer) 
+				if (killer)
 				{
 					// If the killer is a computer controlled player, notify that the crate exists.
-					if (killer->getControllingPlayer() &&	
-						killer->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER) 
+					if (killer->getControllingPlayer() &&
+						killer->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)
 					{
 						AIUpdateInterface *ai = killer->getAIUpdateInterface();
-						if (ai) 
+						if (ai)
 						{
 							ai->notifyCrate( crate->getID() );
 						}
@@ -124,7 +124,7 @@ void CreateCrateDie::onDie( const DamageInfo * damageInfo )
 			}
 		}
 	}
-}  
+}
 
 Bool CreateCrateDie::testCreationChance( CrateTemplate const *currentCrateData )
 {
@@ -144,7 +144,7 @@ Bool CreateCrateDie::testVeterancyLevel( CrateTemplate const *currentCrateData )
 
 Bool CreateCrateDie::testKillerType( CrateTemplate const *currentCrateData, Object *killer )
 {
-	if( killer == NULL )
+	if( killer == nullptr )
 		return FALSE;
 
 	// Must match the whole group of bits set in the KilledBy description (most likely One).
@@ -156,13 +156,13 @@ Bool CreateCrateDie::testKillerType( CrateTemplate const *currentCrateData, Obje
 
 Bool CreateCrateDie::testKillerScience( CrateTemplate const *currentCrateData, Object *killer )
 {
-	if( killer == NULL )
+	if( killer == nullptr )
 		return FALSE;
 
 	// killer's player must have the listed science
 	Player *killerPlayer = killer->getControllingPlayer();
 
-	if( killerPlayer == NULL )
+	if( killerPlayer == nullptr )
 		return FALSE;
 
 	if( ! killerPlayer->hasScience( currentCrateData->m_killerScience ) )
@@ -179,7 +179,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 	// CreationChance is used for the success of this block, but this block can have any number of potential actual crates
 	Real multipleCratePick = GameLogicRandomValueReal( 0, 1 );
 	Real multipleCrateRunningTotal = 0;
-	AsciiString crateName = "";
+	AsciiString crateName;
 
 	for( crateCreationEntryConstIterator iter = currentCrateData->m_possibleCrates.begin();
 				iter != currentCrateData->m_possibleCrates.end();
@@ -198,8 +198,8 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 	// At this point, I could very well have a "" for the type, if the Designer didn't make the sum of chances 1
 
 	ThingTemplate const *crateType = TheThingFactory->findTemplate( crateName );
-	if( crateType == NULL )
-		return NULL;
+	if( crateType == nullptr )
+		return nullptr;
 
 	Bool spotFound = FALSE;
 	Coord3D creationPoint;
@@ -222,8 +222,8 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 		// of the large dead thing (building rubble)
 		fpOptions.minRadius = 0.0f;
 		fpOptions.maxRadius = 125.0f;
-		fpOptions.relationshipObject = NULL;
-		fpOptions.flags = FPF_NONE; 
+		fpOptions.relationshipObject = nullptr;
+		fpOptions.flags = FPF_NONE;
 		if( ThePartitionManager->findPositionAround( &centerPoint, &fpOptions, &creationPoint ) )
 		{
 			spotFound = TRUE;
@@ -232,7 +232,7 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 
 	if( spotFound )
 	{
-		Object *newCrate = TheThingFactory->newObject( crateType, NULL );
+		Object *newCrate = TheThingFactory->newObject( crateType, nullptr );
 		newCrate->setPosition( &creationPoint );
 		newCrate->setOrientation( GameLogicRandomValueReal( 0, 2*PI ) );
 		newCrate->setLayer(layer);
@@ -242,14 +242,14 @@ Object *CreateCrateDie::createCrate( CrateTemplate const *currentCrateData )
 		if( crateDrawable )
 		{
 			crateDrawable->setTerrainDecal(TERRAIN_DECAL_CRATE);
-			crateDrawable->setTerrainDecalSize(2.5f * newCrate->getGeometryInfo().getMajorRadius(), 
+			crateDrawable->setTerrainDecalSize(2.5f * newCrate->getGeometryInfo().getMajorRadius(),
 																2.5f * newCrate->getGeometryInfo().getMajorRadius() )	;
 			crateDrawable->setTerrainDecalFadeTarget(1.0f, 0.03f);
 		}
 
 		return newCrate;
 	}
-	return NULL;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ void CreateCrateDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -279,15 +279,15 @@ void CreateCrateDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CreateCrateDie::loadPostProcess( void )
+void CreateCrateDie::loadPostProcess()
 {
 
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

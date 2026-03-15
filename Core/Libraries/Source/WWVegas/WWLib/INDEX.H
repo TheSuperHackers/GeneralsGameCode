@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/INDEX.H                                            $*
+ *                     $Archive:: /G/wwlib/INDEX.h                                            $*
  *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
  *                                                                                             *
@@ -40,7 +40,7 @@
  *   IndexClass<T>::IndexClass -- Constructor for index handler.                               *
  *   IndexClass<T>::Invalidate_Archive -- Invalidate the archive pointer.                      *
  *   IndexClass<T>::Is_Archive_Same -- Checks to see if archive pointer is same as index.      *
- *   IndexClass<T>::Is_Present -- Checks for presense of index entry.                          *
+ *   IndexClass<T>::Is_Present -- Checks for presence of index entry.                          *
  *   IndexClass<T>::Remove_Index -- Find matching index and remove it from system.             *
  *   IndexClass<T>::Search_For_Node -- Perform a search for the specified node ID              *
  *   IndexClass<T>::Set_Archive -- Records the node pointer into the archive.                  *
@@ -48,14 +48,10 @@
  *   IndexClass<T>::~IndexClass -- Destructor for index handler object.                        *
  *   compfunc -- Support function for bsearch and bsort.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef INDEX_H
-#define INDEX_H
-
-#include	"BSEARCH.H"
+#include	"BSEARCH.h"
 
 #if !defined(__BORLANDC__) || !defined(_USERENTRY)
 #define	_USERENTRY
@@ -84,8 +80,8 @@ template<class INDEX, class T>
 class IndexClass
 {
 	public:
-		IndexClass(void);
-		~IndexClass(void);
+		IndexClass();
+		~IndexClass();
 
 		/*
 		**	Add element to index table.
@@ -105,7 +101,7 @@ class IndexClass
 		/*
 		**	Fetch number of index entries in the table.
 		*/
-		int Count(void) const;
+		int Count() const;
 
 		/*
 		**	Actually a fetch an index data element from the table.
@@ -121,7 +117,7 @@ class IndexClass
 		/*
 		**	Clear out the index table to null (empty) state.
 		*/
-		void Clear(void);
+		void Clear();
 
 	private:
 		/*
@@ -129,7 +125,7 @@ class IndexClass
 		**	object and the index identifier number.
 		*/
 		struct NodeElement {
-			NodeElement(void) {}		// Default constructor does nothing (by design).
+			NodeElement() {}		// Default constructor does nothing (by design).
 			NodeElement(INDEX const & id, T & data) : ID(id), Data(data) {}
 
 			INDEX ID;		// ID number (must be first element in this structure).
@@ -182,7 +178,7 @@ class IndexClass
 		/*
 		**	Invalidate the archive pointer.
 		*/
-		void Invalidate_Archive(void) const;
+		void Invalidate_Archive() const;
 
 		/*
 		**	Set archive to specified value.
@@ -213,7 +209,7 @@ class IndexClass
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-IndexClass<INDEX, T>::IndexClass(void) :
+IndexClass<INDEX, T>::IndexClass() :
 	IndexTable(0),
 	IndexCount(0),
 	IndexSize(0),
@@ -239,7 +235,7 @@ IndexClass<INDEX, T>::IndexClass(void) :
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-IndexClass<INDEX, T>::~IndexClass(void)
+IndexClass<INDEX, T>::~IndexClass()
 {
 	Clear();
 }
@@ -261,7 +257,7 @@ IndexClass<INDEX, T>::~IndexClass(void)
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-void IndexClass<INDEX, T>::Clear(void)
+void IndexClass<INDEX, T>::Clear()
 {
 	delete [] IndexTable;
 	IndexTable = 0;
@@ -297,7 +293,7 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 	if (amount < 0) return(false);
 
 	NodeElement * table = W3DNEWARRAY NodeElement[IndexSize + amount];
-	if (table != NULL) {
+	if (table != nullptr) {
 
 		/*
 		**	Copy all valid nodes into the new table.
@@ -331,12 +327,12 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
 /***********************************************************************************************
  * IndexClass<T>::Count -- Fetch the number of index entries recorded.                         *
  *                                                                                             *
- *    This will return the quantity of index entries that have been recored by this index      *
+ *    This will return the quantity of index entries that have been recorded by this index     *
  *    handler.                                                                                 *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with number of recored indecies present.                                   *
+ * OUTPUT:  Returns with number of recorded indices present.                                   *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -344,14 +340,14 @@ bool IndexClass<INDEX, T>::Increase_Table_Size(int amount)
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-int IndexClass<INDEX, T>::Count(void) const
+int IndexClass<INDEX, T>::Count() const
 {
 	return(IndexCount);
 }
 
 
 /***********************************************************************************************
- * IndexClass<T>::Is_Present -- Checks for presense of index entry.                            *
+ * IndexClass<T>::Is_Present -- Checks for presence of index entry.                            *
  *                                                                                             *
  *    This routine will scan for the specified index entry. If it was found, then 'true' is    *
  *    returned.                                                                                *
@@ -418,7 +414,7 @@ bool IndexClass<INDEX, T>::Is_Present(INDEX const & id) const
  *                                                                                             *
  * WARNINGS:   This routine presumes that the index exists. If it doesn't exist, then the      *
  *             default constructed object "T" is returned instead. To avoid this problem,      *
- *             always verfiy the existance of the index by calling Is_Present() first.         *
+ *             always verfiy the existence of the index by calling Is_Present() first.         *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *
@@ -496,7 +492,7 @@ bool IndexClass<INDEX, T>::Is_Archive_Same(INDEX const & id) const
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class INDEX, class T>
-void IndexClass<INDEX, T>::Invalidate_Archive(void) const
+void IndexClass<INDEX, T>::Invalidate_Archive() const
 {
 	Archive = 0;
 }
@@ -549,7 +545,7 @@ bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 {
 #ifdef RTS_DEBUG
 	/*
-	**	Ensure that two elements with the same index are not added to the 
+	**	Ensure that two elements with the same index are not added to the
 	**	array.
 	*/
 	for (int index = 0; index < IndexCount; index++) {
@@ -657,7 +653,7 @@ bool IndexClass<INDEX, T>::Remove_Index(INDEX const & id)
  *                                                                                             *
  * OUTPUT:  Returns with the comparision value between the two nodes.                          *
  *                                                                                             *
- * WARNINGS:   This is highly dependant upon the layout of the NodeElement structure.          *
+ * WARNINGS:   This is highly dependent upon the layout of the NodeElement structure.          *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *
@@ -684,7 +680,7 @@ int _USERENTRY IndexClass<INDEX, T>::search_compfunc(void const * ptr1, void con
  * INPUT:   id -- The index ID to search for.                                                  *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the NodeElement that matches the index ID specified. If  *
- *          no matching index could be found, then NULL is returned.                           *
+ *          no matching index could be found, then nullptr is returned.                           *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -723,8 +719,3 @@ typename IndexClass<INDEX, T>::NodeElement const * IndexClass<INDEX, T>::Search_
 	return(Binary_Search(IndexTable, IndexCount, node));
 //	return((NodeElement const *)bsearch(&node, &IndexTable[0], IndexCount, sizeof(IndexTable[0]), search_compfunc));
 }
-
-
-#endif
-
-

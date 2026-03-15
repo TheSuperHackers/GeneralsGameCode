@@ -16,30 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/BUFF.H                                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/BUFF.h                                             $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/02/99 11:59a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef CCBUFF_H
-#define CCBUFF_H
-
 
 /*
 **	The "bool" integral type was defined by the C++ committee in
@@ -61,16 +56,16 @@ class Buffer {
 		Buffer(void const * ptr, long size=0);
 		Buffer(long size);
 		Buffer(Buffer const & buffer);
-		~Buffer(void);
+		~Buffer();
 
 		Buffer & operator = (Buffer const & buffer);
-		operator void * (void) const {return(BufferPtr);}
-		operator char * (void) const {return((char *)BufferPtr);}
+		operator void * () const {return(BufferPtr);}
+		operator char * () const {return((char *)BufferPtr);}
 
-		void Reset(void);
-		void * Get_Buffer(void) const {return(BufferPtr);}
-		long Get_Size(void) const {return(Size);}
-		bool Is_Valid(void) const {return(BufferPtr != 0);}
+		void Reset();
+		void * Get_Buffer() const {return(BufferPtr);}
+		long Get_Size() const {return(Size);}
+		bool Is_Valid() const {return(BufferPtr != 0);}
 
 	protected:
 
@@ -90,6 +85,3 @@ class Buffer {
 		*/
 		bool IsAllocated;
 };
-
-
-#endif

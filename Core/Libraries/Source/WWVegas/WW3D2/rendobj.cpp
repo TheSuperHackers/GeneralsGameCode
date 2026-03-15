@@ -17,26 +17,26 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/rendobj.cpp 16    12/17/01 8:06p Byon_g $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Engine                                       * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/rendobj.cpp                            $* 
- *                                                                                             * 
- *                   Org Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Engine                                       *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/rendobj.cpp                            $*
+ *                                                                                             *
+ *                   Org Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 07/01/02 12:45p                                              $*
- *                                                                                             * 
- *                    $Revision:: 17                                                          $* 
- *                                                                                             * 
+ *                                                                                             *
+ *                    $Revision:: 17                                                          $*
+ *                                                                                             *
  * 07/01/02 KM Coltype enum change to avoid MAX conflicts									   *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   RenderObjClass::RenderObjClass -- constructor                                             * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   RenderObjClass::RenderObjClass -- constructor                                             *
  *   RenderObjClass::RenderObjClass -- copy constructor                                        *
  *   RenderObjClass::operator == -- assignment operator                                        *
  *   RenderObjClass::Calculate_Texture_Reduction_Factor -- calculate texture reduction factor  *
@@ -57,7 +57,7 @@
  *   RenderObjClass::Update_Sub_Object_Bits -- updates our bits according to our sub-objects   *
  *   RenderObjClass::Update_Sub_Object_Transforms -- re-evaluate the transforms my sub-objects *
  *   RenderObjClass::Add -- Generic add for render objects                                     *
- *   RenderObjClass::Remove -- Generic Remove for Render Objects                               * 
+ *   RenderObjClass::Remove -- Generic Remove for Render Objects                               *
  *   RenderObjClass::Notify_Added -- notifies the object that it is in a scene                 *
  *   RenderObjClass::Notify_Removed -- notifies an object that it has been removed             *
  *   RenderObjClass::Update_Cached_Bounding_Volumes -- default collision sphere.               *
@@ -93,11 +93,6 @@
 #include "intersec.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off) 
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Definitions of static members:
 const float	RenderObjClass::AT_MIN_LOD = FLT_MAX;
@@ -108,18 +103,18 @@ StringClass
 Filename_From_Asset_Name (const char *asset_name)
 {
 	StringClass filename;
-	if (asset_name != NULL) {
-		
+	if (asset_name != nullptr) {
+
 		//
 		// Copy the model name into a new filename buffer
 		//
 		::lstrcpy (filename.Get_Buffer (::lstrlen (asset_name) + 5), asset_name);
-		
+
 		//
 		// Do we need to strip off the model's suffix?
 		//
 		char *suffix = ::strchr (filename.Peek_Buffer(), '.');
-		if (suffix != NULL) {
+		if (suffix != nullptr) {
 			suffix[0] = 0;
 		}
 
@@ -154,26 +149,26 @@ static inline bool Check_Is_Transform_Identity(const Matrix3D& m)
 }
 
 
-/*********************************************************************************************** 
- * RenderObjClass::RenderObjClass -- constructor                                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/04/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * RenderObjClass::RenderObjClass -- constructor                                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/04/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass::RenderObjClass(void) :
+RenderObjClass::RenderObjClass() :
 	Bits(DEFAULT_BITS),
 	Transform(1),
 	NativeScreenSize(WW3D::Get_Default_Native_Screen_Size()),
-	Scene(NULL),
-	Container(NULL),
-	User_Data(NULL),
-	RenderHook(NULL),
+	Scene(nullptr),
+	Container(nullptr),
+	User_Data(nullptr),
+	RenderHook(nullptr),
 	ObjectScale(1.0),
 	ObjectColor(0),
 	CachedBoundingSphere(Vector3(0,0,0),1.0f),
@@ -199,10 +194,10 @@ RenderObjClass::RenderObjClass(const RenderObjClass & src) :
 	Bits(src.Bits),
 	Transform(src.Transform),
 	NativeScreenSize(src.NativeScreenSize),
-	Scene(NULL),
-	Container(NULL),
-	User_Data(NULL),
-	RenderHook(NULL),
+	Scene(nullptr),
+	Container(nullptr),
+	User_Data(nullptr),
+	RenderHook(nullptr),
 	ObjectScale(1.0),
 	ObjectColor(0),
 	CachedBoundingSphere(src.CachedBoundingSphere),
@@ -241,7 +236,7 @@ RenderObjClass & RenderObjClass::operator = (const RenderObjClass & that)
 	}
 	return *this;
 }
-	
+
 
 /***********************************************************************************************
  * RenderObjClass::Calculate_Texture_Reduction_Factor -- calculate texture reduction factor.   *
@@ -357,9 +352,9 @@ float RenderObjClass::Get_Screen_Size(CameraClass &camera)
  * HISTORY:                                                                                    *
  *   3/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass * RenderObjClass::Get_Scene(void)
+SceneClass * RenderObjClass::Get_Scene()
 {
-	if (Scene != NULL) {
+	if (Scene != nullptr) {
 		Scene->Add_Ref();
 	}
 	return Scene;
@@ -379,11 +374,11 @@ SceneClass * RenderObjClass::Get_Scene(void)
  *   3/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
 void RenderObjClass::Set_Container(RenderObjClass * con)
-{ 
+{
 	// Either we arent currently in a container or we are clearing our container, otherwise
 	// Houston, there is a problem!
-	WWASSERT((con == NULL) || (Container == NULL));
-	Container = con; 
+	WWASSERT((con == nullptr) || (Container == nullptr));
+	Container = con;
 }
 
 #ifdef GET_CONTAINER_INLINE
@@ -401,9 +396,9 @@ void RenderObjClass::Set_Container(RenderObjClass * con)
  * HISTORY:                                                                                    *
  *   3/4/99     GTH : Created.                                                                 *
  *=============================================================================================*/
-RenderObjClass * RenderObjClass::Get_Container(void) const													
-{ 
-	return Container; 
+RenderObjClass * RenderObjClass::Get_Container() const
+{
+	return Container;
 }
 #endif
 
@@ -438,7 +433,7 @@ void RenderObjClass::Set_Transform(const Matrix3D &m)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
- *   07/14/2001 SKB : Add Check_Is_Transform_Identity                                          * 
+ *   07/14/2001 SKB : Add Check_Is_Transform_Identity                                          *
  *=============================================================================================*/
 void RenderObjClass::Set_Position(const Vector3 &v)
 {
@@ -460,19 +455,19 @@ void RenderObjClass::Set_Position(const Vector3 &v)
  * HISTORY:                                                                                    *
  *   6/15/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Validate_Transform(void) const
+void RenderObjClass::Validate_Transform() const
 {
 	/*
-	** Recurse up the tree to see if any of my parents are saying that their sub-object 
+	** Recurse up the tree to see if any of my parents are saying that their sub-object
 	** transforms are dirty
 	*/
 	RenderObjClass * con = Get_Container();
 	bool dirty = false;
-	if (con != NULL) 
+	if (con != nullptr)
 	{
 		dirty = con->Are_Sub_Object_Transforms_Dirty();
 
-		while (con->Get_Container() != NULL) 
+		while (con->Get_Container() != nullptr)
 		{
 			dirty |= con->Are_Sub_Object_Transforms_Dirty();
 			con = con->Get_Container();
@@ -481,12 +476,12 @@ void RenderObjClass::Validate_Transform(void) const
 		/*
 		** If the transforms are dirty, update them
 		*/
-		if (dirty) 
+		if (dirty)
 		{
 			con->Update_Sub_Object_Transforms();
 		}
 	}
-	if (dirty) 
+	if (dirty)
 		IsTransformIdentity = Check_Is_Transform_Identity(Transform);
 }
 
@@ -504,7 +499,7 @@ void RenderObjClass::Validate_Transform(void) const
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-Vector3 RenderObjClass::Get_Position(void) const
+Vector3 RenderObjClass::Get_Position() const
 {
 	Validate_Transform();
 	return Transform.Get_Translation();
@@ -545,8 +540,8 @@ RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *
 		RenderObjClass * robj = Get_Sub_Object(i);
 		if (robj) {
 			const char * subobjname = strchr(robj->Get_Name(),'.');
-			if (subobjname == NULL) {
-				subobjname = robj->Get_Name();	
+			if (subobjname == nullptr) {
+				subobjname = robj->Get_Name();
 			} else {
 				// skip past the period.
 				subobjname = subobjname+1;
@@ -561,7 +556,7 @@ RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -572,7 +567,7 @@ RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *
  *                                                                                             *
  * OUTPUT:                                                                                     *
  *                                                                                             *
- * WARNINGS:	If the bone name is unknown then this function will add the the object to the   *  
+ * WARNINGS:	If the bone name is unknown then this function will add the the object to the   *
  *					root transform rather than failing.  This is due to the fact that GetBoneIndex  *
  *					returns the root tranform for unknown bones.												  *
  *                                                                                             *
@@ -671,7 +666,7 @@ void RenderObjClass::Prepare_LOD(CameraClass &camera)
  * HISTORY:                                                                                    *
  *   3/11/99    NH : Created.                                                                  *
  *=============================================================================================*/
-float RenderObjClass::Get_Cost(void) const
+float RenderObjClass::Get_Cost() const
 {
 	int polycount = Get_Num_Polys();
 	// If polycount is zero set Cost to a small nonzero amount to avoid divisions by zero.
@@ -726,11 +721,11 @@ int RenderObjClass::Calculate_Cost_Value_Arrays(float screen_area, float *values
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Update_Sub_Object_Bits(void)
+void RenderObjClass::Update_Sub_Object_Bits()
 {
 	// this doesn't do anything for non-composite objects
 	if (Get_Num_Sub_Objects() == 0) return;
-	
+
 	// go through all of our sub-objects
 	int coltype = 0;
 	int istrans = 0;
@@ -745,9 +740,9 @@ void RenderObjClass::Update_Sub_Object_Bits(void)
 		isadditive |= robj->Is_Additive();
 		robj->Release_Ref();
 	}
-	
+
 	Set_Collision_Type(coltype);
-	Set_Translucent(istrans);	
+	Set_Translucent(istrans);
 	Set_Alpha(isalpha);
 	Set_Additive(isadditive);
 
@@ -773,63 +768,66 @@ void RenderObjClass::Update_Sub_Object_Bits(void)
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Update_Sub_Object_Transforms(void)
+void RenderObjClass::Update_Sub_Object_Transforms()
 {
 }
 
-	
-/*********************************************************************************************** 
+
+/***********************************************************************************************
  * RenderObjClass::Add -- Generic add for render objects                                       *
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/04/1997 GH  : Created.                                                                 * 
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/04/1997 GH  : Created.                                                                 *
  *   2/25/99    GTH : Moved to the base RenderObjClass                                         *
  *=============================================================================================*/
 void RenderObjClass::Add(SceneClass * scene)
 {
 	WWASSERT(scene);
-	WWASSERT(Container == NULL);
+	WWASSERT(Container == nullptr);
 	Scene = scene;
 	Scene->Add_Render_Object(this);
 }
 
-/*********************************************************************************************** 
- * RenderObjClass::Remove -- Generic Remove for Render Objects                                 * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   11/04/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * RenderObjClass::Remove -- Generic Remove for Render Objects                                 *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/04/1997 GH  : Created.                                                                 *
  *   2/25/99    GTH : moved to the base RenderObjClass                                         *
  *=============================================================================================*/
-void RenderObjClass::Remove(void)
+bool RenderObjClass::Remove()
 {
 	// All render objects have their scene pointers set.  To check if this is a "top level"
-	// object, (i.e. directly in the scene) you see if its Container pointer is NULL.
+	// object, (i.e. directly in the scene) you see if its Container pointer is null.
 #if 1
-	if (Container == NULL) {
-		if (Scene != NULL) {
+	if (Container == nullptr) {
+		if (Scene != nullptr) {
 			Scene->Remove_Render_Object(this);
-			return;
+			return true;
 		}
+		return false;
 	} else {
 		Container->Remove_Sub_Object(this);
-		return;
+		return true;
 	}
 #else
-	if (!Scene) return;
+	if (!Scene)
+		return false;
 	Scene->Remove_Render_Object(this);
-	Scene = NULL;
+	Scene = nullptr;
+	return true;
 #endif
 }
 
@@ -882,7 +880,7 @@ void RenderObjClass::Notify_Added(SceneClass * scene)
  *=============================================================================================*/
 void RenderObjClass::Notify_Removed(SceneClass * scene)
 {
-	Scene = NULL;
+	Scene = nullptr;
 }
 
 
@@ -898,7 +896,7 @@ void RenderObjClass::Notify_Removed(SceneClass * scene)
  * HISTORY:                                                                                    *
  *   11/7/97    GTH : Created.                                                                 *
  *=============================================================================================*/
-void RenderObjClass::Update_Cached_Bounding_Volumes(void) const
+void RenderObjClass::Update_Cached_Bounding_Volumes() const
 {
 	Get_Obj_Space_Bounding_Box(CachedBoundingBox);
 	Get_Obj_Space_Bounding_Sphere(CachedBoundingSphere);
@@ -968,7 +966,7 @@ void RenderObjClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
  * HISTORY:                                                                                    *
  *   2/25/99    GTH : Moved into RenderObjClass                                                *
  *=============================================================================================*/
-bool RenderObjClass::Intersect(IntersectionClass *Intersection, IntersectionResultClass *Final_Result) 
+bool RenderObjClass::Intersect(IntersectionClass *Intersection, IntersectionResultClass *Final_Result)
 {
 
 	// do the quick sphere test just to make sure it is worth the more expensive intersection test
@@ -1014,7 +1012,7 @@ bool RenderObjClass::Intersect(IntersectionClass *Intersection, IntersectionResu
 bool RenderObjClass::Intersect_Sphere(IntersectionClass *Intersection, IntersectionResultClass *Final_Result)
 {
 	SphereClass sphere = Get_Bounding_Sphere();
-	return Intersection->Intersect_Sphere(sphere, Final_Result); 
+	return Intersection->Intersect_Sphere(sphere, Final_Result);
 }
 
 
@@ -1033,7 +1031,7 @@ bool RenderObjClass::Intersect_Sphere(IntersectionClass *Intersection, Intersect
 bool RenderObjClass::Intersect_Sphere_Quick(IntersectionClass *Intersection, IntersectionResultClass *Final_Result)
 {
 	SphereClass sphere = Get_Bounding_Sphere();
-	return Intersection->Intersect_Sphere_Quick(sphere, Final_Result); 
+	return Intersection->Intersect_Sphere_Quick(sphere, Final_Result);
 }
 
 /***********************************************************************************************
@@ -1055,10 +1053,10 @@ bool RenderObjClass::Build_Dependency_List (DynamicVectorClass<StringClass> &fil
 		// Loop through all this object's subobj's
 		int subobj_count = Get_Num_Sub_Objects ();
 		for (int index = 0; index < subobj_count; index ++) {
-			
+
 			// Ask this subobj to add all of its file dependencies to the list
 			RenderObjClass *psub_obj = Get_Sub_Object (index);
-			if (psub_obj != NULL) {
+			if (psub_obj != nullptr) {
 				psub_obj->Build_Dependency_List (file_list);
 				psub_obj->Release_Ref ();
 			}
@@ -1071,7 +1069,7 @@ bool RenderObjClass::Build_Dependency_List (DynamicVectorClass<StringClass> &fil
 	// Return the true/false result code
 	return (file_list.Count () > 0);
 }
- 
+
 
 /***********************************************************************************************
  * RenderObjClass::Build_Texture_List -- Builds a list of texture files this obj depends on.   *
@@ -1098,12 +1096,12 @@ bool RenderObjClass::Build_Texture_List
 		//
 		int subobj_count = Get_Num_Sub_Objects ();
 		for (int index = 0; index < subobj_count; index ++) {
-			
+
 			//
 			// Ask this subobj to add all of its texture file dependencies to the list
 			//
 			RenderObjClass *sub_obj = Get_Sub_Object (index);
-			if (sub_obj != NULL) {
+			if (sub_obj != nullptr) {
 				sub_obj->Build_Texture_List (texture_file_list);
 				sub_obj->Release_Ref ();
 			}
@@ -1118,7 +1116,7 @@ bool RenderObjClass::Build_Texture_List
 	// Return the true/false result code
 	return (texture_file_list.Count () > 0);
 }
- 
+
 /***********************************************************************************************
  * RenderObjClass::Add_Dependencies_To_List -- Add dependent files to the list.                *
  *                                                                                             *
@@ -1141,7 +1139,7 @@ void RenderObjClass::Add_Dependencies_To_List
 	// Should we add W3D files to the list?
 	//
 	if (textures_only == false) {
-		
+
 		//
 		// Main W3D file
 		//
@@ -1152,10 +1150,10 @@ void RenderObjClass::Add_Dependencies_To_List
 		// External hierarchy file
 		//
 		const HTreeClass *phtree = Get_HTree ();
-		if (phtree != NULL) {
+		if (phtree != nullptr) {
 			const char *htree_name = phtree->Get_Name ();
 			if (::lstrcmpi (htree_name, model_name) != 0) {
-								
+
 				//
 				// Add this file to the list
 				//
@@ -1167,8 +1165,8 @@ void RenderObjClass::Add_Dependencies_To_List
 		// Original W3D file (if an aggregate)
 		//
 		const char *base_model_name = Get_Base_Model_Name ();
-		if (base_model_name != NULL) {
-				
+		if (base_model_name != nullptr) {
+
 			//
 			// Add this file to the list
 			//
@@ -1184,23 +1182,23 @@ void RenderObjClass::Add_Dependencies_To_List
 /****************************************************************************************
 
 
-	RenderObjClass - Persistant object support.
+	RenderObjClass - Persistent object support.
 
 	NOTE: For now, the render obj PersistFactory is going to cheat by simply storing
 	the name of the render object that was saved.  At load time, it will ask the
 	asset manager for that object again.  If the asset manager fails to re-create the
-	object, 
+	object,
 
 
 ****************************************************************************************/
 
 class RenderObjPersistFactoryClass : public PersistFactoryClass
 {
-	virtual uint32				Chunk_ID(void) const;
+	virtual uint32				Chunk_ID() const;
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj)	const;
 
-	enum 
+	enum
 	{
 		RENDOBJFACTORY_CHUNKID_VARIABLES		= 0x00555040,
 		RENDOBJFACTORY_VARIABLE_OBJPOINTER	= 0x00,
@@ -1211,67 +1209,68 @@ class RenderObjPersistFactoryClass : public PersistFactoryClass
 
 static RenderObjPersistFactoryClass _RenderObjPersistFactory;
 
-uint32 RenderObjPersistFactoryClass::Chunk_ID(void) const
+uint32 RenderObjPersistFactoryClass::Chunk_ID() const
 {
 	return WW3D_PERSIST_CHUNKID_RENDEROBJ;
 }
 
 PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 {
-	RenderObjClass * old_obj = NULL;
+	RenderObjClass * old_obj = nullptr;
 	Matrix3D tm(1);
 	char name[64];
+	name[0] = '\0';
 
 	while (cload.Open_Chunk()) {
 		switch (cload.Cur_Chunk_ID()) {
 
 			case RENDOBJFACTORY_CHUNKID_VARIABLES:
-			
+
 				while (cload.Open_Micro_Chunk()) {
 					switch(cload.Cur_Micro_Chunk_ID()) {
-						READ_MICRO_CHUNK(cload,RENDOBJFACTORY_VARIABLE_OBJPOINTER,old_obj);	
+						READ_MICRO_CHUNK(cload,RENDOBJFACTORY_VARIABLE_OBJPOINTER,old_obj);
 						READ_MICRO_CHUNK(cload,RENDOBJFACTORY_VARIABLE_TRANSFORM,tm);
 						READ_MICRO_CHUNK_STRING(cload,RENDOBJFACTORY_VARIABLE_NAME,name,sizeof(name));
 					}
-					cload.Close_Micro_Chunk();	
+					cload.Close_Micro_Chunk();
 				}
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		};
 		cload.Close_Chunk();
 	}
-	
+
 	// if the object we saved didn't have a name, replace it with null
 	if (strlen(name) == 0) {
 		static int count = 0;
-		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("RenderObjPersistFactory attempted to load an un-named render object!\r\n"));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+		if ( count++ < 10 ) {
+			WWDEBUG_SAY(("RenderObjPersistFactory attempted to load an un-named render object!"));
+			WWDEBUG_SAY(("Replacing it with a null render object!"));
 		}
 		strcpy(name,"NULL");
 	}
 
 	RenderObjClass * new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(name);
-	
-	if (new_obj == NULL) {
+
+	if (new_obj == nullptr) {
 		static int count = 0;
-		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("RenderObjPersistFactory failed to create object: %s!!\r\n",name));
-			WWDEBUG_SAY(("Either the asset for this object is gone or you tried to save a procedural object.\r\n"));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+		if ( count++ < 10 ) {
+			WWDEBUG_SAY(("RenderObjPersistFactory failed to create object: %s!!",name));
+			WWDEBUG_SAY(("Either the asset for this object is gone or you tried to save a procedural object."));
+			WWDEBUG_SAY(("Replacing it with a null render object!"));
 		}
 		strcpy(name,"NULL");
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(name);
 	}
 
-	WWASSERT(new_obj != NULL);
+	WWASSERT(new_obj != nullptr);
 	if (new_obj) {
 		new_obj->Set_Transform(tm);
 	}
-	
+
 	SaveLoadSystemClass::Register_Pointer(old_obj,new_obj);
 	return new_obj;
 }
@@ -1291,21 +1290,21 @@ void RenderObjPersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * ob
 
 
 /*
-** RenderObj save-load. 
+** RenderObj save-load.
 */
-const PersistFactoryClass & RenderObjClass::Get_Factory (void) const
+const PersistFactoryClass & RenderObjClass::Get_Factory () const
 {
-	return _RenderObjPersistFactory;	
+	return _RenderObjPersistFactory;
 }
 
 bool RenderObjClass::Save (ChunkSaveClass &csave)
 {
 	// This should never hit with the persist factory we're using...
-	// Yes this looks like a design flaw but the way we're saving render objects is 
-	// a "shortcut".  We specifically designed this capability into the persistant
+	// Yes this looks like a design flaw but the way we're saving render objects is
+	// a "shortcut".  We specifically designed this capability into the persistent
 	// object system so that we could avoid making all render object's save and
 	// load themselves if possible.
-	WWASSERT(0); 
+	WWASSERT(0);
 	return true;
 }
 

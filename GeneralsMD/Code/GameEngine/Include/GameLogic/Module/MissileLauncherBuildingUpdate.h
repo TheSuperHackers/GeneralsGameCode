@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _MissileLauncherBuildingUpdate_H_
-#define _MissileLauncherBuildingUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
@@ -59,30 +56,30 @@ public:
 
 	MissileLauncherBuildingUpdateModuleData()
 	{
-		m_specialPowerTemplate = NULL;
+		m_specialPowerTemplate = nullptr;
 		m_doorOpenTime = 0;
 		m_doorWaitOpenTime = 0;
 		m_doorClosingTime = 0;
 
-		m_openingFX = m_openFX = m_waitingToCloseFX = m_closingFX = m_closedFX = NULL;
+		m_openingFX = m_openFX = m_waitingToCloseFX = m_closingFX = m_closedFX = nullptr;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "SpecialPowerTemplate",	INI::parseSpecialPowerTemplate,					NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_specialPowerTemplate ) },
-			{ "DoorOpenTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorOpenTime ) },
-			{ "DoorWaitOpenTime",			INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorWaitOpenTime ) },
-			{ "DoorCloseTime",				INI::parseDurationUnsignedInt,	NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorClosingTime ) },
-			{ "DoorOpeningFX",				INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_openingFX ) },
-			{ "DoorOpenFX",						INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_openFX ) },
-			{ "DoorWaitingToCloseFX",	INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_waitingToCloseFX ) },
-			{ "DoorClosingFX",				INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_closingFX ) },
-			{ "DoorClosedFX",					INI::parseFXList,								NULL, offsetof( MissileLauncherBuildingUpdateModuleData, m_closedFX ) },
-			{ "DoorOpenIdleAudio",		INI::parseAudioEventRTS,				NULL,	offsetof( MissileLauncherBuildingUpdateModuleData, m_openIdleAudio ) },
+			{ "SpecialPowerTemplate",	INI::parseSpecialPowerTemplate,					nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_specialPowerTemplate ) },
+			{ "DoorOpenTime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorOpenTime ) },
+			{ "DoorWaitOpenTime",			INI::parseDurationUnsignedInt,	nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorWaitOpenTime ) },
+			{ "DoorCloseTime",				INI::parseDurationUnsignedInt,	nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_doorClosingTime ) },
+			{ "DoorOpeningFX",				INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_openingFX ) },
+			{ "DoorOpenFX",						INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_openFX ) },
+			{ "DoorWaitingToCloseFX",	INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_waitingToCloseFX ) },
+			{ "DoorClosingFX",				INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_closingFX ) },
+			{ "DoorClosedFX",					INI::parseFXList,								nullptr, offsetof( MissileLauncherBuildingUpdateModuleData, m_closedFX ) },
+			{ "DoorOpenIdleAudio",		INI::parseAudioEventRTS,				nullptr,	offsetof( MissileLauncherBuildingUpdateModuleData, m_openIdleAudio ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -102,20 +99,20 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	//SpecialPowerUpdateInterface pure virtual implementations
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	virtual Bool isSpecialAbility() const { return false; }
-	virtual Bool isSpecialPower() const { return true; }
-	virtual Bool isActive() const { return m_doorState != m_timeoutState; }
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool isSpecialAbility() const override { return false; }
+	virtual Bool isSpecialPower() const override { return true; }
+	virtual Bool isActive() const override { return m_doorState != m_timeoutState; }
 	SpecialPowerTemplate* getTemplate() const;
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return false; } //Is it active now?
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return false; }	//Does it have it, even if it's not active?
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {}
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override { return false; } //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return false; }	//Does it have it, even if it's not active?
+	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override {}
 
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
+	virtual CommandOption getCommandOption() const override { return (CommandOption)0; }
 
-	virtual UpdateSleepTime update();	///< Deciding whether or not to make new guys
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const;
+	virtual UpdateSleepTime update() override;	///< Deciding whether or not to make new guys
+	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override;
 
 private:
 	enum DoorStateType
@@ -126,7 +123,7 @@ private:
 		DOOR_WAITING_TO_CLOSE,
 		DOOR_CLOSING,
 	};
-	
+
 	void switchToState(DoorStateType dst);
 
 	const SpecialPowerModuleInterface*	m_specialPowerModule;
@@ -135,5 +132,3 @@ private:
 	UnsignedInt													m_timeoutFrame;
 	AudioEventRTS												m_openIdleAudio;
 };
-
-#endif // _MissileLauncherBuildingUpdate_H_

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ModelState.h"
 #include "Common/Player.h"
@@ -40,36 +40,36 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void RadarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "DisableProof",	INI::parseBool,	NULL, offsetof( RadarUpgradeModuleData, m_isDisableProof ) },
-		{ 0, 0, 0, 0 }
+		{ "DisableProof",	INI::parseBool,	nullptr, offsetof( RadarUpgradeModuleData, m_isDisableProof ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpgrade::RadarUpgrade( Thing *thing, const ModuleData* moduleData ) : 
+RadarUpgrade::RadarUpgrade( Thing *thing, const ModuleData* moduleData ) :
 							UpgradeModule( thing, moduleData )
 {
 
-}  // end RadarUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadarUpgrade::~RadarUpgrade( void )
+RadarUpgrade::~RadarUpgrade()
 {
 
-}  // end ~RadarUpgrade
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpgrade::onDelete( void )
+void RadarUpgrade::onDelete()
 {
 	const RadarUpgradeModuleData *md = getRadarUpgradeModuleData();
 
@@ -89,7 +89,7 @@ void RadarUpgrade::onDelete( void )
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -112,20 +112,20 @@ void RadarUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 		oldOwner->removeRadar( md->m_isDisableProof );
 		setUpgradeExecuted(FALSE);
 
-	}  // end if
+	}
 	if( newOwner )
 	{
 
 		newOwner->addRadar( md->m_isDisableProof );
 		setUpgradeExecuted(TRUE);
 
-	}  // end if
+	}
 
-}  // end onCapture
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void RadarUpgrade::upgradeImplementation( void )
+void RadarUpgrade::upgradeImplementation()
 {
 	const RadarUpgradeModuleData *md = getRadarUpgradeModuleData();
 
@@ -140,7 +140,7 @@ void RadarUpgrade::upgradeImplementation( void )
 	if( radarUpdate )
 		radarUpdate->extendRadar();
 
-}  // end upgradeImplementation
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -151,7 +151,7 @@ void RadarUpgrade::crc( Xfer *xfer )
 	// extend base class
 	UpgradeModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -169,15 +169,15 @@ void RadarUpgrade::xfer( Xfer *xfer )
 	// extend base class
 	UpgradeModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadarUpgrade::loadPostProcess( void )
+void RadarUpgrade::loadPostProcess()
 {
 
 	// extend base class
 	UpgradeModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

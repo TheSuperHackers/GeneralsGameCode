@@ -24,10 +24,10 @@
 
 // FILE: DieModule.cpp ////////////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_OBJECT_STATUS_NAMES
 #include "Common/Xfer.h"
@@ -38,11 +38,6 @@
 #include "GameLogic/Object.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -54,15 +49,15 @@ DieMuxData::DieMuxData() :
 }
 
 //-------------------------------------------------------------------------------------------------
-const FieldParse* DieMuxData::getFieldParse() 
+const FieldParse* DieMuxData::getFieldParse()
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "DeathTypes",				INI::parseDeathTypeFlags,						NULL, offsetof( DieMuxData, m_deathTypes ) },
-		{ "VeterancyLevels",	INI::parseVeterancyLevelFlags,			NULL, offsetof( DieMuxData, m_veterancyLevels ) },
-		{ "ExemptStatus",			ObjectStatusMaskType::parseFromINI,	NULL,	offsetof( DieMuxData, m_exemptStatus ) },
-		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI, NULL,	offsetof( DieMuxData, m_requiredStatus ) },
-		{ 0, 0, 0, 0 }
+		{ "DeathTypes",				INI::parseDeathTypeFlags,						nullptr, offsetof( DieMuxData, m_deathTypes ) },
+		{ "VeterancyLevels",	INI::parseVeterancyLevelFlags,			nullptr, offsetof( DieMuxData, m_veterancyLevels ) },
+		{ "ExemptStatus",			ObjectStatusMaskType::parseFromINI,	nullptr,	offsetof( DieMuxData, m_exemptStatus ) },
+		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI, nullptr,	offsetof( DieMuxData, m_requiredStatus ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   return dataFieldParse;
 }
@@ -99,7 +94,7 @@ void DieModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -115,15 +110,15 @@ void DieModule::xfer( Xfer *xfer )
 	// call base class
 	BehaviorModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DieModule::loadPostProcess( void )
+void DieModule::loadPostProcess()
 {
 
 	// call base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

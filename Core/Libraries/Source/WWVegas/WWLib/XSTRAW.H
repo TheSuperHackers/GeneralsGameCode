@@ -16,33 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/XSTRAW.H                                           $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/XSTRAW.h                                           $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/02/99 12:01p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef XSTRAW_H
-#define XSTRAW_H
-
-#include	"BUFF.H"
-#include	"STRAW.H"
-#include	"WWFILE.H"
+#include "BUFF.h"
+#include "STRAW.h"
+#include "WWFILE.h"
 #include	<stddef.h>
 
 /*
@@ -62,7 +58,7 @@ class BufferStraw : public Straw
 //		void const * BufferPtr;
 //		int Length;
 
-		bool Is_Valid(void) {return(BufferPtr.Is_Valid());}
+		bool Is_Valid() {return(BufferPtr.Is_Valid());}
 		BufferStraw(BufferStraw & rvalue);
 		BufferStraw & operator = (BufferStraw const & pipe);
 };
@@ -76,17 +72,14 @@ class FileStraw : public Straw
 	public:
 		FileStraw(FileClass * file) : File(file), HasOpened(false) {}
 		FileStraw(FileClass & file) : File(&file), HasOpened(false) {}
-		virtual ~FileStraw(void);
+		virtual ~FileStraw();
 		virtual int Get(void * source, int slen);
 
 	private:
 		FileClass * File;
 		bool HasOpened;
 
-		bool Valid_File(void) {return(File != NULL);}
+		bool Valid_File() {return(File != nullptr);}
 		FileStraw(FileStraw & rvalue);
 		FileStraw & operator = (FileStraw const & pipe);
 };
-
-
-#endif

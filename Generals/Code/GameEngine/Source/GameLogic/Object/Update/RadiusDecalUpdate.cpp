@@ -26,7 +26,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -45,7 +45,7 @@ RadiusDecalUpdate::RadiusDecalUpdate( Thing *thing, const ModuleData* moduleData
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-RadiusDecalUpdate::~RadiusDecalUpdate( void )
+RadiusDecalUpdate::~RadiusDecalUpdate()
 {
 	m_deliveryDecal.clear();
 }
@@ -69,7 +69,7 @@ void RadiusDecalUpdate::killRadiusDecal()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime RadiusDecalUpdate::update( void )
+UpdateSleepTime RadiusDecalUpdate::update()
 {
 	if (m_killWhenNoLongerAttacking && !getObject()->testStatus( OBJECT_STATUS_IS_ATTACKING ))
 	{
@@ -90,7 +90,7 @@ void RadiusDecalUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -113,15 +113,15 @@ void RadiusDecalUpdate::xfer( Xfer *xfer )
 
 	xfer->xferBool(&m_killWhenNoLongerAttacking);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void RadiusDecalUpdate::loadPostProcess( void )
+void RadiusDecalUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

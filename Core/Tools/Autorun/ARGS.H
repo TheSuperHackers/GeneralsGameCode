@@ -30,8 +30,7 @@
 //
 //================================================================================================
 
-#ifndef ARGS_H
-#define ARGS_H
+#pragma once
 
 //----------------------------------------------------------------------------
 // INCLUDES
@@ -66,5 +65,3 @@ class Command_Line_Arguments
 };
 
 extern Command_Line_Arguments *Args;
-
-#endif // ARGC_ARGV_H

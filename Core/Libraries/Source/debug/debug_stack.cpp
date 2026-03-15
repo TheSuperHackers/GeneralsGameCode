@@ -26,7 +26,11 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
-#include "_pch.h"
+
+#include "debug.h"
+#include "debug_stack.h"
+#include <windows.h>
+#include "stringex.h"
 #include <imagehlp.h>
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
@@ -36,9 +40,9 @@
 #undef DBGHELP
 
 #define DBGHELP(name,ret,par) name##Type _##name;
-static union 
+static union
 {
-  struct  
+  struct
   {
 #include "debug_stack.inl"
   };
@@ -47,10 +51,10 @@ static union
 #undef DBGHELP
 
 #define DBGHELP(name,ret,par) #name,
-static char const *DebughelpFunctionNames[] =
+static char const *const DebughelpFunctionNames[] =
 {
 #include "debug_stack.inl"
-	NULL
+	nullptr
 };
 #undef DBGHELP
 
@@ -60,7 +64,7 @@ static HMODULE g_dbghelp;
 // local flag that is true if we're using an old dbghelp.dll version
 static bool g_oldDbghelp;
 
-static void InitDbghelp(void)
+static void InitDbghelp()
 {
   // already called?
   if (g_dbghelp)
@@ -68,7 +72,7 @@ static void InitDbghelp(void)
 
 	// firstly check for dbghelp.dll in the EXE directory
 	char dbgHelpPath[256];
-	if (GetModuleFileName(NULL,dbgHelpPath,sizeof(dbgHelpPath)))
+	if (GetModuleFileName(nullptr,dbgHelpPath,sizeof(dbgHelpPath)))
 	{
 		char *slash=strrchr(dbgHelpPath,'\\');
 		if (slash)
@@ -80,7 +84,7 @@ static void InitDbghelp(void)
 	if (!g_dbghelp)
 		// load any version we can
 		g_dbghelp=::LoadLibrary("DBGHELP.DLL");
-  
+
   if (!g_dbghelp)
     return;
 
@@ -97,7 +101,7 @@ static void InitDbghelp(void)
   {
     // not all functions found -> clear them all
     while (funcptr!=gDbg.funcPtr)
-      *--funcptr=NULL;
+      *--funcptr=0;
   }
   else
   {
@@ -105,7 +109,7 @@ static void InitDbghelp(void)
     gDbg._SymSetOptions(gDbg._SymGetOptions()|SYMOPT_DEFERRED_LOADS|SYMOPT_LOAD_LINES);
 
     // Init module
-    gDbg._SymInitialize((HANDLE)GetCurrentProcessId(),NULL,TRUE);
+    gDbg._SymInitialize((HANDLE)GetCurrentProcessId(),nullptr,TRUE);
 
     // Check: are we using a newer version of dbghelp.dll?
     // (older versions have some serious issues.. err... bugs)
@@ -137,7 +141,7 @@ unsigned DebugStackwalk::Signature::GetAddress(int n) const
   return m_addr[n];
 }
 
-void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned bufSize) 
+void DebugStackwalk::Signature::GetSymbol(unsigned addr, char *buf, unsigned bufSize)
 {
   DFAIL_IF(!buf) return;
   DFAIL_IF(bufSize<64||bufSize>=0x80000000) return;
@@ -213,7 +217,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
   if (relMod) *relMod=0;
   if (bufSym) *bufSym=0;
   if (relSym) *relSym=0;
-  
+
   if (bufFile) *bufFile=0;
   if (linePtr) *linePtr=0;
   if (relLine) *relLine=0;
@@ -250,8 +254,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
 
     char *p=strrchr(symbolBuffer,'\\'); // use filename only, strip off path
     p=p?p+1:symbolBuffer;
-    strncpy(bufMod,p,sizeMod);
-    bufMod[sizeMod-1]=0;
+    strlcpy(bufMod,p,sizeMod);
   }
   if (relMod)
     *relMod=addr-modBase;
@@ -266,12 +269,11 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     DWORD displacement;
     if (gDbg._SymGetSymFromAddr((HANDLE)GetCurrentProcessId(),addr,&displacement,symPtr))
     {
-      strncpy(bufSym,symPtr->Name,sizeSym);
-      bufSym[sizeSym-1]=0;
+      strlcpy(bufSym,symPtr->Name,sizeSym);
       if (relSym)
         *relSym=displacement;
     }
-    else 
+    else
       strcpy(bufSym,"(unknown)");
   }
 
@@ -288,8 +290,7 @@ void DebugStackwalk::Signature::GetSymbol(unsigned addr,
     {
       char *p=strrchr(line.FileName,'\\'); // use filename only, strip off path
       p=p?p+1:line.FileName;
-      strncpy(bufFile,p,sizeFile);
-      bufFile[sizeFile-1]=0;
+      strlcpy(bufFile,p,sizeFile);
       if (linePtr)
         *linePtr=line.LineNumber;
       if (relLine)
@@ -314,7 +315,7 @@ Debug& operator<<(Debug &dbg, const DebugStackwalk::Signature &sig)
 
 //////////////////////////////////////////////////////////////////////////////
 
-DebugStackwalk::DebugStackwalk(void)
+DebugStackwalk::DebugStackwalk()
 {
   // it doesn't harm to do this here
   InitDbghelp();
@@ -324,12 +325,12 @@ DebugStackwalk::~DebugStackwalk()
 {
 }
 
-void *DebugStackwalk::GetDbghelpHandle(void)
+void *DebugStackwalk::GetDbghelpHandle()
 {
   return g_dbghelp;
 }
 
-bool DebugStackwalk::IsOldDbghelp(void)
+bool DebugStackwalk::IsOldDbghelp()
 {
   return g_oldDbghelp;
 }
@@ -353,7 +354,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 	stackFrame.AddrFrame.Mode = AddrModeFlat;
 
 	// Use the context struct if it was provided.
-	if (ctx) 
+	if (ctx)
   {
 		stackFrame.AddrPC.Offset = ctx->Eip;
 		stackFrame.AddrStack.Offset = ctx->Esp;
@@ -363,7 +364,8 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   {
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
-	  __asm 
+#if defined(_MSC_VER)
+	  __asm
     {
     here:
 		  lea	eax,here
@@ -371,6 +373,17 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 		  mov	reg_ebp,ebp
 		  mov	reg_esp,esp
 	  };
+#elif (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(_M_IX86))
+	  __asm__ __volatile__ (
+		  "call 1f\n\t"
+		  "1: pop %0\n\t"
+		  "mov %%ebp, %1\n\t"
+		  "mov %%esp, %2"
+		  : "=r" (reg_eip), "=r" (reg_ebp), "=r" (reg_esp)
+	  );
+#else
+#error "Unsupported compiler or architecture for register capture"
+#endif
 	  stackFrame.AddrPC.Offset = reg_eip;
 	  stackFrame.AddrStack.Offset = reg_esp;
 	  stackFrame.AddrFrame.Offset = reg_ebp;
@@ -380,7 +393,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   bool skipFirst=!ctx;
   while (sig.m_numAddr<Signature::MAX_ADDR&&
 		     gDbg._StackWalk(IMAGE_FILE_MACHINE_I386,GetCurrentProcess(),GetCurrentThread(),
-                         &stackFrame,NULL,NULL,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,NULL))
+                         &stackFrame,nullptr,nullptr,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,nullptr))
   {
     if (skipFirst)
       skipFirst=false;

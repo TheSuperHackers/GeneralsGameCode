@@ -24,12 +24,12 @@
 
 // FILE: CashBountyPower.cpp /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Aug 2002
@@ -37,7 +37,7 @@
 //	Filename: 	CashBountyPower.cpp
 //
 //	author:		Steven Johnson
-//	
+//
 //	purpose:
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -77,7 +77,7 @@ CashBountyPowerModuleData::CashBountyPowerModuleData()
 	m_upgrades.clear();
 #endif
 	m_defaultBounty = 0.0;
-} 
+}
 
 #ifdef NOT_IN_USE
 //-------------------------------------------------------------------------------------------------
@@ -86,12 +86,12 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 {
 	CashBountyPowerModuleData::Upgrades up;
 
-	INI::parseScience(ini, NULL, &up.m_science, NULL);
-	INI::parsePercentToReal(ini, NULL, &up.m_bounty, NULL);
+	INI::parseScience(ini, nullptr, &up.m_science, nullptr);
+	INI::parsePercentToReal(ini, nullptr, &up.m_bounty, nullptr);
 
 	std::vector<CashBountyPowerModuleData::Upgrades>* s = (std::vector<CashBountyPowerModuleData::Upgrades>*)store;
 	s->push_back(up);
-} 
+}
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -100,17 +100,17 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 {
 	SpecialPowerModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 #ifdef NOT_IN_USE
-		{ "UpgradeBounty", parseBountyUpgradePair, NULL, offsetof( CashBountyPowerModuleData, m_upgrades ) },
+		{ "UpgradeBounty", parseBountyUpgradePair, nullptr, offsetof( CashBountyPowerModuleData, m_upgrades ) },
 #endif
-		{ "Bounty",			INI::parsePercentToReal, NULL, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
-		{ 0, 0, 0, 0 } 
+		{ "Bounty",			INI::parsePercentToReal, nullptr, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,17 +118,17 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) : 
+CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) :
 							SpecialPowerModule( thing, moduleData )
 {
-}  // end CashBountyPower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CashBountyPower::~CashBountyPower()
 {
 
-}  // end ~CashBountyPower
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -150,9 +150,9 @@ Real CashBountyPower::findBounty() const
 	const CashBountyPowerModuleData* d = getCashBountyPowerModuleData();
 #ifdef NOT_IN_USE
 	const Player* controller = getObject()->getControllingPlayer();
-	if (controller != NULL)
+	if (controller != nullptr)
 	{
-		for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin(); 
+		for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
 					it != d->m_upgrades.end();
 					++it)
 		{
@@ -188,7 +188,7 @@ void CashBountyPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -206,15 +206,15 @@ void CashBountyPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::loadPostProcess( void )
+void CashBountyPower::loadPostProcess()
 {
 
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

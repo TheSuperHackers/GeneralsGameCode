@@ -24,14 +24,11 @@
 
 // FILE: DelayedUpgrade.h /////////////////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, April 2002
-// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start 
+// Desc:	 An Upgrade that broadcasts to all DelayedUpgradeUpdates that maybe they should start
 //					counting down to execution
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __DELAYED_UPGRADE_H_
-#define __DELAYED_UPGRADE_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
@@ -47,13 +44,13 @@ public:
 		m_delayTime = 0;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpgradeModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "DelayTime",	INI::parseDurationUnsignedInt,	NULL, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
+			{ "DelayTime",	INI::parseDurationUnsignedInt,	nullptr, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -78,11 +75,7 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
-
-
-#endif
-

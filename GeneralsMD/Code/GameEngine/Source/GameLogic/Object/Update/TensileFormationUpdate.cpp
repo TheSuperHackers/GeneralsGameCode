@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "Common/AudioEventRTS.h"
@@ -38,7 +38,7 @@
 #include "GameLogic/Module/TensileFormationUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/PartitionManager.h"
-#include "GameLogic/GameLogic.h" 
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 
@@ -47,11 +47,6 @@
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define MAP_XY_FACTOR			(10.0f)	 //How wide and tall each height map square is in world space.
@@ -76,24 +71,24 @@ private:
 
 public:
 	PartitionFilterTensileFormationMember( Object* obj ) : m_obj( obj ) { }
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterTensileFormationMember"; }
 #endif
 	virtual Bool allow( Object *objOther )
 	{
-		return ( getTFU( objOther ) != NULL );
+		return ( getTFU( objOther ) != nullptr );
 	}
 };
 
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
+TensileFormationUpdateModuleData::TensileFormationUpdateModuleData()
 {
 
 	m_enabled = FALSE;
 
-}  // end TensileFormationUpdateModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -102,15 +97,15 @@ TensileFormationUpdateModuleData::TensileFormationUpdateModuleData( void )
 
 	UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "Enabled",	    INI::parseBool,	NULL, offsetof( TensileFormationUpdateModuleData, m_enabled ) },
-		{ "CrackSound",	INI::parseAudioEventRTS,	NULL,	offsetof( TensileFormationUpdateModuleData, m_crackSound) },
-		{ 0, 0, 0, 0 }
+		{ "Enabled",	    INI::parseBool,	nullptr, offsetof( TensileFormationUpdateModuleData, m_enabled ) },
+		{ "CrackSound",	INI::parseAudioEventRTS,	nullptr,	offsetof( TensileFormationUpdateModuleData, m_crackSound) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +130,7 @@ TensileFormationUpdate::TensileFormationUpdate( Thing *thing, const ModuleData *
 
 	for ( int t = 0; t < 4; ++t)
 	{
-		m_links[ t ].id = INVALID_ID; 
+		m_links[ t ].id = INVALID_ID;
 		m_links[ t ].tensor.set(0,0,0);
 	}
 
@@ -154,18 +149,18 @@ TensileFormationUpdate::TensileFormationUpdate( Thing *thing, const ModuleData *
 
 
 
-}  // end TensileFormationUpdate
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TensileFormationUpdate::~TensileFormationUpdate( void )
+TensileFormationUpdate::~TensileFormationUpdate()
 {
 
-}  // end ~TensileFormationUpdate
+}
 
 
 
-void TensileFormationUpdate::initLinks( void )
+void TensileFormationUpdate::initLinks()
 {
 
 	m_linksInited = TRUE;
@@ -175,8 +170,8 @@ void TensileFormationUpdate::initLinks( void )
 		return;
 
 	PartitionFilterTensileFormationMember tfmFilter( getObject() );
-	PartitionFilter *filters[] = { &tfmFilter, NULL };
-	SimpleObjectIterator *iter = NULL;
+	PartitionFilter *filters[] = { &tfmFilter, nullptr };
+	SimpleObjectIterator *iter = nullptr;
 	iter = ThePartitionManager->iterateObjectsInRange(getObject(), 1000.0f, FROM_BOUNDINGSPHERE_3D, filters);
 	MemoryPoolObjectHolder hold(iter);
 
@@ -193,8 +188,8 @@ void TensileFormationUpdate::initLinks( void )
 		if ( closestDistance > thisDistance )
 		{
 			closestDistance = thisDistance;
-			
-			//push a new link 
+
+			//push a new link
 			for ( int t = 3; t > 0; --t )
 				m_links[ t ] = m_links[ t-1 ];
 
@@ -214,12 +209,12 @@ void TensileFormationUpdate::initLinks( void )
 
 
 
- 
+
 
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime TensileFormationUpdate::update( void )
+UpdateSleepTime TensileFormationUpdate::update()
 {
 
 	if ( ! m_linksInited )
@@ -272,7 +267,7 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 	}
 
 
-	if ( m_life%30 == 29 )		
+	if ( m_life%30 == 29 )
 		propagateDislodgement( TRUE );
 
 
@@ -321,9 +316,9 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 			desiredPos.sub( &tensor );
 
 			//Coord3D desiredPos = { theirPos->x - m_links[ t ].tensor.x, theirPos->y - m_links[ t ].tensor.y, theirPos->z - m_links[ t ].tensor.z };
-			
+
 			newPos.x = newPos.x*0.93f + desiredPos.x*0.07f;
-			newPos.y = newPos.y*0.93f + desiredPos.y*0.07f; 
+			newPos.y = newPos.y*0.93f + desiredPos.y*0.07f;
 			newPos.z = MIN( m_lowestSlideElevation, TheTerrainLogic->getGroundHeight(newPos.x, newPos.y) );//rest on surface here
 
 			tensor.normalize();
@@ -347,7 +342,7 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 
 
 	draw->setModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_POST_COLLAPSE));
-			
+
 	if ( m_life < 200 )
 		draw->setModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_MOVING));
 	else
@@ -357,13 +352,13 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 		draw->setModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_FREEFALL));
 	else
 		draw->clearModelConditionFlags(MAKE_MODELCONDITION_MASK(MODELCONDITION_FREEFALL));
-		
+
 //	{
 //		RGBColor cyan = {0,1,1};
 //		draw->flashAsSelected(&cyan);
 //	}
 
-	
+
 
 	//else
 		//m_motionlessCounter = 0;
@@ -379,7 +374,7 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 
 
 	return UPDATE_SLEEP_NONE;
-}  // end update
+}
 
 
 
@@ -391,8 +386,8 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 void TensileFormationUpdate::propagateDislodgement ( Bool enabled )
 {
 	PartitionFilterTensileFormationMember tfmFilter( getObject() );
-	PartitionFilter *filters[] = { &tfmFilter, NULL };
-	SimpleObjectIterator *iter = NULL;
+	PartitionFilter *filters[] = { &tfmFilter, nullptr };
+	SimpleObjectIterator *iter = nullptr;
 	iter = ThePartitionManager->iterateObjectsInRange(getObject(), 100.0f, FROM_BOUNDINGSPHERE_3D, filters);
 	MemoryPoolObjectHolder hold(iter);
 	for (Object* other = iter->first(); other; other = iter->next())
@@ -410,7 +405,7 @@ void TensileFormationUpdate::propagateDislodgement ( Bool enabled )
 
 
 		//TensileFormationUpdate* tfu = getTFU(other);
-		//if ( tfu != NULL )
+		//if ( tfu != nullptr )
 		//{
 		//	tfu->setEnabled( enabled );
 		//}
@@ -445,7 +440,7 @@ void TensileFormationUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -466,15 +461,15 @@ void TensileFormationUpdate::xfer( Xfer *xfer )
 	// enabled
 	xfer->xferBool( &m_enabled );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TensileFormationUpdate::loadPostProcess( void )
+void TensileFormationUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -45,38 +45,38 @@ SupplyCenterCreate::SupplyCenterCreate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SupplyCenterCreate::~SupplyCenterCreate( void )
+SupplyCenterCreate::~SupplyCenterCreate()
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::onCreate( void )
+void SupplyCenterCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::onBuildComplete( void )
+void SupplyCenterCreate::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
 
 	CreateModule::onBuildComplete(); // extend
 
-	if( ThePlayerList == NULL )
+	if( ThePlayerList == nullptr )
 		return;
 
 	for( Int playerIndex = ThePlayerList->getPlayerCount() - 1; playerIndex >= 0; playerIndex-- )
 	{
 		Player *currentPlayer = ThePlayerList->getNthPlayer( playerIndex );
-		if( currentPlayer == NULL )
+		if( currentPlayer == nullptr )
 			continue;
 		ResourceGatheringManager *manager = currentPlayer->getResourceGatheringManager();
-		if( manager == NULL )
+		if( manager == nullptr )
 			continue;
 		manager->addSupplyCenter( getObject() );
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -87,7 +87,7 @@ void SupplyCenterCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -105,15 +105,15 @@ void SupplyCenterCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SupplyCenterCreate::loadPostProcess( void )
+void SupplyCenterCreate::loadPostProcess()
 {
 
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

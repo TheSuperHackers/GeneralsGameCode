@@ -26,15 +26,12 @@
 //
 // Debug I/O interface
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_IO_H // Include guard
-#define DEBUG_IO_H
+
+#pragma once
 
 /**
   \interface DebugIOInterface debug.h <rts/debug.h>
-  
+
   \brief Debug I/O interface.
 
   A Debug I/O interface implementation must register itself
@@ -60,7 +57,7 @@ protected:
 
 public:
   // interface only so no functionality here
-  explicit DebugIOInterface(void) {}
+  explicit DebugIOInterface() {}
 
   /// List of possible log string types
   enum StringType
@@ -109,19 +106,19 @@ public:
     \brief Write out some characters differentiated by the log string type.
 
     \param type possible string type
-    \param src string source, may be NULL, content depends on type:
+    \param src string source, may be nullptr, content depends on type:
                 <table><tr>
                   <td><b>type</b></td><td><b>src</b></td></tr><tr>
                   <td>Assert</td><td>file(line)</td></tr><tr>
                   <td>Check</td><td>file(line)</td></tr><tr>
                   <td>Log</td><td>log group</td></tr><tr>
                   <td>Crash</td><td>file(line)</td></tr><tr>
-                  <td>Exception</td><td>NULL</td></tr><tr>
+                  <td>Exception</td><td>nullptr</td></tr><tr>
                   <td>CmdReply</td><td>group.command</td></tr><tr>
                   <td>StructuredCmdReply</td><td>group.command</td></tr><tr>
-                  <td>Other</td><td>NULL</td>
+                  <td>Other</td><td>nullptr</td>
                 </tr></table>
-    \param str string to output, NUL delimited, if NULL then simply flush
+    \param str string to output, NUL delimited, if nullptr then simply flush
                output (if applicable)
   */
   virtual void Write(StringType type, const char *src, const char *str)=0;
@@ -132,7 +129,7 @@ public:
     This function gets called during an exception and should perform the
     absolute bare minimum (e.g. just flushing and closing the output file).
   */
-  virtual void EmergencyFlush(void)=0;
+  virtual void EmergencyFlush()=0;
 
   /**
     \brief I/O class specific command.
@@ -155,7 +152,7 @@ public:
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete(void)=0;
+  virtual void Delete()=0;
 };
 
 /**
@@ -172,7 +169,7 @@ public:
     \param type type name of class we're implementing
     \note This macro changes the access method to private.
   */
-  #define DEBUG_DECLARE_IO_INTERFACE(type) 
+  #define DEBUG_DECLARE_IO_INTERFACE(type)
 
   /**
     \brief Helper macro for registering I/O class factory with
@@ -183,14 +180,14 @@ public:
     \param descr short I/O class description
     \param type type name of class we're implementing
   */
-  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) 
+  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type)
 
 #else
 
   #define DEBUG_DECLARE_IO_INTERFACE(type) \
     public: \
       static bool __RegisterClassFactory; \
-      static DebugIOInterface *__ClassFactory(void) { return new type; }
+      static DebugIOInterface *__ClassFactory() { return new type; }
 
   #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) \
     static bool type::__RegisterClassFactory=Debug::AddIOFactory(#io_id,descr,type::__ClassFactory);
@@ -198,5 +195,3 @@ public:
 #endif
 
 ///@}
-
-#endif // DEBUG_IO_H

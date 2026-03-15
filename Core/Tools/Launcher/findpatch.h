@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FINDPATCH_HEADER
-#define FINDPATCH_HEADER
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,5 +28,3 @@
 int Find_Patch(OUT char *file,int maxlen, ConfigFile &config);
 bit8 Get_App_Dir(OUT char *file,int maxlen, ConfigFile &config, int index);
 void Delete_Patches(ConfigFile &config);
-
-#endif

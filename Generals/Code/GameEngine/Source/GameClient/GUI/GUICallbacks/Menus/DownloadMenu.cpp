@@ -24,12 +24,12 @@
 
 // FILE: DownloadMenu.cpp /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:   RTS3
@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/NameKeyGenerator.h"
@@ -68,15 +68,15 @@ static NameKeyType staticTextFileID = NAMEKEY_INVALID;
 static NameKeyType staticTextStatusID = NAMEKEY_INVALID;
 static NameKeyType progressBarMunkeeID = NAMEKEY_INVALID;
 
-static GameWindow * staticTextSize = NULL;
-static GameWindow * staticTextTime = NULL;
-static GameWindow * staticTextFile = NULL;
-static GameWindow * staticTextStatus = NULL;
-static GameWindow * progressBarMunkee = NULL;
+static GameWindow * staticTextSize = nullptr;
+static GameWindow * staticTextTime = nullptr;
+static GameWindow * staticTextFile = nullptr;
+static GameWindow * staticTextStatus = nullptr;
+static GameWindow * progressBarMunkee = nullptr;
 
-static GameWindow *parent = NULL;
+static GameWindow *parent = nullptr;
 
-static void closeDownloadWindow( void )
+static void closeDownloadWindow()
 {
 	DEBUG_ASSERTCRASH(parent, ("No Parent"));
 	if (!parent)
@@ -88,31 +88,31 @@ static void closeDownloadWindow( void )
 		menuLayout->runShutdown();
 		menuLayout->destroyWindows();
 		deleteInstance(menuLayout);
-		menuLayout = NULL;
+		menuLayout = nullptr;
 	}
 
-	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("MainMenu.wnd:MainMenuParent") );
+	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( nullptr, NAMEKEY("MainMenu.wnd:MainMenuParent") );
 	if (mainWin)
 		TheWindowManager->winSetFocus( mainWin );
 }
 
-static void errorCallback( void )
+static void errorCallback()
 {
 	HandleCanceledDownload();
 	closeDownloadWindow();
 }
 
-static void successQuitCallback( void )
+static void successQuitCallback()
 {
 	TheGameEngine->setQuitting( TRUE );
 	closeDownloadWindow();
 
 	// Clean up game data.  No crashy-crash for you!
 	if (TheGameLogic->isInGame())
-		TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
+		TheGameLogic->exitGame();
 }
 
-static void successNoQuitCallback( void )
+static void successNoQuitCallback()
 {
 	HandleCanceledDownload();
 	closeDownloadWindow();
@@ -135,7 +135,7 @@ private:
 HRESULT DownloadManagerMunkee::downloadFile( AsciiString server, AsciiString username, AsciiString password, AsciiString file, AsciiString localfile, AsciiString regkey, Bool tryResume )
 {
 	// see if we'll need to restart
-	if (strstr(localfile.str(), "patches\\") != NULL)
+	if (strstr(localfile.str(), "patches\\") != nullptr)
 	{
 		m_shouldQuitOnSuccess = true;
 	}
@@ -203,7 +203,7 @@ HRESULT DownloadManagerMunkee::OnProgressUpdate( Int bytesread, Int totalsize, I
 	timeLeft = timeleft;
 	if (staticTextTime && GadgetStaticTextGetText(staticTextTime).isEmpty()) // only update immediately the first time
 	{
-		lastUpdate = time(NULL);
+		lastUpdate = time(nullptr);
 		UnicodeString timeString;
 		if (timeleft)
 		{
@@ -245,7 +245,7 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 
 	//set keyboard focus to main parent and set modal
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:ParentDownload");
-	parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
+	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
   // get ids for our children controls
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:ButtonCancel" );
@@ -262,13 +262,11 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 	progressBarMunkee = TheWindowManager->winGetWindowFromId( parent, progressBarMunkeeID );
 
 	DEBUG_ASSERTCRASH(!TheDownloadManager, ("Download manager already exists"));
-	if (TheDownloadManager)
-	{
-		delete TheDownloadManager;
-	}
+
+	delete TheDownloadManager;
 	TheDownloadManager = NEW DownloadManagerMunkee;
 
-}  // end DownloadMenuInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu shutdown method */
@@ -276,20 +274,18 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 void DownloadMenuShutdown( WindowLayout *layout, void *userData )
 {
 	DEBUG_ASSERTCRASH(TheDownloadManager, ("No download manager"));
-	if (TheDownloadManager)
-	{
-		delete TheDownloadManager;
-		TheDownloadManager = NULL;
-	}
 
-	staticTextSize = NULL;
-	staticTextTime = NULL;
-	staticTextFile = NULL;
-	staticTextStatus = NULL;
-	progressBarMunkee = NULL;
-	parent = NULL;
+	delete TheDownloadManager;
+	TheDownloadManager = nullptr;
 
-}  // end DownloadMenuShutdown
+	staticTextSize = nullptr;
+	staticTextTime = nullptr;
+	staticTextFile = nullptr;
+	staticTextStatus = nullptr;
+	progressBarMunkee = nullptr;
+	parent = nullptr;
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu update method */
@@ -298,7 +294,7 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData )
 {
 	if (staticTextTime && !GadgetStaticTextGetText(staticTextTime).isEmpty())
 	{
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 		if (now <= lastUpdate)
 			return;
 
@@ -322,7 +318,7 @@ void DownloadMenuUpdate( WindowLayout *layout, void *userData )
 		GadgetStaticTextSetText(staticTextTime, timeString);
 	}
 
-}  // end DownloadMenuUpdate 
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu input callback */
@@ -331,7 +327,7 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -346,45 +342,44 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-					
+
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
 					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
-						AsciiString buttonName( "DownloadMenu.wnd:ButtonCancel" );
-						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
+						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:ButtonCancel" );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
+						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
 																								(WindowMsgData)button, buttonID );
 
-					}  // end if
+					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
 
-				}  // end escape
+				}
 
-			}  // end switch( key )
+			}
 
-		}  // end char
+		}
 
-	}  // end switch( msg )
+	}
 
 	return MSG_IGNORED;
 
-}  // end DownloadMenuInput
+}
 
 //-------------------------------------------------------------------------------------------------
 /** menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 																		 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg ) 
+  switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -393,14 +388,14 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end create
+		}
     //---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
 			break;
 
-		}  // end case
+		}
 
     //----------------------------------------------------------------------------------------------
     case GWM_INPUT_FOCUS:
@@ -412,28 +407,28 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 			break;
 
-		}  // end input
+		}
     //---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
-      
+
 			if( controlID == buttonCancelID )
 			{
 				HandleCanceledDownload();
 				closeDownloadWindow();
-			}  // end if
-	
+			}
+
 			break;
 
-		}  // end selected
+		}
 
 		default:
 			return MSG_IGNORED;
 
-	}  // end switch
+	}
 
 	return MSG_HANDLED;
 
-} // end DownloadMenuSystem
+}

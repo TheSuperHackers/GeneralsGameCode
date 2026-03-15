@@ -70,10 +70,10 @@ static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND Hwnd,UINT message,WPARAM wP
  * HISTORY:                                                                                    *
  *=============================================================================================*/
 GenMtlNamesDialogClass::GenMtlNamesDialogClass(Interface * maxinterface) :
-	Hwnd(NULL),
-	Options(NULL),
+	Hwnd(nullptr),
+	Options(nullptr),
 	MaxInterface(maxinterface),
-	NameIndexSpin(NULL)
+	NameIndexSpin(nullptr)
 {
 }
 
@@ -149,7 +149,7 @@ bool GenMtlNamesDialogClass::Ok_To_Exit(void)
 	// just check that the user entered a name
 	char buf[W3D_NAME_LEN];
 	GetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf,sizeof(buf));
-	
+
 	if (strlen(buf) == 0) {
 		MessageBox(Hwnd,"Please enter a root name to use.\n","Error",MB_OK);
 		return false;
@@ -186,20 +186,20 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 				IDC_NAME_INDEX_EDIT,
 				MIN_NAME_INDEX,MAX_NAME_INDEX,INITIAL_NAME_INDEX
 			);
-			
+
 			// limit the edit box characters
 			SendDlgItemMessage(Hwnd,IDC_BASE_NAME_EDIT,EM_LIMITTEXT,MAX_ROOT_NAME_LEN,0);
 
 			// set initial name to root of the filename
 			char buf[_MAX_FNAME];
-			_splitpath(MaxInterface->GetCurFileName(),NULL,NULL,buf,NULL);
+			_splitpath(MaxInterface->GetCurFileName(),nullptr,nullptr,buf,nullptr);
 			buf[MAX_ROOT_NAME_LEN+1] = 0;
 			SetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),buf);
 
 			// init radio buttons
 			CheckDlgButton(Hwnd,IDC_AFFECT_ALL_RADIO,BST_UNCHECKED);
 			CheckDlgButton(Hwnd,IDC_AFFECT_SELECTED_RADIO,BST_CHECKED);
-		
+
 			return 1;
 
 		case WM_COMMAND:
@@ -210,11 +210,11 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
 					if (Ok_To_Exit()) {
 						// general options
 						Options->OnlyAffectSelected = (IsDlgButtonChecked(Hwnd,IDC_AFFECT_SELECTED_RADIO) == BST_CHECKED);
-						
+
 						// naming options
 						Options->NameIndex = NameIndexSpin->GetIVal();
 						GetWindowText(GetDlgItem(Hwnd,IDC_BASE_NAME_EDIT),Options->RootName,sizeof(Options->RootName));
-						
+
 						EndDialog(Hwnd, 1);
 					}
 					break;
@@ -244,7 +244,7 @@ bool GenMtlNamesDialogClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LP
  *=============================================================================================*/
 static BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam)
 {
-	static GenMtlNamesDialogClass * dialog = NULL;
+	static GenMtlNamesDialogClass * dialog = nullptr;
 
 	if (message == WM_INITDIALOG) {
 		dialog = (GenMtlNamesDialogClass *)lparam;

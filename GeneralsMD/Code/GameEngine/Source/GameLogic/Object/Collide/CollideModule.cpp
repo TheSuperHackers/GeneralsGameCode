@@ -27,7 +27,7 @@
 // Desc:   Collide module base class implementations
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-// INLCUDES ///////////////////////////////////////////////////////////////////////////////////////
+// INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Module/CollideModule.h"
@@ -41,7 +41,7 @@ void CollideModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -57,15 +57,15 @@ void CollideModule::xfer( Xfer *xfer )
 	// call base class
 	BehaviorModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CollideModule::loadPostProcess( void )
+void CollideModule::loadPostProcess()
 {
 
 	// call base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

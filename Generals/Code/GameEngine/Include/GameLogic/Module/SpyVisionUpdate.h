@@ -24,15 +24,12 @@
 
 // FILE: SpyVisionUpdate.h /////////////////////////////////////////////////////////////////
 // Author: Graham Smallwood, September 2002
-// Desc:   Special Power will spy on the vision of all enemy players.  
+// Desc:   Special Power will spy on the vision of all enemy players.
 //				Putting a SpecialPower in a behavior takes a big huge amount of code duplication and
 //				has no precedent.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef _SPY_VISION_UPDATE_H
-#define _SPY_VISION_UPDATE_H
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
@@ -62,8 +59,8 @@ public:
 	SpyVisionUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDelete( void );
-	virtual UpdateSleepTime update( void );
+	virtual void onDelete() override;
+	virtual UpdateSleepTime update() override;
 
 	void activateSpyVision( UnsignedInt duration );
 
@@ -73,6 +70,3 @@ private:
 
 	UnsignedInt m_deactivateFrame;
 };
-
-#endif 
-

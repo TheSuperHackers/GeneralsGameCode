@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ACTIVEBODY_H_
-#define __ACTIVEBODY_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DamageFX.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -48,7 +45,7 @@ class ParticleSystemTemplate;
 //-------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-class ActiveBodyModuleData : public BodyModuleData 
+class ActiveBodyModuleData : public BodyModuleData
 {
 public:
 	Real m_maxHealth;
@@ -71,56 +68,56 @@ public:
 	ActiveBody( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onDelete( void );
+	virtual void onDelete() override;
 
-	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
-	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const;
-	virtual void attemptHealing( DamageInfo *damageInfo );		///< try to heal this object
-	virtual Real getHealth() const;													///< get current health
-	virtual BodyDamageType getDamageState() const;
-	virtual void setDamageState( BodyDamageType newState );	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting );///< This is a major change like a damage state.  
+	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
+	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const override;
+	virtual void attemptHealing( DamageInfo *damageInfo ) override;		///< try to heal this object
+	virtual Real getHealth() const override;													///< get current health
+	virtual BodyDamageType getDamageState() const override;
+	virtual void setDamageState( BodyDamageType newState ) override;	///< control damage state directly.  Will adjust hitpoints.
+	virtual void setAflame( Bool setting ) override;///< This is a major change like a damage state.
 
-	virtual const DamageInfo *getLastDamageInfo() const { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
-	virtual UnsignedInt getLastHealingTimestamp() const { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
-	virtual ObjectID getClearableLastAttacker() const { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
-	virtual void clearLastAttacker() { m_lastDamageCleared = true; }
+	virtual const DamageInfo *getLastDamageInfo() const override { return &m_lastDamageInfo; }	///< return info on last damage dealt to this object
+	virtual UnsignedInt getLastDamageTimestamp() const override { return m_lastDamageTimestamp; }	///< return frame of last damage dealt
+	virtual UnsignedInt getLastHealingTimestamp() const override { return m_lastHealingTimestamp; }	///< return frame of last damage dealt
+	virtual ObjectID getClearableLastAttacker() const override { return (m_lastDamageCleared ? INVALID_ID : m_lastDamageInfo.in.m_sourceID); }
+	virtual void clearLastAttacker() override { m_lastDamageCleared = true; }
 
-	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel );
+	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback = TRUE ) override;
 
-	virtual void setArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 1); }
-	virtual void clearArmorSetFlag(ArmorSetType ast) { m_curArmorSetFlags.set(ast, 0); }
+	virtual void setArmorSetFlag(ArmorSetType ast) override { m_curArmorSetFlags.set(ast, 1); }
+	virtual void clearArmorSetFlag(ArmorSetType ast) override { m_curArmorSetFlags.set(ast, 0); }
 
-	virtual void setInitialHealth(Int initialPercent); ///< Sets the inital load health %.
-	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ); ///< Sets the inital max health
+	virtual void setInitialHealth(Int initialPercent) override; ///< Sets the initial load health %.
+	virtual void setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ) override; ///< Sets the initial max health
 
-	virtual Bool getFrontCrushed() const { return m_frontCrushed; }
-	virtual Bool getBackCrushed() const { return m_backCrushed; }
+	virtual Bool getFrontCrushed() const override { return m_frontCrushed; }
+	virtual Bool getBackCrushed() const override { return m_backCrushed; }
 
-	virtual void setFrontCrushed(Bool v) { m_frontCrushed = v; }
-	virtual void setBackCrushed(Bool v) { m_backCrushed = v; }
+	virtual void setFrontCrushed(Bool v) override { m_frontCrushed = v; }
+	virtual void setBackCrushed(Bool v) override { m_backCrushed = v; }
 
-	virtual Real getMaxHealth() const;  ///< return max health
-	virtual Real getInitialHealth() const;  // return initial health
+	virtual Real getMaxHealth() const override;  ///< return max health
+	virtual Real getInitialHealth() const override;  // return initial health
 
-	virtual void setIndestructible( Bool indestructible );
-	virtual Bool isIndestructible( void ) const { return m_indestructible; }
+	virtual void setIndestructible( Bool indestructible ) override;
+	virtual Bool isIndestructible() const override { return m_indestructible; }
 
-	virtual void internalChangeHealth( Real delta );								///< change health
+	virtual void internalChangeHealth( Real delta ) override;								///< change health
 
-	virtual void evaluateVisualCondition();
-	virtual void updateBodyParticleSystems( void );// made public for topple anf building collapse updates -ML
+	virtual void evaluateVisualCondition() override;
+	virtual void updateBodyParticleSystems() override;// made public for topple anf building collapse updates -ML
 
 protected:
 
 	void validateArmorAndDamageFX() const;
 	void doDamageFX( const DamageInfo *damageInfo );
 
-	void createParticleSystems( const AsciiString &boneBaseName, 
+	void createParticleSystems( const AsciiString &boneBaseName,
 															const ParticleSystemTemplate *systemTemplate,
 															Int maxSystems );
-	void deleteAllParticleSystems( void );
+	void deleteAllParticleSystems();
 	void setCorrectDamageState();
 
 private:
@@ -152,6 +149,3 @@ private:
 	mutable const DamageFX*						m_curDamageFX;
 
 };
-
-#endif // __ACTIVEBODY_H_
-

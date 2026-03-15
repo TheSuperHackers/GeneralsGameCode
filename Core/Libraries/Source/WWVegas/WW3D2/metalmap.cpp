@@ -24,11 +24,11 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/metalmap.cpp                           $*
  *                                                                                             *
- *                  $Org Author:: Hector_y                                  $* 
- *                                                                         * 
- *                      $Author:: Kenny_m                                  $* 
- *                                                                         * 
- *                     $Modtime:: 08/05/02 10:44a                          $* 
+ *                  $Org Author:: Hector_y                                  $*
+ *                                                                         *
+ *                      $Author:: Kenny_m                                  $*
+ *                                                                         *
+ *                     $Modtime:: 08/05/02 10:44a                          $*
  *                                                                                             *
  *                    $Revision:: 4                                                           $*
  *                                                                                             *
@@ -51,9 +51,8 @@
 #include "ww3dformat.h"
 #include "ww3d.h"
 #include <vp.h>
-#include <INI.H>
+#include <INI.h>
 #include <Point.h>
-#include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>
 #include <wwmath.h>
@@ -61,7 +60,7 @@
 /*
 ** Class static members:
 */
-Vector3 * MetalMapManagerClass::_NormalTable = 0;
+Vector3 * MetalMapManagerClass::_NormalTable = nullptr;
 
 /***********************************************************************************************
  * MMMC::MetalMapManagerClass -- Create metal map manager from INI                             *
@@ -78,8 +77,8 @@ Vector3 * MetalMapManagerClass::_NormalTable = 0;
  *=============================================================================================*/
 MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	MapCount(0),
-	Textures(0),
-	MetalParameters(0),
+	Textures(nullptr),
+	MetalParameters(nullptr),
 	CurrentAmbient(0.0f, 0.0f, 0.0f),
 	CurrentMainLightColor(0.0f, 0.0f, 0.0f),
 	CurrentMainLightDir(1.0f, 0.0f, 0.0f),
@@ -139,18 +138,18 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	bool windowed;
 
 	WW3D::Get_Device_Resolution(w,h,bits,windowed);
-	Use16Bit=(bits<=16);	
+	Use16Bit=(bits<=16);
 
 	WW3DFormat format=(Use16Bit?WW3D_FORMAT_A4R4G4B4:WW3D_FORMAT_A8R8G8B8);
 
 
-	for (int i = 0; i < lp; i++) {		
+	for (int i = 0; i < lp; i++) {
 		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,format,MIP_LEVELS_1));
 		Textures[i]->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		Textures[i]->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		StringClass tex_name;
-		tex_name.Format("!m%02d.tga", i);		
-		Textures[i]->Set_Texture_Name(tex_name);		
+		tex_name.Format("!m%02d.tga", i);
+		Textures[i]->Set_Texture_Name(tex_name);
 	}
 }
 
@@ -168,19 +167,18 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-MetalMapManagerClass::~MetalMapManagerClass(void)
+MetalMapManagerClass::~MetalMapManagerClass()
 {
 	if (Textures) {
 		for (int i = 0; i < MapCount; i++) {
 			REF_PTR_RELEASE(Textures[i]);
 		}
 		delete [] Textures;
-		Textures = 0;
+		Textures = nullptr;
 	}
-	if (MetalParameters) {
-		delete [] MetalParameters;
-		MetalParameters = 0;
-	}
+
+	delete [] MetalParameters;
+	MetalParameters = nullptr;
 }
 
 
@@ -199,7 +197,7 @@ MetalMapManagerClass::~MetalMapManagerClass(void)
  *=============================================================================================*/
 TextureClass * MetalMapManagerClass::Get_Metal_Map(int id)
 {
-	if (id < 0 || id >= MapCount) return 0;
+	if (id < 0 || id >= MapCount) return nullptr;
 	Textures[id]->Add_Ref();
 	return Textures[id];
 }
@@ -218,7 +216,7 @@ TextureClass * MetalMapManagerClass::Get_Metal_Map(int id)
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-int MetalMapManagerClass::Metal_Map_Count(void)
+int MetalMapManagerClass::Metal_Map_Count()
 {
 	return MapCount;
 }
@@ -259,14 +257,14 @@ void MetalMapManagerClass::Update_Lighting(const Vector3& ambient, const Vector3
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-void MetalMapManagerClass::Update_Textures(void)
+void MetalMapManagerClass::Update_Textures()
 {
 	// Currently the lighting is done using a simple Phong (actually Blinn) model.
 	Vector3 &l = CurrentMainLightDir;
 	Vector3 &v = CurrentCameraDir;
 
 	// Calculate halfway vector
-	Vector3 h = l+v;	
+	Vector3 h = l+v;
 	h.Normalize();
 
 	// NOTE: when our lighting equation gets more complicated we might want to do some testing to
@@ -274,19 +272,19 @@ void MetalMapManagerClass::Update_Textures(void)
 
 	// Calculate quantities which are the same for all metal maps
 	float n_dot_l[METALMAP_SIZE_2];
-	float n_dot_h[METALMAP_SIZE_2];	
-	
-	VectorProcessorClass::DotProduct(n_dot_l,l,_NormalTable,METALMAP_SIZE_2);	
-	VectorProcessorClass::ClampMin(n_dot_l, n_dot_l, 0.0f, METALMAP_SIZE_2);					
+	float n_dot_h[METALMAP_SIZE_2];
+
+	VectorProcessorClass::DotProduct(n_dot_l,l,_NormalTable,METALMAP_SIZE_2);
+	VectorProcessorClass::ClampMin(n_dot_l, n_dot_l, 0.0f, METALMAP_SIZE_2);
 	VectorProcessorClass::DotProduct(n_dot_h,h,_NormalTable, METALMAP_SIZE_2);
-	VectorProcessorClass::ClampMin(n_dot_h, n_dot_h, 0.0f, METALMAP_SIZE_2);					
+	VectorProcessorClass::ClampMin(n_dot_h, n_dot_h, 0.0f, METALMAP_SIZE_2);
 
 	// Loop over each metal map and update it
-	for (int i = 0; i < MapCount; i++) {		
+	for (int i = 0; i < MapCount; i++) {
 		MetalParams &cur_params = MetalParameters[i];
 
 		// If shinyness > 1, apply it to specular value array
-		float *specular = 0;
+		float *specular = nullptr;
 		float temp_specular[METALMAP_SIZE_2];
 		float shinyness = cur_params.Shininess;
 		if (shinyness > 1.0f) {
@@ -305,25 +303,25 @@ void MetalMapManagerClass::Update_Textures(void)
 			cur_params.DiffuseColor.Z * CurrentMainLightColor.Z);
 		Vector3 ambient_color(cur_params.AmbientColor.X * CurrentAmbient.X,
 			cur_params.AmbientColor.Y * CurrentAmbient.Y,
-			cur_params.AmbientColor.Z * CurrentAmbient.Z);		
+			cur_params.AmbientColor.Z * CurrentAmbient.Z);
 		Vector3 white(1.0f, 1.0f, 1.0f);
 
 		SurfaceClass * metal_map_surface = Textures[i]->Get_Surface_Level(0);
 		int pitch;
 		unsigned char *map=(unsigned char *) metal_map_surface->Lock(&pitch);
 		int idx=0;
-		for (int y = 0; y < METALMAP_SIZE; y++) {			
-			for (int x = 0; x < METALMAP_SIZE; x++) {				
+		for (int y = 0; y < METALMAP_SIZE; y++) {
+			for (int x = 0; x < METALMAP_SIZE; x++) {
 				Vector3 result = ambient_color + (diffuse_color * n_dot_l[idx]) + (specular_color * specular[idx]);
 				result.Update_Min(white);	// Clamp to white
-				
+
 				unsigned char b,g,r,a;
 				b= (unsigned char)WWMath::Floor(result.Z * 255.99f);	// B
 				g= (unsigned char)WWMath::Floor(result.Y * 255.99f);	// G
 				r= (unsigned char)WWMath::Floor(result.X * 255.99f);	// R
 				a= 0xFF;													// A
 
-				if (Use16Bit) {					
+				if (Use16Bit) {
 					unsigned short tmp;
 					tmp=(a&0xf0)<<8;
 					tmp|=(r&0xf0)<<4;
@@ -342,7 +340,7 @@ void MetalMapManagerClass::Update_Textures(void)
 		}
 		metal_map_surface->Unlock();
 		REF_PTR_RELEASE(metal_map_surface);
-	} // for i
+	}
 }
 
 /***********************************************************************************************
@@ -358,7 +356,7 @@ void MetalMapManagerClass::Update_Textures(void)
  * HISTORY:                                                                                    *
  *   11/19/1999 NH : Created.                                                                  *
  *=============================================================================================*/
-void MetalMapManagerClass::initialize_normal_table(void)
+void MetalMapManagerClass::initialize_normal_table()
 {
 	// NOTE: changing the actual static _NormalTable member must be the last thing this function
 	// does to avoid synchronization errors.
@@ -402,7 +400,7 @@ void MetalMapManagerClass::initialize_normal_table(void)
  *=============================================================================================*/
 void MetalMapManagerClass::initialize_metal_params(int map_count, MetalParams *metal_params)
 {
-	MapCount = map_count;	
+	MapCount = map_count;
 	if (MapCount > 0) {
 		Textures = W3DNEWARRAY TextureClass *[MapCount];
 		MetalParameters = W3DNEWARRAY MetalParams[MapCount];

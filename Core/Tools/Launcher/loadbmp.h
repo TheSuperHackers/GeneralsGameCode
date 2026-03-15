@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOADBMP_HEADER
-#define LOADBMP_HEADER
+#pragma once
 
 #include<stdlib.h>
 #include<stdio.h>
@@ -41,6 +40,3 @@ class LoadBmp
    HPALETTE       PalHandle_;
    HWND           WindowHandle_;
 };
-
-
-#endif

@@ -17,41 +17,41 @@
 */
 
 /* $Header: /Commando/Code/Tools/max2w3d/skindata.cpp 7     5/28/98 12:15p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando Tools - WWSkin                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Tools/max2w3d/skindata.cpp                   $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $* 
- *                                                                                             * 
- *                     $Modtime:: 5/28/98 12:15p                                              $* 
- *                                                                                             * 
- *                    $Revision:: 7                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   SkinDataClass::Save -- save the skindata in the MAX file                                  * 
- *   SkinDataClass::Load -- load the skindata from a MAX file                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando Tools - WWSkin                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/skindata.cpp                   $*
+ *                                                                                             *
+ *                      $Author:: Greg_h                                                      $*
+ *                                                                                             *
+ *                     $Modtime:: 5/28/98 12:15p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 7                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   SkinDataClass::Save -- save the skindata in the MAX file                                  *
+ *   SkinDataClass::Load -- load the skindata from a MAX file                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
 #include "skindata.h"
 
 
-/*********************************************************************************************** 
- * SkinDataClass::Save -- save the skindata in the MAX file                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * SkinDataClass::Save -- save the skindata in the MAX file                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 IOResult SkinDataClass::Save(ISave *isave)
 {
@@ -78,11 +78,11 @@ IOResult SkinDataClass::Save(ISave *isave)
 	}
 
 	/*
-	** Save the named selection sets of vertices 
+	** Save the named selection sets of vertices
 	*/
 #if 0
 	if (VertSelSets.Count() > 0) {
-		isave->BeginChunk(INFLUENCE_DATA_CHUNK);	
+		isave->BeginChunk(INFLUENCE_DATA_CHUNK);
 		VertSelSets.Save(isave);
 		isave->EndChunk();
 	}
@@ -101,17 +101,17 @@ IOResult SkinDataClass::Save(ISave *isave)
 }
 
 
-/*********************************************************************************************** 
- * SkinDataClass::Load -- load the skindata from a MAX file                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   10/26/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * SkinDataClass::Load -- load the skindata from a MAX file                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 IOResult SkinDataClass::Load(ILoad *iload)
 {
@@ -124,16 +124,16 @@ IOResult SkinDataClass::Load(ILoad *iload)
 
 		switch (iload->CurChunkID())  {
 
-			case FLAGS_CHUNK: 
+			case FLAGS_CHUNK:
 				res = iload->Read(&flags,sizeof(flags),&nb);
 				Valid = (flags & 0x01);
 				Held = (flags & 0x02);
 				break;
-			
+
 			case VERT_SEL_CHUNK:
 				res = VertSel.Load(iload);
 				break;
-			
+
 			case NAMED_SEL_SETS_CHUNK:
 				res = VertSelSets.Load(iload);
 				break;
@@ -144,7 +144,7 @@ IOResult SkinDataClass::Load(ILoad *iload)
 				res = iload->Read(VertData.Addr(0),n*sizeof(InfluenceStruct),&nb);
 				break;
 		}
-		
+
 		iload->CloseChunk();
 
 		if (res != IO_OK) {
@@ -156,7 +156,7 @@ IOResult SkinDataClass::Load(ILoad *iload)
 	** ensure that the arrays are sized correctly
 	*/
 	Invalidate();
-	
+
 	return IO_OK;
 }
 

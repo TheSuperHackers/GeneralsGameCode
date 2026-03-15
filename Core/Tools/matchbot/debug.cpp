@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 #include <stdarg.h>
 void DebugCrash( const char *fmt, ... ) {}

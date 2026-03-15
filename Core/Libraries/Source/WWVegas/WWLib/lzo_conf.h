@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/lzo_conf.h                                $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/lzo_conf.h                                $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 /* lzo_conf.h -- main internal configuration file for the the LZO library
@@ -65,9 +65,7 @@
    to change.
  */
 
-
-#ifndef __LZO_CONF_H
-#define __LZO_CONF_H
+#pragma once
 
 #ifndef __LZOCONF_H
 #  include "lzoconf.h"
@@ -202,7 +200,7 @@
 /* Help the optimizer with register allocation.
  * Don't activate this macro for a fair comparision with other algorithms.
  */
-#if 1 && defined(NDEBUG) && !defined(__BOUNDS_CHECKING_ON)
+#if 1 && defined(RTS_RELEASE) && !defined(__BOUNDS_CHECKING_ON)
 #  if defined(__GNUC__) && defined(__i386__)
 #    if !defined(LZO_OPTIMIZE_GNUC_i386_IS_BUGGY)
 #      define LZO_OPTIMIZE_GNUC_i386
@@ -282,7 +280,7 @@
 #else
 /* This is the safe (but slower) version */
 #define LZO_CHECK_MPOS_DET(m_pos,m_off,in,ip,max_offset) \
-		(m_pos == NULL || (m_off = ip - m_pos) > max_offset)
+		(m_pos == nullptr || (m_off = ip - m_pos) > max_offset)
 #endif
 
 
@@ -296,9 +294,6 @@
 
 
 
-#endif /* already included */
-
 /*
 vi:ts=4
 */
-

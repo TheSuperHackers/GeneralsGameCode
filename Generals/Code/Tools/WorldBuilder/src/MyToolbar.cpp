@@ -20,7 +20,7 @@
 // Class to handle cell size slider.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 
 #include "Lib/BaseType.h"
 #include "MyToolbar.h"
@@ -37,7 +37,7 @@ END_MESSAGE_MAP()
 #define MAX_POS 7
 #define MIN_POS 1
 
-CellSizeToolBar *CellSizeToolBar::m_staticThis = NULL;
+CellSizeToolBar *CellSizeToolBar::m_staticThis = nullptr;
 
 void CellSizeToolBar::CellSizeChanged(Int cellSize)
 {
@@ -48,14 +48,14 @@ void CellSizeToolBar::CellSizeChanged(Int cellSize)
 		if (newSize >= cellSize) break;
 	}
 	i = MAX_POS - i + MIN_POS;  // Invert the range
-	if (m_staticThis != NULL) {
+	if (m_staticThis != nullptr) {
 		m_staticThis->m_cellSlider.SetPos(i);
 	}
 }
 
 CellSizeToolBar::~CellSizeToolBar(void)
 {
-	m_staticThis = NULL;
+	m_staticThis = nullptr;
 }
 
 void CellSizeToolBar::SetupSlider(void)
@@ -74,13 +74,13 @@ void CellSizeToolBar::SetupSlider(void)
 	m_staticThis = this;
 }
 
-void CellSizeToolBar::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void CellSizeToolBar::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (nSBCode != TB_THUMBTRACK) {
 		nPos = m_cellSlider.GetPos();
 	}
 	UnsignedInt i;
-	// invert 
+	// invert
 	nPos = MAX_POS - nPos + MIN_POS;
 	int newSize = 1;
 	for (i=1; i<nPos; i++) {
@@ -89,7 +89,7 @@ void CellSizeToolBar::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (newSize>64) return;
 
 	CWorldBuilderView* pView = CWorldBuilderDoc::GetActive2DView();
-	if (pView == NULL || newSize == pView->getCellSize()) return;
+	if (pView == nullptr || newSize == pView->getCellSize()) return;
 	pView->setCellSize(newSize);
 }
 
@@ -98,7 +98,7 @@ LRESULT CellSizeToolBar::WindowProc( UINT message, WPARAM wParam, LPARAM lParam 
 	if (message == WM_VSCROLL) {
 			int nScrollCode = (short)LOWORD(wParam);
 			int nPos = (short)HIWORD(wParam);
-			OnVScroll(nScrollCode, nPos, NULL);
+			OnVScroll(nScrollCode, nPos, nullptr);
 			return(0);
 	}
 	return(CDialogBar::WindowProc(message, wParam, lParam));

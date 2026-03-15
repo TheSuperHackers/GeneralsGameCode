@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "WaypointTool.h"
@@ -43,23 +43,23 @@ Bool WaypointTool::m_isActive = false;
 
 /// Constructor
 WaypointTool::WaypointTool(void) :
-	Tool(ID_WAYPOINT_TOOL, IDC_WAYPOINT) 
+	Tool(ID_WAYPOINT_TOOL, IDC_WAYPOINT)
 {
 }
-	
+
 /// Destructor
-WaypointTool::~WaypointTool(void) 
+WaypointTool::~WaypointTool(void)
 {
 }
 
 /// Clears it's is active flag.
-void WaypointTool::deactivate() 
+void WaypointTool::deactivate()
 {
 	m_isActive = false;
 }
 
 /// Shows the terrain materials options panel.
-void WaypointTool::activate() 
+void WaypointTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WAYPOINT_OPTIONS);
 	WaypointOptions::update();
@@ -100,12 +100,12 @@ MapObject *WaypointTool::pickWaypoint(Coord3D loc){
 			return pObj;
 		}
 	}
-	return NULL; 
+	return nullptr;
 }
 
 
 /// Perform the tool behavior on mouse down.
-void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L) return;
 	m_downWaypointID = 0;
@@ -119,18 +119,18 @@ void WaypointTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		WaypointOptions::update();
 	}	else {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance( MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name = WaypointOptions::GenerateUniqueName(id);
 		pNew->setSelected(true);
 		pNew->setIsWaypoint();
 		pNew->setWaypointID(id);
 		pNew->setWaypointName(name);
-		pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+		pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 		m_downWaypointID = id;
 		WaypointOptions::update();
 	}
@@ -154,7 +154,7 @@ void WaypointTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWo
 }
 
 /** Execute the tool on mouse up - Place an object. */
-void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	DrawObject::stopWaypointDragFeedback();
 	if (m != TRACK_L) return;
@@ -164,9 +164,9 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	MapObject *pObj;
 	PointerTool::clearSelection();
 	pObj = pickWaypoint(docPt);
-	if (pObj == NULL) {
+	if (pObj == nullptr) {
 		pView->snapPoint(&docPt);
-		MapObject *pNew = newInstance( MapObject)(docPt, AsciiString("*Waypoints/Waypoint"), 0, 0, NULL, NULL );
+		MapObject *pNew = newInstance( MapObject)(docPt, "*Waypoints/Waypoint", 0, 0, nullptr, nullptr );
 		Int id = pDoc->getNextWaypointID();
 		AsciiString name;
 		name.format("Waypoint %d", id);
@@ -174,25 +174,25 @@ void WaypointTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		pNew->setIsWaypoint();
 		pNew->setWaypointID(id);
 		pNew->setWaypointName(name);
-		pNew->getProperties()->setAsciiString(TheKey_originalOwner, AsciiString("team"));
+		pNew->getProperties()->setAsciiString(TheKey_originalOwner, "team");
 		AddObjectUndoable *pUndo = new AddObjectUndoable(pDoc, pNew);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 		pObj = pNew;
-		pNew = NULL; // undoable owns it now.
+		pNew = nullptr; // undoable owns it now.
 	}
-	if (pObj) 
+	if (pObj)
 	{
 		pObj->setSelected(true);
-		if (m_downWaypointID && (pObj->getWaypointID() != m_downWaypointID)) 
+		if (m_downWaypointID && (pObj->getWaypointID() != m_downWaypointID))
 		{
 			Int waypointID = pObj->getWaypointID();
 			// If a link
-			if (pDoc->waypointLinkExists(m_downWaypointID, waypointID)) 
+			if (pDoc->waypointLinkExists(m_downWaypointID, waypointID))
 			{
 				pDoc->removeWaypointLink(m_downWaypointID, waypointID);
-			} 
-			else if (m_downWaypointID != waypointID) 
+			}
+			else if (m_downWaypointID != waypointID)
 			{
 				pDoc->addWaypointLink(m_downWaypointID, waypointID);
 			}

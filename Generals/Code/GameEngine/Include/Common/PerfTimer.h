@@ -28,12 +28,9 @@
 
 #pragma once
 
-#ifndef __PERFTIMER_H__
-#define __PERFTIMER_H__
-
 #include "Utility/intrin_compat.h"
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/*
 		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
 		for running in this mode. Only enable it for local builds for testing purposes! (srj)
@@ -88,7 +85,8 @@ __forceinline void GetPrecisionTimer(Int64* t)
 class PerfGather
 {
 public:
-	PerfGather( const char *identifier );
+	// If net only (default), subtract perf timers running inside. [8/12/2003]
+	PerfGather( const char *identifier, Bool netOnly=true );
 	virtual ~PerfGather( );
 
 	__forceinline void startTimer();
@@ -129,6 +127,7 @@ private:
 	PerfGather*		m_next;
 	PerfGather*		m_prev;
 	Bool					m_ignore;
+	Bool					m_netTimeOnly;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -141,7 +140,7 @@ void PerfGather::startTimer()
 //-------------------------------------------------------------------------------------------------
 void PerfGather::stopTimer()
 {
-	DEBUG_ASSERTCRASH(this != NULL, ("I am null, uh oh"));
+	DEBUG_ASSERTCRASH(this != nullptr, ("I am null, uh oh"));
 
 	Int64 runTime;
 	GetPrecisionTimer(&runTime);
@@ -154,7 +153,7 @@ void PerfGather::stopTimer()
 	++m_callCount;
 
 #ifdef RTS_DEBUG
-	DEBUG_ASSERTCRASH(*m_activeHead != NULL, ("m_activeHead is null, uh oh"));
+	DEBUG_ASSERTCRASH(*m_activeHead != nullptr, ("m_activeHead is null, uh oh"));
 	DEBUG_ASSERTCRASH(*m_activeHead == this, ("I am not the active timer, uh oh"));
 	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));
 #endif
@@ -164,7 +163,9 @@ void PerfGather::stopTimer()
 	{
 		// don't add the time it took for us to actually get the ticks (in startTimer) to our parent...
 		(*m_activeHead)->m_runningTimeGross -= (s_stopStartOverhead);
-		(*m_activeHead)->m_runningTimeNet -= (runTime + s_stopStartOverhead);
+		if ((*m_activeHead)->m_netTimeOnly) {
+			(*m_activeHead)->m_runningTimeNet -= (runTime + s_stopStartOverhead);
+		}
 	}
 }
 
@@ -227,7 +228,8 @@ AutoPerfGatherIgnore::~AutoPerfGatherIgnore()
 }
 
 //-------------------------------------------------------------------------------------------------
-#define DECLARE_PERF_TIMER(id)					static PerfGather s_##id(#id); 
+#define DECLARE_TOTAL_PERF_TIMER(id)					static PerfGather s_##id(#id, false);
+#define DECLARE_PERF_TIMER(id)					static PerfGather s_##id(#id);
 #define USE_PERF_TIMER(id)							AutoPerfGather a_##id(s_##id);
 #define IGNORE_PERF_TIMER(id)						AutoPerfGatherIgnore a_##id(s_##id);
 
@@ -241,15 +243,15 @@ class PerfTimer
 public:
 	PerfTimer( const char *identifier, Bool crashWithInfo = true, Int startFrame = 0, Int endFrame = -1);
 	virtual ~PerfTimer( );
-	__forceinline void startTimer( void );
-	__forceinline void stopTimer( void );
-	
+	__forceinline void startTimer();
+	__forceinline void stopTimer();
+
 protected:
 	Int64 m_startTime;
 
 protected:
-	void outputInfo( void );
-	void showMetrics( void );
+	void outputInfo();
+	void showMetrics();
 
 protected:
 	const char *m_identifier;
@@ -268,20 +270,20 @@ protected:
 };
 
 //-------------------------------------------------------------------------------------------------
-void PerfTimer::startTimer( void )
+void PerfTimer::startTimer()
 {
 	UnsignedInt frm = (TheGameLogic ? TheGameLogic->getFrame() : m_startFrame);
-	if (frm >= m_startFrame && (m_endFrame == -1 || frm <= m_endFrame)) 
+	if (frm >= m_startFrame && (m_endFrame == -1 || frm <= m_endFrame))
 	{
 		GetPrecisionTimer(&m_startTime);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-void PerfTimer::stopTimer( void )
+void PerfTimer::stopTimer()
 {
 	UnsignedInt frm = (TheGameLogic ? TheGameLogic->getFrame() : m_startFrame);
-	if (frm >= m_startFrame && (m_endFrame == -1 || frm <= m_endFrame)) 
+	if (frm >= m_startFrame && (m_endFrame == -1 || frm <= m_endFrame))
 	{
 		Int64 tmp;
 		GetPrecisionTimer(&tmp);
@@ -289,7 +291,7 @@ void PerfTimer::stopTimer( void )
 		++m_callCount;
 		m_lastFrame = frm;
 	}
-	
+
 
 	if (TheGlobalData && TheGlobalData->m_showMetrics && m_endFrame > m_startFrame + PERFMETRICS_BETWEEN_METRICS) {
 		m_endFrame = m_startFrame + PERFMETRICS_BETWEEN_METRICS;
@@ -310,10 +312,9 @@ extern void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
 
 #else		// PERF_TIMERS
 
-	#define DECLARE_PERF_TIMER(id)					
+	#define DECLARE_PERF_TIMER(id)
+	#define  DECLARE_TOTAL_PERF_TIMER(id)
 	#define USE_PERF_TIMER(id)
-	#define IGNORE_PERF_TIMER(id)	
+	#define IGNORE_PERF_TIMER(id)
 
 #endif	// PERF_TIMERS
-
-#endif /* __PERFTIMER_H__ */

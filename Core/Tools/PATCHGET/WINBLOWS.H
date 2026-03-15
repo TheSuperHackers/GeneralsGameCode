@@ -16,15 +16,14 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WINBLOWS_HEADER
-#define WINBLOWS_HEADER
+#pragma once
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
 #include <stdlib.h>
 
-#include"WSTYPES.H"
+#include"WSTYPES.h"
 
   extern HINSTANCE Global_instance;
   extern LPSTR     Global_commandline;
@@ -33,5 +32,3 @@
   extern int       main(int argc, char *argv[]);
 
   int              Print_WM(UINT wm,char *out);
-
-#endif

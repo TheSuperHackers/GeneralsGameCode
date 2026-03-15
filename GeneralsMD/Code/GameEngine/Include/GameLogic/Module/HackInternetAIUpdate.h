@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __HACK_INTERNET_AI_UPDATE_H
-#define __HACK_INTERNET_AI_UPDATE_H
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -45,24 +42,21 @@ public:
 //-------------------------------------------------------------------------------------------------
 class HackInternetState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HackInternetState, "HackInternetState")
 public:
 	HackInternetState( StateMachine *machine ) :State( machine, "HackInternetState" )
 	{
-		//Added By Sadullah Nader
-		//Initializations missing and needed
 		m_framesRemaining = 0;
-		//
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_framesRemaining; //frames till next cash update
@@ -72,23 +66,20 @@ EMPTY_DTOR(HackInternetState)
 //-------------------------------------------------------------------------------------------------
 class PackingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PackingState, "PackingState")
 public:
 	PackingState( StateMachine *machine ) : State( machine, "PackingState" )
 	{
-		//Added By Sadullah Nader
-		//Initializations inserted
 		m_framesRemaining = 0;
-		//
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_framesRemaining; //frames till packing animation complete
@@ -98,20 +89,20 @@ EMPTY_DTOR(PackingState)
 //-------------------------------------------------------------------------------------------------
 class UnpackingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnpackingState, "UnpackingState")
 public:
 	UnpackingState( StateMachine *machine ) :State( machine, "UnpackingState" )
 	{
 		m_framesRemaining = 0;
 	}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	UnsignedInt m_framesRemaining; //frames till unpacking animation complete
@@ -132,7 +123,7 @@ class HackInternetAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
 	UnsignedInt		m_unpackTime;
-	UnsignedInt		m_packTime;				
+	UnsignedInt		m_packTime;
 	UnsignedInt		m_cashUpdateDelay;
 	UnsignedInt		m_cashUpdateDelayFast;
 	UnsignedInt		m_regularCashAmount;
@@ -156,22 +147,22 @@ public:
 		m_packUnpackVariationFactor = 0.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "UnpackTime",					INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_unpackTime ) },
-			{ "PackTime",						INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_packTime ) },
-			{ "PackUnpackVariationFactor", INI::parseReal,					NULL, offsetof( HackInternetAIUpdateModuleData, m_packUnpackVariationFactor ) },
-			{ "CashUpdateDelay",		INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_cashUpdateDelay ) },
-			{ "CashUpdateDelayFast",INI::parseDurationUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_cashUpdateDelayFast ) },
-			{ "RegularCashAmount",	INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_regularCashAmount ) },
-			{ "VeteranCashAmount",	INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_veteranCashAmount ) },
-			{ "EliteCashAmount",		INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_eliteCashAmount ) },
-			{ "HeroicCashAmount",		INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_heroicCashAmount ) },
-			{ "XpPerCashUpdate",		INI::parseUnsignedInt,	NULL, offsetof( HackInternetAIUpdateModuleData, m_xpPerCashUpdate ) },
+			{ "UnpackTime",					INI::parseDurationUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_unpackTime ) },
+			{ "PackTime",						INI::parseDurationUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_packTime ) },
+			{ "PackUnpackVariationFactor", INI::parseReal,					nullptr, offsetof( HackInternetAIUpdateModuleData, m_packUnpackVariationFactor ) },
+			{ "CashUpdateDelay",		INI::parseDurationUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_cashUpdateDelay ) },
+			{ "CashUpdateDelayFast",INI::parseDurationUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_cashUpdateDelayFast ) },
+			{ "RegularCashAmount",	INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_regularCashAmount ) },
+			{ "VeteranCashAmount",	INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_veteranCashAmount ) },
+			{ "EliteCashAmount",		INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_eliteCashAmount ) },
+			{ "HeroicCashAmount",		INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_heroicCashAmount ) },
+			{ "XpPerCashUpdate",		INI::parseUnsignedInt,	nullptr, offsetof( HackInternetAIUpdateModuleData, m_xpPerCashUpdate ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -198,7 +189,7 @@ public:
 	HackInternetAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
- 	virtual void aiDoCommand(const AICommandParms* parms);
+ 	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 	Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
 	UnsignedInt getUnpackTime()					const;
@@ -211,23 +202,20 @@ public:
 	UnsignedInt getXpPerCashUpdate()		const { return getHackInternetAIUpdateModuleData()->m_xpPerCashUpdate; }
 
 	void hackInternet();
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
-	virtual Bool isIdle() const;
+	virtual Bool isIdle() const override;
 
-	virtual HackInternetAIInterface* getHackInternetAIInterface() { return this; }
-	virtual const HackInternetAIInterface* getHackInternetAIInterface() const { return this; }
+	virtual HackInternetAIInterface* getHackInternetAIInterface() override { return this; }
+	virtual const HackInternetAIInterface* getHackInternetAIInterface() const override { return this; }
 
-	virtual Bool isHacking() const;
-	virtual Bool isHackingPackingOrUnpacking() const;
+	virtual Bool isHacking() const override;
+	virtual Bool isHackingPackingOrUnpacking() const override;
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
-	
+	virtual AIStateMachine* makeStateMachine() override;
+
 	AICommandParmsStorage		m_pendingCommand;
-	Bool m_hasPendingCommand;	
+	Bool m_hasPendingCommand;
 };
-
-#endif
-

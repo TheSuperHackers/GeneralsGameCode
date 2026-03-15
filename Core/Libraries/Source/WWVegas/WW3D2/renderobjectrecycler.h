@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef RENDEROBJECTRECYCLER_H
-#define RENDEROBJECTRECYCLER_H
+#pragma once
 
 #include "always.h"
 #include "robjlist.h"
@@ -48,12 +46,12 @@ class Matrix3D;
 
 /**
 ** RenderObjectRecyclerClass
-** This class can be used to eliminate dynamic render object allocation.  An example usage would be 
+** This class can be used to eliminate dynamic render object allocation.  An example usage would be
 ** the case where you have a projectile system in a game.  Projectiles could be set up to use a
 ** variety of render objects and would be rapidly created and destroyed as the players and AI's fire
 ** their weapons.  If all of your bullet objects request their models from a RenderObjectCache, and
-** return their models to the cache when the bullet is destroyed; the model will get re-used by 
-** the next bullet that requests that same model type (highly likely in a game situation).  
+** return their models to the cache when the bullet is destroyed; the model will get re-used by
+** the next bullet that requests that same model type (highly likely in a game situation).
 **
 ** Public member functions:
 ** Reset - release all of the models in the cache.
@@ -64,10 +62,10 @@ class RenderObjectRecyclerClass
 {
 public:
 
-	void					Reset(void);
+	void					Reset();
 	RenderObjClass*	Get_Render_Object(const char * name,const Matrix3D & tm);
 	void					Return_Render_Object(RenderObjClass * obj);
-	
+
 private:
 
 	void					Insert_Inactive_Model(RenderObjClass * obj);
@@ -77,8 +75,3 @@ private:
 	RefRenderObjListClass	InactiveModels;
 
 };
-
-
-
-
-#endif //RENDEROBJECTRECYCLER_H

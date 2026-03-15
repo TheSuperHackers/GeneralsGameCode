@@ -38,7 +38,7 @@
 #include "verchk.h"
 #include <windows.h>
 #include <winnt.h>
-#include "RAWFILE.H"
+#include "RAWFILE.h"
 #include "ffactory.h"
 
 
@@ -61,7 +61,7 @@
 
 bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo)
 	{
-	if (filename == NULL || fileInfo == NULL)
+	if (filename == nullptr || fileInfo == nullptr)
 		{
 		return false;
 		}
@@ -121,7 +121,7 @@ bool GetFileCreationTime(char* filename, FILETIME* createTime)
 
 			if (handle != INVALID_HANDLE_VALUE)
 				{
-				if (GetFileTime(handle, NULL, NULL, createTime))
+				if (GetFileTime(handle, nullptr, nullptr, createTime))
 					{
 					return true;
 					}
@@ -149,19 +149,19 @@ Get_Image_File_Header (const char *filename, IMAGE_FILE_HEADER *file_header)
 	FileClass *file=_TheFileFactory->Get_File(filename);
 
 	if (file && file->Open ()) {
-		
+
 		//
 		//	Read the dos header (all PE exectuable files begin with this)
 		//
 		IMAGE_DOS_HEADER dos_header;
 		if (file->Read (&dos_header, sizeof (dos_header)) == sizeof (dos_header)) {
-			
+
 			//
 			//	Determine the index where the image header resides
 			//
 			int file_header_offset = dos_header.e_lfanew + sizeof (DWORD);
 			file->Seek (file_header_offset, SEEK_SET);
-			
+
 			//
 			//	Read the image header from the file
 			//
@@ -173,7 +173,7 @@ Get_Image_File_Header (const char *filename, IMAGE_FILE_HEADER *file_header)
 	}
 
 	_TheFileFactory->Return_File(file);
-	file=NULL;
+	file=nullptr;
 
 	return retval;
 }
@@ -193,8 +193,8 @@ Get_Image_File_Header (HINSTANCE app_instance, IMAGE_FILE_HEADER *file_header)
 	//	Read the dos header (all PE exectuable files begin with this)
 	//
 	IMAGE_DOS_HEADER *dos_header = (IMAGE_DOS_HEADER *)app_instance;
-	if (dos_header != NULL) {
-		
+	if (dos_header != nullptr) {
+
 		//
 		//	Determine the offset where the image header resides
 		//
@@ -205,10 +205,10 @@ Get_Image_File_Header (HINSTANCE app_instance, IMAGE_FILE_HEADER *file_header)
 		//
 		::memcpy (	file_header,
 						(((char *)dos_header) + image_header_offset),
-						sizeof (IMAGE_FILE_HEADER));		
+						sizeof (IMAGE_FILE_HEADER));
 		retval = true;
 	}
-	
+
 
 	return retval;
 }
@@ -235,8 +235,8 @@ Compare_EXE_Version (int app_instance, const char *filename)
 	//	Get the image header for both executables
 	//
 	IMAGE_FILE_HEADER header1 = { 0 };
-	IMAGE_FILE_HEADER header2 = { 0 };	
-	if	(	::Get_Image_File_Header ((HINSTANCE)app_instance, &header1) && 
+	IMAGE_FILE_HEADER header2 = { 0 };
+	if	(	::Get_Image_File_Header ((HINSTANCE)app_instance, &header1) &&
 			::Get_Image_File_Header (filename, &header2))
 	{
 		retval = int(header1.TimeDateStamp - header2.TimeDateStamp);

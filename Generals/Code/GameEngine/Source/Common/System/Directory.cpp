@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #if (0)
 
 #include "Common/Directory.h"
@@ -53,7 +53,7 @@ void FileInfo::set( const WIN32_FIND_DATA& info )
 	modTime = FileTimeToTimet(info.ftLastWriteTime);
 	attributes = info.dwFileAttributes;
 	filesize = info.nFileSizeLow;
-	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d\n", filename.str(), filesize));
+	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d", filename.str(), filesize));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	// sanity
 	if( m_dirPath.isEmpty() )
 	{
-		DEBUG_LOG(( "Empty dirname\n"));
+		DEBUG_LOG(( "Empty dirname"));
 		return;
 	}
 
@@ -77,7 +77,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	// switch into the directory provided
 	if( SetCurrentDirectory( m_dirPath.str() ) == 0 )
 	{
-		DEBUG_LOG(( "Can't set directory '%s'\n", m_dirPath.str() ));
+		DEBUG_LOG(( "Can't set directory '%s'", m_dirPath.str() ));
 		return;
 	}
 
@@ -86,7 +86,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	hFile = FindFirstFile( "*", &item);
 	if( hFile == INVALID_HANDLE_VALUE )
 	{
-		DEBUG_LOG(( "Can't search directory '%s'\n", m_dirPath.str() ));
+		DEBUG_LOG(( "Can't search directory '%s'", m_dirPath.str() ));
 		done = true;
 	}
 
@@ -97,7 +97,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 		// if this is a subdirectory keep the name around till the end
 		if( BitIsSet( item.dwFileAttributes, FILE_ATTRIBUTE_DIRECTORY ) )
 		{
-			if ( strcmp( item.cFileName, "." ) && strcmp( item.cFileName, ".." ) )
+			if ( strcmp( item.cFileName, "." ) != 0 && strcmp( item.cFileName, ".." ) != 0 )
 			{
 				info.set(item);
 				m_subdirs.insert( info );
@@ -122,12 +122,12 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	SetCurrentDirectory( currDir );
 }
 
-FileInfoSet* Directory::getFiles( void )
+FileInfoSet* Directory::getFiles()
 {
 	return &m_files;
 }
 
-FileInfoSet* Directory::getSubdirs( void )
+FileInfoSet* Directory::getSubdirs()
 {
 	return &m_subdirs;
 }

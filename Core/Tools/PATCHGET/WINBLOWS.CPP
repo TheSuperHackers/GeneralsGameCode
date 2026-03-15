@@ -23,15 +23,15 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "WINBLOWS.H"
-#include "CHATAPI.H"
+#include "WINBLOWS.h"
+#include "CHATAPI.h"
 
 
 // TheSuperHackers @fix xezon 13/03/2025 Fix debug linker errors by
 // adding "patchget" namespaces and these globals here.
 // just to satisfy the game libraries we link to
-HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
-HWND ApplicationHWnd = NULL;
+HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
+HWND ApplicationHWnd = nullptr;
 const char *g_strFile = "data\\Generals.str";
 const char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = "patchget_"; // prefix to the debug log.
@@ -64,12 +64,12 @@ int PASCAL WinMain( HINSTANCE instance, HINSTANCE, char *command_line, int comma
 
     int   command_scan=0;
     char  command_char;
-    do 
+    do
     {
       /*
       ** Scan for non-space character on command line
       */
-      do 
+      do
       {
         command_char = *( command_line+command_scan++ );
       } while ( command_char==' ' );

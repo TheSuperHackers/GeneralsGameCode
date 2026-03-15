@@ -61,7 +61,6 @@
 #include "chunkio.h"
 #include "w3d_file.h"
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 #undef WWASSERT
@@ -80,13 +79,13 @@ const float COINCIDENCE_EPSILON = 0.001f;
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-AABTreeBuilderClass::AABTreeBuilderClass(void) : 
-	Root(NULL), 
+AABTreeBuilderClass::AABTreeBuilderClass() :
+	Root(nullptr),
 	CurPolyIndex(0),
 	PolyCount(0),
-	Polys(NULL),
+	Polys(nullptr),
 	VertCount(0),
-	Verts(NULL)
+	Verts(nullptr)
 {
 }
 
@@ -103,8 +102,8 @@ AABTreeBuilderClass::AABTreeBuilderClass(void) :
  * HISTORY:                                                                                    *
  *   5/19/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-AABTreeBuilderClass::~AABTreeBuilderClass(void) 
-{ 
+AABTreeBuilderClass::~AABTreeBuilderClass()
+{
 	Reset();
 }
 
@@ -121,21 +120,16 @@ AABTreeBuilderClass::~AABTreeBuilderClass(void)
  * HISTORY:                                                                                    *
  *   5/19/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-void AABTreeBuilderClass::Reset(void)
+void AABTreeBuilderClass::Reset()
 {
-	if (Root) { 
-		delete Root; Root = NULL; 
-	} 
+	delete Root;
+	Root = nullptr;
 
-	if (Verts != NULL) {
-		delete[] Verts;
-		Verts = NULL;
-	}
+	delete[] Verts;
+	Verts = nullptr;
 
-	if (Polys != NULL) {
-		delete[] Polys;
-		Polys = NULL;
-	}
+	delete[] Polys;
+	Polys = nullptr;
 }
 
 /***********************************************************************************************
@@ -154,8 +148,8 @@ void AABTreeBuilderClass::Build_AABTree(int polycount,TriIndex * polys,int vertc
 {
 	WWASSERT(polycount > 0);
 	WWASSERT(vertcount > 0);
-	WWASSERT(polys != NULL);
-	WWASSERT(verts != NULL);
+	WWASSERT(polys != nullptr);
+	WWASSERT(verts != nullptr);
 
 	/*
 	** If we already have allocated data, release it
@@ -191,7 +185,7 @@ void AABTreeBuilderClass::Build_AABTree(int polycount,TriIndex * polys,int vertc
 	*/
 	Root = W3DNEW CullNodeStruct;
 	Build_Tree(Root,PolyCount,polyindices);
-	polyindices = NULL;
+	polyindices = nullptr;
 
 	/*
 	** fill in the remaining information needed in the tree:
@@ -232,7 +226,7 @@ void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * p
 	SplitChoiceStruct sc;
 
 	sc = Select_Splitting_Plane(polycount,polyindices);
-	
+
 	/*
 	** If the algorithm could not separate any polys, just install the polys
 	** in this node and terminate.  TODO: explore how this happens.
@@ -272,22 +266,22 @@ void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * p
 	** deletes the poly array.
 	*/
 	if (arrays.FrontCount) {
-		WWASSERT(arrays.FrontPolys != NULL);
+		WWASSERT(arrays.FrontPolys != nullptr);
 		node->Front = W3DNEW CullNodeStruct;
 		Build_Tree(node->Front,arrays.FrontCount,arrays.FrontPolys);
-		arrays.FrontPolys = NULL;
+		arrays.FrontPolys = nullptr;
 	}
-	
+
 	/*
 	** Build a back tree if necessary. Remember that the build function
 	** deletes the tile array.
 	*/
 	if (arrays.BackCount) {
-		WWASSERT(arrays.BackPolys != NULL);
+		WWASSERT(arrays.BackPolys != nullptr);
 
 		node->Back = W3DNEW CullNodeStruct;
 		Build_Tree(node->Back,arrays.BackCount,arrays.BackPolys);
-		arrays.BackPolys = NULL;
+		arrays.BackPolys = nullptr;
 	}
 
 }
@@ -305,23 +299,23 @@ void AABTreeBuilderClass::Build_Tree(CullNodeStruct * node,int polycount,int * p
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-AABTreeBuilderClass::SplitChoiceStruct 
+AABTreeBuilderClass::SplitChoiceStruct
 AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 {
-	WWASSERT(polyindices != NULL);
+	WWASSERT(polyindices != nullptr);
 
-	const int NUM_TRYS = 50;
+	const int NUM_TRIES = 50;
 
 	SplitChoiceStruct best_plane_stats;
 	SplitChoiceStruct considered_plane_stats;
-	
+
 	/*
 	** Try putting axis-aligned planes through some random vertices
 	*/
-	for (int trys = 0; trys < MIN(NUM_TRYS,polycount); trys++) {
+	for (int tries = 0; tries < MIN(NUM_TRIES,polycount); tries++) {
 
 		AAPlaneClass plane;
-		
+
 		/*
 		** Select a random poly and vertex index;
 		*/
@@ -329,7 +323,7 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 		int vert_index = rand() % 3;
 		const TriIndex * polyverts = Polys + poly_index;
 		const Vector3 * vert = Verts + (*polyverts)[vert_index];
-		
+
 		/*
 		** Select a random plane
 		*/
@@ -365,7 +359,7 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-AABTreeBuilderClass::SplitChoiceStruct 
+AABTreeBuilderClass::SplitChoiceStruct
 AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const AAPlaneClass & plane)
 {
 	/*
@@ -380,16 +374,16 @@ AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const A
 
 		switch(Which_Side(plane,polyindices[i])) {
 
-			case FRONT:	
+			case FRONT:
 			case ON:
 			case BOTH:
 				{
-					sc.FrontCount++;		
+					sc.FrontCount++;
 					Update_Min_Max(polyindices[i],sc.FMin,sc.FMax );
 					break;
 				}
 
-			case BACK:		
+			case BACK:
 				{
 					sc.BackCount++;
 					Update_Min_Max(polyindices[i],sc.BMin,sc.BMax );
@@ -397,21 +391,21 @@ AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const A
 				}
 		}
 	}
-	
+
 	/*
 	** Inflate the box a tiny amount so that we never
 	** get volumes of zero!
 	*/
 	sc.BMin -= Vector3(WWMATH_EPSILON,WWMATH_EPSILON,WWMATH_EPSILON);
 	sc.BMax += Vector3(WWMATH_EPSILON,WWMATH_EPSILON,WWMATH_EPSILON);
-	
+
 	/*
 	** Compute the cost.
 	*/
 	float back_cost = (sc.BMax.X - sc.BMin.X) * (sc.BMax.Y - sc.BMin.Y) * (sc.BMax.Z - sc.BMin.Z) * sc.BackCount;
 	float front_cost = (sc.FMax.X - sc.FMin.X) * (sc.FMax.Y - sc.FMin.Y) * (sc.FMax.Z - sc.FMin.Z) * sc.FrontCount;
 	sc.Cost = front_cost + back_cost;
-	
+
 	if ((sc.FrontCount == 0) || (sc.BackCount == 0)) {
 		sc.Cost = FLT_MAX;
 	}
@@ -432,7 +426,7 @@ AABTreeBuilderClass::Compute_Plane_Score(int polycount,int * polyindices,const A
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-AABTreeBuilderClass::OverlapType 
+AABTreeBuilderClass::OverlapType
 AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 {
 	/*
@@ -440,13 +434,13 @@ AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 	*/
 	int mask = 0;
 	for (int vi=0; vi<3; vi++) {
-		
+
 		const Vector3 & point = Verts[ Polys[poly_index][vi] ];
 		float delta = point[plane.Normal] - plane.Dist;
-		
+
 		if (delta > COINCIDENCE_EPSILON) {
 			mask |= POS;
-		} 
+		}
 		if (delta < -COINCIDENCE_EPSILON) {
 			mask |= NEG;
 		}
@@ -454,7 +448,7 @@ AABTreeBuilderClass::Which_Side(const AAPlaneClass & plane,int poly_index)
 	}
 
 	/*
-	** Now evaluate the status of all of the verts to determine whether the 
+	** Now evaluate the status of all of the verts to determine whether the
 	** triangle is in front, behind, on or overlapping the plane
 	*/
 
@@ -507,7 +501,7 @@ void AABTreeBuilderClass::Split_Polys
 )
 {
 	/*
-	** Note that this routine arrays of polygons. The caller is then responsible for keeping 
+	** Note that this routine arrays of polygons. The caller is then responsible for keeping
 	** track of the memory this routine allocates.
 	*/
 	if (sc.FrontCount > 0) {
@@ -525,7 +519,7 @@ void AABTreeBuilderClass::Split_Polys
 
 		switch(Which_Side(sc.Plane,polyindices[i])) {
 
-			case FRONT: 
+			case FRONT:
 			case ON:
 			case BOTH:
 				arrays->FrontPolys[arrays->FrontCount++] = polyindices[i];
@@ -538,7 +532,7 @@ void AABTreeBuilderClass::Split_Polys
 	}
 
 	/*
-	** when we are all done, the counts should match. 
+	** when we are all done, the counts should match.
 	*/
 	WWASSERT(arrays->FrontCount == sc.FrontCount);
 	WWASSERT(arrays->BackCount == sc.BackCount);
@@ -589,7 +583,7 @@ void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 
 		if (node->Front->Min.Y < node->Min.Y) node->Min.Y = node->Front->Min.Y;
 		if (node->Front->Max.Y > node->Max.Y) node->Max.Y = node->Front->Max.Y;
-		
+
 		if (node->Front->Min.Z < node->Min.Z) node->Min.Z = node->Front->Min.Z;
 		if (node->Front->Max.Z > node->Max.Z) node->Max.Z = node->Front->Max.Z;
 	}
@@ -603,7 +597,7 @@ void AABTreeBuilderClass::Compute_Bounding_Box(CullNodeStruct * node)
 
 		if (node->Back->Min.Y < node->Min.Y) node->Min.Y = node->Back->Min.Y;
 		if (node->Back->Max.Y > node->Max.Y) node->Max.Y = node->Back->Max.Y;
-		
+
 		if (node->Back->Min.Z < node->Min.Z) node->Min.Z = node->Back->Min.Z;
 		if (node->Back->Max.Z > node->Max.Z) node->Max.Z = node->Back->Max.Z;
 	}
@@ -633,7 +627,7 @@ int AABTreeBuilderClass::Assign_Index(CullNodeStruct * node,int index)
 {
 	/*
 	** This function is used to assign a sequential index to
-	** each node in the tree.  The AABTree stores its nodes in 
+	** each node in the tree.  The AABTree stores its nodes in
 	** an array so this index is used to determine which slot
 	** in the array to put each node into.
 	*/
@@ -665,10 +659,10 @@ int AABTreeBuilderClass::Assign_Index(CullNodeStruct * node,int index)
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-int AABTreeBuilderClass::Node_Count(void)
-{	
+int AABTreeBuilderClass::Node_Count()
+{
 	if (Root) {
-		return Node_Count_Recursive(Root,0);	
+		return Node_Count_Recursive(Root,0);
 	} else {
 		return 0;
 	}
@@ -687,8 +681,8 @@ int AABTreeBuilderClass::Node_Count(void)
  * HISTORY:                                                                                    *
  *   10/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-int AABTreeBuilderClass::Poly_Count(void) 
-{ 
+int AABTreeBuilderClass::Poly_Count()
+{
 	return PolyCount;
 }
 
@@ -891,16 +885,16 @@ void AABTreeBuilderClass::Build_W3D_AABTree_Recursive
 	newnode->Max.X = node->Max.X;
 	newnode->Max.Y = node->Max.Y;
 	newnode->Max.Z = node->Max.Z;
-	
+
 	/*
 	** If this is a non-leaf node, set up the child indices, otherwise set up the polygon indices
 	*/
-	if (node->Front != NULL) {
+	if (node->Front != nullptr) {
 
-		WWASSERT(node->Back != NULL);		// if we have one child, we better have both!
+		WWASSERT(node->Back != nullptr);		// if we have one child, we better have both!
 		newnode->FrontOrPoly0 = node->Front->Index;
 		newnode->BackOrPolyCount = node->Back->Index;
-	
+
 	} else {
 
 		newnode->FrontOrPoly0 = cur_poly | 0x80000000;

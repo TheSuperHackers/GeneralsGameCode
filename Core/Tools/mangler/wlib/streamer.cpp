@@ -28,7 +28,7 @@
 #define STREAMER_UNBUFFERED 0
 #endif
 
-Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
+Streamer::Streamer() : streambuf(), Output_Device(nullptr), Buf(nullptr)
 {
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
   int state=unbuffered();
@@ -37,14 +37,14 @@ Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
   static_assert(STREAMER_UNBUFFERED==0, "std::streambuf is assumed to be buffered by default");
 #endif
 }
- 
+
 Streamer::~Streamer()
 {
   ///////// calling sync seems to cause crashes here on Win32
   //sync();
   /////////
-  if (Buf)
-    delete[] Buf;
+
+  delete[] Buf;
 }
 
 int Streamer::setOutputDevice(OutputDevice *device)
@@ -101,7 +101,7 @@ int Streamer::underflow(void)
 
 int Streamer::doallocate()
 {
-  if (Buf==NULL)
+  if (Buf==nullptr)
   {
     Buf=new char[(2*STREAMER_BUFSIZ)];   // deleted by destructor
     memset(Buf,0,2*STREAMER_BUFSIZ);
@@ -111,14 +111,14 @@ int Streamer::doallocate()
     setb(
        Buf,         // base pointer
        Buf+STREAMER_BUFSIZ,  // ebuf pointer (end of buffer);
-       0);          // 0 = manual deletion of buff 
+       0);          // 0 = manual deletion of buff
 #else
     pubsetbuf(Buf, 2*STREAMER_BUFSIZ);
 #endif
 
     // Get area
     setg(
-        Buf,   // eback 
+        Buf,   // eback
         Buf,   // gptr
         Buf);  // egptr
 

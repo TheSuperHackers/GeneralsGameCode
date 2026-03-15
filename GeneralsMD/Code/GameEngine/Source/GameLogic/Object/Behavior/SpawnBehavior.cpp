@@ -27,7 +27,7 @@
 // Desc:   Update will create and monitor a group of spawned units and replace as needed
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/ThingFactory.h"
@@ -49,17 +49,12 @@
 #define NONE_SPAWNED_YET (0xffffffff)
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
 #define SPAWN_DELAY_MIN_FRAMES (16) // about as rapidly as you'd expect people to successively exit through the same door
 //-------------------------------------------------------------------------------------------------
-SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData ) 
+SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 						 : UpdateModule( thing, moduleData )
 {
 	const SpawnBehaviorModuleData* md = getSpawnBehaviorModuleData();
@@ -73,10 +68,7 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 	//looping back to the beginning
 
 	m_framesToWait = 0;
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_firstBatchCount = 0;
-	//
 	if( md->m_isOneShotData )
 		m_oneShotCountdown = md->m_spawnNumberData;
 	else
@@ -90,19 +82,19 @@ SpawnBehavior::SpawnBehavior( Thing *thing, const ModuleData* moduleData )
 	m_initialBurstTimesInited = FALSE;
 
 
-	
+
 	m_aggregateHealth = md->m_aggregateHealth;
 
 	m_spawnCount = NONE_SPAWNED_YET;
 	m_active = TRUE;
 	m_selfTaskingSpawnCount = 0;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-SpawnBehavior::~SpawnBehavior( void )
+SpawnBehavior::~SpawnBehavior()
 {
 	m_replacementTimes.clear();
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 void SpawnBehavior::onDelete()
@@ -129,13 +121,13 @@ void SpawnBehavior::onDelete()
 			// and will *DESTROY* our spawned things if we ourselves are destroyed and they
 			// are still alive (such a case would be calling destroy object on us directly)
 			//
-			if( obj && obj->isEffectivelyDead() == FALSE )	
+			if( obj && obj->isEffectivelyDead() == FALSE )
 				TheGameLogic->destroyObject( obj );
 
-		}  // end for, it
+		}
 
-	}  // end if
-		
+	}
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -159,7 +151,7 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			for (BehaviorModule** update = currentSpawn->getBehaviorModules(); *update; ++update)
 			{
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-				if (sdu != NULL)
+				if (sdu != nullptr)
 				{
 					sdu->onSlaverDie( damageInfo );
 					break;
@@ -167,7 +159,7 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			}
 
 			// our spawner has died, we must invalidate the ID now in the spawned object
-			currentSpawn->setProducer( NULL );
+			currentSpawn->setProducer( nullptr );
 
 		}
 	}
@@ -190,21 +182,21 @@ void SpawnBehavior::onDie( const DamageInfo *damageInfo )
 			if( obj && obj->isEffectivelyDead() == FALSE )
 				obj->kill();
 
-		}  // end for, it
+		}
 
-	}  // end if
+	}
 
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime SpawnBehavior::update( void )
+UpdateSleepTime SpawnBehavior::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
 
 	//EVERY FRAME
 	if ( m_aggregateHealth )
 	{
-		computeAggregateStates();	
+		computeAggregateStates();
 	}
 
 	const SpawnBehaviorModuleData* md = getSpawnBehaviorModuleData();
@@ -257,9 +249,9 @@ UpdateSleepTime SpawnBehavior::update( void )
 			if( currentTime > replacementTime )
 			{
 				//If you create one, you pop the number off the list
-				if( createSpawn() )	
+				if( createSpawn() )
 					iterator = m_replacementTimes.erase( iterator );
-				else 
+				else
 					iterator++;
 			}
 			else
@@ -280,7 +272,7 @@ Bool SpawnBehavior::maySpawnSelfTaskAI( Real maxSelfTaskersRatio )
 	if ( maxSelfTaskersRatio == 0)
 		return FALSE;
 
-	
+
 	//if my last attack command was from player or script, I need to forbid my spawn from disobeying that command
 	//otherwise (since my attack state was autoacquired my ny own ai), let them deviate by the ratio specified.
 	Object* obj = getObject();
@@ -289,13 +281,13 @@ Bool SpawnBehavior::maySpawnSelfTaskAI( Real maxSelfTaskersRatio )
 	AIUpdateInterface *ai = obj->getAI();
 	if ( ! ai )
 		return FALSE;
-	
+
 	CommandSourceType lastAttackCommandSource = ai->getLastCommandSource();
-	
+
 
 	if ( lastAttackCommandSource != CMD_FROM_AI )
 		return FALSE;
-	
+
 
 	Real curSelfTaskersRatio = (Real)m_selfTaskingSpawnCount / (Real)m_spawnCount;
 
@@ -305,7 +297,7 @@ Bool SpawnBehavior::maySpawnSelfTaskAI( Real maxSelfTaskersRatio )
 // ------------------------------------------------------------------------------------------------
 Object* SpawnBehavior::getClosestSlave( const Coord3D *pos )
 {
-	Object *closest = NULL;
+	Object *closest = nullptr;
 	Real closestDistance;
 	for( objectIDListIterator it = m_spawnIDs.begin(); it != m_spawnIDs.end(); ++it )
 	{
@@ -313,8 +305,8 @@ Object* SpawnBehavior::getClosestSlave( const Coord3D *pos )
 		if( obj )
 		{
 			Real distance = ThePartitionManager->getDistanceSquared( obj, pos, FROM_CENTER_2D );
-			
-			if( !closest || closestDistance > distance ) 
+
+			if( !closest || closestDistance > distance )
 			{
 				closest = obj;
 				closestDistance = distance;
@@ -425,7 +417,7 @@ CanAttackResult SpawnBehavior::getCanAnySlavesAttackSpecificTarget( AbleToAttack
 
 				case ATTACKRESULT_NOT_POSSIBLE:
 					break;
-				
+
 				case ATTACKRESULT_INVALID_SHOT:
 					invalidShot = TRUE;
 					break;
@@ -463,7 +455,7 @@ CanAttackResult SpawnBehavior::getCanAnySlavesUseWeaponAgainstTarget( AbleToAtta
 
 				case ATTACKRESULT_NOT_POSSIBLE:
 					break;
-				
+
 				case ATTACKRESULT_INVALID_SHOT:
 					invalidShot = TRUE;
 					break;
@@ -520,7 +512,7 @@ class OrphanData
 
 public:
 
-	OrphanData( void );
+	OrphanData();
 
 	const ThingTemplate *m_matchTemplate;
 	Object *m_source;
@@ -532,12 +524,12 @@ public:
 #define BIG_DISTANCE 99999999.9f
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-OrphanData::OrphanData( void )
+OrphanData::OrphanData()
 {
 
-	m_matchTemplate = NULL;
-	m_source = NULL;
-	m_closest = NULL;
+	m_matchTemplate = nullptr;
+	m_source = nullptr;
+	m_closest = nullptr;
 	m_closestDistSq = BIG_DISTANCE;
 
 }
@@ -559,16 +551,16 @@ static void findClosestOrphan( Object *obj, void *userData )
 	Real distSq = ThePartitionManager->getDistanceSquared( orphanData->m_source, obj, FROM_CENTER_2D );
 	if( distSq < orphanData->m_closestDistSq )
 	{
-	
+
 		orphanData->m_closest = obj;
 		orphanData->m_closestDistSq = distSq;
 
-	}  // end if
-			
-}  // findClosestOrphan
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
-Object *SpawnBehavior::reclaimOrphanSpawn( void )
+Object *SpawnBehavior::reclaimOrphanSpawn()
 {
 	Player *player = getObject()->getControllingPlayer();
 	const SpawnBehaviorModuleData *md = getSpawnBehaviorModuleData();
@@ -578,20 +570,20 @@ Object *SpawnBehavior::reclaimOrphanSpawn( void )
 	// that we would normally spawn, if found we'll just make it our own
 	//
 	// EVEN MORE NEW AND DIFFERENT
-	// This block scans the list for matchTemplates 
+	// This block scans the list for matchTemplates
 	//
 
 	OrphanData orphanData;
-	AsciiString prevName = "";
+	AsciiString prevName;
 	for (std::vector<AsciiString>::const_iterator tempName = md->m_spawnTemplateNameData.begin();
-			tempName != md->m_spawnTemplateNameData.end(); 
+			tempName != md->m_spawnTemplateNameData.end();
 			++tempName)
 	{
 		if (prevName.compare(*tempName)) // the list may have redundancy, this will skip some of it
 			continue;
-		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );;
+		orphanData.m_matchTemplate = TheThingFactory->findTemplate( *tempName );
 		orphanData.m_source = getObject();
-		orphanData.m_closest = NULL;
+		orphanData.m_closest = nullptr;
 		orphanData.m_closestDistSq = BIG_DISTANCE;
 		player->iterateObjects( findClosestOrphan, &orphanData );
 		prevName = *tempName;
@@ -607,18 +599,18 @@ Bool SpawnBehavior::createSpawn()
 	const SpawnBehaviorModuleData *md = getSpawnBehaviorModuleData();
 
 	ExitInterface* exitInterface = parent->getObjectExitInterface();
-	if( exitInterface == NULL )
+	if( exitInterface == nullptr )
 	{
-		DEBUG_ASSERTCRASH( exitInterface != NULL, ("Something cannot have SpawnBehavior without an exit interface") );
+		DEBUG_ASSERTCRASH( exitInterface != nullptr, ("Something cannot have SpawnBehavior without an exit interface") );
 		return FALSE;
 	}
-	
-	ExitDoorType exitDoor = exitInterface->reserveDoorForExit(NULL, NULL);
+
+	ExitDoorType exitDoor = exitInterface->reserveDoorForExit(nullptr, nullptr);
 	if (exitDoor == DOOR_NONE_AVAILABLE)
 		return FALSE;
 
-	Object *newSpawn = NULL;
-	
+	Object *newSpawn = nullptr;
+
 	// try to reclaim orphaned objects if possible
 	Bool reclaimedOrphan = FALSE;
 	if( md->m_canReclaimOrphans && md->m_isOneShotData == FALSE )
@@ -629,7 +621,7 @@ Bool SpawnBehavior::createSpawn()
 	}
 
 													// This assures that an orphan has not just been reclaimed,
-	if( newSpawn == NULL )	// and that we really want a new spawn, here.
+	if( newSpawn == nullptr )	// and that we really want a new spawn, here.
 	{
 		m_spawnTemplate = TheThingFactory->findTemplate( *m_templateNameIterator );
 
@@ -659,7 +651,7 @@ Bool SpawnBehavior::createSpawn()
 	for (BehaviorModule** update = newSpawn->getBehaviorModules(); *update; ++update)
 	{
 		SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-		if (sdu != NULL)
+		if (sdu != nullptr)
 		{
 			sdu->onEnslave( parent );
 			break;
@@ -683,23 +675,23 @@ Bool SpawnBehavior::createSpawn()
 					ExitInterface* barracksExitInterface = barracks->getObjectExitInterface();
 					if ( barracksExitInterface )
 					{
-						ExitDoorType barracksDoor = barracksExitInterface->reserveDoorForExit(NULL, NULL);
+						ExitDoorType barracksDoor = barracksExitInterface->reserveDoorForExit(nullptr, nullptr);
 						barracksExitInterface->exitObjectViaDoor( newSpawn, barracksDoor );
 						newSpawn->setProducer(parent);//let parents producer exit him, but he thinks it was me
 						--m_initialBurstCountdown;
 						barracksExitSuccess = TRUE;
 					}
-					
+
 				}
 
 			}
-			
+
 			if ( ! barracksExitSuccess )
 			{
-				// find the closest spawn to the nexus... 
+				// find the closest spawn to the nexus...
 				//there is probably a more elegant way to choose the budHost, but oh well
-				Object *budHost = NULL;
-				Object *curSpawn = NULL;
+				Object *budHost = nullptr;
+				Object *curSpawn = nullptr;
 				Real tapeMeasure = 99999;
 				Real closest = 999999.9f; // 1000 * 1000
 				objectIDListIterator iter;
@@ -719,7 +711,7 @@ Bool SpawnBehavior::createSpawn()
 						}
 					}
 				}
-				exitInterface->exitObjectByBudding( newSpawn, budHost );// also handles the NULL pointer okay
+				exitInterface->exitObjectByBudding( newSpawn, budHost );// also handles the nullptr pointer okay
 
 			}
 
@@ -743,7 +735,7 @@ Bool SpawnBehavior::createSpawn()
 	}
 	else
 	{
-		++ m_spawnCount; 
+		++ m_spawnCount;
 	}
 
 
@@ -754,7 +746,7 @@ Bool SpawnBehavior::createSpawn()
 void SpawnBehavior::onSpawnDeath( ObjectID deadSpawn, DamageInfo *damageInfo )
 {
 	objectIDListIterator it = std::find(m_spawnIDs.begin(), m_spawnIDs.end(), deadSpawn);
-	
+
 	// If the iterator is at the end, we didn't find deadSpawn, so bail out.
 	// Otherwise, bad crash stuff will happen.
 	if (it == m_spawnIDs.end())
@@ -762,7 +754,7 @@ void SpawnBehavior::onSpawnDeath( ObjectID deadSpawn, DamageInfo *damageInfo )
 
 	//When one dies, you push (now + delay) as the time a new one should be made
 	const SpawnBehaviorModuleData* md = getSpawnBehaviorModuleData();
-	
+
 	Int replacementTime = md->m_spawnReplaceDelayData + TheGameLogic->getFrame();
 	m_replacementTimes.push_back( replacementTime );
 
@@ -773,7 +765,7 @@ void SpawnBehavior::onSpawnDeath( ObjectID deadSpawn, DamageInfo *damageInfo )
 	if ( (m_spawnCount == 0) && m_aggregateHealth) // I'm dead without my spawn
 	{
 		Object *killer = TheGameLogic->findObjectByID(damageInfo->in.m_sourceID);
-		if (killer != NULL) {
+		if (killer != nullptr) {
 			killer->scoreTheKill(getObject());
 		}
 		TheGameLogic->destroyObject(getObject());
@@ -811,7 +803,7 @@ void SpawnBehavior::onDamage( DamageInfo *info )
 			for (BehaviorModule** update = currentSpawn->getBehaviorModules(); *update; ++update)
 			{
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-				if (sdu != NULL)
+				if (sdu != nullptr)
 				{
 					sdu->onSlaverDamage( info );
 					break;
@@ -854,13 +846,13 @@ Bool SpawnBehavior::shouldTryToSpawn()
 //*   spawn health, and dividing by optimal health of full population
 //*   (that is, the max spawn, SpawnBehaviorModuleData::m_spawnNumberData)
 //*   at full health.
-//* Veterancy is sucked out of any unit that has any and put into the 
+//* Veterancy is sucked out of any unit that has any and put into the
 //* Spawner, scaled by 1/SpawnBehaviorModuleData::m_spawnNumberData;
 //* The HealthBoxPosition (maybe to include moodicon, vet icon) is calc'd
 //* as an average position of all the spawn.
 //********************************************************************
 
-void SpawnBehavior::computeAggregateStates(void)
+void SpawnBehavior::computeAggregateStates()
 {
 	if ( ! m_aggregateHealth ) // sanity
 		return;
@@ -870,7 +862,7 @@ void SpawnBehavior::computeAggregateStates(void)
 
 	Int spawnCount = 0;
 	Int spawnCountMax = md->m_spawnNumberData;
-	Coord3D avgSpawnPos; 
+	Coord3D avgSpawnPos;
 
 	avgSpawnPos.set(0,0,0);
 	Real acrHealth = 0.0f;
@@ -882,10 +874,10 @@ void SpawnBehavior::computeAggregateStates(void)
 	Bool SomebodyIsSelected = FALSE;
 	Bool SomebodyIsNotSelected = FALSE;
 
-	Drawable *spawnDraw = NULL;
-	Object *currentSpawn = NULL;
+	Drawable *spawnDraw = nullptr;
+	Object *currentSpawn = nullptr;
 
-	WeaponBonusConditionFlags spawnWeaponBonus; 
+	WeaponBonusConditionFlags spawnWeaponBonus;
 
 
 	m_selfTaskingSpawnCount = 0;
@@ -901,9 +893,9 @@ void SpawnBehavior::computeAggregateStates(void)
 			for (BehaviorModule** update = currentSpawn->getBehaviorModules(); *update; ++update)
 			{
 				SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-				if (sdu != NULL)
+				if (sdu != nullptr)
 				{
-					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());;
+					m_selfTaskingSpawnCount += ( sdu->isSelfTasking());
 					break;
 				}
 			}
@@ -941,10 +933,10 @@ void SpawnBehavior::computeAggregateStates(void)
 
 			spawnCount++;
 		}
-	} // next iter
+	}
 
 
-	
+
 	// SELECTION STATE *****************************************
 	// THIS LOGIC IS SIMPLE
 	// IF ANY ONE OF MY SPAWN ARE SELECTED RIGHT NOW,
@@ -976,7 +968,7 @@ void SpawnBehavior::computeAggregateStates(void)
 						teamMsg->appendObjectIDArgument( currentSpawn->getID() );
 					}
 				}
-			} // next iter
+			}
 		}
 		// if somebody is selected then I sure need to be!
 		if ( ! obj->getDrawable()->isSelected())
@@ -992,7 +984,7 @@ void SpawnBehavior::computeAggregateStates(void)
 
 
 	// HEALTH BOX POSITION *****************************
-	// pick a centered, average spot to draw the health box 
+	// pick a centered, average spot to draw the health box
 	avgSpawnPos.scale(1.0f / spawnCount);
 	avgSpawnPos.sub(obj->getPosition());
 	obj->setHealthBoxOffset(avgSpawnPos);
@@ -1000,7 +992,7 @@ void SpawnBehavior::computeAggregateStates(void)
 
 
 	// HEALTH STATE *************************************
-	// make my health an aggregate of all my spawns' healths 
+	// make my health an aggregate of all my spawns' healths
 	if ( spawnCount )
 	{
 		avgHealthMax /= spawnCount;
@@ -1070,13 +1062,14 @@ void SpawnBehavior::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
-	* 2: Added m_initialBurstTimesInited to the save. jba. 
+	* 1: Initial version
+	* 2: Added m_initialBurstTimesInited to the save. jba.
+	* 3: TheSuperHackers @bugfix Stubbjax 16/02/2026 Added m_initialBurstCountdown.
 */
 // ------------------------------------------------------------------------------------------------
 void SpawnBehavior::xfer( Xfer *xfer )
@@ -1084,16 +1077,24 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	AsciiString name;
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 2;
+#else
+	XferVersion currentVersion = 3;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
 	// extend base class
 	BehaviorModule::xfer( xfer );
 
-	
+
 	if (version >= 2) {
 		xfer->xferBool(&m_initialBurstTimesInited);
+	}
+
+	if (version >= 3) {
+		xfer->xferUnsignedInt(&m_initialBurstCountdown);
 	}
 
 	// spawn template
@@ -1102,22 +1103,22 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
 
-		m_spawnTemplate = NULL;
+		m_spawnTemplate = nullptr;
 		if( name.isEmpty() == FALSE )
 		{
-		
+
 			m_spawnTemplate = TheThingFactory->findTemplate( name );
-			if( m_spawnTemplate == NULL )
+			if( m_spawnTemplate == nullptr )
 			{
 
-				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'\n", name.str() ));
+				DEBUG_CRASH(( "SpawnBehavior::xfer - Unable to find template '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
-			}  // end if
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
 	// one shot countdown
 	xfer->xferInt( &m_oneShotCountdown );
@@ -1148,15 +1149,15 @@ void SpawnBehavior::xfer( Xfer *xfer )
 	// self tasking spawn count
 	xfer->xferUnsignedInt( &m_selfTaskingSpawnCount );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpawnBehavior::loadPostProcess( void )
+void SpawnBehavior::loadPostProcess()
 {
 
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

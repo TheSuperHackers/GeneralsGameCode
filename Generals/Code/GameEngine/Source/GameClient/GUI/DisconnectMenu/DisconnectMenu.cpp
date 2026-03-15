@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/DisconnectMenu.h"
 #include "GameClient/GUICallbacks.h"
@@ -35,7 +35,7 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkInterface.h"
 
-const char *DisconnectMenu::m_playerNameTextControlNames[] = {
+const char *const DisconnectMenu::m_playerNameTextControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer1Name",
 	"DisconnectScreen.wnd:StaticPlayer2Name",
 	"DisconnectScreen.wnd:StaticPlayer3Name",
@@ -43,10 +43,10 @@ const char *DisconnectMenu::m_playerNameTextControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer5Name",
 	"DisconnectScreen.wnd:StaticPlayer6Name",
 	"DisconnectScreen.wnd:StaticPlayer7Name",
-	NULL
+	nullptr
 };
 
-const char *DisconnectMenu::m_playerTimeoutTextControlNames[] = {
+const char *const DisconnectMenu::m_playerTimeoutTextControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer1Timeout",
 	"DisconnectScreen.wnd:StaticPlayer2Timeout",
 	"DisconnectScreen.wnd:StaticPlayer3Timeout",
@@ -54,10 +54,10 @@ const char *DisconnectMenu::m_playerTimeoutTextControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer5Timeout",
 	"DisconnectScreen.wnd:StaticPlayer6Timeout",
 	"DisconnectScreen.wnd:StaticPlayer7Timeout",
-	NULL
+	nullptr
 };
 
-const char *DisconnectMenu::m_playerVoteButtonControlNames[] = {
+const char *const DisconnectMenu::m_playerVoteButtonControlNames[] = {
 	"DisconnectScreen.wnd:ButtonKickPlayer1",
 	"DisconnectScreen.wnd:ButtonKickPlayer2",
 	"DisconnectScreen.wnd:ButtonKickPlayer3",
@@ -65,10 +65,10 @@ const char *DisconnectMenu::m_playerVoteButtonControlNames[] = {
 	"DisconnectScreen.wnd:ButtonKickPlayer5",
 	"DisconnectScreen.wnd:ButtonKickPlayer6",
 	"DisconnectScreen.wnd:ButtonKickPlayer7",
-	NULL
+	nullptr
 };
 
-const char *DisconnectMenu::m_playerVoteCountControlNames[] = {
+const char *const DisconnectMenu::m_playerVoteCountControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer1Votes",
 	"DisconnectScreen.wnd:StaticPlayer2Votes",
 	"DisconnectScreen.wnd:StaticPlayer3Votes",
@@ -76,26 +76,26 @@ const char *DisconnectMenu::m_playerVoteCountControlNames[] = {
 	"DisconnectScreen.wnd:StaticPlayer5Votes",
 	"DisconnectScreen.wnd:StaticPlayer6Votes",
 	"DisconnectScreen.wnd:StaticPlayer7Votes",
-	NULL
+	nullptr
 };
 
-const char *DisconnectMenu::m_packetRouterTimeoutControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeout";
-const char *DisconnectMenu::m_packetRouterTimeoutLabelControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeoutLabel";
-const char *DisconnectMenu::m_textDisplayControlName = "DisconnectScreen.wnd:ListboxTextDisplay";
+const char *const DisconnectMenu::m_packetRouterTimeoutControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeout";
+const char *const DisconnectMenu::m_packetRouterTimeoutLabelControlName = "DisconnectScreen.wnd:StaticPacketRouterTimeoutLabel";
+const char *const DisconnectMenu::m_textDisplayControlName = "DisconnectScreen.wnd:ListboxTextDisplay";
 
 static const Color chatNormalColor =  GameMakeColor(255,0,0,255);
 
-DisconnectMenu *TheDisconnectMenu = NULL;
+DisconnectMenu *TheDisconnectMenu = nullptr;
 
 DisconnectMenu::DisconnectMenu() {
-	m_disconnectManager = NULL;
+	m_disconnectManager = nullptr;
 }
 
 DisconnectMenu::~DisconnectMenu() {
 }
 
 void DisconnectMenu::init() {
-	m_disconnectManager = NULL;
+	m_disconnectManager = nullptr;
 	HideDisconnectWindow();
 	m_menuState = DISCONNECTMENUSTATETYPE_SCREENOFF;
 }
@@ -119,25 +119,25 @@ void DisconnectMenu::hideScreen() {
 
 void DisconnectMenu::setPlayerName(Int playerNum, UnicodeString name) {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_playerNameTextControlNames[playerNum]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
-		if (name.getLength() > 0) {
+	if (control != nullptr) {
+		if (!name.isEmpty()) {
 			GadgetStaticTextSetText(control, name);
 //			showPlayerControls(playerNum);
 		}
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerTimeoutTextControlNames[playerNum]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
-		if (name.getLength() > 0) {
-			GadgetStaticTextSetText(control, UnicodeString(L""));
+	if (control != nullptr) {
+		if (!name.isEmpty()) {
+			GadgetStaticTextSetText(control, L"");
 		}
 	}
 
-	if (name.getLength() > 0) {
+	if (!name.isEmpty()) {
 		showPlayerControls(playerNum);
 	} else {
 		hidePlayerControls(playerNum);
@@ -146,7 +146,7 @@ void DisconnectMenu::setPlayerName(Int playerNum, UnicodeString name) {
 
 void DisconnectMenu::setPlayerTimeoutTime(Int playerNum, time_t newTime) {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_playerTimeoutTextControlNames[playerNum]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	char str[33]; // itoa uses a max of 33 bytes.
 	itoa(newTime, str, 10);
@@ -154,27 +154,27 @@ void DisconnectMenu::setPlayerTimeoutTime(Int playerNum, time_t newTime) {
 	asciiNum.set(str);
 	UnicodeString uninum;
 	uninum.translate(asciiNum);
-	if (control != NULL) {
+	if (control != nullptr) {
 		GadgetStaticTextSetText(control, uninum);
 	}
 }
 
 void DisconnectMenu::showPlayerControls(Int slot) {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_playerNameTextControlNames[slot]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(FALSE);
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerTimeoutTextControlNames[slot]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(FALSE);
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerVoteButtonControlNames[slot]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(FALSE);
 		// Disallow voting for 2-player games.  Cheating punk.
 		if ( TheGameInfo && TheGameInfo->getNumPlayers() < 3 )
@@ -188,28 +188,28 @@ void DisconnectMenu::showPlayerControls(Int slot) {
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerVoteCountControlNames[slot]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(FALSE);
 	}
 }
 
 void DisconnectMenu::hidePlayerControls(Int slot) {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_playerNameTextControlNames[slot]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(TRUE);
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerTimeoutTextControlNames[slot]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(TRUE);
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerVoteButtonControlNames[slot]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(TRUE);
 		// Disallow voting for 2-player games.  Cheating punk.
 		if ( TheGameInfo && TheGameInfo->getNumPlayers() < 3 )
@@ -223,48 +223,48 @@ void DisconnectMenu::hidePlayerControls(Int slot) {
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_playerVoteCountControlNames[slot]);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
-	if (control != NULL) {
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
+	if (control != nullptr) {
 		control->winHide(TRUE);
 	}
 }
 
 void DisconnectMenu::showPacketRouterTimeout() {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_packetRouterTimeoutLabelControlName);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
+	if (control != nullptr) {
 		control->winHide(FALSE);
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_packetRouterTimeoutControlName);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
-		GadgetStaticTextSetText(control, UnicodeString(L"")); // start it off with a blank string.
+	if (control != nullptr) {
+		GadgetStaticTextSetText(control, L""); // start it off with a blank string.
 		control->winHide(FALSE);
 	}
 }
 
 void DisconnectMenu::hidePacketRouterTimeout() {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_packetRouterTimeoutLabelControlName);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
+	if (control != nullptr) {
 		control->winHide(TRUE);
 	}
 
 	id = TheNameKeyGenerator->nameToKey(m_packetRouterTimeoutControlName);
-	control = TheWindowManager->winGetWindowFromId(NULL, id);
+	control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
+	if (control != nullptr) {
 		control->winHide(TRUE);
 	}
 }
 
 void DisconnectMenu::setPacketRouterTimeoutTime(time_t newTime) {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_packetRouterTimeoutControlName);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
 	char str[33]; // itoa uses a max of 33 bytes.
 	itoa(newTime, str, 10);
@@ -272,7 +272,7 @@ void DisconnectMenu::setPacketRouterTimeoutTime(time_t newTime) {
 	asciiNum.set(str);
 	UnicodeString uninum;
 	uninum.translate(asciiNum);
-	if (control != NULL) {
+	if (control != nullptr) {
 		GadgetStaticTextSetText(control, uninum);
 	}
 }
@@ -283,9 +283,9 @@ void DisconnectMenu::sendChat(UnicodeString text) {
 
 void DisconnectMenu::showChat(UnicodeString text) {
 	NameKeyType displayID = TheNameKeyGenerator->nameToKey(m_textDisplayControlName);
-	GameWindow *displayControl = TheWindowManager->winGetWindowFromId(NULL, displayID);
+	GameWindow *displayControl = TheWindowManager->winGetWindowFromId(nullptr, displayID);
 
-	if (displayControl != NULL) {
+	if (displayControl != nullptr) {
 		GadgetListBoxAddEntryText(displayControl, text, chatNormalColor, -1, -1);
 	}
 }
@@ -298,28 +298,28 @@ void DisconnectMenu::removePlayer(Int slot, UnicodeString playerName) {
 	hidePlayerControls(slot);
 
 	NameKeyType displayID = TheNameKeyGenerator->nameToKey(m_textDisplayControlName);
-	GameWindow *displayControl = TheWindowManager->winGetWindowFromId(NULL, displayID);
+	GameWindow *displayControl = TheWindowManager->winGetWindowFromId(nullptr, displayID);
 
 	UnicodeString text;
 //	UnicodeString name;
 //	name.translate(playerName);
 	text.format(TheGameText->fetch("Network:PlayerLeftGame"), playerName.str());
 
-	if (displayControl != NULL) {
+	if (displayControl != nullptr) {
 		GadgetListBoxAddEntryText(displayControl, text, chatNormalColor, -1, -1);
 	}
 }
 
 void DisconnectMenu::voteForPlayer(Int slot) {
-	DEBUG_LOG(("Casting vote for disconnect slot %d\n", slot));
+	DEBUG_LOG(("Casting vote for disconnect slot %d", slot));
 	TheNetwork->voteForPlayerDisconnect(slot); // Do this next.
 }
 
 void DisconnectMenu::updateVotes(Int slot, Int votes) {
 	NameKeyType id = TheNameKeyGenerator->nameToKey(m_playerVoteCountControlNames[slot]);
-	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
+	GameWindow *control = TheWindowManager->winGetWindowFromId(nullptr, id);
 
-	if (control != NULL) {
+	if (control != nullptr) {
 		char votestr[16];
 		itoa(votes, votestr, 10);
 		AsciiString asciivotes;

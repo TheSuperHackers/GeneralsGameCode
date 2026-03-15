@@ -24,13 +24,10 @@
 
 // FILE: W3DFunctionLexicon.h /////////////////////////////////////////////////////////////////////
 // Created:    Colin Day, September 2001
-// Desc:       Function lexicon for w3d specific funtion pointers
+// Desc:       Function lexicon for w3d specific function pointers
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __W3DFUNCTIONLEXICON_H_
-#define __W3DFUNCTIONLEXICON_H_
 
 #include "Common/FunctionLexicon.h"
 
@@ -42,16 +39,13 @@ class W3DFunctionLexicon : public FunctionLexicon
 
 public:
 
-	W3DFunctionLexicon( void );
-	virtual ~W3DFunctionLexicon( void );
+	W3DFunctionLexicon();
+	virtual ~W3DFunctionLexicon();
 
-	virtual void init( void );
-	virtual void reset( void );
-	virtual void update( void );
-	
+	virtual void init();
+	virtual void reset();
+	virtual void update();
+
 protected:
 
 };
-
-#endif // __W3DFUNCTIONLEXICON_H_
-

@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUND_CHUNK_IDS_H
-#define __SOUND_CHUNK_IDS_H
 
 #include "saveloadids.h"
 #include "definitionclassids.h"
@@ -77,6 +71,3 @@ enum
 {
 	CLASSID_SOUND_DEF			= CLASSID_SOUND,
 };
-
-
-#endif //__SOUND_CHUNK_IDS_H

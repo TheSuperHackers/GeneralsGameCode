@@ -27,7 +27,7 @@
 // Desc:   Die method responsible for telling TheScriptEngine that a special power has been completed
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/SpecialPower.h"
@@ -42,14 +42,14 @@ SpecialPowerCompletionDie::SpecialPowerCompletionDie( Thing *thing, const Module
 {
 	m_creatorID = INVALID_ID;
 	m_creatorSet = FALSE;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerCompletionDie::~SpecialPowerCompletionDie( void )
+SpecialPowerCompletionDie::~SpecialPowerCompletionDie()
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void SpecialPowerCompletionDie::onDie( const DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::notifyScriptEngine( void )
+void SpecialPowerCompletionDie::notifyScriptEngine()
 {
 	if (m_creatorID != INVALID_ID)
 	{
@@ -71,7 +71,7 @@ void SpecialPowerCompletionDie::notifyScriptEngine( void )
 			getSpecialPowerCompletionDieModuleData()->m_specialPowerTemplate->getName(),
 			m_creatorID);
 	}
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void SpecialPowerCompletionDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -117,15 +117,15 @@ void SpecialPowerCompletionDie::xfer( Xfer *xfer )
 	// creator set
 	xfer->xferBool( &m_creatorSet );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCompletionDie::loadPostProcess( void )
+void SpecialPowerCompletionDie::loadPostProcess()
 {
 
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

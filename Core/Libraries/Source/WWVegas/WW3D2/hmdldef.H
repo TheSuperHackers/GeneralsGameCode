@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HMDLDEF_H
-#define HMDLDEF_H
 
 #include "always.h"
 #include "w3d_file.h"
@@ -67,25 +61,25 @@ struct HmdlNodeDefStruct
 **	HModelDefClass
 **
 **	"Hierarchy Model Definition Class"
-**	This class serves as a blueprint for creating HierarchyModelClasses.  
-**	The asset manager stores these objects internally and uses them to 
+**	This class serves as a blueprint for creating HierarchyModelClasses.
+**	The asset manager stores these objects internally and uses them to
 **	create instances of HierarchyModels for the user.
 */
 class HModelDefClass
 {
 
 public:
-	
+
 	enum {
 		OK,
 		LOAD_ERROR
 	};
 
-	HModelDefClass(void);
-	~HModelDefClass(void);
+	HModelDefClass();
+	~HModelDefClass();
 
 	int				Load_W3D(ChunkLoadClass & cload);
-	const char *	Get_Name(void) const { return Name; }
+	const char *	Get_Name() const { return Name; }
 
 private:
 
@@ -97,7 +91,7 @@ private:
 	HmdlNodeDefStruct *		SubObjects;
 	SnapPointsClass *			SnapPoints;
 
-	void Free(void);
+	void Free();
 	bool read_header(ChunkLoadClass & cload);
 	bool read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * con,bool pre30);
 	bool read_mesh_connection(ChunkLoadClass & cload,int idx,bool pre30);
@@ -108,5 +102,3 @@ private:
 	friend class HModelClass;
 	friend class HLodClass;
 };
-
-#endif 

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -43,14 +43,14 @@
 VeterancyCrateCollide::VeterancyCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyCrateCollide::~VeterancyCrateCollide( void )
+VeterancyCrateCollide::~VeterancyCrateCollide()
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -103,12 +103,12 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 	{
 		if( other->getControllingPlayer() != getObject()->getControllingPlayer() )
 		{
-			//This is a pilot and we are checking to make sure the pilot is entering a vehicle on 
+			//This is a pilot and we are checking to make sure the pilot is entering a vehicle on
 			//the same team. If it's not, then don't allow it.. this is particularly the case for
 			//pilots attempting to enter civilian vehicles.
 			return false;
 		}
-		
+
 		if( other->isUsingAirborneLocomotor() )
 		{
 			// Can't upgrade a helicopter or plane, but we will think we can for a moment while it
@@ -125,7 +125,7 @@ Bool VeterancyCrateCollide::isValidToExecute( const Object *other ) const
 Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 {
  	//Make sure the pilot is actually *TRYING* to enter the object
- 	//unlike other crates 
+ 	//unlike other crates
  	AIUpdateInterface *ai = (AIUpdateInterface*)getObject()->getAIUpdateInterface();
 	const VeterancyCrateCollideModuleData *md = getVeterancyCrateCollideModuleData();
 
@@ -139,7 +139,7 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 	if (range == 0)
 	{
 		// do just the collider
-		if (other != NULL)
+		if (other != nullptr)
 		{
 			other->getExperienceTracker()->gainExpForLevel( levelsToGain, ( ! md->m_isPilot) );
 		}
@@ -148,7 +148,7 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 	{
 		PartitionFilterSamePlayer othersPlayerFilter( other->getControllingPlayer() );
 		PartitionFilterSameMapStatus filterMapStatus(other);
-		PartitionFilter *filters[] = { &othersPlayerFilter, &filterMapStatus, NULL };
+		PartitionFilter *filters[] = { &othersPlayerFilter, &filterMapStatus, nullptr };
 		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( other, range, FROM_CENTER_2D, filters, ITER_FASTEST );
 		MemoryPoolObjectHolder hold(iter);
 
@@ -158,7 +158,7 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 			potentialObject->getExperienceTracker()->gainExpForLevel( levelsToGain, ( ! md->m_isPilot) );
 		}
 	}
-	
+
 	//In order to make things easier for the designers, we are going to transfer the terrorist name
 	//to the car... so the designer can control the car with their scripts.
 	if( md->m_isPilot )
@@ -178,7 +178,7 @@ void VeterancyCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -196,15 +196,15 @@ void VeterancyCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void VeterancyCrateCollide::loadPostProcess( void )
+void VeterancyCrateCollide::loadPostProcess()
 {
 
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

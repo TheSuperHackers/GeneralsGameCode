@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef __RadiusDecalUpdate_H_
-#define __RadiusDecalUpdate_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameClient/RadiusDecal.h"
@@ -46,13 +43,13 @@ public:
 		//m_deliveryDecalRadius = 0.0f;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     UpdateModuleData::buildFieldParse(p);
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			//{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalTemplate ) },
-			//{ "DeliveryDecalRadius",			INI::parseReal,									NULL,	offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalRadius ) },
+			//{ "DeliveryDecal",						RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalTemplate ) },
+			//{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( RadiusDecalUpdateModuleData, m_deliveryDecalRadius ) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -75,15 +72,12 @@ public:
 	//void createRadiusDecal( const Coord3D& pos );
 	void createRadiusDecal( const RadiusDecalTemplate& tmpl, Real radius, const Coord3D& pos );
 	void killWhenNoLongerAttacking(Bool v) { m_killWhenNoLongerAttacking = v; }
-	void killRadiusDecal(); 
+	void killRadiusDecal();
 
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update() override;
 
 private:
 
 	RadiusDecal m_deliveryDecal;
 	Bool m_killWhenNoLongerAttacking;
 };
-
-#endif // __RadiusDecalUpdate_H_
-

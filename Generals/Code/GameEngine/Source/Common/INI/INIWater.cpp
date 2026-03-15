@@ -24,11 +24,11 @@
 
 // FILE: INIWater.cpp /////////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, December 2001
-// Desc:   Water settings 
+// Desc:   Water settings
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_TIME_OF_DAY_NAMES
 
@@ -49,7 +49,7 @@
 void INI::parseWaterSettingDefinition( INI* ini )
 {
 	AsciiString name;
-	WaterSetting *waterSetting = NULL;
+	WaterSetting *waterSetting = nullptr;
 
 	// read the name
 	const char* token = ini->getNextToken();
@@ -57,7 +57,7 @@ void INI::parseWaterSettingDefinition( INI* ini )
 	name.set( token );
 
 	// get the water setting we want to load based on name
-	const char **timeOfDayName = TimeOfDayNames;
+	const char *const *timeOfDayName = TimeOfDayNames;
 	Int timeOfDayIndex = 0;  // TIME_OF_DAY_INVALID
 	while( timeOfDayName && *timeOfDayName )
 	{
@@ -68,27 +68,27 @@ void INI::parseWaterSettingDefinition( INI* ini )
 			waterSetting = &WaterSettings[ timeOfDayIndex ];
 			break;
 
-		}  // end if
+		}
 
 		// next name
 		timeOfDayName++;
 		timeOfDayIndex++;
 
-	}  // end while
+	}
 
 	// check for no time of day match
-	if( waterSetting == NULL )
+	if( waterSetting == nullptr )
 		throw INI_INVALID_DATA;
 
 	// parse the data
 	ini->initFromINI( waterSetting, waterSetting->getFieldParse() );
 
-}  // end parseWaterSetting
+}
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseWaterTransparencyDefinition( INI *ini )
 {
-	if (TheWaterTransparency == NULL) {
+	if (TheWaterTransparency == nullptr) {
 		TheWaterTransparency = newInstance(WaterTransparencySetting);
 	} else if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
 		WaterTransparencySetting* wt = (WaterTransparencySetting*) (TheWaterTransparency.getNonOverloadedPointer());
@@ -107,7 +107,7 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 	waterTrans = (WaterTransparencySetting*) (waterTrans->friend_getFinalOverride());
 	// parse the data
 	ini->initFromINI( waterTrans, TheWaterTransparency->getFieldParse() );
-	
+
 	// If we overrode any skybox textures, then call the W3D Water stuff.
 	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES) {
 		// Check to see if we overrode any skybox textures.
@@ -120,7 +120,7 @@ void INI::parseWaterTransparencyDefinition( INI *ini )
 		const WaterTransparencySetting* wtOriginal = TheWaterTransparency.getNonOverloadedPointer();
 		OVERRIDE<WaterTransparencySetting> wtOverride = TheWaterTransparency;
 
-		if (wtOriginal == wtOverride) 
+		if (wtOriginal == wtOverride)
 			return;
 
 		const AsciiString *oldTextures[5],*newTextures[5];

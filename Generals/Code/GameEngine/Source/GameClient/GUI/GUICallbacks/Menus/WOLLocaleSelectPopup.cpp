@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/GameText.h"
 #include "Common/CustomMatchPreferences.h"
@@ -48,11 +48,6 @@
 #include "GameNetwork/GameSpy/PersistentStorageDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
@@ -61,21 +56,21 @@ static NameKeyType buttonOkID = NAMEKEY_INVALID;
 static NameKeyType listboxLocaleID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentLocaleSelect = NULL;
-static GameWindow *buttonOk = NULL;
-static GameWindow *listboxLocale = NULL;
+static GameWindow *parentLocaleSelect = nullptr;
+static GameWindow *buttonOk = nullptr;
+static GameWindow *listboxLocale = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
 void WOLLocaleSelectInit( WindowLayout *layout, void *userData )
 {
-	parentLocaleSelectID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ParentLocaleSelect" ) );
-	buttonOkID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ButtonOk" ) );
-	listboxLocaleID = TheNameKeyGenerator->nameToKey( AsciiString( "PopupLocaleSelect.wnd:ListBoxLocaleSelect" ) );
-	parentLocaleSelect = TheWindowManager->winGetWindowFromId( NULL, parentLocaleSelectID );
-	buttonOk = TheWindowManager->winGetWindowFromId( NULL,  buttonOkID);
-	listboxLocale = TheWindowManager->winGetWindowFromId( NULL,  listboxLocaleID);
+	parentLocaleSelectID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ParentLocaleSelect" );
+	buttonOkID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ButtonOk" );
+	listboxLocaleID = TheNameKeyGenerator->nameToKey( "PopupLocaleSelect.wnd:ListBoxLocaleSelect" );
+	parentLocaleSelect = TheWindowManager->winGetWindowFromId( nullptr, parentLocaleSelectID );
+	buttonOk = TheWindowManager->winGetWindowFromId( nullptr,  buttonOkID);
+	listboxLocale = TheWindowManager->winGetWindowFromId( nullptr,  listboxLocaleID);
 
 	for (int i=LOC_MIN; i<=LOC_MAX; ++i)
 	{
@@ -91,7 +86,7 @@ void WOLLocaleSelectInit( WindowLayout *layout, void *userData )
 	// Set Keyboard to Main Parent
 	TheWindowManager->winSetFocus( parentLocaleSelect );
 	TheWindowManager->winSetModal( parentLocaleSelect );
-} // WOLLocaleSelectInit
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
@@ -105,7 +100,7 @@ void WOLLocaleSelectShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
-}  // WOLLocaleSelectShutdown
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -113,8 +108,8 @@ void WOLLocaleSelectShutdown( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void WOLLocaleSelectUpdate( WindowLayout * layout, void *userData)
 {
-	
-}// WOLLocaleSelectUpdate
+
+}
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
@@ -122,7 +117,7 @@ void WOLLocaleSelectUpdate( WindowLayout * layout, void *userData)
 WindowMsgHandledType WOLLocaleSelectInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	switch( msg ) 
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -134,43 +129,43 @@ WindowMsgHandledType WOLLocaleSelectInput( GameWindow *window, UnsignedInt msg,
 			// ----------------------------------------------------------------------------------------
 			// don't let key fall through anywhere else
 			return MSG_HANDLED;
-		}  // end char
-	}  // end switch( msg )
+		}
+	}
 	return MSG_IGNORED;
-}// WOLLocaleSelectInput
+}
 
 //Int getRegistryNicknameOffset(AsciiString nick); /// @todo: mdc remove this once we can save ini pref files
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg, 
+WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
 
 	switch( msg )
 	{
-		
-		
+
+
 		case GWM_CREATE:
 			{
-				
+
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_DESTROY:
 			{
 				break;
-			} // case GWM_DESTROY:
+			}
 
 		case GWM_INPUT_FOCUS:
-			{	
+			{
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
 				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;
-			}//case GWM_INPUT_FOCUS:
+			}
 
 		case GBM_SELECTED:
 			{
@@ -210,7 +205,7 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 						TheGameSpyInfo->setCachedLocalPlayerStats(stats);
 					}
 					else
-					{						
+					{
 						// force an update of our shtuff
 						PSResponse newResp;
 						newResp.responseType = PSResponse::PSRESPONSE_PLAYERSTATS;
@@ -218,10 +213,10 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 						TheGameSpyPSMessageQueue->addResponse(newResp);
 					}
 					CheckReOpenPlayerInfo();
-				} //if ( controlID == buttonDisconnect )
+				}
 				break;
-			}// case GBM_SELECTED:
-	
+			}
+
 		case GEM_EDIT_DONE:
 			{
 				break;
@@ -229,7 +224,7 @@ WindowMsgHandledType WOLLocaleSelectSystem( GameWindow *window, UnsignedInt msg,
 		default:
 			return MSG_IGNORED;
 
-	}//Switch
+	}
 
 	return MSG_HANDLED;
-}// WOLLocaleSelectSystem
+}

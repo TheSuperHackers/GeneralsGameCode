@@ -42,7 +42,7 @@
 #include "Sound3D.h"
 #include "WWAudio.h"
 #include "ffactory.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "chunkio.h"
 #include "scene.h"
 
@@ -58,9 +58,9 @@ SoundRenderObjLoaderClass		_SoundRenderObjLoader;
 //	SoundRenderObjClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjClass::SoundRenderObjClass (void)
+SoundRenderObjClass::SoundRenderObjClass ()
 	:	Flags (FLAG_STOP_WHEN_HIDDEN),
-		Sound (NULL),
+		Sound (nullptr),
 		IsInitialized (false)
 {
 	return ;
@@ -74,7 +74,7 @@ SoundRenderObjClass::SoundRenderObjClass (void)
 //////////////////////////////////////////////////////////////////////////////////
 SoundRenderObjClass::SoundRenderObjClass (const SoundRenderObjClass &src)
 	:	Flags (FLAG_STOP_WHEN_HIDDEN),
-		Sound (NULL),
+		Sound (nullptr),
 		IsInitialized (false)
 {
 	(*this) = src;
@@ -87,13 +87,13 @@ SoundRenderObjClass::SoundRenderObjClass (const SoundRenderObjClass &src)
 //	~SoundRenderObjClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjClass::~SoundRenderObjClass (void)
+SoundRenderObjClass::~SoundRenderObjClass ()
 {
 	//
 	//	Remove the old sound from the world (if necessary)
 	//
-	if (Sound != NULL) {
-		Sound->Attach_To_Object (NULL);
+	if (Sound != nullptr) {
+		Sound->Attach_To_Object (nullptr);
 		Sound->Remove_From_Scene ();
 		REF_PTR_RELEASE (Sound);
 	}
@@ -109,7 +109,7 @@ SoundRenderObjClass::~SoundRenderObjClass (void)
 //////////////////////////////////////////////////////////////////////////////////
 const SoundRenderObjClass &
 SoundRenderObjClass::operator= (const SoundRenderObjClass &src)
-{	
+{
 	//
 	//	Create a definition from the src sound object
 	//
@@ -140,7 +140,7 @@ SoundRenderObjClass::Set_Sound (AudibleSoundDefinitionClass *definition)
 	//
 	//	Remove the old sound from the world (if necessary)
 	//
-	if (Sound != NULL) {
+	if (Sound != nullptr) {
 		Sound->Remove_From_Scene ();
 		REF_PTR_RELEASE (Sound);
 	}
@@ -148,7 +148,7 @@ SoundRenderObjClass::Set_Sound (AudibleSoundDefinitionClass *definition)
 	//
 	//	Create the sound object from its definition
 	//
-	if (definition != NULL) {
+	if (definition != nullptr) {
 		Sound = (AudibleSoundClass *)definition->Create ();
 	}
 
@@ -162,16 +162,16 @@ SoundRenderObjClass::Set_Sound (AudibleSoundDefinitionClass *definition)
 //
 //////////////////////////////////////////////////////////////////////////////////
 void
-SoundRenderObjClass::On_Frame_Update (void)
+SoundRenderObjClass::On_Frame_Update ()
 {
 	//
 	//	Stop the sound from playing (if necessary)
 	//
-	if (	Sound != NULL &&
+	if (	Sound != nullptr &&
 			Sound->Is_In_Scene () &&
 			Sound->Is_Playing () == false)
 	{
-		Sound->Attach_To_Object (NULL);
+		Sound->Attach_To_Object (nullptr);
 		Sound->Remove_From_Scene ();
 	}
 
@@ -195,7 +195,7 @@ SoundRenderObjClass::Set_Hidden (int onoff)
 	//
 	if (IsInitialized == false || Is_Not_Hidden_At_All () != before) {
 		IsInitialized = true;
-		Update_On_Visibilty ();		
+		Update_On_Visibility ();
 	}
 
 	return ;
@@ -218,7 +218,7 @@ SoundRenderObjClass::Set_Visible (int onoff)
 	//
 	if (IsInitialized == false || Is_Not_Hidden_At_All () != before) {
 		IsInitialized = true;
-		Update_On_Visibilty ();
+		Update_On_Visibility ();
 	}
 
 	return ;
@@ -241,7 +241,7 @@ SoundRenderObjClass::Set_Animation_Hidden (int onoff)
 	//
 	if (IsInitialized == false || Is_Not_Hidden_At_All () != before) {
 		IsInitialized = true;
-		Update_On_Visibilty ();
+		Update_On_Visibility ();
 	}
 
 	return ;
@@ -264,7 +264,7 @@ SoundRenderObjClass::Set_Force_Visible (int onoff)
 	//
 	if (IsInitialized == false || Is_Not_Hidden_At_All () != before) {
 		IsInitialized = true;
-		Update_On_Visibilty ();
+		Update_On_Visibility ();
 	}
 
 	return ;
@@ -273,13 +273,13 @@ SoundRenderObjClass::Set_Force_Visible (int onoff)
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-//	Update_On_Visibilty
+//	Update_On_Visibility
 //
 //////////////////////////////////////////////////////////////////////////////////
 void
-SoundRenderObjClass::Update_On_Visibilty (void)
+SoundRenderObjClass::Update_On_Visibility ()
 {
-	if (Sound == NULL) {
+	if (Sound == nullptr) {
 		return ;
 	}
 
@@ -295,8 +295,8 @@ SoundRenderObjClass::Update_On_Visibilty (void)
 	//
 	if (	Is_Not_Hidden_At_All () &&
 			Sound->Is_In_Scene () == false &&
-			Peek_Scene () != NULL)
-	{		
+			Peek_Scene () != nullptr)
+	{
 		//
 		//	Make sure the sound is properly attached to this render
 		// object and then add it to the scene
@@ -304,13 +304,13 @@ SoundRenderObjClass::Update_On_Visibilty (void)
 		Sound->Attach_To_Object (this);
 		Sound->Add_To_Scene (true);
 
-	} else if ((Is_Not_Hidden_At_All () == false) || (Peek_Scene () == NULL)) {
-		
+	} else if ((Is_Not_Hidden_At_All () == false) || (Peek_Scene () == nullptr)) {
+
 		//
 		//	Remove the sound from the scene (it will stop playing)
 		//
-		if ((Flags & FLAG_STOP_WHEN_HIDDEN) != 0 || (Peek_Scene () == NULL)) {
-			Sound->Attach_To_Object (NULL);
+		if ((Flags & FLAG_STOP_WHEN_HIDDEN) != 0 || (Peek_Scene () == nullptr)) {
+			Sound->Attach_To_Object (nullptr);
 			Sound->Remove_From_Scene ();
 		}
 	}
@@ -325,9 +325,9 @@ SoundRenderObjClass::Update_On_Visibilty (void)
 //
 //////////////////////////////////////////////////////////////////////////////////
 AudibleSoundClass *
-SoundRenderObjClass::Get_Sound (void) const
+SoundRenderObjClass::Get_Sound () const
 {
-	if (Sound != NULL) {
+	if (Sound != nullptr) {
 		Sound->Add_Ref ();
 	}
 
@@ -363,7 +363,7 @@ SoundRenderObjClass::Notify_Added (SceneClass *scene)
 	RenderObjClass::Notify_Added (scene);
 	scene->Register (this, SceneClass::ON_FRAME_UPDATE);
 
-	Update_On_Visibilty ();
+	Update_On_Visibility ();
 	return ;
 }
 
@@ -379,7 +379,7 @@ SoundRenderObjClass::Notify_Removed (SceneClass *scene)
 	scene->Unregister (this, SceneClass::ON_FRAME_UPDATE);
 	RenderObjClass::Notify_Removed (scene);
 
-	Update_On_Visibilty ();
+	Update_On_Visibility ();
 	return ;
 }
 
@@ -396,7 +396,7 @@ SoundRenderObjClass::Set_Transform (const Matrix3D &tm)
 
 	if (IsInitialized == false) {
 		IsInitialized = true;
-		Update_On_Visibilty ();
+		Update_On_Visibility ();
 	}
 
 	return ;
@@ -415,7 +415,7 @@ SoundRenderObjClass::Set_Position (const Vector3 &pos)
 
 	if (IsInitialized == false) {
 		IsInitialized = true;
-		Update_On_Visibilty ();
+		Update_On_Visibility ();
 	}
 
 	return ;
@@ -434,7 +434,7 @@ SoundRenderObjClass::Set_Position (const Vector3 &pos)
 //	SoundRenderObjDefClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjDefClass::SoundRenderObjDefClass (void)
+SoundRenderObjDefClass::SoundRenderObjDefClass ()
 	:	Version (W3D_CURRENT_SOUNDROBJ_VERSION),
 		Flags (SoundRenderObjClass::FLAG_STOP_WHEN_HIDDEN)
 {
@@ -475,7 +475,7 @@ SoundRenderObjDefClass::SoundRenderObjDefClass (const SoundRenderObjDefClass &sr
 //	~SoundRenderObjDefClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-SoundRenderObjDefClass::~SoundRenderObjDefClass (void)
+SoundRenderObjDefClass::~SoundRenderObjDefClass ()
 {
 	return ;
 }
@@ -502,7 +502,7 @@ SoundRenderObjDefClass::operator= (const SoundRenderObjDefClass &src)
 //
 //////////////////////////////////////////////////////////////////////////////////
 RenderObjClass *
-SoundRenderObjDefClass::Create (void)
+SoundRenderObjDefClass::Create ()
 {
 	//
 	//	Allocate and initialize a new instance
@@ -579,7 +579,7 @@ SoundRenderObjDefClass::Save_W3D (ChunkSaveClass &csave)
 	// Begin a chunk that identifies a sound render object
 	//
 	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ) == TRUE) {
-		
+
 		//
 		// Attempt to save the different sections of the aggregate definition
 		//
@@ -655,9 +655,9 @@ SoundRenderObjDefClass::Read_Definition (ChunkLoadClass &cload)
 		//
 		if (Definition.Load (cload)) {
 			retval = WW3D_ERROR_OK;
-		}		
-		
-		cload.Close_Chunk ();		
+		}
+
+		cload.Close_Chunk ();
 	}
 
 	return retval;
@@ -678,7 +678,7 @@ SoundRenderObjDefClass::Write_Header (ChunkSaveClass &csave)
 	// Begin a chunk that identifies the aggregate
 	//
 	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ_HEADER) == TRUE) {
-		
+
 		//
 		// Fill the header structure
 		//
@@ -716,7 +716,7 @@ SoundRenderObjDefClass::Write_Definition (ChunkSaveClass &csave)
 	//
 	// Save the definition to its own chunk
 	//
-	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ_DEFINITION) == TRUE) {		
+	if (csave.Begin_Chunk (W3D_CHUNK_SOUNDROBJ_DEFINITION) == TRUE) {
 		if (Definition.Save (csave)) {
 			retval = WW3D_ERROR_OK;
 		}
@@ -742,14 +742,14 @@ SoundRenderObjDefClass::Write_Definition (ChunkSaveClass &csave)
 PrototypeClass *
 SoundRenderObjLoaderClass::Load_W3D (ChunkLoadClass &cload)
 {
-	SoundRenderObjPrototypeClass *prototype = NULL;
+	SoundRenderObjPrototypeClass *prototype = nullptr;
 
 	//
 	// Create a definition object
 	//
 	SoundRenderObjDefClass *definition = W3DNEW SoundRenderObjDefClass;
-	if (definition != NULL) {
-		
+	if (definition != nullptr) {
+
 		//
 		// Ask the definition object to load the sound data
 		//

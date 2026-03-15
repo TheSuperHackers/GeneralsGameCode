@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SOUND3DOBJ_H
-#define __SOUND3DOBJ_H
 
 #include "AudibleSound.h"
 #include "mempool.h"
@@ -70,8 +65,8 @@ class Sound3DClass : public AudibleSoundClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		Sound3DClass (const Sound3DClass &src);
-		Sound3DClass (void);
-		virtual ~Sound3DClass (void);
+		Sound3DClass ();
+		virtual ~Sound3DClass ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -82,14 +77,14 @@ class Sound3DClass : public AudibleSoundClass
 		//////////////////////////////////////////////////////////////////////
 		//	Identification methods
 		//////////////////////////////////////////////////////////////////////
-		virtual SOUND_CLASSID	Get_Class_ID (void) const	{ return CLASSID_3D; }
+		virtual SOUND_CLASSID	Get_Class_ID () const	{ return CLASSID_3D; }
 		virtual void				Make_Static (bool is_static = true)	{ m_IsStatic = is_static; }
-		virtual bool				Is_Static (void) const					{ return m_IsStatic; }
+		virtual bool				Is_Static () const					{ return m_IsStatic; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
-		//////////////////////////////////////////////////////////////////////		
-		virtual Sound3DClass *	As_Sound3DClass (void) { return this; }
+		//////////////////////////////////////////////////////////////////////
+		virtual Sound3DClass *	As_Sound3DClass () { return this; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	State control methods
@@ -99,43 +94,43 @@ class Sound3DClass : public AudibleSoundClass
 		//////////////////////////////////////////////////////////////////////
 		//	Priority control
 		//////////////////////////////////////////////////////////////////////
-		virtual float			Get_Priority (void) const			{ if (m_IsCulled) return 0; return m_Priority; }
+		virtual float			Get_Priority () const			{ if (m_IsCulled) return 0; return m_Priority; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
 		virtual void			Add_To_Scene (bool start_playing = true);
-		virtual void			Remove_From_Scene (void);		
+		virtual void			Remove_From_Scene ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods
-		//////////////////////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Position (const Vector3 &position);
-		virtual Vector3		Get_Position (void) const							{ return m_Transform.Get_Translation (); }
+		virtual Vector3		Get_Position () const							{ return m_Transform.Get_Translation (); }
 
 		virtual void			Set_Listener_Transform (const Matrix3D &tm);
 		virtual void			Set_Transform (const Matrix3D &transform);
-		virtual Matrix3D		Get_Transform (void) const							{ return m_Transform; }
-		void						Update_Miles_Transform (void);
+		virtual Matrix3D		Get_Transform () const							{ return m_Transform; }
+		void						Update_Miles_Transform ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Velocity methods
-		//////////////////////////////////////////////////////////////////////		
-		
+		//////////////////////////////////////////////////////////////////////
+
 		//
 		// The velocity settings are in meters per millisecond.
 		//
 		virtual void			Set_Velocity (const Vector3 &velocity);
-		virtual Vector3		Get_Velocity (void) const							{ return m_CurrentVelocity; }
+		virtual Vector3		Get_Velocity () const							{ return m_CurrentVelocity; }
 		virtual void			Get_Velocity (Vector3 &velocity) const			{ velocity = m_CurrentVelocity; }
 
 		virtual void			Auto_Calc_Velocity (bool autocalc = true)		{ m_bAutoCalcVel = autocalc; }
-		virtual bool			Is_Auto_Calc_Velocity_On (void) const			{ return m_bAutoCalcVel; }
+		virtual bool			Is_Auto_Calc_Velocity_On () const			{ return m_bAutoCalcVel; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
 		//////////////////////////////////////////////////////////////////////
-		
+
 		//
 		// The maximum-volume radius is the distance from the sound-emitter where
 		//	it seems as loud as it is going to get.  Volume does not increase after this
@@ -144,7 +139,7 @@ class Sound3DClass : public AudibleSoundClass
 		// not 0, but would be 100 or so meters away.
 		//
 		virtual void			Set_Max_Vol_Radius (float radius = 0);
-		virtual float			Get_Max_Vol_Radius (void) const					{ return m_MaxVolRadius; }
+		virtual float			Get_Max_Vol_Radius () const					{ return m_MaxVolRadius; }
 
 		//
 		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
@@ -153,7 +148,7 @@ class Sound3DClass : public AudibleSoundClass
 		virtual float			Get_DropOff_Radius ()  {return(m_DropOffRadius);}
 
 		// From PersistClass
-		const PersistFactoryClass &	Get_Factory (void) const;
+		const PersistFactoryClass &	Get_Factory () const;
 
 		//
 		//	From PersistClass
@@ -165,37 +160,34 @@ class Sound3DClass : public AudibleSoundClass
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
-		//////////////////////////////////////////////////////////////////////				
-		virtual SoundCullObjClass *	Peek_Cullable_Wrapper (void) const	{ return m_PhysWrapper; }
+		//////////////////////////////////////////////////////////////////////
+		virtual SoundCullObjClass *	Peek_Cullable_Wrapper () const	{ return m_PhysWrapper; }
 		virtual void						Set_Cullable_Wrapper (SoundCullObjClass *obj) { m_PhysWrapper = obj; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool					On_Frame_Update (unsigned int milliseconds);		
+		virtual bool					On_Frame_Update (unsigned int milliseconds);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
-		//////////////////////////////////////////////////////////////////////				
+		//////////////////////////////////////////////////////////////////////
 		virtual void			Set_Miles_Handle (MILES_HANDLE handle);
-		virtual void			Initialize_Miles_Handle (void);
-		virtual void			Allocate_Miles_Handle (void);		
+		virtual void			Initialize_Miles_Handle ();
+		virtual void			Allocate_Miles_Handle ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Event handling
-		//////////////////////////////////////////////////////////////////////		
-		virtual void			On_Loop_End (void);
+		//////////////////////////////////////////////////////////////////////
+		virtual void			On_Loop_End ();
 
 		//////////////////////////////////////////////////////////////////////
 		//	Protected member data
 		//////////////////////////////////////////////////////////////////////
 		bool						m_IsTransformInitted;
 		bool						m_bAutoCalcVel;
-		Vector3					m_CurrentVelocity;		
-		float						m_MaxVolRadius;		
+		Vector3					m_CurrentVelocity;
+		float						m_MaxVolRadius;
 		bool						m_IsStatic;
 		unsigned int			m_LastUpdate;
 };
-
-
-#endif //__SOUND3DOBJ_H

@@ -24,11 +24,11 @@
 
 // FILE: StructureToppleUpdate.cpp ///////////////////////////////////////////////////////////////////////
 // Author:
-// Desc:  
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
@@ -48,11 +48,6 @@
 #include "GameClient/InGameUI.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 const Int MAX_IDX = 32;
 
@@ -60,13 +55,9 @@ const Int MAX_IDX = 32;
 //-------------------------------------------------------------------------------------------------
 StructureToppleUpdate::StructureToppleUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_delayBurstLocation.zero();
 	m_structuralIntegrity = 0.0f;
 	m_toppleDirection.x = m_toppleDirection.y = 0;
-	//
 	m_toppleFrame = 0;
 	m_toppleState = TOPPLESTATE_STANDING;
 	m_toppleVelocity = 0.0f;
@@ -83,7 +74,7 @@ StructureToppleUpdate::StructureToppleUpdate( Thing *thing, const ModuleData* mo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-StructureToppleUpdate::~StructureToppleUpdate( void )
+StructureToppleUpdate::~StructureToppleUpdate()
 {
 }
 
@@ -92,7 +83,7 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 {
 	StructureToppleUpdateModuleData* self = (StructureToppleUpdateModuleData*)instance;
 	StructureTopplePhaseType stphase = (StructureTopplePhaseType)INI::scanIndexList(ini->getNextToken(), TheStructureTopplePhaseNames);
-	for (const char* token = ini->getNextToken(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null! this is OK!
 		self->m_ocls[stphase].push_back(ocl);
@@ -104,35 +95,35 @@ static void parseAngleFX(INI* ini, void *instance, void * /* store */, const voi
 {
 	StructureToppleUpdateModuleData* self = (StructureToppleUpdateModuleData*)instance;
 	AngleFXInfo info;
-	INI::parseReal(ini, instance, &(info.angle), NULL);
+	INI::parseReal(ini, instance, &(info.angle), nullptr);
 	info.angle = info.angle * PI / 180.0f; // convert from degrees to radians.
-	INI::parseFXList(ini, instance, &(info.fxList), NULL);
+	INI::parseFXList(ini, instance, &(info.fxList), nullptr);
 	self->angleFX.push_back(info);
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void StructureToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void StructureToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "MinToppleDelay",						INI::parseDurationUnsignedInt,		NULL, offsetof( StructureToppleUpdateModuleData, m_minToppleDelay ) },
-		{ "MaxToppleDelay",						INI::parseDurationUnsignedInt,		NULL, offsetof( StructureToppleUpdateModuleData, m_maxToppleDelay ) },
-		{ "MinToppleBurstDelay",			INI::parseDurationUnsignedInt,		NULL, offsetof( StructureToppleUpdateModuleData, m_minToppleBurstDelay ) },
-		{ "MaxToppleBurstDelay",			INI::parseDurationUnsignedInt,		NULL, offsetof( StructureToppleUpdateModuleData, m_maxToppleBurstDelay ) },
-		{ "StructuralIntegrity",			INI::parseReal,										NULL, offsetof( StructureToppleUpdateModuleData, m_structuralIntegrity ) },
-		{ "StructuralDecay",					INI::parseReal,										NULL, offsetof( StructureToppleUpdateModuleData, m_structuralDecay ) },
-		{ "DamageFXTypes",						INI::parseDamageTypeFlags,				NULL, offsetof( StructureToppleUpdateModuleData, m_damageFXTypes ) },
-		{ "TopplingFX",								INI::parseFXList,									NULL, offsetof( StructureToppleUpdateModuleData, m_toppleFXList ) },
-		{ "ToppleDelayFX",						INI::parseFXList,									NULL, offsetof( StructureToppleUpdateModuleData, m_toppleDelayFXList ) },
-		{ "ToppleStartFX",						INI::parseFXList,									NULL, offsetof( StructureToppleUpdateModuleData, m_toppleStartFXList ) },
-		{ "ToppleDoneFX",							INI::parseFXList,									NULL, offsetof( StructureToppleUpdateModuleData, m_toppleDoneFXList ) },
-		{ "CrushingFX",								INI::parseFXList,									NULL, offsetof( StructureToppleUpdateModuleData, m_crushingFXList ) },
-		{ "CrushingWeaponName",				INI::parseAsciiString,						NULL, offsetof( StructureToppleUpdateModuleData, m_crushingWeaponName ) },
-		{ "OCL",											parseOCL,													NULL, 0 },
-		{ "AngleFX",									parseAngleFX,											NULL, 0 },
-		{ 0, 0, 0, 0 }
+		{ "MinToppleDelay",						INI::parseDurationUnsignedInt,		nullptr, offsetof( StructureToppleUpdateModuleData, m_minToppleDelay ) },
+		{ "MaxToppleDelay",						INI::parseDurationUnsignedInt,		nullptr, offsetof( StructureToppleUpdateModuleData, m_maxToppleDelay ) },
+		{ "MinToppleBurstDelay",			INI::parseDurationUnsignedInt,		nullptr, offsetof( StructureToppleUpdateModuleData, m_minToppleBurstDelay ) },
+		{ "MaxToppleBurstDelay",			INI::parseDurationUnsignedInt,		nullptr, offsetof( StructureToppleUpdateModuleData, m_maxToppleBurstDelay ) },
+		{ "StructuralIntegrity",			INI::parseReal,										nullptr, offsetof( StructureToppleUpdateModuleData, m_structuralIntegrity ) },
+		{ "StructuralDecay",					INI::parseReal,										nullptr, offsetof( StructureToppleUpdateModuleData, m_structuralDecay ) },
+		{ "DamageFXTypes",						INI::parseDamageTypeFlags,				nullptr, offsetof( StructureToppleUpdateModuleData, m_damageFXTypes ) },
+		{ "TopplingFX",								INI::parseFXList,									nullptr, offsetof( StructureToppleUpdateModuleData, m_toppleFXList ) },
+		{ "ToppleDelayFX",						INI::parseFXList,									nullptr, offsetof( StructureToppleUpdateModuleData, m_toppleDelayFXList ) },
+		{ "ToppleStartFX",						INI::parseFXList,									nullptr, offsetof( StructureToppleUpdateModuleData, m_toppleStartFXList ) },
+		{ "ToppleDoneFX",							INI::parseFXList,									nullptr, offsetof( StructureToppleUpdateModuleData, m_toppleDoneFXList ) },
+		{ "CrushingFX",								INI::parseFXList,									nullptr, offsetof( StructureToppleUpdateModuleData, m_crushingFXList ) },
+		{ "CrushingWeaponName",				INI::parseAsciiString,						nullptr, offsetof( StructureToppleUpdateModuleData, m_crushingWeaponName ) },
+		{ "OCL",											parseOCL,													nullptr, 0 },
+		{ "AngleFX",									parseAngleFX,											nullptr, 0 },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( StructureToppleUpdateModuleData, m_dieMuxData ));
@@ -153,7 +144,7 @@ void StructureToppleUpdate::beginStructureTopple(const DamageInfo *damageInfo)
 		Object *building = getObject();
 
 		Real toppleAngle = 0.0;
-		if (attacker == NULL) {
+		if (attacker == nullptr) {
 			toppleAngle = GameLogicRandomValueReal(0.0, 2*PI);
 		} else {
 			const Coord3D *attackerPos = attacker->getPosition();
@@ -207,7 +198,7 @@ void StructureToppleUpdate::onDie( const DamageInfo *damageInfo )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime StructureToppleUpdate::update( void )
+UpdateSleepTime StructureToppleUpdate::update()
 {
 	static const Real TOPPLE_ACCELERATION_FACTOR = 0.02f;
 
@@ -241,9 +232,9 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 	if (m_toppleState == TOPPLESTATE_TOPPLING) {
 		UnsignedInt now = TheGameLogic->getFrame();
 		Real toppleAcceleration = TOPPLE_ACCELERATION_FACTOR * (Sin(m_accumulatedAngle) * (1.0 - m_structuralIntegrity));
-//		DEBUG_LOG(("toppleAcceleration = %f\n", toppleAcceleration));
+//		DEBUG_LOG(("toppleAcceleration = %f", toppleAcceleration));
 		m_toppleVelocity += toppleAcceleration;
-//		DEBUG_LOG(("m_toppleVelocity = %f\n", m_toppleVelocity));
+//		DEBUG_LOG(("m_toppleVelocity = %f", m_toppleVelocity));
 
 		// doesn't make sense to have a structural integrity less than zero.
 		if (m_structuralIntegrity > 0.0f) {
@@ -252,7 +243,7 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 				m_structuralIntegrity = 0.0f;
 			}
 		}
-//		DEBUG_LOG(("m_structuralIntegrity = %f\n\n", m_structuralIntegrity));
+//		DEBUG_LOG(("m_structuralIntegrity = %f", m_structuralIntegrity));
 
 		doAngleFX(m_accumulatedAngle, m_accumulatedAngle + m_toppleVelocity);
 
@@ -268,7 +259,7 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 			applyCrushingDamage(0.0f);
 			doPhaseStuff(STPHASE_FINAL, getObject()->getPosition());
 
-			if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
+			if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 				FXList::doFXObj(d->m_toppleDoneFXList, getObject());
 
 			m_toppleFrame = TheGameLogic->getFrame();
@@ -288,16 +279,16 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 	}
 
 	// The building is now flat on the ground and done with all the crushing and all that.
-	if (m_toppleState == TOPPLESTATE_WAITINGFORDONE) 
+	if (m_toppleState == TOPPLESTATE_WAITINGFORDONE)
 	{
-		if (m_toppleFrame <= TheGameLogic->getFrame()) 
+		if (m_toppleFrame <= TheGameLogic->getFrame())
 		{
 			Object *building = getObject();
 			Drawable *drawable = building->getDrawable();
 			drawable->clearModelConditionState(MODELCONDITION_RUBBLE);
 			drawable->setModelConditionState(MODELCONDITION_POST_COLLAPSE);
 
-			
+
 			// Need to update body particle systems, now
 			BodyModuleInterface *body = building->getBodyModule();
 			body->updateBodyParticleSystems();
@@ -315,11 +306,11 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::doToppleDoneStuff() 
+void StructureToppleUpdate::doToppleDoneStuff()
 {
 	static NameKeyType key_BoneFXUpdate = NAMEKEY("BoneFXUpdate");
 	BoneFXUpdate *bfxu = (BoneFXUpdate *)getObject()->findUpdateModule(key_BoneFXUpdate);
-	if (bfxu != NULL) {
+	if (bfxu != nullptr) {
 		bfxu->stopAllBoneFX();
 	}
 
@@ -337,16 +328,16 @@ void StructureToppleUpdate::doToppleDoneStuff()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::doAngleFX(Real curAngle, Real newAngle) 
+void StructureToppleUpdate::doAngleFX(Real curAngle, Real newAngle)
 {
 	const StructureToppleUpdateModuleData *d = getStructureToppleUpdateModuleData();
 	const DamageInfo *lastDamageInfo = getObject()->getBodyModule()->getLastDamageInfo();
 
 	for (std::vector<AngleFXInfo>::const_iterator it = d->angleFX.begin(); it != d->angleFX.end(); ++it)
 	{
-		if ((it->angle > curAngle) && (it->angle <= newAngle)) 
+		if ((it->angle > curAngle) && (it->angle <= newAngle))
 		{
-			if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
+			if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 				FXList::doFXObj(it->fxList, getObject());
 		}
 	}
@@ -356,7 +347,7 @@ void StructureToppleUpdate::doAngleFX(Real curAngle, Real newAngle)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 // theta is the angle of the building with respect to the ground.
-void StructureToppleUpdate::applyCrushingDamage(Real theta) 
+void StructureToppleUpdate::applyCrushingDamage(Real theta)
 {
 //	static const Real THETA_CEILING = PI/8; // This weapon won't do any damage until theta is less than this value.
 	static const Real THETA_CEILING = PI/6; // This weapon won't do any damage until theta is less than this value.
@@ -384,12 +375,12 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 	temp3D.x = majorComponent;
 	temp3D.y = minorComponent;
 	temp3D.z = 0.0f;
-	
+
 	Real facingWidth = temp3D.length() / 2;
 
 	// Get the crushing weapon.
 	const WeaponTemplate* wt = TheWeaponStore->findWeaponTemplate(d->m_crushingWeaponName);
-	if (wt == NULL) {
+	if (wt == nullptr) {
 		return;
 	}
 
@@ -420,7 +411,7 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate* wt, Real jcos, Real jsin, Real facingWidth, Real toppleAngle) 
+void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate* wt, Real jcos, Real jsin, Real facingWidth, Real toppleAngle)
 {
 	const DamageInfo *lastDamageInfo = getObject()->getBodyModule()->getLastDamageInfo();
 	static const Real WEAPON_SPACING_PARALLEL = 25;				// The spacing between weapon firing locations,
@@ -431,7 +422,7 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
 
 	Coord3D target;
 
-	for (Real i = -facingWidth; i < facingWidth; i += WEAPON_SPACING_PARALLEL) 
+	for (Real i = -facingWidth; i < facingWidth; i += WEAPON_SPACING_PARALLEL)
 	{
 		target.x = building->getPosition()->x + jcos + (i * Sin(toppleAngle));
 		target.y = building->getPosition()->y + jsin + (i * Cos(toppleAngle));
@@ -440,7 +431,7 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
 	  TheWeaponStore->createAndFireTempWeapon(wt, building, &target);
 
 		// do the crushing particle effects
-		if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
+		if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 			FXList::doFXPos(d->m_crushingFXList, &target);
 	}
 
@@ -452,7 +443,7 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
   TheWeaponStore->createAndFireTempWeapon(wt, building, &target);
 
 	// do the crushing particle effects
-	if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
+	if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 		FXList::doFXPos(d->m_crushingFXList, &target);
 
 	// Do the flying debris for this line.
@@ -465,12 +456,12 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::doToppleStartFX(Object *building, const DamageInfo *damageInfo) 
+void StructureToppleUpdate::doToppleStartFX(Object *building, const DamageInfo *damageInfo)
 {
 	const StructureToppleUpdateModuleData *d = getStructureToppleUpdateModuleData();
 	const DamageInfo *lastDamageInfo = getObject()->getBodyModule()->getLastDamageInfo();
 
-	if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )	
+	if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 		FXList::doFXPos(d->m_toppleStartFXList, building->getPosition());
 
 	doPhaseStuff(STPHASE_INITIAL, building->getPosition());
@@ -478,33 +469,33 @@ void StructureToppleUpdate::doToppleStartFX(Object *building, const DamageInfo *
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::doToppleDelayBurstFX() 
+void StructureToppleUpdate::doToppleDelayBurstFX()
 {
 	const StructureToppleUpdateModuleData *d = getStructureToppleUpdateModuleData();
 	const DamageInfo *lastDamageInfo = getObject()->getBodyModule()->getLastDamageInfo();
 
-	DEBUG_LOG(("Doing topple delay burst on frame %d\n", TheGameLogic->getFrame()));
-	if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
+	DEBUG_LOG(("Doing topple delay burst on frame %d", TheGameLogic->getFrame()));
+	if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 		FXList::doFXPos(d->m_toppleDelayFXList, &m_delayBurstLocation);
 
 	Object *building = getObject();
 	Drawable *drawable = building->getDrawable();
 
-	if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
+	if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 	{
 
 		for (std::vector<FXBoneInfo>::const_iterator it = d->fxbones.begin(); it != d->fxbones.end(); ++it)
 		{
 			ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(it->particleSystemTemplate);
-			if (sys != NULL) 
+			if (sys != nullptr)
 			{
 				Coord3D pos;
-				if (drawable->getPristineBonePositions(it->boneName.str(), 0, &pos, NULL, 1) == 1) 
+				if (drawable->getPristineBonePositions(it->boneName.str(), 0, &pos, nullptr, 1) == 1)
 				{
 					// got the bone position...
 					sys->setPosition(&pos);
 
-					// Attatch it to the object...
+					// Attach it to the object...
 					sys->attachToDrawable(drawable);
 				}
 			}
@@ -537,7 +528,7 @@ static void buildNonDupRandomIndexList(Int range, Int count, Int idxList[])
 		do
 		{
 			idx = GameLogicRandomValue(0, range-1);
-		} 
+		}
 		while (inList(idx, i, idxList));
 		idxList[i] = idx;
 	}
@@ -562,7 +553,7 @@ void StructureToppleUpdate::doPhaseStuff(StructureTopplePhaseType stphase, const
 			const OCLVec& v = d->m_ocls[stphase];
 			DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 			const ObjectCreationList* ocl = v[idx];
-			ObjectCreationList::create(ocl, getObject(), target, NULL);
+			ObjectCreationList::create(ocl, getObject(), target, nullptr);
 		}
 	}
 }
@@ -576,7 +567,7 @@ void StructureToppleUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -621,15 +612,15 @@ void StructureToppleUpdate::xfer( Xfer *xfer )
 	// delay burst location
 	xfer->xferCoord3D( &m_delayBurstLocation );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void StructureToppleUpdate::loadPostProcess( void )
+void StructureToppleUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

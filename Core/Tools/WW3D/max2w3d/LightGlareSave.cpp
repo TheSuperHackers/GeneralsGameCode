@@ -62,7 +62,7 @@ LightGlareSaveClass::LightGlareSaveClass
 	// Get the position of the pivot point relative to the given
 	// export coordinate system.
 	//////////////////////////////////////////////////////////////////////
-	
+
 	// Transform the mesh into the desired coordinate system
 	Matrix3 node_matrix = inode->GetObjectTM(curtime);
 	Matrix3 offset_matrix = node_matrix * Inverse(exportspace);

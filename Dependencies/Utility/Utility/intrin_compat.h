@@ -103,7 +103,7 @@ static inline uint64_t _rdtsc()
 #endif
 }
 #endif // _rdtsc
- 
+
 #ifdef _WIN32
 #include <intrin.h>
 #pragma intrinsic(_ReturnAddress)
@@ -120,7 +120,7 @@ static inline uint64_t _rdtsc()
 #error "No implementation for _ReturnAddress"
 #endif
 
-#if defined(__has_builtin) 
+#if defined(__has_builtin)
     #if  __has_builtin(__builtin_debugtrap)
     #define __debugbreak() __builtin_debugtrap()
     #elif __has_builtin(__builtin_trap)

@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 5                                                           $*
@@ -44,7 +44,7 @@
 #include "sortingrenderer.h"
 #include "vp.h"
 #include "Vector3i.h"
-#include "RANDOM.H"
+#include "RANDOM.h"
 #include "v3_rnd.h"
 #include "meshgeometry.h"
 
@@ -60,11 +60,6 @@
 #define SEGLINE_CHUNK_SIZE (128)
 #endif
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define MAX_SEGLINE_POINT_BUFFER_SIZE (1 + SEGLINE_CHUNK_SIZE)
 // This macro depends on the assumption that each line segment is two polys.
@@ -73,8 +68,8 @@
 
 
 
-SegLineRendererClass::SegLineRendererClass(void) :
-		Texture(NULL),
+SegLineRendererClass::SegLineRendererClass() :
+		Texture(nullptr),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
 		Color(Vector3(1,1,1)),
@@ -83,18 +78,18 @@ SegLineRendererClass::SegLineRendererClass(void) :
 		NoiseAmplitude(0.0f),
 		MergeAbortFactor(1.5f),
 		TextureTileFactor(1.0f),
-		LastUsedSyncTime(WW3D::Get_Sync_Time()),
+		LastUsedSyncTime(WW3D::Get_Logic_Time_Milliseconds()),
 		CurrentUVOffset(0.0f,0.0f),
 		UVOffsetDeltaPerMS(0.0f, 0.0f),
 		Bits(DEFAULT_BITS),
 		m_vertexBufferSize(0),
-		m_vertexBuffer(NULL)
+		m_vertexBuffer(nullptr)
 {
 	// EMPTY
 }
 
 SegLineRendererClass::SegLineRendererClass(const SegLineRendererClass & that) :
-		Texture(NULL),
+		Texture(nullptr),
 		Shader(ShaderClass::_PresetAdditiveSpriteShader),
 		Width(0.0f),
 		Color(Vector3(1,1,1)),
@@ -108,7 +103,7 @@ SegLineRendererClass::SegLineRendererClass(const SegLineRendererClass & that) :
 		UVOffsetDeltaPerMS(0.0f, 0.0f),
 		Bits(DEFAULT_BITS),
 		m_vertexBufferSize(0),
-		m_vertexBuffer(NULL)
+		m_vertexBuffer(nullptr)
 {
 	*this = that;
 }
@@ -134,7 +129,7 @@ SegLineRendererClass & SegLineRendererClass::operator = (const SegLineRendererCl
 	return *this;
 }
 
-SegLineRendererClass::~SegLineRendererClass(void)
+SegLineRendererClass::~SegLineRendererClass()
 {
 	REF_PTR_RELEASE(Texture);
 	delete [] m_vertexBuffer;
@@ -149,16 +144,16 @@ void SegLineRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
 	Set_End_Caps(props.Flags & W3D_ELINE_END_CAPS);
 
 	int texture_mode = ((props.Flags & W3D_ELINE_TEXTURE_MAP_MODE_MASK) >> W3D_ELINE_TEXTURE_MAP_MODE_OFFSET);
-	switch (texture_mode) 
+	switch (texture_mode)
 	{
 	case W3D_ELINE_UNIFORM_WIDTH_TEXTURE_MAP:
 		Set_Texture_Mapping_Mode(UNIFORM_WIDTH_TEXTURE_MAP);
 		break;
 	case W3D_ELINE_UNIFORM_LENGTH_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(UNIFORM_LENGTH_TEXTURE_MAP);		
+		Set_Texture_Mapping_Mode(UNIFORM_LENGTH_TEXTURE_MAP);
 		break;
 	case W3D_ELINE_TILED_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(TILED_TEXTURE_MAP);		
+		Set_Texture_Mapping_Mode(TILED_TEXTURE_MAP);
 		break;
 	};
 
@@ -172,13 +167,13 @@ void SegLineRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
 
 
 void SegLineRendererClass::Set_Texture(TextureClass *texture)
-{ 
-	REF_PTR_SET(Texture,texture); 
+{
+	REF_PTR_SET(Texture,texture);
 }
 
-TextureClass * SegLineRendererClass::Get_Texture(void) const
+TextureClass * SegLineRendererClass::Get_Texture() const
 {
-	if (Texture != NULL) {
+	if (Texture != nullptr) {
 		Texture->Add_Ref();
 	}
 	return Texture;
@@ -196,7 +191,7 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 	///@todo: I raised this number and didn't see much difference on our min-spec. -MW
 	const static float MAX_LINE_TILING_FACTOR = 50.0f;
 	if (factor > MAX_LINE_TILING_FACTOR) {
-		WWDEBUG_SAY(("Texture (%s) Tile Factor (%.2f) too large in SegLineRendererClass!\r\n", Get_Texture()->Get_Texture_Name(), TextureTileFactor));
+		WWDEBUG_SAY(("Texture (%s) Tile Factor (%.2f) too large in SegLineRendererClass!", Get_Texture()->Get_Texture_Name().str(), TextureTileFactor));
 		factor = MAX_LINE_TILING_FACTOR;
 	} else {
 		factor = MAX(factor, 0.0f);
@@ -204,16 +199,16 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 	TextureTileFactor = factor;
 }
 
-void SegLineRendererClass::Reset_Line(void)
+void SegLineRendererClass::Reset_Line()
 {
-	LastUsedSyncTime = WW3D::Get_Sync_Time();
+	LastUsedSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 	CurrentUVOffset.Set(0.0f,0.0f);
 }
 
 
 
 void SegLineRendererClass::Render
-(	
+(
 	RenderInfoClass & rinfo,
 	const Matrix3D & transform,
 	unsigned int num_points,
@@ -226,23 +221,23 @@ void SegLineRendererClass::Render
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
+	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
 
-	/* 
+	/*
 	** Handle texture UV offset animation (done once for entire line).
 	*/
-	unsigned int delta = WW3D::Get_Sync_Time() - LastUsedSyncTime;
-	float del = (float)delta;
-	Vector2 uv_offset = CurrentUVOffset + UVOffsetDeltaPerMS * del;
+	// TheSuperHackers @tweak The render update is now decoupled from the logic step.
+	const unsigned int delta = WW3D::Get_Logic_Time_Milliseconds() - LastUsedSyncTime;
+	Vector2 uv_offset = CurrentUVOffset + UVOffsetDeltaPerMS * (float)delta;
 
 	// ensure offsets are in [0, 1] range:
 	uv_offset.X = uv_offset.X - floorf(uv_offset.X);
 	uv_offset.Y = uv_offset.Y - floorf(uv_offset.Y);
-	
+
 	// Update state
 	CurrentUVOffset = uv_offset;
-	LastUsedSyncTime = WW3D::Get_Sync_Time();
+	LastUsedSyncTime = WW3D::Get_Logic_Time_Milliseconds();
 
 	// Used later
 	TextureMapMode map_mode = Get_Texture_Mapping_Mode();
@@ -342,7 +337,7 @@ void SegLineRendererClass::Render
 		Vector4 subdiv_rgbas[MAX_SEGLINE_POINT_BUFFER_SIZE];
 		unsigned int sub_point_cnt;
 
-		Vector4 *rgbasPointer = rgbas ? &rgbas[ chidx ] : NULL;
+		Vector4 *rgbasPointer = rgbas ? &rgbas[ chidx ] : nullptr;
 
 		subdivision_util(point_cnt, xformed_pts, base_tex_v, &sub_point_cnt, xformed_subdiv_pts, subdiv_tex_v, rgbasPointer, subdiv_rgbas);
 
@@ -377,7 +372,7 @@ void SegLineRendererClass::Render
 		};
 
 		bool switch_edges = false;
-		
+
 		// We have dummy segments for "before the first point" and "after the last point" - in these
 		// segments the top and bottom edge are the same - they are a perpendicular plane defined by
 		// the endpoint vertices. This is so we can merge intersections properly for the first and
@@ -547,7 +542,7 @@ void SegLineRendererClass::Render
 		bottom = first_point - first_plane[BOTTOM_EDGE] * Vector3::Dot_Product(first_plane[BOTTOM_EDGE], first_point);
 		bottom.Normalize();
 		intersection[1][BOTTOM_EDGE].Direction = bottom;
-		
+
 		Vector3 segdir = points[1] - points[0];
 		segdir.Normalize();	// Is this needed? Probably not - remove later when all works
 		Vector3 start_pl;
@@ -592,7 +587,7 @@ void SegLineRendererClass::Render
 		bottom = last_point - last_plane[BOTTOM_EDGE] * Vector3::Dot_Product(last_plane[BOTTOM_EDGE], last_point);
 		bottom.Normalize();
 		intersection[last_isec][BOTTOM_EDGE].Direction = bottom;
-		
+
 		segdir = points[point_cnt - 1] - points[point_cnt - 2];
 		segdir.Normalize();	// Is this needed? Probably not - remove later when all works
 		Vector3::Cross_Product(top, bottom, &start_pl);
@@ -719,7 +714,7 @@ void SegLineRendererClass::Render
 				segment[iidx].StartPlane = -start_pl;
 			}
 
-		}	// for iidx
+		}
 
 
 		/*
@@ -738,7 +733,7 @@ void SegLineRendererClass::Render
 			// The merges will be repeated in multiple passes until none are performed. The reason
 			// for this is that one merge may cause the need for another merge elsewhere.
 			bool merged = true;
-			
+
 			while (merged) {
 
 				merged = false;
@@ -880,7 +875,7 @@ void SegLineRendererClass::Render
 							next_int = &(intersection[iidx_r + 1][edge]);
 							next_seg = &(segment[next_int->NextSegmentID]);
 
-						}	// while <merging needed>
+						}
 
 						// Copy from "read index" to "write index"
 						write_int->PointCount		= curr_int->PointCount;
@@ -891,7 +886,7 @@ void SegLineRendererClass::Render
 						write_int->Direction			= curr_int->Direction;
 						write_int->Fold				= curr_int->Fold;
 
-					}	// for iidx
+					}
 
 					// If iidx_r is exactly equal to num_isects (rather than being larger by one) at this
 					// point, this means that the last intersection was not merged with the previous one. In
@@ -917,9 +912,9 @@ void SegLineRendererClass::Render
 					assert(total_cnt == point_cnt);
 #endif
 
-				}	// for edge
-			}	// while (merged)
-		}	// if (Is_Merge_Intersections())
+				}
+			}
+		}
 
 		/*
 		** Find vertex positions, generate vertices and triangles:
@@ -929,10 +924,10 @@ void SegLineRendererClass::Render
 		*/
 
 		// Configure vertex array and setup renderer.
-		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];		
+		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];
 		VertexFormatXYZDUV1 *vArray = getVertexBuffer(vnum);
 		TriIndex v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
-		
+
 		// Vertex and triangle indices
 		unsigned int vidx = 0;
 		unsigned int tidx = 0;
@@ -958,7 +953,7 @@ void SegLineRendererClass::Render
 		vArray[vidx].u1 = u_values[1] + uv_offset.X;
 		vArray[vidx].v1 = intersection[1][BOTTOM_EDGE].TexV + uv_offset.Y;
 		vidx++;
-		
+
 		unsigned int last_top_vidx = 0;
 		unsigned int last_bottom_vidx = 1;
 
@@ -1046,7 +1041,7 @@ void SegLineRendererClass::Render
 					vArray[vidx].z = bottom.Z;
 					vArray[vidx].diffuse = DX8Wrapper::Convert_Color(intersection[bottom_int_idx][BOTTOM_EDGE].RGBA);
 					vArray[vidx].u1 = u_values[1] + uv_offset.X;
-					vArray[vidx].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV + uv_offset.Y;					
+					vArray[vidx].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV + uv_offset.Y;
 					vidx++;
 				} else {
 
@@ -1096,13 +1091,13 @@ void SegLineRendererClass::Render
 				assert(pidx == point_cnt - 1);
 				break;
 			}
-		}		
+		}
 
 		/*
 		** Set color, opacity, vertex flags:
 		*/
-		
-		// If color is not white or opacity not 100%, enable gradient in shader and in renderer - otherwise disable.		
+
+		// If color is not white or opacity not 100%, enable gradient in shader and in renderer - otherwise disable.
 		unsigned int rgba;
 		rgba=DX8Wrapper::Convert_Color(Color,Opacity);
 		bool rgba_all=(rgba==0xFFFFFFFF);
@@ -1113,11 +1108,11 @@ void SegLineRendererClass::Render
 		ShaderClass shader = Shader;
 		shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-		VertexMaterialClass *mat;		
+		VertexMaterialClass *mat;
 
 		// if there's a default color or an rgba array modulate
 		if (!rgba_all || (rgba != 0) ) {
-			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);			
+			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
 			mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 		} else {
 			// othewise it's texture only
@@ -1125,9 +1120,9 @@ void SegLineRendererClass::Render
 			mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_NODIFFUSE);
 		}
 
-		// If Texture is non-NULL enable texturing in shader - otherwise disable.
+		// If Texture is non-null enable texturing in shader - otherwise disable.
 		if (Texture) {
-			shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);			
+			shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
 		} else {
 			shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
 		}
@@ -1135,15 +1130,15 @@ void SegLineRendererClass::Render
 
 		/*
 		** Render
-		*/		
-		
+		*/
+
 		DynamicVBAccessClass Verts((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),dynamic_fvf_type,vnum);
 		// Copy in the data to the  VB
 		{
 			DynamicVBAccessClass::WriteLockClass Lock(&Verts);
 			unsigned int i;
-			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();			
-			const FVFInfoClass& fvfinfo=Verts.FVF_Info();			
+			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
+			const FVFInfoClass& fvfinfo=Verts.FVF_Info();
 
 			const unsigned int verticesOffset = fvfinfo.Get_Location_Offset();
 			const unsigned diffuseOffset = fvfinfo.Get_Diffuse_Offset();
@@ -1162,9 +1157,9 @@ void SegLineRendererClass::Render
 				texture->U = vArray[i].u1;
 				texture->V = vArray[i].v1;
 				vb += vbSize;
-			}			
-		} // copy
-		
+			}
+		}
+
 		DynamicIBAccessClass ib_access((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),tidx*3);
 		{
 			unsigned int i;
@@ -1178,22 +1173,22 @@ void SegLineRendererClass::Render
 				*inds++=v_index_array[i].K;
 			}
 		}
-		
+
 		DX8Wrapper::Set_Index_Buffer(ib_access,0);
-		DX8Wrapper::Set_Vertex_Buffer(Verts);				
-		DX8Wrapper::Set_Material(mat);		
+		DX8Wrapper::Set_Vertex_Buffer(Verts);
+		DX8Wrapper::Set_Material(mat);
 		DX8Wrapper::Set_Texture(0,Texture);
 		DX8Wrapper::Set_Shader(shader);
 
-		if (sorting) {	
+		if (sorting) {
 			SortingRendererClass::Insert_Triangles(obj_sphere,0,tidx,0,vnum);
 		} else {
 			DX8Wrapper::Draw_Triangles(0,tidx,0,vnum);
 		}
-		
+
 		REF_PTR_RELEASE(mat);
 
-	}	// Chunking loop
+	}
 
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
 
@@ -1236,7 +1231,7 @@ void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector
 		stack[0].EndPos = xformed_pts[pidx + 1];
 		stack[0].StartTexV = base_tex_v[pidx];
 		stack[0].EndTexV = base_tex_v[pidx + 1];
-		
+
 		if (base_diffuse) {
 			stack[0].StartDiffuse = base_diffuse[pidx];
 			stack[0].EndDiffuse = base_diffuse[pidx+1];

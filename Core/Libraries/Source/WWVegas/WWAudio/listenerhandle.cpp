@@ -43,7 +43,7 @@
 //	Sound3DHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-ListenerHandleClass::ListenerHandleClass (void)
+ListenerHandleClass::ListenerHandleClass ()
 {
 	return ;
 }
@@ -54,7 +54,7 @@ ListenerHandleClass::ListenerHandleClass (void)
 //	~ListenerHandleClass
 //
 //////////////////////////////////////////////////////////////////////
-ListenerHandleClass::~ListenerHandleClass (void)
+ListenerHandleClass::~ListenerHandleClass ()
 {
 	return ;
 }

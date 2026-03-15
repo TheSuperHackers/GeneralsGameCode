@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/Library/XPIPE.CPP                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/Library/XPIPE.cpp                            $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 9/28/98 12:06p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   BufferPipe::Put -- Submit data to the buffered pipe segment.                              *
  *   FilePipe::Put -- Submit a block of data to the pipe.                                      *
  *   FilePipe::End -- End the file pipe handler.                                               *
@@ -39,9 +39,8 @@
 
 
 #include	"always.h"
-#include	"XPIPE.H"
+#include "XPIPE.h"
 #include	<stddef.h>
-#include	<string.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,7 +70,7 @@ int BufferPipe::Put(void const * source, int slen)
 {
 	int total = 0;
 
-	if (Is_Valid() && source != NULL && slen > 0) {
+	if (Is_Valid() && source != nullptr && slen > 0) {
 		int len = slen;
 		if (BufferPtr.Get_Size() != 0) {
 			int theoretical_max = BufferPtr.Get_Size() - Index;
@@ -95,12 +94,12 @@ int BufferPipe::Put(void const * source, int slen)
 // FilePipe
 //---------------------------------------------------------------------------------------------------------
 
-FilePipe::~FilePipe(void)
+FilePipe::~FilePipe()
 {
 	if (Valid_File() && HasOpened) {
 		HasOpened = false;
 		File->Close();
-		File = NULL;
+		File = nullptr;
 	}
 }
 
@@ -124,7 +123,7 @@ FilePipe::~FilePipe(void)
  * HISTORY:                                                                                    *
  *   07/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FilePipe::End(void)
+int FilePipe::End()
 {
 	int total = Pipe::End();
 	if (Valid_File() && HasOpened) {
@@ -154,7 +153,7 @@ int FilePipe::End(void)
  *=============================================================================================*/
 int FilePipe::Put(void const * source, int slen)
 {
-	if (Valid_File() && source != NULL && slen > 0) {
+	if (Valid_File() && source != nullptr && slen > 0) {
 		if (!File->Is_Open()) {
 			HasOpened = true;
 			File->Open(FileClass::WRITE);

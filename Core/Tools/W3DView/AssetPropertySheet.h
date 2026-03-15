@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_ASSETPROPERTYSHEET_H__FB40246D_5DFB_11D2_9FC7_00104B791122__INCLUDED_)
-#define AFX_ASSETPROPERTYSHEET_H__FB40246D_5DFB_11D2_9FC7_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 // AssetPropertySheet.h : header file
 //
 
@@ -34,7 +30,7 @@ class CAssetPropertySheet : public CPropertySheet
 
 // Construction
 public:
-    CAssetPropertySheet (int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd = NULL);
+    CAssetPropertySheet (int iCaptionID, CPropertyPage *pCPropertyPage, CWnd *pCParentWnd = nullptr);
 
 // Attributes
 public:
@@ -60,8 +56,8 @@ protected:
 
     private:
         // Private constructors (shouldn't be called)
-	    CAssetPropertySheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {}
-	    CAssetPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {}
+	    CAssetPropertySheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0) {}
+	    CAssetPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0) {}
 
         CPropertyPage *m_pCPropertyPage;
 };
@@ -70,5 +66,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_ASSETPROPERTYSHEET_H__FB40246D_5DFB_11D2_9FC7_00104B791122__INCLUDED_)

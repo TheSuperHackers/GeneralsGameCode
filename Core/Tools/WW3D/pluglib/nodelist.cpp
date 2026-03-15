@@ -17,31 +17,31 @@
 */
 
 /* $Header: /Commando/Code/Tools/pluglib/nodelist.cpp 8     1/02/01 6:31p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G                                                 * 
- *                                                                                             * 
- *                    File Name : NODELIST.CPP                                                 * 
- *                                                                                             * 
- *                   Programmer : Greg Hjelstrom                                               * 
- *                                                                                             * 
- *                   Start Date : 06/09/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 9, 1997 [GH]                                            * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
- *   INodeListClass::INodeListClass -- Create an INodeList                                     * 
- *   INodeListClass::~INodeListClass -- Delete the INode List                                  * 
- *   INode * INodeListClass::operator[] -- Array-like access to the list members               * 
- *   INodeListClass::callback -- callback function for MAX                                     * 
- *   INodeListClass::INodeListClass -- A "copy" contstructor with filtering...                 * 
- *   INodeListClass::INodeListClass -- constructor                                             * 
- *   INodeListClass::INodeListClass -- Constructor                                             * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G                                                 *
+ *                                                                                             *
+ *                    File Name : NODELIST.cpp                                                 *
+ *                                                                                             *
+ *                   Programmer : Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                   Start Date : 06/09/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 9, 1997 [GH]                                            *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   INodeListClass::INodeListClass -- Create an INodeList                                     *
+ *   INodeListClass::~INodeListClass -- Delete the INode List                                  *
+ *   INode * INodeListClass::operator[] -- Array-like access to the list members               *
+ *   INodeListClass::callback -- callback function for MAX                                     *
+ *   INodeListClass::INodeListClass -- A "copy" contstructor with filtering...                 *
+ *   INodeListClass::INodeListClass -- constructor                                             *
+ *   INodeListClass::INodeListClass -- Constructor                                             *
  *   INodeListClass::Insert -- insert a list of nodes into this list                           *
- *   INodeListClass::Insert -- Inserts an INode into the list                                  * 
+ *   INodeListClass::Insert -- Inserts an INode into the list                                  *
  *   INodeListClass::Add_Tree -- Add a tree of INodes to the list                              *
  *   INodeListClass::Remove -- Remove the i'th element of the list                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -69,51 +69,51 @@ public:
 	INodeListEntryClass		* Next;
 };
 
-/*********************************************************************************************** 
- * INodeListClass::INodeListClass -- Constructor                                               * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INodeListClass::INodeListClass -- Constructor                                               *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 INodeListClass::INodeListClass(TimeValue time,INodeFilterClass * inodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 }
 
-/*********************************************************************************************** 
- * INodeListClass::INodeListClass -- Create an INodeList                                       * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * scene - 3dsMAX scene to enumerate																			  * 
- * time - time at which to create the list of INodes														  * 
- * inodefilter - object which will accept or reject each INode in the scene						  * 
- * 																														  * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/09/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INodeListClass::INodeListClass -- Create an INodeList                                       *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * scene - 3dsMAX scene to enumerate																			  *
+ * time - time at which to create the list of INodes														  *
+ * inodefilter - object which will accept or reject each INode in the scene						  *
+ * 																														  *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 INodeListClass::INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * inodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 	scene->EnumTree(this);
@@ -135,35 +135,35 @@ INodeListClass::INodeListClass(IScene * scene,TimeValue time,INodeFilterClass * 
 INodeListClass::INodeListClass(INode * root,TimeValue time,INodeFilterClass * nodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(nodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 	Add_Tree(root);
 }
 
 
-/*********************************************************************************************** 
- * INodeListClass::INodeListClass -- A "copy" contstructor with filtering...                   * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INodeListClass::INodeListClass -- A "copy" contstructor with filtering...                   *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 INodeListClass::INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFilterClass * inodefilter) :
 	NumNodes(0),
 	Time(time),
-	ListHead(NULL),
+	ListHead(nullptr),
 	INodeFilter(inodefilter)
 {
-	if (INodeFilter == NULL) {
+	if (INodeFilter == nullptr) {
 		INodeFilter = &_AnyFilter;
 	}
 	for (unsigned i=0; i<copyfrom.Num_Nodes(); i++) {
@@ -171,17 +171,17 @@ INodeListClass::INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFil
 	}
 }
 
-/*********************************************************************************************** 
- * INodeListClass::~INodeListClass -- Delete the INode List                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/09/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INodeListClass::~INodeListClass -- Delete the INode List                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 INodeListClass::~INodeListClass(void)
 {
@@ -193,28 +193,28 @@ INodeListClass::~INodeListClass(void)
 	}
 
 	NumNodes = 0;
-	ListHead = NULL;
+	ListHead = nullptr;
 }
 
 
-/*********************************************************************************************** 
- * INode * INodeListClass::operator[] -- Array-like access to the list members                 * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- * 	index - index of the list entry																			  * 
- * 																														  * 
- * OUTPUT:                                                                                     * 
- * 	pointer to an INode																							  * 
- * 																														  * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/09/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INode * INodeListClass::operator[] -- Array-like access to the list members                 *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ * 	index - index of the list entry																			  *
+ * 																														  *
+ * OUTPUT:                                                                                     *
+ * 	pointer to an INode																							  *
+ * 																														  *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 INode * INodeListClass::operator[] ( int index ) const
 {
 	INodeListEntryClass * entry = ListHead;
-	while (index > 0 && entry != NULL )
+	while (index > 0 && entry != nullptr )
 	{
 		entry = entry->Next;
 		index--;
@@ -242,27 +242,27 @@ void INodeListClass::Insert(INodeListClass & insertlist)
 	}
 }
 
-/*********************************************************************************************** 
- * INodeListClass::Insert -- Inserts an INode into the list                                    * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   07/02/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INodeListClass::Insert -- Inserts an INode into the list                                    *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/02/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 void INodeListClass::Insert(INode * node)
 {
-	if (INodeFilter->Accept_Node(node,Time)) 
+	if (INodeFilter->Accept_Node(node,Time))
 	{
 		INodeListEntryClass * newentry = new INodeListEntryClass(node, Time);
 		newentry->Next = ListHead;
 		ListHead = newentry;
 		NumNodes++;
-	} 
+	}
 }
 
 
@@ -288,9 +288,9 @@ void INodeListClass::Remove(int i)
 	while (i > 1) {
 		prev = prev->Next;
 	}
-	
+
 	INodeListEntryClass * deleteme = prev->Next;
-	if (deleteme != NULL) {
+	if (deleteme != nullptr) {
 		prev->Next = prev->Next->Next;
 		delete deleteme;
 	}
@@ -311,7 +311,7 @@ void INodeListClass::Remove(int i)
  *=============================================================================================*/
 void INodeListClass::Add_Tree(INode * root)
 {
-	if (root == NULL) return;
+	if (root == nullptr) return;
 
 	Insert(root);
 	for (int i=0; i<root->NumberOfChildren(); i++) {
@@ -320,20 +320,20 @@ void INodeListClass::Add_Tree(INode * root)
 }
 
 
-/*********************************************************************************************** 
- * INodeListClass::callback -- callback function for MAX                                       * 
- *                                                                                             * 
- * 3dsMAX calls this function with a pointer to each INode in the scene.  We keep a pointer	  * 
- * to the ones we like.																								  * 
- *                                                                                             * 
- * INPUT:                                                                                      * 
- *                                                                                             * 
- * OUTPUT:                                                                                     * 
- *                                                                                             * 
- * WARNINGS:                                                                                   * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   06/09/1997 GH  : Created.                                                                 * 
+/***********************************************************************************************
+ * INodeListClass::callback -- callback function for MAX                                       *
+ *                                                                                             *
+ * 3dsMAX calls this function with a pointer to each INode in the scene.  We keep a pointer	  *
+ * to the ones we like.																								  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
 int INodeListClass::callback(INode * node)
 {
@@ -350,7 +350,7 @@ void INodeListClass::Sort(const INodeCompareClass & node_compare)
 
 			INodeListEntryClass * ni = get_nth_item(i);
 			INodeListEntryClass * nj = get_nth_item(j);
-			
+
 			if (node_compare(ni->Node,nj->Node) > 0) {
 				INode * tmp = ni->Node;
 				ni->Node = nj->Node;
@@ -363,7 +363,7 @@ void INodeListClass::Sort(const INodeCompareClass & node_compare)
 INodeListEntryClass * INodeListClass::get_nth_item(int index)
 {
 	INodeListEntryClass * entry = ListHead;
-	while (index > 0 && entry != NULL )
+	while (index > 0 && entry != nullptr )
 	{
 		entry = entry->Next;
 		index--;

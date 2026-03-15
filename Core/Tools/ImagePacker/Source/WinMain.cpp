@@ -18,12 +18,12 @@
 
 // FILE: WinMain.cpp //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -58,10 +58,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
+HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
 
 /// just to satisfy the game libraries we link to
-HWND ApplicationHWnd = NULL;
+HWND ApplicationHWnd = nullptr;
 
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
@@ -84,8 +84,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
 
-	// start the log
-	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+	// initialize the memory manager early
 	initMemoryManager();
 
 	// save application instance
@@ -93,7 +92,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// allocate a new image packer system
 	TheImagePacker = new ImagePacker;
-	if( TheImagePacker == NULL )
+	if( TheImagePacker == nullptr )
 		return 0;
 
 	// initialize the system
@@ -101,24 +100,22 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	{
 
 		delete TheImagePacker;
-		TheImagePacker = NULL;
+		TheImagePacker = nullptr;
 		return 0;
 
-	}  // end if
-		
+	}
+
 	// load the dialog box
-	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG, 
-						 NULL, (DLGPROC)ImagePackerProc );
+	DialogBox( hInstance, (LPCTSTR)IMAGE_PACKER_DIALOG,
+						 nullptr, (DLGPROC)ImagePackerProc );
 
 	// delete the image packer
 	delete TheImagePacker;
-	TheImagePacker = NULL;
+	TheImagePacker = nullptr;
 
-	// close the log
 	shutdownMemoryManager();
-	DEBUG_SHUTDOWN();
 
 	// all done
 	return 0;
 
-}  // end WinMain
+}

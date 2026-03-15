@@ -28,7 +28,7 @@
 //         troops, order them to attack, then return. Can do extra things like ordering
 //         injured troops to return to the transport for healing purposes.
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
@@ -43,11 +43,6 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -58,7 +53,7 @@ AssaultTransportAIUpdate::AssaultTransportAIUpdate( Thing *thing, const ModuleDa
 {
 	m_currentMembers = MAX_TRANSPORT_SLOTS; //First time, max it out, to ensure clearing arrays in reset.
 	reset();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void AssaultTransportAIUpdate::reset()
@@ -80,9 +75,9 @@ void AssaultTransportAIUpdate::reset()
 }
 
 //-------------------------------------------------------------------------------------------------
-AssaultTransportAIUpdate::~AssaultTransportAIUpdate( void )
+AssaultTransportAIUpdate::~AssaultTransportAIUpdate()
 {
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 void AssaultTransportAIUpdate::aiDoCommand(const AICommandParms* parms)
@@ -91,7 +86,7 @@ void AssaultTransportAIUpdate::aiDoCommand(const AICommandParms* parms)
 	if( parms->m_cmdSource != CMD_FROM_AI )
 	{
 		//Now the only time we care about anything is if we were ordered to attack something or attack move.
-		switch( parms->m_cmd ) 
+		switch( parms->m_cmd )
 		{
 			case AICMD_ATTACKMOVE_TO_POSITION:
 				//Reset because we have been ordered to do something.
@@ -118,7 +113,7 @@ void AssaultTransportAIUpdate::aiDoCommand(const AICommandParms* parms)
 		}
 	}
 
-	//Note, in both cases, the transport will fire a dummy DEPLOY weapon that will trigger the 
+	//Note, in both cases, the transport will fire a dummy DEPLOY weapon that will trigger the
 	//evacuation of the troops.
 	AIUpdateInterface::aiDoCommand( parms );
 }
@@ -147,7 +142,7 @@ UpdateSleepTime calcSleepTime()
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AssaultTransportAIUpdate::update( void )
+UpdateSleepTime AssaultTransportAIUpdate::update()
 {
 	Object *transport = getObject();
 	//const AssaultTransportAIUpdateModuleData *data = getAssaultTransportAIUpdateModuleData();
@@ -164,7 +159,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 		for( int i = 0; i < m_currentMembers; i++ )
 		{
 			Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-			AIUpdateInterface *ai = member ? member->getAI() : NULL;
+			AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 			if( !member || member->isEffectivelyDead() || ai->getLastCommandSource() != CMD_FROM_AI )
 			{
 				//Member is toast -- so remove him from our list!
@@ -235,8 +230,8 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 					//Generally only player commands allow this, so this flag allows AI commands to do the same.
 					passenger->getAI()->setAllowedToChase( TRUE );
 				}
-				
-				//Check if the passenger is wounded below threshhold (if so make sure we heal him before ordering him to fight!)
+
+				//Check if the passenger is wounded below threshold (if so make sure we heal him before ordering him to fight!)
 				if( isMemberWounded( passenger ) )
 				{
 					m_memberHealing[ m_currentMembers ] = TRUE;
@@ -269,7 +264,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 	Object *designatedTarget = TheGameLogic->findObjectByID( m_designatedTarget );
 	if( designatedTarget && designatedTarget->isEffectivelyDead() )
 	{
-		designatedTarget = NULL;
+		designatedTarget = nullptr;
 	}
 	if( designatedTarget )
 	{
@@ -277,8 +272,8 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 		for( int i = 0; i < m_currentMembers; i++ )
 		{
 			Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-			AIUpdateInterface *ai = member ? member->getAI() : NULL;
-			
+			AIUpdateInterface *ai = member ? member->getAI() : nullptr;
+
 			if( member && ai )
 			{
 				Bool contained = member->isContained();
@@ -289,7 +284,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 					//New members are exempt!
 					ai->aiExit( transport, CMD_FROM_AI );
 				}
-				if( !contained ) 
+				if( !contained )
 				{
 					if( wounded )
 					{
@@ -299,7 +294,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 							ai->aiEnter( transport, CMD_FROM_AI );
 						}
 					}
-					else 
+					else
 					{
 						//Increment the number of fighters and their position.
 						fighterCentroidPos.add( member->getPosition() );
@@ -333,19 +328,19 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 
 	/*
 	//Keep near the troops.
-	if( !m_framesRemaining ) 
+	if( !m_framesRemaining )
 	{
 		if( !isMoving() && fightingMembers && designatedTarget )
 		{
 			m_framesRemaining = 45;
 
-			//Get centriod pos now that we know the number of fighting members.
+			//Get centroid pos now that we know the number of fighting members.
 			Real scale = 1.0f / (Real)fightingMembers;
 			fighterCentroidPos.scale( scale );
 
 			Coord3D designatedTargetPos = *designatedTarget->getPosition();
 
-			//Calculate a vector from the target passed the fighters to be at a safe place 
+			//Calculate a vector from the target passed the fighters to be at a safe place
 			//to be as a transport.
 			Coord3D vector;
 			vector.set( &fighterCentroidPos );
@@ -375,7 +370,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update( void )
 		//aiFaceObject( designatedTarget, CMD_FROM_AI );
 	}
 	*/
-	
+
 	/*UpdateSleepTime ret =*/ AIUpdateInterface::update();
 	//return (mine < ret) ? mine : ret;
 	/// @todo srj -- someday, make sleepy. for now, must not sleep.
@@ -444,7 +439,7 @@ void AssaultTransportAIUpdate::retrieveMembers()
 	for( int i = 0; i < m_currentMembers; i++ )
 	{
 		Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-		AIUpdateInterface *ai = member ? member->getAI() : NULL;
+		AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 		if( member && ai )
 		{
 			Bool contained = member->isContained();
@@ -464,7 +459,7 @@ void AssaultTransportAIUpdate::giveFinalOrders()
 	for( int i = 0; i < m_currentMembers; i++ )
 	{
 		Object *member = TheGameLogic->findObjectByID( m_memberIDs[ i ] );
-		AIUpdateInterface *ai = member ? member->getAI() : NULL;
+		AIUpdateInterface *ai = member ? member->getAI() : nullptr;
 		if( member && ai )
 		{
 			Object *designatedTarget = TheGameLogic->findObjectByID( m_designatedTarget );
@@ -490,7 +485,7 @@ void AssaultTransportAIUpdate::crc( Xfer *xfer )
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
-}  // end crc
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -503,7 +498,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
   XferVersion currentVersion = 1;
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
- 
+
  // extend base class
 	AIUpdateInterface::xfer(xfer);
 
@@ -517,23 +512,23 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 
 	xfer->xferCoord3D( &m_attackMoveGoalPos );
 	xfer->xferObjectID( &m_designatedTarget );
-	
+
 	Int state = (Int)m_state;
 	xfer->xferInt( &state );
 	m_state = (AssaultStateTypes)state;
-	
+
 	xfer->xferUnsignedInt( &m_framesRemaining );
 	xfer->xferBool( &m_isAttackMove );
 	xfer->xferBool( &m_isAttackObject );
 
-}  // end xfer
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Load post process */
 //-------------------------------------------------------------------------------------------------
-void AssaultTransportAIUpdate::loadPostProcess( void )
+void AssaultTransportAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
-}  // end loadPostProcess
+}
 

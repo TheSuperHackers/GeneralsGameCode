@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef CRATE_SYSTEM_H
-#define CRATE_SYSTEM_H
-
 #include "Common/INI.h"
 #include "Common/Overridable.h"
 #include "Common/Override.h"
@@ -48,7 +45,7 @@ typedef std::list< crateCreationEntry >											crateCreationEntryList;
 typedef std::list< crateCreationEntry >::iterator						crateCreationEntryIterator;
 typedef std::list< crateCreationEntry >::const_iterator			crateCreationEntryConstIterator;
 
-/** 
+/**
 		A CrateTemplate is a ini defined set of conditions plus a ThingTemplate that is the Object
 		containing the correct CrateCollide module.
 */
@@ -63,7 +60,7 @@ public:
 	void setName( AsciiString name ) { m_name = name; }
 	AsciiString getName(){ return m_name; }
 
-	inline const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
+	const FieldParse *getFieldParse() const { return TheCrateTemplateFieldParseTable; }
 	static const FieldParse TheCrateTemplateFieldParseTable[];		///< the parse table for INI definition
 
 	static void parseCrateCreationEntry( INI* ini, void *instance, void *store, const void* /*userData*/ );
@@ -84,7 +81,7 @@ private:
 typedef OVERRIDE<CrateTemplate> CrateTemplateOverride;
 
 
-/** 
+/**
 		System responsible for Crates as code objects - ini, new/delete etc
 */
 class CrateSystem : public SubsystemInterface
@@ -103,7 +100,7 @@ public:
 	CrateTemplate *newCrateTemplate( AsciiString name );
 	CrateTemplate *newCrateTemplateOverride( CrateTemplate *crateToOverride );
 
-	
+
 
 	static void parseCrateTemplateDefinition(INI* ini);
 
@@ -113,4 +110,3 @@ private:
 };
 
 extern CrateSystem *TheCrateSystem;
-#endif

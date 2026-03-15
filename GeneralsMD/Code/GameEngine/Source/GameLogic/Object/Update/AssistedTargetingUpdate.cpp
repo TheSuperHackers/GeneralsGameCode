@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #include "Common/Player.h"
@@ -42,26 +42,21 @@
 #include "GameLogic/Module/LaserUpdate.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "AssistingClipSize",		INI::parseInt,		NULL, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
+		{ "AssistingClipSize",		INI::parseInt,		nullptr, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
 		{ "AssistingWeaponSlot",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( AssistedTargetingUpdateModuleData, m_weaponSlot ) },
-		{ "LaserFromAssisted",		INI::parseAsciiString,				NULL, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssistedName ) },
-		{ "LaserToTarget",				INI::parseAsciiString,				NULL, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
-		{ 0, 0, 0, 0 }
+		{ "LaserFromAssisted",		INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssistedName ) },
+		{ "LaserToTarget",				INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -70,13 +65,13 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 //-------------------------------------------------------------------------------------------------
 AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	m_laserFromAssisted = NULL;
-	m_laserToTarget = NULL;
+	m_laserFromAssisted = nullptr;
+	m_laserToTarget = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AssistedTargetingUpdate::~AssistedTargetingUpdate( void )
+AssistedTargetingUpdate::~AssistedTargetingUpdate()
 {
 }
 
@@ -84,7 +79,7 @@ AssistedTargetingUpdate::~AssistedTargetingUpdate( void )
 //-------------------------------------------------------------------------------------------------
 Bool AssistedTargetingUpdate::isFreeToAssist() const
 {
-	// The reload times of my two weapons are tied together, so Ready is indicitive of either.
+	// The reload times of my two weapons are tied together, so Ready is indicative of either.
 	const Object *me = getObject();
 	if( !me->isAbleToAttack() )
 		return FALSE;// This will cover under construction among other things
@@ -127,7 +122,7 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 
 	// Give it a good basis in reality to ensure it can draw when on screen.
 	laser->setPosition(from->getPosition());
-	
+
 	Drawable *draw = laser->getDrawable();
 	static const NameKeyType key_LaserUpdate = NAMEKEY( "LaserUpdate" );
 	LaserUpdate *update = (LaserUpdate*)draw->findClientUpdateModule( key_LaserUpdate );
@@ -142,7 +137,7 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime AssistedTargetingUpdate::update( void )
+UpdateSleepTime AssistedTargetingUpdate::update()
 {
 
   const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
@@ -165,7 +160,7 @@ void AssistedTargetingUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -183,12 +178,12 @@ void AssistedTargetingUpdate::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::loadPostProcess( void )
+void AssistedTargetingUpdate::loadPostProcess()
 {
   const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
 
@@ -198,4 +193,4 @@ void AssistedTargetingUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

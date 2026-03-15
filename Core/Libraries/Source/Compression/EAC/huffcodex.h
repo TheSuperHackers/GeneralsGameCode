@@ -18,16 +18,12 @@
 
 /* Copyright (C) Electronic Arts Canada Inc. 1995-2002.  All rights reserved. */
 
-#ifndef __HUFCODEX
-#define __HUFCODEX 1
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __CODEX_H
-#error "Include codex.h before huffcodex.h"
-#endif
+#include "codex.h"
 
 /****************************************************************/
 /*  HUF Codex                                                   */
@@ -35,7 +31,7 @@ extern "C" {
 
 /* Information Functions */
 
-CODEXABOUT *GCALL HUFF_about(void);
+CODEXABOUT *GCALL HUFF_about();
 bool        GCALL HUFF_is(const void *compresseddata);
 
 /* Decode Functions */
@@ -69,6 +65,5 @@ int        GCALL HUFF_encode(void *compresseddata, const void *source, int sourc
 
 #ifdef __cplusplus
 }
-#endif
 #endif
 

@@ -40,7 +40,7 @@
 #include "meshmdl.h"
 #include "texture.h"
 
-MaterialInfoClass::MaterialInfoClass(void)
+MaterialInfoClass::MaterialInfoClass()
 {
 }
 
@@ -51,7 +51,7 @@ MaterialInfoClass::MaterialInfoClass(const MaterialInfoClass & src)
 		vmat = src.VertexMaterials[mi]->Clone();
 		VertexMaterials.Add(vmat);
 	}
-	
+
 	for (int ti=0; ti<src.Textures.Count(); ti++) {
 		TextureClass * tex = src.Textures[ti];
 		tex->Add_Ref();
@@ -60,20 +60,20 @@ MaterialInfoClass::MaterialInfoClass(const MaterialInfoClass & src)
 }
 
 
-MaterialInfoClass::~MaterialInfoClass(void)
+MaterialInfoClass::~MaterialInfoClass()
 {
 	Free();
 }
 
 
-MaterialInfoClass * MaterialInfoClass::Clone(void) const
-{ 
-	return W3DNEW MaterialInfoClass(*this); 
+MaterialInfoClass * MaterialInfoClass::Clone() const
+{
+	return W3DNEW MaterialInfoClass(*this);
 }
 
 int MaterialInfoClass::Add_Texture(TextureClass * tex)
 {
-	WWASSERT(tex != NULL);
+	WWASSERT(tex != nullptr);
 	tex->Add_Ref();
 	int index = Textures.Count();
 	Textures.Add(tex);
@@ -108,21 +108,21 @@ void MaterialInfoClass::Set_Texture_Reduction_Factor(float trf)
 }
 
 
-void MaterialInfoClass::Process_Texture_Reduction(void)
+void MaterialInfoClass::Process_Texture_Reduction()
 {
 	for (int i = 0; i < Textures.Count(); i++) {
 		Textures[i]->Process_Reduction();
 	}
 }
 */
-void MaterialInfoClass::Free(void) 
+void MaterialInfoClass::Free()
 {
 	int i;
-	
+
 	for (i=0; i<VertexMaterials.Count(); i++) {
 		REF_PTR_RELEASE(VertexMaterials[i]);
 	}
-	VertexMaterials.Delete_All(); 
+	VertexMaterials.Delete_All();
 
 	for (i=0; i<Textures.Count(); i++) {
 		REF_PTR_RELEASE(Textures[i]);
@@ -133,13 +133,13 @@ void MaterialInfoClass::Free(void)
 
 MaterialRemapperClass::MaterialRemapperClass(MaterialInfoClass * src,MaterialInfoClass * dest) :
 	TextureCount(0),
-	TextureRemaps(NULL),
+	TextureRemaps(nullptr),
 	VertexMaterialCount(0),
-	VertexMaterialRemaps(NULL),
-	LastSrcVmat(NULL),
-	LastDestVmat(NULL),
-	LastSrcTex(NULL),
-	LastDestTex(NULL)
+	VertexMaterialRemaps(nullptr),
+	LastSrcVmat(nullptr),
+	LastDestVmat(nullptr),
+	LastSrcTex(nullptr),
+	LastDestTex(nullptr)
 {
 	WWASSERT(src);
 	WWASSERT(dest);
@@ -170,22 +170,18 @@ MaterialRemapperClass::MaterialRemapperClass(MaterialInfoClass * src,MaterialInf
 	}
 }
 
-MaterialRemapperClass::~MaterialRemapperClass(void)
+MaterialRemapperClass::~MaterialRemapperClass()
 {
 	SrcMatInfo->Release_Ref();
 	DestMatInfo->Release_Ref();
 
-	if (TextureRemaps) {
-		delete[] TextureRemaps;
-	}
-	if (VertexMaterialRemaps) {
-		delete[] VertexMaterialRemaps;
-	}
+	delete[] TextureRemaps;
+	delete[] VertexMaterialRemaps;
 }
 
 TextureClass * MaterialRemapperClass::Remap_Texture(TextureClass * src)
 {
-	if (src == NULL) return src;
+	if (src == nullptr) return src;
 	if (src == LastSrcTex) return LastDestTex;
 	for (int i=0; i<TextureCount; i++) {
 		if (TextureRemaps[i].Src == src) {
@@ -194,13 +190,13 @@ TextureClass * MaterialRemapperClass::Remap_Texture(TextureClass * src)
 			return TextureRemaps[i].Dest;
 		}
 	}
-	WWASSERT(0); // uh-oh didn't find the texture, what happend???
-	return NULL;
+	WWASSERT(0); // uh-oh didn't find the texture, what happened???
+	return nullptr;
 }
 
 VertexMaterialClass * MaterialRemapperClass::Remap_Vertex_Material(VertexMaterialClass * src)
 {
-	if (src == NULL) return src;
+	if (src == nullptr) return src;
 	if (src == LastSrcVmat) return LastDestVmat;
 	for (int i=0; i<VertexMaterialCount; i++) {
 		if (VertexMaterialRemaps[i].Src == src) {
@@ -209,8 +205,8 @@ VertexMaterialClass * MaterialRemapperClass::Remap_Vertex_Material(VertexMateria
 			return VertexMaterialRemaps[i].Dest;
 		}
 	}
-	WWASSERT(0); // uh-oh didn't find the material, what happend???
-	return NULL;
+	WWASSERT(0); // uh-oh didn't find the material, what happened???
+	return nullptr;
 }
 
 void MaterialRemapperClass::Remap_Mesh(const MeshMatDescClass * srcmeshmatdesc, MeshMatDescClass * destmeshmatdesc)
@@ -219,43 +215,43 @@ void MaterialRemapperClass::Remap_Mesh(const MeshMatDescClass * srcmeshmatdesc, 
 	** Remap the vertex materials if there is at least one of them
 	*/
 	if (SrcMatInfo->Vertex_Material_Count() >= 1) {
-	
+
 		for (int pass = 0;pass < srcmeshmatdesc->Get_Pass_Count(); pass++) {
 
 			if (srcmeshmatdesc->Has_Material_Array(pass)) {
-				
+
 				for (int vert_index = 0; vert_index < srcmeshmatdesc->Get_Vertex_Count(); vert_index++) {
 					VertexMaterialClass * src = srcmeshmatdesc->Peek_Material(vert_index, pass);
 					destmeshmatdesc->Set_Material(vert_index, Remap_Vertex_Material(src),pass);
 				}
 
 			} else {
-			
+
 				VertexMaterialClass * src = srcmeshmatdesc->Peek_Single_Material(pass);
 				destmeshmatdesc->Set_Single_Material(Remap_Vertex_Material(src), pass);
-				
+
 			}
 		}
 	}
-	
+
 	/*
 	** Remap the textures if there is at least one of them
 	*/
 	if (SrcMatInfo->Texture_Count() >= 1) {
-	
+
 		for (int pass = 0;pass < srcmeshmatdesc->Get_Pass_Count(); pass++) {
 
 			for (int stage = 0; stage < MeshMatDescClass::MAX_TEX_STAGES; stage++) {
-			
+
 				if (srcmeshmatdesc->Has_Texture_Array(pass, stage)) {
-					
+
 					for (int poly_index = 0; poly_index < srcmeshmatdesc->Get_Polygon_Count(); poly_index++) {
 						TextureClass * src = srcmeshmatdesc->Peek_Texture(poly_index, pass, stage);
 						destmeshmatdesc->Set_Texture(poly_index, Remap_Texture(src), pass, stage);
 					}
 
 				} else {
-				
+
 					TextureClass * src = srcmeshmatdesc->Peek_Single_Texture(pass, stage);
 					destmeshmatdesc->Set_Single_Texture(Remap_Texture(src), pass, stage);
 
@@ -265,14 +261,14 @@ void MaterialRemapperClass::Remap_Mesh(const MeshMatDescClass * srcmeshmatdesc, 
 	}
 }
 
-MaterialCollectorClass::MaterialCollectorClass(void)
+MaterialCollectorClass::MaterialCollectorClass()
 {
 	LastShader = ShaderClass(0xFFFFFFFF);
-	LastMaterial = NULL;
-	LastTexture = NULL;
+	LastMaterial = nullptr;
+	LastTexture = nullptr;
 }
 
-MaterialCollectorClass::~MaterialCollectorClass(void)
+MaterialCollectorClass::~MaterialCollectorClass()
 {
 	Reset();
 }
@@ -283,7 +279,7 @@ void MaterialCollectorClass::Collect_Materials(MeshModelClass * mesh)
 
 		// Vertex materials (either single or per vertex)
 		if (mesh->Has_Material_Array(pass)) {
-			
+
 			for (int vert_index = 0;vert_index < mesh->Get_Vertex_Count(); vert_index++) {
 				VertexMaterialClass * mat = mesh->Peek_Material(vert_index,pass);
 				Add_Vertex_Material(mat);
@@ -294,7 +290,7 @@ void MaterialCollectorClass::Collect_Materials(MeshModelClass * mesh)
 			Add_Vertex_Material(mat);
 			REF_PTR_RELEASE(mat);
 		}
-		
+
 
 		// Shaders (single or per poly...)
 		if (mesh->Has_Shader_Array(pass)) {
@@ -305,20 +301,20 @@ void MaterialCollectorClass::Collect_Materials(MeshModelClass * mesh)
 			ShaderClass sh = mesh->Get_Single_Shader(pass);
 			Add_Shader(sh);
 		}
-				
-		
+
+
 		// Textures per pass, per stage (either array or single...)
 		for (int stage = 0; stage < MeshMatDescClass::MAX_TEX_STAGES; stage++) {
 
 			if (mesh->Has_Texture_Array(pass,stage)) {
-				
+
 				for (int poly_index = 0;poly_index < mesh->Get_Polygon_Count(); poly_index++) {
 					TextureClass * tex = mesh->Peek_Texture(poly_index,pass,stage);
 					Add_Texture(tex);
 				}
 
 			} else {
-			
+
 				TextureClass * tex = mesh->Peek_Single_Texture(pass,stage);
 				Add_Texture(tex);
 
@@ -327,7 +323,7 @@ void MaterialCollectorClass::Collect_Materials(MeshModelClass * mesh)
 	}
 }
 
-void MaterialCollectorClass::Reset(void)
+void MaterialCollectorClass::Reset()
 {
 	for (int ti=0; ti<Textures.Count(); ti++) {
 		REF_PTR_RELEASE(Textures[ti]);
@@ -342,7 +338,7 @@ void MaterialCollectorClass::Reset(void)
 
 void MaterialCollectorClass::Add_Texture(TextureClass * tex)
 {
-	if (tex == NULL) return;
+	if (tex == nullptr) return;
 	if (tex == LastTexture) return;
 	if (Find_Texture(tex) != -1) return;
 	Textures.Add(tex);
@@ -360,7 +356,7 @@ void MaterialCollectorClass::Add_Shader(ShaderClass shader)
 
 void MaterialCollectorClass::Add_Vertex_Material(VertexMaterialClass * vmat)
 {
-	if (vmat == NULL) return;
+	if (vmat == nullptr) return;
 	if (vmat == LastMaterial) return;
 	if (Find_Vertex_Material(vmat) != -1) return;
 	VertexMaterials.Add(vmat);
@@ -368,21 +364,21 @@ void MaterialCollectorClass::Add_Vertex_Material(VertexMaterialClass * vmat)
 	LastMaterial = vmat;
 }
 
-int MaterialCollectorClass::Get_Shader_Count(void)
+int MaterialCollectorClass::Get_Shader_Count()
 {
 	return Shaders.Count();
 }
 
-int MaterialCollectorClass::Get_Vertex_Material_Count(void)
+int MaterialCollectorClass::Get_Vertex_Material_Count()
 {
 	return VertexMaterials.Count();
 }
 
-int MaterialCollectorClass::Get_Texture_Count(void)
+int MaterialCollectorClass::Get_Texture_Count()
 {
 	return Textures.Count();
 }
-	
+
 ShaderClass MaterialCollectorClass::Peek_Shader(int i)
 {
 	return Shaders[i];

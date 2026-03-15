@@ -34,19 +34,19 @@
 
 // ------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CreateModule::CreateModule( Thing *thing, const ModuleData* moduleData ) 
+CreateModule::CreateModule( Thing *thing, const ModuleData* moduleData )
 						: BehaviorModule( thing, moduleData ),
 						  m_needToRunOnBuildComplete(TRUE)
 {
 
-}  // end createModule
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 CreateModule::~CreateModule()
 {
 
-}  // end ~CreateModule
+}
 
 //-------------------------------------------------------------------------------------------------
 /** CRC */
@@ -57,7 +57,7 @@ void CreateModule::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -78,17 +78,17 @@ void CreateModule::xfer( Xfer *xfer )
 	// need to run on build complete
 	xfer->xferBool( &m_needToRunOnBuildComplete );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CreateModule::loadPostProcess( void )
+void CreateModule::loadPostProcess()
 {
 
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // ene loadPostProcess
+}
 
 

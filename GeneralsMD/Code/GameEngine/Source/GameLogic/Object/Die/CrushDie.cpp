@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -48,7 +48,7 @@
 // Figure out which crush point was hit so the correct crushed object can be swapped in
 static CrushEnum crushLocationCheck( Object* crusherObject, Object* victimObject )
 {
-	if( (crusherObject == NULL)  ||  (victimObject == NULL) )
+	if( (crusherObject == nullptr)  ||  (victimObject == nullptr) )
 		return NO_CRUSH;
 
 	Bool frontCrushed = victimObject->getBodyModule()->getFrontCrushed();
@@ -152,7 +152,7 @@ CrushDie::CrushDie( Thing *thing, const ModuleData* moduleData ) : DieModule( th
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CrushDie::~CrushDie( void )
+CrushDie::~CrushDie()
 {
 
 }
@@ -165,7 +165,7 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 	if (!isDieApplicable(damageInfo))
 		return;
 
-	DEBUG_ASSERTCRASH(damageInfo->in.m_damageType == DAMAGE_CRUSH, ("this should only be used for crush damage\n"));
+	DEBUG_ASSERTCRASH(damageInfo->in.m_damageType == DAMAGE_CRUSH, ("this should only be used for crush damage"));
 	if (damageInfo->in.m_damageType != DAMAGE_CRUSH)
 		return;
 
@@ -200,12 +200,12 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 				newCrushed.set(MODELCONDITION_BACKCRUSHED, crushType == TOTAL_CRUSH || crushType == BACK_END_CRUSH);
 
 				me->getDrawable()->clearAndSetModelConditionFlags(
-					MAKE_MODELCONDITION_MASK2(MODELCONDITION_BACKCRUSHED, MODELCONDITION_FRONTCRUSHED), 
+					MAKE_MODELCONDITION_MASK2(MODELCONDITION_BACKCRUSHED, MODELCONDITION_FRONTCRUSHED),
 					newCrushed);
 			}
 		}
 	}
-}  
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -216,7 +216,7 @@ void CrushDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -234,15 +234,15 @@ void CrushDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CrushDie::loadPostProcess( void )
+void CrushDie::loadPostProcess()
 {
 
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Renegade Setup/Autorun/CDCNTRL.CPP                         $*
+ *                     $Archive:: /Renegade Setup/Autorun/CDCNTRL.cpp                         $*
  *                                                                                             *
  *                      $Author:: Maria_l                                                     $*
  *                                                                                             *
@@ -61,8 +61,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"assert.h"
-#include	"CDCNTRL.H"
-#include	"WinFix.H"
+#include	"CDCNTRL.h"
+#include	"WinFix.h"
 #include	"Wnd_File.h"
 #pragma	warning(disable : 4201)
 #include	<winioctl.h>
@@ -220,7 +220,7 @@ HANDLE CDControlClass::Open_Removable_Volume( char drive )
 	** Get a handle to the volume.
 	*/
 	_stprintf( volume_name, _TEXT( "\\\\.\\%c:" ), drive + 'A' );
-	volume = CreateFile( volume_name, access_flags, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL );
+	volume = CreateFile( volume_name, access_flags, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
 
 //	assert (volume != INVALID_HANDLE_VALUE);
 
@@ -273,7 +273,7 @@ bool CDControlClass::Lock_Volume( HANDLE volume )
 	*/
 	for ( int trycount = 0; trycount < LOCK_RETRIES; trycount++ ) {
 
-		if ( DeviceIoControl( volume, FSCTL_LOCK_VOLUME, NULL, 0, NULL, 0, &bytes_returned, NULL )) {
+		if ( DeviceIoControl( volume, FSCTL_LOCK_VOLUME, nullptr, 0, nullptr, 0, &bytes_returned, nullptr )) {
 			return( true );
 		}
 //		Msg( __LINE__, TEXT(__FILE__), TEXT("DeviceIoControl failed to lock volume. Error %d - %s"), GetLastError(), Last_Error_Text());
@@ -308,7 +308,7 @@ bool CDControlClass::Unlock_Volume(HANDLE volume)
 	*/
    for ( int trycount = 0; trycount < LOCK_RETRIES; trycount++ ) {
 
-		if ( DeviceIoControl( volume, FSCTL_UNLOCK_VOLUME, NULL, 0, NULL, 0, &bytes_returned, NULL )) return( true );
+		if ( DeviceIoControl( volume, FSCTL_UNLOCK_VOLUME, nullptr, 0, nullptr, 0, &bytes_returned, nullptr )) return( true );
 //		DebugString ("DeviceIoControl failed to unlock volume. Error %d - %s\n", GetLastError(), Last_Error_Text());
 //		Msg( __LINE__, __FILE__, "DeviceIoControl failed to unlock volume. Error %d - %s", GetLastError(), Last_Error_Text());
 		Last_Error_Text( _TEXT( "DeviceIoControl failed to unlock volume." ), GetLastError());
@@ -335,7 +335,7 @@ bool CDControlClass::Dismount_Volume(HANDLE volume)
 	assert( WinVersion.Is_WinNT());
 
 	unsigned long bytes_returned;
-	bool result = ((DeviceIoControl( volume, FSCTL_DISMOUNT_VOLUME, NULL, 0, NULL, 0, &bytes_returned, NULL)) ? true : false );
+	bool result = ((DeviceIoControl( volume, FSCTL_DISMOUNT_VOLUME, nullptr, 0, nullptr, 0, &bytes_returned, nullptr )) ? true : false );
 
 	if (result == false) {
 //		DebugString ("DeviceIoControl failed to dismount volume. Error %d - %s\n", GetLastError(), Last_Error_Text());
@@ -364,10 +364,10 @@ bool CDControlClass::Prevent_Removal_Of_Volume( HANDLE volume, bool prevent )
 
 	unsigned long bytes_returned;
 	PREVENT_MEDIA_REMOVAL pmrbuffer;
-		
+
 	pmrbuffer.PreventMediaRemoval = prevent;
 
-	bool result = ((DeviceIoControl( volume, IOCTL_STORAGE_MEDIA_REMOVAL, &pmrbuffer, sizeof(PREVENT_MEDIA_REMOVAL), NULL, 0, &bytes_returned, NULL)) ? true : false);
+	bool result = ((DeviceIoControl( volume, IOCTL_STORAGE_MEDIA_REMOVAL, &pmrbuffer, sizeof(PREVENT_MEDIA_REMOVAL), nullptr, 0, &bytes_returned, nullptr)) ? true : false);
 
 	if (result == false) {
 //		DebugString ("DeviceIoControl failed to prevent media removal. Error %d - %s\n", GetLastError(), Last_Error_Text());
@@ -382,7 +382,7 @@ bool CDControlClass::Prevent_Removal_Of_Volume( HANDLE volume, bool prevent )
  *                                                                                             *
  * INPUT:    HANDLE of volume to eject                                                         *
  *                                                                                             *
- * OUTPUT:   true if ejection occured                                                          *
+ * OUTPUT:   true if ejection occurred                                                         *
  *                                                                                             *
  * WARNINGS: None                                                                              *
  *                                                                                             *
@@ -393,7 +393,7 @@ bool CDControlClass::Auto_Eject_Volume(HANDLE volume)
 {
 	assert (WinVersion.Is_WinNT());
 	unsigned long bytes_returned;
-	bool result = ((DeviceIoControl( volume, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0, &bytes_returned, NULL)) ? true : false);
+	bool result = ((DeviceIoControl( volume, IOCTL_STORAGE_EJECT_MEDIA, nullptr, 0, nullptr, 0, &bytes_returned, nullptr )) ? true : false);
 
 	if (result == false) {
 //		DebugString ("DeviceIoControl failed to eject media. Error %d - %s\n", GetLastError(), Last_Error_Text());
@@ -911,7 +911,7 @@ bool CDControlClass::Auto_Eject_Volume_95 (HANDLE vwin32, char drive)
 HANDLE WINAPI CDControlClass::Open_VWin32 (void)
 {
 	assert (WinVersion.Is_Win9x());
-	HANDLE result = CreateFile ( TEXT("\\\\.\\vwin32"), 0, 0, NULL, 0, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+	HANDLE result = CreateFile ( TEXT("\\\\.\\vwin32"), 0, 0, nullptr, 0, FILE_FLAG_DELETE_ON_CLOSE, nullptr);
 	assert (result != INVALID_HANDLE_VALUE);
 	return (result);
 }
@@ -1081,31 +1081,31 @@ bool WINAPI CDControlClass::Unlock_Logical_Volume (HANDLE vwin32, char drive)
 
 void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 {
-	LPVOID		szMessage; 
+	LPVOID		szMessage;
 	char		szDisplay[1000];
-	
-	if ( hr == S_OK ) { 
-		_stprintf( szDisplay, TEXT("%s"), szPrefix ); 
-//		MessageBox( NULL, szDisplay, TEXT("Msg"),0 );
+
+	if ( hr == S_OK ) {
+		_stprintf( szDisplay, TEXT("%s"), szPrefix );
+//		MessageBox( nullptr, szDisplay, TEXT("Msg"),0 );
 		return;
-	} 
+	}
 
 	if ( HRESULT_FACILITY( hr ) == FACILITY_WIN32 ) {
 		hr = HRESULT_CODE( hr );
 	}
-	FormatMessage( 
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, 
-			NULL,
-			hr, 
+	FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			nullptr,
+			hr,
 			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
 			(LPTSTR)&szMessage,
 			0,
-			NULL );
+			nullptr );
 
-	_stprintf( szDisplay, TEXT( "%s: %s(%lx)" ), szPrefix, szMessage, hr ); 
+	_stprintf( szDisplay, TEXT( "%s: %s(%lx)" ), szPrefix, szMessage, hr );
 
 	Msg( __LINE__, TEXT(__FILE__), TEXT("GetLastError: %s"), szDisplay );
-//	MessageBox( NULL, szDisplay, TEXT( "GetLastError" ), MB_OK );
+//	MessageBox( nullptr, szDisplay, TEXT( "GetLastError" ), MB_OK );
 
 	LocalFree( szMessage );
 

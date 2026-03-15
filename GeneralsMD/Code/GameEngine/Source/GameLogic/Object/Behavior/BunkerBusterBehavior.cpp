@@ -41,11 +41,6 @@
 
 #include "GameClient/TerrainVisual.h"//Seismic simulations!
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 
@@ -54,21 +49,21 @@ static DomeStyleSeismicFilter bunkerBusterHeavingEarthSeismicFilter;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
+BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData()
 {
 
-	m_upgradeRequired = NULL;
-	m_detonationFX = NULL;
-  m_crashThroughBunkerFX = NULL;
-  m_crashThroughBunkerFXFrequency = 4; 
-  
+	m_upgradeRequired = nullptr;
+	m_detonationFX = nullptr;
+  m_crashThroughBunkerFX = nullptr;
+  m_crashThroughBunkerFXFrequency = 4;
+
   m_seismicEffectRadius = 140.0f;
   m_seismicEffectMagnitude = 6.0f;
 
-  m_shockwaveWeaponTemplate = NULL;
-  m_occupantDamageWeaponTemplate = NULL;
+  m_shockwaveWeaponTemplate = nullptr;
+  m_occupantDamageWeaponTemplate = nullptr;
 
-}  // end BunkerBusterBehaviorModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -76,23 +71,23 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "UpgradeRequired",	              INI::parseAsciiString,	        NULL, offsetof( BunkerBusterBehaviorModuleData, m_upgradeRequired ) },
-		{ "DetonationFX",			              INI::parseFXList,				        NULL, offsetof( BunkerBusterBehaviorModuleData, m_detonationFX ) },
-		{ "CrashThroughBunkerFX",			      INI::parseFXList,				        NULL, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFX ) },
-		{ "CrashThroughBunkerFXFrequency",	INI::parseDurationUnsignedInt,	NULL, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFXFrequency ) },
-		{ "SeismicEffectRadius",			      INI::parseReal,				          NULL, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectRadius ) },
-		{ "SeismicEffectMagnitude",	        INI::parseReal,	                NULL, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectMagnitude ) },
-    { "ShockwaveWeaponTemplate",        INI::parseWeaponTemplate,       NULL, offsetof( BunkerBusterBehaviorModuleData, m_shockwaveWeaponTemplate ) },
-    { "OccupantDamageWeaponTemplate",   INI::parseWeaponTemplate,       NULL, offsetof( BunkerBusterBehaviorModuleData, m_occupantDamageWeaponTemplate ) },
+		{ "UpgradeRequired",	              INI::parseAsciiString,	        nullptr, offsetof( BunkerBusterBehaviorModuleData, m_upgradeRequired ) },
+		{ "DetonationFX",			              INI::parseFXList,				        nullptr, offsetof( BunkerBusterBehaviorModuleData, m_detonationFX ) },
+		{ "CrashThroughBunkerFX",			      INI::parseFXList,				        nullptr, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFX ) },
+		{ "CrashThroughBunkerFXFrequency",	INI::parseDurationUnsignedInt,	nullptr, offsetof( BunkerBusterBehaviorModuleData, m_crashThroughBunkerFXFrequency ) },
+		{ "SeismicEffectRadius",			      INI::parseReal,				          nullptr, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectRadius ) },
+		{ "SeismicEffectMagnitude",	        INI::parseReal,	                nullptr, offsetof( BunkerBusterBehaviorModuleData, m_seismicEffectMagnitude ) },
+    { "ShockwaveWeaponTemplate",        INI::parseWeaponTemplate,       nullptr, offsetof( BunkerBusterBehaviorModuleData, m_shockwaveWeaponTemplate ) },
+    { "OccupantDamageWeaponTemplate",   INI::parseWeaponTemplate,       nullptr, offsetof( BunkerBusterBehaviorModuleData, m_occupantDamageWeaponTemplate ) },
 
-		{ 0, 0, 0, 0 }
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,36 +98,36 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData( void )
 BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modData )
 											 : UpdateModule( thing, modData )
 {
-	// THIS HAS AN UPDATE... BECAUSE I FORSEE THE NEED FOR ONE, BUT RIGHT NOW IT DOES NOTHING
+	// THIS HAS AN UPDATE... BECAUSE I FORESEE THE NEED FOR ONE, BUT RIGHT NOW IT DOES NOTHING
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
   m_victimID = INVALID_ID;
-  m_upgradeRequired = NULL;
+  m_upgradeRequired = nullptr;
 
-}  // end BunkerBusterBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BunkerBusterBehavior::~BunkerBusterBehavior( void )
+BunkerBusterBehavior::~BunkerBusterBehavior()
 {
 
-}  // end ~BunkerBusterBehavior
+}
 
 
 
-void BunkerBusterBehavior::onObjectCreated( void )
+void BunkerBusterBehavior::onObjectCreated()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
 	// convert module upgrade name to a pointer
 	m_upgradeRequired = TheUpgradeCenter->findUpgrade( modData->m_upgradeRequired );
 
-}  // end onObjectCreated
+}
 
 
 // ------------------------------------------------------------------------------------------------
 /** The update callback */
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime BunkerBusterBehavior::update( void )
+UpdateSleepTime BunkerBusterBehavior::update()
 {
   const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
   AIUpdateInterface *ai = getObject()->getAI();
@@ -154,22 +149,29 @@ UpdateSleepTime BunkerBusterBehavior::update( void )
       if ( getObject()->testStatus( OBJECT_STATUS_MISSILE_KILLING_SELF ) && crashFX )
         FXList::doFXObj( crashFX, getObject() );// CrashFX done on the missile/bomb
     }
-  
+
   }
 
-  
+
 
 
 
 	return UPDATE_SLEEP_NONE;
 
-}  // end update
+}
 
 // ------------------------------------------------------------------------------------------------
 /** The death callback */
 // ------------------------------------------------------------------------------------------------
 void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 {
+#if !RETAIL_COMPATIBLE_CRC
+  // TheSuperHackers @bugfix Stubbjax 17/02/2026 Only bust the bunker if the missile kills itself
+  // by reaching its destination and not when killed via external sources such as a zap from a PDL.
+  if (!getObject()->testStatus(OBJECT_STATUS_MISSILE_KILLING_SELF))
+    return;
+#endif
+
   // do what we came here to do!
   bustTheBunker();
 }
@@ -181,17 +183,17 @@ void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** The bunker-busting effect callback */
 // ------------------------------------------------------------------------------------------------
-void BunkerBusterBehavior::bustTheBunker( void )
+void BunkerBusterBehavior::bustTheBunker()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
-  if ( m_upgradeRequired != NULL )
+  if ( m_upgradeRequired != nullptr )
   {
 	  Bool weaponUpgraded = getObject()->getControllingPlayer()->hasUpgradeComplete( m_upgradeRequired );
     if ( ! weaponUpgraded )
       return;
   }
-  
+
 
 //  here is where we kill everyone inside any targeted garrisoned buildings
 //  AIUpdateInterface *ai = getObject()->getAI();
@@ -232,10 +234,10 @@ void BunkerBusterBehavior::bustTheBunker( void )
 #ifdef DO_SEISMIC_SIMULATIONS
   // Okay, the right proper way to do this is to add SeismicSim support to FXList...
   // But until that day, I'm just gonna do it here,  sorry, M Lorenzen 6/26/03
-  SeismicSimulationNode sim( 
-    objectForFX->getPosition(), 
-    modData->m_seismicEffectRadius, 
-    modData->m_seismicEffectMagnitude, 
+  SeismicSimulationNode sim(
+    objectForFX->getPosition(),
+    modData->m_seismicEffectRadius,
+    modData->m_seismicEffectMagnitude,
     &bunkerBusterHeavingEarthSeismicFilter );
 
   TheTerrainVisual->addSeismicSimulation( sim );
@@ -245,7 +247,7 @@ void BunkerBusterBehavior::bustTheBunker( void )
 		TheWeaponStore->createAndFireTempWeapon(modData->m_shockwaveWeaponTemplate, objectForFX, objectForFX->getPosition());
 
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -265,7 +267,7 @@ void BunkerBusterBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -283,15 +285,15 @@ void BunkerBusterBehavior::xfer( Xfer *xfer )
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BunkerBusterBehavior::loadPostProcess( void )
+void BunkerBusterBehavior::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

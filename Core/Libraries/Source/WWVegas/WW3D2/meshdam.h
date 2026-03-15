@@ -36,12 +36,7 @@
 
 #if 0
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef MESHDAM_H
-#define MESHDAM_H
 
 #include "always.h"
 #include "vector3.h"
@@ -51,7 +46,7 @@
 class MeshModelClass;
 class ChunkLoadClass;
 
-struct RGBStruct 
+struct RGBStruct
 {
 	uint8	R,G,B;
 };
@@ -80,8 +75,8 @@ class DamageClass
 {
 public:
 
-	DamageClass(void);
-	~DamageClass(void);
+	DamageClass();
+	~DamageClass();
 
 	WW3DErrorType				Load_W3D(ChunkLoadClass & cload,MeshModelClass * basemesh);
 
@@ -96,13 +91,11 @@ protected:
 	int							NumColors;
 
 	DamageVertexStruct *		Verts;
-	DamageColorStruct *		Colors;	
+	DamageColorStruct *		Colors;
 
 	friend class MeshClass;
 };
 
-
-#endif
 
 
 #endif //0

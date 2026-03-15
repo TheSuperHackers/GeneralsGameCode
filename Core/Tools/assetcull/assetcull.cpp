@@ -69,7 +69,7 @@ static bool filesEqual(const char *fn1, const char *fn2)
     if (fread(buf1,cur,1,f1)!=1||
         fread(buf2,cur,1,f2)!=1)
       break;
-    if (memcmp(buf1,buf2,cur))
+    if (memcmp(buf1,buf2,cur) != 0)
       break;
     k+=cur;
   }
@@ -105,7 +105,7 @@ static int recursiveCull(FILE *batchFile,
   {
     if (fd.attrib&_A_SUBDIR)
     {
-      if (strcmp(fd.name,".")&&
+      if (strcmp(fd.name,".") != 0&&
           strcmp(fd.name,".."))
         subdir.push_back(fd.name);
     }

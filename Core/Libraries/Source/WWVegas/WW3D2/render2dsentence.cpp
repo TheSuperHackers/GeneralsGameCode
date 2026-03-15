@@ -41,11 +41,6 @@
 #include "wwmemlog.h"
 #include "dx8wrapper.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////////
 //	Local constants
@@ -58,19 +53,19 @@
 //	Render2DSentenceClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-Render2DSentenceClass::Render2DSentenceClass (void) :
-	Font (NULL),
+Render2DSentenceClass::Render2DSentenceClass () :
+	Font (nullptr),
 	Location (0.0F,0.0F),
 	Cursor (0.0F,0.0F),
 	TextureOffset (0, 0),
 	TextureStartX (0),
-	CurSurface (NULL),
+	CurSurface (nullptr),
 	CurrTextureSize (0),
 	MonoSpaced (false),
 	IsClippedEnabled (false),
 	ClipRect (0, 0, 0, 0),
 	BaseLocation (0, 0),
-	LockedPtr (NULL),
+	LockedPtr (nullptr),
 	LockedStride (0),
 	TextureSizeHint (0),
 	WrapWidth (0),
@@ -89,7 +84,7 @@ Render2DSentenceClass::Render2DSentenceClass (void) :
 //	~Render2DSentenceClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-Render2DSentenceClass::~Render2DSentenceClass (void)
+Render2DSentenceClass::~Render2DSentenceClass ()
 {
 	REF_PTR_RELEASE (Font);
 	Reset ();
@@ -117,7 +112,7 @@ Render2DSentenceClass::Set_Font (FontCharsClass *font)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Reset_Polys (void)
+Render2DSentenceClass::Reset_Polys ()
 {
 	for (int index = 0; index < Renderers.Count (); index ++) {
 		Renderers[index].Renderer->Reset ();
@@ -133,14 +128,14 @@ Render2DSentenceClass::Reset_Polys (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Reset (void)
+Render2DSentenceClass::Reset ()
 {
 	//
 	//	Make sure we unlock the current surface (if necessary)
 	//
-	if (LockedPtr != NULL) {
+	if (LockedPtr != nullptr) {
 		CurSurface->Unlock ();
-		LockedPtr = NULL;
+		LockedPtr = nullptr;
 	}
 
 	//
@@ -172,10 +167,10 @@ Render2DSentenceClass::Reset (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Make_Additive (void)
+Render2DSentenceClass::Make_Additive ()
 {
 	Shader.Set_Dst_Blend_Func (ShaderClass::DSTBLEND_ONE);
-	Shader.Set_Src_Blend_Func (ShaderClass::SRCBLEND_ONE);	
+	Shader.Set_Src_Blend_Func (ShaderClass::SRCBLEND_ONE);
 	Shader.Set_Primary_Gradient (ShaderClass::GRADIENT_MODULATE);
 	Shader.Set_Secondary_Gradient (ShaderClass::SECONDARY_GRADIENT_DISABLE);
 
@@ -212,7 +207,7 @@ Render2DSentenceClass::Set_Shader (ShaderClass shader)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Render (void)
+Render2DSentenceClass::Render ()
 {
 	//
 	//	Build any textures that are pending
@@ -237,7 +232,7 @@ Render2DSentenceClass::Render (void)
 ////////////////////////////////////////////////////////////////////////////////////
 void
 Render2DSentenceClass::Set_Base_Location (const Vector2 &loc)
-{ 
+{
 	Vector2 dif		= loc - BaseLocation;
 	BaseLocation	= loc;
 	for (int i = 0; i < Renderers.Count (); i ++) {
@@ -255,8 +250,8 @@ Render2DSentenceClass::Set_Base_Location (const Vector2 &loc)
 ////////////////////////////////////////////////////////////////////////////////////
 void
 Render2DSentenceClass::Set_Location (const Vector2 &loc)
-{ 
-	Location	= loc; 
+{
+	Location	= loc;
 	return ;
 }
 
@@ -291,7 +286,7 @@ Render2DSentenceClass::Get_Text_Extents (const WCHAR *text)
 Vector2
 Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text)
 {
-	return Build_Sentence_Not_Centered(text, NULL, NULL, true);
+	return Build_Sentence_Not_Centered(text, nullptr, nullptr, true);
 }
 
 
@@ -301,7 +296,7 @@ Render2DSentenceClass::Get_Formatted_Text_Extents (const WCHAR *text)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Reset_Sentence_Data (void)
+Render2DSentenceClass::Reset_Sentence_Data ()
 {
 	//
 	//	Release our hold on each texture used in the sentence
@@ -323,18 +318,18 @@ Render2DSentenceClass::Reset_Sentence_Data (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Release_Pending_Surfaces (void)
+Render2DSentenceClass::Release_Pending_Surfaces ()
 {
 	//
 	//	Release our hold on each pending surface
 	//
-	for (int index = 0; index < PendingSurfaces.Count (); index ++) {		
+	for (int index = 0; index < PendingSurfaces.Count (); index ++) {
 		SurfaceClass *curr_surface = PendingSurfaces[index].Surface;
 		REF_PTR_RELEASE (curr_surface);
 	}
 
 	if (PendingSurfaces.Count()>0) PendingSurfaces.Delete_All ();
-	return; 
+	return;
 }
 
 
@@ -344,18 +339,18 @@ Render2DSentenceClass::Release_Pending_Surfaces (void)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Build_Textures (void)
+Render2DSentenceClass::Build_Textures ()
 {
 	WWMEMLOG(MEM_TEXTURE);
 
 	//
 	//	Make sure we unlock the current surface
 	//
-	if (LockedPtr != NULL) {
+	if (LockedPtr != nullptr) {
 		CurSurface->Unlock ();
-		LockedPtr = NULL;
+		LockedPtr = nullptr;
 	}
-	
+
 	//
 	//	Release our hold on the current surface
 	//
@@ -366,7 +361,7 @@ Render2DSentenceClass::Build_Textures (void)
 	//
 	//	Convert all pending surfaces to textures
 	//
-	for (int index = 0; index < PendingSurfaces.Count (); index ++) {		
+	for (int index = 0; index < PendingSurfaces.Count (); index ++) {
 		PendingSurfaceStruct &surface_info = PendingSurfaces[index];
 		SurfaceClass *curr_surface = surface_info.Surface;
 
@@ -375,7 +370,7 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		SurfaceClass::SurfaceDescription desc;
 		curr_surface->Get_Description (desc);
-		
+
 		//
 		//	Create the new texture
 		//
@@ -391,9 +386,9 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		//	Copy the contents of the texture from the surface
 		//
-		DX8Wrapper::_Copy_DX8_Rects (curr_surface->Peek_D3D_Surface (), NULL, 0, texture_surface->Peek_D3D_Surface (), NULL);
+		DX8Wrapper::_Copy_DX8_Rects (curr_surface->Peek_D3D_Surface (), nullptr, 0, texture_surface->Peek_D3D_Surface (), nullptr);
 		REF_PTR_RELEASE (texture_surface);
-	
+
 		//
 		//	Assign this texture to any renderers that need it
 		//
@@ -427,8 +422,8 @@ Render2DSentenceClass::Build_Textures (void)
 void
 Render2DSentenceClass::Draw_Sentence (uint32 color)
 {
-	Render2DClass *curr_renderer	= NULL;
-	SurfaceClass *curr_surface		= NULL;
+	Render2DClass *curr_renderer	= nullptr;
+	SurfaceClass *curr_surface		= nullptr;
 
 	DrawExtents.Set (0, 0, 0, 0);
 
@@ -456,7 +451,7 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 					break;
 				}
 			}
-			
+
 			//
 			//	Create a new renderer if we couldn't find an appropriate one
 			//
@@ -469,7 +464,7 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 				curr_renderer->Set_Coordinate_Range (Render2DClass::Get_Screen_Resolution ());
 				ShaderClass *curr_shader = curr_renderer->Get_Shader ();
 				(*curr_shader) = Shader;
-				
+
 				//
 				//	Add it to our list
 				//
@@ -508,7 +503,7 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 		//
 		bool add_quad = true;
 		if (IsClippedEnabled) {
-			
+
 			//
 			//	Check for completely clipped
 			//
@@ -560,7 +555,7 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 		if (add_quad) {
 			//uv_rect.Bottom += 0.5f;
 			uv_rect *=  1.0F / ((float)desc.Width);
-#ifdef TEST_PLACEMENT	 
+#ifdef TEST_PLACEMENT
 			screen_rect.Left += offset*3;
 			screen_rect.Right += offset*3;
 #endif
@@ -588,7 +583,7 @@ Render2DSentenceClass::Draw_Sentence (uint32 color)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-Render2DSentenceClass::Record_Sentence_Chunk (void)
+Render2DSentenceClass::Record_Sentence_Chunk ()
 {
 	//
 	//	Do we have anything to store?
@@ -596,7 +591,7 @@ Render2DSentenceClass::Record_Sentence_Chunk (void)
 	int width = TextureOffset.I - TextureStartX;
 	if (width > 0) {
 		float char_height = Font->Get_Char_Height ();
-		
+
 		//
 		//	Build a structure that contains enough information
 		// to hold this portion of the sentence
@@ -611,7 +606,7 @@ Render2DSentenceClass::Record_Sentence_Chunk (void)
 		sentence_data.UVRect.Left			= TextureStartX;
 		sentence_data.UVRect.Top			= TextureOffset.J;
 		sentence_data.UVRect.Right			= TextureOffset.I;
-		sentence_data.UVRect.Bottom		= TextureOffset.J + char_height;		
+		sentence_data.UVRect.Bottom		= TextureOffset.J + char_height;
 
 		//
 		//	Add this information to our list
@@ -636,20 +631,20 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 		//
 		//	Unlock the last surface (if necessary)
 		//
-		if (LockedPtr != NULL) {
+		if (LockedPtr != nullptr) {
 			CurSurface->Unlock ();
-			LockedPtr = NULL;
+			LockedPtr = nullptr;
 		}
 	}
 
 	//
 	// Calculate the width of the text
-	//	
+	//
 	int text_width = 0;
 	for (int index = 0; text[index] != 0; index ++) {
 		text_width += Font->Get_Char_Spacing (text[index]);
 	}
-	
+
 	int char_height = Font->Get_Char_Height ();
 
 	//
@@ -657,16 +652,16 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 	//
 	CurrTextureSize = 256;
 	int best_tex_mem_usage = 999999999;
-	for (int pow2 = 6; pow2 <= 8; pow2 ++) {		
-		
+	for (int pow2 = 6; pow2 <= 8; pow2 ++) {
+
 		int size					= 1 << pow2;
 		int row_count			= (text_width / size) + 1;
 		int rows_per_texture	= size / (char_height + 1);
-		
+
 		//
 		//	Can we even fit one character on this texture?
 		//
-		if (rows_per_texture > 0) {			
+		if (rows_per_texture > 0) {
 
 			//
 			//	How many textures (at this size) would it take to render
@@ -700,9 +695,9 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 
 		//
 		//	Create the new surface
-		//	
+		//
 		CurSurface = NEW_REF (SurfaceClass, (CurrTextureSize, CurrTextureSize, WW3D_FORMAT_A4R4G4B4));
-		WWASSERT (CurSurface != NULL);
+		WWASSERT (CurSurface != nullptr);
 		CurSurface->Add_Ref ();
 
 		//
@@ -717,7 +712,7 @@ Render2DSentenceClass::Allocate_New_Surface (const WCHAR *text, bool justCalcExt
 	//	Reset to the upper left corner
 	//
 	TextureOffset.Set (0, 0);
-	TextureStartX = 0;	
+	TextureStartX = 0;
 	return ;
 }
 
@@ -738,22 +733,22 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 	int notCenteredHotkeyX = 0;
 	int notCenteredHotkeyY = 0;
 	Vector2 extent = Build_Sentence_Not_Centered(text,&notCenteredHotkeyX, &notCenteredHotkeyY, TRUE); //Get_Formatted_Text_Extents(text);
-	
+
 	//
 	//	Start fresh
 	//
 	Reset_Sentence_Data ();
 	Cursor.Set (0, 0);
-	
+
 	//
 	//	Ensure we have a surface to start with
 	//
-	if (CurSurface == NULL) {
+	if (CurSurface == nullptr) {
 		Allocate_New_Surface (text);
 	}
-	
-	
-	
+
+
+
 	//
 	//	Loop over all the characters in the string
 	//
@@ -790,7 +785,6 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				if( ParseHotKey && (*word == L'&') && (*word+1 != 0) && (*word+1 > L' ') && (*word+1 != L'\n'))
 				{
 					int offset = 0;
-					//Added By Saad
 					if (word_width != 0 )
 					{
 						const WCHAR *word_back = word;
@@ -801,19 +795,18 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 							offset =-1;
 						}
 					}
-					//
 					*word++;
 					calcHotKeyX = true;
 				}
-				
+
 				charWidth = Font->Get_Char_Spacing (*word++);
 				word_width += charWidth;
 				wordCount++;
-				
+
 				if (WrapWidth > 0 && word_width >= WrapWidth && useHardWordWrap)
 					break;
 			}
-			// 
+			//
 			// If this word is unworthy to be on the current line, decrement the space and break
 			//
 			if(WrapWidth > 0 && (line_width + word_width >= WrapWidth))
@@ -823,9 +816,9 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				//If that's the case, drop out and process the word anyway
 				//
 				if(charCount == 0)
-				{	
+				{
 					charCount +=wordCount - 1;
-					line_width += word_width - charWidth;	
+					line_width += word_width - charWidth;
 					if(*word == 0)
 						end = true;
 					break;
@@ -847,7 +840,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			// otherwise, increment the counts
 			//
 			charCount +=wordCount + 1;
-			line_width += word_width;	
+			line_width += word_width;
 			//
 			// We were some a new line character break and process
 			//
@@ -858,7 +851,6 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//
 			word_width = Font->Get_Char_Spacing (*word++);
 			wordCount = 0;
-			//Added By Saad
 			line_width += word_width;
 		}
 		//
@@ -872,7 +864,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			calcHotKeyX = false;
 			hotKeyPosX = Cursor.X + notCenteredHotkeyX;
 		}
-		
+
 		for(int i = 0; i <= charCount; i++) {
 			WCHAR ch = *text++;
 			dontBlit = false;
@@ -885,22 +877,22 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				dontBlit = true;
 			}
 			float char_spacing = Font->Get_Char_Spacing (ch);
-			
+
 			bool exceeded_texture_width	= ((TextureOffset.I + char_spacing) >= CurrTextureSize);
 			bool encountered_break_char	= (ch == L' ' || ch == L'\n' || ch == 0);
-			
+
 			//
 			//	Do we need to record this portion of the sentence to its own chunk?
 			//
 			if (exceeded_texture_width || encountered_break_char) {
 				Record_Sentence_Chunk ();
-				
+
 				//
 				//	Adjust the positions
 				//
 				Cursor.X			+= (TextureOffset.I - TextureStartX);
 				TextureStartX	= TextureOffset.I;
-				
+
 				//
 				//	Adjust the output coordinates
 				//
@@ -909,7 +901,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 				} else if ((ch == 0 )|| (ch == L'\n')) {
 					break;
 				}
-								
+
 				//
 				//	Did the text extend past the edge of the texture?
 				//
@@ -917,7 +909,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 					TextureStartX		= 0;
 					TextureOffset.I	= TextureStartX;
 					TextureOffset.J	+= char_height;
-					
+
 					//
 					//	Did the text extent completely off the texture?
 					//
@@ -930,26 +922,26 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			//	Adjust the output coordinates
 			//
 			if (ch != L'\n' && ch != L' ') {
-				
+
 				//
-				//	Ensure the surface is locked	
+				//	Ensure the surface is locked
 				//
-				if (LockedPtr == NULL) {
+				if (LockedPtr == nullptr) {
 					LockedPtr = (uint16 *)CurSurface->Lock (&LockedStride);
-					WWASSERT (LockedPtr != NULL);
+					WWASSERT (LockedPtr != nullptr);
 				}
-				
+
 				//
 				//	Check to ensure the text will fit on this texture
 				//
 				WWASSERT (((TextureOffset.I + char_spacing) < CurrTextureSize) && ((TextureOffset.J + char_height) < CurrTextureSize));
-				
+
 				//
 				//	Blit the character to the surface
 				//
 				if(!dontBlit)
 					Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);
-				
+
 				if (dontBlit) {
 					// we don't blit for a hot key character.  So add extra spacing.
 					char_spacing += Font->Get_Extra_Overlap();
@@ -958,7 +950,7 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 						char_spacing++;
 					}
 				}
-				
+
 				TextureOffset.I += char_spacing;
 			}
 		}
@@ -969,8 +961,8 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 		Cursor.Y += char_height;
 		line_width = 0;
 		}
-		
-		if(hkX)						
+
+		if(hkX)
 			*hkX = hotKeyPosX;
 		if(hkX)
 			*hkY = hotKeyPosY;
@@ -1006,19 +998,19 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	//
 	//	Ensure we have a surface to start with
 	//
-	if (CurSurface == NULL) {
+	if (CurSurface == nullptr) {
 		Allocate_New_Surface (text, justCalcExtents);
 	}
 
 	TextureOffset.Set (TEXTURE_OFFSET, 0);
-	TextureStartX = TEXTURE_OFFSET;	
+	TextureStartX = TEXTURE_OFFSET;
 
 	float char_height = Font->Get_Char_Height ();
 
 	//
 	//	Loop over all the characters in the string
 	//
-	while (text != NULL) {
+	while (text != nullptr) {
 		WCHAR ch = *text++;
 		dontBlit = false;
 		//
@@ -1067,7 +1059,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 				// Check to see if we need to wrap on this word-break
 				//
 				if (WrapWidth > 0) {
-					
+
 					//
 					//	Find the length of the next word
 					//
@@ -1099,7 +1091,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 				Cursor.Y += char_height;
 			}
 
-			
+
 			//
 			//	Did the text extend past the edge of the texture?
 			//
@@ -1116,17 +1108,17 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 				}
 			}
 		}
-		
+
 		if (ch != L'\n' ) {
 
 			//
-			//	Ensure the surface is locked	
+			//	Ensure the surface is locked
 			//
 			if (!justCalcExtents)
 			{
-				if (LockedPtr == NULL) {
+				if (LockedPtr == nullptr) {
 					LockedPtr = (uint16 *)CurSurface->Lock (&LockedStride);
-					WWASSERT (LockedPtr != NULL);
+					WWASSERT (LockedPtr != nullptr);
 				}
 			}
 
@@ -1140,10 +1132,10 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 			//
 			if (!justCalcExtents && !dontBlit )
 			{
-				Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);			
+				Font->Blit_Char (ch, LockedPtr, LockedStride, TextureOffset.I, TextureOffset.J);
 			}
 			TextureOffset.I += char_spacing;
-		} 
+		}
 	}
 
 	Vector2 extent;
@@ -1153,8 +1145,8 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 	Cursor = cursor;
 	TextureOffset = textureOffset;
 	TextureStartX = textureStartX;
-	
-	if(hkX)						
+
+	if(hkX)
 		*hkX = hotKeyPosX;
 	if(hkX)
 		*hkY = hotKeyPosY;
@@ -1171,18 +1163,20 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 void
 Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 {
-	if (text == NULL) {
+	if (text == nullptr) {
 		return ;
 	}
 
+	if (Font == nullptr)
+		return;
 
 	if(Centered && (WrapWidth > 0 || wcschr(text,L'\n')))
 		Build_Sentence_Centered(text, hkX, hkY);
 	else
 		Build_Sentence_Not_Centered(text, hkX, hkY);
-	
+
 	return;
-	
+
 }
 
 
@@ -1191,22 +1185,22 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 //	FontCharsClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-FontCharsClass::FontCharsClass (void) :
-	OldGDIFont(	NULL ),
-	OldGDIBitmap( NULL ),
-	GDIFont( NULL ),
-	GDIBitmap( NULL ),
-	GDIBitmapBits ( NULL ),
-	MemDC( NULL ),
+FontCharsClass::FontCharsClass () :
+	OldGDIFont(	nullptr ),
+	OldGDIBitmap( nullptr ),
+	GDIFont( nullptr ),
+	GDIBitmap( nullptr ),
+	GDIBitmapBits ( nullptr ),
+	MemDC( nullptr ),
 	CurrPixelOffset( 0 ),
 	PointSize( 0 ),
 	CharHeight( 0 ),
-	UnicodeCharArray( NULL ),
+	UnicodeCharArray( nullptr ),
 	FirstUnicodeChar( 0xFFFF ),
 	LastUnicodeChar( 0 ),
 	IsBold (false)
 {
-	AlternateUnicodeFont = NULL;
+	AlternateUnicodeFont = nullptr;
 	::memset( ASCIICharArray, 0, sizeof (ASCIICharArray) );
 	return ;
 }
@@ -1217,7 +1211,7 @@ FontCharsClass::FontCharsClass (void) :
 //	~FontCharsClass
 //
 ////////////////////////////////////////////////////////////////////////////////////
-FontCharsClass::~FontCharsClass (void) 
+FontCharsClass::~FontCharsClass ()
 {
 	while ( BufferList.Count() ) {
 		delete BufferList[0];
@@ -1238,12 +1232,12 @@ FontCharsClass::~FontCharsClass (void)
 const FontCharsClassCharDataStruct *
 FontCharsClass::Get_Char_Data (WCHAR ch)
 {
-	const FontCharsClassCharDataStruct *retval = NULL;
+	const FontCharsClassCharDataStruct *retval = nullptr;
 
-	if ( ch < 256 ) 
+	if ( ch < 256 )
 	{
 		retval = ASCIICharArray[ch];
-	} 
+	}
  	else if ( AlternateUnicodeFont && this != AlternateUnicodeFont )
 	{
 		return AlternateUnicodeFont->Get_Char_Data( ch );
@@ -1252,12 +1246,12 @@ FontCharsClass::Get_Char_Data (WCHAR ch)
 	{
 		Grow_Unicode_Array( ch );
 		retval = UnicodeCharArray[ch - FirstUnicodeChar];
-	}	
+	}
 
 	//
 	//	If the character wasn't found, then add it to our list
 	//
-	if ( retval == NULL ) {
+	if ( retval == nullptr ) {
 		retval = Store_GDI_Char( ch );
 	}
 
@@ -1275,7 +1269,7 @@ int
 FontCharsClass::Get_Char_Width (WCHAR ch)
 {
 	const FontCharsClassCharDataStruct	* data = Get_Char_Data( ch );
-	if ( data != NULL ) {
+	if ( data != nullptr ) {
 		return data->Width;
 	}
 
@@ -1292,7 +1286,7 @@ int
 FontCharsClass::Get_Char_Spacing (WCHAR ch)
 {
 	const FontCharsClassCharDataStruct	* data = Get_Char_Data( ch );
-	if ( data != NULL ) {
+	if ( data != nullptr ) {
 		if ( data->Width != 0 ) {
 			return data->Width - PixelOverlap - CharOverhang;
 		}
@@ -1311,7 +1305,7 @@ void
 FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, int y)
 {
 	const FontCharsClassCharDataStruct	* data = Get_Char_Data( ch );
-	if ( data != NULL && data->Width != 0 ) {
+	if ( data != nullptr && data->Width != 0 ) {
 
 		//
 		//	Setup the src and destination pointers
@@ -1328,12 +1322,12 @@ FontCharsClass::Blit_Char (WCHAR ch, uint16 *dest_ptr, int dest_stride, int x, i
 				uint16 curData = *src_ptr;
 				if (col<PixelOverlap) {
 					curData |= dest_ptr[col];
-				} 
+				}
 				dest_ptr[col] = curData;
 				src_ptr++;
 			}
 			dest_ptr	+= dest_inc;
-		}		
+		}
 	}
 
 	return ;
@@ -1359,13 +1353,13 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	if (ch == 'W') {
 		xOrigin = 1;
 	}
-	::ExtTextOutW( MemDC, xOrigin, 0, ETO_OPAQUE, &rect, &ch, 1, NULL);
+	::ExtTextOutW( MemDC, xOrigin, 0, ETO_OPAQUE, &rect, &ch, 1, nullptr);
 
 	//
 	//	Get the size of the character we just drew
 	//
 	SIZE char_size = { 0 };
-	::GetTextExtentPoint32W( MemDC, &ch, 1, &char_size );	
+	::GetTextExtentPoint32W( MemDC, &ch, 1, &char_size );
 	char_size.cx += PixelOverlap + xOrigin;
 	//
 	//	Get a pointer to the surface that this character should use
@@ -1373,13 +1367,13 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	Update_Current_Buffer( char_size.cx );
 	uint16* curr_buffer_p = BufferList[BufferList.Count () - 1]->Buffer;
 	curr_buffer_p += CurrPixelOffset;
-	
+
 	//
 	//	Copy the BMP contents to the buffer
 	//
 	int stride = (((width * 3) + 3) & ~3);
 	for (int row = 0; row < char_size.cy; row ++) {
-		
+
 		//
 		//	Compute the indices into the BMP and surface
 		//
@@ -1389,7 +1383,7 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 		//	Loop over each column
 		//
 		for (int col = 0; col < char_size.cx; col ++) {
-			
+
 			//
 			//	Get the pixel color at this location
 			//
@@ -1429,7 +1423,7 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 			if (pixel_value != 0) {
 				pixel_color = 0x0FFF;
 			}
-			
+
 			//
 			//	Convert the pixel intensity from 8bit to 4bit and
 			// store it in our buffer
@@ -1454,7 +1448,7 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 		ASCIICharArray[ch] = char_data;
 	} else {
 		UnicodeCharArray[ch - FirstUnicodeChar] = char_data;
-	}	
+	}
 
 	//
 	//	Advance the character position
@@ -1481,7 +1475,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 	//
 	bool needs_new_buffer = (BufferList.Count () == 0);
 	if (needs_new_buffer == false) {
-		
+
 		//
 		//	Would we extend past this buffer?
 		//
@@ -1493,7 +1487,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 	//
 	//	Do we need to create a new surface?
 	//
-	if (needs_new_buffer) 
+	if (needs_new_buffer)
 	{
 		FontCharsBuffer* new_buffer = W3DNEW FontCharsBuffer;
 		BufferList.Add( new_buffer );
@@ -1509,7 +1503,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 //	Create_GDI_Font
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 FontCharsClass::Create_GDI_Font (const char *font_name)
 {
 	HDC screen_dc = ::GetDC ((HWND)WW3D::Get_Window());
@@ -1546,7 +1540,7 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 								FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 								CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 								VARIABLE_PITCH, font_name);
-	
+
 	//
 	// Set-up the fields of the BITMAPINFOHEADER
 	//	Note: Top-down DIBs use negative height in Win32.
@@ -1571,7 +1565,7 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 													(const BITMAPINFO *)&bitmap_info,
 													DIB_RGB_COLORS,
 													(void **)&GDIBitmapBits,
-													NULL,
+													nullptr,
 													0L);
 
 	//
@@ -1597,12 +1591,14 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 	//
 	TEXTMETRIC text_metric = { 0 };
 	::GetTextMetrics (MemDC, &text_metric);
-	CharHeight = text_metric.tmHeight;	
+	CharHeight = text_metric.tmHeight;
 	CharAscent = text_metric.tmAscent;
 	CharOverhang = text_metric.tmOverhang;
 	if (doingGenerals) {
 		CharOverhang = 0;
 	}
+
+	return GDIFont != nullptr && GDIBitmap != nullptr;
 }
 
 
@@ -1612,34 +1608,34 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-FontCharsClass::Free_GDI_Font (void)
+FontCharsClass::Free_GDI_Font ()
 {
 	//
 	//	Select the old font back into the DC and delete
 	// our font object
 	//
-	if ( GDIFont != NULL ) {
+	if ( GDIFont != nullptr ) {
 		::SelectObject( MemDC, OldGDIFont );
 		::DeleteObject( GDIFont );
-		GDIFont = NULL;
+		GDIFont = nullptr;
 	}
 
 	//
 	//	Select the old bitmap back into the DC and delete
 	// our bitmap object
 	//
-	if ( GDIBitmap != NULL ) {
+	if ( GDIBitmap != nullptr ) {
 		::SelectObject( MemDC, OldGDIBitmap );
 		::DeleteObject( GDIBitmap );
-		GDIBitmap = NULL;
+		GDIBitmap = nullptr;
 	}
 
 	//
 	//	Delete our memory DC
 	//
-	if ( MemDC != NULL ) {		
+	if ( MemDC != nullptr ) {
 		::DeleteDC( MemDC );
-		MemDC = NULL;
+		MemDC = nullptr;
 	}
 
 	return ;
@@ -1651,7 +1647,7 @@ FontCharsClass::Free_GDI_Font (void)
 //	Initialize_GDI_Font
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 FontCharsClass::Initialize_GDI_Font (const char *font_name, int point_size, bool is_bold)
 {
 	//
@@ -1669,8 +1665,7 @@ FontCharsClass::Initialize_GDI_Font (const char *font_name, int point_size, bool
 	//
 	//	Create the actual font object
 	//
-	Create_GDI_Font (font_name);
-	return ;
+	return Create_GDI_Font (font_name);
 }
 
 
@@ -1718,7 +1713,7 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 	//
 	if ( ch >= FirstUnicodeChar && ch <= LastUnicodeChar ) {
 		return ;
-	} 
+	}
 
 	uint16 first_index	= min( FirstUnicodeChar, static_cast<uint16>(ch) );
 	uint16 last_index		= max( LastUnicodeChar, static_cast<uint16>(ch) );
@@ -1733,7 +1728,7 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 	//
 	//	Copy the contents of the old array into the new array
 	//
-	if ( UnicodeCharArray != NULL ) {
+	if ( UnicodeCharArray != nullptr ) {
 		int start_offset	= (FirstUnicodeChar - first_index);
 		int old_count		= (LastUnicodeChar - FirstUnicodeChar) + 1;
 		::memcpy (&new_array[start_offset], UnicodeCharArray, sizeof (FontCharsClassCharDataStruct *) * old_count);
@@ -1742,7 +1737,7 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 		//	Delete the old array
 		//
 		delete [] UnicodeCharArray;
-		UnicodeCharArray = NULL;
+		UnicodeCharArray = nullptr;
 	}
 
 	FirstUnicodeChar	= first_index;
@@ -1758,38 +1753,34 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 //
 ////////////////////////////////////////////////////////////////////////////////////
 void
-FontCharsClass::Free_Character_Arrays (void)
+FontCharsClass::Free_Character_Arrays ()
 {
-	if ( UnicodeCharArray != NULL ) {
+	if ( UnicodeCharArray != nullptr ) {
 
 		int count = (LastUnicodeChar - FirstUnicodeChar) + 1;
-		
+
 		//
 		//	Delete each member of the unicode array
 		//
 		for (int index = 0; index < count; index ++) {
-			if ( UnicodeCharArray[index] != NULL ) {
-				delete UnicodeCharArray[index];
-				UnicodeCharArray[index] = NULL;
-			}
+			delete UnicodeCharArray[index];
+			UnicodeCharArray[index] = nullptr;
 		}
 
 		//
 		//	Delete the array itself
 		//
 		delete [] UnicodeCharArray;
-		UnicodeCharArray = NULL;
+		UnicodeCharArray = nullptr;
 	}
 
 	//
 	//	Delete each member of the ascii character array
 	//
-	for (int index = 0; index < 256; index ++) {		
-		if ( ASCIICharArray[index] != NULL ) {
-			delete ASCIICharArray[index];
-			ASCIICharArray[index] = NULL;
-		}
+	for (int index = 0; index < 256; index ++) {
+		delete ASCIICharArray[index];
+		ASCIICharArray[index] = nullptr;
 	}
-	
+
 	return ;
 }

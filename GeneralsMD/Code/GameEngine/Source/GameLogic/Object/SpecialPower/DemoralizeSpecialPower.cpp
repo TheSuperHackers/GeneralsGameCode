@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #ifdef ALLOW_DEMORALIZE
 
@@ -43,7 +43,7 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
+DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData()
 {
 
 	m_baseRange = 0.0f;
@@ -52,30 +52,30 @@ DemoralizeSpecialPowerModuleData::DemoralizeSpecialPowerModuleData( void )
 	m_baseDurationInFrames = 0;
 	m_bonusDurationPerCapturedInFrames = 0;
 	m_maxDurationInFrames = 0;
-	m_fxList = NULL;
+	m_fxList = nullptr;
 
-}  // end DemoralizeSpecialPowerModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void DemoralizeSpecialPowerModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 	SpecialPowerModuleData::buildFieldParse( p );
-	
-	static const FieldParse dataFieldParse[] = 
+
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "BaseRange",									INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_baseRange ) },
-		{ "BonusRangePerCaptured",			INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured ) },
-		{ "MaxRange",										INI::parseReal,			NULL,			offsetof( DemoralizeSpecialPowerModuleData, m_maxRange ) },
-		{ "BaseDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_baseDurationInFrames ) },
-		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
-		{ "MaxDuration",								INI::parseDurationUnsignedInt,	NULL,   offsetof( DemoralizeSpecialPowerModuleData, m_maxDurationInFrames ) },
-		{ "FXList",											INI::parseFXList,								NULL,		offsetof( DemoralizeSpecialPowerModuleData, m_fxList ) },
+		{ "BaseRange",									INI::parseReal,			nullptr,			offsetof( DemoralizeSpecialPowerModuleData, m_baseRange ) },
+		{ "BonusRangePerCaptured",			INI::parseReal,			nullptr,			offsetof( DemoralizeSpecialPowerModuleData, m_bonusRangePerCaptured ) },
+		{ "MaxRange",										INI::parseReal,			nullptr,			offsetof( DemoralizeSpecialPowerModuleData, m_maxRange ) },
+		{ "BaseDuration",								INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_baseDurationInFrames ) },
+		{ "BonusDurationPerCaptured",		INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_bonusDurationPerCapturedInFrames ) },
+		{ "MaxDuration",								INI::parseDurationUnsignedInt,	nullptr,   offsetof( DemoralizeSpecialPowerModuleData, m_maxDurationInFrames ) },
+		{ "FXList",											INI::parseFXList,								nullptr,		offsetof( DemoralizeSpecialPowerModuleData, m_fxList ) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add( dataFieldParse );
-	
-}  // end buildFieldParse
+
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,14 +87,14 @@ DemoralizeSpecialPower::DemoralizeSpecialPower( Thing *thing, const ModuleData *
 												: SpecialPowerModule( thing, moduleData )
 {
 
-}  // end DemoralizeSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DemoralizeSpecialPower::~DemoralizeSpecialPower( void )
+DemoralizeSpecialPower::~DemoralizeSpecialPower()
 {
 
-}  // end ~DemoralizeSpecialPower
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		return;
 
 	// sanity
-	if( loc == NULL )
+	if( loc == nullptr )
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
@@ -132,7 +132,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		// cap at the max
 		if( duration > modData->m_maxDurationInFrames )
 			duration = modData->m_maxDurationInFrames;
-					
+
 		// increase the range for every prisoner we got
 		range += contain->getContainCount() * modData->m_bonusRangePerCaptured;
 
@@ -140,7 +140,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		if( range > modData->m_maxRange )
 			range = modData->m_maxRange;
 
-	}  // end if
+	}
 
 	// scan the objects in the area range and demoralize them
 	PartitionFilterRelationship filter1( source, PartitionFilterRelationship::ALLOW_ENEMIES |
@@ -148,7 +148,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 	PartitionFilterAcceptByKindOf filter2( MAKE_KINDOF_MASK( KINDOF_INFANTRY ),
 																				 KINDOFMASK_NONE );
 	PartitionFilterSameMapStatus filterMapStatus(source);
-	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, NULL };
+	PartitionFilter *filters[] = { &filter1, &filter2, &filterMapStatus, nullptr };
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( loc,
 																																		 range,
 																																		 FROM_CENTER_2D,
@@ -164,18 +164,18 @@ void DemoralizeSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real 
 		if( ai )
 			ai->setDemoralized( duration );
 
-	}  // end for obj
+	}
 
 	// play an effect at the destination location
 	if( modData->m_fxList )
 	{
-	
+
 		// execute FX
 		FXList::doFXPos( modData->m_fxList, loc );
 
-	}  // end if
-		
-}    // end doSpecialPowerAtLocation
+	}
+
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ void DemoralizeSpecialPower::doSpecialPowerAtObject( const Object *obj, Real ang
 	if( obj )
 		doSpecialPowerAtLocation( obj->getPosition(), angle, commandOptions );
 
-}  // end doSpecialPowerAtObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -198,7 +198,7 @@ void DemoralizeSpecialPower::crc( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -216,18 +216,18 @@ void DemoralizeSpecialPower::xfer( Xfer *xfer )
 	// extend base class
 	SpecialPowerModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DemoralizeSpecialPower::loadPostProcess( void )
+void DemoralizeSpecialPower::loadPostProcess()
 {
 
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 
 #endif	// #ifdef ALLOW_DEMORALIZE
 

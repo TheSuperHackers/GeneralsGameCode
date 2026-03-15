@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __XFERDEEPCRC_H_
-#define __XFERDEEPCRC_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/Xfer.h"
 #include "Common/XferCRC.h"
@@ -46,12 +43,12 @@ class XferDeepCRC : public XferCRC
 
 public:
 
-	XferDeepCRC( void );
-	virtual ~XferDeepCRC( void );
+	XferDeepCRC();
+	virtual ~XferDeepCRC();
 
 	// Xfer methods
 	virtual void open( AsciiString identifier );		///< start a CRC session with this xfer instance
-	virtual void close( void );											///< stop CRC session
+	virtual void close();											///< stop CRC session
 
 	// xfer methods
 	virtual void xferMarkerLabel( AsciiString asciiStringData );  ///< xfer ascii string (need our own)
@@ -64,6 +61,3 @@ protected:
 
 	FILE * m_fileFP;																			///< pointer to file
 };
-
-#endif // __XFERDEEPCRC_H_
-

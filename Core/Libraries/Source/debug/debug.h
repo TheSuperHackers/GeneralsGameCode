@@ -26,17 +26,13 @@
 //
 // Debugging module
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_H // Include guard
-#define DEBUG_H
 
-/** 
+#pragma once
+
+/**
   \page lib_var Library variants
 
-  Generally speaking there are four different library variants:
-  - Internal: all asserts/checks/logs, full optimizations (RTS_INTERNAL macro defined)
+  Generally speaking there are three different library variants:
   - %Debug: all asserts/checks/logs, no optimizations (RTS_DEBUG macro defined)
   - Profile: all asserts/checks/logs, full optimizations, profiling active (RTS_PROFILE macro defined)
   - Release: no asserts/checks/logs, full optimizations
@@ -84,12 +80,8 @@
   - Release: XXX.lib
 */
 
-#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
-	#error "Only either RTS_DEBUG or RTS_INTERNAL should ever be defined"
-#endif
-
-// Define which libraries to use. 
-#if defined(RTS_INTERNAL) || defined(RTS_DEBUG) || defined(RTS_PROFILE)
+// Define which libraries to use.
+#if defined(RTS_DEBUG) || defined(RTS_PROFILE)
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #endif
@@ -109,5 +101,3 @@
 #include "debug_cmd.h"
 #include "debug_stack.h"
 #include "debug_debug.h"
-
-#endif // DEBUG_H

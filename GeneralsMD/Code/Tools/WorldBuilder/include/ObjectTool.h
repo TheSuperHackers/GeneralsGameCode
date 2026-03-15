@@ -22,17 +22,14 @@
 
 #pragma once
 
-#ifndef OBJECTTOOL_H
-#define OBJECTTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************/
 /**                             ObjectTool
-	 Does the BlendEdgesOut tool operation. 
+	 Does the BlendEdgesOut tool operation.
 ***************************************************************************/
 ///  Blend edges out tool.
-class ObjectTool : public Tool 
+class ObjectTool : public Tool
 {
 protected:
 	CPoint m_downPt2d;
@@ -53,6 +50,3 @@ public:
 	virtual void activate(); ///< Become the current tool.
 	virtual void deactivate(); ///< Become not the current tool.
 };
-
-
-#endif //TOOL_H

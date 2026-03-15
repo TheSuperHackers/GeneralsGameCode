@@ -24,12 +24,12 @@
 
 // FILE: AcademyStats.h ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Los Angeles                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2003 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Los Angeles
+//
+//                       Confidential Information
+//                Copyright (C) 2003 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -38,15 +38,12 @@
 //
 // Created:    Kris Morness, July 2003
 //
-// Desc:			 Keeps track of various statistics in order to provide advice to 
+// Desc:			 Keeps track of various statistics in order to provide advice to
 //             the player about how to improve playing.
 //
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-#ifndef __ACADEMY_STATS_H
-#define __ACADEMY_STATS_H
 
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
@@ -74,8 +71,10 @@ enum AcademyClassificationType CPP_11(: Int)
 	ACT_NONE,
 	ACT_UPGRADE_RADAR,
 	ACT_SUPERPOWER,
+
+	ACT_COUNT
 };
-extern const char *TheAcademyClassificationTypeNames[]; //Change above, change this!
+extern const char *const TheAcademyClassificationTypeNames[]; //Change above, change this!
 
 
 // ----------------------------------------------------------------------------------------------
@@ -92,7 +91,7 @@ public:
 	Bool isFirstUpdate() const { return m_firstUpdate; }
 	void setFirstUpdate( Bool set ) { m_firstUpdate = set; }
 
-	void recordProduction( const Object *obj, const Object *constructer );
+	void recordProduction( const Object *obj, const Object *constructor );
 	void recordUpgrade( const UpgradeTemplate *upgrade, Bool granted );
 	void recordSpecialPowerUsed( const SpecialPowerTemplate *spTemplate );
 	void recordIncome();
@@ -131,7 +130,7 @@ protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 
@@ -195,7 +194,7 @@ private:
 	//13) Extra gathers built?
 	UnsignedInt m_gatherersBuilt;
 
-	//14) Heros built?
+	//14) Heroes built?
 	UnsignedInt m_heroesBuilt;
 
 	//+------------------------------+
@@ -241,7 +240,7 @@ private:
 	//25) Did the player use the new alternate interface in the options?
 	//Uses TheGlobalData->m_useAlternateMouse
 
-	//26) Player did not use the new "double click location attack move/guard" 
+	//26) Player did not use the new "double click location attack move/guard"
 	UnsignedInt m_doubleClickAttackMoveOrdersGiven;
 
   //27) Built barracks within 5 minutes?
@@ -275,6 +274,3 @@ private:
 	//35) Did the player ever create a "Firestorm" with his MiGs or Inferno Cannons?
 	UnsignedInt m_firestormsCreated;
 };
-
-#endif // __ACADEMY_STATS_H
-

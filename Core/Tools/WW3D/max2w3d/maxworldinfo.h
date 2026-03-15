@@ -36,14 +36,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef MAXWORLDINFO_H
-#define MAXWORLDINFO_H
-
+#pragma once
 
 #include <max.h>
 #include "meshbuild.h"
 #include "nodelist.h"
-#include "Vector.H"
+#include "Vector.h"
 
 
 class GeometryExportTaskClass;
@@ -60,13 +58,13 @@ class MaxWorldInfoClass : public WorldInfoClass
 		MaxWorldInfoClass(DynamicVectorClass<GeometryExportTaskClass *> & mesh_list)
 			:	MeshList (mesh_list),
 				SmoothBetweenMeshes (true),
-				CurrentTask(NULL),
+				CurrentTask(nullptr),
 				CurrentTime(0)					{ }
 		virtual ~MaxWorldInfoClass(void)	{ }
 
-		// Public methods		
+		// Public methods
 		virtual Vector3	Get_Shared_Vertex_Normal(Vector3 pos, int smgroup);
-		
+
 		virtual GeometryExportTaskClass *	Get_Current_Task(void) const								{ return CurrentTask; }
 		virtual void								Set_Current_Task(GeometryExportTaskClass * task)	{ CurrentTask = task; }
 
@@ -78,7 +76,7 @@ class MaxWorldInfoClass : public WorldInfoClass
 
 		virtual void		Allow_Mesh_Smoothing (bool onoff)	{ SmoothBetweenMeshes = onoff; }
 		virtual bool		Are_Meshes_Smoothed (void) const		{ return SmoothBetweenMeshes; }
-		
+
 	private:
 
 		DynamicVectorClass<GeometryExportTaskClass *> &	MeshList;
@@ -87,7 +85,3 @@ class MaxWorldInfoClass : public WorldInfoClass
 		Matrix3				ExportTrans;
 		bool					SmoothBetweenMeshes;
 };
-
-
-
-#endif

@@ -18,12 +18,12 @@
 
 // FILE: ImageInfo.h //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    ImagePacker
@@ -38,9 +38,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __IMAGEINFO_H_
-#define __IMAGEINFO_H_
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -61,7 +58,7 @@ class ImageInfo
 {
 
 public:
-	
+
 	enum
 	{
 		UNPACKED					= 0x00000001,  ///< this image has not yet been packed
@@ -98,10 +95,10 @@ public:
 	TexturePage *m_page;  ///< pointer to page this image is now packed on
 	ImageInfo *m_nextPageImage;  ///< next image on texture page
 	ImageInfo *m_prevPageImage;  ///< previous image on texture page
-	IRegion2D m_pagePos;  /** once placed on a texture page this has the 
+	IRegion2D m_pagePos;  /** once placed on a texture page this has the
 												coords of the image on the page, it does not include
 												any padding from stretching borders and gutters */
-	
+
 	UnsignedInt m_fitBits;  /**< bit flags of the region used to fit this image on
 													a page and therefore to create m_pagePos */
 	ICoord2D m_gutterUsed;  ///< the gutter size actually used in this image fit
@@ -111,6 +108,3 @@ public:
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-#endif // __IMAGEINFO_H_
-

@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __RAILROADGUIDE_AI_UPDATE_H_
-#define __RAILROADGUIDE_AI_UPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
@@ -48,36 +45,36 @@ class RailroadBehaviorModuleData : public PhysicsBehaviorModuleData
 
 public:
 
-	RailroadBehaviorModuleData( void );
+	RailroadBehaviorModuleData();
 	static void buildFieldParse( MultiIniFieldParse &p )
 	{
 		PhysicsBehaviorModuleData::buildFieldParse( p );
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "PathPrefixName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
-			{ "CrashFXTemplateName",		INI::parseAsciiString, NULL,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
-			{ "IsLocomotive",		INI::parseBool, NULL,	offsetof( RailroadBehaviorModuleData, m_isLocomotive ) },
-			{ "CarriageTemplateName",  INI::parseAsciiStringVectorAppend, NULL, offsetof(RailroadBehaviorModuleData, m_carriageTemplateNameData) },
-			{ "BigMetalBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_bigMetalImpactDefaultSound) },
-			{ "SmallMetalBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_smallMetalImpactDefaultSound) },
-			{ "MeatyBounceSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_meatyImpactDefaultSound) },
-			{ "RunningGarrisonSpeedMax",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_runningGarrisonSpeedMax) },
-			{ "KillSpeedMin",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_killSpeedMin) },
-			{ "SpeedMax",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_speedMax) },
-			{ "Acceleration",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_acceleration) },
-			{ "Braking",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_braking) },
-			{ "WaitAtStationTime",			INI::parseDurationUnsignedInt,	NULL,	offsetof( RailroadBehaviorModuleData, m_waitAtStationTime) },
-			{ "RunningSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_runningSound) },
-			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
-			{ "WhistleSound",			INI::parseAudioEventRTS,	NULL,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
-			{ "Friction",			INI::parseReal,	NULL,	offsetof( RailroadBehaviorModuleData, m_friction) },
+			{ "PathPrefixName",		INI::parseAsciiString, nullptr,	offsetof( RailroadBehaviorModuleData, m_pathPrefixName ) },
+			{ "CrashFXTemplateName",		INI::parseAsciiString, nullptr,	offsetof( RailroadBehaviorModuleData, m_CrashFXTemplateName ) },
+			{ "IsLocomotive",		INI::parseBool, nullptr,	offsetof( RailroadBehaviorModuleData, m_isLocomotive ) },
+			{ "CarriageTemplateName",  INI::parseAsciiStringVectorAppend, nullptr, offsetof(RailroadBehaviorModuleData, m_carriageTemplateNameData) },
+			{ "BigMetalBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_bigMetalImpactDefaultSound) },
+			{ "SmallMetalBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_smallMetalImpactDefaultSound) },
+			{ "MeatyBounceSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_meatyImpactDefaultSound) },
+			{ "RunningGarrisonSpeedMax",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_runningGarrisonSpeedMax) },
+			{ "KillSpeedMin",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_killSpeedMin) },
+			{ "SpeedMax",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_speedMax) },
+			{ "Acceleration",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_acceleration) },
+			{ "Braking",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_braking) },
+			{ "WaitAtStationTime",			INI::parseDurationUnsignedInt,	nullptr,	offsetof( RailroadBehaviorModuleData, m_waitAtStationTime) },
+			{ "RunningSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_runningSound) },
+			{ "ClicketyClackSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_clicketyClackSound) },
+			{ "WhistleSound",			INI::parseAudioEventRTS,	nullptr,	offsetof( RailroadBehaviorModuleData, m_whistleSound) },
+			{ "Friction",			INI::parseReal,	nullptr,	offsetof( RailroadBehaviorModuleData, m_friction) },
 			{ 0, 0, 0, 0 }
 		};
 
 		p.add( dataFieldParse );
 
-	}  // end buildFieldParse
+	}
 
 	TemplateNameList m_carriageTemplateNameData;
 	AsciiString m_pathPrefixName;		///< prefix to use for waypont start and end points we'll look for
@@ -93,13 +90,13 @@ public:
 	UnsignedInt m_waitAtStationTime;
 	AudioEventRTS			m_runningSound;
 	AudioEventRTS			m_clicketyClackSound;
-	AudioEventRTS				m_bigMetalImpactDefaultSound;		
-	AudioEventRTS				m_smallMetalImpactDefaultSound;	
-	AudioEventRTS				m_meatyImpactDefaultSound;			
-	AudioEventRTS				m_whistleSound;						
+	AudioEventRTS				m_bigMetalImpactDefaultSound;
+	AudioEventRTS				m_smallMetalImpactDefaultSound;
+	AudioEventRTS				m_meatyImpactDefaultSound;
+	AudioEventRTS				m_whistleSound;
 };
 //-------------------------------------------------------------------------------------------------
- 
+
 //-------------------------------------------------------------------------------------------------
 
 
@@ -109,12 +106,12 @@ public:
 
 struct TrackPoint
 {
-	TrackPoint( void )
+	TrackPoint()
 	{
 		clear();
 	};
 
-	void clear( void )
+	void clear()
 	{
 		m_position.set(0,0,0);
 		m_distanceFromPrev = 0;
@@ -129,7 +126,7 @@ struct TrackPoint
 	};
 
 
-	Int getHandle( void )
+	Int getHandle()
 	{
 		return m_handle;
 	};
@@ -151,16 +148,16 @@ typedef std::list<TrackPoint> TrackPointList;
 struct TrainTrack
 {
 
-	TrainTrack( void ) // a constructor 4 u
+	TrainTrack() // a constructor 4 u
 	{
 		clear();
 		incReference();
 	};
 
 
-	void clear( void ) 
-	{ 
-		m_pointList.clear(); 
+	void clear()
+	{
+		m_pointList.clear();
 		m_isLooping = FALSE;
 		m_isValid = FALSE;
 		m_refCount = 0;
@@ -171,13 +168,13 @@ struct TrainTrack
 	Bool m_isValid;
 	Real m_length;
 
-	void incReference(); 
-	Bool releaseReference(); 
+	void incReference();
+	Bool releaseReference();
 
-	// To protect the track form ever going out of sync between cars on the same train... 
+	// To protect the track form ever going out of sync between cars on the same train...
 	// I restrict write access to the first referencer, before a second one is added (the locomotive)
-	TrackPointList* getWritablePointList( void ) { return m_refCount == 1 ? &m_pointList : NULL; };
-	const TrackPointList* getPointList( void ) { return &m_pointList; };
+	TrackPointList* getWritablePointList() { return m_refCount == 1 ? &m_pointList : nullptr; };
+	const TrackPointList* getPointList() { return &m_pointList; };
 
 private:
 	TrackPointList m_pointList;
@@ -214,28 +211,28 @@ public:
 	};
 
 	typedef std::vector<AsciiString> TemplateNameVector;
-	typedef TemplateNameVector::const_iterator TemplateNameIterator;;
-	
+	typedef TemplateNameVector::const_iterator TemplateNameIterator;
+
 
 
 	//UpdateModule methods
 //	virtual SleepyUpdatePhase getUpdatePhase() const { return PHASE_FINAL; }
 
 	// PhysicsBehavior methods
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
-	virtual Bool wouldLikeToCollideWith(const Object* other) const {return FALSE;}; // will need to add this!
-	virtual Bool isHijackedVehicleCrateCollide() const {return FALSE;};
-	virtual Bool isCarBombCrateCollide() const {return FALSE;};
-	virtual Bool isRailroad() const ;
-	virtual UpdateSleepTime update( void );
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
+	virtual Bool wouldLikeToCollideWith(const Object* other) const override {return FALSE;}; // will need to add this!
+	virtual Bool isHijackedVehicleCrateCollide() const override {return FALSE;};
+	virtual Bool isCarBombCrateCollide() const override {return FALSE;};
+	virtual Bool isRailroad() const override;
+	virtual UpdateSleepTime update() override;
 
 	// TRAINY METHODS
 	void getPulled( PullInfo *info );
-	void destroyTheWholeTrainNow( void );
+	void destroyTheWholeTrainNow();
 	void hitchNewCarriagebyTemplate( ObjectID parentID, const TemplateNameVector& list, TemplateNameIterator& iter, TrainTrack *trackPointList );
 	void hitchNewCarriagebyProximity( ObjectID parentID, TrainTrack *trackPointList );
-	void disembark( void );
-	Bool hasEverBeenHitched( void ) { return m_hasEverBeenHitched; };
+	void disembark();
+	Bool hasEverBeenHitched() { return m_hasEverBeenHitched; };
 
 protected:
 
@@ -257,8 +254,8 @@ protected:
 
 	// our methods
 	void updatePositionTrackDistance( PullInfo *pullerInfo, PullInfo *myInfo );
-	void loadTrackData( void );
-	void createCarriages( void );
+	void loadTrackData();
+	void createCarriages();
 	void FindPosByPathDistance( Coord3D *pos, const Real dist, const Real length, Bool setState = FALSE );
 	void playImpactSound(Object *victim, const Coord3D *impactPosition);
 
@@ -271,10 +268,10 @@ protected:
 	AudioEventRTS			m_clicketyClackSound;
 	AudioEventRTS			m_runningSound;
 	AudioHandle				m_runningSoundHandle;
-	
+
 	TrainTrack *m_track;
 
-	Int m_currentPointHandle; 
+	Int m_currentPointHandle;
 	Int m_waitAtStationTimer;
 
 	//Flags
@@ -283,12 +280,12 @@ protected:
 	Bool m_trackDataLoaded; ///< have I TRIED to load track data, yet? I only try once!
 	Bool m_waitingInWings; /// I have not entered the real track yet, so leave me alone
 	Bool m_endOfLine;				/// I have reached the end of a non looping track
-	Bool m_isLocomotive; ///< Am I a locomotive, 
-	Bool m_isLeadCarraige; ///< Am the carraige in front,  
-	Int m_wantsToBeLeadCarraige; ///< Am the carraige in front,  
-	Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get theres
-	Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint, 
-												//  i.e. do I provide the movement and scheduling AI for m_trailerID 
+	Bool m_isLocomotive; ///< Am I a locomotive,
+	Bool m_isLeadCarriage; ///< Am the carraige in front,
+	Int m_wantsToBeLeadCarriage; ///< Am the carraige in front,
+	Bool m_disembark; ///< If I wait at a station, I should also evacuate everybody when I get there
+	Bool m_inTunnel; ///< Am I in a tunnel, so I wil not snap to ground height, until the next waypoint,
+												//  i.e. do I provide the movement and scheduling AI for m_trailerID
 												//  And therefore for his and his and his..........
 
 	ConductorState m_conductorState;
@@ -297,7 +294,3 @@ protected:
 
 
 };
-
-
-#endif  // end __RAILROAD_GUIDE_AI_UPDATE_H_
-

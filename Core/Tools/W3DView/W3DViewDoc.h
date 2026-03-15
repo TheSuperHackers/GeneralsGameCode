@@ -20,12 +20,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_W3DVIEWDOC_H__2BB39E31_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_W3DVIEWDOC_H__2BB39E31_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #include "scene.h"
 #include "chunkio.h"
@@ -116,12 +111,12 @@ public:
 	//
 	CameraClass *			Get2DCamera (void) const				{ return m_pC2DCamera; }
 	CameraClass *			GetBackObjectCamera (void) const		{ return m_pCBackObjectCamera; }
-	SceneClass *			Get2DScene (void) const					{ return m_pC2DScene; }        
+	SceneClass *			Get2DScene (void) const					{ return m_pC2DScene; }
 	SceneClass *			GetCursorScene (void) const			{ return m_pCursorScene; }
 	ViewerSceneClass *	GetScene (void) const					{ return m_pCScene; }
 	SceneClass *			GetBackObjectScene (void) const		{ return m_pCBackObjectScene; }
 	LightClass *			GetSceneLight (void) const				{ return m_pCSceneLight; }
-	RenderObjClass *		GetDisplayedObject (void) const		{ return m_pCRenderObj; }	
+	RenderObjClass *		GetDisplayedObject (void) const		{ return m_pCRenderObj; }
 	HAnimClass *			GetCurrentAnimation (void) const		{ return m_pCAnimation; }
 	const HTreeClass *	Get_Current_HTree (void) const;
 
@@ -135,14 +130,14 @@ public:
 	bool					Is_Initialized (void)	{ return m_IsInitialized; }
 
 	void					Reload_Displayed_Object (void);
-	void					Display_Emitter (ParticleEmitterClass *pemitter = NULL, bool use_global_reset_flag = true, bool allow_reset = true);
-	void					DisplayObject (RenderObjClass *pCModel = NULL, bool use_global_reset_flag = true, bool allow_reset = true, bool add_ghost = false);
+	void					Display_Emitter (ParticleEmitterClass *pemitter = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
+	void					DisplayObject (RenderObjClass *pCModel = nullptr, bool use_global_reset_flag = true, bool allow_reset = true, bool add_ghost = false);
 	BOOL					SaveSettings (LPCTSTR pszFilename, DWORD dwSettingsMask);
 	BOOL					LoadSettings (LPCTSTR pszFileName);
 	CGraphicView *		GetGraphicView (void);
 	CDataTreeView *	GetDataTreeView (void);
 
-	void					Build_Emitter_List (EmitterInstanceListClass *emitter_list, LPCTSTR emitter_name, RenderObjClass *render_obj = NULL);
+	void					Build_Emitter_List (EmitterInstanceListClass *emitter_list, LPCTSTR emitter_name, RenderObjClass *render_obj = nullptr);
 
 	//
 	//  Animation methods
@@ -150,7 +145,7 @@ public:
 	void					Make_Movie (void);
 	void					ResetAnimation (void);
 	void					StepAnimation (int frame_inc = 1);
-	void					PlayAnimation (RenderObjClass *pobj, LPCTSTR panim_name = NULL, bool use_global_reset_flag = true, bool allow_reset = true);
+	void					PlayAnimation (RenderObjClass *pobj, LPCTSTR panim_name = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
 	void					PlayAnimation (RenderObjClass *pobj, HAnimComboClass *pcombo, bool use_global_reset_flag = true, bool allow_reset = true);
 	void					UpdateFrame (float time_slice);
 	void					SetAnimationBlend (BOOL bBlend)	{ m_bAnimBlend = bBlend; }
@@ -196,7 +191,7 @@ public:
 	//
 	//	Scene methods
 	//
-	void					Remove_Object_From_Scene (RenderObjClass *prender_obj = NULL);
+	void					Remove_Object_From_Scene (RenderObjClass *prender_obj = nullptr);
 
 	//
 	//	Emitter serialization methods
@@ -216,7 +211,7 @@ public:
 	//
 	void					Auto_Assign_Bones (void);
 	bool					Save_Selected_Aggregate (void);
-	bool					Save_Current_Aggregate (const CString &filename);		  
+	bool					Save_Current_Aggregate (const CString &filename);
 
 	//
 	//	Sound object methods
@@ -229,12 +224,12 @@ public:
 	//
 	bool					Save_Current_LOD (const CString &filename);
 	bool					Save_Selected_LOD (void);
-	void					Switch_LOD (int increment = 1, RenderObjClass *render_obj = NULL);
+	void					Switch_LOD (int increment = 1, RenderObjClass *render_obj = nullptr);
 
 	//
-	// Alternate Material interface.  
+	// Alternate Material interface.
 	//
-	void					Toggle_Alternate_Materials(RenderObjClass * obj = NULL);
+	void					Toggle_Alternate_Materials(RenderObjClass * obj = nullptr);
 
 	//
 	//	Prototype methods
@@ -243,7 +238,7 @@ public:
 	void					Update_LOD_Prototype (HLodClass &hlod);
 
 	//
-	//	Cursor managment
+	//	Cursor management
 	//
 	void					Show_Cursor (bool onoff);
 	void					Set_Cursor (LPCTSTR resource_name);
@@ -253,7 +248,7 @@ public:
 	//
 	//	Particle methods
 	//
-	int					Count_Particles (RenderObjClass *render_obj = NULL);
+	int					Count_Particles (RenderObjClass *render_obj = nullptr);
 	void					Update_Particle_Count (void);
 
 	//
@@ -273,7 +268,7 @@ public:
 	//
 	void					Copy_Assets_To_Dir (LPCTSTR directory);
 	bool					Lookup_Path (LPCTSTR asset_name, CString &path);
-	const char *		Get_Last_Path (void) const { return (m_LastPath.IsEmpty () ? NULL : (const char *)m_LastPath); }
+	const char *		Get_Last_Path (void) const { return (m_LastPath.IsEmpty () ? nullptr : (const char *)m_LastPath); }
 
 	//
 	//	Texture search paths
@@ -284,11 +279,11 @@ public:
 	void					Set_Texture_Path1 (LPCTSTR path);
 	void					Set_Texture_Path2 (LPCTSTR path);
 
-	// 
+	//
 	// Dazzle rendering support
 	//
 	void					Render_Dazzles(CameraClass * camera);
-		
+
 private:
 
 	//////////////////////////////////////////////////////////////////
@@ -303,7 +298,7 @@ private:
 	RenderObjClass *		m_pCBackgroundObject;
 	HAnimClass *			m_pCAnimation;
 	HAnimComboClass *		m_pCAnimCombo;
-	LightClass *			m_pCSceneLight;	  
+	LightClass *			m_pCSceneLight;
 	Bitmap2DObjClass *	m_pCBackgroundBMP;
 	CameraClass *			m_pC2DCamera;
 	CameraClass *			m_pCBackObjectCamera;
@@ -311,7 +306,7 @@ private:
 	Vector3					m_backgroundColor;
 	CString					m_stringBackgroundBMP;
 	CString					m_stringBackgroundObject;
-	
+
 	bool						m_bCompress_channel_Q;
 	int						m_nChannelQnBytes;
 	float						m_CurrentFrame;
@@ -337,7 +332,3 @@ private:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_W3DVIEWDOC_H__2BB39E31_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-
-

@@ -19,7 +19,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // FastAllocator.h
 //
-// Implements simple and fast memory allocators. Includes sample code for 
+// Implements simple and fast memory allocators. Includes sample code for
 // STL and overriding of specific or global new/delete.
 //
 // Allocators are very fast and prevent memory fragmentation. They use up
@@ -27,13 +27,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#ifndef FASTALLOCATOR_H
-#define FASTALLOCATOR_H
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
 
 //#define MEMORY_OVERWRITE_TEST
 
@@ -47,7 +41,6 @@
 #include "mutex.h"
 #include <malloc.h>
 #include <stddef.h> //size_t & ptrdiff_t definition
-#include <string.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Forward Declarations
@@ -69,8 +62,8 @@ class FastAllocatorGeneral;  //Allocates and deletes items of any size. Can use 
 //    objects (especially smaller objects). If you have a class whose size is
 //    40K, you aren't going to be able to put even one of them on the stack.
 //    If you don't need an array but instead just need a single object, then you
-//    can simply create your object on the stack and be done with it. However, 
-//    there are some times when you need a temporary array of objects (or just 
+//    can simply create your object on the stack and be done with it. However,
+//    there are some times when you need a temporary array of objects (or just
 //    an array of chars or pointers) but don't know the size beforehand. That's
 //    where this class is useful.
 //
@@ -79,10 +72,10 @@ class FastAllocatorGeneral;  //Allocates and deletes items of any size. Can use 
 //      T           -- The type of object being allocated. Examples include char,
 //                     cRZString, int*, cRZRect*.
 //      nStackCount -- How many items to allocate on the stack before switching
-//                     to a heap allocation. Note that if you want to write 
+//                     to a heap allocation. Note that if you want to write
 //                     portable code, you need to use no more than about 2K
 //                     of stack space. So make sure nStackCount*sizeof(T) < 2048.
-//      bConstruct  -- This is normally 1, but setting it to 0 is a hint to the 
+//      bConstruct  -- This is normally 1, but setting it to 0 is a hint to the
 //                     compiler that you are constructing a type that has no
 //                     constructor. Testing showed that the VC++ compiler wasn't
 //                     completely able to optimize on its own. In particular, it
@@ -90,14 +83,14 @@ class FastAllocatorGeneral;  //Allocates and deletes items of any size. Can use 
 //                     enough to remore the pTArrayEnd assignment.
 //
 // Benchmarks:
-//    Testing one one machine showed that allocating and freeing a block of 
+//    Testing one one machine showed that allocating and freeing a block of
 //    2048 bytes via malloc/free took 8700 and 8400 clock ticks respectively.
 //    Using this stack allocator to do the same thing tooko 450 and 375 clock
-//    ticks respectively. 
+//    ticks respectively.
 //
 // Usage and examples:
-//    Since we are using a local allocator and not overloading global or class 
-//    operator new, you have to directory call StackAllocator::New instead  
+//    Since we are using a local allocator and not overloading global or class
+//    operator new, you have to directory call StackAllocator::New instead
 //    of operator new. So instead of saying:
 //       SomeStruct* pStructArray = new SomeStruct[13];
 //    you say:
@@ -113,7 +106,7 @@ class FastAllocatorGeneral;  //Allocates and deletes items of any size. Can use 
 //       StackAllocator<int*, 512, 0> stackAllocator; //Create an instance. We use the 'construct' hint feature here.
 //       int** pArray = stackAllocator.New(nSize);    //Allocate memory.
 //       memset(pArray, 0, nSize*sizeof(int*));       //Do something with the memory.
-//       stackAllocator.Delete(pArray);               //In this example, we explicity free the memory.
+//       stackAllocator.Delete(pArray);               //In this example, we explicitly free the memory.
 //    }
 //
 //    void Example(int nSize){
@@ -136,7 +129,7 @@ class FastAllocatorGeneral;  //Allocates and deletes items of any size. Can use 
 template<class T, int nStackCount, int bConstruct=1>
 class StackAllocator{
 public:
-   StackAllocator() : mnAllocCount(-1), mpTHeap(NULL){}
+   StackAllocator() : mnAllocCount(-1), mpTHeap(nullptr){}
   ~StackAllocator(){
       if(mnAllocCount != -1){ //If there is anything to do...
          if(mpTHeap)
@@ -163,14 +156,20 @@ public:
                T* pTArray = (T*)mTArray;
                const T* const pTArrayEnd = pTArray + nCount;
                while(pTArray < pTArrayEnd){
-                  new(pTArray)T; //Use the placement operator new. This simply calls the constructor 
-                  ++pTArray;     //of T with 'this' set to the input address. Note that we don't put
-               }                 //a '()' after the T this is because () causes trivial types like int
-            }                    //and class* to be assigned zero/NULL. We don't want that.
+                  //Use the placement operator new. This simply calls the constructor
+                  //of T with 'this' set to the input address. Note that we don't put
+                  //a '()' after the T this is because () causes trivial types like int
+                  //and class* to be assigned zero/null. We don't want that.
+                  new(pTArray)T;
+                  ++pTArray;
+               }
+            }
             return (T*)mTArray;
-         } //Else the request is too big. So let's use (the slower) operator new.
+         }
+         //Else the request is too big. So let's use (the slower) operator new.
          return (mpTHeap = new T[nCount]); //The compiler will call the constructors here.
-      } //Else we are being used. Let's be nice and allocate something anyway.
+      }
+      //Else we are being used. Let's be nice and allocate something anyway.
       return new T[nCount];
    }
 
@@ -188,7 +187,7 @@ public:
       }
       else if(pT == mpTHeap){ //If the allocation came from our heap...
          delete[] mpTHeap;    //The compiler will call the destructors here.
-         mpTHeap      = NULL; //We clear these out so that we can possibly
+         mpTHeap      = nullptr; //We clear these out so that we can possibly
          mnAllocCount = -1;   //  use the allocator again.
       }
       else //Else the allocation came from the external heap.
@@ -197,7 +196,7 @@ public:
 
 protected:
    int  mnAllocCount;                     //Count of objects allocated. -1 means that nothing is allocated. We don't use zero because zero is a legal allocation count in C++.
-   T*   mpTHeap;                          //This is normally NULL, but gets used of the allocation request is too high.
+   T*   mpTHeap;                          //This is normally null, but gets used of the allocation request is too high.
    char mTArray[nStackCount*sizeof(T)];   //This is our stack memory.
 };
 ///////////////////////////////////////////////////////////////////////////////
@@ -331,7 +330,7 @@ WWINLINE void FastFixedAllocator::grow()
    n->next  = chunks;
    chunks   = n;
 	TotalHeapSize+=sizeof(Chunk);
-   
+
    const int nelem = Chunk::size/esize;
    char* start = n->mem;
    char* last = &start[(nelem-1)*esize];
@@ -427,10 +426,10 @@ WWINLINE void* FastAllocatorGeneral::Alloc(unsigned int n)
 	static int re_entrancy=0;
 	re_entrancy++;
 
-   //We actually allocate n+4 bytes. We store the # allocated 
+   //We actually allocate n+4 bytes. We store the # allocated
    //in the first 4 bytes, and return the ptr to the rest back
    //to the user.
-   n += sizeof(unsigned int); 
+   n += sizeof(unsigned int);
 #ifdef MEMORY_OVERWRITE_TEST
 	n+=sizeof(unsigned int);
 #endif
@@ -493,8 +492,8 @@ WWINLINE void FastAllocatorGeneral::Free(void* pAlloc)
 }
 
 //ANSI C requires:
-//  (1) realloc(NULL, newsize) is equivalent to malloc(newsize).
-//  (2) realloc(pblock, 0) is equivalent to free(pblock) (except that NULL is returned).
+//  (1) realloc(nullptr, newsize) is equivalent to malloc(newsize).
+//  (2) realloc(pblock, 0) is equivalent to free(pblock) (except that nullptr is returned).
 //  (3) if the realloc() fails, the object pointed to by pblock is left unchanged.
 //
 WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
@@ -508,7 +507,7 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
       return pNewAlloc;
    }
    Free(pAlloc);
-   return NULL;
+   return nullptr;
 }
 
 
@@ -529,7 +528,7 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
 // system whereby it maintains buckets for integral sizes.
 //
 
-#ifdef _MSC_VER 
+#ifdef _MSC_VER
    //VC++ continues to be the one compiler that lacks the ability to compile
    //standard C++. So we define a version of the STL allocator specifically
    //for VC++, and let other compilers use a standard allocator template.
@@ -543,9 +542,9 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
       typedef const T&  const_reference;
       typedef T         value_type;
 
-      T*            address(T& t)       const             { return (&t); } //These two are slightly strange but 
+      T*            address(T& t)       const             { return (&t); } //These two are slightly strange but
       const  T*     address(const T& t) const             { return (&t); } //required functions. Just do it.
-      static T*     allocate(size_t n, const void* =NULL) { return (T*)FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(T)); }
+      static T*     allocate(size_t n, const void* =nullptr) { return (T*)FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(T)); }
       static void   construct(T* ptr, const T& value)     { new(ptr) T(value); }
       static void   deallocate(void* ptr, size_t /*n*/)   { FastAllocatorGeneral::Get_Allocator()->Free(ptr); }
       static void   destroy(T* ptr)                       { ptr->~T(); }
@@ -553,15 +552,15 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
 
       //This _Charalloc is required by VC++5 since it VC++5 predates
       //the language standardization. Allocator behaviour is one of the
-      //last things to have been hammered out. Important note: If you 
+      //last things to have been hammered out. Important note: If you
       //decide to write your own fast allocator, containers will allocate
-      //random objects through this function but delete them through 
+      //random objects through this function but delete them through
       //the above delallocate() function. So your version of deallocate
       //should *not* assume that it will only be given T objects to delete.
       char* _Charalloc(size_t n){ return (char*)FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(char)); }
    };
 #else
-   //This is a C++ language standard allocator. Most C++ compilers after 1999 
+   //This is a C++ language standard allocator. Most C++ compilers after 1999
    //other than Microsoft C++ compile this fine. Otherwise. you might be able
    //to use the same allocator as VC++ uses above.
    template <class T>
@@ -587,7 +586,7 @@ WWINLINE void* FastAllocatorGeneral::Realloc(void* pAlloc, unsigned int n){
      pointer address(reference x) const             { return &x; }
      const_pointer address(const_reference x) const { return &x; }
 
-     T* allocate(size_type n, const void* = NULL) { return n != 0 ? static_cast<T*>(FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(T))) : NULL; }
+     T* allocate(size_type n, const void* = nullptr) { return n != 0 ? static_cast<T*>(FastAllocatorGeneral::Get_Allocator()->Alloc(n*sizeof(T))) : nullptr; }
      void deallocate(pointer p, size_type n)      { FastAllocatorGeneral::Get_Allocator()->Free(p); }
      size_type max_size() const                   { return size_t(-1) / sizeof(T); }
      void construct(pointer p, const T& val)      { new(p) T(val); }
@@ -654,7 +653,7 @@ typedef basic_string<char, char_traits<char>, FastSTLAllocator<char> > CharStrin
 ///////////////////////////////////////////////////////////////////////////////
 
 
-void main(){   
+void main(){
    IntArray intArray;
    intArray.push_back(3);
    intArray.pop_back();
@@ -666,7 +665,7 @@ void main(){
    IntDequeue intDequeue;
    intDequeue.push_back(3);
    intDequeue.pop_back();
-   
+
    IntQueue intQueue;
    intQueue.push(3);
    intQueue.pop();
@@ -720,16 +719,3 @@ void main(){
    getchar();
 }
 */
-
-
-
-#endif //sentry
-
-
-
-
-
-
-
-
-

@@ -29,15 +29,12 @@
 
 #pragma once
 
-#ifndef __PRODUCTIONUPDATE_H_
-#define __PRODUCTIONUPDATE_H_
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModelState.h"
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
-// FORWARD REFERNCES //////////////////////////////////////////////////////////////////////////////
+// FORWARD REFERENCES //////////////////////////////////////////////////////////////////////////////
 class ProductionEntry;
 class ThingTemplate;
 class UpgradeTemplate;
@@ -56,7 +53,7 @@ enum ProductionType CPP_11(: Int)
 };
 
 //-------------------------------------------------------------------------------------------------
-/** A ProductionEntry is a single entry representing something that we are supposed to 
+/** A ProductionEntry is a single entry representing something that we are supposed to
 	* produce */
 //-------------------------------------------------------------------------------------------------
 class ProductionEntry : public MemoryPoolObject
@@ -68,23 +65,23 @@ friend class ProductionUpdate;
 
 public:
 
-	ProductionEntry( void );
+	ProductionEntry();
 	// virtual destructor provided by memory pool object
 
 	/// query what kind of thing is being produced by this entry
-	const ThingTemplate *getProductionObject( void ) const { return m_objectToProduce; }
+	const ThingTemplate *getProductionObject() const { return m_objectToProduce; }
 
 	/// query what kind of upgrade is being produced by this entry
-	const UpgradeTemplate *getProductionUpgrade( void ) const { return m_upgradeToResearch; }
+	const UpgradeTemplate *getProductionUpgrade() const { return m_upgradeToResearch; }
 
 	/// query the production type
-	ProductionType getProductionType( void ) const { return m_type; }
+	ProductionType getProductionType() const { return m_type; }
 
 	/// how much progress is done on this entry
-	Real getPercentComplete( void ) const { return m_percentComplete; }
+	Real getPercentComplete() const { return m_percentComplete; }
 
 	/// get the unique (to the producer object) production ID
-	ProductionID getProductionID( void ) const { return m_productionID; }
+	ProductionID getProductionID() const { return m_productionID; }
 
 	Int getProductionQuantity() const { return m_productionQuantityTotal; } //How many I try to make
 	Int getProductionQuantityRemaining() const { return m_productionQuantityTotal - m_productionQuantityProduced; }//How many I have made
@@ -95,7 +92,7 @@ public:
 	void setExitDoor(ExitDoorType exitDoor) { m_exitDoor = exitDoor; }
 
 protected:
-	
+
 	ProductionType m_type;														///< production type
 	union
 	{
@@ -135,7 +132,7 @@ public:
   Int														m_maxQueueEntries;							///< max things that can be queued at once.
 	DisabledMaskType							m_disabledTypesToProcess;
 
-	ProductionUpdateModuleData( void );
+	ProductionUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 	static void parseAppendQuantityModifier( INI* ini, void *instance, void *store, const void *userData );
 };
@@ -153,7 +150,7 @@ public:
 	virtual CanMakeType canQueueCreateUnit( const ThingTemplate *unitType ) const = 0;
 	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const = 0;
 
-	virtual ProductionID requestUniqueUnitID( void ) = 0;
+	virtual ProductionID requestUniqueUnitID() = 0;
 
 	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade ) = 0;
 	virtual void cancelUpgrade( const UpgradeTemplate *upgrade ) = 0;
@@ -164,11 +161,11 @@ public:
 	virtual void cancelUnitCreate( ProductionID productionID ) = 0;
 	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType) = 0;
 
-	virtual void cancelAndRefundAllProduction( void ) = 0;
+	virtual void cancelAndRefundAllProduction() = 0;
 
-	virtual UnsignedInt getProductionCount( void ) const = 0;
+	virtual UnsignedInt getProductionCount() const = 0;
 
-	virtual const ProductionEntry *firstProduction( void ) const = 0;
+	virtual const ProductionEntry *firstProduction() const = 0;
 	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const = 0;
 
 	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt) = 0;
@@ -197,48 +194,48 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// Disabled conditions to process (AI will still process held status)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return getProductionUpdateModuleData()->m_disabledTypesToProcess; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return getProductionUpdateModuleData()->m_disabledTypesToProcess; }
 
-	virtual ProductionUpdateInterface* getProductionUpdateInterface( void ) { return this; }
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual ProductionUpdateInterface* getProductionUpdateInterface() override { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 	static ProductionUpdateInterface *getProductionUpdateInterfaceFromObject( Object *obj );
 
-	virtual CanMakeType canQueueCreateUnit( const ThingTemplate *unitType ) const;
-	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const;
+	virtual CanMakeType canQueueCreateUnit( const ThingTemplate *unitType ) const override;
+	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const override;
 
 	/** this method is used to request a unique ID to assign to the production of a single
-	unit.  It is unique to all units that can be created from this source object, but is 
-	not unique amoung multiple source objects */
-	virtual ProductionID requestUniqueUnitID( void ) { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
+	unit.  It is unique to all units that can be created from this source object, but is
+	not unique among multiple source objects */
+	virtual ProductionID requestUniqueUnitID() override { ProductionID tmp = m_uniqueID; m_uniqueID = (ProductionID)(m_uniqueID+1); return tmp; }
 
-	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade );				///< queue upgrade "research"
-	virtual void cancelUpgrade( const UpgradeTemplate *upgrade );				///< cancel upgrade "research"
-	virtual Bool isUpgradeInQueue( const UpgradeTemplate *upgrade ) const;		///< is the upgrade in our production queue already
-	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const;  ///< count number of units with matching unit type in the production queue
+	virtual Bool queueUpgrade( const UpgradeTemplate *upgrade ) override;				///< queue upgrade "research"
+	virtual void cancelUpgrade( const UpgradeTemplate *upgrade ) override;				///< cancel upgrade "research"
+	virtual Bool isUpgradeInQueue( const UpgradeTemplate *upgrade ) const override;		///< is the upgrade in our production queue already
+	virtual UnsignedInt countUnitTypeInQueue( const ThingTemplate *unitType ) const override;  ///< count number of units with matching unit type in the production queue
 
-	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID );					///< queue unit to be produced
-	virtual void cancelUnitCreate( ProductionID productionID );		      ///< cancel construction of unit with matching production ID
-	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType);	///< cancel all production of type unitType 
+	virtual Bool queueCreateUnit( const ThingTemplate *unitType, ProductionID productionID ) override;					///< queue unit to be produced
+	virtual void cancelUnitCreate( ProductionID productionID ) override;		      ///< cancel construction of unit with matching production ID
+	virtual void cancelAllUnitsOfType( const ThingTemplate *unitType) override;	///< cancel all production of type unitType
 
-	virtual void cancelAndRefundAllProduction( void );									///< cancel and refund anything in the production queue
+	virtual void cancelAndRefundAllProduction() override;									///< cancel and refund anything in the production queue
 
-	virtual UnsignedInt getProductionCount( void ) const { return m_productionCount; }    ///< return # of things in the production queue
+	virtual UnsignedInt getProductionCount() const override { return m_productionCount; }    ///< return # of things in the production queue
 
 	// walking the production list from outside
-	virtual const ProductionEntry *firstProduction( void ) const { return m_productionQueue; }
-	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const { return p ? p->m_next : NULL; }
+	virtual const ProductionEntry *firstProduction() const override { return m_productionQueue; }
+	virtual const ProductionEntry *nextProduction( const ProductionEntry *p ) const override { return p ? p->m_next : nullptr; }
 
-	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt);
+	virtual void setHoldDoorOpen(ExitDoorType exitDoor, Bool holdIt) override;
 
-	virtual UpdateSleepTime update( void );					///< the update
+	virtual UpdateSleepTime update() override;					///< the update
 
 	//These functions keep track of the special power construction of a new building via a special power instead of standard production interface.
 	//This was added for the sneak attack building functionality.
-	virtual const CommandButton* getSpecialPowerConstructionCommandButton() const { return m_specialPowerConstructionCommandButton; }
-	virtual void setSpecialPowerConstructionCommandButton( const CommandButton *commandButton ) { m_specialPowerConstructionCommandButton = commandButton; }
+	virtual const CommandButton* getSpecialPowerConstructionCommandButton() const override { return m_specialPowerConstructionCommandButton; }
+	virtual void setSpecialPowerConstructionCommandButton( const CommandButton *commandButton ) override { m_specialPowerConstructionCommandButton = commandButton; }
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 protected:
 
@@ -268,5 +265,3 @@ protected:
 	Bool								m_flagsDirty;										///< clearFlags/setFlags needs to be set into the model
 
 };
-
-#endif  // end __PRODUCTIONUPDATE_H_

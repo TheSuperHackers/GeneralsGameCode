@@ -36,8 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef GENMTLNAMESDIALOG_H
-#define GENMTLNAMESDIALOG_H
+#pragma once
 
 #include <windows.h>
 
@@ -55,8 +54,8 @@ public:
 
 	GenMtlNamesDialogClass(Interface * maxinterface);
 	~GenMtlNamesDialogClass();
-	
-	enum 
+
+	enum
 	{
 		MAX_MATERIAL_NAME_LEN	= 32,
 		MIN_NAME_INDEX				= 0,
@@ -68,11 +67,11 @@ public:
 	struct OptionsStruct
 	{
 		OptionsStruct(void) : OnlyAffectSelected(true), NameIndex(0)
-		{ 
-			memset(RootName,0,sizeof(RootName)); 
+		{
+			memset(RootName,0,sizeof(RootName));
 		}
-		
-		// overall options		
+
+		// overall options
 		bool		OnlyAffectSelected;
 
 		// name options
@@ -83,7 +82,7 @@ public:
 	bool Get_Options(OptionsStruct * options);
 	bool Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
 	bool Ok_To_Exit(void);
-		
+
 private:
 
 	HWND								Hwnd;
@@ -95,8 +94,3 @@ private:
 	friend BOOL CALLBACK _gen_mtl_names_dialog_proc(HWND hwnd,UINT message,WPARAM wparam,LPARAM lparam);
 
 };
-
-
-#endif //GENMTLNAMESDIALOG_H
-
-

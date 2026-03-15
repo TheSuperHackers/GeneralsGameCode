@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/BitFlagsIO.h"
 #include "Common/CRCDebug.h"
 #include "Common/DamageFX.h"
@@ -61,11 +61,6 @@
 #include "GameLogic/Module/DieModule.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define YELLOW_DAMAGE_PERCENT (0.25f)
 
@@ -91,10 +86,10 @@ public:
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BodyParticleSystem::~BodyParticleSystem( void )
+BodyParticleSystem::~BodyParticleSystem()
 {
 
-}  // end ~BodyParticleSystem
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
@@ -140,29 +135,29 @@ ActiveBodyModuleData::ActiveBodyModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p) 
+void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "MaxHealth",						INI::parseReal,						NULL,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
-		{ "InitialHealth",				INI::parseReal,						NULL,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
+		{ "MaxHealth",						INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_maxHealth ) },
+		{ "InitialHealth",				INI::parseReal,						nullptr,		offsetof( ActiveBodyModuleData, m_initialHealth ) },
 
-		{ "SubdualDamageCap",					INI::parseReal,									NULL,		offsetof( ActiveBodyModuleData, m_subdualDamageCap ) },
-		{ "SubdualDamageHealRate",		INI::parseDurationUnsignedInt,	NULL,		offsetof( ActiveBodyModuleData, m_subdualDamageHealRate ) },
-		{ "SubdualDamageHealAmount",	INI::parseReal,									NULL,		offsetof( ActiveBodyModuleData, m_subdualDamageHealAmount ) },
-		{ 0, 0, 0, 0 }
+		{ "SubdualDamageCap",					INI::parseReal,									nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageCap ) },
+		{ "SubdualDamageHealRate",		INI::parseDurationUnsignedInt,	nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageHealRate ) },
+		{ "SubdualDamageHealAmount",	INI::parseReal,									nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageHealAmount ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) : 
-	BodyModule(thing, moduleData), 
-	m_curDamageFX(NULL),
-	m_curArmorSet(NULL),
+ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
+	BodyModule(thing, moduleData),
+	m_curDamageFX(nullptr),
+	m_curArmorSet(nullptr),
 	m_frontCrushed(false),
 	m_backCrushed(false),
 	m_lastDamageTimestamp(0xffffffff),// So we don't think we just got damaged on the first frame
@@ -171,7 +166,7 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_nextDamageFXTime(0),
 	m_lastDamageFXDone((DamageType)-1),
 	m_lastDamageCleared(false),
-	m_particleSystems(NULL),
+	m_particleSystems(nullptr),
 	m_currentSubdualDamage(0),
 	m_indestructible(false)
 {
@@ -189,19 +184,19 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ActiveBody::~ActiveBody( void )
+ActiveBody::~ActiveBody()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ActiveBody::onDelete( void )
+void ActiveBody::onDelete()
 {
 
 	// delete all particle systems
 	deleteAllParticleSystems();
 
-}  // end onDelete
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -218,14 +213,14 @@ void ActiveBody::setCorrectDamageState()
 			rubbleHeight = TheGlobalData->m_defaultStructureRubbleHeight;
 
 		/** @todo I had to change this to a Z only version to keep it from disappearing from the
-			PartitionManager for a frame.  That didn't used to happen.		 
+			PartitionManager for a frame.  That didn't used to happen.
 		*/
 		getObject()->setGeometryInfoZ(rubbleHeight);
 
 		// Have to tell pathfind as well, as rubble pathfinds differently.
 		TheAI->pathfinder()->removeObjectFromPathfindMap(getObject());
 		TheAI->pathfinder()->addObjectToPathfindMap(getObject());
-		
+
 
 		// here we make sure nobody collides with us, ever again...			//Lorenzen
 		//THis allows projectiles shot from infantry that are inside rubble to get out of said rubble safely
@@ -301,7 +296,7 @@ Real ActiveBody::estimateDamage( DamageInfoInput& damageInfo ) const
 		else
 			return 0.0f;
 	}
-	
+
 	if( damageInfo.m_damageType == DAMAGE_SNIPER )
 	{
 		if( getObject()->isKindOf( KINDOF_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
@@ -347,7 +342,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	validateArmorAndDamageFX();
 
 	// sanity
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if ( m_indestructible )
@@ -365,7 +360,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	Object *damager = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 	if( damager )
 	{
-		//Store the template so later if the attacking object dies, we use script conditions to look at the 
+		//Store the template so later if the attacking object dies, we use script conditions to look at the
 		//damager's template inside evaluateTeamAttackedByType or evaluateNameAttackedByType.
 		damageInfo->in.m_sourceTemplate = damager->getTemplate();
 	}
@@ -388,11 +383,11 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 
 		case DAMAGE_KILLPILOT:
 		{
-			// This type of damage doesn't actually damage the unit, but it does kill it's 
+			// This type of damage doesn't actually damage the unit, but it does kill it's
 			// pilot, in the case of a vehicle.
 			if( obj->isKindOf( KINDOF_VEHICLE ) )
 			{
-				//Handle special case for combat bike. We actually will kill the bike by 
+				//Handle special case for combat bike. We actually will kill the bike by
 				//forcing the rider to leave the bike. That way the bike will automatically
 				//scuttle and be unusable.
 				ContainModuleInterface *contain = obj->getContain();
@@ -410,14 +405,19 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 					}
 					else
 					{
-						//Removing the rider will scuttle the bike.
-						Object *rider = *(contain->getContainedItemsList()->begin());
-						ai->aiEvacuateInstantly( TRUE, CMD_FROM_AI );
+						// TheSuperHackers @bugfix Caball009 04/09/2025 Check whether a bike still has a rider.
+						// A rider may dismount or be sniped off a bike when it's disabled, resulting in a bike object with an empty contain list.
+						if ( !contain->getContainedItemsList()->empty() )
+						{
+							//Removing the rider will scuttle the bike.
+							Object* rider = *(contain->getContainedItemsList()->begin());
+							ai->aiEvacuateInstantly(TRUE, CMD_FROM_AI);
 
-						//Kill the rider.
-						if (damager)
-							damager->scoreTheKill( rider );
-						rider->kill();
+							//Kill the rider.
+							if (damager)
+								damager->scoreTheKill(rider);
+							rider->kill();
+						}
 					}
 				}
 				else
@@ -472,15 +472,15 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 							++numKilled;
 							thingToKill->getControllingPlayer()->getAcademyStats()->recordClearedGarrisonedBuilding();
 						}
-					} // next contained item
+					}
 
-				} // if items
-			}	// if a garrisonable thing
+				}
+			}
 			alreadyHandled = TRUE;
 			allowModifier = FALSE;
 			break;
 		}
-		
+
 		case DAMAGE_STATUS:
 		{
 			// Damage amount is msec time we set the status given in damageStatusType
@@ -496,10 +496,12 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	{
 		if( !canBeSubdued() )
 			return;
-		
+
+		// TheSuperHackers @bugfix Stubbjax 20/09/2025 The isSubdued() function now directly checks status instead
+		// of health to prevent indefinite subdue status when internally shifting health across the threshold.
 		Bool wasSubdued = isSubdued();
 		internalAddSubdualDamage(amount);
-		Bool nowSubdued = isSubdued();
+		Bool nowSubdued = m_maxHealth <= m_currentSubdualDamage;
 		alreadyHandled = TRUE;
 		allowModifier = FALSE;
 
@@ -532,7 +534,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			amount = m_currentHealth;
 		}
 
-		if (!alreadyHandled) 
+		if (!alreadyHandled)
 		{
 			// do the damage simplistic damage subtraction
 			internalChangeHealth( -amount );
@@ -564,7 +566,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 		damageInfo->out.m_actualDamageDealt = amount;
 		damageInfo->out.m_actualDamageClipped = m_prevHealth - m_currentHealth;
 
-		// then copy the whole DamageInfo struct for easy lookup 
+		// then copy the whole DamageInfo struct for easy lookup
 		// (object pointer loses scope as soon as atteptdamage's caller ends)
 		// m_lastDamageTimestamp is initialized to FFFFFFFFFF, so doing a < compare is problematic.
 		// jba.
@@ -594,9 +596,9 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 				// no change.
 			}
 		}
-	
+
 		// Notify the player that they have been attacked by this player
-		if (m_lastDamageInfo.in.m_sourceID != INVALID_ID) 
+		if (m_lastDamageInfo.in.m_sourceID != INVALID_ID)
 		{
 			Object *srcObj = TheGameLogic->findObjectByID(m_lastDamageInfo.in.m_sourceID);
 			if (srcObj)
@@ -629,9 +631,9 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 
 				d->onBodyDamageStateChange( damageInfo, oldState, m_curDamageState );
 			}
-			
+
 			// @todo: This really feels like it should be in the TransitionFX lists.
-			if (m_curDamageState == BODY_DAMAGED) 
+			if (m_curDamageState == BODY_DAMAGED)
 			{
 				AudioEventRTS damaged = *obj->getTemplate()->getSoundOnDamaged();
 				damaged.setObjectID(obj->getID());
@@ -645,10 +647,10 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			}
 
 		}
-		
+
 		// Should we play our fear sound?
-		if( (m_prevHealth / m_maxHealth) > YELLOW_DAMAGE_PERCENT && 
-				(m_currentHealth / m_maxHealth) < YELLOW_DAMAGE_PERCENT && 
+		if( (m_prevHealth / m_maxHealth) > YELLOW_DAMAGE_PERCENT &&
+				(m_currentHealth / m_maxHealth) < YELLOW_DAMAGE_PERCENT &&
 				(m_currentHealth > 0) )
 		{
 			// 25% chance to play
@@ -669,7 +671,7 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 			{
 				damager->scoreTheKill( obj );
 			}
-	
+
 			obj->onDie( damageInfo );
 		}
 	}
@@ -677,9 +679,9 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	doDamageFX(damageInfo);
 
 	// Damaged repulsable civilians scare (repulse) other civs.	jba.
-	if( TheAI->getAiData()->m_enableRepulsors ) 
+	if( TheAI->getAiData()->m_enableRepulsors )
 	{
-		if( obj->isKindOf( KINDOF_CAN_BE_REPULSED ) ) 
+		if( obj->isKindOf( KINDOF_CAN_BE_REPULSED ) )
 		{
 			obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_REPULSOR ) );
 		}
@@ -689,25 +691,25 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 	//Also only retaliate if we're controlled by a human player and the thing that attacked me
 	//is an enemy.
 	Player *controllingPlayer = obj->getControllingPlayer();
-	if( controllingPlayer && controllingPlayer->isLogicalRetaliationModeEnabled() && controllingPlayer->getPlayerType() == PLAYER_HUMAN ) 
+	if( controllingPlayer && controllingPlayer->isLogicalRetaliationModeEnabled() && controllingPlayer->getPlayerType() == PLAYER_HUMAN )
 	{
 		if( shouldRetaliateAgainstAggressor(obj, damager))
 		{
 			PartitionFilterPlayerAffiliation f1( controllingPlayer, ALLOW_ALLIES, true );
 			PartitionFilterOnMap filterMapStatus;
-			PartitionFilter *filters[] = { &f1, &filterMapStatus, 0 };
+			PartitionFilter *filters[] = { &f1, &filterMapStatus, nullptr };
 
-			
+
 			Real distance = TheAI->getAiData()->m_retaliateFriendsRadius + obj->getGeometryInfo().getBoundingCircleRadius();
 			SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( obj->getPosition(), distance, FROM_CENTER_2D, filters, ITER_FASTEST );
 			MemoryPoolObjectHolder hold( iter );
-			for( Object *them = iter->first(); them; them = iter->next() ) 
+			for( Object *them = iter->first(); them; them = iter->next() )
 			{
 				if (!shouldRetaliate(them)) {
 					continue;
 				}
 				AIUpdateInterface *ai = them->getAI();
-				if (ai==NULL) {
+				if (ai==nullptr) {
 					continue;
 				}
 				//If we have AI and we're mobile, then assist!
@@ -730,9 +732,9 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 Bool ActiveBody::shouldRetaliateAgainstAggressor(Object *obj, Object *damager)
 {
 	/* This considers whether obj should invoke his friends to retaliate against damager.
-		 Note that obj could be a structure, so we don't actually check whether obj will 
+		 Note that obj could be a structure, so we don't actually check whether obj will
 		 retaliate, as in many cases he wouldn't. */
-	if (damager==NULL) {
+	if (damager==nullptr) {
 		return false;
 	}
 	if (damager->isAirborneTarget()) {
@@ -763,7 +765,7 @@ Bool ActiveBody::shouldRetaliate(Object *obj)
 	// Cannot retaliate objects dont. [8/25/2003]
 	if (obj->isKindOf(KINDOF_CANNOT_RETALIATE)) {
 		return false;
-	}	
+	}
 	if (obj->isKindOf( KINDOF_IMMOBILE )) {
 		return false;
 	}
@@ -780,14 +782,14 @@ Bool ActiveBody::shouldRetaliate(Object *obj)
 		return false; // Non-ai can't retaliate. [8/26/2003]
 	}
 	// Stealthed units don't retaliate unless they're detected. [8/25/2003]
-	if ( obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && 
+	if ( obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) &&
 		!obj->getStatusBits().test( OBJECT_STATUS_DETECTED ) ) {
-		return false; 
+		return false;
 	}
 	// If we're using an ability, don't stop. [8/25/2003]
 	if (obj->testStatus(OBJECT_STATUS_IS_USING_ABILITY)) {
 		return false;
-	}	
+	}
 	return true;
 }
 
@@ -798,7 +800,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 	validateArmorAndDamageFX();
 
 	// sanity
-	if( damageInfo == NULL )
+	if( damageInfo == nullptr )
 		return;
 
 	if( damageInfo->in.m_damageType != DAMAGE_HEALING )
@@ -813,7 +815,7 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 	// srj sez: sorry, once yer dead, yer dead.
 	// Special case for bridges, cause the system now things they're dead
 	///@todo we need to figure out what has changed so we don't have to hack this (CBD 11-1-2002)
-	if( obj->isKindOf( KINDOF_BRIDGE ) == FALSE && 
+	if( obj->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 			obj->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE &&
 			obj->isEffectivelyDead())
 		return;
@@ -836,11 +838,13 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 		damageInfo->out.m_actualDamageDealt = amount;
 		damageInfo->out.m_actualDamageClipped = m_prevHealth - m_currentHealth;
 
-		//then copy the whole DamageInfo struct for easy lookup 
+		//then copy the whole DamageInfo struct for easy lookup
 		//(object pointer loses scope as soon as atteptdamage's caller ends)
 		m_lastDamageInfo = *damageInfo;
 		m_lastDamageCleared = false;
+#if PRESERVE_RETAIL_BEHAVIOR
 		m_lastDamageTimestamp = TheGameLogic->getFrame();
+#endif
 		m_lastHealingTimestamp = TheGameLogic->getFrame();
 
 		// if our health has gone UP then do run the damage module callback
@@ -883,12 +887,12 @@ void ActiveBody::setInitialHealth(Int initialPercent)
 	m_prevHealth = m_currentHealth;
 
 	Real factor = initialPercent/100.0f;
-	Real newHealth = factor * m_initialHealth; 
-	
+	Real newHealth = factor * m_initialHealth;
+
 	// change the health to the requested percentage.
 	internalChangeHealth(newHealth - m_currentHealth);
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Simple setting of the health value, it does *NOT* track any transition
@@ -923,7 +927,7 @@ void ActiveBody::setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeT
 		case SAME_CURRENTHEALTH:
 			//do nothing
 			break;
-			
+
 		case FULLY_HEAL:
 		{
 			// Set current to the new Max.
@@ -945,7 +949,7 @@ void ActiveBody::setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeT
 		internalChangeHealth( maxHealth - m_currentHealth );
 	}
 
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Given the current damage state of the object, evaluate the visual model conditions
@@ -973,23 +977,23 @@ void ActiveBody::evaluateVisualCondition()
 	* specified by the bone base name.  If there are more bones than maxSystems then the
 	* bones will be randomly selected */
 // ------------------------------------------------------------------------------------------------
-void ActiveBody::createParticleSystems( const AsciiString &boneBaseName, 
+void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 																				const ParticleSystemTemplate *systemTemplate,
 																				Int maxSystems )
 {
 	Object *us = getObject();
 
 	// sanity
-	if( systemTemplate == NULL )
+	if( systemTemplate == nullptr )
 		return;
-	
+
 	// get the bones
 	enum { MAX_BONES = 16 };
 	Coord3D bonePositions[ MAX_BONES ];
-	Int numBones = us->getMultiLogicalBonePosition( boneBaseName.str(), 
-																									MAX_BONES, 
-																									bonePositions, 
-																									NULL, 
+	Int numBones = us->getMultiLogicalBonePosition( boneBaseName.str(),
+																									MAX_BONES,
+																									bonePositions,
+																									nullptr,
 																									FALSE );
 
 	// if no bones found nothing else to do
@@ -1010,7 +1014,7 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 	// but don't want to repeat any
 	//
 	Bool usedBoneIndices[ MAX_BONES ] = { FALSE };
-	
+
 	// create the particle systems
 	const Coord3D *pos;
 	for( Int i = 0; i < maxSystems; ++i )
@@ -1039,20 +1043,20 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 				usedBoneIndices[ j ] = TRUE;
 				break;  // exit for j
 
-			}  // end if
+			}
 			else
 			{
 
 				// we won't use this index, increment count until we find a suitable index to use
 				++count;
 
-			}  // end else
+			}
 
-		}  // end for, j
+		}
 
 		// sanity
-		DEBUG_ASSERTCRASH( j != numBones, 
-											 ("ActiveBody::createParticleSystems, Unable to select particle system index\n") );
+		DEBUG_ASSERTCRASH( j != numBones,
+											 ("ActiveBody::createParticleSystems, Unable to select particle system index") );
 
 		// create particle system here
 		ParticleSystem *particleSystem = TheParticleSystemManager->createParticleSystem( systemTemplate );
@@ -1071,16 +1075,16 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 			newEntry->m_next = m_particleSystems;
 			m_particleSystems = newEntry;
 
-		}  // end if
+		}
 
-	}  // end for, i
+	}
 
-}  // end createParticleSystems
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Delete all the body particle systems */
 // ------------------------------------------------------------------------------------------------
-void ActiveBody::deleteAllParticleSystems( void )
+void ActiveBody::deleteAllParticleSystems()
 {
 	BodyParticleSystem *nextBodySystem;
 	ParticleSystem *particleSystem;
@@ -1102,14 +1106,14 @@ void ActiveBody::deleteAllParticleSystems( void )
 		// set the body systems head to the next
 		m_particleSystems = nextBodySystem;
 
-	}  // end while
+	}
 
-}  // end deleteAllParticleSystems
+}
 
 // ------------------------------------------------------------------------------------------------
 /* 	This function is called on state changes only.  Body Type or Aflameness. */
 // ------------------------------------------------------------------------------------------------
-void ActiveBody::updateBodyParticleSystems( void )
+void ActiveBody::updateBodyParticleSystems()
 {
 	static const ParticleSystemTemplate *fireSmallTemplate   = TheParticleSystemManager->findTemplate( TheGlobalData->m_autoFireParticleSmallSystem );
 	static const ParticleSystemTemplate *fireMediumTemplate  = TheParticleSystemManager->findTemplate( TheGlobalData->m_autoFireParticleMediumSystem );
@@ -1143,7 +1147,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 		// we get to make more of them all too
 		countModifier = 2;
 
-	}  // end if
+	}
 	else
 	{
 
@@ -1158,7 +1162,7 @@ void ActiveBody::updateBodyParticleSystems( void )
 		// we make just the normal amount of these
 		countModifier = 1;
 
-	}  // end else
+	}
 
 	//
 	// remove any particle systems we have currently in the list in favor of any new ones
@@ -1171,41 +1175,41 @@ void ActiveBody::updateBodyParticleSystems( void )
 	//
 
 	// small fire bones
-	createParticleSystems( TheGlobalData->m_autoFireParticleSmallPrefix, 
+	createParticleSystems( TheGlobalData->m_autoFireParticleSmallPrefix,
 												 fireSmall, TheGlobalData->m_autoFireParticleSmallMax * countModifier );
 
 	// medium fire bones
-	createParticleSystems( TheGlobalData->m_autoFireParticleMediumPrefix, 
+	createParticleSystems( TheGlobalData->m_autoFireParticleMediumPrefix,
 												 fireMedium, TheGlobalData->m_autoFireParticleMediumMax * countModifier );
 
 	// large fire bones
-	createParticleSystems( TheGlobalData->m_autoFireParticleLargePrefix, 
+	createParticleSystems( TheGlobalData->m_autoFireParticleLargePrefix,
 												 fireLarge, TheGlobalData->m_autoFireParticleLargeMax * countModifier );
 
 	// small smoke bones
-	createParticleSystems( TheGlobalData->m_autoSmokeParticleSmallPrefix, 
+	createParticleSystems( TheGlobalData->m_autoSmokeParticleSmallPrefix,
 												 smokeSmall, TheGlobalData->m_autoSmokeParticleSmallMax * countModifier );
 
 	// medium smoke bones
-	createParticleSystems( TheGlobalData->m_autoSmokeParticleMediumPrefix, 
+	createParticleSystems( TheGlobalData->m_autoSmokeParticleMediumPrefix,
 												 smokeMedium, TheGlobalData->m_autoSmokeParticleMediumMax * countModifier );
 
 	// large smoke bones
-	createParticleSystems( TheGlobalData->m_autoSmokeParticleLargePrefix, 
+	createParticleSystems( TheGlobalData->m_autoSmokeParticleLargePrefix,
 												 smokeLarge, TheGlobalData->m_autoSmokeParticleLargeMax * countModifier );
 
 	// actively on fire
 	if( getObject()->testStatus( OBJECT_STATUS_AFLAME ) )
-		createParticleSystems( TheGlobalData->m_autoAflameParticlePrefix, 
+		createParticleSystems( TheGlobalData->m_autoAflameParticlePrefix,
 													 aflameTemplate, TheGlobalData->m_autoAflameParticleMax * countModifier );
 
-}  // end updatebodyParticleSystems
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Simple changing of the health value, it does *NOT* track any transition
 	* states for the event of "damage" or the event of "death".  If you
 	* with to kill an object and give these modules a chance to react
-	* to that event use the proper damage method calls. 
+	* to that event use the proper damage method calls.
 	* No game logic should go in here.  This is the low level math and flag maintenance.
 	* Game stuff goes in attemptDamage and attemptHealing.
 */
@@ -1244,13 +1248,13 @@ void ActiveBody::internalChangeHealth( Real delta )
 		if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 			evaluateVisualCondition();
 
-	}  // end if
+	}
 
 	// mark the bit according to our health. (if our AI is dead but our health improves, it will
 	// still re-flag this bit in the AIDeadState every frame.)
 	getObject()->setEffectivelyDead(m_currentHealth <= 0);
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1259,7 +1263,13 @@ void ActiveBody::internalAddSubdualDamage( Real delta )
 	const ActiveBodyModuleData *data = getActiveBodyModuleData();
 
 	m_currentSubdualDamage += delta;
+#if RETAIL_COMPATIBLE_CRC
 	m_currentSubdualDamage = min(m_currentSubdualDamage, data->m_subdualDamageCap);
+#else
+	// TheSuperHackers @bugfix Stubbjax 25/01/2026 Subdual damage can no longer go negative, which
+	// stops weak subdual damage + rapid healing from negatively stacking subdual damage over time.
+	m_currentSubdualDamage = clamp(0.0f, m_currentSubdualDamage, data->m_subdualDamageCap);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1277,7 +1287,7 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 	if( !getObject()->isKindOf(KINDOF_PROJECTILE) )
 	{
 		Object *me = getObject();
-		
+
 		if( isNowSubdued )
 		{
 			me->setDisabled(DISABLED_SUBDUED);
@@ -1316,7 +1326,16 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 //-------------------------------------------------------------------------------------------------
 Bool ActiveBody::isSubdued() const
 {
+#if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
+#else
+  // TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
+	// that matter) when jammed, so we have to check their subdual damage directly.
+	if (getObject()->isKindOf(KINDOF_PROJECTILE))
+		return m_maxHealth <= m_currentSubdualDamage;
+
+	return getObject()->isDisabledByType(DISABLED_SUBDUED);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1335,10 +1354,10 @@ BodyDamageType ActiveBody::getDamageState() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Real ActiveBody::getMaxHealth() const 
+Real ActiveBody::getMaxHealth() const
 {
 	return m_maxHealth;
-}  ///< return max health
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1363,10 +1382,10 @@ Bool ActiveBody::hasAnySubdualDamage() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Real ActiveBody::getInitialHealth() const 
-{ 
+Real ActiveBody::getInitialHealth() const
+{
 	return m_initialHealth;
-}  // return initial health
+}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1398,15 +1417,15 @@ void ActiveBody::setIndestructible( Bool indestructible )
 					if( body )
 						body->setIndestructible( indestructible );
 
-				}  // end if
+				}
 
-			}  // end for, i
+			}
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end setIndestructible
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -1414,7 +1433,7 @@ void ActiveBody::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLeve
 {
 	if (oldLevel == newLevel)
 		return;
-	
+
 	if (oldLevel < newLevel)
 	{
 		if( provideFeedback )
@@ -1432,7 +1451,7 @@ void ActiveBody::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLeve
 					veterancyChanged = *getObject()->getTemplate()->getSoundPromotedHero();
 					break;
 			}
-	
+
 			veterancyChanged.setObjectID(getObject()->getID());
 			TheAudio->addAudioEvent(&veterancyChanged);
 		}
@@ -1511,7 +1530,7 @@ void ActiveBody::setAflame( Bool )
 	// All this does now is act like a major body state change. It is called after Aflame has been
 	// set or cleared as an Object Status
 	//
-	updateBodyParticleSystems();	
+	updateBodyParticleSystems();
 
 }
 
@@ -1524,7 +1543,7 @@ void ActiveBody::crc( Xfer *xfer )
   // extend base class
 	BodyModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -1604,21 +1623,21 @@ void ActiveBody::xfer( Xfer *xfer )
 			// write particle system ID
 			xfer->xferUser( &system->m_particleSystemID, sizeof( ParticleSystemID ) );
 
-		}  // end for, system
+		}
 
-	}  // end if, save
+	}
 	else
 	{
 		ParticleSystemID particleSystemID;
 
 		// the list should be empty at this time
-		if( m_particleSystems != NULL )
+		if( m_particleSystems != nullptr )
 		{
 
-			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not\n" ));
+			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
-		}  // end if
+		}
 
 		// read all data elements
 		BodyParticleSystem *newEntry;
@@ -1634,22 +1653,22 @@ void ActiveBody::xfer( Xfer *xfer )
 			newEntry->m_next = m_particleSystems;  // the list will be reversed, but we don't care
 			m_particleSystems = newEntry;
 
-		}  // end for, i
+		}
 
-	}  // end else, load
+	}
 
 	// armor set flags
 	m_curArmorSetFlags.xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ActiveBody::loadPostProcess( void )
+void ActiveBody::loadPostProcess()
 {
 
 	// extend base class
 	BodyModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

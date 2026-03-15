@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Module/AnimatedParticleSysBoneClientUpdate.h"
@@ -54,7 +54,7 @@ AnimatedParticleSysBoneClientUpdate::AnimatedParticleSysBoneClientUpdate( Thing 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate( void )
+AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate()
 {
 
 }
@@ -63,7 +63,7 @@ AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate( void 
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::clientUpdate( void )
+void AnimatedParticleSysBoneClientUpdate::clientUpdate()
 {
 	//THIS IS HAPPENING CLIENT-SIDE
 	// I CAN DO WHAT I NEED HERE AND NOT HAVE TO BE LOGIC SYNC-SAFE
@@ -100,7 +100,7 @@ void AnimatedParticleSysBoneClientUpdate::crc( Xfer *xfer )
 	// extend base class
 	ClientUpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -119,15 +119,15 @@ void AnimatedParticleSysBoneClientUpdate::xfer( Xfer *xfer )
 	ClientUpdateModule::xfer( xfer );
 
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::loadPostProcess( void )
+void AnimatedParticleSysBoneClientUpdate::loadPostProcess()
 {
 
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

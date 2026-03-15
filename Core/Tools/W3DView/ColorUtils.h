@@ -18,12 +18,11 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//	ColorUtils.H
+//	ColorUtils.h
 //
 //
 
-#ifndef __COLORUTILS_H
-#define __COLORUTILS_H
+#pragma once
 
 /////////////////////////////////////////////////////////////////////////////
 //	Callbacks
@@ -43,9 +42,6 @@ HWND		Create_Color_Picker_Form (HWND parent, int red, int green, int blue);
 BOOL		Get_Form_Color (HWND form_wnd, int *red, int *green, int *blue);
 BOOL		Set_Form_Color (HWND form_wnd, int red, int green, int blue);
 BOOL		Set_Form_Original_Color (HWND form_wnd, int red, int green, int blue);
-BOOL		Set_Update_Callback (HWND form_wnd, WWCTRL_COLORCALLBACK callback, void *arg=NULL);
+BOOL		Set_Update_Callback (HWND form_wnd, WWCTRL_COLORCALLBACK callback, void *arg=nullptr);
 void		RegisterColorPicker (HINSTANCE hinst);
 void		RegisterColorBar (HINSTANCE hinst);
-
-
-#endif //__COLORUTILS_H

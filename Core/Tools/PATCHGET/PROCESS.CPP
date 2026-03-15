@@ -22,12 +22,12 @@ namespace patchget
 {
 
 Process::Process()
-{ 
+{
   directory[0]=0;
   command[0]=0;
   args[0]=0;
-  hProcess=NULL;
-  hThread=NULL;
+  hProcess=nullptr;
+  hThread=nullptr;
 }
 
 // Create a process
@@ -38,13 +38,13 @@ bit8 Create_Process(Process &process)
     PROCESS_INFORMATION      piProcess;
     ZeroMemory(&si,sizeof(si));
     si.cb=sizeof(si);
- 
+
     char cmdargs[513];
     memset(cmdargs,0,513);
     strcpy(cmdargs,process.command);
     strcat(cmdargs,process.args);
 
-    retval=CreateProcess(NULL,cmdargs,NULL,NULL,FALSE, 0  ,NULL, NULL/*process.directory*/,&si,&piProcess);
+    retval=CreateProcess(nullptr,cmdargs,nullptr,nullptr,FALSE, 0  ,nullptr, nullptr/*process.directory*/,&si,&piProcess);
 
     process.hProcess=piProcess.hProcess;
     process.hThread=piProcess.hThread;
@@ -58,11 +58,11 @@ bit8 Wait_Process(Process &process, DWORD *exit_code)
 {
   DWORD retval;
   retval=WaitForSingleObject(process.hProcess,INFINITE);
-  if (exit_code != NULL)
+  if (exit_code != nullptr)
     *exit_code=-1;
   if (retval==WAIT_OBJECT_0)  // process exited
   {
-    if (exit_code != NULL)
+    if (exit_code != nullptr)
       GetExitCodeProcess(process.hProcess,exit_code);
     return(TRUE);
   }

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -57,15 +57,15 @@ m_maxMinorRadius(0)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CheckpointUpdate::~CheckpointUpdate( void )
+CheckpointUpdate::~CheckpointUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Look around us for enemies.
  */
-void CheckpointUpdate::checkForAlliesAndEnemies( void )
+void CheckpointUpdate::checkForAlliesAndEnemies()
 {
 	// periodic enemy checks
 	if (m_enemyScanDelay == 0 || TRUE)
@@ -81,14 +81,14 @@ void CheckpointUpdate::checkForAlliesAndEnemies( void )
 		geom.setMinorRadius( m_maxMinorRadius );
 		obj->setGeometryInfo( geom );
 
-		Object *enemy, *ally = NULL;
+		Object *enemy, *ally = nullptr;
 		Real visionRange = obj->getVisionRange();
 
 		enemy = TheAI->findClosestEnemy( obj, visionRange, 0 );
-		m_enemyNear = (enemy != NULL);
+		m_enemyNear = (enemy != nullptr);
 
 		ally = TheAI->findClosestAlly( obj, visionRange, 0 );
-		m_allyNear = (ally != NULL);
+		m_allyNear = (ally != nullptr);
 
 		// here we restore the radius so that other units can path past the open gate
 		geom.setMinorRadius( restoreSpecialRadius );
@@ -107,10 +107,10 @@ void CheckpointUpdate::checkForAlliesAndEnemies( void )
 UpdateSleepTime CheckpointUpdate::update()
 {
 /// @todo srj use SLEEPY_UPDATE here
-	
+
 	Bool wasAnAlly  = m_allyNear;
 	Bool wasAnEnemy = m_enemyNear;
-	
+
 	checkForAlliesAndEnemies();
 
 	Bool change = ( (wasAnAlly != m_allyNear) || (wasAnEnemy != m_enemyNear) );
@@ -141,7 +141,7 @@ UpdateSleepTime CheckpointUpdate::update()
 				}
 			}
 
-		}// end if change
+		}
 
 		GeometryInfo geom = obj->getGeometryInfo();
 
@@ -151,7 +151,7 @@ UpdateSleepTime CheckpointUpdate::update()
 
 		// THis method is more accidental than above, but it works for an unimportant thing like checkpoint
 		Real radius = geom.getMinorRadius();
-		
+
 		if ( open )
 		{
 			if ( radius > 0 ) geom.setMinorRadius( radius - 0.333f );
@@ -160,11 +160,11 @@ UpdateSleepTime CheckpointUpdate::update()
 		{
 			if ( radius < m_maxMinorRadius ) geom.setMinorRadius( radius + 0.333f );
 		}
-		
+
 
 		obj->setGeometryInfo( geom );
 
-	} // end if draw
+	}
 
 	return UPDATE_SLEEP_NONE;
 
@@ -179,7 +179,7 @@ void CheckpointUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -209,15 +209,15 @@ void CheckpointUpdate::xfer( Xfer *xfer )
 	// enemy scan delay
 	xfer->xferUnsignedInt( &m_enemyScanDelay );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void CheckpointUpdate::loadPostProcess( void )
+void CheckpointUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

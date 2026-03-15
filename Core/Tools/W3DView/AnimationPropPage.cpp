@@ -89,7 +89,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CAnimationPropPage::OnInitDialog (void) 
+CAnimationPropPage::OnInitDialog (void)
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog ();
@@ -99,15 +99,15 @@ CAnimationPropPage::OnInitDialog (void)
     if (pCDoc && pCDoc->GetCurrentAnimation ())
     {
         HAnimClass *pCAnimation = pCDoc->GetCurrentAnimation ();
-        
+
         // Set the description text at the top of the dialog
         CString stringTemp;
         stringTemp.Format (IDS_ANI_PROP_DESC, pCAnimation->Get_Name ());
         SetDlgItemText (IDC_DESCRIPTION, stringTemp);
-        
+
         // Fill in the number of frames
         SetDlgItemInt (IDC_FRAME_COUNT, pCAnimation->Get_Num_Frames ());
-        
+
         // Fill in the frame rate of the animation
         stringTemp.Format ("%.2f fps", pCAnimation->Get_Frame_Rate ());
         SetDlgItemText (IDC_FRAME_RATE, stringTemp);
@@ -120,6 +120,6 @@ CAnimationPropPage::OnInitDialog (void)
         SetDlgItemText (IDC_HIERARCHY_NAME, pCAnimation->Get_HName ());
 
     }
-	
+
 	return TRUE;
 }

@@ -16,33 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/XPIPE.H                                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/XPIPE.h                                            $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/02/99 12:01p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
+
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef XPIPE_H
-#define XPIPE_H
-
-#include	"BUFF.H"
-#include	"PIPE.H"
-#include	"WWFILE.H"
+#include "BUFF.h"
+#include "PIPE.h"
+#include "WWFILE.h"
 
 /*
 **	This is a simple store-into-buffer pipe terminator. Use it as the final link in a pipe process
@@ -60,7 +56,7 @@ class BufferPipe : public Pipe
 		Buffer BufferPtr;
 		int Index;
 
-		bool Is_Valid(void) {return(BufferPtr.Is_Valid());}
+		bool Is_Valid() {return(BufferPtr.Is_Valid());}
 		BufferPipe(BufferPipe & rvalue);
 		BufferPipe & operator = (BufferPipe const & pipe);
 };
@@ -76,19 +72,17 @@ class FilePipe : public Pipe
 	public:
 		FilePipe(FileClass * file) : File(file), HasOpened(false) {}
 		FilePipe(FileClass & file) : File(&file), HasOpened(false) {}
-		virtual ~FilePipe(void);
+		virtual ~FilePipe();
 
 		virtual int Put(void const * source, int slen);
-		virtual int End(void);
+		virtual int End();
 
 	private:
 		FileClass * File;
 		bool HasOpened;
 
-		bool Valid_File(void) {return(File != NULL);}
+		bool Valid_File() {return(File != nullptr);}
 		FilePipe(FilePipe & rvalue);
 		FilePipe & operator = (FilePipe const & pipe);
 
 };
-
-#endif

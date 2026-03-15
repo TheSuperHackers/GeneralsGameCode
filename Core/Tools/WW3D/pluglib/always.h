@@ -33,12 +33,8 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef ALWAYS_H
-#define ALWAYS_H
+#pragma once
 
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
 #pragma warning(disable : 4530)
@@ -92,7 +88,7 @@ void* __cdecl operator new(unsigned int s);
 ** Define the MIN and MAX macros.
 ** NOTE: Joe used to #include <minmax.h> in the various compiler header files.  This
 ** header defines 'min' and 'max' macros which conflict with the surrender code so
-** I'm relpacing all occurances of 'min' and 'max with 'MIN' and 'MAX'.  For code which
+** I'm relpacing all occurrences of 'min' and 'max with 'MIN' and 'MAX'.  For code which
 ** is out of our domain (e.g. Max sdk) I'm declaring template functions for 'min' and 'max'
 */
 #define NOMINMAX
@@ -150,10 +146,6 @@ template <class T> T max(T a,T b)
 #endif
 
 
-#ifndef	NULL
-	#define	NULL		0
-#endif
-
 /**********************************************************************
 **	This macro serves as a general way to determine the number of elements
 **	within an array.
@@ -164,7 +156,4 @@ template <class T> T max(T a,T b)
 
 #ifndef size_of
 #define size_of(typ,id) sizeof(((typ*)0)->id)
-#endif
-
-
 #endif

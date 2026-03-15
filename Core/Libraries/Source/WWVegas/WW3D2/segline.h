@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef SEGLINE_H
-#define SEGLINE_H
 
 #include "rendobj.h"
 #include "shader.h"
@@ -51,17 +46,17 @@ class TextureClass;
 
 /*
 ** SegmentedLineClass -- a render object for rendering thick segmented lines.
-*/ 
+*/
 class SegmentedLineClass : public RenderObjClass
 {
 	public:
 
-		SegmentedLineClass(void);
+		SegmentedLineClass();
 		SegmentedLineClass(const SegmentedLineClass & src);
 		SegmentedLineClass & operator = (const SegmentedLineClass &that);
-		virtual ~SegmentedLineClass(void);
+		virtual ~SegmentedLineClass();
 
-		void					Reset_Line(void);
+		void					Reset_Line();
 
 		/*
 		** SegmentedLineClass interface:
@@ -70,7 +65,7 @@ class SegmentedLineClass : public RenderObjClass
 		// These are segment points, and include the start and end point of the
 		// entire line. Therefore there must be at least two.
 		void					Set_Points(unsigned int num_points, Vector3 *locs);
-		int					Get_Num_Points(void);
+		int					Get_Num_Points();
 
 		// Set object-space location for a given point.
 		// NOTE: If given position beyond end of point list, do nothing.
@@ -84,22 +79,22 @@ class SegmentedLineClass : public RenderObjClass
 		void					Delete_Point(unsigned int point_idx);
 
 		// Get/set global properties (which affect all line segments)
-		TextureClass *		Get_Texture(void);
-		ShaderClass			Get_Shader(void);
+		TextureClass *		Get_Texture();
+		ShaderClass			Get_Shader();
 
-		float					Get_Width(void);
+		float					Get_Width();
 		void					Get_Color(Vector3 &color);
-		float					Get_Opacity(void);
-		float					Get_Noise_Amplitude(void);
-		float					Get_Merge_Abort_Factor(void);
-		unsigned int		Get_Subdivision_Levels(void);
-		SegLineRendererClass::TextureMapMode		Get_Texture_Mapping_Mode(void);
-		float					Get_Texture_Tile_Factor(void);
-		Vector2				Get_UV_Offset_Rate(void);
-		int					Is_Merge_Intersections(void);
-		int					Is_Freeze_Random(void);
-		int					Is_Sorting_Disabled(void);
-		int					Are_End_Caps_Enabled(void);
+		float					Get_Opacity();
+		float					Get_Noise_Amplitude();
+		float					Get_Merge_Abort_Factor();
+		unsigned int		Get_Subdivision_Levels();
+		SegLineRendererClass::TextureMapMode		Get_Texture_Mapping_Mode();
+		float					Get_Texture_Tile_Factor();
+		Vector2				Get_UV_Offset_Rate();
+		int					Is_Merge_Intersections();
+		int					Is_Freeze_Random();
+		int					Is_Sorting_Disabled();
+		int					Are_End_Caps_Enabled();
 
 		void					Set_Texture(TextureClass *texture);
 		void					Set_Shader(ShaderClass shader);
@@ -122,9 +117,9 @@ class SegmentedLineClass : public RenderObjClass
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Cloning and Identification
 		/////////////////////////////////////////////////////////////////////////////
-		virtual RenderObjClass *	Clone(void) const;		
-		virtual int						Class_ID(void)	const { return CLASSID_SEGLINE; }
-		virtual int						Get_Num_Polys(void) const;
+		virtual RenderObjClass *	Clone() const;
+		virtual int						Class_ID()	const { return CLASSID_SEGLINE; }
+		virtual int						Get_Num_Polys() const;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Rendering
@@ -141,14 +136,14 @@ class SegmentedLineClass : public RenderObjClass
 		// Render Object Interface - Predictive LOD
 		/////////////////////////////////////////////////////////////////////////////
 		virtual void					Prepare_LOD(CameraClass &camera);
-		virtual void					Increment_LOD(void);
-		virtual void					Decrement_LOD(void);
-		virtual float					Get_Cost(void) const;
-		virtual float					Get_Value(void) const;
-		virtual float					Get_Post_Increment_Value(void) const;
+		virtual void					Increment_LOD();
+		virtual void					Decrement_LOD();
+		virtual float					Get_Cost() const;
+		virtual float					Get_Value() const;
+		virtual float					Get_Post_Increment_Value() const;
 		virtual void					Set_LOD_Level(int lod);
-		virtual int						Get_LOD_Level(void) const;
-		virtual int						Get_LOD_Count(void) const;
+		virtual int						Get_LOD_Level() const;
+		virtual int						Get_LOD_Count() const;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Attributes, Options, Properties, etc
@@ -178,5 +173,3 @@ class SegmentedLineClass : public RenderObjClass
 		// LineRenderer, contains most of the line settings.
 		SegLineRendererClass		LineRenderer;
 };
-
-#endif // SEGLINE_H

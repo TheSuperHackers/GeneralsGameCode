@@ -26,8 +26,8 @@
  *                                                                                             *
  *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 07/01/02 12:55p                                              $*
  *                                                                                             *
  *                    $Revision:: 24                                                          $*
@@ -49,11 +49,11 @@
  *   SimpleSceneClass::~SimpleSceneClass -- destructor                                         *
  *   SimpleSceneClass::Add_Render_Object -- add a render object to the scene                   *
  *   SimpleSceneClass::Remove_Render_Object -- remove a render object from this scene          *
- *   SimpleSceneClass::Visiblity_Check -- set the visiblity status of the render objects       *
+ *   SimpleSceneClass::Visibility_Check -- set the visibility status of the render objects     *
  *   SimpleSceneClass::Render -- internal scene rendering function                             *
  *   SimpleSceneClass::Render -- Render this scene                                             *
  *   SimpleSceneClass::Create_Iterator -- create an iterator for this scene                    *
- *   SimpleSceneClass::Destroy_Iterator -- destroy an iterater of this scene                   *
+ *   SimpleSceneClass::Destroy_Iterator -- destroy an iterator of this scene                   *
  *   SceneClass::Save -- saves scene settings into a chunk                                     *
  *   SceneClass::Load -- loads scene settings from a chunk                                     *
  *   SimpleSceneClass::Compute_Point_Visibility -- returns visibility of a point               *
@@ -76,7 +76,7 @@
 /*
 ** Chunk ID's used by SceneClass
 */
-enum 
+enum
 {
 	SCENECLASS_CHUNK_VARIABLES			= 0x00042300,
 
@@ -91,22 +91,22 @@ enum
 /*
 ** SimpleSceneIterator
 ** This iterator is used by the SimpleSceneClass to allow
-** the user to iterate through its render objects. 
+** the user to iterate through its render objects.
 */
 class SimpleSceneIterator : public SceneIterator
 {
 public:
-	virtual void					First(void);
-	virtual void					Next(void);
-	virtual bool					Is_Done(void);
-	virtual RenderObjClass *	Current_Item(void);
+	virtual void					First();
+	virtual void					Next();
+	virtual bool					Is_Done();
+	virtual RenderObjClass *	Current_Item();
 
 protected:
 
 	SimpleSceneIterator(RefRenderObjListClass * renderlist,bool onlyvis);
 
-	RefRenderObjListIterator	RobjIterator;	
-	SimpleSceneClass *			Scene;	
+	RefRenderObjListIterator	RobjIterator;
+	SimpleSceneClass *			Scene;
 	bool								OnlyVis;
 
 	friend class SimpleSceneClass;
@@ -125,7 +125,7 @@ protected:
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass::SceneClass(void) : 
+SceneClass::SceneClass() :
 	AmbientLight(0.5f,0.5f,0.5f),
 	PolyRenderMode(FILL),
 	ExtraPassPolyRenderMode(EXTRA_PASS_DISABLE),
@@ -149,7 +149,7 @@ SceneClass::SceneClass(void) :
  * HISTORY:                                                                                    *
  *   12/10/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-SceneClass::~SceneClass(void)
+SceneClass::~SceneClass()
 {
 }
 
@@ -183,7 +183,7 @@ void SceneClass::Add_Render_Object(RenderObjClass * obj)
  * the object...                                                                               *
  *                                                                                             *
  * INPUT:                                                                                      *
- * obj - pointer to the object to remove                                                       * 
+ * obj - pointer to the object to remove                                                       *
  *                                                                                             *
  * OUTPUT:                                                                                     *
  *                                                                                             *
@@ -287,7 +287,7 @@ void SceneClass::Load(ChunkLoadClass & cload)
 {
 	cload.Open_Chunk();
 	if (cload.Cur_Chunk_ID() == SCENECLASS_CHUNK_VARIABLES) {
-		
+
 		while (cload.Open_Micro_Chunk()) {
 			switch(cload.Cur_Micro_Chunk_ID()) {
 				READ_MICRO_CHUNK(cload,SCENECLASS_VARIABLE_AMBIENTLIGHT,AmbientLight);
@@ -301,7 +301,7 @@ void SceneClass::Load(ChunkLoadClass & cload)
 		}
 
 	} else {
-		WWDEBUG_SAY(("Unhandled Chunk: 0x%X in file: %s line: %d\r\n",cload.Cur_Chunk_ID(),__FILE__,__LINE__));
+		WWDEBUG_SAY(("Unhandled Chunk: 0x%X in file: %s line: %d",cload.Cur_Chunk_ID(),__FILE__,__LINE__));
 	}
 	cload.Close_Chunk();
 }
@@ -320,7 +320,7 @@ void SceneClass::Load(ChunkLoadClass & cload)
  *   3/24/98    GTH : Created.                                                                 *
  *   9/10/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-SimpleSceneClass::SimpleSceneClass(void) :
+SimpleSceneClass::SimpleSceneClass() :
    Visibility_Checked(false)
 {
 
@@ -338,7 +338,7 @@ SimpleSceneClass::SimpleSceneClass(void) :
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-SimpleSceneClass::~SimpleSceneClass(void)
+SimpleSceneClass::~SimpleSceneClass()
 {
 	Remove_All_Render_Objects();
 }
@@ -358,10 +358,10 @@ SimpleSceneClass::~SimpleSceneClass(void)
  * HISTORY:                                                                                    *
  *   8/27/2001  hy : Created.                                                                  *
  *=============================================================================================*/
-void SimpleSceneClass::Remove_All_Render_Objects(void)
+void SimpleSceneClass::Remove_All_Render_Objects()
 {
 	RenderObjClass * obj;
-	while ( ( obj = RenderList.Remove_Head() ) != NULL ) {
+	while ( ( obj = RenderList.Remove_Head() ) != nullptr ) {
 		SceneClass::Remove_Render_Object(obj);
 		obj->Release_Ref();							// remove head gets a ref
 	}
@@ -410,14 +410,14 @@ void SimpleSceneClass::Remove_Render_Object(RenderObjClass * obj)
 void SimpleSceneClass::Register(RenderObjClass * obj,RegType for_what)
 {
 	switch (for_what) {
-		case ON_FRAME_UPDATE:	
-			UpdateList.Add(obj);			
+		case ON_FRAME_UPDATE:
+			UpdateList.Add(obj);
 			break;
-		case LIGHT:	
-			LightList.Add_Tail(obj);	
+		case LIGHT:
+			LightList.Add_Tail(obj);
 			break;
-		case RELEASE:				
-			ReleaseList.Add(obj);		
+		case RELEASE:
+			ReleaseList.Add(obj);
 			break;
 	};
 }
@@ -425,14 +425,14 @@ void SimpleSceneClass::Register(RenderObjClass * obj,RegType for_what)
 void SimpleSceneClass::Unregister(RenderObjClass * obj,RegType for_what)
 {
 	switch (for_what) {
-		case ON_FRAME_UPDATE:	
-			UpdateList.Remove(obj);			
+		case ON_FRAME_UPDATE:
+			UpdateList.Remove(obj);
 			break;
-		case LIGHT:	
-			LightList.Remove(obj);	
+		case LIGHT:
+			LightList.Remove(obj);
 			break;
-		case RELEASE:				
-			ReleaseList.Remove(obj);		
+		case RELEASE:
+			ReleaseList.Remove(obj);
 			break;
 	}
 }
@@ -440,7 +440,7 @@ void SimpleSceneClass::Unregister(RenderObjClass * obj,RegType for_what)
 
 
 /***********************************************************************************************
- * SimpleSceneClass::Visiblity_Check -- set the visiblity status of the render objects         *
+ * SimpleSceneClass::Visibility_Check -- set the visibility status of the render objects       *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -494,7 +494,7 @@ void SimpleSceneClass::Visibility_Check(CameraClass * camera)
  *   6/13/2001  gth : Created.                                                                 *
  *=============================================================================================*/
 float SimpleSceneClass::Compute_Point_Visibility
-(	
+(
 	RenderInfoClass & rinfo,
 	const Vector3 & point
 )
@@ -533,7 +533,7 @@ float SimpleSceneClass::Compute_Point_Visibility
  *   06/27/02	KM Shader system light environment updates                                       *
  *=============================================================================================*/
 void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
-{	
+{
 //	SceneClass::Render(rinfo);
 
    // If visibility has not been checked for this scene since the last
@@ -543,9 +543,9 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
       // set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
    }
-   Visibility_Checked = false;	
-	
-	RefRenderObjListIterator it(&UpdateList);	
+   Visibility_Checked = false;
+
+	RefRenderObjListIterator it(&UpdateList);
 
 	// allow all objects in the update list to do their "every frame" processing
 	for (it.First(); !it.Is_Done(); it.Next()) {
@@ -554,27 +554,27 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 
 	// apply only the first four lights in the scene
 	// derived classes should use light environment
-	WWASSERT(rinfo.light_environment==NULL);
+	WWASSERT(rinfo.light_environment==nullptr);
 	int count=0;
 	// Turn off lights in case we have none
-	DX8Wrapper::Set_Light(0,NULL);
-	DX8Wrapper::Set_Light(1,NULL);
-	DX8Wrapper::Set_Light(2,NULL);
-	DX8Wrapper::Set_Light(3,NULL);
+	DX8Wrapper::Set_Light(0,nullptr);
+	DX8Wrapper::Set_Light(1,nullptr);
+	DX8Wrapper::Set_Light(2,nullptr);
+	DX8Wrapper::Set_Light(3,nullptr);
 
 // (gth) WWShade only works with light environments.  We need to upgrade LightEnvironment to
 // support real point lights, etc.  It will likely just evolve into "the n most important" lights
 // rather than optimizing lights into directional lights...
 #if 0
 	for (it.First(&LightList); !it.Is_Done(); it.Next())
-	{		
+	{
 		if (count<4)
 		{
 			DX8Wrapper::Set_Light(count,*(LightClass*)it.Peek_Obj());
 		} else
 		{
 			// Simple scene only supports 4 global lights
-			WWDEBUG_SAY(("Light %d ignored\n",count));
+			WWDEBUG_SAY(("Light %d ignored",count));
 		}
 		count++;
 	}
@@ -587,10 +587,10 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 
 		lenv.Reset(Vector3(0,0,0),AmbientLight);
 
-		for (it.First(&LightList); !it.Is_Done(); it.Next()) 
+		for (it.First(&LightList); !it.Is_Done(); it.Next())
 		{
 			lenv.Add_Light(*(LightClass*)it.Peek_Obj());
-		}	
+		}
 		lenv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 
 		rinfo.light_environment=&lenv;
@@ -620,7 +620,7 @@ void SimpleSceneClass::Post_Render_Processing(RenderInfoClass& rinfo)
 {
 	// process the 'Release' list.  These are objects that have notified us that they
 	// want to be released.  We have to walk this list twice, first un-linking the
-	// object from the scene or its container.  And then removing them all from 
+	// object from the scene or its container.  And then removing them all from
 	// the list.  (this last removal will destroy any auto-created objects)
 	RefRenderObjListIterator it(&ReleaseList);
 	for (it.First(&ReleaseList); !it.Is_Done(); it.Next()) {
@@ -657,7 +657,7 @@ SceneIterator * SimpleSceneClass::Create_Iterator(bool onlyvisible)
 
 
 /***********************************************************************************************
- * SimpleSceneClass::Destroy_Iterator -- destroy an iterater of this scene                     *
+ * SimpleSceneClass::Destroy_Iterator -- destroy an iterator of this scene                     *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -674,29 +674,29 @@ void SimpleSceneClass::Destroy_Iterator(SceneIterator * it)
 }
 
 
-SimpleSceneIterator::SimpleSceneIterator(RefRenderObjListClass * list,bool onlyvis) : 
+SimpleSceneIterator::SimpleSceneIterator(RefRenderObjListClass * list,bool onlyvis) :
 	RobjIterator(list)
 {
 	// TODO: make SimpleSceneIterator able to iterate through only the visible nodes.
 	OnlyVis = onlyvis;
 }
 
-void SimpleSceneIterator::First(void)
+void SimpleSceneIterator::First()
 {
 	RobjIterator.First();
 }
 
-void SimpleSceneIterator::Next(void)
+void SimpleSceneIterator::Next()
 {
 	RobjIterator.Next();
 }
 
-bool SimpleSceneIterator::Is_Done(void)
+bool SimpleSceneIterator::Is_Done()
 {
 	return RobjIterator.Is_Done();
 }
 
-RenderObjClass * SimpleSceneIterator::Current_Item(void)
+RenderObjClass * SimpleSceneIterator::Current_Item()
 {
 	return RobjIterator.Peek_Obj();
 }

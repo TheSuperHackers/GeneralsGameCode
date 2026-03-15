@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __REPAIRDOCKUPDATE_H_
-#define __REPAIRDOCKUPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/GameMemory.h"
 #include "GameLogic/Module/SupplyCenterDockUpdate.h"
@@ -43,7 +40,7 @@ class RepairDockUpdateModuleData : public DockUpdateModuleData
 
 public:
 
-	RepairDockUpdateModuleData( void );
+	RepairDockUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -64,17 +61,15 @@ public:
 	RepairDockUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by MemoryPoolObject base class
 
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
 
-	virtual Bool action( Object *docker, Object *drone = NULL );	///< for me this means do some repair
+	virtual Bool action( Object *docker, Object *drone = nullptr ) override;	///< for me this means do some repair
 
-	virtual Bool isRallyPointAfterDockType(){return TRUE;} ///< A minority of docks want to give you a final command to their rally point
+	virtual Bool isRallyPointAfterDockType() override {return TRUE;} ///< A minority of docks want to give you a final command to their rally point
 
 protected:
 
   ObjectID m_lastRepair;			///< object we were repairing last
 	Real m_healthToAddPerFrame;	///< health to add per frame to current docked object
-	
-};
 
-#endif
+};

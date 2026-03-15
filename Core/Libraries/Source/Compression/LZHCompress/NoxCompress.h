@@ -20,9 +20,7 @@
 // Compress/Decompression header.
 // Author: Jeff Brown, January 1999
 
-
-#ifndef __compress_h
-#define __compress_h
+#pragma once
 
 #define MAP_EXTENSION ".map"
 #define LZH_EXTENSION ".nxz"
@@ -36,5 +34,3 @@ UnsignedInt CalcNewSize		(UnsignedInt rawSize);
 
 Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
 Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
-
-#endif // __compress_h

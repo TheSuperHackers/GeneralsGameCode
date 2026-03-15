@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef FRUSTUM_H
-#define FRUSTUM_H
 
 #include "vector3.h"
 #include "plane.h"
@@ -55,19 +49,28 @@ public:
 							float znear,
 							float zfar );
 
-	const Vector3 &	Get_Bound_Min(void) const		{ return BoundMin; }
-	const Vector3 &	Get_Bound_Max(void) const		{ return BoundMax; }
+	const Vector3 &	Get_Bound_Min() const		{ return BoundMin; }
+	const Vector3 &	Get_Bound_Max() const		{ return BoundMax; }
 
 public:
 
 	Matrix3D				CameraTransform;
+	// Plane 0: NEAR
+	// Plane 1: bottom
+	// Plane 2: right
+	// Plane 3: top
+	// Plane 4: left
+	// Plane 5: FAR
 	PlaneClass			Planes[6];
+	// Corner 0: NEAR upper left
+	// Corner 1: NEAR upper right
+	// Corner 2: NEAR lower left
+	// Corner 3: NEAR lower right
+	// Corner 4: FAR upper left
+	// Corner 5: FAR upper right
+	// Corner 6: FAR lower left
+	// Corner 7: FAR lower right
 	Vector3				Corners[8];
 	Vector3				BoundMin;
 	Vector3				BoundMax;
 };
-
-
-
-#endif
-

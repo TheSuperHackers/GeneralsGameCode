@@ -39,9 +39,6 @@
 
 #pragma once
 
-#ifndef __XFER_H_
-#define __XFER_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Science.h"
 #include "Common/Upgrade.h"
@@ -68,7 +65,7 @@ enum XferMode CPP_11(: Int)
 	XFER_LOAD,
 	XFER_CRC,
 
-	NUM_XFER_TYPES  // please keep this last
+	NUM_XFER_TYPES
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -76,7 +73,7 @@ enum XferMode CPP_11(: Int)
 enum XferStatus CPP_11(: Int)
 {
 	XFER_STATUS_INVALID = 0,
-	
+
 	XFER_OK,														///< all is green and good
 	XFER_EOF,														///< end of file encountered
 	XFER_FILE_NOT_FOUND,								///< requested file does not exist
@@ -93,10 +90,10 @@ enum XferStatus CPP_11(: Int)
 	XFER_INVALID_PARAMETERS,						///< invalid parameters
 	XFER_LIST_NOT_EMPTY,								///< trying to xfer into a list that should be empty, but isn't
 	XFER_UNKNOWN_STRING,								///< unrecognized string value
-	
+
 	XFER_ERROR_UNKNOWN,									///< unknown error (isn't that useful!)
 
-	NUM_XFER_STATUS  // please keep this last
+	NUM_XFER_STATUS
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -106,7 +103,7 @@ enum XferOptions CPP_11(: UnsignedInt)
 	XO_NONE										= 0x00000000,
 	XO_NO_POST_PROCESSING			= 0x00000001,
 
-	XO_ALL										= 0xFFFFFFFF  // keep this last please
+	XO_ALL										= 0xFFFFFFFF
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,20 +116,20 @@ class Xfer
 
 public:
 
-	Xfer( void );
-	virtual ~Xfer( void );
+	Xfer();
+	virtual ~Xfer();
 
-	virtual XferMode getXferMode( void ) { return m_xferMode; }
-	AsciiString getIdentifier( void ) { return m_identifier; }
+	virtual XferMode getXferMode() { return m_xferMode; }
+	AsciiString getIdentifier() { return m_identifier; }
 
 	// xfer management
 	virtual void setOptions( UnsignedInt options ) { BitSet( m_options, options ); }
 	virtual void clearOptions( UnsignedInt options ) { BitClear( m_options, options ); }
-	virtual UnsignedInt getOptions( void ) { return m_options; }
+	virtual UnsignedInt getOptions() { return m_options; }
 	virtual void open( AsciiString identifier ) = 0;		///< xfer open event
-	virtual void close( void ) = 0;											///< xfer close event
-	virtual Int beginBlock( void ) = 0;									///< xfer begin block event
-	virtual void endBlock( void ) = 0;									///< xfer end block event
+	virtual void close() = 0;											///< xfer close event
+	virtual Int beginBlock() = 0;									///< xfer begin block event
+	virtual void endBlock() = 0;									///< xfer end block event
 	virtual void skip( Int dataSize ) = 0;							///< xfer skip data
 
 	virtual void xferSnapshot( Snapshot *snapshot ) = 0;		///< entry point for xfering a snapshot
@@ -183,14 +180,11 @@ public:
 
 protected:
 
-	// this is the actual xfer impelmentation that each derived class should implement
+	// this is the actual xfer implementation that each derived class should implement
 	virtual void xferImplementation( void *data, Int dataSize ) = 0;
 
 	UnsignedInt m_options;					///< xfer options
 	XferMode m_xferMode;						///< the current xfer mode
 	AsciiString m_identifier;				///< the string identifier
-			
+
 };
-
-#endif // __XFER_H_
-

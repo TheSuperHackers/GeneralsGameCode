@@ -22,17 +22,14 @@
 
 #pragma once
 
-#ifndef FEATHERTOOL_H
-#define FEATHERTOOL_H
-
 #include "Tool.h"
 class WorldHeightMapEdit;
 /**************************************************************************/
 /**                             FeatherTool
-	 Does the smooth height map tool operation. 
+	 Does the smooth height map tool operation.
 ***************************************************************************/
 ///  smooth height map tool.
-class FeatherTool : public Tool 
+class FeatherTool : public Tool
 {
 protected:
 	WorldHeightMapEdit *m_htMapEditCopy; //< ref counted.
@@ -56,6 +53,3 @@ public:
 	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
 	virtual void activate(); ///< Become the current tool.
 };
-
-
-#endif //FEATHERTOOL_H

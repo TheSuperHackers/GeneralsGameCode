@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/vector.cpp                             $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/vector.cpp                             $*
+ *                                                                                             *
  *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 1/16/02 11:40a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 20                                                          $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   BooleanVectorClass::BooleanVectorClass -- Copy constructor for boolean array.             *
  *   BooleanVectorClass::BooleanVectorClass -- Explicit data buffer constructor.               *
  *   BooleanVectorClass::Clear -- Resets boolean vector to empty state.                        *
@@ -53,8 +53,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"Vector.H"
-#include	<string.h>
+#include "Vector.h"
 
 /*
 **	The following template function can be located here ONLY if all the instantiations are
@@ -86,7 +85,7 @@ BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array) :
 	BitCount(size),
 	Copy(false),
 	LastIndex(-1),
-	BitArray(0, 0)
+	BitArray(0, nullptr)
 {
 	BitArray.Resize(((size + (8-1)) / 8), array);
 //	LastIndex = -1;
@@ -238,7 +237,7 @@ int BooleanVectorClass::Resize(unsigned size)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Clear(void)
+void BooleanVectorClass::Clear()
 {
 	Fixup();
 	BitCount = 0;
@@ -260,7 +259,7 @@ void BooleanVectorClass::Clear(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Reset(void)
+void BooleanVectorClass::Reset()
 {
 	LastIndex = -1;
 	if (BitArray.Length() > 0) {
@@ -283,7 +282,7 @@ void BooleanVectorClass::Reset(void)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BooleanVectorClass::Set(void)
+void BooleanVectorClass::Set()
 {
 	LastIndex = -1;
 	if (BitArray.Length() > 0) {

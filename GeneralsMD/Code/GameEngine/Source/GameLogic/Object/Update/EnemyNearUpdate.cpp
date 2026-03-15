@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -53,16 +53,16 @@ EnemyNearUpdate::EnemyNearUpdate( Thing *thing, const ModuleData* moduleData ) :
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EnemyNearUpdate::~EnemyNearUpdate( void )
+EnemyNearUpdate::~EnemyNearUpdate()
 {
 }
 
 
 //-------------------------------------------------------------------------------------------------
-/** 
+/**
  * Look around us for enemies.
  */
-void EnemyNearUpdate::checkForEnemies( void )
+void EnemyNearUpdate::checkForEnemies()
 {
 	// periodic enemy checks
 	if (m_enemyScanDelay == 0)
@@ -71,7 +71,7 @@ void EnemyNearUpdate::checkForEnemies( void )
 
 		Real visionRange = getObject()->getVisionRange();
 		Object* enemy = TheAI->findClosestEnemy( getObject(), visionRange, AI::CAN_SEE );
-		m_enemyNear = (enemy != NULL);
+		m_enemyNear = (enemy != nullptr);
 	}
 	else
 	{
@@ -115,7 +115,7 @@ void EnemyNearUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -139,15 +139,15 @@ void EnemyNearUpdate::xfer( Xfer *xfer )
 	// enemy near
 	xfer->xferBool( &m_enemyNear );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void EnemyNearUpdate::loadPostProcess( void )
+void EnemyNearUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

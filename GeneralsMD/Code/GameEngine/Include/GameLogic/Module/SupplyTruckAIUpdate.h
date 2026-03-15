@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef _SUPPLY_TRUCK_AI_UPDATE_H_
-#define _SUPPLY_TRUCK_AI_UPDATE_H_
-
 #include "Common/StateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
@@ -53,60 +50,60 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-------------------------------------------------------------------------------------------------
 class SupplyTruckWantsToPickUpOrDeliverBoxesState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckWantsToPickUpOrDeliverBoxesState, "SupplyTruckWantsToPickUpOrDeliverBoxesState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyTruckWantsToPickUpOrDeliverBoxesState, "SupplyTruckWantsToPickUpOrDeliverBoxesState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 public:
 	SupplyTruckWantsToPickUpOrDeliverBoxesState( StateMachine *machine ) : State( machine, "SupplyTruckWantsToPickUpOrDeliverBoxesState" ) {}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit(StateExitType status);
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit(StateExitType status) override;
 };
 EMPTY_DTOR(SupplyTruckWantsToPickUpOrDeliverBoxesState)
 
 //-------------------------------------------------------------------------------------------------
 class RegroupingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RegroupingState, "RegroupingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(RegroupingState, "RegroupingState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 public:
 	RegroupingState( StateMachine *machine ) : State( machine, "RegroupingState" ) {}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();// Will tell me to aiMove back to base.
-	virtual void onExit(StateExitType status);
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;// Will tell me to aiMove back to base.
+	virtual void onExit(StateExitType status) override;
 };
 EMPTY_DTOR(RegroupingState)
 
 //-------------------------------------------------------------------------------------------------
 class DockingState :  public State
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DockingState, "DockingState")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DockingState, "DockingState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 public:
 	DockingState( StateMachine *machine ) :State( machine, "DockingState" ) {}
-	virtual StateReturnType update();
-	virtual StateReturnType onEnter();
-	virtual void onExit(StateExitType status);
+	virtual StateReturnType update() override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit(StateExitType status) override;
 };
 EMPTY_DTOR(DockingState)
 
@@ -138,17 +135,17 @@ public:
 		m_warehouseScanDistance = 100;
 	}
 
-	static void buildFieldParse(MultiIniFieldParse& p) 
+	static void buildFieldParse(MultiIniFieldParse& p)
 	{
     AIUpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] = 
+		static const FieldParse dataFieldParse[] =
 		{
-			{ "MaxBoxes",					INI::parseInt,		NULL, offsetof( SupplyTruckAIUpdateModuleData, m_maxBoxesData ) },
-			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_centerDelay ) },
-			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseDelay ) },
-			{ "SupplyWarehouseScanDistance", INI::parseReal, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseScanDistance ) },
- 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, NULL, offsetof( SupplyTruckAIUpdateModuleData, m_suppliesDepletedVoice) },
+			{ "MaxBoxes",					INI::parseInt,		nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_maxBoxesData ) },
+			{ "SupplyCenterActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_centerDelay ) },
+			{ "SupplyWarehouseActionDelay", INI::parseDurationUnsignedInt, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseDelay ) },
+			{ "SupplyWarehouseScanDistance", INI::parseReal, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_warehouseScanDistance ) },
+ 			{ "SuppliesDepletedVoice", INI::parseAudioEventRTS, nullptr, offsetof( SupplyTruckAIUpdateModuleData, m_suppliesDepletedVoice) },
 			{ 0, 0, 0, 0 }
 		};
     p.add(dataFieldParse);
@@ -164,6 +161,7 @@ class SupplyTruckAIInterface
 	// who look this up by name.
 public:
 	virtual Int getNumberBoxes() const = 0;
+	virtual Int getMaxBoxes() const = 0;
 	virtual Bool loseOneBox() = 0;
 	virtual Bool gainOneBox( Int remainingStock ) = 0;
 
@@ -196,47 +194,46 @@ public:
 	SupplyTruckAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return this;}
-	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return this;}
+	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() override {return this;}
+	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const override {return this;}
 
-	virtual Int getNumberBoxes() const { return m_numberBoxes; }
-	virtual Bool loseOneBox();
-	virtual Bool gainOneBox( Int remainingStock );
+	virtual Int getNumberBoxes() const override { return m_numberBoxes; }
+	virtual Int getMaxBoxes() const override { return getSupplyTruckAIUpdateModuleData()->m_maxBoxesData; }
+	virtual Bool loseOneBox() override;
+	virtual Bool gainOneBox( Int remainingStock ) override;
 
 	// this is present for subclasses (eg, Chinook) to override, to
 	// prevent supply-ferry behavior in some cases (eg, when toting passengers)
-	virtual Bool isAvailableForSupplying() const;
-	virtual Bool isCurrentlyFerryingSupplies() const;
-	virtual Real getWarehouseScanDistance() const; ///< How far can I look for a warehouse?
+	virtual Bool isAvailableForSupplying() const override;
+	virtual Bool isCurrentlyFerryingSupplies() const override;
+	virtual Real getWarehouseScanDistance() const override; ///< How far can I look for a warehouse?
 
-	virtual void setForceWantingState(Bool v) { m_forcePending = v; } // When a Supply Center creates us (or maybe other sources later), we need to hop into autopilot mode.
-	virtual Bool isForcedIntoWantingState() const { return m_forcePending; }
+	virtual void setForceWantingState(Bool v) override { m_forcePending = v; } // When a Supply Center creates us (or maybe other sources later), we need to hop into autopilot mode.
+	virtual Bool isForcedIntoWantingState() const override { return m_forcePending; }
 
-	virtual void setForceBusyState(Bool v) { m_forcedBusyPending = v; } 
-	virtual Bool isForcedIntoBusyState() const { return m_forcedBusyPending; }
+	virtual void setForceBusyState(Bool v) override { m_forcedBusyPending = v; }
+	virtual Bool isForcedIntoBusyState() const override { return m_forcedBusyPending; }
 
-	virtual ObjectID getPreferredDockID() const { return m_preferredDock; }
-	virtual UnsignedInt getActionDelayForDock( Object *dock );
-	virtual Int getUpgradedSupplyBoost() const { return 0; }
-	
-	virtual UpdateSleepTime update();
+	virtual ObjectID getPreferredDockID() const override { return m_preferredDock; }
+	virtual UnsignedInt getActionDelayForDock( Object *dock ) override;
+	virtual Int getUpgradedSupplyBoost() const override { return 0; }
+
+	virtual UpdateSleepTime update() override;
 
 protected:
 
-	virtual AIStateMachine* makeStateMachine();
-	virtual void privateDock( Object *obj, CommandSourceType cmdSource );
-	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.	
+	virtual AIStateMachine* makeStateMachine() override;
+	virtual void privateDock( Object *obj, CommandSourceType cmdSource ) override;
+	virtual void privateIdle(CommandSourceType cmdSource) override;						///< Enter idle state.
 
 private:
 	SupplyTruckStateMachine*	m_supplyTruckStateMachine;
 	ObjectID									m_preferredDock;			///< Instead of searching, try this one first
 	Int												m_numberBoxes;
-	Bool											m_forcePending;				// To prevent a function from doing a setState, 
+	Bool											m_forcePending;				// To prevent a function from doing a setState,
 																									// forceWanting will latch into here until serviced.
 	Bool											m_forcedBusyPending;	// A supply truck can't tell the difference between Idle since
 																									// I'm between docking states, or a Stop command without help.
  	AudioEventRTS m_suppliesDepletedVoice;						///< Sound played when I take the last box.
 
 };
-
-#endif

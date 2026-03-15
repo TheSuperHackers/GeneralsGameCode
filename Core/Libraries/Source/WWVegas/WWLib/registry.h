@@ -33,18 +33,10 @@
  *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef REGISTRY_H
-#define REGISTRY_H
-
-#ifndef ALWAYS_H
 #include "always.h"
-#endif
-
-#include "Vector.H"
+#include "Vector.h"
 #include "wwstring.h"
 #include "widestring.h"
 
@@ -59,9 +51,9 @@ public:
 
 	// Constructor & Destructor
 	RegistryClass( const char * sub_key, bool create = true );
-	~RegistryClass( void );
+	~RegistryClass();
 
-	bool	Is_Valid( void )		{ return IsValid; }
+	bool	Is_Valid()		{ return IsValid; }
 
 	// Int data type access
 	int	Get_Int( const char * name, int def_value = 0 );
@@ -77,12 +69,12 @@ public:
 
 	// String data type access
 	char *Get_String( const char * name, char *value, int value_size,
-      const char * default_string = NULL );
-	void	Get_String( const char * name, StringClass &string, const char *default_string = NULL);
+      const char * default_string = nullptr );
+	void	Get_String( const char * name, StringClass &string, const char *default_string = nullptr);
 	void	Set_String( const char * name, const char *value );
 
 	// Wide string data type access
-	void	Get_String( const WCHAR * name, WideStringClass &string, const WCHAR *default_string = NULL);
+	void	Get_String( const WCHAR * name, WideStringClass &string, const WCHAR *default_string = nullptr);
 	void	Set_String( const WCHAR * name, const WCHAR *value );
 
 	// Binary data type access
@@ -95,7 +87,7 @@ public:
 
 	// Delete support
 	void	Delete_Value( const char * name);
-	void	Deleta_All_Values( void );
+	void	Deleta_All_Values();
 
 	// Read only.
 	static void Set_Read_Only(bool set) {IsLocked = set;}
@@ -123,5 +115,3 @@ private:
 	//
 	static bool IsLocked;
 };
-
-#endif // REGISTRY_H

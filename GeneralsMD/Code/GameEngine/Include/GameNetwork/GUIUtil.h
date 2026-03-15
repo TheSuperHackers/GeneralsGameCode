@@ -27,9 +27,6 @@
 
 #pragma once
 
-#ifndef __GUIUTIL_H__
-#define __GUIUTIL_H__
-
 class GameWindow;
 class GameInfo;
 
@@ -42,16 +39,14 @@ void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGa
 void PopulateStartingCashComboBox(GameWindow *comboBox, GameInfo *myGame);
 
 void EnableSlotListUpdates( Bool val );
-Bool AreSlotListUpdatesEnabled( void );
+Bool AreSlotListUpdatesEnabled();
 
 void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
-										GameWindow *comboTeam[], GameWindow *buttonAccept[], 
+										GameWindow *comboTeam[], GameWindow *buttonAccept[],
 										GameWindow *buttonStart, GameWindow *buttonMapStartPosition[] );
 
 void EnableAcceptControls(Bool Enabled, GameInfo *myGame, GameWindow *comboPlayer[],
 										GameWindow *comboColor[], GameWindow *comboPlayerTemplate[],
 										GameWindow *comboTeam[], GameWindow *buttonAccept[], GameWindow *buttonStart,
 										GameWindow *buttonMapStartPosition[], Int slotNum = -1);
-
-#endif // __GUIUTIL_H__

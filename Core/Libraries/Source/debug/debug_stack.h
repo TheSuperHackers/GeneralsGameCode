@@ -26,22 +26,19 @@
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef DEBUG_STACK_H // Include guard
-#define DEBUG_STACK_H
+
+#pragma once
 
 /// \brief stack walker class (singleton)
 class DebugStackwalk
 {
   friend class Debug;
-  
+
   DebugStackwalk(const DebugStackwalk&);
   DebugStackwalk& operator=(DebugStackwalk&);
 
   // private so that only Debug can create and destroy us
-  DebugStackwalk(void);
+  DebugStackwalk();
   ~DebugStackwalk();
 
 public:
@@ -62,18 +59,18 @@ public:
     unsigned m_addr[MAX_ADDR];
 
   public:
-    explicit Signature(void): m_numAddr(0) {}
+    explicit Signature(): m_numAddr(0) {}
     Signature(const Signature &src);
     Signature& operator=(const Signature& src);
 
-    /** 
+    /**
       \brief Determine the number of addresses in this signature.
 
       \return number of addresses in this signature
     */
-    unsigned Size(void) const { return m_numAddr; }
+    unsigned Size() const { return m_numAddr; }
 
-    /** 
+    /**
       \brief Get a single address from the signature.
 
       The address at index 0 is always on top of the stack.
@@ -106,7 +103,7 @@ public:
     /**
       \brief Determines symbol for given address.
 
-      The data is returned in the form 
+      The data is returned in the form
       \<addr\> \<module\>+NN, \<sym\>+NN, \<file\>:\<line\>+NN
 
       \param addr function address
@@ -114,21 +111,21 @@ public:
       \param bufSize size of return buffer, minimum is 64 bytes (256 recommended)
     */
     static void GetSymbol(unsigned addr, char *buf, unsigned bufSize);
-    
+
     /**
       \brief Determines symbol for given address.
 
       \param addr function address
-      \param bufMod module buffer, may be NULL
+      \param bufMod module buffer, may be nullptr
       \param sizeMod size of buffer, including NUL, minimum 16 if given
-      \param relMod relative address within module, may be NULL
-      \param bufSym symbol buffer, may be NULL
+      \param relMod relative address within module, may be nullptr
+      \param bufSym symbol buffer, may be nullptr
       \param sizeSym size of buffer, including NUL
-      \param relSym relative address within symbol, may be NULL
-      \param bufFile file name buffer, may be NULL
+      \param relSym relative address within symbol, may be nullptr
+      \param bufFile file name buffer, may be nullptr
       \param sizeFile size of buffer, including NUL
-      \param line line number, may be NULL
-      \param relLine relative address within line, may be NULL
+      \param line line number, may be nullptr
+      \param relLine relative address within line, may be nullptr
     */
     static void GetSymbol(unsigned addr,
                           char *bufMod, unsigned sizeMod, unsigned *relMod,
@@ -141,20 +138,20 @@ public:
 
     \return dbghelp.dll DLL handle
   */
-  static void *GetDbghelpHandle(void);
+  static void *GetDbghelpHandle();
 
   /** \internal
     \brief Checks if dbghelp.dll version is old.
 
     \return true if old version, false if not
   */
-  static bool IsOldDbghelp(void);
+  static bool IsOldDbghelp();
 
   /**
     \brief Walks the stack from the given address.
 
     \param sig stack signature to return
-    \param ctx processor context, if NULL then use current address
+    \param ctx processor context, if nullptr then use current address
     \return number of addresses found
   */
   static int StackWalk(Signature &sig, struct _CONTEXT *ctx=0);
@@ -168,5 +165,3 @@ public:
   \return debug instance
 */
 Debug& operator<<(Debug &dbg, const DebugStackwalk::Signature &sig);
-
-#endif // DEBUG_STACK_H

@@ -52,19 +52,19 @@ public:
 
 	GenNamesDialogClass(Interface * maxinterface);
 	~GenNamesDialogClass();
-	
+
 	struct OptionsStruct
 	{
-		OptionsStruct(void) : OnlyAffectSelected(false), NameIndex(0), AssignCollisionBits(false) 
-		{ 
-			memset(RootName,0,sizeof(RootName)); 
+		OptionsStruct(void) : OnlyAffectSelected(false), NameIndex(0), AssignCollisionBits(false)
+		{
+			memset(RootName,0,sizeof(RootName));
 			memset(PrefixName,0,sizeof(PrefixName));
 			memset(SuffixName,0,sizeof(SuffixName));
 		}
-		
-		// overall options		
-		bool		AssignNames;				
-		bool		AssignPrefix;				
+
+		// overall options
+		bool		AssignNames;
+		bool		AssignPrefix;
 		bool		AssignSuffix;
 		bool		AssignCollisionBits;
 		bool		OnlyAffectSelected;
@@ -88,10 +88,10 @@ public:
 	bool Ok_To_Exit(void);
 	void Toggle_Collision_Bits_Assignment(void);
 	void Toggle_Name_Assignment(void);
-		
+
 private:
 
-	enum 
+	enum
 	{
 		MIN_NAME_INDEX				= 0,
 		MAX_NAME_INDEX				= 999,

@@ -34,15 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __DEFINITION_H
-#define __DEFINITION_H
 
 #include "always.h"
-// SKB Remove because of G conflicts with CLASSID_?? 
+// SKB Remove because of G conflicts with CLASSID_??
 #include "definitionclassids.h"
 #include "definitionmgr.h"
 #include "editable.h"
@@ -70,22 +65,22 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
-	DefinitionClass (void);
-	virtual ~DefinitionClass (void);
+	DefinitionClass ();
+	virtual ~DefinitionClass ();
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////
-	
+
 	// Type identification
-	virtual uint32						Get_Class_ID (void) const = 0;
-	virtual uint32						Get_ID (void) const;
+	virtual uint32						Get_Class_ID () const = 0;
+	virtual uint32						Get_ID () const;
 	virtual void						Set_ID (uint32 id);
-	virtual PersistClass *			Create (void) const = 0;
+	virtual PersistClass *			Create () const = 0;
 
 	// Display name methods
-	virtual const char *				Get_Name (void) const;
-	virtual void						Set_Name (const char *new_name);	
+	virtual const char *				Get_Name () const;
+	virtual void						Set_Name (const char *new_name);
 
 	// Validation methods
 	virtual bool						Is_Valid_Config (StringClass &message);
@@ -95,15 +90,15 @@ public:
 	virtual bool						Load (ChunkLoadClass &cload);
 
 	// User data support
-	uint32								Get_User_Data (void) const		{ return m_GenericUserData; }
+	uint32								Get_User_Data () const		{ return m_GenericUserData; }
 	void									Set_User_Data (uint32 data)	{ m_GenericUserData = data; }
 
 	// Save support
-	bool									Is_Save_Enabled (void) const	{ return m_SaveEnabled; }
+	bool									Is_Save_Enabled () const	{ return m_SaveEnabled; }
 	void									Enable_Save (bool onoff)		{ m_SaveEnabled = onoff; }
 
 protected:
-	
+
 	/////////////////////////////////////////////////////////////////////
 	//	Protected member data
 	/////////////////////////////////////////////////////////////////////
@@ -136,7 +131,7 @@ private:
 //	DefinitionClass
 /////////////////////////////////////////////////////////////////////
 inline
-DefinitionClass::DefinitionClass (void)
+DefinitionClass::DefinitionClass ()
 	:	m_ID (0),
 		m_SaveEnabled (true),
 		m_DefinitionMgrLink (-1)
@@ -148,7 +143,7 @@ DefinitionClass::DefinitionClass (void)
 //	DefinitionClass
 /////////////////////////////////////////////////////////////////////
 inline
-DefinitionClass::~DefinitionClass (void)
+DefinitionClass::~DefinitionClass ()
 {
 	return ;
 }
@@ -157,7 +152,7 @@ DefinitionClass::~DefinitionClass (void)
 //	Get_Name
 //////////////////////////////////////////////////////////////////////////////////
 inline const char *
-DefinitionClass::Get_Name (void) const
+DefinitionClass::Get_Name () const
 {
 	return m_Name;
 }
@@ -176,7 +171,7 @@ DefinitionClass::Set_Name (const char *new_name)
 //	Get_ID
 //////////////////////////////////////////////////////////////////////////////////
 inline uint32
-DefinitionClass::Get_ID (void) const
+DefinitionClass::Get_ID () const
 {
 	return m_ID;
 }
@@ -189,6 +184,3 @@ DefinitionClass::Is_Valid_Config (StringClass &message)
 {
 	return true;
 }
-
-
-#endif //__DEFINITION_H

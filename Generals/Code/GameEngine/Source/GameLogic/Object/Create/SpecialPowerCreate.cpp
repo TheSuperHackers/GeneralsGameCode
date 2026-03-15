@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
@@ -44,18 +44,18 @@ SpecialPowerCreate::SpecialPowerCreate( Thing *thing, const ModuleData* moduleDa
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerCreate::~SpecialPowerCreate( void )
+SpecialPowerCreate::~SpecialPowerCreate()
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCreate::onCreate( void )
+void SpecialPowerCreate::onCreate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerCreate::onBuildComplete( void )
+void SpecialPowerCreate::onBuildComplete()
 {
 	if( ! shouldDoOnBuildComplete() )
 		return;
@@ -70,7 +70,7 @@ void SpecialPowerCreate::onBuildComplete( void )
 
 		sp->onSpecialPowerCreation();
 	}
-} 
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -81,7 +81,7 @@ void SpecialPowerCreate::crc( Xfer *xfer )
 	// extend base class
 	CreateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -99,15 +99,15 @@ void SpecialPowerCreate::xfer( Xfer *xfer )
 	// extend base class
 	CreateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpecialPowerCreate::loadPostProcess( void )
+void SpecialPowerCreate::loadPostProcess()
 {
 
 	// extend base class
 	CreateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

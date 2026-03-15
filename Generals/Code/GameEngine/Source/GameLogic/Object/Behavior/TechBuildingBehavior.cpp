@@ -40,9 +40,9 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
+TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData()
 {
-	m_pulseFX = NULL;
+	m_pulseFX = nullptr;
 	m_pulseFXRate = 0;
 }
 
@@ -52,16 +52,16 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData( void )
 {
   UpdateModuleData::buildFieldParse( p );
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "PulseFX",								INI::parseFXList,								NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFX ) },
-		{ "PulseFXRate",						INI::parseDurationUnsignedInt,	NULL,	offsetof( TechBuildingBehaviorModuleData, m_pulseFXRate ) },
-		{ 0, 0, 0, 0 }
+		{ "PulseFX",								INI::parseFXList,								nullptr,	offsetof( TechBuildingBehaviorModuleData, m_pulseFX ) },
+		{ "PulseFXRate",						INI::parseDurationUnsignedInt,	nullptr,	offsetof( TechBuildingBehaviorModuleData, m_pulseFXRate ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
 
   p.add( dataFieldParse );
 
-}  // end buildFieldParse
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -79,18 +79,18 @@ TechBuildingBehavior::TechBuildingBehavior( Thing *thing, const ModuleData *modD
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-TechBuildingBehavior::~TechBuildingBehavior( void )
+TechBuildingBehavior::~TechBuildingBehavior()
 {
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-UpdateSleepTime TechBuildingBehavior::update( void )
+UpdateSleepTime TechBuildingBehavior::update()
 {
 	Object *us = getObject();
 	const TechBuildingBehaviorModuleData* d = getTechBuildingBehaviorModuleData();
 	Bool captured = false;
-	
+
 	// update our model condition for the captured status
 	Player *player = us->getControllingPlayer();
 	if( player && player->isPlayableSide() )
@@ -105,7 +105,7 @@ UpdateSleepTime TechBuildingBehavior::update( void )
 	}
 
 	// if we have a pulse fx, and are owned, sleep only a little while, otherwise sleep forever
-	if (d->m_pulseFX != NULL && d->m_pulseFXRate > 0 && captured)
+	if (d->m_pulseFX != nullptr && d->m_pulseFXRate > 0 && captured)
 	{
 		FXList::doFXObj( d->m_pulseFX, us );
 		return UPDATE_SLEEP(d->m_pulseFXRate);
@@ -128,7 +128,7 @@ void TechBuildingBehavior::onDie( const DamageInfo *damageInfo )
 	Object *us = getObject();
 	us->setTeam( ThePlayerList->getNeutralPlayer()->getDefaultTeam() );
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ void TechBuildingBehavior::onCapture( Player *oldOwner, Player *newOwner )
 	// wake up next frame so we can re-evaluate our captured status
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
-}  // end onCapture
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ void TechBuildingBehavior::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -162,19 +162,19 @@ void TechBuildingBehavior::xfer( Xfer *xfer )
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
-	
+
 	// extend base class
 	UpdateModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void TechBuildingBehavior::loadPostProcess( void )
+void TechBuildingBehavior::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}
 

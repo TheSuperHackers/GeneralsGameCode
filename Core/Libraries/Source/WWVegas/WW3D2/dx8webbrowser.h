@@ -27,11 +27,10 @@
 // Date of Creation	: 6/4/2002
 //
 //******************************************************************************************
-// $Header: $ 
+// $Header: $
 //******************************************************************************************
 
-#ifndef DX8_WEBBROWSER_H
-#define DX8_WEBBROWSER_H
+#pragma once
 
 #include <windows.h>
 #include "d3d8.h"
@@ -66,9 +65,9 @@ public:
 											const char* mousefilename = 0,
 											const char* mousebusyfilename = 0);			//Initialize the Embedded Browser
 
-	static void			Shutdown(void);			// Shutdown the embedded browser.  Will close any open browsers.
+	static void			Shutdown();			// Shutdown the embedded browser.  Will close any open browsers.
 
-	static void			Update(void);				// Copies all browser contexts to D3D Image surfaces.
+	static void			Update();				// Copies all browser contexts to D3D Image surfaces.
 	static void			Render(int backbufferindex);	//Draws all browsers to the backbuffer.
 
 	// Creates a browser with the specified name
@@ -87,7 +86,5 @@ private:
 	// The window handle of the application.  This is initialized by Initialize().
 	static				HWND						hWnd;
 };
-
-#endif
 
 #endif

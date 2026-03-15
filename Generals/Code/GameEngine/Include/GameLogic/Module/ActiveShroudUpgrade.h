@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __ACTIVE_SHROUD_UPGRADE_H_
-#define __ACTIVE_SHROUD_UPGRADE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
 
@@ -47,7 +44,7 @@ class ActiveShroudUpgradeModuleData : public UpgradeModuleData
 
 public:
 
-	ActiveShroudUpgradeModuleData( void );
+	ActiveShroudUpgradeModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -71,10 +68,7 @@ public:
 
 protected:
 
-	virtual void upgradeImplementation( void ); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation() override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
-
-#endif // __ACTIVE_SHROUD_UPGRADE_H_
-

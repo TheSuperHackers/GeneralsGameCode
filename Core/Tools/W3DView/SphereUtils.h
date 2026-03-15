@@ -34,12 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef __SPHERE_UTILS
-#define __SPHERE_UTILS
 
 #include "sphereobj.h"
 
@@ -56,12 +51,12 @@ public:
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////
 	SphereKeysClass (void)
-		:	m_Keys (NULL),
+		:	m_Keys (nullptr),
 			m_KeyCount (0),
 			m_MaxKeys (0)		{ }
 
 	virtual ~SphereKeysClass (void)	{ Free_Keys (); }
-	
+
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
@@ -91,7 +86,3 @@ private:
 	int								m_KeyCount;
 	int								m_MaxKeys;
 };
-
-
-#endif //__SPHERE_UTILS
-

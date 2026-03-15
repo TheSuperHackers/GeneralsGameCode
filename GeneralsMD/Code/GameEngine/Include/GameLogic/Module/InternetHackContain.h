@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __INTERNET_HACK_CONTAIN_H
-#define __INTERNET_HACK_CONTAIN_H
-
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
 
@@ -39,7 +36,7 @@
 class InternetHackContainModuleData : public TransportContainModuleData
 {
 public:
-	
+
 
 	InternetHackContainModuleData();
 
@@ -60,14 +57,11 @@ public:
 	InternetHackContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
+	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
 
 protected:
 
-	
+
 private:
 
 };
-
-#endif // __RIDER_CHANGE_CONTAIN_H
-

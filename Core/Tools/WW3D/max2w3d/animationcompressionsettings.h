@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#ifndef __ANIMATION_COMPRESSION_SETTINGS_H
-#define __ANIMATION_COMPRESSION_SETTINGS_H
+#pragma once
 
 #include <windows.h>
 #include <max.h>
@@ -57,14 +55,14 @@ public:
 	//////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////////
-	AnimationCompressionSettingsDialogClass (Interface *maxinterface, HWND parent_wnd = NULL);
+	AnimationCompressionSettingsDialogClass (Interface *maxinterface, HWND parent_wnd = nullptr);
 	~AnimationCompressionSettingsDialogClass (void);
 
 
 	//////////////////////////////////////////////////////////////////
 	//	Public methods
-	//////////////////////////////////////////////////////////////////		
-	
+	//////////////////////////////////////////////////////////////////
+
 	void			Set_Options (W3dExportOptionsStruct *options)	{ Options = options; }
 	int			Do_Modal (void);
 
@@ -74,7 +72,7 @@ private:
 	//	Static methods
 	//////////////////////////////////////////////////////////////////
 	static BOOL CALLBACK	Real_Message_Proc (HWND wnd, UINT message, WPARAM wparam, LPARAM lparam);
-	
+
 	//////////////////////////////////////////////////////////////////
 	//	Private methods
 	//////////////////////////////////////////////////////////////////
@@ -90,7 +88,3 @@ private:
 	HWND								Wnd;
 	HWND								ParentWnd;
 };
-
-
-#endif //__ANIMATION_COMPRESSION_SETTINGS_H
-

@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					                  
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //----------------------------------------------------------------------------
 //
 // Project:    Generals
@@ -43,12 +43,8 @@
 
 #pragma once
 
-#ifndef __W3DDEVICE_GAMECLIENT_W3DDEBUGDISPLAY_H
-#define __W3DDEVICE_GAMECLIENT_W3DDEBUGDISPLAY_H
-
-
 //----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //----------------------------------------------------------------------------
 
 #include "GameClient/DebugDisplay.h"
@@ -67,7 +63,7 @@ class DisplayString;
 
 
 //===============================
-// W3DDebugDisplay 
+// W3DDebugDisplay
 //===============================
 
 class W3DDebugDisplay : public DebugDisplay
@@ -78,7 +74,7 @@ class W3DDebugDisplay : public DebugDisplay
 		W3DDebugDisplay();
 		virtual ~W3DDebugDisplay();
 
-		void init( void );																						///< Initialized the display
+		void init();																						///< Initialized the display
 		void setFont( GameFont *font );																///< Set the font to render with
 		void setFontWidth( Int width ) { m_fontWidth = width; };			///< Set the font width
 		void setFontHeight( Int height ) { m_fontHeight = height; };		///< Set the font height
@@ -90,15 +86,11 @@ class W3DDebugDisplay : public DebugDisplay
 		Int m_fontHeight;
 		DisplayString *m_displayString;
 
-		virtual void drawText( Int x, Int y, Char *text );			///< Render null ternimated string at current cursor position
+		virtual void drawText( Int x, Int y, Char *text );			///< Render null terminated string at current cursor position
 
 };
 
 
 //----------------------------------------------------------------------------
-//           Inlining                                                       
+//           Inlining
 //----------------------------------------------------------------------------
-
-
-
-#endif // __W3DDEVICE_GAMECLIENT_W3DDEBUGDISPLAY_H

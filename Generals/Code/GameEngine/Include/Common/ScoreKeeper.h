@@ -24,12 +24,12 @@
 
 // FILE: ScoreKeeper.h /////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Electronic Arts Pacific.                          
-//                                                                          
-//                       Confidential Information                           
-//                Copyright (C) 2002 - All Rights Reserved                  
-//                                                                          
+//
+//                       Electronic Arts Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2002 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 //	created:	Jun 2002
@@ -37,16 +37,13 @@
 //	Filename: 	ScoreKeeper.h
 //
 //	author:		Chris Huybregts
-//	
+//
 //	purpose:	Header file for the scorekeeper class
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __SCOREKEEPER_H_
-#define __SCOREKEEPER_H_
 
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
@@ -68,49 +65,49 @@ class ThingTemplate;
 class ScoreKeeper : public Snapshot
 {
 public:
-	ScoreKeeper( void );
-	~ScoreKeeper( void );
+	ScoreKeeper();
+	~ScoreKeeper();
 
 	void reset( Int playerIdx );			///< Zero out the variables
-	Int calculateScore( void );				///< Performs the equation to calculate the score
-	
+	Int calculateScore();				///< Performs the equation to calculate the score
+
 	void addMoneySpent( Int money );								///< Adds money to the amount spent
 	void addMoneyEarned( Int money );								///< Adds money to the earned amount
-	
+
 	void addObjectBuilt( const Object *o );
 	void addObjectDestroyed( const Object *o );
 	void addObjectLost( const Object *o );
 	void addObjectCaptured( const Object *o );
 
 	void removeObjectBuilt( const Object *o );
-	
-	Int getTotalMoneyEarned( void ) { return m_totalMoneyEarned; }
-	Int getTotalMoneySpent( void ) { return m_totalMoneySpent; }
-	Int getTotalUnitsDestroyed( void );
-	Int getTotalUnitsBuilt( void ) { return m_totalUnitsBuilt; }
-	Int getTotalUnitsLost( void ) { return m_totalUnitsLost; } 
-	Int getTotalBuildingsDestroyed( void );
-	Int getTotalBuildingsBuilt( void ) { return m_totalBuildingsBuilt; }
-	Int getTotalBuildingsLost( void ) { return m_totalBuildingsLost; }
-	Int getTotalTechBuildingsCaptured( void ) { return m_totalTechBuildingsCaptured; }
-	Int getTotalFactionBuildingsCaptured( void ) { return m_totalFactionBuildingsCaptured; }
+
+	Int getTotalMoneyEarned() { return m_totalMoneyEarned; }
+	Int getTotalMoneySpent() { return m_totalMoneySpent; }
+	Int getTotalUnitsDestroyed();
+	Int getTotalUnitsBuilt() { return m_totalUnitsBuilt; }
+	Int getTotalUnitsLost() { return m_totalUnitsLost; }
+	Int getTotalBuildingsDestroyed();
+	Int getTotalBuildingsBuilt() { return m_totalBuildingsBuilt; }
+	Int getTotalBuildingsLost() { return m_totalBuildingsLost; }
+	Int getTotalTechBuildingsCaptured() { return m_totalTechBuildingsCaptured; }
+	Int getTotalFactionBuildingsCaptured() { return m_totalFactionBuildingsCaptured; }
 	Int getTotalObjectsBuilt( const ThingTemplate *pTemplate ); // get a count of objects built matching a specific thing template
 
 	// for battle honor calculation.  done once at the end of each online game
 	Int getTotalUnitsBuilt( KindOfMaskType validMask, KindOfMaskType invalidMask );
 
 protected:
-	
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 private:
 
 	Int m_totalMoneyEarned;						///< The total money that was harvested, refined, received in crates
 	Int m_totalMoneySpent;						///< The total money spent on units, buildings, repairs
-	Int m_totalUnitsDestroyed[MAX_PLAYER_COUNT];				///< The total number of enimies that we've killed
+	Int m_totalUnitsDestroyed[MAX_PLAYER_COUNT];				///< The total number of enemies that we've killed
 	Int m_totalUnitsBuilt;						///< The total number of units we've created (created meaning that we built from a building)
 	Int m_totalUnitsLost;							///< The total number of our units lost
 	Int m_totalBuildingsDestroyed[MAX_PLAYER_COUNT];		///< The total number of Buildings we've destroyed
@@ -129,7 +126,7 @@ private:
 	ObjectCountMap m_objectsLost;				///< how many and what kinds of objects did we loose
 	ObjectCountMap m_objectsCaptured;
 	void xferObjectCountMap( Xfer *xfer, ObjectCountMap *map );
-		
+
 };
 
 //-----------------------------------------------------------------------------
@@ -141,5 +138,3 @@ inline void ScoreKeeper::addMoneyEarned( Int money )						{	m_totalMoneyEarned +
 //-----------------------------------------------------------------------------
 // EXTERNALS //////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#endif // __SCOREKEEPER_H_

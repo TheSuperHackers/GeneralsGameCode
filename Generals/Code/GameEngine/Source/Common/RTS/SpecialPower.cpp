@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Science.h"
@@ -37,39 +37,35 @@
 #include "GameLogic/Object.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBAL /////////////////////////////////////////////////////////////////////////////////////////
-SpecialPowerStore *TheSpecialPowerStore = NULL;
+SpecialPowerStore *TheSpecialPowerStore = nullptr;
 
-#define DEFAULT_DEFECTION_DETECTION_PROTECTION_TIME_LIMIT (LOGICFRAMES_PER_SECOND * 10) 
+#define DEFAULT_DEFECTION_DETECTION_PROTECTION_TIME_LIMIT (LOGICFRAMES_PER_SECOND * 10)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Externs ////////////////////////////////////////////////////////////////////////////////////////
-const char* SpecialPowerMaskType::s_bitNameList[] = 
+template<>
+const char* const SpecialPowerMaskType::s_bitNameList[] =
 {
 	"SPECIAL_INVALID",
 
 	//Superweapons
-	"SPECIAL_DAISY_CUTTER", 
-	"SPECIAL_PARADROP_AMERICA", 
-	"SPECIAL_CARPET_BOMB", 
-	"SPECIAL_CLUSTER_MINES", 
-	"SPECIAL_EMP_PULSE", 
-	"SPECIAL_NAPALM_STRIKE", 
-	"SPECIAL_CASH_HACK", 
-	"SPECIAL_NEUTRON_MISSILE", 
-	"SPECIAL_SPY_SATELLITE", 
+	"SPECIAL_DAISY_CUTTER",
+	"SPECIAL_PARADROP_AMERICA",
+	"SPECIAL_CARPET_BOMB",
+	"SPECIAL_CLUSTER_MINES",
+	"SPECIAL_EMP_PULSE",
+	"SPECIAL_NAPALM_STRIKE",
+	"SPECIAL_CASH_HACK",
+	"SPECIAL_NEUTRON_MISSILE",
+	"SPECIAL_SPY_SATELLITE",
 	"SPECIAL_DEFECTOR",
-	"SPECIAL_TERROR_CELL", 
-	"SPECIAL_AMBUSH", 
+	"SPECIAL_TERROR_CELL",
+	"SPECIAL_AMBUSH",
 	"SPECIAL_BLACK_MARKET_NUKE",
 	"SPECIAL_ANTHRAX_BOMB",
 	"SPECIAL_SCUD_STORM",
@@ -84,14 +80,14 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 	"SPECIAL_ARTILLERY_BARRAGE",
 
 	//Special abilities
-	"SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES", 
-	"SPECIAL_REMOTE_CHARGES", 
-	"SPECIAL_TIMED_CHARGES", 
-	"SPECIAL_HACKER_DISABLE_BUILDING", 
-	"SPECIAL_TANKHUNTER_TNT_ATTACK", 
+	"SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES",
+	"SPECIAL_REMOTE_CHARGES",
+	"SPECIAL_TIMED_CHARGES",
+	"SPECIAL_HACKER_DISABLE_BUILDING",
+	"SPECIAL_TANKHUNTER_TNT_ATTACK",
 	"SPECIAL_BLACKLOTUS_CAPTURE_BUILDING",
-	"SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK", 
-	"SPECIAL_BLACKLOTUS_STEAL_CASH_HACK", 
+	"SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK",
+	"SPECIAL_BLACKLOTUS_STEAL_CASH_HACK",
 	"SPECIAL_INFANTRY_CAPTURE_BUILDING",
 	"SPECIAL_RADAR_VAN_SCAN",
 	"SPECIAL_SPY_DRONE",
@@ -103,16 +99,17 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 	"SPECIAL_CIA_INTELLIGENCE",
 	"SPECIAL_CLEANUP_AREA",
 	"SPECIAL_LAUNCH_BAIKONUR_ROCKET",
-	
-	NULL
+
+	nullptr
 };
+static_assert(ARRAY_SIZE(SpecialPowerMaskType::s_bitNameList) == SpecialPowerMaskType::NumBits + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 {
 	// read the name
-	AsciiString name = ini->getNextToken();	
+	AsciiString name = ini->getNextToken();
 
 	SpecialPowerTemplate* specialPower = TheSpecialPowerStore->findSpecialPowerTemplatePrivate( name );
 
@@ -162,22 +159,22 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-/* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] = 
+/* static */ const FieldParse SpecialPowerTemplate::m_specialPowerFieldParse[] =
 {
-	
-	{ "ReloadTime",								INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
-	{ "RequiredScience",					INI::parseScience,								NULL, offsetof( SpecialPowerTemplate, m_requiredScience ) },
-	{ "InitiateSound",						INI::parseAudioEventRTS,					NULL,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
-	{ "InitiateAtLocationSound",	INI::parseAudioEventRTS,					NULL,	offsetof( SpecialPowerTemplate, m_initiateAtLocationSound ) },
-	{ "PublicTimer",							INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_publicTimer ) },
+
+	{ "ReloadTime",								INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_reloadTime ) },
+	{ "RequiredScience",					INI::parseScience,								nullptr, offsetof( SpecialPowerTemplate, m_requiredScience ) },
+	{ "InitiateSound",						INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateSound ) },
+	{ "InitiateAtLocationSound",	INI::parseAudioEventRTS,					nullptr,	offsetof( SpecialPowerTemplate, m_initiateAtLocationSound ) },
+	{ "PublicTimer",							INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_publicTimer ) },
 	{ "Enum",											INI::parseIndexList,							SpecialPowerMaskType::getBitNames(), offsetof( SpecialPowerTemplate, m_type ) },
-	{ "DetectionTime",						INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_detectionTime ) },
-	{ "SharedSyncedTimer",				INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_sharedNSync ) },
-	{ "ViewObjectDuration",				INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_viewObjectDuration ) },
-	{ "ViewObjectRange",					INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
-	{ "RadiusCursorRadius",				INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
-	{ "ShortcutPower",						INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
-	{ NULL,	NULL, NULL,	0 }  // keep this last
+	{ "DetectionTime",						INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_detectionTime ) },
+	{ "SharedSyncedTimer",				INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_sharedNSync ) },
+	{ "ViewObjectDuration",				INI::parseDurationUnsignedInt,		nullptr,	offsetof( SpecialPowerTemplate, m_viewObjectDuration ) },
+	{ "ViewObjectRange",					INI::parseReal,										nullptr,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
+	{ "RadiusCursorRadius",				INI::parseReal,										nullptr,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
+	{ "ShortcutPower",						INI::parseBool,										nullptr, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
+	{ nullptr,	nullptr, nullptr,	0 }
 
 };
 
@@ -197,14 +194,14 @@ SpecialPowerTemplate::SpecialPowerTemplate()
 	m_radiusCursorRadius = 0;
 	m_shortcutPower = FALSE;
 
-}  // end SpecialPowerTemplate
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpecialPowerTemplate::~SpecialPowerTemplate()
 {
 
-}  // end ~SpecialPowerTemplate
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,16 +209,16 @@ SpecialPowerTemplate::~SpecialPowerTemplate()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerStore::SpecialPowerStore( void )
+SpecialPowerStore::SpecialPowerStore()
 {
 
 	m_nextSpecialPowerID = 0;
 
-}  // end SpecialPowerStore
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-SpecialPowerStore::~SpecialPowerStore( void )
+SpecialPowerStore::~SpecialPowerStore()
 {
 
 	// delete all templates
@@ -234,7 +231,7 @@ SpecialPowerStore::~SpecialPowerStore( void )
 	// set our count to zero
 	m_nextSpecialPowerID = 0;
 
-}  // end ~SpecialPowerStore
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -246,7 +243,7 @@ SpecialPowerTemplate* SpecialPowerStore::findSpecialPowerTemplatePrivate( AsciiS
 		if( m_specialPowerTemplates[ i ]->getName() == name )
 			return m_specialPowerTemplates[ i ];
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 
@@ -261,7 +258,7 @@ const SpecialPowerTemplate *SpecialPowerStore::findSpecialPowerTemplateByID( Uns
 		if( m_specialPowerTemplates[ i ]->getID() == id )
 			return m_specialPowerTemplates[ i ];
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
 }
 
@@ -274,19 +271,19 @@ const SpecialPowerTemplate *SpecialPowerStore::getSpecialPowerTemplateByIndex( U
 	if (index >= 0 && index < m_specialPowerTemplates.size())
 		return m_specialPowerTemplates[ index ];
 
-	return NULL;  // not found
+	return nullptr;  // not found
 
-}  // end getSpecialPowerTemplateByIndex
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Return the size of the store (WB) */
 //-------------------------------------------------------------------------------------------------
-Int SpecialPowerStore::getNumSpecialPowers( void )
+Int SpecialPowerStore::getNumSpecialPowers()
 {
 
 	return m_specialPowerTemplates.size();
 
-}  // end getNumSpecialPowers
+}
 
 //-------------------------------------------------------------------------------------------------
 /** does the object (and therefore the player) meet all the requirements to use this power */
@@ -295,22 +292,22 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 {
 
 	// sanity
-	if( obj == NULL || specialPowerTemplate == NULL )
+	if( obj == nullptr || specialPowerTemplate == nullptr )
 		return FALSE;
 
 	// as a first sanity check, the object must have a module capable of executing the power
-	if( obj->getSpecialPowerModule( specialPowerTemplate ) == NULL )
+	if( obj->getSpecialPowerModule( specialPowerTemplate ) == nullptr )
 		return FALSE;
 
 	//
 	// in order to execute the special powers we have attached special power modules to the objects
-	// that can use them.  However, just because an object has a module that is capable of 
+	// that can use them.  However, just because an object has a module that is capable of
 	// doing the power, does not mean the object and the player can actually execute the
 	// power because some powers require a specialized science that the player must select and
 	// they cannot have all of them.
 	//
-	
-	// check for requried science
+
+	// check for required science
 	ScienceType requiredScience = specialPowerTemplate->getRequiredScience();
 	if( requiredScience != SCIENCE_INVALID )
 	{
@@ -319,27 +316,27 @@ Bool SpecialPowerStore::canUseSpecialPower( Object *obj, const SpecialPowerTempl
 		if( player->hasScience( requiredScience ) == FALSE )
 			return FALSE;
 
-	}  // end if
+	}
 
-	
-	// I THINK THIS IS WHERE WE BAIL OUT IF A DIFFERENT CONYARD IS ALREADY CHARGIN THIS SPECIAL RIGHT NOW //LORENZEN
+
+	// I THINK THIS IS WHERE WE BAIL OUT IF A DIFFERENT CONYARD IS ALREADY CHARGING THIS SPECIAL RIGHT NOW //LORENZEN
 
 
 	// all is well
 	return TRUE;
 
-}  // end canUseSpecialPower
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset */
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerStore::reset( void )
+void SpecialPowerStore::reset()
 {
 	for (SpecialPowerTemplatePtrVector::iterator it = m_specialPowerTemplates.begin(); it != m_specialPowerTemplates.end(); /*++it*/)
 	{
 		SpecialPowerTemplate* si = *it;
 		Overridable* temp = si->deleteOverrides();
-		if (temp == NULL)
+		if (temp == nullptr)
 		{
 			it = m_specialPowerTemplates.erase(it);
 		}
@@ -348,4 +345,4 @@ void SpecialPowerStore::reset( void )
 			++it;
 		}
 	}
-}  // end reset
+}

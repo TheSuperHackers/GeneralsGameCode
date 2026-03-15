@@ -79,7 +79,10 @@ static int refcompress(unsigned char *from, int len, unsigned char *dest, int ma
         return(0);
 	link = (int *) galloc(131072L*sizeof(int));
 	if (!link)
-        return(0);
+	{
+	    gfree(hashtbl);
+	    return(0);
+	}
 
     memset(hashtbl,-1,65536L*sizeof(int));
 

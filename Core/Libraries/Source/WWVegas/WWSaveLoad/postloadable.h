@@ -36,9 +36,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef POSTLOADABLE_H
-#define POSTLOADABLE_H
-
+#pragma once
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -52,20 +50,15 @@
 class PostLoadableClass
 {
 public:
-	PostLoadableClass(void) : IsPostLoadRegistered(false)						{ }
-	virtual ~PostLoadableClass(void)													{ }
+	PostLoadableClass() : IsPostLoadRegistered(false)						{ }
+	virtual ~PostLoadableClass()													{ }
 
-	virtual void						On_Post_Load (void)							{ }
+	virtual void						On_Post_Load ()							{ }
 
-	bool									Is_Post_Load_Registered(void)				{ return IsPostLoadRegistered; }
+	bool									Is_Post_Load_Registered()				{ return IsPostLoadRegistered; }
 	void									Set_Post_Load_Registered(bool onoff)	{ IsPostLoadRegistered = onoff; }
 
 private:
 
 	bool									IsPostLoadRegistered;
 };
-
-
-
-#endif
-

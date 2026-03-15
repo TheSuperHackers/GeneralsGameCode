@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef SCRIPTS_H
-#define SCRIPTS_H
-
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/ObjectStatusTypes.h"
@@ -82,8 +79,8 @@ class DataChunkOutput;
 #define NO_MORE_COMPLEX_SKIRMISH_SCRIPTS
 #ifndef NO_MORE_COMPLEX_SKIRMISH_SCRIPTS
 // For now, we only actually allow the simple stuff to be chosen. However, as soon as I can get more
-// time on the schedule, we need to extend these scripts to be more useful. To that end, I've 
-// created the parameters and such necessary for more complex behavior, but for now only the 
+// time on the schedule, we need to extend these scripts to be more useful. To that end, I've
+// created the parameters and such necessary for more complex behavior, but for now only the
 // rudimentary support is enabled. jkmcd
 	#define MORE_COMPLEX_SKIRMISH_SCRIPTS
 #endif
@@ -103,16 +100,16 @@ extern const char *ShakeIntensities[];
 // ******************************** class ScriptGroup ***********************************************
 //-------------------------------------------------------------------------------------------------
 class ScriptGroup : public MemoryPoolObject, public Snapshot
-// This is a list of scripts that are grouped and named, with some 
+// This is a list of scripts that are grouped and named, with some
 // additional properties.
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScriptGroup, "ScriptGroup")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScriptGroup, "ScriptGroup")
 protected:
-	
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer ); 
-	virtual void loadPostProcess( void );
+	virtual void xfer( Xfer *xfer );
+	virtual void loadPostProcess();
 
 protected:
 	Script			*m_firstScript;
@@ -128,8 +125,8 @@ public:
 
 public:
 
-	ScriptGroup *duplicate(void) const;		// note, duplicates just this node, not the full list.
-	ScriptGroup *duplicateAndQualify(const AsciiString& qualifier, 
+	ScriptGroup *duplicate() const;		// note, duplicates just this node, not the full list.
+	ScriptGroup *duplicateAndQualify(const AsciiString& qualifier,
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;		// note, duplicates just this node, not the full list.
 
 	void setName(AsciiString name) { m_groupName = name;}
@@ -138,12 +135,12 @@ public:
 	void setWarnings(Bool warnings) { m_hasWarnings = warnings;}
 	void setNextGroup(ScriptGroup *pGr) {m_nextGroup = pGr;}
 
-	AsciiString getName(void) const { return m_groupName;}
-	Bool isActive(void) const { return m_isGroupActive;}
-	Bool isSubroutine(void) const { return m_isGroupSubroutine;}
-	Bool hasWarnings(void) const { return m_hasWarnings;}
-	ScriptGroup *getNext(void) const {return m_nextGroup;};
-	Script *getScript(void) {return m_firstScript;};
+	AsciiString getName() const { return m_groupName;}
+	Bool isActive() const { return m_isGroupActive;}
+	Bool isSubroutine() const { return m_isGroupSubroutine;}
+	Bool hasWarnings() const { return m_hasWarnings;}
+	ScriptGroup *getNext() const {return m_nextGroup;};
+	Script *getScript() {return m_firstScript;};
 
 	void addScript(Script *pScr, Int ndx);
 	void deleteScript(Script *pScr);
@@ -158,31 +155,31 @@ public:
 /// This is a linked list of or clauses, each containing a list of and clauses.
 class OrCondition : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OrCondition, "OrCondition")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(OrCondition, "OrCondition")
 protected:
 	OrCondition *m_nextOr;   // Next or clause.
 	Condition *m_firstAnd;	 // These are Anded.
-	
+
 public:
-	OrCondition():m_nextOr(NULL),m_firstAnd(NULL){};
+	OrCondition():m_nextOr(nullptr),m_firstAnd(nullptr){};
 	//~OrCondition();
 	/// Duplicate creates a "deep" copy.  If it is head of a linked list, duplicates the entire list.
-	OrCondition *duplicate(void) const;
-	OrCondition *duplicateAndQualify(const AsciiString& qualifier, 
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;		
+	OrCondition *duplicate() const;
+	OrCondition *duplicateAndQualify(const AsciiString& qualifier,
+			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;
 
 public:
 	void setNextOrCondition(OrCondition *pOr) {m_nextOr = pOr;}
 	void setFirstAndCondition(Condition *pAnd) {m_firstAnd = pAnd;}
 
-	OrCondition *getNextOrCondition(void) {return m_nextOr;}
-	Condition *getFirstAndCondition(void) {return m_firstAnd;}
+	OrCondition *getNextOrCondition() {return m_nextOr;}
+	Condition *getFirstAndCondition() {return m_firstAnd;}
 
 	Condition *removeCondition(Condition *pCond);
 	void deleteCondition(Condition *pCond);
 	static void WriteOrConditionDataChunk(DataChunkOutput &chunkWriter, OrCondition *pCondition);
 	static Bool ParseOrConditionDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
-	
+
 	// Utility for moving scripts upwards
 	Condition *findPreviousCondition( Condition *curCond );
 };
@@ -190,17 +187,17 @@ public:
 //-------------------------------------------------------------------------------------------------
 // ******************************** class ScriptAction ***********************************************
 //-------------------------------------------------------------------------------------------------
-/** This is an action that can be executed by a script.  The Action Types 
+/** This is an action that can be executed by a script.  The Action Types
 are defined by ActionTemplates created in the ScriptEngine::init method. */
 enum {MAX_PARMS=12};
 
 class ScriptAction : public MemoryPoolObject // This is the action class.
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScriptAction, "ScriptAction")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScriptAction, "ScriptAction")
 // friend bad for MPOs. (srj)
 //friend class EditAction;
 public:
-	enum ScriptActionType 
+	enum ScriptActionType
 	{
 		DEBUG_MESSAGE_BOX,							///< Show a message box.
 		SET_FLAG,													///< Set a flag true of false.
@@ -232,7 +229,7 @@ public:
 		CAMERA_MOD_SET_FINAL_PITCH,				///< Sets the final pitch for a camera movement
 		CAMERA_MOD_FREEZE_ANGLE,					///< Freeze camera angle during a camera movement.
 		CAMERA_MOD_SET_FINAL_SPEED_MULTIPLIER,///< Sets the final time multiplier for a camera movement.
-		CAMERA_MOD_SET_ROLLING_AVERAGE,		///< Sets the number of frames to average changes (angle, positoin) to smooth out a camera movement.
+		CAMERA_MOD_SET_ROLLING_AVERAGE,		///< Sets the number of frames to average changes (angle, position) to smooth out a camera movement.
 		CAMERA_MOD_FINAL_LOOK_TOWARD,			///< Sets the look toward point for the end of a camera movement.
 		CAMERA_MOD_LOOK_TOWARD,						///< Sets the look toward point during a camera movement.
 		TEAM_ATTACK_TEAM,									///< Tell team to attack other team
@@ -270,7 +267,7 @@ public:
 		PLAYER_ENABLE_BASE_CONSTRUCTION,	///< Allow a player to build bases
 		PLAYER_ENABLE_FACTORIES,					///< Allow a player to build from his factories
 		PLAYER_ENABLE_UNIT_CONSTRUCTION,	///< Allow a player to build units
-		CAMERA_MOVE_HOME,									///< Impl JKMCD	
+		CAMERA_MOVE_HOME,									///< Impl JKMCD
 		BUILD_TEAM,												///< Build a team from a teamtemplate
 		NAMED_DAMAGE,											///< Damage a unit
 		NAMED_DELETE,											///< Delete a unit
@@ -428,7 +425,7 @@ public:
 		INGAME_POPUP_MESSAGE,											///< Popup an ingame popup message box
 		SET_CAVE_INDEX,														///< Set the index of which set of caves a cave is connected to.
 		NAMED_SET_HELD,														///< Sets a named object to be "held" in place or not
-		NAMED_SET_TOPPLE_DIRECTION,								///< Set the topple direction of the specified direction 
+		NAMED_SET_TOPPLE_DIRECTION,								///< Set the topple direction of the specified direction
 		UNIT_MOVE_TOWARDS_NEAREST_OBJECT_TYPE,		///< Move a named unit towards the nearest object of type type
 		TEAM_MOVE_TOWARDS_NEAREST_OBJECT_TYPE,		///< For each member of the team, move towards the nearest object of type
 		MAP_REVEAL_ALL_PERM,
@@ -441,7 +438,7 @@ public:
 		DISPLAY_COUNTER,													///< shows a counter
 		HIDE_COUNTER,															///< hides a counter
 		TEAM_USE_COMMANDBUTTON_ABILITY_ON_NAMED,	///< Make a team use an ability on another unit.
-		TEAM_USE_COMMANDBUTTON_ABILITY_AT_WAYPOINT,			///< Make a team use an ability on a waypoint.		
+		TEAM_USE_COMMANDBUTTON_ABILITY_AT_WAYPOINT,			///< Make a team use an ability on a waypoint.
 		NAMED_USE_COMMANDBUTTON_ABILITY,					///< Make a unit use an ability.
 		TEAM_USE_COMMANDBUTTON_ABILITY,						///< Make a team use an ability.
 		NAMED_FLASH_WHITE,												///< Flashes a specific unit
@@ -471,7 +468,7 @@ public:
 		TEAM_ALL_USE_COMMANDBUTTON_ON_NEAREST_ENEMY_BUILDING,	///< Tell the team to use the commandbutton on the nearest enemy building
 		TEAM_ALL_USE_COMMANDBUTTON_ON_NEAREST_ENEMY_BUILDING_CLASS,	///< Tell the team to use the commandbutton on the nearest enemy building class
 		TEAM_ALL_USE_COMMANDBUTTON_ON_NEAREST_OBJECTTYPE,	///< Tell the team to use the commandbutton on the nearest enemy object of type
-		TEAM_PARTIAL_USE_COMMANDBUTTON,						///< Tell some percentage of the team to use the commandbutton on 
+		TEAM_PARTIAL_USE_COMMANDBUTTON,						///< Tell some percentage of the team to use the commandbutton on
 		TEAM_CAPTURE_NEAREST_UNOWNED_FACTION_UNIT,///< Tell the team to capture the nearest unowned faction unit (unit whose pilot has been killed by Jarmen Kell)
 		PLAYER_CREATE_TEAM_FROM_CAPTURED_UNITS,		///< Tell the player to create a new named team from all the units who have been captured.
 		PLAYER_ADD_SKILLPOINTS,										///< add/subtract skill points to the player.
@@ -512,7 +509,7 @@ public:
 		COMMANDBAR_REMOVE_BUTTON_OBJECTTYPE,			///< Remove a button from a command bar for an objecttype
 		COMMANDBAR_ADD_BUTTON_OBJECTTYPE_SLOT,		///< Add a button to the command bar for an objecttype, in a specific slot
 		UNIT_SPAWN_NAMED_LOCATION_ORIENTATION,		///< Create a named unit at the specified location, altitude, and orientation
-		PLAYER_AFFECT_RECEIVING_EXPERIENCE,				///< Adjust whether or not a player is receieving experience for kills
+		PLAYER_AFFECT_RECEIVING_EXPERIENCE,				///< Adjust whether or not a player is receiving experience for kills
 		PLAYER_EXCLUDE_FROM_SCORE_SCREEN,					///< This player should be listed in the score screen.  Should only be used in campaign games.
 		TEAM_GUARD_SUPPLY_CENTER,									///< Have an ai team guard the nearest available supply center..
 		ENABLE_SCORING,														///< Turn on scoring of kills, units destroyed, etc.
@@ -538,23 +535,23 @@ public:
 		SET_TRAIN_HELD,				                    ///< LORENZEN -- Forbids trains from departing stations while true
     NAMED_SET_EVAC_LEFT_OR_RIGHT,	            ///< LORENZEN -- Which side of the garrisoned unit (LIKELY A TRAIN) do you want units to evacuate from?
     ENABLE_OBJECT_SOUND,                      ///< Enables the ambient sound on an object or fire the one-shot "ambient" sound on an object
-    DISABLE_OBJECT_SOUND,                     ///< Disable the ambient sound on an object or kill the one-shot "ambient" sound on an object	
+    DISABLE_OBJECT_SOUND,                     ///< Disable the ambient sound on an object or kill the one-shot "ambient" sound on an object
 		NAMED_USE_COMMANDBUTTON_ABILITY_USING_WAYPOINT_PATH, ///< Added for particle cannon to have beam follow waypoint path.
 		NAMED_SET_UNMANNED_STATUS,								///< Make unit unmanned or manned.
 		TEAM_SET_UNMANNED_STATUS,									///< Make all units on team unmanned or manned.
 		NAMED_SET_BOOBYTRAPPED,										///< Add boobytrap to unit.
 		TEAM_SET_BOOBYTRAPPED,										///< Add boobytrap to all units on team.
-		SHOW_WEATHER,															///< show map defined weather.    
+		SHOW_WEATHER,															///< show map defined weather.
 		AI_PLAYER_BUILD_TYPE_NEAREST_TEAM,				///< Tell the ai player to build an object nearest team.
 		// add new items here, please
 		NUM_ITEMS
 	};
-	ScriptAction(ScriptActionType type); 
-	//~ScriptAction(); 
+	ScriptAction(ScriptActionType type);
+	//~ScriptAction();
 
-	ScriptAction *duplicate(void) const;
-	ScriptAction *duplicateAndQualify(const AsciiString& qualifier, 
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;		
+	ScriptAction *duplicate() const;
+	ScriptAction *duplicateAndQualify(const AsciiString& qualifier,
+			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;
 
 protected:
 		ScriptAction();  ///< Protected constructor for read.
@@ -572,18 +569,18 @@ public:
 public:
 	void setNextAction(ScriptAction *pAct) {m_nextAction = pAct;}
 	void setWarnings(Bool warnings) { m_hasWarnings = warnings;}
-	ScriptActionType getActionType(void) {return m_actionType;}
-	ScriptAction * getNext(void) {return m_nextAction;}
-	AsciiString getUiText(void);				
-	Parameter *getParameter(Int ndx) 
+	ScriptActionType getActionType() {return m_actionType;}
+	ScriptAction * getNext() {return m_nextAction;}
+	AsciiString getUiText();
+	Parameter *getParameter(Int ndx)
 	{
-		if (ndx>=0 && ndx<m_numParms) 
-			return m_parms[ndx]; 
+		if (ndx>=0 && ndx<m_numParms)
+			return m_parms[ndx];
 
-		return NULL;
+		return nullptr;
 	}
-	Bool hasWarnings(void) const { return m_hasWarnings;}
-	Int getNumParameters(void) {return m_numParms;}
+	Bool hasWarnings() const { return m_hasWarnings;}
+	Int getNumParameters() {return m_numParms;}
 	Int getUiStrings(AsciiString strings[MAX_PARMS]);
 
 	static void WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptAction *pAct);
@@ -599,17 +596,17 @@ protected:
 //-------------------------------------------------------------------------------------------------
 // ******************************** class Script ***********************************************
 //-------------------------------------------------------------------------------------------------
-/** This is a script, in a linked list of scripts.  The m_condition list is evaluated, and if one of the 
+/** This is a script, in a linked list of scripts.  The m_condition list is evaluated, and if one of the
 or clauses is true, the m_action list is executed.  . */
 class Script : public MemoryPoolObject, public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Script, "Script")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Script, "Script")
 protected:	// Note - If you add any member vars, you must take them into account in duplicate() and updateFrom(), as well as file read/write.
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	AsciiString	m_scriptName;   ///<Short name.
 	AsciiString m_comment;			///< Long comment.
@@ -639,9 +636,9 @@ protected:	// Note - If you add any member vars, you must take them into account
 public:
 	Script();
 	//~Script();
-	Script *duplicate(void) const;	// note, duplicates just this node, not the full list.
-	Script *duplicateAndQualify(const AsciiString& qualifier, 
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;		
+	Script *duplicate() const;	// note, duplicates just this node, not the full list.
+	Script *duplicateAndQualify(const AsciiString& qualifier,
+			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;
 
 public:
 	void setName(AsciiString name) { m_scriptName = name;}
@@ -661,33 +658,33 @@ public:
 	void setFalseAction(ScriptAction *pAction) {m_actionFalse = pAction;}
 	void updateFrom(Script *pSrc); ///< Updates this from pSrc.  pSrc IS MODIFIED - it's guts are removed.  jba.
 	void setFrameToEvaluate(UnsignedInt frame) {m_frameToEvaluateAt=frame;}
-	void incrementConditionCount(void) {m_conditionExecutedCount++;}
+	void incrementConditionCount() {m_conditionExecutedCount++;}
 	void addToConditionTime(Real time) {m_conditionTime += time;}
 	void setCurTime(Real time) {m_curTime	= time;}
 	void setDelayEvalSeconds(Int delay) {m_delayEvaluationSeconds = delay;}
 
-	UnsignedInt getFrameToEvaluate(void) {return m_frameToEvaluateAt;}
-	Int getConditionCount(void) {return m_conditionExecutedCount;}
-	Real getConditionTime(void) {return m_conditionTime;}
-	Real getCurTime(void) {return m_curTime;}
-	Int getDelayEvalSeconds(void) {return m_delayEvaluationSeconds;}
+	UnsignedInt getFrameToEvaluate() {return m_frameToEvaluateAt;}
+	Int getConditionCount() {return m_conditionExecutedCount;}
+	Real getConditionTime() {return m_conditionTime;}
+	Real getCurTime() {return m_curTime;}
+	Int getDelayEvalSeconds() {return m_delayEvaluationSeconds;}
 
-	AsciiString getName(void) const { return m_scriptName;}
-	AsciiString getComment(void) const {return m_comment;}
-	AsciiString getActionComment(void) const {return m_actionComment;}
-	AsciiString getConditionComment(void) const {return m_conditionComment;}
-	Bool hasWarnings(void) const { return m_hasWarnings;}
-	Bool isActive(void) const { return m_isActive;}
-	Bool isOneShot(void) const { return m_isOneShot;}
-	Bool isEasy(void) const { return m_easy;}
-	Bool isNormal(void) const { return m_normal;}
-	Bool isHard(void) const { return m_hard;}
-	Bool isSubroutine(void) const { return m_isSubroutine;}
-	Script *getNext(void) const {return m_nextScript;}
-	OrCondition *getOrCondition(void) const {return m_condition;}
-	ScriptAction *getAction(void) const	{return m_action;}
-	ScriptAction *getFalseAction(void) const {return m_actionFalse;}
-	AsciiString getUiText(void);
+	AsciiString getName() const { return m_scriptName;}
+	AsciiString getComment() const {return m_comment;}
+	AsciiString getActionComment() const {return m_actionComment;}
+	AsciiString getConditionComment() const {return m_conditionComment;}
+	Bool hasWarnings() const { return m_hasWarnings;}
+	Bool isActive() const { return m_isActive;}
+	Bool isOneShot() const { return m_isOneShot;}
+	Bool isEasy() const { return m_easy;}
+	Bool isNormal() const { return m_normal;}
+	Bool isHard() const { return m_hard;}
+	Bool isSubroutine() const { return m_isSubroutine;}
+	Script *getNext() const {return m_nextScript;}
+	OrCondition *getOrCondition() const {return m_condition;}
+	ScriptAction *getAction() const	{return m_action;}
+	ScriptAction *getFalseAction() const {return m_actionFalse;}
+	AsciiString getUiText();
 
 	void deleteOrCondition(OrCondition *pCond);
 	void deleteAction(ScriptAction *pAct);
@@ -701,8 +698,8 @@ public:
 	// Support routines for moving conditions around
 	OrCondition *findPreviousOrCondition( OrCondition *curOr );
 
-	// Support routines for ScriptEngine - 
-	AsciiString getConditionTeamName(void) {return m_conditionTeamName;}
+	// Support routines for ScriptEngine -
+	AsciiString getConditionTeamName() {return m_conditionTeamName;}
 	void setConditionTeamName(AsciiString teamName) {m_conditionTeamName = teamName;}
 };
 
@@ -712,7 +709,7 @@ public:
 /** This is a parameter, in either a condition or an action. */
 class Parameter : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Parameter, "Parameter")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Parameter, "Parameter")
 // friend bad for MPOs. (srj)
 //friend class EditParameter;
 //friend class EditCoordParameter;
@@ -722,7 +719,7 @@ class Parameter : public MemoryPoolObject
 
 public:
 
-	enum ParameterType 
+	enum ParameterType
 	{
 		INT=0,							// Int.
 		REAL,								// Real.
@@ -750,7 +747,7 @@ public:
 		MOVIE,							// String, specifies string usable with open(...) or load(...)
 		WAYPOINT_PATH,			// String, waypoint path label.
 		LOCALIZED_TEXT,			// String, must be looked up from the localized text file.
-		BRIDGE,							// String, Named bridge.			
+		BRIDGE,							// String, Named bridge.
 		KIND_OF_PARAM,			// Integer, KindOfType enum.
 		ATTACK_PRIORITY_SET,// String, name of an attack priority set.
 		RADAR_EVENT_TYPE,		// Int. Specifies the radar Event type
@@ -768,7 +765,7 @@ public:
 		COMMANDBUTTON_ALL_ABILITIES, // String, refers to all command buttons
 		SKIRMISH_WAYPOINT_PATH, // String, name of a predefined skirmish waypoint path.
 		COLOR,							// color (as int) in ARGB format.
-		EMOTICON,						// List of all possible emoticons. 
+		EMOTICON,						// List of all possible emoticons.
 		OBJECT_PANEL_FLAG,	// String, specifies a flag name available on the options panel.
 		FACTION_NAME,				// The name of the faction (GLA, America, Munkee, China, etc)
 		OBJECT_TYPE_LIST,		// String, Special case of Object Type.
@@ -776,7 +773,7 @@ public:
 		SCIENCE_AVAILABILITY, // String, the name of the different science availabilities.
     LEFT_OR_RIGHT,        // 1=left, 2=right, okay?
 		PERCENT,						// Real.  A percentage.
-		NUM_ITEMS	
+		NUM_ITEMS
 	};
 
 	enum { // Comparison types.  Stored in Int value.
@@ -794,7 +791,7 @@ public:
 		REL_FRIEND		= ALLIES
 	};
 
-	Parameter(ParameterType type, int val = 0) : 
+	Parameter(ParameterType type, int val = 0) :
 		m_initialized(false),
 		m_paramType(type),
 		m_int(val),
@@ -820,10 +817,10 @@ protected:
 	void setStatus( ObjectStatusMaskType objectStatus ) { m_objectStatus.set( objectStatus ); }
 
 public:
-	Int getInt(void) const {return m_int;}
-	Real getReal(void) const {return m_real;}
+	Int getInt() const {return m_int;}
+	Real getReal() const {return m_real;}
 	void getCoord3D(Coord3D *pLoc) const;
-	ParameterType getParameterType(void) const {return m_paramType;}
+	ParameterType getParameterType() const {return m_paramType;}
 	ObjectStatusMaskType getStatus() const { return m_objectStatus; }
 
 	void friend_setInt(Int i) {m_int = i;}
@@ -833,8 +830,8 @@ public:
 
 	void qualify(const AsciiString& qualifier,const AsciiString& playerTemplateName,const AsciiString& newPlayerName);
 
-	const AsciiString& getString(void) const {return m_string;}
-	AsciiString getUiText(void) const;
+	const AsciiString& getString() const {return m_string;}
+	AsciiString getUiText() const;
 
 	void WriteParameter(DataChunkOutput &chunkWriter);
 	static Parameter *ReadParameter(DataChunkInput &file);
@@ -842,25 +839,25 @@ public:
 };
 EMPTY_DTOR(Parameter)
 
-extern const char* TheObjectFlagsNames[];
+extern const char* const TheObjectFlagsNames[];
 
 //-------------------------------------------------------------------------------------------------
 // ******************************** class Condition ***********************************************
 //-------------------------------------------------------------------------------------------------
-/** This is a condition.  The parameters for a ConditionType are set up in 
-ConditionTemplates created in ScriptEngine::init. 
+/** This is a condition.  The parameters for a ConditionType are set up in
+ConditionTemplates created in ScriptEngine::init.
 
-// SPECIAL NOTE ABOUT Skirmish Scripts: Please note that ALL Skirmish conditions should first pass a pSkirmishPlayerParm to 
-// prevet the necessity of having to write additional scripts for other players / skirmish types later.
+// SPECIAL NOTE ABOUT Skirmish Scripts: Please note that ALL Skirmish conditions should first pass a pSkirmishPlayerParm to
+// prevent the necessity of having to write additional scripts for other players / skirmish types later.
 */
 
 class Condition : public MemoryPoolObject  // This is the conditional class.
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Condition, "Condition")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Condition, "Condition")
 // friend bad for MPOs. (srj)
 //friend class EditCondition;
 public:
-	enum ConditionType 
+	enum ConditionType
 	{
 		CONDITION_FALSE,										// Always evaluates to false.
 		COUNTER,															// COUNTER, COMPARISON, INT
@@ -869,7 +866,7 @@ public:
 		TIMER_EXPIRED,												// If a timer expired.
 		PLAYER_ALL_DESTROYED,									// If a side (player) is totally destroyed.
 		PLAYER_ALL_BUILDFACILITIES_DESTROYED, // If a side (player) has all build facilities destroyed.
-		TEAM_INSIDE_AREA_PARTIALLY,						// If a player has units from a team entering an area.		
+		TEAM_INSIDE_AREA_PARTIALLY,						// If a player has units from a team entering an area.
 		TEAM_DESTROYED,												// If a team has been destroyed.
 		CAMERA_MOVEMENT_FINISHED,							// If the camera has completed it's current movement.
 		TEAM_HAS_UNITS,												// If a team has units.
@@ -886,7 +883,7 @@ public:
 		NAMED_ATTACKED_BY_PLAYER,							// If a unit has been attacked by a unit controlled by player
 		TEAM_ATTACKED_BY_PLAYER,							// If a team has been attacked by a unit controlled by player
 		BUILT_BY_PLAYER,											// If a unit of type objecttype has been built by player
-		NAMED_CREATED,												// If a unit is currently in existence 
+		NAMED_CREATED,												// If a unit is currently in existence
 		TEAM_CREATED,													// If a team is currently in existence
 		PLAYER_HAS_CREDITS,										// If X [Less Than | Equal | More than] Players credits
 		NAMED_DISCOVERED,											// If a named unit is currently "seen" by a player.
@@ -895,7 +892,7 @@ public:
 		NAMED_OWNED_BY_PLAYER,								// If a unit is currently owned by a player
 		TEAM_OWNED_BY_PLAYER,									// If a team is currently owned by a player
 		PLAYER_HAS_N_OR_FEWER_BUILDINGS,			// If a player has count or fewer buildings
-		PLAYER_HAS_POWER,											// If a player currently has power to his facilities 
+		PLAYER_HAS_POWER,											// If a player currently has power to his facilities
 		NAMED_REACHED_WAYPOINTS_END,					// If a unit has reached the end of the path that contains Waypoint
 		TEAM_REACHED_WAYPOINTS_END,						// If a team has reached the end of the path that contains Waypoint
 		NAMED_SELECTED,												// If a unit is selected
@@ -956,7 +953,7 @@ public:
 		SKIRMISH_UNOWNED_FACTION_UNIT_EXISTS,		// True if there are comparison to unowned faction unit on the map.
 		SKIRMISH_PLAYER_HAS_PREREQUISITE_TO_BUILD,	// True if we can build this thing (we have prerequisites)
 		SKIRMISH_PLAYER_HAS_COMPARISON_GARRISONED,	// True if there are comparison to garrisoned buildings (by player) on the map
-		SKIRMISH_PLAYER_HAS_COMPARISON_CAPTURED_UNITS,	// True if there are comparison to captured units 
+		SKIRMISH_PLAYER_HAS_COMPARISON_CAPTURED_UNITS,	// True if there are comparison to captured units
 		SKIRMISH_NAMED_AREA_EXIST,							// True if a named area exists
 		SKIRMISH_PLAYER_HAS_UNITS_IN_AREA,			// True if a player has units in an area
 		SKIRMISH_PLAYER_HAS_BEEN_ATTACKED_BY_PLAYER,	// True if the player has been attacked by a player
@@ -968,7 +965,7 @@ public:
 		PLAYER_CAN_PURCHASE_SCIENCE,						// True is player can purchase the given science (has all prereqs & points needed)
 		MUSIC_TRACK_HAS_COMPLETED,							// True if the specified track has completed at least N times
 		PLAYER_LOST_OBJECT_TYPE,								// True if a player has lost a specific unit type
-		
+
 		SUPPLY_SOURCE_SAFE,											// True if the nearest available supply source is not under enemy influence.
 		SUPPLY_SOURCE_ATTACKED,									// True if our supply depot or dozer near depot was attacked.
 		START_POSITION_IS,											// True if our start position matches.
@@ -977,12 +974,12 @@ public:
 		NUM_ITEMS		 // Always the last condition.
 	};
 
-	Condition(enum ConditionType type); 
-	//~Condition(); 
+	Condition(enum ConditionType type);
+	//~Condition();
 
-	Condition *duplicate(void) const;
-	Condition *duplicateAndQualify(const AsciiString& qualifier, 
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;		
+	Condition *duplicate() const;
+	Condition *duplicateAndQualify(const AsciiString& qualifier,
+			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;
 
 protected:
 	Condition();  ///< Protected constructor for read.
@@ -1003,24 +1000,24 @@ public:
 public:
 	void setNextCondition(Condition *pScr) {m_nextAndCondition = pScr;}
 	void setWarnings(Bool warnings) { m_hasWarnings = warnings;}
-	enum ConditionType getConditionType(void) {return m_conditionType;}
-	Condition * getNext(void) {return m_nextAndCondition;}
-	AsciiString getUiText(void);				
-	Parameter *getParameter(Int ndx) 
+	enum ConditionType getConditionType() {return m_conditionType;}
+	Condition * getNext() {return m_nextAndCondition;}
+	AsciiString getUiText();
+	Parameter *getParameter(Int ndx)
 	{
-		if (ndx>=0 && ndx<m_numParms) 
-			return m_parms[ndx]; 
+		if (ndx>=0 && ndx<m_numParms)
+			return m_parms[ndx];
 
-		return NULL;
+		return nullptr;
 	}
 
-	Int getNumParameters(void) {return m_numParms;}
+	Int getNumParameters() {return m_numParms;}
 	Int getUiStrings(AsciiString strings[MAX_PARMS]);
-	Bool hasWarnings(void) const { return m_hasWarnings;}
-	Int getCustomData(void) const {return m_customData;}
+	Bool hasWarnings() const { return m_hasWarnings;}
+	Int getCustomData() const {return m_customData;}
 	void setCustomData(Int val) { m_customData = val;}
 
-	Int getCustomFrame(void) const {return m_customFrame;}
+	Int getCustomFrame() const {return m_customFrame;}
 	void setCustomFrame(Int val) { m_customFrame = val;}
 
 	static void WriteConditionDataChunk(DataChunkOutput &chunkWriter, Condition *pCond);
@@ -1033,11 +1030,11 @@ public:
 //-------------------------------------------------------------------------------------------------
 // ******************************** class Template ***********************************************
 //-------------------------------------------------------------------------------------------------
-/** The template defines the parameters and ui strings used to display a 
+/** The template defines the parameters and ui strings used to display a
 condition or action. */
-class Template : public MemoryPoolObject 
+class Template : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Template, "Template")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Template, "Template")
 // friend bad for MPOs. (srj)
 //friend class ScriptEngine;
 public:
@@ -1059,10 +1056,10 @@ public:
 	Template();
 
 public:
-	AsciiString getName(void) const {return m_uiName;}
-	AsciiString getName2(void) const {return m_uiName2;}
+	AsciiString getName() const {return m_uiName;}
+	AsciiString getName2() const {return m_uiName2;}
 	Int getUiStrings(AsciiString strings[MAX_PARMS]) const;
-	Int getNumParameters(void) const {return m_numParameters;}
+	Int getNumParameters() const {return m_numParameters;}
 	enum Parameter::ParameterType getParameterType(Int ndx) const;
 };
 EMPTY_DTOR(Template)
@@ -1084,16 +1081,16 @@ class ActionTemplate : public Template{};
 //-------------------------------------------------------------------------------------------------
 /// List of scripts.  May have one level of hierarchy in the ScriptGroup list.
 class ScriptList : public MemoryPoolObject, public Snapshot
-// A script list belongs to a Player.  It contains the heads of the 
+// A script list belongs to a Player.  It contains the heads of the
 // the top level scripts, and the script groups.
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScriptList, "ScriptList")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ScriptList, "ScriptList")
 protected:
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
 	ScriptGroup		*m_firstGroup;
 	Script				*m_firstScript;
@@ -1107,35 +1104,32 @@ public:
 	//~ScriptList();
 
 public:
-	static void updateDefaults(void);
-	static void reset(void); 
-	static Int getNextID(void) {m_curId++; return m_curId;};
-	
+	static void updateDefaults();
+	static void reset();
+	static Int getNextID() {m_curId++; return m_curId;};
+
 public:
-	ScriptGroup *getScriptGroup(void) {return m_firstGroup;};
-	Script *getScript(void) {return m_firstScript;};
+	ScriptGroup *getScriptGroup() {return m_firstGroup;};
+	Script *getScript() {return m_firstScript;};
 	void WriteScriptListDataChunk(DataChunkOutput &chunkWriter);
 	static Bool ParseScriptListDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
-	
+
 	void addGroup(ScriptGroup *pGrp, Int ndx);
 	void addScript(Script *pScr, Int ndx);
 	void deleteScript(Script *pScr);
 	void deleteGroup(ScriptGroup *pGrp);
 
-	void discard(void);
+	void discard();
 
-	ScriptList *duplicate(void) const;
-	ScriptList *duplicateAndQualify(const AsciiString& qualifier, 
-			const AsciiString& playerTemplateName, const AsciiString& newPlayerName ) const;		
+	ScriptList *duplicate() const;
+	ScriptList *duplicateAndQualify(const AsciiString& qualifier,
+			const AsciiString& playerTemplateName, const AsciiString& newPlayerName ) const;
 	/// Reads a set of scripts into m_readScripts.  Use getReadScripts to access.
 	static Bool ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	/// Writes sides (including build list info.)
 	static void WriteScriptsDataChunk(DataChunkOutput &chunkWriter, ScriptList *scriptLists[], Int numLists);
 
-	/// Returns array of script list pointers.  This can only be called once after scripts 
+	/// Returns array of script list pointers.  This can only be called once after scripts
 	/// are read, and the caller is responsible for deleting the scripts.
 	static Int getReadScripts(ScriptList *scriptLists[MAX_PLAYER_COUNT]);
 };
-
-#endif
-

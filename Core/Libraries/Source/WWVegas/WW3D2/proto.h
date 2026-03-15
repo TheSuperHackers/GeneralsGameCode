@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef PROTO_H
-#define PROTO_H
 
 #include "always.h"
 #include <stdlib.h>
@@ -78,27 +72,27 @@ class ChunkLoadClass;
 ** Some simple render objects will be created through cloning.  In
 ** that case, their associated prototype simply stores an object and
 ** clones it whenever the Create method is called.  More complex
-** composite render objects will be created from a "blueprint" object.  
-** Basically this class simply associates a name with a render object 
+** composite render objects will be created from a "blueprint" object.
+** Basically this class simply associates a name with a render object
 ** creation function.
 */
-class PrototypeClass 
+class PrototypeClass
 {
 
 public:
 
-	PrototypeClass(void) : NextHash(NULL) {}
-	
-	virtual const char *			Get_Name(void)	const = 0;
-	virtual int								Get_Class_ID(void) const = 0;
-	virtual RenderObjClass *	Create(void) = 0;
+	PrototypeClass() : NextHash(nullptr) {}
+
+	virtual const char *			Get_Name()	const = 0;
+	virtual int								Get_Class_ID() const = 0;
+	virtual RenderObjClass *	Create() = 0;
 	virtual void							DeleteSelf() = 0;
 
-	inline void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
-	inline PrototypeClass* friend_getNextHash() { return NextHash; }
+	void friend_setNextHash(PrototypeClass* n) { NextHash = n; }
+	PrototypeClass* friend_getNextHash() { return NextHash; }
 
 protected:
-	virtual ~PrototypeClass(void) {};
+	virtual ~PrototypeClass() {};
 
 private:
 	PrototypeClass *				NextHash;
@@ -114,32 +108,32 @@ class PrimitivePrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	PrimitivePrototypeClass(RenderObjClass * proto);
 
-	virtual const char *			Get_Name(void) const;
-	virtual int						Get_Class_ID(void) const;
-	virtual RenderObjClass *	Create(void);
+	virtual const char *			Get_Name() const;
+	virtual int						Get_Class_ID() const;
+	virtual RenderObjClass *	Create();
 	virtual void							DeleteSelf()										{ delete this; }
 
 	RenderObjClass *				Proto;
 
 protected:
-	virtual ~PrimitivePrototypeClass(void);
+	virtual ~PrimitivePrototypeClass();
 };
 
 /*
 ** PrototypeLoaderClass
 ** This is the interface for an object which recognizes a certain
 ** chunk type in a W3D file and can load it and create a PrototypeClass
-** for it.  
+** for it.
 */
-class PrototypeLoaderClass 
+class PrototypeLoaderClass
 {
 
 public:
 
-	PrototypeLoaderClass(void) {}
-	~PrototypeLoaderClass(void) {}
+	PrototypeLoaderClass() {}
+	~PrototypeLoaderClass() {}
 
-	virtual int						Chunk_Type(void) = 0;
+	virtual int						Chunk_Type() = 0;
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) = 0;
 
 private:
@@ -158,7 +152,7 @@ class MeshLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_MESH; }
+	virtual int						Chunk_Type() { return W3D_CHUNK_MESH; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -166,7 +160,7 @@ class HModelLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type(void) { return W3D_CHUNK_HMODEL; }
+	virtual int						Chunk_Type() { return W3D_CHUNK_HMODEL; }
 	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
 };
 
@@ -177,7 +171,3 @@ public:
 */
 extern MeshLoaderClass			_MeshLoader;
 extern HModelLoaderClass		_HModelLoader;
-
-
-
-#endif

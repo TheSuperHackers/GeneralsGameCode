@@ -28,9 +28,6 @@
 
 #pragma once
 
-#ifndef __InstantDeathBehavior_H_
-#define __InstantDeathBehavior_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DieModule.h"
 
@@ -73,9 +70,6 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 };
-
-#endif // __InstantDeathBehavior_H_
-

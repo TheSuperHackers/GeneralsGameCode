@@ -35,7 +35,7 @@ int Find_Patch(OUT char *filename,int maxlen, ConfigFile &config)
   WIN32_FIND_DATA     findData;
   char                string[128];
   HANDLE              hFile;
-  const char         *extensions[]={"web","exe","exn","rtp",NULL};
+  const char         *extensions[]={"web","exe","exn","rtp", nullptr};
   int                 i;
   int                 skuIndex=0;
   Wstring             key;
@@ -54,7 +54,7 @@ int Find_Patch(OUT char *filename,int maxlen, ConfigFile &config)
     ok=Get_App_Dir(gamePath,MAX_PATH,config,skuIndex);
     if (ok==FALSE)
       break;
-    
+
     i=0;
     while(extensions[i++])
     {
@@ -108,7 +108,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   if (config.getString(string,key)==FALSE)
     return(FALSE);
 
- 
+
   DBGMSG("KEY = "<<key.get());
   // Get the InstallPath from the specified registry key
   temp=0;
@@ -131,7 +131,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   }
   DWORD  type;
   DWORD  length=MAX_PATH;
-  regRetval=RegQueryValueEx(regKey,"InstallPath",NULL,&type,(uint8 *)gamePath,
+  regRetval=RegQueryValueEx(regKey,"InstallPath",nullptr,&type,(uint8 *)gamePath,
       &length);
   DBGMSG("GAME PATH = "<<gamePath);
   if ((regRetval!=ERROR_SUCCESS)||(type!=REG_SZ))
@@ -145,7 +145,7 @@ bit8 Get_App_Dir(OUT char *filename,int maxlen, ConfigFile &config,int index)
   //  path to a file, you better end the directory with a trailing '\\'!!!
   char *cptr=gamePath;
   char *tempPtr;
-  while( (tempPtr=strchr(cptr,'\\')) !=NULL)
+  while( (tempPtr=strchr(cptr,'\\')) !=nullptr)
     cptr=tempPtr+1;
   if (cptr)
     *cptr=0;
@@ -206,8 +206,8 @@ void Delete_Patches(ConfigFile &config)
           DBGMSG("UNLINK: "<<findData.cFileName);
         }
       }
-    }  // If there's at least one file
+    }
     FindClose(hFile);
-  }  // while there's apps in config
+  }
   return;
-} 
+}

@@ -28,13 +28,10 @@
 
 #pragma once
 
-#ifndef _AI_SKIRMISH_PLAYER_H_
-#define _AI_SKIRMISH_PLAYER_H_
-
 #include "Common/GameMemory.h"
 #include "GameLogic/AIPlayer.h"
 
-class BuildListInfo;	
+class BuildListInfo;
 class SpecialPowerTemplate;
 
 
@@ -43,14 +40,14 @@ class SpecialPowerTemplate;
  */
 class AISkirmishPlayer : public AIPlayer
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISkirmishPlayer, "AISkirmishPlayer"  )		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AISkirmishPlayer, "AISkirmishPlayer"  )
 
 public:	 // AISkirmish specific methods.
 
 	AISkirmishPlayer( Player *p );							///< constructor
 	virtual Bool computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *pos, Int playerNdx, Real weaponRadius); ///< Calculates best pos for weapon given radius.
 
-public:	// AIPlayer interface methods.  
+public:	// AIPlayer interface methods.
 
 	virtual void update();											///< simulates the behavior of a player
 
@@ -69,40 +66,40 @@ public:	// AIPlayer interface methods.
 
 	virtual void recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadius); ///< Builds this team immediately.
 
-	virtual Bool isSkirmishAI(void) {return true;}
+	virtual Bool isSkirmishAI() {return true;}
 
 	virtual Bool checkBridges(Object *unit, Waypoint *way);
 
-	virtual Player *getAiEnemy(void);	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
+	virtual Player *getAiEnemy();	///< Solo AI attacks based on scripting.  Only skirmish auto-acquires an enemy at this point.  jba.
 
 protected:
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void );
+	virtual void loadPostProcess();
 
-	virtual void doBaseBuilding(void);
-	virtual void checkReadyTeams(void);
-	virtual void checkQueuedTeams(void);
-	virtual void doTeamBuilding(void);
+	virtual void doBaseBuilding();
+	virtual void checkReadyTeams();
+	virtual void checkQueuedTeams();
+	virtual void doTeamBuilding();
 	virtual Object *findDozer(const Coord3D *pos);
-	virtual void queueDozer(void);
+	virtual void queueDozer();
 
 protected:
 
-	virtual Bool selectTeamToBuild( void );			///< determine the next team to build
+	virtual Bool selectTeamToBuild();			///< determine the next team to build
 	virtual Bool selectTeamToReinforce( Int minPriority );			///< determine the next team to reinforce
 	virtual Bool startTraining( WorkOrder *order, Bool busyOK, AsciiString teamName);	///< find a production building that can handle the order, and start building
 
 	virtual Bool isAGoodIdeaToBuildTeam( TeamPrototype *proto );		///< return true if team should be built
-	virtual void processBaseBuilding( void );		///< do base-building behaviors
-	virtual void processTeamBuilding( void );		///< do team-building behaviors
+	virtual void processBaseBuilding();		///< do base-building behaviors
+	virtual void processTeamBuilding();		///< do team-building behaviors
 
 protected:
 	void adjustBuildList(BuildListInfo *list);
-	Int getMyEnemyPlayerIndex(void);
-	void acquireEnemy(void);
+	Int getMyEnemyPlayerIndex();
+	void acquireEnemy();
 
 protected:
 	Int m_curFrontBaseDefense; // First is 0.
@@ -118,8 +115,3 @@ protected:
 	Player			*m_currentEnemy;
 
 };
-
-#endif // _AI_SKIRMISH_PLAYER_H_
-
-
-

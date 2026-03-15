@@ -37,10 +37,10 @@
 static char m_input[256];
 static unsigned m_inputUsed;
 
-static void InitConsole(void)
+static void InitConsole()
 {
   AllocConsole();
-  
+
   HANDLE h=GetStdHandle(STD_INPUT_HANDLE);
   SetConsoleMode(h,0);
 
@@ -62,7 +62,7 @@ static void InitConsole(void)
   SetConsoleCursorInfo(h,&ci);
 }
 
-static char *InputConsole(void)
+static char *InputConsole()
 {
   // update our input buffer
   HANDLE h=GetStdHandle(STD_INPUT_HANDLE);
@@ -122,7 +122,7 @@ static char *InputConsole(void)
   if (GetTickCount()&512)
     ci[m_inputUsed].Attributes=BACKGROUND_BLUE|BACKGROUND_GREEN
                               |BACKGROUND_RED|BACKGROUND_INTENSITY|FOREGROUND_BLUE;
-  
+
   COORD srcSize,srcCoord;
   srcSize.X=sizeof(m_input); srcSize.Y=1;
   srcCoord.X=srcCoord.Y=0;
@@ -157,9 +157,9 @@ class Pipe
   char *m_str;
 
 public:
-  Pipe(void):
+  Pipe():
     m_pipe(INVALID_HANDLE_VALUE),
-    m_src(NULL), m_str(NULL), m_stringType(0)
+    m_src(nullptr), m_str(nullptr), m_stringType(0)
   {
   }
 
@@ -179,20 +179,20 @@ public:
     m_pipe=CreateNamedPipe(name,
                            PIPE_ACCESS_DUPLEX,
                            PIPE_TYPE_MESSAGE|PIPE_READMODE_MESSAGE|PIPE_NOWAIT,
-                           PIPE_UNLIMITED_INSTANCES,1024,1024,0,NULL);
+                           PIPE_UNLIMITED_INSTANCES,1024,1024,0,nullptr);
     m_connected=false;
     return m_pipe!=INVALID_HANDLE_VALUE;
   }
 
-  bool Connected(void)
+  bool Connected()
   {
     if (!m_connected)
     {
-      ConnectNamedPipe(m_pipe,NULL);
+      ConnectNamedPipe(m_pipe,nullptr);
       if (GetLastError()==ERROR_PIPE_CONNECTED)
       {
         DWORD dwDummy;
-        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<connect>\n",11,&dwDummy,NULL);
+        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<connect>\n",11,&dwDummy,nullptr);
         m_connected=true;
         m_state=0;
       }
@@ -203,30 +203,30 @@ public:
   void Write(char msg)
   {
     DWORD dummy;
-    if (!WriteFile(m_pipe,&msg,1,&dummy,NULL)||!dummy)
+    if (!WriteFile(m_pipe,&msg,1,&dummy,nullptr)||!dummy)
     {
       char sp[30];
       wsprintf(sp,"%c:%i/%i\n",msg,dummy,GetLastError());
 
       DWORD dwDummy;
-      WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),sp,strlen(sp),&dwDummy,NULL);
+      WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),sp,strlen(sp),&dwDummy,nullptr);
     }
   }
 
-  const char *Read(void)
+  const char *Read()
   {
     DWORD read;
     switch(m_state)
     {
       case 0:
-        if (!ReadFile(m_pipe,&m_stringType,1,&read,NULL))
+        if (!ReadFile(m_pipe,&m_stringType,1,&read,nullptr))
           break;
         if (read==1)
           m_state++;
-        return NULL;
+        return nullptr;
       case 1:
       case 3:
-        if (!ReadFile(m_pipe,&m_len,4,&read,NULL))
+        if (!ReadFile(m_pipe,&m_len,4,&read,nullptr))
           break;
         if (read==4)
         {
@@ -236,18 +236,18 @@ public:
             m_str=(char *)realloc(m_str,m_len+1);
           m_state++;
         }
-        return NULL;
+        return nullptr;
       case 2:
-        if (!ReadFile(m_pipe,m_src,m_len,&read,NULL))
+        if (!ReadFile(m_pipe,m_src,m_len,&read,nullptr))
           break;
         if (read==m_len)
         {
           m_src[m_len]=0;
           m_state++;
         }
-        return NULL;
+        return nullptr;
       case 4:
-        if (!ReadFile(m_pipe,m_str,m_len,&read,NULL))
+        if (!ReadFile(m_pipe,m_str,m_len,&read,nullptr))
           break;
         if (read==m_len)
         {
@@ -255,19 +255,19 @@ public:
           m_state=0;
           return m_str;
         }
-        return NULL;
+        return nullptr;
     }
 
     if (GetLastError()==ERROR_BROKEN_PIPE)
     {
       DisconnectNamedPipe(m_pipe);
-      
+
       DWORD dwDummy;
-      WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<disconnect>\n",14,&dwDummy,NULL);
+      WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),"\n<disconnect>\n",14,&dwDummy,nullptr);
       m_connected=false;
     }
 
-    return NULL;
+    return nullptr;
   }
 };
 
@@ -280,15 +280,15 @@ int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
   GetComputerName(buf1,&dwDummy);
   WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),buf2,
             wsprintf(buf2,"\n\nSimple debug.net Server ready. Enter 'quit' to exit.\n\nLocal machine: %s\n\n",buf1),
-            &dwDummy,NULL);
-  
+            &dwDummy,nullptr);
+
   Pipe p[10];
   for (int k=0;k<10;k++)
     if (!p[k].Create("\\\\.\\pipe\\ea_debug_v1"))
     {
       char msg[200];
       wsprintf(msg,"Can't create named pipe (Code %i).",GetLastError());
-      MessageBox(NULL,msg,"Error",MB_OK);
+      MessageBox(nullptr,msg,"Error",MB_OK);
       return 1;
     }
 
@@ -297,7 +297,7 @@ int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
     char *input=InputConsole();
     if (input)
     {
-      if (!strcmp(input,"quit"))
+      if (strcmp(input,"quit") == 0)
         break;
     }
 
@@ -310,7 +310,7 @@ int CALLBACK WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
       if (msg)
       {
         DWORD dwDummy;
-        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),msg,strlen(msg),&dwDummy,NULL);
+        WriteFile(GetStdHandle(STD_OUTPUT_HANDLE),msg,strlen(msg),&dwDummy,nullptr);
       }
 
       if (input)

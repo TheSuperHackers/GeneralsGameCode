@@ -34,9 +34,9 @@
 *     Reinterpret_Cast<X> replaces reinterpret_cast<X*> and reinterpret_cast<X&>
 *     Const_Cast<X> replaces const_cast<X*> and const_cast<X&>
 *
-*     IsValid() replaces (x != NULL)
-*  
-*     Member function Attach() or assigning RefPtr<X>() will NULL a pointer.
+*     IsValid() replaces (x != nullptr)
+*
+*     Member function Attach() or assigning RefPtr<X>() will nullptr a pointer.
 *
 *     Generally, RefPtr<> and RefPtrConst<> behave like their raw pointer
 *     counterparts, except of course they are reference counted and will delete
@@ -65,8 +65,7 @@
 *
 ******************************************************************************/
 
-#ifndef REFPTR_H
-#define REFPTR_H
+#pragma once
 
 #include "Visualc.h"
 #include "RefCounted.h"
@@ -86,27 +85,27 @@ class RefPtrBase
 			{return !operator==(rhs);}
 
 		inline bool IsValid(void) const
-			{return (mRefObject != NULL);}
+			{return (mRefObject != nullptr);}
 
 		inline void Detach(void)
 			{
 			if (IsValid())
 				{
 				mRefObject->Release();
-				mRefObject = NULL;
+				mRefObject = nullptr;
 				}
 			}
 
 	protected:
 		RefPtrBase()
-			: mRefObject(NULL)
+			: mRefObject(nullptr)
 			{}
 
 		RefPtrBase(RefCounted* object)
 			: mRefObject(object)
 			{
-			assert((mRefObject == NULL) || (mRefObject->mRefCount == 0));
-		
+			assert((mRefObject == nullptr) || (mRefObject->mRefCount == 0));
+
 			if (IsValid())
 				{
 				mRefObject->AddReference();
@@ -117,7 +116,7 @@ class RefPtrBase
 			: mRefObject(object.mRefObject)
 			{
 			assert(false); // why is this being called?
-	
+
 			if (IsValid())
 				{
 				mRefObject->AddReference();
@@ -128,7 +127,7 @@ class RefPtrBase
 			{Detach();}
 
 		const RefPtrBase& operator=(const RefPtrBase&);
-	
+
 		inline RefCounted* const GetRefObject(void)
 			{return mRefObject;}
 
@@ -141,7 +140,7 @@ class RefPtrBase
 			if (object != mRefObject)
 				{
 				// Add reference to new object
-				if (object != NULL)
+				if (object != nullptr)
 					{
 					object->AddReference();
 					}
@@ -357,5 +356,3 @@ RefPtr<Type> Const_Cast(RefPtrConst<Type>& rhs)
 	object.Attach(rhs.ReferencedObject());
 	return object;
 	}
-
-#endif // RC_PTR_H

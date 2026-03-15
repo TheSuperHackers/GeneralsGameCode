@@ -16,33 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/rawfile.h                                          $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/rawfile.h                                          $*
+ *                                                                                             *
  *                      $Author:: Neal_k                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 10/04/99 10:25a                                             $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   RawFileClass::File_Name -- Returns with the filename associate with the file object.      *
  *   RawFileClass::RawFileClass -- Default constructor for a file object.                      *
  *   RawFileClass::~RawFileClass -- Default deconstructor for a file object.                   *
  *   RawFileClass::Is_Open -- Checks to see if the file is open or not.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef RAWFILE_Hx
-#define RAWFILE_Hx
+#pragma once
 
 //#include	<errno.h>
 
@@ -51,8 +47,8 @@
 #ifdef _UNIX
 #include <stdio.h>
 #include "osdep.h"
-  #define	NULL_HANDLE	 	NULL	
-  #define	HANDLE_TYPE		FILE*	
+  #define	NULL_HANDLE	 	nullptr
+  #define	HANDLE_TYPE		FILE*
 #else
   #define	NULL_HANDLE		INVALID_HANDLE_VALUE
   #define	HANDLE_TYPE		HANDLE
@@ -109,14 +105,14 @@ class RawFileClass : public FileClass
 		virtual void Close(void);
 		virtual unsigned long Get_Date_Time(void);
 		virtual bool Set_Date_Time(unsigned long datetime);
-		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 
 		void Bias(int start, int length=-1);
 
-		virtual void * Get_File_Handle(void) { return Handle; } 
+		virtual void * Get_File_Handle(void) { return Handle; }
 
 		virtual void	Attach (void *handle, int rights=READ);
-		virtual void	Detach (void);		
+		virtual void	Detach (void);
 
 		/*
 		**	These bias values enable a sub-portion of a file to appear as if it
@@ -149,7 +145,7 @@ class RawFileClass : public FileClass
 		#endif
 
 		/*
-		**	This points to the filename as a NULL terminated string. It may point to either a
+		**	This points to the filename as a null-terminated string. It may point to either a
 		**	constant or an allocated string as indicated by the "Allocated" flag.
 		*/
 		char const * Filename;
@@ -183,11 +179,11 @@ class RawFileClass : public FileClass
  * RawFileClass::File_Name -- Returns with the filename associate with the file object.        *
  *                                                                                             *
  *    Use this routine to determine what filename is associated with this file object. If no   *
- *    filename has yet been assigned, then this routing will return NULL.                      *
+ *    filename has yet been assigned, then this routing will return null.                      *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or nullptr   *
  *          if one doesn't exist.                                                              *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
@@ -199,7 +195,3 @@ inline char const * RawFileClass::File_Name(void) const
 {
 	return(Filename);
 }
-
-
-
-#endif

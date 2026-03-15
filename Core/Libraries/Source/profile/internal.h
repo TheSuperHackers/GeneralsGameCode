@@ -26,18 +26,15 @@
 //
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
-#ifdef _MSC_VER
-#  pragma once
-#endif
-#ifndef INTERNAL_H // Include guard
-#define INTERNAL_H
+
+#pragma once
 
 #include "../debug/debug.h"
 #include "internal_funclevel.h"
 #include "internal_highlevel.h"
 #include "internal_cmd.h"
 #include "internal_result.h"
-#include "Utility/CppMacros.h"
+#include <windows.h>
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
 #include <atomic>
@@ -48,7 +45,7 @@ class ProfileFastCS
 {
   ProfileFastCS(const ProfileFastCS&) CPP_11(= delete);
   ProfileFastCS& operator=(const ProfileFastCS&) CPP_11(= delete);
-  
+
 	static HANDLE testEvent;
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
@@ -83,17 +80,17 @@ class ProfileFastCS
 	}
 
 public:
-	ProfileFastCS(void):
-    m_Flag(0) 
+	ProfileFastCS():
+    m_Flag(0)
   {
   }
 #else
 
-	volatile std::atomic_flag Flag{};
+	std::atomic_flag Flag{};
 
 	void ThreadSafeSetFlag()
 	{
-		while (Flag.test_and_set(std::memory_order_acquire)) {
+		while (Flag.test_and_set(std::memory_order_acq_rel)) {
 			Flag.wait(true, std::memory_order_relaxed);
 		}
 	}
@@ -105,7 +102,7 @@ public:
 	}
 
 public:
-	ProfileFastCS(void) {}
+	ProfileFastCS() {}
 
 #endif
 
@@ -117,7 +114,7 @@ public:
 		ProfileFastCS& CriticalSection;
 
 	public:
-		Lock(ProfileFastCS& cs): 
+		Lock(ProfileFastCS& cs):
       CriticalSection(cs)
 		{
 			CriticalSection.ThreadSafeSetFlag();
@@ -154,5 +151,3 @@ __forceinline void ProfileGetTime(__int64 &t)
   t = static_cast<__int64>(_rdtsc());
 #endif
 }
-
-#endif // INTERNAL_H

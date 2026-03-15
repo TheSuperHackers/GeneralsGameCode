@@ -49,13 +49,13 @@
 #endif
 
 
-long SystemTimerClass::operator () (void) const
+long SystemTimerClass::operator () () const
 {
 	return TIMEGETTIME()/16;
 }
 
 
-SystemTimerClass::operator long (void) const
+SystemTimerClass::operator long () const
 {
 	return TIMEGETTIME()/16;
 }

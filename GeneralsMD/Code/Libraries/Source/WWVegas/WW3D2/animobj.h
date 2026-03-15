@@ -38,12 +38,7 @@
  *   Animatable3DObjClass::Combo_Update -- Animation update for a combination of anims         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef ANIMOBJ_H
-#define ANIMOBJ_H
 
 #include "always.h"
 #include "composite.h"
@@ -67,7 +62,7 @@ public:
 	Animatable3DObjClass(const char * htree_name);
 	Animatable3DObjClass(const Animatable3DObjClass & src);
 	Animatable3DObjClass & operator = (const Animatable3DObjClass &);
-	virtual ~Animatable3DObjClass(void);
+	virtual ~Animatable3DObjClass();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Rendering
@@ -84,7 +79,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Hierarchical Animation
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation(void);
+	virtual void					Set_Animation();
 	virtual void					Set_Animation( HAnimClass * motion,
 															float frame, int anim_mode = ANIM_MODE_MANUAL);
 	virtual void					Set_Animation( HAnimClass * motion0,
@@ -97,10 +92,10 @@ public:
 	virtual void					Set_Animation_Frame_Rate_Multiplier(float multiplier);	// 020607 srj -- added
 
 	virtual HAnimClass *	Peek_Animation_And_Info(float& frame, int& numFrames, int& mode, float& mult);	// 020710 srj -- added
-	
-	virtual HAnimClass *			Peek_Animation( void );
-	virtual bool					Is_Animation_Complete( void ) const;
-	virtual int						Get_Num_Bones(void);
+
+	virtual HAnimClass *			Peek_Animation();
+	virtual bool					Is_Animation_Complete() const;
+	virtual int						Get_Num_Bones();
 	virtual const char *			Get_Bone_Name(int bone_index);
 	virtual int						Get_Bone_Index(const char * bonename);
 	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename);
@@ -109,11 +104,11 @@ public:
 	virtual void					Release_Bone(int boneindex);
 	virtual bool					Is_Bone_Captured(int boneindex) const;
 	virtual void					Control_Bone(int bindex,const Matrix3D & objtm,bool world_space_translation = false);
-	virtual const HTreeClass *	Get_HTree(void) const { return HTree; }
-	
+	virtual const HTreeClass *	Get_HTree() const { return HTree; }
+
 	//
 	//	Simple bone evaluation methods for when the caller doesn't want
-	// to update the heirarchy, but needs to know the transform of
+	// to update the hierarchy, but needs to know the transform of
 	// a bone at a given frame.
 	//
 	virtual bool					Simple_Evaluate_Bone(int boneindex, Matrix3D *tm) const;
@@ -128,10 +123,10 @@ public:
 protected:
 
 	// internally used to compute the current frame if the object is in ANIM_MODE_MANUAL
-	float								Compute_Current_Frame(float *newDirection=NULL) const;
+	float								Compute_Current_Frame(float *newDirection=nullptr) const;
 
 	// Update the sub-object transforms according to the current anim state and root transform.
-	virtual	void					Update_Sub_Object_Transforms(void);
+	virtual	void					Update_Sub_Object_Transforms();
 
 	// Update the transforms using the base pose only
 	void								Base_Update(const Matrix3D & root);
@@ -153,15 +148,15 @@ protected:
 	void								Combo_Update(	const Matrix3D & root,
 															HAnimComboClass *anim);
 
-	// flag to kep track of whether the hierarchy tree transforms are currently valid
-	bool								Is_Hierarchy_Valid(void) const				{ return IsTreeValid; }
+	// flag to keep track of whether the hierarchy tree transforms are currently valid
+	bool								Is_Hierarchy_Valid() const				{ return IsTreeValid; }
 	void								Set_Hierarchy_Valid(bool onoff) const  	{ IsTreeValid = onoff; }
 
-	// Progress anims for single anim (loop and once)
-	void								Single_Anim_Progress( void );
+	// Progress animations for single anim (loop and once)
+	void								Single_Anim_Progress();
 
-	// Release any anims
-	void								Release( void );
+	// Release any animations
+	void								Release();
 
 protected:
 
@@ -170,7 +165,7 @@ protected:
 
 	// Hierarchy Tree
 	HTreeClass *					HTree;
-	
+
 	// Animation state for the next frame.  When we add more flexible motion
 	// compositing, add a new state and its associated data to the union below
 	enum {
@@ -190,14 +185,14 @@ protected:
 			float		  				Frame;
 			float						PrevFrame;
 			int						AnimMode;
-			mutable int				LastSyncTime;
+			int								LastSyncTime;
 			float							animDirection;
 			float							frameRateMultiplier;	// 020607 srj -- added
-		} ModeAnim;				  
+		} ModeAnim;
 
 		// CurMotionMode == DOUBLE_ANIM
 		struct {
-			
+
 			HAnimClass *			Motion0;
 			HAnimClass *			Motion1;
 			float		  				Frame0;
@@ -211,9 +206,9 @@ protected:
 		struct {
 			HAnimComboClass *		AnimCombo;
 		} ModeCombo;
-  
+
 	};
-	
+
 	friend class SkinClass;
 };
 
@@ -262,9 +257,11 @@ inline void Animatable3DObjClass::Anim_Update(const Matrix3D & root,HAnimClass *
 	** Apply motion to the base pose
 	*/
 	if ((motion) && (HTree)) {
-		if (ModeAnim.Motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
-			HTree->Anim_Update(Transform,(HRawAnimClass*)ModeAnim.Motion,ModeAnim.Frame);
+#if !WW3D_ENABLE_RAW_ANIM_INTERPOLATION
+		if (motion->Class_ID() == HAnimClass::CLASSID_HRAWANIM)
+			HTree->Anim_Update_Without_Interpolation(root,(HRawAnimClass*)motion,frame);
 		else
+#endif
 			HTree->Anim_Update(root,motion,frame);
 	}
 	Set_Hierarchy_Valid(true);
@@ -322,7 +319,3 @@ inline void Animatable3DObjClass::Combo_Update( const Matrix3D & root, HAnimComb
 	}
 	Set_Hierarchy_Valid(true);
 }
-
-
-
-#endif //ANIMOBJ_H

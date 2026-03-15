@@ -16,6 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// JSUPPORT.H
+// JSUPPORT.h
 // DBCS Support Header
 extern int nGetWord( char *,int );

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_SHADOW_NAMES								// for TheShadowNames[]
 #define DEFINE_WEAPONSLOTTYPE_NAMES
@@ -70,17 +70,12 @@
 
 #include "Common/CRCDebug.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-ObjectCreationListStore *TheObjectCreationListStore = NULL;					///< the ObjectCreationList store definition
+ObjectCreationListStore *TheObjectCreationListStore = nullptr;					///< the ObjectCreationList store definition
 
 //-------------------------------------------------------------------------------------------------
 static void adjustVector(Coord3D *vec, const Matrix3D* mtx)
@@ -105,7 +100,7 @@ static void adjustVector(Coord3D *vec, const Matrix3D* mtx)
 //-------------------------------------------------------------------------------------------------
 Object* ObjectCreationNugget::create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames ) const
 {
-	return create( primary, primary ? primary->getPosition() : NULL, secondary ? secondary->getPosition() : NULL, lifetimeFrames );
+	return create( primary, primary ? primary->getPosition() : nullptr, secondary ? secondary->getPosition() : nullptr, lifetimeFrames );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -119,36 +114,36 @@ Object* ObjectCreationNugget::create( const Object *primaryObj, const Coord3D *p
 //-------------------------------------------------------------------------------------------------
 class FireWeaponNugget : public ObjectCreationNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireWeaponNugget, "FireWeaponNugget")		
-	
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireWeaponNugget, "FireWeaponNugget")
+
 public:
 
-	FireWeaponNugget() : 
-    m_weapon(NULL)
+	FireWeaponNugget() :
+    m_weapon(nullptr)
 	{
 	}
 
 	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (!primaryObj || !primary || !secondary)
-		{ 
+		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return NULL;
+      return nullptr;
     }
 
 	  if (m_weapon)
 	  {
 		  TheWeaponStore->createAndFireTempWeapon( m_weapon, primaryObj, secondary );
 	  }
-		return NULL;
+		return nullptr;
   }
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
-			{ "Weapon", INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponNugget, m_weapon ) },
-			{ 0, 0, 0, 0 }
+			{ "Weapon", INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponNugget, m_weapon ) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		FireWeaponNugget* nugget = newInstance(FireWeaponNugget);
@@ -158,17 +153,17 @@ public:
 
 private:
 	const WeaponTemplate* m_weapon;
-};  
+};
 EMPTY_DTOR(FireWeaponNugget)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class AttackNugget : public ObjectCreationNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AttackNugget, "AttackNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AttackNugget, "AttackNugget")
 public:
 
-	AttackNugget() : 
+	AttackNugget() :
     m_numberOfShots(1),
 		m_weaponSlot(PRIMARY_WEAPON),
 		m_deliveryDecalRadius(0)
@@ -178,15 +173,15 @@ public:
 	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (!primaryObj || !primary || !secondary)
-		{ 
+		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return NULL;
+      return nullptr;
     }
 
 		// Star trekkin, across the universe.
-		// Boldly goin forward now, cause we can't find reverse!
+		// Boldly going forward now, cause we can't find reverse!
 
-		// 1:30 left on the clock, Demo looming, should I de-const all of OCL since this one effect needs the 
+		// 1:30 left on the clock, Demo looming, should I de-const all of OCL since this one effect needs the
 		// Primary to help make the objects?  Should I rewrite superweapons to completely subsume them
 		// into normal special powers, so I can have a spell attack with a global timer and a spinny clock?
 		// Should I const cast?  Should I eat them?  No!  I'd rather hurt them stomp them crush them hurt them
@@ -208,18 +203,18 @@ public:
 			rd->createRadiusDecal(m_deliveryDecalTemplate, m_deliveryDecalRadius, *secondary);
 			rd->killWhenNoLongerAttacking(true);
 		}
-		return NULL;
+		return nullptr;
   }
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
-			{ "NumberOfShots",	INI::parseInt,				NULL, offsetof( AttackNugget, m_numberOfShots ) },
+			{ "NumberOfShots",	INI::parseInt,				nullptr, offsetof( AttackNugget, m_numberOfShots ) },
 			{ "WeaponSlot",			INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( AttackNugget, m_weaponSlot ) },
-			{ "DeliveryDecal",				RadiusDecalTemplate::parseRadiusDecalTemplate,	NULL, offsetof( AttackNugget, m_deliveryDecalTemplate ) },
-			{ "DeliveryDecalRadius",	INI::parseReal, NULL, offsetof(AttackNugget, m_deliveryDecalRadius) },
-			{ 0, 0, 0, 0 }
+			{ "DeliveryDecal",				RadiusDecalTemplate::parseRadiusDecalTemplate,	nullptr, offsetof( AttackNugget, m_deliveryDecalTemplate ) },
+			{ "DeliveryDecalRadius",	INI::parseReal, nullptr, offsetof(AttackNugget, m_deliveryDecalRadius) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		AttackNugget* nugget = newInstance(AttackNugget);
@@ -232,17 +227,17 @@ private:
 	Real								m_deliveryDecalRadius;
 	Int									m_numberOfShots;
 	WeaponSlotType			m_weaponSlot;
-};  
+};
 EMPTY_DTOR(AttackNugget)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class DeliverPayloadNugget : public ObjectCreationNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeliverPayloadNugget, "DeliverPayloadNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DeliverPayloadNugget, "DeliverPayloadNugget")
 public:
 
-	DeliverPayloadNugget() : 
+	DeliverPayloadNugget() :
 		m_startAtPreferredHeight(true),
 		m_startAtMaxSpeed(false),
 		m_formationSize(1),
@@ -252,15 +247,9 @@ public:
 		m_convergenceFactor( 0.0f )
 	{
 		//Note: m_data is constructed with default values.
-		
-		// Added by Sadullah Nader
-		// Initialization missing and needed
-		
 		m_payload.clear();
 		m_putInContainerName.clear();
 		m_transportName.clear();
-
-		// End Add
 	}
 
 	virtual Object* create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 ) const
@@ -273,14 +262,14 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return NULL;
+      return nullptr;
     }
 
-		Team* owner = primaryObj ? primaryObj->getControllingPlayer()->getDefaultTeam() : NULL;
+		Team* owner = primaryObj ? primaryObj->getControllingPlayer()->getDefaultTeam() : nullptr;
 
 
-		//What I'm doing for the purposes of the formations is to calculate the relative positions of 
-		//each member of the formation. To do so, we take the vector from the target location to the 
+		//What I'm doing for the purposes of the formations is to calculate the relative positions of
+		//each member of the formation. To do so, we take the vector from the target location to the
 		//lead plane location, normalize it, then rotate it 90 degrees (CW and CCW). When we add the
 		//resultant vectors to the initial vectors, we can calculate the delta positions for each plane.
 		Real CCWx = 0.0f, CCWy = 0.0f, CWx = 0.0f, CWy = 0.0f;
@@ -290,7 +279,7 @@ public:
 			//Get the delta x and y values from the target to the origin.
 			Real dx = primary->x - secondary->x;
 			Real dy = primary->y - secondary->y;
-			
+
 			//Calc length
 			Real length = sqrt( dx*dx + dy*dy );
 
@@ -311,8 +300,8 @@ public:
 			CWx = dx * c + dy * -s + dx;
 			CWy = dx * s + dy * c + dy;
 		}
-		
-		Object *firstTransport = NULL;
+
+		Object *firstTransport = nullptr;
 		for( UnsignedInt formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
 		{
 			Coord3D offset;
@@ -341,9 +330,9 @@ public:
 
 			Coord3D targetPos = *secondary;
 
-			
-			//Our target position only applies when using fireweapon and when we have multiple planes, 
-			//as is the case with the napalm strike. The target position either be somewhere between the 
+
+			//Our target position only applies when using fireweapon and when we have multiple planes,
+			//as is the case with the napalm strike. The target position either be somewhere between the
 			//moveToPos of the lead plane and that of the relative offset -- determined by the convergenceFactor.
 			targetPos.x += offset.x * (1.0f - m_convergenceFactor);
 			targetPos.y += offset.y * (1.0f - m_convergenceFactor);
@@ -375,7 +364,7 @@ public:
 				transport = TheThingFactory->newObject( ttn, owner );
 				if( !transport )
 				{
-					return NULL;
+					return nullptr;
 				}
 				if( !firstTransport )
 				{
@@ -425,7 +414,7 @@ public:
 						physics->applyMotiveForce( &startingForce );
 					}
 				}
-				
+
 				// only the first guy in each formation gets a delivery decal
 				DeliverPayloadData data = m_data;
 				if (formationIndex != 0)
@@ -437,15 +426,15 @@ public:
 					transport->setPosition(&startPos);
 				}
 
-				const ThingTemplate* putInContainerTmpl = m_putInContainerName.isEmpty() ? NULL : TheThingFactory->findTemplate(m_putInContainerName);
+				const ThingTemplate* putInContainerTmpl = m_putInContainerName.isEmpty() ? nullptr : TheThingFactory->findTemplate(m_putInContainerName);
 				for (std::vector<Payload>::const_iterator it = m_payload.begin(); it != m_payload.end(); ++it)
   			{
 					const ThingTemplate* payloadTmpl = TheThingFactory->findTemplate(it->m_payloadName);
 					if( !payloadTmpl )
 					{
-						DEBUG_CRASH( ("DeliverPayloadNugget::create() -- %s couldn't create %s (template not found).", 
+						DEBUG_CRASH( ("DeliverPayloadNugget::create() -- %s couldn't create %s (template not found).",
 							transport->getTemplate()->getName().str(), it->m_payloadName.str() ) );
-						return NULL;
+						return nullptr;
 					}
 					for (int i = 0; i < it->m_payloadCount; ++i)
 					{
@@ -515,7 +504,7 @@ public:
 		const char* name = ini->getNextToken();
 		const char* countStr = ini->getNextTokenOrNull();
 		Int count = countStr ? INI::scanInt(countStr) : 1;
-		
+
 		Payload p;
 		p.m_payloadName.set(name);
 		p.m_payloadCount = count;
@@ -524,32 +513,32 @@ public:
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
 			//***************************************************************
 			//OBJECT CREATION LIST SPECIFIC DATA -- once created data no longer needed
 			//The transport(s) that carry all the payload items (and initial physics information)
-			{ "Transport",								INI::parseAsciiString,				NULL, offsetof(DeliverPayloadNugget, m_transportName) },
-			{ "StartAtPreferredHeight",		INI::parseBool,								NULL, offsetof(DeliverPayloadNugget, m_startAtPreferredHeight) },
-			{ "StartAtMaxSpeed",					INI::parseBool,								NULL, offsetof(DeliverPayloadNugget, m_startAtMaxSpeed) },
+			{ "Transport",								INI::parseAsciiString,				nullptr, offsetof(DeliverPayloadNugget, m_transportName) },
+			{ "StartAtPreferredHeight",		INI::parseBool,								nullptr, offsetof(DeliverPayloadNugget, m_startAtPreferredHeight) },
+			{ "StartAtMaxSpeed",					INI::parseBool,								nullptr, offsetof(DeliverPayloadNugget, m_startAtMaxSpeed) },
 
 			//For multiple transports, this defines the formation (and convergence if all weapons will hit same target)
-			{ "FormationSize",						INI::parseUnsignedInt,					NULL, offsetof( DeliverPayloadNugget, m_formationSize) },
-			{ "FormationSpacing",					INI::parseReal,									NULL, offsetof( DeliverPayloadNugget, m_formationSpacing) },
-			{ "WeaponConvergenceFactor",	INI::parseReal,									NULL, offsetof( DeliverPayloadNugget, m_convergenceFactor ) },
-			{ "WeaponErrorRadius",				INI::parseReal,									NULL, offsetof( DeliverPayloadNugget, m_errorRadius ) },
-			{ "DelayDeliveryMax",					INI::parseDurationUnsignedInt,	NULL, offsetof( DeliverPayloadNugget, m_delayDeliveryFramesMax ) },
+			{ "FormationSize",						INI::parseUnsignedInt,					nullptr, offsetof( DeliverPayloadNugget, m_formationSize) },
+			{ "FormationSpacing",					INI::parseReal,									nullptr, offsetof( DeliverPayloadNugget, m_formationSpacing) },
+			{ "WeaponConvergenceFactor",	INI::parseReal,									nullptr, offsetof( DeliverPayloadNugget, m_convergenceFactor ) },
+			{ "WeaponErrorRadius",				INI::parseReal,									nullptr, offsetof( DeliverPayloadNugget, m_errorRadius ) },
+			{ "DelayDeliveryMax",					INI::parseDurationUnsignedInt,	nullptr, offsetof( DeliverPayloadNugget, m_delayDeliveryFramesMax ) },
 
 			//Payload information (it's all created now and stored inside)
-			{ "Payload",									parsePayload,									NULL, 0 },
-			{ "PutInContainer",						INI::parseAsciiString,				NULL, offsetof( DeliverPayloadNugget, m_putInContainerName) },
+			{ "Payload",									parsePayload,									nullptr, 0 },
+			{ "PutInContainer",						INI::parseAsciiString,				nullptr, offsetof( DeliverPayloadNugget, m_putInContainerName) },
 			//END OBJECT CREATION LIST SPECIFIC DATA
 			//***************************************************************
-			
+
 			//***************************************************************
 			//DELIVERPAYLOADDATA contains the rest (and most) of the parsed data.
 			//***************************************************************
-			{ 0, 0, 0, 0 }
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		DeliverPayloadNugget* nugget = newInstance(DeliverPayloadNugget);
@@ -583,7 +572,7 @@ private:
 
 	//AI specific data passed over to DeliverPayloadAIUpdate::deliver()
 	DeliverPayloadData		m_data;
-};  
+};
 EMPTY_DTOR(DeliverPayloadNugget)
 
 //-------------------------------------------------------------------------------------------------
@@ -609,10 +598,10 @@ static void calcRandomForce(Real minMag, Real maxMag, Real minPitch, Real maxPit
 //-------------------------------------------------------------------------------------------------
 class ApplyRandomForceNugget : public ObjectCreationNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ApplyRandomForceNugget, "ApplyRandomForceNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ApplyRandomForceNugget, "ApplyRandomForceNugget")
 public:
 
-	ApplyRandomForceNugget() : 
+	ApplyRandomForceNugget() :
 		m_spinRate(0.0f),
 		m_minMag(0.0f),
 		m_maxMag(0.0f),
@@ -649,25 +638,25 @@ public:
 		{
 			DEBUG_CRASH(("You must have a primary source for this effect"));
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		DEBUG_CRASH(("You must call this effect with an object, not a location"));
-		return NULL;
+		return nullptr;
 	}
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
-			{ "SpinRate",					INI::parseAngularVelocityReal,	NULL, offsetof(ApplyRandomForceNugget, m_spinRate) },
-			{ "MinForceMagnitude",	INI::parseReal,	NULL, offsetof(ApplyRandomForceNugget, m_minMag) },
-			{ "MaxForceMagnitude",	INI::parseReal,	NULL, offsetof(ApplyRandomForceNugget, m_maxMag) },
-			{ "MinForcePitch",	INI::parseAngleReal,	NULL, offsetof(ApplyRandomForceNugget, m_minPitch) },
-			{ "MaxForcePitch",	INI::parseAngleReal,	NULL, offsetof(ApplyRandomForceNugget, m_maxPitch) },
-			{ 0, 0, 0, 0 }
+			{ "SpinRate",					INI::parseAngularVelocityReal,	nullptr, offsetof(ApplyRandomForceNugget, m_spinRate) },
+			{ "MinForceMagnitude",	INI::parseReal,	nullptr, offsetof(ApplyRandomForceNugget, m_minMag) },
+			{ "MaxForceMagnitude",	INI::parseReal,	nullptr, offsetof(ApplyRandomForceNugget, m_maxMag) },
+			{ "MinForcePitch",	INI::parseAngleReal,	nullptr, offsetof(ApplyRandomForceNugget, m_minPitch) },
+			{ "MaxForcePitch",	INI::parseAngleReal,	nullptr, offsetof(ApplyRandomForceNugget, m_maxPitch) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		ApplyRandomForceNugget* nugget = newInstance(ApplyRandomForceNugget);
@@ -681,7 +670,7 @@ private:
 	Real											m_spinRate;
 	Real											m_minMag, m_maxMag;
 	Real											m_minPitch, m_maxPitch;
-};  
+};
 EMPTY_DTOR(ApplyRandomForceNugget)
 
 //-------------------------------------------------------------------------------------------------
@@ -698,7 +687,7 @@ enum DebrisDisposition CPP_11(: Int)
 	WHIRLING								= 0x00000100
 };
 
-static const char* DebrisDispositionNames[] =
+static const char* const DebrisDispositionNames[] =
 {
 	"LIKE_EXISTING",
 	"ON_GROUND_ALIGNED",
@@ -709,6 +698,7 @@ static const char* DebrisDispositionNames[] =
 	"FLOATING",
 	"INHERIT_VELOCITY",
 	"WHIRLING",
+	nullptr
 };
 
 std::vector<AsciiString>	debrisModelNamesGlobalHack;
@@ -720,18 +710,18 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 	Real fricPerSec = INI::scanReal(ini->getNextToken());
 	Real fricPerFrame = fricPerSec * SECONDS_PER_LOGICFRAME_REAL;
 	*(Real *)store = fricPerFrame;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 class GenericObjectCreationNugget : public ObjectCreationNugget
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GenericObjectCreationNugget, "GenericObjectCreationNugget")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GenericObjectCreationNugget, "GenericObjectCreationNugget")
 public:
 
-	GenericObjectCreationNugget() : 
+	GenericObjectCreationNugget() :
 		m_requiresLivePlayer(FALSE),
-		m_debrisToGenerate(1), 
-		m_mass(0), 
+		m_debrisToGenerate(1),
+		m_mass(0),
 		m_extraBounciness(0),
 		m_extraFriction(0),
 		m_disposition(ON_GROUND_ALIGNED),
@@ -758,9 +748,9 @@ public:
 		m_fadeIn(false),
 		m_fadeOut(false),
 		m_fadeFrames(0),
-		m_fadeSoundName(AsciiString::TheEmptyString), // Added By Sadullah Nader
-		m_particleSysName(AsciiString::TheEmptyString), // Added By Sadullah Nader
-		m_putInContainer(AsciiString::TheEmptyString), // Added By Sadullah Nader
+		m_fadeSoundName(AsciiString::TheEmptyString),
+		m_particleSysName(AsciiString::TheEmptyString),
+		m_putInContainer(AsciiString::TheEmptyString),
 		m_minMag(0.0f),
 		m_maxMag(0.0f),
 		m_minPitch(0.0f),
@@ -768,13 +758,11 @@ public:
 		m_minFrames(0),
 		m_maxFrames(0),
 		m_shadowType(SHADOW_NONE),
-		m_fxFinal(NULL),
+		m_fxFinal(nullptr),
 		m_preserveLayer(true),
-		m_objectCount(0) // Added By Sadullah Nader
+		m_objectCount(0)
 	{
-		// Change Made by Sadullah Nader
-		// for init purposes, easier to read
-		m_offset.zero(); 
+		m_offset.zero();
 	}
 
 	virtual Object* create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
@@ -782,7 +770,7 @@ public:
 		if (primary)
 		{
 			if (m_skipIfSignificantlyAirborne && primary->isSignificantlyAboveTerrain())
-				return NULL;
+				return nullptr;
 
 			return reallyCreate( primary->getPosition(), primary->getTransformMatrix(), primary->getOrientation(), primary, lifetimeFrames );
 		}
@@ -790,14 +778,14 @@ public:
 		{
 			DEBUG_CRASH(("You must have a primary source for this effect"));
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (primary)
 		{
-			const Matrix3D *xfrm = NULL;
+			const Matrix3D *xfrm = nullptr;
 			const Real angle = 0.0;
 			return reallyCreate( primary, xfrm, angle, primaryObj, lifetimeFrames );
 		}
@@ -805,61 +793,61 @@ public:
 		{
 			DEBUG_CRASH(("You must have a primary source for this effect"));
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	static const FieldParse* getCommonFieldParse()
 	{
 		static const FieldParse commonFieldParse[] =
 		{
-			{ "PutInContainer", INI::parseAsciiString, NULL, offsetof( GenericObjectCreationNugget, m_putInContainer) },
-			{ "ParticleSystem",		INI::parseAsciiString, NULL, offsetof( GenericObjectCreationNugget, m_particleSysName) },
-			{ "Count",						INI::parseInt,						NULL, offsetof( GenericObjectCreationNugget, m_debrisToGenerate ) },
-			{ "IgnorePrimaryObstacle", INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_ignorePrimaryObstacle) },
-			{ "OrientInForceDirection", INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_orientInForceDirection) },
-			{ "ExtraBounciness",				INI::parseReal,						NULL, offsetof( GenericObjectCreationNugget, m_extraBounciness ) },
-			{ "ExtraFriction",				parseFrictionPerSec,						NULL, offsetof( GenericObjectCreationNugget, m_extraFriction ) },
-			{ "Offset",						INI::parseCoord3D,				NULL, offsetof( GenericObjectCreationNugget, m_offset ) },
+			{ "PutInContainer", INI::parseAsciiString, nullptr, offsetof( GenericObjectCreationNugget, m_putInContainer) },
+			{ "ParticleSystem",		INI::parseAsciiString, nullptr, offsetof( GenericObjectCreationNugget, m_particleSysName) },
+			{ "Count",						INI::parseInt,						nullptr, offsetof( GenericObjectCreationNugget, m_debrisToGenerate ) },
+			{ "IgnorePrimaryObstacle", INI::parseBool, nullptr, offsetof(GenericObjectCreationNugget, m_ignorePrimaryObstacle) },
+			{ "OrientInForceDirection", INI::parseBool, nullptr, offsetof(GenericObjectCreationNugget, m_orientInForceDirection) },
+			{ "ExtraBounciness",				INI::parseReal,						nullptr, offsetof( GenericObjectCreationNugget, m_extraBounciness ) },
+			{ "ExtraFriction",				parseFrictionPerSec,						nullptr, offsetof( GenericObjectCreationNugget, m_extraFriction ) },
+			{ "Offset",						INI::parseCoord3D,				nullptr, offsetof( GenericObjectCreationNugget, m_offset ) },
 			{ "Disposition",			INI::parseBitString32,			DebrisDispositionNames, offsetof( GenericObjectCreationNugget, m_disposition ) },
-			{ "DispositionIntensity",	INI::parseReal,						NULL,	offsetof( GenericObjectCreationNugget, m_dispositionIntensity ) },
-			{ "SpinRate",					INI::parseAngularVelocityReal,	NULL, offsetof(GenericObjectCreationNugget, m_spinRate) },
-			{ "YawRate",					INI::parseAngularVelocityReal,	NULL, offsetof(GenericObjectCreationNugget, m_yawRate) },
-			{ "RollRate",					INI::parseAngularVelocityReal,	NULL, offsetof(GenericObjectCreationNugget, m_rollRate) },
-			{ "PitchRate",				INI::parseAngularVelocityReal,	NULL, offsetof(GenericObjectCreationNugget, m_pitchRate) },
-			{ "MinForceMagnitude",	INI::parseReal,	NULL, offsetof(GenericObjectCreationNugget, m_minMag) },
-			{ "MaxForceMagnitude",	INI::parseReal,	NULL, offsetof(GenericObjectCreationNugget, m_maxMag) },
-			{ "MinForcePitch",	INI::parseAngleReal,	NULL, offsetof(GenericObjectCreationNugget, m_minPitch) },
-			{ "MaxForcePitch",	INI::parseAngleReal,	NULL, offsetof(GenericObjectCreationNugget, m_maxPitch) },
-			{ "MinLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( GenericObjectCreationNugget, m_minFrames ) },
-			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		NULL, offsetof( GenericObjectCreationNugget, m_maxFrames ) },
-			{ "SpreadFormation",			INI::parseBool,	NULL, offsetof(GenericObjectCreationNugget, m_spreadFormation) },
-			{ "MinDistanceAFormation",	INI::parseReal, NULL, offsetof(GenericObjectCreationNugget, m_minDistanceAFormation) },
-			{ "MinDistanceBFormation",	INI::parseReal, NULL, offsetof(GenericObjectCreationNugget, m_minDistanceBFormation) },
-			{ "MaxDistanceFormation",	INI::parseReal, NULL, offsetof(GenericObjectCreationNugget, m_maxDistanceFormation) },
-			{ "FadeIn",			INI::parseBool,	NULL, offsetof(GenericObjectCreationNugget, m_fadeIn) },
-			{ "FadeOut",			INI::parseBool,	NULL, offsetof(GenericObjectCreationNugget, m_fadeOut) },
-			{ "FadeTime",	INI::parseDurationUnsignedInt,	NULL, offsetof(GenericObjectCreationNugget, m_fadeFrames) },
-			{ "FadeSound", INI::parseAsciiString, NULL, offsetof( GenericObjectCreationNugget, m_fadeSoundName) },
-			{ "PreserveLayer", INI::parseBool, NULL, offsetof( GenericObjectCreationNugget, m_preserveLayer) },
-			{ 0, 0, 0, 0 }
+			{ "DispositionIntensity",	INI::parseReal,						nullptr,	offsetof( GenericObjectCreationNugget, m_dispositionIntensity ) },
+			{ "SpinRate",					INI::parseAngularVelocityReal,	nullptr, offsetof(GenericObjectCreationNugget, m_spinRate) },
+			{ "YawRate",					INI::parseAngularVelocityReal,	nullptr, offsetof(GenericObjectCreationNugget, m_yawRate) },
+			{ "RollRate",					INI::parseAngularVelocityReal,	nullptr, offsetof(GenericObjectCreationNugget, m_rollRate) },
+			{ "PitchRate",				INI::parseAngularVelocityReal,	nullptr, offsetof(GenericObjectCreationNugget, m_pitchRate) },
+			{ "MinForceMagnitude",	INI::parseReal,	nullptr, offsetof(GenericObjectCreationNugget, m_minMag) },
+			{ "MaxForceMagnitude",	INI::parseReal,	nullptr, offsetof(GenericObjectCreationNugget, m_maxMag) },
+			{ "MinForcePitch",	INI::parseAngleReal,	nullptr, offsetof(GenericObjectCreationNugget, m_minPitch) },
+			{ "MaxForcePitch",	INI::parseAngleReal,	nullptr, offsetof(GenericObjectCreationNugget, m_maxPitch) },
+			{ "MinLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( GenericObjectCreationNugget, m_minFrames ) },
+			{ "MaxLifetime",					INI::parseDurationUnsignedInt,		nullptr, offsetof( GenericObjectCreationNugget, m_maxFrames ) },
+			{ "SpreadFormation",			INI::parseBool,	nullptr, offsetof(GenericObjectCreationNugget, m_spreadFormation) },
+			{ "MinDistanceAFormation",	INI::parseReal, nullptr, offsetof(GenericObjectCreationNugget, m_minDistanceAFormation) },
+			{ "MinDistanceBFormation",	INI::parseReal, nullptr, offsetof(GenericObjectCreationNugget, m_minDistanceBFormation) },
+			{ "MaxDistanceFormation",	INI::parseReal, nullptr, offsetof(GenericObjectCreationNugget, m_maxDistanceFormation) },
+			{ "FadeIn",			INI::parseBool,	nullptr, offsetof(GenericObjectCreationNugget, m_fadeIn) },
+			{ "FadeOut",			INI::parseBool,	nullptr, offsetof(GenericObjectCreationNugget, m_fadeOut) },
+			{ "FadeTime",	INI::parseDurationUnsignedInt,	nullptr, offsetof(GenericObjectCreationNugget, m_fadeFrames) },
+			{ "FadeSound", INI::parseAsciiString, nullptr, offsetof( GenericObjectCreationNugget, m_fadeSoundName) },
+			{ "PreserveLayer", INI::parseBool, nullptr, offsetof( GenericObjectCreationNugget, m_preserveLayer) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 		return commonFieldParse;
 	}
 
 	static void parseObject(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
-			{ "ContainInsideSourceObject", INI::parseBool, NULL, offsetof( GenericObjectCreationNugget, m_containInsideSourceObject) },
-			{ "ObjectNames",				parseDebrisObjectNames,		NULL, 0 },
-			{ "ObjectCount",				INI::parseInt,  NULL, offsetof(GenericObjectCreationNugget, m_objectCount) },
-			{ "InheritsVeterancy",	INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_inheritsVeterancy) },
-			{ "SkipIfSignificantlyAirborne", INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_skipIfSignificantlyAirborne) },
-			{ "InvulnerableTime",		INI::parseDurationUnsignedInt, NULL, offsetof(GenericObjectCreationNugget, m_invulnerableTime) },
-			{ "MinHealth",					INI::parsePercentToReal, NULL, offsetof(GenericObjectCreationNugget, m_minHealth) },
-			{ "MaxHealth",					INI::parsePercentToReal, NULL, offsetof(GenericObjectCreationNugget, m_maxHealth) },
-			{ "RequiresLivePlayer",	INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_requiresLivePlayer) },
-			{ 0, 0, 0, 0 }
+			{ "ContainInsideSourceObject", INI::parseBool, nullptr, offsetof( GenericObjectCreationNugget, m_containInsideSourceObject) },
+			{ "ObjectNames",				parseDebrisObjectNames,		nullptr, 0 },
+			{ "ObjectCount",				INI::parseInt,  nullptr, offsetof(GenericObjectCreationNugget, m_objectCount) },
+			{ "InheritsVeterancy",	INI::parseBool, nullptr, offsetof(GenericObjectCreationNugget, m_inheritsVeterancy) },
+			{ "SkipIfSignificantlyAirborne", INI::parseBool, nullptr, offsetof(GenericObjectCreationNugget, m_skipIfSignificantlyAirborne) },
+			{ "InvulnerableTime",		INI::parseDurationUnsignedInt, nullptr, offsetof(GenericObjectCreationNugget, m_invulnerableTime) },
+			{ "MinHealth",					INI::parsePercentToReal, nullptr, offsetof(GenericObjectCreationNugget, m_minHealth) },
+			{ "MaxHealth",					INI::parsePercentToReal, nullptr, offsetof(GenericObjectCreationNugget, m_maxHealth) },
+			{ "RequiresLivePlayer",	INI::parseBool, nullptr, offsetof(GenericObjectCreationNugget, m_requiresLivePlayer) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		MultiIniFieldParse p;
@@ -876,17 +864,17 @@ public:
 
 	static void parseDebris(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] = 
+		static const FieldParse myFieldParse[] =
 		{
-			{ "ModelNames",							parseDebrisObjectNames,							NULL,					0 },
-			{ "Mass",										INI::parsePositiveNonZeroReal,			NULL,					offsetof( GenericObjectCreationNugget, m_mass ) },
-			{ "AnimationSet",						parseAnimSet,												NULL,					offsetof( GenericObjectCreationNugget, m_animSets) },
-			{ "FXFinal",								INI::parseFXList,										NULL,					offsetof( GenericObjectCreationNugget, m_fxFinal) },
-			{ "OkToChangeModelColor",		INI::parseBool,											NULL,					offsetof(GenericObjectCreationNugget, m_okToChangeModelColor) },
-			{ "MinLODRequired",					INI::parseStaticGameLODLevel,				NULL,					offsetof(GenericObjectCreationNugget, m_minLODRequired) },
+			{ "ModelNames",							parseDebrisObjectNames,							nullptr,					0 },
+			{ "Mass",										INI::parsePositiveNonZeroReal,			nullptr,					offsetof( GenericObjectCreationNugget, m_mass ) },
+			{ "AnimationSet",						parseAnimSet,												nullptr,					offsetof( GenericObjectCreationNugget, m_animSets) },
+			{ "FXFinal",								INI::parseFXList,										nullptr,					offsetof( GenericObjectCreationNugget, m_fxFinal) },
+			{ "OkToChangeModelColor",		INI::parseBool,											nullptr,					offsetof(GenericObjectCreationNugget, m_okToChangeModelColor) },
+			{ "MinLODRequired",					INI::parseStaticGameLODLevel,				nullptr,					offsetof(GenericObjectCreationNugget, m_minLODRequired) },
 			{ "Shadow",									INI::parseBitString32,							TheShadowNames,	offsetof( GenericObjectCreationNugget, m_shadowType ) },
-			{ "BounceSound",						INI::parseAudioEventRTS,						NULL,					offsetof( GenericObjectCreationNugget, m_bounceSound) },
-			{ 0, 0, 0, 0 }
+			{ "BounceSound",						INI::parseAudioEventRTS,						nullptr,					offsetof( GenericObjectCreationNugget, m_bounceSound) },
+			{ nullptr, nullptr, nullptr, 0 }
 		};
 
 		MultiIniFieldParse p;
@@ -898,7 +886,7 @@ public:
 
 		ini->initFromINIMulti(nugget, p);
 
-		DEBUG_ASSERTCRASH(nugget->m_mass > 0.0f, ("Zero masses are not allowed for debris!\n"));
+		DEBUG_ASSERTCRASH(nugget->m_mass > 0.0f, ("Zero masses are not allowed for debris!"));
 		((ObjectCreationList*)instance)->addObjectCreationNugget(nugget);
 	}
 
@@ -914,11 +902,11 @@ public:
 protected:
 
 	void doStuffToObj(
-		Object* obj, 
-		const AsciiString& modelName, 
-		const Coord3D *pos, 
-		const Matrix3D *mtx, 
-		Real orientation, 
+		Object* obj,
+		const AsciiString& modelName,
+		const Coord3D *pos,
+		const Matrix3D *mtx,
+		Real orientation,
 		const Object *sourceObj,
 		UnsignedInt lifetimeFrames
 	) const
@@ -941,7 +929,7 @@ protected:
 				lup->setLifetimeRange(m_minFrames, m_maxFrames);
 			}
 		}
-		
+
 		if (!m_nameAreObjects)
 		{
 			for (DrawModule** dm = obj->getDrawable()->getDrawModules(); *dm; ++dm)
@@ -950,7 +938,7 @@ protected:
 				if (di)
 				{
 					di->setModelName(modelName, m_okToChangeModelColor ? obj->getIndicatorColor() : 0, m_shadowType);
-					if (m_animSets.size() > 0)
+					if (!m_animSets.empty())
 					{
 						Int which = GameLogicRandomValue(0, m_animSets.size()-1);
 						di->setAnimNames(m_animSets[which].m_animInitial, m_animSets[which].m_animFlying, m_animSets[which].m_animFinal, m_fxFinal);
@@ -967,7 +955,7 @@ protected:
 		chunkPos.x = pos->x + offset.x;
 		chunkPos.y = pos->y + offset.y;
 		chunkPos.z = pos->z + offset.z;
-		
+
 		if (!m_particleSysName.isEmpty())
 		{
 			const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate(m_particleSysName);
@@ -977,7 +965,7 @@ protected:
 				sys->attachToObject(obj);
 			}
 		}
-		
+
 		if (m_ignorePrimaryObstacle)
 		{
 			PhysicsBehavior* p = obj->getPhysics();
@@ -995,7 +983,7 @@ protected:
 		for (BehaviorModule** update = obj->getBehaviorModules(); *update; ++update)
 		{
 			SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
-			if (sdu != NULL)
+			if (sdu != nullptr)
 			{
 				sdu->onEnslave( sourceObj );
 				break;
@@ -1004,7 +992,7 @@ protected:
 
 		if (m_inheritsVeterancy && sourceObj && obj->getExperienceTracker()->isTrainable())
 		{
-			DEBUG_LOG(("Object %s inherits veterancy level %d from %s\n",
+			DEBUG_LOG(("Object %s inherits veterancy level %d from %s",
 				obj->getTemplate()->getName().str(), sourceObj->getVeterancyLevel(), sourceObj->getTemplate()->getName().str()));
 			VeterancyLevel v = sourceObj->getVeterancyLevel();
 			obj->getExperienceTracker()->setVeterancyLevel(v);
@@ -1016,7 +1004,7 @@ protected:
 
 		if ( m_invulnerableTime > 0 )
 		{
-			obj->goInvulnerable( m_invulnerableTime ); 
+			obj->goInvulnerable( m_invulnerableTime );
 		}
 
 		if( BitIsSet( m_disposition, INHERIT_VELOCITY ) && sourceObj )
@@ -1041,7 +1029,7 @@ protected:
 				PhysicsBehavior* physics = obj->getPhysics();
 				if (physics)
 					physics->setAllowToFall(true);
-			}	
+			}
 		}
 
 		if( BitIsSet( m_disposition, ON_GROUND_ALIGNED ) )
@@ -1102,7 +1090,7 @@ protected:
 					DUMPREAL(m_mass);
 					objUp->setMass( m_mass );
 				}
-				DEBUG_ASSERTCRASH(objUp->getMass() > 0.0f, ("Zero masses are not allowed for obj!\n"));
+				DEBUG_ASSERTCRASH(objUp->getMass() > 0.0f, ("Zero masses are not allowed for obj!"));
 
 				objUp->setExtraBounciness(m_extraBounciness);
 				objUp->setExtraFriction(m_extraFriction);
@@ -1110,7 +1098,7 @@ protected:
 				objUp->setBounceSound(&m_bounceSound);
 				DUMPREAL(m_extraBounciness);
 				DUMPREAL(m_extraFriction);
-				
+
 				// if omitted from INI, calc it based on intensity.
 				Real spinRate		= m_spinRate >= 0.0f ? m_spinRate : (PI/32.0f) * m_dispositionIntensity;
 
@@ -1123,7 +1111,7 @@ protected:
 				DUMPREAL(yawRate);
 				DUMPREAL(rollRate);
 				DUMPREAL(pitchRate);
-				
+
 				Real yaw = GameLogicRandomValueReal( -yawRate, yawRate );
 				Real roll = GameLogicRandomValueReal( -rollRate, rollRate );
 				Real pitch = GameLogicRandomValueReal( -pitchRate, pitchRate );
@@ -1146,8 +1134,8 @@ protected:
 				else if (BitIsSet(m_disposition, SEND_IT_UP) )
 				{
 					Real horizForce = 2.0f * m_dispositionIntensity;
-					Real vertForce = 4.0f * m_dispositionIntensity;	
-					
+					Real vertForce = 4.0f * m_dispositionIntensity;
+
 					force.x = GameLogicRandomValueReal( -horizForce, horizForce );
 					force.y = GameLogicRandomValueReal( -horizForce, horizForce );
 					force.z = GameLogicRandomValueReal( vertForce * 0.75f, vertForce );
@@ -1155,7 +1143,7 @@ protected:
 					DUMPREAL(vertForce);
 					DUMPCOORD3D(&force);
 				}
-				else 
+				else
 				{
 					calcRandomForce(m_minMag, m_maxMag, m_minPitch, m_maxPitch, &force);
 					DUMPREAL(m_minMag);
@@ -1194,7 +1182,7 @@ protected:
 				objUp->setPitchRate(pitch);
 			}
 		}
-		
+
 		if( BitIsSet( m_disposition, FLOATING ) )
 		{
 			static NameKeyType key = NAMEKEY( "FloatUpdate" );
@@ -1218,7 +1206,7 @@ protected:
 			}
 			else
 			{
-				DEBUG_ASSERTCRASH(FALSE,("A OCL with ContainInsideSourceObject failed the contain and is killing the new object."));
+				DEBUG_CRASH(("A OCL with ContainInsideSourceObject failed the contain and is killing the new object."));
 				// If we fail to contain it, we can't just leave it.  Stillborn it.
 				TheGameLogic->destroyObject(obj);
 			}
@@ -1230,18 +1218,18 @@ protected:
 		static const ThingTemplate* debrisTemplate = TheThingFactory->findTemplate("GenericDebris");
 
 		if (m_names.size() <= 0)
-			return NULL;
+			return nullptr;
 
 		if (m_requiresLivePlayer && (!sourceObj || !sourceObj->getControllingPlayer()->isPlayerActive()))
-			return NULL; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
+			return nullptr; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
 
 		// Object type debris might need this information to process visual UpgradeModules.
-		Team *debrisOwner = NULL;
+		Team *debrisOwner = nullptr;
 		if( sourceObj )
 			debrisOwner = sourceObj->getControllingPlayer()->getDefaultTeam();
-		
-		Object* container = NULL;
-		Object *firstObject = NULL;
+
+		Object* container = nullptr;
+		Object *firstObject = nullptr;
 		if (!m_putInContainer.isEmpty())
 		{
 			const ThingTemplate* containerTmpl = TheThingFactory->findTemplate(m_putInContainer);
@@ -1274,7 +1262,7 @@ protected:
 
 				tmpl = debrisTemplate;
 			}
-			DEBUG_ASSERTCRASH(tmpl, ("Object %s not found\n",m_names[pick].str()));
+			DEBUG_ASSERTCRASH(tmpl, ("Object %s not found",m_names[pick].str()));
 			if (!tmpl)
 				continue;
 
@@ -1289,14 +1277,14 @@ protected:
 				firstObject = debris;
 			}
 			debris->setProducer(sourceObj);
-			if (m_preserveLayer && sourceObj != NULL && container == NULL)
+			if (m_preserveLayer && sourceObj != nullptr && container == nullptr)
 			{
 				PathfindLayerEnum layer = sourceObj->getLayer();
 				if (layer != LAYER_GROUND)
 					debris->setLayer(layer);
 			}
 
-			if (container != NULL && container->getContain() != NULL && container->getContain()->isValidContainerFor(debris, true))
+			if (container != nullptr && container->getContain() != nullptr && container->getContain()->isValidContainerFor(debris, true))
 				container->getContain()->addToContain(debris);
 
 			// if we want the objects being created to appear in a spread formation
@@ -1304,23 +1292,35 @@ protected:
 			// objects that are placed in the same location are no longer placed in a
 			// diagonal line but rather in random locations nearby, this logic will no
 			// longer be necessary and can be taken out -- amit
-			if (m_spreadFormation) 
+			if (m_spreadFormation)
 			{
-				Coord3D resultPos;
 				FindPositionOptions fpOptions;
 				fpOptions.minRadius = GameLogicRandomValueReal(m_minDistanceAFormation, m_minDistanceBFormation);
 				fpOptions.maxRadius = m_maxDistanceFormation;
 				fpOptions.flags = FPF_USE_HIGHEST_LAYER;
-				ThePartitionManager->findPositionAround(pos, &fpOptions, &resultPos);
+
+				// TheSuperHackers @bugfix Caball009 12/01/2026 Position variable needs to be initialized before use.
+				// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches for unpatched clients.
+				// Fall back to the center position if no valid position was found, so that the behavior is deterministic for patched clients.
+				Coord3D resultPos = *pos;
+
+				if (!ThePartitionManager->findPositionAround(pos, &fpOptions, &resultPos))
+				{
+					DEBUG_ASSERTCRASH(resultPos == *pos, ("Position should not have been changed"));
+
+#if RETAIL_COMPATIBLE_CRC
+					DEBUG_CRASH(("A mismatch is likely to happen if this code path is used in a match with unpatched clients."));
+#endif
+				}
 				doStuffToObj( debris, m_names[pick], &resultPos, mtx, orientation, sourceObj, lifetimeFrames );
 			}
-			else 
+			else
 			{
 				// do stuff to contained objects too
 				doStuffToObj( debris, m_names[pick], pos, mtx, orientation, sourceObj, lifetimeFrames );
 			}
 
-			if (m_fadeIn) 
+			if (m_fadeIn)
 			{
 				AudioEventRTS fadeAudioEvent(m_fadeSoundName);
 				fadeAudioEvent.setObjectID(sourceObj->getID());
@@ -1328,7 +1328,7 @@ protected:
 				debris->getDrawable()->fadeIn(m_fadeFrames);
 			}
 
-			if (m_fadeOut) 
+			if (m_fadeOut)
 			{
 				AudioEventRTS fadeAudioEvent(m_fadeSoundName);
 				fadeAudioEvent.setObjectID(sourceObj->getID());
@@ -1337,9 +1337,14 @@ protected:
 			}
 		}
 
+#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
+		ObjectID sinkID = sourceObj->getExperienceTracker()->getExperienceSink();
+		firstObject->getExperienceTracker()->setExperienceSink(sinkID != INVALID_ID ? sinkID : sourceObj->getID());
+#endif
+
 		if (container)
 			doStuffToObj( container, AsciiString::TheEmptyString, pos, mtx, orientation, sourceObj, lifetimeFrames );
-    
+
 		return firstObject;
 	}
 
@@ -1406,7 +1411,7 @@ private:
 	Bool											m_inheritsVeterancy;
 	Bool											m_skipIfSignificantlyAirborne;
 
-};  
+};
 EMPTY_DTOR(GenericObjectCreationNugget)
 
 //-------------------------------------------------------------------------------------------------
@@ -1417,13 +1422,13 @@ EMPTY_DTOR(GenericObjectCreationNugget)
 //-------------------------------------------------------------------------------------------------
 static const FieldParse TheObjectCreationListFieldParse[] =
 {
-	{ "CreateObject",			GenericObjectCreationNugget::parseObject, 0, 0},		
-	{ "CreateDebris",			GenericObjectCreationNugget::parseDebris, 0, 0},		
-	{ "ApplyRandomForce",	ApplyRandomForceNugget::parse, 0, 0},
-	{ "DeliverPayload",		DeliverPayloadNugget::parse, 0, 0},
-	{ "FireWeapon",				FireWeaponNugget::parse, 0, 0},
-	{ "Attack",						AttackNugget::parse, 0, 0},
-	{ NULL, NULL, 0, 0 }  // keep this last
+	{ "CreateObject",			GenericObjectCreationNugget::parseObject, nullptr, 0},
+	{ "CreateDebris",			GenericObjectCreationNugget::parseDebris, nullptr, 0},
+	{ "ApplyRandomForce",	ApplyRandomForceNugget::parse, nullptr, 0},
+	{ "DeliverPayload",		DeliverPayloadNugget::parse, nullptr, 0},
+	{ "FireWeapon",				FireWeaponNugget::parse, nullptr, 0},
+	{ "Attack",						AttackNugget::parse, nullptr, 0},
+	{ nullptr, nullptr, nullptr, 0 }
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -1443,12 +1448,12 @@ void ObjectCreationList::addObjectCreationNugget(ObjectCreationNugget* nugget)
 //-------------------------------------------------------------------------------------------------
 Object* ObjectCreationList::createInternal( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames ) const
 {
-	DEBUG_ASSERTCRASH(primaryObj != NULL, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
-	Object *theFirstObject = NULL;
+	DEBUG_ASSERTCRASH(primaryObj != nullptr, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
+	Object *theFirstObject = nullptr;
 	for (ObjectCreationNuggetVector::const_iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
 		Object *curObj = (*i)->create( primaryObj, primary, secondary, createOwner, lifetimeFrames );
-		if (theFirstObject==NULL) {
+		if (theFirstObject==nullptr) {
 			theFirstObject = curObj;
 		}
 	}
@@ -1458,12 +1463,12 @@ Object* ObjectCreationList::createInternal( const Object* primaryObj, const Coor
 //-------------------------------------------------------------------------------------------------
 Object* ObjectCreationList::createInternal( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames ) const
 {
-	DEBUG_ASSERTCRASH(primaryObj != NULL, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
-	Object *theFirstObject = NULL;
+	DEBUG_ASSERTCRASH(primaryObj != nullptr, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
+	Object *theFirstObject = nullptr;
 	for (ObjectCreationNuggetVector::const_iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
 		Object *curObj =  (*i)->create( primaryObj, primary, secondary, lifetimeFrames );
-		if (theFirstObject==NULL) {
+		if (theFirstObject==nullptr) {
 			theFirstObject = curObj;
 		}
 	}
@@ -1473,12 +1478,12 @@ Object* ObjectCreationList::createInternal( const Object* primaryObj, const Coor
 //-------------------------------------------------------------------------------------------------
 Object* ObjectCreationList::createInternal( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames ) const
 {
-	DEBUG_ASSERTCRASH(primary != NULL, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
-	Object *theFirstObject = NULL;
+	DEBUG_ASSERTCRASH(primary != nullptr, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
+	Object *theFirstObject = nullptr;
 	for (ObjectCreationNuggetVector::const_iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
 		Object *curObj =  (*i)->create( primary, secondary, lifetimeFrames );
-		if (theFirstObject==NULL) {
+		if (theFirstObject==nullptr) {
 			theFirstObject = curObj;
 		}
 	}
@@ -1499,8 +1504,7 @@ ObjectCreationListStore::~ObjectCreationListStore()
 {
 	for (ObjectCreationNuggetVector::iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
-		if (*i)
-			deleteInstance(*i);
+		deleteInstance(*i);
 	}
 	m_nuggets.clear();
 }
@@ -1509,12 +1513,12 @@ ObjectCreationListStore::~ObjectCreationListStore()
 const ObjectCreationList *ObjectCreationListStore::findObjectCreationList(const char* name) const
 {
 	if (stricmp(name, "None") == 0)
-		return NULL;
+		return nullptr;
 
   ObjectCreationListMap::const_iterator it = m_ocls.find(NAMEKEY(name));
-  if (it == m_ocls.end()) 
+  if (it == m_ocls.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 	else
 	{

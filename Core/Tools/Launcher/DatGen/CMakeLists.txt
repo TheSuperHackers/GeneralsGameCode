@@ -1,7 +1,7 @@
 set(DATGEN_SRC
     "DatGen.cpp"
-    "../BFISH.CPP"
-    "../BFISH.H"
+    "../BFISH.cpp"
+    "../BFISH.h"
     "../Toolkit/Debug/DebugPrint.cpp"
     "../Toolkit/Debug/DebugPrint.h"
 )
@@ -14,7 +14,6 @@ target_include_directories(corei_datgen INTERFACE
 )
 
 target_link_libraries(corei_datgen INTERFACE
-    core_config
 )
 
 target_sources(corei_datgen INTERFACE ${DATGEN_SRC})

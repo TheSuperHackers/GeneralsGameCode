@@ -42,11 +42,6 @@
 #include "Common/GlobalData.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 
@@ -73,14 +68,14 @@
 #define DEFAULT_VISIBLE_TERRAIN 96	//assumed size of visible terrain cells.
 
 //-----------------------------------------------------------------------------
-W3DShroud::W3DShroud(void)
+W3DShroud::W3DShroud()
 {
-	m_finalFogData=NULL;
-	m_currentFogData=NULL;
-	m_pSrcTexture=NULL;
-	m_pDstTexture=NULL;
-	m_srcTextureData=NULL;
-	m_srcTexturePitch=NULL;
+	m_finalFogData=nullptr;
+	m_currentFogData=nullptr;
+	m_pSrcTexture=nullptr;
+	m_pDstTexture=nullptr;
+	m_srcTextureData=nullptr;
+	m_srcTexturePitch=0;
 	m_dstTextureWidth=m_numMaxVisibleCellsX=0;
 	m_dstTextureHeight=m_numMaxVisibleCellsY=0;
 	m_boderShroudLevel = (W3DShroudLevel)TheGlobalData->m_shroudAlpha;	//assume border is black
@@ -94,16 +89,16 @@ W3DShroud::W3DShroud(void)
 }
 
 //-----------------------------------------------------------------------------
-W3DShroud::~W3DShroud(void)
+W3DShroud::~W3DShroud()
 {
 	ReleaseResources();
+
 	if (m_pSrcTexture)
 		m_pSrcTexture->Release();
-	m_pSrcTexture=NULL;
-	if (m_finalFogData)
-		delete [] m_finalFogData;
-	if (m_currentFogData)
-		delete [] m_currentFogData;
+
+	delete [] m_finalFogData;
+	delete [] m_currentFogData;
+
 	m_drawFogOfWar=FALSE;
 }
 
@@ -114,8 +109,8 @@ W3DShroud::~W3DShroud(void)
 */
 void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSizeY)
 {
-	DEBUG_ASSERTCRASH( m_pSrcTexture == NULL, ("ReAcquire of existing shroud textures"));
-	DEBUG_ASSERTCRASH( pMap != NULL, ("Shroud init with NULL WorldHeightMap"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture == nullptr, ("ReAcquire of existing shroud textures"));
+	DEBUG_ASSERTCRASH( pMap != nullptr, ("Shroud init with null WorldHeightMap"));
 
 	Int dstTextureWidth=0;
 	Int dstTextureHeight=0;
@@ -124,7 +119,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 
 	//Precompute a bounding box for entire shroud layer
 	if (pMap)
-	{	
+	{
 		m_numCellsX = REAL_TO_INT_CEIL((Real)(pMap->getXExtent() - 1 - pMap->getBorderSizeInline()*2)*MAP_XY_FACTOR/m_cellWidth);
 		m_numCellsY = REAL_TO_INT_CEIL((Real)(pMap->getYExtent() - 1 - pMap->getBorderSizeInline()*2)*MAP_XY_FACTOR/m_cellHeight);
 
@@ -134,8 +129,8 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 		dstTextureHeight=m_numMaxVisibleCellsY=REAL_TO_INT_FLOOR((Real)(pMap->getDrawHeight()-1)*MAP_XY_FACTOR/m_cellHeight)+1;
 
 		dstTextureWidth = m_numCellsX;
-		dstTextureHeight = m_numCellsY; 
-		
+		dstTextureHeight = m_numCellsY;
+
 		dstTextureWidth += 2;	//enlarge by 2 pixels so we can have a border color all the way around.
 		unsigned int depth = 1;
 		dstTextureHeight += 2;	//enlarge by 2 pixels so we can have border color all the way around.
@@ -160,19 +155,19 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
  	memset(m_finalFogData,0,srcWidth*srcHeight);
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		m_pSrcTexture = DX8Wrapper::_Create_DX8_Surface(srcWidth,srcHeight, WW3D_FORMAT_A4R4G4B4);
 	else
 #endif
 		m_pSrcTexture = DX8Wrapper::_Create_DX8_Surface(srcWidth,srcHeight, WW3D_FORMAT_R5G6B5);
 
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Failed to Allocate Shroud Src Surface"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Failed to Allocate Shroud Src Surface"));
 
 	D3DLOCKED_RECT rect;
 
 	//Get a pointer to source surface pixels.
-	HRESULT res = m_pSrcTexture->LockRect(&rect,NULL,D3DLOCK_NO_DIRTY_UPDATE);
+	HRESULT res = m_pSrcTexture->LockRect(&rect,nullptr,D3DLOCK_NO_DIRTY_UPDATE);
 	m_pSrcTexture->UnlockRect();
 
 	DEBUG_ASSERTCRASH( res == D3D_OK, ("Failed to lock shroud src surface"));
@@ -184,7 +179,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 	//clear entire texture to black
 	memset(m_srcTextureData,0,m_srcTexturePitch*srcHeight);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		fillShroudData(TheGlobalData->m_shroudAlpha);	//initialize shroud to a known value
 #endif
@@ -209,43 +204,46 @@ void W3DShroud::reset()
 {
 	//Free old shroud data since it may no longer fit new map.
 	if (m_pSrcTexture)
+	{
 		m_pSrcTexture->Release();
-	m_pSrcTexture=NULL;
-	if (m_finalFogData)
-		delete [] m_finalFogData;
-	m_finalFogData=NULL;
-	if (m_currentFogData)
-		delete [] m_currentFogData;
-	m_currentFogData=NULL;
+		m_pSrcTexture=nullptr;
+	}
+
+	delete [] m_finalFogData;
+	m_finalFogData=nullptr;
+
+	delete [] m_currentFogData;
+	m_currentFogData=nullptr;
+
 	m_clearDstTexture = TRUE;	//always refill the destination texture after a reset
 }
 
 //-----------------------------------------------------------------------------
 ///Release any resources that can't survive a D3D device reset.
-void W3DShroud::ReleaseResources(void)
+void W3DShroud::ReleaseResources()
 {
 	REF_PTR_RELEASE (m_pDstTexture);
 }
 
 //-----------------------------------------------------------------------------
 ///Restore resources that are lost on D3D device reset.
-Bool W3DShroud::ReAcquireResources(void)
+Bool W3DShroud::ReAcquireResources()
 {
 		if (!m_dstTextureWidth)
-			return TRUE;	//nothing to reaquire since shroud was never initialized with valid data
+			return TRUE;	//nothing to reacquire since shroud was never initialized with valid data
 
-		DEBUG_ASSERTCRASH( m_pDstTexture == NULL, ("ReAcquire of existing shroud texture"));
-	
+		DEBUG_ASSERTCRASH( m_pDstTexture == nullptr, ("ReAcquire of existing shroud texture"));
+
 		// Create destination texture (stored in video memory).
 		// Since we control the video memory copy, we can do partial updates more efficiently. Or do shift blits.
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 		else
 #endif
 			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_R5G6B5,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 
-		DEBUG_ASSERTCRASH( m_pDstTexture != NULL, ("Failed ReAcquire of shroud texture"));
+		DEBUG_ASSERTCRASH( m_pDstTexture != nullptr, ("Failed ReAcquire of shroud texture"));
 
 		if (!m_pDstTexture)
 		{	//could not create a valid texture
@@ -264,13 +262,13 @@ Bool W3DShroud::ReAcquireResources(void)
 //-----------------------------------------------------------------------------
 W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 {
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Reading empty shroud"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Reading empty shroud"));
 
 	if (x < m_numCellsX && y < m_numCellsY)
 	{
 		UnsignedShort pixel=*(UnsignedShort *)((Byte *)m_srcTextureData + x*2 + y*m_srcTexturePitch);
-		
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+
+#if defined(RTS_DEBUG)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 			//in this mode, alpha channel holds intensity
 			return (W3DShroudLevel)((1.0f-((Real)(pixel >> 12)/15.0f))*255.0f);
@@ -285,7 +283,7 @@ W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 //-----------------------------------------------------------------------------
 void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureOnly)
 {
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Writing empty shroud.  Usually means that map failed to load."));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Writing empty shroud.  Usually means that map failed to load."));
 
 	if (!m_pSrcTexture)
 		return;
@@ -295,7 +293,7 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 		if (level < TheGlobalData->m_shroudAlpha)
 			level = TheGlobalData->m_shroudAlpha;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		{
 			///@todo: optimize this case if we end up using fog shroud.
@@ -334,9 +332,9 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 
 //      For those interested, MLorenzen has this bock commented out until he gets back on Mon, Sept. 30 2002
 			// If this code is still here by mid october, nuke it!
-//			UnsignedInt texelRed =  ((*texel >> 8 ) & 0xf8); 
-//			UnsignedInt texelGreen =((*texel >> 3 ) & 0xfc);  
-//			UnsignedInt texelBlue = ((*texel << 3 ) & 0xf8);  
+//			UnsignedInt texelRed =  ((*texel >> 8 ) & 0xf8);
+//			UnsignedInt texelGreen =((*texel >> 3 ) & 0xfc);
+//			UnsignedInt texelBlue = ((*texel << 3 ) & 0xf8);
 //			if (texelRed < texelGreen && texelGreen > texelBlue)
 //			{
 //				bluepixel += redpixel;
@@ -360,7 +358,7 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 	if (level < TheGlobalData->m_shroudAlpha)
 		level = TheGlobalData->m_shroudAlpha;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	//convert value to pixel format
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 	{
@@ -394,7 +392,7 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 	}
 
 	UnsignedShort *ptr=(UnsignedShort *)m_srcTextureData;
-	Int pitch = m_srcTexturePitch >> 1;	//2 bytes per pointer increment 
+	Int pitch = m_srcTexturePitch >> 1;	//2 bytes per pointer increment
 	for (y=0; y<m_numCellsY; y++)
 	{
 		for (x=0; x<m_numCellsX; x++)
@@ -423,7 +421,7 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 	if (level < TheGlobalData->m_shroudAlpha)
 		level = TheGlobalData->m_shroudAlpha;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	//convert value to pixel format
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 	{
@@ -479,7 +477,7 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 		dstPoint.x=0;
 
 		for (x=0; x<numFullCopies; x++)
-		{	
+		{
 			dstPoint.x = x * srcRect.right;	//advance to next set of pixel in row.
 
 			DX8Wrapper::_Copy_DX8_Rects(
@@ -502,7 +500,7 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 			srcRect.right = oldVal;
 		}
 	}
-	
+
 }
 
 /**Set the shroud color within the border area of the map*/
@@ -514,7 +512,7 @@ void W3DShroud::setBorderShroudLevel(W3DShroudLevel level)
 
 //-----------------------------------------------------------------------------
 ///@todo: remove this
-TextureClass *DummyTexture=NULL;
+TextureClass *DummyTexture=nullptr;
 
 //#define LOAD_DUMMY_SHROUD
 
@@ -531,9 +529,9 @@ void W3DShroud::render(CameraClass *cam)
 	if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
 		return;	//device not ready to render anything
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn != m_drawFogOfWar)
-	{	
+	{
 		//fog state has changed since last time shroud system was initialized
 		reset();
 		ReleaseResources();
@@ -544,13 +542,13 @@ void W3DShroud::render(CameraClass *cam)
 	}
 #endif
 
-	DEBUG_ASSERTCRASH( m_pSrcTexture != NULL, ("Updating unallocated shroud texture"));
+	DEBUG_ASSERTCRASH( m_pSrcTexture != nullptr, ("Updating unallocated shroud texture"));
 
 #ifdef LOAD_DUMMY_SHROUD
-	
+
 	static doInit=1;
 	if (doInit)
-	{	
+	{
 		//some temporary code here to debug the shroud.
 
 		///@todo: remove this debug buffer fill.
@@ -591,7 +589,7 @@ void W3DShroud::render(CameraClass *cam)
 		{
 			for (Int x=0; x<desc.Width; x++)
 			{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 				{
 					dataDest[x]=((TheGlobalData->m_shroudColor.getAsInt()>>4)&0xf) | (((TheGlobalData->m_shroudColor.getAsInt()>>12)&0xf)<<4) | (((TheGlobalData->m_shroudColor.getAsInt()>>20)&0xf)<<8) | ((((255-(dataSrc[x] & 0xff))>>4)&0xf)<<12);
@@ -633,13 +631,13 @@ void W3DShroud::render(CameraClass *cam)
 
 	Int visEndX=visStartX+REAL_TO_INT_FLOOR((Real)(hm->getDrawWidth()-1)*MAP_XY_FACTOR/m_cellWidth)+1;	//size of rendered heightmap rectangle
 	Int visEndY=visStartY+REAL_TO_INT_FLOOR((Real)(hm->getDrawHeight()-1)*MAP_XY_FACTOR/m_cellHeight)+1;
-	
+
 	// Do it all [3/11/2003]
 	visEndX = m_numCellsX;
 	visEndY = m_numCellsY;
 
 	if (visEndX > m_numCellsX)
-	{	
+	{
 		visStartX -= visEndX - m_numCellsX;	//shift visible rectangle to fall within terrain bounds
 		if (visStartX < 0)
 			visStartX = 0;
@@ -647,7 +645,7 @@ void W3DShroud::render(CameraClass *cam)
 	}
 
 	if (visEndY > m_numCellsY)
-	{	
+	{
 		visStartY -= visEndY - m_numCellsY;	//shift visible rectangle to fall within terrain bounds
 		if (visStartY < 0)
 			visStartY = 0;
@@ -665,7 +663,7 @@ void W3DShroud::render(CameraClass *cam)
 	pitch >>= 1;	//we have 2 bytes per pixel, so divide pitch by 2
 
 	Byte *sd=shroudData+visStartY*MAX_MAP_SHROUDSIZE;	//pointer to first shroud row
-	
+
 	for (Int y=visStartY; y<(visStartY+visSizeY); y++)
 	{
 		for (Int x=visStartX; x<(visStartX+visSizeX); x++)
@@ -692,7 +690,7 @@ void W3DShroud::render(CameraClass *cam)
 
 	RECT	srcRect;
 	POINT	dstPoint={1,1};	//first row/column is reserved for border.
-	
+
 	srcRect.left=visStartX;
 	srcRect.top=visStartY;
 	srcRect.right=visEndX;
@@ -707,7 +705,7 @@ void W3DShroud::render(CameraClass *cam)
 	{	//we need to clear unused parts of the destination texture to a known
 		//color in order to keep map border in the state we want.
 		m_clearDstTexture=FALSE;
-		
+
 		fillBorderShroudData(m_boderShroudLevel, pDestSurface);
 	}
 
@@ -784,7 +782,7 @@ void W3DShroud::setShroudFilter(Bool enable)
 
 //-----------------------------------------------------------------------------
 ///Set render states required to draw shroud pass.
-void W3DShroudMaterialPassClass::Install_Materials(void) const
+void W3DShroudMaterialPassClass::Install_Materials() const
 {
 	if (TheTerrainRenderObject->getShroud())
 	{
@@ -795,21 +793,21 @@ void W3DShroudMaterialPassClass::Install_Materials(void) const
 
 //-----------------------------------------------------------------------------
 ///Restore render states that W3D doesn't know about.
-void W3DShroudMaterialPassClass::UnInstall_Materials(void) const
+void W3DShroudMaterialPassClass::UnInstall_Materials() const
 {
 	W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
 }
 
 //-----------------------------------------------------------------------------
 ///Set render states required to draw shroud pass.
-void W3DMaskMaterialPassClass::Install_Materials(void) const
+void W3DMaskMaterialPassClass::Install_Materials() const
 {
 	W3DShaderManager::setShader(W3DShaderManager::ST_MASK_TEXTURE, 0);
 }
 
 //-----------------------------------------------------------------------------
 ///Restore render states that W3D doesn't know about.
-void W3DMaskMaterialPassClass::UnInstall_Materials(void) const
+void W3DMaskMaterialPassClass::UnInstall_Materials() const
 {
 	if (m_allowUninstall)
 		W3DShaderManager::resetShader(W3DShaderManager::ST_MASK_TEXTURE);

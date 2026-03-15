@@ -32,21 +32,14 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef AGGREGATE_DEF_H
-#define AGGREGATE_DEF_H
 
 #include "proto.h"
 #include "rendobj.h"
 #include "w3d_file.h"
 #include "w3derr.h"
-#include "Vector.H"
+#include "Vector.h"
 #include "bittype.h"
-#include <string.h>
 
 #ifdef _UNIX
 #include "osdep.h"
@@ -90,34 +83,34 @@ class AggregateDefClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public constructors/destructors
-		//		
-		AggregateDefClass (void);
+		//
+		AggregateDefClass ();
 		AggregateDefClass (RenderObjClass &base_model);
 		AggregateDefClass (const AggregateDefClass &src);
-		virtual ~AggregateDefClass (void);
+		virtual ~AggregateDefClass ();
 
-		
+
 		///////////////////////////////////////////////////////////
 		//
 		//	Public operators
-		//		
+		//
 		const AggregateDefClass &operator= (const AggregateDefClass &src);
 
 		///////////////////////////////////////////////////////////
 		//
 		//	Public methods
-		//		
+		//
 		virtual WW3DErrorType	Load_W3D (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Save_W3D (ChunkSaveClass &chunk_save);
-		const char *				Get_Name (void) const					{ return m_pName; }
+		const char *				Get_Name () const					{ return m_pName; }
 		void							Set_Name (const char *pname)			{ SAFE_FREE (m_pName); m_pName = ::_strdup (pname); }
-		RenderObjClass *			Create (void);
-		AggregateDefClass *		Clone (void) const						{ return W3DNEW AggregateDefClass (*this); }
+		RenderObjClass *			Create ();
+		AggregateDefClass *		Clone () const						{ return W3DNEW AggregateDefClass (*this); }
 
 		//
 		//	Public accessors
 		//
-		ULONG							Class_ID (void) const					{ return m_MiscInfo.OriginalClassID; }
+		ULONG							Class_ID () const					{ return m_MiscInfo.OriginalClassID; }
 
 		//
 		//	Initialization
@@ -138,13 +131,13 @@ class AggregateDefClass
 			bool operator == (_TEXTURE_INFO &src) { return false; }
 			bool operator != (_TEXTURE_INFO &src) { return true; }
 		} TEXTURE_INFO;
-		
+
 
 		///////////////////////////////////////////////////////////
 		//
 		//	Protected methods
 		//
-		
+
 		//
 		//	Loading methods
 		//
@@ -174,7 +167,7 @@ class AggregateDefClass
 		//
 		//	Misc. methods
 		//
-		virtual void				Free_Subobject_List (void);
+		virtual void				Free_Subobject_List ();
 		virtual void				Add_Subobject (const W3dAggregateSubobjectStruct &subobj_info);
 		virtual bool				Load_Assets (const char *asset_name);
 		virtual RenderObjClass *Create_Render_Object (const char *passet_name);
@@ -201,7 +194,7 @@ class AggregateDefClass
 //
 //	AggregatePrototypeClass
 //
-class AggregatePrototypeClass : public W3DMPO, public PrototypeClass 
+class AggregatePrototypeClass : public W3DMPO, public PrototypeClass
 {
 	W3DMPO_GLUE(AggregatePrototypeClass)
 	public:
@@ -209,22 +202,22 @@ class AggregatePrototypeClass : public W3DMPO, public PrototypeClass
 		///////////////////////////////////////////////////////////
 		//
 		//	Public constructors/destructors
-		//		
+		//
 		AggregatePrototypeClass (AggregateDefClass *pdef)		{ m_pDefinition = pdef; }
-		
+
 		///////////////////////////////////////////////////////////
 		//
 		//	Public methods
 		//
-		virtual const char *				Get_Name(void) const				{ return m_pDefinition->Get_Name (); }
-		virtual int									Get_Class_ID(void) const		{ return m_pDefinition->Class_ID (); }
-		virtual RenderObjClass *		Create (void)								{ return m_pDefinition->Create (); }
+		virtual const char *				Get_Name() const				{ return m_pDefinition->Get_Name (); }
+		virtual int									Get_Class_ID() const		{ return m_pDefinition->Class_ID (); }
+		virtual RenderObjClass *		Create ()								{ return m_pDefinition->Create (); }
 		virtual void								DeleteSelf()								{ delete this; }
-		virtual AggregateDefClass	*	Get_Definition (void) const { return m_pDefinition; }
+		virtual AggregateDefClass	*	Get_Definition () const { return m_pDefinition; }
 		virtual void								Set_Definition (AggregateDefClass *pdef) { m_pDefinition = pdef; }
 
 	protected:
-		virtual ~AggregatePrototypeClass (void)					{ delete m_pDefinition; }
+		virtual ~AggregatePrototypeClass ()					{ delete m_pDefinition; }
 
 	private:
 
@@ -244,7 +237,7 @@ class AggregateLoaderClass : public PrototypeLoaderClass
 {
 	public:
 
-		virtual int						Chunk_Type (void)  { return W3D_CHUNK_AGGREGATE; }
+		virtual int						Chunk_Type ()  { return W3D_CHUNK_AGGREGATE; }
 		virtual PrototypeClass *	Load_W3D (ChunkLoadClass &chunk_load);
 };
 
@@ -254,6 +247,3 @@ class AggregateLoaderClass : public PrototypeLoaderClass
 //	Global variables
 //
 extern AggregateLoaderClass	_AggregateLoader;
-
-
-#endif //__AGGREGATE_DEF_H

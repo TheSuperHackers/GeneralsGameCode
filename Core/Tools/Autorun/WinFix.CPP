@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Renegade Setup/Autorun/WinFix.CPP                          $*
+ *                     $Archive:: /Renegade Setup/Autorun/WinFix.cpp                          $*
  *                                                                                             *
  *                      $Author:: Maria_l                                                     $*
  *                                                                                             *
@@ -45,7 +45,7 @@
 //#include <winuser.h>
 #include <assert.h>
 #include <stdio.h>
-#include "WinFix.H"
+#include "WinFix.h"
 #include "Wnd_File.h"
 
 /***************************************************************************
@@ -93,21 +93,21 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	// Start recording messages.
 	//--------------------------------------------------------------------------
 	Delete_Msg_File();
-	Msg( __LINE__, __FILE__, "----------------------------------------------", NULL );
-	Msg( __LINE__, __FILE__, "------------------ Setup -----------------", NULL );
-	Msg( __LINE__, __FILE__, "----------------------------------------------", NULL );
+	Msg( __LINE__, __FILE__, "----------------------------------------------", nullptr );
+	Msg( __LINE__, __FILE__, "------------------ Setup -----------------", nullptr );
+	Msg( __LINE__, __FILE__, "----------------------------------------------", nullptr );
 
 	//--------------------------------------------------------------------------
 	// Get the version info from the OS.
 	//
-	//	typedef struct _OSVERSIONINFO{ 
-	//		DWORD	dwOSVersionInfoSize; 
-	//		DWORD	dwMajorVersion; 
-	//		DWORD	dwMinorVersion; 
-	//		DWORD	dwBuildNumber; 
-	//		DWORD	dwPlatformId; 
-	//		TCHAR	szCSDVersion[ 128 ]; 
-	// } OSVERSIONINFO; 
+	//	typedef struct _OSVERSIONINFO{
+	//		DWORD	dwOSVersionInfoSize;
+	//		DWORD	dwMajorVersion;
+	//		DWORD	dwMinorVersion;
+	//		DWORD	dwBuildNumber;
+	//		DWORD	dwPlatformId;
+	//		TCHAR	szCSDVersion[ 128 ];
+	// } OSVERSIONINFO;
 	//
 	//	typedef struct _OSVERSIONINFOEX {
 	//		DWORD	dwOSVersionInfoSize;
@@ -123,7 +123,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//		BYTE	wReserved;
 	//	} OSVERSIONINFOEX, *POSVERSIONINFOEX, *LPOSVERSIONINFOEX;
 	//--------------------------------------------------------------------------
-	ZeroMemory( &version_info, sizeof( version_info ));	
+	ZeroMemory( &version_info, sizeof( version_info ));
 	version_info.dwOSVersionInfoSize = sizeof( version_info );
 
 	int result = GetVersionEx( &version_info );
@@ -166,7 +166,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	if ( version_info.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
 
 		IsWinNT = true;
-		
+
 		if (( MajorVersionNumber >= 5 ) && ( MinorVersionNumber >= 1 )) {
 			IsWinXP = true;
 //			if ( version_info.wSuiteMask == VER_SUITE_PERSONAL ) {
@@ -191,7 +191,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
             DWORD dwBufLen;
 
             RegOpenKeyEx( HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueEx( hKey, "ProductType", NULL, NULL, (LPBYTE) szProductType, &dwBufLen);
+            RegQueryValueEx( hKey, "ProductType", nullptr, nullptr, (LPBYTE) szProductType, &dwBufLen);
             RegCloseKey( hKey );
 
             if ( lstrcmpi( "WINNT", szProductType) == 0 )

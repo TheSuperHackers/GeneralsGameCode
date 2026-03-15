@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
@@ -36,33 +36,23 @@
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
 #include "WWMath/vector3.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ProjectileStreamUpdate::ProjectileStreamUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	ObjectID m_projectileIDs[MAX_PROJECTILE_STREAM];
-	for( Int index = 0; index < MAX_PROJECTILE_STREAM; index++ )
-	{
-		m_projectileIDs[index] = INVALID_ID;
-	}
-
-	m_owningObject = INVALID_ID;
+	std::fill(m_projectileIDs, m_projectileIDs + ARRAY_SIZE(m_projectileIDs), INVALID_ID);
 	m_nextFreeIndex = 0;
 	m_firstValidIndex = 0;
-	
+	m_owningObject = INVALID_ID;
+
 	m_targetObject = INVALID_ID;
 	m_targetPosition.zero();
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ProjectileStreamUpdate::~ProjectileStreamUpdate( void )
+ProjectileStreamUpdate::~ProjectileStreamUpdate()
 {
 
 }
@@ -70,7 +60,7 @@ ProjectileStreamUpdate::~ProjectileStreamUpdate( void )
 //-------------------------------------------------------------------------------------------------
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime ProjectileStreamUpdate::update( void )
+UpdateSleepTime ProjectileStreamUpdate::update()
 {
 	cullFrontOfList();
 
@@ -105,7 +95,7 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 		// Clear position so we know we are an object shot
 		m_targetPosition.zero();
 	}
-	else if( victimPos != NULL )
+	else if( victimPos != nullptr )
 	{
 		if( ! (m_targetPosition == (*victimPos)) )
 		{
@@ -133,7 +123,7 @@ void ProjectileStreamUpdate::addProjectile( ObjectID sourceID, ObjectID newID, O
 
 void ProjectileStreamUpdate::cullFrontOfList()
 {
-	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == NULL) )
+	while( (m_firstValidIndex != m_nextFreeIndex)  &&  (TheGameLogic->findObjectByID( m_projectileIDs[m_firstValidIndex] ) == nullptr) )
 	{
 		// Chew off the front if they are gone.  Don't chew on the middle, as bad ones there are just a break in the chain
 		m_firstValidIndex = (m_firstValidIndex + 1) % MAX_PROJECTILE_STREAM;
@@ -145,7 +135,7 @@ Bool ProjectileStreamUpdate::considerDying()
 	if( m_firstValidIndex == m_nextFreeIndex  &&  m_owningObject != INVALID_ID )
 	{
 		//If I have no projectiles to watch, and my master is dead, then yes, I want to die
-		if( TheGameLogic->findObjectByID(m_owningObject) == NULL )
+		if( TheGameLogic->findObjectByID(m_owningObject) == nullptr )
 			return TRUE;
 	}
 
@@ -174,7 +164,7 @@ void ProjectileStreamUpdate::getAllPoints( Vector3 *points, Int *count )
 			points[pointCount].X = thisPoint.x;
 			points[pointCount].Y = thisPoint.y;
 			points[pointCount].Z = thisPoint.z;
-			
+
 
 			if ( obj && obj->isKindOf( KINDOF_VEHICLE ) )				// this makes the stream skim along my roof, if I have a roof
 			{
@@ -221,12 +211,12 @@ void ProjectileStreamUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version 
+	* 1: Initial version
 	* 2: Target tracking for line breaking
 */
 // ------------------------------------------------------------------------------------------------
@@ -259,15 +249,15 @@ void ProjectileStreamUpdate::xfer( Xfer *xfer )
 		xfer->xferCoord3D( &m_targetPosition );
 	}
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ProjectileStreamUpdate::loadPostProcess( void )
+void ProjectileStreamUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

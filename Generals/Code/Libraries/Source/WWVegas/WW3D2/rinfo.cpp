@@ -46,24 +46,24 @@
 **
 ***********************************************************************************************/
 RenderInfoClass::RenderInfoClass(CameraClass & cam) :
-	Camera(cam), 
+	Camera(cam),
 	fog_start(0.0f),
 	fog_end(0.0f),
 	fog_scale(0.0f),
-	light_environment(0),
+	light_environment(nullptr),
 	AdditionalMaterialPassCount(0),
 	RejectedMaterialPasses(0),
 	OverrideFlagLevel(0),
-	Texture_Projector(NULL),
+	Texture_Projector(nullptr),
 	alphaOverride(1.0f),
 	materialPassAlphaOverride(1.0f),
 	materialPassEmissiveOverride(1.0f)
-{ 
+{
 	// Need to have one entry in the override flags stack, initialize it to default values.
 	OverrideFlag[OverrideFlagLevel]=RINFO_OVERRIDE_DEFAULT;
 }
 
-RenderInfoClass::~RenderInfoClass(void)
+RenderInfoClass::~RenderInfoClass()
 {
 }
 
@@ -77,18 +77,18 @@ void RenderInfoClass::Push_Material_Pass(MaterialPassClass * matpass)
 	AdditionalMaterialPassArray[AdditionalMaterialPassCount++]=matpass;
 }
 
-void RenderInfoClass::Pop_Material_Pass(void)
+void RenderInfoClass::Pop_Material_Pass()
 {
 	// remove from the end of the array
 	WWASSERT(AdditionalMaterialPassCount>0);
 	AdditionalMaterialPassCount--;
 	MaterialPassClass * mpass = AdditionalMaterialPassArray[AdditionalMaterialPassCount];
-	if (mpass != NULL) {
+	if (mpass != nullptr) {
 		mpass->Release_Ref();
 	}
 }
 
-int RenderInfoClass::Additional_Pass_Count(void)
+int RenderInfoClass::Additional_Pass_Count()
 {
 	return AdditionalMaterialPassCount;
 }
@@ -106,13 +106,13 @@ void RenderInfoClass::Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg)
 	OverrideFlag[OverrideFlagLevel]=flg;
 }
 
-void RenderInfoClass::Pop_Override_Flags(void)
+void RenderInfoClass::Pop_Override_Flags()
 {
 	WWASSERT(OverrideFlagLevel>0);
 	OverrideFlagLevel--;
 }
 
-RenderInfoClass::RINFO_OVERRIDE_FLAGS & RenderInfoClass::Current_Override_Flags(void)
+RenderInfoClass::RINFO_OVERRIDE_FLAGS & RenderInfoClass::Current_Override_Flags()
 {
 	return OverrideFlag[OverrideFlagLevel];
 }
@@ -128,12 +128,12 @@ RenderInfoClass::RINFO_OVERRIDE_FLAGS & RenderInfoClass::Current_Override_Flags(
 SpecialRenderInfoClass::SpecialRenderInfoClass(CameraClass & cam,int render_type) :
 	RenderInfoClass(cam),
 	RenderType(render_type),
-	VisRasterizer(NULL),
-	BWRenderer(NULL)
+	VisRasterizer(nullptr),
+	BWRenderer(nullptr)
 {
 }
 
-SpecialRenderInfoClass::~SpecialRenderInfoClass(void)
+SpecialRenderInfoClass::~SpecialRenderInfoClass()
 {
 }
 

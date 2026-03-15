@@ -16,8 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MATCHER_H__
-#define __MATCHER_H__
+#pragma once
 
 #ifdef _WIN32
 #include <process.h>
@@ -88,6 +87,3 @@ protected:
 	time_t m_lastRotation;
 
 };
-
-#endif /* __MATCHER_H__ */
-

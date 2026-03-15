@@ -29,10 +29,7 @@
 
 #pragma once
 
-#ifndef __GAME_STATE_MAP_H_
-#define __GAME_STATE_MAP_H_
-
-// INLCUDES ///////////////////////////////////////////////////////////////////////////////////////
+// INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Snapshot.h"
 #include "Common/SubsystemInterface.h"
 
@@ -47,20 +44,20 @@ class GameStateMap : public SubsystemInterface,
 
 public:
 
-	GameStateMap( void );
-	virtual ~GameStateMap( void );
+	GameStateMap();
+	virtual ~GameStateMap();
 
 	// subsystem interface methods
-	virtual void init( void ) { }
-	virtual void reset( void ) { }
-	virtual void update( void ) { }
+	virtual void init() { }
+	virtual void reset() { }
+	virtual void update() { }
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) { }
 	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess( void ) { }
+	virtual void loadPostProcess() { }
 
-	void clearScratchPadMaps( void );		///< clear any scratch pad maps from the save directory
+	void clearScratchPadMaps();		///< clear any scratch pad maps from the save directory
 
 protected:
 
@@ -69,5 +66,3 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern GameStateMap *TheGameStateMap;
-
-#endif  // end __GAME_STATE_MAP_H_

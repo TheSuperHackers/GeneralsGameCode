@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-#define __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
@@ -55,6 +52,8 @@ enum GunshipCreateLocType CPP_11(: Int)
   CREATE_GUNSHIP_AT_EDGE_FARTHEST_FROM_SOURCE,
 	CREATE_GUNSHIP_AT_EDGE_NEAR_TARGET,
 	CREATE_GUNSHIP_AT_EDGE_FARTHEST_FROM_TARGET,
+
+	GUNSHIP_CREATE_LOC_COUNT
 };
 
 
@@ -84,7 +83,7 @@ public:
 	SpectreGunshipDeploymentUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-private: 
+private:
 
 };
 
@@ -112,28 +111,28 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	virtual Bool isSpecialAbility() const { return false; }
-	virtual Bool isSpecialPower() const { return true; }
-	virtual Bool isActive() const {return FALSE;}
-	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() { return this; }
-	virtual CommandOption getCommandOption() const { return (CommandOption)0; }
-  virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const { return FALSE; };
-	virtual ScienceType getExtraRequiredScience() const { return getSpectreGunshipDeploymentUpdateModuleData()->m_extraRequiredScience; } //Does this object have more than one special power module with the same spTemplate?
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) override;
+	virtual Bool isSpecialAbility() const override { return false; }
+	virtual Bool isSpecialPower() const override { return true; }
+	virtual Bool isActive() const override {return FALSE;}
+	virtual SpecialPowerUpdateInterface* getSpecialPowerUpdateInterface() override { return this; }
+	virtual CommandOption getCommandOption() const override { return (CommandOption)0; }
+  virtual Bool isPowerCurrentlyInUse( const CommandButton *command = nullptr ) const override { return FALSE; };
+	virtual ScienceType getExtraRequiredScience() const override { return getSpectreGunshipDeploymentUpdateModuleData()->m_extraRequiredScience; } //Does this object have more than one special power module with the same spTemplate?
 
-	virtual void onObjectCreated();
-	virtual UpdateSleepTime update();
+	virtual void onObjectCreated() override;
+	virtual UpdateSleepTime update() override;
 
 	void cleanUp();
 
 
 
-  virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const { return FALSE; };
-	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return FALSE; }	//Does it have it, even if it's not active?
-  virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) {};
+  virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const override { return FALSE; };
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const override { return FALSE; }	//Does it have it, even if it's not active?
+  virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) override {};
 
 	// Disabled conditions to process (termination conditions!)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK4( DISABLED_SUBDUED, DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return MAKE_DISABLED_MASK4( DISABLED_SUBDUED, DISABLED_UNDERPOWERED, DISABLED_EMP, DISABLED_HACKED ); }
 
 protected:
 
@@ -145,7 +144,3 @@ protected:
 
 
 };
-
-
-#endif // __SPECTRE_GUNSHIP_DEPLOYMENT_UPDATE_H_
-

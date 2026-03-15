@@ -16,27 +16,26 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/Tools/max2w3d/PROGRESS.H 5     10/28/97 6:08p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D engine                                       * 
- *                                                                                             * 
- *                    File Name : PROGRESS.H                                                   * 
- *                                                                                             * 
- *                   Programmer : James McNeil                                                 * 
- *                                                                                             * 
- *                   Start Date : 06/19/97                                                     * 
- *                                                                                             * 
- *                  Last Update : June 19, 1997 [GH]                                           * 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/* $Header: /Commando/Code/Tools/max2w3d/PROGRESS.h 5     10/28/97 6:08p Greg_h $ */
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D engine                                       *
+ *                                                                                             *
+ *                    File Name : PROGRESS.h                                                   *
+ *                                                                                             *
+ *                   Programmer : James McNeil                                                 *
+ *                                                                                             *
+ *                   Start Date : 06/19/97                                                     *
+ *                                                                                             *
+ *                  Last Update : June 19, 1997 [GH]                                           *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef PROGRESS_H
-#define PROGRESS_H
+#pragma once
 
 #include "always.h"
 
@@ -121,5 +120,3 @@ private:
 
 	BOOL Cancel_Requested;
 };
-
-#endif /* PROGRESS_H */

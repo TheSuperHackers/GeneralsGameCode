@@ -46,8 +46,7 @@
 void parseFactionObjectCreationList( INI *ini, void *instance, void *store, const void *userData )
 {
 	OCLUpdateModuleData::FactionOCLInfo info;
-	info.m_factionName = "";
-	info.m_ocl = 0;
+	info.m_ocl = nullptr;
 
 	const char *token = ini->getNextToken( ini->getSepsColon() );
 
@@ -64,41 +63,41 @@ void parseFactionObjectCreationList( INI *ini, void *instance, void *store, cons
 
 	token = ini->getNextTokenOrNull( ini->getSepsColon() );
 	if ( stricmp(token, "OCL") == 0 )
-		ini->parseObjectCreationList( ini, instance, &info.m_ocl, NULL );
+		ini->parseObjectCreationList( ini, instance, &info.m_ocl, nullptr );
 	else
 		throw INI_INVALID_DATA;
 
 	// Insert the info into the ocl hashmap
 	OCLUpdateModuleData::FactionOCLList * theList = (OCLUpdateModuleData::FactionOCLList*)store;
 	theList->push_back(info);
-	
-}  // end parseFactionObjectCreationList
+
+}
 
 //-------------------------------------------------------------------------------------------------
 OCLUpdateModuleData::OCLUpdateModuleData()
 {
 	m_minDelay = 0;
 	m_maxDelay = 0;
-	m_ocl = NULL;
+	m_ocl = nullptr;
 	m_factionOCL.clear();
 	m_isCreateAtEdge = FALSE;
 	m_isFactionTriggered = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
+/*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "OCL",					INI::parseObjectCreationList,		NULL, offsetof( OCLUpdateModuleData, m_ocl ) },
-		{ "FactionOCL",		parseFactionObjectCreationList,	NULL, offsetof( OCLUpdateModuleData, m_factionOCL ) },
-		{ "MinDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_minDelay ) },
-		{ "MaxDelay",			INI::parseDurationUnsignedInt,	NULL, offsetof( OCLUpdateModuleData, m_maxDelay ) },
-		{ "CreateAtEdge",	INI::parseBool,									NULL, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
-		{ "FactionTriggered",	INI::parseBool,							NULL, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",					INI::parseObjectCreationList,		nullptr, offsetof( OCLUpdateModuleData, m_ocl ) },
+		{ "FactionOCL",		parseFactionObjectCreationList,	nullptr, offsetof( OCLUpdateModuleData, m_factionOCL ) },
+		{ "MinDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_minDelay ) },
+		{ "MaxDelay",			INI::parseDurationUnsignedInt,	nullptr, offsetof( OCLUpdateModuleData, m_maxDelay ) },
+		{ "CreateAtEdge",	INI::parseBool,									nullptr, offsetof( OCLUpdateModuleData, m_isCreateAtEdge ) },
+		{ "FactionTriggered",	INI::parseBool,							nullptr, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 }
@@ -115,23 +114,34 @@ OCLUpdate::OCLUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModul
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-OCLUpdate::~OCLUpdate( void )
+OCLUpdate::~OCLUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime OCLUpdate::update( void )
+UpdateSleepTime OCLUpdate::update()
 {
+#if RETAIL_COMPATIBLE_CRC
 	if( getObject()->isDisabled() )
 	{
 		m_nextCreationFrame++;
 		return UPDATE_SLEEP_NONE;
 	}
+#else
+	// TheSuperHackers @bugfix dizzyj/Caball009/Mauller 14/07/2025 prevent triggering supply drop when subdued while under construction
+	// When the construction is finished, we allow the timer to be initialized and then start shifting the timer while subdued
+	if ( m_timerStartedFrame > 0 && getObject()->isDisabled() )
+	{
+		m_nextCreationFrame++;
+		m_timerStartedFrame++;
+		return UPDATE_SLEEP_NONE;
+	}
+#endif
 
 	const OCLUpdateModuleData *data = getOCLUpdateModuleData();
 
-	// Test if the OCL update is faction dependant. If so, check for faction changes
+	// Test if the OCL update is faction dependent. If so, check for faction changes
 	if (data->m_isFactionTriggered)
 	{
 		Player *player = getObject()->getControllingPlayer();
@@ -162,7 +172,7 @@ UpdateSleepTime OCLUpdate::update( void )
 			}
 		}
 
-		// If the building is neutal, skip futher update
+		// If the building is neutal, skip further update
 		if (m_isFactionNeutral)
 			return UPDATE_SLEEP_NONE;
 	}
@@ -188,18 +198,18 @@ UpdateSleepTime OCLUpdate::update( void )
 		// If this is faction triggered, search through the faction specific OCLs to find the match
 		if (data->m_isFactionTriggered)
 		{
-			std::string playerFactionName("");
+			std::string playerFactionName;
 
 			Player *player = getObject()->getControllingPlayer();
 			if (!player) return UPDATE_SLEEP_NONE;
-			
+
 			const PlayerTemplate *playerT = player->getPlayerTemplate();
 			if (!playerT) return UPDATE_SLEEP_NONE;
 
 			// Get and store the faction side to compare with the faction ocl list
 			if (playerT->getSide().str()) playerFactionName = playerT->getSide().str();
 
-			// Loop through the list of faction ocls to find the matching faction that triggeres the specific ocls
+			// Loop through the list of faction ocls to find the matching faction that triggers the specific ocls
 			for (OCLUpdateModuleData::FactionOCLList::const_iterator it = data->m_factionOCL.begin(); it != data->m_factionOCL.end(); ++it)
 			{
 				OCLUpdateModuleData::FactionOCLInfo info = *it;
@@ -242,7 +252,7 @@ Bool OCLUpdate::shouldCreate()
 // ------------------------------------------------------------------------------------------------
 void OCLUpdate::setNextCreationFrame()
 {
-	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay, 
+	UnsignedInt delay = GameLogicRandomValue( getOCLUpdateModuleData()->m_minDelay,
 																						getOCLUpdateModuleData()->m_maxDelay );
 	m_timerStartedFrame = TheGameLogic->getFrame();
 	m_nextCreationFrame = m_timerStartedFrame + delay;
@@ -276,7 +286,7 @@ void OCLUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -302,19 +312,19 @@ void OCLUpdate::xfer( Xfer *xfer )
 
 	// faction status
 	xfer->xferBool( &m_isFactionNeutral );
-	
+
 	// current owning player color
 	xfer->xferInt( &m_currentPlayerColor );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void OCLUpdate::loadPostProcess( void )
+void OCLUpdate::loadPostProcess()
 {
 
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

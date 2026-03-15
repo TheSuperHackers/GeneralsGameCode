@@ -29,9 +29,6 @@
 
 #pragma once
 
-#ifndef _COMMAND_SET_UPGRADE_H
-#define _COMMAND_SET_UPGRADE_H
-
 #include "GameLogic/Module/UpgradeModule.h"
 
 //-----------------------------------------------------------------------------
@@ -65,10 +62,7 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ); ///< Here's the actual work of Upgrading
-	virtual Bool isSubObjectsUpgrade() { return false; }
+	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual Bool isSubObjectsUpgrade() override { return false; }
 
 };
-#endif // _COMMAND_SET_UPGRADE_H
-
-

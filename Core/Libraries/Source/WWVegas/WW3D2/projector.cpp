@@ -26,8 +26,8 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 6                                                           $*
@@ -46,7 +46,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "projector.h"
-#include "refcount.h"
 #include "matrixmapper.h"
 
 
@@ -61,7 +60,7 @@
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-ProjectorClass::ProjectorClass(void) :
+ProjectorClass::ProjectorClass() :
 	Transform(1),
 	Projection(1),
 	LocalBoundingVolume(Vector3(0,0,0),Vector3(1,1,1)),
@@ -82,7 +81,7 @@ ProjectorClass::ProjectorClass(void) :
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-ProjectorClass::~ProjectorClass(void)
+ProjectorClass::~ProjectorClass()
 {
 	REF_PTR_RELEASE(Mapper);
 }
@@ -122,7 +121,7 @@ void ProjectorClass::Set_Transform(const Matrix3D & tm)
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-const Matrix3D & ProjectorClass::Get_Transform(void) const
+const Matrix3D & ProjectorClass::Get_Transform() const
 {
 	return Transform;
 }
@@ -150,7 +149,7 @@ void ProjectorClass::Set_Perspective_Projection(float hfov,float vfov,float znea
 {
 	Mapper->Set_Type(MatrixMapperClass::PERSPECTIVE_PROJECTION);
 	Projection.Init_Perspective(hfov,vfov,0.1f,zfar);					// don't use znear for the projection matrix
-	
+
 	float tan_hfov2 = tan(hfov) * 0.5f;
 	float tan_vfov2 = tan(vfov) * 0.5f;
 
@@ -225,12 +224,12 @@ void ProjectorClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3 * 
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void ProjectorClass::Update_WS_Bounding_Volume(void)
+void ProjectorClass::Update_WS_Bounding_Volume()
 {
 	/*
 	** Recompute our world-space bounding volume
 	*/
 	OBBoxClass localbox(LocalBoundingVolume.Center,LocalBoundingVolume.Extent,Matrix3x3(1));
-	OBBoxClass::Transform(Transform,localbox,&WorldBoundingVolume);	
+	OBBoxClass::Transform(Transform,localbox,&WorldBoundingVolume);
 }
 

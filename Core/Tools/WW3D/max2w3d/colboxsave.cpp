@@ -70,7 +70,7 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	memset(&BoxData,0,sizeof(BoxData));
 
 	BoxData.Version = W3D_BOX_CURRENT_VERSION;
-	if ((container_name != NULL) && (strlen(container_name) > 0)) {
+	if ((container_name != nullptr) && (strlen(container_name) > 0)) {
 		strcpy(BoxData.Name,container_name);
 		strcat(BoxData.Name,".");
 	}
@@ -83,19 +83,19 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_ORIENTED;
 	}
 	if (Is_Physical_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PHYSICAL;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PHYSICAL;
 	}
 	if (Is_Projectile_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_PROJECTILE;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_PROJECTILE;
 	}
 	if (Is_Vis_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VIS;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VIS;
 	}
 	if (Is_Camera_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_CAMERA;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_CAMERA;
 	}
 	if (Is_Vehicle_Collision(inode)) {
-		BoxData.Attributes |= W3D_BOX_ATTRIBTUE_COLLISION_TYPE_VEHICLE;
+		BoxData.Attributes |= W3D_BOX_ATTRIBUTE_COLLISION_TYPE_VEHICLE;
 	}
 
 	BoxData.Color.R = GetRValue(wirecolor);
@@ -111,7 +111,7 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 	Matrix3 node_matrix = inode->GetObjectTM(curtime);
 	Matrix3 offset_matrix = node_matrix * Inverse(exportspace);
 	int ivert;
-	
+
 	for (ivert = 0; ivert < mesh.getNumVerts (); ++ivert) {
 		mesh.verts[ivert] = mesh.verts[ivert] * offset_matrix;
 	}
@@ -129,7 +129,7 @@ CollisionBoxSaveClass::CollisionBoxSaveClass
 		if (mesh.verts[ivert].y > max_point.y) max_point.y = mesh.verts[ivert].y;
 		if (mesh.verts[ivert].z > max_point.z) max_point.z = mesh.verts[ivert].z;
 	}
-		
+
 	Point3 center = (max_point + min_point) / 2.0f;
 	Point3 extent = (max_point - min_point) / 2.0f;
 
@@ -153,4 +153,4 @@ int CollisionBoxSaveClass::Write_To_File(ChunkSaveClass & csave)
 }
 
 
-	
+

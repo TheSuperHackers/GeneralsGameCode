@@ -16,12 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(AFX_GRAPHICVIEW_H__2BB39E41_5D3A_11D2_9FC6_00104B791122__INCLUDED_)
-#define AFX_GRAPHICVIEW_H__2BB39E41_5D3A_11D2_9FC6_00104B791122__INCLUDED_
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
+
 // GraphicView.h : header file
 //
 
@@ -235,7 +231,7 @@ protected:
 		  RenderObjClass *	m_pLightMesh;
 		  bool					m_bLightMeshInScene;
 		  Vector3				m_ObjectCenter;
-		  SphereClass			m_ViewedSphere;		  
+		  SphereClass			m_ViewedSphere;
 
         BOOL					m_bMouseDown;
         BOOL					m_bRMouseDown;
@@ -245,7 +241,7 @@ protected:
 		  float					m_CameraDistance;
 		  DWORD					m_ParticleCountUpdate;
 		  BOOL					m_CameraBonePosX;
-        
+
         // Animation data
         DWORD					m_dwLastFrameUpdate;
         float					m_animationSpeed;
@@ -259,5 +255,3 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_GRAPHICVIEW_H__2BB39E41_5D3A_11D2_9FC6_00104B791122__INCLUDED_)

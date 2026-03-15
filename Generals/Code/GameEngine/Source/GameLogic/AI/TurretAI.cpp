@@ -22,11 +22,11 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// TurretAI.cpp 
+// TurretAI.cpp
 // Turret behavior implementation
 // Author: Steven Johnson, April 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
@@ -47,18 +47,13 @@
 
 const UnsignedInt WAIT_INDEFINITELY = 0xffffffff;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 static StateReturnType frameToSleepTime(
-	UnsignedInt frame1, 
-	UnsignedInt frame2 = FOREVER, 
-	UnsignedInt frame3 = FOREVER, 
+	UnsignedInt frame1,
+	UnsignedInt frame2 = FOREVER,
+	UnsignedInt frame3 = FOREVER,
 	UnsignedInt frame4 = FOREVER
 )
 {
@@ -83,15 +78,15 @@ static StateReturnType frameToSleepTime(
 
 //----------------------------------------------------------------------------------------------------------
 /**
- * Create a TurretAI state machine. Define all of the states the machine 
+ * Create a TurretAI state machine. Define all of the states the machine
  * can possibly be in, and set the initial (default) state.
  */
 TurretStateMachine::TurretStateMachine( TurretAI* tai, Object *obj, AsciiString name ) : m_turretAI(tai), StateMachine( obj, name )
 {
-	static const StateConditionInfo fireConditions[] = 
+	static const StateConditionInfo fireConditions[] =
 	{
-		StateConditionInfo(outOfWeaponRangeObject, TURRETAI_AIM, NULL),
-		StateConditionInfo(NULL, NULL, NULL)	// keep last
+		StateConditionInfo(outOfWeaponRangeObject, TURRETAI_AIM, nullptr),
+		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
 	// order matters: first state is the default state.
@@ -148,25 +143,25 @@ StateReturnType TurretStateMachine::setState(StateID newStateID)
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::xfer( Xfer *xfer )
 {
-	XferVersion cv = 1;	
-	XferVersion v = cv; 
+	XferVersion cv = 1;
+	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TurretStateMachine::loadPostProcess( void )
+void TurretStateMachine::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------------
@@ -208,7 +203,7 @@ static void parseTWS(INI* ini, void * /*instance*/, void * store, const void* /*
 {
 	UnsignedInt* tws = (UnsignedInt*)store;
 	const char* token = ini->getNextToken();
-	while (token != NULL)
+	while (token != nullptr)
 	{
 		WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(token, TheWeaponSlotTypeNames);
 		*tws |= (1 << wslot);
@@ -221,7 +216,7 @@ void TurretAIData::parseTurretSweep(INI* ini, void *instance, void * /*store*/, 
 {
 	TurretAIData* self = (TurretAIData*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
-	INI::parseAngleReal( ini, instance, &self->m_turretFireAngleSweep[wslot], NULL );
+	INI::parseAngleReal( ini, instance, &self->m_turretFireAngleSweep[wslot], nullptr );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -229,36 +224,36 @@ void TurretAIData::parseTurretSweepSpeed(INI* ini, void *instance, void * /*stor
 {
 	TurretAIData* self = (TurretAIData*)instance;
 	WeaponSlotType wslot = (WeaponSlotType)INI::scanIndexList(ini->getNextToken(), TheWeaponSlotTypeNames);
-	INI::parseReal( ini, instance, &self->m_turretSweepSpeedModifier[wslot], NULL );
+	INI::parseReal( ini, instance, &self->m_turretSweepSpeedModifier[wslot], nullptr );
 }
 
 //----------------------------------------------------------------------------------------------------------
-void TurretAIData::buildFieldParse(MultiIniFieldParse& p) 
+void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 {
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "TurretTurnRate",					INI::parseAngularVelocityReal,				NULL, offsetof( TurretAIData, m_turnRate ) },
-		{ "TurretPitchRate",				INI::parseAngularVelocityReal,				NULL, offsetof( TurretAIData, m_pitchRate ) },
-		{ "NaturalTurretAngle",			INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_naturalTurretAngle ) },
-		{ "NaturalTurretPitch",			INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_naturalTurretPitch ) },
-		{ "FirePitch",							INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_firePitch ) },
-		{ "MinPhysicalPitch",				INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_minPitch ) },
-		{ "GroundUnitPitch",				INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_groundUnitPitch ) },
-		{ "TurretFireAngleSweep",		TurretAIData::parseTurretSweep,				NULL, NULL },
-		{ "TurretSweepSpeedModifier",TurretAIData::parseTurretSweepSpeed,	NULL, NULL },
-		{ "ControlledWeaponSlots",	parseTWS,															NULL, offsetof( TurretAIData, m_turretWeaponSlots ) },
-		{ "AllowsPitch",						INI::parseBool,												NULL, offsetof( TurretAIData, m_isAllowsPitch ) },
+		{ "TurretTurnRate",					INI::parseAngularVelocityReal,				nullptr, offsetof( TurretAIData, m_turnRate ) },
+		{ "TurretPitchRate",				INI::parseAngularVelocityReal,				nullptr, offsetof( TurretAIData, m_pitchRate ) },
+		{ "NaturalTurretAngle",			INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_naturalTurretAngle ) },
+		{ "NaturalTurretPitch",			INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_naturalTurretPitch ) },
+		{ "FirePitch",							INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_firePitch ) },
+		{ "MinPhysicalPitch",				INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_minPitch ) },
+		{ "GroundUnitPitch",				INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_groundUnitPitch ) },
+		{ "TurretFireAngleSweep",		TurretAIData::parseTurretSweep,				nullptr, 0 },
+		{ "TurretSweepSpeedModifier",TurretAIData::parseTurretSweepSpeed,	nullptr, 0 },
+		{ "ControlledWeaponSlots",	parseTWS,															nullptr, offsetof( TurretAIData, m_turretWeaponSlots ) },
+		{ "AllowsPitch",						INI::parseBool,												nullptr, offsetof( TurretAIData, m_isAllowsPitch ) },
 #ifdef INTER_TURRET_DELAY
-		{ "InterTurretDelay",				INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_interTurretDelay ) },
+		{ "InterTurretDelay",				INI::parseDurationUnsignedInt,				nullptr, offsetof( TurretAIData, m_interTurretDelay ) },
 #endif
-		{ "MinIdleScanAngle",				INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_minIdleScanAngle ) },
-		{ "MaxIdleScanAngle",				INI::parseAngleReal,									NULL, offsetof( TurretAIData, m_maxIdleScanAngle ) },
-		{ "MinIdleScanInterval",		INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_minIdleScanInterval ) },
-		{ "MaxIdleScanInterval",		INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_maxIdleScanInterval ) },
-		{ "RecenterTime",						INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_recenterTime ) },
-		{ "InitiallyDisabled",			INI::parseBool,												NULL, offsetof( TurretAIData, m_initiallyDisabled ) },
-		{ "FiresWhileTurning",			INI::parseBool,												NULL, offsetof( TurretAIData, m_firesWhileTurning ) },
-		{ 0, 0, 0, 0 }
+		{ "MinIdleScanAngle",				INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_minIdleScanAngle ) },
+		{ "MaxIdleScanAngle",				INI::parseAngleReal,									nullptr, offsetof( TurretAIData, m_maxIdleScanAngle ) },
+		{ "MinIdleScanInterval",		INI::parseDurationUnsignedInt,				nullptr, offsetof( TurretAIData, m_minIdleScanInterval ) },
+		{ "MaxIdleScanInterval",		INI::parseDurationUnsignedInt,				nullptr, offsetof( TurretAIData, m_maxIdleScanInterval ) },
+		{ "RecenterTime",						INI::parseDurationUnsignedInt,				nullptr, offsetof( TurretAIData, m_recenterTime ) },
+		{ "InitiallyDisabled",			INI::parseBool,												nullptr, offsetof( TurretAIData, m_initiallyDisabled ) },
+		{ "FiresWhileTurning",			INI::parseBool,												nullptr, offsetof( TurretAIData, m_firesWhileTurning ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 
@@ -269,11 +264,11 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 //----------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------
-TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur) : 
+TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur) :
 	m_owner(owner),
 	m_whichTurret(tur),
 	m_data(data),
-	m_turretStateMachine(NULL),
+	m_turretStateMachine(nullptr),
 	m_playRotSound(false),
 	m_playPitchSound(false),
 	m_positiveSweep(true),
@@ -285,15 +280,9 @@ TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur)
 	m_enabled(!data->m_initiallyDisabled),
 	m_firesWhileTurning(data->m_firesWhileTurning),
 	m_isForceAttacking(false),
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
-	m_victimInitialTeam(NULL)
-	//
+	m_victimInitialTeam(nullptr)
 {
-	//Added By Sadullah Nader
-	//Initialization(s) inserted
 	m_continuousFireExpirationFrame = -1;
-	//
 	if (!m_data)
 	{
 		DEBUG_CRASH(("TurretAI MUST have ModuleData"));
@@ -326,8 +315,7 @@ TurretAI::~TurretAI()
 {
 	stopRotOrPitchSound();
 
-	if (m_turretStateMachine)
-		deleteInstance(m_turretStateMachine);
+	deleteInstance(m_turretStateMachine);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -335,7 +323,7 @@ TurretAI::~TurretAI()
 // ------------------------------------------------------------------------------------------------
 void TurretAI::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -347,16 +335,16 @@ void TurretAI::xfer( Xfer *xfer )
   XferVersion version = currentVersion;
   xfer->xferVersion( &version, currentVersion );
 
-/* These 4 are loaded on creation, and don't change. jba. 
+/* These 4 are loaded on creation, and don't change. jba.
 	const TurretAIData*				m_data;
 	WhichTurretType						m_whichTurret;
-	Object*										m_owner;								
+	Object*										m_owner;
 	AudioEventRTS							m_turretRotOrPitchSound;		///< Sound of turret rotation
 	*/
 	xfer->xferSnapshot(m_turretStateMachine);
 
-	xfer->xferReal(&m_angle);									
-	xfer->xferReal(&m_pitch);									
+	xfer->xferReal(&m_angle);
+	xfer->xferReal(&m_pitch);
 	xfer->xferUnsignedInt(&m_enableSweepUntil);
 
 	xfer->xferUser(&m_target, sizeof(m_target));
@@ -375,18 +363,18 @@ void TurretAI::xfer( Xfer *xfer )
 	if (version >= 2)
 		xfer->xferUnsignedInt(&m_sleepUntil);
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TurretAI::loadPostProcess( void )
+void TurretAI::loadPostProcess()
 {
 	Object *victim = m_turretStateMachine->getGoalObject();
 	if (victim) {
 		m_victimInitialTeam = victim->getTeam();
 	}
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Real relThresh)
@@ -409,7 +397,7 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	}
 	else
 	{
-		if (angleDiff > 0) 
+		if (angleDiff > 0)
 			actualAngle += turnRate;
 		else
 			actualAngle -= turnRate;
@@ -419,7 +407,7 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	}
 
 	m_angle = normalizeAngle(actualAngle);
-	
+
 	if( m_angle != origAngle )
 		getOwner()->reactToTurretChange( m_whichTurret, origAngle, m_pitch );
 
@@ -469,7 +457,7 @@ Bool TurretAI::isWeaponSlotOkToFire(WeaponSlotType wslot) const
 //----------------------------------------------------------------------------------------------------------
 Real TurretAI::getTurretFireAngleSweepForWeaponSlot( WeaponSlotType slot ) const
 {
-	return m_data->m_turretFireAngleSweep[slot];	
+	return m_data->m_turretFireAngleSweep[slot];
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -505,7 +493,7 @@ Bool TurretAI::isOwnersCurWeaponOnTurret() const
 {
 	WeaponSlotType wslot;
 	Weapon* w = m_owner->getCurrentWeapon(&wslot);
-	return w != NULL && isWeaponSlotOnTurret(wslot);
+	return w != nullptr && isWeaponSlotOnTurret(wslot);
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -517,7 +505,7 @@ Bool TurretAI::isWeaponSlotOnTurret(WeaponSlotType wslot) const
 //----------------------------------------------------------------------------------------------------------
 TurretTargetType TurretAI::friend_getTurretTarget(Object*& obj, Coord3D& pos) const
 {
-	obj = NULL;
+	obj = nullptr;
 	pos.zero();
 
 	if (m_target == TARGET_OBJECT)
@@ -525,17 +513,17 @@ TurretTargetType TurretAI::friend_getTurretTarget(Object*& obj, Coord3D& pos) co
 		obj = m_turretStateMachine->getGoalObject();
 		// clear it explicitly if null -- could be deceased but holding the
 		// old (bogus) objectid internally
-		if (obj == NULL || obj->isEffectivelyDead())
+		if (obj == nullptr || obj->isEffectivelyDead())
 		{
-			m_turretStateMachine->setGoalObject(NULL);
+			m_turretStateMachine->setGoalObject(nullptr);
 			m_target = TARGET_NONE;
 			m_targetWasSetByIdleMood = false;
 		}
 	}
 	else if (m_target == TARGET_POSITION)
 	{
-		obj = NULL;
-		pos = *m_turretStateMachine->getGoalPosition(); 
+		obj = nullptr;
+		pos = *m_turretStateMachine->getGoalPosition();
 	}
 
 	return m_target;
@@ -545,11 +533,11 @@ TurretTargetType TurretAI::friend_getTurretTarget(Object*& obj, Coord3D& pos) co
 void TurretAI::removeSelfAsTargeter()
 {
 	// be paranoid, in case we are called from dtors, etc.
-	if (m_target == TARGET_OBJECT && m_turretStateMachine != NULL)
+	if (m_target == TARGET_OBJECT && m_turretStateMachine != nullptr)
 	{
 		Object* self = m_owner;
 		Object* target = m_turretStateMachine->getGoalObject();
-		if (self != NULL && target != NULL)
+		if (self != nullptr && target != nullptr)
 		{
 			AIUpdateInterface* targetAI = target->getAI();
 			if (targetAI)
@@ -563,14 +551,14 @@ void TurretAI::removeSelfAsTargeter()
 //----------------------------------------------------------------------------------------------------------
 void TurretAI::setTurretTargetObject( Object *victim, Bool forceAttacking )
 {
-	if (!victim || 
+	if (!victim ||
 				victim->isEffectivelyDead() ||
 				!isOwnersCurWeaponOnTurret())
 	{
-		victim = NULL;
+		victim = nullptr;
 	}
 
-	if (victim == NULL)
+	if (victim == nullptr)
 	{
 		// if nuking the victim, remove self as targeter before doing anything else.
 		// (note that we never ADD self as targeter here; that is done in the aim state)
@@ -583,11 +571,11 @@ void TurretAI::setTurretTargetObject( Object *victim, Bool forceAttacking )
 	m_isForceAttacking = forceAttacking;
 
 	StateID sid = m_turretStateMachine->getCurrentStateID();
-	if (victim != NULL)
+	if (victim != nullptr)
 	{
 		// if we're already in the aim state, don't call setState, since
 		// it would go thru the exit/enter stuff, which we don't really want
-		// to do... 
+		// to do...
 		if (sid != TURRETAI_AIM && sid != TURRETAI_FIRE)
 			m_turretStateMachine->setState( TURRETAI_AIM );
 		m_victimInitialTeam = victim->getTeam();
@@ -597,7 +585,7 @@ void TurretAI::setTurretTargetObject( Object *victim, Bool forceAttacking )
 		// only change states if we are aiming.
 		if (sid == TURRETAI_AIM || sid == TURRETAI_FIRE)
 			m_turretStateMachine->setState(TURRETAI_HOLD);
-		m_victimInitialTeam = NULL;
+		m_victimInitialTeam = nullptr;
 	}
 }
 
@@ -606,35 +594,35 @@ void TurretAI::setTurretTargetPosition( const Coord3D* pos )
 {
 	if (!pos ||	!isOwnersCurWeaponOnTurret())
 	{
-		pos = NULL;
+		pos = nullptr;
 	}
 
 	// remove self as targeter before doing anything else.
 	// (note that we never ADD self as targeter here; that is done in the aim state)
 	removeSelfAsTargeter();
 
-	m_turretStateMachine->setGoalObject( NULL );
+	m_turretStateMachine->setGoalObject( nullptr );
 	if (pos)
 		m_turretStateMachine->setGoalPosition( pos );
 	m_target = pos ? TARGET_POSITION : TARGET_NONE;
 	m_targetWasSetByIdleMood = false;
 
 	StateID sid = m_turretStateMachine->getCurrentStateID();
-	if (pos != NULL)
+	if (pos != nullptr)
 	{
 		// if we're already in the aim state, don't call setState, since
 		// it would go thru the exit/enter stuff, which we don't really want
-		// to do... 
+		// to do...
 		if (sid != TURRETAI_AIM && sid != TURRETAI_FIRE)
 			m_turretStateMachine->setState( TURRETAI_AIM );
-		m_victimInitialTeam = NULL;
+		m_victimInitialTeam = nullptr;
 	}
 	else
 	{
 		// only change states if we are aiming.
 		if (sid == TURRETAI_AIM || sid == TURRETAI_FIRE)
 			m_turretStateMachine->setState(TURRETAI_HOLD);
-		m_victimInitialTeam = NULL;
+		m_victimInitialTeam = nullptr;
 	}
 }
 
@@ -647,7 +635,7 @@ void TurretAI::recenterTurret()
 //----------------------------------------------------------------------------------------------------------
 Bool TurretAI::isTurretInNaturalPosition() const
 {
-	if( getNaturalTurretAngle() == getTurretAngle() && 
+	if( getNaturalTurretAngle() == getTurretAngle() &&
 			getNaturalTurretPitch() == getTurretPitch() )
 	{
 		return true;
@@ -672,9 +660,9 @@ UpdateSleepTime TurretAI::updateTurretAI()
 {
 	USE_PERF_TIMER(TurretAI)
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(!m_enabled ||
-							m_turretStateMachine->peekSleepTill() == 0 || 
+							m_turretStateMachine->peekSleepTill() == 0 ||
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
 #endif
 
@@ -684,7 +672,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 		return UPDATE_SLEEP(m_sleepUntil - now);
 	}
 
-	//DEBUG_LOG(("updateTurretAI frame %d: %08lx\n",TheGameLogic->getFrame(),getOwner()));
+	//DEBUG_LOG(("updateTurretAI frame %d: %08lx",TheGameLogic->getFrame(),getOwner()));
 	UpdateSleepTime subMachineSleep = UPDATE_SLEEP_FOREVER;	// assume the best!
 
 	// either we don't care about continuous fire stuff, or we care, but time has elapsed
@@ -722,18 +710,18 @@ UpdateSleepTime TurretAI::updateTurretAI()
 		}
 		else
 		{
-			// it's STATE_CONTINUE, STATE_SUCCESS, or STATE_FAILURE, 
+			// it's STATE_CONTINUE, STATE_SUCCESS, or STATE_FAILURE,
 			// any of which will probably require next frame
 			subMachineSleep = UPDATE_SLEEP_NONE;
 		}
 
-	}	// if enabled or recentering
+	}
 
 	m_sleepUntil = now + subMachineSleep;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(!m_enabled ||
-							m_turretStateMachine->peekSleepTill() == 0 || 
+							m_turretStateMachine->peekSleepTill() == 0 ||
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
 #endif
 
@@ -757,7 +745,7 @@ void TurretAI::setTurretEnabled( Bool enabled )
  */
 void TurretAI::startRotOrPitchSound()
 {
-	if (!m_turretRotOrPitchSound.isCurrentlyPlaying()) 
+	if (!m_turretRotOrPitchSound.isCurrentlyPlaying())
 	{
 		m_turretRotOrPitchSound.setObjectID(m_owner->getID());
 		m_turretRotOrPitchSound.setPlayingHandle(TheAudio->addAudioEvent(&m_turretRotOrPitchSound));
@@ -770,7 +758,7 @@ void TurretAI::startRotOrPitchSound()
  */
 void TurretAI::stopRotOrPitchSound()
 {
-	if (m_turretRotOrPitchSound.isCurrentlyPlaying()) 
+	if (m_turretRotOrPitchSound.isCurrentlyPlaying())
 	{
 		TheAudio->removeAudioEvent(m_turretRotOrPitchSound.getPlayingHandle());
 	}
@@ -791,7 +779,7 @@ void TurretAI::getOtherTurretWeaponInfo(Int& numSelf, Int& numSelfReloading, Int
 	{
 		// ignore empty slots.
 		const Weapon* w = getOwner()->getWeaponInWeaponSlot((WeaponSlotType)i);
-		if (w == NULL)
+		if (w == nullptr)
 			continue;
 
 		// ignore the weapons on this turret.
@@ -823,12 +811,12 @@ Bool TurretAI::friend_isAnyWeaponInRangeOf(const Object* o) const
 	{
 		// ignore empty slots.
 		const Weapon* w = getOwner()->getWeaponInWeaponSlot((WeaponSlotType)i);
-		if (w == NULL || !isWeaponSlotOnTurret((WeaponSlotType)i))
+		if (w == nullptr || !isWeaponSlotOnTurret((WeaponSlotType)i))
 			continue;
 
 		if (w->isWithinAttackRange(getOwner(), o)
-				// srj sez: not sure if we want to do this or not.  
-				// jba sez: no, don't do this.  isWithinAttackRange checks terrain los now, and 
+				// srj sez: not sure if we want to do this or not.
+				// jba sez: no, don't do this.  isWithinAttackRange checks terrain los now, and
 				// some weapons (like tomahawk) can fire beyond los, so this check is problematical here.
 				//  && w->isClearFiringLineOfSightTerrain(getOwner(), o)
 			)
@@ -841,8 +829,8 @@ Bool TurretAI::friend_isAnyWeaponInRangeOf(const Object* o) const
 }
 
 //----------------------------------------------------------------------------------------------------------
-Bool TurretAI::friend_isSweepEnabled() const 
-{ 
+Bool TurretAI::friend_isSweepEnabled() const
+{
 	if (m_enableSweepUntil != 0 && m_enableSweepUntil > TheGameLogic->getFrame())
 		return true;
 
@@ -854,7 +842,7 @@ UnsignedInt TurretAI::friend_getNextIdleMoodTargetFrame() const
 {
 	const Object* obj = getOwner();
 	const AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	// ai can be null during object construction. 
+	// ai can be null during object construction.
 	return ai ? ai->getNextMoodCheckTime() : TheGameLogic->getFrame();
 }
 
@@ -869,10 +857,10 @@ void TurretAI::friend_checkForIdleMoodTarget()
 	UnsignedInt moodAdjust = ai->getMoodMatrixActionAdjustment(MM_Action_Idle);
 	if (moodAdjust & MAA_Affect_Range_IgnoreAll)
 		return;
-	
+
 	// If we're supposed to attack based on mood, etc, then we will do so.
 	Object* enemy = ai->getNextMoodTarget( true, true );
-	if (enemy) 
+	if (enemy)
 	{
 		setTurretTargetObject(enemy, FALSE);
 		obj->chooseBestWeaponForTarget(enemy, PREFER_MOST_DAMAGE, CMD_FROM_AI);
@@ -950,7 +938,7 @@ StateReturnType TurretAIAimTurretState::onEnter()
  */
 StateReturnType TurretAIAimTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIAimTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIAimTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	TurretAI* turret = getTurretAI();
 	Object* obj = turret->getOwner();
@@ -961,7 +949,7 @@ StateReturnType TurretAIAimTurretState::update()
 	}
 
 	Object* enemy;
-	AIUpdateInterface* enemyAI=NULL;
+	AIUpdateInterface* enemyAI=nullptr;
 	Coord3D enemyPosition;
 	Bool preventing = false;
 	TurretTargetType targetType =  turret->friend_getTurretTarget(enemy, enemyPosition);
@@ -980,53 +968,53 @@ StateReturnType TurretAIAimTurretState::update()
 			Bool isPrimaryEnemy = (enemy && enemy == ai->getGoalObject());
 			// if the enemy is gone, or we're out of range, or it changed teams, the attack is over
 			Bool ableToAttackTarget = obj->isAbleToAttack();
-			if (ableToAttackTarget) 
+			if (ableToAttackTarget)
 			{
 				// srj sez: since we have already acquired this target, we should use
 				// the CONTINUED attack tests, not the new ones.
 				CanAttackResult result = obj->getAbleToAttackSpecificObject(
-							turret->isForceAttacking() ? ATTACK_CONTINUED_TARGET_FORCED : ATTACK_CONTINUED_TARGET, 
-							enemy, 
-							ai->getLastCommandSource() 
+							turret->isForceAttacking() ? ATTACK_CONTINUED_TARGET_FORCED : ATTACK_CONTINUED_TARGET,
+							enemy,
+							ai->getLastCommandSource()
 						);
 				ableToAttackTarget = result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING;
 			}
-			
+
 			nothingInRange = !turret->friend_isAnyWeaponInRangeOf(enemy);
-			if (enemy == NULL || !ableToAttackTarget || 
+			if (enemy == nullptr || !ableToAttackTarget ||
 					(!isPrimaryEnemy && nothingInRange) ||
 					enemy->getTeam() != turret->friend_getVictimInitialTeam()
 			)
 			{
 				if (turret->friend_getTargetWasSetByIdleMood())
 				{
-					turret->setTurretTargetObject(NULL, FALSE);
+					turret->setTurretTargetObject(nullptr, FALSE);
 				}
 				return STATE_FAILURE;
 			}
 
 			// aim turret towards enemy (turret angle is relative to its parent object)
-			if (enemy->isKindOf(KINDOF_BRIDGE)) 
+			if (enemy->isKindOf(KINDOF_BRIDGE))
 			{
 				// Special case - bridges have two attackable points at either end.
 				TBridgeAttackInfo info;
 				TheTerrainLogic->getBridgeAttackPoints(enemy, &info);
 				Real distSqr = ThePartitionManager->getDistanceSquared( obj, &info.attackPoint1, FROM_BOUNDINGSPHERE_3D );
-				if (distSqr > ThePartitionManager->getDistanceSquared( obj, &info.attackPoint2, FROM_BOUNDINGSPHERE_3D ) ) 
+				if (distSqr > ThePartitionManager->getDistanceSquared( obj, &info.attackPoint2, FROM_BOUNDINGSPHERE_3D ) )
 				{
 					enemyPosition = info.attackPoint2;
-				}	
-				else 
+				}
+				else
 				{
 					enemyPosition = info.attackPoint1;
 				}
-			}	
-			else 
+			}
+			else
 			{
 				enemyPosition = *enemy->getPosition();
 			}
 
-			enemyAI = enemy ? enemy->getAI() : NULL;
+			enemyAI = enemy ? enemy->getAI() : nullptr;
 
 			// add ourself as a targeter BEFORE calling isTemporarilyPreventingAimSuccess().
 			// we do this every time thru, just in case we get into a squabble with our ai
@@ -1038,7 +1026,7 @@ StateReturnType TurretAIAimTurretState::update()
 
 			// don't use 'enemy' after this point, just the position. to help
 			// enforce this, we'll null it out.
-			enemy = NULL;
+			enemy = nullptr;
 			break;
 		}
 
@@ -1051,16 +1039,16 @@ StateReturnType TurretAIAimTurretState::update()
 
 	WeaponSlotType slot;
 	Weapon *curWeapon = obj->getCurrentWeapon( &slot );
-	if (!curWeapon) 
+	if (!curWeapon)
 	{
-		DEBUG_CRASH(("TurretAIAimTurretState::update - curWeapon is NULL.\n"));
+		DEBUG_CRASH(("TurretAIAimTurretState::update - curWeapon is null."));
 		return STATE_FAILURE;
 	}
 
 	Real turnSpeedModifier = 1.0f;// Just like how recentering turns you half speed, sweeping can change your turn speed
-	
+
 	Real relAngle = ThePartitionManager->getRelativeAngle2D( obj, &enemyPosition );
-	
+
 	Real aimAngle = relAngle;
 	Real sweep = turret->getTurretFireAngleSweepForWeaponSlot( slot );
 	if (sweep > 0.0f && turret->friend_isSweepEnabled())
@@ -1107,12 +1095,12 @@ StateReturnType TurretAIAimTurretState::update()
 
 			//GetVectorTo only takes Object as the first, but we want the angle from our Weapon to the
 			// target, not us to the target.  Raise our side to get the line to make sense.
-			v.z -= obj->getGeometryInfo().getMaxHeightAbovePosition() / 2; // I kinda hate our logic/client split.  
+			v.z -= obj->getGeometryInfo().getMaxHeightAbovePosition() / 2; // I kinda hate our logic/client split.
 			//The point to fire from should be intrinsic to the turret, but in reality it is very slow to look it up.
 
 			Real actualPitch;
 			if( v.length() > 0 )
-				actualPitch = ASin( v.z / v.length() ); 
+				actualPitch = ASin( v.z / v.length() );
 			else
 				actualPitch = 0;// Don't point at NAN, just point at 0 if they are right on us
 
@@ -1135,7 +1123,7 @@ StateReturnType TurretAIAimTurretState::update()
 				if (adjust) {
 					Real range = curWeapon->getAttackRange(obj);
 					Real dist = v.length();
-					if (range<1) range = 1; // paranoia. jba.		 
+					if (range<1) range = 1; // paranoia. jba.
 					// As the unit gets closer, reduce the pitch so we don't shoot over him.
 					Real groundPitch = turret->getGroundUnitPitch() * (dist/range);
 					desiredPitch = actualPitch+groundPitch;
@@ -1150,10 +1138,10 @@ StateReturnType TurretAIAimTurretState::update()
 		pitchAlignedToNemesis = turret->friend_turnTowardsPitch(desiredPitch, 1.0f);
 	}
 
-	// For now, we require that we're within range before we can successfully exit the AIM state, 
+	// For now, we require that we're within range before we can successfully exit the AIM state,
 	// and move into the FIRE state.
-	if (turnAlignedToNemesis && pitchAlignedToNemesis && 
-		((enemyForDistanceCheckOnly && curWeapon->isWithinAttackRange(obj, enemyForDistanceCheckOnly)) || 
+	if (turnAlignedToNemesis && pitchAlignedToNemesis &&
+		((enemyForDistanceCheckOnly && curWeapon->isWithinAttackRange(obj, enemyForDistanceCheckOnly)) ||
 		 (!enemyForDistanceCheckOnly && curWeapon->isWithinAttackRange(obj, &enemyPosition))))
 	{
 #ifdef INTER_TURRET_DELAY
@@ -1208,7 +1196,7 @@ StateReturnType TurretAIRecenterTurretState::onEnter()
 
 StateReturnType TurretAIRecenterTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	TurretAI* turret = getTurretAI();
 	Bool angleAligned = turret->friend_turnTowardsAngle(turret->getNaturalTurretAngle(), 0.5f, 0.0f);
@@ -1237,7 +1225,7 @@ void TurretAIRecenterTurretState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1250,14 +1238,14 @@ void TurretAIIdleState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextIdleScan);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TurretAIIdleState::loadPostProcess( void )
+void TurretAIIdleState::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 void TurretAIIdleState::resetIdleScan()
@@ -1271,13 +1259,13 @@ void TurretAIIdleState::resetIdleScan()
 StateReturnType TurretAIIdleState::onEnter()
 {
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
-	if (ai) 
+	if (ai)
 	{
 		ai->resetNextMoodCheckTime();
 		if (ai->friend_getTurretSync() == getTurretAI()->friend_getWhichTurret())
 			ai->friend_setTurretSync(TURRET_INVALID);
-	} // ai doesn't exist if the object was just created this frame.
-	
+	}
+
 	resetIdleScan();
 
 	TurretAI* turret = getTurretAI();
@@ -1287,12 +1275,12 @@ StateReturnType TurretAIIdleState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIIdleState::update()
 {
-	//DEBUG_LOG(("TurretAIIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIIdleState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_nextIdleScan)
 	{
-		// this is redundant, since we're exiting the state, and will reset 
+		// this is redundant, since we're exiting the state, and will reset
 		// it again in onEnter next time (srj)
 		// resetIdleScan();
 
@@ -1314,7 +1302,7 @@ StateReturnType TurretAIIdleState::update()
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleScanState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1327,14 +1315,14 @@ void TurretAIIdleScanState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferReal(&m_desiredAngle);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TurretAIIdleScanState::loadPostProcess( void )
+void TurretAIIdleScanState::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIIdleScanState::onEnter()
@@ -1358,7 +1346,7 @@ StateReturnType TurretAIIdleScanState::onEnter()
 
 StateReturnType TurretAIIdleScanState::update()
 {
-	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	Bool angleAligned = getTurretAI()->friend_turnTowardsAngle(getTurretAI()->getNaturalTurretAngle() + m_desiredAngle, 0.5f, 0.0f);
 	Bool pitchAligned = getTurretAI()->friend_turnTowardsPitch(getTurretAI()->getNaturalTurretPitch(), 0.5f);
@@ -1386,7 +1374,7 @@ void TurretAIIdleScanState::onExit( StateExitType status )
 // ------------------------------------------------------------------------------------------------
 void TurretAIHoldTurretState::crc( Xfer *xfer )
 {
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method */
@@ -1399,14 +1387,14 @@ void TurretAIHoldTurretState::xfer( Xfer *xfer )
   xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_timestamp);
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void TurretAIHoldTurretState::loadPostProcess( void )
+void TurretAIHoldTurretState::loadPostProcess()
 {
-}  // end loadPostProcess
+}
 
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIHoldTurretState::onEnter()
@@ -1429,7 +1417,7 @@ void TurretAIHoldTurretState::onExit( StateExitType status )
 
 StateReturnType TurretAIHoldTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIHoldTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIHoldTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	if (TheGameLogic->getFrame() >= m_timestamp)
 		return STATE_SUCCESS;

@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Library/LZOSTRAW.CPP                              $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Library/LZOSTRAW.cpp                              $*
+ *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 7/22/97 11:37a                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 1                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   LZOStraw::Get -- Fetch data through the LZO processor.                                    *
  *   LZOStraw::LZOStraw -- Constructor for LZO straw object.                                   *
  *   LZOStraw::~LZOStraw -- Destructor for the LZO straw.                                      *
@@ -66,8 +66,8 @@
 LZOStraw::LZOStraw(CompControl control, int blocksize) :
 		Control(control),
 		Counter(0),
-		Buffer(NULL),
-		Buffer2(NULL),
+		Buffer(nullptr),
+		Buffer2(nullptr),
 		BlockSize(blocksize)
 {
 	SafetyMargin = BlockSize;
@@ -92,13 +92,13 @@ LZOStraw::LZOStraw(CompControl control, int blocksize) :
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-LZOStraw::~LZOStraw(void)
+LZOStraw::~LZOStraw()
 {
 	delete [] Buffer;
-	Buffer = NULL;
+	Buffer = nullptr;
 
 	delete [] Buffer2;
-	Buffer2 = NULL;
+	Buffer2 = nullptr;
 }
 
 
@@ -125,14 +125,14 @@ LZOStraw::~LZOStraw(void)
  *=============================================================================================*/
 int LZOStraw::Get(void * destbuf, int slen)
 {
-	assert(Buffer != NULL);
+	assert(Buffer != nullptr);
 
 	int total = 0;
 
 	/*
 	**	Verify parameters for legality.
 	*/
-	if (destbuf == NULL || slen < 1) {
+	if (destbuf == nullptr || slen < 1) {
 		return(0);
 	}
 
@@ -164,7 +164,7 @@ int LZOStraw::Get(void * destbuf, int slen)
 			incount = Straw::Get(staging_buffer, BlockHeader.CompCount);
 			if (incount != BlockHeader.CompCount) break;
 			unsigned int length = sizeof(Buffer);
-			lzo1x_decompress ((unsigned char*)staging_buffer, BlockHeader.CompCount, (unsigned char*)Buffer, &length, NULL);
+			lzo1x_decompress ((unsigned char*)staging_buffer, BlockHeader.CompCount, (unsigned char*)Buffer, &length, nullptr);
 			delete [] staging_buffer;
 			Counter = BlockHeader.UncompCount;
 		} else {

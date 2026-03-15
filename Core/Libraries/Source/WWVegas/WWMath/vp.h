@@ -26,8 +26,8 @@
  *                                                                                             *
  *                     Org Author:: Hector Yee                                                  *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 13                                                          $*
@@ -45,12 +45,7 @@
  *----------------------------------------------------------------------------------------------*
  */
 
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef VECTORPROCESSOR_H
-#define VECTORPROCESSOR_H
 
 class Vector2;
 class Vector3;
@@ -89,5 +84,3 @@ public:
 	static void ClampMin(float *dst, float *src, const float min, const int count);
 	static void Power(float *dst, float *src, const float pow, const int count);
 };
-
-#endif // VECTORPROCESSOR_H

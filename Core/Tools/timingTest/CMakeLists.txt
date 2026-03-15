@@ -10,8 +10,7 @@ set_target_properties(core_timingtest PROPERTIES OUTPUT_NAME timingtest)
 target_sources(core_timingtest PRIVATE ${TIMINGTEST_SRC})
 
 target_link_libraries(core_timingtest PRIVATE
-    core_config
-    core_utility
+    corei_always
     winmm
 )
 

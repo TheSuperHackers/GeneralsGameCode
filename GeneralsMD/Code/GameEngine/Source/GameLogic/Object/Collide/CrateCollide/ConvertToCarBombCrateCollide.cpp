@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "Common/Player.h"
 #include "Common/Radar.h"
 #include "Common/ThingTemplate.h"
@@ -39,21 +39,20 @@
 #include "GameLogic/Module/ConvertToCarBombCrateCollide.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/ScriptEngine.h"
-#include "GameLogic/ExperienceTracker.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ConvertToCarBombCrateCollide::ConvertToCarBombCrateCollide( Thing *thing, const ModuleData* moduleData ) : CrateCollide( thing, moduleData )
 {
 
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide( void )
+ConvertToCarBombCrateCollide::~ConvertToCarBombCrateCollide()
 {
 
-}  
+}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -68,7 +67,7 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 	{
 		return FALSE;
 	}
-	
+
 	if( other->isKindOf( KINDOF_AIRCRAFT ) || other->isKindOf( KINDOF_BOAT ) )
 	{
 		//Can't make carbombs out of planes and boats!
@@ -95,7 +94,7 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 		//weaponset.
 		return FALSE;
 	}
-	
+
 	// Also make sure that the car isn't already a carbomb!
 	if( other->testWeaponSetFlag( WEAPONSET_CARBOMB ) )
 	{
@@ -168,7 +167,7 @@ void ConvertToCarBombCrateCollide::crc( Xfer *xfer )
 	// extend base class
 	CrateCollide::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -186,15 +185,15 @@ void ConvertToCarBombCrateCollide::xfer( Xfer *xfer )
 	// extend base class
 	CrateCollide::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void ConvertToCarBombCrateCollide::loadPostProcess( void )
+void ConvertToCarBombCrateCollide::loadPostProcess()
 {
 
 	// extend base class
 	CrateCollide::loadPostProcess();
 
-}  // end loadPostProcess
+}

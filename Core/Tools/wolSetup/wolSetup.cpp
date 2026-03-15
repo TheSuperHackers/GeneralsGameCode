@@ -20,9 +20,6 @@
 // Defines the entry point for the application.
 // Author: Matthew D. Campbell, December 2001
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,16 +32,16 @@ void registerDLL(const char *dllName)
 {
 	HINSTANCE hLib = LoadLibrary(dllName);
 	FARPROC lpDllEntryPoint;
-	
+
 	if (hLib < (HINSTANCE)HINSTANCE_ERROR)
 	{
 		return;
 	}
-	
+
 	// Find the entry point.
-	(FARPROC&)lpDllEntryPoint = GetProcAddress(hLib, 
+	(FARPROC&)lpDllEntryPoint = GetProcAddress(hLib,
 		"DllRegisterServer");
-	if (lpDllEntryPoint != NULL)
+	if (lpDllEntryPoint != nullptr)
 		(*lpDllEntryPoint)();
 	else
 		;//unable to locate entry point
@@ -52,7 +49,7 @@ void registerDLL(const char *dllName)
 
 
 
-HINSTANCE g_hInst = NULL;
+HINSTANCE g_hInst = nullptr;
 
 LRESULT CALLBACK MainDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -65,13 +62,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	checkInstalledWolapiVersion();
 
-	DialogBox(g_hInst, (LPCTSTR)IDD_MAINBOX, NULL, (DLGPROC)MainDialogProc);
+	DialogBox(g_hInst, (LPCTSTR)IDD_MAINBOX, nullptr, (DLGPROC)MainDialogProc);
 
 	return 0;
 }
 
 
-// Mesage handler for generals setup box.
+// Message handler for generals setup box.
 LRESULT CALLBACK GeneralsSetupDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
@@ -124,7 +121,7 @@ void updateDisplay(HWND hDlg)
 	SetDlgItemText(hDlg, IDC_TEXT_GENERALSDIR, g_generalsFilename);
 }
 
-// Mesage handler for main dialog box.
+// Message handler for main dialog box.
 LRESULT CALLBACK MainDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)

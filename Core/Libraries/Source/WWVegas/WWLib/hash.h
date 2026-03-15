@@ -17,31 +17,25 @@
 */
 
 /* $Header: /Commando/Code/wwlib/hash.h 2     6/15/00 10:53a Byon_g $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/hash.h                                 $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 6/15/00 9:43a                                               $* 
- *                                                                                             * 
- *                    $Revision:: 2                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/hash.h                                 $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 6/15/00 9:43a                                               $*
+ *                                                                                             *
+ *                    $Revision:: 2                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HASH_H
-#define HASH_H
 
 #include "always.h"
 
@@ -54,10 +48,10 @@ class HashTableIteratorClass;
 class	HashableClass {
 
 public:
-	HashableClass( void ) : NextHash( NULL ) {}
-	virtual	~HashableClass( void ) {}
+	HashableClass() : NextHash( nullptr ) {}
+	virtual	~HashableClass() {}
 
-	virtual	const char * Get_Key( void )				= 0;
+	virtual	const char * Get_Key()				= 0;
 
 private:
 	HashableClass * NextHash;
@@ -73,9 +67,9 @@ class HashTableClass {
 
 public:
 	HashTableClass( int size );
-	~HashTableClass( void );
+	~HashTableClass();
 
-	void					Reset( void );
+	void					Reset();
 	void					Add( HashableClass * entry );
 	bool					Remove( HashableClass * entry );
 
@@ -100,12 +94,12 @@ class HashTableIteratorClass
 {
 public:
 	HashTableIteratorClass( HashTableClass & table ) : Table( table ) {}
-	virtual ~HashTableIteratorClass( void ) {}
+	virtual ~HashTableIteratorClass() {}
 
-	void					First( void );
-	void					Next( void );
-	bool					Is_Done( void )		{ return CurrentEntry == NULL; }
-	HashableClass *	Get_Current( void )	{ return CurrentEntry; }
+	void					First();
+	void					Next();
+	bool					Is_Done()		{ return CurrentEntry == nullptr; }
+	HashableClass *	Get_Current()	{ return CurrentEntry; }
 
 private:
 	const HashTableClass	&	Table;
@@ -113,8 +107,5 @@ private:
 	HashableClass *			CurrentEntry;
 	HashableClass *			NextEntry;
 
-	void					Advance_Next( void );
+	void					Advance_Next();
 };
-
-
-#endif	// HASH_H

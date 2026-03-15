@@ -24,12 +24,12 @@
 
 // FILE: W3DRoadBuffer.h //////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-//                                                                          
-//                       Westwood Studios Pacific.                          
-//                                                                          
-//                       Confidential Information					         
-//                Copyright (C) 2001 - All Rights Reserved                  
-//                                                                          
+//
+//                       Westwood Studios Pacific.
+//
+//                       Confidential Information
+//                Copyright (C) 2001 - All Rights Reserved
+//
 //-----------------------------------------------------------------------------
 //
 // Project:    RTS3
@@ -44,11 +44,8 @@
 
 #pragma once
 
-#ifndef __W3DROAD_BUFFER_H_
-#define __W3DROAD_BUFFER_H_
-
 //-----------------------------------------------------------------------------
-//           Includes                                                      
+//           Includes
 //-----------------------------------------------------------------------------
 #include "always.h"
 #include "rendobj.h"
@@ -72,7 +69,7 @@
 //-----------------------------------------------------------------------------
 
 
-enum {bottomLeft=0, bottomRight=1, topLeft=2, topRight=3, NUM_CORNERS=4};												 
+enum {bottomLeft=0, bottomRight=1, topLeft=2, topRight=3, NUM_CORNERS=4};
 #define MAX_LINKS 6
 #define DEFAULT_ROAD_SCALE (8.0f)
 #define MIN_ROAD_SEGMENT (0.25f)
@@ -84,13 +81,13 @@ struct TRoadPt
 	Vector2 top;
 	Vector2 bottom;
 	Int			count;
-	Bool		last;	
+	Bool		last;
 	Bool		multi;
 	Bool		isAngled;
 	Bool		isJoin;
 };
 
-struct TRoadSegInfo 
+struct TRoadSegInfo
 {
 	Vector2 loc;
 	Vector2 roadNormal;
@@ -103,20 +100,20 @@ struct TRoadSegInfo
 
 // The individual data for a road segment.
 enum {MAX_SEG_VERTEX=500, MAX_SEG_INDEX=2000};
-enum TCorner CPP_11(: Int) 
+enum TCorner CPP_11(: Int)
 {
-	SEGMENT, 
-	CURVE, 
-	TEE, 
-	FOUR_WAY, 
-	THREE_WAY_Y, 
-	THREE_WAY_H, 
-	THREE_WAY_H_FLIP, 
-	ALPHA_JOIN, 
+	SEGMENT,
+	CURVE,
+	TEE,
+	FOUR_WAY,
+	THREE_WAY_Y,
+	THREE_WAY_H,
+	THREE_WAY_H_FLIP,
+	ALPHA_JOIN,
 	NUM_JOINS
 };
 
-class RoadSegment 
+class RoadSegment
 {
 public:
 	TRoadPt		m_pt1;					///< Drawing location pt1 to pt2.
@@ -135,25 +132,25 @@ protected:
 	TRoadSegInfo					m_info;
 	SphereClass						m_bounds;
 public:
-	RoadSegment(void);
-	~RoadSegment(void);
+	RoadSegment();
+	~RoadSegment();
 public:
 	void SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex);
 	void SetIndexBuffer(UnsignedShort *ib, Int numIndex);
 	void SetRoadSegInfo(TRoadSegInfo *pInfo) {m_info = *pInfo;};
 	void GetRoadSegInfo(TRoadSegInfo *pInfo) {*pInfo = m_info;};
-	const SphereClass &getBounds(void) {return m_bounds;};
-	Int GetNumVertex(void) {return m_numVertex;};
-	Int GetNumIndex(void) {return m_numIndex;};
+	const SphereClass &getBounds() {return m_bounds;};
+	Int GetNumVertex() {return m_numVertex;};
+	Int GetNumIndex() {return m_numIndex;};
 	Int GetVertices(VertexFormatXYZDUV1 *destination_vb, Int numToCopy);
 	Int GetIndices(UnsignedShort *destination_ib, Int numToCopy, Int offset);
-	void updateSegLighting(void);
+	void updateSegLighting();
 } ;
 
 class RoadType {
 public:
-	RoadType(void);
-	~RoadType(void);
+	RoadType();
+	~RoadType();
 protected:
 	TextureClass *m_roadTexture;	///<Roads texture
 	DX8VertexBufferClass	*m_vertexRoad;	///<Road vertex buffer.
@@ -169,21 +166,21 @@ protected:
 #endif
 public:
 	void loadTexture(AsciiString path, Int id);
-	void applyTexture(void);
-	Int getStacking(void) {return m_stackingOrder;}
+	void applyTexture();
+	Int getStacking() {return m_stackingOrder;}
 	void setStacking(Int order) {m_stackingOrder = order;}
-	Int getUniqueID(void) {return m_uniqueID;};
-	DX8VertexBufferClass	*getVB(void) {return m_vertexRoad;};
-	DX8IndexBufferClass		*getIB(void) {return m_indexRoad;}
-	Int getNumVertices(void) {return m_numRoadVertices;}
+	Int getUniqueID() {return m_uniqueID;};
+	DX8VertexBufferClass	*getVB() {return m_vertexRoad;};
+	DX8IndexBufferClass		*getIB() {return m_indexRoad;}
+	Int getNumVertices() {return m_numRoadVertices;}
 	void setNumIndices(Int num) {m_numRoadIndices=num;}
 	void setNumVertices(Int num) {m_numRoadVertices=num;}
-	Int getNumIndices(void) {return m_numRoadIndices;}
+	Int getNumIndices() {return m_numRoadIndices;}
 #ifdef LOAD_TEST_ASSETS
-	void setAutoLoaded(void) {m_isAutoLoaded = true;};
-	Bool isAutoLoaded(void) {return m_isAutoLoaded;};
-	AsciiString getPath(void) {return(m_texturePath);};
-	void loadTestTexture(void);
+	void setAutoLoaded() {m_isAutoLoaded = true;};
+	Bool isAutoLoaded() {return m_isAutoLoaded;};
+	AsciiString getPath() {return(m_texturePath);};
+	void loadTestTexture();
 #endif
 }	;
 
@@ -192,26 +189,26 @@ class WorldHeightMap;
 // W3DRoadBuffer: Draw buffer for the roads.
 //
 //
-class W3DRoadBuffer 
-{	
+class W3DRoadBuffer
+{
 friend class BaseHeightMapRenderObjClass;
 public:
 
-	W3DRoadBuffer(void);
-	~W3DRoadBuffer(void);
-	/// Loads the roads from the map objects list.  
+	W3DRoadBuffer();
+	~W3DRoadBuffer();
+	/// Loads the roads from the map objects list.
 	void loadRoads();
 	/// Empties the road buffer.
-	void clearAllRoads(void);
+	void clearAllRoads();
 	/// Draws the roads.  Uses terrain bounds for culling.
 	void drawRoads(CameraClass * camera, TextureClass *cloudTexture, TextureClass *noiseTexture, Bool wireframe,
 																	Int minX, Int maxX, Int minY, Int maxY, RefRenderObjListIterator *pDynamicLightsIterator);
 	/// Sets the map pointer.
 	void setMap(WorldHeightMap *pMap);
 	/// Updates the diffuse lighting in the buffers.
-	void updateLighting(void);
+	void updateLighting();
 	/// Notifies that the camera moved.
-	void updateCenter(void);
+	void updateCenter();
 
 protected:
 	RoadType *m_roadTypes;	///<Roads texture
@@ -236,50 +233,48 @@ protected:
 
 	Bool m_updateBuffers; ///< If true, update the vertex buffers.
 
-	void addMapObjects(void);
+	void addMapObjects();
 	void addMapObject(RoadSegment *pRoad, Bool updateTheCounts);
 	void adjustStacking(Int topUniqueID, Int bottomUniqueID);
 	Int findCrossTypeJoinVector(Vector2 loc, Vector2 *joinVector, Int uniqueID);
 	void flipTheRoad(RoadSegment *pRoad) {TRoadPt tmp=pRoad->m_pt1; pRoad->m_pt1 = pRoad->m_pt2; pRoad->m_pt2 = tmp;}; ///< Flips the loc1 and loc2 info.
 	void insertCurveSegmentAt(Int ndx1, Int ndx2);
-	void insertCrossTypeJoins(void);
+	void insertCrossTypeJoins();
 	void insertJoinAt(Int ndx);
 	void miter(Int ndx1, Int ndx2);
 	void moveRoadSegTo(Int fromNdx, Int toNdx);
 	void checkLinkAfter(Int ndx);
 	void checkLinkBefore(Int ndx);
 	void updateCounts(RoadSegment *pRoad);
-	void updateCountsAndFlags(void);
-	void insertCurveSegments(void);
-	void insertTeeIntersections(void);
+	void updateCountsAndFlags();
+	void insertCurveSegments();
+	void insertTeeIntersections();
 	void insertTee(Vector2 loc, Int index1, Real scale);
 	Bool insertY(Vector2 loc, Int index1, Real scale);
 	void insert4Way(Vector2 loc, Int index1, Real scale);
-	void offset4Way(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, TRoadPt *pr3, TRoadPt *pc4, Vector2 loc, Vector2 alignVector, Real widthInTexture); 
+	void offset4Way(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, TRoadPt *pr3, TRoadPt *pc4, Vector2 loc, Vector2 alignVector, Real widthInTexture);
 	void offset3Way(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, Vector2 loc, Vector2 upVector, Vector2 teeVector, Real widthInTexture);
 	void offsetY(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, Vector2 loc, Vector2 upVector, Real widthInTexture);
 	void offsetH(TRoadPt *pc1, TRoadPt *pc2, TRoadPt *pc3, Vector2 loc, Vector2 upVector, Vector2 teeVector, Bool flip, Bool mirror, Real widthInTexture);
-	void preloadRoadsInVertexAndIndexBuffers(void); ///< Fills the index and vertex buffers for drawing.
+	void preloadRoadsInVertexAndIndexBuffers(); ///< Fills the index and vertex buffers for drawing.
 	void preloadRoadSegment(RoadSegment *pRoad); ///< Fills the index and vertex buffers for drawing 1 segment.
 	void loadCurve(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Real scale); ///< Fills the index and vertex buffers for drawing 1 fade.
 	void loadTee(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Bool is4way, Real scale); ///< Fills the index and vertex buffers for drawing 1 tee intersection.
 	void loadY(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Real scale); ///< Fills the index and vertex buffers for drawing 1 Y intersection.
 	void loadAlphaJoin(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Real scale); ///< Fills the index and vertex buffers for drawing 1 alpha blend cap.
 	void loadH(RoadSegment *pRoad, Vector2 loc1, Vector2 loc2, Bool flip, Real scale); ///< Fills the index and vertex buffers for drawing 1 h tee intersection.
-	void loadFloatSection(RoadSegment *pRoad, Vector2 loc, 
+	void loadFloatSection(RoadSegment *pRoad, Vector2 loc,
 														Vector2 roadVector, Real height, Real left, Real right, Real uOffset, Real vOffset, Real scale);
-	void loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc, 
+	void loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc,
 														Vector2 roadNormal, Vector2 roadVector,
-														Vector2 *cornersP, 
+														Vector2 *cornersP,
 														Real uOffset, Real vOffset, Real uScale, Real vScale);
 	void loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RefRenderObjListIterator *pDynamicLightsIterator);
-	void loadRoadsInVertexAndIndexBuffers(void); ///< Fills the index and vertex buffers for drawing.
+	void loadRoadsInVertexAndIndexBuffers(); ///< Fills the index and vertex buffers for drawing.
 	void loadLitRoadsInVertexAndIndexBuffers(RefRenderObjListIterator *pDynamicLightsIterator); ///< Fills the index and vertex buffers for drawing.
 	void loadRoadSegment(UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RoadSegment *pRoad); ///< Fills the index and vertex buffers for drawing 1 segment.
-	void allocateRoadBuffers(void);							 ///< Allocates the buffers.
-	void freeRoadBuffers(void);									 ///< Frees the index and vertex buffers.
+	void allocateRoadBuffers();							 ///< Allocates the buffers.
+	void freeRoadBuffers();									 ///< Frees the index and vertex buffers.
 	Bool visibilityChanged(const IRegion2D &bounds);								///< Returns true if some roads are now visible that weren't, or vice versa.
 	void rotateAbout(Vector2 *ptP, Vector2 center, Real angle);
 };
-
-#endif  // end __W3DROAD_BUFFER_H_

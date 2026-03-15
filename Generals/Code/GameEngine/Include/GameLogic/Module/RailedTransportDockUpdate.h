@@ -27,8 +27,7 @@
 // Desc:   Railed transport dock update
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __RAILED_TRANSPORT_DOCK_UPDATE_H_
-#define __RAILED_TRANSPORT_DOCK_UPDATE_H_
+#pragma once
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/DockUpdate.h"
@@ -40,11 +39,11 @@ class RailedTransportDockUpdateModuleData : public DockUpdateModuleData
 
 public:
 
-	RailedTransportDockUpdateModuleData( void );
+	RailedTransportDockUpdateModuleData();
 
 	static void buildFieldParse( MultiIniFieldParse &p );
 
-	UnsignedInt m_pullInsideDurationInFrames;		/**< how long it takes to pull object inside 
+	UnsignedInt m_pullInsideDurationInFrames;		/**< how long it takes to pull object inside
 																									 once they're at the dock action point */
 	UnsignedInt m_pushOutsideDurationInFrames;	/**< how long it takes to push object outside
 																									 when we're unloading */
@@ -58,8 +57,8 @@ class RailedTransportDockUpdateInterface
 
 public:
 
-	virtual Bool isLoadingOrUnloading( void ) = 0;
-	virtual void unloadAll( void ) = 0;
+	virtual Bool isLoadingOrUnloading() = 0;
+	virtual void unloadAll() = 0;
 	virtual void unloadSingleObject( Object *obj ) = 0;
 
 };
@@ -79,26 +78,26 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// module interfaces
-	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface( void ) { return this; }
+	virtual RailedTransportDockUpdateInterface *getRailedTransportDockUpdateInterface() override { return this; }
 
 	// update module methods
-	virtual UpdateSleepTime update( void );
+	virtual UpdateSleepTime update() override;
 
 	// dock methods
-	virtual DockUpdateInterface* getDockUpdateInterface() { return this; }
-	virtual Bool action( Object* docker, Object *drone = NULL );
-	virtual Bool isClearToEnter( Object const* docker ) const;
+	virtual DockUpdateInterface* getDockUpdateInterface() override { return this; }
+	virtual Bool action( Object* docker, Object *drone = nullptr ) override;
+	virtual Bool isClearToEnter( Object const* docker ) const override;
 
 	// our own methods
-	virtual Bool isLoadingOrUnloading( void );
-	virtual void unloadAll( void );
-	virtual void unloadSingleObject( Object *obj );
+	virtual Bool isLoadingOrUnloading() override;
+	virtual void unloadAll() override;
+	virtual void unloadSingleObject( Object *obj ) override;
 
 protected:
 
-	void doPullInDocking( void );							///< pull docking objects into us
-	void doPushOutDocking( void );						///< push unloading objects out of us
-	void unloadNext( void );									///< start the "next" object we have inside us coming out
+	void doPullInDocking();							///< pull docking objects into us
+	void doPushOutDocking();						///< push unloading objects out of us
+	void unloadNext();									///< start the "next" object we have inside us coming out
 
 	ObjectID m_dockingObjectID;								///< object docking with us
 	Real m_pullInsideDistancePerFrame;				///< when docking, pull object inside this much each frame
@@ -109,5 +108,3 @@ protected:
 	Int m_unloadCount;												///< count used to govern unloading 1 or all objects
 
 };
-
-#endif  // end __RAILED_TRANSPORT_DOCK_UPDATE_H_

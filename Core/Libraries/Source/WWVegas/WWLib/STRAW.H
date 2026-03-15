@@ -16,29 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /G/wwlib/STRAW.H                                            $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /G/wwlib/STRAW.h                                            $*
+ *                                                                                             *
  *                      $Author:: Eric_c                                                      $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 4/02/99 12:00p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 3                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
 
-#ifndef STRAW_H
-#define STRAW_H
+#pragma once
 
 /*
 **	This is a demand driven data carrier. It will retrieve the byte request by passing
@@ -50,8 +46,8 @@
 class Straw
 {
 	public:
-		Straw(void) : ChainTo(0), ChainFrom(0) {}
-		virtual ~Straw(void);
+		Straw() : ChainTo(0), ChainFrom(0) {}
+		virtual ~Straw();
 
 		virtual void Get_From(Straw * pipe);
 		void Get_From(Straw & pipe) {Get_From(&pipe);}
@@ -71,6 +67,3 @@ class Straw
 		Straw(Straw & rvalue);
 		Straw & operator = (Straw const & pipe);
 };
-
-
-#endif

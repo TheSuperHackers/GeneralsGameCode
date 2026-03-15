@@ -20,7 +20,7 @@
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
 
-#include "StdAfx.h" 
+#include "StdAfx.h"
 #include "resource.h"
 
 #include "BlendEdgeTool.h"
@@ -34,18 +34,18 @@
 //
 /// Constructor
 BlendEdgeTool::BlendEdgeTool(void) :
-	Tool(ID_BLEND_EDGE_TOOL, IDC_BLEND_EDGE) 
+	Tool(ID_BLEND_EDGE_TOOL, IDC_BLEND_EDGE)
 {
 }
-	
+
 /// Destructor
-BlendEdgeTool::~BlendEdgeTool(void) 
+BlendEdgeTool::~BlendEdgeTool(void)
 {
 }
 
 
 /** Execute the tool on mouse down - Place an object. */
-void BlendEdgeTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void BlendEdgeTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt);
@@ -54,10 +54,10 @@ void BlendEdgeTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWo
 }
 
 /** Execute the tool on mouse up - Blend an edge.  Left mouse blends the from
-texture to the to texture based on your drag. Right mouse blends the 
-foreground texture in the texture panel on top of the destination tile for 
+texture to the to texture based on your drag. Right mouse blends the
+foreground texture in the texture panel on top of the destination tile for
 custom blends. */
-void BlendEdgeTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
+void BlendEdgeTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	CPoint from, to;
 

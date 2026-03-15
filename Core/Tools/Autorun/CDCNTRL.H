@@ -22,7 +22,7 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Renegade Setup/Autorun/CDCNTRL.H                           $*
+ *                     $Archive:: /Renegade Setup/Autorun/CDCNTRL.h                           $*
  *                                                                                             *
  *                      $Author:: Maria_l                                                     $*
  *                                                                                             *
@@ -35,11 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma once
-
-
-#ifndef _CDCNTRL
-#define _CDCNTRL
-
 
 //#include	"always.h"
 //#include	<winmin.h>
@@ -149,8 +144,3 @@ typedef struct _PARAMBLOCK {
 } PARAMBLOCK, *PPARAMBLOCK;
 
 #pragma pack()
-
-
-
-#endif	//_CDCNTRL
-

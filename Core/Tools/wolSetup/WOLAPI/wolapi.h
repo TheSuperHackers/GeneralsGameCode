@@ -24,7 +24,7 @@
  */
 /* Compiler settings for .\WOLAPI.idl:
     Oicf (OptLev=i2), W1, Zp8, env=Win32, ms_ext, c_ext
-    error checks: allocation ref bounds_check enum stub_data 
+    error checks: allocation ref bounds_check enum stub_data
 */
 //@@MIDL_FILE_HEADING(  )
 
@@ -51,9 +51,9 @@
 
 #ifdef __cplusplus
 extern "C"{
-#endif 
+#endif
 
-/* Forward Declarations */ 
+/* Forward Declarations */
 
 #ifndef __IRTPatcher_FWD_DEFINED__
 #define __IRTPatcher_FWD_DEFINED__
@@ -198,56 +198,56 @@ typedef struct Chat2 Chat2;
 #include "ocidl.h"
 
 void __RPC_FAR * __RPC_USER MIDL_user_allocate(size_t);
-void __RPC_USER MIDL_user_free( void __RPC_FAR * ); 
+void __RPC_USER MIDL_user_free( void __RPC_FAR * );
 
 #ifndef __IRTPatcher_INTERFACE_DEFINED__
 #define __IRTPatcher_INTERFACE_DEFINED__
 
 /* interface IRTPatcher */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_IRTPatcher;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("925CDEDE-71B9-11D1-B1C5-006097176556")
     IRTPatcher : public IUnknown
     {
     public:
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE ApplyPatch( 
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE ApplyPatch(
             /* [string][in] */ LPCSTR destpath,
             /* [string][in] */ LPCSTR filename) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IRTPatcherVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IRTPatcher __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IRTPatcher __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IRTPatcher __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *ApplyPatch )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *ApplyPatch )(
             IRTPatcher __RPC_FAR * This,
             /* [string][in] */ LPCSTR destpath,
             /* [string][in] */ LPCSTR filename);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )(
             IRTPatcher __RPC_FAR * This);
-        
+
         END_INTERFACE
     } IRTPatcherVtbl;
 
@@ -256,7 +256,7 @@ EXTERN_C const IID IID_IRTPatcher;
         CONST_VTBL struct IRTPatcherVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -284,7 +284,7 @@ EXTERN_C const IID IID_IRTPatcher;
 
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcher_ApplyPatch_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcher_ApplyPatch_Proxy(
     IRTPatcher __RPC_FAR * This,
     /* [string][in] */ LPCSTR destpath,
     /* [string][in] */ LPCSTR filename);
@@ -297,7 +297,7 @@ void __RPC_STUB IRTPatcher_ApplyPatch_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcher_PumpMessages_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcher_PumpMessages_Proxy(
     IRTPatcher __RPC_FAR * This);
 
 
@@ -316,52 +316,52 @@ void __RPC_STUB IRTPatcher_PumpMessages_Stub(
 #define __IRTPatcherEvent_INTERFACE_DEFINED__
 
 /* interface IRTPatcherEvent */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_IRTPatcherEvent;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("925CDEE3-71B9-11D1-B1C5-006097176556")
     IRTPatcherEvent : public IUnknown
     {
     public:
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnProgress( 
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnProgress(
             /* [in] */ LPCSTR filename,
             /* [in] */ int progress) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnTermination( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnTermination(
             /* [in] */ BOOL success) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IRTPatcherEventVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IRTPatcherEvent __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IRTPatcherEvent __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IRTPatcherEvent __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnProgress )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnProgress )(
             IRTPatcherEvent __RPC_FAR * This,
             /* [in] */ LPCSTR filename,
             /* [in] */ int progress);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnTermination )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnTermination )(
             IRTPatcherEvent __RPC_FAR * This,
             /* [in] */ BOOL success);
-        
+
         END_INTERFACE
     } IRTPatcherEventVtbl;
 
@@ -370,7 +370,7 @@ EXTERN_C const IID IID_IRTPatcherEvent;
         CONST_VTBL struct IRTPatcherEventVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -398,7 +398,7 @@ EXTERN_C const IID IID_IRTPatcherEvent;
 
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcherEvent_OnProgress_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcherEvent_OnProgress_Proxy(
     IRTPatcherEvent __RPC_FAR * This,
     /* [in] */ LPCSTR filename,
     /* [in] */ int progress);
@@ -411,7 +411,7 @@ void __RPC_STUB IRTPatcherEvent_OnProgress_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcherEvent_OnTermination_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IRTPatcherEvent_OnTermination_Proxy(
     IRTPatcherEvent __RPC_FAR * This,
     /* [in] */ BOOL success);
 
@@ -431,13 +431,13 @@ void __RPC_STUB IRTPatcherEvent_OnTermination_Stub(
 #define __IChat_INTERFACE_DEFINED__
 
 /* interface IChat */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 typedef long time_t;
 #endif
 
-typedef 
+typedef
 enum Locale
     {	LOC_UNKNOWN	= 0,
 	LOC_OTHER	= LOC_UNKNOWN + 1,
@@ -628,336 +628,336 @@ typedef struct Squad Squad;
 EXTERN_C const IID IID_IChat;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("4DD3BAF4-7579-11D1-B1C6-006097176556")
     IChat : public IUnknown
     {
     public:
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestServerList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestServerList(
             /* [in] */ unsigned long SKU,
             /* [in] */ unsigned long current_version,
             /* [in] */ LPCSTR loginname,
             /* [in] */ LPCSTR password,
             /* [in] */ int timeout) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestConnection( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestConnection(
             /* [in] */ Server __RPC_FAR *server,
             /* [in] */ int timeout,
             int domangle) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelList(
             /* [in] */ int channelType,
             /* [in] */ int autoping) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelCreate( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelCreate(
             /* [in] */ Channel __RPC_FAR *channel) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelJoin( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelJoin(
             /* [in] */ Channel __RPC_FAR *channel) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelLeave( void) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserList( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicMessage(
             /* [in] */ LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateMessage(
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR message) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLogout( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateGameOptions( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateGameOptions(
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR options) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicGameOptions( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicGameOptions(
             /* [in] */ LPCSTR options) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicAction(
             /* [in] */ LPCSTR action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateAction(
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestGameStart( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestGameStart(
             /* [in] */ User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelTopic( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelTopic(
             /* [in] */ LPCSTR topic) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetVersion( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetVersion(
             /* [in] */ unsigned long __RPC_FAR *version) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserKick( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserKick(
             /* [in] */ User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserIP( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserIP(
             /* [in] */ User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetGametypeInfo( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetGametypeInfo(
             unsigned int gtype,
             int icon_size,
             unsigned char __RPC_FAR *__RPC_FAR *bitmap,
             int __RPC_FAR *bmp_bytes,
             LPCSTR __RPC_FAR *name,
             LPCSTR __RPC_FAR *URL) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestFind( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestFind(
             User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPage(
             User __RPC_FAR *user,
             LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetFindPage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetFindPage(
             int findOn,
             int pageOn) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetSquelch( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetSquelch(
             User __RPC_FAR *user,
             int squelch) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetSquelch( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetSquelch(
             User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetChannelFilter( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetChannelFilter(
             int channelType) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestGameEnd( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetLangFilter( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetLangFilter(
             int onoff) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelBan( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelBan(
             LPCSTR name,
             int ban) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetGametypeList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetGametypeList(
             LPCSTR __RPC_FAR *list) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetHelpURL( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetHelpURL(
             LPCSTR __RPC_FAR *url) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetProductSKU( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetProductSKU(
             unsigned long SKU) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetNick( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetNick(
             int num,
             LPCSTR __RPC_FAR *nick,
             LPCSTR __RPC_FAR *pass) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetNick( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetNick(
             int num,
             LPCSTR nick,
             LPCSTR pass,
             int domangle) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetLobbyCount( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetLobbyCount(
             int __RPC_FAR *count) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestRawMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestRawMessage(
             LPCSTR ircmsg) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetAttributeValue( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetAttributeValue(
             LPCSTR attrib,
             LPCSTR __RPC_FAR *value) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetAttributeValue( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetAttributeValue(
             LPCSTR attrib,
             LPCSTR value) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetChannelExInfo( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetChannelExInfo(
             LPCSTR info) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE StopAutoping( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSquadInfo( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSquadInfo(
             unsigned long id) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetTeam( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetTeam(
             int team) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetLocale( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetLocale(
             Locale locale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserLocale( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserLocale(
             User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserTeam( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserTeam(
             User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetNickLocale( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetNickLocale(
             int nicknum,
             Locale __RPC_FAR *locale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetNickLocale( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetNickLocale(
             int nicknum,
             Locale locale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetLocaleString( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetLocaleString(
             LPCSTR __RPC_FAR *loc_string,
             Locale locale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetLocaleCount( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetLocaleCount(
             int __RPC_FAR *num) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetClientVersion( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetClientVersion(
             unsigned long version) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetCodepageFilter( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetCodepageFilter(
             int filter) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyList( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyAdd( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyAdd(
             User __RPC_FAR *newbuddy) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyDelete( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyDelete(
             User __RPC_FAR *buddy) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicUnicodeMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicUnicodeMessage(
             /* [in] */ const unsigned short __RPC_FAR *message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateUnicodeMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateUnicodeMessage(
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ const unsigned short __RPC_FAR *message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicUnicodeAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicUnicodeAction(
             /* [in] */ const unsigned short __RPC_FAR *action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateUnicodeAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateUnicodeAction(
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ const unsigned short __RPC_FAR *action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUnicodePage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUnicodePage(
             User __RPC_FAR *user,
             const unsigned short __RPC_FAR *message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetPlayerCount( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetPlayerCount(
             unsigned int currentPlayers,
             unsigned int maxPlayers) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestServerTime( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestInsiderStatus( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestInsiderStatus(
             User __RPC_FAR *users) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetLocalIP( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSquadByName( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSquadByName(
             LPCSTR name) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IChatVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IChat __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IChat __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestServerList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestServerList )(
             IChat __RPC_FAR * This,
             /* [in] */ unsigned long SKU,
             /* [in] */ unsigned long current_version,
             /* [in] */ LPCSTR loginname,
             /* [in] */ LPCSTR password,
             /* [in] */ int timeout);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestConnection )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestConnection )(
             IChat __RPC_FAR * This,
             /* [in] */ Server __RPC_FAR *server,
             /* [in] */ int timeout,
             int domangle);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelList )(
             IChat __RPC_FAR * This,
             /* [in] */ int channelType,
             /* [in] */ int autoping);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelCreate )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelCreate )(
             IChat __RPC_FAR * This,
             /* [in] */ Channel __RPC_FAR *channel);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelJoin )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelJoin )(
             IChat __RPC_FAR * This,
             /* [in] */ Channel __RPC_FAR *channel);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelLeave )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelLeave )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserList )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicMessage )(
             IChat __RPC_FAR * This,
             /* [in] */ LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateMessage )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLogout )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLogout )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateGameOptions )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateGameOptions )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR options);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicGameOptions )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicGameOptions )(
             IChat __RPC_FAR * This,
             /* [in] */ LPCSTR options);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicAction )(
             IChat __RPC_FAR * This,
             /* [in] */ LPCSTR action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateAction )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestGameStart )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestGameStart )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelTopic )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelTopic )(
             IChat __RPC_FAR * This,
             /* [in] */ LPCSTR topic);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetVersion )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetVersion )(
             IChat __RPC_FAR * This,
             /* [in] */ unsigned long __RPC_FAR *version);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserKick )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserKick )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserIP )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserIP )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetGametypeInfo )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetGametypeInfo )(
             IChat __RPC_FAR * This,
             unsigned int gtype,
             int icon_size,
@@ -965,196 +965,196 @@ EXTERN_C const IID IID_IChat;
             int __RPC_FAR *bmp_bytes,
             LPCSTR __RPC_FAR *name,
             LPCSTR __RPC_FAR *URL);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestFind )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestFind )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPage )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *user,
             LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetFindPage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetFindPage )(
             IChat __RPC_FAR * This,
             int findOn,
             int pageOn);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetSquelch )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetSquelch )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *user,
             int squelch);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetSquelch )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetSquelch )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetChannelFilter )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetChannelFilter )(
             IChat __RPC_FAR * This,
             int channelType);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestGameEnd )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestGameEnd )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetLangFilter )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetLangFilter )(
             IChat __RPC_FAR * This,
             int onoff);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelBan )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelBan )(
             IChat __RPC_FAR * This,
             LPCSTR name,
             int ban);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetGametypeList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetGametypeList )(
             IChat __RPC_FAR * This,
             LPCSTR __RPC_FAR *list);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetHelpURL )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetHelpURL )(
             IChat __RPC_FAR * This,
             LPCSTR __RPC_FAR *url);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetProductSKU )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetProductSKU )(
             IChat __RPC_FAR * This,
             unsigned long SKU);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetNick )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetNick )(
             IChat __RPC_FAR * This,
             int num,
             LPCSTR __RPC_FAR *nick,
             LPCSTR __RPC_FAR *pass);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetNick )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetNick )(
             IChat __RPC_FAR * This,
             int num,
             LPCSTR nick,
             LPCSTR pass,
             int domangle);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetLobbyCount )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetLobbyCount )(
             IChat __RPC_FAR * This,
             int __RPC_FAR *count);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestRawMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestRawMessage )(
             IChat __RPC_FAR * This,
             LPCSTR ircmsg);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetAttributeValue )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetAttributeValue )(
             IChat __RPC_FAR * This,
             LPCSTR attrib,
             LPCSTR __RPC_FAR *value);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetAttributeValue )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetAttributeValue )(
             IChat __RPC_FAR * This,
             LPCSTR attrib,
             LPCSTR value);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetChannelExInfo )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetChannelExInfo )(
             IChat __RPC_FAR * This,
             LPCSTR info);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *StopAutoping )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *StopAutoping )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSquadInfo )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSquadInfo )(
             IChat __RPC_FAR * This,
             unsigned long id);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetTeam )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetTeam )(
             IChat __RPC_FAR * This,
             int team);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetLocale )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetLocale )(
             IChat __RPC_FAR * This,
             Locale locale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserLocale )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserLocale )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserTeam )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserTeam )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetNickLocale )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetNickLocale )(
             IChat __RPC_FAR * This,
             int nicknum,
             Locale __RPC_FAR *locale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetNickLocale )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetNickLocale )(
             IChat __RPC_FAR * This,
             int nicknum,
             Locale locale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetLocaleString )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetLocaleString )(
             IChat __RPC_FAR * This,
             LPCSTR __RPC_FAR *loc_string,
             Locale locale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetLocaleCount )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetLocaleCount )(
             IChat __RPC_FAR * This,
             int __RPC_FAR *num);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetClientVersion )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetClientVersion )(
             IChat __RPC_FAR * This,
             unsigned long version);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetCodepageFilter )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetCodepageFilter )(
             IChat __RPC_FAR * This,
             int filter);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestBuddyList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestBuddyList )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestBuddyAdd )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestBuddyAdd )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *newbuddy);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestBuddyDelete )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestBuddyDelete )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *buddy);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicUnicodeMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicUnicodeMessage )(
             IChat __RPC_FAR * This,
             /* [in] */ const unsigned short __RPC_FAR *message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateUnicodeMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateUnicodeMessage )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ const unsigned short __RPC_FAR *message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicUnicodeAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPublicUnicodeAction )(
             IChat __RPC_FAR * This,
             /* [in] */ const unsigned short __RPC_FAR *action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateUnicodeAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPrivateUnicodeAction )(
             IChat __RPC_FAR * This,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ const unsigned short __RPC_FAR *action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUnicodePage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUnicodePage )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *user,
             const unsigned short __RPC_FAR *message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetPlayerCount )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetPlayerCount )(
             IChat __RPC_FAR * This,
             unsigned int currentPlayers,
             unsigned int maxPlayers);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestServerTime )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestServerTime )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestInsiderStatus )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestInsiderStatus )(
             IChat __RPC_FAR * This,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetLocalIP )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSetLocalIP )(
             IChat __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSquadByName )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestSquadByName )(
             IChat __RPC_FAR * This,
             LPCSTR name);
-        
+
         END_INTERFACE
     } IChatVtbl;
 
@@ -1163,7 +1163,7 @@ EXTERN_C const IID IID_IChat;
         CONST_VTBL struct IChatVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -1380,7 +1380,7 @@ EXTERN_C const IID IID_IChat;
 
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_PumpMessages_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_PumpMessages_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -1391,7 +1391,7 @@ void __RPC_STUB IChat_PumpMessages_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestServerList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestServerList_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ unsigned long SKU,
     /* [in] */ unsigned long current_version,
@@ -1407,7 +1407,7 @@ void __RPC_STUB IChat_RequestServerList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestConnection_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestConnection_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ Server __RPC_FAR *server,
     /* [in] */ int timeout,
@@ -1421,7 +1421,7 @@ void __RPC_STUB IChat_RequestConnection_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelList_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ int channelType,
     /* [in] */ int autoping);
@@ -1434,7 +1434,7 @@ void __RPC_STUB IChat_RequestChannelList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelCreate_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelCreate_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ Channel __RPC_FAR *channel);
 
@@ -1446,7 +1446,7 @@ void __RPC_STUB IChat_RequestChannelCreate_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelJoin_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelJoin_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ Channel __RPC_FAR *channel);
 
@@ -1458,7 +1458,7 @@ void __RPC_STUB IChat_RequestChannelJoin_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelLeave_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelLeave_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -1469,7 +1469,7 @@ void __RPC_STUB IChat_RequestChannelLeave_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserList_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -1480,7 +1480,7 @@ void __RPC_STUB IChat_RequestUserList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicMessage_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ LPCSTR message);
 
@@ -1492,7 +1492,7 @@ void __RPC_STUB IChat_RequestPublicMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateMessage_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *users,
     /* [in] */ LPCSTR message);
@@ -1505,7 +1505,7 @@ void __RPC_STUB IChat_RequestPrivateMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestLogout_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestLogout_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -1516,7 +1516,7 @@ void __RPC_STUB IChat_RequestLogout_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateGameOptions_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateGameOptions_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *users,
     /* [in] */ LPCSTR options);
@@ -1529,7 +1529,7 @@ void __RPC_STUB IChat_RequestPrivateGameOptions_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicGameOptions_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicGameOptions_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ LPCSTR options);
 
@@ -1541,7 +1541,7 @@ void __RPC_STUB IChat_RequestPublicGameOptions_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicAction_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ LPCSTR action);
 
@@ -1553,7 +1553,7 @@ void __RPC_STUB IChat_RequestPublicAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateAction_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *users,
     /* [in] */ LPCSTR action);
@@ -1566,7 +1566,7 @@ void __RPC_STUB IChat_RequestPrivateAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestGameStart_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestGameStart_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *users);
 
@@ -1578,7 +1578,7 @@ void __RPC_STUB IChat_RequestGameStart_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelTopic_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelTopic_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ LPCSTR topic);
 
@@ -1590,7 +1590,7 @@ void __RPC_STUB IChat_RequestChannelTopic_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetVersion_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetVersion_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ unsigned long __RPC_FAR *version);
 
@@ -1602,7 +1602,7 @@ void __RPC_STUB IChat_GetVersion_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserKick_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserKick_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *user);
 
@@ -1614,7 +1614,7 @@ void __RPC_STUB IChat_RequestUserKick_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserIP_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserIP_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *user);
 
@@ -1626,7 +1626,7 @@ void __RPC_STUB IChat_RequestUserIP_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetGametypeInfo_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetGametypeInfo_Proxy(
     IChat __RPC_FAR * This,
     unsigned int gtype,
     int icon_size,
@@ -1643,7 +1643,7 @@ void __RPC_STUB IChat_GetGametypeInfo_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestFind_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestFind_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *user);
 
@@ -1655,7 +1655,7 @@ void __RPC_STUB IChat_RequestFind_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPage_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *user,
     LPCSTR message);
@@ -1668,7 +1668,7 @@ void __RPC_STUB IChat_RequestPage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetFindPage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetFindPage_Proxy(
     IChat __RPC_FAR * This,
     int findOn,
     int pageOn);
@@ -1681,7 +1681,7 @@ void __RPC_STUB IChat_SetFindPage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetSquelch_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetSquelch_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *user,
     int squelch);
@@ -1694,7 +1694,7 @@ void __RPC_STUB IChat_SetSquelch_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetSquelch_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetSquelch_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *user);
 
@@ -1706,7 +1706,7 @@ void __RPC_STUB IChat_GetSquelch_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetChannelFilter_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetChannelFilter_Proxy(
     IChat __RPC_FAR * This,
     int channelType);
 
@@ -1718,7 +1718,7 @@ void __RPC_STUB IChat_SetChannelFilter_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestGameEnd_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestGameEnd_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -1729,7 +1729,7 @@ void __RPC_STUB IChat_RequestGameEnd_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetLangFilter_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetLangFilter_Proxy(
     IChat __RPC_FAR * This,
     int onoff);
 
@@ -1741,7 +1741,7 @@ void __RPC_STUB IChat_SetLangFilter_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelBan_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestChannelBan_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR name,
     int ban);
@@ -1754,7 +1754,7 @@ void __RPC_STUB IChat_RequestChannelBan_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetGametypeList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetGametypeList_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR __RPC_FAR *list);
 
@@ -1766,7 +1766,7 @@ void __RPC_STUB IChat_GetGametypeList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetHelpURL_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetHelpURL_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR __RPC_FAR *url);
 
@@ -1778,7 +1778,7 @@ void __RPC_STUB IChat_GetHelpURL_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetProductSKU_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetProductSKU_Proxy(
     IChat __RPC_FAR * This,
     unsigned long SKU);
 
@@ -1790,7 +1790,7 @@ void __RPC_STUB IChat_SetProductSKU_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetNick_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetNick_Proxy(
     IChat __RPC_FAR * This,
     int num,
     LPCSTR __RPC_FAR *nick,
@@ -1804,7 +1804,7 @@ void __RPC_STUB IChat_GetNick_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetNick_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetNick_Proxy(
     IChat __RPC_FAR * This,
     int num,
     LPCSTR nick,
@@ -1819,7 +1819,7 @@ void __RPC_STUB IChat_SetNick_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetLobbyCount_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetLobbyCount_Proxy(
     IChat __RPC_FAR * This,
     int __RPC_FAR *count);
 
@@ -1831,7 +1831,7 @@ void __RPC_STUB IChat_GetLobbyCount_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestRawMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestRawMessage_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR ircmsg);
 
@@ -1843,7 +1843,7 @@ void __RPC_STUB IChat_RequestRawMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetAttributeValue_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetAttributeValue_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR attrib,
     LPCSTR __RPC_FAR *value);
@@ -1856,7 +1856,7 @@ void __RPC_STUB IChat_GetAttributeValue_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetAttributeValue_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetAttributeValue_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR attrib,
     LPCSTR value);
@@ -1869,7 +1869,7 @@ void __RPC_STUB IChat_SetAttributeValue_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetChannelExInfo_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetChannelExInfo_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR info);
 
@@ -1881,7 +1881,7 @@ void __RPC_STUB IChat_SetChannelExInfo_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_StopAutoping_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_StopAutoping_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -1892,7 +1892,7 @@ void __RPC_STUB IChat_StopAutoping_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSquadInfo_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSquadInfo_Proxy(
     IChat __RPC_FAR * This,
     unsigned long id);
 
@@ -1904,7 +1904,7 @@ void __RPC_STUB IChat_RequestSquadInfo_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetTeam_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetTeam_Proxy(
     IChat __RPC_FAR * This,
     int team);
 
@@ -1916,7 +1916,7 @@ void __RPC_STUB IChat_RequestSetTeam_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetLocale_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetLocale_Proxy(
     IChat __RPC_FAR * This,
     Locale locale);
 
@@ -1928,7 +1928,7 @@ void __RPC_STUB IChat_RequestSetLocale_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserLocale_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserLocale_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *users);
 
@@ -1940,7 +1940,7 @@ void __RPC_STUB IChat_RequestUserLocale_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserTeam_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUserTeam_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *users);
 
@@ -1952,7 +1952,7 @@ void __RPC_STUB IChat_RequestUserTeam_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetNickLocale_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetNickLocale_Proxy(
     IChat __RPC_FAR * This,
     int nicknum,
     Locale __RPC_FAR *locale);
@@ -1965,7 +1965,7 @@ void __RPC_STUB IChat_GetNickLocale_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetNickLocale_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetNickLocale_Proxy(
     IChat __RPC_FAR * This,
     int nicknum,
     Locale locale);
@@ -1978,7 +1978,7 @@ void __RPC_STUB IChat_SetNickLocale_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetLocaleString_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetLocaleString_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR __RPC_FAR *loc_string,
     Locale locale);
@@ -1991,7 +1991,7 @@ void __RPC_STUB IChat_GetLocaleString_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetLocaleCount_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_GetLocaleCount_Proxy(
     IChat __RPC_FAR * This,
     int __RPC_FAR *num);
 
@@ -2003,7 +2003,7 @@ void __RPC_STUB IChat_GetLocaleCount_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetClientVersion_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetClientVersion_Proxy(
     IChat __RPC_FAR * This,
     unsigned long version);
 
@@ -2015,7 +2015,7 @@ void __RPC_STUB IChat_SetClientVersion_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetCodepageFilter_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_SetCodepageFilter_Proxy(
     IChat __RPC_FAR * This,
     int filter);
 
@@ -2027,7 +2027,7 @@ void __RPC_STUB IChat_SetCodepageFilter_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestBuddyList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestBuddyList_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -2038,7 +2038,7 @@ void __RPC_STUB IChat_RequestBuddyList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestBuddyAdd_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestBuddyAdd_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *newbuddy);
 
@@ -2050,7 +2050,7 @@ void __RPC_STUB IChat_RequestBuddyAdd_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestBuddyDelete_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestBuddyDelete_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *buddy);
 
@@ -2062,7 +2062,7 @@ void __RPC_STUB IChat_RequestBuddyDelete_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicUnicodeMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicUnicodeMessage_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ const unsigned short __RPC_FAR *message);
 
@@ -2074,7 +2074,7 @@ void __RPC_STUB IChat_RequestPublicUnicodeMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateUnicodeMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateUnicodeMessage_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *users,
     /* [in] */ const unsigned short __RPC_FAR *message);
@@ -2087,7 +2087,7 @@ void __RPC_STUB IChat_RequestPrivateUnicodeMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicUnicodeAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPublicUnicodeAction_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ const unsigned short __RPC_FAR *action);
 
@@ -2099,7 +2099,7 @@ void __RPC_STUB IChat_RequestPublicUnicodeAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateUnicodeAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestPrivateUnicodeAction_Proxy(
     IChat __RPC_FAR * This,
     /* [in] */ User __RPC_FAR *users,
     /* [in] */ const unsigned short __RPC_FAR *action);
@@ -2112,7 +2112,7 @@ void __RPC_STUB IChat_RequestPrivateUnicodeAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUnicodePage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestUnicodePage_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *user,
     const unsigned short __RPC_FAR *message);
@@ -2125,7 +2125,7 @@ void __RPC_STUB IChat_RequestUnicodePage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetPlayerCount_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetPlayerCount_Proxy(
     IChat __RPC_FAR * This,
     unsigned int currentPlayers,
     unsigned int maxPlayers);
@@ -2138,7 +2138,7 @@ void __RPC_STUB IChat_RequestSetPlayerCount_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestServerTime_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestServerTime_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -2149,7 +2149,7 @@ void __RPC_STUB IChat_RequestServerTime_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestInsiderStatus_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestInsiderStatus_Proxy(
     IChat __RPC_FAR * This,
     User __RPC_FAR *users);
 
@@ -2161,7 +2161,7 @@ void __RPC_STUB IChat_RequestInsiderStatus_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetLocalIP_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSetLocalIP_Proxy(
     IChat __RPC_FAR * This);
 
 
@@ -2172,7 +2172,7 @@ void __RPC_STUB IChat_RequestSetLocalIP_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSquadByName_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat_RequestSquadByName_Proxy(
     IChat __RPC_FAR * This,
     LPCSTR name);
 
@@ -2192,518 +2192,518 @@ void __RPC_STUB IChat_RequestSquadByName_Stub(
 #define __IChatEvent_INTERFACE_DEFINED__
 
 /* interface IChatEvent */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_IChatEvent;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("4DD3BAF6-7579-11D1-B1C6-006097176556")
     IChatEvent : public IUnknown
     {
     public:
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerList( 
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerList(
             /* [in] */ HRESULT res,
             /* [in] */ Server __RPC_FAR *servers) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUpdateList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUpdateList(
             /* [in] */ HRESULT res,
             /* [in] */ Update __RPC_FAR *updates) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerError( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerError(
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR ircmsg) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnConnection( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnConnection(
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR motd) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnMessageOfTheDay( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnMessageOfTheDay(
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR motd) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelList(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channels) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelCreate( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelCreate(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelJoin( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelJoin(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelLeave( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelLeave(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelTopic( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelTopic(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ LPCSTR topic) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateAction(
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicAction(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             User __RPC_FAR *user,
             /* [in] */ LPCSTR action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserList(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicMessage(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateMessage(
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSystemMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSystemMessage(
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnNetStatus( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnNetStatus(
             /* [in] */ HRESULT res) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnLogout( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnLogout(
             /* [in] */ HRESULT status,
             /* [in] */ User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateGameOptions( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateGameOptions(
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR options) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicGameOptions( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicGameOptions(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR options) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnGameStart( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnGameStart(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ int gameid) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserKick( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserKick(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *kicked,
             /* [in] */ User __RPC_FAR *kicker) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserIP( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserIP(
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnFind( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnFind(
             HRESULT res,
             Channel __RPC_FAR *chan) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPageSend( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPageSend(
             HRESULT res) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPaged( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPaged(
             HRESULT res,
             User __RPC_FAR *user,
             LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerBannedYou( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerBannedYou(
             HRESULT res,
             time_t bannedTill) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserFlags( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserFlags(
             HRESULT res,
             LPCSTR name,
             unsigned int flags,
             unsigned int mask) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelBan( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelBan(
             HRESULT res,
             LPCSTR name,
             int banned) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSquadInfo( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSquadInfo(
             HRESULT res,
             unsigned long id,
             Squad __RPC_FAR *squad) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserLocale( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserLocale(
             HRESULT res,
             User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserTeam( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserTeam(
             HRESULT res,
             User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSetLocale( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSetLocale(
             HRESULT res,
             Locale newlocale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSetTeam( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSetTeam(
             HRESULT res,
             int newteam) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnBuddyList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnBuddyList(
             HRESULT res,
             User __RPC_FAR *buddy_list) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnBuddyAdd( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnBuddyAdd(
             HRESULT res,
             User __RPC_FAR *buddy_added) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnBuddyDelete( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnBuddyDelete(
             HRESULT res,
             User __RPC_FAR *buddy_deleted) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicUnicodeMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicUnicodeMessage(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateUnicodeMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateUnicodeMessage(
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateUnicodeAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPrivateUnicodeAction(
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicUnicodeAction( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPublicUnicodeAction(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *action) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPagedUnicode( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnPagedUnicode(
             HRESULT res,
             User __RPC_FAR *user,
             const unsigned short __RPC_FAR *message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerTime( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnServerTime(
             HRESULT res,
             time_t stime) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnInsiderStatus( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnInsiderStatus(
             HRESULT res,
             User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSetLocalIP( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnSetLocalIP(
             HRESULT res,
             LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelListBegin( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelListBegin(
             /* [in] */ HRESULT res) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelListEntry( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelListEntry(
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelListEnd( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelListEnd(
             /* [in] */ HRESULT res) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IChatEventVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IChatEvent __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IChatEvent __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerList )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Server __RPC_FAR *servers);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUpdateList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUpdateList )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Update __RPC_FAR *updates);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerError )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerError )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR ircmsg);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnConnection )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnConnection )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR motd);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnMessageOfTheDay )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnMessageOfTheDay )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR motd);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelList )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channels);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelCreate )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelCreate )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelJoin )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelJoin )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelLeave )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelLeave )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelTopic )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelTopic )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ LPCSTR topic);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateAction )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicAction )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             User __RPC_FAR *user,
             /* [in] */ LPCSTR action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserList )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicMessage )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateMessage )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSystemMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSystemMessage )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnNetStatus )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnNetStatus )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnLogout )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnLogout )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT status,
             /* [in] */ User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateGameOptions )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateGameOptions )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR options);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicGameOptions )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicGameOptions )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ LPCSTR options);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnGameStart )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnGameStart )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ int gameid);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserKick )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserKick )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *kicked,
             /* [in] */ User __RPC_FAR *kicker);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserIP )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserIP )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnFind )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnFind )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             Channel __RPC_FAR *chan);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPageSend )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPageSend )(
             IChatEvent __RPC_FAR * This,
             HRESULT res);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPaged )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPaged )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *user,
             LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerBannedYou )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerBannedYou )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             time_t bannedTill);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserFlags )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserFlags )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             LPCSTR name,
             unsigned int flags,
             unsigned int mask);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelBan )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelBan )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             LPCSTR name,
             int banned);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSquadInfo )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSquadInfo )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             unsigned long id,
             Squad __RPC_FAR *squad);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserLocale )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserLocale )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserTeam )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserTeam )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSetLocale )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSetLocale )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             Locale newlocale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSetTeam )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSetTeam )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             int newteam);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnBuddyList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnBuddyList )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *buddy_list);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnBuddyAdd )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnBuddyAdd )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *buddy_added);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnBuddyDelete )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnBuddyDelete )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *buddy_deleted);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicUnicodeMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicUnicodeMessage )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateUnicodeMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateUnicodeMessage )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateUnicodeAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPrivateUnicodeAction )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicUnicodeAction )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPublicUnicodeAction )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel,
             User __RPC_FAR *user,
             /* [in] */ const unsigned short __RPC_FAR *action);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPagedUnicode )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPagedUnicode )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *user,
             const unsigned short __RPC_FAR *message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerTime )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnServerTime )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             time_t stime);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnInsiderStatus )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnInsiderStatus )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSetLocalIP )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnSetLocalIP )(
             IChatEvent __RPC_FAR * This,
             HRESULT res,
             LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelListBegin )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelListBegin )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelListEntry )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelListEntry )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res,
             /* [in] */ Channel __RPC_FAR *channel);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelListEnd )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelListEnd )(
             IChatEvent __RPC_FAR * This,
             /* [in] */ HRESULT res);
-        
+
         END_INTERFACE
     } IChatEventVtbl;
 
@@ -2712,7 +2712,7 @@ EXTERN_C const IID IID_IChatEvent;
         CONST_VTBL struct IChatEventVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -2878,7 +2878,7 @@ EXTERN_C const IID IID_IChatEvent;
 
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerList_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Server __RPC_FAR *servers);
@@ -2891,7 +2891,7 @@ void __RPC_STUB IChatEvent_OnServerList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUpdateList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUpdateList_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Update __RPC_FAR *updates);
@@ -2904,7 +2904,7 @@ void __RPC_STUB IChatEvent_OnUpdateList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerError_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerError_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ LPCSTR ircmsg);
@@ -2917,7 +2917,7 @@ void __RPC_STUB IChatEvent_OnServerError_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnConnection_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnConnection_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ LPCSTR motd);
@@ -2930,7 +2930,7 @@ void __RPC_STUB IChatEvent_OnConnection_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnMessageOfTheDay_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnMessageOfTheDay_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ LPCSTR motd);
@@ -2943,7 +2943,7 @@ void __RPC_STUB IChatEvent_OnMessageOfTheDay_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelList_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channels);
@@ -2956,7 +2956,7 @@ void __RPC_STUB IChatEvent_OnChannelList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelCreate_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelCreate_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel);
@@ -2969,7 +2969,7 @@ void __RPC_STUB IChatEvent_OnChannelCreate_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelJoin_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelJoin_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -2983,7 +2983,7 @@ void __RPC_STUB IChatEvent_OnChannelJoin_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelLeave_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelLeave_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -2997,7 +2997,7 @@ void __RPC_STUB IChatEvent_OnChannelLeave_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelTopic_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelTopic_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3011,7 +3011,7 @@ void __RPC_STUB IChatEvent_OnChannelTopic_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateAction_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ User __RPC_FAR *user,
@@ -3025,7 +3025,7 @@ void __RPC_STUB IChatEvent_OnPrivateAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicAction_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3040,7 +3040,7 @@ void __RPC_STUB IChatEvent_OnPublicAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserList_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3054,7 +3054,7 @@ void __RPC_STUB IChatEvent_OnUserList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicMessage_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3069,7 +3069,7 @@ void __RPC_STUB IChatEvent_OnPublicMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateMessage_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ User __RPC_FAR *user,
@@ -3083,7 +3083,7 @@ void __RPC_STUB IChatEvent_OnPrivateMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSystemMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSystemMessage_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ LPCSTR message);
@@ -3096,7 +3096,7 @@ void __RPC_STUB IChatEvent_OnSystemMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnNetStatus_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnNetStatus_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res);
 
@@ -3108,7 +3108,7 @@ void __RPC_STUB IChatEvent_OnNetStatus_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnLogout_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnLogout_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT status,
     /* [in] */ User __RPC_FAR *user);
@@ -3121,7 +3121,7 @@ void __RPC_STUB IChatEvent_OnLogout_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateGameOptions_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateGameOptions_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ User __RPC_FAR *user,
@@ -3135,7 +3135,7 @@ void __RPC_STUB IChatEvent_OnPrivateGameOptions_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicGameOptions_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicGameOptions_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3150,7 +3150,7 @@ void __RPC_STUB IChatEvent_OnPublicGameOptions_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnGameStart_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnGameStart_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3165,7 +3165,7 @@ void __RPC_STUB IChatEvent_OnGameStart_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserKick_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserKick_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3180,7 +3180,7 @@ void __RPC_STUB IChatEvent_OnUserKick_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserIP_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserIP_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ User __RPC_FAR *user);
@@ -3193,7 +3193,7 @@ void __RPC_STUB IChatEvent_OnUserIP_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnFind_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnFind_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     Channel __RPC_FAR *chan);
@@ -3206,7 +3206,7 @@ void __RPC_STUB IChatEvent_OnFind_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPageSend_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPageSend_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res);
 
@@ -3218,7 +3218,7 @@ void __RPC_STUB IChatEvent_OnPageSend_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPaged_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPaged_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *user,
@@ -3232,7 +3232,7 @@ void __RPC_STUB IChatEvent_OnPaged_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerBannedYou_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerBannedYou_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     time_t bannedTill);
@@ -3245,7 +3245,7 @@ void __RPC_STUB IChatEvent_OnServerBannedYou_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserFlags_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserFlags_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     LPCSTR name,
@@ -3260,7 +3260,7 @@ void __RPC_STUB IChatEvent_OnUserFlags_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelBan_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelBan_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     LPCSTR name,
@@ -3274,7 +3274,7 @@ void __RPC_STUB IChatEvent_OnChannelBan_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSquadInfo_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSquadInfo_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     unsigned long id,
@@ -3288,7 +3288,7 @@ void __RPC_STUB IChatEvent_OnSquadInfo_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserLocale_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserLocale_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *users);
@@ -3301,7 +3301,7 @@ void __RPC_STUB IChatEvent_OnUserLocale_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserTeam_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnUserTeam_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *users);
@@ -3314,7 +3314,7 @@ void __RPC_STUB IChatEvent_OnUserTeam_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSetLocale_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSetLocale_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     Locale newlocale);
@@ -3327,7 +3327,7 @@ void __RPC_STUB IChatEvent_OnSetLocale_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSetTeam_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSetTeam_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     int newteam);
@@ -3340,7 +3340,7 @@ void __RPC_STUB IChatEvent_OnSetTeam_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnBuddyList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnBuddyList_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *buddy_list);
@@ -3353,7 +3353,7 @@ void __RPC_STUB IChatEvent_OnBuddyList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnBuddyAdd_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnBuddyAdd_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *buddy_added);
@@ -3366,7 +3366,7 @@ void __RPC_STUB IChatEvent_OnBuddyAdd_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnBuddyDelete_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnBuddyDelete_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *buddy_deleted);
@@ -3379,7 +3379,7 @@ void __RPC_STUB IChatEvent_OnBuddyDelete_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicUnicodeMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicUnicodeMessage_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3394,7 +3394,7 @@ void __RPC_STUB IChatEvent_OnPublicUnicodeMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateUnicodeMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateUnicodeMessage_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ User __RPC_FAR *user,
@@ -3408,7 +3408,7 @@ void __RPC_STUB IChatEvent_OnPrivateUnicodeMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateUnicodeAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPrivateUnicodeAction_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ User __RPC_FAR *user,
@@ -3422,7 +3422,7 @@ void __RPC_STUB IChatEvent_OnPrivateUnicodeAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicUnicodeAction_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPublicUnicodeAction_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel,
@@ -3437,7 +3437,7 @@ void __RPC_STUB IChatEvent_OnPublicUnicodeAction_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPagedUnicode_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnPagedUnicode_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *user,
@@ -3451,7 +3451,7 @@ void __RPC_STUB IChatEvent_OnPagedUnicode_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerTime_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnServerTime_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     time_t stime);
@@ -3464,7 +3464,7 @@ void __RPC_STUB IChatEvent_OnServerTime_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnInsiderStatus_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnInsiderStatus_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *users);
@@ -3477,7 +3477,7 @@ void __RPC_STUB IChatEvent_OnInsiderStatus_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSetLocalIP_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnSetLocalIP_Proxy(
     IChatEvent __RPC_FAR * This,
     HRESULT res,
     LPCSTR message);
@@ -3490,7 +3490,7 @@ void __RPC_STUB IChatEvent_OnSetLocalIP_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelListBegin_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelListBegin_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res);
 
@@ -3502,7 +3502,7 @@ void __RPC_STUB IChatEvent_OnChannelListBegin_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelListEntry_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelListEntry_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res,
     /* [in] */ Channel __RPC_FAR *channel);
@@ -3515,7 +3515,7 @@ void __RPC_STUB IChatEvent_OnChannelListEntry_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelListEnd_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChatEvent_OnChannelListEnd_Proxy(
     IChatEvent __RPC_FAR * This,
     /* [in] */ HRESULT res);
 
@@ -3535,49 +3535,49 @@ void __RPC_STUB IChatEvent_OnChannelListEnd_Stub(
 #define __IDownload_INTERFACE_DEFINED__
 
 /* interface IDownload */
-/* [unique][helpstring][dual][uuid][object] */ 
+/* [unique][helpstring][dual][uuid][object] */
 
 
 EXTERN_C const IID IID_IDownload;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("0BF5FCEB-9F03-11D1-9DC7-006097C54321")
     IDownload : public IUnknown
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE DownloadFile( 
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE DownloadFile(
             LPCSTR server,
             LPCSTR login,
             LPCSTR password,
             LPCSTR file,
             LPCSTR localfile,
             LPCSTR regkey) = 0;
-        
+
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Abort( void) = 0;
-        
+
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IDownloadVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IDownload __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IDownload __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IDownload __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *DownloadFile )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *DownloadFile )(
             IDownload __RPC_FAR * This,
             LPCSTR server,
             LPCSTR login,
@@ -3585,13 +3585,13 @@ EXTERN_C const IID IID_IDownload;
             LPCSTR file,
             LPCSTR localfile,
             LPCSTR regkey);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Abort )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Abort )(
             IDownload __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )(
             IDownload __RPC_FAR * This);
-        
+
         END_INTERFACE
     } IDownloadVtbl;
 
@@ -3600,7 +3600,7 @@ EXTERN_C const IID IID_IDownload;
         CONST_VTBL struct IDownloadVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -3631,7 +3631,7 @@ EXTERN_C const IID IID_IDownload;
 
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownload_DownloadFile_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownload_DownloadFile_Proxy(
     IDownload __RPC_FAR * This,
     LPCSTR server,
     LPCSTR login,
@@ -3648,7 +3648,7 @@ void __RPC_STUB IDownload_DownloadFile_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownload_Abort_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownload_Abort_Proxy(
     IDownload __RPC_FAR * This);
 
 
@@ -3659,7 +3659,7 @@ void __RPC_STUB IDownload_Abort_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownload_PumpMessages_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownload_PumpMessages_Proxy(
     IDownload __RPC_FAR * This);
 
 
@@ -3678,73 +3678,73 @@ void __RPC_STUB IDownload_PumpMessages_Stub(
 #define __IDownloadEvent_INTERFACE_DEFINED__
 
 /* interface IDownloadEvent */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_IDownloadEvent;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("6869E99D-9FB4-11D1-9DC8-006097C54321")
     IDownloadEvent : public IUnknown
     {
     public:
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnEnd( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnError( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnError(
             int error) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnProgressUpdate( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnProgressUpdate(
             int bytesread,
             int totalsize,
             int timetaken,
             int timeleft) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnQueryResume( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnStatusUpdate( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnStatusUpdate(
             int status) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IDownloadEventVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IDownloadEvent __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IDownloadEvent __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IDownloadEvent __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnEnd )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnEnd )(
             IDownloadEvent __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnError )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnError )(
             IDownloadEvent __RPC_FAR * This,
             int error);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnProgressUpdate )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnProgressUpdate )(
             IDownloadEvent __RPC_FAR * This,
             int bytesread,
             int totalsize,
             int timetaken,
             int timeleft);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnQueryResume )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnQueryResume )(
             IDownloadEvent __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnStatusUpdate )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnStatusUpdate )(
             IDownloadEvent __RPC_FAR * This,
             int status);
-        
+
         END_INTERFACE
     } IDownloadEventVtbl;
 
@@ -3753,7 +3753,7 @@ EXTERN_C const IID IID_IDownloadEvent;
         CONST_VTBL struct IDownloadEventVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -3790,7 +3790,7 @@ EXTERN_C const IID IID_IDownloadEvent;
 
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnEnd_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnEnd_Proxy(
     IDownloadEvent __RPC_FAR * This);
 
 
@@ -3801,7 +3801,7 @@ void __RPC_STUB IDownloadEvent_OnEnd_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnError_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnError_Proxy(
     IDownloadEvent __RPC_FAR * This,
     int error);
 
@@ -3813,7 +3813,7 @@ void __RPC_STUB IDownloadEvent_OnError_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnProgressUpdate_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnProgressUpdate_Proxy(
     IDownloadEvent __RPC_FAR * This,
     int bytesread,
     int totalsize,
@@ -3828,7 +3828,7 @@ void __RPC_STUB IDownloadEvent_OnProgressUpdate_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnQueryResume_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnQueryResume_Proxy(
     IDownloadEvent __RPC_FAR * This);
 
 
@@ -3839,7 +3839,7 @@ void __RPC_STUB IDownloadEvent_OnQueryResume_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnStatusUpdate_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IDownloadEvent_OnStatusUpdate_Proxy(
     IDownloadEvent __RPC_FAR * This,
     int status);
 
@@ -3859,24 +3859,24 @@ void __RPC_STUB IDownloadEvent_OnStatusUpdate_Stub(
 #define __INetUtil_INTERFACE_DEFINED__
 
 /* interface INetUtil */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_INetUtil;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("B832B0AA-A7D3-11D1-97C3-00609706FA0C")
     INetUtil : public IUnknown
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestGameresSend( 
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestGameresSend(
             LPCSTR host,
             int port,
             unsigned char __RPC_FAR *data,
             int length) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestLadderSearch( 
+
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestLadderSearch(
             LPCSTR host,
             int port,
             LPCSTR key,
@@ -3886,8 +3886,8 @@ EXTERN_C const IID IID_INetUtil;
             int sort,
             int number,
             int leading) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestLadderList( 
+
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestLadderList(
             LPCSTR host,
             int port,
             LPCSTR keys,
@@ -3895,38 +3895,38 @@ EXTERN_C const IID IID_INetUtil;
             int team,
             int cond,
             int sort) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestPing( 
+
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RequestPing(
             LPCSTR host,
             int timeout,
             int __RPC_FAR *handle) = 0;
-        
+
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetAvgPing( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetAvgPing(
             unsigned long ip,
             int __RPC_FAR *avg) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestNewNick( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestNewNick(
             LPCSTR nick,
             LPCSTR pass,
             LPCSTR email,
             LPCSTR parentEmail,
             int newsletter,
             int shareinfo) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestAgeCheck( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestAgeCheck(
             int month,
             int day,
             int year,
             LPCSTR email) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestWDTState( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestWDTState(
             LPCSTR host,
             int port,
             unsigned char request) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLocaleLadderList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLocaleLadderList(
             LPCSTR host,
             int port,
             LPCSTR keys,
@@ -3935,8 +3935,8 @@ EXTERN_C const IID IID_INetUtil;
             int cond,
             int sort,
             Locale locale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLocaleLadderSearch( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLocaleLadderSearch(
             LPCSTR host,
             int port,
             LPCSTR key,
@@ -3947,43 +3947,43 @@ EXTERN_C const IID IID_INetUtil;
             int number,
             int leading,
             Locale locale) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestHighscore( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestHighscore(
             LPCSTR host,
             int port,
             LPCSTR keys,
             unsigned long SKU) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetGameResMD5( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetGameResMD5(
             int flag) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct INetUtilVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             INetUtil __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             INetUtil __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             INetUtil __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestGameresSend )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestGameresSend )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
             unsigned char __RPC_FAR *data,
             int length);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLadderSearch )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLadderSearch )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
@@ -3994,8 +3994,8 @@ EXTERN_C const IID IID_INetUtil;
             int sort,
             int number,
             int leading);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLadderList )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLadderList )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
@@ -4004,22 +4004,22 @@ EXTERN_C const IID IID_INetUtil;
             int team,
             int cond,
             int sort);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPing )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestPing )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int timeout,
             int __RPC_FAR *handle);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )(
             INetUtil __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetAvgPing )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetAvgPing )(
             INetUtil __RPC_FAR * This,
             unsigned long ip,
             int __RPC_FAR *avg);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestNewNick )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestNewNick )(
             INetUtil __RPC_FAR * This,
             LPCSTR nick,
             LPCSTR pass,
@@ -4027,21 +4027,21 @@ EXTERN_C const IID IID_INetUtil;
             LPCSTR parentEmail,
             int newsletter,
             int shareinfo);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestAgeCheck )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestAgeCheck )(
             INetUtil __RPC_FAR * This,
             int month,
             int day,
             int year,
             LPCSTR email);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestWDTState )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestWDTState )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
             unsigned char request);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLocaleLadderList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLocaleLadderList )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
@@ -4051,8 +4051,8 @@ EXTERN_C const IID IID_INetUtil;
             int cond,
             int sort,
             Locale locale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLocaleLadderSearch )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLocaleLadderSearch )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
@@ -4064,18 +4064,18 @@ EXTERN_C const IID IID_INetUtil;
             int number,
             int leading,
             Locale locale);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestHighscore )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestHighscore )(
             INetUtil __RPC_FAR * This,
             LPCSTR host,
             int port,
             LPCSTR keys,
             unsigned long SKU);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetGameResMD5 )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *SetGameResMD5 )(
             INetUtil __RPC_FAR * This,
             int flag);
-        
+
         END_INTERFACE
     } INetUtilVtbl;
 
@@ -4084,7 +4084,7 @@ EXTERN_C const IID IID_INetUtil;
         CONST_VTBL struct INetUtilVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -4145,7 +4145,7 @@ EXTERN_C const IID IID_INetUtil;
 
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestGameresSend_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestGameresSend_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4160,7 +4160,7 @@ void __RPC_STUB INetUtil_RequestGameresSend_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLadderSearch_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLadderSearch_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4180,7 +4180,7 @@ void __RPC_STUB INetUtil_RequestLadderSearch_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLadderList_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLadderList_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4198,7 +4198,7 @@ void __RPC_STUB INetUtil_RequestLadderList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestPing_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestPing_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int timeout,
@@ -4212,7 +4212,7 @@ void __RPC_STUB INetUtil_RequestPing_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_PumpMessages_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtil_PumpMessages_Proxy(
     INetUtil __RPC_FAR * This);
 
 
@@ -4223,7 +4223,7 @@ void __RPC_STUB INetUtil_PumpMessages_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_GetAvgPing_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_GetAvgPing_Proxy(
     INetUtil __RPC_FAR * This,
     unsigned long ip,
     int __RPC_FAR *avg);
@@ -4236,7 +4236,7 @@ void __RPC_STUB INetUtil_GetAvgPing_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestNewNick_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestNewNick_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR nick,
     LPCSTR pass,
@@ -4253,7 +4253,7 @@ void __RPC_STUB INetUtil_RequestNewNick_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestAgeCheck_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestAgeCheck_Proxy(
     INetUtil __RPC_FAR * This,
     int month,
     int day,
@@ -4268,7 +4268,7 @@ void __RPC_STUB INetUtil_RequestAgeCheck_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestWDTState_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestWDTState_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4282,7 +4282,7 @@ void __RPC_STUB INetUtil_RequestWDTState_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLocaleLadderList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLocaleLadderList_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4301,7 +4301,7 @@ void __RPC_STUB INetUtil_RequestLocaleLadderList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLocaleLadderSearch_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestLocaleLadderSearch_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4322,7 +4322,7 @@ void __RPC_STUB INetUtil_RequestLocaleLadderSearch_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestHighscore_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_RequestHighscore_Proxy(
     INetUtil __RPC_FAR * This,
     LPCSTR host,
     int port,
@@ -4337,7 +4337,7 @@ void __RPC_STUB INetUtil_RequestHighscore_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_SetGameResMD5_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtil_SetGameResMD5_Proxy(
     INetUtil __RPC_FAR * This,
     int flag);
 
@@ -4357,121 +4357,121 @@ void __RPC_STUB INetUtil_SetGameResMD5_Stub(
 #define __INetUtilEvent_INTERFACE_DEFINED__
 
 /* interface INetUtilEvent */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_INetUtilEvent;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("B832B0AC-A7D3-11D1-97C3-00609706FA0C")
     INetUtilEvent : public IUnknown
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnPing( 
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnPing(
             HRESULT res,
             int time,
             unsigned long ip,
             int handle) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnLadderList( 
+
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnLadderList(
             HRESULT res,
             /* [in] */ Ladder __RPC_FAR *list,
             int totalCount,
             long timeStamp,
             int keyRung) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnGameresSent( 
+
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnGameresSent(
             HRESULT res) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnNewNick( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnNewNick(
             HRESULT res,
             LPCSTR message,
             LPCSTR nick,
             LPCSTR pass) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnAgeCheck( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnAgeCheck(
             HRESULT res,
             int years,
             int consent) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnWDTState( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnWDTState(
             HRESULT res,
             unsigned char __RPC_FAR *state,
             int length) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnHighscore( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnHighscore(
             HRESULT res,
             /* [in] */ Highscore __RPC_FAR *list,
             int totalCount,
             long timeStamp,
             int keyRung) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct INetUtilEventVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             INetUtilEvent __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             INetUtilEvent __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             INetUtilEvent __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPing )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnPing )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res,
             int time,
             unsigned long ip,
             int handle);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnLadderList )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnLadderList )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res,
             /* [in] */ Ladder __RPC_FAR *list,
             int totalCount,
             long timeStamp,
             int keyRung);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnGameresSent )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnGameresSent )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnNewNick )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnNewNick )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res,
             LPCSTR message,
             LPCSTR nick,
             LPCSTR pass);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnAgeCheck )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnAgeCheck )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res,
             int years,
             int consent);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnWDTState )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnWDTState )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res,
             unsigned char __RPC_FAR *state,
             int length);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnHighscore )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnHighscore )(
             INetUtilEvent __RPC_FAR * This,
             HRESULT res,
             /* [in] */ Highscore __RPC_FAR *list,
             int totalCount,
             long timeStamp,
             int keyRung);
-        
+
         END_INTERFACE
     } INetUtilEventVtbl;
 
@@ -4480,7 +4480,7 @@ EXTERN_C const IID IID_INetUtilEvent;
         CONST_VTBL struct INetUtilEventVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -4523,7 +4523,7 @@ EXTERN_C const IID IID_INetUtilEvent;
 
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnPing_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnPing_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res,
     int time,
@@ -4538,7 +4538,7 @@ void __RPC_STUB INetUtilEvent_OnPing_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnLadderList_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnLadderList_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res,
     /* [in] */ Ladder __RPC_FAR *list,
@@ -4554,7 +4554,7 @@ void __RPC_STUB INetUtilEvent_OnLadderList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnGameresSent_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnGameresSent_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res);
 
@@ -4566,7 +4566,7 @@ void __RPC_STUB INetUtilEvent_OnGameresSent_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnNewNick_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnNewNick_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res,
     LPCSTR message,
@@ -4581,7 +4581,7 @@ void __RPC_STUB INetUtilEvent_OnNewNick_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnAgeCheck_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnAgeCheck_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res,
     int years,
@@ -4595,7 +4595,7 @@ void __RPC_STUB INetUtilEvent_OnAgeCheck_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnWDTState_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnWDTState_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res,
     unsigned char __RPC_FAR *state,
@@ -4609,7 +4609,7 @@ void __RPC_STUB INetUtilEvent_OnWDTState_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnHighscore_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE INetUtilEvent_OnHighscore_Proxy(
     INetUtilEvent __RPC_FAR * This,
     HRESULT res,
     /* [in] */ Highscore __RPC_FAR *list,
@@ -4633,7 +4633,7 @@ void __RPC_STUB INetUtilEvent_OnHighscore_Stub(
 #define __IChat2_INTERFACE_DEFINED__
 
 /* interface IChat2 */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 typedef unsigned long GID;
 
@@ -4657,107 +4657,107 @@ typedef enum CHAN_CTYPE_ CHAN_CTYPE;
 EXTERN_C const IID IID_IChat2;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("8B938190-EF3F-11D1-9808-00609706FA0C")
     IChat2 : public IUnknown
     {
     public:
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestConnection( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestConnection(
             Server __RPC_FAR *server,
             int timeout) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestMessage(
             GID who,
             LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetTypeFromGID( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetTypeFromGID(
             GID id,
             GTYPE __RPC_FAR *type) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelList( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelJoin( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelJoin(
             LPCSTR name) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelLeave( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelLeave(
             Channel __RPC_FAR *chan) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserList(
             Channel __RPC_FAR *chan) = 0;
-        
+
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLogout( void) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelCreate( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelCreate(
             Channel __RPC_FAR *chan) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestRawCmd( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestRawCmd(
             LPCSTR cmd) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IChat2Vtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IChat2 __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IChat2 __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IChat2 __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *PumpMessages )(
             IChat2 __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestConnection )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestConnection )(
             IChat2 __RPC_FAR * This,
             Server __RPC_FAR *server,
             int timeout);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestMessage )(
             IChat2 __RPC_FAR * This,
             GID who,
             LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetTypeFromGID )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *GetTypeFromGID )(
             IChat2 __RPC_FAR * This,
             GID id,
             GTYPE __RPC_FAR *type);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelList )(
             IChat2 __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelJoin )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelJoin )(
             IChat2 __RPC_FAR * This,
             LPCSTR name);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelLeave )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelLeave )(
             IChat2 __RPC_FAR * This,
             Channel __RPC_FAR *chan);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestUserList )(
             IChat2 __RPC_FAR * This,
             Channel __RPC_FAR *chan);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLogout )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestLogout )(
             IChat2 __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelCreate )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestChannelCreate )(
             IChat2 __RPC_FAR * This,
             Channel __RPC_FAR *chan);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestRawCmd )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *RequestRawCmd )(
             IChat2 __RPC_FAR * This,
             LPCSTR cmd);
-        
+
         END_INTERFACE
     } IChat2Vtbl;
 
@@ -4766,7 +4766,7 @@ EXTERN_C const IID IID_IChat2;
         CONST_VTBL struct IChat2Vtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -4821,7 +4821,7 @@ EXTERN_C const IID IID_IChat2;
 
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_PumpMessages_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_PumpMessages_Proxy(
     IChat2 __RPC_FAR * This);
 
 
@@ -4832,7 +4832,7 @@ void __RPC_STUB IChat2_PumpMessages_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestConnection_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestConnection_Proxy(
     IChat2 __RPC_FAR * This,
     Server __RPC_FAR *server,
     int timeout);
@@ -4845,7 +4845,7 @@ void __RPC_STUB IChat2_RequestConnection_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestMessage_Proxy(
     IChat2 __RPC_FAR * This,
     GID who,
     LPCSTR message);
@@ -4858,7 +4858,7 @@ void __RPC_STUB IChat2_RequestMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_GetTypeFromGID_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_GetTypeFromGID_Proxy(
     IChat2 __RPC_FAR * This,
     GID id,
     GTYPE __RPC_FAR *type);
@@ -4871,7 +4871,7 @@ void __RPC_STUB IChat2_GetTypeFromGID_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelList_Proxy(
     IChat2 __RPC_FAR * This);
 
 
@@ -4882,7 +4882,7 @@ void __RPC_STUB IChat2_RequestChannelList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelJoin_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelJoin_Proxy(
     IChat2 __RPC_FAR * This,
     LPCSTR name);
 
@@ -4894,7 +4894,7 @@ void __RPC_STUB IChat2_RequestChannelJoin_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelLeave_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelLeave_Proxy(
     IChat2 __RPC_FAR * This,
     Channel __RPC_FAR *chan);
 
@@ -4906,7 +4906,7 @@ void __RPC_STUB IChat2_RequestChannelLeave_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestUserList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestUserList_Proxy(
     IChat2 __RPC_FAR * This,
     Channel __RPC_FAR *chan);
 
@@ -4918,7 +4918,7 @@ void __RPC_STUB IChat2_RequestUserList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestLogout_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestLogout_Proxy(
     IChat2 __RPC_FAR * This);
 
 
@@ -4929,7 +4929,7 @@ void __RPC_STUB IChat2_RequestLogout_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelCreate_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestChannelCreate_Proxy(
     IChat2 __RPC_FAR * This,
     Channel __RPC_FAR *chan);
 
@@ -4941,7 +4941,7 @@ void __RPC_STUB IChat2_RequestChannelCreate_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestRawCmd_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2_RequestRawCmd_Proxy(
     IChat2 __RPC_FAR * This,
     LPCSTR cmd);
 
@@ -4961,121 +4961,121 @@ void __RPC_STUB IChat2_RequestRawCmd_Stub(
 #define __IChat2Event_INTERFACE_DEFINED__
 
 /* interface IChat2Event */
-/* [object][unique][helpstring][uuid] */ 
+/* [object][unique][helpstring][uuid] */
 
 
 EXTERN_C const IID IID_IChat2Event;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("8B938192-EF3F-11D1-9808-00609706FA0C")
     IChat2Event : public IUnknown
     {
     public:
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnNetStatus( 
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnNetStatus(
             HRESULT res) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnMessage( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnMessage(
             HRESULT res,
             User __RPC_FAR *user,
             LPCSTR message) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelList(
             HRESULT res,
             Channel __RPC_FAR *list) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelJoin( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelJoin(
             HRESULT res,
             Channel __RPC_FAR *chan,
             User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnLogin( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnLogin(
             HRESULT res) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserList( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUserList(
             HRESULT res,
             Channel __RPC_FAR *chan,
             User __RPC_FAR *users) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelLeave( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelLeave(
             HRESULT res,
             Channel __RPC_FAR *chan,
             User __RPC_FAR *user) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelCreate( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnChannelCreate(
             HRESULT res,
             Channel __RPC_FAR *chan) = 0;
-        
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUnknownLine( 
+
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnUnknownLine(
             HRESULT res,
             LPCSTR line) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IChat2EventVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IChat2Event __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IChat2Event __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IChat2Event __RPC_FAR * This);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnNetStatus )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnNetStatus )(
             IChat2Event __RPC_FAR * This,
             HRESULT res);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnMessage )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnMessage )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             User __RPC_FAR *user,
             LPCSTR message);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelList )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             Channel __RPC_FAR *list);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelJoin )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelJoin )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             Channel __RPC_FAR *chan,
             User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnLogin )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnLogin )(
             IChat2Event __RPC_FAR * This,
             HRESULT res);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserList )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUserList )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             Channel __RPC_FAR *chan,
             User __RPC_FAR *users);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelLeave )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelLeave )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             Channel __RPC_FAR *chan,
             User __RPC_FAR *user);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelCreate )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnChannelCreate )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             Channel __RPC_FAR *chan);
-        
-        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUnknownLine )( 
+
+        /* [helpstring] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *OnUnknownLine )(
             IChat2Event __RPC_FAR * This,
             HRESULT res,
             LPCSTR line);
-        
+
         END_INTERFACE
     } IChat2EventVtbl;
 
@@ -5084,7 +5084,7 @@ EXTERN_C const IID IID_IChat2Event;
         CONST_VTBL struct IChat2EventVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -5133,7 +5133,7 @@ EXTERN_C const IID IID_IChat2Event;
 
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnNetStatus_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnNetStatus_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res);
 
@@ -5145,7 +5145,7 @@ void __RPC_STUB IChat2Event_OnNetStatus_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnMessage_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnMessage_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     User __RPC_FAR *user,
@@ -5159,7 +5159,7 @@ void __RPC_STUB IChat2Event_OnMessage_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelList_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     Channel __RPC_FAR *list);
@@ -5172,7 +5172,7 @@ void __RPC_STUB IChat2Event_OnChannelList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelJoin_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelJoin_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     Channel __RPC_FAR *chan,
@@ -5186,7 +5186,7 @@ void __RPC_STUB IChat2Event_OnChannelJoin_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnLogin_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnLogin_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res);
 
@@ -5198,7 +5198,7 @@ void __RPC_STUB IChat2Event_OnLogin_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnUserList_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnUserList_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     Channel __RPC_FAR *chan,
@@ -5212,7 +5212,7 @@ void __RPC_STUB IChat2Event_OnUserList_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelLeave_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelLeave_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     Channel __RPC_FAR *chan,
@@ -5226,7 +5226,7 @@ void __RPC_STUB IChat2Event_OnChannelLeave_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelCreate_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnChannelCreate_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     Channel __RPC_FAR *chan);
@@ -5239,7 +5239,7 @@ void __RPC_STUB IChat2Event_OnChannelCreate_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnUnknownLine_Proxy( 
+/* [helpstring] */ HRESULT STDMETHODCALLTYPE IChat2Event_OnUnknownLine_Proxy(
     IChat2Event __RPC_FAR * This,
     HRESULT res,
     LPCSTR line);
@@ -5260,63 +5260,63 @@ void __RPC_STUB IChat2Event_OnUnknownLine_Stub(
 #define __IIGROptions_INTERFACE_DEFINED__
 
 /* interface IIGROptions */
-/* [unique][helpstring][dual][uuid][object] */ 
+/* [unique][helpstring][dual][uuid][object] */
 
 
 EXTERN_C const IID IID_IIGROptions;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
+
     MIDL_INTERFACE("89DD1ECD-0DCA-49d8-8EF3-3375E6D6EE9D")
     IIGROptions : public IUnknown
     {
     public:
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Init( void) = 0;
-        
+
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Auto_Login_Allowed( void) = 0;
-        
+
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Storing_Nicks_Allowed( void) = 0;
-        
+
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Running_Reg_App_Allowed( void) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Set_Options( 
+
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Set_Options(
             unsigned int options) = 0;
-        
+
     };
-    
+
 #else 	/* C style interface */
 
     typedef struct IIGROptionsVtbl
     {
         BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )( 
+
+        HRESULT ( STDMETHODCALLTYPE __RPC_FAR *QueryInterface )(
             IIGROptions __RPC_FAR * This,
             /* [in] */ REFIID riid,
             /* [iid_is][out] */ void __RPC_FAR *__RPC_FAR *ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *AddRef )(
             IIGROptions __RPC_FAR * This);
-        
-        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )( 
+
+        ULONG ( STDMETHODCALLTYPE __RPC_FAR *Release )(
             IIGROptions __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Init )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Init )(
             IIGROptions __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Is_Auto_Login_Allowed )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Is_Auto_Login_Allowed )(
             IIGROptions __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Is_Storing_Nicks_Allowed )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Is_Storing_Nicks_Allowed )(
             IIGROptions __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Is_Running_Reg_App_Allowed )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Is_Running_Reg_App_Allowed )(
             IIGROptions __RPC_FAR * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Set_Options )( 
+
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE __RPC_FAR *Set_Options )(
             IIGROptions __RPC_FAR * This,
             unsigned int options);
-        
+
         END_INTERFACE
     } IIGROptionsVtbl;
 
@@ -5325,7 +5325,7 @@ EXTERN_C const IID IID_IIGROptions;
         CONST_VTBL struct IIGROptionsVtbl __RPC_FAR *lpVtbl;
     };
 
-    
+
 
 #ifdef COBJMACROS
 
@@ -5362,7 +5362,7 @@ EXTERN_C const IID IID_IIGROptions;
 
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Init_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Init_Proxy(
     IIGROptions __RPC_FAR * This);
 
 
@@ -5373,7 +5373,7 @@ void __RPC_STUB IIGROptions_Init_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Is_Auto_Login_Allowed_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Is_Auto_Login_Allowed_Proxy(
     IIGROptions __RPC_FAR * This);
 
 
@@ -5384,7 +5384,7 @@ void __RPC_STUB IIGROptions_Is_Auto_Login_Allowed_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Is_Storing_Nicks_Allowed_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Is_Storing_Nicks_Allowed_Proxy(
     IIGROptions __RPC_FAR * This);
 
 
@@ -5395,7 +5395,7 @@ void __RPC_STUB IIGROptions_Is_Storing_Nicks_Allowed_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Is_Running_Reg_App_Allowed_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Is_Running_Reg_App_Allowed_Proxy(
     IIGROptions __RPC_FAR * This);
 
 
@@ -5406,7 +5406,7 @@ void __RPC_STUB IIGROptions_Is_Running_Reg_App_Allowed_Stub(
     DWORD *_pdwStubPhase);
 
 
-/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Set_Options_Proxy( 
+/* [helpstring][id] */ HRESULT STDMETHODCALLTYPE IIGROptions_Set_Options_Proxy(
     IIGROptions __RPC_FAR * This,
     unsigned int options);
 
@@ -5427,7 +5427,7 @@ void __RPC_STUB IIGROptions_Set_Options_Stub(
 #define __WOLAPILib_LIBRARY_DEFINED__
 
 /* library WOLAPILib */
-/* [helpstring][version][uuid] */ 
+/* [helpstring][version][uuid] */
 
 
 EXTERN_C const IID LIBID_WOLAPILib;

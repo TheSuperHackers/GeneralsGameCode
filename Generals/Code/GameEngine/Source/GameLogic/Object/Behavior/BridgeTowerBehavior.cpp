@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -48,35 +48,35 @@ BridgeTowerBehavior::BridgeTowerBehavior( Thing *thing, const ModuleData *module
 
 	m_bridgeID = INVALID_ID;
 
-}  // end BridgeTowerBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-BridgeTowerBehavior::~BridgeTowerBehavior( void )
+BridgeTowerBehavior::~BridgeTowerBehavior()
 {
 
-}  // end ~BridgeTowerBehavior
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void BridgeTowerBehavior::setBridge( Object *bridge )
 {
 
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		m_bridgeID = INVALID_ID;
 	else
 		m_bridgeID = bridge->getID();
 
-}  // end setBridge
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-ObjectID BridgeTowerBehavior::getBridgeID( void )
+ObjectID BridgeTowerBehavior::getBridgeID()
 {
 
 	return m_bridgeID;
 
-}  // end getBridge
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void BridgeTowerBehavior::setTowerType( BridgeTowerType type )
 
 	m_type = type;
 
-}  // end setTowerType
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -94,19 +94,19 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 	Object *bridge = TheGameLogic->findObjectByID( getBridgeID() );
 
 	// sanity
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		return;
 
 	//
 	// get our body info so we now how much damage percent is being done to us ... we need this
-	// so that we can propagate the same damage percentage amont the towers and the bridge
+	// so that we can propagate the same damage percentage amount the towers and the bridge
 	//
 	BodyModuleInterface *body = getObject()->getBodyModule();
 	Real damagePercentage = damageInfo->in.m_amount / body->getMaxHealth();
 
 	// get the bridge behavior module for our bridge
 	BehaviorModule **bmi;
-	BridgeBehaviorInterface *bridgeInterface = NULL;
+	BridgeBehaviorInterface *bridgeInterface = nullptr;
 	for( bmi = bridge->getBehaviorModules(); *bmi; ++bmi )
 	{
 
@@ -114,8 +114,8 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 		if( bridgeInterface )
 			break;
 
-	}  // end for bmi
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found\n") );
+	}
+	DEBUG_ASSERTCRASH( bridgeInterface != nullptr, ("BridgeTowerBehavior::onDamage - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
 
@@ -124,7 +124,7 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 		// or other towers
 		//
 		Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-		if( source == NULL || 
+		if( source == nullptr ||
 			  (source->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 				 source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE) )
 		{
@@ -145,9 +145,9 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 					towerDamage.in.m_deathType = damageInfo->in.m_deathType;
 					tower->attemptDamage( &towerDamage );
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			//
 			// damage bridge object, but make sure it's done through the bridge interface
@@ -162,11 +162,11 @@ void BridgeTowerBehavior::onDamage( DamageInfo *damageInfo )
 			bridgeDamage.in.m_deathType = damageInfo->in.m_deathType;
 			bridge->attemptDamage( &bridgeDamage );
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end onDamage
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -175,19 +175,19 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 	Object *bridge = TheGameLogic->findObjectByID( getBridgeID() );
 
 	// sanity
-	if( bridge == NULL )
+	if( bridge == nullptr )
 		return;
 
 	//
 	// get our body info so we now how much healing percent is being done to us ... we need this
-	// so that we can propagate the same healing percentage amont the towers and the bridge
+	// so that we can propagate the same healing percentage amount the towers and the bridge
 	//
 	BodyModuleInterface *body = getObject()->getBodyModule();
 	Real healingPercentage = damageInfo->in.m_amount / body->getMaxHealth();
 
 	// get the bridge behavior module for our bridge
 	BehaviorModule **bmi;
-	BridgeBehaviorInterface *bridgeInterface = NULL;
+	BridgeBehaviorInterface *bridgeInterface = nullptr;
 	for( bmi = bridge->getBehaviorModules(); *bmi; ++bmi )
 	{
 
@@ -195,8 +195,8 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 		if( bridgeInterface )
 			break;
 
-	}  // end for bmi
-	DEBUG_ASSERTCRASH( bridgeInterface != NULL, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found\n") );
+	}
+	DEBUG_ASSERTCRASH( bridgeInterface != nullptr, ("BridgeTowerBehavior::onHealing - no 'BridgeBehaviorInterface' found") );
 	if( bridgeInterface )
 	{
 
@@ -205,7 +205,7 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 		// or other towers
 		//
 		Object *source = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
-		if( source == NULL || 
+		if( source == nullptr ||
 			  (source->isKindOf( KINDOF_BRIDGE ) == FALSE &&
 				 source->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE) )
 		{
@@ -220,9 +220,9 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 					BodyModuleInterface *towerBody = tower->getBodyModule();
 					tower->attemptHealing(healingPercentage * towerBody->getMaxHealth(), getObject());
 
-				}  // end if
+				}
 
-			}  // end for i
+			}
 
 			//
 			// heal bridge object, but make sure it's done through the bridge interface
@@ -231,20 +231,20 @@ void BridgeTowerBehavior::onHealing( DamageInfo *damageInfo )
 			BodyModuleInterface *bridgeBody = bridge->getBodyModule();
 			bridge->attemptHealing(healingPercentage * bridgeBody->getMaxHealth(), getObject());
 
-		}  // end if
+		}
 
-	}  // end if
+	}
 
-}  // end onHealing
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void BridgeTowerBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo, 
-																									 BodyDamageType oldState, 
+void BridgeTowerBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
+																									 BodyDamageType oldState,
 																									 BodyDamageType newState )
 {
 
-}  // end onBodyDamageStateChange
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ void BridgeTowerBehavior::onDie( const DamageInfo *damageInfo )
 	if( bridge )
 		bridge->kill();
 
-}  // end onDie
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -269,11 +269,11 @@ BridgeTowerBehaviorInterface *BridgeTowerBehavior::getBridgeTowerBehaviorInterfa
 {
 
 	// sanity
-	if( obj == NULL || obj->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE )
-		return NULL;
+	if( obj == nullptr || obj->isKindOf( KINDOF_BRIDGE_TOWER ) == FALSE )
+		return nullptr;
 
 	BehaviorModule **bmi;
-	BridgeTowerBehaviorInterface *bridgeTowerInterface = NULL;
+	BridgeTowerBehaviorInterface *bridgeTowerInterface = nullptr;
 	for( bmi = obj->getBehaviorModules(); *bmi; ++bmi )
 	{
 
@@ -281,12 +281,12 @@ BridgeTowerBehaviorInterface *BridgeTowerBehavior::getBridgeTowerBehaviorInterfa
 		if( bridgeTowerInterface )
 			return bridgeTowerInterface;
 
-	}  // end for bmi
+	}
 
 	// interface not found
-	return NULL;
+	return nullptr;
 
-}  // getBridgeTowerBehaviorInterfaceFromObject
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -297,7 +297,7 @@ void BridgeTowerBehavior::crc( Xfer *xfer )
 	// extend base class
 	BehaviorModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -321,15 +321,15 @@ void BridgeTowerBehavior::xfer( Xfer *xfer )
 	// xfer tower type
 	xfer->xferUser( &m_type, sizeof( BridgeTowerType ) );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void BridgeTowerBehavior::loadPostProcess( void )
+void BridgeTowerBehavior::loadPostProcess()
 {
 
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

@@ -26,8 +26,8 @@
  *                                                                                             *
  *                    Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                       Author : Kenny Mitchell                                               * 
- *                                                                                             * 
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
  *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 10                                                           $*
@@ -57,7 +57,7 @@ CollisionMath::Overlap_Test(const AAPlaneClass & plane,const Vector3 & point)
 	float delta = point[plane.Normal] - plane.Dist;
 	if (delta > COINCIDENCE_EPSILON) {
 		return POS;
-	} 
+	}
 	if (delta < -COINCIDENCE_EPSILON) {
 		return NEG;
 	}
@@ -89,7 +89,7 @@ CollisionMath::Overlap_Test(const AAPlaneClass & plane,const SphereClass & spher
 	float delta = sphere.Center[plane.Normal] - plane.Dist;
 	if (delta > sphere.Radius) {
 		return POS;
-	} 
+	}
 	if (delta < sphere.Radius) {
 		return NEG;
 	}
@@ -111,7 +111,7 @@ CollisionMath::Overlap_Test(const AAPlaneClass & plane,const AABoxClass & box)
 	} else {
 		mask |= ON;
 	}
-	
+
 	// check the 'max' side of the box
 	delta = (box.Center[plane.Normal] + box.Extent[plane.Normal]) - plane.Dist;
 	if (delta > WWMATH_EPSILON) {
@@ -121,7 +121,7 @@ CollisionMath::Overlap_Test(const AAPlaneClass & plane,const AABoxClass & box)
 	} else {
 		mask |= ON;
 	}
-	
+
 	return eval_overlap_mask(mask);
 }
 
@@ -162,7 +162,7 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const SphereClass & sphere)
 	float dist = Vector3::Dot_Product(sphere.Center,plane.N) - plane.D;
 	if (dist > sphere.Radius) {
 		return POS;
-	} 
+	}
 	if (dist < -sphere.Radius) {
 		return NEG;
 	}
@@ -185,7 +185,7 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const OBBoxClass & box)
 	negfarpt = -posfarpt;
 	posfarpt += box.Center;
 	negfarpt += box.Center;
-	
+
 	// overlap test
 	if (Overlap_Test(plane,negfarpt) == POS) {
 		return POS;

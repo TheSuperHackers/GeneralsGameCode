@@ -63,11 +63,9 @@ gimex.h - Primary header file for the GIMEX API.
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-#ifndef __GIMEX_H
-#define __GIMEX_H 1
+#pragma once
 
 #if defined(_MSC_VER)
-#pragma once
 #pragma warning(disable : 4100)
 /* warning C4100: unreferenced parameter */
 #endif
@@ -287,7 +285,7 @@ typedef enum{ False=0x0, True=0x1}bool;
 
 typedef struct GFUNCTIONS
 {
-    GABOUT * (GCALL * GIMEX_about)(void);
+    GABOUT * (GCALL * GIMEX_about)();
     int      (GCALL * GIMEX_is)(GSTREAM *g);
     int      (GCALL * GIMEX_open)(GINSTANCE **gx, GSTREAM *g, const char *pathname,bool framecountflag);
     GINFO *  (GCALL * GIMEX_info)(GINSTANCE *gx, int framenum);
@@ -314,7 +312,7 @@ extern struct GFUNCTIONS gfunctions[];
 #endif
 /* Information Functions */
 
-GABOUT *GCALL GIMEX_about(void);
+GABOUT *GCALL GIMEX_about();
 int     GCALL GIMEX_is(GSTREAM *g);
 
 /* Import Functions */
@@ -491,7 +489,5 @@ static __inline void gputi(void *dst, unsigned int data, int bytes)
         ((unsigned char *) dst)[2] = (unsigned char) (data>>16);
     }
 }
-
-#endif /* __GIMEX_H */
 
 /* END ABSTRACT */

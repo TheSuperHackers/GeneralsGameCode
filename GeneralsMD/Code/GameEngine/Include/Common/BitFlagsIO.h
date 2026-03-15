@@ -24,13 +24,10 @@
 
 // FILE: BitFlagsIO.h /////////////////////////////////////////////////////////////////////////////
 // Author: Steven Johnson, March 2002
-// Desc:   
+// Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-#ifndef __BitFlagsIO_H_
-#define __BitFlagsIO_H_
 
 #include "Common/BitFlags.h"
 #include "Common/INI.h"
@@ -42,20 +39,20 @@
 template <size_t NUMBITS>
 void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 {
-	if ( str == NULL )
+	if ( str == nullptr )
 		return;//sanity
- 
+
 	for( Int i = 0; i < size(); ++i )
 	{
 		const char* bitName = getBitNameIfSet(i);
 
-		if (bitName != NULL)
+		if (bitName != nullptr)
 		{
 			str->concat( bitName );
 			str->concat( ",\n");
 		}
-	}  
-} 
+	}
+}
 */
 
 //-------------------------------------------------------------------------------------------------
@@ -70,7 +67,7 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 	Bool foundAddOrSub = false;
 
 	// loop through all tokens
-	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
 	{
 		if (str)
 		{
@@ -135,7 +132,7 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 template <size_t NUMBITS>
 /*static*/ void BitFlags<NUMBITS>::parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
 {
-	((BitFlags*)store)->parse(ini, NULL);
+	((BitFlags*)store)->parse(ini, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -175,16 +172,16 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 			const char* bitName = getBitNameIfSet(i);
 
 			// ignore if this kindof is not set in our mask data
-			if (bitName == NULL)
+			if (bitName == nullptr)
 				continue;
 
 			// this bit is set, write the string value
 			AsciiString bitNameA = bitName;
 			xfer->xferAsciiString( &bitNameA );
 
-		}  // end for i
+		}
 
-	}  // end if, save
+	}
 	else if( xfer->getXferMode() == XFER_LOAD )
 	{
   	// clear the kind of mask data
@@ -210,24 +207,26 @@ void BitFlags<NUMBITS>::xfer(Xfer* xfer)
 				throw XFER_READ_ERROR;
 			}
 
-		}  // end for, i
+		}
 
-	}  // end else if, load
+	}
 	else if( xfer->getXferMode() == XFER_CRC )
 	{
 
 		// just call the xfer implementation on the data values
+#if RETAIL_COMPATIBLE_CRC
 		xfer->xferUser( this, sizeof( this ) );
+#else
+		xfer->xferUser( this, sizeof( *this ) );
+#endif
 
-	}  // end else if, crc
+	}
 	else
 	{
 
-		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'\n", xfer->getXferMode() ));
+		DEBUG_CRASH(( "BitFlagsXfer - Unknown xfer mode '%d'", xfer->getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
-	}  // end else
+	}
 
-}  // end xfer
-
-#endif
+}

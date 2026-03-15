@@ -55,7 +55,7 @@ static SegLineRendererClass _LineRenderer;
 ** SegmentedLineClass implementation:
 */
 
-SegmentedLineClass::SegmentedLineClass(void) :
+SegmentedLineClass::SegmentedLineClass() :
 		MaxSubdivisionLevels(0),
 		NormalizedScreenArea(0.0f)
 {
@@ -84,11 +84,11 @@ SegmentedLineClass & SegmentedLineClass::operator = (const SegmentedLineClass &t
 	return * this;
 }
 
-SegmentedLineClass::~SegmentedLineClass(void)
+SegmentedLineClass::~SegmentedLineClass()
 {
 }
 
-void SegmentedLineClass::Reset_Line(void)
+void SegmentedLineClass::Reset_Line()
 {
 	LineRenderer.Reset_Line();
 }
@@ -113,7 +113,7 @@ void SegmentedLineClass::Set_Points(unsigned int num_points, Vector3 *locs)
 
 // These are segment points, and include the start and end point of the
 // entire line. Therefore there must be at least two.
-int SegmentedLineClass::Get_Num_Points(void)
+int SegmentedLineClass::Get_Num_Points()
 {
 	return PointLocations.Count();
 }
@@ -152,12 +152,12 @@ void SegmentedLineClass::Delete_Point(unsigned int point_idx)
 }
 
 
-TextureClass * SegmentedLineClass::Get_Texture(void)
+TextureClass * SegmentedLineClass::Get_Texture()
 {
 	return LineRenderer.Get_Texture();
 }
 
-ShaderClass SegmentedLineClass::Get_Shader(void)
+ShaderClass SegmentedLineClass::Get_Shader()
 {
 	return LineRenderer.Get_Shader();
 }
@@ -167,57 +167,57 @@ void SegmentedLineClass::Get_Color(Vector3 &color)
 	color.Set(LineRenderer.Get_Color());
 }
 
-float SegmentedLineClass::Get_Opacity(void)
+float SegmentedLineClass::Get_Opacity()
 {
 	return LineRenderer.Get_Opacity();
 }
 
-float SegmentedLineClass::Get_Noise_Amplitude(void)
+float SegmentedLineClass::Get_Noise_Amplitude()
 {
 	return LineRenderer.Get_Noise_Amplitude();
 }
 
-float SegmentedLineClass::Get_Merge_Abort_Factor(void)
+float SegmentedLineClass::Get_Merge_Abort_Factor()
 {
 	return LineRenderer.Get_Merge_Abort_Factor();
 }
 
-unsigned int SegmentedLineClass::Get_Subdivision_Levels(void)
+unsigned int SegmentedLineClass::Get_Subdivision_Levels()
 {
 	return MaxSubdivisionLevels;
 }
 
-SegLineRendererClass::TextureMapMode SegmentedLineClass::Get_Texture_Mapping_Mode(void)
+SegLineRendererClass::TextureMapMode SegmentedLineClass::Get_Texture_Mapping_Mode()
 {
-	return LineRenderer.Get_Texture_Mapping_Mode(); 
+	return LineRenderer.Get_Texture_Mapping_Mode();
 }
 
-float SegmentedLineClass::Get_Texture_Tile_Factor(void)
+float SegmentedLineClass::Get_Texture_Tile_Factor()
 {
 	return LineRenderer.Get_Texture_Tile_Factor();
 }
 
-Vector2 SegmentedLineClass::Get_UV_Offset_Rate(void)
+Vector2 SegmentedLineClass::Get_UV_Offset_Rate()
 {
 	return LineRenderer.Get_UV_Offset_Rate();
 }
 
-int SegmentedLineClass::Is_Merge_Intersections(void)
+int SegmentedLineClass::Is_Merge_Intersections()
 {
 	return LineRenderer.Is_Merge_Intersections();
 }
 
-int SegmentedLineClass::Is_Freeze_Random(void)
+int SegmentedLineClass::Is_Freeze_Random()
 {
 	return LineRenderer.Is_Freeze_Random();
 }
 
-int SegmentedLineClass::Is_Sorting_Disabled(void)
+int SegmentedLineClass::Is_Sorting_Disabled()
 {
 	return LineRenderer.Is_Sorting_Disabled();
 }
 
-int SegmentedLineClass::Are_End_Caps_Enabled(void)
+int SegmentedLineClass::Are_End_Caps_Enabled()
 {
 	return LineRenderer.Are_End_Caps_Enabled();
 }
@@ -232,7 +232,7 @@ void SegmentedLineClass::Set_Shader(ShaderClass shader)
 	LineRenderer.Set_Shader(shader);
 }
 
-float SegmentedLineClass::Get_Width(void)
+float SegmentedLineClass::Get_Width()
 {
 	return LineRenderer.Get_Width();
 }
@@ -315,12 +315,12 @@ void SegmentedLineClass::Set_End_Caps(int onoff)
 ** RenderObjClass interface:
 */
 
-RenderObjClass * SegmentedLineClass::Clone(void) const
+RenderObjClass * SegmentedLineClass::Clone() const
 {
-	return NEW_REF( SegmentedLineClass, (*this)); 
+	return NEW_REF( SegmentedLineClass, (*this));
 }
 
-int SegmentedLineClass::Get_Num_Polys(void) const
+int SegmentedLineClass::Get_Num_Polys() const
 {
 	int subdivision_factor = 1 << LineRenderer.Get_Current_Subdivision_Level();
 	return 2 * (PointLocations.Count() - 1) * subdivision_factor;
@@ -337,14 +337,14 @@ void SegmentedLineClass::Render(RenderInfoClass & rinfo)
 
 	unsigned int sort_level = SORT_LEVEL_NONE;
 
-	if (!WW3D::Is_Sorting_Enabled())	
-		sort_level=Get_Shader().Guess_Sort_Level();	
+	if (!WW3D::Is_Sorting_Enabled())
+		sort_level=Get_Shader().Guess_Sort_Level();
 
-	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {		
-		
+	if (WW3D::Are_Static_Sort_Lists_Enabled() && sort_level!=SORT_LEVEL_NONE) {
+
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
 
-	} else 
+	} else
 		Render_Seg_Line(rinfo);
 }
 
@@ -362,9 +362,9 @@ void SegmentedLineClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) con
 void SegmentedLineClass::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 {
 	unsigned int num_points = PointLocations.Count();
-	
+
 	// Line must have at least two points to be valid
-	
+
 	if (num_points >= 2) {
 
 		// Find object-space axis-aligned bounding box
@@ -447,28 +447,28 @@ void SegmentedLineClass::Prepare_LOD(CameraClass &camera)
 	}
 }
 
-void SegmentedLineClass::Increment_LOD(void)
+void SegmentedLineClass::Increment_LOD()
 {
 	unsigned int lvl = LineRenderer.Get_Current_Subdivision_Level();
-	
+
 	lvl = MIN(lvl+1,MaxSubdivisionLevels);
-	
+
 	LineRenderer.Set_Current_Subdivision_Level(lvl);
 }
 
-void SegmentedLineClass::Decrement_LOD(void)
+void SegmentedLineClass::Decrement_LOD()
 {
 	int lvl = LineRenderer.Get_Current_Subdivision_Level();
 	if (lvl == 0) return;
 	LineRenderer.Set_Current_Subdivision_Level(lvl-1);
 }
 
-float SegmentedLineClass::Get_Cost(void) const
+float SegmentedLineClass::Get_Cost() const
 {
 	return Get_Num_Polys();
 }
 
-float SegmentedLineClass::Get_Value(void) const
+float SegmentedLineClass::Get_Value() const
 {
 	// If we are at the minimum LOD, we must return AT_MIN_LOD.
 	if (LineRenderer.Get_Current_Subdivision_Level() == 0) {
@@ -480,7 +480,7 @@ float SegmentedLineClass::Get_Value(void) const
 	}
 }
 
-float SegmentedLineClass::Get_Post_Increment_Value(void) const
+float SegmentedLineClass::Get_Post_Increment_Value() const
 {
 	// If we are at the maximum LOD, we must return AT_MIN_LOD.
 	if (LineRenderer.Get_Current_Subdivision_Level() == MaxSubdivisionLevels) {
@@ -502,12 +502,12 @@ void SegmentedLineClass::Set_LOD_Level(int lod)
 	LineRenderer.Set_Current_Subdivision_Level((unsigned int)lod);
 }
 
-int SegmentedLineClass::Get_LOD_Level(void) const
+int SegmentedLineClass::Get_LOD_Level() const
 {
 	return (int) LineRenderer.Get_Current_Subdivision_Level();
 }
 
-int SegmentedLineClass::Get_LOD_Count(void) const
+int SegmentedLineClass::Get_LOD_Count() const
 {
 	return (int)MaxSubdivisionLevels;
 }
@@ -525,7 +525,7 @@ void SegmentedLineClass::Render_Seg_Line(RenderInfoClass & rinfo)
 	if (PointLocations.Count() < 2) return;
 
 	SphereClass bounding_sphere;
-	Get_Obj_Space_Bounding_Sphere(bounding_sphere);			
+	Get_Obj_Space_Bounding_Sphere(bounding_sphere);
 
 	LineRenderer.Render(
 		rinfo,
@@ -547,7 +547,7 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 	//	Check each line segment against the ray
 	//
 	float fraction = 1.0F;
-	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++) 
+	for (uint32 index = 1; index < (unsigned int)PointLocations.Count(); index ++)
 	{
 #ifdef ALLOW_TEMPORARIES
 		Vector3 curr_start	= Transform * PointLocations[index-1];
@@ -558,11 +558,11 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 		Transform.mulVector3Array(&PointLocations[index-1], curr, 2);
 		LineSegClass line_seg(curr[0], curr[1]);
 #endif
-		
+
 		Vector3 p0;
 		Vector3 p1;
-		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, NULL)) {
-			
+		if (raytest.Ray.Find_Intersection (line_seg, &p0, &fraction, &p1, nullptr)) {
+
 			//
 			//	Determine if the ray was close enough to this line to be
 			// considered intersecting
@@ -573,7 +573,7 @@ bool SegmentedLineClass::Cast_Ray(RayCollisionTestClass & raytest)
 				retval = true;
 				break;
 			}
-		}			
+		}
 	}
 
 	//

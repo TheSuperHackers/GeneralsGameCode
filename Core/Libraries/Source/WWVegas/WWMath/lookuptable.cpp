@@ -38,7 +38,7 @@
 
 #include "lookuptable.h"
 #include "curve.h"
-#include "WWFILE.H"
+#include "WWFILE.h"
 #include "ffactory.h"
 #include "chunkio.h"
 #include "persistfactory.h"
@@ -73,7 +73,7 @@ LookupTableClass::LookupTableClass(int sample_count) :
 {
 }
 
-LookupTableClass::~LookupTableClass(void)
+LookupTableClass::~LookupTableClass()
 {
 }
 
@@ -83,8 +83,8 @@ void LookupTableClass::Init(const char * name,Curve1DClass * curve)
 	Name = name;
 
 	// Store the min and max input values for the table
-	curve->Get_Key(0,NULL,&MinInputValue,NULL);
-	curve->Get_Key(curve->Key_Count()-1,NULL,&MaxInputValue,NULL);
+	curve->Get_Key(0,nullptr,&MinInputValue,nullptr);
+	curve->Get_Key(curve->Key_Count()-1,nullptr,&MaxInputValue,nullptr);
 	OOMaxMinusMin = 1.0f / (MaxInputValue - MinInputValue);
 
 	// Sample the curve and store the output values
@@ -103,12 +103,12 @@ void LookupTableClass::Init(const char * name,Curve1DClass * curve)
 ** LookupTableManager Implementation
 **
 ***********************************************************************************************/
-void LookupTableMgrClass::Init(void)
+void LookupTableMgrClass::Init()
 {
 	// create a default table that the user can use in an emergency
 	LookupTableClass * default_table = NEW_REF(LookupTableClass,(2));
 	LinearCurve1DClass * default_curve = W3DNEW LinearCurve1DClass;
-	
+
 	default_curve->Add_Key(0.5f,0.0f);
 	default_curve->Add_Key(0.5f,1.0f);
 	default_table->Init("DefaultTable",default_curve);
@@ -118,14 +118,14 @@ void LookupTableMgrClass::Init(void)
 	default_table->Release_Ref();
 }
 
-void LookupTableMgrClass::Shutdown(void)
+void LookupTableMgrClass::Shutdown()
 {
 	Reset();
 }
 
-void LookupTableMgrClass::Reset(void)
+void LookupTableMgrClass::Reset()
 {
-	while (Tables.Peek_Head() != NULL) {
+	while (Tables.Peek_Head() != nullptr) {
 		Tables.Release_Head();
 	}
 }
@@ -151,17 +151,17 @@ LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_
 	}
 
 	// otherwise we can try to load it.
-	LookupTableClass * new_table = NULL;
+	LookupTableClass * new_table = nullptr;
 	if (try_to_load) {
 
 		FileClass * file = _TheFileFactory->Get_File(name);
 		if (file && file->Open()) {
-			
+
 			ChunkLoadClass cload(file);
 
-			Curve1DClass * curve = NULL;
+			Curve1DClass * curve = nullptr;
 			Load_Table_Desc(cload,&curve);
-			if (curve != NULL) {
+			if (curve != nullptr) {
 				new_table = NEW_REF(LookupTableClass,());
 				new_table->Init(name,curve);
 				Add_Table(new_table);
@@ -170,7 +170,7 @@ LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_
 		}
 		_TheFileFactory->Return_File(file);
 	}
-	
+
 	return new_table;  // constructor ref is returned to user.
 }
 
@@ -206,7 +206,7 @@ void LookupTableMgrClass::Load_Table_Desc
 	Vector2 *			set_max_corner
 )
 {
-	*curve_ptr = NULL;
+	*curve_ptr = nullptr;
 	PersistFactoryClass * factory;
 
 	float xmin,xmax;
@@ -218,8 +218,8 @@ void LookupTableMgrClass::Load_Table_Desc
 			case LOOKUPTABLE_CHUNK_CURVE:
 				cload.Open_Chunk();
 				factory = SaveLoadSystemClass::Find_Persist_Factory(cload.Cur_Chunk_ID());
-				WWASSERT(factory != NULL);
-				if (factory != NULL) {
+				WWASSERT(factory != nullptr);
+				if (factory != nullptr) {
 					*curve_ptr = (Curve1DClass *)factory->Load(cload);
 				}
 				cload.Close_Chunk();
@@ -232,16 +232,16 @@ void LookupTableMgrClass::Load_Table_Desc
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		}
 		cload.Close_Chunk();
 	}
 
-	if (set_min_corner != NULL) {
+	if (set_min_corner != nullptr) {
 		set_min_corner->Set(xmin,ymin);
 	}
-	if (set_max_corner != NULL) {
+	if (set_max_corner != nullptr) {
 		set_max_corner->Set(xmax,ymax);
 	}
 }

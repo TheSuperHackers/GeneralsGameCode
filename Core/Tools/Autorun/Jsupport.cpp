@@ -16,11 +16,11 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// JSUPPORT.CPP
+// JSUPPORT.cpp
 // DBCS Support Codes
 
 #include <windows.h>
-#include "JSUPPORT.H"
+#include "JSUPPORT.h"
 
 // ‘O’u‹Ö‘¥•¶Žš
 // Can't set these characters on top of line
@@ -88,7 +88,7 @@ int nGetWord( char *string, int fdbcs )
 	// If no string was passed in, exit.
 	//--------------------------------------------------------------------------
 	if( !p || !( c0 = *p++ )) {
-//	if(( p == NULL ) || ( *p == '\0' )) {
+//	if(( p == nullptr ) || ( *p == '\0' )) {
 		return 0;
 	}
 //	c0 = *p;

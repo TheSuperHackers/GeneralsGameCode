@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef W3DERR_H
-#define W3DERR_H
 
 #include "always.h"
 
@@ -56,5 +50,3 @@ enum WW3DErrorType
 	WW3D_ERROR_WINDOW_NOT_OPEN,
 	WW3D_ERROR_INITIALIZATION_FAILED,
 };
-
-#endif

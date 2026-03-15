@@ -27,7 +27,7 @@
 // Desc:   Update module to handle deployment of the SpectreGunship Generals special power.from command center
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_DEATH_NAMES
 
@@ -44,7 +44,6 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
 #include "GameClient/FXList.h"
-#include "GameClient/ParticleSys.h"
 
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/GameLogic.h"
@@ -63,18 +62,13 @@
 #include "GameLogic/Module/ContainModule.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 SpectreGunshipDeploymentUpdateModuleData::SpectreGunshipDeploymentUpdateModuleData()
 {
-	m_specialPowerTemplate			   = NULL;
+	m_specialPowerTemplate			   = nullptr;
 	m_extraRequiredScience				 = SCIENCE_INVALID;
 /******BOTH*******//*BOTH*//******BOTH*******//******BOTH*******/  m_attackAreaRadius             = 200.0f;
 	m_createLoc = CREATE_GUNSHIP_AT_EDGE_FARTHEST_FROM_TARGET;
@@ -82,15 +76,15 @@ SpectreGunshipDeploymentUpdateModuleData::SpectreGunshipDeploymentUpdateModuleDa
 }
 
 
-static const char* TheGunshipCreateLocTypeNames[] =
+static const char* const TheGunshipCreateLocTypeNames[] =
 {
 	"CREATE_AT_EDGE_NEAR_SOURCE",
   "CREATE_AT_EDGE_FARTHEST_FROM_SOURCE",
 	"CREATE_AT_EDGE_NEAR_TARGET",
 	"CREATE_AT_EDGE_FARTHEST_FROM_TARGET",
-	NULL
+	nullptr
 };
-
+static_assert(ARRAY_SIZE(TheGunshipCreateLocTypeNames) == GUNSHIP_CREATE_LOC_COUNT + 1, "Wrong array size");
 
 
 static Real zero = 0.0f;
@@ -99,15 +93,15 @@ static Real zero = 0.0f;
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
-		{ "GunshipTemplateName",	    INI::parseAsciiString,				    NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_gunshipTemplateName ) },
-		{ "RequiredScience",					INI::parseScience,								NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_extraRequiredScience ) },
-/******BOTH*******/   { "SpecialPowerTemplate",     INI::parseSpecialPowerTemplate,   NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_specialPowerTemplate ) },
-/*******BOTH******/		{ "AttackAreaRadius",	        INI::parseReal,				            NULL, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_attackAreaRadius ) },
+		{ "GunshipTemplateName",	    INI::parseAsciiString,				    nullptr, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_gunshipTemplateName ) },
+		{ "RequiredScience",					INI::parseScience,								nullptr, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_extraRequiredScience ) },
+/******BOTH*******/   { "SpecialPowerTemplate",     INI::parseSpecialPowerTemplate,   nullptr, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_specialPowerTemplate ) },
+/*******BOTH******/		{ "AttackAreaRadius",	        INI::parseReal,				            nullptr, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_attackAreaRadius ) },
 		{ "CreateLocation", INI::parseIndexList, TheGunshipCreateLocTypeNames, offsetof( SpectreGunshipDeploymentUpdateModuleData, m_createLoc ) },
 
-    { 0, 0, 0, 0 }
+    { nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
@@ -115,12 +109,12 @@ static Real zero = 0.0f;
 //-------------------------------------------------------------------------------------------------
 SpectreGunshipDeploymentUpdate::SpectreGunshipDeploymentUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
-	m_specialPowerModule = NULL;
+	m_specialPowerModule = nullptr;
   m_gunshipID  = INVALID_ID;
-} 
+}
 
 //-------------------------------------------------------------------------------------------------
-SpectreGunshipDeploymentUpdate::~SpectreGunshipDeploymentUpdate( void )
+SpectreGunshipDeploymentUpdate::~SpectreGunshipDeploymentUpdate()
 {
 }
 
@@ -153,7 +147,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 	}
 
 //	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( specialPowerTemplate );
-	
+
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
 /******CHANGE*******/		m_initialTargetPosition.set( targetPos );
@@ -168,17 +162,17 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 
    Object *newGunship = TheGameLogic->findObjectByID( m_gunshipID );
 	const ThingTemplate *gunshipTemplate = TheThingFactory->findTemplate( data->m_gunshipTemplateName );
-	if( newGunship != NULL )
+	if( newGunship != nullptr )
   {
 //    disengageAndDepartAO( newGunship );
     m_gunshipID = INVALID_ID;
-    newGunship = NULL;
+    newGunship = nullptr;
   }
-  
+
 
   // Lets make a gunship, since we have none.
 	{
-		newGunship = TheThingFactory->newObject( gunshipTemplate, getObject()->getTeam() ); 
+		newGunship = TheThingFactory->newObject( gunshipTemplate, getObject()->getTeam() );
   }
 
   DEBUG_ASSERTCRASH( newGunship, ("SpecterGunshipUpdate failed to find or create a gunship object"));
@@ -205,11 +199,11 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 			  creationCoord = TheTerrainLogic->findFarthestEdgePoint(targetPos);
 			  break;
 	  }
-    
-    
-    
 
-      // HERE WE NEED TO CREATE THE POINT FURTHER OFF THE MAP SO WE CANT SEE THE LAME HOVER AND ACCELLERATE BEHAVIOR
+
+
+
+      // HERE WE NEED TO CREATE THE POINT FURTHER OFF THE MAP SO WE CANT SEE THE LAME HOVER AND ACCELERATE BEHAVIOR
     Coord3D deltaToCreationPoint = m_initialTargetPosition;
     deltaToCreationPoint.sub( &creationCoord );
     Real distanceFromTarget = deltaToCreationPoint.length();
@@ -226,7 +220,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
     //ORIENTATION
 		Real orient = atan2( m_initialTargetPosition.y - creationCoord.y, m_initialTargetPosition.x - creationCoord.x);
     newGunship->setOrientation( orient );
-    
+
     // ID
     m_gunshipID = newGunship->getID();
 
@@ -241,8 +235,8 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 	  }
 
     // MAKE THE GUNSHIP SELECTED
-
-    TheGameLogic->selectObject( newGunship, TRUE, getObject()->getControllingPlayer()->getPlayerMask(), TRUE );
+    // TheSuperHackers @bugfix arcticdolphin 04/03/2026 Only select the gunship on the local client that controls the unit.
+    TheGameLogic->selectObject( newGunship, TRUE, getObject()->getControllingPlayer()->getPlayerMask(), newGunship->isLocallyControlled() );
 
 
   }
@@ -254,7 +248,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
 		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
 	}
-  
+
   return TRUE;
 }
 
@@ -265,7 +259,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 /** The update callback. */
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SpectreGunshipDeploymentUpdate::update()
-{	
+{
 //	const SpectreGunshipDeploymentUpdateModuleData *data = getSpectreGunshipDeploymentUpdateModuleData();
 
 
@@ -301,7 +295,7 @@ void SpectreGunshipDeploymentUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpdateModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -321,14 +315,14 @@ void SpectreGunshipDeploymentUpdate::xfer( Xfer *xfer )
 	UpdateModule::xfer( xfer );
   xfer->xferObjectID( &m_gunshipID );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void SpectreGunshipDeploymentUpdate::loadPostProcess( void )
+void SpectreGunshipDeploymentUpdate::loadPostProcess()
 {
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

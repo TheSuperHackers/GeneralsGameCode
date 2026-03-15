@@ -48,10 +48,10 @@ SpherePropertySheetClass::SpherePropertySheetClass
 	CWnd *						pParentWnd,
 	UINT							iSelectPage
 )
-	:	m_RenderObj (NULL),
+	:	m_RenderObj (nullptr),
 		CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
-	MEMBER_ADD (m_RenderObj, sphere);
+	REF_PTR_SET (m_RenderObj, sphere);
 	Initialize ();
 	return ;
 }
@@ -69,10 +69,10 @@ SpherePropertySheetClass::SpherePropertySheetClass
 	CWnd *							pParentWnd,
 	UINT								iSelectPage
 )
-	:	m_RenderObj (NULL),		
+	:	m_RenderObj (nullptr),
 		CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
-	MEMBER_ADD (m_RenderObj, sphere);
+	REF_PTR_SET (m_RenderObj, sphere);
 	Initialize ();
 	return ;
 }
@@ -85,7 +85,7 @@ SpherePropertySheetClass::SpherePropertySheetClass
 /////////////////////////////////////////////////////////////////////////////
 SpherePropertySheetClass::~SpherePropertySheetClass (void)
 {
-	MEMBER_RELEASE (m_RenderObj);
+	REF_PTR_RELEASE (m_RenderObj);
 	return ;
 }
 
@@ -140,7 +140,7 @@ SpherePropertySheetClass::WindowProc
 
 				case IDOK:
 				case ID_APPLY_NOW:
-				{					
+				{
 					// Did the user click the button?
 					if (HIWORD (wParam) == BN_CLICKED) {
 						LRESULT lresult = CPropertySheet::WindowProc (message, wParam, lParam);
@@ -149,11 +149,11 @@ SpherePropertySheetClass::WindowProc
 						if (	m_GeneralPage.Is_Data_Valid () &&
 								m_ColorPage.Is_Data_Valid () &&
 								m_ScalePage.Is_Data_Valid ())
-						{							
+						{
 							// Update the current emitter to match the data
 							Update_Object ();
 						}
-												
+
 						return lresult;
 					}
 				}
@@ -178,13 +178,13 @@ void
 SpherePropertySheetClass::Add_Object_To_Viewer (void)
 {
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
-	if ((doc != NULL) && (m_RenderObj != NULL)) {
-		
+	if ((doc != nullptr) && (m_RenderObj != nullptr)) {
+
 		//
 		// Create a new prototype for this object
 		//
 		SpherePrototypeClass *prototype	= new SpherePrototypeClass (m_RenderObj);
-		
+
 		//
 		// Update the asset manager with the new prototype
 		//
@@ -192,7 +192,7 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 			WW3DAssetManager::Get_Instance()->Remove_Prototype (m_LastSavedName);
 		}
 		WW3DAssetManager::Get_Instance()->Add_Prototype (prototype);
-		
+
 		//
 		// Add this object to the data tree
 		//
@@ -204,7 +204,7 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 		//
 		doc->Reload_Displayed_Object ();
 		m_LastSavedName = m_RenderObj->Get_Name ();
-		MEMBER_ADD (m_RenderObj, (SphereRenderObjClass *)doc->GetDisplayedObject ());
+		REF_PTR_SET (m_RenderObj, (SphereRenderObjClass *)doc->GetDisplayedObject ());
 
 		//
 		// Pass the object along to the pages
@@ -239,7 +239,7 @@ SpherePropertySheetClass::Update_Object (void)
 void
 SpherePropertySheetClass::Initialize (void)
 {
-	if (m_RenderObj == NULL) {
+	if (m_RenderObj == nullptr) {
 		Create_New_Object ();
 	} else {
 		m_LastSavedName = m_RenderObj->Get_Name ();
@@ -261,7 +261,7 @@ SpherePropertySheetClass::Initialize (void)
 
 	//
 	//	Force the pages to be created up front
-	//	
+	//
 	m_GeneralPage.m_psp.dwFlags	|= PSP_PREMATURE;
 	m_ColorPage.m_psp.dwFlags		|= PSP_PREMATURE;
 	m_ScalePage.m_psp.dwFlags		|= PSP_PREMATURE;

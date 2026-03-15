@@ -86,12 +86,12 @@
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-AABTreeClass::AABTreeClass(void) :
+AABTreeClass::AABTreeClass() :
 	NodeCount(0),
-	Nodes(NULL),
+	Nodes(nullptr),
 	PolyCount(0),
-	PolyIndices(NULL),
-	Mesh(NULL)
+	PolyIndices(nullptr),
+	Mesh(nullptr)
 {
 }
 
@@ -137,12 +137,12 @@ AABTreeClass::AABTreeClass(AABTreeBuilderClass * builder)
  *=============================================================================================*/
 AABTreeClass::AABTreeClass(const AABTreeClass & that) :
 	NodeCount(0),
-	Nodes(NULL),
+	Nodes(nullptr),
 	PolyCount(0),
-	PolyIndices(0),
-	Mesh(NULL)
-{ 
-	*this = that; 
+	PolyIndices(nullptr),
+	Mesh(nullptr)
+{
+	*this = that;
 }
 
 /***********************************************************************************************
@@ -157,7 +157,7 @@ AABTreeClass::AABTreeClass(const AABTreeClass & that) :
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-AABTreeClass::~AABTreeClass(void)
+AABTreeClass::~AABTreeClass()
 {
 	Reset();
 }
@@ -177,7 +177,7 @@ AABTreeClass::~AABTreeClass(void)
 AABTreeClass & AABTreeClass::operator = (const AABTreeClass & that)
 {
 	Reset();
-	
+
 	NodeCount = that.NodeCount;
 	if (NodeCount > 0) {
 		Nodes = W3DNEWARRAY CullNodeStruct[NodeCount];
@@ -208,21 +208,17 @@ AABTreeClass & AABTreeClass::operator = (const AABTreeClass & that)
  * HISTORY:                                                                                    *
  *   6/22/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void AABTreeClass::Reset(void)
+void AABTreeClass::Reset()
 {
 	NodeCount = 0;
-	if (Nodes) {
-		delete[] Nodes;
-		Nodes = NULL;
-	}
+	delete[] Nodes;
+	Nodes = nullptr;
+
 	PolyCount = 0;
-	if (PolyIndices) {
-		delete[] PolyIndices;
-		PolyIndices = NULL;
-	}
-	if (Mesh) {
-		Mesh = NULL;
-	}
+	delete[] PolyIndices;
+	PolyIndices = nullptr;
+
+	Mesh = nullptr;
 }
 
 /***********************************************************************************************
@@ -267,16 +263,16 @@ void AABTreeClass::Build_Tree_Recursive(AABTreeBuilderClass::CullNodeStruct * no
 
 	newnode->Min = node->Min;
 	newnode->Max = node->Max;
-	
+
 	/*
 	** If this is a non-leaf node, set up the child indices, otherwise set up the polygon indices
 	*/
-	if (node->Front != NULL) {
+	if (node->Front != nullptr) {
 
-		WWASSERT(node->Back != NULL);		// if we have one child, we better have both!
+		WWASSERT(node->Back != nullptr);		// if we have one child, we better have both!
 		newnode->Set_Front_Child(node->Front->Index);
 		newnode->Set_Back_Child(node->Back->Index);
-	
+
 	} else {
 
 		newnode->Set_Poly0(curpolyindex);
@@ -364,11 +360,11 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node,OBBoxAPTCo
 	*/
 	AABoxClass nodebox;
 	nodebox.Init_Min_Max(node->Min,node->Max);				// NOTE: too bad we have to compute the nodebox!!!
-	
+
 	if (!CollisionMath::Intersection_Test(context.Box,nodebox)) {
 		return;
 	}
-	
+
 	/*
 	** If this is a leaf, test its polygons, otherwise recurse into the children
 	*/
@@ -387,7 +383,7 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node,OBBoxAPTCo
 			for (int poly_counter=0; poly_counter<polycount; poly_counter++) {
 
 				int poly_index = PolyIndices[poly0 + poly_counter];
-				
+
 				tri.V[0] = &(loc[ polys[poly_index][0] ]);
 				tri.V[1] = &(loc[ polys[poly_index][1] ]);
 				tri.V[2] = &(loc[ polys[poly_index][2] ]);
@@ -400,7 +396,7 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node,OBBoxAPTCo
 #endif
 				if (CollisionMath::Intersection_Test(context.Box,tri)) {;
 					context.APT.Add(poly_index);
-				} 
+				}
 			}
 		}
 
@@ -459,11 +455,11 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node, OBBoxRayA
 	*/
 	AABoxClass nodebox;
 	nodebox.Init_Min_Max(node->Min,node->Max);				// NOTE: too bad we have to compute the nodebox!!!
-	
+
 	if (!CollisionMath::Intersection_Test(context.Box,nodebox)) {
 		return;
 	}
-	
+
 	/*
 	** If this is a leaf, test its polygons, otherwise recurse into the children
 	*/
@@ -483,7 +479,7 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node, OBBoxRayA
 			for (int poly_counter=0; poly_counter<polycount; poly_counter++) {
 
 				int poly_index = PolyIndices[poly0 + poly_counter];
-				
+
 				tri.V[0] = &(loc[ polys[poly_index][0] ]);
 				tri.V[1] = &(loc[ polys[poly_index][1] ]);
 				tri.V[2] = &(loc[ polys[poly_index][2] ]);
@@ -497,7 +493,7 @@ void AABTreeClass::Generate_OBBox_APT_Recursive(CullNodeStruct * node, OBBoxRayA
 				if (Vector3::Dot_Product(*tri.N,context.ViewVector) < 0.0f) {
 					if (CollisionMath::Intersection_Test(context.Box,tri)) {
 						context.APT.Add(poly_index);
-					} 
+					}
 				}
 			}
 		}
@@ -533,19 +529,19 @@ bool AABTreeClass::Cast_Ray_Recursive(CullNodeStruct * node,RayCollisionTestClas
 	if (raytest.Cull(node->Min,node->Max)) {
 		return false;
 	}
-	
+
 	bool res = false;
 	if (node->Is_Leaf()) {
-	
+
 		return Cast_Ray_To_Polys(node,raytest);
-	
+
 	} else {
 
 		res = res | Cast_Ray_Recursive(&(Nodes[node->Get_Front_Child()]),raytest);
 		res = res | Cast_Ray_Recursive(&(Nodes[node->Get_Back_Child()]),raytest);
 
 	}
-	
+
 	return res;
 }
 
@@ -595,10 +591,10 @@ int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(CullNodeStruct *
 
 	int count = 0;
 	if (node->Is_Leaf()) {
-	
+
 		return Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys(node, start_point, axis_r, axis_1,
 			axis_2, direction, flags);
-	
+
 	} else {
 
 		count += Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(&(Nodes[node->Get_Front_Child()]),
@@ -607,7 +603,7 @@ int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_Recursive(CullNodeStruct *
 			start_point, axis_r, axis_1, axis_2, direction, flags);
 
 	}
-	
+
 	return count;
 }
 
@@ -647,7 +643,7 @@ bool AABTreeClass::Cast_AABox_Recursive(CullNodeStruct * node,AABoxCollisionTest
 		res = res | Cast_AABox_Recursive(&(Nodes[node->Get_Back_Child()]),boxtest);
 
 	}
-	
+
 	return res;
 }
 
@@ -680,7 +676,7 @@ bool AABTreeClass::Cast_OBBox_Recursive(CullNodeStruct * node,OBBoxCollisionTest
 	if (node->Is_Leaf()) {
 
 		return Cast_OBBox_To_Polys(node,boxtest);
-	
+
 	} else {
 
 		res = res | Cast_OBBox_Recursive(&(Nodes[node->Get_Front_Child()]),boxtest);
@@ -718,7 +714,7 @@ bool AABTreeClass::Intersect_OBBox_Recursive(AABTreeClass::CullNodeStruct * node
 	if (node->Is_Leaf()) {
 
 		return Intersect_OBBox_With_Polys(node,test);
-		
+
 	} else {
 
 		res = res | Intersect_OBBox_Recursive(&(Nodes[node->Get_Front_Child()]),test);
@@ -728,10 +724,6 @@ bool AABTreeClass::Intersect_OBBox_Recursive(AABTreeClass::CullNodeStruct * node
 	return res;
 }
 
-#ifdef RTS_DEBUG
-#pragma optimize("", off)	 // We get an odd error when using optimized in the debug.  
-// All optimized seems to work.  jba.
-#endif
 /***********************************************************************************************
  * AABTreeClass::Cast_Ray_To_Polys -- cast the ray to polys in the given node                  *
  *                                                                                             *
@@ -791,10 +783,6 @@ bool AABTreeClass::Cast_Ray_To_Polys(CullNodeStruct * node,RayCollisionTestClass
 	}
 	return false;
 }
-#ifdef RTS_DEBUG
-#pragma optimize("", on)
-#endif
-
 
 /***********************************************************************************************
  * AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys -- cast ray to polys in the node *
@@ -831,7 +819,7 @@ int AABTreeClass::Cast_Semi_Infinite_Axis_Aligned_Ray_To_Polys(CullNodeStruct * 
 		const Vector4 * plane = Mesh->Get_Plane_Array();
 		int poly0 = node->Get_Poly0();
 		int polycount = node->Get_Poly_Count();
-		
+
 		for (int poly_counter=0; poly_counter < polycount; poly_counter++) {
 
 			int poly_index = PolyIndices[poly0 + poly_counter];
@@ -868,7 +856,7 @@ bool AABTreeClass::Cast_AABox_To_Polys(CullNodeStruct * node,AABoxCollisionTestC
 	if (node->Get_Poly_Count() > 0) {
 		/*
 		** Simply loop through the polys in this node, checking each for collision
-		*/	  
+		*/
 		TriClass tri;
 
 		const Vector3 * loc = Mesh->Get_Vertex_Array();
@@ -932,7 +920,7 @@ bool AABTreeClass::Cast_OBBox_To_Polys(CullNodeStruct * node,OBBoxCollisionTestC
 	if (polycount > 0) {
 		/*
 		** Simply loop through the polys in this node, checking each for collision
-		*/	  
+		*/
 		TriClass tri;
 
 		const Vector3 * loc = Mesh->Get_Vertex_Array();
@@ -1000,7 +988,7 @@ bool AABTreeClass::Intersect_OBBox_With_Polys
 	if (polycount > 0) {
 		/*
 		** Simply loop through the polys in this node, checking each for collision
-		*/	  
+		*/
 		TriClass tri;
 
 		const Vector3 * loc = Mesh->Get_Vertex_Array();
@@ -1072,7 +1060,7 @@ void AABTreeClass::Update_Bounding_Boxes_Recursive(CullNodeStruct * node)
 
 		if (Nodes[front].Min.Y < node->Min.Y) node->Min.Y = Nodes[front].Min.Y;
 		if (Nodes[front].Max.Y > node->Max.Y) node->Max.Y = Nodes[front].Max.Y;
-		
+
 		if (Nodes[front].Min.Z < node->Min.Z) node->Min.Z = Nodes[front].Min.Z;
 		if (Nodes[front].Max.Z > node->Max.Z) node->Max.Z = Nodes[front].Max.Z;
 
@@ -1081,12 +1069,12 @@ void AABTreeClass::Update_Bounding_Boxes_Recursive(CullNodeStruct * node)
 
 		if (Nodes[back].Min.Y < node->Min.Y) node->Min.Y = Nodes[back].Min.Y;
 		if (Nodes[back].Max.Y > node->Max.Y) node->Max.Y = Nodes[back].Max.Y;
-		
+
 		if (Nodes[back].Min.Z < node->Min.Z) node->Min.Z = Nodes[back].Min.Z;
 		if (Nodes[back].Max.Z > node->Max.Z) node->Max.Z = Nodes[back].Max.Z;
 
 	} else {
-		
+
 		/*
 		** Bound our polygons
 		*/
@@ -1154,7 +1142,7 @@ void AABTreeClass::Update_Min_Max(int poly_index,Vector3 & min,Vector3 & max)
 void AABTreeClass::Load_W3D(ChunkLoadClass & cload)
 {
 	Reset();
-	
+
 	W3dMeshAABTreeHeader header;
 	cload.Open_Chunk();
 	WWASSERT(cload.Cur_Chunk_ID() == W3D_CHUNK_AABTREE_HEADER);
@@ -1167,7 +1155,7 @@ void AABTreeClass::Load_W3D(ChunkLoadClass & cload)
 	PolyIndices = W3DNEWARRAY uint32[PolyCount];
 
 	while (cload.Open_Chunk()) {
-		switch (cload.Cur_Chunk_ID()) 
+		switch (cload.Cur_Chunk_ID())
 		{
 		case W3D_CHUNK_AABTREE_POLYINDICES:
 			Read_Poly_Indices(cload);

@@ -30,7 +30,7 @@
 
 void CreateTranslationTable ( void )
 {
-	int i; 
+	int i;
 	FILE *out;
 	wchar_t wc;
 	wchar_t mb;

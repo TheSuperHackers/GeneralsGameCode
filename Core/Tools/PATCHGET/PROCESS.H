@@ -16,11 +16,10 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PROCESS_HEADER
-#define PROCESS_HEADER
+#pragma once
 
 #include <windows.h>
-#include "WSTYPES.H"
+#include "WSTYPES.h"
 
 namespace patchget
 {
@@ -39,8 +38,6 @@ class Process
 
 //bit8 Read_Process_Info(ConfigFile &config,OUT Process &info);
 bit8 Create_Process(Process &process);
-bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
+bit8 Wait_Process(Process &process, DWORD *exit_code=nullptr);
 
 } // namespace patchget
-
-#endif

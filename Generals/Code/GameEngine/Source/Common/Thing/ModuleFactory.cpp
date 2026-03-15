@@ -25,9 +25,9 @@
 // FILE: ModuleFactory.cpp ////////////////////////////////////////////////////////////////////////
 // Author: Colin Day, September 2001
 // Desc:	 TheModuleFactory is where we actually instance modules for objects
-//				 and drawbles.  Those modules are things such as an UpdateModule
+//				 and drawables.  Those modules are things such as an UpdateModule
 //			   or DamageModule or DrawModule etc.
-//	
+//
 //				 TheModuleFactory will contain a list of ModuleTemplates, when we
 //				 request a new module, we will look for that template in our
 //				 list and create it
@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Module.h"
 #include "Common/ModuleFactory.h"
@@ -100,7 +100,7 @@
 #include "GameLogic/Module/BoneFXUpdate.h"
 #include "GameLogic/Module/ChinookAIUpdate.h"
 #include "GameLogic/Module/DefaultProductionExitUpdate.h"
-#include "GameLogic/Module/DelayedWeaponSetUpgradeUpdate.h" 
+#include "GameLogic/Module/DelayedWeaponSetUpgradeUpdate.h"
 #include "GameLogic/Module/DeletionUpdate.h"
 #include "GameLogic/Module/DeliverPayloadAIUpdate.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
@@ -193,7 +193,6 @@
 #include "GameLogic/Module/UnpauseSpecialPowerUpgrade.h"
 #include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/WeaponSetUpgrade.h"
-#include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
 #include "GameLogic/Module/ExperienceScalarUpgrade.h"
 #include "GameLogic/Module/MaxHealthUpgrade.h"
@@ -255,28 +254,23 @@
 #include "GameClient/Module/BeaconClientUpdate.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ModuleFactory *TheModuleFactory = NULL;  ///< the module factory singleton
+ModuleFactory *TheModuleFactory = nullptr;  ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ModuleFactory::ModuleFactory( void )
+ModuleFactory::ModuleFactory()
 {
 	m_moduleTemplateMap.clear();
 	m_moduleDataList.clear();
-	
+
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ModuleFactory::~ModuleFactory( void )
+ModuleFactory::~ModuleFactory()
 {
 	m_moduleTemplateMap.clear();
 
@@ -294,7 +288,7 @@ ModuleFactory::~ModuleFactory( void )
 	* to objects or drawables as modules needs to add a template
 	* for that class here */
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::init( void )
+void ModuleFactory::init()
 {
 
 	// behavior modules
@@ -509,7 +503,7 @@ void ModuleFactory::init( void )
 	addModule( SwayClientUpdate );
 	addModule( BeaconClientUpdate );
 
-}  // end init
+}
 
 //-------------------------------------------------------------------------------------------------
 Int ModuleFactory::findModuleInterfaceMask(const AsciiString& name, ModuleType type)
@@ -531,7 +525,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 																								const AsciiString& moduleTag)
 {
 	if (name.isEmpty())
-		return NULL;
+		return nullptr;
 
 	const ModuleTemplate* moduleTemplate = findModuleTemplate(name, type);
 	if (moduleTemplate)
@@ -542,7 +536,7 @@ ModuleData* ModuleFactory::newModuleDataFromINI(INI* ini, const AsciiString& nam
 		return md;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
@@ -562,10 +556,10 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 	NameKeyType namekey = makeDecoratedNameKey(name, type);
 
   ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
-  if (it == m_moduleTemplateMap.end()) 
+  if (it == m_moduleTemplateMap.end())
 	{
-		DEBUG_CRASH(( "Module name '%s' not found\n", name.str() ));
-		return NULL;
+		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
+		return nullptr;
 	}
 	else
 	{
@@ -574,15 +568,15 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Allocate a new acton class istance given the name */
+/** Allocate a new acton class instance given the name */
 //-------------------------------------------------------------------------------------------------
 Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const ModuleData* moduleData, ModuleType type )
 {
 	// sanity
 	if( name.isEmpty() )
 	{
-		DEBUG_CRASH(("attempting to create module with empty name\n"));
-		return NULL;
+		DEBUG_CRASH(("attempting to create module with empty name"));
+		return nullptr;
 	}
 	const ModuleTemplate* mt = findModuleTemplate(name, type);
 	if (mt)
@@ -595,44 +589,44 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 			BehaviorModule* bm = (BehaviorModule*)mod;
 
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != NULL), 
-				("getInterfaceMask bad for MODULE_BODY (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_BODY)) != 0) == (bm->getBody() != nullptr),
+				("getInterfaceMask bad for MODULE_BODY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != NULL), 
-				("getInterfaceMask bad for MODULE_COLLIDE (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_COLLIDE)) != 0) == (bm->getCollide() != nullptr),
+				("getInterfaceMask bad for MODULE_COLLIDE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != NULL), 
-				("getInterfaceMask bad for MODULE_CONTAIN (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_CONTAIN)) != 0) == (bm->getContain() != nullptr),
+				("getInterfaceMask bad for MODULE_CONTAIN (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != NULL), 
-				("getInterfaceMask bad for MODULE_CREATE (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_CREATE)) != 0) == (bm->getCreate() != nullptr),
+				("getInterfaceMask bad for MODULE_CREATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != NULL), 
-				("getInterfaceMask bad for MODULE_DAMAGE (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DAMAGE)) != 0) == (bm->getDamage() != nullptr),
+				("getInterfaceMask bad for MODULE_DAMAGE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != NULL), 
-				("getInterfaceMask bad for MODULE_DESTROY (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DESTROY)) != 0) == (bm->getDestroy() != nullptr),
+				("getInterfaceMask bad for MODULE_DESTROY (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != NULL), 
-				("getInterfaceMask bad for MODULE_DIE (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_DIE)) != 0) == (bm->getDie() != nullptr),
+				("getInterfaceMask bad for MODULE_DIE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != NULL), 
-				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_SPECIAL_POWER)) != 0) == (bm->getSpecialPower() != nullptr),
+				("getInterfaceMask bad for MODULE_SPECIAL_POWER (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != NULL), 
-				("getInterfaceMask bad for MODULE_UPDATE (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_UPDATE)) != 0) == (bm->getUpdate() != nullptr),
+				("getInterfaceMask bad for MODULE_UPDATE (%s)",name.str()));
 			DEBUG_ASSERTCRASH(
-				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != NULL), 
-				("getInterfaceMask bad for MODULE_UPGRADE (%s)\n",name.str()));
+				((mt->m_whichInterfaces & (MODULEINTERFACE_UPGRADE)) != 0) == (bm->getUpgrade() != nullptr),
+				("getInterfaceMask bad for MODULE_UPGRADE (%s)",name.str()));
 		}
 #endif
 
 		return mod;
 	}
 
-	return NULL;
+	return nullptr;
 
-}  // end newModule
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Add a module template to our list of templates */
@@ -671,6 +665,6 @@ void ModuleFactory::xfer( Xfer *xfer )
 }
 
 //-------------------------------------------------------------------------------------------------
-void ModuleFactory::loadPostProcess( void )
+void ModuleFactory::loadPostProcess()
 {
 }

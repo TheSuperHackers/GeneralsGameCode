@@ -37,10 +37,6 @@
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
 
-#ifdef RTS_INTERNAL
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 extern HWND ApplicationHWnd;
@@ -53,7 +49,7 @@ static void RTSFlagsToOSFlags(UnsignedInt buttonFlags, UnsignedInt otherFlags, U
 	if (BitIsSet(buttonFlags, OSDBT_OK)) {
 		outWindowsFlags |= MB_OK;
 	}
-	
+
 	if (BitIsSet(buttonFlags, OSDBT_CANCEL)) {
 		outWindowsFlags |= MB_OKCANCEL;
 	}
@@ -101,29 +97,39 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 
 	UnsignedInt windowsOptionsFlags = 0;
 	RTSFlagsToOSFlags(buttonFlags, otherFlags, windowsOptionsFlags);
-	
+
 	// @todo Make this return more than just ok/cancel - jkmcd
 	// (we need a function to translate back the other way.)
 	Int returnResult = 0;
-	if (TheSystemIsUnicode) 
+	if (TheSystemIsUnicode)
 	{
-		returnResult = ::MessageBoxW(NULL, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
-	} 
-	else 
+		returnResult = ::MessageBoxW(nullptr, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
+	}
+	else
 	{
-		// However, if we're using the default version of the message box, we need to 
+		// However, if we're using the default version of the message box, we need to
 		// translate the string into an AsciiString
 		AsciiString promptA, mesgA;
 		promptA.translate(promptStr);
 		mesgA.translate(mesgStr);
 		//Make sure main window is not TOP_MOST
 		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-		returnResult = ::MessageBoxA(NULL, mesgA.str(), promptA.str(), windowsOptionsFlags);
+		returnResult = ::MessageBoxA(nullptr, mesgA.str(), promptA.str(), windowsOptionsFlags);
 	}
 
 	if (returnResult == IDOK) {
 		return OSDBT_OK;
-	} 
+	}
 
 	return OSDBT_CANCEL;
+}
+
+//-------------------------------------------------------------------------------------------------
+void OSDisplaySetBusyState(Bool busyDisplay, Bool busySystem)
+{
+	EXECUTION_STATE state = ES_CONTINUOUS;
+	state |= busyDisplay ? ES_DISPLAY_REQUIRED : 0;
+	state |= busySystem ? ES_SYSTEM_REQUIRED : 0;
+
+	::SetThreadExecutionState(state);
 }

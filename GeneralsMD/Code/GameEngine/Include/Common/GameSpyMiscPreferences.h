@@ -30,16 +30,13 @@
 
 #pragma once
 
-#ifndef __GAMESPYMISCPREFERENCES_H__
-#define __GAMESPYMISCPREFERENCES_H__
-
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/UserPreferences.h"
 
 //-----------------------------------------------------------------------------
-// GameSpyMiscPreferences base class 
+// GameSpyMiscPreferences base class
 //-----------------------------------------------------------------------------
 class GameSpyMiscPreferences : public UserPreferences
 {
@@ -47,15 +44,13 @@ public:
 	GameSpyMiscPreferences();
 	virtual ~GameSpyMiscPreferences();
 
-	Int getLocale( void );
+	Int getLocale();
 	void setLocale( Int val );
 
-	AsciiString getCachedStats( void );
+	AsciiString getCachedStats();
 	void setCachedStats( AsciiString val );
 
-	Bool getQuickMatchResLocked( void );
+	Bool getQuickMatchResLocked();
 
-	Int getMaxMessagesPerUpdate( void );
+	Int getMaxMessagesPerUpdate();
 };
-
-#endif // __GAMESPYMISCPREFERENCES_H__

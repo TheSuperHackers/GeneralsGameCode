@@ -17,36 +17,30 @@
 */
 
 /* $Header: /Commando/Code/ww3d2/hanimmgr.h 1     1/22/01 3:36p Greg_h $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/ww3d2/hanimmgr.h                             $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 1/08/01 10:04a                                              $* 
- *                                                                                             * 
- *                    $Revision:: 1                                                           $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/hanimmgr.h                             $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 1/08/01 10:04a                                              $*
+ *                                                                                             *
+ *                    $Revision:: 1                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef HANIMMGR_H
-#define HANIMMGR_H
 
 #include "always.h"
 #include "hash.h"
 #include "wwstring.h"
-#include "Vector.H"
+#include "Vector.h"
 
 class HAnimClass;
 class ChunkLoadClass;
@@ -59,9 +53,9 @@ class MissingAnimClass : public HashableClass {
 
 public:
 	MissingAnimClass( const char * name ) : Name( name ) {}
-	virtual	~MissingAnimClass( void ) {}
+	virtual	~MissingAnimClass() {}
 
-	virtual	const char * Get_Key( void )	{ return Name;	}
+	virtual	const char * Get_Key()	{ return Name;	}
 
 private:
 	StringClass	Name;
@@ -78,20 +72,20 @@ class HAnimManagerClass
 {
 
 public:
-	HAnimManagerClass(void);
-	~HAnimManagerClass(void);
+	HAnimManagerClass();
+	~HAnimManagerClass();
 
 	int			 		Load_Anim(ChunkLoadClass & cload);
 	HAnimClass *		Get_Anim(const char * name);
 	HAnimClass *		Peek_Anim(const char * name);
 	bool					Add_Anim(HAnimClass *new_anim);
-	void			 		Free_All_Anims(void);
+	void			 		Free_All_Anims();
 	void			 		Free_All_Anims_With_Exclusion_List(const W3DExclusionListClass & exclusion_list);
 	void					Create_Asset_List(DynamicVectorClass<StringClass> & exclusion_list);
 
 	void					Register_Missing( const char * name );
 	bool					Is_Missing( const char * name );
-	void					Reset_Missing( void );
+	void					Reset_Missing();
 
 private:
 	int					Load_Compressed_Anim(ChunkLoadClass & cload);
@@ -111,7 +105,5 @@ private:
 class HAnimManagerIterator : public HashTableIteratorClass {
 public:
 	HAnimManagerIterator( HAnimManagerClass & manager ) : HashTableIteratorClass( *manager.AnimPtrTable ) {}
-	HAnimClass * Get_Current_Anim( void );
+	HAnimClass * Get_Current_Anim();
 };
-
-#endif

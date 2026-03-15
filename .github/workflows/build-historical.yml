@@ -1,0 +1,278 @@
+name: Build Historical
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Commit SHA to build'
+        required: true
+        type: string
+      pull_requests:
+        description: 'PR numbers to cherry-pick (comma-separated, e.g., "545,876")'
+        required: false
+        default: ''
+        type: string
+      game:
+        description: 'Game to build'
+        required: true
+        default: 'GeneralsMD'
+        type: choice
+        options:
+          - 'Generals'
+          - 'GeneralsMD'
+          - 'Both'
+      create_release:
+        description: 'Create a GitHub release'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.commit }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare Build Info
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.info.outputs.short_sha }}
+      commit_date: ${{ steps.info.outputs.commit_date }}
+      commit_subject: ${{ steps.info.outputs.commit_subject }}
+      release_tag: ${{ steps.info.outputs.release_tag }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Gather Commit Info
+        id: info
+        run: |
+          COMMIT="${{ github.event.inputs.commit }}"
+
+          if ! git cat-file -e "$COMMIT^{commit}" 2>/dev/null; then
+            echo "::error::Commit $COMMIT not found in repository"
+            exit 1
+          fi
+
+          SHORT_SHA=$(git rev-parse --short=7 "$COMMIT")
+          COMMIT_DATE=$(git show -s --format=%cs "$COMMIT")
+          COMMIT_SUBJECT=$(git show -s --format=%s "$COMMIT" | head -c 80)
+
+          PR_SUFFIX=""
+          if [ -n "${{ github.event.inputs.pull_requests }}" ]; then
+            PR_SUFFIX="+pr${{ github.event.inputs.pull_requests }}"
+          fi
+          RELEASE_TAG="historical-${COMMIT_DATE}-${SHORT_SHA}${PR_SUFFIX}"
+
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "commit_date=$COMMIT_DATE" >> $GITHUB_OUTPUT
+          echo "commit_subject=$COMMIT_SUBJECT" >> $GITHUB_OUTPUT
+          echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+
+          echo "### Build Info" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: \`$COMMIT\` ($SHORT_SHA)" >> $GITHUB_STEP_SUMMARY
+          echo "- Date: $COMMIT_DATE" >> $GITHUB_STEP_SUMMARY
+          echo "- Subject: $COMMIT_SUBJECT" >> $GITHUB_STEP_SUMMARY
+          echo "- PRs to apply: ${{ github.event.inputs.pull_requests || 'none' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Release tag: $RELEASE_TAG" >> $GITHUB_STEP_SUMMARY
+
+  build:
+    name: Build ${{ matrix.game }} vc6
+    needs: prepare
+    runs-on: windows-2022
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        game: ${{ github.event.inputs.game == 'Both' && fromJson('["Generals", "GeneralsMD"]') || fromJson(format('["{0}"]', github.event.inputs.game)) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout Target Commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit }}
+          fetch-depth: 0
+
+      - name: Apply Pull Requests
+        if: ${{ github.event.inputs.pull_requests != '' }}
+        shell: bash
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          PR_LIST="${{ github.event.inputs.pull_requests }}"
+          IFS=',' read -ra PRS <<< "$PR_LIST"
+
+          for PR in "${PRS[@]}"; do
+            PR=$(echo "$PR" | xargs)
+            echo "::group::Applying PR #$PR"
+
+            git fetch origin "pull/$PR/head:pr-$PR"
+
+            PR_BASE=$(git merge-base pr-$PR HEAD)
+            PR_COMMITS=$(git rev-list --reverse "$PR_BASE..pr-$PR")
+
+            for COMMIT in $PR_COMMITS; do
+              echo "Cherry-picking $COMMIT"
+              if ! git cherry-pick --no-commit "$COMMIT"; then
+                echo "::error::Failed to cherry-pick commit $COMMIT from PR #$PR"
+                git cherry-pick --abort || true
+                exit 1
+              fi
+            done
+
+            git commit -m "Apply PR #$PR" || echo "No changes to commit for PR #$PR"
+            echo "::endgroup::"
+          done
+
+      - name: Cache VC6 Installation
+        id: cache-vc6
+        uses: actions/cache@v4
+        with:
+          path: C:\VC6
+          key: vc6-permanent-cache-v2
+
+      - name: Download VC6 Portable
+        if: ${{ steps.cache-vc6.outputs.cache-hit != 'true' }}
+        env:
+          EXPECTED_HASH: "D0EE1F6DCEF7DB3AD703120D9FB4FAD49EBCA28F44372E40550348B1C00CA583"
+          VC6_COMMIT: "001c4bafdcf2ef4b474d693acccd35a91e848f40"
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://github.com/itsmattkc/MSVC600/archive/$env:VC6_COMMIT.zip -OutFile VS6_VisualStudio6.zip
+
+          $fileHash = (Get-FileHash -Path VS6_VisualStudio6.zip -Algorithm SHA256).Hash
+          if ($fileHash -ne $env:EXPECTED_HASH) {
+              Write-Error "Hash verification failed!"
+              exit 1
+          }
+
+          Expand-Archive -Path VS6_VisualStudio6.zip -DestinationPath C:\VC6
+          Move-Item -Path C:\VC6\MSVC600-$env:VC6_COMMIT -Destination C:\VC6\VC6SP6
+          Remove-Item VS6_VisualStudio6.zip
+
+      - name: Set Up VC6 Environment
+        shell: pwsh
+        run: |
+          $VSCommonDir = "C:\VC6\VC6SP6\Common"
+          $MSDevDir = "C:\VC6\VC6SP6\Common\msdev98"
+          $MSVCDir = "C:\VC6\VC6SP6\VC98"
+          $VcOsDir = "WINNT"
+
+          "VSCommonDir=$VSCommonDir" >> $env:GITHUB_ENV
+          "MSDevDir=$MSDevDir" >> $env:GITHUB_ENV
+          "MSVCDir=$MSVCDir" >> $env:GITHUB_ENV
+          "VcOsDir=$VcOsDir" >> $env:GITHUB_ENV
+          "PATH=$MSDevDir\BIN;$MSVCDir\BIN;$VSCommonDir\TOOLS\$VcOsDir;$VSCommonDir\TOOLS;$env:PATH" >> $env:GITHUB_ENV
+          "INCLUDE=$MSVCDir\ATL\INCLUDE;$MSVCDir\INCLUDE;$MSVCDir\MFC\INCLUDE;$env:INCLUDE" >> $env:GITHUB_ENV
+          "LIB=$MSVCDir\LIB;$MSVCDir\MFC\LIB;$env:LIB" >> $env:GITHUB_ENV
+
+      - name: Configure with CMake
+        shell: pwsh
+        run: |
+          $buildFlags = @(
+            "-DRTS_BUILD_ZEROHOUR=${{ matrix.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
+            "-DRTS_BUILD_GENERALS=${{ matrix.game == 'Generals' && 'ON' || 'OFF' }}",
+            "-DRTS_BUILD_CORE_TOOLS=ON",
+            "-DRTS_BUILD_${{ matrix.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}_TOOLS=ON"
+          )
+          cmake --preset vc6 $buildFlags
+
+      - name: Build with CMake
+        shell: pwsh
+        run: |
+          cmake --build --preset vc6
+
+      - name: Collect Artifacts
+        shell: pwsh
+        run: |
+          $buildDir = "build\vc6"
+          $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ matrix.game }}\artifacts"
+
+          $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ matrix.game }}" -File |
+            Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") }
+
+          $files | Move-Item -Destination $artifactsDir -Force
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.game }}-vc6-${{ needs.prepare.outputs.short_sha }}
+          path: build\vc6\${{ matrix.game }}\artifacts
+          retention-days: 90
+
+  create-release:
+    name: Create Release
+    needs: [prepare, build]
+    if: ${{ github.event.inputs.create_release == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Generals Artifact
+        if: ${{ github.event.inputs.game == 'Generals' || github.event.inputs.game == 'Both' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: Generals-vc6-${{ needs.prepare.outputs.short_sha }}
+          path: generals-artifacts
+
+      - name: Download GeneralsMD Artifact
+        if: ${{ github.event.inputs.game == 'GeneralsMD' || github.event.inputs.game == 'Both' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: GeneralsMD-vc6-${{ needs.prepare.outputs.short_sha }}
+          path: generalsmd-artifacts
+
+      - name: Prepare Release Archives
+        run: |
+          if [ -d "generals-artifacts" ]; then
+            zip -jr generals-${{ needs.prepare.outputs.release_tag }}.zip generals-artifacts/*
+          fi
+          if [ -d "generalsmd-artifacts" ]; then
+            zip -jr generalszh-${{ needs.prepare.outputs.release_tag }}.zip generalsmd-artifacts/*
+          fi
+
+      - name: Generate Release Notes
+        id: notes
+        run: |
+          BODY="## Historical Build
+
+          **Commit:** \`${{ github.event.inputs.commit }}\`
+          **Date:** ${{ needs.prepare.outputs.commit_date }}
+          **Subject:** ${{ needs.prepare.outputs.commit_subject }}"
+
+          if [ -n "${{ github.event.inputs.pull_requests }}" ]; then
+            BODY="${BODY}
+
+          **Applied PRs:** ${{ github.event.inputs.pull_requests }}"
+          fi
+
+          BODY="${BODY}
+
+          ---
+          *Built for replay compatibility testing.*"
+
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.release_tag }}
+          name: ${{ needs.prepare.outputs.release_tag }}
+          prerelease: true
+          body: ${{ steps.notes.outputs.body }}
+          files: |
+            generals-${{ needs.prepare.outputs.release_tag }}.zip
+            generalszh-${{ needs.prepare.outputs.release_tag }}.zip
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

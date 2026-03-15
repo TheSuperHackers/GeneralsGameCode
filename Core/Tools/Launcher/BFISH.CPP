@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Blowfish Component                                           * 
- *                                                                                             * 
- *                     $Archive:: /Sun/Blowfish/bfish.cpp                                     $* 
- *                                                                                             * 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Blowfish Component                                           *
+ *                                                                                             *
+ *                     $Archive:: /Sun/Blowfish/bfish.cpp                                     $*
+ *                                                                                             *
  *                      $Author:: Joe_b                                                       $*
- *                                                                                             * 
+ *                                                                                             *
  *                     $Modtime:: 12/02/97 9:35p                                              $*
- *                                                                                             * 
+ *                                                                                             *
  *                    $Revision:: 6                                                           $*
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  *   BlowfishEngine::Decrypt -- Decrypts data using blowfish algorithm.                        *
  *   BlowfishEngine::Encrypt -- Encrypt an arbitrary block of data.                            *
  *   BlowfishEngine::Process_Block -- Process a block of data using Blowfish algorithm.        *
@@ -41,7 +41,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma warning(disable : 4514)
-#include	"BFISH.H"
+#include	"BFISH.h"
 #include	<string.h>
 #include	<assert.h>
 
@@ -81,7 +81,7 @@ typedef union {
 BlowfishEngine::~BlowfishEngine(void)
 {
 	if (IsKeyed) {
-		Submit_Key(NULL, 0);
+		Submit_Key(nullptr, 0);
 	}
 }
 
@@ -95,7 +95,7 @@ BlowfishEngine::~BlowfishEngine(void)
  *    indefinitely. The key must be 56 bytes or less in length. This is necessary because      *
  *    any keys longer than that will not correctly affect the encryption process.              *
  *                                                                                             *
- *    If the key pointer is NULL, then the S-Box tables are reset to identity. This will       *
+ *    If the key pointer is null, then the S-Box tables are reset to identity. This will       *
  *    mask the previous key setting. Use this method to clear the engine after processing in   *
  *    order to gain a measure of security.                                                     *
  *                                                                                             *

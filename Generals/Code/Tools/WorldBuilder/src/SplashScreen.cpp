@@ -45,7 +45,7 @@ SplashScreen::SplashScreen()
 	lf.lfQuality = DEFAULT_QUALITY;
 	lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
 	strcpy(lf.lfFaceName, "Arial");
-	
+
 	m_font.CreateFontIndirect(&lf);
 }
 
@@ -64,8 +64,8 @@ void SplashScreen::outputText(UINT nIDString)
 	}
 
 	m_loadString = str;
-	
-	RedrawWindow(&m_rect, NULL);
+
+	RedrawWindow(&m_rect, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -74,15 +74,15 @@ void SplashScreen::OnPaint()
 	// we're extending the default behavior
 	CDialog::OnPaint();
 
-	
+
 	CDC *dc = GetDC();
-	
+
 	// Save off the old font
 	CFont *oldFont = dc->SelectObject(&m_font);
 	COLORREF oldRef = dc->SetTextColor(0x00000000);
-	
+
 //	dc->DrawText(m_loadString, m_rect, DT_VCENTER | DT_LEFT);
-	
+
 	// restore the old font
 	dc->SelectObject(oldFont);
 	dc->SetTextColor(oldRef);

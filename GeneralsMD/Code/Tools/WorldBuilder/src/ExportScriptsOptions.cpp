@@ -31,7 +31,7 @@ Bool ExportScriptsOptions::m_triggers = true;
 Bool ExportScriptsOptions::m_allScripts = false;
 Bool ExportScriptsOptions::m_sides = true;
 
-ExportScriptsOptions::ExportScriptsOptions(CWnd* pParent /*=NULL*/)
+ExportScriptsOptions::ExportScriptsOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(ExportScriptsOptions::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(ExportScriptsOptions)
@@ -57,10 +57,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ExportScriptsOptions message handlers
 
-void ExportScriptsOptions::OnOK() 
+void ExportScriptsOptions::OnOK()
 {
 	// TODO: Add extra validation here
-	
+
 	CButton *pButton = (CButton*)GetDlgItem(IDC_WAYPOINTS);
 	m_waypoints = pButton->GetCheck()==1;
 	pButton = (CButton*)GetDlgItem(IDC_UNITS);
@@ -76,10 +76,10 @@ void ExportScriptsOptions::OnOK()
 	CDialog::OnOK();
 }
 
-BOOL ExportScriptsOptions::OnInitDialog() 
+BOOL ExportScriptsOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	
+
 	CButton *pButton = (CButton*)GetDlgItem(IDC_WAYPOINTS);
 	pButton->SetCheck(m_waypoints?1:0);
 	pButton = (CButton*)GetDlgItem(IDC_UNITS);

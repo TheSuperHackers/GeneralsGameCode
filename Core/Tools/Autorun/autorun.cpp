@@ -22,7 +22,7 @@
  *																			*
  *                  Project Name : Autorun									*
  *																			*
- *                     File Name : AUTORUN.CPP								*
+ *                     File Name : AUTORUN.cpp								*
  *																			*
  *                    Programmers: Maria del Mar McCready Legg				*
  *																			*
@@ -90,14 +90,14 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <winuser.h>
-#include "ARGS.H"
+#include "ARGS.h"
 #include "autorun.h"
 #include "DrawButton.h"
 #include "resource.h"
-#include "Wnd_File.h" 
+#include "Wnd_File.h"
 //#include "visualc.h"
-#include "WinFix.H"
-#include "CDCNTRL.H"
+#include "WinFix.h"
+#include "CDCNTRL.h"
 #include "IGR.h"
 #include "ViewHTML.h"
 
@@ -141,7 +141,7 @@
 #define		NUM_FLICKER_FRAMES				1
 #define		NUM_FLICKER_POSITIONS			15
 
-#define		MOUSE_WAV						"MouseMove"  
+#define		MOUSE_WAV						"MouseMove"
 #define		SOUND_FILE1						"SPEECH_FILE1"
 #define		SOUND_FILE2						"SPEECH_FILE2"
 
@@ -164,15 +164,15 @@
 //-----------------------------------------------------------------------------
 // These defines need the Product name from Setup.ini to complete.
 //-----------------------------------------------------------------------------
-#define		SETUP_MAIN_WINDOW_NAME			"%s Setup" 
-#define		CLASS_NAME						"%s Autorun" 
-#define		GAME_MAIN_WINDOW_NAME			"%s Game Window" 
+#define		SETUP_MAIN_WINDOW_NAME			"%s Setup"
+#define		CLASS_NAME						"%s Autorun"
+#define		GAME_MAIN_WINDOW_NAME			"%s Game Window"
 
-//#define	GAME_WEBSITE					"http://www.westwood.com/" 
-#define		GAME_WEBSITE					"http://generals.ea.com" 
+//#define	GAME_WEBSITE					"http://www.westwood.com/"
+#define		GAME_WEBSITE					"http://generals.ea.com"
 
-#define		AUTORUN_MUTEX_OBJECT			"01AF9993-3492-11d3-8F6F-0060089C05B1" 
-//#define		GAME_MUTEX_OBJECT			"C6D925A3-7A9B-4ca3-866D-8B4D506C3665" 
+#define		AUTORUN_MUTEX_OBJECT			"01AF9993-3492-11d3-8F6F-0060089C05B1"
+//#define		GAME_MUTEX_OBJECT			"C6D925A3-7A9B-4ca3-866D-8B4D506C3665"
 #define		GAME_MUTEX_OBJECT				"685EAFF2-3216-4265-B047-251C5F4B82F3"
 #define		PRODUCT_VOLUME_CD1	 			"Generals1"
 #define		PRODUCT_VOLUME_CD2	 			"Generals2"
@@ -182,7 +182,7 @@
 // Global Variables
 //-----------------------------------------------------------------------------
 LaunchObjectClass	LaunchObject;
-MainWindow			*GlobalMainWindow	= NULL;
+MainWindow			*GlobalMainWindow	= nullptr;
 int					Language			= 0;
 int					LanguageToUse		= 0;
 
@@ -230,7 +230,7 @@ wchar_t		szFullProductName	[ _MAX_PATH ];
 
 /*
 enum
-{	
+{
 	IDS_INSTALL,
 	IDS_EXPLORE_CD,
 	IDS_PREVIEWS,
@@ -252,7 +252,7 @@ enum
 	IDS_MAIN_WINDOW,
 
 
-	IDS_COUNT // keep this last
+	IDS_COUNT
 };
 */
 
@@ -284,9 +284,9 @@ BOOL		CDLocked				= FALSE;
 int			WindowsVersion 			= 0;
 int			NumberArguments			= 0;
 int			SongNumber 				= 0;
-HANDLE		AppMutex				= NULL;
-HANDLE		GameAppMutex			= NULL;
-HANDLE		SetupAppMutex	 		= NULL;
+HANDLE		AppMutex				= nullptr;
+HANDLE		GameAppMutex			= nullptr;
+HANDLE		SetupAppMutex	 		= nullptr;
 
 
 
@@ -304,7 +304,7 @@ extern ArchiveFileSystem *TheArchiveFileSystem;
 #endif
 
 // stuff needed to compile.
-HWND		ApplicationHWnd = NULL;
+HWND		ApplicationHWnd = nullptr;
 HINSTANCE ApplicationHInstance;				///< main application instance
 
 const char *g_strFile = "Autorun.str";
@@ -385,7 +385,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	ApplicationHInstance = hInstance;
 	Main::hPrevInstance	= hPrevInstance;
 	Main::nCmdShow		= nCmdShow;
-	Main::hModule 		= GetModuleHandle( NULL );
+	Main::hModule 		= GetModuleHandle( nullptr );
 
 	memset( szSetupWindow,		'\0', MAX_PATH );
 	memset( szGameWindow,		'\0', MAX_PATH );
@@ -416,9 +416,9 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	// Init Args class.
 	//-------------------------------------------------------------------------
 	Args = new Command_Line_Arguments( hInstance, GetCommandLine());
-	if ( Args == NULL ) {
-//		Error_Message( hInstance, IDS_ERROR, IDS_COMMAND_LINE_ERR, NULL );
-		Error_Message( hInstance, "Autorun:Error", "Autorun:CommandLineError", NULL );
+	if ( Args == nullptr ) {
+//		Error_Message( hInstance, IDS_ERROR, IDS_COMMAND_LINE_ERR, nullptr );
+		Error_Message( hInstance, "Autorun:Error", "Autorun:CommandLineError", nullptr );
 		return( 0 );
 	}
 	Msg( __LINE__, __FILE__, "Args Created." );
@@ -469,7 +469,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 		//---------------------------------------------------------------------
 		Make_Current_Path_To( SETUP_INI_FILE2, szIniPath );
 	}
-	FindClose( handle );	
+	FindClose( handle );
 
 	Msg( __LINE__, __FILE__, "Resource file = %s.", szPath );
 	Msg( __LINE__, __FILE__, "Setup.ini file = %s.", szIniPath );
@@ -487,7 +487,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	Msg( __LINE__, __FILE__, "IsEnglish = %d.", IsEnglish );
 
 	//--------------------------------------------------------------------------
-	// Set language to use.  
+	// Set language to use.
 	//--------------------------------------------------------------------------
 	if( Locale_Use_Multi_Language_Files()) {
 
@@ -539,8 +539,8 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	// Save off the Current path for use by other stuff.
 	//-------------------------------------------------------------------------
 	_tcscpy( szArgvPath, Args->Get_argv(0));
-	_tsplitpath( szArgvPath, drive, dir, NULL, NULL );
-	_tmakepath ( szArgvPath, drive, dir, NULL, NULL );
+	_tsplitpath( szArgvPath, drive, dir, nullptr, nullptr );
+	_tmakepath ( szArgvPath, drive, dir, nullptr, nullptr );
 	Path_Add_Back_Slash( szArgvPath );
 	Msg( __LINE__, TEXT(__FILE__), TEXT("szArgvPath = %s."), szArgvPath );
 
@@ -558,7 +558,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 		LoadString( Main::hInstance, IDS_CANT_FIND_FILE, szBuffer1, _MAX_PATH );
 		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szPath, _MAX_PATH, szWideBuffer0, _MAX_PATH );
 		sprintf( szBuffer2, szBuffer1, szWideBuffer0 );
-		MessageBox( NULL, szBuffer2, "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, szBuffer2, "Autorun", MB_APPLMODAL | MB_OK );
 		return 0;
 	}
 	*/
@@ -583,7 +583,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//Fix_Single_Ampersands( &szProductName[0], false );
 	//Fix_Single_Ampersands( &szFullProductName[0], false );
 	Msg( __LINE__, __FILE__, "szProductName		= %s.", szProductName		);
-	WideCharToMultiByte( CodePage, 0, szProductName, _MAX_PATH, szProduct_Name, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, szProductName, _MAX_PATH, szProduct_Name, _MAX_PATH, nullptr, nullptr );
 
 #else
 
@@ -593,7 +593,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	Msg( __LINE__, __FILE__, "Full Product Name = %ls.", fullProductName.str()	);
 	Msg( __LINE__, __FILE__, "szRegistryKey		= %s.", szRegistryKey		);
 	Msg( __LINE__, __FILE__, "szGameWindow		= %s.", szGameWindow		);
-	WideCharToMultiByte( CodePage, 0, productName.str(), productName.getLength()+1, szProduct_Name, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, productName.str(), productName.getLength()+1, szProduct_Name, _MAX_PATH, nullptr, nullptr );
 
 #endif
 
@@ -609,12 +609,12 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//	our app is already running.
 	//
 	//	Return Values:
-	//	If the function succeeds, the return value is a handle to the mutex object. 
-	//	If the named mutex object existed before the function call, the function returns 
-	//	a handle to the existing object and GetLastError returns ERROR_ALREADY_EXISTS. 
-	//	Otherwise, the caller created the mutex. 
-	//	If the function fails, the return value is NULL. To get extended error 
-	//	information, call GetLastError. 
+	//	If the function succeeds, the return value is a handle to the mutex object.
+	//	If the named mutex object existed before the function call, the function returns
+	//	a handle to the existing object and GetLastError returns ERROR_ALREADY_EXISTS.
+	//	Otherwise, the caller created the mutex.
+	//	If the function fails, the return value is null. To get extended error
+	//	information, call GetLastError.
 	//
 	// WARNING: DO NOT use this number for any other application except Autorun
 	//=========================================================================
@@ -623,9 +623,9 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	} else {
 		strcpy( szBuffer, AUTORUN_MUTEX_OBJECT );
 	}
-	AppMutex = CreateMutex( NULL, FALSE, szBuffer );
+	AppMutex = CreateMutex( nullptr, FALSE, szBuffer );
 
-	if ( AppMutex != NULL && ( GetLastError() == ERROR_ALREADY_EXISTS )) {
+	if ( AppMutex != nullptr && ( GetLastError() == ERROR_ALREADY_EXISTS )) {
 
 		Msg( __LINE__, __FILE__, "AppMutex of %s already exists. Exit here.", szBuffer );
 
@@ -636,7 +636,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 		//---------------------------------------------------------------------
 		// Check if Game/Setup is already running, and is looking for the CDRom.
 		//---------------------------------------------------------------------
-		HWND prev = FindWindow( szClassName, NULL );
+		HWND prev = FindWindow( szClassName, nullptr );
 		if( prev ){
 			//if( IsIconic( prev )){
 				//ShowWindow( prev, SW_RESTORE );
@@ -648,19 +648,19 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	Msg( __LINE__, __FILE__, "AppMutex of %s created.", szBuffer );
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// if AppMutex was NULL, let through. Perhaps in future we want to trap it?
+	// if AppMutex was nullptr, let through. Perhaps in future we want to trap it?
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if ( AppMutex == NULL ) {
+	if ( AppMutex == nullptr ) {
 	}
 
 	//=========================================================================
-	//	Create a mutex with a unique name to Game/Setup in order to 
+	//	Create a mutex with a unique name to Game/Setup in order to
 	//	determine if our app is already running.
 	//
 	//	Return Values
 	//	If the function succeeds, the return value is a handle to the mutex object.
-	//	If the function fails, the return value is NULL. To get extended error 
-	//	information, call GetLastError. 
+	//	If the function fails, the return value is null. To get extended error
+	//	information, call GetLastError.
 	//
 	// WARNING: DO NOT use this number for any other application except Game/Setup.
 	//=========================================================================
@@ -671,16 +671,16 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	}
 	GameAppMutex = OpenMutex( MUTEX_ALL_ACCESS, FALSE, szBuffer );
 
-	if ( GameAppMutex != NULL ) {
+	if ( GameAppMutex != nullptr ) {
 
 		Msg( __LINE__, TEXT(__FILE__), TEXT("Mutex Object of game found."));
 		Msg( __LINE__, TEXT(__FILE__), TEXT("Looking for Game Window."));
 
-		HWND ccwindow = FindWindow( szGameWindow, NULL );
+		HWND ccwindow = FindWindow( szGameWindow, nullptr );
 		if ( ccwindow ) {
-	
+
 			Msg( __LINE__, TEXT(__FILE__), TEXT("Found Game Window."));
-			
+
 			if( IsIconic( ccwindow )){
 				ShowWindow( ccwindow, SW_RESTORE );
 			}
@@ -690,7 +690,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 
 			Msg( __LINE__, TEXT(__FILE__), TEXT("Looking for Setup Window."));
 
-			ccwindow = FindWindow( szSetupWindow, NULL );
+			ccwindow = FindWindow( szSetupWindow, nullptr );
 			if ( ccwindow ) {
 
 				Msg( __LINE__, TEXT(__FILE__), TEXT("Found Setup Window."));
@@ -713,11 +713,11 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	//---------------------------------------------------------------------
 	// Check if Game/Setup is already running, and is looking for the CDRom.
 	//---------------------------------------------------------------------
-	HWND prev = FindWindow( szClassName, NULL );
-	if ( prev == NULL ) {
-		prev = FindWindow( szGameWindow, NULL );
-		if ( prev == NULL ) {
-			prev = FindWindow( szSetupWindow, NULL );
+	HWND prev = FindWindow( szClassName, nullptr );
+	if ( prev == nullptr ) {
+		prev = FindWindow( szGameWindow, nullptr );
+		if ( prev == nullptr ) {
+			prev = FindWindow( szSetupWindow, nullptr );
 		}
 	}
 	if( prev ){
@@ -735,7 +735,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	// because we ask the user to insert CD-1 again at the end of the install
 	// to prevent a crash on Windows ME where it tries to access CD-1 again.
 	//---------------------------------------------------------------------
-	prev = FindWindow( NULL,"InstallShield Wizard");
+	prev = FindWindow( nullptr,"InstallShield Wizard");
 	if( prev ){
 		return 0;
 	}
@@ -761,7 +761,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 		Msg( __LINE__, __FILE__, "szWav[0] = %s.", szWavs[0] );
 		Msg( __LINE__, __FILE__, "szWav[1] = %s.", szWavs[1] );
 
-		srand(( unsigned )time( NULL ));
+		srand(( unsigned )time( nullptr ));
 		SongNumber	= rand() & 1;
 //		UseSounds	= TRUE;
 
@@ -828,12 +828,12 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	strcpy( FocusedButtonImages[9], BUTTON_SEL );
 
 	//=========================================================================
-	// A Windows class should be registered with Windows before any windows 
-	// of that type are created. Register here all Windows classes that 
+	// A Windows class should be registered with Windows before any windows
+	// of that type are created. Register here all Windows classes that
 	// will be used in the program.
 	//-------------------------------------------------------------------------
-	// Register the class only AFTER WinMain assigns appropriate values to 
-	// static members of Main and only if no previous instances of the program 
+	// Register the class only AFTER WinMain assigns appropriate values to
+	// static members of Main and only if no previous instances of the program
 	// exist (a previous instance would have already performed the registration).
 	//=========================================================================
 	if ( !Main::hPrevInstance ) {
@@ -874,32 +874,32 @@ void Prog_End ( void )
 		CDLocked = false;
 	}
 
-	if( Args != NULL ) {
+	if( Args != nullptr ) {
 		delete( Args );
-		Args = NULL;
+		Args = nullptr;
 		Msg( __LINE__, __FILE__, "Args deleted." );
 	}
 
-	if ( AppMutex != NULL ) {
+	if ( AppMutex != nullptr ) {
 		CloseHandle( AppMutex );
-		AppMutex = NULL;
+		AppMutex = nullptr;
 		Msg( __LINE__, __FILE__, "AppMutex deleted." );
 	}
 
-	if ( GameAppMutex != NULL) {
+	if ( GameAppMutex != nullptr) {
 		CloseHandle( GameAppMutex );
-		GameAppMutex = NULL;
+		GameAppMutex = nullptr;
 	}
 
-	if ( FontManager != NULL ) {
+	if ( FontManager != nullptr ) {
    		delete( FontManager );
-		FontManager = NULL;
+		FontManager = nullptr;
 		Msg( __LINE__, __FILE__, "FontManager deleted." );
 	}
 
-	if ( OnlineOptions != NULL ) {
+	if ( OnlineOptions != nullptr ) {
 		delete( OnlineOptions );
-		OnlineOptions = NULL;
+		OnlineOptions = nullptr;
 		Msg( __LINE__, __FILE__, "OnlineOptions deleted." );
 	}
 
@@ -929,7 +929,7 @@ int Main::MessageLoop( void )
 {
 	MSG msg;
 
-	while( GetMessage( &msg, NULL, 0, 0 )) {
+	while( GetMessage( &msg, nullptr, 0, 0 )) {
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );
 	}
@@ -998,7 +998,7 @@ void MainWindow::Register( void )
 	wndclass.hIcon	  		= LoadIcon( Main::hInstance, MAKEINTRESOURCE(1));
 
 //	strcpy( szBuffer, "C&C2.ICO" );
-//	wndclass.hIcon	= (HICON)LoadImage( NULL, szBuffer, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE );
+//	wndclass.hIcon	= (HICON)LoadImage( nullptr, szBuffer, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE );
 
 	wndclass.hCursor		= LoadCursor( Main::hInstance, MAKEINTRESOURCE(2) );
 	wndclass.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
@@ -1009,18 +1009,18 @@ void MainWindow::Register( void )
 	if ( !RegisterClassEx((const WNDCLASSEX *) &wndclass ) ) {
 
 	#if(RTS_DEBUG)
-		LPVOID szMessage; 
+		LPVOID szMessage;
 
-		FormatMessage( 
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, 
-			NULL,
-			GetLastError(), 
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			nullptr,
+			GetLastError(),
 			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
 			(LPTSTR)&szMessage,
 			0,
-			NULL );
+			nullptr );
 
-		_stprintf( szBuffer, TEXT( "%s(%lx)" ), szMessage, GetLastError()); 
+		_stprintf( szBuffer, TEXT( "%s(%lx)" ), szMessage, GetLastError());
 		Msg( __LINE__, TEXT(__FILE__), TEXT("GetLastError: %s"), szBuffer );
 	#endif
 
@@ -1029,16 +1029,16 @@ void MainWindow::Register( void )
 }
 
 //*****************************************************************************
-// MainWindow::MainWindow -- Main Window Constructor function.					
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// MainWindow::MainWindow -- Main Window Constructor function.
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 MainWindow::MainWindow( void )
@@ -1048,15 +1048,15 @@ MainWindow::MainWindow( void )
 
 #ifdef LEAN_AND_MEAN
 
-	WideCharToMultiByte( CodePage, 0, szFullProductName, _MAX_PATH, szBuffer, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, szFullProductName, _MAX_PATH, szBuffer, _MAX_PATH, nullptr, nullptr );
 
 #else
 
-	WideCharToMultiByte( CodePage, 0, fullProductName.str(), fullProductName.getLength()+1, szBuffer, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, fullProductName.str(), fullProductName.getLength()+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 
 #endif
 
-	memset( szTitle, '\0', _MAX_PATH );	
+	memset( szTitle, '\0', _MAX_PATH );
 	sprintf( szTitle, CLASS_NAME, szBuffer );
 
 	//--------------------------------------------------------------------------
@@ -1065,16 +1065,16 @@ MainWindow::MainWindow( void )
 	//--------------------------------------------------------------------------
 	hWnd = CreateWindowEx(
    				0,
-		 		szClassName, 
+		 		szClassName,
 		 		szClassName,
 		 		WS_POPUPWINDOW | WS_MINIMIZE | !WS_VISIBLE,
-		 		0, 
+		 		0,
 		 		0,
 				640,
 				480,
-		 		NULL, 
-		 		NULL, 
-		 		Main::hInstance, 
+		 		nullptr,
+		 		nullptr,
+		 		Main::hInstance,
 		 		(LPTSTR) this );
 
 	if ( !hWnd ) {
@@ -1097,16 +1097,16 @@ MainWindow::MainWindow( void )
 }
 
 //*****************************************************************************
-// MainWindow::Window_Proc -- Main Window Procedure fnc to process msgs.	
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// MainWindow::Window_Proc -- Main Window Procedure fnc to process msgs.
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam )
@@ -1138,10 +1138,9 @@ LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 
 			decision = DialogBox( Main::hInstance, _TEXT( "BitmapDialog" ), hWnd, Dialog_Box_Proc );
 
-			if ( Args ) {
-				delete( Args );
-				Args = NULL;
-			}
+			delete( Args );
+			Args = nullptr;
+
 			Stop_Sound_Playing();
 
 			MoveWindow(	hWnd, 0, 0, 0, 0, TRUE );
@@ -1193,7 +1192,7 @@ LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 		// LOWORD( lParam )		Child Window handle
 		// HIWORD( lParam )		Notification Code: BN_CLICKED, BN_PAINT, etc...
 		//-----------------------------------------------------------------------
-		case WM_COMMAND:  
+		case WM_COMMAND:
 			break;
 
 		//-----------------------------------------------------------------------
@@ -1217,13 +1216,13 @@ LRESULT MainWindow::Window_Proc( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM
 // MainWindow::Is_Product_Registered -- Check the Registration Table information.
 //
 // INPUT:  		none.
-//                                                                 
+//
 //	OUTPUT: 		BOOL - TRUE if product is already installed, FALSE if not.
-//                                                                 
+//
 // WARNINGS:	none.
-//                                                                 
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 BOOL MainWindow::Is_Product_Registered( void )
@@ -1272,7 +1271,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 		// Get Full path\filename of product to execute ("Play").
 		//-----------------------------------------------------------------------
 		Size = _MAX_PATH;
- 		if ( RegQueryValueEx( phKey, INSTALL_PATH_KEY, NULL, &Type, (unsigned char *)szGamePath, &Size ) == ERROR_SUCCESS ) {
+ 		if ( RegQueryValueEx( phKey, INSTALL_PATH_KEY, nullptr, &Type, (unsigned char *)szGamePath, &Size ) == ERROR_SUCCESS ) {
 			_tcscpy(szWorldbuilderPath, szGamePath);
 			_tcscpy(szPatchgetPath, szGamePath);
 			_tcscat(szGamePath, LAUNCHER_FILENAME);
@@ -1281,7 +1280,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 			handle = FindFirstFile( szGamePath, &FindFileData );
 			if ( handle != INVALID_HANDLE_VALUE ) {
 				InstallProduct = FALSE;
-				FindClose( handle );	
+				FindClose( handle );
 			}
 		}
 		Msg( __LINE__, TEXT(__FILE__), TEXT("GamePath =  %s."), szGamePath );
@@ -1303,31 +1302,31 @@ BOOL MainWindow::Is_Product_Registered( void )
 	if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &phKey ) == ERROR_SUCCESS ) {
 
 		Size = _MAX_PATH;
-		if ( RegQueryValueEx( phKey, UNINSTALL_STRING_SUBKEY, NULL, &Type, (unsigned char *)aName, &Size ) == ERROR_SUCCESS ) 
+		if ( RegQueryValueEx( phKey, UNINSTALL_STRING_SUBKEY, nullptr, &Type, (unsigned char *)aName, &Size ) == ERROR_SUCCESS )
 		{
 			//------------------------------------------------------------------------------------------------------
 			// Look for the uninstall program.  If found, set flag.
 			// JFS... need to extract path and command line...  8/26/03
 			// JFS... further verify that we use a very limited uninstall based on the presence of "IDriver.exe"
 			//------------------------------------------------------------------------------------------------------
-			if(strstr(aName,UNINSTALL_EXECUTABLE) != NULL)
+			if(strstr(aName,UNINSTALL_EXECUTABLE) != nullptr)
 			{
 				char	*sp;
-				
+
 				strcpy( szUninstallPath, aName );
 				sp = strchr(szUninstallPath,'/');
-				if(*sp != NULL)
+				if(sp != nullptr && *sp != '\0')
 				{
 					strcpy( szUninstallCommandLine, sp );
 					strcpy( szUninstallPath, aName );
 					*sp = '\0';
-				}		
+				}
 			}
-				
+
 			handle = FindFirstFile( szUninstallPath, &FindFileData );
 			if ( handle != INVALID_HANDLE_VALUE ) {
 				UninstallAvailable = TRUE;
-				FindClose( handle );	
+				FindClose( handle );
 			}
 		}
 		RegCloseKey( phKey );
@@ -1369,7 +1368,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 			// Get Full path\filename of product to execute ("Register.exe").
 			//-----------------------------------------------------------------------
 			Size = _MAX_PATH;
-			if ( RegQueryValueEx( phKey, INSTALLPATH_SUBKEY, NULL, &Type, (unsigned char *)szRegisterPath, &Size ) == ERROR_SUCCESS ) {
+			if ( RegQueryValueEx( phKey, INSTALLPATH_SUBKEY, nullptr, &Type, (unsigned char *)szRegisterPath, &Size ) == ERROR_SUCCESS ) {
 
 				//--------------------------------------------------------------------
 				// Check if this executable exists.
@@ -1377,7 +1376,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 				handle = FindFirstFile( szRegisterPath, &FindFileData );
 				if ( handle != INVALID_HANDLE_VALUE ) {
 					DisplayRegisterButton = TRUE;
-					FindClose( handle );	
+					FindClose( handle );
 				}
 			}
 			RegCloseKey( phKey );
@@ -1396,7 +1395,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 		// Get Full path\filename of product to execute ("Register.exe").
 		//-----------------------------------------------------------------------
 		Size = _MAX_PATH;
-		if ( RegQueryValueEx( phKey, INSTALLPATH_SUBKEY, NULL, &Type, (unsigned char *)szBuffer, &Size ) == ERROR_SUCCESS ) {
+		if ( RegQueryValueEx( phKey, INSTALLPATH_SUBKEY, nullptr, &Type, (unsigned char *)szBuffer, &Size ) == ERROR_SUCCESS ) {
 
 			//--------------------------------------------------------------------
 			// Check if this executable exists.
@@ -1404,7 +1403,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 			handle = FindFirstFile( szBuffer, &FindFileData );
 			if ( handle != INVALID_HANDLE_VALUE ) {
 				IsWolapiAvailable = TRUE;
-				FindClose( handle );	
+				FindClose( handle );
 			}
 		}
 		RegCloseKey( phKey );
@@ -1438,8 +1437,8 @@ BOOL MainWindow::Is_Product_Registered( void )
 //
 //	WARNINGS:	none.
 //
-//	HISTORY:                                                                
-//		06/04/1996  MML : Created.                                            
+//	HISTORY:
+//		06/04/1996  MML : Created.
 //=============================================================================
 
 BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
@@ -1452,15 +1451,15 @@ BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
 	char 	lpszComLine		[ 127 ];
 
 	BOOL result = FALSE;
-	PROCESS_INFORMATION processinfo; 
+	PROCESS_INFORMATION processinfo;
 	STARTUPINFO startupinfo;
 
 	//--------------------------------------------------------------------------
 	// Get current drive/directory from _argv[0].
 	//--------------------------------------------------------------------------
 	_tcscpy( szPath, szArgvPath );
-	_tsplitpath( szPath, drive, dir, NULL, NULL );
-	_tmakepath ( szPath, drive, dir, NULL, NULL );
+	_tsplitpath( szPath, drive, dir, nullptr, nullptr );
+	_tmakepath ( szPath, drive, dir, nullptr, nullptr );
 
 	//--------------------------------------------------------------------------
 	// Get Windows directory and build path to Explorer.  Pas in szPath as
@@ -1482,14 +1481,14 @@ BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
 	//--------------------------------------------------------------------------
 	// Next, start the process
 	//--------------------------------------------------------------------------
-	result = CreateProcess( 
+	result = CreateProcess(
 				szWindowsPath, 				// address of module name
 				lpszComLine,				// address of command line
-				NULL,						// address of process security attributes
-				NULL,						// address of thread security attributes
+				nullptr,						// address of process security attributes
+				nullptr,						// address of thread security attributes
 				FALSE,						// new process inherits handles
 				0,							// creation flags
-				NULL,						// address of new environment block
+				nullptr,						// address of new environment block
 				szCurDir,					// address of current directory name
 				&startupinfo,				// address of STARTUPINFO
 				&processinfo );				// address of PROCESS_INFORMATION
@@ -1521,8 +1520,8 @@ BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
 //
 // WARNINGS:	none.
 //
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_Game ( HWND hWnd, RECT *rect )
@@ -1540,7 +1539,7 @@ unsigned int MainWindow::Run_Game ( HWND hWnd, RECT *rect )
 	// Check if C&C is already running, and is looking for the CDRom.
 	// The Autorun keeps asking to "Play" when this happens.
 	//--------------------------------------------------------------------------
-	HWND game_window = FindWindow ( szGameWindow, NULL );
+	HWND game_window = FindWindow ( szGameWindow, nullptr );
 	if ( game_window ){
 		ShowWindow( game_window, SW_RESTORE );
 		SetForegroundWindow ( game_window );
@@ -1560,7 +1559,7 @@ unsigned int MainWindow::Run_Game ( HWND hWnd, RECT *rect )
 		return FALSE;
 	}
 
-	FindClose( handle );	
+	FindClose( handle );
 
 	//-----------------------------------------------------------------------
 	// Stop Sound if sound was playing.
@@ -1581,8 +1580,8 @@ unsigned int MainWindow::Run_Game ( HWND hWnd, RECT *rect )
 //
 // WARNINGS:	none.
 //
-// HISTORY:                                                                
-//   12/02/2002  BGC : Created.                                            
+// HISTORY:
+//   12/02/2002  BGC : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_WorldBuilder( HWND hWnd, RECT *rect)
@@ -1598,7 +1597,7 @@ unsigned int MainWindow::Run_WorldBuilder( HWND hWnd, RECT *rect)
 		return FALSE;
 	}
 
-	FindClose( handle );	
+	FindClose( handle );
 
 	//-----------------------------------------------------------------------
 	// Stop Sound if sound was playing.
@@ -1619,8 +1618,8 @@ unsigned int MainWindow::Run_WorldBuilder( HWND hWnd, RECT *rect)
 //
 // WARNINGS:	none.
 //
-// HISTORY:                                                                
-//   12/02/2002  BGC : Created.                                            
+// HISTORY:
+//   12/02/2002  BGC : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_PatchGet( HWND hWnd, RECT *rect)
@@ -1636,7 +1635,7 @@ unsigned int MainWindow::Run_PatchGet( HWND hWnd, RECT *rect)
 		return FALSE;
 	}
 
-	FindClose( handle );	
+	FindClose( handle );
 
 	//-----------------------------------------------------------------------
 	// Stop Sound if sound was playing.
@@ -1657,8 +1656,8 @@ unsigned int MainWindow::Run_PatchGet( HWND hWnd, RECT *rect)
 //
 //	WARNINGS:	none.
 //
-//	HISTORY:                                                                
-//		01/08/2002  MML : Created.                                            
+//	HISTORY:
+//		01/08/2002  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_Demo ( HWND hWnd, RECT *rect, int cd_drive )
@@ -1684,7 +1683,7 @@ unsigned int MainWindow::Run_Demo ( HWND hWnd, RECT *rect, int cd_drive )
 		return FALSE;
 	}
 
-	FindClose( handle );	
+	FindClose( handle );
 
 	//-----------------------------------------------------------------------
 	// Stop Sound if sound was playing.
@@ -1697,16 +1696,16 @@ unsigned int MainWindow::Run_Demo ( HWND hWnd, RECT *rect, int cd_drive )
 }
 
 //*****************************************************************************
-// MainWindow::Run_OpenFile -- Main Window function to perform Setup tasks.		
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// MainWindow::Run_OpenFile -- Main Window function to perform Setup tasks.
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_OpenFile(int cd_drive, const char *filename, bool wait /* = false */)
@@ -1746,11 +1745,11 @@ unsigned int MainWindow::Run_OpenFile(int cd_drive, const char *filename, bool w
 		while ((waiting == true) && (quit != true)) {
 			Sleep(0);
 
-			while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+			while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 			{
 
 				// get the message
-				returnValue = GetMessage( &msg, NULL, 0, 0 );
+				returnValue = GetMessage( &msg, nullptr, 0, 0 );
 
 				// check for quitting
 				if( returnValue == 0 )
@@ -1760,7 +1759,7 @@ unsigned int MainWindow::Run_OpenFile(int cd_drive, const char *filename, bool w
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
 
-			}  // end while
+			}
 
 			DWORD exitCode;
 			GetExitCodeProcess(hProcess, &exitCode);
@@ -1775,16 +1774,16 @@ unsigned int MainWindow::Run_OpenFile(int cd_drive, const char *filename, bool w
 }
 
 //*****************************************************************************
-// MainWindow::Run_Setup -- Main Window function to perform Setup tasks.		
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// MainWindow::Run_Setup -- Main Window function to perform Setup tasks.
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_Setup( HWND hWnd, RECT *rect, int cd_drive )
@@ -1821,7 +1820,7 @@ unsigned int MainWindow::Run_Setup( HWND hWnd, RECT *rect, int cd_drive )
 		Cant_Find_MessageBox( Main::hInstance, filepath );
 		return FALSE;
 	}
-	FindClose( handle );	
+	FindClose( handle );
 
 	//--------------------------------------------------------------------------
 	//	Create parameters to pass in with the program we are calling.
@@ -1850,16 +1849,16 @@ unsigned int MainWindow::Run_Setup( HWND hWnd, RECT *rect, int cd_drive )
 
 
 //*****************************************************************************
-// MainWindow::Run_New_Account -- Create a new online account.		
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// MainWindow::Run_New_Account -- Create a new online account.
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_New_Account ( HWND hWnd, RECT *rect )
@@ -1891,7 +1890,7 @@ unsigned int MainWindow::Run_New_Account ( HWND hWnd, RECT *rect )
 		Cant_Find_MessageBox( Main::hInstance, SETUP_NAME );
 		return FALSE;
 	}
-	FindClose( handle );	
+	FindClose( handle );
 
 	//--------------------------------------------------------------------------
 	//	Create parameters to pass in with the program we are calling.
@@ -1922,18 +1921,18 @@ unsigned int MainWindow::Run_New_Account ( HWND hWnd, RECT *rect )
 
 
 //*****************************************************************************
-// MainWindow::Run_Register_Or_Auto_Update 
-//                                         
+// MainWindow::Run_Register_Or_Auto_Update
+//
 //		Either run Register.exe or Game Update Program from the user's harddrive.
-//                                
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   02/24/1999  MML : Created.                                            
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   02/24/1999  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_Register ( HWND hWnd, RECT *rect )
@@ -1949,7 +1948,7 @@ unsigned int MainWindow::Run_Register ( HWND hWnd, RECT *rect )
 	if ( DisplayRegisterButton ) {
 
 		//-----------------------------------------------------------------------
-		// Check again.  May have been changed ...										 
+		// Check again.  May have been changed ...
 		//-----------------------------------------------------------------------
 		handle = FindFirstFile( szRegisterPath, &FindFileData );
 		if ( handle == INVALID_HANDLE_VALUE ) {
@@ -1973,17 +1972,17 @@ unsigned int MainWindow::Run_Register ( HWND hWnd, RECT *rect )
 
 //*****************************************************************************
 // MainWindow::Run_Auto_Update
-//                                         
+//
 //		Either run Register.exe or Game Update Program from the user's harddrive.
-//                                
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   02/24/1999  MML : Created.                                            
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   02/24/1999  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_Auto_Update ( HWND hWnd, RECT *rect )
@@ -1999,7 +1998,7 @@ unsigned int MainWindow::Run_Auto_Update ( HWND hWnd, RECT *rect )
 	if ( !InstallProduct ) {
 
 		//-----------------------------------------------------------------------
-		// Check again.  May have been changed ...										 
+		// Check again.  May have been changed ...
 		//-----------------------------------------------------------------------
 		handle = FindFirstFile( szGamePath, &FindFileData );
 		if ( handle == INVALID_HANDLE_VALUE ) {
@@ -2019,16 +2018,16 @@ unsigned int MainWindow::Run_Auto_Update ( HWND hWnd, RECT *rect )
 
 
 //*****************************************************************************
-// MainWindow::Run_Uninstall -- Main Window function to perform Setup tasks.		
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// MainWindow::Run_Uninstall -- Main Window function to perform Setup tasks.
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
@@ -2058,10 +2057,10 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 		return( 0 );
 	}
 
-	FindClose( handle );	
+	FindClose( handle );
 
-	_splitpath( szUninstallPath, drive, dir, NULL, NULL );
-	_makepath ( szCurDir, drive, dir, NULL, NULL );
+	_splitpath( szUninstallPath, drive, dir, nullptr, nullptr );
+	_makepath ( szCurDir, drive, dir, nullptr, nullptr );
 
 	//=======================================================================
 	// Setup the call
@@ -2069,14 +2068,14 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 	memset( &startupinfo, 0, sizeof( STARTUPINFO ));
 	startupinfo.cb = sizeof( STARTUPINFO );
 
-	result = CreateProcess( 
+	result = CreateProcess(
 					szUninstallPath,			// address of module name
 					szUninstallCommandLine,		// address of command line
-					NULL,						// address of process security attributes
-					NULL,						// address of thread security attributes
+					nullptr,						// address of process security attributes
+					nullptr,						// address of thread security attributes
 					0,							// new process inherits handles
 					0,
-					NULL,						// address of new environment block
+					nullptr,						// address of new environment block
 					szCurDir,
 					&startupinfo,				// address of STARTUPINFO
 					&processinfo );				// address of PROCESS_INFORMATION
@@ -2086,8 +2085,8 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 	//--------------------------------------------------------------------------
 	if ( !result ) {
 
-		_tsplitpath( szUninstallPath, NULL, NULL, file, ext );
-		_tmakepath ( szPath, NULL, NULL, file, ext );
+		_tsplitpath( szUninstallPath, nullptr, nullptr, file, ext );
+		_tmakepath ( szPath, nullptr, nullptr, file, ext );
 		Cant_Find_MessageBox ( Main::hInstance, szPath );
 
 //	#if(BACKGROUND_BITMAP)
@@ -2106,7 +2105,7 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 	//--------------------------------------------------------------------------
 	// Wait for App to shutdown
 	//--------------------------------------------------------------------------
-	while (dwRC == WAIT_TIMEOUT)  
+	while (dwRC == WAIT_TIMEOUT)
 	{
 
 		//-----------------------------------------------------------------------
@@ -2118,24 +2117,24 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 		//-----------------------------------------------------------------------
 		// Flush the Queue
 		//-----------------------------------------------------------------------
-		while (PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ))  {
+		while (PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ))  {
 			TranslateMessage( &msg );
 //			DispatchMessage( &msg );
 		}
 	}
 #endif
 	//--------------------------------------------------------------------------
-	// If the specified process has not terminated, the termination status 
-	// returned is STILL_ACTIVE.    
+	// If the specified process has not terminated, the termination status
+	// returned is STILL_ACTIVE.
 	//--------------------------------------------------------------------------
 	GetExitCodeProcess( processinfo.hProcess, &lpExitCode );
-	CloseHandle( processinfo.hProcess ); 
-	CloseHandle( processinfo.hThread  ); 
+	CloseHandle( processinfo.hProcess );
+	CloseHandle( processinfo.hThread  );
 
 #if(BACKGROUND_BITMAP)
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// MML 5/27/99:  This function is dropping through because we launch Uninstll.exe 
+	// MML 5/27/99:  This function is dropping through because we launch Uninstll.exe
 	// which in turn launches Uninst.exe thus ::Run_Install ends before Uninst.exe is done.
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2152,15 +2151,15 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 
 //*****************************************************************************
 // MainWindow::Create_Buttons -- Reset the Buttons.
-//                                                                         
-// INPUT:         none.																		
-//																									
-// OUTPUT:        none.                                                    
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+//
+// INPUT:         none.
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
@@ -2216,19 +2215,15 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 
 	for ( i = 0; i < NUM_BUTTONS; i++ ) {
 
-		if ( ButtonList[i] ) 
-		{
-			delete( ButtonList[i] );
-		}
-
-		ButtonList[i]			= NULL;
+		delete( ButtonList[i] );
+		ButtonList[i]			= nullptr;
 		ButtonSizes[i].left		= x_pos; 				// X position.
 		ButtonSizes[i].top 		= y_pos;				// Y position.
 		ButtonSizes[i].right	= width;				// Button's width.
 		ButtonSizes[i].bottom	= height;				// Button's height.
 		y_pos += height + 4;
 
-		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonSizes[%d] = ( %d, %d, %d, %d )"), 
+		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonSizes[%d] = ( %d, %d, %d, %d )"),
 			i, ButtonSizes[i].left, ButtonSizes[i].top, ButtonSizes[i].right, ButtonSizes[i].bottom );
 	}
 
@@ -2272,16 +2267,16 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		// (8) INSTALL button.
 		//---------------------------------------------------------------------
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_OK, j, "Install" );
-		ButtonList[i++] = new DrawButton( 
-			IDD_OK, 
-			button_size[j++], 
-			BUTTON_REG, 
-			BUTTON_SEL, 
-			BUTTON_SEL, 
+		ButtonList[i++] = new DrawButton(
+			IDD_OK,
+			button_size[j++],
+			BUTTON_REG,
+			BUTTON_SEL,
+			BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
-			Locale_GetString( "Autorun:Install" ), 
+			Locale_GetString( "Autorun:Install" ),
 #else
-			AsciiString("Autorun:Install"), 
+			"Autorun:Install",
 #endif
 			TTButtonFontPtr );
 
@@ -2291,16 +2286,16 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		// (8) PLAY button.
 		//---------------------------------------------------------------------
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_OK2, j, "Play" );
-		ButtonList[i++] = new DrawButton( 
-			IDD_OK2, 
-			button_size[j++], 
-			BUTTON_REG, 
-			BUTTON_SEL, 
-			BUTTON_SEL, 
+		ButtonList[i++] = new DrawButton(
+			IDD_OK2,
+			button_size[j++],
+			BUTTON_REG,
+			BUTTON_SEL,
+			BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Play" ),
 #else
-			AsciiString("Autorun:Play"), 
+			"Autorun:Play",
 #endif
 			TTButtonFontPtr );
 /*
@@ -2308,18 +2303,18 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		// (8) WorldBuilder button.
 		//---------------------------------------------------------------------
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_OK2, j, "WorldBuilder" );
-//		ButtonList[i--] = new DrawButton( 
-		ButtonList[i++] = new DrawButton( 
-			IDD_OK3, 
-//			button_size[j--], 
-			button_size[j++], 
-			BUTTON_REG, 
-			BUTTON_SEL, 
-			BUTTON_SEL, 
+//		ButtonList[i--] = new DrawButton(
+		ButtonList[i++] = new DrawButton(
+			IDD_OK3,
+//			button_size[j--],
+			button_size[j++],
+			BUTTON_REG,
+			BUTTON_SEL,
+			BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
-			Locale_GetString( "Autorun:Worldbuilder" ), 
+			Locale_GetString( "Autorun:Worldbuilder" ),
 #else
-			AsciiString("Autorun:Worldbuilder"), 
+			"Autorun:Worldbuilder",
 #endif
 			TTButtonFontPtr );
 */
@@ -2327,18 +2322,18 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		// (8) Check for updates button.
 		//---------------------------------------------------------------------
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_OK2, j, "Check For Updates" );
-//		ButtonList[i--] = new DrawButton( 
-		ButtonList[i++] = new DrawButton( 
-			IDD_OK4, 
-//			button_size[j--], 
-			button_size[j++], 
-			BUTTON_REG, 
-			BUTTON_SEL, 
-			BUTTON_SEL, 
+//		ButtonList[i--] = new DrawButton(
+		ButtonList[i++] = new DrawButton(
+			IDD_OK4,
+//			button_size[j--],
+			button_size[j++],
+			BUTTON_REG,
+			BUTTON_SEL,
+			BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:CheckForUpdates" ),
 #else
-			AsciiString("Autorun:CheckForUpdates"), 
+			"Autorun:CheckForUpdates",
 #endif
 			TTButtonFontPtr );
 	}
@@ -2356,7 +2351,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
 		Locale_GetString( "Autorun:ExploreCD" ),
 #else
-		AsciiString("Autorun:ExploreCD"),
+		"Autorun:ExploreCD",
 #endif
 		TTButtonFontPtr );
 //	strcpy( next_button_name, ButtonImages[button_index] );
@@ -2368,16 +2363,16 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		// (3) WebSite button.
 		//-----------------------------------------------------------------------
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_OK, j, "Install" );
-		ButtonList[i++] = new DrawButton( 
-			IDD_INTERNET, 
+		ButtonList[i++] = new DrawButton(
+			IDD_INTERNET,
 			button_size[j++],
-			BUTTON_REG, 
-			BUTTON_SEL, 
-			BUTTON_SEL, 
+			BUTTON_REG,
+			BUTTON_SEL,
+			BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Website" ),
 #else
-			AsciiString("Autorun:Website"), 
+			"Autorun:Website",
 #endif
 			TTButtonFontPtr );
 
@@ -2391,16 +2386,16 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	//--------------------------------------------------------------------------
 	if ( UninstallAvailable && !InstallProduct ) {
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_UNINSTALL, j, "Uninstall" );
-		ButtonList[i++] = new DrawButton( 
-			IDD_UNINSTALL, 
+		ButtonList[i++] = new DrawButton(
+			IDD_UNINSTALL,
 			button_size[j++],
-			BUTTON_REG, 
-			BUTTON_SEL, 
-			BUTTON_SEL, 
+			BUTTON_REG,
+			BUTTON_SEL,
+			BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
 			Locale_GetString( "Autorun:Uninstall" ),
 #else
-			AsciiString("Autorun:Uninstall"), 
+			"Autorun:Uninstall",
 #endif
 			TTButtonFontPtr );
 
@@ -2422,7 +2417,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
     Locale_GetString( "Autorun:Previews" ),
 #else
-		AsciiString("Autorun:Previews"),
+		"Autorun:Previews",
 #endif
 		TTButtonFontPtr );
 
@@ -2439,7 +2434,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 #ifdef LEAN_AND_MEAN
     Locale_GetString( "Autorun:Help" ),
 #else
-		AsciiString("Autorun:Help"),
+		"Autorun:Help",
 #endif
 		TTButtonFontPtr );
 
@@ -2447,16 +2442,16 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	// (1) CANCEL?
 	//--------------------------------------------------------------------------
 	Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_CANCEL, j, "Cancel" );
-	ButtonList[i++] = new DrawButton( 
-		IDD_CANCEL, 
-		button_size[j++], 
-		BUTTON_REG, 
-		BUTTON_SEL, 
-		BUTTON_SEL, 
+	ButtonList[i++] = new DrawButton(
+		IDD_CANCEL,
+		button_size[j++],
+		BUTTON_REG,
+		BUTTON_SEL,
+		BUTTON_SEL,
 #ifdef LEAN_AND_MEAN
 		Locale_GetString( "Autorun:Cancel" ),
 #else
-		AsciiString("Autorun:Cancel"), 
+		"Autorun:Cancel",
 #endif
 		TTButtonFontPtr );
 
@@ -2476,11 +2471,11 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	Msg( __LINE__, TEXT(__FILE__), TEXT("----------------------------------------------------------------------------------"));
 	for( i=0; i<NUM_BUTTONS; i++ ) {
 		if ( ButtonList[i]) {
-			Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=[%d,%d,%d,%d]."), 
-				i, 
+			Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=[%d,%d,%d,%d]."),
+				i,
 				ButtonList[i]->Return_Id(),
 				ButtonList[i]->Return_X_Pos(),
-				ButtonList[i]->Return_Y_Pos(),				
+				ButtonList[i]->Return_Y_Pos(),
 				ButtonList[i]->Return_Width(),
 				ButtonList[i]->Return_Height());
 		}
@@ -2490,17 +2485,17 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 
 
 //*****************************************************************************
-// WndProc -- Get Main Window's Stored Word.											
-//                                                                         
-// INPUT:         HWND hWnd.																
-//						Window *pWindow														
-//                                                                         
-// OUTPUT:        none.                                                		
-//                                                                         
-// WARNINGS:      none.                                                    
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// WndProc -- Get Main Window's Stored Word.
+//
+// INPUT:         HWND hWnd.
+//						Window *pWindow
+//
+// OUTPUT:        none.
+//
+// WARNINGS:      none.
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 LRESULT CALLBACK  Wnd_Proc ( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam )
@@ -2510,7 +2505,7 @@ LRESULT CALLBACK  Wnd_Proc ( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 	// msg is called.  Then we use the GlobalMainWindow's WindowProc to
 	// process all the individual msgs sent.
 	//--------------------------------------------------------------------------
-	if ( GlobalMainWindow == NULL ) {
+	if ( GlobalMainWindow == nullptr ) {
 		if ( iMessage == WM_CREATE ) {
 
 				LPCREATESTRUCT lpcs;
@@ -2534,16 +2529,16 @@ LRESULT CALLBACK  Wnd_Proc ( HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 }
 
 //*****************************************************************************
-// DIALOG_BOX_PROC -- Handles dlg messages                     
-//                                                                         
-// INPUT: standard windows dialog command parameters                       
-//                                                                         
-// OUTPUT: unused                                                          
-//                                                                         
-// WARNINGS: none                                                          
-//                                                                         
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// DIALOG_BOX_PROC -- Handles dlg messages
+//
+// INPUT: standard windows dialog command parameters
+//
+// OUTPUT: unused
+//
+// WARNINGS: none
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param )
@@ -2561,7 +2556,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 	HDC 	   		hDC, memDC, buttonDC, licenseDC;
 	BITMAP     		bm, fm, lm;
-//	LOGPALETTE 	  *	plgpl = NULL;
+//	LOGPALETTE 	  *	plgpl = nullptr;
 	PAINTSTRUCT		ps;
 	static int 		bits_pixel = 0;
 	static int 		idCtl = 0;
@@ -2592,7 +2587,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 	static HBITMAP		oldLicenseBitmap	= 0;
 	static HBITMAP		hButtonBitmap		= 0;
 	static HBITMAP		hFlicker[NUM_FLICKER_FRAMES];
-	static HBITMAP		hLicenseBitmap;	
+	static HBITMAP		hLicenseBitmap;
 
 	static POINT		point;
 	static HBRUSH		hStaticBrush		= 0;
@@ -2662,7 +2657,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 				wideBuffer = TheGameText->fetch("Autorun:Title");
 				wideBuffer2.format(wideBuffer, fullProductName.str());
-				WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer, _MAX_PATH, NULL, NULL );
+				WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 
 #endif
 
@@ -2694,7 +2689,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				HDC hdc = GetDC( window_handle );
 
 				FontManager = new FontManagerClass( hdc );
-				assert( FontManager != NULL );
+				assert( FontManager != nullptr );
 				ReleaseDC( window_handle, hdc );
 
 				//=======================================================================
@@ -2710,7 +2705,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 //				memset( szWSMsg1,		'\0', _MAX_PATH );
 				memset( szWSMsg2,		'\0', _MAX_PATH );
-				memset( szWholeWSMsg,	'\0', 1000 ); 
+				memset( szWholeWSMsg,	'\0', 1000 );
 
 //				Locale_GetString( WESTWOOD_COM_MSG, szWSMsg1 );
 //				wsMsg1 = TheGameText->fetch("Autorun:WestwoodComMsg");
@@ -2721,7 +2716,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //				swprintf( szWholeWSMsg, L"%s", wsMsg1.str() );
 
 //				memset( szInstallWarningMsg, '\0', _MAX_PATH );
-				
+
 //				Locale_GetString( IDS_INSTALL_WARNING_MSG, szWideBuffer );
 //				wideBuffer = TheGameText->fetch("Autorun:InstallWarningMsg");
 
@@ -2835,29 +2830,29 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				// Set the x, y, width, height of the Dialog and bitmaps dimensions.
 				//-----------------------------------------------------------------------
 				bitmap_rect.left  	= dlg_rect.left		= 0;
-				bitmap_rect.top		= dlg_rect.top		= 0; 
-				bitmap_rect.right 	= dlg_rect.right 	= bm.bmWidth;	
+				bitmap_rect.top		= dlg_rect.top		= 0;
+				bitmap_rect.right 	= dlg_rect.right 	= bm.bmWidth;
 				bitmap_rect.bottom	= dlg_rect.bottom 	= bm.bmHeight;
-  
+
 				//-----------------------------------------------------------------------
 				// Set the x, y, width, height of the Dialog and bitmaps dimensions.
 				//-----------------------------------------------------------------------
 				dlg_rect.left	= 0;
-				dlg_rect.top	= 0; 
+				dlg_rect.top	= 0;
 
 				if( b640X480 ) {
-					dlg_rect.right 		= rect.right;	
+					dlg_rect.right 		= rect.right;
 					dlg_rect.bottom 	= tray_rect.bottom;											// desktop smaller than image
 				} else if( b800X600 ) {
 					if(true){
-						dlg_rect.right 		= bm.bmWidth + 6;	
+						dlg_rect.right 		= bm.bmWidth + 6;
 						dlg_rect.bottom 	= bm.bmHeight + GetSystemMetrics( SM_CYCAPTION ) + 6;		// desktop larger than image
 					} else {
-						dlg_rect.right 		= 640;//bm.bmWidth + 6;	
+						dlg_rect.right 		= 640;//bm.bmWidth + 6;
 						dlg_rect.bottom 	= 480; //bm.bmHeight + GetSystemMetrics( SM_CYCAPTION ) + 6;		// desktop larger than image
 					}
 				} else {
-					dlg_rect.right 		= bm.bmWidth + 6;	
+					dlg_rect.right 		= bm.bmWidth + 6;
 					dlg_rect.bottom 	= bm.bmHeight + GetSystemMetrics( SM_CYCAPTION ) + 6;		// desktop larger than image
 				}
 
@@ -2875,7 +2870,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				i = 0;
 				while ( i < NUM_BUTTONS ) {
-					if ( ButtonList[i] == NULL ) {
+					if ( ButtonList[i] == nullptr ) {
 						i++;
 					} else {
 						break;
@@ -2888,18 +2883,18 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 				Msg( __LINE__, TEXT(__FILE__), TEXT("----------------------------- determining button area ---------------------------" ));
 
-				buttons_rect.left	= ButtonSizes[i].left;                                                 
-				buttons_rect.top  	= ButtonSizes[i].top;                                                  
-				buttons_rect.right	= ButtonSizes[i].left + ButtonSizes[i].right;                          
+				buttons_rect.left	= ButtonSizes[i].left;
+				buttons_rect.top  	= ButtonSizes[i].top;
+				buttons_rect.right	= ButtonSizes[i].left + ButtonSizes[i].right;
 				buttons_rect.bottom	= ButtonSizes[i].top  +  ButtonSizes[i].bottom;
 
 //				Msg( __LINE__, TEXT(__FILE__), TEXT("buttons_rect = [%d,%d,%d,%d]"), buttons_rect.left, buttons_rect.top, buttons_rect.right, buttons_rect.bottom );
 
 				for( j = 0; j < NUM_BUTTONS; j++ ) {
-					if ( ButtonList[j] != NULL ) {
-						buttons_rect.left	= __min( ButtonSizes[j].left							, buttons_rect.left	 ); 
+					if ( ButtonList[j] != nullptr ) {
+						buttons_rect.left	= __min( ButtonSizes[j].left							, buttons_rect.left	 );
 						buttons_rect.top  	= __min( ButtonSizes[j].top								, buttons_rect.top 	 );
-						buttons_rect.right	= __max( ButtonSizes[j].left + ButtonSizes[j].right		, buttons_rect.right  );                          
+						buttons_rect.right	= __max( ButtonSizes[j].left + ButtonSizes[j].right		, buttons_rect.right  );
 						buttons_rect.bottom	= __max( ButtonSizes[j].top  + ButtonSizes[j].bottom	, buttons_rect.bottom );
 					}
 				}
@@ -2914,12 +2909,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					MoveWindow(	window_handle,
 						( rect.right  - dlg_rect.right  )/2,
 						( rect.bottom - dlg_rect.bottom )/2,
-						dlg_rect.right, 
+						dlg_rect.right,
 						dlg_rect.bottom, TRUE );
 				} else {
-					MoveWindow(	window_handle, 
+					MoveWindow(	window_handle,
 						0, 0,
-						dlg_rect.right, 
+						dlg_rect.right,
 						dlg_rect.bottom, TRUE );
 				}
 
@@ -2928,7 +2923,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				GetClientRect( window_handle, &dlg_rect );
 
-				
+
 				//=======================================================================================
 				// JFS: 8/26/03 -- This was not getting cleared so if the button cnt were reduced...
 				//=======================================================================================
@@ -2968,7 +2963,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				// Who is the first button?
 				//-----------------------------------------------------------------------
 				while ( i < NUM_BUTTONS ) {
-					if ( ButtonList[i] == NULL ) {
+					if ( ButtonList[i] == nullptr ) {
 						i++;
 					} else {
 						break;
@@ -2988,7 +2983,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					//-------------------------------------------------------------------
 					// Make areas between the buttons.
 					//-------------------------------------------------------------------
-					if ( ButtonList[index] != NULL && ButtonList[index+1] != NULL ) {
+					if ( ButtonList[index] != nullptr && ButtonList[index+1] != nullptr ) {
 
 						// Area between buttons.
 						BackgroundRect[j].top		= ButtonList[index]->Return_Y_Pos() + ButtonList[index]->Return_Height();
@@ -3001,7 +2996,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					//-------------------------------------------------------------------
 					// Now look for areas in front of and behind each button.
 					//-------------------------------------------------------------------
-					if ( ButtonList[index] != NULL ) {
+					if ( ButtonList[index] != nullptr ) {
 
 						// Area in front of buttons.
 						BackgroundRect[j].top		= ButtonList[index]->Return_Y_Pos();
@@ -3026,11 +3021,11 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					Msg( __LINE__, TEXT(__FILE__), TEXT("b640X480		= [%d]"), b640X480 );
 					Msg( __LINE__, TEXT(__FILE__), TEXT("b800X600		= [%d]"), b800X600 );
 					Msg( __LINE__, TEXT(__FILE__), TEXT("ClientRect		= [%d,%d,%d,%d]"), dlg_rect.left, dlg_rect.top, dlg_rect.right, dlg_rect.bottom );
-					
+
 					for( index = 0; index < ( NUM_BUTTONS * 3 ) + 3; index++ ) {
 						Msg( __LINE__, TEXT(__FILE__), TEXT("BackgroundRect[%d]	= [%d,%d,%d,%d]"), index, BackgroundRect[index].top, BackgroundRect[index].bottom, BackgroundRect[index].left, BackgroundRect[index].right );
 					}
-					
+
 					Msg( __LINE__, TEXT(__FILE__), TEXT("BitmapRect	   	= [%d,%d,%d,%d]"), bitmap_rect.left, bitmap_rect.top, bitmap_rect.right, bitmap_rect.bottom );
 					Msg( __LINE__, TEXT(__FILE__), TEXT("FlickerRect		= [%d,%d,%d,%d]"), flicker_rect.left, flicker_rect.top, flicker_rect.right, flicker_rect.bottom );
 					Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonsRect		= [%d,%d,%d,%d]"), buttons_rect.left, buttons_rect.top, buttons_rect.right, buttons_rect.bottom );
@@ -3049,8 +3044,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//=======================================================================
 				// Set dialog's timer!  1000 = 1 second.
 				//=======================================================================
-//				timer_id = SetTimer( window_handle, 1000, 250L, NULL );
-				timer_id = SetTimer( window_handle, 1000, 500L, NULL );
+//				timer_id = SetTimer( window_handle, 1000, 250L, nullptr );
+				timer_id = SetTimer( window_handle, 1000, 500L, nullptr );
 			}
 			return( TRUE );
 
@@ -3058,7 +3053,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 		// Try and set a custom cursor.
 		//-------------------------------------------------------------------------------
 //		case WM_SETCURSOR:
-//			SetCursor(LoadCursor( Main::hInstance, MAKEINTRESOURCE(2))); 
+//			SetCursor(LoadCursor( Main::hInstance, MAKEINTRESOURCE(2)));
 //			break;
 
 		//-------------------------------------------------------------------------------
@@ -3074,7 +3069,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 		//-------------------------------------------------------------------------------
 		// Set and Realize our palette, then repaint if necessary.
-		// Note that SelectPalette here is passed a FALSE.  
+		// Note that SelectPalette here is passed a FALSE.
 		// This means reset palette as if we are in the foreground.
 		//-------------------------------------------------------------------------------
 		case WM_QUERYNEWPALETTE:
@@ -3125,13 +3120,13 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				}
 				GameAppMutex = OpenMutex( MUTEX_ALL_ACCESS, FALSE, szBuffer );
 
-				if ( GameAppMutex != NULL ) {
+				if ( GameAppMutex != nullptr ) {
 
 					//---------------------------------------------------------
 					// Handle(s) are closed in the ProgEnd().
 					//---------------------------------------------------------
 
-					HWND ccwindow = FindWindow( szGameWindow, NULL );
+					HWND ccwindow = FindWindow( szGameWindow, nullptr );
 					if ( ccwindow ) {
 						if( IsIconic( ccwindow )){
 							ShowWindow( ccwindow, SW_RESTORE );
@@ -3140,7 +3135,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 					} else {
 
-						ccwindow = FindWindow( szSetupWindow, NULL );
+						ccwindow = FindWindow( szSetupWindow, nullptr );
 						if ( ccwindow ) {
 							if( IsIconic( ccwindow )){
 								ShowWindow( ccwindow, SW_RESTORE );
@@ -3166,7 +3161,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 //				Msg( __LINE__, TEXT(__FILE__), TEXT("---------------------- WM_PAINT ---------------------"), i );
 //				Msg( __LINE__, TEXT(__FILE__), TEXT("Rectangle to update  = [%d,%d,%d,%d]"), paint_rect.left, paint_rect.top, paint_rect.right, paint_rect.bottom );
-				
+
 				//-----------------------------------------------------------------------
 				// Get dialog's hDC.
 				//-----------------------------------------------------------------------
@@ -3202,10 +3197,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						RealizePalette( buttonDC );
 						SelectPalette( licenseDC, hpal, FALSE );
 						RealizePalette( licenseDC );
-						
+
 						//---------------------------------------------------------------
 						// If area to update is a button area, this will be drawn farther
-						// on. This is to prevent "flickering" by drawing the background 
+						// on. This is to prevent "flickering" by drawing the background
 						// then the button image.
 						//---------------------------------------------------------------
 						for ( i = 0; i < NUM_BUTTONS; i++ ) {
@@ -3214,11 +3209,11 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 								ButtonList[i]->Return_Area( &rect );
 
-								if ( paint_rect.left	== rect.left	&& 
-									 paint_rect.top		== rect.top		&& 
-									 paint_rect.right	== rect.right	&& 
+								if ( paint_rect.left	== rect.left	&&
+									 paint_rect.top		== rect.top		&&
+									 paint_rect.right	== rect.right	&&
 									 paint_rect.bottom	== rect.bottom ) {
-					
+
 									PaintBackground = FALSE;
 //									Msg( __LINE__, TEXT(__FILE__), TEXT("Rectangle matches a button to update = [%d,%d,%d,%d]"), rect.left, rect.top, rect.right, rect.bottom );
 									break;
@@ -3227,7 +3222,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						}
 
 						//===============================================================
-						// Paint the background. 
+						// Paint the background.
 						//===============================================================
 						if ( PaintBackground ) {
 
@@ -3242,19 +3237,19 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						#if(1)
 							for( int i=0; i < ( NUM_BUTTONS * 3 ) + 3; i++ ) {
 
-								if( BackgroundRect[i].left	!= 0 || BackgroundRect[i].top	 != 0 || 
+								if( BackgroundRect[i].left	!= 0 || BackgroundRect[i].top	 != 0 ||
 									BackgroundRect[i].right != 0 || BackgroundRect[i].bottom != 0 ) {
 
-									result = StretchBlt( hDC, 
-										BackgroundRect[i].left, 
-										BackgroundRect[i].top, 
-										BackgroundRect[i].right, 
+									result = StretchBlt( hDC,
+										BackgroundRect[i].left,
+										BackgroundRect[i].top,
+										BackgroundRect[i].right,
 										BackgroundRect[i].bottom,
-  										memDC, 
-										BackgroundRect[i].left, 
-										BackgroundRect[i].top, 
-										BackgroundRect[i].right, 
-										BackgroundRect[i].bottom, 
+  										memDC,
+										BackgroundRect[i].left,
+										BackgroundRect[i].top,
+										BackgroundRect[i].right,
+										BackgroundRect[i].bottom,
 										SRCCOPY );
 
 									if( result != 0 ) {
@@ -3265,12 +3260,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 									HPEN 	pen		= CreatePen( /*PS_DOT*/ PS_SOLID, 1, TEXT_COLOR );
 									HGDIOBJ	oldpen	= SelectObject( hDC, pen );
 									SetBkMode( hDC, TRANSPARENT );
-					
-									MoveToEx(	hDC, BackgroundRect[i].left+1,  BackgroundRect[i].top+1,	NULL );
-									LineTo(		hDC, BackgroundRect[i].right-1,	BackgroundRect[i].top+1 ); 
-									LineTo(		hDC, BackgroundRect[i].right-1,	BackgroundRect[i].bottom-1 ); 		
-									LineTo(		hDC, BackgroundRect[i].left+1,	BackgroundRect[i].bottom-1 ); 		
-									LineTo(		hDC, BackgroundRect[i].left+1,	BackgroundRect[i].top+1 );			
+
+									MoveToEx(	hDC, BackgroundRect[i].left+1,  BackgroundRect[i].top+1,	nullptr );
+									LineTo(		hDC, BackgroundRect[i].right-1,	BackgroundRect[i].top+1 );
+									LineTo(		hDC, BackgroundRect[i].right-1,	BackgroundRect[i].bottom-1 );
+									LineTo(		hDC, BackgroundRect[i].left+1,	BackgroundRect[i].bottom-1 );
+									LineTo(		hDC, BackgroundRect[i].left+1,	BackgroundRect[i].top+1 );
 
 									SelectObject( hDC, oldpen );
 									DeleteObject( pen );
@@ -3286,16 +3281,16 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							//-----------------------------------------------------------
 							// Updates area around the button area.
 							//-----------------------------------------------------------
-							result = StretchBlt( hDC, 
-										license_rect.left, 
-										license_rect.top, 
-										license_rect.right, 
+							result = StretchBlt( hDC,
+										license_rect.left,
+										license_rect.top,
+										license_rect.right,
 										license_rect.bottom,
-  										licenseDC, 
-										0, 
-										0, 
-										license_rect.right, 
-										license_rect.bottom, 
+  										licenseDC,
+										0,
+										0,
+										license_rect.right,
+										license_rect.bottom,
 										SRCCOPY );
 */
 						#else
@@ -3324,29 +3319,29 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //							oldBitmap = ( HBITMAP )SelectObject( memDC, hFlicker[FlickerIndex] );
 							oldBitmap = ( HBITMAP )SelectObject( memDC, hFlicker[0] );
 
-							StretchBlt( 
-								hDC, 
-								flicker_rect.left, 
-								flicker_rect.top, 
-								flicker_rect.right, 
+							StretchBlt(
+								hDC,
+								flicker_rect.left,
+								flicker_rect.top,
+								flicker_rect.right,
 								flicker_rect.bottom,
-								memDC, 
-								0, 
-								0, 
-								flicker_rect.right, 
-								flicker_rect.bottom, 
+								memDC,
+								0,
+								0,
+								flicker_rect.right,
+								flicker_rect.bottom,
 								SRCCOPY );
 
 							#if(0)
 								HPEN 	pen		= CreatePen( /*PS_DOT*/ PS_SOLID, 1, TEXT_COLOR );
 								HGDIOBJ	oldpen	= SelectObject( hDC, pen );
 								SetBkMode( hDC, TRANSPARENT );
-				
-								MoveToEx(	hDC, flicker_rect.left+1,	flicker_rect.top+1,	NULL );
-								LineTo(		hDC, flicker_rect.right-1,	flicker_rect.top+1 ); 
-								LineTo(		hDC, flicker_rect.right-1,	flicker_rect.bottom-1 ); 		
-								LineTo(		hDC, flicker_rect.left+1,	flicker_rect.bottom-1 ); 		
-								LineTo(		hDC, flicker_rect.left+1,	flicker_rect.top+1 );			
+
+								MoveToEx(	hDC, flicker_rect.left+1,	flicker_rect.top+1,	nullptr );
+								LineTo(		hDC, flicker_rect.right-1,	flicker_rect.top+1 );
+								LineTo(		hDC, flicker_rect.right-1,	flicker_rect.bottom-1 );
+								LineTo(		hDC, flicker_rect.left+1,	flicker_rect.bottom-1 );
+								LineTo(		hDC, flicker_rect.left+1,	flicker_rect.top+1 );
 
 								SelectObject( hDC, oldpen );
 								DeleteObject( pen );
@@ -3392,17 +3387,17 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 										// Draw the button's bitmap background.
 										//-----------------------------------------------
 										oldBitmap = ( HBITMAP ) SelectObject( buttonDC, hButtonBitmap );
-										StretchBlt( 
-													hDC, 
-													dst_rect.left,			
-													dst_rect.top,			
-													dst_rect.right,			
-													dst_rect.bottom,		
-													buttonDC, 
-													src_rect.left,			
-													src_rect.top,			
-													src_rect.right,			
-													src_rect.bottom,		
+										StretchBlt(
+													hDC,
+													dst_rect.left,
+													dst_rect.top,
+													dst_rect.right,
+													dst_rect.bottom,
+													buttonDC,
+													src_rect.left,
+													src_rect.top,
+													src_rect.right,
+													src_rect.bottom,
 													SRCCOPY );
 
 										SelectObject( buttonDC, oldBitmap );
@@ -3410,7 +3405,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 										hButtonBitmap = 0;
 									}
 
-								} // END OF DRAW BITMAPS
+								}
 
 #if(0)
 								TTFontClass *fontptr = ButtonList[i]->Return_Font_Ptr();
@@ -3427,64 +3422,64 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 									*/
 //									SetTextColor( hDC, RGB( 0, 240, 0 ));
 //									DrawFocusRect(	hDC, &dst_rect );
-											
+
 									if ( ButtonList[i]->Get_State() == DrawButton::PRESSED_STATE ) {
-										fontptr->Print( 
-											hDC, 
-											ButtonList[i]->Return_Text(), 
-											rect, 
-											TEXT_PRESSED_COLOR, 
-											TEXT_PRESSED_SHADOW_COLOR, 
+										fontptr->Print(
+											hDC,
+											ButtonList[i]->Return_Text(),
+											rect,
+											TEXT_PRESSED_COLOR,
+											TEXT_PRESSED_SHADOW_COLOR,
 											TPF_BUTTON,
 											TPF_SHADOW );
 
 									} else if ( ButtonList[i]->Get_State() == DrawButton::FOCUS_STATE ) {
-										fontptr->Print( 
-											hDC, 
-											ButtonList[i]->Return_Text(), 
-											rect, 
-											TEXT_FOCUSED_COLOR, 
-											TEXT_FOCUSED_SHADOW_COLOR, 
+										fontptr->Print(
+											hDC,
+											ButtonList[i]->Return_Text(),
+											rect,
+											TEXT_FOCUSED_COLOR,
+											TEXT_FOCUSED_SHADOW_COLOR,
 											TPF_BUTTON,
 											TPF_SHADOW );
 
 									} else {
-										fontptr->Print( 
-											hDC, 
-											ButtonList[i]->Return_Text(), 
-											rect, 
-											TEXT_NORMAL_COLOR,	
-											TEXT_NORMAL_SHADOW_COLOR, 
+										fontptr->Print(
+											hDC,
+											ButtonList[i]->Return_Text(),
+											rect,
+											TEXT_NORMAL_COLOR,
+											TEXT_NORMAL_SHADOW_COLOR,
 											TPF_BUTTON,
 											TPF_SHADOW );
 									}
-								
+
 								#if(0)
 									HPEN 	pen		= CreatePen( /*PS_DOT*/ PS_SOLID, 2, TEXT_COLOR );
 									HGDIOBJ	oldpen	= SelectObject( hDC, pen );
 									SetBkMode( hDC, TRANSPARENT );
-									
+
 									MoveToEx( hDC,					// handle to device context
 										outline_rect.left,			// x-coordinate of new current position
 										outline_rect.top,			// y-coordinate of new current position
-										NULL );						// pointer to old current position
-									
+										nullptr );						// pointer to old current position
+
 									LineTo( hDC,					// device context handle
 										outline_rect.right,			// x-coordinate of line's ending point
 										outline_rect.top );			// y-coordinate of line's ending point
-									
+
 									LineTo( hDC,					// device context handle
 										outline_rect.right,			// x-coordinate of line's ending point
 										outline_rect.bottom ); 		// y-coordinate of line's ending point
-									
+
 									LineTo( hDC,					// device context handle
 										outline_rect.left, 			// x-coordinate of line's ending point
 										outline_rect.bottom ); 		// y-coordinate of line's ending point
-									
+
 									LineTo( hDC,					// device context handle
 										outline_rect.left, 			// x-coordinate of line's ending point
 										outline_rect.top );			// y-coordinate of line's ending point
-									
+
 									SelectObject( hDC, oldpen );
 									DeleteObject( pen );
 								#endif
@@ -3495,9 +3490,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 
 
-							} // end of if button
+							}
 
-						}	// For each button...
+						}
 
 						//---------------------------------------------------------------
 						// Used in debugging -- draw rect around where buttons are.
@@ -3512,20 +3507,20 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 											HGDIOBJ	oldpen = SelectObject(  hDC, hPen1 );
 
-											MoveToEx( hDC, 
-												ButtonList[i]->Return_X_Pos()-1, 
-												ButtonList[i]->Return_Y_Pos()-1, NULL );
-											LineTo( hDC,   
-												ButtonList[i]->Return_X_Pos() + ButtonList[i]->Return_Width() + 1, 
+											MoveToEx( hDC,
+												ButtonList[i]->Return_X_Pos()-1,
+												ButtonList[i]->Return_Y_Pos()-1, nullptr );
+											LineTo( hDC,
+												ButtonList[i]->Return_X_Pos() + ButtonList[i]->Return_Width() + 1,
 												ButtonList[i]->Return_Y_Pos()-1 );
-											LineTo( hDC,   
-												ButtonList[i]->Return_X_Pos() + ButtonList[i]->Return_Width()  + 1, 
+											LineTo( hDC,
+												ButtonList[i]->Return_X_Pos() + ButtonList[i]->Return_Width()  + 1,
 												ButtonList[i]->Return_Y_Pos() + ButtonList[i]->Return_Height() + 1);
-											LineTo( hDC,   
-												ButtonList[i]->Return_X_Pos()-1, 
+											LineTo( hDC,
+												ButtonList[i]->Return_X_Pos()-1,
 												ButtonList[i]->Return_Y_Pos() + ButtonList[i]->Return_Height() + 1);
-											LineTo( hDC,   
-												ButtonList[i]->Return_X_Pos() - 1, 
+											LineTo( hDC,
+												ButtonList[i]->Return_X_Pos() - 1,
 												ButtonList[i]->Return_Y_Pos() - 1);
 
 											SelectObject( hDC, oldpen );
@@ -3543,7 +3538,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						SetStretchBltMode( memDC, prevMemDCStretchMode );
 						SetStretchBltMode( buttonDC, prevButtonDCStretchMode );
 						SetStretchBltMode( licenseDC, prevLicenseDCStretchMode );
-						
+
 						SelectPalette( hDC,	hpalold, FALSE );
 						SelectPalette( memDC, hpalold, FALSE );
 						SelectPalette( buttonDC, hpalold, FALSE );
@@ -3553,7 +3548,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						DeleteDC( buttonDC );
 						DeleteDC( licenseDC );
 
-					} // end of bitmaps
+					}
 
 					//===================================================================
 					// Draw a solid colored background.
@@ -3565,7 +3560,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					// Print text at bottom of screen.
 					//===================================================================
 					Rect		text_rect;
-					TTFontClass *fontptr = NULL;
+					TTFontClass *fontptr = nullptr;
 
 					if ( b640X480 ) {
 						fontptr = TTTextFontPtr640;
@@ -3605,12 +3600,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						// WESTWOOD_COM Message at the top.
 						//---------------------------------------------------------------
 /*
-						fontptr->Print( 
-							hDC, 
+						fontptr->Print(
+							hDC,
 							szWholeWSMsg,
-							text_rect, 
-							TEXT_COLOR, 
-							SHADOW_COLOR, 
+							text_rect,
+							TEXT_COLOR,
+							SHADOW_COLOR,
 							TPF_CENTER_TEXT,
 							TPF_SHADOW );
 */
@@ -3626,12 +3621,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						if ( b640X480 || b800X600 ) {
 							text_rect.X			= 220;
 							text_rect.Y			= 400;
-							text_rect.Width		= 300;		//460;						 
+							text_rect.Width		= 300;		//460;
 							text_rect.Height	=  48;		//26;
 						} else {
 							text_rect.X			= 250;
 							text_rect.Y			= 574;
-							text_rect.Width		= 420;		//460;						 
+							text_rect.Width		= 420;		//460;
 							text_rect.Height	=  60;		//26;
 						}
 
@@ -3647,12 +3642,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 //							DrawFocusRect( hDC, &one );
 						#endif
 
-						fontptr->Print( 
-							hDC, 
+						fontptr->Print(
+							hDC,
 							szWholeString,
-							text_rect, 
-							TEXT_COLOR, 
-							SHADOW_COLOR, 
+							text_rect,
+							TEXT_COLOR,
+							SHADOW_COLOR,
 							TPF_CENTER_TEXT,
 							TPF_SHADOW );
 					}
@@ -3677,9 +3672,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				// Play DISK.WAV sound on CD.
 				//-----------------------------------------------------------------------
-				if ( FirstTime ) { 
+				if ( FirstTime ) {
 					if( UseSounds ) {
-						PlaySound( szWavs[ SongNumber ], NULL, SND_ASYNC | SND_RESOURCE );
+						PlaySound( szWavs[ SongNumber ], nullptr, SND_ASYNC | SND_RESOURCE );
 					}
 					FirstTime = FALSE;
 				}
@@ -3741,10 +3736,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							std::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunAVIs");
 							std::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, NULL, NULL );
+							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, NULL, NULL );
-							MessageBox( NULL, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
+							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+							MessageBox( nullptr, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
 						}
 */
 					}
@@ -3754,7 +3749,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					{
 						std::wstring wFileName;
 						wFileName = Locale_GetString(HELP_FILENAME);
-						
+
 						std::string fname;
 						const wchar_t *tmp = wFileName.c_str();
 						char hack[2] = "a";
@@ -3786,10 +3781,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							std::wstring wideBuffer = TheGameText->fetch("Autorun:CantRunHelp");
 							std::wstring wideBuffer2 = TheGameText->fetch("Autorun:Error");
 							int length = wideBuffer.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, NULL, NULL );
+							WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 							length = wideBuffer2.length();
-							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, NULL, NULL );
-							MessageBox( NULL, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
+							WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+							MessageBox( nullptr, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
 						}
 */
 					}
@@ -3861,7 +3856,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 							Reformat_Volume_Name( PRODUCT_VOLUME_CD2, volume_to_match );
 //							result = Prompt_For_CD( window_handle, volume_to_match, IDS_INSERT_CDROM_WITH_VOLUME2, IDS_EXIT_MESSAGE2, &cd_drive );
-							result = Prompt_For_CD( window_handle, volume_to_match, AsciiString("Autorun:InsertCDROMWithVolume2"), AsciiString("Autorun:ExitMessage2"), &cd_drive );
+							result = Prompt_For_CD( window_handle, volume_to_match, "Autorun:InsertCDROMWithVolume2", "Autorun:ExitMessage2", &cd_drive );
 						}
 
 						if ( result ) {
@@ -3882,13 +3877,13 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					//-------------------------------------------------------------------
 					case IDD_GAMESPY:
 						Msg( __LINE__, TEXT(__FILE__), TEXT("IDD_GAMESPY Selected." ));
-						if( ViewHTML( GAMESPY_WEBSITE )) 
+						if( ViewHTML( GAMESPY_WEBSITE ))
 						{
 							end_dialog = true;
-						} 
-						else 
+						}
+						else
 						{
-							Error_Message( Main::hInstance, AsciiString("Autorun:Generals"), AsciiString("Autorun:CantFindExplorer"), GAME_WEBSITE );
+							Error_Message( Main::hInstance, "Autorun:Generals", "Autorun:CantFindExplorer", GAME_WEBSITE );
 						}
 						break;
 				#endif
@@ -3922,8 +3917,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						Msg( __LINE__, TEXT(__FILE__), TEXT("IDD_INTERNET Selected." ));
 						if( ViewHTML( GAME_WEBSITE )) {
 							end_dialog = true;
-						} 
-						else 
+						}
+						else
 						{
 							Error_Message( Main::hInstance, "Autorun:Generals", "Autorun:CantFindExplorer", GAME_WEBSITE );
 						}
@@ -3957,8 +3952,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						result = GlobalMainWindow->Run_Uninstall( window_handle, &dlg_rect );
 
 						//---------------------------------------------------------------
-						// MML 5/27/99:  I am exiting here because the we launch 
-						// Uninstll.exe which in turn launches Uninst.exe thus 
+						// MML 5/27/99:  I am exiting here because the we launch
+						// Uninstll.exe which in turn launches Uninst.exe thus
 						// ::Run_Install ends before Uninst.exe is done.
 						//---------------------------------------------------------------
 						if ( result ) {
@@ -3976,10 +3971,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				if( end_dialog ) {
 
 					for ( i = 0; i < NUM_BUTTONS; i++ ) {
-						if ( ButtonList[i] ) {
-							delete( ButtonList[i] );
-							ButtonList[i] = NULL;
-						}
+						delete( ButtonList[i] );
+						ButtonList[i] = nullptr;
 					}
 					if ( hpal ) {
 						DeleteObject( hpal );
@@ -4018,10 +4011,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				#if(BACKGROUND_BITMAP)
 
 					for ( i = 0; i < NUM_BUTTONS; i++ ) {
-						if ( ButtonList[i] ) {
-							delete( ButtonList[i] );
-							ButtonList[i] = NULL;
-						}
+						delete( ButtonList[i] );
+						ButtonList[i] = nullptr;
 					}
 					if ( hpal ) {
 						DeleteObject( hpal );
@@ -4049,10 +4040,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				// Delete the arguments.
 				//-----------------------------------------------------------------------
-				if ( Args ) {
-					delete( Args );
-					Args = NULL;
-				}
+				delete( Args );
+				Args = nullptr;
+
 				KillTimer( window_handle, timer_id );
 				EndDialog( window_handle, w_param );
 			}
@@ -4060,8 +4050,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 		//-------------------------------------------------------------------------------
 		// WM_SYSCOLORCHANGE Message.
-		// If your applications uses controls in Windows 95/NT, forward the 
-		// WM_SYSCOLORCHANGE message to the controls. 
+		// If your applications uses controls in Windows 95/NT, forward the
+		// WM_SYSCOLORCHANGE message to the controls.
 		//-------------------------------------------------------------------------------
 		#if( !BACKGROUND_BITMAP )
 		case WM_SYSCOLORCHANGE:
@@ -4083,7 +4073,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 		//	WM_CTLCOLORLISTBOX
 		//	WM_CTLCOLORBTN
 		//	WM_CTLCOLORDLG
-		//	WM_CTLCOLORSCROLLBAR 
+		//	WM_CTLCOLORSCROLLBAR
 		//	WM_CTLCOLORSTATIC
 		//	#define WM_CTLCOLOR								0x0019
 		//	#define GET_WM_CTLCOLOR_HDC (wp, lp, msg)		(HDC)(wp)
@@ -4102,7 +4092,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				UnrealizeObject( hStaticBrush );									// reset the origin of the brush next time used.
 				point.x = point.y = 0;												// create a point.
 				ClientToScreen( window_handle, &point );						// translate into screen coordinates.
-				SetBrushOrgEx( (HDC)w_param, point.x, point.y, NULL );	// New Origin to use when next selected.
+				SetBrushOrgEx( (HDC)w_param, point.x, point.y, nullptr );	// New Origin to use when next selected.
 				return((LRESULT) hStaticBrush );
 			}
 		#endif
@@ -4138,13 +4128,13 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							ButtonList[i]->Set_State( DrawButton::PRESSED_STATE );
 							InvalidateRect( window_handle, &rect, FALSE );
 
-							Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONDOWN -- %s. rect = [%d,%d,%d,%d]."), 
+							Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONDOWN -- %s. rect = [%d,%d,%d,%d]."),
 								ButtonList[i]->Return_Normal_Bitmap(), rect.left, rect.top, rect.right, rect.bottom );
 
 							UpdateWindow( window_handle );
 						}
 						break;
-					} 
+					}
 				}
 			}
 			break;
@@ -4180,7 +4170,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						//---------------------------------------------------------------
 						// Save index of button with focus.
 						//---------------------------------------------------------------
-						if(	ButtonList[i]->Get_State() == DrawButton::FOCUS_STATE || 
+						if(	ButtonList[i]->Get_State() == DrawButton::FOCUS_STATE ||
 						  	ButtonList[i]->Get_State() == DrawButton::PRESSED_STATE ) {
 							focus_index = i;
 						}
@@ -4197,13 +4187,13 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				}
 
 				//-----------------------------------------------------------------------
-				// If new button is not found... 
+				// If new button is not found...
 				//-----------------------------------------------------------------------
 				if ( found_focus == -1 ) {
 
 					//-------------------------------------------------------------------
-					// Make sure previously focused/pressed button is now is a 
-					// focused state and no action is taken.  This occurs when 
+					// Make sure previously focused/pressed button is now is a
+					// focused state and no action is taken.  This occurs when
 					// mouse is clicked outside of any button areas.
 					//-------------------------------------------------------------------
 					if ( ButtonList[focus_index] && ( ButtonList[focus_index]->Get_State() != DrawButton::FOCUS_STATE )) {
@@ -4212,7 +4202,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						ButtonList[focus_index]->Return_Area ( &rect );
 						InvalidateRect( window_handle, &rect, FALSE );
 
-						Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[FOCUS_STATE] = [x=%d, y=%d, w=%d, h=%d]."), 
+						Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[FOCUS_STATE] = [x=%d, y=%d, w=%d, h=%d]."),
 							ButtonList[ focus_index ]->Return_Normal_Bitmap(),	rect.left, rect.top, rect.right, rect.bottom );
 
 						UpdateWindow( window_handle );
@@ -4229,7 +4219,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						ButtonList[ found_focus ]->Return_Area ( &rect );
 						InvalidateRect( window_handle, &rect, FALSE );
 
-						Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[FOCUS_STATE] = [x=%d, y=%d, w=%d, h=%d]."), 
+						Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[FOCUS_STATE] = [x=%d, y=%d, w=%d, h=%d]."),
 							ButtonList[ found_focus ]->Return_Normal_Bitmap(), rect.left, rect.top, rect.right, rect.bottom );
 
 						UpdateWindow( window_handle );
@@ -4240,15 +4230,15 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						// Make previously focused button, Normal...
 						//---------------------------------------------------------------
 						if ( ButtonList[ focus_index ] ) {
-					
+
 							ButtonList[ focus_index ]->Set_State( DrawButton::NORMAL_STATE );
 							ButtonList[ focus_index ]->Return_Area ( &rect );
 							InvalidateRect( window_handle, &rect, FALSE );
-		
-							Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[NORMAL_STATE] = [x=%d, y=%d, w=%d, h=%d]."), 
+
+							Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[NORMAL_STATE] = [x=%d, y=%d, w=%d, h=%d]."),
 								ButtonList[ focus_index ]->Return_Normal_Bitmap(),
 								rect.left, rect.top, rect.right, rect.bottom );
-						
+
 							UpdateWindow( window_handle );
 						}
 
@@ -4256,12 +4246,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						// ...and the new button now has focus.
 						//---------------------------------------------------------------
 						if ( ButtonList[ found_focus ] ) {
-					
+
 							ButtonList[ found_focus ]->Set_State( DrawButton::FOCUS_STATE );
 							ButtonList[ found_focus ]->Return_Area ( &rect );
 							InvalidateRect( window_handle, &rect, FALSE );
 
-							Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[FOCUS_STATE] = [x=%d, y=%d, w=%d, h=%d]."), 
+							Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONUP -- %s[FOCUS_STATE] = [x=%d, y=%d, w=%d, h=%d]."),
 								ButtonList[ found_focus ]->Return_Normal_Bitmap(), rect.left, rect.top, rect.right, rect.bottom );
 
 							UpdateWindow( window_handle );
@@ -4278,8 +4268,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				// Do the focus button's action.
 				//-----------------------------------------------------------------------
 				if ( found_focus >= 0 ) {
-					if (( ButtonList[found_focus] ) && 
-						( ButtonList[found_focus]->Get_State() == DrawButton::FOCUS_STATE ) && 
+					if (( ButtonList[found_focus] ) &&
+						( ButtonList[found_focus]->Get_State() == DrawButton::FOCUS_STATE ) &&
 						( ButtonList[found_focus]->Is_Mouse_In_Region( mouse_x, mouse_y ))) {
 							SendMessage( window_handle, WM_COMMAND, ButtonList[found_focus]->Return_Id(), 0L );
 							break;
@@ -4308,24 +4298,24 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 			#if(USE_MOUSE_MOVES)
 				//-----------------------------------------------------------------------
-				// Reset most current button.									         
+				// Reset most current button.
 				//-----------------------------------------------------------------------
 				CurrentButton = 0;
 			#endif
 
 				//-----------------------------------------------------------------------
-				// For each button in the list...								         
+				// For each button in the list...
 				//-----------------------------------------------------------------------
 				i = 0;
 				while( i < NUM_BUTTONS && !done ) {
 
 					//-------------------------------------------------------------------
-					// For each button, check if mouse is in it's area.			        
+					// For each button, check if mouse is in it's area.
 					//-------------------------------------------------------------------
 					if ( ButtonList[i] && ButtonList[i]->Is_Mouse_In_Region( mouse_x, mouse_y )) {
 
 						//---------------------------------------------------------------
-						// This is now the current button.							       
+						// This is now the current button.
 						//---------------------------------------------------------------
 						CurrentButton = ButtonList[i]->Return_Id();
 
@@ -4352,15 +4342,15 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 								}
 
 							} else {
-		
+
 								//--------------------------------------------------------
-								// If this button is not already focused, give it the focus. 
+								// If this button is not already focused, give it the focus.
 								//--------------------------------------------------------
 								if ( ButtonList[i] && ButtonList[i]->Get_State() != DrawButton::FOCUS_STATE ) {
 									ButtonList[i]->Set_State( DrawButton::FOCUS_STATE );
 //									Msg( __LINE__, TEXT(__FILE__), TEXT("WM_MOUSEMOVE -- %s[FOCUS_STATE]."), ButtonList[i]->Return_Normal_Bitmap());
 								}
-							}	// end of if
+							}
 
 							//-----------------------------------------------------------
 							// Get the area of the button, and post it for updating.
@@ -4380,15 +4370,15 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 							done = 1;
 						}
 
-					}	// end of if
+					}
 					i++;
 
-				}	// end of for
+				}
 
 
 			#if( USE_MOUSE_MOVES )
 	        	//-----------------------------------------------------------------------
-				// If a MouseMove was found to be in one of the buttons, then 
+				// If a MouseMove was found to be in one of the buttons, then
 				// CurrentButton will have a value.
         		//-----------------------------------------------------------------------
 				if ( CurrentButton != 0 ) {
@@ -4418,14 +4408,14 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 		case WM_SETFOCUS:
 			InvalidateRect( window_handle, &dlg_rect, TRUE );
 //			nResult = UpdateWindow( window_handle );
-//			Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONDBLCLK -- dlg_rect = [x=%d, y=%d, w=%d, h=%d]."), 
+//			Msg( __LINE__, TEXT(__FILE__), TEXT("WM_LBUTTONDBLCLK -- dlg_rect = [x=%d, y=%d, w=%d, h=%d]."),
 //				dlg_rect.left, dlg_rect.top, dlg_rect.right, dlg_rect.bottom );
 			break;
 
 		#if(BACKGROUND_BITMAP)
 		//-------------------------------------------------------------------------------
-		// bit 30 of lParam - Specifies the previous key state. 
-		// The value is 1 if the key is down before the message is sent, 
+		// bit 30 of lParam - Specifies the previous key state.
+		// The value is 1 if the key is down before the message is sent,
 		// or it is 0 if the key is up.
 		//-------------------------------------------------------------------------------
 		case WM_KEYUP:
@@ -4459,7 +4449,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					case VK_DOWN:
 						{
 							//-----------------------------------------------------------
-							// Find the button with focus and "tab" to the next button by finding 
+							// Find the button with focus and "tab" to the next button by finding
 							// the next valid index.  If past last button, circle back to the top.
 							//-----------------------------------------------------------
 							int focused_button = 0;
@@ -4518,7 +4508,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					case VK_UP:
 						{
 							//-----------------------------------------------------------
-							// Find the button with focus and "tab" to the next button by finding 
+							// Find the button with focus and "tab" to the next button by finding
 							// the next valid index.  If past last button, circle back to the top.
 							//-----------------------------------------------------------
 							int focused_button = 0;
@@ -4587,34 +4577,34 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 //*****************************************************************************
 // STOP_SOUND_PLAYING -- Stop the background sound.
-//                                                                 
+//
 // INPUT:		none.
-//                                                                 
+//
 // OUTPUT:		none.
-//                                                                 
+//
 // WARNINGS:	Will stop any sound started by PlaySound.
-//                                                                 
-// HISTORY:                                                                
-//   06/04/1999  MML : Created.                                            
+//
+// HISTORY:
+//   06/04/1999  MML : Created.
 //=============================================================================
 
 void Stop_Sound_Playing ( void )
 {
-	PlaySound( NULL, NULL, SND_ASYNC | SND_FILENAME );
+	PlaySound( nullptr, nullptr, SND_ASYNC | SND_FILENAME );
 }
 
 //*****************************************************************************
-// OPTIONS -- Find any user options and set the correct flags      
-//                                                                 
-// INPUT:   int argc      =  no. of arguments to check        		 
-//          BYTE *argv[]  =  ptr to actual command line parameters 
-//                                                                 
-// OUTPUT:                                                         
-//                                                                 
-// WARNINGS:                                                       
-//                                                                 
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// OPTIONS -- Find any user options and set the correct flags
+//
+// INPUT:   int argc      =  no. of arguments to check
+//          BYTE *argv[]  =  ptr to actual command line parameters
+//
+// OUTPUT:
+//
+// WARNINGS:
+//
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 BOOL Options( Command_Line_Arguments *Orgs )
@@ -4660,7 +4650,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 						sprintf( szBuffer3, szBuffer, szVersion );
 //						strcpy( szBuffer, szRegistryKey );
 
-						MessageBox( NULL, szBuffer3, "Autorun", MB_TASKMODAL | MB_OK );
+						MessageBox( nullptr, szBuffer3, "Autorun", MB_TASKMODAL | MB_OK );
 						result = FALSE;
 					}
 					break;
@@ -4684,7 +4674,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 							strcpy( szVolumeName, PRODUCT_VOLUME_CD1 );
 						} else {
 							strcpy( szVolumeName, PRODUCT_VOLUME_CD2 );
-							FindClose( handle );	
+							FindClose( handle );
 						}
 
 						strcpy( Arguments[ NumberArguments++ ], buffer );
@@ -4696,7 +4686,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 				case 'c':
 					if( buffer[2] == 'd' ) {
 						szCDDrive[0] = buffer[3];
-						szCDDrive[1] = ':';						
+						szCDDrive[1] = ':';
 						szCDDrive[2] = '\\';
 					}
 					break;
@@ -4707,11 +4697,11 @@ BOOL Options( Command_Line_Arguments *Orgs )
 				case 'l':
 					{
 						//-----------------------------------------------------
-						//	Identifier		Meaning 
-						//	932				Japan 
-						//	936				Chinese (PRC, Singapore) 
-						//	949				Korean 
-						//	1252			Windows 3.1 Latin 1 (US, Western Europe) 
+						//	Identifier		Meaning
+						//	932				Japan
+						//	936				Chinese (PRC, Singapore)
+						//	949				Korean
+						//	1252			Windows 3.1 Latin 1 (US, Western Europe)
 						//-----------------------------------------------------
 						char *temp = buffer+2;
 						int number = atoi( temp );
@@ -4789,7 +4779,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 }
 
 //*****************************************************************************
-// Valid_Environment -- Make sure this program is run from CD-ROM disc only 
+// Valid_Environment -- Make sure this program is run from CD-ROM disc only
 //					 	AND it is a Win95 system.
 //
 // INPUT:  		none.
@@ -4798,8 +4788,8 @@ BOOL Options( Command_Line_Arguments *Orgs )
 //
 // WARNINGS:	returns 0 if ok to continue.
 //
-// HISTORY:                                                                
-//   06/04/1996  MML : Created.                                            
+// HISTORY:
+//   06/04/1996  MML : Created.
 //=============================================================================
 
 BOOL Valid_Environment ( void )
@@ -4812,15 +4802,15 @@ BOOL Valid_Environment ( void )
 
 	int length = 0;
 	result = WinVersion.Meets_Minimum_Version_Requirements();
-  if ( !result ) 
+  if ( !result )
 	{
 		std::wstring wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
 		std::wstring wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
 		length = wideBuffer.length();
-		WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, NULL, NULL );
+		WideCharToMultiByte( CodePage, 0, wideBuffer.c_str(), length+1, szBuffer, _MAX_PATH, nullptr, nullptr );
 		length = wideBuffer2.length();
-		WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, NULL, NULL );
-		MessageBox( NULL, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
+		WideCharToMultiByte( CodePage, 0, wideBuffer2.c_str(), length+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+		MessageBox( nullptr, szBuffer, szBuffer2, MB_APPLMODAL | MB_OK );
 	}
 
 	return( result );
@@ -4828,17 +4818,17 @@ BOOL Valid_Environment ( void )
 
 //****************************************************************************
 // LOADRESOURCEBITMAP -- Find & Load the bitmap from the resource.
-//                                                                 
+//
 // INPUT:   HINSTANCE hInstance -- Program's hInstance.
 //          LPTSTR lpString -- name of bitmap to find.
 //          HPALETTE FAR *lphPalette -- we will return palette in this.
 //
 // OUTPUT:  HBITMAP -- handle to the bitmap if found.
-//                                                                 
+//
 // WARNINGS:
-//                                                                 
+//
 // HISTORY: Found this routine on MS Developmemt CD, July 1996.
-// 	09/26/1996  MML : Created.                                            
+// 	09/26/1996  MML : Created.
 //=============================================================================
 
 HBITMAP LoadResourceBitmap( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR *lphPalette, bool loading_a_button )
@@ -4847,7 +4837,7 @@ HBITMAP LoadResourceBitmap( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 	int 		iNumColors;
 	HRSRC 		hRsrc;
 	HGLOBAL 	hGlobal;
-	HBITMAP 	hBitmapFinal = NULL;
+	HBITMAP 	hBitmapFinal = nullptr;
 	LPBITMAPINFOHEADER lpbi;
 
 	hBitmapFinal = LoadBitmap( hInstance, lpString );
@@ -4878,7 +4868,7 @@ HBITMAP LoadResourceBitmap( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 		} else {
 
 			//--------------------------------------------------------------------
-			// Get the palette from the resource.  
+			// Get the palette from the resource.
 			//--------------------------------------------------------------------
 			*lphPalette = CreateDIBPalette((LPBITMAPINFO) lpbi, &iNumColors );
 		}
@@ -4892,26 +4882,26 @@ HBITMAP LoadResourceBitmap( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 
 	return( hBitmapFinal );
 }
- 
+
 //*****************************************************************************
 // CREATEDIBPALETTE -- Creates the palette from the Bitmap found above.
-//                                                                 
+//
 // INPUT:   LPBITMAPINFO lpbmi -- bitmap info from header.
 //          LPINT lpiNumColors -- number of colors.
 //
 // OUTPUT:  HPALETTE -- handle to the bitmap if found.
-//                                                                 
-// WARNINGS:                                                       
-//                                                                 
+//
+// WARNINGS:
+//
 // HISTORY: Found this routine on MS Developmemt CD, July 1996.
-// 	09/26/1996  MML : Created.                                            
+// 	09/26/1996  MML : Created.
 //=============================================================================
 HPALETTE CreateDIBPalette ( LPBITMAPINFO lpbmi, LPINT lpiNumColors )
 {
 	LPBITMAPINFOHEADER lpbi;
 	LPLOGPALETTE lpPal;
 	HANDLE hLogPal;
-	HPALETTE hPal = NULL;
+	HPALETTE hPal = nullptr;
 	int i;
 
 	lpbi = (LPBITMAPINFOHEADER) lpbmi;
@@ -4963,22 +4953,22 @@ HPALETTE CreateDIBPalette ( LPBITMAPINFO lpbmi, LPINT lpiNumColors )
 #endif
 
 	}
-	return( hPal );	
+	return( hPal );
 }
 
 //*****************************************************************************
 // LOADRESOURCEBUTTON -- Find & Load the bitmap from the resource.
-//                                                                 
+//
 // INPUT:   HINSTANCE hInstance -- Program's hInstance.
 //          LPTSTR lpString -- name of bitmap to find.
 //          HPALETTE FAR *lphPalette -- we will return palette in this.
 //
 // OUTPUT:  HBITMAP -- handle to the bitmap if found.
-//                                                                 
+//
 // WARNINGS:
-//                                                                 
+//
 // HISTORY: Found this routine on MS Developmemt CD, July 1996.
-// 	09/26/1996  MML : Created.                                            
+// 	09/26/1996  MML : Created.
 //=============================================================================
 HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR lphPalette )
 {
@@ -4986,7 +4976,7 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 	int 		iNumColors;
 	HRSRC 	hRsrc;
 	HGLOBAL 	hGlobal;
-	HBITMAP 	hBitmapFinal = NULL;
+	HBITMAP 	hBitmapFinal = nullptr;
 	LPBITMAPINFOHEADER lpbi;
 
 	//--------------------------------------------------------------------------
@@ -5000,7 +4990,7 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 		//-----------------------------------------------------------------------
 		hGlobal	= LoadResource( hInstance, hRsrc );
 		lpbi		= (LPBITMAPINFOHEADER) LockResource( hGlobal );
-		hdc		= GetDC( NULL );
+		hdc		= GetDC( nullptr );
 
 		//--------------------------------------------------------------------------
 		// Set number of colors ( 2 to the nth ).
@@ -5012,11 +5002,11 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 		}
 
 		//-----------------------------------------------------------------------
-		// Get the palette from the resource.  
+		// Get the palette from the resource.
 		// Select to the DC and realize it in the System palette.
 		//-----------------------------------------------------------------------
 //		*lphPalette = CreateDIBPalette((LPBITMAPINFO) lpbi, &iNumColors );
-		if ( lphPalette != NULL ) {
+		if ( lphPalette != nullptr ) {
 			SelectPalette( hdc, lphPalette, FALSE );
 			RealizePalette( hdc );
 		}
@@ -5024,8 +5014,8 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 		//-----------------------------------------------------------------------
 		// Now create the bitmap itself.
 		//-----------------------------------------------------------------------
-		hBitmapFinal = CreateDIBitmap( 
-						hdc, 
+		hBitmapFinal = CreateDIBitmap(
+						hdc,
 						(LPBITMAPINFOHEADER)lpbi,
 						(LONG)CBM_INIT,
 						(LPTSTR)lpbi + lpbi->biSize + iNumColors * sizeof( RGBQUAD ),
@@ -5035,7 +5025,7 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 		//-----------------------------------------------------------------------
 		// Free DS and memory used.
 		//-----------------------------------------------------------------------
-		ReleaseDC( NULL, hdc );                        
+		ReleaseDC( nullptr, hdc );
 		UnlockResource( hGlobal );
 		FreeResource( hGlobal );
 	}
@@ -5044,18 +5034,18 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 
 //*****************************************************************************
 // Cant_Find_MessageBox -- Find & Load the bitmap from the resource.
-//                                                                 
+//
 // INPUT:   HINSTANCE hInstance -- Program's hInstance.
 //          LPTSTR lpString -- name of bitmap to find.
 //          HPALETTE FAR *lphPalette -- we will return palette in this.
 //
 // OUTPUT:  HBITMAP -- handle to the bitmap if found.
-//                                                                 
+//
 // WARNINGS:
-//                                                                 
+//
 // HISTORY: Found this routine on MS Developmemt CD, July 1996.
-// 	09/26/1996  MML : Created.  
-//  08/27/2003  JFS : Repaired!                                          
+// 	09/26/1996  MML : Created.
+//  08/27/2003  JFS : Repaired!
 //=============================================================================
 
 void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
@@ -5071,9 +5061,9 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 		Locale_GetString( "Autorun:CantFind", szWideBuffer );
 		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szPath, _MAX_PATH, szWideBuffer0, _MAX_PATH );
-		swprintf( szWideBuffer2, szWideBuffer, szWideBuffer0 );	
+		swprintf( szWideBuffer2, szWideBuffer, szWideBuffer0 );
 
-		MessageBoxW( NULL,  szWideBuffer2, szWideBuffer3, MB_APPLMODAL | MB_OK );
+		MessageBoxW( nullptr,  szWideBuffer2, szWideBuffer3, MB_APPLMODAL | MB_OK );
 	}
 
 #else
@@ -5082,8 +5072,8 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 	std::wstring wideBuffer2.format( wideBuffer.str(), productName.str() );
 	std::wstring wideBuffer3 = TheGameText->fetch("Autorun:CantFind");
 
-	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, NULL, NULL );
-	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, nullptr );
+	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
 
 
 	sprintf( szBuffer1, szBuffer3, szPath );
@@ -5091,45 +5081,45 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 	if ( strlen( szPath ) < 3 )
 	{
-		MessageBox( NULL, "The path specified in Cant_Find_MessageBox was blank", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "The path specified in Cant_Find_MessageBox was blank", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
-	}	
+	}
 	if ( strlen( szBuffer1 ) < 3 && strlen( szBuffer3 ) < 3 )
 	{
-		MessageBox( NULL, "***MISSING MESSAGES***... IDS_AUTORUN_TITLE and IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "***MISSING MESSAGES***... IDS_AUTORUN_TITLE and IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
-	}	
+	}
 	if ( strlen( szBuffer1 ) < 3 )
 	{
-		MessageBox( NULL, "***MISSING MESSAGE***... IDS_AUTORUN_TITLE", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "***MISSING MESSAGE***... IDS_AUTORUN_TITLE", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
-	}	
+	}
 	if ( strlen( szBuffer3 ) < 3 )
 	{
-		MessageBox( NULL, "***MISSING MESSAGE***... IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
+		MessageBox( nullptr, "***MISSING MESSAGE***... IDS_CANT_FIND", "Autorun", MB_APPLMODAL | MB_OK );
 		return;
 	}
 
 
 
 
-	MessageBox( NULL, szBuffer1, szBuffer2, MB_APPLMODAL | MB_OK );
+	MessageBox( nullptr, szBuffer1, szBuffer2, MB_APPLMODAL | MB_OK );
 #endif
 
 }
 
 
-/****************************************************************************** 
- * Error_Message -- 														  
- *                                                                            
- * INPUT:		 															  
- *                                                                            
- * OUTPUT:      
- *                                                                            
- * WARNINGS:   none                                                           
- *                                                                            
- * HISTORY:                                                                   
- *   08/14/1998 MML : Created.                                                
+/******************************************************************************
+ * Error_Message --
+ *
+ * INPUT:
+ *
+ * OUTPUT:
+ *
+ * WARNINGS:   none
+ *
+ * HISTORY:
+ *   08/14/1998 MML : Created.
  *============================================================================*/
 
 void Error_Message ( HINSTANCE hInstance, const char * title, const char * string, const char *path )
@@ -5140,29 +5130,29 @@ void Error_Message ( HINSTANCE hInstance, const char * title, const char * strin
 	wideBuffer2 = TheGameText->fetch(title);
 	wideBuffer3 = TheGameText->fetch(string);
 
-	if ( path && ( path[0] != '\0' )) 
+	if ( path && ( path[0] != '\0' ))
 	{
 		wideBuffer3.format( wideBuffer.str(), path );
-	} 
-	else 
+	}
+	else
 	{
 		wideBuffer3 = wideBuffer;					// insert not provided
 	}
 
-	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, NULL, NULL );
-	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, nullptr, nullptr );
+	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, nullptr, nullptr );
 
-	MessageBox( NULL, szBuffer3, szBuffer2, MB_APPLMODAL | MB_OK );
+	MessageBox( nullptr, szBuffer3, szBuffer2, MB_APPLMODAL | MB_OK );
 
 #endif
 
-	MessageBox( NULL, "ERROR_UNDEFINED", "ERROR_UNDEFINED", MB_APPLMODAL | MB_OK );
+	MessageBox( nullptr, "ERROR_UNDEFINED", "ERROR_UNDEFINED", MB_APPLMODAL | MB_OK );
 
 
 }
 
 
-/****************************************************************************** 
+/******************************************************************************
 / Launch Class Object
 /******************************************************************************/
 
@@ -5171,17 +5161,17 @@ LaunchObjectClass::LaunchObjectClass ( char *path, char *args )
 	memset( szPath, '\0', _MAX_PATH );
 	memset( szArgs, '\0', _MAX_PATH );
 
-	if( path != NULL && path[0] != '\0' ) {
+	if( path != nullptr && path[0] != '\0' ) {
 		strcpy( szPath, path );
 	}
-	if( args != NULL && args[0] != '\0' ) {
+	if( args != nullptr && args[0] != '\0' ) {
 		strcpy( szArgs, args );
 	}
 }
 
 void LaunchObjectClass::SetPath ( char *path )
 {
-	if( path != NULL && path[0] != '\0' ) {
+	if( path != nullptr && path[0] != '\0' ) {
 		memset( szPath, '\0', _MAX_PATH );
 		strcpy( szPath, path );
 	}
@@ -5189,7 +5179,7 @@ void LaunchObjectClass::SetPath ( char *path )
 
 void LaunchObjectClass::SetArgs ( char *args )
 {
-	if( args != NULL && args[0] != '\0' ) {
+	if( args != nullptr && args[0] != '\0' ) {
 		memset( szArgs, '\0', _MAX_PATH );
 		strcpy( szArgs, args );
 	}
@@ -5204,7 +5194,7 @@ unsigned int LaunchObjectClass::Launch ( void )
 	char 	file		[_MAX_FNAME];
 	char 	lpszComLine [ 127 ];
 
-	PROCESS_INFORMATION processinfo; 
+	PROCESS_INFORMATION processinfo;
 	STARTUPINFO			startupinfo;
 	unsigned int		abc = 0;
 	unsigned int		result = 0;
@@ -5219,12 +5209,12 @@ unsigned int LaunchObjectClass::Launch ( void )
 	//--------------------------------------------------------------------------
 	// Change current path to the correct dir.
 	//
-	// The _chdrive function changes the current working drive to the drive 
-	// specified by drive. The drive parameter uses an integer to specify the 
-	// new working drive (1=A, 2=B, and so forth). This function changes only 
+	// The _chdrive function changes the current working drive to the drive
+	// specified by drive. The drive parameter uses an integer to specify the
+	// new working drive (1=A, 2=B, and so forth). This function changes only
 	// the working drive; _chdir changes the working directory.
 	//--------------------------------------------------------------------------
-	_makepath( filepath, drive, dir, NULL, NULL );
+	_makepath( filepath, drive, dir, nullptr, nullptr );
 	Path_Remove_Back_Slash( filepath );
 
 	abc = (unsigned)( toupper( filepath[0] ) - 'A' + 1 );
@@ -5257,15 +5247,15 @@ unsigned int LaunchObjectClass::Launch ( void )
 
 	Msg( __LINE__, TEXT(__FILE__), TEXT("About to launch %s." ), lpszComLine );
 
-	result = CreateProcess( 
+	result = CreateProcess(
 				szPath,												// address of module name
 				lpszComLine, 										// address of command line
-				NULL,												// address of process security attributes
-				NULL,												// address of thread security attributes
+				nullptr,												// address of process security attributes
+				nullptr,												// address of thread security attributes
 				FALSE,												// new process inherits handles
 				FALSE,
-				NULL,												// address of new environment block
-				NULL,												// address of current directory name
+				nullptr,												// address of new environment block
+				nullptr,												// address of current directory name
 				&startupinfo,										// address of STARTUPINFO
 				&processinfo );										// address of PROCESS_INFORMATION
 
@@ -5275,7 +5265,7 @@ unsigned int LaunchObjectClass::Launch ( void )
 	if ( !result ) {
 
 		Msg( __LINE__, TEXT(__FILE__), TEXT("Launch of %s failed." ), lpszComLine );
-		_makepath ( filepath, NULL, NULL, file, ext );
+		_makepath ( filepath, nullptr, nullptr, file, ext );
 		Cant_Find_MessageBox ( Main::hInstance, filepath );
 	}
 	Msg( __LINE__, TEXT(__FILE__), TEXT("Launch of %s succeeded." ), lpszComLine );
@@ -5325,7 +5315,7 @@ void Debug_Date_And_Time_Stamp ( void )
     struct tm *	today;
 
     /*-------------------------------------------------------------------------
-	 *Convert to time structure and adjust for PM if necessary. 
+	 *Convert to time structure and adjust for PM if necessary.
 	 */
     time( &ltime );
     today = localtime( &ltime );
@@ -5337,19 +5327,19 @@ void Debug_Date_And_Time_Stamp ( void )
 		today->tm_hour = 12;
 	}
 
-	Msg( __LINE__, __FILE__, "%s, %s %d, %d		%d:%d:%d %s", 
+	Msg( __LINE__, __FILE__, "%s, %s %d, %d		%d:%d:%d %s",
 		Week_Day_Strings[ today->tm_wday ],
 		Month_Strings[ today->tm_mon ],
-		today->tm_mday,		
+		today->tm_mday,
 		today->tm_year + 1900,
-		today->tm_hour, 
-		today->tm_min, 
-		today->tm_sec, 
+		today->tm_hour,
+		today->tm_min,
+		today->tm_sec,
 		ampm );
 
     /*-------------------------------------------------------------------------
-	 * Note how pointer addition is used to skip the first 11 
-     * characters and printf is used to trim off terminating 
+	 * Note how pointer addition is used to skip the first 11
+     * characters and printf is used to trim off terminating
      * characters.
      */
 //	Msg( __LINE__, __FILE__, "%s %s\n", asctime( today ), ampm );
@@ -5438,7 +5428,7 @@ int Show_Message ( HWND window_handle, const char * message1, const char * messa
 	wcscat( szString3, L" " );
 	wcscat( szString3, string2.str() );
 
-	WideCharToMultiByte( CodePage, 0, szString3, _MAX_PATH, szBuffer, _MAX_PATH, NULL, NULL );
+	WideCharToMultiByte( CodePage, 0, szString3, _MAX_PATH, szBuffer, _MAX_PATH, nullptr, nullptr );
 	result = MessageBox( window_handle, szBuffer, "Autorun", MB_RETRYCANCEL|MB_APPLMODAL|MB_SETFOREGROUND );
 
 	return( result );
@@ -5462,7 +5452,7 @@ void Reformat_Volume_Name ( const char *volume_name, char *new_volume_name )
 		temp_volume_name[11] = '\0';
 	}
 
-	if( new_volume_name != NULL ) {
+	if( new_volume_name != nullptr ) {
 		strcpy( new_volume_name, temp_volume_name );
 	}
 }

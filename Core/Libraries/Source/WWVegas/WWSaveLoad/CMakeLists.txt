@@ -42,4 +42,5 @@ target_sources(core_wwsaveload PRIVATE ${WWSAVELOAD_SRC})
 
 target_link_libraries(core_wwsaveload PRIVATE
     core_wwcommon
+    corei_always
 )

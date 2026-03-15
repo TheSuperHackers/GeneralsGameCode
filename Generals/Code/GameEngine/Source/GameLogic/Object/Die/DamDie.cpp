@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
@@ -45,10 +45,10 @@
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DamDieModuleData::DamDieModuleData( void )
+DamDieModuleData::DamDieModuleData()
 {
 
-}  // end DamDieModuleData
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -57,14 +57,14 @@ DamDieModuleData::DamDieModuleData( void )
 
   DieModuleData::buildFieldParse( p );
 
-//	static const FieldParse dataFieldParse[] = 
+//	static const FieldParse dataFieldParse[] =
 //	{
 //		{ 0, 0, 0, 0 }
 //	};
 //
 //  p.add(dataFieldParse);
 
-}  // end buildFieldParse
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,14 +76,14 @@ DamDie::DamDie( Thing *thing, const ModuleData *moduleData )
 			 :DieModule( thing, moduleData )
 {
 
-}  // end DamDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-DamDie::~DamDie( void )
+DamDie::~DamDie()
 {
 
-}  // end ~DamDie
+}
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -97,16 +97,16 @@ void DamDie::onDie( const DamageInfo *damageInfo )
 	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
 
-		// only care aboue water waves
+		// only care about water waves
 		if( obj->isKindOf( KINDOF_WAVEGUIDE ) == FALSE )
 			continue;
 
 		// clear any disabled status of the water wave
 		obj->clearDisabled( DISABLED_DEFAULT );
 
-	}  // end for, obj
+	}
 
-}  // end onDie
+}
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -117,7 +117,7 @@ void DamDie::crc( Xfer *xfer )
 	// extend base class
 	DieModule::crc( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -135,15 +135,15 @@ void DamDie::xfer( Xfer *xfer )
 	// extend base class
 	DieModule::xfer( xfer );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void DamDie::loadPostProcess( void )
+void DamDie::loadPostProcess()
 {
 
 	// extend base class
 	DieModule::loadPostProcess();
 
-}  // end loadPostProcess
+}

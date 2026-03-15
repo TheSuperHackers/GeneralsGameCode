@@ -16,14 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
-
-#ifndef BSEARCH_H
-#define BSEARCH_H
-
 
 /*
 **	Binary searching template. It can be faster than the built in C library
@@ -71,8 +64,5 @@ T * Binary_Search(T * A, int n, T const & target)
 		   stride -= pivot + 1;
 		}
    }
-   return (NULL);
+   return (nullptr);
 }
-
-
-#endif

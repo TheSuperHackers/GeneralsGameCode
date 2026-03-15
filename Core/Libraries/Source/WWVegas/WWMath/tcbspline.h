@@ -34,13 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#if defined(_MSC_VER)
 #pragma once
-#endif
-
-#ifndef TCBSPLINE_H
-#define TCBSPLINE_H
 
 #include "hermitespline.h"
 
@@ -54,19 +48,19 @@ public:
 
 	virtual int			Add_Key(const Vector3 & point,float t);
 	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys(void);
+	virtual void		Clear_Keys();
 
 	virtual void		Set_TCB_Params(int i,float tension,float continuity,float bias);
 	virtual void		Get_TCB_Params(int i,float *tension,float *continuity,float *bias);
 
-	void					Update_Tangents(void);
+	void					Update_Tangents();
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory(void) const;
+	virtual const PersistFactoryClass &	Get_Factory() const;
 	virtual bool								Save(ChunkSaveClass &csave);
 	virtual bool								Load(ChunkLoadClass &cload);
 
-protected:	
+protected:
 
 	class TCBClass
 	{
@@ -80,7 +74,3 @@ protected:
 
 	DynamicVectorClass<TCBClass> Params;
 };
-
-
-#endif
-

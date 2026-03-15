@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
+#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES  //TheWeaponSlotTypeNamesLookupList
 
@@ -51,34 +51,29 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 FireOCLAfterWeaponCooldownUpdateModuleData::FireOCLAfterWeaponCooldownUpdateModuleData()
 {
-	m_weaponSlot						= PRIMARY_WEAPON; 
+	m_weaponSlot						= PRIMARY_WEAPON;
 	m_minShotsRequired			= 1;
 	m_oclLifetimePerSecond	= 1000;
 	m_oclMaxFrames					= 1000;
-	m_ocl										= NULL;
+	m_ocl										= nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 void FireOCLAfterWeaponCooldownUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
   UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] = 
+	static const FieldParse dataFieldParse[] =
 	{
 		{ "WeaponSlot",						INI::parseLookupList,						TheWeaponSlotTypeNamesLookupList, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_weaponSlot ) },
-		{ "OCL",									INI::parseObjectCreationList,		NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_ocl ) },
-		{ "MinShotsToCreateOCL",  INI::parseUnsignedInt,					NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_minShotsRequired ) },
-		{ "OCLLifetimePerSecond",	INI::parseUnsignedInt,					NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclLifetimePerSecond ) },
-		{ "OCLLifetimeMaxCap",		INI::parseDurationUnsignedInt,	NULL, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclMaxFrames ) },
-		{ 0, 0, 0, 0 }
+		{ "OCL",									INI::parseObjectCreationList,		nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_ocl ) },
+		{ "MinShotsToCreateOCL",  INI::parseUnsignedInt,					nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_minShotsRequired ) },
+		{ "OCLLifetimePerSecond",	INI::parseUnsignedInt,					nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclLifetimePerSecond ) },
+		{ "OCLLifetimeMaxCap",		INI::parseDurationUnsignedInt,	nullptr, offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_oclMaxFrames ) },
+		{ nullptr, nullptr, nullptr, 0 }
 	};
   p.add(dataFieldParse);
 	p.add(UpgradeMuxData::getFieldParse(), offsetof( FireOCLAfterWeaponCooldownUpdateModuleData, m_upgradeMuxData ));
@@ -94,13 +89,13 @@ FireOCLAfterWeaponCooldownUpdate::FireOCLAfterWeaponCooldownUpdate( Thing *thing
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireOCLAfterWeaponCooldownUpdate::~FireOCLAfterWeaponCooldownUpdate( void )
+FireOCLAfterWeaponCooldownUpdate::~FireOCLAfterWeaponCooldownUpdate()
 {
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
-{	
+UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update()
+{
 	const FireOCLAfterWeaponCooldownUpdateModuleData* data = getFireOCLAfterWeaponCooldownUpdateModuleData();
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
@@ -114,7 +109,7 @@ UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 	{
 		if( weapon->getWeaponSlot() != data->m_weaponSlot )
 		{
-			//Not the right weapon slot -- it's possible we switched weapons in which case it's 
+			//Not the right weapon slot -- it's possible we switched weapons in which case it's
 			//possible to fire the OCL.
 			validThisFrame = false;
 		}
@@ -126,8 +121,8 @@ UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 		validThisFrame = false;
 	}
 
-	UpgradeMaskType objectMask = obj->getObjectCompletedUpgradeMask();
-	UpgradeMaskType playerMask = obj->getControllingPlayer()->getCompletedUpgradeMask();
+	const UpgradeMaskType& objectMask = obj->getObjectCompletedUpgradeMask();
+	const UpgradeMaskType& playerMask = obj->getControllingPlayer()->getCompletedUpgradeMask();
 	UpgradeMaskType maskToCheck = playerMask;
 	maskToCheck.set( objectMask );
 	if( validThisFrame && !testUpgradeConditions( maskToCheck ) )
@@ -145,14 +140,14 @@ UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 			m_consecutiveShots++;
 			if( m_consecutiveShots == 1 )
 			{
-				//Our first shot -- so record the frame number so we can easily calculate the 
+				//Our first shot -- so record the frame number so we can easily calculate the
 				//time we've been firing!
 				m_startFrame = now;
 			}
 		}
 		else if( weapon->getPossibleNextShotFrame() < now )
 		{
-			//Means we could have shot but didn't! 
+			//Means we could have shot but didn't!
 
 			if( data->m_minShotsRequired <= m_consecutiveShots )
 			{
@@ -173,12 +168,12 @@ UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 	}
 
 	if( validThisFrame != m_valid )
-	{	
+	{
 		//There has been a validity change, so reset all values!
 		m_valid = validThisFrame;
 		resetStats();
 	}
-	
+
 	return UPDATE_SLEEP_NONE;
 }
 
@@ -219,7 +214,7 @@ void FireOCLAfterWeaponCooldownUpdate::crc( Xfer *xfer )
 	// extend base class
 	UpgradeMux::upgradeMuxCRC( xfer );
 
-}  // end crc
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
@@ -249,12 +244,12 @@ void FireOCLAfterWeaponCooldownUpdate::xfer( Xfer *xfer )
 	// start frame
 	xfer->xferUnsignedInt( &m_startFrame );
 
-}  // end xfer
+}
 
 // ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
-void FireOCLAfterWeaponCooldownUpdate::loadPostProcess( void )
+void FireOCLAfterWeaponCooldownUpdate::loadPostProcess()
 {
 
 	// extend base class
@@ -263,4 +258,4 @@ void FireOCLAfterWeaponCooldownUpdate::loadPostProcess( void )
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-}  // end loadPostProcess
+}

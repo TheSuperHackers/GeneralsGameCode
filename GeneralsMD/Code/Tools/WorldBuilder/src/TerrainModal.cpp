@@ -34,7 +34,7 @@
 // TerrainModal dialog
 
 
-TerrainModal::TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent  /*=NULL*/)
+TerrainModal::TerrainModal(AsciiString path, WorldHeightMapEdit *pMap, CWnd* pParent  /*=nullptr*/)
 	: CDialog(TerrainModal::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(TerrainModal)
@@ -60,10 +60,10 @@ void TerrainModal::updateLabel(void)
 	if (!pDoc) return;
 
 	const char *tName = pDoc->GetHeightMap()->getTexClassUiName(m_currentFgTexture).str();
-	if (tName == NULL || tName[0] == 0) {
+	if (tName == nullptr || tName[0] == 0) {
 		tName = pDoc->GetHeightMap()->getTexClassUiName(m_currentFgTexture).str();
 	}
-	if (tName == NULL) {
+	if (tName == nullptr) {
 		return;
 	}
 	const char *leaf = tName;
@@ -80,7 +80,7 @@ void TerrainModal::updateLabel(void)
 }
 
 /// Setup the controls in the dialog.
-BOOL TerrainModal::OnInitDialog() 
+BOOL TerrainModal::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -98,7 +98,7 @@ BOOL TerrainModal::OnInitDialog()
 	pWnd->GetWindowRect(&rect);
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	m_terrainSwatches.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	m_terrainSwatches.Create(nullptr, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
 	m_terrainSwatches.ShowWindow(SW_SHOW);
 
 	pWnd = GetDlgItem(IDC_MISSING_NAME);
@@ -119,11 +119,11 @@ HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, const char *pLabel)
 	char buffer[_MAX_PATH];
 	::memset(&ins, 0, sizeof(ins));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
 		ins.item.hItem = child;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = sizeof(buffer)-2;				
+		ins.item.cchTextMax = sizeof(buffer)-2;
 		m_terrainTreeView.GetItem(&ins.item);
 		if (strcmp(buffer, pLabel) == 0) {
 			return(child);
@@ -138,7 +138,7 @@ HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, const char *pLabel)
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
 	ins.item.pszText = const_cast<LPSTR>(pLabel);
-	ins.item.cchTextMax = strlen(pLabel);				
+	ins.item.cchTextMax = strlen(pLabel);
 	child = m_terrainTreeView.InsertItem(&ins);
 	return(child);
 }
@@ -168,15 +168,15 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 				parent = findOrAdd( parent, terrainTypeNames[ i ] );
 				break;  // exit for
 
-			}  // end if
+			}
 
-		}  // end for i
+		}
 
-		strcpy( buffer, terrain->getName().str() );
+		strlcpy(buffer, terrain->getName().str(), ARRAY_SIZE(buffer));
 
 		doAdd = TRUE;
-						
-	}  // end if
+
+	}
 	else
 	{
 
@@ -194,7 +194,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 					parent = findOrAdd(parent, buffer);
 				}
 				pPath+= i+1;
-				i = 0;			
+				i = 0;
 			}
 			buffer[i] = pPath[i];
 			buffer[i+1] = 0;  // terminate at next char
@@ -202,7 +202,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 			doAdd = TRUE;
 		}
 
-	}  // end else
+	}
 
 	if (doAdd)
 	{
@@ -214,7 +214,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 		ins.item.lParam = terrainNdx;
 		ins.item.pszText = buffer;
-		ins.item.cchTextMax = strlen(buffer)+2;				
+		ins.item.cchTextMax = strlen(buffer)+2;
 		m_terrainTreeView.InsertItem(&ins);
 	}
 
@@ -234,7 +234,7 @@ void TerrainModal::updateTextures(void)
 		}
 		const char *tName = WorldHeightMapEdit::getTexClassName(i).str();
 		char path[_MAX_PATH];
-		strncpy(path, tName, _MAX_PATH-2);
+		strlcpy(path, tName, _MAX_PATH);
 		addTerrain(path, i, TVI_ROOT);
 	}
 	setTerrainTreeViewSelection(TVI_ROOT, m_currentFgTexture);
@@ -247,11 +247,11 @@ Bool TerrainModal::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 	char buffer[_MAX_PATH];
 	::memset(&item, 0, sizeof(item));
 	HTREEITEM child = m_terrainTreeView.GetChildItem(parent);
-	while (child != NULL) {
+	while (child != nullptr) {
 		item.mask = TVIF_HANDLE|TVIF_PARAM;
 		item.hItem = child;
 		item.pszText = buffer;
-		item.cchTextMax = sizeof(buffer)-2;				
+		item.cchTextMax = sizeof(buffer)-2;
 		m_terrainTreeView.GetItem(&item);
 		if (item.lParam == selection) {
 			m_terrainTreeView.SelectItem(child);
@@ -267,7 +267,7 @@ Bool TerrainModal::setTerrainTreeViewSelection(HTREEITEM parent, Int selection)
 
 
 
-BOOL TerrainModal::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
+BOOL TerrainModal::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 	if (pHdr->hdr.hwndFrom == m_terrainTreeView.m_hWnd) {
@@ -286,7 +286,7 @@ BOOL TerrainModal::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 		}
 	}
-	
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 

@@ -35,11 +35,11 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
-#if 0 
+#if 0
 
 #include "always.h"
 #include "nvdxtlib.h"
-#include "TARGA.H"
+#include "TARGA.h"
 #include "tgatodxt.h"
 #include "wwdebug.h"
 #include <io.h>
@@ -55,12 +55,12 @@ TGAToDXTClass _TGAToDXTConverter;
 //
 ///////////////////////////////////////////////////////////////////////////////
 TGAToDXTClass::TGAToDXTClass()
-	: WriteTimePtr (NULL),
+	: WriteTimePtr (nullptr),
 	  BufferSize (1024),
 	  BufferCount (0)
 {
 	Buffer = new unsigned char [BufferSize];
-	WWASSERT (Buffer != NULL);
+	WWASSERT (Buffer != nullptr);
 }
 
 
@@ -101,14 +101,14 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 		// 1. Pixel depth must be 24 or 32 (compressor has no support for lower bit depths) or 8-bit not paletted
 		// 2. Dimensions >= 4 (DDS block size is 4x4).
 		// 3. Aspect ratio <= 1:8 (some H/W will not render textures above this ratio).
-		// 4. Dimensions must be power of 2 (see below).		
+		// 4. Dimensions must be power of 2 (see below).
 		validbitdepth = ((targa.Header.PixelDepth == 24) || (targa.Header.PixelDepth == 32)
 							|| ( (targa.Header.PixelDepth == 8) && (targa.Header.ColorMapType != 1) ) );
 		validsize	  = (targa.Header.Width >= 4) && (targa.Header.Height >= 4);
-		validaspect	  = ((float) MAX (targa.Header.Width, targa.Header.Height)) / ((float) MIN (targa.Header.Width, targa.Header.Height)) <= 8.0f; 
-		
+		validaspect	  = ((float) MAX (targa.Header.Width, targa.Header.Height)) / ((float) MIN (targa.Header.Width, targa.Header.Height)) <= 8.0f;
+
 		if (validbitdepth && validsize && validaspect) {
-			
+
 			unsigned char *byte;
 			HRESULT			errorcode;
 
@@ -116,7 +116,7 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 
 			// If TGA has an alpha channel...
 			if (targa.Header.PixelDepth == 32) {
-				
+
 				// Analyse the alpha channel and ignore it if it contains redundant data (ie. is either all black or all white).
 				if (!dontcheckalpha) {
 					byte = (unsigned char*) targa.GetImage();
@@ -143,7 +143,7 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 					// Remove the alpha channel and swizel the pixel data.
 					nonalphaimage = new unsigned char [3 * ((unsigned) targa.Header.Width) * ((unsigned) targa.Header.Height)];
 					nonalphabyte  = nonalphaimage;
-					
+
 					byte = (unsigned char*) targa.GetImage();
 					for (unsigned p = 0; p < ((unsigned) targa.Header.Width) * ((unsigned) targa.Header.Height); p++) {
 
@@ -164,7 +164,7 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 
 				// convert to 24-bit monochrome
 				image = new unsigned char [3 * ((unsigned) targa.Header.Width) * ((unsigned) targa.Header.Height)];
-				
+
 				byte = (unsigned char*) targa.GetImage();
 				for (unsigned p = 0; p < ((unsigned) targa.Header.Width) * ((unsigned) targa.Header.Height); p++) {
 					image[3*p]=image[3*p+1]=image[3*p+2]=byte[p];
@@ -191,7 +191,7 @@ TGAToDXTClass::ErrorCode TGAToDXTClass::Convert (const char *inputpathname, cons
 			if (!validsize) error_code = INVALID_SIZE;
 			if (!validaspect) error_code = INVALID_ASPECT_RATIO;
 		}
-	} // error == 0
+	}
 
 	return error_code;
 }
@@ -206,16 +206,16 @@ void TGAToDXTClass::Write (const char *outputpathname)
 {
 	HANDLE hfile;
 	DWORD  bytecountwritten;
-	
-	hfile = ::CreateFile (outputpathname, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, 0L, NULL);
+
+	hfile = ::CreateFile (outputpathname, GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, 0L, nullptr);
 	if (hfile != INVALID_HANDLE_VALUE) {
-      LockFile (hfile, 0, 0, BufferCount, 0); 
-      WriteFile (hfile, Buffer, BufferCount, &bytecountwritten, NULL);
-      UnlockFile (hfile, 0, 0, BufferCount, 0); 
-		
+      LockFile (hfile, 0, 0, BufferCount, 0);
+      WriteFile (hfile, Buffer, BufferCount, &bytecountwritten, nullptr);
+      UnlockFile (hfile, 0, 0, BufferCount, 0);
+
 		// Stamp the write time (if one has been supplied).
-		if (WriteTimePtr != NULL) {
-			SetFileTime (hfile, NULL, NULL, WriteTimePtr);
+		if (WriteTimePtr != nullptr) {
+			SetFileTime (hfile, nullptr, nullptr, WriteTimePtr);
 		}
 
 		CloseHandle (hfile);
@@ -253,7 +253,7 @@ void WriteDTXnFile (DWORD datacount, void *data)
 
 		newbuffersize = MAX (_TGAToDXTConverter.BufferSize * 2, _TGAToDXTConverter.BufferCount + datacount);
 		newbuffer	  = new unsigned char [newbuffersize];
-		WWASSERT (newbuffer != NULL);
+		WWASSERT (newbuffer != nullptr);
 		memcpy (newbuffer, _TGAToDXTConverter.Buffer, _TGAToDXTConverter.BufferCount);
 		delete [] _TGAToDXTConverter.Buffer;
 		_TGAToDXTConverter.Buffer = newbuffer;

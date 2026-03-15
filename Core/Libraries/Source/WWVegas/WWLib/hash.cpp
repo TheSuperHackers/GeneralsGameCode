@@ -17,29 +17,27 @@
 */
 
 /* $Header: /VSS_Sync/wwlib/hash.cpp 3     10/17/00 4:48p Vss_sync $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Commando / G 3D Library                                      * 
- *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/hash.cpp                                    $* 
- *                                                                                             * 
- *                       Author:: Greg_h                                                       * 
- *                                                                                             * 
- *                     $Modtime:: 10/16/00 11:42a                                             $* 
- *                                                                                             * 
- *                    $Revision:: 3                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Commando / G 3D Library                                      *
+ *                                                                                             *
+ *                     $Archive:: /VSS_Sync/wwlib/hash.cpp                                    $*
+ *                                                                                             *
+ *                       Author:: Greg_h                                                       *
+ *                                                                                             *
+ *                     $Modtime:: 10/16/00 11:42a                                             $*
+ *                                                                                             *
+ *                    $Revision:: 3                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hash.h"
 #include "wwdebug.h"
 #include "realcrc.h"
-
-#include <string.h>
 
 /*
 ** HashTableClass
@@ -55,41 +53,39 @@ HashTableClass::HashTableClass( int size ) :
 	Reset();
 }
 
-HashTableClass::~HashTableClass( void )
+HashTableClass::~HashTableClass()
 {
 	// If we need to, free the hash table
-	if ( HashTable != NULL) {
-		delete [] HashTable;
-		HashTable = NULL;
-	}
+	delete [] HashTable;
+	HashTable = nullptr;
 }
 
-void	HashTableClass::Reset( void )
+void	HashTableClass::Reset()
 {
 	for ( int i = 0; i < HashTableSize; i++ ) {
-		HashTable[i] = NULL;
+		HashTable[i] = nullptr;
 	}
 }
 
 void	HashTableClass::Add( HashableClass * entry )
 {
-	WWASSERT( entry != NULL);
+	WWASSERT( entry != nullptr);
 
 	int index = Hash( entry->Get_Key() );
-	WWASSERT( entry->NextHash == NULL );
+	WWASSERT( entry->NextHash == nullptr );
 	entry->NextHash = HashTable[ index ];
 	HashTable[ index ] = entry;
 }
 
 bool	HashTableClass::Remove( HashableClass * entry )
 {
-	WWASSERT(entry != NULL);
+	WWASSERT(entry != nullptr);
 
 	// Find in the hash table.
 	const char *key = entry->Get_Key();
 	int index = Hash( key );
 
-	if ( HashTable[ index ] != NULL ) {
+	if ( HashTable[ index ] != nullptr ) {
 
 		// Special check for first entry
 		if ( HashTable[ index ] == entry ) {
@@ -99,7 +95,7 @@ bool	HashTableClass::Remove( HashableClass * entry )
 
 		// Search the list for the entry, and remove it
 		HashableClass * node = HashTable[ index ];
-		while ( node->NextHash != NULL ) {
+		while ( node->NextHash != nullptr ) {
 			if ( node->NextHash == entry ) {
 				node->NextHash = entry->NextHash;
 				return true;
@@ -115,12 +111,12 @@ HashableClass * HashTableClass::Find( const char * key )
 {
 	// Find in the hash table.
 	int index = Hash( key );
-	for ( HashableClass * node = HashTable[ index ]; node != NULL; node = node->NextHash ) {
+	for ( HashableClass * node = HashTable[ index ]; node != nullptr; node = node->NextHash ) {
 		if ( ::stricmp( node->Get_Key(), key ) == 0 ) {
 			return node;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 int	HashTableClass::Hash( const char * key )
@@ -132,7 +128,7 @@ int	HashTableClass::Hash( const char * key )
 /*
 **
 */
-void	HashTableIteratorClass::First(void)
+void	HashTableIteratorClass::First()
 {
 	Index = 0;
 	NextEntry = Table.HashTable[ Index ];
@@ -140,18 +136,18 @@ void	HashTableIteratorClass::First(void)
 	Next();		// Accept the next we found, and go to the next next
 }
 
-void	HashTableIteratorClass::Next(void)
+void	HashTableIteratorClass::Next()
 {
 	CurrentEntry = NextEntry;
-	if ( NextEntry != NULL ) {
+	if ( NextEntry != nullptr ) {
 		NextEntry = NextEntry->NextHash;
 		Advance_Next();
 	}
 }
 
-void	HashTableIteratorClass::Advance_Next(void)
+void	HashTableIteratorClass::Advance_Next()
 {
-	while ( NextEntry == NULL ) {
+	while ( NextEntry == nullptr ) {
 		Index++;
 		if ( Index >= Table.HashTableSize ) {
 			return;	// Done!
