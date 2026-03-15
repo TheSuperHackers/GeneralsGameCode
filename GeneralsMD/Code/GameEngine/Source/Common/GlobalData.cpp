@@ -73,6 +73,8 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "Windowed",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_windowed ) },
 	{ "XResolution",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_xResolution ) },
 	{ "YResolution",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_yResolution ) },
+	{ "AntiAliasing",							INI::parseInt,				nullptr,			offsetof( GlobalData, m_antiAliasBoxValue ) },
+	{ "AnisotropicFiltering",					INI::parseBool,				nullptr,			offsetof( GlobalData, m_anisotropicFiltering ) },
 	{ "MapName",									INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_mapName ) },
 	{ "MoveHintName",							INI::parseAsciiString,nullptr,			offsetof( GlobalData, m_moveHintName ) },
 	{ "UseTrees",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_useTrees ) },
@@ -940,6 +942,7 @@ GlobalData::GlobalData()
 	m_firewallPortAllocationDelta = 0;
 	m_loadScreenDemo = FALSE;
 	m_disableRender = false;
+	m_anisotropicFiltering = false;
 
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
@@ -1247,6 +1250,10 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_xResolution = xres;
 	TheWritableGlobalData->m_yResolution = yres;
+
+	TheWritableGlobalData->m_antiAliasBoxValue = optionPref.getInt("AntiAliasing", 0);
+
+	TheWritableGlobalData->m_anisotropicFiltering = optionPref.getBool("AnisotropicFiltering", false);
 }
 
 void GlobalData::parseCustomDefinition()

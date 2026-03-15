@@ -93,8 +93,7 @@ const int DEFAULT_BIT_DEPTH = 32;
 const int DEFAULT_TEXTURE_BIT_DEPTH = 16;
 
 bool DX8Wrapper_IsWindowed = true;
-
-// FPU_PRESERVE
+D3DMULTISAMPLE_TYPE DX8Wrapper::MultiSampleType = D3DMULTISAMPLE_NONE;
 int DX8Wrapper_PreserveFPU = 0;
 
 /***********************************************************************************
@@ -1024,8 +1023,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	_PresentParameters.BackBufferWidth = ResolutionWidth;
 	_PresentParameters.BackBufferHeight = ResolutionHeight;
 	_PresentParameters.BackBufferCount = IsWindowed ? 1 : 2;
-
-	_PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
+	_PresentParameters.MultiSampleType = MultiSampleType;
 	//I changed this to discard all the time (even when full-screen) since that the most efficient. 07-16-03 MW:
 	_PresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;//IsWindowed ? D3DSWAPEFFECT_DISCARD : D3DSWAPEFFECT_FLIP;		// Shouldn't this be D3DSWAPEFFECT_FLIP?
 	_PresentParameters.hDeviceWindow = _Hwnd;
