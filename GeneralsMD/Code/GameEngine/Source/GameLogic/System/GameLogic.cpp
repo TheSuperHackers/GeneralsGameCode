@@ -3716,7 +3716,15 @@ void GameLogic::update()
 		{
 			UpdateModulePtr u = *it;
 			DisabledMaskType dis = u->friend_getObject()->getDisabledFlags();
+#if RETAIL_COMPATIBLE_CRC
 			if (!dis.any() || dis.anyIntersectionWith(u->getDisabledTypesToProcess()))
+#else
+			// TheSuperHackers @bugfix Stubbjax 15/03/2026 The disabled-types-to-process mask is now exclusive.
+			// Previously, if the disabled mask had any bits in common with the disabled-types-to-process mask,
+			// the update would be processed. Now, if any *other* bits are set in the disabled mask, the update
+			// is no longer processed.
+			if (!dis.any() || u->getDisabledTypesToProcess().testForAll(dis))
+#endif
 			{
 				USE_PERF_TIMER(GameLogic_update_normal)
 
@@ -3756,7 +3764,15 @@ void GameLogic::update()
 			UpdateSleepTime sleepLen = UPDATE_SLEEP_NONE;	// default, if it is disabled.
 
 			DisabledMaskType dis = u->friend_getObject()->getDisabledFlags();
+#if RETAIL_COMPATIBLE_CRC
 			if (!dis.any() || dis.anyIntersectionWith(u->getDisabledTypesToProcess()))
+#else
+			// TheSuperHackers @bugfix Stubbjax 15/03/2026 The disabled-types-to-process mask is now exclusive.
+			// Previously, if the disabled mask had any bits in common with the disabled-types-to-process mask,
+			// the update would be processed. Now, if any *other* bits are set in the disabled mask, the update
+			// is no longer processed.
+			if (!dis.any() || u->getDisabledTypesToProcess().testForAll(dis))
+#endif
 			{
 				USE_PERF_TIMER(GameLogic_update_sleepy)
 
