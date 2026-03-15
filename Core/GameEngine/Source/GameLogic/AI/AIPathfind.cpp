@@ -4021,7 +4021,7 @@ void Pathfinder::reset()
 	s_forceCleanCells = false;
 #endif
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 	m_classifyFenceZeroInit = false;
 #endif
 }

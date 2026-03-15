@@ -905,7 +905,7 @@ private:
 	Int						m_queuePRTail;
 	Int						m_cumulativeCellsAllocated;
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 public:
 	Bool					m_classifyFenceZeroInit;
 #endif

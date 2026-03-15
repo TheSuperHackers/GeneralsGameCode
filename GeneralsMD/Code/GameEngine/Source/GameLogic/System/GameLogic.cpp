@@ -2489,7 +2489,7 @@ void GameLogic::processDestroyList()
 {
 	//USE_PERF_TIMER(processDestroyList)
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 	TheAI->pathfinder()->m_classifyFenceZeroInit = !m_objectsToDestroy.empty();
 #endif
 
@@ -2552,7 +2552,7 @@ void GameLogic::processDestroyList()
 
 		Object::friend_deleteInstance(currentObject);//actual delete
 
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 		TheAI->pathfinder()->m_classifyFenceZeroInit = false;
 #endif
 	}
