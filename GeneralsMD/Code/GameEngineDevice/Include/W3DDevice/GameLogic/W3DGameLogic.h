@@ -59,6 +59,7 @@ protected:
 
 	/// factory for TheTerrainLogic, called from init()
 	virtual TerrainLogic *createTerrainLogic() { return NEW W3DTerrainLogic; };
-	virtual GhostObjectManager *createGhostObjectManager() { return NEW W3DGhostObjectManager; }
+	// TheSuperHackers @feature bobtista 19/01/2026 Use dummy for headless mode
+	virtual GhostObjectManager *createGhostObjectManager(bool headless) { return headless ? static_cast<GhostObjectManager*>(NEW GhostObjectManagerDummy) : NEW W3DGhostObjectManager; }
 
 };

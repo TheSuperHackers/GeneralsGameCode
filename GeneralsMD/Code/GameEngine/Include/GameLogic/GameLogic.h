@@ -359,7 +359,7 @@ private:
 
 	/// factory for TheTerrainLogic, called from init()
 	virtual TerrainLogic *createTerrainLogic();
-	virtual GhostObjectManager *createGhostObjectManager();
+	virtual GhostObjectManager *createGhostObjectManager(bool headless = false);
 
 	GameMode m_gameMode;
 	Int m_rankLevelLimit;
