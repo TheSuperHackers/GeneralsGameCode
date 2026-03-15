@@ -51,7 +51,7 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 */
 	public:
 		W3DProjectedShadowManager();
-		~W3DProjectedShadowManager();
+		virtual ~W3DProjectedShadowManager() override;
 		Bool init();					///<allocate one-time shadow assets for length of entire game.
 		void reset();					///<free all existing shadows - ready for next map.
 		void shutdown();			///<free all assets prior to shutdown of entire game.
@@ -61,8 +61,8 @@ class W3DProjectedShadowManager	: public ProjectedShadowManager
 		Bool ReAcquireResources();	///<allocate device dependent D3D resources.
 		void invalidateCachedLightPositions();	///<forces shadows to update regardless of last lightposition
 
-		virtual Shadow	*addDecal(RenderObjClass *robj, Shadow::ShadowTypeInfo *shadowInfo);	///<add a non-shadow decal
-		virtual Shadow	*addDecal(Shadow::ShadowTypeInfo *shadowInfo);	///<add a non-shadow decal which does not follow an object.
+		virtual Shadow	*addDecal(RenderObjClass *robj, Shadow::ShadowTypeInfo *shadowInfo) override;	///<add a non-shadow decal
+		virtual Shadow	*addDecal(Shadow::ShadowTypeInfo *shadowInfo) override;	///<add a non-shadow decal which does not follow an object.
 		W3DProjectedShadow	*addShadow( RenderObjClass *robj, Shadow::ShadowTypeInfo *shadowInfo, Drawable *draw);	///<add a new shadow with texture of given name or that of robj.
 		W3DProjectedShadow	*createDecalShadow( Shadow::ShadowTypeInfo *shadowInfo);	///<add a new shadow with texture of given name or that of robj.
 		void removeShadow (W3DProjectedShadow *shadow);
@@ -132,5 +132,5 @@ class W3DProjectedShadow	: public Shadow
 		Real	m_decalOffsetU;		/// texture coordinate offset so not centered at object origin.
 		Real	m_decalOffsetV;		/// texture coordinate offset so not centered at object origin.
 		Int		m_flags;			/// custom rendering flags
-		virtual void release()	{TheW3DProjectedShadowManager->removeShadow(this);}	///<release shadow from manager
+		virtual void release() override	{TheW3DProjectedShadowManager->removeShadow(this);}	///<release shadow from manager
 };

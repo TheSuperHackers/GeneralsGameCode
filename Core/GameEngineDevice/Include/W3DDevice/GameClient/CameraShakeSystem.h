@@ -80,7 +80,7 @@ public:
 	{
 	public:
 		CameraShakerClass(const Vector3 & position,float radius,float duration,float power);
-		~CameraShakerClass();
+		virtual ~CameraShakerClass() override;
 
 		void					Timestep(float dt)							{ ElapsedTime += dt; }
 		bool					Is_Expired()								{ return (ElapsedTime >= Duration); }

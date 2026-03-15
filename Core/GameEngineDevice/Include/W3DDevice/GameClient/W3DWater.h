@@ -73,14 +73,14 @@ public:
 	};
 
 	WaterRenderObjClass();
-	~WaterRenderObjClass();
+	virtual ~WaterRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
 /// @todo: Add methods for collision detection with water surface
 //	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
 //	virtual Bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
@@ -88,11 +88,11 @@ public:
 //	virtual Bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
 //	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
 
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 	// Get and set static sort level
-	virtual int		Get_Sort_Level() const		{ return m_sortLevel; }
-  	virtual void	Set_Sort_Level(int level)		{ m_sortLevel = level;}
+	virtual int		Get_Sort_Level() const override { return m_sortLevel; }
+  	virtual void	Set_Sort_Level(int level) override { m_sortLevel = level;}
 
 	///allocate W3D resources needed to render water
 	void renderWater();				///<draw the water surface (flat)
@@ -258,9 +258,9 @@ protected:
 	HRESULT generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
 
 	// snapshot methods for save/load
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 

@@ -41,7 +41,7 @@ public:
 	ScienceType m_requiredScience; ///< Local player must have this science for me to ever draw
 
 	W3DScienceModelDrawModuleData();
-	~W3DScienceModelDrawModuleData();
+	virtual ~W3DScienceModelDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -56,7 +56,7 @@ public:
 
 	W3DScienceModelDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
-	virtual void doDrawModule(const Matrix3D* transformMtx);///< checks a property on the local player before passing this up
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;///< checks a property on the local player before passing this up
 
 protected:
 };

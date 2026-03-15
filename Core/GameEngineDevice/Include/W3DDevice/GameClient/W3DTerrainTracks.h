@@ -53,16 +53,16 @@ class TerrainTracksRenderObjClass : public W3DMPO, public RenderObjClass
 public:
 
 	TerrainTracksRenderObjClass();
-	~TerrainTracksRenderObjClass();
+	virtual ~TerrainTracksRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 
 	Int freeTerrainTracksResources();	///<free W3D assets used for this track
 	void init( Real width, Real length, const Char *texturename);	///<allocate W3D resources and set size

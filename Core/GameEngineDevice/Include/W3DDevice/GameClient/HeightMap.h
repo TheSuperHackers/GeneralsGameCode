@@ -57,32 +57,32 @@ class HeightMapRenderObjClass : public BaseHeightMapRenderObjClass
 public:
 
 	HeightMapRenderObjClass();
-	virtual ~HeightMapRenderObjClass();
+	virtual ~HeightMapRenderObjClass() override;
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources();  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources() override;	///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources() override;  ///< Reacquire all resources after device reset.
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					On_Frame_Update();
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					On_Frame_Update() override;
 
 	///allocate resources needed to render heightmap
-	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles=TRUE);
-	virtual Int freeMapResources();	///< free resources used to render heightmap
-	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
+	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles=TRUE) override;
+	virtual Int freeMapResources() override;	///< free resources used to render heightmap
+	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator) override;
 
-	virtual void staticLightingChanged();
-	virtual	void adjustTerrainLOD(Int adj);
-	virtual void reset();
-	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator);
+	virtual void staticLightingChanged() override;
+	virtual	void adjustTerrainLOD(Int adj) override;
+	virtual void reset() override;
+	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator) override;
 
-	virtual void oversizeTerrain(Int tilesToOversize);
+	virtual void oversizeTerrain(Int tilesToOversize) override;
 
-	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator);
+	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) override;
 
 protected:
 	Int *m_extraBlendTilePositions;	///<array holding x,y tile positions of all extra blend tiles. (used for 3 textures per tile).
@@ -113,7 +113,7 @@ protected:
 	///update vertex buffers associated with the given rectangle
 	void initDestAlphaLUT();	///<initialize water depth LUT stored in m_destAlphaTexture
 	void renderTerrainPass(CameraClass *pCamera);	///< renders additional terrain pass.
-	Int	getNumExtraBlendTiles(Bool visible) { return visible?m_numVisibleExtraBlendTiles:m_numExtraBlendTiles;}
+	virtual Int	getNumExtraBlendTiles(Bool visible) override { return visible?m_numVisibleExtraBlendTiles:m_numExtraBlendTiles;}
 	void freeIndexVertexBuffers();
 	void renderExtraBlendTiles();	///< render 3-way blend tiles that have blend of 3 textures.
 };

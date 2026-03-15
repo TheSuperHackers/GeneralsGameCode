@@ -63,10 +63,10 @@ protected:
 
 public:
 	W3DDynamicLight();
-	~W3DDynamicLight();
+	virtual ~W3DDynamicLight() override;
 
 public:
-	virtual void					On_Frame_Update();
+	virtual void					On_Frame_Update() override;
 
 	void setEnabled(Bool enabled) { m_enabled = enabled; m_decayRange = false; m_decayFrameCount = 0; m_decayColor = false; m_increaseFrameCount = 0;};
 	Bool isEnabled() {return m_enabled;};

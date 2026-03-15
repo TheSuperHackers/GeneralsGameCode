@@ -57,7 +57,7 @@ public:
 	Real m_tilingScalar;
 
 	W3DLaserDrawModuleData();
-	~W3DLaserDrawModuleData();
+	virtual ~W3DLaserDrawModuleData() override;
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 
@@ -75,18 +75,18 @@ public:
 	W3DLaserDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void releaseShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void setShadowsEnabled(Bool enable) { }
-	virtual void setFullyObscuredByShroud(Bool fullyObscured) { };
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) { }
-	virtual void reactToGeometryChange() { }
-	virtual Bool isLaser() const { return true; }
-	Real getLaserTemplateWidth() const;
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
+	virtual void releaseShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void setShadowsEnabled(Bool enable) override { }
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override { };
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override { }
+	virtual void reactToGeometryChange() override { }
+	virtual Bool isLaser() const override { return true; }
+	virtual Real getLaserTemplateWidth() const override;
 
-	virtual LaserDrawInterface* getLaserDrawInterface() { return this; }
-	virtual const LaserDrawInterface* getLaserDrawInterface() const { return this; }
+	virtual LaserDrawInterface* getLaserDrawInterface() override { return this; }
+	virtual const LaserDrawInterface* getLaserDrawInterface() const override { return this; }
 
 protected:
 

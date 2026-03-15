@@ -51,27 +51,27 @@ class W3DRadar : public Radar
 public:
 
 	W3DRadar();
-	~W3DRadar();
+	virtual ~W3DRadar() override;
 
-	virtual void xfer( Xfer *xfer );
+	virtual void xfer( Xfer *xfer ) override;
 
-	virtual void init();																		///< subsystem init
-	virtual void update();																	///< subsystem update
-	virtual void reset();																		///< subsystem reset
+	virtual void init() override;																		///< subsystem init
+	virtual void update() override;																	///< subsystem update
+	virtual void reset() override;																		///< subsystem reset
 
-	virtual void newMap( TerrainLogic *terrain );				///< reset radar for new map
+	virtual void newMap( TerrainLogic *terrain ) override;				///< reset radar for new map
 
-	virtual void draw( Int pixelX, Int pixelY, Int width, Int height );		///< draw the radar
+	virtual void draw( Int pixelX, Int pixelY, Int width, Int height ) override;		///< draw the radar
 
-	virtual void clearShroud();
-	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting); ///< set the shroud level at shroud cell x,y
-	virtual void beginSetShroudLevel(); ///< call this once before multiple calls to setShroudLevel for better performance
-	virtual void endSetShroudLevel(); ///< call this once after beginSetShroudLevel and setShroudLevel
+	virtual void clearShroud() override;
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) override; ///< set the shroud level at shroud cell x,y
+	virtual void beginSetShroudLevel() override; ///< call this once before multiple calls to setShroudLevel for better performance
+	virtual void endSetShroudLevel() override; ///< call this once after beginSetShroudLevel and setShroudLevel
 
-	virtual void refreshTerrain( TerrainLogic *terrain );
-	virtual void refreshObjects();
+	virtual void refreshTerrain( TerrainLogic *terrain ) override;
+	virtual void refreshObjects() override;
 
-	virtual void notifyViewChanged(); ///< signals that the camera view has changed
+	virtual void notifyViewChanged() override; ///< signals that the camera view has changed
 
 protected:
 

@@ -72,21 +72,21 @@ class BinkVideoStream : public VideoStream
 		Char					*m_memFile;													///< Pointer to memory resident file
 
 		BinkVideoStream();																///< only BinkVideoPlayer can create these
-		virtual ~BinkVideoStream();
+		virtual ~BinkVideoStream() override;
 
 	public:
 
-		virtual void update();											///< Update bink stream
+		virtual void update() override;											///< Update bink stream
 
-		virtual Bool	isFrameReady();								///< Is the frame ready to be displayed
-		virtual void	frameDecompress();						///< Render current frame in to buffer
-		virtual void	frameRender( VideoBuffer *buffer ); ///< Render current frame in to buffer
-		virtual void	frameNext();									///< Advance to next frame
-		virtual Int		frameIndex();									///< Returns zero based index of current frame
-		virtual Int		frameCount();									///< Returns the total number of frames in the stream
-		virtual void	frameGoto( Int index );							///< Go to the spcified frame index
-		virtual Int		height();											///< Return the height of the video
-		virtual Int		width();											///< Return the width of the video
+		virtual Bool	isFrameReady() override;								///< Is the frame ready to be displayed
+		virtual void	frameDecompress() override;						///< Render current frame in to buffer
+		virtual void	frameRender( VideoBuffer *buffer ) override; ///< Render current frame in to buffer
+		virtual void	frameNext() override;									///< Advance to next frame
+		virtual Int		frameIndex() override;									///< Returns zero based index of current frame
+		virtual Int		frameCount() override;									///< Returns the total number of frames in the stream
+		virtual void	frameGoto( Int index ) override;							///< Go to the spcified frame index
+		virtual Int		height() override;											///< Return the height of the video
+		virtual Int		width() override;											///< Return the width of the video
 
 
 };
@@ -109,24 +109,24 @@ class BinkVideoPlayer : public VideoPlayer
 	public:
 
 		// subsytem requirements
-		virtual void	init();														///< Initialize video playback code
-		virtual void	reset();													///< Reset video playback
-		virtual void	update();													///< Services all audio tasks. Should be called frequently
+		virtual void	init() override;														///< Initialize video playback code
+		virtual void	reset() override;													///< Reset video playback
+		virtual void	update() override;													///< Services all audio tasks. Should be called frequently
 
-		virtual void	deinit();													///< Close down player
+		virtual void	deinit() override;													///< Close down player
 
 
 		BinkVideoPlayer();
-		~BinkVideoPlayer();
+		virtual ~BinkVideoPlayer() override;
 
 		// service
-		virtual void	loseFocus();											///< Should be called when application loses focus
-		virtual void	regainFocus();										///< Should be called when application regains focus
+		virtual void	loseFocus() override;											///< Should be called when application loses focus
+		virtual void	regainFocus() override;										///< Should be called when application regains focus
 
-		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
-		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
+		virtual VideoStreamInterface*	open( AsciiString movieTitle ) override;	///< Open video file for playback
+		virtual VideoStreamInterface*	load( AsciiString movieTitle ) override;	///< Load video file in to memory for playback
 
-		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid );
+		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) override;
 		virtual void initializeBinkWithMiles();
 };
 
