@@ -2489,6 +2489,10 @@ void GameLogic::processDestroyList()
 {
 	//USE_PERF_TIMER(processDestroyList)
 
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	TheAI->pathfinder()->m_classifyFenceZeroInit = !m_objectsToDestroy.empty();
+#endif
+
 	for( ObjectPointerListIterator iterator = m_objectsToDestroy.begin(); iterator != m_objectsToDestroy.end(); iterator++ )
 	{
 		Object* currentObject = (*iterator);
@@ -2547,6 +2551,10 @@ void GameLogic::processDestroyList()
 		removeObjectFromLookupTable( currentObject );
 
 		Object::friend_deleteInstance(currentObject);//actual delete
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+		TheAI->pathfinder()->m_classifyFenceZeroInit = false;
+#endif
 	}
 
 	m_objectsToDestroy.clear();//list full of bad pointers now, clear it.  If anyone's deletion resulted
