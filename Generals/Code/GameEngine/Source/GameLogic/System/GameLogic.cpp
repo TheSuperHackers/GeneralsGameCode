@@ -4246,14 +4246,18 @@ void GameLogic::prepareLogicForObjectLoad()
 	*		 this version breaks compatibility with previous versions. (CBD)
 	* 5: Added xfering the BuildAssistant's sell list.
 	* 9: Added m_rankPointsToAddAtGameStart, or else on a load game, your RestartGame button will forget your exp
-	* 10: TheSuperHackers @tweak Save objects in reverse order so they load in correct order. Reverse object list for old saves.
+	* 10: TheSuperHackers @fix Save objects in reverse order so they load in correct order
 	*/
 // ------------------------------------------------------------------------------------------------
 void GameLogic::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 9;
+#else
 	const XferVersion currentVersion = 10;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -4286,14 +4290,17 @@ void GameLogic::xfer( Xfer *xfer )
 	ObjectTOCEntry *tocEntry;
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
-
-		// TheSuperHackers @fix bobtista 27/01/2026 Save objects in reverse order (newest first)
+#if !RETAIL_COMPATIBLE_XFER_SAVE
+		// TheSuperHackers @fix bobtista 07/03/2026 Save objects in reverse order (newest first)
 		// so they load in the correct order (oldest objects at head of list).
 		Object *lastObj = nullptr;
 		for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
 			lastObj = obj;
 
 		for( obj = lastObj; obj; obj = obj->getPrevObject() )
+#else
+		for( obj = getFirstObject(); obj; obj = obj->getNextObject() )
+#endif
 		{
 
 			// get the object TOC entry for this template
@@ -4376,9 +4383,9 @@ void GameLogic::xfer( Xfer *xfer )
 
 		}
 
-		// TheSuperHackers @fix bobtista 27/01/2026 Reverse object list for old saves.
-		// Old saves stored objects oldest-first, which results in reversed order when loaded
-		// since objects are prepended during creation. Version 10+ saves in reverse order.
+		// TheSuperHackers @fix bobtista 07/03/2026 Reverse object list after load.
+		// Objects are prepended during creation, which reverses the saved order.
+		// Version 10+ saves in reverse order so they load in the correct order.
 		if ( version <= 9 )
 		{
 			Object *prev = nullptr;
