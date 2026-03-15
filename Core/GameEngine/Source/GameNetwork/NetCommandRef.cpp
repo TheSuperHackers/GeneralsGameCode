@@ -41,9 +41,13 @@ NetCommandRef::NetCommandRef(NetCommandMsg *msg)
 #endif
 {
 	m_msg = msg;
+	if (m_msg != nullptr)
+	{
+		m_msg->attach();
+	}
 	m_next = nullptr;
 	m_prev = nullptr;
-	m_msg->attach();
+	m_relay = 0;
 	m_timeLastSent = -1;
 
 #ifdef DEBUG_NETCOMMANDREF
@@ -61,7 +65,7 @@ NetCommandRef::~NetCommandRef()
 	{
 		m_msg->detach();
 	}
- 	DEBUG_ASSERTCRASH(m_next == nullptr, ("NetCommandRef::~NetCommandRef - m_next != nullptr"));
+	DEBUG_ASSERTCRASH(m_next == nullptr, ("NetCommandRef::~NetCommandRef - m_next != nullptr"));
 	DEBUG_ASSERTCRASH(m_prev == nullptr, ("NetCommandRef::~NetCommandRef - m_prev != nullptr"));
 
 #ifdef DEBUG_NETCOMMANDREF
