@@ -367,7 +367,7 @@ void AutoHealBehavior::loadPostProcess()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void AutoHealBehavior::createEmitters( void )
+void AutoHealBehavior::createEmitters()
 {
 	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID )
 	{

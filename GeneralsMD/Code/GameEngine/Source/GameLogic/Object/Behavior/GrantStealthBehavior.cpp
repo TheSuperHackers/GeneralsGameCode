@@ -237,7 +237,7 @@ void GrantStealthBehavior::loadPostProcess()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GrantStealthBehavior::createEmitters( void )
+void GrantStealthBehavior::createEmitters()
 {
 	if( m_radiusParticleSystemID == INVALID_PARTICLE_SYSTEM_ID )
 	{
