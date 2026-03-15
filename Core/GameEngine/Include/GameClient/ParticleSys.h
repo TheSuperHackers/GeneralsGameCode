@@ -835,6 +835,21 @@ private:
 	ParticleSystemIDMap m_systemMap; ///< a hash map of all particle systems
 };
 
+// TheSuperHackers @feature bobtista 31/01/2026
+// ParticleSystemManager that does nothing. Used for Headless Mode.
+class ParticleSystemManagerDummy : public ParticleSystemManager
+{
+public:
+	Int getOnScreenParticleCount() override { return 0; }
+	void doParticles(RenderInfoClass &rinfo) override {}
+	void queueParticleRender() override {}
+
+protected:
+	void crc( Xfer *xfer ) override {}
+	void xfer( Xfer *xfer ) override {}
+	void loadPostProcess() override {}
+};
+
 /// The particle system manager singleton
 extern ParticleSystemManager *TheParticleSystemManager;
 

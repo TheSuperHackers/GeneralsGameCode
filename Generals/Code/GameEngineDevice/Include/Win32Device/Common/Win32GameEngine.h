@@ -33,6 +33,7 @@
 #pragma once
 
 #include "Common/GameEngine.h"
+#include "GameClient/ParticleSys.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "MilesAudioDevice/MilesAudioManager.h"
@@ -78,7 +79,7 @@ protected:
 	virtual Radar *createRadar();											///< Factory for radar
 	virtual WebBrowser *createWebBrowser();						///< Factory for embedded browser
 	virtual AudioManager *createAudioManager();				///< Factory for audio device
-	virtual ParticleSystemManager* createParticleSystemManager();
+	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy);
 
 
 protected:
@@ -93,7 +94,7 @@ inline ThingFactory *Win32GameEngine::createThingFactory() { return NEW W3DThing
 inline FunctionLexicon *Win32GameEngine::createFunctionLexicon() { return NEW W3DFunctionLexicon; }
 inline LocalFileSystem *Win32GameEngine::createLocalFileSystem() { return NEW Win32LocalFileSystem; }
 inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem() { return NEW Win32BIGFileSystem; }
-inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager() { return NEW W3DParticleSystemManager; }
+inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager(Bool dummy) { return dummy ? static_cast<ParticleSystemManager*>(NEW ParticleSystemManagerDummy) : NEW W3DParticleSystemManager; }
 
 inline NetworkInterface *Win32GameEngine::createNetwork() { return NetworkInterface::createNetwork(); }
 inline Radar *Win32GameEngine::createRadar() { return NEW W3DRadar; }
