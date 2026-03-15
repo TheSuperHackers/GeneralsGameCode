@@ -896,6 +896,11 @@ private:
 	Int						m_queuePRHead;
 	Int						m_queuePRTail;
 	Int						m_cumulativeCellsAllocated;
+
+#if RETAIL_COMPATIBLE_CRC
+public:
+	Bool					m_classifyFenceZeroInit;
+#endif
 };
 
 

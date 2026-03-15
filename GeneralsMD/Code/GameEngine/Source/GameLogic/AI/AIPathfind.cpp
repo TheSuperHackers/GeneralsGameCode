@@ -3972,6 +3972,10 @@ void Pathfinder::reset()
 	s_useFixedPathfinding = false;
 	s_forceCleanCells = false;
 #endif
+
+#if RETAIL_COMPATIBLE_CRC
+	m_classifyFenceZeroInit = false;
+#endif
 }
 
 /**
@@ -4113,8 +4117,17 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 
 	// In retail, the values in the stack often look like this. We set them
 	// to reduce the likelihood of mismatch.
-	cellBounds.hi.x = 253961804;
-	cellBounds.hi.y = 4202797;
+	if (m_classifyFenceZeroInit)
+	{
+		cellBounds.hi.x = 0;
+		cellBounds.hi.y = 0;
+	}
+	else
+	{
+		// the value just needs to be larger than the width and height of m_map
+		cellBounds.hi.x = 1000000;
+		cellBounds.hi.y = 1000000;
+	}
 #else
 	cellBounds.hi.x = REAL_TO_INT_CEIL((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.hi.y = REAL_TO_INT_CEIL((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
