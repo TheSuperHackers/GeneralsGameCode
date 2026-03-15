@@ -1,11 +1,14 @@
 name: Validate Pull Request
 
-# Minimal permissions: read code, write PR comments.
+# Workflow configuration:
+# - Set the repository or organization variable POST_VALIDATE_COMMENT=false to disable
+#   posting and updating bot PR comments.
+# - Ensure the repository defines the "Squash" and "Rebase" labels used by this workflow.
+
 permissions:
   contents: read
   pull-requests: write
 
-# Uses pull_request_target to access secrets for PR comments on forks.
 on:
   pull_request_target:
     branches:
@@ -15,37 +18,194 @@ on:
       - edited
       - synchronize
       - reopened
+      - labeled
+      - unlabeled
 
-# Avoid racing on PR comments when multiple events fire quickly.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  # Safe because GITHUB_TOKEN label changes do not trigger new runs (GitHub's
+  # recursive-run prevention). If a run is cancelled mid-post-comment, the next
+  # run's delete-stale step cleans up the orphaned comment naturally.
   cancel-in-progress: true
 
 jobs:
   validate-title-and-commits:
     name: Validate Title and Commits
     runs-on: ubuntu-slim
-    timeout-minutes: 3
-
-    # Expose context as env vars to avoid inline ${{ }} in run blocks (injection hardening).
+    timeout-minutes: 2
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
       PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       BASE_REF: ${{ github.base_ref }}
       REPO: ${{ github.repository }}
+      POST_VALIDATE_COMMENT: ${{ vars.POST_VALIDATE_COMMENT }}
 
     steps:
+      # This step uses github.token, so label changes made here do not trigger a second workflow run.
+      # Recoverable label-edit failures are surfaced via the autolabel warning output and treated as infra
+      # failures later so auto-labeling cannot silently drift from the PR description.
+      - name: Apply merge method labels from PR description
+        id: apply-merge-labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          set -euo pipefail
+          trap 'echo "autolabel-warning=true" >> "$GITHUB_OUTPUT"; echo "Unexpected error in auto-labeling step." >> "$GITHUB_STEP_SUMMARY"; exit 0' ERR
+
+          echo "autolabel-warning=false" >> "$GITHUB_OUTPUT"
+          LABEL_LINES=$(jq -r '.pull_request.labels[].name' "$GITHUB_EVENT_PATH")
+          BODY=$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")
+
+          HAS_SQUASH="false"
+          HAS_REBASE="false"
+          if printf '%s\n' "$LABEL_LINES" | grep -qx "Squash"; then
+            HAS_SQUASH="true"
+          fi
+          if printf '%s\n' "$LABEL_LINES" | grep -qx "Rebase"; then
+            HAS_REBASE="true"
+          fi
+
+          if [ "$EVENT_ACTION" = "labeled" ] || [ "$EVENT_ACTION" = "unlabeled" ]; then
+            echo "Manual label event detected. Skipping description auto-labeling." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          if [ "$EVENT_ACTION" = "synchronize" ] && { [ "$HAS_SQUASH" = "true" ] || [ "$HAS_REBASE" = "true" ]; }; then
+            echo "Labels already present during synchronize event. Skipping auto-labeling to respect potential manual overrides." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # Note: if labels were manually removed but the description still contains matching keywords,
+          # they will be re-applied on the next synchronize event. To permanently override the
+          # description-driven label, either remove the matching keywords from the PR body or
+          # manually add the opposing label before pushing commits.
+
+          SQUASH_PATTERN='squash[- ]merge|squash and merge|merge by squash|merge with squash'
+          REBASE_PATTERN='rebase[- ]merge|rebase and merge|merge by rebase|merge with rebase'
+          NEGATE_SQUASH_PATTERN="don't[ -]?squash|dont[ -]?squash|do not[ -]?squash|\bnot[ -]?squash|avoid[ -]?squash"
+          NEGATE_REBASE_PATTERN="don't[ -]?rebase|dont[ -]?rebase|do not[ -]?rebase|\bnot[ -]?rebase|avoid[ -]?rebase"
+
+          WANTS_SQUASH="false"
+          if printf '%s\n' "$BODY" | grep -qiE "$SQUASH_PATTERN" && ! printf '%s\n' "$BODY" | grep -qiE "$NEGATE_SQUASH_PATTERN"; then
+            WANTS_SQUASH="true"
+          fi
+
+          WANTS_REBASE="false"
+          if printf '%s\n' "$BODY" | grep -qiE "$REBASE_PATTERN" && ! printf '%s\n' "$BODY" | grep -qiE "$NEGATE_REBASE_PATTERN"; then
+            WANTS_REBASE="true"
+          fi
+
+          if [ "$WANTS_SQUASH" = "true" ] && [ "$WANTS_REBASE" = "true" ]; then
+            echo "Both squash and rebase keywords detected in description; defaulting to **Rebase**." >> "$GITHUB_STEP_SUMMARY"
+            WANTS_SQUASH="false"
+          fi
+
+          if [ "$WANTS_REBASE" = "true" ]; then
+            if [ "$HAS_REBASE" = "true" ] && [ "$HAS_SQUASH" != "true" ]; then
+              echo "Rebase label already present and matches description." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+
+            if [ "$HAS_SQUASH" = "true" ]; then
+              if ! gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "Squash" > /dev/null 2>&1; then
+                echo "autolabel-warning=true" >> "$GITHUB_OUTPUT"
+                echo "Could not remove **Squash** label; skipping **Rebase** application to avoid conflict." >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+              fi
+            fi
+
+            if gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "Rebase" > /dev/null 2>&1; then
+              echo "Applied **Rebase** label from PR description." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "autolabel-warning=true" >> "$GITHUB_OUTPUT"
+              echo "Could not apply **Rebase** label." >> "$GITHUB_STEP_SUMMARY"
+            fi
+
+          elif [ "$WANTS_SQUASH" = "true" ]; then
+            if [ "$HAS_SQUASH" = "true" ] && [ "$HAS_REBASE" != "true" ]; then
+              echo "Squash label already present and matches description." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+
+            if [ "$HAS_REBASE" = "true" ]; then
+              if ! gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "Rebase" > /dev/null 2>&1; then
+                echo "autolabel-warning=true" >> "$GITHUB_OUTPUT"
+                echo "Could not remove **Rebase** label; skipping **Squash** application to avoid conflict." >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+              fi
+            fi
+
+            if gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "Squash" > /dev/null 2>&1; then
+              echo "Applied **Squash** label from PR description." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "autolabel-warning=true" >> "$GITHUB_OUTPUT"
+              echo "Could not apply **Squash** label." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+
+          exit 0
+
+      - name: Detect merge method labels
+        id: labels
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! LABEL_LINES=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" --jq '.[].name'); then
+            echo "::error::Failed to fetch labels from GitHub API; cannot determine merge method."
+            echo "squash=false" >> "$GITHUB_OUTPUT"
+            echo "rebase=false" >> "$GITHUB_OUTPUT"
+            echo "conflict=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          if [[ -n "$LABEL_LINES" ]]; then
+            echo "Labels detected: $(printf '%s' "$LABEL_LINES" | tr '\n' ',' | sed 's/,/, /g')" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Labels detected: (none)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          HAS_SQUASH="false"
+          HAS_REBASE="false"
+
+          if printf '%s\n' "$LABEL_LINES" | grep -qx "Squash"; then HAS_SQUASH="true"; fi
+          if printf '%s\n' "$LABEL_LINES" | grep -qx "Rebase"; then HAS_REBASE="true"; fi
+
+          echo "squash=$HAS_SQUASH" >> "$GITHUB_OUTPUT"
+          echo "rebase=$HAS_REBASE" >> "$GITHUB_OUTPUT"
+
+          if [ "$HAS_SQUASH" = "true" ] && [ "$HAS_REBASE" = "true" ]; then
+            echo "::error::Both Squash and Rebase labels are present. Remove one."
+            echo "⚠️ Both **Squash** and **Rebase** labels are present. Remove one." >> "$GITHUB_STEP_SUMMARY"
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "conflict=false" >> "$GITHUB_OUTPUT"
+
+          if [ "$HAS_SQUASH" = "true" ]; then
+            echo "Detected **Squash** label: only PR title will be validated." >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$HAS_REBASE" = "true" ]; then
+            echo "Detected **Rebase** label: all commits and PR title will be validated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Checkout base branch
+        id: checkout
+        if: ${{ !cancelled() }}
         uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
           fetch-depth: 0
 
       - name: Fetch PR head
+        id: fetch-pr-head
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' && steps.labels.outcome == 'success' && steps.labels.outputs.squash != 'true' && steps.labels.outputs.conflict != 'true' }}
         run: git fetch origin "$PR_HEAD_SHA"
 
       - name: Load valid tags
         id: load-tags
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
         run: |
           TAGS_FILE=".github/workflows/valid-tags.txt"
 
@@ -54,49 +214,66 @@ jobs:
             exit 1
           fi
 
-          # Normalize line endings and remove empty lines
-          TAGS=$(tr -d '\r' < "$TAGS_FILE" | sed '/^$/d')
+          CLEAN_TAGS=$(tr -d '\r' < "$TAGS_FILE" | grep -v '^$')
 
-          VALID_TAGS=$(echo "$TAGS" | tr '\n' ',' | sed 's/,$//; s/,/, /g')
+          VALID_TAGS=$(printf '%s\n' "$CLEAN_TAGS" | awk 'NR==1{printf "`%s`", $0; next} {printf ", `%s`", $0}')
           echo "**Valid tags**: $VALID_TAGS" >> "$GITHUB_STEP_SUMMARY"
           echo "valid-tags=$VALID_TAGS" >> "$GITHUB_OUTPUT"
 
-          TAG_REGEX=$(echo "$TAGS" | paste -sd "|" -)
+          TAG_REGEX=$(printf '%s\n' "$CLEAN_TAGS" | paste -sd "|" -)
 
           # Matches:
           #   Conventional commit: type or type(scope) followed by colon, single space, then uppercase text
           REGEX="^(($TAG_REGEX)(\\([^)]+\\))?: [A-Z].*)$"
           echo "regex=$REGEX" >> "$GITHUB_OUTPUT"
-          echo "Built the regex: $REGEX"
 
       - name: Validate PR title
         id: validate-title
+        if: >-
+          !cancelled()
+          && steps.load-tags.outcome == 'success'
         env:
+          # Title validation reads only the event payload and the loaded tag regex.
+          # It is intentionally NOT gated on labels.outcome, checkout.outcome, or
+          # labels.outputs.conflict:
+          #   - labels.outcome: title has no dependency on merge-method labels.
+          #   - checkout.outcome: the title comes from the event payload, not the repo.
+          #   - conflict: always show title feedback so the author can fix both the
+          #     label conflict and any title issues in parallel.
           REGEX: ${{ steps.load-tags.outputs.regex }}
         run: |
+          set -euo pipefail
           echo "### Validate PR Title" >> "$GITHUB_STEP_SUMMARY"
           TITLE=$(jq -r '.pull_request.title // "No title found"' "$GITHUB_EVENT_PATH")
 
           if [[ ! "$TITLE" =~ $REGEX ]]; then
-            echo "- ❌ PR title \"$TITLE\" is invalid." >> "$GITHUB_STEP_SUMMARY"
+            printf -- "- ❌ PR title \"%s\" is invalid.\n" "$TITLE" >> "$GITHUB_STEP_SUMMARY"
             echo "title-valid=false" >> "$GITHUB_OUTPUT"
             DELIM="TITLE_EOF_$(openssl rand -hex 8)"
             {
               echo "INVALID_TITLE<<$DELIM"
-              echo "$TITLE"
+              printf '%s\n' "$TITLE"
               echo "$DELIM"
             } >> "$GITHUB_ENV"
           else
-            echo "- ✅ PR title \"$TITLE\" is valid." >> "$GITHUB_STEP_SUMMARY"
+            printf -- "- ✅ PR title \"%s\" is valid.\n" "$TITLE" >> "$GITHUB_STEP_SUMMARY"
             echo "title-valid=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Validate PR commits
         id: validate-commits
-        if: (success() || failure()) && steps.load-tags.outcome == 'success'
+        if: >-
+          !cancelled()
+          && steps.load-tags.outcome == 'success'
+          && steps.labels.outcome == 'success'
+          && steps.labels.outputs.squash != 'true'
+          && steps.labels.outputs.conflict != 'true'
+          && steps.checkout.outcome == 'success'
+          && steps.fetch-pr-head.outcome == 'success'
         env:
           REGEX: ${{ steps.load-tags.outputs.regex }}
         run: |
+          set -euo pipefail
           echo "### Validate PR Commits" >> "$GITHUB_STEP_SUMMARY"
           COMMITS=$(git log "$BASE_REF".."$PR_HEAD_SHA" --pretty=format:"%s" --no-merges)
 
@@ -114,12 +291,12 @@ jobs:
               continue
             fi
             if [[ ! "$COMMIT_MSG" =~ $REGEX ]]; then
-              echo "- ❌ Commit message \"$COMMIT_MSG\" is invalid." >> "$GITHUB_STEP_SUMMARY"
+              printf -- "- ❌ Commit message \"%s\" is invalid.\n" "$COMMIT_MSG" >> "$GITHUB_STEP_SUMMARY"
               INVALID_COMMITS=$((INVALID_COMMITS + 1))
-              SANITIZED_MSG=$(echo "$COMMIT_MSG" | tr -d '\`')
+              SANITIZED_MSG=$(printf '%s\n' "$COMMIT_MSG" | tr -d '\`')
               INVALID_LIST="${INVALID_LIST}- \`${SANITIZED_MSG}\`"$'\n'
             else
-              echo "- ✅ Commit message \"$COMMIT_MSG\" is valid." >> "$GITHUB_STEP_SUMMARY"
+              printf -- "- ✅ Commit message \"%s\" is valid.\n" "$COMMIT_MSG" >> "$GITHUB_STEP_SUMMARY"
             fi
           done <<< "$COMMITS"
 
@@ -135,30 +312,114 @@ jobs:
             echo "commits-valid=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # Always clean up old failure comments, even when validation now passes.
-      - name: Delete stale bot comments
-        if: always() && steps.load-tags.outcome == 'success'
+      - name: Determine validation result
+        id: result
+        if: ${{ !cancelled() }}
         env:
-          GH_TOKEN: ${{ github.token }}
+          AUTOLABEL_WARNING: ${{ steps.apply-merge-labels.outputs.autolabel-warning }}
+          LABELS_OUTCOME: ${{ steps.labels.outcome }}
+          LABEL_CONFLICT: ${{ steps.labels.outputs.conflict }}
+          TITLE_OUTCOME: ${{ steps.validate-title.outcome }}
+          TITLE_VALID: ${{ steps.validate-title.outputs.title-valid }}
+          COMMITS_OUTCOME: ${{ steps.validate-commits.outcome }}
+          COMMITS_VALID: ${{ steps.validate-commits.outputs.commits-valid }}
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          FETCH_OUTCOME: ${{ steps.fetch-pr-head.outcome }}
+          LOAD_TAGS_OUTCOME: ${{ steps.load-tags.outcome }}
         run: |
-          gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" \
-            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("### ⚠️ Title/Commit Validation Failed"))) | .id' \
-            | while read -r comment_id; do
-                gh api -X DELETE "repos/$REPO/issues/comments/$comment_id" || true
-              done || true
+          set -euo pipefail
+          has_infra_failure="false"
+          has_validation_failure="false"
 
-      # Post a new failure comment with details on what's wrong.
+          # 1. Catch infrastructure issues.
+          # This includes hard step failures and explicit auto-label warnings.
+          # FETCH_OUTCOME is "skipped" for Squash/conflict/API-failure
+          # paths by design, so only a literal "failure" here means the fetch itself broke.
+          # Note: APPLY_OUTCOME is omitted because its ERR trap guarantees exit 0 (outcome
+          # is always "success"); label-edit failures surface via AUTOLABEL_WARNING instead.
+          if [[ "$CHECKOUT_OUTCOME" == "failure" ]] || \
+             [[ "$LOAD_TAGS_OUTCOME" == "failure" ]] || \
+             [[ "$FETCH_OUTCOME" == "failure" ]] || \
+             [[ "$COMMITS_OUTCOME" == "failure" ]]; then
+            has_infra_failure="true"
+          fi
+
+          # Title validation should always run when tags loaded successfully.
+          # An unexpected skip indicates a condition bug.
+          if [[ "$TITLE_OUTCOME" == "failure" ]] || \
+             [[ "$TITLE_OUTCOME" == "skipped" && "$LOAD_TAGS_OUTCOME" == "success" ]]; then
+            has_infra_failure="true"
+          fi
+
+          # Commit validation should run when not in Squash/conflict mode and all
+          # prerequisites succeeded. An unexpected skip indicates a condition bug.
+          if [[ "$COMMITS_OUTCOME" == "skipped" && "$LABELS_OUTCOME" == "success" \
+             && "$LABEL_CONFLICT" != "true" && "$CHECKOUT_OUTCOME" == "success" \
+             && "$FETCH_OUTCOME" == "success" && "$LOAD_TAGS_OUTCOME" == "success" ]]; then
+            has_infra_failure="true"
+          fi
+
+          if [[ "$AUTOLABEL_WARNING" == "true" ]]; then
+            has_infra_failure="true"
+          fi
+
+          if [[ "$LABELS_OUTCOME" == "failure" ]]; then
+            if [[ "$LABEL_CONFLICT" == "true" ]]; then
+              has_validation_failure="true"
+            else
+              has_infra_failure="true"
+            fi
+          fi
+
+          # 2. Catch logical validation failures after infrastructure completed.
+          if [[ "$TITLE_OUTCOME" == "success" && "$TITLE_VALID" != "true" ]]; then
+            has_validation_failure="true"
+          fi
+
+          if [[ "$COMMITS_OUTCOME" == "success" && "$COMMITS_VALID" != "true" ]]; then
+            has_validation_failure="true"
+          fi
+
+          if [[ "$has_infra_failure" == "true" || "$has_validation_failure" == "true" ]]; then
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "infra_failed=$has_infra_failure" >> "$GITHUB_OUTPUT"
+
       - name: Comment on PR if validation failed
-        if: always() && steps.load-tags.outcome == 'success' && (steps.validate-title.outputs.title-valid != 'true' || steps.validate-commits.outputs.commits-valid != 'true')
+        id: post-comment
+        if: >-
+          !cancelled()
+          && env.POST_VALIDATE_COMMENT != 'false'
+          && steps.result.outcome == 'success'
+          && steps.result.outputs.failed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          VALID_TAGS_RAW: ${{ steps.load-tags.outputs.valid-tags }}
+          AUTOLABEL_WARNING: ${{ steps.apply-merge-labels.outputs.autolabel-warning }}
+          VALID_TAGS: ${{ steps.load-tags.outputs.valid-tags }}
+          IS_SQUASH: ${{ steps.labels.outputs.squash }}
+          IS_REBASE: ${{ steps.labels.outputs.rebase }}
+          IS_CONFLICT: ${{ steps.labels.outputs.conflict }}
+          LABELS_OUTCOME: ${{ steps.labels.outcome }}
+          INFRA_FAILED: ${{ steps.result.outputs.infra_failed }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          VALID_TAGS=$(echo "$VALID_TAGS_RAW" | sed 's/[^, ][^, ]*/`&`/g')
-          BODY="### ⚠️ Title/Commit Validation Failed"
+          set -eo pipefail
+          OLD_COMMENT_IDS=$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("### 🚩 PR Validation Failed"))) | .id')
+          DELIM="COMMENT_IDS_EOF_$(openssl rand -hex 8)"
+          {
+            echo "old-comment-ids<<$DELIM"
+            printf '%s\n' "$OLD_COMMENT_IDS"
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+          BODY="### 🚩 PR Validation Failed"
 
           if [[ -n "$INVALID_TITLE" ]]; then
-            SANITIZED_TITLE=$(echo "$INVALID_TITLE" | tr -d '\`')
+            SANITIZED_TITLE=$(printf '%s\n' "$INVALID_TITLE" | tr -d '\`')
             BODY="$BODY"$'\n\n'"**Invalid PR title:**"
             BODY="$BODY"$'\n'"- \`$SANITIZED_TITLE\`"
           fi
@@ -168,19 +429,66 @@ jobs:
             BODY="$BODY"$'\n'"$INVALID_COMMITS_LIST"
           fi
 
-          BODY="$BODY"$'\n'"PR titles and commit messages must follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format:"
-          BODY="$BODY"$'\n'"\`\`\`"
-          BODY="$BODY"$'\n'"type: Description"
-          BODY="$BODY"$'\n'"type(scope): Description"
-          BODY="$BODY"$'\n'"\`\`\`"
-          BODY="$BODY"$'\n\n'"**Allowed types:** $VALID_TAGS"
-          BODY="$BODY"$'\n\n'"See [CONTRIBUTING.md](https://github.com/$REPO/blob/$BASE_REF/CONTRIBUTING.md#pull-request-documentation) for details."
+          if [[ -n "$INVALID_TITLE" || -n "$INVALID_COMMITS_LIST" ]]; then
+            BODY="$BODY"$'\n\n'"PR titles and commit messages must follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format:"
+            BODY="$BODY"$'\n'"\`\`\`"
+            BODY="$BODY"$'\n'"type: Description"
+            BODY="$BODY"$'\n'"type(scope): Description"
+            BODY="$BODY"$'\n'"\`\`\`"
+            BODY="$BODY"$'\n\n'"**Allowed types:** $VALID_TAGS"
+          fi
 
-          gh pr comment "$PR_NUMBER" \
-            --repo "$REPO" \
-            --body "$BODY"
+          if [[ "$IS_CONFLICT" == "true" ]]; then
+            BODY="$BODY"$'\n\n'"⚠️ Both \`Squash\` and \`Rebase\` labels are present. Remove one."
+          fi
 
-      # Separate fail step so the comment is always posted before the job fails.
+          if [[ "$IS_CONFLICT" != "true" && "$IS_SQUASH" != "true" && "$IS_REBASE" != "true" && -n "$INVALID_COMMITS_LIST" && "$INFRA_FAILED" != "true" ]]; then
+            BODY="$BODY"$'\n\n'"ℹ️ Add the \`Squash\` label to skip commit validation."
+          fi
+
+          if [[ "$AUTOLABEL_WARNING" == "true" ]]; then
+            BODY="$BODY"$'\n\n'"⚠️ Merge-method auto-labeling did not complete. Check the [workflow run logs]($RUN_URL)."
+          fi
+
+          if [[ -z "$INVALID_TITLE" && -z "$INVALID_COMMITS_LIST" && "$IS_CONFLICT" != "true" && "$AUTOLABEL_WARNING" != "true" ]]; then
+            BODY="$BODY"$'\n\n'"⚠️ No validation results could be produced due to an infrastructure error. Check the [workflow run logs]($RUN_URL)."
+          elif [[ "$INFRA_FAILED" == "true" && "$AUTOLABEL_WARNING" != "true" && -z "$INVALID_COMMITS_LIST" && "$IS_CONFLICT" != "true" ]]; then
+            BODY="$BODY"$'\n\n'"⚠️ Commit validation could not run; the title result above may be the only feedback. Check the [workflow run logs]($RUN_URL)."
+          fi
+
+          if [[ -n "$INVALID_TITLE" || -n "$INVALID_COMMITS_LIST" ]]; then
+            BODY="$BODY"$'\n\n'"📖 See [CONTRIBUTING.md](https://github.com/$REPO/blob/$BASE_REF/CONTRIBUTING.md#pull-request-documentation) for details."
+          fi
+
+          gh api "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$BODY" > /dev/null
+
+      - name: Delete stale bot comments
+        if: >-
+          !cancelled()
+          && steps.result.outcome == 'success'
+          && (env.POST_VALIDATE_COMMENT == 'false' || steps.result.outputs.failed != 'true' || steps.post-comment.outcome == 'success')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENTS_ENABLED: ${{ env.POST_VALIDATE_COMMENT != 'false' }}
+          VALIDATION_FAILED: ${{ steps.result.outputs.failed }}
+          OLD_COMMENT_IDS: ${{ steps.post-comment.outputs.old-comment-ids }}
+        run: |
+          if [[ "$VALIDATION_FAILED" == "true" && "$COMMENTS_ENABLED" == "true" ]]; then
+            COMMENT_IDS="$OLD_COMMENT_IDS"
+          else
+            COMMENT_IDS=$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" \
+              --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("### 🚩 PR Validation Failed"))) | .id')
+          fi
+
+          printf '%s\n' "$COMMENT_IDS" \
+            | while read -r comment_id; do
+                [ -n "$comment_id" ] || continue
+                gh api -X DELETE "repos/$REPO/issues/comments/$comment_id" || true
+              done || true
+
       - name: Fail if validation did not pass
-        if: always() && steps.load-tags.outcome == 'success' && (steps.validate-title.outputs.title-valid != 'true' || steps.validate-commits.outputs.commits-valid != 'true')
+        if: >-
+          !cancelled()
+          && steps.result.outcome == 'success'
+          && steps.result.outputs.failed == 'true'
         run: exit 1
