@@ -8694,7 +8694,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 			PathfindCell *ignoreCell = getClippedCell(goalObj->getLayer(), goalObj->getPosition());
 			if ( (goalCell->getObstacleID()==ignoreCell->getObstacleID()) && (goalCell->getObstacleID() != INVALID_ID) ) {
 				Object* newObstacle = TheGameLogic->findObjectByID(goalCell->getObstacleID());
-#if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
+#if RTS_GENERALS
 				if (newObstacle != nullptr && newObstacle->isKindOf(KINDOF_AIRFIELD))
 #else
 				if (newObstacle != nullptr && newObstacle->isKindOf(KINDOF_FS_AIRFIELD))
