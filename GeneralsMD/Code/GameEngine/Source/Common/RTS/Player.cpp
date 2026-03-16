@@ -2119,12 +2119,50 @@ void Player::setObjectsEnabled(AsciiString templateTypeToAffect, Bool enable)
 }
 
 //=============================================================================
+static void cancelUpgradeInProduction(Object* obj, void* userData)
+{
+	const UpgradeTemplate* upgradeTemplate = (const UpgradeTemplate*)userData;
+	ProductionUpdateInterface* pui = ProductionUpdate::getProductionUpdateInterfaceFromObject(obj);
+
+	if (pui && pui->isUpgradeInQueue(upgradeTemplate))
+	{
+		pui->cancelUpgrade(upgradeTemplate);
+	}
+}
+
+//=============================================================================
 void Player::transferAssetsFromThat(Player *that)
 {
 	Team *defaultTeam = getDefaultTeam();
 	if (!defaultTeam) {
 		return;
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 03/02/2026 Cancel any in-progress player upgrades 'that'
+	// player currently has in progress that 'this' player already has in progress or completed.
+	std::vector<const UpgradeTemplate*> upgradesToCancel;
+	for (Upgrade* upgrade = that->m_upgradeList; upgrade; upgrade = upgrade->friend_getNext())
+	{
+		const UpgradeTemplate* upgradeTemplate = upgrade->getTemplate();
+
+		if (upgrade->getStatus() == UPGRADE_STATUS_IN_PRODUCTION
+			&& upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER
+			&& (hasUpgradeComplete(upgradeTemplate) || hasUpgradeInProduction(upgradeTemplate)))
+		{
+			upgradesToCancel.push_back(upgradeTemplate);
+		}
+	}
+
+	for (const UpgradeTemplate* upgradeTemplate : upgradesToCancel)
+	{
+		that->iterateObjects(cancelUpgradeInProduction, (void*)upgradeTemplate);
+	}
+
+	// TheSuperHackers @bugfix Stubbjax 03/02/2026 Ensure the in-progress upgrade mask is copied from 'that'
+	// player to 'this' player to prevent duplicate player upgrades being purchased.
+	m_upgradesInProgress.set(that->m_upgradesInProgress);
+#endif
 
 	std::list<Object *> objsToTransfer;
 
