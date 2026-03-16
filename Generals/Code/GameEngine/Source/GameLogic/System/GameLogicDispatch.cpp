@@ -528,10 +528,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
-				if ( obj->getControllingPlayer() != thisPlayer )
+				if ( obj->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 obj->getTemplate()->getName().str(),
 						 obj->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -693,10 +693,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -747,10 +747,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -802,10 +802,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -1255,10 +1255,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;

@@ -531,10 +531,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
-				if ( obj->getControllingPlayer() != thisPlayer )
+				if ( obj->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 obj->getTemplate()->getName().str(),
 						 obj->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -668,9 +668,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Player *player = ThePlayerList->getNthPlayer( playerIndex );
 			if( player )
 			{
-				DEBUG_ASSERTCRASH(player == thisPlayer,
+				DEBUG_ASSERTCRASH(player == msgPlayer,
 					("Retaliation mode of player '%ls' was illegally set by player '%ls'. Before: '%d', after: '%d'.",
-						player->getPlayerDisplayName().str(), thisPlayer->getPlayerDisplayName().str(),
+						player->getPlayerDisplayName().str(), msgPlayer->getPlayerDisplayName().str(),
 						player->isLogicalRetaliationModeEnabled(), enableRetaliation) );
 
 				player->setLogicalRetaliationModeEnabled( enableRetaliation );
@@ -678,7 +678,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #else
 			// TheSuperHackers @fix stephanmeesters 08/03/2026 Ensure that players can only set their own retaliation mode.
 			const Bool enableRetaliation = msg->getArgument( 0 )->boolean;
-			thisPlayer->setLogicalRetaliationModeEnabled( enableRetaliation );
+			msgPlayer->setLogicalRetaliationModeEnabled( enableRetaliation );
 #endif
 			break;
 		}
@@ -721,10 +721,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -778,10 +778,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -833,10 +833,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -1288,10 +1288,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
