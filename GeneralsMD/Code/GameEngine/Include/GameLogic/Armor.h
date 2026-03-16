@@ -32,6 +32,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/NameKeyGenerator.h"
 #include "Common/STLTypedefs.h"
+#include "Common/Overridable.h"
 #include "GameLogic/Damage.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -43,8 +44,19 @@ class ArmorStore;
 	to simulate different materials, and to help make game balance easier to adjust.
 */
 //-------------------------------------------------------------------------------------------------
-class ArmorTemplate
+class ArmorTemplate : public Overridable
 {
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ArmorTemplate, "ArmorTemplatePool")
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	ArmorTemplate(const ArmorTemplate&)
+	{
+		DEBUG_CRASH(("This should never be called"));
+	}
+#else
+	ArmorTemplate(const ArmorTemplate& that) = delete;
+#endif
+
 public:
 
 	ArmorTemplate();
@@ -99,10 +111,10 @@ class ArmorStore : public SubsystemInterface
 public:
 
 	ArmorStore();
-	~ArmorStore();
+	virtual ~ArmorStore();
 
 	void init() { }
-	void reset() { }
+	void reset();
 	void update() { }
 
 	const ArmorTemplate* findArmorTemplate(NameKeyType namekey) const;
@@ -121,7 +133,9 @@ public:
 
 private:
 
-	typedef std::hash_map< NameKeyType, ArmorTemplate, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > ArmorTemplateMap;
+	ArmorTemplate* newOverride(ArmorTemplate *armorTemplate, const char* name);
+
+	typedef std::hash_map< NameKeyType, ArmorTemplate*, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > ArmorTemplateMap;
 	ArmorTemplateMap m_armorTemplates;
 
 };
