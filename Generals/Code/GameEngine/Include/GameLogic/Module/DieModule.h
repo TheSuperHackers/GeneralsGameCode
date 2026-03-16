@@ -95,9 +95,9 @@ public:
 	static Int getInterfaceMask() { return MODULEINTERFACE_DIE; }
 
 	// BehaviorModule
-	virtual DieModuleInterface* getDie() { return this; }
+	virtual DieModuleInterface* getDie() override { return this; }
 
-	void onDie( const DamageInfo *damageInfo ) = 0;
+	virtual void onDie( const DamageInfo *damageInfo ) = 0;
 
 protected:
 	Bool isDieApplicable(const DamageInfo *damageInfo) const { return getDieModuleData()->isDieApplicable(getObject(), damageInfo); }

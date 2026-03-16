@@ -241,11 +241,11 @@ public:
 	void changeBodyDamageState( BodyDamageType oldState, BodyDamageType newState);
 	void stopAllBoneFX();
 
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 protected:
 
-	virtual void onObjectCreated();
+	virtual void onObjectCreated() override;
 
 	virtual void resolveBoneLocations();
 

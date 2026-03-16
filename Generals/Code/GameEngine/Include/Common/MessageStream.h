@@ -628,7 +628,7 @@ public:
 	 * @todo This should be a more list-like interface.  Very inefficient.
 	 */
 	const GameMessageArgumentType *getArgument( Int argIndex ) const;
-	GameMessageArgumentDataType getArgumentDataType( Int argIndex );
+	GameMessageArgumentDataType getArgumentDataType( Int argIndex ) const;
 
 	void friend_setNext(GameMessage* m) { m_next = m; }
 	void friend_setPrev(GameMessage* m) { m_prev = m; }

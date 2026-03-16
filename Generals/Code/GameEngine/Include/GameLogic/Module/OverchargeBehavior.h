@@ -81,30 +81,30 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// interface housekeeping
-	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() { return this; }
+	virtual OverchargeBehaviorInterface* getOverchargeBehaviorInterface() override { return this; }
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
 
 	// BehaviorModule
-	virtual DamageModuleInterface* getDamage() { return this; }
+	virtual DamageModuleInterface* getDamage() override { return this; }
 
 	// UpdateModuleInterface
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo );
-	virtual void onHealing( DamageInfo *damageInfo ) { }
+	virtual void onDamage( DamageInfo *damageInfo ) override;
+	virtual void onHealing( DamageInfo *damageInfo ) override { }
 	virtual void onBodyDamageStateChange( const DamageInfo *damageInfo,
 																				BodyDamageType oldState,
-																				BodyDamageType newState ) { }
+																				BodyDamageType newState ) override { }
 
 
 	// specific methods
-	virtual void toggle();						///< toggle overcharge on/off
-	virtual void enable( Bool enable );			///< turn overcharge on/off
-	virtual Bool isOverchargeActive() { return m_overchargeActive; }
+	virtual void toggle() override;						///< toggle overcharge on/off
+	virtual void enable( Bool enable ) override;			///< turn overcharge on/off
+	virtual Bool isOverchargeActive() override { return m_overchargeActive; }
 
-	void onDelete();																///< we have some work to do when this module goes away
-	void onCapture( Player *oldOwner, Player *newOwner );	///< object containing upgrade has changed teams
+	virtual void onDelete() override;																///< we have some work to do when this module goes away
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;	///< object containing upgrade has changed teams
 
 protected:
 

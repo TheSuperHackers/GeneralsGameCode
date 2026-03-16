@@ -47,21 +47,21 @@ public:
 	InactiveBody( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void attemptDamage( DamageInfo *damageInfo );		///< try to damage this object
-	virtual void attemptHealing( DamageInfo *damageInfo );		///< try to heal this object
-	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const;
-	virtual Real getHealth() const;													///< get current health
-	virtual BodyDamageType getDamageState() const;
-	virtual void setDamageState( BodyDamageType newState );	///< control damage state directly.  Will adjust hitpoints.
-	virtual void setAflame( Bool setting ){}///< This is a major change like a damage state.
+	virtual void attemptDamage( DamageInfo *damageInfo ) override;		///< try to damage this object
+	virtual void attemptHealing( DamageInfo *damageInfo ) override;		///< try to heal this object
+	virtual Real estimateDamage( DamageInfoInput& damageInfo ) const override;
+	virtual Real getHealth() const override;													///< get current health
+	virtual BodyDamageType getDamageState() const override;
+	virtual void setDamageState( BodyDamageType newState ) override;	///< control damage state directly.  Will adjust hitpoints.
+	virtual void setAflame( Bool setting ) override {}///< This is a major change like a damage state.
 
-	void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback ) { /* nothing */ }
+	virtual void onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel newLevel, Bool provideFeedback ) override { /* nothing */ }
 
-	virtual void setArmorSetFlag(ArmorSetType ast) { /* nothing */ }
-	virtual void clearArmorSetFlag(ArmorSetType ast) { /* nothing */ }
-	virtual Bool testArmorSetFlag(ArmorSetType ast){ return FALSE; }
+	virtual void setArmorSetFlag(ArmorSetType ast) override { /* nothing */ }
+	virtual void clearArmorSetFlag(ArmorSetType ast) override { /* nothing */ }
+	virtual Bool testArmorSetFlag(ArmorSetType ast) override { return FALSE; }
 
-	virtual void internalChangeHealth( Real delta );
+	virtual void internalChangeHealth( Real delta ) override;
 
 private:
 	Bool m_dieCalled;

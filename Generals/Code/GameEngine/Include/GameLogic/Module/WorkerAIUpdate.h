@@ -50,9 +50,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -123,91 +123,91 @@ public:
 	WorkerAIUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual DozerAIInterface* getDozerAIInterface() {return this;}
-	virtual const DozerAIInterface* getDozerAIInterface() const {return this;}
-	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() {return this;}
-	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const {return this;}
-	virtual WorkerAIInterface* getWorkerAIInterface() { return this; }
-	virtual const WorkerAIInterface* getWorkerAIInterface() const { return this; }
+	virtual DozerAIInterface* getDozerAIInterface() override {return this;}
+	virtual const DozerAIInterface* getDozerAIInterface() const override {return this;}
+	virtual SupplyTruckAIInterface* getSupplyTruckAIInterface() override {return this;}
+	virtual const SupplyTruckAIInterface* getSupplyTruckAIInterface() const override {return this;}
+	virtual WorkerAIInterface* getWorkerAIInterface() override { return this; }
+	virtual const WorkerAIInterface* getWorkerAIInterface() const override { return this; }
 
 	// Dozer side
-	virtual void onDelete();
+	virtual void onDelete() override;
 
-	virtual Real getRepairHealthPerSecond() const;	///< get health to repair per second
-	virtual Real getBoredTime() const;							///< how long till we're bored
-	virtual Real getBoredRange() const;							///< when we're bored, we look this far away to do things
+	virtual Real getRepairHealthPerSecond() const override;	///< get health to repair per second
+	virtual Real getBoredTime() const override;							///< how long till we're bored
+	virtual Real getBoredRange() const override;							///< when we're bored, we look this far away to do things
 
 	virtual Object *construct( const ThingTemplate *what,
 														 const Coord3D *pos, Real angle,
 														 Player *owningPlayer,
-														 Bool isRebuild );			///< construct a building
+														 Bool isRebuild ) override;			///< construct a building
 
 	// get task information
-	virtual DozerTask getMostRecentCommand();				///< return task that was most recently issued
-	virtual Bool isTaskPending( DozerTask task );					///< is there a desire to do the requested task
-	virtual ObjectID getTaskTarget( DozerTask task );			///< get target of task
-	virtual Bool isAnyTaskPending();								///< is there any dozer task pending
-	virtual DozerTask getCurrentTask() const { return m_currentTask; }	///< return the current task we're doing
-	virtual void setCurrentTask( DozerTask task ) { m_currentTask = task; }		///< set the current task of the dozer
+	virtual DozerTask getMostRecentCommand() override;				///< return task that was most recently issued
+	virtual Bool isTaskPending( DozerTask task ) override;					///< is there a desire to do the requested task
+	virtual ObjectID getTaskTarget( DozerTask task ) override;			///< get target of task
+	virtual Bool isAnyTaskPending() override;								///< is there any dozer task pending
+	virtual DozerTask getCurrentTask() const override { return m_currentTask; }	///< return the current task we're doing
+	virtual void setCurrentTask( DozerTask task ) override { m_currentTask = task; }		///< set the current task of the dozer
 
-	virtual Bool getIsRebuild() { return m_isRebuild; } ///< get whether or not our task is a rebuild.
+	virtual Bool getIsRebuild() override { return m_isRebuild; } ///< get whether or not our task is a rebuild.
 
 	// task actions
-	virtual void newTask( DozerTask task, Object* target );	///< set a desire to do the requrested task
-	virtual void cancelTask( DozerTask task );						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
-	virtual void cancelAllTasks();												///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
-	virtual void resumePreviousTask();									///< resume the previous task if there was one
+	virtual void newTask( DozerTask task, Object* target ) override;	///< set a desire to do the requrested task
+	virtual void cancelTask( DozerTask task ) override;						///< cancel this task from the queue, if it's the current task the dozer will stop working on it
+	virtual void cancelAllTasks() override;												///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
+	virtual void resumePreviousTask() override;									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
-	virtual void internalTaskComplete( DozerTask task );					///< set a dozer task as successfully completed
-	virtual void internalCancelTask( DozerTask task );						///< cancel this task from the dozer
-	virtual void internalTaskCompleteOrCancelled( DozerTask task );	///< this is called when tasks are cancelled or completed
+	virtual void internalTaskComplete( DozerTask task ) override;					///< set a dozer task as successfully completed
+	virtual void internalCancelTask( DozerTask task ) override;						///< cancel this task from the dozer
+	virtual void internalTaskCompleteOrCancelled( DozerTask task ) override;	///< this is called when tasks are cancelled or completed
 
 	/** return a dock point for the action and task (if valid) ... note it can return nullptr
 	if no point has been set for the combination of task and point */
-	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point );
+	virtual const Coord3D* getDockPoint( DozerTask task, DozerDockPoint point ) override;
 
-	virtual void setBuildSubTask( DozerBuildSubTask subTask ) { m_buildSubTask = subTask; };
-	virtual DozerBuildSubTask getBuildSubTask() { return m_buildSubTask; }
+	virtual void setBuildSubTask( DozerBuildSubTask subTask ) override { m_buildSubTask = subTask; };
+	virtual DozerBuildSubTask getBuildSubTask() override { return m_buildSubTask; }
 	//
 	// the following methods must be overridden so that if a player issues a command the dozer
 	// can exit the internal state machine and do whatever the player says
 	//
-	virtual void aiDoCommand(const AICommandParms* parms);
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 
 // Supply truck stuff
-	virtual Int getNumberBoxes() const { return m_numberBoxes; }
-	virtual Bool loseOneBox();
-	virtual Bool gainOneBox( Int remainingStock );
+	virtual Int getNumberBoxes() const override { return m_numberBoxes; }
+	virtual Bool loseOneBox() override;
+	virtual Bool gainOneBox( Int remainingStock ) override;
 
-	virtual Bool isAvailableForSupplying() const;
-	virtual Bool isCurrentlyFerryingSupplies() const;
-	virtual Real getWarehouseScanDistance() const; ///< How far can I look for a warehouse?
+	virtual Bool isAvailableForSupplying() const override;
+	virtual Bool isCurrentlyFerryingSupplies() const override;
+	virtual Real getWarehouseScanDistance() const override; ///< How far can I look for a warehouse?
 
-	virtual void setForceBusyState(Bool v) { m_forcedBusyPending = v; }
-	virtual Bool isForcedIntoBusyState() const { return m_forcedBusyPending; }
+	virtual void setForceBusyState(Bool v) override { m_forcedBusyPending = v; }
+	virtual Bool isForcedIntoBusyState() const override { return m_forcedBusyPending; }
 
-	virtual void setForceWantingState(Bool v){ m_forcePending = v; }
-	virtual Bool isForcedIntoWantingState() const { return m_forcePending; }
-	virtual ObjectID getPreferredDockID() const { return m_preferredDock; }
-	virtual UnsignedInt getActionDelayForDock( Object *dock );
+	virtual void setForceWantingState(Bool v) override { m_forcePending = v; }
+	virtual Bool isForcedIntoWantingState() const override { return m_forcePending; }
+	virtual ObjectID getPreferredDockID() const override { return m_preferredDock; }
+	virtual UnsignedInt getActionDelayForDock( Object *dock ) override;
 
 // worker specific
 	Bool isSupplyTruckBrainActiveAndBusy();
 	void resetSupplyTruckBrain();
 	void resetDozerBrain();
 
-	virtual void exitingSupplyTruckState(); ///< This worker is leaving a supply truck task and should go back to Dozer mode.
+	virtual void exitingSupplyTruckState() override; ///< This worker is leaving a supply truck task and should go back to Dozer mode.
 
-	virtual UpdateSleepTime update();				///< the update entry point
+	virtual UpdateSleepTime update() override;				///< the update entry point
 
 	// repairing
-	virtual Bool canAcceptNewRepair( Object *obj );
-	virtual void createBridgeScaffolding( Object *bridgeTower );
-	virtual void removeBridgeScaffolding( Object *bridgeTower );
+	virtual Bool canAcceptNewRepair( Object *obj ) override;
+	virtual void createBridgeScaffolding( Object *bridgeTower ) override;
+	virtual void removeBridgeScaffolding( Object *bridgeTower ) override;
 
-	virtual void startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID );
-	virtual void finishBuildingSound();
+	virtual void startBuildingSound( const AudioEventRTS *sound, ObjectID constructionSiteID ) override;
+	virtual void finishBuildingSound() override;
 
 protected:
 
@@ -259,10 +259,10 @@ protected:
 	AudioEventRTS	m_buildingSound;			///< sound is pulled from the object we are building!
 
 protected:
-	virtual void privateRepair( Object *obj, CommandSourceType cmdSource );	///< repair the target
-	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource );  ///< resume construction on obj
-	virtual void privateDock( Object *obj, CommandSourceType cmdSource );
-	virtual void privateIdle(CommandSourceType cmdSource);						///< Enter idle state.
+	virtual void privateRepair( Object *obj, CommandSourceType cmdSource ) override;	///< repair the target
+	virtual void privateResumeConstruction( Object *obj, CommandSourceType cmdSource ) override;  ///< resume construction on obj
+	virtual void privateDock( Object *obj, CommandSourceType cmdSource ) override;
+	virtual void privateIdle(CommandSourceType cmdSource) override;						///< Enter idle state.
 
 private:
 

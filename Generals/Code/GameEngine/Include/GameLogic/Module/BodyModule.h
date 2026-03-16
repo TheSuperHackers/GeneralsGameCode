@@ -205,7 +205,7 @@ public:
 	static Int getInterfaceMask() { return MODULEINTERFACE_BODY; }
 
 	// BehaviorModule
-	virtual BodyModuleInterface* getBody() { return this; }
+	virtual BodyModuleInterface* getBody() override { return this; }
 
 	/**
 		Try to damage this Object. The module's Armor
@@ -231,9 +231,9 @@ public:
 
 	virtual Real getHealth() const = 0;													///< get current health
 
-	virtual Real getMaxHealth() const {return 0.0f;}  ///< return max health
+	virtual Real getMaxHealth() const override {return 0.0f;}  ///< return max health
 
-	virtual Real getInitialHealth() const {return 0.0f;}  // return initial health
+	virtual Real getInitialHealth() const override {return 0.0f;}  // return initial health
 
 	virtual BodyDamageType getDamageState() const = 0;
 	virtual void setDamageState( BodyDamageType newState ) = 0;	///< control damage state directly.  Will adjust hitpoints.
@@ -244,27 +244,27 @@ public:
 	virtual void setArmorSetFlag(ArmorSetType ast) = 0;
 	virtual void clearArmorSetFlag(ArmorSetType ast) = 0;
 
-	virtual const DamageInfo *getLastDamageInfo() const { return nullptr; }	///< return info on last damage dealt to this object
-	virtual UnsignedInt getLastDamageTimestamp() const { return 0; }	///< return frame of last damage dealt
-	virtual UnsignedInt getLastHealingTimestamp() const { return 0; }	///< return frame of last healing dealt
-	virtual ObjectID getClearableLastAttacker() const { return INVALID_ID; }
-	virtual void clearLastAttacker() { }
-	virtual Bool getFrontCrushed() const { return false; }
-	virtual Bool getBackCrushed() const { return false; }
+	virtual const DamageInfo *getLastDamageInfo() const override { return nullptr; }	///< return info on last damage dealt to this object
+	virtual UnsignedInt getLastDamageTimestamp() const override { return 0; }	///< return frame of last damage dealt
+	virtual UnsignedInt getLastHealingTimestamp() const override { return 0; }	///< return frame of last healing dealt
+	virtual ObjectID getClearableLastAttacker() const override { return INVALID_ID; }
+	virtual void clearLastAttacker() override { }
+	virtual Bool getFrontCrushed() const override { return false; }
+	virtual Bool getBackCrushed() const override { return false; }
 
-	virtual void setInitialHealth(Int initialPercent)  {  } ///< Sets the initial load health %.
-	virtual void setMaxHealth(Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH )  {  } ///< Sets the max health.
+	virtual void setInitialHealth(Int initialPercent) override  {  } ///< Sets the initial load health %.
+	virtual void setMaxHealth(Real maxHealth, MaxHealthChangeType healthChangeType = SAME_CURRENTHEALTH ) override  {  } ///< Sets the max health.
 
-	virtual void setFrontCrushed(Bool v) { DEBUG_CRASH(("you should never call this for generic Bodys")); }
-	virtual void setBackCrushed(Bool v) { DEBUG_CRASH(("you should never call this for generic Bodys")); }
+	virtual void setFrontCrushed(Bool v) override { DEBUG_CRASH(("you should never call this for generic Bodys")); }
+	virtual void setBackCrushed(Bool v) override { DEBUG_CRASH(("you should never call this for generic Bodys")); }
 
 
-	virtual void setIndestructible( Bool indestructible ) { }
-	virtual Bool isIndestructible() const { return TRUE; }
+	virtual void setIndestructible( Bool indestructible ) override { }
+	virtual Bool isIndestructible() const override { return TRUE; }
 
 	//Allows outside systems to apply defensive bonuses or penalties (they all stack as a multiplier!)
-	virtual void applyDamageScalar( Real scalar ) { m_damageScalar *= scalar; }
-	virtual Real getDamageScalar() const { return m_damageScalar; }
+	virtual void applyDamageScalar( Real scalar ) override { m_damageScalar *= scalar; }
+	virtual Real getDamageScalar() const override { return m_damageScalar; }
 
 	/**
 		Change the module's health by the given delta. Note that
@@ -275,15 +275,15 @@ public:
 	*/
 	virtual void internalChangeHealth( Real delta ) = 0;
 
-	virtual void evaluateVisualCondition() { }
-	virtual void updateBodyParticleSystems() { };// made public for topple anf building collapse updates -ML
+	virtual void evaluateVisualCondition() override { }
+	virtual void updateBodyParticleSystems() override { };// made public for topple anf building collapse updates -ML
 
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Real	m_damageScalar;
 

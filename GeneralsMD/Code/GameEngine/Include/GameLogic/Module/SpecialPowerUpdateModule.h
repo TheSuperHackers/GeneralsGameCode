@@ -63,8 +63,8 @@ public:
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	//SpecialPowerUpdateInterface virtual implementations
-	virtual Bool doesSpecialPowerUpdatePassScienceTest() const;
-	virtual ScienceType getExtraRequiredScience() const { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
+	virtual Bool doesSpecialPowerUpdatePassScienceTest() const override;
+	virtual ScienceType getExtraRequiredScience() const override { return SCIENCE_INVALID; } //Does this object have more than one special power module with the same spTemplate?
 
 	//SpecialPowerUpdateInterface PURE virtual implementations
 	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions ) = 0;

@@ -63,50 +63,50 @@ class HelixContain : public TransportContain
 
 	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
 																				BodyDamageType oldState,
-																				BodyDamageType newState);  ///< state change callback
+																				BodyDamageType newState) override;  ///< state change callback
 public:
 
 	HelixContain( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual OpenContain *asOpenContain() { return this; }  ///< treat as open container
-	virtual Bool isHealContain() const { return false; } ///< true when container only contains units while healing (not a transport!)
-	virtual Bool isTunnelContain() const { return FALSE; }
-	virtual Bool isImmuneToClearBuildingAttacks() const { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const {return TRUE;}
+	virtual OpenContain *asOpenContain() override { return this; }  ///< treat as open container
+	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
+	virtual Bool isTunnelContain() const override { return FALSE; }
+	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
+  virtual Bool isSpecialOverlordStyleContainer() const override {return TRUE;}
 
-	virtual void onDie( const DamageInfo *damageInfo );  ///< the die callback
-	virtual void onDelete();	///< Last possible moment cleanup
-	virtual void onCapture( Player *oldOwner, Player *newOwner );
-	virtual void onObjectCreated();
-  virtual void onContaining( Object *obj, Bool wasSelected  );
-  virtual void onRemoving( Object *obj );
+	virtual void onDie( const DamageInfo *damageInfo ) override;  ///< the die callback
+	virtual void onDelete() override;	///< Last possible moment cleanup
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;
+	virtual void onObjectCreated() override;
+  virtual void onContaining( Object *obj, Bool wasSelected  ) override;
+  virtual void onRemoving( Object *obj ) override;
 
 
-  virtual UpdateSleepTime update();							///< called once per frame
+  virtual UpdateSleepTime update() override;							///< called once per frame
 
 
  // virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
 //	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
 
-	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
-	virtual void addToContain( Object *obj );				///< add 'obj' to contain list
+	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const override;
+	virtual void addToContain( Object *obj ) override;				///< add 'obj' to contain list
 	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
-	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE );	///< remove 'obj' from contain list
+	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
 	//virtual void removeAllContained( Bool exposeStealthUnits = FALSE );				///< remove all objects on contain list
-	virtual Bool isEnclosingContainerFor( const Object *obj ) const;	///< Does this type of Contain Visibly enclose its contents?
-	virtual Bool isPassengerAllowedToFire(  ObjectID id = INVALID_ID  ) const;	///< Hey, can I shoot out of this container?
+	virtual Bool isEnclosingContainerFor( const Object *obj ) const override;	///< Does this type of Contain Visibly enclose its contents?
+	virtual Bool isPassengerAllowedToFire(  ObjectID id = INVALID_ID  ) const override;	///< Hey, can I shoot out of this container?
 
 	// Friend for our Draw module only.
-	virtual const Object *friend_getRider() const; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
+	virtual const Object *friend_getRider() const override; ///< Damn.  The draw order dependency bug for riders means that our draw module needs to cheat to get around it.
 
 	///< if my object gets selected, then my visible passengers should, too
 	///< this gets called from
-	virtual void clientVisibleContainedFlashAsSelected();
+	virtual void clientVisibleContainedFlashAsSelected() override;
 
-  virtual void redeployOccupants();
+  virtual void redeployOccupants() override;
 
-	virtual Bool getContainerPipsToShow(Int& numTotal, Int& numFull)
+	virtual Bool getContainerPipsToShow(Int& numTotal, Int& numFull) override
   {
     if ( getHelixContainModuleData()->m_drawPips == FALSE )
     {
@@ -118,7 +118,7 @@ public:
     return ContainModuleInterface::getContainerPipsToShow( numTotal, numFull );
   }
 
-	virtual void createPayload();
+	virtual void createPayload() override;
 
 private:
   void parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ );

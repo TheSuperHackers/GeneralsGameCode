@@ -409,6 +409,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/SelectionInfo.cpp", Game.CORE, "GameEngine/Source/GameClient/SelectionInfo.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Statistics.cpp", Game.CORE, "GameEngine/Source/GameClient/Statistics.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp", Game.CORE, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/AIPathfind.h", Game.CORE, "GameEngine/Include/GameLogic/AIPathfind.h")
+
     return
 
 

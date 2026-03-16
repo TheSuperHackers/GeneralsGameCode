@@ -116,13 +116,13 @@ public:
 
 	UpgradeMux();
 
-	virtual Bool isAlreadyUpgraded() const ;
+	virtual Bool isAlreadyUpgraded() const override ;
 	// ***DANGER! DANGER! Don't use this, unless you are forcing an already made upgrade to refresh!!
-	virtual void forceRefreshUpgrade();
-	virtual Bool attemptUpgrade( const UpgradeMaskType& keyMask );
-	virtual Bool wouldUpgrade( const UpgradeMaskType& keyMask ) const;
-	virtual Bool resetUpgrade( const UpgradeMaskType& keyMask );
-	virtual Bool testUpgradeConditions( const UpgradeMaskType& keyMask ) const;
+	virtual void forceRefreshUpgrade() override;
+	virtual Bool attemptUpgrade( const UpgradeMaskType& keyMask ) override;
+	virtual Bool wouldUpgrade( const UpgradeMaskType& keyMask ) const override;
+	virtual Bool resetUpgrade( const UpgradeMaskType& keyMask ) override;
+	virtual Bool testUpgradeConditions( const UpgradeMaskType& keyMask ) const override;
 
 protected:
 
@@ -180,29 +180,29 @@ public:
 	static Int getInterfaceMask() { return MODULEINTERFACE_UPGRADE; }
 
 	// BehaviorModule
-	virtual UpgradeModuleInterface* getUpgrade() { return this; }
+	virtual UpgradeModuleInterface* getUpgrade() override { return this; }
 
 	bool isTriggeredBy(const std::string & upgrade) const { return getUpgradeModuleData()->m_upgradeMuxData.isTriggeredBy(upgrade); }
 
 protected:
 
-	virtual void processUpgradeRemoval()
+	virtual void processUpgradeRemoval() override
 	{
 		// I can't take it any more.  Let the record show that I think the UpgradeMux multiple inheritance is CRAP.
 		getUpgradeModuleData()->m_upgradeMuxData.muxDataProcessUpgradeRemoval(getObject());
 	}
 
-	virtual Bool requiresAllActivationUpgrades() const
+	virtual Bool requiresAllActivationUpgrades() const override
 	{
 		return getUpgradeModuleData()->m_upgradeMuxData.m_requiresAllTriggers;
 	}
 
-	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const override
 	{
 		getUpgradeModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}
 
-	virtual void performUpgradeFX()
+	virtual void performUpgradeFX() override
 	{
 		getUpgradeModuleData()->m_upgradeMuxData.performUpgradeFX(getObject());
 	}

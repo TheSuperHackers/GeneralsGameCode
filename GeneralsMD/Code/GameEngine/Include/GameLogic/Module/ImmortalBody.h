@@ -49,7 +49,7 @@ public:
 	ImmortalBody( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void internalChangeHealth( Real delta );								///< change health
+	virtual void internalChangeHealth( Real delta ) override;								///< change health
 
 protected:
 

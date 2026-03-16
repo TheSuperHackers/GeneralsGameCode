@@ -50,7 +50,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// This collide method gets called when collision occur
-	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal );
+	virtual void onCollide( Object *other, const Coord3D *loc, const Coord3D *normal ) override;
 
 protected:
 

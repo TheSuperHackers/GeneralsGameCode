@@ -49,6 +49,7 @@ public:
 #endif
 	//~NetCommandRef();
 
+	const NetCommandMsg *getCommand() const;
 	NetCommandMsg *getCommand();
 	NetCommandRef *getNext();
 	NetCommandRef *getPrev();
@@ -72,6 +73,14 @@ protected:
 	UnsignedInt m_id;
 #endif
 };
+
+/**
+ * Return the const command message.
+ */
+inline const NetCommandMsg * NetCommandRef::getCommand() const
+{
+	return m_msg;
+}
 
 /**
  * Return the command message.

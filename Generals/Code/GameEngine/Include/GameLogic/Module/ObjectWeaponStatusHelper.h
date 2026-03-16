@@ -56,7 +56,7 @@ protected:
 		user update modules, so it redefines this. Please don't redefine this
 		for other modules without very careful deliberation. (srj)
 	*/
-	virtual SleepyUpdatePhase getUpdatePhase() const
+	virtual SleepyUpdatePhase getUpdatePhase() const override
 	{
 		return PHASE_FINAL;
 	}
@@ -71,7 +71,7 @@ public:
 	}
 	// virtual destructor prototype provided by memory pool object
 
-	virtual UpdateSleepTime update()
+	virtual UpdateSleepTime update() override
 	{
 		getObject()->adjustModelConditionForWeaponStatus();
 		// unlike other helpers, this one must run every frame.

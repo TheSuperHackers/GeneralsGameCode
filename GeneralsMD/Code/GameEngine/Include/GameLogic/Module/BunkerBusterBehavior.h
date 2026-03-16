@@ -83,12 +83,12 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// update module methods
-	virtual UpdateSleepTime update();
-  virtual void onObjectCreated();
+	virtual UpdateSleepTime update() override;
+  virtual void onObjectCreated() override;
 
 	// die module methods
-	virtual DieModuleInterface *getDie() { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual DieModuleInterface *getDie() override { return this; }
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 
 

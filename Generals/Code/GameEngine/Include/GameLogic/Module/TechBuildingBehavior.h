@@ -64,15 +64,15 @@ public:
 	// virtual destructor prototype provided by memory pool object
 
 	// module methods
-	virtual void onCapture( Player *oldOwner, Player *newOwner );
+	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// update methods
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// die methods
-	virtual DieModuleInterface *getDie() { return this; }
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual DieModuleInterface *getDie() override { return this; }
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 protected:
 

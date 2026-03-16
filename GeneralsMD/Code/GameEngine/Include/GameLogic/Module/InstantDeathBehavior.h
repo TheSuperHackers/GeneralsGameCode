@@ -70,6 +70,6 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// DieModuleInterface
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 };

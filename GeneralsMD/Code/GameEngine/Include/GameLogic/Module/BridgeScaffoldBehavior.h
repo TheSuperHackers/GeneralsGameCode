@@ -77,20 +77,20 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// behavior module methods
-	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() { return this; }
+	virtual BridgeScaffoldBehaviorInterface* getBridgeScaffoldBehaviorInterface() override { return this; }
 
 	// update methods
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// bridge scaffold interface methods
 	virtual void setPositions( const Coord3D *createPos,
 														 const Coord3D *riseToPos,
-														 const Coord3D *buildPos );
-	virtual void setMotion( ScaffoldTargetMotion targetMotion );
-	virtual ScaffoldTargetMotion getCurrentMotion() { return m_targetMotion; }
-	virtual void reverseMotion();
-	virtual void setLateralSpeed( Real lateralSpeed ) { m_lateralSpeed = lateralSpeed; }
-	virtual void setVerticalSpeed( Real verticalSpeed ) { m_verticalSpeed = verticalSpeed; }
+														 const Coord3D *buildPos ) override;
+	virtual void setMotion( ScaffoldTargetMotion targetMotion ) override;
+	virtual ScaffoldTargetMotion getCurrentMotion() override { return m_targetMotion; }
+	virtual void reverseMotion() override;
+	virtual void setLateralSpeed( Real lateralSpeed ) override { m_lateralSpeed = lateralSpeed; }
+	virtual void setVerticalSpeed( Real verticalSpeed ) override { m_verticalSpeed = verticalSpeed; }
 
 	// public interface acquisition
 	static BridgeScaffoldBehaviorInterface *getBridgeScaffoldBehaviorInterfaceFromObject( Object *obj );

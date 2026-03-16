@@ -98,44 +98,44 @@ public:
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DIE); }
 
 	// BehaviorModule
-	virtual DieModuleInterface *getDie() { return this; }
-	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return this; }
-	virtual ExitInterface* getUpdateExitInterface() { return this; }
+	virtual DieModuleInterface *getDie() override { return this; }
+	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return this; }
+	virtual ExitInterface* getUpdateExitInterface() override { return this; }
 
 	// ExitInterface
-	virtual Bool isExitBusy() const {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
-	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject );
-	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor );
-	virtual void unreserveDoorForExit( ExitDoorType exitDoor );
-	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) { return; }
+	virtual Bool isExitBusy() const override {return FALSE;}	///< Contain style exiters are getting the ability to space out exits, so ask this before reserveDoor as a kind of no-commitment check.
+	virtual ExitDoorType reserveDoorForExit( const ThingTemplate* objType, Object *specificObject ) override;
+	virtual void exitObjectViaDoor( Object *newObj, ExitDoorType exitDoor ) override;
+	virtual void unreserveDoorForExit( ExitDoorType exitDoor ) override;
+	virtual void exitObjectByBudding( Object *newObj, Object *budHost ) override { return; }
 
-	virtual Bool getExitPosition( Coord3D& rallyPoint ) const;
-	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const;
-	virtual void setRallyPoint( const Coord3D *pos );			///< define a "rally point" for units to move towards
-	virtual const Coord3D *getRallyPoint() const;			///< define a "rally point" for units to move towards
+	virtual Bool getExitPosition( Coord3D& rallyPoint ) const override;
+	virtual Bool getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset = TRUE ) const override;
+	virtual void setRallyPoint( const Coord3D *pos ) override;			///< define a "rally point" for units to move towards
+	virtual const Coord3D *getRallyPoint() const override;			///< define a "rally point" for units to move towards
 
 	// UpdateModule
-	virtual UpdateSleepTime update();
+	virtual UpdateSleepTime update() override;
 
 	// DieModule
-	virtual void onDie( const DamageInfo *damageInfo );
+	virtual void onDie( const DamageInfo *damageInfo ) override;
 
 	// ParkingPlaceBehaviorInterface
-	Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const;
-	Bool hasAvailableSpaceFor(const ThingTemplate* thing) const;
-	Bool hasReservedSpace(ObjectID id) const;
-	Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
-	void releaseSpace(ObjectID id);
-	Bool reserveRunway(ObjectID id, Bool forLanding);
-	void releaseRunway(ObjectID id);
-	virtual Int getRunwayIndex(ObjectID id);
-	Int getRunwayCount() const { return m_runways.size(); }
-	ObjectID getRunwayReservation(Int r);
-	void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
-	Real getApproachHeight() const { return getParkingPlaceBehaviorModuleData()->m_approachHeight; }
-	void setHealee(Object* healee, Bool add);
-	void killAllParkedUnits();
-	void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime);
+	virtual Bool shouldReserveDoorWhenQueued(const ThingTemplate* thing) const override;
+	virtual Bool hasAvailableSpaceFor(const ThingTemplate* thing) const override;
+	virtual Bool hasReservedSpace(ObjectID id) const override;
+	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info) override;
+	virtual void releaseSpace(ObjectID id) override;
+	virtual Bool reserveRunway(ObjectID id, Bool forLanding) override;
+	virtual void releaseRunway(ObjectID id) override;
+	virtual Int getRunwayIndex(ObjectID id) override;
+	virtual Int getRunwayCount() const override { return m_runways.size(); }
+	virtual ObjectID getRunwayReservation(Int r) override;
+	virtual void transferRunwayReservationToNextInLineForTakeoff(ObjectID id) override;
+	virtual Real getApproachHeight() const override { return getParkingPlaceBehaviorModuleData()->m_approachHeight; }
+	virtual void setHealee(Object* healee, Bool add) override;
+	virtual void killAllParkedUnits() override;
+	virtual void defectAllParkedUnits(Team* newTeam, UnsignedInt detectionTime) override;
 
 private:
 
