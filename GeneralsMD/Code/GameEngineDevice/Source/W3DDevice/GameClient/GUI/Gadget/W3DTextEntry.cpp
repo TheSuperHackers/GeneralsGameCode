@@ -49,6 +49,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/GadgetTextEntry.h"
+#include "GameClient/GlobalLanguage.h"
 #include "GameClient/IMEManager.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
@@ -153,8 +154,16 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 		// draw the text
 		if(textWidth < width)
 		{
-			text->draw( x, y, textColor, textDropColor );
-			cursorPos = textWidth + x;
+			if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL)
+			{
+				text->draw( (x + width - textWidth), y, textColor, textDropColor );
+				cursorPos = x + width - textWidth;
+			}
+			else
+			{
+				text->draw( x, y, textColor, textDropColor );
+				cursorPos = textWidth + x;
+			}
 		}
 		else
 		{
@@ -182,8 +191,16 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 
 		x+= 5;
 		// draw the text
-		text->draw( x, y, textColor, textDropColor );
-		cursorPos = textWidth + x;
+		if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL)
+		{
+			text->draw( (x + width - textWidth), y, textColor, textDropColor );
+			cursorPos = x + width - textWidth;
+		}
+		else
+		{
+			text->draw( x, y, textColor, textDropColor );
+			cursorPos = textWidth + x;
+		}
 	}
 
 	if (e->constructText->getTextLength() > 0 )

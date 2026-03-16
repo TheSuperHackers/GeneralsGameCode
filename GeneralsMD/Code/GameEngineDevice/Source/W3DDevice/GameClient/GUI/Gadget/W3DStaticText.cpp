@@ -51,6 +51,7 @@
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetStaticText.h"
+#include "GameClient/GlobalLanguage.h"
 #include "W3DDevice/GameClient/W3DGameWindow.h"
 #include "W3DDevice/GameClient/W3DGadget.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
@@ -118,6 +119,10 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	if( tData->centered )
 	{
 		textPos.x = origin.x + (size.x / 2) - (textWidth / 2);
+	}
+	else if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL)
+	{
+		textPos.x = origin.x + size.x - textWidth - tData->leftMargin;
 	}
 	else
 	{

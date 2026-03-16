@@ -75,7 +75,7 @@ HWND ApplicationHWnd = nullptr;  ///< our application window handle
 Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
-const Char *g_strFile = "data\\Generals.str";
+const Char *g_strFile = "data\\%s\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 

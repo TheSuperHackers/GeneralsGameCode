@@ -52,10 +52,12 @@
 #include "Common/SubsystemInterface.h"
 #include "Common/STLTypedefs.h"
 #include "GameClient/FontDesc.h"
+#include "Common/AsciiString.h"
+
+class INI;
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-class AsciiString;
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -125,6 +127,9 @@ public:
 	Real			m_resolutionFontSizeAdjustment;
 	Real			m_userResolutionFontSizeAdjustment;
 	ResolutionFontSizeMethod m_resolutionFontSizeMethod;
+	Int m_languageID; // Map language setting to LanguageID. TheSuperHackers @feature
+	AsciiString m_languagePrefix; // Map language setting to .str prefix. TheSuperHackers @feature
+	Bool m_isRTL; // Is current language RTL? TheSuperHackers @feature
 	StringList m_localFonts; // List of the font filenames that are in our local directory
 };
 

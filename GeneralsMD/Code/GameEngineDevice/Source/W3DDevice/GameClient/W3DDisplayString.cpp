@@ -127,6 +127,8 @@ void W3DDisplayString::notifyTextChanged()
 			m_textRenderer.Set_Use_Hard_Word_Wrap(false);
 			m_textRendererHotKey.Set_Use_Hard_Word_Wrap(false);
 		}
+		m_textRenderer.Set_Right_Aligned(TheGlobalLanguageData->m_isRTL);
+		m_textRendererHotKey.Set_Right_Aligned(TheGlobalLanguageData->m_isRTL);
 	}
 
 	// get our new text extents

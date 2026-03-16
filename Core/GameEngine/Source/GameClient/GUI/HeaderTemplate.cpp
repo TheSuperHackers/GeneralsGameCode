@@ -88,15 +88,10 @@ void INI::parseHeaderTemplateDefinition( INI *ini )
 	hTemplate = TheHeaderTemplateManager->findHeaderTemplate( name );
 	if( hTemplate == nullptr )
 	{
-
 		// allocate a new item
 		hTemplate = TheHeaderTemplateManager->newHeaderTemplate( name );
+	}
 
-	}
-	else
-	{
-		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate header Template %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
-	}
 	// parse the ini definition
 	ini->initFromINI( hTemplate, TheHeaderTemplateManager->getFieldParse() );
 
@@ -131,11 +126,31 @@ HeaderTemplateManager::~HeaderTemplateManager()
 void HeaderTemplateManager::init()
 {
 	{
+		INI ini;
+
+		// TheSuperHackers @mod Load default English HeaderTemplate first as baseline
+		try
+		{
+			ini.loadFileDirectory( "Data\\English\\HeaderTemplate", INI_LOAD_OVERWRITE, nullptr );
+		}
+		catch (...)
+		{
+			// ignore failure
+		}
+
 		AsciiString fname;
 		fname.format("Data\\%s\\HeaderTemplate", GetRegistryLanguage().str());
 
-		INI ini;
-		ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
+		try
+		{
+			// Load localized overrides. loadFileDirectory will not crash if one or more files fail,
+			// but it might throw INI_CANT_OPEN_FILE if the directory/file is missing entirely.
+			ini.loadFileDirectory( fname, INI_LOAD_OVERWRITE, nullptr );
+		}
+		catch (...)
+		{
+			// localized might be missing, which is why we have the fallback
+		}
 	}
 
 	populateGameFonts();
