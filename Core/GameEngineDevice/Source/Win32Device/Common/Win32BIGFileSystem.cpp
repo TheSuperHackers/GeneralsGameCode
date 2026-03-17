@@ -18,7 +18,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //																																						//
-//  (c) 2001-2003 Electronic Arts Inc.                                        //
+//  (c) 2001-2003 Electronic Arts Inc.
+//  //
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,11 +35,6 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/Registry.h"
 #include "Common/file.h"
-
-
-#if RTS_ZEROHOUR
-#include "Common/Registry.h"
-#endif
 
 #include "Utility/endian_compat.h"
 #include "Win32Device/Common/Win32BIGFile.h"
@@ -59,44 +55,6 @@ void Win32BIGFileSystem::init() {
   }
 
   loadBigFilesFromDirectory("", "*.big");
-
-#if RTS_ZEROHOUR
-
-  // load original Generals assets
-  AsciiString installPath;
-  GetStringFromGeneralsRegistry("", "InstallPath", installPath);
-  //@todo this will need to be ramped up to a crash for release
-  DEBUG_ASSERTCRASH(!installPath.isEmpty(), ("Be 1337! Go install Generals!"));
-  if (!installPath.isEmpty()) {
-    loadBigFilesFromDirectory(installPath, "*.big");
-  }
-
-#if !RETAIL_COMPATIBLE_CRC
-  // TheSuperHackers @fix Ensure Zero Hour assets ALWAYS take precedence over
-  // Base Generals. Base Generals may be on a different drive (e.g., D:\),
-  // causing its absolute paths to sort BEFORE the relative paths of the Zero
-  // Hour root BIG files in the internal set.
-  loadBigFilesFromDirectory("", "*ZH.big", TRUE);
-  loadBigFilesFromDirectory("", "Patch*.big", TRUE);
-
-  // TheSuperHackers @mod load English fallbacks for non-English languages to
-  // retain Zero Hour UI Doing this AFTER the previous loads ensures it properly
-  // overrides everything else.
-  AsciiString language = GetRegistryLanguage();
-  language.toLower();
-  if (language != "english") {
-    // Load base Generals assets first as the bottom layer
-    loadBigFilesFromDirectory("", "English.big", TRUE);
-    loadBigFilesFromDirectory("", "AudioEnglish.big", TRUE);
-    loadBigFilesFromDirectory("", "SpeechEnglish.big", TRUE);
-
-    // Load Zero Hour assets second to override base Generals UI/data
-    loadBigFilesFromDirectory("", "EnglishZH.big", TRUE);
-    loadBigFilesFromDirectory("", "AudioEnglishZH.big", TRUE);
-    loadBigFilesFromDirectory("", "SpeechEnglishZH.big", TRUE);
-  }
-#endif
-#endif
 }
 
 void Win32BIGFileSystem::reset() {}
@@ -195,23 +153,45 @@ ArchiveFile *Win32BIGFileSystem::openArchiveFile(const Char *filename) {
     fileInfo->m_filename.toLower();
     buffer[filenameIndex + 1] = 0;
 
-    AsciiString path;
-    path = buffer;
+    char *finalPath = buffer;
+    AsciiString path = finalPath;
 
-#if !RETAIL_COMPATIBLE_CRC
-    AsciiString prefix = "US";
+    // TheSuperHackers @feature 17/03/2026
+    // Universal Asset Fallback (Dual-Layer):
+    // If we are playing in a non-English language (e.g. Arabic), we map
+    // English assets to two places to provide a complete baseline:
+    // 1. Root "Data\" (Fixes internal references like Art\Textures)
+    // 2. Localized "Data\<Lang>\" (Fixes engine-specific localized searches)
+    // We EXCLUDE Language.ini from the localized mapping to ensure disk
+    // settings (RTL, fonts) have priority.
+    AsciiString registryLang = GetRegistryLanguage();
+    if (registryLang.compareNoCase("english") != 0) {
+      if (strnicmp(finalPath, "Data\\English\\", 13) == 0 ||
+          strnicmp(finalPath, "Data/English/", 13) == 0) {
 
-    if (TheGlobalLanguageData) {
-      prefix = TheGlobalLanguageData->m_languagePrefix;
+        const Char *relativePath = finalPath + 13;
+        const Bool isLangFile =
+            (fileInfo->m_filename.endsWithNoCase("Language.ini") ||
+             fileInfo->m_filename.endsWithNoCase(".csf") ||
+             fileInfo->m_filename.endsWithNoCase(".str"));
+
+        // Layer 1: Global root fallback (Fixes expansion art/model references)
+        if (!isLangFile) {
+          AsciiString strippedPath;
+          strippedPath.format("Data\\%s", relativePath);
+          archiveFile->addFile(strippedPath, fileInfo);
+        }
+
+        // Layer 2: Localized folder fallback (Fixes engine-specific localized
+        // searches)
+        if (!isLangFile) {
+          AsciiString localizedPath;
+          localizedPath.format("Data\\%s\\%s", registryLang.str(),
+                               relativePath);
+          archiveFile->addFile(localizedPath, fileInfo);
+        }
+      }
     }
-    prefix.concat(":");
-#endif
-    AsciiString debugpath;
-    debugpath = path;
-    debugpath.concat(fileInfo->m_filename);
-    //		DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - adding file %s
-    //to archive file %s, file number %d", debugpath.str(),
-    //fileInfo->m_archiveFilename.str(), i));
 
     archiveFile->addFile(path, fileInfo);
   }
@@ -262,12 +242,9 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir,
   TheLocalFileSystem->getFileListInDirectory(dir, "", fileMask, filenameList,
                                              TRUE);
 
-  // std::set is already sorted
-
   Bool actuallyAdded = FALSE;
   FilenameListIter it = filenameList.begin();
   while (it != filenameList.end()) {
-#if !RETAIL_COMPATIBLE_CRC
 #if RTS_ZEROHOUR
     // TheSuperHackers @bugfix bobtista 18/11/2025 Skip duplicate INIZH.big in
     // Data\INI to prevent CRC mismatches. English, Chinese, and Korean SKUs
@@ -280,7 +257,12 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir,
       it++;
       continue;
     }
-#endif
+
+    // Skip if already loaded in the map
+    if (m_archiveFileMap.find(*it) != m_archiveFileMap.end()) {
+      it++;
+      continue;
+    }
 #endif
 
     ArchiveFile *archiveFile = openArchiveFile((*it).str());

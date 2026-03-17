@@ -127,10 +127,9 @@ static const FieldParse TheGlobalLanguageDataFieldParseTable[] = {
      offsetof(GlobalLanguage, m_creditsPositionFont)},
     {"CreditsNormalFont", GlobalLanguage::parseFontDesc, nullptr,
      offsetof(GlobalLanguage, m_creditsNormalFont)},
-    {"LanguageID", INI::parseInt, nullptr,
-     offsetof(GlobalLanguage, m_languageID)},
     {"LanguagePrefix", INI::parseAsciiString, nullptr,
      offsetof(GlobalLanguage, m_languagePrefix)},
+    {"IsRTL", INI::parseBool, nullptr, offsetof(GlobalLanguage, m_isRTL)},
 
     {nullptr, nullptr, nullptr, 0}};
 
@@ -160,8 +159,9 @@ GlobalLanguage::GlobalLanguage() {
   m_militaryCaptionDelayMS = 750;
 
   m_userResolutionFontSizeAdjustment = -1.0f;
-  m_languageID = LANGUAGE_ID_US;
+  m_languageID = GetRegistryLanguage();
   m_languagePrefix = "US";
+  m_isRTL = FALSE;
 }
 
 GlobalLanguage::~GlobalLanguage() {
@@ -177,21 +177,13 @@ GlobalLanguage::~GlobalLanguage() {
 void GlobalLanguage::init() {
   {
     INI ini;
-#if !RETAIL_COMPATIBLE_CRC
-    // TheSuperHackers @mod Load default English Language.ini first as baseline
-    try {
-      ini.load("Data\\English\\Language.ini", INI_LOAD_OVERWRITE, nullptr);
-    } catch (...) {
-      // ignore
-    }
-#endif
-
     AsciiString fname;
     fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
 
     try {
       // Load localized overrides.
       ini.load(fname, INI_LOAD_OVERWRITE, nullptr);
+      INI::parseLanguageDefinition(&ini);
     } catch (...) {
       // Language directory or INI file not found for this locale — use
       // defaults.
@@ -326,6 +318,32 @@ void GlobalLanguage::parseCustomDefinition() {
     // font upscaling in higher resolution packages.
     m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Classic;
   }
+}
+
+LanguageID GlobalLanguage::getLanguageIDEnumValue() const {
+  if (m_languageID.isEmpty())
+    return OurLanguage;
+
+  if (m_languageID.compareNoCase("English") == 0)
+    return LANGUAGE_ID_US;
+  if (m_languageID.compareNoCase("German") == 0)
+    return LANGUAGE_ID_GERMAN;
+  if (m_languageID.compareNoCase("French") == 0)
+    return LANGUAGE_ID_FRENCH;
+  if (m_languageID.compareNoCase("Spanish") == 0)
+    return LANGUAGE_ID_SPANISH;
+  if (m_languageID.compareNoCase("Italian") == 0)
+    return LANGUAGE_ID_ITALIAN;
+  if (m_languageID.compareNoCase("Japanese") == 0)
+    return LANGUAGE_ID_JAPANESE;
+  if (m_languageID.compareNoCase("Jabber") == 0)
+    return LANGUAGE_ID_JABBER;
+  if (m_languageID.compareNoCase("Korean") == 0)
+    return LANGUAGE_ID_KOREAN;
+  if (m_languageID.compareNoCase("Unknown") == 0)
+    return LANGUAGE_ID_UNKNOWN;
+
+  return OurLanguage;
 }
 
 FontDesc::FontDesc() {

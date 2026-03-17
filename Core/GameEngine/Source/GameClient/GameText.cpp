@@ -315,10 +315,9 @@ void GameTextManager::init()
   } else if (getCSFInfo(csfFile.str())) {
     format = CSF_FILE;
   } else {
-    // Fallback to old behavior only if localized .str failed and it's US
-    if (GetRegistryLanguage().compareNoCase("English") == 0 &&
-        getStringCount("data\\Generals.str", m_textCount)) {
-      localizedStrFile = "data\\Generals.str";
+    // Fallback if localized .str failed
+    if (getStringCount("Data\\generals.str", m_textCount)) {
+      localizedStrFile = "Data\\generals.str";
       format = STRING_FILE;
     } else {
       return;
@@ -596,8 +595,11 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 			case 1:
 				if ( ( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9') || ch == '_' )
 				{
-					*wavefile++ = ch;
-					len++;
+					if (len < maxBufLen - 1)
+					{
+						*wavefile++ = ch;
+						len++;
+					}
 					break;
 				}
 				state = 2;
@@ -796,9 +798,13 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 		if( m_buffer[0] == '"' )
 		{
 				Int len = strlen(m_buffer);
-				m_buffer[ len ] = '\n';
-				m_buffer[ len+1] = 0;
-			readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
+				// Safely add newline and null terminator without overflowing m_buffer (size 10240)
+				if (len < MAX_UITEXT_LENGTH - 2)
+				{
+					m_buffer[ len ] = '\n';
+					m_buffer[ len+1] = 0;
+				}
+			readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH - 1 );
 		}
 		else if( stricmp( m_buffer, "END") == 0 )
 		{
@@ -980,7 +986,8 @@ quit:
 // GameTextManager::parseStringFile
 //============================================================================
 
-Bool GameTextManager::parseStringFile(const char *filename) {
+Bool GameTextManager::parseStringFile(const char *filename)
+{
   Int listCount = 0;
   Int ok = TRUE;
   AsciiString prefix = "US";
@@ -1008,13 +1015,6 @@ Bool GameTextManager::parseStringFile(const char *filename) {
         !m_buffer[0]) //	0x2F2F is Hex for //
       continue;
 
-    // make sure label is unique
-
-    for (Int i = 0; i < listCount; i++) {
-      if (stricmp(m_stringInfo[i].label.str(), m_buffer) == 0) {
-        DEBUG_CRASH(("String label '%s' multiply defined!", m_buffer));
-      }
-    }
 
     m_stringInfo[listCount].label = m_buffer;
     len = strlen(m_buffer);
@@ -1038,13 +1038,10 @@ Bool GameTextManager::parseStringFile(const char *filename) {
       }
 
 			if (m_buffer[0] == '"'
-#if !RETAIL_COMPATIBLE_CRC
 				|| (prefix.getLength() > 0 && strnicmp(m_buffer, prefix.str(), prefix.getLength()) == 0)
-#endif
 				)
 			{
 				Char *content = m_buffer;
-#if !RETAIL_COMPATIBLE_CRC
 				if (m_buffer[0] != '"')
 				{
 					// It's a prefixed string, skip the prefix and optional colon
@@ -1054,18 +1051,17 @@ Bool GameTextManager::parseStringFile(const char *filename) {
 					while (*content == ' ' || *content == '\t')
 						content++;
 				}
-#endif
 
 				if (*content == '"')
 				{
 					len = strlen(content);
 					// Ensure we don't overflow m_buffer indices (0 to MAX_UITEXT_LENGTH-1)
-					if ((content - m_buffer) + len + 1 < MAX_UITEXT_LENGTH)
+					if (len < MAX_UITEXT_LENGTH - 2)
 					{
 						content[len] = '\n';
 						content[len + 1] = 0;
 					}
-					readToEndOfQuote(file, content + 1, m_buffer2, m_buffer3, MAX_UITEXT_LENGTH);
+					readToEndOfQuote(file, content + 1, m_buffer2, m_buffer3, MAX_UITEXT_LENGTH - 1);
 
 					if (readString)
 					{
@@ -1181,13 +1177,10 @@ Bool GameTextManager::parseMapStringFile(const char *filename) {
       removeLeadingAndTrailing(m_buffer);
 
 			if (m_buffer[0] == '"'
-#if !RETAIL_COMPATIBLE_CRC
 				|| (prefix.getLength() > 0 && strnicmp(m_buffer, prefix.str(), prefix.getLength()) == 0)
-#endif
 				)
 			{
 				Char *content = m_buffer;
-#if !RETAIL_COMPATIBLE_CRC
 				if (m_buffer[0] != '"')
 				{
 					// It's a prefixed string, skip the prefix and optional colon
@@ -1197,18 +1190,17 @@ Bool GameTextManager::parseMapStringFile(const char *filename) {
 					while (*content == ' ' || *content == '\t')
 						content++;
 				}
-#endif
 
 				if (*content == '"')
 				{
 					len = strlen(content);
 					// Ensure we don't overflow m_buffer indices (0 to MAX_UITEXT_LENGTH-1)
-					if ((content - m_buffer) + len + 1 < MAX_UITEXT_LENGTH)
+					if (len < MAX_UITEXT_LENGTH - 2)
 					{
 						content[len] = '\n';
 						content[len + 1] = 0;
 					}
-					readToEndOfQuote(file, content + 1, m_buffer2, m_buffer3, MAX_UITEXT_LENGTH);
+					readToEndOfQuote(file, content + 1, m_buffer2, m_buffer3, MAX_UITEXT_LENGTH - 1);
 
 					if (readString)
 					{
@@ -1418,7 +1410,7 @@ AsciiStringVec &GameTextManager::getStringsWithLabelPrefix(AsciiString label) {
 Bool GameTextManager::readLine(char *buffer, Int max, File *file) {
   Int ok = FALSE;
 
-  while (max && file->read(buffer, 1) == 1) {
+  while (max > 1 && file->read(buffer, 1) == 1) {
     ok = TRUE;
 
     if (*buffer == '\n') {
@@ -1439,13 +1431,13 @@ Bool GameTextManager::readLine(char *buffer, Int max, File *file) {
 //============================================================================
 
 Char GameTextManager::readChar(File *file) {
-  Char ch;
+  unsigned char ch;
 
   if (file->read(&ch, 1) == 1) {
-    return ch;
+    return (Char)ch;
   }
 
-  return 0;
+  return (Char)EOF;
 }
 
 //============================================================================
