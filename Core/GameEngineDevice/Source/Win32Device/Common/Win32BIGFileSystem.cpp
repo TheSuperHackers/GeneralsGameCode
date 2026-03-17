@@ -158,36 +158,35 @@ ArchiveFile *Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 
     // TheSuperHackers @feature 17/03/2026
     // Universal Asset Fallback (Dual-Layer):
-    // If we are playing in a non-English language (e.g. Arabic), we map
-    // English assets to two places to provide a complete baseline:
-    // 1. Root "Data\" (Fixes internal references like Art\Textures)
-    // 2. Localized "Data\<Lang>\" (Fixes engine-specific localized searches)
-    // We EXCLUDE Language.ini from the localized mapping to ensure disk
-    // settings (RTL, fonts) have priority.
+    // Simplified logic that identifies "\English\" at any level after "Data"
     AsciiString registryLang = GetRegistryLanguage();
     if (registryLang.compareNoCase("english") != 0) {
-      if (strnicmp(finalPath, "Data\\English\\", 13) == 0 ||
-          strnicmp(finalPath, "Data/English/", 13) == 0) {
+      AsciiString lowerPath = path;
+      lowerPath.toLower();
+      const char *englishPtr = strstr(lowerPath.str(), "english\\");
+      if (englishPtr == nullptr) englishPtr = strstr(lowerPath.str(), "english/");
 
-        const Char *relativePath = finalPath + 13;
+      if (englishPtr != nullptr) {
         const Bool isLangFile =
             (fileInfo->m_filename.endsWithNoCase("Language.ini") ||
              fileInfo->m_filename.endsWithNoCase(".csf") ||
              fileInfo->m_filename.endsWithNoCase(".str"));
 
-        // Layer 1: Global root fallback (Fixes expansion art/model references)
         if (!isLangFile) {
-          AsciiString strippedPath;
-          strippedPath.format("Data\\%s", relativePath);
-          archiveFile->addFile(strippedPath, fileInfo);
-        }
+          int englishPos = (int)(englishPtr - lowerPath.str());
+          AsciiString prefix(path.str(), englishPos);
+          AsciiString relativePath(path.str() + englishPos + 8); // Skip "English/" segment
 
-        // Layer 2: Localized folder fallback (Fixes engine-specific localized
-        // searches)
-        if (!isLangFile) {
+          // Layer 1: Global root fallback (Fixes internal references)
+          // e.g. Data/Audio/English/ -> Data/Audio/
+          AsciiString strippedPath;
+          strippedPath.format("%s%s", prefix.str(), relativePath.str());
+          archiveFile->addFile(strippedPath, fileInfo);
+
+          // Layer 2: Localized folder fallback (Fixes engine-specific localized searches)
+          // e.g. Data/Audio/English/ -> Data/Audio/Swedish/
           AsciiString localizedPath;
-          localizedPath.format("Data\\%s\\%s", registryLang.str(),
-                               relativePath);
+          localizedPath.format("%s%s\\%s", prefix.str(), registryLang.str(), relativePath.str());
           archiveFile->addFile(localizedPath, fileInfo);
         }
       }
