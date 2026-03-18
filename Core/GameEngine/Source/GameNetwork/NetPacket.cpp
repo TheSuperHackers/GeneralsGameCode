@@ -433,10 +433,11 @@ NetCommandList * NetPacket::getCommandList() {
 
 			if (ref == nullptr)
 			{
+				// we don't recognize this command, but we have to increment i so we don't fall into an infinite loop.
 				DEBUG_CRASH(("Unrecognized packet entry, ignoring."));
 				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - Unrecognized packet entry at index %d", i));
 				dumpPacketToLog(m_packet, m_packetLen);
-				break;
+				continue;
 			}
 
 			// increment to the next command ID.
