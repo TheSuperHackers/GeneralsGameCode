@@ -2119,7 +2119,7 @@ void Player::setObjectsEnabled(AsciiString templateTypeToAffect, Bool enable)
 //=============================================================================
 static void cancelUpgradeInProduction(Object* obj, void* userData)
 {
-	const UpgradeTemplate* upgradeTemplate = (const UpgradeTemplate*)userData;
+	const UpgradeTemplate* upgradeTemplate = static_cast<const UpgradeTemplate*>(userData);
 	ProductionUpdateInterface* pui = ProductionUpdate::getProductionUpdateInterfaceFromObject(obj);
 
 	if (pui && pui->isUpgradeInQueue(upgradeTemplate))
