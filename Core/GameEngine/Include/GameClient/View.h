@@ -360,6 +360,8 @@ public:
 	virtual void updateView(void) override {}
 	virtual void stepView() override {}
 	virtual void setGuardBandBias( const Coord2D *gb ) override {}
+	virtual Bool isDoingScriptedCamera() override { return false; }
+	virtual void stopDoingScriptedCamera() override {}
 
 	// TheSuperHackers @bugfix bobtista 03/02/2026 Do not override View::xfer(). The base
 	// implementation must run to serialize valid view state for save file compatibility.
