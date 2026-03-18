@@ -86,7 +86,8 @@ public:
 
 	NetPacketBuf offset(size_t size) const
 	{
-		return NetPacketBuf(m_data + size, m_size - size);
+		const size_t safeSize = min(size, m_size);
+		return NetPacketBuf(m_data + safeSize, m_size - safeSize);
 	}
 
 private:
