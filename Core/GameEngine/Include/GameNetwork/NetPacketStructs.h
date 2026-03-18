@@ -119,22 +119,31 @@ inline size_t readBytes(UnsignedByte *dest, size_t destLen, NetPacketBuf src)
 inline size_t readStringWithoutNull(UnicodeString &str, size_t maxStrLen, NetPacketBuf src)
 {
 	const size_t strLen = min(maxStrLen, src.size() / sizeof(WideChar));
-	const size_t readLen = strLen * sizeof(WideChar);
-	WideChar *strBuf = str.getBufferForRead(strLen);
-	memcpy(strBuf, src.data(), readLen);
-	strBuf[strLen] = 0;
-	return readLen;
+	const size_t cpyLen = strLen * sizeof(WideChar);
+
+	if (strLen > 0)
+	{
+		WideChar *strBuf = str.getBufferForRead(strLen);
+		memcpy(strBuf, src.data(), cpyLen);
+		strBuf[strLen] = 0;
+	}
+	return cpyLen;
 }
 
 inline size_t readStringWithNull(AsciiString &str, size_t maxStrLen, NetPacketBuf src)
 {
 	const size_t realStrLen = strnlen(reinterpret_cast<const char*>(src.data()), src.size());
 	const size_t usedStrLen = min(realStrLen, maxStrLen);
-	const size_t readLen = usedStrLen;
-	char *strBuf = str.getBufferForRead(usedStrLen);
-	memcpy(strBuf, src.data(), readLen);
-	strBuf[usedStrLen] = 0;
-	return realStrLen + 1;
+	const size_t realCpyLen = realStrLen * sizeof(char);
+	const size_t usedCpyLen = usedStrLen * sizeof(char);
+
+	if (usedStrLen > 0)
+	{
+		char *strBuf = str.getBufferForRead(usedStrLen);
+		memcpy(strBuf, src.data(), usedCpyLen);
+		strBuf[usedStrLen] = 0;
+	}
+	return realCpyLen + sizeof(char);
 }
 
 template<typename T>
