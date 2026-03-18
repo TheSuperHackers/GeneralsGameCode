@@ -2152,8 +2152,9 @@ void Player::transferAssetsFromThat(Player *that)
 		}
 	}
 
-	for (const UpgradeTemplate* upgradeTemplate : upgradesToCancel)
+	for (std::vector<const UpgradeTemplate*>::iterator cancelIt = upgradesToCancel.begin(); cancelIt != upgradesToCancel.end(); ++cancelIt)
 	{
+		const UpgradeTemplate* upgradeTemplate = *cancelIt;
 		that->iterateObjects(cancelUpgradeInProduction, (void*)upgradeTemplate);
 	}
 
