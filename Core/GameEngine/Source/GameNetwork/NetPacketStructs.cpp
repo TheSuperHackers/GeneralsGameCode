@@ -681,7 +681,7 @@ size_t NetPacketChatCommandData::readMessage(NetCommandRef &ref, NetPacketBuf bu
 
 	size_t size = 0;
 	size += network::readObject(textLength, buf.offset(size));
-	size += network::readStringWithoutNull(unitext, textLength,  buf.offset(size));
+	size += network::readStringWithoutNull(unitext, textLength, buf.offset(size));
 	size += network::readObject(playerMask, buf.offset(size));
 
 	cmdMsg->setText(unitext);
@@ -737,7 +737,7 @@ size_t NetPacketDisconnectChatCommandData::readMessage(NetCommandRef &ref, NetPa
 
 	size_t size = 0;
 	size += network::readObject(textLength, buf.offset(size));
-	size += network::readStringWithoutNull(unitext, textLength,  buf.offset(size));
+	size += network::readStringWithoutNull(unitext, textLength, buf.offset(size));
 
 	cmdMsg->setText(unitext);
 

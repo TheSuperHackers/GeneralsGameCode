@@ -128,12 +128,13 @@ inline size_t readStringWithoutNull(UnicodeString &str, size_t maxStrLen, NetPac
 
 inline size_t readStringWithNull(AsciiString &str, size_t maxStrLen, NetPacketBuf src)
 {
-	const size_t strLen = strnlen(reinterpret_cast<const char*>(src.data()), min(maxStrLen, src.size()));
-	const size_t readLen = strLen;
-	char *strBuf = str.getBufferForRead(strLen);
+	const size_t realStrLen = strnlen(reinterpret_cast<const char*>(src.data()), src.size());
+	const size_t usedStrLen = min(realStrLen, maxStrLen);
+	const size_t readLen = usedStrLen;
+	char *strBuf = str.getBufferForRead(usedStrLen);
 	memcpy(strBuf, src.data(), readLen);
-	strBuf[strLen] = 0;
-	return readLen + 1;
+	strBuf[usedStrLen] = 0;
+	return realStrLen + 1;
 }
 
 template<typename T>
