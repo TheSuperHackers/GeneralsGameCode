@@ -87,6 +87,7 @@ const int DEFAULT_RESOLUTION_WIDTH = 640;
 const int DEFAULT_RESOLUTION_HEIGHT = 480;
 const int DEFAULT_BIT_DEPTH = 32;
 const int DEFAULT_TEXTURE_BIT_DEPTH = 16;
+const D3DMULTISAMPLE_TYPE DEFAULT_MSAA = D3DMULTISAMPLE_NONE;
 
 bool DX8Wrapper_IsWindowed = true;
 
@@ -110,6 +111,7 @@ int								DX8Wrapper::BitDepth										= DEFAULT_BIT_DEPTH;
 int								DX8Wrapper::TextureBitDepth							= DEFAULT_TEXTURE_BIT_DEPTH;
 bool								DX8Wrapper::IsWindowed									= false;
 D3DFORMAT					DX8Wrapper::DisplayFormat	= D3DFMT_UNKNOWN;
+D3DMULTISAMPLE_TYPE DX8Wrapper::MultiSampleAntiAliasing	= DEFAULT_MSAA;
 
 D3DMATRIX						DX8Wrapper::old_world;
 D3DMATRIX						DX8Wrapper::old_view;
@@ -951,7 +953,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	_PresentParameters.BackBufferHeight = ResolutionHeight;
 	_PresentParameters.BackBufferCount = IsWindowed ? 1 : 2;
 
-	_PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
 	_PresentParameters.SwapEffect = IsWindowed ? D3DSWAPEFFECT_DISCARD : D3DSWAPEFFECT_FLIP;		// Shouldn't this be D3DSWAPEFFECT_FLIP?
 	_PresentParameters.hDeviceWindow = _Hwnd;
 	_PresentParameters.Windowed = IsWindowed;
@@ -1024,7 +1025,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	}
 
 	/*
-	** Time to actually create the device.
+	** Set default for depth stencil format if auto Z buffer failed.
 	*/
 	if (_PresentParameters.AutoDepthStencilFormat==D3DFMT_UNKNOWN) {
 		if (BitDepth==32) {
@@ -1035,6 +1036,40 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 		}
 	}
 
+	/*
+	** Check the devices support for the requested MSAA mode then setup the multi sample type
+	*/
+	if (MultiSampleAntiAliasing > D3DMULTISAMPLE_NONE) {
+
+		HRESULT hrBack = D3DInterface->CheckDeviceMultiSampleType(
+			CurRenderDevice,
+			D3DDEVTYPE_HAL,
+			_PresentParameters.BackBufferFormat,
+			IsWindowed,
+			MultiSampleAntiAliasing
+		);
+
+		HRESULT hrDepth = D3DInterface->CheckDeviceMultiSampleType(
+			CurRenderDevice,
+			D3DDEVTYPE_HAL,
+			_PresentParameters.AutoDepthStencilFormat,
+			IsWindowed,
+			MultiSampleAntiAliasing
+		);
+
+		if (FAILED(hrBack) || FAILED(hrDepth)) {
+			// IF we fail then disable MSAA entirely.
+			// External code needs to retrieve the configured MSAA mode after device creation
+			WWDEBUG_SAY(("Requested MSAA Mode Not Supported"));
+			MultiSampleAntiAliasing = D3DMULTISAMPLE_NONE;
+		}
+	}
+
+	_PresentParameters.MultiSampleType = MultiSampleAntiAliasing;
+
+	/*
+	** Time to actually create the device.
+	*/
 	StringClass displayFormat;
 	StringClass backbufferFormat;
 

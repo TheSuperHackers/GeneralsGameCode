@@ -72,6 +72,13 @@ class WW3D
 {
 public:
 
+	enum MultiSampleModeEnum {
+		MULTISAMPLE_MODE_NONE,
+		MULTISAMPLE_MODE_2X,
+		MULTISAMPLE_MODE_4X,
+		MULTISAMPLE_MODE_8X
+	};
+
 	enum PrelitModeEnum {
 		PRELIT_MODE_VERTEX,
 		PRELIT_MODE_LIGHTMAP_MULTI_PASS,
@@ -258,6 +265,9 @@ public:
 
 	static void					Set_Texture_Bitdepth(int bitdepth);
 	static int					Get_Texture_Bitdepth();
+
+	static void					Set_MSAA_Mode(MultiSampleModeEnum mode);
+	static MultiSampleModeEnum Get_MSAA_Mode();
 
 	static void					Set_Mesh_Draw_Mode (MeshDrawModeEnum mode)	{ MeshDrawMode = mode; }
 	static MeshDrawModeEnum Get_Mesh_Draw_Mode ()								{ return (MeshDrawMode); }

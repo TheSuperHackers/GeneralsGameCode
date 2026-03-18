@@ -590,6 +590,9 @@ protected:
 	static void	Set_Texture_Bitdepth(int depth)	{ WWASSERT(depth==16 || depth==32); TextureBitDepth = depth; }
 	static int	Get_Texture_Bitdepth()			{ return TextureBitDepth; }
 
+	static void Set_MSAA_Mode(D3DMULTISAMPLE_TYPE mode) { MultiSampleAntiAliasing = mode; }
+	static D3DMULTISAMPLE_TYPE Get_MSAA_Mode() { return MultiSampleAntiAliasing; }
+
 	static void	Set_Swap_Interval(int swap);
 	static int	Get_Swap_Interval();
 	static void Set_Polygon_Mode(int mode);
@@ -628,6 +631,7 @@ protected:
 	static int								TextureBitDepth;
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
+	static D3DMULTISAMPLE_TYPE	MultiSampleAntiAliasing;
 
 	static D3DMATRIX						old_world;
 	static D3DMATRIX						old_view;
