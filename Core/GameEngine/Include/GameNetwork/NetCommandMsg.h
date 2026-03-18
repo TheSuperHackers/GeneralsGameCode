@@ -38,6 +38,9 @@ class NetCommandRef;
 //-----------------------------------------------------------------------------
 class NetCommandDataChunk
 {
+	NetCommandDataChunk(const NetCommandDataChunk&) CPP_11(= delete);
+	void operator=(const NetCommandDataChunk&) CPP_11(= delete);
+
 public:
 	NetCommandDataChunk(Byte *data, UnsignedInt size)
 		: m_data(reinterpret_cast<UnsignedByte *>(data))
