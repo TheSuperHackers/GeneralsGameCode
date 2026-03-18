@@ -354,7 +354,6 @@ public:
 	{
 		return WTS_INVALID;
 	}
-	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) override {}
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) override {}
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override {}
 	virtual void drawView( void ) override {}
