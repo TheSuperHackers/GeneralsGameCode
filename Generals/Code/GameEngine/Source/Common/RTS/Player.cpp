@@ -2977,22 +2977,22 @@ void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, const BattlePla
 		//First, inverse the bonuses
 		BattlePlanBonusesData invertedBonus = *bonus;
 
-		invertedBonus.m_armorScalar				= 1.0f / __max( bonus->m_armorScalar, 0.01f );
-		invertedBonus.m_sightRangeScalar		= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
-		if( invertedBonus.m_bombardment > 0 )
+		invertedBonus.m_armorScalar = 1.0f / __max(bonus->m_armorScalar, 0.01f);
+		invertedBonus.m_sightRangeScalar = 1.0f / __max(bonus->m_sightRangeScalar, 0.01f);
+		if (invertedBonus.m_bombardment > 0)
 		{
-			invertedBonus.m_bombardment			= -1;
+			invertedBonus.m_bombardment = -1;
 		}
-		if( invertedBonus.m_holdTheLine > 0 )
+		if (invertedBonus.m_holdTheLine > 0)
 		{
-			invertedBonus.m_holdTheLine			= -1;
+			invertedBonus.m_holdTheLine = -1;
 		}
-		if( invertedBonus.m_searchAndDestroy > 0 )
+		if (invertedBonus.m_searchAndDestroy > 0)
 		{
-			invertedBonus.m_searchAndDestroy	= -1;
+			invertedBonus.m_searchAndDestroy = -1;
 		}
 
-		applyBattlePlanBonusesForPlayerObjects( &invertedBonus );
+		applyBattlePlanBonusesForPlayerObjects(&invertedBonus);
 	}
 }
 
