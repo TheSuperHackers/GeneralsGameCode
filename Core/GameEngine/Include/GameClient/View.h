@@ -336,47 +336,31 @@ class ViewLocation
 class ViewDummy : public View
 {
 public:
-	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType )
+	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) override
 	{
 		return nullptr;
 	}
-	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion, Bool (*callback)( Drawable *draw, void *userData ), void *userData )
+	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion, Bool (*callback)( Drawable *draw, void *userData ), void *userData ) override
 	{
 		return 0;
 	}
-	virtual void forceRedraw()
-	{
-	}
-	virtual const Coord3D& get3DCameraPosition() const
+	virtual void forceRedraw() override {}
+	virtual const Coord3D& get3DCameraPosition() const override
 	{
 		static Coord3D zero = {0,0,0};
 		return zero;
 	}
-	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s )
+	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) override
 	{
 		return WTS_INVALID;
 	}
-	virtual void screenToWorld( const ICoord2D *s, Coord3D *w )
-	{
-	}
-	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world )
-	{
-	}
-	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z )
-	{
-	}
-	virtual void drawView( void )
-	{
-	}
-	virtual void updateView(void)
-	{
-	}
-	virtual void stepView()
-	{
-	}
-	virtual void setGuardBandBias( const Coord2D *gb )
-	{
-	}
+	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) override {}
+	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) override {}
+	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override {}
+	virtual void drawView( void ) override {}
+	virtual void updateView(void) override {}
+	virtual void stepView() override {}
+	virtual void setGuardBandBias( const Coord2D *gb ) override {}
 
 	// TheSuperHackers @bugfix bobtista 03/02/2026 Do not override View::xfer(). The base
 	// implementation must run to serialize valid view state for save file compatibility.

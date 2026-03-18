@@ -689,7 +689,7 @@ protected:
 
 	void incrementSelectCount() { ++m_selectCount; }			///< Increase by one the running total of "selected" drawables
 	void decrementSelectCount() { --m_selectCount; }			///< Decrease by one the running total of "selected" drawables
-	virtual View *createView() = 0;												///< Factory for Views
+	virtual View *createView(bool dummy = false) = 0;								///< Factory for Views
 	void evaluateSoloNexus( Drawable *newlyAddedDrawable = nullptr );
 
 	/// expire a hint from of the specified type at the hint index
