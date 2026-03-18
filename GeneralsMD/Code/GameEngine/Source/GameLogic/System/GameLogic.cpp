@@ -4492,8 +4492,10 @@ UnsignedInt GameLogic::getObjectCount()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-GhostObjectManager *GameLogic::createGhostObjectManager(bool)
+GhostObjectManager *GameLogic::createGhostObjectManager(bool dummy)
 {
+	if (dummy)
+		return NEW GhostObjectManagerDummy;
 	return NEW GhostObjectManager;
 }
 
