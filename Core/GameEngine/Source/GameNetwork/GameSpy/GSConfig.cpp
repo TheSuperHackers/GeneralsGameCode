@@ -48,17 +48,17 @@ public:
 	virtual ~GameSpyConfig() override {}
 
 	// Pings
-	std::list<AsciiString> getPingServers() override	{ return m_pingServers; }
-	Int getNumPingRepetitions() override							{ return m_pingReps; }
-	Int getPingTimeoutInMs() override								{ return m_pingTimeout; }
+	virtual std::list<AsciiString> getPingServers() override	{ return m_pingServers; }
+	virtual Int getNumPingRepetitions() override							{ return m_pingReps; }
+	virtual Int getPingTimeoutInMs() override								{ return m_pingTimeout; }
 	virtual Int getPingCutoffGood() override				{	return m_pingCutoffGood; }
 	virtual Int getPingCutoffBad() override				{ return m_pingCutoffBad;	}
 
 	// QM
-	std::list<AsciiString> getQMMaps() override			{ return m_qmMaps; }
-	Int getQMBotID() override												{ return m_qmBotID; }
-	Int getQMChannel() override											{ return m_qmChannel; }
-	void setQMChannel(Int channel) override							{ m_qmChannel = channel; }
+	virtual std::list<AsciiString> getQMMaps() override			{ return m_qmMaps; }
+	virtual Int getQMBotID() override												{ return m_qmBotID; }
+	virtual Int getQMChannel() override											{ return m_qmChannel; }
+	virtual void setQMChannel(Int channel) override							{ m_qmChannel = channel; }
 
 	// Player Info
 	virtual Int getPointsForRank(Int rank) override;
@@ -67,7 +67,7 @@ public:
 	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port) override;
 
 	// Ladder / Any other external parsing
-	AsciiString getLeftoverConfig() override					{ return m_leftoverConfig; }
+	virtual AsciiString getLeftoverConfig() override					{ return m_leftoverConfig; }
 
 	// NAT Timeouts
 	virtual Int getTimeBetweenRetries() override { return m_natRetryInterval; }
