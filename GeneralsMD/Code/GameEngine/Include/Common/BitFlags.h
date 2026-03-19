@@ -202,31 +202,25 @@ public:
 		return (m_bits & that.m_bits).any();
 	}
 
-	void clear(const BitFlags& clr)
+	void clear(const BitFlags& flagsToClear)
 	{
-		m_bits &= ~clr.m_bits;
+		m_bits &= ~flagsToClear.m_bits;
 	}
 
-	void set(const BitFlags& set)
+	void set(const BitFlags& flagsToSet)
 	{
-		m_bits |= set.m_bits;
+		m_bits |= flagsToSet.m_bits;
 	}
 
-	void clearAndSet(const BitFlags& clr, const BitFlags& set)
+	void clearAndSet(const BitFlags& flagsToClear, const BitFlags& flagsToSet)
 	{
-		m_bits &= ~clr.m_bits;
-		m_bits |= set.m_bits;
+		clear(flagsToClear);
+		set(flagsToSet);
 	}
 
 	Bool testSetAndClear(const BitFlags& mustBeSet, const BitFlags& mustBeClear) const
 	{
-		if ((m_bits & mustBeClear.m_bits).any())
-			return false;
-
-		if ((~m_bits & mustBeSet.m_bits).any())
-			return false;
-
-		return true;
+		return testForNone(mustBeClear) && testForAll(mustBeSet);
 	}
 
 	// TheSuperHackers @info Function for rare use cases where we must access the flags as an integer.
