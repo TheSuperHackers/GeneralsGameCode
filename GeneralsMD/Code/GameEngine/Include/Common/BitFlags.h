@@ -155,8 +155,6 @@ public:
 	//All argument bits must be set in our bits too in order to return TRUE
 	Bool testForAll( const BitFlags& that ) const
 	{
-		DEBUG_ASSERTCRASH( that.any(), ("BitFlags::testForAll is always true if you ask about zero flags.  Did you mean that?") );
-
 		BitFlags tmp = *this;
 		tmp.m_bits.flip();
 		tmp.m_bits &= that.m_bits;
