@@ -202,14 +202,14 @@ public:
 		return (m_bits & that.m_bits).any();
 	}
 
-	void clear(const BitFlags& flagsToClear)
+	void clear(const BitFlags& that)
 	{
-		m_bits &= ~flagsToClear.m_bits;
+		m_bits &= ~that.m_bits;
 	}
 
-	void set(const BitFlags& flagsToSet)
+	void set(const BitFlags& that)
 	{
-		m_bits |= flagsToSet.m_bits;
+		m_bits |= that.m_bits;
 	}
 
 	void clearAndSet(const BitFlags& flagsToClear, const BitFlags& flagsToSet)
