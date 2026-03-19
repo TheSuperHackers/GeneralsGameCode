@@ -83,16 +83,9 @@ void W3DDisplayStringManager::postProcessLoad()
 	{
 		m_groupNumeralStrings[i] = newDisplayString();
 		m_groupNumeralStrings[i]->setFont(font);
-
-#ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
-		UnicodeString displayNumber;
-		displayNumber.format( L"%d", i);
-		m_groupNumeralStrings[i]->setText( displayNumber );
-#else
  		AsciiString displayNumber;
  		displayNumber.format("NUMBER:%d", i);
  		m_groupNumeralStrings[i]->setText(TheGameText->fetch(displayNumber));
-#endif
 	}
 
 	m_formationLetterDisplayString = newDisplayString();
