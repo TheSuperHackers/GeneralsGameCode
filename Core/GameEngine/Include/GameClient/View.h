@@ -363,8 +363,7 @@ public:
 	virtual Bool isDoingScriptedCamera() override { return false; }
 	virtual void stopDoingScriptedCamera() override {}
 
-	// TheSuperHackers @bugfix bobtista 03/02/2026 Do not override View::xfer(). The base
-	// implementation must run to serialize valid view state for save file compatibility.
+	// Do not override View::xfer(). The base implementation must run to serialize valid view state for save file compatibility.
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
