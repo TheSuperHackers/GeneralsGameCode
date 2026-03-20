@@ -701,11 +701,11 @@ class GameMessageList : public SubsystemInterface
 public:
 
 	GameMessageList();
-	virtual ~GameMessageList();
+	virtual ~GameMessageList() override;
 
-	virtual void init() { };			///< Initialize system
-	virtual void reset() { };			///< Reset system
-	virtual void update() { };		///< Update system
+	virtual void init() override { };			///< Initialize system
+	virtual void reset() override { };			///< Reset system
+	virtual void update() override { };		///< Update system
 
 	GameMessage *getFirstMessage() { return m_firstMessage; }	///< Return the first message
 
@@ -748,12 +748,12 @@ class MessageStream : public GameMessageList
 public:
 
 	MessageStream();
-	virtual ~MessageStream();
+	virtual ~MessageStream() override;
 
 	// Inherited Methods ----------------------------------------------------------------------------
-	virtual void init();
-	virtual void reset();
-	virtual void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	virtual GameMessage *appendMessage( GameMessage::Type type );		///< Append a message to the end of the stream
 	virtual GameMessage *insertMessage( GameMessage::Type type, GameMessage *messageToInsertAfter );	// Insert message after messageToInsertAfter.
@@ -804,11 +804,11 @@ class CommandList : public GameMessageList
 {
 public:
 	CommandList();
-	virtual ~CommandList();
+	virtual ~CommandList() override;
 
-	virtual void init();			///< Init command list
-	virtual void reset();			///< Destroy all messages and reset list to empty
-	virtual void update();		///< Update hook
+	virtual void init() override;			///< Init command list
+	virtual void reset() override;			///< Destroy all messages and reset list to empty
+	virtual void update() override;		///< Update hook
 
 	void appendMessageList( GameMessage *list );			///< Adds messages to the end of the command list
 

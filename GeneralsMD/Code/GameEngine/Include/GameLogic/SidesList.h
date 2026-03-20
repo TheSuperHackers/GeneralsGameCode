@@ -136,11 +136,11 @@ class SidesList : public SubsystemInterface,
 public:
 
 	SidesList();
-	~SidesList();
+	virtual ~SidesList() override;
 
-	void init() { }
-	void update() { }
-	void reset();
+	virtual void init() override { }
+	virtual void update() override { }
+	virtual void reset() override;
 
 	/// Reads sides (including build list info && player dicts.)
 	static Bool ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
@@ -186,9 +186,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Int					m_numSides;
 	SidesInfo		m_sides[MAX_PLAYER_COUNT];
@@ -269,9 +269,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	AsciiString			m_buildingName;			///< The name of this building.
 	AsciiString			m_templateName;			///< The thing template name for this model's info.

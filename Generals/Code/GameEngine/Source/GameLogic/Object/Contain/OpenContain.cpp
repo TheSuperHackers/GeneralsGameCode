@@ -760,14 +760,20 @@ void OpenContain::onDie( const DamageInfo * damageInfo )
 	if (!getOpenContainModuleData()->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
+	killRidersWhoAreNotFreeToExit();
+#endif
+
 	//Check to see if we are going to inflict damage on contained units.
 	if( getOpenContainModuleData()->m_damagePercentageToUnits > 0 )
 	{
 		//Cycle through the units and apply damage to them!
-		processDamageToContained();
+		processDamageToContained(getOpenContainModuleData()->m_damagePercentageToUnits);
 	}
 
+#if RETAIL_COMPATIBLE_CRC
 	killRidersWhoAreNotFreeToExit();
+#endif
 
 	// Leaving this commented out to show it can't work.  We are about to die, so they will have zero
 	// chance to hit an exitState::Update.  At least we would clean them up in onDelete.
@@ -1291,9 +1297,9 @@ void OpenContain::orderAllPassengersToExit( CommandSourceType commandSource )
 }
 
 //-------------------------------------------------------------------------------------------------
-void OpenContain::processDamageToContained()
+void OpenContain::processDamageToContained(Real percentDamage)
 {
-	const OpenContainModuleData* data = getOpenContainModuleData();
+	const bool killContained = percentDamage == 1.0f;
 
 #if RETAIL_COMPATIBLE_CRC
 
@@ -1308,7 +1314,7 @@ void OpenContain::processDamageToContained()
 			Object *object = *it++;
 
 			//Calculate the damage to be inflicted on each unit.
-			Real damage = object->getBodyModule()->getMaxHealth() * data->m_damagePercentageToUnits;
+			Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
 
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -1317,7 +1323,7 @@ void OpenContain::processDamageToContained()
 			damageInfo.in.m_amount = damage;
 			object->attemptDamage( &damageInfo );
 
-			if( !object->isEffectivelyDead() && data->m_damagePercentageToUnits == 1.0f )
+			if( !object->isEffectivelyDead() && killContained )
 				object->kill(); // in case we are carrying flame proof troops we have been asked to kill
 
 			// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill will not remove
@@ -1365,7 +1371,7 @@ void OpenContain::processDamageToContained()
 		DEBUG_ASSERTCRASH( object, ("Contain list must not contain null element") );
 
 		// Calculate the damage to be inflicted on each unit.
-		Real damage = object->getBodyModule()->getMaxHealth() * data->m_damagePercentageToUnits;
+		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
 
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -1374,7 +1380,7 @@ void OpenContain::processDamageToContained()
 		damageInfo.in.m_amount = damage;
 		object->attemptDamage( &damageInfo );
 
-		if( !object->isEffectivelyDead() && data->m_damagePercentageToUnits == 1.0f )
+		if( !object->isEffectivelyDead() && killContained )
 			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
 
 		if ( object->isEffectivelyDead() )

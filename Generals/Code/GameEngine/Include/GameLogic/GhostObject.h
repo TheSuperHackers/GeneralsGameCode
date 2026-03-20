@@ -56,9 +56,9 @@ public:
 	const Coord3D *getParentPosition() const {return &m_parentPosition;}
 
 protected:
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Object *m_parentObject;		///< object which we are ghosting
 	GeometryType m_parentGeometryType;
@@ -89,9 +89,9 @@ public:
 	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
 
 protected:
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;
@@ -107,6 +107,20 @@ inline Bool GhostObjectManager::trackAllPlayers() const
 	return m_trackAllPlayers;
 #endif
 }
+
+// TheSuperHackers @feature bobtista 19/01/2026
+// GhostObjectManager that does nothing for headless mode.
+// Note: Does NOT override crc/xfer/loadPostProcess to maintain save compatibility.
+class GhostObjectManagerDummy : public GhostObjectManager
+{
+public:
+	virtual void reset() override {}
+	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) override { return nullptr; }
+	virtual void removeGhostObject(GhostObject *mod) override {}
+	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) override {}
+	virtual void releasePartitionData() override {}
+	virtual void restorePartitionData() override {}
+};
 
 // the singleton
 extern GhostObjectManager *TheGhostObjectManager;

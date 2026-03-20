@@ -90,10 +90,10 @@ public:
 	~CachedFileInputStream();
 	Bool open(AsciiString path);	///< Returns true if open succeeded.
 	void close();  ///< Explict close.  Destructor closes if file is left open.
-	virtual Int read(void *pData, Int numBytes);
-	virtual UnsignedInt tell();
-	virtual Bool absoluteSeek(UnsignedInt pos);
-	virtual Bool eof();
+	virtual Int read(void *pData, Int numBytes) override;
+	virtual UnsignedInt tell() override;
+	virtual Bool absoluteSeek(UnsignedInt pos) override;
+	virtual Bool eof() override;
 	void rewind();
 };
 

@@ -59,6 +59,11 @@ protected:
 
 	/// factory for TheTerrainLogic, called from init()
 	virtual TerrainLogic *createTerrainLogic() { return NEW W3DTerrainLogic; };
-	virtual GhostObjectManager *createGhostObjectManager() { return NEW W3DGhostObjectManager; }
+	virtual GhostObjectManager *createGhostObjectManager(bool dummy)
+	{
+		if (dummy)
+			return NEW GhostObjectManagerDummy;
+		return NEW W3DGhostObjectManager;
+	}
 
 };

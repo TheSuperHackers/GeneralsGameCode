@@ -139,14 +139,14 @@ class TextOnFrameTransition : public Transition
 {
 public:
 	TextOnFrameTransition ();
-	virtual ~TextOnFrameTransition();
+	virtual ~TextOnFrameTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -161,14 +161,14 @@ class ReverseSoundTransition : public Transition
 {
 public:
 	ReverseSoundTransition ();
-	virtual ~ReverseSoundTransition();
+	virtual ~ReverseSoundTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -184,14 +184,14 @@ class FullFadeTransition : public Transition
 {
 public:
 	FullFadeTransition ();
-	virtual ~FullFadeTransition();
+	virtual ~FullFadeTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -209,14 +209,14 @@ class ControlBarArrowTransition : public Transition
 {
 public:
 	ControlBarArrowTransition ();
-	virtual ~ControlBarArrowTransition();
+	virtual ~ControlBarArrowTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -238,14 +238,14 @@ class ScreenFadeTransition : public Transition
 {
 public:
 	ScreenFadeTransition ();
-	virtual ~ScreenFadeTransition();
+	virtual ~ScreenFadeTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -263,14 +263,14 @@ class CountUpTransition : public Transition
 {
 public:
 	CountUpTransition ();
-	virtual ~CountUpTransition();
+	virtual ~CountUpTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -297,14 +297,14 @@ class TextTypeTransition : public Transition
 {
 public:
 	TextTypeTransition ();
-	virtual ~TextTypeTransition();
+	virtual ~TextTypeTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -324,14 +324,14 @@ class MainMenuScaleUpTransition : public Transition
 {
 public:
 	MainMenuScaleUpTransition ();
-	virtual ~MainMenuScaleUpTransition();
+	virtual ~MainMenuScaleUpTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -354,14 +354,14 @@ class MainMenuMediumScaleUpTransition : public Transition
 {
 public:
 	MainMenuMediumScaleUpTransition ();
-	virtual ~MainMenuMediumScaleUpTransition();
+	virtual ~MainMenuMediumScaleUpTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -382,14 +382,14 @@ class MainMenuSmallScaleDownTransition : public Transition
 {
 public:
 	MainMenuSmallScaleDownTransition ();
-	virtual ~MainMenuSmallScaleDownTransition();
+	virtual ~MainMenuSmallScaleDownTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -415,14 +415,14 @@ class ScaleUpTransition : public Transition
 {
 public:
 	ScaleUpTransition ();
-	virtual ~ScaleUpTransition();
+	virtual ~ScaleUpTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -460,14 +460,14 @@ class ScoreScaleUpTransition : public Transition
 {
 public:
 	ScoreScaleUpTransition ();
-	virtual ~ScoreScaleUpTransition();
+	virtual ~ScoreScaleUpTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -494,14 +494,14 @@ class FadeTransition : public Transition
 {
 public:
 	FadeTransition ();
-	virtual ~FadeTransition();
+	virtual ~FadeTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -529,14 +529,14 @@ class FlashTransition : public Transition
 {
 public:
 	FlashTransition ();
-	virtual ~FlashTransition();
+	virtual ~FlashTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -560,14 +560,14 @@ class ButtonFlashTransition : public Transition
 {
 public:
 	ButtonFlashTransition ();
-	virtual ~ButtonFlashTransition();
+	virtual ~ButtonFlashTransition() override;
 
-	virtual void init( GameWindow *win );
-	virtual void update( Int frame );
-	virtual void reverse();
-	virtual void draw();
+	virtual void init( GameWindow *win ) override;
+	virtual void update( Int frame ) override;
+	virtual void reverse() override;
+	virtual void draw() override;
 
-	virtual void skip();
+	virtual void skip() override;
 
 protected:
 	enum{
@@ -656,13 +656,13 @@ class GameWindowTransitionsHandler: public SubsystemInterface
 {
 public:
 	GameWindowTransitionsHandler();
-	~GameWindowTransitionsHandler();
+	virtual ~GameWindowTransitionsHandler() override;
 
-	void init();
+	virtual void init() override;
 	void load();
-	void reset();
-	void update();
-	void draw();
+	virtual void reset() override;
+	virtual void update() override;
+	virtual void draw() override;
 	Bool isFinished();
 	const FieldParse *getFieldParse() const { return m_gameWindowTransitionsFieldParseTable; }								///< returns the parsing fields
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table

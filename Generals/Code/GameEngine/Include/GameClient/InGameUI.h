@@ -347,12 +347,12 @@ public:  // ********************************************************************
 	};
 
 	InGameUI();
-	virtual ~InGameUI();
+	virtual ~InGameUI() override;
 
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init();															///< Initialize the in-game user interface
-	virtual void update();														///< Update the UI by calling preDraw(), draw(), and postDraw()
-	virtual void reset();															///< Reset
+	virtual	void init() override;															///< Initialize the in-game user interface
+	virtual void update() override;														///< Update the UI by calling preDraw(), draw(), and postDraw()
+	virtual void reset() override;															///< Reset
 	//-----------------------------------------------------------------------------------------------
 
 	// interface for the popup messages
@@ -600,9 +600,9 @@ public:
 
 protected:
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 
@@ -669,7 +669,7 @@ protected:
 
 	void incrementSelectCount() { ++m_selectCount; }			///< Increase by one the running total of "selected" drawables
 	void decrementSelectCount() { --m_selectCount; }			///< Decrease by one the running total of "selected" drawables
-	virtual View *createView() = 0;												///< Factory for Views
+	virtual View *createView(bool dummy = false) = 0;								///< Factory for Views
 	void evaluateSoloNexus( Drawable *newlyAddedDrawable = nullptr );
 
 	/// expire a hint from of the specified type at the hint index

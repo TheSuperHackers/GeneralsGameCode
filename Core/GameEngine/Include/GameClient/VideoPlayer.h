@@ -189,23 +189,23 @@ class VideoStream : public VideoStreamInterface
 		VideoStream							*m_next;									///< Next open stream
 
 		VideoStream();																		///< only VideoPlayer can create these
-		virtual ~VideoStream();
+		virtual ~VideoStream() override;
 
 	public:
 
- 		virtual	VideoStreamInterface* next();				///< Returns next open stream
-		virtual void update();											///< Update stream
-		virtual void close();												///< Close and free stream
+ 		virtual	VideoStreamInterface* next() override;				///< Returns next open stream
+		virtual void update() override;											///< Update stream
+		virtual void close() override;												///< Close and free stream
 
-		virtual Bool	isFrameReady();								///< Is the frame ready to be displayed
-		virtual void	frameDecompress();						///< Render current frame in to buffer
-		virtual void	frameRender( VideoBuffer *buffer ); ///< Render current frame in to buffer
-		virtual void	frameNext();									///< Advance to next frame
-		virtual Int		frameIndex();									///< Returns zero based index of current frame
-		virtual Int		frameCount();									///< Returns the total number of frames in the stream
-		virtual void	frameGoto( Int index );							///< Go to the spcified frame index
-		virtual Int		height();											///< Return the height of the video
-		virtual Int		width();											///< Return the width of the video
+		virtual Bool	isFrameReady() override;								///< Is the frame ready to be displayed
+		virtual void	frameDecompress() override;						///< Render current frame in to buffer
+		virtual void	frameRender( VideoBuffer *buffer ) override; ///< Render current frame in to buffer
+		virtual void	frameNext() override;									///< Advance to next frame
+		virtual Int		frameIndex() override;									///< Returns zero based index of current frame
+		virtual Int		frameCount() override;									///< Returns the total number of frames in the stream
+		virtual void	frameGoto( Int index ) override;							///< Go to the spcified frame index
+		virtual Int		height() override;											///< Return the height of the video
+		virtual Int		width() override;											///< Return the width of the video
 
 
 };
@@ -229,7 +229,7 @@ class VideoPlayerInterface : public SubsystemInterface
 
 		virtual void	deinit() = 0;													///< Close down player
 
-		virtual				~VideoPlayerInterface() {};
+		virtual ~VideoPlayerInterface() override {};
 
 		// service
 		virtual void	loseFocus() = 0;											///< Should be called when application loses focus
@@ -271,33 +271,33 @@ class VideoPlayer : public VideoPlayerInterface
 	public:
 
 		// subsytem requirements
-		virtual void	init();														///< Initialize video playback code
-		virtual void	reset();													///< Reset video playback
-		virtual void	update();													///< Services all audio tasks. Should be called frequently
+		virtual void	init() override;														///< Initialize video playback code
+		virtual void	reset() override;													///< Reset video playback
+		virtual void	update() override;													///< Services all audio tasks. Should be called frequently
 
-		virtual void	deinit();													///< Close down player
+		virtual void	deinit() override;													///< Close down player
 
 
 		VideoPlayer();
-		~VideoPlayer();
+		virtual ~VideoPlayer() override;
 
 		// service
-		virtual void	loseFocus();											///< Should be called when application loses focus
-		virtual void	regainFocus();										///< Should be called when application regains focus
+		virtual void	loseFocus() override;											///< Should be called when application loses focus
+		virtual void	regainFocus() override;										///< Should be called when application regains focus
 
-		virtual VideoStreamInterface*	open( AsciiString movieTitle );	///< Open video file for playback
-		virtual VideoStreamInterface*	load( AsciiString movieTitle );	///< Load video file in to memory for playback
-		virtual VideoStreamInterface* firstStream();		///< Return the first open/loaded video stream
-		virtual void	closeAllStreams();								///< Close all open streams
+		virtual VideoStreamInterface*	open( AsciiString movieTitle ) override;	///< Open video file for playback
+		virtual VideoStreamInterface*	load( AsciiString movieTitle ) override;	///< Load video file in to memory for playback
+		virtual VideoStreamInterface* firstStream() override;		///< Return the first open/loaded video stream
+		virtual void	closeAllStreams() override;								///< Close all open streams
 
-		virtual void	addVideo( Video* videoToAdd );					///< Add a video to the list of videos we can play
-		virtual void	removeVideo( Video* videoToRemove );		///< Remove a video to the list of videos we can play
-		virtual Int getNumVideos();											///< Retrieve info about the number of videos currently listed
-		virtual const Video* getVideo( AsciiString movieTitle );	///< Retrieve info about a movie based on internal name
-		virtual const Video* getVideo( Int index );						///< Retrieve info about a movie based on index
-		virtual const FieldParse *getFieldParse() const { return m_videoFieldParseTable; }		///< Return the field parse info
+		virtual void	addVideo( Video* videoToAdd ) override;					///< Add a video to the list of videos we can play
+		virtual void	removeVideo( Video* videoToRemove ) override;		///< Remove a video to the list of videos we can play
+		virtual Int getNumVideos() override;											///< Retrieve info about the number of videos currently listed
+		virtual const Video* getVideo( AsciiString movieTitle ) override;	///< Retrieve info about a movie based on internal name
+		virtual const Video* getVideo( Int index ) override;						///< Retrieve info about a movie based on index
+		virtual const FieldParse *getFieldParse() const override { return m_videoFieldParseTable; }		///< Return the field parse info
 
-		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) { }
+		virtual void notifyVideoPlayerOfNewProvider( Bool nowHasValid ) override { }
 
 		// Implementation specific
 		void remove( VideoStream *stream );										///< remove stream from active list

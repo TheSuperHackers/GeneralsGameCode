@@ -540,7 +540,12 @@ void TransportContain::killRidersWhoAreNotFreeToExit()
 			if (d->m_destroyRidersWhoAreNotFreeToExit)
 				TheGameLogic->destroyObject(obj);
 			else
+#if RETAIL_COMPATIBLE_CRC
 				obj->kill();
+#else
+				// TheSuperHackers @info Burned death prevents infantry corpses dropping out of the container.
+				obj->kill(DAMAGE_UNRESISTABLE, d->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL);
+#endif
 		}
 	}
 }
@@ -561,6 +566,14 @@ Bool TransportContain::isSpecificRiderFreeToExit(Object* specificObject)
 	const AIUpdateInterface* ai = me->getAIUpdateInterface();
 	if (ai && ai->getAiFreeToExit(specificObject) != FREE_TO_EXIT)
 		return FALSE;
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 02/03/2026 If our parent container is held, then we
+	// are not free to exit.
+	DEBUG_ASSERTCRASH(specificObject->getContainedBy(), ("rider must be contained"));
+	if (specificObject->getContainedBy()->isDisabledByType(DISABLED_HELD))
+		return FALSE;
+#endif
 
   // I can always kick people out if I am in the air, I know what I'm doing
   if (me->isUsingAirborneLocomotor())

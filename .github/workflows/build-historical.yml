@@ -48,7 +48,7 @@ jobs:
       release_tag: ${{ steps.info.outputs.release_tag }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -97,7 +97,7 @@ jobs:
 
     steps:
       - name: Checkout Target Commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.event.inputs.commit }}
           fetch-depth: 0
@@ -136,7 +136,7 @@ jobs:
 
       - name: Cache VC6 Installation
         id: cache-vc6
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: C:\VC6
           key: vc6-permanent-cache-v2
@@ -204,7 +204,7 @@ jobs:
           $files | Move-Item -Destination $artifactsDir -Force
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ${{ matrix.game }}-vc6-${{ needs.prepare.outputs.short_sha }}
           path: build\vc6\${{ matrix.game }}\artifacts
@@ -218,14 +218,14 @@ jobs:
     steps:
       - name: Download Generals Artifact
         if: ${{ github.event.inputs.game == 'Generals' || github.event.inputs.game == 'Both' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: Generals-vc6-${{ needs.prepare.outputs.short_sha }}
           path: generals-artifacts
 
       - name: Download GeneralsMD Artifact
         if: ${{ github.event.inputs.game == 'GeneralsMD' || github.event.inputs.game == 'Both' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: GeneralsMD-vc6-${{ needs.prepare.outputs.short_sha }}
           path: generalsmd-artifacts
@@ -264,7 +264,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           tag_name: ${{ needs.prepare.outputs.release_tag }}
           name: ${{ needs.prepare.outputs.release_tag }}

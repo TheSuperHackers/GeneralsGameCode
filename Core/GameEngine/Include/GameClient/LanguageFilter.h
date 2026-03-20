@@ -65,11 +65,11 @@ static const char BadWordFileName[] = "langdata.dat";
 class LanguageFilter : public SubsystemInterface {
 public:
 	LanguageFilter();
-	~LanguageFilter();
+	virtual ~LanguageFilter() override;
 
-	void init();
-	void reset();
-	void update();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 	void filterLine(UnicodeString &line);
 
 protected:

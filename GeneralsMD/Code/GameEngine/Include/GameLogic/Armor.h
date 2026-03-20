@@ -99,11 +99,11 @@ class ArmorStore : public SubsystemInterface
 public:
 
 	ArmorStore();
-	~ArmorStore();
+	virtual ~ArmorStore() override;
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	virtual void init() override { }
+	virtual void reset() override { }
+	virtual void update() override { }
 
 	const ArmorTemplate* findArmorTemplate(NameKeyType namekey) const;
 	/**

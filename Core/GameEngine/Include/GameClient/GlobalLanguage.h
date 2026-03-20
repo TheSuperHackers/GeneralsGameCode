@@ -85,11 +85,11 @@ public:
 public:
 
 	GlobalLanguage();
-	virtual ~GlobalLanguage();
+	virtual ~GlobalLanguage() override;
 
-	void init();
-	void reset();
-	void update() {}
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override {}
 
 	Real getResolutionFontSizeAdjustment() const;
   LanguageID getLanguageIDEnumValue() const;

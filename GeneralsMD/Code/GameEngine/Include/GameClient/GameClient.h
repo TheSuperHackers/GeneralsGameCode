@@ -69,8 +69,8 @@ typedef std::vector<Drawable*> DrawablePtrVector;
 class GameClientMessageDispatcher : public GameMessageTranslator
 {
 public:
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
-	virtual ~GameClientMessageDispatcher() { }
+	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
+	virtual ~GameClientMessageDispatcher() override { }
 };
 
 
@@ -86,12 +86,12 @@ class GameClient : public SubsystemInterface,
 public:
 
 	GameClient();
-	virtual ~GameClient();
+	virtual ~GameClient() override;
 
 	// subsystem methods
-	virtual void init();																					///< Initialize resources
-	virtual void update();																				///< Updates the GUI, display, audio, etc
-	virtual void reset();																					///< reset system
+	virtual void init() override;																					///< Initialize resources
+	virtual void update() override;																				///< Updates the GUI, display, audio, etc
+	virtual void reset() override;																					///< reset system
 
 	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number
 	virtual void registerDrawable( Drawable *draw );										///< Given a drawable, register it with the GameClient and give it a unique ID
@@ -159,9 +159,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	// @todo Should there be a separate GameClient frame counter?
 	UnsignedInt m_frame;																				///< Simulation frame number from server

@@ -95,13 +95,13 @@ class Keyboard : public SubsystemInterface
 public:
 
 	Keyboard();
-	virtual ~Keyboard();
+	virtual ~Keyboard() override;
 
 	// you may extend the functionality of these for your device
-	virtual void init();							/**< initialize the keyboard, only extend this
+	virtual void init() override;							/**< initialize the keyboard, only extend this
 																							 functionality, do not replace */
-	virtual void reset();							///< Reset keyboard system
-	virtual void update();						/**< gather current state of all keys, extend
+	virtual void reset() override;							///< Reset keyboard system
+	virtual void update() override;						/**< gather current state of all keys, extend
 																							 this functionality, do not replace */
 	virtual Bool getCapsState() = 0;  ///< get state of caps lock key, return TRUE if down
 

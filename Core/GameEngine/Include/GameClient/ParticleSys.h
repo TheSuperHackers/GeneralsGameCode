@@ -157,9 +157,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 
@@ -206,9 +206,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	void computeAlphaRate();							///< compute alpha rate to get to next key
 	void computeColorRate();							///< compute color change to get to next key
@@ -264,9 +264,9 @@ public:
 	ParticleSystemInfo();												///< to set defaults.
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Bool m_isOneShot;														///< if true, destroy system after one burst has occurred
 
@@ -662,9 +662,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	virtual Particle *createParticle( const ParticleInfo *data,
 																		ParticlePriorityType priority,
@@ -747,11 +747,11 @@ public:
 	typedef std::hash_map<AsciiString, ParticleSystemTemplate *, rts::hash<AsciiString>, rts::equal_to<AsciiString> > TemplateMap;
 
 	ParticleSystemManager();
-	virtual ~ParticleSystemManager();
+	virtual ~ParticleSystemManager() override;
 
-	virtual void init();									///< initialize the manager
-	virtual void reset();									///< reset the manager and all particle systems
-	virtual void update();								///< update all particle systems
+	virtual void init() override;									///< initialize the manager
+	virtual void reset() override;									///< reset the manager and all particle systems
+	virtual void update() override;								///< update all particle systems
 
 	virtual Int getOnScreenParticleCount() = 0;   ///< returns the number of particles on screen
   virtual void setOnScreenParticleCount(int count);
@@ -812,9 +812,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Particle *m_allParticlesHead[ NUM_PARTICLE_PRIORITIES ];
 	Particle *m_allParticlesTail[ NUM_PARTICLE_PRIORITIES ];
@@ -833,6 +833,21 @@ protected:
 private:
 	TemplateMap m_templateMap;		///< a hash map of all particle system templates
 	ParticleSystemIDMap m_systemMap; ///< a hash map of all particle systems
+};
+
+// TheSuperHackers @feature bobtista 31/01/2026
+// ParticleSystemManager that does nothing. Used for Headless Mode.
+class ParticleSystemManagerDummy : public ParticleSystemManager
+{
+public:
+	Int getOnScreenParticleCount() override { return 0; }
+	void doParticles(RenderInfoClass &rinfo) override {}
+	void queueParticleRender() override {}
+
+protected:
+	void crc( Xfer *xfer ) override {}
+	void xfer( Xfer *xfer ) override {}
+	void loadPostProcess() override {}
 };
 
 /// The particle system manager singleton

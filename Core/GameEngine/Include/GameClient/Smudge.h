@@ -51,7 +51,7 @@ public:
 	friend class SmudgeManager;
 
 	SmudgeSet();
-	virtual ~SmudgeSet();
+	virtual ~SmudgeSet() override;
 	void reset();
 
 	Smudge *addSmudgeToSet();

@@ -632,11 +632,11 @@ class ControlBar : public SubsystemInterface
 public:
 
 	ControlBar();
-	virtual ~ControlBar();
+	virtual ~ControlBar() override;
 
-	virtual void init();					///< from subsystem interface
-	virtual void reset();					///< from subsystem interface
-	virtual void update();				///< from subsystem interface
+	virtual void init() override;					///< from subsystem interface
+	virtual void reset() override;					///< from subsystem interface
+	virtual void update() override;				///< from subsystem interface
 
 	/// mark the UI as dirty so the context of everything is re-evaluated
 	void markUIDirty();

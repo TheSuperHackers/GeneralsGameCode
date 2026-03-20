@@ -63,9 +63,9 @@ public:
 	void setExperienceScalar( Real scalar ) { m_experienceScalar = scalar; }
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer );
-	void xfer( Xfer *xfer );
-	void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	Object*						m_parent;														///< Object I am owned by

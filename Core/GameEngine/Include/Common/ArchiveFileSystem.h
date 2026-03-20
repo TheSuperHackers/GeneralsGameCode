@@ -124,7 +124,7 @@ class ArchiveFileSystem : public SubsystemInterface
 {
 public:
 	ArchiveFileSystem();
-	virtual ~ArchiveFileSystem();
+	virtual ~ArchiveFileSystem() override;
 
 	virtual void init() = 0;
 	virtual void update() = 0;

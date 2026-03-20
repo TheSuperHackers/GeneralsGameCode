@@ -42,7 +42,7 @@ class OptionPreferences : public UserPreferences
 {
 public:
 	OptionPreferences();
-	virtual ~OptionPreferences();
+	virtual ~OptionPreferences() override;
 
 	Bool loadFromIniFile();
 

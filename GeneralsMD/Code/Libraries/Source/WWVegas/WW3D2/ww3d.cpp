@@ -222,7 +222,7 @@ static bool												_LargeTextureExtraReductionEnabled = false;
 int														WW3D::LastFrameMemoryAllocations;
 int														WW3D::LastFrameMemoryFrees;
 
-int														WW3D::TextureFilter = 0;
+int														WW3D::TextureFilter = TextureFilterClass::TextureFilterMode::TEXTURE_FILTER_BILINEAR;
 
 bool														WW3D::Lite = false;
 
@@ -2015,6 +2015,52 @@ void WW3D::Set_Texture_Bitdepth(int bitdepth)
 int WW3D::Get_Texture_Bitdepth()
 {
 	return DX8Wrapper::Get_Texture_Bitdepth();
+}
+
+void WW3D::Set_MSAA_Mode(MultiSampleModeEnum mode)
+{
+	switch (mode) {
+
+	default:
+	case MULTISAMPLE_MODE_NONE:
+		DX8Wrapper::Set_MSAA_Mode(D3DMULTISAMPLE_NONE);
+		break;
+
+	case MULTISAMPLE_MODE_2X:
+		DX8Wrapper::Set_MSAA_Mode(D3DMULTISAMPLE_2_SAMPLES);
+		break;
+
+	case MULTISAMPLE_MODE_4X:
+		DX8Wrapper::Set_MSAA_Mode(D3DMULTISAMPLE_4_SAMPLES);
+		break;
+
+	case MULTISAMPLE_MODE_8X:
+		DX8Wrapper::Set_MSAA_Mode(D3DMULTISAMPLE_8_SAMPLES);
+		break;
+
+	}
+}
+
+WW3D::MultiSampleModeEnum WW3D::Get_MSAA_Mode()
+{
+	D3DMULTISAMPLE_TYPE type = DX8Wrapper::Get_MSAA_Mode();
+
+	switch (type) {
+
+	default:
+	case D3DMULTISAMPLE_NONE:
+		return MULTISAMPLE_MODE_NONE;
+
+	case D3DMULTISAMPLE_2_SAMPLES:
+		return MULTISAMPLE_MODE_2X;
+
+	case D3DMULTISAMPLE_4_SAMPLES:
+		return MULTISAMPLE_MODE_4X;
+
+	case D3DMULTISAMPLE_8_SAMPLES:
+		return MULTISAMPLE_MODE_8X;
+
+	}
 }
 
 void WW3D::Add_To_Static_Sort_List(RenderObjClass *robj, unsigned int sort_level)

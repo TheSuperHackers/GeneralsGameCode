@@ -61,11 +61,11 @@ public:
 
 public:
 	RecorderClass();																	///< Constructor.
-	virtual ~RecorderClass();													///< Destructor.
+	virtual ~RecorderClass() override;													///< Destructor.
 
-	void init();																			///< Initialize TheRecorder.
-	void reset();																			///< Reset the state of TheRecorder.
-	void update();																		///< General purpose update function.
+	virtual void init() override;																			///< Initialize TheRecorder.
+	virtual void reset() override;																			///< Reset the state of TheRecorder.
+	virtual void update() override;																		///< General purpose update function.
 
 	// Methods dealing with recording.
 	void updateRecord();															///< The update function for recording.

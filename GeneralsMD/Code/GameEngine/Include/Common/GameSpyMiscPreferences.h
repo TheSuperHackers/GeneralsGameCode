@@ -42,7 +42,7 @@ class GameSpyMiscPreferences : public UserPreferences
 {
 public:
 	GameSpyMiscPreferences();
-	virtual ~GameSpyMiscPreferences();
+	virtual ~GameSpyMiscPreferences() override;
 
 	Int getLocale();
 	void setLocale( Int val );

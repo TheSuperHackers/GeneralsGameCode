@@ -167,9 +167,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess() { }
+	virtual void crc( Xfer *xfer ) override { }
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override { }
 
 	void tryNextFrame();						///< we've just drawn ... try to update our frame if necessary
 
@@ -196,11 +196,11 @@ class Anim2DCollection : public SubsystemInterface
 public:
 
 	Anim2DCollection();
-	virtual ~Anim2DCollection();
+	virtual ~Anim2DCollection() override;
 
-	virtual void init();						///< initialize system
-	virtual void reset() { };				///< reset system
-	virtual void update();					///< update system
+	virtual void init() override;						///< initialize system
+	virtual void reset() override { };				///< reset system
+	virtual void update() override;					///< update system
 
 	Anim2DTemplate *findTemplate( const AsciiString& name );				///< find animation template
 	Anim2DTemplate *newTemplate( const AsciiString& name );				///< allocate a new template to be loaded

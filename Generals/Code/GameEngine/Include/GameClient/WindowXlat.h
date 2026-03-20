@@ -36,6 +36,6 @@ private:
 	// nothing
 public:
 	WindowTranslator();
-	~WindowTranslator();
-	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg);
+	virtual ~WindowTranslator() override;
+	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 };

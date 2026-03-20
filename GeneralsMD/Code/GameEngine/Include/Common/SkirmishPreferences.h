@@ -42,11 +42,11 @@ class SkirmishPreferences : public UserPreferences
 {
 public:
 	SkirmishPreferences();
-	virtual ~SkirmishPreferences();
+	virtual ~SkirmishPreferences() override;
 
 	Bool loadFromIniFile();
 
-	virtual Bool write();
+	virtual Bool write() override;
 	AsciiString getSlotList();
 	void setSlotList();
 	UnicodeString getUserName();		// convenience function

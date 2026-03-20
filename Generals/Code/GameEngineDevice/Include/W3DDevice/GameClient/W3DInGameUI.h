@@ -69,7 +69,12 @@ public:
 protected:
 
 	/// factory for views
-	virtual View *createView() { return NEW W3DView; }
+	virtual View *createView(bool dummy)
+	{
+		if (dummy)
+			return NEW ViewDummy;
+		return NEW W3DView;
+	}
 
 	virtual void drawSelectionRegion();			///< draw the selection region on screen
 	virtual void drawMoveHints( View *view );			///< draw move hint visual feedback

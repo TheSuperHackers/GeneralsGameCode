@@ -117,9 +117,9 @@ public:
 	}
 
 public:
-	virtual void crc( Xfer *xfer ) {}
-	virtual void xfer( Xfer *xfer ) {}
-	virtual void loadPostProcess() {}
+	virtual void crc( Xfer *xfer ) override {}
+	virtual void xfer( Xfer *xfer ) override {}
+	virtual void loadPostProcess() override {}
 
 private:
 	NameKeyType m_moduleTagNameKey;		///< module tag key, unique among all modules for an object instance
@@ -213,9 +213,9 @@ protected:
 
 	const ModuleData* getModuleData() const { return m_moduleData; }
 
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	const ModuleData* m_moduleData;
@@ -251,9 +251,9 @@ protected:
 	Object *getObject() { return m_object; }
 	const Object *getObject() const { return m_object; }
 
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 
@@ -294,9 +294,9 @@ protected:
 	Drawable *getDrawable() { return m_drawable; }
 	const Drawable *getDrawable() const { return m_drawable; }
 
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 

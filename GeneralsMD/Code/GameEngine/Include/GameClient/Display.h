@@ -64,11 +64,11 @@ public:
 	typedef void (DebugDisplayCallback)( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
 
 	Display();
-	virtual ~Display();
+	virtual ~Display() override;
 
-	virtual void init() { };																///< Initialize
-	virtual void reset();																		///< Reset system
-	virtual void update();																	///< Update system
+	virtual void init() override { };																///< Initialize
+	virtual void reset() override;																		///< Reset system
+	virtual void update() override;																	///< Update system
 
 	//---------------------------------------------------------------------------------------
 	// Display attribute methods
@@ -114,7 +114,7 @@ public:
 	virtual	void enableClipping( Bool onoff ) = 0;
 
 	virtual void step() {}; ///< Do one fixed time step
-	virtual void draw();																		///< Redraw the entire display
+	virtual void draw() override;																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE

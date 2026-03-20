@@ -22,8 +22,8 @@ RUN mkdir -pm755 /etc/apt/keyrings \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 # Setup build folder 
-RUN mkdir /build
-RUN chown  ${UID}:${GID} /build
+RUN mkdir -p /build/tools
+RUN chown -R  ${UID}:${GID} /build
 
 USER ${UID}:${GID}
 WORKDIR /build/tools
