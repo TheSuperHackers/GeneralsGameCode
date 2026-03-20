@@ -571,6 +571,7 @@ private:
 	// just the "leaf name", read from INI. private because no one is ever allowed
 	// to look at it directly; they must go thru getPath_UserData(). (srj)
 	AsciiString m_userDataLeafName;
+	static AsciiString BuildUserDataPathFromIni();
 
 	static GlobalData *m_theOriginal;		///< the original global data instance (no overrides)
 	GlobalData *m_next;									///< next instance (for overrides)
