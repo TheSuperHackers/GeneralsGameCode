@@ -162,7 +162,7 @@ Bool UpgradeMux::testUpgradeConditions( const UpgradeMaskType& keyMask ) const
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Okay, make sure we don't have any conflicting upgrades
-	if( !keyMask.any() || !keyMask.testForAny( conflicting ) )
+	if( keyMask.testForNone( conflicting ) )
 	{
 		//Make sure we have activation conditions
 		if( activation.any() )
