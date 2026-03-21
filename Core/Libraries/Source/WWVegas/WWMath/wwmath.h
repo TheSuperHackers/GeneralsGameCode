@@ -155,8 +155,15 @@ static WWINLINE float		Max(float a, float b);
 
 static WWINLINE int			Float_As_Int(const float f) { return *((int*)&f); }
 
-static WWINLINE float		Lerp(float a, float b, float lerp );
-static WWINLINE double		Lerp(double a, double b, float lerp );
+// Linearly interpolates between a and b using parameter t in [0, 1].
+// t = 0 returns a, t = 1 returns b, values in between return a proportionate blend.
+static WWINLINE float		Lerp(float a, float b, float t);
+static WWINLINE double	Lerp(double a, double b, float t);
+
+// Computes the interpolation parameter t such that v = Lerp(a, b, t).
+// Returns where v lies between a and b as a ratio, typically in [0, 1].
+static WWINLINE float		Inverse_Lerp(float a, float b, float v);
+static WWINLINE double	Inverse_Lerp(double a, double b, float v);
 
 static WWINLINE long			Float_To_Long(double f);
 
@@ -258,16 +265,25 @@ WWINLINE float WWMath::Max(float a, float b)
 	return b;
 }
 
-WWINLINE float WWMath::Lerp(float a, float b, float lerp )
+WWINLINE float WWMath::Lerp(float a, float b, float t)
 {
-	return (a + (b - a)*lerp);
+	return (a + (b - a)*t);
 }
 
-WWINLINE double WWMath::Lerp(double a, double b, float lerp )
+WWINLINE double WWMath::Lerp(double a, double b, float t)
 {
-	return (a + (b - a)*lerp);
+	return (a + (b - a)*t);
 }
 
+WWINLINE float WWMath::Inverse_Lerp(float a, float b, float v)
+{
+	return (v - a) / (b - a);
+}
+
+WWINLINE double WWMath::Inverse_Lerp(double a, double b, float v)
+{
+	return (v - a) / (b - a);
+}
 
 WWINLINE bool WWMath::Is_Valid_Float(float x)
 {

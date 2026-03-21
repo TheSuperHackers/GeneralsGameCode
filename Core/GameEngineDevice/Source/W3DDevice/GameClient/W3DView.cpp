@@ -435,6 +435,57 @@ Bool W3DView::zoomCameraToDesiredHeight()
 	return false;
 }
 
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix New logic responsible for moving the camera pivot to the terrain ground.
+// This is essential to correctly center the camera above the ground when playing.
+Bool W3DView::movePivotToGround()
+{
+	const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
+	const Real adjustFactor = TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
+	const Real groundLevel = m_groundLevel;
+	const Real groundLevelDiff = m_terrainHeightAtPivot - groundLevel;
+	if (fabs(groundLevelDiff) > 0.1f)
+	{
+		// Adjust the ground level. This will change the world height of the camera.
+		m_groundLevel += groundLevelDiff * adjustFactor;
+
+		// Reposition the camera relative to its pitch.
+		// This effectively zooms the camera in the view direction together with the ground level change.
+		Vector3 sourcePos;
+		Vector3 targetPos;
+		buildCameraPosition(sourcePos, targetPos);
+		const Vector3 delta = targetPos - sourcePos;
+
+		if (fabs(delta.Z) > 0.1f)
+		{
+			Vector2 groundLevelCenter;
+			Vector2 terrainHeightCenter;
+			groundLevelCenter.X = Vector3::Find_X_At_Z(groundLevel, sourcePos, targetPos);
+			groundLevelCenter.Y = Vector3::Find_Y_At_Z(groundLevel, sourcePos, targetPos);
+			terrainHeightCenter.X = Vector3::Find_X_At_Z(m_terrainHeightAtPivot, sourcePos, targetPos);
+			terrainHeightCenter.Y = Vector3::Find_Y_At_Z(m_terrainHeightAtPivot, sourcePos, targetPos);
+			Vector2 posDiff = terrainHeightCenter - groundLevelCenter;
+
+			// Adjust the strength of the repositioning for low camera pitch, because
+			// it feels bad to move the camera around when it looks over the terrain.
+			const Real pitch = WWMath::Asin(fabs(delta.Z) / delta.Length());
+			constexpr const Real lowerPitch = DEG_TO_RADF(15.f);
+			constexpr const Real upperPitch = DEG_TO_RADF(30.f);
+			Real repositionStrength = WWMath::Inverse_Lerp(lowerPitch, upperPitch, pitch);
+			repositionStrength = WWMath::Clamp(repositionStrength, 0.0f, 1.0f);
+			posDiff *= repositionStrength;
+
+			Coord3D pos = *getPosition();
+			pos.x += posDiff.X * adjustFactor;
+			pos.y += posDiff.Y * adjustFactor;
+			setPosition(&pos);
+		}
+
+		return true;
+	}
+	return false;
+}
+
 void W3DView::updateCameraAreaConstraints()
 {
 #if defined(RTS_DEBUG)
@@ -1396,7 +1447,26 @@ void W3DView::update()
 
 		if (adjustZoomWhenScrolling || adjustZoomWhenNotScrolling)
 		{
+			// TheSuperHackers @info The camera zoom has two modes:
+			// 1. Zoom by scaling the distance of the camera origin to the look-at target.
+			//    Used by user zooming and the scripted camera.
+			// 2. Zoom by moving the camera pivot to the ground while repositioning the
+			//    camera origin towards the look-at target. Visually this looks identical
+			//    to (1), but changes the pivot point which is important for the rotation
+			//    origin and map border collisions.
+			Bool isZoomingOrMovingPivot = false;
+
 			if (zoomCameraToDesiredHeight())
+			{
+				isZoomingOrMovingPivot = true;
+			}
+
+			if (movePivotToGround())
+			{
+				isZoomingOrMovingPivot = true;
+			}
+
+			if (isZoomingOrMovingPivot)
 			{
 				m_recalcCamera = true;
 
@@ -2376,16 +2446,18 @@ void W3DView::lookAt( const Coord3D *o )
 //-------------------------------------------------------------------------------------------------
 void W3DView::initHeightForMap()
 {
-	m_groundLevel = TheTerrainLogic->getGroundHeight(m_pos.x, m_pos.y);
-	const Real MAX_GROUND_LEVEL = 120.0; // jba - starting ground level can't exceed this height.
-	if (m_groundLevel>MAX_GROUND_LEVEL) {
-		m_groundLevel = MAX_GROUND_LEVEL;
-	}
+	resetPivotToGround();
 
 	m_cameraOffset.z = m_groundLevel+TheGlobalData->m_cameraHeight;
 	m_cameraOffset.y = -(m_cameraOffset.z / tan(TheGlobalData->m_cameraPitch * (PI / 180.0)));
 	m_cameraOffset.x = -(m_cameraOffset.y * tan(TheGlobalData->m_cameraYaw * (PI / 180.0)));
-	m_cameraAreaConstraintsValid = false;	// possible ground level change invalidates camera constraints
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DView::resetPivotToGround( void )
+{
+	m_groundLevel = getHeightAroundPos(m_pos.x, m_pos.y);
+	m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints
 	m_recalcCamera = true;
 }
 

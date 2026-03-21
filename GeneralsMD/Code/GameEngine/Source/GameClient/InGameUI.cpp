@@ -4503,9 +4503,10 @@ Bool InGameUI::areSelectedObjectsControllable() const
 //------------------------------------------------------------------------------
 void InGameUI::resetCamera()
 {
-	ViewLocation currentView;
-	TheTacticalView->getLocation( &currentView );
-	TheTacticalView->resetCamera( &currentView.getPosition(), 1, 0.0f, 0.0f );
+	TheTacticalView->userResetPivotToGround();
+	TheTacticalView->userSetAngleToDefault();
+	TheTacticalView->userSetPitchToDefault();
+	TheTacticalView->userSetZoomToDefault();
 }
 
 //------------------------------------------------------------------------------
