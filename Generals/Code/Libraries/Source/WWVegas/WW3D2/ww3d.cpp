@@ -118,6 +118,7 @@
 #include "animatedsoundmgr.h"
 #include "static_sort_list.h"
 #include "framgrab.h"
+#include "Lib/BaseType.h"
 
 
 const char* DAZZLE_INI_FILENAME="DAZZLE.INI";
@@ -222,6 +223,7 @@ int														WW3D::LastFrameMemoryAllocations;
 int														WW3D::LastFrameMemoryFrees;
 
 int														WW3D::TextureFilter = TextureFilterClass::TextureFilterMode::TEXTURE_FILTER_BILINEAR;
+int														WW3D::AnisotropyLevel = TextureFilterClass::AnisotropicFilterMode::TEXTURE_FILTER_ANISOTROPIC_2X;
 
 bool														WW3D::Lite = false;
 
@@ -766,12 +768,21 @@ void WW3D::_Invalidate_Textures()
 
 void WW3D::Set_Texture_Filter(int texture_filter)
 {
-	if (texture_filter<0) texture_filter=0;
-	if (texture_filter>TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC) texture_filter=TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC;
-	TextureFilter=texture_filter;
-	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)TextureFilter);
+	TextureFilter = clamp((int)TextureFilterClass::TEXTURE_FILTER_NONE, texture_filter, (int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC);
+	TextureFilterClass::_Init_Filters(
+		(TextureFilterClass::TextureFilterMode)TextureFilter,
+		(TextureFilterClass::AnisotropicFilterMode)AnisotropyLevel
+	);
 }
 
+void WW3D::Set_Anisotropy_Level(int level)
+{
+	level = clamp((int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X, level, (int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_16X);
+	level = highestBit(level);
+
+	AnisotropyLevel = level;
+	TextureFilterClass::_Set_Max_Anisotropy((TextureFilterClass::AnisotropicFilterMode)AnisotropyLevel);
+}
 
 /***********************************************************************************************
  * WW3D::Begin_Render -- mark the start of rendering for a new frame                           *

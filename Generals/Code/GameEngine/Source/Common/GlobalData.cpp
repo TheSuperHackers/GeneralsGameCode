@@ -33,6 +33,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "ww3d.h"
+#include "texturefilter.h"
 
 #include "Common/GlobalData.h"
 
@@ -930,6 +931,8 @@ GlobalData::GlobalData()
 	m_standardPublicBones.clear();
 
 	m_antiAliasLevel = WW3D::MultiSampleModeEnum::MULTISAMPLE_MODE_NONE;
+	m_textureFilteringMode = TextureFilterClass::TextureFilterMode::TEXTURE_FILTER_BILINEAR;
+	m_textureAnisotropyLevel = TextureFilterClass::AnisotropicFilterMode::TEXTURE_FILTER_ANISOTROPIC_2X;
 
 //	m_languageFilterPref = false;
 	m_languageFilterPref = true;
@@ -1207,6 +1210,8 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
 
 	TheWritableGlobalData->m_antiAliasLevel = optionPref.getAntiAliasing();
+	TheWritableGlobalData->m_textureFilteringMode = optionPref.getTextureFilterMode();
+	TheWritableGlobalData->m_textureAnisotropyLevel = optionPref.getTextureAnisotropyLevel();
 
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.

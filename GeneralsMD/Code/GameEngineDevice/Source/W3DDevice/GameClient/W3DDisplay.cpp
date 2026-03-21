@@ -778,8 +778,13 @@ void W3DDisplay::init()
 				true );
 
 			// TheSuperHackers @info Update the MSAA mode that was set as some GPU's may not support certain levels
+			// Texture filtering must also be updated after render device initialization
 			if (renderDeviceError == WW3D_ERROR_OK) {
 				TheWritableGlobalData->m_antiAliasLevel = (UnsignedInt)WW3D::Get_MSAA_Mode();
+				WW3D::Set_Texture_Filter(TheWritableGlobalData->m_textureFilteringMode);
+				TheWritableGlobalData->m_textureFilteringMode = WW3D::Get_Texture_Filter();
+				WW3D::Set_Anisotropy_Level(TheWritableGlobalData->m_textureAnisotropyLevel);
+				TheWritableGlobalData->m_textureAnisotropyLevel = WW3D::Get_Anisotropy_Level();
 			}
 
 			++attempt;

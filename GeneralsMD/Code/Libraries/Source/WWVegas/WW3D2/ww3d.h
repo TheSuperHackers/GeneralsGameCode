@@ -143,6 +143,9 @@ public:
 	static void					Set_Texture_Filter(int filter);
 	static int					Get_Texture_Filter() { return TextureFilter; }
 
+	static void					Set_Anisotropy_Level(int level);
+	static int					Get_Anisotropy_Level() { return AnisotropyLevel; }
+
 	/*
 	** Rendering functions
 	** Each frame should be bracketed by a Begin_Render and End_Render call.  Between these two calls you will
@@ -396,6 +399,7 @@ private:
 	static bool							ExposePrelit;
 
 	static int							TextureFilter;
+	static int							AnisotropyLevel;
 
 	static bool							SnapshotActivated;
 	static bool							ThumbnailEnabled;

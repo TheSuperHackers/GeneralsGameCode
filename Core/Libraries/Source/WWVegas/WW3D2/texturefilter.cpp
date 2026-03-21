@@ -40,6 +40,24 @@
 #include "texturefilter.h"
 #include "dx8wrapper.h"
 
+const char* const TextureFilterClass::TextureFilterModeString[TEXTURE_FILTER_COUNT] = {
+	"None",
+	"Point",
+	"Bilinear",
+	"Trilinear",
+	"Anisotropic"
+};
+
+TextureFilterClass::TextureFilterMode TextureFilterClass::getTextureFilterMode(const char* str) {
+	for (int i = 0; i < TextureFilterClass::TEXTURE_FILTER_COUNT; ++i) {
+		if (stricmp(str, TextureFilterClass::TextureFilterModeString[i]) == 0) {
+			return (TextureFilterClass::TextureFilterMode)i;
+		}
+	}
+
+	return TextureFilterClass::TEXTURE_FILTER_NONE;
+}
+
 unsigned _MinTextureFilters[MAX_TEXTURE_STAGES][TextureFilterClass::FILTER_TYPE_COUNT];
 unsigned _MagTextureFilters[MAX_TEXTURE_STAGES][TextureFilterClass::FILTER_TYPE_COUNT];
 unsigned _MipMapFilters[MAX_TEXTURE_STAGES][TextureFilterClass::FILTER_TYPE_COUNT];
@@ -100,7 +118,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 //! Init filters (legacy)
 /*!
 */
-void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
+void TextureFilterClass::_Init_Filters(TextureFilterMode texture_filter, AnisotropicFilterMode anisotropy_level)
 {
 	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
@@ -122,7 +140,7 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 	// TheSuperHackers @feature Mauller 08/03/2026 Add full support for all texture filtering modes;
 	// None, Point, Bilinear, Trilinear, Anisotropic.
 	BOOL FilterSupported = false;
-	switch (filter_type) {
+	switch (texture_filter) {
 
 	default:
 		// TheSuperHackers @info if we have an invalid filter_type, set the filtering to none
@@ -201,8 +219,8 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
 			_MagTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
 
-			// Set the Anisotropic filtering level for all stages - 2X by default
-			_Set_Max_Anisotropy(TEXTURE_FILTER_ANISOTROPIC_2X);
+			// Set the Anisotropic filtering level for all stages
+			_Set_Max_Anisotropy(anisotropy_level);
 		}
 		else {
 			_MinTextureFilters[0][FILTER_TYPE_BEST]=D3DTEXF_POINT;

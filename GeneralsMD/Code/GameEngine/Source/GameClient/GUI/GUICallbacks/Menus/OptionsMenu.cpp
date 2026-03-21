@@ -75,6 +75,7 @@
 #include "GameClient/MessageBox.h"
 
 #include "ww3d.h"
+#include "texturefilter.h"
 
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
@@ -566,6 +567,31 @@ static void saveOptions()
 		(*pref)["AntiAliasing"] = prefString;
   }
 
+	//-------------------------------------------------------------------------------------------------
+	// texture filter mode
+	val = pref->getTextureFilterMode();
+	if (val >= 0)
+	{
+		val = clamp((int)TextureFilterClass::TEXTURE_FILTER_NONE, val, (int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC);
+
+		TheWritableGlobalData->m_textureFilteringMode = val;
+		AsciiString prefString;
+		prefString = TextureFilterClass::TextureFilterModeString[val];
+		(*pref)["TextureFilter"] = prefString;
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// anisotropy level
+	val = pref->getTextureAnisotropyLevel();
+	if (val >= 0)
+	{
+		val = clamp((int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X, val, (int)TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_16X);
+
+		TheWritableGlobalData->m_textureAnisotropyLevel = val;
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["AnisotropyLevel"] = prefString;
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// mouse mode

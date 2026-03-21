@@ -31,6 +31,8 @@
 #pragma once
 
 #include "ww3d.h"
+#include "texturefilter.h"
+
 #include "Common/UserPreferences.h"
 
 typedef UnsignedInt CursorCaptureMode;
@@ -57,6 +59,8 @@ public:
 	Bool loadFromIniFile();
 
 	WW3D::MultiSampleModeEnum getAntiAliasing() const;
+	TextureFilterClass::TextureFilterMode getTextureFilterMode() const;
+	TextureFilterClass::AnisotropicFilterMode getTextureAnisotropyLevel() const;
 	UnsignedInt getLANIPAddress();
 	UnsignedInt getOnlineIPAddress();
 	void setLANIPAddress(AsciiString IP);

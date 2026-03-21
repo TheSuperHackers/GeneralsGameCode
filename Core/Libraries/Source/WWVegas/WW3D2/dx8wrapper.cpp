@@ -377,7 +377,10 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits()
 	** Initialize any other subsystems inside of WW3D
 	*/
 	MissingTexture::_Init();
-	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter());
+	TextureFilterClass::_Init_Filters(
+		(TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter(),
+		(TextureFilterClass::AnisotropicFilterMode)WW3D::Get_Anisotropy_Level()
+	);
 	TheDX8MeshRenderer.Init();
 	SHD_INIT;
 	BoxRenderObjClass::Init();
