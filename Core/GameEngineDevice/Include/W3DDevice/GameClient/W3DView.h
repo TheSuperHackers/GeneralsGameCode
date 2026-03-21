@@ -238,7 +238,7 @@ public:
 	virtual void set3DWireFrameMode(Bool enable) override;	///<enables custom wireframe rendering of 3D viewport
 
 	Bool updateCameraMovements();
-	virtual void forceCameraAreaConstraintRecalc() override { calcCameraAreaConstraints(); }
+	virtual void forceCameraAreaConstraintRecalc() override { m_cameraAreaConstraintsValid = false; }
 
 	virtual void setGuardBandBias( const Coord2D *gb ) override { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
 
@@ -283,13 +283,18 @@ private:
 
 	Region2D m_cameraAreaConstraints; ///< Camera should be constrained to be within this area
 	Bool m_cameraAreaConstraintsValid; ///< If false, recalculates the camera area constraints in the next render update
+	Bool m_recalcCameraConstraintsAfterScrolling; ///< Recalculates the camera area constraints after the user has moved the camera
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
 	void setCameraTransform(); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraPosition(Vector3 &sourcePos, Vector3 &targetPos);
 	void buildCameraTransform(Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
+	Bool zoomCameraToDesiredHeight();
+	void updateCameraAreaConstraints();
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
-	Real calcCameraAreaOffset(Real maxEdgeZ);
+	Real calcCameraAreaOffset(Real maxEdgeZ, Bool isLookingDown);
+	void clipCameraIntoAreaConstraints();
+	Bool isWithinCameraAreaConstraints() const;
 	Bool isWithinCameraHeightConstraints() const;
 	virtual void setUserControlled(Bool value);
 	Bool hasScriptedState(ScriptedState state) const;

@@ -197,6 +197,12 @@ struct RealRange
 {
 	Real lo, hi;							// low and high values of the range
 
+	void zero()
+	{
+		lo = 0.0f;
+		hi = 0.0f;
+	}
+
 	// combine the given range with us such that we now encompass
 	// both ranges
 	void combine( RealRange &other )
@@ -209,6 +215,12 @@ struct RealRange
 struct Coord2D
 {
 	Real x, y;
+
+	void zero()
+	{
+		x = 0.0f;
+		y = 0.0f;
+	}
 
 	Real length() const { return (Real)sqrt( x*x + y*y ); }
 	Real lengthSqr() const { return x*x + y*y; }
@@ -291,6 +303,12 @@ struct ICoord2D
 {
 	Int x, y;
 
+	void zero()
+	{
+		x = 0;
+		y = 0;
+	}
+
 	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
 };
 
@@ -298,16 +316,30 @@ struct Region2D
 {
 	Coord2D lo, hi;						// bounds of 2D rectangular region
 
+	void zero()
+	{
+		lo.zero();
+		hi.zero();
+	}
+
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
+	Bool isInRegion( Real x, Real y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };
 
 struct IRegion2D
 {
 	ICoord2D lo, hi;					// bounds of 2D rectangular region
 
+	void zero()
+	{
+		lo.zero();
+		hi.zero();
+	}
+
 	Int width() const { return hi.x - lo.x; }
 	Int height() const { return hi.y - lo.y; }
+	Bool isInRegion( Int x, Int y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };
 
 
@@ -399,15 +431,16 @@ struct ICoord3D
 	Int x, y, z;
 
 	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
+
 	void zero()
 	{
-
 		x = 0;
 		y = 0;
 		z = 0;
 	}
 };
 
+// For alternative see AABoxClass
 struct Region3D
 {
 	Coord3D lo, hi;						// axis-aligned bounding box
@@ -460,20 +493,27 @@ struct Region3D
 
 	Bool isInRegionNoZ( const Coord3D *query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x)
-						&& (lo.y < query->y) && (query->y < hi.y);
+		return (lo.x < query->x) && (query->x < hi.x) &&
+					 (lo.y < query->y) && (query->y < hi.y);
 	}
-	Bool isInRegionWithZ( const Coord3D *query ) const
+
+	Bool isInRegion( const Coord3D *query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x)
-						&& (lo.y < query->y) && (query->y < hi.y)
-						&& (lo.z < query->z) && (query->z < hi.z);
+		return (lo.x < query->x) && (query->x < hi.x) &&
+					 (lo.y < query->y) && (query->y < hi.y) &&
+					 (lo.z < query->z) && (query->z < hi.z);
 	}
 };
 
 struct IRegion3D
 {
 	ICoord3D lo, hi;					// axis-aligned bounding box
+
+	void zero()
+	{
+		lo.zero();
+		hi.zero();
+	}
 
 	Int width() const { return hi.x - lo.x; }
 	Int height() const { return hi.y - lo.y; }
