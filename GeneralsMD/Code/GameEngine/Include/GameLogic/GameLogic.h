@@ -79,6 +79,8 @@ enum GameMode CPP_11(: Int)
 	GAME_NONE
 };
 
+const char* toString(GameMode mode);
+
 enum
 {
 	CRC_CACHED,
