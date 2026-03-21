@@ -398,7 +398,7 @@ public:
 																			 units will always keep their formation. If it's <1.0, then the user must click a
 																			 smaller area within the rectangle to order the gather. */
 
-	Int m_antiAliasBoxValue;          ///< value of selected antialias from combo box in options menu
+	UnsignedInt m_antiAliasLevel;          ///< value of selected antialias level in the game options
 	Bool m_languageFilterPref;        ///< Bool if user wants to filter language
 	Bool m_loadScreenDemo;						///< Bool if true, run the loadscreen demo movie
 	Bool m_disableRender;							///< if true, no rendering!

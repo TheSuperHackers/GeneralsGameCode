@@ -716,7 +716,7 @@ void W3DDisplay::init()
 			}
 
 			// TheSuperHackers @feature Mauller 13/03/2026 Add native MSAA support, must be set before creating render device
-			WW3D::Set_MSAA_Mode(WW3D::MULTISAMPLE_MODE_NONE);
+			WW3D::Set_MSAA_Mode((WW3D::MultiSampleModeEnum)TheWritableGlobalData->m_antiAliasLevel);
 
 			renderDeviceError = WW3D::Set_Render_Device(
 				0,
@@ -725,6 +725,11 @@ void W3DDisplay::init()
 				getBitDepth(),
 				getWindowed(),
 				true );
+
+			// TheSuperHackers @info Update the MSAA mode that was set as some GPU's may not support certain levels
+			if (renderDeviceError == WW3D_ERROR_OK) {
+				TheWritableGlobalData->m_antiAliasLevel = (UnsignedInt)WW3D::Get_MSAA_Mode();
+			}
 
 			++attempt;
 		}

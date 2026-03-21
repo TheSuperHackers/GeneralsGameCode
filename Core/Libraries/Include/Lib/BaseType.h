@@ -58,6 +58,22 @@ inline int sign(NUM x)
 	else return 0;
 }
 
+template <typename NUM>
+inline NUM highestBit(NUM x)
+{
+	static_assert(sizeof(NUM) <= 8, "NUM must be 8 bytes or less");
+	UnsignedInt64 y = static_cast<UnsignedInt64>(x);
+
+	y |= (y >> 1);
+	y |= (y >> 2);
+	y |= (y >> 4);
+	y |= (y >> 8);
+	y |= (y >> 16);
+	y |= (y >> 32);
+
+	return static_cast<NUM>(y & ~(y >> 1));
+}
+
 // TheSuperHackers @refactor JohnsterID 24/01/2026 Add lowercase min/max templates for GameEngine layer.
 // GameEngine code typically uses BaseType.h, but may include WWVegas headers (which define min/max in always.h).
 // Header guard prevents duplicate definitions. VC6's <algorithm> lacks std::min/std::max.

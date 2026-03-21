@@ -533,11 +533,17 @@ static void saveOptions()
 	//-------------------------------------------------------------------------------------------------
 	// antialiasing
   GadgetComboBoxGetSelectedPos(comboBoxAntiAliasing, &index);
-  if( index >= 0 && TheGlobalData->m_antiAliasBoxValue != index )
+  if( index >= 0 )
   {
-    TheWritableGlobalData->m_antiAliasBoxValue = index;
+		Int mode = WW3D::MULTISAMPLE_MODE_NONE;
+
+		// TheSuperHackers @info We are converting comboBox entry position to MultiSampleModeEnum values
+		index = clamp((int)OptionPreferences::AntiAliasingMode_OFF, index, (int)OptionPreferences::AntiAliasingMode_MSAA_8X);
+		mode = (index > 0) ? 1 << index : 0;
+
+		TheWritableGlobalData->m_antiAliasLevel = mode;
     AsciiString prefString;
-		prefString.format("%d", index);
+		prefString.format("%d", mode);
 		(*pref)["AntiAliasing"] = prefString;
   }
 
@@ -992,14 +998,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	Color color =  GameMakeColor(255,255,255,255);
 
-  enum AliasingMode CPP_11(: Int)
-  {
-    OFF = 0,
-    LOW,
-    HIGH,
-    NUM_ALIASING_MODES
-  };
-
 	initLabelVersion();
 
 	// Choose an IP address, then initialize the IP combo box
@@ -1103,18 +1101,32 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GadgetComboBoxReset(comboBoxAntiAliasing);
 	AsciiString temp;
 	Int i=0;
-	for (; i < NUM_ALIASING_MODES; ++i)
+	for (; i < OptionPreferences::AntiAliasingMode_Count; ++i)
 	{
 		temp.format("GUI:AntiAliasing%d", i);
 		str = TheGameText->fetch( temp );
 		index = GadgetComboBoxAddEntry(comboBoxAntiAliasing, str, color);
 	}
 	Int val = atoi(selectedAliasingMode.str());
-	if( val < 0 || val > NUM_ALIASING_MODES )
+	Int pos = 0;
+
+	// TheSuperHackers @info We are converting from human readable value to comboBox entry position
+	val = highestBit(val);
+
+	if (val == WW3D::MULTISAMPLE_MODE_NONE)
+		pos = OptionPreferences::AntiAliasingMode_OFF;
+	else if (val == WW3D::MULTISAMPLE_MODE_2X)
+		pos = OptionPreferences::AntiAliasingMode_MSAA_2X;
+	else if (val == WW3D::MULTISAMPLE_MODE_4X)
+		pos = OptionPreferences::AntiAliasingMode_MSAA_4X;
+	else if (val == WW3D::MULTISAMPLE_MODE_8X)
+		pos = OptionPreferences::AntiAliasingMode_MSAA_8X;
+
+	if (val < 0 || val > WW3D::MULTISAMPLE_MODE_8X)
 	{
-		TheWritableGlobalData->m_antiAliasBoxValue = val = 0;
+		TheWritableGlobalData->m_antiAliasLevel = pos = 0;
 	}
-	GadgetComboBoxSetSelectedPos(comboBoxAntiAliasing, val);
+	GadgetComboBoxSetSelectedPos(comboBoxAntiAliasing, pos);
 
 	// get resolution from saved preferences file
 	AsciiString selectedResolution = (*pref) ["Resolution"];

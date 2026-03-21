@@ -66,6 +66,19 @@ Bool OptionPreferences::loadFromIniFile()
 	return load("Options.ini");
 }
 
+WW3D::MultiSampleModeEnum OptionPreferences::getAntiAliasing() const
+{
+	OptionPreferences::const_iterator it = find("AntiAliasing");
+	if (it == end())
+		return WW3D::MULTISAMPLE_MODE_NONE;
+
+	WW3D::MultiSampleModeEnum level = (WW3D::MultiSampleModeEnum)atoi(it->second.str());
+	level = clamp(WW3D::MULTISAMPLE_MODE_NONE, level, WW3D::MULTISAMPLE_MODE_8X);
+	level = highestBit(level);
+
+	return level;
+}
+
 Int OptionPreferences::getCampaignDifficulty()
 {
 	OptionPreferences::const_iterator it = find("CampaignDifficulty");
