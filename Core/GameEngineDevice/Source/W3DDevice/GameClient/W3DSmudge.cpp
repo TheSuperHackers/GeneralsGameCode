@@ -488,8 +488,11 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 			{
 				Smudge *smudge=remainingSmudgeStart;
 
-				while (smudge)
+				for (; smudge; smudge=smudge->Succ())
 				{
+					if (!smudge->m_draw)
+						continue;
+
 					Smudge::smudgeVertex *smVerts = smudge->m_verts;
 
 					//Check if we exceeded maximum number of smudges allowed per draw call.
@@ -520,7 +523,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 					}
 
 					smudgesInRenderBatch++;
-					smudge=smudge->Succ();
 				}
 
 				set=set->Succ();	//advance to next node.
