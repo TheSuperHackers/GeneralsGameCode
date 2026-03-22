@@ -32,7 +32,7 @@ class DX8IndexBufferClass;
 
 //#define USE_COPY_RECTS	1	//this was the old method that didn't render to texture. Just copied backbuffer into texture. Slow on Nvidia.
 
-class W3DSmudgeManager : public SmudgeManager
+class W3DSmudgeManager final : public SmudgeManager
 {
 public:
 	W3DSmudgeManager();
