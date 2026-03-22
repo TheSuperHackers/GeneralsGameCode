@@ -47,6 +47,16 @@ struct Smudge : public DLNodeClass<Smudge>
 	smudgeVertex m_verts[5];	//5 vertices of this smudge (in counter-clockwise order, starting at top-left, ending in center.)
 };
 
+#ifdef USING_STLPORT
+namespace std
+{
+	template<> struct hash<Smudge::Identifier>
+	{
+		size_t operator()(Smudge::Identifier id) const { return reinterpret_cast<size_t>(id); }
+	};
+}
+#endif // USING_STLPORT
+
 struct SmudgeSet : public DLNodeClass<SmudgeSet>
 {
 	friend class SmudgeManager;
