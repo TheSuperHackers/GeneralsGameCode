@@ -2429,6 +2429,39 @@ void Player::doBountyForKill(const Object* killer, const Object* victim)
 		return;
 
 	Int costToBuild = victim->getTemplate()->calcCostToBuild(victim->getControllingPlayer());
+
+	// TheSuperHackers @bugfix zhaog100 23/03/2026
+	// When a unit is produced in quantity (e.g. China Red Guards come in pairs),
+	// the BuildCost on the template reflects the total cost for the whole batch,
+	// not the per-unit cost. Look up the producer's quantity modifier to get the
+	// correct per-unit bounty value.
+	ObjectID producerID = victim->getProducerID();
+	if (producerID != INVALID_ID)
+	{
+		Object* producer = TheGameLogic->findObjectByID(producerID);
+		if (producer)
+		{
+			ProductionUpdateInterface* pu = producer->getProductionUpdateInterface();
+			if (pu)
+			{
+				const ProductionUpdateModuleData* pud = pu->getProductionUpdateModuleData();
+				const std::vector<QuantityModifier>& modifiers = pud->m_quantityModifiers;
+				for (std::vector<QuantityModifier>::const_iterator it = modifiers.begin(); it != modifiers.end(); ++it)
+				{
+					const ThingTemplate* modTemplate = TheThingFactory->findTemplate(it->m_templateName);
+					if (modTemplate && modTemplate->isEquivalentTo(victim->getTemplate()))
+					{
+						if (it->m_quantity > 1)
+						{
+							costToBuild = costToBuild / it->m_quantity;
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
 #if RETAIL_COMPATIBLE_CRC
 	Int bounty = REAL_TO_INT_CEIL(costToBuild * m_cashBountyPercent);
 #else
