@@ -3036,6 +3036,7 @@ void ParticleSystemManager::update()
 					smudge->m_offset.Set(GameClientRandomValueReal(-0.06f,0.06f), GameClientRandomValueReal(-0.03f,0.03f));
 					smudge->m_size = p->getSize();
 					smudge->m_opacity = p->getAlpha();
+					smudge->m_draw = false;
 				}
 			}
 		}
