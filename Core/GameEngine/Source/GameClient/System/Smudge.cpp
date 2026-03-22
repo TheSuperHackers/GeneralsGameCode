@@ -136,6 +136,7 @@ void SmudgeSet::reset()
 	}
 
 	m_usedSmudgeMap.clear();
+	m_usedSmudgeCount = 0;
 }
 
 void SmudgeSet::resetDraw()
