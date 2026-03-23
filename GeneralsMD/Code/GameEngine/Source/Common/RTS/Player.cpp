@@ -2441,22 +2441,13 @@ void Player::doBountyForKill(const Object* killer, const Object* victim)
 		Object* producer = TheGameLogic->findObjectByID(producerID);
 		if (producer)
 		{
-			ProductionUpdateInterface* pu = producer->getProductionUpdateInterface();
+			ProductionUpdate* pu = dynamic_cast<ProductionUpdate*>(producer->getProductionUpdateInterface());
 			if (pu)
 			{
-				const ProductionUpdateModuleData* pud = pu->getProductionUpdateModuleData();
-				const std::vector<QuantityModifier>& modifiers = pud->m_quantityModifiers;
-				for (std::vector<QuantityModifier>::const_iterator it = modifiers.begin(); it != modifiers.end(); ++it)
+				Int quantity = pu->getQuantityForTemplate(victim->getTemplate());
+				if (quantity > 1)
 				{
-					const ThingTemplate* modTemplate = TheThingFactory->findTemplate(it->m_templateName);
-					if (modTemplate && modTemplate->isEquivalentTo(victim->getTemplate()))
-					{
-						if (it->m_quantity > 1)
-						{
-							costToBuild = costToBuild / it->m_quantity;
-						}
-						break;
-					}
+					costToBuild = costToBuild / quantity;
 				}
 			}
 		}

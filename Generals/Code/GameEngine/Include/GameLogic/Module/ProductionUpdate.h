@@ -195,6 +195,9 @@ public:
 	virtual DieModuleInterface* getDie() override { return this; }
 	static ProductionUpdateInterface *getProductionUpdateInterfaceFromObject( Object *obj );
 
+	/// @return the quantity modifier for the given thing template, or 1 if none found
+	Int getQuantityForTemplate(const ThingTemplate* thingTemplate) const;
+
 	virtual CanMakeType canQueueCreateUnit( const ThingTemplate *unitType ) const override;
 	virtual CanMakeType canQueueUpgrade( const UpgradeTemplate *upgrade ) const override;
 

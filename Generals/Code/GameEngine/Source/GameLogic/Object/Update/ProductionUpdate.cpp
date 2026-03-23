@@ -1395,3 +1395,21 @@ void ProductionUpdate::loadPostProcess()
 	UpdateModule::loadPostProcess();
 
 }
+
+// ------------------------------------------------------------------------------------------------
+/** Get the production quantity modifier for the given thing template. */
+// ------------------------------------------------------------------------------------------------
+Int ProductionUpdate::getQuantityForTemplate(const ThingTemplate* thingTemplate) const
+{
+	const ProductionUpdateModuleData* pud = getProductionUpdateModuleData();
+	const std::vector<QuantityModifier>& modifiers = pud->m_quantityModifiers;
+	for (std::vector<QuantityModifier>::const_iterator it = modifiers.begin(); it != modifiers.end(); ++it)
+	{
+		const ThingTemplate* modTemplate = TheThingFactory->findTemplate(it->m_templateName);
+		if (modTemplate && modTemplate->isEquivalentTo(thingTemplate))
+		{
+			return it->m_quantity;
+		}
+	}
+	return 1;
+}
