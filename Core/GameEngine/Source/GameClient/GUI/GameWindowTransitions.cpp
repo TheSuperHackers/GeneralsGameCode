@@ -240,7 +240,7 @@ Int TransitionWindow::getTotalFrames( void )
 //-----------------------------------------------------------------------------
 TransitionGroup::TransitionGroup( void )
 {
-	m_currentFrame = 0;
+	m_currentFrame = 0.0f;
 	m_fireOnce = FALSE;
 }
 
@@ -257,7 +257,7 @@ TransitionGroup::~TransitionGroup( void )
 
 void TransitionGroup::init( void )
 {
-	m_currentFrame = 0;
+	m_currentFrame = 0.0f;
 	m_directionMultiplier = 1;
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
 	while (it != m_transitionWindowList.end())
@@ -318,7 +318,7 @@ void TransitionGroup::reverse( void )
 		tWin->reverse(totalFrames);
 		it++;
 	}
-	m_currentFrame = totalFrames;
+	m_currentFrame = (Real)totalFrames;
 //	m_currentFrame ++;
 }
 
