@@ -569,7 +569,7 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 	public:
 
 		W3DShadowGeometry() { };
-		~W3DShadowGeometry() override { };
+		virtual ~W3DShadowGeometry() override { };
 
 		virtual	const char * Get_Key() override { return m_namebuf;	}
 

@@ -151,7 +151,7 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 			m_shadowUV[0].Set(1.0f,0.0f,0.0f);	//u runs along world x axis
 			m_shadowUV[1].Set(0.0f,-1.0f,0.0f);	//v runs along world -y axis
 		}
-		~W3DShadowTexture() override { REF_PTR_RELEASE(m_texture);}
+		virtual ~W3DShadowTexture() override { REF_PTR_RELEASE(m_texture);}
 
 		virtual	const char * Get_Key() override { return m_namebuf;	}
 
