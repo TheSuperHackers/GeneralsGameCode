@@ -266,7 +266,6 @@ protected:
 private:
 
 	void tryStartNewGame( Bool loadSaveGame );
-	Bool m_quitToDesktopAfterMatch;
 
 	void updateDisplayBusyState();
 
@@ -312,6 +311,7 @@ private:
 	Bool m_loadingMap;
 	Bool m_loadingSave;
 	Bool m_clearingGameData;
+	Bool m_quitToDesktopAfterMatch;
 
 	Bool m_isInUpdate;
 	Bool m_hasUpdated;
