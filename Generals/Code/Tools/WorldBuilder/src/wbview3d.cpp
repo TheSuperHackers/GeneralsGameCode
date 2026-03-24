@@ -296,7 +296,7 @@ class SkeletonSceneClass : public RTS3DScene
 {
 public:
 	SkeletonSceneClass(void) : m_testPass(nullptr) { }
-	~SkeletonSceneClass(void) override { REF_PTR_RELEASE(m_testPass); }
+	virtual ~SkeletonSceneClass(void) override { REF_PTR_RELEASE(m_testPass); }
 
 	void					Set_Material_Pass(MaterialPassClass * pass)	{ REF_PTR_SET(m_testPass, pass); }
 	virtual void Remove_Render_Object(RenderObjClass * obj) override;
