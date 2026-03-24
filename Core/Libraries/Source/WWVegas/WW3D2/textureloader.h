@@ -281,7 +281,7 @@ protected:
 	virtual bool			Begin_Uncompressed_Load	() override;
 
 	virtual bool			Load_Compressed_Mipmap	() override;
-//	virtual bool			Load_Uncompressed_Mipmap();
+//	virtual bool			Load_Uncompressed_Mipmap() override;
 
 	virtual void			Lock_Surfaces				() override;
 	virtual void			Unlock_Surfaces			() override;
@@ -309,7 +309,7 @@ protected:
 	virtual bool			Begin_Uncompressed_Load	() override;
 
 	virtual bool			Load_Compressed_Mipmap	() override;
-//	virtual bool			Load_Uncompressed_Mipmap();
+//	virtual bool			Load_Uncompressed_Mipmap() override;
 
 	virtual void			Lock_Surfaces				() override;
 	virtual void			Unlock_Surfaces			() override;

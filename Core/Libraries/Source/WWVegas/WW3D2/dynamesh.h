@@ -155,7 +155,7 @@ public:
 
 	// Get and set static sort level
    virtual int		Get_Sort_Level() const override { return SortLevel; }
-  	virtual void	Set_Sort_Level(int level) override		{ SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
+  	virtual void	Set_Sort_Level(int level) override { SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
 
 	// object space bounding volumes
 	virtual inline void Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
