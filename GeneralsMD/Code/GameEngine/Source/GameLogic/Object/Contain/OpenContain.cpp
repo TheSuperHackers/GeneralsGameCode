@@ -1467,7 +1467,7 @@ void OpenContain::orderAllPassengersToHackInternet( CommandSourceType commandSou
 //-------------------------------------------------------------------------------------------------
 void OpenContain::processDamageToContainedInternal(Object* const* objects, size_t size, Real percentDamage)
 {
-	const bool isBurnedDeathToUnits = getOpenContainModuleData()->m_isBurnedDeathToUnits;
+	const DeathType deathType = getOpenContainModuleData()->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
 	const bool killContained = percentDamage == 1.0f;
 
 	for (size_t i = 0; i < size; ++i)
@@ -1479,7 +1479,7 @@ void OpenContain::processDamageToContainedInternal(Object* const* objects, size_
 
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
-		damageInfo.in.m_deathType = isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
+		damageInfo.in.m_deathType = deathType;
 		damageInfo.in.m_sourceID = getObject()->getID();
 		damageInfo.in.m_amount = damage;
 		object->attemptDamage( &damageInfo );
@@ -1495,7 +1495,7 @@ void OpenContain::processDamageToContainedInternal(Object* const* objects, size_
 	}
 }
 
-#endif
+#endif // RETAIL_COMPATIBLE_CRC
 
 //-------------------------------------------------------------------------------------------------
 void OpenContain::processDamageToContained(Real percentDamage)
@@ -1505,7 +1505,8 @@ void OpenContain::processDamageToContained(Real percentDamage)
 	DEBUG_ASSERTCRASH(m_containListSize == m_containList.size(), ("contain list size doesn't match size of container"));
 
 	// TheSuperHackers @bugfix Caball009 11/03/2026 Use a temporary copy of the contain list to iterate over,
-	// because Object::attemptDamage may remove some or all elements from the list while iterating over it, which may be unsafe.
+	// because causing damage to the occupants may remove some or all elements from the list
+	// while iterating over it, which may be unsafe.
 
 	constexpr const UnsignedInt smallContainerSize = 16;
 	if (m_containListSize < smallContainerSize)
@@ -1525,13 +1526,14 @@ void OpenContain::processDamageToContained(Real percentDamage)
 #else
 
 	// TheSuperHackers @bugfix xezon 05/06/2025 Temporarily empty the m_containList
-	// because Object::attemptDamage may remove some or all elements from the list while iterating over it, which may be unsafe.
+	// because causing damage to the occupants may remove some or all elements from the list
+	// while iterating over it, which may be unsafe.
 
 	// Caveat: While the m_containList is empty, it will not be possible to apply damage
 	// on death of a unit to another unit in the host container. If this functionality
 	// is desired, then this implementation needs to be revisited.
 
-	const bool isBurnedDeathToUnits = getOpenContainModuleData()->m_isBurnedDeathToUnits;
+	const DeathType deathType = getOpenContainModuleData()->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
 	const bool killContained = percentDamage == 1.0f;
 
 	ContainedItemsList list;
@@ -1551,7 +1553,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
-		damageInfo.in.m_deathType = isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
+		damageInfo.in.m_deathType = deathType;
 		damageInfo.in.m_sourceID = getObject()->getID();
 		damageInfo.in.m_amount = damage;
 		object->attemptDamage( &damageInfo );
