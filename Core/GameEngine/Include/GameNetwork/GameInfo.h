@@ -100,7 +100,7 @@ public:
 	void setNATBehavior( FirewallHelperClass::FirewallBehaviorType NATBehavior) { m_NATBehavior = NATBehavior; }
 	FirewallHelperClass::FirewallBehaviorType getNATBehavior() const { return m_NATBehavior; }
 
-	void saveOffOriginalInfo();
+	void saveOriginalSetup();
 	Int getOriginalPlayerTemplate() const	{ return m_origPlayerTemplate; }
 	Int getOriginalColor() const						{ return m_origColor; }
 	Int getOriginalStartPos() const				{ return m_origStartPos; }

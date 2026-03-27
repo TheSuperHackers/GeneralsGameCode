@@ -1265,7 +1265,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		{
 			GameSlot *slot = TheGameInfo->getSlot(i);
 			if (!loadingSaveGame) {
-				slot->saveOffOriginalInfo();
+				slot->saveOriginalSetup();
 			}
 			if (slot->isAI())
 			{
