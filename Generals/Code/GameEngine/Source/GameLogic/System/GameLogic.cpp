@@ -202,6 +202,30 @@ void setFPMode()
 	_controlfp(newVal, _MCW_PC | _MCW_RC);
 }
 
+//-------------------------------------------------------------------------------------------------
+const char* toString(GameMode mode)
+{
+	switch (mode)
+	{
+		case GAME_SINGLE_PLAYER:
+			return "GAME_SINGLE_PLAYER";
+		case GAME_LAN:
+			return "GAME_LAN";
+		case GAME_SKIRMISH:
+			return "GAME_SKIRMISH";
+		case GAME_REPLAY:
+			return "GAME_REPLAY";
+		case GAME_SHELL:
+			return "GAME_SHELL";
+		case GAME_INTERNET:
+			return "GAME_INTERNET";
+		case GAME_NONE:
+			return "GAME_NONE";
+		default:
+			return "GAME_UNKNOWN";
+	}
+}
+
 // ------------------------------------------------------------------------------------------------
 /** GameLogic class constructor */
 // ------------------------------------------------------------------------------------------------
@@ -1081,7 +1105,20 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		{
 			GameSlot *slot = TheGameInfo->getSlot(i);
 			if (!loadingSaveGame) {
-				slot->saveOffOriginalInfo();
+				if (!slot->getSaveOriginalSetup())
+				{
+					DEBUG_ASSERTCRASH(m_gameMode == GAME_SKIRMISH, ("Expected GAME_SKIRMISH but got %s", toString(m_gameMode)));
+
+					// TheSuperHackers @fix Caball009 19/03/2026 Random color, position and faction are based on the logical seed. For improved determinism,
+					// restarted games now set the original values so that the games start with the exact same logical seed values as the first time.
+					slot->setColor(slot->getOriginalColor());
+					slot->setStartPos(slot->getOriginalStartPos());
+					slot->setPlayerTemplate(slot->getOriginalPlayerTemplate());
+				}
+				else
+				{
+					slot->saveOriginalSetup();
+				}
 			}
 			if (slot->isAI())
 			{
