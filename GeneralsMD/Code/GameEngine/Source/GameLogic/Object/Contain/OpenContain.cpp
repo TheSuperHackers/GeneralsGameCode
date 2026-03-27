@@ -448,7 +448,7 @@ void OpenContain::removeAllContained( Bool exposeStealthUnits )
 void OpenContain::killAllContained()
 {
 	// TheSuperHackers @bugfix Caball009 11/03/2026 The contain list must be updated while iterating over it,
-	// because e.g. GarrisonContain::onRemoving relies on that behavior for the team ownership of civilian buildings.
+	// because e.g. garrisoned infantry relies on that behavior for the team ownership of civilian buildings.
 
 	ContainedItemsList::iterator it = m_containList.begin();
 	while ( it != m_containList.end() )
@@ -465,7 +465,7 @@ void OpenContain::killAllContained()
 			rider->onRemovedFrom( getObject() );
 			rider->kill();
 
-			// After Object::kill, the iterator may or may not be invalidated and the list may or may not be empty.
+			// After kill, the iterator may or may not be invalidated and the list may or may not be empty.
 			// Set the iterator to the beginning of the list.
 			it = m_containList.begin();
 		}
