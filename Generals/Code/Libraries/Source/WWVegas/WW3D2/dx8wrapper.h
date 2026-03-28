@@ -22,16 +22,19 @@
  *                                                                                             *
  *                 Project Name : ww3d                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/dx8wrapper.h                                $*
+ *                     $Archive:: /Commando/Code/ww3d2/dx8wrapper.h                           $*
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 08/05/02 2:40p                                              $*
  *                                                                                             *
- *                    $Revision:: 76                                                          $*
+ *                    $Revision:: 92                                                          $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
+ * 06/27/02 KM Render to shadow buffer texture support														*
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -197,6 +200,7 @@ struct RenderStateStruct
 	TextureBaseClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
+  //unsigned lightsHash;
 	D3DMATRIX world;
 	D3DMATRIX view;
 	unsigned vertex_buffer_type;
@@ -705,7 +709,7 @@ protected:
 // shader system updates KJM v
 WWINLINE void DX8Wrapper::Set_Vertex_Shader(DWORD vertex_shader)
 {
-#if 0 //(gth) some code is bypassing this acessor function so we can't count on this variable...
+#if 0 //(gth) some code is bypassing this accessor function so we can't count on this variable...
 	// may be incorrect if shaders are created and destroyed dynamically
 	if (Vertex_Shader==vertex_shader) return;
 #endif
@@ -983,7 +987,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha
 	unsigned int col;
 
 	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
-	// such that 32 bit ingeger has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
+	// such that 32 bit integer has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
 	__asm
 	{
 		sub	esp,20					// space for a, r, g and b float plus fpu rounding mode
@@ -1160,9 +1164,18 @@ WWINLINE void DX8Wrapper::Set_Texture(unsigned stage,TextureBaseClass* texture)
 
 WWINLINE void DX8Wrapper::Set_Material(const VertexMaterialClass* material)
 {
-	if (material==render_state.material) return;
+/*	if (material && render_state.material &&
+		// !stricmp(material->Get_Name(),render_state.material->Get_Name())) {
+		material->Get_CRC()!=render_state.material->Get_CRC()) {
+		return;
+	}
+*/
+//	if (material==render_state.material) {
+//		return;
+//	}
 	REF_PTR_SET(render_state.material,const_cast<VertexMaterialClass*>(material));
 	render_state_changed|=MATERIAL_CHANGED;
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Material(%s)",material ? material->Get_Name() : "null"));
 }
 
 WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)

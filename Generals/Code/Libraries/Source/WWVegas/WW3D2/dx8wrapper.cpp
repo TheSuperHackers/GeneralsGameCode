@@ -22,16 +22,19 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/dx8wrapper.cpp                              $*
+ *                     $Archive:: /Commando/Code/ww3d2/dx8wrapper.cpp                         $*
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 08/05/02 1:27p                                              $*
  *                                                                                             *
- *                    $Revision:: 134                                                         $*
+ *                    $Revision:: 170                                                         $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
+ * 06/27/02 KM Render to shadow buffer texture support														*
+ * 06/27/02 KM Shader system updates																				*
  * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -1660,9 +1663,15 @@ void DX8Wrapper::Flip_To_Primary()
 }
 
 
+//**********************************************************************************************
+//! Clear current render device
+/*! KM
+/* 5/17/02 KM Fixed support for render to texture with depth/stencil buffers
+*/
 void DX8Wrapper::Clear(bool clear_color, bool clear_z_stencil, const Vector3 &color, float dest_alpha, float z, unsigned int stencil)
 {
 	DX8_THREAD_ASSERT();
+
 	// If we try to clear a stencil buffer which is not there, the entire call will fail
 	bool has_stencil = (	_PresentParameters.AutoDepthStencilFormat == D3DFMT_D15S1 ||
 								_PresentParameters.AutoDepthStencilFormat == D3DFMT_D24S8 ||
@@ -2072,7 +2081,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	{
 		if (render_state_changed&mask)
 		{
-			SNAPSHOT_SAY(("DX8 - apply texture %d",i));
+			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path().str() : "null"));
 
 			if (render_state.Textures[i])
 			{
@@ -2124,7 +2133,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 				}
 				else {
 					Set_DX8_Light(index,nullptr);
-					SNAPSHOT_SAY((" clearing light to null"));
+					SNAPSHOT_SAY((" clearing light to NULL"));
 				}
 			}
 		}
@@ -3611,7 +3620,7 @@ void DX8Wrapper::Apply_Default_State()
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {
-		SNAPSHOT_SAY(("Clearing light %d to null",index));
+		SNAPSHOT_SAY(("Clearing light %d to NULL",index));
 		Set_DX8_Light(index,nullptr);
 	}
 
