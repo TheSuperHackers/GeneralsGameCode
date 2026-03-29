@@ -624,6 +624,9 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		DX8TextureManagerClass::Release_Textures();
 		SHD_SHUTDOWN_SHADERS;
 
+		// Reset frame count to reflect the flipping chain being reset by Reset()
+		FrameCount = 0;
+
 		memset(Vertex_Shader_Constants,0,sizeof(Vector4)*MAX_VERTEX_SHADER_CONSTANTS);
 		memset(Pixel_Shader_Constants,0,sizeof(Vector4)*MAX_PIXEL_SHADER_CONSTANTS);
 
