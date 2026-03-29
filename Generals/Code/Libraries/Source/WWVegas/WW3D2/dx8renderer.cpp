@@ -2154,6 +2154,15 @@ static void Render_FVF_Category_Container_List(FVFCategoryList& list)
 	}
 }
 
+static void Render_FVF_Category_Container_List_Delayed_Passes(FVFCategoryList& list)
+{
+	FVFCategoryListIterator it(&list);
+	while (!it.Is_Done()) {
+		it.Peek_Obj()->Render_Delayed_Procedural_Material_Passes();
+		it.Next();
+	}
+}
+
 void DX8MeshRendererClass::Flush()
 {
 	int i;
@@ -2178,6 +2187,14 @@ void DX8MeshRendererClass::Flush()
 	Render_FVF_Category_Container_List(*texture_category_container_list_skin);
 
 	Render_Decal_Meshes();
+
+	/*
+	** Render the translucent procedural material passes that were applied to meshes that
+	** had their base passes disabled.
+	*/
+	for (i=0;i<texture_category_container_lists_rigid.Count();++i) {
+		Render_FVF_Category_Container_List_Delayed_Passes(*texture_category_container_lists_rigid[i]);
+	}
 
 	DX8Wrapper::Set_Vertex_Buffer(nullptr);
 	DX8Wrapper::Set_Index_Buffer(nullptr,0);
