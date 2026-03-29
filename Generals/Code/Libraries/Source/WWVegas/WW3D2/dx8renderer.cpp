@@ -1986,7 +1986,9 @@ DX8MeshRendererClass::~DX8MeshRendererClass()
 
 void DX8MeshRendererClass::Init()
 {
-	texture_category_container_list_skin = W3DNEW FVFCategoryList;
+	// DMS - Only allocate one if we have not already (leak fix)
+	if(!texture_category_container_list_skin)
+		texture_category_container_list_skin = W3DNEW FVFCategoryList;
 }
 
 void DX8MeshRendererClass::Shutdown()
