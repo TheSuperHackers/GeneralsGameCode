@@ -47,6 +47,7 @@
 #include "dx8indexbuffer.h"
 #include "dx8fvf.h"
 #include "dx8caps.h"
+#include "dx8rendererdebugger.h"
 #include "wwdebug.h"
 #include "wwprofile.h"
 #include "wwmemlog.h"
@@ -1865,6 +1866,9 @@ void DX8TextureCategoryClass::Render()
 		/*
 		** Render mesh using either sorting or immediate pipeline
 		*/
+		//(gth) this if statement's contents are not tabbed to avoid perforce merge problems...
+		if (!DX8RendererDebugger::Is_Enabled() || !mesh->Is_Disabled_By_Debugger()) {
+
 		if ((!!mesh->Peek_Model()->Get_Flag(MeshGeometryClass::SORT)) && WW3D::Is_Sorting_Enabled()) {
 			renderer->Render_Sorted(mesh->Get_Base_Vertex_Offset(),mesh->Get_Bounding_Sphere());
 		} else {
@@ -1930,6 +1934,7 @@ void DX8TextureCategoryClass::Render()
 
 
 
+        }
 
 		/*
 		** Move to the next render task.  Note that the delete should be fast because prt's are pooled
