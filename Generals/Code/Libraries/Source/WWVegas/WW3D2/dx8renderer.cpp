@@ -22,16 +22,17 @@
  *                                                                                             *
  *                 Project Name : ww3d                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/dx8renderer.cpp                             $*
+ *                     $Archive:: /Commando/Code/ww3d2/dx8renderer.cpp                        $*
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                    $Revision:: 103                                                         $*
+ *                    $Revision:: 111                                                         $*
  *                                                                                             *
+ * 06/27/02 KM Changes to max texture stage caps																*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

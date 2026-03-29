@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                       Author : Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 7/10/01 5:49p                                               $*
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                    $Revision:: 28                                                          $*
+ *                    $Revision:: 29                                                          $*
  *                                                                                             *
+ * 06/27/02 KM Changes to max texture stage caps																*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
