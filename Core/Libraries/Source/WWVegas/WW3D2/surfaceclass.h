@@ -74,7 +74,7 @@ class SurfaceClass : public W3DMPO, public RefCountClass
 		// Create the surface from a D3D pointer
 		SurfaceClass(IDirect3DSurface8 *d3d_surface);
 
-		~SurfaceClass();
+		virtual ~SurfaceClass() override;
 
 		// Get surface description
 		void Get_Description(SurfaceDescription &surface_desc);

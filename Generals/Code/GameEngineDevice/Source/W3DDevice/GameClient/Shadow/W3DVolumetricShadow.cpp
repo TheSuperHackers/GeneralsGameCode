@@ -569,9 +569,9 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 	public:
 
 		W3DShadowGeometry() { };
-		~W3DShadowGeometry() { };
+		virtual ~W3DShadowGeometry() override { };
 
-		virtual	const char * Get_Key()	{ return m_namebuf;	}
+		virtual	const char * Get_Key() override { return m_namebuf;	}
 
 		Int init (RenderObjClass *robj);
 		Int initFromHLOD (RenderObjClass *robj);	///<initialize the geometry from a W3D HLOD object.
@@ -3819,9 +3819,9 @@ class MissingGeomClass : public HashableClass {
 
 public:
 	MissingGeomClass( const char * name ) : Name( name ) {}
-	virtual	~MissingGeomClass() {}
+	virtual	~MissingGeomClass() override {}
 
-	virtual	const char * Get_Key()	{ return Name;	}
+	virtual	const char * Get_Key() override { return Name;	}
 
 private:
 	StringClass	Name;

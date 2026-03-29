@@ -42,12 +42,12 @@ class W3DParticleSystemManager : public ParticleSystemManager
 
 public:
 	W3DParticleSystemManager();
-	~W3DParticleSystemManager();
+	virtual ~W3DParticleSystemManager() override;
 
-	virtual void doParticles(RenderInfoClass &rinfo);
-	virtual void queueParticleRender();
+	virtual void doParticles(RenderInfoClass &rinfo) override;
+	virtual void queueParticleRender() override;
 	///< returns the number of particles shown on screen per frame
-	virtual Int getOnScreenParticleCount() { return m_onScreenParticleCount; }
+	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
 private:
 	enum { MAX_POINTS_PER_GROUP = 512 };

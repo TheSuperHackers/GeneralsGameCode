@@ -70,18 +70,18 @@ class DirectInputKeyboard : public Keyboard
 public:
 
 	DirectInputKeyboard();
-	virtual ~DirectInputKeyboard();
+	virtual ~DirectInputKeyboard() override;
 
 	// extend methods from the base class
-	virtual void init();		///< initialize the keyboard, extending init functionality
-	virtual void reset();		///< Reset the keyboard system
-	virtual void update();  ///< update call, extending update functionality
-	virtual Bool getCapsState();		///< get state of caps lock key, return TRUE if down
+	virtual void init() override;		///< initialize the keyboard, extending init functionality
+	virtual void reset() override;		///< Reset the keyboard system
+	virtual void update() override;  ///< update call, extending update functionality
+	virtual Bool getCapsState() override;		///< get state of caps lock key, return TRUE if down
 
 protected:
 
 	// extended methods from the base class
-	virtual void getKey( KeyboardIO *key );  ///< get a single key event
+	virtual void getKey( KeyboardIO *key ) override;  ///< get a single key event
 
 	//-----------------------------------------------------------------------------------------------
 

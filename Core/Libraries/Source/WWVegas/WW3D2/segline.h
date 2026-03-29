@@ -54,7 +54,7 @@ class SegmentedLineClass : public RenderObjClass
 		SegmentedLineClass();
 		SegmentedLineClass(const SegmentedLineClass & src);
 		SegmentedLineClass & operator = (const SegmentedLineClass &that);
-		virtual ~SegmentedLineClass();
+		virtual ~SegmentedLineClass() override;
 
 		void					Reset_Line();
 
@@ -117,33 +117,33 @@ class SegmentedLineClass : public RenderObjClass
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Cloning and Identification
 		/////////////////////////////////////////////////////////////////////////////
-		virtual RenderObjClass *	Clone() const;
-		virtual int						Class_ID()	const { return CLASSID_SEGLINE; }
-		virtual int						Get_Num_Polys() const;
+		virtual RenderObjClass *	Clone() const override;
+		virtual int						Class_ID()	const override { return CLASSID_SEGLINE; }
+		virtual int						Get_Num_Polys() const override;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Rendering
 		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Render(RenderInfoClass & rinfo);
+		virtual void					Render(RenderInfoClass & rinfo) override;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Bounding Volumes
 		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-		virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+		virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+		virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Predictive LOD
 		/////////////////////////////////////////////////////////////////////////////
-		virtual void					Prepare_LOD(CameraClass &camera);
-		virtual void					Increment_LOD();
-		virtual void					Decrement_LOD();
-		virtual float					Get_Cost() const;
-		virtual float					Get_Value() const;
-		virtual float					Get_Post_Increment_Value() const;
-		virtual void					Set_LOD_Level(int lod);
-		virtual int						Get_LOD_Level() const;
-		virtual int						Get_LOD_Count() const;
+		virtual void					Prepare_LOD(CameraClass &camera) override;
+		virtual void					Increment_LOD() override;
+		virtual void					Decrement_LOD() override;
+		virtual float					Get_Cost() const override;
+		virtual float					Get_Value() const override;
+		virtual float					Get_Post_Increment_Value() const override;
+		virtual void					Set_LOD_Level(int lod) override;
+		virtual int						Get_LOD_Level() const override;
+		virtual int						Get_LOD_Count() const override;
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Attributes, Options, Properties, etc
@@ -153,7 +153,7 @@ class SegmentedLineClass : public RenderObjClass
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Render Object Interface - Collision Detection
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
+		virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
 
 	protected:
 

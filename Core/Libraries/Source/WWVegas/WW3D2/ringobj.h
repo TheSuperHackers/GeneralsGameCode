@@ -111,45 +111,45 @@ public:
 	RingRenderObjClass(const W3dRingStruct & def);
 	RingRenderObjClass(const RingRenderObjClass & src);
 	RingRenderObjClass & operator = (const RingRenderObjClass &);
-	~RingRenderObjClass();
+	virtual ~RingRenderObjClass() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass	& sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
+	virtual void 					Set_Transform(const Matrix3D &m) override;
+	virtual void 					Set_Position(const Vector3 &v) override;
+   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass	& sphere) const override;
+   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
-	virtual void					Prepare_LOD(CameraClass &camera);
-	virtual void					Increment_LOD();
-	virtual void					Decrement_LOD();
-	virtual float					Get_Cost() const;
-	virtual float					Get_Value() const;
-	virtual float					Get_Post_Increment_Value() const;
-	virtual void					Set_LOD_Level(int lod);
-	virtual int						Get_LOD_Level() const;
-	virtual int						Get_LOD_Count() const;
-	virtual void					Set_LOD_Bias(float bias)	{ LODBias = MAX(bias, 0.0f); }
-	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
+	virtual void					Prepare_LOD(CameraClass &camera) override;
+	virtual void					Increment_LOD() override;
+	virtual void					Decrement_LOD() override;
+	virtual float					Get_Cost() const override;
+	virtual float					Get_Value() const override;
+	virtual float					Get_Post_Increment_Value() const override;
+	virtual void					Set_LOD_Level(int lod) override;
+	virtual int						Get_LOD_Level() const override;
+	virtual int						Get_LOD_Count() const override;
+	virtual void					Set_LOD_Bias(float bias) override	{ LODBias = MAX(bias, 0.0f); }
+	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const override;
 
-	virtual void					Scale(float scale);
-	virtual void					Scale(float scalex, float scaley, float scalez);
+	virtual void					Scale(float scale) override;
+	virtual void					Scale(float scalex, float scaley, float scalez) override;
 
-	virtual void					Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibility (); }
-	virtual void					Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibility (); }
-	virtual void					Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
-	virtual void					Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
+	virtual void					Set_Hidden(int onoff) override				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibility (); }
+	virtual void					Set_Visible(int onoff) override				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibility (); }
+	virtual void					Set_Animation_Hidden(int onoff) override	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
+	virtual void					Set_Force_Visible(int onoff) override		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibility (); }
 
 	const	AABoxClass	&			Get_Box();
 
-	virtual int				  		Get_Num_Polys() const;
-	virtual const char		  *Get_Name() const;
-	virtual void					Set_Name(const char * name);
+	virtual int				  		Get_Num_Polys() const override;
+	virtual const char		  *Get_Name() const override;
+	virtual void					Set_Name(const char * name) override;
 
 	unsigned int					Get_Flags() {return Flags;}
 	void								Set_Flags(unsigned int flags) { Flags = flags; }
@@ -317,8 +317,8 @@ inline const AABoxClass & RingRenderObjClass::Get_Box()
 class RingLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type ()  { return W3D_CHUNK_RING; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+	virtual int						Chunk_Type () override { return W3D_CHUNK_RING; }
+	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
 };
 
 /*
@@ -332,16 +332,16 @@ public:
 	RingPrototypeClass ();
 	RingPrototypeClass (RingRenderObjClass *ring);
 
-	virtual const char *			Get_Name() const;
-	virtual int						Get_Class_ID() const;
-	virtual RenderObjClass *	Create();
-	virtual void							DeleteSelf()										{ delete this; }
+	virtual const char *			Get_Name() const override;
+	virtual int						Get_Class_ID() const override;
+	virtual RenderObjClass *	Create() override;
+	virtual void							DeleteSelf() override { delete this; }
 
 	bool								Load (ChunkLoadClass &cload);
 	bool								Save (ChunkSaveClass &csave);
 
 protected:
-	~RingPrototypeClass ();
+	virtual ~RingPrototypeClass () override;
 
 private:
 	W3dRingStruct					Definition;

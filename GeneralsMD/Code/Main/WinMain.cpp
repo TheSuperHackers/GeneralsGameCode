@@ -704,7 +704,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed)
-		windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
+		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_CAPTION;
 	else
 		windowStyle |= WS_EX_TOPMOST | WS_SYSMENU;
 

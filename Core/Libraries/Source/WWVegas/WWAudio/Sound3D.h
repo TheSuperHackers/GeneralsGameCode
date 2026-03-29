@@ -66,7 +66,7 @@ class Sound3DClass : public AudibleSoundClass
 		//////////////////////////////////////////////////////////////////////
 		Sound3DClass (const Sound3DClass &src);
 		Sound3DClass ();
-		virtual ~Sound3DClass ();
+		virtual ~Sound3DClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -77,40 +77,40 @@ class Sound3DClass : public AudibleSoundClass
 		//////////////////////////////////////////////////////////////////////
 		//	Identification methods
 		//////////////////////////////////////////////////////////////////////
-		virtual SOUND_CLASSID	Get_Class_ID () const	{ return CLASSID_3D; }
+		virtual SOUND_CLASSID	Get_Class_ID () const override { return CLASSID_3D; }
 		virtual void				Make_Static (bool is_static = true)	{ m_IsStatic = is_static; }
 		virtual bool				Is_Static () const					{ return m_IsStatic; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual Sound3DClass *	As_Sound3DClass () { return this; }
+		virtual Sound3DClass *	As_Sound3DClass () override { return this; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	State control methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool			Play (bool alloc_handle = true);
+		virtual bool			Play (bool alloc_handle = true) override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Priority control
 		//////////////////////////////////////////////////////////////////////
-		virtual float			Get_Priority () const			{ if (m_IsCulled) return 0; return m_Priority; }
+		virtual float			Get_Priority () const override { if (m_IsCulled) return 0; return m_Priority; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Add_To_Scene (bool start_playing = true);
-		virtual void			Remove_From_Scene ();
+		virtual void			Add_To_Scene (bool start_playing = true) override;
+		virtual void			Remove_From_Scene () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Position (const Vector3 &position);
-		virtual Vector3		Get_Position () const							{ return m_Transform.Get_Translation (); }
+		virtual void			Set_Position (const Vector3 &position) override;
+		virtual Vector3		Get_Position () const override { return m_Transform.Get_Translation (); }
 
-		virtual void			Set_Listener_Transform (const Matrix3D &tm);
-		virtual void			Set_Transform (const Matrix3D &transform);
-		virtual Matrix3D		Get_Transform () const							{ return m_Transform; }
+		virtual void			Set_Listener_Transform (const Matrix3D &tm) override;
+		virtual void			Set_Transform (const Matrix3D &transform) override;
+		virtual Matrix3D		Get_Transform () const override { return m_Transform; }
 		void						Update_Miles_Transform ();
 
 		//////////////////////////////////////////////////////////////////////
@@ -144,42 +144,42 @@ class Sound3DClass : public AudibleSoundClass
 		//
 		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
 		//
-		virtual void			Set_DropOff_Radius (float radius = 1);
+		virtual void			Set_DropOff_Radius (float radius = 1) override;
 		virtual float			Get_DropOff_Radius ()  {return(m_DropOffRadius);}
 
 		// From PersistClass
-		const PersistFactoryClass &	Get_Factory () const;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 		//
 		//	From PersistClass
 		//
-		virtual bool					Save (ChunkSaveClass &csave);
-		virtual bool					Load (ChunkLoadClass &cload);
+		virtual bool					Save (ChunkSaveClass &csave) override;
+		virtual bool					Load (ChunkLoadClass &cload) override;
 
 	protected:
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
 		//////////////////////////////////////////////////////////////////////
-		virtual SoundCullObjClass *	Peek_Cullable_Wrapper () const	{ return m_PhysWrapper; }
-		virtual void						Set_Cullable_Wrapper (SoundCullObjClass *obj) { m_PhysWrapper = obj; }
+		virtual SoundCullObjClass *	Peek_Cullable_Wrapper () const override { return m_PhysWrapper; }
+		virtual void						Set_Cullable_Wrapper (SoundCullObjClass *obj) override { m_PhysWrapper = obj; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool					On_Frame_Update (unsigned int milliseconds);
+		virtual bool					On_Frame_Update (unsigned int milliseconds) override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Miles_Handle (MILES_HANDLE handle);
-		virtual void			Initialize_Miles_Handle ();
-		virtual void			Allocate_Miles_Handle ();
+		virtual void			Set_Miles_Handle (MILES_HANDLE handle) override;
+		virtual void			Initialize_Miles_Handle () override;
+		virtual void			Allocate_Miles_Handle () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Event handling
 		//////////////////////////////////////////////////////////////////////
-		virtual void			On_Loop_End ();
+		virtual void			On_Loop_End () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Protected member data

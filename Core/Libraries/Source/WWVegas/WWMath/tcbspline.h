@@ -46,19 +46,19 @@ class TCBSpline3DClass : public HermiteSpline3DClass
 {
 public:
 
-	virtual int			Add_Key(const Vector3 & point,float t);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys();
+	virtual int			Add_Key(const Vector3 & point,float t) override;
+	virtual void		Remove_Key(int i) override;
+	virtual void		Clear_Keys() override;
 
 	virtual void		Set_TCB_Params(int i,float tension,float continuity,float bias);
 	virtual void		Get_TCB_Params(int i,float *tension,float *continuity,float *bias);
 
-	void					Update_Tangents();
+	virtual void					Update_Tangents() override;
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 

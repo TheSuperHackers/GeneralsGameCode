@@ -76,12 +76,12 @@ public:
 
 	HAnimClass()	:
 		EmbeddedSoundBoneIndex (EMBEDDED_SOUND_BONE_INDEX_NOT_SET)	{ }
-	virtual ~HAnimClass()		{ }
+	virtual ~HAnimClass() override { }
 
 	virtual const char *		Get_Name() const = 0;
 	virtual const char *		Get_HName() const = 0;
 
-	virtual const char *		Get_Key()						{ return Get_Name(); }
+	virtual const char *		Get_Key() override						{ return Get_Name(); }
 
 	virtual int					Get_Num_Frames() = 0;
 	virtual float				Get_Frame_Rate() = 0;
@@ -135,9 +135,9 @@ public:
 class NamedPivotMapClass : public PivotMapClass
 {
 public:
-	~NamedPivotMapClass();
+	virtual ~NamedPivotMapClass() override;
 
-	virtual NamedPivotMapClass * As_Named_Pivot_Map() { return this; }
+	virtual NamedPivotMapClass * As_Named_Pivot_Map() override { return this; }
 
 	// add a name & weight to the arrays
 	void Add(const char *Name, float Weight);

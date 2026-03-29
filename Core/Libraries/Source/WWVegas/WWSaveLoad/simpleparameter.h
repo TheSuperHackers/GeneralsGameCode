@@ -63,7 +63,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////////
 	//	Public operators
 	//////////////////////////////////////////////////////////////////////////////
-	bool				operator== (const ParameterClass &src);
+	virtual bool				operator== (const ParameterClass &src) override;
 
 	///////////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -72,8 +72,8 @@ public:
 	void				Set_Value (const T &new_value);
 
 	// From Parameter class
-	ParameterClass::Type	Get_Type () const;
-	void						Copy_Value (const ParameterClass &src);
+	virtual ParameterClass::Type	Get_Type () const override;
+	virtual void						Copy_Value (const ParameterClass &src) override;
 
 private:
 

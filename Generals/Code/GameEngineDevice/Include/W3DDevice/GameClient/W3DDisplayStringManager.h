@@ -35,13 +35,8 @@
 //-------------------------------------------------------------------------------------------------
 /** Access for creating game managed display strings */
 //-------------------------------------------------------------------------------------------------
-//#define KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
 
-#ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
-	#define MAX_GROUPS 20
-#else
-	#define MAX_GROUPS 10
-#endif
+#define MAX_GROUPS 10
 
 class W3DDisplayStringManager : public DisplayStringManager
 {
@@ -49,24 +44,24 @@ class W3DDisplayStringManager : public DisplayStringManager
 public:
 
 	W3DDisplayStringManager();
-	virtual ~W3DDisplayStringManager();
+	virtual ~W3DDisplayStringManager() override;
 
 	// Initialize our numeral strings in postProcessLoad
-	virtual void postProcessLoad();
+	virtual void postProcessLoad() override;
 
 	/// update method for all our display strings
-	virtual void update();
+	virtual void update() override;
 
 	/// allocate a new display string
-	virtual DisplayString *newDisplayString();
+	virtual DisplayString *newDisplayString() override;
 
 	/// free a display string
-	virtual void freeDisplayString( DisplayString *string );
+	virtual void freeDisplayString( DisplayString *string ) override;
 
 	// This is used to save us a few FPS and storage space. There's no reason to
 	// duplicate the DisplayString on every drawable when 1 copy will suffice.
-	virtual DisplayString *getGroupNumeralString( Int numeral );
-	virtual DisplayString *getFormationLetterString() { return m_formationLetterDisplayString; };
+	virtual DisplayString *getGroupNumeralString( Int numeral ) override;
+	virtual DisplayString *getFormationLetterString() override { return m_formationLetterDisplayString; };
 
 protected:
 	DisplayString *m_groupNumeralStrings[ MAX_GROUPS ];

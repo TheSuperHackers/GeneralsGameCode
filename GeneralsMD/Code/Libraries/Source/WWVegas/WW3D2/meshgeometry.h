@@ -91,7 +91,7 @@ public:
 
 	MeshGeometryClass();
 	MeshGeometryClass(const MeshGeometryClass & that);
-	virtual ~MeshGeometryClass();
+	virtual ~MeshGeometryClass() override;
 
 	MeshGeometryClass & operator = (const MeshGeometryClass & that);
 

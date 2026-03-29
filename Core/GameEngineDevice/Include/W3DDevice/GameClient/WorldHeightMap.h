@@ -221,7 +221,7 @@ protected:
 
 public: // constructors/destructors
 	WorldHeightMap(ChunkInputStream *pFile, Bool bHMapOnly=false);	// read from file.
-	~WorldHeightMap();			// destroy.
+	virtual ~WorldHeightMap() override;			// destroy.
 
 public:  // Boundary info
 	const VecICoord2D& getAllBoundaries() const { return m_boundaries; }
@@ -243,7 +243,7 @@ public:  // height map info.
 	Int getDrawHeight() {return m_drawHeightY;}
 	void setDrawWidth(Int width) {m_drawWidthX = width; if (m_drawWidthX>m_width) m_drawWidthX = m_width;}
 	void setDrawHeight(Int height) {m_drawHeightY = height; if (m_drawHeightY>m_height) m_drawHeightY = m_height;}
-	virtual Int getBorderSize() {return m_borderSize;}
+	virtual Int getBorderSize() override {return m_borderSize;}
   Int getBorderSizeInline() const { return m_borderSize; }
 	/// Get height with the offset that HeightMapRenderObjClass uses built in.
 	UnsignedByte getDisplayHeight(Int x, Int y) { return m_data[x+m_drawOriginX+m_width*(y+m_drawOriginY)];}
@@ -296,10 +296,10 @@ public:  // tile and texture info.
   Bool getSeismicUpdateFlag(Int xIndex, Int yIndex) const;
   void setSeismicUpdateFlag(Int xIndex, Int yIndex, Bool value);
   void clearSeismicUpdateFlags() ;
-  virtual Real getSeismicZVelocity(Int xIndex, Int yIndex) const;
-  virtual void setSeismicZVelocity(Int xIndex, Int yIndex, Real value);
+  virtual Real getSeismicZVelocity(Int xIndex, Int yIndex) const override;
+  virtual void setSeismicZVelocity(Int xIndex, Int yIndex, Real value) override;
   void fillSeismicZVelocities( Real value );
-  virtual Real getBilinearSampleSeismicZVelocity( Int x, Int y);
+  virtual Real getBilinearSampleSeismicZVelocity( Int x, Int y) override;
 
 
 

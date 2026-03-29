@@ -56,20 +56,20 @@ class W3DInGameUI : public InGameUI
 public:
 
 	W3DInGameUI();
-	virtual ~W3DInGameUI();
+	virtual ~W3DInGameUI() override;
 
 	// Inherited from subsystem interface -----------------------------------------------------------
-	virtual	void init();		///< Initialize the in-game user interface
-	virtual void update();	//< Update the UI by calling preDraw(), draw(), and postDraw()
-	virtual void reset();		///< Reset
+	virtual	void init() override;		///< Initialize the in-game user interface
+	virtual void update() override;	//< Update the UI by calling preDraw(), draw(), and postDraw()
+	virtual void reset() override;		///< Reset
 	//-----------------------------------------------------------------------------------------------
 
-	virtual void draw(); ///< Render the in-game user interface
+	virtual void draw() override; ///< Render the in-game user interface
 
 protected:
 
 	/// factory for views
-	virtual View *createView(bool dummy)
+	virtual View *createView(bool dummy) override
 	{
 		if (dummy)
 			return NEW ViewDummy;

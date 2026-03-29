@@ -50,29 +50,29 @@ class FlatHeightMapRenderObjClass : public BaseHeightMapRenderObjClass
 public:
 
 	FlatHeightMapRenderObjClass();
-	virtual ~FlatHeightMapRenderObjClass();
+	virtual ~FlatHeightMapRenderObjClass() override;
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources();	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources();  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources() override;	///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources() override;  ///< Reacquire all resources after device reset.
 
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					On_Frame_Update();
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					On_Frame_Update() override;
 
 	///allocate resources needed to render heightmap
-	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator,Bool updateExtraPassTiles=TRUE);
-	virtual Int freeMapResources();	///< free resources used to render heightmap
-	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator);
- 	virtual void adjustTerrainLOD(Int adj);
-	virtual void reset();
-	virtual void oversizeTerrain(Int tilesToOversize);
-	virtual void staticLightingChanged();
-	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator);
-  virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator){return 0;};
+	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator,Bool updateExtraPassTiles=TRUE) override;
+	virtual Int freeMapResources() override;	///< free resources used to render heightmap
+	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator) override;
+ 	virtual void adjustTerrainLOD(Int adj) override;
+	virtual void reset() override;
+	virtual void oversizeTerrain(Int tilesToOversize) override;
+	virtual void staticLightingChanged() override;
+	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator) override;
+  virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) override {return 0;};
 
 protected:
 	W3DTerrainBackground	*m_tiles;

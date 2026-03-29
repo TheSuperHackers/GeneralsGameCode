@@ -142,70 +142,70 @@ class MilesAudioManager : public AudioManager
 #endif
 
 		// from AudioDevice
-		virtual void init();
-		virtual void postProcessLoad();
-		virtual void reset();
-		virtual void update();
+		virtual void init() override;
+		virtual void postProcessLoad() override;
+		virtual void reset() override;
+		virtual void update() override;
 
 		MilesAudioManager();
-		virtual ~MilesAudioManager();
+		virtual ~MilesAudioManager() override;
 
 
-		virtual void nextMusicTrack();
-		virtual void prevMusicTrack();
-		virtual Bool isMusicPlaying() const;
-		virtual Bool hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const;
-		virtual AsciiString getMusicTrackName() const;
+		virtual void nextMusicTrack() override;
+		virtual void prevMusicTrack() override;
+		virtual Bool isMusicPlaying() const override;
+		virtual Bool hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const override;
+		virtual AsciiString getMusicTrackName() const override;
 
-		virtual void openDevice();
-		virtual void closeDevice();
-		virtual void *getDevice() { return m_digitalHandle; }
+		virtual void openDevice() override;
+		virtual void closeDevice() override;
+		virtual void *getDevice() override { return m_digitalHandle; }
 
-		virtual void stopAudio( AudioAffect which );
-		virtual void pauseAudio( AudioAffect which );
-		virtual void resumeAudio( AudioAffect which );
-		virtual void pauseAmbient( Bool shouldPause );
+		virtual void stopAudio( AudioAffect which ) override;
+		virtual void pauseAudio( AudioAffect which ) override;
+		virtual void resumeAudio( AudioAffect which ) override;
+		virtual void pauseAmbient( Bool shouldPause ) override;
 
-		virtual void killAudioEventImmediately( AudioHandle audioEvent );
+		virtual void killAudioEventImmediately( AudioHandle audioEvent ) override;
 
 		///< Return whether the current audio is playing or not.
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
-		virtual Bool isCurrentlyPlaying( AudioHandle handle );
+		virtual Bool isCurrentlyPlaying( AudioHandle handle ) override;
 
-		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags );
+		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags ) override;
 		virtual PlayingAudio *findPlayingAudioFrom( UnsignedInt audioCompleted, UnsignedInt flags );
 
-		virtual UnsignedInt getProviderCount() const;
-		virtual AsciiString getProviderName( UnsignedInt providerNum ) const;
-		virtual UnsignedInt getProviderIndex( AsciiString providerName ) const;
-		virtual void selectProvider( UnsignedInt providerNdx );
-		virtual void unselectProvider();
-		virtual UnsignedInt getSelectedProvider() const;
-		virtual void setSpeakerType( UnsignedInt speakerType );
-		virtual UnsignedInt getSpeakerType();
+		virtual UnsignedInt getProviderCount() const override;
+		virtual AsciiString getProviderName( UnsignedInt providerNum ) const override;
+		virtual UnsignedInt getProviderIndex( AsciiString providerName ) const override;
+		virtual void selectProvider( UnsignedInt providerNdx ) override;
+		virtual void unselectProvider() override;
+		virtual UnsignedInt getSelectedProvider() const override;
+		virtual void setSpeakerType( UnsignedInt speakerType ) override;
+		virtual UnsignedInt getSpeakerType() override;
 
- 		virtual void *getHandleForBink();
- 		virtual void releaseHandleForBink();
+ 		virtual void *getHandleForBink() override;
+ 		virtual void releaseHandleForBink() override;
 
-		virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay);
+		virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) override;
 
-		virtual UnsignedInt getNum2DSamples() const;
-		virtual UnsignedInt getNum3DSamples() const;
-		virtual UnsignedInt getNumStreams() const;
+		virtual UnsignedInt getNum2DSamples() const override;
+		virtual UnsignedInt getNum3DSamples() const override;
+		virtual UnsignedInt getNumStreams() const override;
 
-		virtual Bool doesViolateLimit( AudioEventRTS *event ) const;
-		virtual Bool isPlayingLowerPriority( AudioEventRTS *event ) const;
-		virtual Bool isPlayingAlready( AudioEventRTS *event ) const;
-		virtual Bool isObjectPlayingVoice( UnsignedInt objID ) const;
+		virtual Bool doesViolateLimit( AudioEventRTS *event ) const override;
+		virtual Bool isPlayingLowerPriority( AudioEventRTS *event ) const override;
+		virtual Bool isPlayingAlready( AudioEventRTS *event ) const override;
+		virtual Bool isObjectPlayingVoice( UnsignedInt objID ) const override;
 		Bool killLowestPrioritySoundImmediately( AudioEventRTS *event );
 		AudioEventRTS* findLowestPrioritySound( AudioEventRTS *event );
 
-		virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume);
+		virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) override;
 
-		virtual void removePlayingAudio( AsciiString eventName );
-		virtual void removeAllDisabledAudio();
+		virtual void removePlayingAudio( AsciiString eventName ) override;
+		virtual void removeAllDisabledAudio() override;
 
-		virtual void processRequestList();
+		virtual void processRequestList() override;
 		virtual void processPlayingList();
 		virtual void processFadingList();
 		virtual void processStoppedList();
@@ -214,23 +214,23 @@ class MilesAudioManager : public AudioManager
 		void adjustRequest( AudioRequest *req );
 		Bool checkForSample( AudioRequest *req );
 
-		virtual void setHardwareAccelerated(Bool accel);
-		virtual void setSpeakerSurround(Bool surround);
+		virtual void setHardwareAccelerated(Bool accel) override;
+		virtual void setSpeakerSurround(Bool surround) override;
 
-		virtual void setPreferredProvider(AsciiString provider) { m_pref3DProvider = provider; }
-		virtual void setPreferredSpeaker(AsciiString speakerType) { m_prefSpeaker = speakerType; }
+		virtual void setPreferredProvider(AsciiString provider) override { m_pref3DProvider = provider; }
+		virtual void setPreferredSpeaker(AsciiString speakerType) override { m_prefSpeaker = speakerType; }
 
-		virtual Real getFileLengthMS( AsciiString strToLoad ) const;
+		virtual Real getFileLengthMS( AsciiString strToLoad ) const override;
 
-		virtual void closeAnySamplesUsingFile( const void *fileToClose );
+		virtual void closeAnySamplesUsingFile( const void *fileToClose ) override;
 
 
-    virtual Bool has3DSensitiveStreamsPlaying() const;
+    virtual Bool has3DSensitiveStreamsPlaying() const override;
 
 
 	protected:
 		// 3-D functions
-		virtual void setDeviceListenerPosition();
+		virtual void setDeviceListenerPosition() override;
 		const Coord3D *getCurrentPositionFromEvent( AudioEventRTS *event );
 		Bool isOnScreen( const Coord3D *pos ) const;
 		Real getEffectiveVolume(AudioEventRTS *event) const;

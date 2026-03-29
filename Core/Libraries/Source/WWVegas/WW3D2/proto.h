@@ -108,15 +108,15 @@ class PrimitivePrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	PrimitivePrototypeClass(RenderObjClass * proto);
 
-	virtual const char *			Get_Name() const;
-	virtual int						Get_Class_ID() const;
-	virtual RenderObjClass *	Create();
-	virtual void							DeleteSelf()										{ delete this; }
+	virtual const char *			Get_Name() const override;
+	virtual int						Get_Class_ID() const override;
+	virtual RenderObjClass *	Create() override;
+	virtual void							DeleteSelf() override { delete this; }
 
 	RenderObjClass *				Proto;
 
 protected:
-	virtual ~PrimitivePrototypeClass();
+	virtual ~PrimitivePrototypeClass() override;
 };
 
 /*
@@ -152,16 +152,16 @@ class MeshLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type() { return W3D_CHUNK_MESH; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+	virtual int						Chunk_Type() override { return W3D_CHUNK_MESH; }
+	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
 };
 
 class HModelLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type() { return W3D_CHUNK_HMODEL; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+	virtual int						Chunk_Type() override { return W3D_CHUNK_HMODEL; }
+	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
 };
 
 

@@ -55,7 +55,7 @@ class IndexBufferClass : public W3DMPO, public RefCountClass
 	// nope, it's an ABC
 	//W3DMPO_GLUE(IndexBufferClass)
 protected:
-	virtual ~IndexBufferClass();
+	virtual ~IndexBufferClass() override;
 public:
 	IndexBufferClass(unsigned type, unsigned short index_count);
 
@@ -122,7 +122,7 @@ class DynamicIBAccessClass : public W3DMPO
 
 public:
 	DynamicIBAccessClass(unsigned short type, unsigned short index_count);
-	~DynamicIBAccessClass();
+	virtual ~DynamicIBAccessClass() override;
 
 	unsigned Get_Type() const { return Type; }
 	unsigned short Get_Index_Count() const { return IndexCount; }
@@ -168,7 +168,7 @@ public:
 	};
 
 	DX8IndexBufferClass(unsigned short index_count,UsageType usage=USAGE_DEFAULT);
-	~DX8IndexBufferClass();
+	virtual ~DX8IndexBufferClass() override;
 
 	void Copy(unsigned int* indices,unsigned start_index,unsigned index_count);
 	void Copy(unsigned short* indices,unsigned start_index,unsigned index_count);
@@ -192,7 +192,7 @@ class SortingIndexBufferClass : public IndexBufferClass
 	friend DynamicIBAccessClass::WriteLockClass;
 public:
 	SortingIndexBufferClass(unsigned short index_count);
-	~SortingIndexBufferClass();
+	virtual ~SortingIndexBufferClass() override;
 
 protected:
 	unsigned short* index_buffer;

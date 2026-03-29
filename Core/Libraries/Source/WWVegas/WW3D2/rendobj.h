@@ -218,7 +218,7 @@ public:
 	RenderObjClass();
 	RenderObjClass(const RenderObjClass & src);
 	RenderObjClass & operator = (const RenderObjClass &);
-	virtual ~RenderObjClass()																					{ if (RenderHook) delete RenderHook; }
+	virtual ~RenderObjClass() override { if (RenderHook) delete RenderHook; }
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -485,9 +485,9 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Persistent object save-load interface
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual const PersistFactoryClass &	Get_Factory () const;
-	virtual bool					Save (ChunkSaveClass &csave);
-	virtual bool					Load (ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory () const override;
+	virtual bool					Save (ChunkSaveClass &csave) override;
+	virtual bool					Load (ChunkLoadClass &cload) override;
 
 	// Application-specific render hook:
 	RenderHookClass *				Get_Render_Hook() { return RenderHook; }

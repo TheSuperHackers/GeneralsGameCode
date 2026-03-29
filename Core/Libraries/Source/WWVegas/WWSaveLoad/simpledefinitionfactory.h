@@ -41,10 +41,10 @@ public:
 	//////////////////////////////////////////////////////////////
 	//	Public methods
 	//////////////////////////////////////////////////////////////
-	virtual DefinitionClass *	Create () const;
-	virtual const char *			Get_Name () const;
-	virtual uint32					Get_Class_ID () const;
-	virtual bool					Is_Displayed () const	{ return IsDisplayed; }
+	virtual DefinitionClass *	Create () const override;
+	virtual const char *			Get_Name () const override;
+	virtual uint32					Get_Class_ID () const override;
+	virtual bool					Is_Displayed () const override { return IsDisplayed; }
 
 protected:
 

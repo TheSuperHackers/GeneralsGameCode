@@ -68,30 +68,30 @@ public:
 	LightClass(LightType type = POINT);
 	LightClass(const LightClass & src);
 	LightClass & operator = (const LightClass &);
-	virtual ~LightClass();
-	RenderObjClass *		Clone() const;
-	virtual int				Class_ID() const											{ return CLASSID_LIGHT; }
+	virtual ~LightClass() override;
+	virtual RenderObjClass *		Clone() const override;
+	virtual int				Class_ID() const override { return CLASSID_LIGHT; }
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Rendering
 	// Lights do not "Render" but they are vertex processors.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void			Render(RenderInfoClass & rinfo)							{ }
+	virtual void			Render(RenderInfoClass & rinfo) override { }
 	virtual bool			Is_Vertex_Processor()									{ return true; }
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Lights register themselves with the scene as VertexProcessors.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void			Notify_Added(SceneClass * scene);
-	virtual void			Notify_Removed(SceneClass * scene);
+	virtual void			Notify_Added(SceneClass * scene) override;
+	virtual void			Notify_Removed(SceneClass * scene) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	// Bounding volume of a light extends to its attenuation radius
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+   virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// LightClass Interface
@@ -145,9 +145,9 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Persistent object save-load interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual const PersistFactoryClass &	Get_Factory () const;
-	virtual bool								Save (ChunkSaveClass &csave);
-	virtual bool								Load (ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory () const override;
+	virtual bool								Save (ChunkSaveClass &csave) override;
+	virtual bool								Load (ChunkLoadClass &cload) override;
 	//bool isDonut() {return Donut; };
 	//void setDonut(bool donut) { Donut = donut; };
 

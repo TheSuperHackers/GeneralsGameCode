@@ -1235,6 +1235,16 @@ void PathfindCellInfo::releaseACellInfo(PathfindCellInfo *theInfo)
 
 //-----------------------------------------------------------------------------------
 
+Bool PathfindCellList::canReverseSort(PathfindCell& currentCell) const
+{
+	if (m_head && m_tail)
+		return m_head->getTotalCostDifference(currentCell) > m_tail->getTotalCostDifference(currentCell);
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------------
+
 /**
  * Constructor
  */
@@ -1336,6 +1346,18 @@ inline void PathfindCell::setBlockedByAlly(Bool blocked)
 #else
 	m_blockedByAlly = (blocked != 0);
 #endif
+}
+
+/**
+ * Determine absolute total path cost difference between two cells.
+ * Returns UINT_MAX if used with an uninitialised cell, so will be sorted as maximally dissimilar.
+ */
+inline UnsignedInt PathfindCell::getTotalCostDifference(PathfindCell& other) const
+{
+	if (m_info && other.m_info)
+		return abs((Int)m_info->m_totalCost - (Int)other.m_info->m_totalCost);
+
+	return UINT_MAX;
 }
 
 /**
@@ -1734,7 +1756,7 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 }
 #endif
 
-// Forward insertion sort, returns early if the list is being initialised or we are prepending the list
+// Forward insertion sort, returns early if the list is being initialized or we are prepending the list
 void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 {
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
@@ -1748,6 +1770,7 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = nullptr;
 		list.m_head = this;
+		list.m_tail = this;
 		return;
 	}
 
@@ -1771,8 +1794,58 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 	if (current->m_info->m_nextOpen != nullptr) {
 		current->m_info->m_nextOpen->m_prevOpen = this->m_info;
 	}
+	else {
+		list.m_tail = this;
+	}
+
 	current->m_info->m_nextOpen = this->m_info;
 	m_info->m_prevOpen = current->m_info;
+}
+
+// Reverse insertion sort, returns early if the list is being initialized or we are appending the list
+void PathfindCell::reverseInsertionSort(PathfindCellList& list)
+{
+	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
+	DEBUG_ASSERTCRASH(m_info->m_closed == FALSE && m_info->m_open == FALSE, ("Serious error - Invalid flags. jba"));
+
+	// mark the new cell as being on the open list
+	m_info->m_open = true;
+	m_info->m_closed = false;
+
+	if (list.m_tail == nullptr) {
+		m_info->m_prevOpen = nullptr;
+		m_info->m_nextOpen = nullptr;
+		list.m_tail = this;
+		list.m_head = this;
+		return;
+	}
+
+	// If the node needs inserting after the current list tail
+	if (m_info->m_totalCost >= list.m_tail->m_info->m_totalCost) {
+		m_info->m_prevOpen = list.m_tail->m_info;
+		list.m_tail->m_info->m_nextOpen = this->m_info;
+		m_info->m_nextOpen = nullptr;
+		list.m_tail = this;
+		return;
+	}
+
+	// Traverse the list to find correct position
+	PathfindCell* current = list.m_tail;
+	while (current->m_info->m_prevOpen && current->m_info->m_prevOpen->m_totalCost > m_info->m_totalCost) {
+		current = current->getPrevOpen();
+	}
+
+	// Insert the new node in the correct position
+	m_info->m_prevOpen = current->m_info->m_prevOpen;
+	if (current->m_info->m_prevOpen != nullptr) {
+		current->m_info->m_prevOpen->m_nextOpen = this->m_info;
+	}
+	else {
+		list.m_head = this;
+	}
+
+	current->m_info->m_prevOpen = this->m_info;
+	m_info->m_nextOpen = current->m_info;
 }
 
 /// put self on "open" list in ascending cost order, return new list
@@ -1785,7 +1858,15 @@ void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 	}
 #endif
 
-	forwardInsertionSort(list);
+	// TheSuperHackers @performance Mauller 20/03/2026 Implement reverse insertion sorting.
+	// Long and complex paths often append PathfindCell's, with high total path costs, to the open list.
+	// Appending and reverse traversal allow faster insertion of these cells, reducing pathfinding overhead by 50 - 66%.
+	if (list.canReverseSort(*this)) {
+		reverseInsertionSort(list);
+	}
+	else {
+		forwardInsertionSort(list);
+	}
 }
 
 /// remove self from "open" list
@@ -1795,6 +1876,9 @@ void PathfindCell::removeFromOpenList( PathfindCellList &list )
 	DEBUG_ASSERTCRASH(m_info->m_closed==FALSE && m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
 	if (m_info->m_nextOpen)
 		m_info->m_nextOpen->m_prevOpen = m_info->m_prevOpen;
+	else {
+		list.m_tail = getPrevOpen();
+	}
 
 	if (m_info->m_prevOpen)
 		m_info->m_prevOpen->m_nextOpen = m_info->m_nextOpen;
@@ -1832,7 +1916,7 @@ Int PathfindCell::releaseOpenList( PathfindCellList &list )
 		if (curInfo->m_nextOpen) {
 			list.m_head = curInfo->m_nextOpen->m_cell;
 		} else {
-			list.m_head = nullptr;
+			list.reset();
 		}
 		DEBUG_ASSERTCRASH(cur == curInfo->m_cell, ("Bad backpointer in PathfindCellInfo"));
 		curInfo->m_nextOpen = nullptr;
@@ -1867,7 +1951,7 @@ Int PathfindCell::releaseClosedList( PathfindCellList &list )
 		if (curInfo->m_nextOpen) {
 			list.m_head = curInfo->m_nextOpen->m_cell;
 		} else {
-			list.m_head = nullptr;
+			list.reset();
 		}
 		DEBUG_ASSERTCRASH(cur == curInfo->m_cell, ("Bad backpointer in PathfindCellInfo"));
 		curInfo->m_nextOpen = nullptr;
@@ -4020,6 +4104,10 @@ void Pathfinder::reset()
 	s_useFixedPathfinding = false;
 	s_forceCleanCells = false;
 #endif
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	m_classifyFenceZeroInit = false;
+#endif
 }
 
 /**
@@ -4159,10 +4247,18 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 #if RETAIL_COMPATIBLE_CRC
 	//CRCDEBUG_LOG(("Pathfinder::classifyFence - (%d,%d)", cellBounds.hi.x, cellBounds.hi.y));
 
-	// In retail, the values in the stack often look like this. We set them
-	// to reduce the likelihood of mismatch.
-	cellBounds.hi.x = 253961804;
-	cellBounds.hi.y = 4202797;
+	// For retail the values on the stack are often either 0 or larger than the map size.
+	// We initialize them to reduce the likelihood of a mismatch.
+	if (m_classifyFenceZeroInit)
+	{
+		cellBounds.hi.x = 0;
+		cellBounds.hi.y = 0;
+	}
+	else
+	{
+		cellBounds.hi.x = 1000000;
+		cellBounds.hi.y = 1000000;
+	}
 #else
 	cellBounds.hi.x = REAL_TO_INT_CEIL((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.hi.y = REAL_TO_INT_CEIL((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);

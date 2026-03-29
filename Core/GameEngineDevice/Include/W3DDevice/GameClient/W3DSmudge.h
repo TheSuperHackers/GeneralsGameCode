@@ -36,14 +36,14 @@ class W3DSmudgeManager : public SmudgeManager
 {
 public:
 	W3DSmudgeManager();
-	virtual ~W3DSmudgeManager();
+	virtual ~W3DSmudgeManager() override;
 
-	virtual void init();
-	virtual void reset ();
+	virtual void init() override;
+	virtual void reset () override;
 
 	void render (RenderInfoClass &rinfo);
-	void ReleaseResources();
-	void ReAcquireResources();
+	virtual void ReleaseResources() override;
+	virtual void ReAcquireResources() override;
 
 private:
 	Bool testHardwareSupport();		///<test if video card supports the effect.

@@ -55,7 +55,7 @@ class FilteredSoundClass : public SoundPseudo3DClass
 		//////////////////////////////////////////////////////////////////////
 		FilteredSoundClass (const FilteredSoundClass &src);
 		FilteredSoundClass ();
-		virtual ~FilteredSoundClass ();
+		virtual ~FilteredSoundClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -70,22 +70,22 @@ class FilteredSoundClass : public SoundPseudo3DClass
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual FilteredSoundClass *	As_FilteredSoundClass () { return this; }
+		virtual FilteredSoundClass *	As_FilteredSoundClass () override { return this; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Volume control
 		//////////////////////////////////////////////////////////////////////
-		virtual void				Update_Volume ();
+		virtual void				Update_Volume () override;
 
 		// From PersistClass
-		const PersistFactoryClass &	Get_Factory () const;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 	protected:
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information
 		//////////////////////////////////////////////////////////////////////
-		virtual void				Initialize_Miles_Handle ();
+		virtual void				Initialize_Miles_Handle () override;
 
 	private:
 

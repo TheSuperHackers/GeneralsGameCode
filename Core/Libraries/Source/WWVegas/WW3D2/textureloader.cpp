@@ -235,7 +235,7 @@ public:
 	LoaderThreadClass(const char *thread_name = "Texture loader thread") : ThreadClass(thread_name) {}
 #endif
 
-	void Thread_Function();
+	virtual void Thread_Function() override;
 } _TextureLoadThread;
 
 

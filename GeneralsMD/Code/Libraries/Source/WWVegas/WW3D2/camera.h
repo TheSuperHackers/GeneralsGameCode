@@ -120,28 +120,28 @@ public:
 	CameraClass();
 	CameraClass(const CameraClass & src);
 	CameraClass & operator = (const CameraClass &);
-	virtual ~CameraClass();
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const { return CLASSID_CAMERA; }
+	virtual ~CameraClass() override;
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override { return CLASSID_CAMERA; }
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface -  Rendering, cameras don't "render"
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo) { }
+	virtual void					Render(RenderInfoClass & rinfo) override { }
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Cameras cache their frustum description, this is invalidated whenever
 	// the transform/position is changed
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
+	virtual void 					Set_Transform(const Matrix3D &m) override;
+	virtual void 					Set_Position(const Vector3 &v) override;
 
   	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Camera parameter control

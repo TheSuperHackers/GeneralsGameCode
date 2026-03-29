@@ -32,12 +32,12 @@ class W3DSnowManager : public SnowManager
   public :
 
 	W3DSnowManager();
-	~W3DSnowManager();
+	virtual ~W3DSnowManager() override;
 
-	virtual void init();
-	virtual void reset();
-	virtual void update ();
-	virtual void updateIniSettings();
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update () override;
+	virtual void updateIniSettings() override;
 
 	void	render(RenderInfoClass &rinfo);
 	void	renderAsQuads(RenderInfoClass &rinfo, Int cubeOriginX, Int cubeOriginY, Int cubeDimX, Int cubeDimY);

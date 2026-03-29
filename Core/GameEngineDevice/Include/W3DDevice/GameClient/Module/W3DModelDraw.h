@@ -312,7 +312,7 @@ public:
 
 
 	W3DModelDrawModuleData();
-	~W3DModelDrawModuleData();
+	virtual ~W3DModelDrawModuleData() override;
 	void validateStuffForTimeAndWeather(const Drawable* draw, Bool night, Bool snowy) const;
 	static void buildFieldParse(MultiIniFieldParse& p);
  	AsciiString getBestModelNameForWB(const ModelConditionFlags& c) const;
@@ -323,16 +323,16 @@ public:
 #endif
 
 	// ugh, hack
-	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const { return this; }
-	virtual StaticGameLODLevel getMinimumRequiredGameLOD() const { return m_minLODRequired;}
+	virtual const W3DModelDrawModuleData* getAsW3DModelDrawModuleData() const override { return this; }
+	virtual StaticGameLODLevel getMinimumRequiredGameLOD() const override { return m_minLODRequired;}
 
 private:
 	static void parseConditionState( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );
 
 public:
- 	virtual void crc( Xfer *xfer );
- 	virtual void xfer( Xfer *xfer );
- 	virtual void loadPostProcess();
+ 	virtual void crc( Xfer *xfer ) override;
+ 	virtual void xfer( Xfer *xfer ) override;
+ 	virtual void loadPostProcess() override;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -348,44 +348,44 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
   /// preloading assets
-	virtual void preloadAssets( TimeOfDay timeOfDay );
+	virtual void preloadAssets( TimeOfDay timeOfDay ) override;
 
 	/// the draw method
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void setShadowsEnabled(Bool enable);
-	virtual void releaseShadows();	///< frees all shadow resources used by this module - used by Options screen.
-	virtual void allocateShadows(); ///< create shadow resources if not already present. Used by Options screen.
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
+	virtual void setShadowsEnabled(Bool enable) override;
+	virtual void releaseShadows() override;	///< frees all shadow resources used by this module - used by Options screen.
+	virtual void allocateShadows() override; ///< create shadow resources if not already present. Used by Options screen.
 
 #if defined(RTS_DEBUG)
 	virtual void getRenderCost(RenderCost & rc) const;  ///< estimates the render cost of this draw module
 	void getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const;
 #endif
 
-	virtual void setFullyObscuredByShroud(Bool fullyObscured);
-	virtual void setTerrainDecal(TerrainDecalType type);
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override;
+	virtual void setTerrainDecal(TerrainDecalType type) override;
 
-	virtual Bool isVisible() const;
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
-	virtual void reactToGeometryChange() { }
+	virtual Bool isVisible() const override;
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override;
+	virtual void reactToGeometryChange() override { }
 
 	// this method must ONLY be called from the client, NEVER From the logic, not even indirectly.
-	virtual Bool clientOnly_getRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform) const;
-	virtual Bool clientOnly_getRenderObjBoundBox(OBBoxClass * boundbox) const;
-	virtual Bool clientOnly_getRenderObjBoneTransform(const AsciiString & boneName,Matrix3D * set_tm) const;
-	virtual Int getPristineBonePositionsForConditionState(const ModelConditionFlags& condition, const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const;
-	virtual Int getCurrentBonePositions(const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const;
-	virtual Bool getCurrentWorldspaceClientBonePositions(const char* boneName, Matrix3D& transform) const;
-	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = nullptr) const;
-	virtual void updateProjectileClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ); ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
-	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ); ///< This will do visual feedback on Supplies carried
-	virtual void notifyDrawModuleDependencyCleared(){}///< if you were waiting for something before you drew, it's ready now
+	virtual Bool clientOnly_getRenderObjInfo(Coord3D* pos, Real* boundingSphereRadius, Matrix3D* transform) const override;
+	virtual Bool clientOnly_getRenderObjBoundBox(OBBoxClass * boundbox) const override;
+	virtual Bool clientOnly_getRenderObjBoneTransform(const AsciiString & boneName,Matrix3D * set_tm) const override;
+	virtual Int getPristineBonePositionsForConditionState(const ModelConditionFlags& condition, const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const override;
+	virtual Int getCurrentBonePositions(const char* boneNamePrefix, Int startIndex, Coord3D* positions, Matrix3D* transforms, Int maxBones) const override;
+	virtual Bool getCurrentWorldspaceClientBonePositions(const char* boneName, Matrix3D& transform) const override;
+	virtual Bool getProjectileLaunchOffset(const ModelConditionFlags& condition, WeaponSlotType wslot, Int specificBarrelToUse, Matrix3D* launchPos, WhichTurretType tur, Coord3D* turretRotPos, Coord3D* turretPitchPos = nullptr) const override;
+	virtual void updateProjectileClipStatus( UnsignedInt shotsRemaining, UnsignedInt maxShots, WeaponSlotType slot ) override; ///< This will do the show/hide work if ProjectileBoneFeedbackEnabled is set.
+	virtual void updateDrawModuleSupplyStatus( Int maxSupply, Int currentSupply ) override; ///< This will do visual feedback on Supplies carried
+	virtual void notifyDrawModuleDependencyCleared() override {}///< if you were waiting for something before you drew, it's ready now
 
-	virtual void setHidden(Bool h);
-	virtual void replaceModelConditionState(const ModelConditionFlags& c);
-	virtual void replaceIndicatorColor(Color color);
-	virtual Bool handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius);
-	virtual Int getBarrelCount(WeaponSlotType wslot) const;
-	virtual void setSelectable(Bool selectable); // Change the selectability of the model.
+	virtual void setHidden(Bool h) override;
+	virtual void replaceModelConditionState(const ModelConditionFlags& c) override;
+	virtual void replaceIndicatorColor(Color color) override;
+	virtual Bool handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius) override;
+	virtual Int getBarrelCount(WeaponSlotType wslot) const override;
+	virtual void setSelectable(Bool selectable) override; // Change the selectability of the model.
 
 	/**
 		This call says, "I want the current animation (if any) to take n frames to complete a single cycle".
@@ -393,41 +393,41 @@ public:
 		"pad" frames at the start and/or end, but for now, we always just "stretch" the animation to fit.
 		Note that you must call this AFTER setting the condition codes.
 	*/
-	virtual void setAnimationLoopDuration(UnsignedInt numFrames);
+	virtual void setAnimationLoopDuration(UnsignedInt numFrames) override;
 
 	/**
 		similar to the above, but assumes that the current state is a "ONCE",
 		and is smart about transition states... if there is a transition state
 		"in between", it is included in the completion time.
 	*/
-	virtual void setAnimationCompletionTime(UnsignedInt numFrames);
+	virtual void setAnimationCompletionTime(UnsignedInt numFrames) override;
 
 	/**
 	  This call is used to pause or resume an animation.
 	*/
-	virtual void setPauseAnimation(Bool pauseAnim);
+	virtual void setPauseAnimation(Bool pauseAnim) override;
 
 	//Kris: Manually set a drawable's current animation to specific frame.
 	virtual void setAnimationFrame( int frame );
 
-	virtual void updateSubObjects();
-	virtual void showSubObject( const AsciiString& name, Bool show );
+	virtual void updateSubObjects() override;
+	virtual void showSubObject( const AsciiString& name, Bool show ) override;
 
 #ifdef ALLOW_ANIM_INQUIRIES
 // srj sez: not sure if this is a good idea, for net sync reasons...
 	virtual Real getAnimationScrubScalar() const;
 #endif
 
-	virtual ObjectDrawInterface* getObjectDrawInterface() { return this; }
-	virtual const ObjectDrawInterface* getObjectDrawInterface() const { return this; }
+	virtual ObjectDrawInterface* getObjectDrawInterface() override { return this; }
+	virtual const ObjectDrawInterface* getObjectDrawInterface() const override { return this; }
 
 	///@todo: I had to make this public because W3DDevice needs access for casting shadows -MW
 	RenderObjClass *getRenderObject() { return m_renderObject; }
-	virtual Bool updateBonesForClientParticleSystems();///< this will reposition particle systems on the fly ML
+	virtual Bool updateBonesForClientParticleSystems() override;///< this will reposition particle systems on the fly ML
 
-	virtual void onDrawableBoundToObject();
-	virtual void setTerrainDecalSize(Real x, Real y);
-	virtual void setTerrainDecalOpacity(Real o);
+	virtual void onDrawableBoundToObject() override;
+	virtual void setTerrainDecalSize(Real x, Real y) override;
+	virtual void setTerrainDecalOpacity(Real o) override;
 
 protected:
 

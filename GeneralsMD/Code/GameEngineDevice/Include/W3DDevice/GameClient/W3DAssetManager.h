@@ -54,12 +54,12 @@ class W3DAssetManager: public WW3DAssetManager
 {
 public:
 	W3DAssetManager();
-	virtual ~W3DAssetManager();
+	virtual ~W3DAssetManager() override;
 
-	virtual RenderObjClass * Create_Render_Obj(const char * name);
+	virtual RenderObjClass * Create_Render_Obj(const char * name) override;
 	// unique to W3DAssetManager
-	virtual HAnimClass *	Get_HAnim(const char * name);
-	virtual bool Load_3D_Assets( const char * filename ); // This CANNOT be Bool, as it will not inherit properly if you make Bool == Int
+	virtual HAnimClass *	Get_HAnim(const char * name) override;
+	virtual bool Load_3D_Assets( const char * filename ) override; // This CANNOT be Bool, as it will not inherit properly if you make Bool == Int
 
 	virtual TextureClass *	Get_Texture
 	(
@@ -69,7 +69,7 @@ public:
 		bool allow_compression=true,
 		TextureBaseClass::TexAssetType type=TextureBaseClass::TEX_REGULAR,
 		bool allow_reduction=true
-	);
+	) override;
 
 	//'Generals' customizations
 	void Report_Used_Assets();

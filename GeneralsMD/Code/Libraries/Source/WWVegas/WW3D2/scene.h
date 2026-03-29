@@ -88,7 +88,7 @@ class SceneClass : public RefCountClass
 {
 public:
 	SceneClass();
-	virtual ~SceneClass();
+	virtual ~SceneClass() override;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// RTTI information.
@@ -218,20 +218,20 @@ class SimpleSceneClass : public SceneClass
 public:
 
 	SimpleSceneClass();
-	virtual ~SimpleSceneClass();
+	virtual ~SimpleSceneClass() override;
 
 	virtual int	Get_Scene_ID()	{	return SCENE_ID_SIMPLE;	}
 
-	virtual void Add_Render_Object(RenderObjClass * obj);
-	virtual void Remove_Render_Object(RenderObjClass * obj);
+	virtual void Add_Render_Object(RenderObjClass * obj) override;
+	virtual void Remove_Render_Object(RenderObjClass * obj) override;
 
 	virtual void Remove_All_Render_Objects();
 
-	virtual void Register(RenderObjClass * obj,RegType for_what);
-	virtual void Unregister(RenderObjClass * obj,RegType for_what);
+	virtual void Register(RenderObjClass * obj,RegType for_what) override;
+	virtual void Unregister(RenderObjClass * obj,RegType for_what) override;
 
-	virtual SceneIterator *		Create_Iterator(bool onlyvisible = false);
-	virtual void					Destroy_Iterator(SceneIterator * it);
+	virtual SceneIterator *		Create_Iterator(bool onlyvisible = false) override;
+	virtual void					Destroy_Iterator(SceneIterator * it) override;
 
 	// Set visibility status for my render objects. If not called explicitly
 	// beforehand, will be called inside Render().
@@ -241,7 +241,7 @@ public:
 	//	Point visibility - used by DazzleRenderObj when no custom handler is installed
 	///////////////////////////////////////////////////////////////////////////////////
 	virtual float				Compute_Point_Visibility(	RenderInfoClass & rinfo,
-																		const Vector3 & point);
+																		const Vector3 & point) override;
 
 protected:
 
@@ -255,6 +255,6 @@ protected:
 
 	friend class SimpleSceneIterator;
 
-	virtual void Customized_Render(RenderInfoClass & rinfo);
-	virtual void Post_Render_Processing(RenderInfoClass& rinfo);
+	virtual void Customized_Render(RenderInfoClass & rinfo) override;
+	virtual void Post_Render_Processing(RenderInfoClass& rinfo) override;
 };

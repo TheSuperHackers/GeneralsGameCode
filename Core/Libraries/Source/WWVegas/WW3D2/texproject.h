@@ -101,7 +101,7 @@ class TexProjectClass : public ProjectorClass, public CullableClass, public Mult
 public:
 
 	TexProjectClass();
-	virtual ~TexProjectClass();
+	virtual ~TexProjectClass() override;
 
 	/*
 	** Material settings
@@ -135,8 +135,8 @@ public:
 	** 2 - call Set_Projection_Perspective -or- Set_Projection_Ortho
 	** 3 - call Set_Texture.
 	*/
-	virtual void			Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar);
-	virtual void			Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar);
+	virtual void			Set_Perspective_Projection(float hfov,float vfov,float znear,float zfar) override;
+	virtual void			Set_Ortho_Projection(float xmin,float xmax,float ymin,float ymax,float znear,float zfar) override;
 
 	void						Set_Texture(TextureClass * texture);
 	TextureClass *			Get_Texture() const;
@@ -181,7 +181,7 @@ protected:
 
 	void						Set_Flag(uint32 flag,bool onoff);
 	bool						Get_Flag(uint32 flag) const;
-	virtual void			Update_WS_Bounding_Volume();
+	virtual void			Update_WS_Bounding_Volume() override;
 	void						Configure_Camera(CameraClass & camera);
 
 	enum FlagsType

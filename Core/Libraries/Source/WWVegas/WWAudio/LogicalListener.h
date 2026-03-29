@@ -53,7 +53,7 @@ class LogicalListenerClass : public SoundSceneObjClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		LogicalListenerClass ();
-		virtual ~LogicalListenerClass ();
+		virtual ~LogicalListenerClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
@@ -68,23 +68,23 @@ class LogicalListenerClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Position (const Vector3 &position)		{ m_Position = position; }
-		virtual Vector3			Get_Position () const						{ return m_Position; }
+		virtual void			Set_Position (const Vector3 &position) override { m_Position = position; }
+		virtual Vector3			Get_Position () const override { return m_Position; }
 
-		virtual void			Set_Transform (const Matrix3D &transform) { m_Position = transform.Get_Translation (); }
-		virtual Matrix3D		Get_Transform () const						{ Matrix3D tm(1); tm.Set_Translation (m_Position); return tm; }
+		virtual void			Set_Transform (const Matrix3D &transform) override { m_Position = transform.Get_Translation (); }
+		virtual Matrix3D		Get_Transform () const override { Matrix3D tm(1); tm.Set_Translation (m_Position); return tm; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Culling methods (not used for listeners)
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Cull_Sound (bool culled = true)	{ };
-		virtual bool			Is_Sound_Culled () const		{ return false; };
+		virtual void			Cull_Sound (bool culled = true) override { };
+		virtual bool			Is_Sound_Culled () const override { return false; };
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Add_To_Scene (bool /*start_playing*/ = true);
-		virtual void			Remove_From_Scene ();
+		virtual void			Add_To_Scene (bool /*start_playing*/ = true) override;
+		virtual void			Remove_From_Scene () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
@@ -100,15 +100,15 @@ class LogicalListenerClass : public SoundSceneObjClass
 		static float			Get_Global_Scale ()				{ return m_GlobalScale; }
 		static void				Set_Global_Scale (float scale)	{ m_GlobalScale = scale; }
 
-		virtual void			Set_DropOff_Radius (float radius = 1)	{}
-		virtual float			Get_DropOff_Radius () const			{ return 1.0F; }
+		virtual void			Set_DropOff_Radius (float radius = 1) override {}
+		virtual float			Get_DropOff_Radius () const override { return 1.0F; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
-		bool									Save (ChunkSaveClass &csave);
-		bool									Load (ChunkLoadClass &cload);
-		const PersistFactoryClass &	Get_Factory () const;
+		virtual bool									Save (ChunkSaveClass &csave) override;
+		virtual bool									Load (ChunkLoadClass &cload) override;
+		virtual const PersistFactoryClass &	Get_Factory () const override;
 
 
 		//////////////////////////////////////////////////////////////////////

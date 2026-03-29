@@ -400,13 +400,13 @@ void GameLogic::reset()
 	m_objVector.resize(OBJ_HASH_SIZE, nullptr);
 
 	m_pauseFrame = 0;
-	m_gamePaused = FALSE;
 	m_pauseSound = FALSE;
 	m_pauseMusic = FALSE;
-	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	m_logicTimeScaleEnabledMemory = FALSE;
+	pauseGameLogic(FALSE);
+	pauseGameInput(FALSE);
 
 	setFPMode();
 
@@ -2489,6 +2489,12 @@ void GameLogic::processDestroyList()
 {
 	//USE_PERF_TIMER(processDestroyList)
 
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info Set m_classifyFenceZeroInit to true for the first object. It's set to false when this function exits.
+	// Pathfinder::classifyFence may be called indirectly from Object::~Object.
+	TheAI->pathfinder()->m_classifyFenceZeroInit = !m_objectsToDestroy.empty();
+#endif
+
 	for( ObjectPointerListIterator iterator = m_objectsToDestroy.begin(); iterator != m_objectsToDestroy.end(); iterator++ )
 	{
 		Object* currentObject = (*iterator);
@@ -2547,6 +2553,10 @@ void GameLogic::processDestroyList()
 		removeObjectFromLookupTable( currentObject );
 
 		Object::friend_deleteInstance(currentObject);//actual delete
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+		TheAI->pathfinder()->m_classifyFenceZeroInit = false;
+#endif
 	}
 
 	m_objectsToDestroy.clear();//list full of bad pointers now, clear it.  If anyone's deletion resulted

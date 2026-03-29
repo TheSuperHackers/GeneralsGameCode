@@ -59,12 +59,12 @@ public:
 	DynamicMeshModel(unsigned int max_polys, unsigned int max_verts);
 	DynamicMeshModel(unsigned int max_polys, unsigned int max_verts, MaterialInfoClass *mat_info);
 	DynamicMeshModel(const DynamicMeshModel &src);
-	~DynamicMeshModel();
+	virtual ~DynamicMeshModel() override;
 
 	// Inherited from MeshGeometryClass
 	virtual void	Compute_Plane_Equations();
 	virtual void	Compute_Vertex_Normals();
-	virtual void	Compute_Bounds(Vector3 * verts);
+	virtual void	Compute_Bounds(Vector3 * verts) override;
 
 	// Reset mesh (with existing max polygon and max vertex counts)
 	void	Reset();
@@ -135,31 +135,31 @@ public:
 	DynamicMeshClass( int max_poly, int max_vert);
 	DynamicMeshClass( int max_poly, int max_vert, MaterialInfoClass *mat_info);
 	DynamicMeshClass( const DynamicMeshClass & src);
-	virtual ~DynamicMeshClass();
+	virtual ~DynamicMeshClass() override;
 
 	// Inherited from RenderObjClass:
-	virtual RenderObjClass * 		Clone() const;
-	virtual int							Class_ID() const					{ return CLASSID_DYNAMESH; }
-	virtual void						Render(RenderInfoClass & rinfo);
+	virtual RenderObjClass * 		Clone() const override;
+	virtual int							Class_ID() const override { return CLASSID_DYNAMESH; }
+	virtual void						Render(RenderInfoClass & rinfo) override;
 
 	virtual MaterialInfoClass		*Peek_Material_Info()			{ return Model->Peek_Material_Info(); }
-	virtual MaterialInfoClass		*Get_Material_Info()			{ return Model->Get_Material_Info(); }
+	virtual MaterialInfoClass		*Get_Material_Info() override			{ return Model->Get_Material_Info(); }
 	virtual void Set_Material_Info(MaterialInfoClass *mat_info)		{ Model->Set_Material_Info(mat_info); }
 
 	// all render objects should be able to tell you how many polygons were
 	// used in the making of the render object.
-	virtual int Get_Num_Polys() const { return PolyCount; }
+	virtual int Get_Num_Polys() const override { return PolyCount; }
 
 	// return the number of vertices used by this renderobject
 	virtual int Get_Num_Vertices() const { return VertCount; }
 
 	// Get and set static sort level
-   virtual int		Get_Sort_Level() const		{ return SortLevel; }
-  	virtual void	Set_Sort_Level(int level)		{ SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
+   virtual int		Get_Sort_Level() const override { return SortLevel; }
+  	virtual void	Set_Sort_Level(int level) override { SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
 
 	// object space bounding volumes
-	virtual inline void Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-	virtual inline void Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual inline void Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+	virtual inline void Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	// Set the vertex material for the current triangle
 	int	Set_Vertex_Material( int idx, int pass = 0);
@@ -541,24 +541,24 @@ public:
 	// constructor and destructor
 	DynamicScreenMeshClass( int max_poly, int max_vert, float aspect = 1.0f ) : DynamicMeshClass( max_poly, max_vert), Aspect( aspect ) {}
 	DynamicScreenMeshClass( const DynamicScreenMeshClass & src) : DynamicMeshClass(src), Aspect(src.Aspect) {}
-	virtual ~DynamicScreenMeshClass() {}
+	virtual ~DynamicScreenMeshClass() override {}
 
 	// function to clone a dynamic screen mesh class
-	virtual RenderObjClass * 		Clone() const	{ return NEW_REF( DynamicScreenMeshClass, (*this)); }
+	virtual RenderObjClass * 		Clone() const override { return NEW_REF( DynamicScreenMeshClass, (*this)); }
 
 	// class id of this render object
-	virtual int	Class_ID() const	{ return CLASSID_DYNASCREENMESH; }
+	virtual int	Class_ID() const override { return CLASSID_DYNASCREENMESH; }
 
 	// Remap locations to match a screen
-	virtual void Location( float x, float y, float z = 0.0f);
+	virtual void Location( float x, float y, float z = 0.0f) override;
 
 	// For moving a vertex after the DynaMesh has already been created.
-   virtual void Move_Vertex(int index, float x, float y, float z = 0.0f);
+   virtual void Move_Vertex(int index, float x, float y, float z = 0.0f) override;
 
 	// Set position
-	virtual void Set_Position(const Vector3 &v);
+	virtual void Set_Position(const Vector3 &v) override;
 
-	virtual void Reset();
+	virtual void Reset() override;
 
 	virtual void Set_Aspect(float aspect) { Aspect=aspect; };
 
@@ -570,5 +570,5 @@ protected:
 	float		Aspect;
 
 	// tells when the triangle needs to be back flipped
-	virtual	bool	Flip_Face() { return !DynamicMeshClass::Flip_Face(); }
+	virtual	bool	Flip_Face() override { return !DynamicMeshClass::Flip_Face(); }
 };

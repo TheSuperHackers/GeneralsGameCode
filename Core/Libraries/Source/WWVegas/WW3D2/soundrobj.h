@@ -86,7 +86,7 @@ public:
 	///////////////////////////////////////////////////////////
 	SoundRenderObjClass ();
 	SoundRenderObjClass (const SoundRenderObjClass &src);
-	virtual ~SoundRenderObjClass ();
+	virtual ~SoundRenderObjClass () override;
 
 	///////////////////////////////////////////////////////////
 	//	Public operators
@@ -100,20 +100,20 @@ public:
 	//
 	//	From RenderObjClass
 	//
-	RenderObjClass *	Clone () const					{ return W3DNEW SoundRenderObjClass (*this); }
-	int					Class_ID () const				{ return CLASSID_SOUND; }
-	const char *		Get_Name () const				{ return Name; }
-	void					Set_Name (const char *name)		{ Name = name; }
-	void					Render (RenderInfoClass &rinfo)	{ }
-	void					On_Frame_Update ();
-	void					Set_Hidden (int onoff);
-	void					Set_Visible (int onoff);
-	void					Set_Animation_Hidden (int onoff);
-	void					Set_Force_Visible (int onoff);
-	void					Notify_Added (SceneClass *scene);
-	void					Notify_Removed (SceneClass *scene);
-	void 					Set_Transform(const Matrix3D &m);
-	void 					Set_Position(const Vector3 &v);
+	virtual RenderObjClass *	Clone () const override { return W3DNEW SoundRenderObjClass (*this); }
+	virtual int					Class_ID () const override { return CLASSID_SOUND; }
+	virtual const char *		Get_Name () const override { return Name; }
+	virtual void					Set_Name (const char *name) override { Name = name; }
+	virtual void					Render (RenderInfoClass &rinfo) override { }
+	virtual void					On_Frame_Update () override;
+	virtual void					Set_Hidden (int onoff) override;
+	virtual void					Set_Visible (int onoff) override;
+	virtual void					Set_Animation_Hidden (int onoff) override;
+	virtual void					Set_Force_Visible (int onoff) override;
+	virtual void					Notify_Added (SceneClass *scene) override;
+	virtual void					Notify_Removed (SceneClass *scene) override;
+	virtual void 					Set_Transform(const Matrix3D &m) override;
+	virtual void 					Set_Position(const Vector3 &v) override;
 
 	//
 	//	SoundRenderObjClass specific
@@ -165,7 +165,7 @@ public:
 	SoundRenderObjDefClass ();
 	SoundRenderObjDefClass (SoundRenderObjClass &render_obj);
 	SoundRenderObjDefClass (const SoundRenderObjDefClass &src);
-	virtual ~SoundRenderObjDefClass ();
+	virtual ~SoundRenderObjDefClass () override;
 
 	///////////////////////////////////////////////////////////
 	//	Public operators
@@ -236,16 +236,16 @@ public:
 	///////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////
-	const char *					Get_Name() const					{ return Definition->Get_Name (); }
-	int								Get_Class_ID() const			{ return RenderObjClass::CLASSID_SOUND; }
-	RenderObjClass *				Create ()							{ return Definition->Create (); }
-	virtual void							DeleteSelf()										{ delete this; }
+	virtual const char *					Get_Name() const override { return Definition->Get_Name (); }
+	virtual int								Get_Class_ID() const override { return RenderObjClass::CLASSID_SOUND; }
+	virtual RenderObjClass *				Create () override							{ return Definition->Create (); }
+	virtual void							DeleteSelf() override { delete this; }
 
 	SoundRenderObjDefClass	*	Peek_Definition () const						{ return Definition; }
 	void								Set_Definition (SoundRenderObjDefClass *def)	{ REF_PTR_SET (Definition, def); }
 
 protected:
-	virtual ~SoundRenderObjPrototypeClass ()						{ REF_PTR_RELEASE (Definition); }
+	virtual ~SoundRenderObjPrototypeClass () override						{ REF_PTR_RELEASE (Definition); }
 
 private:
 
@@ -264,8 +264,8 @@ private:
 class SoundRenderObjLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type ()		{ return W3D_CHUNK_SOUNDROBJ; }
-	virtual PrototypeClass *	Load_W3D (ChunkLoadClass &cload);
+	virtual int						Chunk_Type () override { return W3D_CHUNK_SOUNDROBJ; }
+	virtual PrototypeClass *	Load_W3D (ChunkLoadClass &cload) override;
 };
 
 

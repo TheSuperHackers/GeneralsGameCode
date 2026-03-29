@@ -77,9 +77,9 @@ public:
 	BoxRenderObjClass(const BoxRenderObjClass & src);
 	BoxRenderObjClass & operator = (const BoxRenderObjClass &);
 
-	virtual int							Get_Num_Polys() const;
-	virtual const char *				Get_Name() const;
-	virtual void						Set_Name(const char * name);
+	virtual int							Get_Num_Polys() const override;
+	virtual const char *				Get_Name() const override;
+	virtual void						Set_Name(const char * name) override;
 	void									Set_Color(const Vector3 & color);
 	void									Set_Opacity(float opacity) { Opacity = opacity; }
 
@@ -143,19 +143,19 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
+	virtual void 					Set_Transform(const Matrix3D &m) override;
+	virtual void 					Set_Position(const Vector3 &v) override;
+	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
+	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest) override;
+	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
+	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest) override;
+	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest) override;
+   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// AABoxRenderObjClass Interface
@@ -164,7 +164,7 @@ public:
 
 protected:
 
-	virtual void					update_cached_box();
+	virtual void					update_cached_box() override;
 
 	AABoxClass						CachedBox;
 
@@ -194,19 +194,19 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
-	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
-	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
+	virtual void 					Set_Transform(const Matrix3D &m) override;
+	virtual void 					Set_Position(const Vector3 &v) override;
+	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
+	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest) override;
+	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
+	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest) override;
+	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest) override;
+   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// OBBoxRenderObjClass Interface
@@ -215,7 +215,7 @@ public:
 
 protected:
 
-	virtual void					update_cached_box();
+	virtual void					update_cached_box() override;
 
 	OBBoxClass						CachedBox;
 
@@ -228,8 +228,8 @@ protected:
 class BoxLoaderClass : public PrototypeLoaderClass
 {
 public:
-	virtual int						Chunk_Type ()  { return W3D_CHUNK_BOX; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+	virtual int						Chunk_Type () override { return W3D_CHUNK_BOX; }
+	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
 };
 
 
@@ -242,10 +242,10 @@ class BoxPrototypeClass : public W3DMPO, public PrototypeClass
 	W3DMPO_GLUE(BoxPrototypeClass)
 public:
 	BoxPrototypeClass(W3dBoxStruct box);
-	virtual const char *				Get_Name() const;
-	virtual int									Get_Class_ID() const;
-	virtual RenderObjClass *		Create();
-	virtual void								DeleteSelf() { delete this; }
+	virtual const char *				Get_Name() const override;
+	virtual int									Get_Class_ID() const override;
+	virtual RenderObjClass *		Create() override;
+	virtual void								DeleteSelf() override { delete this; }
 private:
 	W3dBoxStruct					Definition;
 };
