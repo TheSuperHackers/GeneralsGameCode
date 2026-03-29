@@ -317,6 +317,8 @@ public:
 
 	// Set_ and Get_Transform() functions take the matrix in Westwood convention format.
 
+	static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix,float znear, float zfar);	// pointer to 16 matrices
+
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
 	static void Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
@@ -1191,6 +1193,24 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)",shader.Get_Description(str).str()));
 }
 
+WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix, float znear, float zfar)
+{
+	ZFar=zfar;
+	ZNear=znear;
+	ProjectionMatrix=To_D3DMATRIX(matrix);
+
+	if (!Get_Current_Caps()->Support_ZBias() && ZNear!=ZFar) {
+		D3DMATRIX tmp=ProjectionMatrix;
+		float tmp_zbias=ZBias;
+		tmp_zbias*=(1.0f/16.0f);
+		tmp_zbias*=1.0f / (ZFar - ZNear);
+		tmp.m[2][2]-=tmp_zbias*tmp.m[3][2];
+		DX8CALL(SetTransform(D3DTS_PROJECTION,&tmp));
+	}
+	else {
+		DX8CALL(SetTransform(D3DTS_PROJECTION,&ProjectionMatrix));
+	}
+}
 
 WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m)
 {
