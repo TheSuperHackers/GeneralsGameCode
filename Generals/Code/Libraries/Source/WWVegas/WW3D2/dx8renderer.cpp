@@ -2192,9 +2192,11 @@ void DX8MeshRendererClass::Add_To_Render_List(DecalMeshClass * decalmesh)
 
 void DX8MeshRendererClass::Render_Decal_Meshes()
 {
+	DecalMeshClass * decal_mesh = visible_decal_meshes;
+	if (!decal_mesh) return;
+
 	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,8);
 
-	DecalMeshClass * decal_mesh = visible_decal_meshes;
 	while (decal_mesh != nullptr) {
 		decal_mesh->Render();
 		decal_mesh = decal_mesh->Peek_Next_Visible();
