@@ -334,7 +334,7 @@ void DX8TextureCategoryClass::Log(bool only_visible)
 	WWDEBUG_SAY((work));
 
 	StringClass work2(255,true);
-	for (int stage=0;stage<MAX_TEXTURE_STAGES;++stage) {
+	for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
 		work2.Format("\n	texture[%d]: %x (%s)", stage, textures[stage], textures[stage] ? textures[stage]->Get_Name() : "-");
 		work+=work2;
 	}
@@ -1637,7 +1637,8 @@ void DX8TextureCategoryClass::Render()
 	if (!WW3D::Expose_Prelit()) {
 	#endif
 
-		for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
+		for (unsigned i=0;i<MeshMatDescClass::MAX_TEX_STAGES;++i)
+		{
 			SNAPSHOT_SAY(("Set_Texture(%d,%s)",i,Peek_Texture(i) ? Peek_Texture(i)->Get_Texture_Name().str() : "null"));
 			DX8Wrapper::Set_Texture(i,Peek_Texture(i));
 		}
@@ -1708,7 +1709,8 @@ void DX8TextureCategoryClass::Render()
 				case MeshGeometryClass::PRELIT_VERTEX:
 
 					// Disable texturing on all stages and passes.
-					for (i = 0; i < MAX_TEXTURE_STAGES; i++) {
+					for (i = 0; i < MeshMatDescClass::MAX_TEX_STAGES; i++)
+					{
 						DX8Wrapper::Set_Texture (i, nullptr);
 					}
 					break;
@@ -1717,7 +1719,8 @@ void DX8TextureCategoryClass::Render()
 
 					// Disable texturing on all but the last pass.
 					if (pass == mesh->Peek_Model()->Get_Pass_Count() - 1) {
-						for (i = 0; i < MAX_TEXTURE_STAGES; i++) {
+						for (i = 0; i < MeshMatDescClass::MAX_TEX_STAGES; i++)
+						{
 							DX8Wrapper::Set_Texture (i, Peek_Texture (i));
 						}
 					} else {
@@ -1731,13 +1734,15 @@ void DX8TextureCategoryClass::Render()
 
 					// Disable texturing on all but the zeroth stage of each pass.
 					DX8Wrapper::Set_Texture (0, Peek_Texture (0));
-					for (i = 1; i < MAX_TEXTURE_STAGES; i++) {
+					for (i = 1; i < MeshMatDescClass::MAX_TEX_STAGES; i++)
+					{
 						DX8Wrapper::Set_Texture (i, nullptr);
 					}
 					break;
 
 				default:
-					for (i = 0; i < MAX_TEXTURE_STAGES; i++) {
+					for (i = 0; i < MeshMatDescClass::MAX_TEX_STAGES; i++)
+					{
 						DX8Wrapper::Set_Texture (i, Peek_Texture (i));
 					}
 					break;

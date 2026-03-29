@@ -46,6 +46,7 @@
 #include "dx8list.h"
 #include "shader.h"
 #include "dx8wrapper.h"
+#include "meshmatdesc.h"
 
 class IndexBufferClass;
 class VertexBufferClass;
@@ -75,7 +76,7 @@ class CameraClass;
 class DX8TextureCategoryClass : public MultiListObjectClass
 {
 	int												pass;
-	TextureClass *									textures[MAX_TEXTURE_STAGES];
+	TextureClass *									textures[MeshMatDescClass::MAX_TEX_STAGES];
 	ShaderClass										shader;
 	VertexMaterialClass *						material;
 	DX8PolygonRendererList						PolygonRendererList;
