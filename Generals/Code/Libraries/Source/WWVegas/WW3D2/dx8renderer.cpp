@@ -297,6 +297,7 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes()
    	bool renderTasksRemaining=false;
 
 	while (mpr != nullptr) {
+		SNAPSHOT_SAY(("Render_Procedural_Material_Pass"));
 
    		MeshClass * mesh = mpr->Peek_Mesh();
 
@@ -371,7 +372,6 @@ void DX8TextureCategoryClass::Log(bool only_visible)
 #ifdef ENABLE_CATEGORY_LOG
 	StringClass work(255,true);
 	work.Format("	DX8TextureCategoryClass");
-	WWDEBUG_SAY((work));
 
 	StringClass work2(255,true);
 	for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
@@ -1334,9 +1334,11 @@ void DX8SkinFVFCategoryContainer::Render()
 					continue;
 				}
 
-				WWASSERT((vertex_offset+mesh_vertex_count)<=VisibleVertexCount);
 
-				DX8_RECORD_SKIN_RENDER(mesh->Get_Num_Polys(),mesh_vertex_count);
+		// If this assert hits, a skinned mesh has probably been added to the scene more than once.
+		// Example: A skinned mesh was added to the scene then it was attached to a bone without being removed from the scene.
+		WWASSERT((vertex_offset+mesh_vertex_count)<=VisibleVertexCount);
+			DX8_RECORD_SKIN_RENDER(mesh->Get_Num_Polys(),mesh_vertex_count);
 
 				if (_TempVertexBuffer.Length() < mesh_vertex_count) _TempVertexBuffer.Resize(mesh_vertex_count);
 				if (_TempNormalBuffer.Length() < mesh_vertex_count) _TempNormalBuffer.Resize(mesh_vertex_count);
@@ -2226,6 +2228,7 @@ static void Invalidate_FVF_Category_Container_List(FVFCategoryList& list)
 
 void DX8MeshRendererClass::Invalidate( bool shutdown)
 {
+	WWMEMLOG(MEM_RENDERER);
 	_RegisteredMeshList.Reset_List();
 
 	for (int i=0;i<texture_category_container_lists_rigid.Count();++i) {
