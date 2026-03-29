@@ -311,18 +311,58 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes()
 		mpr->Peek_Mesh()->Render_Material_Pass(mpr->Peek_Material_Pass(),index_buffer);
 		MatPassTaskClass * next_mpr = mpr->Get_Next_Visible();
 
- 		// remove from list, then delete
- 		if (last_mpr == nullptr) {
- 			visible_matpass_head = next_mpr;
- 		} else {
- 	       last_mpr->Set_Next_Visible(next_mpr);
- 	    }
+		// remove from list, then delete
+		if (last_mpr == nullptr) {
+			visible_matpass_head = next_mpr;
+		} else {
+	       last_mpr->Set_Next_Visible(next_mpr);
+	    }
 
 		delete mpr;
 		mpr = next_mpr;
 	}
 
- 	visible_matpass_tail = renderTasksRemaining ? last_mpr : nullptr;
+	visible_matpass_tail = renderTasksRemaining ? last_mpr : nullptr;
+}
+
+void DX8RigidFVFCategoryContainer::Add_Delayed_Visible_Material_Pass(MaterialPassClass * pass, MeshClass * mesh)
+{
+	MatPassTaskClass * new_mpr = new MatPassTaskClass(pass,mesh);
+
+	if (delayed_matpass_head == nullptr) {
+		WWASSERT(delayed_matpass_tail == nullptr);
+		delayed_matpass_head = new_mpr;
+	} else {
+		WWASSERT(delayed_matpass_tail != nullptr);
+		delayed_matpass_tail->Set_Next_Visible(new_mpr);
+	}
+
+	delayed_matpass_tail = new_mpr;
+	AnyDelayedPassesToRender=true;
+}
+
+void DX8RigidFVFCategoryContainer::Render_Delayed_Procedural_Material_Passes()
+{
+	if (!Any_Delayed_Passes_To_Render()) return;
+	AnyDelayedPassesToRender=false;
+
+	DX8Wrapper::Set_Vertex_Buffer(vertex_buffer);
+	DX8Wrapper::Set_Index_Buffer(index_buffer,0);
+
+	SNAPSHOT_SAY(("DX8RigidFVFCategoryContainer::Render_Delayed_Procedural_Material_Passes()"));
+
+	// additional passes
+	MatPassTaskClass * mpr = delayed_matpass_head;
+	while (mpr != nullptr) {
+
+		mpr->Peek_Mesh()->Render_Material_Pass(mpr->Peek_Material_Pass(),index_buffer);
+		MatPassTaskClass * next_mpr = mpr->Get_Next_Visible();
+
+		delete mpr;
+		mpr = next_mpr;
+	}
+
+	delayed_matpass_head = delayed_matpass_tail = nullptr;
 }
 
 
@@ -389,7 +429,8 @@ DX8FVFCategoryContainer::DX8FVFCategoryContainer(unsigned FVF_,bool sorting_)
 	used_indices(0),
 	passes(MAX_PASSES),
 	uv_coordinate_channels(0),
-	AnythingToRender(false)
+	AnythingToRender(false),
+	AnyDelayedPassesToRender(false)
 {
 	if ((FVF&D3DFVF_TEX1)==D3DFVF_TEX1) uv_coordinate_channels=1;
 	if ((FVF&D3DFVF_TEX2)==D3DFVF_TEX2) uv_coordinate_channels=2;
@@ -702,7 +743,9 @@ DX8RigidFVFCategoryContainer::DX8RigidFVFCategoryContainer(unsigned FVF,bool sor
 	:
 	DX8FVFCategoryContainer(FVF,sorting_),
 	vertex_buffer(nullptr),
-	used_vertices(0)
+	used_vertices(0),
+	delayed_matpass_head(nullptr),
+	delayed_matpass_tail(nullptr)
 {
 }
 
