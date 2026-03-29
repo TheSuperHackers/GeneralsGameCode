@@ -982,9 +982,9 @@ public:
 		return mmc;
 	}
 
-	unsigned* Get_Polygon_Array(unsigned pass)
+	unsigned short* Get_Polygon_Array(unsigned pass)
 	{
-		return (unsigned*)polygon_array;
+		return (unsigned short*)polygon_array;
 	}
 };
 
