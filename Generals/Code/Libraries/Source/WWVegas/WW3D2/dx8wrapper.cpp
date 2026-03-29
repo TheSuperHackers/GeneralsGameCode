@@ -3035,13 +3035,18 @@ void DX8Wrapper::Set_Light(unsigned index,const LightClass &light)
 	Set_Light(index,&dlight);
 }
 
-// ----------------------------------------------------------------------------
-//
-// Set the light environment. This is a lighting model which used up to four
-// directional lights to produce the lighting.
-//
+//**********************************************************************************************
+//! Set the light environment. This is a lighting model which used up to four
+//! directional lights to produce the lighting.
+/*! 5/27/02 KJM Added shader light environment support
+*/
 void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 {
+	// Shader light environment support															*
+//	if (Light_Environment && light_env && (*Light_Environment)==(*light_env)) return;
+
+	Light_Environment=light_env;
+
 	if (light_env)
 	{
 		int light_count = light_env->Get_Light_Count();
@@ -3065,6 +3070,12 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 			(Vector3&)light.Diffuse=light_env->Get_Light_Diffuse(l);
 			Vector3 dir=-light_env->Get_Light_Direction(l);
 			light.Direction=(const D3DVECTOR&)(dir);
+
+			// (gth) TODO: put specular into LightEnvironment?  Much work to be done on lights :-)'
+			if (l==0) {
+				light.Specular.r = light.Specular.g = light.Specular.b = 1.0f;
+			}
+
 			if (light_env->isPointLight(l)) {
 				light.Type = D3DLIGHT_POINT;
 				(Vector3&)light.Diffuse=light_env->getPointDiffuse(l);
@@ -3076,7 +3087,14 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 				double a,b;
 				b = light_env->getPointOrad(l);
 				a = light_env->getPointIrad(l);
+
+//(gth) CNC3 Generals code for the attenuation factors is causing the lights to over-brighten
+//I'm changing the Attenuation0 parameter to 1.0 to avoid this problem.
+#if 0
 				light.Attenuation0=0.01f;
+#else
+				light.Attenuation0=1.0f;
+#endif
 				if (fabs(a-b)<1e-5)
 					// if the attenuation range is too small assume uniform with cutoff
 					light.Attenuation1=0.0f;
