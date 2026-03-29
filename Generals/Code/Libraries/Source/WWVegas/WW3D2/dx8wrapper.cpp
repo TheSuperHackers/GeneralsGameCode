@@ -521,11 +521,14 @@ bool DX8Wrapper::Create_Device()
 		return false;
 	}
 
-	Vertex_Processing_Behavior=D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-	if (caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT)
+	Vertex_Processing_Behavior=(caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT) ?
+		D3DCREATE_MIXED_VERTEXPROCESSING : D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+
+	// enable this when all 'get' dx calls are removed KJM
+	/*if (caps.DevCaps&D3DDEVCAPS_PUREDEVICE)
 	{
-		Vertex_Processing_Behavior=D3DCREATE_MIXED_VERTEXPROCESSING;
-	}
+		Vertex_Processing_Behavior|=D3DCREATE_PUREDEVICE;
+	}*/
 
 #ifdef CREATE_DX8_MULTI_THREADED
 	Vertex_Processing_Behavior|=D3DCREATE_MULTITHREADED;
@@ -557,7 +560,36 @@ bool DX8Wrapper::Create_Device()
 
 	if (FAILED(hr))
 	{
-		return false;
+		// The device selection may fail because the device lied that it supports 32 bit zbuffer with 16 bit
+		// display. This happens at least on Voodoo2.
+
+		if ((_PresentParameters.BackBufferFormat==D3DFMT_R5G6B5 ||
+			_PresentParameters.BackBufferFormat==D3DFMT_X1R5G5B5 ||
+			_PresentParameters.BackBufferFormat==D3DFMT_A1R5G5B5) &&
+			(_PresentParameters.AutoDepthStencilFormat==D3DFMT_D32 ||
+			_PresentParameters.AutoDepthStencilFormat==D3DFMT_D24S8 ||
+			_PresentParameters.AutoDepthStencilFormat==D3DFMT_D24X8))
+		{
+			_PresentParameters.AutoDepthStencilFormat=D3DFMT_D16;
+			hr = D3DInterface->CreateDevice
+			(
+				CurRenderDevice,
+				WW3D_DEVTYPE,
+				_Hwnd,
+				Vertex_Processing_Behavior,
+				&_PresentParameters,
+				&D3DDevice
+			);
+
+			if (FAILED(hr))
+			{
+				return false;
+			}
+        }
+		else
+		{
+				return false;
+		}
 	}
 
 	dbgHelpGuard.deactivate();
@@ -745,17 +777,17 @@ void DX8Wrapper::Enumerate_Devices()
 
 bool DX8Wrapper::Set_Any_Render_Device()
 {
-	// Try windowed first
+	// Then fullscreen
 	int dev_number = 0;
 	for (; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
-		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
+		if (Set_Render_Device(dev_number,-1,-1,-1,0,false)) {
 			return true;
 		}
 	}
 
-	// Then fullscreen
+	// Try windowed first
 	for (dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
-		if (Set_Render_Device(dev_number,-1,-1,-1,0,false)) {
+		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;
 		}
 	}
@@ -939,7 +971,8 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	_PresentParameters.BackBufferHeight = ResolutionHeight;
 	_PresentParameters.BackBufferCount = IsWindowed ? 1 : 2;
 
-	_PresentParameters.SwapEffect = IsWindowed ? D3DSWAPEFFECT_DISCARD : D3DSWAPEFFECT_FLIP;		// Shouldn't this be D3DSWAPEFFECT_FLIP?
+	//I changed this to discard all the time (even when full-screen) since that the most efficient. 07-16-03 MW:
+	_PresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;//IsWindowed ? D3DSWAPEFFECT_DISCARD : D3DSWAPEFFECT_FLIP;		// Shouldn't this be D3DSWAPEFFECT_FLIP?
 	_PresentParameters.hDeviceWindow = _Hwnd;
 	_PresentParameters.Windowed = IsWindowed;
 
@@ -1306,8 +1339,63 @@ bool DX8Wrapper::Registry_Load_Render_Device( const char * sub_key, bool resize_
 			TextureBitDepth=16;
 		}
 
+
+//		_RenderDeviceDescriptionTable.
+
+
 		if ( Set_Render_Device( name, width,height,depth,windowed, resize_window ) != true) {
-			return Set_Any_Render_Device();
+			if (depth==16) depth=32;
+			else depth=16;
+			if ( Set_Render_Device( name, width,height,depth,windowed, resize_window ) == true) {
+				return true;
+			}
+			if (depth==16) depth=32;
+			else depth=16;
+			// we'll test resolutions down, so if start is 640, increase to begin with...
+			if (width==640) {
+				width=1024;
+				height=768;
+			}
+			for(;;) {
+				if (width>2048) {
+					width=2048;
+					height=1536;
+				}
+				else if (width>1920) {
+					width=1920;
+					height=1440;
+				}
+				else if (width>1600) {
+					width=1600;
+					height=1200;
+				}
+				else if (width>1280) {
+					width=1280;
+					height=1024;
+				}
+				else if (width>1024) {
+					width=1024;
+					height=768;
+				}
+				else if (width>800) {
+					width=800;
+					height=600;
+				}
+				else if (width!=640) {
+					width=640;
+					height=480;
+				}
+				else {
+					return Set_Any_Render_Device();
+				}
+				for (int i=0;i<2;++i) {
+					if ( Set_Render_Device( name, width,height,depth,windowed, resize_window ) == true) {
+						return true;
+					}
+					if (depth==16) depth=32;
+					else depth=16;
+				}
+			}
 		}
 
 		return true;
@@ -1688,9 +1776,30 @@ void DX8Wrapper::Clear(bool clear_color, bool clear_z_stencil, const Vector3 &co
 	DX8_THREAD_ASSERT();
 
 	// If we try to clear a stencil buffer which is not there, the entire call will fail
-	bool has_stencil = (	_PresentParameters.AutoDepthStencilFormat == D3DFMT_D15S1 ||
+	// KJM fixed this to get format from back buffer (incase render to texture is used)
+	/*bool has_stencil = (	_PresentParameters.AutoDepthStencilFormat == D3DFMT_D15S1 ||
 								_PresentParameters.AutoDepthStencilFormat == D3DFMT_D24S8 ||
-								_PresentParameters.AutoDepthStencilFormat == D3DFMT_D24X4S4);
+								_PresentParameters.AutoDepthStencilFormat == D3DFMT_D24X4S4);*/
+	bool has_stencil=false;
+	IDirect3DSurface8* depthbuffer;
+
+	_Get_D3D_Device8()->GetDepthStencilSurface(&depthbuffer);
+	DX8_RECORD_DX8_CALLS();
+
+	if (depthbuffer)
+	{
+		D3DSURFACE_DESC desc;
+		depthbuffer->GetDesc(&desc);
+		has_stencil=
+		(
+			desc.Format==D3DFMT_D15S1 ||
+			desc.Format==D3DFMT_D24S8 ||
+			desc.Format==D3DFMT_D24X4S4
+		);
+
+		// release ref
+		depthbuffer->Release();
+	}
 
 	DWORD flags = 0;
 	if (clear_color) flags |= D3DCLEAR_TARGET;
@@ -1836,7 +1945,11 @@ void DX8Wrapper::Draw_Sorting_IB_VB(
 		0,
 		static_cast<DX8VertexBufferClass*>(dyn_vb_access.VertexBuffer)->Get_DX8_Vertex_Buffer(),
 		dyn_vb_access.FVF_Info().Get_FVF_Size()));
-	DX8CALL(SetVertexShader(dyn_vb_access.FVF_Info().Get_FVF()));
+	// If using FVF format VB, set the FVF as vertex shader (may not be needed here KM)
+	unsigned fvf=dyn_vb_access.FVF_Info().Get_FVF();
+	if (fvf!=0) {
+		DX8CALL(SetVertexShader(fvf));
+	}
 	DX8_RECORD_VERTEX_BUFFER_CHANGE();
 
 	unsigned index_count=0;
@@ -2255,9 +2368,35 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 			return nullptr;
 		}
 
+		// If ran out of texture ram, try invalidating some textures and mesh cache.
 		if (ret==D3DERR_OUTOFVIDEOMEMORY) {
-			Non_Fatal_Log_DX8_ErrorCode(ret,__FILE__,__LINE__);
-			return nullptr;
+			WWDEBUG_SAY(("Error: Out of memory while creating render target. Trying to release assets..."));
+			// Free all textures that haven't been used in the last 5 seconds
+			TextureClass::Invalidate_Old_Unused_Textures(5000);
+
+			// Invalidate the mesh cache
+			WW3D::_Invalidate_Mesh_Cache();
+
+			ret=D3DXCreateTexture(
+				DX8Wrapper::_Get_D3D_Device8(),
+				width,
+				height,
+				mip_level_count,
+				D3DUSAGE_RENDERTARGET,
+				WW3DFormat_To_D3DFormat(format),
+				pool,
+				&texture);
+
+			if (SUCCEEDED(ret)) {
+				WWDEBUG_SAY(("...Render target creation successful."));
+			}
+			else {
+				WWDEBUG_SAY(("...Render target creation failed."));
+			}
+			if (ret==D3DERR_OUTOFVIDEOMEMORY) {
+				Non_Fatal_Log_DX8_ErrorCode(ret,__FILE__,__LINE__);
+				return nullptr;
+			}
 		}
 
 		DX8_ErrorCode(ret);
@@ -2266,9 +2405,10 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 		return texture;
 	}
 
-	// Don't allow any errors in non-render target
-	// texture creation.
-	DX8_ErrorCode(D3DXCreateTexture(
+	// We should never run out of video memory when allocating a non-rendertarget texture.
+	// However, it seems to happen sometimes when there are a lot of textures in memory and so
+	// if it happens we'll release assets and try again (anything is better than crashing).
+	unsigned ret=D3DXCreateTexture(
 		DX8Wrapper::_Get_D3D_Device8(),
 		width,
 		height,
@@ -2276,12 +2416,37 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 		0,
 		WW3DFormat_To_D3DFormat(format),
 		pool,
-		&texture));
+		&texture);
 
-//	unsigned reduction=WW3D::Get_Texture_Reduction();
-//	unsigned level_count=texture->GetLevelCount();
-//	if (reduction>=level_count) reduction=level_count-1;
-//	texture->SetLOD(reduction);
+	// If ran out of texture ram, try invalidating some textures and mesh cache.
+	if (ret==D3DERR_OUTOFVIDEOMEMORY) {
+		WWDEBUG_SAY(("Error: Out of memory while creating texture. Trying to release assets..."));
+		// Free all textures that haven't been used in the last 5 seconds
+		TextureClass::Invalidate_Old_Unused_Textures(5000);
+
+		// Invalidate the mesh cache
+		WW3D::_Invalidate_Mesh_Cache();
+
+		ret=D3DXCreateTexture(
+			DX8Wrapper::_Get_D3D_Device8(),
+			width,
+			height,
+			mip_level_count,
+			0,
+			WW3DFormat_To_D3DFormat(format),
+			pool,
+			&texture);
+		if (SUCCEEDED(ret)) {
+			WWDEBUG_SAY(("...Texture creation successful."));
+		}
+		else {
+			StringClass format_name(0,true);
+			Get_WW3D_Format_Name(format, format_name);
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d",width,height,format_name.str(),mip_level_count));
+		}
+
+	}
+	DX8_ErrorCode(ret);
 
 	return texture;
 }
