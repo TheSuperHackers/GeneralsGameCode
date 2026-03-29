@@ -2044,6 +2044,14 @@ void DX8MeshRendererClass::Unregister_Mesh_Type(MeshModelClass* mmc)
 		delete n;
 	}
 	_RegisteredMeshList.Remove(mmc);
+
+	// Also remove the gap filler!
+	if (mmc->GapFiller) {
+		GapFillerClass* gf=mmc->GapFiller;
+		mmc->GapFiller=nullptr;
+		delete gf;
+	}
+
 }
 
 
