@@ -302,8 +302,8 @@ void DX8FVFCategoryContainer::Render_Procedural_Material_Passes()
 
    		if (mesh->Get_Base_Vertex_Offset() == VERTEX_BUFFER_OVERFLOW)	//check if this mesh is valid
    		{	//skip this mesh so it gets rendered later after vertices are filled in.
- 	        last_mpr = mpr;
-  			mpr = mpr->Get_Next_Visible();
+	        last_mpr = mpr;
+   			mpr = mpr->Get_Next_Visible();
    			renderTasksRemaining = true;
    			continue;
    		}
@@ -1306,7 +1306,6 @@ void DX8SkinFVFCategoryContainer::Render()
 
 				VertexFormatXYZNDUV2* verts=dest_verts+vertex_offset;
 
-	//			mesh->Compose_Deformed_Vertex_Buffer(verts,uv0,uv1,diffuse);
 				mesh->Get_Deformed_Vertices(loc,norm);
 
 				for (int v=0;v<mesh_vertex_count;++v) {
@@ -1379,6 +1378,7 @@ void DX8SkinFVFCategoryContainer::Render()
 	}
 
 	WWASSERT(renderedVertexCount==VisibleVertexCount);
+
 
 	clearVisibleSkinList();
 }
@@ -1678,7 +1678,7 @@ void DX8TextureCategoryClass::Render()
 	bool renderTasksRemaining=false;
 
 	PolyRenderTaskClass * prt = render_task_head;
- 	PolyRenderTaskClass * last_prt = nullptr;
+	PolyRenderTaskClass * last_prt = nullptr;
 
 	while (prt) {
 
@@ -1866,8 +1866,7 @@ void DX8TextureCategoryClass::Render()
 				{	oldMapper->Set_LastUsedSyncTime(oldUVOffsetSyncTime);
 					oldMapper->Set_Current_UV_Offset(oldUVOffset);
 				}
-
-				DX8Wrapper::Set_Material(nullptr);	//force a reset of vertex material since we secretly changed opacity or uv offset
+				DX8Wrapper::Set_Material(nullptr);	//force a reset of vertex material since we secretly changed opacity
 				DX8Wrapper::Set_Material(vmaterial);	//restore previous material.
 			}
 			else
@@ -1887,12 +1886,12 @@ void DX8TextureCategoryClass::Render()
 		*/
 		PolyRenderTaskClass * next_prt = prt->Get_Next_Visible();
 
- 		// remove from list, then delete
+		// remove from list, then delete
 		if (last_prt == nullptr) {
- 		   render_task_head = next_prt;
- 		} else {
- 		  last_prt->Set_Next_Visible(next_prt);
- 		}
+		   render_task_head = next_prt;
+		} else {
+		  last_prt->Set_Next_Visible(next_prt);
+		}
 
 		delete prt;
 		prt = next_prt;
@@ -2099,11 +2098,22 @@ static void Render_FVF_Category_Container_List(FVFCategoryList& list)
 
 void DX8MeshRendererClass::Flush()
 {
+	int i;
+
 	WWPROFILE("DX8MeshRenderer::Flush");
 	if (!camera) return;
 	Log_Statistics_String(true);
 
-	for (int i=0;i<texture_category_container_lists_rigid.Count();++i) {
+	/*
+	** Render the FVF categories.  Note that it is critical that skins be
+	** rendered *after* the rigid meshes.  This is caused by the fact that an object may
+	** have its base passes disabled and a translucent procedural material pass rendered
+	** instead.  In this case, technically we have to delay rendering of the material pass but
+	** for skins we just render these passes as we go because we can assume that the
+	** bulk of the meshes have already been drawn (there would be extra overhead involved
+	** in solving this for skins)
+	*/
+	for (i=0;i<texture_category_container_lists_rigid.Count();++i) {
 		Render_FVF_Category_Container_List(*texture_category_container_lists_rigid[i]);
 	}
 
