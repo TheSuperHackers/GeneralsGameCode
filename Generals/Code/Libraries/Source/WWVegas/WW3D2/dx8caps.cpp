@@ -47,13 +47,8 @@
 
 static StringClass CapsWorkString;
 
-
-enum {
-	VENDOR_ID_NVIDIA=0x10de,
-	VENROD_ID_ATI=0x1002,
-	VENDOR_ID_VMWARE=0x15AD,
-};
-
+#define DXLOG(n) CapsWorkString.Format n ; CapsLog+=CapsWorkString;
+#define COMPACTLOG(n) CapsWorkString.Format n ; CompactLog+=CapsWorkString;
 
 static const char* const VendorNames[]={
 	"Unknown",
@@ -485,6 +480,26 @@ DX8Caps::DX8Caps(
 	Compute_Caps(display_format, adapter_id);
 }
 
+DX8Caps::DX8Caps(
+	IDirect3D8* direct3d,
+	const D3DCAPS8& caps,
+	WW3DFormat display_format,
+	const D3DADAPTER_IDENTIFIER8& adapter_id)
+	:
+	Direct3D(direct3d),
+	Caps(caps),
+	MaxDisplayWidth(0),
+	MaxDisplayHeight(0)
+{
+	if ((Caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT)==D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+		SupportTnL=true;
+	} else {
+		SupportTnL=false;
+	}
+
+	Compute_Caps(display_format,adapter_id);
+}
+
 //Don't really need this but I added this function to free static variables so
 //they don't show up in our memory manager as a leak. -MW 7-22-03
 void DX8Caps::Shutdown()
@@ -501,13 +516,13 @@ void DX8Caps::Shutdown()
 void DX8Caps::Init_Caps(IDirect3DDevice8* D3DDevice)
 {
 	D3DDevice->SetRenderState(D3DRS_SOFTWAREVERTEXPROCESSING,TRUE);
-	DX8CALL(GetDeviceCaps(&swVPCaps));
+	DX8CALL(GetDeviceCaps(&Caps));
 
-	if ((swVPCaps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT)==D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+	if ((Caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT)==D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
 		SupportTnL=true;
 
 		D3DDevice->SetRenderState(D3DRS_SOFTWAREVERTEXPROCESSING,FALSE);
-		DX8CALL(GetDeviceCaps(&hwVPCaps));
+		DX8CALL(GetDeviceCaps(&Caps));
 	} else {
 		SupportTnL=false;
 	}
@@ -522,33 +537,133 @@ void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIE
 {
 //	Init_Caps(D3DDevice);
 
-	const D3DCAPS8& caps=Get_DX8_Caps();
+	CanDoMultiPass=true;
+	IsFogAllowed=true;
 
-	if ((caps.DevCaps&D3DDEVCAPS_NPATCHES)==D3DDEVCAPS_NPATCHES) {
-		SupportNPatches=true;
-	} else {
-		SupportNPatches=false;
+	CapsLog="";
+	CompactLog="";
+	DXLOG(("Video Card: %s\r\n",adapter_id.Description));
+	DXLOG(("Driver: %s\r\n",adapter_id.Driver));
+
+	DriverDLL=adapter_id.Driver;
+	int Product = HIWORD(adapter_id.DriverVersion.HighPart);
+	int Version = LOWORD(adapter_id.DriverVersion.HighPart);
+	int SubVersion = HIWORD(adapter_id.DriverVersion.LowPart);
+	DriverBuildVersion = LOWORD(adapter_id.DriverVersion.LowPart);
+
+	DXLOG(("Product=%d, Version=%d, SubVersion=%d, Build=%d\r\n",Product, Version, SubVersion, DriverBuildVersion));
+
+	VendorId=Define_Vendor(adapter_id.VendorId);
+	// Make a guess - if driver doesn't intruduce itself and the name starts with 3, what could it possibly be?
+	if (VendorId==VENDOR_UNKNOWN) {
+		if (DriverDLL[0]=='3') VendorId=VENDOR_3DFX;
+	}
+	COMPACTLOG(("%s\t",VendorNames[VendorId]));
+	DXLOG(("Video Card Chip Vendor: %s\r\n",VendorNames[VendorId]));
+	DXLOG(("Type of chip: "));
+	switch (VendorId) {
+	default:
+	case VENDOR_UNKNOWN:
+		DeviceId=0;
+		DXLOG(("Unknown"));
+		COMPACTLOG(("Unknown"));
+		break;
+	case VENDOR_NVIDIA:
+		DeviceId=(unsigned)Get_NVidia_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNamesNVidia[DeviceId]));
+		COMPACTLOG((DeviceNamesNVidia[DeviceId]));
+		break;
+	case VENDOR_ATI:
+		DeviceId=(unsigned)Get_ATI_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNamesATI[DeviceId]));
+		COMPACTLOG((DeviceNamesATI[DeviceId]));
+		break;
+	case VENDOR_INTEL:
+		DeviceId=(unsigned)Get_Intel_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNamesIntel[DeviceId]));
+		COMPACTLOG((DeviceNamesIntel[DeviceId]));
+		break;
+	case VENDOR_S3:
+		DeviceId=(unsigned)Get_S3_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNamesS3[DeviceId]));
+		COMPACTLOG((DeviceNamesS3[DeviceId]));
+		break;
+	case VENDOR_POWERVR:
+		DeviceId=(unsigned)Get_PowerVR_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNamesPowerVR[DeviceId]));
+		COMPACTLOG((DeviceNamesPowerVR[DeviceId]));
+		break;
+	case VENDOR_MATROX:
+		DeviceId=(unsigned)Get_Matrox_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNamesMatrox[DeviceId]));
+		COMPACTLOG((DeviceNamesMatrox[DeviceId]));
+		break;
+	case VENDOR_3DFX:
+		DeviceId=(unsigned)Get_3Dfx_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNames3Dfx[DeviceId]));
+		COMPACTLOG((DeviceNames3Dfx[DeviceId]));
+		break;
+	case VENDOR_3DLABS:
+		DeviceId=(unsigned)Get_3DLabs_Device(adapter_id.DeviceId);
+		DXLOG((DeviceNames3DLabs[DeviceId]));
+		COMPACTLOG((DeviceNames3DLabs[DeviceId]));
+		break;
 	}
 
-	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3)
-	{
-		SupportDot3=true;
-	} else {
-		SupportDot3=false;
-	}
+	COMPACTLOG(("\t%d\t",DriverBuildVersion));
 
-	supportGamma=((swVPCaps.Caps2&D3DCAPS2_FULLSCREENGAMMA)==D3DCAPS2_FULLSCREENGAMMA);
-	SupportPointSprites = (caps.MaxPointSize > 1.0f);
+	DXLOG(("\r\n"));
 
-	MaxTexturesPerPass=MAX_TEXTURE_STAGES;
+	DXLOG(("Vendor id: 0x%x\r\n",adapter_id.VendorId));
+	DXLOG(("Device id: 0x%x\r\n",adapter_id.DeviceId));
+	DXLOG(("SubSys id: 0x%x\r\n",adapter_id.SubSysId));
+	DXLOG(("Revision: %d\r\n",adapter_id.Revision));
 
-	Check_Texture_Format_Support(display_format,caps);
-	Check_Render_To_Texture_Support(display_format,caps);
-	Check_Depth_Stencil_Support(display_format,caps);
-	Check_Texture_Compression_Support(caps);
-	Check_Bumpmap_Support(caps);
-	Check_Shader_Support(caps);
-	Check_Maximum_Texture_Support(caps);
+	DXLOG(("GUID = {0x%x, 0x%x, 0x%x}, {0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x}\r\n",
+		adapter_id.DeviceIdentifier.Data1,
+		adapter_id.DeviceIdentifier.Data2,
+		adapter_id.DeviceIdentifier.Data3,
+		adapter_id.DeviceIdentifier.Data4[0],
+		adapter_id.DeviceIdentifier.Data4[1],
+		adapter_id.DeviceIdentifier.Data4[2],
+		adapter_id.DeviceIdentifier.Data4[3],
+		adapter_id.DeviceIdentifier.Data4[4],
+		adapter_id.DeviceIdentifier.Data4[5],
+		adapter_id.DeviceIdentifier.Data4[6],
+		adapter_id.DeviceIdentifier.Data4[7]));
+
+
+	SupportPointSprites = (Caps.MaxPointSize > 1.0f);
+	SupportNPatches = ((Caps.DevCaps&D3DDEVCAPS_NPATCHES)==D3DDEVCAPS_NPATCHES);
+	SupportZBias = ((Caps.RasterCaps&D3DPRASTERCAPS_ZBIAS)==D3DPRASTERCAPS_ZBIAS);
+	supportGamma=((Caps.Caps2&D3DCAPS2_FULLSCREENGAMMA)==D3DCAPS2_FULLSCREENGAMMA);
+	SupportModAlphaAddClr = (Caps.TextureOpCaps & D3DTEXOPCAPS_MODULATEALPHA_ADDCOLOR) == D3DTEXOPCAPS_MODULATEALPHA_ADDCOLOR;
+	SupportDot3=(Caps.TextureOpCaps & D3DTEXOPCAPS_DOTPRODUCT3) == D3DTEXOPCAPS_DOTPRODUCT3;
+	SupportCubemaps=(Caps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP) == D3DPTEXTURECAPS_CUBEMAP;
+	SupportAnisotropicFiltering=
+		(Caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFANISOTROPIC) && (Caps.TextureFilterCaps&D3DPTFILTERCAPS_MINFANISOTROPIC);
+
+	DXLOG(("Hardware T&L support: %s\r\n",SupportTnL ? "Yes" : "No"));
+	DXLOG(("NPatch support: %s\r\n",SupportNPatches ? "Yes" : "No"));
+	DXLOG(("ZBias support: %s\r\n",SupportZBias ? "Yes" : "No"));
+	DXLOG(("Gamma support: %s\r\n",supportGamma ? "Yes" : "No"));
+	DXLOG(("ModAlphaAddClr support: %s\r\n",SupportModAlphaAddClr ? "Yes" : "No"));
+	DXLOG(("Dot3 support: %s\r\n",SupportDot3 ? "Yes" : "No"));
+	DXLOG(("Anisotropic filtering support: %s\r\n",SupportAnisotropicFiltering ? "Yes" : "No"));
+
+	Check_Texture_Format_Support(display_format,Caps);
+	Check_Render_To_Texture_Support(display_format,Caps);
+	Check_Depth_Stencil_Support(display_format,Caps);
+	Check_Texture_Compression_Support(Caps);
+	Check_Bumpmap_Support(Caps);
+	Check_Shader_Support(Caps);
+	Check_Driver_Version_Status();
+	Check_Maximum_Texture_Support(Caps);
+
+	MaxTexturesPerPass=Caps.MaxSimultaneousTextures;
+
+	DXLOG(("Max textures per pass: %d\r\n",MaxTexturesPerPass));
+
 	Vendor_Specific_Hacks(adapter_id);
 	CapsWorkString="";
 }
@@ -563,6 +678,8 @@ void DX8Caps::Check_Bumpmap_Support(const D3DCAPS8& caps)
 {
 	SupportBumpEnvmap=!!(caps.TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAP);
 	SupportBumpEnvmapLuminance=!!(caps.TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAPLUMINANCE);
+	DXLOG(("Bumpmap support: %s\r\n",SupportBumpEnvmap ? "Yes" : "No"));
+	DXLOG(("Bumpmap luminance support: %s\r\n",SupportBumpEnvmapLuminance ? "Yes" : "No"));
 }
 
 // ----------------------------------------------------------------------------
@@ -578,6 +695,7 @@ void DX8Caps::Check_Texture_Compression_Support(const D3DCAPS8& caps)
 		SupportTextureFormat[WW3D_FORMAT_DXT3]|
 		SupportTextureFormat[WW3D_FORMAT_DXT4]|
 		SupportTextureFormat[WW3D_FORMAT_DXT5];
+	DXLOG(("Texture compression support: %s\r\n",SupportDXTC ? "Yes" : "No"));
 }
 
 void DX8Caps::Check_Texture_Format_Support(WW3DFormat display_format,const D3DCAPS8& caps)
@@ -603,6 +721,11 @@ void DX8Caps::Check_Texture_Format_Support(WW3DFormat display_format,const D3DCA
 					0,
 					D3DRTYPE_TEXTURE,
 					WW3DFormat_To_D3DFormat(format)));
+			if (SupportTextureFormat[i]) {
+				StringClass name(0,true);
+				Get_WW3D_Format_Name(format,name);
+				DXLOG(("Supports texture format: %s\r\n",name.str()));
+			}
 		}
 	}
 }
@@ -630,6 +753,11 @@ void DX8Caps::Check_Render_To_Texture_Support(WW3DFormat display_format,const D3
 					D3DUSAGE_RENDERTARGET,
 					D3DRTYPE_TEXTURE,
 					WW3DFormat_To_D3DFormat(format)));
+			if (SupportRenderToTextureFormat[i]) {
+				StringClass name(0,true);
+				Get_WW3D_Format_Name(format,name);
+				DXLOG(("Supports render-to-texture format: %s\r\n",name.str()));
+			}
 		}
 	}
 }
@@ -672,6 +800,13 @@ void DX8Caps::Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCA
 					WW3DZFormat_To_D3DFormat(format)
 				)
 			);
+
+			if (SupportDepthStencilFormat[i])
+			{
+				StringClass name(0,true);
+				Get_WW3D_ZFormat_Name(format,name);
+				DXLOG(("Supports depth stencil format: %s\r\n",name.str()));
+			}
 		}
 	}
 }
@@ -685,6 +820,183 @@ void DX8Caps::Check_Shader_Support(const D3DCAPS8& caps)
 {
 	VertexShaderVersion=caps.VertexShaderVersion;
 	PixelShaderVersion=caps.PixelShaderVersion;
+	DXLOG(("Vertex shader version: %d.%d, pixel shader version: %d.%d\r\n",
+		(VertexShaderVersion>>8)&0xff,VertexShaderVersion&0xff,
+		(PixelShaderVersion>>8)&0xff,PixelShaderVersion&0xff));
+}
+
+void DX8Caps::Check_Driver_Version_Status()
+{
+	DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+
+	switch (VendorId) {
+	// All 3Dfx drivers are bad
+	case VENDOR_3DFX:
+		DriverVersionStatus=DRIVER_STATUS_BAD;
+		break;
+	case VENDOR_NVIDIA:
+		if (stricmp(DriverDLL,"nv4.dll") == 0) {
+			switch (DriverBuildVersion) {
+			case 327:	// 5.00.2165.327
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+			}
+		}
+
+		if (stricmp(DriverDLL,"nv4_disp.dll") == 0 || stricmp(DriverDLL,"nvdd32.dll") == 0) {
+			switch (DriverBuildVersion) {
+			// 23.11 Is known to be very unstable
+			case 2311:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			// 21.83 Has occasional lock-up at start or exit
+			// Darren Korman (DKORMAN2389-2K GeForce3)
+			case 2183:
+			case 2240:
+				DriverVersionStatus=DRIVER_STATUS_OK;
+				break;
+			// 21.81 Has occasional lock-up at start or exit
+			case 2181:
+				DriverVersionStatus=DRIVER_STATUS_OK;
+				break;
+			case 1440:		// Denzil had problems in opening 16 bit modes, fixed by updating driver
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 1410:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 1260:	// Byon - BYONG
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 1241:	// Steve Tall gets occasional blue screening with this driver version (blue screen happens in the driver dll)
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 1240:	// Robert Powers
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 1101:
+				DriverVersionStatus=DRIVER_STATUS_BAD;//DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				break;
+			case 650:	// Rich Donelly - RENEGADE-JENNA2
+				DriverVersionStatus=DRIVER_STATUS_BAD;//DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				break;
+			case 649:
+				DriverVersionStatus=DRIVER_STATUS_BAD;//DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				break;
+			case 635:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 634:	// Sean Decker - SDECKER2339-2K
+				DriverVersionStatus=DRIVER_STATUS_BAD;//DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				break;
+			case 625:	// TESTIBM240
+				DriverVersionStatus=DRIVER_STATUS_BAD;//DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				break;
+			case 618:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			default:
+				if (DriverBuildVersion<2000) {	// All under 20.xx versions are too old!
+					DriverVersionStatus=DRIVER_STATUS_BAD;
+				}
+				else {
+					DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				}
+			}
+		}
+		// Elsa OEM drivers?
+		if (stricmp(DriverDLL,"egdad.dll") == 0) {
+			// We know of version 5.9.0.312 (asked MShelling if he the drivers seem ok)
+			switch (DriverBuildVersion) {
+			default:
+				DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+			case 312:
+				DriverVersionStatus=DRIVER_STATUS_OK;
+			}
+		}
+
+		// Elsa GLoria
+		if (stricmp(DriverDLL,"egliid.dll") == 0) {
+			switch (DriverBuildVersion) {
+			default:
+				DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+			case 172:
+				DriverVersionStatus=DRIVER_STATUS_OK;
+			}
+
+		}
+
+		// ASUS OEM drivers?
+		if (stricmp(DriverDLL,"v66_disp.dll") == 0) {
+		// TOMSS1: 5.0.2195.379
+		}
+		break;
+	case VENDOR_ATI:
+		if (stricmp(DriverDLL,"ati2dvag.dll") == 0) {
+			switch (DriverBuildVersion) {
+			case 3287:
+				DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+				break;
+			case 3281:
+				DriverVersionStatus=DRIVER_STATUS_OK;	// Not really ok, but we have to accept something...
+				break;
+			case 3063:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 3273:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			case 3276:
+				DriverVersionStatus=DRIVER_STATUS_BAD;
+				break;
+			}
+		}
+		if (stricmp(DriverDLL,"atid32ae.dll") == 0) {
+			switch (DriverBuildVersion) {
+			case 1010:
+				DriverVersionStatus=DRIVER_STATUS_OK;
+			}
+		}
+		if (stricmp(DriverDLL,"ati3drai.dll") == 0) {
+			switch (DriverBuildVersion) {
+			case 1119:
+				DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+			}
+		}
+		break;
+	case VENDOR_POWERVR:
+		if (stricmp(DriverDLL,"pmx2hal.dll") == 0) {
+			switch (DriverBuildVersion) {
+			case 3111:	// Michael Ruppert - TESTIBM104
+			default: DriverVersionStatus=DRIVER_STATUS_UNKNOWN;
+			}
+		}
+		break;
+	}
+
+	switch (DriverVersionStatus) {
+	default:
+	case DRIVER_STATUS_UNKNOWN:
+		DXLOG(("Driver version status: Unknown\r\n"));
+		break;
+	case DRIVER_STATUS_OK:
+		DXLOG(("Driver version status: OK (No known problems)\r\n"));
+		break;
+	case DRIVER_STATUS_GOOD:
+		DXLOG(("Driver version status: Good\r\n"));
+		break;
+	case DRIVER_STATUS_BAD:
+		DXLOG(("Driver version status: Bad (Driver update recommended)\r\n"));
+		break;
+	}
+}
+
+bool DX8Caps::Is_Valid_Display_Format(int width, int height, WW3DFormat format)
+{
+	// If nothing limits the maximum resolution, accept any resolution
+	if (MaxDisplayWidth==0 && MaxDisplayHeight==0) return true;
+
+	if (width>MaxDisplayWidth || height>MaxDisplayHeight) return false;
+	return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -696,7 +1008,15 @@ void DX8Caps::Check_Shader_Support(const D3DCAPS8& caps)
 
 void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 {
-	if (adapter_id.VendorId==VENDOR_ID_NVIDIA) {
+	if (VendorId==VENDOR_NVIDIA)
+  {
+		if (SupportNPatches) {
+			DXLOG(("NVidia Driver reported N-Patch support, disabling.\r\n"));
+		}
+		if (SupportTextureFormat[WW3D_FORMAT_DXT1]) {
+			DXLOG(("Disabling DXT1 support on NVidia hardware.\r\n"));
+		}
+
 		SupportNPatches = false;	// Driver incorrectly report N-Patch support
 		SupportTextureFormat[WW3D_FORMAT_DXT1] = false;			// DXT1 is broken on NVidia hardware
 		SupportDXTC=
@@ -705,15 +1025,147 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 			SupportTextureFormat[WW3D_FORMAT_DXT3]|
 			SupportTextureFormat[WW3D_FORMAT_DXT4]|
 			SupportTextureFormat[WW3D_FORMAT_DXT5];
+
+
+    if (DeviceId == DEVICE_NVIDIA_GEFORCE2_MX ||
+        DeviceId == DEVICE_NVIDIA_GEFORCE2_MX_400 )
+    {
+		  DXLOG(("Maximum screen resolution limited to 1024 x 768 on NVidia GeForce2 mx/mx400 cards\r\n"));
+		  MaxDisplayWidth=1024;
+		  MaxDisplayHeight=768;
+    }
+
+
+
 	}
 
-	if (adapter_id.VendorId==VENDOR_ID_VMWARE) {
+	if (VendorId==VENDOR_MATROX) {
+		// G400 and G550 claim support for ModAlphaAddClr but argument limitations make it unusable.
+		if (DeviceId==DEVICE_MATROX_G400 ||
+			DeviceId==DEVICE_MATROX_G550) {
+			DXLOG(("ModAlphaAddClr disabled Matrox G400 and G550 cards (cannot put texture in 2nd arg)\r\n"));
+			SupportModAlphaAddClr = false;
+		}
+	}
+
+	if (VendorId==VENDOR_ATI) {
+		// Rage Pro doesn't handle multitexturing well enough...
+		// It also doesn't really handle render-to-texture...
+		if (DeviceId==DEVICE_ATI_RAGE_PRO || DeviceId==DEVICE_ATI_RAGE_PRO_MOBILITY) {
+			DXLOG(("Disabling multitexturing on ATI Rage Pro\r\n"));
+			MaxTexturesPerPass=1;
+			CanDoMultiPass=false;
+
+			DXLOG(("Disabling render-to-texture on Rage Pro\r\n"));
+			for (unsigned i=0;i<WW3D_FORMAT_COUNT;++i) {
+				SupportRenderToTextureFormat[i]=false;
+			}
+		}
+
+		// Rage 128 Pro GL is used in ATI Rage Fury Maxx
+		// The driver support is bad and the card seems to suffer quite a bit from
+		// lock-ups and rendering errors. These ease up when multitexturing and
+		// render-to-texture are disabled.
+		// However, E&B requires multitexturing, so renabling it.
+		if (DeviceId==DEVICE_ATI_RAGE_128_PRO_GL) {
+			CanDoMultiPass=false;
+
+			DXLOG(("Disabling render-to-texture on ATI Rage 128 Pro GL\r\n"));
+			for (unsigned i=0;i<WW3D_FORMAT_COUNT;++i) {
+				SupportRenderToTextureFormat[i]=false;
+			}
+
+		}
+
+		if (DeviceId==DEVICE_ATI_RAGE_128_MOBILITY ||
+			DeviceId==DEVICE_ATI_RAGE_128_MOBILITY_M3 ||
+			DeviceId==DEVICE_ATI_RAGE_128_MOBILITY_M4 ||
+			DeviceId==DEVICE_ATI_RAGE_128_PRO_ULTRA ||
+			DeviceId==DEVICE_ATI_RAGE_128_4X ||
+			DeviceId==DEVICE_ATI_RAGE_128_PRO_GL ||
+			DeviceId==DEVICE_ATI_RAGE_128_PRO_VR ||
+			DeviceId==DEVICE_ATI_RAGE_128_GL ||
+			DeviceId==DEVICE_ATI_RAGE_128_VR) {
+			DXLOG(("Maximum screen resolution limited to 1280 x 1024 on ATI Rage 128 cards\r\n"));
+			MaxDisplayWidth=1280;
+			MaxDisplayHeight=1024;
+			DXLOG(("ModAlphaAddClr disabled ATI Rage 128 cards (cannot put texture in 2nd arg)\r\n"));
+			SupportModAlphaAddClr = false;
+		}
+
+		if (DeviceId==DEVICE_ATI_MOBILITY_RADEON ||
+			DeviceId==DEVICE_ATI_MOBILITY_RADEON_VE_M6 ||
+			DeviceId==DEVICE_ATI_RADEON_VE ||
+			DeviceId==DEVICE_ATI_RADEON_DDR ||
+			DeviceId==DEVICE_ATI_RADEON ||
+			DeviceId==DEVICE_ATI_MOBILITY_R7500 ||
+			DeviceId==DEVICE_ATI_R7500) {
+			DXLOG(("Disabling render-to-texture on Radeon\r\n"));
+			for (unsigned i=0;i<WW3D_FORMAT_COUNT;++i) {
+				SupportRenderToTextureFormat[i]=false;
+			}
+		}
+
+		// CAT-lab reported that selecting anisotorpic filtering on Radeon VE causes a lock up after a while
+		if (DeviceId==DEVICE_ATI_RADEON_VE) {
+			DXLOG(("Disabling anisotropic filtering on Radeon VE\r\n"));
+			SupportAnisotropicFiltering=false;
+		}
+
+
+	}
+
+	if (VendorId==VENDOR_3DFX) {
+		// Voodoo2, Banshee and Voodoo3 don't handle multi-texturing with DX8 well enough.
+		if (DeviceId==DEVICE_3DFX_VOODOO_3 ||
+			DeviceId==DEVICE_3DFX_BANSHEE ||
+			DeviceId==DEVICE_3DFX_VOODOO_2) {
+			DXLOG(("Disabling multitexturing on Voodoo2/Voodoo3/Banshee\r\n"));
+			MaxTexturesPerPass=1;	// Especially important on Banshee (multitexturing crashes)!!!
+
+			DXLOG(("Maximum screen resolution limited to 1280 x 1024 on Voodoo2/Voodoo3/Banshee\r\n"));
+			MaxDisplayWidth=1280;
+			MaxDisplayHeight=1024;
+		}
+
+		if (DeviceId==DEVICE_3DFX_VOODOO_3) {
+			DXLOG(("Disabling render-to-texture on Voodoo3\r\n"));
+			for (unsigned i=0;i<WW3D_FORMAT_COUNT;++i) {
+				SupportRenderToTextureFormat[i]=false;
+			}
+		}
+	}
+
+	if (VendorId==VENDOR_POWERVR) {
+		DXLOG(("Maximum screen resolution limited to 1280 x 1024 on PowerVR Kyro cards\r\n"));
+		MaxDisplayWidth=1280;
+		MaxDisplayHeight=1024;
+
+		// No fog on scene capture cards! (They don't like fog color changes in mid-frame)
+		IsFogAllowed=false;
+	}
+
+	if (VendorId==VENDOR_S3) {
+		if (DeviceId==DEVICE_S3_SAVAGE_4) {
+			DXLOG(("Maximum screen resolution limited to 1024 x 768 on S3 Savage 4 cards\r\n"));
+			MaxDisplayWidth=800;//1024;
+			MaxDisplayHeight=600;//768;
+		}
+
+		if (DeviceId==DEVICE_S3_SAVAGE_200) {
+			DXLOG(("Disabling multitexturing on S3 Savage 2000\r\n"));
+			MaxTexturesPerPass=1;
+			CanDoMultiPass=false;
+		}
+
+
+	}
+
+	if (VendorId==VENDOR_VMWARE) {
 		// TheSuperHackers @bugfix Stubbjax 15/01/2026 Disable DOT3 support for VMWare's virtual GPU.
 		// The D3DTA_ALPHAREPLICATE modifier fails when passed to a D3DTOP_MULTIPLYADD operation.
+		DXLOG(("Disabling DOT3 on VMWare\r\n"));
 		SupportDot3 = false;
 	}
-
-//	SupportDXTC=false;
-
 }
 

@@ -205,6 +205,7 @@ public:
 	};
 
 
+	DX8Caps(IDirect3D8* direct3d, const D3DCAPS8& caps,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
 	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
 	static void Shutdown();
 
@@ -215,8 +216,17 @@ public:
 	bool Support_NPatches() const { return SupportNPatches; }
 	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
 	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
+	bool Support_ZBias() const { return SupportZBias; }
+	bool Support_Anisotropic_Filtering() const { return SupportAnisotropicFiltering; }
+	bool Support_ModAlphaAddClr() const { return SupportModAlphaAddClr; }
 	bool Support_Dot3() const { return SupportDot3; }
 	bool Support_PointSprites() const { return SupportPointSprites; }
+	bool Support_Cubemaps() const { return SupportCubemaps; }
+	bool Can_Do_Multi_Pass() const { return CanDoMultiPass; }
+	bool Is_Fog_Allowed() const { return IsFogAllowed; }
+
+	bool Is_Valid_Display_Format(int width, int height, WW3DFormat format);
+
 	int Get_Max_Textures_Per_Pass() const { return MaxTexturesPerPass; }
 
 	// -------------------------------------------------------------------------
@@ -236,10 +246,18 @@ public:
 	bool Support_Render_To_Texture_Format(WW3DFormat format) const { return SupportRenderToTextureFormat[format]; }
 	bool Support_Depth_Stencil_Format(WW3DZFormat format) const { return SupportDepthStencilFormat[format]; }
 
-	D3DCAPS8 const & Get_DX8_Caps() const { return (SupportTnL?hwVPCaps:swVPCaps); }
+	D3DCAPS8 const & Get_DX8_Caps() const { return Caps; }
 
-	D3DCAPS8 const & Get_HW_VP_Caps() const { return hwVPCaps; };
-	D3DCAPS8 const & Get_SW_VP_Caps() const { return swVPCaps; };
+	const StringClass& Get_Log() const { return CapsLog; }
+	const StringClass& Get_Compact_Log() const { return CompactLog; }
+
+	unsigned Get_Vendor() const { return VendorId; }
+	unsigned Get_Device() const { return DeviceId; }
+	const StringClass& Get_Driver_Name() const { return DriverDLL; }
+	unsigned Get_Driver_Build_Version() const { return DriverBuildVersion; }
+
+	// This will return false if the driver version is known to have problems.
+	DriverVersionStatusType Get_Driver_Version_Status() { return DriverVersionStatus; }
 
 private:
 	static VendorIdType Define_Vendor(unsigned vendor_id);
@@ -260,13 +278,13 @@ private:
 	void Check_Bumpmap_Support(const D3DCAPS8& caps);
 	void Check_Shader_Support(const D3DCAPS8& caps);
 	void Check_Maximum_Texture_Support(const D3DCAPS8& caps);
+	void Check_Driver_Version_Status();
 	void Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id);
 
 	int MaxDisplayWidth;
 	int MaxDisplayHeight;
 
-	D3DCAPS8 hwVPCaps;
-	D3DCAPS8 swVPCaps;
+	D3DCAPS8 Caps;
 	bool SupportTnL;
 	bool SupportDXTC;
 	bool supportGamma;
@@ -276,11 +294,24 @@ private:
 	bool SupportTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportRenderToTextureFormat[WW3D_FORMAT_COUNT];
 	bool SupportDepthStencilFormat[WW3D_ZFORMAT_COUNT];
+	bool SupportZBias;
+	bool SupportAnisotropicFiltering;
+	bool SupportModAlphaAddClr;
 	bool SupportDot3;
 	bool SupportPointSprites;
+	bool SupportCubemaps;
+	bool CanDoMultiPass;
+	bool IsFogAllowed;
 	int MaxTexturesPerPass;
 	int VertexShaderVersion;
 	int PixelShaderVersion;
 	int MaxSimultaneousTextures;
+	unsigned DeviceId;
+	unsigned DriverBuildVersion;
+	DriverVersionStatusType DriverVersionStatus;
+	VendorIdType VendorId;
+	StringClass DriverDLL;
 	IDirect3D8* Direct3D; // warning XDK name conflict KJM
+	StringClass CapsLog;
+	StringClass CompactLog;
 };
