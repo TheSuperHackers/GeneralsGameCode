@@ -1296,67 +1296,77 @@ void OpenContain::orderAllPassengersToExit( CommandSourceType commandSource )
 	}
 }
 
+#if RETAIL_COMPATIBLE_CRC
+
 //-------------------------------------------------------------------------------------------------
-void OpenContain::processDamageToContained(Real percentDamage)
+void OpenContain::processDamageToContainedInternal(Object* const* objects, size_t size, Real percentDamage)
 {
 	const bool killContained = percentDamage == 1.0f;
 
+	for (size_t i = 0; i < size; ++i)
+	{
+		Object* object = objects[i];
+
+		// Calculate the damage to be inflicted on each unit.
+		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
+
+		DamageInfo damageInfo;
+		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
+		damageInfo.in.m_deathType = DEATH_BURNED;
+		damageInfo.in.m_sourceID = getObject()->getID();
+		damageInfo.in.m_amount = damage;
+		object->attemptDamage( &damageInfo );
+
+		if( !object->isEffectivelyDead() && killContained )
+			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
+
+		// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill may not remove
+		// the occupant from the host container straight away. Instead it would be removed when the
+		// Object deletion is finalized in a Game Logic update. This will lead to strange behavior
+		// where the occupant will be removed after death with a delay. This behavior cannot be
+		// changed without breaking retail compatibility.
+	}
+}
+
+#endif // RETAIL_COMPATIBLE_CRC
+
+//-------------------------------------------------------------------------------------------------
+void OpenContain::processDamageToContained(Real percentDamage)
+{
 #if RETAIL_COMPATIBLE_CRC
 
-	const ContainedItemsList* items = getContainedItemsList();
-	if( items )
+	DEBUG_ASSERTCRASH(m_containListSize == m_containList.size(), ("contain list size doesn't match size of container"));
+
+	// TheSuperHackers @bugfix Caball009 11/03/2026 Use a temporary copy of the contain list to iterate over,
+	// because causing damage to the occupants may remove some or all elements from the list
+	// while iterating over it, which may be unsafe.
+
+	constexpr const UnsignedInt smallContainerSize = 16;
+	if (m_containListSize < smallContainerSize)
 	{
-		ContainedItemsList::const_iterator it = items->begin();
-		const size_t listSize = items->size();
+		Object* containCopy[smallContainerSize];
+		std::copy(m_containList.begin(), m_containList.end(), containCopy);
 
-		while( it != items->end() )
-		{
-			Object *object = *it++;
+		processDamageToContainedInternal(containCopy, m_containListSize, percentDamage);
+	}
+	else
+	{
+		const std::vector<Object*> containCopy(m_containList.begin(), m_containList.end());
 
-			//Calculate the damage to be inflicted on each unit.
-			Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
-
-			DamageInfo damageInfo;
-			damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
-			damageInfo.in.m_deathType = DEATH_BURNED;
-			damageInfo.in.m_sourceID = getObject()->getID();
-			damageInfo.in.m_amount = damage;
-			object->attemptDamage( &damageInfo );
-
-			if( !object->isEffectivelyDead() && killContained )
-				object->kill(); // in case we are carrying flame proof troops we have been asked to kill
-
-			// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill will not remove
-			// the occupant from the host container straight away. Instead it will be removed when the
-			// Object deletion is finalized in a Game Logic update. This will lead to strange behavior
-			// where the occupant will be removed after death with a delay. This behavior cannot be
-			// changed without breaking retail compatibility.
-
-			// TheSuperHackers @bugfix xezon 05/06/2025 Stop iterating when the list was cleared.
-			// This scenario can happen if the killed occupant(s) apply deadly damage on death
-			// to the host container, which then attempts to remove all remaining occupants
-			// on the death of the host container. This is reproducible by destroying a
-			// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
-			if (listSize != items->size())
-			{
-				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty") );
-				break;
-			}
-		}
+		processDamageToContainedInternal(&containCopy[0], containCopy.size(), percentDamage);
 	}
 
 #else
 
 	// TheSuperHackers @bugfix xezon 05/06/2025 Temporarily empty the m_containList
-	// to prevent a potential child call to catastrophically modify the m_containList.
-	// This scenario can happen if the killed occupant(s) apply deadly damage on death
-	// to the host container, which then attempts to remove all remaining occupants
-	// on the death of the host container. This is reproducible by destroying a
-	// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
+	// because causing damage to the occupants may remove some or all elements from the list
+	// while iterating over it, which may be unsafe.
 
 	// Caveat: While the m_containList is empty, it will not be possible to apply damage
 	// on death of a unit to another unit in the host container. If this functionality
 	// is desired, then this implementation needs to be revisited.
+
+	const bool killContained = percentDamage == 1.0f;
 
 	ContainedItemsList list;
 	m_containList.swap(list);

@@ -205,6 +205,9 @@ public:
 	virtual Bool hasObjectsWantingToEnterOrExit() const override;
 
 	virtual void processDamageToContained(Real percentDamage) override; ///< Do our % damage to units now.
+#if RETAIL_COMPATIBLE_CRC
+	void processDamageToContainedInternal(Object* const* objects, size_t size, Real percentDamage);
+#endif
 
 	virtual void enableLoadSounds( Bool enable ) override { m_loadSoundsEnabled = enable; }
 
