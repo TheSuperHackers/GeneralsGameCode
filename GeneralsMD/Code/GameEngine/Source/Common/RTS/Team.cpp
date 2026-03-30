@@ -2531,26 +2531,27 @@ void Team::updateGenericScripts()
 {
 	//USE_PERF_TIMER(updateGenericScripts)
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-		if (m_shouldAttemptGenericScript[i]) {
-			// Does the condition succeed? If so, run it. If it is a run once script, also mark that we
-			// shouldn't run it again.
-			Script *script = m_proto->getGenericScript(i);
-			if (script) {
-				if (TheScriptEngine->evaluateConditions(script, this)) {
-					// It was successful.
-					if (script->isOneShot()) {
-						m_shouldAttemptGenericScript[i] = false;
-					}
-					TheScriptEngine->friend_executeAction(script->getAction(), this);
-					AsciiString msg = "Generic script '";
-					msg.concat(script->getName());
-					msg.concat("' run on team ");
-					msg.concat(getName());
-					TheScriptEngine->AppendDebugMessage(msg, false);
-				}
-			} else {
+		if (!m_shouldAttemptGenericScript[i]) {
+			continue;
+		}
+
+		Script *script = m_proto->getGenericScript(i);
+		if (!script) {
+			m_shouldAttemptGenericScript[i] = false;
+			continue;
+		}
+
+		if (TheScriptEngine->evaluateConditions(script, this)) {
+			// It was successful.
+			if (script->isOneShot()) {
 				m_shouldAttemptGenericScript[i] = false;
 			}
+			TheScriptEngine->friend_executeAction(script->getAction(), this);
+			AsciiString msg = "Generic script '";
+			msg.concat(script->getName());
+			msg.concat("' run on team ");
+			msg.concat(getName());
+			TheScriptEngine->AppendDebugMessage(msg, false);
 		}
 	}
 }
