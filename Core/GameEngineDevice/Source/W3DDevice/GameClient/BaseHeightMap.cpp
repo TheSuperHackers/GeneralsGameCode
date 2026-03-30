@@ -497,7 +497,7 @@ static lights into account as well.  It is possible to just use the normal in th
 vertex and let D3D do the lighting, but it is slower to render, and can only
 handle 4 lights at this point. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, Vector3*light, Vector3*normal, RefRenderObjListIterator *pLightsIterator, UnsignedByte alpha)
+void BaseHeightMapRenderObjClass::doTheLight(VERTEX_FORMAT *vb, const Vector3*light, Vector3*normal, RefRenderObjListIterator *pLightsIterator, UnsignedByte alpha)
 {
 #ifdef USE_NORMALS
 	vb->nx = normal->X;
