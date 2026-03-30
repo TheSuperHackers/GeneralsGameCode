@@ -45,8 +45,8 @@ View::View()
 	m_userControlLockedUntilFrame = 0u;
 	m_isUserControlled = true;
 	m_currentHeightAboveGround = 0.0f;
-	m_defaultAngle = 0.0f;
-	m_defaultPitch = 0.0f;
+	m_defaultAngle = DEG_TO_RADF(TheGlobalData->m_cameraYaw);
+	m_defaultPitch = DEG_TO_RADF(TheGlobalData->m_cameraPitch);
 	m_heightAboveGround = 0.0f;
 	m_lockDist = 0.0f;
 	m_maxHeightAboveGround = 0.0f;
@@ -102,8 +102,8 @@ void View::init()
 	m_minHeightAboveGround = TheGlobalData->m_minCameraHeight;
 	m_okToAdjustHeight = FALSE;
 
-	m_defaultAngle = 0.0f;
-	m_defaultPitch = 0.0f;
+	m_defaultAngle = DEG_TO_RADF(TheGlobalData->m_cameraYaw);
+	m_defaultPitch = DEG_TO_RADF(TheGlobalData->m_cameraPitch);
 }
 
 void View::reset()
@@ -165,8 +165,20 @@ void View::setAngle( Real radians )
  */
 void View::setPitch( Real radians )
 {
-	constexpr Real limit = PI/5.0f;
-	m_pitch = clamp(-limit, radians, limit);
+#if 1
+	m_pitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+#else
+	m_pitch = WWMath::Normalize_Angle(radians);
+#endif
+}
+
+void View::setDefaultPitch( Real radians )
+{
+#if 1
+	m_defaultPitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+#else
+	m_defaultPitch = WWMath::Normalize_Angle(radians);
+#endif
 }
 
 /**
