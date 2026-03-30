@@ -95,10 +95,8 @@ class DynamicVBAccessClass;
 class IndexBufferClass;
 class DynamicIBAccessClass;
 class TextureClass;
-class ZTextureClass;
 class LightClass;
 class SurfaceClass;
-class DX8Caps;
 
 #define DX8_RECORD_MATRIX_CHANGE()				matrix_changes++
 #define DX8_RECORD_MATERIAL_CHANGE()			material_changes++
