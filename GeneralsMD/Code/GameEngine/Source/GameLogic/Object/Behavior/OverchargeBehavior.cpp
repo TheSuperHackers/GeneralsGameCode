@@ -126,7 +126,7 @@ UpdateSleepTime OverchargeBehavior::update()
 			enable( FALSE );
 
 			// do some UI info for the local user if this is theirs
-			if( ThePlayerList->getLocalPlayer() == us->getControllingPlayer() )
+			if( us->isLocallyControlled() )
 			{
 
 				// print msg

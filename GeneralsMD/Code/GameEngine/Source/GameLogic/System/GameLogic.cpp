@@ -4030,7 +4030,7 @@ void GameLogic::destroyObject( Object *obj )
 	//Clean up special power shortcut bars
 	if( obj->hasAnySpecialPower() )
 	{
-		if( ThePlayerList->getLocalPlayer() == obj->getControllingPlayer() )
+		if( obj->isLocallyControlled() )
 		{
 			TheControlBar->markUIDirty();
 		}
