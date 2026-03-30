@@ -413,19 +413,8 @@ public:
 	*/
 	static void Begin_Statistics();
 	static void End_Statistics();
-	static unsigned Get_Last_Frame_Matrix_Changes();
-	static unsigned Get_Last_Frame_Material_Changes();
-	static unsigned Get_Last_Frame_Vertex_Buffer_Changes();
-	static unsigned Get_Last_Frame_Index_Buffer_Changes();
-	static unsigned Get_Last_Frame_Light_Changes();
-	static unsigned Get_Last_Frame_Texture_Changes();
-	static unsigned Get_Last_Frame_Render_State_Changes();
-	static unsigned Get_Last_Frame_Texture_Stage_State_Changes();
-	static unsigned Get_Last_Frame_DX8_Calls();
-	static unsigned Get_Last_Frame_Draw_Calls();
 
 	static unsigned long Get_FrameCount();
-
 	// Needed by shader class
 	static bool						Get_Fog_Enable() { return FogEnable; }
 	static D3DCOLOR				Get_Fog_Color() { return FogColor; }
