@@ -2566,6 +2566,27 @@ void Team::updateGenericScripts()
 			continue;
 		}
 
+		// TheSuperHackers @feature Mauller/TanSo 30/03/2026 Evaluate all script properties on generic scripts
+		Player* currentPlayer = getControllingPlayer();
+		GameDifficulty difficulty = TheScriptEngine->getGlobalDifficulty();
+		if (currentPlayer) {
+			difficulty = currentPlayer->getPlayerDifficulty();
+		}
+		switch (difficulty) {
+		case DIFFICULTY_EASY: if (!script->isEasy()) continue;  break;
+		case DIFFICULTY_NORMAL: if (!script->isNormal()) continue;  break;
+		case DIFFICULTY_HARD: if (!script->isHard()) continue;  break;
+		}
+
+		if (TheGameLogic->getFrame() < script->getFrameToEvaluate()) {
+			continue;
+		}
+
+		Int delaySeconds = script->getDelayEvalSeconds();
+		if (delaySeconds > 0) {
+			script->setFrameToEvaluate(TheGameLogic->getFrame() + delaySeconds * LOGICFRAMES_PER_SECOND);
+		}
+
 		if (TheScriptEngine->evaluateConditions(script, this)) {
 			// It was successful.
 			if (script->isOneShot()) {
