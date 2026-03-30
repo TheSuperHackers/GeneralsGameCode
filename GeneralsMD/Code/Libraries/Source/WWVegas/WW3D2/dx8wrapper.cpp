@@ -196,8 +196,6 @@ static unsigned				last_frame_texture_stage_state_changes				= 0;
 static unsigned				last_frame_number_of_DX8_calls						= 0;
 static unsigned				last_frame_draw_calls									= 0;
 
-static D3DDISPLAYMODE DesktopMode;
-
 static D3DPRESENT_PARAMETERS								_PresentParameters;
 static DynamicVectorClass<StringClass>					_RenderDeviceNameTable;
 static DynamicVectorClass<StringClass>					_RenderDeviceShortNameTable;
