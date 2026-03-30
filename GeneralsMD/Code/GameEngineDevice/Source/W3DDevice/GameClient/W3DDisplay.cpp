@@ -591,15 +591,11 @@ void W3DDisplay::setHeight( UnsignedInt height )
 void W3DDisplay::beginBatch()
 {
 	m_isBatching = TRUE;
-	m_batchTexture = nullptr;
-	m_batchGrayscale = FALSE;
+	m_batchTexture = (TextureClass*)-1;
 	m_batchMode = DRAW_IMAGE_ALPHA;
-	if (m_2DRender)
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing(FALSE);
-		m_2DRender->Enable_Alpha(TRUE);
-	}
+	m_batchGrayscale = FALSE;
+
+	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 }
 
 void W3DDisplay::endBatch()
@@ -612,6 +608,79 @@ void W3DDisplay::endBatch()
 			m_2DRender->Reset();
 		}
 		m_isBatching = FALSE;
+		m_batchTexture = nullptr;
+		m_batchMode = DRAW_IMAGE_ALPHA;
+		m_batchGrayscale = FALSE;
+	}
+}
+
+void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale)
+{
+	if (m_isBatching)
+	{
+		if (m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
+		{
+			return;
+		}
+
+		if (m_2DRender)
+		{
+			// if m_batchTexture == -1, this is the very first setup in a batch, we don't render/reset yet
+			if (m_batchTexture != (TextureClass*)-1)
+			{
+				m_2DRender->Render();
+				m_2DRender->Reset();
+			}
+		}
+		m_batchTexture = tex;
+		m_batchMode = mode;
+		m_batchGrayscale = grayscale;
+	}
+	else
+	{
+		if (m_2DRender)
+		{
+			m_2DRender->Reset();
+		}
+	}
+
+	if (m_2DRender)
+	{
+		if (tex)
+		{
+			m_2DRender->Enable_Texturing(TRUE);
+			m_2DRender->Set_Texture(tex);
+		}
+		else
+		{
+			m_2DRender->Enable_Texturing(FALSE);
+		}
+
+		// Strictly mirroring original commit's state setting logic per mode
+		switch (mode)
+		{
+		case DRAW_IMAGE_ALPHA:
+			m_2DRender->Enable_Alpha(TRUE);
+			m_2DRender->Enable_Grayscale(grayscale);
+			break;
+		case DRAW_IMAGE_GRAYSCALE:
+			m_2DRender->Enable_Grayscale(TRUE);
+			break;
+		case DRAW_IMAGE_ADDITIVE:
+			m_2DRender->Enable_Additive(TRUE);
+			m_2DRender->Enable_Grayscale(grayscale);
+			break;
+		case DRAW_IMAGE_SOLID:
+			m_2DRender->Enable_Additive(FALSE);
+			m_2DRender->Enable_Alpha(FALSE);
+			m_2DRender->Enable_Grayscale(grayscale);
+			break;
+		case DRAW_IMAGE_PRIMITIVE:
+			m_2DRender->Enable_Additive(FALSE);
+			m_2DRender->Enable_Alpha(TRUE);
+			m_2DRender->Enable_Grayscale(FALSE);
+			break;
+		}
 	}
 }
 
@@ -2179,24 +2248,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor )
 {
-	if (m_isBatching)
-	{
-		if (m_batchTexture != nullptr || m_batchMode != DRAW_IMAGE_SOLID)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-			m_batchTexture = nullptr;
-			m_batchMode = DRAW_IMAGE_SOLID;
-			m_2DRender->Enable_Texturing(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-		}
-	}
-	else
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing( FALSE );
-		m_2DRender->Enable_Alpha(TRUE);
-	}
+	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
@@ -2215,24 +2267,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor1,UnsignedInt lineColor2 )
 {
-	if (m_isBatching)
-	{
-		if (m_batchTexture != nullptr || m_batchMode != DRAW_IMAGE_SOLID)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-			m_batchTexture = nullptr;
-			m_batchMode = DRAW_IMAGE_SOLID;
-			m_2DRender->Enable_Texturing(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-		}
-	}
-	else
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing( FALSE );
-		m_2DRender->Enable_Alpha(TRUE);
-	}
+	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor1, lineColor2 );
@@ -2283,24 +2318,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 	}
 	else
 	{
-		if (m_isBatching)
-		{
-			if (m_batchTexture != nullptr || m_batchMode != DRAW_IMAGE_SOLID)
-			{
-				m_2DRender->Render();
-				m_2DRender->Reset();
-				m_batchTexture = nullptr;
-				m_batchMode = DRAW_IMAGE_SOLID;
-				m_2DRender->Enable_Texturing(FALSE);
-				m_2DRender->Enable_Alpha(TRUE);
-			}
-		}
-		else
-		{
-			m_2DRender->Reset();
-			m_2DRender->Enable_Texturing( FALSE );
-			m_2DRender->Enable_Alpha(TRUE);
-		}
+		setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 
 		m_2DRender->Add_Outline( RectClass( startX, startY,
 																				startX + width, startY + height ),
@@ -2320,24 +2338,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 															 UnsignedInt color )
 {
-	if (m_isBatching)
-	{
-		if (m_batchTexture != nullptr || m_batchMode != DRAW_IMAGE_SOLID)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-			m_batchTexture = nullptr;
-			m_batchMode = DRAW_IMAGE_SOLID;
-			m_2DRender->Enable_Texturing(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-		}
-	}
-	else
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing( FALSE );
-		m_2DRender->Enable_Alpha(TRUE);
-	}
+	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 
 	m_2DRender->Add_Rect( RectClass( startX, startY,
 																	 startX + width, startY + height ),
@@ -2356,24 +2357,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	if(percent < 1 || percent > 100)
 		return;
 
-	if (m_isBatching)
-	{
-		if (m_batchTexture != nullptr || m_batchMode != DRAW_IMAGE_SOLID)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-			m_batchTexture = nullptr;
-			m_batchMode = DRAW_IMAGE_SOLID;
-			m_2DRender->Enable_Texturing(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-		}
-	}
-	else
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing( FALSE );
-		m_2DRender->Enable_Alpha(TRUE);
-	}
+	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 
 // The rectangles are numberd as follows
 //(x,y)	|---------|
@@ -2538,24 +2522,7 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	if( percent < 0 || percent > 99 )
 		return;
 
-	if (m_isBatching)
-	{
-		if (m_batchTexture != nullptr || m_batchMode != DRAW_IMAGE_SOLID)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-			m_batchTexture = nullptr;
-			m_batchMode = DRAW_IMAGE_SOLID;
-			m_2DRender->Enable_Texturing(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-		}
-	}
-	else
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing( FALSE );
-		m_2DRender->Enable_Alpha(TRUE);
-	}
+	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 
 // The rectangles are numbered as follows
 //(x,y)	|---------|
@@ -2751,58 +2718,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 
 	Bool grayscale = (mode == DRAW_IMAGE_GRAYSCALE);
 	///@todo: Why are we alpha blending all images?  Reduces our fillrate. -MW
-	if (m_isBatching)
-	{
-		if (m_batchTexture != tex || m_batchMode != mode || m_batchGrayscale != grayscale)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-			m_batchTexture = tex;
-			m_batchMode = mode;
-			m_batchGrayscale = grayscale;
-
-			m_2DRender->Enable_Texturing(TRUE);
-			m_2DRender->Set_Texture(tex);
-			switch (mode)
-			{
-			case DRAW_IMAGE_ALPHA:
-				m_2DRender->Enable_Alpha(TRUE);
-				break;
-			case DRAW_IMAGE_GRAYSCALE:
-				m_2DRender->Enable_Grayscale(true);
-				break;
-			case DRAW_IMAGE_ADDITIVE:
-				m_2DRender->Enable_Additive(true);
-				break;
-			case DRAW_IMAGE_SOLID:
-				m_2DRender->Enable_Additive(false);
-				m_2DRender->Enable_Alpha(false);
-				break;
-			}
-		}
-	}
-	else
-	{
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing(TRUE);
-		m_2DRender->Set_Texture(tex);
-		switch (mode)
-		{
-		case DRAW_IMAGE_ALPHA:
-			m_2DRender->Enable_Alpha(TRUE);
-			break;
-		case DRAW_IMAGE_GRAYSCALE:
-			m_2DRender->Enable_Grayscale(TRUE);
-			break;
-		case DRAW_IMAGE_ADDITIVE:
-			m_2DRender->Enable_Additive(TRUE);
-			break;
-		case DRAW_IMAGE_SOLID:
-			m_2DRender->Enable_Additive(FALSE);
-			m_2DRender->Enable_Alpha(FALSE);
-			break;
-		}
-	}
+	setup2DRenderState(tex, mode, grayscale);
 
 	if (tex != nullptr && !BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
 	{
@@ -2926,7 +2842,10 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	{
 		m_2DRender->Render();
 		m_2DRender->Enable_Grayscale(false);
-		m_2DRender->Enable_Alpha(true);
+		if (mode == DRAW_IMAGE_ADDITIVE || mode == DRAW_IMAGE_SOLID)
+		{
+			m_2DRender->Enable_Alpha(true);
+		}
 	}
 
 }
@@ -3029,21 +2948,8 @@ void W3DDisplay::drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, I
 {
 	W3DVideoBuffer *vbuffer = (W3DVideoBuffer*) buffer;
 
-	if (m_isBatching)
-	{
-		m_2DRender->Render();
-		m_2DRender->Reset();
-		m_batchTexture = vbuffer->texture();
-		m_batchMode = DRAW_IMAGE_ALPHA;
-		m_batchGrayscale = FALSE;
-	}
-	else
-	{
-		m_2DRender->Reset();
-	}
+	setup2DRenderState(vbuffer->texture(), DRAW_IMAGE_ALPHA, FALSE);
 
-	m_2DRender->Enable_Texturing( TRUE );
-	m_2DRender->Set_Texture( vbuffer->texture() );
 	m_2DRender->Add_Quad( RectClass( startX, startY, endX, endY ),
 												vbuffer->Rect( 0, 0, 1, 1) );
 	

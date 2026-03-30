@@ -58,7 +58,8 @@ public:
 		DRAW_IMAGE_SOLID,
 		DRAW_IMAGE_GRAYSCALE,		//draw image without blending and ignoring alpha
 		DRAW_IMAGE_ALPHA,		//alpha blend the image into frame buffer
-		DRAW_IMAGE_ADDITIVE	//additive blend the image into frame buffer
+		DRAW_IMAGE_ADDITIVE,	//additive blend the image into frame buffer
+		DRAW_IMAGE_PRIMITIVE	//non-textured primitive (lines, rects)
 	};
 
 	typedef void (DebugDisplayCallback)( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
