@@ -307,9 +307,6 @@ public:
 	static LightEnvironmentClass* Get_Light_Environment() { return Light_Environment; }
 	static void Set_Fog(bool enable, const Vector3 &color, float start, float end);
 
-	static WWINLINE const D3DLIGHT8& Peek_Light(unsigned index);
-	static WWINLINE bool Is_Light_Enabled(unsigned index);
-
 	static bool Validate_Device();
 
 	// Deferred
@@ -1251,17 +1248,6 @@ WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4
 		break;
 	}
 }
-
-WWINLINE const D3DLIGHT8& DX8Wrapper::Peek_Light(unsigned index)
-{
-	return render_state.Lights[index];
-}
-
-WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)
-{
-	return render_state.LightEnable[index];
-}
-
 
 WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 {
