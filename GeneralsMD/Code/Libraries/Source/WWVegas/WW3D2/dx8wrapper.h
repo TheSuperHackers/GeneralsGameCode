@@ -295,7 +295,6 @@ public:
 
 	// Set_ and Get_Transform() functions take the matrix in Westwood convention format.
 
-	static void Set_DX8_ZBias(int zbias);
 	static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix,float znear, float zfar);	// pointer to 16 matrices
 
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
@@ -1214,26 +1213,6 @@ WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& 
 	}
 	else {
 		DX8CALL(SetTransform(D3DTS_PROJECTION,&ProjectionMatrix));
-	}
-}
-
-WWINLINE void DX8Wrapper::Set_DX8_ZBias(int zbias)
-{
-	if (zbias==ZBias) return;
-	if (zbias>15) zbias=15;
-	if (zbias<0) zbias=0;
-	ZBias=zbias;
-
-	if (!Get_Current_Caps()->Support_ZBias() && ZNear!=ZFar) {
-		D3DMATRIX tmp=ProjectionMatrix;
-		float tmp_zbias=ZBias;
-		tmp_zbias*=(1.0f/16.0f);
-		tmp_zbias*=1.0f / (ZFar - ZNear);
-		tmp.m[2][2]-=tmp_zbias*tmp.m[3][2];
-		DX8CALL(SetTransform(D3DTS_PROJECTION,&tmp));
-	}
-	else {
-		Set_DX8_Render_State (D3DRS_ZBIAS, ZBias);
 	}
 }
 

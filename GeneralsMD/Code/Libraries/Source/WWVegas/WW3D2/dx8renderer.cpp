@@ -806,27 +806,17 @@ void DX8RigidFVFCategoryContainer::Render()
 	AnythingToRender=false;
 
 	DX8Wrapper::Set_Vertex_Buffer(vertex_buffer);
-
 	DX8Wrapper::Set_Index_Buffer(index_buffer,0);
 
 	SNAPSHOT_SAY(("DX8RigidFVFCategoryContainer::Render()"));
-	// The Z-biasing was causing more problems than they solved.
-	// Disabling it for now HY.
-	//int zbias=0;
-	//DX8Wrapper::Set_DX8_ZBias(zbias);
 	for (unsigned p=0;p<passes;++p) {
 		SNAPSHOT_SAY(("Pass: %d",p));
 		while (DX8TextureCategoryClass * tex = visible_texture_category_list[p].Remove_Head()) {
 			tex->Render();
 		}
-		//zbias++;
-		//if (zbias>15) zbias=15;
-		//DX8Wrapper::Set_DX8_ZBias(zbias);
 	}
 
 	Render_Procedural_Material_Passes();
-
-	//DX8Wrapper::Set_DX8_ZBias(0);
 }
 
 // ----------------------------------------------------------------------------
