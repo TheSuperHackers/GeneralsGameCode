@@ -115,12 +115,6 @@ void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass& name)
 	case WW3D_ZFORMAT_D16			: name="D16"; break; // 16-bit z-buffer bit depth.
 	case WW3D_ZFORMAT_D24X8			: name="D24X8"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel.
 	case WW3D_ZFORMAT_D24X4S4		: name="D24X4S4"; break; // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
-#ifdef _XBOX
-	case WW3D_ZFORMAT_LIN_D24S8	: name="D24S8LIN"; break;
-	case WW3D_ZFORMAT_LIN_F24S8	: name="F24S8LIN"; break;
-	case WW3D_ZFORMAT_LIN_D16		: name="D16LIN"; break;
-	case WW3D_ZFORMAT_LIN_F16		: name="F16LIN"; break;
-#endif
 	}
 }
 
@@ -529,12 +523,6 @@ unsigned Get_Num_Depth_Bits(WW3DZFormat zformat)
 	case WW3D_ZFORMAT_D16			: return 16; break;
 	case WW3D_ZFORMAT_D24X8			: return 24; break;
 	case WW3D_ZFORMAT_D24X4S4		: return 24; break;
-#ifdef _XBOX
-	case WW3D_ZFORMAT_LIN_D24S8	: return 24; break;
-	case WW3D_ZFORMAT_LIN_F24S8	: return 24; break;
-	case WW3D_ZFORMAT_LIN_D16		: return 16; break;
-	case WW3D_ZFORMAT_LIN_F16		: return 16; break;
-#endif
 	};
 	return 0;
 };
@@ -550,12 +538,6 @@ unsigned Get_Num_Stencil_Bits(WW3DZFormat zformat)
 	case WW3D_ZFORMAT_D16			: return 0; break;
 	case WW3D_ZFORMAT_D24X8			: return 0; break;
 	case WW3D_ZFORMAT_D24X4S4		: return 4; break;
-#ifdef _XBOX
-	case WW3D_ZFORMAT_LIN_D24S8	: return 8; break;
-	case WW3D_ZFORMAT_LIN_F24S8	: return 8; break;
-	case WW3D_ZFORMAT_LIN_D16		: return 0; break;
-	case WW3D_ZFORMAT_LIN_F16		: return 0; break;
-#endif
 	};
 	return 0;
 };

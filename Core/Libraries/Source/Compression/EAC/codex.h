@@ -70,7 +70,7 @@ typedef struct
 #define QMAKEID(a,b,c,d) (((a)<<24)|((b)<<16)|((c)<<8)|(d))
 
 #if !defined(GCALL)
-#if defined(_MSC_VER) && !defined(_XBOX)
+#if defined(_MSC_VER)
 #define GCALL __stdcall
 #else
 #define GCALL

@@ -69,7 +69,6 @@ D3DFORMAT WW3DFormatToD3DFormatConversionArray[WW3D_FORMAT_COUNT] = {
 // adding depth stencil format conversion
 D3DFORMAT WW3DZFormatToD3DFormatConversionArray[WW3D_ZFORMAT_COUNT] =
 {
-#ifndef _XBOX
 	D3DFMT_UNKNOWN,
 	D3DFMT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format.
 	D3DFMT_D32, // 32-bit z-buffer bit depth.
@@ -78,21 +77,6 @@ D3DFORMAT WW3DZFormatToD3DFormatConversionArray[WW3D_ZFORMAT_COUNT] =
 	D3DFMT_D16, // 16-bit z-buffer bit depth.
 	D3DFMT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel.
 	D3DFMT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
-#else
-	D3DFMT_UNKNOWN,
-	D3DFMT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format.
-	D3DFMT_D32, // 32-bit z-buffer bit depth.
-	D3DFMT_D15S1, // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel.
-	D3DFMT_D24S8, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel.
-	D3DFMT_D16, // 16-bit z-buffer bit depth.
-	D3DFMT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel.
-	D3DFMT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
-
-	D3DFMT_LIN_D24S8,
-	D3DFMT_LIN_F24S8,
-	D3DFMT_LIN_D16,
-	D3DFMT_LIN_F16
-#endif
 };
 
 
@@ -129,13 +113,8 @@ WW3DFormat D3DFormatToWW3DFormatConversionArray[HIGHEST_SUPPORTED_D3DFORMAT + 1]
 };
 */
 
-#ifndef _XBOX
 #define HIGHEST_SUPPORTED_D3DFORMAT D3DFMT_X8L8V8U8
 #define HIGHEST_SUPPORTED_D3DZFORMAT D3DFMT_D16
-#else
-#define HIGHEST_SUPPORTED_D3DFORMAT  D3DFMT_LIN_R8G8B8A8
-#define HIGHEST_SUPPORTED_D3DZFORMAT    D3DFMT_LIN_F16
-#endif
 WW3DFormat D3DFormatToWW3DFormatConversionArray[HIGHEST_SUPPORTED_D3DFORMAT + 1];
 WW3DZFormat D3DFormatToWW3DZFormatConversionArray[HIGHEST_SUPPORTED_D3DZFORMAT + 1];
 
@@ -243,10 +222,4 @@ void Init_D3D_To_WW3_Conversion()
 	D3DFormatToWW3DZFormatConversionArray[D3DFMT_D16]=WW3D_ZFORMAT_D16;
 	D3DFormatToWW3DZFormatConversionArray[D3DFMT_D24X8]=WW3D_ZFORMAT_D24X8;
 	D3DFormatToWW3DZFormatConversionArray[D3DFMT_D24X4S4]=WW3D_ZFORMAT_D24X4S4;
-#ifdef _XBOX
-	D3DFormatToWW3DZFormatConversionArray[D3DFMT_LIN_D24S8]=WW3D_ZFORMAT_LIN_D24S8;
-	D3DFormatToWW3DZFormatConversionArray[D3DFMT_LIN_F24S8]=WW3D_ZFORMAT_LIN_F24S8;
-	D3DFormatToWW3DZFormatConversionArray[D3DFMT_LIN_D16]=WW3D_ZFORMAT_LIN_D16;
-	D3DFormatToWW3DZFormatConversionArray[D3DFMT_LIN_F16]=WW3D_ZFORMAT_LIN_F16;
-#endif
 };

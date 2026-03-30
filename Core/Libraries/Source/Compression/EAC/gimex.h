@@ -270,7 +270,7 @@ typedef struct
 #endif
 
 #if !defined(GCALL)
-#if defined(_MSC_VER) && !defined(_XBOX)
+#if defined(_MSC_VER)
 #define GCALL __stdcall
 #else
 #define GCALL

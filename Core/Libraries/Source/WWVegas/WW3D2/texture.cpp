@@ -336,11 +336,7 @@ unsigned int TextureBaseClass::Get_Priority()
 		return 0;
 	}
 
-#ifndef _XBOX
 	return D3DTexture->GetPriority();
-#else
-	return 0;
-#endif
 }
 
 
@@ -356,11 +352,7 @@ unsigned int TextureBaseClass::Set_Priority(unsigned int priority)
 		return 0;
 	}
 
-#ifndef _XBOX
 	return D3DTexture->SetPriority(priority);
-#else
-	return 0;
-#endif
 }
 
 

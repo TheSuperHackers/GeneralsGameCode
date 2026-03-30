@@ -3201,7 +3201,6 @@ DX8Wrapper::Set_Render_Target(IDirect3DSwapChain8 *swap_chain)
 void
 DX8Wrapper::Set_Render_Target(IDirect3DSurface8 *render_target, bool use_default_depth_buffer)
 {
-//#ifndef _XBOX
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
 
@@ -3316,7 +3315,6 @@ DX8Wrapper::Set_Render_Target(IDirect3DSurface8 *render_target, bool use_default
 
 	IsRenderToTexture = false;
 	return ;
-//#endif // XBOX
 }
 
 
@@ -3330,7 +3328,6 @@ void DX8Wrapper::Set_Render_Target
 	IDirect3DSurface8* depth_buffer
 )
 {
-//#ifndef _XBOX
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
 
@@ -3430,7 +3427,6 @@ void DX8Wrapper::Set_Render_Target
 	}
 
 	IsRenderToTexture=true;
-//#endif // XBOX
 }
 
 
