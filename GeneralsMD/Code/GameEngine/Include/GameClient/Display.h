@@ -113,6 +113,10 @@ public:
 	virtual	Bool isClippingEnabled() = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
+	virtual void beginBatch() { }
+	virtual void endBatch() { }
+	virtual Bool isBatching() { return m_isBatching; }
+
 	virtual void step() {}; ///< Do one fixed time step
 	virtual void draw() override;																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
@@ -187,6 +191,7 @@ protected:
 	UnsignedInt m_width, m_height;			///< Dimensions of the display
 	UnsignedInt m_bitDepth;							///< bit depth of the display
 	Bool m_windowed;										///< TRUE when windowed, FALSE when fullscreen
+	Bool m_isBatching;
 	View *m_viewList;										///< All of the views into the world
 
 	// Cinematic text data

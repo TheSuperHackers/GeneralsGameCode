@@ -45,6 +45,7 @@ class Render2DClass;
 class RTS3DScene;
 class RTS2DScene;
 class RTS3DInterfaceScene;
+class TextureClass;
 
 
 //=============================================================================
@@ -80,6 +81,9 @@ public:
 
 	virtual void step() override; ///< Do one fixed time step
 	virtual void draw() override;  ///< redraw the entire display
+
+	virtual void beginBatch();
+	virtual void endBatch();
 
 	/// @todo Replace these light management routines with a LightManager singleton
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius,
@@ -168,6 +172,11 @@ protected:
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 	Real m_averageFPS;		///<average fps over the last 30 frames.
 	Real m_currentFPS;		///<current fps value.
+
+	TextureClass *m_batchTexture;
+	DrawImageMode m_batchMode;
+	Bool m_batchGrayscale;
+
 #if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;
 #endif

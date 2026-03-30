@@ -49,6 +49,7 @@
 #include <stdlib.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "GameClient/Display.h"
 #include "GameClient/GameClient.h"
 #include "W3DDevice/GameClient/W3DDisplayString.h"
 #include "GameClient/HotKey.h"
@@ -227,6 +228,11 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 	}
 
 	// render the text
+	if (TheDisplay->isBatching())
+	{
+		TheDisplay->endBatch();
+		TheDisplay->beginBatch();
+	}
 	m_textRenderer.Render();
 
 	// we are for sure using display resources now

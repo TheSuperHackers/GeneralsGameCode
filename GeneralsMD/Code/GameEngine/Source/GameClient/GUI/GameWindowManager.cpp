@@ -1269,6 +1269,8 @@ void GameWindowManager::winRepaint()
 {
 	GameWindow *window, *next;
 
+	TheDisplay->beginBatch();
+
 	// draw below windows
 	for( window = m_windowTail; window; window = next )
 	{
@@ -1299,6 +1301,8 @@ void GameWindowManager::winRepaint()
 
 	if(TheTransitionHandler)
 		TheTransitionHandler->draw();
+
+	TheDisplay->endBatch();
 }
 
 //-------------------------------------------------------------------------------------------------
