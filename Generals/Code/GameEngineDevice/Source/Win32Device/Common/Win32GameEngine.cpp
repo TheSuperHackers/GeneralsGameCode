@@ -85,8 +85,6 @@ void Win32GameEngine::reset()
 //-------------------------------------------------------------------------------------------------
 void Win32GameEngine::update()
 {
-
-
 	// call the engine normal update
 	GameEngine::update();
 
@@ -112,6 +110,12 @@ void Win32GameEngine::update()
 				break; // keep running.
 			}
 		}
+
+		// The MilesAudioManager seems to go into a coma sometimes when the window is minimized
+		// and not regain focus properly when we come back. We're going to force it to wake up after we come back from being minimized.
+		AudioAffect aa = (AudioAffect)0x10;  // AudioAffect_SystemSetting: forces m_volumeHasChanged without changing channel volumes
+		if (TheAudio)
+			TheAudio->setVolume(TheAudio->getVolume(aa), aa);
 	}
 
 	// allow windows to perform regular windows maintenance stuff like msgs

@@ -474,6 +474,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 					//restore mouse cursor to our custom version.
 					if (TheWin32Mouse)
 						TheWin32Mouse->setCursor(TheWin32Mouse->getMouseCursor());
+
+					// Unmute audio when the window is activated.
+					if (TheAudio)
+						TheAudio->unmuteAudio(AudioManager::MuteAudioReason_WindowFocus);
 				}
 			}
 			return 0;
