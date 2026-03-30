@@ -307,8 +307,6 @@ public:
 	static LightEnvironmentClass* Get_Light_Environment() { return Light_Environment; }
 	static void Set_Fog(bool enable, const Vector3 &color, float start, float end);
 
-	static bool Validate_Device();
-
 	// Deferred
 
 	static void Set_Shader(const ShaderClass& shader);

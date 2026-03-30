@@ -430,16 +430,6 @@ void DX8Wrapper::Set_Default_Global_Render_States()
 	// Set dither mode here?
 }
 
-//MW: I added this for 'Generals'.
-bool DX8Wrapper::Validate_Device()
-{	DWORD numPasses=0;
-	HRESULT hRes;
-
-	hRes=_Get_D3D_Device8()->ValidateDevice(&numPasses);
-
-	return (hRes == D3D_OK);
-}
-
 void DX8Wrapper::Invalidate_Cached_Render_States()
 {
 	render_state_changed=0;
