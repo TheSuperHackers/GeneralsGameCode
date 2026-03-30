@@ -3033,7 +3033,7 @@ void ParticleSystemManager::update()
 					const Coord3D *pos = p->getPosition();
 					Smudge *smudge = set->addSmudgeToSet(p);
 					smudge->m_pos.Set(pos->x, pos->y, pos->z);
-					smudge->m_offset.Set(GameClientRandomValueReal(-0.06f,0.06f), GameClientRandomValueReal(-0.03f,0.03f));
+					smudge->m_offset.Set(GameClientRandomValueReal(-0.06f,0.06f), GameClientRandomValueReal(-0.06f,0.06f));
 					smudge->m_size = p->getSize();
 					smudge->m_opacity = p->getAlpha();
 					smudge->m_draw = false;
