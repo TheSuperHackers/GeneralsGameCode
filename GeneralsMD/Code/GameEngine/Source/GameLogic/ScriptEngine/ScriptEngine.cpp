@@ -6815,6 +6815,23 @@ void ScriptEngine::adjustTimer( ScriptAction *pAction, Bool millisecondTimer, Bo
 void ScriptEngine::enableScript( ScriptAction *pAction )
 {
 	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	// TheSuperHackers @feature Mauller/TanSo 30/03/2026 Allow searching for a team generic script.
+	// We can now enable and disable team generic scripts through scripting.
+	// OneShot generic scripts can also be re-enabled to run again.
+	if (m_callingTeam) {
+		const AsciiString& scriptName = pAction->getParameter(0)->getString();
+		TeamPrototype* teamProto = const_cast<TeamPrototype*>(m_callingTeam->getPrototype());
+		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+			Script* script = teamProto->getGenericScript(i);
+			if (script && script->getName() == scriptName) {
+				script->setActive(true);
+				return;
+			}
+		}
+	}
+#endif
+
 	ScriptGroup *pGroup = findGroup(pAction->getParameter(0)->getString());
 	if (pGroup) {
 		pGroup->setActive(true);
@@ -6826,11 +6843,25 @@ void ScriptEngine::enableScript( ScriptAction *pAction )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Enables a script or group. */
+/** Disables a script or group. */
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::disableScript( ScriptAction *pAction )
 {
 	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	if (m_callingTeam) {
+		const AsciiString& scriptName = pAction->getParameter(0)->getString();
+		TeamPrototype* teamProto = const_cast<TeamPrototype*>(m_callingTeam->getPrototype());
+		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+			Script* script = teamProto->getGenericScript(i);
+			if (script && script->getName() == scriptName) {
+				script->setActive(false);
+				return;
+			}
+		}
+	}
+#endif
+
 	Script *pScript = findScript(pAction->getParameter(0)->getString());
 	if (pScript) {
 		pScript->setActive(false);
