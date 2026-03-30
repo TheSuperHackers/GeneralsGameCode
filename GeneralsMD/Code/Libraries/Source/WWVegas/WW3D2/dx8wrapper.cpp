@@ -1700,6 +1700,22 @@ void DX8Wrapper::End_Statistics()
 	last_frame_draw_calls=draw_calls;
 }
 
+DX8FrameStatistics DX8Wrapper::Get_Last_Frame_Statistics()
+{
+	DX8FrameStatistics stats;
+	stats.matrix_changes = last_frame_matrix_changes;
+	stats.material_changes = last_frame_material_changes;
+	stats.vertex_buffer_changes = last_frame_vertex_buffer_changes;
+	stats.index_buffer_changes = last_frame_index_buffer_changes;
+	stats.light_changes = last_frame_light_changes;
+	stats.texture_changes = last_frame_texture_changes;
+	stats.render_state_changes = last_frame_render_state_changes;
+	stats.texture_stage_state_changes = last_frame_texture_stage_state_changes;
+	stats.dx8_calls = last_frame_number_of_DX8_calls;
+	stats.draw_calls = last_frame_draw_calls;
+	return stats;
+}
+
 unsigned long DX8Wrapper::Get_FrameCount() {return FrameCount;}
 
 void DX8_Assert()

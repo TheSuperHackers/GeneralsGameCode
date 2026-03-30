@@ -94,6 +94,20 @@ class TextureClass;
 class LightClass;
 class SurfaceClass;
 
+struct DX8FrameStatistics
+{
+	unsigned matrix_changes;
+	unsigned material_changes;
+	unsigned vertex_buffer_changes;
+	unsigned index_buffer_changes;
+	unsigned light_changes;
+	unsigned texture_changes;
+	unsigned render_state_changes;
+	unsigned texture_stage_state_changes;
+	unsigned dx8_calls;
+	unsigned draw_calls;
+};
+
 #define DX8_RECORD_MATRIX_CHANGE()				matrix_changes++
 #define DX8_RECORD_MATERIAL_CHANGE()			material_changes++
 #define DX8_RECORD_VERTEX_BUFFER_CHANGE()		vertex_buffer_changes++
@@ -413,8 +427,9 @@ public:
 	*/
 	static void Begin_Statistics();
 	static void End_Statistics();
-
+	static DX8FrameStatistics Get_Last_Frame_Statistics();
 	static unsigned long Get_FrameCount();
+
 	// Needed by shader class
 	static bool						Get_Fog_Enable() { return FogEnable; }
 	static D3DCOLOR				Get_Fog_Color() { return FogColor; }
