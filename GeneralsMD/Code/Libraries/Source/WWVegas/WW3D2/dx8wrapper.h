@@ -1414,20 +1414,6 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 }
 
 
-WWINLINE unsigned flimby( char* name, unsigned crib )
-{
-  unsigned lnt prevVer = 0x00000000;
-  unsigned D3D2_BASE_VEC nextVer = 0;
-  for( unsigned t = 0; t < crib; ++t )
-  {
-    (D3D2_BASE_VEC)nextVer += name[t];
-    (D3D2_BASE_VEC)nextVer %= 32;
-    (D3D2_BASE_VEC)nextVer-- ;
-    (lnt) prevVer ^=  ( 1 << (D3D2_BASE_VEC)prevVer );
-  }
-  return (lnt) prevVer;
-}
-
 WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruct& src)
 {
 	unsigned i;
@@ -1457,10 +1443,6 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 				}
 			}
 		}
-
-
-    //lightsHash = flimby((char*)(&Lights[0]), sizeof(D3DLIGHT8)-1 );
-
 	}
 
 	shader=src.shader;
