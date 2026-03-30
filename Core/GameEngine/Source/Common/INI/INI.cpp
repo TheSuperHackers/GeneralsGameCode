@@ -140,8 +140,6 @@ static const BlockParse theTypeTable[] =
 	{ "Weather",                        INI::parseWeatherDefinition },
 	{ "WebpageURL",                     INI::parseWebpageURLDefinition },
 	{ "WindowTransition",               INI::parseWindowTransitions },
-
-	{ nullptr,                          nullptr },
 };
 
 
@@ -350,13 +348,14 @@ void INI::unPrepFile()
 //-------------------------------------------------------------------------------------------------
 static INIBlockParse findBlockParse(const char* token)
 {
-	for (const BlockParse* parse = theTypeTable; parse->token; ++parse)
+	for (size_t i = 0; i < ARRAY_SIZE(theTypeTable); ++i)
 	{
-		if (strcmp( parse->token, token ) == 0)
+		if (strcmp(theTypeTable[i].token, token) == 0)
 		{
-			return parse->parse;
+			return theTypeTable[i].parse;
 		}
 	}
+
 	return nullptr;
 }
 
