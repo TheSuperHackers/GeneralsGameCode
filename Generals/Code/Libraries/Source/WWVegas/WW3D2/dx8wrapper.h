@@ -71,10 +71,6 @@ const unsigned MAX_VERTEX_SHADER_CONSTANTS=96;
 const unsigned MAX_PIXEL_SHADER_CONSTANTS=8;
 const unsigned MAX_SHADOW_MAPS=1;
 
-#define prevVer
-#define nextVer
-
-
 enum {
 	BUFFER_TYPE_DX8,
 	BUFFER_TYPE_SORTING,
