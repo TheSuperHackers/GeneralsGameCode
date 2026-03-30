@@ -588,29 +588,34 @@ void W3DDisplay::setHeight( UnsignedInt height )
 
 }
 
-void W3DDisplay::beginBatch()
+void W3DDisplay::onBeginBatch()
 {
-	m_isBatching = TRUE;
-	m_batchTexture = (TextureClass*)-1;
+	m_batchTexture = nullptr;
 	m_batchMode = DRAW_IMAGE_ALPHA;
 	m_batchGrayscale = FALSE;
+	m_batchNeedsInit = FALSE;
+
+	if (m_2DRender)
+	{
+		m_2DRender->Reset();
+	}
 
 	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 }
 
-void W3DDisplay::endBatch()
+void W3DDisplay::onEndBatch()
 {
-	if (m_isBatching)
+	onFlush();
+	m_batchTexture = nullptr;
+}
+
+void W3DDisplay::onFlush()
+{
+	if (m_2DRender && !m_batchNeedsInit)
 	{
-		if (m_2DRender)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-		}
-		m_isBatching = FALSE;
-		m_batchTexture = nullptr;
-		m_batchMode = DRAW_IMAGE_ALPHA;
-		m_batchGrayscale = FALSE;
+		m_2DRender->Render();
+		m_2DRender->Reset();
+		m_batchNeedsInit = TRUE;
 	}
 }
 
@@ -618,23 +623,20 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 {
 	if (m_isBatching)
 	{
-		if (m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
+		if (!m_batchNeedsInit && m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
 		{
 			return;
 		}
 
 		if (m_2DRender)
 		{
-			// if m_batchTexture == -1, this is the very first setup in a batch, we don't render/reset yet
-			if (m_batchTexture != (TextureClass*)-1)
-			{
-				m_2DRender->Render();
-				m_2DRender->Reset();
-			}
+			m_2DRender->Render();
+			m_2DRender->Reset();
 		}
 		m_batchTexture = tex;
 		m_batchMode = mode;
 		m_batchGrayscale = grayscale;
+		m_batchNeedsInit = FALSE;
 	}
 	else
 	{
@@ -656,17 +658,20 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 			m_2DRender->Enable_Texturing(FALSE);
 		}
 
-		// Strictly mirroring original commit's state setting logic per mode
 		switch (mode)
 		{
 		case DRAW_IMAGE_ALPHA:
+			m_2DRender->Enable_Additive(FALSE);
 			m_2DRender->Enable_Alpha(TRUE);
 			m_2DRender->Enable_Grayscale(grayscale);
 			break;
 		case DRAW_IMAGE_GRAYSCALE:
+			m_2DRender->Enable_Additive(FALSE);
+			m_2DRender->Enable_Alpha(FALSE);
 			m_2DRender->Enable_Grayscale(TRUE);
 			break;
 		case DRAW_IMAGE_ADDITIVE:
+			m_2DRender->Enable_Alpha(FALSE);
 			m_2DRender->Enable_Additive(TRUE);
 			m_2DRender->Enable_Grayscale(grayscale);
 			break;

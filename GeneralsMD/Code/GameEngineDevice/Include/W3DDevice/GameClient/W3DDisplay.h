@@ -82,9 +82,6 @@ public:
 	virtual void step() override; ///< Do one fixed time step
 	virtual void draw() override;  ///< redraw the entire display
 
-	virtual void beginBatch();
-	virtual void endBatch();
-
 	/// @todo Replace these light management routines with a LightManager singleton
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real outerRadius,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE
@@ -165,6 +162,9 @@ protected:
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
 	void updateAverageFPS();	///< calculate the average fps over the last 30 frames.
 	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale);
+	virtual void onBeginBatch() override;
+	virtual void onEndBatch() override;
+	virtual void onFlush() override;
 
 	Byte m_initialized;												///< TRUE when system is initialized
 	LightClass *m_myLight[LightEnvironmentClass::MAX_LIGHTS];										///< light hack for now
@@ -177,6 +177,7 @@ protected:
 	TextureClass *m_batchTexture;
 	DrawImageMode m_batchMode;
 	Bool m_batchGrayscale;
+	Bool m_batchNeedsInit;
 
 #if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;

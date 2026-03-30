@@ -114,8 +114,9 @@ public:
 	virtual	Bool isClippingEnabled() = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
-	virtual void beginBatch() { }
-	virtual void endBatch() { }
+	virtual void beginBatch();
+	virtual void endBatch();
+	virtual void flush();
 	virtual Bool isBatching() { return m_isBatching; }
 
 	virtual void step() {}; ///< Do one fixed time step
@@ -187,6 +188,9 @@ public:
 	virtual Int getLastFrameDrawCalls() = 0;  ///< returns the number of draw calls issued in the previous frame
 
 protected:
+	virtual void onBeginBatch() { }
+	virtual void onEndBatch() { }
+	virtual void onFlush() { }
 
 	virtual void deleteViews();   ///< delete all views
 	UnsignedInt m_width, m_height;			///< Dimensions of the display
