@@ -606,7 +606,11 @@ void W3DDisplay::onBeginBatch()
 void W3DDisplay::onEndBatch()
 {
 	onFlush();
-	m_batchTexture = nullptr;
+	if (m_batchTexture)
+	{
+		m_batchTexture->Release_Ref();
+		m_batchTexture = nullptr;
+	}
 }
 
 void W3DDisplay::onFlush()
@@ -633,7 +637,14 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 			m_2DRender->Render();
 			m_2DRender->Reset();
 		}
-		m_batchTexture = tex;
+
+		if (tex != m_batchTexture)
+		{
+			if (tex) tex->Add_Ref();
+			if (m_batchTexture) m_batchTexture->Release_Ref();
+			m_batchTexture = tex;
+		}
+
 		m_batchMode = mode;
 		m_batchGrayscale = grayscale;
 		m_batchNeedsInit = FALSE;
