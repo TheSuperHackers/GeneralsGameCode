@@ -612,12 +612,9 @@ void W3DDisplay::onEndBatch()
 
 void W3DDisplay::onFlush()
 {
-	if (m_2DRender)
+	if (m_2DRender && !m_batchNeedsInit)
 	{
-		if (!m_batchNeedsInit)
-		{
-			m_2DRender->Render();
-		}
+		m_2DRender->Render();
 		m_2DRender->Reset();
 		m_batchNeedsInit = TRUE;
 	}
