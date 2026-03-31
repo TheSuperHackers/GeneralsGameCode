@@ -408,7 +408,7 @@ W3DDisplay::W3DDisplay()
 	m_batchTexture = nullptr;
 	m_batchMode = DRAW_IMAGE_ALPHA;
 	m_batchGrayscale = FALSE;
-	m_batchNeedsInit = TRUE;
+	m_batchNeedsInit = FALSE;
 }
 
 // W3DDisplay::~W3DDisplay ====================================================
@@ -594,12 +594,11 @@ void W3DDisplay::onBeginBatch()
 	m_batchTexture = nullptr;
 	m_batchMode = DRAW_IMAGE_ALPHA;
 	m_batchGrayscale = FALSE;
-	m_batchNeedsInit = FALSE;
-
 	if (m_2DRender)
 	{
-		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
+		m_2DRender->Reset();
 	}
+	m_batchNeedsInit = TRUE;
 }
 
 void W3DDisplay::onEndBatch()
@@ -614,9 +613,12 @@ void W3DDisplay::onEndBatch()
 
 void W3DDisplay::onFlush()
 {
-	if (m_2DRender && !m_batchNeedsInit)
+	if (m_2DRender)
 	{
-		m_2DRender->Render();
+		if (!m_batchNeedsInit)
+		{
+			m_2DRender->Render();
+		}
 		m_2DRender->Reset();
 		m_batchNeedsInit = TRUE;
 	}
