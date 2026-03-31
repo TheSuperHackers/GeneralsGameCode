@@ -215,12 +215,12 @@ void View::getLocation( ViewLocation *location )
  */
 void View::setLocation( const ViewLocation *location )
 {
-	if ( location->m_valid )
+	if ( location->isValid() )
 	{
-		setPosition(&location->m_pos);
-		setAngle(location->m_angle);
-		setPitch(location->m_pitch);
-		setZoom(location->m_zoom);
+		setPosition(&location->getPosition());
+		setAngle(location->getAngle());
+		setPitch(location->getPitch());
+		setZoom(location->getZoom());
 		forceRedraw();
 	}
 

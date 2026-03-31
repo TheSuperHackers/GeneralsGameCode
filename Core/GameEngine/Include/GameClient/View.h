@@ -339,9 +339,6 @@ protected:
 // ------------------------------------------------------------------------------------------------
 class ViewLocation
 {
-	friend class View;
-	friend class LookAtTranslator;
-
 	protected:
 		Bool m_valid;																								///< Is this location valid
 		Coord3D m_pos;																							///< Position of this view, in world coordinates
@@ -353,28 +350,28 @@ class ViewLocation
 
 		ViewLocation()
 		{
-			m_valid = FALSE;
+			m_valid = false;
 			m_pos.zero();
 			m_angle = 0.0f;
 			m_pitch = 0.0f;
 			m_zoom = 0.0f;
 		}
 
-		const Coord3D& getPosition() const { return m_pos; }
 		Bool isValid() const { return m_valid; }
+		const Coord3D& getPosition() const { return m_pos; }
 		Real getAngle() const { return m_angle; }
 		Real getPitch() const { return m_pitch; }
 		Real getZoom() const { return m_zoom; }
 
 		void init(Real x, Real y, Real z, Real angle, Real pitch, Real zoom)
 		{
+			m_valid = true;
 			m_pos.x = x;
 			m_pos.y = y;
 			m_pos.z = z;
 			m_angle = angle;
 			m_pitch = pitch;
 			m_zoom = zoom;
-			m_valid = true;
 		}
 };
 
