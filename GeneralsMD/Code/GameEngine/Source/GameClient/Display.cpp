@@ -405,8 +405,8 @@ void Display::endBatch()
 	{
 		return;
 	}
-	onEndBatch();
 	m_isBatching = FALSE;
+	onEndBatch();
 }
 
 void Display::flush()
