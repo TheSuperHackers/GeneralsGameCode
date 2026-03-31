@@ -391,14 +391,20 @@ Display::DebugDisplayCallback *Display::getDebugDisplayCallback()
 
 void Display::beginBatch()
 {
-	if (m_isBatching) return;
+	if (m_isBatching)
+	{
+		return;
+	}
 	m_isBatching = TRUE;
 	onBeginBatch();
 }
 
 void Display::endBatch()
 {
-	if (!m_isBatching) return;
+	if (!m_isBatching)
+	{
+		return;
+	}
 	onEndBatch();
 	m_isBatching = FALSE;
 }
