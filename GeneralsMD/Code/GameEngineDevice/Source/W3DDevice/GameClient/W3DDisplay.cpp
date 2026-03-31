@@ -598,7 +598,7 @@ void W3DDisplay::onBeginBatch()
 
 	if (m_2DRender)
 	{
-		setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 	}
 }
 
@@ -631,11 +631,7 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 			return;
 		}
 
-		if (m_2DRender)
-		{
-			m_2DRender->Render();
-			m_2DRender->Reset();
-		}
+		onFlush();
 
 		if (tex != m_batchTexture)
 		{
@@ -695,11 +691,6 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 			m_2DRender->Enable_Additive(FALSE);
 			m_2DRender->Enable_Alpha(FALSE);
 			m_2DRender->Enable_Grayscale(grayscale);
-			break;
-		case DRAW_IMAGE_PRIMITIVE:
-			m_2DRender->Enable_Additive(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-			m_2DRender->Enable_Grayscale(FALSE);
 			break;
 		}
 	}
@@ -2269,7 +2260,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor )
 {
-	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
@@ -2288,7 +2279,7 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor1,UnsignedInt lineColor2 )
 {
-	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor1, lineColor2 );
@@ -2339,7 +2330,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 	}
 	else
 	{
-		setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 		m_2DRender->Add_Outline( RectClass( startX, startY,
 																				startX + width, startY + height ),
@@ -2359,7 +2350,7 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 															 UnsignedInt color )
 {
-	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 	m_2DRender->Add_Rect( RectClass( startX, startY,
 																	 startX + width, startY + height ),
@@ -2378,7 +2369,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	if(percent < 1 || percent > 100)
 		return;
 
-	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 // The rectangles are numberd as follows
 //(x,y)	|---------|
@@ -2543,7 +2534,7 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	if( percent < 0 || percent > 99 )
 		return;
 
-	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 // The rectangles are numbered as follows
 //(x,y)	|---------|
