@@ -641,8 +641,14 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 
 		if (tex != m_batchTexture)
 		{
-			if (tex) tex->Add_Ref();
-			if (m_batchTexture) m_batchTexture->Release_Ref();
+			if (tex)
+			{
+				tex->Add_Ref();
+			}
+			if (m_batchTexture)
+			{
+				m_batchTexture->Release_Ref();
+			}
 			m_batchTexture = tex;
 		}
 
@@ -2737,11 +2743,6 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	///@todo: Why are we alpha blending all images?  Reduces our fillrate. -MW
 	setup2DRenderState(tex, mode, grayscale);
 
-	if (tex != nullptr && !BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
-	{
-		tex->Release_Ref();
-	}
-
 	RectClass screen_rect(startX,startY,endX,endY);
 	RectClass uv_rect(uv->lo.x,uv->lo.y,uv->hi.x,uv->hi.y);
 
@@ -2863,6 +2864,11 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 		{
 			m_2DRender->Enable_Alpha(true);
 		}
+	}
+
+	if (tex != nullptr && !BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
+	{
+		tex->Release_Ref();
 	}
 
 }
