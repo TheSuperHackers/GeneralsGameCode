@@ -93,6 +93,9 @@ const int DEFAULT_BIT_DEPTH = 32;
 const int DEFAULT_TEXTURE_BIT_DEPTH = 16;
 const D3DMULTISAMPLE_TYPE DEFAULT_MSAA = D3DMULTISAMPLE_NONE;
 
+DX8FrameStatistics DX8Wrapper::FrameStatistics = { 0 };
+static DX8FrameStatistics LastFrameStatistics = { 0 };
+
 bool DX8Wrapper_IsWindowed = true;
 
 // FPU_PRESERVE
@@ -150,15 +153,6 @@ IDirect3DSurface8 *			DX8Wrapper::DefaultRenderTarget						= nullptr;
 IDirect3DSurface8 *			DX8Wrapper::DefaultDepthBuffer						= nullptr;
 bool								DX8Wrapper::IsRenderToTexture							= false;
 
-unsigned							DX8Wrapper::matrix_changes								= 0;
-unsigned							DX8Wrapper::material_changes							= 0;
-unsigned							DX8Wrapper::vertex_buffer_changes					= 0;
-unsigned							DX8Wrapper::index_buffer_changes                = 0;
-unsigned							DX8Wrapper::light_changes								= 0;
-unsigned							DX8Wrapper::texture_changes							= 0;
-unsigned							DX8Wrapper::render_state_changes						= 0;
-unsigned							DX8Wrapper::texture_stage_state_changes			= 0;
-unsigned							DX8Wrapper::draw_calls									= 0;
 unsigned							DX8Wrapper::_MainThreadID								= 0;
 bool								DX8Wrapper::CurrentDX8LightEnables[4];
 bool								DX8Wrapper::IsDeviceLost;
@@ -178,18 +172,7 @@ D3DADAPTER_IDENTIFIER8		DX8Wrapper::CurrentAdapterIdentifier;
 unsigned long DX8Wrapper::FrameCount = 0;
 
 bool								_DX8SingleThreaded										= false;
-
 unsigned							number_of_DX8_calls										= 0;
-static unsigned				last_frame_matrix_changes								= 0;
-static unsigned				last_frame_material_changes							= 0;
-static unsigned				last_frame_vertex_buffer_changes						= 0;
-static unsigned				last_frame_index_buffer_changes						= 0;
-static unsigned				last_frame_light_changes								= 0;
-static unsigned				last_frame_texture_changes								= 0;
-static unsigned				last_frame_render_state_changes						= 0;
-static unsigned				last_frame_texture_stage_state_changes				= 0;
-static unsigned				last_frame_number_of_DX8_calls						= 0;
-static unsigned				last_frame_draw_calls									= 0;
 
 static D3DPRESENT_PARAMETERS								_PresentParameters;
 static DynamicVectorClass<StringClass>					_RenderDeviceNameTable;
@@ -1649,71 +1632,26 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 
 void DX8Wrapper::Reset_Statistics()
 {
-	matrix_changes	= 0;
-	material_changes = 0;
-	vertex_buffer_changes = 0;
-	index_buffer_changes = 0;
-	light_changes = 0;
-	texture_changes = 0;
-	render_state_changes =0;
-	texture_stage_state_changes =0;
-	draw_calls =0;
-
-	number_of_DX8_calls = 0;
-	last_frame_matrix_changes = 0;
-	last_frame_material_changes = 0;
-	last_frame_vertex_buffer_changes = 0;
-	last_frame_index_buffer_changes = 0;
-	last_frame_light_changes = 0;
-	last_frame_texture_changes = 0;
-	last_frame_render_state_changes = 0;
-	last_frame_texture_stage_state_changes = 0;
-	last_frame_number_of_DX8_calls = 0;
-	last_frame_draw_calls =0;
+	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
+	memset(&LastFrameStatistics, 0, sizeof(FrameStatistics));
+	number_of_DX8_calls=0;
 }
 
 void DX8Wrapper::Begin_Statistics()
 {
-	matrix_changes=0;
-	material_changes=0;
-	vertex_buffer_changes=0;
-	index_buffer_changes=0;
-	light_changes=0;
-	texture_changes = 0;
-	render_state_changes =0;
-	texture_stage_state_changes =0;
+	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
 	number_of_DX8_calls=0;
-	draw_calls=0;
 }
 
 void DX8Wrapper::End_Statistics()
 {
-	last_frame_matrix_changes=matrix_changes;
-	last_frame_material_changes=material_changes;
-	last_frame_vertex_buffer_changes=vertex_buffer_changes;
-	last_frame_index_buffer_changes=index_buffer_changes;
-	last_frame_light_changes=light_changes;
-	last_frame_texture_changes = texture_changes;
-	last_frame_render_state_changes = render_state_changes;
-	last_frame_texture_stage_state_changes = texture_stage_state_changes;
-	last_frame_number_of_DX8_calls=number_of_DX8_calls;
-	last_frame_draw_calls=draw_calls;
+	LastFrameStatistics = FrameStatistics;
+	LastFrameStatistics.dx8_calls = number_of_DX8_calls;
 }
 
-DX8FrameStatistics DX8Wrapper::Get_Last_Frame_Statistics()
+const DX8FrameStatistics& DX8Wrapper::Get_Last_Frame_Statistics()
 {
-	DX8FrameStatistics stats;
-	stats.matrix_changes = last_frame_matrix_changes;
-	stats.material_changes = last_frame_material_changes;
-	stats.vertex_buffer_changes = last_frame_vertex_buffer_changes;
-	stats.index_buffer_changes = last_frame_index_buffer_changes;
-	stats.light_changes = last_frame_light_changes;
-	stats.texture_changes = last_frame_texture_changes;
-	stats.render_state_changes = last_frame_render_state_changes;
-	stats.texture_stage_state_changes = last_frame_texture_stage_state_changes;
-	stats.dx8_calls = last_frame_number_of_DX8_calls;
-	stats.draw_calls = last_frame_draw_calls;
-	return stats;
+	return LastFrameStatistics;
 }
 
 unsigned long DX8Wrapper::Get_FrameCount() {return FrameCount;}

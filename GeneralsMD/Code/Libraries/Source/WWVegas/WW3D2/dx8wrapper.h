@@ -108,15 +108,15 @@ struct DX8FrameStatistics
 	unsigned draw_calls;
 };
 
-#define DX8_RECORD_MATRIX_CHANGE()				matrix_changes++
-#define DX8_RECORD_MATERIAL_CHANGE()			material_changes++
-#define DX8_RECORD_VERTEX_BUFFER_CHANGE()		vertex_buffer_changes++
-#define DX8_RECORD_INDEX_BUFFER_CHANGE()		index_buffer_changes++
-#define DX8_RECORD_LIGHT_CHANGE()				light_changes++
-#define DX8_RECORD_TEXTURE_CHANGE()				texture_changes++
-#define DX8_RECORD_RENDER_STATE_CHANGE()		render_state_changes++
-#define DX8_RECORD_TEXTURE_STAGE_STATE_CHANGE() texture_stage_state_changes++
-#define DX8_RECORD_DRAW_CALLS()					draw_calls++
+#define DX8_RECORD_MATRIX_CHANGE()				FrameStatistics.matrix_changes++
+#define DX8_RECORD_MATERIAL_CHANGE()			FrameStatistics.material_changes++
+#define DX8_RECORD_VERTEX_BUFFER_CHANGE()		FrameStatistics.vertex_buffer_changes++
+#define DX8_RECORD_INDEX_BUFFER_CHANGE()		FrameStatistics.index_buffer_changes++
+#define DX8_RECORD_LIGHT_CHANGE()				FrameStatistics.light_changes++
+#define DX8_RECORD_TEXTURE_CHANGE()				FrameStatistics.texture_changes++
+#define DX8_RECORD_RENDER_STATE_CHANGE()		FrameStatistics.render_state_changes++
+#define DX8_RECORD_TEXTURE_STAGE_STATE_CHANGE() FrameStatistics.texture_stage_state_changes++
+#define DX8_RECORD_DRAW_CALLS()					FrameStatistics.draw_calls++
 
 extern unsigned number_of_DX8_calls;
 extern bool _DX8SingleThreaded;
@@ -427,7 +427,7 @@ public:
 	*/
 	static void Begin_Statistics();
 	static void End_Statistics();
-	static DX8FrameStatistics Get_Last_Frame_Statistics();
+	static const DX8FrameStatistics& Get_Last_Frame_Statistics();
 	static unsigned long Get_FrameCount();
 
 	// Needed by shader class
@@ -661,15 +661,7 @@ protected:
 	static bool								FogEnable;
 	static D3DCOLOR						FogColor;
 
-	static unsigned						matrix_changes;
-	static unsigned						material_changes;
-	static unsigned						vertex_buffer_changes;
-	static unsigned						index_buffer_changes;
-	static unsigned						light_changes;
-	static unsigned						texture_changes;
-	static unsigned						render_state_changes;
-	static unsigned						texture_stage_state_changes;
-	static unsigned						draw_calls;
+	static DX8FrameStatistics			FrameStatistics;
 	static bool								CurrentDX8LightEnables[4];
 
 	static unsigned long FrameCount;
