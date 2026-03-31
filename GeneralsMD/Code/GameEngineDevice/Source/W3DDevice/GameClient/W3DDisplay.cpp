@@ -408,6 +408,7 @@ W3DDisplay::W3DDisplay()
 	m_batchTexture = nullptr;
 	m_batchMode = DRAW_IMAGE_ALPHA;
 	m_batchGrayscale = FALSE;
+	m_batchNeedsInit = TRUE;
 }
 
 // W3DDisplay::~W3DDisplay ====================================================
