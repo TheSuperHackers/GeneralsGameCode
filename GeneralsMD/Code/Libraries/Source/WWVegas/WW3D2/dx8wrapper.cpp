@@ -172,7 +172,6 @@ D3DADAPTER_IDENTIFIER8		DX8Wrapper::CurrentAdapterIdentifier;
 unsigned long DX8Wrapper::FrameCount = 0;
 
 bool								_DX8SingleThreaded										= false;
-unsigned							number_of_DX8_calls										= 0;
 
 static D3DPRESENT_PARAMETERS								_PresentParameters;
 static DynamicVectorClass<StringClass>					_RenderDeviceNameTable;
@@ -1634,19 +1633,16 @@ void DX8Wrapper::Reset_Statistics()
 {
 	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
 	memset(&LastFrameStatistics, 0, sizeof(LastFrameStatistics));
-	number_of_DX8_calls=0;
 }
 
 void DX8Wrapper::Begin_Statistics()
 {
 	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
-	number_of_DX8_calls=0;
 }
 
 void DX8Wrapper::End_Statistics()
 {
 	LastFrameStatistics = FrameStatistics;
-	LastFrameStatistics.dx8_calls = number_of_DX8_calls;
 }
 
 const DX8FrameStatistics& DX8Wrapper::Get_Last_Frame_Statistics()
@@ -1690,7 +1686,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 			hr=_Get_D3D_Device8()->Present(nullptr, nullptr, nullptr, nullptr);
 		}
 
-		number_of_DX8_calls++;
+		DX8_RECORD_DX8_CALLS();
 
 		if (SUCCEEDED(hr)) {
 #ifdef EXTENDED_STATS
@@ -1799,7 +1795,7 @@ void DX8Wrapper::Clear(bool clear_color, bool clear_z_stencil, const Vector3 &co
 	IDirect3DSurface8* depthbuffer;
 
 	_Get_D3D_Device8()->GetDepthStencilSurface(&depthbuffer);
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	if (depthbuffer)
 	{
@@ -3161,7 +3157,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	// Use the current display format if format isn't specified
 	if (format==WW3D_FORMAT_UNKNOWN) {
@@ -3227,7 +3223,7 @@ void DX8Wrapper::Create_Render_Target
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	// Use the current display format if format isn't specified
 	if (format==WW3D_FORMAT_UNKNOWN)
@@ -3628,7 +3624,7 @@ void DX8Wrapper::Flush_DX8_Resource_Manager(unsigned int bytes)
 unsigned int DX8Wrapper::Get_Free_Texture_RAM()
 {
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 	return DX8Wrapper::_Get_D3D_Device8()->GetAvailableTextureMem();
 }
 
@@ -3644,7 +3640,7 @@ void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrat
 	float oo_gamma=1.0f/gamma;
 
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	DWORD flag=(calibrate?D3DSGR_CALIBRATE:D3DSGR_NO_CALIBRATION);
 
