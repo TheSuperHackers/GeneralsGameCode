@@ -681,7 +681,7 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 			break;
 		case DRAW_IMAGE_GRAYSCALE:
 			m_2DRender->Enable_Additive(FALSE);
-			m_2DRender->Enable_Alpha(FALSE);
+			m_2DRender->Enable_Alpha(TRUE);
 			m_2DRender->Enable_Grayscale(TRUE);
 			break;
 		case DRAW_IMAGE_ADDITIVE:
