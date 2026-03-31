@@ -2750,6 +2750,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	if (m_isClippedEnabled)
 	{	//need to clip this quad to clip rectangle
 		if (screen_rect.Left < m_clipRegion.lo.x || screen_rect.Right > m_clipRegion.hi.x || screen_rect.Top < m_clipRegion.lo.y || screen_rect.Bottom > m_clipRegion.hi.y)
+		{
 			RectClass clipped_rect;
 			RectClass clipped_uv_rect;
 
