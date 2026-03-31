@@ -598,10 +598,8 @@ void W3DDisplay::onBeginBatch()
 
 	if (m_2DRender)
 	{
-		m_2DRender->Reset();
+		setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 	}
-
-	setup2DRenderState(nullptr, DRAW_IMAGE_PRIMITIVE, FALSE);
 }
 
 void W3DDisplay::onEndBatch()
@@ -2725,6 +2723,17 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	if( image == nullptr )
 		return;
 
+	if (m_isClippedEnabled)
+	{
+		if (	endX <= m_clipRegion.lo.x ||
+				endY <= m_clipRegion.lo.y ||
+				startX >= m_clipRegion.hi.x ||
+				startY >= m_clipRegion.hi.y)
+		{
+			return;	//nothing to render
+		}
+	}
+
 	// !!
 	// Remember to update the GUIEditDisplay::drawImage when you make
 	// changes to this, it technically uses W3D code to render itself,
@@ -2748,21 +2757,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 
 	if (m_isClippedEnabled)
 	{	//need to clip this quad to clip rectangle
-
-		//
-		//	Check for completely clipped
-		//
-		if (	endX <= m_clipRegion.lo.x ||
-				endY <= m_clipRegion.lo.y ||
-				startX >= m_clipRegion.hi.x ||
-				startY >= m_clipRegion.hi.y)
 		{
-			if (tex != nullptr && !BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
-			{
-				tex->Release_Ref();
-			}
-			return;	//nothing to render
-		} else {
 			RectClass clipped_rect;
 			RectClass clipped_uv_rect;
 
