@@ -2753,8 +2753,14 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 		//	Check for completely clipped
 		//
 		if (	endX <= m_clipRegion.lo.x ||
-				endY <= m_clipRegion.lo.y)
+				endY <= m_clipRegion.lo.y ||
+				startX >= m_clipRegion.hi.x ||
+				startY >= m_clipRegion.hi.y)
 		{
+			if (tex != nullptr && !BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
+			{
+				tex->Release_Ref();
+			}
 			return;	//nothing to render
 		} else {
 			RectClass clipped_rect;
