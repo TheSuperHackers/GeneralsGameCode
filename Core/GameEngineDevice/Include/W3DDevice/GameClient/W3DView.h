@@ -275,18 +275,27 @@ private:
 	Bool		m_cameraHasMovedSinceRequest;					///< If true, throw out all saved locations
 	VecPosRequests	m_locationRequests;		///< These are cached. New requests are added here
 
-	Coord3D m_cameraOffset;													///< offset for camera from view center
-	Coord3D m_previousLookAtPosition;													///< offset for camera from view center
+	Coord3D m_previousLookAtPosition;
 	Coord2D m_scrollAmount;													///< scroll speed
 	Real m_scrollAmountCutoffSqr;										///< scroll speed at which we do not adjust height
 
 	Real m_groundLevel;															///< height of ground.
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	// TheSuperHackers @tweak Uses the initial ground level for preserving the original look of the scripted camera,
+	// because alterations to the ground level do affect the positioning in subtle ways.
+	Real m_initialGroundLevel;
+#endif
 
 	Region2D m_cameraAreaConstraints; ///< Camera should be constrained to be within this area
 	Bool m_cameraAreaConstraintsValid; ///< If false, recalculates the camera area constraints in the next render update
 	Bool m_recalcCameraConstraintsAfterScrolling; ///< Recalculates the camera area constraints after the user has moved the camera
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
+	Real getCameraOffsetZ() const;
+	Real getDesiredHeight(Real x, Real y) const;
+	Real getDesiredZoom(Real x, Real y) const;
+	Real getMaxHeight(Real x, Real y) const;
+	Real getMaxZoom(Real x, Real y) const;
 	void setCameraTransform(); ///< set the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void buildCameraPosition(Vector3 &sourcePos, Vector3 &targetPos);
 	void buildCameraTransform(Matrix3D *transform, const Vector3 &sourcePos, const Vector3 &targetPos); ///< calculate (but do not set) the transform matrix of m_3DCamera, based on m_pos & m_angle
