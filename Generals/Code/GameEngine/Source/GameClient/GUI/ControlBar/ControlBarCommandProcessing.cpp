@@ -243,7 +243,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				break;
 
 			// sanity check, the building must be under our control to cancel construction
-			if( building->getControllingPlayer() != ThePlayerList->getLocalPlayer() )
+			if( !building->isLocallyControlled() )
 				break;
 
 			// do the message
@@ -357,7 +357,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				break;
 
 			// sanity, we must control the producer ... if this isn't true they might be hacking the game
-			if( producer->getControllingPlayer() != ThePlayerList->getLocalPlayer() )
+			if( !producer->isLocallyControlled() )
 				break;
 
 			// send a message to cancel that particular production entry
