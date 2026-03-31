@@ -1632,14 +1632,14 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 
 void DX8Wrapper::Reset_Statistics()
 {
-	memset(&FrameStatistics, 0, sizeof(DX8FrameStatistics));
-	memset(&LastFrameStatistics, 0, sizeof(DX8FrameStatistics));
+	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
+	memset(&LastFrameStatistics, 0, sizeof(LastFrameStatistics));
 	number_of_DX8_calls=0;
 }
 
 void DX8Wrapper::Begin_Statistics()
 {
-	memset(&FrameStatistics, 0, sizeof(DX8FrameStatistics));
+	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
 	number_of_DX8_calls=0;
 }
 
