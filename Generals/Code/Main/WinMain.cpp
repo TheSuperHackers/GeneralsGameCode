@@ -760,6 +760,12 @@ static LONG WINAPI UnHandledExceptionFilter( struct _EXCEPTION_POINTERS* e_info 
 
 	MiniDumper::shutdownMiniDumper();
 #endif
+
+	// TheSuperHackers @bugfix JohnsterID 20/01/2026 Show crash dialog for unhandled exceptions.
+	// This ensures users see crash information and GitHub link for all crashes,
+	// not just explicit DEBUG_CRASH calls.
+	ReleaseCrash("Unhandled exception");
+
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
