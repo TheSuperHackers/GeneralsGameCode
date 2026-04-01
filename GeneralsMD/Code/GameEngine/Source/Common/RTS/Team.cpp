@@ -1323,6 +1323,12 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	m_playerRelations = newInstance(PlayerRelationMap);
 	m_teamRelations = newInstance(TeamRelationMap);
 
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+		m_genericScriptsToRun[i] = nullptr;
+	}
+#endif
+
 	if (proto)
 	{
 		proto->prependTo_TeamInstanceList(this);
@@ -1332,15 +1338,26 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 			m_checkEnemySighted = true;	 // Only keep track of enemy sighted if there is a script that cares.
 		}
 
+#if !RETAIL_COMPATIBLE_SCRIPTING
+		for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+			Script* script = proto->getGenericScript(i);
+			if (script) {
+				m_genericScriptsToRun[i] = proto->getGenericScript(i)->duplicate();
+			}
+		}
+#endif
+
 		AsciiString teamName = proto->getName();
 		teamName.concat(" - creating team instance.");
 		TheScriptEngine->AppendDebugMessage(teamName, false);
 	}
 
+#if RETAIL_COMPATIBLE_SCRIPTING
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
 	{
 		m_shouldAttemptGenericScript[i] = true;
 	}
+#endif
 
 
 }
@@ -1379,6 +1396,15 @@ Team::~Team()
 
 	// make sure the xfer list is clear
 	m_xferMemberIDList.clear();
+
+#if !RETAIL_COMPATIBLE_SCRIPTING
+	// Clear any scripts that we have ownership of
+	for (i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
+	{
+		deleteInstance(m_genericScriptsToRun[i]);
+		m_genericScriptsToRun[i] = nullptr;
+	}
+#endif
 
 }
 
@@ -2557,7 +2583,7 @@ void Team::updateGenericScripts()
 	}
 #else
 	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-		Script* script = m_proto->getGenericScript(i);
+		Script* script = m_genericScriptsToRun[i];
 		if (!script) {
 			continue;
 		}
@@ -2731,7 +2757,7 @@ void Team::xfer( Xfer *xfer )
 #else
 	// TheSuperHackers @info Generic scripts can now be toggled so we need to directly check each scripts active state
 	for (Int i = 0; i < shouldAttemptGenericScriptCount; ++i) {
-		Script* script = m_proto->getGenericScript(i);
+		Script* script = m_genericScriptsToRun[i];
 		Bool scriptActive = script ? script->isActive() : false;
 		xfer->xferBool(&scriptActive);
 	}

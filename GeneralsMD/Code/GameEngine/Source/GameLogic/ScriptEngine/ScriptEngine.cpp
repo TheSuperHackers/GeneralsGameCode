@@ -6821,9 +6821,8 @@ void ScriptEngine::enableScript( ScriptAction *pAction )
 	// OneShot generic scripts can also be re-enabled to run again.
 	if (m_callingTeam) {
 		const AsciiString& scriptName = pAction->getParameter(0)->getString();
-		TeamPrototype* teamProto = const_cast<TeamPrototype*>(m_callingTeam->getPrototype());
 		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-			Script* script = teamProto->getGenericScript(i);
+			Script* script = m_callingTeam->getGenericScript(i);
 			if (script && script->getName() == scriptName) {
 				script->setActive(true);
 				return;
@@ -6851,9 +6850,8 @@ void ScriptEngine::disableScript( ScriptAction *pAction )
 #if !RETAIL_COMPATIBLE_SCRIPTING
 	if (m_callingTeam) {
 		const AsciiString& scriptName = pAction->getParameter(0)->getString();
-		TeamPrototype* teamProto = const_cast<TeamPrototype*>(m_callingTeam->getPrototype());
 		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-			Script* script = teamProto->getGenericScript(i);
+			Script* script = m_callingTeam->getGenericScript(i);
 			if (script && script->getName() == scriptName) {
 				script->setActive(false);
 				return;
