@@ -93,8 +93,8 @@ const int DEFAULT_BIT_DEPTH = 32;
 const int DEFAULT_TEXTURE_BIT_DEPTH = 16;
 const D3DMULTISAMPLE_TYPE DEFAULT_MSAA = D3DMULTISAMPLE_NONE;
 
-DX8FrameStatistics DX8Wrapper::FrameStatistics = { 0 };
-static DX8FrameStatistics LastFrameStatistics = { 0 };
+DX8FrameStatistics DX8Wrapper::FrameStatistics;
+static DX8FrameStatistics LastFrameStatistics;
 
 bool DX8Wrapper_IsWindowed = true;
 
@@ -1631,13 +1631,13 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 
 void DX8Wrapper::Reset_Statistics()
 {
-	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
-	memset(&LastFrameStatistics, 0, sizeof(LastFrameStatistics));
+	FrameStatistics = DX8FrameStatistics();
+	LastFrameStatistics = DX8FrameStatistics();
 }
 
 void DX8Wrapper::Begin_Statistics()
 {
-	memset(&FrameStatistics, 0, sizeof(FrameStatistics));
+	FrameStatistics = DX8FrameStatistics();
 }
 
 void DX8Wrapper::End_Statistics()

@@ -96,6 +96,20 @@ class SurfaceClass;
 
 struct DX8FrameStatistics
 {
+	DX8FrameStatistics() :
+		matrix_changes(0),
+		material_changes(0),
+		vertex_buffer_changes(0),
+		index_buffer_changes(0),
+		light_changes(0),
+		texture_changes(0),
+		render_state_changes(0),
+		texture_stage_state_changes(0),
+		dx8_calls(0),
+		draw_calls(0)
+	{
+	}
+
 	unsigned matrix_changes;
 	unsigned material_changes;
 	unsigned vertex_buffer_changes;
