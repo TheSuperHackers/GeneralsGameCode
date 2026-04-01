@@ -32,8 +32,7 @@
 #include "shader.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
-
-#define MAX_TRACK_EDGE_COUNT	100	//maximum number of edges or divisions in track mark
+#include "Common/GlobalData.h"
 #define MAX_TRACK_OPAQUE_EDGE	25	//linear fade of edges will begin at this edge
 #define FADE_TIME_FRAMES 300000	// 300 seconds at 30 fps - time to fade out an edge and remove it from the system.
 
@@ -86,7 +85,7 @@ protected:
 		Real	alpha;					///< current alpha value for rendering
 	};
 
-	edgeInfo	m_edges[MAX_TRACK_EDGE_COUNT];	///<edges at each segment break
+	edgeInfo	m_edges[MAX_TANK_TRACK_EDGES];	///<edges at each segment break
 	Vector3		m_lastAnchor;						///<location of last edge center
 	Int			m_bottomIndex;						///<points at oldest edge on track
 	Int			m_topIndex;						///<points to newest edge on track
