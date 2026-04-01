@@ -36,6 +36,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
+#include "Common/BuildAssistant.h"
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -1506,7 +1507,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			}
 		}
 
-		// Last check is shroudedness, if it is cared about
+		// Second check is shroudedness, if it is cared about
 		switch( spTemplate->getSpecialPowerType() )
 		{
 			case SPECIAL_DAISY_CUTTER:
@@ -1552,7 +1553,6 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case SUPW_SPECIAL_PARTICLE_UPLINK_CANNON:
 			case LAZR_SPECIAL_PARTICLE_UPLINK_CANNON:
 			case SPECIAL_CLEANUP_AREA:
-			case SPECIAL_SNEAK_ATTACK:
 			case SPECIAL_BATTLESHIP_BOMBARDMENT:
 				//Don't allow "damaging" special powers in shrouded areas, but Fogged are okay.
 				return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
@@ -1585,6 +1585,35 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			case SPECIAL_CASH_BOUNTY:
 			case SPECIAL_CHANGE_BATTLE_PLANS:
 				return false;
+		}
+
+		// TheSuperHackers @fix stephanmeesters 04/04/2026 Some special powers can spawn a building. To avoid cheating
+		// we must verify that it is legal to place this building.
+		switch( spTemplate->getSpecialPowerType() )
+		{
+			case SPECIAL_SNEAK_ATTACK:
+			{
+#if RETAIL_COMPATIBLE_CRC
+				return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
+#elif
+				const ThingTemplate* referenceThing = mod->getReferenceThingTemplate();
+				DEBUG_ASSERTCRASH(referenceThing, ("canDoSpecialPowerAtLocation: SpecialPowerTemplate has a null ThingTemplate") );
+				if (!referenceThing)
+					return FALSE;
+
+				return TheBuildAssistant->isLocationLegalToBuild(loc,
+																 referenceThing,
+																 referenceThing->getPlacementViewAngle(),
+																 BuildAssistant::USE_QUICK_PATHFIND |
+																 BuildAssistant::TERRAIN_RESTRICTIONS |
+																 BuildAssistant::CLEAR_PATH |
+																 BuildAssistant::NO_OBJECT_OVERLAP |
+																 BuildAssistant::SHROUD_REVEALED |
+																 BuildAssistant::IGNORE_STEALTHED,
+																 obj,
+																 nullptr) == LBC_OK;
+#endif
+			}
 		}
 	}
 	return false;
