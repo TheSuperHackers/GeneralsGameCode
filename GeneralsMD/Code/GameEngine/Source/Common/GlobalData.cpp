@@ -1245,6 +1245,20 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	// parse the ini weapon definition
 	ini->initFromINI( TheWritableGlobalData, s_GlobalDataFieldParseTable );
 
+	// TheSuperHackers @fix Sanitize values that are used as loop bounds or allocation sizes.
+	TheWritableGlobalData->m_numGlobalLights = std::clamp(TheWritableGlobalData->m_numGlobalLights, 0, MAX_GLOBAL_LIGHTS);
+	TheWritableGlobalData->m_maxVisibleTranslucentObjects = std::max(TheWritableGlobalData->m_maxVisibleTranslucentObjects, 0);
+	TheWritableGlobalData->m_maxVisibleOccluderObjects = std::max(TheWritableGlobalData->m_maxVisibleOccluderObjects, 0);
+	TheWritableGlobalData->m_maxVisibleOccludeeObjects = std::max(TheWritableGlobalData->m_maxVisibleOccludeeObjects, 0);
+	TheWritableGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects = std::max(TheWritableGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects, 0);
+	TheWritableGlobalData->m_maxLineBuildObjects = std::max(TheWritableGlobalData->m_maxLineBuildObjects, 0);
+	TheWritableGlobalData->m_maxRoadSegments = std::max(TheWritableGlobalData->m_maxRoadSegments, 0);
+	TheWritableGlobalData->m_maxRoadVertex = std::max(TheWritableGlobalData->m_maxRoadVertex, 0);
+	TheWritableGlobalData->m_maxRoadIndex = std::max(TheWritableGlobalData->m_maxRoadIndex, 0);
+	TheWritableGlobalData->m_maxRoadTypes = std::max(TheWritableGlobalData->m_maxRoadTypes, 0);
+	TheWritableGlobalData->m_maxTankTrackEdges = std::max(TheWritableGlobalData->m_maxTankTrackEdges, 1);
+	TheWritableGlobalData->m_networkFPSHistoryLength = std::max(TheWritableGlobalData->m_networkFPSHistoryLength, 1u);
+	TheWritableGlobalData->m_networkLatencyHistoryLength = std::max(TheWritableGlobalData->m_networkLatencyHistoryLength, 1u);
 
 	// override INI values with user preferences
 	OptionPreferences optionPref;
