@@ -870,4 +870,4 @@ END_MESSAGE_MAP()
 std::string LayersList::TheDefaultLayerName = "Default Layer";
 std::string LayersList::TheDefaultNewLayerName = "New Layer";
 const std::string LayersList::TheUnmutableDefaultLayerName = "Default Layer";
-extern LayersList *TheLayersList = nullptr;
+LayersList *TheLayersList = nullptr;

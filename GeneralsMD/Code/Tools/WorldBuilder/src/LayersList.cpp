@@ -1343,4 +1343,4 @@ std::string LayersList::TheDefaultNewLayerName = "New Layer";
 std::string LayersList::ThePolygonTriggerLayerName = "Default Trigger Layer";
 std::string LayersList::TheActiveLayerName;
 const std::string LayersList::TheUnmutableDefaultLayerName = "Default Object Layer";
-extern LayersList *TheLayersList = nullptr;
+LayersList *TheLayersList = nullptr;

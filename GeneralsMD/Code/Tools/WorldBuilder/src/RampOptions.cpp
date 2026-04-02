@@ -79,7 +79,7 @@ void RampOptions::OnWidthChange()
 	m_rampWidth = atof(str.GetBuffer(0));
 }
 
-extern RampOptions* TheRampOptions = nullptr;
+RampOptions* TheRampOptions = nullptr;
 
 BEGIN_MESSAGE_MAP(RampOptions, COptionsPanel)
 	ON_BN_CLICKED(IDC_RO_APPLY, OnApply)
