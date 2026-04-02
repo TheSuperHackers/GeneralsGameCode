@@ -709,6 +709,10 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 	Int curTree=0;
 	Int bNdx;
 	const GlobalData::TerrainLighting *objectLighting = TheGlobalData->m_terrainObjectsLighting[TheGlobalData->m_timeOfDay];
+	// TheSuperHackers @info Reset bufferNdx so updateVertexBuffer skips trees absent from this rebuild.
+	for (Int t = 0; t < m_numTrees; t++) {
+		m_trees[t].bufferNdx = -1;
+	}
 	for (bNdx=0; bNdx<MAX_BUFFERS; bNdx++) {
 		m_curNumTreeVertices[bNdx] = 0;
 		m_curNumTreeIndices[bNdx] = 0;
@@ -991,6 +995,10 @@ void W3DTreeBuffer::updateVertexBuffer()
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexTree[bNdx], D3DLOCK_DISCARD);
 	#endif
 		vb=(VertexFormatXYZNDUV1*)lockVtxBuffer.Get_Vertex_Array();
+		// TheSuperHackers @info Guard against a failed vertex buffer lock returning null.
+		if (!vb) {
+			break;
+		}
 
 		VertexFormatXYZNDUV1 *curVb;
 
@@ -1012,8 +1020,9 @@ void W3DTreeBuffer::updateVertexBuffer()
 			Vector3 loc = m_trees[curTree].location;
 			Real theSin = m_trees[curTree].sin;
 			Real theCos = m_trees[curTree].cos;
+			// TheSuperHackers @info Skip missing mesh trees to avoid using the wrong vertex count.
 			if (type<0 || m_treeTypes[type].m_mesh == nullptr) {
-				type = 0;
+				continue;
 			}
 
 			Int startVertex = m_trees[curTree].firstIndex;
