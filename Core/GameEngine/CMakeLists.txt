@@ -120,7 +120,6 @@ set(GAMEENGINE_SRC
     Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
     Include/Common/SubsystemInterface.h
-#    Include/Common/SystemInfo.h
 #    Include/Common/Team.h
 #    Include/Common/Terrain.h
 #    Include/Common/TerrainTypes.h
