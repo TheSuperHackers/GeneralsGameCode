@@ -665,13 +665,6 @@ void DX8Wrapper::Enumerate_Devices()
 		if (res == D3D_OK) {
 
 			/*
-			** Set up the device name
-			*/
-			StringClass device_name = id.Description;
-			_RenderDeviceNameTable.Add(device_name);
-			_RenderDeviceShortNameTable.Add(device_name);	// for now, just add the same name to the "pretty name table"
-
-			/*
 			** Set up the render device description
 			** TODO: Fill in more fields of the render device description?  (need some lookup tables)
 			*/
@@ -687,6 +680,11 @@ void DX8Wrapper::Enumerate_Devices()
 				LOWORD(id.DriverVersion.LowPart));
 
 			desc.set_driver_version(buf);
+
+			D3DInterface->GetDeviceCaps(adapter_index,WW3D_DEVTYPE,&desc.Caps);
+			D3DInterface->GetAdapterIdentifier(adapter_index,D3DENUM_NO_WHQL_LEVEL,&desc.AdapterIdentifier);
+
+			DX8Caps dx8caps(D3DInterface,desc.Caps,WW3D_FORMAT_UNKNOWN,desc.AdapterIdentifier);
 
 			/*
 			** Enumerate the resolutions
@@ -710,6 +708,11 @@ void DX8Wrapper::Enumerate_Devices()
 						case D3DFMT_X1R5G5B5:		bits = 16; break;
 					}
 
+					// Some cards fail in certain modes, DX8Caps keeps list of those.
+					if (!dx8caps.Is_Valid_Display_Format(d3dmode.Width,d3dmode.Height,D3DFormat_To_WW3DFormat(d3dmode.Format))) {
+						bits=0;
+					}
+
 					/*
 					** If we recognize the format, add it to the list
 					** TODO: should we handle more formats?  will any cards report more than 24 or 16 bit?
@@ -720,10 +723,22 @@ void DX8Wrapper::Enumerate_Devices()
 				}
 			}
 
-			/*
-			** Add the render device to our table
-			*/
-			_RenderDeviceDescriptionTable.Add(desc);
+			// IML: If the device has one or more valid resolutions add it to the device list.
+			// NOTE: Testing has shown that there are drivers with zero resolutions.
+			if (desc.Enumerate_Resolutions().Count() > 0) {
+
+				/*
+				** Set up the device name
+				*/
+				StringClass device_name(id.Description,true);
+				_RenderDeviceNameTable.Add(device_name);
+				_RenderDeviceShortNameTable.Add(device_name);	// for now, just add the same name to the "pretty name table"
+
+				/*
+				** Add the render device to our table
+				*/
+				_RenderDeviceDescriptionTable.Add(desc);
+			}
 		}
 	}
 }
