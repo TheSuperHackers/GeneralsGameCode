@@ -82,6 +82,7 @@
 #include "bound.h"
 #include "DbgHelpGuard.h"
 
+#include "shdlib.h"
 
 const int DEFAULT_RESOLUTION_WIDTH = 640;
 const int DEFAULT_RESOLUTION_HEIGHT = 480;
@@ -380,6 +381,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits()
 	MissingTexture::_Init();
 	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter());
 	TheDX8MeshRenderer.Init();
+	SHD_INIT;
 	BoxRenderObjClass::Init();
 	VertexMaterialClass::Init();
 	PointGroupClass::_Init(); // This needs the VertexMaterialClass to be initted
@@ -467,6 +469,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Shutdowns()
 	PointGroupClass::_Shutdown();
 	VertexMaterialClass::Shutdown();
 	BoxRenderObjClass::Shutdown();
+	SHD_SHUTDOWN;
 	TheDX8MeshRenderer.Shutdown();
 	MissingTexture::_Deinit();
 
@@ -579,6 +582,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		DynamicVBAccessClass::_Deinit();
 		DynamicIBAccessClass::_Deinit();
 		DX8TextureManagerClass::Release_Textures();
+		SHD_SHUTDOWN_SHADERS;
 
 		memset(Vertex_Shader_Constants,0,sizeof(Vector4)*MAX_VERTEX_SHADER_CONSTANTS);
 		memset(Pixel_Shader_Constants,0,sizeof(Vector4)*MAX_PIXEL_SHADER_CONSTANTS);
@@ -601,6 +605,7 @@ bool DX8Wrapper::Reset_Device(bool reload_assets)
 		}
 		Invalidate_Cached_Render_States();
 		Set_Default_Global_Render_States();
+		SHD_INIT_SHADERS;
 		WWDEBUG_SAY(("Device reset completed"));
 		return true;
 	}
