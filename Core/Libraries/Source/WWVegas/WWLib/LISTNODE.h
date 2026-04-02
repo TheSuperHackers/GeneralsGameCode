@@ -222,7 +222,6 @@ class DataNode : public GenericNode {
 	T Value;
 public:
 	DataNode() {};
-	DataNode(T value) { Set(value); };
 	void Set(T value) { Value = value; };
 	T Get() const { return Value; };
 
