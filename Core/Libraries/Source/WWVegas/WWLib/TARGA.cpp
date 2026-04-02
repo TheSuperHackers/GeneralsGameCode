@@ -735,7 +735,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		if (!error)
 			{
 			footer.Developer = 0;
-			strlcpy(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature));
+			memcpy(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)); // TheSuperHackers @bugfix bobtista 02/04/2026 Use memcpy to copy all 16 bytes of the TGA2 signature without null termination, as the field is a fixed-size binary field per the TGA 2.0 spec
 			footer.RsvdChar = '.';
 			footer.BZST = 0;
 
