@@ -339,40 +339,41 @@ protected:
 // ------------------------------------------------------------------------------------------------
 class ViewLocation
 {
-	protected:
-		Bool m_valid;																								///< Is this location valid
-		Coord3D m_pos;																							///< Position of this view, in world coordinates
-		Real m_angle;																								///< Angle at which view has been rotated about the Z axis
-		Real m_pitch;																								///< Angle at which view has been rotated about the Y axis
-		Real m_zoom;																								///< Current zoom value
+public:
 
-	public:
+	ViewLocation()
+	{
+		m_valid = false;
+		m_pos.zero();
+		m_angle = 0.0f;
+		m_pitch = 0.0f;
+		m_zoom = 0.0f;
+	}
 
-		ViewLocation()
-		{
-			m_valid = false;
-			m_pos.zero();
-			m_angle = 0.0f;
-			m_pitch = 0.0f;
-			m_zoom = 0.0f;
-		}
+	Bool isValid() const { return m_valid; }
+	const Coord3D& getPosition() const { return m_pos; }
+	Real getAngle() const { return m_angle; }
+	Real getPitch() const { return m_pitch; }
+	Real getZoom() const { return m_zoom; }
 
-		Bool isValid() const { return m_valid; }
-		const Coord3D& getPosition() const { return m_pos; }
-		Real getAngle() const { return m_angle; }
-		Real getPitch() const { return m_pitch; }
-		Real getZoom() const { return m_zoom; }
+	void init(Real x, Real y, Real z, Real angle, Real pitch, Real zoom)
+	{
+		m_valid = true;
+		m_pos.x = x;
+		m_pos.y = y;
+		m_pos.z = z;
+		m_angle = angle;
+		m_pitch = pitch;
+		m_zoom = zoom;
+	}
 
-		void init(Real x, Real y, Real z, Real angle, Real pitch, Real zoom)
-		{
-			m_valid = true;
-			m_pos.x = x;
-			m_pos.y = y;
-			m_pos.z = z;
-			m_angle = angle;
-			m_pitch = pitch;
-			m_zoom = zoom;
-		}
+private:
+
+	Bool m_valid;					///< Is this location valid
+	Coord3D m_pos;				///< Position of this view, in world coordinates
+	Real m_angle;					///< Angle at which view has been rotated about the Z axis
+	Real m_pitch;					///< Angle at which view has been rotated about the Y axis
+	Real m_zoom;					///< Current zoom value
 };
 
 // TheSuperHackers @feature bobtista 31/01/2026
