@@ -997,7 +997,7 @@ void W3DTreeBuffer::updateVertexBuffer()
 		vb=(VertexFormatXYZNDUV1*)lockVtxBuffer.Get_Vertex_Array();
 		// TheSuperHackers @info Guard against a failed vertex buffer lock returning null.
 		if (!vb) {
-			break;
+			continue;
 		}
 
 		VertexFormatXYZNDUV1 *curVb;
