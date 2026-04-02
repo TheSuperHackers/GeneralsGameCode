@@ -95,9 +95,6 @@ public:
 
 	RefCountClass()
 		: NumRefs(1)
-#ifdef RTS_DEBUG
-		, ActiveRefNode()
-#endif
 	{
 #ifdef RTS_DEBUG
 		ActiveRefNode.Set(this);
@@ -111,9 +108,6 @@ public:
 	*/
 	RefCountClass(const RefCountClass & )
 		: NumRefs(1)
-#ifdef RTS_DEBUG
-		, ActiveRefNode()
-#endif
 	{
 #ifdef RTS_DEBUG
 		ActiveRefNode.Set(this);
