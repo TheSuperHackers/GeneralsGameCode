@@ -99,19 +99,7 @@ OSDisplayButtonType OSDisplayWarningBox(AsciiString p, AsciiString m, UnsignedIn
 
 	// @todo Make this return more than just ok/cancel - jkmcd
 	// (we need a function to translate back the other way.)
-#ifdef UNICODE
 	const Int returnResult = ::MessageBoxW(nullptr, mesgStr.str(), promptStr.str(), windowsOptionsFlags);
-#else
-	// However, if we're using the default version of the message box, we need to
-	// translate the string into an AsciiString
-	AsciiString promptA, mesgA;
-	promptA.translate(promptStr);
-	mesgA.translate(mesgStr);
-	//Make sure main window is not TOP_MOST
-	::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-	const Int returnResult = ::MessageBoxA(nullptr, mesgA.str(), promptA.str(), windowsOptionsFlags);
-#endif
-
 	if (returnResult == IDOK) {
 		return OSDBT_OK;
 	}

@@ -847,18 +847,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		}
 	}
 
-#ifdef UNICODE
-	::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
-#else
-	// However, if we're using the default version of the message box, we need to
-	// translate the string into an AsciiString
-	AsciiString promptA, mesgA;
-	promptA.translate(prompt);
-	mesgA.translate(mesg);
-	//Make sure main window is not TOP_MOST
-	::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
-	::MessageBoxA(nullptr, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
-#endif
+	::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
