@@ -1350,10 +1350,6 @@ bool DX8Wrapper::Registry_Load_Render_Device( const char * sub_key, bool resize_
 			TextureBitDepth=16;
 		}
 
-
-//		_RenderDeviceDescriptionTable.
-
-
 		if ( Set_Render_Device( name, width,height,depth,windowed, resize_window ) != true) {
 			if (depth==16) depth=32;
 			else depth=16;
@@ -3043,8 +3039,6 @@ void DX8Wrapper::Set_Light(unsigned index,const LightClass &light)
 void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 {
 	// Shader light environment support															*
-//	if (Light_Environment && light_env && (*Light_Environment)==(*light_env)) return;
-
 	Light_Environment=light_env;
 
 	if (light_env)
