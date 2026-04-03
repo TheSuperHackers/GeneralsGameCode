@@ -59,14 +59,15 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
-#if (defined(_MSC_VER) && _MSC_VER < 1300)
-#define USE_STD_FROM_CHARS_PARSING 0
-#else
+#if (defined(__cplusplus) && __cplusplus >= 201611L)
 #define USE_STD_FROM_CHARS_PARSING 1
+#else
+#define USE_STD_FROM_CHARS_PARSING 0
 #endif
 
 #if USE_STD_FROM_CHARS_PARSING
 #include <charconv>
+#include <string_view>
 #include <type_traits>
 #endif
 
@@ -1638,12 +1639,11 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 #if USE_STD_FROM_CHARS_PARSING
 
 template <typename Type>
-Type scanType(const char* token)
+Type scanType(std::string_view token)
 {
-	// TheSuperHackers @info std::from_chars cannot parse "-1" as uint32 so the result needs to be a 64 bit type for integers.
+	// TheSuperHackers @info std::from_chars cannot parse "-1" as uint32 so the result needs to be int64 for integers.
 	std::conditional_t<std::is_integral_v<Type>, Int64, Real> result{};
-	// TheSuperHackers @todo Try to optimize this strlen call away by using std::string_view or similar.
-	const auto [ptr, ec] = std::from_chars(token, token + strlen(token), result);
+	const auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), result);
 
 	if (ec != std::errc{})
 	{
