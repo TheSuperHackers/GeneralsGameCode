@@ -713,7 +713,7 @@ long Targa::Save(const char* name, long flags, bool addextension)
 			if (!error) {
 
 				mExtension.ExtSize = 495;
-				strcpy(mExtension.SoftID, "Denzil's Targa Code");
+				strlcpy_t(mExtension.SoftID, "Denzil's Targa Code"); // TheSuperHackers @fix bobtista 03/04/2026 Replace strcpy with strlcpy_t
 				mExtension.SoftVer.Number = (1 * 100);
 				mExtension.SoftVer.Letter = 0;
 
@@ -735,7 +735,8 @@ long Targa::Save(const char* name, long flags, bool addextension)
 		if (!error)
 			{
 			footer.Developer = 0;
-			memcpy(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)); // TheSuperHackers @bugfix bobtista 02/04/2026 Use memcpy to copy all 16 bytes of the TGA2 signature without null termination, as the field is a fixed-size binary field per the TGA 2.0 spec
+			static_assert(sizeof(TGA2_SIGNATURE) - 1 == sizeof(footer.Signature), "TGA2 signature length mismatch"); // TheSuperHackers @bugfix bobtista 02/04/2026 Verify TGA2 signature sizes match
+			strncpy(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature));
 			footer.RsvdChar = '.';
 			footer.BZST = 0;
 
