@@ -59,6 +59,16 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
+#if (defined(_MSC_VER) && _MSC_VER < 1300)
+#define USE_STD_FROM_CHARS_PARSING 0
+#else
+#define USE_STD_FROM_CHARS_PARSING 1
+#endif
+
+#if USE_STD_FROM_CHARS_PARSING
+#include <charconv>
+#include <type_traits>
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -1625,31 +1635,81 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 	return TheScienceStore->friend_lookupScience( token );
 }
 
+#if USE_STD_FROM_CHARS_PARSING
+
+template <typename Type>
+Type scanType(const char* token)
+{
+	// TheSuperHackers @info std::from_chars cannot parse "-1" as uint32 so the result needs to be a 64 bit type for integers.
+	std::conditional_t<std::is_integral_v<Type>, Int64, Real> result{};
+	// TheSuperHackers @todo Try to optimize this strlen call away by using std::string_view or similar.
+	const auto [ptr, ec] = std::from_chars(token, token + strlen(token), result);
+
+	if (ec != std::errc{})
+	{
+		throw INI_INVALID_DATA;
+	}
+
+	return static_cast<Type>(result);
+}
+
+#endif
+
 //-------------------------------------------------------------------------------------------------
 /*static*/ Int INI::scanInt(const char* token)
 {
+#if USE_STD_FROM_CHARS_PARSING == 1
+	return scanType<Int>(token);
+#else
 	Int value;
 	if (sscanf( token, "%d", &value ) != 1)
 		throw INI_INVALID_DATA;
+
+#if USE_STD_FROM_CHARS_PARSING == -1
+	if (value != scanType<Int>(token))
+		throw INI_INVALID_DATA;
+#endif
+
 	return value;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ UnsignedInt INI::scanUnsignedInt(const char* token)
 {
+#if USE_STD_FROM_CHARS_PARSING == 1
+	return scanType<UnsignedInt>(token);
+#else
 	UnsignedInt value;
 	if (sscanf( token, "%u", &value ) != 1)	// unsigned int is %u, not %d
 		throw INI_INVALID_DATA;
+
+#if USE_STD_FROM_CHARS_PARSING == -1
+	if (value != scanType<UnsignedInt>(token))
+		throw INI_INVALID_DATA;
+#endif
+
 	return value;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ Real INI::scanReal(const char* token)
 {
+#if USE_STD_FROM_CHARS_PARSING == 1
+	return scanType<Real>(token);
+#else
 	Real value;
 	if (sscanf( token, "%f", &value ) != 1)
 		throw INI_INVALID_DATA;
+
+#if USE_STD_FROM_CHARS_PARSING == -1
+	if (value != scanType<Real>(token))
+		throw INI_INVALID_DATA;
+#endif
+
 	return value;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
