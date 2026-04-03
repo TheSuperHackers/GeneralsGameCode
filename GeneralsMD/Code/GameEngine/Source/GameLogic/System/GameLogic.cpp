@@ -1265,7 +1265,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		{
 			GameSlot *slot = TheGameInfo->getSlot(i);
 			if (!loadingSaveGame) {
-				if (!slot->getSaveOriginalSetup())
+				if (slot->hasSavedOriginalSetup())
 				{
 					DEBUG_ASSERTCRASH(m_gameMode == GAME_SKIRMISH, ("Expected GAME_SKIRMISH but got %s", toString(m_gameMode)));
 

@@ -70,7 +70,7 @@ void GameSlot::reset()
 	m_disconnected = FALSE;
 	m_port = 0;
 	m_isMuted = FALSE;
-	m_saveOriginalSetup = TRUE;
+	m_hasSavedOriginalSetup = FALSE;
 	m_origPlayerTemplate = -1;
 	m_origStartPos = -1;
 	m_origColor = -1;
@@ -86,7 +86,7 @@ void GameSlot::saveOriginalSetup()
 	DEBUG_LOG(("GameSlot::saveOriginalSetup() - color=%d, pos=%d, house=%d",
 		m_color, m_startPos, m_playerTemplate));
 
-	m_saveOriginalSetup = FALSE;
+	m_hasSavedOriginalSetup = TRUE;
 }
 
 static Int getSlotIndex(const GameSlot *slot)
