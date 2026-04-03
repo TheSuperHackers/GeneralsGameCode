@@ -107,11 +107,11 @@ struct TransferFileRule
 static const TransferFileRule transferFileRules[TransferFileType_Count] =
 {
 	{ ".map", 5 * 1024 * 1024 },
-	{ ".ini", 512 * 1024 },
+	{ ".ini", 2 * 1024 * 1024 },
 	{ ".str", 512 * 1024 },
-	{ ".txt", 512 * 1024 },
+	{ ".txt", 1 * 1024 * 1024 },
 	{ ".tga", 2 * 1024 * 1024 },
-	{ ".wak", 512 * 1024 },
+	{ ".wak", 128 * 1024 },
 };
 
 static TransferFileType getTransferFileType(const char* extension)
