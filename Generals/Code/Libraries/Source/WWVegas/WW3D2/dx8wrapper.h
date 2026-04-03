@@ -200,7 +200,6 @@ struct RenderStateStruct
 	TextureBaseClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
-  //unsigned lightsHash;
 	D3DMATRIX world;
 	D3DMATRIX view;
 	unsigned vertex_buffer_types[MAX_VERTEX_STREAMS];
@@ -1359,7 +1358,6 @@ WWINLINE RenderStateStruct::RenderStateStruct()
 	unsigned i;
 	for (i=0;i<MAX_VERTEX_STREAMS;++i) vertex_buffers[i]=0;
 	for (i=0;i<MAX_TEXTURE_STAGES;++i) Textures[i]=0;
-  //lightsHash = (unsigned)this;
 }
 
 WWINLINE RenderStateStruct::~RenderStateStruct()

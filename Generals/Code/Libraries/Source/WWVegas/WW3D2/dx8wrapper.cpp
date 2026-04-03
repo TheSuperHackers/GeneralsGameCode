@@ -788,7 +788,7 @@ void DX8Wrapper::Enumerate_Devices()
 
 bool DX8Wrapper::Set_Any_Render_Device()
 {
-	// Then fullscreen
+	// Try fullscreen first
 	int dev_number = 0;
 	for (; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,0,false)) {
@@ -796,7 +796,7 @@ bool DX8Wrapper::Set_Any_Render_Device()
 		}
 	}
 
-	// Try windowed first
+	// Then windowed
 	for (dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;

@@ -1009,7 +1009,7 @@ bool DX8Caps::Is_Valid_Display_Format(int width, int height, WW3DFormat format)
 void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 {
 	if (VendorId==VENDOR_NVIDIA)
-  {
+    {
 		if (SupportNPatches) {
 			DXLOG(("NVidia Driver reported N-Patch support, disabling.\r\n"));
 		}
