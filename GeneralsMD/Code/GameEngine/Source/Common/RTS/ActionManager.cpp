@@ -1595,7 +1595,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 			{
 #if RETAIL_COMPATIBLE_CRC
 				return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
-#elif
+#else
 				const ThingTemplate* referenceThing = mod->getReferenceThingTemplate();
 				DEBUG_ASSERTCRASH(referenceThing, ("canDoSpecialPowerAtLocation: SpecialPowerTemplate has a null ThingTemplate") );
 				if (!referenceThing)
