@@ -21,10 +21,7 @@
 // Author: Matthew D. Campbell, December 2001
 
 #include <string>
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
+#include <win.h>
 #include <windows.h>
 
 #include "Registry.h"
