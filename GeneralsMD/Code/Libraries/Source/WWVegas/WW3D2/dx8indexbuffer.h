@@ -52,8 +52,6 @@ class SortingIndexBufferClass;
 
 class IndexBufferClass : public RefCountClass
 {
-	// nope, it's an ABC
-	//W3DMPO_CODE(IndexBufferClass)
 protected:
 	virtual ~IndexBufferClass() override;
 public:

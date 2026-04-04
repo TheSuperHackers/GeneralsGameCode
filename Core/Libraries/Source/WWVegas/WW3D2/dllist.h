@@ -81,9 +81,6 @@ public:
 template <class T>
 class DLNodeClass
 {
-	// nope, this is an ABC
-	//W3DMPO_CODE(DLNodeClass)
-
 	friend DLListClass<T>;
 	DLNodeClass<T>* succ;
 	DLNodeClass<T>* pred;

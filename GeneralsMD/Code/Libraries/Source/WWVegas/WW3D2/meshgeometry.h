@@ -85,8 +85,6 @@ typedef Vector3i16 TriIndex;
 
 class MeshGeometryClass : public RefCountClass, public MultiListObjectClass
 {
-	//W3DMPO_CODE(MeshGeometryClass)
-
 public:
 
 	MeshGeometryClass();
