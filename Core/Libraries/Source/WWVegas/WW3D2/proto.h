@@ -104,7 +104,7 @@ private:
 
 class PrimitivePrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(PrimitivePrototypeClass)
+	W3DMPO_CODE(PrimitivePrototypeClass)
 public:
 	PrimitivePrototypeClass(RenderObjClass * proto);
 

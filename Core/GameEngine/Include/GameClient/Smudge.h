@@ -30,7 +30,7 @@ struct Smudge : public DLNodeClass<Smudge>
 {
 	typedef void *Identifier;
 
-	W3DMPO_GLUE(Smudge)
+	W3DMPO_CODE(Smudge)
 
 	Identifier m_identifier;	//a number or pointer to identify this smudge
 	Vector3 m_pos;	//position of smudge center
@@ -61,7 +61,7 @@ struct SmudgeSet : public DLNodeClass<SmudgeSet>
 {
 	friend class SmudgeManager;
 
-	W3DMPO_GLUE(SmudgeSet)
+	W3DMPO_CODE(SmudgeSet)
 
 	SmudgeSet();
 	virtual ~SmudgeSet() override;

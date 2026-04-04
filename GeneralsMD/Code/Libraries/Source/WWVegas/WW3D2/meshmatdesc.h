@@ -59,7 +59,7 @@ class MeshModelClass;
 */
 class MeshMatDescClass : public W3DMPO
 {
-	W3DMPO_GLUE(MeshMatDescClass)
+	W3DMPO_CODE(MeshMatDescClass)
 public:
 
 	enum
@@ -230,7 +230,7 @@ protected:
 */
 class MatBufferClass : public ShareBufferClass < VertexMaterialClass * >
 {
-	W3DMPO_GLUE(MatBufferClass)
+	W3DMPO_CODE(MatBufferClass)
 public:
 	MatBufferClass(int count, const char* msg) : ShareBufferClass<VertexMaterialClass *>(count, msg) { Clear(); }
 	MatBufferClass(const MatBufferClass & that);
@@ -252,7 +252,7 @@ private:
 */
 class TexBufferClass : public ShareBufferClass < TextureClass * >
 {
-	W3DMPO_GLUE(TexBufferClass)
+	W3DMPO_CODE(TexBufferClass)
 public:
 	TexBufferClass(int count, const char* msg) : ShareBufferClass<TextureClass *>(count, msg) { Clear(); }
 	TexBufferClass(const TexBufferClass & that);
@@ -274,7 +274,7 @@ private:
 */
 class UVBufferClass : public ShareBufferClass < Vector2 >
 {
-	W3DMPO_GLUE(UVBufferClass)
+	W3DMPO_CODE(UVBufferClass)
 public:
 	UVBufferClass(int count, const char* msg) : ShareBufferClass<Vector2>(count, msg), CRC(0xFFFFFFFF) { }
 	UVBufferClass(const UVBufferClass & that);

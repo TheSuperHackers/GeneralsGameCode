@@ -119,7 +119,7 @@ protected:
 */
 class CollectionPrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(CollectionPrototypeClass)
+	W3DMPO_CODE(CollectionPrototypeClass)
 public:
 	CollectionPrototypeClass(CollectionDefClass * def)		{ ColDef = def; WWASSERT(ColDef); }
 

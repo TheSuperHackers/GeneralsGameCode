@@ -47,7 +47,7 @@
 template <class T>
 class ShareBufferClass : public W3DMPO, public RefCountClass
 {
-	W3DMPO_GLUE(ShareBufferClass)
+	W3DMPO_CODE(ShareBufferClass)
 	public:
 		ShareBufferClass(int count, const char* msg);
 		ShareBufferClass(const ShareBufferClass & that);

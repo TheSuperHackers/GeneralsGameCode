@@ -82,7 +82,7 @@ template <class T>
 class DLNodeClass : public W3DMPO
 {
 	// nope, this is an ABC
-	//W3DMPO_GLUE(DLNodeClass)
+	//W3DMPO_CODE(DLNodeClass)
 
 	friend DLListClass<T>;
 	DLNodeClass<T>* succ;

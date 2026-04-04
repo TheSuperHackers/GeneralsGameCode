@@ -246,7 +246,7 @@ struct VertexFormatXYZNDCUBEMAP
 
 class FVFInfoClass : public W3DMPO
 {
-	W3DMPO_GLUE(FVFInfoClass)
+	W3DMPO_CODE(FVFInfoClass)
 
 	mutable unsigned						FVF;
 	mutable unsigned						fvf_size;

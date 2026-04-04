@@ -52,7 +52,7 @@ class	IntersectionResultClass;
 */
 class DynamicMeshModel : public MeshGeometryClass
 {
-	W3DMPO_GLUE(DynamicMeshModel)
+	W3DMPO_CODE(DynamicMeshModel)
 
 public:
 

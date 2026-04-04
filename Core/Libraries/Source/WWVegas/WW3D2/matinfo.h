@@ -65,7 +65,7 @@ class MeshMatDescClass;
 ***********************************************************************************************/
 class MaterialInfoClass : public W3DMPO, public RefCountClass
 {
-	W3DMPO_GLUE(MaterialInfoClass)
+	W3DMPO_CODE(MaterialInfoClass)
 public:
 
 	MaterialInfoClass();

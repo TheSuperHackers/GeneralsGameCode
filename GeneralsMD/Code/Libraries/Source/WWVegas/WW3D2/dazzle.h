@@ -355,7 +355,7 @@ public:
 */
 class DazzlePrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(DazzlePrototypeClass)
+	W3DMPO_CODE(DazzlePrototypeClass)
 public:
 	DazzlePrototypeClass() : DazzleType(0)				{ }
 

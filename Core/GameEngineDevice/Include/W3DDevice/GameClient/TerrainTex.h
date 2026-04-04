@@ -41,7 +41,7 @@ class WorldHeightMap;
 ***************************************************************************/
 class TerrainTextureClass : public TextureClass
 {
-	W3DMPO_GLUE(TerrainTextureClass)
+	W3DMPO_CODE(TerrainTextureClass)
 protected:
 	virtual void Apply(unsigned int stage) override;
 
@@ -62,7 +62,7 @@ public:
 
 class AlphaTerrainTextureClass : public TextureClass
 {
-	W3DMPO_GLUE(AlphaTerrainTextureClass)
+	W3DMPO_CODE(AlphaTerrainTextureClass)
 protected:
 		virtual void Apply(unsigned int stage) override;
 public:
@@ -78,7 +78,7 @@ public:
 ***************************************************************************/
 class AlphaEdgeTextureClass : public TextureClass
 {
-	W3DMPO_GLUE(AlphaEdgeTextureClass)
+	W3DMPO_CODE(AlphaEdgeTextureClass)
 protected:
 	virtual void Apply(unsigned int stage) override;
 	int update256(WorldHeightMap *htMap);///< Sets the pixels, and returns the actual height of the texture.
@@ -95,7 +95,7 @@ public:
 
 class LightMapTerrainTextureClass : public TextureClass
 {
-	W3DMPO_GLUE(LightMapTerrainTextureClass)
+	W3DMPO_CODE(LightMapTerrainTextureClass)
 protected:
 		virtual void Apply(unsigned int stage) override;
 
@@ -108,7 +108,7 @@ public:
 
 class ScorchTextureClass : public TextureClass
 {
-	W3DMPO_GLUE(ScorchTextureClass)
+	W3DMPO_CODE(ScorchTextureClass)
 protected:
 		virtual void Apply(unsigned int stage) override;
 
@@ -121,7 +121,7 @@ public:
 
 class CloudMapTerrainTextureClass : public TextureClass
 {
-	W3DMPO_GLUE(CloudMapTerrainTextureClass)
+	W3DMPO_CODE(CloudMapTerrainTextureClass)
 protected:
 		virtual void Apply(unsigned int stage) override;
 

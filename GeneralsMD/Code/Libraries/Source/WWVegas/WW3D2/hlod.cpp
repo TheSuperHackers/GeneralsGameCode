@@ -184,7 +184,7 @@ protected:
 */
 class ProxyArrayClass : public W3DMPO, public VectorClass<ProxyRecordClass>, public RefCountClass
 {
-	W3DMPO_GLUE(ProxyArrayClass)
+	W3DMPO_CODE(ProxyArrayClass)
 public:
 	ProxyArrayClass(int size) : VectorClass<ProxyRecordClass>(size)
 	{

@@ -153,7 +153,7 @@ class W3DTreeBuffer : public Snapshot
 	//-----------------------------------------------------------------------------
 	class W3DTreeTextureClass : public TextureClass
 	{
-		W3DMPO_GLUE(W3DTreeTextureClass)
+		W3DMPO_CODE(W3DTreeTextureClass)
 	protected:
 		virtual void Apply(unsigned int stage) override;
 

@@ -54,7 +54,7 @@ class RenderInfoClass;
 */
 class Line3DClass : public W3DMPO, public RenderObjClass
 {
-	W3DMPO_GLUE(Line3DClass)
+	W3DMPO_CODE(Line3DClass)
 
 	public:
 

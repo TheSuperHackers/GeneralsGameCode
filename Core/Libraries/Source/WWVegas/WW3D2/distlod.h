@@ -216,7 +216,7 @@ private:
 */
 class DistLODPrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(DistLODPrototypeClass)
+	W3DMPO_CODE(DistLODPrototypeClass)
 public:
 	DistLODPrototypeClass( DistLODDefClass *def ) { Definition = def; }
 

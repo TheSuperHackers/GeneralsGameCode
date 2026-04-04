@@ -83,7 +83,7 @@ public:
 
 class ThumbnailManagerClass : public DLNodeClass<ThumbnailManagerClass>
 {
-	W3DMPO_GLUE(ThumbnailManagerClass);
+	W3DMPO_CODE(ThumbnailManagerClass);
 
 	friend ThumbnailClass;
 

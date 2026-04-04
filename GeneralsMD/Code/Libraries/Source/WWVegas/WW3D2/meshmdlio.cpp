@@ -111,7 +111,7 @@
 */
 class MeshLoadContextClass : public W3DMPO
 {
-	W3DMPO_GLUE(MeshLoadContextClass)
+	W3DMPO_CODE(MeshLoadContextClass)
 private:
 	MeshLoadContextClass();
 	virtual ~MeshLoadContextClass() override;

@@ -93,7 +93,7 @@ class	Vector4;
 */
 class Render2DClass : public W3DMPO
 {
-	W3DMPO_GLUE(Render2DClass)
+	W3DMPO_CODE(Render2DClass)
 public:
 	Render2DClass( TextureClass* tex = nullptr );
 	virtual ~Render2DClass() override;

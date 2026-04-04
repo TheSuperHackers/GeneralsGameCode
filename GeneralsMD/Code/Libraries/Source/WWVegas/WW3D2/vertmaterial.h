@@ -62,7 +62,7 @@ struct _D3DMATERIAL8;
 */
 class VertexMaterialClass : public W3DMPO, public RefCountClass
 {
-	W3DMPO_GLUE(VertexMaterialClass)
+	W3DMPO_CODE(VertexMaterialClass)
 
 	friend DX8Wrapper;
 

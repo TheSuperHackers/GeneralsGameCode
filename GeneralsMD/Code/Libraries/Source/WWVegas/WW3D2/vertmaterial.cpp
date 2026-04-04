@@ -55,7 +55,7 @@ VertexMaterialClass* VertexMaterialClass::Presets[VertexMaterialClass::PRESET_CO
 #ifdef DYN_MAT8
 class DynD3DMATERIAL8 : public W3DMPO
 {
-	W3DMPO_GLUE(DynD3DMATERIAL8)
+	W3DMPO_CODE(DynD3DMATERIAL8)
 public:
 	D3DMATERIAL8 Mat;
 };

@@ -68,7 +68,7 @@ class HRawAnimClass;
 */
 class HTreeClass : public W3DMPO
 {
-	W3DMPO_GLUE(HTreeClass)
+	W3DMPO_CODE(HTreeClass)
 public:
 
 	enum

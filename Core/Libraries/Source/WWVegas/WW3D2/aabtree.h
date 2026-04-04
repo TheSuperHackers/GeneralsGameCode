@@ -81,7 +81,7 @@ struct BoxRayAPTContextStruct;
 */
 class AABTreeClass : public W3DMPO, public RefCountClass
 {
-	W3DMPO_GLUE(AABTreeClass)
+	W3DMPO_CODE(AABTreeClass)
 public:
 
 	AABTreeClass();

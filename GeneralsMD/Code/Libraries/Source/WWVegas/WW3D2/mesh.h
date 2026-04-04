@@ -67,7 +67,7 @@ struct VertexFormatXYZNDUV2;
 */
 class MeshClass : public W3DMPO, public RenderObjClass
 {
-	W3DMPO_GLUE(MeshClass)
+	W3DMPO_CODE(MeshClass)
 public:
 
 	MeshClass();

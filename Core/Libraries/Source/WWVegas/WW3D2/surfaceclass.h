@@ -55,7 +55,7 @@ class Vector3;
 *************************************************************************/
 class SurfaceClass : public W3DMPO, public RefCountClass
 {
-	W3DMPO_GLUE(SurfaceClass)
+	W3DMPO_CODE(SurfaceClass)
 	public:
 		typedef void *LockedSurfacePtr;
 

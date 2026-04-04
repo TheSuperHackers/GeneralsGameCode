@@ -85,7 +85,7 @@ typedef Vector3i16 TriIndex;
 
 class MeshGeometryClass : public W3DMPO, public RefCountClass, public MultiListObjectClass
 {
-	//W3DMPO_GLUE(MeshGeometryClass)
+	//W3DMPO_CODE(MeshGeometryClass)
 
 public:
 

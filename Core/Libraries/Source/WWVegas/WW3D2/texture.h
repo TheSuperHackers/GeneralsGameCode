@@ -263,7 +263,7 @@ private:
 *************************************************************************/
 class TextureClass : public W3DMPO, public TextureBaseClass
 {
-	W3DMPO_GLUE(TextureClass)
+	W3DMPO_CODE(TextureClass)
 //	friend DX8Wrapper;
 
 public:

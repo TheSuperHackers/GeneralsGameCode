@@ -76,7 +76,7 @@ public:
 class VertexBufferClass : public W3DMPO, public RefCountClass
 {
 	// nope, an ABC
-	//W3DMPO_GLUE(VertexBufferClass)
+	//W3DMPO_CODE(VertexBufferClass)
 
 protected:
 	VertexBufferClass(unsigned type, unsigned FVF, unsigned short VertexCount);
@@ -200,7 +200,7 @@ inline VertexFormatXYZNDUV2 * DynamicVBAccessClass::WriteLockClass::Get_Formatte
 */
 class DX8VertexBufferClass : public VertexBufferClass
 {
-	W3DMPO_GLUE(DX8VertexBufferClass)
+	W3DMPO_CODE(DX8VertexBufferClass)
 protected:
 	virtual ~DX8VertexBufferClass() override;
 public:
@@ -239,7 +239,7 @@ protected:
 */
 class SortingVertexBufferClass : public VertexBufferClass
 {
-	W3DMPO_GLUE(SortingVertexBufferClass)
+	W3DMPO_CODE(SortingVertexBufferClass)
 
 	friend DX8Wrapper;
 	friend SortingRendererClass;

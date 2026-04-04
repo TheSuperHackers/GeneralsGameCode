@@ -61,7 +61,7 @@ class ProxyArrayClass;
 */
 class HLodClass : public W3DMPO, public Animatable3DObjClass
 {
-	W3DMPO_GLUE(HLodClass)
+	W3DMPO_CODE(HLodClass)
 public:
 
 	HLodClass(const HLodClass & src);
@@ -279,7 +279,7 @@ public:
 */
 class HLodDefClass : public W3DMPO
 {
-	W3DMPO_GLUE(HLodDefClass)
+	W3DMPO_CODE(HLodDefClass)
 public:
 
 	HLodDefClass();
@@ -345,7 +345,7 @@ private:
 */
 class HLodPrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(HLodPrototypeClass)
+	W3DMPO_CODE(HLodPrototypeClass)
 public:
 	HLodPrototypeClass( HLodDefClass *def )					{ Definition = def; }
 

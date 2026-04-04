@@ -131,7 +131,7 @@ inline void BoxRenderObjClass::Set_Local_Min_Max(const Vector3 & min,const Vecto
 */
 class AABoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
 {
-	W3DMPO_GLUE(AABoxRenderObjClass)
+	W3DMPO_CODE(AABoxRenderObjClass)
 public:
 
 	AABoxRenderObjClass();
@@ -182,7 +182,7 @@ inline const AABoxClass & AABoxRenderObjClass::Get_Box()
 */
 class OBBoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
 {
-	W3DMPO_GLUE(OBBoxRenderObjClass)
+	W3DMPO_CODE(OBBoxRenderObjClass)
 public:
 
 	OBBoxRenderObjClass();
@@ -239,7 +239,7 @@ public:
 */
 class BoxPrototypeClass : public W3DMPO, public PrototypeClass
 {
-	W3DMPO_GLUE(BoxPrototypeClass)
+	W3DMPO_CODE(BoxPrototypeClass)
 public:
 	BoxPrototypeClass(W3dBoxStruct box);
 	virtual const char *				Get_Name() const override;

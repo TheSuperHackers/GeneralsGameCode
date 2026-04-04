@@ -119,7 +119,7 @@ struct VertexFormatXYZNDUV2;
 */
 class GapFillerClass : public W3DMPO
 {
-	W3DMPO_GLUE(GapFillerClass)
+	W3DMPO_CODE(GapFillerClass)
 
 	TriIndex* PolygonArray;
 	unsigned PolygonCount;
@@ -147,7 +147,7 @@ public:
 
 class MeshModelClass : public MeshGeometryClass
 {
-	W3DMPO_GLUE(MeshModelClass)
+	W3DMPO_CODE(MeshModelClass)
 
 public:
 
