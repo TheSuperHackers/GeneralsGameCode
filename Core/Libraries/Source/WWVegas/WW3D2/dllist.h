@@ -87,7 +87,7 @@ class DLNodeClass
 	DLListClass<T>* list;
 public:
 	DLNodeClass() : succ(0), pred(0), list(0) {}
-	virtual ~DLNodeClass() override { Remove(); }
+	~DLNodeClass() { Remove(); }
 
 	void Insert_Before(DLNodeClass<T>* n)
 	{

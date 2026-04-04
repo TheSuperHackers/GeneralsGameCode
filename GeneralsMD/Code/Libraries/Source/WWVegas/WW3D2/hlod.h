@@ -284,7 +284,7 @@ public:
 
 	HLodDefClass();
 	HLodDefClass(HLodClass &src_lod);
-	virtual ~HLodDefClass() override;
+	~HLodDefClass();
 
 	WW3DErrorType				Load_W3D(ChunkLoadClass & cload);
 	WW3DErrorType				Save(ChunkSaveClass & csave);

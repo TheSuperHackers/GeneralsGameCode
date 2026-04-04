@@ -114,7 +114,7 @@ class MeshLoadContextClass
 	W3DMPO_CODE(MeshLoadContextClass)
 private:
 	MeshLoadContextClass();
-	virtual ~MeshLoadContextClass() override;
+	~MeshLoadContextClass();
 
 	W3dTexCoordStruct *		Get_Texcoord_Array();
 

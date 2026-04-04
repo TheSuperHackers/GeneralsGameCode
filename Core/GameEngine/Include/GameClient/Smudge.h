@@ -64,7 +64,7 @@ struct SmudgeSet : public DLNodeClass<SmudgeSet>
 	W3DMPO_CODE(SmudgeSet)
 
 	SmudgeSet();
-	virtual ~SmudgeSet() override;
+	~SmudgeSet();
 
 	void reset();
 	void resetDraw();

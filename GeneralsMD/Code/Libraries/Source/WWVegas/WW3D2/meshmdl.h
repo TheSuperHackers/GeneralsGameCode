@@ -133,7 +133,7 @@ class GapFillerClass
 public:
 	GapFillerClass(MeshModelClass* mmc);
 	GapFillerClass(const GapFillerClass& that);
-	virtual ~GapFillerClass() override;
+	~GapFillerClass();
 
 	WWINLINE const TriIndex* Get_Polygon_Array() const { return PolygonArray; }
 	WWINLINE unsigned Get_Polygon_Count() const { return PolygonCount; }

@@ -72,7 +72,7 @@ public:
 
 	MeshMatDescClass();
 	MeshMatDescClass(const MeshMatDescClass & that);
-	virtual ~MeshMatDescClass() override;
+	~MeshMatDescClass();
 	void							Reset(int polycount,int vertcount,int passcount);
 	MeshMatDescClass &		operator = (const MeshMatDescClass & that);
 

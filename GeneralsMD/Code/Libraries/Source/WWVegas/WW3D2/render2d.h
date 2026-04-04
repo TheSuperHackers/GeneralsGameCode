@@ -96,7 +96,7 @@ class Render2DClass
 	W3DMPO_CODE(Render2DClass)
 public:
 	Render2DClass( TextureClass* tex = nullptr );
-	virtual ~Render2DClass() override;
+	virtual ~Render2DClass();
 
 	virtual	void	Reset();
 	void	Render();

@@ -120,7 +120,7 @@ class DynamicIBAccessClass
 
 public:
 	DynamicIBAccessClass(unsigned short type, unsigned short index_count);
-	virtual ~DynamicIBAccessClass() override;
+	~DynamicIBAccessClass();
 
 	unsigned Get_Type() const { return Type; }
 	unsigned short Get_Index_Count() const { return IndexCount; }
