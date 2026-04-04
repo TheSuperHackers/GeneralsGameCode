@@ -1588,7 +1588,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 		}
 
 		// TheSuperHackers @fix stephanmeesters 04/04/2026 Some special powers can spawn a building. To avoid cheating
-		// we must verify that it is legal to place this building.
+		// verify that it is legal to place this building.
 		switch( spTemplate->getSpecialPowerType() )
 		{
 			case SPECIAL_SNEAK_ATTACK:
@@ -1597,21 +1597,21 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 				return ThePartitionManager->getShroudStatusForPlayer( obj->getControllingPlayer()->getPlayerIndex(), loc ) != CELLSHROUD_SHROUDED;
 #else
 				const ThingTemplate* referenceThing = mod->getReferenceThingTemplate();
-				DEBUG_ASSERTCRASH(referenceThing, ("canDoSpecialPowerAtLocation: SpecialPowerTemplate has a null ThingTemplate") );
 				if (!referenceThing)
 					return FALSE;
 
-				return TheBuildAssistant->isLocationLegalToBuild(loc,
-																 referenceThing,
-																 referenceThing->getPlacementViewAngle(),
-																 BuildAssistant::USE_QUICK_PATHFIND |
-																 BuildAssistant::TERRAIN_RESTRICTIONS |
-																 BuildAssistant::CLEAR_PATH |
-																 BuildAssistant::NO_OBJECT_OVERLAP |
-																 BuildAssistant::SHROUD_REVEALED |
-																 BuildAssistant::IGNORE_STEALTHED,
-																 obj,
-																 nullptr) == LBC_OK;
+				return TheBuildAssistant->isLocationLegalToBuild(
+					loc,
+					referenceThing,
+					referenceThing->getPlacementViewAngle(),
+					BuildAssistant::USE_QUICK_PATHFIND |
+					BuildAssistant::TERRAIN_RESTRICTIONS |
+					BuildAssistant::CLEAR_PATH |
+					BuildAssistant::NO_OBJECT_OVERLAP |
+					BuildAssistant::SHROUD_REVEALED |
+					BuildAssistant::IGNORE_STEALTHED,
+					obj,
+					nullptr) == LBC_OK;
 #endif
 			}
 		}
