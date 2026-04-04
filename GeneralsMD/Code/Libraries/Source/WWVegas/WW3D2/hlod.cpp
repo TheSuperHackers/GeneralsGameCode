@@ -182,7 +182,7 @@ protected:
 ** This is a ref-counted list of proxy objects.  It is generated whenever an HLODdef contains
 ** proxies.  Each instantiated HLOD simply add-refs a pointer to the single list.
 */
-class ProxyArrayClass : public W3DMPO, public VectorClass<ProxyRecordClass>, public RefCountClass
+class ProxyArrayClass : public VectorClass<ProxyRecordClass>, public RefCountClass
 {
 	W3DMPO_CODE(ProxyArrayClass)
 public:

@@ -79,7 +79,7 @@ struct BoxRayAPTContextStruct;
 ** is in MeshGeometryClass.  I moved these out into a separate file just to reduce the
 ** size of meshmdl.cpp.
 */
-class AABTreeClass : public W3DMPO, public RefCountClass
+class AABTreeClass : public RefCountClass
 {
 	W3DMPO_CODE(AABTreeClass)
 public:

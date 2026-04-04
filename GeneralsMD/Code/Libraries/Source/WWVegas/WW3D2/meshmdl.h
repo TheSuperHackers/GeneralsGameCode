@@ -117,7 +117,7 @@ struct VertexFormatXYZNDUV2;
 ** GapFillerClass
 ** This class is used to generate gap-filling polygons for "N-Patched" meshes
 */
-class GapFillerClass : public W3DMPO
+class GapFillerClass
 {
 	W3DMPO_CODE(GapFillerClass)
 

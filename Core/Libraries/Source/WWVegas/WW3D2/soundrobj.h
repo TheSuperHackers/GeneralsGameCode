@@ -222,7 +222,7 @@ private:
 //	SoundRenderObjPrototypeClass
 //
 ///////////////////////////////////////////////////////////////////////////////////
-class SoundRenderObjPrototypeClass : public W3DMPO, public PrototypeClass
+class SoundRenderObjPrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(SoundRenderObjPrototypeClass)
 public:

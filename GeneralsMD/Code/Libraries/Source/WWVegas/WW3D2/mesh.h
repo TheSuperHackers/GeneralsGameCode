@@ -65,7 +65,7 @@ struct VertexFormatXYZNDUV2;
 /**
 ** MeshClass -- Render3DObject for rendering meshes.
 */
-class MeshClass : public W3DMPO, public RenderObjClass
+class MeshClass : public RenderObjClass
 {
 	W3DMPO_CODE(MeshClass)
 public:

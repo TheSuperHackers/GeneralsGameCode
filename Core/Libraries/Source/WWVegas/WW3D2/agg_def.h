@@ -194,7 +194,7 @@ class AggregateDefClass
 //
 //	AggregatePrototypeClass
 //
-class AggregatePrototypeClass : public W3DMPO, public PrototypeClass
+class AggregatePrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(AggregatePrototypeClass)
 	public:

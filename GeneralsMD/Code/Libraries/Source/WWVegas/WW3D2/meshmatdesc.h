@@ -57,7 +57,7 @@ class MeshModelClass;
 ** MeshMatDescClass - This class encapsulates all of the material description data for a mesh.
 ** WARNING: The vertex count and polygon count *MUST* be kept in sync with the mesh
 */
-class MeshMatDescClass : public W3DMPO
+class MeshMatDescClass
 {
 	W3DMPO_CODE(MeshMatDescClass)
 public:

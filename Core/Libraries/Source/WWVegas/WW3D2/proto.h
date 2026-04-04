@@ -102,7 +102,7 @@ private:
 	PrototypeClass & operator = (const PrototypeClass & that);
 };
 
-class PrimitivePrototypeClass : public W3DMPO, public PrototypeClass
+class PrimitivePrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(PrimitivePrototypeClass)
 public:

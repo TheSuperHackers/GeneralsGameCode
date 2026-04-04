@@ -73,7 +73,7 @@ public:
 ** DX8VertexBufferClass
 ** This class wraps a DX8 vertex buffer.  Use the lock objects to modify or append to the vertex buffer.
 */
-class VertexBufferClass : public W3DMPO, public RefCountClass
+class VertexBufferClass : public RefCountClass
 {
 	// nope, an ABC
 	//W3DMPO_CODE(VertexBufferClass)

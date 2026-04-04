@@ -52,7 +52,7 @@ class RenderInfoClass;
 ** Line3DCLass objects are unlit, therefore only the sihouette needs to be
 ** approximated).
 */
-class Line3DClass : public W3DMPO, public RenderObjClass
+class Line3DClass : public RenderObjClass
 {
 	W3DMPO_CODE(Line3DClass)
 

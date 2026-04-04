@@ -53,7 +53,7 @@ static unsigned int unique=1;
 VertexMaterialClass* VertexMaterialClass::Presets[VertexMaterialClass::PRESET_COUNT];
 
 #ifdef DYN_MAT8
-class DynD3DMATERIAL8 : public W3DMPO
+class DynD3DMATERIAL8
 {
 	W3DMPO_CODE(DynD3DMATERIAL8)
 public:

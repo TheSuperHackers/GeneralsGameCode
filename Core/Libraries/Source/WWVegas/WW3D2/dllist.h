@@ -79,7 +79,7 @@ public:
 };
 
 template <class T>
-class DLNodeClass : public W3DMPO
+class DLNodeClass
 {
 	// nope, this is an ABC
 	//W3DMPO_CODE(DLNodeClass)

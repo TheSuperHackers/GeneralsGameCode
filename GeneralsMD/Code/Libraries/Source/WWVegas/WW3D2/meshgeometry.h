@@ -83,7 +83,7 @@ typedef Vector3i16 TriIndex;
 ** This class encapsulates the geometry data for a triangle mesh.
 */
 
-class MeshGeometryClass : public W3DMPO, public RefCountClass, public MultiListObjectClass
+class MeshGeometryClass : public RefCountClass, public MultiListObjectClass
 {
 	//W3DMPO_CODE(MeshGeometryClass)
 

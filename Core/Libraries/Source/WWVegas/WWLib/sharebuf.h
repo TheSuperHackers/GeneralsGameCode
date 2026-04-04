@@ -45,7 +45,7 @@
 ** refcounted wrapper (also a count).
 */
 template <class T>
-class ShareBufferClass : public W3DMPO, public RefCountClass
+class ShareBufferClass : public RefCountClass
 {
 	W3DMPO_CODE(ShareBufferClass)
 	public:

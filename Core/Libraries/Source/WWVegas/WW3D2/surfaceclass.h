@@ -53,7 +53,7 @@ class Vector3;
 ** Hector Yee 2/12/01 - added in fills, blits etc for font3d class
 **
 *************************************************************************/
-class SurfaceClass : public W3DMPO, public RefCountClass
+class SurfaceClass : public RefCountClass
 {
 	W3DMPO_CODE(SurfaceClass)
 	public:

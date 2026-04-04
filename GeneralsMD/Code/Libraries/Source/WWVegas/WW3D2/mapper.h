@@ -53,7 +53,7 @@ class INIClass;
 ** TextureMapperClass
 ** Base class for all texture mappers.
 */
-class TextureMapperClass : public W3DMPO, public RefCountClass
+class TextureMapperClass : public RefCountClass
 {
 	public:
 

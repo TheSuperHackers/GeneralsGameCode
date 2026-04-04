@@ -244,7 +244,7 @@ struct VertexFormatXYZNDCUBEMAP
 // FVF info class can be created for any legal FVF. It constructs information
 // of offsets to various elements in the vertex buffer.
 
-class FVFInfoClass : public W3DMPO
+class FVFInfoClass
 {
 	W3DMPO_CODE(FVFInfoClass)
 

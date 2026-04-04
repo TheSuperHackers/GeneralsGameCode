@@ -50,7 +50,7 @@ class SortingIndexBufferClass;
 
 // ----------------------------------------------------------------------------
 
-class IndexBufferClass : public W3DMPO, public RefCountClass
+class IndexBufferClass : public RefCountClass
 {
 	// nope, it's an ABC
 	//W3DMPO_CODE(IndexBufferClass)
@@ -105,7 +105,7 @@ protected:
 
 // HY 2/14/01
 // Created
-class DynamicIBAccessClass : public W3DMPO
+class DynamicIBAccessClass
 {
 	W3DMPO_CODE(DynamicIBAccessClass)
 

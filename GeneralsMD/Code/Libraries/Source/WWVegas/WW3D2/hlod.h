@@ -59,7 +59,7 @@ class ProxyArrayClass;
 	This is an hierarchical, animatable level-of-detail model.
 
 */
-class HLodClass : public W3DMPO, public Animatable3DObjClass
+class HLodClass : public Animatable3DObjClass
 {
 	W3DMPO_CODE(HLodClass)
 public:
@@ -277,7 +277,7 @@ public:
 ** This description object is generated when reading a W3D_CHUNK_HLOD.  It
 ** directly describes the contents of an HLod model.
 */
-class HLodDefClass : public W3DMPO
+class HLodDefClass
 {
 	W3DMPO_CODE(HLodDefClass)
 public:
@@ -343,7 +343,7 @@ private:
 /*
 ** Prototype for HLod objects
 */
-class HLodPrototypeClass : public W3DMPO, public PrototypeClass
+class HLodPrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(HLodPrototypeClass)
 public:
