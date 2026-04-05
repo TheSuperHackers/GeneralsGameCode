@@ -353,11 +353,6 @@ void DX8Wrapper::Shutdown()
 		}
 	}
 
-	if (D3DInterface) {
-		UINT newRefCount=D3DInterface->Release();
-		D3DInterface=nullptr;
-	}
-
 	if (D3D8Lib) {
 		FreeLibrary(D3D8Lib);
 		D3D8Lib = nullptr;
@@ -896,7 +891,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 		// Resize the window to fit this resolution
 		if (!IsWindowed)
 		{
-			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
+			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW);
 
 			DEBUG_LOG(("Window resized to w:%d h:%d", width, height));
 		}
@@ -948,9 +943,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	*/
 	if (width != -1)		ResolutionWidth = width;
 	if (height != -1)		ResolutionHeight = height;
-
-	// Initialize Render2DClass Screen Resolution
-	Render2DClass::Set_Screen_Resolution( RectClass( 0, 0, ResolutionWidth, ResolutionHeight ) );
 
 	if (bits != -1)		BitDepth = bits;
 	if (windowed != -1)	IsWindowed = (windowed != 0);
@@ -1119,6 +1111,11 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 		ret = Create_Device();
 
 	WWDEBUG_SAY(("Reset/Create_Device done, reset_device=%d, restore_assets=%d", reset_device, restore_assets));
+
+	if (ret)
+	{
+		Render2DClass::Set_Screen_Resolution( RectClass( 0, 0, ResolutionWidth, ResolutionHeight ) );
+	}
 
 	return ret;
 }
