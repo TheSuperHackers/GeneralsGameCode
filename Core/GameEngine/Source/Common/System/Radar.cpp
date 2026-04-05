@@ -1188,7 +1188,8 @@ Bool Radar::tryEvent( RadarEventType event, const Coord3D *pos )
 			// get distance from our new event location to this event location in 2D
 			const Real distSquared = sqr(m_event[ i ].worldLoc.x - pos->x) + sqr(m_event[ i ].worldLoc.y - pos->y);
 
-			if( distSquared <= closeEnoughDistanceSq )
+			// TheSuperHackers @bugfix Restore retail map-wide suppression for under attack events.
+			if( (event == RADAR_EVENT_UNDER_ATTACK) || (distSquared <= closeEnoughDistanceSq) )
 			{
 
 				// finally only reject making a new event of this existing one is "recent enough"
