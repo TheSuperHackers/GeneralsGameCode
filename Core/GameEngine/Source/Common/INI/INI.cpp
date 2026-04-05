@@ -162,21 +162,7 @@ Bool INI::isValidINIFilename( const char *filename )
 	if( filename == nullptr )
 		return FALSE;
 
-	Int len = strlen( filename );
-	if( len < 3 )
-		return FALSE;
-
-	if( filename[ len - 1 ] != 'I' && filename[ len - 1 ] != 'i' )
-		return FALSE;
-
-	if( filename[ len - 2 ] != 'N' && filename[ len - 2 ] != 'n' )
-		return FALSE;
-
-	if( filename[ len - 3 ] != 'I' && filename[ len - 3 ] != 'i' )
-		return FALSE;
-
-	return TRUE;
-
+	return endsWithNoCase(filename, ".ini");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,42 +250,34 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 	if( dirName.isEmpty() )
 		throw INI_INVALID_DIRECTORY;
 
-	try
+	FilenameList filenameList;
+	dirName.concat('\\');
+	TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, subdirs);
+	// Load the INI files in the dir now, in a sorted order.  This keeps things the same between machines
+	// in a network game.
+	FilenameList::const_iterator it = filenameList.begin();
+	while (it != filenameList.end())
 	{
-		FilenameList filenameList;
-		dirName.concat('\\');
-		TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, subdirs);
-		// Load the INI files in the dir now, in a sorted order.  This keeps things the same between machines
-		// in a network game.
-		FilenameList::const_iterator it = filenameList.begin();
-		while (it != filenameList.end())
-		{
-			AsciiString tempname;
-			tempname = (*it).str() + dirName.getLength();
+		AsciiString tempname;
+		tempname = (*it).str() + dirName.getLength();
 
-			if ((tempname.find('\\') == nullptr) && (tempname.find('/') == nullptr)) {
-				// this file doesn't reside in a subdirectory, load it first.
-				filesRead += load( *it, loadType, pXfer );
-			}
-			++it;
+		if ((tempname.find('\\') == nullptr) && (tempname.find('/') == nullptr)) {
+			// this file doesn't reside in a subdirectory, load it first.
+			filesRead += load( *it, loadType, pXfer );
 		}
-
-		it = filenameList.begin();
-		while (it != filenameList.end())
-		{
-			AsciiString tempname;
-			tempname = (*it).str() + dirName.getLength();
-
-			if ((tempname.find('\\') != nullptr) || (tempname.find('/') != nullptr)) {
-				filesRead += load( *it, loadType, pXfer );
-			}
-			++it;
-		}
+		++it;
 	}
-	catch (...)
+
+	it = filenameList.begin();
+	while (it != filenameList.end())
 	{
-		// propagate the exception
-		throw;
+		AsciiString tempname;
+		tempname = (*it).str() + dirName.getLength();
+
+		if ((tempname.find('\\') != nullptr) || (tempname.find('/') != nullptr)) {
+			filesRead += load( *it, loadType, pXfer );
+		}
+		++it;
 	}
 
 	return filesRead;
@@ -1753,14 +1731,11 @@ Type scanType(std::string_view token)
 	}
 
 	// search for matching name
-	Bool found = false;
 	for( const LookupListRec* lookup = &lookupList[0]; lookup->name; lookup++ )
 	{
 		if( stricmp( lookup->name, token ) == 0 )
 		{
 			return lookup->value;
-			found = true;
-			break;
 		}
 	}
 
