@@ -891,7 +891,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 		// Resize the window to fit this resolution
 		if (!IsWindowed)
 		{
-			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW);
+			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, 0);
 
 			DEBUG_LOG(("Window resized to w:%d h:%d", width, height));
 		}
