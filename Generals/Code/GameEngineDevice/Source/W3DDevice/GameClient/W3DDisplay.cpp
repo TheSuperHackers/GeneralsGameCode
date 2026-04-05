@@ -354,6 +354,10 @@ W3DDisplay::W3DDisplay()
 	for (i = 0; i < DisplayStringCount; i++)
 		m_displayStrings[i] = nullptr;
 
+	m_batchTexture = nullptr;
+	m_batchMode = DRAW_IMAGE_ALPHA;
+	m_batchGrayscale = FALSE;
+	m_batchNeedsInit = FALSE;
 }
 
 // W3DDisplay::~W3DDisplay ====================================================
@@ -532,6 +536,112 @@ void W3DDisplay::setHeight( UnsignedInt height )
 	// of the screen with (width,height) at the lower right
 	m_2DRender->Set_Coordinate_Range( RectClass( 0, 0, getWidth(), getHeight() ) );
 
+}
+
+void W3DDisplay::onBeginBatch()
+{
+	m_batchTexture = nullptr;
+	m_batchMode = DRAW_IMAGE_ALPHA;
+	m_batchGrayscale = FALSE;
+	if (m_2DRender)
+	{
+		m_2DRender->Reset();
+	}
+	m_batchNeedsInit = TRUE;
+}
+
+void W3DDisplay::onEndBatch()
+{
+	onFlush();
+	if (m_batchTexture)
+	{
+		m_batchTexture->Release_Ref();
+		m_batchTexture = nullptr;
+	}
+}
+
+void W3DDisplay::onFlush()
+{
+	if (m_2DRender && !m_batchNeedsInit)
+	{
+		m_2DRender->Render();
+		m_2DRender->Reset();
+		m_batchNeedsInit = TRUE;
+	}
+}
+
+void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale)
+{
+	if (m_isBatching)
+	{
+		if (!m_batchNeedsInit && m_batchTexture == tex && m_batchMode == mode && m_batchGrayscale == grayscale)
+		{
+			return;
+		}
+
+		onFlush();
+
+		if (tex != m_batchTexture)
+		{
+			if (tex)
+			{
+				tex->Add_Ref();
+			}
+			if (m_batchTexture)
+			{
+				m_batchTexture->Release_Ref();
+			}
+			m_batchTexture = tex;
+		}
+
+		m_batchMode = mode;
+		m_batchGrayscale = grayscale;
+		m_batchNeedsInit = FALSE;
+	}
+	else
+	{
+		if (m_2DRender)
+		{
+			m_2DRender->Reset();
+		}
+	}
+
+	if (m_2DRender)
+	{
+		if (tex)
+		{
+			m_2DRender->Enable_Texturing(TRUE);
+			m_2DRender->Set_Texture(tex);
+		}
+		else
+		{
+			m_2DRender->Enable_Texturing(FALSE);
+		}
+
+		switch (mode)
+		{
+		case DRAW_IMAGE_ALPHA:
+			m_2DRender->Enable_Additive(FALSE);
+			m_2DRender->Enable_Alpha(TRUE);
+			m_2DRender->Enable_Grayscale(grayscale);
+			break;
+		case DRAW_IMAGE_GRAYSCALE:
+			m_2DRender->Enable_Additive(FALSE);
+			m_2DRender->Enable_Alpha(TRUE);
+			m_2DRender->Enable_Grayscale(TRUE);
+			break;
+		case DRAW_IMAGE_ADDITIVE:
+			m_2DRender->Enable_Additive(TRUE);
+			m_2DRender->Enable_Alpha(FALSE);
+			m_2DRender->Enable_Grayscale(grayscale);
+			break;
+		case DRAW_IMAGE_SOLID:
+			m_2DRender->Enable_Additive(FALSE);
+			m_2DRender->Enable_Alpha(FALSE);
+			m_2DRender->Enable_Grayscale(grayscale);
+			break;
+		}
+	}
 }
 
 // W3DDisplay::initAssets =====================================================
@@ -2039,13 +2149,14 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor )
 {
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-	/// @todo we need to consider the efficiency of the 2D renderer
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor );
-	m_2DRender->Render();
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+	}
 
 }
 
@@ -2057,13 +2168,15 @@ void W3DDisplay::drawLine( Int startX, Int startY,
 													 Real lineWidth,
 													 UnsignedInt lineColor1,UnsignedInt lineColor2 )
 {
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-	/// @todo we need to consider the efficiency of the 2D renderer
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
 	m_2DRender->Add_Line( Vector2( startX, startY ), Vector2( endX, endY ),
 												lineWidth, lineColor1, lineColor2 );
-	m_2DRender->Render();
+
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+	}
 
 }
 
@@ -2106,16 +2219,17 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 	}
 	else
 	{
-		/// @todo we need to consider the efficiency of the 2D renderer
-		m_2DRender->Reset();
-		m_2DRender->Enable_Texturing( FALSE );
+		setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 		m_2DRender->Add_Outline( RectClass( startX, startY,
 																				startX + width, startY + height ),
 														 lineWidth, lineColor );
 
 		// render it now!
-		m_2DRender->Render();
+		if (!m_isBatching)
+		{
+			m_2DRender->Render();
+		}
 	}
 
 }
@@ -2125,17 +2239,17 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 															 UnsignedInt color )
 {
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
-	/// @todo we need to consider the efficiency of the 2D renderer
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
 	m_2DRender->Add_Rect( RectClass( startX, startY,
 																	 startX + width, startY + height ),
 												0, 0, color );
 
 	// render it now!
-	m_2DRender->Render();
-
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+	}
 }
 
 void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color)
@@ -2144,8 +2258,7 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	if(percent < 1 || percent > 100)
 		return;
 
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 // The rectanges are numberd as follows
 //(x,y)	|---------|
@@ -2291,8 +2404,10 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 	}
 
 	// render it now!
-	m_2DRender->Render();
-
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+	}
 }
 
 
@@ -2470,7 +2585,10 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	}
 
 	// render it now!
-	m_2DRender->Render();
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+	}
 }
 
 
@@ -2486,6 +2604,17 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	if( image == nullptr )
 		return;
 
+	if (m_isClippedEnabled)
+	{
+		if (	endX <= m_clipRegion.lo.x ||
+				endY <= m_clipRegion.lo.y ||
+				startX >= m_clipRegion.hi.x ||
+				startY >= m_clipRegion.hi.y)
+		{
+			return;	//nothing to render
+		}
+	}
+
 	// !!
 	// Remember to update the GUIEditDisplay::drawImage when you make
 	// changes to this, it technically uses W3D code to render itself,
@@ -2494,52 +2623,23 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 
 	const Region2D *uv = image->getUV();
 
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( TRUE );
-
-	Bool doAlphaReset=FALSE;
-
-	///@todo: Why are we alpha blending all images?  Reduces our fillrate. -MW
-	switch (mode)
-	{
-		case DRAW_IMAGE_ALPHA:	//nothing to do since alpha is the default state
-			break;
-		case DRAW_IMAGE_GRAYSCALE:
-			m_2DRender->Enable_Grayscale(true);
-			break;
-		case DRAW_IMAGE_ADDITIVE:
-			m_2DRender->Enable_Additive(true);
-			doAlphaReset = TRUE;
-			break;
-		case DRAW_IMAGE_SOLID:
-			m_2DRender->Enable_Additive(false);
-			m_2DRender->Enable_Alpha(false);
-			doAlphaReset = TRUE;
-			break;
-		default:
-			break;
-	}
-
-	// if we have raw texture data we will use it, otherwise we are referencing filenames
-	if( BitIsSet( image->getStatus(), IMAGE_STATUS_RAW_TEXTURE ) )
-		m_2DRender->Set_Texture( (TextureClass *)(image->getRawTextureData()) );
+	TextureClass *tex = nullptr;
+	if (BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
+		tex = (TextureClass *)(image->getRawTextureData());
 	else
-		m_2DRender->Set_Texture( image->getFilename().str() );
+		tex = WW3DAssetManager::Get_Instance()->Get_Texture(image->getFilename().str(), MIP_LEVELS_1);
+
+	Bool grayscale = (mode == DRAW_IMAGE_GRAYSCALE);
+	///@todo: Why are we alpha blending all images?  Reduces our fillrate. -MW
+	setup2DRenderState(tex, mode, grayscale);
 
 	RectClass screen_rect(startX,startY,endX,endY);
 	RectClass uv_rect(uv->lo.x,uv->lo.y,uv->hi.x,uv->hi.y);
 
 	if (m_isClippedEnabled)
 	{	//need to clip this quad to clip rectangle
-
-		//
-		//	Check for completely clipped
-		//
-		if (	endX <= m_clipRegion.lo.x ||
-				endY <= m_clipRegion.lo.y)
+		if (screen_rect.Left < m_clipRegion.lo.x || screen_rect.Right > m_clipRegion.hi.x || screen_rect.Top < m_clipRegion.lo.y || screen_rect.Bottom > m_clipRegion.hi.y)
 		{
-			return;	//nothing to render
-		} else {
 			RectClass clipped_rect;
 			RectClass clipped_uv_rect;
 
@@ -2639,12 +2739,20 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 
 	}
 
-	m_2DRender->Render();
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+		m_2DRender->Enable_Grayscale(false);
+		if (mode == DRAW_IMAGE_ADDITIVE || mode == DRAW_IMAGE_SOLID)
+		{
+			m_2DRender->Enable_Alpha(true);
+		}
+	}
 
-	//reset to default states for next time this method is called.
-	m_2DRender->Enable_Grayscale(false);	//never leave it in this mode
-	if (doAlphaReset)
-		m_2DRender->Enable_Alpha(true);
+	if (tex != nullptr && !BitIsSet(image->getStatus(), IMAGE_STATUS_RAW_TEXTURE))
+	{
+		tex->Release_Ref();
+	}
 
 }
 
@@ -2746,12 +2854,15 @@ void W3DDisplay::drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, I
 {
 	W3DVideoBuffer *vbuffer = (W3DVideoBuffer*) buffer;
 
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( TRUE );
-	m_2DRender->Set_Texture( vbuffer->texture() );
+	setup2DRenderState(vbuffer->texture(), DRAW_IMAGE_ALPHA, FALSE);
+
 	m_2DRender->Add_Quad( RectClass( startX, startY, endX, endY ),
 												vbuffer->Rect( 0, 0, 1, 1) );
-	m_2DRender->Render();
+	
+	if (!m_isBatching)
+	{
+		m_2DRender->Render();
+	}
 
 }
 
