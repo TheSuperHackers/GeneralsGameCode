@@ -22,8 +22,6 @@
 
 #include <string>
 #include <win.h>
-#include <windows.h>
-
 #include "Registry.h"
 
 bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::string& val)
