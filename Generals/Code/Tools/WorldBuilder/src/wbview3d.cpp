@@ -196,11 +196,11 @@ public:
 
 	virtual void forceRedraw() override { }
 
-	virtual Bool isDoingScriptedCamera() { return false; }
-	virtual void stopDoingScriptedCamera() {}
+	virtual Bool isDoingScriptedCamera() override { return false; }
+	virtual void stopDoingScriptedCamera() override {}
 
-	virtual void lookAt( const Coord3D *o ){};														///< Center the view on the given coordinate
-	virtual void initHeightForMap( void ) {};														///<  Init the camera height for the map at the current position.
+	virtual void lookAt( const Coord3D *o ) override {};											///< Center the view on the given coordinate
+	virtual void initHeightForMap( void ) override {};												///<  Init the camera height for the map at the current position.
 	virtual void scrollBy( Coord2D *delta ){};														///< Shift the view by the given delta
 	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter,
 														Bool orient) {lookAt(o);};
