@@ -184,7 +184,9 @@ public:
 	Real m_viewportHeightScale; // The height scale of the tactical view ranging 0..1. Used to hide the world behind the Control Bar.
 	Real m_cameraPitch;
 	Real m_cameraYaw;
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
 	Real m_cameraHeight;
+#endif
 	Real m_maxCameraHeight;
 	Real m_minCameraHeight;
 	Real m_terrainHeightAtEdgeOfMap;
