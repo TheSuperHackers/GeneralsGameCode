@@ -692,10 +692,6 @@ Real W3DView::getMaxHeight(Real x, Real y) const
 //-------------------------------------------------------------------------------------------------
 Real W3DView::getDesiredZoom(Real x, Real y) const
 {
-	if (!isZoomLimited() || isUserControlLocked())
-	{
-		return m_zoom;
-	}
 	return getDesiredHeight(x, y) / getCameraOffsetZ();
 }
 
@@ -2121,7 +2117,7 @@ void W3DView::setHeightAboveGround(Real z)
 void W3DView::setZoom(Real z)
 {
 	m_heightAboveGround = m_maxHeightAboveGround * z;
-	m_zoom = z;
+	m_zoom = getDesiredZoom(m_pos.x, m_pos.y);
 
 	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
