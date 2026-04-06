@@ -2422,8 +2422,7 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 	if( percent < 0 || percent > 99 )
 		return;
 
-	m_2DRender->Reset();
-	m_2DRender->Enable_Texturing( FALSE );
+	setup2DRenderState(nullptr, DRAW_IMAGE_ALPHA, FALSE);
 
 // The rectanges are numbered as follows
 //(x,y)	|---------|
