@@ -1001,7 +1001,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			{
 				DEBUG_LOG(("META: select team %d",group));
 
-				UnsignedInt now = TheGameLogic->getFrame();
+				UnsignedInt now = timeGetTime();
 				if ( m_lastGroupSelTime == 0 )
 				{
 					m_lastGroupSelTime = now;
@@ -1010,7 +1010,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				Bool performSelection = TRUE;
 
 				// check for double-press to jump view
-				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
+				if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
 				{
 					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					// TheSuperHackers @bugfix Stubbjax 26/05/2025 Perform selection on double-press
@@ -1082,7 +1082,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			{
 				DEBUG_LOG(("META: select team %d",group));
 
-				UnsignedInt now = TheGameLogic->getFrame();
+				UnsignedInt now = timeGetTime();
 				if ( m_lastGroupSelTime == 0 )
 				{
 					m_lastGroupSelTime = now;
@@ -1090,7 +1090,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// check for double-press to jump view
 
-				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
+				if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
 				{
 					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
