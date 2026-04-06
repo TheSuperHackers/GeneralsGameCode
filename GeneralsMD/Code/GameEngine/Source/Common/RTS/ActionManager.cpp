@@ -1587,8 +1587,8 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 				return false;
 		}
 
-		// TheSuperHackers @fix stephanmeesters 04/04/2026 Some special powers can spawn a building. To avoid cheating
-		// verify that it is legal to place this building.
+		// TheSuperHackers @fix stephanmeesters 04/04/2026 Some special powers can spawn a building.
+		// To avoid cheating, verify that it is legal to place this building.
 		switch( spTemplate->getSpecialPowerType() )
 		{
 			case SPECIAL_SNEAK_ATTACK:
@@ -1600,18 +1600,17 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 				if (!referenceThing)
 					return FALSE;
 
+				const Real angle = referenceThing->getPlacementViewAngle();
+
 				return TheBuildAssistant->isLocationLegalToBuild(
-					loc,
-					referenceThing,
-					referenceThing->getPlacementViewAngle(),
+					loc, referenceThing, angle,
 					BuildAssistant::USE_QUICK_PATHFIND |
 					BuildAssistant::TERRAIN_RESTRICTIONS |
 					BuildAssistant::CLEAR_PATH |
 					BuildAssistant::NO_OBJECT_OVERLAP |
 					BuildAssistant::SHROUD_REVEALED |
 					BuildAssistant::IGNORE_STEALTHED,
-					obj,
-					nullptr) == LBC_OK;
+					obj, nullptr) == LBC_OK;
 #endif
 			}
 		}
