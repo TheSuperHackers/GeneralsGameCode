@@ -541,10 +541,10 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 //=============================================================================
 Bool W3DDisplay::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed )
 {
-	const UnsignedInt oldWidth    = getWidth();
-	const UnsignedInt oldHeight   = getHeight();
+	const UnsignedInt oldWidth = getWidth();
+	const UnsignedInt oldHeight = getHeight();
 	const UnsignedInt oldBitDepth = getBitDepth();
-	const Bool        oldWindowed = getWindowed();
+	const Bool oldWindowed = getWindowed();
 
 	if (WW3D_ERROR_OK == WW3D::Set_Device_Resolution(xres,yres,bitdepth,windowed,true))
 	{
