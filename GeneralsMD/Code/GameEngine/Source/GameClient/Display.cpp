@@ -411,5 +411,8 @@ void Display::endBatch()
 
 void Display::flush()
 {
-	onFlush();
+	if (m_isBatching)
+	{
+		onFlush();
+	}
 }

@@ -543,11 +543,12 @@ void W3DDisplay::onBeginBatch()
 	m_batchTexture = nullptr;
 	m_batchMode = DRAW_IMAGE_ALPHA;
 	m_batchGrayscale = FALSE;
+	m_batchNeedsInit = TRUE;
+
 	if (m_2DRender)
 	{
 		m_2DRender->Reset();
 	}
-	m_batchNeedsInit = TRUE;
 }
 
 void W3DDisplay::onEndBatch()
@@ -591,6 +592,7 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 			{
 				m_batchTexture->Release_Ref();
 			}
+
 			m_batchTexture = tex;
 		}
 
@@ -598,12 +600,9 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 		m_batchGrayscale = grayscale;
 		m_batchNeedsInit = FALSE;
 	}
-	else
+	else if (m_2DRender)
 	{
-		if (m_2DRender)
-		{
-			m_2DRender->Reset();
-		}
+		m_2DRender->Reset();
 	}
 
 	if (m_2DRender)
@@ -620,26 +619,26 @@ void W3DDisplay::setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool 
 
 		switch (mode)
 		{
-		case DRAW_IMAGE_ALPHA:
-			m_2DRender->Enable_Additive(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-			m_2DRender->Enable_Grayscale(grayscale);
-			break;
-		case DRAW_IMAGE_GRAYSCALE:
-			m_2DRender->Enable_Additive(FALSE);
-			m_2DRender->Enable_Alpha(TRUE);
-			m_2DRender->Enable_Grayscale(TRUE);
-			break;
-		case DRAW_IMAGE_ADDITIVE:
-			m_2DRender->Enable_Additive(TRUE);
-			m_2DRender->Enable_Alpha(FALSE);
-			m_2DRender->Enable_Grayscale(grayscale);
-			break;
-		case DRAW_IMAGE_SOLID:
-			m_2DRender->Enable_Additive(FALSE);
-			m_2DRender->Enable_Alpha(FALSE);
-			m_2DRender->Enable_Grayscale(grayscale);
-			break;
+			case DRAW_IMAGE_ALPHA:
+				m_2DRender->Enable_Additive(FALSE);
+				m_2DRender->Enable_Alpha(TRUE);
+				m_2DRender->Enable_Grayscale(grayscale);
+				break;
+			case DRAW_IMAGE_GRAYSCALE:
+				m_2DRender->Enable_Additive(FALSE);
+				m_2DRender->Enable_Alpha(TRUE);
+				m_2DRender->Enable_Grayscale(TRUE);
+				break;
+			case DRAW_IMAGE_ADDITIVE:
+				m_2DRender->Enable_Additive(TRUE);
+				m_2DRender->Enable_Alpha(FALSE);
+				m_2DRender->Enable_Grayscale(grayscale);
+				break;
+			case DRAW_IMAGE_SOLID:
+				m_2DRender->Enable_Additive(FALSE);
+				m_2DRender->Enable_Alpha(FALSE);
+				m_2DRender->Enable_Grayscale(grayscale);
+				break;
 		}
 	}
 }
@@ -2630,7 +2629,6 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 		tex = WW3DAssetManager::Get_Instance()->Get_Texture(image->getFilename().str(), MIP_LEVELS_1);
 
 	Bool grayscale = (mode == DRAW_IMAGE_GRAYSCALE);
-	///@todo: Why are we alpha blending all images?  Reduces our fillrate. -MW
 	setup2DRenderState(tex, mode, grayscale);
 
 	RectClass screen_rect(startX,startY,endX,endY);

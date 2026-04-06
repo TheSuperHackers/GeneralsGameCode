@@ -226,10 +226,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 
 	}
 
-	if (TheDisplay->isBatching())
-	{
-		TheDisplay->flush();
-	}
+	TheDisplay->flush();
 
 	if(m_useHotKey)
 	{
