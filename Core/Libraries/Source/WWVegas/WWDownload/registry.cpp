@@ -20,9 +20,9 @@
 // Simple interface for storing/retrieving registry values
 // Author: Matthew D. Campbell, December 2001
 
+#include "Registry.h"
 #include <string>
 #include <win.h>
-#include "Registry.h"
 
 bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::string& val)
 {
