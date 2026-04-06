@@ -148,14 +148,14 @@ public:
 																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' at
 																								 UnsignedInt options,		// use LocationLegalToBuildOptions
-																								 Object *builderObject,
+																								 const Object *builderObject,
 																								 Player *player);
 
 	/// query if we can build at this location
 	virtual Bool isLocationClearOfObjects( const Coord3D *worldPos,
 																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' a
-																								 Object *builderObject,
+																								 const Object *builderObject,
 																								 UnsignedInt options,
 																								 Player *thePlayer);
 
