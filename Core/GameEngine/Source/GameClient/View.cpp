@@ -45,8 +45,8 @@ View::View()
 	m_userControlLockedUntilFrame = 0u;
 	m_isUserControlled = true;
 	m_currentHeightAboveGround = 0.0f;
-	m_defaultAngle = DEG_TO_RADF(TheGlobalData->m_cameraYaw);
-	m_defaultPitch = DEG_TO_RADF(TheGlobalData->m_cameraPitch);
+	m_defaultAngle = 0.0f;
+	m_defaultPitch = 0.0f;
 	m_heightAboveGround = 0.0f;
 	m_lockDist = 0.0f;
 	m_maxHeightAboveGround = 0.0f;
