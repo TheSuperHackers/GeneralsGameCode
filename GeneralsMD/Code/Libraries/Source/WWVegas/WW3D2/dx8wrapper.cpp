@@ -2272,7 +2272,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 				}
 				else {
 					Set_DX8_Light(index,nullptr);
-					SNAPSHOT_SAY((" clearing light to NULL"));
+					SNAPSHOT_SAY((" clearing light to null"));
 				}
 			}
 		}
@@ -3835,7 +3835,7 @@ void DX8Wrapper::Apply_Default_State()
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {
-		SNAPSHOT_SAY(("Clearing light %d to NULL",index));
+		SNAPSHOT_SAY(("Clearing light %d to null",index));
 		Set_DX8_Light(index,nullptr);
 	}
 
