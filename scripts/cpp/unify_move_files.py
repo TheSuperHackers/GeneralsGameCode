@@ -126,6 +126,31 @@ def unify_move_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     move_file(fromGame, fromFile, toGame, toFile)
 
 
+def unify_move_file_lib(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
+    assert(toGame == Game.CORE)
+
+    fromGamePath = get_game_path(fromGame)
+    toGamePath = get_game_path(toGame)
+
+    fromFirstFolderIndex = fromFile.rfind("/")
+    toFirstFolderIndex = toFile.rfind("/")
+    assert(fromFirstFolderIndex > 0)
+    assert(toFirstFolderIndex > 0)
+
+    fromFirstFolderName = fromFile[:fromFirstFolderIndex]
+    toFirstFolderName = toFile[:toFirstFolderIndex]
+    fromFileInCmake = fromFile[fromFirstFolderIndex+1:]
+    toFileInCmake = toFile[toFirstFolderIndex+1:]
+
+    fromCmakeFile = os.path.join(fromGamePath, fromFirstFolderName, "CMakeLists.txt")
+    toCmakeFile = os.path.join(toGamePath, toFirstFolderName, "CMakeLists.txt")
+
+    modify_cmakelists(fromCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(toCmakeFile, toFileInCmake, CmakeModifyType.REMOVE_COMMENT)
+
+    move_file(fromGame, fromFile, toGame, toFile)
+
+
 def main():
 
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/crc.h", Game.CORE, "GameEngine/Include/Common/crc.h")
@@ -411,6 +436,8 @@ def main():
 
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp", Game.CORE, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/AIPathfind.h", Game.CORE, "GameEngine/Include/GameLogic/AIPathfind.h")
+
+    unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/shdlib.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/shdlib.h")
 
     return
 
