@@ -263,11 +263,9 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 
 	// TheSuperHackers @info The default pitch affects the look-at distance to the target.
 	// This is strange math which would need special attention when changed.
-	constexpr const Real DefaultPitch = DEG_TO_RADF(37.5f);
-	constexpr const Real DefaultAngle = DEG_TO_RADF(0.0f);
 	sourcePos.Z = getCameraOffsetZ();
-	sourcePos.Y = -(sourcePos.Z / tan(DefaultPitch));
-	sourcePos.X = -(sourcePos.Y * tan(DefaultAngle));
+	sourcePos.Y = -(sourcePos.Z / tan(ViewDefaultPitchRadians));
+	sourcePos.X = -(sourcePos.Y * tan(ViewDefaultPitchRadians));
 
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV

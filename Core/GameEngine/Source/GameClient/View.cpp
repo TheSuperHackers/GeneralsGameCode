@@ -166,7 +166,7 @@ void View::setAngle( Real radians )
 void View::setPitch( Real radians )
 {
 #if 1
-	m_pitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+	m_pitch = std::clamp(radians, DEG_TO_RADF(0.1f), DEG_TO_RADF(89.9f));
 #else
 	m_pitch = WWMath::Normalize_Angle(radians);
 #endif
@@ -175,7 +175,7 @@ void View::setPitch( Real radians )
 void View::setDefaultPitch( Real radians )
 {
 #if 1
-	m_defaultPitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+	m_defaultPitch = std::clamp(radians, DEG_TO_RADF(0.1f), DEG_TO_RADF(89.9f));
 #else
 	m_defaultPitch = WWMath::Normalize_Angle(radians);
 #endif
