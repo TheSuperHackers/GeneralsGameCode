@@ -104,6 +104,8 @@ void View::init()
 
 	m_defaultAngle = DEG_TO_RADF(TheGlobalData->m_cameraYaw);
 	m_defaultPitch = DEG_TO_RADF(TheGlobalData->m_cameraPitch);
+	m_angle = m_defaultAngle;
+	m_pitch = m_defaultPitch;
 }
 
 void View::reset()
