@@ -43,8 +43,8 @@
 
 class ProfileFastCS
 {
-  ProfileFastCS(const ProfileFastCS&) CPP_11(= delete);
-  ProfileFastCS& operator=(const ProfileFastCS&) CPP_11(= delete);
+	ProfileFastCS(const ProfileFastCS&) CPP_11(= delete);
+	ProfileFastCS& operator=(const ProfileFastCS&) CPP_11(= delete);
 
 	static HANDLE testEvent;
 
@@ -65,9 +65,9 @@ class ProfileFastCS
 		return;
 
 	The_Bit_Was_Previously_Set_So_Try_Again:
-    // can't use SwitchToThread() here because Win9X doesn't have it!
-    if (testEvent)
-		  ::WaitForSingleObject(testEvent,1);
+		// can't use SwitchToThread() here because Win9X doesn't have it!
+		if (testEvent)
+		::WaitForSingleObject(testEvent,1);
 		__asm mov ebx, [nFlag]
 		__asm ts_lock
 		__asm bts dword ptr [ebx], 0
@@ -82,8 +82,8 @@ class ProfileFastCS
 public:
 	ProfileFastCS():
     m_Flag(0)
-  {
-  }
+	{
+	}
 #else
 
 	std::atomic_flag Flag{};

@@ -79,7 +79,7 @@ public:
 class W3DTruckDraw : public W3DModelDraw
 {
 
- 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DTruckDraw, "W3DTruckDraw" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DTruckDraw, "W3DTruckDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DTruckDraw, W3DTruckDrawModuleData )
 
 public:

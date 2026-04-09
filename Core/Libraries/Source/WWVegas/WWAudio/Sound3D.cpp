@@ -115,7 +115,7 @@ Sound3DClass::Sound3DClass (const Sound3DClass &src)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Sound3DClass::~Sound3DClass ()
 {
- 	Free_Miles_Handle ();
+	Free_Miles_Handle ();
 	return ;
 }
 

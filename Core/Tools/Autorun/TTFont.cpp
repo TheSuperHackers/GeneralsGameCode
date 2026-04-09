@@ -245,7 +245,7 @@ TTFontClass::TTFontClass(
 		Underlined		= tm.tmUnderlined;
 		StruckOut		= tm.tmStruckOut;
 		CharSet			= tm.tmCharSet;						// [OYO] It is important to support Double Byte Chars
- 		SelectObject( hdc, old_object );
+		SelectObject( hdc, old_object );
 
 	} else {
 
@@ -758,7 +758,7 @@ Point2D TTFontClass::Print(
 // 			length				// number of characters
 // 		);
 
- 		result = DrawTextW(
+		result = DrawTextW(
  			hdc,
  			string,
  			length,
@@ -1217,7 +1217,7 @@ FontManagerClass::FontManagerClass ( HDC hdc )
 		char	drive[ _MAX_DRIVE ];
 		char	dir[ _MAX_DIR ];
 		bool	b640X480 = false;
-	  	RECT	rect;								// Desktop Window ( used once ).
+		RECT	rect;								// Desktop Window ( used once ).
 
 		strcpy( szFile, "Arial.ttf" );
 		strcpy( szFacename, "Arial" );

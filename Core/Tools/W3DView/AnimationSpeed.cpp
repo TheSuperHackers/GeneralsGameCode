@@ -52,7 +52,7 @@ CAnimationSpeed::CAnimationSpeed (CWnd* pParent)
 	//{{AFX_DATA_INIT(CAnimationSpeed)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
+	return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ CAnimationSpeed::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CAnimationSpeed)
 	DDX_Control(pDX, IDC_SPEED_SLIDER, m_speedSlider);
 	//}}AFX_DATA_MAP
-    return ;
+	return ;
 }
 
 
@@ -90,51 +90,51 @@ BOOL
 CAnimationSpeed::OnInitDialog (void)
 {
 	// Allow the base class to process this message
-    CDialog::OnInitDialog ();
+	CDialog::OnInitDialog ();
 
-    // Center the dialog around the data tree view instead
-    // of the direct center of the screen
-    ::CenterDialogAroundTreeView (m_hWnd);
+	// Center the dialog around the data tree view instead
+	// of the direct center of the screen
+	::CenterDialogAroundTreeView (m_hWnd);
 
-    // Get a pointer to the doc so we can get at the current scene
-    // pointer.
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        SendDlgItemMessage (IDC_BLEND, BM_SETCHECK, (WPARAM)pCDoc->GetAnimationBlend ());
-		  CheckDlgButton(IDC_COMPRESSQ, pCDoc->GetChannelQCompression());
+	// Get a pointer to the doc so we can get at the current scene
+	// pointer.
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+	if (pCDoc)
+	{
+		SendDlgItemMessage (IDC_BLEND, BM_SETCHECK, (WPARAM)pCDoc->GetAnimationBlend ());
+		CheckDlgButton(IDC_COMPRESSQ, pCDoc->GetChannelQCompression());
 			CheckRadioButton(IDC_16BIT, IDC_8BIT, IDC_16BIT+2);//-pCDoc->GetChannelQnBytes());
-		  if(pCDoc->GetChannelQCompression()){
+		if(pCDoc->GetChannelQCompression()){
 				GetDlgItem(IDC_16BIT)->EnableWindow(TRUE);
 				GetDlgItem(IDC_8BIT)->EnableWindow(TRUE);
-		  }else{
-			  GetDlgItem(IDC_16BIT)->EnableWindow(FALSE);
-			  GetDlgItem(IDC_8BIT)->EnableWindow(FALSE);
-		  }
-	 }
+		}else{
+			GetDlgItem(IDC_16BIT)->EnableWindow(FALSE);
+			GetDlgItem(IDC_8BIT)->EnableWindow(FALSE);
+		}
+	}
 
-    // Get a pointer to the main window
-    CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-    if (pCMainWnd)
-    {
-        // Get a pointer to the graphic view pane
-        CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane (0, 1);
-        if (pCGraphicView)
-        {
-            // Determine the current display speed
-            float animationSpeed = pCGraphicView->GetAnimationSpeed ();
+	// Get a pointer to the main window
+	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
+	if (pCMainWnd)
+	{
+		// Get a pointer to the graphic view pane
+		CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane (0, 1);
+		if (pCGraphicView)
+		{
+			// Determine the current display speed
+			float animationSpeed = pCGraphicView->GetAnimationSpeed ();
 
-            // Convert the current display speed to a percentage
-            m_iInitialPercent = int(animationSpeed*100.00F);
-        }
-    }
+			// Convert the current display speed to a percentage
+			m_iInitialPercent = int(animationSpeed*100.00F);
+		}
+	}
 
-    // Set the range of the slider control
-    m_speedSlider.SetRange (1, 200);
+	// Set the range of the slider control
+	m_speedSlider.SetRange (1, 200);
 
-    // Set the initial pos of the slider control
-    m_speedSlider.SetPos (m_iInitialPercent);
-    return TRUE;
+	// Set the initial pos of the slider control
+	m_speedSlider.SetPos (m_iInitialPercent);
+	return TRUE;
 }
 
 //////////////////////////////////////////////////////////////
@@ -150,23 +150,23 @@ CAnimationSpeed::OnHScroll
 )
 {
 	// Get the current position of the slider control
-    m_iInitialPercent = m_speedSlider.GetPos ();
+	m_iInitialPercent = m_speedSlider.GetPos ();
 
-    // Get a pointer to the main window
-    CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-    if (pCMainWnd)
-    {
-        // Get a pointer to the graphic view pane
-        CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane (0, 1);
-        if (pCGraphicView)
-        {
-            pCGraphicView->SetAnimationSpeed (((float)m_iInitialPercent) / (100.00F));
-        }
-    }
+	// Get a pointer to the main window
+	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
+	if (pCMainWnd)
+	{
+		// Get a pointer to the graphic view pane
+		CGraphicView *pCGraphicView = (CGraphicView *)pCMainWnd->GetPane (0, 1);
+		if (pCGraphicView)
+		{
+			pCGraphicView->SetAnimationSpeed (((float)m_iInitialPercent) / (100.00F));
+		}
+	}
 
 	// Allow the base class to process this message
-    CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
+	CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
+	return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -176,9 +176,9 @@ CAnimationSpeed::OnHScroll
 void
 CAnimationSpeed::OnDestroy (void)
 {
-    m_iInitialPercent = m_speedSlider.GetPos ();
+	m_iInitialPercent = m_speedSlider.GetPos ();
 	CDialog::OnDestroy();
-    return ;
+	return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -188,16 +188,16 @@ CAnimationSpeed::OnDestroy (void)
 void
 CAnimationSpeed::OnBlend (void)
 {
-    // Get a pointer to the doc so we can get at the current scene
-    // pointer.
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        // Turn on/off the blending option
-        pCDoc->SetAnimationBlend (SendDlgItemMessage (IDC_BLEND, BM_GETCHECK));
-    }
+	// Get a pointer to the doc so we can get at the current scene
+	// pointer.
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+	if (pCDoc)
+	{
+		// Turn on/off the blending option
+		pCDoc->SetAnimationBlend (SendDlgItemMessage (IDC_BLEND, BM_GETCHECK));
+	}
 
-    return ;
+	return ;
 }
 
 void CAnimationSpeed::

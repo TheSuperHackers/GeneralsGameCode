@@ -98,8 +98,8 @@ void DebugWindowDialog::InitPanel( void )
 
 	pCombo = (CComboBox*) GetDlgItem(IDC_PSEd_Priority);
 	if (pCombo) {
-	  for (int i = 1; ParticlePriorityNames[i]; ++i) {
-		  pCombo->AddString(ParticlePriorityNames[i]);
+		for (int i = 1; ParticlePriorityNames[i]; ++i) {
+			pCombo->AddString(ParticlePriorityNames[i]);
 		}
 		pCombo->SetCurSel(0);
 	}
@@ -1254,11 +1254,11 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 		if (pCombo) {
 			int selndx;
 			if (toUI) {
-			  selndx = pCombo->SelectString(-1, ParticlePriorityNames[(long) m_particleSystem->m_priority]);
+				selndx = pCombo->SelectString(-1, ParticlePriorityNames[(long) m_particleSystem->m_priority]);
 			} else {
 				selndx = pCombo->GetCurSel();
 				if (selndx >= 0) {
-				  m_particleSystem->m_priority = (ParticlePriorityType)(selndx + 1);
+					m_particleSystem->m_priority = (ParticlePriorityType)(selndx + 1);
 				}
 			}
 		}

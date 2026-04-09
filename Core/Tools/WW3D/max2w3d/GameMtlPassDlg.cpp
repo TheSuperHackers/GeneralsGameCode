@@ -214,7 +214,7 @@ BOOL GameMtlPassDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 									SWP_NOZORDER);
 			}
 
- 			CurPage = 0;
+			CurPage = 0;
 			TabCtrl_SetCurSel(GetDlgItem(HwndPanel,IDC_GAMEMTL_TAB),CurPage);
 			Page[CurPage]->Show();
 

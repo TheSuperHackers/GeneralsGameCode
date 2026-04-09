@@ -35,9 +35,9 @@
 
 struct HuffDecodeContext
 {
-    unsigned char  *s;
-    int             bitsleft;
-    unsigned int   bits;
+	unsigned char  *s;
+	int             bitsleft;
+	unsigned int   bits;
 };
 
 /****************************************************************/
@@ -136,373 +136,373 @@ static int ZERO=0;
 
 static int HUFF_decompress(unsigned char *packbuf, unsigned char *unpackbuf)
 {
-    unsigned int    type;
-    unsigned char   clue;
-    int            ulen;
-    unsigned int    cmp;
-    int             bitnum=0;
-    int             cluelen=0;
-    unsigned char   *qs;
-    unsigned char   *qd;
-    unsigned int   bits;
-    unsigned int   bitsunshifted=0;
-    int             numbits;
-    int             bitsleft;
-    unsigned int   v;
+	unsigned int    type;
+	unsigned char   clue;
+	int            ulen;
+	unsigned int    cmp;
+	int             bitnum=0;
+	int             cluelen=0;
+	unsigned char   *qs;
+	unsigned char   *qd;
+	unsigned int   bits;
+	unsigned int   bitsunshifted=0;
+	int             numbits;
+	int             bitsleft;
+	unsigned int   v;
 
-    qs = packbuf;
-    qd = unpackbuf;
-    ulen = 0L;
+	qs = packbuf;
+	qd = unpackbuf;
+	ulen = 0L;
 
-    if (qs)
-    {
-        {
-            int             mostbits;
-            int             i;
-            int             bitnumtbl[16];
-            unsigned int    deltatbl[16];
-            unsigned int    cmptbl[16];
-            unsigned char   codetbl[256];
-            unsigned char   quickcodetbl[256];
-            unsigned char   quicklentbl[256];
+	if (qs)
+	{
+		{
+			int             mostbits;
+			int             i;
+			int             bitnumtbl[16];
+			unsigned int    deltatbl[16];
+			unsigned int    cmptbl[16];
+			unsigned char   codetbl[256];
+			unsigned char   quickcodetbl[256];
+			unsigned char   quicklentbl[256];
 
-            bitsleft = -16;                                 /* init bit stream */
-            bits = 0;
-            SQgetbits(v,ZERO);
+			bitsleft = -16;                                 /* init bit stream */
+			bits = 0;
+			SQgetbits(v,ZERO);
 
-            SQgetbits(type,16);
+			SQgetbits(type,16);
 
-            if (type&0x8000) /* 4 byte size field */
-            {
+			if (type&0x8000) /* 4 byte size field */
+			{
                 /* (skip nothing for 0x30fb) */
-                if (type&0x100)                                 /* skip ulen */
-                {
-                    SQgetbits(v,16);
-                    SQgetbits(v,16);
-                }
-                type &= ~0x100;
+				if (type&0x100)                                 /* skip ulen */
+				{
+					SQgetbits(v,16);
+					SQgetbits(v,16);
+				}
+				type &= ~0x100;
 
-                SQgetbits(v,16);                                 /* unpack len */
-                SQgetbits(ulen,16);
-                ulen |= (v<<16);
-            }
-            else
-            {
+				SQgetbits(v,16);                                 /* unpack len */
+				SQgetbits(ulen,16);
+				ulen |= (v<<16);
+			}
+			else
+			{
                 /* (skip nothing for 0x30fb) */
-                if (type&0x100)                                 /* skip ulen */
-                {
-                    SQgetbits(v,8);
-                    SQgetbits(v,16);
-                }
-                type &= ~0x100;
+				if (type&0x100)                                 /* skip ulen */
+				{
+					SQgetbits(v,8);
+					SQgetbits(v,16);
+				}
+				type &= ~0x100;
 
-                SQgetbits(v,8);                                 /* unpack len */
-                SQgetbits(ulen,16);
-                ulen |= (v<<16);
-            }
+				SQgetbits(v,8);                                 /* unpack len */
+				SQgetbits(ulen,16);
+				ulen |= (v<<16);
+			}
 
-            {
-                {
-                    int numchars;
+			{
+				{
+					int numchars;
 
-                    {
-                        unsigned int basecmp;
+					{
+						unsigned int basecmp;
 
-                        {
-                            unsigned int t;
-                            SQgetbits(t,8);                          /* clue byte */
-                            clue = (unsigned char)t;
-                        }
+						{
+							unsigned int t;
+							SQgetbits(t,8);                          /* clue byte */
+							clue = (unsigned char)t;
+						}
 
-                        numchars = 0;
-                        numbits = 1;
-                        basecmp = (unsigned int) 0;
+						numchars = 0;
+						numbits = 1;
+						basecmp = (unsigned int) 0;
 
                         /* decode bitnums */
 
-                        do
-                        {
-                            basecmp <<= 1;
-                            deltatbl[numbits] = basecmp-numchars;
+						do
+						{
+							basecmp <<= 1;
+							deltatbl[numbits] = basecmp-numchars;
 
-                            SQgetnum(bitnum);               /* # of codes of n bits */
-                            bitnumtbl[numbits] = bitnum;
+							SQgetnum(bitnum);               /* # of codes of n bits */
+							bitnumtbl[numbits] = bitnum;
 
-                            numchars += bitnum;
-                            basecmp += bitnum;
+							numchars += bitnum;
+							basecmp += bitnum;
 
-                            cmp = 0;
-                            if (bitnum)                             /* left justify cmp */
-                                cmp = (basecmp << (16-numbits) & 0xffff);
+							cmp = 0;
+							if (bitnum)                             /* left justify cmp */
+							cmp = (basecmp << (16-numbits) & 0xffff);
 
-                            cmptbl[numbits++] = cmp;
+							cmptbl[numbits++] = cmp;
 
-                        }
-                        while (!bitnum || cmp);                     /* n+1 bits in cmp? */
-                    }
-                    cmptbl[numbits-1] = 0xffffffff;               /* force match on most bits */
+						}
+						while (!bitnum || cmp);                     /* n+1 bits in cmp? */
+					}
+					cmptbl[numbits-1] = 0xffffffff;               /* force match on most bits */
 
-                    mostbits = numbits-1;
+					mostbits = numbits-1;
 
                     /* decode leapfrog code table */
 
-                    {
-                        signed char     leap[256];
-                        unsigned char   nextchar;
+					{
+						signed char     leap[256];
+						unsigned char   nextchar;
 
-                        SQmemset(leap,0,256);
-                        nextchar = (unsigned char) -1;
+						SQmemset(leap,0,256);
+						nextchar = (unsigned char) -1;
 
-                        for (i=0;i<numchars;++i)
-                        {
-                            int leapdelta=0;
+						for (i=0;i<numchars;++i)
+						{
+							int leapdelta=0;
 
-                            SQgetnum(leapdelta);
-                            ++leapdelta;
+							SQgetnum(leapdelta);
+							++leapdelta;
 
-                            do
-                            {
-                                ++nextchar;
-                                if (!leap[nextchar])
-                                    --leapdelta;
-                            } while (leapdelta);
+							do
+							{
+								++nextchar;
+								if (!leap[nextchar])
+								--leapdelta;
+							} while (leapdelta);
 
-                            leap[nextchar] = 1;
-                            codetbl[i] = nextchar;
-                        }
-                    }
-                }
+							leap[nextchar] = 1;
+							codetbl[i] = nextchar;
+						}
+					}
+				}
 
 /****************************************************************/
 /*  Make fast 8 tables                                          */
 /****************************************************************/
 
-                SQmemset(quicklentbl,64,256);
+				SQmemset(quicklentbl,64,256);
 
-                {
-                    int bits;
-                    int bitnum;
-                    int numbitentries;
-                    int nextcode;
-                    int nextlen;
-                    int i;
-                    unsigned char *codeptr;
-                    unsigned char *quickcodeptr;
-                    unsigned char *quicklenptr;
+				{
+					int bits;
+					int bitnum;
+					int numbitentries;
+					int nextcode;
+					int nextlen;
+					int i;
+					unsigned char *codeptr;
+					unsigned char *quickcodeptr;
+					unsigned char *quicklenptr;
 
-                    codeptr = codetbl;
-                    quickcodeptr = quickcodetbl;
-                    quicklenptr = quicklentbl;
+					codeptr = codetbl;
+					quickcodeptr = quickcodetbl;
+					quicklenptr = quicklentbl;
 
-                    for (bits=1; bits<=mostbits; ++bits)
-                    {
-                        bitnum = bitnumtbl[bits];
-                        if (bits>=9)
-                            break;
-                        numbitentries = 1<<(8-bits);
+					for (bits=1; bits<=mostbits; ++bits)
+					{
+						bitnum = bitnumtbl[bits];
+						if (bits>=9)
+						break;
+						numbitentries = 1<<(8-bits);
 
-                        while (bitnum--)
-                        {
-                            nextcode = *codeptr++;
-                            nextlen = bits;
-                            if (nextcode==clue)
-                            {
-                                cluelen = bits;
-                                nextlen = 96;                   /* will force out of main loop */
-                            }
-                            for (i=0; i<numbitentries; ++i)
-                            {
-                                *quickcodeptr++ = (unsigned char) nextcode;
-                                *quicklenptr++ = (unsigned char) nextlen;
-                            }
-                        }
-                    }
-                }
-            }
+						while (bitnum--)
+						{
+							nextcode = *codeptr++;
+							nextlen = bits;
+							if (nextcode==clue)
+							{
+								cluelen = bits;
+								nextlen = 96;                   /* will force out of main loop */
+							}
+							for (i=0; i<numbitentries; ++i)
+							{
+								*quickcodeptr++ = (unsigned char) nextcode;
+								*quicklenptr++ = (unsigned char) nextlen;
+							}
+						}
+					}
+				}
+			}
 
 /****************************************************************/
 /*  Main decoder                                                */
 /****************************************************************/
 
-            for (;;)
-            {
-                unsigned char   *quickcodeptr = quickcodetbl;
-                unsigned char   *quicklenptr  = quicklentbl;
+			for (;;)
+			{
+				unsigned char   *quickcodeptr = quickcodetbl;
+				unsigned char   *quicklenptr  = quicklentbl;
 
-                goto nextloop;
+				goto nextloop;
 
 /* quick 8 fetch */
 
-                do
-                {
+				do
+				{
 
-                    *qd++ = quickcodeptr[bits>>24];
-                    GET16BITS();
-                    bits = bitsunshifted<<(16-bitsleft);
+					*qd++ = quickcodeptr[bits>>24];
+					GET16BITS();
+					bits = bitsunshifted<<(16-bitsleft);
 
 /* quick 8 decode */
 
 nextloop:
-                    numbits = quicklenptr[bits>>24];
-                    bitsleft -= numbits;
+					numbits = quicklenptr[bits>>24];
+					bitsleft -= numbits;
 
-                    if (bitsleft>=0)
-                    {
-                        do
-                        {
-                            *qd++ = quickcodeptr[bits>>24];
-                            bits <<= numbits;
+					if (bitsleft>=0)
+					{
+						do
+						{
+							*qd++ = quickcodeptr[bits>>24];
+							bits <<= numbits;
 
-                            numbits = quicklenptr[bits>>24];
-                            bitsleft -= numbits;
-                            if (bitsleft<0) break;
-                            *qd++ = quickcodeptr[bits>>24];
-                            bits <<= numbits;
+							numbits = quicklenptr[bits>>24];
+							bitsleft -= numbits;
+							if (bitsleft<0) break;
+							*qd++ = quickcodeptr[bits>>24];
+							bits <<= numbits;
 
-                            numbits = quicklenptr[bits>>24];
-                            bitsleft -= numbits;
-                            if (bitsleft<0) break;
-                            *qd++ = quickcodeptr[bits>>24];
-                            bits <<= numbits;
+							numbits = quicklenptr[bits>>24];
+							bitsleft -= numbits;
+							if (bitsleft<0) break;
+							*qd++ = quickcodeptr[bits>>24];
+							bits <<= numbits;
 
-                            numbits = quicklenptr[bits>>24];
-                            bitsleft -= numbits;
-                            if (bitsleft<0) break;
-                            *qd++ = quickcodeptr[bits>>24];
-                            bits <<= numbits;
+							numbits = quicklenptr[bits>>24];
+							bitsleft -= numbits;
+							if (bitsleft<0) break;
+							*qd++ = quickcodeptr[bits>>24];
+							bits <<= numbits;
 
-                            numbits = quicklenptr[bits>>24];
-                            bitsleft -= numbits;
+							numbits = quicklenptr[bits>>24];
+							bitsleft -= numbits;
 
-                        } while (bitsleft>=0);
-                    }
-                    bitsleft += 16;
+						} while (bitsleft>=0);
+					}
+					bitsleft += 16;
 
-                } while (bitsleft>=0);  /* would fetching 16 bits do it? */
+				} while (bitsleft>=0);  /* would fetching 16 bits do it? */
 
-                bitsleft = bitsleft-16+numbits;   /* back to normal */
+				bitsleft = bitsleft-16+numbits;   /* back to normal */
 
 /****************************************************************/
 /*  16 bit decoder                                              */
 /****************************************************************/
 
-                {
-                    unsigned char   code;
+				{
+					unsigned char   code;
 
 
-                    if (numbits!=96)
-                    {
-                        cmp = (unsigned int) (bits>>16);  /* 16 bit left justified compare */
+					if (numbits!=96)
+					{
+						cmp = (unsigned int) (bits>>16);  /* 16 bit left justified compare */
 
-                        numbits = 8;
-                        do
-                        {
-                            ++numbits;
-                        }
-                        while (cmp>=cmptbl[numbits]);
-                    }
-                    else
-                        numbits = cluelen;
+						numbits = 8;
+						do
+						{
+							++numbits;
+						}
+						while (cmp>=cmptbl[numbits]);
+					}
+					else
+					numbits = cluelen;
 
 
-                    cmp = bits >> (32-(numbits));
-                    bits <<= (numbits);
-                    bitsleft -= (numbits);
+					cmp = bits >> (32-(numbits));
+					bits <<= (numbits);
+					bitsleft -= (numbits);
 
-                    code = codetbl[cmp-deltatbl[numbits]];  /* the code */
+					code = codetbl[cmp-deltatbl[numbits]];  /* the code */
 
-                    if (code!=clue && bitsleft>=0)
-                    {
-                        *qd++ = code;
-                        goto nextloop;
-                    }
+					if (code!=clue && bitsleft>=0)
+					{
+						*qd++ = code;
+						goto nextloop;
+					}
 
-                    if (bitsleft<0)
-                    {
-                        GET16BITS();
-                        bits = bitsunshifted<<-bitsleft;
-                        bitsleft += 16;
-                    }
+					if (bitsleft<0)
+					{
+						GET16BITS();
+						bits = bitsunshifted<<-bitsleft;
+						bitsleft += 16;
+					}
 
-                    if (code!=clue)
-                    {
-                        *qd++ = code;
-                        goto nextloop;
-                    }
+					if (code!=clue)
+					{
+						*qd++ = code;
+						goto nextloop;
+					}
 
                     /* handle clue */
 
-                    {
-                        int    runlen=0;
-                        unsigned char *d=qd;
-                        unsigned char *dest;
+					{
+						int    runlen=0;
+						unsigned char *d=qd;
+						unsigned char *dest;
 
-                        SQgetnum(runlen);
-                        if (runlen)                             /* runlength sequence */
-                        {
-                            dest = d+runlen;
-                            code = *(d-1);
-                            do
-                            {
-                                *d++ = code;
-                            } while (d<dest);
+						SQgetnum(runlen);
+						if (runlen)                             /* runlength sequence */
+						{
+							dest = d+runlen;
+							code = *(d-1);
+							do
+							{
+								*d++ = code;
+							} while (d<dest);
 
-                            qd = d;
-                            goto nextloop;
-                        }
-                    }
+							qd = d;
+							goto nextloop;
+						}
+					}
 
-                    SQgetbits(v,1);                         /* End Of File */
-                    if (v)
-                        break;
+					SQgetbits(v,1);                         /* End Of File */
+					if (v)
+					break;
 
-                    {
-                        unsigned int t;
-                        SQgetbits(t,8);                    /* explicite byte */
-                        code = (unsigned char)t;
-                    }
-                    *qd++ = code;
-                    goto nextloop;
-                }
+					{
+						unsigned int t;
+						SQgetbits(t,8);                    /* explicite byte */
+						code = (unsigned char)t;
+					}
+					*qd++ = code;
+					goto nextloop;
+				}
 
-            }
+			}
 
 
 /****************************************************************/
 /*  Undelta                                                     */
 /****************************************************************/
 
-            {
-                int i;
-                int nextchar;
+			{
+				int i;
+				int nextchar;
 
-                if (type==0x32fb || type==0xb2fb)                           /* deltaed? */
-                {
-                    i = 0;
-                    qd = unpackbuf;
-                    while (qd<unpackbuf+ulen)
-                    {
-                        i += (int) *qd;
-                        *qd++ = (unsigned char) i;
-                    }
-                }
-                else if (type==0x34fb || type==0xb4fb)                      /* accelerated? */
-                {
+				if (type==0x32fb || type==0xb2fb)                           /* deltaed? */
+				{
+					i = 0;
+					qd = unpackbuf;
+					while (qd<unpackbuf+ulen)
+					{
+						i += (int) *qd;
+						*qd++ = (unsigned char) i;
+					}
+				}
+				else if (type==0x34fb || type==0xb4fb)                      /* accelerated? */
+				{
 
-                    i = 0;
-                    nextchar = 0;
-                    qd = unpackbuf;
-                    while (qd<unpackbuf+ulen)
-                    {
-                        i += (int) *qd;
-                        nextchar += i;
-                        *qd++ = (unsigned char) nextchar;
-                    }
-                }
-            }
-        }
-    }
-    return(ulen);
+					i = 0;
+					nextchar = 0;
+					qd = unpackbuf;
+					while (qd<unpackbuf+ulen)
+					{
+						i += (int) *qd;
+						nextchar += i;
+						*qd++ = (unsigned char) nextchar;
+					}
+				}
+			}
+		}
+	}
+	return(ulen);
 }
 
 #if defined(_MSC_VER)
@@ -518,10 +518,10 @@ nextloop:
 
 bool GCALL HUFF_is(const void *compresseddata)
 {
-    bool ok=false;
-    int packtype=ggetm(compresseddata,2);
+	bool ok=false;
+	int packtype=ggetm(compresseddata,2);
 
-    if (packtype==0x30fb
+	if (packtype==0x30fb
      || packtype==0x31fb
      || packtype==0x32fb
      || packtype==0x33fb
@@ -533,9 +533,9 @@ bool GCALL HUFF_is(const void *compresseddata)
      || packtype==0xb3fb
      || packtype==0xb4fb
      || packtype==0xb5fb)
-        ok = true;
+	ok = true;
 
-    return(ok);
+	return(ok);
 }
 
 
@@ -545,25 +545,25 @@ bool GCALL HUFF_is(const void *compresseddata)
 
 int GCALL HUFF_size(const void *compresseddata)
 {
-    int len=0;
-    int packtype=ggetm(compresseddata,2);
-    int ssize=(packtype&0x8000)?4:3;
+	int len=0;
+	int packtype=ggetm(compresseddata,2);
+	int ssize=(packtype&0x8000)?4:3;
 
-    if (packtype&0x100)     /* 31fb 33fb 35fb */
-    {
-        len = ggetm((char *)compresseddata+2+ssize,ssize);
-    }
-    else                    /* 30fb 32fb 34fb */
-    {
-        len = ggetm((char *)compresseddata+2,ssize);
-    }
+	if (packtype&0x100)     /* 31fb 33fb 35fb */
+	{
+		len = ggetm((char *)compresseddata+2+ssize,ssize);
+	}
+	else                    /* 30fb 32fb 34fb */
+	{
+		len = ggetm((char *)compresseddata+2,ssize);
+	}
 
-    return(len);
+	return(len);
 }
 
 int GCALL HUFF_decode(void *dest, const void *compresseddata, int *compressedsize)
 {
-    return(HUFF_decompress((unsigned char *)compresseddata, (unsigned char *)dest));
+	return(HUFF_decompress((unsigned char *)compresseddata, (unsigned char *)dest));
 }
 
 #endif

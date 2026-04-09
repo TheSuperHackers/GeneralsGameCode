@@ -206,7 +206,7 @@ public:
 	WWINLINE void Set(const Vector3 & position);
 
 	// access functions:
- 	WWINLINE Vector4 & operator [] (int i) { return Row[i]; }
+	WWINLINE Vector4 & operator [] (int i) { return Row[i]; }
 	WWINLINE const Vector4 & operator [] (int i) const { return Row[i]; }
 
 	WWINLINE Vector3 Get_Translation() const { return Vector3(Row[0][3],Row[1][3],Row[2][3]); }
@@ -243,9 +243,9 @@ public:
 	WWINLINE void	Make_Identity();
 	void	Translate(float x,float y,float z);
 	void	Translate(const Vector3 &t);
-   void  Translate_X(float x);
-   void  Translate_Y(float y);
-   void  Translate_Z(float z);
+	void  Translate_X(float x);
+	void  Translate_Y(float y);
+	void  Translate_Z(float z);
 	void	Rotate_X(float theta);
 	void	Rotate_Y(float theta);
 	void 	Rotate_Z(float theta);
@@ -1504,7 +1504,7 @@ WWINLINE Matrix3D operator * (const Matrix3D &A,const Matrix3D &B)
 
 WWINLINE float submul(const Vector4& row, float tmp1, float tmp2, float tmp3)
 {
-  return row.X * tmp1 + row.Y * tmp2 + row.Z * tmp3;
+	return row.X * tmp1 + row.Y * tmp2 + row.Z * tmp3;
 }
 
 // does "this = that * this"
@@ -1523,7 +1523,7 @@ WWINLINE void Matrix3D::postMul(const Matrix3D& that)
 
 #define AVOID_TEMP_IN_POSTMUL
 #ifdef AVOID_TEMP_IN_POSTMUL
-  float tmpX, tmpY, tmpZ, tmpW;
+	float tmpX, tmpY, tmpZ, tmpW;
 
 	tmpX = submul(this->Row[0], that.Row[0].X, that.Row[1].X, that.Row[2].X);
 	tmpY = submul(this->Row[0], that.Row[0].Y, that.Row[1].Y, that.Row[2].Y);
@@ -1704,12 +1704,12 @@ WWINLINE void Matrix3D::mulVector3Array(Vector3* inout, int count) const
  *=============================================================================================*/
 WWINLINE bool operator == (const Matrix3D &A, const Matrix3D &B)
 {
-   for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 4; j++) {
-         if (A[i][j] != B[i][j]) return false;
-      }
-   }
-   return true;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (A[i][j] != B[i][j]) return false;
+		}
+	}
+	return true;
 }
 
 
@@ -1727,7 +1727,7 @@ WWINLINE bool operator == (const Matrix3D &A, const Matrix3D &B)
  *=============================================================================================*/
 WWINLINE bool operator != (const Matrix3D &A, const Matrix3D &B)
 {
-   return !(A == B);
+	return !(A == B);
 }
 
 

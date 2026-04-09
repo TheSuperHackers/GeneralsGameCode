@@ -91,9 +91,9 @@ void DebugCrash(const char *format, ...)
 	strcat(theBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
-  va_start(arg, format);
-  vsprintf(theBuffer + strlen(theBuffer), format, arg);
-  va_end(arg);
+		va_start(arg, format);
+		vsprintf(theBuffer + strlen(theBuffer), format, arg);
+		va_end(arg);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
 		::MessageBox(nullptr, "String too long for debug buffers", "", MB_OK|MB_APPLMODAL);

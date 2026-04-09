@@ -66,7 +66,7 @@ void *Debug::PostStatic = nullptr;
 
 Debug::LogDescription::LogDescription(const char *fileOrGroup, const char *description)
 {
-  Debug::Instance.AddLogGroup(fileOrGroup,description);
+	Debug::Instance.AddLogGroup(fileOrGroup,description);
 }
 
 // our global Debug instance
@@ -79,197 +79,197 @@ unsigned Debug::curStackFrame;
 // work is done in PreStaticInit (and some in PostStaticInit)
 Debug::Debug()
 {
-  // do not put any code in here (but it's good for keeping module global todo's)
-  /// @todo what about frame based logging?
-  /// @todo have new DLOG with category, add DWARN, DPERF, DERR etc. based on that,
-  ///       make it possible to enable/disable categories by adding category to log ID
+	// do not put any code in here (but it's good for keeping module global todo's)
+	/// @todo what about frame based logging?
+	/// @todo have new DLOG with category, add DWARN, DPERF, DERR etc. based on that,
+	///       make it possible to enable/disable categories by adding category to log ID
 }
 
 void Debug::PreStaticInit()
 {
-  // do not change any member variables that have constructors
-  // because they are not constructed yet!
+	// do not change any member variables that have constructors
+	// because they are not constructed yet!
 
-  // make sure this function gets called on exit
-  // (we might still have to call it manually if there's
-  // an exception and we're not calling exit)
-  atexit(StaticExit);
+	// make sure this function gets called on exit
+	// (we might still have to call it manually if there's
+	// an exception and we're not calling exit)
+	atexit(StaticExit);
 
-  // init vars
-  Instance.hrTranslators=nullptr;
-  Instance.numHrTranslators=0;
-  Instance.firstIOFactory=nullptr;
-  Instance.firstCmdGroup=nullptr;
-  memset(Instance.frameHash,0,sizeof(Instance.frameHash));
-  Instance.nextUnusedFrameHash=nullptr;
-  Instance.numAvailableFrameHash=0;
-  Instance.firstLogGroup=nullptr;
-  memset(Instance.ioBuffer,0,sizeof(Instance.ioBuffer));
-  Instance.curType=DebugIOInterface::StringType::MAX;
-  *Instance.curSource=0;
-  Instance.disableAssertsEtc=0;
-  Instance.curFrameEntry=nullptr;
-  Instance.firstPatternEntry=nullptr;
-  Instance.lastPatternEntry=nullptr;
-  *Instance.curCommandGroup=0;
-  Instance.alwaysFlush=false;
-  Instance.timeStamp=false;
-  Instance.m_radix=10;
-  Instance.m_fillChar=' ';
+	// init vars
+	Instance.hrTranslators=nullptr;
+	Instance.numHrTranslators=0;
+	Instance.firstIOFactory=nullptr;
+	Instance.firstCmdGroup=nullptr;
+	memset(Instance.frameHash,0,sizeof(Instance.frameHash));
+	Instance.nextUnusedFrameHash=nullptr;
+	Instance.numAvailableFrameHash=0;
+	Instance.firstLogGroup=nullptr;
+	memset(Instance.ioBuffer,0,sizeof(Instance.ioBuffer));
+	Instance.curType=DebugIOInterface::StringType::MAX;
+	*Instance.curSource=0;
+	Instance.disableAssertsEtc=0;
+	Instance.curFrameEntry=nullptr;
+	Instance.firstPatternEntry=nullptr;
+	Instance.lastPatternEntry=nullptr;
+	*Instance.curCommandGroup=0;
+	Instance.alwaysFlush=false;
+	Instance.timeStamp=false;
+	Instance.m_radix=10;
+	Instance.m_fillChar=' ';
 
-  /// install exception handler
-  SetUnhandledExceptionFilter(DebugExceptionhandler::ExceptionFilter);
+	/// install exception handler
+	SetUnhandledExceptionFilter(DebugExceptionhandler::ExceptionFilter);
 }
 
 void Debug::PostStaticInit()
 {
-  InstallExceptionHandler();
+	InstallExceptionHandler();
 
-  // register our default IO classes
-  AddIOFactory("con","Console window",DebugIOCon::Create);
-  AddIOFactory("flat","Flat local file(s)",DebugIOFlat::Create);
-  AddIOFactory("net","Network via named pipe",DebugIONet::Create);
-  AddIOFactory("ods","OutputDebugString function",DebugIOOds::Create);
+	// register our default IO classes
+	AddIOFactory("con","Console window",DebugIOCon::Create);
+	AddIOFactory("flat","Flat local file(s)",DebugIOFlat::Create);
+	AddIOFactory("net","Network via named pipe",DebugIONet::Create);
+	AddIOFactory("ods","OutputDebugString function",DebugIOOds::Create);
 
-  // add debug command handler
-  AddCommands("debug",new (DebugAllocMemory(sizeof(DebugCmdInterfaceDebug))) DebugCmdInterfaceDebug);
+	// add debug command handler
+	AddCommands("debug",new (DebugAllocMemory(sizeof(DebugCmdInterfaceDebug))) DebugCmdInterfaceDebug);
 
-  /// exec dbgcmd file
-  char ioBuffer[2048];
-  GetModuleFileName(nullptr,ioBuffer,sizeof(ioBuffer));
-  char *q=strrchr(ioBuffer,'.');
-  if (q)
-    strcpy(q,".dbgcmd");
-  HANDLE h=CreateFile(ioBuffer,GENERIC_READ,0,nullptr,OPEN_EXISTING,
+	/// exec dbgcmd file
+	char ioBuffer[2048];
+	GetModuleFileName(nullptr,ioBuffer,sizeof(ioBuffer));
+	char *q=strrchr(ioBuffer,'.');
+	if (q)
+	strcpy(q,".dbgcmd");
+	HANDLE h=CreateFile(ioBuffer,GENERIC_READ,0,nullptr,OPEN_EXISTING,
                       FILE_ATTRIBUTE_NORMAL,nullptr);
-  if (h==INVALID_HANDLE_VALUE)
-    h=CreateFile("default.dbgcmd",GENERIC_READ,0,nullptr,OPEN_EXISTING,
+	if (h==INVALID_HANDLE_VALUE)
+	h=CreateFile("default.dbgcmd",GENERIC_READ,0,nullptr,OPEN_EXISTING,
                       FILE_ATTRIBUTE_NORMAL,nullptr);
-  if (h!=INVALID_HANDLE_VALUE)
-  {
-    char cmdBuffer[512];
-    unsigned long ioCur=0,ioUsed=0,cmdCur=0;
-    ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
-    for (;;)
-    {
-      if (ioCur==ioUsed)
-      {
-        ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
-        ioCur=0;
-      }
-      if (ioCur==ioUsed||ioBuffer[ioCur]=='\n'||ioBuffer[ioCur]=='\r')
-      {
-        if (cmdCur)
-        {
-          Instance.ExecCommand(cmdBuffer,cmdBuffer+cmdCur);
-          cmdCur=0;
-        }
-        if (ioCur==ioUsed)
-          break;
-        ioCur++;
-      }
-      else
-      {
-        if (cmdCur<sizeof(cmdBuffer))
-          cmdBuffer[cmdCur++]=ioBuffer[ioCur];
-        ioCur++;
-      }
-    }
-    CloseHandle(h);
-  }
-  else
-  {
-    // exec default commands
-    const char *p=DebugGetDefaultCommands();
-    while (p&&*p)
-    {
-      const char *q=strchr(p,'\n');
-      if (!q)
-        q=p+strlen(p);
-      if (p!=q)
-      {
-        Instance.ExecCommand(p,q);
-        p=*q?q+1:nullptr;
-      }
-    }
-  }
+	if (h!=INVALID_HANDLE_VALUE)
+	{
+		char cmdBuffer[512];
+		unsigned long ioCur=0,ioUsed=0,cmdCur=0;
+		ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
+		for (;;)
+		{
+			if (ioCur==ioUsed)
+			{
+				ReadFile(h,ioBuffer,sizeof(ioBuffer),&ioUsed,nullptr);
+				ioCur=0;
+			}
+			if (ioCur==ioUsed||ioBuffer[ioCur]=='\n'||ioBuffer[ioCur]=='\r')
+			{
+				if (cmdCur)
+				{
+					Instance.ExecCommand(cmdBuffer,cmdBuffer+cmdCur);
+					cmdCur=0;
+				}
+				if (ioCur==ioUsed)
+				break;
+				ioCur++;
+			}
+			else
+			{
+				if (cmdCur<sizeof(cmdBuffer))
+				cmdBuffer[cmdCur++]=ioBuffer[ioCur];
+				ioCur++;
+			}
+		}
+		CloseHandle(h);
+	}
+	else
+	{
+		// exec default commands
+		const char *p=DebugGetDefaultCommands();
+		while (p&&*p)
+		{
+			const char *q=strchr(p,'\n');
+			if (!q)
+			q=p+strlen(p);
+			if (p!=q)
+			{
+				Instance.ExecCommand(p,q);
+				p=*q?q+1:nullptr;
+			}
+		}
+	}
 
-  // check: are we using an old dbghelp.dll?
-  if (DebugStackwalk::IsOldDbghelp())
-  {
-    // give a serious hint
-    Instance.StartOutput(DebugIOInterface::Other,"");
-    Instance << RepeatChar('=',79) <<
+	// check: are we using an old dbghelp.dll?
+	if (DebugStackwalk::IsOldDbghelp())
+	{
+		// give a serious hint
+		Instance.StartOutput(DebugIOInterface::Other,"");
+		Instance << RepeatChar('=',79) <<
       "\nYou are using an older version of the DBGHELP.DLL library.\n"
       "Please update to the newest available version in order to\n"
       "get reliable stack and symbol information.\n\n";
 
-    char buf[256];
-    GetModuleFileName((HMODULE)DebugStackwalk::GetDbghelpHandle(),buf,sizeof(buf));
-    Instance <<
+		char buf[256];
+		GetModuleFileName((HMODULE)DebugStackwalk::GetDbghelpHandle(),buf,sizeof(buf));
+		Instance <<
       "Hint: The DLL got loaded as:\n" << buf << "\n" << RepeatChar('=',79) << "\n\n";
 
-    // flush output only if there is already an active I/O class
-    Instance.FlushOutput(false);
-  }
+		// flush output only if there is already an active I/O class
+		Instance.FlushOutput(false);
+	}
 }
 
 void Debug::StaticExit()
 {
-  // yes, we do leave memory 'leaks' but Win32 will take care of these
+	// yes, we do leave memory 'leaks' but Win32 will take care of these
 
-  // however, I/O classes must be actively shut down
-  if (Instance.curType!=DebugIOInterface::StringType::MAX)
-    Instance.FlushOutput();
-  for (IOFactoryListEntry *io=Instance.firstIOFactory;io;io=io->next)
-    if (io->io)
-    {
-      io->io->Delete();
-      io->io=nullptr;
-    }
+	// however, I/O classes must be actively shut down
+	if (Instance.curType!=DebugIOInterface::StringType::MAX)
+	Instance.FlushOutput();
+	for (IOFactoryListEntry *io=Instance.firstIOFactory;io;io=io->next)
+	if (io->io)
+	{
+		io->io->Delete();
+		io->io=nullptr;
+	}
 
-  // and command group interfaces...
-  for (CmdInterfaceListEntry *cmd=Instance.firstCmdGroup;cmd;cmd=cmd->next)
-    if (cmd->cmdif)
-    {
-      cmd->cmdif->Delete();
-      cmd->cmdif=nullptr;
-    }
+	// and command group interfaces...
+	for (CmdInterfaceListEntry *cmd=Instance.firstCmdGroup;cmd;cmd=cmd->next)
+	if (cmd->cmdif)
+	{
+		cmd->cmdif->Delete();
+		cmd->cmdif=nullptr;
+	}
 }
 
 Debug& Debug::operator<<(RepeatChar c)
 {
-  if (c.m_count>=10)
-  {
-    char help[10];
-    memset(help,c.m_char,10);
-    while ((c.m_count-=10)>=0)
-      AddOutput(help,10);
-  }
-  while (c.m_count-->0)
-    AddOutput(&c.m_char,1);
-  return *this;
+	if (c.m_count>=10)
+	{
+		char help[10];
+		memset(help,c.m_char,10);
+		while ((c.m_count-=10)>=0)
+		AddOutput(help,10);
+	}
+	while (c.m_count-->0)
+	AddOutput(&c.m_char,1);
+	return *this;
 }
 
 Debug::Format::Format(const char *format, ...)
 {
-  va_list va;
-  va_start(va,format);
-  vsnprintf(m_buffer,sizeof(m_buffer)-1,format,va);
-  va_end(va);
+	va_list va;
+	va_start(va,format);
+	vsnprintf(m_buffer,sizeof(m_buffer)-1,format,va);
+	va_end(va);
 }
 
 Debug::~Debug()
 {
-  // again, do not put any code in here
+	// again, do not put any code in here
 }
 
 #if defined(_MSC_VER)
 // MSVC: Use SE Translator
 static void LocalSETranslator(unsigned, struct _EXCEPTION_POINTERS *pExPtrs)
 {
-  // simply call our regular exception handler
-  DebugExceptionhandler::ExceptionFilter(pExPtrs);
+	// simply call our regular exception handler
+	DebugExceptionhandler::ExceptionFilter(pExPtrs);
 }
 #elif defined(__GNUC__) && defined(_WIN32)
 // MinGW-w64: Use Vectored Exception Handler (Windows-only)
@@ -278,19 +278,19 @@ static void LocalSETranslator(unsigned, struct _EXCEPTION_POINTERS *pExPtrs)
 // Returns EXCEPTION_CONTINUE_SEARCH to avoid interfering with normal exception handling.
 static LONG WINAPI LocalVectoredExceptionHandler(struct _EXCEPTION_POINTERS *pExPtrs)
 {
-  // Call our regular exception handler
-  DebugExceptionhandler::ExceptionFilter(pExPtrs);
-  return EXCEPTION_CONTINUE_SEARCH;
+	// Call our regular exception handler
+	DebugExceptionhandler::ExceptionFilter(pExPtrs);
+	return EXCEPTION_CONTINUE_SEARCH;
 }
 #endif
 
 void Debug::InstallExceptionHandler()
 {
 #if defined(_MSC_VER)
-  _set_se_translator(LocalSETranslator);
+	_set_se_translator(LocalSETranslator);
 #elif defined(__GNUC__) && defined(_WIN32)
-  // MinGW-w64 doesn't support _set_se_translator, use Vectored Exception Handler
-  AddVectoredExceptionHandler(1, LocalVectoredExceptionHandler);
+	// MinGW-w64 doesn't support _set_se_translator, use Vectored Exception Handler
+	AddVectoredExceptionHandler(1, LocalVectoredExceptionHandler);
 #else
   #error "Unsupported compiler for exception handling"
 #endif

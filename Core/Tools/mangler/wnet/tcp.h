@@ -70,21 +70,21 @@ class TCP
 // DATA ---------------
 
 private:
-  int         mode;               // client or server
-  sint32      fd;                 // the primary FD
+	int         mode;               // client or server
+	sint32      fd;                 // the primary FD
 
-  uint32      myIP;               // after bind myIP & myPort will be
-  uint16      myPort;             //   whatever we bound to
+	uint32      myIP;               // after bind myIP & myPort will be
+	uint16      myPort;             //   whatever we bound to
 
-  struct sockaddr_in addr;
-  int         maxFD;              // value of the biggest FD
-  int         clientCount;        // how many clients open
+	struct sockaddr_in addr;
+	int         maxFD;              // value of the biggest FD
+	int         clientCount;        // how many clients open
 
 
-  sint32      inputDelay;         // default delay for semi-blocking reads
-  sint32      outputDelay;        // default delay for semi-blocking writes
+	sint32      inputDelay;         // default delay for semi-blocking reads
+	sint32      outputDelay;        // default delay for semi-blocking writes
 
-  enum ConnectionState
+	enum ConnectionState
   {
      CLOSED,
      CONNECTING,
@@ -93,15 +93,15 @@ private:
 
 public:
 
-  enum
+	enum
   {
     CLIENT = 1,
     SERVER = 2
   };
 
-  // These defines specify a system independent way to
-  //   get error codes for socket services.
-  enum
+	// These defines specify a system independent way to
+	//   get error codes for socket services.
+	enum
   {
     OK,                 // Everything's cool
     UNKNOWN,            // There was an error of unknown type
@@ -123,74 +123,74 @@ public:
     TIMEDOUT            // Timeout
   };
 
-  // for client list (if this is a server)
-  fd_set clientList;
+	// for client list (if this is a server)
+	fd_set clientList;
 
 
 // CODE ----------------
 
 public:
-          TCP(int newMode);
-          TCP(int newMode,sint16 socket);
-         ~TCP();
-  bit8    Bind(uint32 IP,uint16 port,bit8 reuseAddr=FALSE);
-  bit8    Bind(char *Host,uint16 port,bit8 reuseAddr=FALSE);
+	TCP(int newMode);
+	TCP(int newMode,sint16 socket);
+	~TCP();
+	bit8    Bind(uint32 IP,uint16 port,bit8 reuseAddr=FALSE);
+	bit8    Bind(char *Host,uint16 port,bit8 reuseAddr=FALSE);
 
-  sint32  GetMaxFD(void);
+	sint32  GetMaxFD(void);
 
-  bit8    Connect(uint32 IP,uint16 port);
-  bit8    Connect(char *Host,uint16 port);
-  bit8    ConnectAsync(uint32 IP,uint16 port);
-  bit8    ConnectAsync(char *Host,uint16 port);
+	bit8    Connect(uint32 IP,uint16 port);
+	bit8    Connect(char *Host,uint16 port);
+	bit8    ConnectAsync(uint32 IP,uint16 port);
+	bit8    ConnectAsync(char *Host,uint16 port);
 
-  bit8    IsConnected(sint32 whichFD=0);
+	bit8    IsConnected(sint32 whichFD=0);
 
-  sint32  GetFD(void);
-  sint32  GetClientCount(void) { return(clientCount); }
+	sint32  GetFD(void);
+	sint32  GetClientCount(void) { return(clientCount); }
 
-  // Get IP or Port of a connected endpoint
-  uint32  GetRemoteIP(sint32 whichFD=0);
-  uint16  GetRemotePort(sint32 whichFD=0);
+	// Get IP or Port of a connected endpoint
+	uint32  GetRemoteIP(sint32 whichFD=0);
+	uint16  GetRemotePort(sint32 whichFD=0);
 
-  sint32  GetConnection(void);
-  sint32  GetConnection(struct sockaddr *clientAddr);
-  void    WaitWrite(sint32 whichFD=0);
-  bit8    CanWrite(sint32 whichFD=0);
-  sint32  Write(const uint8 *msg,uint32 len,sint32 whichFD=0);
-  sint32  WriteNB(uint8 *msg,uint32 len,sint32 whichFD=0);
-  sint32  EncapsulatedWrite(uint8 *msg,uint32 len,sint32 whichFD=0);
-  sint32  WriteString(char *msg,sint32 whichFD=0);
-  sint32  Printf(sint32 whichFD,const char *format,...);
-  sint32  Read(uint8 *msg,uint32 len,sint32 whichFD=0);
-  sint32  TimedRead(uint8 *msg,uint32 len,int seconds,sint32 whichFD=0);
-  sint32  Peek(uint8 *msg,uint32 len,sint32 whichFD=0);
-  sint32  EncapsulatedRead(uint8 *msg,uint32 len,sint32 whichFD=0);
+	sint32  GetConnection(void);
+	sint32  GetConnection(struct sockaddr *clientAddr);
+	void    WaitWrite(sint32 whichFD=0);
+	bit8    CanWrite(sint32 whichFD=0);
+	sint32  Write(const uint8 *msg,uint32 len,sint32 whichFD=0);
+	sint32  WriteNB(uint8 *msg,uint32 len,sint32 whichFD=0);
+	sint32  EncapsulatedWrite(uint8 *msg,uint32 len,sint32 whichFD=0);
+	sint32  WriteString(char *msg,sint32 whichFD=0);
+	sint32  Printf(sint32 whichFD,const char *format,...);
+	sint32  Read(uint8 *msg,uint32 len,sint32 whichFD=0);
+	sint32  TimedRead(uint8 *msg,uint32 len,int seconds,sint32 whichFD=0);
+	sint32  Peek(uint8 *msg,uint32 len,sint32 whichFD=0);
+	sint32  EncapsulatedRead(uint8 *msg,uint32 len,sint32 whichFD=0);
 
-  char   *Gets(char *string,int n,int whichFD=0);
+	char   *Gets(char *string,int n,int whichFD=0);
 
-  // Wait on all sockets (or a specified one)
-  //   return when ready for reading (or timeout occurs)
-  int     Wait(sint32 sec,sint32 usec,fd_set &returnSet,sint32 whichFD=0);
-  int     Wait(sint32 sec,sint32 usec,fd_set &inputSet,fd_set &returnSet);
+	// Wait on all sockets (or a specified one)
+	//   return when ready for reading (or timeout occurs)
+	int     Wait(sint32 sec,sint32 usec,fd_set &returnSet,sint32 whichFD=0);
+	int     Wait(sint32 sec,sint32 usec,fd_set &inputSet,fd_set &returnSet);
 
-  int     GetStatus(void);
-  void    ClearStatus(void);
+	int     GetStatus(void);
+	void    ClearStatus(void);
 
-  //sint32  GetSockStatus(sint32 whichFD=0);
+	//sint32  GetSockStatus(sint32 whichFD=0);
 
-  // give up ownership of the socket without closing it
-  void    DisownSocket(void);
+	// give up ownership of the socket without closing it
+	void    DisownSocket(void);
 
-  sint32  Close(sint32 whichFD=0);
-  sint32  CloseAll(void);   // close all sockets (same as close for client)
+	sint32  Close(sint32 whichFD=0);
+	sint32  CloseAll(void);   // close all sockets (same as close for client)
 
-  sint32  SetBlocking(bit8 block,sint32 whichFD=0);
+	sint32  SetBlocking(bit8 block,sint32 whichFD=0);
 
-  // Set default delays for semi-blocking reads & writes
-  // default input = 5, output = 5
-  // this is new and not used everywhere
-  //
-  bit8    SetInputDelay(sint32 delay) { inputDelay=delay; return(TRUE); };
-  bit8    SetOutputDelay(sint32 delay) { outputDelay=delay; return(TRUE); };
+	// Set default delays for semi-blocking reads & writes
+	// default input = 5, output = 5
+	// this is new and not used everywhere
+	//
+	bit8    SetInputDelay(sint32 delay) { inputDelay=delay; return(TRUE); };
+	bit8    SetOutputDelay(sint32 delay) { outputDelay=delay; return(TRUE); };
 
 };

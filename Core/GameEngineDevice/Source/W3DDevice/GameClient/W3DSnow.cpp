@@ -34,7 +34,7 @@
 
 struct POINTVERTEX
 {
-    Vector3 v;	//center of particle.
+	Vector3 v;	//center of particle.
 };
 
 W3DSnowManager::W3DSnowManager()
@@ -348,14 +348,14 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	Int cubeDimX=cubeCenterX + mumEmittersInHalf;		//bottom/right extents.
 	Int cubeDimY=cubeCenterY + mumEmittersInHalf;
 
- 	const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
+	const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
 	AABoxClass bbox;
 
 	//Get a bounding box around our visible universe.  Bounded by terrain and the sky
 	//so much tighter fitting volume than what's actually visible.  This will cull
 	//particles falling under the ground.
 
- 	TheTerrainRenderObject->getMaximumVisibleBox(frustum, &bbox, TRUE);
+	TheTerrainRenderObject->getMaximumVisibleBox(frustum, &bbox, TRUE);
 
 	//Particles move outside the visible box as a result of local sine movement
 	//so adjust bounding box to include them.
@@ -419,18 +419,18 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 
 	DX8Wrapper::Apply_Render_State_Changes();
 
-    // Set the render states for using point sprites
+	// Set the render states for using point sprites
 	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSPRITEENABLE, TRUE );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALEENABLE,  TRUE );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSIZE,     FtoDW(m_pointSize) );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSIZE_MIN, FtoDW(m_minPointSize) );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSIZE_MAX, FtoDW(m_maxPointSize) );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_A,  FtoDW(0.00f) );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_B,  FtoDW(0.00f) );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_C,  FtoDW(1.00f) );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALEENABLE,  TRUE );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSIZE,     FtoDW(m_pointSize) );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSIZE_MIN, FtoDW(m_minPointSize) );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSIZE_MAX, FtoDW(m_maxPointSize) );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_A,  FtoDW(0.00f) );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_B,  FtoDW(0.00f) );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALE_C,  FtoDW(1.00f) );
 
 	DX8Wrapper::_Get_D3D_Device8()->SetStreamSource( 0, m_VertexBufferD3D, sizeof(POINTVERTEX) );
-    DX8Wrapper::_Get_D3D_Device8()->SetVertexShader( D3DFVF_POINTVERTEX );
+	DX8Wrapper::_Get_D3D_Device8()->SetVertexShader( D3DFVF_POINTVERTEX );
 	m_dwBase = SNOW_BUFFER_SIZE;	//start with a new vertex buffer each frame.
 
 	m_leafDim = 45;	//cull boxes that are 20x20 emitters in size. Making them much smaller will result in too many draw calls.
@@ -442,8 +442,8 @@ void W3DSnowManager::render(RenderInfoClass &rinfo)
 	renderSubBox(rinfo,cubeOriginX,cubeOriginY,cubeDimX,cubeDimY);
 
 	// Reset render states
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSPRITEENABLE, FALSE );
-    DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALEENABLE,  FALSE );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSPRITEENABLE, FALSE );
+	DX8Wrapper::Set_DX8_Render_State( D3DRS_POINTSCALEENABLE,  FALSE );
 
 }
 

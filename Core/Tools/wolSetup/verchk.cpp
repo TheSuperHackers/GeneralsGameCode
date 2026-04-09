@@ -34,49 +34,49 @@
 	*/
 bool GetVersionInfo(char* filename, VS_FIXEDFILEINFO* fileInfo)
 {
-   if (filename == nullptr || fileInfo == nullptr)
-   {
-      return false;
-   }
+	if (filename == nullptr || fileInfo == nullptr)
+	{
+		return false;
+	}
 
-   // Get version information from the application
-   DWORD verHandle;
-   DWORD verInfoSize = GetFileVersionInfoSize(filename, &verHandle);
+	// Get version information from the application
+	DWORD verHandle;
+	DWORD verInfoSize = GetFileVersionInfoSize(filename, &verHandle);
 
-   if (verInfoSize)
-   {
-      // If we were able to get the information, process it:
-      HANDLE memHandle = GlobalAlloc(GMEM_MOVEABLE, verInfoSize);
+	if (verInfoSize)
+	{
+		// If we were able to get the information, process it:
+		HANDLE memHandle = GlobalAlloc(GMEM_MOVEABLE, verInfoSize);
 
-      if (memHandle)
-      {
-         LPVOID buffer = GlobalLock(memHandle);
+		if (memHandle)
+		{
+			LPVOID buffer = GlobalLock(memHandle);
 
-         if (buffer)
-         {
-            BOOL success = GetFileVersionInfo(filename, verHandle, verInfoSize, buffer);
+			if (buffer)
+			{
+				BOOL success = GetFileVersionInfo(filename, verHandle, verInfoSize, buffer);
 
-            if (success)
-            {
-               VS_FIXEDFILEINFO* data;
-               UINT dataSize = 0;
-               success = VerQueryValue(buffer, "\\", (LPVOID*) & data, &dataSize);
+				if (success)
+				{
+					VS_FIXEDFILEINFO* data;
+					UINT dataSize = 0;
+					success = VerQueryValue(buffer, "\\", (LPVOID*) & data, &dataSize);
 
-               if (success && (dataSize == sizeof(VS_FIXEDFILEINFO)))
-               {
-                  memcpy(fileInfo, data, sizeof(VS_FIXEDFILEINFO));
-                  return true;
-               }
-            }
+					if (success && (dataSize == sizeof(VS_FIXEDFILEINFO)))
+					{
+						memcpy(fileInfo, data, sizeof(VS_FIXEDFILEINFO));
+						return true;
+					}
+				}
 
-            GlobalUnlock(memHandle);
-         }
+				GlobalUnlock(memHandle);
+			}
 
-         GlobalFree(memHandle);
-      }
-   }
+			GlobalFree(memHandle);
+		}
+	}
 
-   return false;
+	return false;
 }
 
 bool loadWolapi( char *filename )

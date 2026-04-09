@@ -111,13 +111,13 @@ BOOL CGenerateDlg::OnInitDialog()
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void CGenerateDlg::OnSelectall()
 {
 	// TODO: Add your control notification handler code here
-	 list->SelItemRange ( TRUE, 0, num_langs-1 );
+	list->SelItemRange ( TRUE, 0, num_langs-1 );
 }
 
 void CGenerateDlg::OnInvert()

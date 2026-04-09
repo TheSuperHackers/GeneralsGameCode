@@ -223,7 +223,7 @@ public:
 
 	void	Reset();		// empties the dynamic vector
 
- 	bool	Normalize_Weights();	// Normalizes all weights (returns true if succeeded)
+	bool	Normalize_Weights();	// Normalizes all weights (returns true if succeeded)
 	int	Get_Num_Anims() { return HAnimComboData.Count(); }
 
 	void	Set_Motion( int indx, HAnimClass *motion );

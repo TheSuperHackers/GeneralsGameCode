@@ -152,7 +152,7 @@ void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
 	if ( file.Query_Open( )) {
 
 		int length = strlen( szBuffer1 );
-   		nBytes = file.Write( szBuffer1, length );
+		nBytes = file.Write( szBuffer1, length );
 		if ( nBytes != strlen( szBuffer1 )) {
 		}
 		file.Close();
@@ -243,7 +243,7 @@ void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codep
 		WideCharToMultiByte( codepage, 0, szBuffer1, -1, szBuffer3, MAX_PATH*3, nullptr, nullptr );
 
 		length = strlen( szBuffer3 );
-   		nBytes = file.Write( szBuffer3, length );
+		nBytes = file.Write( szBuffer3, length );
 		if ( nBytes != strlen( szBuffer3 )) {
 		}
 		file.Close();
@@ -347,7 +347,7 @@ StandardFileClass::~StandardFileClass( void )
 		ASSERT( File_Handle == INVALID_FILE_HANDLE );
 	#endif
 	#if( SUPPORT_STREAMS )
-   		ASSERT( File_Stream_Ptr == nullptr );
+	ASSERT( File_Stream_Ptr == nullptr );
 	#endif
 	ASSERT( Currently_Open == FALSE );
 
@@ -403,16 +403,16 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 			//
 			strcpy( pathed_file_name, CD_Path );
 			strcat( pathed_file_name, no_path_file_name );
-	   		File_Handle = Open_File( pathed_file_name, open_mode );
+		File_Handle = Open_File( pathed_file_name, open_mode );
 		}
 
-   	//
-   	// not successful HD or CD open?
-   	//
-   	if ( File_Handle == INVALID_FILE_HANDLE ) {
+	//
+	// not successful HD or CD open?
+	//
+	if ( File_Handle == INVALID_FILE_HANDLE ) {
 		ASSERT( FALSE );
-   		return( FALSE );
-   	}
+		return( FALSE );
+	}
 
 	#endif
 
@@ -482,15 +482,15 @@ bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 			//
 			strcpy( pathed_file_name, CD_Path );
 			strcat( pathed_file_name, no_path_file_name );
-	   		File_Stream_Ptr = fopen( pathed_file_name, attributes );
+		File_Stream_Ptr = fopen( pathed_file_name, attributes );
 		}
 
 	//
-   	// not successful?
-   	//
-   	if ( File_Stream_Ptr == nullptr ) {
-   		return( FALSE );
-   	}
+	// not successful?
+	//
+	if ( File_Stream_Ptr == nullptr ) {
+		return( FALSE );
+	}
 
 	//
 	// get file stats
@@ -521,7 +521,7 @@ bool StandardFileClass::Close( void )
 	int status;
 
 	#if( SUPPORT_HANDLES )
-	   bool success;
+	bool success;
 	#endif
 
 	//
@@ -534,35 +534,35 @@ bool StandardFileClass::Close( void )
 	ASSERT( File_Handle > INVALID_FILE_HANDLE );
 
 	//
-   	// error?
-   	//
-   	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
-    	//
-     	// no success
-     	//
-     	ASSERT( FALSE );
-    	return( FALSE );
+	// error?
+	//
+	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
+		//
+		// no success
+		//
+		ASSERT( FALSE );
+		return( FALSE );
 	}
 
-   	//
-   	// close file
-   	//
-   	// status = Close_File( File_Handle );
-   	success = Close_File( File_Handle );
-   	ASSERT( success == TRUE );
+	//
+	// close file
+	//
+	// status = Close_File( File_Handle );
+	success = Close_File( File_Handle );
+	ASSERT( success == TRUE );
 
 	//
-   	// reset file data
-   	//
+	// reset file data
+	//
 	File_Handle = INVALID_FILE_HANDLE;
 	Currently_Open = FALSE;
 
-   	//
-   	// error on close?
-   	//
-   	// if ( status == INVALID_FILE_HANDLE ) {
-   	// 		return( FALSE );
-   	// }
+	//
+	// error on close?
+	//
+	// if ( status == INVALID_FILE_HANDLE ) {
+	// 		return( FALSE );
+	// }
 	return( success );
 
 	#endif
@@ -571,35 +571,35 @@ bool StandardFileClass::Close( void )
 
 	ASSERT( File_Stream_Ptr != nullptr );
 
-   	//
-   	// error?
-   	//
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-       		//
-         	// no success
-         	//
-         	ASSERT( FALSE );
-       		return( FALSE );
+	//
+	// error?
+	//
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		//
+		// no success
+		//
+		ASSERT( FALSE );
+		return( FALSE );
 	}
 
-   	//
-   	// close file
-   	//
-   	status = fclose( File_Stream_Ptr );
-   	ASSERT( status == 0 );
+	//
+	// close file
+	//
+	status = fclose( File_Stream_Ptr );
+	ASSERT( status == 0 );
 
 	//
-   	// reset file data
-   	//
+	// reset file data
+	//
 	File_Stream_Ptr = nullptr;
 	Currently_Open = FALSE;
 
-   	//
-   	// error on close?
-   	//
-   	if ( status != 0 ) {
-   		return( FALSE );
-   	}
+	//
+	// error on close?
+	//
+	if ( status != 0 ) {
+		return( FALSE );
+	}
 	#endif
 
 	//
@@ -649,10 +649,10 @@ int StandardFileClass::Read( void *buffer, unsigned long int bytes_to_read )
 	// error?
 	//
 	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-   		//
+		//
 		// nothing read
 		//
-   		return( 0 );
+		return( 0 );
 	}
 
 	//
@@ -705,42 +705,42 @@ int StandardFileClass::Write( void *buffer, unsigned long int bytes_to_write )
 
 	ASSERT( File_Handle != INVALID_FILE_HANDLE );
 
-   	//
-   	// error?
-   	//
-   	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
-       		//
-         	// nothing written
-         	//
-       		return( 0 );
+	//
+	// error?
+	//
+	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
+		//
+		// nothing written
+		//
+		return( 0 );
 	}
 
-   	//
-   	// write out the bytes
-   	//
-   	bytes_written = Write_File( File_Handle, buffer, bytes_to_write );
+	//
+	// write out the bytes
+	//
+	bytes_written = Write_File( File_Handle, buffer, bytes_to_write );
 	ASSERT( bytes_written == bytes_to_write );
 	#endif
 
 	#if( SUPPORT_STREAMS )
 
 	ASSERT( File_Stream_Ptr != nullptr );
-   	//
-   	// error?
-   	//
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-       		//
-         	// nothing written
-         	//
-      		return( 0 );
+	//
+	// error?
+	//
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		//
+		// nothing written
+		//
+		return( 0 );
 	}
 
-   	//
-   	// write out the bytes
-   	//
-   	items_written = fwrite( buffer, bytes_to_write, 1, File_Stream_Ptr );
+	//
+	// write out the bytes
+	//
+	items_written = fwrite( buffer, bytes_to_write, 1, File_Stream_Ptr );
 	ASSERT( items_written == 1 );
-    bytes_written = items_written * bytes_to_write;
+	bytes_written = items_written * bytes_to_write;
 	#endif
 
 	//
@@ -768,20 +768,20 @@ bool StandardFileClass::Seek( int distance, int seek_file_position )
 	bool success;
 
 	ASSERT( File_Handle != INVALID_FILE_HANDLE );
-   	//
-   	// error?
-   	//
-   	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
-       		//
-         	// error
-         	//
-       		return( FALSE );
+	//
+	// error?
+	//
+	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
+		//
+		// error
+		//
+		return( FALSE );
 	}
 
 	//
-   	// do the seek!
-   	//
-   	success = Seek_File( File_Handle, distance, seek_file_position );
+	// do the seek!
+	//
+	success = Seek_File( File_Handle, distance, seek_file_position );
 	ASSERT( success == TRUE );
 	return( success );
 	#endif
@@ -790,24 +790,24 @@ bool StandardFileClass::Seek( int distance, int seek_file_position )
 
 	ASSERT( File_Stream_Ptr != nullptr );
 
-   	//
-   	// error?
-   	//
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-       		//
-         	// error
-         	//
-      		return( FALSE );
+	//
+	// error?
+	//
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		//
+		// error
+		//
+		return( FALSE );
 	}
 
 	//
-   	// do the seek!
-   	//
-   	int result = fseek( File_Stream_Ptr, distance, seek_file_position );
+	// do the seek!
+	//
+	int result = fseek( File_Stream_Ptr, distance, seek_file_position );
 
 	ASSERT( result == 0 );
 	if ( ! result ) {
-      	return( TRUE );
+		return( TRUE );
 	}
 	return( FALSE );
 	#endif
@@ -831,20 +831,20 @@ int StandardFileClass::Tell( void )
 	#if( SUPPORT_HANDLES )
 
 	ASSERT( File_Handle != INVALID_FILE_HANDLE );
-   	//
-   	// error?
-   	//
-   	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
-       		//
-         	// error
-         	//
-       		return( -1 );
+	//
+	// error?
+	//
+	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
+		//
+		// error
+		//
+		return( -1 );
 	}
 
 	//
-   	// do the tell
-   	//
-   	file_pos = Tell_File( File_Handle );
+	// do the tell
+	//
+	file_pos = Tell_File( File_Handle );
 
 	ASSERT( file_pos != -1 );
 	return( file_pos );
@@ -854,20 +854,20 @@ int StandardFileClass::Tell( void )
 	#if( SUPPORT_STREAMS )
 
 	ASSERT( File_Stream_Ptr != nullptr );
-   	//
-   	// error?
-   	//
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-       		//
-         	// error
-         	//
-       		return( -1 );
+	//
+	// error?
+	//
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		//
+		// error
+		//
+		return( -1 );
 	}
 
 	//
-   	// do the tell!
-   	//
-   	file_pos = ftell( File_Stream_Ptr );
+	// do the tell!
+	//
+	file_pos = ftell( File_Stream_Ptr );
 
 	ASSERT( file_pos != -1 );
 	return( file_pos );
@@ -891,34 +891,34 @@ int StandardFileClass::Query_Size( void )
 	#if( SUPPORT_HANDLES )
 
 	ASSERT( File_Handle != INVALID_FILE_HANDLE );
-   	//
-   	// error?
-   	//
-   	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
-       		//
-         	// error
-         	//
-       		return( -1 );
+	//
+	// error?
+	//
+	if ( File_Handle == INVALID_FILE_HANDLE || Currently_Open == FALSE ) {
+		//
+		// error
+		//
+		return( -1 );
 	}
 
 	size = File_Size( File_Handle );
-   	ASSERT( size > -1 );
+	ASSERT( size > -1 );
 	#endif
 
 	#if( SUPPORT_STREAMS )
 	ASSERT( File_Stream_Ptr != nullptr );
-   	//
-   	// error?
-   	//
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-       		//
-         	// error
-         	//
-       		return( -1 );
+	//
+	// error?
+	//
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		//
+		// error
+		//
+		return( -1 );
 	}
 
 	size = File_Statistics.st_size;
-   	ASSERT( size > -1 );
+	ASSERT( size > -1 );
 	#endif
 
 	return( size );
@@ -984,15 +984,15 @@ void StandardFileClass::Reset( void )
 int StandardFileClass::End_Of_File	( void )
 {
 	#if( SUPPORT_HANDLES )
-   	return( TRUE );
+	return( TRUE );
 	#endif
 
 	#if( SUPPORT_STREAMS )
 	ASSERT( File_Stream_Ptr != nullptr );
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-    	return( -1 );
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		return( -1 );
 	}
-   	return( feof( File_Stream_Ptr ));
+	return( feof( File_Stream_Ptr ));
 	#endif
 }
 
@@ -1000,10 +1000,10 @@ int StandardFileClass::Flush ( void )
 {
 	#if( SUPPORT_STREAMS )
 	ASSERT( File_Stream_Ptr != nullptr );
-   	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
-    	return( -1 );
+	if ( File_Stream_Ptr == nullptr || Currently_Open == FALSE ) {
+		return( -1 );
 	}
-   	return( fflush( File_Stream_Ptr ));
+	return( fflush( File_Stream_Ptr ));
 	#endif
 }
 
@@ -1051,15 +1051,15 @@ HANDLE Open_File( char const *file_name, int mode )
 	//
 	// if ( mode == READ ) {
 	if ( mode == MODE_READ_ONLY ) {
-   		access = GENERIC_READ;
+		access = GENERIC_READ;
 		share = FILE_SHARE_READ;
 		creation = OPEN_EXISTING;
 	}
 	// else if ( mode == WRITE ) {
 	else if ( mode == MODE_WRITE_ONLY ) {
-   		access = GENERIC_WRITE;
-    	share = 0;
-   		creation = CREATE_ALWAYS;
+		access = GENERIC_WRITE;
+		share = 0;
+		creation = CREATE_ALWAYS;
 	}
 	else if ( mode == MODE_READ_AND_WRITE ) {
 		//
@@ -1087,21 +1087,21 @@ HANDLE Open_File( char const *file_name, int mode )
                                      FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
                                      nullptr );
 	//
-    // error?
-    //
-    // we don't want to assert because we may be looking for a file
-    // to just see if it is there...
-    //
-    //	ASSERT( windows_file_handle != INVALID_HANDLE_VALUE );
-    //
-    // error!
-    //
-    if ( windows_file_handle == INVALID_HANDLE_VALUE ) {
+	// error?
+	//
+	// we don't want to assert because we may be looking for a file
+	// to just see if it is there...
+	//
+	//	ASSERT( windows_file_handle != INVALID_HANDLE_VALUE );
+	//
+	// error!
+	//
+	if ( windows_file_handle == INVALID_HANDLE_VALUE ) {
 		//  #if( RTS_DEBUG )
 		//	Debug_Printf( "%s: Create file error is %d\r\n", file_name, GetLastError());
 		//  #endif
-        return( INVALID_FILE_HANDLE );
-    }
+		return( INVALID_FILE_HANDLE );
+	}
 
 	//
 	// store the windows handle
@@ -1204,13 +1204,13 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
 	ASSERT( success == TRUE );
 
 	if ( success == FALSE ) {
-   		//
+		//
 		// no bytes read
 		//
-   		return( 0 );
+		return( 0 );
 	}
 
-   return( bytes_actually_read );
+	return( bytes_actually_read );
 }
 
 //------------------------------------------------------------------------------
@@ -1251,10 +1251,10 @@ int Write_File( HANDLE handle, void const *buffer, unsigned long int bytes_to_wr
 	ASSERT( bytes_actually_written == bytes_to_write );
 
 	if ( success == FALSE ) {
-   		//
+		//
 		// no bytes written
 		//
-   		return( 0 );
+		return( 0 );
 	}
 
 	return( bytes_actually_written );
@@ -1283,7 +1283,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
 	// set the seek movement method
 	//
 	if ( seek_file_location == SEEK_SET ) {
-   		move_method = FILE_BEGIN;
+		move_method = FILE_BEGIN;
 	}
 	else if ( seek_file_location == SEEK_CUR ) {
 		move_method = FILE_CURRENT;
@@ -1306,7 +1306,7 @@ bool Seek_File( HANDLE handle, int distance, int seek_file_location )
                              move_method );
 
 	if ( success == 0xFFFFFFFF ) {
-   		return( FALSE );
+		return( FALSE );
 	}
 	return( TRUE );
 }
@@ -1340,7 +1340,7 @@ int Tell_File( HANDLE handle )
                          move_method );
 
 	if ( pos == 0xFFFFFFFF ) {
-   		return( -1 );
+		return( -1 );
 	}
 	return( pos );
 }
@@ -1366,7 +1366,7 @@ int File_Size( HANDLE handle )
 	// error!
 	//
 	if ( file_size == 0xFFFFFFFF ) {
-   		return( -1 );
+		return( -1 );
 	}
 
 	//
@@ -1402,7 +1402,7 @@ bool Full_Path_File_Exists( char const *file_name )
 	// close the file and return success if opened
 	//
 	if ( fh != INVALID_FILE_HANDLE ) {
-   		Close_File( fh );
+		Close_File( fh );
 		return( TRUE );
 	}
 
@@ -1441,7 +1441,7 @@ bool HD_File_Exists( char const *file_name )
 	// close the file and return success if opened
 	//
 	if ( fh != INVALID_FILE_HANDLE ) {
-   		Close_File( fh );
+		Close_File( fh );
 		return( TRUE );
 	}
 
@@ -1480,7 +1480,7 @@ bool CD_File_Exists( char const *file_name )
 	// close the file and return success if opened
 	//
 	if ( fh != INVALID_FILE_HANDLE ) {
-   		Close_File( fh );
+		Close_File( fh );
 		return( TRUE );
 	}
 
@@ -1516,7 +1516,7 @@ int Get_Internal_File_Handle( void )
 	// initialize file handle table once!
 	//
 	if ( ! _initialized ) {
-   		for ( i = 0; i < MAX_FILES_OPEN_AT_A_TIME; i ++ ) {
+		for ( i = 0; i < MAX_FILES_OPEN_AT_A_TIME; i ++ ) {
 			Windows_File_Handles[ i ] = nullptr;
 		}
 		_initialized = TRUE;
@@ -1525,9 +1525,9 @@ int Get_Internal_File_Handle( void )
 	//
 	// look for free slot
 	//
-  	for ( i = 0; i < MAX_FILES_OPEN_AT_A_TIME; i ++ ) {
-   		if ( Windows_File_Handles[ i ] == nullptr ) {
-      		return( i );
+	for ( i = 0; i < MAX_FILES_OPEN_AT_A_TIME; i ++ ) {
+		if ( Windows_File_Handles[ i ] == nullptr ) {
+			return( i );
 		}
 	}
 
@@ -1554,7 +1554,7 @@ bool Full_Path_File_Exists( char const *file_name )
 
 	file_stream_ptr = fopen( file_name, "rb" );
 	if ( file_stream_ptr != nullptr ) {
-   		fclose( file_stream_ptr );
+		fclose( file_stream_ptr );
 		return( TRUE );
 	}
 	return( FALSE );
@@ -1579,7 +1579,7 @@ bool HD_File_Exists( char const *file_name )
 
 	file_stream_ptr = fopen( full_path, "rb" );
 	if ( file_stream_ptr != nullptr ) {
-   		fclose( file_stream_ptr );
+		fclose( file_stream_ptr );
 		return( TRUE );
 	}
 	return( FALSE );
@@ -1604,7 +1604,7 @@ bool CD_File_Exists( char const *file_name )
 
 	file_stream_ptr = fopen( full_path, "rb" );
 	if ( file_stream_ptr != nullptr ) {
-   		fclose( file_stream_ptr );
+		fclose( file_stream_ptr );
 		return( TRUE );
 	}
 	return( FALSE );

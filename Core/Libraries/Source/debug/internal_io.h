@@ -38,42 +38,42 @@ class DebugIOCon: public DebugIOInterface
     true if we allocated the console, false if there has already
     been a console
   */
-  bool m_allocatedConsole;
+	bool m_allocatedConsole;
 
   /**
     internal input buffer
   */
-  char m_input[256];
+	char m_input[256];
 
   /**
     number of bytes in input buffer
   */
-  unsigned m_inputUsed;
+	unsigned m_inputUsed;
 
   /**
     Current read position. This variable is 0 while data is
     composed into m_input and >0 while multiple Read calls are
     received.
   */
-  unsigned m_inputRead;
+	unsigned m_inputRead;
 
 public:
-  explicit DebugIOCon();
-  virtual ~DebugIOCon();
-  virtual int Read(char *buf, int maxchar);
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush() {}
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
+	explicit DebugIOCon();
+	virtual ~DebugIOCon();
+	virtual int Read(char *buf, int maxchar);
+	virtual void Write(StringType type, const char *src, const char *str);
+	virtual void EmergencyFlush() {}
+	virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv);
-  static DebugIOInterface *Create();
-  virtual void Delete();
+	static DebugIOInterface *Create();
+	virtual void Delete();
 };
 
 /// \internal \brief con flat I/O class
 class DebugIOFlat: public DebugIOInterface
 {
-  /// \brief single output stream
-  class OutputStream
+	/// \brief single output stream
+	class OutputStream
   {
     OutputStream(const OutputStream&);
     OutputStream& operator=(const OutputStream&);
@@ -152,8 +152,8 @@ class DebugIOFlat: public DebugIOInterface
     void Flush();
   };
 
-  /// \brief a single split structure
-  struct SplitListEntry
+	/// \brief a single split structure
+	struct SplitListEntry
   {
     /// next split
     SplitListEntry *next;
@@ -171,8 +171,8 @@ class DebugIOFlat: public DebugIOInterface
     OutputStream *stream;
   };
 
-  /// \brief List of output streams
-  struct StreamListEntry
+	/// \brief List of output streams
+	struct StreamListEntry
   {
     /// next entry
     StreamListEntry *next;
@@ -181,23 +181,23 @@ class DebugIOFlat: public DebugIOInterface
     OutputStream *stream;
   };
 
-  /// first split
-  SplitListEntry *m_firstSplit;
+	/// first split
+	SplitListEntry *m_firstSplit;
 
-  /// end of split list pointer
-  SplitListEntry **m_lastSplitPtr;
+	/// end of split list pointer
+	SplitListEntry **m_lastSplitPtr;
 
-  /// first output stream (first is always the default output stream)
-  StreamListEntry *m_firstStream;
+	/// first output stream (first is always the default output stream)
+	StreamListEntry *m_firstStream;
 
-  /// end of stream list pointer
-  StreamListEntry **m_lastStreamPtr;
+	/// end of stream list pointer
+	StreamListEntry **m_lastStreamPtr;
 
-  /// base filename
-  char m_baseFilename[256];
+	/// base filename
+	char m_baseFilename[256];
 
-  /// copy location
-  char m_copyDir[256];
+	/// copy location
+	char m_copyDir[256];
 
   /**
     \brief Expands a magic filename into a real filename.
@@ -206,48 +206,48 @@ class DebugIOFlat: public DebugIOInterface
     \param splitName split name, null for default stream
     \param buf output buffer, must have a size of at least 256 char's
   */
-  static void ExpandMagic(const char *src, const char *splitName, char *buf);
+	static void ExpandMagic(const char *src, const char *splitName, char *buf);
 
 public:
-  explicit DebugIOFlat();
-  virtual ~DebugIOFlat();
-  virtual int Read(char *buf, int maxchar) { return 0; }
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush();
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
+	explicit DebugIOFlat();
+	virtual ~DebugIOFlat();
+	virtual int Read(char *buf, int maxchar) { return 0; }
+	virtual void Write(StringType type, const char *src, const char *str);
+	virtual void EmergencyFlush();
+	virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv);
-  static DebugIOInterface *Create();
-  virtual void Delete();
+	static DebugIOInterface *Create();
+	virtual void Delete();
 };
 
 /// \internal \brief net debug I/O class
 class DebugIONet: public DebugIOInterface
 {
-  /// our pipe handle
-  HANDLE m_pipe;
+	/// our pipe handle
+	HANDLE m_pipe;
 
 public:
-  explicit DebugIONet();
-  virtual ~DebugIONet();
-  virtual int Read(char *buf, int maxchar);
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush();
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
+	explicit DebugIONet();
+	virtual ~DebugIONet();
+	virtual int Read(char *buf, int maxchar);
+	virtual void Write(StringType type, const char *src, const char *str);
+	virtual void EmergencyFlush();
+	virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv);
-  static DebugIOInterface *Create();
-  virtual void Delete();
+	static DebugIOInterface *Create();
+	virtual void Delete();
 };
 
 /// \internal \brief ods debug I/O class
 class DebugIOOds: public DebugIOInterface
 {
 public:
-  explicit DebugIOOds() {}
-  virtual int Read(char *buf, int maxchar) { return 0; }
-  virtual void Write(StringType type, const char *src, const char *str);
-  virtual void EmergencyFlush() {}
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
+	explicit DebugIOOds() {}
+	virtual int Read(char *buf, int maxchar) { return 0; }
+	virtual void Write(StringType type, const char *src, const char *str);
+	virtual void EmergencyFlush() {}
+	virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                        unsigned argn, const char * const * argv) {}
-  static DebugIOInterface *Create();
-  virtual void Delete();
+	static DebugIOInterface *Create();
+	virtual void Delete();
 };

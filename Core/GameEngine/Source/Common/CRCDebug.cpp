@@ -226,10 +226,10 @@ static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 
 void addCRCDebugLine(const char *fmt, ...)
 {
-    va_list args;
-    va_start(args, fmt);
-    addCRCDebugLineInternal(true, fmt, args);
-    va_end(args);
+	va_list args;
+	va_start(args, fmt);
+	addCRCDebugLineInternal(true, fmt, args);
+	va_end(args);
 }
 
 void addCRCDebugLineNoCounter(const char *fmt, ...)
@@ -238,10 +238,10 @@ void addCRCDebugLineNoCounter(const char *fmt, ...)
 	// This version doesn't increase the lastCRCDebugIndex counter
 	// and can be used for logging lines that don't necessarily match up on all peers.
 	// (Otherwise the numbers would no longer match up and the diff would be very difficult to read)
-    va_list args;
-    va_start(args, fmt);
-    addCRCDebugLineInternal(false, fmt, args);
-    va_end(args);
+	va_list args;
+	va_start(args, fmt);
+	addCRCDebugLineInternal(false, fmt, args);
+	va_end(args);
 }
 
 void addCRCGenLine(const char *fmt, ...)

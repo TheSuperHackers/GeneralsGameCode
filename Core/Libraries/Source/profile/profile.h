@@ -40,10 +40,10 @@
 */
 class Profile
 {
-  friend class ProfileCmdInterface;
+	friend class ProfileCmdInterface;
 
-  // nobody can construct this class
-  Profile();
+	// nobody can construct this class
+	Profile();
 
 public:
 
@@ -52,7 +52,7 @@ public:
 
     \param range name of range to record, == nullptr for "frame"
   */
-  static void StartRange(const char *range=0);
+	static void StartRange(const char *range=0);
 
   /**
     \brief Appends profile data to the last recorded frame
@@ -60,7 +60,7 @@ public:
 
     \param range name of range to record, == nullptr for "frame"
   */
-  static void AppendRange(const char *range=0);
+	static void AppendRange(const char *range=0);
 
   /**
     \brief Stops range recording.
@@ -70,14 +70,14 @@ public:
 
     \param range name of range to record, == nullptr for "frame"
   */
-  static void StopRange(const char *range=0);
+	static void StopRange(const char *range=0);
 
   /**
     \brief Determines if any range recording is enabled or not.
 
     \return true if range profiling is enabled, false if not
   */
-  static bool IsEnabled();
+	static bool IsEnabled();
 
   /**
     \brief Determines the number of known (recorded) range frames.
@@ -88,7 +88,7 @@ public:
 
     \return number of recorded range frames
   */
-  static unsigned GetFrameCount();
+	static unsigned GetFrameCount();
 
   /**
     \brief Determines the range name of a recorded range frame.
@@ -99,14 +99,14 @@ public:
     \param frame number of recorded frame
     \return range name
   */
-  static const char *GetFrameName(unsigned frame);
+	static const char *GetFrameName(unsigned frame);
 
   /**
     \brief Resets all 'total' counter values to 0.
 
     This function does not change any recorded frames.
   */
-  static void ClearTotals();
+	static void ClearTotals();
 
   /**
     \brief Determines number of CPU clock cycles per second.
@@ -116,7 +116,7 @@ public:
 
     \return number of CPU clock cycles per second
   */
-  static _int64 GetClockCyclesPerSecond();
+	static _int64 GetClockCyclesPerSecond();
 
   /**
     \brief Add the given result function interface.
@@ -125,7 +125,7 @@ public:
     \param name factory name
     \param arg description of optional parameters the factory function recognizes
   */
-  static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
+	static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
                                 const char *name, const char *arg);
 
 private:
@@ -137,10 +137,10 @@ private:
     \param pattern pattern, only wildcard valid is '*'
     \return true if string matches pattern, false if not
   */
-  static bool SimpleMatch(const char *str, const char *pattern);
+	static bool SimpleMatch(const char *str, const char *pattern);
 
-  /// known frame names
-  struct FrameName
+	/// known frame names
+	struct FrameName
   {
     /// frame name
     char *name;
@@ -164,8 +164,8 @@ private:
     int lastGlobalIndex;
   };
 
-  /// \internal pattern list entry
-  struct PatternListEntry
+	/// \internal pattern list entry
+	struct PatternListEntry
   {
     /// next entry
     PatternListEntry *next;
@@ -183,23 +183,23 @@ private:
     okay for this because checking patterns is a costly
     operation anyway and is therefore cached.
   */
-  static PatternListEntry *firstPatternEntry;
+	static PatternListEntry *firstPatternEntry;
 
-  /// \internal last pattern list entry for fast additions to list at end
-  static PatternListEntry *lastPatternEntry;
+	/// \internal last pattern list entry for fast additions to list at end
+	static PatternListEntry *lastPatternEntry;
 
-  /// number of recorded frames
-  static unsigned m_rec;
+	/// number of recorded frames
+	static unsigned m_rec;
 
-  /// names of recorded frames
-  static char **m_recNames;
+	/// names of recorded frames
+	static char **m_recNames;
 
-  /// number of known frame names
-  static unsigned m_names;
+	/// number of known frame names
+	static unsigned m_names;
 
-  /// list of known frame names
-  static FrameName *m_frameNames;
+	/// list of known frame names
+	static FrameName *m_frameNames;
 
-  /// CPU clock cycles/second
-  static _int64 m_clockCycles;
+	/// CPU clock cycles/second
+	static _int64 m_clockCycles;
 };

@@ -366,9 +366,9 @@ void UnicodeString::format(UnicodeString format, ...)
 {
 	validate();
 	va_list args;
-  va_start(args, format);
+	va_start(args, format);
 	format_va(format, args);
-  va_end(args);
+	va_end(args);
 	validate();
 }
 
@@ -377,9 +377,9 @@ void UnicodeString::format(const WideChar* format, ...)
 {
 	validate();
 	va_list args;
-  va_start(args, format);
+	va_start(args, format);
 	format_va(format, args);
-  va_end(args);
+	va_end(args);
 	validate();
 }
 

@@ -81,7 +81,7 @@ ParticleInfo::ParticleInfo()
 	m_angularRateZ = 0.0f;
 	m_angularDamping = 0.0f;
 	m_colorScale =0.0f;
-  m_size = 0.0f;
+	m_size = 0.0f;
 	m_sizeRate = 0.0f;
 	m_sizeRateDamping = 0.0f;
 	m_velDamping = 0.0f;
@@ -3174,8 +3174,8 @@ void ParticleSystemManager::destroyAttachedSystems( Object *obj )
 
 	// iterate through all systems
 	for( ParticleSystemListIt it = m_allParticleSystemList.begin();
-			 it != m_allParticleSystemList.end();
-			 ++it )
+	it != m_allParticleSystemList.end();
+	++it )
 	{
 
 		ParticleSystem *system = *it;
@@ -3288,8 +3288,8 @@ Int ParticleSystemManager::removeOldestParticles( UnsignedInt count,
 	while (count-- && getParticleCount())
 	{
 		for( Int i = PARTICLE_PRIORITY_LOWEST;
-				 i < priorityCap;
-				 ++i )
+		i < priorityCap;
+		++i )
 		{
 			if( m_allParticlesHead[ i ] )
 			{

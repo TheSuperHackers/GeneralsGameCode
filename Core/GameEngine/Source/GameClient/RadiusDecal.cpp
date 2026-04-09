@@ -95,15 +95,15 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 // ------------------------------------------------------------------------------------------------
 void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferAsciiString(&m_name);
 	xfer->xferUser(&m_shadowType, sizeof(m_shadowType));
 	xfer->xferReal(&m_minOpacity);
-  xfer->xferReal(&m_maxOpacity);
+	xfer->xferReal(&m_maxOpacity);
 	xfer->xferUnsignedInt(&m_opacityThrobTime);
 	xfer->xferColor(&m_color);
 	xfer->xferBool(&m_onlyVisibleToOwningPlayer);

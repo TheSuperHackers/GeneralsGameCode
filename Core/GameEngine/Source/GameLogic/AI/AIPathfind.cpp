@@ -283,10 +283,10 @@ void Path::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Path::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	PathNode *node = m_path;
 	Int count = 0;
@@ -365,7 +365,7 @@ void Path::xfer( Xfer *xfer )
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
@@ -2744,12 +2744,12 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 #endif
 					}
 					if (cell->getConnectLayer() > LAYER_GROUND) {
- 						m_zoneBlocks[xBlock][yBlock].setInteractsWithBridge(true);
+						m_zoneBlocks[xBlock][yBlock].setInteractsWithBridge(true);
 					}
 
 				}
 			}
- 		}
+		}
 	}
 
 	Int totalZones = m_maxZone;
@@ -4128,7 +4128,7 @@ void Pathfinder::removeWallPiece(Object *wallPiece)
 {
 
 	// sanity
-  if( wallPiece == nullptr )
+		if( wallPiece == nullptr )
 		return;
 
 	// find entry
@@ -4218,26 +4218,26 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 #endif
 
 	const Coord3D *pos = obj->getPosition();
-  Real angle = obj->getOrientation();
+		Real angle = obj->getOrientation();
 
- 	Real halfsizeX = obj->getTemplate()->getFenceWidth()/2;
- 	Real halfsizeY = PATHFIND_CELL_SIZE_F/10.0f;
- 	Real fenceOffset = obj->getTemplate()->getFenceXOffset();
+		Real halfsizeX = obj->getTemplate()->getFenceWidth()/2;
+		Real halfsizeY = PATHFIND_CELL_SIZE_F/10.0f;
+		Real fenceOffset = obj->getTemplate()->getFenceXOffset();
 
- 	Real c = (Real)Cos(angle);
- 	Real s = (Real)Sin(angle);
+		Real c = (Real)Cos(angle);
+		Real s = (Real)Sin(angle);
 
- 	const Real STEP_SIZE = PATHFIND_CELL_SIZE_F * 0.5f;	// in theory, should be PATHFIND_CELL_SIZE_F exactly, but needs to be smaller to avoid aliasing problems
- 	Real ydx = s * STEP_SIZE;
- 	Real ydy = -c * STEP_SIZE;
- 	Real xdx = c * STEP_SIZE;
- 	Real xdy = s * STEP_SIZE;
+		const Real STEP_SIZE = PATHFIND_CELL_SIZE_F * 0.5f;	// in theory, should be PATHFIND_CELL_SIZE_F exactly, but needs to be smaller to avoid aliasing problems
+		Real ydx = s * STEP_SIZE;
+		Real ydy = -c * STEP_SIZE;
+		Real xdx = c * STEP_SIZE;
+		Real xdy = s * STEP_SIZE;
 
- 	Int numStepsX = REAL_TO_INT_CEIL(2.0f * halfsizeX / STEP_SIZE);
- 	Int numStepsY = REAL_TO_INT_CEIL(2.0f * halfsizeY / STEP_SIZE);
+		Int numStepsX = REAL_TO_INT_CEIL(2.0f * halfsizeX / STEP_SIZE);
+		Int numStepsY = REAL_TO_INT_CEIL(2.0f * halfsizeY / STEP_SIZE);
 
- 	Real tl_x = pos->x - fenceOffset*c - halfsizeY*s;
- 	Real tl_y = pos->y + halfsizeY*c - fenceOffset*s;
+		Real tl_x = pos->x - fenceOffset*c - halfsizeY*s;
+		Real tl_y = pos->y + halfsizeY*c - fenceOffset*s;
 
 #if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 	IRegion2D cellBounds;
@@ -4266,49 +4266,49 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 	Bool didAnything = false;
 #endif // !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 
- 	for (Int iy = 0; iy < numStepsY; ++iy, tl_x += ydx, tl_y += ydy)
- 	{
- 		Real x = tl_x;
- 		Real y = tl_y;
- 		for (Int ix = 0; ix < numStepsX; ++ix, x += xdx, y += xdy)
- 		{
- 			Int cx = REAL_TO_INT_FLOOR((x + 0.5f)/PATHFIND_CELL_SIZE_F);
- 			Int cy = REAL_TO_INT_FLOOR((y + 0.5f)/PATHFIND_CELL_SIZE_F);
- 			if (cx >= 0 && cy >= 0 && cx < m_extent.hi.x && cy < m_extent.hi.y)
- 			{
+		for (Int iy = 0; iy < numStepsY; ++iy, tl_x += ydx, tl_y += ydy)
+		{
+			Real x = tl_x;
+			Real y = tl_y;
+			for (Int ix = 0; ix < numStepsX; ++ix, x += xdx, y += xdy)
+			{
+				Int cx = REAL_TO_INT_FLOOR((x + 0.5f)/PATHFIND_CELL_SIZE_F);
+				Int cy = REAL_TO_INT_FLOOR((y + 0.5f)/PATHFIND_CELL_SIZE_F);
+				if (cx >= 0 && cy >= 0 && cx < m_extent.hi.x && cy < m_extent.hi.y)
+				{
 #if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
- 				if (insert) {
- 					ICoord2D pos;
- 					pos.x = cx;
- 					pos.y = cy;
- 					m_map[cx][cy].setTypeAsObstacle( obj, true, pos );
- 				}
- 				else
- 					m_map[cx][cy].removeObstacle(obj);
+					if (insert) {
+						ICoord2D pos;
+						pos.x = cx;
+						pos.y = cy;
+						m_map[cx][cy].setTypeAsObstacle( obj, true, pos );
+					}
+					else
+					m_map[cx][cy].removeObstacle(obj);
 #else
- 				if (insert) {
- 					ICoord2D pos;
- 					pos.x = cx;
- 					pos.y = cy;
+					if (insert) {
+						ICoord2D pos;
+						pos.x = cx;
+						pos.y = cy;
 					if (m_map[cx][cy].setTypeAsObstacle( obj, true, pos )) {
 						didAnything = true;
- 						m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+							m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
 					}
- 				}
+					}
 				else {
 					if (m_map[cx][cy].removeObstacle(obj)) {
 						didAnything = true;
- 						m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+							m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
 					}
 				}
 				if (cellBounds.lo.x>cx) cellBounds.lo.x = cx;
- 				if (cellBounds.lo.y>cy) cellBounds.lo.y = cy;
- 				if (cellBounds.hi.x<cx) cellBounds.hi.x = cx;
- 				if (cellBounds.hi.y<cy) cellBounds.hi.y = cy;
+					if (cellBounds.lo.y>cy) cellBounds.lo.y = cy;
+					if (cellBounds.hi.x<cx) cellBounds.hi.x = cx;
+					if (cellBounds.hi.y<cy) cellBounds.hi.y = cy;
 #endif
- 			}
- 		}
- 	}
+				}
+			}
+		}
 #if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 	if (didAnything) {
 		m_zoneManager.markZonesDirty();
@@ -4351,8 +4351,8 @@ void Pathfinder::classifyObjectFootprint( Object *obj, Bool insert )
 		// lifeless immobile husks of debris, but we still need to remove them.  jba.
 
 #if !RTS_GENERALS
-    if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent, never remove them
-      return;
+			if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent, never remove them
+			return;
 #endif
 
 		removeUnitFromPathfindMap(obj);
@@ -4404,7 +4404,7 @@ void Pathfinder::classifyObjectFootprint( Object *obj, Bool insert )
 	}
 #else
 	if (obj->getHeightAboveTerrain() > PATHFIND_CELL_SIZE_F && ( ! obj->isKindOf( KINDOF_BLAST_CRATER ) ) )
-  {
+		{
 		return; // Don't add bounds that are up in the air.... unless a blast crater wants to do just that
 	}
 #endif
@@ -4476,18 +4476,18 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 							pos.x = cx;
 							pos.y = cy;
 							if (m_map[cx][cy].setTypeAsObstacle( obj, false, pos )) {
- 								m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+									m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
 							}
 						}
 						else {
 							if (m_map[cx][cy].removeObstacle(obj)) {
- 								m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+									m_map[cx][cy].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
 							}
 						}
- 						if (cellBounds.lo.x>cx) cellBounds.lo.x = cx;
- 						if (cellBounds.lo.y>cy) cellBounds.lo.y = cy;
- 						if (cellBounds.hi.x<cx) cellBounds.hi.x = cx;
- 						if (cellBounds.hi.y<cy) cellBounds.hi.y = cy;
+							if (cellBounds.lo.x>cx) cellBounds.lo.x = cx;
+							if (cellBounds.lo.y>cy) cellBounds.lo.y = cy;
+							if (cellBounds.hi.x<cx) cellBounds.hi.x = cx;
+							if (cellBounds.hi.y<cy) cellBounds.hi.y = cy;
 					}
 #endif
 				}
@@ -4547,18 +4547,18 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 								pos.x = i;
 								pos.y = j;
 								if (m_map[i][j].setTypeAsObstacle( obj, false, pos )) {
- 									m_map[i][j].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+										m_map[i][j].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
 								}
 							}
 							else {
 								if (m_map[i][j].removeObstacle(obj)) {
- 									m_map[i][j].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
+										m_map[i][j].setZone(PathfindZoneManager::UNINITIALIZED_ZONE);
 								}
 							}
- 							if (cellBounds.lo.x>i) cellBounds.lo.x = i;
- 							if (cellBounds.lo.y>j) cellBounds.lo.y = j;
- 							if (cellBounds.hi.x<i) cellBounds.hi.x = i;
- 							if (cellBounds.hi.y<j) cellBounds.hi.y = j;
+								if (cellBounds.lo.x>i) cellBounds.lo.x = i;
+								if (cellBounds.lo.y>j) cellBounds.lo.y = j;
+								if (cellBounds.hi.x<i) cellBounds.hi.x = i;
+								if (cellBounds.hi.y<j) cellBounds.hi.y = j;
 						}
 #endif
 					}
@@ -4757,7 +4757,7 @@ void Pathfinder::newMap()
 	if (!dataAllocated) {
 		m_extent = bounds;
 		DEBUG_ASSERTCRASH(m_map == nullptr, ("Can't reallocate pathfind cells."));
- 		m_zoneManager.allocateBlocks(m_extent);
+			m_zoneManager.allocateBlocks(m_extent);
 		// Allocate cells.
 		m_blockOfMapCells = MSGNEW("PathfindMapCells") PathfindCell[(bounds.hi.x+1)*(bounds.hi.y+1)];
 		m_map = MSGNEW("PathfindMapCells") PathfindCellP[bounds.hi.x+1];
@@ -5396,7 +5396,7 @@ Bool Pathfinder::checkForAdjust(Object *obj, const LocomotorSet& locomotorSet, B
 			adjustedPathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &adjustDest);
 			if (!pathExists) {
 				if (clientSafeQuickDoesPathExist( locomotorSet, dest, &adjustDest))	{
- 					adjustedPathExists = true;
+						adjustedPathExists = true;
 				}
 			}
 		}
@@ -6219,7 +6219,7 @@ struct ExamineCellsStruct
 
 			if (!to->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
- 				return 1;
+				return 1;
 			}
 			to->setBlockedByAlly(false);
 			Int costRemaining = 0;
@@ -6395,7 +6395,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			if (!newCell->hasInfo()) {
 				if (!newCell->allocateInfo(newCellCoord)) {
 					// Out of cells for pathing...
- 					return cellCount;
+					return cellCount;
 				}
 				cellCount++;
 			}
@@ -6749,7 +6749,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+			RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		addIcon(nullptr, 0, 0, color);
@@ -6904,7 +6904,7 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 	if (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+			RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
@@ -6970,7 +6970,7 @@ Path *Pathfinder::buildHierarchicalPath( const Coord3D *fromPos, PathfindCell *g
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+			RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
@@ -7083,7 +7083,7 @@ struct GroundCellsStruct
 			newCellCoord.y = to_y;
 			if (!to->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
- 				return 1;
+				return 1;
 			}
 
 			UnsignedInt newCostSoFar = from->getCostSoFar() + 0.5f*COST_ORTHOGONAL;
@@ -7381,7 +7381,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 
 				if (!newCell->allocateInfo(newCellCoord)) {
 					// Out of cells for pathing...
- 					continue;
+						continue;
 				}
 				cellCount++;
 
@@ -7440,7 +7440,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	if (TheGlobalData->m_debugAI)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		addIcon(nullptr, 0, 0, color);
@@ -7519,7 +7519,7 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 #else
 		if( !newCell->hasInfo() )
 		{
- 			return;
+			return;
 		}
 
 		if( newCell->getOpen() || newCell->getClosed() )
@@ -7732,7 +7732,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		ICoord2D toNdx;
 		m_layers[layer].getStartCellIndex(&ndx);
 		m_layers[layer].getEndCellIndex(&toNdx);
- 		PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
+		PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
 		PathfindCell *startCell = getCell(LAYER_GROUND, ndx.x, ndx.y);
 		if (cell && startCell) {
 			// Close parent cell;
@@ -7856,7 +7856,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 						reachedGoal = true;
 						break;
 					}
- 					PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
+					PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
 					if (!cell)
 						continue;
 
@@ -7963,7 +7963,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		show |= (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS);
 		if (show)	{
 			extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 			RGBColor color;
+			RGBColor color;
 			color.blue = 1;
 			color.red = 1;
 			color.green = 0;
@@ -8144,7 +8144,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	if (TheGlobalData->m_debugAI)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
- 		RGBColor color;
+		RGBColor color;
 		color.blue = 0;
 		color.red = color.green = 1;
 		addIcon(nullptr, 0, 0, color);

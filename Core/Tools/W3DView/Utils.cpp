@@ -45,23 +45,23 @@
 CW3DViewDoc *
 GetCurrentDocument (void)
 {
-    // Assume failure
-    CW3DViewDoc *pCDoc = nullptr;
+	// Assume failure
+	CW3DViewDoc *pCDoc = nullptr;
 
-    // Get a pointer to the main window
-    CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
+	// Get a pointer to the main window
+	CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
 
-    ASSERT (pCMainWnd);
-    if (pCMainWnd)
-    {
-        // Use the main window pointer to get a pointer
-        // to the current doc.
-        pCDoc = (CW3DViewDoc *)pCMainWnd->GetActiveDocument ();
-        ASSERT (pCDoc);
-    }
+	ASSERT (pCMainWnd);
+	if (pCMainWnd)
+	{
+		// Use the main window pointer to get a pointer
+		// to the current doc.
+		pCDoc = (CW3DViewDoc *)pCMainWnd->GetActiveDocument ();
+		ASSERT (pCDoc);
+	}
 
-    // Return the doc pointer
-    return pCDoc;
+	// Return the doc pointer
+	return pCDoc;
 }
 
 /////////////////////////////////////////////////////////////
@@ -71,42 +71,42 @@ GetCurrentDocument (void)
 void
 CenterDialogAroundTreeView (HWND hDlg)
 {
-    // Params OK?
-    if (::IsWindow (hDlg))
-    {
-        // Get a pointer to the main window
-        CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
+	// Params OK?
+	if (::IsWindow (hDlg))
+	{
+		// Get a pointer to the main window
+		CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
 
-        ASSERT (pCMainWnd);
-        if (pCMainWnd)
-        {
-            // Get the tree view pane so we can get its rectangle
-            CDataTreeView *pCDataTreeView = (CDataTreeView *)pCMainWnd->GetPane (0, 0);
+		ASSERT (pCMainWnd);
+		if (pCMainWnd)
+		{
+			// Get the tree view pane so we can get its rectangle
+			CDataTreeView *pCDataTreeView = (CDataTreeView *)pCMainWnd->GetPane (0, 0);
 
-            ASSERT (pCDataTreeView);
-            if (pCDataTreeView)
-            {
-                // Get the bounding rectangle of the data tree view
-                RECT rect;
-                pCDataTreeView->GetWindowRect (&rect);
+			ASSERT (pCDataTreeView);
+			if (pCDataTreeView)
+			{
+				// Get the bounding rectangle of the data tree view
+				RECT rect;
+				pCDataTreeView->GetWindowRect (&rect);
 
-                // Get the bounding rectangle of the dialog
-                RECT dialogRect;
-                ::GetWindowRect (hDlg, &dialogRect);
+				// Get the bounding rectangle of the dialog
+				RECT dialogRect;
+				::GetWindowRect (hDlg, &dialogRect);
 
-                // Move the dialog so its centered in the data tree view
-                ::SetWindowPos (hDlg,
+				// Move the dialog so its centered in the data tree view
+				::SetWindowPos (hDlg,
                                 nullptr,
                                 rect.left + ((rect.right-rect.left) >> 1) - ((dialogRect.right-dialogRect.left) >> 1),
                                 rect.top + ((rect.bottom-rect.top) >> 1) - ((dialogRect.bottom-dialogRect.top) >> 1),
                                 0,
                                 0,
                                 SWP_NOSIZE | SWP_NOZORDER);
-            }
-        }
-    }
+			}
+		}
+	}
 
-    return ;
+	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -122,42 +122,42 @@ Paint_Gradient
 	BYTE baseBlue
 )
 {
-    // Get the bounding rectangle so we know how much to paint
-    RECT rect;
-    ::GetClientRect (hWnd, &rect);
+	// Get the bounding rectangle so we know how much to paint
+	RECT rect;
+	::GetClientRect (hWnd, &rect);
 
-    // Determine the width, height, and width per each shade
-    int iWidth = rect.right-rect.left;
-    int iHeight = rect.bottom-rect.top;
-    float widthPerShade = ((float)iWidth) / 256.00F;
+	// Determine the width, height, and width per each shade
+	int iWidth = rect.right-rect.left;
+	int iHeight = rect.bottom-rect.top;
+	float widthPerShade = ((float)iWidth) / 256.00F;
 
-    // Pull a hack to get the CDC for the window
-    HDC hDC = ::GetDC (hWnd);
-    CDC cDC;
-    cDC.Attach(hDC);
+	// Pull a hack to get the CDC for the window
+	HDC hDC = ::GetDC (hWnd);
+	CDC cDC;
+	cDC.Attach(hDC);
 
-    // Loop through each shade and paint its sliver
-    float posX = 0.00F;
-    for (int iShade = 0; iShade < 256; iShade ++)
-    {
-        // Paint this sliver
-        cDC.FillSolidRect ((int)posX,
+	// Loop through each shade and paint its sliver
+	float posX = 0.00F;
+	for (int iShade = 0; iShade < 256; iShade ++)
+	{
+		// Paint this sliver
+		cDC.FillSolidRect ((int)posX,
                            0,
                            (widthPerShade >= 1.00F) ? ((int)widthPerShade)+1 : 1,
                            iHeight,
                            RGB (iShade*baseRed, iShade*baseGreen, iShade*baseBlue));
 
-        // Increment the current position
-        posX += widthPerShade;
-    }
+		// Increment the current position
+		posX += widthPerShade;
+	}
 
-    // Release the DC
-    cDC.Detach ();
-    ::ReleaseDC (hWnd, hDC);
+	// Release the DC
+	cDC.Detach ();
+	::ReleaseDC (hWnd, hDC);
 
-    // Validate the contents of the window so the control won't paint itself
-    ::ValidateRect (hWnd, nullptr);
-    return ;
+	// Validate the contents of the window so the control won't paint itself
+	::ValidateRect (hWnd, nullptr);
+	return ;
 }
 
 

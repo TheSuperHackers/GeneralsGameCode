@@ -914,7 +914,7 @@ int W3DUtilityClass::convert_materials (MaterialConversionEnum conversion, Mater
 
 											// Does this material already have an equivalent standard material?
 											if (((GameMtl*) submaterial)->Substitute_Material() == nullptr) {
- 												((GameMtl*) submaterial)->Set_Substitute_Material (new_standard_material ((GameMtl*) submaterial));
+												((GameMtl*) submaterial)->Set_Substitute_Material (new_standard_material ((GameMtl*) submaterial));
 											}
 											nodemtl->SetSubMtl (materialindex, ((GameMtl*) submaterial)->Substitute_Material());
 
@@ -1611,7 +1611,7 @@ bool SettingsFormClass::Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM 
 					(control_id == IDC_COLLISION_VIS) ||
 					(control_id == IDC_COLLISION_CAMERA) ||
 					(control_id == IDC_COLLISION_VEHICLE))
- 			{
+			{
 				check = !SendDlgItemMessage(hWnd,LOWORD(wParam),BM_GETCHECK,0,0L);
 				SendDlgItemMessage(hWnd,LOWORD(wParam),BM_SETCHECK,check,0L);
 			}

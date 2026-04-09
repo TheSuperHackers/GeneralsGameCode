@@ -29,34 +29,34 @@ BOOL CALLBACK Patch_Window_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
 HWND Create_Patch_Dialog(void)
 {
-  PatchDialog=CreateDialog(Global_instance, MAKEINTRESOURCE(IDD_PATCHPROGRESS),
+	PatchDialog=CreateDialog(Global_instance, MAKEINTRESOURCE(IDD_PATCHPROGRESS),
     nullptr, (DLGPROC)Patch_Window_Proc);
 
-  ShowWindow(PatchDialog, SW_NORMAL);
-  SetForegroundWindow(PatchDialog);
-  return(PatchDialog);
+	ShowWindow(PatchDialog, SW_NORMAL);
+	SetForegroundWindow(PatchDialog);
+	return(PatchDialog);
 }
 
 BOOL CALLBACK Patch_Window_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 
-  static LoadBmp bmpLoader;
+	static LoadBmp bmpLoader;
 
-  switch(iMsg) {
-    case WM_INITDIALOG:
-      // progress bar
-      SendMessage(GetDlgItem(hwnd,IDC_PROGRESS2),PBM_SETRANGE,
+	switch(iMsg) {
+		case WM_INITDIALOG:
+			// progress bar
+			SendMessage(GetDlgItem(hwnd,IDC_PROGRESS2),PBM_SETRANGE,
         0,MAKELPARAM(0,100));
-      SendMessage(GetDlgItem(hwnd,IDC_PROGRESS2),PBM_SETPOS,0,0);
-      SendMessage(GetDlgItem(hwnd,IDC_PROGRESS2),PBM_SETSTEP,10,0);
+			SendMessage(GetDlgItem(hwnd,IDC_PROGRESS2),PBM_SETPOS,0,0);
+			SendMessage(GetDlgItem(hwnd,IDC_PROGRESS2),PBM_SETSTEP,10,0);
 
-      bmpLoader.init("launcher.bmp",GetDlgItem(hwnd,IDC_SPLASH));
-      return(TRUE);   // True means windows handles focus issues
-    break;
-    case WM_PAINT:
-      bmpLoader.drawBmp();
-    break;
-    case WM_COMMAND:
+			bmpLoader.init("launcher.bmp",GetDlgItem(hwnd,IDC_SPLASH));
+			return(TRUE);   // True means windows handles focus issues
+			break;
+		case WM_PAINT:
+			bmpLoader.drawBmp();
+			break;
+		case WM_COMMAND:
       /* May want to add cancel later
       switch(wParam) {
         case IDCANCEL:
@@ -69,12 +69,12 @@ BOOL CALLBACK Patch_Window_Proc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
       }
       default:
       *************/
-    break;
-    case WM_CLOSE:
-      DestroyWindow(hwnd);
-      PostQuitMessage(0);
-      exit(0);
-    break;
-  }
-  return(FALSE);
+			break;
+		case WM_CLOSE:
+			DestroyWindow(hwnd);
+			PostQuitMessage(0);
+			exit(0);
+			break;
+	}
+	return(FALSE);
 }

@@ -580,12 +580,12 @@ WWINLINE float WWMath::Sqrt(float val)
 
 WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
 {
-    int a	= *reinterpret_cast<const int*>(&f);				// take bit pattern of float into a register
-    int sign	= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
-    int mantissa	= (a&((1<<23)-1))|(1<<23);						// extract mantissa and add the hidden bit
-    int exponent	= ((a&0x7fffffff)>>23)-127;					// extract the exponent
-    int r	= ((unsigned int)(mantissa)<<8)>>(31-exponent);	// ((1<<exponent)*mantissa)>>24 -- (we know that mantissa > (1<<24))
-    return ((r ^ (sign)) - sign ) &~ (exponent>>31);			// add original sign. If exponent was negative, make return value 0.
+	int a	= *reinterpret_cast<const int*>(&f);				// take bit pattern of float into a register
+	int sign	= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
+	int mantissa	= (a&((1<<23)-1))|(1<<23);						// extract mantissa and add the hidden bit
+	int exponent	= ((a&0x7fffffff)>>23)-127;					// extract the exponent
+	int r	= ((unsigned int)(mantissa)<<8)>>(31-exponent);	// ((1<<exponent)*mantissa)>>24 -- (we know that mantissa > (1<<24))
+	return ((r ^ (sign)) - sign ) &~ (exponent>>31);			// add original sign. If exponent was negative, make return value 0.
 }
 
 WWINLINE int WWMath::Float_To_Int_Floor (const float& f)

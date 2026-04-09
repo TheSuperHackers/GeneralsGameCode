@@ -555,9 +555,9 @@ IMEManager::~IMEManager()
 void IMEManager::init()
 {
 	//HWND ImeWindow = ImmGetDefaultIMEWnd(ApplicationHWnd);
-  // if(ImeWindow)
+	// if(ImeWindow)
 	// {
-  //    DestroyWindow(ImeWindow);
+	//    DestroyWindow(ImeWindow);
 	//	}
 
 	m_context = ImmCreateContext();
@@ -668,7 +668,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 	printMessageInfo( message, wParam, lParam );
 	#endif
 
-   switch(message){
+	switch(message){
 
 			// --------------------------------------------------------------------
 			case WM_IME_CHAR:
@@ -706,20 +706,20 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 			}
 
 			// --------------------------------------------------------------------
-      case WM_IME_SELECT:
+		case WM_IME_SELECT:
 					DEBUG_LOG(("IMM: WM_IME_SELECT"));
 				return FALSE;
-      case WM_IME_STARTCOMPOSITION:
-        //The WM_IME_STARTCOMPOSITION message is sent immediately before an
-        //IME generates a composition string as a result of a user's keystroke.
-        //
+		case WM_IME_STARTCOMPOSITION:
+			//The WM_IME_STARTCOMPOSITION message is sent immediately before an
+			//IME generates a composition string as a result of a user's keystroke.
+			//
 				m_composing = TRUE;
 				m_compositionCharsDisplayed = 0;
 				updateCompositionString();
-        m_result = 1;
+			m_result = 1;
 				return TRUE;
 			// --------------------------------------------------------------------
-      case WM_IME_ENDCOMPOSITION:
+		case WM_IME_ENDCOMPOSITION:
 			{
 				//First remove the composition characters
 				m_composing = FALSE;
@@ -734,12 +734,12 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 				// the strings real time inside WM_IME_COMPOSITION
 				// instead of waiting for user to enter separator. -MW
 
-        //IMEs send this message to the application when the IMEs' composition
-        //windows have closed. Applications that display their own composition
-        //characters should process this message. Other applications should
-        //send the message to the application IME window or to DefWindowProc,
-        //which will pass the message to  the default IME window.
-        //
+			//IMEs send this message to the application when the IMEs' composition
+			//windows have closed. Applications that display their own composition
+			//characters should process this message. Other applications should
+			//send the message to the application IME window or to DefWindowProc,
+			//which will pass the message to  the default IME window.
+			//
 
 				m_composing = FALSE; // reset this flag before calling GWM_IME_CHAR
 
@@ -907,7 +907,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 						//
 						updateCandidateList( lParam );
 						m_result =  1;
-				 	  return TRUE;
+					return TRUE;
 					}
 					case IMN_GUIDELINE:              //This message is sent when an IME is about to show an error message or other data.
 					{
@@ -954,18 +954,18 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 		}
 
 			// --------------------------------------------------------------------
-      case WM_IME_COMPOSITIONFULL:
+		case WM_IME_COMPOSITIONFULL:
 			{
 				//IMEs send this message to the application when they are unable to
-        //extend the composition window to accommodate any more characters.
-        //Applications should tell IMEs how to display the composition window
-        //using the IMC_SETCOMPOSITIONWINDOW message.
-        //
-        //I'm not sure what to do here.
-        m_result = 1;
+			//extend the composition window to accommodate any more characters.
+			//Applications should tell IMEs how to display the composition window
+			//using the IMC_SETCOMPOSITIONWINDOW message.
+			//
+			//I'm not sure what to do here.
+			m_result = 1;
 				return TRUE;
 			}
-   }
+	}
 
 	return FALSE;
 }
@@ -1170,7 +1170,7 @@ void IMEManager::getResultsString ()
 
 		if ( result >= 0 )
 		{
-		 stringLen = result/2;
+			stringLen = result/2;
 		}
 		else
 		{
@@ -1205,7 +1205,7 @@ void IMEManager::getResultsString ()
 
 void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
 {
- 	int size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), nullptr, 0 );
+	int size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), nullptr, 0 );
 
 	unicode.clear();
 
@@ -1246,7 +1246,7 @@ void IMEManager::openCandidateList( Int candidateFlags )
 	}
 	// first get latest candidate list info
 	updateCandidateList( candidateFlags );
-  resizeCandidateWindow( m_pageSize );
+	resizeCandidateWindow( m_pageSize );
 
 	m_candidateWindow->winHide( FALSE );
 	m_candidateWindow->winBringToTop();
@@ -1395,13 +1395,13 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 
 			if ( ok && clist->dwStyle != IME_CAND_UNKNOWN && clist->dwStyle != IME_CAND_CODE  )
 			{
-		    //Apparently there is an "IME98 bug" (IME bug under Windows 98?) that
-		    //causes you to have to execute the following code.
-		    if(( clist->dwPageStart >  clist->dwSelection) ||
+				//Apparently there is an "IME98 bug" (IME bug under Windows 98?) that
+				//causes you to have to execute the following code.
+				if(( clist->dwPageStart >  clist->dwSelection) ||
 		       (clist->dwSelection >= clist->dwPageStart + clist->dwPageSize))
-		    {
-		       clist->dwPageStart = (clist->dwSelection / clist->dwPageSize) * clist->dwPageSize;
-		    }
+				{
+					clist->dwPageStart = (clist->dwSelection / clist->dwPageSize) * clist->dwPageSize;
+				}
 
 				m_pageSize = clist->dwPageSize;
 				m_candidateCount = clist->dwCount;

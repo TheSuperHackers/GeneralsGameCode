@@ -1275,7 +1275,7 @@ void NAT::setConnectionState(Int nodeNumber, NATConnectionState state) {
 			if (m_slotList[i]->isHuman()) {
 				if (i != m_connectionNodes[m_localNodeNumber].m_slotIndex) {
 					if (i == slotIndex) {
-					 break;
+						break;
 					}
 					++slot;
 				}

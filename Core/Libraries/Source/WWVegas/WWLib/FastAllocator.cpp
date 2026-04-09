@@ -35,7 +35,7 @@ FastAllocatorGeneral::FastAllocatorGeneral() : MemoryLeakLogEnabled(false), Allo
 {
 	int alloc_size=ALLOC_STEP;
 	for (int i=0;i<MAX_ALLOC_SIZE/ALLOC_STEP;++i) {
-	   allocators[i].Init(alloc_size);
+		allocators[i].Init(alloc_size);
 		alloc_size+=ALLOC_STEP;
 	}
 }

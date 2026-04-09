@@ -706,7 +706,7 @@ void Network::update()
 			m_didSelfSlug = FALSE;
 		}
 		//m_conMgr->update(); // Do the priority thing, packetize thing. This also calls the Transport::update function.
-									 // depacketizes the incoming packets and puts them on the Network command list.
+		// depacketizes the incoming packets and puts them on the Network command list.
 	}
 
 	liteupdate();
@@ -828,7 +828,7 @@ Real Network::getIncomingBytesPerSecond()
 	if (m_conMgr)
 		return m_conMgr->getIncomingBytesPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -839,7 +839,7 @@ Real Network::getIncomingPacketsPerSecond()
 	if (m_conMgr)
 		return m_conMgr->getIncomingPacketsPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -850,7 +850,7 @@ Real Network::getOutgoingBytesPerSecond()
 	if (m_conMgr)
 		return m_conMgr->getOutgoingBytesPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -861,7 +861,7 @@ Real Network::getOutgoingPacketsPerSecond()
 	if (m_conMgr)
 		return m_conMgr->getOutgoingPacketsPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -872,7 +872,7 @@ Real Network::getUnknownBytesPerSecond()
 	if (m_conMgr)
 		return m_conMgr->getUnknownBytesPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -883,7 +883,7 @@ Real Network::getUnknownPacketsPerSecond()
 	if (m_conMgr)
 		return m_conMgr->getUnknownPacketsPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**

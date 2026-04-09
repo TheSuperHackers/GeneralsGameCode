@@ -166,8 +166,8 @@ void Matrix3D::Set(const Matrix3 & rot,const Vector3 & pos)
  *=============================================================================================*/
 void Matrix3D::Set(const Quaternion & rot,const Vector3 & pos)
 {
-   Set_Rotation(rot);
-   Set_Translation(pos);
+	Set_Rotation(rot);
+	Set_Translation(pos);
 }
 
 
@@ -830,12 +830,12 @@ void Matrix3D::Re_Orthogonalize(void)
  *=============================================================================================*/
 Matrix3D Lerp(const Matrix3D &A, const Matrix3D &B, float factor)
 {
-   assert(factor >= 0.0f);
-   assert(factor <= 1.0f);
+	assert(factor >= 0.0f);
+	assert(factor <= 1.0f);
 
 	// Lerp position
-   Vector3 pos = Lerp(A.Get_Translation(), B.Get_Translation(), factor);
+	Vector3 pos = Lerp(A.Get_Translation(), B.Get_Translation(), factor);
 	Quaternion rot = Slerp(Build_Quaternion(A), Build_Quaternion(B), factor);
-   return Matrix3D(rot, pos);
+	return Matrix3D(rot, pos);
 }
 

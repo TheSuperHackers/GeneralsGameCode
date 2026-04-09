@@ -49,7 +49,7 @@
 class TGAToDXTClass
 {
 	public:
-		 TGAToDXTClass();
+	TGAToDXTClass();
 		~TGAToDXTClass();
 
 		enum ErrorCode {

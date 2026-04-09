@@ -48,17 +48,17 @@ class TestCmdInterface: public DebugCmdInterface
 {
 public:
 
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
+	virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
                        unsigned argn, const char * const * argv)
-  {
-    if (strcmp(cmd,"box") != 0)
-      return false;
+	{
+		if (strcmp(cmd,"box") != 0)
+		return false;
 
-    MessageBox(nullptr,"Hello world!","Command",MB_OK);
-    return true;
-  }
+		MessageBox(nullptr,"Hello world!","Command",MB_OK);
+		return true;
+	}
 
-  virtual void Delete() { delete this; }
+	virtual void Delete() { delete this; }
 };
 
 DEBUG_CREATE_COMMAND_GROUP(test,TestCmdInterface)
@@ -68,7 +68,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
- 	// TODO: Place code here.
+	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -85,8 +85,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, (LPCTSTR)IDC_TEST2);
 
-  // Send a command to Debug interface
-  Debug::Command("debug.io ; send via EXE, try test.box!");
+	// Send a command to Debug interface
+	Debug::Command("debug.io ; send via EXE, try test.box!");
 
 	// Main message loop:
 	while (GetMessage(&msg, nullptr, 0, 0))
@@ -149,25 +149,25 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
+	HWND hWnd;
 
-   hInst = hInstance; // Store instance handle in our global variable
+	hInst = hInstance; // Store instance handle in our global variable
 
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   // create a timer for calling Debug::Update
-   SetTimer(hWnd,1,100,nullptr);
+	// create a timer for calling Debug::Update
+	SetTimer(hWnd,1,100,nullptr);
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   return TRUE;
+	return TRUE;
 }
 
 //
@@ -197,13 +197,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch (wmId)
 			{
 				case IDM_ABOUT:
-				   DialogBox(hInst, (LPCTSTR)IDD_ABOUTBOX, hWnd, (DLGPROC)About);
-				   break;
+					DialogBox(hInst, (LPCTSTR)IDD_ABOUTBOX, hWnd, (DLGPROC)About);
+					break;
 				case IDM_EXIT:
-				   DestroyWindow(hWnd);
-				   break;
+					DestroyWindow(hWnd);
+					break;
 				default:
-				   return DefWindowProc(hWnd, message, wParam, lParam);
+					return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 			break;
 		case WM_PAINT:
@@ -217,13 +217,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
-    case WM_TIMER:
-      Debug::Update();
-      break;
+		case WM_TIMER:
+			Debug::Update();
+			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
-   }
-   return 0;
+	}
+	return 0;
 }
 
 // Message handler for about box.
@@ -242,5 +242,5 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 	}
-    return FALSE;
+	return FALSE;
 }

@@ -309,13 +309,13 @@ void GameInfo::reset()
 	m_seed = GetTickCount(); //GameClientRandomValue(0, INT_MAX - 1);
 	m_useStats = TRUE;
 	m_surrendered = FALSE;
-  m_oldFactionsOnly = FALSE;
+	m_oldFactionsOnly = FALSE;
 //	m_localIP = 0; // BGC - actually we don't want this to be reset since the m_localIP is
 										// set properly in the constructor of LANGameInfo which uses this as a base class.
 	m_mapCRC = 0;
 	m_mapSize = 0;
-  m_superweaponRestriction = 0;
-  m_startingCash = TheGlobalData->m_defaultStartingCash;
+	m_superweaponRestriction = 0;
+	m_startingCash = TheGlobalData->m_defaultStartingCash;
 
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
@@ -695,12 +695,12 @@ void GameInfo::setSlotPointer( Int index, GameSlot *slot )
 
 void GameInfo::setSuperweaponRestriction( UnsignedShort restriction )
 {
-  m_superweaponRestriction = restriction;
+	m_superweaponRestriction = restriction;
 }
 
 void GameInfo::setStartingCash( const Money & startingCash )
 {
-  m_startingCash = startingCash;
+	m_startingCash = startingCash;
 }
 
 Bool GameInfo::isColorTaken(Int colorIdx, Int slotToIgnore ) const
@@ -1017,10 +1017,10 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	Int seed = 0;
 	Int crc = 100;
 	Bool sawCRC = FALSE;
-  Bool oldFactionsOnly = FALSE;
+	Bool oldFactionsOnly = FALSE;
 	Int useStats = TRUE;
-  Money startingCash = TheGlobalData->m_defaultStartingCash;
-  UnsignedShort restriction = 0; // Always the default
+	Money startingCash = TheGlobalData->m_defaultStartingCash;
+	UnsignedShort restriction = 0; // Always the default
 
 	Bool sawMap = FALSE;
 	Bool sawMapCRC = FALSE;
@@ -1123,23 +1123,23 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			crc = atoi(val.str());
 			sawCRC = TRUE;
 		}
-    else if (key.compare("SR") == 0 )
-    {
-      restriction = (UnsignedShort)atoi(val.str());
-      sawSuperweaponRestriction = TRUE;
-    }
-    else if (key.compare("SC") == 0 )
-    {
-      UnsignedInt startingCashAmount = strtoul( val.str(), nullptr, 10 );
-      startingCash.init();
-      startingCash.deposit( startingCashAmount, FALSE, FALSE );
-      sawStartingCash = TRUE;
-    }
-    else if (key.compare("O") == 0 )
-    {
-      oldFactionsOnly = ( val.compareNoCase( "Y" ) == 0 );
-      sawOldFactions = TRUE;
-    }
+		else if (key.compare("SR") == 0 )
+		{
+			restriction = (UnsignedShort)atoi(val.str());
+			sawSuperweaponRestriction = TRUE;
+		}
+		else if (key.compare("SC") == 0 )
+		{
+			UnsignedInt startingCashAmount = strtoul( val.str(), nullptr, 10 );
+			startingCash.init();
+			startingCash.deposit( startingCashAmount, FALSE, FALSE );
+			sawStartingCash = TRUE;
+		}
+		else if (key.compare("O") == 0 )
+		{
+			oldFactionsOnly = ( val.compareNoCase( "Y" ) == 0 );
+			sawOldFactions = TRUE;
+		}
 		else if (key.getLength() == 1 && *key.str() == slotListID)
 		{
 			sawSlotlist = true;
@@ -1171,7 +1171,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 								break;
 							}
 							UnicodeString name;
-              				name.set(MultiByteToWideCharSingleLine(slotValue.str() +1).c_str());
+						name.set(MultiByteToWideCharSingleLine(slotValue.str() +1).c_str());
 
 							//DEBUG_LOG(("ParseAsciiStringToGameInfo - name is %s", slotValue.str()+1));
 
@@ -1321,7 +1321,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 						break;
 						case 'C':
 						{
-            	DEBUG_LOG(("ParseAsciiStringToGameInfo - AI player"));
+						DEBUG_LOG(("ParseAsciiStringToGameInfo - AI player"));
 							char *slotPos = nullptr;
 							//Parse out the Name
 							AsciiString slotValue(strtok_r((char *)rawSlot.str(),",",&slotPos));
@@ -1590,7 +1590,7 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 		Int origStartPos=m_slot[slot]->getOriginalStartPos();
 		xfer->xferInt(&origStartPos);
 
- 		Int origPlayerTemplate=m_slot[slot]->getOriginalPlayerTemplate();
+		Int origPlayerTemplate=m_slot[slot]->getOriginalPlayerTemplate();
 		xfer->xferInt(&origPlayerTemplate);
 
 		if( xfer->getXferMode() == XFER_LOAD ) {
@@ -1617,24 +1617,24 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 	xfer->xferInt(&m_mapMask);
 	xfer->xferInt(&m_seed);
 
-  if ( version >= 3 )
-  {
-    xfer->xferUnsignedShort( &m_superweaponRestriction );
+	if ( version >= 3 )
+	{
+		xfer->xferUnsignedShort( &m_superweaponRestriction );
 
-    if ( version == 3 )
-    {
-      // Version 3 had a bool which is now gone
-      Bool obsoleteBool;
-      xfer->xferBool( &obsoleteBool );
-    }
+		if ( version == 3 )
+		{
+			// Version 3 had a bool which is now gone
+			Bool obsoleteBool;
+			xfer->xferBool( &obsoleteBool );
+		}
 
-    xfer->xferSnapshot( &m_startingCash );
-  }
-  else if ( xfer->getXferMode() == XFER_LOAD )
-  {
-    m_superweaponRestriction = 0;
-    m_startingCash = TheGlobalData->m_defaultStartingCash;
-  }
+		xfer->xferSnapshot( &m_startingCash );
+	}
+	else if ( xfer->getXferMode() == XFER_LOAD )
+	{
+		m_superweaponRestriction = 0;
+		m_startingCash = TheGlobalData->m_defaultStartingCash;
+	}
 
 }
 

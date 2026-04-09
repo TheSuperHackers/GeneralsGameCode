@@ -809,7 +809,7 @@ void ShatterSystem::Init()
 	StringClass htree_name;
 	htree_name.Format(SHATTER_PATTERN_FORMAT,0);
 
- 	if (WW3DAssetManager::Get_Instance()==nullptr)
+	if (WW3DAssetManager::Get_Instance()==nullptr)
 		return;  // WorldBuilderTool doesn't initialize the asset manager.  jba.
 #if 1
 	HTreeClass *htree = nullptr;

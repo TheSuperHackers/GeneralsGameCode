@@ -274,7 +274,7 @@ void CreditsManager::update()
 		}
 		break;
 	case CREDIT_STYLE_NORMAL:
-	 {
+		{
 			cLine->m_color = m_normalColor;
 
 			if(TheGlobalLanguageData && !cLine->m_text.isEmpty())

@@ -249,8 +249,8 @@ public:
 	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
 	virtual void 					Set_Transform(const Matrix3D &m) override;
 	virtual void 					Set_Position(const Vector3 &v) override;
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 
 	virtual void					Prepare_LOD(CameraClass &camera) override;
 	virtual void					Increment_LOD() override;

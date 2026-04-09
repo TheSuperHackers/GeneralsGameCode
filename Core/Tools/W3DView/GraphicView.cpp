@@ -90,10 +90,10 @@ CGraphicView::CGraphicView (void)
       m_allowedCameraRotation (FreeRotation),
 		m_ObjectCenter (0.0f, 0.0f, 0.0f)
 {
-    // Get the windowed mode from the registry
-    CString string_windowed = theApp.GetProfileString ("Config", "Windowed", "1");
-	 m_iWindowed = ::atoi ((LPCTSTR)string_windowed);
-    return ;
+	// Get the windowed mode from the registry
+	CString string_windowed = theApp.GetProfileString ("Config", "Windowed", "1");
+	m_iWindowed = ::atoi ((LPCTSTR)string_windowed);
+	return ;
 }
 
 
@@ -133,14 +133,14 @@ void
 CGraphicView::OnDraw (CDC* pDC)
 {
 	// Get the document to display
-    CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
+	CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 
-    // Are we in a valid state?
-    if (!pDC->IsPrinting ())
-    {
-    }
+	// Are we in a valid state?
+	if (!pDC->IsPrinting ())
+	{
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -167,10 +167,10 @@ int
 CGraphicView::OnCreate (LPCREATESTRUCT lpCreateStruct)
 {
 	// Allow the base class to process this message
-    if (CView::OnCreate(lpCreateStruct) == -1)
+	if (CView::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-    m_dwLastFrameUpdate = timeGetTime ();//::GetTickCount ();
+	m_dwLastFrameUpdate = timeGetTime ();//::GetTickCount ();
 	return 0;
 }
 
@@ -212,49 +212,49 @@ CGraphicView::InitializeGraphicView (void)
 													g_iBitsPerPixel,
 													m_iWindowed) == WW3D_ERROR_OK);
 
-    ASSERT (bReturn);
-    if (bReturn && (m_pCamera == nullptr))
-    {
-        // Instantiate a new camera class
-	    m_pCamera = new CameraClass ();
-        bReturn = (m_pCamera != nullptr);
+	ASSERT (bReturn);
+	if (bReturn && (m_pCamera == nullptr))
+	{
+		// Instantiate a new camera class
+		m_pCamera = new CameraClass ();
+		bReturn = (m_pCamera != nullptr);
 
-        // Were we successful in creating a camera?
-        ASSERT (m_pCamera);
-        if (m_pCamera)
-        {
-            // Create a transformation matrix
-            Matrix3D transform (1);
-	        transform.Translate (Vector3 (0.0F, 0.0F, 35.0F));
+		// Were we successful in creating a camera?
+		ASSERT (m_pCamera);
+		if (m_pCamera)
+		{
+			// Create a transformation matrix
+			Matrix3D transform (1);
+			transform.Translate (Vector3 (0.0F, 0.0F, 35.0F));
 
-	        // Point the camera in this direction (I think)
-            m_pCamera->Set_Transform (transform);
-        }
+			// Point the camera in this direction (I think)
+			m_pCamera->Set_Transform (transform);
+		}
 
-		  //
-		  //	Attach the 'listener' to the camera
-		  //
-		  WWAudioClass::Get_Instance ()->Get_Sound_Scene ()->Attach_Listener_To_Obj (m_pCamera);
-    }
+		//
+		//	Attach the 'listener' to the camera
+		//
+		WWAudioClass::Get_Instance ()->Get_Sound_Scene ()->Attach_Listener_To_Obj (m_pCamera);
+	}
 
 	Reset_FOV ();
 
-	 if (m_pLightMesh == nullptr)
-	 {
+	if (m_pLightMesh == nullptr)
+	{
 		ResourceFileClass light_mesh_file (nullptr, "Light.w3d");
 		WW3DAssetManager::Get_Instance()->Load_3D_Assets (light_mesh_file);
 
 		m_pLightMesh = WW3DAssetManager::Get_Instance()->Create_Render_Obj ("LIGHT");
 		ASSERT (m_pLightMesh != nullptr);
 		m_bLightMeshInScene = false;
-	 }
+	}
 
 
-    // Remember whether or not we are initialized
-    m_bInitialized = bReturn;
+	// Remember whether or not we are initialized
+	m_bInitialized = bReturn;
 
-    if (m_bInitialized && (m_TimerID == 0))
-    {
+	if (m_bInitialized && (m_TimerID == 0))
+	{
 		// Kick off a timer that we can use to update
 		// the display (kinda like a game loop iterator)
 		TIMECAPS caps = { 0 };
@@ -265,7 +265,7 @@ CGraphicView::InitializeGraphicView (void)
 													 fnTimerCallback,
 													 (DWORD)m_hWnd,
 													 TIME_PERIODIC);
-    }
+	}
 
 	// Return the TRUE/FALSE result code
 	return bReturn;
@@ -286,7 +286,7 @@ CGraphicView::OnSize
 )
 {
 	// Allow the base class to process this message
-    CView::OnSize (nType, cx, cy);
+	CView::OnSize (nType, cx, cy);
 
 	if (m_bInitialized) {
 
@@ -360,7 +360,7 @@ void
 CGraphicView::OnInitialUpdate (void)
 {
 	// Allow the base class to process this message
-    CView::OnInitialUpdate ();
+	CView::OnInitialUpdate ();
 
 	CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 	if (doc)
@@ -440,11 +440,11 @@ CGraphicView::RepaintView
 		return;
 	_already_painting = true;
 
-	 //
-	 // Are we in a valid state?
-	 //
-	 CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
-	 if (doc->Is_Initialized () && doc->GetScene () && m_UpdateCounter == 0) {
+	//
+	// Are we in a valid state?
+	//
+	CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
+	if (doc->Is_Initialized () && doc->GetScene () && m_UpdateCounter == 0) {
 
 		// Only update the frame if the animation is
 		// supposed to be playing
@@ -585,9 +585,9 @@ void
 CGraphicView::UpdateDisplay (void)
 {
 	// Get the document to display
-    CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
+	CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 
-    // Are we in a valid state?
+	// Are we in a valid state?
     /*if (m_bInitialized && doc->GetScene ())
     {
         RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
@@ -607,7 +607,7 @@ CGraphicView::UpdateDisplay (void)
 		WW3D::End_Render ();
     } */
 
-    return ;
+	return ;
 }
 
 
@@ -755,29 +755,29 @@ CGraphicView::OnLButtonUp
     CPoint point
 )
 {
-    if (!m_bRMouseDown)
-    {
-        // Release the mouse capture
-        ReleaseCapture ();
-    }
+	if (!m_bRMouseDown)
+	{
+		// Release the mouse capture
+		ReleaseCapture ();
+	}
 
-    // Mouse button is up
-    m_bMouseDown = FALSE;
+	// Mouse button is up
+	m_bMouseDown = FALSE;
 
-    if (m_bRMouseDown == TRUE)
-    {
-        ::SetCursor (::LoadCursor (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDC_CURSOR_ZOOM)));
-		  ((CW3DViewDoc *)GetDocument())->Set_Cursor ("zoom.tga");
-    }
-    else
-    {
-        ::SetCursor (::LoadCursor (nullptr, MAKEINTRESOURCE (IDC_ARROW)));
-		  ((CW3DViewDoc *)GetDocument())->Set_Cursor ("cursor.tga");
-    }
+	if (m_bRMouseDown == TRUE)
+	{
+		::SetCursor (::LoadCursor (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDC_CURSOR_ZOOM)));
+		((CW3DViewDoc *)GetDocument())->Set_Cursor ("zoom.tga");
+	}
+	else
+	{
+		::SetCursor (::LoadCursor (nullptr, MAKEINTRESOURCE (IDC_ARROW)));
+		((CW3DViewDoc *)GetDocument())->Set_Cursor ("cursor.tga");
+	}
 
 	// Allow the base class to process this message
-    CView::OnLButtonUp (nFlags, point);
-    return ;
+	CView::OnLButtonUp (nFlags, point);
+	return ;
 }
 
 float minZoomAdjust = 0.0F;
@@ -1052,12 +1052,12 @@ CGraphicView::OnMouseMove
 
 			if ((adjustment < minZoomAdjust) && (adjustment >= 0.00F))
 			{
-				 adjustment = minZoomAdjust;
+				adjustment = minZoomAdjust;
 			}
 
 			if ((adjustment > -minZoomAdjust) && (adjustment <= 0.00F))
 			{
-				 adjustment = -minZoomAdjust;
+				adjustment = -minZoomAdjust;
 			}
 
 			if ((m_CameraDistance + adjustment) > 0.00F)
@@ -1383,27 +1383,27 @@ CGraphicView::OnRButtonDown
     CPoint point
 )
 {
-    // Capture all mouse messages
-    SetCapture ();
+	// Capture all mouse messages
+	SetCapture ();
 
-    // Mouse button is down
-    m_bRMouseDown = TRUE;
-    m_lastPoint = point;
+	// Mouse button is down
+	m_bRMouseDown = TRUE;
+	m_lastPoint = point;
 
-    if (m_bMouseDown)
-    {
-        ::SetCursor (::LoadCursor (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDC_CURSOR_GRAB)));
-		  ((CW3DViewDoc *)GetDocument())->Set_Cursor ("grab.tga");
-    }
-    else
-    {
-        ::SetCursor (::LoadCursor (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDC_CURSOR_ZOOM)));
-		  ((CW3DViewDoc *)GetDocument())->Set_Cursor ("zoom.tga");
-    }
+	if (m_bMouseDown)
+	{
+		::SetCursor (::LoadCursor (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDC_CURSOR_GRAB)));
+		((CW3DViewDoc *)GetDocument())->Set_Cursor ("grab.tga");
+	}
+	else
+	{
+		::SetCursor (::LoadCursor (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDC_CURSOR_ZOOM)));
+		((CW3DViewDoc *)GetDocument())->Set_Cursor ("zoom.tga");
+	}
 
 	// Allow the base class to process this message
-    CView::OnRButtonDown(nFlags, point);
-    return ;
+	CView::OnRButtonDown(nFlags, point);
+	return ;
 }
 
 
@@ -1415,50 +1415,50 @@ CGraphicView::OnRButtonDown
 void
 CGraphicView::SetAnimationState (ANIMATION_STATE animationState)
 {
-    // Has the state changed?
-    if (m_animationState != animationState)
-    {
-        switch (animationState)
-        {
-            // We want to stop the animation
-            case AnimStopped:
-            {
-                // Get the document so we can get our current object
-                CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
-                ASSERT_VALID (doc);
+	// Has the state changed?
+	if (m_animationState != animationState)
+	{
+		switch (animationState)
+		{
+			// We want to stop the animation
+			case AnimStopped:
+			{
+				// Get the document so we can get our current object
+				CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
+				ASSERT_VALID (doc);
 
-                // Get the currently displayed object
-                RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
-                if (pCRenderObj)
-                {
-                    // Reset the animation to frame 0
+				// Get the currently displayed object
+				RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
+				if (pCRenderObj)
+				{
+					// Reset the animation to frame 0
 
-                    if (doc->GetCurrentAnimation()) {
-                    	pCRenderObj->Set_Animation (doc->GetCurrentAnimation (), 0);
-                    }
-                }
+					if (doc->GetCurrentAnimation()) {
+						pCRenderObj->Set_Animation (doc->GetCurrentAnimation (), 0);
+					}
+				}
 
-                // Reset the animation to frame 0
-                doc->ResetAnimation ();
-            }
-            break;
+				// Reset the animation to frame 0
+				doc->ResetAnimation ();
+			}
+				break;
 
-            case AnimPlaying:
-            {
+			case AnimPlaying:
+			{
 					CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument ();
 					doc->Play_Animation_Sound ();
 
-                // Reset the frame timer
-					 m_dwLastFrameUpdate = timeGetTime ();
-            }
-            break;
-        }
+				// Reset the frame timer
+				m_dwLastFrameUpdate = timeGetTime ();
+			}
+				break;
+		}
 
-        // Save the new state
-        m_animationState = animationState;
-    }
+		// Save the new state
+		m_animationState = animationState;
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1470,84 +1470,84 @@ CGraphicView::SetAnimationState (ANIMATION_STATE animationState)
 void
 CGraphicView::SetCameraPos (CAMERA_POS cameraPos)
 {
-    // Get the document so we can get our current object
-    CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
-    ASSERT_VALID (doc);
+	// Get the document so we can get our current object
+	CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
+	ASSERT_VALID (doc);
 
-    // Get the currently displayed object
-    RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
-    if (pCRenderObj)
-    {
-        SphereClass sphere = m_ViewedSphere;
+	// Get the currently displayed object
+	RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
+	if (pCRenderObj)
+	{
+		SphereClass sphere = m_ViewedSphere;
 
-        m_CameraDistance = sphere.Radius * 3.00F;
-        m_CameraDistance = (m_CameraDistance < 1.0F) ? 1.0F : m_CameraDistance;
-        m_CameraDistance = (m_CameraDistance > 400.0F) ? 400.0F : m_CameraDistance;
+		m_CameraDistance = sphere.Radius * 3.00F;
+		m_CameraDistance = (m_CameraDistance < 1.0F) ? 1.0F : m_CameraDistance;
+		m_CameraDistance = (m_CameraDistance > 400.0F) ? 400.0F : m_CameraDistance;
 
-        Matrix3D transform (1);
+		Matrix3D transform (1);
 
-        switch (cameraPos)
-        {
-            case CameraFront:
-            {
-                transform.Look_At (sphere.Center + Vector3 (m_CameraDistance, 0.00F, 0.00F), sphere.Center, 0);
-            }
-            break;
+		switch (cameraPos)
+		{
+			case CameraFront:
+			{
+				transform.Look_At (sphere.Center + Vector3 (m_CameraDistance, 0.00F, 0.00F), sphere.Center, 0);
+			}
+				break;
 
-            case CameraBack:
-            {
-                transform.Look_At (sphere.Center + Vector3 (-m_CameraDistance, 0.00F, 0.00F), sphere.Center, 0);
-            }
-            break;
+			case CameraBack:
+			{
+				transform.Look_At (sphere.Center + Vector3 (-m_CameraDistance, 0.00F, 0.00F), sphere.Center, 0);
+			}
+				break;
 
-            case CameraLeft:
-            {
-                transform.Look_At (sphere.Center + Vector3 (0.00F, -m_CameraDistance, 0.00F), sphere.Center, 0);
-            }
-            break;
+			case CameraLeft:
+			{
+				transform.Look_At (sphere.Center + Vector3 (0.00F, -m_CameraDistance, 0.00F), sphere.Center, 0);
+			}
+				break;
 
-            case CameraRight:
-            {
-                transform.Look_At (sphere.Center + Vector3 (0.00F, m_CameraDistance, 0.00F), sphere.Center, 0);
-            }
-            break;
+			case CameraRight:
+			{
+				transform.Look_At (sphere.Center + Vector3 (0.00F, m_CameraDistance, 0.00F), sphere.Center, 0);
+			}
+				break;
 
-            case CameraTop:
-            {
-                transform.Look_At (sphere.Center + Vector3 (0.00F, 0.00F, m_CameraDistance), sphere.Center, 3.1415926535F);
-            }
-            break;
+			case CameraTop:
+			{
+				transform.Look_At (sphere.Center + Vector3 (0.00F, 0.00F, m_CameraDistance), sphere.Center, 3.1415926535F);
+			}
+				break;
 
-            case CameraBottom:
-            {
-                transform.Look_At (sphere.Center + Vector3 (0.00F, 0.00F, -m_CameraDistance), sphere.Center, 3.1415926535F);
-            }
-            break;
-        }
+			case CameraBottom:
+			{
+				transform.Look_At (sphere.Center + Vector3 (0.00F, 0.00F, -m_CameraDistance), sphere.Center, 3.1415926535F);
+			}
+				break;
+		}
 
-	    // Move the camera back to get a good view of the object
-        m_pCamera->Set_Transform (transform);
+		// Move the camera back to get a good view of the object
+		m_pCamera->Set_Transform (transform);
 
-        // Get the main window of our app
-        CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
-        if (pCMainWnd != nullptr)
-        {
-            CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
+		// Get the main window of our app
+		CMainFrame *pCMainWnd = (CMainFrame *)::AfxGetMainWnd ();
+		if (pCMainWnd != nullptr)
+		{
+			CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
 
-            doc->GetBackObjectCamera ()->Set_Transform (transform);
-            doc->GetBackObjectCamera ()->Set_Position (Vector3 (0.00F, 0.00F, 0.00F));
+			doc->GetBackObjectCamera ()->Set_Transform (transform);
+			doc->GetBackObjectCamera ()->Set_Position (Vector3 (0.00F, 0.00F, 0.00F));
 
-            RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
-            if (pCRenderObj)
-            {
-                pCMainWnd->UpdatePolygonCount (pCRenderObj->Get_Num_Polys ());
-            }
+			RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
+			if (pCRenderObj)
+			{
+				pCMainWnd->UpdatePolygonCount (pCRenderObj->Get_Num_Polys ());
+			}
 
-            pCMainWnd->UpdateCameraDistance(m_CameraDistance);
-        }
-    }
+			pCMainWnd->UpdateCameraDistance(m_CameraDistance);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1559,14 +1559,14 @@ CGraphicView::SetCameraPos (CAMERA_POS cameraPos)
 void
 CGraphicView::RotateObject (OBJECT_ROTATION rotation)
 {
-    // Is this rotation different?
-    if (m_objectRotation != rotation)
-    {
-        // Save the rotation state
-        m_objectRotation = rotation;
-    }
+	// Is this rotation different?
+	if (m_objectRotation != rotation)
+	{
+		// Save the rotation state
+		m_objectRotation = rotation;
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1578,9 +1578,9 @@ CGraphicView::RotateObject (OBJECT_ROTATION rotation)
 void
 CGraphicView::SetAllowedCameraRotation (CAMERA_ROTATION cameraRotation)
 {
-    // Store this for later reference
-    m_allowedCameraRotation = cameraRotation;
-    return ;
+	// Store this for later reference
+	m_allowedCameraRotation = cameraRotation;
+	return ;
 }
 
 
@@ -1592,22 +1592,22 @@ CGraphicView::SetAllowedCameraRotation (CAMERA_ROTATION cameraRotation)
 void
 CGraphicView::ResetObject (void)
 {
-    // Get the current document
-    CW3DViewDoc *doc = ::GetCurrentDocument ();
+	// Get the current document
+	CW3DViewDoc *doc = ::GetCurrentDocument ();
 
-    ASSERT (doc);
-    if (doc)
-    {
-        // Get the currently displayed object
-        RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
-        if (pCRenderObj)
-        {
-            // Reset the rotation of the object
-            pCRenderObj->Set_Transform (Matrix3D(true));
-        }
-    }
+	ASSERT (doc);
+	if (doc)
+	{
+		// Get the currently displayed object
+		RenderObjClass *pCRenderObj = doc->GetDisplayedObject ();
+		if (pCRenderObj)
+		{
+			// Reset the rotation of the object
+			pCRenderObj->Set_Transform (Matrix3D(true));
+		}
+	}
 
-    return ;
+	return ;
 }
 
 

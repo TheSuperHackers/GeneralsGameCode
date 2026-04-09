@@ -261,11 +261,11 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 	strlcat(Name, aheader.Name, ARRAY_SIZE(Name));
 
 	// TSS chasing crash bug 05/26/99
-   WWASSERT(HierarchyName != nullptr);
-   WWASSERT(aheader.HierarchyName != nullptr);
-   WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
-	 static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(aheader.HierarchyName), "Incorrect array size");
-	 strcpy(HierarchyName, aheader.HierarchyName);
+	WWASSERT(HierarchyName != nullptr);
+	WWASSERT(aheader.HierarchyName != nullptr);
+	WWASSERT(sizeof(HierarchyName) >= W3D_NAME_LEN);
+	static_assert(ARRAY_SIZE(HierarchyName) >= ARRAY_SIZE(aheader.HierarchyName), "Incorrect array size");
+	strcpy(HierarchyName, aheader.HierarchyName);
 
 	HTreeClass * base_pose = WW3DAssetManager::Get_Instance()->Get_HTree(HierarchyName);
 	if (base_pose == nullptr) {

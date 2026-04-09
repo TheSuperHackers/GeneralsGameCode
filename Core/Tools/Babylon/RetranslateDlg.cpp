@@ -80,7 +80,7 @@ BOOL RetranslateDlg::OnInitDialog()
 	text->SetWindowText ( oldtext->GetSB());
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void RetranslateDlg::OnCancelMode()
@@ -104,7 +104,7 @@ void RetranslateDlg::OnSkip()
 {
 	// TODO: Add your control notification handler code here
 
-		 EndDialog ( IDSKIP );
+	EndDialog ( IDSKIP );
 }
 
 void RetranslateDlg::OnNoRetranslate()

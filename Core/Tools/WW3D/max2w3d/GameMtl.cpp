@@ -1002,8 +1002,8 @@ RefResult GameMtl::NotifyRefChanged
 		{
 			Ivalid.SetEmpty();						// if any refs changed, clear the validity
 			if (MaterialDialog && (MaterialDialog->TheMtl == this)) {
- 				MaterialDialog->Invalidate();			// if the dialog is up, refresh it
-		 	}
+				MaterialDialog->Invalidate();			// if the dialog is up, refresh it
+			}
 			break;
 		}
 		case REFMSG_GET_PARAM_DIM:
@@ -2451,7 +2451,7 @@ int GameMtl::Compute_PS2_Shader_From_PC_Shader(int pass)
 		}
 	}
 
- 	// Set the PS2 W3D shader to opaque.
+	// Set the PS2 W3D shader to opaque.
 	Set_PS2_Shader_Param_A(pass, PSS_SRC);
 	Set_PS2_Shader_Param_B(pass, PSS_ZERO);
 	Set_PS2_Shader_Param_C(pass, PSS_ONE);

@@ -312,25 +312,25 @@ inline void SphereClass::Add_Sphere(const SphereClass & s)
 
 	float rnew = (dist + Radius + s.Radius) / 2.0f;
 
-   // If rnew is smaller than either of the two sphere radii (it can't be
-   // smaller than both of them), this means that the smaller sphere is
-   // completely inside the larger, and the result of adding the two is
-   // simply the larger sphere. If rnew isn't less than either of them, it is
-   // the new radius - calculate the new center.
-   if (rnew < Radius) {
-      // The existing sphere is the result - do nothing.
-   } else {
-      if (rnew < s.Radius) {
-         // The new sphere is the result:
-         Init(s.Center, s.Radius);
-      } else {
-         // Neither sphere is completely inside the other, so rnew is the new
-         // radius - calculate the new center
-	      float lerp = (rnew - Radius) / dist;
-	      Vector3 center = (s.Center - Center) * lerp + Center;
-	      Init(center, rnew);
-      }
-   }
+	// If rnew is smaller than either of the two sphere radii (it can't be
+	// smaller than both of them), this means that the smaller sphere is
+	// completely inside the larger, and the result of adding the two is
+	// simply the larger sphere. If rnew isn't less than either of them, it is
+	// the new radius - calculate the new center.
+	if (rnew < Radius) {
+		// The existing sphere is the result - do nothing.
+	} else {
+		if (rnew < s.Radius) {
+			// The new sphere is the result:
+			Init(s.Center, s.Radius);
+		} else {
+			// Neither sphere is completely inside the other, so rnew is the new
+			// radius - calculate the new center
+			float lerp = (rnew - Radius) / dist;
+			Vector3 center = (s.Center - Center) * lerp + Center;
+			Init(center, rnew);
+		}
+	}
 }
 
 /***********************************************************************************************

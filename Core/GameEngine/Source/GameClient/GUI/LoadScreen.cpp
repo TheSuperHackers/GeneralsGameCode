@@ -653,8 +653,8 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 
 void SinglePlayerLoadScreen::reset()
 {
- setLoadScreen(nullptr);
- m_progressBar = nullptr;
+	setLoadScreen(nullptr);
+	m_progressBar = nullptr;
 }
 
 void SinglePlayerLoadScreen::update( Int percent )
@@ -1148,8 +1148,8 @@ void ChallengeLoadScreen::init( GameInfo *game )
 
 void ChallengeLoadScreen::reset()
 {
- setLoadScreen(nullptr);
- m_progressBar = nullptr;
+	setLoadScreen(nullptr);
+	m_progressBar = nullptr;
 }
 
 void ChallengeLoadScreen::update( Int percent )
@@ -1212,8 +1212,8 @@ void ShellGameLoadScreen::init( GameInfo *game )
 
 void ShellGameLoadScreen::reset()
 {
- setLoadScreen(nullptr);
- m_progressBar = nullptr;
+	setLoadScreen(nullptr);
+	m_progressBar = nullptr;
 }
 
 void ShellGameLoadScreen::update( Int percent )

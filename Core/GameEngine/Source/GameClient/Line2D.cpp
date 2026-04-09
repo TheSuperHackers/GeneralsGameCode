@@ -206,7 +206,7 @@ Bool ClipLine2D( ICoord2D *p1, ICoord2D *p2, ICoord2D *c1, ICoord2D *c2,
 		}
 	}
 
-  c1->x = x1;
+	c1->x = x1;
 	c1->y = y1;
 	c2->x = x2;
 	c2->y = y2;

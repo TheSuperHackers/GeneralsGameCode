@@ -114,7 +114,7 @@ static void printReturnCode( char *label, HRESULT hr )
 //-------------------------------------------------------------------------------------------------
 void DirectInputKeyboard::openKeyboard()
 {
-  HRESULT hr;
+	HRESULT hr;
 
 	// create our interface to direct input
 	hr = DirectInput8Create( ApplicationHInstance,
@@ -176,7 +176,7 @@ void DirectInputKeyboard::openKeyboard()
 
 	}
 
-  // set the keyboard buffer size
+	// set the keyboard buffer size
 	DIPROPDWORD prop;
 	prop.diph.dwSize = sizeof( DIPROPDWORD );
 	prop.diph.dwHeaderSize = sizeof( DIPROPHEADER );

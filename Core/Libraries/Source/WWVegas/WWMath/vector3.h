@@ -138,7 +138,7 @@ public:
 	// Equality operators
 	friend bool operator == (const Vector3 &a,const Vector3 &b);
 	friend bool operator != (const Vector3 &a,const Vector3 &b);
-   WWINLINE friend bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon);
+	WWINLINE friend bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon);
 
 	// dot product / inner product
 	WWINLINE friend float operator * (const Vector3 &a,const Vector3 &b);
@@ -343,7 +343,7 @@ WWINLINE bool operator != (const Vector3 &a,const Vector3 &b)
  *========================================================================*/
 WWINLINE bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon)
 {
-   return(	(WWMath::Fabs(a.X - b.X) < epsilon) &&
+	return(	(WWMath::Fabs(a.X - b.X) < epsilon) &&
 				(WWMath::Fabs(a.Y - b.Y) < epsilon) &&
 				(WWMath::Fabs(a.Z - b.Z) < epsilon)	);
 }
@@ -390,17 +390,17 @@ WWINLINE void Vector3::Normalized_Cross_Product(const Vector3 &a,const Vector3 &
 
 WWINLINE float Vector3::Cross_Product_X(const Vector3 &a,const Vector3 &b)
 {
-   return a.Y * b.Z - a.Z * b.Y;
+	return a.Y * b.Z - a.Z * b.Y;
 }
 
 WWINLINE float Vector3::Cross_Product_Y(const Vector3 &a,const Vector3 &b)
 {
-   return a.Z * b.X - a.X * b.Z;
+	return a.Z * b.X - a.X * b.Z;
 }
 
 WWINLINE float Vector3::Cross_Product_Z(const Vector3 &a,const Vector3 &b)
 {
-   return a.X * b.Y - a.Y * b.X;
+	return a.X * b.Y - a.Y * b.X;
 }
 
 /**************************************************************************
@@ -536,8 +536,8 @@ WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Ve
 {
 	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*alpha);
-   set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
-   set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
+	set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
+	set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
 }
 
 
@@ -924,7 +924,7 @@ WWINLINE unsigned long	Vector3::Convert_To_ARGB() const
 
 WWINLINE unsigned long Vector3::Convert_To_ARGB( float alpha ) const
 {
-    return (unsigned(alpha * 255)<<24) |
+	return (unsigned(alpha * 255)<<24) |
         (unsigned(X*255.0f)<<16) |
         (unsigned(Y*255.0f)<<8) |
         (unsigned(Z*255.0f));

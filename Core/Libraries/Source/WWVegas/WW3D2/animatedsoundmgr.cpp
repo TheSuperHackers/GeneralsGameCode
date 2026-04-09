@@ -114,8 +114,8 @@ Build_List_From_String
 		//
 		const char *entry = buffer;
 		for (;
-			  (entry != nullptr) && (entry[1] != 0);
-			  entry = ::strstr (entry, delimiter))
+		(entry != nullptr) && (entry[1] != 0);
+		entry = ::strstr (entry, delimiter))
 		{
 
 			//
@@ -141,8 +141,8 @@ Build_List_From_String
 			//
 			count = 0;
 			for (entry = buffer;
-				  (entry != nullptr) && (entry[1] != 0);
-				  entry = ::strstr (entry, delimiter))
+			(entry != nullptr) && (entry[1] != 0);
+			entry = ::strstr (entry, delimiter))
 			{
 
 				//
@@ -228,7 +228,7 @@ Is_In_Param_List
 			// if ( stricmp( string.Peek_Buffer(), param_to_check ) == 0 ) // Breaks with whitespaces
 			if ( strstr( string.str(), param_to_check ) != nullptr )
 			{
-			 	return( true );
+				return( true );
 			}
 		}
 	}

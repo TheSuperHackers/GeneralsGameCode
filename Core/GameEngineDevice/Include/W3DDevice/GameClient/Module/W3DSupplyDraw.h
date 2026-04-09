@@ -47,7 +47,7 @@ public:
 class W3DSupplyDraw : public W3DModelDraw
 {
 
- 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DSupplyDraw, "W3DSupplyDraw" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( W3DSupplyDraw, "W3DSupplyDraw" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( W3DSupplyDraw, W3DSupplyDrawModuleData )
 
 public:

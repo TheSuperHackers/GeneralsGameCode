@@ -318,7 +318,7 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 			}
 
 			// Get (incrementable) tuple with maximum next value.
-		 	max_data = max_post_increment_value_queue.Top()->Get_Item();
+			max_data = max_post_increment_value_queue.Top()->Get_Item();
 
 			// Increment tuple (and update TotalCost accordingly).
 			TotalCost -= max_data->Get_Cost();
@@ -341,7 +341,7 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 			}
 
 			// Get (decrementable) tuple with minimum current value.
-		 	min_data = min_current_value_queue.Top()->Get_Item();
+			min_data = min_current_value_queue.Top()->Get_Item();
 
 			// Decrement tuple (and update TotalCost accordingly).
 			TotalCost -= min_data->Get_Cost();

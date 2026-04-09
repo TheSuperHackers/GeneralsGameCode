@@ -163,14 +163,14 @@ SkinWSMObjectClass::~SkinWSMObjectClass(void)
 	if (SotHWND != nullptr) {
 		InterfacePtr->UnRegisterDlgWnd(SotHWND);
 		InterfacePtr->DeleteRollupPage(SotHWND);
-	  	SotHWND = nullptr;
+		SotHWND = nullptr;
 	}
 
 	assert(!((InterfacePtr == nullptr) && (SkeletonHWND != nullptr)));
 	if (SkeletonHWND != nullptr) {
 		InterfacePtr->UnRegisterDlgWnd(SkeletonHWND);
 		InterfacePtr->DeleteRollupPage(SkeletonHWND);
-	  	SkeletonHWND = nullptr;
+		SkeletonHWND = nullptr;
 	}
 }
 
@@ -227,7 +227,7 @@ void SkinWSMObjectClass::EndEditParams(IObjParam *ip, ULONG flags,Animatable *ne
 		if (SotHWND != nullptr) {
 			InterfacePtr->UnRegisterDlgWnd(SotHWND);
 			InterfacePtr->DeleteRollupPage(SotHWND);
-	  		SotHWND = nullptr;
+			SotHWND = nullptr;
 		}
 
 		/*
@@ -236,7 +236,7 @@ void SkinWSMObjectClass::EndEditParams(IObjParam *ip, ULONG flags,Animatable *ne
 		if (SkeletonHWND != nullptr) {
 			InterfacePtr->UnRegisterDlgWnd(SkeletonHWND);
 			InterfacePtr->DeleteRollupPage(SkeletonHWND);
-	  		SkeletonHWND = nullptr;
+			SkeletonHWND = nullptr;
 		}
 	}
 

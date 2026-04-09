@@ -154,8 +154,8 @@ public:
 	virtual int Get_Num_Vertices() const { return VertCount; }
 
 	// Get and set static sort level
-   virtual int		Get_Sort_Level() const override { return SortLevel; }
-  	virtual void	Set_Sort_Level(int level) override { SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
+	virtual int		Get_Sort_Level() const override { return SortLevel; }
+	virtual void	Set_Sort_Level(int level) override { SortLevel = level; if(level != SORT_LEVEL_NONE) Disable_Sort();}
 
 	// object space bounding volumes
 	virtual inline void Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
@@ -553,7 +553,7 @@ public:
 	virtual void Location( float x, float y, float z = 0.0f) override;
 
 	// For moving a vertex after the DynaMesh has already been created.
-   virtual void Move_Vertex(int index, float x, float y, float z = 0.0f) override;
+	virtual void Move_Vertex(int index, float x, float y, float z = 0.0f) override;
 
 	// Set position
 	virtual void Set_Position(const Vector3 &v) override;

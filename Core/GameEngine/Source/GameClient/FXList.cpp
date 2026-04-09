@@ -141,10 +141,10 @@ EMPTY_DTOR(SoundFXNugget)
 //-------------------------------------------------------------------------------------------------
 static Real calcDist(const Coord3D& src, const Coord3D& dst)
 {
-  Real dx = dst.x - src.x;
-  Real dy = dst.y - src.y;
-  Real dz = dst.z - src.z;
-  return sqrt(dx*dx + dy*dy + dz*dz);
+	Real dx = dst.x - src.x;
+	Real dy = dst.y - src.y;
+	Real dz = dst.z - src.z;
+	return sqrt(dx*dx + dy*dy + dz*dz);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -156,9 +156,9 @@ public:
 	TracerFXNugget()
 	{
 		m_tracerName.set("GenericTracer");
-    m_boneName.clear();
-    m_speed = 0.0f; // means "use passed-in speed"
-    m_decayAt = 1.0f;
+		m_boneName.clear();
+		m_speed = 0.0f; // means "use passed-in speed"
+		m_decayAt = 1.0f;
 		m_length = 10.0f;
 		m_width = 1.0f;
 		m_color.red = m_color.green = m_color.blue = 1.0f;
@@ -240,9 +240,9 @@ public:
 
 private:
 	AsciiString			m_tracerName;
-  AsciiString     m_boneName;
-  Real            m_speed;
-  Real            m_decayAt;
+	AsciiString     m_boneName;
+	Real            m_speed;
+	Real            m_decayAt;
 	Real						m_length;
 	Real						m_width;
 	RGBColor				m_color;
@@ -690,8 +690,8 @@ public:
 	FXListAtBonePosFXNugget()
 	{
 		m_fx = nullptr;
-    m_boneName.clear();
-    m_orientToBone = true;
+		m_boneName.clear();
+		m_orientToBone = true;
 	}
 
 	virtual void doFXPos(const Coord3D *primary, const Matrix3D* primaryMtx, const Real /*primarySpeed*/, const Coord3D * /*secondary*/, const Real /*overrideRadius*/ ) const override
@@ -703,10 +703,10 @@ public:
 	{
 		if (primary)
 		{
-      // first, try the unadorned name.
+			// first, try the unadorned name.
 			doFxAtBones(primary, 0);
 
-      // then, try the 01,02,03...etc names.
+			// then, try the 01,02,03...etc names.
 			doFxAtBones(primary, 1);
 		}
 		else
@@ -734,10 +734,10 @@ protected:
 
 	void doFxAtBones(const Object* obj, Int start) const
 	{
-    Coord3D bonePos[MAX_BONE_POINTS];
-    Matrix3D boneMtx[MAX_BONE_POINTS];
+		Coord3D bonePos[MAX_BONE_POINTS];
+		Matrix3D boneMtx[MAX_BONE_POINTS];
 
-    Drawable* draw = obj->getDrawable();
+		Drawable* draw = obj->getDrawable();
 		if (draw)
 		{
 			// yes, BONEPOS_CURRENT_CLIENT_ONLY -- this is client-only, so should be safe to do.
@@ -757,8 +757,8 @@ private:
 	enum { MAX_BONE_POINTS = 40 };
 
 	const FXList*		m_fx;
-  AsciiString     m_boneName;
-  Bool            m_orientToBone;
+	AsciiString     m_boneName;
+	Bool            m_orientToBone;
 };
 EMPTY_DTOR(FXListAtBonePosFXNugget)
 
@@ -854,8 +854,8 @@ const FXList *FXListStore::findFXList(const char* name) const
 	if (stricmp(name, "None") == 0)
 		return nullptr;
 
-  FXListMap::const_iterator it = m_fxmap.find(NAMEKEY(name));
-  if (it != m_fxmap.end())
+	FXListMap::const_iterator it = m_fxmap.find(NAMEKEY(name));
+	if (it != m_fxmap.end())
 	{
 		return &(*it).second;
 	}

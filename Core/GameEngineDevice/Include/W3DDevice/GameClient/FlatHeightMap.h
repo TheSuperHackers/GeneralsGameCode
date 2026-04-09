@@ -67,12 +67,12 @@ public:
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator,Bool updateExtraPassTiles=TRUE) override;
 	virtual Int freeMapResources() override;	///< free resources used to render heightmap
 	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator) override;
- 	virtual void adjustTerrainLOD(Int adj) override;
+	virtual void adjustTerrainLOD(Int adj) override;
 	virtual void reset() override;
 	virtual void oversizeTerrain(Int tilesToOversize) override;
 	virtual void staticLightingChanged() override;
 	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator) override;
-  virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) override {return 0;};
+	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) override {return 0;};
 
 protected:
 	W3DTerrainBackground	*m_tiles;

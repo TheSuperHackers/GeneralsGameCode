@@ -258,7 +258,7 @@ IOResult GameMapsClass::Load(ILoad * iload)
 					ULONG f;
 					res = iload->Read(&f,sizeof(f), &nb);
 					for (int i=0; i<NTEXMAPS; i++)
-						 (*this)[i].MapOn = (f&(1<<i))?1:0;
+				(*this)[i].MapOn = (f&(1<<i))?1:0;
 				}
 				break;
 

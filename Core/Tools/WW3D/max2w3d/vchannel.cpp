@@ -203,7 +203,7 @@ bool VectorChannelClass::SaveTimeCoded(ChunkSaveClass & csave, BitChannelClass *
 			// check for false binary movement
 			if (fcount != Begin) {
 				if (binary_move)  {
-   				*pivec |= W3D_TIMECODED_BINARY_MOVEMENT_FLAG;
+					*pivec |= W3D_TIMECODED_BINARY_MOVEMENT_FLAG;
 				}
 			}
 			else {
@@ -304,50 +304,50 @@ struct
 float VectorChannelClass::test_compress(int filter_index, float scale, float value1, float *indata, float *outdata)
 {
 
-   float error = 0.0f;
+	float error = 0.0f;
 
-   // compute filter
+	// compute filter
 
-   float filter = filtertable[filter_index] * scale;
+	float filter = filtertable[filter_index] * scale;
 
-   assert(filter_index < FILTER_TABLE_SIZE);
+	assert(filter_index < FILTER_TABLE_SIZE);
 
-   float last_value = value1;
+	float last_value = value1;
 
-   for(int data_idx=0; data_idx < 16; data_idx++)  {
+	for(int data_idx=0; data_idx < 16; data_idx++)  {
 
-      // NOTE: DETERMINE best factor via Brute Force
-      // This helps under/over-flow problems
+		// NOTE: DETERMINE best factor via Brute Force
+		// This helps under/over-flow problems
 
-      // brute
-      int   best_factor = 100;
-      float	least_error = 999999999.9f;
-      for (float try_factor = -8.0f; try_factor < 8.0f; try_factor+=1.0f)  {
-      	float temp = (try_factor * filter) + last_value; // decompress using this filter
-         temp-=indata[data_idx];									 // delta decompressed value, vs original value
-         temp=fabs(temp);
-         if (temp < least_error)  {
-         	least_error = temp;
-            best_factor = try_factor;
-         }
-      }
-      assert(best_factor <= 7);
-      assert(best_factor >=-8);
+		// brute
+		int   best_factor = 100;
+		float	least_error = 999999999.9f;
+		for (float try_factor = -8.0f; try_factor < 8.0f; try_factor+=1.0f)  {
+			float temp = (try_factor * filter) + last_value; // decompress using this filter
+			temp-=indata[data_idx];									 // delta decompressed value, vs original value
+			temp=fabs(temp);
+			if (temp < least_error)  {
+				least_error = temp;
+				best_factor = try_factor;
+			}
+		}
+		assert(best_factor <= 7);
+		assert(best_factor >=-8);
 
-      float dfactor = best_factor;
+		float dfactor = best_factor;
 
-      outdata[data_idx] = (dfactor * filter) + last_value;
-      // END BRUTE FORCE IT
+		outdata[data_idx] = (dfactor * filter) + last_value;
+		// END BRUTE FORCE IT
 
 		float delta = outdata[data_idx] - indata[data_idx];
 
 		//if (delta > error) error = delta;
-      error+= (delta * delta);
+		error+= (delta * delta);
 
-      last_value = outdata[data_idx];
-   }
+		last_value = outdata[data_idx];
+	}
 
-   return( sqrt(error) );
+	return( sqrt(error) );
 
 }
 
@@ -364,44 +364,44 @@ float VectorChannelClass::test_compress(int filter_index, float scale, float val
 //
 float VectorChannelClass::compress(int filter_index, float scale, float value1, float *indata, unsigned char *pPacket, float *outdata)
 {
-   float error = 0.0f;
+	float error = 0.0f;
 
-   // compute filter
+	// compute filter
 
-   float filter = filtertable[filter_index] * scale;
+	float filter = filtertable[filter_index] * scale;
 
-   assert(filter_index < FILTER_TABLE_SIZE);
+	assert(filter_index < FILTER_TABLE_SIZE);
 
-   *pPacket = filter_index;
-   pPacket++;
+	*pPacket = filter_index;
+	pPacket++;
 
-   float last_value = value1;
+	float last_value = value1;
 
-   for(int data_idx=0; data_idx < 16; data_idx++)  {
+	for(int data_idx=0; data_idx < 16; data_idx++)  {
 
-      // NOTE: PLAN TO ADD A LOOP IN HERE, to DETERMINE best factor via Brute Force
-      // This could help under/over-flow problems
-      {
-      	// brute
-         int   best_factor = 100;
-         float	least_error = 999999999.9f;
-       	for (float try_factor = -8.0f; try_factor < 8.0f; try_factor+=1.0f)  {
-       		float temp = (try_factor * filter) + last_value; // decompress using this filter
-            temp-=indata[data_idx];									 // delta decompressed value, vs original value
-            temp=fabs(temp);
-            if (temp < least_error)  {
-            	least_error = temp;
-               best_factor = try_factor;
-            }
-       	}
-         assert(best_factor <= 7);
-         assert(best_factor >=-8);
+		// NOTE: PLAN TO ADD A LOOP IN HERE, to DETERMINE best factor via Brute Force
+		// This could help under/over-flow problems
+		{
+			// brute
+			int   best_factor = 100;
+			float	least_error = 999999999.9f;
+			for (float try_factor = -8.0f; try_factor < 8.0f; try_factor+=1.0f)  {
+				float temp = (try_factor * filter) + last_value; // decompress using this filter
+				temp-=indata[data_idx];									 // delta decompressed value, vs original value
+				temp=fabs(temp);
+				if (temp < least_error)  {
+					least_error = temp;
+					best_factor = try_factor;
+				}
+			}
+			assert(best_factor <= 7);
+			assert(best_factor >=-8);
 
-         float dfactor = best_factor;
+			float dfactor = best_factor;
 
-         outdata[data_idx] = (dfactor * filter) + last_value;
+			outdata[data_idx] = (dfactor * filter) + last_value;
 
-         int pi = data_idx>>1;
+			int pi = data_idx>>1;
 
 			if (data_idx & 1) {
 				best_factor<<=4;
@@ -409,21 +409,21 @@ float VectorChannelClass::compress(int filter_index, float scale, float value1, 
 				pPacket[pi]|=best_factor;
 			}
 			else {
-			  	best_factor&=0xf;
+				best_factor&=0xf;
 				pPacket[pi]&=0xf0;
 				pPacket[pi]|=best_factor;
 			}
-      }
+		}
 
-      // END BRUTE FORCE IT
+		// END BRUTE FORCE IT
 
-      error+=fabs(outdata[data_idx] - indata[data_idx]);
+		error+=fabs(outdata[data_idx] - indata[data_idx]);
 
-      last_value = outdata[data_idx];
+		last_value = outdata[data_idx];
 
-   }
+	}
 
-   return( error );
+	return( error );
 
 }
 
@@ -506,26 +506,26 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 
 			}
 
-         // Brute Force Filter
+			// Brute Force Filter
 
-         int   best_filter = 2 * FILTER_TABLE_SIZE;
-         float least_error = 999999999.9f;
-         last_value = work[vi];
+			int   best_filter = 2 * FILTER_TABLE_SIZE;
+			float least_error = 999999999.9f;
+			last_value = work[vi];
 
-         for(int try_filter=0; try_filter < FILTER_TABLE_SIZE; try_filter++) {
+			for(int try_filter=0; try_filter < FILTER_TABLE_SIZE; try_filter++) {
 
-         	float temp_error = test_compress(try_filter, scale, last_value, original_packet, decompressed_packet);
+				float temp_error = test_compress(try_filter, scale, last_value, original_packet, decompressed_packet);
 
-            if (temp_error < least_error)  {
-            	best_filter = try_filter;
-               least_error = temp_error;
-            }
+				if (temp_error < least_error)  {
+					best_filter = try_filter;
+					least_error = temp_error;
+				}
 
-         }
+			}
 
-         assert(best_filter < FILTER_TABLE_SIZE);
+			assert(best_filter < FILTER_TABLE_SIZE);
 
-         //log->printf("\nvi= %d frames %d to %d : error = %f ",vi, frame, frame+15, least_error);
+			//log->printf("\nvi= %d frames %d to %d : error = %f ",vi, frame, frame+15, least_error);
 
 			// Encode current packet
 
@@ -536,7 +536,7 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 			pPacket+= (sizeof(AdaptiveDeltaPacketStruct) * VectorLen * ((frame-1)>>4));  // skip up to the appropriate packet
 			pPacket+=  sizeof(AdaptiveDeltaPacketStruct) * vi;	// skip up the appropriate vector index
 
-         compress(best_filter, scale, last_value, original_packet, pPacket, decompressed_packet);
+			compress(best_filter, scale, last_value, original_packet, pPacket, decompressed_packet);
 
 			// update work[vi];
 			work[vi] = decompressed_packet[15];
@@ -735,7 +735,7 @@ bool VectorChannelClass::is_identity(float32 * vec)
 	double dist = 0.0;
 
 	for (int vi=0; vi<VectorLen; vi++) {
- 		dist += (vec[vi] - IdentVect[vi])*(vec[vi] - IdentVect[vi]);
+		dist += (vec[vi] - IdentVect[vi])*(vec[vi] - IdentVect[vi]);
 	}
 
 	// if distance from identity is very small, it is identity...
@@ -947,114 +947,114 @@ uint32 VectorChannelClass::find_useless_packet(W3dTimeCodedAnimChannelStruct * c
 #define MAX_VECTOR_SIZE 8
 static  float32 tempvec[MAX_VECTOR_SIZE];
 
-  assert( c );	// make sure pointer exists
-  assert( c->NumTimeCodes );	// make sure some packets exist
-  assert( c->VectorLen <= MAX_VECTOR_SIZE );
+	assert( c );	// make sure pointer exists
+	assert( c->NumTimeCodes );	// make sure some packets exist
+	assert( c->VectorLen <= MAX_VECTOR_SIZE );
 
-  uint32 packet_size = c->VectorLen + 1;
+	uint32 packet_size = c->VectorLen + 1;
 
-  if (c->NumTimeCodes > 1) {
-  	if (c->NumTimeCodes > 2)  {
+	if (c->NumTimeCodes > 1) {
+		if (c->NumTimeCodes > 2)  {
 
-  		float32 *pVecSrc, *pVecDst, *pVecOriginal;
-      uint32	*pTcSrc,  *pTcDst,  *pTcOriginal;
+			float32 *pVecSrc, *pVecDst, *pVecOriginal;
+			uint32	*pTcSrc,  *pTcDst,  *pTcOriginal;
 
-      for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 2); try_idx++)  {
+			for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 2); try_idx++)  {
 
-        // Src Pointers
-        pTcSrc  = (uint32 *) &c->Data[ try_idx * packet_size ];
-        pVecSrc	= (float32 *) pTcSrc+1;
+				// Src Pointers
+				pTcSrc  = (uint32 *) &c->Data[ try_idx * packet_size ];
+				pVecSrc	= (float32 *) pTcSrc+1;
 
-        // Original Vector we're trying to recreate
-        pTcOriginal  = (uint32 *) &c->Data[ (try_idx + 1) * packet_size ];
-        pVecOriginal = (float32 *) pTcOriginal+1;
+				// Original Vector we're trying to recreate
+				pTcOriginal  = (uint32 *) &c->Data[ (try_idx + 1) * packet_size ];
+				pVecOriginal = (float32 *) pTcOriginal+1;
 
-        // Dst Pointers
-        pTcDst  = (uint32 *) &c->Data[ (try_idx + 2 ) * packet_size ];
-        pVecDst =	(float32 *) pTcDst+1;
+				// Dst Pointers
+				pTcDst  = (uint32 *) &c->Data[ (try_idx + 2 ) * packet_size ];
+				pVecDst =	(float32 *) pTcDst+1;
 
-        // Skip automagically, if binary movement involved
-        if (*pTcOriginal & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
+				// Skip automagically, if binary movement involved
+				if (*pTcOriginal & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
 				continue;	// can't get rid of this guy
-        }
-        if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
-        		continue;	// can't get rid of this guy either
-        }
+				}
+				if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
+					continue;	// can't get rid of this guy either
+				}
 
-        // Linear Interpolate between Src, and Dst, to recreate the
-        // Original
+				// Linear Interpolate between Src, and Dst, to recreate the
+				// Original
 
-        float32 tStart    = ((*pTcSrc) & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG);				// upgrade to floats
-        float32 tRecreate = *pTcOriginal;
-        float32 tEnd      = *pTcDst;
-        float32 tRatio    = (tRecreate - tStart) / (tEnd - tStart);
+				float32 tStart    = ((*pTcSrc) & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG);				// upgrade to floats
+				float32 tRecreate = *pTcOriginal;
+				float32 tEnd      = *pTcDst;
+				float32 tRatio    = (tRecreate - tStart) / (tEnd - tStart);
 
-        uint32 idx=0;
-        for (; idx < c->VectorLen; idx++)  {
+				uint32 idx=0;
+				for (; idx < c->VectorLen; idx++)  {
 
-        	tempvec[ idx ] = WWMath::Lerp(pVecSrc[idx], pVecDst[idx], tRatio);
+					tempvec[ idx ] = WWMath::Lerp(pVecSrc[idx], pVecDst[idx], tRatio);
 
-        }
+				}
 
-        // Compare Original to our re-creation
+				// Compare Original to our re-creation
 
-        bool close_enough = true;
+				bool close_enough = true;
 
-        for (idx=0; idx < c->VectorLen; idx++)  {
+				for (idx=0; idx < c->VectorLen; idx++)  {
 
-          float32 delta;
+					float32 delta;
 
-          delta = fabs(pVecOriginal[idx] - tempvec[idx]);
+					delta = fabs(pVecOriginal[idx] - tempvec[idx]);
 
-          if (delta > tolerance)  {
-          	close_enough = false;
-            break;
-          }
+					if (delta > tolerance)  {
+						close_enough = false;
+						break;
+					}
 
-        }
+				}
 
-        // If our Recreation is very close to the original,
-        // then discard the original
+				// If our Recreation is very close to the original,
+				// then discard the original
 
-        if (true == close_enough)  {
-        		return (try_idx + 1);
-        }
+				if (true == close_enough)  {
+					return (try_idx + 1);
+				}
 
-        // else continue
+				// else continue
 
-      }
+			}
 
-  	}
-    else  {
-    	// Special Case, when there are only 2 time codes
-      // Check to see if they are equal, value
-      // if so, then return the 2nd timecode as useless
+		}
+		else  {
+			// Special Case, when there are only 2 time codes
+			// Check to see if they are equal, value
+			// if so, then return the 2nd timecode as useless
 
-      float32 *pVecSrc = (float32 *) &c->Data[ 1 ];
-      float32 *pVecDst = (float32 *) &c->Data[ packet_size + 1 ];
+			float32 *pVecSrc = (float32 *) &c->Data[ 1 ];
+			float32 *pVecDst = (float32 *) &c->Data[ packet_size + 1 ];
 
-      bool identical = true;
+			bool identical = true;
 
-      if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0) {
+			if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0) {
 
-	      for(uint32 idx=0; idx < c->VectorLen; idx++) {
+				for(uint32 idx=0; idx < c->VectorLen; idx++) {
 
-	      	float32 delta;
+					float32 delta;
 
-	        delta = fabs(pVecDst[idx] - pVecSrc[idx]);
+					delta = fabs(pVecDst[idx] - pVecSrc[idx]);
 
-	        if (delta > tolerance)  {
-	       		identical = false;
-	          break;
-	        }
+					if (delta > tolerance)  {
+						identical = false;
+						break;
+					}
 
-	      }
+				}
 
-	      if (identical) return( 1 );
+				if (identical) return( 1 );
 
-      }
-    }
-  }
+			}
+		}
+	}
 
 	return( PACKETS_ALL_USEFUL );
 
@@ -1072,17 +1072,17 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * c, double tolerance)
 {
 
-  assert( c );	// make sure pointer exists
-  assert( c->NumTimeCodes );	// make sure some packets exist
-  assert( c->VectorLen == 4);
+	assert( c );	// make sure pointer exists
+	assert( c->NumTimeCodes );	// make sure some packets exist
+	assert( c->VectorLen == 4);
 
-  uint32 packet_size = c->VectorLen + 1;
+	uint32 packet_size = c->VectorLen + 1;
 
-  if (c->NumTimeCodes > 1) {
-  	if (c->NumTimeCodes > 2)  {
+	if (c->NumTimeCodes > 1) {
+		if (c->NumTimeCodes > 2)  {
 
-  		float32 *pVecSrc, *pVecDst, *pVecOrg;
-      uint32	*pTcSrc,  *pTcDst,  *pTcOrg;
+			float32 *pVecSrc, *pVecDst, *pVecOrg;
+			uint32	*pTcSrc,  *pTcDst,  *pTcOrg;
 
 		for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 2); try_idx++)  {
 
@@ -1101,13 +1101,13 @@ uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * 
 			// Sphereical Linear Interpolate between Src, and Dst, to recreate the
 			// Original
 
-        	// Skip automagically, if binary movement involved
-        	if (*pTcOrg & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
+				// Skip automagically, if binary movement involved
+				if (*pTcOrg & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
 				continue;	// can't get rid of this guy
-        	}
-       	if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
-        		continue;	// can't get rid of this guy either
-        	}
+				}
+				if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
+					continue;	// can't get rid of this guy either
+				}
 
 			float32 tStart    = ((*pTcSrc) & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG); // upgrade to floats
 			float32 tRecreate = *pTcOrg;
@@ -1141,16 +1141,16 @@ uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * 
 
 	}
 
-  	}
-    else  {
-    	// Special Case, when there are only 2 time codes
-      // Check to see if they are equal, value
-      // if so, then return the 2nd timecode as useless
+	}
+	else  {
+		// Special Case, when there are only 2 time codes
+		// Check to see if they are equal, value
+		// if so, then return the 2nd timecode as useless
 
 		float32 *pVecSrc = (float32 *) &c->Data[ 1 ];
-      float32 *pVecDst = (float32 *) &c->Data[ packet_size + 1 ];
+		float32 *pVecDst = (float32 *) &c->Data[ packet_size + 1 ];
 
-      if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0)  {
+		if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0)  {
 
 			Quaternion qSrc(1);
 			qSrc.Set(pVecSrc[0], pVecSrc[1], pVecSrc[2], pVecSrc[3]);
@@ -1166,8 +1166,8 @@ uint32 VectorChannelClass::find_useless_packetQ(W3dTimeCodedAnimChannelStruct * 
 			if (angle <= tolerance ) {
 				return (1);
 			}
-      }
-  }
+		}
+	}
 
 	return( PACKETS_ALL_USEFUL );
 
@@ -1188,19 +1188,19 @@ uint32 VectorChannelClass::find_least_useful_packet(W3dTimeCodedAnimChannelStruc
 
 static  float32 tempvec[MAX_VECTOR_SIZE];
 
-  assert( c );	// make sure pointer exists
-  assert( c->NumTimeCodes );	// make sure some packets exist
-  assert( c->VectorLen <= MAX_VECTOR_SIZE );
+	assert( c );	// make sure pointer exists
+	assert( c->NumTimeCodes );	// make sure some packets exist
+	assert( c->VectorLen <= MAX_VECTOR_SIZE );
 
-  uint32 packet_size = c->VectorLen + 1;
+	uint32 packet_size = c->VectorLen + 1;
 
-  double leasterror = 9999999.0f;
-  uint32 ret_idx = PACKETS_ALL_USEFUL;
+	double leasterror = 9999999.0f;
+	uint32 ret_idx = PACKETS_ALL_USEFUL;
 
 	if (c->NumTimeCodes > 1) {
 		if (c->NumTimeCodes > 2)  {
 
-  			float32 *pVecSrc, *pVecDst, *pVecOriginal;
+			float32 *pVecSrc, *pVecDst, *pVecOriginal;
 			uint32	*pTcSrc,  *pTcDst,  *pTcOriginal;
 
 			for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 2); try_idx++)  {
@@ -1217,13 +1217,13 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 				pTcDst  = (uint32 *) &c->Data[ (try_idx + 2 ) * packet_size ];
 				pVecDst =	(float32 *) pTcDst+1;
 
-	        	// Skip automagically, if binary movement involved
-	       	if (*pTcOriginal & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
+				// Skip automagically, if binary movement involved
+				if (*pTcOriginal & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
 					continue;	// can't get rid of this guy
-	         }
-	         if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
-	        		continue;	// can't get rid of this guy either
-	         }
+				}
+				if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
+					continue;	// can't get rid of this guy either
+				}
 
 				// Linear Interpolate between Src, and Dst, to recreate the
 				// Original
@@ -1236,7 +1236,7 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 				uint32 idx=0;
 				for (; idx < c->VectorLen; idx++)  {
 
-        		 tempvec[ idx ] = WWMath::Lerp(pVecSrc[idx], pVecDst[idx], tRatio);
+					tempvec[ idx ] = WWMath::Lerp(pVecSrc[idx], pVecDst[idx], tRatio);
 
 				}
 
@@ -1275,14 +1275,14 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 		}
 		else  {
 
-      	if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0) {
+			if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0) {
 				return( 1 );
-         }
+			}
 		}
-  }
+	}
 
 
-  return( PACKETS_ALL_USEFUL );
+	return( PACKETS_ALL_USEFUL );
 
 
 }
@@ -1301,20 +1301,20 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 uint32 VectorChannelClass::find_least_useful_packetQ(W3dTimeCodedAnimChannelStruct *c)
 {
 
-  assert( c );	// make sure pointer exists
-  assert( c->NumTimeCodes );	// make sure some packets exist
-  assert( c->VectorLen == 4);
+	assert( c );	// make sure pointer exists
+	assert( c->NumTimeCodes );	// make sure some packets exist
+	assert( c->VectorLen == 4);
 
-  uint32 packet_size = c->VectorLen + 1;
+	uint32 packet_size = c->VectorLen + 1;
 
-  double leasterror = 9999999.0f;
-  uint32 ret_idx = PACKETS_ALL_USEFUL;
+	double leasterror = 9999999.0f;
+	uint32 ret_idx = PACKETS_ALL_USEFUL;
 
-  if (c->NumTimeCodes > 1) {
-  	if (c->NumTimeCodes > 2)  {
+	if (c->NumTimeCodes > 1) {
+		if (c->NumTimeCodes > 2)  {
 
-  		float32 *pVecSrc, *pVecDst, *pVecOrg;
-      uint32	*pTcSrc,  *pTcDst,  *pTcOrg;
+			float32 *pVecSrc, *pVecDst, *pVecOrg;
+			uint32	*pTcSrc,  *pTcDst,  *pTcOrg;
 
 		for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 2); try_idx++)  {
 
@@ -1330,13 +1330,13 @@ uint32 VectorChannelClass::find_least_useful_packetQ(W3dTimeCodedAnimChannelStru
 			pTcDst  = (uint32 *) &c->Data[ (try_idx + 2 ) * packet_size ];
 			pVecDst = (float32 *) pTcDst+1;
 
-	      // Skip automagically, if binary movement involved
-	      if (*pTcOrg & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
+				// Skip automagically, if binary movement involved
+				if (*pTcOrg & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
 				continue;	// can't get rid of this guy
-	      }
-	      if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
-	      	continue;	// can't get rid of this guy either
-	      }
+				}
+				if (*pTcDst & W3D_TIMECODED_BINARY_MOVEMENT_FLAG)  {
+					continue;	// can't get rid of this guy either
+				}
 
 			// Spherical Linear Interpolate between Src, and Dst, to recreate the
 			// Original
@@ -1376,19 +1376,19 @@ uint32 VectorChannelClass::find_least_useful_packetQ(W3dTimeCodedAnimChannelStru
 
 	}
 
-  	}
-    else  {
-    	// Special Case, when there are only 2 time codes
-      // Check to see if they are equal, value
-      // if so, then return the 2nd timecode as useless
+	}
+	else  {
+		// Special Case, when there are only 2 time codes
+		// Check to see if they are equal, value
+		// if so, then return the 2nd timecode as useless
 
-      	if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0) {
+		if ((c->Data[ packet_size ] & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) == 0) {
 				return( 1 );
-         }
-  }
+		}
+	}
 
 
-  return( PACKETS_ALL_USEFUL );
+	return( PACKETS_ALL_USEFUL );
 
 }
 

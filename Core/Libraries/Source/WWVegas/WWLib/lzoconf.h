@@ -94,12 +94,12 @@
 
 /* Unsigned type with 32 bits or more */
 #if (UINT_MAX >= 0xffffffffL)
-   typedef unsigned int     lzo_uint;
-   typedef int              lzo_int;
+typedef unsigned int     lzo_uint;
+typedef int              lzo_int;
 #  define LZO_UINT_MAX      UINT_MAX
 #elif (ULONG_MAX >= 0xffffffffL)
-   typedef unsigned long    lzo_uint;
-   typedef long             lzo_int;
+typedef unsigned long    lzo_uint;
+typedef long             lzo_int;
 #  define LZO_UINT_MAX      ULONG_MAX
 #else
 #  error lzo_uint

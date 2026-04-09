@@ -126,11 +126,11 @@ protected:
 	Int m_dataSize;			///< size of m_data.
 	UnsignedByte *m_data;	///< array of z(height) values in the height map.
 
-  UnsignedByte *m_seismicUpdateFlag;  ///< array of bits to prevent ovelapping physics-update regions from doubling effects on shared cells
-  UnsignedInt   m_seismicUpdateWidth; ///< width of the array holding SeismicUpdateFlags
-  Real         *m_seismicZVelocities; ///< how fast is the dirt rising/falling at this location
+	UnsignedByte *m_seismicUpdateFlag;  ///< array of bits to prevent ovelapping physics-update regions from doubling effects on shared cells
+	UnsignedInt   m_seismicUpdateWidth; ///< width of the array holding SeismicUpdateFlags
+	Real         *m_seismicZVelocities; ///< how fast is the dirt rising/falling at this location
 
-  UnsignedByte *m_cellFlipState;	///< array of bits to indicate the flip state of each cell.
+	UnsignedByte *m_cellFlipState;	///< array of bits to indicate the flip state of each cell.
 	Int m_flipStateWidth;			///< with of the array holding cellFlipState
 	UnsignedByte *m_cellCliffState;	///< array of bits to indicate the cliff state of each cell.
 
@@ -244,7 +244,7 @@ public:  // height map info.
 	void setDrawWidth(Int width) {m_drawWidthX = width; if (m_drawWidthX>m_width) m_drawWidthX = m_width;}
 	void setDrawHeight(Int height) {m_drawHeightY = height; if (m_drawHeightY>m_height) m_drawHeightY = m_height;}
 	virtual Int getBorderSize() override {return m_borderSize;}
-  Int getBorderSizeInline() const { return m_borderSize; }
+	Int getBorderSizeInline() const { return m_borderSize; }
 	/// Get height with the offset that HeightMapRenderObjClass uses built in.
 	UnsignedByte getDisplayHeight(Int x, Int y) { return m_data[x+m_drawOriginX+m_width*(y+m_drawOriginY)];}
 
@@ -293,13 +293,13 @@ public:  // tile and texture info.
 	Bool isCliffMappedTexture(Int xIndex, Int yIndex);
 
 
-  Bool getSeismicUpdateFlag(Int xIndex, Int yIndex) const;
-  void setSeismicUpdateFlag(Int xIndex, Int yIndex, Bool value);
-  void clearSeismicUpdateFlags() ;
-  virtual Real getSeismicZVelocity(Int xIndex, Int yIndex) const override;
-  virtual void setSeismicZVelocity(Int xIndex, Int yIndex, Real value) override;
-  void fillSeismicZVelocities( Real value );
-  virtual Real getBilinearSampleSeismicZVelocity( Int x, Int y) override;
+	Bool getSeismicUpdateFlag(Int xIndex, Int yIndex) const;
+	void setSeismicUpdateFlag(Int xIndex, Int yIndex, Bool value);
+	void clearSeismicUpdateFlags() ;
+	virtual Real getSeismicZVelocity(Int xIndex, Int yIndex) const override;
+	virtual void setSeismicZVelocity(Int xIndex, Int yIndex, Real value) override;
+	void fillSeismicZVelocities( Real value );
+	virtual Real getBilinearSampleSeismicZVelocity( Int x, Int y) override;
 
 
 

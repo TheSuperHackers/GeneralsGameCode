@@ -32,19 +32,19 @@
 /// \brief stack walker class (singleton)
 class DebugStackwalk
 {
-  friend class Debug;
+	friend class Debug;
 
-  DebugStackwalk(const DebugStackwalk&);
-  DebugStackwalk& operator=(DebugStackwalk&);
+	DebugStackwalk(const DebugStackwalk&);
+	DebugStackwalk& operator=(DebugStackwalk&);
 
-  // private so that only Debug can create and destroy us
-  DebugStackwalk();
-  ~DebugStackwalk();
+	// private so that only Debug can create and destroy us
+	DebugStackwalk();
+	~DebugStackwalk();
 
 public:
 
-  /// \brief a stack trace signature
-  class Signature
+	/// \brief a stack trace signature
+	class Signature
   {
     // makes life easier :)
     friend class DebugStackwalk;
@@ -138,14 +138,14 @@ public:
 
     \return dbghelp.dll DLL handle
   */
-  static void *GetDbghelpHandle();
+	static void *GetDbghelpHandle();
 
   /** \internal
     \brief Checks if dbghelp.dll version is old.
 
     \return true if old version, false if not
   */
-  static bool IsOldDbghelp();
+	static bool IsOldDbghelp();
 
   /**
     \brief Walks the stack from the given address.
@@ -154,7 +154,7 @@ public:
     \param ctx processor context, if nullptr then use current address
     \return number of addresses found
   */
-  static int StackWalk(Signature &sig, struct _CONTEXT *ctx=0);
+	static int StackWalk(Signature &sig, struct _CONTEXT *ctx=0);
 };
 
 /**

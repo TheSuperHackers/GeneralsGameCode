@@ -73,22 +73,22 @@ void FrustumClass::Init
 	// Store the camera transform
 	CameraTransform = camera;
 
-   // Forward is negative Z in our viewspace coordinate system.
+	// Forward is negative Z in our viewspace coordinate system.
 	// Just flip the sign if the user passed in positive values.
-   if ((znear > 0.0f) && (zfar > 0.0f)) {
+	if ((znear > 0.0f) && (zfar > 0.0f)) {
 		znear = -znear;
 		zfar = -zfar;
 	}
 
 	// Calculate the corners of the camera frustum.
 	// Generate the camera-space frustum corners by linearly
-   // extrapolating the viewplane to the near and far z clipping planes.
+	// extrapolating the viewplane to the near and far z clipping planes.
 
 	// The camera frustum corners are defined in the following order:
 	// When looking at the frustum from the position of the camera, the near four corners are
 	// numbered: upper left 0, upper right 1, lower left 2, lower right 3. The far plane's
 	// Frustum corners are numbered from 4 to 7 in an analogous fashion.
-  // (remember: the camera space has x going to the right, y up and z backwards).
+	// (remember: the camera space has x going to the right, y up and z backwards).
 
 	//calculate a proper z-vector assuming our right-handed coordinate system
 	Vector3	zv;
@@ -98,8 +98,8 @@ void FrustumClass::Init
 	//opposite directions, we have a reflected camera matrix.
 	if (Vector3::Dot_Product(CameraTransform.Get_Z_Vector(),zv) < 0)
 	{	//flip the frustum corners horizontally for a reflected matrix
-	  Corners[1].Set(vpmin.X, vpmax.Y, 1.0);
-	  Corners[5] = Corners[1];
+		Corners[1].Set(vpmin.X, vpmax.Y, 1.0);
+		Corners[5] = Corners[1];
 		Corners[1] *= znear;
 		Corners[5] *= zfar;
 		Corners[0].Set(vpmax.X, vpmax.Y, 1.0);

@@ -185,7 +185,7 @@ public:
 	Bool getLastEventLoc( Coord3D *eventPos );							///< get last event loc (if any)
 	void tryUnderAttackEvent( const Object *obj );					///< try to make an "under attack" event if it's the proper time
 	void tryInfiltrationEvent( const Object *obj );					///< try to make an "infiltration" event if it's the proper time
- 	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
+	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
 	virtual Bool addObject( Object *obj ); ///< add object to radar

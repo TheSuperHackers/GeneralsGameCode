@@ -445,7 +445,7 @@ RefResult AlphaModifierClass::NotifyRefChanged
 	{
 		case REFMSG_CHANGE:
 		{
- 			alpha_param_blk.InvalidateUI();
+			alpha_param_blk.InvalidateUI();
 		}
 		break;
 	}

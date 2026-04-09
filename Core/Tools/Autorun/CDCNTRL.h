@@ -113,13 +113,13 @@ extern CDControlClass CDControl;
 #define VWIN32_DIOC_DOS_IOCTL      1
 
 typedef struct _DIOC_REGISTERS {
-    DWORD reg_EBX;
-    DWORD reg_EDX;
-    DWORD reg_ECX;
-    DWORD reg_EAX;
-    DWORD reg_EDI;
-    DWORD reg_ESI;
-    DWORD reg_Flags;
+	DWORD reg_EBX;
+	DWORD reg_EDX;
+	DWORD reg_ECX;
+	DWORD reg_EAX;
+	DWORD reg_EDI;
+	DWORD reg_ESI;
+	DWORD reg_Flags;
 } DIOC_REGISTERS, *PDIOC_REGISTERS;
 
 #endif
@@ -139,8 +139,8 @@ typedef struct _DIOC_REGISTERS {
 ** Parameters for locking/unlocking removable media
 */
 typedef struct _PARAMBLOCK {
-   BYTE bOperation;
-   BYTE bNumLocks;
+	BYTE bOperation;
+	BYTE bNumLocks;
 } PARAMBLOCK, *PPARAMBLOCK;
 
 #pragma pack()

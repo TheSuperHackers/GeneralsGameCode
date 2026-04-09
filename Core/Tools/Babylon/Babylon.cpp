@@ -119,7 +119,7 @@ BOOL CBabylonApp::InitInstance()
 
 	sprintf (AppTitle, "%s Built on %s - %s", AppName, __DATE__, __TIME__ );
 
-  if ( !_getcwd( RootPath, _MAX_PATH ) )
+	if ( !_getcwd( RootPath, _MAX_PATH ) )
 	{
 		AfxMessageBox ( "Failed to obtain current working directoy!\n\n Set directoy path to \"c:\\Babylon\"." );
 		strcpy ( (char *) RootPath, "c:\\Babylon" );
@@ -204,8 +204,8 @@ BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam)
 	if ( strstr(szText, szSearchTitle))
 	{
 		* (BOOL *) lParam = TRUE;
-		 FoundWindow = hWnd;
-		 return FALSE;
+		FoundWindow = hWnd;
+		return FALSE;
 	}
 
 	FoundWindow = nullptr;
@@ -223,8 +223,8 @@ BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam)
 	if ( strncmp (szText, szSearchTitle, strlen ( szSearchTitle)) == 0)
 	{
 		* (BOOL *) lParam = TRUE;
-		 FoundWindow = hWnd;
-		 return FALSE;
+		FoundWindow = hWnd;
+		return FALSE;
 	}
 
 	FoundWindow = nullptr;

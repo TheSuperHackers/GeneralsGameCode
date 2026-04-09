@@ -236,35 +236,35 @@ int		IFF_NextForm ( IFF_FILE *iff )
 	IFF_CHUNK chunk;
 	int	form;
 
-   	IFF_goto_form_end ( iff );
+	IFF_goto_form_end ( iff );
 
-   	IFF_RAWREAD (iff, &chunk, sizeof( IFF_CHUNK ), error );
+	IFF_RAWREAD (iff, &chunk, sizeof( IFF_CHUNK ), error );
 
-   	chunk.Size = 	BgEn32 (chunk.Size);
-   	chunk.ID =  	BgEn32 (chunk.ID);
+	chunk.Size = 	BgEn32 (chunk.Size);
+	chunk.ID =  	BgEn32 (chunk.ID);
 
-   	iff->pad_form = (int) (chunk.Size & 0x0001);
+	iff->pad_form = (int) (chunk.Size & 0x0001);
 
-   	if (chunk.ID != vIFF_ID_FORM )
+	if (chunk.ID != vIFF_ID_FORM )
 	{
-   		goto error;
+		goto error;
 	}
 
-   	IFF_RAWREAD (iff, &form, sizeof( int ), error);
+	IFF_RAWREAD (iff, &form, sizeof( int ), error);
 
-   	iff->FormID = 	(int) BgEn32 (form);
+	iff->FormID = 	(int) BgEn32 (form);
 
-   	iff->flags |= mIFF_FILE_FORMOPEN;
-   	iff->next_byte += sizeof( int ) + sizeof ( IFF_CHUNK );
-   	iff->FormSize = (int) chunk.Size - sizeof ( int );
-   	iff->ChunkSize = 0;
-   	iff->pad_chunk = 0;
+	iff->flags |= mIFF_FILE_FORMOPEN;
+	iff->next_byte += sizeof( int ) + sizeof ( IFF_CHUNK );
+	iff->FormSize = (int) chunk.Size - sizeof ( int );
+	iff->ChunkSize = 0;
+	iff->pad_chunk = 0;
 
-   	return 	TRUE;
+	return 	TRUE;
 
 error:
 
-   	return	FALSE;
+	return	FALSE;
 }
 
 /******************************************************************/

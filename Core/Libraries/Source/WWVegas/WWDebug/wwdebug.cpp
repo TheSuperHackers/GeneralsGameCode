@@ -309,21 +309,21 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
 			ExitProcess(0);
 		}
 
-      char assertbuf[4096];
+		char assertbuf[4096];
 		sprintf(assertbuf, "Assert failed\n\n. File %s Line %d", file, line);
 
-      int code = MessageBoxA(nullptr, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
+		int code = MessageBoxA(nullptr, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
 
-      if (code == IDABORT) {
-      	raise(SIGABRT);
-      	_exit(3);
-      }
+		if (code == IDABORT) {
+			raise(SIGABRT);
+			_exit(3);
+		}
 
 		if (code == IDRETRY) {
 			WWDEBUG_BREAK
       	return;
 		}
-   }
+	}
 }
 #endif
 
@@ -468,61 +468,61 @@ void WWDebug_Profile_Stop( const char * title)
 void WWDebug_DBWin32_Message_Handler( const char * str )
 {
 
-    HANDLE heventDBWIN;  /* DBWIN32 synchronization object */
-    HANDLE heventData;   /* data passing synch object */
-    HANDLE hSharedFile;  /* memory mapped file shared data */
-    LPSTR lpszSharedMem;
+	HANDLE heventDBWIN;  /* DBWIN32 synchronization object */
+	HANDLE heventData;   /* data passing synch object */
+	HANDLE hSharedFile;  /* memory mapped file shared data */
+	LPSTR lpszSharedMem;
 
     /* make sure DBWIN is open and waiting */
-    heventDBWIN = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_BUFFER_READY");
-    if ( !heventDBWIN )
-    {
-        //MessageBox(nullptr, "DBWIN_BUFFER_READY nonexistent", nullptr, MB_OK);
-        return;
-    }
+	heventDBWIN = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_BUFFER_READY");
+	if ( !heventDBWIN )
+	{
+		//MessageBox(nullptr, "DBWIN_BUFFER_READY nonexistent", nullptr, MB_OK);
+		return;
+	}
 
     /* get a handle to the data synch object */
-    heventData = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_DATA_READY");
-    if ( !heventData )
-    {
-        // MessageBox(nullptr, "DBWIN_DATA_READY nonexistent", nullptr, MB_OK);
-        CloseHandle(heventDBWIN);
-        return;
-    }
+	heventData = OpenEvent(EVENT_MODIFY_STATE, FALSE, "DBWIN_DATA_READY");
+	if ( !heventData )
+	{
+		// MessageBox(nullptr, "DBWIN_DATA_READY nonexistent", nullptr, MB_OK);
+		CloseHandle(heventDBWIN);
+		return;
+	}
 
-    hSharedFile = CreateFileMapping((HANDLE)-1, nullptr, PAGE_READWRITE, 0, 4096, "DBWIN_BUFFER");
-    if (!hSharedFile)
-    {
-        //MessageBox(nullptr, "DebugTrace: Unable to create file mapping object DBWIN_BUFFER", "Error", MB_OK);
-        CloseHandle(heventDBWIN);
-        CloseHandle(heventData);
-        return;
-    }
+	hSharedFile = CreateFileMapping((HANDLE)-1, nullptr, PAGE_READWRITE, 0, 4096, "DBWIN_BUFFER");
+	if (!hSharedFile)
+	{
+		//MessageBox(nullptr, "DebugTrace: Unable to create file mapping object DBWIN_BUFFER", "Error", MB_OK);
+		CloseHandle(heventDBWIN);
+		CloseHandle(heventData);
+		return;
+	}
 
-    lpszSharedMem = (LPSTR)MapViewOfFile(hSharedFile, FILE_MAP_WRITE, 0, 0, 512);
-    if (!lpszSharedMem)
-    {
-        //MessageBox(nullptr, "DebugTrace: Unable to map shared memory", "Error", MB_OK);
-        CloseHandle(heventDBWIN);
-        CloseHandle(heventData);
-        return;
-    }
+	lpszSharedMem = (LPSTR)MapViewOfFile(hSharedFile, FILE_MAP_WRITE, 0, 0, 512);
+	if (!lpszSharedMem)
+	{
+		//MessageBox(nullptr, "DebugTrace: Unable to map shared memory", "Error", MB_OK);
+		CloseHandle(heventDBWIN);
+		CloseHandle(heventData);
+		return;
+	}
 
     /* wait for buffer event */
-    WaitForSingleObject(heventDBWIN, INFINITE);
+	WaitForSingleObject(heventDBWIN, INFINITE);
 
     /* write it to the shared memory */
-    *((LPDWORD)lpszSharedMem) = 0;
-    wsprintf(lpszSharedMem + sizeof(DWORD), "%s", str);
+	*((LPDWORD)lpszSharedMem) = 0;
+	wsprintf(lpszSharedMem + sizeof(DWORD), "%s", str);
 
     /* signal data ready event */
-    SetEvent(heventData);
+	SetEvent(heventData);
 
     /* clean up handles */
-    CloseHandle(hSharedFile);
-    CloseHandle(heventData);
-    CloseHandle(heventDBWIN);
+	CloseHandle(hSharedFile);
+	CloseHandle(heventData);
+	CloseHandle(heventDBWIN);
 
-    return;
+	return;
 }
 #endif // WWDEBUG

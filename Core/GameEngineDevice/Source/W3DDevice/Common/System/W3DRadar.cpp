@@ -197,8 +197,8 @@ void W3DRadar::reconstructViewBox()
 	{
 
 		// first convert to radar cells
- 		radar[ i ].x = world[ i ].x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
- 		radar[ i ].y = world[ i ].y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+		radar[ i ].x = world[ i ].x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
+		radar[ i ].y = world[ i ].y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
 
 		//
 		// store these points in the view box array which contains a first position
@@ -307,8 +307,8 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 	TheTacticalView->screenToWorldAtZ( &ulScreen, &ulWorld, getTerrainAverageZ() );
 
 	// convert world to radar coords
- 	ulRadar.x = ulWorld.x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
- 	ulRadar.y = ulWorld.y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+	ulRadar.x = ulWorld.x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
+	ulRadar.y = ulWorld.y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
 
 	//
 	// convert radar point to actual pixel coords on the screen, shifted
@@ -335,7 +335,7 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 		TheDisplay->drawLine( clipStart.x, clipStart.y, clipEnd.x, clipEnd.y,
 													lineWidth, topColor );
 
-  // right line
+	// right line
 	start = end;
 	radar.x += m_viewBox[ 2 ].x;
 	radar.y += m_viewBox[ 2 ].y;
@@ -344,7 +344,7 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 		TheDisplay->drawLine( clipStart.x, clipStart.y, clipEnd.x, clipEnd.y,
 													lineWidth, topColor, bottomColor );
 
-  // bottom line
+	// bottom line
 	start = end;
 	radar.x += m_viewBox[ 3 ].x;
 	radar.y += m_viewBox[ 3 ].y;
@@ -353,7 +353,7 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 		TheDisplay->drawLine( clipStart.x, clipStart.y, clipEnd.x, clipEnd.y,
 													lineWidth, bottomColor );
 
-  // left line
+	// left line
 	start = end;
 	end = ulStart;
 	if( ClipLine2D( &start, &end, &clipStart, &clipEnd, &clipRegion ) )
@@ -1493,7 +1493,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 	}
 
 	// draw the overlay image
- 	TheDisplay->drawImage( m_overlayImage, ul.x, ul.y, lr.x, lr.y );
+	TheDisplay->drawImage( m_overlayImage, ul.x, ul.y, lr.x, lr.y );
 
 	// draw the shroud image
 #if ENABLE_CONFIGURABLE_SHROUD

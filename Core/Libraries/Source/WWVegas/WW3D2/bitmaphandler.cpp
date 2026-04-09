@@ -213,9 +213,9 @@ void BitmapHandlerClass::Copy_Image(
 				int iDv = (v1M-v10); // The delta-v bump value
 
 				if( (v00 < vM1) && (v00 < v01) ) {  // If we are at valley
-					 iDu = vM1-v00;                 // Choose greater of 1st order diffs
-					 if( iDu < v00-v01 )
-						  iDu = v00-v01;
+					iDu = vM1-v00;                 // Choose greater of 1st order diffs
+					if( iDu < v00-v01 )
+					iDu = v00-v01;
 				}
 
 				// The luminance bump value (land masses are less shiny)

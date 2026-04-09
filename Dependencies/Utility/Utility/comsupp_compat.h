@@ -56,82 +56,82 @@ namespace _com_util
 
 inline BSTR WINAPI ConvertStringToBSTR(const char *pSrc)
 {
-    DWORD cwch;
-    BSTR wsOut = nullptr;
+		DWORD cwch;
+		BSTR wsOut = nullptr;
 
-    if (!pSrc)
-        return nullptr;
+		if (!pSrc)
+		return nullptr;
 
-    // Compute the needed size with the null terminator
-    cwch = MultiByteToWideChar(CP_ACP, 0, pSrc, -1, nullptr, 0);
-    if (cwch == 0)
-        return nullptr;
+		// Compute the needed size with the null terminator
+		cwch = MultiByteToWideChar(CP_ACP, 0, pSrc, -1, nullptr, 0);
+		if (cwch == 0)
+		return nullptr;
 
-    // Allocate the BSTR (without the null terminator)
-    wsOut = SysAllocStringLen(nullptr, cwch - 1);
-    if (!wsOut)
-    {
-        _com_issue_error(HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY));
-        return nullptr;
-    }
+		// Allocate the BSTR (without the null terminator)
+		wsOut = SysAllocStringLen(nullptr, cwch - 1);
+		if (!wsOut)
+		{
+			_com_issue_error(HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY));
+			return nullptr;
+		}
 
-    // Convert the string
-    if (MultiByteToWideChar(CP_ACP, 0, pSrc, -1, wsOut, cwch) == 0)
-    {
-        // We failed, clean everything up
-        cwch = GetLastError();
+		// Convert the string
+		if (MultiByteToWideChar(CP_ACP, 0, pSrc, -1, wsOut, cwch) == 0)
+		{
+			// We failed, clean everything up
+			cwch = GetLastError();
 
-        SysFreeString(wsOut);
-        wsOut = nullptr;
+			SysFreeString(wsOut);
+			wsOut = nullptr;
 
-        _com_issue_error(!IS_ERROR(cwch) ? HRESULT_FROM_WIN32(cwch) : cwch);
-    }
+			_com_issue_error(!IS_ERROR(cwch) ? HRESULT_FROM_WIN32(cwch) : cwch);
+		}
 
-    return wsOut;
+		return wsOut;
 }
 
 inline char* WINAPI ConvertBSTRToString(BSTR pSrc)
 {
-    DWORD cb, cwch;
-    char *szOut = nullptr;
+		DWORD cb, cwch;
+		char *szOut = nullptr;
 
-    if (!pSrc)
-        return nullptr;
+		if (!pSrc)
+		return nullptr;
 
-    // Retrieve the size of the BSTR with the null terminator
-    cwch = SysStringLen(pSrc) + 1;
+		// Retrieve the size of the BSTR with the null terminator
+		cwch = SysStringLen(pSrc) + 1;
 
-    // Compute the needed size with the null terminator
-    cb = WideCharToMultiByte(CP_ACP, 0, pSrc, cwch, nullptr, 0, nullptr, nullptr);
-    if (cb == 0)
-    {
-        cwch = GetLastError();
-        _com_issue_error(!IS_ERROR(cwch) ? HRESULT_FROM_WIN32(cwch) : cwch);
-        return nullptr;
-    }
+		// Compute the needed size with the null terminator
+		cb = WideCharToMultiByte(CP_ACP, 0, pSrc, cwch, nullptr, 0, nullptr, nullptr);
+		if (cb == 0)
+		{
+			cwch = GetLastError();
+			_com_issue_error(!IS_ERROR(cwch) ? HRESULT_FROM_WIN32(cwch) : cwch);
+			return nullptr;
+		}
 
-    // Allocate the string
-    szOut = (char*)::operator new(cb * sizeof(char));
-    if (!szOut)
-    {
-        _com_issue_error(HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY));
-        return nullptr;
-    }
+		// Allocate the string
+		szOut = (char*)::operator new(cb * sizeof(char));
+		if (!szOut)
+		{
+			_com_issue_error(HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY));
+			return nullptr;
+		}
 
-    // Convert the string and null-terminate
-    szOut[cb - 1] = '\0';
-    if (WideCharToMultiByte(CP_ACP, 0, pSrc, cwch, szOut, cb, nullptr, nullptr) == 0)
-    {
-        // We failed, clean everything up
-        cwch = GetLastError();
+		// Convert the string and null-terminate
+		szOut[cb - 1] = '\0';
+		if (WideCharToMultiByte(CP_ACP, 0, pSrc, cwch, szOut, cb, nullptr, nullptr) == 0)
+		{
+			// We failed, clean everything up
+			cwch = GetLastError();
 
-        ::operator delete(szOut);
-        szOut = nullptr;
+			::operator delete(szOut);
+			szOut = nullptr;
 
-        _com_issue_error(!IS_ERROR(cwch) ? HRESULT_FROM_WIN32(cwch) : cwch);
-    }
+			_com_issue_error(!IS_ERROR(cwch) ? HRESULT_FROM_WIN32(cwch) : cwch);
+		}
 
-    return szOut;
+		return szOut;
 }
 
 }

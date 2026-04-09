@@ -51,8 +51,8 @@ CMeshPropPage::CMeshPropPage (const CString &stringMeshName)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 
-    m_stringMeshName = stringMeshName;
-    return ;
+	m_stringMeshName = stringMeshName;
+	return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ CMeshPropPage::CMeshPropPage (const CString &stringMeshName)
 //
 CMeshPropPage::~CMeshPropPage (void)
 {
-    return ;
+	return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ CMeshPropPage::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CMeshPropPage)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
+	return ;
 }
 
 
@@ -96,85 +96,85 @@ BOOL
 CMeshPropPage::OnInitDialog (void)
 {
 	// Allow the base class to process this message
-    CPropertyPage::OnInitDialog();
+	CPropertyPage::OnInitDialog();
 
-    if (m_stringMeshName.GetLength () > 0)
-    {
-        // Get a pointer to the mesh object from the asset manager
-        MeshClass *pCMesh = (MeshClass *)WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_stringMeshName);
+	if (m_stringMeshName.GetLength () > 0)
+	{
+		// Get a pointer to the mesh object from the asset manager
+		MeshClass *pCMesh = (MeshClass *)WW3DAssetManager::Get_Instance()->Create_Render_Obj (m_stringMeshName);
 
-        ASSERT (pCMesh);
-        if (pCMesh)
-        {
-            CString stringDesc;
-            stringDesc.Format (IDS_MESH_PROP_DESC, static_cast<const char*>(m_stringMeshName));
+		ASSERT (pCMesh);
+		if (pCMesh)
+		{
+			CString stringDesc;
+			stringDesc.Format (IDS_MESH_PROP_DESC, static_cast<const char*>(m_stringMeshName));
 
-            // Put the description onto the dialog
-            SetDlgItemText (IDC_DESCRIPTION, stringDesc);
+			// Put the description onto the dialog
+			SetDlgItemText (IDC_DESCRIPTION, stringDesc);
 
-            // Put the polygon count onto the dialog
-            SetDlgItemInt (IDC_POLYGON_COUNT, pCMesh->Get_Num_Polys ());
+			// Put the polygon count onto the dialog
+			SetDlgItemInt (IDC_POLYGON_COUNT, pCMesh->Get_Num_Polys ());
 
-            MeshModelClass *pmeshmodel = pCMesh->Get_Model ();
-            ASSERT (pmeshmodel);
-            if (pmeshmodel)
-            {
-                // Put the vertex count onto the dialog
-                SetDlgItemInt (IDC_VERTEX_COUNT, pmeshmodel->Get_Vertex_Count ());
-            }
+			MeshModelClass *pmeshmodel = pCMesh->Get_Model ();
+			ASSERT (pmeshmodel);
+			if (pmeshmodel)
+			{
+				// Put the vertex count onto the dialog
+				SetDlgItemInt (IDC_VERTEX_COUNT, pmeshmodel->Get_Vertex_Count ());
+			}
 
-            // Put the user text onto the dialog
-            SetDlgItemText (IDC_USER_TEXT, pCMesh->Get_User_Text ());
+			// Put the user text onto the dialog
+			SetDlgItemText (IDC_USER_TEXT, pCMesh->Get_User_Text ());
 
-            // Get the flags for the mesh
-            DWORD dwFlags = pCMesh->Get_W3D_Flags ();
+			// Get the flags for the mesh
+			DWORD dwFlags = pCMesh->Get_W3D_Flags ();
 
-            // Determine what type of mesh this is
-            if ((dwFlags & W3D_MESH_FLAG_COLLISION_BOX) == W3D_MESH_FLAG_COLLISION_BOX)
-            {
-                SendDlgItemMessage (IDC_MESH_TYPE_COLLISION_BOX, BM_SETCHECK, (WPARAM)TRUE);
-            }
-            else if ((dwFlags & W3D_MESH_FLAG_SKIN) == W3D_MESH_FLAG_SKIN)
-            {
-                SendDlgItemMessage (IDC_MESH_TYPE_SKIN, BM_SETCHECK, (WPARAM)TRUE);
-            }
-            else if ((dwFlags & W3D_MESH_FLAG_SHADOW) == W3D_MESH_FLAG_SHADOW)
-            {
-                SendDlgItemMessage (IDC_MESH_TYPE_SHADOW, BM_SETCHECK, (WPARAM)TRUE);
-            }
-            else
-            {
-                SendDlgItemMessage (IDC_MESH_TYPE_NORMAL, BM_SETCHECK, (WPARAM)TRUE);
-            }
+			// Determine what type of mesh this is
+			if ((dwFlags & W3D_MESH_FLAG_COLLISION_BOX) == W3D_MESH_FLAG_COLLISION_BOX)
+			{
+				SendDlgItemMessage (IDC_MESH_TYPE_COLLISION_BOX, BM_SETCHECK, (WPARAM)TRUE);
+			}
+			else if ((dwFlags & W3D_MESH_FLAG_SKIN) == W3D_MESH_FLAG_SKIN)
+			{
+				SendDlgItemMessage (IDC_MESH_TYPE_SKIN, BM_SETCHECK, (WPARAM)TRUE);
+			}
+			else if ((dwFlags & W3D_MESH_FLAG_SHADOW) == W3D_MESH_FLAG_SHADOW)
+			{
+				SendDlgItemMessage (IDC_MESH_TYPE_SHADOW, BM_SETCHECK, (WPARAM)TRUE);
+			}
+			else
+			{
+				SendDlgItemMessage (IDC_MESH_TYPE_NORMAL, BM_SETCHECK, (WPARAM)TRUE);
+			}
 
 
-            // Is this collision type physical?
-            DWORD dwCollisionFlags = dwFlags & W3D_MESH_FLAG_COLLISION_TYPE_MASK;
-            if ((dwCollisionFlags & W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL) == W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL)
-            {
-                SendDlgItemMessage (IDC_COLLISION_TYPE_PHYSICAL, BM_SETCHECK, (WPARAM)TRUE);
-            }
+			// Is this collision type physical?
+			DWORD dwCollisionFlags = dwFlags & W3D_MESH_FLAG_COLLISION_TYPE_MASK;
+			if ((dwCollisionFlags & W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL) == W3D_MESH_FLAG_COLLISION_TYPE_PHYSICAL)
+			{
+				SendDlgItemMessage (IDC_COLLISION_TYPE_PHYSICAL, BM_SETCHECK, (WPARAM)TRUE);
+			}
 
-            // Is this collision type projectile?
-            if ((dwCollisionFlags & W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE) == W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE)
-            {
-                SendDlgItemMessage (IDC_COLLISION_TYPE_PROJECTILE, BM_SETCHECK, (WPARAM)TRUE);
-            }
+			// Is this collision type projectile?
+			if ((dwCollisionFlags & W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE) == W3D_MESH_FLAG_COLLISION_TYPE_PROJECTILE)
+			{
+				SendDlgItemMessage (IDC_COLLISION_TYPE_PROJECTILE, BM_SETCHECK, (WPARAM)TRUE);
+			}
 
-            // Is this a hidden mesh?
-            if ((dwFlags & W3D_MESH_FLAG_HIDDEN) == W3D_MESH_FLAG_HIDDEN)
-            {
-                SendDlgItemMessage (IDC_HIDDEN, BM_SETCHECK, (WPARAM)TRUE);
-            }
+			// Is this a hidden mesh?
+			if ((dwFlags & W3D_MESH_FLAG_HIDDEN) == W3D_MESH_FLAG_HIDDEN)
+			{
+				SendDlgItemMessage (IDC_HIDDEN, BM_SETCHECK, (WPARAM)TRUE);
+			}
 
-            // Free the object
-            pCMesh->Release_Ref ();
-            pCMesh = nullptr;
-        }
-    }
+			// Free the object
+			pCMesh->Release_Ref ();
+			pCMesh = nullptr;
+		}
+	}
 
-    GetParent ()->GetDlgItem (IDOK)->ShowWindow (SW_HIDE);
-    GetParent ()->GetDlgItem (IDCANCEL)->SetWindowText ("Close");
+	GetParent ()->GetDlgItem (IDOK)->ShowWindow (SW_HIDE);
+	GetParent ()->GetDlgItem (IDCANCEL)->SetWindowText ("Close");
 	return TRUE;
 }
 
@@ -184,5 +184,5 @@ void CMeshPropPage::OnClose()
 	// TODO: Add your message handler code here and/or call default
 
 	CPropertyPage::OnClose();
-    return ;
+	return ;
 }

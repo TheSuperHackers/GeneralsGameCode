@@ -596,7 +596,7 @@ BOOL GameMtlDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam 
 
 			break;
 
-  	}
+	}
 
 	return FALSE;
 }

@@ -327,7 +327,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 				}
 			}
 		}
- 		for (cellY = 0; cellY < numRows; cellY++) {
+		for (cellY = 0; cellY < numRows; cellY++) {
 			Int rowBytes = surface_desc.Width*pixelBytes;
 			Int row = cellY*tilePixelExtent;
 			row += TILE_OFFSET/2;
@@ -620,7 +620,7 @@ void AlphaTerrainTextureClass::Apply(unsigned int stage)
 		}
 		else
 		{
-  			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1 );
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 			DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG1 );

@@ -795,7 +795,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	unsigned char *current_frame = nullptr;
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-   float value_255 = 0.9961f;	//254 / 255
+	float value_255 = 0.9961f;	//254 / 255
 	bool default_white_opaque = (	DefaultPointColor.X > value_255 &&
 											DefaultPointColor.Y > value_255 &&
 											DefaultPointColor.Z > value_255 &&
@@ -1275,14 +1275,14 @@ void PointGroupClass::Update_Arrays(
 			{
 				// Offsets need to be scaled to the current screen resolution
 
-   			// First find x and y scale factors (sizes in pixels need to be
-   			// normalized to 2D cam viewplane of -1,-1 to 1,1)
-   			int xres, yres, bitdepth;
-   			bool windowed;
-   			WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
+			// First find x and y scale factors (sizes in pixels need to be
+			// normalized to 2D cam viewplane of -1,-1 to 1,1)
+			int xres, yres, bitdepth;
+			bool windowed;
+			WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
 
-   			float x_scale = (VPXMax - VPXMin) / xres;
-   			float y_scale = (VPYMax - VPYMin) / yres;
+			float x_scale = (VPXMax - VPXMin) / xres;
+			float y_scale = (VPYMax - VPYMin) / yres;
 
 				Vector3 scaled_locs[2][3];
 				for (int i = 0; i < 2; i++) {
@@ -1309,14 +1309,14 @@ void PointGroupClass::Update_Arrays(
 			{
 				// Offsets need to be scaled to the current screen resolution
 
-   			// First find x and y scale factors (sizes in pixels need to be
-   			// normalized to 2D cam viewplane of -1,-1 to 1,1)
-   			int xres, yres, bitdepth;
-   			bool windowed;
-   			WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
+			// First find x and y scale factors (sizes in pixels need to be
+			// normalized to 2D cam viewplane of -1,-1 to 1,1)
+			int xres, yres, bitdepth;
+			bool windowed;
+			WW3D::Get_Render_Target_Resolution(xres, yres, bitdepth, windowed);
 
-   			float x_scale = (VPXMax - VPXMin) / xres;
-   			float y_scale = (VPYMax - VPYMin) / yres;
+			float x_scale = (VPXMax - VPXMin) / xres;
+			float y_scale = (VPYMax - VPYMin) / yres;
 
 				Vector3 scaled_locs[2][3];
 				for (int i = 0; i < 2; i++) {
@@ -1667,7 +1667,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 	unsigned char *current_frame = nullptr;
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-  float value_255 = 0.9961f;	//254 / 255
+	float value_255 = 0.9961f;	//254 / 255
 	bool default_white_opaque = (	DefaultPointColor.X > value_255 &&
 											DefaultPointColor.Y > value_255 &&
 											DefaultPointColor.Z > value_255 &&

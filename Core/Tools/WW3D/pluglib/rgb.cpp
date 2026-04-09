@@ -193,27 +193,27 @@ RGBClass::operator HSVClass (void) const
 	*/
 	if (saturation != 0) {
 		unsigned int tmp = value - white;
-	 	unsigned int r1 = ((value - red) * 255) / tmp;
-	 	unsigned int g1 = ((value - green) * 255) / tmp;
-	 	unsigned int b1 = ((value - blue) * 255) / tmp;
+		unsigned int r1 = ((value - red) * 255) / tmp;
+		unsigned int g1 = ((value - green) * 255) / tmp;
+		unsigned int b1 = ((value - blue) * 255) / tmp;
 
 		// Find effect of second most predominant color.
 		// In which section of the hexagon of colors does the color lie?
 		if (value == red) {
-		 	if (white == green) {
+			if (white == green) {
 				tmp = 5 * 256 + b1;
 			} else {
 				tmp = 1 * 256 - g1;
 			}
 		} else {
 			if (value == green) {
-			 	if (white == blue) {
+				if (white == blue) {
 					tmp = 1 * 256 + r1;
 				} else {
 					tmp = 3 * 256 - b1;
 				}
 			} else {
-			 	if (white == red) {
+				if (white == red) {
 					tmp = 3 * 256 + g1;
 				} else {
 					tmp = 5 * 256 - r1;

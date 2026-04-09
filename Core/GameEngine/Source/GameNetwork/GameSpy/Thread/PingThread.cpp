@@ -341,11 +341,11 @@ BOOL WINAPI IcmpCloseHandle(HANDLE IcmpHandle); /* FALSE on error */
  */
 typedef struct ip_option_information
 {
-   UnsignedByte Ttl;         /* Time To Live (used for traceroute) */
-   UnsignedByte Tos;         /* Type Of Service (usually 0) */
-   UnsignedByte Flags;       /* IP header flags (usually 0) */
-   UnsignedByte OptionsSize; /* Size of options data (usually 0, max 40) */
-   UnsignedByte FAR *OptionsData;   /* Options data buffer */
+	UnsignedByte Ttl;         /* Time To Live (used for traceroute) */
+	UnsignedByte Tos;         /* Type Of Service (usually 0) */
+	UnsignedByte Flags;       /* IP header flags (usually 0) */
+	UnsignedByte OptionsSize; /* Size of options data (usually 0, max 40) */
+	UnsignedByte FAR *OptionsData;   /* Options data buffer */
 }
 IPINFO, *PIPINFO, FAR *LPIPINFO;
 
@@ -357,13 +357,13 @@ IPINFO, *PIPINFO, FAR *LPIPINFO;
  */
 typedef struct icmp_echo_reply
 {
-   UnsignedInt Address;     /* source address */
-   ////////UnsignedInt Status;      /* IP status value (see below) */
-   UnsignedInt RTTime;      /* Round Trip Time in milliseconds */
-   UnsignedShort DataSize;   /* reply data size */
-   UnsignedShort Reserved;   /* */
-   void FAR *Data;     /* reply data buffer */
-   struct ip_option_information Options; /* reply options */
+	UnsignedInt Address;     /* source address */
+	////////UnsignedInt Status;      /* IP status value (see below) */
+	UnsignedInt RTTime;      /* Round Trip Time in milliseconds */
+	UnsignedShort DataSize;   /* reply data size */
+	UnsignedShort Reserved;   /* */
+	void FAR *Data;     /* reply data buffer */
+	struct ip_option_information Options; /* reply options */
 }
 ICMPECHO, *PICMPECHO, FAR *LPICMPECHO;
 
@@ -420,91 +420,91 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
     * Initialize default settings
     */
 
-   IPINFO stIPInfo, *lpstIPInfo;
-   HANDLE hICMP, hICMP_DLL;
-   int i, j, nDataLen, nLoopLimit, nTimeOut, nTTL, nTOS;
-   DWORD dwReplyCount;
-   ///////IN_ADDR stDestAddr;
-   BOOL fRet, fDontStop;
-   ///BOOL fTraceRoute;
+	IPINFO stIPInfo, *lpstIPInfo;
+	HANDLE hICMP, hICMP_DLL;
+	int i, j, nDataLen, nLoopLimit, nTimeOut, nTTL, nTOS;
+	DWORD dwReplyCount;
+	///////IN_ADDR stDestAddr;
+	BOOL fRet, fDontStop;
+	///BOOL fTraceRoute;
 
-   nDataLen = DEFAULT_LEN;
-   nLoopLimit = LOOPLIMIT;
-   nTimeOut = timeout;
-   fDontStop = FALSE;
-   lpstIPInfo = nullptr;
-   nTTL = DEFAULT_TTL;
-   nTOS = 0;
+	nDataLen = DEFAULT_LEN;
+	nLoopLimit = LOOPLIMIT;
+	nTimeOut = timeout;
+	fDontStop = FALSE;
+	lpstIPInfo = nullptr;
+	nTTL = DEFAULT_TTL;
+	nTOS = 0;
 
-   Int pingTime = -1;  // in case of error
+	Int pingTime = -1;  // in case of error
 
-   char achReqData[BUFSIZE];
-   char achRepData[sizeof(ICMPECHO) + BUFSIZE];
+	char achReqData[BUFSIZE];
+	char achRepData[sizeof(ICMPECHO) + BUFSIZE];
 
 
-   HANDLE ( WINAPI *lpfnIcmpCreateFile )( VOID ) = nullptr;
-   BOOL ( WINAPI *lpfnIcmpCloseHandle )( HANDLE ) = nullptr;
-   DWORD (WINAPI *lpfnIcmpSendEcho)(HANDLE, DWORD, LPVOID, WORD, LPVOID,
+	HANDLE ( WINAPI *lpfnIcmpCreateFile )( VOID ) = nullptr;
+	BOOL ( WINAPI *lpfnIcmpCloseHandle )( HANDLE ) = nullptr;
+	DWORD (WINAPI *lpfnIcmpSendEcho)(HANDLE, DWORD, LPVOID, WORD, LPVOID,
                                     LPVOID, DWORD, DWORD) = nullptr;
 
 
    /*
     *  Load the ICMP.DLL
     */
-   hICMP_DLL = LoadLibrary("ICMP.DLL");
-   if (hICMP_DLL == nullptr)
-   {
-      DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!"));
-      goto cleanup;
-   }
+	hICMP_DLL = LoadLibrary("ICMP.DLL");
+	if (hICMP_DLL == nullptr)
+	{
+		DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!"));
+		goto cleanup;
+	}
 
    /*
     * Get pointers to ICMP.DLL functions
     */
-   lpfnIcmpCreateFile = (void * (__stdcall *)())GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCreateFile");
-   lpfnIcmpCloseHandle = (int (__stdcall *)(void *))GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCloseHandle");
-   lpfnIcmpSendEcho = (unsigned long (__stdcall *)(void *, unsigned long, void *, unsigned short,
+	lpfnIcmpCreateFile = (void * (__stdcall *)())GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCreateFile");
+	lpfnIcmpCloseHandle = (int (__stdcall *)(void *))GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpCloseHandle");
+	lpfnIcmpSendEcho = (unsigned long (__stdcall *)(void *, unsigned long, void *, unsigned short,
                        void *, void *, unsigned long, unsigned long))GetProcAddress( (HINSTANCE)hICMP_DLL, "IcmpSendEcho" );
 
-   if ((!lpfnIcmpCreateFile) ||
+	if ((!lpfnIcmpCreateFile) ||
          (!lpfnIcmpCloseHandle) ||
          (!lpfnIcmpSendEcho))
-   {
-      DEBUG_LOG(("GetProcAddr() failed for at least one function."));
-      goto cleanup;
-   }
+	{
+		DEBUG_LOG(("GetProcAddr() failed for at least one function."));
+		goto cleanup;
+	}
 
 
    /*
     * IcmpCreateFile() - Open the ping service
     */
-   hICMP = (HANDLE) lpfnIcmpCreateFile();
-   if (hICMP == INVALID_HANDLE_VALUE)
-   {
-      DEBUG_LOG(("IcmpCreateFile() failed"));
-      goto cleanup;
-   }
+	hICMP = (HANDLE) lpfnIcmpCreateFile();
+	if (hICMP == INVALID_HANDLE_VALUE)
+	{
+		DEBUG_LOG(("IcmpCreateFile() failed"));
+		goto cleanup;
+	}
 
    /*
     * Init data buffer printable ASCII
     *  32 (space) through 126 (tilde)
     */
-   for (j = 0, i = 32; j < nDataLen; j++, i++)
-   {
-      if (i >= 126)
-         i = 32;
-      achReqData[j] = i;
-   }
+	for (j = 0, i = 32; j < nDataLen; j++, i++)
+	{
+		if (i >= 126)
+		i = 32;
+		achReqData[j] = i;
+	}
 
    /*
    * Init IPInfo structure
    */
-   lpstIPInfo = &stIPInfo;
-   stIPInfo.Ttl = nTTL;
-   stIPInfo.Tos = nTOS;
-   stIPInfo.Flags = 0;
-   stIPInfo.OptionsSize = 0;
-   stIPInfo.OptionsData = nullptr;
+	lpstIPInfo = &stIPInfo;
+	stIPInfo.Ttl = nTTL;
+	stIPInfo.Tos = nTOS;
+	stIPInfo.Flags = 0;
+	stIPInfo.OptionsSize = 0;
+	stIPInfo.OptionsData = nullptr;
 
 
 
@@ -512,7 +512,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
     * IcmpSendEcho() - Send the ICMP Echo Request
     *                   and read the Reply
     */
-   dwReplyCount = lpfnIcmpSendEcho(
+	dwReplyCount = lpfnIcmpSendEcho(
                      hICMP,
                      IP,
                      achReqData,
@@ -521,52 +521,52 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
                      achRepData,
                      sizeof(achRepData),
                      nTimeOut);
-   if (dwReplyCount != 0)
-   {
-      //////////IN_ADDR stDestAddr;
-      DWORD dwStatus;
+	if (dwReplyCount != 0)
+	{
+		//////////IN_ADDR stDestAddr;
+		DWORD dwStatus;
 
-      pingTime = (*(UnsignedInt *) & (achRepData[8]));
+		pingTime = (*(UnsignedInt *) & (achRepData[8]));
 
-      // I've seen the ping time bigger than the timeout by a little
-      //   bit.  How lame.
-      if (pingTime > timeout)
-         pingTime = timeout;
+		// I've seen the ping time bigger than the timeout by a little
+		//   bit.  How lame.
+		if (pingTime > timeout)
+		pingTime = timeout;
 
-      dwStatus = *(DWORD *) & (achRepData[4]);
-      if (dwStatus != IP_SUCCESS)
-      {
-         DEBUG_LOG(("ICMPERR: %d", dwStatus));
-      }
+		dwStatus = *(DWORD *) & (achRepData[4]);
+		if (dwStatus != IP_SUCCESS)
+		{
+			DEBUG_LOG(("ICMPERR: %d", dwStatus));
+		}
 
-   }
-   else
-   {
-      DEBUG_LOG(("IcmpSendEcho() failed: %d", dwReplyCount));
-      // Ok we didn't get a packet, just say everything's OK
-      //  and the time was -1
-      pingTime = -1;
-      goto cleanup;
-   }
+	}
+	else
+	{
+		DEBUG_LOG(("IcmpSendEcho() failed: %d", dwReplyCount));
+		// Ok we didn't get a packet, just say everything's OK
+		//  and the time was -1
+		pingTime = -1;
+		goto cleanup;
+	}
 
 
    /*
     * IcmpCloseHandle - Close the ICMP handle
     */
-   fRet = lpfnIcmpCloseHandle(hICMP);
-   if (fRet == FALSE)
-   {
-      DEBUG_LOG(("Error closing ICMP handle"));
-   }
+	fRet = lpfnIcmpCloseHandle(hICMP);
+	if (fRet == FALSE)
+	{
+		DEBUG_LOG(("Error closing ICMP handle"));
+	}
 
-   // Say what you will about goto's but it's handy for stuff like this
+	// Say what you will about goto's but it's handy for stuff like this
 cleanup:
 
-   // Shut down...
-   if (hICMP_DLL)
-      FreeLibrary((HINSTANCE)hICMP_DLL);
+	// Shut down...
+	if (hICMP_DLL)
+	FreeLibrary((HINSTANCE)hICMP_DLL);
 
-   return pingTime;
+	return pingTime;
 }
 
 

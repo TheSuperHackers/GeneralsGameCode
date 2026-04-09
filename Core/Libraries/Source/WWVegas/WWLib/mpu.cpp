@@ -126,9 +126,9 @@ static unsigned long TSC_High;
 
 void RDTSC()
 {
-    auto TSC = _rdtsc();
-    TSC_Low = TSC & 0xFFFFFFFF;
-    TSC_High = TSC >> 32;
+	auto TSC = _rdtsc();
+	TSC_Low = TSC & 0xFFFFFFFF;
+	TSC_High = TSC >> 32;
 }
 
 

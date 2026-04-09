@@ -43,29 +43,29 @@ bool BigEndian = false;
 
 unsigned long ResolveIP(const char *Server)
 {
-  char serverName[100];
-  struct hostent *serverStruct;
-  struct in_addr *serverNode;
+	char serverName[100];
+	struct hostent *serverStruct;
+	struct in_addr *serverNode;
 
-  if (Server == nullptr)
-  {
-	  ERRMSG("Can't resolve null");
-	  return 0;
-  }
+	if (Server == nullptr)
+	{
+		ERRMSG("Can't resolve null");
+		return 0;
+	}
 
-  if (isdigit(Server[0]))
-    return ( ntohl(inet_addr(Server)) );
+	if (isdigit(Server[0]))
+	return ( ntohl(inet_addr(Server)) );
 
-  strcpy(serverName, Server);
+	strcpy(serverName, Server);
 
-  serverStruct = gethostbyname(Server);
-  if (serverStruct == nullptr)
-  {
-	  ERRMSG("Can't resolve " << Server);
-	  return 0;
-  }
-  serverNode = (struct in_addr *) serverStruct->h_addr;
-  return ( ntohl(serverNode->s_addr) );
+	serverStruct = gethostbyname(Server);
+	if (serverStruct == nullptr)
+	{
+		ERRMSG("Can't resolve " << Server);
+		return 0;
+	}
+	serverNode = (struct in_addr *) serverStruct->h_addr;
+	return ( ntohl(serverNode->s_addr) );
 }
 
 void DisplayHelp(const char *prog)
@@ -105,14 +105,14 @@ int main(int argc, char **argv)
 
 	// ----- LOGGING -----
 	// Setup debugging & logging output
-  	Wstring output_file("manglertest.log");
+	Wstring output_file("manglertest.log");
 	config.getString("LOGFILE", output_file);
-  	Wstring backup_file;
-  	backup_file = output_file;
+	Wstring backup_file;
+	backup_file = output_file;
 	backup_file += ".bak";
-  	rename(output_file.get(),backup_file.get());  // save the old file
-  	FileD   output_device(output_file.get());
-  	MsgManager::setAllStreams(&output_device);
+	rename(output_file.get(),backup_file.get());  // save the old file
+	FileD   output_device(output_file.get());
+	MsgManager::setAllStreams(&output_device);
 	DBGMSG("DBG working...");
 	INFMSG("INF working...");
 	WRNMSG("WRN working...");

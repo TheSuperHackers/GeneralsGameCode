@@ -902,8 +902,8 @@ Bool ImagePacker::generateINIFile( void )
 
 		// go through each image on this page
 		for( image = page->getFirstImage();
-				 image;
-				 image = image->m_nextPageImage )
+		image;
+		image = image->m_nextPageImage )
 		{
 
 			//

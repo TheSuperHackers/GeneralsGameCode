@@ -125,7 +125,7 @@ unsigned long  CRC32_Table[ 256 ] =
  *=============================================================================================*/
 unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsigned long crc )
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
+	crc ^= 0xFFFFFFFF;									// invert previous CRC
 	while ( length-- ) {
 		crc = CRC32( *data++, crc );					// calc crc for each byte
 	}
@@ -146,7 +146,7 @@ unsigned long	CRC_Memory( const unsigned char *data, unsigned long length, unsig
  *=============================================================================================*/
 unsigned long	CRC_String( const char *string, unsigned long crc )
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
+	crc ^= 0xFFFFFFFF;									// invert previous CRC
 	while ( *string )	{
 		crc = CRC32( *string++, crc );				// calc crc for each byte
 	}
@@ -167,7 +167,7 @@ unsigned long	CRC_String( const char *string, unsigned long crc )
  *=============================================================================================*/
 unsigned long	CRC_Stringi( const char *string, unsigned long crc )
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
+	crc ^= 0xFFFFFFFF;									// invert previous CRC
 	while ( *string )	{
 		char c = (char)toupper(*string++);
 		crc = CRC32( c, crc );				// calc crc for each byte

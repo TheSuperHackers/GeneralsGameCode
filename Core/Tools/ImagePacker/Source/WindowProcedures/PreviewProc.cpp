@@ -87,8 +87,8 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 			// find the target texture page
 			TexturePage *page;
 			for( page = TheImagePacker->getFirstTexturePage();
-					 page;
-					 page = page->m_next )
+			page;
+			page = page->m_next )
 			{
 
 				// if this is not the target page, ignore it
@@ -138,8 +138,8 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 					// go through all the images on this page
 					ImageInfo *image;
 					for( image = page->getFirstImage();
-							 image;
-							 image = image->m_nextPageImage )
+					image;
+					image = image->m_nextPageImage )
 					{
 						RECT rect;
 

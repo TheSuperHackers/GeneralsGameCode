@@ -80,8 +80,8 @@ public:
 	static DefinitionClass *	Find_Definition (uint32 id, bool twiddle = true);
 	static DefinitionClass *	Find_Named_Definition (const char *name, bool twiddle = true);
 	static DefinitionClass *	Find_Typed_Definition (const char *name, uint32 class_id, bool twiddle = true);
-   static void                List_Available_Definitions ();
-   static void                List_Available_Definitions (int superclass_id);
+	static void                List_Available_Definitions ();
+	static void                List_Available_Definitions (int superclass_id);
 	static uint32					Get_New_ID (uint32 class_id);
 
 	// Definition registration

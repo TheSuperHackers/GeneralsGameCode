@@ -126,7 +126,7 @@ public:
 	void addVar(const Bool *var) { m_bools.push_back(var); }
 	Bool isInSection();
 protected:
-	 SectionList m_bools;
+	SectionList m_bools;
 };
 Bool SectionChecker::isInSection() {
 	Bool ret = FALSE;

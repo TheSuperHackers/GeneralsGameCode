@@ -476,7 +476,7 @@ void SphereRenderObjClass::render_sphere()
 
 	// Enable sorting if the primitive is translucent, alpha testing is not enabled, and sorting is enabled globally.
 	const bool sort = (SphereShader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (SphereShader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
- 	const unsigned int buffer_type = sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8;
+	const unsigned int buffer_type = sort ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8;
 
 	DynamicVBAccessClass vb(buffer_type, dynamic_fvf_type, mesh.Vertex_ct);
 	{
@@ -1739,7 +1739,7 @@ void SphereMeshClass::Free()
 	vtx			= nullptr;
 	vtx_normal	= nullptr;
 	vtx_uv		= nullptr;
- 	dcg			= nullptr;
+	dcg			= nullptr;
 	strips		= nullptr;
 	fans			= nullptr;
 	tri_poly		= nullptr;

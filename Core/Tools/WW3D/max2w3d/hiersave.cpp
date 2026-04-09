@@ -117,7 +117,7 @@ HierarchySaveClass::HierarchySaveClass
 	** Build our tree from the given tree of nodes
 	*/
 	int rootidx = add_node(nullptr,-1);
- 	assert(rootidx == 0);
+	assert(rootidx == 0);
 	add_tree(root,rootidx);
 
 	HierarchyHeader.Version = W3D_CURRENT_HTREE_VERSION;
@@ -171,7 +171,7 @@ HierarchySaveClass::HierarchySaveClass
 	** Build the tree with all leaves of all of the nodes given
 	*/
 	int rootidx = add_node(nullptr,-1);
- 	assert(rootidx == 0);
+	assert(rootidx == 0);
 
 	for (unsigned int i = 0; i < rootlist->Num_Nodes(); i++) {
 		add_tree((*rootlist)[i],rootidx);

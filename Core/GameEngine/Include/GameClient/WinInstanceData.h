@@ -135,11 +135,11 @@ public:
 	really should be protected and have the rest of the code use access
 	functions to edit them */
 
-  Int m_id;								            // Id of the window (used mainly for scripts)
-  Int m_state;                 // Flags indicating state of window
-  UnsignedInt m_style;         // Flags indicating style of window
+	Int m_id;								            // Id of the window (used mainly for scripts)
+	Int m_state;                 // Flags indicating state of window
+	UnsignedInt m_style;         // Flags indicating style of window
 	UnsignedInt m_status;	       // Status bits for this window (mirrored in GameWindow)
-  GameWindow *m_owner;
+	GameWindow *m_owner;
 
 	WinDrawData m_enabledDrawData[ MAX_DRAW_DATA ];  ///< image/color info for enabled state
 	WinDrawData m_disabledDrawData[ MAX_DRAW_DATA ];  ///< image/color info for disabled state
@@ -150,7 +150,7 @@ public:
 	TextDrawData m_hiliteText;		///< hilite text colors
 	TextDrawData m_imeCompositeText;///< IME composite text colors
 
-  ICoord2D	m_imageOffset;		 // dx, dy for blitting bkgnd images
+	ICoord2D	m_imageOffset;		 // dx, dy for blitting bkgnd images
 
 	GameFont *m_font;								 // font which this window should use
 
@@ -160,7 +160,7 @@ public:
 
 	AsciiString m_headerTemplateName;		///< name of the template we're going to base our font off of.
 
-  Int m_tooltipDelay;           ///< desired delay before showing tooltip
+	Int m_tooltipDelay;           ///< desired delay before showing tooltip
 
 	DisplayString *m_text;				 ///< generic text for any window to display
 	DisplayString *m_tooltip;		 ///< tooltip for display

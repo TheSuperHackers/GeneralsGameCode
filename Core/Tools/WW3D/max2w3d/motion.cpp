@@ -318,7 +318,7 @@ MotionClass::~MotionClass(void)
 		delete[] BinMoveData;
 	}
 
- 	ExportLog::printf("Destroy Log..%d,%d,%d,%d, %s..\n",1,2,3,4,"go");
+	ExportLog::printf("Destroy Log..%d,%d,%d,%d, %s..\n",1,2,3,4,"go");
 
 }
 
@@ -425,9 +425,9 @@ void MotionClass::compute_frame_motion(int frame)
 			//
 			bool binary_move = false;
 
-         if ((node)&&(vis))  {
+			if ((node)&&(vis))  {
 
-	         if (frame != 0) {
+				if (frame != 0) {
 					// sample previous frame, and an in between time
 					// to determine if there's a binary movement
 
@@ -437,13 +437,13 @@ void MotionClass::compute_frame_motion(int frame)
 					// if data at frametime_prev == data at frametime_mid and != data at frametime
 					// then we have a binary movement!
 
-               Control *c;
+					Control *c;
 
-               c = node->GetTMController()->GetPositionController();
+					c = node->GetTMController()->GetPositionController();
 
 					if (c) {
 
-            		Interval iValid;
+						Interval iValid;
 
 						Matrix3 smat1;	// sample matrix 1
 						Matrix3 smat2;	// sample matrix 2
@@ -462,7 +462,7 @@ void MotionClass::compute_frame_motion(int frame)
 						c->GetValue(frametime, &smat3, iValid, CTRL_RELATIVE);
 
 						if ((smat1 == smat2) && (!(smat2 == smat3))) {
-               		binary_move = true;
+							binary_move = true;
 							DebugPrint(_T("Binary Move on Translation\n"));
 						}
 
@@ -484,14 +484,14 @@ void MotionClass::compute_frame_motion(int frame)
 								c->GetValue(frametime, &smat3, iValid, CTRL_RELATIVE);
 
 								if ((smat1 == smat2) && (!(smat2 == smat3)))  {
-                  			binary_move = true;
+									binary_move = true;
 									DebugPrint(_T("Binary Move on Rotation\n"));
 								}
 							}
 						}
 					}
-	         }
-         }
+				}
+			}
 
 
 			set_binary_movement(bindex, frame, binary_move);
@@ -580,17 +580,17 @@ void MotionClass::set_eulers(int node,int frame, float x, float y, float z)
 		double y2 = PI - y;
 		double z2 = PI + z;
 
- 		if (x2 > PI) {
- 			x2 = x2 - 2*PI;
- 		}
+		if (x2 > PI) {
+			x2 = x2 - 2*PI;
+		}
 
- 		if (y2 > PI) {
- 			y2 = y2 - 2*PI;
- 		}
+		if (y2 > PI) {
+			y2 = y2 - 2*PI;
+		}
 
- 		if (z2 > PI) {
- 			z2 = z2 - 2*PI;
- 		}
+		if (z2 > PI) {
+			z2 = z2 - 2*PI;
+		}
 
 		/*
 		** load up the previous frame eulers

@@ -98,14 +98,14 @@ SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 
 	// determine new width make the size of the new image either 128x128 or 256x256,
 	// dependent on the width of the original image
-   int new_width;
+	int new_width;
 	if (current_width < 256) {
 		new_width = 128;
 	} else {
 		new_width = 256;
 	}
 
-   int new_height = new_width;
+	int new_height = new_width;
 	//  create a new 4 bit alpha image to build into
 	// We dont support non-homogeneous copies just yet
 	SurfaceClass	*new_surface = NEW_REF(SurfaceClass,(new_width, new_height,WW3D_FORMAT_A4R4G4B4));
@@ -256,7 +256,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 	// If input is a font strike (strip) process it as such
 	if ( sd.Width > 8 * sd.Height ) {
 
- 		// the height of the strike is the height of the characters
+		// the height of the strike is the height of the characters
 		VHeight = 1;
 		CharHeight = sd.Height;
 

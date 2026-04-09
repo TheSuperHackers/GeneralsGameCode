@@ -237,8 +237,8 @@ AggregateDefClass::Find_Subobject
 	// Loop through all the models in our "path" until we've either failed
 	// or found the exact mesh we were looking for...
 	for (int index = 1;
-		  (mesh_path[index][0] != 0) && (parent_model != nullptr);
-		  index ++) {
+	(mesh_path[index][0] != 0) && (parent_model != nullptr);
+	index ++) {
 
 		// Look one level deeper into the subobject chain...
 		RenderObjClass *sub_obj = nullptr;
@@ -434,8 +434,8 @@ AggregateDefClass::Build_Subobject_List
 		// Build a list of nodes that are contained in the vanilla model
 		DynamicVectorClass <RenderObjClass *> orig_node_list;
 		for (index = 0;
-			  index < original_model.Get_Num_Sub_Objects_On_Bone (bone_index);
-			  index ++) {
+		index < original_model.Get_Num_Sub_Objects_On_Bone (bone_index);
+		index ++) {
 			RenderObjClass *psubobj = original_model.Get_Sub_Object_On_Bone (index, bone_index);
 			if (psubobj != nullptr) {
 				orig_node_list.Add (psubobj);
@@ -445,8 +445,8 @@ AggregateDefClass::Build_Subobject_List
 		// Build a list of nodes that are contained in this bone
 		DynamicVectorClass <RenderObjClass *> node_list;
 		for (index = 0;
-			  index < model.Get_Num_Sub_Objects_On_Bone (bone_index);
-			  index ++) {
+		index < model.Get_Num_Sub_Objects_On_Bone (bone_index);
+		index ++) {
 			RenderObjClass *psubobj = model.Get_Sub_Object_On_Bone (index, bone_index);
 			if (psubobj != nullptr) {
 				node_list.Add (psubobj);
@@ -625,8 +625,8 @@ AggregateDefClass::Read_Info (ChunkLoadClass &chunk_load)
 
 		// Read all the subobjects from the file
 		for (UINT isubobject = 0;
-			  (isubobject < m_Info.SubobjectCount) && (ret_val == WW3D_ERROR_OK);
-			  isubobject ++) {
+		(isubobject < m_Info.SubobjectCount) && (ret_val == WW3D_ERROR_OK);
+		isubobject ++) {
 
 			// Read this subobject's definition from the file
 			ret_val = Read_Subobject (chunk_load);
@@ -790,8 +790,8 @@ AggregateDefClass::Save_Info (ChunkSaveClass &chunk_save)
 
 			// Write all the subobjects to the file
 			for (int isubobject = 0;
-			     (isubobject < m_SubobjectList.Count ()) && (ret_val == WW3D_ERROR_OK);
-				  isubobject ++) {
+			(isubobject < m_SubobjectList.Count ()) && (ret_val == WW3D_ERROR_OK);
+			isubobject ++) {
 
 				// Write this object to the file
 				ret_val = Save_Subobject (chunk_save, m_SubobjectList[isubobject]);
@@ -889,7 +889,7 @@ AggregateLoaderClass::Load_W3D (ChunkLoadClass &chunk_load)
 		}
 	}
 
-    // Return a pointer to the prototype
-	 return pprototype;
+	// Return a pointer to the prototype
+	return pprototype;
 }
 

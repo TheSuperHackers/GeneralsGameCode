@@ -229,7 +229,7 @@ BOOL CW3DViewApp::InitInstance (void)
 		EnableShellOpen();
 		RegisterShellFileTypes(TRUE);
 
-		 // Parse command line for standard shell commands, DDE, file open
+		// Parse command line for standard shell commands, DDE, file open
 		CCommandLineInfo cmdInfo;
 		ParseCommandLine(cmdInfo);
 
@@ -320,7 +320,7 @@ void Debug_Refs(void)
 {
 #ifdef RTS_DEBUG
 	TRACE("Detecting Active Refs...\r\n");
-   //ODS("At time %s", cMiscUtil::Get_Text_Time());
+	//ODS("At time %s", cMiscUtil::Get_Text_Time());
 	RefCountNodeClass * first = RefCountClass::ActiveRefList.First();
 	RefCountNodeClass * node = first;
 	while (node->Is_Valid())
@@ -367,7 +367,7 @@ void Debug_Refs(void)
 		node = node->Next();
 	}
 	TRACE("Done.\r\n");
-   //ODS("At time %s", cMiscUtil::Get_Text_Time());
+	//ODS("At time %s", cMiscUtil::Get_Text_Time());
 #endif // RTS_DEBUG
 }
 

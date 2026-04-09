@@ -136,7 +136,7 @@ void WinInstanceData::init()
 	m_owner = nullptr;
 	m_textLabelString.clear();
 	m_tooltipString.clear();
-  m_tooltipDelay = -1; ///< default value
+	m_tooltipDelay = -1; ///< default value
 	m_decoratedNameString.clear();
 
 	m_imageOffset.x = 0;

@@ -171,21 +171,21 @@ inline bool IntersectionClass::_Point_In_Polygon_Z(
 	// and do bounds checking (sum <= 1)  to determine whether or not the triangle intersection occurs.
 
 	if (u1 == 0.0f)    {
-	  beta = u0 / u2;			// beta is the percentage down the edge Corner1->Corner3
-	  if ((beta >= 0.0f) && (beta <= 1.0f)) {		// make sure it's within the edge segment
+		beta = u0 / u2;			// beta is the percentage down the edge Corner1->Corner3
+		if ((beta >= 0.0f) && (beta <= 1.0f)) {		// make sure it's within the edge segment
 			alpha = (v0 - beta * v2) / v1;	 // alpha is the percentage down the edge Corner1->Corner2
 
 			// if alpha is valid & the sum of alpha & beta is <= 1 then it's within the triangle
 			// note:       0.00001 added after testing an intersection of a square in the middle indicated
 			// an error of 0.0000001350, apparently due to roundoff.
 			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0));
-	  }
+		}
 	} else {
-	  beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
-	  if ((beta >= 0.0) && (beta <= 1.0)) {
+		beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
+		if ((beta >= 0.0) && (beta <= 1.0)) {
 			alpha = (u0 - beta * u2) / u1;
 			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0));
-	  }
+		}
 	}
 
 	// if it is inside, adjust the Z value to sit upon the triangle plane.
@@ -249,21 +249,21 @@ inline bool IntersectionClass::_Point_In_Polygon(
 #endif
 
 	if (u1 == 0.0f)    {
-	  Beta = beta = u0 / u2;			// beta is the percentage down the edge loc1->loc3
-	  if ((beta >= 0.0f) && (beta <= 1.0f)) {		// make sure it's within the edge segment
+		Beta = beta = u0 / u2;			// beta is the percentage down the edge loc1->loc3
+		if ((beta >= 0.0f) && (beta <= 1.0f)) {		// make sure it's within the edge segment
 			Alpha = alpha = (v0 - beta * v2) / v1;	 // alpha is the percentage down the edge loc1->loc2
 
 			// if alpha is valid & the sum of alpha & beta is <= 1 then it's within the triangle
 			// note:       0.00001 added after testing an intersection of a square in the middle indicated
 			// an error of 0.0000001350, apparently due to roundoff.
 			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0));
-	  }
+		}
 	} else {
-	  Beta = beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
-	  if ((beta >= 0.0) && (beta <= 1.0)) {
+		Beta = beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
+		if ((beta >= 0.0) && (beta <= 1.0)) {
 			Alpha = alpha = (u0 - beta * u2) / u1;
 			intersect = ((alpha >= 0.0) && ((alpha + beta) <= 1.0));
-	  }
+		}
 	}
 
 #ifdef DEBUG_NORMALS

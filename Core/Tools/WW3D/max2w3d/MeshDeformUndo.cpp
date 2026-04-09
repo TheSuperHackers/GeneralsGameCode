@@ -148,7 +148,7 @@ VertexRestoreClass::Redo (void)
 	//
 	//	Notify the mesh of geometry changes
 	//
- 	m_pModifier->NotifyDependents (FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
+	m_pModifier->NotifyDependents (FOREVER, PART_GEOM | PART_VERTCOLOR, REFMSG_CHANGE);
 	m_pModifier->Update_UI (m_pModData);
 	return ;
 }

@@ -230,17 +230,17 @@ bool TriClass::Contains_Point(const Vector3 & ipoint) const
 	// calculate alpha and beta as normalized (0..1) percentages across the 2d projected triangle
 	// and do bounds checking (sum <= 1)  to determine whether or not the triangle intersection occurs.
 	if (u1 == 0)    {
-	  beta = u0 / u2;
-	  if ((beta >= 0) && (beta <= 1)) {
+		beta = u0 / u2;
+		if ((beta >= 0) && (beta <= 1)) {
 			alpha = (v0 - beta * v2) / v1;
 			intersect = ((alpha >= 0) && ((alpha + beta) <= 1 + WWMATH_EPSILON));
-	  }
+		}
 	} else {
-	  beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
-	  if ((beta >= 0) && (beta <= 1)) {
+		beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
+		if ((beta >= 0) && (beta <= 1)) {
 			alpha = (u0 - beta * u2) / u1;
 			intersect = ((alpha >= 0) && ((alpha + beta) <= 1 + WWMATH_EPSILON));
-	  }
+		}
 	}
 
 	return intersect;

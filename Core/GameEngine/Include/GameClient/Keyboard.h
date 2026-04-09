@@ -99,10 +99,10 @@ public:
 
 	// you may extend the functionality of these for your device
 	virtual void init() override;							/**< initialize the keyboard, only extend this
-																							 functionality, do not replace */
+	functionality, do not replace */
 	virtual void reset() override;							///< Reset keyboard system
 	virtual void update() override;						/**< gather current state of all keys, extend
-																							 this functionality, do not replace */
+	this functionality, do not replace */
 	virtual Bool getCapsState() = 0;  ///< get state of caps lock key, return TRUE if down
 
 	virtual void createStreamMessages();  /**< given state of device, create

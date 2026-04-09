@@ -61,7 +61,7 @@ NetCommandRef::~NetCommandRef()
 	{
 		m_msg->detach();
 	}
- 	DEBUG_ASSERTCRASH(m_next == nullptr, ("NetCommandRef::~NetCommandRef - m_next != nullptr"));
+	DEBUG_ASSERTCRASH(m_next == nullptr, ("NetCommandRef::~NetCommandRef - m_next != nullptr"));
 	DEBUG_ASSERTCRASH(m_prev == nullptr, ("NetCommandRef::~NetCommandRef - m_prev != nullptr"));
 
 #ifdef DEBUG_NETCOMMANDREF

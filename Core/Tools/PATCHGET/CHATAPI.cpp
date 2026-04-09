@@ -47,10 +47,10 @@ namespace patchget
 
 enum EVENT_TYPES
 {
-  NOUPDATE_EVENT=0,    // don't need to update
-  ABORT_EVENT,
+		NOUPDATE_EVENT=0,    // don't need to update
+		ABORT_EVENT,
 
-  NUM_EVENTS
+		NUM_EVENTS
 };
 
 #if RTS_GENERALS
@@ -117,33 +117,33 @@ HRESULT DownloadManagerMunkee::downloadFile( std::string server, std::string use
 HRESULT DownloadManagerMunkee::OnError( int error )
 {
 	HRESULT ret = DownloadManager::OnError( error );
-  g_Finished = -1;
+		g_Finished = -1;
 	return ret;
 }
 HRESULT DownloadManagerMunkee::OnEnd()
 {
 	HRESULT ret = DownloadManager::OnEnd();
-  g_Finished = 1;
+		g_Finished = 1;
 	return ret;
 }
 HRESULT DownloadManagerMunkee::OnProgressUpdate( int bytesread, int totalsize, int timetaken, int timeleft )
 {
 	HRESULT ret = DownloadManager::OnProgressUpdate( bytesread, totalsize, timetaken, timeleft );
 
-  SendDlgItemMessage( g_DownloadWindow, IDC_PROGRESS, PBM_SETPOS, (WPARAM)(bytesread * 100) / totalsize, 0 );
-  char temp[256];
+		SendDlgItemMessage( g_DownloadWindow, IDC_PROGRESS, PBM_SETPOS, (WPARAM)(bytesread * 100) / totalsize, 0 );
+		char temp[256];
 
-  if( timeleft > 0 )
-  {
-    //DBGMSG("Bytes read: "<<bytesread<<".    Time left: "<<timeleft<<" seconds");
- 	 LoadString(Global_instance, TXT_TIME_REMAIN, temp, sizeof(temp));
-    sprintf(g_DLTimeRem,temp,(timeleft/60),(timeleft%60));
+		if( timeleft > 0 )
+		{
+			//DBGMSG("Bytes read: "<<bytesread<<".    Time left: "<<timeleft<<" seconds");
+			LoadString(Global_instance, TXT_TIME_REMAIN, temp, sizeof(temp));
+			sprintf(g_DLTimeRem,temp,(timeleft/60),(timeleft%60));
 
-    LoadString(Global_instance, TXT_BPS, temp, sizeof(temp));
-    sprintf(g_DLBPS,temp,bytesread/timetaken);
-  }
-  LoadString(Global_instance, TXT_BYTES_READ, temp, sizeof(temp));
-  sprintf(g_DLBytesLeft,temp,bytesread,totalsize);
+			LoadString(Global_instance, TXT_BPS, temp, sizeof(temp));
+			sprintf(g_DLBPS,temp,bytesread/timetaken);
+		}
+		LoadString(Global_instance, TXT_BYTES_READ, temp, sizeof(temp));
+		sprintf(g_DLBytesLeft,temp,bytesread,totalsize);
 	return ret;
 }
 HRESULT DownloadManagerMunkee::OnStatusUpdate( int status )
@@ -156,27 +156,27 @@ HRESULT DownloadManagerMunkee::OnStatusUpdate( int status )
 ///////////////////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK simpleDialogProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-  switch( uMsg )
-  {
-    case WM_INITDIALOG:
-      return(TRUE);
-    break;
-    case WM_CLOSE:
-      DestroyWindow(hwnd);
-      PostQuitMessage(0);
-      exit(0);
-    break;
-  }
-  return(FALSE);
+		switch( uMsg )
+		{
+			case WM_INITDIALOG:
+				return(TRUE);
+				break;
+			case WM_CLOSE:
+				DestroyWindow(hwnd);
+				PostQuitMessage(0);
+				exit(0);
+				break;
+		}
+		return(FALSE);
 }
 
 static void startOnline( void )
 {
 	checkingForPatch = false;
 
-  // Close that contacting window
-  DestroyWindow(g_ContactWindow);
-  g_ContactWindow=nullptr;
+		// Close that contacting window
+		DestroyWindow(g_ContactWindow);
+		g_ContactWindow=nullptr;
 
 	if (cantConnect)
 	{
@@ -194,7 +194,7 @@ static void startOnline( void )
 				queuedDownloads.pop_front();
 				TheDownloadManager = new DownloadManagerMunkee;
 				/**/
-		    int retVal = DialogBox(Global_instance, MAKEINTRESOURCE(IDD_DOWNLOAD_DIALOG), g_PrimaryWindow, downloadDialogProc);
+					int retVal = DialogBox(Global_instance, MAKEINTRESOURCE(IDD_DOWNLOAD_DIALOG), g_PrimaryWindow, downloadDialogProc);
 				if (retVal)
 				{
 					DEBUG_LOG(("Error %d", GetLastError()));
@@ -608,33 +608,33 @@ char const * Fetch_String(int id);
 //
 HWND CreatePrimaryWin(void)
 {
-  HWND                hwnd;
-  WNDCLASS            wc;
-  char                name[256];
+		HWND                hwnd;
+		WNDCLASS            wc;
+		char                name[256];
 
-  sprintf(name,Fetch_String(TXT_TITLE));
+		sprintf(name,Fetch_String(TXT_TITLE));
 
-  //DBGMSG("CreatePrimary: "<<name);
+		//DBGMSG("CreatePrimary: "<<name);
 
   /*
   ** set up and register window class
   */
-  wc.style = CS_HREDRAW | CS_VREDRAW;
-  wc.lpfnWndProc = DefWindowProc;
-  wc.cbClsExtra = 0;            // Don't need any extra class data
-  wc.cbWndExtra = 0;            // No extra win data
-  wc.hInstance = Global_instance;
-  wc.hIcon=LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1));
-  wc.hCursor = nullptr;  /////////LoadCursor( nullptr, IDC_ARROW );
-  wc.hbrBackground = nullptr;
-  wc.lpszMenuName = name;
-  wc.lpszClassName = name;
-  RegisterClass( &wc );
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpfnWndProc = DefWindowProc;
+		wc.cbClsExtra = 0;            // Don't need any extra class data
+		wc.cbWndExtra = 0;            // No extra win data
+		wc.hInstance = Global_instance;
+		wc.hIcon=LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hCursor = nullptr;  /////////LoadCursor( nullptr, IDC_ARROW );
+		wc.hbrBackground = nullptr;
+		wc.lpszMenuName = name;
+		wc.lpszClassName = name;
+		RegisterClass( &wc );
 
   /*
   ** create a window
   */
-  hwnd = CreateWindowEx(
+		hwnd = CreateWindowEx(
       WS_EX_APPWINDOW,
       name,
       name,
@@ -650,12 +650,12 @@ HWND CreatePrimaryWin(void)
       Global_instance,
       nullptr );
 
-  SendMessage(hwnd,WM_SETICON,(WPARAM)ICON_SMALL,
+		SendMessage(hwnd,WM_SETICON,(WPARAM)ICON_SMALL,
       (LPARAM)LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1)));
 
-  ShowWindow(hwnd,SW_SHOWNORMAL);
+		ShowWindow(hwnd,SW_SHOWNORMAL);
 
-  return(hwnd);
+		return(hwnd);
 }
 
 
@@ -665,16 +665,16 @@ HWND CreatePrimaryWin(void)
 //
 void DispatchEvents(void)
 {
-  MSG msg;
-  int counter=0;
-  while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
-  {
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
-	 counter++;
-	 if (counter==256)  // just in case
-	   break;
-  }
+		MSG msg;
+		int counter=0;
+		while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+			counter++;
+			if (counter==256)  // just in case
+			break;
+		}
 }
 
 //
@@ -755,33 +755,33 @@ int main(int argc, char *argv[])
 */
 
 
-  // Find the game version
-  g_AppVer = -1;
+		// Find the game version
+		g_AppVer = -1;
 	if (!GetUnsignedIntFromRegistry("", "Version", g_AppVer))
 	{
-    MessageBox(g_PrimaryWindow,Fetch_String(TXT_INSTALL_PROBLEM),Fetch_String(TXT_ERROR),MB_OK);
-    exit(0);
+			MessageBox(g_PrimaryWindow,Fetch_String(TXT_INSTALL_PROBLEM),Fetch_String(TXT_ERROR),MB_OK);
+			exit(0);
 	}
-  // OK, have the current game version now
+		// OK, have the current game version now
 
-  g_PrimaryWindow=CreatePrimaryWin();  // Create the main window
-  DispatchEvents();  // process some win messages
+		g_PrimaryWindow=CreatePrimaryWin();  // Create the main window
+		DispatchEvents();  // process some win messages
 
-  // Popup the "contacting" window
-  g_ContactWindow=CreateDialog(Global_instance,MAKEINTRESOURCE(IDD_CONNECTING),g_PrimaryWindow,Simple_Dialog_Proc);
-  ShowWindow(g_ContactWindow,SW_SHOWNORMAL);
-  SetForegroundWindow(g_ContactWindow);
-  DispatchEvents();  // process some win messages
+		// Popup the "contacting" window
+		g_ContactWindow=CreateDialog(Global_instance,MAKEINTRESOURCE(IDD_CONNECTING),g_PrimaryWindow,Simple_Dialog_Proc);
+		ShowWindow(g_ContactWindow,SW_SHOWNORMAL);
+		SetForegroundWindow(g_ContactWindow);
+		DispatchEvents();  // process some win messages
 
 
-  // Setup the Westwood Online stuff
-  Startup_Chat();
+		// Setup the Westwood Online stuff
+		Startup_Chat();
 
-  Update_If_Required();
+		Update_If_Required();
 
-  Shutdown_Chat();
+		Shutdown_Chat();
 
-  return(0);
+		return(0);
 }
 
 
@@ -888,10 +888,10 @@ char const * Fetch_String(int id)
 void LogMsg(const char *msg)
 {
 #ifdef RTS_DEBUG
-  FILE *out=fopen("register.log","a");
-  fprintf(out,"%s\n",msg);
-  fflush(out);
-  fclose(out);
+		FILE *out=fopen("register.log","a");
+		fprintf(out,"%s\n",msg);
+		fflush(out);
+		fclose(out);
 #endif
 }
 
@@ -972,47 +972,47 @@ void Shutdown_Chat(void)
 //
 void Update_If_Required(void)
 {
-  int   retval;
-  int   i;
-  // Create the events
-  for (i=0; i<NUM_EVENTS; i++)
-    Events[i]=CreateEvent(nullptr,FALSE,FALSE,nullptr);
+		int   retval;
+		int   i;
+		// Create the events
+		for (i=0; i<NUM_EVENTS; i++)
+		Events[i]=CreateEvent(nullptr,FALSE,FALSE,nullptr);
 
 	StartPatchCheck();
 
 	while (1)
 	{
 		ghttpThink();
-    MSG msg;
-    while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
-    {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-    }
-    retval=WaitForMultipleObjectsEx(NUM_EVENTS,Events,FALSE,50,FALSE);
-    if (retval==WAIT_TIMEOUT)
-      continue;
-    //DBGMSG("An event was set");
-    retval-=WAIT_OBJECT_0;
-    break;
-  }
+			MSG msg;
+			while(PeekMessage(&msg,nullptr,0,0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			retval=WaitForMultipleObjectsEx(NUM_EVENTS,Events,FALSE,50,FALSE);
+			if (retval==WAIT_TIMEOUT)
+			continue;
+			//DBGMSG("An event was set");
+			retval-=WAIT_OBJECT_0;
+			break;
+		}
 
-  //DBGMSG("Out of the loop")
+		//DBGMSG("Out of the loop")
 
-  if (retval==ABORT_EVENT)
-  {
-     exit(0);
-  }
-  else
-  {
-    //DBGMSG("NO update required");
-  }
+		if (retval==ABORT_EVENT)
+		{
+			exit(0);
+		}
+		else
+		{
+			//DBGMSG("NO update required");
+		}
 
-  //DBGMSG("Shutting down");
+		//DBGMSG("Shutting down");
 
-  // close all the event objects
-  for (i=0; i<NUM_EVENTS; i++)
-    CloseHandle(Events[i]);
+		// close all the event objects
+		for (i=0; i<NUM_EVENTS; i++)
+		CloseHandle(Events[i]);
 
 	/*
   Startup_Chat();
@@ -1262,23 +1262,23 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			switch( LOWORD( wParam ) )
 			{
 				case IDC_DLABORT:
-            {
+					{
 
-               char abort[128];
-               char abortdload[256];
-  	            LoadString(Global_instance, TXT_ABORT_DOWNLOAD, abortdload, sizeof(abortdload));
-               LoadString(Global_instance, TXT_ABORT, abort, sizeof(abort));
+						char abort[128];
+						char abortdload[256];
+						LoadString(Global_instance, TXT_ABORT_DOWNLOAD, abortdload, sizeof(abortdload));
+						LoadString(Global_instance, TXT_ABORT, abort, sizeof(abort));
 
-               if (MessageBox(g_PrimaryWindow,abortdload,abort,MB_YESNO)==IDYES)
-               {
+						if (MessageBox(g_PrimaryWindow,abortdload,abort,MB_YESNO)==IDYES)
+						{
 /*
 					  pDownload->Abort();
 */
-                 EndDialog( hwndDlg, g_Finished );
-					  DestroyWindow(hwndDlg);
-               }
-            }
-            break;
+							EndDialog( hwndDlg, g_Finished );
+							DestroyWindow(hwndDlg);
+						}
+					}
+						break;
 
 				default:
 					return FALSE;
@@ -1288,19 +1288,19 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		case WM_INITDIALOG:
 			SetupDownload();
 
-         SendMessage(hwndDlg, WM_SETICON,(WPARAM)ICON_SMALL,
+				SendMessage(hwndDlg, WM_SETICON,(WPARAM)ICON_SMALL,
            (LPARAM)LoadIcon(Global_instance, MAKEINTRESOURCE(IDI_ICON1)));
 
-         g_DLTimeRem[0]=0;
-         g_DLBytesLeft[0]=0;
-         g_DLBPS[0]=0;
+				g_DLTimeRem[0]=0;
+				g_DLBytesLeft[0]=0;
+				g_DLBPS[0]=0;
 
 			//SetDlgItemText( hwndDlg, IDC_DOWNLOADTITLE, g_UpdateString);
-         //SetWindowText(hwndDlg, g_UpdateString);
+				//SetWindowText(hwndDlg, g_UpdateString);
 
-         SetDlgItemText( hwndDlg, IDC_TIMEREM, g_DLTimeRem);
-         SetDlgItemText( hwndDlg, IDC_BYTESLEFT, g_DLBytesLeft);
-         // SetDlgItemText( hwndDlg, IDC_BPS, g_DLBPS );
+				SetDlgItemText( hwndDlg, IDC_TIMEREM, g_DLTimeRem);
+				SetDlgItemText( hwndDlg, IDC_BYTESLEFT, g_DLBytesLeft);
+				// SetDlgItemText( hwndDlg, IDC_BPS, g_DLBPS );
 
 /*
          // Work out the full file name
@@ -1321,25 +1321,25 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			break;
 
 		case WM_TIMER:
-      LogMsg("TIMER");
+				LogMsg("TIMER");
 			if( g_Finished == 0 )
 			{
-            LogMsg("Entering PumpMsgs");
+					LogMsg("Entering PumpMsgs");
 /*
 				pDownload->PumpMessages();
 */
-            LogMsg("Done with PumpMsgs");
-            if (strlen(g_DLTimeRem))
-              SetDlgItemText( hwndDlg, IDC_TIMEREM, g_DLTimeRem );
-            if (strlen(g_DLBytesLeft))
-              SetDlgItemText( hwndDlg, IDC_BYTESLEFT, g_DLBytesLeft );
-            //if (strlen(g_DLBPS))
-            //  SetDlgItemText( hwndDlg, IDC_BPS, g_DLBPS );
+					LogMsg("Done with PumpMsgs");
+					if (strlen(g_DLTimeRem))
+					SetDlgItemText( hwndDlg, IDC_TIMEREM, g_DLTimeRem );
+					if (strlen(g_DLBytesLeft))
+					SetDlgItemText( hwndDlg, IDC_BYTESLEFT, g_DLBytesLeft );
+					//if (strlen(g_DLBPS))
+					//  SetDlgItemText( hwndDlg, IDC_BPS, g_DLBPS );
 			}
 			else
 			{
-            LogMsg("TIMER: Finished");
-            EndDialog( hwndDlg, g_Finished );
+					LogMsg("TIMER: Finished");
+					EndDialog( hwndDlg, g_Finished );
 				DestroyWindow( hwndDlg );
 			}
 			break;
@@ -1348,7 +1348,7 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			KillTimer( hwndDlg, 1 );
 			ClosedownDownload();
 
-         //DBGMSG("WM_DESTROY");
+				//DBGMSG("WM_DESTROY");
 			break;
 
 		case WM_SETFONT:
@@ -1365,18 +1365,18 @@ BOOL CALLBACK Download_Dialog_Proc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 // Whoeee this is an exciting one...
 BOOL CALLBACK Simple_Dialog_Proc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-  switch( uMsg )
-  {
-    case WM_INITDIALOG:
-      return(TRUE);
-    break;
-    case WM_CLOSE:
-      DestroyWindow(hwnd);
-      PostQuitMessage(0);
-      exit(0);
-    break;
-  }
-  return(FALSE);
+		switch( uMsg )
+		{
+			case WM_INITDIALOG:
+				return(TRUE);
+				break;
+			case WM_CLOSE:
+				DestroyWindow(hwnd);
+				PostQuitMessage(0);
+				exit(0);
+				break;
+		}
+		return(FALSE);
 }
 
 

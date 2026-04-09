@@ -263,7 +263,7 @@ bool W3dOptionsDialogClass::Dialog_Proc
 					}
 					break;
 
-	 		}
+			}
 
 	}
 	return 0;
@@ -347,7 +347,7 @@ void W3dOptionsDialogClass::Dialog_Init()
 	SetDlgItemText(Hwnd, IDC_ANIMATION_FPS_STATIC, string);
 
 
-  // initialize animation combo/list boxes
+	// initialize animation combo/list boxes
 
 	HwndReduce = GetDlgItem(Hwnd, IDC_REDUCE_ANIMATION_COMBO);
 	HwndFlavor = GetDlgItem(Hwnd, IDC_COMPRESS_ANIMATION_FLAVOR_COMBO);

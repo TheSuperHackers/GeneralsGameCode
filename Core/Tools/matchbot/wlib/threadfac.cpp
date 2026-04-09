@@ -42,9 +42,9 @@ CritSec   Runnable::CritSec_;           // to protect ThreadCount_
 //
 struct ThreadInformation
 {
-  void     *startPoint;    // The address of the _real_ thread function, or class
-  void     *data;          // data to pass to real thread function or class
-  bit8      destroy;       // only applies to classes, should delete after execution?
+	void     *startPoint;    // The address of the _real_ thread function, or class
+	void     *data;          // data to pass to real thread function or class
+	bit8      destroy;       // only applies to classes, should delete after execution?
 };
 
 
@@ -56,54 +56,54 @@ bit8 ThreadFactory::startThread(Runnable &runnable, void *data, bit8 destroy)
 {
 #ifdef _REENTRANT
 
-  {
-	  Runnable::CritSec_.lock();
-	  Runnable::ThreadCount_++;
-	  Runnable::CritSec_.unlock();
-  }
+	{
+		Runnable::CritSec_.lock();
+		Runnable::ThreadCount_++;
+		Runnable::CritSec_.unlock();
+	}
 
 
-  ThreadInformation *tInfo=new ThreadInformation;
-  tInfo->startPoint=(void *)&runnable;
-  tInfo->data=data;
-  tInfo->destroy=destroy;
+	ThreadInformation *tInfo=new ThreadInformation;
+	tInfo->startPoint=(void *)&runnable;
+	tInfo->data=data;
+	tInfo->destroy=destroy;
 
   #ifdef _WIN32
-    // Under windows call _beginthreadex instead of CreateThread so you can
-    //  use all the normal C library stuff. (IMPORTANT!!!)
-    uint32 handle;
+	// Under windows call _beginthreadex instead of CreateThread so you can
+	//  use all the normal C library stuff. (IMPORTANT!!!)
+	uint32 handle;
 	uint32 stup1d;
-    handle=_beginthreadex(nullptr,0,  threadClassLauncher, tInfo, 0, &stup1d);
-    if (handle!=nullptr)
-      return(TRUE);
-    else
-    {
-      {
-        runnable.CritSec_.lock();
-        runnable.ThreadCount_--;   // Ok, so it didn't really start
-        runnable.CritSec_.unlock();
-      }
-      return(FALSE);
-    }
+	handle=_beginthreadex(nullptr,0,  threadClassLauncher, tInfo, 0, &stup1d);
+	if (handle!=nullptr)
+	return(TRUE);
+	else
+	{
+		{
+			runnable.CritSec_.lock();
+			runnable.ThreadCount_--;   // Ok, so it didn't really start
+			runnable.CritSec_.unlock();
+		}
+		return(FALSE);
+	}
   #else // UNIX
-    // Setup thread attributes for client threads
-    int retval;
-    pthread_attr_t threadAttr;
-    pthread_attr_init(&threadAttr);
-    pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
-    pthread_attr_setscope(&threadAttr,PTHREAD_SCOPE_SYSTEM);
-    retval=pthread_create(nullptr,&threadAttr, threadClassLauncher, tInfo);
-    if (retval==0)
-      return(TRUE);
-    else
-    {
-      {
-        runnable.CritSec_.lock();
-        runnable.ThreadCount_--;   // Ok, so it didn't really start
-        runnable.CritSec_.unlock();
-      }
-      return(FALSE);
-    }
+	// Setup thread attributes for client threads
+	int retval;
+	pthread_attr_t threadAttr;
+	pthread_attr_init(&threadAttr);
+	pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
+	pthread_attr_setscope(&threadAttr,PTHREAD_SCOPE_SYSTEM);
+	retval=pthread_create(nullptr,&threadAttr, threadClassLauncher, tInfo);
+	if (retval==0)
+	return(TRUE);
+	else
+	{
+		{
+			runnable.CritSec_.lock();
+			runnable.ThreadCount_--;   // Ok, so it didn't really start
+			runnable.CritSec_.unlock();
+		}
+		return(FALSE);
+	}
   #endif
 #else
 	return (FALSE);
@@ -117,31 +117,31 @@ bit8 ThreadFactory::startThread(Runnable &runnable, void *data, bit8 destroy)
 bit8 ThreadFactory::startThread(void (*start_func)(void *), void *data)
 {
 #ifdef _REENTRANT
-  ThreadInformation *tInfo=new ThreadInformation;
-  tInfo->startPoint=start_func;
-  tInfo->data=data;
+	ThreadInformation *tInfo=new ThreadInformation;
+	tInfo->startPoint=start_func;
+	tInfo->data=data;
 
   #ifdef _WIN32
-    // Under windows call _beginthreadex instead of CreateThread so you can
-    //  use all the normal C library stuff. (IMPORTANT!!!)
-    uint32 handle;
+	// Under windows call _beginthreadex instead of CreateThread so you can
+	//  use all the normal C library stuff. (IMPORTANT!!!)
+	uint32 handle;
 	unsigned temp;
-    handle=_beginthreadex(nullptr,0,  threadFuncLauncher, tInfo, 0, &temp);
-    if (handle!=nullptr)
-      return(TRUE);
-    return(FALSE);
+	handle=_beginthreadex(nullptr,0,  threadFuncLauncher, tInfo, 0, &temp);
+	if (handle!=nullptr)
+	return(TRUE);
+	return(FALSE);
   #else // UNIX
-    // Setup thread attributes for client threads
-    int retval;
-    pthread_attr_t threadAttr;
-    pthread_attr_init(&threadAttr);
-    pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
-    pthread_attr_setscope(&threadAttr,PTHREAD_SCOPE_SYSTEM);
-    retval=pthread_create(nullptr,&threadAttr, threadFuncLauncher, tInfo);
-    if (retval==0)
-      return(TRUE);
-    else
-      return(FALSE);
+	// Setup thread attributes for client threads
+	int retval;
+	pthread_attr_t threadAttr;
+	pthread_attr_init(&threadAttr);
+	pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
+	pthread_attr_setscope(&threadAttr,PTHREAD_SCOPE_SYSTEM);
+	retval=pthread_create(nullptr,&threadAttr, threadFuncLauncher, tInfo);
+	if (retval==0)
+	return(TRUE);
+	else
+	return(FALSE);
   #endif
 #else
 	return(FALSE);

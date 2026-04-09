@@ -213,7 +213,7 @@ WideStringClass::WideStringClass (WCHAR ch, bool hint_temporary)
 ///////////////////////////////////////////////////////////////////
 inline
 WideStringClass::WideStringClass (const WideStringClass &string, bool hint_temporary)
- 	:	m_Buffer (m_EmptyString)
+:	m_Buffer (m_EmptyString)
 {
 	if (hint_temporary || (string.Get_Length()>1)) {
 		Get_String(string.Get_Length()+1, hint_temporary);

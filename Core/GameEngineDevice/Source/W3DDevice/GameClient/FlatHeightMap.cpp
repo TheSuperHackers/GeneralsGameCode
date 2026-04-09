@@ -499,41 +499,41 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	DX8Wrapper::Set_Material(m_vertexMaterialClass);
 	DX8Wrapper::Set_Shader(m_shaderClass);
 
- 	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE; //set default shader
+	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE; //set default shader
 
- 	//set correct shader based on current settings
- 	if (TheGlobalData->m_useLightMap && doCloud)
- 	{	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE12;
- 	}
- 	else
- 	if (TheGlobalData->m_useLightMap)
- 	{	//lightmap only
- 		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE2;
- 	}
- 	else
- 	if (doCloud)
- 	{	//cloudmap only
- 		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE1;
- 	}
+	//set correct shader based on current settings
+	if (TheGlobalData->m_useLightMap && doCloud)
+	{	st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE12;
+	}
+	else
+	if (TheGlobalData->m_useLightMap)
+	{	//lightmap only
+		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE2;
+	}
+	else
+	if (doCloud)
+	{	//cloudmap only
+		st=W3DShaderManager::ST_FLAT_TERRAIN_BASE_NOISE1;
+	}
 
 
 
 	//Find number of passes required to render current shader
- 	devicePasses=W3DShaderManager::getShaderPasses(st);
+	devicePasses=W3DShaderManager::getShaderPasses(st);
 
- 	if (m_disableTextures)
- 		devicePasses=1;	//force to 1 lighting-only pass
+	if (m_disableTextures)
+	devicePasses=1;	//force to 1 lighting-only pass
 
- 	//Specify all textures that this shader may need.
- 	W3DShaderManager::setTexture(0,m_stageZeroTexture);
+	//Specify all textures that this shader may need.
+	W3DShaderManager::setTexture(0,m_stageZeroTexture);
 	if (m_shroud && rinfo.Additional_Pass_Count() && !m_disableTextures)
 	{
 		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
 	}
 
- 	W3DShaderManager::setTexture(1,nullptr);	// Set by the tile later. [3/31/2003]
- 	W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
- 	W3DShaderManager::setTexture(3,m_stageThreeTexture);//noise
+	W3DShaderManager::setTexture(1,nullptr);	// Set by the tile later. [3/31/2003]
+	W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
+	W3DShaderManager::setTexture(3,m_stageThreeTexture);//noise
 	//Disable writes to destination alpha channel (if there is one)
 	if (DX8Wrapper::getBackBufferFormat() == WW3D_FORMAT_A8R8G8B8) {
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
@@ -544,7 +544,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	Int yCoordMin = m_map->getXExtent();
 	Int xCoordMax = 0;
 	Int xCoordMin = m_map->getYExtent();
- 	for (pass=0; pass<devicePasses; pass++) {
+	for (pass=0; pass<devicePasses; pass++) {
 		Bool disableTex = m_disableTextures;
 		if (m_disableTextures ) {
 			DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaque2DShader);
@@ -580,7 +580,7 @@ void FlatHeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	}
 
 	if (pass)	//shader was applied at least once?
- 		W3DShaderManager::resetShader(st);
+	W3DShaderManager::resetShader(st);
 #if 1
 
 	//Draw feathered shorelines

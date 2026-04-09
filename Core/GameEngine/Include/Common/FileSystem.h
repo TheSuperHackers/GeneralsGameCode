@@ -137,8 +137,8 @@ struct FileInfo {
 //===============================
 class FileSystem : public SubsystemInterface
 {
-  FileSystem(const FileSystem&);
-  FileSystem& operator=(const FileSystem&);
+	FileSystem(const FileSystem&);
+	FileSystem& operator=(const FileSystem&);
 
 public:
 	FileSystem();

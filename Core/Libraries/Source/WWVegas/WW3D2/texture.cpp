@@ -732,9 +732,9 @@ TextureClass::TextureClass
 	{
 		Width=thumb->Get_Original_Texture_Width();
 		Height=thumb->Get_Original_Texture_Height();
- 		if (MipLevelCount!=MIP_LEVELS_1) {
- 			MipLevelCount=(MipCountType)thumb->Get_Original_Texture_Mip_Level_Count();
- 		}
+		if (MipLevelCount!=MIP_LEVELS_1) {
+			MipLevelCount=(MipCountType)thumb->Get_Original_Texture_Mip_Level_Count();
+		}
 	}
 
 	LastAccessed=WW3D::Get_Sync_Time();
@@ -1477,9 +1477,9 @@ CubeTextureClass::CubeTextureClass
 	{
 		Width=thumb->Get_Original_Texture_Width();
 		Height=thumb->Get_Original_Texture_Height();
- 		if (MipLevelCount!=MIP_LEVELS_1) {
- 			MipLevelCount=(MipCountType)thumb->Get_Original_Texture_Mip_Level_Count();
- 		}
+		if (MipLevelCount!=MIP_LEVELS_1) {
+			MipLevelCount=(MipCountType)thumb->Get_Original_Texture_Mip_Level_Count();
+		}
 	}
 
 	LastAccessed=WW3D::Get_Sync_Time();
@@ -1762,9 +1762,9 @@ VolumeTextureClass::VolumeTextureClass
 	{
 		Width=thumb->Get_Original_Texture_Width();
 		Height=thumb->Get_Original_Texture_Height();
- 		if (MipLevelCount!=MIP_LEVELS_1) {
- 			MipLevelCount=(MipCountType)thumb->Get_Original_Texture_Mip_Level_Count();
- 		}
+		if (MipLevelCount!=MIP_LEVELS_1) {
+			MipLevelCount=(MipCountType)thumb->Get_Original_Texture_Mip_Level_Count();
+		}
 	}
 
 	LastAccessed=WW3D::Get_Sync_Time();

@@ -59,25 +59,25 @@ protected:
 
     public:
 
-        // Return the selected device index
-        int GetDeviceIndex () const
-            { return m_iDeviceIndex; }
+	// Return the selected device index
+	int GetDeviceIndex () const
+	{ return m_iDeviceIndex; }
 
-        // Return the selected bits per pixel
-        int GetBitsPerPixel () const
-            { return m_iBitsPerPixel; }
+	// Return the selected bits per pixel
+	int GetBitsPerPixel () const
+	{ return m_iBitsPerPixel; }
 
-        const CString &GetDriverName () const
-            { return m_DriverName; }
+	const CString &GetDriverName () const
+	{ return m_DriverName; }
 
     protected:
-        void UpdateDeviceDescription (void);
+	void UpdateDeviceDescription (void);
 
     private:
-        BOOL		m_bLookupCachedInfo;
-        int			m_iDeviceIndex;
-        int			m_iBitsPerPixel;
-		  CString	m_DriverName;
+	BOOL		m_bLookupCachedInfo;
+	int			m_iDeviceIndex;
+	int			m_iBitsPerPixel;
+	CString	m_DriverName;
 };
 
 //{{AFX_INSERT_LOCATION}}

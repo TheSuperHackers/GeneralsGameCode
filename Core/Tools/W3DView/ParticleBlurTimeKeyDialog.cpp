@@ -69,7 +69,7 @@ BOOL ParticleBlurTimeKeyDialogClass::OnInitDialog()
 	Initialize_Spinner (m_BlurTimeSpin, m_BlurTime, -1024, 1024);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 BOOL ParticleBlurTimeKeyDialogClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)

@@ -93,8 +93,8 @@ protected:
 		void					LoadAnimationsIntoTree (void);
 		void					LoadAnimationsIntoTree (HTREEITEM hItem);
 
-	  bool					Are_Anims_Restricted (void) const			{ return m_RestrictAnims; }
-	  void					Restrict_Anims (bool onoff);
+	bool					Are_Anims_Restricted (void) const			{ return m_RestrictAnims; }
+	void					Restrict_Anims (bool onoff);
 
 		//
 		//	Texture insertion methods

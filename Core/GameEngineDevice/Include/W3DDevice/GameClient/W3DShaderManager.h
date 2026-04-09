@@ -143,7 +143,7 @@ public:
 	virtual Bool setup(FilterModes mode){return false;} ///< Called when the filter is started, one time before the first prerender.
 protected:
 	virtual Int set(FilterModes mode) = 0;		///<setup shader for the specified rendering pass.
-	 ///do any custom resetting necessary to bring W3D in sync.
+	///do any custom resetting necessary to bring W3D in sync.
 	virtual void reset() = 0;
 };
 

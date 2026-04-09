@@ -96,10 +96,10 @@ struct ManglerData {
 
 // size = TransportMessageHeader + ManglerData + 10 bytes = 26 bytes
 struct ManglerMessage {
-        ManglerData							data;
-        int											length;
-        unsigned int						ip;
-        unsigned short					port;
+	ManglerData							data;
+	int											length;
+	unsigned int						ip;
+	unsigned short					port;
 };
 
 #pragma pack(pop)

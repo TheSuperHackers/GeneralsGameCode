@@ -89,7 +89,7 @@ private:
 	// This function finds the start and end of the "non-default" data
 	void compute_range(void);
 
-  // compress functions
+	// compress functions
 	void remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 packet_idx);
 	uint32 find_useless_packet(W3dTimeCodedBitChannelStruct * c);
 	void compress(W3dTimeCodedBitChannelStruct * c);

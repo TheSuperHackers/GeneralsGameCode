@@ -388,7 +388,7 @@ bool Is_Geometry(INode * node)
  *=============================================================================================*/
 bool Is_Normal_Mesh(INode * node)
 {
- 	if (!Is_Geometry(node)) return false;
+	if (!Is_Geometry(node)) return false;
 	if (Is_Skin(node)) return false;
 	if (Is_Proxy(*node)) return false;
 	return (get_geometry_type(node) == W3DAppData2Struct::GEO_TYPE_NORMAL_MESH);

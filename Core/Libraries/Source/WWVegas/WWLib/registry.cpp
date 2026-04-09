@@ -219,12 +219,12 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 	} else {
 		//*value = 0;
 		//value = (char *) default_string;
-      if (default_string == nullptr) {
-		   *value = 0;
-      } else {
-         assert(strlen(default_string) < (unsigned int) value_size);
-         strcpy(value, default_string);
-      }
+		if (default_string == nullptr) {
+			*value = 0;
+		} else {
+			assert(strlen(default_string) < (unsigned int) value_size);
+			strcpy(value, default_string);
+		}
 	}
 	return value;
 }
@@ -232,7 +232,7 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 void	RegistryClass::Set_String( const char * name, const char *value )
 {
 	assert( IsValid );
-   int size = strlen( value ) + 1; // must include null terminator
+	int size = strlen( value ) + 1; // must include null terminator
 	if (IsLocked) {
 		return;
 	}
@@ -323,7 +323,7 @@ void	RegistryClass::Set_String( const WCHAR * name, const WCHAR *value )
 {
 	assert( IsValid );
 
-   //
+	//
 	//	Determine the size
 	//
 	int size = wcslen( value ) + 1;
@@ -591,7 +591,7 @@ void RegistryClass::Load_Registry(const char *filename, char *old_path, char *ne
 								int temp = ini.Get_Int(section_name, entry, 0);
 								reg.Set_Int(entry+6, temp);
 							} else {
-					 			if (strncmp(entry, "STRING_", 7) == 0) {
+								if (strncmp(entry, "STRING_", 7) == 0) {
 									ini.Get_String(section_name, entry, "", string, sizeof(string));
 									reg.Set_String(entry+7, string);
 								} else {

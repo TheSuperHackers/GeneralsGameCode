@@ -93,8 +93,8 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 			char reason[ 32 ];
 
 			for( page = TheImagePacker->getFirstTexturePage();
-					 page;
-					 page = page->m_next )
+			page;
+			page = page->m_next )
 			{
 
 				// if image can't be processed find out why

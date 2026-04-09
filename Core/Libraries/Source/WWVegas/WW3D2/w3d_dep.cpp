@@ -53,9 +53,9 @@
 class STLSpecialAlloc
 {
 public:
-  // this one is needed for proper simple_alloc wrapping
-  static void*  allocate(size_t __n) {  return ::operator new(__n); }
-  static void deallocate(void* __p, size_t) { ::operator delete(__p); }
+	// this one is needed for proper simple_alloc wrapping
+	static void*  allocate(size_t __n) {  return ::operator new(__n); }
+	static void deallocate(void* __p, size_t) { ::operator delete(__p); }
 };
 
 

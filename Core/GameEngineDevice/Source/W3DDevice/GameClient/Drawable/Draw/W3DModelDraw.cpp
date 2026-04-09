@@ -1040,7 +1040,7 @@ W3DModelDrawModuleData::W3DModelDrawModuleData() :
 	m_recoilSettle = SETTLE_RATE;
 
 
-  m_receivesDynamicLights = TRUE;
+	m_receivesDynamicLights = TRUE;
 
 	// m_ignoreConditionStates defaults to all zero, which is what we want
 }
@@ -1125,8 +1125,8 @@ void W3DModelDrawModuleData::preloadAssets( TimeOfDay timeOfDay, Real scale ) co
 {
 
 	for( ModelConditionVector::iterator it = m_conditionStates.begin();
-			 it != m_conditionStates.end();
-			 ++it )
+	it != m_conditionStates.end();
+	++it )
 	{
 
 		it->preloadAssets( timeOfDay, scale );
@@ -1195,7 +1195,7 @@ static void parseAsciiStringLC( INI* ini, void * /*instance*/, void *store, cons
 //-------------------------------------------------------------------------------------------------
 void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -1219,7 +1219,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ReceivesDynamicLights", INI::parseBool, nullptr, offsetof(W3DModelDrawModuleData, m_receivesDynamicLights) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 
@@ -1758,24 +1758,24 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 
 	Drawable* draw = getDrawable();
 
-  if ( draw )
-  {
-	  Object* obj = draw->getObject();
-	  if (obj)
-	  {
-		  if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-			  m_hexColor = obj->getNightIndicatorColor();
-		  else
-			  m_hexColor = obj->getIndicatorColor();
-	  }
+	if ( draw )
+	{
+		Object* obj = draw->getObject();
+		if (obj)
+		{
+			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+			m_hexColor = obj->getNightIndicatorColor();
+			else
+			m_hexColor = obj->getIndicatorColor();
+		}
 
-    // THE VAST MAJORITY OF THESE SHOULD BE TRUE
-    if ( ! getW3DModelDrawModuleData()->m_receivesDynamicLights)
-    {
-      draw->setReceivesDynamicLights( FALSE );
-		  DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s", draw->getTemplate()->getName().str()));
-    }
-  }
+		// THE VAST MAJORITY OF THESE SHOULD BE TRUE
+		if ( ! getW3DModelDrawModuleData()->m_receivesDynamicLights)
+		{
+			draw->setReceivesDynamicLights( FALSE );
+			DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s", draw->getTemplate()->getName().str()));
+		}
+	}
 
 	setModelState(info);
 }
@@ -1870,7 +1870,7 @@ void W3DModelDraw::allocateShadows()
 		shadowInfo.m_sizeY					= tmplate->getShadowSizeY();
 		shadowInfo.m_offsetX				= tmplate->getShadowOffsetX();
 		shadowInfo.m_offsetY				= tmplate->getShadowOffsetY();
-  		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
+		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 		if (m_shadow)
 		{	m_shadow->enableShadowInvisible(m_fullyObscuredByShroud);
 			if (m_renderObject->Is_Hidden() || !m_shadowEnabled)
@@ -2105,12 +2105,12 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 	handleClientTurretPositioning();
 	recalcBonesForClientParticleSystems();
 
-  const W3DModelDrawModuleData *modData = getW3DModelDrawModuleData();
-  if ( modData->m_particlesAttachedToAnimatedBones )
-    updateBonesForClientParticleSystems();// LORENZEN ADDED THIS
-                                          // IT REPOSITIONS PARTICLESYSTEMS TO TSTAY IN SYNC WITH ANIMATED BONES
+	const W3DModelDrawModuleData *modData = getW3DModelDrawModuleData();
+	if ( modData->m_particlesAttachedToAnimatedBones )
+	updateBonesForClientParticleSystems();// LORENZEN ADDED THIS
+	// IT REPOSITIONS PARTICLESYSTEMS TO TSTAY IN SYNC WITH ANIMATED BONES
 
-  handleClientRecoil();
+	handleClientRecoil();
 
 }
 
@@ -2304,22 +2304,22 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
 #endif
 #if 0	//old slow version
 
-  for (Int i=0; i < numSubObjects; i++)
-  {
-  	Int childBoneIndex = fullObject->Get_Sub_Object_Bone_Index(0, i);
-  	Int parentIndex = htree->Get_Parent_Index(childBoneIndex);
-  	if (childBoneIndex == parentIndex)
-  		continue;
+	for (Int i=0; i < numSubObjects; i++)
+	{
+		Int childBoneIndex = fullObject->Get_Sub_Object_Bone_Index(0, i);
+		Int parentIndex = htree->Get_Parent_Index(childBoneIndex);
+		if (childBoneIndex == parentIndex)
+		continue;
 
-  	if (parentIndex == boneIdx)	// this object has our subobject as parent so copy hide state
-  	{
-  		RenderObjClass* childObject = fullObject->Get_Sub_Object(i);
-  		// recurse down the hierarchy to hide all sub-children
-  		doHideShowBoneSubObjs(state, numSubObjects, childBoneIndex, fullObject, htree);
+		if (parentIndex == boneIdx)	// this object has our subobject as parent so copy hide state
+		{
+			RenderObjClass* childObject = fullObject->Get_Sub_Object(i);
+			// recurse down the hierarchy to hide all sub-children
+			doHideShowBoneSubObjs(state, numSubObjects, childBoneIndex, fullObject, htree);
 		childObject->Set_Hidden(state);
-  		childObject->Release_Ref();
-  	}
-  }
+			childObject->Release_Ref();
+		}
+	}
 #endif
 }
 
@@ -2688,22 +2688,22 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 			Int boneIndex = (*it).boneIndex;
 			if ( (sys != nullptr) && (boneIndex != 0)  )
 			{
-    		const Matrix3D boneTransform = m_renderObject->Get_Bone_Transform(boneIndex);// just a little worried about state changes
+				const Matrix3D boneTransform = m_renderObject->Get_Bone_Transform(boneIndex);// just a little worried about state changes
 
-        Vector3 vpos = boneTransform.Get_Translation();
+				Vector3 vpos = boneTransform.Get_Translation();
 
-        Coord3D pos;
+				Coord3D pos;
 				pos.x = vpos.X;
 				pos.y = vpos.Y;
 				pos.z = vpos.Z;
 
 				sys->setPosition(&pos);
 
-        Real orientation = boneTransform.Get_Z_Rotation();
+				Real orientation = boneTransform.Get_Z_Rotation();
 				sys->rotateLocalTransformZ(orientation);
 
-        sys->setLocalTransform(&boneTransform);
-        sys->setSkipParentXfrm(true);
+				sys->setLocalTransform(&boneTransform);
+				sys->setSkipParentXfrm(true);
 
 			}
 		}
@@ -3102,8 +3102,8 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			}
 
 			Object *obj = draw->getObject();
- 			if( obj )
-   		{
+			if( obj )
+			{
 
 				// for non bridge objects we adjust some collision types
 				if( obj->isKindOf( KINDOF_BRIDGE ) == FALSE &&
@@ -3112,16 +3112,16 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 
 					if( obj->isKindOf( KINDOF_STRUCTURE ) && draw->getModelConditionFlags().test( MODELCONDITION_RUBBLE ) )
 					{
-	 					//A dead building, -- don't allow the user to click on rubble! Treat it as a location instead.
-	   				m_renderObject->Set_Collision_Type( 0 );
+						//A dead building, -- don't allow the user to click on rubble! Treat it as a location instead.
+						m_renderObject->Set_Collision_Type( 0 );
 					}
 					else if( obj->isEffectivelyDead() )
 					{
- 						//A dead object, -- don't allow the user to click on rubble/hulks! Treat it as a location instead.
-	   				m_renderObject->Set_Collision_Type( 0 );
+						//A dead object, -- don't allow the user to click on rubble/hulks! Treat it as a location instead.
+						m_renderObject->Set_Collision_Type( 0 );
 					}
 				}
-   		}
+			}
 
 			// add render object to our scene
 			if (W3DDisplay::m_3DScene != nullptr)

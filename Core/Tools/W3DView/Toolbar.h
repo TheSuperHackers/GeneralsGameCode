@@ -44,10 +44,10 @@ const int BORDER_BOTTOM     = 8;
 //
 class CFancyToolbar : public CControlBar
 {
-    ////////////////////////////////////////////////////////
-    //
-    //  MFC Junk
-    //
+	////////////////////////////////////////////////////////
+	//
+	//  MFC Junk
+	//
 
     public:
 	// ClassWizard generated virtual function overrides
@@ -60,105 +60,105 @@ class CFancyToolbar : public CControlBar
 
     public:
 
-        ////////////////////////////////////////////////////////
-        //
-        //  Public Data Types
-        //
-        typedef enum
-        {
-            StateUp = 0,
-            StateDn = 1
-        } STATE_INFO;
+	////////////////////////////////////////////////////////
+	//
+	//  Public Data Types
+	//
+	typedef enum
+	{
+		StateUp = 0,
+		StateDn = 1
+	} STATE_INFO;
 
-        typedef enum
-        {
-            TypeNormal = 0,
-            Type2State = 1
-        } BUTTON_TYPE;
-
-
-        ////////////////////////////////////////////////////////
-        //
-        //  Public Contructors
-        //
-        CFancyToolbar ();
-        virtual ~CFancyToolbar ();
+	typedef enum
+	{
+		TypeNormal = 0,
+		Type2State = 1
+	} BUTTON_TYPE;
 
 
-        ////////////////////////////////////////////////////////
-        //
-        //  Public Methods
-        //
+	////////////////////////////////////////////////////////
+	//
+	//  Public Contructors
+	//
+	CFancyToolbar ();
+	virtual ~CFancyToolbar ();
 
-        //
-        //  Required methods
-        //
-        CSize CalcFixedLayout (BOOL, BOOL)
-            { return CSize (m_iButtons*BUTTON_WIDTH + BORDER_LEFT + BORDER_RIGHT, BUTTON_HEIGHT + BORDER_TOP + BORDER_BOTTOM); }
 
-        CSize CalcDynamicLayout( int nLength, DWORD dwMode )
-            { return CSize (m_iButtons*BUTTON_WIDTH + BORDER_LEFT + BORDER_RIGHT, BUTTON_HEIGHT + BORDER_TOP + BORDER_BOTTOM); }
+	////////////////////////////////////////////////////////
+	//
+	//  Public Methods
+	//
 
-        void OnUpdateCmdUI (class CFrameWnd*, int) {}
+	//
+	//  Required methods
+	//
+	CSize CalcFixedLayout (BOOL, BOOL)
+	{ return CSize (m_iButtons*BUTTON_WIDTH + BORDER_LEFT + BORDER_RIGHT, BUTTON_HEIGHT + BORDER_TOP + BORDER_BOTTOM); }
 
-        //
-        //  Creation routines
-        //
-        void AddButton (UINT iBMPUp, UINT iBMPDn, int iCommandID, BUTTON_TYPE buttonType = TypeNormal);
-        BOOL Create (LPCTSTR pszWindowName, CWnd *pCParentWnd, UINT uiID);
+	CSize CalcDynamicLayout( int nLength, DWORD dwMode )
+	{ return CSize (m_iButtons*BUTTON_WIDTH + BORDER_LEFT + BORDER_RIGHT, BUTTON_HEIGHT + BORDER_TOP + BORDER_BOTTOM); }
 
-        //
-        //  State management routines
-        //
-        void SetButtonState (int iCommandID, STATE_INFO newState, BOOL bRepaint = TRUE);
-        STATE_INFO GetButtonState (int iCommandID) const;
+	void OnUpdateCmdUI (class CFrameWnd*, int) {}
+
+	//
+	//  Creation routines
+	//
+	void AddButton (UINT iBMPUp, UINT iBMPDn, int iCommandID, BUTTON_TYPE buttonType = TypeNormal);
+	BOOL Create (LPCTSTR pszWindowName, CWnd *pCParentWnd, UINT uiID);
+
+	//
+	//  State management routines
+	//
+	void SetButtonState (int iCommandID, STATE_INFO newState, BOOL bRepaint = TRUE);
+	STATE_INFO GetButtonState (int iCommandID) const;
 
     protected:
 
-        ////////////////////////////////////////////////////////
-        //
-        //  Protected Methods
-        //
-        void Paint (void);
-        void DrawButton (HDC hDC, int iXPos, int iYPos, HBITMAP hBMP);
-        int ButtonFromPoint (const CPoint &point);
-        void RegisterFancyToolbarClass (void);
+	////////////////////////////////////////////////////////
+	//
+	//  Protected Methods
+	//
+	void Paint (void);
+	void DrawButton (HDC hDC, int iXPos, int iYPos, HBITMAP hBMP);
+	int ButtonFromPoint (const CPoint &point);
+	void RegisterFancyToolbarClass (void);
 
-	    //{{AFX_MSG(CFancyToolbar)
-        afx_msg void OnPaint();
-	    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	    //}}AFX_MSG
-        DECLARE_MESSAGE_MAP()
+	//{{AFX_MSG(CFancyToolbar)
+	afx_msg void OnPaint();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
         ////////////////////////////////////////////////////////
         //
         //  Static Methods
         //
-        static LRESULT CALLBACK fnMessageProc (HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK fnMessageProc (HWND hWnd, UINT uiMessage, WPARAM wParam, LPARAM lParam);
 
     private:
 
-        ////////////////////////////////////////////////////////
-        //
-        //  Private Data Types
-        //
-        typedef struct
-        {
-            HBITMAP hBMPUp;
-            HBITMAP hBMPDn;
-            int iCommandID;
-            STATE_INFO currentState;
-            BUTTON_TYPE buttonType;
-            BOOL bVisible;
-        } BUTTON_INFO;
+	////////////////////////////////////////////////////////
+	//
+	//  Private Data Types
+	//
+	typedef struct
+	{
+		HBITMAP hBMPUp;
+		HBITMAP hBMPDn;
+		int iCommandID;
+		STATE_INFO currentState;
+		BUTTON_TYPE buttonType;
+		BOOL bVisible;
+	} BUTTON_INFO;
 
 
-        ////////////////////////////////////////////////////////
-        //
-        //  Private Methods
-        //
-        BUTTON_INFO m_pButtonArray[10];
-        int m_iButtons;
-        int m_iCurrentButton;
+	////////////////////////////////////////////////////////
+	//
+	//  Private Methods
+	//
+	BUTTON_INFO m_pButtonArray[10];
+	int m_iButtons;
+	int m_iCurrentButton;
 };

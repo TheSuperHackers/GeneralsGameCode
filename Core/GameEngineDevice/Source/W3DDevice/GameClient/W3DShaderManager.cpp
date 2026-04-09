@@ -85,7 +85,7 @@ class W3DShaderInterface
 public:
 	Int getNumPasses() {return m_numPasses;};	///<return number of passes needed for this shader
 	virtual Int set(Int pass) {return TRUE;};		///<setup shader for the specified rendering pass.
-	 ///do any custom resetting necessary to bring W3D in sync.
+	///do any custom resetting necessary to bring W3D in sync.
 	virtual void reset() {
 		ShaderClass::Invalidate();
 		DX8Wrapper::_Get_D3D_Device8()->SetTexture(0, nullptr);
@@ -2948,7 +2948,7 @@ ChipsetType W3DShaderManager::getChipset()
 			if ( (did.DeviceId >= 0x100 && did.DeviceId <= 0x103) ||	//GeForce
 				 (did.DeviceId >= 0x110 && did.DeviceId <= 0x113) ||	//GeForce2 MX
 						 (did.DeviceId >= 0x150 && did.DeviceId <= 0x153) )	//GeForce2
-           		return DC_GEFORCE2;
+			return DC_GEFORCE2;
 
 			if (did.DeviceId >= 0x200 && did.DeviceId < 0x250)
 				return DC_GEFORCE3;
@@ -3155,22 +3155,22 @@ void add(float *sum,float *addend)
 Real W3DShaderManager::GetCPUBenchTime()
 {
 	float ztot, yran, ymult, ymod, x, y, z, pi, prod;
-    long int low, ixran, itot, j, iprod;
+	long int low, ixran, itot, j, iprod;
 
-  	__int64 endTime64,freq64,startTime64;
+	__int64 endTime64,freq64,startTime64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 
-    ztot = 0.0;
-    low = 1;
-    ixran = 1907;
-    yran = 5813.0;
-    ymult = 1307.0;
-    ymod = 5471.0;
-    itot = 560000;	//total iterations. This value ends up running at ~30 fps on our P4-2.2Ghz.
+	ztot = 0.0;
+	low = 1;
+	ixran = 1907;
+	yran = 5813.0;
+	ymult = 1307.0;
+	ymod = 5471.0;
+	itot = 560000;	//total iterations. This value ends up running at ~30 fps on our P4-2.2Ghz.
 
-    for(j=1; j<=itot; j++)
-    {
+	for(j=1; j<=itot; j++)
+	{
 		iprod = 27611 * ixran;
 		ixran = iprod - 74383*(long int)(iprod/74383);
 		x = (float)ixran / 74383.0;
@@ -3181,7 +3181,7 @@ Real W3DShaderManager::GetCPUBenchTime()
 		add(&ztot,&z);
 		if ( z <= 1.0 )
 		{
-		  low = low + 1;
+			low = low + 1;
 		}
 	}
 	pi = 4.0 * (float)low/(float)itot;

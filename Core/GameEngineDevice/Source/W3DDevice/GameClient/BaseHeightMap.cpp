@@ -688,10 +688,10 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	CastResultStruct	result;
 	Int StartCellX = 0;
 	Int EndCellX = 0;
- 	Int StartCellY = 0;
+	Int StartCellY = 0;
 	Int EndCellY = 0;
 	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH + m_map->getBorderSizeInline(); // Allow picking past the edge for scrolling & objects.
- 	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
+	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
 	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang),
 		MAP_XY_FACTOR*(m_map->getYExtent()+overhang), MAP_HEIGHT_SCALE*m_map->getMaxHeightValue()+MAP_XY_FACTOR);
 	MinMaxAABoxClass mmbox(minPt, maxPt);
@@ -844,20 +844,20 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* normal) const
 {
 
-  // SORRY, KIDS
-  // Had to make this function logic safe, so,
-  // even though this is a renderObject, and is thus classified as client-side
-  // it is responsible for reporting height map heights (for reasons I can't say)
-  // but to do so safely, I a going to pass it the logical heighmap from the W3dTerrainVisual
-  // yes another nosequiter. Ugh!
+	// SORRY, KIDS
+	// Had to make this function logic safe, so,
+	// even though this is a renderObject, and is thus classified as client-side
+	// it is responsible for reporting height map heights (for reasons I can't say)
+	// but to do so safely, I a going to pass it the logical heighmap from the W3dTerrainVisual
+	// yes another nosequiter. Ugh!
 
-  // M Lorenzen
+	// M Lorenzen
 
-  // by doing it this way the compiler won't call getLogicHeightMap twice...
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	// by doing it this way the compiler won't call getLogicHeightMap twice...
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
-  if ( !logicHeightMap )
-  {
+	if ( !logicHeightMap )
+	{
 		if (normal)
 		{
 			// return a default normal pointing up
@@ -866,7 +866,7 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* no
 			normal->z = 1.0f;
 		}
 		return 0;
-  }
+	}
 
 
 	float height;
@@ -938,9 +938,9 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* no
 		//
 		//		4			5
 		//Find surrounding grid points for smoothed normals.
- 		int idx4 = ix + (iy-1)*xExtent;
- 		int idx0 = ix + iy*xExtent;
- 		int idx3 = ix + iy*xExtent+xExtent;
+		int idx4 = ix + (iy-1)*xExtent;
+		int idx0 = ix + iy*xExtent;
+		int idx3 = ix + iy*xExtent+xExtent;
 		int idx9 = ix + (iy+2)*xExtent;
 		UnsignedByte d0, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11;
 		d0 = data[idx0];
@@ -997,7 +997,7 @@ Bool BaseHeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const C
 	if (m_map == nullptr)
 		return false;	// doh. should not happen.
 
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
 #define DO_BRESENHAM
 #ifdef DO_BRESENHAM
@@ -1202,7 +1202,7 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 		return 0.0f;	//return default height
 	}
 
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
 
 	Int offset = 1;
@@ -1245,7 +1245,7 @@ Bool BaseHeightMapRenderObjClass::isCliffCell(Real x, Real y)
 		return false;
 	}
 
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
 	Int iX = x/MAP_XY_FACTOR;
 	Int iY = y/MAP_XY_FACTOR;
@@ -1992,10 +1992,10 @@ void BaseHeightMapRenderObjClass::updateScorches()
 #endif
 				if (flipForBlend) {
 					*curIb++ = startVertex + j*yOffset + i+1;
- 					*curIb++ = startVertex + j*yOffset + i+yOffset;
+					*curIb++ = startVertex + j*yOffset + i+yOffset;
 					*curIb++ = startVertex + j*yOffset + i;
- 					*curIb++ = startVertex + j*yOffset + i+1;
- 					*curIb++ = startVertex + j*yOffset + i+1+yOffset;
+					*curIb++ = startVertex + j*yOffset + i+1;
+					*curIb++ = startVertex + j*yOffset + i+1+yOffset;
 					*curIb++ = startVertex + j*yOffset + i+yOffset;
 				}
 				else
@@ -2130,8 +2130,8 @@ Int BaseHeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 		RefRenderObjListIterator *it = pMyScene->createLightsIterator();
 		doTheLight(&vertex, lightRay, &normalAtTexel, it, 1.0f);
 		if (it) {
-		 pMyScene->destroyLightsIterator(it);
-		 it = nullptr;
+			pMyScene->destroyLightsIterator(it);
+			it = nullptr;
 		}
 	} else {
 		doTheLight(&vertex, lightRay, &normalAtTexel, nullptr, 1.0f);

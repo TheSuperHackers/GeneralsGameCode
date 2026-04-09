@@ -186,8 +186,8 @@ BoneMgrDialogClass::Fill_Bone_Item
 	DynamicVectorClass <RenderObjClass *> orig_node_list;
 	int index = 0;
 	for (;
-		  index < porig_model->Get_Num_Sub_Objects_On_Bone (bone_index);
-		  index ++) {
+	index < porig_model->Get_Num_Sub_Objects_On_Bone (bone_index);
+	index ++) {
 		RenderObjClass *psubobj = porig_model->Get_Sub_Object_On_Bone (index, bone_index);
 		if (psubobj != nullptr) {
 			orig_node_list.Add (psubobj);
@@ -197,8 +197,8 @@ BoneMgrDialogClass::Fill_Bone_Item
 	// Build a list of nodes that are contained in this bone
 	DynamicVectorClass <RenderObjClass *> node_list;
 	for (index = 0;
-		  index < m_pBaseModel->Get_Num_Sub_Objects_On_Bone (bone_index);
-		  index ++) {
+	index < m_pBaseModel->Get_Num_Sub_Objects_On_Bone (bone_index);
+	index ++) {
 		RenderObjClass *psubobj = m_pBaseModel->Get_Sub_Object_On_Bone (index, bone_index);
 		if (psubobj != nullptr) {
 			node_list.Add (psubobj);
@@ -329,8 +329,8 @@ BoneMgrDialogClass::Is_Render_Obj_Already_Attached (const CString &name)
 
 		// Loop through all the children of this bone
 		for (HTREEITEM hchild_item = m_BoneTree.GetChildItem (htree_item);
-			  (hchild_item != nullptr) && (retval == false);
-			  hchild_item = m_BoneTree.GetNextSiblingItem (hchild_item)) {
+		(hchild_item != nullptr) && (retval == false);
+		hchild_item = m_BoneTree.GetNextSiblingItem (hchild_item)) {
 
 			// Is this the render object we were looking for?
 			CString child_name = m_BoneTree.GetItemText (hchild_item);
@@ -525,8 +525,8 @@ BoneMgrDialogClass::Remove_Object_From_Bone
 {
 	// Loop through all the children of this bone
 	for (HTREEITEM hchild_item = m_BoneTree.GetChildItem (bone_item);
-		  (hchild_item != nullptr);
-		  hchild_item = m_BoneTree.GetNextSiblingItem (hchild_item)) {
+	(hchild_item != nullptr);
+	hchild_item = m_BoneTree.GetNextSiblingItem (hchild_item)) {
 
 		// Is this the render object we were looking for?
 		CString child_name = m_BoneTree.GetItemText (hchild_item);

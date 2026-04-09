@@ -629,8 +629,8 @@ void WorldHeightMap::setSeismicZVelocity(Int xIndex, Int yIndex, Real value)
 void WorldHeightMap::fillSeismicZVelocities( Real value )
 {
 	if (!m_seismicZVelocities) return ;
-  for (Int idx = 0; idx < m_width*m_height; ++idx)
-    m_seismicZVelocities[idx] = value;
+	for (Int idx = 0; idx < m_width*m_height; ++idx)
+	m_seismicZVelocities[idx] = value;
 }
 
 Real WorldHeightMap::getBilinearSampleSeismicZVelocity( Int x, Int y)
@@ -640,58 +640,58 @@ Real WorldHeightMap::getBilinearSampleSeismicZVelocity( Int x, Int y)
 	if ( x >= m_width ) return 0;
 	if (!m_seismicZVelocities) return 0;
 
-  Real collector = 0.0f;
-  Real divisor = 0.0f;
+	Real collector = 0.0f;
+	Real divisor = 0.0f;
 
-  collector += m_seismicZVelocities[ y * m_width + x ];
-  ++divisor;
+	collector += m_seismicZVelocities[ y * m_width + x ];
+	++divisor;
 
-  if ( y > 0 )
-  {
-    collector += m_seismicZVelocities[ (y-1) * m_width + x ];//bottom
-    ++divisor;
+	if ( y > 0 )
+	{
+		collector += m_seismicZVelocities[ (y-1) * m_width + x ];//bottom
+		++divisor;
 
-    if( x > 0 )
-    {
-      collector += m_seismicZVelocities[ (y-1) * m_width + (x-1) ];//lower left
-      ++divisor;
-    }
-    if ( x < m_width-1 )
-    {
-      collector += m_seismicZVelocities[ (y-1) * m_width + (x+1) ];//lower right
-      ++divisor;
-    }
-  }
-  if ( y < m_height-1 )
-  {
-    collector += m_seismicZVelocities[ (y+1) * m_width + x ];//top
-    ++divisor;
+		if( x > 0 )
+		{
+			collector += m_seismicZVelocities[ (y-1) * m_width + (x-1) ];//lower left
+			++divisor;
+		}
+		if ( x < m_width-1 )
+		{
+			collector += m_seismicZVelocities[ (y-1) * m_width + (x+1) ];//lower right
+			++divisor;
+		}
+	}
+	if ( y < m_height-1 )
+	{
+		collector += m_seismicZVelocities[ (y+1) * m_width + x ];//top
+		++divisor;
 
-    if( x > 0 )
-    {
-      collector += m_seismicZVelocities[ (y+1) * m_width + (x-1) ];//upper left
-      ++divisor;
-    }
-    if ( x < m_width-1 )
-    {
-      collector += m_seismicZVelocities[ (y+1) * m_width + (x+1) ];//upper right
-      ++divisor;
-    }
-  }
-  if( x > 0 )
-  {
-    collector += m_seismicZVelocities[ y * m_width + (x-1) ];//left
-    ++divisor;
-  }
-  if ( x < m_width-1 )
-  {
-    collector += m_seismicZVelocities[ y * m_width + (x+1) ];//right
-    ++divisor;
-  }
+		if( x > 0 )
+		{
+			collector += m_seismicZVelocities[ (y+1) * m_width + (x-1) ];//upper left
+			++divisor;
+		}
+		if ( x < m_width-1 )
+		{
+			collector += m_seismicZVelocities[ (y+1) * m_width + (x+1) ];//upper right
+			++divisor;
+		}
+	}
+	if( x > 0 )
+	{
+		collector += m_seismicZVelocities[ y * m_width + (x-1) ];//left
+		++divisor;
+	}
+	if ( x < m_width-1 )
+	{
+		collector += m_seismicZVelocities[ y * m_width + (x+1) ];//right
+		++divisor;
+	}
 
-  collector /= divisor;
+	collector /= divisor;
 
-  return collector;
+	return collector;
 
 }
 
@@ -887,9 +887,9 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
 	Int numBytesY = m_height;
 	m_seismicUpdateWidth=numBytesX;
 	m_seismicUpdateFlag	= MSGNEW("WorldHeightMap::ParseHeightMapData _ m_seismicUpdateFlag allocated") UnsignedByte[numBytesX*numBytesY];
-  clearSeismicUpdateFlags();
-  m_seismicZVelocities = MSGNEW("WorldHeightMap_ParseHeightMapData _ zvelocities allocated") Real[m_dataSize];
-  fillSeismicZVelocities( 0 );
+	clearSeismicUpdateFlags();
+	m_seismicZVelocities = MSGNEW("WorldHeightMap_ParseHeightMapData _ zvelocities allocated") Real[m_dataSize];
+	fillSeismicZVelocities( 0 );
 
 
 	file.readArrayOfBytes((char *)m_data, m_dataSize);
@@ -1289,8 +1289,8 @@ typedef struct {
 	Short			imageHeight;
 	UnsignedByte	pixelDepth;
 	UnsignedByte	flags; //  &0x0F = alpha channel bits, &0x10 is right to left flag,
-						   // 0x20 is top to bottom flag.  (0x0? is left to right, bottom to top)
-						   // 0x3? is top to bottom, right to left.
+	// 0x20 is top to bottom flag.  (0x0? is left to right, bottom to top)
+	// 0x3? is top to bottom, right to left.
 } TTargaHeader;
 
 // followed by idLength bytes of ascii data

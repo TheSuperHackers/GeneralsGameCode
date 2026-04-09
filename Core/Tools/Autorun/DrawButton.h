@@ -83,7 +83,7 @@ class DrawButton
 
 	protected:
 
-   		int				Id;
+	int				Id;
 		Rect			MyRect;
 		Rect			TextRect;
 		RECT			rect;
@@ -94,7 +94,7 @@ class DrawButton
 		TTFontClass		*MyFontPtr;
 
 		wchar_t		String[ MAX_PATH ];
-	    char		NormalBitmap [ _MAX_FNAME ];
+	char		NormalBitmap [ _MAX_FNAME ];
 		char		PressedBitmap[ _MAX_FNAME ];
 		char		FocusBitmap  [ _MAX_FNAME ];
 };

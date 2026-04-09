@@ -52,7 +52,7 @@ class PathfindCell;
 #undef RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 #endif
 
-  typedef UnsignedShort zoneStorageType;
+typedef UnsignedShort zoneStorageType;
 
 
 //----------------------------------------------------------------------------------------------------------
@@ -418,7 +418,7 @@ private:
 	UnsignedInt m_obstacleIsTransparent : 1;  ///< True if obstacle is transparent (undefined if obstacleid is invalid)
 
 	zoneStorageType m_zone : 14;              ///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
-	                                          /// you still may be able to if you can cross multiple terrain types.
+	/// you still may be able to if you can cross multiple terrain types.
 	UnsignedShort m_aircraftGoal : 1;         ///< This is an aircraft goal cell.
 	UnsignedShort m_pinched : 1;              ///< This cell is surrounded by obstacle cells.
 	UnsignedByte m_type : 4;                  ///< what type of cell terrain this is.
@@ -526,7 +526,7 @@ protected:
 
 	zoneStorageType m_firstZone; // First zone in this block.
 	UnsignedShort m_numZones;	 // Number of zones in this block.  If == 1, there is only one zone, and
-														 // no zone equivalency arrays will be allocated.
+	// no zone equivalency arrays will be allocated.
 
 	UnsignedShort m_zonesAllocated;
 	zoneStorageType *m_groundCliffZones;
@@ -838,9 +838,9 @@ protected:
 	static Int lineBlockedByObstacleCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
 	static Int tightenPathCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
 	static Int attackBlockedByObstacleCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
- 	static Int examineCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
- 	static Int groundCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
- 	static Int moveAlliesDestinationCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
+	static Int examineCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
+	static Int groundCellsCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
+	static Int moveAlliesDestinationCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
 
 	static Int segmentIntersectsBuildingCallback(Pathfinder* pathfinder, PathfindCell* from, PathfindCell* to, Int to_x, Int to_y, void* userData);
 

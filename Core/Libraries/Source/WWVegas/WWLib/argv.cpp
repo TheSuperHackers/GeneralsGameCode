@@ -160,7 +160,7 @@ const char *ArgvClass::Find_Again(const char *arg)
 int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 {
 	// Get pointer to command line.
-   char	*ptr = lpCmdLine;
+	char	*ptr = lpCmdLine;
 	if (!ptr || !*ptr) {
 		return 0;
 	}

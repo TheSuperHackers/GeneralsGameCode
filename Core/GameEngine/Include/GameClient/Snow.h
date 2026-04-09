@@ -81,12 +81,12 @@ extern OVERRIDE<WeatherSetting> TheWeatherSetting;
 class SnowManager : public SubsystemInterface
 {
   public :
-	  enum{
+	enum{
 		 SNOW_NOISE_X=64,			//dimensions table holding noise function used for initial snow positions.
 		 SNOW_NOISE_Y=64,			//dimensions table holding noise function used for initial snow positions.
 	  };
 
-	 SnowManager();
+	SnowManager();
 	virtual ~SnowManager() override;
 
 	virtual void init() override;

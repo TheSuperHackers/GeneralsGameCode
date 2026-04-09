@@ -295,7 +295,7 @@ void GameSpyInfo::addChat( PlayerInfo p, UnicodeString msg, Bool isPublic, Bool 
 	// filters language
 //  if( TheGlobalData->m_languageFilterPref )
 //  {
-    TheLanguageFilter->filterLine(msg);
+	TheLanguageFilter->filterLine(msg);
 //  }
 
 	UnicodeString fullMsg;

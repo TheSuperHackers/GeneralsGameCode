@@ -607,7 +607,7 @@ Short FirewallHelperClass::getSourcePortAllocationDelta() {
 
 Bool FirewallHelperClass::detectionBeginUpdate() {
 //	UnsignedShort mangler_port = MANGLER_PORT;
-	 m_packetID = 0x7f00;
+	m_packetID = 0x7f00;
 	//int current_mangler = 0;
 
 	/*

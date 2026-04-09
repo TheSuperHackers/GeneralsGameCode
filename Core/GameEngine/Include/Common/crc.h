@@ -45,10 +45,10 @@ public:
 	UnsignedInt get();
 
 #if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
-  void set( UnsignedInt v )
-  {
-    crc = v;
-  }
+	void set( UnsignedInt v )
+	{
+		crc = v;
+	}
 #endif
 
 private:
@@ -65,70 +65,70 @@ class CRC
 public:
 	CRC() { crc=0; }
 
-  /// Compute the CRC for a buffer, added into current CRC
+	/// Compute the CRC for a buffer, added into current CRC
 	__forceinline void computeCRC( const void *buf, Int len )
-  {
-    if (!buf||len<1)
-      return;
+	{
+		if (!buf||len<1)
+		return;
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
-    // C++ version left in for reference purposes
-	  for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
-    {
-    	int hibit;
-    	if (crc & 0x80000000)
-      {
-		    hibit = 1;
-	    }
-      else
-      {
-		    hibit = 0;
-	    }
+		// C++ version left in for reference purposes
+		for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
+		{
+			int hibit;
+			if (crc & 0x80000000)
+			{
+				hibit = 1;
+			}
+			else
+			{
+				hibit = 0;
+			}
 
-	    crc <<= 1;
-	    crc += *uintPtr;
-	    crc += hibit;
-    }
+			crc <<= 1;
+			crc += *uintPtr;
+			crc += hibit;
+		}
 #else
-    // ASM version, verified by comparing resulting data with C++ version data
-    unsigned *crcPtr=&crc;
-    _asm
-    {
-      mov esi,[buf]
-      mov ecx,[len]
-      dec ecx
+		// ASM version, verified by comparing resulting data with C++ version data
+		unsigned *crcPtr=&crc;
+		_asm
+		{
+			mov esi,[buf]
+			mov ecx,[len]
+			dec ecx
       mov edi,[crcPtr]
-      mov ebx,dword ptr [edi]
-      xor eax,eax
+			mov ebx,dword ptr [edi]
+			xor eax,eax
     lp:
       mov al,byte ptr [esi]
-      shl ebx,1
+			shl ebx,1
       inc esi
       adc ebx,eax
       dec ecx
       jns lp
       mov dword ptr [edi],ebx
-    };
+		};
 #endif
-  }
+	}
 
-  /// Clears the CRC to 0
+	/// Clears the CRC to 0
 	void clear()
-  {
-    crc = 0;
-  }
+	{
+		crc = 0;
+	}
 
-  ///< Get the combined CRC
+	///< Get the combined CRC
 	UnsignedInt get() const
-  {
-    return crc;
-  }
+	{
+		return crc;
+	}
 
 #if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
-  void set( UnsignedInt v )
-  {
-    crc = v;
-  }
+	void set( UnsignedInt v )
+	{
+		crc = v;
+	}
 #endif
 
 private:

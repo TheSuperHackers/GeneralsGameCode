@@ -194,7 +194,7 @@ public:
 	void Set(const Vector3 & position);
 
 	// access functions:
- 	Vector4 & operator [] (int i) { return Row[i]; }
+	Vector4 & operator [] (int i) { return Row[i]; }
 	const Vector4 & operator [] (int i) const { return Row[i]; }
 
 	Vector3 Get_Translation(void) const { return Vector3(Row[0][3],Row[1][3],Row[2][3]); }
@@ -231,9 +231,9 @@ public:
 	void	Make_Identity(void);
 	void	Translate(float x,float y,float z);
 	void	Translate(const Vector3 &t);
-   void  Translate_X(float x);
-   void  Translate_Y(float y);
-   void  Translate_Z(float z);
+	void  Translate_X(float x);
+	void  Translate_Y(float y);
+	void  Translate_Z(float z);
 	void	Rotate_X(float theta);
 	void	Rotate_Y(float theta);
 	void 	Rotate_Z(float theta);
@@ -1411,12 +1411,12 @@ inline Vector3 operator * (const Matrix3D &A,const Vector3 &a)
  *=============================================================================================*/
 inline bool operator == (const Matrix3D &A, const Matrix3D &B)
 {
-   for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 4; j++) {
-         if (A[i][j] != B[i][j]) return false;
-      }
-   }
-   return true;
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (A[i][j] != B[i][j]) return false;
+		}
+	}
+	return true;
 }
 
 
@@ -1434,7 +1434,7 @@ inline bool operator == (const Matrix3D &A, const Matrix3D &B)
  *=============================================================================================*/
 inline bool operator != (const Matrix3D &A, const Matrix3D &B)
 {
-   return !(A == B);
+	return !(A == B);
 }
 
 

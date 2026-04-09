@@ -141,37 +141,37 @@ class File : public MemoryPoolObject
 		virtual void	close();																			///< Close the file !!! File object no longer valid after this call !!!
 
 		virtual Int		read( void *buffer, Int bytes ) = 0 ;						/**< Read the specified number of bytes from the file in to the
-																																			  *  memory pointed at by buffer. Returns the number of bytes read.
-																																			  *  Returns -1 if an error occurred.
-																																			  */
+	*  memory pointed at by buffer. Returns the number of bytes read.
+	*  Returns -1 if an error occurred.
+	*/
 		virtual Int		readChar() = 0 ;											/**< Read a character from the file
-																																			  *  Returns the character converted to an integer.
-																																			  *  Returns EOF if an error occurred.
-																																			  */
+	*  Returns the character converted to an integer.
+	*  Returns EOF if an error occurred.
+	*/
 		virtual Int		readWideChar() = 0 ;										/**< Read a wide character from the file
-																																			  *  Returns the wide character converted to an integer.
-																																			  *  Returns wide EOF if an error occurred.
-																																			  */
+	*  Returns the wide character converted to an integer.
+	*  Returns wide EOF if an error occurred.
+	*/
 		virtual Int		write( const void *buffer, Int bytes ) = 0 ;						/**< Write the specified number of bytes from the
-																																			  *	 memory pointed at by buffer to the file. Returns the number of bytes written.
-																																			  *	 Returns -1 if an error occurred.
-																																			  */
+	*	 memory pointed at by buffer to the file. Returns the number of bytes written.
+	*	 Returns -1 if an error occurred.
+	*/
 		virtual Int		writeFormat( const Char* format, ... ) = 0 ;						/**< Write an unterminated formatted string to the file
-																																			  *	 Returns the number of bytes written.
-																																			  *	 Returns -1 if an error occurred.
-																																			  */
+	*	 Returns the number of bytes written.
+	*	 Returns -1 if an error occurred.
+	*/
 		virtual Int		writeFormat( const WideChar* format, ... ) = 0 ;						/**< Write an unterminated formatted wide character string to the file
-																																			  *	 Returns the number of bytes written.
-																																			  *	 Returns -1 if an error occurred.
-																																			  */
+	*	 Returns the number of bytes written.
+	*	 Returns -1 if an error occurred.
+	*/
 		virtual Int		writeChar( const Char* character ) = 0 ;						/**< Write a character to the file
-																																			  *	 Returns a copy of the character written.
-																																			  *	 Returns EOF if an error occurred.
-																																			  */
+	*	 Returns a copy of the character written.
+	*	 Returns EOF if an error occurred.
+	*/
 		virtual Int		writeChar( const WideChar* character ) = 0 ;						/**< Write a wide character to the file
-																																			  *	 Returns a copy of the wide character written.
-																																			  *	 Returns wide EOF if an error occurred.
-																																			  */
+	*	 Returns a copy of the wide character written.
+	*	 Returns wide EOF if an error occurred.
+	*/
 		virtual Int		seek( Int bytes, seekMode mode = CURRENT ) = 0;	/**< Sets the file position of the next read/write operation. Returns the new file
 																																				*  position as the number of bytes from the start of the file.
 																																				*  Returns -1 if an error occurred.

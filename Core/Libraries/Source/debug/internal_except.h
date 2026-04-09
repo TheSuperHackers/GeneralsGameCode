@@ -32,11 +32,11 @@
 /// \internal exception handler
 class DebugExceptionhandler
 {
-  DebugExceptionhandler(const DebugExceptionhandler&);
-  DebugExceptionhandler& operator=(const DebugExceptionhandler&);
+	DebugExceptionhandler(const DebugExceptionhandler&);
+	DebugExceptionhandler& operator=(const DebugExceptionhandler&);
 
-  // nobody can instantiate us
-  DebugExceptionhandler();
+	// nobody can instantiate us
+	DebugExceptionhandler();
 
   /** \internal
 
@@ -45,7 +45,7 @@ class DebugExceptionhandler
     \param dbg debug instance
     \param exptr exception pointers
   */
-  static void LogExceptionLocation(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
+	static void LogExceptionLocation(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
 
   /** \internal
 
@@ -54,7 +54,7 @@ class DebugExceptionhandler
     \param dbg debug instance
     \param exptr exception pointers
   */
-  static void LogRegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
+	static void LogRegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
 
   /** \internal
 
@@ -63,7 +63,7 @@ class DebugExceptionhandler
     \param dbg debug instance
     \param exptr exception pointers
   */
-  static void LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
+	static void LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr);
 
 public:
 
@@ -75,11 +75,11 @@ public:
     \param explanation exception explanation, buffer must be 512 chars
     \return exception type as string
   */
-  static const char *GetExceptionType(struct _EXCEPTION_POINTERS *exptr, char *explanation);
+	static const char *GetExceptionType(struct _EXCEPTION_POINTERS *exptr, char *explanation);
 
   /** \internal
 
     \brief System exception filter
   */
-  static long __stdcall ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs);
+	static long __stdcall ExceptionFilter(struct _EXCEPTION_POINTERS* pExPtrs);
 };

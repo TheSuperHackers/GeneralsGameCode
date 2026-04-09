@@ -30,7 +30,7 @@ class CMeshPropPage : public CPropertyPage
 
 // Construction
 public:
-    CMeshPropPage (const CString &stringMeshName);
+	CMeshPropPage (const CString &stringMeshName);
 	~CMeshPropPage ();
 
 // Dialog Data
@@ -60,7 +60,7 @@ protected:
     private:
         CMeshPropPage () {};
 
-        CString m_stringMeshName;
+	CString m_stringMeshName;
 
 };
 

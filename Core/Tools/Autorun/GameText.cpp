@@ -873,14 +873,14 @@ Bool GameTextManager::parseCSF( Char *filename )
 
 		while ( num < num_strings )
 		{
-		 	file.read ( &id, sizeof ( Int ) );
+			file.read ( &id, sizeof ( Int ) );
 
 			if ( id != CSF_STRING && id != CSF_STRINGWITHWAVE )
 			{
 				goto quit;
 			}
 
-		 	file.read ( &len, sizeof ( Int ) );
+			file.read ( &len, sizeof ( Int ) );
 
 			if ( len )
 			{
@@ -910,7 +910,7 @@ Bool GameTextManager::parseCSF( Char *filename )
 
 			if ( id == CSF_STRINGWITHWAVE )
 			{
-			 	file.read ( &len, sizeof ( Int ) );
+				file.read ( &len, sizeof ( Int ) );
 				if ( len )
 				{
 					file.read ( m_buffer, len );

@@ -54,8 +54,8 @@ static VARIANT GetCell ( int row, int column )
 
 	assert ( column > 0 );
 	swprintf ( cellname, L"%c%d", 'A'+column -1 , row );
- 	V_VT ( &cell ) = VT_BSTR;
- 	V_BSTR ( &cell ) = SysAllocString (cellname);
+	V_VT ( &cell ) = VT_BSTR;
+	V_BSTR ( &cell ) = SysAllocString (cellname);
 
 	V_VT ( &result ) = VT_BOOL;
 	V_BOOL ( &result ) = FALSE;
@@ -65,7 +65,7 @@ static VARIANT GetCell ( int row, int column )
 		goto error;
 	}
 
-  if ( ! (dispatch = ws->GetRange (cell, cell )))
+	if ( ! (dispatch = ws->GetRange (cell, cell )))
 	{
 		goto error;
 	}
@@ -97,15 +97,15 @@ int PutCell ( int row, int column, const OLECHAR *string, int val )
 
 	assert ( column > 0 );
 	swprintf ( cellname, L"%c%d", 'A'+column-1, row );
- 	V_VT ( &cell ) = VT_BSTR;
- 	V_BSTR ( &cell ) = SysAllocString (cellname);
+	V_VT ( &cell ) = VT_BSTR;
+	V_BSTR ( &cell ) = SysAllocString (cellname);
 
 	if ( !ws )
 	{
 		goto error;
 	}
 
-  if ( ! (dispatch = ws->GetRange (cell, cell )))
+	if ( ! (dispatch = ws->GetRange (cell, cell )))
 	{
 		goto error;
 	}
@@ -172,22 +172,22 @@ int PutSeparator ( int row )
 	OLECHAR cellname2[20];
 	VARIANT cell1,cell2;
 
-  if ( !ws )
-  {
- 		goto error;
-  }
+	if ( !ws )
+	{
+		goto error;
+	}
 
 	assert ( row > 0 );
 	swprintf ( cellname1, L"A%d", row );
 	swprintf ( cellname2, L"%c%d", 'A'+CELL_LAST-1-1, row );
- 	V_VT ( &cell1 ) = VT_BSTR;
- 	V_BSTR ( &cell1 ) = SysAllocString (cellname1);
+	V_VT ( &cell1 ) = VT_BSTR;
+	V_BSTR ( &cell1 ) = SysAllocString (cellname1);
 
- 	V_VT ( &cell2 ) = VT_BSTR;
- 	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
+	V_VT ( &cell2 ) = VT_BSTR;
+	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
 
 
-  if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
+	if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
 	{
 		goto error;
 	}
@@ -247,22 +247,22 @@ int PutSection ( int row, OLECHAR *title )
 	VARIANT cell1,cell2;
 	_Worksheet *ws = nullptr;
 
-  if ( !ws )
-  {
- 		goto error;
-  }
+	if ( !ws )
+	{
+		goto error;
+	}
 
 	assert ( row > 0 );
 	swprintf ( cellname1, L"A%d", row );
 	swprintf ( cellname2, L"%c%d", 'A'+CELL_LAST-1-1, row );
- 	V_VT ( &cell1 ) = VT_BSTR;
- 	V_BSTR ( &cell1 ) = SysAllocString (cellname1);
+	V_VT ( &cell1 ) = VT_BSTR;
+	V_BSTR ( &cell1 ) = SysAllocString (cellname1);
 
- 	V_VT ( &cell2 ) = VT_BSTR;
- 	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
+	V_VT ( &cell2 ) = VT_BSTR;
+	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
 
 
-  if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
+	if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
 	{
 		goto error;
 	}
@@ -608,7 +608,7 @@ void SelectActiveSheet ( void )
 {
 	LPDISPATCH dispatch;
 
-  if ( ! (dispatch = xl->GetActiveSheet ()))
+	if ( ! (dispatch = xl->GetActiveSheet ()))
 	{
 		return;
 	}

@@ -87,8 +87,8 @@ public:
 		SHAKE_COUNT
 	};
 
-  // Return values for worldToScreenTriReturn
-  enum WorldToScreenReturn CPP_11(: Int)
+	// Return values for worldToScreenTriReturn
+	enum WorldToScreenReturn CPP_11(: Int)
   {
     WTS_INSIDE_FRUSTUM = 0, // On the screen (inside frustum of camera)
     WTS_OUTSIDE_FRUSTUM,    // Return is valid but off the screen (outside frustum of camera)
@@ -161,8 +161,8 @@ public:
 	virtual void setFadeParameters(Int fadeFrames, Int direction) { };
 	virtual void set3DWireFrameMode(Bool enable) { };
 
- 	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn=0.0f, Real easeOut=0.0f) {}; ///< Move camera to location, and reset to default angle & zoom.
- 	virtual void rotateCamera(Real rotations, Int frames, Real easeIn=0.0f, Real easeOut=0.0f) {}; ///< Rotate camera about current viewpoint.
+	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn=0.0f, Real easeOut=0.0f) {}; ///< Move camera to location, and reset to default angle & zoom.
+	virtual void rotateCamera(Real rotations, Int frames, Real easeIn=0.0f, Real easeOut=0.0f) {}; ///< Rotate camera about current viewpoint.
 	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn=0.0f, Real easeOut=0.0f) {};	///< Rotate camera to face an object, and hold on it
 	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn=0.0f, Real easeOut=0.0f, Bool reverseRotation=FALSE) {};	///< Rotate camera to face a location.
 	virtual Bool isTimeFrozen(){ return false;}					///< Freezes time during the next camera movement.
@@ -221,8 +221,8 @@ public:
 	virtual void setFieldOfView( Real angle ) { m_FOV = angle; }				///< Set the horizontal field of view angle
 	virtual Real getFieldOfView() { return m_FOV; }								///< Get the horizontal field of view angle
 
-  Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return worldToScreenTriReturn( w, s ) == WTS_INSIDE_FRUSTUM; }	///< Transform world coordinate "w" into screen coordinate "s"
-  virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) = 0; ///< Like worldToScreen(), but with a more informative return value
+	Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return worldToScreenTriReturn( w, s ) == WTS_INSIDE_FRUSTUM; }	///< Transform world coordinate "w" into screen coordinate "s"
+	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) = 0; ///< Like worldToScreen(), but with a more informative return value
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) = 0;  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) = 0;  ///< transform screen point to world point at the specified world Z value
 

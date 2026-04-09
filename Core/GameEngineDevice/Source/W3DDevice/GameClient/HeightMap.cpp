@@ -899,7 +899,7 @@ void HeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, Wor
 
 		if (minY> m_y-1) {
 			minY -= m_y-1;
- 			maxY -= m_y-1;
+			maxY -= m_y-1;
 		}
 		if (maxY > m_y-1) {
 			maxY -= m_y-1;
@@ -1184,7 +1184,7 @@ void HeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 	}
 	Int dx = width-m_map->getDrawWidth();
 	Int dy = height-m_map->getDrawHeight();
- 	m_map->setDrawWidth(width);
+	m_map->setDrawWidth(width);
 	m_map->setDrawHeight(height);
 	dx /= 2;
 	dy /= 2;
@@ -1647,7 +1647,7 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 
 	m_updating = true;
 	if (m_needFullUpdate)
-  {
+	{
 		m_needFullUpdate = false;
 		updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
 		m_updating = false;
@@ -1655,7 +1655,7 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	}
 
 	if (m_x >= m_map->getXExtent() && m_y >= m_map->getYExtent())
-  {
+	{
 		m_updating = false;
 		return; // no need to center.
 	}
@@ -1956,57 +1956,57 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 		DX8Wrapper::Set_Material(m_vertexMaterialClass);
 		DX8Wrapper::Set_Shader(m_shaderClass);
 
- 		st=W3DShaderManager::ST_TERRAIN_BASE; //set default shader
+		st=W3DShaderManager::ST_TERRAIN_BASE; //set default shader
 
- 		//set correct shader based on current settings
- 		if (!ShaderClass::Is_Backface_Culling_Inverted())
- 		{	//not reflection pass
- 			if (TheGlobalData->m_useLightMap && doCloud)
- 			{	st=W3DShaderManager::ST_TERRAIN_BASE_NOISE12;
- 			}
- 			else
- 			if (TheGlobalData->m_useLightMap)
- 			{	//lightmap only
- 				st=W3DShaderManager::ST_TERRAIN_BASE_NOISE2;
- 			}
- 			else
- 			if (doCloud)
- 			{	//cloudmap only
- 				st=W3DShaderManager::ST_TERRAIN_BASE_NOISE1;
- 			}
- 		}
- 		else
- 		{	//reflection pass, just do base texture
- 			st=W3DShaderManager::ST_TERRAIN_BASE;
- 		}
+		//set correct shader based on current settings
+		if (!ShaderClass::Is_Backface_Culling_Inverted())
+		{	//not reflection pass
+			if (TheGlobalData->m_useLightMap && doCloud)
+			{	st=W3DShaderManager::ST_TERRAIN_BASE_NOISE12;
+			}
+			else
+			if (TheGlobalData->m_useLightMap)
+			{	//lightmap only
+				st=W3DShaderManager::ST_TERRAIN_BASE_NOISE2;
+			}
+			else
+			if (doCloud)
+			{	//cloudmap only
+				st=W3DShaderManager::ST_TERRAIN_BASE_NOISE1;
+			}
+		}
+		else
+		{	//reflection pass, just do base texture
+			st=W3DShaderManager::ST_TERRAIN_BASE;
+		}
 
- 		//Find number of passes required to render current shader
- 		devicePasses=W3DShaderManager::getShaderPasses(st);
+		//Find number of passes required to render current shader
+		devicePasses=W3DShaderManager::getShaderPasses(st);
 
- 		if (m_disableTextures)
- 			devicePasses=1;	//force to 1 lighting-only pass
+		if (m_disableTextures)
+		devicePasses=1;	//force to 1 lighting-only pass
 
- 		//Specify all textures that this shader may need.
- 		W3DShaderManager::setTexture(0,m_stageZeroTexture);
- 		W3DShaderManager::setTexture(1,m_stageZeroTexture);
- 		W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
- 		W3DShaderManager::setTexture(3,m_stageThreeTexture);//noise
+		//Specify all textures that this shader may need.
+		W3DShaderManager::setTexture(0,m_stageZeroTexture);
+		W3DShaderManager::setTexture(1,m_stageZeroTexture);
+		W3DShaderManager::setTexture(2,m_stageTwoTexture);	//cloud
+		W3DShaderManager::setTexture(3,m_stageThreeTexture);//noise
 		//Disable writes to destination alpha channel (if there is one)
 		if (DX8Wrapper::getBackBufferFormat() == WW3D_FORMAT_A8R8G8B8)
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,D3DCOLORWRITEENABLE_BLUE|D3DCOLORWRITEENABLE_GREEN|D3DCOLORWRITEENABLE_RED);
 	}
 
 	Int pass;
- 	for (pass=0; pass<devicePasses; pass++) {
+	for (pass=0; pass<devicePasses; pass++) {
 #ifdef TIMING_TESTS
 #endif
 		if (!doMultiPassWireFrame)	//multi-pass wireframe doesn't use regular shaders.
 		{
- 			if (m_disableTextures ) {
- 				DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaque2DShader);
- 				DX8Wrapper::Set_Texture(0,nullptr);
-   			} else {
- 				W3DShaderManager::setShader(st, pass);
+			if (m_disableTextures ) {
+				DX8Wrapper::Set_Shader(ShaderClass::_PresetOpaque2DShader);
+				DX8Wrapper::Set_Texture(0,nullptr);
+			} else {
+				W3DShaderManager::setShader(st, pass);
 			}
 		}
 
@@ -2041,7 +2041,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	if (!doMultiPassWireFrame)
 	{
 		if (pass)	//shader was applied at least once?
- 			W3DShaderManager::resetShader(st);
+		W3DShaderManager::resetShader(st);
 
 		//Draw feathered shorelines
 		renderShoreLines(&rinfo.Camera);
@@ -2115,8 +2115,8 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	else
 			m_bridgeBuffer->drawBridges(&rinfo.Camera, m_disableTextures, m_stageTwoTexture);
 
-  if ( m_waypointBuffer )
-	  m_waypointBuffer->drawWaypoints(rinfo);
+	if ( m_waypointBuffer )
+	m_waypointBuffer->drawWaypoints(rinfo);
 
 	m_bibBuffer->renderBibs();
 
@@ -2351,17 +2351,17 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			const Bool doCloud = useCloud();
 
 			if (TheGlobalData->m_useLightMap && doCloud)
- 			{
+			{
 				st = W3DShaderManager::ST_ROAD_BASE_NOISE12;
- 			}
- 			else if (TheGlobalData->m_useLightMap)
- 			{	//lightmap only
- 				st = W3DShaderManager::ST_ROAD_BASE_NOISE2;
- 			}
- 			else if (doCloud)
- 			{	//cloudmap only
- 				st = W3DShaderManager::ST_ROAD_BASE_NOISE1;
- 			}
+			}
+			else if (TheGlobalData->m_useLightMap)
+			{	//lightmap only
+				st = W3DShaderManager::ST_ROAD_BASE_NOISE2;
+			}
+			else if (doCloud)
+			{	//cloudmap only
+				st = W3DShaderManager::ST_ROAD_BASE_NOISE1;
+			}
 
 			Int devicePasses=W3DShaderManager::getShaderPasses(st);
 
@@ -2375,6 +2375,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			}
 			W3DShaderManager::resetShader(st);
 		}
-  }
+	}
 }
 #endif

@@ -2166,7 +2166,7 @@ void MeshSaveClass::compute_physical_constants
 
 #if DEBUG_VOXELS
 		VoxelDebugWindowClass dbgwin(voxel);
- 		dbgwin.Display_Window();
+		dbgwin.Display_Window();
 #endif
 
 		double vol[1];

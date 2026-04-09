@@ -754,7 +754,7 @@ public:
 	virtual void update() override;								///< update all particle systems
 
 	virtual Int getOnScreenParticleCount() = 0;   ///< returns the number of particles on screen
-  virtual void setOnScreenParticleCount(int count);
+	virtual void setOnScreenParticleCount(int count);
 
 	ParticleSystemTemplate *findTemplate( const AsciiString &name ) const;
 	ParticleSystemTemplate *findParentTemplate( const AsciiString &name, int parentNum ) const;

@@ -38,18 +38,18 @@
 */
 class ProfileFuncLevel
 {
-  friend class Profile;
+	friend class Profile;
 
-  // no, no copying allowed!
-  ProfileFuncLevel(const ProfileFuncLevel&);
-  ProfileFuncLevel& operator=(const ProfileFuncLevel&);
+	// no, no copying allowed!
+	ProfileFuncLevel(const ProfileFuncLevel&);
+	ProfileFuncLevel& operator=(const ProfileFuncLevel&);
 
 public:
-  class Id;
-  class Thread;
+	class Id;
+	class Thread;
 
-  /// \brief A list of function level profile IDs
-  class IdList
+	/// \brief A list of function level profile IDs
+	class IdList
   {
     friend Id;
 
@@ -74,8 +74,8 @@ public:
     void *m_ptr;
   };
 
-  /// \brief A function level profile ID.
-  class Id
+	/// \brief A function level profile ID.
+	class Id
   {
     friend IdList;
     friend Thread;
@@ -156,8 +156,8 @@ public:
     void *m_funcPtr;
   };
 
-  /// \brief a profiled thread
-  class Thread
+	/// \brief a profiled thread
+	class Thread
   {
     friend ProfileFuncLevel;
 
@@ -199,7 +199,7 @@ public:
     \param thread return buffer for thread handle
     \return true if Thread found, false if not
   */
-  static bool EnumThreads(unsigned index, Thread &thread);
+	static bool EnumThreads(unsigned index, Thread &thread);
 
 private:
 
@@ -209,10 +209,10 @@ private:
     We can make this private as well so nobody accidentally tries to create
     another instance.
   */
-  ProfileFuncLevel();
+	ProfileFuncLevel();
 
   /**
     \brief The only function level profiler instance.
   */
-  static ProfileFuncLevel Instance;
+	static ProfileFuncLevel Instance;
 };

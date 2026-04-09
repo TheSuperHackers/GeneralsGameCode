@@ -123,8 +123,8 @@ private:
 
 	// compress functions
 	void		compress(W3dTimeCodedAnimChannelStruct * c);
-   float		compress(int filter_index, float scale, float value1, float *indata, unsigned char *pPacket, float *outdata);
-   float		test_compress(int filter_index, float scale, float value1, float *indata, float *outdata);
+	float		compress(int filter_index, float scale, float value1, float *indata, unsigned char *pPacket, float *outdata);
+	float		test_compress(int filter_index, float scale, float value1, float *indata, float *outdata);
 	uint32	find_useless_packet(W3dTimeCodedAnimChannelStruct * c, double tolerance);
 	uint32	find_useless_packetQ(W3dTimeCodedAnimChannelStruct * c, double tolerance);
 	uint32	find_least_useful_packet(W3dTimeCodedAnimChannelStruct *c);

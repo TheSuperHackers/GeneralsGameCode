@@ -512,7 +512,7 @@ WWINLINE void Matrix4x4::Init_Perspective
  *=============================================================================================*/
 WWINLINE Matrix4x4 Matrix4x4::Transpose() const
 {
-    return Matrix4x4(
+	return Matrix4x4(
 			Vector4(Row[0][0], Row[1][0], Row[2][0], Row[3][0]),
 			Vector4(Row[0][1], Row[1][1], Row[2][1], Row[3][1]),
 			Vector4(Row[0][2], Row[1][2], Row[2][2], Row[3][2]),

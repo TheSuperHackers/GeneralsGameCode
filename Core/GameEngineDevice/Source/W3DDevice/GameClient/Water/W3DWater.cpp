@@ -420,9 +420,9 @@ RenderObjClass *	 WaterRenderObjClass::Clone() const
 //-------------------------------------------------------------------------------------------------
 HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass *pBumpSource)
 {
-    SurfaceClass::SurfaceDescription    d3dsd;
+	SurfaceClass::SurfaceDescription    d3dsd;
 	SurfaceClass * surf;
-    D3DLOCKED_RECT     d3dlr;
+	D3DLOCKED_RECT     d3dlr;
 	DWORD dwSrcPitch;
 	BYTE* pSrc;
 	Int numLevels;
@@ -530,84 +530,84 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 	surf->Get_Description(d3dsd);
 	pSrc=(unsigned char *)surf->Lock((int *)&dwSrcPitch);
 
-    // Create the bumpmap's surface and texture objects
+	// Create the bumpmap's surface and texture objects
 	m_pBumpTexture[i]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,TextureClass::MIP_LEVELS_1,D3DPOOL_MANAGED,false);
 
-    // Fill the bits of the new texture surface with bits from
-    // a private format.
+	// Fill the bits of the new texture surface with bits from
+	// a private format.
 
-    m_pBumpTexture[i]->LockRect( 0, &d3dlr, 0, 0 );
-    DWORD dwDstPitch = (DWORD)d3dlr.Pitch;
-    BYTE* pDst       = (BYTE*)d3dlr.pBits;
+	m_pBumpTexture[i]->LockRect( 0, &d3dlr, 0, 0 );
+	DWORD dwDstPitch = (DWORD)d3dlr.Pitch;
+	BYTE* pDst       = (BYTE*)d3dlr.pBits;
 
-    for( DWORD y=0; y<d3dsd.Height; y++ )
-    {
-        BYTE* pDstT  = pDst;
-        BYTE* pSrcB0 = (BYTE*)pSrc;
-        BYTE* pSrcB1 = ( pSrcB0 + dwSrcPitch );
-        BYTE* pSrcB2 = ( pSrcB0 - dwSrcPitch );
+	for( DWORD y=0; y<d3dsd.Height; y++ )
+	{
+		BYTE* pDstT  = pDst;
+		BYTE* pSrcB0 = (BYTE*)pSrc;
+		BYTE* pSrcB1 = ( pSrcB0 + dwSrcPitch );
+		BYTE* pSrcB2 = ( pSrcB0 - dwSrcPitch );
 
-        if( y == d3dsd.Height-1 )  // Don't go past the last line
-            pSrcB1 = pSrcB0;
-        if( y == 0 )               // Don't go before first line
-            pSrcB2 = pSrcB0;
+		if( y == d3dsd.Height-1 )  // Don't go past the last line
+		pSrcB1 = pSrcB0;
+		if( y == 0 )               // Don't go before first line
+		pSrcB2 = pSrcB0;
 
-        for( DWORD x=0; x<d3dsd.Width; x++ )
-        {
-            LONG v00 = 256-*(pSrcB0+0); // Get the current pixel
-            LONG v01 = 256-*(pSrcB0+4); // and the pixel to the right
-            LONG vM1 = 256-*(pSrcB0-4); // and the pixel to the left
-            LONG v10 = 256-*(pSrcB1+0); // and the pixel one line below.
-            LONG v1M = 256-*(pSrcB2+0); // and the pixel one line above.
+		for( DWORD x=0; x<d3dsd.Width; x++ )
+		{
+			LONG v00 = 256-*(pSrcB0+0); // Get the current pixel
+			LONG v01 = 256-*(pSrcB0+4); // and the pixel to the right
+			LONG vM1 = 256-*(pSrcB0-4); // and the pixel to the left
+			LONG v10 = 256-*(pSrcB1+0); // and the pixel one line below.
+			LONG v1M = 256-*(pSrcB2+0); // and the pixel one line above.
 
-            LONG iDu = (vM1-v01); // The delta-u bump value
-            LONG iDv = (v1M-v10); // The delta-v bump value
+			LONG iDu = (vM1-v01); // The delta-u bump value
+			LONG iDv = (v1M-v10); // The delta-v bump value
 
-            if( (v00 < vM1) && (v00 < v01) )  // If we are at valley
-            {
-                iDu = vM1-v00;                 // Choose greater of 1st order diffs
-                if( iDu < v00-v01 )
-                    iDu = v00-v01;
-            }
+			if( (v00 < vM1) && (v00 < v01) )  // If we are at valley
+			{
+				iDu = vM1-v00;                 // Choose greater of 1st order diffs
+				if( iDu < v00-v01 )
+				iDu = v00-v01;
+			}
 
-            // The luminance bump value (land masses are less shiny)
-            WORD uL = ( v00>1 ) ? 63 : 127;
+			// The luminance bump value (land masses are less shiny)
+			WORD uL = ( v00>1 ) ? 63 : 127;
 
-            switch( D3DFMT_V8U8)//m_BumpMapFormat )
-            {
-                case D3DFMT_V8U8:
-                    *pDstT++ = (BYTE)iDu;
-                    *pDstT++ = (BYTE)iDv;
-                    break;
+			switch( D3DFMT_V8U8)//m_BumpMapFormat )
+			{
+				case D3DFMT_V8U8:
+					*pDstT++ = (BYTE)iDu;
+					*pDstT++ = (BYTE)iDv;
+					break;
 
-                case D3DFMT_L6V5U5:
-                    *(WORD*)pDstT  = (WORD)( ( (iDu>>3) & 0x1f ) <<  0 );
-                    *(WORD*)pDstT |= (WORD)( ( (iDv>>3) & 0x1f ) <<  5 );
-                    *(WORD*)pDstT |= (WORD)( ( ( uL>>2) & 0x3f ) << 10 );
-                    pDstT += 2;
-                    break;
+				case D3DFMT_L6V5U5:
+					*(WORD*)pDstT  = (WORD)( ( (iDu>>3) & 0x1f ) <<  0 );
+					*(WORD*)pDstT |= (WORD)( ( (iDv>>3) & 0x1f ) <<  5 );
+					*(WORD*)pDstT |= (WORD)( ( ( uL>>2) & 0x3f ) << 10 );
+					pDstT += 2;
+					break;
 
-                case D3DFMT_X8L8V8U8:
-                    *pDstT++ = (BYTE)iDu;
-                    *pDstT++ = (BYTE)iDv;
-                    *pDstT++ = (BYTE)uL;
-                    *pDstT++ = (BYTE)0L;
-                    break;
-            }
+				case D3DFMT_X8L8V8U8:
+					*pDstT++ = (BYTE)iDu;
+					*pDstT++ = (BYTE)iDv;
+					*pDstT++ = (BYTE)uL;
+					*pDstT++ = (BYTE)0L;
+					break;
+			}
 
-            // Move one pixel to the left (src is 32-bpp)
-            pSrcB0+=4;   pSrcB1+=4;   pSrcB2+=4;
-        }
+			// Move one pixel to the left (src is 32-bpp)
+			pSrcB0+=4;   pSrcB1+=4;   pSrcB2+=4;
+		}
 
-        // Move to the next line
-        pSrc += dwSrcPitch;    pDst += dwDstPitch;
-    }
+		// Move to the next line
+		pSrc += dwSrcPitch;    pDst += dwDstPitch;
+	}
 
-    m_pBumpTexture[i]->UnlockRect(0);
-    surf->Unlock();
+	m_pBumpTexture[i]->UnlockRect(0);
+	surf->Unlock();
 #endif
 
-    return S_OK;
+	return S_OK;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1466,10 +1466,10 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 
 	//Force reflected image to be drawn into full texture size - not a viewport inside texture.
 	Vector2 vMin,vMax,vOldMax,vOldMin;
- 	cam->Get_Viewport(vOldMin,vOldMax);
- 	vMax.X=vMax.Y=1.0f;
+	cam->Get_Viewport(vOldMin,vOldMax);
+	vMax.X=vMax.Y=1.0f;
 	vMin.X=vMin.Y=0.0f;
- 	cam->Set_Viewport(vMin,vMax);
+	cam->Set_Viewport(vMin,vMax);
 
 	cam->Apply();	//force an update of all the camera dependent parameters like frustum clip planes
 
@@ -1484,7 +1484,7 @@ void WaterRenderObjClass::renderMirror(CameraClass *cam)
 	WW3D::Render(m_parentScene,cam);
 
 	cam->Set_Transform(OldCameraMatrix);	//restore original non-reflected matrix
- 	cam->Set_Viewport(vOldMin,vOldMax);
+	cam->Set_Viewport(vOldMin,vOldMax);
 
 	cam->Apply();	//force an update of all the camera dependent parameters like frustum clip planes
 
@@ -1590,7 +1590,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				ShaderClass::Invert_Backface_Culling(true);
 
 			#ifdef CLIP_GEOMETRY_TO_PLANE
-			  // Set a clip plane, so that only objects above the water are reflected
+			// Set a clip plane, so that only objects above the water are reflected
 				WaterPlane.W *= -1.0f;	//flip sign of plane distance for D3D use.
 
 			//	DX8Wrapper::Set_DX8_Clip_Plane( 0, &WaterPlane.X );
@@ -1765,7 +1765,7 @@ Bool WaterRenderObjClass::getClippedWaterPlane(CameraClass *cam, AABoxClass *box
 	{
 		//find axis aligned bounding box around visible polygon
 		if (box)
-  			box->Init(&(ClippedPoly0.Verts[0]),final_vcount);
+		box->Init(&(ClippedPoly0.Verts[0]),final_vcount);
 		return TRUE;
 	}
 
@@ -2713,7 +2713,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,(rectangleCount+1)*2*3);
 	{
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
- 		UnsignedShort *curIb = lockib.Get_Index_Array();
+		UnsignedShort *curIb = lockib.Get_Index_Array();
 		for (Int i=0; i<rectangleCount; i++)
 		{
 			//triangle 1
@@ -2837,7 +2837,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->diffuse= diffuse;
 
 			Real wobbleConst=-m_riverVOrigin+vScale*(Real)i + WWMath::Fast_Sin(2*PI*(vScale*(Real)i) - constA)/22.0f;
- 			//old slower version
+			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v1=wobbleConst;
 			vb->u1=HEIGHT_TO_USE ;
@@ -2857,12 +2857,12 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->y=y;
 			vb->z=outerPt.z;
 			vb->diffuse= diffuse;
- 			//old slower version
+			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v1=wobbleConst;
 			vb->u1=0;
 			//old slower version
- 			//vb->v2 = -m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
+			//vb->v2 = -m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v2 =wobbleConst;
 			vb->u2 = 0;
 			vb->nx = 0;
@@ -2888,7 +2888,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
 
 	if (m_riverWaterPixelShader) DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_riverWaterPixelShader);
- 	DWORD cull;
+	DWORD cull;
 	DX8Wrapper::_Get_D3D_Device8()->GetRenderState(D3DRS_CULLMODE, &cull);
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
@@ -3058,7 +3058,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	DynamicIBAccessClass ib_access(BUFFER_TYPE_DYNAMIC_DX8,(rectangleCount+1)*2*3);
 	{
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
- 		UnsignedShort *curIb = lockib.Get_Index_Array();
+		UnsignedShort *curIb = lockib.Get_Index_Array();
 		for (j=0; j<vCount-1; j++)
 		{	for (i=0; i<uCount-1; i++)
 			{
@@ -3228,13 +3228,13 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 				vb->diffuse= diffuse;
 				//Old slower version
- 				//vb->u1=(vertex.X/waterFactor) + 0.02*cos(11*m_riverVOrigin)*sin(25*m_riverVOrigin+vertex.X*PI/(4*MAP_XY_FACTOR));
- 				//vb->v1=(vertex.Y/waterFactor) + 0.02*cos(5*m_riverVOrigin)*sin(25*m_riverVOrigin+vertex.Y*PI/(4*MAP_XY_FACTOR));
+				//vb->u1=(vertex.X/waterFactor) + 0.02*cos(11*m_riverVOrigin)*sin(25*m_riverVOrigin+vertex.X*PI/(4*MAP_XY_FACTOR));
+				//vb->v1=(vertex.Y/waterFactor) + 0.02*cos(5*m_riverVOrigin)*sin(25*m_riverVOrigin+vertex.Y*PI/(4*MAP_XY_FACTOR));
 				vb->u1=vertex.X*ooWaterFactor + constA*WWMath::Fast_Sin(constC+vertex.X*constD);
 				vb->v1=vertex.Y*ooWaterFactor + constB*WWMath::Fast_Sin(constC+vertex.Y*constD);
 				vb->u2 = vertex.X/BUMP_SIZE;
 				//Old slower version
- 				//vb->v2 = vertex.Y/BUMP_SIZE + 0.3f*vertex.X/BUMP_SIZE;
+				//vb->v2 = vertex.Y/BUMP_SIZE + 0.3f*vertex.X/BUMP_SIZE;
 				vb->v2 = (vertex.Y+0.3f*vertex.X)/BUMP_SIZE;
 				vb->nx = 0;
 				vb->ny = 0;
@@ -3264,7 +3264,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	}
 
 
- 	DWORD cull;
+	DWORD cull;
 	DX8Wrapper::_Get_D3D_Device8()->GetRenderState(D3DRS_CULLMODE, &cull);
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 

@@ -32,27 +32,27 @@ This is useful because the constructor will automatically call sem_init
 Sem4::Sem4()
 {
 #ifndef _WIN32
-  sem_init(&sem,1,1);
+	sem_init(&sem,1,1);
 #else
-  sem = CreateSemaphore(nullptr, 1, 1, nullptr);
+	sem = CreateSemaphore(nullptr, 1, 1, nullptr);
 #endif
 }
 
 Sem4::Sem4(uint32 value)
 {
 #ifndef _WIN32
-  sem_init(&sem,1,value);
+	sem_init(&sem,1,value);
 #else
-  sem = CreateSemaphore(nullptr, value, value, nullptr);
+	sem = CreateSemaphore(nullptr, value, value, nullptr);
 #endif
 }
 
 Sem4::~Sem4()
 {
 #ifndef _WIN32
-  sem_destroy(&sem);
+	sem_destroy(&sem);
 #else
-  if (sem) CloseHandle(sem);
+	if (sem) CloseHandle(sem);
 #endif
 }
 
@@ -80,20 +80,20 @@ sint32  Sem4::Wait(void) const
 sint32 Sem4::Post(void) const
 {
 #ifndef _WIN32
-  return(sem_post((sem_t *)&sem));
+	return(sem_post((sem_t *)&sem));
 #else
-  if (!sem)
-	  return -1;
-  if (!ReleaseSemaphore(sem, 1 ,nullptr))
-	  return -1;
-  return 0;
+	if (!sem)
+	return -1;
+	if (!ReleaseSemaphore(sem, 1 ,nullptr))
+	return -1;
+	return 0;
 #endif
 }
 
 sint32 Sem4::TryWait(void) const
 {
 #ifndef _WIN32
-  return(sem_trywait((sem_t *)&sem));
+	return(sem_trywait((sem_t *)&sem));
 #else
 	if (!sem)
 		return -1;
@@ -113,7 +113,7 @@ sint32 Sem4::TryWait(void) const
 sint32 Sem4::GetValue(int *sval) const
 {
 #ifndef _WIN32
-  return(sem_getvalue((sem_t *)&sem,sval));
+	return(sem_getvalue((sem_t *)&sem,sval));
 #else
 	if (!sem)
 		return -1;
@@ -129,9 +129,9 @@ sint32 Sem4::GetValue(int *sval) const
 sint32 Sem4::Destroy(void)
 {
 #ifndef _WIN32
-  return(sem_destroy(&sem));
+	return(sem_destroy(&sem));
 #else
-  return CloseHandle(sem);
+	return CloseHandle(sem);
 #endif
 }
 
@@ -155,27 +155,27 @@ Sem4::~Sem4()
 
 sint32  Sem4::Wait(void) const
 {
-  return(0);
+	return(0);
 }
 
 sint32 Sem4::Post(void) const
 {
-  return(0);
+	return(0);
 }
 
 sint32 Sem4::TryWait(void) const
 {
-  return(0);
+	return(0);
 }
 
 sint32 Sem4::GetValue(int *) const
 {
-  return(0);
+	return(0);
 }
 
 sint32 Sem4::Destroy(void)
 {
-  return(0);
+	return(0);
 }
 
 #endif

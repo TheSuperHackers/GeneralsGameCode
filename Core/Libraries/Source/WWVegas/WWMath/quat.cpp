@@ -317,7 +317,7 @@ void __cdecl Fast_Slerp(Quaternion& res, const Quaternion & p,const Quaternion &
 
 		fld		alpha
 		fsubr		st(0),st(1)				// st(1) contains 1.0
- 		fstp     beta
+		fstp     beta
 		jmp      done_slerp
 
 normal_slerp:

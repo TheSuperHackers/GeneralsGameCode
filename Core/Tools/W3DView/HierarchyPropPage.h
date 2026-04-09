@@ -60,7 +60,7 @@ protected:
         // Private constructor that shouldn't be called
         CHierarchyPropPage () {};
 
-        CString m_stringHierarchyName;
+	CString m_stringHierarchyName;
 
 };
 

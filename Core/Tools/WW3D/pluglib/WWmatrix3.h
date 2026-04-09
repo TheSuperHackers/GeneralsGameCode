@@ -400,7 +400,7 @@ inline Matrix3::Matrix3(const Quaternion & q)
  *=============================================================================================*/
 inline Matrix3 Matrix3::Transpose() const
 {
-    return Matrix3(
+	return Matrix3(
 			Vector3(Row[0][0], Row[1][0], Row[2][0]),
 			Vector3(Row[0][1], Row[1][1], Row[2][1]),
 			Vector3(Row[0][2], Row[1][2], Row[2][2])
@@ -624,32 +624,32 @@ inline float Matrix3::Get_Z_Rotation(void) const
 
 inline Vector3 Matrix3::Get_X_Vector(void) const
 {
-   return Vector3(Row[0][0], Row[1][0], Row[2][0]);
+	return Vector3(Row[0][0], Row[1][0], Row[2][0]);
 }
 
 inline Vector3 Matrix3::Get_Y_Vector(void) const
 {
-   return Vector3(Row[0][1], Row[1][1], Row[2][1]);
+	return Vector3(Row[0][1], Row[1][1], Row[2][1]);
 }
 
 inline Vector3 Matrix3::Get_Z_Vector(void) const
 {
-   return Vector3(Row[0][2], Row[1][2], Row[2][2]);
+	return Vector3(Row[0][2], Row[1][2], Row[2][2]);
 }
 
 inline void Matrix3::Get_X_Vector(Vector3 * set) const
 {
-   set->Set(Row[0][0], Row[1][0], Row[2][0]);
+	set->Set(Row[0][0], Row[1][0], Row[2][0]);
 }
 
 inline void Matrix3::Get_Y_Vector(Vector3 * set) const
 {
-   set->Set(Row[0][1], Row[1][1], Row[2][1]);
+	set->Set(Row[0][1], Row[1][1], Row[2][1]);
 }
 
 inline void Matrix3::Get_Z_Vector(Vector3 * set) const
 {
-   set->Set(Row[0][2], Row[1][2], Row[2][2]);
+	set->Set(Row[0][2], Row[1][2], Row[2][2]);
 }
 
 inline Matrix3 operator - (const Matrix3 & a)

@@ -52,7 +52,7 @@
 //-------------------------------------------------------------------------------------------------
 W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
 {
-  m_renderObject = nullptr;
+	m_renderObject = nullptr;
 	for (int i = 0; i < STATECOUNT; ++i)
 		m_anims[i] = nullptr;
 	m_fxFinal = nullptr;
@@ -75,8 +75,8 @@ W3DDebrisDraw::~W3DDebrisDraw()
 	{
 		if (W3DDisplay::m_3DScene != nullptr)
 			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
-  	REF_PTR_RELEASE(m_renderObject);
- 		m_renderObject = nullptr;
+		REF_PTR_RELEASE(m_renderObject);
+		m_renderObject = nullptr;
 	}
 	for (int i = 0; i < STATECOUNT; ++i)
 	{
@@ -103,7 +103,7 @@ void W3DDebrisDraw::setFullyObscuredByShroud(Bool fullyObscured)
 //-------------------------------------------------------------------------------------------------
 void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 {
-  if (m_renderObject == nullptr && !name.isEmpty())
+	if (m_renderObject == nullptr && !name.isEmpty())
 	{
 		Int hexColor = 0;
 		if (color != 0)
@@ -129,7 +129,7 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		{
 			Shadow::ShadowTypeInfo shadowInfo;
 			shadowInfo.m_type = t;
-  		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
+			m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 		}
 		else
 		{

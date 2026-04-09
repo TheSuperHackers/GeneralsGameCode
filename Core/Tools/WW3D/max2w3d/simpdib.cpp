@@ -84,7 +84,7 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 	if (!Handle) {
 		IsZombie = true;
 		return;
-    }
+	}
 
 	Width = Info->bmiHeader.biWidth;
 	Height = abs(Info->bmiHeader.biHeight);
@@ -95,15 +95,15 @@ SimpleDIBClass::SimpleDIBClass(HWND hwnd,int width,int height,PaletteClass & pal
 	if (Info->bmiHeader.biHeight > 0) {
 
 		// bottom-up DIB
-        PixelBase = (Pixels + (Height - 1) * Width);
-        Pitch = -Pitch;
+		PixelBase = (Pixels + (Height - 1) * Width);
+		Pitch = -Pitch;
 
-    } else {
+	} else {
 
 		// top-down DIB
-        PixelBase = Pixels;
-        Pitch = Pitch;
-    }
+		PixelBase = Pixels;
+		Pitch = Pitch;
+	}
 }
 
 SimpleDIBClass::~SimpleDIBClass(void)

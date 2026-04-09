@@ -62,66 +62,66 @@ template <class T>
 class ArrayList
 {
  public:
-                   ArrayList();
-                   ArrayList(ArrayList<T> &other);
-                  ~ArrayList();
+	ArrayList();
+	ArrayList(ArrayList<T> &other);
+	~ArrayList();
 
-  // Remove all entries from the lsit
-  void             clear(void);
+	// Remove all entries from the lsit
+	void             clear(void);
 
-  // Add a node after the zero based 'pos'
-  bit8             add(IN T &node,sint32 pos);
-  bit8             addTail(IN T &node);
-  bit8             addHead(IN T &node);
-  bit8		   addSortedAsc(IN T &node);		// Ascending
-  bit8		   addSortedDes(IN T &node);		// Descending
+	// Add a node after the zero based 'pos'
+	bit8             add(IN T &node,sint32 pos);
+	bit8             addTail(IN T &node);
+	bit8             addHead(IN T &node);
+	bit8		   addSortedAsc(IN T &node);		// Ascending
+	bit8		   addSortedDes(IN T &node);		// Descending
   /*bit8		   addNumSortedAsc(IN T &node);		// Ascending
   bit8		   addNumSortedDes(IN T &node);		// Descending*/
 
-  // Remove a node
-  bit8             remove(OUT T &node,sint32 pos);
-  bit8             remove(sint32 pos);
-  bit8             removeHead(OUT T &node);
-  bit8             removeTail(OUT T &node);
+	// Remove a node
+	bit8             remove(OUT T &node,sint32 pos);
+	bit8             remove(sint32 pos);
+	bit8             removeHead(OUT T &node);
+	bit8             removeTail(OUT T &node);
 
-  // Replace one obj with another
-  bit8             replace(IN T &node, sint32 pos);
+	// Replace one obj with another
+	bit8             replace(IN T &node, sint32 pos);
 
 
-  // Get a node without removing from the list
-  bit8             get(OUT T &node,sint32 pos) RO;
-  bit8             getHead(OUT T &node) RO;
-  bit8             getTail(OUT T &node) RO;
+	// Get a node without removing from the list
+	bit8             get(OUT T &node,sint32 pos) RO;
+	bit8             getHead(OUT T &node) RO;
+	bit8             getTail(OUT T &node) RO;
 
-  // Get a pointer to the interally managed copy (careful!)
-  bit8             getPointer(OUT T **node,sint32 pos) RO;
+	// Get a pointer to the interally managed copy (careful!)
+	bit8             getPointer(OUT T **node,sint32 pos) RO;
 
-  // Get the number of entries in the list
-  sint32           length(void) RO;
+	// Get the number of entries in the list
+	sint32           length(void) RO;
 
-  // UNSAFE! for classes, see note below!
-  bit8             setSize(sint32 newsize, IN T &filler);
+	// UNSAFE! for classes, see note below!
+	bit8             setSize(sint32 newsize, IN T &filler);
 
-  // Print information on the list
-  void             print(FILE *out);
+	// Print information on the list
+	void             print(FILE *out);
 
-  // assignment operator
-  ArrayList<T>   &operator=(IN ArrayList<T> &other);
+	// assignment operator
+	ArrayList<T>   &operator=(IN ArrayList<T> &other);
 
  private:
-  sint32 	   _sortedLookup(IN T &target, int ascending);
-  sint32           Entries_;   // Number of entries
-  sint32           Slots_;     // Number of available slots
+	sint32 	   _sortedLookup(IN T &target, int ascending);
+	sint32           Entries_;   // Number of entries
+	sint32           Slots_;     // Number of available slots
 
-  T               *Vector_;    // The actual memory where the list is held
+	T               *Vector_;    // The actual memory where the list is held
 
-  enum
+	enum
   {
     INITIAL_SIZE = 10
   };
 
-  bit8             growVector(void);   // Expand the number of slots
-  bit8             shrinkVector(void); // Reduce the number of slots
+	bit8             growVector(void);   // Expand the number of slots
+	bit8             shrinkVector(void); // Reduce the number of slots
 };
 
 
@@ -129,46 +129,46 @@ class ArrayList
 template <class T>
 ArrayList<T>::ArrayList()
 {
-  Entries_=0;
-  Slots_=0;
-  Vector_=nullptr;
+	Entries_=0;
+	Slots_=0;
+	Vector_=nullptr;
 }
 
 // copy constructor
 template <class T>
 ArrayList<T>::ArrayList(ArrayList<T> &other)
 {
-  Entries_=0;
-  Slots_=0;
-  Vector_=nullptr;
-  (*this)=other;
+	Entries_=0;
+	Slots_=0;
+	Vector_=nullptr;
+	(*this)=other;
 }
 
 //Free all the memory...
 template <class T>
 ArrayList<T>::~ArrayList()
 {
-  clear();                   // Remove the entries & call destructors on them
+	clear();                   // Remove the entries & call destructors on them
 
   delete[]((uint8*)Vector_); // this will prevent the destructors from
-                             //  gettting called on elements not
-                             //  containing valid objects.
+	//  gettting called on elements not
+	//  containing valid objects.
 
-  //fprintf(stderr,"Arraylist destructor\n");
+	//fprintf(stderr,"Arraylist destructor\n");
 }
 
 // assignment operator
 template <class T>
 ArrayList<T> &ArrayList<T>::operator=(IN ArrayList<T> &other)
 {
-  T node;
-  clear();
-  for (int i=0; i<other.length(); i++)
-  {
-    other.get(node,i);
-    addTail(node);
-  }
-  return(*this);
+	T node;
+	clear();
+	for (int i=0; i<other.length(); i++)
+	{
+		other.get(node,i);
+		addTail(node);
+	}
+	return(*this);
 }
 
 
@@ -176,12 +176,12 @@ ArrayList<T> &ArrayList<T>::operator=(IN ArrayList<T> &other)
 template <class T>
 void ArrayList<T>::clear()
 {
-  for (int i=0; i<Entries_; i++)
-  {
-    (Vector_+i)->~T();    // Call the destructor manually. Don't try this
-                          //  at home kiddies!
-  }
-  Entries_=0;
+	for (int i=0; i<Entries_; i++)
+	{
+		(Vector_+i)->~T();    // Call the destructor manually. Don't try this
+		//  at home kiddies!
+	}
+	Entries_=0;
 }
 
 // ************************* UNSAFE UNSAFE UNSAFE *************************
@@ -196,28 +196,28 @@ void ArrayList<T>::clear()
 template <class T>
 bit8 ArrayList<T>::setSize(sint32 newsize, IN T &filler)
 {
-  int oldEntries=Entries_;
-  Entries_ = newsize;
+	int oldEntries=Entries_;
+	Entries_ = newsize;
 
-  if (newsize<0)
-    return(false);
+	if (newsize<0)
+	return(false);
 
-  // Grow the vector as much as we need to
-  while (newsize > Slots_)
-    growVector();
+	// Grow the vector as much as we need to
+	while (newsize > Slots_)
+	growVector();
 
-  // Create new objects in the blank holes
-  for (int i=oldEntries; i<Entries_; i++)
-  {
-    // Now put the replacement object in there...
-    new((void *)(Vector_+i)) T(filler); // Trust me, this isn't a memory leak
-  }
+	// Create new objects in the blank holes
+	for (int i=oldEntries; i<Entries_; i++)
+	{
+		// Now put the replacement object in there...
+		new((void *)(Vector_+i)) T(filler); // Trust me, this isn't a memory leak
+	}
 
-  // If we're at 33% usage or less, shrink the vector
-  if ((Entries_*3) <= Slots_)  // don't do while, because I think shrink will never goto 0
-    shrinkVector();
+	// If we're at 33% usage or less, shrink the vector
+	if ((Entries_*3) <= Slots_)  // don't do while, because I think shrink will never goto 0
+	shrinkVector();
 
-  return(true);
+	return(true);
 }
 
 
@@ -226,26 +226,26 @@ bit8 ArrayList<T>::setSize(sint32 newsize, IN T &filler)
 template <class T>
 bit8 ArrayList<T>::add(IN T &node,sint32 pos)
 {
-  if (pos > Entries_)      // You can only access one of the end of the vector
-    pos=Entries_;
-  if (pos >= Slots_)        // If we're at the end, grow the list
-    growVector();
-  if (Entries_ >= Slots_)   // enuff space?
-    growVector();
+	if (pos > Entries_)      // You can only access one of the end of the vector
+	pos=Entries_;
+	if (pos >= Slots_)        // If we're at the end, grow the list
+	growVector();
+	if (Entries_ >= Slots_)   // enuff space?
+	growVector();
 
-  // If we are insering into the middle or front of the list we have to
-  //  slide the old objects forward.
-  if (pos < Entries_)   // If there are elements after the add point
-    memmove(Vector_+pos+1,Vector_+pos,sizeof(T)*(Entries_-pos)); // move them forward
+	// If we are insering into the middle or front of the list we have to
+	//  slide the old objects forward.
+	if (pos < Entries_)   // If there are elements after the add point
+	memmove(Vector_+pos+1,Vector_+pos,sizeof(T)*(Entries_-pos)); // move them forward
 
-  //fprintf(stderr,"Placement new to %p\n",(Vector_+pos));
+	//fprintf(stderr,"Placement new to %p\n",(Vector_+pos));
 
-  // This uses the placement new operator. placement new allows us to
-  //  specify the memory address for the new object.  In this case we
-  //  want it at the 'pos' index into our array.
-  new((void *)(Vector_+pos)) T((T &)node); // Trust me, this isn't a memory leak
-  Entries_++;                         // one new entry
-  return(TRUE);
+	// This uses the placement new operator. placement new allows us to
+	//  specify the memory address for the new object.  In this case we
+	//  want it at the 'pos' index into our array.
+	new((void *)(Vector_+pos)) T((T &)node); // Trust me, this isn't a memory leak
+	Entries_++;                         // one new entry
+	return(TRUE);
 }
 
 
@@ -253,7 +253,7 @@ bit8 ArrayList<T>::add(IN T &node,sint32 pos)
 template <class T>
 bit8 ArrayList<T>::addHead(IN T &node)
 {
-  return(add(node,0));
+	return(add(node,0));
 }
 
 
@@ -261,7 +261,7 @@ bit8 ArrayList<T>::addHead(IN T &node)
 template <class T>
 bit8 ArrayList<T>::addTail(IN T &node)
 {
-  return(add(node,length()));
+	return(add(node,length()));
 }
 
 
@@ -501,20 +501,20 @@ sint32 ArrayList<T>::_numSortedLookup(IN T &target, char delim, int fields, int 
 template <class T>
 bit8 ArrayList<T>::replace(IN T &node, sint32 pos)
 {
-  if (Entries_==0)
-    return(FALSE);
-  if (pos<0)
-    pos=0;
-  if (pos >= Entries_)
-    pos=Entries_-1;
+	if (Entries_==0)
+	return(FALSE);
+	if (pos<0)
+	pos=0;
+	if (pos >= Entries_)
+	pos=Entries_-1;
 
-  (Vector_+pos)->~T();    // Call the destructor manually. Don't try this
-                          //  at home kiddies!
+	(Vector_+pos)->~T();    // Call the destructor manually. Don't try this
+	//  at home kiddies!
 
-  // Now put the replacement object in there...
-  new((void *)(Vector_+pos)) T(node); // Trust me, this isn't a memory leak
+	// Now put the replacement object in there...
+	new((void *)(Vector_+pos)) T(node); // Trust me, this isn't a memory leak
 
-  return(TRUE);
+	return(TRUE);
 }
 
 
@@ -524,25 +524,25 @@ bit8 ArrayList<T>::replace(IN T &node, sint32 pos)
 template <class T>
 bit8 ArrayList<T>::remove(sint32 pos)
 {
-  if (Entries_==0)
-    return(FALSE);
-  if (pos<0)
-    pos=0;
-  if (pos >= Entries_)
-    pos=Entries_-1;
+	if (Entries_==0)
+	return(FALSE);
+	if (pos<0)
+	pos=0;
+	if (pos >= Entries_)
+	pos=Entries_-1;
 
-  (Vector_+pos)->~T();    // Call the destructor manually. Don't try this
-                          //  at home kiddies!
+	(Vector_+pos)->~T();    // Call the destructor manually. Don't try this
+	//  at home kiddies!
 
-  memmove(Vector_+pos,Vector_+pos+1,sizeof(T)*(Entries_-pos-1));
+	memmove(Vector_+pos,Vector_+pos+1,sizeof(T)*(Entries_-pos-1));
 
-  Entries_--;
+	Entries_--;
 
-  // If we're at 33% usage or less, shrink the vector
-  if ( (Entries_*3) <= Slots_)
-    shrinkVector();
+	// If we're at 33% usage or less, shrink the vector
+	if ( (Entries_*3) <= Slots_)
+	shrinkVector();
 
-  return(TRUE);
+	return(TRUE);
 }
 
 
@@ -551,11 +551,11 @@ bit8 ArrayList<T>::remove(sint32 pos)
 template <class T>
 bit8 ArrayList<T>::remove(OUT T &node, sint32 pos)
 {
-  bit8 retval;
-  retval=get(node,pos);
-  if (retval==FALSE)
-    return(FALSE);
-  return(remove(pos));
+	bit8 retval;
+	retval=get(node,pos);
+	if (retval==FALSE)
+	return(FALSE);
+	return(remove(pos));
 }
 
 
@@ -563,7 +563,7 @@ bit8 ArrayList<T>::remove(OUT T &node, sint32 pos)
 template <class T>
 bit8 ArrayList<T>::removeHead(OUT T &node)
 {
-  return(remove(node,0));
+	return(remove(node,0));
 }
 
 
@@ -571,7 +571,7 @@ bit8 ArrayList<T>::removeHead(OUT T &node)
 template <class T>
 bit8 ArrayList<T>::removeTail(OUT T &node)
 {
-  return(remove(node,Entries_-1));
+	return(remove(node,Entries_-1));
 }
 
 // get a pointer to the internally managed object.  Try and avoid this, but
@@ -580,10 +580,10 @@ bit8 ArrayList<T>::removeTail(OUT T &node)
 template <class T>
 bit8 ArrayList<T>::getPointer(OUT T **node,sint32 pos) RO
 {
-  if ((pos < 0)||(pos >= Entries_))
-    return(FALSE);
-  *node=&(Vector_[pos]);
-  return(TRUE);
+	if ((pos < 0)||(pos >= Entries_))
+	return(FALSE);
+	*node=&(Vector_[pos]);
+	return(TRUE);
 }
 
 
@@ -591,10 +591,10 @@ bit8 ArrayList<T>::getPointer(OUT T **node,sint32 pos) RO
 template <class T>
 bit8 ArrayList<T>::get(OUT T &node,sint32 pos) RO
 {
-  if ((pos < 0)||(pos >= Entries_))
-    return(FALSE);
-  node=Vector_[pos];
-  return(TRUE);
+	if ((pos < 0)||(pos >= Entries_))
+	return(FALSE);
+	node=Vector_[pos];
+	return(TRUE);
 }
 
 
@@ -602,7 +602,7 @@ bit8 ArrayList<T>::get(OUT T &node,sint32 pos) RO
 template <class T>
 bit8 ArrayList<T>::getHead(OUT T &node) RO
 {
-  return(get(node,0));
+	return(get(node,0));
 }
 
 
@@ -610,59 +610,59 @@ bit8 ArrayList<T>::getHead(OUT T &node) RO
 template <class T>
 bit8 ArrayList<T>::getTail(OUT T &node) RO
 {
-  return(get(node,Entries_-1));
+	return(get(node,Entries_-1));
 }
 
 // just for debugging
 template <class T>
 void ArrayList<T>::print(FILE *out)
 {
-  fprintf(out,"--------------------\n");
-  //for (int i=0; i<Entries_; i++)
-  //  Vector_[i].print();
-  fprintf(out,"Entries: %d  Slots:  %d  sizeof(T): %d\n",Entries_,Slots_,
+	fprintf(out,"--------------------\n");
+	//for (int i=0; i<Entries_; i++)
+	//  Vector_[i].print();
+	fprintf(out,"Entries: %d  Slots:  %d  sizeof(T): %d\n",Entries_,Slots_,
     sizeof(T));
-  fprintf(out,"--------------------\n");
+	fprintf(out,"--------------------\n");
 }
 
 // Return the current length of the list
 template <class T>
 sint32 ArrayList<T>::length(void) RO
 {
-  return(Entries_);
+	return(Entries_);
 }
 
 // Grow the vector by a factor of 2X
 template <class T>
 bit8 ArrayList<T>::growVector(void)
 {
-  if (Entries_ < Slots_)   // Don't grow until we're at 100% usage
-    return(FALSE);
+	if (Entries_ < Slots_)   // Don't grow until we're at 100% usage
+	return(FALSE);
 
-  int   newSlots=Entries_*2;
-  if(newSlots < INITIAL_SIZE)
-    newSlots=INITIAL_SIZE;
+	int   newSlots=Entries_*2;
+	if(newSlots < INITIAL_SIZE)
+	newSlots=INITIAL_SIZE;
 
-  //fprintf(stderr,"Growing vector to: %d\n",newSlots);
+	//fprintf(stderr,"Growing vector to: %d\n",newSlots);
 
-  // The goofy looking new below prevents operator new from getting called
-  //  unnecessarily.  This is severall times faster than allocating all of
-  //  the slots as objects and then calling the assignment operator on them
-  //  when they actually get used.
-  //
-  T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
-  memset(newVector,0,newSlots * sizeof(T)); // zero just to be safe
+	// The goofy looking new below prevents operator new from getting called
+	//  unnecessarily.  This is severall times faster than allocating all of
+	//  the slots as objects and then calling the assignment operator on them
+	//  when they actually get used.
+	//
+	T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
+	memset(newVector,0,newSlots * sizeof(T)); // zero just to be safe
 
-  if (Vector_ != nullptr)
-    memcpy(newVector,Vector_,Entries_*sizeof(T));
+	if (Vector_ != nullptr)
+	memcpy(newVector,Vector_,Entries_*sizeof(T));
 
-  delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
+	delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
                                //  destructors
 
   Vector_=newVector;
-  Slots_=newSlots;
+	Slots_=newSlots;
 
-  return(TRUE);
+	return(TRUE);
 }
 
 
@@ -670,36 +670,36 @@ bit8 ArrayList<T>::growVector(void)
 template <class T>
 bit8 ArrayList<T>::shrinkVector(void)
 {
-  //fprintf(stderr,"Shrink called\n");
+	//fprintf(stderr,"Shrink called\n");
 
-  // Don't need to shrink until usage goes below 33%
-  if ( (Entries_*3) > Slots_)
-    return(FALSE);
+	// Don't need to shrink until usage goes below 33%
+	if ( (Entries_*3) > Slots_)
+	return(FALSE);
 
-  int   newSlots=Slots_/2;
-  if(newSlots < INITIAL_SIZE) // never shrink past initial size
-    newSlots=INITIAL_SIZE;
+	int   newSlots=Slots_/2;
+	if(newSlots < INITIAL_SIZE) // never shrink past initial size
+	newSlots=INITIAL_SIZE;
 
-  if (newSlots >= Slots_)   // don't need to shrink
-    return(FALSE);
+	if (newSlots >= Slots_)   // don't need to shrink
+	return(FALSE);
 
-  //fprintf(stderr,"Shrinking vector to: %d\n",newSlots);
+	//fprintf(stderr,"Shrinking vector to: %d\n",newSlots);
 
-  // The goofy looking new below prevents operator new from getting called
-  //  unnecessarily.  This is severall times faster than allocating all of
-  //  the slots as objects and then calling the assignment operator on them
-  //  when they actually get used.
-  //
-  T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
+	// The goofy looking new below prevents operator new from getting called
+	//  unnecessarily.  This is severall times faster than allocating all of
+	//  the slots as objects and then calling the assignment operator on them
+	//  when they actually get used.
+	//
+	T *newVector=(T *)(new uint8[newSlots * sizeof(T)]);
 
-  if (Vector_ != nullptr)    // Vector_ better not be nullptr!
-    memcpy(newVector,Vector_,Entries_*sizeof(T));
+	if (Vector_ != nullptr)    // Vector_ better not be nullptr!
+	memcpy(newVector,Vector_,Entries_*sizeof(T));
 
-  delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
+	delete[]((uint8 *)Vector_);  // Get rid of the old vector without calling
                                //  destructors
 
   Vector_=newVector;
-  Slots_=newSlots;
+	Slots_=newSlots;
 
-  return(TRUE);
+	return(TRUE);
 }

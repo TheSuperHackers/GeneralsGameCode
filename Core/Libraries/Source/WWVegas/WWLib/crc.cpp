@@ -205,7 +205,7 @@ unsigned long  CRC::_Table[ 256 ] =
 
 unsigned long	CRC::Memory( unsigned char *data, unsigned long length, unsigned long crc )
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
+	crc ^= 0xFFFFFFFF;									// invert previous CRC
 	while ( length-- ) {
 		crc = CRC32( *data++, crc );					// calc crc for each byte
 	}
@@ -214,7 +214,7 @@ unsigned long	CRC::Memory( unsigned char *data, unsigned long length, unsigned l
 
 unsigned long	CRC::String( const char *string, unsigned long crc)
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
+	crc ^= 0xFFFFFFFF;									// invert previous CRC
 	while ( *string )	{
 		crc = CRC32( *string++, crc );				// calc crc for each byte
 	}

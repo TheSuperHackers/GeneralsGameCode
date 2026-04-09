@@ -458,8 +458,8 @@ Int GameWindow::winBringToTop()
 
 		// sanity, make sure this window is in the window list
 		for( current = TheWindowManager->winGetWindowList();
-				 current != this;
-				 current = current->m_next)
+		current != this;
+		current = current->m_next)
 			if (current == nullptr)
 				return WIN_ERR_INVALID_PARAMETER;
 
@@ -701,7 +701,7 @@ Int GameWindow::winEnable( Bool enable )
 //=============================================================================
 Bool GameWindow::winGetEnabled()
 {
-  return BitIsSet( m_status, WIN_STATUS_ENABLED );
+	return BitIsSet( m_status, WIN_STATUS_ENABLED );
 
 }
 

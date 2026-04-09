@@ -49,7 +49,7 @@ W3DScienceModelDrawModuleData::~W3DScienceModelDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DScienceModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -57,7 +57,7 @@ void W3DScienceModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -98,7 +98,7 @@ WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second()
 static inline void WWProfile_Get_Ticks(_int64 * ticks)
 {
 #ifdef _UNIX
-       *ticks = TIMEGETTIME();
+	*ticks = TIMEGETTIME();
 #else
 	*ticks = _rdtsc();
 #endif

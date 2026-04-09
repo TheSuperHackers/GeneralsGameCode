@@ -63,7 +63,7 @@ protected:
 
 #ifndef RTS_DEBUG  // debug version in W3DViewView.cpp
 inline CW3DViewDoc* CW3DViewView::GetDocument()
-   { return (CW3DViewDoc*)m_pDocument; }
+{ return (CW3DViewDoc*)m_pDocument; }
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

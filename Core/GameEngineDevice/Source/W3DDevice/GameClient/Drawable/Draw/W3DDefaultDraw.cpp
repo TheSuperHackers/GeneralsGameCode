@@ -62,7 +62,7 @@ W3DDefaultDraw::W3DDefaultDraw(Thing *thing, const ModuleData* moduleData) : Dra
 
 		Shadow::ShadowTypeInfo shadowInfo;
 		shadowInfo.m_type=(ShadowType)SHADOW_VOLUME;
-  		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
+		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 
 
 		DEBUG_ASSERTCRASH(m_renderObject, ("Test asset %s not found", getDrawable()->getTemplate()->getLTAName().str()));
@@ -109,7 +109,7 @@ W3DDefaultDraw::~W3DDefaultDraw()
 	if (m_renderObject)
 	{
 		W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
-  	REF_PTR_RELEASE(m_renderObject);
+		REF_PTR_RELEASE(m_renderObject);
 		m_renderObject = nullptr;
 	}
 #endif

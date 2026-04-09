@@ -1238,7 +1238,7 @@ FontCharsClass::Get_Char_Data (WCHAR ch)
 	{
 		retval = ASCIICharArray[ch];
 	}
- 	else if ( AlternateUnicodeFont && this != AlternateUnicodeFont )
+	else if ( AlternateUnicodeFont && this != AlternateUnicodeFont )
 	{
 		return AlternateUnicodeFont->Get_Char_Data( ch );
 	}
@@ -1390,33 +1390,33 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 			uint8 pixel_value = GDIBitmapBits[index];
 			index += 3;
 #ifdef TEST_PLACEMENT
- 			if (row==CharHeight-1&&col==0) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==CharHeight-2&&col==1) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==0&&col==0) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==1&&col==1) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==CharHeight-1&&col==char_size.cx-1-PixelOverlap) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==CharHeight-2&&col==char_size.cx-2-PixelOverlap) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==0&&col==char_size.cx-1-PixelOverlap) {
- 				pixel_value = 0xff;
- 			}
- 			if (row==1&&col==char_size.cx-2-PixelOverlap) {
- 				pixel_value = 0xff;
- 			}
- 			if (pixel_value == 0x00) {
- 				pixel_value = 0x40;
- 			}
+			if (row==CharHeight-1&&col==0) {
+				pixel_value = 0xff;
+			}
+			if (row==CharHeight-2&&col==1) {
+				pixel_value = 0xff;
+			}
+			if (row==0&&col==0) {
+				pixel_value = 0xff;
+			}
+			if (row==1&&col==1) {
+				pixel_value = 0xff;
+			}
+			if (row==CharHeight-1&&col==char_size.cx-1-PixelOverlap) {
+				pixel_value = 0xff;
+			}
+			if (row==CharHeight-2&&col==char_size.cx-2-PixelOverlap) {
+				pixel_value = 0xff;
+			}
+			if (row==0&&col==char_size.cx-1-PixelOverlap) {
+				pixel_value = 0xff;
+			}
+			if (row==1&&col==char_size.cx-2-PixelOverlap) {
+				pixel_value = 0xff;
+			}
+			if (pixel_value == 0x00) {
+				pixel_value = 0x40;
+			}
 #endif
 
 			uint16 pixel_color = 0;

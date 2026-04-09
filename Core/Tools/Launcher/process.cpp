@@ -20,46 +20,46 @@
 
 Process::Process()
 {
-  directory[0]=0;
-  command[0]=0;
-  args[0]=0;
-  hProcess=nullptr;
-  hThread=nullptr;
+	directory[0]=0;
+	command[0]=0;
+	args[0]=0;
+	hProcess=nullptr;
+	hThread=nullptr;
 }
 
 // Create a process
 bit8 Create_Process(Process &process)
 {
-    int                      retval;
-    STARTUPINFO              si;
-    PROCESS_INFORMATION      piProcess;
-    ZeroMemory(&si,sizeof(si));
-    si.cb=sizeof(si);
+	int                      retval;
+	STARTUPINFO              si;
+	PROCESS_INFORMATION      piProcess;
+	ZeroMemory(&si,sizeof(si));
+	si.cb=sizeof(si);
 
-    char cmdargs[513];
-    memset(cmdargs,0,513);
-    strcpy(cmdargs,process.command);
-    strcat(cmdargs,process.args);
+	char cmdargs[513];
+	memset(cmdargs,0,513);
+	strcpy(cmdargs,process.command);
+	strcat(cmdargs,process.args);
 
-    DBGMSG("PROCESS CMD="<<cmdargs<<"  DIR="<<process.directory);
+	DBGMSG("PROCESS CMD="<<cmdargs<<"  DIR="<<process.directory);
 
-    retval=CreateProcess(nullptr,cmdargs,nullptr,nullptr,FALSE, 0  ,nullptr, nullptr/*process.directory*/,&si,&piProcess);
+	retval=CreateProcess(nullptr,cmdargs,nullptr,nullptr,FALSE, 0  ,nullptr, nullptr/*process.directory*/,&si,&piProcess);
 
-    DBGMSG("("<<retval<<") New process:  HANDLE " << (void *)piProcess.hProcess << "   ID "
+	DBGMSG("("<<retval<<") New process:  HANDLE " << (void *)piProcess.hProcess << "   ID "
       << (DWORD)piProcess.dwProcessId);
-    DBGMSG("("<<retval<<") New thread:  HANDLE " << (void *)piProcess.hThread << "   ID "
+	DBGMSG("("<<retval<<") New thread:  HANDLE " << (void *)piProcess.hThread << "   ID "
       << (DWORD)piProcess.dwThreadId);
-    if (retval==0)
-    {
-      char message_buffer[256];
-	   FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr );
-      DBGMSG("ERR: "<<message_buffer);
-    }
-    process.hProcess=piProcess.hProcess;
+	if (retval==0)
+	{
+		char message_buffer[256];
+		FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &message_buffer[0], 256, nullptr );
+		DBGMSG("ERR: "<<message_buffer);
+	}
+	process.hProcess=piProcess.hProcess;
 		process.dwProcessID = piProcess.dwProcessId;
-    process.hThread=piProcess.hThread;
+	process.hThread=piProcess.hThread;
 		process.dwThreadID = piProcess.dwThreadId;
-    return(TRUE);
+	return(TRUE);
 }
 
 //
@@ -67,21 +67,21 @@ bit8 Create_Process(Process &process)
 //
 bit8 Wait_Process(Process &process, DWORD *exit_code)
 {
-  DWORD retval;
-  retval=WaitForSingleObject(process.hProcess,INFINITE);
-  if (exit_code != nullptr)
-    *exit_code=-1;
-  if (retval==WAIT_OBJECT_0)  // process exited
-  {
+	DWORD retval;
+	retval=WaitForSingleObject(process.hProcess,INFINITE);
+	if (exit_code != nullptr)
+	*exit_code=-1;
+	if (retval==WAIT_OBJECT_0)  // process exited
+	{
 		// MDC 1/10/2003 Inserting sleep here to let game exit before applying patch
 		Sleep(3000);
 
-    if (exit_code != nullptr)
-      GetExitCodeProcess(process.hProcess,exit_code);
-    return(TRUE);
-  }
-  else                        // can this happen?
-    return(FALSE);
+		if (exit_code != nullptr)
+		GetExitCodeProcess(process.hProcess,exit_code);
+		return(TRUE);
+	}
+	else                        // can this happen?
+	return(FALSE);
 }
 
 
@@ -91,33 +91,33 @@ bit8 Wait_Process(Process &process, DWORD *exit_code)
 bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN const char *key)
 {
 
- Wstring keyStr = "RUN";
- if (key)
-	 keyStr = key;
+	Wstring keyStr = "RUN";
+	if (key)
+	keyStr = key;
 
- Wstring procinfo;
- if (config.getString(keyStr.get(), procinfo)==FALSE)
- {
-   DBGMSG("Couldn't read the RUN line");
-   return(FALSE);
- }
- int          offset=0;
- Wstring      dir;
- Wstring      executable;
- Wstring      args;
- offset=procinfo.getToken(offset," ",dir);
- offset=procinfo.getToken(offset," ",executable);
- args=procinfo;
- args.remove(0,offset);
+	Wstring procinfo;
+	if (config.getString(keyStr.get(), procinfo)==FALSE)
+	{
+		DBGMSG("Couldn't read the RUN line");
+		return(FALSE);
+	}
+	int          offset=0;
+	Wstring      dir;
+	Wstring      executable;
+	Wstring      args;
+	offset=procinfo.getToken(offset," ",dir);
+	offset=procinfo.getToken(offset," ",executable);
+	args=procinfo;
+	args.remove(0,offset);
 
- ///
- ///
- DBGMSG("RUN: EXE = "<<executable.get()<<"  DIR = "<<dir.get()<<
+	///
+	///
+	DBGMSG("RUN: EXE = "<<executable.get()<<"  DIR = "<<dir.get()<<
    "  ARGS = "<<args.get());
- strcpy(info.command,executable.get());
- strcpy(info.directory,dir.get());
- strcpy(info.args,args.get());
- return(TRUE);
+	strcpy(info.command,executable.get());
+	strcpy(info.directory,dir.get());
+	strcpy(info.args,args.get());
+	return(TRUE);
 
 
 /*********************************************************

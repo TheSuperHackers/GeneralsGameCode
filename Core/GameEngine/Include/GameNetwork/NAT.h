@@ -145,12 +145,12 @@ protected:
 	time_t m_timeoutTime; ///< the time at which we will time out waiting for the other player's port number.
 	time_t m_roundTimeout;	///< the time at which we will time out this connection round.
 
- static Int m_timeBetweenRetries; // 1 second between retries sounds good to me.
- static time_t m_manglerRetryTimeInterval; // sounds good to me.
- static Int m_maxAllowedManglerRetries; // works for me.
- static time_t m_keepaliveInterval; // 15 seconds between keepalive packets seems good.
- static time_t m_timeToWaitForPort; // wait for ten seconds for the other player's port number.
- static time_t m_timeForRoundTimeout; // wait for at most ten seconds for each connection round to finish.
+	static Int m_timeBetweenRetries; // 1 second between retries sounds good to me.
+	static time_t m_manglerRetryTimeInterval; // sounds good to me.
+	static Int m_maxAllowedManglerRetries; // works for me.
+	static time_t m_keepaliveInterval; // 15 seconds between keepalive packets seems good.
+	static time_t m_timeToWaitForPort; // wait for ten seconds for the other player's port number.
+	static time_t m_timeForRoundTimeout; // wait for at most ten seconds for each connection round to finish.
 
 };
 

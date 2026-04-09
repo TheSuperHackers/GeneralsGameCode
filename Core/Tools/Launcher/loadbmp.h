@@ -30,13 +30,13 @@
 class LoadBmp
 {
  public:
-                  LoadBmp();
-                 ~LoadBmp();
-   bit8           init(const char *filename,HWND hwnd);  // must call before the drawBmp
-   bit8           drawBmp(void);  // call this from your WM_PAINT message
+	LoadBmp();
+	~LoadBmp();
+	bit8           init(const char *filename,HWND hwnd);  // must call before the drawBmp
+	bit8           drawBmp(void);  // call this from your WM_PAINT message
 
  private:
-   HBITMAP        BitmapHandle_;
-   HPALETTE       PalHandle_;
-   HWND           WindowHandle_;
+	HBITMAP        BitmapHandle_;
+	HPALETTE       PalHandle_;
+	HWND           WindowHandle_;
 };

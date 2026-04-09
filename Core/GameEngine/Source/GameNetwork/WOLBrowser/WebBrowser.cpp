@@ -58,7 +58,7 @@ public:
 	{
 		// Initialize this instance
 		OleInitialize(nullptr);
-	 }
+	}
 	~OLEInitializer()
 	{
 		OleUninitialize();

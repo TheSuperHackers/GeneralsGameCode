@@ -47,9 +47,9 @@ public:
 	LogDataDialogClass(HWND parent);
 	~LogDataDialogClass();
 
-   void	Wait_OK();	// wait for user to hit OK
+	void	Wait_OK();	// wait for user to hit OK
 
-   void	printf(const char *, ...);
+	void	printf(const char *, ...);
 	void	printf(const char * text, va_list args);
 	void  rprintf(const char *, ...);
 	void	rprintf(const char *text, va_list args);

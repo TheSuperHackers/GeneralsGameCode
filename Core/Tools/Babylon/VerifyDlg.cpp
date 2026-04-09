@@ -130,7 +130,7 @@ BOOL VerifyDlg::OnInitDialog()
 	PostMessage ( WM_COMMAND, MAKEWPARAM ( IDC_PLAY, BN_CLICKED ));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void VerifyDlg::OnNomatch()

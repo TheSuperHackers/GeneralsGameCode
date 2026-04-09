@@ -52,8 +52,8 @@ void MoreParmsDialog::InitPanel( void )
 
 	pCombo = (CComboBox*) GetDlgItem(IDC_PSEd_WindMotion);
 	if (pCombo) {
-	  for (int i = 1; WindMotionNames[i]; ++i) {
-		  pCombo->AddString(WindMotionNames[i]);
+		for (int i = 1; WindMotionNames[i]; ++i) {
+			pCombo->AddString(WindMotionNames[i]);
 		}
 		pCombo->SetCurSel(0);
 	}

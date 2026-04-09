@@ -49,13 +49,13 @@ W3DOverlordTankDrawModuleData::~W3DOverlordTankDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DOverlordTankDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DTankDrawModuleData::buildFieldParse(p);
+	W3DTankDrawModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

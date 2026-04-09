@@ -42,18 +42,18 @@
 class CritSec
 {
  public:
-                CritSec();
-               ~CritSec();
+	CritSec();
+	~CritSec();
 
-  sint32		lock(int *refcount=nullptr) RO;
-  sint32		unlock(void) RO;
+	sint32		lock(int *refcount=nullptr) RO;
+	sint32		unlock(void) RO;
 
  protected:
   #ifdef _WIN32
-    mutable CRITICAL_SECTION    CritSec_;
+	mutable CRITICAL_SECTION    CritSec_;
   #else
-    mutable pthread_mutex_t	Mutex_;         // Mutex lock
-    mutable pthread_t		ThreadId_;	// Owner of mutex
-    mutable int                 RefCount_;      // Reference count
+	mutable pthread_mutex_t	Mutex_;         // Mutex lock
+	mutable pthread_t		ThreadId_;	// Owner of mutex
+	mutable int                 RefCount_;      // Reference count
   #endif
 };

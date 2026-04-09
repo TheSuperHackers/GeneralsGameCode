@@ -55,7 +55,7 @@ W3DDependencyModelDrawModuleData::~W3DDependencyModelDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -63,7 +63,7 @@ void W3DDependencyModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -89,24 +89,24 @@ void W3DDependencyModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		m_dependencyCleared = FALSE;
 
 
-    // A handy place to synchronize my drawable with container's
-    Drawable *myDrawable = getDrawable();
-    if ( ! myDrawable )
-      return;
+		// A handy place to synchronize my drawable with container's
+		Drawable *myDrawable = getDrawable();
+		if ( ! myDrawable )
+		return;
 
-    const Object *me = myDrawable->getObject();
-    if ( ! me )
-      return;
+		const Object *me = myDrawable->getObject();
+		if ( ! me )
+		return;
 
-	  Drawable *theirDrawable = nullptr;
+		Drawable *theirDrawable = nullptr;
 
-	  if( me->getContainedBy() && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me) )
-		  theirDrawable = me->getContainedBy()->getDrawable();
+		if( me->getContainedBy() && !me->getContainedBy()->getContain()->isEnclosingContainerFor(me) )
+		theirDrawable = me->getContainedBy()->getDrawable();
 
-    if( ! theirDrawable )
-		  return;
+		if( ! theirDrawable )
+		return;
 
-    myDrawable->imitateStealthLook( *theirDrawable );
+		myDrawable->imitateStealthLook( *theirDrawable );
 
 	}
 }
@@ -144,7 +144,7 @@ void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 			}
 			else
 			{
-        mtx = *theirDrawable->getTransformMatrix();//TransformMatrix();
+				mtx = *theirDrawable->getTransformMatrix();//TransformMatrix();
 				DEBUG_LOG(("m_attachToDrawableBoneInContainer %s not found",getW3DDependencyModelDrawModuleData()->m_attachToDrawableBoneInContainer.str()));
 			}
 		}

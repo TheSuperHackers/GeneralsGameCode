@@ -906,7 +906,7 @@ void RenderObjClass::Update_Cached_Bounding_Volumes() const
 #else
 	Get_Transform().mulVector3(CachedBoundingSphere.Center);
 #endif
- 	CachedBoundingSphere.Radius = ObjectScale * CachedBoundingSphere.Radius;
+	CachedBoundingSphere.Radius = ObjectScale * CachedBoundingSphere.Radius;
 	CachedBoundingBox.Transform(Get_Transform());
 
 	Validate_Cached_Bounding_Volumes();

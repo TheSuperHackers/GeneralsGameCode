@@ -25,10 +25,10 @@ typedef char* LPSTR;
 
 // String functions
 inline char *_strlwr(char *str) {
-  for (int i = 0; str[i] != '\0'; i++) {
-    str[i] = tolower(str[i]);
-  }
-  return str;
+	for (int i = 0; str[i] != '\0'; i++) {
+		str[i] = tolower(str[i]);
+	}
+	return str;
 }
 
 #define strlwr _strlwr

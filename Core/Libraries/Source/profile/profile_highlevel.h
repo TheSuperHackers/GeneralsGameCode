@@ -37,16 +37,16 @@ class ProfileId;
 */
 class ProfileHighLevel
 {
-  friend class Profile;
+	friend class Profile;
 
-  // no, no copying allowed!
-  ProfileHighLevel(const ProfileHighLevel&);
-  ProfileHighLevel& operator=(const ProfileHighLevel&);
+	// no, no copying allowed!
+	ProfileHighLevel(const ProfileHighLevel&);
+	ProfileHighLevel& operator=(const ProfileHighLevel&);
 
 public:
 
-  /// \brief A high level profile ID.
-  class Id
+	/// \brief A high level profile ID.
+	class Id
   {
     friend ProfileHighLevel;
 
@@ -141,8 +141,8 @@ public:
     ProfileId *m_idPtr;
   };
 
-  /// \brief Timer based function block profile
-  class Block
+	/// \brief Timer based function block profile
+	class Block
   {
     friend ProfileHighLevel;
 
@@ -193,7 +193,7 @@ public:
     \param exp10 10 base exponent (used for scaleing)
     \return internal profile ID value
   */
-  static Id AddProfile(const char *name, const char *descr, const char *unit, int precision, int exp10=0);
+	static Id AddProfile(const char *name, const char *descr, const char *unit, int precision, int exp10=0);
 
   /**
     \brief Enumerates the list of known high level profile values.
@@ -204,7 +204,7 @@ public:
     \param id return buffer for ID value
     \return true if ID found at given index, false if not
   */
-  static bool EnumProfile(unsigned index, Id &id);
+	static bool EnumProfile(unsigned index, Id &id);
 
   /**
     \brief Searches for the given high level profile.
@@ -217,7 +217,7 @@ public:
     \param id return buffer for ID value
     \return true if ID found, false if not
   */
-  static bool FindProfile(const char *name, Id &id);
+	static bool FindProfile(const char *name, Id &id);
 
 private:
 
@@ -227,10 +227,10 @@ private:
     We can make this private as well so nobody accidentally tries to create
     another instance.
   */
-  ProfileHighLevel();
+	ProfileHighLevel();
 
   /**
     \brief The only high level profiler instance.
   */
-  static ProfileHighLevel Instance;
+	static ProfileHighLevel Instance;
 };

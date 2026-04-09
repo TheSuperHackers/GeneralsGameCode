@@ -89,10 +89,10 @@ public:
 //	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 	// Get and set static sort level
 	virtual int		Get_Sort_Level() const override { return m_sortLevel; }
-  	virtual void	Set_Sort_Level(int level) override { m_sortLevel = level;}
+	virtual void	Set_Sort_Level(int level) override { m_sortLevel = level;}
 
 	///allocate W3D resources needed to render water
 	void renderWater();				///<draw the water surface (flat)

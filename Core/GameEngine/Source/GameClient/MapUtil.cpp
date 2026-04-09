@@ -1194,7 +1194,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 
 		if (success)
 		{
-    	image = newInstance(Image);
+			image = newInstance(Image);
 			image->setName(tempName);
 			//image->setFullPath("mission.tga");
 			image->setFilename(name);

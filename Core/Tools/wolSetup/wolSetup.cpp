@@ -101,7 +101,7 @@ LRESULT CALLBACK GeneralsSetupDialogProc(HWND hDlg, UINT message, WPARAM wParam,
 			}
 			break;
 	}
-    return FALSE;
+	return FALSE;
 }
 
 void updateDisplay(HWND hDlg)
@@ -201,7 +201,7 @@ LRESULT CALLBACK MainDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 			}
 			break;
 	}
-    return FALSE;
+	return FALSE;
 }
 
 

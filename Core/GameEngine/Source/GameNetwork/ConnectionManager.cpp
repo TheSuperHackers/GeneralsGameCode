@@ -2050,7 +2050,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 			if (game->getLocalSlotNum() == i)
 			{
 				m_localSlot = i;
-   			m_localUser->setName(slot->getName());
+				m_localUser->setName(slot->getName());
 			}
 
 			if (m_localSlot != i)
@@ -2178,7 +2178,7 @@ Real ConnectionManager::getIncomingBytesPerSecond()
 	if (m_transport)
 		return m_transport->getIncomingBytesPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -2189,7 +2189,7 @@ Real ConnectionManager::getIncomingPacketsPerSecond()
 	if (m_transport)
 		return m_transport->getIncomingPacketsPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -2200,7 +2200,7 @@ Real ConnectionManager::getOutgoingBytesPerSecond()
 	if (m_transport)
 		return m_transport->getOutgoingBytesPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -2211,7 +2211,7 @@ Real ConnectionManager::getOutgoingPacketsPerSecond()
 	if (m_transport) {
 		return m_transport->getOutgoingPacketsPerSecond();
 	} else {
-	  return 0.0;
+		return 0.0;
 	}
 }
 
@@ -2223,7 +2223,7 @@ Real ConnectionManager::getUnknownBytesPerSecond()
 	if (m_transport)
 		return m_transport->getUnknownBytesPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**
@@ -2234,7 +2234,7 @@ Real ConnectionManager::getUnknownPacketsPerSecond()
 	if (m_transport)
 		return m_transport->getUnknownPacketsPerSecond();
 	else
-	  return 0.0;
+	return 0.0;
 }
 
 /**

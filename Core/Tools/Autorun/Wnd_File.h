@@ -124,7 +124,7 @@ class StandardFileClass
 		int 	Query_Size			( void );
 		bool 	Query_Open			( void );
 		char *	Query_Name_String	( void );
-     	int		End_Of_File			( void );
+	int		End_Of_File			( void );
 		int		Flush	  	 		( void );
 
 		#if( SUPPORT_STREAMS )

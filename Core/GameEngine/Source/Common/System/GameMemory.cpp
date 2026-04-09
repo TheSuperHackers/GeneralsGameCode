@@ -1638,12 +1638,12 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 		for (; blob != nullptr; blob = blob->getNextInList())
 		{
 			if (blob->hasAnyFreeBlocks())
-			 	break;
+			break;
 		}
 
 		// note that if we walk thru the list without finding anything, this will
 		// reset m_firstBlobWithFreeBlocks to null and fall thru.
-	 	m_firstBlobWithFreeBlocks = blob;
+		m_firstBlobWithFreeBlocks = blob;
 	}
 
 	// OK, if we are here then we have no blobs with freespace... darn.
@@ -2247,9 +2247,9 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 #endif
 
 #if defined(RTS_DEBUG)
-  // check alignment
-  if (unsigned(result)&3)
-    throw ERROR_OUT_OF_MEMORY;
+	// check alignment
+	if (unsigned(result)&3)
+	throw ERROR_OUT_OF_MEMORY;
 #endif
 
 	return result;

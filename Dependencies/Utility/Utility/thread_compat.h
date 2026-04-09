@@ -23,11 +23,11 @@
 
 inline int GetCurrentThreadId()
 {
-  return pthread_self();
+	return pthread_self();
 }
 
 inline void Sleep(int ms)
 {
-  usleep(ms * 1000);
+	usleep(ms * 1000);
 }
 

@@ -37,9 +37,9 @@
 */
 class ProfileResultInterface
 {
-  // no copying
-  ProfileResultInterface(const ProfileResultInterface&);
-  ProfileResultInterface& operator=(const ProfileResultInterface&);
+	// no copying
+	ProfileResultInterface(const ProfileResultInterface&);
+	ProfileResultInterface& operator=(const ProfileResultInterface&);
 
 public:
   /**
@@ -47,15 +47,15 @@ public:
 
     This function is called on program exit.
   */
-  virtual void WriteResults()=0;
+	virtual void WriteResults()=0;
 
   /**
     \brief Destroys the current result function.
 
     Use this function instead of just delete'ing the instance.
   */
-  virtual void Delete()=0;
+	virtual void Delete()=0;
 
 protected:
-  ProfileResultInterface() {}
+	ProfileResultInterface() {}
 };

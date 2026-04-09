@@ -268,7 +268,7 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 	//-------------------------------------------------------------------------
 	// Get filesize and create a buffer.
 	//-------------------------------------------------------------------------
-  	size = file.Query_Size();
+	size = file.Query_Size();
 	ptr = (void*)malloc(size + 1);
 	if ( !ptr ) {
 		return( nullptr );
@@ -278,8 +278,8 @@ void * Load_Alloc_Data( char *filename, long *filesize )
 	// Read data into the buffer, close the file.
 	//-------------------------------------------------------------------------
 	memset( ptr, '\0', size + 1 );
-  	bytes_read = file.Read( ptr, size );
-  	file.Close();
+	bytes_read = file.Read( ptr, size );
+	file.Close();
 
 	//-------------------------------------------------------------------------
 	// Check return bytes.  It should match the file size.
@@ -394,7 +394,7 @@ char *Path_Add_Back_Slash ( char *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ strlen( path )-1 ] != '\\' ) {
-			 strcat( path, "\\" );
+			strcat( path, "\\" );
 		}
 	}
 	return( path );
@@ -404,7 +404,7 @@ wchar_t *Path_Add_Back_Slash ( wchar_t *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ wcslen( path )-1 ] != '\\' ) {
-			 wcscat( path, L"\\" );
+			wcscat( path, L"\\" );
 		}
 	}
 	return( path );
@@ -428,7 +428,7 @@ char *Path_Remove_Back_Slash ( char *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ strlen( path )-1 ] == '\\' ) {
-			 path[ strlen( path )-1 ] = '\0';
+			path[ strlen( path )-1 ] = '\0';
 		}
 	}
 	return( path );
@@ -438,7 +438,7 @@ wchar_t *Path_Remove_Back_Slash ( wchar_t *path )
 {
 	if ( path != nullptr && *path != '\0' ) {
 		if ( path[ wcslen( path )-1 ] == L'\\' ) {
-			 path[ wcslen( path )-1 ] = L'\0';
+			path[ wcslen( path )-1 ] = L'\0';
 		}
 	}
 	return( path );

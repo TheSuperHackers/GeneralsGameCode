@@ -343,7 +343,7 @@ CMainFrame::CMainFrame (void)
 ////////////////////////////////////////////////////////////////////////////
 CMainFrame::~CMainFrame (void)
 {
-    return ;
+	return ;
 }
 
 
@@ -717,9 +717,9 @@ CMainFrame::WindowProc
 void
 CMainFrame::OnObjectProperties (void)
 {
-    // Dislay the properties for the currently selected object.
-    ShowObjectProperties ();
-    return ;
+	// Dislay the properties for the currently selected object.
+	ShowObjectProperties ();
+	return ;
 }
 
 
@@ -732,51 +732,51 @@ void
 CMainFrame::ShowObjectProperties (void)
 {
 	// Get a pointer to the 'graphic' pane's window
-    CDataTreeView *pCDataTreeView = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
-    BOOL bReturn = (pCDataTreeView != nullptr);
+	CDataTreeView *pCDataTreeView = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
+	BOOL bReturn = (pCDataTreeView != nullptr);
 
-    // Were we successful in getting the view's pointer?
-    ASSERT (pCDataTreeView);
-    if (pCDataTreeView)
-    {
-        // What type of object is currently selected?
-        switch (pCDataTreeView->GetCurrentSelectionType ())
-        {
-            case TypeMesh:
-            {
-                // Create a one-page property sheet that will display property information
-                // for the mesh
-                CMeshPropPage meshPropPage (pCDataTreeView->GetCurrentSelectionName ());
-                CAssetPropertySheet propertySheet (IDS_MESH_PROP_TITLE, &meshPropPage, this);
+	// Were we successful in getting the view's pointer?
+	ASSERT (pCDataTreeView);
+	if (pCDataTreeView)
+	{
+		// What type of object is currently selected?
+		switch (pCDataTreeView->GetCurrentSelectionType ())
+		{
+			case TypeMesh:
+			{
+				// Create a one-page property sheet that will display property information
+				// for the mesh
+				CMeshPropPage meshPropPage (pCDataTreeView->GetCurrentSelectionName ());
+				CAssetPropertySheet propertySheet (IDS_MESH_PROP_TITLE, &meshPropPage, this);
 
-                // Show the property sheet
-                propertySheet.DoModal ();
-            }
-            break;
+				// Show the property sheet
+				propertySheet.DoModal ();
+			}
+				break;
 
-            case TypeHierarchy:
-            {
-                // Create a one-page property sheet that will display property information
-                // for the hierarchy
-                CHierarchyPropPage hierarchyPropPage (pCDataTreeView->GetCurrentSelectionName ());
-                CAssetPropertySheet propertySheet (IDS_HIERARCHY_PROP_TITLE, &hierarchyPropPage, this);
+			case TypeHierarchy:
+			{
+				// Create a one-page property sheet that will display property information
+				// for the hierarchy
+				CHierarchyPropPage hierarchyPropPage (pCDataTreeView->GetCurrentSelectionName ());
+				CAssetPropertySheet propertySheet (IDS_HIERARCHY_PROP_TITLE, &hierarchyPropPage, this);
 
-                // Show the property sheet
-                propertySheet.DoModal ();
-            }
-            break;
+				// Show the property sheet
+				propertySheet.DoModal ();
+			}
+				break;
 
-            case TypeAnimation:
-            {
-                // Create a one-page property sheet that will display property information
-                // for the animation
-                CAnimationPropPage animationPropPage;
-                CAssetPropertySheet propertySheet (IDS_ANIMATION_PROP_TITLE, &animationPropPage, this);
+			case TypeAnimation:
+			{
+				// Create a one-page property sheet that will display property information
+				// for the animation
+				CAnimationPropPage animationPropPage;
+				CAssetPropertySheet propertySheet (IDS_ANIMATION_PROP_TITLE, &animationPropPage, this);
 
-                // Show the property sheet
-                propertySheet.DoModal ();
-            }
-            break;
+				// Show the property sheet
+				propertySheet.DoModal ();
+			}
+				break;
 
 				case TypeSound:
 					OnEditSoundObject ();
@@ -789,10 +789,10 @@ CMainFrame::ShowObjectProperties (void)
 				case TypePrimitives:
 					OnEditPrimitive ();
 					break;
-        }
-    }
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -805,18 +805,18 @@ void
 CMainFrame::OnUpdateObjectProperties (CCmdUI* pCmdUI)
 {
 	// Get a pointer to the 'graphic' pane's window
-    CDataTreeView *pCDataTreeView = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
-    BOOL bReturn = (pCDataTreeView != nullptr);
+	CDataTreeView *pCDataTreeView = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
+	BOOL bReturn = (pCDataTreeView != nullptr);
 
-    // Were we successful in view's getting the pointer?
-    ASSERT (pCDataTreeView);
-    if (pCDataTreeView)
-    {
-        // Get the name of the currently selected object
-        pCmdUI->Enable (pCDataTreeView->GetCurrentSelectionName () != nullptr);
-    }
+	// Were we successful in view's getting the pointer?
+	ASSERT (pCDataTreeView);
+	if (pCDataTreeView)
+	{
+		// Get the name of the currently selected object
+		pCmdUI->Enable (pCDataTreeView->GetCurrentSelectionName () != nullptr);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -828,145 +828,145 @@ CMainFrame::OnUpdateObjectProperties (CCmdUI* pCmdUI)
 void
 CMainFrame::OnSelectionChanged (ASSET_TYPE newAssetType)
 {
-    if (m_currentAssetType != newAssetType)
-    {
-        // What was the old type?
-        switch (m_currentAssetType)
-        {
-            case TypeAnimation:
+	if (m_currentAssetType != newAssetType)
+	{
+		// What was the old type?
+		switch (m_currentAssetType)
+		{
+			case TypeAnimation:
 				case TypeCompressedAnimation:
-            case TypeLOD:
-            case TypeHierarchy:
+			case TypeLOD:
+			case TypeHierarchy:
 				case TypeAggregate:
-            {
-                CMenu *pMainMenu = GetMenu ();
-                if (pMainMenu)
-                {
-                    // Remove the 'special' menu from the menubar
-                    pMainMenu->RemoveMenu (SPECIAL_MENU_SLOT, MF_BYPOSITION);
-                    DrawMenuBar ();
-                }
+			{
+				CMenu *pMainMenu = GetMenu ();
+				if (pMainMenu)
+				{
+					// Remove the 'special' menu from the menubar
+					pMainMenu->RemoveMenu (SPECIAL_MENU_SLOT, MF_BYPOSITION);
+					DrawMenuBar ();
+				}
 
-                if ((m_currentAssetType == TypeAnimation) || (m_currentAssetType == TypeCompressedAnimation))
-                {
-                    // Remember whether or not to show the animation bar next time
-                    m_bShowAnimationBar = m_animationToolbar.IsWindowVisible ();
+				if ((m_currentAssetType == TypeAnimation) || (m_currentAssetType == TypeCompressedAnimation))
+				{
+					// Remember whether or not to show the animation bar next time
+					m_bShowAnimationBar = m_animationToolbar.IsWindowVisible ();
 
-                    // Hide the animation control bar
-                    ShowControlBar (&m_animationToolbar, FALSE, FALSE);
-                }
-            }
-            break;
-        }
+					// Hide the animation control bar
+					ShowControlBar (&m_animationToolbar, FALSE, FALSE);
+				}
+			}
+				break;
+		}
 
-        // Whats the new type?
-        switch (newAssetType)
-        {
+		// Whats the new type?
+		switch (newAssetType)
+		{
 				case TypeCompressedAnimation:
-            case TypeAnimation:
-            {
-                CMenu *pMainMenu = GetMenu ();
-                if (pMainMenu)
-                {
-                    // Load the menu from the resources
-                    HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_ANI_MENU));
-                    hSubMenu = ::GetSubMenu (hSubMenu, 0);
+			case TypeAnimation:
+			{
+				CMenu *pMainMenu = GetMenu ();
+				if (pMainMenu)
+				{
+					// Load the menu from the resources
+					HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_ANI_MENU));
+					hSubMenu = ::GetSubMenu (hSubMenu, 0);
 
-                    // Add this menu to the menu bar
-                    MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
-                    menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
-                    menuInfo.hSubMenu = hSubMenu;
-                    menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = const_cast<LPSTR>("&Animation");
-                    ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
+					// Add this menu to the menu bar
+					MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
+					menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
+					menuInfo.hSubMenu = hSubMenu;
+					menuInfo.fType = MFT_STRING;
+					menuInfo.dwTypeData = const_cast<LPSTR>("&Animation");
+					::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
-                    // Redrew the menu
-                    DrawMenuBar ();
-                }
+					// Redrew the menu
+					DrawMenuBar ();
+				}
 
-                if (m_bShowAnimationBar)
-                {
-                    // Show the animation bar
-                    OnViewAnimationBar ();
-                }
-            }
-            break;
+				if (m_bShowAnimationBar)
+				{
+					// Show the animation bar
+					OnViewAnimationBar ();
+				}
+			}
+				break;
 
-            case TypeHierarchy:
-            {
-                CMenu *pMainMenu = GetMenu ();
-                if (pMainMenu)
-                {
-                    // Load the menu from the resources
-                    HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_HIERARCHY_MENU));
-                    hSubMenu = ::GetSubMenu (hSubMenu, 0);
+			case TypeHierarchy:
+			{
+				CMenu *pMainMenu = GetMenu ();
+				if (pMainMenu)
+				{
+					// Load the menu from the resources
+					HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_HIERARCHY_MENU));
+					hSubMenu = ::GetSubMenu (hSubMenu, 0);
 
-                    // Add this menu to the menu bar
-                    MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
-                    menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
-                    menuInfo.hSubMenu = hSubMenu;
-                    menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = const_cast<LPSTR>("&Hierarchy");
-                    ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
+					// Add this menu to the menu bar
+					MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
+					menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
+					menuInfo.hSubMenu = hSubMenu;
+					menuInfo.fType = MFT_STRING;
+					menuInfo.dwTypeData = const_cast<LPSTR>("&Hierarchy");
+					::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
-                    // Redrew the menu
-                    DrawMenuBar ();
-                }
-            }
-            break;
+					// Redrew the menu
+					DrawMenuBar ();
+				}
+			}
+				break;
 
-            case TypeAggregate:
-            {
-                CMenu *pMainMenu = GetMenu ();
-                if (pMainMenu)
-                {
-                    // Load the menu from the resources
-                    HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_AGGREGATE_MENU));
-                    hSubMenu = ::GetSubMenu (hSubMenu, 0);
+			case TypeAggregate:
+			{
+				CMenu *pMainMenu = GetMenu ();
+				if (pMainMenu)
+				{
+					// Load the menu from the resources
+					HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_AGGREGATE_MENU));
+					hSubMenu = ::GetSubMenu (hSubMenu, 0);
 
-                    // Add this menu to the menu bar
-                    MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
-                    menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
-                    menuInfo.hSubMenu = hSubMenu;
-                    menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = const_cast<LPSTR>("&Aggregate");
-                    ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
+					// Add this menu to the menu bar
+					MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
+					menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
+					menuInfo.hSubMenu = hSubMenu;
+					menuInfo.fType = MFT_STRING;
+					menuInfo.dwTypeData = const_cast<LPSTR>("&Aggregate");
+					::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
-                    // Redrew the menu
-                    DrawMenuBar ();
-                }
-            }
-            break;
+					// Redrew the menu
+					DrawMenuBar ();
+				}
+			}
+				break;
 
-            case TypeLOD:
-            {
-                CMenu *pMainMenu = GetMenu ();
-                if (pMainMenu)
-                {
-                    // Load the menu from the resources
-                    HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_LOD_MENU));
-                    hSubMenu = ::GetSubMenu (hSubMenu, 0);
+			case TypeLOD:
+			{
+				CMenu *pMainMenu = GetMenu ();
+				if (pMainMenu)
+				{
+					// Load the menu from the resources
+					HMENU hSubMenu = ::LoadMenu (::AfxGetResourceHandle (), MAKEINTRESOURCE(IDR_LOD_MENU));
+					hSubMenu = ::GetSubMenu (hSubMenu, 0);
 
-                    // Add this menu to the menu bar
-                    MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
-                    menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
-                    menuInfo.hSubMenu = hSubMenu;
-                    menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = const_cast<LPSTR>("&LOD");
-                    ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
+					// Add this menu to the menu bar
+					MENUITEMINFO menuInfo = { sizeof (MENUITEMINFO), 0 };
+					menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
+					menuInfo.hSubMenu = hSubMenu;
+					menuInfo.fType = MFT_STRING;
+					menuInfo.dwTypeData = const_cast<LPSTR>("&LOD");
+					::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
-                    // Redrew the menu
-                    DrawMenuBar ();
-                }
-            }
-            break;
-        }
+					// Redrew the menu
+					DrawMenuBar ();
+				}
+			}
+				break;
+		}
 
-        // Remember the new asset type for later
-        m_currentAssetType = newAssetType;
-    }
+		// Remember the new asset type for later
+		m_currentAssetType = newAssetType;
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1039,20 +1039,20 @@ CMainFrame::OnActivateApp
 )
 {
 	// Get a pointer to the 'graphic' pane's window
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 
-    // Were we successful in view's getting the pointer?
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Let the view know whether or not to actively update
-        // its display (animation, etc)
-        pCGraphicView->SetActiveUpdate (bActive);
-    }
+	// Were we successful in view's getting the pointer?
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Let the view know whether or not to actively update
+		// its display (animation, etc)
+		pCGraphicView->SetActiveUpdate (bActive);
+	}
 
 	// Allow the base class to process this message
-    CFrameWnd::OnActivateApp(bActive, hTask);
-    return ;
+	CFrameWnd::OnActivateApp(bActive, hTask);
+	return ;
 }
 
 
@@ -1116,11 +1116,11 @@ CMainFrame::Update_Frame_Time (DWORD clocks)
 void
 CMainFrame::UpdatePolygonCount (int iPolygons)
 {
-    CString stringPolyCount;
-    stringPolyCount.Format ("Polys %d", iPolygons);
+	CString stringPolyCount;
+	stringPolyCount.Format ("Polys %d", iPolygons);
 
-    m_wndStatusBar.SetPaneText (PANE_POLYS, stringPolyCount);
-    return ;
+	m_wndStatusBar.SetPaneText (PANE_POLYS, stringPolyCount);
+	return ;
 }
 
 
@@ -1132,11 +1132,11 @@ CMainFrame::UpdatePolygonCount (int iPolygons)
 void
 CMainFrame::Update_Particle_Count (int particles)
 {
-    CString count_string;
-    count_string.Format ("Particles %d", particles);
+	CString count_string;
+	count_string.Format ("Particles %d", particles);
 
-    m_wndStatusBar.SetPaneText (PANE_PARTICLES, count_string);
-    return ;
+	m_wndStatusBar.SetPaneText (PANE_PARTICLES, count_string);
+	return ;
 }
 
 
@@ -1153,11 +1153,11 @@ CMainFrame::UpdateFrameCount
 	 float	frame_rate
 )
 {
-    CString frames;
-    frames.Format ("Frame %d/%d at %.2f fps", iCurrentFrame, iTotalFrames, frame_rate);
+	CString frames;
+	frames.Format ("Frame %d/%d at %.2f fps", iCurrentFrame, iTotalFrames, frame_rate);
 
-    m_wndStatusBar.SetPaneText (PANE_FRAMES, frames);
-    return ;
+	m_wndStatusBar.SetPaneText (PANE_FRAMES, frames);
+	return ;
 }
 
 
@@ -1169,11 +1169,11 @@ CMainFrame::UpdateFrameCount
 void
 CMainFrame::UpdateCameraDistance (float cameraDistance)
 {
-    CString distance_string;
-    distance_string.Format ("Camera %.3f", cameraDistance);
+	CString distance_string;
+	distance_string.Format ("Camera %.3f", cameraDistance);
 
-    m_wndStatusBar.SetPaneText (PANE_DISTANCE, distance_string);
-    return ;
+	m_wndStatusBar.SetPaneText (PANE_DISTANCE, distance_string);
+	return ;
 }
 
 
@@ -1190,48 +1190,48 @@ CMainFrame::OnFileOpen (void)
 		return ;
 	}
 
-    CFileDialog openFileDialog (TRUE,
+	CFileDialog openFileDialog (TRUE,
                                 ".w3d",
                                 nullptr,
                                 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ALLOWMULTISELECT | OFN_EXPLORER,
                                 "Westwood 3D Files (*.w3d)|*.w3d||",
                                 this);
 
-    TCHAR szFileNameList[MAX_PATH*10] = { 0 };
-    openFileDialog.m_ofn.lpstrFile			= szFileNameList;
-    openFileDialog.m_ofn.nMaxFile			= sizeof (szFileNameList);
-	 openFileDialog.m_ofn.lpstrInitialDir	= doc->Get_Last_Path ();
+	TCHAR szFileNameList[MAX_PATH*10] = { 0 };
+	openFileDialog.m_ofn.lpstrFile			= szFileNameList;
+	openFileDialog.m_ofn.nMaxFile			= sizeof (szFileNameList);
+	openFileDialog.m_ofn.lpstrInitialDir	= doc->Get_Last_Path ();
 
-    // Ask the user what files they want to load.
-    if (openFileDialog.DoModal () == IDOK)
-    {
-        // Show the wait cursor while we load assets
-        SetCursor (::LoadCursor (nullptr, IDC_WAIT));
+	// Ask the user what files they want to load.
+	if (openFileDialog.DoModal () == IDOK)
+	{
+		// Show the wait cursor while we load assets
+		SetCursor (::LoadCursor (nullptr, IDC_WAIT));
 
-         // Loop through all the selected files
-         POSITION pPos = openFileDialog.GetStartPosition ();
-         while (pPos != nullptr)
-         {
-             // Ask the doc to load the assets from this file into memory
-             CString stringFileName = openFileDialog.GetNextPathName (pPos);
-             doc->LoadAssetsFromFile (stringFileName);
+		// Loop through all the selected files
+		POSITION pPos = openFileDialog.GetStartPosition ();
+		while (pPos != nullptr)
+		{
+			// Ask the doc to load the assets from this file into memory
+			CString stringFileName = openFileDialog.GetNextPathName (pPos);
+			doc->LoadAssetsFromFile (stringFileName);
 
-             // Add this filename to the MRU
-             ::AfxGetApp ()->AddToRecentFileList (stringFileName);
-         }
+			// Add this filename to the MRU
+			::AfxGetApp ()->AddToRecentFileList (stringFileName);
+		}
 
-        CDataTreeView *pCDataTreeView = doc->GetDataTreeView ();
-        if (pCDataTreeView)
-        {
-            // Re-load the data list to include all new assets
-            pCDataTreeView->LoadAssetsIntoTree ();
-        }
+		CDataTreeView *pCDataTreeView = doc->GetDataTreeView ();
+		if (pCDataTreeView)
+		{
+			// Re-load the data list to include all new assets
+			pCDataTreeView->LoadAssetsIntoTree ();
+		}
 
-        // Restore the arrow cursor
-        SetCursor (::LoadCursor (nullptr, IDC_ARROW));
-    }
+		// Restore the arrow cursor
+		SetCursor (::LoadCursor (nullptr, IDC_ARROW));
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1243,19 +1243,19 @@ CMainFrame::OnFileOpen (void)
 void
 CMainFrame::OnAniSpeed (void)
 {
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        float initialSpeed = pCGraphicView->GetAnimationSpeed ();
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		float initialSpeed = pCGraphicView->GetAnimationSpeed ();
 
-	    CAnimationSpeed animationSpeedDialog (this);
-        if (animationSpeedDialog.DoModal () != IDOK)
-        {
-            pCGraphicView->SetAnimationSpeed (initialSpeed);
-        }
-    }
+		CAnimationSpeed animationSpeedDialog (this);
+		if (animationSpeedDialog.DoModal () != IDOK)
+		{
+			pCGraphicView->SetAnimationSpeed (initialSpeed);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1268,18 +1268,18 @@ void
 CMainFrame::OnAniStop (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Stop the animation
-        pCGraphicView->SetAnimationState (CGraphicView::AnimStopped);
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Stop the animation
+		pCGraphicView->SetAnimationState (CGraphicView::AnimStopped);
 
-        // Pop the start and pause buttons on the toolbar
-        m_animationToolbar.SetButtonState (IDM_ANI_START, CFancyToolbar::StateUp);
-        m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
-    }
+		// Pop the start and pause buttons on the toolbar
+		m_animationToolbar.SetButtonState (IDM_ANI_START, CFancyToolbar::StateUp);
+		m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1292,20 +1292,20 @@ void
 CMainFrame::OnAniStart (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Start the animation
-        pCGraphicView->SetAnimationState (CGraphicView::AnimPlaying);
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Start the animation
+		pCGraphicView->SetAnimationState (CGraphicView::AnimPlaying);
 
-        // Pop the pause button on the toolbar
-        m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
+		// Pop the pause button on the toolbar
+		m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
 
-        // Push the 'play' button
-        m_animationToolbar.SetButtonState (IDM_ANI_START, CFancyToolbar::StateDn);
-    }
+		// Push the 'play' button
+		m_animationToolbar.SetButtonState (IDM_ANI_START, CFancyToolbar::StateDn);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1318,33 +1318,33 @@ void
 CMainFrame::OnAniPause (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        if (pCGraphicView->GetAnimationState () == CGraphicView::AnimPlaying)
-        {
-            // Pause the animation
-            pCGraphicView->SetAnimationState (CGraphicView::AnimPaused);
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		if (pCGraphicView->GetAnimationState () == CGraphicView::AnimPlaying)
+		{
+			// Pause the animation
+			pCGraphicView->SetAnimationState (CGraphicView::AnimPaused);
 
-            // Push the pause button on the toolbar
-            m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateDn);
-        }
-        else if (pCGraphicView->GetAnimationState () == CGraphicView::AnimPaused)
-        {
-            // Play the animation
-            pCGraphicView->SetAnimationState (CGraphicView::AnimPlaying);
+			// Push the pause button on the toolbar
+			m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateDn);
+		}
+		else if (pCGraphicView->GetAnimationState () == CGraphicView::AnimPaused)
+		{
+			// Play the animation
+			pCGraphicView->SetAnimationState (CGraphicView::AnimPlaying);
 
-            // Pop the pause button on the toolbar
-            m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
-        }
-        else
-        {
-            // Pop the pause button on the toolbar
-            m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
-        }
-    }
+			// Pop the pause button on the toolbar
+			m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
+		}
+		else
+		{
+			// Pop the pause button on the toolbar
+			m_animationToolbar.SetButtonState (IDM_ANI_PAUSE, CFancyToolbar::StateUp);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1357,14 +1357,14 @@ void
 CMainFrame::OnCameraBack (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Position the camera as requested
-        pCGraphicView->SetCameraPos (CGraphicView::CameraBack);
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Position the camera as requested
+		pCGraphicView->SetCameraPos (CGraphicView::CameraBack);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1377,14 +1377,14 @@ void
 CMainFrame::OnCameraBottom (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Position the camera as requested
-        pCGraphicView->SetCameraPos (CGraphicView::CameraBottom);
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Position the camera as requested
+		pCGraphicView->SetCameraPos (CGraphicView::CameraBottom);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1397,14 +1397,14 @@ void
 CMainFrame::OnCameraFront (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Position the camera as requested
-        pCGraphicView->SetCameraPos (CGraphicView::CameraFront);
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Position the camera as requested
+		pCGraphicView->SetCameraPos (CGraphicView::CameraFront);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1417,14 +1417,14 @@ void
 CMainFrame::OnCameraLeft (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Position the camera as requested
-        pCGraphicView->SetCameraPos (CGraphicView::CameraLeft);
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Position the camera as requested
+		pCGraphicView->SetCameraPos (CGraphicView::CameraLeft);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1437,13 +1437,13 @@ void
 CMainFrame::OnCameraReset (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Get a pointer to the current document
-        CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
-        if (pCDoc && pCDoc->GetDisplayedObject ())
-        {
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Get a pointer to the current document
+		CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
+		if (pCDoc && pCDoc->GetDisplayedObject ())
+		{
 				// Reset the camera data
 				RenderObjClass *prender_obj = pCDoc->GetDisplayedObject ();
 				if (prender_obj->Class_ID () == RenderObjClass::CLASSID_PARTICLEEMITTER) {
@@ -1451,10 +1451,10 @@ CMainFrame::OnCameraReset (void)
 				} else {
 					pCGraphicView->Reset_Camera_To_Display_Object (*prender_obj);
 				}
-        }
-    }
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1467,14 +1467,14 @@ void
 CMainFrame::OnCameraRight (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Position the camera as requested
-        pCGraphicView->SetCameraPos (CGraphicView::CameraRight);
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Position the camera as requested
+		pCGraphicView->SetCameraPos (CGraphicView::CameraRight);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1487,14 +1487,14 @@ void
 CMainFrame::OnCameraTop (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Position the camera as requested
-        pCGraphicView->SetCameraPos (CGraphicView::CameraTop);
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Position the camera as requested
+		pCGraphicView->SetCameraPos (CGraphicView::CameraTop);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1507,28 +1507,28 @@ void
 CMainFrame::OnObjectRotateZ (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        int iZRotation = (pCGraphicView->GetObjectRotation () ^ (CGraphicView::RotateZ));
-		  iZRotation &= ~CGraphicView::RotateZBack;
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		int iZRotation = (pCGraphicView->GetObjectRotation () ^ (CGraphicView::RotateZ));
+		iZRotation &= ~CGraphicView::RotateZBack;
 
-        // Start or stop the rotation around Z
-        pCGraphicView->RotateObject ((CGraphicView::OBJECT_ROTATION)iZRotation);
+		// Start or stop the rotation around Z
+		pCGraphicView->RotateObject ((CGraphicView::OBJECT_ROTATION)iZRotation);
 
-        if (iZRotation & ROTATION_Z)
-        {
-            // Force the toolbar button to be up
-            m_objectToolbar.SetButtonState (IDM_OBJECT_ROTATE_Z, CFancyToolbar::StateDn);
-        }
-        else
-        {
-            // Force the toolbar button to be up
-            m_objectToolbar.SetButtonState (IDM_OBJECT_ROTATE_Z, CFancyToolbar::StateUp);
-        }
-    }
+		if (iZRotation & ROTATION_Z)
+		{
+			// Force the toolbar button to be up
+			m_objectToolbar.SetButtonState (IDM_OBJECT_ROTATE_Z, CFancyToolbar::StateDn);
+		}
+		else
+		{
+			// Force the toolbar button to be up
+			m_objectToolbar.SetButtonState (IDM_OBJECT_ROTATE_Z, CFancyToolbar::StateUp);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1541,17 +1541,17 @@ void
 CMainFrame::OnObjectRotateY (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        int iYRotation = (pCGraphicView->GetObjectRotation () ^ (CGraphicView::RotateY));
-		  iYRotation &= ~CGraphicView::RotateYBack;
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		int iYRotation = (pCGraphicView->GetObjectRotation () ^ (CGraphicView::RotateY));
+		iYRotation &= ~CGraphicView::RotateYBack;
 
-        // Start or stop the rotation around Y
-        pCGraphicView->RotateObject ((CGraphicView::OBJECT_ROTATION)iYRotation);
-    }
+		// Start or stop the rotation around Y
+		pCGraphicView->RotateObject ((CGraphicView::OBJECT_ROTATION)iYRotation);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1564,18 +1564,18 @@ void
 CMainFrame::OnObjectRotateX (void)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
 
-    {
-        int iXRotation = (pCGraphicView->GetObjectRotation () ^ (CGraphicView::RotateX));
-		  iXRotation &= ~CGraphicView::RotateXBack;
+	{
+		int iXRotation = (pCGraphicView->GetObjectRotation () ^ (CGraphicView::RotateX));
+		iXRotation &= ~CGraphicView::RotateXBack;
 
-        // Start or stop the rotation around X
-        pCGraphicView->RotateObject ((CGraphicView::OBJECT_ROTATION)iXRotation);
-    }
+		// Start or stop the rotation around X
+		pCGraphicView->RotateObject ((CGraphicView::OBJECT_ROTATION)iXRotation);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1587,10 +1587,10 @@ CMainFrame::OnObjectRotateX (void)
 void
 CMainFrame::OnLightAmbient (void)
 {
-    // Show the ambient light dialog
-    CAmbientLightDialog ambientLightDialog (this);
-    ambientLightDialog.DoModal ();
-    return ;
+	// Show the ambient light dialog
+	CAmbientLightDialog ambientLightDialog (this);
+	ambientLightDialog.DoModal ();
+	return ;
 
 }
 
@@ -1603,10 +1603,10 @@ CMainFrame::OnLightAmbient (void)
 void
 CMainFrame::OnLightScene (void)
 {
-    // Show the scene light dialog
-    CSceneLightDialog sceneLightDialog (this);
-    sceneLightDialog.DoModal ();
-    return ;
+	// Show the scene light dialog
+	CSceneLightDialog sceneLightDialog (this);
+	sceneLightDialog.DoModal ();
+	return ;
 }
 
 
@@ -1618,10 +1618,10 @@ CMainFrame::OnLightScene (void)
 void
 CMainFrame::OnBackgroundColor (void)
 {
-    // Show the background color
-    CBackgroundColorDialog backgroundColorDialog (this);
-    backgroundColorDialog.DoModal ();
-    return ;
+	// Show the background color
+	CBackgroundColorDialog backgroundColorDialog (this);
+	backgroundColorDialog.DoModal ();
+	return ;
 }
 
 
@@ -1665,10 +1665,10 @@ CMainFrame::OnBackgroundFog (void)
 void
 CMainFrame::OnBackgroundBMP (void)
 {
-    // Show the background BMP dialog
-    CBackgroundBMPDialog backgroundBMPDialog (this);
-    backgroundBMPDialog.DoModal ();
-    return ;
+	// Show the background BMP dialog
+	CBackgroundBMPDialog backgroundBMPDialog (this);
+	backgroundBMPDialog.DoModal ();
+	return ;
 }
 
 
@@ -1680,10 +1680,10 @@ CMainFrame::OnBackgroundBMP (void)
 void
 CMainFrame::OnSaveSettings (void)
 {
-    // Show the save settings dialog
-    CSaveSettingsDialog saveSettingsDialog (this);
-    saveSettingsDialog.DoModal ();
-    return ;
+	// Show the save settings dialog
+	CSaveSettingsDialog saveSettingsDialog (this);
+	saveSettingsDialog.DoModal ();
+	return ;
 }
 
 
@@ -1695,26 +1695,26 @@ CMainFrame::OnSaveSettings (void)
 void
 CMainFrame::OnLoadSettings (void)
 {
-    // Get the active document
-    CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
-    if (pCDoc)
-    {
-        CFileDialog openFileDialog (TRUE,
+	// Get the active document
+	CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
+	if (pCDoc)
+	{
+		CFileDialog openFileDialog (TRUE,
                                     ".dat",
                                     nullptr,
                                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
                                     "Settings data files (*.dat)|*.dat||",
                                     this);
 
-        // Ask the user what settings file they wish to load
-        if (openFileDialog.DoModal () == IDOK)
-        {
-            // Ask the doc to load the settings from this file
-            pCDoc->LoadSettings (openFileDialog.GetPathName ());
-        }
-    }
+		// Ask the user what settings file they wish to load
+		if (openFileDialog.DoModal () == IDOK)
+		{
+			// Ask the doc to load the settings from this file
+			pCDoc->LoadSettings (openFileDialog.GetPathName ());
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1726,10 +1726,10 @@ CMainFrame::OnLoadSettings (void)
 void
 CMainFrame::OnLODSetSwitch (void)
 {
-    // Display the edit LOD dialog
-    CEditLODDialog editLODDialog (this);
-    editLODDialog.DoModal ();
-    return ;
+	// Display the edit LOD dialog
+	CEditLODDialog editLODDialog (this);
+	editLODDialog.DoModal ();
+	return ;
 }
 
 
@@ -1760,8 +1760,8 @@ CMainFrame::OnLODSave (void)
 void
 CMainFrame::OnLODSaveAll (void)
 {
-    MessageBox ("Not implemented yet.", "Test", MB_OK | MB_ICONEXCLAMATION);
-    return ;
+	MessageBox ("Not implemented yet.", "Test", MB_OK | MB_ICONEXCLAMATION);
+	return ;
 }
 
 
@@ -1773,9 +1773,9 @@ CMainFrame::OnLODSaveAll (void)
 void
 CMainFrame::OnBackgroundObject (void)
 {
-    // Display the background object dialog
+	// Display the background object dialog
 	CBackgroundObjectDialog backgroundObjectDialog (this);
-    backgroundObjectDialog.DoModal ();
+	backgroundObjectDialog.DoModal ();
 	return ;
 }
 
@@ -1788,21 +1788,21 @@ CMainFrame::OnBackgroundObject (void)
 void
 CMainFrame::OnUpdateViewAnimationBar (CCmdUI* pCmdUI)
 {
-    // Are we currently displaying an animation?
-    if ((m_currentAssetType != TypeAnimation) || (m_currentAssetType != TypeCompressedAnimation))
-    {
-        // Disable the option and clear the check
-        pCmdUI->Enable (FALSE);
-        pCmdUI->SetCheck (FALSE);
-    }
-    else
-    {
-        // Enable the option and set the correct state of the check
-        pCmdUI->Enable (TRUE);
-        pCmdUI->SetCheck (m_animationToolbar.IsWindowVisible ());
-    }
+	// Are we currently displaying an animation?
+	if ((m_currentAssetType != TypeAnimation) || (m_currentAssetType != TypeCompressedAnimation))
+	{
+		// Disable the option and clear the check
+		pCmdUI->Enable (FALSE);
+		pCmdUI->SetCheck (FALSE);
+	}
+	else
+	{
+		// Enable the option and set the correct state of the check
+		pCmdUI->Enable (TRUE);
+		pCmdUI->SetCheck (m_animationToolbar.IsWindowVisible ());
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1814,10 +1814,10 @@ CMainFrame::OnUpdateViewAnimationBar (CCmdUI* pCmdUI)
 void
 CMainFrame::OnUpdateViewObjectBar (CCmdUI* pCmdUI)
 {
-    // Enable the option and set the correct state of the check
-    pCmdUI->Enable (TRUE);
-    pCmdUI->SetCheck (m_objectToolbar.IsWindowVisible ());
-    return ;
+	// Enable the option and set the correct state of the check
+	pCmdUI->Enable (TRUE);
+	pCmdUI->SetCheck (m_objectToolbar.IsWindowVisible ());
+	return ;
 }
 
 
@@ -1829,24 +1829,24 @@ CMainFrame::OnUpdateViewObjectBar (CCmdUI* pCmdUI)
 void
 CMainFrame::OnViewAnimationBar (void)
 {
-    if (m_animationToolbar.IsWindowVisible () == FALSE)
-    {
-        // Show the animation control bar
-        ShowControlBar (&m_animationToolbar, TRUE, FALSE);
+	if (m_animationToolbar.IsWindowVisible () == FALSE)
+	{
+		// Show the animation control bar
+		ShowControlBar (&m_animationToolbar, TRUE, FALSE);
 
-        // Remember whether or not to auto show this toolbar
-        m_bShowAnimationBar = TRUE;
-    }
-    else
-    {
-        // Hide the animation control bar
-        ShowControlBar (&m_animationToolbar, FALSE, FALSE);
+		// Remember whether or not to auto show this toolbar
+		m_bShowAnimationBar = TRUE;
+	}
+	else
+	{
+		// Hide the animation control bar
+		ShowControlBar (&m_animationToolbar, FALSE, FALSE);
 
-        // Remember whether or not to auto show this toolbar
-        m_bShowAnimationBar = FALSE;
-    }
+		// Remember whether or not to auto show this toolbar
+		m_bShowAnimationBar = FALSE;
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1858,18 +1858,18 @@ CMainFrame::OnViewAnimationBar (void)
 void
 CMainFrame::OnViewObjectBar (void)
 {
-    if (m_objectToolbar.IsWindowVisible () == FALSE)
-    {
-        // Show the object control bar
-        ShowControlBar (&m_objectToolbar, TRUE, FALSE);
-    }
-    else
-    {
-        // Hide the object control bar
-        ShowControlBar (&m_objectToolbar, FALSE, FALSE);
-    }
+	if (m_objectToolbar.IsWindowVisible () == FALSE)
+	{
+		// Show the object control bar
+		ShowControlBar (&m_objectToolbar, TRUE, FALSE);
+	}
+	else
+	{
+		// Hide the object control bar
+		ShowControlBar (&m_objectToolbar, FALSE, FALSE);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1881,15 +1881,15 @@ CMainFrame::OnViewObjectBar (void)
 void
 CMainFrame::OnAniStepFwd (void)
 {
-    // Get the current doc
-    CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
-    if (pCDoc)
-    {
-        // Ask the doc to step the animation forward one frame
-        pCDoc->StepAnimation (1);
-    }
+	// Get the current doc
+	CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
+	if (pCDoc)
+	{
+		// Ask the doc to step the animation forward one frame
+		pCDoc->StepAnimation (1);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1901,15 +1901,15 @@ CMainFrame::OnAniStepFwd (void)
 void
 CMainFrame::OnAniStepBkwd (void)
 {
-    // Get the current doc
-    CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
-    if (pCDoc)
-    {
-        // Ask the doc to step the animation backward one frame
-        pCDoc->StepAnimation (-1);
-    }
+	// Get the current doc
+	CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
+	if (pCDoc)
+	{
+		// Ask the doc to step the animation backward one frame
+		pCDoc->StepAnimation (-1);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1921,15 +1921,15 @@ CMainFrame::OnAniStepBkwd (void)
 void
 CMainFrame::OnObjectReset (void)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        // Ask the view to reset the rotation of the current object
-        pCGraphicView->ResetObject ();
-    }
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		// Ask the view to reset the rotation of the current object
+		pCGraphicView->ResetObject ();
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1941,33 +1941,33 @@ CMainFrame::OnObjectReset (void)
 void
 CMainFrame::OnCameraAllowRotateX (void)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        if (pCGraphicView->GetAllowedCameraRotation () != CGraphicView::OnlyRotateX)
-        {
-            // Enable rotatation about this axis
-            pCGraphicView->SetAllowedCameraRotation (CGraphicView::OnlyRotateX);
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		if (pCGraphicView->GetAllowedCameraRotation () != CGraphicView::OnlyRotateX)
+		{
+			// Enable rotatation about this axis
+			pCGraphicView->SetAllowedCameraRotation (CGraphicView::OnlyRotateX);
 
-            // Make sure the toolbar buttons are in the right state
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateDn);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
-        }
-        else
-        {
-            // Enable rotatation about this axis
-            pCGraphicView->SetAllowedCameraRotation (CGraphicView::FreeRotation);
+			// Make sure the toolbar buttons are in the right state
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateDn);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
+		}
+		else
+		{
+			// Enable rotatation about this axis
+			pCGraphicView->SetAllowedCameraRotation (CGraphicView::FreeRotation);
 
-            // Make sure the toolbar buttons are in the right state
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
-        }
-    }
+			// Make sure the toolbar buttons are in the right state
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -1979,33 +1979,33 @@ CMainFrame::OnCameraAllowRotateX (void)
 void
 CMainFrame::OnCameraAllowRotateY (void)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        if (pCGraphicView->GetAllowedCameraRotation () != CGraphicView::OnlyRotateY)
-        {
-            // Enable rotatation about this axis
-            pCGraphicView->SetAllowedCameraRotation (CGraphicView::OnlyRotateY);
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		if (pCGraphicView->GetAllowedCameraRotation () != CGraphicView::OnlyRotateY)
+		{
+			// Enable rotatation about this axis
+			pCGraphicView->SetAllowedCameraRotation (CGraphicView::OnlyRotateY);
 
-            // Make sure the toolbar buttons are in the right state
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateDn);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
-        }
-        else
-        {
-            // Enable rotatation about this axis
-            pCGraphicView->SetAllowedCameraRotation (CGraphicView::FreeRotation);
+			// Make sure the toolbar buttons are in the right state
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateDn);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
+		}
+		else
+		{
+			// Enable rotatation about this axis
+			pCGraphicView->SetAllowedCameraRotation (CGraphicView::FreeRotation);
 
-            // Make sure the toolbar buttons are in the right state
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
-        }
-    }
+			// Make sure the toolbar buttons are in the right state
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -2017,33 +2017,33 @@ CMainFrame::OnCameraAllowRotateY (void)
 void
 CMainFrame::OnCameraAllowRotateZ (void)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        if (pCGraphicView->GetAllowedCameraRotation () != CGraphicView::OnlyRotateZ)
-        {
-            // Enable rotatation about this axis
-            pCGraphicView->SetAllowedCameraRotation (CGraphicView::OnlyRotateZ);
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		if (pCGraphicView->GetAllowedCameraRotation () != CGraphicView::OnlyRotateZ)
+		{
+			// Enable rotatation about this axis
+			pCGraphicView->SetAllowedCameraRotation (CGraphicView::OnlyRotateZ);
 
-            // Make sure the toolbar buttons are in the right state
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateDn);
-        }
-        else
-        {
-            // Enable rotatation about this axis
-            pCGraphicView->SetAllowedCameraRotation (CGraphicView::FreeRotation);
+			// Make sure the toolbar buttons are in the right state
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateDn);
+		}
+		else
+		{
+			// Enable rotatation about this axis
+			pCGraphicView->SetAllowedCameraRotation (CGraphicView::FreeRotation);
 
-            // Make sure the toolbar buttons are in the right state
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
-            m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
-        }
-    }
+			// Make sure the toolbar buttons are in the right state
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_X, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Y, CFancyToolbar::StateUp);
+			m_objectToolbar.SetButtonState (IDM_CAMERA_ALLOW_ROTATE_Z, CFancyToolbar::StateUp);
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -2055,15 +2055,15 @@ CMainFrame::OnCameraAllowRotateZ (void)
 void
 CMainFrame::OnUpdateCameraAllowRotateX (CCmdUI* pCmdUI)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        // Either turn the check on or off depending on the view's settings
-        pCmdUI->SetCheck (pCGraphicView->GetAllowedCameraRotation () == CGraphicView::OnlyRotateX);
-    }
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		// Either turn the check on or off depending on the view's settings
+		pCmdUI->SetCheck (pCGraphicView->GetAllowedCameraRotation () == CGraphicView::OnlyRotateX);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -2075,15 +2075,15 @@ CMainFrame::OnUpdateCameraAllowRotateX (CCmdUI* pCmdUI)
 void
 CMainFrame::OnUpdateCameraAllowRotateY (CCmdUI* pCmdUI)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        // Either turn the check on or off depending on the view's settings
-        pCmdUI->SetCheck (pCGraphicView->GetAllowedCameraRotation () == CGraphicView::OnlyRotateY);
-    }
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		// Either turn the check on or off depending on the view's settings
+		pCmdUI->SetCheck (pCGraphicView->GetAllowedCameraRotation () == CGraphicView::OnlyRotateY);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -2095,15 +2095,15 @@ CMainFrame::OnUpdateCameraAllowRotateY (CCmdUI* pCmdUI)
 void
 CMainFrame::OnUpdateCameraAllowRotateZ (CCmdUI* pCmdUI)
 {
-    // Get the graphic view
-    CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    if (pCGraphicView)
-    {
-        // Either turn the check on or off depending on the view's settings
-        pCmdUI->SetCheck (pCGraphicView->GetAllowedCameraRotation () == CGraphicView::OnlyRotateZ);
-    }
+	// Get the graphic view
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	if (pCGraphicView)
+	{
+		// Either turn the check on or off depending on the view's settings
+		pCmdUI->SetCheck (pCGraphicView->GetAllowedCameraRotation () == CGraphicView::OnlyRotateZ);
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -2116,12 +2116,12 @@ void
 CMainFrame::OnUpdateObjectRotateX (CCmdUI* pCmdUI)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Set the check if we are currently rotating around X
-        pCmdUI->SetCheck ((pCGraphicView->GetObjectRotation () & (CGraphicView::RotateX)));
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Set the check if we are currently rotating around X
+		pCmdUI->SetCheck ((pCGraphicView->GetObjectRotation () & (CGraphicView::RotateX)));
+	}
 
 	return ;
 }
@@ -2136,12 +2136,12 @@ void
 CMainFrame::OnUpdateObjectRotateY (CCmdUI* pCmdUI)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Set the check if we are currently rotating around Y
-        pCmdUI->SetCheck ((pCGraphicView->GetObjectRotation () & (CGraphicView::RotateY)));
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Set the check if we are currently rotating around Y
+		pCmdUI->SetCheck ((pCGraphicView->GetObjectRotation () & (CGraphicView::RotateY)));
+	}
 
 	return ;
 }
@@ -2156,12 +2156,12 @@ void
 CMainFrame::OnUpdateObjectRotateZ (CCmdUI* pCmdUI)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Set the check if we are currently rotating around Z
-        pCmdUI->SetCheck ((pCGraphicView->GetObjectRotation () & (CGraphicView::RotateZ)));
-    }
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Set the check if we are currently rotating around Z
+		pCmdUI->SetCheck ((pCGraphicView->GetObjectRotation () & (CGraphicView::RotateZ)));
+	}
 
 	return ;
 }
@@ -2176,21 +2176,21 @@ void
 CMainFrame::Select_Device (bool show_dlg)
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
-    ASSERT (pCGraphicView);
-    if (pCGraphicView)
-    {
-        // Show a dialog to the user asking them which
-        // device they would like to use.
-        CDeviceSelectionDialog deviceSelDialog (show_dlg == false, this);
-        if (deviceSelDialog.DoModal () == IDOK)
-        {
-            // Record the user's selection from the dialog (as globals for now)
-            g_iDeviceIndex = deviceSelDialog.GetDeviceIndex ();
-            g_iBitsPerPixel = deviceSelDialog.GetBitsPerPixel ();
+	ASSERT (pCGraphicView);
+	if (pCGraphicView)
+	{
+		// Show a dialog to the user asking them which
+		// device they would like to use.
+		CDeviceSelectionDialog deviceSelDialog (show_dlg == false, this);
+		if (deviceSelDialog.DoModal () == IDOK)
+		{
+			// Record the user's selection from the dialog (as globals for now)
+			g_iDeviceIndex = deviceSelDialog.GetDeviceIndex ();
+			g_iBitsPerPixel = deviceSelDialog.GetBitsPerPixel ();
 
-            // Ask the view to initialize itself with the graphics engine
-            BOOL bReturn = pCGraphicView->InitializeGraphicView ();
-            ASSERT (bReturn);
+			// Ask the view to initialize itself with the graphics engine
+			BOOL bReturn = pCGraphicView->InitializeGraphicView ();
+			ASSERT (bReturn);
 
 				if (bReturn) {
 
@@ -2225,10 +2225,10 @@ CMainFrame::Select_Device (bool show_dlg)
 						}
 					}
 				}
-        }
-    }
+		}
+	}
 
-    return ;
+	return ;
 }
 
 
@@ -4230,7 +4230,7 @@ CMainFrame::OnUpdateToggleSorting(CCmdUI* pCmdUI)
 void
 CMainFrame::OnCameraBonePosX()
 {
-   CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	if (pCGraphicView != nullptr) {
 		pCGraphicView->Set_Camera_Bone_Pos_X(!pCGraphicView->Is_Camera_Bone_Pos_X());
 	}
@@ -4245,7 +4245,7 @@ CMainFrame::OnCameraBonePosX()
 void
 CMainFrame::OnUpdateCameraBonePosX(CCmdUI* pCmdUI)
 {
-   CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
+	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	if (pCGraphicView != nullptr) {
 		pCmdUI->SetCheck(pCGraphicView->Is_Camera_Bone_Pos_X());
 	}

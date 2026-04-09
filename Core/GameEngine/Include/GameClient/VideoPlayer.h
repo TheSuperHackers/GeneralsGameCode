@@ -193,7 +193,7 @@ class VideoStream : public VideoStreamInterface
 
 	public:
 
- 		virtual	VideoStreamInterface* next() override;				///< Returns next open stream
+	virtual	VideoStreamInterface* next() override;				///< Returns next open stream
 		virtual void update() override;											///< Update stream
 		virtual void close() override;												///< Close and free stream
 

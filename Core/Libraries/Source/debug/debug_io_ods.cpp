@@ -33,17 +33,17 @@
 
 void DebugIOOds::Write(StringType type, const char *src, const char *str)
 {
-  if (type!=StringType::StructuredCmdReply&&str)
-    OutputDebugString(str);
+	if (type!=StringType::StructuredCmdReply&&str)
+	OutputDebugString(str);
 }
 
 DebugIOInterface *DebugIOOds::Create()
 {
-  return new (DebugAllocMemory(sizeof(DebugIOOds))) DebugIOOds();
+	return new (DebugAllocMemory(sizeof(DebugIOOds))) DebugIOOds();
 }
 
 void DebugIOOds::Delete()
 {
-  this->~DebugIOOds();
-  DebugFreeMemory(this);
+	this->~DebugIOOds();
+	DebugFreeMemory(this);
 }

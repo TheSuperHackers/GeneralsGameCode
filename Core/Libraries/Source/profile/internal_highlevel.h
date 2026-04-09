@@ -32,8 +32,8 @@
 /// an internal high level profile ID
 class ProfileId
 {
-  ProfileId(const ProfileId&);
-  ProfileId& operator=(const ProfileId&);
+	ProfileId(const ProfileId&);
+	ProfileId& operator=(const ProfileId&);
 
 public:
   /**
@@ -45,78 +45,78 @@ public:
     \param precision number of decimal places to show
     \param exp10 10 base exponent (used for scaleing)
   */
-  ProfileId(const char *name, const char *descr, const char *unit, int precision, int exp10);
+	ProfileId(const char *name, const char *descr, const char *unit, int precision, int exp10);
 
   /**
     Retrieves the first profile ID.
 
     \return first profile ID
   */
-  static ProfileId *GetFirst() { return first; }
+	static ProfileId *GetFirst() { return first; }
 
   /**
     Retrieves next profile ID.
 
     \return next profile ID, nullptr if none
   */
-  ProfileId *GetNext() const { return m_next; }
+	ProfileId *GetNext() const { return m_next; }
 
   /**
     Retrieves name of the profile ID.
 
     \return profile ID name
   */
-  const char *GetName() const { return m_name; }
+	const char *GetName() const { return m_name; }
 
   /**
     Retrieves unit name of the profile ID.
 
     \return profile ID unit name
   */
-  const char *GetUnit() const { return m_unit?m_unit:""; }
+	const char *GetUnit() const { return m_unit?m_unit:""; }
 
   /**
     Retrieves description of the profile ID.
 
     \return profile description
   */
-  const char *GetDescr() const { return m_descr?m_descr:""; }
+	const char *GetDescr() const { return m_descr?m_descr:""; }
 
   /**
     Increments the profile value.
 
     \param add add value
   */
-  void Increment(double add);
+	void Increment(double add);
 
   /**
     Sets a new maximum value.
 
     \param max new maximum value
   */
-  void Maximum(double max);
+	void Maximum(double max);
 
   /**
     Returns current value, internally resetting it.
 
     \return current value
   */
-  double GetCurrentValue()
-  {
-    double help=m_curVal;
-    m_curVal=0.;
-    return help;
-  }
+	double GetCurrentValue()
+	{
+		double help=m_curVal;
+		m_curVal=0.;
+		return help;
+	}
 
   /**
     Returns total value
 
     \return total value
   */
-  double GetTotalValue() const
-  {
-    return m_totalVal;
-  }
+	double GetTotalValue() const
+	{
+		return m_totalVal;
+	}
 
   /**
     Returns value at the given frame.
@@ -125,14 +125,14 @@ public:
     \param value value at frame
     \return true if frame found, false if not
   */
-  bool GetFrameValue(unsigned frame, double &value) const
-  {
-    if (frame<(unsigned)m_firstFrame||
+	bool GetFrameValue(unsigned frame, double &value) const
+	{
+		if (frame<(unsigned)m_firstFrame||
         frame>=(unsigned)curFrame)
-      return false;
-    value=m_recFrameVal[frame-m_firstFrame];
-    return true;
-  }
+		return false;
+		value=m_recFrameVal[frame-m_firstFrame];
+		return true;
+	}
 
   /**
     Translate given numeric value into a string, using an internal temp buffer.
@@ -140,39 +140,39 @@ public:
     \param v value
     \return given numeric value as string
   */
-  const char *AsString(double v) const;
+	const char *AsString(double v) const;
 
   /**
     Shutdown function.
   */
-  static void Shutdown();
+	static void Shutdown();
 
   /**
     Starts frame based profiling, starts a new frame.
   */
-  static int FrameStart();
+	static int FrameStart();
 
   /**
     Ends frame based profiling.
   */
-  static void FrameEnd(int which, int mixIndex);
+	static void FrameEnd(int which, int mixIndex);
 
   /**
     Clears all total values.
   */
-  static void ClearTotals()
-  {
-    for (ProfileId *cur=first;cur;cur=cur->m_next)
-      cur->m_totalVal=0.;
-  }
+	static void ClearTotals()
+	{
+		for (ProfileId *cur=first;cur;cur=cur->m_next)
+		cur->m_totalVal=0.;
+	}
 
 private:
   /**
     ProfileId's can't be destructed.
   */
-  ~ProfileId() {}
+	~ProfileId() {}
 
-  enum
+	enum
   {
     /// # of simultaneous frame recordings
     MAX_FRAME_RECORDS = 4,
@@ -181,62 +181,62 @@ private:
     STRING_BUFFER_SIZE = 1024
   };
 
-  /// possible value modes
-  enum ValueMode
+	/// possible value modes
+	enum ValueMode
   {
     Unknown,
     ModeIncrement,
     ModeMaximum
   };
 
-  /// first profile ID
-  static ProfileId *first;
+	/// first profile ID
+	static ProfileId *first;
 
-  /// next profile ID
-  ProfileId *m_next;
+	/// next profile ID
+	ProfileId *m_next;
 
-  /// profile name
-  char *m_name;
+	/// profile name
+	char *m_name;
 
-  /// profile description
-  char *m_descr;
+	/// profile description
+	char *m_descr;
 
-  /// profile unit
-  char *m_unit;
+	/// profile unit
+	char *m_unit;
 
-  /// number of decimal places to show
-  int m_precision;
+	/// number of decimal places to show
+	int m_precision;
 
-  /// 10 base exponent (used for scaleing)
-  int m_exp10;
+	/// 10 base exponent (used for scaleing)
+	int m_exp10;
 
-  /// current value
-  double m_curVal;
+	/// current value
+	double m_curVal;
 
-  /// total value
-  double m_totalVal;
+	/// total value
+	double m_totalVal;
 
-  /// frame values
-  double m_frameVal[MAX_FRAME_RECORDS];
+	/// frame values
+	double m_frameVal[MAX_FRAME_RECORDS];
 
-  /// list of recorded frame values
-  double *m_recFrameVal;
+	/// list of recorded frame values
+	double *m_recFrameVal;
 
-  /// index of first recorded frame
-  int m_firstFrame;
+	/// index of first recorded frame
+	int m_firstFrame;
 
-  /// value mode
-  ValueMode m_valueMode;
+	/// value mode
+	ValueMode m_valueMode;
 
-  /// current frame
-  static int curFrame;
+	/// current frame
+	static int curFrame;
 
-  /// bit mask, currently recording which cur[] entries?
-  static unsigned frameRecordMask;
+	/// bit mask, currently recording which cur[] entries?
+	static unsigned frameRecordMask;
 
-  /// internal string buffer
-  static char stringBuf[STRING_BUFFER_SIZE];
+	/// internal string buffer
+	static char stringBuf[STRING_BUFFER_SIZE];
 
-  /// next unused char in string buffer
-  static unsigned stringBufUnused;
+	/// next unused char in string buffer
+	static unsigned stringBufUnused;
 };

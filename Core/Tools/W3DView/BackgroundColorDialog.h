@@ -60,9 +60,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
     public:
-        int m_initialRed;
-        int m_initialGreen;
-        int m_initialBlue;
+	int m_initialRed;
+	int m_initialGreen;
+	int m_initialBlue;
 };
 
 //{{AFX_INSERT_LOCATION}}

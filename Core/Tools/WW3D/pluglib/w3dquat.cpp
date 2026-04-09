@@ -138,12 +138,12 @@ void Quaternion::Normalize()
  *=============================================================================================*/
 Quaternion & Quaternion::operator = (const Quaternion & source)
 {
-  X = source[0];
-  Y = source[1];
-  Z = source[2];
-  W = source[3];
+	X = source[0];
+	Y = source[1];
+	Z = source[2];
+	W = source[3];
 
-  return *this;
+	return *this;
 }
 
 /***********************************************************************************************

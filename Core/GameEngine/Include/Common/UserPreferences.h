@@ -89,8 +89,8 @@ public:
 	Int getNumRemoteIPs();					// convenience function
 	UnicodeString getRemoteIPEntry(Int i);	// convenience function
 
-  Bool getSuperweaponRestricted() const;
-  Money getStartingCash() const;
-  void setSuperweaponRestricted( Bool superweaponRestricted);
-  void setStartingCash( const Money & startingCash );
+	Bool getSuperweaponRestricted() const;
+	Money getStartingCash() const;
+	void setSuperweaponRestricted( Bool superweaponRestricted);
+	void setStartingCash( const Money & startingCash );
 };

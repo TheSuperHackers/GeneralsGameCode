@@ -835,11 +835,11 @@ void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 
 	BoundBox.Init(box);
 
-   Invalidate_Cached_Bounding_Volumes();
+	Invalidate_Cached_Bounding_Volumes();
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 
 	Set_Transform(tm);
 }
