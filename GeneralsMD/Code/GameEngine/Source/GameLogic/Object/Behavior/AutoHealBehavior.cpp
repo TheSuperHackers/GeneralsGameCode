@@ -361,8 +361,6 @@ void AutoHealBehavior::loadPostProcess()
 	// extend base class
 	UpgradeMux::upgradeMuxLoadPostProcess();
 
-	createEmitters();
-
 }
 
 // ------------------------------------------------------------------------------------------------

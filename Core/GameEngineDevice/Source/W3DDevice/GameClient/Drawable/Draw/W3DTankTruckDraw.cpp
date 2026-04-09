@@ -201,6 +201,8 @@ void W3DTankTruckDraw::createTreadEmitters()
 {
 	if (getW3DTankTruckDrawModuleData())
 	{
+		static_assert(ARRAY_SIZE(m_treadDebrisIDs) == 2, "m_treadDebrisIDs array size is expected to be 2");
+
 		if (m_treadDebrisIDs[0] == INVALID_PARTICLE_SYSTEM_ID)
 		{
 			m_treadDebrisIDs[0] = createParticleSystem(getW3DTankTruckDrawModuleData()->m_treadDebrisNameLeft, getDrawable());
@@ -506,14 +508,12 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (obj == nullptr)
 		return;
 
-	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until draw
-	createTreadEmitters();
-
 	if (getRenderObject()==nullptr) return;
 	if (getRenderObject() != m_prevRenderObj) {
 		updateBones();
 		updateTreadObjects();
 	}
+
 	// get object physics state
 	PhysicsBehavior *physics = obj->getPhysics();
 	if (physics == nullptr)
@@ -673,6 +673,9 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (velMult.z > 1.0f)
 		velMult.z = 1.0f;
 
+	// TheSuperHackers @bugfix 14/03/2026 Delay emitter creation until draw
+	createTreadEmitters();
+
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
 	{
 		if (ParticleSystem *particleSys = TheParticleSystemManager->findParticleSystem(m_treadDebrisIDs[i]))
@@ -765,7 +768,5 @@ void W3DTankTruckDraw::loadPostProcess()
 
 	// toss any existing wheel emitters (no need to re-create; we'll do that on demand)
 	tossWheelEmitters();
-
-	createTreadEmitters();
 
 }

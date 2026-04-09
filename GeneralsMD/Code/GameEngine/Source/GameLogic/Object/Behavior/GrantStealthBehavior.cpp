@@ -232,7 +232,6 @@ void GrantStealthBehavior::loadPostProcess()
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-	createEmitters();
 }
 
 // ------------------------------------------------------------------------------------------------

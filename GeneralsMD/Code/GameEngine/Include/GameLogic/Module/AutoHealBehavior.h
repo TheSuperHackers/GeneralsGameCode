@@ -108,7 +108,9 @@ public:
 //-------------------------------------------------------------------------------------------------
 class AutoHealBehavior : public UpdateModule,
 												 public UpgradeMux,
-												 public DamageModuleInterface {
+												 public DamageModuleInterface
+{
+
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AutoHealBehavior, "AutoHealBehavior" )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AutoHealBehavior, AutoHealBehaviorModuleData )
 
