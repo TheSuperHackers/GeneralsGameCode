@@ -273,21 +273,22 @@ def process_file(filepath, dry_run=False, verbose=False):
                 depth = get_indent_depth(parent)
 
         # Special handling: access specifiers (public/private/protected)
-        # For now, skip these - deferred to another PR
+        # These sit at the class brace level, not indented inside the class body.
         if node.type in ('public', 'private', 'protected'):
-            new_lines.append(line)
-            skipped += 1
-            if verbose:
-                print(f"  SKIP access spec L{line_idx+1}: {line.rstrip()[:80]}")
-            continue
+            access_spec = node.parent  # access_specifier node
+            if access_spec is not None and access_spec.type == 'access_specifier':
+                field_list = access_spec.parent  # field_declaration_list
+                if field_list is not None:
+                    depth = get_indent_depth(field_list)
 
         # Special handling: the colon after access specifier or case label
         if node.type == ':':
             parent = node.parent
             if parent is not None and parent.type == 'access_specifier':
-                new_lines.append(line)
-                skipped += 1
-                continue
+                # Same line as the access specifier keyword - same depth
+                field_list = parent.parent
+                if field_list is not None:
+                    depth = get_indent_depth(field_list)
 
         # Sanity check: if the line had significant indentation but we
         # computed depth 0, something is likely wrong (parse errors nearby,
@@ -368,7 +369,7 @@ def main():
 
     action = "Would change" if args.dry_run else "Changed"
     print(f"\n{action} {total_changed} lines across {total_files_modified} files")
-    print(f"Skipped {total_skipped} lines (continuations, access specifiers, ambiguous)")
+    print(f"Skipped {total_skipped} lines (continuations, ambiguous)")
 
 
 if __name__ == '__main__':
