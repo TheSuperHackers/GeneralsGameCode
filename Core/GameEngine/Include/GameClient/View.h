@@ -34,6 +34,7 @@
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
 #include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
+#include "WWMath/wwmath.h"
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480
@@ -51,7 +52,7 @@ enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 constexpr const Real ViewDefaultPitchRadians = DEG_TO_RADF(37.5f);
-constexpr const Real ViewDefaultPitchRadians = DEG_TO_RADF(0.0f);
+constexpr const Real ViewDefaultAngleRadians = DEG_TO_RADF(0.0f);
 
 // ------------------------------------------------------------------------------------------------
 enum PickType CPP_11(: Int)
