@@ -86,7 +86,7 @@ FireSpreadUpdateModuleData::FireSpreadUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void FireSpreadUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -96,7 +96,7 @@ FireSpreadUpdateModuleData::FireSpreadUpdateModuleData()
 		{ "SpreadTryRange",		INI::parseReal,									nullptr, offsetof( FireSpreadUpdateModuleData, m_spreadTryRange ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

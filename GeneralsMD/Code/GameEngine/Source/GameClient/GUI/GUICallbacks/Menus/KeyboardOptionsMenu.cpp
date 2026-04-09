@@ -565,10 +565,10 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if(controlID == comboBoxCategoryListID )
-      {
-        Int selected;
-        GadgetComboBoxGetSelectedPos(comboBoxCategoryList, &selected);
+			if(controlID == comboBoxCategoryListID )
+			{
+				Int selected;
+				GadgetComboBoxGetSelectedPos(comboBoxCategoryList, &selected);
 
 				LookupListRec rec;
 				rec = CategoryListName[selected];
@@ -589,7 +589,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 				//disable textEntry until specific command is chosen
 				textEntryAssignHotkey->winEnable( false );
 
-      }
+			}
 			break;
 
 		}

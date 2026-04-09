@@ -622,7 +622,7 @@ private:
 	Coord3D m_position;
 	GeometryInfo m_geom;
 	Real m_angle;
-  Bool m_desiredCollisionResult;  // collision must match this for allow to return true
+	Bool m_desiredCollisionResult;  // collision must match this for allow to return true
 public:
 	PartitionFilterWouldCollide(const Coord3D& pos, const GeometryInfo& geom, Real angle, Bool desired);
 	virtual Bool allow(Object *objOther) override;

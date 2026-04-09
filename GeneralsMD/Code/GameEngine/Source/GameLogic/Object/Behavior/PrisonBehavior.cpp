@@ -100,7 +100,7 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void PrisonBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  OpenContainModuleData::buildFieldParse( p );
+	OpenContainModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -111,7 +111,7 @@ PrisonBehaviorModuleData::PrisonBehaviorModuleData()
 
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

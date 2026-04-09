@@ -84,7 +84,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
+		UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "DepositTiming",					INI::parseDurationUnsignedInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_depositFrame ) },
@@ -92,7 +92,7 @@ public:
 			{ "InitialCaptureBonus",		INI::parseInt,		nullptr, offsetof( AutoDepositUpdateModuleData, m_initialCaptureBonus ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

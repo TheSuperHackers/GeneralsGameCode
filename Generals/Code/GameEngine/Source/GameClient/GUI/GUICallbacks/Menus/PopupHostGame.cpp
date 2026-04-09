@@ -403,7 +403,7 @@ WindowMsgHandledType PopupHostGameInput( GameWindow *window, UnsignedInt msg, Wi
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-  switch( msg )
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -413,7 +413,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 			break;
 
 		}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 			parentPopup = nullptr;
@@ -422,8 +422,8 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 
 		}
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
@@ -434,7 +434,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 
 		}
 
-    //----------------------------------------------------------------------------------------------
+		//----------------------------------------------------------------------------------------------
 		case GEM_UPDATE_TEXT:
 			{
 				GameWindow *control = (GameWindow *)mData1;
@@ -463,7 +463,7 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 				}
 				break;
 			}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GCM_SELECTED:
 			{
 				GameWindow *control = (GameWindow *)mData1;
@@ -487,13 +487,13 @@ WindowMsgHandledType PopupHostGameSystem( GameWindow *window, UnsignedInt msg, W
 				break;
 			}
 
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if( controlID == buttonCancelID )
+			if( controlID == buttonCancelID )
 			{
 				parentPopup = nullptr;
 				GameSpyCloseOverlay(GSOVERLAY_GAMEOPTIONS);
@@ -542,17 +542,17 @@ void createGame()
 	req.password = passwd.str();
 	CustomMatchPreferences customPref;
 	Bool aO = GadgetCheckBoxIsChecked(checkBoxAllowObservers);
-  Bool limitArmies = FALSE;
-  Bool useStats = TRUE;
+	Bool limitArmies = FALSE;
+	Bool useStats = TRUE;
 	customPref.setAllowsObserver(aO);
-  customPref.setFactionsLimited( limitArmies );
-  customPref.setUseStats( useStats );
+	customPref.setFactionsLimited( limitArmies );
+	customPref.setUseStats( useStats );
 	customPref.write();
 	req.stagingRoomCreation.allowObservers = aO;
-  req.stagingRoomCreation.useStats = useStats;
+	req.stagingRoomCreation.useStats = useStats;
 	TheGameSpyGame->setAllowObservers(aO);
-  TheGameSpyGame->setOldFactionsOnly( limitArmies );
-  TheGameSpyGame->setUseStats( useStats );
+	TheGameSpyGame->setOldFactionsOnly( limitArmies );
+	TheGameSpyGame->setUseStats( useStats );
 	req.stagingRoomCreation.exeCRC = TheGlobalData->m_exeCRC;
 	req.stagingRoomCreation.iniCRC = TheGlobalData->m_iniCRC;
 	req.stagingRoomCreation.gameVersion = TheGameSpyInfo->getInternalIP();

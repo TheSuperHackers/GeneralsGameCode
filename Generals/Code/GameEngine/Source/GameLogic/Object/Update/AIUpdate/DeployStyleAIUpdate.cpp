@@ -477,12 +477,12 @@ void DeployStyleAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeployStyleAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 3;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 3;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferBool(&m_hasOutsideCommand);
@@ -519,7 +519,7 @@ void DeployStyleAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeployStyleAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 

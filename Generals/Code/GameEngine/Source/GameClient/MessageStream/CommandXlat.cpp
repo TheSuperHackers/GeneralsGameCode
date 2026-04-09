@@ -1924,8 +1924,8 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 			{
 
 				// Now, this just tricks the AI  into making the hijacker run towards the target vehicle
-        // I must add a test to keep him from actually entering an enemy vehicle (contained)... Lorenzen
-        msgType = createEnterMessage( draw, type );
+				// I must add a test to keep him from actually entering an enemy vehicle (contained)... Lorenzen
+				msgType = createEnterMessage( draw, type );
 
 			}
 			else

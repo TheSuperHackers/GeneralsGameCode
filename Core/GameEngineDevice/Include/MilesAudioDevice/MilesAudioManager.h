@@ -80,8 +80,8 @@ struct PlayingAudio
 
 struct ProviderInfo
 {
-  AsciiString name;
-  HPROVIDER id;
+	AsciiString name;
+	HPROVIDER id;
 	Bool m_isValid;
 };
 
@@ -225,7 +225,7 @@ class MilesAudioManager : public AudioManager
 		virtual void closeAnySamplesUsingFile( const void *fileToClose ) override;
 
 
-    virtual Bool has3DSensitiveStreamsPlaying() const override;
+	virtual Bool has3DSensitiveStreamsPlaying() const override;
 
 
 	protected:

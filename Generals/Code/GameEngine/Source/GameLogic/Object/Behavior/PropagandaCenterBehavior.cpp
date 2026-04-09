@@ -57,7 +57,7 @@ PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void PropagandaCenterBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  PrisonBehaviorModuleData::buildFieldParse( p );
+	PrisonBehaviorModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -67,7 +67,7 @@ PropagandaCenterBehaviorModuleData::PropagandaCenterBehaviorModuleData()
 
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

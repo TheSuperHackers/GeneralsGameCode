@@ -131,7 +131,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_SUPPLY_CENTER );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_SUPPLY_CENTER );
 
 	//Steal cash!
 	Money *targetMoney = other->getControllingPlayer()->getMoney();

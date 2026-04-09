@@ -1150,7 +1150,7 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 Bool AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D *retPos, Int playerNdx, Real weaponRadius)
 {
 
-  Bool success = FALSE;
+	Bool success = FALSE;
 
 	Region2D bounds;
 	getPlayerStructureBounds(&bounds, playerNdx);
@@ -1288,10 +1288,10 @@ Bool AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord
 	veryBestPos.z = TheTerrainLogic->getGroundHeight(veryBestPos.x, veryBestPos.y);
 	*retPos = veryBestPos;
 
-  success = ( cash > -1 );
+	success = ( cash > -1 );
 
 
-  return success;
+	return success;
 
 
 }
@@ -1994,7 +1994,7 @@ Bool AIPlayer::calcClosestConstructionZoneLocation( const ThingTemplate *constru
 		return FALSE;
 	}
 
-  Bool success = FALSE;
+	Bool success = FALSE;
 
 	// offset back towards the base.
 	Coord2D offset;
@@ -2073,18 +2073,18 @@ Bool AIPlayer::calcClosestConstructionZoneLocation( const ThingTemplate *constru
 	{
 		//We succeeded in calculating the best position.
 		location->set( &newPos );
-    success = TRUE;
+		success = TRUE;
 	}
 	else
 	{
 		//We failed to calculate a position, so zero out the position.
 		location->zero();
-    success = FALSE;
+		success = FALSE;
 	}
 
 	TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
 
-  return success;
+	return success;
 
 }
 

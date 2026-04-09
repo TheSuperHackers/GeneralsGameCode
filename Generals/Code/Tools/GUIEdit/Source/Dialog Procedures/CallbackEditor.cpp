@@ -306,14 +306,14 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 			Int notifyCode = HIWORD( wParam );  // notification code
 //			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( LOWORD( wParam ) )
-      {
+			switch( LOWORD( wParam ) )
+			{
 
 				// --------------------------------------------------------------------
 				case LIST_WINDOWS:
@@ -356,7 +356,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
 
 					// save callbacks, set current window to empty and end dialog
@@ -369,21 +369,21 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 					// end dialog
 					EndDialog( hWndDialog, TRUE );
 
-          break;
+					break;
 
 				}
 
-      }
+			}
 
-      return 0;
+			return 0;
 
-    }
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }
+	}
 
 }
 

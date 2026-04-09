@@ -42,7 +42,7 @@ public:
 
 	virtual void					Render() {};	///<draw this object
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;	///<bounding sphere of this object
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;		///<bounding box of this object
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;		///<bounding box of this object
 
 	Int freeWaterTracksResources();	///<free W3D assets used for this track
 	void init( Real width, Real length, const Vector2 &start, const Vector2 &end, const Char *texturename, Int waveTimeOffset);	///<allocate W3D resources and set size

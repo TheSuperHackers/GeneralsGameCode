@@ -112,7 +112,7 @@ static void initGadgetsNoSaveQuit()
 
 void destroyQuitMenu()
 {
-  // destroy the quit menu
+	// destroy the quit menu
 	quitConfirmationWindow = nullptr;
 	if(fullQuitMenuLayout)
 	{
@@ -137,7 +137,7 @@ void destroyQuitMenu()
  */
 static void exitQuitMenu()
 {
-  // destroy the quit menu
+	// destroy the quit menu
 	destroyQuitMenu();
 
 	// clear out all the game data
@@ -149,10 +149,10 @@ static void exitQuitMenu()
 	TheGameLogic->exitGame();
 	// TheGameLogic->clearGameData();
 	// display the menu on top of the shell stack
-  // TheShell->showShell();
+	// TheShell->showShell();
 
 	// this will trigger an exit
-  // TheGameEngine->setQuitting( TRUE );
+	// TheGameEngine->setQuitting( TRUE );
 	TheInGameUI->setClientQuiet( TRUE );
 }
 static void noExitQuitMenu()
@@ -162,7 +162,7 @@ static void noExitQuitMenu()
 
 static void quitToDesktopQuitMenu()
 {
-  // destroy the quit menu
+	// destroy the quit menu
 	destroyQuitMenu();
 
 	if (TheGameLogic->isInGame())
@@ -180,7 +180,7 @@ static void quitToDesktopQuitMenu()
 
 static void surrenderQuitMenu()
 {
-  // destroy the quit menu
+	// destroy the quit menu
 	destroyQuitMenu();
 
 	if (TheVictoryConditions->isLocalAlliedVictory())
@@ -471,15 +471,15 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if( controlID == buttonSaveLoad )
-      {
+			if( controlID == buttonSaveLoad )
+			{
 
 				//
-        // these commented lines (12-11-2002) will allow access to load only when were
-        // viewing an in-game cinema ... but it's brittle, so I'm disableing it for
-        // now and just using the grey button for the whole save/load button for now
-        // during a cinema
-        //
+				// these commented lines (12-11-2002) will allow access to load only when were
+				// viewing an in-game cinema ... but it's brittle, so I'm disableing it for
+				// now and just using the grey button for the whole save/load button for now
+				// during a cinema
+				//
 
 //				SaveLoadLayoutType layoutType = SLLT_SAVE_AND_LOAD;
 
@@ -493,15 +493,15 @@ WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg,
 //				if( TheGameLogic->getInputEnabledMemory() == FALSE )
 //					layoutType = SLLT_LOAD_ONLY;
 
-        saveLoadMenuLayout = TheShell->getSaveLoadMenuLayout();
+				saveLoadMenuLayout = TheShell->getSaveLoadMenuLayout();
 //				saveLoadMenuLayout->runInit( &layoutType );
 				saveLoadMenuLayout->runInit();
 				saveLoadMenuLayout->hide( FALSE );
 				saveLoadMenuLayout->bringForward();
-      }
+			}
 			else if( controlID == buttonExit )
 			{
-        quitConfirmationWindow = QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),/*quitCallback*/exitQuitMenu,noExitQuitMenu);
+				quitConfirmationWindow = QuitMessageBoxYesNo(TheGameText->fetch("GUI:QuitPopupTitle"), TheGameText->fetch("GUI:QuitPopupMessage"),/*quitCallback*/exitQuitMenu,noExitQuitMenu);
 			}
 			else if( controlID == buttonReturn )
 			{

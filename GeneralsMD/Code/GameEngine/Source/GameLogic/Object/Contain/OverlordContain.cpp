@@ -61,7 +61,7 @@ OverlordContainModuleData::OverlordContainModuleData()
 // ------------------------------------------------------------------------------------------------
 void OverlordContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  TransportContainModuleData::buildFieldParse(p);
+	TransportContainModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -70,7 +70,7 @@ void OverlordContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ OverlordContain::OverlordContain( Thing *thing, const ModuleData *moduleData ) :
 {
 	m_redirectionActivated = FALSE;
 
-  m_payloadCreated = FALSE;
+	m_payloadCreated = FALSE;
 
 }
 
@@ -106,7 +106,7 @@ OverlordContain::~OverlordContain()
 
 void OverlordContain::onObjectCreated()
 {
-  OverlordContain::createPayload();
+	OverlordContain::createPayload();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -116,11 +116,11 @@ void OverlordContain::createPayload()
 	OverlordContainModuleData* self = (OverlordContainModuleData*)getOverlordContainModuleData();
 
 
-  // Any number of different passengers can be loaded here at init time
+	// Any number of different passengers can be loaded here at init time
 	Object* object = getObject();
 	ContainModuleInterface *contain = object->getContain();
 	if( contain )
-  {
+	{
 		contain->enableLoadSounds( FALSE );
 
 	  TemplateNameList list = self->m_payloadTemplateNameData;
@@ -141,14 +141,14 @@ void OverlordContain::createPayload()
 				  DEBUG_CRASH( ( "OverlordContain::createPayload: %s is full, or not valid for the payload %s!", object->getName().str(), self->m_initialPayload.name.str() ) );
 			  }
 
-      }
+			}
 
-      ++iter;
-    }
+			++iter;
+		}
 
 		contain->enableLoadSounds( TRUE );
 
-  }
+	}
 
 	m_payloadCreated = TRUE;
 
@@ -365,8 +365,8 @@ void OverlordContain::onContaining( Object *obj, Bool wasSelected )
 		TransportContain::onContaining( obj, wasSelected );
 
 
-    if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
-    {
+		if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
+		{
   		activateRedirectedContain();//Am now carrying something
 
 			// And this contain style explicitly sucks XP from our little friend.
@@ -374,25 +374,25 @@ void OverlordContain::onContaining( Object *obj, Bool wasSelected )
 				obj->getExperienceTracker()->setExperienceSink(getObject()->getID());
 
 
-      if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
-      {
-        StealthUpdate *myStealth =  obj->getStealth();
-        if ( myStealth )
-        {
-          myStealth->receiveGrant( true );
-          // note to anyone... once stealth is granted to this gattlingcannon ( or such )
-          // let its own stealthupdate govern the allowedtostealth cases
-          // a portable structure never gets removed, so...
-        }
-      }
+			if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )
+			{
+				StealthUpdate *myStealth =  obj->getStealth();
+				if ( myStealth )
+				{
+					myStealth->receiveGrant( true );
+					// note to anyone... once stealth is granted to this gattlingcannon ( or such )
+					// let its own stealthupdate govern the allowedtostealth cases
+					// a portable structure never gets removed, so...
+				}
+			}
 
 
 
 
-    }
+		}
 
 
-    return;
+		return;
 	}
 
 	OpenContain::onContaining( obj, wasSelected );
@@ -581,10 +581,10 @@ Bool OverlordContain::isPassengerAllowedToFire( ObjectID id ) const
 	}
 
 
-  if ( getObject() && getObject()->getContainedBy() ) // nested containment voids firing, always
-    return FALSE;
+	if ( getObject() && getObject()->getContainedBy() ) // nested containment voids firing, always
+	return FALSE;
 
-  return TransportContain::isPassengerAllowedToFire();
+	return TransportContain::isPassengerAllowedToFire();
 }
 
 

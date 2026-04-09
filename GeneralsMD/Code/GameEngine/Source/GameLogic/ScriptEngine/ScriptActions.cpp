@@ -387,7 +387,7 @@ void ScriptActions::doEnableObjectSound(const AsciiString& objectName, Bool enab
 		return;
 	}
 
-  drawable->enableAmbientSoundFromScript( enable );
+	drawable->enableAmbientSoundFromScript( enable );
 }
 
 
@@ -1019,11 +1019,11 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 			obj->setOrientation(angle);
 			obj->setPosition( pos );
 
-      if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent
-      {
-        TheTerrainLogic->createCraterInTerrain( obj );
-        TheAI->pathfinder()->addObjectToPathfindMap( obj );
-      }
+			if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent
+			{
+				TheTerrainLogic->createCraterInTerrain( obj );
+				TheAI->pathfinder()->addObjectToPathfindMap( obj );
+			}
 
 
 		}
@@ -1630,10 +1630,10 @@ void ScriptActions::doNamedSetGarrisonEvacDisposition(const AsciiString& unitNam
 	}
 
 	ContainModuleInterface *contain = theUnit->getContain();
-  if( contain )
+	if( contain )
 		contain->setEvacDisposition( (EvacDisposition)disp );
-    // should be safe to cast any-old int to this enum,
-    // since only 1(EVAC_TO_LEFT) and 2(EVAC_TO_RIGHT) differ from default case
+	// should be safe to cast any-old int to this enum,
+	// since only 1(EVAC_TO_LEFT) and 2(EVAC_TO_RIGHT) differ from default case
 
 }
 
@@ -4267,7 +4267,7 @@ void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &pla
 
 
 	        Coord3D location;
-          Bool locationFound = FALSE;
+					Bool locationFound = FALSE;
 
 					locationFound = pPlayer->computeSuperweaponTarget(power, &location, enemyNdx, radius);
 
@@ -4282,7 +4282,7 @@ void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &pla
 						}
 					}
 
-          DEBUG_ASSERTCRASH( locationFound, ("ScriptActions::doSkirmishFireSpecialPowerAtMostCost() could not find a valid (costly) location.") );
+					DEBUG_ASSERTCRASH( locationFound, ("ScriptActions::doSkirmishFireSpecialPowerAtMostCost() could not find a valid (costly) location.") );
 
 					if( locationFound && location.lengthSqr() > 0.0f )
 					{
@@ -6519,10 +6519,10 @@ void ScriptActions::doNamedSetTrainHeld( const AsciiString &locoName, const Bool
 		static const NameKeyType rrkey = NAMEKEY( "RailroadBehavior" );
 		RailroadBehavior *rBehavior = (RailroadBehavior*)obj->findUpdateModule( rrkey );
 
-    if ( rBehavior )
-    {
-      rBehavior->RailroadBehavior::setHeld( set );
-    }
+		if ( rBehavior )
+		{
+			rBehavior->RailroadBehavior::setHeld( set );
+		}
 
 	}
 }
@@ -6772,9 +6772,9 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 		case ScriptAction::TEAM_EXIT_ALL:
 			doTeamExitAll(pAction->getParameter(0)->getString());
 			return;
-    case ScriptAction::NAMED_SET_EVAC_LEFT_OR_RIGHT:
-      doNamedSetGarrisonEvacDisposition(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt());
-      return;
+		case ScriptAction::NAMED_SET_EVAC_LEFT_OR_RIGHT:
+			doNamedSetGarrisonEvacDisposition(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt());
+			return;
 		case ScriptAction::NAMED_FOLLOW_WAYPOINTS:
 			doNamedFollowWaypoints(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getString());
 			return;

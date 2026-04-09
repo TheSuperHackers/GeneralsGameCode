@@ -137,15 +137,15 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return nullptr;
-    }
+			return nullptr;
+		}
 
 	  if (m_weapon)
 	  {
 		  TheWeaponStore->createAndFireTempWeapon( m_weapon, primaryObj, secondary );
 	  }
 		return nullptr;
-  }
+	}
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
@@ -184,8 +184,8 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return nullptr;
-    }
+			return nullptr;
+		}
 
 		// Star trekkin, across the universe.
 		// Boldly going forward now, cause we can't find reverse!
@@ -213,7 +213,7 @@ public:
 			rd->killWhenNoLongerAttacking(true);
 		}
 		return nullptr;
-  }
+	}
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
@@ -271,8 +271,8 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return nullptr;
-    }
+			return nullptr;
+		}
 
 		Team* owner = primaryObj ? primaryObj->getControllingPlayer()->getDefaultTeam() : nullptr;
 
@@ -568,7 +568,7 @@ private:
 	};
 
 	//Specific data needed to create the transport(s), internal payload, and initial physics.
-  AsciiString           m_transportName;
+	AsciiString           m_transportName;
 	AsciiString						m_putInContainerName;
 	std::vector<Payload>	m_payload;
 	Real									m_formationSpacing;
@@ -625,8 +625,8 @@ public:
 		{
 			/// @todo srj -- ack. const_cast is evil.
 			PhysicsBehavior* p = const_cast<Object*>(primary)->getPhysics();
-      if (p)
-      {
+			if (p)
+			{
 				Coord3D force;
 				calcRandomForce(m_minMag, m_maxMag, m_minPitch, m_maxPitch, &force);
 				p->applyForce(&force);
@@ -637,11 +637,11 @@ public:
 			  p->setYawRate(yaw);
 			  p->setRollRate(roll);
 			  p->setPitchRate(pitch);
-      }
-      else
-      {
+			}
+			else
+			{
   			DEBUG_CRASH(("You must have a Physics module source for this effect"));
-      }
+			}
 		}
 		else
 		{
@@ -1046,12 +1046,12 @@ protected:
 					physics->setAllowToFall(true);
 			}
 
-      //Lorenzen sez:
-      //Since the sneak attack is a structure created with an ocl, it bypasses a lot of the
-      //goodness that it would have gotten from dozerAI::build( the normal way to make structures )
-      // but, since it is a building... lets stamp it down in the pathfind map, here.
-      if ( obj->isKindOf( KINDOF_STRUCTURE ) )
-      {
+			//Lorenzen sez:
+			//Since the sneak attack is a structure created with an ocl, it bypasses a lot of the
+			//goodness that it would have gotten from dozerAI::build( the normal way to make structures )
+			// but, since it is a building... lets stamp it down in the pathfind map, here.
+			if ( obj->isKindOf( KINDOF_STRUCTURE ) )
+			{
 	      // Flatten the terrain underneath the object, then adjust to the flattened height. jba.
 	      TheTerrainLogic->flattenTerrain(obj);
 	      Coord3D adjustedPos = *obj->getPosition();
@@ -1060,7 +1060,7 @@ protected:
 	      // Note - very important that we add to map AFTER we flatten terrain. jba.
 	      TheAI->pathfinder()->addObjectToPathfindMap( obj );
 
-      }
+			}
 
 
 
@@ -1252,8 +1252,8 @@ protected:
 
 
 
-    if ( m_diesOnBadLand && obj )
-    {
+		if ( m_diesOnBadLand && obj )
+		{
 	    // if we land in the water, we die. alas.
 	    const Coord3D* riderPos = obj->getPosition();
 	    Real waterZ, terrainZ;
@@ -1288,12 +1288,12 @@ protected:
 		    obj->kill();
 	    }
 
-  // Note: for future enhancement of this feature, we should test the object against the cell type he is on,
-  // using obj->getAI()->hasLocomotorForSurface( __ ). We cshould not assume here that the object can not
-  // find happiness on cliffs or water or whatever.
+			// Note: for future enhancement of this feature, we should test the object against the cell type he is on,
+			// using obj->getAI()->hasLocomotorForSurface( __ ). We cshould not assume here that the object can not
+			// find happiness on cliffs or water or whatever.
 
 
-    }
+		}
 
 
 
@@ -1497,7 +1497,7 @@ private:
 	Bool											m_fadeOut;
 	Bool											m_ignorePrimaryObstacle;
 	Bool											m_inheritsVeterancy;
-  Bool                      m_diesOnBadLand;
+	Bool                      m_diesOnBadLand;
 	Bool											m_skipIfSignificantlyAirborne;
 
 };
@@ -1604,8 +1604,8 @@ const ObjectCreationList *ObjectCreationListStore::findObjectCreationList(const 
 	if (stricmp(name, "None") == 0)
 		return nullptr;
 
-  ObjectCreationListMap::const_iterator it = m_ocls.find(NAMEKEY(name));
-  if (it == m_ocls.end())
+	ObjectCreationListMap::const_iterator it = m_ocls.find(NAMEKEY(name));
+	if (it == m_ocls.end())
 	{
 		return nullptr;
 	}

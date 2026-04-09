@@ -87,7 +87,7 @@ CMainFrame::~CMainFrame()
 	TheMainFrame = nullptr;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "AutoSave", m_autoSave);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "AutoSaveIntervalSeconds", m_autoSaveInterval);
-    CoUninitialize();
+	CoUninitialize();
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)

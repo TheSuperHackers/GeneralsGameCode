@@ -174,7 +174,7 @@ public:
 	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion,
 																				Bool (*callback)( Drawable *draw, void *userData ),
 																				void *userData ) {return 0;};
-  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
+	virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {};  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {};  ///< transform screen point to world point at the specified world Z value
 	virtual void getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
@@ -2209,8 +2209,8 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWMAPBOUNDARIES, OnUpdateViewShowMapBoundaries)
 	ON_COMMAND(ID_VIEW_SHOWAMBIENTSOUNDS, OnViewShowAmbientSounds)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWAMBIENTSOUNDS, OnUpdateViewShowAmbientSounds)
-  ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
-  ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_SOUND_CIRCLES, OnUpdateViewShowSoundCircles)
+ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
+ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_SOUND_CIRCLES, OnUpdateViewShowSoundCircles)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -2352,7 +2352,7 @@ int WbView3d::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_showLayersList = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowLayersList", 0);
 	m_showMapBoundaries = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowMapBoundaries", 0);
 	m_showAmbientSounds = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowAmbientSounds", 0);
-  m_showSoundCircles = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", 0);
+	m_showSoundCircles = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", 0);
 
 	DrawObject::setDoBoundaryFeedback(m_showMapBoundaries);
 	DrawObject::setDoAmbientSoundFeedback(m_showAmbientSounds);
@@ -2382,42 +2382,42 @@ void WbView3d::OnPaint()
 /// Draw a (not very good) circle into the hdc
 void WbView3d::drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color )
 {
-  CPoint rulerPoints[2];
-  Coord3D pnt;
-  Real angle = 0.0f;
-  Real inc = PI/4.0f;
+	CPoint rulerPoints[2];
+	Coord3D pnt;
+	Real angle = 0.0f;
+	Real inc = PI/4.0f;
 
-  // Create and select a correctly colored pen. Remember the old one so that it can be restored.
-  HPEN pen = CreatePen(PS_SOLID, 2, color);
-  HPEN penOld = (HPEN)SelectObject(hdc, pen);
+	// Create and select a correctly colored pen. Remember the old one so that it can be restored.
+	HPEN pen = CreatePen(PS_SOLID, 2, color);
+	HPEN penOld = (HPEN)SelectObject(hdc, pen);
 
 
-  // Get the starting point on the circumference of the circle.
-  pnt.x = centerPoint.x + radius * (Real)cosf(angle);
-  pnt.y = centerPoint.y + radius * (Real)sinf(angle);
-  pnt.z = centerPoint.z;
-  docToViewCoords(pnt, &rulerPoints[0]);
+	// Get the starting point on the circumference of the circle.
+	pnt.x = centerPoint.x + radius * (Real)cosf(angle);
+	pnt.y = centerPoint.y + radius * (Real)sinf(angle);
+	pnt.z = centerPoint.z;
+	docToViewCoords(pnt, &rulerPoints[0]);
 
-  angle += inc;
-  for(; angle <= 2.0f * PI; angle += inc) {
+	angle += inc;
+	for(; angle <= 2.0f * PI; angle += inc) {
 		// Get a new point on the circumference of the circle.
 		pnt.x = centerPoint.x + radius * (Real)cosf(angle);
-    pnt.y = centerPoint.y + radius * (Real)sinf(angle);
-    pnt.z = centerPoint.z;
+		pnt.y = centerPoint.y + radius * (Real)sinf(angle);
+		pnt.z = centerPoint.z;
 
-    docToViewCoords(pnt, &rulerPoints[1]);
+		docToViewCoords(pnt, &rulerPoints[1]);
 
-    ::Polyline(hdc, rulerPoints, 2);
+		::Polyline(hdc, rulerPoints, 2);
 
-    // Remember the last point to use as the starting point for the next line.
-    rulerPoints[0].x = rulerPoints[1].x;
-    rulerPoints[0].y = rulerPoints[1].y;
-  }
+		// Remember the last point to use as the starting point for the next line.
+		rulerPoints[0].x = rulerPoints[1].x;
+		rulerPoints[0].y = rulerPoints[1].y;
+	}
 
-  // Restore previous pen.
-  SelectObject(hdc, penOld);
-  // Delete new pen.
-  DeleteObject(pen);
+	// Restore previous pen.
+	SelectObject(hdc, penOld);
+	// Delete new pen.
+	DeleteObject(pen);
 }
 
 
@@ -2553,23 +2553,23 @@ void WbView3d::drawLabels(HDC hdc)
 
 	if (hdc && m_doRulerFeedback) {
 		if (m_doRulerFeedback == RULER_LINE) {
-      // Change world coords to screen viewport coords.
-      CPoint rulerPoints[2];
-      docToViewCoords(m_rulerPoints[0], &rulerPoints[0]);
-      docToViewCoords(m_rulerPoints[1], &rulerPoints[1]);
+			// Change world coords to screen viewport coords.
+			CPoint rulerPoints[2];
+			docToViewCoords(m_rulerPoints[0], &rulerPoints[0]);
+			docToViewCoords(m_rulerPoints[1], &rulerPoints[1]);
 
-      // Create and select a green pen. Remember the old one so that it can be restored.
-      HPEN pen = CreatePen(PS_SOLID, 2, RGB(0,255,0));
-      HPEN penOld = (HPEN)SelectObject(hdc, pen);
-      // Draw the line ruler.
+			// Create and select a green pen. Remember the old one so that it can be restored.
+			HPEN pen = CreatePen(PS_SOLID, 2, RGB(0,255,0));
+			HPEN penOld = (HPEN)SelectObject(hdc, pen);
+			// Draw the line ruler.
 			::Polyline(hdc, rulerPoints, 2);
 
-      // Restore previous pen.
-      SelectObject(hdc, penOld);
-      // Delete new pen.
-      DeleteObject(pen);
+			// Restore previous pen.
+			SelectObject(hdc, penOld);
+			// Delete new pen.
+			DeleteObject(pen);
 		} else if (m_doRulerFeedback == RULER_CIRCLE) {
-      drawCircle( hdc, m_rulerPoints[0], m_rulerLength, RGB( 0, 255, 0 ) );
+			drawCircle( hdc, m_rulerPoints[0], m_rulerLength, RGB( 0, 255, 0 ) );
 		}
 	}
 
@@ -3252,14 +3252,14 @@ void WbView3d::OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI)
 
 void WbView3d::OnViewShowSoundCircles()
 {
-  m_showSoundCircles = !m_showSoundCircles;
-  ::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", m_showSoundCircles ? 1 : 0);
-  resetRenderObjects();
-  invalObjectInView(nullptr);
+	m_showSoundCircles = !m_showSoundCircles;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", m_showSoundCircles ? 1 : 0);
+	resetRenderObjects();
+	invalObjectInView(nullptr);
 }
 
 void WbView3d::OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI)
 {
-  pCmdUI->SetCheck(m_showSoundCircles ? 1 : 0);
+	pCmdUI->SetCheck(m_showSoundCircles ? 1 : 0);
 }
 

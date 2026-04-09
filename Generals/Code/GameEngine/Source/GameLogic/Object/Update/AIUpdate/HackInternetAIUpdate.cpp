@@ -210,12 +210,12 @@ void HackInternetAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HackInternetAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 	xfer->xferBool(&m_hasPendingCommand);
 	if (m_hasPendingCommand) {
@@ -228,7 +228,7 @@ void HackInternetAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HackInternetAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 
@@ -265,10 +265,10 @@ void UnpackingState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void UnpackingState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
 }
@@ -354,10 +354,10 @@ void PackingState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void PackingState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
 }
@@ -430,10 +430,10 @@ void HackInternetState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HackInternetState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
 }

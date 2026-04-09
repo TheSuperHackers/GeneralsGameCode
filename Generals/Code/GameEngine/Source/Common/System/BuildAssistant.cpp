@@ -431,7 +431,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
 	}
 
-  return nullptr;
+	return nullptr;
 
 }
 

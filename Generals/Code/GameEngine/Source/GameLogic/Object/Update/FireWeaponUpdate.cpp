@@ -45,14 +45,14 @@ FireWeaponUpdateModuleData::FireWeaponUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void FireWeaponUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "Weapon",	INI::parseWeaponTemplate,	nullptr, offsetof( FireWeaponUpdateModuleData, m_weaponTemplate ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -97,7 +97,7 @@ Line3DClass::Line3DClass (const Vector3 & start, const Vector3 & end,
 	float width, float r, float g, float b, float opacity)
 {
 	Length = (end - start).Length();
-   Width = width;
+	Width = width;
 
 	// Create box model with origin at start point (X is major axis).
 
@@ -190,7 +190,7 @@ Line3DClass & Line3DClass::operator = (const Line3DClass & that)
 
 	if (this != &that) {
 		Length = that.Length;
-      Width = that.Width;
+		Width = that.Width;
 		Shader=that.Shader;
 		Color=that.Color;
 		for (int i=0; i<8; i++)
@@ -322,13 +322,13 @@ void Line3DClass::Scale(float scale)
 {
 	for (int i=0; i<8; i++) vert[i]*=scale;
 	Length *= scale;
-   Width *= scale;
+	Width *= scale;
 
-   Invalidate_Cached_Bounding_Volumes();
+	Invalidate_Cached_Bounding_Volumes();
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
 
@@ -353,13 +353,13 @@ void Line3DClass::Scale(float scalex, float scaley, float scalez)
 	Vector3 scale(scalex,scaley,scalez);
 	for (int i=0; i<8; i++) vert[i].Scale(scale);
 	Length *= scalex;
-   Width *= scaley;
+	Width *= scaley;
 
-   Invalidate_Cached_Bounding_Volumes();
+	Invalidate_Cached_Bounding_Volumes();
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
 
@@ -406,11 +406,11 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end)
 	transform.Obj_Look_At(new_start, new_end, 0.0);
 	Set_Transform(transform);
 
-   Invalidate_Cached_Bounding_Volumes();
+	Invalidate_Cached_Bounding_Volumes();
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
 
@@ -434,16 +434,16 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end, floa
 	if (new_length == 0) {
 		new_length = 0.001f;			// make sure we don't have a zero length BMG
 	}
-   float width_scale = new_width / Width;
+	float width_scale = new_width / Width;
 	Scale((new_length / Length), width_scale, width_scale);
 	Length = new_length;
-   Width = new_width;
+	Width = new_width;
 
 	// Adjust transform of line:
 	Matrix3D transform(true);
 	transform.Obj_Look_At(new_start, new_end, 0.0);
 	Set_Transform(transform);
-   Matrix3D inv;
+	Matrix3D inv;
 	transform.Get_Orthogonal_Inverse(inv);
 #ifdef ALLOW_TEMPORARIES
 //   Vector3 test = inv * Vector3(new_end);
@@ -452,11 +452,11 @@ void Line3DClass::Reset(const Vector3 & new_start, const Vector3 & new_end, floa
 //		inv.mulVector3(new_end, test);
 #endif
 
-   Invalidate_Cached_Bounding_Volumes();
+	Invalidate_Cached_Bounding_Volumes();
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
 

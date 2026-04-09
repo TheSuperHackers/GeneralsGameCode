@@ -1010,7 +1010,7 @@ Bool ActionManager::canCaptureBuilding( const Object *obj, const Object *objectT
 	if (appearsToContainFriendlies(obj, objectToCapture))
 		return FALSE;
 
-  return TRUE;
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------

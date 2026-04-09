@@ -71,7 +71,7 @@ W3DTankTruckDrawModuleData::~W3DTankTruckDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DTankTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -95,7 +95,7 @@ void W3DTankTruckDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "TreadDriveSpeedFraction", INI::parseReal, nullptr, offsetof(W3DTankTruckDrawModuleData, m_treadDriveSpeedFraction) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

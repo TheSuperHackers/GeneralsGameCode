@@ -198,7 +198,7 @@ void AttackPriorityInfo::dumpPriorityInfo()
 	DEBUG_LOG(("Attack priority '%s', default %d", m_name.str(), m_defaultPriority));
 	if (m_priorityMap==nullptr) return;
 	for (AttackPriorityMap::const_iterator it = m_priorityMap->begin(); it != m_priorityMap->end(); ++it)
-    {
+	{
 		const ThingTemplate *tThing = (*it).first;
 		Int priority = (*it).second;
 		DEBUG_LOG(("  Thing '%s' priority %d",tThing->getName().str(), priority));
@@ -898,7 +898,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[0] = "Build a building of type ";
 	curTemplate->m_uiStrings[1] = ".";
 
-  curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_SUPPLY_CENTER];
+	curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_SUPPLY_CENTER];
 	curTemplate->m_internalName = "AI_PLAYER_BUILD_SUPPLY_CENTER";
 	curTemplate->m_uiName = "Player_/AI/AI player build near a supply source.";
 	curTemplate->m_numParameters = 3;
@@ -911,7 +911,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[2] = " near a supply source with at least ";
 	curTemplate->m_uiStrings[3] = " available resources.";
 
-  curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_TYPE_NEAREST_TEAM];
+	curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_TYPE_NEAREST_TEAM];
 	curTemplate->m_internalName = "AI_PLAYER_BUILD_TYPE_NEAREST_TEAM";
 	curTemplate->m_uiName = "Player_/AI/AI player build nearest specified team.";
 	curTemplate->m_numParameters = 3;
@@ -924,7 +924,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[2] = " nearest team ";
 	curTemplate->m_uiStrings[3] = ".";
 
-  curTemplate = &m_actionTemplates[ScriptAction::TEAM_GUARD_SUPPLY_CENTER];
+	curTemplate = &m_actionTemplates[ScriptAction::TEAM_GUARD_SUPPLY_CENTER];
 	curTemplate->m_internalName = "TEAM_GUARD_SUPPLY_CENTER";
 	curTemplate->m_uiName = "Team_/Guard/Set to guard a supply source.";
 	curTemplate->m_numParameters = 2;
@@ -935,7 +935,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[1] = " guard attacked or closest supply source with at least ";
 	curTemplate->m_uiStrings[2] = " available resources";
 
-  curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_UPGRADE];
+	curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_UPGRADE];
 	curTemplate->m_internalName = "AI_PLAYER_BUILD_UPGRADE";
 	curTemplate->m_uiName = "Player_/AI/AI player build an upgrade.";
 	curTemplate->m_numParameters = 2;
@@ -4066,28 +4066,28 @@ void ScriptEngine::init()
 	curTemplate->m_uiName = "Unit/ Set which side of a container (likely a train) you want the riders to exit on.";
 	curTemplate->m_numParameters = 2;
 	curTemplate->m_parameters[0] = Parameter::UNIT;
-  curTemplate->m_parameters[1] = Parameter::LEFT_OR_RIGHT;
+	curTemplate->m_parameters[1] = Parameter::LEFT_OR_RIGHT;
 	curTemplate->m_numUiStrings = 2;
 	curTemplate->m_uiStrings[0] = " ";
 	curTemplate->m_uiStrings[1] = " will exit its riders on its ";
 
-  curTemplate = &m_actionTemplates[ScriptAction::ENABLE_OBJECT_SOUND];
-  curTemplate->m_internalName = "ENABLE_OBJECT_SOUND";
-  curTemplate->m_uiName = "Multimedia_/Sound Effect/Enable object's ambient sound";
-  curTemplate->m_numParameters = 1;
-  curTemplate->m_parameters[0] = Parameter::UNIT;
-  curTemplate->m_numUiStrings = 2;
-  curTemplate->m_uiStrings[0] = "Enable (or trigger) ";
-  curTemplate->m_uiStrings[1] = "'s ambient sound.";
+	curTemplate = &m_actionTemplates[ScriptAction::ENABLE_OBJECT_SOUND];
+	curTemplate->m_internalName = "ENABLE_OBJECT_SOUND";
+	curTemplate->m_uiName = "Multimedia_/Sound Effect/Enable object's ambient sound";
+	curTemplate->m_numParameters = 1;
+	curTemplate->m_parameters[0] = Parameter::UNIT;
+	curTemplate->m_numUiStrings = 2;
+	curTemplate->m_uiStrings[0] = "Enable (or trigger) ";
+	curTemplate->m_uiStrings[1] = "'s ambient sound.";
 
-  curTemplate = &m_actionTemplates[ScriptAction::DISABLE_OBJECT_SOUND];
-  curTemplate->m_internalName = "DISABLE_OBJECT_SOUND";
-  curTemplate->m_uiName = "Multimedia_/Sound Effect/Disable object's ambient sound";
-  curTemplate->m_numParameters = 1;
-  curTemplate->m_parameters[0] = Parameter::UNIT;
-  curTemplate->m_numUiStrings = 2;
-  curTemplate->m_uiStrings[0] = "Disable ";
-  curTemplate->m_uiStrings[1] = "'s ambient sound.";
+	curTemplate = &m_actionTemplates[ScriptAction::DISABLE_OBJECT_SOUND];
+	curTemplate->m_internalName = "DISABLE_OBJECT_SOUND";
+	curTemplate->m_uiName = "Multimedia_/Sound Effect/Disable object's ambient sound";
+	curTemplate->m_numParameters = 1;
+	curTemplate->m_parameters[0] = Parameter::UNIT;
+	curTemplate->m_numUiStrings = 2;
+	curTemplate->m_uiStrings[0] = "Disable ";
+	curTemplate->m_uiStrings[1] = "'s ambient sound.";
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6932,7 +6932,7 @@ void ScriptEngine::checkConditionsForTeamNames(Script *pScript)
 		if (!singletonTeamName.isEmpty()) {
 			pScript->setConditionTeamName(singletonTeamName);
 		}
-  } else {
+	} else {
 		pScript->setConditionTeamName(multiTeamName);
 	}
 
@@ -7008,7 +7008,7 @@ void ScriptEngine::executeScript( Script *pScript )
 
 				// Only do this if there are actually false actions.
 				executeActions(pScript->getFalseAction());
-      }
+			}
 		}
 
 	} else {
@@ -7783,13 +7783,13 @@ void ScriptEngine::removeAllSequentialScripts(Object *obj)
 	for (it = m_sequentialScripts.begin(); it != m_sequentialScripts.end(); /* empty */) {
 		SequentialScript *seqScript = (*it);
 		if (!seqScript) {
-      ++it;
+			++it;
 			continue;
 		}
 		if (seqScript->m_objectID == id) {
 			it = cleanupSequentialScript(it, TRUE);
 		}
-    else
+		else
 		  ++it;
 	}
 }

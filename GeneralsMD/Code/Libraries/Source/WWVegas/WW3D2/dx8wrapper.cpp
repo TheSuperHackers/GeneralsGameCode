@@ -582,7 +582,7 @@ bool DX8Wrapper::Create_Device()
 			{
 				return false;
 			}
-        }
+		}
 		else
 		{
 				return false;
@@ -4413,7 +4413,7 @@ const char* DX8Wrapper::Get_DX8_Patch_Edge_Style_Name(unsigned value)
 {
 	switch (value) {
 	case D3DPATCHEDGE_DISCRETE	: return "D3DPATCHEDGE_DISCRETE";
-   case D3DPATCHEDGE_CONTINUOUS:return "D3DPATCHEDGE_CONTINUOUS";
+		case D3DPATCHEDGE_CONTINUOUS:return "D3DPATCHEDGE_CONTINUOUS";
 	default							: return "UNKNOWN";
 	}
 }

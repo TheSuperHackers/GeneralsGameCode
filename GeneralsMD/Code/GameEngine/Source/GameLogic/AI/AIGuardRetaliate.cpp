@@ -310,10 +310,10 @@ void AIGuardRetaliateMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateMachine::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	if (version>=2) {
 		StateMachine::xfer(xfer);	// Forgot this in initial implementation.  jba.
@@ -344,10 +344,10 @@ void AIGuardRetaliateInnerState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateInnerState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 }
 
@@ -467,10 +467,10 @@ void AIGuardRetaliateOuterState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateOuterState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 }
 
@@ -575,10 +575,10 @@ void AIGuardRetaliateReturnState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateReturnState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextReturnScanTime);
 }
@@ -645,10 +645,10 @@ void AIGuardRetaliateIdleState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateIdleState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextEnemyScanTime);
 }
@@ -859,10 +859,10 @@ void AIGuardRetaliateAttackAggressorState::crc( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 void AIGuardRetaliateAttackAggressorState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 }
 

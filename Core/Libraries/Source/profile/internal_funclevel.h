@@ -33,21 +33,21 @@
 
 class ProfileFuncLevelTracer
 {
-  friend class ProfileCmdInterface;
+	friend class ProfileCmdInterface;
 
-  // can't copy this
-  ProfileFuncLevelTracer(const ProfileFuncLevelTracer&);
-  ProfileFuncLevelTracer& operator=(const ProfileFuncLevelTracer&);
+	// can't copy this
+	ProfileFuncLevelTracer(const ProfileFuncLevelTracer&);
+	ProfileFuncLevelTracer& operator=(const ProfileFuncLevelTracer&);
 
 public:
-  enum
+	enum
   {
     // # of simultaneous frame recordings
     MAX_FRAME_RECORDS = 4
   };
 
-  /// simple unique unsigned/unsigned map
-  class UnsignedMap
+	/// simple unique unsigned/unsigned map
+	class UnsignedMap
   {
     UnsignedMap(const UnsignedMap&);
     UnsignedMap& operator=(const UnsignedMap&);
@@ -85,8 +85,8 @@ public:
     void MixIn(const UnsignedMap &src);
   };
 
-  /// profile entry
-  struct Profile
+	/// profile entry
+	struct Profile
   {
     /// call count
     __int64 callCount;
@@ -120,8 +120,8 @@ public:
     }
   };
 
-  /// map of profiles
-  class ProfileMap
+	/// map of profiles
+	class ProfileMap
   {
     ProfileMap(const ProfileMap&);
     ProfileMap& operator=(const ProfileMap&);
@@ -144,8 +144,8 @@ public:
     void MixIn(int frame, const Profile &p);
   };
 
-  /// function entry (map address -> Function)
-  struct Function
+	/// function entry (map address -> Function)
+	struct Function
   {
     /// address of this function
     unsigned addr;
@@ -181,8 +181,8 @@ public:
     }
   };
 
-  ProfileFuncLevelTracer();
-  ~ProfileFuncLevelTracer();
+	ProfileFuncLevelTracer();
+	~ProfileFuncLevelTracer();
 
   /**
     Enters the function at the given address.
@@ -191,7 +191,7 @@ public:
     @param esp current ESP value
     @param ret return address for given function
   */
-  void Enter(unsigned addr, unsigned esp, unsigned ret);
+	void Enter(unsigned addr, unsigned esp, unsigned ret);
 
   /**
     Leaves the function at the ESP value.
@@ -201,61 +201,61 @@ public:
     @param esp current ESP value
     @return return address
   */
-  unsigned Leave(unsigned esp);
+	unsigned Leave(unsigned esp);
 
   /**
     Shutdown function.
   */
-  static void Shutdown();
+	static void Shutdown();
 
   /**
     Starts frame based profiling, starts a new frame.
   */
-  static int FrameStart();
+	static int FrameStart();
 
   /**
     Ends frame based profiling.
   */
-  static void FrameEnd(int which, int mixIndex);
+	static void FrameEnd(int which, int mixIndex);
 
   /**
     Clears all total values.
   */
-  static void ClearTotals();
+	static void ClearTotals();
 
   /**
     Retrieves the first function level tracer.
 
     \return first function level tracer
   */
-  static ProfileFuncLevelTracer *GetFirst()
-  {
-    return head;
-  }
+	static ProfileFuncLevelTracer *GetFirst()
+	{
+		return head;
+	}
 
   /**
     Retrieves next function level tracer.
 
     \return next function level tracer, nullptr if none
   */
-  ProfileFuncLevelTracer *GetNext()
-  {
-    return next;
-  }
+	ProfileFuncLevelTracer *GetNext()
+	{
+		return next;
+	}
 
-  Function *FindFunction(unsigned addr)
-  {
-    return func.Find(addr);
-  }
+	Function *FindFunction(unsigned addr)
+	{
+		return func.Find(addr);
+	}
 
-  Function *EnumFunction(unsigned index)
-  {
-    return func.Enumerate(index);
-  }
+	Function *EnumFunction(unsigned index)
+	{
+		return func.Enumerate(index);
+	}
 
 private:
-  /// single stack entry
-  struct StackEntry
+	/// single stack entry
+	struct StackEntry
   {
     /// function
     Function *func;
@@ -273,8 +273,8 @@ private:
     __int64 tickSubTime;
   };
 
-  /// map of functions
-  class FunctionMap
+	/// map of functions
+	class FunctionMap
   {
     FunctionMap(const FunctionMap&);
     FunctionMap& operator=(const FunctionMap&);
@@ -303,57 +303,57 @@ private:
     Function *Enumerate(int index);
   };
 
-  /// head of list
-  static ProfileFuncLevelTracer *head;
+	/// head of list
+	static ProfileFuncLevelTracer *head;
 
-  /// next tracer object
-  ProfileFuncLevelTracer *next;
+	/// next tracer object
+	ProfileFuncLevelTracer *next;
 
-  /// are we in shutdown mode?
-  static bool shuttingDown;
+	/// are we in shutdown mode?
+	static bool shuttingDown;
 
-  /// stack
-  StackEntry *stack;
+	/// stack
+	StackEntry *stack;
 
-  /// number of used entries
-  int usedStack;
+	/// number of used entries
+	int usedStack;
 
-  /// total number of entries
-  int totalStack;
+	/// total number of entries
+	int totalStack;
 
-  /// max call depth
-  int maxDepth;
+	/// max call depth
+	int maxDepth;
 
-  /// current frame
-  static int curFrame;
+	/// current frame
+	static int curFrame;
 
-  /// function map
-  FunctionMap func;
+	/// function map
+	FunctionMap func;
 
-  /// bit mask, currently recording which cur[] entries?
-  static unsigned frameRecordMask;
+	/// bit mask, currently recording which cur[] entries?
+	static unsigned frameRecordMask;
 
-  /// record caller information?
-  static bool recordCaller;
+	/// record caller information?
+	static bool recordCaller;
 };
 
 inline void ProfileFuncLevelTracer::UnsignedMap::Insert(unsigned val, int countAdd)
 {
-  // in hash?
-  unsigned at=(val/16)%HASH_SIZE;
-  for (Entry *e=hash[at];e;e=e->next)
-    if (e->val==val)
-    {
-      e->count+=countAdd;
-      return;
-    }
-  _Insert(at,val,countAdd);
+	// in hash?
+	unsigned at=(val/16)%HASH_SIZE;
+	for (Entry *e=hash[at];e;e=e->next)
+	if (e->val==val)
+	{
+		e->count+=countAdd;
+		return;
+	}
+	_Insert(at,val,countAdd);
 }
 
 inline ProfileFuncLevelTracer::Function *ProfileFuncLevelTracer::FunctionMap::Find(unsigned addr)
 {
-  for (Entry *e=hash[(addr/16)%HASH_SIZE];e;e=e->next)
-    if (e->funcPtr->addr==addr)
-      return e->funcPtr;
-  return nullptr;
+	for (Entry *e=hash[(addr/16)%HASH_SIZE];e;e=e->next)
+	if (e->funcPtr->addr==addr)
+	return e->funcPtr;
+	return nullptr;
 }

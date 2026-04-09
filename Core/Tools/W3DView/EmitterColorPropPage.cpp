@@ -54,10 +54,10 @@ EmitterColorPropPageClass::EmitterColorPropPageClass (EmitterInstanceListClass *
 	  CPropertyPage (EmitterColorPropPageClass::IDD)
 {
 
-  ::memset (&m_OrigColors, 0, sizeof (m_OrigColors));
-  ::memset (&m_OrigOpacities, 0, sizeof (m_OrigOpacities));
-  ::memset (&m_CurrentColors, 0, sizeof (m_CurrentColors));
-  ::memset (&m_CurrentOpacities, 0, sizeof (m_CurrentOpacities));
+	::memset (&m_OrigColors, 0, sizeof (m_OrigColors));
+	::memset (&m_OrigOpacities, 0, sizeof (m_OrigOpacities));
+	::memset (&m_CurrentColors, 0, sizeof (m_CurrentColors));
+	::memset (&m_CurrentOpacities, 0, sizeof (m_CurrentOpacities));
 
 	//{{AFX_DATA_INIT(EmitterColorPropPageClass)
 	//}}AFX_DATA_INIT

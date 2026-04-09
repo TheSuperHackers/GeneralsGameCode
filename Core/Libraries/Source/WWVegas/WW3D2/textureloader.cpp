@@ -1559,7 +1559,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 	WW3DFormat dest_format=src_format;
 	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
 
-   if (	src_format != WW3D_FORMAT_A8R8G8B8
+	if (	src_format != WW3D_FORMAT_A8R8G8B8
    	&&	src_format != WW3D_FORMAT_R8G8B8
   		&&	src_format != WW3D_FORMAT_X8R8G8B8 )
 	{
@@ -2339,7 +2339,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load()
 	WW3DFormat dest_format=src_format;
 	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
 
-   if (		src_format != WW3D_FORMAT_A8R8G8B8
+	if (		src_format != WW3D_FORMAT_A8R8G8B8
    		&&	src_format != WW3D_FORMAT_R8G8B8
   			&&	src_format != WW3D_FORMAT_X8R8G8B8 )
 	{
@@ -2705,7 +2705,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load()
 	WW3DFormat dest_format=src_format;
 	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
 
-   if (		src_format != WW3D_FORMAT_A8R8G8B8
+	if (		src_format != WW3D_FORMAT_A8R8G8B8
    		&&	src_format != WW3D_FORMAT_R8G8B8
   			&&	src_format != WW3D_FORMAT_X8R8G8B8 )
 	{

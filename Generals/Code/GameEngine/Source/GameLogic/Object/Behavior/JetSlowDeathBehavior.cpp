@@ -81,7 +81,7 @@ JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void JetSlowDeathBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  SlowDeathBehaviorModuleData::buildFieldParse( p );
+	SlowDeathBehaviorModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -115,7 +115,7 @@ JetSlowDeathBehaviorModuleData::JetSlowDeathBehaviorModuleData()
 
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

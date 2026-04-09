@@ -243,7 +243,7 @@ private:
 	//26) Player did not use the new "double click location attack move/guard"
 	UnsignedInt m_doubleClickAttackMoveOrdersGiven;
 
-  //27) Built barracks within 5 minutes?
+	//27) Built barracks within 5 minutes?
 	Bool m_builtBarracksWithinFiveMinutes;
 
 	//28) Built war factory within 10 minutes?

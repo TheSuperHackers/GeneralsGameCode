@@ -77,9 +77,9 @@ class Line3DClass : public W3DMPO, public RenderObjClass
 		// returns the number of polygons in the render object
 		virtual int Get_Num_Polys() const override;
 
-      // Get the object space bounding volumes
-      virtual void	Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-      virtual void	Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	// Get the object space bounding volumes
+	virtual void	Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+	virtual void	Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 		// The following functions are unique to Line3DClass:
 

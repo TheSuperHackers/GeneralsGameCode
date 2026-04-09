@@ -54,7 +54,7 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void POWTruckBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  OpenContainModuleData::buildFieldParse( p );
+	OpenContainModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -63,7 +63,7 @@ POWTruckBehaviorModuleData::POWTruckBehaviorModuleData()
 
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

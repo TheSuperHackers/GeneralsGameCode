@@ -49,7 +49,7 @@
 //-------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "AssistingClipSize",		INI::parseInt,		nullptr, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
@@ -58,7 +58,7 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "LaserToTarget",				INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 UpdateSleepTime AssistedTargetingUpdate::update()
 {
 
-  const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
+	const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
 
 	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
 
@@ -185,7 +185,7 @@ void AssistedTargetingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdate::loadPostProcess()
 {
-  const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
+	const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
 
 	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
 	m_laserToTarget =TheThingFactory->findTemplate( d->m_laserFromAssistedName );

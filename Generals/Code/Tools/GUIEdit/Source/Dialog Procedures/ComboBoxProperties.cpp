@@ -96,14 +96,14 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 	{
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( controlID )
-      {
+			switch( controlID )
+			{
 
 				// --------------------------------------------------------------------
 				case BUTTON_SUBCONTROL_COLOR:
@@ -167,7 +167,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
 					GameWindow *window = TheEditor->getPropertyTarget();
 
@@ -553,32 +553,32 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 
 					}
 
-          DestroyWindow( hWndDialog );
-          break;
+					DestroyWindow( hWndDialog );
+					break;
 
 				}
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
+				case IDCANCEL:
 				{
 
-          DestroyWindow( hWndDialog );
-          break;
+					DestroyWindow( hWndDialog );
+					break;
 
 				}
 
-      }
+			}
 
-      return 0;
+			return 0;
 
-    }
+		}
 
 		// ------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
 
-      DestroyWindow( hWndDialog );
-      return 0;
+			DestroyWindow( hWndDialog );
+			return 0;
 
 		}
 
@@ -586,7 +586,7 @@ static LRESULT CALLBACK comboBoxPropertiesCallback( HWND hWndDialog,
 		default:
 			return 0;
 
-  }
+	}
 
 }
 
@@ -670,7 +670,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 	image = GadgetComboBoxGetHiliteSelectedItemImageSmallCenter( window );
 	StoreImageAndColor( COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
 
-  GameWindow *listBox = GadgetComboBoxGetListBox( window );
+	GameWindow *listBox = GadgetComboBoxGetListBox( window );
 	if (listBox)
 	{
 		image = GadgetListBoxGetEnabledSelectedItemImageLeft( listBox );
@@ -960,7 +960,7 @@ HWND InitComboBoxPropertiesDialog( GameWindow *window )
 	}
 
 	// init comboBox specific property section
-  ComboBoxData *comboData = (ComboBoxData *)window->winGetUserData();
+	ComboBoxData *comboData = (ComboBoxData *)window->winGetUserData();
 
 	SetDlgItemInt(dialog, EDIT_MAX_CHARS, comboData->maxChars, true);
 	SetDlgItemInt(dialog, EDIT_MAX_ITEMS_DISPLAYED, comboData->maxDisplay,true );

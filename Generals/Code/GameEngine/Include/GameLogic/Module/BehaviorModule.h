@@ -89,7 +89,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    ModuleData::buildFieldParse(p);
+		ModuleData::buildFieldParse(p);
 	}
 };
 

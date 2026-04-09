@@ -51,7 +51,7 @@ CSceneLightDialog::CSceneLightDialog(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(CSceneLightDialog)
 	//}}AFX_DATA_INIT
-    return ;
+	return ;
 }
 
 
@@ -72,7 +72,7 @@ CSceneLightDialog::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER_GREEN, m_greenSlider);
 	DDX_Control(pDX, IDC_SLIDER_RED, m_redSlider);
 	//}}AFX_DATA_MAP
-    return ;
+	return ;
 }
 
 

@@ -110,9 +110,9 @@
 
 /* ptrdiff_t */
 #if (UINT_MAX >= 0xffffffffL)
-   typedef ptrdiff_t        lzo_ptrdiff_t;
+typedef ptrdiff_t        lzo_ptrdiff_t;
 #else
-   typedef long             lzo_ptrdiff_t;
+typedef long             lzo_ptrdiff_t;
 #endif
 
 

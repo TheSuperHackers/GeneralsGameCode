@@ -47,7 +47,7 @@ public:
 	HelixContainModuleData();
 
 	TemplateNameList m_payloadTemplateNameData;
-  Bool m_drawPips;
+	Bool m_drawPips;
 
 
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -73,20 +73,20 @@ public:
 	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
 	virtual Bool isTunnelContain() const override { return FALSE; }
 	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const override {return TRUE;}
+	virtual Bool isSpecialOverlordStyleContainer() const override {return TRUE;}
 
 	virtual void onDie( const DamageInfo *damageInfo ) override;  ///< the die callback
 	virtual void onDelete() override;	///< Last possible moment cleanup
 	virtual void onCapture( Player *oldOwner, Player *newOwner ) override;
 	virtual void onObjectCreated() override;
-  virtual void onContaining( Object *obj, Bool wasSelected  ) override;
-  virtual void onRemoving( Object *obj ) override;
+	virtual void onContaining( Object *obj, Bool wasSelected  ) override;
+	virtual void onRemoving( Object *obj ) override;
 
 
-  virtual UpdateSleepTime update() override;							///< called once per frame
+	virtual UpdateSleepTime update() override;							///< called once per frame
 
 
- // virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
+	// virtual void onContaining( Object *obj, Bool wasSelected );		///< object now contains 'obj'
 //	virtual void onRemoving( Object *obj );			///< object no longer contains 'obj'
 
 	virtual Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const override;
@@ -104,25 +104,25 @@ public:
 	///< this gets called from
 	virtual void clientVisibleContainedFlashAsSelected() override;
 
-  virtual void redeployOccupants() override;
+	virtual void redeployOccupants() override;
 
 	virtual Bool getContainerPipsToShow(Int& numTotal, Int& numFull) override
-  {
-    if ( getHelixContainModuleData()->m_drawPips == FALSE )
-    {
-      numTotal = 0;
-      numFull = 0;
-      return FALSE;
-    }
+	{
+		if ( getHelixContainModuleData()->m_drawPips == FALSE )
+		{
+			numTotal = 0;
+			numFull = 0;
+			return FALSE;
+		}
 
-    return ContainModuleInterface::getContainerPipsToShow( numTotal, numFull );
-  }
+		return ContainModuleInterface::getContainerPipsToShow( numTotal, numFull );
+	}
 
 	virtual void createPayload() override;
 
 private:
-  void parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ );
-  Object *getPortableStructure();
-  ObjectID  m_portableStructureID;
+	void parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	Object *getPortableStructure();
+	ObjectID  m_portableStructureID;
 
 };

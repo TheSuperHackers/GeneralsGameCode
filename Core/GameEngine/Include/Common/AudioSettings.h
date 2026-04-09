@@ -96,10 +96,10 @@ struct AudioSettings
 	Real m_microphoneMaxPercentageBetweenGroundAndCamera;
 
 	//Handles changing sound volume whenever the camera is close to the microphone.
-  Real m_zoomMinDistance;			//If we're closer than the minimum distance, then apply the full bonus no matter how close.
-  Real m_zoomMaxDistance;			//The maximum distance from microphone we need to be before benefiting from any bonus.
+	Real m_zoomMinDistance;			//If we're closer than the minimum distance, then apply the full bonus no matter how close.
+	Real m_zoomMaxDistance;			//The maximum distance from microphone we need to be before benefiting from any bonus.
 
-  //NOTE: The higher this value is, the lower normal sounds will be! If you specify a sound volume value of 25%, then sounds will play
+	//NOTE: The higher this value is, the lower normal sounds will be! If you specify a sound volume value of 25%, then sounds will play
 	//between 75% and 100%, not 100% to 125%!
-  Real m_zoomSoundVolumePercentageAmount;	//The amount of sound volume dedicated to zooming.
+	Real m_zoomSoundVolumePercentageAmount;	//The amount of sound volume dedicated to zooming.
 };

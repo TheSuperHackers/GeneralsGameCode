@@ -52,7 +52,7 @@ public:
 	Real m_initialVelocityPercent;
 	Real m_initialAccelPercent;
 	Real m_bounceVelocityPercent;
-  Real m_minimumToppleSpeed;
+	Real m_minimumToppleSpeed;
 	Bool m_killWhenToppled;
 	Bool m_doTopple;
 	UnsignedInt m_sinkFrames; // How long it takes to sink after toppling. [7/11/2003]

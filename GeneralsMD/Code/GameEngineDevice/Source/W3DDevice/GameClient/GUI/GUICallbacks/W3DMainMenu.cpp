@@ -846,7 +846,7 @@ void W3DMainMenuRandomTextDraw( GameWindow *window, WinInstanceData *instData )
 	textOutlineColor	= window->winGetDisabledTextBorderColor();
 	// draw the text
 
-  if( !(tData->text && (textColor != WIN_COLOR_UNDEFINED)) )
+	if( !(tData->text && (textColor != WIN_COLOR_UNDEFINED)) )
 		return;
 
 	DisplayString *text = tData->text;

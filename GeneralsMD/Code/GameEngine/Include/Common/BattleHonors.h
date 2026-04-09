@@ -62,7 +62,7 @@
 //-----------------------------------------------------------------------------
 enum
 {
-  BATTLE_HONOR_LADDER_CHAMP				= 0x00000001,
+	BATTLE_HONOR_LADDER_CHAMP				= 0x00000001,
 	BATTLE_HONOR_STREAK							= 0x00000002,
 //	BATTLE_HONOR_STREAK_5					= 0x00000004, // NOT TO BE REUSED
 //	BATTLE_HONOR_STREAK_10				= 0x00000008, // NOT TO BE REUSED

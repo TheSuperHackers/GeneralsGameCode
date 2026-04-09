@@ -539,12 +539,12 @@ class DynamicVectorClass : public VectorClass<T>
 			return(*this);
 		}
 
-      // Uninitialized Add - does everything an Add does, except copying an
-      // object into the 'new' spot in the array. It returns a pointer to
-      // the 'new' spot. (null if the Add failed). NOTE - you must then fill
-      // this memory area with a valid object (e.g. by using placement new),
-      // or chaos will result!
-      T * Uninitialized_Add();
+	// Uninitialized Add - does everything an Add does, except copying an
+	// object into the 'new' spot in the array. It returns a pointer to
+	// the 'new' spot. (null if the Add failed). NOTE - you must then fill
+	// this memory area with a valid object (e.g. by using placement new),
+	// or chaos will result!
+	T * Uninitialized_Add();
 
 	protected:
 
@@ -946,7 +946,7 @@ T * DynamicVectorClass<T>::Uninitialized_Add()
 	**	There is room for the new space now. Add it to the end of the object
    ** vector. and return a pointer to it.
 	*/
-   return &((*this)[ActiveCount++]);
+	return &((*this)[ActiveCount++]);
 }
 
 

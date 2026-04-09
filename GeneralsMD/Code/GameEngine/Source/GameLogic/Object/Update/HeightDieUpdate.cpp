@@ -62,7 +62,7 @@ HeightDieUpdateModuleData::HeightDieUpdateModuleData()
 void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -76,7 +76,7 @@ void HeightDieUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

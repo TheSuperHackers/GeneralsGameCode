@@ -76,37 +76,37 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
 											      WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg )
+	switch( msg )
 	{
 		// ------------------------------------------------------------------------
-    case GWM_CHAR:
-      switch (mData1)
+		case GWM_CHAR:
+			switch (mData1)
 			{
 
-        case KEY_DOWN:
-        case KEY_RIGHT:
-        case KEY_TAB:
+				case KEY_DOWN:
+				case KEY_RIGHT:
+				case KEY_TAB:
 					// Just in case some fool sets static text as a tab stop
 					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
-            window->winNextTab();
-          break;
+					window->winNextTab();
+					break;
 
-        case KEY_UP:
-        case KEY_LEFT:
+				case KEY_UP:
+				case KEY_LEFT:
 					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
-            window->winPrevTab();
-          break;
+					window->winPrevTab();
+					break;
 
 				default:
 					return MSG_IGNORED;
-      }
+			}
 
 			break;
 
 		default:
 			return MSG_IGNORED;
 
-  }
+	}
 	return MSG_HANDLED;
 
 
@@ -120,7 +120,7 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 {
 //	WinInstanceData *instData = window->winGetInstanceData();
 
-  switch( msg )
+	switch( msg )
 	{
 		// ------------------------------------------------------------------------
 		case GGM_GET_LABEL:
@@ -142,16 +142,16 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 					tData->text->setText( *(UnicodeString*)mData1 );
 			}
 
-      break;
+			break;
 
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CREATE:
-      break;
+			break;
 
 		// ------------------------------------------------------------------------
-    case GWM_DESTROY:
+		case GWM_DESTROY:
 		{
 			TextData *data = (TextData *)window->winGetUserData();
 
@@ -162,14 +162,14 @@ WindowMsgHandledType GadgetStaticTextSystem( GameWindow *window, UnsignedInt msg
 			delete (TextData *)window->winGetUserData();
 			window->winSetUserData( nullptr );
 
-      break;
+			break;
 
 		}
 
 		default:
 			return MSG_IGNORED;
 
-  }
+	}
 
 	return MSG_HANDLED;
 }

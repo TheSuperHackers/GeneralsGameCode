@@ -923,10 +923,10 @@ DefinitionMgrClass::fnCompareDefinitionsCallback
 	const void *elem2
 )
 {
-   WWASSERT (elem1 != nullptr);
-   WWASSERT (elem2 != nullptr);
-   DefinitionClass *definition1 = *((DefinitionClass **)elem1);
-   DefinitionClass *definition2 = *((DefinitionClass **)elem2);
+	WWASSERT (elem1 != nullptr);
+	WWASSERT (elem2 != nullptr);
+	DefinitionClass *definition1 = *((DefinitionClass **)elem1);
+	DefinitionClass *definition2 = *((DefinitionClass **)elem2);
 
 	//
 	//	Sort the definitions based on ID
@@ -940,5 +940,5 @@ DefinitionMgrClass::fnCompareDefinitionsCallback
 		result = 0;
 	}
 
-   return result;
+	return result;
 }

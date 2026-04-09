@@ -154,8 +154,8 @@ public:
 	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
 	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest) override;
 	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest) override;
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// AABoxRenderObjClass Interface
@@ -205,8 +205,8 @@ public:
 	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
 	virtual bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest) override;
 	virtual bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest) override;
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// OBBoxRenderObjClass Interface

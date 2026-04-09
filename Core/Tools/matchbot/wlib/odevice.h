@@ -23,7 +23,7 @@
 class OutputDevice
 {
  public:
-                 OutputDevice() {}
-    virtual     ~OutputDevice() {};
-    virtual int print(const char *s,int len)=0;
+	OutputDevice() {}
+	virtual     ~OutputDevice() {};
+	virtual int print(const char *s,int len)=0;
 };

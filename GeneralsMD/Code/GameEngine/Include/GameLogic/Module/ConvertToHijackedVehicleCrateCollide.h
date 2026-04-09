@@ -53,7 +53,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    CrateCollideModuleData::buildFieldParse(p);
+		CrateCollideModuleData::buildFieldParse(p);
 	}
 
 };

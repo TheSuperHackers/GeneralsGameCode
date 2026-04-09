@@ -713,7 +713,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			}
 
-      //what if container is subdued... assert a logic failure, perhaps?
+			//what if container is subdued... assert a logic failure, perhaps?
 
 			// send message to exit
 			GameMessage *exitMsg = TheMessageStream->appendMessage( GameMessage::MSG_EXIT );

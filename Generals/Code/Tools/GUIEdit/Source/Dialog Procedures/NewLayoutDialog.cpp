@@ -101,14 +101,14 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 
-      switch( LOWORD( wParam ) )
-      {
+			switch( LOWORD( wParam ) )
+			{
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
 
 					// reset the editor
@@ -117,31 +117,31 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 					// end this dialog
 					EndDialog( hWndDialog, TRUE );
 
-          break;
+					break;
 
 				}
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
+				case IDCANCEL:
 				{
 
 					EndDialog( hWndDialog, FALSE );
-          break;
+					break;
 
 				}
 
-      }
+			}
 
-      return 0;
+			return 0;
 
-    }
+		}
 
 		// ------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
 
 			EndDialog( hWndDialog, FALSE );
-      return 0;
+			return 0;
 
 		}
 
@@ -149,7 +149,7 @@ LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message,
 		default:
 			return 0;
 
-  }
+	}
 
 }
 

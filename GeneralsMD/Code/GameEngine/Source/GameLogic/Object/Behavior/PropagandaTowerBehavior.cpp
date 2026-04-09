@@ -93,7 +93,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void PropagandaTowerBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -108,7 +108,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 
@@ -428,36 +428,36 @@ void PropagandaTowerBehavior::doScan()
 	}
 
 
-  Bool doFX = TRUE;
-    // if it is us, or if it is he and we do see him
-  Object *overlord = us->getContainedBy();
-  if ( overlord )
-  {
+	Bool doFX = TRUE;
+	// if it is us, or if it is he and we do see him
+	Object *overlord = us->getContainedBy();
+	if ( overlord )
+	{
 	  if ( us->getControllingPlayer() != rts::getObservedOrLocalPlayer() )// dealing with someone else's tower
-    {
-      if ( overlord->testStatus( OBJECT_STATUS_STEALTHED ) && !overlord->testStatus( OBJECT_STATUS_DETECTED ) )
-        doFX = FALSE;// so they don't give up their position
+		{
+			if ( overlord->testStatus( OBJECT_STATUS_STEALTHED ) && !overlord->testStatus( OBJECT_STATUS_DETECTED ) )
+			doFX = FALSE;// so they don't give up their position
 
-    }
+		}
 
-    // Sorry, this is a lot of hard coded mishmash, but it must be done... ship it!
-    // Propaganda towers (proper) never get contained, so they don't care about this code
-    // The PropTowers that ride on the backs of overlord tanks want to suppress their fx if the overlord is stealthed to the local player
-    // The PropTowers that ride on the bellies of Helixes also suppress their fx when hiding stealthed (never happens?)
-    // The PropTowers must do nothing, scanning-or-FX-wise when they are inside something... there are two cases
-    //   1) When the prop tower is on an Overlord that is in a helicopter (likely a Helix II)
-    //   2) When the prop tower is the EmperorTank, which is in a helicopter (likely a Helix II).
+		// Sorry, this is a lot of hard coded mishmash, but it must be done... ship it!
+		// Propaganda towers (proper) never get contained, so they don't care about this code
+		// The PropTowers that ride on the backs of overlord tanks want to suppress their fx if the overlord is stealthed to the local player
+		// The PropTowers that ride on the bellies of Helixes also suppress their fx when hiding stealthed (never happens?)
+		// The PropTowers must do nothing, scanning-or-FX-wise when they are inside something... there are two cases
+		//   1) When the prop tower is on an Overlord that is in a helicopter (likely a Helix II)
+		//   2) When the prop tower is the EmperorTank, which is in a helicopter (likely a Helix II).
 
-    if ( us->isKindOf( KINDOF_VEHICLE ) && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )//craptacular!
-      // oh my dear Lord... I am not a propaganda tower, I am an emperorTank! that means the overlord is a helix or something!
-      return; // proptowers that are riding IN things cannot do their scan!
+		if ( us->isKindOf( KINDOF_VEHICLE ) && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )//craptacular!
+		// oh my dear Lord... I am not a propaganda tower, I am an emperorTank! that means the overlord is a helix or something!
+		return; // proptowers that are riding IN things cannot do their scan!
 
-    //okay this is wacky, but this proptower may be on an overlord thank that is riding in a helix... oy!
-    Object *helix = overlord->getContainedBy();
-    if ( helix )
-      return; // proptowers that are riding ON things that are in-turn riding IN things cannot do their scan!
+		//okay this is wacky, but this proptower may be on an overlord thank that is riding in a helix... oy!
+		Object *helix = overlord->getContainedBy();
+		if ( helix )
+		return; // proptowers that are riding ON things that are in-turn riding IN things cannot do their scan!
 
-  }
+	}
 
 	if ( us->getControllingPlayer() != rts::getObservedOrLocalPlayer() )// dealing with someone else's tower
 	{
@@ -467,14 +467,14 @@ void PropagandaTowerBehavior::doScan()
 		}
 	}
 
-  if ( doFX )
-  {
-    // play the right pulse
+	if ( doFX )
+	{
+		// play the right pulse
 	  if( upgradePresent == TRUE )
 		  FXList::doFXObj( modData->m_upgradedPulseFX, us );
 	  else
 		  FXList::doFXObj( modData->m_pulseFX, us );
-  }
+	}
 
 	// setup scan filters
 	PartitionFilterRelationship relationship( us, PartitionFilterRelationship::ALLOW_ALLIES );

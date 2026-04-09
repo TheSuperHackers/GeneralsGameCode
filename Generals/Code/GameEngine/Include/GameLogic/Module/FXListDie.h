@@ -54,7 +54,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DieModuleData::buildFieldParse(p);
+		DieModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -62,7 +62,7 @@ public:
 			{ "OrientToObject",				INI::parseBool,		nullptr, offsetof( FXListDieModuleData, m_orientToObject ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

@@ -63,7 +63,7 @@ POWTruckAIUpdateModuleData::POWTruckAIUpdateModuleData()
 // ------------------------------------------------------------------------------------------------
 void POWTruckAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  AIUpdateModuleData::buildFieldParse( p );
+	AIUpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -72,7 +72,7 @@ void POWTruckAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 		{ 0, 0, 0, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 
@@ -888,12 +888,12 @@ void POWTruckAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void POWTruckAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferUser(&m_aiMode, sizeof(m_aiMode));
@@ -910,7 +910,7 @@ void POWTruckAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void POWTruckAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 

@@ -88,9 +88,9 @@ ParticleUplinkCannonUpdateModuleData::ParticleUplinkCannonUpdateModuleData()
 	m_damageType										= DAMAGE_LASER;
 	m_deathType											= DEATH_LASERED;
 	m_revealRange										= 0.0f;
-  m_manualDrivingSpeed						= 0.0f;
-  m_manualFastDrivingSpeed				= 0.0f;
-  m_doubleClickToFastDriveDelay		= 500;
+	m_manualDrivingSpeed						= 0.0f;
+	m_manualFastDrivingSpeed				= 0.0f;
+	m_doubleClickToFastDriveDelay		= 500;
 	m_swathOfDeathAmplitude					= 0.0f;
 	m_swathOfDeathDistance					=	0.0f;
 }

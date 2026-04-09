@@ -100,9 +100,9 @@ public:
 	AsciiString		m_annihilationSoundName;
 	AsciiString		m_damagePulseRemnantObjectName;
 
-  Real					m_manualDrivingSpeed;
-  Real					m_manualFastDrivingSpeed;
-  UnsignedInt		m_doubleClickToFastDriveDelay;
+	Real					m_manualDrivingSpeed;
+	Real					m_manualFastDrivingSpeed;
+	UnsignedInt		m_doubleClickToFastDriveDelay;
 
 	ParticleUplinkCannonUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);

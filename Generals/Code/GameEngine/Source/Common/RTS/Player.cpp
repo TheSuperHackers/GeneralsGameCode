@@ -1545,8 +1545,8 @@ UnsignedInt Player::getSupplyBoxValue()
 //=============================================================================
 Real Player::getProductionCostChangePercent( AsciiString buildTemplateName ) const
 {
-  ProductionChangeMap::const_iterator it = m_productionCostChanges.find(NAMEKEY(buildTemplateName));
-  if (it != m_productionCostChanges.end())
+	ProductionChangeMap::const_iterator it = m_productionCostChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionCostChanges.end())
 	{
 		return (*it).second;
 	}
@@ -1557,8 +1557,8 @@ Real Player::getProductionCostChangePercent( AsciiString buildTemplateName ) con
 //=============================================================================
 Real Player::getProductionTimeChangePercent( AsciiString buildTemplateName ) const
 {
-  ProductionChangeMap::const_iterator it = m_productionTimeChanges.find(NAMEKEY(buildTemplateName));
-  if (it != m_productionTimeChanges.end())
+	ProductionChangeMap::const_iterator it = m_productionTimeChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionTimeChanges.end())
 	{
 		return (*it).second;
 	}
@@ -1570,8 +1570,8 @@ Real Player::getProductionTimeChangePercent( AsciiString buildTemplateName ) con
 VeterancyLevel Player::getProductionVeterancyLevel( AsciiString buildTemplateName ) const
 {
 	NameKeyType templateNameKey = NAMEKEY(buildTemplateName);
-  ProductionVeterancyMap::const_iterator it = m_productionVeterancyLevels.find(templateNameKey);
-  if (it != m_productionVeterancyLevels.end())
+	ProductionVeterancyMap::const_iterator it = m_productionVeterancyLevels.find(templateNameKey);
+	if (it != m_productionVeterancyLevels.end())
 	{
 		return (*it).second;
 	}

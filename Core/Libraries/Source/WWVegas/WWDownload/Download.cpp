@@ -61,7 +61,7 @@ HRESULT CDownload::DownloadFile(LPCSTR server, LPCSTR username, LPCSTR password,
 		( password == nullptr ) || ( file == nullptr ) ||
 		( localfile == nullptr ) || ( regkey == nullptr ) )
 	{
-     //////////DBGMSG("Download Paramerror");
+		//////////DBGMSG("Download Paramerror");
 		return( DOWNLOAD_PARAMERROR );
 	}
 
@@ -101,7 +101,7 @@ HRESULT CDownload::DownloadFile(LPCSTR server, LPCSTR username, LPCSTR password,
 	if (m_Status != DOWNLOADSTATUS_FINDINGFILE)
 		m_Status = DOWNLOADSTATUS_GO;
 
-   //////////DBGMSG("Ready to download");
+	//////////DBGMSG("Ready to download");
 	return S_OK;
 }
 
@@ -162,7 +162,7 @@ HRESULT CDownload::PumpMessages()
 
 	/* Avoid reentrancy. */
 
-   ////DBGMSG("Download Pump");
+	////DBGMSG("Download Pump");
 
 	if( reenter != 0 )
 	{
@@ -202,10 +202,10 @@ HRESULT CDownload::PumpMessages()
 	if( m_Status == DOWNLOADSTATUS_CONNECTING )
 	{
 		// Connect to the server
-      //////////DBGMSG("Connect to Server");
+		//////////DBGMSG("Connect to Server");
 
 		iResult = m_Ftp->ConnectToServer( m_Server );
-      ////////////DBGMSG("out of FTP connect");
+		////////////DBGMSG("out of FTP connect");
 
 		if( iResult == FTP_SUCCEEDED )
 		{
@@ -216,7 +216,7 @@ HRESULT CDownload::PumpMessages()
 			if( iResult == FTP_FAILED )
 			{
 				// Tell the client we couldn't connect
-            ///////////DBGMSG("Couldn't connect");
+				///////////DBGMSG("Couldn't connect");
 				Listener->OnError( DOWNLOADEVENT_COULDNOTCONNECT );
 				reenter = 0;
 				return DOWNLOAD_NETWORKERROR;
@@ -229,7 +229,7 @@ HRESULT CDownload::PumpMessages()
 	if( m_Status == DOWNLOADSTATUS_LOGGINGIN )
 	{
 		// Login to the server
-      ////////////DBGMSG("Login to server");
+		////////////DBGMSG("Login to server");
 
 		iResult = m_Ftp->LoginToServer( m_Login, m_Password );
 
@@ -256,7 +256,7 @@ HRESULT CDownload::PumpMessages()
 	{
 
 		// Find the file on the server
-      ///////////DBGMSG("Find File");
+		///////////DBGMSG("Find File");
 
 		if( m_Ftp->FindFile( m_File, &m_FileSize ) == FTP_FAILED )
 		{
@@ -329,7 +329,7 @@ HRESULT CDownload::PumpMessages()
 	{
 
 		// Get the next chunk of the file
-      ///DBGMSG("Get Next File Block");
+		///DBGMSG("Get Next File Block");
 
 		iResult = m_Ftp->GetNextFileBlock( m_LocalFile, &m_BytesRead );
 
@@ -359,7 +359,7 @@ HRESULT CDownload::PumpMessages()
 		timetaken = ( timeGetTime() - m_TimeStarted ) / 1000;
 
 		//////////if( m_BytesRead > 0 ) // NAK - RP said this is wrong
-      if( ( m_BytesRead - m_StartPosition ) > 0 )
+		if( ( m_BytesRead - m_StartPosition ) > 0 )
 		{
 			// Not the first read.
 			int predictionIndex = ( m_predictions++ ) & 0x7;

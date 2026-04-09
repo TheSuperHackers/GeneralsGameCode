@@ -531,8 +531,8 @@ LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namekey)
 	if (namekey == NAMEKEY_INVALID)
 		return nullptr;
 
-  LocomotorTemplateMap::iterator it = m_locomotorTemplates.find(namekey);
-  if (it == m_locomotorTemplates.end())
+	LocomotorTemplateMap::iterator it = m_locomotorTemplates.find(namekey);
+	if (it == m_locomotorTemplates.end())
 		return nullptr;
 	else
 		return (*it).second;
@@ -544,8 +544,8 @@ const LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namek
 	if (namekey == NAMEKEY_INVALID)
 		return nullptr;
 
-  LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(namekey);
-  if (it == m_locomotorTemplates.end())
+	LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(namekey);
+	if (it == m_locomotorTemplates.end())
 	{
 		return nullptr;
 	}
@@ -2575,10 +2575,10 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 			force.z = 0.0f;
 
 
-      // Apply a random kick (if applicable) to dirty-up visually.
-      // The idea is that chopper pilots have to do course corrections all the time
-      // Because of changes in wind, pressure, etc.
-      // Those changes are added here, then the
+			// Apply a random kick (if applicable) to dirty-up visually.
+			// The idea is that chopper pilots have to do course corrections all the time
+			// Because of changes in wind, pressure, etc.
+			// Those changes are added here, then the
 
 
 

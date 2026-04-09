@@ -53,7 +53,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
+		UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "UnitCreatePoint",		INI::parseCoord3D,		nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_unitCreatePoint ) },
@@ -61,7 +61,7 @@ public:
 			{ "UseSpawnRallyPoint", INI::parseBool,				nullptr, offsetof( DefaultProductionExitUpdateModuleData, m_useSpawnRallyPoint ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

@@ -86,7 +86,7 @@ AIUpdateModuleData::AIUpdateModuleData()
 	m_surrenderDuration = LOGICFRAMES_PER_SECOND * 120;
 #endif
 
-  m_forbidPlayerCommands = FALSE;
+	m_forbidPlayerCommands = FALSE;
 	m_turretsLinked = FALSE;
 }
 
@@ -109,8 +109,8 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	if (m_locomotorTemplates.empty())
 		return nullptr;
 
-  LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(t);
-  if (it == m_locomotorTemplates.end())
+	LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(t);
+	if (it == m_locomotorTemplates.end())
 	{
 		return nullptr;
 	}
@@ -123,7 +123,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 //-------------------------------------------------------------------------------------------------
 /*static*/ void AIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -138,7 +138,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
     { "TurretsLinked",							INI::parseBool,										nullptr, offsetof( AIUpdateModuleData, m_turretsLinked ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1592,7 +1592,7 @@ Bool AIUpdateInterface::canComputeQuickPath()
 	// Note - if a truck happens to pop into the air and gets a move to command, it still
 	// needs to pathfind.  So only skip pathfinding for airborne things that can fly... jba.
 	if (!(m_locomotorSet.getValidSurfaces() & LOCOMOTORSURFACE_AIR))
-  {
+	{
 		landBound = TRUE;
 	}
 
@@ -1800,7 +1800,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 	// Note - if a truck happens to pop into the air and gets a move to command, it still
 	// needs to pathfind.  So only skip pathfinding for airborne things that can fly... jba.
 	if (!(m_locomotorSet.getValidSurfaces() & LOCOMOTORSURFACE_AIR))
-  {
+	{
 		landBound = TRUE;
 	}
 
@@ -2359,11 +2359,11 @@ void AIUpdateInterface::setLocomotorGoalNone()
 Bool AIUpdateInterface::isDoingGroundMovement() const
 {
 
-  if (getObject()->isDisabledByType( DISABLED_UNMANNED )
+	if (getObject()->isDisabledByType( DISABLED_UNMANNED )
    && getObject()->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )
-  {
-    return TRUE; // an unmanned helicopter gets grounded, eventually.
-  }
+	{
+		return TRUE; // an unmanned helicopter gets grounded, eventually.
+	}
 
 	if (m_locomotorSet.getValidSurfaces() == LOCOMOTORSURFACE_AIR)
 	{
@@ -2603,16 +2603,16 @@ Bool AIUpdateInterface::isAllowedToRespondToAiCommands(const AICommandParms* par
 	if ((moodParms & MM_Controller_AI) && (moodParms & MM_Mood_Sleep) && (parms->m_cmd != AICMD_MOVE_TO_POSITION_EVEN_IF_SLEEPING))
 		return FALSE;
 
-  const AIUpdateModuleData *data = getAIUpdateModuleData();
+	const AIUpdateModuleData *data = getAIUpdateModuleData();
 
-  Bool forbidden = data->m_forbidPlayerCommands;
+	Bool forbidden = data->m_forbidPlayerCommands;
 
-  if ( parms->m_cmdSource == CMD_FROM_PLAYER && forbidden )
-    return FALSE;
-  // THIS IS JUST FOR THE SPECTREGUNSHIP FOR NOW...
-  // IT LOCKS OUT USER INPUT,
-  // ALLOWING ONLY THE SPECTREUPDATE TO COMMAND IT VIA CMD_FROM_AI
-  // AUTHOR, LORENZEN... 5/15/03
+	if ( parms->m_cmdSource == CMD_FROM_PLAYER && forbidden )
+	return FALSE;
+	// THIS IS JUST FOR THE SPECTREGUNSHIP FOR NOW...
+	// IT LOCKS OUT USER INPUT,
+	// ALLOWING ONLY THE SPECTREUPDATE TO COMMAND IT VIA CMD_FROM_AI
+	// AUTHOR, LORENZEN... 5/15/03
 
 
 	return TRUE;
@@ -3742,7 +3742,7 @@ void AIUpdateInterface::privateResumeConstruction( Object *obj, CommandSourceTyp
 void AIUpdateInterface::privateGetHealed( Object *healDepot, CommandSourceType cmdSource )
 {
 
-  // sanity, if we can't get healed from here get outta here
+	// sanity, if we can't get healed from here get outta here
 	if( TheActionManager->canGetHealedAt( getObject(), healDepot, cmdSource ) == FALSE )
 		return;
 
@@ -3832,8 +3832,8 @@ void AIUpdateInterface::privateExit( Object *objectToExit, CommandSourceType cmd
 	if (!objectToExit)
 		return;
 
-  if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
-    return;
+	if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
+	return;
 
 
 	// we must go thru this state (rather than calling exitObjectViaDoor directly!),
@@ -3861,8 +3861,8 @@ void AIUpdateInterface::privateExitInstantly( Object *objectToExit, CommandSourc
 	if (!objectToExit)
 		return;
 
-  if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
-    return;
+	if ( objectToExit->isDisabledByType( DISABLED_SUBDUED ) )
+	return;
 
 	// we must go thru this state (rather than calling exitObjectViaDoor directly!),
 	// because a few containers might need to delay to allow
@@ -3901,8 +3901,8 @@ void AIUpdateInterface::doQuickExit( std::vector<Coord3D>* path )
 void AIUpdateInterface::privateEvacuate( Int exposeStealthUnits, CommandSourceType cmdSource )
 {
 
-  if ( getObject()->isDisabledByType( DISABLED_SUBDUED ) )
-    return;
+	if ( getObject()->isDisabledByType( DISABLED_SUBDUED ) )
+	return;
 
 
 	ContainModuleInterface *contain = getObject()->getContain();
@@ -3923,8 +3923,8 @@ void AIUpdateInterface::privateEvacuate( Int exposeStealthUnits, CommandSourceTy
 void AIUpdateInterface::privateEvacuateInstantly( Int exposeStealthUnits, CommandSourceType cmdSource )
 {
 
-  if ( getObject()->isDisabledByType( DISABLED_SUBDUED ) )
-    return;
+	if ( getObject()->isDisabledByType( DISABLED_SUBDUED ) )
+	return;
 
 
 	ContainModuleInterface *contain = getObject()->getContain();
@@ -4492,9 +4492,9 @@ void AIUpdateInterface::setNextMoodCheckTime( UnsignedInt frame )
 
 Bool AIUpdateInterface::canAutoAcquireWhileStealthed() const
 {
-  if ( getObject() && getObject()->getStealth() && getObject()->getStealth()->isGrantedBySpecialPower() )
-    return TRUE;
-  return getAIUpdateModuleData()->m_autoAcquireEnemiesWhenIdle & AAS_Idle_Stealthed;
+	if ( getObject() && getObject()->getStealth() && getObject()->getStealth()->isGrantedBySpecialPower() )
+	return TRUE;
+	return getAIUpdateModuleData()->m_autoAcquireEnemiesWhenIdle & AAS_Idle_Stealthed;
 }
 
 
@@ -5064,13 +5064,13 @@ void AIUpdateInterface::crc( Xfer *x )
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::xfer( Xfer *xfer )
 {
-  // version
-  const XferVersion currentVersion = 4;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 4;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  UpdateModule::xfer( xfer );
+	// extend base class
+	UpdateModule::xfer( xfer );
 
 	xfer->xferUnsignedInt(&m_priorWaypointID);
 	xfer->xferUnsignedInt(&m_currentWaypointID);

@@ -193,10 +193,10 @@ static Waypoint * findNamedWaypoint(AsciiString name)
 // ------------------------------------------------------------------------------------------------
 void setFPMode()
 {
-  // Set floating point round mode to CHOP, which only comes
-  // into play when precision is exceeded.  This is necessary
-  // for the fast float to int routines used elsewhere in the
-  // system.
+	// Set floating point round mode to CHOP, which only comes
+	// into play when precision is exceeded.  This is necessary
+	// for the fast float to int routines used elsewhere in the
+	// system.
 	//
 	// Also set floating point precision to low.  It could be
 	// anything as long as it is consistent, really, but this
@@ -1240,21 +1240,21 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		}
 	}
 
-  // On a NEW game, we need to copy the superweapon restrictions from the game info to here
-  // (because TheGameInfo is not always saved and doesn't carry over to replays). On a save
-  // game, we save the superweapon restrictions in GameLogic::xfer()
-  if ( !loadingSaveGame )
-  {
-    if ( TheGameInfo )
-    {
-      m_superweaponRestriction = TheGameInfo->getSuperweaponRestriction();
-    }
-    else
-    {
-      // ??? Apparently this is legit? Oh well, use defaults
-      m_superweaponRestriction = 0;
-    }
-  }
+	// On a NEW game, we need to copy the superweapon restrictions from the game info to here
+	// (because TheGameInfo is not always saved and doesn't carry over to replays). On a save
+	// game, we save the superweapon restrictions in GameLogic::xfer()
+	if ( !loadingSaveGame )
+	{
+		if ( TheGameInfo )
+		{
+			m_superweaponRestriction = TheGameInfo->getSuperweaponRestriction();
+		}
+		else
+		{
+			// ??? Apparently this is legit? Oh well, use defaults
+			m_superweaponRestriction = 0;
+		}
+	}
 
 	checkForDuplicateColors( TheGameInfo );
 
@@ -2018,13 +2018,13 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				// prevent from loading disallowed templates, in case your peer hacked their GUI.
 
 
-        // So that the global flag for restricting factions to "OLD" is applied only in the appropriate context!
-        // Trouble was that skirmish games would get no command centers upon start, if this was set true in a GameSpyMenu
-        if ( isInInternetGame() )
-        {
+				// So that the global flag for restricting factions to "OLD" is applied only in the appropriate context!
+				// Trouble was that skirmish games would get no command centers upon start, if this was set true in a GameSpyMenu
+				if ( isInInternetGame() )
+				{
 				  if ( TheGameInfo->oldFactionsOnly() && !pt->isOldFaction() )
 				    continue;
-        }
+				}
 
 
 
@@ -2373,17 +2373,17 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheGameSpyBuddyMessageQueue->addRequest(req);
 	}
 
-  if( loadingSaveGame == FALSE )
-  {
-    // Drawables need to do some work on level start; give them a chance to do it
-    Drawable * drawable = TheGameClient->getDrawableList();
+	if( loadingSaveGame == FALSE )
+	{
+		// Drawables need to do some work on level start; give them a chance to do it
+		Drawable * drawable = TheGameClient->getDrawableList();
 
-    while ( drawable != nullptr )
-    {
-      drawable->onLevelStart();
-      drawable = drawable->getNextDrawable();
-    }
-  }
+		while ( drawable != nullptr )
+		{
+			drawable->onLevelStart();
+			drawable = drawable->getNextDrawable();
+		}
+	}
 
 	//ReAllows quit menu to work during loading scene
 	//setGameLoading(FALSE);
@@ -2401,10 +2401,10 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheGameSpyInfo->updateAdditionalGameSpyDisconnections(1);
 
 
-  if ( isInReplayGame() && TheInGameUI && TheGameText )
-  {
+	if ( isInReplayGame() && TheInGameUI && TheGameText )
+	{
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
-  }
+	}
 
 
 }
@@ -2914,16 +2914,16 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 	UpdateModulePtr* pI = &m_sleepyUpdates[i];
 
 	// our children are i*2 and i*2+1
-  Int child = ((i)<<1)+1;
+	Int child = ((i)<<1)+1;
 	UpdateModulePtr* pChild = &m_sleepyUpdates[0] + child;
 	UpdateModulePtr* pSZ = &m_sleepyUpdates[0] + m_sleepyUpdates.size();	// yes, this is off the end.
 
-  while (pChild < pSZ)
+	while (pChild < pSZ)
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
 		if (pChild < pSZ-1 && isLowerPriority(*pChild, *(pChild+1)))
 		{
-      ++pChild;
+			++pChild;
 			++child;
 		}
 
@@ -2948,16 +2948,16 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 
 		child = ((i)<<1)+1;
 		pChild = &m_sleepyUpdates[0] + child;
-  }
+	}
 #else
 	// our children are i*2 and i*2+1
 	Int sz = m_sleepyUpdates.size();
-  Int child = ((i)<<1)+1;
-  while (child < sz)
+	Int child = ((i)<<1)+1;
+	while (child < sz)
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
 		if (child < sz-1 && isLowerPriority(m_sleepyUpdates[child], m_sleepyUpdates[child+1]))
-      ++child;
+		++child;
 
 		// if we're higher-pri than our children, we're done.
 		if (!isLowerPriority(m_sleepyUpdates[i], m_sleepyUpdates[child]))
@@ -2976,7 +2976,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		b->friend_setIndexInLogic(child);
 		i = child;
 		child = ((i)<<1)+1;
-  }
+	}
 #endif
 	return i;
 }
@@ -2996,13 +2996,13 @@ void GameLogic::remakeSleepyUpdate()
 	USE_PERF_TIMER(SleepyMaintenance)
 
 	Int parent = m_sleepyUpdates.size() / 2;
-  while (true)
+	while (true)
 	{
-    rebalanceChildSleepyUpdate(parent);
-    if (parent == 0)
+		rebalanceChildSleepyUpdate(parent);
+		if (parent == 0)
 			break;
-    --parent;
-  }
+		--parent;
+	}
 
 	validateSleepyUpdate();
 }
@@ -3137,14 +3137,14 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 
 void drawGraph( const char* style, Real scale, double value )
 {
-  for ( Int t = 0; t < value*scale; ++t)
-  {
-    DEBUG_LOG((style));
-    if ( t%200 == 199 )
-      DEBUG_LOG(("..."));
-  }
+	for ( Int t = 0; t < value*scale; ++t)
+	{
+		DEBUG_LOG((style));
+		if ( t%200 == 199 )
+		DEBUG_LOG(("..."));
+	}
 
-  DEBUG_LOG_RAW(("\n"));
+	DEBUG_LOG_RAW(("\n"));
 
 }
 
@@ -3178,7 +3178,7 @@ static void unitTimings()
 	sides[sideCount++] = "China";
 	sides[sideCount++] = "GLA";
 
-  //The MissionDisk new 'sides'
+	//The MissionDisk new 'sides'
 	sides[sideCount++] = "AmericaSuperWeaponGeneral";
 	sides[sideCount++] = "AmericaLaserGeneral";
 	sides[sideCount++] = "AmericaAirForceGeneral";
@@ -3297,27 +3297,27 @@ static void unitTimings()
 
 
 		char remark[2048];
-    Real graphScale = 20.0f;
+		Real graphScale = 20.0f;
 		AsciiString thingName = g_UT_curThing->getName();
 		if (veryFirstTime) {
 			thingName = "No Object";
 		}
 
-    sprintf(remark, "All %f: (%d ms) for %d %s's\n", timeAll, (Int)(timeAll*1000/TIME_FRAMES), TOTAL_UNITS, thingName.str() );
-    DEBUG_LOG((remark));
-    drawGraph( "@", graphScale, timeAll );
+		sprintf(remark, "All %f: (%d ms) for %d %s's\n", timeAll, (Int)(timeAll*1000/TIME_FRAMES), TOTAL_UNITS, thingName.str() );
+		DEBUG_LOG((remark));
+		drawGraph( "@", graphScale, timeAll );
 
 		sprintf(remark, "Without Particles %f\n", timeNoPart);
-    DEBUG_LOG((remark));
-    drawGraph( "@", graphScale, timeNoPart );
+		DEBUG_LOG((remark));
+		drawGraph( "@", graphScale, timeNoPart );
 
  		sprintf(remark, "Without Spawn %f  \n", timeNoSpawn );
-    DEBUG_LOG((remark));
-    drawGraph( "@", graphScale, timeNoSpawn );
+		DEBUG_LOG((remark));
+		drawGraph( "@", graphScale, timeNoSpawn );
 
  		sprintf(remark, "Logic %f \n", timeLogic);
-    DEBUG_LOG((remark));
-    drawGraph( "@", graphScale, timeLogic );
+		DEBUG_LOG((remark));
+		drawGraph( "@", graphScale, timeLogic );
 
 
 		sprintf(remark, "DrawCalls for %s \n", thingName.str() ) ;
@@ -3325,19 +3325,19 @@ static void unitTimings()
 
 		sprintf(remark, "All %f\n", drawCallAll );
 		DEBUG_LOG((remark));
-    drawGraph( "#", graphScale, drawCallAll );
+		drawGraph( "#", graphScale, drawCallAll );
 
 		sprintf(remark, "Without Particles %f\n", drawCallNoPart );
 		DEBUG_LOG((remark));
-    drawGraph( "#", graphScale, drawCallNoPart );
+		drawGraph( "#", graphScale, drawCallNoPart );
 
 		sprintf(remark, "Without Spawn %f \n", drawCallNoSpawn );
 		DEBUG_LOG((remark));
-    drawGraph( "#", graphScale, drawCallNoSpawn );
+		drawGraph( "#", graphScale, drawCallNoSpawn );
 
 		sprintf(remark, "Draw Call Logic %f \n", drawCallLogic );
 		DEBUG_LOG((remark));
-    drawGraph( "#", graphScale, drawCallLogic );
+		drawGraph( "#", graphScale, drawCallLogic );
 
 
 		if (g_UT_timingLog) {
@@ -3426,15 +3426,15 @@ static void unitTimings()
 					side++;
 					unitTypes = INFANTRY;
 					if (sides[side].isEmpty() ) // end of sides list
-          {
+					{
 						g_UT_startTiming = false;
 						if (g_UT_timingLog)
-            {
+						{
 							fclose(g_UT_timingLog);
 							g_UT_timingLog = nullptr;
 						}
 						if (g_UT_commaLog)
-            {
+						{
 							fclose(g_UT_commaLog);
 							g_UT_commaLog = nullptr;
 						}
@@ -3447,17 +3447,17 @@ static void unitTimings()
 			const ThingTemplate* btt = g_UT_curThing;
 
 #ifndef SINGLE_UNIT
-      Bool unspecified = FALSE;
+			Bool unspecified = FALSE;
 			if (btt->getDefaultOwningSide() != sides[side])
-      {
-        if (sides[side] == "*")
-        {
-          if ( btt->getDefaultOwningSide().isEmpty() )// wildcard for unspecified side
-            unspecified = TRUE;
-          else
-            continue;
-        }
-        else
+			{
+				if (sides[side] == "*")
+				{
+					if ( btt->getDefaultOwningSide().isEmpty() )// wildcard for unspecified side
+					unspecified = TRUE;
+					else
+					continue;
+				}
+				else
     		  continue;
 
 			}
@@ -3479,7 +3479,7 @@ static void unitTimings()
 #endif
 
 
-      static const char *const illegalTemplateNames[] =
+			static const char *const illegalTemplateNames[] =
       {
 	      "EMPPulseBomb",
 	      "GLAAngryMobRockProjectileObject",
@@ -3506,32 +3506,32 @@ static void unitTimings()
 	      nullptr
       };
 
-      Bool skip = FALSE;
+			Bool skip = FALSE;
 
-      for ( Int test = 0; test < sizeof( illegalTemplateNames ) ; ++test )
-      {
-        if ( illegalTemplateNames[test] == nullptr )
-          break;
+			for ( Int test = 0; test < sizeof( illegalTemplateNames ) ; ++test )
+			{
+				if ( illegalTemplateNames[test] == nullptr )
+				break;
 
-        if (btt->getName().startsWith(illegalTemplateNames[test]))
-        {
-          skip = TRUE;
-          break;
-        }
-        if (btt->getName().endsWith(illegalTemplateNames[test]))
-        {
-          skip = TRUE;
-          break;
-        }
-        if (btt->getName() == illegalTemplateNames[test] )
-        {
-          skip = TRUE;
-          break;
-        }
-      }
+				if (btt->getName().startsWith(illegalTemplateNames[test]))
+				{
+					skip = TRUE;
+					break;
+				}
+				if (btt->getName().endsWith(illegalTemplateNames[test]))
+				{
+					skip = TRUE;
+					break;
+				}
+				if (btt->getName() == illegalTemplateNames[test] )
+				{
+					skip = TRUE;
+					break;
+				}
+			}
 
-      if ( skip )
-        continue;
+			if ( skip )
+			continue;
 
 //			if (btt->getName() endsWith("EMPPulseBomb")) continue; // 100 overloads system.
 //			if (btt->getName() endsWith("GLAAngryMobRockProjectileObject")) continue; // 100 overloads system.
@@ -3671,11 +3671,11 @@ void GameLogic::update()
 	#endif
 
 #ifdef RTS_PROFILE
-    Profile::StartRange("map_load");
+		Profile::StartRange("map_load");
 #endif
 		startNewGame( FALSE );
 #ifdef RTS_PROFILE
-    Profile::StopRange("map_load");
+		Profile::StopRange("map_load");
 #endif
 		m_startNewGame = FALSE;
 
@@ -4338,9 +4338,9 @@ void GameLogic::pauseGameSound(Bool paused)
 		TheAudio->pauseAudio((AudioAffect)(AudioAffect_All & ~AudioAffect_Music));
 
 #if 0 // Kris added this code some time ago. I'm not sure why -- the pauseAudio should stop the
-      // ambients by itself. Everything seems to work fine without it and it's messing up my
-      // custom ambient code. Hopefully he can explain it to me, but until he gets back, I'm
-      // disabling it. -Ian
+		// ambients by itself. Everything seems to work fine without it and it's messing up my
+		// custom ambient code. Hopefully he can explain it to me, but until he gets back, I'm
+		// disabling it. -Ian
 
 		//Stop all ambient sounds!
 		Drawable *drawable = TheGameClient->getDrawableList();
@@ -5205,14 +5205,14 @@ void GameLogic::xfer( Xfer *xfer )
 		xfer->xferInt(&m_rankPointsToAddAtGameStart);
 	}
 
-  if ( version >= 10 )
-  {
-    xfer->xferUnsignedShort( &m_superweaponRestriction );
-  }
-  else if ( xfer->getXferMode() == XFER_LOAD )
-  {
-    m_superweaponRestriction = 0;
-  }
+	if ( version >= 10 )
+	{
+		xfer->xferUnsignedShort( &m_superweaponRestriction );
+	}
+	else if ( xfer->getXferMode() == XFER_LOAD )
+	{
+		m_superweaponRestriction = 0;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

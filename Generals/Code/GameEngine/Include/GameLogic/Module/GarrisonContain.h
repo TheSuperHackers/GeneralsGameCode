@@ -57,7 +57,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    OpenContainModuleData::buildFieldParse(p);
+		OpenContainModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -69,7 +69,7 @@ public:
 
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	};
 
 	static void parseInitialRoster( INI* ini, void *instance, void *store, const void* )

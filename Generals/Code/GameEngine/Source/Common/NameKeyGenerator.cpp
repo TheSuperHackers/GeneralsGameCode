@@ -252,7 +252,7 @@ NameKeyType NameKeyGenerator::createNameKey(UnsignedInt hash, const AsciiString&
 //-------------------------------------------------------------------------------------------------
 void NameKeyGenerator::parseStringAsNameKeyType( INI *ini, void *instance, void *store, const void* userData )
 {
-  *(NameKeyType *)store = TheNameKeyGenerator->nameToKey( ini->getNextToken() );
+	*(NameKeyType *)store = TheNameKeyGenerator->nameToKey( ini->getNextToken() );
 }
 
 

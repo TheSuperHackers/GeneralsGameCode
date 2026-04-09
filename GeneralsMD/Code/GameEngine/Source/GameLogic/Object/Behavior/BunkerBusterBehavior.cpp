@@ -54,14 +54,14 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData()
 
 	m_upgradeRequired = nullptr;
 	m_detonationFX = nullptr;
-  m_crashThroughBunkerFX = nullptr;
-  m_crashThroughBunkerFXFrequency = 4;
+	m_crashThroughBunkerFX = nullptr;
+	m_crashThroughBunkerFXFrequency = 4;
 
-  m_seismicEffectRadius = 140.0f;
-  m_seismicEffectMagnitude = 6.0f;
+	m_seismicEffectRadius = 140.0f;
+	m_seismicEffectMagnitude = 6.0f;
 
-  m_shockwaveWeaponTemplate = nullptr;
-  m_occupantDamageWeaponTemplate = nullptr;
+	m_shockwaveWeaponTemplate = nullptr;
+	m_occupantDamageWeaponTemplate = nullptr;
 
 }
 
@@ -69,7 +69,7 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void BunkerBusterBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -85,7 +85,7 @@ BunkerBusterBehaviorModuleData::BunkerBusterBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 
@@ -100,8 +100,8 @@ BunkerBusterBehavior::BunkerBusterBehavior( Thing *thing, const ModuleData *modD
 {
 	// THIS HAS AN UPDATE... BECAUSE I FORESEE THE NEED FOR ONE, BUT RIGHT NOW IT DOES NOTHING
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
-  m_victimID = INVALID_ID;
-  m_upgradeRequired = nullptr;
+	m_victimID = INVALID_ID;
+	m_upgradeRequired = nullptr;
 
 }
 
@@ -129,28 +129,28 @@ void BunkerBusterBehavior::onObjectCreated()
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime BunkerBusterBehavior::update()
 {
-  const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
-  AIUpdateInterface *ai = getObject()->getAI();
-  if ( ai )// is this a SMART bomb?
-  {
-    if ( m_victimID == INVALID_ID )
-    {
-      Object *victim = ai->getCurrentVictim();
-      if ( victim )
-        m_victimID = victim->getID();
-      DEBUG_ASSERTCRASH( victim, ("BunkerBusterBehavior::update... AIUpdateInterface reports no victim." ) );
-    }
-    DEBUG_ASSERTCRASH( ai, ("BunkerBusterBehavior::update could not find an AIUpdateInterface." ) );
+	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
+	AIUpdateInterface *ai = getObject()->getAI();
+	if ( ai )// is this a SMART bomb?
+	{
+		if ( m_victimID == INVALID_ID )
+		{
+			Object *victim = ai->getCurrentVictim();
+			if ( victim )
+			m_victimID = victim->getID();
+			DEBUG_ASSERTCRASH( victim, ("BunkerBusterBehavior::update... AIUpdateInterface reports no victim." ) );
+		}
+		DEBUG_ASSERTCRASH( ai, ("BunkerBusterBehavior::update could not find an AIUpdateInterface." ) );
 
 
-    if ( TheGameLogic->getFrame()%modData->m_crashThroughBunkerFXFrequency == 1 )// not too much
-    {
-      const FXList *crashFX = modData->m_crashThroughBunkerFX;
-      if ( getObject()->testStatus( OBJECT_STATUS_MISSILE_KILLING_SELF ) && crashFX )
-        FXList::doFXObj( crashFX, getObject() );// CrashFX done on the missile/bomb
-    }
+		if ( TheGameLogic->getFrame()%modData->m_crashThroughBunkerFXFrequency == 1 )// not too much
+		{
+			const FXList *crashFX = modData->m_crashThroughBunkerFX;
+			if ( getObject()->testStatus( OBJECT_STATUS_MISSILE_KILLING_SELF ) && crashFX )
+			FXList::doFXObj( crashFX, getObject() );// CrashFX done on the missile/bomb
+		}
 
-  }
+	}
 
 
 
@@ -166,14 +166,14 @@ UpdateSleepTime BunkerBusterBehavior::update()
 void BunkerBusterBehavior::onDie( const DamageInfo *damageInfo )
 {
 #if !RETAIL_COMPATIBLE_CRC
-  // TheSuperHackers @bugfix Stubbjax 17/02/2026 Only bust the bunker if the missile kills itself
-  // by reaching its destination and not when killed via external sources such as a zap from a PDL.
-  if (!getObject()->testStatus(OBJECT_STATUS_MISSILE_KILLING_SELF))
-    return;
+	// TheSuperHackers @bugfix Stubbjax 17/02/2026 Only bust the bunker if the missile kills itself
+	// by reaching its destination and not when killed via external sources such as a zap from a PDL.
+	if (!getObject()->testStatus(OBJECT_STATUS_MISSILE_KILLING_SELF))
+	return;
 #endif
 
-  // do what we came here to do!
-  bustTheBunker();
+	// do what we came here to do!
+	bustTheBunker();
 }
 
 
@@ -187,63 +187,63 @@ void BunkerBusterBehavior::bustTheBunker()
 {
 	const BunkerBusterBehaviorModuleData *modData = getBunkerBusterBehaviorModuleData();
 
-  if ( m_upgradeRequired != nullptr )
-  {
+	if ( m_upgradeRequired != nullptr )
+	{
 	  Bool weaponUpgraded = getObject()->getControllingPlayer()->hasUpgradeComplete( m_upgradeRequired );
-    if ( ! weaponUpgraded )
-      return;
-  }
+		if ( ! weaponUpgraded )
+		return;
+	}
 
 
 //  here is where we kill everyone inside any targeted garrisoned buildings
 //  AIUpdateInterface *ai = getObject()->getAI();
-  Object *target = TheGameLogic->findObjectByID( m_victimID );
+	Object *target = TheGameLogic->findObjectByID( m_victimID );
 
-  Object *objectForFX = getObject();
+	Object *objectForFX = getObject();
 
-  if ( target ) // Was the pilot aiming at an object?
-  {
-    objectForFX = target;
+	if ( target ) // Was the pilot aiming at an object?
+	{
+		objectForFX = target;
 
-    ContainModuleInterface *contain = target->getContain();
-    if ( contain && contain->isBustable() ) // Was that object something that bunkerbusters bust?
-    {
+		ContainModuleInterface *contain = target->getContain();
+		if ( contain && contain->isBustable() ) // Was that object something that bunkerbusters bust?
+		{
 
-      if ( modData->m_occupantDamageWeaponTemplate )
-      {
+			if ( modData->m_occupantDamageWeaponTemplate )
+			{
 			  DamageInfo damageInfo;
 			  damageInfo.in.m_damageType = modData->m_occupantDamageWeaponTemplate->getDamageType();
 			  damageInfo.in.m_deathType = modData->m_occupantDamageWeaponTemplate->getDeathType();
 			  damageInfo.in.m_sourceID = getObject()->getID();
 			  damageInfo.in.m_sourcePlayerMask = getObject()->getControllingPlayer()->getPlayerMask();
 			  damageInfo.in.m_amount = 100.0f;
-        contain->harmAndForceExitAllContained( &damageInfo ); // Ouch!
-      }
-      else
-        contain->killAllContained();
+				contain->harmAndForceExitAllContained( &damageInfo ); // Ouch!
+			}
+			else
+			contain->killAllContained();
 
 
 
-    }
-  }
+		}
+	}
 
-  const FXList *detonationFX = modData->m_detonationFX;
-  if ( detonationFX )
+	const FXList *detonationFX = modData->m_detonationFX;
+	if ( detonationFX )
   	FXList::doFXObj( detonationFX, objectForFX );//DetonationFX done on the building
 
 #ifdef DO_SEISMIC_SIMULATIONS
-  // Okay, the right proper way to do this is to add SeismicSim support to FXList...
-  // But until that day, I'm just gonna do it here,  sorry, M Lorenzen 6/26/03
-  SeismicSimulationNode sim(
+	// Okay, the right proper way to do this is to add SeismicSim support to FXList...
+	// But until that day, I'm just gonna do it here,  sorry, M Lorenzen 6/26/03
+	SeismicSimulationNode sim(
     objectForFX->getPosition(),
     modData->m_seismicEffectRadius,
     modData->m_seismicEffectMagnitude,
     &bunkerBusterHeavingEarthSeismicFilter );
 
-  TheTerrainVisual->addSeismicSimulation( sim );
+	TheTerrainVisual->addSeismicSimulation( sim );
 #endif
 
-  if ( modData->m_shockwaveWeaponTemplate )
+	if ( modData->m_shockwaveWeaponTemplate )
 		TheWeaponStore->createAndFireTempWeapon(modData->m_shockwaveWeaponTemplate, objectForFX, objectForFX->getPosition());
 
 

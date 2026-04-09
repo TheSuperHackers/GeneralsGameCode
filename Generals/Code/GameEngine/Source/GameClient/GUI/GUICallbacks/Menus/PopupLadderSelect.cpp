@@ -335,14 +335,14 @@ void ladderSelectedCallback()
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 )
 {
-  switch( msg )
+	switch( msg )
 	{
 		// --------------------------------------------------------------------------------------------
 		case GWM_CREATE:
 		{
 			break;
 		}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 			parent = nullptr;
@@ -352,16 +352,16 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			break;
 		}
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
 			// if we're given the opportunity to take the keyboard focus we must say we want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 			break;
 		}
-    //----------------------------------------------------------------------------------------------
-    case GBM_SELECTED:
+		//----------------------------------------------------------------------------------------------
+		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
@@ -431,7 +431,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			break;
 		}
 
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GLM_SELECTED:
 		{
 			Int selIndex, selID;
@@ -447,7 +447,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			break;
 		}
 
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GLM_DOUBLE_CLICKED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
@@ -455,7 +455,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			Int selectPos = (Int)mData2;
 			GadgetListBoxSetSelected(control, &selectPos);
 
-      if( controlID == listboxLadderSelectID )
+			if( controlID == listboxLadderSelectID )
 			{
 				TheWindowManager->winSendSystemMsg( parent, GBM_SELECTED,
 																					(WindowMsgData)buttonOk, buttonOk->winGetWindowId() );
@@ -463,7 +463,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			break;
 		}
 
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
 		{
 			GameWindow *control = (GameWindow *)mData1;

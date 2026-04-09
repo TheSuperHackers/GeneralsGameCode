@@ -831,7 +831,7 @@ void Targa::XFlip()
 static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
+	_asm
   {
     mov esi,[p1]
     mov edi,[p2]
@@ -906,11 +906,11 @@ void Targa::YFlip()
 	}
   */
 
-  unsigned stride=Header.Width*TGA_BytesPerPixel(Header.PixelDepth);
-  char *ptrTop=mImage,
+	unsigned stride=Header.Width*TGA_BytesPerPixel(Header.PixelDepth);
+	char *ptrTop=mImage,
        *ptrBottom=mImage+stride*(Header.Height-1);
-  for (unsigned y=Header.Height/2;y;--y,ptrTop+=stride,ptrBottom-=stride)
-    _swapBytes(ptrTop,ptrBottom,stride);
+	for (unsigned y=Header.Height/2;y;--y,ptrTop+=stride,ptrBottom-=stride)
+	_swapBytes(ptrTop,ptrBottom,stride);
 }
 
 /****************************************************************************

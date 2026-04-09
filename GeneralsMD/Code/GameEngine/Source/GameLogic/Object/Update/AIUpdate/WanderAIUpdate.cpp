@@ -84,11 +84,11 @@ void WanderAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WanderAIUpdate::xfer( Xfer *xfer )
 {
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 }
@@ -98,6 +98,6 @@ void WanderAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WanderAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }

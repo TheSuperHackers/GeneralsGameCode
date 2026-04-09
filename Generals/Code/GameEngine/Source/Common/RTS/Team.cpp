@@ -1539,7 +1539,7 @@ Object *Team::getTeamTargetObject()
 }
 
 // ------------------------------------------------------------------------
- void Team::setOverrideTeamRelationship( TeamID teamID, Relationship r)
+void Team::setOverrideTeamRelationship( TeamID teamID, Relationship r)
 {
 	if (teamID != TEAM_ID_INVALID )
 	{

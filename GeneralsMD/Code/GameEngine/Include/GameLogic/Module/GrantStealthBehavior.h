@@ -57,7 +57,7 @@ public:
 	{
 		m_finalRadius = 200.0f;
 		m_startRadius = 0.0f;
-    m_radiusGrowRate = 10.0f;
+		m_radiusGrowRate = 10.0f;
 		m_radiusParticleSystemTmpl = nullptr;
 		SET_ALL_KINDOFMASK_BITS( m_kindOf );
 	}
@@ -78,7 +78,7 @@ public:
 
 		p.add(dataFieldParse);
 
-  }
+	}
 
 };
 
@@ -102,5 +102,5 @@ private:
 
 	void grantStealthToObject( Object *obj );
 	ParticleSystemID m_radiusParticleSystemID;
-  Real m_currentScanRadius;
+	Real m_currentScanRadius;
 };

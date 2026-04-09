@@ -76,7 +76,7 @@ ToppleUpdateModuleData::ToppleUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -93,7 +93,7 @@ void ToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "BounceVelocityPercent",	INI::parsePercentToReal, nullptr, offsetof( ToppleUpdateModuleData, m_bounceVelocityPercent ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 

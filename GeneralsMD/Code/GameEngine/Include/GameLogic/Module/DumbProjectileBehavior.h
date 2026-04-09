@@ -114,7 +114,7 @@ private:
 	Int										m_currentFlightPathStep;	///< Our current index in the flight path vector.  Quicker than popping off.
 	WeaponBonusConditionFlags		m_extraBonusFlags;
 
-  Bool                  m_hasDetonated;           ///<
+	Bool                  m_hasDetonated;           ///<
 
 	Bool calcFlightPath(Bool recalcNumSegments);
 #if defined(RTS_DEBUG)

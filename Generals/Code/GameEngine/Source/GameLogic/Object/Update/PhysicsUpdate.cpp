@@ -145,7 +145,7 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 //-------------------------------------------------------------------------------------------------
 /*static*/ void PhysicsBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -170,7 +170,7 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1296,7 +1296,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 static Bool perpsLogicallyEqual( Real perpOne, Real perpTwo )
 {
 	// Equality with a wiggle fudge.
-  const Real PERP_RANGE = 0.15f;
+	const Real PERP_RANGE = 0.15f;
 	return fabs( perpOne - perpTwo ) <= PERP_RANGE;
 }
 
@@ -1321,8 +1321,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 		return false;
 
 
-  Object* crusherMe = getObject();
-  Object* crusheeOther = other;
+	Object* crusherMe = getObject();
+	Object* crusheeOther = other;
 
 	//Determine if we can crush the other object.
 	Bool selfCrushingOther = crusherMe->canCrushOrSquish( crusheeOther, TEST_CRUSH_ONLY );
@@ -1368,8 +1368,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 		crusheeOther->attemptDamage( &damageInfo );
 	}
 
-  const Coord3D *crusheePos = crusheeOther->getPosition();
-  const Coord3D *crusherPos = crusherMe->getPosition();
+	const Coord3D *crusheePos = crusheeOther->getPosition();
+	const Coord3D *crusherPos = crusherMe->getPosition();
 
 	BodyModuleInterface* crusheeBody = crusheeOther->getBodyModule();
 	Bool frontCrushed = crusheeBody->getFrontCrushed();

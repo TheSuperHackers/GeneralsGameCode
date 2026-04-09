@@ -219,7 +219,7 @@ public:
 	** Get_Ext_Swap_Interval - what is our current setting for the swap interval?
 	*/
 	static void             Set_Ext_Swap_Interval(long swap);
-   static long             Get_Ext_Swap_Interval();
+	static long             Get_Ext_Swap_Interval();
 
 	/*
 	** Texture Reduction - all currently loaded textures can be de-resed on the fly
@@ -324,10 +324,10 @@ public:
 	static void					Activate_Snapshot(bool b)					{ SnapshotActivated=b; }
 
 	// These clock all the time under user control, and are used to update
-   // Stats.UserStat* when performance sampling is enabled.
-   static long             UserStat0;
-   static long             UserStat1;
-   static long             UserStat2;
+	// Stats.UserStat* when performance sampling is enabled.
+	static long             UserStat0;
+	static long             UserStat1;
+	static long             UserStat2;
 
 	// Gamma control
 	static void					Set_Gamma(float gamma,float bright,float contrast,bool calibrate=true);
@@ -438,7 +438,7 @@ struct RenderStatistics
 {
 		// General statistics
 		double	ElapsedSeconds;
-      int      FramesRendered;
+	int      FramesRendered;
 
 		// Geometry engine statistics
 		double	TrianglesReceived;
@@ -473,8 +473,8 @@ struct RenderStatistics
 		long		MemUsed;
 		long		MaxMemory;
 
-      // User stats (can be used to see how often a function is called, etc.)
-      long     UserStat0;
-      long     UserStat1;
-      long     UserStat2;
+	// User stats (can be used to see how often a function is called, etc.)
+	long     UserStat0;
+	long     UserStat1;
+	long     UserStat2;
 };

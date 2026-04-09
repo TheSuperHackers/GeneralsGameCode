@@ -65,7 +65,7 @@ public:
 //	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 
 //	virtual int					 	Get_Num_Polys(void) const;

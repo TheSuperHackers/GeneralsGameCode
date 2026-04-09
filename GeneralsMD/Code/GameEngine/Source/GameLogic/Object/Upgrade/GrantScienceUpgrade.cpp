@@ -57,14 +57,14 @@
 // ------------------------------------------------------------------------------------------------
 void GrantScienceUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "GrantScience",		INI::parseAsciiString,	nullptr, offsetof( GrantScienceUpgradeModuleData, m_grantScienceName ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

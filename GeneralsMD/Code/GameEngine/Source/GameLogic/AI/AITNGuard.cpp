@@ -270,10 +270,10 @@ void AITNGuardMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardMachine::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	if (version>=2) {
 		StateMachine::xfer(xfer);	// Forgot this in initial implementation.  jba.
@@ -304,10 +304,10 @@ void AITNGuardInnerState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardInnerState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 }
 
@@ -448,10 +448,10 @@ void AITNGuardOuterState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardOuterState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 }
 
@@ -552,10 +552,10 @@ void AITNGuardReturnState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardReturnState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIEnterState::xfer(xfer);
 
@@ -658,10 +658,10 @@ void AITNGuardIdleState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AITNGuardIdleState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextEnemyScanTime);
 }
@@ -876,10 +876,10 @@ void AITNGuardAttackAggressorState::crc( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 void AITNGuardAttackAggressorState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 }
 

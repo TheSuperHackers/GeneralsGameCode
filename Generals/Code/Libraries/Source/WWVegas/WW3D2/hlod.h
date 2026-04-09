@@ -156,7 +156,7 @@ public:
 	// Render Object Interface - Predictive LOD
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Prepare_LOD(CameraClass &camera) override;
-   virtual void					Recalculate_Static_LOD_Factors() override;
+	virtual void					Recalculate_Static_LOD_Factors() override;
 	virtual void					Increment_LOD() override;
 	virtual void					Decrement_LOD() override;
 	virtual float					Get_Cost() const override;

@@ -78,7 +78,7 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData()
 /*static*/ void WaveGuideUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -101,7 +101,7 @@ WaveGuideUpdateModuleData::WaveGuideUpdateModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

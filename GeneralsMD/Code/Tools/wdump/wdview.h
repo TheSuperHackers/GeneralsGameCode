@@ -65,7 +65,7 @@ protected:
 
 #ifndef RTS_DEBUG  // debug version in wdumpView.cpp
 inline CWdumpDoc* CWdumpView::GetDocument()
-   { return (CWdumpDoc*)m_pDocument; }
+{ return (CWdumpDoc*)m_pDocument; }
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

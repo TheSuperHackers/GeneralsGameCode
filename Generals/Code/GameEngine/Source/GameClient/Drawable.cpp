@@ -350,7 +350,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_effectiveStealthOpacity = 1.0f;
 	m_terrainDecalType = TERRAIN_DECAL_NONE;
 
-  m_fadeMode = FADING_NONE;
+	m_fadeMode = FADING_NONE;
 	m_timeElapsedFade = 0;
 	m_timeToFade = 0;
 
@@ -400,7 +400,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 
 	m_ambientSoundEnabled = TRUE;
 
-  m_receivesDynamicLights = TRUE; // a good default... overridden by one of my draw modules if at all
+	m_receivesDynamicLights = TRUE; // a good default... overridden by one of my draw modules if at all
 
 	// allocate any modules we need to, we should keep
 	// this at or near the end of the drawable construction so that we have
@@ -1274,16 +1274,16 @@ Bool Drawable::calcPhysicsXform(PhysicsXformInfo& info)
 
 	if (hasPhysicsXform)
 	{
-     // HOTFIX: Ensure that we are not passing denormalized values back to caller
-     // @todo remove hotfix
-     if (info.m_totalPitch>-1e-20f&&info.m_totalPitch<1e-20f)
-       info.m_totalPitch=0.f;
-     if (info.m_totalRoll>-1e-20f&&info.m_totalRoll<1e-20f)
-       info.m_totalRoll=0.f;
-     if (info.m_totalYaw>-1e-20f&&info.m_totalYaw<1e-20f)
-       info.m_totalYaw=0.f;
-     if (info.m_totalZ>-1e-20f&&info.m_totalZ<1e-20f)
-       info.m_totalZ=0.f;
+		// HOTFIX: Ensure that we are not passing denormalized values back to caller
+		// @todo remove hotfix
+		if (info.m_totalPitch>-1e-20f&&info.m_totalPitch<1e-20f)
+		info.m_totalPitch=0.f;
+		if (info.m_totalRoll>-1e-20f&&info.m_totalRoll<1e-20f)
+		info.m_totalRoll=0.f;
+		if (info.m_totalYaw>-1e-20f&&info.m_totalYaw<1e-20f)
+		info.m_totalYaw=0.f;
+		if (info.m_totalZ>-1e-20f&&info.m_totalZ<1e-20f)
+		info.m_totalZ=0.f;
 	}
 
 	return hasPhysicsXform;
@@ -1426,7 +1426,7 @@ void Drawable::calcPhysicsXformHoverOrWings( const Locomotor *locomotor, Physics
 	info.m_totalRoll = m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll;
 
 	if (physics->isMotive())
-  {
+	{
 		if (Z_VEL_PITCH_COEFF != 0.0f)
 		{
 			const Real TINY_DZ = 0.001f;

@@ -469,7 +469,7 @@ public:  // ********************************************************************
 	virtual void stopCameoMovie();
 	virtual VideoBuffer* cameoVideoBuffer();
 
-  // mouse over information
+	// mouse over information
 	virtual DrawableID getMousedOverDrawableID() const;	///< Get drawble ID of drawable under cursor
 
 	/// Set the ingame flag as to if we have the Quit menu up or not

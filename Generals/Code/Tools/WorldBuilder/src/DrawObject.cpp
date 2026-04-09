@@ -1837,7 +1837,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 			DX8Wrapper::Set_Shader(m_shaderClass);
 			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 //			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- //			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+			//			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 		}
 	}
 

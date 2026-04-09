@@ -65,11 +65,11 @@ protected:
 
     public:
     protected:
-        void ResetControls (int iIndex);
-        void EnableControls (BOOL bEnable);
+	void ResetControls (int iIndex);
+	void EnableControls (BOOL bEnable);
 
     private:
-        float m_spinIncrement;
+	float m_spinIncrement;
 };
 
 //{{AFX_INSERT_LOCATION}}

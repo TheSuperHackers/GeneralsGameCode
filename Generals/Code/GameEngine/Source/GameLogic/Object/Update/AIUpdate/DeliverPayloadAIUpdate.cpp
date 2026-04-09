@@ -394,7 +394,7 @@ Bool DeliverPayloadAIUpdate::isOffMap() const
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::crc(xfer);
 }
 
@@ -405,12 +405,12 @@ void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  const XferVersion currentVersion = 3;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 3;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferCoord3D(&m_targetPos);
@@ -423,7 +423,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	xfer->xferAsciiString(&data.m_visibleDropBoneName);
 	xfer->xferAsciiString(&data.m_visibleSubObjectName);
 	xfer->xferAsciiString(&data.m_visiblePayloadTemplateName);
-  xfer->xferReal(&data.m_distToTarget);
+	xfer->xferReal(&data.m_distToTarget);
 	xfer->xferInt(&data.m_maxAttempts);
 	xfer->xferCoord3D(&data.m_dropOffset);
 	xfer->xferCoord3D(&data.m_dropVariance);
@@ -484,7 +484,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 
@@ -622,10 +622,10 @@ void DeliveringState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_dropDelayLeft);
 	xfer->xferBool(&m_didOpen);
@@ -901,10 +901,10 @@ void ConsiderNewApproachState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferInt(&m_numberEntriesToState);
 }
@@ -1013,10 +1013,10 @@ void RecoverFromOffMapState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_reEntryFrame);
 }
@@ -1039,14 +1039,14 @@ StateReturnType RecoverFromOffMapState::onEnter() // Increment local counter o' 
 		return STATE_FAILURE;
 	}
 
-  // have him hold in place, if possible.
+	// have him hold in place, if possible.
 	ai->aiMoveToPosition( owner->getPosition(), CMD_FROM_AI );
 
-  // a little cheesy... make a delay based on turn-radius time to simulate offscreen
-  // maneuvering.
-  Real timeToTravelThatDist;
+	// a little cheesy... make a delay based on turn-radius time to simulate offscreen
+	// maneuvering.
+	Real timeToTravelThatDist;
 	/*Real minTurnRadius =*/ ai->calcMinTurnRadius(&timeToTravelThatDist);
-  m_reEntryFrame = TheGameLogic->getFrame() + REAL_TO_INT_CEIL(timeToTravelThatDist);
+	m_reEntryFrame = TheGameLogic->getFrame() + REAL_TO_INT_CEIL(timeToTravelThatDist);
 
 	// kill its momentum
 	PhysicsBehavior* physics = owner->getPhysics();

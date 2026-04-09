@@ -96,7 +96,7 @@ class SpecialPowerTemplate : public Overridable
 
 public:
 
-  SpecialPowerTemplate();
+	SpecialPowerTemplate();
 	// virtual destructor prototype provided by MemoryPoolObject
 
 	static const FieldParse* getFieldParse() { return m_specialPowerFieldParse; }

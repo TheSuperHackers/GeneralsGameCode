@@ -161,7 +161,7 @@ class ParticleBufferClass : public RenderObjClass
 		void Set_Emitter(ParticleEmitterClass *emitter);
 
 		// from RenderObj...
-      virtual bool	Is_Complete() override { return IsEmitterDead && !NonNewNum && !NewNum; }
+	virtual bool	Is_Complete() override { return IsEmitterDead && !NonNewNum && !NewNum; }
 
 		// This adds an uninitialized NewParticleStuct to the new particle
 		// buffer and returns its address so the particle emitter can

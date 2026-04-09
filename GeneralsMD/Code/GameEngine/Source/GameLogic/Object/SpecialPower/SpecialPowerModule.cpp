@@ -554,94 +554,94 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 	Player *localPlayer = rts::getObservedOrLocalPlayer();
 	Relationship relationship = localPlayer->getRelationship(getObject()->getTeam());
 
-  // Only play the EVA sounds if this is not the local player, and the local player doesn't consider the
+	// Only play the EVA sounds if this is not the local player, and the local player doesn't consider the
 	// person an enemy.
 	// Kris: Actually, all players need to hear these warnings.
-  // Ian: But now there are different Eva messages depending on who launched
+	// Ian: But now there are different Eva messages depending on who launched
 	//if (localPlayer != getObject()->getControllingPlayer() && localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES)
-  {
+	{
 		if( type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON )
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ParticleCannon);
-      }
-      else if (relationship != ENEMIES)
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ParticleCannon);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ParticleCannon);
-      }
-    }
-    else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Nuke);
-      }
-      else if (relationship != ENEMIES)
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Nuke);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Nuke);
-      }
-    }
+		{
+			if ( localPlayer == getObject()->getControllingPlayer() )
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ParticleCannon);
+			}
+			else if (relationship != ENEMIES)
+			{
+				// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ParticleCannon);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ParticleCannon);
+			}
+		}
+		else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
+		{
+			if ( localPlayer == getObject()->getControllingPlayer() )
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Nuke);
+			}
+			else if (relationship != ENEMIES)
+			{
+				// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Nuke);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Nuke);
+			}
+		}
 		else if (type == SPECIAL_SCUD_STORM)
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ScudStorm);
-      }
-      else if (relationship != ENEMIES)
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ScudStorm);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ScudStorm);
-      }
-    }
+		{
+			if ( localPlayer == getObject()->getControllingPlayer() )
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ScudStorm);
+			}
+			else if (relationship != ENEMIES)
+			{
+				// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ScudStorm);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ScudStorm);
+			}
+		}
 		else if (type == SPECIAL_GPS_SCRAMBLER || type == SLTH_SPECIAL_GPS_SCRAMBLER )
-    {
+		{
 			// This is Ghetto.  Voices should be ini lines in the special power entry.  You shouldn't have to
 			// add to an enum to get a new voice
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_GPS_Scrambler);
-      }
-      else if (relationship != ENEMIES)
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_GPS_Scrambler);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_GPS_Scrambler);
-      }
-    }
+			if ( localPlayer == getObject()->getControllingPlayer() )
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_GPS_Scrambler);
+			}
+			else if (relationship != ENEMIES)
+			{
+				// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_GPS_Scrambler);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_GPS_Scrambler);
+			}
+		}
 		else if (type == SPECIAL_SNEAK_ATTACK)
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Sneak_Attack);
-      }
-      else if (relationship != ENEMIES)
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Sneak_Attack);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Sneak_Attack);
-      }
-    }
+		{
+			if ( localPlayer == getObject()->getControllingPlayer() )
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Sneak_Attack);
+			}
+			else if (relationship != ENEMIES)
+			{
+				// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Sneak_Attack);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Sneak_Attack);
+			}
+		}
 	}
 
 	// get module data

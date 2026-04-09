@@ -3155,22 +3155,22 @@ void add(float *sum,float *addend)
 Real W3DShaderManager::GetCPUBenchTime()
 {
 	float ztot, yran, ymult, ymod, x, y, z, pi, prod;
-    long int low, ixran, itot, j, iprod;
+	long int low, ixran, itot, j, iprod;
 
   	__int64 endTime64,freq64,startTime64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 
-    ztot = 0.0;
-    low = 1;
-    ixran = 1907;
-    yran = 5813.0;
-    ymult = 1307.0;
-    ymod = 5471.0;
-    itot = 560000;	//total iterations. This value ends up running at ~30 fps on our P4-2.2Ghz.
+	ztot = 0.0;
+	low = 1;
+	ixran = 1907;
+	yran = 5813.0;
+	ymult = 1307.0;
+	ymod = 5471.0;
+	itot = 560000;	//total iterations. This value ends up running at ~30 fps on our P4-2.2Ghz.
 
-    for(j=1; j<=itot; j++)
-    {
+	for(j=1; j<=itot; j++)
+	{
 		iprod = 27611 * ixran;
 		ixran = iprod - 74383*(long int)(iprod/74383);
 		x = (float)ixran / 74383.0;

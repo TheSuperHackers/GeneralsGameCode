@@ -291,7 +291,7 @@ public:
 
 	BodyModuleInterface* getBodyModule() const { return m_body; }
 	ContainModuleInterface* getContain() const { return m_contain; }
-  StealthUpdate*          getStealth() const { return m_stealth; }
+	StealthUpdate*          getStealth() const { return m_stealth; }
 	SpawnBehaviorInterface* getSpawnBehaviorInterface() const;
 	ProjectileUpdateInterface* getProjectileUpdateInterface() const;
 
@@ -399,13 +399,13 @@ public:
 	ObjectID calculateCountermeasureToDivertTo( const Object& victim );
 
 	void calcNaturalRallyPoint(Coord2D *pt); ///< calc the "natural" starting rally point
-  void setConstructionPercent( Real percent ) { m_constructionPercent = percent; }
+	void setConstructionPercent( Real percent ) { m_constructionPercent = percent; }
 	Real getConstructionPercent() const { return m_constructionPercent; }
 
-  void setLayer( PathfindLayerEnum layer );
+	void setLayer( PathfindLayerEnum layer );
 	PathfindLayerEnum getLayer() const { return m_layer; }
 
-  void setDestinationLayer( PathfindLayerEnum layer );
+	void setDestinationLayer( PathfindLayerEnum layer );
 	PathfindLayerEnum getDestinationLayer() const { return m_destinationLayer; }
 
 	void prependToList(Object **pListHead);
@@ -502,7 +502,7 @@ public:
 	Weapon* findWaypointFollowingCapableWeapon();
 	Bool getAmmoPipShowingInfo(Int& numTotal, Int& numFull) const;
 
-  void notifyFiringTrackerShotFired( const Weapon* weaponFired, ObjectID victimID ) ;
+	void notifyFiringTrackerShotFired( const Weapon* weaponFired, ObjectID victimID ) ;
 
   /**
 		Determines if the unit has any weapon that could conceivably
@@ -565,7 +565,7 @@ public:
 	void setWeaponBonusCondition(WeaponBonusConditionType wst);
 	void clearWeaponBonusCondition(WeaponBonusConditionType wst);
 
-  // note, the !=0 at the end is important, to convert this into a boolean type! (srj)
+	// note, the !=0 at the end is important, to convert this into a boolean type! (srj)
 	Bool testWeaponBonusCondition(WeaponBonusConditionType wst) const { return (m_weaponBonusCondition & (1 << wst)) != 0; }
 	inline WeaponBonusConditionFlags getWeaponBonusCondition() const { return m_weaponBonusCondition; }
 
@@ -750,7 +750,7 @@ private:
 	// cache these, for convenience
 	ContainModuleInterface*				m_contain;
 	BodyModuleInterface*					m_body;
-  StealthUpdate*                m_stealth;
+	StealthUpdate*                m_stealth;
 
 	AIUpdateInterface*						m_ai;	///< ai interface (if any), cached for handy access. (duplicate of entry in the module array!)
 	PhysicsBehavior*							m_physics;	///< physics interface (if any), cached for handy access. (duplicate of entry in the module array!)

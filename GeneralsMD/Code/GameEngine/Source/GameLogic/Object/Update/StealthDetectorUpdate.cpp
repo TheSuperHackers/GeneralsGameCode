@@ -56,7 +56,7 @@
 //-------------------------------------------------------------------------------------------------
 void StealthDetectorUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -77,7 +77,7 @@ void StealthDetectorUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -250,12 +250,12 @@ UpdateSleepTime StealthDetectorUpdate::update()
  						// ui msg
  						TheInGameUI->message( TheGameText->fetch( "MESSAGE:StealthDiscovered" ) );
 
-            // If revealing this unit is suppose to cause an Eva event, do it
-            EvaMessage message = stealth->getEnemyDetectionEvaEvent();
-            if ( message != EVA_Invalid && TheEva != nullptr )
-            {
-              TheEva->setShouldPlay( message );
-            }
+						// If revealing this unit is suppose to cause an Eva event, do it
+						EvaMessage message = stealth->getEnemyDetectionEvaEvent();
+						if ( message != EVA_Invalid && TheEva != nullptr )
+						{
+							TheEva->setShouldPlay( message );
+						}
 					}
 
 				}
@@ -286,12 +286,12 @@ UpdateSleepTime StealthDetectorUpdate::update()
  						// ui msg
  						TheInGameUI->message( TheGameText->fetch( "MESSAGE:StealthNeutralized" ) );
 
-            // If revealing this unit is suppose to cause an Eva event, do it
-            EvaMessage message = stealth->getOwnDetectionEvaEvent();
-            if ( message != EVA_Invalid && TheEva != nullptr )
-            {
-              TheEva->setShouldPlay( message );
-            }
+						// If revealing this unit is suppose to cause an Eva event, do it
+						EvaMessage message = stealth->getOwnDetectionEvaEvent();
+						if ( message != EVA_Invalid && TheEva != nullptr )
+						{
+							TheEva->setShouldPlay( message );
+						}
 					}
 
 				}
@@ -338,7 +338,7 @@ UpdateSleepTime StealthDetectorUpdate::update()
 				{
 					rider = *it;
 
-          StealthUpdate *stealth = rider->getStealth();
+					StealthUpdate *stealth = rider->getStealth();
 					if ( stealth )
 					{
 						// we have found someone
@@ -355,13 +355,13 @@ UpdateSleepTime StealthDetectorUpdate::update()
 	}
 
 
-  const Player *localPlayer = rts::getObservedOrLocalPlayer();
+	const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 	//Make sure the detector is visible to the local player before we add effects or sounds.
 	if ( self->getShroudedStatus( localPlayer->getPlayerIndex() ) <= OBJECTSHROUD_PARTIAL_CLEAR )
 	{
-    if ( self->testStatus( OBJECT_STATUS_STEALTHED ) == FALSE || self->getControllingPlayer() == localPlayer )
-    {
+		if ( self->testStatus( OBJECT_STATUS_STEALTHED ) == FALSE || self->getControllingPlayer() == localPlayer )
+		{
 		  Drawable *myDraw = self->getDrawable();
 		  Coord3D bonePosition = {-1.66f,5.5f,15};
 		  if (myDraw)
@@ -412,7 +412,7 @@ UpdateSleepTime StealthDetectorUpdate::update()
 		  IRPingSound.setObjectID( self->getID() );
 		  TheAudio->addAudioEvent(&IRPingSound);
 
-    }
+		}
 
 	}
 

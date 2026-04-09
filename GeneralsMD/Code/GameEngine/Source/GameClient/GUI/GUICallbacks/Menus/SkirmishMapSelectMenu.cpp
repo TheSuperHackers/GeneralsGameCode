@@ -580,7 +580,7 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 				    if (md)
 				    {
   						GadgetStaticTextSetText(win, md->m_displayName);
-                    }
+						}
 		         }
 					//if (mapFname)
 						//setupGameStart(mapFname);

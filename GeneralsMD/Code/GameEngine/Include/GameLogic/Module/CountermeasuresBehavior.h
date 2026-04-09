@@ -48,25 +48,25 @@ public:
 	UpgradeMuxData				m_upgradeMuxData;
 	AsciiString						m_flareTemplateName;
 	AsciiString						m_flareBoneBaseName;
-  Real									m_evasionRate;
-  UnsignedInt						m_volleySize;
-  Real									m_volleyArcAngle;
+	Real									m_evasionRate;
+	UnsignedInt						m_volleySize;
+	Real									m_volleyArcAngle;
 	Real									m_volleyVelocityFactor;
-  UnsignedInt						m_framesBetweenVolleys;
+	UnsignedInt						m_framesBetweenVolleys;
 	UnsignedInt						m_numberOfVolleys;
-  UnsignedInt						m_reloadFrames;
+	UnsignedInt						m_reloadFrames;
 	UnsignedInt						m_missileDecoyFrames;
 	UnsignedInt						m_countermeasureReactionFrames;
 	Bool									m_mustReloadAtAirfield;
 
 	CountermeasuresBehaviorModuleData()
 	{
-    m_volleySize            = 0;
+		m_volleySize            = 0;
 		m_volleyArcAngle				= 0.0f;
-    m_framesBetweenVolleys  = 0;
+		m_framesBetweenVolleys  = 0;
 		m_numberOfVolleys       = 0;
-    m_reloadFrames          = 0;
-    m_evasionRate           = 0.0f;
+		m_reloadFrames          = 0;
+		m_evasionRate           = 0.0f;
 		m_mustReloadAtAirfield	= FALSE;
 		m_missileDecoyFrames		= 0;
 		m_volleyVelocityFactor  = 1.0f;

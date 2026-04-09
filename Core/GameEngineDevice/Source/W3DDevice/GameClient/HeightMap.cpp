@@ -1647,7 +1647,7 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 
 	m_updating = true;
 	if (m_needFullUpdate)
-  {
+	{
 		m_needFullUpdate = false;
 		updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
 		m_updating = false;
@@ -1655,7 +1655,7 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	}
 
 	if (m_x >= m_map->getXExtent() && m_y >= m_map->getYExtent())
-  {
+	{
 		m_updating = false;
 		return; // no need to center.
 	}
@@ -2115,7 +2115,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	else
 			m_bridgeBuffer->drawBridges(&rinfo.Camera, m_disableTextures, m_stageTwoTexture);
 
-  if ( m_waypointBuffer )
+	if ( m_waypointBuffer )
 	  m_waypointBuffer->drawWaypoints(rinfo);
 
 	m_bibBuffer->renderBibs();
@@ -2375,6 +2375,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles()
 			}
 			W3DShaderManager::resetShader(st);
 		}
-  }
+	}
 }
 #endif

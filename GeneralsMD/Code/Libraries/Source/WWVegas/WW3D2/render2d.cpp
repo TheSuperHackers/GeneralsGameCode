@@ -77,7 +77,7 @@ Render2DClass::Render2DClass( TextureClass* tex ) :
 	Colors(sizeof(PreAllocatedColors)/sizeof(unsigned long),PreAllocatedColors)
 {
 	Set_Texture( tex );
-   Shader = Get_Default_Shader();
+	Shader = Get_Default_Shader();
 	return ;
 }
 
@@ -103,7 +103,7 @@ Render2DClass::Get_Default_Shader()
 {
 	ShaderClass shader;
 
-   shader.Set_Depth_Mask( ShaderClass::DEPTH_WRITE_DISABLE );
+	shader.Set_Depth_Mask( ShaderClass::DEPTH_WRITE_DISABLE );
 	shader.Set_Depth_Compare( ShaderClass::PASS_ALWAYS );
 	shader.Set_Dst_Blend_Func( ShaderClass::DSTBLEND_ONE_MINUS_SRC_ALPHA );
 	shader.Set_Src_Blend_Func( ShaderClass::SRCBLEND_SRC_ALPHA );

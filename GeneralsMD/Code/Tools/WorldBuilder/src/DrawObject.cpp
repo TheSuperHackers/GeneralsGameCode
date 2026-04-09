@@ -1721,32 +1721,32 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 /** Draw a "circle" into the m_lineRenderer, e.g. to visualize weapon range, sight range, sound range **/
 void DrawObject::addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera )
 {
-  Real angle, inc = PI/4.0f;
-  Coord3D pnt, lastPnt;
-  ICoord2D start, end;
-  Real z = center.z;
+	Real angle, inc = PI/4.0f;
+	Coord3D pnt, lastPnt;
+	ICoord2D start, end;
+	Real z = center.z;
 
-  // Draw the circle.
-  angle = 0.0f;
-  lastPnt.x = center.x + radius * (Real)cos(angle);
-  lastPnt.y = center.y + radius * (Real)sin(angle);
-  lastPnt.z = z;
-  bool shouldEnd = worldToScreen(&lastPnt, &end, camera);
+	// Draw the circle.
+	angle = 0.0f;
+	lastPnt.x = center.x + radius * (Real)cos(angle);
+	lastPnt.y = center.y + radius * (Real)sin(angle);
+	lastPnt.z = z;
+	bool shouldEnd = worldToScreen(&lastPnt, &end, camera);
 
-  for( angle = inc; angle <= 2.0f * PI; angle += inc ) {
-    pnt.x = center.x + radius * (Real)cos(angle);
-    pnt.y = center.y + radius * (Real)sin(angle);
-    pnt.z = z;
+	for( angle = inc; angle <= 2.0f * PI; angle += inc ) {
+		pnt.x = center.x + radius * (Real)cos(angle);
+		pnt.y = center.y + radius * (Real)sin(angle);
+		pnt.z = z;
 
-    bool shouldStart = worldToScreen(&pnt, &start, camera);
-    if (shouldStart && shouldEnd) {
-      m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), width, color);
-    }
+		bool shouldStart = worldToScreen(&pnt, &start, camera);
+		if (shouldStart && shouldEnd) {
+			m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), width, color);
+		}
 
-    lastPnt = pnt;
-    end = start;
-    shouldEnd = shouldStart;
-  }
+		lastPnt = pnt;
+		end = start;
+		shouldEnd = shouldStart;
+	}
 
 }
 
@@ -1769,7 +1769,7 @@ void DrawObject::updateVBWithSightRange(MapObject *pMapObj, CameraClass* camera)
 		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
 	}
 
-  addCircleToLineRenderer(pos, radius, SIGHT_RANGE_LINE_WIDTH, color, camera );
+	addCircleToLineRenderer(pos, radius, SIGHT_RANGE_LINE_WIDTH, color, camera );
 }
 
 #define WEAPON_RANGE_LINE_WIDTH 1.0f
@@ -1781,7 +1781,7 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 		return;
 	}
 
-  const unsigned long colors[WEAPONSLOT_COUNT] = {0xFF00FF00, 0xFFE0F00A, 0xFFFF0000}; // Green, Yellow, Red
+	const unsigned long colors[WEAPONSLOT_COUNT] = {0xFF00FF00, 0xFFE0F00A, 0xFFFF0000}; // Green, Yellow, Red
 
 
 	Coord3D pos = *pMapObj->getLocation();
@@ -1806,7 +1806,7 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 
 			Real radius = tmpl->getUnmodifiedAttackRange();
 
-      addCircleToLineRenderer(pos, radius, WEAPON_RANGE_LINE_WIDTH, colors[i], camera );
+			addCircleToLineRenderer(pos, radius, WEAPON_RANGE_LINE_WIDTH, colors[i], camera );
 		}
 	}
 }
@@ -1816,122 +1816,122 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 // MLL C&C3
 void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera)
 {
-  if (!pMapObj || !m_lineRenderer) {
-    return;
-  }
+	if (!pMapObj || !m_lineRenderer) {
+		return;
+	}
 
-  const unsigned long colors[2] = {0xFF0000FF, 0xFFFF00FF}; // Blue and purple
-                                                            // Colors match those used in W3DView.cpp
+	const unsigned long colors[2] = {0xFF0000FF, 0xFFFF00FF}; // Blue and purple
+	// Colors match those used in W3DView.cpp
 
 
-  Coord3D pos = *pMapObj->getLocation();
-  if (TheTerrainRenderObject) {
-    // Make sure that the position is on the terrain.
-    pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
-  }
+	Coord3D pos = *pMapObj->getLocation();
+	if (TheTerrainRenderObject) {
+		// Make sure that the position is on the terrain.
+		pos.z += TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, nullptr);
+	}
 
-  // Does this object actually have an attached sound?
-  const AudioEventInfo * audioInfo = nullptr;
+	// Does this object actually have an attached sound?
+	const AudioEventInfo * audioInfo = nullptr;
 
-  Dict * properties = pMapObj->getProperties();
+	Dict * properties = pMapObj->getProperties();
 
-  Bool exists = false;
-  AsciiString ambientName = properties->getAsciiString( TheKey_objectSoundAmbient, &exists );
+	Bool exists = false;
+	AsciiString ambientName = properties->getAsciiString( TheKey_objectSoundAmbient, &exists );
 
-  if ( exists )
-  {
-    if ( ambientName.isEmpty() )
-    {
-      // User has removed normal sound
-      return;
-    }
-    else
-    {
-      if ( TheAudio == nullptr )
-      {
-        DEBUG_CRASH( ("TheAudio is null! Can't draw sound circles") );
-        return;
-      }
+	if ( exists )
+	{
+		if ( ambientName.isEmpty() )
+		{
+			// User has removed normal sound
+			return;
+		}
+		else
+		{
+			if ( TheAudio == nullptr )
+			{
+				DEBUG_CRASH( ("TheAudio is null! Can't draw sound circles") );
+				return;
+			}
 
-      audioInfo = TheAudio->findAudioEventInfo( ambientName );
+			audioInfo = TheAudio->findAudioEventInfo( ambientName );
 
-      if ( audioInfo == nullptr )
-      {
-        DEBUG_CRASH( ("Override audio named %s is missing; Can't draw sound circles", ambientName.str() ) );
-        return;
-      }
-    }
-  }
-  else
-  {
-    const ThingTemplate * thingTemplate = pMapObj->getThingTemplate();
-    if ( thingTemplate == nullptr )
-    {
-      // No sound if no template
-      return;
-    }
+			if ( audioInfo == nullptr )
+			{
+				DEBUG_CRASH( ("Override audio named %s is missing; Can't draw sound circles", ambientName.str() ) );
+				return;
+			}
+		}
+	}
+	else
+	{
+		const ThingTemplate * thingTemplate = pMapObj->getThingTemplate();
+		if ( thingTemplate == nullptr )
+		{
+			// No sound if no template
+			return;
+		}
 
-    if ( !thingTemplate->hasSoundAmbient() )
-    {
-      return;
-    }
+		if ( !thingTemplate->hasSoundAmbient() )
+		{
+			return;
+		}
 
-    const AudioEventRTS * event = thingTemplate->getSoundAmbient();
+		const AudioEventRTS * event = thingTemplate->getSoundAmbient();
 
-    if ( event == nullptr )
-    {
-      return;
-    }
+		if ( event == nullptr )
+		{
+			return;
+		}
 
-    audioInfo = event->getAudioEventInfo();
+		audioInfo = event->getAudioEventInfo();
 
-    if ( audioInfo == nullptr )
-    {
-      // May just not be set up yet
-      if ( TheAudio == nullptr )
-      {
-        DEBUG_CRASH( ("TheAudio is null! Can't draw sound circles") );
-        return;
-      }
+		if ( audioInfo == nullptr )
+		{
+			// May just not be set up yet
+			if ( TheAudio == nullptr )
+			{
+				DEBUG_CRASH( ("TheAudio is null! Can't draw sound circles") );
+				return;
+			}
 
-      audioInfo = TheAudio->findAudioEventInfo( event->getEventName() );
+			audioInfo = TheAudio->findAudioEventInfo( event->getEventName() );
 
-      if ( audioInfo == nullptr )
-      {
-        DEBUG_CRASH( ("Default ambient sound %s has no info; Can't draw sound circles", event->getEventName().str() ) );
-        return;
-      }
-    }
-  }
+			if ( audioInfo == nullptr )
+			{
+				DEBUG_CRASH( ("Default ambient sound %s has no info; Can't draw sound circles", event->getEventName().str() ) );
+				return;
+			}
+		}
+	}
 
-  // Should have set up audioInfo or returned by now
-  DEBUG_ASSERTCRASH( audioInfo != nullptr, ("Managed to finish setting up audio info without setting it?!?" ) );
-  if ( audioInfo == nullptr )
-  {
-    return;
-  }
+	// Should have set up audioInfo or returned by now
+	DEBUG_ASSERTCRASH( audioInfo != nullptr, ("Managed to finish setting up audio info without setting it?!?" ) );
+	if ( audioInfo == nullptr )
+	{
+		return;
+	}
 
-  // Get the current radius (could be overridden)
-  Real minRadius = audioInfo->m_minDistance;
-  Real maxRadius = audioInfo->m_maxDistance;
-  Bool customized = properties->getBool( TheKey_objectSoundAmbientCustomized, &exists );
-  if ( exists && customized )
-  {
-    Real valReal;
+	// Get the current radius (could be overridden)
+	Real minRadius = audioInfo->m_minDistance;
+	Real maxRadius = audioInfo->m_maxDistance;
+	Bool customized = properties->getBool( TheKey_objectSoundAmbientCustomized, &exists );
+	if ( exists && customized )
+	{
+		Real valReal;
 
-    valReal = properties->getReal( TheKey_objectSoundAmbientMinRange, &exists );
-    if ( exists )
-    {
-      minRadius = valReal;
-    }
-    valReal = properties->getReal( TheKey_objectSoundAmbientMaxRange, &exists );
-    if ( exists )
-    {
-      maxRadius = valReal;
-    }
-  }
-  addCircleToLineRenderer(pos, minRadius, SOUND_RANGE_LINE_WIDTH, colors[0], camera );
-  addCircleToLineRenderer(pos, maxRadius, SOUND_RANGE_LINE_WIDTH, colors[1], camera );
+		valReal = properties->getReal( TheKey_objectSoundAmbientMinRange, &exists );
+		if ( exists )
+		{
+			minRadius = valReal;
+		}
+		valReal = properties->getReal( TheKey_objectSoundAmbientMaxRange, &exists );
+		if ( exists )
+		{
+			maxRadius = valReal;
+		}
+	}
+	addCircleToLineRenderer(pos, minRadius, SOUND_RANGE_LINE_WIDTH, colors[0], camera );
+	addCircleToLineRenderer(pos, maxRadius, SOUND_RANGE_LINE_WIDTH, colors[1], camera );
 }
 
 
@@ -2095,7 +2095,7 @@ if (_skip_drawobject_render) {
 	}
 	m_waterDrawObject->update();
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
-  if (m_drawObjects || m_drawWaypoints || m_drawBoundingBoxes || m_drawSightRanges || m_drawWeaponRanges || m_drawSoundRanges || m_drawTestArtHighlight) {
+	if (m_drawObjects || m_drawWaypoints || m_drawBoundingBoxes || m_drawSightRanges || m_drawWeaponRanges || m_drawSoundRanges || m_drawTestArtHighlight) {
 		//Apply the shader and material
 
 		//WST Variables below are for optimization to reduce VB updates which are extremely slow
@@ -2112,7 +2112,7 @@ if (_skip_drawobject_render) {
 
 // DEBUG!
 if (pMapObj->isSelected()) {
- Transform.Get_Translation();
+				Transform.Get_Translation();
 }
 			Coord3D loc = *pMapObj->getLocation();
 			if (TheTerrainRenderObject) {
@@ -2149,10 +2149,10 @@ if (pMapObj->isSelected()) {
 						linesToRender = true;
 						updateVBWithWeaponRange(pMapObj, &rinfo.Camera);
 					}
-          if (doArrow && m_drawSoundRanges) {
-            linesToRender = true;
-            updateVBWithSoundRanges(pMapObj, &rinfo.Camera);
-          }
+					if (doArrow && m_drawSoundRanges) {
+						linesToRender = true;
+						updateVBWithSoundRanges(pMapObj, &rinfo.Camera);
+					}
 				}
 
 				if (doArrow && m_drawTestArtHighlight) {
@@ -2423,7 +2423,7 @@ if (pMapObj->isSelected()) {
 		}
 	}
 
-  DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
+	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
  	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 
 	if (m_waterDrawObject) {

@@ -46,14 +46,14 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpgradeModuleData::buildFieldParse(p);
+		UpgradeModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "DelayTime",	INI::parseDurationUnsignedInt,	nullptr, offsetof( DelayedUpgradeModuleData, m_delayTime ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

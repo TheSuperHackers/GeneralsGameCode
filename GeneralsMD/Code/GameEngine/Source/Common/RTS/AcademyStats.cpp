@@ -248,7 +248,7 @@ void AcademyStats::init( const Player *player )
 	//26) Player did not use the new "double click location attack move/guard"
 	m_doubleClickAttackMoveOrdersGiven = 0;
 
-  //27) Built barracks within 5 minutes?
+	//27) Built barracks within 5 minutes?
 	m_builtBarracksWithinFiveMinutes = FALSE;
 
 	//28) Built war factory within 10 minutes?
@@ -916,7 +916,7 @@ void AcademyStats::evaluateTier3Advice( AcademyAdviceInfo *info, Int numAvailabl
 		numAvailableTips--;
 	}
 
-  //27) Built barracks within 5 minutes?
+	//27) Built barracks within 5 minutes?
 	if( !m_builtBarracksWithinFiveMinutes )
 	{
 		availableTips++;
@@ -1223,7 +1223,7 @@ void AcademyStats::xfer( Xfer *xfer )
 	//26) Player did not use the new "double click location attack move/guard"
 	xfer->xferUnsignedInt( &m_doubleClickAttackMoveOrdersGiven );
 
-  //27) Built barracks within 5 minutes?
+	//27) Built barracks within 5 minutes?
 	xfer->xferBool( &m_builtBarracksWithinFiveMinutes );
 
 	//28) Built war factory within 10 minutes?

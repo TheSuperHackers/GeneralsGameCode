@@ -55,7 +55,7 @@ DefectorSpecialPowerModuleData::DefectorSpecialPowerModuleData()
 
 	//static
 
- void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
+void DefectorSpecialPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	SpecialPowerModuleData::buildFieldParse( p );
 
@@ -119,7 +119,7 @@ void DefectorSpecialPower::doSpecialPowerAtObject( Object *objectToMakeDefector,
 	}
 
 	// call the base class action cause we are *EXTENDING* functionality
-  SpecialPowerModule::doSpecialPowerAtObject( objectToMakeDefector, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject( objectToMakeDefector, commandOptions );
 
 	//AIUpdateInterface *hisAI = objectToMakeDefector->getAIUpdateInterface();
 	//if (hisAI)

@@ -65,7 +65,7 @@ static VARIANT GetCell ( int row, int column )
 		goto error;
 	}
 
-  if ( ! (dispatch = ws->GetRange (cell, cell )))
+	if ( ! (dispatch = ws->GetRange (cell, cell )))
 	{
 		goto error;
 	}
@@ -105,7 +105,7 @@ int PutCell ( int row, int column, const OLECHAR *string, int val )
 		goto error;
 	}
 
-  if ( ! (dispatch = ws->GetRange (cell, cell )))
+	if ( ! (dispatch = ws->GetRange (cell, cell )))
 	{
 		goto error;
 	}
@@ -172,10 +172,10 @@ int PutSeparator ( int row )
 	OLECHAR cellname2[20];
 	VARIANT cell1,cell2;
 
-  if ( !ws )
-  {
+	if ( !ws )
+	{
  		goto error;
-  }
+	}
 
 	assert ( row > 0 );
 	swprintf ( cellname1, L"A%d", row );
@@ -187,7 +187,7 @@ int PutSeparator ( int row )
  	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
 
 
-  if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
+	if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
 	{
 		goto error;
 	}
@@ -247,10 +247,10 @@ int PutSection ( int row, OLECHAR *title )
 	VARIANT cell1,cell2;
 	_Worksheet *ws = nullptr;
 
-  if ( !ws )
-  {
+	if ( !ws )
+	{
  		goto error;
-  }
+	}
 
 	assert ( row > 0 );
 	swprintf ( cellname1, L"A%d", row );
@@ -262,7 +262,7 @@ int PutSection ( int row, OLECHAR *title )
  	V_BSTR ( &cell2 ) = SysAllocString (cellname2);
 
 
-  if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
+	if ( ! (dispatch = ws->GetRange (cell1, cell2 )))
 	{
 		goto error;
 	}
@@ -608,7 +608,7 @@ void SelectActiveSheet ( void )
 {
 	LPDISPATCH dispatch;
 
-  if ( ! (dispatch = xl->GetActiveSheet ()))
+	if ( ! (dispatch = xl->GetActiveSheet ()))
 	{
 		return;
 	}

@@ -1181,7 +1181,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 					TheGameSpyInfo->reset();
 					TheShell->pop();
 				}
-            break; // LORENZEN ADDED. SORRY IF THIS "BREAKS" IT...
+					break; // LORENZEN ADDED. SORRY IF THIS "BREAKS" IT...
 
 
 			case PeerResponse::PEERRESPONSE_JOINGROUPROOM:
@@ -1220,7 +1220,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 
 
 // LORENZEN EXPRESSES DOUBT ABOUT THIS ONE, AS IT MAY HAVE SUFFERED MERGE MANGLING... SORRY
-            // I THINK THIS IS THE OBSOLETE VERSION... SEE THE NEWER LOOKING ONE ABOVE
+				// I THINK THIS IS THE OBSOLETE VERSION... SEE THE NEWER LOOKING ONE ABOVE
 /*
   			case PeerResponse::PEERRESPONSE_DISCONNECT:
   				{

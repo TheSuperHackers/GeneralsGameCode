@@ -132,7 +132,7 @@ static void commandButtonTooltip(GameWindow *window,
 /// mark the UI as dirty so the context of everything is re-evaluated
 void ControlBar::markUIDirty()
 {
-  m_UIDirty = TRUE;
+	m_UIDirty = TRUE;
 
 #if defined(RTS_DEBUG)
 	UnsignedInt now = TheGameLogic->getFrame();
@@ -837,7 +837,7 @@ CommandSet::CommandSet(const AsciiString& name) :
 const CommandButton* CommandSet::getCommandButton(Int i) const
 {
 	const CommandButton* button;
-  // Check for TheGameLogic == null, cause it is in Worldbuilder, and wb gets command bar info. jba.
+	// Check for TheGameLogic == null, cause it is in Worldbuilder, and wb gets command bar info. jba.
 	if (TheGameLogic && TheGameLogic->findControlBarOverride(m_name, i, button))
 		return button;
 
@@ -2623,7 +2623,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 				setPortraitByObject( nullptr );
 				return;
 			}
-      StealthUpdate *stealth = obj->getStealth();
+			StealthUpdate *stealth = obj->getStealth();
 			if( stealth && stealth->isDisguised() )
 			{
 				//Fake player upgrades too!

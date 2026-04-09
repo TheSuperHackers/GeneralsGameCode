@@ -280,8 +280,8 @@ private:
 	void 		Free();
 
 	float		getframe(uint32 frame_idx, uint32 vector_idx=0);
-   void		decompress(uint32 frame_idx, float *outdata);
-   void		decompress(uint32 src_idx, float *srcdata, uint32 frame_idx, float *outdata);
+	void		decompress(uint32 frame_idx, float *outdata);
+	void		decompress(uint32 src_idx, float *srcdata, uint32 frame_idx, float *outdata);
 
 	friend class HCompressedAnimClass;
 };

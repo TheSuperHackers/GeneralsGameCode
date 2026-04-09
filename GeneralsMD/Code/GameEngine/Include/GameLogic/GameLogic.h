@@ -244,8 +244,8 @@ public:
 	// We need to allow access to this, because on a restartGame, we need to restart with the settings we started with
 	Int getRankPointsToAddAtGameStart() const { return m_rankPointsToAddAtGameStart; }
 
-  UnsignedShort getSuperweaponRestriction() const; ///< Get any optional limits on superweapons
-  void setSuperweaponRestriction();
+	UnsignedShort getSuperweaponRestriction() const; ///< Get any optional limits on superweapons
+	void setSuperweaponRestriction();
 
 #ifdef DUMP_PERF_STATS
 	void getAIMetricsStatistics( UnsignedInt *numAI, UnsignedInt *numMoving, UnsignedInt *numAttacking, UnsignedInt *numWaitingForPath, UnsignedInt *overallFailedPathfinds );
@@ -365,7 +365,7 @@ private:
 
 	GameMode m_gameMode;
 	Int m_rankLevelLimit;
-  UnsignedShort m_superweaponRestriction;
+	UnsignedShort m_superweaponRestriction;
 
 	LoadScreen *getLoadScreen( Bool loadSaveGame );
 	LoadScreen *m_loadScreen;

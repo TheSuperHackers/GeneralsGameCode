@@ -48,7 +48,7 @@ enum
 	STEALTH_NOT_WHILE_FIRING_TERTIARY		= 0x00000020,
 	STEALTH_ONLY_WITH_BLACK_MARKET			= 0x00000040,
 	STEALTH_NOT_WHILE_TAKING_DAMAGE			= 0x00000080,
-  STEALTH_NOT_WHILE_RIDERS_ATTACKING  = 0x00000100,
+	STEALTH_NOT_WHILE_RIDERS_ATTACKING  = 0x00000100,
 
 	STEALTH_NOT_WHILE_FIRING_WEAPON			= (STEALTH_NOT_WHILE_FIRING_PRIMARY | STEALTH_NOT_WHILE_FIRING_SECONDARY | STEALTH_NOT_WHILE_FIRING_TERTIARY),
 };
@@ -90,15 +90,15 @@ public:
 	UnsignedInt		m_stealthDelay;
 	UnsignedInt		m_stealthLevel;
 	UnsignedInt		m_blackMarketCheckFrames;
-  EvaMessage    m_enemyDetectionEvaEvent;
-  EvaMessage    m_ownDetectionEvaEvent;
-  Bool					m_innateStealth;
+	EvaMessage    m_enemyDetectionEvaEvent;
+	EvaMessage    m_ownDetectionEvaEvent;
+	Bool					m_innateStealth;
 	Bool					m_orderIdleEnemiesToAttackMeUponReveal;
 	Bool					m_teamDisguised;
 	Bool					m_useRiderStealth;
-  Bool          m_grantedBySpecialPower;
+	Bool          m_grantedBySpecialPower;
 
-  StealthUpdateModuleData();
+	StealthUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 };
@@ -116,7 +116,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 
-  virtual StealthUpdate* getStealth() override { return this; }
+	virtual StealthUpdate* getStealth() override { return this; }
 
 
 	virtual UpdateSleepTime update() override;
@@ -133,14 +133,14 @@ public:
 	Real getFriendlyOpacity() const;
 	UnsignedInt getStealthDelay() const { return getStealthUpdateModuleData()->m_stealthDelay; }
 	UnsignedInt getStealthLevel() const { return getStealthUpdateModuleData()->m_stealthLevel; }
-  EvaMessage getEnemyDetectionEvaEvent() const { return getStealthUpdateModuleData()->m_enemyDetectionEvaEvent; }
-  EvaMessage getOwnDetectionEvaEvent() const { return getStealthUpdateModuleData()->m_ownDetectionEvaEvent; }
+	EvaMessage getEnemyDetectionEvaEvent() const { return getStealthUpdateModuleData()->m_enemyDetectionEvaEvent; }
+	EvaMessage getOwnDetectionEvaEvent() const { return getStealthUpdateModuleData()->m_ownDetectionEvaEvent; }
 	Bool getOrderIdleEnemiesToAttackMeUponReveal() const { return getStealthUpdateModuleData()->m_orderIdleEnemiesToAttackMeUponReveal; }
 	Object* calcStealthOwner(); //Is it me that can stealth or is it my rider?
 	Bool allowedToStealth( Object *stealthOwner ) const;
-  void receiveGrant( Bool active = TRUE, UnsignedInt frames = 0 );
+	void receiveGrant( Bool active = TRUE, UnsignedInt frames = 0 );
 
-  Bool isGrantedBySpecialPower() { return getStealthUpdateModuleData()->m_grantedBySpecialPower; }
+	Bool isGrantedBySpecialPower() { return getStealthUpdateModuleData()->m_grantedBySpecialPower; }
 	Bool isTemporaryGrant() { return m_framesGranted > 0; }
 
 protected:

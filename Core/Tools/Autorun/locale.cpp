@@ -34,10 +34,10 @@
 
 typedef struct
 {
-    unsigned int   ChunkID;        /* 'LOCH' LOCALEFILE_HEADERCHUNKID */
-    unsigned int   ChunkSize;      /* size of chunk in bytes */
-    unsigned int   Flags;          /* 0=no index chunk present,1=index chunk present */
-    unsigned int   LanguageCount;  /* number of language chunks in this file */
+	unsigned int   ChunkID;        /* 'LOCH' LOCALEFILE_HEADERCHUNKID */
+	unsigned int   ChunkSize;      /* size of chunk in bytes */
+	unsigned int   Flags;          /* 0=no index chunk present,1=index chunk present */
+	unsigned int   LanguageCount;  /* number of language chunks in this file */
 /*  unsigned int   LanguageOffset[LanguageCount]; \\ offsets in bytes from start of file to language chunk */
 } LOCALEFILE_HEADERCHUNK;
 
@@ -47,10 +47,10 @@ typedef struct
 
 typedef struct
 {
-    unsigned int   ChunkID;        /* 'LOCI' LOCALEFILE_INDEXCHUNKID */
-    unsigned int   ChunkSize;      /* size of chunk in bytes */
-    unsigned int   StringCount;    /* number of string ids in this chunk (same value in all language chunks) */
-    unsigned int   pad;            /* must be zero */
+	unsigned int   ChunkID;        /* 'LOCI' LOCALEFILE_INDEXCHUNKID */
+	unsigned int   ChunkSize;      /* size of chunk in bytes */
+	unsigned int   StringCount;    /* number of string ids in this chunk (same value in all language chunks) */
+	unsigned int   pad;            /* must be zero */
 /*  STRINGID StringID[StringCount];  */
 /*  { */
 /*      unsigned short ID;          \\ id that user gives to look up value */
@@ -64,10 +64,10 @@ typedef struct
 
 typedef struct
 {
-    unsigned int   ChunkID;        /* 'LOCL' LOCALEFILE_LANGUAGECHUNKID */
-    unsigned int   ChunkSize;      /* size of chunk in bytes including this header and all string data */
-    unsigned int   LanguageID;     /* language strings are in for this bank */
-    unsigned int   StringCount;    /* number of strings in this chunk */
+	unsigned int   ChunkID;        /* 'LOCL' LOCALEFILE_LANGUAGECHUNKID */
+	unsigned int   ChunkSize;      /* size of chunk in bytes including this header and all string data */
+	unsigned int   LanguageID;     /* language strings are in for this bank */
+	unsigned int   StringCount;    /* number of strings in this chunk */
 /*  unsigned int   StringOffset[StringCount];   \\ offsets in bytes from start of chunk to string */
 /*  const char*    Data[StringCount];           \\ StringCount null terminated strings */
 } LOCALEFILE_LANGUAGECHUNK;
@@ -86,9 +86,9 @@ typedef LOCALEFILE_LANGUAGECHUNK BANK;
 
 typedef struct
 {
-    int     BankIndex;     /* current language bank set (0..BANK_COUNT-1) */
-    BANK*   pBank[LOCALE_BANK_COUNT];  /* array of string banks */
-    INDEX*  pIndex[LOCALE_BANK_COUNT]; /* array of string indices */
+	int     BankIndex;     /* current language bank set (0..BANK_COUNT-1) */
+	BANK*   pBank[LOCALE_BANK_COUNT];  /* array of string banks */
+	INDEX*  pIndex[LOCALE_BANK_COUNT]; /* array of string indices */
 } LOCALE_INSTANCE;
 
 static LOCALE_INSTANCE	*lx			= nullptr;
@@ -100,10 +100,10 @@ static LOCALE_INSTANCE	*lx			= nullptr;
 /* helper function to make assertions for initialization clearer */
 int LOCALE_isinitialized( void )
 {
-    if ( lx == nullptr ) {
+	if ( lx == nullptr ) {
 //        TRACE("LOCALE API is not initialized - call LOCALE_init before calling LOCALE functions\n");
 	}
-    return( lx != nullptr );
+	return( lx != nullptr );
 }
 
 /*
@@ -145,18 +145,18 @@ int LOCALE_isinitialized( void )
 
 int LOCALE_init(void)
 {
-    int ok = 0;
+	int ok = 0;
 
     /* ensure locale module is NOT already initialized */
-    ASSERT(lx == nullptr); /* can only call LOCALE_init after a restore or once, cannot double init locale API */
+	ASSERT(lx == nullptr); /* can only call LOCALE_init after a restore or once, cannot double init locale API */
 
     /* allocate instance */
-    lx = (LOCALE_INSTANCE*)galloc(sizeof(LOCALE_INSTANCE));
-    if (lx != nullptr) {
-        memset(lx, 0, sizeof(LOCALE_INSTANCE));
-        ok = 1;
-    }
-    return ok;
+	lx = (LOCALE_INSTANCE*)galloc(sizeof(LOCALE_INSTANCE));
+	if (lx != nullptr) {
+		memset(lx, 0, sizeof(LOCALE_INSTANCE));
+		ok = 1;
+	}
+	return ok;
 }
 
 /*
@@ -196,7 +196,7 @@ int LOCALE_init(void)
 
 void LOCALE_restore(void)
 {
-    int i;
+	int i;
 
 	if( lx != nullptr ) {
 
@@ -261,8 +261,8 @@ void LOCALE_restore(void)
 
 void LOCALE_setbank(int BankIndex)
 {
-    ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-    lx->BankIndex = BankIndex;
+	ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
+	lx->BankIndex = BankIndex;
 }
 
 /*
@@ -301,8 +301,8 @@ void LOCALE_setbank(int BankIndex)
 
 int LOCALE_getbank(void)
 {
-    ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-    return lx->BankIndex;
+	ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
+	return lx->BankIndex;
 }
 
 
@@ -342,9 +342,9 @@ int LOCALE_getbank(void)
 
 int LOCALE_getbanklanguageid(void)
 {
-    ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-    ASSERT(lx->pBank[lx->BankIndex]);       /* must load a table into bank before calling this function */
-    return (int)(lx->pBank[lx->BankIndex]->LanguageID);
+	ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
+	ASSERT(lx->pBank[lx->BankIndex]);       /* must load a table into bank before calling this function */
+	return (int)(lx->pBank[lx->BankIndex]->LanguageID);
 }
 
 /*
@@ -383,13 +383,13 @@ int LOCALE_getbanklanguageid(void)
 
 int LOCALE_getbankstringcount(void)
 {
-    int StringCount = 0;
+	int StringCount = 0;
 
-    ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-    if (lx->pBank[lx->BankIndex]) {
-        StringCount = lx->pBank[lx->BankIndex]->StringCount;
-    }
-    return StringCount;
+	ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
+	if (lx->pBank[lx->BankIndex]) {
+		StringCount = lx->pBank[lx->BankIndex]->StringCount;
+	}
+	return StringCount;
 }
 
 /*************************************************************************/
@@ -443,14 +443,14 @@ int LOCALE_getbankstringcount(void)
 
 static int readheader( GSTREAM* g )
 {
-    int ok = 0;
+	int ok = 0;
 
     /* read file header */
-    LOCALEFILE_HEADERCHUNK header;
-    int HeaderChunkSize = sizeof(LOCALEFILE_HEADERCHUNK);
+	LOCALEFILE_HEADERCHUNK header;
+	int HeaderChunkSize = sizeof(LOCALEFILE_HEADERCHUNK);
 
 //	VERIFY(gread(g, &header, HeaderChunkSize) == HeaderChunkSize);
-    if( gread(g, &header, HeaderChunkSize) != HeaderChunkSize ) {
+	if( gread(g, &header, HeaderChunkSize) != HeaderChunkSize ) {
 		return ok;
 	}
 
@@ -458,49 +458,49 @@ static int readheader( GSTREAM* g )
 	Msg( __LINE__, __FILE__, "readheader - header.LanguageCount = %d.", header.LanguageCount );
 	Msg( __LINE__, __FILE__, "readheader - header.Flags = %d.", header.Flags );
 
-    ASSERT( header.ChunkID == LOCALEFILE_HEADERCHUNKID ); /* ensure that this is a valid .loc file */
+	ASSERT( header.ChunkID == LOCALEFILE_HEADERCHUNKID ); /* ensure that this is a valid .loc file */
 
     /* read index chunk if present */
-    if ( header.Flags == 1 ) {
+	if ( header.Flags == 1 ) {
 
-        int IndexChunkSize;
-        int IndexChunkPos = header.ChunkSize;
+		int IndexChunkSize;
+		int IndexChunkPos = header.ChunkSize;
 
         /* read index chunk size */
 //		VERIFY(gseek(g, IndexChunkPos + 4));
-        if( !gseek( g, IndexChunkPos + 4)) {
+		if( !gseek( g, IndexChunkPos + 4)) {
 			return ok;
 		}
 
 		Msg( __LINE__, __FILE__, "readheader - seek to = %d.", IndexChunkPos + 4 );
 
 //		VERIFY(gread(g, &IndexChunkSize, 4) == 4);
-        if( gread( g, &IndexChunkSize, 4) != 4 ) {
+		if( gread( g, &IndexChunkSize, 4) != 4 ) {
 			return ok;
 		}
 
 		Msg( __LINE__, __FILE__, "readheader - IndexChunkSize = %d.", IndexChunkSize );
 
         /* alloc and read index chunk */
-        lx->pIndex[lx->BankIndex] = (LOCALEFILE_INDEXCHUNK *)galloc((long)IndexChunkSize );
-        if (lx->pIndex[lx->BankIndex]) {
+		lx->pIndex[lx->BankIndex] = (LOCALEFILE_INDEXCHUNK *)galloc((long)IndexChunkSize );
+		if (lx->pIndex[lx->BankIndex]) {
 
 //			VERIFY(gseek(g, IndexChunkPos));
-            gseek( g, IndexChunkPos );
+			gseek( g, IndexChunkPos );
 
 			Msg( __LINE__, __FILE__, "readheader - seek to = %d.", IndexChunkPos );
 
 //			VERIFY(gread(g, lx->pIndex[lx->BankIndex], IndexChunkSize) == IndexChunkSize);
-            if ( gread(g, lx->pIndex[lx->BankIndex], IndexChunkSize ) != IndexChunkSize ) {
+			if ( gread(g, lx->pIndex[lx->BankIndex], IndexChunkSize ) != IndexChunkSize ) {
 				return ok;
 			}
 			Msg( __LINE__, __FILE__, "readheader - IndexChunkSize = %d.", IndexChunkSize );
 
-            ASSERT( lx->pIndex[lx->BankIndex]->ChunkID == LOCALEFILE_INDEXCHUNKID );
+			ASSERT( lx->pIndex[lx->BankIndex]->ChunkID == LOCALEFILE_INDEXCHUNKID );
 
 			ok = 1;
-        }
-    }
+		}
+	}
 	Msg( __LINE__, __FILE__, "readheader - exiting." );
 
 	return ok;
@@ -510,26 +510,26 @@ static int readstrings( GSTREAM* g, int LanguageID )
 {
 	Msg( __LINE__, __FILE__, "readstrings:: g ok? %d.", ((g!= nullptr)?1:0));
 
-    int ok = 0;
+	int ok = 0;
 
-    int LanguageChunkOffsetPos = 16 + LanguageID*4;
-    int LanguageChunkPos = 0;
-    int LanguageChunkSize = -1;
+	int LanguageChunkOffsetPos = 16 + LanguageID*4;
+	int LanguageChunkPos = 0;
+	int LanguageChunkSize = -1;
 
     /* read offset to language chunk */
 //	VERIFY(gseek(g, (int)LanguageChunkOffsetPos));
 //	VERIFY(gread(g, &LanguageChunkPos, 4) == 4);
-    if( !gseek( g, (int)LanguageChunkOffsetPos )) {
+	if( !gseek( g, (int)LanguageChunkOffsetPos )) {
 		return ok;
 	}
-    if( gread( g, &LanguageChunkPos, 4 ) != 4 ) {
+	if( gread( g, &LanguageChunkPos, 4 ) != 4 ) {
 		return ok;
 	}
 
     /* read language chunk size */
 //	VERIFY(gseek(g, LanguageChunkPos + 4));
 //	VERIFY(gread(g, &LanguageChunkSize, 4) == 4);
-    if( !gseek( g, LanguageChunkPos + 4 )) {
+	if( !gseek( g, LanguageChunkPos + 4 )) {
 		return ok;
 	}
 	if( gread( g, &LanguageChunkSize, 4 ) != 4 ) {
@@ -541,8 +541,8 @@ static int readstrings( GSTREAM* g, int LanguageID )
 	Msg( __LINE__, __FILE__, "readstrings::LanguageChunkSize = %d.", LanguageChunkSize );
 
     /* alloc and read language chunk */
-    lx->pBank[lx->BankIndex] = (LOCALEFILE_LANGUAGECHUNK *)galloc((long)LanguageChunkSize);
-    if (lx->pBank[lx->BankIndex]) {
+	lx->pBank[lx->BankIndex] = (LOCALEFILE_LANGUAGECHUNK *)galloc((long)LanguageChunkSize);
+	if (lx->pBank[lx->BankIndex]) {
 
 		Msg( __LINE__, __FILE__, "readstrings:: A." );
 
@@ -556,26 +556,26 @@ static int readstrings( GSTREAM* g, int LanguageID )
 		}
 
 		ASSERT(lx->pBank[lx->BankIndex]->ChunkID == LOCALEFILE_LANGUAGECHUNKID);
-        ok = 1;
-    }
-    return ok;
+		ok = 1;
+	}
+	return ok;
 }
 
 int LOCALE_loadtable(const char* PathName, int LanguageID)
 {
-    int ok = 0;
-    GSTREAM* g;
+	int ok = 0;
+	GSTREAM* g;
 
-    ASSERT(LOCALE_isinitialized());             /* must call LOCALE_init before calling this function */
-    ASSERT(lx->pBank[lx->BankIndex] == nullptr);   /* bank must be empty before loading a new table */
-    ASSERT(lx->pIndex[lx->BankIndex] == nullptr);  /* bank must be empty before loading a new table */
+	ASSERT(LOCALE_isinitialized());             /* must call LOCALE_init before calling this function */
+	ASSERT(lx->pBank[lx->BankIndex] == nullptr);   /* bank must be empty before loading a new table */
+	ASSERT(lx->pIndex[lx->BankIndex] == nullptr);  /* bank must be empty before loading a new table */
 
-    g = gopen( PathName );
-    if( g != nullptr ) {
+	g = gopen( PathName );
+	if( g != nullptr ) {
 
 		Msg( __LINE__, __FILE__, "LOCALE_loadtable-- file opened." );
 
-        if( readheader(g)) {
+		if( readheader(g)) {
 
 			Msg( __LINE__, __FILE__, "LOCALE_loadtable-- readstrings." );
 
@@ -583,9 +583,9 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 
 			Msg( __LINE__, __FILE__, "LOCALE_loadtable-- ok = %d ).", ok );
 		}
-        gclose(g);
-    }
-    return ok;
+		gclose(g);
+	}
+	return ok;
 }
 
 /*
@@ -702,76 +702,76 @@ void LOCALE_freetable(void)
 
 static int compare ( const void* arg1, const void* arg2 )
 {
-    const unsigned short* s1 = (const unsigned short*)(arg1);
-    const unsigned short* s2 = (const unsigned short*)(arg2);
-    return (*s1) - (*s2);
+	const unsigned short* s1 = (const unsigned short*)(arg1);
+	const unsigned short* s2 = (const unsigned short*)(arg2);
+	return (*s1) - (*s2);
 }
 
 static int getstringbyindex( unsigned short key, const INDEX* pIndex )
 {
-    int index = 0;
-    unsigned short* result;
-    unsigned char*  base;   /* pointer to base of string id table */
+	int index = 0;
+	unsigned short* result;
+	unsigned char*  base;   /* pointer to base of string id table */
 
-    ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
-    ASSERT(pIndex != nullptr); /* index not loaded - .loc file must have index created (use -i option) */
+	ASSERT(LOCALE_isinitialized()); /* must call LOCALE_init before calling this function */
+	ASSERT(pIndex != nullptr); /* index not loaded - .loc file must have index created (use -i option) */
 
-    base	= ((unsigned char*)pIndex) + LOCALEFILE_INDEXCHUNK_STRINGID_OFFSET;
-    result	= (unsigned short*)bsearch((unsigned char *)&key, base, pIndex->StringCount, 4, compare);
+	base	= ((unsigned char*)pIndex) + LOCALEFILE_INDEXCHUNK_STRINGID_OFFSET;
+	result	= (unsigned short*)bsearch((unsigned char *)&key, base, pIndex->StringCount, 4, compare);
 
-    if (result != nullptr) {
+	if (result != nullptr) {
         /* index is the second unsigned short */
-        ++result;
-        index = *result;
-    } else {
-        index = -1;
-    }
-    return index;
+		++result;
+		index = *result;
+	} else {
+		index = -1;
+	}
+	return index;
 }
 
 const char* LOCALE_getstring( int StringID )
 {
-    const char* p;							/* pointer to string, nullptr if string cannot be found */
+	const char* p;							/* pointer to string, nullptr if string cannot be found */
 
 	Msg( __LINE__, __FILE__, "Locale_getstring::( %d ).", StringID );
 
-    ASSERT( LOCALE_isinitialized());		/* must call LOCALE_init before calling this function */
+	ASSERT( LOCALE_isinitialized());		/* must call LOCALE_init before calling this function */
 
     /* get string array index from the index if it exists */
-    if ( lx->pIndex[ lx->BankIndex ] != nullptr ) {
-        StringID = getstringbyindex((unsigned short)StringID, lx->pIndex[lx->BankIndex]);
-    }
+	if ( lx->pIndex[ lx->BankIndex ] != nullptr ) {
+		StringID = getstringbyindex((unsigned short)StringID, lx->pIndex[lx->BankIndex]);
+	}
 
 	Msg( __LINE__, __FILE__, "Locale_getstring::( %d ).", StringID );
 	Msg( __LINE__, __FILE__, "Locale_getstring::( lx->BankIndex = %d ).", lx->BankIndex );
 	Msg( __LINE__, __FILE__, "Locale_getstring::( lx->pBank[lx->BankIndex]->StringCount = %d ).", lx->pBank[lx->BankIndex]->StringCount );
 
-    if ((StringID >= 0) && (StringID < (int)(lx->pBank[lx->BankIndex]->StringCount ))) {
+	if ((StringID >= 0) && (StringID < (int)(lx->pBank[lx->BankIndex]->StringCount ))) {
 
 		Msg( __LINE__, __FILE__, "Locale_getstring:: A" );
 
-        unsigned int offset;
+		unsigned int offset;
 
-        p = (const char*)(lx->pBank[lx->BankIndex]);
+		p = (const char*)(lx->pBank[lx->BankIndex]);
 
 		Msg( __LINE__, __FILE__, "Locale_getstring:: B" );
 
-        offset = *(unsigned int*)(p + LOCALEFILE_LANGUAGECHUNK_STRING_OFFSET + StringID*4);
+		offset = *(unsigned int*)(p + LOCALEFILE_LANGUAGECHUNK_STRING_OFFSET + StringID*4);
 
 		Msg( __LINE__, __FILE__, "Locale_getstring:: C" );
 
-        p += offset;
+		p += offset;
 
 		Msg( __LINE__, __FILE__, "Locale_getstring:: D" );
 
 
-    } else {
-        p = nullptr;
-    }
+	} else {
+		p = nullptr;
+	}
 
 	Msg( __LINE__, __FILE__, L"%s", 1252, (wchar_t *)p );
 
-    return p;
+	return p;
 }
 
 
@@ -825,40 +825,40 @@ const char* LOCALE_getstr( const void* pLocFile, int StringID )
 {
 	const char* p; /* pointer to string, nullptr if string cannot be found */
 
-    HEADER* pHeader;
-    BANK*   pBank;
+	HEADER* pHeader;
+	BANK*   pBank;
 
-    ASSERT(pLocFile != nullptr);
+	ASSERT(pLocFile != nullptr);
 
-    pHeader = (LOCALEFILE_HEADERCHUNK*)(pLocFile);
-    ASSERT(pHeader->ChunkID == LOCALEFILE_HEADERCHUNKID);
-    ASSERT(pHeader->LanguageCount >= 1);
+	pHeader = (LOCALEFILE_HEADERCHUNK*)(pLocFile);
+	ASSERT(pHeader->ChunkID == LOCALEFILE_HEADERCHUNKID);
+	ASSERT(pHeader->LanguageCount >= 1);
 
-    if( pHeader->Flags == 1 ) {
+	if( pHeader->Flags == 1 ) {
 
         /* file has an index */
-        INDEX* pIndex = (INDEX*)((unsigned char*)(pLocFile) + pHeader->ChunkSize);
-        StringID = getstringbyindex((unsigned short)StringID, pIndex);
-    }
+		INDEX* pIndex = (INDEX*)((unsigned char*)(pLocFile) + pHeader->ChunkSize);
+		StringID = getstringbyindex((unsigned short)StringID, pIndex);
+	}
 
     /* get pointer to string bank */
-    {
-        int offset = *((int*)(pLocFile) + 4 + LOCALElanguageid);
-        pBank = (BANK*)((unsigned char*)(pLocFile) + offset);
-    }
+	{
+		int offset = *((int*)(pLocFile) + 4 + LOCALElanguageid);
+		pBank = (BANK*)((unsigned char*)(pLocFile) + offset);
+	}
 
-    if ((StringID >= 0) && (StringID < (int)(pBank->StringCount))) {
+	if ((StringID >= 0) && (StringID < (int)(pBank->StringCount))) {
 
-        unsigned int offset;
+		unsigned int offset;
 
-        p = (const char*)(pBank);
-        offset = *(unsigned int*)(p + LOCALEFILE_LANGUAGECHUNK_STRING_OFFSET + StringID*4);
-        p += offset;
+		p = (const char*)(pBank);
+		offset = *(unsigned int*)(p + LOCALEFILE_LANGUAGECHUNK_STRING_OFFSET + StringID*4);
+		p += offset;
 
-    } else {
-        p = nullptr;
-    }
+	} else {
+		p = nullptr;
+	}
 
-    return p;
+	return p;
 }
 

@@ -97,7 +97,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DamageModuleData::buildFieldParse(p);
+		DamageModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -219,7 +219,7 @@ public:
 
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 
 	}
 

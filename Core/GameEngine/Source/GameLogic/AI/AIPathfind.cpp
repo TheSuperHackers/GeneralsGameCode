@@ -283,10 +283,10 @@ void Path::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Path::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	PathNode *node = m_path;
 	Int count = 0;
@@ -4128,7 +4128,7 @@ void Pathfinder::removeWallPiece(Object *wallPiece)
 {
 
 	// sanity
-  if( wallPiece == nullptr )
+		if( wallPiece == nullptr )
 		return;
 
 	// find entry
@@ -4218,7 +4218,7 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 #endif
 
 	const Coord3D *pos = obj->getPosition();
-  Real angle = obj->getOrientation();
+		Real angle = obj->getOrientation();
 
  	Real halfsizeX = obj->getTemplate()->getFenceWidth()/2;
  	Real halfsizeY = PATHFIND_CELL_SIZE_F/10.0f;
@@ -4351,8 +4351,8 @@ void Pathfinder::classifyObjectFootprint( Object *obj, Bool insert )
 		// lifeless immobile husks of debris, but we still need to remove them.  jba.
 
 #if !RTS_GENERALS
-    if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent, never remove them
-      return;
+			if ( obj->isKindOf( KINDOF_BLAST_CRATER ) ) // since these footprints are permanent, never remove them
+			return;
 #endif
 
 		removeUnitFromPathfindMap(obj);
@@ -4404,7 +4404,7 @@ void Pathfinder::classifyObjectFootprint( Object *obj, Bool insert )
 	}
 #else
 	if (obj->getHeightAboveTerrain() > PATHFIND_CELL_SIZE_F && ( ! obj->isKindOf( KINDOF_BLAST_CRATER ) ) )
-  {
+		{
 		return; // Don't add bounds that are up in the air.... unless a blast crater wants to do just that
 	}
 #endif

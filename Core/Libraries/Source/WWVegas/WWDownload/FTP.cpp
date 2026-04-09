@@ -169,7 +169,7 @@ static bool Use_Non_Blocking_Mode()
 
 Cftp::Cftp()
 {
-  ZeroStuff();
+	ZeroStuff();
 }
 
 
@@ -193,7 +193,7 @@ Cftp::Cftp()
 
 Cftp::~Cftp()
 {
-  CloseSockets();
+	CloseSockets();
 
 	if (m_pfLocalFile)
 	{
@@ -245,13 +245,13 @@ void Cftp::ZeroStuff()
 DWORD WINAPI gethostbynameA( void * szName )
 {
 	HOSTENT *he = gethostbyname( (const char *)szName );
-   //////DBGMSG("Hostname copy start");
+	//////DBGMSG("Hostname copy start");
 
 	if (he)
 		memcpy((char *)&(gThreadAddress.sin_addr), he->h_addr, he->h_length );
 	else
 		memcpy((char *)&(gThreadAddress.sin_addr),"",strlen("")+1);
-   /////DBGMSG("Hostname copy complete");
+	/////DBGMSG("Hostname copy complete");
 
 	gThreadFlag = 1;
 	return 0;
@@ -267,7 +267,7 @@ int Cftp::AsyncGetHostByName(char * szName, struct sockaddr_in &address )
 	{
 		/* Kick off gethostname thread */
 		gThreadFlag = 0;
-      memset(&gThreadAddress,0,sizeof(gThreadAddress));
+		memset(&gThreadAddress,0,sizeof(gThreadAddress));
 
 		if( CreateThread( nullptr, 0, gethostbynameA, szName, 0, &threadid ) == nullptr )
 		{
@@ -280,8 +280,8 @@ int Cftp::AsyncGetHostByName(char * szName, struct sockaddr_in &address )
 		if( gThreadFlag )
 		{
 			/* Thread finished */
-         address = gThreadAddress;
-         address.sin_family=AF_INET;
+			address = gThreadAddress;
+			address.sin_family=AF_INET;
 			stat = 0;
 			return( FTP_SUCCEEDED );
 		}
@@ -338,27 +338,27 @@ HRESULT  Cftp::ConnectToServer(LPCSTR szServerName)
 		if( serverIP == INADDR_NONE )
 		{
 			/* It's an FQDN - hopefully. */
-         ////////DBGMSG("Async gethostbyname");
+			////////DBGMSG("Async gethostbyname");
 			if( AsyncGetHostByName( m_szServerName, address ) == FTP_TRYING )
 			{
 				return( FTP_TRYING );
 			}
-         //////DBGMSG("Got hostbyname");
+			//////DBGMSG("Got hostbyname");
 
 			if( address.sin_addr.s_addr == 0 )
 			{
-            ///////DBGMSG("gethostbyname failed");
+				///////DBGMSG("gethostbyname failed");
 				return( FTP_FAILED );
 			}
 
-         m_CommandSockAddr=address;
+			m_CommandSockAddr=address;
 
 			///////memcpy( (char *)&(m_CommandSockAddr.sin_addr), he.h_addr, he.h_length );
 
 			serverIP = m_CommandSockAddr.sin_addr.s_addr;
-         //////DBGMSG("ServerIP = "<<serverIP);
+			//////DBGMSG("ServerIP = "<<serverIP);
 
-         /////DBGMSG("Memcpy OK");
+			/////DBGMSG("Memcpy OK");
 		}
 		else
 		{
@@ -379,7 +379,7 @@ HRESULT  Cftp::ConnectToServer(LPCSTR szServerName)
 			return( FTP_FAILED );
 		}
 
-      //////DBGMSG("Socket created");
+		//////DBGMSG("Socket created");
 
 		/* Set socket to non-blocking */
 
@@ -407,7 +407,7 @@ HRESULT  Cftp::ConnectToServer(LPCSTR szServerName)
 
 			if( error != WSAEISCONN )
 			{
-            ////////DBGMSG("Connect failed");
+				////////DBGMSG("Connect failed");
 				closesocket( m_iCommandSocket );
 				return( FTP_FAILED );
 			}
@@ -600,7 +600,7 @@ HRESULT  Cftp::LogoffFromServer()
 				{
 					//m_iStatus = FTPSTAT_SENTQUIT;
 
-                    //m_iStatus = FTPSTAT_INIT;  // NAK
+					//m_iStatus = FTPSTAT_INIT;  // NAK
 
 					CloseSockets();
 					ZeroStuff();
@@ -665,12 +665,12 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	char ext[ 10 ];
 
 	if (m_findStart==0)
-      m_findStart=time(nullptr);
+	m_findStart=time(nullptr);
 
 	if((time(nullptr)-m_findStart) > 30)  // try for 30 seconds
 	{
-        /////////DBGMSG("FindFile: Tried for too long");
-        m_findStart=0;
+		/////////DBGMSG("FindFile: Tried for too long");
+		m_findStart=0;
 		return( FTP_FAILED );
 	}
 
@@ -778,8 +778,8 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 		i = OpenDataConnection();
 		if( i != FTP_SUCCEEDED )
 		{
-            /////////DBGMSG("FindFile: OpenDataConnection failed: "<<i);
-            m_findStart=0;
+			/////////DBGMSG("FindFile: OpenDataConnection failed: "<<i);
+			m_findStart=0;
 			return( i );
 		}
 		m_iStatus = FTPSTAT_LISTDATAOPEN;
@@ -822,7 +822,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 	if( strncmp( listline, m_szRemoteFileName, sizeof( m_szRemoteFileName ) ) == 0 )
 	{
 		/* No */
-        ////////DBGMSG("FindFile: File not in list: "<<listline);
+		////////DBGMSG("FindFile: File not in list: "<<listline);
 		return( FTP_FAILED );
 	}
 
@@ -838,7 +838,7 @@ HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 		return( FTP_SUCCEEDED );
 	}
 
-    ////////DBGMSG("Default fail case: "<<listline);
+	////////DBGMSG("Default fail case: "<<listline);
 	return( FTP_FAILED );
 }
 

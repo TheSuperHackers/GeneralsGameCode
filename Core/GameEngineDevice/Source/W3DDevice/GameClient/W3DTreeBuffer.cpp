@@ -1805,13 +1805,13 @@ void W3DTreeBuffer::applyTopplingForce( TTree *tree, const Coord3D* toppleDirect
 		return;
 	}
 	const W3DTreeDrawModuleData* d = m_treeTypes[tree->treeType].m_data;
-  // Having a low toppleSpeed is BAD. In particular, if the toppleSpeed is exactly 0, the
-  // tree will stay upright forever, frozen in place (because the sway update is dead)
-  // but never dying
-  if ( toppleSpeed < d->m_minimumToppleSpeed )
-  {
-    toppleSpeed = d->m_minimumToppleSpeed;
-  }
+	// Having a low toppleSpeed is BAD. In particular, if the toppleSpeed is exactly 0, the
+	// tree will stay upright forever, frozen in place (because the sway update is dead)
+	// but never dying
+	if ( toppleSpeed < d->m_minimumToppleSpeed )
+	{
+		toppleSpeed = d->m_minimumToppleSpeed;
+	}
 
 	tree->m_toppleDirection = *toppleDirection;
 	tree->m_toppleDirection.normalize();

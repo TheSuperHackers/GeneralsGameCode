@@ -55,7 +55,7 @@ W3DProjectileStreamDrawModuleData::~W3DProjectileStreamDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -66,7 +66,7 @@ void W3DProjectileStreamDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "MaxSegments",	INI::parseInt,					nullptr, offsetof(W3DProjectileStreamDrawModuleData, m_maxSegments) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

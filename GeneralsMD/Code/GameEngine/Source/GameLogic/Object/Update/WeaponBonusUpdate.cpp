@@ -76,7 +76,7 @@ WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
 //-----------------------------------------------------------------------------
 void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "RequiredAffectKindOf",		KindOfMaskType::parseFromINI,		nullptr, offsetof( WeaponBonusUpdateModuleData, m_requiredAffectKindOf ) },
@@ -87,7 +87,7 @@ void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "BonusConditionType",			INI::parseIndexList,	TheWeaponBonusNames, offsetof( WeaponBonusUpdateModuleData, m_bonusConditionType ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-----------------------------------------------------------------------------

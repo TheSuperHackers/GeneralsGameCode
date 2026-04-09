@@ -465,10 +465,10 @@ void InGameUI::xfer( Xfer *xfer )
 					xfer->xferBool(&swInfo->m_hiddenByScript);
 					xfer->xferBool(&swInfo->m_hiddenByScience);
 					xfer->xferBool(&swInfo->m_ready);
-          if ( currentVersion >= 3 )
-          {
-            xfer->xferBool( &swInfo->m_evaReadyPlayed );
-          }
+					if ( currentVersion >= 3 )
+					{
+						xfer->xferBool( &swInfo->m_evaReadyPlayed );
+					}
 				}
 			}
 		}
@@ -512,14 +512,14 @@ void InGameUI::xfer( Xfer *xfer )
 			xfer->xferBool(&hiddenByScript);
 			xfer->xferBool(&hiddenByScience);
 			xfer->xferBool(&ready);
-      if ( currentVersion >= 3 )
-      {
-        xfer->xferBool( &evaReadyPlayed );
-      }
-      else
-      {
-        evaReadyPlayed = ready;
-      }
+			if ( currentVersion >= 3 )
+			{
+				xfer->xferBool( &evaReadyPlayed );
+			}
+			else
+			{
+				evaReadyPlayed = ready;
+			}
 
 			// srj sez: due to order-of-operation stuff, sometimes these will already exist,
 			// sometimes not. not sure why. so handle both cases.
@@ -548,7 +548,7 @@ void InGameUI::xfer( Xfer *xfer )
 				swInfo->m_hiddenByScript = hiddenByScript;
 				swInfo->m_hiddenByScience = hiddenByScience;
 				swInfo->m_ready = ready;
-        swInfo->m_evaReadyPlayed = evaReadyPlayed;
+				swInfo->m_evaReadyPlayed = evaReadyPlayed;
 			}
 			swInfo->m_forceUpdateText = true;
 
@@ -613,7 +613,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 	Bool hiddenByScience = (powerTemplate->getRequiredScience() != SCIENCE_INVALID) && (player->hasScience(powerTemplate->getRequiredScience()) == false);
 
 #ifndef DO_UNIT_TIMINGS
-  DEBUG_LOG(("Adding superweapon UI timer"));
+	DEBUG_LOG(("Adding superweapon UI timer"));
 #endif
 	SuperweaponInfo *info = newInstance(SuperweaponInfo)(
 					id,
@@ -1050,13 +1050,13 @@ InGameUI::InGameUI()
 	Int i;
 
 
-  m_inputEnabled = true;
+	m_inputEnabled = true;
 	m_isDragSelecting = false;
 	m_nextMoveHint = 0;
 	m_selectCount = 0;
 	m_frameSelectionChanged = 0;
-  m_duringDoubleClickAttackMoveGuardHintTimer = 0;
-  m_duringDoubleClickAttackMoveGuardHintStashedPosition.zero();
+	m_duringDoubleClickAttackMoveGuardHintTimer = 0;
+	m_duringDoubleClickAttackMoveGuardHintStashedPosition.zero();
 	m_maxSelectCount = -1;
 	m_isScrolling = FALSE;
 	m_isSelecting = FALSE;
@@ -1470,7 +1470,7 @@ void InGameUI::setRadiusCursor(RadiusCursorType cursorType, const SpecialPowerTe
 		case RADIUSCURSOR_PARTICLECANNON:
 		case RADIUSCURSOR_A10STRIKE:
 		case RADIUSCURSOR_SPECTREGUNSHIP:
-    case RADIUSCURSOR_HELIX_NAPALM_BOMB:
+		case RADIUSCURSOR_HELIX_NAPALM_BOMB:
 		case RADIUSCURSOR_DAISYCUTTER:
 		case RADIUSCURSOR_CARPETBOMB:
 		case RADIUSCURSOR_PARADROP:
@@ -1522,25 +1522,25 @@ void InGameUI::handleRadiusCursor()
 			TheTacticalView->screenToTerrain( &mouseIO->pos, &pos );
 
 
-    if ( TheGlobalData->m_doubleClickAttackMove && m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
-    {
-      m_curRadiusCursor.setOpacity( m_duringDoubleClickAttackMoveGuardHintTimer * 0.1f );
+		if ( TheGlobalData->m_doubleClickAttackMove && m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
+		{
+			m_curRadiusCursor.setOpacity( m_duringDoubleClickAttackMoveGuardHintTimer * 0.1f );
   		m_curRadiusCursor.setPosition( m_duringDoubleClickAttackMoveGuardHintStashedPosition );	//world space position of center of decal
 
-    }
-    else
-    {
+		}
+		else
+		{
   		m_curRadiusCursor.setPosition(pos);	//world space position of center of decal
-      m_curRadiusCursor.update();
-    }
+			m_curRadiusCursor.update();
+		}
 
-  }
+	}
 }
 
 
 void InGameUI::triggerDoubleClickAttackMoveGuardHint()
 {
-  m_duringDoubleClickAttackMoveGuardHintTimer = 11;
+	m_duringDoubleClickAttackMoveGuardHintTimer = 11;
 	const MouseIO* mouseIO = TheMouse->getMouseStatus();
 	TheTacticalView->screenToTerrain( &mouseIO->pos, &m_duringDoubleClickAttackMoveGuardHintStashedPosition );
 }
@@ -2627,7 +2627,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 				//Because we have support for disguised units pretending to be units from another
 				//team, we need to intercept it here and make sure it's rendered appropriately
 				//based on which client is rendering it.
-        StealthUpdate *update = obj->getStealth();
+				StealthUpdate *update = obj->getStealth();
 				if( update )
 				{
 					if( update->isDisguised() )
@@ -2719,7 +2719,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 				str.concat(warehouseFeedback);
 			}
 
-      if (player)
+			if (player)
 			{
 				UnicodeString tooltip;
 				//if (TheRecorder->isMultiplayer() && player->getPlayerType() == PLAYER_HUMAN)
@@ -2845,17 +2845,17 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 
 
 	setRadiusCursorNone();
-  if ( TheGlobalData->m_doubleClickAttackMove )
-  {
-    if ( --m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
-    {
-      setMouseCursor(Mouse::FORCE_ATTACK_GROUND);
+	if ( TheGlobalData->m_doubleClickAttackMove )
+	{
+		if ( --m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
+		{
+			setMouseCursor(Mouse::FORCE_ATTACK_GROUND);
 		  setRadiusCursor(RADIUSCURSOR_GUARD_AREA,
 										  nullptr,
 										  PRIMARY_WEAPON);
-      return;
-    }
-  }
+			return;
+		}
+	}
 
 
 
@@ -3850,9 +3850,9 @@ void InGameUI::postDraw()
 	}
 
 	// draw superweapon timers
-  // Also responsible for Eva saying "Superweapon is ready for launch"
-  //  IMPORTANT: Don't bail out of this block early just because you don't
-  //  want to display the timers -- Eva still needs to be checked
+	// Also responsible for Eva saying "Superweapon is ready for launch"
+	//  IMPORTANT: Don't bail out of this block early just because you don't
+	//  want to display the timers -- Eva still needs to be checked
 	if (TheGameLogic->getFrame() > 0 )
 	{
 //	Int superweaponCount = 0;
@@ -3915,76 +3915,76 @@ void InGameUI::postDraw()
  									readySecs = (module->getReadyFrame() - TheGameLogic->getFrame()) / LOGICFRAMES_PER_SECOND;
 								// Yes, integer math.  We can't have float imprecision display 4:01 on a disabled superweapon.
 
-                // Only if we actually changed the ready status do we want to play an Eva event.
-                if ( isReady && !info->m_evaReadyPlayed )
-                {
-                  if ( TheGameLogic->getFrame() > 0 )
-                  {
-                    SpecialPowerType type = module->getSpecialPowerTemplate()->getSpecialPowerType();
+								// Only if we actually changed the ready status do we want to play an Eva event.
+								if ( isReady && !info->m_evaReadyPlayed )
+								{
+									if ( TheGameLogic->getFrame() > 0 )
+									{
+										SpecialPowerType type = module->getSpecialPowerTemplate()->getSpecialPowerType();
 
-                    Player *localPlayer = ThePlayerList->getLocalPlayer();
+										Player *localPlayer = ThePlayerList->getLocalPlayer();
 
-                    if( type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON )
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ParticleCannon);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ParticleCannon);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ParticleCannon);
-                      }
-                    }
-                    else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_Nuke);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_Nuke);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_Nuke);
-                      }
-                    }
-                    else if (type == SPECIAL_SCUD_STORM)
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ScudStorm);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ScudStorm);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ScudStorm);
-                      }
-                    }
-                  }
-                  info->m_evaReadyPlayed = true;
-                }
-                else
-                {
-                  if ( !isReady )
-                    info->m_evaReadyPlayed = false; // Reset Eva for next time
-                }
+										if( type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON )
+										{
+											if ( localPlayer == owningObject->getControllingPlayer() )
+											{
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ParticleCannon);
+											}
+											else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
+											{
+												// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ParticleCannon);
+											}
+											else
+											{
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ParticleCannon);
+											}
+										}
+										else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
+										{
+											if ( localPlayer == owningObject->getControllingPlayer() )
+											{
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Own_Nuke);
+											}
+											else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
+											{
+												// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_Nuke);
+											}
+											else
+											{
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_Nuke);
+											}
+										}
+										else if (type == SPECIAL_SCUD_STORM)
+										{
+											if ( localPlayer == owningObject->getControllingPlayer() )
+											{
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ScudStorm);
+											}
+											else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
+											{
+												// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ScudStorm);
+											}
+											else
+											{
+												TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ScudStorm);
+											}
+										}
+									}
+									info->m_evaReadyPlayed = true;
+								}
+								else
+								{
+									if ( !isReady )
+									info->m_evaReadyPlayed = false; // Reset Eva for next time
+								}
 
-                // draw the text
-                if ( !m_superweaponHiddenByScript && !marginExceeded )
-                {
-                  // Similarly, only checking timers is not truly indicative of readiness.
+								// draw the text
+								if ( !m_superweaponHiddenByScript && !marginExceeded )
+								{
+									// Similarly, only checking timers is not truly indicative of readiness.
  								  Bool changeBolding = (readySecs != info->m_timestamp) || (isReady != info->m_ready) || info->m_forceUpdateText;
  								  if (changeBolding)
  								  {
@@ -4006,17 +4006,17 @@ void InGameUI::postDraw()
 									  info->m_forceUpdateText = false;
  									  info->m_ready = isReady;
 									  info->m_timestamp = readySecs;
-                    Int min = readySecs/60;
-                    Int sec = readySecs - min*60;
-                    AsciiString strIndex;
-                    strIndex.format("GUI:%s", templateName.str());
-                    UnicodeString name, time;
-                    name.format(L"%ls: ", TheGameText->fetch(strIndex.str()).str());
-                    time.format(L"%d:%2.2d", min, sec);
-                    info->setText(name, time);
-                  }
+										Int min = readySecs/60;
+										Int sec = readySecs - min*60;
+										AsciiString strIndex;
+										strIndex.format("GUI:%s", templateName.str());
+										UnicodeString name, time;
+										name.format(L"%ls: ", TheGameText->fetch(strIndex.str()).str());
+										time.format(L"%d:%2.2d", min, sec);
+										info->setText(name, time);
+									}
 
-                  if (isReady)
+									if (isReady)
 								  {
 									  if ( m_superweaponFlashDuration != 0.0f )
 									  {
@@ -4045,15 +4045,15 @@ void InGameUI::postDraw()
 								  // increment text spot to next location
 								  startY += info->getHeight();
 
-                }
-                if (info->getSpecialPowerTemplate()->isSharedNSync())
-                  break; // Wow, it is almost too easy!
-                // This prevents redundant timers for shared powers/superweapons
-                // No matter how many specialpowermodules register their timers with me,
-                // I will only draw the timer of the first valid one in my list,
-                // since they all have the same template, ans they all
-                // use the Player::getReadyFrame() functions to stay in sync.
-              }
+								}
+								if (info->getSpecialPowerTemplate()->isSharedNSync())
+								break; // Wow, it is almost too easy!
+								// This prevents redundant timers for shared powers/superweapons
+								// No matter how many specialpowermodules register their timers with me,
+								// I will only draw the timer of the first valid one in my list,
+								// since they all have the same template, ans they all
+								// use the Player::getReadyFrame() functions to stay in sync.
+							}
 						}
 					}
 				}
@@ -6266,13 +6266,13 @@ void InGameUI::drawGameTime()
 	Int seconds = gameSeconds % 60;
 	Int frame = currentFrame % 30;
 
-    UnicodeString gameTimeString;
-    gameTimeString.format(L"%2.2d:%2.2d:%2.2d", hours, minutes, seconds);
-    m_gameTimeString->setText(gameTimeString);
+	UnicodeString gameTimeString;
+	gameTimeString.format(L"%2.2d:%2.2d:%2.2d", hours, minutes, seconds);
+	m_gameTimeString->setText(gameTimeString);
 
 	UnicodeString gameTimeFrameString;
-    gameTimeFrameString.format(L".%2.2d", frame);
-    m_gameTimeFrameString->setText(gameTimeFrameString);
+	gameTimeFrameString.format(L".%2.2d", frame);
+	m_gameTimeFrameString->setText(gameTimeFrameString);
 
 	// TheSuperHackers @info this implicitly offsets the game timer from the right instead of left of the screen
 	int horizontalTimerOffset = TheDisplay->getWidth() - (Int)m_gameTimePosition.x - m_gameTimeString->getWidth() - m_gameTimeFrameString->getWidth();

@@ -59,7 +59,7 @@ const FieldParse* DieMuxData::getFieldParse()
 		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI, nullptr,	offsetof( DieMuxData, m_requiredStatus ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  return dataFieldParse;
+	return dataFieldParse;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -204,9 +204,9 @@ enum
 struct WindowMessageBoxData
 {
 	GameWinMsgBoxFunc yesCallback; ///<Function pointer to the Yes Button Callback
-  GameWinMsgBoxFunc noCallback;///<Function pointer to the No Button Callback
-  GameWinMsgBoxFunc okCallback;///<Function pointer to the Ok Button Callback
-  GameWinMsgBoxFunc cancelCallback;///<Function pointer to the Cancel Button Callback
+	GameWinMsgBoxFunc noCallback;///<Function pointer to the No Button Callback
+	GameWinMsgBoxFunc okCallback;///<Function pointer to the Ok Button Callback
+	GameWinMsgBoxFunc cancelCallback;///<Function pointer to the Cancel Button Callback
 };
 
 // GameWindowEditData ---------------------------------------------------------
@@ -251,7 +251,7 @@ public:
 	Int winBringToTop();  ///< bring this window to the top of the win list
 	Int winEnable( Bool enable );  /**< enable/disable a window, a disbled
 																 window can be seen but accepts no input */
-  Bool winGetEnabled(); ///< Is window enabled?
+	Bool winGetEnabled(); ///< Is window enabled?
 	Int winHide( Bool hide );  ///< hide/unhide a window
 	Bool winIsHidden();  ///< is this window hidden/
 	UnsignedInt winSetStatus( UnsignedInt status );  ///< set status bits
@@ -297,8 +297,8 @@ public:
 	void winGetDrawOffset( Int *x, Int *y );  ///< get draw offset
 	void winSetHiliteState( Bool state );  ///< set hilite state
 	void winSetTooltip( UnicodeString tip );  ///< set tooltip text
-  Int  getTooltipDelay() { return m_instData.m_tooltipDelay; } ///< get tooltip delay
-  void setTooltipDelay(Int delay) { m_instData.m_tooltipDelay = delay; } ///< set tooltip delay
+	Int  getTooltipDelay() { return m_instData.m_tooltipDelay; } ///< get tooltip delay
+	void setTooltipDelay(Int delay) { m_instData.m_tooltipDelay = delay; } ///< set tooltip delay
 
 	//-----------------------------------------------------------------------------
 	// text methods
@@ -367,7 +367,7 @@ public:
 	the enabled status of the child */
 	GameWindow *winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Bool ignoreEnableCheck = FALSE );
 
-  // get the callbacks for a window -------------------------------------------
+	// get the callbacks for a window -------------------------------------------
 	GameWinInputFunc		winGetInputFunc();
 	GameWinSystemFunc		winGetSystemFunc();
 	GameWinDrawFunc			winGetDrawFunc();
@@ -405,7 +405,7 @@ protected:
 	WinInstanceData m_instData;					// Class data, varies by window type
 	void *m_inputData;								  // Client data
 
-  // user defined callbacks
+	// user defined callbacks
 	GameWinInputFunc			m_input;					///< callback for input
 	GameWinSystemFunc			m_system;					///< callback for system messages
 	GameWinDrawFunc				m_draw;						///< callback for drawing

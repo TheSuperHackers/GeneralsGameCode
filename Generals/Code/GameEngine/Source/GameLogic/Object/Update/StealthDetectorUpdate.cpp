@@ -55,7 +55,7 @@
 //-------------------------------------------------------------------------------------------------
 void StealthDetectorUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -76,7 +76,7 @@ void StealthDetectorUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -336,7 +336,7 @@ UpdateSleepTime StealthDetectorUpdate::update()
 	}
 
 
-  const Player *localPlayer = rts::getObservedOrLocalPlayer();
+	const Player *localPlayer = rts::getObservedOrLocalPlayer();
 
 	//Make sure the detector is visible to the local player before we add effects or sounds.
 	if (data->m_IRGridParticleSysTmpl && self->getShroudedStatus(localPlayer->getPlayerIndex()) <= OBJECTSHROUD_PARTIAL_CLEAR)

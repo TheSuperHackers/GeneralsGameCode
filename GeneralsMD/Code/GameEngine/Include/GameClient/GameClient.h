@@ -146,7 +146,7 @@ public:
 	virtual void releaseShadows();	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(); ///< create shadow resources if not already present. Used by Options screen.
 
-  virtual void preloadAssets( TimeOfDay timeOfDay );									///< preload assets
+	virtual void preloadAssets( TimeOfDay timeOfDay );									///< preload assets
 
 	virtual Drawable *getDrawableList() { return m_drawableList; }
 

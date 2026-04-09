@@ -38,7 +38,7 @@ class FireWeaponUpdateModuleData : public UpdateModuleData
 {
 public:
 	const WeaponTemplate* m_weaponTemplate;
-  UnsignedInt m_initialDelayFrames;
+	UnsignedInt m_initialDelayFrames;
 	UnsignedInt m_exclusiveWeaponDelay;	///< If non-zero, any other weapon having fired this recently will keep us from doing anything
 
 	FireWeaponUpdateModuleData();
@@ -69,6 +69,6 @@ protected:
 	Bool isOkayToFire();
 
 	Weapon* m_weapon;
-  UnsignedInt m_initialDelayFrame;
+	UnsignedInt m_initialDelayFrame;
 
 };

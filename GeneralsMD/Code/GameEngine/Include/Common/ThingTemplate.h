@@ -506,21 +506,21 @@ public:
 	const AudioEventRTS *getSoundPromotedHero() const					{ return getAudio(TTAUDIO_soundPromotedHero); }
 	const AudioEventRTS *getSoundFalling() const							{ return getAudio(TTAUDIO_soundFalling); }
 
-  Bool hasSoundAmbient() const                              { return hasAudio(TTAUDIO_soundAmbient); }
+		Bool hasSoundAmbient() const                              { return hasAudio(TTAUDIO_soundAmbient); }
 
-  const AudioEventRTS *getPerUnitSound(const AsciiString& soundName) const;
+		const AudioEventRTS *getPerUnitSound(const AsciiString& soundName) const;
 	const FXList* getPerUnitFX(const AsciiString& fxName) const;
 
 	UnsignedInt getThreatValue() const								{ return m_threatValue; }
 
-  //-------------------------------------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------------------
   /** If this is not NAMEKEY_INVALID, it indicates that all the templates which return the same name key
     * should be counted as the same "type" when looking at getMaxSimultaneousOfType(). For instance,
     * a Scud Storm and a Scud Storm rebuild hole will return the same value, so that the player
     * can't build another Scud Storm while waiting for the rebuild hole to start rebuilding */
-  //-------------------------------------------------------------------------------------------------
-  NameKeyType getMaxSimultaneousLinkKey() const { return m_maxSimultaneousLinkKey; }
-  UnsignedInt getMaxSimultaneousOfType() const;
+		//-------------------------------------------------------------------------------------------------
+		NameKeyType getMaxSimultaneousLinkKey() const { return m_maxSimultaneousLinkKey; }
+		UnsignedInt getMaxSimultaneousOfType() const;
 
 	void validate();
 
@@ -634,7 +634,7 @@ protected:
 	const PerUnitSoundMap* getAllPerUnitSounds() const { return &m_perUnitSounds; }
 	void validateAudio();
 	const AudioEventRTS* getAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] ? &m_audioarray.m_audio[t]->m_event : &s_audioEventNoSound; }
-  Bool hasAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] != nullptr; }
+		Bool hasAudio(ThingTemplateAudioType t) const { return m_audioarray.m_audio[t] != nullptr; }
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	/** Table for parsing the object fields */
@@ -653,9 +653,9 @@ protected:
 	static void parseRemoveModule(INI *ini, void *instance, void *store, const void *userData);
 	static void parseReplaceModule(INI *ini, void *instance, void *store, const void *userData);
 	static void parseInheritableModule(INI *ini, void *instance, void *store, const void *userData);
-  static void OverrideableByLikeKind(INI *ini, void *instance, void *store, const void *userData);
+		static void OverrideableByLikeKind(INI *ini, void *instance, void *store, const void *userData);
 
-  static void parseMaxSimultaneous(INI *ini, void *instance, void *store, const void *userData);
+		static void parseMaxSimultaneous(INI *ini, void *instance, void *store, const void *userData);
 
 	Bool removeModuleInfo(const AsciiString& moduleToRemove, AsciiString& clearedModuleNameOut);
 
@@ -741,7 +741,7 @@ private:
 	Int						m_energyBonus;								///< how much extra Energy this produces due to the upgrade
 	Color					m_displayColor;								///< for the editor display color
 	UnsignedInt		m_occlusionDelay;							///< delay after object creation before building occlusion is allowed.
-  NameKeyType   m_maxSimultaneousLinkKey;     ///< If this is not NAMEKEY_INVALID, it indicates that all the templates which have the same name key should be counted as the same "type" when looking at getMaxSimultaneousOfType().
+		NameKeyType   m_maxSimultaneousLinkKey;     ///< If this is not NAMEKEY_INVALID, it indicates that all the templates which have the same name key should be counted as the same "type" when looking at getMaxSimultaneousOfType().
 
 	// ---- Short-sized things
 	UnsignedShort		m_templateID;									///< id for net (etc.) transmission purposes
@@ -751,7 +751,7 @@ private:
 	UnsignedShort		m_maxSimultaneousOfType;			///< max simultaneous of this unit we can have (per player) at one time. (0 == unlimited)
 
 	// ---- Bool-sized things
-  Bool          m_maxSimultaneousDeterminedBySuperweaponRestriction; ///< If true, override value in m_maxSimultaneousOfType with value from GameInfo::getSuperweaponRestriction()
+		Bool          m_maxSimultaneousDeterminedBySuperweaponRestriction; ///< If true, override value in m_maxSimultaneousOfType with value from GameInfo::getSuperweaponRestriction()
 	Bool					m_isPrerequisite;							///< Is this thing considered in a prerequisite for any other thing?
 	Bool					m_isBridge;										///< True if this model is a bridge.
  	Bool					m_isBuildFacility;						///< is this the build facility for something? (calculated based on other template's prereqs)

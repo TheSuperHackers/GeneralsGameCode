@@ -447,7 +447,7 @@ void MobMemberSlavedUpdate::xfer( Xfer *xfer )
 	xfer->xferBool( &m_isSelfTasking );
 
 	// catch up crisis timer
-  xfer->xferUnsignedInt( &m_catchUpCrisisTimer );
+	xfer->xferUnsignedInt( &m_catchUpCrisisTimer );
 
 }
 

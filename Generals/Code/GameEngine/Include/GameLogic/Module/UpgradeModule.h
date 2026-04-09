@@ -152,7 +152,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    ModuleData::buildFieldParse(p);
+		ModuleData::buildFieldParse(p);
 		p.add(UpgradeMuxData::getFieldParse(), offsetof( UpgradeModuleData, m_upgradeMuxData ));
 	}
 };

@@ -811,15 +811,15 @@ void CPUDetectClass::Init_CPUID_Instruction()
 {
 	unsigned long cpuid_available=0;
 
-   // The pushfd/popfd commands are done using emits
-   // because CodeWarrior seems to have problems with
-   // the command (huh?)
+	// The pushfd/popfd commands are done using emits
+	// because CodeWarrior seems to have problems with
+	// the command (huh?)
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 #ifdef WIN32
    __asm
-   {
-      mov cpuid_available, 0	// clear flag
+	{
+		mov cpuid_available, 0	// clear flag
       push ebx
       pushfd
       pop eax
@@ -836,26 +836,26 @@ void CPUDetectClass::Init_CPUID_Instruction()
       push ebx
       popfd
       pop ebx
-   }
+	}
 #elif defined(_UNIX)
-     __asm__(" mov $0, __cpuid_available");  // clear flag
-     __asm__(" push %ebx");
-     __asm__(" pushfd");
-     __asm__(" pop %eax");
-     __asm__(" mov %eax, %ebx");
-     __asm__(" xor 0x00200000, %eax");
-     __asm__(" push %eax");
-     __asm__(" popfd");
-     __asm__(" pushfd");
-     __asm__(" pop %eax");
-     __asm__(" xor %ebx, %eax");
-     __asm__(" je done");
-     __asm__(" mov $1, __cpuid_available");
-     goto done;  // just to shut the compiler up
-   done:
-     __asm__(" push %ebx");
-     __asm__(" popfd");
-     __asm__(" pop %ebx");
+	__asm__(" mov $0, __cpuid_available");  // clear flag
+	__asm__(" push %ebx");
+	__asm__(" pushfd");
+	__asm__(" pop %eax");
+	__asm__(" mov %eax, %ebx");
+	__asm__(" xor 0x00200000, %eax");
+	__asm__(" push %eax");
+	__asm__(" popfd");
+	__asm__(" pushfd");
+	__asm__(" pop %eax");
+	__asm__(" xor %ebx, %eax");
+	__asm__(" je done");
+	__asm__(" mov $1, __cpuid_available");
+	goto done;  // just to shut the compiler up
+	done:
+	__asm__(" push %ebx");
+	__asm__(" popfd");
+	__asm__(" pop %ebx");
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
 #else
@@ -897,25 +897,25 @@ void CPUDetectClass::Init_Memory()
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	MEMORYSTATUS mem;
-   GlobalMemoryStatus(&mem);
+	GlobalMemoryStatus(&mem);
 
-   TotalPhysicalMemory     = mem.dwTotalPhys;
-   AvailablePhysicalMemory = mem.dwAvailPhys;
-   TotalPageMemory         = mem.dwTotalPageFile;
-   AvailablePageMemory     = mem.dwAvailPageFile;
-   TotalVirtualMemory      = mem.dwTotalVirtual;
-   AvailableVirtualMemory  = mem.dwAvailVirtual;
+	TotalPhysicalMemory     = mem.dwTotalPhys;
+	AvailablePhysicalMemory = mem.dwAvailPhys;
+	TotalPageMemory         = mem.dwTotalPageFile;
+	AvailablePageMemory     = mem.dwAvailPageFile;
+	TotalVirtualMemory      = mem.dwTotalVirtual;
+	AvailableVirtualMemory  = mem.dwAvailVirtual;
 #else
 	MEMORYSTATUSEX mem;
 	mem.dwLength = sizeof(mem);
-   GlobalMemoryStatusEx(&mem);
+	GlobalMemoryStatusEx(&mem);
 
-   TotalPhysicalMemory     = mem.ullTotalPhys;
-   AvailablePhysicalMemory = mem.ullAvailPhys;
-   TotalPageMemory         = mem.ullTotalPageFile;
-   AvailablePageMemory     = mem.ullAvailPageFile;
-   TotalVirtualMemory      = mem.ullTotalVirtual;
-   AvailableVirtualMemory  = mem.ullAvailVirtual;
+	TotalPhysicalMemory     = mem.ullTotalPhys;
+	AvailablePhysicalMemory = mem.ullAvailPhys;
+	TotalPageMemory         = mem.ullTotalPageFile;
+	AvailablePageMemory     = mem.ullAvailPageFile;
+	TotalVirtualMemory      = mem.ullTotalVirtual;
+	AvailableVirtualMemory  = mem.ullAvailVirtual;
 #endif // defined(_MSC_VER) && _MSC_VER < 1300
 
 #else
@@ -932,39 +932,39 @@ void CPUDetectClass::Init_OS()
 // RtlGetVersion returns the correct information at least at the time of writing.
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	OSVERSIONINFO os;
-   os.dwOSVersionInfoSize = sizeof(os);
+	os.dwOSVersionInfoSize = sizeof(os);
 	GetVersionEx(&os);
 
-   OSVersionNumberMajor = os.dwMajorVersion;
-   OSVersionNumberMinor = os.dwMinorVersion;
-   OSVersionBuildNumber = os.dwBuildNumber;
-   OSVersionPlatformId  = os.dwPlatformId;
-   OSVersionExtraInfo   = os.szCSDVersion;
+	OSVersionNumberMajor = os.dwMajorVersion;
+	OSVersionNumberMinor = os.dwMinorVersion;
+	OSVersionBuildNumber = os.dwBuildNumber;
+	OSVersionPlatformId  = os.dwPlatformId;
+	OSVersionExtraInfo   = os.szCSDVersion;
 #else
 	typedef LONG(WINAPI * RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
-    HMODULE ntdll = LoadLibraryExA("ntdll", nullptr, 0);
-    if (ntdll != nullptr) {
-        RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)::GetProcAddress(ntdll, "RtlGetVersion");
+	HMODULE ntdll = LoadLibraryExA("ntdll", nullptr, 0);
+	if (ntdll != nullptr) {
+		RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)::GetProcAddress(ntdll, "RtlGetVersion");
 
-        if (RtlGetVersion != nullptr) {
-            RTL_OSVERSIONINFOW os = {0};
-            os.dwOSVersionInfoSize = sizeof(os);
-            RtlGetVersion(&os);
-            OSVersionNumberMajor = os.dwMajorVersion;
-            OSVersionNumberMinor = os.dwMinorVersion;
-            OSVersionBuildNumber = os.dwBuildNumber;
-            OSVersionPlatformId = os.dwPlatformId;
-            OSVersionExtraInfo = os.szCSDVersion;
-            return;
-        }
-    }
+		if (RtlGetVersion != nullptr) {
+			RTL_OSVERSIONINFOW os = {0};
+			os.dwOSVersionInfoSize = sizeof(os);
+			RtlGetVersion(&os);
+			OSVersionNumberMajor = os.dwMajorVersion;
+			OSVersionNumberMinor = os.dwMinorVersion;
+			OSVersionBuildNumber = os.dwBuildNumber;
+			OSVersionPlatformId = os.dwPlatformId;
+			OSVersionExtraInfo = os.szCSDVersion;
+			return;
+		}
+	}
 
 	// GetVersionEx will return this info if no manifest is present so seems a safe fallback.
-    OSVersionNumberMajor = 6;
-    OSVersionNumberMinor = 2;
-    OSVersionBuildNumber = 0;
-    OSVersionPlatformId = 2;
-    OSVersionExtraInfo = "";
+	OSVersionNumberMajor = 6;
+	OSVersionNumberMinor = 2;
+	OSVersionBuildNumber = 0;
+	OSVersionPlatformId = 2;
+	OSVersionExtraInfo = "";
 #endif // defined(_MSC_VER) && _MSC_VER < 1300
 #else
 #warning FIX Init_OS()
@@ -1100,13 +1100,13 @@ void CPUDetectClass::Init_Compact_Log()
 	StringClass work(0,true);
 
 #ifdef WIN32
-   TIME_ZONE_INFORMATION time_zone;
-   GetTimeZoneInformation(&time_zone);
-   COMPACTLOG(("%d\t", time_zone.Bias));  // get diff between local time and UTC
+	TIME_ZONE_INFORMATION time_zone;
+	GetTimeZoneInformation(&time_zone);
+	COMPACTLOG(("%d\t", time_zone.Bias));  // get diff between local time and UTC
 #elif defined(_UNIX)
-   time_t t = time(nullptr);
-   localtime(&t);
-   COMPACTLOG(("%d\t", timezone));
+	time_t t = time(nullptr);
+	localtime(&t);
+	COMPACTLOG(("%d\t", timezone));
 #endif
 
 	OSInfoStruct os_info;

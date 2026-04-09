@@ -51,7 +51,7 @@ RailedTransportAIUpdateModuleData::RailedTransportAIUpdateModuleData()
 // ------------------------------------------------------------------------------------------------
 void RailedTransportAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  AIUpdateModuleData::buildFieldParse( p );
+	AIUpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -59,7 +59,7 @@ void RailedTransportAIUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 
@@ -383,11 +383,11 @@ void RailedTransportAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void RailedTransportAIUpdate::xfer( Xfer *xfer )
 {
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferBool(&m_inTransit);
@@ -411,6 +411,6 @@ void RailedTransportAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void RailedTransportAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }

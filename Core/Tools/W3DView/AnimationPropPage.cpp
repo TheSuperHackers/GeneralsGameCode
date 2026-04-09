@@ -51,7 +51,7 @@ CAnimationPropPage::CAnimationPropPage (void)
 	//{{AFX_DATA_INIT(CAnimationPropPage)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
+	return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ CAnimationPropPage::CAnimationPropPage (void)
 //
 CAnimationPropPage::~CAnimationPropPage (void)
 {
-    return ;
+	return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -71,11 +71,11 @@ void
 CAnimationPropPage::DoDataExchange (CDataExchange* pDX)
 {
 	// Allow the base class to process this message
-    CPropertyPage::DoDataExchange(pDX);
+	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAnimationPropPage)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
+	return ;
 }
 
 
@@ -92,34 +92,34 @@ BOOL
 CAnimationPropPage::OnInitDialog (void)
 {
 	// Allow the base class to process this message
-    CPropertyPage::OnInitDialog ();
+	CPropertyPage::OnInitDialog ();
 
-    // Get a pointer to the doc so we can get at the current animation object
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc && pCDoc->GetCurrentAnimation ())
-    {
-        HAnimClass *pCAnimation = pCDoc->GetCurrentAnimation ();
+	// Get a pointer to the doc so we can get at the current animation object
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+	if (pCDoc && pCDoc->GetCurrentAnimation ())
+	{
+		HAnimClass *pCAnimation = pCDoc->GetCurrentAnimation ();
 
-        // Set the description text at the top of the dialog
-        CString stringTemp;
-        stringTemp.Format (IDS_ANI_PROP_DESC, pCAnimation->Get_Name ());
-        SetDlgItemText (IDC_DESCRIPTION, stringTemp);
+		// Set the description text at the top of the dialog
+		CString stringTemp;
+		stringTemp.Format (IDS_ANI_PROP_DESC, pCAnimation->Get_Name ());
+		SetDlgItemText (IDC_DESCRIPTION, stringTemp);
 
-        // Fill in the number of frames
-        SetDlgItemInt (IDC_FRAME_COUNT, pCAnimation->Get_Num_Frames ());
+		// Fill in the number of frames
+		SetDlgItemInt (IDC_FRAME_COUNT, pCAnimation->Get_Num_Frames ());
 
-        // Fill in the frame rate of the animation
-        stringTemp.Format ("%.2f fps", pCAnimation->Get_Frame_Rate ());
-        SetDlgItemText (IDC_FRAME_RATE, stringTemp);
+		// Fill in the frame rate of the animation
+		stringTemp.Format ("%.2f fps", pCAnimation->Get_Frame_Rate ());
+		SetDlgItemText (IDC_FRAME_RATE, stringTemp);
 
-        // Fill in the total time taken by the animation
-        stringTemp.Format ("%.3f seconds", pCAnimation->Get_Total_Time ());
-        SetDlgItemText (IDC_TOTAL_TIME, stringTemp);
+		// Fill in the total time taken by the animation
+		stringTemp.Format ("%.3f seconds", pCAnimation->Get_Total_Time ());
+		SetDlgItemText (IDC_TOTAL_TIME, stringTemp);
 
-        // Set the name of the hierarchy this animation belongs to.
-        SetDlgItemText (IDC_HIERARCHY_NAME, pCAnimation->Get_HName ());
+		// Set the name of the hierarchy this animation belongs to.
+		SetDlgItemText (IDC_HIERARCHY_NAME, pCAnimation->Get_HName ());
 
-    }
+	}
 
 	return TRUE;
 }

@@ -204,8 +204,8 @@ ImageCollection::ImageCollection()
 //-------------------------------------------------------------------------------------------------
 ImageCollection::~ImageCollection()
 {
-  for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
-    deleteInstance(i->second);
+	for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+	deleteInstance(i->second);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ ImageCollection::~ImageCollection()
 //-------------------------------------------------------------------------------------------------
 void ImageCollection::addImage( Image *image )
 {
-  m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName())]=image;
+	m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName())]=image;
 }
 
 //-------------------------------------------------------------------------------------------------

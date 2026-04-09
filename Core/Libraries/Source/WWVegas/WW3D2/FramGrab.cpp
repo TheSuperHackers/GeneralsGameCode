@@ -54,8 +54,8 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	} while(result != -1);
 
 	// Create new AVI file using AVIFileOpen.
-    hr = AVIFileOpen(&AVIFile, file, OF_WRITE | OF_CREATE, nullptr);
-    if (hr != 0) {
+	hr = AVIFileOpen(&AVIFile, file, OF_WRITE | OF_CREATE, nullptr);
+	if (hr != 0) {
 		char buf[256];
 		snprintf(buf, ARRAY_SIZE(buf), "Unable to open %s\n", Filename);
 		OutputDebugString(buf);
@@ -64,7 +64,7 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	}
 
 
-    // Create a stream using AVIFileCreateStream.
+	// Create a stream using AVIFileCreateStream.
 	AVIStreamInfo.fccType = streamtypeVIDEO;
 	AVIStreamInfo.fccHandler = mmioFOURCC('M','S','V','C');
 	AVIStreamInfo.dwFlags = 0;
@@ -84,17 +84,17 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	AVIStreamInfo.dwFormatChangeCount = 0;
 	sprintf(AVIStreamInfo.szName,"G");
 
-    hr = AVIFileCreateStream(AVIFile, &Stream, &AVIStreamInfo);
-    if (hr != 0) {
+	hr = AVIFileCreateStream(AVIFile, &Stream, &AVIStreamInfo);
+	if (hr != 0) {
 		CleanupAVI();
 		return;
 	}
 
-    // Set format of new stream
+	// Set format of new stream
 	BitmapInfoHeader.biWidth = width;
 	BitmapInfoHeader.biHeight = height;
 	BitmapInfoHeader.biBitCount = (unsigned short)bitcount;
-    BitmapInfoHeader.biSizeImage = ((((UINT)BitmapInfoHeader.biBitCount * BitmapInfoHeader.biWidth + 31) & ~31) / 8) * BitmapInfoHeader.biHeight;
+	BitmapInfoHeader.biSizeImage = ((((UINT)BitmapInfoHeader.biBitCount * BitmapInfoHeader.biWidth + 31) & ~31) / 8) * BitmapInfoHeader.biHeight;
 	BitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER); // size of structure
 	BitmapInfoHeader.biPlanes = 1; // must be set to 1
 	BitmapInfoHeader.biCompression = BI_RGB; // uncompressed
@@ -103,13 +103,13 @@ FrameGrabClass::FrameGrabClass(const char *filename, MODE mode, int width, int h
 	BitmapInfoHeader.biClrUsed = 0; // all colors are used
 	BitmapInfoHeader.biClrImportant = 0; // all colors are important
 
-    hr = AVIStreamSetFormat(Stream, 0, &BitmapInfoHeader, sizeof(BitmapInfoHeader));
-    if (hr != 0) {
+	hr = AVIStreamSetFormat(Stream, 0, &BitmapInfoHeader, sizeof(BitmapInfoHeader));
+	if (hr != 0) {
 		CleanupAVI();
 		return;
 	}
 
-    Bitmap = (long *) GlobalAllocPtr(GMEM_MOVEABLE, BitmapInfoHeader.biSizeImage);
+	Bitmap = (long *) GlobalAllocPtr(GMEM_MOVEABLE, BitmapInfoHeader.biSizeImage);
 }
 
 FrameGrabClass::~FrameGrabClass()
@@ -130,10 +130,10 @@ void FrameGrabClass::CleanupAVI() {
 
 void FrameGrabClass::GrabAVI(void *BitmapPointer)
 {
-    // CompressDIB(&bi, lpOld, &biNew, lpNew);
+	// CompressDIB(&bi, lpOld, &biNew, lpNew);
 
-    // Save the compressed data using AVIStreamWrite.
-    HRESULT hr = AVIStreamWrite(Stream, Counter++, 1, BitmapPointer, BitmapInfoHeader.biSizeImage, AVIIF_KEYFRAME, nullptr, nullptr);
+	// Save the compressed data using AVIStreamWrite.
+	HRESULT hr = AVIStreamWrite(Stream, Counter++, 1, BitmapPointer, BitmapInfoHeader.biSizeImage, AVIIF_KEYFRAME, nullptr, nullptr);
 	if(hr != 0) {
 		char buf[256];
 		sprintf(buf, "avi write error %x/%d\n", hr, hr);

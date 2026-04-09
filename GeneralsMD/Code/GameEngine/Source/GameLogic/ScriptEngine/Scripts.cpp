@@ -1955,15 +1955,15 @@ AsciiString Parameter::getUiText() const
 			}
 			break;
 
-    case LEFT_OR_RIGHT:
-      switch (m_int)
-      {
-        case EVAC_BURST_FROM_CENTER: uiText.format("normal (burst from center)"); break;
-        case EVAC_TO_LEFT: uiText.format("left"); break;
-        case EVAC_TO_RIGHT: uiText.format("right"); break;
-        default :  uiText.format("unspecified"); break;
-      }
-      break;
+		case LEFT_OR_RIGHT:
+			switch (m_int)
+			{
+				case EVAC_BURST_FROM_CENTER: uiText.format("normal (burst from center)"); break;
+				case EVAC_TO_LEFT: uiText.format("left"); break;
+				case EVAC_TO_RIGHT: uiText.format("right"); break;
+				default :  uiText.format("unspecified"); break;
+			}
+			break;
 
 
 
@@ -2163,16 +2163,16 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 	}
 
 	if (pParm->getParameterType() == KIND_OF_PARAM)
-  {
+	{
 		// Need to change the string to an integer
 		const char* const* kindofNames = KindOfMaskType::getBitNames();
 		if (!pParm->m_string.isEmpty())
-    {
+		{
 			Bool found = false;
 			for (int i = 0; kindofNames[i]; ++i)
 			{
 				if (pParm->m_string.compareNoCase(kindofNames[i]) == 0)
-        {
+				{
 					pParm->setInt(i);
 					found = true;
 					break;
@@ -2219,13 +2219,13 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 
 			}
 			if (!found)
-      {
+			{
 				DEBUG_CRASH(("Unable to find Kindof '%s', please call JKM (x36872).", pParm->m_string.str()));
 				throw ERROR_BUG;
 			}
 		}
-    else
-    {
+		else
+		{
 			// Seems weird, but this is so WB will load them into the proper format.
 			pParm->m_string = kindofNames[pParm->m_int];
 		}

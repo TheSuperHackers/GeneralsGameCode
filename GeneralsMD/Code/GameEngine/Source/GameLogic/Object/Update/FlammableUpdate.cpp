@@ -55,7 +55,7 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void FlammableUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -68,7 +68,7 @@ FlammableUpdateModuleData::FlammableUpdateModuleData()
 		{ "FlameDamageExpiration",	INI::parseDurationUnsignedInt,	nullptr,	offsetof( FlammableUpdateModuleData, m_flameDamageExpirationDelay ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -59,8 +59,8 @@ PoisonedBehaviorModuleData::PoisonedBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  UpdateModuleData::buildFieldParse(p);
-  p.add(dataFieldParse);
+	UpdateModuleData::buildFieldParse(p);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

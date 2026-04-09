@@ -45,7 +45,7 @@ CBackgroundBMPDialog::CBackgroundBMPDialog (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CBackgroundBMPDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
+	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -56,12 +56,12 @@ void
 CBackgroundBMPDialog::DoDataExchange (CDataExchange* pDX)
 {
 	// Allow the base class to process this message
-    CDialog::DoDataExchange (pDX);
+	CDialog::DoDataExchange (pDX);
 
 	//{{AFX_DATA_MAP(CBackgroundBMPDialog)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
+	return ;
 }
 
 
@@ -82,19 +82,19 @@ BOOL
 CBackgroundBMPDialog::OnInitDialog (void)
 {
 	// Allow the base class to process this message
-    CDialog::OnInitDialog ();
+	CDialog::OnInitDialog ();
 
-    // Center the dialog around the data tree view instead
-    // of the direct center of the screen
-    ::CenterDialogAroundTreeView (m_hWnd);
+	// Center the dialog around the data tree view instead
+	// of the direct center of the screen
+	::CenterDialogAroundTreeView (m_hWnd);
 
-    // Gett a pointer to the current document
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        // Set the initial filename in the edit control
-        SetDlgItemText (IDC_FILENAME_EDIT, pCDoc->GetBackgroundBMP ());
-    }
+	// Gett a pointer to the current document
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+	if (pCDoc)
+	{
+		// Set the initial filename in the edit control
+		SetDlgItemText (IDC_FILENAME_EDIT, pCDoc->GetBackgroundBMP ());
+	}
 
 	return TRUE;
 }
@@ -106,28 +106,28 @@ CBackgroundBMPDialog::OnInitDialog (void)
 void
 CBackgroundBMPDialog::OnOK (void)
 {
-    // Gett a pointer to the current document
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        CString stringBackgroundBMPName;
+	// Gett a pointer to the current document
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+	if (pCDoc)
+	{
+		CString stringBackgroundBMPName;
 
-        // Get the filename the user entered
-        if (GetDlgItemText (IDC_FILENAME_EDIT, stringBackgroundBMPName) > 0)
-        {
-            // Ask the doc to create a new background from this BMP
-            pCDoc->SetBackgroundBMP (stringBackgroundBMPName);
-        }
-        else
-        {
-            // Ask the doc to clear any existing background BMP
-            pCDoc->SetBackgroundBMP (nullptr);
-        }
-    }
+		// Get the filename the user entered
+		if (GetDlgItemText (IDC_FILENAME_EDIT, stringBackgroundBMPName) > 0)
+		{
+			// Ask the doc to create a new background from this BMP
+			pCDoc->SetBackgroundBMP (stringBackgroundBMPName);
+		}
+		else
+		{
+			// Ask the doc to clear any existing background BMP
+			pCDoc->SetBackgroundBMP (nullptr);
+		}
+	}
 
 	// Allow the base class to process this message
-    CDialog::OnOK ();
-    return ;
+	CDialog::OnOK ();
+	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -137,24 +137,24 @@ CBackgroundBMPDialog::OnOK (void)
 void
 CBackgroundBMPDialog::OnBrowse (void)
 {
-    // Get a pointer to the current document
-    CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
-    if (pCDoc)
-    {
-        CFileDialog openFileDialog (TRUE,
+	// Get a pointer to the current document
+	CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
+	if (pCDoc)
+	{
+		CFileDialog openFileDialog (TRUE,
                                     ".tga",
                                     pCDoc->GetBackgroundBMP (),
                                     OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_EXPLORER,
                                     "Targa files (*.tga)|*.tga||",
                                     this);
 
-        // Ask the user what Targa file they wish to load
-        if (openFileDialog.DoModal () == IDOK)
-        {
-            // Set the text of the filename edit control
-            SetDlgItemText (IDC_FILENAME_EDIT, openFileDialog.GetPathName ());
-        }
-    }
+		// Ask the user what Targa file they wish to load
+		if (openFileDialog.DoModal () == IDOK)
+		{
+			// Set the text of the filename edit control
+			SetDlgItemText (IDC_FILENAME_EDIT, openFileDialog.GetPathName ());
+		}
+	}
 
-    return ;
+	return ;
 }

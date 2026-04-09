@@ -156,13 +156,13 @@ public:
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) override;				///< remove all objects on contain list
 	virtual void killAllContained() override;				///< kill all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ) override; // apply canned damage against those contains
+	virtual void harmAndForceExitAllContained( DamageInfo *info ) override; // apply canned damage against those contains
 	virtual Bool isEnclosingContainerFor( const Object *obj ) const override;	///< Does this type of Contain Visibly enclose its contents?
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const override;	///< Hey, can I shoot out of this container?
 
-  virtual void setPassengerAllowedToFire( Bool permission = TRUE ) override { m_passengerAllowedToFire = permission; }	///< Hey, can I shoot out of this container?
+	virtual void setPassengerAllowedToFire( Bool permission = TRUE ) override { m_passengerAllowedToFire = permission; }	///< Hey, can I shoot out of this container?
 
-  virtual void setOverrideDestination( const Coord3D * ) override {} ///< Instead of falling peacefully towards a clear spot, I will now aim here
+	virtual void setOverrideDestination( const Coord3D * ) override {} ///< Instead of falling peacefully towards a clear spot, I will now aim here
 	virtual Bool isDisplayedOnControlBar() const override {return FALSE;}///< Does this container display its contents on the ControlBar?
 	virtual Int getExtraSlotsInUse() override { return 0; }
 	virtual Bool isKickOutOnCapture() override { return TRUE; }///< By default, yes, all contain modules kick passengers out on capture
@@ -204,8 +204,8 @@ public:
 	virtual Bool isRiderChangeContain() const override { return FALSE; }
 	virtual Bool isSpecialZeroSlotContainer() const override { return false; }
 	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const override { return false; }
-  virtual Bool isAnyRiderAttacking() const override;
+	virtual Bool isSpecialOverlordStyleContainer() const override { return false; }
+	virtual Bool isAnyRiderAttacking() const override;
 
 	/**
 		this is used for containers that must do something to allow people to enter or exit...
@@ -228,10 +228,10 @@ public:
 
 	virtual void enableLoadSounds( Bool enable ) override { m_loadSoundsEnabled = enable; }
 
-  Real getDamagePercentageToUnits();
-  virtual Object* getClosestRider ( const Coord3D *pos ) override;
+	Real getDamagePercentageToUnits();
+	virtual Object* getClosestRider ( const Coord3D *pos ) override;
 
-  virtual void setEvacDisposition( EvacDisposition disp ) override {};
+	virtual void setEvacDisposition( EvacDisposition disp ) override {};
 protected:
 
 	virtual void monitorConditionChanges();				///< check to see if we need to update our occupant positions from a model change or anything else
@@ -284,5 +284,5 @@ private:
 	Coord3D							m_rallyPoint;												///< Where units should move to after they have reached the "natural" rally point
 	Bool								m_rallyPointExists;										///< Only move to the rally point if this is true
 	Bool								m_loadSoundsEnabled;								///< Don't serialize -- used for disabling sounds during payload creation.
-  Bool                m_passengerAllowedToFire;      ///< Newly promoted from the template data to the module for upgrade overriding access
+	Bool                m_passengerAllowedToFire;      ///< Newly promoted from the template data to the module for upgrade overriding access
 };

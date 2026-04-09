@@ -47,7 +47,7 @@ ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData()
 void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-  UpgradeModuleData::buildFieldParse( p );
+	UpgradeModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -55,7 +55,7 @@ void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

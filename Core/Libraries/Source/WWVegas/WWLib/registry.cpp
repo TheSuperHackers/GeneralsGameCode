@@ -219,12 +219,12 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 	} else {
 		//*value = 0;
 		//value = (char *) default_string;
-      if (default_string == nullptr) {
+		if (default_string == nullptr) {
 		   *value = 0;
-      } else {
-         assert(strlen(default_string) < (unsigned int) value_size);
-         strcpy(value, default_string);
-      }
+		} else {
+			assert(strlen(default_string) < (unsigned int) value_size);
+			strcpy(value, default_string);
+		}
 	}
 	return value;
 }
@@ -232,7 +232,7 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 void	RegistryClass::Set_String( const char * name, const char *value )
 {
 	assert( IsValid );
-   int size = strlen( value ) + 1; // must include null terminator
+	int size = strlen( value ) + 1; // must include null terminator
 	if (IsLocked) {
 		return;
 	}
@@ -323,7 +323,7 @@ void	RegistryClass::Set_String( const WCHAR * name, const WCHAR *value )
 {
 	assert( IsValid );
 
-   //
+	//
 	//	Determine the size
 	//
 	int size = wcslen( value ) + 1;

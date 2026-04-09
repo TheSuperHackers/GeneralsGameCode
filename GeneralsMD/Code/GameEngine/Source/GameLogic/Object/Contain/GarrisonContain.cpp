@@ -73,7 +73,7 @@ GarrisonContainModuleData::GarrisonContainModuleData()
 	m_doIHealObjects = false;			///< if T, then I heal objects that are inside of me
 	m_framesForFullHeal = 1.0f;		///< the number of frames something inside of me takes to heal
 	m_immuneToClearBuildingAttacks = false;
-  m_isEnclosingContainer = TRUE; ///< a sensible default for a garrison container... few exceptions, firebase is one
+	m_isEnclosingContainer = TRUE; ///< a sensible default for a garrison container... few exceptions, firebase is one
 
 	m_initialRoster.count = 0;
 }
@@ -283,8 +283,8 @@ Bool GarrisonContain::calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3
 		return FALSE;
 
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 
 
@@ -317,8 +317,8 @@ Bool GarrisonContain::attemptBestFirePointPosition( Object *source, Weapon *weap
 	}
 
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 	//If this object is already at a garrison point, remove him.
 	Int existingIndex = getObjectGarrisonPointIndex( source );
@@ -357,8 +357,8 @@ Bool GarrisonContain::attemptBestFirePointPosition( Object *source, Weapon *weap
 		return FALSE;
 	}
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 
 	//If this object is already at a garrison point, remove him.
@@ -398,8 +398,8 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
 		return;
 
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 	// if obj target, override pos
 	if (target != nullptr)
@@ -429,12 +429,12 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
 void GarrisonContain::removeObjectFromGarrisonPoint( Object *obj, Int index )
 {
 
-  if ( ! isEnclosingContainerFor(obj) )
-    return;// since I am not enclosed, I am not at a garrison point!
+	if ( ! isEnclosingContainerFor(obj) )
+	return;// since I am not enclosed, I am not at a garrison point!
 
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 
 	// sanity
@@ -510,7 +510,7 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 	m_hideGarrisonedStateFromNonallies = FALSE;
 	m_garrisonPointsInUse = 0;
 	m_garrisonPointsInitialized = FALSE;
-  m_stationGarrisonPointsInitialized = FALSE;
+	m_stationGarrisonPointsInitialized = FALSE;
 
 	for( i = 0; i < MAX_GARRISON_POINTS; i++ )
 	{
@@ -530,10 +530,10 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 	m_exitRallyPoint.zero();
 
 
-  m_evacDisposition = EVAC_BURST_FROM_CENTER; // default, anyway
+	m_evacDisposition = EVAC_BURST_FROM_CENTER; // default, anyway
 
 
-  m_stationPointList.clear();
+	m_stationPointList.clear();
 
 }
 
@@ -587,8 +587,8 @@ Bool GarrisonContain::isValidContainerFor(const Object* obj, Bool checkCapacity)
 void GarrisonContain::removeInvalidObjectsFromGarrisonPoints()
 {
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("removeinvalidobjFromGarrisonPoint... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("removeinvalidobjFromGarrisonPoint... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 	Object *obj;
 
@@ -638,8 +638,8 @@ void GarrisonContain::addValidObjectsToGarrisonPoints()
 
 
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("addvalidobjtoGarrisonPoint... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("addvalidobjtoGarrisonPoint... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 
 
@@ -682,8 +682,8 @@ void GarrisonContain::trackTargets()
 {
 
 
-  if ( ! isEnclosingContainerFor( nullptr ) )
-    return; // since ina non-enclosing container, objects fire from their station points, instead of being juggled around between garrison firepoints
+	if ( ! isEnclosingContainerFor( nullptr ) )
+	return; // since ina non-enclosing container, objects fire from their station points, instead of being juggled around between garrison firepoints
 
 
 
@@ -797,13 +797,13 @@ void GarrisonContain::redeployOccupants()
 //	addValidObjectsToGarrisonPoints();
 
 
-  // ATTENTION... setting this false allows each redeployOccupants() call to create fresh station points, based on the new transform
-  // if anything weird ever happens, like rotating buildings and such, we will need a way of transforming the points without clearing the
-  // list (and thus forgetting where everyone contained was stationed)... just a handy reminder.
-  m_stationGarrisonPointsInitialized = FALSE;
+	// ATTENTION... setting this false allows each redeployOccupants() call to create fresh station points, based on the new transform
+	// if anything weird ever happens, like rotating buildings and such, we will need a way of transforming the points without clearing the
+	// list (and thus forgetting where everyone contained was stationed)... just a handy reminder.
+	m_stationGarrisonPointsInitialized = FALSE;
 
 
-  matchObjectsToGarrisonPoints();
+	matchObjectsToGarrisonPoints();
 
 	// restore the frame markers that things were recorded as entering their point
 	Int index;
@@ -832,8 +832,8 @@ void GarrisonContain::updateEffects()
 
 
 #ifdef DEBUG_CRASHING
-  const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("updateeffects... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("updateeffects... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
 
 
@@ -948,7 +948,7 @@ UpdateSleepTime GarrisonContain::update()
 //	// a garrison point
 //	//
 //	addValidObjectsToGarrisonPoints();
-  matchObjectsToGarrisonPoints();
+	matchObjectsToGarrisonPoints();
 
 	healObjects();
 
@@ -974,13 +974,13 @@ UpdateSleepTime GarrisonContain::update()
 // ------------------------------------------------------------------------------------------------
 void GarrisonContain::matchObjectsToGarrisonPoints()
 {
-  if ( isEnclosingContainerFor( nullptr ) == FALSE )
-  {
-    // enforce that everybody stays at their pre-assigned space
-    positionObjectsAtStationGarrisonPoints();
-  }
-  else
-  {
+	if ( isEnclosingContainerFor( nullptr ) == FALSE )
+	{
+		// enforce that everybody stays at their pre-assigned space
+		positionObjectsAtStationGarrisonPoints();
+	}
+	else
+	{
 	  // are there any objects at the garrison points who now need to go back to the center of the structure
 	  removeInvalidObjectsFromGarrisonPoints();
 	  // are there any objects in the center that have now obtained targets and need to move to
@@ -993,7 +993,7 @@ void GarrisonContain::matchObjectsToGarrisonPoints()
 	  // to shuffle our object to the new closest garrison point.  We'll also track the target
 	  // here and set orientation for any effects we need to
 	  trackTargets();
-  }
+	}
 
 }
 
@@ -1004,38 +1004,38 @@ void GarrisonContain::matchObjectsToGarrisonPoints()
 // ------------------------------------------------------------------------------------------------
 void GarrisonContain::positionObjectsAtStationGarrisonPoints()
 {
-  if ( ! m_stationGarrisonPointsInitialized )
-  {
-    loadStationGarrisonPoints();
-  }
+	if ( ! m_stationGarrisonPointsInitialized )
+	{
+		loadStationGarrisonPoints();
+	}
 
 	const ContainedItemsList& containList = getContainList();
 	Object *contained;
 	for( ContainedItemsList::const_iterator it = containList.begin(); it != containList.end(); ++it )
 	{
 		contained = *it;
-    Bool foundHisSpot = FALSE;
+		Bool foundHisSpot = FALSE;
 
-    // now lets find him in our station point list, and make sure he stays put there.
-    for( std::vector<StationPointData>::const_iterator pt = m_stationPointList.begin();
-    pt != m_stationPointList.end();
-    ++pt)
-    {
-      const StationPointData *spd = &*pt;
+		// now lets find him in our station point list, and make sure he stays put there.
+		for( std::vector<StationPointData>::const_iterator pt = m_stationPointList.begin();
+		pt != m_stationPointList.end();
+		++pt)
+		{
+			const StationPointData *spd = &*pt;
 
-      if( spd->occupantID == contained->getID() )
-      {
-        contained->setPosition( &spd->position );
-        foundHisSpot = TRUE;
-        break;
-      }
+			if( spd->occupantID == contained->getID() )
+			{
+				contained->setPosition( &spd->position );
+				foundHisSpot = TRUE;
+				break;
+			}
 
-    }
+		}
 
-    if ( ! foundHisSpot && ! pickAStationForMe( contained ))
-    {
-      DEBUG_ASSERTCRASH( foundHisSpot, ("GarrisonContain::positionObjectsAtStationGarrisonPoints found something terribly wrong... \nthere is either a station point shortage, or some other bug."));
-    }
+		if ( ! foundHisSpot && ! pickAStationForMe( contained ))
+		{
+			DEBUG_ASSERTCRASH( foundHisSpot, ("GarrisonContain::positionObjectsAtStationGarrisonPoints found something terribly wrong... \nthere is either a station point shortage, or some other bug."));
+		}
 
 	}
 
@@ -1048,45 +1048,45 @@ void GarrisonContain::positionObjectsAtStationGarrisonPoints()
 // ------------------------------------------------------------------------------------------------
 Bool GarrisonContain::pickAStationForMe( const Object *obj )
 {
-  Bool foundVacancy = FALSE;
-  for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt)
-  {
-    StationPointData *spd = &*pt; // non const
-    if ( spd->occupantID  == INVALID_ID ) // found a vacancy
-    {
-      spd->occupantID = obj->getID();
-      foundVacancy = TRUE;
-      return TRUE;
-    }
-  }
+	Bool foundVacancy = FALSE;
+	for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt)
+	{
+		StationPointData *spd = &*pt; // non const
+		if ( spd->occupantID  == INVALID_ID ) // found a vacancy
+		{
+			spd->occupantID = obj->getID();
+			foundVacancy = TRUE;
+			return TRUE;
+		}
+	}
 
-  DEBUG_ASSERTCRASH(foundVacancy, ("GarrisonContain::pickAStationForMe is all kinds of bad... \n there was no vacancy found for a newly contained object."));
+	DEBUG_ASSERTCRASH(foundVacancy, ("GarrisonContain::pickAStationForMe is all kinds of bad... \n there was no vacancy found for a newly contained object."));
 
-  return FALSE;
+	return FALSE;
 
 }
 
 void GarrisonContain::removeObjectFromStationPoint( const Object *obj )
 {
 
-  //sanity
-  if ( obj == nullptr )
-    return;
+	//sanity
+	if ( obj == nullptr )
+	return;
 
-  Bool foundOccupant = FALSE;
-  for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt)
-  {
-    StationPointData *spd = &*pt; // non const
-    if ( spd->occupantID  == obj->getID() ) // found him sitting there
-    {
-      spd->occupantID = INVALID_ID;// give up your space
-      foundOccupant = TRUE;
-      return;
-    }
-  }
+	Bool foundOccupant = FALSE;
+	for( std::vector<StationPointData>::iterator pt = m_stationPointList.begin(); pt != m_stationPointList.end(); ++pt)
+	{
+		StationPointData *spd = &*pt; // non const
+		if ( spd->occupantID  == obj->getID() ) // found him sitting there
+		{
+			spd->occupantID = INVALID_ID;// give up your space
+			foundOccupant = TRUE;
+			return;
+		}
+	}
 
 
-  DEBUG_ASSERTCRASH(foundOccupant, ("GarrisonContain::removeObjectFromStationPoint is all kinds of bad... \n the contained object was not found in station point list."));
+	DEBUG_ASSERTCRASH(foundOccupant, ("GarrisonContain::removeObjectFromStationPoint is all kinds of bad... \n the contained object was not found in station point list."));
 
 
 }
@@ -1279,22 +1279,22 @@ void GarrisonContain::recalcApparentControllingPlayer()
 		// now that we have an object inside us, we need to get all the garrison point positions
 		// if we don't already have them.
 		if( getContainCount() > 0 )
-    {
-      if ( isEnclosingContainerFor( nullptr ) )
-      {
-        if ( m_garrisonPointsInitialized == FALSE )
+		{
+			if ( isEnclosingContainerFor( nullptr ) )
+			{
+				if ( m_garrisonPointsInitialized == FALSE )
 		    {
 			    loadGarrisonPoints();
 		    }
-      }
-      else // must need station points instead
-      {
-        if ( m_stationGarrisonPointsInitialized == FALSE )
-        {
-          loadStationGarrisonPoints();
-        }
-      }
-    }
+			}
+			else // must need station points instead
+			{
+				if ( m_stationGarrisonPointsInitialized == FALSE )
+				{
+					loadStationGarrisonPoints();
+				}
+			}
+		}
 	}
 }
 
@@ -1308,9 +1308,9 @@ void GarrisonContain::loadGarrisonPoints()
 
 	const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
 
-  DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("loadGarrisonPoints... SHOULD NOT GET HERE, since this container is non-enclosing") );
+	DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("loadGarrisonPoints... SHOULD NOT GET HERE, since this container is non-enclosing") );
 
-  Object *structure = getObject();
+	Object *structure = getObject();
 	Int i, j;
 	Bool gBonesFound = FALSE;
 
@@ -1451,8 +1451,8 @@ void GarrisonContain::validateRallyPoint()
 //-------------------------------------------------------------------------------------------------
 void GarrisonContain::onSelling()
 {
-  removeAllContained( FALSE );
-  OpenContain::onSelling();
+	removeAllContained( FALSE );
+	OpenContain::onSelling();
 }
 
 
@@ -1505,7 +1505,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 
 	Real exitAngle = getObject()->getOrientation();
 
-  // Garrison doesn't have reserveDoor or exitDelay, so if we do nothing, everyone will appear on top
+	// Garrison doesn't have reserveDoor or exitDelay, so if we do nothing, everyone will appear on top
 	// of each other and get stuck inside each others' extent (except for the first guy).  So we'll
 	// scatter the start point around a little to make it better.
 	startPosition = *getObject()->getPosition();
@@ -1531,33 +1531,33 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 
 
 
-  if ( m_evacDisposition == EVAC_TO_LEFT || m_evacDisposition == EVAC_TO_RIGHT  )
-  {
+	if ( m_evacDisposition == EVAC_TO_LEFT || m_evacDisposition == EVAC_TO_RIGHT  )
+	{
 
-    Real EVAC__SCALAR = ( m_evacDisposition == EVAC_TO_LEFT ? 1.0f : -1.0f );
+		Real EVAC__SCALAR = ( m_evacDisposition == EVAC_TO_LEFT ? 1.0f : -1.0f );
 
-    Real containerHalfLength = getObject()->getGeometryInfo().getMajorRadius() ;
-    Real containerHalfWidth = getObject()->getGeometryInfo().getMinorRadius() ;
+		Real containerHalfLength = getObject()->getGeometryInfo().getMajorRadius() ;
+		Real containerHalfWidth = getObject()->getGeometryInfo().getMinorRadius() ;
 
-    Vector3 doorPosition;
-    doorPosition.X = GameLogicRandomValueReal( -containerHalfLength/4, containerHalfLength/4 );// a rectangular pocket to act as the "doorway"
-    doorPosition.Y = GameLogicRandomValueReal( containerHalfWidth/2, containerHalfWidth * 2) * EVAC__SCALAR;
-    doorPosition.Z = 0;
-    Vector3 walkToPosition;
-    walkToPosition.X = GameLogicRandomValueReal( -containerHalfLength, containerHalfLength );
-    walkToPosition.Y = containerHalfWidth * 10 * EVAC__SCALAR;// spread-out!
-    walkToPosition.Z = 0;
+		Vector3 doorPosition;
+		doorPosition.X = GameLogicRandomValueReal( -containerHalfLength/4, containerHalfLength/4 );// a rectangular pocket to act as the "doorway"
+		doorPosition.Y = GameLogicRandomValueReal( containerHalfWidth/2, containerHalfWidth * 2) * EVAC__SCALAR;
+		doorPosition.Z = 0;
+		Vector3 walkToPosition;
+		walkToPosition.X = GameLogicRandomValueReal( -containerHalfLength, containerHalfLength );
+		walkToPosition.Y = containerHalfWidth * 10 * EVAC__SCALAR;// spread-out!
+		walkToPosition.Z = 0;
 
-    const Matrix3D *mtx = getObject()->getTransformMatrix();
-    mtx->Transform_Vector( *mtx, doorPosition, &doorPosition );
-    startPosition.x = doorPosition.X;
-    startPosition.y = doorPosition.Y;
-    startPosition.z = doorPosition.Z;
+		const Matrix3D *mtx = getObject()->getTransformMatrix();
+		mtx->Transform_Vector( *mtx, doorPosition, &doorPosition );
+		startPosition.x = doorPosition.X;
+		startPosition.y = doorPosition.Y;
+		startPosition.z = doorPosition.Z;
 
-    mtx->Transform_Vector( *mtx, walkToPosition, &walkToPosition );
-    endPosition.x = walkToPosition.X;
-    endPosition.y = walkToPosition.Y;
-    endPosition.z = walkToPosition.Z;
+		mtx->Transform_Vector( *mtx, walkToPosition, &walkToPosition );
+		endPosition.x = walkToPosition.X;
+		endPosition.y = walkToPosition.Y;
+		endPosition.z = walkToPosition.Z;
 
 	  exitObj->setPosition( &startPosition );
 	  exitObj->setOrientation( exitAngle );
@@ -1575,17 +1575,17 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 		  TheAI->pathfinder()->updateGoal(exitObj, &endPosition, TheTerrainLogic->getLayerForDestination(&endPosition));
 	  }
 
-  }
-  else // must be EVAC_BURST_FROM_CENTER. then!
-  {
-    // if we are not enclosed, then just walk away from where we "are."
+	}
+	else // must be EVAC_BURST_FROM_CENTER. then!
+	{
+		// if we are not enclosed, then just walk away from where we "are."
   	if ( isEnclosingContainerFor( exitObj ))
-    {
-      exitObj->setPosition( &startPosition ); // correct for non-ground-level station points
-      exitObj->setPositionZ( TheTerrainLogic->getGroundHeight( startPosition.x, startPosition.y ) );
-    }
+		{
+			exitObj->setPosition( &startPosition ); // correct for non-ground-level station points
+			exitObj->setPositionZ( TheTerrainLogic->getGroundHeight( startPosition.x, startPosition.y ) );
+		}
 
-    exitObj->setOrientation( exitAngle );
+		exitObj->setOrientation( exitAngle );
 	  ///< @todo This really should be automatically wrapped up in an activation sequence	for objects in general
 	  // tell the AI about it
 	  TheAI->pathfinder()->addObjectToPathfindMap( exitObj );
@@ -1599,7 +1599,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 		  ai->aiFollowPath( &exitPath, getObject(), CMD_FROM_AI );
 		  TheAI->pathfinder()->updateGoal(exitObj, &endPosition, TheTerrainLogic->getLayerForDestination(&endPosition));
 	  }
-  }
+	}
 
 
 
@@ -1627,7 +1627,7 @@ void GarrisonContain::onContaining( Object *obj, Bool wasSelected )
 	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
 
 	// put the object in the center of the building
-  if (isEnclosingContainerFor( obj ))
+	if (isEnclosingContainerFor( obj ))
 	  obj->setPosition( structure->getPosition() );
 
 	obj->getControllingPlayer()->getAcademyStats()->recordBuildingGarrisoned();
@@ -1639,9 +1639,9 @@ void GarrisonContain::onContaining( Object *obj, Bool wasSelected )
 	//
 	recalcApparentControllingPlayer();
 
-  Drawable *draw = obj->getDrawable();
-  if ( draw && draw->isSelected() )
-    TheInGameUI->deselectDrawable( draw );
+	Drawable *draw = obj->getDrawable();
+	if ( draw && draw->isSelected() )
+	TheInGameUI->deselectDrawable( draw );
 
 
 }
@@ -1653,16 +1653,16 @@ void GarrisonContain::onRemoving( Object *obj )
 	OpenContain::onRemoving(obj);
 
 
-  if (isEnclosingContainerFor( obj ))
+	if (isEnclosingContainerFor( obj ))
 	  // first remove the object from any garrison fire point if it's at one
   	removeObjectFromGarrisonPoint( obj );
-  else
-  {
-    removeObjectFromStationPoint( obj );
+	else
+	{
+		removeObjectFromStationPoint( obj );
 		//Kris: Patch 1.01 -- Passing in correct argument for Y (instead of X) fixes cases where selling firebases
 		//were dropping contained infantry to incorrect altitudes.
-    obj->setPositionZ( TheTerrainLogic->getGroundHeight( obj->getPosition()->x, obj->getPosition()->y ) );
-  }
+		obj->setPositionZ( TheTerrainLogic->getGroundHeight( obj->getPosition()->x, obj->getPosition()->y ) );
+	}
 	// give the object back a regular weapon
 	obj->clearWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
 
@@ -1713,9 +1713,9 @@ void GarrisonContain::onRemoving( Object *obj )
 Bool GarrisonContain::isPassengerAllowedToFire( ObjectID id ) const
 {
 
-  const Object *self = getObject();
-  if ( self && self->isDisabledByType( DISABLED_SUBDUED ) )
-    return FALSE;
+	const Object *self = getObject();
+	if ( self && self->isDisabledByType( DISABLED_SUBDUED ) )
+	return FALSE;
 
 	return TRUE;
 
@@ -2010,7 +2010,7 @@ void GarrisonContain::loadStationGarrisonPoints()
 		conditionIndex = GARRISON_POINT_PRISTINE;
 
 
-    Coord3D tempBuffer[MAX_GARRISON_POINTS];
+		Coord3D tempBuffer[MAX_GARRISON_POINTS];
 		int t = 0;
 		for( ; t < MAX_GARRISON_POINTS; ++t )
 		  tempBuffer[ t ] = *(structure->getPosition());
@@ -2019,19 +2019,19 @@ void GarrisonContain::loadStationGarrisonPoints()
 		if ( count > 0) stationBonesFound = TRUE;
 
 
-    m_stationPointList.clear();// we are starting over... forget everything
+		m_stationPointList.clear();// we are starting over... forget everything
 
-    for( t = 0; t < count; ++t )
-    {
-      StationPointData tempStationPointData;
-      tempStationPointData.position = tempBuffer[ t ];
-      tempStationPointData.occupantID = INVALID_ID;
-      m_stationPointList.push_back( tempStationPointData ); // store for later use
-    }
+		for( t = 0; t < count; ++t )
+		{
+			StationPointData tempStationPointData;
+			tempStationPointData.position = tempBuffer[ t ];
+			tempStationPointData.occupantID = INVALID_ID;
+			m_stationPointList.push_back( tempStationPointData ); // store for later use
+		}
 		// restore the original condition flags
 		draw->replaceModelConditionFlags( originalFlags );
 
-    //tempBuffer pops
+		//tempBuffer pops
 
 	}
 

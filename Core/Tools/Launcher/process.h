@@ -26,14 +26,14 @@
 class Process
 {
  public:
-           Process();
+	Process();
 
-  char     directory[256];
-  char     command[256];
-  char     args[256];
-  HANDLE   hProcess;
+	char     directory[256];
+	char     command[256];
+	char     args[256];
+	HANDLE   hProcess;
 	DWORD dwProcessID;
-  HANDLE   hThread;
+	HANDLE   hThread;
 	DWORD dwThreadID;
 };
 

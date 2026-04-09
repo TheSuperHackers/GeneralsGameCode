@@ -51,7 +51,7 @@ m_maxOutwardMovement(1.0f)
 	const Real START_VELOCITY_PERCENT = 0.2f;
 	const Real START_ACCEL_PERCENT = 0.01f;
 	const Real VELOCITY_BOUNCE_PERCENT = 0.3f;			// multiply the velocity by this when you bounce
-  const Real MINIMUM_TOPPLE_SPEED = 0.5f;         // Won't let trees fall slower than this
+	const Real MINIMUM_TOPPLE_SPEED = 0.5f;         // Won't let trees fall slower than this
 	m_toppleFX = nullptr;
 	m_bounceFX = nullptr;
 	m_stumpName.clear();
@@ -61,7 +61,7 @@ m_maxOutwardMovement(1.0f)
 	m_initialVelocityPercent = START_VELOCITY_PERCENT;
 	m_initialAccelPercent = START_ACCEL_PERCENT;
 	m_bounceVelocityPercent = VELOCITY_BOUNCE_PERCENT;
-  m_minimumToppleSpeed = MINIMUM_TOPPLE_SPEED;
+	m_minimumToppleSpeed = MINIMUM_TOPPLE_SPEED;
 	m_sinkFrames = 10*LOGICFRAMES_PER_SECOND;
 	m_sinkDistance = 20.0f;
 
@@ -75,7 +75,7 @@ W3DTreeDrawModuleData::~W3DTreeDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "ModelName", INI::parseAsciiString, nullptr, offsetof(W3DTreeDrawModuleData, m_modelName) },
@@ -100,7 +100,7 @@ void W3DTreeDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "DoShadow",	INI::parseBool, nullptr, offsetof( W3DTreeDrawModuleData, m_doShadow ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

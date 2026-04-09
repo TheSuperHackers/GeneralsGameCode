@@ -133,76 +133,76 @@ void TerrainVisual::loadPostProcess()
 SeismicSimulationFilterBase::SeismicSimStatusCode DomeStyleSeismicFilter::filterCallback( WorldHeightMapInterfaceClass *heightMap, const SeismicSimulationNode *node )
 {
 
-  Int life = node->m_life;
+	Int life = node->m_life;
 
-  if ( heightMap == nullptr )
-    return SEISMIC_STATUS_INVALID;
-
-
-  if ( life == 0 )
-    return SEISMIC_STATUS_ACTIVE;
-  if ( life < 15 )
-  {
-    // ADD HEIGHT BECAUSE THE EXPLOSION IS PUSHING DIRT UP
-
-    Real magnitude = node->m_magnitude;
-
-    Real offsScalar =  magnitude / (Real)life; // real-life, get it?
-    Int radius = node->m_radius;
-    Int border = heightMap->getBorderSize();
-    Int centerX = node->m_center.x + border ;
-    Int centerY = node->m_center.y + border ;
-
-    UnsignedInt workspaceWidth = radius*2;
-    Real *workspace = NEW Real[ sqr(workspaceWidth) ];
-    Real *workspaceEnd = workspace + sqr(workspaceWidth);
+	if ( heightMap == nullptr )
+	return SEISMIC_STATUS_INVALID;
 
 
-    for ( Real *t = workspace; t < workspaceEnd; ++t ) *t = 0.0f;// clear the workspace
+	if ( life == 0 )
+	return SEISMIC_STATUS_ACTIVE;
+	if ( life < 15 )
+	{
+		// ADD HEIGHT BECAUSE THE EXPLOSION IS PUSHING DIRT UP
 
-    Int x, y;
-    for (x = 0; x < radius; ++x)
-    {
-      for (y = 0; y < radius; ++y)
-      {
+		Real magnitude = node->m_magnitude;
 
-        Real distance = sqrt( sqr(x) + sqr(y) );//Pythagoras
+		Real offsScalar =  magnitude / (Real)life; // real-life, get it?
+		Int radius = node->m_radius;
+		Int border = heightMap->getBorderSize();
+		Int centerX = node->m_center.x + border ;
+		Int centerY = node->m_center.y + border ;
 
-        if ( distance < radius )
-        {
-          Real distScalar = cos( ( distance / radius * (PI/2) ) );
-          Real height = (offsScalar * distScalar);
+		UnsignedInt workspaceWidth = radius*2;
+		Real *workspace = NEW Real[ sqr(workspaceWidth) ];
+		Real *workspaceEnd = workspace + sqr(workspaceWidth);
 
-          workspace[ (radius + x) +  workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX + x,  centerY + y ) ;//kaleidoscope
 
-          if ( x != 0 ) // non-zero test prevents cross-shaped double stamp
-          {
+		for ( Real *t = workspace; t < workspaceEnd; ++t ) *t = 0.0f;// clear the workspace
+
+		Int x, y;
+		for (x = 0; x < radius; ++x)
+		{
+			for (y = 0; y < radius; ++y)
+			{
+
+				Real distance = sqrt( sqr(x) + sqr(y) );//Pythagoras
+
+				if ( distance < radius )
+				{
+					Real distScalar = cos( ( distance / radius * (PI/2) ) );
+					Real height = (offsScalar * distScalar);
+
+					workspace[ (radius + x) +  workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX + x,  centerY + y ) ;//kaleidoscope
+
+					if ( x != 0 ) // non-zero test prevents cross-shaped double stamp
+					{
       			workspace[ (radius - x) + workspaceWidth * (radius + y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX - x,  centerY + y ) ;
-            if ( y != 0 )
-              workspace[ (radius - x) + workspaceWidth * (radius - y) ] =  height + heightMap->getBilinearSampleSeismicZVelocity( centerX - x,  centerY - y ) ;
-          }
-          if ( y != 0 )
+						if ( y != 0 )
+						workspace[ (radius - x) + workspaceWidth * (radius - y) ] =  height + heightMap->getBilinearSampleSeismicZVelocity( centerX - x,  centerY - y ) ;
+					}
+					if ( y != 0 )
       			workspace[ (radius + x) + workspaceWidth * (radius - y) ] = height + heightMap->getBilinearSampleSeismicZVelocity( centerX + x,  centerY - y ) ;
-        }
-      }
-    }
+				}
+			}
+		}
 
-    // stuff the values from the workspace into the heightmap's velocities
-    for (x = 0; x < workspaceWidth; ++x)
-      for (y = 0; y < workspaceWidth; ++y)
+		// stuff the values from the workspace into the heightmap's velocities
+		for (x = 0; x < workspaceWidth; ++x)
+		for (y = 0; y < workspaceWidth; ++y)
     		heightMap->setSeismicZVelocity( centerX - radius + x, centerY - radius + y,  MIN( 9.0f, workspace[  x + workspaceWidth * y ])  );
 
-    delete [] workspace;
+		delete [] workspace;
 
-    return SEISMIC_STATUS_ACTIVE;
-  }
-  else
-    return SEISMIC_STATUS_ZERO_ENERGY;
+		return SEISMIC_STATUS_ACTIVE;
+	}
+	else
+	return SEISMIC_STATUS_ZERO_ENERGY;
 }
 
 Real DomeStyleSeismicFilter::applyGravityCallback( Real velocityIn )
 {
-  Real velocityOut = velocityIn;
-  velocityOut -= 1.5f;
-  return velocityOut;
+	Real velocityOut = velocityIn;
+	velocityOut -= 1.5f;
+	return velocityOut;
 }

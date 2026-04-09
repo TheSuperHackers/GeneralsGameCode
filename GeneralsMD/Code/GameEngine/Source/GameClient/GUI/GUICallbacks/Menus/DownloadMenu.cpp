@@ -247,7 +247,7 @@ void DownloadMenuInit( WindowLayout *layout, void *userData )
 	NameKeyType parentID = TheNameKeyGenerator->nameToKey("DownloadMenu.wnd:ParentDownload");
 	parent = TheWindowManager->winGetWindowFromId( nullptr, parentID );
 
-  // get ids for our children controls
+	// get ids for our children controls
 	buttonCancelID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:ButtonCancel" );
 	staticTextSizeID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:StaticTextSize" );
 	staticTextTimeID = TheNameKeyGenerator->nameToKey( "DownloadMenu.wnd:StaticTextTime" );
@@ -379,7 +379,7 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 																		 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg )
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 			break;
 
 		}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
@@ -397,8 +397,8 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 		}
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
@@ -408,7 +408,7 @@ WindowMsgHandledType DownloadMenuSystem( GameWindow *window, UnsignedInt msg,
 			break;
 
 		}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;

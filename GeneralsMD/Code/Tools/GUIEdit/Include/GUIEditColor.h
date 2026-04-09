@@ -82,9 +82,9 @@ struct RGBColorReal
 //-----------------------------------------------------------------------------
 struct HSVColorReal
 {
-  Real hue;
-  Real saturation;
-  Real value;
+	Real hue;
+	Real saturation;
+	Real value;
 	Real alpha;
 };
 

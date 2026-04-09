@@ -175,9 +175,9 @@ UpdateSleepTime AutoDepositUpdate::update()
 		if (moneyAmount > 0 && getObject()->isLogicallyVisible())
 		{
 
-      const Object *owner = getObject();
-      if ( owner )
-      {
+			const Object *owner = getObject();
+			if ( owner )
+			{
 
 			  // OY LOOK!  I AM USING LOCAL PLAYER.  Do not put anything other than TheInGameUI->addFloatingText in the block this controls!!!
 			  UnicodeString moneyString;
@@ -186,18 +186,18 @@ UpdateSleepTime AutoDepositUpdate::update()
 			  pos.set( getObject()->getPosition() );
 			  pos.z += 10.0f; //add a little z to make it show up above the unit.
 
-        if ( owner->isKindOf( KINDOF_STRUCTURE ) )
-        {
-          Real width = owner->getGeometryInfo().getMajorRadius() * 0.3f;
-          Real depth = owner->getGeometryInfo().getMinorRadius() * 0.3f;
-          pos.x += GameClientRandomValue(-width,width);
-          pos.y += GameClientRandomValue(-depth,depth);
-        }
+				if ( owner->isKindOf( KINDOF_STRUCTURE ) )
+				{
+					Real width = owner->getGeometryInfo().getMajorRadius() * 0.3f;
+					Real depth = owner->getGeometryInfo().getMinorRadius() * 0.3f;
+					pos.x += GameClientRandomValue(-width,width);
+					pos.y += GameClientRandomValue(-depth,depth);
+				}
 
 
-        Color color = getObject()->getControllingPlayer()->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
+				Color color = getObject()->getControllingPlayer()->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
 			  TheInGameUI->addFloatingText( moneyString, &pos, color );
-      }
+			}
 		}
 	}
 

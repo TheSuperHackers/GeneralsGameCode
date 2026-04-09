@@ -50,7 +50,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    CrateCollideModuleData::buildFieldParse(p);
+		CrateCollideModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -58,7 +58,7 @@ public:
 			{ "UnitName",		INI::parseAsciiString,	nullptr, offsetof( UnitCrateCollideModuleData, m_unitType ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 
 	}
 };

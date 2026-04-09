@@ -206,8 +206,8 @@ void Money::loadPostProcess()
 // ------------------------------------------------------------------------------------------------
 void Money::parseMoneyAmount( INI *ini, void *instance, void *store, const void* userData )
 {
-  // Someday, maybe, have multiple fields like Gold:10000 Wood:1000 Tiberian:10
-  Money * money = (Money *)store;
+	// Someday, maybe, have multiple fields like Gold:10000 Wood:1000 Tiberian:10
+	Money * money = (Money *)store;
 	UnsignedInt moneyAmount;
 	INI::parseUnsignedInt( ini, instance, &moneyAmount, userData );
 	money->setStartingCash(moneyAmount);

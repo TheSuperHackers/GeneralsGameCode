@@ -71,7 +71,7 @@ StreakRendererClass::StreakRendererClass() :
 		m_vertexBufferSize(0),
 		m_vertexBuffer(nullptr)
 {
-  // EMPTY
+	// EMPTY
 }
 
 StreakRendererClass::StreakRendererClass(const StreakRendererClass & that) :

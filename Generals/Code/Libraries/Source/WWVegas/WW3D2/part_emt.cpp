@@ -540,10 +540,10 @@ void ParticleEmitterClass::Update_Cached_Bounding_Volumes() const
 // slerping the orientation and lerping the origin.
 void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, const Vector3 & curr_orig)
 {
-   Quaternion quat;
-   Vector3 orig;
+	Quaternion quat;
+	Vector3 orig;
 
-   // The emit remainder from the previous interval (the time remaining in
+	// The emit remainder from the previous interval (the time remaining in
 	// the previous interval when the last particle was emitted) is added to
 	// the size of the current frame to yield the time currently available
 	// for emitting particles.
@@ -566,15 +566,15 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 	EmitRemain += frametime;
 
 	// The interpolation factor (0: start of interval: 1: end of interval).
-   // Possibly negative at this point, but after the delta is added to it, it
-   // will be positive.
+	// Possibly negative at this point, but after the delta is added to it, it
+	// will be positive.
 	float fl_frametime = (float)frametime;
-   float alpha = 1 - ((float)EmitRemain / fl_frametime);
-   float d_alpha = (float)EmitRate / fl_frametime;
+	float alpha = 1 - ((float)EmitRemain / fl_frametime);
+	float d_alpha = (float)EmitRate / fl_frametime;
 
-   // Setup the slerp between the two quaternions.
-   SlerpInfoStruct slerp_info;
-   Slerp_Setup(PrevQ, curr_quat, &slerp_info);
+	// Setup the slerp between the two quaternions.
+	SlerpInfoStruct slerp_info;
+	Slerp_Setup(PrevQ, curr_quat, &slerp_info);
 
 	// Find the velocity of the emitter (for velocity inheritance).
 	// InheritedWorldSpaceEmitterVel is a global variable which is only used
@@ -586,16 +586,16 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 		InheritedWorldSpaceEmitterVel.Set(0.0, 0.0, 0.0);
 	}
 
-   for (; EmitRemain > EmitRate;) {
+	for (; EmitRemain > EmitRate;) {
 
 		// Calculate the new remainder.
 		EmitRemain -= EmitRate;
 
-      // Interpolate the start and end transforms to find the transform at
-      // the moment of particle creation.
-      alpha += d_alpha;
-      quat = Cached_Slerp(PrevQ, curr_quat, alpha, &slerp_info);
-      Vector3::Lerp(PrevOrig, curr_orig, alpha, &orig);
+		// Interpolate the start and end transforms to find the transform at
+		// the moment of particle creation.
+		alpha += d_alpha;
+		quat = Cached_Slerp(PrevQ, curr_quat, alpha, &slerp_info);
+		Vector3::Lerp(PrevOrig, curr_orig, alpha, &orig);
 
 		// Initialize BurstSize new particles with the given age and emitter
 		// transform (expressed as a quaternion and origin vector), and add it
@@ -634,10 +634,10 @@ void ParticleEmitterClass::Create_New_Particles(const Quaternion & curr_quat, co
 void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
    unsigned int timestamp, const Quaternion & quat, const Vector3 & orig)
 {
-   // Set time stamp.
+	// Set time stamp.
 	newpart->TimeStamp = timestamp;
 
-   // Set starting (random) local position.
+	// Set starting (random) local position.
 	Vector3 rand_pos;
 	if (PosRand) {
 		PosRand->Get_Vector(rand_pos);
@@ -646,7 +646,7 @@ void ParticleEmitterClass::Initialize_Particle(NewParticleStruct * newpart,
 	}
 
 	// Transform position to worldspace, using the transform at moment of
-   // particle creation.
+	// particle creation.
 	newpart->Position = quat.Rotate_Vector(rand_pos) + orig;
 
 	// Set (random) local velocity.

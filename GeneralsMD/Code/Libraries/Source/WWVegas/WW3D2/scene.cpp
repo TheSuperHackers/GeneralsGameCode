@@ -474,7 +474,7 @@ void SimpleSceneClass::Visibility_Check(CameraClass * camera)
 		}
 	}
 
-   Visibility_Checked = true;
+	Visibility_Checked = true;
 }
 
 
@@ -536,14 +536,14 @@ void SimpleSceneClass::Customized_Render(RenderInfoClass & rinfo)
 {
 //	SceneClass::Render(rinfo);
 
-   // If visibility has not been checked for this scene since the last
-   // Render() call, check it (set/clear the visibility bit in all render
-   // objects in the scene).
-   if (!Visibility_Checked) {
-      // set the visibility bit in all render objects in all layers.
+	// If visibility has not been checked for this scene since the last
+	// Render() call, check it (set/clear the visibility bit in all render
+	// objects in the scene).
+	if (!Visibility_Checked) {
+		// set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
-   }
-   Visibility_Checked = false;
+	}
+	Visibility_Checked = false;
 
 	RefRenderObjListIterator it(&UpdateList);
 

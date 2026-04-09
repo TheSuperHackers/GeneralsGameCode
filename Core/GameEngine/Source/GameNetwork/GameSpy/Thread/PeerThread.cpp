@@ -93,7 +93,7 @@ enum
 	PW_KEY,
 	OBS_KEY,
 #if !RTS_GENERALS
-  USE_STATS_KEY,
+	USE_STATS_KEY,
 #endif
 	LADIP_KEY,
 	LADPORT_KEY,
@@ -227,7 +227,7 @@ public:
 	void stopHostingAlready(PEER peer);
 	Bool hasPassword() { return m_hasPassword; }
 	Bool allowObservers() { return m_allowObservers; }
-  Bool useStats() const { return m_useStats; }
+	Bool useStats() const { return m_useStats; }
 	std::string getMapName() { return m_mapName; }
 	UnsignedInt exeCRC() { return m_exeCRC; }
 	UnsignedInt iniCRC() { return m_iniCRC; }
@@ -299,7 +299,7 @@ private:
 	UnsignedInt m_iniCRC;
 	UnsignedInt m_gameVersion;
 	Bool m_allowObservers;
-  Bool m_useStats;
+	Bool m_useStats;
 	std::string m_pingStr;
 	std::string m_ladderIP;
 	UnsignedShort m_ladderPort;
@@ -798,9 +798,9 @@ static void QRServerKeyCallback
 		ADDINT(t->allowObservers());
 		break;
 #if !RTS_GENERALS
-  case USE_STATS_KEY:
-    ADDINT(t->useStats());
-    break;
+		case USE_STATS_KEY:
+			ADDINT(t->useStats());
+			break;
 #endif
 	case LADIP_KEY:
 		ADD(t->ladderIP().c_str());
@@ -947,7 +947,7 @@ static void QRKeyListCallback
 		qr2_keybuffer_add(keyBuffer, PW_KEY);
 		qr2_keybuffer_add(keyBuffer, OBS_KEY);
 #if !RTS_GENERALS
-    qr2_keybuffer_add(keyBuffer, USE_STATS_KEY);
+		qr2_keybuffer_add(keyBuffer, USE_STATS_KEY);
 #endif
 		qr2_keybuffer_add(keyBuffer, LADIP_KEY);
 		qr2_keybuffer_add(keyBuffer, LADPORT_KEY);
@@ -1199,7 +1199,7 @@ void PeerThreadClass::Thread_Function()
 	qr2_register_key(PW_KEY, PW_STR);
 	qr2_register_key(OBS_KEY, OBS_STR);
 #if !RTS_GENERALS
-  qr2_register_key(USE_STATS_KEY, USE_STATS_STR);
+		qr2_register_key(USE_STATS_KEY, USE_STATS_STR);
 #endif
 	qr2_register_key(LADIP_KEY, LADIP_STR);
 	qr2_register_key(LADPORT_KEY, LADPORT_STR);
@@ -1652,7 +1652,7 @@ void PeerThreadClass::Thread_Function()
 						s_wantStateChangedHeartbeat = FALSE;
 						m_isHosting = TRUE;
 						m_allowObservers = incomingRequest.stagingRoomCreation.allowObservers;
-            m_useStats = incomingRequest.stagingRoomCreation.useStats;
+							m_useStats = incomingRequest.stagingRoomCreation.useStats;
 						m_mapName = "";
 						for (Int i=0; i<MAX_SLOTS; ++i)
 						{
@@ -2886,7 +2886,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 	{
 		Bool hasPassword = (Bool)SBServerGetIntValue(server, PW_STR, FALSE);
 		Bool allowObservers = (Bool)SBServerGetIntValue(server, OBS_STR, FALSE);
-    Bool usesStats = (Bool)SBServerGetIntValue(server, USE_STATS_STR, TRUE);
+		Bool usesStats = (Bool)SBServerGetIntValue(server, USE_STATS_STR, TRUE);
 		const char *verStr = SBServerGetStringValue(server, "gamever", "000000");
 		const char *exeStr = SBServerGetStringValue(server, EXECRC_STR, "000000");
 		const char *iniStr = SBServerGetStringValue(server, INICRC_STR, "000000");
@@ -2898,7 +2898,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 		UnsignedInt iniVal = strtoul(iniStr, nullptr, 10);
 		resp.stagingRoom.requiresPassword = hasPassword;
 		resp.stagingRoom.allowObservers = allowObservers;
-    resp.stagingRoom.useStats = usesStats;
+		resp.stagingRoom.useStats = usesStats;
 		resp.stagingRoom.version = verVal;
 		resp.stagingRoom.exeCRC = exeVal;
 		resp.stagingRoom.iniCRC = iniVal;

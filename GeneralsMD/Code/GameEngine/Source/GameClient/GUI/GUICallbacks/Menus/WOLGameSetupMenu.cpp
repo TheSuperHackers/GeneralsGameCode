@@ -317,9 +317,9 @@ static void savePlayerInfo()
 				if (TheGameSpyGame->amIHost())
 				{
 					pref.setPreferredMap(TheGameSpyGame->getMap());
-          pref.setSuperweaponRestricted( TheGameSpyGame->getSuperweaponRestriction() != 0 );
-          pref.setStartingCash( TheGameSpyGame->getStartingCash() );
-        }
+					pref.setSuperweaponRestricted( TheGameSpyGame->getSuperweaponRestriction() != 0 );
+					pref.setStartingCash( TheGameSpyGame->getStartingCash() );
+				}
 				pref.write();
 			}
 		}
@@ -751,52 +751,52 @@ static void handleTeamSelection(int index)
 
 static void handleStartingCashSelection()
 {
-  GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
+	GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
 
-  if (myGame)
-  {
-    Int selIndex;
-    GadgetComboBoxGetSelectedPos(comboBoxStartingCash, &selIndex);
+	if (myGame)
+	{
+		Int selIndex;
+		GadgetComboBoxGetSelectedPos(comboBoxStartingCash, &selIndex);
 
-    Money startingCash;
-    startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE, FALSE );
-    myGame->setStartingCash( startingCash );
-    myGame->resetAccepted();
+		Money startingCash;
+		startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE, FALSE );
+		myGame->setStartingCash( startingCash );
+		myGame->resetAccepted();
 
-    if (myGame->amIHost())
-    {
-      // send around the new data
-      TheGameSpyInfo->setGameOptions();
-      WOLDisplaySlotList();// Update the accepted button UI
-    }
-  }
+		if (myGame->amIHost())
+		{
+			// send around the new data
+			TheGameSpyInfo->setGameOptions();
+			WOLDisplaySlotList();// Update the accepted button UI
+		}
+	}
 }
 
 static void handleLimitSuperweaponsClick()
 {
-  GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
+	GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
 
-  if (myGame)
-  {
-    // At the moment, 1 and 0 are the only choices supported in the GUI, though the system could
-    // support more.
-    if ( GadgetCheckBoxIsChecked( checkBoxLimitSuperweapons ) )
-    {
-      myGame->setSuperweaponRestriction( 1 );
-    }
-    else
-    {
-      myGame->setSuperweaponRestriction( 0 );
-    }
-    myGame->resetAccepted();
+	if (myGame)
+	{
+		// At the moment, 1 and 0 are the only choices supported in the GUI, though the system could
+		// support more.
+		if ( GadgetCheckBoxIsChecked( checkBoxLimitSuperweapons ) )
+		{
+			myGame->setSuperweaponRestriction( 1 );
+		}
+		else
+		{
+			myGame->setSuperweaponRestriction( 0 );
+		}
+		myGame->resetAccepted();
 
-    if (myGame->amIHost())
-    {
-      // send around a new slotlist
-      TheGameSpyInfo->setGameOptions();
-      WOLDisplaySlotList();// Update the accepted button UI
-    }
-  }
+		if (myGame->amIHost())
+		{
+			// send around a new slotlist
+			TheGameSpyInfo->setGameOptions();
+			WOLDisplaySlotList();// Update the accepted button UI
+		}
+	}
 }
 
 
@@ -982,51 +982,51 @@ void WOLDisplayGameOptions()
 	WOLPositionStartSpots();
 	updateMapStartSpots(TheGameSpyInfo->getCurrentStagingRoom(), buttonMapStartPosition);
 
-  //If our display does not match the current state of game settings, update the checkbox.
-  Bool isUsingStats = TheGameSpyInfo->getCurrentStagingRoom()->getUseStats() ? TRUE : FALSE;
-  if (GadgetCheckBoxIsChecked(checkBoxUseStats) != isUsingStats)
-  {
+	//If our display does not match the current state of game settings, update the checkbox.
+	Bool isUsingStats = TheGameSpyInfo->getCurrentStagingRoom()->getUseStats() ? TRUE : FALSE;
+	if (GadgetCheckBoxIsChecked(checkBoxUseStats) != isUsingStats)
+	{
   	GadgetCheckBoxSetChecked(checkBoxUseStats, isUsingStats);
-    checkBoxUseStats->winSetTooltip( TheGameText->fetch( isUsingStats ? "TOOLTIP:UseStatsOn" : "TOOLTIP:UseStatsOff" ) );
-  }
+		checkBoxUseStats->winSetTooltip( TheGameText->fetch( isUsingStats ? "TOOLTIP:UseStatsOn" : "TOOLTIP:UseStatsOff" ) );
+	}
 
-  Bool oldFactionsOnly = theGame->oldFactionsOnly();
-  if (GadgetCheckBoxIsChecked(checkBoxLimitArmies) != oldFactionsOnly)
-  {
-    GadgetCheckBoxSetChecked(checkBoxLimitArmies, oldFactionsOnly);
-    // Repopulate the lists of available armies, since the old list is now wrong
-    for (Int i = 0; i < MAX_SLOTS; i++)
-    {
-      PopulatePlayerTemplateComboBox(i, comboBoxPlayerTemplate, theGame, theGame->getAllowObservers() );
+	Bool oldFactionsOnly = theGame->oldFactionsOnly();
+	if (GadgetCheckBoxIsChecked(checkBoxLimitArmies) != oldFactionsOnly)
+	{
+		GadgetCheckBoxSetChecked(checkBoxLimitArmies, oldFactionsOnly);
+		// Repopulate the lists of available armies, since the old list is now wrong
+		for (Int i = 0; i < MAX_SLOTS; i++)
+		{
+			PopulatePlayerTemplateComboBox(i, comboBoxPlayerTemplate, theGame, theGame->getAllowObservers() );
 
-      // Make sure selections are up to date on all machines
-      handlePlayerTemplateSelection(i) ;
-    }
-  }
+			// Make sure selections are up to date on all machines
+			handlePlayerTemplateSelection(i) ;
+		}
+	}
 
-  // Note: must check if checkbox is already correct to avoid infinite recursion
-  Bool limitSuperweapons = (theGame->getSuperweaponRestriction() != 0);
-  if ( limitSuperweapons != GadgetCheckBoxIsChecked(checkBoxLimitSuperweapons))
-    GadgetCheckBoxSetChecked( checkBoxLimitSuperweapons, limitSuperweapons );
+	// Note: must check if checkbox is already correct to avoid infinite recursion
+	Bool limitSuperweapons = (theGame->getSuperweaponRestriction() != 0);
+	if ( limitSuperweapons != GadgetCheckBoxIsChecked(checkBoxLimitSuperweapons))
+	GadgetCheckBoxSetChecked( checkBoxLimitSuperweapons, limitSuperweapons );
 
-  Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
-  Int index = 0;
-  for ( ; index < itemCount; index++ )
-  {
-    Int value  = (Int)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
-    if ( value == theGame->getStartingCash().countMoney() )
-    {
-      // Note: must check if combobox is already correct to avoid infinite recursion
-      Int selectedIndex;
-      GadgetComboBoxGetSelectedPos( comboBoxStartingCash, &selectedIndex );
-      if ( index != selectedIndex )
-        GadgetComboBoxSetSelectedPos(comboBoxStartingCash, index, TRUE);
+	Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
+	Int index = 0;
+	for ( ; index < itemCount; index++ )
+	{
+		Int value  = (Int)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
+		if ( value == theGame->getStartingCash().countMoney() )
+		{
+			// Note: must check if combobox is already correct to avoid infinite recursion
+			Int selectedIndex;
+			GadgetComboBoxGetSelectedPos( comboBoxStartingCash, &selectedIndex );
+			if ( index != selectedIndex )
+			GadgetComboBoxSetSelectedPos(comboBoxStartingCash, index, TRUE);
 
-      break;
-    }
-  }
+			break;
+		}
+	}
 
-  DEBUG_ASSERTCRASH( index < itemCount, ("Could not find new starting cash amount %d in list", theGame->getStartingCash().countMoney() ) );
+	DEBUG_ASSERTCRASH( index < itemCount, ("Could not find new starting cash amount %d in list", theGame->getStartingCash().countMoney() ) );
 }
 
 
@@ -1110,9 +1110,9 @@ void InitWOLGameGadgets()
 	buttonSelectMapID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:ButtonSelectMap" );
 	checkBoxUseStatsID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:CheckBoxUseStats" );
 	windowMapID = TheNameKeyGenerator->nameToKey( "GameSpyGameOptionsMenu.wnd:MapWindow" );
-  checkBoxLimitSuperweaponsID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:CheckboxLimitSuperweapons");
-  comboBoxStartingCashID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:ComboBoxStartingCash");
-  checkBoxLimitArmiesID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:CheckBoxLimitArmies");
+	checkBoxLimitSuperweaponsID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:CheckboxLimitSuperweapons");
+	comboBoxStartingCashID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:ComboBoxStartingCash");
+	checkBoxLimitArmiesID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:CheckBoxLimitArmies");
 	windowMapSelectMapID = TheNameKeyGenerator->nameToKey("WOLMapSelectMenu.wnd:WinMapPreview");
 
 	NameKeyType staticTextTitleID = NAMEKEY("GameSpyGameOptionsMenu.wnd:StaticTextGameName");
@@ -1128,31 +1128,31 @@ void InitWOLGameGadgets()
 	textEntryChat = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, textEntryChatID );
 	textEntryMapDisplay = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, textEntryMapDisplayID );
 	windowMap = TheWindowManager->winGetWindowFromId( parentWOLGameSetup,windowMapID  );
-  DEBUG_ASSERTCRASH(windowMap, ("Could not find the parentWOLGameSetup.wnd:MapWindow" ));
+	DEBUG_ASSERTCRASH(windowMap, ("Could not find the parentWOLGameSetup.wnd:MapWindow" ));
 
-  checkBoxLimitSuperweapons = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, checkBoxLimitSuperweaponsID );
-  DEBUG_ASSERTCRASH(windowMap, ("Could not find the GameSpyGameOptionsMenu.wnd:CheckboxLimitSuperweapons" ));
-  comboBoxStartingCash = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxStartingCashID );
-  DEBUG_ASSERTCRASH(windowMap, ("Could not find the GameSpyGameOptionsMenu.wnd:ComboBoxStartingCash" ));
-  PopulateStartingCashComboBox( comboBoxStartingCash, TheGameSpyGame );
-  checkBoxLimitArmies = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, checkBoxLimitArmiesID );
-  DEBUG_ASSERTCRASH(windowMap, ("Could not find the GameSpyGameOptionsMenu.wnd:CheckBoxLimitArmies" ));
+	checkBoxLimitSuperweapons = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, checkBoxLimitSuperweaponsID );
+	DEBUG_ASSERTCRASH(windowMap, ("Could not find the GameSpyGameOptionsMenu.wnd:CheckboxLimitSuperweapons" ));
+	comboBoxStartingCash = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, comboBoxStartingCashID );
+	DEBUG_ASSERTCRASH(windowMap, ("Could not find the GameSpyGameOptionsMenu.wnd:ComboBoxStartingCash" ));
+	PopulateStartingCashComboBox( comboBoxStartingCash, TheGameSpyGame );
+	checkBoxLimitArmies = TheWindowManager->winGetWindowFromId( parentWOLGameSetup, checkBoxLimitArmiesID );
+	DEBUG_ASSERTCRASH(windowMap, ("Could not find the GameSpyGameOptionsMenu.wnd:CheckBoxLimitArmies" ));
 
-  // Limit Armies can ONLY be set in the Host Game window (PopupHostGame.wnd)
-  checkBoxLimitArmies->winEnable( false );
-  // Ditto use stats
-  checkBoxUseStats->winEnable( false );
+	// Limit Armies can ONLY be set in the Host Game window (PopupHostGame.wnd)
+	checkBoxLimitArmies->winEnable( false );
+	// Ditto use stats
+	checkBoxUseStats->winEnable( false );
 	Int isUsingStats = TheGameSpyGame->getUseStats();
-  GadgetCheckBoxSetChecked(checkBoxUseStats, isUsingStats );
-  checkBoxUseStats->winSetTooltip( TheGameText->fetch( isUsingStats ? "TOOLTIP:UseStatsOn" : "TOOLTIP:UseStatsOff" ) );
+	GadgetCheckBoxSetChecked(checkBoxUseStats, isUsingStats );
+	checkBoxUseStats->winSetTooltip( TheGameText->fetch( isUsingStats ? "TOOLTIP:UseStatsOn" : "TOOLTIP:UseStatsOff" ) );
 
-  if ( !TheGameSpyGame->amIHost() )
-  {
-    checkBoxLimitSuperweapons->winEnable( false );
-    comboBoxStartingCash->winEnable( false );
+	if ( !TheGameSpyGame->amIHost() )
+	{
+		checkBoxLimitSuperweapons->winEnable( false );
+		comboBoxStartingCash->winEnable( false );
 		NameKeyType labelID = TheNameKeyGenerator->nameToKey("GameSpyGameOptionsMenu.wnd:StartingCashLabel");
 		TheWindowManager->winGetWindowFromId(parentWOLGameSetup, labelID)->winEnable( FALSE );
-  }
+	}
 
 	if (isUsingStats)
 	{
@@ -1283,8 +1283,8 @@ void DeinitWOLGameGadgets()
 		windowMap = nullptr;
 	}
 	checkBoxUseStats = nullptr;
-  checkBoxLimitSuperweapons = nullptr;
-  comboBoxStartingCash = nullptr;
+	checkBoxLimitSuperweapons = nullptr;
+	comboBoxStartingCash = nullptr;
 
 //	GameWindow *staticTextTitle = nullptr;
 	for (Int i = 0; i < MAX_SLOTS; i++)
@@ -1382,16 +1382,16 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 			game->setOldFactionsOnly( 0 );
 
 		//game->setOldFactionsOnly( customPref.getFactionsLimited() );
-    if ( game->oldFactionsOnly() )
-    {
-      // Make sure host follows the old factions only restrictions!
-      const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(hostSlot->getPlayerTemplate());
+		if ( game->oldFactionsOnly() )
+		{
+			// Make sure host follows the old factions only restrictions!
+			const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(hostSlot->getPlayerTemplate());
 
-      if ( fac != nullptr && !fac->isOldFaction() )
-      {
-        hostSlot->setPlayerTemplate( PLAYERTEMPLATE_RANDOM );
-      }
-    }
+			if ( fac != nullptr && !fac->isOldFaction() )
+			{
+				hostSlot->setPlayerTemplate( PLAYERTEMPLATE_RANDOM );
+			}
+		}
 
 		for (Int i=1; i<MAX_SLOTS; ++i)
 		{
@@ -1462,8 +1462,8 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 		buttonStart->winSetText(TheGameText->fetch("GUI:Accept"));
 		buttonStart->winEnable( FALSE );
 		buttonSelectMap->winEnable( FALSE );
-    checkBoxLimitSuperweapons->winEnable( FALSE ); // Can look but only host can touch
-    comboBoxStartingCash->winEnable( FALSE );      // Ditto
+		checkBoxLimitSuperweapons->winEnable( FALSE ); // Can look but only host can touch
+		comboBoxStartingCash->winEnable( FALSE );      // Ditto
 		initialAcceptEnable = FALSE;
 	}
 
@@ -2293,15 +2293,15 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 								{
 									if (val >= PLAYERTEMPLATE_MIN && val < ThePlayerTemplateStore->getPlayerTemplateCount() && val != slot->getPlayerTemplate())
 									{
-                    // Validate for LimitArmies checkbox
-                    if ( game->oldFactionsOnly() )
-                    {
-                      const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(val);
-                      if ( fac != nullptr && !fac->isOldFaction())
-                      {
-                        val = PLAYERTEMPLATE_RANDOM;
-                      }
-                    }
+										// Validate for LimitArmies checkbox
+										if ( game->oldFactionsOnly() )
+										{
+											const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(val);
+											if ( fac != nullptr && !fac->isOldFaction())
+											{
+												val = PLAYERTEMPLATE_RANDOM;
+											}
+										}
 
 										slot->setPlayerTemplate(val);
 										if (val == PLAYERTEMPLATE_OBSERVER)
@@ -2601,12 +2601,12 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					break;
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-        if ( controlID == comboBoxStartingCashID )
-        {
-          handleStartingCashSelection();
-        }
-        else
-        {
+			if ( controlID == comboBoxStartingCashID )
+			{
+				handleStartingCashSelection();
+			}
+			else
+			{
 				  GameSpyStagingRoom *myGame = TheGameSpyInfo->getCurrentStagingRoom();
 				  for (Int i = 0; i < MAX_SLOTS; i++)
 				  {
@@ -2666,8 +2666,8 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 						  break;
 					  }
 				  }
-        }
-        break;
+			}
+			break;
 			}
 		//-------------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
@@ -2749,10 +2749,10 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 						WOLDisplaySlotList();
 					}
 				}
-        else if ( controlID == checkBoxLimitSuperweaponsID )
-        {
-          handleLimitSuperweaponsClick();
-        }
+			else if ( controlID == checkBoxLimitSuperweaponsID )
+			{
+				handleLimitSuperweaponsClick();
+			}
 				else
 				{
 					for (Int i = 0; i < MAX_SLOTS; i++)

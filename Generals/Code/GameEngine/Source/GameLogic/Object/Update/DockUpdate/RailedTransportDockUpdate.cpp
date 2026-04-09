@@ -59,7 +59,7 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void RailedTransportDockUpdateModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  DockUpdateModuleData::buildFieldParse( p );
+	DockUpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -70,7 +70,7 @@ RailedTransportDockUpdateModuleData::RailedTransportDockUpdateModuleData()
 
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

@@ -137,7 +137,7 @@ void CashHackSpecialPower::doSpecialPowerAtObject( Object *victim, UnsignedInt c
 		return;
 
 	// call the base class action cause we are *EXTENDING* functionality
-  SpecialPowerModule::doSpecialPowerAtObject( victim, commandOptions );
+	SpecialPowerModule::doSpecialPowerAtObject( victim, commandOptions );
 
 	// get our module data
 	Object *self = getObject();

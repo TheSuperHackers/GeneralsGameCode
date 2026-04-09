@@ -362,40 +362,40 @@ Random4Class::Random4Class(unsigned int seed)
     /*    Vol. 2 (2nd Ed.), pp102]                  */
 	if (!seed) seed=4375;
 
-    mt[0]= seed & 0xffffffff;
-    for (mti=1; mti<N; mti++)
-        mt[mti] = (69069 * mt[mti-1]) & 0xffffffff;
+	mt[0]= seed & 0xffffffff;
+	for (mti=1; mti<N; mti++)
+	mt[mti] = (69069 * mt[mti-1]) & 0xffffffff;
 	 // mti is N+1 after this
 }
 
 int Random4Class::operator() ()
 {
-    unsigned int y;
-    static unsigned int mag01[2]={0x0, MATRIX_A};
+	unsigned int y;
+	static unsigned int mag01[2]={0x0, MATRIX_A};
     /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-    if (mti >= N) { /* generate N words at one time */
-        int kk;
+	if (mti >= N) { /* generate N words at one time */
+		int kk;
 
-        for (kk=0;kk<N-M;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1];
-        }
-        for (;kk<N-1;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1];
-        }
-        y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-        mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
+		for (kk=0;kk<N-M;kk++) {
+			y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
+			mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1];
+		}
+		for (;kk<N-1;kk++) {
+			y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
+			mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1];
+		}
+		y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
+		mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
 
-        mti = 0;
-    }
+		mti = 0;
+	}
 
-    y = mt[mti++];
-    y ^= TEMPERING_SHIFT_U(y);
-    y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;
-    y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
-    y ^= TEMPERING_SHIFT_L(y);
+	y = mt[mti++];
+	y ^= TEMPERING_SHIFT_U(y);
+	y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;
+	y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
+	y ^= TEMPERING_SHIFT_L(y);
 
 	 int *x=(int *)&y;
 

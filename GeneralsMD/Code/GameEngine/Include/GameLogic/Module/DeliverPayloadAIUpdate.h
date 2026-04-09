@@ -139,7 +139,7 @@ class HeadOffMapState :  public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeadOffMapState, "HeadOffMapState")
 	//I'm outta here
 public:
-  HeadOffMapState( StateMachine *machine ) :State( machine, "HeadOffMapState" ) { facingDirectionUponDelivery.zero(); }
+	HeadOffMapState( StateMachine *machine ) :State( machine, "HeadOffMapState" ) { facingDirectionUponDelivery.zero(); }
 	virtual StateReturnType update() override;
 	virtual StateReturnType onEnter() override;
 protected:
@@ -148,7 +148,7 @@ protected:
 	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
 	virtual void loadPostProcess() override {};
 
-  Coord3D facingDirectionUponDelivery;
+	Coord3D facingDirectionUponDelivery;
 };
 EMPTY_DTOR(HeadOffMapState)
 
@@ -209,7 +209,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    AIUpdateModuleData::buildFieldParse(p);
+		AIUpdateModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -229,7 +229,7 @@ public:
 			{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 
 	}
 };
@@ -247,7 +247,7 @@ public:
 	AsciiString						m_visibleDropBoneName;				///< Where the payload is created (offset by current bone number 01-xx)
 	AsciiString						m_visibleSubObjectName;				///< Visible subobject to show or hide (offset by current drop number 01-xx)
 	AsciiString						m_visiblePayloadTemplateName;
-  Real                  m_distToTarget;
+	Real                  m_distToTarget;
 	Real									m_preOpenDistance;
 	Int										m_maxAttempts;
 	Coord3D								m_dropOffset;

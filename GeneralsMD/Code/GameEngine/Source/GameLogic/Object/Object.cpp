@@ -423,12 +423,12 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 			m_contain = contain;
 		}
 
-    StealthUpdate* stealth = (StealthUpdate*)newMod->getStealth();
-    if ( stealth )
-    {
-      DEBUG_ASSERTCRASH( m_stealth == nullptr, ("DuplicateStealthUpdates!") );
-      m_stealth = stealth;
-    }
+		StealthUpdate* stealth = (StealthUpdate*)newMod->getStealth();
+		if ( stealth )
+		{
+			DEBUG_ASSERTCRASH( m_stealth == nullptr, ("DuplicateStealthUpdates!") );
+			m_stealth = stealth;
+		}
 
 
 		AIUpdateInterface* ai = newMod->getAIUpdateInterface();
@@ -691,7 +691,7 @@ void Object::onContainedBy( Object *containedBy )
 	m_containedBy = containedBy;
 	m_containedByFrame = TheGameLogic->getFrame();
 
-  handlePartitionCellMaintenance(); // which should unlook me now that I am contained
+	handlePartitionCellMaintenance(); // which should unlook me now that I am contained
 
 }
 
@@ -704,7 +704,7 @@ void Object::onRemovedFrom( Object *removedFrom )
 	m_containedBy = nullptr;
 	m_containedByFrame = 0;
 
-  handlePartitionCellMaintenance(); // get a clean look, now that I am outdoors, again
+	handlePartitionCellMaintenance(); // get a clean look, now that I am outdoors, again
 
 }
 
@@ -1528,8 +1528,8 @@ void Object::fireCurrentWeapon(const Coord3D* pos)
 //==============================================================================
 void Object::notifyFiringTrackerShotFired( const Weapon* weaponFired, ObjectID victimID )
 {
-  if ( m_firingTracker )
-    m_firingTracker->shotFired( weaponFired, victimID );
+	if ( m_firingTracker )
+	m_firingTracker->shotFired( weaponFired, victimID );
 }
 
 
@@ -1627,7 +1627,7 @@ void Object::setProducer(const Object* obj)
 void Object::setBuilder( const Object *obj )
 {
 
-  m_builderID = obj ? obj->getID() : INVALID_ID;
+	m_builderID = obj ? obj->getID() : INVALID_ID;
 
 }
 
@@ -1895,9 +1895,9 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 			behavior->applyRandomRotation();
 
 			// Set stunned state due to the shock for the object
-      behavior->setStunned(true);
+			behavior->setStunned(true);
 
-      setModelConditionState(MODELCONDITION_STUNNED_FLAILING);
+			setModelConditionState(MODELCONDITION_STUNNED_FLAILING);
 		}
 	}
 
@@ -3064,15 +3064,15 @@ Bool Object::isSelectable() const
 
 
 	if (getTemplate()->isKindOf(KINDOF_ALWAYS_SELECTABLE))
-    return TRUE;
+	return TRUE;
 
 	if ( m_isSelectable )
-    if ( !testStatus(OBJECT_STATUS_UNSELECTABLE) )
+	if ( !testStatus(OBJECT_STATUS_UNSELECTABLE) )
 		  if ( !isEffectivelyDead() )
 				//if ( !getTemplate()->isKindOf(KINDOF_DRONE) )//Most drones are unselectable from being slaved, but the SpyDrone needs help
 					return TRUE;
 
-  return FALSE;
+	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3112,7 +3112,7 @@ Bool Object::hasSpecialPower( SpecialPowerType type ) const
 //-------------------------------------------------------------------------------------------------
 Bool Object::hasAnySpecialPower() const
 {
-  return SPECIALPOWERMASK_ANY_SET( m_specialPowerBits );
+	return SPECIALPOWERMASK_ANY_SET( m_specialPowerBits );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3238,8 +3238,8 @@ Bool Object::isAbleToAttack() const
 	if( testStatus(OBJECT_STATUS_SOLD) )
 		return false;
 
-  if ( isDisabledByType( DISABLED_SUBDUED ) )
-    return FALSE; // A Microwave Tank is cooking me
+	if ( isDisabledByType( DISABLED_SUBDUED ) )
+	return FALSE; // A Microwave Tank is cooking me
 
 	//We can't fire if we, as a portable structure, are aptly disabled
 	if ( isKindOf( KINDOF_PORTABLE_STRUCTURE ) || isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ))
@@ -3247,25 +3247,25 @@ Bool Object::isAbleToAttack() const
 		if( isDisabledByType( DISABLED_HACKED ) || isDisabledByType( DISABLED_EMP ) )
 			return false;
 
-    if ( isKindOf( KINDOF_INFANTRY ) ) // I must be a stinger soldier or similar
-    {
-      for (BehaviorModule** update = getBehaviorModules(); *update; ++update)//expensive search, limited only to stinger soldiers
-      {
+		if ( isKindOf( KINDOF_INFANTRY ) ) // I must be a stinger soldier or similar
+		{
+			for (BehaviorModule** update = getBehaviorModules(); *update; ++update)//expensive search, limited only to stinger soldiers
+			{
 	      SlavedUpdateInterface* sdu = (*update)->getSlavedUpdateInterface();
 	      if ( sdu )
 	      {
-          ObjectID slaverID = sdu->getSlaverID();
-          if ( slaverID != INVALID_ID )
-          {
-            Object *slaver = TheGameLogic->findObjectByID( slaverID );
-            if ( slaver && slaver->isDisabledByType( DISABLED_SUBDUED ))
-              return FALSE;// if my stinger site is subdued, so am I
-          }
+					ObjectID slaverID = sdu->getSlaverID();
+					if ( slaverID != INVALID_ID )
+					{
+						Object *slaver = TheGameLogic->findObjectByID( slaverID );
+						if ( slaver && slaver->isDisabledByType( DISABLED_SUBDUED ))
+						return FALSE;// if my stinger site is subdued, so am I
+					}
 
-          break;//only expect one slavedupdate, so stop searching
+					break;//only expect one slavedupdate, so stop searching
 	      }
-      }
-    }
+			}
+		}
 
 
 	}
@@ -3636,193 +3636,193 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
 	} while (!valStr.isEmpty());
 
 	Drawable	*drawable = getDrawable();
-  if ( drawable )
-  {
-    valInt = properties->getInt(TheKey_objectTime, &exists);
-    if (exists)
-    {
-      switch (valInt)
-      {
-      case 1:
-        drawable->clearModelConditionState(MODELCONDITION_NIGHT);
-        break;
-      case 2:
-        drawable->setModelConditionState(MODELCONDITION_NIGHT);
-        break;
-      default:
-        break;
-      }
-    }
+	if ( drawable )
+	{
+		valInt = properties->getInt(TheKey_objectTime, &exists);
+		if (exists)
+		{
+			switch (valInt)
+			{
+				case 1:
+					drawable->clearModelConditionState(MODELCONDITION_NIGHT);
+					break;
+				case 2:
+					drawable->setModelConditionState(MODELCONDITION_NIGHT);
+					break;
+				default:
+					break;
+			}
+		}
 
-    valInt = properties->getInt(TheKey_objectWeather, &exists);
-    if (exists)
-    {
-      switch (valInt)
-      {
-      case 1:
-        drawable->clearModelConditionState(MODELCONDITION_SNOW);
-        break;
-      case 2:
-        drawable->setModelConditionState(MODELCONDITION_SNOW);
-        break;
-      default:
-        break;
-      }
-    }
+		valInt = properties->getInt(TheKey_objectWeather, &exists);
+		if (exists)
+		{
+			switch (valInt)
+			{
+				case 1:
+					drawable->clearModelConditionState(MODELCONDITION_SNOW);
+					break;
+				case 2:
+					drawable->setModelConditionState(MODELCONDITION_SNOW);
+					break;
+				default:
+					break;
+			}
+		}
 
-    // See if we are supposed to playing the ambient sound
-    Bool soundEnabledExists;
-    Bool soundEnabled = properties->getBool( TheKey_objectSoundAmbientEnabled, &soundEnabledExists );
+		// See if we are supposed to playing the ambient sound
+		Bool soundEnabledExists;
+		Bool soundEnabled = properties->getBool( TheKey_objectSoundAmbientEnabled, &soundEnabledExists );
 
-    DynamicAudioEventInfo * audioToModify = nullptr;
-    Bool infoModified = false;
-    valStr = properties->getAsciiString( TheKey_objectSoundAmbient, &exists );
-    if ( exists )
-    {
-      if ( valStr.isEmpty() )
-      {
-        drawable->setCustomSoundAmbientOff();
-        soundEnabledExists = true;
-        soundEnabled = false; // Don't bother trying to enable later
-      }
-      else
-      {
-        const AudioEventInfo * baseInfo = TheAudio->findAudioEventInfo( valStr );
-        DEBUG_ASSERTCRASH( baseInfo != nullptr, ("Cannot find customized ambient sound '%s'", valStr.str() ) );
-        if ( baseInfo != nullptr )
-        {
-          audioToModify = newInstance( DynamicAudioEventInfo )( *baseInfo );
-          infoModified = true;
-        }
-      }
-    }
+		DynamicAudioEventInfo * audioToModify = nullptr;
+		Bool infoModified = false;
+		valStr = properties->getAsciiString( TheKey_objectSoundAmbient, &exists );
+		if ( exists )
+		{
+			if ( valStr.isEmpty() )
+			{
+				drawable->setCustomSoundAmbientOff();
+				soundEnabledExists = true;
+				soundEnabled = false; // Don't bother trying to enable later
+			}
+			else
+			{
+				const AudioEventInfo * baseInfo = TheAudio->findAudioEventInfo( valStr );
+				DEBUG_ASSERTCRASH( baseInfo != nullptr, ("Cannot find customized ambient sound '%s'", valStr.str() ) );
+				if ( baseInfo != nullptr )
+				{
+					audioToModify = newInstance( DynamicAudioEventInfo )( *baseInfo );
+					infoModified = true;
+				}
+			}
+		}
 
-    // Don't do anything more to audio if we forced the ambient sound off
-    if ( !( exists && valStr.isEmpty() ) )
-    {
-      valBool = properties->getBool( TheKey_objectSoundAmbientCustomized, &exists );
-      if ( exists && valBool )
-      {
-        if ( audioToModify == nullptr )
-        {
-          const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
-          DEBUG_ASSERTCRASH( baseInfo != nullptr, ("getBaseSoundAmbientInfo() return null" ) );
-          if ( baseInfo != nullptr )
-          {
-            audioToModify = newInstance( DynamicAudioEventInfo )( *baseInfo );
-          }
-        }
+		// Don't do anything more to audio if we forced the ambient sound off
+		if ( !( exists && valStr.isEmpty() ) )
+		{
+			valBool = properties->getBool( TheKey_objectSoundAmbientCustomized, &exists );
+			if ( exists && valBool )
+			{
+				if ( audioToModify == nullptr )
+				{
+					const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
+					DEBUG_ASSERTCRASH( baseInfo != nullptr, ("getBaseSoundAmbientInfo() return null" ) );
+					if ( baseInfo != nullptr )
+					{
+						audioToModify = newInstance( DynamicAudioEventInfo )( *baseInfo );
+					}
+				}
 
-        if ( audioToModify != nullptr )
-        {
-          valBool = properties->getBool( TheKey_objectSoundAmbientLooping, &exists );
-          if ( exists )
-          {
-             audioToModify->overrideLoopFlag( valBool );
-             infoModified = true;
-          }
+				if ( audioToModify != nullptr )
+				{
+					valBool = properties->getBool( TheKey_objectSoundAmbientLooping, &exists );
+					if ( exists )
+					{
+						audioToModify->overrideLoopFlag( valBool );
+						infoModified = true;
+					}
 
-          valInt = properties->getInt( TheKey_objectSoundAmbientLoopCount, &exists );
-          if ( exists && BitIsSet( audioToModify->m_control, AC_LOOP ) )
-          {
-            audioToModify->overrideLoopCount( valInt );
-            infoModified = true;
-          }
+					valInt = properties->getInt( TheKey_objectSoundAmbientLoopCount, &exists );
+					if ( exists && BitIsSet( audioToModify->m_control, AC_LOOP ) )
+					{
+						audioToModify->overrideLoopCount( valInt );
+						infoModified = true;
+					}
 
-          valReal = properties->getReal( TheKey_objectSoundAmbientMinVolume, &exists );
-          if ( exists )
-          {
-            audioToModify->overrideMinVolume( valReal );
-            infoModified = true;
-          }
+					valReal = properties->getReal( TheKey_objectSoundAmbientMinVolume, &exists );
+					if ( exists )
+					{
+						audioToModify->overrideMinVolume( valReal );
+						infoModified = true;
+					}
 
-          valReal = properties->getReal( TheKey_objectSoundAmbientVolume, &exists );
-          if ( exists )
-          {
-            audioToModify->overrideVolume( valReal );
-            infoModified = true;
-          }
+					valReal = properties->getReal( TheKey_objectSoundAmbientVolume, &exists );
+					if ( exists )
+					{
+						audioToModify->overrideVolume( valReal );
+						infoModified = true;
+					}
 
-          valReal = properties->getReal( TheKey_objectSoundAmbientMinRange, &exists );
-          if ( exists )
-          {
-            audioToModify->overrideMinRange( valReal );
-            infoModified = true;
-          }
+					valReal = properties->getReal( TheKey_objectSoundAmbientMinRange, &exists );
+					if ( exists )
+					{
+						audioToModify->overrideMinRange( valReal );
+						infoModified = true;
+					}
 
-          valReal = properties->getReal( TheKey_objectSoundAmbientMaxRange, &exists );
-          if ( exists )
-          {
-            audioToModify->overrideMaxRange( valReal );
-            infoModified = true;
-          }
+					valReal = properties->getReal( TheKey_objectSoundAmbientMaxRange, &exists );
+					if ( exists )
+					{
+						audioToModify->overrideMaxRange( valReal );
+						infoModified = true;
+					}
 
-          valInt = properties->getInt( TheKey_objectSoundAmbientPriority, &exists );
-          if ( exists )
-          {
-            audioToModify->overridePriority ( (AudioPriority)valInt );
-            infoModified = true;
-          }
-        }
-      }
-    }
+					valInt = properties->getInt( TheKey_objectSoundAmbientPriority, &exists );
+					if ( exists )
+					{
+						audioToModify->overridePriority ( (AudioPriority)valInt );
+						infoModified = true;
+					}
+				}
+			}
+		}
 
-    if ( !soundEnabledExists )
-    {
-      // Decide if the sound should start enabled or not, since the map maker didn't record
-      // a preference. Enable permanently looping sounds, disable one-shot sounds by default
-      // NOTE: This test should match the tests done in MapObjectProps::mapObjectPageSound::dictToEnabled()
-      // when it decided whether or not to show a customized sound as enabled
-      if ( audioToModify != nullptr )
-      {
-        soundEnabled = audioToModify->isPermanentSound();
-        soundEnabledExists = true; // To get into enableAmbientSoundFromScript() call.
-      }
-      else
-      {
-        // Use default audio
-        const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
-        if ( baseInfo != nullptr )
-        {
-          soundEnabled = baseInfo->isPermanentSound();
-          soundEnabledExists = true; // To get into enableAmbientSoundFromScript() call.
-        }
-      }
-    }
+		if ( !soundEnabledExists )
+		{
+			// Decide if the sound should start enabled or not, since the map maker didn't record
+			// a preference. Enable permanently looping sounds, disable one-shot sounds by default
+			// NOTE: This test should match the tests done in MapObjectProps::mapObjectPageSound::dictToEnabled()
+			// when it decided whether or not to show a customized sound as enabled
+			if ( audioToModify != nullptr )
+			{
+				soundEnabled = audioToModify->isPermanentSound();
+				soundEnabledExists = true; // To get into enableAmbientSoundFromScript() call.
+			}
+			else
+			{
+				// Use default audio
+				const AudioEventInfo * baseInfo = drawable->getBaseSoundAmbientInfo();
+				if ( baseInfo != nullptr )
+				{
+					soundEnabled = baseInfo->isPermanentSound();
+					soundEnabledExists = true; // To get into enableAmbientSoundFromScript() call.
+				}
+			}
+		}
 
-    if ( soundEnabledExists && !soundEnabled )
-    {
-      // Make sure sound doesn't start playing when we set it
-      // ...FromScript because this is also controlled by the map designer not the game logic
-      drawable->enableAmbientSoundFromScript( false );
-    }
+		if ( soundEnabledExists && !soundEnabled )
+		{
+			// Make sure sound doesn't start playing when we set it
+			// ...FromScript because this is also controlled by the map designer not the game logic
+			drawable->enableAmbientSoundFromScript( false );
+		}
 
-    if ( infoModified && audioToModify != nullptr )
-    {
-      // Give a custom, level-specific name
-      drawable->mangleCustomAudioName( audioToModify );
+		if ( infoModified && audioToModify != nullptr )
+		{
+			// Give a custom, level-specific name
+			drawable->mangleCustomAudioName( audioToModify );
 
-      // Pass to TheAudio
-      TheAudio->addAudioEventInfo( audioToModify );
+			// Pass to TheAudio
+			TheAudio->addAudioEventInfo( audioToModify );
 
-      drawable->setCustomSoundAmbientInfo( audioToModify );
-      audioToModify = nullptr; // Belongs to TheAudio now
-    }
+			drawable->setCustomSoundAmbientInfo( audioToModify );
+			audioToModify = nullptr; // Belongs to TheAudio now
+		}
 
-    deleteInstance(audioToModify);
-    audioToModify = nullptr;
+		deleteInstance(audioToModify);
+		audioToModify = nullptr;
 
-    if ( soundEnabledExists && soundEnabled )
-    {
-      // Play sound now that it is set up, if needed. Don't call if already enabled because that
-      // can cause sound to play twice
-      // ...FromScript because this is also controlled by the map designer not the game logic
-      if ( !drawable->getAmbientSoundEnabledFromScript() )
-      {
-        drawable->enableAmbientSoundFromScript( true );
-      }
-    }
-  }
+		if ( soundEnabledExists && soundEnabled )
+		{
+			// Play sound now that it is set up, if needed. Don't call if already enabled because that
+			// can cause sound to play twice
+			// ...FromScript because this is also controlled by the map designer not the game logic
+			if ( !drawable->getAmbientSoundEnabledFromScript() )
+			{
+				drawable->enableAmbientSoundFromScript( true );
+			}
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5014,9 +5014,9 @@ void Object::look()
 		if( !isDestroyed() && !isEffectivelyDead() )
 		{
 
-      ContainModuleInterface * contain = (getContainedBy() ? getContainedBy()->getContain() : nullptr);
-      if ( contain && !contain->isGarrisonable() )
-          return;// dont look, 'cause you are in a tunnel, now
+			ContainModuleInterface * contain = (getContainedBy() ? getContainedBy()->getContain() : nullptr);
+			if ( contain && !contain->isGarrisonable() )
+			return;// dont look, 'cause you are in a tunnel, now
 			// GS 10-20 Need to expand that exception to all transports or else you get a perma reveal where
 			// you entered the transport.  Remember, this hackiness is caused by the fact that we never realized that
 			// garrisoned buildings weren't looking, we were just seeing the leftover last look of the guy inside.

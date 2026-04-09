@@ -43,40 +43,40 @@ struct HUFFMemStruct
 
 struct HuffEncodeContext
 {
-    char            qleapcode[HUFFCODES];
-    unsigned int	count[768];
-    unsigned int	bitnum[HUFFMAXBITS+1];
-    unsigned int	repbits[HUFFREPTBL];
-    unsigned int	repbase[HUFFREPTBL];
-    unsigned int	tree_left[HUFFTREESIZE];
-    unsigned int	tree_right[HUFFTREESIZE];
-    unsigned int	bitsarray[HUFFCODES];
-    unsigned int	patternarray[HUFFCODES];
-    unsigned int	masks[17];
-    unsigned int	packbits;
-    unsigned int	workpattern;
-    unsigned char	*buffer;
-    unsigned char	*bufptr;
-    int			flen;
-    unsigned int	csum;
-    unsigned int	mostbits;
-    unsigned int	codes;
-    unsigned int	chainused;
-    unsigned int	clue;
-    unsigned int	dclue;
-    unsigned int	clues;
-    unsigned int	dclues;
-    int				mindelta;
-    int				maxdelta;
-    unsigned int	plen;
-    unsigned int	ulen;
-    unsigned int	sortptr[HUFFCODES];
+	char            qleapcode[HUFFCODES];
+	unsigned int	count[768];
+	unsigned int	bitnum[HUFFMAXBITS+1];
+	unsigned int	repbits[HUFFREPTBL];
+	unsigned int	repbase[HUFFREPTBL];
+	unsigned int	tree_left[HUFFTREESIZE];
+	unsigned int	tree_right[HUFFTREESIZE];
+	unsigned int	bitsarray[HUFFCODES];
+	unsigned int	patternarray[HUFFCODES];
+	unsigned int	masks[17];
+	unsigned int	packbits;
+	unsigned int	workpattern;
+	unsigned char	*buffer;
+	unsigned char	*bufptr;
+	int			flen;
+	unsigned int	csum;
+	unsigned int	mostbits;
+	unsigned int	codes;
+	unsigned int	chainused;
+	unsigned int	clue;
+	unsigned int	dclue;
+	unsigned int	clues;
+	unsigned int	dclues;
+	int				mindelta;
+	int				maxdelta;
+	unsigned int	plen;
+	unsigned int	ulen;
+	unsigned int	sortptr[HUFFCODES];
 };
 
 static void HUFF_deltabytes(const void *source,void *dest,int len)
 {
-    const unsigned char *s = (const unsigned char *) source;
-    unsigned char *d = (unsigned char *) dest;
+	const unsigned char *s = (const unsigned char *) source;
+	unsigned char *d = (unsigned char *) dest;
 	unsigned char c;
 	unsigned char c1;
 	const unsigned char *send;
@@ -1114,8 +1114,8 @@ static int HUFF_packfile(struct HuffEncodeContext *EC,
 
 /* write standard header stuff (type/signature/ulen/adjust) */
 
-    if (ulen>0xffffff)  // 32 bit header required
-    {
+	if (ulen>0xffffff)  // 32 bit header required
+	{
     	/* simple fb6 header */
 
     	if (ulen==infile->len)
@@ -1138,9 +1138,9 @@ static int HUFF_packfile(struct HuffEncodeContext *EC,
     		HUFF_writebits(EC,outfile,(unsigned int) ulen, 32);
     		HUFF_writebits(EC,outfile,(unsigned int) infile->len, 32);
     	}
-    }
-    else
-    {
+	}
+	else
+	{
     	/* simple fb6 header */
 
 
@@ -1164,11 +1164,11 @@ static int HUFF_packfile(struct HuffEncodeContext *EC,
     		HUFF_writebits(EC,outfile,(unsigned int) ulen, 24);
     		HUFF_writebits(EC,outfile,(unsigned int) infile->len, 24);
     	}
-    }
+	}
 
 	HUFF_pack(EC,outfile, opt);
 
-    return(outfile->len);
+	return(outfile->len);
 }
 
 
@@ -1178,49 +1178,49 @@ static int HUFF_packfile(struct HuffEncodeContext *EC,
 
 int GCALL HUFF_encode(void *compresseddata, const void *source, int sourcesize, int *opts)
 {
-    int   plen=0;
-    struct HUFFMemStruct infile;
-    struct HUFFMemStruct outfile;
-    struct HuffEncodeContext *EC=nullptr;
-    void *deltabuf=nullptr;
-    int opt=0;
-    if (opts)
-        opt = opts[0];
+	int   plen=0;
+	struct HUFFMemStruct infile;
+	struct HUFFMemStruct outfile;
+	struct HuffEncodeContext *EC=nullptr;
+	void *deltabuf=nullptr;
+	int opt=0;
+	if (opts)
+	opt = opts[0];
 
-    EC = (struct HuffEncodeContext *)galloc(sizeof(struct HuffEncodeContext));
-    if (EC)
-    {
-        switch (opt)
-        {
-            default:
-            case 0:
-                infile.ptr = (char *)source;
-                break;
+	EC = (struct HuffEncodeContext *)galloc(sizeof(struct HuffEncodeContext));
+	if (EC)
+	{
+		switch (opt)
+		{
+			default:
+			case 0:
+				infile.ptr = (char *)source;
+				break;
 
-            case 1:
-                deltabuf = galloc(sourcesize);
+			case 1:
+				deltabuf = galloc(sourcesize);
     			HUFF_deltabytes(source,deltabuf,sourcesize);
-                infile.ptr = (char *) deltabuf;
-                break;
+				infile.ptr = (char *) deltabuf;
+				break;
 
-            case 2:
-                deltabuf = galloc(sourcesize);
+			case 2:
+				deltabuf = galloc(sourcesize);
     			HUFF_deltabytes(source,deltabuf,sourcesize);
     			HUFF_deltabytes(deltabuf,deltabuf,sourcesize);
-                infile.ptr = (char *) deltabuf;
-                break;
-        }
+				infile.ptr = (char *) deltabuf;
+				break;
+		}
 
-        infile.len = sourcesize;
-        outfile.ptr = (char *)compresseddata;
-        outfile.len = sourcesize;
+		infile.len = sourcesize;
+		outfile.ptr = (char *)compresseddata;
+		outfile.len = sourcesize;
 
-        plen = HUFF_packfile(EC,&infile, &outfile, sourcesize, opt);
+		plen = HUFF_packfile(EC,&infile, &outfile, sourcesize, opt);
 
-        if (deltabuf) gfree(deltabuf);
-        gfree(EC);
-    }
-    return(plen);
+		if (deltabuf) gfree(deltabuf);
+		gfree(EC);
+	}
+	return(plen);
 }
 
 #endif

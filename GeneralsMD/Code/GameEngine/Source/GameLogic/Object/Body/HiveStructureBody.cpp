@@ -74,7 +74,7 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 	if( getDamageTypeFlag( data->m_damageTypesToPropagateToSlaves, damageInfo->in.m_damageType ) )
 	{
 
-    //We have the right type of damage types incoming to propagate to slaves. Do we have slaves?
+		//We have the right type of damage types incoming to propagate to slaves. Do we have slaves?
 		SpawnBehaviorInterface *spawnInterface = hive->getSpawnBehaviorInterface();
 		if( spawnInterface )
 		{
@@ -101,7 +101,7 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 		}
 		else if ( hive->getContain() )
 		{
-      ContainModuleInterface *contain = hive->getContain();
+			ContainModuleInterface *contain = hive->getContain();
 			//We found the spawn interface, now get some slaves!
 			Object *shooter = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 			if( shooter )
@@ -122,7 +122,7 @@ void HiveStructureBody::attemptDamage( DamageInfo *damageInfo )
 					return;
 				}
 			}
-    }
+		}
 		else
 		{
 			DEBUG_CRASH( ("%s has a HiveStructureBody module, which requires a SpawnBehavior module. Thus it is unable to propagate damage to slaves.", hive->getTemplate()->getName().str() ) );

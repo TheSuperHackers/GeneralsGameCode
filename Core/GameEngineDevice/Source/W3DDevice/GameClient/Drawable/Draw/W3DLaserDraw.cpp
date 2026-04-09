@@ -61,9 +61,9 @@ W3DLaserDrawModuleData::W3DLaserDrawModuleData()
 {
 	m_innerBeamWidth = 0.0f;         //The total width of beam
 	m_outerBeamWidth = 1.0f;         //The total width of beam
-  m_numBeams = 1;                 //Number of overlapping cylinders that make the beam. 1 beam will just use inner data.
-  m_maxIntensityFrames = 0;				//Laser stays at max intensity for specified time in ms.
-  m_fadeFrames = 0;               //Laser will fade and delete.
+	m_numBeams = 1;                 //Number of overlapping cylinders that make the beam. 1 beam will just use inner data.
+	m_maxIntensityFrames = 0;				//Laser stays at max intensity for specified time in ms.
+	m_fadeFrames = 0;               //Laser will fade and delete.
 	m_scrollRate = 0.0f;
 	m_tile = false;
 	m_segments = 1;
@@ -82,7 +82,7 @@ W3DLaserDrawModuleData::~W3DLaserDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -102,7 +102,7 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "TilingScalar",					INI::parseReal,									nullptr, offsetof( W3DLaserDrawModuleData, m_tilingScalar ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 

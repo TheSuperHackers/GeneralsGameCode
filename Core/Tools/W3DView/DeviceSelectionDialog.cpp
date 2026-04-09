@@ -55,7 +55,7 @@ CDeviceSelectionDialog::CDeviceSelectionDialog
 	//{{AFX_DATA_INIT(CDeviceSelectionDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
+	return ;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -65,12 +65,12 @@ CDeviceSelectionDialog::CDeviceSelectionDialog
 void
 CDeviceSelectionDialog::DoDataExchange (CDataExchange* pDX)
 {
-    // Allow the base class to process this message
+	// Allow the base class to process this message
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CDeviceSelectionDialog)
 	DDX_Control(pDX, IDC_RENDER_DEVICE_COMBO, m_deviceListComboBox);
 	//}}AFX_DATA_MAP
-    return ;
+	return ;
 }
 
 

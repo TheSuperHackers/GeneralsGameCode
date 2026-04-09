@@ -39,15 +39,15 @@
 DebugIOFlat::OutputStream::OutputStream(const char *filename, unsigned maxSize):
   m_bufferUsed(0), m_nextChar(0)
 {
-  m_fileName=(char *)DebugAllocMemory(strlen(filename)+1);
-  strcpy(m_fileName,filename);
+	m_fileName=(char *)DebugAllocMemory(strlen(filename)+1);
+	strcpy(m_fileName,filename);
 
-  m_limitedFileSize=maxSize>0;
-  m_bufferSize=m_limitedFileSize?maxSize:0x10000;
-  m_buffer=(char *)DebugAllocMemory(m_bufferSize);
+	m_limitedFileSize=maxSize>0;
+	m_bufferSize=m_limitedFileSize?maxSize:0x10000;
+	m_buffer=(char *)DebugAllocMemory(m_bufferSize);
 
-  if (!m_limitedFileSize)
-    m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,
+	if (!m_limitedFileSize)
+	m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,
                             FILE_ATTRIBUTE_NORMAL|FILE_FLAG_WRITE_THROUGH,
                             nullptr);
 }
@@ -58,290 +58,290 @@ DebugIOFlat::OutputStream::~OutputStream()
 
 DebugIOFlat::OutputStream *DebugIOFlat::OutputStream::Create(const char *filename, unsigned maxSize)
 {
-  return new (DebugAllocMemory(sizeof(OutputStream))) OutputStream(filename,maxSize);
+	return new (DebugAllocMemory(sizeof(OutputStream))) OutputStream(filename,maxSize);
 }
 
 void DebugIOFlat::OutputStream::Delete(const char *path)
 {
-  Flush();
-  if (!m_limitedFileSize)
-    CloseHandle(m_fileHandle);
+	Flush();
+	if (!m_limitedFileSize)
+	CloseHandle(m_fileHandle);
 
-  if (path&&*path)
-  {
-    // copy file to given path
-    int run=-1;
-    char *ext=strrchr(m_fileName,'.');
-    if (!ext)
-      ext=m_fileName+strlen(m_fileName);
-    char *fileNameOnly=strrchr(m_fileName,'\\');
-    fileNameOnly=fileNameOnly?fileNameOnly+1:m_fileName;
+	if (path&&*path)
+	{
+		// copy file to given path
+		int run=-1;
+		char *ext=strrchr(m_fileName,'.');
+		if (!ext)
+		ext=m_fileName+strlen(m_fileName);
+		char *fileNameOnly=strrchr(m_fileName,'\\');
+		fileNameOnly=fileNameOnly?fileNameOnly+1:m_fileName;
 
-    unsigned pathLen=strlen(path);
-    for (;;)
-    {
-      // absolute path?
-      char help[512];
-      if (path[0]&&(path[1]==':'||(path[0]=='\\'&&path[1]=='\\')))
-      {
-        strlcpy(help, path, ARRAY_SIZE(help));
-        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
-      }
-      else
-      {
-        // no, relative path given
-        strlcpy(help, m_fileName, ARRAY_SIZE(help));
-        strlcat(help, path, ARRAY_SIZE(help));
-        strlcat(help, fileNameOnly, ARRAY_SIZE(help));
-      }
-      if (++run)
-        wsprintf(help+strlen(help),"(%i)%s",run,ext);
-      else
-        strlcat(help, ext, ARRAY_SIZE(help));
-      if (CopyFile(m_fileName,help,TRUE))
-        break;
-      if (GetLastError()!=ERROR_FILE_EXISTS)
-        break;
-    }
-  }
+		unsigned pathLen=strlen(path);
+		for (;;)
+		{
+			// absolute path?
+			char help[512];
+			if (path[0]&&(path[1]==':'||(path[0]=='\\'&&path[1]=='\\')))
+			{
+				strlcpy(help, path, ARRAY_SIZE(help));
+				strlcat(help, fileNameOnly, ARRAY_SIZE(help));
+			}
+			else
+			{
+				// no, relative path given
+				strlcpy(help, m_fileName, ARRAY_SIZE(help));
+				strlcat(help, path, ARRAY_SIZE(help));
+				strlcat(help, fileNameOnly, ARRAY_SIZE(help));
+			}
+			if (++run)
+			wsprintf(help+strlen(help),"(%i)%s",run,ext);
+			else
+			strlcat(help, ext, ARRAY_SIZE(help));
+			if (CopyFile(m_fileName,help,TRUE))
+			break;
+			if (GetLastError()!=ERROR_FILE_EXISTS)
+			break;
+		}
+	}
 
-  DebugFreeMemory(m_buffer);
-  DebugFreeMemory(m_fileName);
+	DebugFreeMemory(m_buffer);
+	DebugFreeMemory(m_fileName);
 
-  this->~OutputStream();
-  DebugFreeMemory(this);
+	this->~OutputStream();
+	DebugFreeMemory(this);
 }
 
 void DebugIOFlat::OutputStream::Write(const char *src)
 {
-  if (!src)
-  {
-    // flush request, flush only if unlimited file size
-    if (!m_limitedFileSize)
-      Flush();
-  }
-  else
-  {
-    unsigned len=strlen(src);
+	if (!src)
+	{
+		// flush request, flush only if unlimited file size
+		if (!m_limitedFileSize)
+		Flush();
+	}
+	else
+	{
+		unsigned len=strlen(src);
 
-    while (len>m_bufferSize)
-    {
-      InternalWrite(src,m_bufferSize);
-      src+=m_bufferSize;
-      len-=m_bufferSize;
-    }
-    InternalWrite(src,len);
-  }
+		while (len>m_bufferSize)
+		{
+			InternalWrite(src,m_bufferSize);
+			src+=m_bufferSize;
+			len-=m_bufferSize;
+		}
+		InternalWrite(src,len);
+	}
 }
 
 void DebugIOFlat::OutputStream::InternalWrite(const char *src, unsigned len)
 {
-  __ASSERT(len<=m_bufferSize);
+	__ASSERT(len<=m_bufferSize);
 
-  // unlimited log file length?
-  if (!m_limitedFileSize)
-  {
-    if (m_bufferUsed+len>m_bufferSize)
-      Flush();
-    memcpy(m_buffer+m_bufferUsed,src,len);
-    m_bufferUsed+=len;
-  }
-  else
-  {
-    // just write to ring buffer
-    if ((m_bufferUsed+=len)>m_bufferSize)
-      m_bufferUsed=m_bufferSize;
+	// unlimited log file length?
+	if (!m_limitedFileSize)
+	{
+		if (m_bufferUsed+len>m_bufferSize)
+		Flush();
+		memcpy(m_buffer+m_bufferUsed,src,len);
+		m_bufferUsed+=len;
+	}
+	else
+	{
+		// just write to ring buffer
+		if ((m_bufferUsed+=len)>m_bufferSize)
+		m_bufferUsed=m_bufferSize;
 
-    while (len)
-    {
-      unsigned toWrite;
-      if (m_nextChar+len>m_bufferSize)
-        toWrite=m_bufferSize-m_nextChar;
-      else
-        toWrite=len;
-      memcpy(m_buffer+m_nextChar,src,toWrite);
-      if ((m_nextChar+=toWrite)>=m_bufferSize)
-        m_nextChar=0;
-      src+=toWrite;
-      len-=toWrite;
-    }
-  }
+		while (len)
+		{
+			unsigned toWrite;
+			if (m_nextChar+len>m_bufferSize)
+			toWrite=m_bufferSize-m_nextChar;
+			else
+			toWrite=len;
+			memcpy(m_buffer+m_nextChar,src,toWrite);
+			if ((m_nextChar+=toWrite)>=m_bufferSize)
+			m_nextChar=0;
+			src+=toWrite;
+			len-=toWrite;
+		}
+	}
 }
 
 void DebugIOFlat::OutputStream::Flush()
 {
-  if (!m_limitedFileSize)
-  {
-    // simple flush to file
-    DWORD written;
-    WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,nullptr);
-    m_bufferUsed=0;
-  }
-  else
-  {
-    // create file, write ring buffer
-    m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,
+	if (!m_limitedFileSize)
+	{
+		// simple flush to file
+		DWORD written;
+		WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,nullptr);
+		m_bufferUsed=0;
+	}
+	else
+	{
+		// create file, write ring buffer
+		m_fileHandle=CreateFile(m_fileName,GENERIC_WRITE,0,nullptr,CREATE_ALWAYS,
                             FILE_ATTRIBUTE_NORMAL|FILE_FLAG_WRITE_THROUGH,
                             nullptr);
-    DWORD written;
-    if (m_bufferUsed<m_bufferSize)
-      WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,nullptr);
-    else
-    {
-      WriteFile(m_fileHandle,m_buffer+m_nextChar,m_bufferUsed-m_nextChar,&written,nullptr);
-      WriteFile(m_fileHandle,m_buffer,m_nextChar,&written,nullptr);
-    }
-    CloseHandle(m_fileHandle);
-  }
+		DWORD written;
+		if (m_bufferUsed<m_bufferSize)
+		WriteFile(m_fileHandle,m_buffer,m_bufferUsed,&written,nullptr);
+		else
+		{
+			WriteFile(m_fileHandle,m_buffer+m_nextChar,m_bufferUsed-m_nextChar,&written,nullptr);
+			WriteFile(m_fileHandle,m_buffer,m_nextChar,&written,nullptr);
+		}
+		CloseHandle(m_fileHandle);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 void DebugIOFlat::ExpandMagic(const char *src, const char *splitName, char *buf)
 {
-  // barf if too long
-  if (strlen(src)>250)
-    src="*eMN";
+	// barf if too long
+	if (strlen(src)>250)
+	src="*eMN";
 
-  // non-magic name?
-  if (*src!='*')
-  {
-    // just return input name
-    if (splitName)
-    {
-      // must jam in split name before extension
-      const char *p=strrchr(src,'.');
-      if (!p)
-        p=src+strlen(src);
-      strncpy(buf,src,p-src);
-      buf[p-src]='-';
-      strcpy(buf+(p-src)+1,splitName);
-      strcat(buf,p);
-    }
-    else
-      strcpy(buf,src);
+	// non-magic name?
+	if (*src!='*')
+	{
+		// just return input name
+		if (splitName)
+		{
+			// must jam in split name before extension
+			const char *p=strrchr(src,'.');
+			if (!p)
+			p=src+strlen(src);
+			strncpy(buf,src,p-src);
+			buf[p-src]='-';
+			strcpy(buf+(p-src)+1,splitName);
+			strcat(buf,p);
+		}
+		else
+		strcpy(buf,src);
 
-    return;
-  }
+		return;
+	}
 
-  // translate magic name
-  src++;
-  char *dst=buf;
-  while (*src)
-  {
-    if (dst-buf>250)
-      break;
+	// translate magic name
+	src++;
+	char *dst=buf;
+	while (*src)
+	{
+		if (dst-buf>250)
+		break;
 
-    if (*src>='A'&&*src<='Z'&&(*src!='N'||splitName))
-      *dst++='-';
+		if (*src>='A'&&*src<='Z'&&(*src!='N'||splitName))
+		*dst++='-';
 
-    char help[256];
-    DWORD size=sizeof(help);
-    *help=0;
+		char help[256];
+		DWORD size=sizeof(help);
+		*help=0;
 
-    switch(*src++)
-    {
-      case 'e':
-      case 'E':
-        GetModuleFileName(nullptr,help,sizeof(help));
-        break;
-      case 'm':
-      case 'M':
-        GetComputerName(help,&size);
-        break;
-      case 'u':
-      case 'U':
-        GetUserName(help,&size);
-        break;
-      case 't':
-      case 'T':
-        {
-          SYSTEMTIME systime;
-          GetLocalTime(&systime);
+		switch(*src++)
+		{
+			case 'e':
+			case 'E':
+				GetModuleFileName(nullptr,help,sizeof(help));
+				break;
+			case 'm':
+			case 'M':
+				GetComputerName(help,&size);
+				break;
+			case 'u':
+			case 'U':
+				GetUserName(help,&size);
+				break;
+			case 't':
+			case 'T':
+			{
+				SYSTEMTIME systime;
+				GetLocalTime(&systime);
 
-          wsprintf(help,"%04i%02i%02i-%02i%02i-%02i",
+				wsprintf(help,"%04i%02i%02i-%02i%02i-%02i",
                    systime.wYear,systime.wMonth,systime.wDay,
                    systime.wHour,systime.wMinute,systime.wSecond);
-        }
-        break;
-      case 'n':
-      case 'N':
-        if (splitName&&strlen(splitName)<250)
-          strlcpy(help, splitName, ARRAY_SIZE(help));
-        break;
-      default:
-        *dst++=src[-1];
-    }
+			}
+				break;
+			case 'n':
+			case 'N':
+				if (splitName&&strlen(splitName)<250)
+				strlcpy(help, splitName, ARRAY_SIZE(help));
+				break;
+			default:
+				*dst++=src[-1];
+		}
 
-    unsigned len=strlen(help);
-    if (dst-buf+len>250)
-      break;
-    strcpy(dst, help);
-    dst+=len;
-  }
-  strcpy(dst,".log");
+		unsigned len=strlen(help);
+		if (dst-buf+len>250)
+		break;
+		strcpy(dst, help);
+		dst+=len;
+	}
+	strcpy(dst,".log");
 }
 
 DebugIOFlat::DebugIOFlat():
   m_firstStream(nullptr), m_firstSplit(nullptr),
   m_lastStreamPtr(&m_firstStream), m_lastSplitPtr(&m_firstSplit)
 {
-  *m_copyDir=0;
+	*m_copyDir=0;
 }
 
 DebugIOFlat::~DebugIOFlat()
 {
-  for (SplitListEntry *cur=m_firstSplit;cur;)
-  {
-    SplitListEntry *kill=cur;
-    cur=cur->next;
-    DebugFreeMemory(kill);
-  }
-  m_firstSplit=nullptr;
+	for (SplitListEntry *cur=m_firstSplit;cur;)
+	{
+		SplitListEntry *kill=cur;
+		cur=cur->next;
+		DebugFreeMemory(kill);
+	}
+	m_firstSplit=nullptr;
 
-  for (StreamListEntry *stream=m_firstStream;stream;)
-  {
-    StreamListEntry *kill=stream;
-    stream=stream->next;
-    kill->stream->Delete(m_copyDir);
-    DebugFreeMemory(kill);
-  }
+	for (StreamListEntry *stream=m_firstStream;stream;)
+	{
+		StreamListEntry *kill=stream;
+		stream=stream->next;
+		kill->stream->Delete(m_copyDir);
+		DebugFreeMemory(kill);
+	}
 }
 
 void DebugIOFlat::Write(StringType type, const char *src, const char *str)
 {
-  SplitListEntry *cur=m_firstSplit;
-  for (;cur;cur=cur->next)
-  {
-    if (!(cur->stringTypes&(1<<type)))
-      continue;
-    if (src&&*src&&!Debug::SimpleMatch(src,cur->items))
-      continue;
-    cur->stream->Write(str);
-    break;
-  }
-  if (!cur)
-    m_firstStream->stream->Write(str);
+	SplitListEntry *cur=m_firstSplit;
+	for (;cur;cur=cur->next)
+	{
+		if (!(cur->stringTypes&(1<<type)))
+		continue;
+		if (src&&*src&&!Debug::SimpleMatch(src,cur->items))
+		continue;
+		cur->stream->Write(str);
+		break;
+	}
+	if (!cur)
+	m_firstStream->stream->Write(str);
 }
 
 void DebugIOFlat::EmergencyFlush()
 {
-  for (StreamListEntry *cur=m_firstStream;cur;cur=cur->next)
-    cur->stream->Flush();
+	for (StreamListEntry *cur=m_firstStream;cur;cur=cur->next)
+	cur->stream->Flush();
 }
 
 void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
                           unsigned argn, const char * const * argv)
 {
-  if (!cmd||strcmp(cmd,"help") == 0)
-  {
-    if (!argn)
-      dbg << "flat I/O help:\n"
+	if (!cmd||strcmp(cmd,"help") == 0)
+	{
+		if (!argn)
+		dbg << "flat I/O help:\n"
              "The following I/O commands are defined:\n"
              "  add, copy, splitadd, splitview, splitremove\n"
              "Type in debug.io flat help <cmd> for a detailed command help.\n";
-    else if (strcmp(argv[0],"add") == 0)
-      dbg <<
+		else if (strcmp(argv[0],"add") == 0)
+		dbg <<
         "add [ <filename> [ <size in kb> ] ]\n\n"
         "Create flat file I/O (optionally specifying file name and file size).\n"
         "If a filename is specified all output is written to that file. Otherwise\n"
@@ -364,14 +364,14 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
         "size memory based ring buffer. This data is flushed out once the \n"
         "program exits. If no size is given then the size of the log file is not \n"
         "limited and any log data is written out immediately.\n";
-    else if (strcmp(argv[0],"copy") == 0)
-      dbg <<
+		else if (strcmp(argv[0],"copy") == 0)
+		dbg <<
         "copy <directory>\n\n"
         "Copies generated log file(s) into the given directory if the program\n"
         "exists or crashes. If there is already a log file with the same\n"
         "name a unique number is appended to the current log files' name.\n";
-    else if (strcmp(argv[0],"splitadd") == 0)
-      dbg <<
+		else if (strcmp(argv[0],"splitadd") == 0)
+		dbg <<
         "splitadd <types> <filter> <name> [ <size in kb> ]\n\n"
         "Splits off part of the log data. Multiple splits can be defined. They \n"
         "are written out to the first matching split file.\n"
@@ -403,147 +403,147 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
         "\n"
         "If no size is given then the size of the log file is not limited and \n"
         "any log data is written out immediately.\n";
-    else if (strcmp(argv[0],"splitview") == 0)
-      dbg << "splitview\n\n"
+		else if (strcmp(argv[0],"splitview") == 0)
+		dbg << "splitview\n\n"
              "Shows all existing splits in the order they are evaluated.";
-    else if (strcmp(argv[0],"splitremove") == 0)
-      dbg << "splitremove <namepattern>\n\n"
+		else if (strcmp(argv[0],"splitremove") == 0)
+		dbg << "splitremove <namepattern>\n\n"
              "Removes all active splits matching the given name pattern.";
-    else
-      dbg << "Unknown flat I/O command";
-  }
-  else if (strcmp(cmd,"add") == 0)
-  {
-    // add [ <filename> [ <size in kb> ] ]
-    __ASSERT(m_firstStream==nullptr);
+		else
+		dbg << "Unknown flat I/O command";
+	}
+	else if (strcmp(cmd,"add") == 0)
+	{
+		// add [ <filename> [ <size in kb> ] ]
+		__ASSERT(m_firstStream==nullptr);
 
-    strlcpy(m_baseFilename, argn?argv[0]:"*eMN", ARRAY_SIZE(m_baseFilename));
+		strlcpy(m_baseFilename, argn?argv[0]:"*eMN", ARRAY_SIZE(m_baseFilename));
 
-    char fn[256];
-    ExpandMagic(m_baseFilename,nullptr,fn);
+		char fn[256];
+		ExpandMagic(m_baseFilename,nullptr,fn);
 
-    m_firstStream=(StreamListEntry *)DebugAllocMemory(sizeof(StreamListEntry));
-    m_firstStream->next=nullptr;
-    m_firstStream->stream=OutputStream::Create(fn,argn>1?atoi(argv[1])*1024:0);
-    m_lastStreamPtr=&m_firstStream->next;
-  }
-  else if (strcmp(cmd,"copy") == 0)
-  {
-    // copy <directory>
-    if (argn)
-    {
-      strlcpy(m_copyDir,argv[0],sizeof(m_copyDir));
-    }
-  }
-  else if (strcmp(cmd,"splitadd") == 0)
-  {
-    // splitadd <types> <filter> <name> [ <size in kb> ]
-    if (argn>=3)
-    {
-      // add entry
-      SplitListEntry *cur=(SplitListEntry *)DebugAllocMemory(sizeof(SplitListEntry));
-      cur->next=*m_lastSplitPtr;
-      m_lastSplitPtr=&cur->next;
-      if (!m_firstSplit)
-        m_firstSplit=cur;
-      cur->stringTypes=0;
-      for (const char *p=argv[0];*p;++p)
-      {
-        switch(*p)
-        {
-          case 'a': cur->stringTypes|=1<<Assert; break;
-          case 'c': cur->stringTypes|=1<<Check; break;
-          case 'l': cur->stringTypes|=1<<Log; break;
-          case 'h': cur->stringTypes|=1<<Crash; break;
-          case 'x': cur->stringTypes|=1<<Exception; break;
-          case 'r': cur->stringTypes|=1<<CmdReply; break;
-          case 'o': cur->stringTypes|=1<<Other; break;
-        }
-      }
-      if (!cur->stringTypes)
-        cur->stringTypes=0xffffffff;
+		m_firstStream=(StreamListEntry *)DebugAllocMemory(sizeof(StreamListEntry));
+		m_firstStream->next=nullptr;
+		m_firstStream->stream=OutputStream::Create(fn,argn>1?atoi(argv[1])*1024:0);
+		m_lastStreamPtr=&m_firstStream->next;
+	}
+	else if (strcmp(cmd,"copy") == 0)
+	{
+		// copy <directory>
+		if (argn)
+		{
+			strlcpy(m_copyDir,argv[0],sizeof(m_copyDir));
+		}
+	}
+	else if (strcmp(cmd,"splitadd") == 0)
+	{
+		// splitadd <types> <filter> <name> [ <size in kb> ]
+		if (argn>=3)
+		{
+			// add entry
+			SplitListEntry *cur=(SplitListEntry *)DebugAllocMemory(sizeof(SplitListEntry));
+			cur->next=*m_lastSplitPtr;
+			m_lastSplitPtr=&cur->next;
+			if (!m_firstSplit)
+			m_firstSplit=cur;
+			cur->stringTypes=0;
+			for (const char *p=argv[0];*p;++p)
+			{
+				switch(*p)
+				{
+					case 'a': cur->stringTypes|=1<<Assert; break;
+					case 'c': cur->stringTypes|=1<<Check; break;
+					case 'l': cur->stringTypes|=1<<Log; break;
+					case 'h': cur->stringTypes|=1<<Crash; break;
+					case 'x': cur->stringTypes|=1<<Exception; break;
+					case 'r': cur->stringTypes|=1<<CmdReply; break;
+					case 'o': cur->stringTypes|=1<<Other; break;
+				}
+			}
+			if (!cur->stringTypes)
+			cur->stringTypes=0xffffffff;
 
-      strlcpy(cur->items,argv[1],sizeof(cur->items));
-      strlcpy(cur->name,argv[2],sizeof(cur->name));
+			strlcpy(cur->items,argv[1],sizeof(cur->items));
+			strlcpy(cur->name,argv[2],sizeof(cur->name));
 
-      // create our filename, search for stream with same filename
-      char fn[256];
-      ExpandMagic(m_baseFilename,cur->name,fn);
-      StreamListEntry *stream=m_firstStream;
-      for (;stream;stream=stream->next)
-        if (strcmp(stream->stream->GetFilename(),fn) == 0)
-          break;
-      if (!stream)
-      {
-        // must create new stream
-        stream=(StreamListEntry *)DebugAllocMemory(sizeof(StreamListEntry));
-        stream->next=nullptr;
-        *m_lastStreamPtr=stream;
-        m_lastStreamPtr=&stream->next;
-        stream->stream=OutputStream::Create(fn,argn>3?atoi(argv[3])*1024:0);
-      }
-      cur->stream=stream->stream;
-    }
-  }
-  else if (strcmp(cmd,"splitview") == 0)
-  {
-    // splitview
-    for (SplitListEntry *cur=m_firstSplit;cur;cur=cur->next)
-    {
-      for (StringType t=Assert;t<MAX;t=(StringType)(t+1))
-      {
-        if (t==StructuredCmdReply||!(cur->stringTypes&(1<<t)))
-          continue;
-        switch(t)
-        {
-          case Assert:    dbg << "a"; break;
-          case Check:     dbg << "c"; break;
-          case Log:       dbg << "l"; break;
-          case Crash:     dbg << "h"; break;
-          case Exception: dbg << "x"; break;
-          case CmdReply:  dbg << "r"; break;
-          case Other:     dbg << "o"; break;
-        }
-      }
-      dbg << " " << cur->items << " " << cur->name << "\n";
-    }
-  }
-  else if (strcmp(cmd,"splitremove") == 0)
-  {
-    // splitremove <namepattern>
-    const char *pattern=argn<1?"*":argv[0];
-    for (SplitListEntry **entryPtr=&m_firstSplit;*entryPtr;)
-    {
-      if ( Debug::SimpleMatch((*entryPtr)->name,pattern) )
-      {
-        // remove this entry
-        SplitListEntry *cur=*entryPtr;
-        *entryPtr=cur->next;
-        DebugFreeMemory(cur);
-      }
-      else
-        entryPtr=&((*entryPtr)->next);
-    }
+			// create our filename, search for stream with same filename
+			char fn[256];
+			ExpandMagic(m_baseFilename,cur->name,fn);
+			StreamListEntry *stream=m_firstStream;
+			for (;stream;stream=stream->next)
+			if (strcmp(stream->stream->GetFilename(),fn) == 0)
+			break;
+			if (!stream)
+			{
+				// must create new stream
+				stream=(StreamListEntry *)DebugAllocMemory(sizeof(StreamListEntry));
+				stream->next=nullptr;
+				*m_lastStreamPtr=stream;
+				m_lastStreamPtr=&stream->next;
+				stream->stream=OutputStream::Create(fn,argn>3?atoi(argv[3])*1024:0);
+			}
+			cur->stream=stream->stream;
+		}
+	}
+	else if (strcmp(cmd,"splitview") == 0)
+	{
+		// splitview
+		for (SplitListEntry *cur=m_firstSplit;cur;cur=cur->next)
+		{
+			for (StringType t=Assert;t<MAX;t=(StringType)(t+1))
+			{
+				if (t==StructuredCmdReply||!(cur->stringTypes&(1<<t)))
+				continue;
+				switch(t)
+				{
+					case Assert:    dbg << "a"; break;
+					case Check:     dbg << "c"; break;
+					case Log:       dbg << "l"; break;
+					case Crash:     dbg << "h"; break;
+					case Exception: dbg << "x"; break;
+					case CmdReply:  dbg << "r"; break;
+					case Other:     dbg << "o"; break;
+				}
+			}
+			dbg << " " << cur->items << " " << cur->name << "\n";
+		}
+	}
+	else if (strcmp(cmd,"splitremove") == 0)
+	{
+		// splitremove <namepattern>
+		const char *pattern=argn<1?"*":argv[0];
+		for (SplitListEntry **entryPtr=&m_firstSplit;*entryPtr;)
+		{
+			if ( Debug::SimpleMatch((*entryPtr)->name,pattern) )
+			{
+				// remove this entry
+				SplitListEntry *cur=*entryPtr;
+				*entryPtr=cur->next;
+				DebugFreeMemory(cur);
+			}
+			else
+			entryPtr=&((*entryPtr)->next);
+		}
 
-    // must fixup m_lastSplitPtr now
-    if (m_firstSplit)
-    {
-      SplitListEntry *cur=m_firstSplit;
-      for (;cur->next;cur=cur->next);
-      m_firstSplit=cur;
-    }
-    else
-      m_firstSplit=nullptr;
-  }
+		// must fixup m_lastSplitPtr now
+		if (m_firstSplit)
+		{
+			SplitListEntry *cur=m_firstSplit;
+			for (;cur->next;cur=cur->next);
+			m_firstSplit=cur;
+		}
+		else
+		m_firstSplit=nullptr;
+	}
 }
 
 DebugIOInterface *DebugIOFlat::Create()
 {
-  return new (DebugAllocMemory(sizeof(DebugIOFlat))) DebugIOFlat();
+	return new (DebugAllocMemory(sizeof(DebugIOFlat))) DebugIOFlat();
 }
 
 void DebugIOFlat::Delete()
 {
-  this->~DebugIOFlat();
-  DebugFreeMemory(this);
+	this->~DebugIOFlat();
+	DebugFreeMemory(this);
 }

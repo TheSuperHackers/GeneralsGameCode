@@ -45,7 +45,7 @@ class DozerPrimaryStateMachine : public StateMachine
 
 public:
 
-  DozerPrimaryStateMachine( Object *owner );
+	DozerPrimaryStateMachine( Object *owner );
 	// virtual destructor prototypes provided by memory pool object
 
 	//-----------------------------------------------------------------------------------------------

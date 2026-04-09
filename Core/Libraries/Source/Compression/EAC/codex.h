@@ -53,18 +53,18 @@ extern "C" {
 
 typedef struct
 {
-    int signature;              /* signature of codex ie 'tga ' (optional) */
-    int size;                   /* size of CODEXABOUT structure */
-    int version;                /* version number of CODEXABOUT structure (200) */
+		int signature;              /* signature of codex ie 'tga ' (optional) */
+		int size;                   /* size of CODEXABOUT structure */
+		int version;                /* version number of CODEXABOUT structure (200) */
 
-    unsigned int decode    :1;  /* supports decoding */
-    unsigned int encode    :1;  /* supports encoding */
-    unsigned int size32    :1;  /* support 32 bit size field */
-    unsigned int pad       :29;
+		unsigned int decode    :1;  /* supports decoding */
+		unsigned int encode    :1;  /* supports encoding */
+		unsigned int size32    :1;  /* support 32 bit size field */
+		unsigned int pad       :29;
 
-    char versionstr[8];          /* version number of codex module ie 1.00 */
-    char shorttypestr[8];        /* 3 or 4 character type string ie ref */
-    char longtypestr[16];        /* full name of data format ie Refpack */
+		char versionstr[8];          /* version number of codex module ie 1.00 */
+		char shorttypestr[8];        /* 3 or 4 character type string ie ref */
+		char longtypestr[16];        /* full name of data format ie Refpack */
 } CODEXABOUT;
 
 #define QMAKEID(a,b,c,d) (((a)<<24)|((b)<<16)|((c)<<8)|(d))
@@ -80,11 +80,11 @@ typedef struct
 
 typedef struct QFUNCTIONS
 {
-    CODEXABOUT * (GCALL * CODEX_about)();
-    bool         (GCALL * CODEX_is)(const void *compressed);
-    int          (GCALL * CODEX_size)(const void *compressed);
-    int          (GCALL * CODEX_decode)(void *dest, const void *source, int *sourcesizeptr);
-    int          (GCALL * CODEX_encode)(void *dest, const void *source, int sourcesize, int *opts);
+		CODEXABOUT * (GCALL * CODEX_about)();
+		bool         (GCALL * CODEX_is)(const void *compressed);
+		int          (GCALL * CODEX_size)(const void *compressed);
+		int          (GCALL * CODEX_decode)(void *dest, const void *source, int *sourcesizeptr);
+		int          (GCALL * CODEX_encode)(void *dest, const void *source, int sourcesize, int *opts);
 } QFUNCTIONS;
 
 extern struct QFUNCTIONS qfunctions[];

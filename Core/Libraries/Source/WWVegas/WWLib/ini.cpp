@@ -1637,15 +1637,15 @@ bool INIClass::Put_String(char const * section, char const * entry, char const *
 	*/
 	INIEntry * entryptr = secptr->Find_Entry(entry);
 	if (entryptr != nullptr) {
-      if (strcmp(entryptr->Entry, entry) != 0) {
-         DuplicateCRCError("INIClass::Put_String", section, entry);
-      } else {
+		if (strcmp(entryptr->Entry, entry) != 0) {
+			DuplicateCRCError("INIClass::Put_String", section, entry);
+		} else {
 #if 0
 			OutputDebugString("INIClass::Put_String - Duplicate Entry \"");
 	   	OutputDebugString(entry);
 		   OutputDebugString("\"\n");
 #endif
-      }
+		}
    	secptr->EntryIndex.Remove_Index(entryptr->Index_ID());
 	   delete entryptr;
 	}
@@ -1832,7 +1832,7 @@ int INIClass::Get_Int_Bitfield(char const * section, char const * entry, int def
 	int retval	= 0;
 	char *str	= strdup(entryptr->Value);
 
-   int lp;
+	int lp;
 	for (char *token = strtok(str, "|+"); token; token = strtok(nullptr, "|+")) {
 		for (lp = 0; list[lp]; lp++) {
 			// if this list entry matches our string token then we need

@@ -66,10 +66,10 @@ extern "C" HRESULT WINAPI _ATL_DelegateQueryInterface(void* pv, REFIID riid, LPV
 // Define _Delegate implementation and macro now that ATL types are available
 inline HRESULT WINAPI _ATL_DelegateQueryInterface(void* pv, REFIID riid, LPVOID* ppv, DWORD_PTR dw)
 {
-    IUnknown** ppunk = reinterpret_cast<IUnknown**>(reinterpret_cast<char*>(pv) + dw);
-    if (*ppunk == nullptr)
-        return E_NOINTERFACE;
-    return (*ppunk)->QueryInterface(riid, ppv);
+	IUnknown** ppunk = reinterpret_cast<IUnknown**>(reinterpret_cast<char*>(pv) + dw);
+	if (*ppunk == nullptr)
+	return E_NOINTERFACE;
+	return (*ppunk)->QueryInterface(riid, ppv);
 }
 
 #ifndef _Delegate

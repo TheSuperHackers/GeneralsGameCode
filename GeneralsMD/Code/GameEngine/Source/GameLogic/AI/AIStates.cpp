@@ -93,16 +93,16 @@ AICommandParms::AICommandParms(AICommandType cmd, CommandSourceType cmdSource) :
 void AICommandParmsStorage::store(const AICommandParms& parms)
 {
 	m_cmd = parms.m_cmd;
-  m_cmdSource = parms.m_cmdSource;
-  m_pos = parms.m_pos;
-  m_obj = parms.m_obj ? parms.m_obj->getID() : INVALID_ID;
-  m_otherObj = parms.m_otherObj ? parms.m_otherObj->getID() : INVALID_ID;
-  m_teamName = parms.m_team ? parms.m_team->getName() : AsciiString::TheEmptyString;
+	m_cmdSource = parms.m_cmdSource;
+	m_pos = parms.m_pos;
+	m_obj = parms.m_obj ? parms.m_obj->getID() : INVALID_ID;
+	m_otherObj = parms.m_otherObj ? parms.m_otherObj->getID() : INVALID_ID;
+	m_teamName = parms.m_team ? parms.m_team->getName() : AsciiString::TheEmptyString;
 	m_coords = parms.m_coords;
-  m_waypoint = parms.m_waypoint;
-  m_polygon = parms.m_polygon;
-  m_intValue = parms.m_intValue;       /// misc usage
-  m_damage = parms.m_damage;
+	m_waypoint = parms.m_waypoint;
+	m_polygon = parms.m_polygon;
+	m_intValue = parms.m_intValue;       /// misc usage
+	m_damage = parms.m_damage;
 	m_commandButton = parms.m_commandButton;
 	m_path = parms.m_path;	/// @todo srj -- probably need a better way to safely save/restore this
 }
@@ -111,16 +111,16 @@ void AICommandParmsStorage::store(const AICommandParms& parms)
 void AICommandParmsStorage::reconstitute(AICommandParms& parms) const
 {
 	parms.m_cmd = m_cmd;
-  parms.m_cmdSource = m_cmdSource;
-  parms.m_pos = m_pos;
-  parms.m_obj = TheGameLogic->findObjectByID(m_obj);
-  parms.m_otherObj = TheGameLogic->findObjectByID(m_otherObj);
-  parms.m_team = TheTeamFactory->findTeam(m_teamName);
+	parms.m_cmdSource = m_cmdSource;
+	parms.m_pos = m_pos;
+	parms.m_obj = TheGameLogic->findObjectByID(m_obj);
+	parms.m_otherObj = TheGameLogic->findObjectByID(m_otherObj);
+	parms.m_team = TheTeamFactory->findTeam(m_teamName);
 	parms.m_coords = m_coords;
-  parms.m_waypoint = m_waypoint;
-  parms.m_polygon = m_polygon;
-  parms.m_intValue = m_intValue;
-  parms.m_damage = m_damage;
+	parms.m_waypoint = m_waypoint;
+	parms.m_polygon = m_polygon;
+	parms.m_intValue = m_intValue;
+	parms.m_damage = m_damage;
 	parms.m_commandButton = m_commandButton;
 	parms.m_path = m_path;	/// @todo srj -- probably need a better way to safely save/restore this
 }
@@ -480,10 +480,10 @@ void AIRappelState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIRappelState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferReal(&m_rappelRate);
 	xfer->xferReal(&m_destZ);
@@ -748,12 +748,12 @@ void AIStateMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIStateMachine::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	StateMachine::xfer(xfer);
 
 	Int i;
@@ -1282,10 +1282,10 @@ void AIIdleState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIIdleState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedShort(&m_initialSleepOffset);
 	xfer->xferBool(&m_shouldLookForTargets);
@@ -1550,12 +1550,12 @@ void AIInternalMoveToState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIInternalMoveToState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	xfer->xferCoord3D(&m_goalPosition);
 	xfer->xferUser(&m_goalLayer, sizeof(m_goalLayer));
 	xfer->xferBool(&m_waitingForPath);
@@ -2204,12 +2204,12 @@ void AIMoveAndTightenState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIMoveAndTightenState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIInternalMoveToState::xfer(xfer);
 	xfer->xferInt(&m_okToRepathTimes);
 	xfer->xferBool(&m_checkForPath);
@@ -2518,13 +2518,13 @@ void AIAttackApproachTargetState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackApproachTargetState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  AIInternalMoveToState::xfer( xfer );
+	// extend base class
+	AIInternalMoveToState::xfer( xfer );
 
 	xfer->xferCoord3D(&m_prevVictimPos);
 	xfer->xferUnsignedInt(&m_approachTimestamp);
@@ -2539,8 +2539,8 @@ void AIAttackApproachTargetState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackApproachTargetState::loadPostProcess()
 {
- // extend base class
-  AIInternalMoveToState::loadPostProcess();
+	// extend base class
+	AIInternalMoveToState::loadPostProcess();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -2917,13 +2917,13 @@ void AIAttackPursueTargetState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackPursueTargetState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  AIInternalMoveToState::xfer( xfer );
+	// extend base class
+	AIInternalMoveToState::xfer( xfer );
 
 	xfer->xferCoord3D(&m_prevVictimPos);
 	xfer->xferUnsignedInt(&m_approachTimestamp);
@@ -2938,8 +2938,8 @@ void AIAttackPursueTargetState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackPursueTargetState::loadPostProcess()
 {
- // extend base class
-  AIInternalMoveToState::loadPostProcess();
+	// extend base class
+	AIInternalMoveToState::loadPostProcess();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -3153,13 +3153,13 @@ void AIPickUpCrateState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIPickUpCrateState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  AIInternalMoveToState::xfer( xfer );
+	// extend base class
+	AIInternalMoveToState::xfer( xfer );
 
 	xfer->xferInt(&m_delayCounter);
 	xfer->xferCoord3D(&m_goalPosition);
@@ -3171,8 +3171,8 @@ void AIPickUpCrateState::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIPickUpCrateState::loadPostProcess()
 {
- // extend base class
-  AIInternalMoveToState::loadPostProcess();
+	// extend base class
+	AIInternalMoveToState::loadPostProcess();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -3231,10 +3231,10 @@ void AIFollowPathState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIFollowPathState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 
@@ -3433,10 +3433,10 @@ void AIMoveAndEvacuateState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIMoveAndEvacuateState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 
@@ -3539,13 +3539,13 @@ void AIAttackMoveToState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackMoveToState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  AIMoveToState::xfer( xfer );
+	// extend base class
+	AIMoveToState::xfer( xfer );
 
 	if (version>=2) {
 		xfer->xferUnsignedInt(&m_frameToSleepUntil);
@@ -3702,10 +3702,10 @@ void AIMoveAndDeleteState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIMoveAndDeleteState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 
@@ -3971,10 +3971,10 @@ void AIFollowWaypointPathState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIFollowWaypointPathState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 
@@ -4270,10 +4270,10 @@ void AIFollowWaypointPathExactState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIFollowWaypointPathExactState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 	UnsignedInt id = INVALID_WAYPOINT_ID;
@@ -4404,13 +4404,13 @@ void AIAttackFollowWaypointPathState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackFollowWaypointPathState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  AIFollowWaypointPathState::xfer( xfer );
+	// extend base class
+	AIFollowWaypointPathState::xfer( xfer );
 
 	xfer->xferSnapshot(m_attackFollowMachine);
 }
@@ -4538,10 +4538,10 @@ void AIWanderState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIWanderState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIFollowWaypointPathState::xfer(xfer);
 
@@ -4660,10 +4660,10 @@ void AIWanderInPlaceState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIWanderInPlaceState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 
@@ -4770,10 +4770,10 @@ void AIPanicState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIPanicState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIFollowWaypointPathState::xfer(xfer);
 
@@ -4895,10 +4895,10 @@ void AIAttackAimAtTargetState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackAimAtTargetState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferBool(&m_canTurnInPlace);
 	xfer->xferBool(&m_setLocomotor);
@@ -5248,10 +5248,10 @@ StateReturnType AIAttackFireWeaponState::update()
 
 	if (m_att->isAttackingObject())
 	{
-    // Since it is very late in the project, and there is no call for such code...
-    // there is currently no support here for linked turrets, as regards Attacking Objects (victims)
-    // If the concept of linked turrets is further developed then God help you, and put more code right here
-    // that lookl like the //LINKED TURRETS// block, below
+		// Since it is very late in the project, and there is no call for such code...
+		// there is currently no support here for linked turrets, as regards Attacking Objects (victims)
+		// If the concept of linked turrets is further developed then God help you, and put more code right here
+		// that lookl like the //LINKED TURRETS// block, below
 
 
 		obj->fireCurrentWeapon(victim);
@@ -5301,21 +5301,21 @@ StateReturnType AIAttackFireWeaponState::update()
 	else
 	{
 
-    if( getMachineOwner()->getAI()->areTurretsLinked() ) //LINKED TURRETS
-    {// it doesn;t matter which weapon slot is locked, current or whatever
-      for ( Int slot = PRIMARY_WEAPON; slot < WEAPONSLOT_COUNT ; slot++ )
-      {// were firing with all barrels
-        Weapon *weapon = obj->getWeaponInWeaponSlot( (WeaponSlotType)slot );
-        if ( weapon )
-        {
-          if ( weapon->fireWeapon(obj, getMachineGoalPosition()) ) //fire() returns 'reloaded'
-            obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
+		if( getMachineOwner()->getAI()->areTurretsLinked() ) //LINKED TURRETS
+		{// it doesn;t matter which weapon slot is locked, current or whatever
+			for ( Int slot = PRIMARY_WEAPON; slot < WEAPONSLOT_COUNT ; slot++ )
+			{// were firing with all barrels
+				Weapon *weapon = obj->getWeaponInWeaponSlot( (WeaponSlotType)slot );
+				if ( weapon )
+				{
+					if ( weapon->fireWeapon(obj, getMachineGoalPosition()) ) //fire() returns 'reloaded'
+					obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
 
 	  	    obj->notifyFiringTrackerShotFired(weapon, INVALID_ID);
-        }
-      }
-    }
-    else
+				}
+			}
+		}
+		else
 		obj->fireCurrentWeapon(getMachineGoalPosition());
 		// clear this, just in case.
 		obj->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
@@ -5413,10 +5413,10 @@ void AIAttackState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_attackMachine!=nullptr;
 
@@ -5819,10 +5819,10 @@ void AIAttackSquadState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackSquadState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_attackSquadMachine!=nullptr;
 
@@ -6053,10 +6053,10 @@ void AIDockState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIDockState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_dockMachine!=nullptr;
 
@@ -6107,7 +6107,7 @@ StateReturnType AIDockState::onEnter()
 		DEBUG_LOG(("No goal in AIDockState::onEnter - exiting."));
 		return STATE_FAILURE;
 	}
-  DockUpdateInterface *dock = nullptr;
+	DockUpdateInterface *dock = nullptr;
 	dock = dockWithMe->getDockUpdateInterface();
 
 	// if we have nothing to dock with, fail
@@ -6205,10 +6205,10 @@ void AIEnterState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIEnterState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	AIInternalMoveToState::xfer(xfer);
 
@@ -6428,10 +6428,10 @@ void AIExitState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIExitState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferObjectID(&m_entryToClear);
 }
@@ -6543,10 +6543,10 @@ void AIExitInstantlyState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIExitInstantlyState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferObjectID(&m_entryToClear);
 }
@@ -6660,10 +6660,10 @@ void AIGuardState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_guardMachine!=nullptr;
 
@@ -6817,10 +6817,10 @@ void AIGuardRetaliateState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIGuardRetaliateState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_guardRetaliateMachine!=nullptr;
 
@@ -6956,10 +6956,10 @@ void AITunnelNetworkGuardState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AITunnelNetworkGuardState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_guardMachine!=nullptr;
 
@@ -7082,10 +7082,10 @@ void AIHuntState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIHuntState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_huntMachine!=nullptr;
 
@@ -7289,10 +7289,10 @@ void AIAttackAreaState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIAttackAreaState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	Bool hasMachine = m_attackMachine!=nullptr;
 
@@ -7423,10 +7423,10 @@ void AIFaceState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AIFaceState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferBool(&m_canTurnInPlace);
 }

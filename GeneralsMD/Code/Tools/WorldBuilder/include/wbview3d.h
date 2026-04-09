@@ -148,9 +148,9 @@ protected:
 	afx_msg void OnUpdateViewShowMapBoundaries(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowAmbientSounds();
 	afx_msg void OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI);
-  afx_msg void OnViewShowSoundCircles();
-  afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
-  //}}AFX_MSG
+	afx_msg void OnViewShowSoundCircles();
+	afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -204,7 +204,7 @@ private:
 	Bool										m_showLayersList;	///< Flag whether the layers list is visible or not.
 	Bool										m_showMapBoundaries;	///< Flag whether to show all the map boundaries or not
 	Bool										m_showAmbientSounds;	///< Flag whether to show all the ambient sounds or not
-  Bool										m_showSoundCircles;	///< Flag whether to show the minimum and maximum radii of the ambient sounds attached to the selected object
+	Bool										m_showSoundCircles;	///< Flag whether to show the minimum and maximum radii of the ambient sounds attached to the selected object
 	Bool										m_showBoundingBoxes;
 	Bool										m_showSightRanges;
 	Bool										m_showWeaponRanges;
@@ -222,7 +222,7 @@ protected:
 	void init3dScene();
 	void initAssets();
 	void initWW3D();
-  void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
+	void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
 	void drawLabels(HDC hdc);
 	void drawLabels(void);
 	void shutdownWW3D();

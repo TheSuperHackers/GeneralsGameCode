@@ -45,7 +45,7 @@ ExperienceTracker::ExperienceTracker(Object *parent) :
 	m_experienceScalar( 1.0f ),
 	m_currentExperience(0)
 {
-  resetTrainable();
+	resetTrainable();
 }
 
 //-------------------------------------------------------------------------------------------------

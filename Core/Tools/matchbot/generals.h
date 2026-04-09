@@ -42,10 +42,10 @@ typedef std::vector<bool> MapBitSet;
 // Here are the states a matcher can be in:
 typedef enum
 {
-    STATUS_INVAL = 0,
-    STATUS_INCHANNEL,  // Just entered the channel
-    STATUS_WORKING,    // Sent info, needs to be matched
-    STATUS_MATCHED,    // Been matched, but is still in the channel
+	STATUS_INVAL = 0,
+	STATUS_INCHANNEL,  // Just entered the channel
+	STATUS_WORKING,    // Sent info, needs to be matched
+	STATUS_MATCHED,    // Been matched, but is still in the channel
 } UserStatus;
 
 class GeneralsUser

@@ -210,7 +210,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
  			}
 
 
-     //  is this where we set the cameos disabled when container is subdued?
+			//  is this where we set the cameos disabled when container is subdued?
 
 			// if we've counted more UI spots than the transport can hold, hide this command window
 			if( inventoryCommandCount > transportMax )

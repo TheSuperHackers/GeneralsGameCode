@@ -306,7 +306,7 @@ bool CDControlClass::Unlock_Volume(HANDLE volume)
 	/*
 	** Do this in a loop until a timeout period has expired
 	*/
-   for ( int trycount = 0; trycount < LOCK_RETRIES; trycount++ ) {
+	for ( int trycount = 0; trycount < LOCK_RETRIES; trycount++ ) {
 
 		if ( DeviceIoControl( volume, FSCTL_UNLOCK_VOLUME, nullptr, 0, nullptr, 0, &bytes_returned, nullptr )) return( true );
 //		DebugString ("DeviceIoControl failed to unlock volume. Error %d - %s\n", GetLastError(), Last_Error_Text());
@@ -428,12 +428,12 @@ bool CDControlClass::Eject_CD(char drive)
 	/*
 	** Lock and dismount the volume.
 	*/
-    if (Lock_Volume(volume) && Dismount_Volume(volume)) {
+	if (Lock_Volume(volume) && Dismount_Volume(volume)) {
 
 		/*
 		** Set prevent removal to false and eject the volume.
 		*/
-       if (Prevent_Removal_Of_Volume(volume, false) && Auto_Eject_Volume(volume)) {
+		if (Prevent_Removal_Of_Volume(volume, false) && Auto_Eject_Volume(volume)) {
 			ejected = true;
 		}
 	}
@@ -471,7 +471,7 @@ bool CDControlClass::Lock_CD_Drive(char drive)
 	/*
 	** Lock the volume.
 	*/
-    if (Lock_Volume(volume)) {
+	if (Lock_Volume(volume)) {
 
 		/*
 		** Set prevent removal to false
@@ -515,7 +515,7 @@ bool CDControlClass::Unlock_CD_Drive(char drive)
 	/*
 	** Lock the volume.
 	*/
-    if (Lock_Volume(volume)) {
+	if (Lock_Volume(volume)) {
 
 		/*
 		** Set prevent removal to false
@@ -837,13 +837,13 @@ bool CDControlClass::Lock_Volume_95 (HANDLE vwin32, char drive)
 	/*
 	** Increment the lock count.
 	*/
-    unlock_params.bOperation = 0;   // lock the media
-    regs.reg_EAX = 0x440D;
-    regs.reg_EBX = drive;
-    regs.reg_ECX = MAKEWORD(0x48, 0x08);  // LOCK/UNLOCK
-    regs.reg_EDX = (unsigned long)&unlock_params;
+	unlock_params.bOperation = 0;   // lock the media
+	regs.reg_EAX = 0x440D;
+	regs.reg_EBX = drive;
+	regs.reg_ECX = MAKEWORD(0x48, 0x08);  // LOCK/UNLOCK
+	regs.reg_EDX = (unsigned long)&unlock_params;
 
-    result = (DeviceIoControl (vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
+	result = (DeviceIoControl (vwin32, VWIN32_DIOC_DOS_IOCTL, &regs, sizeof(regs), &regs, sizeof(regs), &cb, 0)) ? true : false;
 	if (result == false) {
 //		DebugString ("DeviceIoControl failed to perform DOS IO control function. Error %d - %s\n", GetLastError(), Last_Error_Text());
 //		Msg( __LINE__, __FILE__, "DeviceIoControl failed to perform DOS IO control function. Error %d - %s.", GetLastError(), Last_Error_Text() );
@@ -853,7 +853,7 @@ bool CDControlClass::Lock_Volume_95 (HANDLE vwin32, char drive)
 	/*
 	** See if DeviceIoControl and the lock succeeded
 	*/
-    result = result && !(regs.reg_Flags & CARRY_FLAG);
+	result = result && !(regs.reg_Flags & CARRY_FLAG);
 	return (result);
 }
 

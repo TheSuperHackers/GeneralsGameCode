@@ -106,7 +106,7 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 //-------------------------------------------------------------------------------------------------
 /*static*/ void StructureCollapseUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -121,7 +121,7 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 		{ "FXList",											parseFX,													nullptr, 0 },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( StructureCollapseUpdateModuleData, m_dieMuxData ));
 }
 

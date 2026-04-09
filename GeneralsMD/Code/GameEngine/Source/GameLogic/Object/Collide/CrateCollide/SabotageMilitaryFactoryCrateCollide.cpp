@@ -137,7 +137,7 @@ Bool SabotageMilitaryFactoryCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_MILITARY_FACTORY );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_MILITARY_FACTORY );
 
 	if( other->isLocallyViewed() )
 	{

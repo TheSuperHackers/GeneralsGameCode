@@ -110,7 +110,7 @@ static void closeSaveMenu( GameWindow *window )
 void PopupReplayInit( WindowLayout *layout, void *userData )
 {
 
-  // get ids for our children controls
+	// get ids for our children controls
 	buttonBackKey					 = NAMEKEY( "PopupReplay.wnd:ButtonBack" );
 	buttonSaveKey					 = NAMEKEY( "PopupReplay.wnd:ButtonSave" );
 	listboxGamesKey				 = NAMEKEY( "PopupReplay.wnd:ListboxGames" );
@@ -339,7 +339,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 																				 WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg )
+	switch( msg )
 	{
 
 		// --------------------------------------------------------------------------------------------
@@ -349,7 +349,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 			break;
 
 		}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
 
@@ -357,8 +357,8 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 
 		}
 
-    //----------------------------------------------------------------------------------------------
-    case GWM_INPUT_FOCUS:
+		//----------------------------------------------------------------------------------------------
+		case GWM_INPUT_FOCUS:
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
@@ -398,33 +398,33 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 
 		}
 
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GEM_EDIT_DONE:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if( controlID == textEntryReplayNameKey )
-      {
+			if( controlID == textEntryReplayNameKey )
+			{
 				UnicodeString filename = GadgetTextEntryGetText( control );
 				if (filename.isEmpty())
 					break;
 
 				saveReplay(filename);
 
-      }
+			}
 
 			break;
 
 		}
-    //---------------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-      if( controlID == buttonSaveKey )
-      {
+			if( controlID == buttonSaveKey )
+			{
 				// get the filename, and see if we are overwriting
 				GameWindow *textEntryReplayName = TheWindowManager->winGetWindowFromId( window, textEntryReplayNameKey );
 				DEBUG_ASSERTCRASH( textEntryReplayName != nullptr, ("PopupReplaySystem - Unable to find text entry") );
@@ -435,7 +435,7 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 
 				saveReplay(filename);
 
-      }
+			}
 			else if( controlID == buttonBackKey )
 			{
 

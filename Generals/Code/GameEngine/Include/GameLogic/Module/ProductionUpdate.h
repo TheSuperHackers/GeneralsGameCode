@@ -123,13 +123,13 @@ class ProductionUpdateModuleData : public UpdateModuleData
 {
 
 public:
-  Int														m_numDoorAnimations;						///< has a door animation(s) upon unit built and exit
+	Int														m_numDoorAnimations;						///< has a door animation(s) upon unit built and exit
 	UnsignedInt										m_doorOpeningTime;							///< in frames, time it takes the door to open
 	UnsignedInt										m_doorWaitOpenTime;							///< in frames, time we should leave the door open
 	UnsignedInt										m_doorClosingTime;							///< in frames, time it takes to close the door
 	UnsignedInt										m_constructionCompleteDuration; ///< in frames, how long we state in "construction complete" condition after making something
 	std::vector<QuantityModifier>	m_quantityModifiers;						///< Quantity modifiers modify the number of specified object to created whenever produced.
-  Int														m_maxQueueEntries;							///< max things that can be queued at once.
+	Int														m_maxQueueEntries;							///< max things that can be queued at once.
 	DisabledMaskType							m_disabledTypesToProcess;
 
 	ProductionUpdateModuleData();

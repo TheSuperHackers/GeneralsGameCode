@@ -65,30 +65,30 @@
 StealthUpdateModuleData::StealthUpdateModuleData()
 {
 		m_disguiseFX = nullptr;
-    m_disguiseRevealFX = nullptr;
-    m_stealthDelay		= UINT_MAX;
-    m_stealthLevel		= 0;
-    m_stealthSpeed		= 0.0f;
-    m_friendlyOpacityMin = 0.5f;
-    m_friendlyOpacityMax = 1.0f;
-    m_pulseFrames = 30;
-    m_teamDisguised		= false;
-    m_revealDistanceFromTarget = 0.0f;
-    m_orderIdleEnemiesToAttackMeUponReveal = false;
-    m_innateStealth   = true;
-    m_disguiseTransitionFrames = 0;
-    m_disguiseRevealTransitionFrames = 0;
-    m_blackMarketCheckFrames = 0;
-    m_enemyDetectionEvaEvent = EVA_Invalid;
-    m_ownDetectionEvaEvent = EVA_Invalid;
-    m_grantedBySpecialPower = FALSE;
+	m_disguiseRevealFX = nullptr;
+	m_stealthDelay		= UINT_MAX;
+	m_stealthLevel		= 0;
+	m_stealthSpeed		= 0.0f;
+	m_friendlyOpacityMin = 0.5f;
+	m_friendlyOpacityMax = 1.0f;
+	m_pulseFrames = 30;
+	m_teamDisguised		= false;
+	m_revealDistanceFromTarget = 0.0f;
+	m_orderIdleEnemiesToAttackMeUponReveal = false;
+	m_innateStealth   = true;
+	m_disguiseTransitionFrames = 0;
+	m_disguiseRevealTransitionFrames = 0;
+	m_blackMarketCheckFrames = 0;
+	m_enemyDetectionEvaEvent = EVA_Invalid;
+	m_ownDetectionEvaEvent = EVA_Invalid;
+	m_grantedBySpecialPower = FALSE;
 }
 
 
 //-------------------------------------------------------------------------------------------------
 void StealthUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -117,7 +117,7 @@ void StealthUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -150,9 +150,9 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	}
 
 	// start active, since some stealths start enabled from the get-go
-  if ( data->m_grantedBySpecialPower )
+	if ( data->m_grantedBySpecialPower )
 	  setWakeFrame( getObject(), UPDATE_SLEEP_FOREVER );
-  else
+	else
 	  setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
 	// we do not need to restore a disguise
@@ -191,12 +191,12 @@ void isBlackMarket( Object *obj, void *userData )
 //---------------------------------------------------------------------------------------~-_-~-_-~-
 void StealthUpdate::receiveGrant( Bool active, UnsignedInt frames )
 {
-  Object *obj = getObject();
-  if ( obj == nullptr )
-    return;
+	Object *obj = getObject();
+	if ( obj == nullptr )
+	return;
 
-  if (this->canDisguise())
-    return; //so bombtrucks and stuff do not get foiled by this.
+	if (this->canDisguise())
+	return; //so bombtrucks and stuff do not get foiled by this.
 
 	//Kris: Turn it off if we pass in FALSE for active.
 	if( !active && m_enabled )
@@ -227,17 +227,17 @@ void StealthUpdate::receiveGrant( Bool active, UnsignedInt frames )
 		}
 	}
 
-  const ContainModuleInterface *contain = obj->getContain();
-  if ( contain && contain->isRiderChangeContain() )
-  {
-    const Object *rider = contain->friend_getRider();
-    if ( rider )
-    {
-      StealthUpdate *riderStealth = rider->getStealth();
-      if ( riderStealth )
-        riderStealth->receiveGrant( active, frames );
-    }
-  }
+	const ContainModuleInterface *contain = obj->getContain();
+	if ( contain && contain->isRiderChangeContain() )
+	{
+		const Object *rider = contain->friend_getRider();
+		if ( rider )
+		{
+			StealthUpdate *riderStealth = rider->getStealth();
+			if ( riderStealth )
+			riderStealth->receiveGrant( active, frames );
+		}
+	}
 
 
 
@@ -257,7 +257,7 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 		//Extract the rules from the rider's stealthupdate module data instead
 		//of our own, because the rider determines if the container can stealth or not.
 
-    const StealthUpdate *stealthUpdate = stealthOwner->getStealth();
+		const StealthUpdate *stealthUpdate = stealthOwner->getStealth();
 		if( stealthUpdate )
 		{
 			flags = stealthUpdate->getStealthLevel();
@@ -387,17 +387,17 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 		}
 	}
 
-  //new past-alpha feature, grr...
+	//new past-alpha feature, grr...
 	if( flags & STEALTH_NOT_WHILE_RIDERS_ATTACKING )
 	{
-    ContainModuleInterface *myContain = self->getContain();
-    if ( myContain && myContain->isPassengerAllowedToFire() )
-    {
-      if ( myContain->isAnyRiderAttacking() )
-        return FALSE;
+		ContainModuleInterface *myContain = self->getContain();
+		if ( myContain && myContain->isPassengerAllowedToFire() )
+		{
+			if ( myContain->isAnyRiderAttacking() )
+			return FALSE;
 
-    }
-  }
+		}
+	}
 
 
 
@@ -617,7 +617,7 @@ UpdateSleepTime StealthUpdate::update()
 	{
 		//Extract the rules from the rider's stealthupdate module data instead
 		//of our own, because the rider determines if the container can stealth or not.
-    const StealthUpdate *stealthUpdate = stealthOwner->getStealth();
+		const StealthUpdate *stealthUpdate = stealthOwner->getStealth();
 		if( stealthUpdate )
 		{
 			stealthDelay = stealthUpdate->getStealthDelay();
@@ -879,7 +879,7 @@ void StealthUpdate::markAsDetected(UnsignedInt numFrames)
 	{
 		//Extract the rules from the rider's stealthupdate module data instead
 		//of our own, because the rider determines if the container can stealth or not.
-    const StealthUpdate *stealthUpdate = stealthOwner->getStealth();
+		const StealthUpdate *stealthUpdate = stealthOwner->getStealth();
 		if( stealthUpdate )
 		{
 			stealthDelay = stealthUpdate->getStealthDelay();
@@ -937,7 +937,7 @@ void StealthUpdate::disguiseAsObject( const Object *target )
 	const StealthUpdateModuleData *data = getStealthUpdateModuleData();
 	if( target && target->getControllingPlayer() )
 	{
-    StealthUpdate* stealth = target->getStealth();
+		StealthUpdate* stealth = target->getStealth();
 		if( stealth && stealth->getDisguisedTemplate() )
 		{
 			m_disguiseAsTemplate				= stealth->getDisguisedTemplate();

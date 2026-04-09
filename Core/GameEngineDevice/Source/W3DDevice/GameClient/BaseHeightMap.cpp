@@ -844,20 +844,20 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* normal) const
 {
 
-  // SORRY, KIDS
-  // Had to make this function logic safe, so,
-  // even though this is a renderObject, and is thus classified as client-side
-  // it is responsible for reporting height map heights (for reasons I can't say)
-  // but to do so safely, I a going to pass it the logical heighmap from the W3dTerrainVisual
-  // yes another nosequiter. Ugh!
+	// SORRY, KIDS
+	// Had to make this function logic safe, so,
+	// even though this is a renderObject, and is thus classified as client-side
+	// it is responsible for reporting height map heights (for reasons I can't say)
+	// but to do so safely, I a going to pass it the logical heighmap from the W3dTerrainVisual
+	// yes another nosequiter. Ugh!
 
-  // M Lorenzen
+	// M Lorenzen
 
-  // by doing it this way the compiler won't call getLogicHeightMap twice...
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	// by doing it this way the compiler won't call getLogicHeightMap twice...
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
-  if ( !logicHeightMap )
-  {
+	if ( !logicHeightMap )
+	{
 		if (normal)
 		{
 			// return a default normal pointing up
@@ -866,7 +866,7 @@ Real BaseHeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* no
 			normal->z = 1.0f;
 		}
 		return 0;
-  }
+	}
 
 
 	float height;
@@ -997,7 +997,7 @@ Bool BaseHeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const C
 	if (m_map == nullptr)
 		return false;	// doh. should not happen.
 
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
 #define DO_BRESENHAM
 #ifdef DO_BRESENHAM
@@ -1202,7 +1202,7 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 		return 0.0f;	//return default height
 	}
 
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
 
 	Int offset = 1;
@@ -1245,7 +1245,7 @@ Bool BaseHeightMapRenderObjClass::isCliffCell(Real x, Real y)
 		return false;
 	}
 
-  WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
+	WorldHeightMap *logicHeightMap = TheTerrainVisual?TheTerrainVisual->getLogicHeightMap():m_map;
 
 	Int iX = x/MAP_XY_FACTOR;
 	Int iY = y/MAP_XY_FACTOR;

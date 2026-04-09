@@ -50,7 +50,7 @@ MaxHealthUpgradeModuleData::MaxHealthUpgradeModuleData()
 void MaxHealthUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-  UpgradeModuleData::buildFieldParse( p );
+	UpgradeModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -59,7 +59,7 @@ void MaxHealthUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

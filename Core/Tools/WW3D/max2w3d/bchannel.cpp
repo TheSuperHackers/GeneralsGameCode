@@ -99,31 +99,31 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 {
 	if (IsEmpty) return true;
 
-  if (compress)  {
+	if (compress)  {
   	// Save the Channel Data Compressed
-    // TIMECODED
+		// TIMECODED
 		if (!csave.Begin_Chunk(W3D_CHUNK_COMPRESSED_BIT_CHANNEL)) {
 			return false;
 		}
 
-    uint32	channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
+		uint32	channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
 		uint32  packetsize   = sizeof(uint32);
 
-    channelsize	+= packetsize * MaxFrames;
-    channelsize -= sizeof(uint32);
+		channelsize	+= packetsize * MaxFrames;
+		channelsize -= sizeof(uint32);
 
-    W3dTimeCodedBitChannelStruct * chn = (W3dTimeCodedBitChannelStruct *)malloc(channelsize);
+		W3dTimeCodedBitChannelStruct * chn = (W3dTimeCodedBitChannelStruct *)malloc(channelsize);
 
-    if (chn == nullptr)  {
+		if (chn == nullptr)  {
     	return false;
-    }
+		}
 
-    chn->NumTimeCodes = MaxFrames;
-    chn->Pivot        = ID;
-    chn->Flags        = ChannelType;
-    chn->DefaultVal   = DefaultVal;
+		chn->NumTimeCodes = MaxFrames;
+		chn->Pivot        = ID;
+		chn->Flags        = ChannelType;
+		chn->DefaultVal   = DefaultVal;
 
-    // copy data into the channel struct, in timecoded raw format
+		// copy data into the channel struct, in timecoded raw format
 
 		for (uint32 fcount=0; fcount < chn->NumTimeCodes; fcount++) {
 
@@ -135,23 +135,23 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 			}
 		}
 
-    // Compress the new structure
+		// Compress the new structure
 
-    BitChannelClass::compress( chn );
+		BitChannelClass::compress( chn );
 
 	 float originalchannelsize = channelsize;
 
-    // Update Channel Size
-    channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
-    channelsize	+= packetsize * chn->NumTimeCodes;
-    channelsize -= sizeof(uint32);
+		// Update Channel Size
+		channelsize  = sizeof(W3dTimeCodedBitChannelStruct);
+		channelsize	+= packetsize * chn->NumTimeCodes;
+		channelsize -= sizeof(uint32);
 
 	 float percent = (((float) channelsize) / originalchannelsize) * 100.0f;
 
 	 ExportLog::printf("%.0f", percent);
 
 
-    // save
+		// save
 
 		if (csave.Write(chn,channelsize) != channelsize) {
 			return false;
@@ -165,8 +165,8 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 			return false;
 		}
 
-  }
-  else  {
+	}
+	else  {
   	// Stock Raw Save
 		if (!csave.Begin_Chunk(W3D_CHUNK_BIT_CHANNEL)) {
 			return false;
@@ -211,7 +211,7 @@ bool BitChannelClass::Save(ChunkSaveClass & csave, bool compress)
 			return false;
 		}
 
-  }
+	}
 
 	return true;
 }
@@ -246,20 +246,20 @@ void BitChannelClass::compute_range(void)
 uint32 BitChannelClass::find_useless_packet(W3dTimeCodedBitChannelStruct * c)
 {
 
-  assert( c );	// make sure pointer exists
-  assert( c->NumTimeCodes );	// make sure some packets exist
+	assert( c );	// make sure pointer exists
+	assert( c->NumTimeCodes );	// make sure some packets exist
 
   	if (c->NumTimeCodes > 2)  {
 
-      for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 1); try_idx++)  {
+		for(uint32 try_idx = 0; try_idx < (c->NumTimeCodes - 1); try_idx++)  {
 
-        if ((c->Data[try_idx]   & W3D_TIMECODED_BIT_MASK) ==
+			if ((c->Data[try_idx]   & W3D_TIMECODED_BIT_MASK) ==
             (c->Data[try_idx+1] & W3D_TIMECODED_BIT_MASK))  {
             	return(try_idx + 1);
-            }
+			}
 
-      }
-    }
+		}
+	}
 
 	return( PACKETS_ALL_USEFUL );
 
@@ -272,26 +272,26 @@ uint32 BitChannelClass::find_useless_packet(W3dTimeCodedBitChannelStruct * c)
 void BitChannelClass::remove_packet(W3dTimeCodedBitChannelStruct * c, uint32 packet_idx)
 {
 	assert( c );
-  assert( c->NumTimeCodes > 1 );
+	assert( c->NumTimeCodes > 1 );
 
-  uint32 packet_size = 1;
-  uint32 packet_len  = packet_size * sizeof(uint32);
+	uint32 packet_size = 1;
+	uint32 packet_len  = packet_size * sizeof(uint32);
 
-  uint32 *src, *dst;
+	uint32 *src, *dst;
 
-  dst = (uint32 *) &c->Data[ packet_size * packet_idx ];
-  src = (uint32 *) &c->Data[ packet_size * (packet_idx + 1) ];
+	dst = (uint32 *) &c->Data[ packet_size * packet_idx ];
+	src = (uint32 *) &c->Data[ packet_size * (packet_idx + 1) ];
 
-  uint32 copy_length = (c->NumTimeCodes - (packet_idx + 1)) * packet_len;
+	uint32 copy_length = (c->NumTimeCodes - (packet_idx + 1)) * packet_len;
 
-  if (copy_length)  {
+	if (copy_length)  {
 
-    memcpy(dst, src, copy_length);
+		memcpy(dst, src, copy_length);
 
-  }
+	}
 
-  // Decrement Packet Count
-  c->NumTimeCodes--;
+	// Decrement Packet Count
+	c->NumTimeCodes--;
 
 }
 

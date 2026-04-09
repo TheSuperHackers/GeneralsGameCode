@@ -86,7 +86,7 @@ OpenContainModuleData::OpenContainModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void OpenContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -107,7 +107,7 @@ OpenContainModuleData::OpenContainModuleData()
  		{ "AllowNeutralInside",				INI::parseBool,	nullptr, offsetof( OpenContainModuleData, m_allowNeutralInside ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( OpenContainModuleData, m_dieMuxData ));
 
 }
@@ -142,8 +142,8 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 	m_whichExitPath = 1;
 	m_loadSoundsEnabled = TRUE;
 
-  m_passengerAllowedToFire = getOpenContainModuleData()->m_passengersAllowedToFire;
-  // overridable by setPass...()  in the parent interface (for use by upgrade module)
+	m_passengerAllowedToFire = getOpenContainModuleData()->m_passengersAllowedToFire;
+	// overridable by setPass...()  in the parent interface (for use by upgrade module)
 
 	for( Int i = 0; i < MAX_FIRE_POINTS; i++ )
 	{
@@ -509,7 +509,7 @@ void OpenContain::harmAndForceExitAllContained( DamageInfo *info )
 	}
 
 
-  DEBUG_ASSERTCRASH( m_containListSize == 0, ("harmAndForceExitAllContained just made a booboo, list size != zero.") );
+	DEBUG_ASSERTCRASH( m_containListSize == 0, ("harmAndForceExitAllContained just made a booboo, list size != zero.") );
 
 }
 
@@ -599,7 +599,7 @@ void OpenContain::iterateContained( ContainIterateFunc func, void *userData, Boo
 			// call it
 			(*func)( rider, userData );
 		}
-  }
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -611,21 +611,21 @@ Object* OpenContain::getClosestRider( const Coord3D *pos )
 
 	for(ContainedItemsList::const_iterator it = m_containList.begin(); it != m_containList.end(); ++it)
 	{
-    Object *rider = *it;
+		Object *rider = *it;
 
-    if (rider)
-    {
-      Real distance = ThePartitionManager->getDistanceSquared( rider, pos, FROM_CENTER_2D );
+		if (rider)
+		{
+			Real distance = ThePartitionManager->getDistanceSquared( rider, pos, FROM_CENTER_2D );
 	    if( !closest || closestDistance > distance )
 	    {
 		    closest = rider;
 		    closestDistance = distance;
 	    }
-    }
+		}
 
-  }
+	}
 
-   return closest; //Could be null!
+	return closest; //Could be null!
 }
 
 
@@ -689,7 +689,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 	{
 		addOrRemoveObjFromWorld(rider, true);
   	rider->setPosition( getObject()->getPosition() );
-        // if we are not enclosed, then just walk away from where we "are."
+		// if we are not enclosed, then just walk away from where we "are."
 
 	}
 
@@ -844,7 +844,7 @@ void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *n
 				if( rider->isKindOf( KINDOF_STEALTH_GARRISON ) )
 				{
 					// aiExit is needed to walk away from the building well, but it doesn't take the Unstealth flag
-          StealthUpdate* stealth = rider->getStealth();
+					StealthUpdate* stealth = rider->getStealth();
          	if( stealth )
 					{
 						stealth->markAsDetected();
@@ -1184,8 +1184,8 @@ void OpenContain::exitObjectInAHurry( Object *exitObj )
 Bool OpenContain::isPassengerAllowedToFire( ObjectID id ) const
 {
 //	const OpenContainModuleData *modData = getOpenContainModuleData();
-  //this flag is owned by opencontain, now, so that the upgrade can override the template data
-  //M Lorenzen, 5/6/03
+	//this flag is owned by opencontain, now, so that the upgrade can override the template data
+	//M Lorenzen, 5/6/03
 	if( ! m_passengerAllowedToFire )
 		return FALSE;// Just no, no matter what.
 
@@ -1677,21 +1677,21 @@ Bool OpenContain::getNaturalRallyPoint( Coord3D& rallyPoint, Bool offset )  cons
 void testForAttackingProc( Object *obj, void *userData )
 {
 	Bool *info = (Bool*)userData;
-  if ( *info == TRUE )
-    return;
+	if ( *info == TRUE )
+	return;
 
-  *info = ( obj->testStatus( OBJECT_STATUS_IS_ATTACKING ) );
+	*info = ( obj->testStatus( OBJECT_STATUS_IS_ATTACKING ) );
 
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool OpenContain::isAnyRiderAttacking() const
 {
-  Bool wellIsHe = FALSE;
+	Bool wellIsHe = FALSE;
 
 	((ContainModuleInterface*)this)->iterateContained(testForAttackingProc, &wellIsHe, FALSE );
 
-  return wellIsHe;
+	return wellIsHe;
 }
 
 
@@ -1886,10 +1886,10 @@ void OpenContain::xfer( Xfer *xfer )
 	xfer->xferInt( &m_whichExitPath );
 
 
-  if ( version >= 2 )
-  {
-    xfer->xferBool( &m_passengerAllowedToFire );
-  }
+	if ( version >= 2 )
+	{
+		xfer->xferBool( &m_passengerAllowedToFire );
+	}
 
 
 }

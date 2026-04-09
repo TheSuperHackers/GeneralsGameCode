@@ -1221,13 +1221,13 @@ void ThingTemplate::initForLTA(const AsciiString& name)
 //=============================================================================
 const ArmorTemplateSet* ThingTemplate::findArmorTemplateSet(const ArmorSetFlags& t) const
 {
-  return m_armorTemplateSetFinder.findBestInfo(m_armorTemplateSets, t);
+	return m_armorTemplateSetFinder.findBestInfo(m_armorTemplateSets, t);
 }
 
 //=============================================================================
 const WeaponTemplateSet* ThingTemplate::findWeaponTemplateSet(const WeaponSetFlags& t) const
 {
-  return m_weaponTemplateSetFinder.findBestInfo(m_weaponTemplateSets, t);
+	return m_weaponTemplateSetFinder.findBestInfo(m_weaponTemplateSets, t);
 }
 
 //-----------------------------------------------------------------------------

@@ -82,7 +82,7 @@ void MobNexusContainModuleData::parseInitialPayload( INI* ini, void *instance, v
 // ------------------------------------------------------------------------------------------------
 void MobNexusContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  OpenContainModuleData::buildFieldParse(p);
+	OpenContainModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -96,7 +96,7 @@ void MobNexusContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "HealthRegen%PerSec", INI::parseReal, nullptr, offsetof( MobNexusContainModuleData, m_healthRegen ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 
@@ -388,7 +388,7 @@ ExitDoorType MobNexusContain::reserveDoorForExit( const ThingTemplate* objType, 
 
 	// This is an override, not an extend.  I will check for game legality for
 	// okaying the call to exitObjectViaDoor.
-  Object *me = getObject();
+	Object *me = getObject();
 
 	// this is present solely for some MobNexuss to override, so that they can land before
 	// allowing people to exit...
@@ -396,21 +396,21 @@ ExitDoorType MobNexusContain::reserveDoorForExit( const ThingTemplate* objType, 
 	if (ai && ai->getAiFreeToExit(me) != FREE_TO_EXIT)
 		return DOOR_NONE_AVAILABLE;
 
-  // I can always kick people out if I am in the air, I know what I'm doing
-  if( me->isUsingAirborneLocomotor() )
+	// I can always kick people out if I am in the air, I know what I'm doing
+	if( me->isUsingAirborneLocomotor() )
    	return DOOR_1;
 
-  const Coord3D *myPosition = me->getPosition();
+	const Coord3D *myPosition = me->getPosition();
  	if( !specificObject->getAIUpdateInterface() )
 	{
 		return DOOR_NONE_AVAILABLE;
 	}
 	const Locomotor *hisLocomotor = specificObject->getAIUpdateInterface()->getCurLocomotor();
-  // He can't get to this spot naturally, so I can't force him there.  (amphib MobNexus)
-  if( ! TheAI->pathfinder()->validMovementTerrain(me->getLayer(), hisLocomotor, myPosition ) )
+	// He can't get to this spot naturally, so I can't force him there.  (amphib MobNexus)
+	if( ! TheAI->pathfinder()->validMovementTerrain(me->getLayer(), hisLocomotor, myPosition ) )
    	return DOOR_NONE_AVAILABLE;
 
-  return DOOR_1;
+	return DOOR_1;
 }
 
 // ------------------------------------------------------------------------------------------------

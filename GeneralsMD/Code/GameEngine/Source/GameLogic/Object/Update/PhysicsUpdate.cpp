@@ -158,7 +158,7 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 //-------------------------------------------------------------------------------------------------
 /*static*/ void PhysicsBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -188,7 +188,7 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -697,7 +697,7 @@ UpdateSleepTime PhysicsBehavior::update()
 				getObject()->clearModelConditionState(MODELCONDITION_STUNNED);
 			}
 
-    }
+		}
 
 		if (getFlag(HAS_PITCHROLLYAW))
 		{
@@ -872,7 +872,7 @@ UpdateSleepTime PhysicsBehavior::update()
 				damageInfo.in.m_deathType = DEATH_SPLATTED;
 				damageInfo.in.m_sourceID = obj->getID();
 				damageInfo.in.m_amount = damageAmt;
-        damageInfo.in.m_shockWaveAmount = 0.0f;
+				damageInfo.in.m_shockWaveAmount = 0.0f;
 				obj->attemptDamage( &damageInfo );
 				//DEBUG_LOG(("Dealing %f (%f %f) points of falling damage to %s!",damageAmt,damageInfo.out.m_actualDamageDealt, damageInfo.out.m_actualDamageClipped,obj->getTemplate()->getName().str()));
 
@@ -1421,7 +1421,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 static Bool perpsLogicallyEqual( Real perpOne, Real perpTwo )
 {
 	// Equality with a wiggle fudge.
-  const Real PERP_RANGE = 0.15f;
+	const Real PERP_RANGE = 0.15f;
 	return fabs( perpOne - perpTwo ) <= PERP_RANGE;
 }
 
@@ -1446,8 +1446,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 		return false;
 
 
-  Object* crusherMe = getObject();
-  Object* crusheeOther = other;
+	Object* crusherMe = getObject();
+	Object* crusheeOther = other;
 
 	//Determine if we can crush the other object.
 	Bool selfCrushingOther = crusherMe->canCrushOrSquish( crusheeOther, TEST_CRUSH_ONLY );
@@ -1493,8 +1493,8 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 		crusheeOther->attemptDamage( &damageInfo );
 	}
 
-  const Coord3D *crusheePos = crusheeOther->getPosition();
-  const Coord3D *crusherPos = crusherMe->getPosition();
+	const Coord3D *crusheePos = crusheeOther->getPosition();
+	const Coord3D *crusherPos = crusherMe->getPosition();
 
 	BodyModuleInterface* crusheeBody = crusheeOther->getBodyModule();
 	Bool frontCrushed = crusheeBody->getFrontCrushed();
@@ -1786,11 +1786,11 @@ void PhysicsBehavior::testStunnedUnitForDestruction()
 	}
 
 	// Check if unit has exited playable area. If so, kill it
-  if (obj->isOffMap())
+	if (obj->isOffMap())
 	{
-     obj->kill();
+		obj->kill();
 		 return;
-  }
+	}
 
 	// Check for being in cells that the unit has no locomotor for
 	AIUpdateInterface *aiInt = obj->getAI();

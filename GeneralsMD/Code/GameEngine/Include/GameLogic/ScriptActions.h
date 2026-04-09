@@ -147,7 +147,7 @@ protected:
 	void doTeamEnterNamed(const AsciiString& teamName, const AsciiString& unitDestName);
 	void doNamedExitAll(const AsciiString& unitName);
 	void doTeamExitAll(const AsciiString& teamName);
-  void doNamedSetGarrisonEvacDisposition(const AsciiString& unitName, UnsignedInt disp );
+	void doNamedSetGarrisonEvacDisposition(const AsciiString& unitName, UnsignedInt disp );
 	void doNamedFollowWaypoints(const AsciiString& unitName, const AsciiString& waypointName);
 	void doTeamFollowWaypoints(const AsciiString& teamName, const AsciiString& waypointName, Bool asTeam);
 	void doTeamFollowWaypointsExact(const AsciiString& teamName, const AsciiString& waypointName, Bool asTeam);
@@ -385,6 +385,6 @@ protected:
 	void doResizeViewGuardband(const Real gbx, const Real gby );
 	void deleteAllUnmanned();
 	void doNamedSetTrainHeld( const AsciiString &locoName, const Bool set );
-  void doEnableObjectSound(const AsciiString& objectName, Bool enable);
+	void doEnableObjectSound(const AsciiString& objectName, Bool enable);
 
 };

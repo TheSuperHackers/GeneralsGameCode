@@ -800,16 +800,16 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 
 	if (DX8Wrapper::_Get_D3D_Device8() && (hr=DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
 	{
-        // If the device was lost, do not render until we get it back
-        if( D3DERR_DEVICELOST == hr )
-            return WW3D_ERROR_GENERIC;	//other app has the device
+		// If the device was lost, do not render until we get it back
+		if( D3DERR_DEVICELOST == hr )
+		return WW3D_ERROR_GENERIC;	//other app has the device
 
-        // Check if the device needs to be reset
-        if( D3DERR_DEVICENOTRESET == hr )
-        {
-            WWDEBUG_SAY(("WW3D::Begin_Render is resetting the device."));
-            DX8Wrapper::Reset_Device();
-        }
+		// Check if the device needs to be reset
+		if( D3DERR_DEVICENOTRESET == hr )
+		{
+			WWDEBUG_SAY(("WW3D::Begin_Render is resetting the device."));
+			DX8Wrapper::Reset_Device();
+		}
 
 		return WW3D_ERROR_GENERIC;
 	}

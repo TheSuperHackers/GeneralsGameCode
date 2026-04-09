@@ -271,10 +271,10 @@ public:
 		m_amount = 0;
 		m_kill = FALSE;
 
-    m_shockWaveVector.zero();
-    m_shockWaveAmount   = 0.0f;
-    m_shockWaveRadius   = 0.0f;
-    m_shockWaveTaperOff = 0.0f;
+			m_shockWaveVector.zero();
+			m_shockWaveAmount   = 0.0f;
+			m_shockWaveRadius   = 0.0f;
+			m_shockWaveTaperOff = 0.0f;
 	}
 
 	ObjectID		   m_sourceID;							///< source of the damage

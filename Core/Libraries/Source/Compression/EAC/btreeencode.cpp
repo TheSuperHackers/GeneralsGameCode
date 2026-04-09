@@ -42,20 +42,20 @@ struct BTREEMemStruct
 
 struct BTreeEncodeContext
 {
-    unsigned int	packbits;
-    unsigned int	workpattern;
-    unsigned char  *bufptr;
-    unsigned int	ulen;
-    unsigned int	masks[17];
-    unsigned char	clueq[BTREECODES];
-    unsigned char	right[BTREECODES];
-    unsigned char	join[BTREECODES];
-    unsigned int	plen;
-    unsigned char  *bufbase;
-    unsigned char  *bufend;
-    unsigned char  *buffer;
-    unsigned char  *buf1;
-    unsigned char  *buf2;
+	unsigned int	packbits;
+	unsigned int	workpattern;
+	unsigned char  *bufptr;
+	unsigned int	ulen;
+	unsigned int	masks[17];
+	unsigned char	clueq[BTREECODES];
+	unsigned char	right[BTREECODES];
+	unsigned char	join[BTREECODES];
+	unsigned int	plen;
+	unsigned char  *bufbase;
+	unsigned char  *bufend;
+	unsigned char  *buffer;
+	unsigned char  *buf1;
+	unsigned char  *buf2;
 };
 
 static void BTREE_writebits(struct BTreeEncodeContext *EC,
@@ -90,7 +90,7 @@ static void BTREE_adjcount(unsigned char *s, unsigned char *bend, BTREEWORD *cou
 
 #ifdef __WATCOMC__
 
-    union
+	union
     {
         unsigned char           b[4];
         int                     w;
@@ -98,7 +98,7 @@ static void BTREE_adjcount(unsigned char *s, unsigned char *bend, BTREEWORD *cou
 
     #define	COUNTADJ(j)	i.b[1] = i.b[0]; i.b[0] = *(s+j); ++count[i.w];
 
-    i.w = 0;
+	i.w = 0;
 	i.b[0] = (unsigned BTREEWORD) *s++;
 
 #else
@@ -136,7 +136,7 @@ static void BTREE_adjcount(unsigned char *s, unsigned char *bend, BTREEWORD *cou
 			COUNTADJ(13);
 			COUNTADJ(14);
 			COUNTADJ(15);
-            s += 16;
+			s += 16;
 
 		} while (s<bend);
 	}
@@ -148,7 +148,7 @@ static void BTREE_adjcount(unsigned char *s, unsigned char *bend, BTREEWORD *cou
 		do
 		{
 			COUNTADJ(0);
-            ++s;
+			++s;
 
 		} while (s<bend);
 	}
@@ -193,7 +193,7 @@ static void BTREE_clearcount(unsigned char *tryq,BTREEWORD *countbuf)
 				*(intptr+13) = zero;
 				*(intptr+14) = zero;
 				*(intptr+15) = zero;
-                intptr += 16;
+				intptr += 16;
 
 			} while (--i);
 		}
@@ -218,13 +218,13 @@ static void BTREE_joinnodes(struct BTreeEncodeContext *EC,
 
     /* pack file */
 
-    s = EC->bufbase;
+	s = EC->bufbase;
 	if (s==EC->buf1)
 	{
 		d = EC->buf2;
 	}
 	else
-    {
+	{
 		d = EC->buf1;
 	}
 	EC->bufbase = d;
@@ -334,7 +334,7 @@ static void BTREE_treepack(struct BTreeEncodeContext *EC,
 	unsigned int	domore;
 	unsigned int	cost, save;
 	unsigned int	tcost, tsave;
-    unsigned int	clue;
+	unsigned int	clue;
 
 	unsigned int	freeptr;
 	unsigned int	count2[BTREECODES];
@@ -350,20 +350,20 @@ static void BTREE_treepack(struct BTreeEncodeContext *EC,
 	unsigned int	bt_node[BTREECODES];
 	unsigned int	bt_left[BTREECODES];
 	unsigned int	bt_right[BTREECODES];
-    unsigned int	sortptr[BTREECODES];
+	unsigned int	sortptr[BTREECODES];
 
 	int			treebufsize;
 	int			buf1size;
 	int			buf2size;
 
-    // 3/2 allows for worst case, where 2nd most popular
+	// 3/2 allows for worst case, where 2nd most popular
 	treebufsize = 65536L*sizeof(BTREEWORD);  /* 131K */
 	buf1size = EC->ulen*3/2+(int)BTREESLOPAGE;
 	buf2size = EC->ulen*3/2+(int)BTREESLOPAGE;
 
 	treebuf =	(unsigned char *) galloc(treebufsize);
 	if (!treebuf)
-        return; /* failure Insufficient memory for work buffer */
+	return; /* failure Insufficient memory for work buffer */
 
 	EC->buf1 =	(unsigned char *) galloc(buf1size);
 	if (!EC->buf1)
@@ -380,7 +380,7 @@ static void BTREE_treepack(struct BTreeEncodeContext *EC,
 		return; /* failure Insufficient memory for work buffer */
 	}
 
-    memcpy(EC->buf1, EC->buffer, EC->ulen); /* copy to scratch buffer */
+	memcpy(EC->buf1, EC->buffer, EC->ulen); /* copy to scratch buffer */
 
 	EC->buffer = EC->buf1;
 	EC->bufptr = EC->buf1+EC->ulen;
@@ -633,7 +633,7 @@ static int BTREE_compressfile(struct BTreeEncodeContext *EC,
 
 	unsigned int	passes;
 	unsigned int	multimax;
-    int			flen;
+	int			flen;
 
 /* set defaults */
 
@@ -684,7 +684,7 @@ static int BTREE_compressfile(struct BTreeEncodeContext *EC,
 
 	BTREE_treepack(EC,outfile,passes, multimax, 0, zerosuppress);
 
-    return(outfile->len);
+	return(outfile->len);
 }
 
 
@@ -695,22 +695,22 @@ static int BTREE_compressfile(struct BTreeEncodeContext *EC,
 
 int GCALL BTREE_encode(void *compresseddata, const void *source, int sourcesize, int *opts)
 {
-    int   plen;
-    struct BTREEMemStruct infile;
-    struct BTREEMemStruct outfile;
-    struct BTreeEncodeContext EC;
-    int opt=0;
-    if (opts)
-        opt = opts[0];
+	int   plen;
+	struct BTREEMemStruct infile;
+	struct BTREEMemStruct outfile;
+	struct BTreeEncodeContext EC;
+	int opt=0;
+	if (opts)
+	opt = opts[0];
 
-    infile.ptr = (char *)source;
-    infile.len = sourcesize;
-    outfile.ptr = (char *)compresseddata;
-    outfile.len = sourcesize;
+	infile.ptr = (char *)source;
+	infile.len = sourcesize;
+	outfile.ptr = (char *)compresseddata;
+	outfile.len = sourcesize;
 
-    plen = BTREE_compressfile(&EC,&infile, &outfile, sourcesize, opt);
+	plen = BTREE_compressfile(&EC,&infile, &outfile, sourcesize, opt);
 
-    return(plen);
+	return(plen);
 }
 
 #endif

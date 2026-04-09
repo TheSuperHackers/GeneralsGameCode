@@ -109,7 +109,7 @@ protected:
 	/// factory for creating the font library
 	virtual FontLibrary *createFontLibrary() override { return NEW W3DFontLibrary; }
 
-  /// Manager for display strings
+	/// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager() override { return NEW W3DDisplayStringManager; }
 #ifdef RTS_HAS_FFMPEG
 	virtual VideoPlayerInterface *createVideoPlayer() { return NEW FFmpegVideoPlayer; }

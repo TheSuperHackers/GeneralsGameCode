@@ -3204,21 +3204,21 @@ void W3DVolumetricShadowManager::renderStencilShadows()
 	width=TheTacticalView->getWidth();
 	height=TheTacticalView->getHeight();
 
-    v[0].p = D3DXVECTOR4( xpos+width, ypos+height, 0.0f, 1.0f );
-    v[1].p = D3DXVECTOR4( xpos+width, 0, 0.0f, 1.0f );
-    v[2].p = D3DXVECTOR4(  xpos, ypos+height, 0.0f, 1.0f );
-    v[3].p = D3DXVECTOR4(  xpos,  0, 0.0f, 1.0f );
-    v[0].color = TheW3DShadowManager->getShadowColor();
-    v[1].color = TheW3DShadowManager->getShadowColor();
-    v[2].color = TheW3DShadowManager->getShadowColor();
-    v[3].color = TheW3DShadowManager->getShadowColor();
+	v[0].p = D3DXVECTOR4( xpos+width, ypos+height, 0.0f, 1.0f );
+	v[1].p = D3DXVECTOR4( xpos+width, 0, 0.0f, 1.0f );
+	v[2].p = D3DXVECTOR4(  xpos, ypos+height, 0.0f, 1.0f );
+	v[3].p = D3DXVECTOR4(  xpos,  0, 0.0f, 1.0f );
+	v[0].color = TheW3DShadowManager->getShadowColor();
+	v[1].color = TheW3DShadowManager->getShadowColor();
+	v[2].color = TheW3DShadowManager->getShadowColor();
+	v[3].color = TheW3DShadowManager->getShadowColor();
 
 	//draw polygons like this is very inefficient but for only 2 triangles, it's
 	//not worth bothering with index/vertex buffers.
 	m_pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
 
 	// Use alpha blending to draw the transparent shadow
-    m_pDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+	m_pDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 //  m_pDev->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 //  m_pDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 		m_pDev->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_DESTCOLOR);
@@ -3226,18 +3226,18 @@ void W3DVolumetricShadowManager::renderStencilShadows()
 
 
 	// Set stencil states
-    m_pDev->SetRenderState( D3DRS_ZENABLE,          TRUE );
+	m_pDev->SetRenderState( D3DRS_ZENABLE,          TRUE );
 		m_pDev->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 
 	// Only write where stencil val >= 1 (count indicates # of shadows that
 	// overlap that pixel)
-    m_pDev->SetRenderState( D3DRS_STENCILENABLE, TRUE );
-    m_pDev->SetRenderState( D3DRS_STENCILFUNC, D3DCMP_LESSEQUAL );	//reference value is less or equal to stencil
-    m_pDev->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_KEEP );
+	m_pDev->SetRenderState( D3DRS_STENCILENABLE, TRUE );
+	m_pDev->SetRenderState( D3DRS_STENCILFUNC, D3DCMP_LESSEQUAL );	//reference value is less or equal to stencil
+	m_pDev->SetRenderState( D3DRS_STENCILPASS, D3DSTENCILOP_KEEP );
 	//Upper bits of stencil could be used for storing occluded models which are player colored.  So we mask out those
 	//pixels and only use the lower bits for shadow calculations.
 	m_pDev->SetRenderState( D3DRS_STENCILMASK,     ~TheW3DShadowManager->getStencilShadowMask());
-    m_pDev->SetRenderState( D3DRS_STENCILREF,      0x1 );
+	m_pDev->SetRenderState( D3DRS_STENCILREF,      0x1 );
 
 
 	m_pDev->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);

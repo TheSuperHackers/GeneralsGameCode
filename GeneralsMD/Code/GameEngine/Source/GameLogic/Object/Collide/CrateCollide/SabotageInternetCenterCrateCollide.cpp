@@ -164,7 +164,7 @@ Bool SabotageInternetCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_INTERNET_CENTER );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_INTERNET_CENTER );
 
 	if( other->isLocallyViewed() )
 	{

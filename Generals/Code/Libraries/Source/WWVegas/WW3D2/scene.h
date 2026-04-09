@@ -245,8 +245,8 @@ public:
 
 protected:
 
-   // Has a visibility check been performed since scene was last rendered?
-   bool Visibility_Checked;
+	// Has a visibility check been performed since scene was last rendered?
+	bool Visibility_Checked;
 
 	RefRenderObjListClass	RenderList;
 	RefRenderObjListClass	UpdateList;

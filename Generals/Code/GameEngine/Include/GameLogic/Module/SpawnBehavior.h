@@ -76,7 +76,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    BehaviorModuleData::buildFieldParse(p);
+		BehaviorModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "SpawnNumber",							INI::parseInt,										nullptr, offsetof( SpawnBehaviorModuleData, m_spawnNumberData ) },
@@ -90,7 +90,7 @@ public:
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( SpawnBehaviorModuleData, m_damageTypesToPropagateToSlaves ) },
 			{ "InitialBurst",				      INI::parseInt,						        nullptr, offsetof( SpawnBehaviorModuleData, m_initialBurst ) },			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 		p.add(DieMuxData::getFieldParse(), offsetof( SpawnBehaviorModuleData, m_dieMuxData ));
 	}
 };

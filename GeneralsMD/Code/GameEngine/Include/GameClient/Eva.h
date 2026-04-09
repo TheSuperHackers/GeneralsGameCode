@@ -195,8 +195,8 @@ class Eva : public SubsystemInterface
 
 		void setEvaEnabled(Bool enabled);
 
-    // Parse EvaMessage enum name in INI
-    static void parseEvaMessageFromIni( INI * ini, void *instance, void *store, const void* userData );
+	// Parse EvaMessage enum name in INI
+	static void parseEvaMessageFromIni( INI * ini, void *instance, void *store, const void* userData );
 
 	protected: 	// Note: These are all protected. They should *NEVER* be made public. They are for internal use only
 		Bool isTimeForCheck(EvaMessage messageToTest, UnsignedInt currentFrame) const;

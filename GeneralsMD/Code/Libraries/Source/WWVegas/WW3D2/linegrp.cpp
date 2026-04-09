@@ -237,7 +237,7 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 	Shader.Set_Cull_Mode(ShaderClass::CULL_MODE_ENABLE);
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-   float value_255 = 0.9961f;	//254 / 255
+	float value_255 = 0.9961f;	//254 / 255
 	bool default_white_opaque = (	DefaultLineColor.X > value_255 &&
 											DefaultLineColor.Y > value_255 &&
 											DefaultLineColor.Z > value_255 &&

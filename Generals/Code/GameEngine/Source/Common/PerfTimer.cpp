@@ -66,63 +66,63 @@ void InitPrecisionTimer()
 {
 #ifdef HOFFESOMMER_REPLACEMENT_CODE
 
-  // measure clock cycles 3 times for 20 msec each
-  // then take the 2 counts that are closest, average
-  _int64 n[ 3 ];
-  for( int k = 0; k < 3; k++ )
-  {
-    // wait for end of current tick
-    unsigned timeEnd = timeGetTime() + 2;
-    while( timeGetTime() < timeEnd ); //do nothing
+	// measure clock cycles 3 times for 20 msec each
+	// then take the 2 counts that are closest, average
+	_int64 n[ 3 ];
+	for( int k = 0; k < 3; k++ )
+	{
+		// wait for end of current tick
+		unsigned timeEnd = timeGetTime() + 2;
+		while( timeGetTime() < timeEnd ); //do nothing
 
-    // get cycles
-    _int64 start, startQPC, endQPC;
-    QueryPerformanceCounter( (LARGE_INTEGER *)&startQPC );
-    ProfileGetTime( start );
-    timeEnd += 20;
-    while( timeGetTime() < timeEnd ); //do nothing
-    ProfileGetTime( n[ k ] );
-    n[ k ] -= start;
+		// get cycles
+		_int64 start, startQPC, endQPC;
+		QueryPerformanceCounter( (LARGE_INTEGER *)&startQPC );
+		ProfileGetTime( start );
+		timeEnd += 20;
+		while( timeGetTime() < timeEnd ); //do nothing
+		ProfileGetTime( n[ k ] );
+		n[ k ] -= start;
 
-    // convert to 1 second
-    if( QueryPerformanceCounter( (LARGE_INTEGER*)&endQPC ) )
-    {
-      QueryPerformanceFrequency( (LARGE_INTEGER*)&s_ticksPerSec );
-      n[ k ] = ( n[ k ] * s_ticksPerSec ) / ( endQPC - startQPC );
-    }
-    else
-    {
-      n[ k ] = ( n[ k ] * 1000 ) / 20;
-    }
-  }
+		// convert to 1 second
+		if( QueryPerformanceCounter( (LARGE_INTEGER*)&endQPC ) )
+		{
+			QueryPerformanceFrequency( (LARGE_INTEGER*)&s_ticksPerSec );
+			n[ k ] = ( n[ k ] * s_ticksPerSec ) / ( endQPC - startQPC );
+		}
+		else
+		{
+			n[ k ] = ( n[ k ] * 1000 ) / 20;
+		}
+	}
 
-  // find two closest values
-  _int64 d01 = n[ 1 ] - n[ 0 ];
+	// find two closest values
+	_int64 d01 = n[ 1 ] - n[ 0 ];
 	_int64 d02 = n[ 2 ] - n[ 0 ];
 	_int64 d12 = n[ 2 ] - n[ 1 ];
 
-  if( d01 < 0 )
+	if( d01 < 0 )
 	{
 		d01 = -d01;
 	}
-  if( d02 < 0 )
+	if( d02 < 0 )
 	{
 		d02 = -d02;
 	}
-  if( d12 < 0 )
+	if( d12 < 0 )
 	{
 		d12 = -d12;
 	}
 
-  _int64 avg;
-  if( d01 < d02 )
-  {
-    avg = d01 < d12 ? n[ 0 ] + n[ 1 ] : n[ 1 ] + n[ 2 ];
-  }
-  else
-  {
-    avg = d02 < d12 ? n[ 0 ] + n[ 2 ] : n[ 1 ] + n[ 2 ];
-  }
+	_int64 avg;
+	if( d01 < d02 )
+	{
+		avg = d01 < d12 ? n[ 0 ] + n[ 1 ] : n[ 1 ] + n[ 2 ];
+	}
+	else
+	{
+		avg = d02 < d12 ? n[ 0 ] + n[ 2 ] : n[ 1 ] + n[ 2 ];
+	}
 
 	//s_ticksPerMSec = 1.0 * TotalTicks / totalTime;
 	s_ticksPerMSec = avg / 2000.0f;

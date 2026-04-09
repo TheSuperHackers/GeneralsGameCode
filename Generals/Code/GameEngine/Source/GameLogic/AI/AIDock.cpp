@@ -149,10 +149,10 @@ void AIDockMachine::loadPostProcess()
 // ------------------------------------------------------------------------------------------------
 void AIDockApproachState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	if (version>=2) {
 		AIInternalMoveToState::xfer(xfer);
@@ -406,7 +406,7 @@ StateReturnType AIDockMoveToEntryState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
-  DockUpdateInterface *dock = nullptr;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 
@@ -774,7 +774,7 @@ StateReturnType AIDockMoveToRallyState::onEnter()
 {
 	Object *goalObject = getMachineGoalObject();
 
-  DockUpdateInterface *dock = nullptr;
+	DockUpdateInterface *dock = nullptr;
 	if( goalObject )
 		dock = goalObject->getDockUpdateInterface();
 

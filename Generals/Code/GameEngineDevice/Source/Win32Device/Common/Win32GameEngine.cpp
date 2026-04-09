@@ -128,7 +128,7 @@ void Win32GameEngine::update()
 void Win32GameEngine::serviceWindowsOS()
 {
 	MSG msg;
-  Int returnValue;
+	Int returnValue;
 
 	//
 	// see if we have any messages to process, a nullptr window handle tells the

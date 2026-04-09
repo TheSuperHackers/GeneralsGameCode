@@ -694,14 +694,14 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 	// register the window class
 
-  WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
+	WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
                        LoadIcon (hInstance, MAKEINTRESOURCE(IDI_ApplicationIcon)),
                        nullptr/*LoadCursor(nullptr, IDC_ARROW)*/,
                        (HBRUSH)GetStockObject(BLACK_BRUSH), nullptr,
 	                     TEXT("Game Window") };
-  RegisterClass( &wndClass );
+	RegisterClass( &wndClass );
 
-   // Create our main window
+	// Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed)
 		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_CAPTION;
@@ -722,7 +722,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 	gInitializing = true;
 
-  HWND hWnd = CreateWindow( TEXT("Game Window"),
+	HWND hWnd = CreateWindow( TEXT("Game Window"),
                             TEXT("Command and Conquer Generals"),
                             windowStyle,
 														(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2), // original position X
@@ -794,7 +794,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Int exitcode = 1;
 
 #ifdef RTS_PROFILE
-  Profile::StartRange("init");
+	Profile::StartRange("init");
 #endif
 
 	try {

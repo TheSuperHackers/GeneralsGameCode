@@ -106,8 +106,8 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	if (m_locomotorTemplates.empty())
 		return nullptr;
 
-  LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(t);
-  if (it == m_locomotorTemplates.end())
+	LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(t);
+	if (it == m_locomotorTemplates.end())
 	{
 		return nullptr;
 	}
@@ -120,7 +120,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 //-------------------------------------------------------------------------------------------------
 /*static*/ void AIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -133,7 +133,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 #endif
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1571,7 +1571,7 @@ Bool AIUpdateInterface::canComputeQuickPath()
 	// Note - if a truck happens to pop into the air and gets a move to command, it still
 	// needs to pathfind.  So only skip pathfinding for airborne things that can fly... jba.
 	if (!(m_locomotorSet.getValidSurfaces() & LOCOMOTORSURFACE_AIR))
-  {
+	{
 		landBound = TRUE;
 	}
 
@@ -1779,7 +1779,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 	// Note - if a truck happens to pop into the air and gets a move to command, it still
 	// needs to pathfind.  So only skip pathfinding for airborne things that can fly... jba.
 	if (!(m_locomotorSet.getValidSurfaces() & LOCOMOTORSURFACE_AIR))
-  {
+	{
 		landBound = TRUE;
 	}
 
@@ -3587,7 +3587,7 @@ void AIUpdateInterface::privateResumeConstruction( Object *obj, CommandSourceTyp
 void AIUpdateInterface::privateGetHealed( Object *healDepot, CommandSourceType cmdSource )
 {
 
-  // sanity, if we can't get healed from here get outta here
+	// sanity, if we can't get healed from here get outta here
 	if( TheActionManager->canGetHealedAt( getObject(), healDepot, cmdSource ) == FALSE )
 		return;
 
@@ -4816,13 +4816,13 @@ void AIUpdateInterface::crc( Xfer *x )
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::xfer( Xfer *xfer )
 {
-  // version
-  const XferVersion currentVersion = 4;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 4;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
-  UpdateModule::xfer( xfer );
+	// extend base class
+	UpdateModule::xfer( xfer );
 
 	xfer->xferUnsignedInt(&m_priorWaypointID);
 	xfer->xferUnsignedInt(&m_currentWaypointID);

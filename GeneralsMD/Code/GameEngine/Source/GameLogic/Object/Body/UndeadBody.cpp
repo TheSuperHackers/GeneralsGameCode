@@ -40,13 +40,13 @@
 //-------------------------------------------------------------------------------------------------
 void UndeadBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ActiveBodyModuleData::buildFieldParse(p);
+	ActiveBodyModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "SecondLifeMaxHealth",			INI::parseReal,	nullptr,		offsetof( UndeadBodyModuleData, m_secondLifeMaxHealth ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

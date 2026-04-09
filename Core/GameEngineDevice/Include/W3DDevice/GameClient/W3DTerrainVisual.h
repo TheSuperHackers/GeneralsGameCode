@@ -125,24 +125,24 @@ public:
 	/// Replace the skybox texture
 	virtual void replaceSkyboxTextures(const AsciiString *oldTexName[NumSkyboxTextures], const AsciiString *newTexName[NumSkyboxTextures]) override;
 
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
 #ifdef DO_SEISMIC_SIMULATIONS
-  virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
+	virtual void addSeismicSimulation( const SeismicSimulationNode& sim );
 #endif
-  virtual WorldHeightMap* getLogicHeightMap() override {return m_logicHeightMap;};
-  virtual WorldHeightMap* getClientHeightMap() override
-  {
+	virtual WorldHeightMap* getLogicHeightMap() override {return m_logicHeightMap;};
+	virtual WorldHeightMap* getClientHeightMap() override
+	{
 #ifdef DO_SEISMIC_SIMULATIONS
-    return m_clientHeightMap;
+		return m_clientHeightMap;
 #else
-    return m_logicHeightMap;
+		return m_logicHeightMap;
 #endif
-  }
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
+	}
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
 
 protected:
 
@@ -152,30 +152,30 @@ protected:
 	virtual void loadPostProcess() override;
 
 #ifdef DO_SEISMIC_SIMULATIONS
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  virtual void handleSeismicSimulations();
-  SeismicSimulationList m_seismicSimulationList;
-  virtual void updateSeismicSimulations(); /// walk the SeismicSimulationList and, well, do it.
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	virtual void handleSeismicSimulations();
+	SeismicSimulationList m_seismicSimulationList;
+	virtual void updateSeismicSimulations(); /// walk the SeismicSimulationList and, well, do it.
 
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
+	////////////////////////////////////////////////////
 #endif
 
 	BaseHeightMapRenderObjClass *m_terrainRenderObject;  ///< W3D render object for terrain
 	WaterRenderObjClass	*m_waterRenderObject;	///< W3D render object for water plane
 
-  WorldHeightMap *m_logicHeightMap;  ///< height map used for render obj building
+	WorldHeightMap *m_logicHeightMap;  ///< height map used for render obj building
 
 #ifdef DO_SEISMIC_SIMULATIONS
-  WorldHeightMap *m_clientHeightMap; ///< this is a workspace for animating the terrain elevations
+	WorldHeightMap *m_clientHeightMap; ///< this is a workspace for animating the terrain elevations
 #endif
 
 	Bool m_isWaterGridRenderingEnabled;
 
-  AsciiString	m_currentSkyboxTexNames[NumSkyboxTextures];	///<store current texture names applied to skybox.
+	AsciiString	m_currentSkyboxTexNames[NumSkyboxTextures];	///<store current texture names applied to skybox.
 	AsciiString m_initialSkyboxTexNames[NumSkyboxTextures];	///<store starting texture/default skybox textures.
 
 };

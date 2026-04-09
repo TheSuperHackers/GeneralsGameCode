@@ -50,7 +50,7 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void TechBuildingBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -59,7 +59,7 @@ TechBuildingBehaviorModuleData::TechBuildingBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

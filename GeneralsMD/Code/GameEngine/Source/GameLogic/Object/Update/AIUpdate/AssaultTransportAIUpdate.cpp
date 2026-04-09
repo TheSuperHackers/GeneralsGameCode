@@ -65,8 +65,8 @@ void AssaultTransportAIUpdate::reset()
 		m_newMember[ i ] = FALSE;
 	}
 	m_currentMembers = 0;
-  m_attackMoveGoalPos.zero();
-  m_designatedTarget = INVALID_ID;
+	m_attackMoveGoalPos.zero();
+	m_designatedTarget = INVALID_ID;
 	m_state = IDLE;
 	m_framesRemaining = 0;
 	m_isAttackMove = FALSE;
@@ -496,12 +496,12 @@ void AssaultTransportAIUpdate::crc( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferInt( &m_currentMembers );
@@ -530,7 +530,7 @@ void AssaultTransportAIUpdate::xfer( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 void AssaultTransportAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 

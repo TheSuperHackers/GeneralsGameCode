@@ -519,8 +519,8 @@ LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namekey)
 	if (namekey == NAMEKEY_INVALID)
 		return nullptr;
 
-  LocomotorTemplateMap::iterator it = m_locomotorTemplates.find(namekey);
-  if (it == m_locomotorTemplates.end())
+	LocomotorTemplateMap::iterator it = m_locomotorTemplates.find(namekey);
+	if (it == m_locomotorTemplates.end())
 		return nullptr;
 	else
 		return (*it).second;
@@ -532,8 +532,8 @@ const LocomotorTemplate* LocomotorStore::findLocomotorTemplate(NameKeyType namek
 	if (namekey == NAMEKEY_INVALID)
 		return nullptr;
 
-  LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(namekey);
-  if (it == m_locomotorTemplates.end())
+	LocomotorTemplateMap::const_iterator it = m_locomotorTemplates.find(namekey);
+	if (it == m_locomotorTemplates.end())
 	{
 		return nullptr;
 	}

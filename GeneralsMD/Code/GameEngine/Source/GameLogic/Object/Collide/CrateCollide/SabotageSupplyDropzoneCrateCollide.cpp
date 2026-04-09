@@ -131,7 +131,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_DROP_ZONE );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_DROP_ZONE );
 
 	//Reset the timer on the dropzone. Um... only the dropzone has an OCLUpdate and one, so
 	//we can "assume" it's going to be safe. Otherwise, we'll have to write code to search for

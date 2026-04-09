@@ -82,10 +82,10 @@ static_assert(ARRAY_SIZE(TheHordeActionTypeNames) == HORDEACTION_COUNT + 1, "Inc
 class HordeUpdateModuleData : public ModuleData
 {
 public:
-  UnsignedInt								m_updateRate;   ///< how often to recheck our horde status
+		UnsignedInt								m_updateRate;   ///< how often to recheck our horde status
 	KindOfMaskType						m_kindof;				///< the kind(s) of units that count towards hordeness
 	Int												m_minCount;		  ///< min count to get "horde" status
-  Real											m_minDist;      ///< min dist to contribute to hordeness
+		Real											m_minDist;      ///< min dist to contribute to hordeness
 	Bool											m_alliesOnly;		///< if true, only allied units count towards hordeness
 	Bool											m_exactMatch;		///< if true, only exact same type of units count towards hordeness
 	Real											m_rubOffRadius;///< If I am this close to another guy who is a true hordesman, it'll rub off on me

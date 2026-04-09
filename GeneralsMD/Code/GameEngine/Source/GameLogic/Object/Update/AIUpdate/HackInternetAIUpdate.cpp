@@ -216,12 +216,12 @@ void HackInternetAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HackInternetAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 	xfer->xferBool(&m_hasPendingCommand);
 	if (m_hasPendingCommand) {
@@ -234,7 +234,7 @@ void HackInternetAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HackInternetAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 
@@ -271,10 +271,10 @@ void UnpackingState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void UnpackingState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
 }
@@ -360,10 +360,10 @@ void PackingState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void PackingState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
 }
@@ -436,10 +436,10 @@ void HackInternetState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HackInternetState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_framesRemaining);
 }
@@ -555,14 +555,14 @@ StateReturnType HackInternetState::update()
 					pos.z += 20.0f; //add a little z to make it show up above the unit.
 
 
-          Object *internetCenter = owner->getContainedBy();
-          if ( internetCenter )
-          {
-            Real width = internetCenter->getGeometryInfo().getMajorRadius() * 0.3f;
-            Real depth = internetCenter->getGeometryInfo().getMinorRadius() * 0.3f;
-            pos.x += GameClientRandomValue(-width,width);
-            pos.y += GameClientRandomValue(-depth,depth);
-          }
+					Object *internetCenter = owner->getContainedBy();
+					if ( internetCenter )
+					{
+						Real width = internetCenter->getGeometryInfo().getMajorRadius() * 0.3f;
+						Real depth = internetCenter->getGeometryInfo().getMinorRadius() * 0.3f;
+						pos.x += GameClientRandomValue(-width,width);
+						pos.y += GameClientRandomValue(-depth,depth);
+					}
 
 
 					TheInGameUI->addFloatingText( moneyString, &pos, GameMakeColor( 0, 255, 0, 255 ) );

@@ -109,15 +109,15 @@ public:
 	MultiplayerColorDefinition * getColor(Int which);
 
 
-  const Money & getDefaultStartingMoney() const
-  {
-    DEBUG_ASSERTCRASH( m_gotDefaultStartingMoney, ("You must specify a default starting money amount in multiplayer.ini") );
-    return m_defaultStartingMoney;
-  }
+	const Money & getDefaultStartingMoney() const
+	{
+		DEBUG_ASSERTCRASH( m_gotDefaultStartingMoney, ("You must specify a default starting money amount in multiplayer.ini") );
+		return m_defaultStartingMoney;
+	}
 
-  const MultiplayerStartingMoneyList & getStartingMoneyList() const { return m_startingMoneyList; }
+	const MultiplayerStartingMoneyList & getStartingMoneyList() const { return m_startingMoneyList; }
 
-  void addStartingMoneyChoice( const Money & money, Bool isDefault );
+	void addStartingMoneyChoice( const Money & money, Bool isDefault );
 
 private:
 	Int m_initialCreditsMin;
@@ -133,9 +133,9 @@ private:
 	Int m_numColors;
 	MultiplayerColorDefinition m_observerColor;
 	MultiplayerColorDefinition m_randomColor;
-  MultiplayerStartingMoneyList      m_startingMoneyList;
-  Money                             m_defaultStartingMoney;
-  Bool                              m_gotDefaultStartingMoney;
+	MultiplayerStartingMoneyList      m_startingMoneyList;
+	Money                             m_defaultStartingMoney;
+	Bool                              m_gotDefaultStartingMoney;
 };
 
 // singleton

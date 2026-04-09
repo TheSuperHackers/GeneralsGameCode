@@ -200,35 +200,35 @@ static void saveData( HWND hWndDialog )
 char *saveAsDialog( void )
 {
 	static char filename[ _MAX_PATH ];
-  OPENFILENAME ofn;
-  Bool returnCode;
-  char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"  \
+	OPENFILENAME ofn;
+	Bool returnCode;
+	char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"  \
                   "All Files (*.*)\0*.*\0\0" ;
 
-  ofn.lStructSize       = sizeof( OPENFILENAME );
-  ofn.hwndOwner         = TheEditor->getWindowHandle();
-  ofn.hInstance         = nullptr;
-  ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = nullptr;
-  ofn.nMaxCustFilter    = 0;
-  ofn.nFilterIndex      = 0;
-  ofn.lpstrFile         = filename;
-  ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = nullptr;
-  ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = nullptr;
-  ofn.lpstrTitle        = nullptr;
-  ofn.Flags             = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-  ofn.nFileOffset       = 0;
-  ofn.nFileExtension    = 0;
-  ofn.lpstrDefExt       = "ls";
-  ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = nullptr ;
-  ofn.lpTemplateName    = nullptr ;
+	ofn.lStructSize       = sizeof( OPENFILENAME );
+	ofn.hwndOwner         = TheEditor->getWindowHandle();
+	ofn.hInstance         = nullptr;
+	ofn.lpstrFilter       = filter;
+	ofn.lpstrCustomFilter = nullptr;
+	ofn.nMaxCustFilter    = 0;
+	ofn.nFilterIndex      = 0;
+	ofn.lpstrFile         = filename;
+	ofn.nMaxFile          = _MAX_PATH;
+	ofn.lpstrFileTitle    = nullptr;
+	ofn.nMaxFileTitle     = 0;
+	ofn.lpstrInitialDir   = nullptr;
+	ofn.lpstrTitle        = nullptr;
+	ofn.Flags             = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.nFileOffset       = 0;
+	ofn.nFileExtension    = 0;
+	ofn.lpstrDefExt       = "ls";
+	ofn.lCustData         = 0L ;
+	ofn.lpfnHook          = nullptr ;
+	ofn.lpTemplateName    = nullptr ;
 
-  returnCode = GetSaveFileName( &ofn );
+	returnCode = GetSaveFileName( &ofn );
 
-  if( returnCode )
+	if( returnCode )
 		return filename;
 	else
 		return nullptr;
@@ -242,35 +242,35 @@ char *saveAsDialog( void )
 char *openDialog( void )
 {
 	static char filename[ _MAX_PATH ];
-  OPENFILENAME ofn;
-  Bool returnCode;
-  char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"  \
+	OPENFILENAME ofn;
+	Bool returnCode;
+	char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"  \
                   "All Files (*.*)\0*.*\0\0" ;
 
-  ofn.lStructSize       = sizeof( OPENFILENAME );
-  ofn.hwndOwner         = TheEditor->getWindowHandle();
-  ofn.hInstance         = nullptr;
-  ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = nullptr;
-  ofn.nMaxCustFilter    = 0;
-  ofn.nFilterIndex      = 0;
-  ofn.lpstrFile         = filename;
-  ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = nullptr;
-  ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = nullptr;
-  ofn.lpstrTitle        = nullptr;
-  ofn.Flags             = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-  ofn.nFileOffset       = 0;
-  ofn.nFileExtension    = 0;
-  ofn.lpstrDefExt       = "ls";
-  ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = nullptr ;
-  ofn.lpTemplateName    = nullptr ;
+	ofn.lStructSize       = sizeof( OPENFILENAME );
+	ofn.hwndOwner         = TheEditor->getWindowHandle();
+	ofn.hInstance         = nullptr;
+	ofn.lpstrFilter       = filter;
+	ofn.lpstrCustomFilter = nullptr;
+	ofn.nMaxCustFilter    = 0;
+	ofn.nFilterIndex      = 0;
+	ofn.lpstrFile         = filename;
+	ofn.nMaxFile          = _MAX_PATH;
+	ofn.lpstrFileTitle    = nullptr;
+	ofn.nMaxFileTitle     = 0;
+	ofn.lpstrInitialDir   = nullptr;
+	ofn.lpstrTitle        = nullptr;
+	ofn.Flags             = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.nFileOffset       = 0;
+	ofn.nFileExtension    = 0;
+	ofn.lpstrDefExt       = "ls";
+	ofn.lCustData         = 0L ;
+	ofn.lpfnHook          = nullptr ;
+	ofn.lpTemplateName    = nullptr ;
 
-  returnCode = GetOpenFileName( &ofn );
+	returnCode = GetOpenFileName( &ofn );
 
-  if( returnCode )
+	if( returnCode )
 		return filename;
 	else
 		return nullptr;
@@ -309,8 +309,8 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 //			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 //			HWND hWndControl = (HWND)lParam;  // control window handle

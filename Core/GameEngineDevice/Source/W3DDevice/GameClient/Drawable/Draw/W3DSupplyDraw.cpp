@@ -44,7 +44,7 @@ W3DSupplyDrawModuleData::~W3DSupplyDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DSupplyDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -52,7 +52,7 @@ void W3DSupplyDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

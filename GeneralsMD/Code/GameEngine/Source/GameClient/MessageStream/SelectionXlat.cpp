@@ -277,7 +277,7 @@ SelectionTranslator::SelectionTranslator()
 	TheSelectionTranslator = this;
 
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-  m_HandOfGodSelectionMode = FALSE;
+	m_HandOfGodSelectionMode = FALSE;
 #endif
 }
 
@@ -647,44 +647,44 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			{
 				si.selectMine = TRUE;
 
-        // EXACTLY ONE CLICKED OR DRAGGED BUILDING
+				// EXACTLY ONE CLICKED OR DRAGGED BUILDING
 				if ( si.newCountMineBuildings == 1 && si.newCountMine == 1 )
 				{
 					addToGroup = FALSE;
 					si.selectMineBuildings = TRUE;
-        }
-        else if ( si.newCountMineBuildings > 0 )////////////// SO SORRY, I KNOW THIS IS MICKEY MOUSE ///////////////////
-        { // What we are after here is to allow the drag select to get the building,
-          // if the other things in the list are going to be ignored anyway
-          // so we find out whether the other things are not selectible
-          // this came up with the new AmericaBuildingFireBase, which shows its contained
-          // but does not let you select them. The selection is propagated to the container
-          // in new code in SelectionInfo.cpp, in the static addDrawableToList();
-          // -Mark Lorenzen, 6/12/03
-          Bool onlyTheOneBuildingIsSelectableAnyway = TRUE;
-          DrawableID buildingID = INVALID_DRAWABLE_ID;
-          for (DrawableListIt it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
+				}
+				else if ( si.newCountMineBuildings > 0 )////////////// SO SORRY, I KNOW THIS IS MICKEY MOUSE ///////////////////
+				{ // What we are after here is to allow the drag select to get the building,
+					// if the other things in the list are going to be ignored anyway
+					// so we find out whether the other things are not selectible
+					// this came up with the new AmericaBuildingFireBase, which shows its contained
+					// but does not let you select them. The selection is propagated to the container
+					// in new code in SelectionInfo.cpp, in the static addDrawableToList();
+					// -Mark Lorenzen, 6/12/03
+					Bool onlyTheOneBuildingIsSelectableAnyway = TRUE;
+					DrawableID buildingID = INVALID_DRAWABLE_ID;
+					for (DrawableListIt it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
 				  {
-            const Drawable *d = *it;
-            if ( d->isKindOf( KINDOF_STRUCTURE ) )
-            {// make sure there is really only the one building in the list, as it may be multiply listed
+						const Drawable *d = *it;
+						if ( d->isKindOf( KINDOF_STRUCTURE ) )
+						{// make sure there is really only the one building in the list, as it may be multiply listed
 
-              if ( buildingID == INVALID_DRAWABLE_ID ) // this is the first building
-                buildingID = d->getID();
-              else if ( buildingID != d->getID() )//oops, more than one building!
-                onlyTheOneBuildingIsSelectableAnyway = FALSE;
-            }
+							if ( buildingID == INVALID_DRAWABLE_ID ) // this is the first building
+							buildingID = d->getID();
+							else if ( buildingID != d->getID() )//oops, more than one building!
+							onlyTheOneBuildingIsSelectableAnyway = FALSE;
+						}
 					  else if ( d->isSelectable() )
-              onlyTheOneBuildingIsSelectableAnyway = FALSE;
+						onlyTheOneBuildingIsSelectableAnyway = FALSE;
 
-            if ( ! onlyTheOneBuildingIsSelectableAnyway )
-              break;
-          }
-          if ( onlyTheOneBuildingIsSelectableAnyway )
-          {
+						if ( ! onlyTheOneBuildingIsSelectableAnyway )
+						break;
+					}
+					if ( onlyTheOneBuildingIsSelectableAnyway )
+					{
 					  addToGroup = FALSE;
 					  si.selectMineBuildings = TRUE;
-          }
+					}
 				}
 
 			}
@@ -831,7 +831,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 #if defined(RTS_DEBUG)
 
 
-          if (m_HandOfGodSelectionMode && draw)
+					if (m_HandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
 						if (obj)
@@ -845,7 +845,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					}
 					else
 
-          if (TheHurtSelectionMode && draw)
+					if (TheHurtSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
 						if (obj)
@@ -879,7 +879,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-          if (m_HandOfGodSelectionMode && draw)
+					if (m_HandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
 						if (obj)
@@ -894,7 +894,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 #endif
 
 
-        }
+				}
 			}
 
 			if (disp == DESTROY_MESSAGE)

@@ -48,9 +48,9 @@ class BattlePlanUpdateModuleData : public ModuleData
 public:
 	SpecialPowerTemplate *m_specialPowerTemplate;
 
-  UnsignedInt m_bombardmentPlanAnimationFrames;
-  UnsignedInt m_holdTheLinePlanAnimationFrames;
-  UnsignedInt m_searchAndDestroyPlanAnimationFrames;
+	UnsignedInt m_bombardmentPlanAnimationFrames;
+	UnsignedInt m_holdTheLinePlanAnimationFrames;
+	UnsignedInt m_searchAndDestroyPlanAnimationFrames;
 	UnsignedInt m_transitionIdleFrames;
 
 	AsciiString	m_bombardmentUnpackName;

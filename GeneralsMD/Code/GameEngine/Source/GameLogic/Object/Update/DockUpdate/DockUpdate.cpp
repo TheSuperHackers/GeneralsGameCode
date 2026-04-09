@@ -59,7 +59,7 @@ DockUpdateModuleData::DockUpdateModuleData()
 
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

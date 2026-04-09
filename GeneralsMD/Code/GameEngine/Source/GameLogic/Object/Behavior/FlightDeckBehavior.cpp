@@ -149,7 +149,7 @@ FlightDeckBehavior::FlightDeckBehavior( Thing *thing, const ModuleData* moduleDa
 		m_rampUp[ i ] = FALSE;
 	}
 
-  m_thingTemplate = nullptr;
+	m_thingTemplate = nullptr;
 
 }
 

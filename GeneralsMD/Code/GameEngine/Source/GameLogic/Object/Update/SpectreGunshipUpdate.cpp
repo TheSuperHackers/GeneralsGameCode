@@ -87,11 +87,11 @@ SpectreGunshipUpdateModuleData::SpectreGunshipUpdateModuleData()
 /*************/  m_orbitFrames                  = 0;
 /*************/  m_targetingReticleRadius       = 25.0f;
 /*************/  m_gunshipOrbitRadius           = 250.0f;
-  m_strafingIncrement = 20.0f;
-  m_orbitInsertionSlope = 0.7f;
-  m_howitzerFiringRate = 10;
-  m_howitzerFollowLag = 0;
-  m_randomOffsetForHowitzer = 20.0f;
+	m_strafingIncrement = 20.0f;
+	m_orbitInsertionSlope = 0.7f;
+	m_howitzerFiringRate = 10;
+	m_howitzerFollowLag = 0;
+	m_randomOffsetForHowitzer = 20.0f;
 }
 
 static Real zero = 0.0f;
@@ -130,19 +130,19 @@ static Real zero = 0.0f;
 SpectreGunshipUpdate::SpectreGunshipUpdate( Thing *thing, const ModuleData* moduleData ) : SpecialPowerUpdateModule( thing, moduleData )
 {
 	m_specialPowerModule = nullptr;
-  m_gattlingID = INVALID_ID;
+	m_gattlingID = INVALID_ID;
 	m_status = GUNSHIP_STATUS_IDLE;
 	m_initialTargetPosition.zero();
 	m_overrideTargetDestination.zero();
-  m_gattlingTargetPosition.zero();
-  m_positionToShootAt.zero();
+	m_gattlingTargetPosition.zero();
+	m_positionToShootAt.zero();
 	m_attackAreaDecal.clear();
 	m_targetingReticleDecal.clear();
-  m_orbitEscapeFrame = 0;
+	m_orbitEscapeFrame = 0;
 	m_afterburnerSound = *(getObject()->getTemplate()->getPerUnitSound("Afterburner"));
 	m_howitzerFireSound = *(getObject()->getTemplate()->getPerUnitSound("HowitzerFire"));
 
-  m_okToFireHowitzerCounter = 0;
+	m_okToFireHowitzerCounter = 0;
 
 #if defined TRACKERS
 m_howitzerTrackerDecal.clear();
@@ -177,7 +177,7 @@ void SpectreGunshipUpdate::onObjectCreated()
 	}
 
 	m_specialPowerModule = obj->getSpecialPowerModule( data->m_specialPowerTemplate );
-  m_satellitePosition.set( obj->getPosition() );
+	m_satellitePosition.set( obj->getPosition() );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ Bool SpectreGunshipUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemp
 	{
 		m_initialTargetPosition.set( targetPos );
 		m_overrideTargetDestination.set( targetPos );
-    m_gattlingTargetPosition.set( targetPos );
+		m_gattlingTargetPosition.set( targetPos );
 	}
 	else
 	{
@@ -206,56 +206,56 @@ Bool SpectreGunshipUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemp
 	}
 
 
-  Object * gunShip = getObject();
+	Object * gunShip = getObject();
 
 
-  if ( gunShip )
-  {
-    // MAKE TWEAKS TO AI SO SHIP MOVES PRETTY
-    AIUpdateInterface *shipAI = gunShip->getAIUpdateInterface();
-    if ( shipAI)
-    {
-     shipAI->chooseLocomotorSet( LOCOMOTORSET_PANIC );
+	if ( gunShip )
+	{
+		// MAKE TWEAKS TO AI SO SHIP MOVES PRETTY
+		AIUpdateInterface *shipAI = gunShip->getAIUpdateInterface();
+		if ( shipAI)
+		{
+			shipAI->chooseLocomotorSet( LOCOMOTORSET_PANIC );
 	    shipAI->getCurLocomotor()->setAllowInvalidPosition(TRUE);
 	    shipAI->getCurLocomotor()->setUltraAccurate(TRUE);	// set ultra-accurate just so AI won't try to adjust our dest
-    }
+		}
 
-    Drawable *draw = gunShip->getDrawable();
-    if ( draw )
-      draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
-    friend_enableAfterburners(TRUE);
+		Drawable *draw = gunShip->getDrawable();
+		if ( draw )
+		draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
+		friend_enableAfterburners(TRUE);
 
-    setLogicalStatus( GUNSHIP_STATUS_INSERTING ); // The gunship is en route to the tharget area, from map-edge
+		setLogicalStatus( GUNSHIP_STATUS_INSERTING ); // The gunship is en route to the tharget area, from map-edge
 
 
-    // TELL THE GUNNERS ABOARD THE GUNSHIP TO HOLD THEIR FIRE UNTIL ORBIT INSERTION
-        ContainModuleInterface *shipContain = gunShip->getContain();
-    if ( shipContain )
-    {
+		// TELL THE GUNNERS ABOARD THE GUNSHIP TO HOLD THEIR FIRE UNTIL ORBIT INSERTION
+		ContainModuleInterface *shipContain = gunShip->getContain();
+		if ( shipContain )
+		{
 
-      Object *newGattling = TheGameLogic->findObjectByID( m_gattlingID );
+			Object *newGattling = TheGameLogic->findObjectByID( m_gattlingID );
 	    const ThingTemplate *gattlingTemplate = TheThingFactory->findTemplate( data->m_gattlingTemplateName );
 	    if( newGattling != nullptr )
-      {
-        m_gattlingID = INVALID_ID;
-        newGattling = nullptr;
-      }
-      if ( gattlingTemplate )
-      {
-        newGattling = TheThingFactory->newObject( gattlingTemplate, getObject()->getTeam() );
-        DEBUG_ASSERTCRASH( gunShip, ("SpecterGunshipUpdate failed to find or create a GATTLING object"));
-        shipContain->addToContain( newGattling );
-        m_gattlingID = newGattling->getID();
-      }
+			{
+				m_gattlingID = INVALID_ID;
+				newGattling = nullptr;
+			}
+			if ( gattlingTemplate )
+			{
+				newGattling = TheThingFactory->newObject( gattlingTemplate, getObject()->getTeam() );
+				DEBUG_ASSERTCRASH( gunShip, ("SpecterGunshipUpdate failed to find or create a GATTLING object"));
+				shipContain->addToContain( newGattling );
+				m_gattlingID = newGattling->getID();
+			}
 
 
-      Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-      if ( gattling )
-        gattling->setDisabled ( DISABLED_PARALYZED );
+			Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
+			if ( gattling )
+			gattling->setDisabled ( DISABLED_PARALYZED );
 
-    }
+		}
 
-  }
+	}
 
 
 	data->m_attackAreaDecalTemplate.createRadiusDecal( *getObject()->getPosition(), data->m_attackAreaRadius, getObject()->getControllingPlayer(), m_attackAreaDecal);
@@ -356,106 +356,106 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 {
 	const SpectreGunshipUpdateModuleData *data = getSpectreGunshipUpdateModuleData();
 
-   Object *gunship = getObject();
-   if ( gunship )
-   {
+	Object *gunship = getObject();
+	if ( gunship )
+	{
 
 
-      if ( gunship->isEffectivelyDead() )
-        return UPDATE_SLEEP_FOREVER;
+		if ( gunship->isEffectivelyDead() )
+		return UPDATE_SLEEP_FOREVER;
 
 
 
 
-      m_attackAreaDecal.update();
-      m_targetingReticleDecal.update();
+		m_attackAreaDecal.update();
+		m_targetingReticleDecal.update();
 #if defined TRACKERS
 	    m_howitzerTrackerDecal.update();
 #endif
 
-      AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
-      AIUpdateInterface *gattlingAI = nullptr;
+		AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
+		AIUpdateInterface *gattlingAI = nullptr;
 
-      Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-      if ( gattling )
-      {
+		Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
+		if ( gattling )
+		{
 				gattlingAI = gattling->getAIUpdateInterface();
-      }
+		}
 
 
 
-      if ( m_status == GUNSHIP_STATUS_INSERTING || m_status == GUNSHIP_STATUS_ORBITING )
-      {
+		if ( m_status == GUNSHIP_STATUS_INSERTING || m_status == GUNSHIP_STATUS_ORBITING )
+		{
 
 
-  //   init'l    apogee
-  //   target *<-------->*
-  //    posi  ^\         /
-  //          | \      /
-  //  perigee |  \   /
-  //          |   */ declination
-  //          |  / \
-  //          v/    * m_satelliteposition
-  //          *
-  //          |
-  //          |
-  //          |
-  //          |
-  //          |
-  //          * gunship->getPosition()
+			//   init'l    apogee
+			//   target *<-------->*
+			//    posi  ^\         /
+			//          | \      /
+			//  perigee |  \   /
+			//          |   */ declination
+			//          |  / \
+			//          v/    * m_satelliteposition
+			//          *
+			//          |
+			//          |
+			//          |
+			//          |
+			//          |
+			//          * gunship->getPosition()
 
-        //perigee is the point in the orbital arc nearest the satellite being captured
-        Coord3D perigee = *gunship->getPosition();
-        perigee.sub( &m_initialTargetPosition );
-        perigee.z = zero;
-        Real distanceToTarget = perigee.length();
-        perigee.normalize();
+			//perigee is the point in the orbital arc nearest the satellite being captured
+			Coord3D perigee = *gunship->getPosition();
+			perigee.sub( &m_initialTargetPosition );
+			perigee.z = zero;
+			Real distanceToTarget = perigee.length();
+			perigee.normalize();
 
-        //apogee is the anteclockwise point farthest from the perigee line
-        Coord3D apogee;
-        apogee.z = zero;
-        apogee.x = -perigee.y;
-        apogee.y =  perigee.x;
+			//apogee is the anteclockwise point farthest from the perigee line
+			Coord3D apogee;
+			apogee.z = zero;
+			apogee.x = -perigee.y;
+			apogee.y =  perigee.x;
 
-        // declination intersects line [p][a], given an attack slope of n1/n2
-        Coord3D declination;
-        Real n1 = min( ORBIT_INSERTION_SLOPE_MAX, max(ORBIT_INSERTION_SLOPE_MIN, data->m_orbitInsertionSlope) );
-        Real n2 = ONE - n1;
-        declination.z = zero;
-        declination.x = ( perigee.x * n1 ) + ( apogee.x * n2 );
-        declination.y = ( perigee.y * n1 ) + ( apogee.y * n2 );
+			// declination intersects line [p][a], given an attack slope of n1/n2
+			Coord3D declination;
+			Real n1 = min( ORBIT_INSERTION_SLOPE_MAX, max(ORBIT_INSERTION_SLOPE_MIN, data->m_orbitInsertionSlope) );
+			Real n2 = ONE - n1;
+			declination.z = zero;
+			declination.x = ( perigee.x * n1 ) + ( apogee.x * n2 );
+			declination.y = ( perigee.y * n1 ) + ( apogee.y * n2 );
 
-        //scale out to the orbital radius
-        Real orbitalRadius = data->m_gunshipOrbitRadius;
-        declination.x *= orbitalRadius;
-        declination.y *= orbitalRadius;
+			//scale out to the orbital radius
+			Real orbitalRadius = data->m_gunshipOrbitRadius;
+			declination.x *= orbitalRadius;
+			declination.y *= orbitalRadius;
 
-        m_satellitePosition.x = m_initialTargetPosition.x + declination.x;
-        m_satellitePosition.y = m_initialTargetPosition.y + declination.y;
+			m_satellitePosition.x = m_initialTargetPosition.x + declination.x;
+			m_satellitePosition.y = m_initialTargetPosition.y + declination.y;
 
-        if ( shipAI)
-        {
-           shipAI->aiMoveToPosition( &m_satellitePosition, CMD_FROM_AI );
-        }
+			if ( shipAI)
+			{
+				shipAI->aiMoveToPosition( &m_satellitePosition, CMD_FROM_AI );
+			}
 
-        Real constraintRadius = data->m_attackAreaRadius - data->m_targetingReticleRadius;
+			Real constraintRadius = data->m_attackAreaRadius - data->m_targetingReticleRadius;
 
-        //Constrain Target Override to the targeting radius
-        Coord3D overrideTargetDelta = m_initialTargetPosition;
-        overrideTargetDelta.sub( &m_overrideTargetDestination );
-        if ( overrideTargetDelta.length() > constraintRadius )
-        {
-          overrideTargetDelta.normalize();
-          overrideTargetDelta.x *= constraintRadius;
-          overrideTargetDelta.y *= constraintRadius;
+			//Constrain Target Override to the targeting radius
+			Coord3D overrideTargetDelta = m_initialTargetPosition;
+			overrideTargetDelta.sub( &m_overrideTargetDestination );
+			if ( overrideTargetDelta.length() > constraintRadius )
+			{
+				overrideTargetDelta.normalize();
+				overrideTargetDelta.x *= constraintRadius;
+				overrideTargetDelta.y *= constraintRadius;
 
-          m_overrideTargetDestination.x = m_initialTargetPosition.x - overrideTargetDelta.x;
-          m_overrideTargetDestination.y = m_initialTargetPosition.y - overrideTargetDelta.y;
+				m_overrideTargetDestination.x = m_initialTargetPosition.x - overrideTargetDelta.x;
+				m_overrideTargetDestination.y = m_initialTargetPosition.y - overrideTargetDelta.y;
 
-        }
+			}
 
-        m_attackAreaDecal.setPosition( m_initialTargetPosition );
-        m_targetingReticleDecal.setPosition( m_overrideTargetDestination );
+			m_attackAreaDecal.setPosition( m_initialTargetPosition );
+			m_targetingReticleDecal.setPosition( m_overrideTargetDestination );
 
 
 #if defined TRACKERS
@@ -463,56 +463,56 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 #endif
 
 
-        if ( (m_status == GUNSHIP_STATUS_INSERTING) && (distanceToTarget < orbitalRadius ) )// close enough to shoot
-        {
-          setLogicalStatus( GUNSHIP_STATUS_ORBITING );
-          m_orbitEscapeFrame = TheGameLogic->getFrame() + data->m_orbitFrames;
+			if ( (m_status == GUNSHIP_STATUS_INSERTING) && (distanceToTarget < orbitalRadius ) )// close enough to shoot
+			{
+				setLogicalStatus( GUNSHIP_STATUS_ORBITING );
+				m_orbitEscapeFrame = TheGameLogic->getFrame() + data->m_orbitFrames;
 
-          Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-          if ( gattling )
-            gattling->clearDisabled ( DISABLED_PARALYZED );
+				Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
+				if ( gattling )
+				gattling->clearDisabled ( DISABLED_PARALYZED );
 
-          AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
-          if ( shipAI)
-          {
-            shipAI->chooseLocomotorSet( LOCOMOTORSET_NORMAL );
+				AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
+				if ( shipAI)
+				{
+					shipAI->chooseLocomotorSet( LOCOMOTORSET_NORMAL );
 	          shipAI->getCurLocomotor()->setAllowInvalidPosition(TRUE);
 	          shipAI->getCurLocomotor()->setUltraAccurate(TRUE);	// set ultra-accurate just so AI won't try to adjust our dest
-          }
+				}
 
-          Drawable *draw = gunship->getDrawable();
-          if ( draw )
-            draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_CLOSING, MODELCONDITION_DOOR_1_OPENING );
-          friend_enableAfterburners(FALSE);
+				Drawable *draw = gunship->getDrawable();
+				if ( draw )
+				draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_CLOSING, MODELCONDITION_DOOR_1_OPENING );
+				friend_enableAfterburners(FALSE);
 
-        }
+			}
 
-      }
-
-
-      if ( m_status == GUNSHIP_STATUS_ORBITING )
-      {
-        Object *validTargetObject = nullptr;
+		}
 
 
-        if ( TheGameLogic->getFrame() >= m_orbitEscapeFrame )
-        {
-          cleanUp();
-          setLogicalStatus( GUNSHIP_STATUS_DEPARTING );
-
-          // CEASE FIRE, RETURN TO BASE
-          disengageAndDepartAO( gunship );
+		if ( m_status == GUNSHIP_STATUS_ORBITING )
+		{
+			Object *validTargetObject = nullptr;
 
 
-        }
-        else
-        {
+			if ( TheGameLogic->getFrame() >= m_orbitEscapeFrame )
+			{
+				cleanUp();
+				setLogicalStatus( GUNSHIP_STATUS_DEPARTING );
 
-          // ONLY EVERY FEW FRAMES DO WE RE_EVALUATE THE TARGET OBJECT
-          if ( TheGameLogic->getFrame() %data->m_howitzerFiringRate < ONE )
-          {
+				// CEASE FIRE, RETURN TO BASE
+				disengageAndDepartAO( gunship );
 
-            m_positionToShootAt = m_overrideTargetDestination; // unless we get a hit, below
+
+			}
+			else
+			{
+
+				// ONLY EVERY FEW FRAMES DO WE RE_EVALUATE THE TARGET OBJECT
+				if ( TheGameLogic->getFrame() %data->m_howitzerFiringRate < ONE )
+				{
+
+					m_positionToShootAt = m_overrideTargetDestination; // unless we get a hit, below
 
 	          PartitionFilterLiveMapEnemies filterObvious( gunship );
 	          PartitionFilterStealthedAndUndetected filterStealth( gunship, false );
@@ -528,7 +528,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
 
 
-            // THIS WILL FIND A VALID TARGET WITHIN THE TARGETING RETICLE
+					// THIS WILL FIND A VALID TARGET WITHIN THE TARGETING RETICLE
 	          ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(&m_overrideTargetDestination,
               data->m_targetingReticleRadius,
               FROM_BOUNDINGSPHERE_2D,
@@ -537,23 +537,23 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 	          MemoryPoolObjectHolder holder(iter);
 	          for (Object *theEnemy = iter->first(); theEnemy; theEnemy = iter->next())
 	          {
-              if ( theEnemy && isFairDistanceFromShip( theEnemy ) )
-              {
-                validTargetObject = theEnemy;
-                break;
-              }
+						if ( theEnemy && isFairDistanceFromShip( theEnemy ) )
+						{
+							validTargetObject = theEnemy;
+							break;
+						}
 	          }
 
 
 
-            // WE WANT THE WIDE_RANGE AUTOACQUIRE POWER DISABLED FOR HUMAN PLAYERS
-            // SO THAT THE SPECTREGUNSHIP REQUIRES BABYSITTING AT ALL TIMES
-            if (gunship->getControllingPlayer()->getPlayerType() != PLAYER_HUMAN )
-            {
-              if ( ! validTargetObject )
-              {
-                // set a flag to start the targeting decal fading, since there is nothing to kill there
-                // THIS WILL FIND A VALID TARGET ANYWHERE INSIDE THE TARGETING AREA (THE BIG CIRCLE)
+					// WE WANT THE WIDE_RANGE AUTOACQUIRE POWER DISABLED FOR HUMAN PLAYERS
+					// SO THAT THE SPECTREGUNSHIP REQUIRES BABYSITTING AT ALL TIMES
+					if (gunship->getControllingPlayer()->getPlayerType() != PLAYER_HUMAN )
+					{
+						if ( ! validTargetObject )
+						{
+							// set a flag to start the targeting decal fading, since there is nothing to kill there
+							// THIS WILL FIND A VALID TARGET ANYWHERE INSIDE THE TARGETING AREA (THE BIG CIRCLE)
 	              ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(&m_initialTargetPosition,
                   data->m_attackAreaRadius,
                   FROM_BOUNDINGSPHERE_2D,
@@ -562,84 +562,84 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 	              MemoryPoolObjectHolder holder(iter);
 	              for (Object *theEnemy = iter->first(); theEnemy; theEnemy = iter->next())
 	              {
-                  if ( theEnemy && isFairDistanceFromShip( theEnemy ) )
-                  {
-                    // WE GOT A HIT!!!! SHOOT HIM!
-                    validTargetObject = theEnemy;
-                    m_positionToShootAt = *validTargetObject->getPosition();
+								if ( theEnemy && isFairDistanceFromShip( theEnemy ) )
+								{
+									// WE GOT A HIT!!!! SHOOT HIM!
+									validTargetObject = theEnemy;
+									m_positionToShootAt = *validTargetObject->getPosition();
 
-                    break;
-                  }
+									break;
+								}
 	              }
-              }
-            }
+						}
+					}
 
 
 
-            //lets keep a constant barrage of gattling bullets on the current aim location
+					//lets keep a constant barrage of gattling bullets on the current aim location
 				    if( gattlingAI )
 				    {
-              if ( validTargetObject )// either in the reticle or the targeting area
-                gattlingAI->aiAttackObject( validTargetObject, LOTS_OF_SHOTS, CMD_FROM_AI );
-              else
+						if ( validTargetObject )// either in the reticle or the targeting area
+						gattlingAI->aiAttackObject( validTargetObject, LOTS_OF_SHOTS, CMD_FROM_AI );
+						else
   					    gattlingAI->aiAttackPosition( &m_gattlingTargetPosition, LOTS_OF_SHOTS, CMD_FROM_AI );
 				    }
 
 
 
 
-            // IF THE GATTLING GUN HAS BEEN PLINKING THE TARGET LONG ENOUGH, LETS FOLLOW WITH A VOLLEY OF HOWITZER FIRE
-            if ( m_okToFireHowitzerCounter > data->m_howitzerFollowLag )
-            {
-              WeaponTemplate *wt = data->m_howitzerWeaponTemplate;
-              if( wt )
-              {
-                Coord3D attackPositionWithRandomOffset;
-                Real offs = data->m_randomOffsetForHowitzer;
-                attackPositionWithRandomOffset.x = m_gattlingTargetPosition.x + GameLogicRandomValue( -offs, offs );
-                attackPositionWithRandomOffset.y = m_gattlingTargetPosition.y + GameLogicRandomValue( -offs, offs );
-                attackPositionWithRandomOffset.z = m_gattlingTargetPosition.z;
+					// IF THE GATTLING GUN HAS BEEN PLINKING THE TARGET LONG ENOUGH, LETS FOLLOW WITH A VOLLEY OF HOWITZER FIRE
+					if ( m_okToFireHowitzerCounter > data->m_howitzerFollowLag )
+					{
+						WeaponTemplate *wt = data->m_howitzerWeaponTemplate;
+						if( wt )
+						{
+							Coord3D attackPositionWithRandomOffset;
+							Real offs = data->m_randomOffsetForHowitzer;
+							attackPositionWithRandomOffset.x = m_gattlingTargetPosition.x + GameLogicRandomValue( -offs, offs );
+							attackPositionWithRandomOffset.y = m_gattlingTargetPosition.y + GameLogicRandomValue( -offs, offs );
+							attackPositionWithRandomOffset.z = m_gattlingTargetPosition.z;
 	              TheWeaponStore->createAndFireTempWeapon( wt, gunship, &attackPositionWithRandomOffset );
 
-                m_howitzerFireSound.setObjectID(gunship->getID());
-                TheAudio->addAudioEvent( &m_howitzerFireSound );
+							m_howitzerFireSound.setObjectID(gunship->getID());
+							TheAudio->addAudioEvent( &m_howitzerFireSound );
 
-              }
-            }
-
-
-          }
+						}
+					}
 
 
+				}
 
 
 
-          // GATTLING TARGETING LOGIC------------------------------------------
+
+
+				// GATTLING TARGETING LOGIC------------------------------------------
 				  const ParticleSystemTemplate *tmp = data->m_gattlingStrafeFXParticleSystem;
 				  if (tmp && gattling && gattling->testStatus( OBJECT_STATUS_IS_FIRING_WEAPON) )
 				  {
 
 
 
-            // I am going to wind my gattling gun toward the next good spot,
-            //whether an object's position or a cursor position
+					// I am going to wind my gattling gun toward the next good spot,
+					//whether an object's position or a cursor position
 
 
-            Coord3D delta = m_positionToShootAt;
-            delta.sub( &m_gattlingTargetPosition );
-            Real dist = delta.length();
-            if ( dist < data->m_strafingIncrement )
-            {
-              m_gattlingTargetPosition = m_positionToShootAt;
-              ++m_okToFireHowitzerCounter;
-            }
-            else
-            {
-              m_okToFireHowitzerCounter = ZERO;
-              delta.normalize();
-              delta.scale( data->m_strafingIncrement );
-              m_gattlingTargetPosition.add( &delta );
-            }
+					Coord3D delta = m_positionToShootAt;
+					delta.sub( &m_gattlingTargetPosition );
+					Real dist = delta.length();
+					if ( dist < data->m_strafingIncrement )
+					{
+						m_gattlingTargetPosition = m_positionToShootAt;
+						++m_okToFireHowitzerCounter;
+					}
+					else
+					{
+						m_okToFireHowitzerCounter = ZERO;
+						delta.normalize();
+						delta.scale( data->m_strafingIncrement );
+						m_gattlingTargetPosition.add( &delta );
+					}
 
 
 			const Player *localPlayer = rts::getObservedOrLocalPlayer();
@@ -661,34 +661,34 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 				}
 			}
 
-          }
-        }
+				}
+			}
 
 
-      }
-      else if ( m_status == GUNSHIP_STATUS_DEPARTING )
-      {
-        if ( isPointOffMap( *gunship->getPosition() ) )
-        {
+		}
+		else if ( m_status == GUNSHIP_STATUS_DEPARTING )
+		{
+			if ( isPointOffMap( *gunship->getPosition() ) )
+			{
 
-          TheGameLogic->destroyObject( gunship );
-          setLogicalStatus( GUNSHIP_STATUS_IDLE );
+				TheGameLogic->destroyObject( gunship );
+				setLogicalStatus( GUNSHIP_STATUS_IDLE );
 
-          cleanUp();
+				cleanUp();
 
-          // HERE WE NEED TO CLEAN UP THE TERRAIN DECALS, AND ANYTHING ELSE THAT WAS CREATED IN INIT-INTENT[]
+				// HERE WE NEED TO CLEAN UP THE TERRAIN DECALS, AND ANYTHING ELSE THAT WAS CREATED IN INIT-INTENT[]
 
-        }
-      }
+			}
+		}
 
-   }
-   else if ( m_status != GUNSHIP_STATUS_IDLE )
-   {
-     //OH MY GOODNESS, THE GUNSHIP MUST HAVE GOTTEN SHOT DOWN!
-      setLogicalStatus( GUNSHIP_STATUS_IDLE );
+	}
+	else if ( m_status != GUNSHIP_STATUS_IDLE )
+	{
+		//OH MY GOODNESS, THE GUNSHIP MUST HAVE GOTTEN SHOT DOWN!
+		setLogicalStatus( GUNSHIP_STATUS_IDLE );
 
-      cleanUp();
-   }
+		cleanUp();
+	}
 
 
 
@@ -732,22 +732,22 @@ void SpectreGunshipUpdate::friend_enableAfterburners(Bool v)
 Bool SpectreGunshipUpdate::isFairDistanceFromShip( Object *target )
 {
 
-  Object *gunship = getObject();
-  if ( !gunship )
-    return FALSE;
+	Object *gunship = getObject();
+	if ( !gunship )
+	return FALSE;
 
-  if ( ! target )
-    return FALSE;
+	if ( ! target )
+	return FALSE;
 
-  const Coord3D *targetPosition = target->getPosition();
-  const Coord3D *gunshipPosition = gunship->getPosition();
+	const Coord3D *targetPosition = target->getPosition();
+	const Coord3D *gunshipPosition = gunship->getPosition();
 
-  Coord3D shipToTargetDelta;
-  shipToTargetDelta.x = gunshipPosition->x - targetPosition->x;
-  shipToTargetDelta.y = gunshipPosition->y - targetPosition->y;
-  shipToTargetDelta.z = 0.0f;
+	Coord3D shipToTargetDelta;
+	shipToTargetDelta.x = gunshipPosition->x - targetPosition->x;
+	shipToTargetDelta.y = gunshipPosition->y - targetPosition->y;
+	shipToTargetDelta.z = 0.0f;
 
-  return (shipToTargetDelta.length() > getSpectreGunshipUpdateModuleData()->m_gunshipOrbitRadius * 0.75f );
+	return (shipToTargetDelta.length() > getSpectreGunshipUpdateModuleData()->m_gunshipOrbitRadius * 0.75f );
 
 }
 
@@ -760,13 +760,13 @@ Bool SpectreGunshipUpdate::isFairDistanceFromShip( Object *target )
 //-------------------------------------------------------------------------------------------------
 void SpectreGunshipUpdate::cleanUp()
 {
-  m_attackAreaDecal.clear();
-  m_targetingReticleDecal.clear();
+	m_attackAreaDecal.clear();
+	m_targetingReticleDecal.clear();
 
 
-  Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-  if ( gattling )
-    TheGameLogic->destroyObject( gattling );
+	Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
+	if ( gattling )
+	TheGameLogic->destroyObject( gattling );
 
 #if defined TRACKERS
 	 m_howitzerTrackerDecal.clear();
@@ -781,48 +781,48 @@ void SpectreGunshipUpdate::cleanUp()
 void SpectreGunshipUpdate::disengageAndDepartAO( Object *gunship )
 {
 
-  if ( gunship == nullptr )
-    return;
+	if ( gunship == nullptr )
+	return;
 
-  AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
+	AIUpdateInterface *shipAI = gunship->getAIUpdateInterface();
 
-  if ( shipAI)
-  {
-    Coord3D exitPoint;// head off the map in the direction you are facing
-    gunship->getUnitDirectionVector3D( exitPoint );
-    Real mapSize = 99999.0f;
-    exitPoint.x *= mapSize;
-    exitPoint.y *= mapSize;
-    exitPoint.add( gunship->getPosition() );
+	if ( shipAI)
+	{
+		Coord3D exitPoint;// head off the map in the direction you are facing
+		gunship->getUnitDirectionVector3D( exitPoint );
+		Real mapSize = 99999.0f;
+		exitPoint.x *= mapSize;
+		exitPoint.y *= mapSize;
+		exitPoint.add( gunship->getPosition() );
 
-    shipAI->aiMoveToPosition( &exitPoint, CMD_FROM_AI );
-
-
-
-  }
+		shipAI->aiMoveToPosition( &exitPoint, CMD_FROM_AI );
 
 
-    Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
-    if ( gattling )
-      gattling->setDisabled ( DISABLED_PARALYZED );
+
+	}
 
 
-    if ( shipAI)
-    {
-      shipAI->chooseLocomotorSet( LOCOMOTORSET_PANIC );
+	Object *gattling = TheGameLogic->findObjectByID( m_gattlingID );
+	if ( gattling )
+	gattling->setDisabled ( DISABLED_PARALYZED );
+
+
+	if ( shipAI)
+	{
+		shipAI->chooseLocomotorSet( LOCOMOTORSET_PANIC );
 	    shipAI->getCurLocomotor()->setAllowInvalidPosition(TRUE);
 	    shipAI->getCurLocomotor()->setUltraAccurate(TRUE);	// set ultra-accurate just so AI won't try to adjust our dest
-    }
+	}
 
-    Drawable *draw = gunship->getDrawable();
-    if ( draw )
-      draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
-          friend_enableAfterburners(TRUE);
+	Drawable *draw = gunship->getDrawable();
+	if ( draw )
+	draw->clearAndSetModelConditionState( MODELCONDITION_DOOR_1_OPENING, MODELCONDITION_DOOR_1_CLOSING );
+	friend_enableAfterburners(TRUE);
 
 
-  cleanUp();
+	cleanUp();
 
-  return;
+	return;
 
 }
 
@@ -869,7 +869,7 @@ void SpectreGunshipUpdate::xfer( Xfer *xfer )
 
 
 
-  // The initial target destination.
+	// The initial target destination.
 	xfer->xferCoord3D( &m_initialTargetPosition );
 	// The manual override target destination.
 	xfer->xferCoord3D( &m_overrideTargetDestination );
@@ -878,7 +878,7 @@ void SpectreGunshipUpdate::xfer( Xfer *xfer )
 	// status
 	xfer->xferUser( &m_status, sizeof( GunshipStatus ) );
 
-  xfer->xferUnsignedInt( &m_orbitEscapeFrame );
+	xfer->xferUnsignedInt( &m_orbitEscapeFrame );
 
 
 	if( version < 2 )

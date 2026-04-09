@@ -472,18 +472,18 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 	if (victim->testStatus(OBJECT_STATUS_NO_ATTACK_FROM_AI) && commandSource == CMD_FROM_AI)
 		return ATTACKRESULT_NOT_POSSIBLE;
 
-  Bool allowStealthToPreventAttacks = TRUE;
+	Bool allowStealthToPreventAttacks = TRUE;
 	if (source->testStatus(OBJECT_STATUS_IGNORING_STEALTH) || sameOwnerForceAttack)
 		allowStealthToPreventAttacks = FALSE;
-  if( isForcedAttack( attackType ) && victim->isKindOf( KINDOF_DISGUISER ) )
-  {
-    // force-attack allows you to attack disguised things, which also happen to be stealthed.
-    // since we normally disallow attacking stealthed things (even via force-fire), we check
-    // for disguised and explicitly ignore stealth in that case
+	if( isForcedAttack( attackType ) && victim->isKindOf( KINDOF_DISGUISER ) )
+	{
+		// force-attack allows you to attack disguised things, which also happen to be stealthed.
+		// since we normally disallow attacking stealthed things (even via force-fire), we check
+		// for disguised and explicitly ignore stealth in that case
 	  StealthUpdate *update = victim->getStealth();
-    if (update && update->isDisguised())
+		if (update && update->isDisguised())
   	  allowStealthToPreventAttacks = FALSE;
-  }
+	}
 
 	// If an object is stealthed and hasn't been detected yet, then it is not a valid target to fire
 	// on.
@@ -526,7 +526,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 	// here commented out to show that shroud should not be checked.
 //  const Player* sourceController = source->getControllingPlayer();
 //	if( sourceController
- //   && sourceController->getPlayerType() == PLAYER_HUMAN
+	//   && sourceController->getPlayerType() == PLAYER_HUMAN
 //		&& commandSource != CMD_FROM_SCRIPT
 //		&& !(isContinuedAttack(attackType) && victim->isKindOf(KINDOF_IMMOBILE))
 //		&&  victim->getShroudedStatus(sourceController->getPlayerIndex()) >= OBJECTSHROUD_FOGGED

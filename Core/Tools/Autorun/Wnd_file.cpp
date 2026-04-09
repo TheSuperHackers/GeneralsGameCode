@@ -740,7 +740,7 @@ int StandardFileClass::Write( void *buffer, unsigned long int bytes_to_write )
    	//
    	items_written = fwrite( buffer, bytes_to_write, 1, File_Stream_Ptr );
 	ASSERT( items_written == 1 );
-    bytes_written = items_written * bytes_to_write;
+	bytes_written = items_written * bytes_to_write;
 	#endif
 
 	//
@@ -1087,21 +1087,21 @@ HANDLE Open_File( char const *file_name, int mode )
                                      FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
                                      nullptr );
 	//
-    // error?
-    //
-    // we don't want to assert because we may be looking for a file
-    // to just see if it is there...
-    //
-    //	ASSERT( windows_file_handle != INVALID_HANDLE_VALUE );
-    //
-    // error!
-    //
-    if ( windows_file_handle == INVALID_HANDLE_VALUE ) {
+	// error?
+	//
+	// we don't want to assert because we may be looking for a file
+	// to just see if it is there...
+	//
+	//	ASSERT( windows_file_handle != INVALID_HANDLE_VALUE );
+	//
+	// error!
+	//
+	if ( windows_file_handle == INVALID_HANDLE_VALUE ) {
 		//  #if( RTS_DEBUG )
 		//	Debug_Printf( "%s: Create file error is %d\r\n", file_name, GetLastError());
 		//  #endif
-        return( INVALID_FILE_HANDLE );
-    }
+		return( INVALID_FILE_HANDLE );
+	}
 
 	//
 	// store the windows handle
@@ -1210,7 +1210,7 @@ int Read_File( HANDLE handle, void *buffer, unsigned long int bytes_to_read )
    		return( 0 );
 	}
 
-   return( bytes_actually_read );
+	return( bytes_actually_read );
 }
 
 //------------------------------------------------------------------------------

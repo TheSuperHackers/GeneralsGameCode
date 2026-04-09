@@ -1013,7 +1013,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 	saveFont( window, fp, dataIndent );
 	saveHeaderTemplate( window, fp, dataIndent );
 	saveTooltipText( window, fp, dataIndent );
-  saveTooltipDelay( window, fp, dataIndent );
+	saveTooltipDelay( window, fp, dataIndent );
 	saveText( window, fp, dataIndent );
 	saveTextColor( window, fp, dataIndent );
 	saveDrawData( "ENABLEDDRAWDATA", window, fp, dataIndent );

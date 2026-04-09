@@ -2487,13 +2487,13 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 	if( listboxData->columns < 1 )
 		return;
 
-  Int columns = listboxData->columns;
+	Int columns = listboxData->columns;
 	ListEntryRow *newData = NEW ListEntryRow[ newLength ];
 	DEBUG_ASSERTCRASH(newData, ("Unable to allocate new data structures for the Listbox"));
 	if( !newData )
 		return;
 	Int i;
-  // zero out the new Data structure
+	// zero out the new Data structure
 	memset( newData, 0, newLength  * sizeof( ListEntryRow ) );
 
 	// we want to copy over different amounts of data depending on if we're adding
@@ -2511,10 +2511,10 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 		//if we're multiselect, just select no position
 		if(listboxData->selectPos > newLength || listboxData->multiSelect)
 			listboxData->selectPos = -1;
-    if(listboxData->insertPos > newLength)
+		if(listboxData->insertPos > newLength)
 			listboxData->insertPos = newLength;
 
-    listboxData->endPos = newLength;
+		listboxData->endPos = newLength;
 		//copy only the data that we'll be needing.
 		memcpy(newData,listboxData->listData,newLength * sizeof( ListEntryRow ) );
 	}
@@ -2555,7 +2555,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 	//reset the total height
 	computeTotalHeight(listbox);
 
-  // Sanity check that everything was created properly
+	// Sanity check that everything was created properly
 	if( listboxData->listData == nullptr )
 	{
 

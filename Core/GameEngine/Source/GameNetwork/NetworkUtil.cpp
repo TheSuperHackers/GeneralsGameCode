@@ -81,30 +81,30 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
  */
 UnsignedInt ResolveIP(AsciiString host)
 {
-  struct hostent *hostStruct;
-  struct in_addr *hostNode;
+	struct hostent *hostStruct;
+	struct in_addr *hostNode;
 
-  if (host.isEmpty())
-  {
+	if (host.isEmpty())
+	{
 	  DEBUG_LOG(("ResolveIP(): Can't resolve null"));
 	  return 0;
-  }
+	}
 
-  // String such as "127.0.0.1"
-  if (isdigit(host.getCharAt(0)))
-  {
-    return ( ntohl(inet_addr(host.str())) );
-  }
+	// String such as "127.0.0.1"
+	if (isdigit(host.getCharAt(0)))
+	{
+		return ( ntohl(inet_addr(host.str())) );
+	}
 
-  // String such as "localhost"
-  hostStruct = gethostbyname(host.str());
-  if (hostStruct == nullptr)
-  {
+	// String such as "localhost"
+	hostStruct = gethostbyname(host.str());
+	if (hostStruct == nullptr)
+	{
 	  DEBUG_LOG(("ResolveIP(): Can't resolve %s", host.str()));
 	  return 0;
-  }
-  hostNode = (struct in_addr *) hostStruct->h_addr;
-  return ( ntohl(hostNode->s_addr) );
+	}
+	hostNode = (struct in_addr *) hostStruct->h_addr;
+	return ( ntohl(hostNode->s_addr) );
 }
 
 /**

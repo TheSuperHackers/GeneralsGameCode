@@ -104,7 +104,7 @@ static void parseAngleFX(INI* ini, void *instance, void * /* store */, const voi
 //-------------------------------------------------------------------------------------------------
 /*static*/ void StructureToppleUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -125,7 +125,7 @@ static void parseAngleFX(INI* ini, void *instance, void * /* store */, const voi
 		{ "AngleFX",									parseAngleFX,											nullptr, 0 },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( StructureToppleUpdateModuleData, m_dieMuxData ));
 }
 
@@ -440,7 +440,7 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
 	target.y = building->getPosition()->y + jsin + (facingWidth * Cos(toppleAngle));
 	target.z = TheTerrainLogic->getGroundHeight(target.x, target.y);
 
-  TheWeaponStore->createAndFireTempWeapon(wt, building, &target);
+	TheWeaponStore->createAndFireTempWeapon(wt, building, &target);
 
 	// do the crushing particle effects
 	if( lastDamageInfo == nullptr || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )

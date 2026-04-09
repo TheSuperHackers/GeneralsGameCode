@@ -81,7 +81,7 @@ BridgeBehaviorModuleData::~BridgeBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void BridgeBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  BehaviorModuleData::buildFieldParse( p );
+	BehaviorModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -92,7 +92,7 @@ BridgeBehaviorModuleData::~BridgeBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

@@ -100,7 +100,7 @@ public:
 	// Render Object Interface - Bounding Volumes
 	/////////////////////////////////////////////////////////////////////////////
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
@@ -109,8 +109,8 @@ public:
 	virtual void					Scale(float scalex, float scaley, float scalez) override;
 	virtual MaterialInfoClass * Get_Material_Info() override;
 
-   virtual int						Get_Sort_Level() const override;
-   virtual void					Set_Sort_Level(int level) override;
+	virtual int						Get_Sort_Level() const override;
+	virtual void					Set_Sort_Level(int level) override;
 
 
 	/////////////////////////////////////////////////////////////////////////////

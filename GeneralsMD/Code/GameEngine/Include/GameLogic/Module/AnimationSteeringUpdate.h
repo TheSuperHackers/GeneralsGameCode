@@ -45,14 +45,14 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse( p );
+		UpdateModuleData::buildFieldParse( p );
 
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "MinTransitionTime", INI::parseDurationUnsignedInt, nullptr, offsetof( AnimationSteeringUpdateModuleData, m_transitionFrames ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 
 	}
 
@@ -77,6 +77,6 @@ public:
 
 protected:
 
-  ModelConditionFlagType m_currentTurnAnim;
+	ModelConditionFlagType m_currentTurnAnim;
 	UnsignedInt m_nextTransitionFrame;
 };

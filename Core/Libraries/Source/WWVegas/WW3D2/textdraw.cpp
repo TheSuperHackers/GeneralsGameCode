@@ -335,8 +335,8 @@ float	TextDrawClass::Print( Font3DInstanceClass *font, const char *message, floa
 void	TextDrawClass::Show_Font( Font3DInstanceClass *font, float screen_x, float screen_y )
 {
 	// normalize coordinates
-   float size_x = PixelSize.X * 256;
-   float size_y = PixelSize.Y * 256;
+	float size_x = PixelSize.X * 256;
+	float size_y = PixelSize.Y * 256;
 
 	Set_Texture( font->Peek_Texture('A') );
 

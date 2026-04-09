@@ -114,7 +114,7 @@ public:
 	virtual void					On_Frame_Update() override;
 	virtual void					Notify_Added(SceneClass * scene) override;
 
-  // Other VIRTUAL methods. [3/20/2003]
+	// Other VIRTUAL methods. [3/20/2003]
 
 	///allocate resources needed to render heightmap
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles=TRUE);
@@ -126,11 +126,11 @@ public:
 	virtual void oversizeTerrain(Int tilesToOversize);
 	virtual void reset();
 
-  void redirectToHeightmap( WorldHeightMap *pMap )
-  {
-    REF_PTR_RELEASE( m_map );
+	void redirectToHeightmap( WorldHeightMap *pMap )
+	{
+		REF_PTR_RELEASE( m_map );
 	  REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
-  }
+	}
 
 
 	UnsignedByte getClipHeight(Int x, Int y) const

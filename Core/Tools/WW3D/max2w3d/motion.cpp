@@ -425,7 +425,7 @@ void MotionClass::compute_frame_motion(int frame)
 			//
 			bool binary_move = false;
 
-         if ((node)&&(vis))  {
+			if ((node)&&(vis))  {
 
 	         if (frame != 0) {
 					// sample previous frame, and an in between time
@@ -437,9 +437,9 @@ void MotionClass::compute_frame_motion(int frame)
 					// if data at frametime_prev == data at frametime_mid and != data at frametime
 					// then we have a binary movement!
 
-               Control *c;
+					Control *c;
 
-               c = node->GetTMController()->GetPositionController();
+					c = node->GetTMController()->GetPositionController();
 
 					if (c) {
 
@@ -491,7 +491,7 @@ void MotionClass::compute_frame_motion(int frame)
 						}
 					}
 	         }
-         }
+			}
 
 
 			set_binary_movement(bindex, frame, binary_move);

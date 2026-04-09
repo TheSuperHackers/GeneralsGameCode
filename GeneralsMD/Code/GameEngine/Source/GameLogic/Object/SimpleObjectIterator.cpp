@@ -150,7 +150,7 @@ void SimpleObjectIterator::sort(IterOrderType order)
 	// do a basic mergesort, which works nicely for linked lists,
 	// and is reasonably efficient (N log N).
 
-  for ( Int n = 1 ; ; n *= 2 )
+	for ( Int n = 1 ; ; n *= 2 )
 	{
 		Clump *to_do = m_firstClump;
 		Clump *tail = nullptr;

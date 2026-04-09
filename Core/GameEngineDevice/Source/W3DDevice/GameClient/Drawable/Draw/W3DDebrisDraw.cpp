@@ -52,7 +52,7 @@
 //-------------------------------------------------------------------------------------------------
 W3DDebrisDraw::W3DDebrisDraw(Thing *thing, const ModuleData* moduleData) : DrawModule(thing, moduleData)
 {
-  m_renderObject = nullptr;
+	m_renderObject = nullptr;
 	for (int i = 0; i < STATECOUNT; ++i)
 		m_anims[i] = nullptr;
 	m_fxFinal = nullptr;
@@ -103,7 +103,7 @@ void W3DDebrisDraw::setFullyObscuredByShroud(Bool fullyObscured)
 //-------------------------------------------------------------------------------------------------
 void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 {
-  if (m_renderObject == nullptr && !name.isEmpty())
+	if (m_renderObject == nullptr && !name.isEmpty())
 	{
 		Int hexColor = 0;
 		if (color != 0)

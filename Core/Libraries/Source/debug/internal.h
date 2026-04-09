@@ -85,12 +85,12 @@ void DebugFreeMemory(void *ptr);
 class DebugCmdInterfaceDebug: public DebugCmdInterface
 {
 public:
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
+	virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
                        unsigned argn, const char * const * argv);
 
-  virtual void Delete()
-  {
-    this->~DebugCmdInterfaceDebug();
-    DebugFreeMemory(this);
-  }
+	virtual void Delete()
+	{
+		this->~DebugCmdInterfaceDebug();
+		DebugFreeMemory(this);
+	}
 };

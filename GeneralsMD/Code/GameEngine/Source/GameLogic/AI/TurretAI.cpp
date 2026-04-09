@@ -255,7 +255,7 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 		{ "FiresWhileTurning",			INI::parseBool,												nullptr, offsetof( TurretAIData, m_firesWhileTurning ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 
@@ -330,10 +330,10 @@ void TurretAI::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAI::xfer( Xfer *xfer )
 {
-  // version
-  const XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 /* These 4 are loaded on creation, and don't change. jba.
 	const TurretAIData*				m_data;
@@ -451,9 +451,9 @@ Bool TurretAI::friend_turnTowardsPitch(Real desiredPitch, Real rateModifier)
 //----------------------------------------------------------------------------------------------------------
 Bool TurretAI::isWeaponSlotOkToFire(WeaponSlotType wslot) const
 {
-  // If we turrets are linked, ai wants us to fire together, regardless of slot
-  if( getOwner()->getAI()->areTurretsLinked() )
-    return TRUE;
+	// If we turrets are linked, ai wants us to fire together, regardless of slot
+	if( getOwner()->getAI()->areTurretsLinked() )
+	return TRUE;
 
 	return isWeaponSlotOnTurret(wslot);
 }
@@ -647,8 +647,8 @@ void TurretAI::recenterTurret()
 Bool TurretAI::isTurretInNaturalPosition() const
 {
 
-  if( this->getOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
-    return true;//ML so that under-construction base-defenses do not re-center while under construction
+	if( this->getOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
+	return true;//ML so that under-construction base-defenses do not re-center while under construction
 
 
 
@@ -1216,8 +1216,8 @@ StateReturnType TurretAIRecenterTurretState::update()
 	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 
-  if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
-    return STATE_CONTINUE;//ML so that under-construction base-defenses do not re-center while under construction
+	if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
+	return STATE_CONTINUE;//ML so that under-construction base-defenses do not re-center while under construction
 
 
 	TurretAI* turret = getTurretAI();
@@ -1254,10 +1254,10 @@ void TurretAIIdleState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextIdleScan);
 }
@@ -1331,10 +1331,10 @@ void TurretAIIdleScanState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleScanState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferReal(&m_desiredAngle);
 }
@@ -1370,8 +1370,8 @@ StateReturnType TurretAIIdleScanState::update()
 {
 	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
-  if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
-    return STATE_CONTINUE;//ML so that under-construction base-defenses do not idle-scan while under construction
+	if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
+	return STATE_CONTINUE;//ML so that under-construction base-defenses do not idle-scan while under construction
 
 	Bool angleAligned = getTurretAI()->friend_turnTowardsAngle(getTurretAI()->getNaturalTurretAngle() + m_desiredAngle, 0.5f, 0.0f);
 	Bool pitchAligned = getTurretAI()->friend_turnTowardsPitch(getTurretAI()->getNaturalTurretPitch(), 0.5f);
@@ -1406,10 +1406,10 @@ void TurretAIHoldTurretState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAIHoldTurretState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_timestamp);
 }

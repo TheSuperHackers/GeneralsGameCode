@@ -53,7 +53,7 @@ EjectPilotDieModuleData::EjectPilotDieModuleData() :
 //-------------------------------------------------------------------------------------------------
 void EjectPilotDieModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  DieModuleData::buildFieldParse(p);
+	DieModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -63,7 +63,7 @@ void EjectPilotDieModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -450,7 +450,7 @@ Mouse::Mouse()
 	//m_tooltipString.clear();	// redundant
 	m_displayTooltip = FALSE;
 	m_tooltipDisplayString = nullptr;
-  m_tooltipDelay = -1;  // default value
+	m_tooltipDelay = -1;  // default value
 	// initialize all the mouse io data
 	memset( m_mouseEvents, 0, sizeof( m_mouseEvents ) );
 	memset( &m_currMouse, 0, sizeof( m_currMouse ) );
@@ -642,7 +642,7 @@ void Mouse::reset()
 	///@ todo Write Mouse::reset() if there needs to be anything here
 
 	// reset the text of the cursor text
-  if ( m_cursorTextDisplayString )
+	if ( m_cursorTextDisplayString )
   	m_cursorTextDisplayString->reset();
 
 	blockCapture(CursorCaptureBlockReason_NoInit);
@@ -681,9 +681,9 @@ void Mouse::createStreamMessages()
 	msg->appendPixelArgument( m_currMouse.pos );
 	msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 
-  Int delay = m_tooltipDelayTime;
-  if(m_tooltipDelay >= 0 )
-     delay = m_tooltipDelay;
+	Int delay = m_tooltipDelayTime;
+	if(m_tooltipDelay >= 0 )
+	delay = m_tooltipDelay;
 	if( TheGlobalData->m_scriptDebug )
 	{
 		//No delay while scriptdebugging!
@@ -840,7 +840,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 	//DEBUG_LOG(("%d Tooltip: %ls", TheGameClient->getFrame(), tooltip.str()));
 
 	m_isTooltipEmpty = tooltip.isEmpty();
-  m_tooltipDelay = delay;
+	m_tooltipDelay = delay;
 
 	Bool forceRecalc = FALSE;
 	if ( !tooltip.isEmpty() && width != m_lastTooltipWidth )

@@ -67,7 +67,7 @@ public:
 //	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 
 //	virtual int					 	Get_Num_Polys(void) const;
@@ -81,7 +81,7 @@ public:
 	Int freeMapResources(void);
 	int initData(void);
 
-  void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly; m_drawBoundingBoxes = bounding; m_drawSightRanges = sight; m_drawWeaponRanges = weapon; m_drawSoundRanges = sound; m_drawTestArtHighlight = testart, m_drawLetterbox = letterbox;}
+	void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly; m_drawBoundingBoxes = bounding; m_drawSightRanges = sight; m_drawWeaponRanges = weapon; m_drawSoundRanges = sound; m_drawTestArtHighlight = testart, m_drawLetterbox = letterbox;}
 	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}
 	static void setDoMeshFeedback(Bool val) { m_meshFeedback = val; }
 	static void setDoRampFeedback(Bool val) { m_rampFeedback = val; }
@@ -129,7 +129,7 @@ protected:
 	Bool											m_drawBoundingBoxes;
 	Bool											m_drawSightRanges;
 	Bool											m_drawWeaponRanges;
-  Bool                      m_drawSoundRanges;
+	Bool                      m_drawSoundRanges;
 	Bool											m_drawTestArtHighlight;
 	Bool											m_drawLetterbox;
 
@@ -167,7 +167,7 @@ protected: // static state vars.
 	static Real								m_rampWidth;
 
 protected:
-  void addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera );
+	void addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera );
 	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
 	void updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOpen);
 	void updateFeedbackVB(void);
@@ -181,7 +181,7 @@ protected:
 	void updateVBWithSightRange(MapObject *pMapObj, CameraClass* camera);
 	void updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera);
 	void updateVBWithTestArtHighlight(MapObject *pMapObj, CameraClass* camera);
-  void updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera);
+	void updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera);
 	bool worldToScreen(const Coord3D *w, ICoord2D *s, CameraClass* camera);
 
 };

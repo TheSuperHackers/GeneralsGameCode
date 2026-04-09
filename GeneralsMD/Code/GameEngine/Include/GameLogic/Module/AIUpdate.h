@@ -194,15 +194,15 @@ public:
 	LocomotorTemplateMap	m_locomotorTemplates;					///< locomotors for object
 	const TurretAIData*		m_turretData[MAX_TURRETS];
 	UnsignedInt						m_moodAttackCheckRate;				///< how frequently we should recheck for enemies due to moods, when idle
-  Bool        m_forbidPlayerCommands;     ///< Should isAllowedToRespondToAiCommands() filter out commands from the player, thus making it ai-controllable only?
-  Bool        m_turretsLinked;						///< Turrets are linked together and attack together.
+	Bool        m_forbidPlayerCommands;     ///< Should isAllowedToRespondToAiCommands() filter out commands from the player, thus making it ai-controllable only?
+	Bool        m_turretsLinked;						///< Turrets are linked together and attack together.
 	UnsignedInt						m_autoAcquireEnemiesWhenIdle;
 #ifdef ALLOW_SURRENDER
  	UnsignedInt						m_surrenderDuration;					///< when we surrender, how long we stay surrendered.
 #endif
 
 
-  AIUpdateModuleData();
+	AIUpdateModuleData();
 	virtual ~AIUpdateModuleData() override;
 
 	virtual Bool isAiModuleData() const override { return true; }
@@ -591,7 +591,7 @@ public:
 
 	Bool canAutoAcquire() const { return getAIUpdateModuleData()->m_autoAcquireEnemiesWhenIdle; }
 
-  Bool canAutoAcquireWhileStealthed() const ;
+	Bool canAutoAcquireWhileStealthed() const ;
 
 
 protected:

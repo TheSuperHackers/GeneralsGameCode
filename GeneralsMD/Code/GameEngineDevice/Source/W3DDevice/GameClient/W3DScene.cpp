@@ -475,12 +475,12 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 						{
 							isVisible = FALSE;
 						  robj->Set_Visible(isVisible);
-            }
+						}
 						//assume normal rendering.
 						drawInfo->m_flags = DrawableInfo::ERF_IS_NORMAL;	//clear any rendering flags that may be in effect.
 
-            if ( ! isVisible )
-              continue;
+						if ( ! isVisible )
+						continue;
 
 						if (draw->getEffectiveOpacity() != 1.0f && m_translucentObjectsCount < TheGlobalData->m_maxVisibleTranslucentObjects)
 						{
@@ -533,7 +533,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 		}
 	}
 
-   Visibility_Checked = true;
+	Visibility_Checked = true;
 }
 
 //============================================================================
@@ -716,18 +716,18 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 		{
 			rinfo.materialPassEmissiveOverride = draw->getSecondMaterialPassOpacity();
 
-      //if ( draw->testTintStatus( TINT_STATUS_FRENZY ) )
-      //{
+			//if ( draw->testTintStatus( TINT_STATUS_FRENZY ) )
+			//{
 			//	rinfo.Push_Material_Pass(m_heatVisionMaterialPass);
-      //}
+			//}
 			//else
-      if (draw->getStealthLook() == STEALTHLOOK_VISIBLE_DETECTED )
+			if (draw->getStealthLook() == STEALTHLOOK_VISIBLE_DETECTED )
 			{
 			  rinfo.materialPassEmissiveOverride = draw->getSecondMaterialPassOpacity();
 				// THIS WILL EXPLICITLY SKIP THE FIRST PASS SO THAT HEATVISION ONLY WILL RENDER
 				rinfo.Push_Override_Flags(RenderInfoClass::RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY);
 				rinfo.Push_Material_Pass(m_heatVisionOnlyPass);
-        doExtraFlagsPop = TRUE;
+				doExtraFlagsPop = TRUE;
 			}
 			else
 			{
@@ -777,8 +777,8 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 			}
 		}
 
-    if( draw && draw->getReceivesDynamicLights() )
-    {
+		if( draw && draw->getReceivesDynamicLights() )
+		{
 		  // dynamic lights
 		  RefRenderObjListIterator dynaLightIt(&m_dynamicLightList);
 		  for (dynaLightIt.First(); !dynaLightIt.Is_Done(); dynaLightIt.Next())
@@ -793,7 +793,7 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 			  }
 			  lightEnv.Add_Light(*(LightClass*)dynaLightIt.Peek_Obj());
 		  }
-    }
+		}
 
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 		rinfo.light_environment = &lightEnv;
@@ -916,11 +916,11 @@ void RTS3DScene::updateFixedLightEnvironments(RenderInfoClass & rinfo)
 
 		m_globalLight[globalLightIndex]->Get_Diffuse(&oldDiffuse);
 		m_globalLight[globalLightIndex]->Get_Ambient(&oldAmbient);
-    oldDiffuse *= infantryLightScale;
-    oldAmbient *= infantryLightScale;
-    static Vector3 id (1.0f, 1.0f, 1.0f);
-    oldDiffuse.Cap_Absolute_To(id);
-    oldAmbient.Cap_Absolute_To(id);
+		oldDiffuse *= infantryLightScale;
+		oldAmbient *= infantryLightScale;
+		static Vector3 id (1.0f, 1.0f, 1.0f);
+		oldDiffuse.Cap_Absolute_To(id);
+		oldAmbient.Cap_Absolute_To(id);
 		m_infantryLight[globalLightIndex]->Set_Ambient(oldAmbient);//CLAMPED
 		m_infantryLight[globalLightIndex]->Set_Diffuse(oldDiffuse);//CLAMPED
 
@@ -1114,14 +1114,14 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 
 #define USE_LIGHT_ENV 1
 
-   if (!Visibility_Checked) {
-      // set the visibility bit in all render objects in all layers.
+	if (!Visibility_Checked) {
+		// set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
 #ifdef USE_NON_STENCIL_OCCLUSION
 	   flagOccludedObjects(&rinfo.Camera);
 #endif
-   }
-   Visibility_Checked = false;
+	}
+	Visibility_Checked = false;
 
 
 	RefRenderObjListIterator it(&UpdateList);
@@ -1254,14 +1254,14 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 	width=TheTacticalView->getWidth();
 	height=TheTacticalView->getHeight();
 
-    v[0].p.Set(xpos+width, ypos+height, 0.0f, 1.0f );
-    v[1].p.Set(xpos+width, 0, 0.0f, 1.0f );
-    v[2].p.Set(xpos, ypos+height, 0.0f, 1.0f );
-    v[3].p.Set(xpos,  0, 0.0f, 1.0f );
-    v[0].color = color;
-    v[1].color = color;
-    v[2].color = color;
-    v[3].color = color;
+	v[0].p.Set(xpos+width, ypos+height, 0.0f, 1.0f );
+	v[1].p.Set(xpos+width, 0, 0.0f, 1.0f );
+	v[2].p.Set(xpos, ypos+height, 0.0f, 1.0f );
+	v[3].p.Set(xpos,  0, 0.0f, 1.0f );
+	v[0].color = color;
+	v[1].color = color;
+	v[2].color = color;
+	v[3].color = color;
 
 	DX8Wrapper::Set_Shader(PlayerColorShader);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);

@@ -87,7 +87,7 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void OCLUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -99,7 +99,7 @@ OCLUpdateModuleData::OCLUpdateModuleData()
 		{ "FactionTriggered",	INI::parseBool,							nullptr, offsetof( OCLUpdateModuleData, m_isFactionTriggered ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

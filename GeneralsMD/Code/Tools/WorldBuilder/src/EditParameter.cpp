@@ -299,10 +299,10 @@ AsciiString EditParameter::getWarningText(Parameter *pParm, Bool isAction)
 		case Parameter::RADAR_EVENT_TYPE:
 			break;
 
-    case Parameter::LEFT_OR_RIGHT:
-      break;
+		case Parameter::LEFT_OR_RIGHT:
+			break;
 
-    case Parameter::RELATION:
+		case Parameter::RELATION:
 			break;
 
 		case Parameter::DIALOG:
@@ -455,7 +455,7 @@ AsciiString EditParameter::getInfoText(Parameter *pParm)
 		case Parameter::OBJECT_TYPE_LIST:
 		case Parameter::REVEALNAME:
 		case Parameter::OBJECT_PANEL_FLAG:
-    case Parameter::LEFT_OR_RIGHT:
+		case Parameter::LEFT_OR_RIGHT:
 
 			break;
 
@@ -1289,7 +1289,7 @@ Bool EditParameter::loadFontNames(CComboBox *pCombo, AsciiString match)
 		string.concat( " - Size:" );
 		Int size = font->pointSize;
 		char buffer[33];
-    itoa( size, buffer, 10 );
+		itoa( size, buffer, 10 );
 		string.concat( buffer );
 		if( font->bold )
 			string.concat( " [Bold]" );
@@ -1923,7 +1923,7 @@ BOOL EditParameter::OnInitDialog()
 			break;
 
 
-    case Parameter::LEFT_OR_RIGHT:
+		case Parameter::LEFT_OR_RIGHT:
 			captionText = "Evacuate Container Side Choices:";
 			pList->InsertString(-1,"Left");
 			pList->InsertString(-1,"Right");
@@ -2265,9 +2265,9 @@ void EditParameter::OnOK()
 			break;
 
 
-    case Parameter::LEFT_OR_RIGHT:
-      m_parameter->friend_setInt(pList->GetCurSel() + 1);
-      break;
+		case Parameter::LEFT_OR_RIGHT:
+			m_parameter->friend_setInt(pList->GetCurSel() + 1);
+			break;
 
 
 		case Parameter::LOCALIZED_TEXT:

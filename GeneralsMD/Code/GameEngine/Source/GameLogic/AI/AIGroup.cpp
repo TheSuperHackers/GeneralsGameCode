@@ -1562,26 +1562,26 @@ void clampWaypointPosition( Coord3D &position, Int margin )
 	Region3D mapExtent;
 	TheTerrainLogic->getExtent(&mapExtent);
 
-  // trim some fat off of all sides,
-  mapExtent.hi.x -= margin;
-  mapExtent.hi.y -= margin;
-  mapExtent.lo.x += margin;
-  mapExtent.lo.y += margin;
+	// trim some fat off of all sides,
+	mapExtent.hi.x -= margin;
+	mapExtent.hi.y -= margin;
+	mapExtent.lo.x += margin;
+	mapExtent.lo.y += margin;
 
 	if ( mapExtent.isInRegionNoZ( &position ) == FALSE )
-  {
-    if ( position.x > mapExtent.hi.x )
-      position.x = mapExtent.hi.x;
-    else if ( position.x < mapExtent.lo.x )
-      position.x = mapExtent.lo.x;
+	{
+		if ( position.x > mapExtent.hi.x )
+		position.x = mapExtent.hi.x;
+		else if ( position.x < mapExtent.lo.x )
+		position.x = mapExtent.lo.x;
 
-    if ( position.y > mapExtent.hi.y )
-      position.y = mapExtent.hi.y;
-    else if ( position.y < mapExtent.lo.y )
-      position.y = mapExtent.lo.y;
+		if ( position.y > mapExtent.hi.y )
+		position.y = mapExtent.hi.y;
+		else if ( position.y < mapExtent.lo.y )
+		position.y = mapExtent.lo.y;
 
-    position.z = TheTerrainLogic->getGroundHeight( position.x, position.y );
-  }
+		position.z = TheTerrainLogic->getGroundHeight( position.x, position.y );
+	}
 }
 
 
@@ -1591,8 +1591,8 @@ void clampWaypointPosition( Coord3D &position, Int margin )
 void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, CommandSourceType cmdSource )
 {
 
-  Coord3D position = *p_posIn;
-  Coord3D *pos = &position;
+	Coord3D position = *p_posIn;
+	Coord3D *pos = &position;
 
 	Bool didInfantry = false;
 	Bool didVehicles = false;
@@ -1605,9 +1605,9 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 
 	Bool isFormation = getMinMaxAndCenter( &min, &max, &center );
 	if (addWaypoint)
-  {
-    isFormation = false;
-  }
+	{
+		isFormation = false;
+	}
 
 
 	if (!addWaypoint && !isFormation) {
@@ -1629,31 +1629,31 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 		}
 	}
 
-  Real extraMargin = 0.0f;
+	Real extraMargin = 0.0f;
 
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
-    const Object *groupMember = (*i);
+		const Object *groupMember = (*i);
 
-    if ( groupMember->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )//helicopter
-    {
-      isFormation = FALSE;
-      extraMargin = MAX( extraMargin, groupMember->getGeometryInfo().getMajorRadius() );
-    }
-    else if ( groupMember->isKindOf( KINDOF_AIRCRAFT ) )// fixed wing aircraft only
-    {
+		if ( groupMember->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )//helicopter
+		{
+			isFormation = FALSE;
+			extraMargin = MAX( extraMargin, groupMember->getGeometryInfo().getMajorRadius() );
+		}
+		else if ( groupMember->isKindOf( KINDOF_AIRCRAFT ) )// fixed wing aircraft only
+		{
 			if ( groupMember->getAI() && groupMember->getAI()->isDoingGroundMovement() == FALSE ) //if unit is airborne
-      {
+			{
 				tightenGroup = FALSE;	// Don't tighten aircraft.  It is a bad idea. jba.
 				isFormation = FALSE;//then keep spread formation after move
-      }
+			}
 
-      extraMargin = MAX( extraMargin, STD_AIRCRAFT_EXTRA_MARGIN );
+			extraMargin = MAX( extraMargin, STD_AIRCRAFT_EXTRA_MARGIN );
 		}
 	}
 
-  Int margin = STD_WAYPOINT_CLAMP_MARGIN + extraMargin;
-  clampWaypointPosition( position, margin );
+	Int margin = STD_WAYPOINT_CLAMP_MARGIN + extraMargin;
+	clampWaypointPosition( position, margin );
 
 
 
@@ -1767,7 +1767,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 				//Not stealthed, not detected -- so do auto-acquire while stealthed?
 				if( !ai->canAutoAcquireWhileStealthed() )
 				{
-          StealthUpdate *stealth = theUnit->getStealth();
+					StealthUpdate *stealth = theUnit->getStealth();
 					if( stealth )
 					{
 						//Delay the mood check time (for autoacquire) until after the unit can stealth again.
@@ -1861,30 +1861,30 @@ const Real CIRCLE = ( 2.0f * PI );
 
 void getHelicopterOffset( Coord3D& posOut, Int idx )
 {
-  if (idx == 0)
-    return;
+	if (idx == 0)
+	return;
 
-  Real assumedHeliDiameter = 70.0f;
-  Real radius = assumedHeliDiameter;
-  Real circumference = radius * CIRCLE;
-  Real angle = 0;
-  Real angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
-  for (Int h = 1; h < idx; ++h )
-  {
-    angle += angleBetweenEachChopper;
+	Real assumedHeliDiameter = 70.0f;
+	Real radius = assumedHeliDiameter;
+	Real circumference = radius * CIRCLE;
+	Real angle = 0;
+	Real angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+	for (Int h = 1; h < idx; ++h )
+	{
+		angle += angleBetweenEachChopper;
 
-    if ( angle > CIRCLE )
-    {
-      radius += assumedHeliDiameter;
-      circumference = radius * CIRCLE;
-      angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
-      angle -= CIRCLE;
-    }
-  }
+		if ( angle > CIRCLE )
+		{
+			radius += assumedHeliDiameter;
+			circumference = radius * CIRCLE;
+			angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+			angle -= CIRCLE;
+		}
+	}
 
-  Coord3D tempCtr = posOut;
-  posOut.x = tempCtr.x + (sin(angle) * radius);
-  posOut.y = tempCtr.y + (cos(angle) * radius);
+	Coord3D tempCtr = posOut;
+	posOut.x = tempCtr.x + (sin(angle) * radius);
+	posOut.y = tempCtr.y + (cos(angle) * radius);
 
 }
 
@@ -1937,27 +1937,27 @@ void AIGroup::groupTightenToPosition( const Coord3D *pos, Bool addWaypoint, Comm
 	iter->sort(ITER_SORTED_NEAR_TO_FAR);
 	// Works better if you let the near units get the first paths... jba.
 
-  // Need a special case for helicopters, which do tighten when in groups
-  // but who do not reserve ground when they pathfind
-  // so we will send each new helicopter found in this list to a discrete
-  // offset from 'pos' from the s_helicopterFormation table
-  // a more elegant solution should have been added to AIPathfind, but given
-  // the late date, this is much safer.
+	// Need a special case for helicopters, which do tighten when in groups
+	// but who do not reserve ground when they pathfind
+	// so we will send each new helicopter found in this list to a discrete
+	// offset from 'pos' from the s_helicopterFormation table
+	// a more elegant solution should have been added to AIPathfind, but given
+	// the late date, this is much safer.
 
-  Int heliIdx = 0;
+	Int heliIdx = 0;
 	Object *theUnit;
 	for (theUnit = iter->first(); theUnit; theUnit = iter->next())
 	{
 		AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
 		if( !addWaypoint )
 		{
-      if ( theUnit->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) ) //NEW
-      {
-        Coord3D heliOffs = *pos;
-        getHelicopterOffset( heliOffs, heliIdx++ );
-        ai->aiTightenToPosition( &heliOffs, CMD_FROM_AI );//NEW
-      }
-      else
+			if ( theUnit->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) ) //NEW
+			{
+				Coord3D heliOffs = *pos;
+				getHelicopterOffset( heliOffs, heliIdx++ );
+				ai->aiTightenToPosition( &heliOffs, CMD_FROM_AI );//NEW
+			}
+			else
   			ai->aiTightenToPosition( pos, cmdSource );
 		}
 		else
@@ -2113,7 +2113,7 @@ void AIGroup::groupIdle(CommandSourceType cmdSource)
 					//Not stealthed, not detected -- so do auto-acquire while stealthed?
 					if( !ai->canAutoAcquireWhileStealthed() )
 					{
-            StealthUpdate *stealth = obj->getStealth();
+						StealthUpdate *stealth = obj->getStealth();
 						if( stealth )
 						{
 							//Delay the mood check time (for autoacquire) until after the unit can stealth again.
@@ -2729,13 +2729,13 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
 
 		Object *object = (*i);
 
-    ++i; // just in case the act of specialpowering changes this list,
-         // like when the rebelambush happens over the ocean, and all the rebels drown
-         // and, of course, their slowdeath behavior calls deselect(), which naturally
-         // destroys the AIGroup list, in order to keep the selection sync'ed with the group.
-         // M Lorenzen... 8/23/03
+		++i; // just in case the act of specialpowering changes this list,
+		// like when the rebelambush happens over the ocean, and all the rebels drown
+		// and, of course, their slowdeath behavior calls deselect(), which naturally
+		// destroys the AIGroup list, in order to keep the selection sync'ed with the group.
+		// M Lorenzen... 8/23/03
 
-    const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
+		const SpecialPowerTemplate *spTemplate = TheSpecialPowerStore->findSpecialPowerTemplateByID( specialPowerID );
 		if( spTemplate )
 		{
 			// Have to justify the execution in case someone changed their button

@@ -121,8 +121,8 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
+			UINT controlID = (UINT)wParam;  // control identifier
+			LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			RGBColorInt *color = &gridColor;
 
 			// we only care about color button controls
@@ -139,21 +139,21 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 				// Get the area we have to draw in
 				GetClientRect( hWndControl, &rect );
 
-        // create a new brush and select it into DC
-        hBrushNew = CreateSolidBrush (RGB ((BYTE)color->red,
+				// create a new brush and select it into DC
+				hBrushNew = CreateSolidBrush (RGB ((BYTE)color->red,
                                            (BYTE)color->green,
                                            (BYTE)color->blue));
-        hBrushOld = (HBRUSH)SelectObject( drawItem->hDC, hBrushNew );
+				hBrushOld = (HBRUSH)SelectObject( drawItem->hDC, hBrushNew );
 
-        // draw the rectangle
-        Rectangle( drawItem->hDC, rect.left, rect.top, rect.right, rect.bottom );
+				// draw the rectangle
+				Rectangle( drawItem->hDC, rect.left, rect.top, rect.right, rect.bottom );
 
-        // put the old brush back and delete the new one
-        SelectObject( drawItem->hDC, hBrushOld );
-        DeleteObject( hBrushNew );
+				// put the old brush back and delete the new one
+				SelectObject( drawItem->hDC, hBrushOld );
+				DeleteObject( hBrushNew );
 
-        // validate this new area
-        ValidateRect( hWndControl, nullptr );
+				// validate this new area
+				ValidateRect( hWndControl, nullptr );
 
 				// we have taken care of it
 				return TRUE;
@@ -165,14 +165,14 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 //			Int notifyCode = HIWORD( wParam );  // notification code
 //			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( LOWORD( wParam ) )
-      {
+			switch( LOWORD( wParam ) )
+			{
 
 				// --------------------------------------------------------------------
 				case BUTTON_COLOR:
@@ -205,7 +205,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
+				case IDOK:
 				{
 					Int value;
 
@@ -227,31 +227,31 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 					// end this dialog
 					EndDialog( hWndDialog, TRUE );
 
-          break;
+					break;
 
 				}
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
+				case IDCANCEL:
 				{
 
 					EndDialog( hWndDialog, FALSE );
-          break;
+					break;
 
 				}
 
-      }
+			}
 
-      return 0;
+			return 0;
 
-    }
+		}
 
 		// ------------------------------------------------------------------------
-    case WM_CLOSE:
+		case WM_CLOSE:
 		{
 
 			EndDialog( hWndDialog, FALSE );
-      return 0;
+			return 0;
 
 		}
 
@@ -259,7 +259,7 @@ BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message,
 		default:
 			return 0;
 
-  }
+	}
 
 }
 

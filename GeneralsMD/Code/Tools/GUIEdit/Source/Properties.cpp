@@ -877,10 +877,10 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	if( tooltipEdit )
 		loadTooltipTextLabel( tooltipEdit, window );
 
-  // load text edit control if present
+	// load text edit control if present
 	HWND tooltipDelay = GetDlgItem( dialog, EDIT_TOOLTIP_DELAY );
 	if( tooltipDelay )
-    SetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, instData->m_tooltipDelay, TRUE );
+	SetDlgItemInt( dialog, EDIT_TOOLTIP_DELAY, instData->m_tooltipDelay, TRUE );
 
 
 
@@ -1176,7 +1176,7 @@ void LoadImageListComboBox( HWND comboBox )
 	SendMessage( comboBox, CB_RESETCONTENT, 0, 0 );
 
 	// load the combo box with string names from the GUI image collection
-  for (unsigned index=0;(image=TheMappedImageCollection->Enum(index))!=nullptr;index++)
+	for (unsigned index=0;(image=TheMappedImageCollection->Enum(index))!=nullptr;index++)
 	{
 
 		SendMessage( comboBox, CB_ADDSTRING, 0, (LPARAM)image->getName().str() );
@@ -1496,8 +1496,8 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 		// ------------------------------------------------------------------------
 		case WM_DRAWITEM:
 		{
-      UINT controlID = (UINT)wParam;  // control identifier
-      LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
+			UINT controlID = (UINT)wParam;  // control identifier
+			LPDRAWITEMSTRUCT drawItem = (LPDRAWITEMSTRUCT)lParam; // item drawing
 			Color color = GAME_COLOR_UNDEFINED;
 //			ImageAndColorInfo *info = GetCurrentStateInfo( hWndDialog );
 
@@ -1546,19 +1546,19 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 				// Get the area we have to draw in
 				GetClientRect( hWndControl, &rect );
 
-        // create a new brush and select it into DC
-        hBrushNew = CreateSolidBrush( RGB ( r, g, b ) );
-        hBrushOld = (HBRUSH)SelectObject( drawItem->hDC, hBrushNew );
+				// create a new brush and select it into DC
+				hBrushNew = CreateSolidBrush( RGB ( r, g, b ) );
+				hBrushOld = (HBRUSH)SelectObject( drawItem->hDC, hBrushNew );
 
-        // draw the rectangle
-        Rectangle( drawItem->hDC, rect.left, rect.top, rect.right, rect.bottom );
+				// draw the rectangle
+				Rectangle( drawItem->hDC, rect.left, rect.top, rect.right, rect.bottom );
 
-        // put the old brush back and delete the new one
-        SelectObject( drawItem->hDC, hBrushOld );
-        DeleteObject( hBrushNew );
+				// put the old brush back and delete the new one
+				SelectObject( drawItem->hDC, hBrushOld );
+				DeleteObject( hBrushNew );
 
-        // validate this new area
-        ValidateRect( hWndControl, nullptr );
+				// validate this new area
+				ValidateRect( hWndControl, nullptr );
 
 				// we have taken care of it
 				*returnCode = TRUE;
@@ -1573,14 +1573,14 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 			Int notifyCode = HIWORD( wParam );  // notification code
 			Int controlID = LOWORD( wParam );  // control ID
 			HWND hWndControl = (HWND)lParam;  // control window handle
 
-      switch( controlID )
-      {
+			switch( controlID )
+			{
 
 				// --------------------------------------------------------------------
 				case COMBO_STATE:
@@ -1704,14 +1704,14 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 
 				}
 
-      }
+			}
 
-      *returnCode = 0;
+			*returnCode = 0;
 			break;
 
-    }
+		}
 
-  }
+	}
 
 	return used;
 

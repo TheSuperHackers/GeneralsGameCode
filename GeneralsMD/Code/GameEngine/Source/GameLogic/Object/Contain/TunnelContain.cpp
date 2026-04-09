@@ -137,7 +137,7 @@ void TunnelContain::harmAndForceExitAllContained( DamageInfo *info )
 	{
 		obj = *it;
 		removeFromContain( obj, true );
-    obj->attemptDamage( info );
+		obj->attemptDamage( info );
 		it = (*fullList).begin();
 	}
 
@@ -226,7 +226,7 @@ void TunnelContain::onContaining( Object *obj, Bool wasSelected )
 
 
 
-  obj->handlePartitionCellMaintenance();
+	obj->handlePartitionCellMaintenance();
 
 
 }

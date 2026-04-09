@@ -112,7 +112,7 @@ void CountermeasuresBehavior::reportMissileForCountermeasures( Object *missile )
 	//Record the number of missiles that have been fired at us
 	m_incomingMissiles++;
 
-  if( m_availableCountermeasures + m_activeCountermeasures > 0 )
+	if( m_availableCountermeasures + m_activeCountermeasures > 0 )
 	{
 		//We have countermeasures we can use. Determine now whether or not the incoming missile will
 		//be diverted.

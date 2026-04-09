@@ -395,7 +395,7 @@ Bool DeliverPayloadAIUpdate::isOffMap() const
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::crc(xfer);
 }
 
@@ -408,12 +408,12 @@ void DeliverPayloadAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 {
-  // version
-  const XferVersion currentVersion = 5;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 5;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	xfer->xferCoord3D(&m_targetPos);
@@ -426,7 +426,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 	xfer->xferAsciiString(&data.m_visibleDropBoneName);
 	xfer->xferAsciiString(&data.m_visibleSubObjectName);
 	xfer->xferAsciiString(&data.m_visiblePayloadTemplateName);
-  xfer->xferReal(&data.m_distToTarget);
+	xfer->xferReal(&data.m_distToTarget);
 	if( version >= 5 )
 		xfer->xferReal(&data.m_preOpenDistance);
 	xfer->xferInt(&data.m_maxAttempts);
@@ -493,7 +493,7 @@ void DeliverPayloadAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeliverPayloadAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 
@@ -608,14 +608,14 @@ StateReturnType ApproachState::update()
 
 	if (ai->getAIStateType() != AI_MOVE_TO)
 	{
-    if ( ai->getAIStateType() == AI_IDLE )
-    // Because something outside us has told us to IDLE, so geez, ignore it and try our approach again
-      return STATE_FAILURE;
-    else
-    {
+		if ( ai->getAIStateType() == AI_IDLE )
+		// Because something outside us has told us to IDLE, so geez, ignore it and try our approach again
+		return STATE_FAILURE;
+		else
+		{
 		  DEBUG_CRASH(("hmm, bailed from moveto state early... should this be possible?"));
 		  ai->aiMoveToPosition( ai->getMoveToPos(), CMD_FROM_AI );
-    }
+		}
 
 	}
 
@@ -638,10 +638,10 @@ void DeliveringState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DeliveringState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_dropDelayLeft);
 	xfer->xferBool(&m_didOpen);
@@ -928,10 +928,10 @@ void ConsiderNewApproachState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ConsiderNewApproachState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferInt(&m_numberEntriesToState);
 }
@@ -1040,10 +1040,10 @@ void RecoverFromOffMapState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void RecoverFromOffMapState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_reEntryFrame);
 }
@@ -1066,14 +1066,14 @@ StateReturnType RecoverFromOffMapState::onEnter() // Increment local counter o' 
 		return STATE_FAILURE;
 	}
 
-  // have him hold in place, if possible.
+	// have him hold in place, if possible.
 	ai->aiMoveToPosition( owner->getPosition(), CMD_FROM_AI );
 
-  // a little cheesy... make a delay based on turn-radius time to simulate offscreen
-  // maneuvering.
-  Real timeToTravelThatDist;
+	// a little cheesy... make a delay based on turn-radius time to simulate offscreen
+	// maneuvering.
+	Real timeToTravelThatDist;
 	/*Real minTurnRadius =*/ ai->calcMinTurnRadius(&timeToTravelThatDist);
-  m_reEntryFrame = TheGameLogic->getFrame() + REAL_TO_INT_CEIL(timeToTravelThatDist);
+	m_reEntryFrame = TheGameLogic->getFrame() + REAL_TO_INT_CEIL(timeToTravelThatDist);
 
 	// kill its momentum
 	PhysicsBehavior* physics = owner->getPhysics();
@@ -1168,7 +1168,7 @@ StateReturnType HeadOffMapState::onEnter() // Give move order out of town
 	ai->friend_setAcceptingCommands(false);
 
 
-  owner->getUnitDirectionVector3D( facingDirectionUponDelivery );
+	owner->getUnitDirectionVector3D( facingDirectionUponDelivery );
 
 	return STATE_CONTINUE;
 }
@@ -1186,19 +1186,19 @@ StateReturnType HeadOffMapState::update()
 	if (ai->isOffMap())
 		return STATE_SUCCESS;
 
-  // greasy as this hack seems... if terrain or objects or whatever have turned me away from the map-edge that I had first headed for,...
-  //I blow up, rather than face eternally spinning on the point of a mineret or derrick or something awful.
-  if ( owner->getPhysics()->getTurning() != 0 )
-  {
-    Coord3D currentDirection;
-    owner->getUnitDirectionVector3D( currentDirection );
+	// greasy as this hack seems... if terrain or objects or whatever have turned me away from the map-edge that I had first headed for,...
+	//I blow up, rather than face eternally spinning on the point of a mineret or derrick or something awful.
+	if ( owner->getPhysics()->getTurning() != 0 )
+	{
+		Coord3D currentDirection;
+		owner->getUnitDirectionVector3D( currentDirection );
   	Real dot = facingDirectionUponDelivery.x * currentDirection.x
              + facingDirectionUponDelivery.y * currentDirection.y
              + facingDirectionUponDelivery.z * currentDirection.z;
 
-    if ( dot < 0.3f )
-      owner->kill();
-  }
+		if ( dot < 0.3f )
+		owner->kill();
+	}
 
 
 

@@ -149,8 +149,8 @@ class ParticleEmitterClass : public RenderObjClass
 		// - hopefully can be rewritten more cleanly in future)...
 		virtual void			On_Frame_Update() override;
 
-      virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override { sphere.Center.Set(0,0,0); sphere.Radius = 0; }
-      virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const override { box.Center.Set(0,0,0); box.Extent.Set(0,0,0); }
+	virtual void			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override { sphere.Center.Set(0,0,0); sphere.Radius = 0; }
+	virtual void			Get_Obj_Space_Bounding_Box(AABoxClass & box) const override { box.Center.Set(0,0,0); box.Extent.Set(0,0,0); }
 		virtual void			Set_Hidden(int onoff) override				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibility (); }
 		virtual void			Set_Visible(int onoff) override				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibility (); }
 		virtual void			Set_Animation_Hidden(int onoff) override	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibility (); }
@@ -202,7 +202,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void						Remove_Buffer_From_Scene ()	{ Buffer->Remove (); FirstTime = true; BufferSceneNeeded = true; }
 
 		// from RenderObj...
-      virtual bool			Is_Complete() override { return IsComplete; }
+	virtual bool			Is_Complete() override { return IsComplete; }
 
 		// Auto deletion behavior controls
 		bool						Is_Remove_On_Complete_Enabled()				{ return RemoveOnComplete; }
@@ -282,15 +282,15 @@ class ParticleEmitterClass : public RenderObjClass
 	private:
 
 		// Collision sphere is a point - emitter emits also when not visible,
-      // so this is only important to avoid affecting the collision spheres
-      // of hierarchy objects into which the emitter is inserted.
+	// so this is only important to avoid affecting the collision spheres
+	// of hierarchy objects into which the emitter is inserted.
 		virtual void Update_Cached_Bounding_Volumes() const override;
 
-      // Create new particles and pass them to the particle buffer. Receives
-      // the end-of-interval quaternion and origin and interpolates between
-      // them and PrevQ/PrevOrig to get the transform to apply to each
-      // particle's position and velocity as it is created. New particles are
-      // placed into a circular queue for processing by the particle buffer.
+	// Create new particles and pass them to the particle buffer. Receives
+	// the end-of-interval quaternion and origin and interpolates between
+	// them and PrevQ/PrevOrig to get the transform to apply to each
+	// particle's position and velocity as it is created. New particles are
+	// placed into a circular queue for processing by the particle buffer.
 		void Create_New_Particles(const Quaternion & curr_quat, const Vector3 & curr_orig);
 
 		// Initialize one new particle at the given NewParticleStruct

@@ -119,7 +119,7 @@ BOOL CBabylonApp::InitInstance()
 
 	sprintf (AppTitle, "%s Built on %s - %s", AppName, __DATE__, __TIME__ );
 
-  if ( !_getcwd( RootPath, _MAX_PATH ) )
+	if ( !_getcwd( RootPath, _MAX_PATH ) )
 	{
 		AfxMessageBox ( "Failed to obtain current working directoy!\n\n Set directoy path to \"c:\\Babylon\"." );
 		strcpy ( (char *) RootPath, "c:\\Babylon" );

@@ -207,7 +207,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    AIUpdateModuleData::buildFieldParse(p);
+		AIUpdateModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -227,7 +227,7 @@ public:
 			{ "DeliveryDecalRadius",			INI::parseReal,									nullptr,	offsetof( DeliverPayloadAIUpdateModuleData, m_deliveryDecalRadius ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 
 	}
 };
@@ -245,7 +245,7 @@ public:
 	AsciiString						m_visibleDropBoneName;				///< Where the payload is created (offset by current bone number 01-xx)
 	AsciiString						m_visibleSubObjectName;				///< Visible subobject to show or hide (offset by current drop number 01-xx)
 	AsciiString						m_visiblePayloadTemplateName;
-  Real                  m_distToTarget;
+	Real                  m_distToTarget;
 	Real									m_preOpenDistance;
 	Int										m_maxAttempts;
 	Coord3D								m_dropOffset;

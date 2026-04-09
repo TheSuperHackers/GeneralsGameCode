@@ -328,7 +328,7 @@ EvaMessage Eva::nameToMessage(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 AsciiString Eva::messageToName(EvaMessage message)
 {
-  if (message >= EVA_FIRST && message < EVA_COUNT)
+	if (message >= EVA_FIRST && message < EVA_COUNT)
 		return TheEvaMessageNames[message];
 
 	DEBUG_CRASH(("Invalid requested Eva message translation. jkmcd"));
@@ -373,7 +373,7 @@ void Eva::setShouldPlay(EvaMessage messageToPlay)
 {
 	m_shouldPlay[messageToPlay] = TRUE;
 
-  // DEBUG_LOG( ( "Eva message %s play requested", messageToName( messageToPlay).str() ) );
+	// DEBUG_LOG( ( "Eva message %s play requested", messageToName( messageToPlay).str() ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -507,8 +507,8 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	AsciiString side = rts::getObservedOrLocalPlayer()->getSide();
 	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
 
-  // clear it. If we can't find the side we want, don't play anything
-  m_evaSpeech.setEventName(AsciiString::TheEmptyString);
+	// clear it. If we can't find the side we want, don't play anything
+	m_evaSpeech.setEventName(AsciiString::TheEmptyString);
 
 	for (Int i = 0; i < numSides; ++i) {
 		if (side.compareNoCase(storedIt->m_evaInfo->m_evaSideSounds[i].m_side) == 0) {
@@ -517,7 +517,7 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 				Int soundToPlay = GameClientRandomValue(0, storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() - 1);
 				m_evaSpeech.setEventName(storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames[soundToPlay]);
 			}
-      break;
+			break;
 		}
 	}
 
@@ -537,16 +537,16 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 //-------------------------------------------------------------------------------------------------
 /*static*/void Eva::parseEvaMessageFromIni( INI * ini, void *instance, void *store, const void* userData )
 {
-  const char *token = ini->getNextToken();
+	const char *token = ini->getNextToken();
 
-  EvaMessage message = nameToMessage( token );
-  if ( message == EVA_Invalid )
-  {
-    // debug message already displayed
-    throw ERROR_BAD_INI;
-  }
+	EvaMessage message = nameToMessage( token );
+	if ( message == EVA_Invalid )
+	{
+		// debug message already displayed
+		throw ERROR_BAD_INI;
+	}
 
-  *((EvaMessage *)store) = message;
+	*((EvaMessage *)store) = message;
 }
 
 //-------------------------------------------------------------------------------------------------

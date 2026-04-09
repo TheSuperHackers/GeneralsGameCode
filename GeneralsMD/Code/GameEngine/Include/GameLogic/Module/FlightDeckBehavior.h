@@ -205,7 +205,7 @@ private:
 	FlightDeckInfo* findPPI(ObjectID id);
 	FlightDeckInfo* findEmptyPPI();
 
-  const ThingTemplate *m_thingTemplate;
+	const ThingTemplate *m_thingTemplate;
 
 
 	std::vector<FlightDeckInfo>		m_spaces;

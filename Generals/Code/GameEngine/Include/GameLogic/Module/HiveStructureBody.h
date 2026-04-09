@@ -48,14 +48,14 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    StructureBodyModuleData::buildFieldParse(p);
+		StructureBodyModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "PropagateDamageTypesToSlavesWhenExisting",   INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToPropagateToSlaves ) },
 			{ "SwallowDamageTypesIfSlavesNotExisting",			INI::parseDamageTypeFlags, nullptr, offsetof( HiveStructureBodyModuleData, m_damageTypesToSwallow ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

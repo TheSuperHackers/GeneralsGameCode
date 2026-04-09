@@ -70,7 +70,7 @@ public:
 	void							Free_All_Trees_With_Exclusion_List(const W3DExclusionListClass & exclusion_list);
 
 	int							Get_Tree_ID(const char * name);
-   char *						Get_Tree_Name(const int id);
+	char *						Get_Tree_Name(const int id);
 
 private:
 

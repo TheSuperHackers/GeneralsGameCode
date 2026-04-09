@@ -211,7 +211,7 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
  			}
 
 
-     //  is this where we set the cameos disabled when container is subdued?
+			//  is this where we set the cameos disabled when container is subdued?
 
 			// if we've counted more UI spots than the transport can hold, hide this command window
 			if( inventoryCommandCount > transportMax )
@@ -826,7 +826,7 @@ void ControlBar::updateContextCommand()
 
 
 // LORENZEN COMMENTED THIS OUT 8/11
-    // Reason: ExitCameos can be greyed out when the container object gets subdued
+		// Reason: ExitCameos can be greyed out when the container object gets subdued
 
 //		// ignore transport/structure inventory commands, they are handled elsewhere
 //		if( command->getCommandType() == GUI_COMMAND_EXIT_CONTAINER )
@@ -1126,7 +1126,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	{
 		case GUI_COMMAND_DOZER_CONSTRUCT:
 		{
-      const ThingTemplate * whatToBuild = command->getThingTemplate();
+			const ThingTemplate * whatToBuild = command->getThingTemplate();
 			// if the command is a dozer construct task and the object dozer is building anything
 			// this command is not available
 			if(whatToBuild)
@@ -1175,9 +1175,9 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if (obj->testScriptStatusBit(OBJECT_STATUS_SCRIPT_UNSELLABLE))
 				return COMMAND_HIDDEN;
 
-    //since the container can be subdued, , M Lorenzen 8/11
-      if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
-        return COMMAND_RESTRICTED;
+			//since the container can be subdued, , M Lorenzen 8/11
+			if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
+			return COMMAND_RESTRICTED;
 
 			break;
 		}
@@ -1366,9 +1366,9 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			// container changes the UI is completely repopulated
 			//
 
-    //since the container can be subdued, the above is no longer true, M Lorenzen 8/11
-      if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
-        return COMMAND_RESTRICTED;
+			//since the container can be subdued, the above is no longer true, M Lorenzen 8/11
+			if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
+			return COMMAND_RESTRICTED;
 
 			break;
 		}
@@ -1380,8 +1380,8 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if( !obj->getContain() || obj->getContain()->getContainCount() <= 0 )
 				return COMMAND_RESTRICTED;
 
-      if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
-        return COMMAND_RESTRICTED;
+			if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
+			return COMMAND_RESTRICTED;
 
 
 			break;

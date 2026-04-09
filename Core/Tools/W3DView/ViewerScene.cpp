@@ -138,7 +138,7 @@ ViewerSceneClass::Visibility_Check (CameraClass *camera)
 		}
 	}
 
-   Visibility_Checked = true;
+	Visibility_Checked = true;
 
 	//SimpleSceneClass::Visibility_Check (camera);
 	return ;
@@ -327,13 +327,13 @@ void	ViewerSceneClass::Customized_Render(RenderInfoClass & rinfo)
 {
 #ifdef WW3D_DX8 // just use simplescene for now...
 	// If visibility has not been checked for this scene since the last
-   // Render() call, check it (set/clear the visibility bit in all render
-   // objects in the scene).
-   if (!Visibility_Checked) {
-      // set the visibility bit in all render objects in all layers.
+	// Render() call, check it (set/clear the visibility bit in all render
+	// objects in the scene).
+	if (!Visibility_Checked) {
+		// set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
-   }
-   Visibility_Checked = false;
+	}
+	Visibility_Checked = false;
 
 	// Install the vertex processors.  Derived scenes may want to use some
 	// form of spatial subdivision to only insert the needed vps...

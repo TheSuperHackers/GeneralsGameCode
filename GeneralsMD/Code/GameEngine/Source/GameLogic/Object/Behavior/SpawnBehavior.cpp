@@ -1022,7 +1022,7 @@ Bool SpawnBehavior::areAllSlavesStealthed() const
 		currentSpawn = TheGameLogic->findObjectByID( (*iter) );
 		if( currentSpawn )
 		{
-      const StealthUpdate *stealthUpdate = currentSpawn->getStealth();
+			const StealthUpdate *stealthUpdate = currentSpawn->getStealth();
 			if( !stealthUpdate || !stealthUpdate->allowedToStealth( currentSpawn ) )
 			{
 				return FALSE;

@@ -234,47 +234,47 @@ public:
 		return val;
 	}
 
-  static const char* const* getBitNames()
-  {
-    return s_bitNameList;
-  }
+	static const char* const* getBitNames()
+	{
+		return s_bitNameList;
+	}
 
-  static const char* getNameFromSingleBit(Int i)
-  {
-    return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
-  }
+	static const char* getNameFromSingleBit(Int i)
+	{
+		return (i >= 0 && i < NUMBITS) ? s_bitNameList[i] : nullptr;
+	}
 
-  static Int getSingleBitFromName(const char* token)
-  {
-    Int i = 0;
+	static Int getSingleBitFromName(const char* token)
+	{
+		Int i = 0;
 	  for(const char* const* name = s_bitNameList; *name; ++name, ++i )
 	  {
 		  if( stricmp( *name, token ) == 0 )
 		  {
-        return i;
+				return i;
 		  }
 	  }
 		return -1;
-  }
+	}
 
-  const char* getBitNameIfSet(Int i) const
-  {
-    return test(i) ? s_bitNameList[i] : nullptr;
-  }
+	const char* getBitNameIfSet(Int i) const
+	{
+		return test(i) ? s_bitNameList[i] : nullptr;
+	}
 
-  Bool setBitByName(const char* token)
-  {
-    Int i = getSingleBitFromName(token);
+	Bool setBitByName(const char* token)
+	{
+		Int i = getSingleBitFromName(token);
 		if (i >= 0)
 		{
-      set(i);
+			set(i);
 			return true;
 		}
 		else
 		{
 	    return false;
 		}
-  }
+	}
 
 	void parse(INI* ini, AsciiString* str);
 	void parseSingleBit(INI* ini, AsciiString* str);

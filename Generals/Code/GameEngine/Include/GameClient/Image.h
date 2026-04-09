@@ -133,20 +133,20 @@ public:
 	const Image *findImageByName( const AsciiString& name ) const; ///< find image based on name
 	const Image *findImageByName( const char* name ) const; ///< find image based on name
 
-  /// adds the given image to the collection, transfers ownership to this object
-  void addImage(Image *image);
+	/// adds the given image to the collection, transfers ownership to this object
+	void addImage(Image *image);
 
-  /// enumerates the list of existing images
-  Image *Enum(unsigned index)
-  {
-    for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
-      if (!index--)
-        return i->second;
-    return nullptr;
-  }
+	/// enumerates the list of existing images
+	Image *Enum(unsigned index)
+	{
+		for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
+		if (!index--)
+		return i->second;
+		return nullptr;
+	}
 
 protected:
-  ImageMap m_imageMap;  ///< maps named keys to images
+	ImageMap m_imageMap;  ///< maps named keys to images
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////

@@ -55,7 +55,7 @@ HealContainModuleData::HealContainModuleData()
 /*static*/ void HealContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 
-  OpenContainModuleData::buildFieldParse( p );
+	OpenContainModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -63,7 +63,7 @@ HealContainModuleData::HealContainModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

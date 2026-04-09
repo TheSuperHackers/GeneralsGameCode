@@ -2058,8 +2058,8 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 																								  Bool defaultVisual )
 
 {
-  GameWindow *listbox;
-  ListboxData *listboxData;
+	GameWindow *listbox;
+	ListboxData *listboxData;
 	Bool title = FALSE;
 
 	// we MUST have a push button style window to do this
@@ -2073,7 +2073,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	}
 
 	// create the listbox
-  listbox = winCreate( parent, status, x, y, width, height,
+	listbox = winCreate( parent, status, x, y, width, height,
 											 GadgetListBoxSystem, instData );
 
 	if( listbox == nullptr )
@@ -2090,8 +2090,8 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	DEBUG_ASSERTCRASH(listboxDataTemplate, ("listboxDataTemplate not initialized"));
 	memcpy( listboxData, listboxDataTemplate, sizeof( ListboxData ) );
 
-  // Add the list box data struct to the window's class data
-  listbox->winSetUserData( listboxData );
+	// Add the list box data struct to the window's class data
+	listbox->winSetUserData( listboxData );
 
 	// set the owner to the parent, or if no parent it will be itself
 	listbox->winSetOwner( parent );
@@ -2129,12 +2129,12 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	if( title )
 		listboxData->displayHeight -= winFontHeight( instData->getFont() );
 
-  // Set display position to the top of the list
-  listboxData->displayPos = 0;
-  listboxData->selectPos = -1;
+	// Set display position to the top of the list
+	listboxData->displayPos = 0;
+	listboxData->selectPos = -1;
 	listboxData->doubleClickTime = 0;
-  listboxData->insertPos = 0;
-  listboxData->endPos = 0;
+	listboxData->insertPos = 0;
+	listboxData->endPos = 0;
 	listboxData->totalHeight = 0;
 
 	// if this listbox has multiple selections prep it
@@ -2185,7 +2185,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	// assign the default images/colors
 	assignDefaultGadgetLook( listbox, defaultFont, defaultVisual );
 
-  return listbox;
+	return listbox;
 
 }
 
@@ -2326,8 +2326,8 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 																								  GameFont *defaultFont,
 																								  Bool defaultVisual )
 {
-  GameWindow *comboBox;
-  ComboBoxData *comboBoxData;
+	GameWindow *comboBox;
+	ComboBoxData *comboBoxData;
 	Bool title = FALSE;
 
 	// we MUST have a push button style window to do this
@@ -2341,7 +2341,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	}
 
 	// create the listbox
-  comboBox = winCreate( parent, status, x, y, width, height,
+	comboBox = winCreate( parent, status, x, y, width, height,
 											 GadgetComboBoxSystem, instData );
 
 	if( comboBox == nullptr )
@@ -2359,8 +2359,8 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	comboBoxData = NEW ComboBoxData;
 	memcpy( comboBoxData, comboBoxDataTemplate, sizeof( ComboBoxData ) );
 
-  // Add the list box data struct to the window's class data
-  comboBox->winSetUserData( comboBoxData );
+	// Add the list box data struct to the window's class data
+	comboBox->winSetUserData( comboBoxData );
 
 	// set the owner to the parent, or if no parent it will be itself
 	comboBox->winSetOwner( parent );
@@ -2433,7 +2433,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	winInstData.init();
 
 	winInstData.m_owner = comboBox;
-  winInstData.m_style |= GWS_ENTRY_FIELD;
+	winInstData.m_style |= GWS_ENTRY_FIELD;
 	winInstData.m_textLabelString = "Entry";
 	if( BitIsSet( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
 		BitSet( winInstData.m_style, GWS_MOUSE_TRACK );
@@ -2446,7 +2446,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 		statusTextEntry = status | WIN_STATUS_NO_INPUT ;//| WIN_STATUS_NO_FOCUS;
 		comboBoxData->entryData->drawTextFromStart = TRUE;
 	}
-  comboBoxData->editBox = gogoGadgetTextEntry( comboBox, statusTextEntry ,
+	comboBoxData->editBox = gogoGadgetTextEntry( comboBox, statusTextEntry ,
 																										 0,0 ,
 																										width - buttonWidth , height ,
 																										&winInstData, comboBoxData->entryData,
@@ -2463,12 +2463,12 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	winInstData.init();
 
 	winInstData.m_owner = comboBox;
-  if( BitIsSet( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
+	if( BitIsSet( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
 		BitSet( winInstData.m_style, GWS_MOUSE_TRACK );
 	BitSet( winInstData.m_style, WIN_STATUS_HIDDEN );
-  winInstData.m_style |= GWS_SCROLL_LISTBOX;
+	winInstData.m_style |= GWS_SCROLL_LISTBOX;
 	status &= ~(WIN_STATUS_IMAGE);
-  comboBoxData->listBox = gogoGadgetListBox( comboBox, status | WIN_STATUS_ABOVE | WIN_STATUS_ONE_LINE, 0, height,
+	comboBoxData->listBox = gogoGadgetListBox( comboBox, status | WIN_STATUS_ABOVE | WIN_STATUS_ONE_LINE, 0, height,
 																								width, height,
 																								&winInstData, comboBoxData->listboxData,
 																								winInstData.m_font, FALSE );
@@ -2516,7 +2516,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	// assign the default images/colors
 	assignDefaultGadgetLook( comboBox, defaultFont, defaultVisual );
 
-  return comboBox;
+	return comboBox;
 
 }
 
@@ -2591,24 +2591,24 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
 																										 Bool defaultVisual )
 
 {
-  GameWindow *textWin;
-  TextData *data;
+	GameWindow *textWin;
+	TextData *data;
 
 	// Static Text can not be a Tab Stop
 	BitClear( instData->m_style, GWS_TAB_STOP );
 
-  if( BitIsSet( instData->getStyle(), GWS_STATIC_TEXT ) )
+	if( BitIsSet( instData->getStyle(), GWS_STATIC_TEXT ) )
 	{
-    textWin = winCreate( parent, status, x, y, width, height,
+		textWin = winCreate( parent, status, x, y, width, height,
 												 GadgetStaticTextSystem, instData );
-  }
+	}
 	else
 	{
-    DEBUG_LOG(( "gogoGadgetText warning: unrecognized text style." ));
-    return nullptr;
-  }
+		DEBUG_LOG(( "gogoGadgetText warning: unrecognized text style." ));
+		return nullptr;
+	}
 
-  if( textWin != nullptr )
+	if( textWin != nullptr )
 	{
 
 		// set the owner to the parent, or if no parent it will be itself
@@ -2621,16 +2621,16 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
 		else
 			textWin->winSetDrawFunc( getStaticTextDrawFunc() );
 
-    data = NEW TextData;
+		data = NEW TextData;
 		assert( textData != nullptr );
-    memcpy( data, textData, sizeof(TextData) );
+		memcpy( data, textData, sizeof(TextData) );
 
 		// allocate a display string for the tet
 		data->text = TheDisplayStringManager->newDisplayString();
 		// set whether or not we center the wrapped text
 		data->text->setWordWrapCentered( BitIsSet( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
-    // Add the entry field data struct to the window's class data
-    textWin->winSetUserData( data );
+		// Add the entry field data struct to the window's class data
+		textWin->winSetUserData( data );
 
 		// assign the default images/colors
 		assignDefaultGadgetLook( textWin, defaultFont, defaultVisual );
@@ -2640,9 +2640,9 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
 		if( text.getLength() )
 			GadgetStaticTextSetText( textWin, text );
 
-  }
+	}
 
-  return textWin;
+	return textWin;
 
 }
 

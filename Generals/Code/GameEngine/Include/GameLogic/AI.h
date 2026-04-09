@@ -405,16 +405,16 @@ enum AICommandType CPP_11(: Int)	// Stored in save file, do not reorder/renumber
 struct AICommandParms
 {
 	AICommandType						m_cmd;
-  CommandSourceType				m_cmdSource;
-  Coord3D									m_pos;
-  Object*									m_obj;
-  Object*									m_otherObj;
-  const Team*							m_team;
+		CommandSourceType				m_cmdSource;
+		Coord3D									m_pos;
+		Object*									m_obj;
+		Object*									m_otherObj;
+		const Team*							m_team;
 	std::vector<Coord3D>		m_coords;
-  const Waypoint*         m_waypoint;
-  const PolygonTrigger*   m_polygon;
-  Int											m_intValue;       /// misc usage
-  DamageInfo							m_damage;
+		const Waypoint*         m_waypoint;
+		const PolygonTrigger*   m_polygon;
+		Int											m_intValue;       /// misc usage
+		DamageInfo							m_damage;
 	const CommandButton*		m_commandButton;
 	Path*										m_path;
 
@@ -425,16 +425,16 @@ class AICommandParmsStorage
 {
 private:
 	AICommandType						m_cmd;
-  CommandSourceType				m_cmdSource;
-  Coord3D									m_pos;
-  ObjectID								m_obj;
-  ObjectID								m_otherObj;
-  AsciiString							m_teamName;
+		CommandSourceType				m_cmdSource;
+		Coord3D									m_pos;
+		ObjectID								m_obj;
+		ObjectID								m_otherObj;
+		AsciiString							m_teamName;
 	std::vector<Coord3D>		m_coords;
-  const Waypoint*         m_waypoint;
-  const PolygonTrigger*   m_polygon;
-  Int											m_intValue;       /// misc usage
-  DamageInfo							m_damage;
+		const Waypoint*         m_waypoint;
+		const PolygonTrigger*   m_polygon;
+		Int											m_intValue;       /// misc usage
+		DamageInfo							m_damage;
 	const CommandButton*  	m_commandButton;
 	Path*										m_path;
 

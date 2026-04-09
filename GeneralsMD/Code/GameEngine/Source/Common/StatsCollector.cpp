@@ -230,8 +230,8 @@ void StatsCollector::writeFileEnd()
 		// Time
 	struct tm *newTime;
 	time_t aclock;
-  time( &aclock );
-  newTime = localtime( &aclock );
+	time( &aclock );
+	newTime = localtime( &aclock );
 	fprintf(f, "End Time:\t%s\n",asctime(newTime) );
 
 	fprintf(f, "=KEY===============================================\n");
@@ -371,8 +371,8 @@ void StatsCollector::writeInitialFileInfo()
 	// Time
 	struct tm *newTime;
 	time_t aclock;
-  time( &aclock );
-  newTime = localtime( &aclock );
+	time( &aclock );
+	newTime = localtime( &aclock );
 	fprintf(f, "Date:\t%s",asctime(newTime) );
 
 	// Map

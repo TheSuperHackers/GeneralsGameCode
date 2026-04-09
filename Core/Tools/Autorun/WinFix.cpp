@@ -186,17 +186,17 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 //         } else {
 
 		#if( RTS_DEBUG )
-            HKEY hKey;
-            char szProductType[80];
-            DWORD dwBufLen;
+		HKEY hKey;
+		char szProductType[80];
+		DWORD dwBufLen;
 
-            RegOpenKeyEx( HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueEx( hKey, "ProductType", nullptr, nullptr, (LPBYTE) szProductType, &dwBufLen);
-            RegCloseKey( hKey );
+		RegOpenKeyEx( HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\ProductOptions", 0, KEY_QUERY_VALUE, &hKey );
+		RegQueryValueEx( hKey, "ProductType", nullptr, nullptr, (LPBYTE) szProductType, &dwBufLen);
+		RegCloseKey( hKey );
 
-            if ( lstrcmpi( "WINNT", szProductType) == 0 )
+		if ( lstrcmpi( "WINNT", szProductType) == 0 )
 				Msg( __LINE__, __FILE__, "WinNT Workstation." );
-            if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
+		if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
 				Msg( __LINE__, __FILE__, "WinNT Server." );
 		#endif
 //         }

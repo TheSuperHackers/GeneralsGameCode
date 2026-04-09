@@ -58,13 +58,13 @@ W3DOverlordAircraftDrawModuleData::~W3DOverlordAircraftDrawModuleData()
 //-------------------------------------------------------------------------------------------------
 void W3DOverlordAircraftDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  W3DModelDrawModuleData::buildFieldParse(p);
+	W3DModelDrawModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -95,16 +95,16 @@ void W3DOverlordAircraftDraw::doDrawModule(const Matrix3D* transformMtx)
 		)
 	{
 		Drawable *riderDraw = me->getContain()->friend_getRider()->getDrawable();
-    if ( riderDraw )
-    {
-      TintEnvelope *env = getDrawable()->getColorTintEnvelope();
-      if ( env )
-        riderDraw->setColorTintEnvelope( *env );
+		if ( riderDraw )
+		{
+			TintEnvelope *env = getDrawable()->getColorTintEnvelope();
+			if ( env )
+			riderDraw->setColorTintEnvelope( *env );
 
-      riderDraw->notifyDrawableDependencyCleared();
-      riderDraw->draw();
-    }
-    DEBUG_ASSERTCRASH( riderDraw, ("OverlordAircraftDraw finds no rider's drawable") );
+			riderDraw->notifyDrawableDependencyCleared();
+			riderDraw->draw();
+		}
+		DEBUG_ASSERTCRASH( riderDraw, ("OverlordAircraftDraw finds no rider's drawable") );
 
 	}
 }

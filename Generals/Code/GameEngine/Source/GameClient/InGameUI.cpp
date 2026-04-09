@@ -1021,7 +1021,7 @@ InGameUI::InGameUI()
 	Int i;
 
 
-  m_inputEnabled = true;
+	m_inputEnabled = true;
 	m_isDragSelecting = false;
 	m_nextMoveHint = 0;
 	m_selectCount = 0;
@@ -2658,7 +2658,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 				str.concat(warehouseFeedback);
 			}
 
-      if (player)
+			if (player)
 			{
 				UnicodeString tooltip;
 				//if (TheRecorder->isMultiplayer() && player->getPlayerType() == PLAYER_HUMAN)
@@ -6093,13 +6093,13 @@ void InGameUI::drawGameTime()
 	Int seconds = gameSeconds % 60;
 	Int frame = currentFrame % 30;
 
-    UnicodeString gameTimeString;
-    gameTimeString.format(L"%2.2d:%2.2d:%2.2d", hours, minutes, seconds);
-    m_gameTimeString->setText(gameTimeString);
+	UnicodeString gameTimeString;
+	gameTimeString.format(L"%2.2d:%2.2d:%2.2d", hours, minutes, seconds);
+	m_gameTimeString->setText(gameTimeString);
 
 	UnicodeString gameTimeFrameString;
-    gameTimeFrameString.format(L".%2.2d", frame);
-    m_gameTimeFrameString->setText(gameTimeFrameString);
+	gameTimeFrameString.format(L".%2.2d", frame);
+	m_gameTimeFrameString->setText(gameTimeFrameString);
 
 	// TheSuperHackers @info this implicitly offsets the game timer from the right instead of left of the screen
 	int horizontalTimerOffset = TheDisplay->getWidth() - (Int)m_gameTimePosition.x - m_gameTimeString->getWidth() - m_gameTimeFrameString->getWidth();

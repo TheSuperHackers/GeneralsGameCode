@@ -73,7 +73,7 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 									            WindowMsgData mData1, WindowMsgData mData2 )
 {
 
-  switch( msg )
+	switch( msg )
 	{
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
@@ -83,18 +83,18 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
 		}
 
 		// ------------------------------------------------------------------------
-    case GPM_SET_PROGRESS:
-    {
-      Int newPos = (Int)mData1;
+		case GPM_SET_PROGRESS:
+		{
+			Int newPos = (Int)mData1;
 
-      if (newPos < 0 || newPos > 100)
-        break;
+			if (newPos < 0 || newPos > 100)
+			break;
 
-      window->winSetUserData( (void *)newPos );
+			window->winSetUserData( (void *)newPos );
 
 			break;
 
-    }
+		}
 
 		// ------------------------------------------------------------------------
 		default:

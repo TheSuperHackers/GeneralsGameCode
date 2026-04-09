@@ -797,7 +797,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[0] = "Build a building of type ";
 	curTemplate->m_uiStrings[1] = ".";
 
-  curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_SUPPLY_CENTER];
+	curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_SUPPLY_CENTER];
 	curTemplate->m_name = "[Player] AI player build near a supply source.";
 	curTemplate->m_numParameters = 3;
 	curTemplate->m_parameters[0] = Parameter::SIDE;
@@ -809,7 +809,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[2] = " near a supply source with at least ";
 	curTemplate->m_uiStrings[3] = " available resources.";
 
-  curTemplate = &m_actionTemplates[ScriptAction::TEAM_GUARD_SUPPLY_CENTER];
+	curTemplate = &m_actionTemplates[ScriptAction::TEAM_GUARD_SUPPLY_CENTER];
 	curTemplate->m_name = "[Team] Set to guard - a supply source.";
 	curTemplate->m_numParameters = 2;
 	curTemplate->m_parameters[0] = Parameter::TEAM;
@@ -819,7 +819,7 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[1] = " guard attacked or closest supply source with at least ";
 	curTemplate->m_uiStrings[2] = " available resources";
 
-  curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_UPGRADE];
+	curTemplate = &m_actionTemplates[ScriptAction::AI_PLAYER_BUILD_UPGRADE];
 	curTemplate->m_name = "[Player] AI player build an upgrade.";
 	curTemplate->m_numParameters = 2;
 	curTemplate->m_parameters[0] = Parameter::SIDE;

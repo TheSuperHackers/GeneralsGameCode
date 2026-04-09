@@ -50,7 +50,7 @@ public:
 	WWINLINE Vector3i(int i,int j,int k);
 
 	WWINLINE bool			operator== (const Vector3i & v) const;
-   WWINLINE bool			operator!= (const Vector3i& v) const;
+	WWINLINE bool			operator!= (const Vector3i& v) const;
 	WWINLINE const	int&	operator[] (int n) const;
 	WWINLINE int&			operator[] (int n);
 };

@@ -243,7 +243,7 @@ class AudioManager : public SubsystemInterface
 		// on zoom.
 		virtual void set3DVolumeAdjustment( Real volumeAdjustment );
 
-    virtual Bool has3DSensitiveStreamsPlaying() const = 0;
+	virtual Bool has3DSensitiveStreamsPlaying() const = 0;
 
  		virtual void *getHandleForBink() = 0;
  		virtual void releaseHandleForBink() = 0;
@@ -262,7 +262,7 @@ class AudioManager : public SubsystemInterface
 		virtual void processRequestList();
 
 		virtual AudioEventInfo *newAudioEventInfo( AsciiString newEventName );
-    virtual void addAudioEventInfo( AudioEventInfo * newEventInfo );
+	virtual void addAudioEventInfo( AudioEventInfo * newEventInfo );
 		virtual AudioEventInfo *findAudioEventInfo( AsciiString eventName ) const;
 
 		const AudioSettings *getAudioSettings() const;
@@ -303,7 +303,7 @@ class AudioManager : public SubsystemInterface
 
 		// For Worldbuilder, to build lists from which to select
 		virtual void findAllAudioEventsOfType( AudioType audioType, std::vector<AudioEventInfo*>& allEvents );
-    virtual const AudioEventInfoHash & getAllAudioEvents() const { return m_allAudioEventInfo; }
+	virtual const AudioEventInfoHash & getAllAudioEvents() const { return m_allAudioEventInfo; }
 
 		Real getZoomVolume() const { return m_zoomVolume; }
 	protected:
@@ -323,10 +323,10 @@ class AudioManager : public SubsystemInterface
 		// For tracking purposes
 		virtual AudioHandle allocateNewHandle();
 
-    // Remove all AudioEventInfo's with the m_isLevelSpecific flag
-    virtual void removeLevelSpecificAudioEventInfos();
+	// Remove all AudioEventInfo's with the m_isLevelSpecific flag
+	virtual void removeLevelSpecificAudioEventInfos();
 
-    void removeAllAudioRequests();
+	void removeAllAudioRequests();
 
 	protected:
 		AudioSettings *m_audioSettings;

@@ -145,13 +145,13 @@ static Real calcPointToLineDistSquared(const Coord3D& pt, const Coord3D& lineSta
 		return calcDistSquared(pt, lineEnd);
 	}
 
-  Real tmp = dot / lineLenSqr;
+	Real tmp = dot / lineLenSqr;
 
 	closest.x = lineStart.x + tmp * line.x;
 	closest.y = lineStart.y + tmp * line.y;
 	closest.z = lineStart.z + tmp * line.z;
 
-  return calcDistSquared(pt, closest);
+	return calcDistSquared(pt, closest);
 }
 
 //=============================================================================

@@ -61,14 +61,14 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    OpenContainModuleData::buildFieldParse(p);
+		OpenContainModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "TimeForFullHeal", INI::parseDurationReal, nullptr, offsetof( TunnelContainModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -92,7 +92,7 @@ public:
 	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
 	virtual Bool isTunnelContain() const override { return TRUE; }
 	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
+	virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
 
 	virtual void onContaining( Object *obj, Bool wasSelected ) override;		///< object now contains 'obj'
 	virtual void onRemoving( Object *obj ) override;			///< object no longer contains 'obj'
@@ -106,8 +106,8 @@ public:
 	virtual void addToContainList( Object *obj );		///< The part of AddToContain that inheritors can override (Can't do whole thing because of all the private stuff involved)
 	virtual void removeFromContain( Object *obj, Bool exposeStealthUnits = FALSE ) override;	///< remove 'obj' from contain list
 	virtual void removeAllContained( Bool exposeStealthUnits = FALSE ) override;				///< remove all objects on contain list
-  virtual void harmAndForceExitAllContained( DamageInfo *info ) override;
-  virtual void killAllContained() override;				///< kill all objects on contain list
+	virtual void harmAndForceExitAllContained( DamageInfo *info ) override;
+	virtual void killAllContained() override;				///< kill all objects on contain list
 
 	// contain list access
 	virtual void iterateContained( ContainIterateFunc func, void *userData, Bool reverse ) override;

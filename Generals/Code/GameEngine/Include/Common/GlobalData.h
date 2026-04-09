@@ -285,8 +285,8 @@ public:
 
 #ifdef DUMP_PERF_STATS
 	Bool m_dumpPerformanceStatistics;
-  Bool  m_dumpStatsAtInterval;///< should I automatically dump stats every N frames
-  Int   m_statsInterval;       ///< if so, how many is N?
+	Bool  m_dumpStatsAtInterval;///< should I automatically dump stats every N frames
+	Int   m_statsInterval;       ///< if so, how many is N?
 #endif
 
 	Bool m_forceBenchmark;	///<forces running of CPU detection benchmark, even on known cpu's.
@@ -487,9 +487,9 @@ public:
 	UnsignedInt	m_networkDisconnectScreenNotifyTime; ///< The number of milliseconds between when the disconnect screen comes up and when the other players are notified that we are on the disconnect screen.
 
 	Real				m_keyboardCameraRotateSpeed;    ///< How fast the camera rotates when rotated via keyboard controls.
-  Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
+	Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
-  Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
+	Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
 
 #if defined(RTS_DEBUG) || ENABLE_CONFIGURABLE_SHROUD
 	Bool m_shroudOn;
@@ -529,7 +529,7 @@ public:
 	Int m_debugProjectileTileDuration;		///< How long should these tiles stay around, in frames?
 	RGBColor m_debugProjectileTileColor;	///< What color should these tiles be?
 	Bool m_showCollisionExtents;	///< Used to display collision extents
-  Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
+	Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
 	Bool m_saveStats;
 	Bool m_saveAllStats;
 	Bool m_useLocalMOTD;

@@ -201,9 +201,9 @@ void	DebugDisplay::printf( const Char *format, ...)
 	int result;
 	static char text[5*1024];
 
-  va_start( args, format );
+	va_start( args, format );
 	result = vsprintf( text, format, args );
-  va_end( args );
+	va_end( args );
 
 	if ( result < 0 )
 	{

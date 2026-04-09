@@ -124,7 +124,7 @@ public:
 	// Equality operators
 	friend bool operator == (const Vector2 &a,const Vector2 &b);
 	friend bool operator != (const Vector2 &a,const Vector2 &b);
-   WWINLINE friend bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon);
+	WWINLINE friend bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon);
 
 	// Rotation
 	WWINLINE void Rotate(float theta);
@@ -309,7 +309,7 @@ WWINLINE bool operator != (const Vector2 &a,const Vector2 &b)
  *========================================================================*/
 WWINLINE bool Equal_Within_Epsilon(const Vector2 &a,const Vector2 &b,float epsilon)
 {
-   return( (WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon) );
+	return( (WWMath::Fabs(a.X - b.X) < epsilon) && (WWMath::Fabs(a.Y - b.Y) < epsilon) );
 }
 
 /**************************************************************************
@@ -658,5 +658,5 @@ WWINLINE void Vector2::Lerp(const Vector2 & a,const Vector2 & b,float t,Vector2 
 {
 	assert(set_result != nullptr);
 	set_result->X = (a.X + (b.X - a.X)*t);
-   set_result->Y = (a.Y + (b.Y - a.Y)*t);
+	set_result->Y = (a.Y + (b.Y - a.Y)*t);
 }

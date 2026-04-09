@@ -86,7 +86,7 @@ Animatable3DObjClass::Animatable3DObjClass(const char * htree_name) :
 	CurMotionMode(BASE_POSE)
 {
 	// Inline struct members can't be initialized in init list for some reason...
-  ModeAnim.Motion=nullptr;
+	ModeAnim.Motion=nullptr;
 	ModeAnim.Frame=0.0f;
 	ModeAnim.PrevFrame=0.0f;
 	ModeAnim.LastSyncTime=WW3D::Get_Logic_Time_Milliseconds();
@@ -141,7 +141,7 @@ Animatable3DObjClass::Animatable3DObjClass(const Animatable3DObjClass & src) :
 	CurMotionMode(BASE_POSE),
 	HTree(nullptr)
 {
-   // Inline struct members can't be initialized in init list for some reason...
+	// Inline struct members can't be initialized in init list for some reason...
 	ModeAnim.Motion=nullptr;
 	ModeAnim.Frame=0.0f;
 	ModeAnim.PrevFrame=0.0f;

@@ -406,7 +406,7 @@ WWINLINE Matrix3x3::Matrix3x3(const Quaternion & q)
  *=============================================================================================*/
 WWINLINE Matrix3x3 Matrix3x3::Transpose() const
 {
-    return Matrix3x3(
+	return Matrix3x3(
 			Vector3(Row[0][0], Row[1][0], Row[2][0]),
 			Vector3(Row[0][1], Row[1][1], Row[2][1]),
 			Vector3(Row[0][2], Row[1][2], Row[2][2])
@@ -630,32 +630,32 @@ WWINLINE float Matrix3x3::Get_Z_Rotation() const
 
 WWINLINE Vector3 Matrix3x3::Get_X_Vector() const
 {
-   return Vector3(Row[0][0], Row[1][0], Row[2][0]);
+	return Vector3(Row[0][0], Row[1][0], Row[2][0]);
 }
 
 WWINLINE Vector3 Matrix3x3::Get_Y_Vector() const
 {
-   return Vector3(Row[0][1], Row[1][1], Row[2][1]);
+	return Vector3(Row[0][1], Row[1][1], Row[2][1]);
 }
 
 WWINLINE Vector3 Matrix3x3::Get_Z_Vector() const
 {
-   return Vector3(Row[0][2], Row[1][2], Row[2][2]);
+	return Vector3(Row[0][2], Row[1][2], Row[2][2]);
 }
 
 WWINLINE void Matrix3x3::Get_X_Vector(Vector3 * set) const
 {
-   set->Set(Row[0][0], Row[1][0], Row[2][0]);
+	set->Set(Row[0][0], Row[1][0], Row[2][0]);
 }
 
 WWINLINE void Matrix3x3::Get_Y_Vector(Vector3 * set) const
 {
-   set->Set(Row[0][1], Row[1][1], Row[2][1]);
+	set->Set(Row[0][1], Row[1][1], Row[2][1]);
 }
 
 WWINLINE void Matrix3x3::Get_Z_Vector(Vector3 * set) const
 {
-   set->Set(Row[0][2], Row[1][2], Row[2][2]);
+	set->Set(Row[0][2], Row[1][2], Row[2][2]);
 }
 
 WWINLINE Matrix3x3 operator - (const Matrix3x3 & a)

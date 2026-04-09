@@ -555,8 +555,8 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
 {
 	NameKeyType namekey = makeDecoratedNameKey(name, type);
 
-  ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
-  if (it == m_moduleTemplateMap.end())
+	ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
+	if (it == m_moduleTemplateMap.end())
 	{
 		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
 		return nullptr;

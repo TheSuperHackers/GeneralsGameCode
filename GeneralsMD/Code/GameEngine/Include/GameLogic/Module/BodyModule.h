@@ -114,7 +114,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    BehaviorModuleData::buildFieldParse(p);
+		BehaviorModuleData::buildFieldParse(p);
 	}
 };
 

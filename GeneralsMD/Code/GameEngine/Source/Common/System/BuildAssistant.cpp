@@ -431,7 +431,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
 	}
 
-  return nullptr;
+	return nullptr;
 
 }
 
@@ -1325,13 +1325,13 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 		return CANMAKE_OK;
 	}
 
-  Player *player = builder->getControllingPlayer();
+	Player *player = builder->getControllingPlayer();
 
-  // make sure we're not maxed out for this type of unit.
-  // Warning: isPossibleToMakeUnit() now implicitly calls
-  // canBuildMoreOfType(), so do this check first
-  if ( player && !player->canBuildMoreOfType( whatToBuild ) )
-    return CANMAKE_MAXED_OUT_FOR_PLAYER;
+	// make sure we're not maxed out for this type of unit.
+	// Warning: isPossibleToMakeUnit() now implicitly calls
+	// canBuildMoreOfType(), so do this check first
+	if ( player && !player->canBuildMoreOfType( whatToBuild ) )
+	return CANMAKE_MAXED_OUT_FOR_PLAYER;
 
 	if (!isPossibleToMakeUnit(builder, whatToBuild))
 		return CANMAKE_NO_PREREQ;

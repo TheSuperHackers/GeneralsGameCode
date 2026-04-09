@@ -55,7 +55,7 @@ SupplyCenterDockUpdateModuleData::SupplyCenterDockUpdateModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 

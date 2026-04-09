@@ -420,9 +420,9 @@ RenderObjClass *	 WaterRenderObjClass::Clone() const
 //-------------------------------------------------------------------------------------------------
 HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass *pBumpSource)
 {
-    SurfaceClass::SurfaceDescription    d3dsd;
+	SurfaceClass::SurfaceDescription    d3dsd;
 	SurfaceClass * surf;
-    D3DLOCKED_RECT     d3dlr;
+	D3DLOCKED_RECT     d3dlr;
 	DWORD dwSrcPitch;
 	BYTE* pSrc;
 	Int numLevels;
@@ -530,84 +530,84 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 	surf->Get_Description(d3dsd);
 	pSrc=(unsigned char *)surf->Lock((int *)&dwSrcPitch);
 
-    // Create the bumpmap's surface and texture objects
+	// Create the bumpmap's surface and texture objects
 	m_pBumpTexture[i]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,TextureClass::MIP_LEVELS_1,D3DPOOL_MANAGED,false);
 
-    // Fill the bits of the new texture surface with bits from
-    // a private format.
+	// Fill the bits of the new texture surface with bits from
+	// a private format.
 
-    m_pBumpTexture[i]->LockRect( 0, &d3dlr, 0, 0 );
-    DWORD dwDstPitch = (DWORD)d3dlr.Pitch;
-    BYTE* pDst       = (BYTE*)d3dlr.pBits;
+	m_pBumpTexture[i]->LockRect( 0, &d3dlr, 0, 0 );
+	DWORD dwDstPitch = (DWORD)d3dlr.Pitch;
+	BYTE* pDst       = (BYTE*)d3dlr.pBits;
 
-    for( DWORD y=0; y<d3dsd.Height; y++ )
-    {
-        BYTE* pDstT  = pDst;
-        BYTE* pSrcB0 = (BYTE*)pSrc;
-        BYTE* pSrcB1 = ( pSrcB0 + dwSrcPitch );
-        BYTE* pSrcB2 = ( pSrcB0 - dwSrcPitch );
+	for( DWORD y=0; y<d3dsd.Height; y++ )
+	{
+		BYTE* pDstT  = pDst;
+		BYTE* pSrcB0 = (BYTE*)pSrc;
+		BYTE* pSrcB1 = ( pSrcB0 + dwSrcPitch );
+		BYTE* pSrcB2 = ( pSrcB0 - dwSrcPitch );
 
-        if( y == d3dsd.Height-1 )  // Don't go past the last line
-            pSrcB1 = pSrcB0;
-        if( y == 0 )               // Don't go before first line
-            pSrcB2 = pSrcB0;
+		if( y == d3dsd.Height-1 )  // Don't go past the last line
+		pSrcB1 = pSrcB0;
+		if( y == 0 )               // Don't go before first line
+		pSrcB2 = pSrcB0;
 
-        for( DWORD x=0; x<d3dsd.Width; x++ )
-        {
-            LONG v00 = 256-*(pSrcB0+0); // Get the current pixel
-            LONG v01 = 256-*(pSrcB0+4); // and the pixel to the right
-            LONG vM1 = 256-*(pSrcB0-4); // and the pixel to the left
-            LONG v10 = 256-*(pSrcB1+0); // and the pixel one line below.
-            LONG v1M = 256-*(pSrcB2+0); // and the pixel one line above.
+		for( DWORD x=0; x<d3dsd.Width; x++ )
+		{
+			LONG v00 = 256-*(pSrcB0+0); // Get the current pixel
+			LONG v01 = 256-*(pSrcB0+4); // and the pixel to the right
+			LONG vM1 = 256-*(pSrcB0-4); // and the pixel to the left
+			LONG v10 = 256-*(pSrcB1+0); // and the pixel one line below.
+			LONG v1M = 256-*(pSrcB2+0); // and the pixel one line above.
 
-            LONG iDu = (vM1-v01); // The delta-u bump value
-            LONG iDv = (v1M-v10); // The delta-v bump value
+			LONG iDu = (vM1-v01); // The delta-u bump value
+			LONG iDv = (v1M-v10); // The delta-v bump value
 
-            if( (v00 < vM1) && (v00 < v01) )  // If we are at valley
-            {
-                iDu = vM1-v00;                 // Choose greater of 1st order diffs
-                if( iDu < v00-v01 )
-                    iDu = v00-v01;
-            }
+			if( (v00 < vM1) && (v00 < v01) )  // If we are at valley
+			{
+				iDu = vM1-v00;                 // Choose greater of 1st order diffs
+				if( iDu < v00-v01 )
+				iDu = v00-v01;
+			}
 
-            // The luminance bump value (land masses are less shiny)
-            WORD uL = ( v00>1 ) ? 63 : 127;
+			// The luminance bump value (land masses are less shiny)
+			WORD uL = ( v00>1 ) ? 63 : 127;
 
-            switch( D3DFMT_V8U8)//m_BumpMapFormat )
-            {
-                case D3DFMT_V8U8:
-                    *pDstT++ = (BYTE)iDu;
-                    *pDstT++ = (BYTE)iDv;
-                    break;
+			switch( D3DFMT_V8U8)//m_BumpMapFormat )
+			{
+				case D3DFMT_V8U8:
+					*pDstT++ = (BYTE)iDu;
+					*pDstT++ = (BYTE)iDv;
+					break;
 
-                case D3DFMT_L6V5U5:
-                    *(WORD*)pDstT  = (WORD)( ( (iDu>>3) & 0x1f ) <<  0 );
-                    *(WORD*)pDstT |= (WORD)( ( (iDv>>3) & 0x1f ) <<  5 );
-                    *(WORD*)pDstT |= (WORD)( ( ( uL>>2) & 0x3f ) << 10 );
-                    pDstT += 2;
-                    break;
+				case D3DFMT_L6V5U5:
+					*(WORD*)pDstT  = (WORD)( ( (iDu>>3) & 0x1f ) <<  0 );
+					*(WORD*)pDstT |= (WORD)( ( (iDv>>3) & 0x1f ) <<  5 );
+					*(WORD*)pDstT |= (WORD)( ( ( uL>>2) & 0x3f ) << 10 );
+					pDstT += 2;
+					break;
 
-                case D3DFMT_X8L8V8U8:
-                    *pDstT++ = (BYTE)iDu;
-                    *pDstT++ = (BYTE)iDv;
-                    *pDstT++ = (BYTE)uL;
-                    *pDstT++ = (BYTE)0L;
-                    break;
-            }
+				case D3DFMT_X8L8V8U8:
+					*pDstT++ = (BYTE)iDu;
+					*pDstT++ = (BYTE)iDv;
+					*pDstT++ = (BYTE)uL;
+					*pDstT++ = (BYTE)0L;
+					break;
+			}
 
-            // Move one pixel to the left (src is 32-bpp)
-            pSrcB0+=4;   pSrcB1+=4;   pSrcB2+=4;
-        }
+			// Move one pixel to the left (src is 32-bpp)
+			pSrcB0+=4;   pSrcB1+=4;   pSrcB2+=4;
+		}
 
-        // Move to the next line
-        pSrc += dwSrcPitch;    pDst += dwDstPitch;
-    }
+		// Move to the next line
+		pSrc += dwSrcPitch;    pDst += dwDstPitch;
+	}
 
-    m_pBumpTexture[i]->UnlockRect(0);
-    surf->Unlock();
+	m_pBumpTexture[i]->UnlockRect(0);
+	surf->Unlock();
 #endif
 
-    return S_OK;
+	return S_OK;
 }
 
 //-------------------------------------------------------------------------------------------------

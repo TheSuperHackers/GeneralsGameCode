@@ -1040,7 +1040,7 @@ W3DModelDrawModuleData::W3DModelDrawModuleData() :
 	m_recoilSettle = SETTLE_RATE;
 
 
-  m_receivesDynamicLights = TRUE;
+	m_receivesDynamicLights = TRUE;
 
 	// m_ignoreConditionStates defaults to all zero, which is what we want
 }
@@ -1195,7 +1195,7 @@ static void parseAsciiStringLC( INI* ini, void * /*instance*/, void *store, cons
 //-------------------------------------------------------------------------------------------------
 void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -1219,7 +1219,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ReceivesDynamicLights", INI::parseBool, nullptr, offsetof(W3DModelDrawModuleData, m_receivesDynamicLights) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 
@@ -1758,8 +1758,8 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 
 	Drawable* draw = getDrawable();
 
-  if ( draw )
-  {
+	if ( draw )
+	{
 	  Object* obj = draw->getObject();
 	  if (obj)
 	  {
@@ -1769,13 +1769,13 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 			  m_hexColor = obj->getIndicatorColor();
 	  }
 
-    // THE VAST MAJORITY OF THESE SHOULD BE TRUE
-    if ( ! getW3DModelDrawModuleData()->m_receivesDynamicLights)
-    {
-      draw->setReceivesDynamicLights( FALSE );
+		// THE VAST MAJORITY OF THESE SHOULD BE TRUE
+		if ( ! getW3DModelDrawModuleData()->m_receivesDynamicLights)
+		{
+			draw->setReceivesDynamicLights( FALSE );
 		  DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s", draw->getTemplate()->getName().str()));
-    }
-  }
+		}
+	}
 
 	setModelState(info);
 }
@@ -2105,12 +2105,12 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 	handleClientTurretPositioning();
 	recalcBonesForClientParticleSystems();
 
-  const W3DModelDrawModuleData *modData = getW3DModelDrawModuleData();
-  if ( modData->m_particlesAttachedToAnimatedBones )
-    updateBonesForClientParticleSystems();// LORENZEN ADDED THIS
-                                          // IT REPOSITIONS PARTICLESYSTEMS TO TSTAY IN SYNC WITH ANIMATED BONES
+	const W3DModelDrawModuleData *modData = getW3DModelDrawModuleData();
+	if ( modData->m_particlesAttachedToAnimatedBones )
+	updateBonesForClientParticleSystems();// LORENZEN ADDED THIS
+	// IT REPOSITIONS PARTICLESYSTEMS TO TSTAY IN SYNC WITH ANIMATED BONES
 
-  handleClientRecoil();
+	handleClientRecoil();
 
 }
 
@@ -2304,8 +2304,8 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
 #endif
 #if 0	//old slow version
 
-  for (Int i=0; i < numSubObjects; i++)
-  {
+	for (Int i=0; i < numSubObjects; i++)
+	{
   	Int childBoneIndex = fullObject->Get_Sub_Object_Bone_Index(0, i);
   	Int parentIndex = htree->Get_Parent_Index(childBoneIndex);
   	if (childBoneIndex == parentIndex)
@@ -2319,7 +2319,7 @@ static void doHideShowBoneSubObjs(Bool state, Int numSubObjects, Int boneIdx, Re
 		childObject->Set_Hidden(state);
   		childObject->Release_Ref();
   	}
-  }
+	}
 #endif
 }
 
@@ -2690,20 +2690,20 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 			{
     		const Matrix3D boneTransform = m_renderObject->Get_Bone_Transform(boneIndex);// just a little worried about state changes
 
-        Vector3 vpos = boneTransform.Get_Translation();
+				Vector3 vpos = boneTransform.Get_Translation();
 
-        Coord3D pos;
+				Coord3D pos;
 				pos.x = vpos.X;
 				pos.y = vpos.Y;
 				pos.z = vpos.Z;
 
 				sys->setPosition(&pos);
 
-        Real orientation = boneTransform.Get_Z_Rotation();
+				Real orientation = boneTransform.Get_Z_Rotation();
 				sys->rotateLocalTransformZ(orientation);
 
-        sys->setLocalTransform(&boneTransform);
-        sys->setSkipParentXfrm(true);
+				sys->setLocalTransform(&boneTransform);
+				sys->setSkipParentXfrm(true);
 
 			}
 		}

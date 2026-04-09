@@ -255,7 +255,7 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 		{ "FiresWhileTurning",			INI::parseBool,												nullptr, offsetof( TurretAIData, m_firesWhileTurning ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 
@@ -330,10 +330,10 @@ void TurretAI::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAI::xfer( Xfer *xfer )
 {
-  // version
-  const XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	const XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 /* These 4 are loaded on creation, and don't change. jba.
 	const TurretAIData*				m_data;
@@ -1232,10 +1232,10 @@ void TurretAIIdleState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_nextIdleScan);
 }
@@ -1309,10 +1309,10 @@ void TurretAIIdleScanState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAIIdleScanState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferReal(&m_desiredAngle);
 }
@@ -1381,10 +1381,10 @@ void TurretAIHoldTurretState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretAIHoldTurretState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_timestamp);
 }

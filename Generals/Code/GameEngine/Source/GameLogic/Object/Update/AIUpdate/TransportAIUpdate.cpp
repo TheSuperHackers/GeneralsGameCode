@@ -210,11 +210,11 @@ void TransportAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TransportAIUpdate::xfer( Xfer *xfer )
 {
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 }
@@ -224,6 +224,6 @@ void TransportAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TransportAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }

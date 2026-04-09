@@ -81,7 +81,7 @@ ParticleInfo::ParticleInfo()
 	m_angularRateZ = 0.0f;
 	m_angularDamping = 0.0f;
 	m_colorScale =0.0f;
-  m_size = 0.0f;
+	m_size = 0.0f;
 	m_sizeRate = 0.0f;
 	m_sizeRateDamping = 0.0f;
 	m_velDamping = 0.0f;

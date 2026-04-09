@@ -404,16 +404,16 @@ bool TimeCodedMotionChannelClass::Load_W3D(ChunkLoadClass & cload)
 void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 {
 
-  uint32	tc0;
+	uint32	tc0;
 
-  tc0 = frame;
+	tc0 = frame;
 
-  uint32 pidx = get_index( tc0 );
-  uint32 p2idx;
+	uint32 pidx = get_index( tc0 );
+	uint32 p2idx;
 
-  if (pidx == ((NumTimeCodes - 1) * PacketSize))  {
+	if (pidx == ((NumTimeCodes - 1) * PacketSize))  {
 
-     float32 *frm = (float32 *) &Data[pidx+1];
+		float32 *frm = (float32 *) &Data[pidx+1];
 
 		for (int i=0; i < VectorLen; i++)  {
 
@@ -421,36 +421,36 @@ void	TimeCodedMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 
 	  }
 
-     return;
+		return;
 
-  }
-  else {
+	}
+	else {
   	p2idx = pidx + PacketSize;
-  }
+	}
 
-  uint32 time = Data[p2idx];
+	uint32 time = Data[p2idx];
 
-   if (time & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
+	if (time & W3D_TIMECODED_BINARY_MOVEMENT_FLAG) {
 		float32 *frm = (float32 *) &Data[pidx+1];
 		for (int i=0; i < VectorLen; i++) {
 			setvec[i] = frm[i];
 		}
 		return;
-   }
+	}
 
-  float32 time1 = (Data[pidx]  & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG);
-  float32 time2 = (time & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG);
+	float32 time1 = (Data[pidx]  & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG);
+	float32 time2 = (time & ~W3D_TIMECODED_BINARY_MOVEMENT_FLAG);
 
-  float32 ratio = (frame - time1) / (time2 - time1);
+	float32 ratio = (frame - time1) / (time2 - time1);
 
-  float32 *frame1 = (float32 *) &Data[pidx+1];
-  float32 *frame2 = (float32 *) &Data[p2idx+1];
+	float32 *frame1 = (float32 *) &Data[pidx+1];
+	float32 *frame2 = (float32 *) &Data[p2idx+1];
 
-  for (int i=0; i < VectorLen; i++)  {
+	for (int i=0; i < VectorLen; i++)  {
 
-     setvec[i] = WWMath::Lerp(frame1[i],frame2[i],ratio);
+		setvec[i] = WWMath::Lerp(frame1[i],frame2[i],ratio);
 
-  }
+	}
 
 }
 
@@ -1004,7 +1004,7 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 frame_idx, float *outdat
 
 				if (frame == frame_idx) {
             	done = true;
-               break;
+					break;
 				}
 				frame++;
 
@@ -1016,7 +1016,7 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 frame_idx, float *outdat
 
 		}
 
-      outdata[vi] = last_value;
+		outdata[vi] = last_value;
 
 	}
 
@@ -1026,11 +1026,11 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 {
 	// Contine decompressing from src_idx, up to frame_idx
 
-   assert(src_idx < frame_idx);
-   src_idx++;
+	assert(src_idx < frame_idx);
+	src_idx++;
 
 	float *base	= (float *) &Data[0];	// pointer to our true know beginning values
-   base += VectorLen;						// skip header information
+	base += VectorLen;						// skip header information
 
 	bool done = false;
 
@@ -1040,8 +1040,8 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 		pPacket+= PACKET_SIZE * vi;								// skip to the appropriate packet start
 		pPacket+= (PACKET_SIZE * VectorLen) * ((src_idx-1)>>4); // skip out to current packet
 
-      // initial filter index
-      int fi = (src_idx-1) & 0xF;
+		// initial filter index
+		int fi = (src_idx-1) & 0xF;
 
 		float last_value = srcdata[vi];
 
@@ -1084,12 +1084,12 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 
 				if (frame == frame_idx) {
             	done = true;
-               break;
+					break;
 				}
 				frame++;
 
 			}
-         fi = 0;
+			fi = 0;
 
 			if (done) break;	// we're at the desired frame
 
@@ -1097,7 +1097,7 @@ void AdaptiveDeltaMotionChannelClass::decompress(uint32 src_idx, float *srcdata,
 
 		}
 
-      outdata[vi] = last_value;
+		outdata[vi] = last_value;
 
 	}
 
@@ -1134,49 +1134,49 @@ float AdaptiveDeltaMotionChannelClass::getframe(uint32 frame_idx, uint32 vector_
 
 	if (frame_idx < CacheFrame)  {
 		// Requested Frame isn't cached, so cache it, and frame_idx+1, and return the decompressed data
-      // from frame_idx
+		// from frame_idx
 
-      decompress(frame_idx, &CacheData[0]);
+		decompress(frame_idx, &CacheData[0]);
 
-      if (frame_idx != (NumFrames - 1))  {
+		if (frame_idx != (NumFrames - 1))  {
       	decompress(frame_idx, &CacheData[0], frame_idx+1, &CacheData[VectorLen]);
-      }
+		}
 
-      CacheFrame = frame_idx;
+		CacheFrame = frame_idx;
 
-      return(CacheData[vector_idx]);
+		return(CacheData[vector_idx]);
 	}
 
-   // Copy last known Cached data down
+	// Copy last known Cached data down
 
-   if (frame_idx == (CacheFrame + 2))  {
+	if (frame_idx == (CacheFrame + 2))  {
 
-      // Sliding window
+		// Sliding window
    	memcpy(&CacheData[0], &CacheData[VectorLen], VectorLen * sizeof(float));
 
-      CacheFrame++;
+		CacheFrame++;
 
-      decompress(CacheFrame, &CacheData[0], frame_idx, &CacheData[VectorLen]);
+		decompress(CacheFrame, &CacheData[0], frame_idx, &CacheData[VectorLen]);
 
     	return(CacheData[VectorLen + vector_idx]);
-   }
+	}
 
-   // Else just use last known frame to decompress forwards
+	// Else just use last known frame to decompress forwards
 
-   assert(VectorLen <= 4);
+	assert(VectorLen <= 4);
 
-   float temp[4];
+	float temp[4];
 
-   memcpy(&temp[0], &CacheData[VectorLen], VectorLen * sizeof(float));
+	memcpy(&temp[0], &CacheData[VectorLen], VectorLen * sizeof(float));
 
-   decompress(CacheFrame, &temp[0], frame_idx, &CacheData[0]);
-   CacheFrame = frame_idx;
+	decompress(CacheFrame, &temp[0], frame_idx, &CacheData[0]);
+	CacheFrame = frame_idx;
 
-   if (frame_idx != (NumFrames - 1))  {
+	if (frame_idx != (NumFrames - 1))  {
    	decompress(CacheFrame, &CacheData[0], frame_idx+1, &CacheData[VectorLen]);
-   }
+	}
 
-   return(CacheData[vector_idx]);
+	return(CacheData[vector_idx]);
 
 }
 
@@ -1202,7 +1202,7 @@ void	AdaptiveDeltaMotionChannelClass::Get_Vector(float32 frame,float * setvec)
 	float value1 = getframe(frame1);
 	float value2 = getframe(frame1 + 1);
 
-   *setvec = WWMath::Lerp(value1,value2,ratio);
+	*setvec = WWMath::Lerp(value1,value2,ratio);
 
 
 }

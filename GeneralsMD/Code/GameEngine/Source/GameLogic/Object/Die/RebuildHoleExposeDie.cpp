@@ -103,14 +103,14 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 
 
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-  if(TheSelectionTranslator->isHandOfGodSelectionMode())
-  {
-    if ( getObject()->isKindOf( KINDOF_STRUCTURE ) )
-    {
-      if ( damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE )
-        return;
-    }
-  }
+	if(TheSelectionTranslator->isHandOfGodSelectionMode())
+	{
+		if ( getObject()->isKindOf( KINDOF_STRUCTURE ) )
+		{
+			if ( damageInfo->in.m_damageType == DAMAGE_UNRESISTABLE )
+			return;
+		}
+	}
 #endif
 
 

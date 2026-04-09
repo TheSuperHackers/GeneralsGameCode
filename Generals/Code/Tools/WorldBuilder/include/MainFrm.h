@@ -54,7 +54,7 @@ class LayersList;
 
 class CMainFrame : public CFrameWnd
 {
-  DECLARE_DYNAMIC(CMainFrame)
+	DECLARE_DYNAMIC(CMainFrame)
 
 public:
 	CMainFrame();

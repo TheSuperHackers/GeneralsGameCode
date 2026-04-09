@@ -55,7 +55,7 @@ enum NeutronBlast CPP_11(: Int)
 // ------------------------------------------------------------------------------------------------
 struct BlastInfo
 {
-  Bool enabled;					///< this blast is enabled
+	Bool enabled;					///< this blast is enabled
 	Real delay;						///< delay after death to start the regular blast
 	Real scorchDelay;			///< delay after death to start a scorch blast
 	Real innerRadius;			///< inner radius of damage

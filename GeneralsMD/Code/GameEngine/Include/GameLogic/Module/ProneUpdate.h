@@ -41,7 +41,7 @@ class DamageInfo;
 class ProneUpdateModuleData : public ModuleData
 {
 public:
-  Real		m_damageToFramesRatio;      ///< Conversion from damage dealt to number of frames we cower
+	Real		m_damageToFramesRatio;      ///< Conversion from damage dealt to number of frames we cower
 
 	ProneUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);

@@ -76,11 +76,11 @@ void TempWeaponBonusHelper::clearTempWeaponBonus()
 		m_frameToRemove = 0;
 
 		if( getObject()->getDrawable() )
-    {
+		{
 			getObject()->getDrawable()->clearTintStatus(TINT_STATUS_FRENZY);
 //      if (getObject()->isKindOf(KINDOF_INFANTRY))
 //        getObject()->getDrawable()->setSecondMaterialPassOpacity( 0.0f );
-    }
+		}
 	}
 }
 
@@ -97,11 +97,11 @@ void TempWeaponBonusHelper::doTempWeaponBonus( WeaponBonusConditionType status, 
 	m_frameToRemove = TheGameLogic->getFrame() + duration;
 
 	if( getObject()->getDrawable() )
-  {
+	{
 		getObject()->getDrawable()->setTintStatus(TINT_STATUS_FRENZY);
 //    if (getObject()->isKindOf(KINDOF_INFANTRY))
 //      getObject()->getDrawable()->setSecondMaterialPassOpacity( 1.0f );
-  }
+	}
 
 	setWakeFrame( getObject(), UPDATE_SLEEP(duration) );
 }

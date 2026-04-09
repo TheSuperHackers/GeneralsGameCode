@@ -304,7 +304,7 @@ const PlayerTemplate* PlayerTemplateStore::findPlayerTemplate(NameKeyType nameke
 	#ifdef RTS_DEBUG
 	AsciiString nn = KEYNAME(namekey);
 	#endif
-  for (PlayerTemplateVector::const_iterator it = m_playerTemplates.begin(); it != m_playerTemplates.end(); ++it)
+	for (PlayerTemplateVector::const_iterator it = m_playerTemplates.begin(); it != m_playerTemplates.end(); ++it)
 	{
 		#ifdef RTS_DEBUG
 		AsciiString n = KEYNAME((*it).getNameKey());

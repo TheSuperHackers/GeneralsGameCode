@@ -110,7 +110,7 @@ protected:
 	DeployStateTypes				m_state;
 	UnsignedInt							m_frameToWakeForDeploy;
 
-  ObjectID								m_designatedTargetID;
+	ObjectID								m_designatedTargetID;
 	ObjectID								m_attackObjectID;
 	Coord3D									m_position;	//Used for attack position and guard position.
 	Bool										m_isAttackMultiple;

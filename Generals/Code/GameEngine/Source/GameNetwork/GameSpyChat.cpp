@@ -422,7 +422,7 @@ static handleUnicodeMessage( const char *nick, UnicodeString msg, Bool isPublic,
 	// filters language
 //  if( TheGlobalData->m_languageFilterPref )
 //  {
-    TheLanguageFilter->filterLine(msg);
+	TheLanguageFilter->filterLine(msg);
 //	}
 
 	UnicodeString fullMsg;

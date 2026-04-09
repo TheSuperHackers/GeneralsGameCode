@@ -374,13 +374,13 @@ public:
 	void removeUpgrade( const UpgradeTemplate *upgradeT );	///< remove upgrade from this object
 
 	void calcNaturalRallyPoint(Coord2D *pt); ///< calc the "natural" starting rally point
-  void setConstructionPercent( Real percent ) { m_constructionPercent = percent; }
+	void setConstructionPercent( Real percent ) { m_constructionPercent = percent; }
 	Real getConstructionPercent() const { return m_constructionPercent; }
 
-  void setLayer( PathfindLayerEnum layer );
+	void setLayer( PathfindLayerEnum layer );
 	PathfindLayerEnum getLayer() const { return m_layer; }
 
-  void setDestinationLayer( PathfindLayerEnum layer );
+	void setDestinationLayer( PathfindLayerEnum layer );
 	PathfindLayerEnum getDestinationLayer() const { return m_destinationLayer; }
 
 	void prependToList(Object **pListHead);
@@ -528,7 +528,7 @@ public:
 
 	void setWeaponBonusCondition(WeaponBonusConditionType wst) { m_weaponBonusCondition |= (1 << wst); }
 	void clearWeaponBonusCondition(WeaponBonusConditionType wst) { m_weaponBonusCondition &= ~(1 << wst); }
-  // note, the !=0 at the end is important, to convert this into a boolean type! (srj)
+	// note, the !=0 at the end is important, to convert this into a boolean type! (srj)
 	Bool testWeaponBonusCondition(WeaponBonusConditionType wst) const { return (m_weaponBonusCondition & (1 << wst)) != 0; }
 	inline WeaponBonusConditionFlags getWeaponBonusCondition() const { return m_weaponBonusCondition; }
 

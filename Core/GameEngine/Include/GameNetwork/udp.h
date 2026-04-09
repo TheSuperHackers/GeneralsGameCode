@@ -60,17 +60,17 @@
 
 class UDP
 {
- // DATA
+	// DATA
  private:
-  Int       fd;
-  UnsignedInt       myIP;
-  UnsignedShort       myPort;
-  struct       sockaddr_in  addr;
+	Int       fd;
+	UnsignedInt       myIP;
+	UnsignedShort       myPort;
+	struct       sockaddr_in  addr;
 
  public:
-  // These defines specify a system independent way to
-  //   get error codes for socket services.
-  enum sockStat CPP_11(: Int)
+	// These defines specify a system independent way to
+	//   get error codes for socket services.
+	enum sockStat CPP_11(: Int)
   {
     OK           =  0,     // Everything's cool
     UNKNOWN      = -1,     // There was an error of unknown type
@@ -94,29 +94,29 @@ class UDP
 
 // CODE
  private:
-  Int           SetBlocking(Int block);
+	Int           SetBlocking(Int block);
 
 	Int m_lastError;
 
  public:
-                   UDP();
-                  ~UDP();
-  Int           Bind(UnsignedInt IP,UnsignedShort port);
-  Int           Bind(const char *Host,UnsignedShort port);
-  Int           Write(const unsigned char *msg,UnsignedInt len,UnsignedInt IP,UnsignedShort port);
-  Int           Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from);
-  sockStat         GetStatus();
-  void             ClearStatus();
-  //int              Wait(Int sec,Int usec,fd_set &returnSet);
-  //int              Wait(Int sec,Int usec,fd_set &givenSet,fd_set &returnSet);
+	UDP();
+	~UDP();
+	Int           Bind(UnsignedInt IP,UnsignedShort port);
+	Int           Bind(const char *Host,UnsignedShort port);
+	Int           Write(const unsigned char *msg,UnsignedInt len,UnsignedInt IP,UnsignedShort port);
+	Int           Read(unsigned char *msg,UnsignedInt len,sockaddr_in *from);
+	sockStat         GetStatus();
+	void             ClearStatus();
+	//int              Wait(Int sec,Int usec,fd_set &returnSet);
+	//int              Wait(Int sec,Int usec,fd_set &givenSet,fd_set &returnSet);
 
-  Int             getLocalAddr(UnsignedInt &ip, UnsignedShort &port);
-  Int           getFD() { return(fd); }
+	Int             getLocalAddr(UnsignedInt &ip, UnsignedShort &port);
+	Int           getFD() { return(fd); }
 
-  Int             SetInputBuffer(UnsignedInt bytes);
-  Int             SetOutputBuffer(UnsignedInt bytes);
-  int              GetInputBuffer();
-  int              GetOutputBuffer();
+	Int             SetInputBuffer(UnsignedInt bytes);
+	Int             SetOutputBuffer(UnsignedInt bytes);
+	int              GetInputBuffer();
+	int              GetOutputBuffer();
 	Int						AllowBroadcasts(Bool status);
 };
 

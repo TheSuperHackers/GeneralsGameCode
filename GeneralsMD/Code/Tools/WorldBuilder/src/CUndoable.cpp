@@ -794,7 +794,7 @@ void DictItemUndoable::Do(void)
 			m_dictToModify[i]->copyPairFrom(m_newDictData, m_key);
 	}
 	MapObjectProps::update();	// ugh, hack to update panel
-  ObjectOptions::update();	// ditto
+	ObjectOptions::update();	// ditto
 	if (m_inval && m_pDoc) {
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
@@ -811,7 +811,7 @@ void DictItemUndoable::Undo(void)
 			m_dictToModify[i]->copyPairFrom(m_oldDictData[i], m_key);
 	}
 	MapObjectProps::update();		// ugh, hack to update panel
-  ObjectOptions::update();	// ditto
+	ObjectOptions::update();	// ditto
 	if (m_inval && m_pDoc) {
 		WbView3d *p3View = m_pDoc->GetActive3DView();
 		p3View->resetRenderObjects();
@@ -1363,7 +1363,7 @@ void DeletePolygonUndoable::Undo(void)
 // MultipleUndoable - constructor.
 //
 MultipleUndoable::MultipleUndoable(void)
-  : m_undoableList( nullptr )
+: m_undoableList( nullptr )
 {
 }
 
@@ -1372,10 +1372,10 @@ MultipleUndoable::MultipleUndoable(void)
 //
 MultipleUndoable::~MultipleUndoable(void)
 {
-  if ( m_undoableList )
-  {
-    REF_PTR_RELEASE(m_undoableList);
-  }
+	if ( m_undoableList )
+	{
+		REF_PTR_RELEASE(m_undoableList);
+	}
 }
 
 //
@@ -1383,9 +1383,9 @@ MultipleUndoable::~MultipleUndoable(void)
 //
 void MultipleUndoable::addUndoable( Undoable * undoable )
 {
-  undoable->LinkNext( m_undoableList );
+	undoable->LinkNext( m_undoableList );
 
-  REF_PTR_SET( m_undoableList, undoable );
+	REF_PTR_SET( m_undoableList, undoable );
 }
 
 
@@ -1394,14 +1394,14 @@ void MultipleUndoable::addUndoable( Undoable * undoable )
 //
 void MultipleUndoable::Do(void)
 {
-  Undoable * undoable = m_undoableList;
+	Undoable * undoable = m_undoableList;
 
-  while ( undoable != nullptr )
-  {
-    Undoable * next = undoable->GetNext();
-    undoable->Do();
-    undoable = next;
-  }
+	while ( undoable != nullptr )
+	{
+		Undoable * next = undoable->GetNext();
+		undoable->Do();
+		undoable = next;
+	}
 }
 
 
@@ -1410,12 +1410,12 @@ void MultipleUndoable::Do(void)
 //
 static void undoHelper(Undoable * undoable)
 {
-  if ( undoable == nullptr )
-    return;
+	if ( undoable == nullptr )
+	return;
 
-  undoHelper( undoable->GetNext() );
+	undoHelper( undoable->GetNext() );
 
-  undoable->Undo();
+	undoable->Undo();
 }
 
 //
@@ -1424,7 +1424,7 @@ static void undoHelper(Undoable * undoable)
 //
 void MultipleUndoable::Undo(void)
 {
-  undoHelper(m_undoableList);
+	undoHelper(m_undoableList);
 }
 
 
@@ -1433,13 +1433,13 @@ void MultipleUndoable::Undo(void)
 //
 void MultipleUndoable::Redo(void)
 {
-  Undoable * undoable = m_undoableList;
+	Undoable * undoable = m_undoableList;
 
-  while ( undoable != nullptr )
-  {
-    Undoable * next = undoable->GetNext();
-    undoable->Redo();
-    undoable = next;
-  }
+	while ( undoable != nullptr )
+	{
+		Undoable * next = undoable->GetNext();
+		undoable->Redo();
+		undoable = next;
+	}
 }
 

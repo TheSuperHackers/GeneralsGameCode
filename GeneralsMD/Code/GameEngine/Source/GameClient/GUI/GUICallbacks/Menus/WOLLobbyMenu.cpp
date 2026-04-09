@@ -1191,7 +1191,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 							room.setExeCRC(resp.stagingRoom.exeCRC);
 							room.setIniCRC(resp.stagingRoom.iniCRC);
 							room.setAllowObservers(resp.stagingRoom.allowObservers);
-              room.setUseStats(resp.stagingRoom.useStats);
+								room.setUseStats(resp.stagingRoom.useStats);
 							room.setPingString(resp.stagingServerPingString.c_str());
 							room.setLadderIP(resp.stagingServerLadderIP.c_str());
 							room.setLadderPort(resp.stagingRoom.ladderPort);

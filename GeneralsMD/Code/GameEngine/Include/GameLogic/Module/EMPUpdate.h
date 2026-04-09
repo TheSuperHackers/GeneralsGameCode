@@ -53,8 +53,8 @@ public:
 	Real				m_effectRadius;
 	Int         m_rejectMask;
 
-  KindOfMaskType m_victimKindOf;
-  KindOfMaskType m_victimKindOfNot;
+	KindOfMaskType m_victimKindOf;
+	KindOfMaskType m_victimKindOfNot;
 	Bool				m_doesNotAffectMyOwnBuildings;
 
 	EMPUpdateModuleData()
@@ -74,13 +74,13 @@ public:
 		m_rejectMask = 0;
 		m_doesNotAffectMyOwnBuildings = FALSE;
 
-    m_victimKindOf.clear();
-    m_victimKindOfNot.clear();
+		m_victimKindOf.clear();
+		m_victimKindOfNot.clear();
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
+		UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "Lifetime",	INI::parseDurationUnsignedInt,		nullptr, offsetof( EMPUpdateModuleData, m_lifeFrames ) },
@@ -103,7 +103,7 @@ public:
 
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -157,7 +157,7 @@ class LeafletDropBehaviorModuleData : public UpdateModuleData
 public:
 	UnsignedInt m_delayFrames;
 	UnsignedInt m_disabledDuration;
-  Real m_radius;
+	Real m_radius;
 	const ParticleSystemTemplate *m_leafletFXParticleSystem;
 
 
@@ -165,13 +165,13 @@ public:
 	{
 		m_delayFrames = 1;
 		m_disabledDuration = 0;
-    m_radius = 60.0f;
-    m_leafletFXParticleSystem = nullptr;
+		m_radius = 60.0f;
+		m_leafletFXParticleSystem = nullptr;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
+		UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "Delay",	        INI::parseDurationUnsignedInt,	nullptr, offsetof( LeafletDropBehaviorModuleData, m_delayFrames ) },
@@ -183,7 +183,7 @@ public:
 
       { 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 
@@ -205,7 +205,7 @@ public:
 	virtual UpdateSleepTime update() override;
 	void doDisableAttack();
 
-  // BehaviorModule
+	// BehaviorModule
 	virtual DieModuleInterface* getDie() override { return this; }
 
 	// DieModuleInterface
@@ -216,5 +216,5 @@ public:
 protected:
 
 	UnsignedInt m_startFrame;			///< frame we die on
-  Bool  m_fxFired; ///< have we done our fx yet
+	Bool  m_fxFired; ///< have we done our fx yet
 };

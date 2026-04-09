@@ -54,16 +54,16 @@
 
 class UDP
 {
- // DATA
+	// DATA
  private:
-  sint32       fd;
-  uint32       myIP;
-  uint16       myPort;
-  struct       sockaddr_in  addr;
+	sint32       fd;
+	uint32       myIP;
+	uint16       myPort;
+	struct       sockaddr_in  addr;
 
-  // These defines specify a system independent way to
-  //   get error codes for socket services.
-  enum sockStat
+	// These defines specify a system independent way to
+	//   get error codes for socket services.
+	enum sockStat
   {
     OK           =  0,     // Everything's cool
     UNKNOWN      = -1,     // There was an error of unknown type
@@ -87,25 +87,25 @@ class UDP
 
 // CODE
  private:
-  sint32           SetBlocking(bit8 block);
+	sint32           SetBlocking(bit8 block);
 
  public:
-                   UDP();
-                  ~UDP();
-  sint32           Bind(uint32 IP,uint16 port);
-  sint32           Bind(char *Host,uint16 port);
-  sint32           Write(uint8 *msg,uint32 len,uint32 IP,uint16 port);
-  sint32           Read(uint8 *msg,uint32 len,sockaddr_in *from);
-  sockStat         GetStatus(void);
-  void             ClearStatus(void);
-  int              Wait(sint32 sec,sint32 usec,fd_set &returnSet);
-  int              Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet);
+	UDP();
+	~UDP();
+	sint32           Bind(uint32 IP,uint16 port);
+	sint32           Bind(char *Host,uint16 port);
+	sint32           Write(uint8 *msg,uint32 len,uint32 IP,uint16 port);
+	sint32           Read(uint8 *msg,uint32 len,sockaddr_in *from);
+	sockStat         GetStatus(void);
+	void             ClearStatus(void);
+	int              Wait(sint32 sec,sint32 usec,fd_set &returnSet);
+	int              Wait(sint32 sec,sint32 usec,fd_set &givenSet,fd_set &returnSet);
 
-  bit8             getLocalAddr(uint32 &ip, uint16 &port);
-  sint32           getFD(void) { return(fd); }
+	bit8             getLocalAddr(uint32 &ip, uint16 &port);
+	sint32           getFD(void) { return(fd); }
 
-  bit8             SetInputBuffer(uint32 bytes);
-  bit8             SetOutputBuffer(uint32 bytes);
-  int              GetInputBuffer(void);
-  int              GetOutputBuffer(void);
+	bit8             SetInputBuffer(uint32 bytes);
+	bit8             SetOutputBuffer(uint32 bytes);
+	int              GetInputBuffer(void);
+	int              GetOutputBuffer(void);
 };

@@ -359,9 +359,9 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
 // put these helper templates in a namespace...
 namespace _Debug
 {
-  template<bool> struct StaticAssertionFailed;
-  template<> struct StaticAssertionFailed<true> {};
-  template<int x> struct StaticAssertionTest {};
+	template<bool> struct StaticAssertionFailed;
+	template<> struct StaticAssertionFailed<true> {};
+	template<int x> struct StaticAssertionTest {};
 
   #define DCTASSERT(expr)         typedef ::_Debug::StaticAssertionTest< \
                                     sizeof(::_Debug::StaticAssertionFailed< (bool)(expr) >) \

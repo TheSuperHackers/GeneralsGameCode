@@ -168,9 +168,9 @@ UpdateSleepTime HijackerUpdate::update()
 
 void HijackerUpdate::setTargetObject( const Object *object )
 {
-  if( object )
-  {
-    m_targetID = object->getID();
+	if( object )
+	{
+		m_targetID = object->getID();
 
 		// here we also test the target to see whether it ejects pilots
 		// when it dies... if so, stores a pointer to that diemoduleinterface
@@ -183,7 +183,7 @@ void HijackerUpdate::setTargetObject( const Object *object )
 //			if( m_ejectPilotDMI )
 //				return;
 //		}  // end for dmi
-  }
+	}
 	else
 	{
 		m_targetID = INVALID_ID;
@@ -194,11 +194,11 @@ void HijackerUpdate::setTargetObject( const Object *object )
 
 Object* HijackerUpdate::getTargetObject() const
 {
-  if( m_targetID != INVALID_ID )
-  {
-    return TheGameLogic->findObjectByID( m_targetID );
-  }
-  return nullptr;
+	if( m_targetID != INVALID_ID )
+	{
+		return TheGameLogic->findObjectByID( m_targetID );
+	}
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------

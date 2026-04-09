@@ -75,7 +75,7 @@ public:
 	virtual Bool					Cast_Ray(RayCollisionTestClass & raytest);
 
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-  virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
 
 	int updateBlock();
 	void freeMapResources();

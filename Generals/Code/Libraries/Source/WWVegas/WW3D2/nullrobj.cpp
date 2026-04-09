@@ -76,7 +76,7 @@ void Null3DObjClass::Render(RenderInfoClass & rinfo)
 
 void Null3DObjClass::Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const
 {
-   sphere.Center.Set(0,0,0);
+	sphere.Center.Set(0,0,0);
 	sphere.Radius = 0.0f;
 }
 

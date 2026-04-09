@@ -69,11 +69,11 @@ public:
 
 	virtual OpenContain *asOpenContain() override { return this; }  ///< treat as open container
 	virtual Bool isGarrisonable() const override;	///< can this unit be Garrisoned? (ick)
-  virtual Bool isBustable() { return false;};	///< can this container get busted by bunkerbuster? (ick)
+	virtual Bool isBustable() { return false;};	///< can this container get busted by bunkerbuster? (ick)
 	virtual Bool isHealContain() const override { return false; } ///< true when container only contains units while healing (not a transport!)
 	virtual Bool isTunnelContain() const override { return FALSE; }
 	virtual Bool isImmuneToClearBuildingAttacks() const override { return true; }
-  virtual Bool isSpecialOverlordStyleContainer() const override {return TRUE;}
+	virtual Bool isSpecialOverlordStyleContainer() const override {return TRUE;}
 	virtual Bool isPassengerAllowedToFire( ObjectID id = INVALID_ID ) const override;	///< Hey, can I shoot out of this container?
 
 
@@ -119,7 +119,7 @@ private:
 	ContainModuleInterface *getRedirectedContain() const; ///< And this gets what are redirecting to.
 	void activateRedirectedContain();///< I need to shut this off since I can talk directly to my bunker, but he can never directly see me
 	void deactivateRedirectedContain();
-  void parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	void parseInitialPayload( INI* ini, void *instance, void *store, const void* /*userData*/ );
 
 	Bool m_redirectionActivated;
 

@@ -72,7 +72,7 @@ SpecialAbilityUpdate::SpecialAbilityUpdate( Thing *thing, const ModuleData* modu
 	m_active = false;
 	m_prepFrames = 0;
 	m_animFrames = 0;
-  m_targetID = INVALID_ID;
+	m_targetID = INVALID_ID;
 	m_targetPos.zero();
 	m_locationCount = 0;
 	m_specialObjectEntries = 0;
@@ -1881,8 +1881,8 @@ void SpecialAbilityUpdate::xfer( Xfer *xfer )
 	// do disable fx particles
 	xfer->xferBool( &m_doDisableFXParticles );
 
-  // capture flash phase
-  xfer->xferReal( &m_captureFlashPhase );
+	// capture flash phase
+	xfer->xferReal( &m_captureFlashPhase );
 
 }
 

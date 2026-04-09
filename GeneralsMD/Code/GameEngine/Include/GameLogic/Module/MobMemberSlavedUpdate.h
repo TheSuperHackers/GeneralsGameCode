@@ -62,7 +62,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse(p);
+		UpdateModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "MustCatchUpRadius",			INI::parseInt,	nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_mustCatchUpRadius ) },
@@ -71,7 +71,7 @@ public:
 			{ "Squirrelliness",     INI::parseReal, nullptr, offsetof( MobMemberSlavedUpdateModuleData, m_squirrellinessRatio ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

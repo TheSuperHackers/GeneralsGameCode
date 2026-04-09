@@ -1009,7 +1009,7 @@ bool DX8Caps::Is_Valid_Display_Format(int width, int height, WW3DFormat format)
 void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 {
 	if (VendorId==VENDOR_NVIDIA)
-  {
+	{
 		if (SupportNPatches) {
 			DXLOG(("NVidia Driver reported N-Patch support, disabling.\r\n"));
 		}
@@ -1027,13 +1027,13 @@ void DX8Caps::Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id)
 			SupportTextureFormat[WW3D_FORMAT_DXT5];
 
 
-    if (DeviceId == DEVICE_NVIDIA_GEFORCE2_MX ||
+		if (DeviceId == DEVICE_NVIDIA_GEFORCE2_MX ||
         DeviceId == DEVICE_NVIDIA_GEFORCE2_MX_400 )
-    {
+		{
 		  DXLOG(("Maximum screen resolution limited to 1024 x 768 on NVidia GeForce2 mx/mx400 cards\r\n"));
 		  MaxDisplayWidth=1024;
 		  MaxDisplayHeight=768;
-    }
+		}
 
 
 

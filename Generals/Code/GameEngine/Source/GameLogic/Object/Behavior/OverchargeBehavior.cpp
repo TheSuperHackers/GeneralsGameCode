@@ -59,7 +59,7 @@ OverchargeBehaviorModuleData::OverchargeBehaviorModuleData()
 /*static*/ void OverchargeBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
 
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -68,7 +68,7 @@ OverchargeBehaviorModuleData::OverchargeBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

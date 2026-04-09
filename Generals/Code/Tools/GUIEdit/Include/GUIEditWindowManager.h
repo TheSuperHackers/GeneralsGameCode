@@ -93,7 +93,7 @@ protected:
 	and become adults (their parent will be null, otherwise the screen) */
 //	void orphanSelectedChildren( void );
 
-  /// dupe a window and its children
+	/// dupe a window and its children
 	GameWindow *duplicateWindow( GameWindow *source, GameWindow *parent );
 	void createClipboardDuplicate( void );  ///< duplicate the clipboard on the dup list
 

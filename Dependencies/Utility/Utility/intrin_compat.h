@@ -39,8 +39,8 @@ static inline __int64 _rdtsc()
 		mov	[l],eax
 	}
 
-    __int64 result ((__int64)h << 32 | l);
-    return result;
+	__int64 result ((__int64)h << 32 | l);
+	return result;
 }
 #endif //_rdtsc
 
@@ -75,10 +75,10 @@ static inline __int64 _rdtsc()
 static inline uint32_t _lrotl(uint32_t value, int shift)
 {
 #if defined(__has_builtin) && __has_builtin(__builtin_rotateleft32)
-    return __builtin_rotateleft32(value, shift);
+	return __builtin_rotateleft32(value, shift);
 #else
-    shift &= 31;
-    return ((value << shift) | (value >> (32 - shift)));
+	shift &= 31;
+	return ((value << shift) | (value >> (32 - shift)));
 #endif
 }
 #endif
@@ -93,11 +93,11 @@ static inline uint32_t _lrotl(uint32_t value, int shift)
 static inline uint64_t _rdtsc()
 {
 #ifdef _WIN32
-    return __rdtsc();
+	return __rdtsc();
 #elif defined(__has_builtin) && __has_builtin(__builtin_readcyclecounter)
-    return __builtin_readcyclecounter();
+	return __builtin_readcyclecounter();
 #elif defined(__has_builtin) && __has_builtin(__builtin_ia32_rdtsc)
-    return __builtin_ia32_rdtsc();
+	return __builtin_ia32_rdtsc();
 #else
 #error "No implementation for _rdtsc"
 #endif
@@ -111,7 +111,7 @@ static inline uint64_t _rdtsc()
     #if __has_builtin(__builtin_return_address)
     static inline uintptr_t _ReturnAddress()
     {
-        return reinterpret_cast<uintptr_t>(__builtin_return_address(0));
+	return reinterpret_cast<uintptr_t>(__builtin_return_address(0));
     }
     #else
     #error "No implementation for _ReturnAddress"

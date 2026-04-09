@@ -785,7 +785,7 @@ LRESULT CALLBACK AboutCallback( HWND hDlg, UINT message,
 			}
 			break;
 	}
-    return FALSE;
+	return FALSE;
 
 }
 

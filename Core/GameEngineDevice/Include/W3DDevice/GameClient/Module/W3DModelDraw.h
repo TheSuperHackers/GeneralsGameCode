@@ -306,9 +306,9 @@ public:
 #endif
 	mutable Byte											m_validated;
 
-  Bool                              m_particlesAttachedToAnimatedBones;
+	Bool                              m_particlesAttachedToAnimatedBones;
 
-  Bool                              m_receivesDynamicLights; ///< just like it sounds... it sets a property of Drawable, actually
+	Bool                              m_receivesDynamicLights; ///< just like it sounds... it sets a property of Drawable, actually
 
 
 	W3DModelDrawModuleData();
@@ -347,7 +347,7 @@ public:
 	W3DModelDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-  /// preloading assets
+	/// preloading assets
 	virtual void preloadAssets( TimeOfDay timeOfDay ) override;
 
 	/// the draw method

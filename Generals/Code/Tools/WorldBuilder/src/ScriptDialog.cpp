@@ -1749,7 +1749,7 @@ void ScriptDialog::OnBegindragScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 	m_curSelection.IntToList(pNMTreeView->itemNew.lParam);
 	if (m_curSelection.m_objType != ListType::PLAYER_TYPE) {
 		m_dragItem = pNMTreeView->itemNew.hItem;
-    pTree->SelectItem(m_dragItem);
+		pTree->SelectItem(m_dragItem);
 		m_draggingTreeView = true;
  		SetCapture();
 	}
@@ -1761,16 +1761,16 @@ void ScriptDialog::OnMouseMove(UINT nFlags, CPoint point)
 	if (m_draggingTreeView) {
 		CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 
-    HTREEITEM htiTarget;  // handle to target item
-    TVHITTESTINFO tvht;  // hit test information
+		HTREEITEM htiTarget;  // handle to target item
+		TVHITTESTINFO tvht;  // hit test information
 
 		const Int CENTER_OFFSET = 12;
 		point.y -= CENTER_OFFSET;
-    tvht.pt = point;
-    if ((htiTarget = pTree->HitTest( &tvht)) != nullptr) {
+		tvht.pt = point;
+		if ((htiTarget = pTree->HitTest( &tvht)) != nullptr) {
 			pTree->SelectDropTarget(htiTarget);
-    }
-  }
+		}
+	}
 
 	CDialog::OnMouseMove(nFlags, point);
 }
@@ -1782,17 +1782,17 @@ void ScriptDialog::OnLButtonUp(UINT nFlags, CPoint point)
 		m_draggingTreeView = false;
 
 		ReleaseCapture();
-    HTREEITEM htiTarget;  // handle to target item
-    TVHITTESTINFO tvht;  // hit test information
+		HTREEITEM htiTarget;  // handle to target item
+		TVHITTESTINFO tvht;  // hit test information
 
 		const Int CENTER_OFFSET = 12;
 		point.y -= CENTER_OFFSET;
-    tvht.pt = point;
-    if ((htiTarget = pTree->HitTest( &tvht)) != nullptr) {
-      pTree->SelectItem(htiTarget);
+		tvht.pt = point;
+		if ((htiTarget = pTree->HitTest( &tvht)) != nullptr) {
+			pTree->SelectItem(htiTarget);
 			pTree->SelectDropTarget(htiTarget);
 			doDropOn(m_dragItem, htiTarget);
-    }
+		}
 	}
 	CDialog::OnLButtonUp(nFlags, point);
 }

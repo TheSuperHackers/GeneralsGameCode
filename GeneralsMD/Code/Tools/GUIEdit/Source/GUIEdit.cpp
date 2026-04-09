@@ -120,35 +120,35 @@ GUIEdit *TheEditor = nullptr;
 char *GUIEdit::saveAsDialog( void )
 {
 	static char filename[ _MAX_PATH ];
-  OPENFILENAME ofn;
-  Bool returnCode;
-  char filter[] = "Window Files (*.wnd)\0*.wnd\0"  \
+	OPENFILENAME ofn;
+	Bool returnCode;
+	char filter[] = "Window Files (*.wnd)\0*.wnd\0"  \
                   "All Files (*.*)\0*.*\0\0" ;
 
-  ofn.lStructSize       = sizeof( OPENFILENAME );
-  ofn.hwndOwner         = m_appHWnd;
-  ofn.hInstance         = nullptr;
-  ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = nullptr;
-  ofn.nMaxCustFilter    = 0;
-  ofn.nFilterIndex      = 0;
-  ofn.lpstrFile         = filename;
-  ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = nullptr;
-  ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = nullptr;
-  ofn.lpstrTitle        = nullptr;
-  ofn.Flags             = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-  ofn.nFileOffset       = 0;
-  ofn.nFileExtension    = 0;
-  ofn.lpstrDefExt       = "wnd";
-  ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = nullptr ;
-  ofn.lpTemplateName    = nullptr ;
+	ofn.lStructSize       = sizeof( OPENFILENAME );
+	ofn.hwndOwner         = m_appHWnd;
+	ofn.hInstance         = nullptr;
+	ofn.lpstrFilter       = filter;
+	ofn.lpstrCustomFilter = nullptr;
+	ofn.nMaxCustFilter    = 0;
+	ofn.nFilterIndex      = 0;
+	ofn.lpstrFile         = filename;
+	ofn.nMaxFile          = _MAX_PATH;
+	ofn.lpstrFileTitle    = nullptr;
+	ofn.nMaxFileTitle     = 0;
+	ofn.lpstrInitialDir   = nullptr;
+	ofn.lpstrTitle        = nullptr;
+	ofn.Flags             = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.nFileOffset       = 0;
+	ofn.nFileExtension    = 0;
+	ofn.lpstrDefExt       = "wnd";
+	ofn.lCustData         = 0L ;
+	ofn.lpfnHook          = nullptr ;
+	ofn.lpTemplateName    = nullptr ;
 
-  returnCode = GetSaveFileName( &ofn );
+	returnCode = GetSaveFileName( &ofn );
 
-  if( returnCode )
+	if( returnCode )
 		return filename;
 	else
 		return nullptr;
@@ -162,35 +162,35 @@ char *GUIEdit::saveAsDialog( void )
 char *GUIEdit::openDialog( void )
 {
 	static char filename[ _MAX_PATH ];
-  OPENFILENAME ofn;
-  Bool returnCode;
-  char filter[] = "Window Files (*.wnd)\0*.wnd\0"  \
+	OPENFILENAME ofn;
+	Bool returnCode;
+	char filter[] = "Window Files (*.wnd)\0*.wnd\0"  \
                   "All Files (*.*)\0*.*\0\0" ;
 
-  ofn.lStructSize       = sizeof( OPENFILENAME );
-  ofn.hwndOwner         = m_appHWnd;
-  ofn.hInstance         = nullptr;
-  ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = nullptr;
-  ofn.nMaxCustFilter    = 0;
-  ofn.nFilterIndex      = 0;
-  ofn.lpstrFile         = filename;
-  ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = nullptr;
-  ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = nullptr;
-  ofn.lpstrTitle        = nullptr;
-  ofn.Flags             = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-  ofn.nFileOffset       = 0;
-  ofn.nFileExtension    = 0;
-  ofn.lpstrDefExt       = "wnd";
-  ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = nullptr ;
-  ofn.lpTemplateName    = nullptr ;
+	ofn.lStructSize       = sizeof( OPENFILENAME );
+	ofn.hwndOwner         = m_appHWnd;
+	ofn.hInstance         = nullptr;
+	ofn.lpstrFilter       = filter;
+	ofn.lpstrCustomFilter = nullptr;
+	ofn.nMaxCustFilter    = 0;
+	ofn.nFilterIndex      = 0;
+	ofn.lpstrFile         = filename;
+	ofn.nMaxFile          = _MAX_PATH;
+	ofn.lpstrFileTitle    = nullptr;
+	ofn.nMaxFileTitle     = 0;
+	ofn.lpstrInitialDir   = nullptr;
+	ofn.lpstrTitle        = nullptr;
+	ofn.Flags             = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.nFileOffset       = 0;
+	ofn.nFileExtension    = 0;
+	ofn.lpstrDefExt       = "wnd";
+	ofn.lCustData         = 0L ;
+	ofn.lpfnHook          = nullptr ;
+	ofn.lpTemplateName    = nullptr ;
 
-  returnCode = GetOpenFileName( &ofn );
+	returnCode = GetOpenFileName( &ofn );
 
-  if( returnCode )
+	if( returnCode )
 		return filename;
 	else
 		return nullptr;
@@ -248,7 +248,7 @@ void GUIEdit::setUnsaved( Bool unsaved )
 //=============================================================================
 void GUIEdit::setSaveFile( const char *fullPathAndFilename )
 {
-  const char *ptr;
+	const char *ptr;
 
 	// copy over the full path and filename
 	strlcpy(m_savePathAndFilename, fullPathAndFilename, ARRAY_SIZE(m_savePathAndFilename));
@@ -3338,7 +3338,7 @@ void GUIEdit::createStatusBar( void )
 {
 	RECT rect;
 	Int width;
-  Int sizes[ STATUS_NUM_PARTS ];
+	Int sizes[ STATUS_NUM_PARTS ];
 
 	// create the bar
 	m_statusBarHWnd = CreateStatusWindow( WS_CHILD |
@@ -3365,7 +3365,7 @@ void GUIEdit::createStatusBar( void )
 
 	}
 	sizes[ STATUS_NUM_PARTS - 1 ] = -1;  // right edge
-  SendMessage( m_statusBarHWnd, SB_SETPARTS, STATUS_NUM_PARTS, (LPARAM)sizes );
+	SendMessage( m_statusBarHWnd, SB_SETPARTS, STATUS_NUM_PARTS, (LPARAM)sizes );
 
 }
 

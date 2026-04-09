@@ -735,7 +735,7 @@ int RawFileClass::Write(void const * buffer, int size)
 		opened = true;
 	}
 
-   int writeok=TRUE;
+	int writeok=TRUE;
    #ifdef _UNIX
 		byteswritten = fwrite(buffer, 1, size, Handle);
 		if (byteswritten != size)
@@ -1175,7 +1175,7 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 	}
 
    #ifdef _UNIX
-      pos=fseek(Handle, pos, dir);
+	pos=fseek(Handle, pos, dir);
    #else
 		switch (dir) {
 			case SEEK_SET:

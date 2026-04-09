@@ -60,7 +60,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
     private:
-        int m_iInitialPercent;
+	int m_iInitialPercent;
 };
 
 //{{AFX_INSERT_LOCATION}}

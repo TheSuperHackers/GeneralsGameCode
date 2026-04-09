@@ -47,7 +47,7 @@ LockWeaponCreateModuleData::LockWeaponCreateModuleData()
 // ------------------------------------------------------------------------------------------------
 void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  CreateModuleData::buildFieldParse(p);
+	CreateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -55,7 +55,7 @@ void LockWeaponCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

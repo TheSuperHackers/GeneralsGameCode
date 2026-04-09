@@ -734,7 +734,7 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 
 
 
- /////////////////////////////
+/////////////////////////////
 /**
  * Return the closest ally, according to the qualifiers.
  */
@@ -774,7 +774,7 @@ Object *AI::findClosestAlly( const Object *me, Real range, UnsignedInt qualifier
 
 
 
- /////////////////////////////
+/////////////////////////////
 /**
  * Return the closest repulsor.
  */

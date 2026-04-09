@@ -138,7 +138,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 	srcWidth=m_numCellsX;
 	//vertical size is larger by 1 pixel so that we have some unused pixels to use in clearing the video texture.
 	//To clear the video texture, I will copy pixels from this unused area.  There is no other way to clear a video
-  //memory texture to a known value because you can't lock it - only copy into it.
+	//memory texture to a known value because you can't lock it - only copy into it.
 	srcHeight=m_numCellsY;
 	srcHeight += 1;
 

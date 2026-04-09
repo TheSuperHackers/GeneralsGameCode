@@ -126,7 +126,7 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
 		}
 
 
-  }
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

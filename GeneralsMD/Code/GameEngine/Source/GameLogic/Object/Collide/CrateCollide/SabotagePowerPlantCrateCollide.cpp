@@ -127,7 +127,7 @@ Bool SabotagePowerPlantCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_POWER_PLANT );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_POWER_PLANT );
 
 	//When the sabotage occurs, play the appropriate EVA
 	//event if the local player is the victim!

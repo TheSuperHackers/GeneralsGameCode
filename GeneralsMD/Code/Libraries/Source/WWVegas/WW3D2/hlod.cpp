@@ -3276,9 +3276,9 @@ void HLodClass::Scale(float scale)
 	// Invalidate hierarchy
 	Set_Hierarchy_Valid(false);
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
 
@@ -3486,12 +3486,12 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes()
 	ObjSphere = sphere;
 	ObjBox = box;
 
-   Invalidate_Cached_Bounding_Volumes();
+	Invalidate_Cached_Bounding_Volumes();
 	Set_Hierarchy_Valid(false);
 
-   // Now update the object space bounding volumes of this object's container:
-   RenderObjClass *container = Get_Container();
-   if (container) container->Update_Obj_Space_Bounding_Volumes();
+	// Now update the object space bounding volumes of this object's container:
+	RenderObjClass *container = Get_Container();
+	if (container) container->Update_Obj_Space_Bounding_Volumes();
 }
 
 

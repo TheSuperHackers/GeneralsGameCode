@@ -52,7 +52,7 @@ class PathfindCell;
 #undef RETAIL_COMPATIBLE_PATHFINDING_ALLOCATION
 #endif
 
-  typedef UnsignedShort zoneStorageType;
+typedef UnsignedShort zoneStorageType;
 
 
 //----------------------------------------------------------------------------------------------------------

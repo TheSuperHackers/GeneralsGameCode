@@ -472,14 +472,14 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
+		case WM_COMMAND:
+		{
 //			Int notifyCode = HIWORD( wParam );
 			Int controlID = LOWORD( wParam );
 //			HWND hWndControl = (HWND)lParam;
 
-      switch( controlID )
-      {
+			switch( controlID )
+			{
 
 				// --------------------------------------------------------------------
 				case MENU_HIERARCHY_MOVE_HERE:
@@ -578,24 +578,24 @@ LRESULT CALLBACK HierarchyView::dialogProc( HWND hWndDialog, UINT message,
 				}
 
 				// --------------------------------------------------------------------
-        case IDOK:
-          break;
+				case IDOK:
+					break;
 
 				// --------------------------------------------------------------------
-        case IDCANCEL:
-          break;
+				case IDCANCEL:
+					break;
 
-      }
+			}
 
-      return 0;
+			return 0;
 
-    }
+		}
 
 		// ------------------------------------------------------------------------
 		default:
 			return 0;
 
-  }
+	}
 
 }
 

@@ -1461,7 +1461,7 @@ void Object::setProducer(const Object* obj)
 void Object::setBuilder( const Object *obj )
 {
 
-  m_builderID = obj ? obj->getID() : INVALID_ID;
+	m_builderID = obj ? obj->getID() : INVALID_ID;
 
 }
 
@@ -5347,7 +5347,7 @@ Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
  	return FALSE;// Cheatin' punk.
 }
 
- //=============================================================================
+//=============================================================================
 const AsciiString& Object::getCommandSetString() const
 {
 	if (m_commandSetStringOverride.isNotEmpty())

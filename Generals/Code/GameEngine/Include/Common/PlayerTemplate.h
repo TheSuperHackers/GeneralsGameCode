@@ -125,7 +125,7 @@ public:
 
 	AsciiString getLoadScreenMusic() const {return m_loadScreenMusic;	}
 
-  Bool isOldFaction() const { return m_oldFaction; }
+	Bool isOldFaction() const { return m_oldFaction; }
 
 	static const FieldParse* getFieldParse();
 
@@ -163,7 +163,7 @@ private:
 	AsciiString				m_tooltip;								///< The tooltip describing this player template
 	Bool							m_observer;
 	Bool							m_playableSide;
-  Bool              m_oldFaction;                       ///< Faction existed in the original Generals
+	Bool              m_oldFaction;                       ///< Faction existed in the original Generals
 
 	Int								m_intrinsicSPP;
 

@@ -121,7 +121,7 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 //-------------------------------------------------------------------------------------------------
 /*static*/ void SlowDeathBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -142,7 +142,7 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 		{ "FlingPitchVariance",								INI::parseAngleReal,							nullptr, offsetof( SlowDeathBehaviorModuleData, m_flingPitchVariance) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 	p.add(DieMuxData::getFieldParse(), offsetof( SlowDeathBehaviorModuleData, m_dieMuxData ));
 }
 

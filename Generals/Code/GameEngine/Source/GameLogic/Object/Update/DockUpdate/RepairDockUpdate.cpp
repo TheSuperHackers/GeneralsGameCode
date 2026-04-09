@@ -57,7 +57,7 @@ RepairDockUpdateModuleData::RepairDockUpdateModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 
 }
 
@@ -71,7 +71,7 @@ RepairDockUpdate::RepairDockUpdate( Thing *thing, const ModuleData* moduleData )
 								: DockUpdate( thing, moduleData )
 {
 
-  m_lastRepair = INVALID_ID;
+	m_lastRepair = INVALID_ID;
 	m_healthToAddPerFrame = 0.0f;
 
 }

@@ -90,7 +90,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    ModuleData::buildFieldParse(p);
+		ModuleData::buildFieldParse(p);
 	}
 };
 
@@ -163,7 +163,7 @@ public:
 	virtual SpecialPowerModuleInterface* getSpecialPower() override { return nullptr; }
 	virtual UpdateModuleInterface* getUpdate() override { return nullptr; }
 	virtual UpgradeModuleInterface* getUpgrade() override { return nullptr; }
-  virtual StealthUpdate* getStealth() { return nullptr; }
+	virtual StealthUpdate* getStealth() { return nullptr; }
 	virtual SpyVisionUpdate* getSpyVisionUpdate() { return nullptr; }
 
 	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() override { return nullptr; }

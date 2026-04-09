@@ -109,7 +109,7 @@ BridgeInfo::BridgeInfo()
 	fromRight.zero();
 	toLeft.zero();
 	toRight.zero();
-  bridgeIndex = 0;
+	bridgeIndex = 0;
 	curDamageState = BODY_PRISTINE;
 	damageStateChanged = FALSE;
 	bridgeObjectID = INVALID_ID;
@@ -2140,12 +2140,12 @@ Bool TerrainLogic::isUnderwater( Real x, Real y, Real *waterZ, Real *terrainZ )
 
 	// if no water here, no height, no nuttin
 	if( waterHandle == nullptr )
-  {
-    // but we have to return the terrain Z if requested!
-    if (terrainZ)
-      *terrainZ=getGroundHeight(x,y);
+	{
+		// but we have to return the terrain Z if requested!
+		if (terrainZ)
+		*terrainZ=getGroundHeight(x,y);
 		return FALSE;
-  }
+	}
 
 	//
 	// if this water handle is a grid water use the grid height function, otherwise look into

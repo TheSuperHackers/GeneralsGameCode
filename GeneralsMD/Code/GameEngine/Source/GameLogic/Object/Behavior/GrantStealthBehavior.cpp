@@ -94,10 +94,10 @@ GrantStealthBehavior::GrantStealthBehavior( Thing *thing, const ModuleData* modu
 
 	m_radiusParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 
-  m_currentScanRadius = d->m_startRadius;
+	m_currentScanRadius = d->m_startRadius;
 
 
-  Object *obj = getObject();
+	Object *obj = getObject();
 
 	{
 		if( d->m_radiusParticleSystemTmpl )
@@ -147,30 +147,30 @@ UpdateSleepTime GrantStealthBehavior::update()
 	PartitionFilter *filters[] = { &relationship, &filterAlive, &filterMapStatus, nullptr };
 
 
-  m_currentScanRadius += d->m_radiusGrowRate;
+	m_currentScanRadius += d->m_radiusGrowRate;
 
-  Bool thisIsFinalScan = FALSE;
-  if ( m_currentScanRadius >=  d->m_finalRadius )
-  {
-    m_currentScanRadius = d->m_finalRadius;
-    thisIsFinalScan = TRUE;
-  }
+	Bool thisIsFinalScan = FALSE;
+	if ( m_currentScanRadius >=  d->m_finalRadius )
+	{
+		m_currentScanRadius = d->m_finalRadius;
+		thisIsFinalScan = TRUE;
+	}
 
 	// scan objects in our region
 	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self->getPosition(), m_currentScanRadius, FROM_CENTER_2D, filters );
 	MemoryPoolObjectHolder hold( iter );
 	// GRANT STEALTH TO FRIENDLIES IN RADIUS
 	for( Object *obj = iter->first(); obj; obj = iter->next() )
-    grantStealthToObject( obj );
+	grantStealthToObject( obj );
 
-  if ( thisIsFinalScan )
-  {
+	if ( thisIsFinalScan )
+	{
 
-    TheGameLogic->destroyObject( self );
-    return UPDATE_SLEEP_FOREVER;
-  }
+		TheGameLogic->destroyObject( self );
+		return UPDATE_SLEEP_FOREVER;
+	}
 
-  return UPDATE_SLEEP_NONE;
+	return UPDATE_SLEEP_NONE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -178,23 +178,23 @@ UpdateSleepTime GrantStealthBehavior::update()
 void GrantStealthBehavior::grantStealthToObject( Object *obj )
 {
 
-  if ( obj == getObject() )
-    return;
+	if ( obj == getObject() )
+	return;
 
 
 	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();
-  if ( ! obj->isAnyKindOf( d->m_kindOf ) )
-    return;
+	if ( ! obj->isAnyKindOf( d->m_kindOf ) )
+	return;
 
-  StealthUpdate* stealth = obj->getStealth();
+	StealthUpdate* stealth = obj->getStealth();
 	if( stealth )
 	{
 		stealth->receiveGrant();
-    Drawable *draw = obj->getDrawable();
-    if ( draw )
-    {
-      draw->flashAsSelected();
-    }
+		Drawable *draw = obj->getDrawable();
+		if ( draw )
+		{
+			draw->flashAsSelected();
+		}
 	}
 
 

@@ -127,7 +127,7 @@ Bool SabotageFakeBuildingCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_FAKE_BUILDING );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_FAKE_BUILDING );
 
 	//When the sabotage occurs, play the appropriate EVA
 	//event if the local player is the victim!

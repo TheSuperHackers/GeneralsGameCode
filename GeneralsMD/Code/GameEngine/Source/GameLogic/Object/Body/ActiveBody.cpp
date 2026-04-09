@@ -137,7 +137,7 @@ ActiveBodyModuleData::ActiveBodyModuleData()
 //-------------------------------------------------------------------------------------------------
 void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ModuleData::buildFieldParse(p);
+	ModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -149,7 +149,7 @@ void ActiveBodyModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "SubdualDamageHealAmount",	INI::parseReal,									nullptr,		offsetof( ActiveBodyModuleData, m_subdualDamageHealAmount ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -426,8 +426,8 @@ void ActiveBody::attemptDamage( DamageInfo *damageInfo )
 					obj->setDisabled( DISABLED_UNMANNED );
 					TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
 
-          if ( obj->getAI() )
-            obj->getAI()->aiIdle( CMD_FROM_AI );
+					if ( obj->getAI() )
+					obj->getAI()->aiIdle( CMD_FROM_AI );
 
 					// Convert it to the neutral team so it renders gray giving visual representation that it is unmanned.
 					obj->setTeam( ThePlayerList->getNeutralPlayer()->getDefaultTeam() );
@@ -1292,9 +1292,9 @@ void ActiveBody::onSubdualChange( Bool isNowSubdued )
 		{
 			me->setDisabled(DISABLED_SUBDUED);
 
-      ContainModuleInterface *contain = me->getContain();
-      if ( contain )
-        contain->orderAllPassengersToIdle( CMD_FROM_AI );
+			ContainModuleInterface *contain = me->getContain();
+			if ( contain )
+			contain->orderAllPassengersToIdle( CMD_FROM_AI );
 
 		}
 		else
@@ -1329,7 +1329,7 @@ Bool ActiveBody::isSubdued() const
 #if RETAIL_COMPATIBLE_CRC
 	return m_maxHealth <= m_currentSubdualDamage;
 #else
-  // TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
+	// TheSuperHackers @info Projectiles don't receive the DISABLED_SUBDUED flag (or any flag for
 	// that matter) when jammed, so we have to check their subdual damage directly.
 	if (getObject()->isKindOf(KINDOF_PROJECTILE))
 		return m_maxHealth <= m_currentSubdualDamage;
@@ -1540,7 +1540,7 @@ void ActiveBody::setAflame( Bool )
 void ActiveBody::crc( Xfer *xfer )
 {
 
-  // extend base class
+	// extend base class
 	BodyModule::crc( xfer );
 
 }

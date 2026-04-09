@@ -1101,7 +1101,7 @@ void Player::becomingLocalPlayer(Bool yes)
 					if( draw )
 					{
 
-            StealthUpdate *update = object->getStealth();
+						StealthUpdate *update = object->getStealth();
 
 						if( update && update->isDisguised() )
 						{
@@ -1164,7 +1164,7 @@ Bool Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D
 		return m_ai->computeSuperweaponTarget(power, retPos, playerNdx, weaponRadius);
 	}
 
-  return FALSE;
+	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1665,57 +1665,57 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 	if( structure->hasSpecialPower( SPECIAL_PARTICLE_UPLINK_CANNON ) ||
 			structure->hasSpecialPower( SUPW_SPECIAL_PARTICLE_UPLINK_CANNON ) ||
 			structure->hasSpecialPower( LAZR_SPECIAL_PARTICLE_UPLINK_CANNON ) )
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
+	{
+		if ( localPlayer == structure->getControllingPlayer() )
+		{
 		  TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ParticleCannon);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
-    }
-  }
+		}
+		else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
+		{
+			// Note: treating NEUTRAL as ally. Is this correct?
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
+		}
+		else
+		{
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
+		}
+	}
 
 	if( structure->hasSpecialPower( SPECIAL_NEUTRON_MISSILE ) ||
 			structure->hasSpecialPower( NUKE_SPECIAL_NEUTRON_MISSILE ) ||
 			structure->hasSpecialPower( SUPW_SPECIAL_NEUTRON_MISSILE ) )
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
-    }
-  }
+	{
+		if ( localPlayer == structure->getControllingPlayer() )
+		{
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
+		}
+		else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
+		{
+			// Note: treating NEUTRAL as ally. Is this correct?
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
+		}
+		else
+		{
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
+		}
+	}
 
 	if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
-    }
-  }
+	{
+		if ( localPlayer == structure->getControllingPlayer() )
+		{
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
+		}
+		else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
+		{
+			// Note: treating NEUTRAL as ally. Is this correct?
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
+		}
+		else
+		{
+			TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
+		}
+	}
 }
 
 //=============================================================================
@@ -1932,8 +1932,8 @@ UnsignedInt Player::getSupplyBoxValue()
 //=============================================================================
 Real Player::getProductionCostChangePercent( AsciiString buildTemplateName ) const
 {
-  ProductionChangeMap::const_iterator it = m_productionCostChanges.find(NAMEKEY(buildTemplateName));
-  if (it != m_productionCostChanges.end())
+	ProductionChangeMap::const_iterator it = m_productionCostChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionCostChanges.end())
 	{
 		return (*it).second;
 	}
@@ -1944,8 +1944,8 @@ Real Player::getProductionCostChangePercent( AsciiString buildTemplateName ) con
 //=============================================================================
 Real Player::getProductionTimeChangePercent( AsciiString buildTemplateName ) const
 {
-  ProductionChangeMap::const_iterator it = m_productionTimeChanges.find(NAMEKEY(buildTemplateName));
-  if (it != m_productionTimeChanges.end())
+	ProductionChangeMap::const_iterator it = m_productionTimeChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionTimeChanges.end())
 	{
 		return (*it).second;
 	}
@@ -1957,8 +1957,8 @@ Real Player::getProductionTimeChangePercent( AsciiString buildTemplateName ) con
 VeterancyLevel Player::getProductionVeterancyLevel( AsciiString buildTemplateName ) const
 {
 	NameKeyType templateNameKey = NAMEKEY(buildTemplateName);
-  ProductionVeterancyMap::const_iterator it = m_productionVeterancyLevels.find(templateNameKey);
-  if (it != m_productionVeterancyLevels.end())
+	ProductionVeterancyMap::const_iterator it = m_productionVeterancyLevels.find(templateNameKey);
+	if (it != m_productionVeterancyLevels.end())
 	{
 		return (*it).second;
 	}
@@ -2300,16 +2300,16 @@ void Player::setUnitsShouldIdleOrResume(Bool idle)
 //-------------------------------------------------------------------------------
 void sellBuildings( Object *obj, void *userData )
 {
-  if( obj->isFactionStructure() || obj->isKindOf( KINDOF_COMMANDCENTER ) || obj->isKindOf( KINDOF_FS_POWER ) )
-  {
-    TheBuildAssistant->sellObject( obj );
-  }
+	if( obj->isFactionStructure() || obj->isKindOf( KINDOF_COMMANDCENTER ) || obj->isKindOf( KINDOF_FS_POWER ) )
+	{
+		TheBuildAssistant->sellObject( obj );
+	}
 }
 
 //=============================================================================
 void Player::sellEverythingUnderTheSun()
 {
-  iterateObjects( sellBuildings, nullptr );
+	iterateObjects( sellBuildings, nullptr );
 }
 
 
@@ -2415,7 +2415,7 @@ Bool Player::calcClosestConstructionZoneLocation( const ThingTemplate *construct
 		return m_ai->calcClosestConstructionZoneLocation( constructTemplate, location );
 	}
 
-  return FALSE;
+	return FALSE;
 }
 
 //=============================================================================
@@ -2835,15 +2835,15 @@ ScienceAvailabilityType Player::getScienceAvailabilityTypeFromString( const Asci
 
 namespace
 {
-  // ------------------------------------------------------------------------------------------------
-  // For countExisting
-  struct TypeCountData
-  {
-    UnsignedInt count;
-    const ThingTemplate *type;
-    NameKeyType linkKey;
-    Bool        checkProductionInterface;
-  };
+	// ------------------------------------------------------------------------------------------------
+	// For countExisting
+	struct TypeCountData
+	{
+		UnsignedInt count;
+		const ThingTemplate *type;
+		NameKeyType linkKey;
+		Bool        checkProductionInterface;
+	};
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2851,56 +2851,56 @@ namespace
 // ------------------------------------------------------------------------------------------------
 static void countExisting( Object *obj, void *userData )
 {
-  // Don't care about dead objects
-  if ( obj->isEffectivelyDead() )
-    return;
+	// Don't care about dead objects
+	if ( obj->isEffectivelyDead() )
+	return;
 
-  TypeCountData *typeCountData = (TypeCountData *)userData;
+	TypeCountData *typeCountData = (TypeCountData *)userData;
 
-  // Compare templates
-  if ( ( typeCountData->type && typeCountData->type->isEquivalentTo( obj->getTemplate() ) ) ||
+	// Compare templates
+	if ( ( typeCountData->type && typeCountData->type->isEquivalentTo( obj->getTemplate() ) ) ||
        ( typeCountData->linkKey != NAMEKEY_INVALID && obj->getTemplate() != nullptr && typeCountData->linkKey == obj->getTemplate()->getMaxSimultaneousLinkKey() ) )
-  {
-    typeCountData->count++;
-  }
+	{
+		typeCountData->count++;
+	}
 
-  // Also consider objects that have a production update interface
-  if ( typeCountData->checkProductionInterface )
-  {
-    ProductionUpdateInterface *pui = ProductionUpdate::getProductionUpdateInterfaceFromObject( obj );
-    if( pui )
-    {
-      // add the count of this type that are in the queue
-      typeCountData->count += pui->countUnitTypeInQueue( typeCountData->type );
-    }
-  }
+	// Also consider objects that have a production update interface
+	if ( typeCountData->checkProductionInterface )
+	{
+		ProductionUpdateInterface *pui = ProductionUpdate::getProductionUpdateInterfaceFromObject( obj );
+		if( pui )
+		{
+			// add the count of this type that are in the queue
+			typeCountData->count += pui->countUnitTypeInQueue( typeCountData->type );
+		}
+	}
 }
 
 //=============================================================================
 // Make sure that building another of this unit/structure/object won't exceed MaxSimultaneousOfType()
 Bool Player::canBuildMoreOfType( const ThingTemplate *whatToBuild ) const
 {
-  // make sure we're not maxed out for this type of unit.
-  UnsignedInt maxSimultaneousOfType = whatToBuild->getMaxSimultaneousOfType();
-  if (maxSimultaneousOfType != 0)
-  {
+	// make sure we're not maxed out for this type of unit.
+	UnsignedInt maxSimultaneousOfType = whatToBuild->getMaxSimultaneousOfType();
+	if (maxSimultaneousOfType != 0)
+	{
 
-    TypeCountData typeCountData;
-    typeCountData.count = 0;
-    typeCountData.type = whatToBuild;
-    typeCountData.linkKey = whatToBuild->getMaxSimultaneousLinkKey();
-    // Assumption: Things with a KINDOF_STRUCTURE flag can never be built from
-    // a factory (ProductionUpdateInterface), because the building can't move
-    // out of the factory. When we do our Starcraft port and have flying Terran
-    // buildings, we'll have to change this ;-)
-    // Remember: To ASSUME makes an ASS out of U and ME.
-    typeCountData.checkProductionInterface = !whatToBuild->isKindOf( KINDOF_STRUCTURE );
+		TypeCountData typeCountData;
+		typeCountData.count = 0;
+		typeCountData.type = whatToBuild;
+		typeCountData.linkKey = whatToBuild->getMaxSimultaneousLinkKey();
+		// Assumption: Things with a KINDOF_STRUCTURE flag can never be built from
+		// a factory (ProductionUpdateInterface), because the building can't move
+		// out of the factory. When we do our Starcraft port and have flying Terran
+		// buildings, we'll have to change this ;-)
+		// Remember: To ASSUME makes an ASS out of U and ME.
+		typeCountData.checkProductionInterface = !whatToBuild->isKindOf( KINDOF_STRUCTURE );
 
-    iterateObjects( countExisting, &typeCountData );
-    if( typeCountData.count >= maxSimultaneousOfType )
-      return false;
-  }
-  return true;
+		iterateObjects( countExisting, &typeCountData );
+		if( typeCountData.count >= maxSimultaneousOfType )
+		return false;
+	}
+	return true;
 }
 
 //=============================================================================
@@ -2943,8 +2943,8 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 
 	}
 
-  if ( !canBuildMoreOfType( tmplate ) )
-    return false;
+	if ( !canBuildMoreOfType( tmplate ) )
+	return false;
 
 
 	return true;

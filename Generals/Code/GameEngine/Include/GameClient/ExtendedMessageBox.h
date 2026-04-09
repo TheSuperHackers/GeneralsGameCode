@@ -46,9 +46,9 @@ typedef MessageBoxReturnType (* MessageBoxFunc)( void *userData );
 struct WindowExMessageBoxData
 {
 	MessageBoxFunc yesCallback;		///<Function pointer to the Yes Button Callback
-  MessageBoxFunc noCallback;			///<Function pointer to the No Button Callback
-  MessageBoxFunc okCallback;			///<Function pointer to the Ok Button Callback
-  MessageBoxFunc cancelCallback;	///<Function pointer to the Cancel Button Callback
+	MessageBoxFunc noCallback;			///<Function pointer to the No Button Callback
+	MessageBoxFunc okCallback;			///<Function pointer to the Ok Button Callback
+	MessageBoxFunc cancelCallback;	///<Function pointer to the Cancel Button Callback
 	void *userData;
 };
 

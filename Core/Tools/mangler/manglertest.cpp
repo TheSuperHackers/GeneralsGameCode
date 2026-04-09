@@ -43,29 +43,29 @@ bool BigEndian = false;
 
 unsigned long ResolveIP(const char *Server)
 {
-  char serverName[100];
-  struct hostent *serverStruct;
-  struct in_addr *serverNode;
+	char serverName[100];
+	struct hostent *serverStruct;
+	struct in_addr *serverNode;
 
-  if (Server == nullptr)
-  {
+	if (Server == nullptr)
+	{
 	  ERRMSG("Can't resolve null");
 	  return 0;
-  }
+	}
 
-  if (isdigit(Server[0]))
-    return ( ntohl(inet_addr(Server)) );
+	if (isdigit(Server[0]))
+	return ( ntohl(inet_addr(Server)) );
 
-  strcpy(serverName, Server);
+	strcpy(serverName, Server);
 
-  serverStruct = gethostbyname(Server);
-  if (serverStruct == nullptr)
-  {
+	serverStruct = gethostbyname(Server);
+	if (serverStruct == nullptr)
+	{
 	  ERRMSG("Can't resolve " << Server);
 	  return 0;
-  }
-  serverNode = (struct in_addr *) serverStruct->h_addr;
-  return ( ntohl(serverNode->s_addr) );
+	}
+	serverNode = (struct in_addr *) serverStruct->h_addr;
+	return ( ntohl(serverNode->s_addr) );
 }
 
 void DisplayHelp(const char *prog)

@@ -277,8 +277,8 @@ public:
 	virtual void					Render(RenderInfoClass & rinfo) override;
 	virtual void Special_Render(SpecialRenderInfoClass & rinfo) override;
 	virtual void 					Set_Transform(const Matrix3D &m) override;
-   virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
-   virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const override;
 	virtual void					Scale(float scale) override 															{ radius*=scale; };
 
 	void Set_Dazzle_Color(const Vector3& col) { dazzle_color=col; }

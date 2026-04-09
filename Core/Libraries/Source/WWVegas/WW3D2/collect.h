@@ -111,7 +111,7 @@ public:
 	virtual void					Get_Snap_Point(int index,Vector3 * set) override;
 	virtual void					Scale(float scale) override;
 	virtual void					Scale(float scalex, float scaley, float scalez) override;
-   virtual void               Update_Obj_Space_Bounding_Volumes() override;
+	virtual void               Update_Obj_Space_Bounding_Volumes() override;
 
 protected:
 

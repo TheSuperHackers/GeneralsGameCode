@@ -103,7 +103,7 @@ UpdateSleepTime NeutronBlastBehavior::update()
 void NeutronBlastBehavior::neutronBlastToObject( Object *obj )
 {
 	// early exit check
-  if ( !obj || obj == getObject() )
+	if ( !obj || obj == getObject() )
 		return;
 
 	// Check for allies and quick exit if we are not suppose to hurt our own.
@@ -140,8 +140,8 @@ void NeutronBlastBehavior::neutronBlastToObject( Object *obj )
 			// Make it unmanned, so units can easily check the ability to "take control of it"
 			obj->setDisabled( DISABLED_UNMANNED );
 
-      if ( obj->getAI() )
-        obj->getAI()->aiIdle( CMD_FROM_AI );
+			if ( obj->getAI() )
+			obj->getAI()->aiIdle( CMD_FROM_AI );
 
 			TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
 

@@ -507,7 +507,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 		}
 	}
 
-   Visibility_Checked = true;
+	Visibility_Checked = true;
 }
 
 //============================================================================
@@ -1066,14 +1066,14 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 
 #define USE_LIGHT_ENV 1
 
-   if (!Visibility_Checked) {
-      // set the visibility bit in all render objects in all layers.
+	if (!Visibility_Checked) {
+		// set the visibility bit in all render objects in all layers.
 	   Visibility_Check(&rinfo.Camera);
 #ifdef USE_NON_STENCIL_OCCLUSION
 	   flagOccludedObjects(&rinfo.Camera);
 #endif
-   }
-   Visibility_Checked = false;
+	}
+	Visibility_Checked = false;
 
 
 	RefRenderObjListIterator it(&UpdateList);
@@ -1206,14 +1206,14 @@ void renderStenciledPlayerColor( UnsignedInt color, UnsignedInt stencilRef, Bool
 	width=TheTacticalView->getWidth();
 	height=TheTacticalView->getHeight();
 
-    v[0].p.Set(xpos+width, ypos+height, 0.0f, 1.0f );
-    v[1].p.Set(xpos+width, 0, 0.0f, 1.0f );
-    v[2].p.Set(xpos, ypos+height, 0.0f, 1.0f );
-    v[3].p.Set(xpos,  0, 0.0f, 1.0f );
-    v[0].color = color;
-    v[1].color = color;
-    v[2].color = color;
-    v[3].color = color;
+	v[0].p.Set(xpos+width, ypos+height, 0.0f, 1.0f );
+	v[1].p.Set(xpos+width, 0, 0.0f, 1.0f );
+	v[2].p.Set(xpos, ypos+height, 0.0f, 1.0f );
+	v[3].p.Set(xpos,  0, 0.0f, 1.0f );
+	v[0].color = color;
+	v[1].color = color;
+	v[2].color = color;
+	v[3].color = color;
 
 	DX8Wrapper::Set_Shader(PlayerColorShader);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);

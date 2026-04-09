@@ -21,37 +21,37 @@
 MonoD::MonoD(void)
 {
 #ifdef _WIN32
-  unsigned long retval;
-  handle = CreateFile("\\\\.\\MONO", GENERIC_READ|GENERIC_WRITE, 0, nullptr,
+	unsigned long retval;
+	handle = CreateFile("\\\\.\\MONO", GENERIC_READ|GENERIC_WRITE, 0, nullptr,
                         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
-  if (handle != INVALID_HANDLE_VALUE)
-  {
-    DeviceIoControl(handle, (DWORD)IOCTL_MONO_CLEAR_SCREEN, nullptr, 0, nullptr, 0,
+	if (handle != INVALID_HANDLE_VALUE)
+	{
+		DeviceIoControl(handle, (DWORD)IOCTL_MONO_CLEAR_SCREEN, nullptr, 0, nullptr, 0,
                      &retval,0);
-  }
+	}
 #endif
 }
 
 MonoD::~MonoD()
 {
   #ifdef _WIN32
-    CloseHandle(handle);
-    handle = nullptr;
+	CloseHandle(handle);
+	handle = nullptr;
   #endif
 }
 
 int MonoD::print(const char *str, int len)
 {
   #ifdef _WIN32
-    unsigned long retval;
-    WriteFile(handle, str, len, &retval, nullptr);
-    //DeviceIoControl(handle, (DWORD)IOCTL_MONO_PRINT_RAW, (void *)str, len, nullptr, 0,
-    //                 &retval,0);
-    return(len);
+	unsigned long retval;
+	WriteFile(handle, str, len, &retval, nullptr);
+	//DeviceIoControl(handle, (DWORD)IOCTL_MONO_PRINT_RAW, (void *)str, len, nullptr, 0,
+	//                 &retval,0);
+	return(len);
   #else
-    for (int i=0; i<len; i++)
-      fprintf(stderr,"%c",str[i]);
-    return(len);
+	for (int i=0; i<len; i++)
+	fprintf(stderr,"%c",str[i]);
+	return(len);
   #endif
 }

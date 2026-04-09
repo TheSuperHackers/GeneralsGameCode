@@ -517,13 +517,13 @@ void Shell::showShell( Bool runInit )
 
 
 	if (!TheGlobalData->m_shellMapOn && m_screenCount == 0)
-  {
+	{
 #ifdef RTS_PROFILE
-    Profile::StopRange("init");
+		Profile::StopRange("init");
 #endif
 	//else
 		push( "Menus/MainMenu.wnd" );
-  }
+	}
 	m_isShellActive = TRUE;
 }
 
@@ -846,7 +846,7 @@ WindowLayout *Shell::getSaveLoadMenuLayout()
 
 	// if layout has not been created, create it now
 	if( m_saveLoadMenuLayout == nullptr )
-   m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( "Menus/PopupSaveLoad.wnd" );
+	m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( "Menus/PopupSaveLoad.wnd" );
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout") );
@@ -863,7 +863,7 @@ WindowLayout *Shell::getPopupReplayLayout()
 
 	// if layout has not been created, create it now
 	if( m_popupReplayLayout == nullptr )
-   m_popupReplayLayout = TheWindowManager->winCreateLayout( "Menus/PopupReplay.wnd" );
+	m_popupReplayLayout = TheWindowManager->winCreateLayout( "Menus/PopupReplay.wnd" );
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout") );

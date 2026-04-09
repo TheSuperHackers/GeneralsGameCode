@@ -44,14 +44,14 @@ ModelConditionUpgradeModuleData::ModelConditionUpgradeModuleData()
 // ------------------------------------------------------------------------------------------------
 void ModelConditionUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "ConditionFlag",	ModelConditionFlags::parseSingleBitFromINI,	nullptr, offsetof( ModelConditionUpgradeModuleData, m_conditionFlag ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

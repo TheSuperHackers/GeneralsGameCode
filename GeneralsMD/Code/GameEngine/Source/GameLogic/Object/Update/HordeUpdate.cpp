@@ -321,12 +321,12 @@ UpdateSleepTime HordeUpdate::update()
 				if ( isInfantry )
 				{
 					if( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM ) == TRUE )
-          {
-            if ( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM ) == TRUE )
+					{
+						if ( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM ) == TRUE )
   						nuType = ( TERRAIN_DECAL_HORDE_WITH_FANATICISM_UPGRADE );
-            else
+						else
   						nuType = ( TERRAIN_DECAL_HORDE_WITH_NATIONALISM_UPGRADE );
-          }
+					}
 					else
 						nuType =(TERRAIN_DECAL_HORDE);
 
@@ -339,12 +339,12 @@ UpdateSleepTime HordeUpdate::update()
 					draw->setTerrainDecalSize( size, size );
 
 					if( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM ) == TRUE )
-          {
-            if ( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM ) == TRUE )
+					{
+						if ( obj->testWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM ) == TRUE )
   						nuType = ( TERRAIN_DECAL_HORDE_WITH_FANATICISM_UPGRADE );
-            else
+						else
   						nuType = ( TERRAIN_DECAL_HORDE_WITH_NATIONALISM_UPGRADE );
-          }
+					}
 					else
 						nuType = (TERRAIN_DECAL_HORDE_VEHICLE);
 

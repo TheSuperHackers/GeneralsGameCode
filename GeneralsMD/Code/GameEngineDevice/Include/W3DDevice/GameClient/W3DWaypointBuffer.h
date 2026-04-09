@@ -78,7 +78,7 @@ public:
 
 
 private:
-  void setDefaultLineStyle();
+	void setDefaultLineStyle();
 
 	RenderObjClass *m_waypointNodeRobj;
 	SegmentedLineClass *m_line;

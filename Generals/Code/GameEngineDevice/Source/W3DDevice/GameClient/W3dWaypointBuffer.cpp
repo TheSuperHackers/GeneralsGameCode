@@ -103,7 +103,7 @@ W3DWaypointBuffer::W3DWaypointBuffer()
 	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( "EXLaser.tga" );
 
 
-  setDefaultLineStyle();
+	setDefaultLineStyle();
 }
 
 //=============================================================================

@@ -326,7 +326,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	// !!! Graham: Please please please have inspiration for how to *not* duplicate this code
 	// GS - Construct needs to be an AI primitive.  Inheriting off of AIUpdate means you are writing a
 	// master brain that will call AI primitives on the object, not something that does stuff itself.
-  // SupplyTruckAI decides who to call AIDock on.  Worker should decide to AIDock or AIConstruct
+	// SupplyTruckAI decides who to call AIDock on.  Worker should decide to AIDock or AIConstruct
 	// or AIRepair.  Dozer should just use the latter two.  No construction logic should be in
 	// the inherited AIUpdates at all.
 
@@ -1440,10 +1440,10 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 #else
 	XferVersion currentVersion = 2;
 #endif
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 
@@ -1500,6 +1500,6 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }

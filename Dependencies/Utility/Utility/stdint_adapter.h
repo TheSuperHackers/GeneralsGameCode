@@ -21,11 +21,11 @@
 #if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
 /* 7.18.1.4  Integer types capable of holding object pointers */
 #ifdef _WIN64
-  typedef __int64 intptr_t;
-  typedef unsigned __int64 uintptr_t;
+typedef __int64 intptr_t;
+typedef unsigned __int64 uintptr_t;
 #else
-  typedef int intptr_t;
-  typedef unsigned int uintptr_t;
+typedef int intptr_t;
+typedef unsigned int uintptr_t;
 #endif
 
 /* 7.18.1.1  Exact-width integer types */

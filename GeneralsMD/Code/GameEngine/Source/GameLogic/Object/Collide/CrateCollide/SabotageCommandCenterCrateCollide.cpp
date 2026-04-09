@@ -132,7 +132,7 @@ Bool SabotageCommandCenterCrateCollide::executeCrateBehavior( Object *other )
 
 	TheRadar->tryInfiltrationEvent( other );
 
-  doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_COMMAND_CENTER );
+	doSabotageFeedbackFX( other, CrateCollide::SAB_VICTIM_COMMAND_CENTER );
 
 	//When the sabotage occurs, play the appropriate EVA
 	//event if the local player is the victim!

@@ -567,7 +567,7 @@ EMPTY_DTOR(AIPickUpCrateState)
 /**
  * Execute an Attack-Move
  */
- class AIAttackMoveToState : public AIMoveToState
+class AIAttackMoveToState : public AIMoveToState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIAttackMoveToState, "AIAttackMoveToState")
 public:

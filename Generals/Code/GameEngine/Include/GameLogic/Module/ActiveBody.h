@@ -124,8 +124,8 @@ private:
 
 	Real									m_currentHealth;				///< health of the object
 	Real									m_prevHealth;						///< previous health value before current health change op
-  Real									m_maxHealth;						///< max health this object can have
-  Real									m_initialHealth;				///< starting health for this object
+	Real									m_maxHealth;						///< max health this object can have
+	Real									m_initialHealth;				///< starting health for this object
 
 	BodyDamageType				m_curDamageState;				///< last known damage state
 	UnsignedInt						m_nextDamageFXTime;

@@ -45,12 +45,12 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    ActiveBodyModuleData::buildFieldParse(p);
+		ActiveBodyModuleData::buildFieldParse(p);
 		static const FieldParse dataFieldParse[] =
 		{
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

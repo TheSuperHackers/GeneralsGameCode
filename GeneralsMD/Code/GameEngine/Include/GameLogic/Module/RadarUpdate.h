@@ -43,7 +43,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse( p );
+		UpdateModuleData::buildFieldParse( p );
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -51,11 +51,11 @@ public:
 			{ "RadarExtendTime", INI::parseDurationReal, nullptr, offsetof( RadarUpdateModuleData, m_radarExtendTime ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 
 	}
 
-  Real m_radarExtendTime;  ///< in frames, time it takes the radar tower to build
+	Real m_radarExtendTime;  ///< in frames, time it takes the radar tower to build
 
 };
 

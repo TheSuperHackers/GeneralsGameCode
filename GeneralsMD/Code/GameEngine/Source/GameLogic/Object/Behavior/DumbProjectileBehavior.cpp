@@ -73,7 +73,7 @@ DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() :
 //-----------------------------------------------------------------------------
 void DumbProjectileBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -98,7 +98,7 @@ void DumbProjectileBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ DumbProjectileBehavior::DumbProjectileBehavior( Thing *thing, const ModuleData* 
 	m_currentFlightPathStep = 0;
 	m_extraBonusFlags = 0;
 
-  m_hasDetonated = FALSE;
+	m_hasDetonated = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -530,8 +530,8 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 //-------------------------------------------------------------------------------------------------
 void DumbProjectileBehavior::detonate()
 {
-  if ( m_hasDetonated )
-    return;
+	if ( m_hasDetonated )
+	return;
 
 	Object* obj = getObject();
 	if (m_detonationWeaponTmpl)
@@ -568,7 +568,7 @@ void DumbProjectileBehavior::detonate()
 	if (obj->getDrawable())
 		obj->getDrawable()->setDrawableHidden(true);
 
-  m_hasDetonated = TRUE;
+	m_hasDetonated = TRUE;
 
 }
 
@@ -632,8 +632,8 @@ UpdateSleepTime DumbProjectileBehavior::update()
 	Coord3D flightStep = m_flightPath[m_currentFlightPathStep];
 
 	if (d->m_orientToFlightPath && (!d->m_tumbleRandomly) )
-  {
-    if ( m_currentFlightPathStep > 0)
+	{
+		if ( m_currentFlightPathStep > 0)
 	  {
 	  // this seems reasonable; however, if this object has a PhysicsBehavior on it, this calc will be wrong,
 	  // since Physics is applying gravity, which we duly ignore, but the prevPos won't be what we expect.
@@ -644,14 +644,14 @@ UpdateSleepTime DumbProjectileBehavior::update()
 
 		  Vector3 curDir(flightStep.x - prevPos.x, flightStep.y - prevPos.y, flightStep.z - prevPos.z);
 		  curDir.Normalize();	// buildTransformMatrix wants it this way
-      Matrix3D orientMtx;
+			Matrix3D orientMtx;
 		  orientMtx.buildTransformMatrix(Vector3(flightStep.x, flightStep.y, flightStep.z), curDir);
 		  getObject()->setTransformMatrix(&orientMtx);
-    }
-    else // oops! how do we orient the projectile on the zeroeth frame? This didn't matter until we started using the
-      //long, blurry projectile graphics which look badly oriented on step 0 of the flight path
-      // so lets orient it the same as if it were on frame 1!
-    {
+		}
+		else // oops! how do we orient the projectile on the zeroeth frame? This didn't matter until we started using the
+		//long, blurry projectile graphics which look badly oriented on step 0 of the flight path
+		// so lets orient it the same as if it were on frame 1!
+		{
 			// TheSuperHackers @bugfix Caball009 10/01/2026 Check vector size before accessing the second element to prevent out of bounds access.
 			// The non-deterministic behavior for retail clients cannot be fixed, so this will remain a source of potential mismatches in retail compatibility mode.
 			// Use the flight path start and end coordinates if needed, so that the behavior is deterministic for patched clients.
@@ -677,10 +677,10 @@ UpdateSleepTime DumbProjectileBehavior::update()
 
 		  Vector3 curDir(curPos.x - prevPos.x, curPos.y - prevPos.y, curPos.z - prevPos.z);
 		  curDir.Normalize();	// buildTransformMatrix wants it this way
-      Matrix3D orientMtx;
+			Matrix3D orientMtx;
 		  orientMtx.buildTransformMatrix(Vector3(flightStep.x, flightStep.y, flightStep.z), curDir);
 		  getObject()->setTransformMatrix(&orientMtx);
-    }
+		}
 
 	}
 	else

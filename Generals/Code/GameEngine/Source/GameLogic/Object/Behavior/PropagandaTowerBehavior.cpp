@@ -92,7 +92,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData()
 // ------------------------------------------------------------------------------------------------
 /*static*/ void PropagandaTowerBehaviorModuleData::buildFieldParse( MultiIniFieldParse &p )
 {
-  UpdateModuleData::buildFieldParse( p );
+	UpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -106,7 +106,7 @@ PropagandaTowerBehaviorModuleData::PropagandaTowerBehaviorModuleData()
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 

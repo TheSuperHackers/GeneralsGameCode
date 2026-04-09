@@ -597,15 +597,15 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 	}
 
 
-  // hmm.. must be shooting a firebase or such, if there is noone home to take the bullet, return 0!
-  if ( victimObj->isKindOf( KINDOF_STRUCTURE) && damageType == DAMAGE_SNIPER )
-  {
-    if ( victimObj->getContain() )
-    {
-      if ( victimObj->getContain()->getContainCount() == 0 )
-        return 0.0f;
-    }
-  }
+	// hmm.. must be shooting a firebase or such, if there is noone home to take the bullet, return 0!
+	if ( victimObj->isKindOf( KINDOF_STRUCTURE) && damageType == DAMAGE_SNIPER )
+	{
+		if ( victimObj->getContain() )
+		{
+			if ( victimObj->getContain()->getContainCount() == 0 )
+			return 0.0f;
+		}
+	}
 
 
 
@@ -1516,7 +1516,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 				damageInfo.in.m_shockWaveTaperOff = m_shockWaveTaperOff;
 			}
 
-      if (source && source->getControllingPlayer()) {
+			if (source && source->getControllingPlayer()) {
 				damageInfo.in.m_sourcePlayerMask = source->getControllingPlayer()->getPlayerMask();
 			}
 			// note, don't bother with damage multipliers here...
@@ -3083,7 +3083,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 //  DEBUG_ASSERTCRASH( muzzleHeight > 0.001f, ("YOUR TURRET HAS A VERY LOW PROJECTILE LAUNCH POSITION, BUT FOUND A VALID BONE. DID YOU PICK THE WRONG ONE? %s", launcher->getTemplate()->getName().str()));
 //#endif
 
-  launcher->convertBonePosToWorldPos(nullptr, &attachTransform, nullptr, &worldTransform);
+	launcher->convertBonePosToWorldPos(nullptr, &attachTransform, nullptr, &worldTransform);
 
 	Vector3 tmp = worldTransform.Get_Translation();
 	worldPos.x = tmp.X;

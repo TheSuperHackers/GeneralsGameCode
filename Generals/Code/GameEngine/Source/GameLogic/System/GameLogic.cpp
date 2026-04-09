@@ -182,10 +182,10 @@ static Waypoint * findNamedWaypoint(AsciiString name)
 // ------------------------------------------------------------------------------------------------
 void setFPMode()
 {
-  // Set floating point round mode to CHOP, which only comes
-  // into play when precision is exceeded.  This is necessary
-  // for the fast float to int routines used elsewhere in the
-  // system.
+	// Set floating point round mode to CHOP, which only comes
+	// into play when precision is exceeded.  This is necessary
+	// for the fast float to int routines used elsewhere in the
+	// system.
 	//
 	// Also set floating point precision to low.  It could be
 	// anything as long as it is consistent, really, but this
@@ -2101,10 +2101,10 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheGameSpyInfo->updateAdditionalGameSpyDisconnections(1);
 
 
-  if ( isInReplayGame() && TheInGameUI && TheGameText )
-  {
+	if ( isInReplayGame() && TheInGameUI && TheGameText )
+	{
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
-  }
+	}
 
 
 }
@@ -2580,16 +2580,16 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 	UpdateModulePtr* pI = &m_sleepyUpdates[i];
 
 	// our children are i*2 and i*2+1
-  Int child = ((i)<<1)+1;
+	Int child = ((i)<<1)+1;
 	UpdateModulePtr* pChild = &m_sleepyUpdates[0] + child;
 	UpdateModulePtr* pSZ = &m_sleepyUpdates[0] + m_sleepyUpdates.size();	// yes, this is off the end.
 
-  while (pChild < pSZ)
+	while (pChild < pSZ)
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
 		if (pChild < pSZ-1 && isLowerPriority(*pChild, *(pChild+1)))
 		{
-      ++pChild;
+			++pChild;
 			++child;
 		}
 
@@ -2614,16 +2614,16 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 
 		child = ((i)<<1)+1;
 		pChild = &m_sleepyUpdates[0] + child;
-  }
+	}
 #else
 	// our children are i*2 and i*2+1
 	Int sz = m_sleepyUpdates.size();
-  Int child = ((i)<<1)+1;
-  while (child < sz)
+	Int child = ((i)<<1)+1;
+	while (child < sz)
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
 		if (child < sz-1 && isLowerPriority(m_sleepyUpdates[child], m_sleepyUpdates[child+1]))
-      ++child;
+		++child;
 
 		// if we're higher-pri than our children, we're done.
 		if (!isLowerPriority(m_sleepyUpdates[i], m_sleepyUpdates[child]))
@@ -2642,7 +2642,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		b->friend_setIndexInLogic(child);
 		i = child;
 		child = ((i)<<1)+1;
-  }
+	}
 #endif
 	return i;
 }
@@ -2662,13 +2662,13 @@ void GameLogic::remakeSleepyUpdate()
 	USE_PERF_TIMER(SleepyMaintenance)
 
 	Int parent = m_sleepyUpdates.size() / 2;
-  while (true)
+	while (true)
 	{
-    rebalanceChildSleepyUpdate(parent);
-    if (parent == 0)
+		rebalanceChildSleepyUpdate(parent);
+		if (parent == 0)
 			break;
-    --parent;
-  }
+		--parent;
+	}
 
 	validateSleepyUpdate();
 }

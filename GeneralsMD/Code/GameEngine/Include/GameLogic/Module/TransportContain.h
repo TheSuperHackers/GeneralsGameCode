@@ -84,7 +84,7 @@ public:
 	virtual UpdateSleepTime update() override;							///< called once per frame
 
 	virtual Bool isRiderChangeContain() const override { return FALSE; }
-  virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
+	virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
 
 	virtual Int getContainMax() const override;
 

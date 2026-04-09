@@ -55,7 +55,7 @@ DynamicShroudClearingRangeUpdateModuleData::DynamicShroudClearingRangeUpdateModu
 //-------------------------------------------------------------------------------------------------
 /*static*/ void DynamicShroudClearingRangeUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -69,7 +69,7 @@ DynamicShroudClearingRangeUpdateModuleData::DynamicShroudClearingRangeUpdateModu
 		{ "GridDecalTemplate", RadiusDecalTemplate::parseRadiusDecalTemplate, nullptr, offsetof( DynamicShroudClearingRangeUpdateModuleData, m_gridDecalTemplate ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -127,10 +127,10 @@ void DozerActionPickActionPosState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerActionPickActionPosState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
 	xfer->xferInt(&m_failedAttempts);
@@ -270,10 +270,10 @@ void DozerActionMoveToActionPosState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerActionMoveToActionPosState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
 }
@@ -416,10 +416,10 @@ void DozerActionDoActionState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerActionDoActionState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
 	xfer->xferUnsignedInt(&m_enterFrame);
@@ -787,7 +787,7 @@ class DozerActionStateMachine : public StateMachine
 
 public:
 
-  DozerActionStateMachine( Object *owner, DozerTask task );
+	DozerActionStateMachine( Object *owner, DozerTask task );
 	// virtual destructor prototypes provided by memory pool object
 
 protected:
@@ -831,10 +831,10 @@ void DozerActionStateMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerActionStateMachine::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
 }
@@ -997,10 +997,10 @@ void DozerPrimaryIdleState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerPrimaryIdleState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUnsignedInt(&m_idleTooLongTimestamp);
 	xfer->xferInt(&m_idlePlayerNumber);
@@ -1185,10 +1185,10 @@ void DozerActionState::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerActionState::xfer( Xfer *xfer )
 {
-  // version
-  XferVersion currentVersion = 1;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	// version
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
 	xfer->xferUser(&m_task, sizeof(m_task));
 	xfer->xferSnapshot(m_actionMachine);
@@ -1414,7 +1414,7 @@ DozerAIUpdateModuleData::DozerAIUpdateModuleData()
 // ------------------------------------------------------------------------------------------------
 void DozerAIUpdateModuleData::buildFieldParse( MultiIniFieldParse& p)
 {
-  AIUpdateModuleData::buildFieldParse( p );
+	AIUpdateModuleData::buildFieldParse( p );
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -1424,7 +1424,7 @@ void DozerAIUpdateModuleData::buildFieldParse( MultiIniFieldParse& p)
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add( dataFieldParse );
+	p.add( dataFieldParse );
 
 }
 
@@ -1822,12 +1822,12 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
 	//{
 	//	BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
 	//	DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface") );
-  //
+	//
 	//	Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
 	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object") );
 	//	if( BitIsSet( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
 	//		return;
-  //
+	//
 	//}  // end if
 
 
@@ -1840,7 +1840,7 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
 	//  Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
 	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object") );
 	//	bridge->setStatus( OBJECT_STATUS_UNDERGOING_REPAIR );
-  //
+	//
 	//}  // end if
 
 	// start the new task
@@ -2210,7 +2210,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 			//
 			//if( obj )
 			//{
-      //
+			//
 			//
 			//	 when we're done repairing bridges, tell the scaffolding to go away and also remove
 			//	 the undergoing repair status from the bridge object itself
@@ -2219,7 +2219,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 			//	{
 			//		// remove the bridge scaffold
 			//		removeBridgeScaffolding( obj );
-      //
+			//
 			//		// clear the repair bit from the bridge
 			//		BridgeTowerBehaviorInterface *btbi = BridgeTowerBehavior::getBridgeTowerBehaviorInterfaceFromObject( obj );
 			//		DEBUG_ASSERTCRASH( btbi, ("Unable to find bridge tower behavior interface") );
@@ -2228,7 +2228,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 			//		bridge->clearStatus( OBJECT_STATUS_UNDERGOING_REPAIR );
 			//
 			//	}  // end if
-      //
+			//
 			//}  // end if
 
 			break;
@@ -2470,16 +2470,16 @@ void DozerAIUpdate::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerAIUpdate::xfer( Xfer *xfer )
 {
-  // version
+	// version
 #if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
 #else
 	XferVersion currentVersion = 2;
 #endif
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
 
 	Int numTasks = DOZER_NUM_TASKS;
@@ -2523,7 +2523,7 @@ void DozerAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DozerAIUpdate::loadPostProcess()
 {
- // extend base class
+	// extend base class
 	AIUpdateInterface::loadPostProcess();
 }
 

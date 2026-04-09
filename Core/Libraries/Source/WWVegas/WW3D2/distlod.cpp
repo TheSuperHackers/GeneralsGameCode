@@ -395,7 +395,7 @@ DistLODClass::DistLODClass(const DistLODDefClass & def)
 		// create a render object
 		Lods[i].Model = WW3DAssetManager::Get_Instance()->Create_Render_Obj(def.Lods[i].Name);
 		assert(Lods[i].Model != nullptr);
-      Lods[i].Model->Set_Container(this);
+		Lods[i].Model->Set_Container(this);
 
 		// copy the distances
 		Lods[i].ResUpDist = def.Lods[i].ResUpDist;
@@ -430,7 +430,7 @@ DistLODClass::DistLODClass(const DistLODClass & that) :
 		// create a render object
 		Lods[i].Model = that.Lods[i].Model->Clone();
 		assert(Lods[i].Model != nullptr);
-      Lods[i].Model->Set_Container(this);
+		Lods[i].Model->Set_Container(this);
 
 		// copy the distances
 		Lods[i].ResUpDist = that.Lods[i].ResUpDist;
@@ -808,7 +808,7 @@ const char * DistLODClass::Get_Bone_Name(int bone_index)
  *=============================================================================================*/
 int DistLODClass::Get_Bone_Index(const char * bonename)
 {
-   // Highest LOD is used since lowest may be a Null3DObjClass.
+	// Highest LOD is used since lowest may be a Null3DObjClass.
 	return Lods[0].Model->Get_Bone_Index(bonename);
 }
 
@@ -827,7 +827,7 @@ int DistLODClass::Get_Bone_Index(const char * bonename)
  *=============================================================================================*/
 const Matrix3D &	DistLODClass::Get_Bone_Transform(const char * bonename)
 {
-   // Highest LOD is used since lowest may be a Null3DObjClass.
+	// Highest LOD is used since lowest may be a Null3DObjClass.
 	return Lods[0].Model->Get_Bone_Transform(bonename);
 }
 
@@ -846,7 +846,7 @@ const Matrix3D &	DistLODClass::Get_Bone_Transform(const char * bonename)
  *=============================================================================================*/
 const Matrix3D &	DistLODClass::Get_Bone_Transform(int boneindex)
 {
-   // Highest LOD is used since lowest may be a Null3DObjClass.
+	// Highest LOD is used since lowest may be a Null3DObjClass.
 	return Lods[0].Model->Get_Bone_Transform(boneindex);
 }
 
@@ -907,7 +907,7 @@ void DistLODClass::Release_Bone(int bindex)
  *=============================================================================================*/
 bool DistLODClass::Is_Bone_Captured(int bindex) const
 {
-   // Highest LOD is used since lowest may be a Null3DObjClass.
+	// Highest LOD is used since lowest may be a Null3DObjClass.
 	return Lods[0].Model->Is_Bone_Captured(bindex);
 }
 

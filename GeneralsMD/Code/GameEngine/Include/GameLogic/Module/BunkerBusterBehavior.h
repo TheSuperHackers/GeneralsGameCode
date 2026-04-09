@@ -53,14 +53,14 @@ public:
 
 	AsciiString m_upgradeRequired;///< Upgrade required to kill garrisoned units
 	const FXList *m_detonationFX;						///< FXList to play upon detonation
-  const FXList *m_crashThroughBunkerFX;  ///< FXList to play as the bomb goes smashing through the bunker
-  UnsignedInt m_crashThroughBunkerFXFrequency;  ///< How often to play the above FX
+	const FXList *m_crashThroughBunkerFX;  ///< FXList to play as the bomb goes smashing through the bunker
+	UnsignedInt m_crashThroughBunkerFXFrequency;  ///< How often to play the above FX
 
-  Real m_seismicEffectRadius;
-  Real m_seismicEffectMagnitude;
+	Real m_seismicEffectRadius;
+	Real m_seismicEffectMagnitude;
 
-  WeaponTemplate *m_shockwaveWeaponTemplate; ///< a weapon that gets fired when the buster gets busted, intended to generate a shockwave effect only
-  WeaponTemplate *m_occupantDamageWeaponTemplate; ///< a weapon to provide a damegeInfo that gets applied to each occupant of container struck as they are getting kicked out
+	WeaponTemplate *m_shockwaveWeaponTemplate; ///< a weapon that gets fired when the buster gets busted, intended to generate a shockwave effect only
+	WeaponTemplate *m_occupantDamageWeaponTemplate; ///< a weapon to provide a damegeInfo that gets applied to each occupant of container struck as they are getting kicked out
 
 
 };
@@ -84,7 +84,7 @@ public:
 
 	// update module methods
 	virtual UpdateSleepTime update() override;
-  virtual void onObjectCreated() override;
+	virtual void onObjectCreated() override;
 
 	// die module methods
 	virtual DieModuleInterface *getDie() override { return this; }
@@ -93,9 +93,9 @@ public:
 
 
 protected:
-  void bustTheBunker();
+	void bustTheBunker();
 
 	const UpgradeTemplate *m_upgradeRequired;			///< Upgrade required to use the upgraded pulse FX
 
-  ObjectID m_victimID;
+	ObjectID m_victimID;
 };

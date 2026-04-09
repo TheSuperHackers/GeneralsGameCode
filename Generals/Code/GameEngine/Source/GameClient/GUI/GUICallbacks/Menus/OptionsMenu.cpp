@@ -532,14 +532,14 @@ static void saveOptions()
 
 	//-------------------------------------------------------------------------------------------------
 	// antialiasing
-  GadgetComboBoxGetSelectedPos(comboBoxAntiAliasing, &index);
-  if( index >= 0 && TheGlobalData->m_antiAliasBoxValue != index )
-  {
-    TheWritableGlobalData->m_antiAliasBoxValue = index;
-    AsciiString prefString;
+	GadgetComboBoxGetSelectedPos(comboBoxAntiAliasing, &index);
+	if( index >= 0 && TheGlobalData->m_antiAliasBoxValue != index )
+	{
+		TheWritableGlobalData->m_antiAliasBoxValue = index;
+		AsciiString prefString;
 		prefString.format("%d", index);
 		(*pref)["AntiAliasing"] = prefString;
-  }
+	}
 
 
 	//-------------------------------------------------------------------------------------------------
@@ -614,10 +614,10 @@ static void saveOptions()
 	val = GadgetSliderGetPosition(sliderMusicVolume);
 	if(val != -1)
 	{
-    AsciiString prefString;
-    prefString.format("%d", val);
-    (*pref)["MusicVolume"] = prefString;
-    TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["MusicVolume"] = prefString;
+		TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Music | AudioAffect_SystemSetting));
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -643,14 +643,14 @@ static void saveOptions()
 		}
 
 		//Apply the sound volumes in the audio system now.
-    TheAudio->setVolume( sound2DVolume, (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting) );
+		TheAudio->setVolume( sound2DVolume, (AudioAffect) (AudioAffect_Sound | AudioAffect_SystemSetting) );
 		TheAudio->setVolume( sound3DVolume, (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting) );
 
 		//Save the settings in the options.ini.
-    AsciiString prefString;
-    prefString.format("%d", REAL_TO_INT( sound2DVolume * 100.0f ) );
-    (*pref)["SFXVolume"] = prefString;
-    prefString.format("%d", REAL_TO_INT( sound3DVolume * 100.0f ) );
+		AsciiString prefString;
+		prefString.format("%d", REAL_TO_INT( sound2DVolume * 100.0f ) );
+		(*pref)["SFXVolume"] = prefString;
+		prefString.format("%d", REAL_TO_INT( sound3DVolume * 100.0f ) );
 		(*pref)["SFX3DVolume"] = prefString;
 	}
 
@@ -659,10 +659,10 @@ static void saveOptions()
 	val = GadgetSliderGetPosition(sliderVoiceVolume);
 	if(val != -1)
 	{
-    AsciiString prefString;
-    prefString.format("%d", val);
-    (*pref)["VoiceVolume"] = prefString;
-    TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["VoiceVolume"] = prefString;
+		TheAudio->setVolume(val / 100.0f, (AudioAffect) (AudioAffect_Speech | AudioAffect_SystemSetting));
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -986,13 +986,13 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	checkProps   = TheWindowManager->winGetWindowFromId( nullptr, checkPropsID);
 
 	sliderParticleCapID = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ParticleCapSlider" );
-  sliderParticleCap = TheWindowManager->winGetWindowFromId( nullptr, sliderParticleCapID );
+	sliderParticleCap = TheWindowManager->winGetWindowFromId( nullptr, sliderParticleCapID );
 
 	WinAdvancedDisplay->winHide(TRUE);
 
 	Color color =  GameMakeColor(255,255,255,255);
 
-  enum AliasingMode CPP_11(: Int)
+	enum AliasingMode CPP_11(: Int)
   {
     OFF = 0,
     LOW,
@@ -1580,57 +1580,57 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 				TheShell->push( "Menus/KeyboardOptionsMenu.wnd" );
 			}
 			else if(controlID == checkDrawAnchorID )
-      {
-        if( GadgetCheckBoxIsChecked( control ) )
-        {
+			{
+				if( GadgetCheckBoxIsChecked( control ) )
+				{
           	TheInGameUI->setDrawRMBScrollAnchor(true);
           	(*pref)["DrawScrollAnchor"] = "yes";
-        }
+				}
 				else
-        {
+				{
           	TheInGameUI->setDrawRMBScrollAnchor(false);
           	(*pref)["DrawScrollAnchor"] = "no";
-        }
-      }
+				}
+			}
 			else if(controlID == checkMoveAnchorID )
-      {
-        if( GadgetCheckBoxIsChecked( control ) )
-        {
+			{
+				if( GadgetCheckBoxIsChecked( control ) )
+				{
           	TheInGameUI->setMoveRMBScrollAnchor(true);
           	(*pref)["MoveScrollAnchor"] = "yes";
-        }
+				}
 				else
-        {
+				{
           	TheInGameUI->setMoveRMBScrollAnchor(false);
           	(*pref)["MoveScrollAnchor"] = "no";
-        }
-      }
+				}
+			}
 			else if(controlID == checkSaveCameraID )
-      {
-        if( GadgetCheckBoxIsChecked( control ) )
-        {
+			{
+				if( GadgetCheckBoxIsChecked( control ) )
+				{
           	TheWritableGlobalData->m_saveCameraInReplay = true;
           	(*pref)["SaveCameraInReplays"] = "yes";
-        }
+				}
 				else
-        {
+				{
           	TheWritableGlobalData->m_saveCameraInReplay = false;
           	(*pref)["SaveCameraInReplays"] = "no";
-        }
-      }
+				}
+			}
 			else if(controlID == checkUseCameraID )
-      {
-        if( GadgetCheckBoxIsChecked( control ) )
-        {
+			{
+				if( GadgetCheckBoxIsChecked( control ) )
+				{
           	TheWritableGlobalData->m_useCameraInReplay = true;
           	(*pref)["UseCameraInReplays"] = "yes";
-        }
+				}
 				else
-        {
+				{
           	TheWritableGlobalData->m_useCameraInReplay = false;
           	(*pref)["UseCameraInReplays"] = "no";
-        }
-      }
+				}
+			}
 			else if (controlID == buttonFirewallRefreshID)
 			{
 				// setting the behavior to unknown will force the firewall helper to detect the firewall behavior

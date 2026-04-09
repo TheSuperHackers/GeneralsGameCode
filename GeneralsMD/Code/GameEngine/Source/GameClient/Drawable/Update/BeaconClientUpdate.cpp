@@ -54,7 +54,7 @@ BeaconClientUpdateModuleData::~BeaconClientUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 void BeaconClientUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  ClientUpdateModuleData::buildFieldParse(p);
+	ClientUpdateModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -62,7 +62,7 @@ void BeaconClientUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "RadarPulseDuration",		INI::parseDurationUnsignedInt, nullptr, offsetof(BeaconClientUpdateModuleData, m_radarPulseDuration) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

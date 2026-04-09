@@ -128,15 +128,15 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return nullptr;
-    }
+			return nullptr;
+		}
 
 	  if (m_weapon)
 	  {
 		  TheWeaponStore->createAndFireTempWeapon( m_weapon, primaryObj, secondary );
 	  }
 		return nullptr;
-  }
+	}
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
@@ -175,8 +175,8 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return nullptr;
-    }
+			return nullptr;
+		}
 
 		// Star trekkin, across the universe.
 		// Boldly going forward now, cause we can't find reverse!
@@ -204,7 +204,7 @@ public:
 			rd->killWhenNoLongerAttacking(true);
 		}
 		return nullptr;
-  }
+	}
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
 	{
@@ -262,8 +262,8 @@ public:
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return nullptr;
-    }
+			return nullptr;
+		}
 
 		Team* owner = primaryObj ? primaryObj->getControllingPlayer()->getDefaultTeam() : nullptr;
 
@@ -559,7 +559,7 @@ private:
 	};
 
 	//Specific data needed to create the transport(s), internal payload, and initial physics.
-  AsciiString           m_transportName;
+	AsciiString           m_transportName;
 	AsciiString						m_putInContainerName;
 	std::vector<Payload>	m_payload;
 	Real									m_formationSpacing;
@@ -616,8 +616,8 @@ public:
 		{
 			/// @todo srj -- ack. const_cast is evil.
 			PhysicsBehavior* p = const_cast<Object*>(primary)->getPhysics();
-      if (p)
-      {
+			if (p)
+			{
 				Coord3D force;
 				calcRandomForce(m_minMag, m_maxMag, m_minPitch, m_maxPitch, &force);
 				p->applyForce(&force);
@@ -628,11 +628,11 @@ public:
 			  p->setYawRate(yaw);
 			  p->setRollRate(roll);
 			  p->setPitchRate(pitch);
-      }
-      else
-      {
+			}
+			else
+			{
   			DEBUG_CRASH(("You must have a Physics module source for this effect"));
-      }
+			}
 		}
 		else
 		{
@@ -1515,8 +1515,8 @@ const ObjectCreationList *ObjectCreationListStore::findObjectCreationList(const 
 	if (stricmp(name, "None") == 0)
 		return nullptr;
 
-  ObjectCreationListMap::const_iterator it = m_ocls.find(NAMEKEY(name));
-  if (it == m_ocls.end())
+	ObjectCreationListMap::const_iterator it = m_ocls.find(NAMEKEY(name));
+	if (it == m_ocls.end())
 	{
 		return nullptr;
 	}

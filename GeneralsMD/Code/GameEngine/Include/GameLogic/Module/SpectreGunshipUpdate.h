@@ -53,19 +53,19 @@ public:
 	SpecialPowerTemplate *m_specialPowerTemplate;
 	WeaponTemplate	      *m_howitzerWeaponTemplate;
 //  AsciiString           m_gunshipTemplateName;
-  AsciiString           m_gattlingTemplateName;
+	AsciiString           m_gattlingTemplateName;
 //  AsciiString           m_howitzerTemplateName;
-  RadiusDecalTemplate   m_attackAreaDecalTemplate;
-  RadiusDecalTemplate   m_targetingReticleDecalTemplate;
-  UnsignedInt           m_orbitFrames;
-  UnsignedInt           m_howitzerFiringRate;
-  UnsignedInt           m_howitzerFollowLag;
-  Real                  m_attackAreaRadius;
-  Real                  m_targetingReticleRadius;
-  Real                  m_gunshipOrbitRadius;
-  Real                  m_strafingIncrement;
-  Real                  m_orbitInsertionSlope;
-  Real                  m_randomOffsetForHowitzer;
+	RadiusDecalTemplate   m_attackAreaDecalTemplate;
+	RadiusDecalTemplate   m_targetingReticleDecalTemplate;
+	UnsignedInt           m_orbitFrames;
+	UnsignedInt           m_howitzerFiringRate;
+	UnsignedInt           m_howitzerFollowLag;
+	Real                  m_attackAreaRadius;
+	Real                  m_targetingReticleRadius;
+	Real                  m_gunshipOrbitRadius;
+	Real                  m_strafingIncrement;
+	Real                  m_orbitInsertionSlope;
+	Real                  m_randomOffsetForHowitzer;
 
 	const ParticleSystemTemplate * m_gattlingStrafeFXParticleSystem;
 
@@ -123,34 +123,34 @@ public:
 
 protected:
 
-  void setLogicalStatus( GunshipStatus newStatus ) { m_status = newStatus; }
-  void disengageAndDepartAO( Object *gunship );
+	void setLogicalStatus( GunshipStatus newStatus ) { m_status = newStatus; }
+	void disengageAndDepartAO( Object *gunship );
 
-  Bool isPointOffMap( const Coord3D& testPos ) const;
-  Bool isFairDistanceFromShip( Object *target );
+	Bool isPointOffMap( const Coord3D& testPos ) const;
+	Bool isFairDistanceFromShip( Object *target );
 
 	SpecialPowerModuleInterface* m_specialPowerModule;
 
-  void friend_enableAfterburners(Bool v);
+	void friend_enableAfterburners(Bool v);
 
 
 
 
-  Coord3D				m_initialTargetPosition;
+	Coord3D				m_initialTargetPosition;
 	Coord3D				m_overrideTargetDestination;
-  Coord3D       m_satellitePosition;
-  Coord3D       m_gattlingTargetPosition;
-  Coord3D       m_positionToShootAt;
+	Coord3D       m_satellitePosition;
+	Coord3D       m_gattlingTargetPosition;
+	Coord3D       m_positionToShootAt;
 
 
 	GunshipStatus		m_status;
 
-  UnsignedInt     m_okToFireHowitzerCounter;
-  UnsignedInt     m_orbitEscapeFrame;
+	UnsignedInt     m_okToFireHowitzerCounter;
+	UnsignedInt     m_orbitEscapeFrame;
 
 
 //  ObjectID        m_howitzerID;
-  ObjectID        m_gattlingID;
+	ObjectID        m_gattlingID;
 
 
 	RadiusDecal			m_attackAreaDecal;
@@ -160,10 +160,10 @@ protected:
 
 
 #if defined TRACKERS
-  RadiusDecal			m_howitzerTrackerDecal;
+	RadiusDecal			m_howitzerTrackerDecal;
 #endif
 
-  AudioEventRTS m_afterburnerSound;
-  AudioEventRTS m_howitzerFireSound;
+	AudioEventRTS m_afterburnerSound;
+	AudioEventRTS m_howitzerFireSound;
 
 };

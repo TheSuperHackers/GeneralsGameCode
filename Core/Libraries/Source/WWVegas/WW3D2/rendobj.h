@@ -372,7 +372,7 @@ public:
 	virtual const AABoxClass &	Get_Bounding_Box() const;
 	virtual void		 			Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
 	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
-   virtual void               Update_Obj_Space_Bounding_Volumes()								{ };
+	virtual void               Update_Obj_Space_Bounding_Volumes()								{ };
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ public:
 	static const float	AT_MAX_LOD;
 
 	virtual void	Prepare_LOD(CameraClass &camera);
-   virtual void   Recalculate_Static_LOD_Factors()													{ }
+	virtual void   Recalculate_Static_LOD_Factors()													{ }
 	virtual void	Increment_LOD()																			{ }
 	virtual void	Decrement_LOD()																			{ }
 	virtual float	Get_Cost() const;
@@ -437,8 +437,8 @@ public:
  	void							Set_ObjectColor(unsigned int color) { ObjectColor=color;}	//the color that was used to modify the asset for player team color (for Generals). -MW
 	unsigned int					Get_ObjectColor() const { return ObjectColor; };
 
-   virtual int						Get_Sort_Level() const													{ return 0; /* SORT_LEVEL_NONE */ }
-   virtual void					Set_Sort_Level(int level)													{ }
+	virtual int						Get_Sort_Level() const													{ return 0; /* SORT_LEVEL_NONE */ }
+	virtual void					Set_Sort_Level(int level)													{ }
 
 	virtual int						Is_Really_Visible()														{ return ((Bits & IS_REALLY_VISIBLE) == IS_REALLY_VISIBLE); }
 	virtual int						Is_Not_Hidden_At_All()													{ return ((Bits & IS_NOT_HIDDEN_AT_ALL) == IS_NOT_HIDDEN_AT_ALL); }
@@ -446,7 +446,7 @@ public:
 	virtual void					Set_Visible(int onoff)														{ if (onoff) { Bits |= IS_VISIBLE; } else { Bits &= ~IS_VISIBLE; } }
 
 // The cheatSpy has been put on ice until later... perhaps the next patch? - M Lorenzen
-  //	virtual int						Is_VisibleWithCheatSpy() const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
+	//	virtual int						Is_VisibleWithCheatSpy() const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
 //	virtual void					Set_VisibleWithCheatSpy(int onoff)								{ if (onoff) { Bits |= IS_VISIBLE|0x80; } else { Bits &= ~IS_VISIBLE; } }
 
 	virtual int						Is_Hidden() const														{ return !(Bits & IS_NOT_HIDDEN); }
@@ -464,7 +464,7 @@ public:
 	virtual void					Set_Additive(int onoff)													{ if (onoff) { Bits |= IS_ADDITIVE; } else { Bits &= ~IS_ADDITIVE; } }
 	virtual int						Get_Collision_Type() const											{ return (Bits & COLL_TYPE_MASK); }
 	virtual void					Set_Collision_Type(int type)												{ Bits &= ~COLL_TYPE_MASK; Bits |= (type & COLL_TYPE_MASK) | COLL_TYPE_ALL; }
-   virtual bool					Is_Complete()																{ return false; }
+	virtual bool					Is_Complete()																{ return false; }
 	virtual bool					Is_In_Scene()																{ return Scene != nullptr; }
 	virtual float					Get_Native_Screen_Size() const										{ return NativeScreenSize; }
 	virtual void					Set_Native_Screen_Size(float screensize)								{ NativeScreenSize = screensize; }

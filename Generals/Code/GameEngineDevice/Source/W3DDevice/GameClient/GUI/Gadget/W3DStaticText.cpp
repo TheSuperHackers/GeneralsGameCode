@@ -200,7 +200,7 @@ void W3DGadgetStaticTextDraw( GameWindow *window, WinInstanceData *instData )
 	}
 
 	// draw the text
-  if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
+	if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
 		drawStaticTextText( window, instData, textColor, textOutlineColor );
 
 
@@ -252,7 +252,7 @@ void W3DGadgetStaticTextImageDraw( GameWindow *window, WinInstanceData *instData
 	}
 
 	// draw the text
-  if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
+	if( tData->text && (textColor != WIN_COLOR_UNDEFINED) )
 		drawStaticTextText( window, instData, textColor, textOutlineColor );
 
 

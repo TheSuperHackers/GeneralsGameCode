@@ -795,7 +795,7 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	unsigned char *current_frame = nullptr;
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-   float value_255 = 0.9961f;	//254 / 255
+	float value_255 = 0.9961f;	//254 / 255
 	bool default_white_opaque = (	DefaultPointColor.X > value_255 &&
 											DefaultPointColor.Y > value_255 &&
 											DefaultPointColor.Z > value_255 &&
@@ -1667,7 +1667,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 	unsigned char *current_frame = nullptr;
 
 	// If there is a color or alpha array enable gradient in shader - otherwise disable.
-  float value_255 = 0.9961f;	//254 / 255
+	float value_255 = 0.9961f;	//254 / 255
 	bool default_white_opaque = (	DefaultPointColor.X > value_255 &&
 											DefaultPointColor.Y > value_255 &&
 											DefaultPointColor.Z > value_255 &&

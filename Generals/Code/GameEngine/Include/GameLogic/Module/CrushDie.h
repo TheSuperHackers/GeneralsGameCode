@@ -66,7 +66,7 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DieModuleData::buildFieldParse(p);
+		DieModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
@@ -78,7 +78,7 @@ public:
 			{ "FrontEndCrushSoundPercent",INI::parseInt,						nullptr, offsetof( CrushDieModuleData, m_crushSoundPercent[FRONT_END_CRUSH] ) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 };
 

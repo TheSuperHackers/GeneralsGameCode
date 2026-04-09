@@ -39,7 +39,7 @@
 //-------------------------------------------------------------------------------------------------
 void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  CollideModuleData::buildFieldParse(p);
+	CollideModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -49,7 +49,7 @@ void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ForbiddenStatus",	ObjectStatusMaskType::parseFromINI,	nullptr, offsetof( FireWeaponCollideModuleData, m_forbiddenStatus ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

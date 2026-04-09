@@ -38,7 +38,7 @@
 // ------------------------------------------------------------------------------------------------
 void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -47,7 +47,7 @@ void CommandSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "TriggerAlt",			INI::parseAsciiString,	nullptr, offsetof( CommandSetUpgradeModuleData, m_triggerAlt ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------

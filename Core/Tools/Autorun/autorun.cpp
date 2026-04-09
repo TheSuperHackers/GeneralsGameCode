@@ -589,7 +589,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 
 	productName = TheGameText->fetch("Autorun:Generals");
 	fullProductName = TheGameText->fetch("Autorun:Command&ConquerGenerals");
-  Msg( __LINE__, __FILE__, "Product Name = %ls.", productName.str() );
+	Msg( __LINE__, __FILE__, "Product Name = %ls.", productName.str() );
 	Msg( __LINE__, __FILE__, "Full Product Name = %ls.", fullProductName.str()	);
 	Msg( __LINE__, __FILE__, "szRegistryKey		= %s.", szRegistryKey		);
 	Msg( __LINE__, __FILE__, "szGameWindow		= %s.", szGameWindow		);
@@ -4802,7 +4802,7 @@ BOOL Valid_Environment ( void )
 
 	int length = 0;
 	result = WinVersion.Meets_Minimum_Version_Requirements();
-  if ( !result )
+	if ( !result )
 	{
 		std::wstring wideBuffer = TheGameText->fetch("GUI:WindowsVersionText");
 		std::wstring wideBuffer2 = TheGameText->fetch("GUI:WindowsVersionTitle");
@@ -5311,18 +5311,18 @@ void Debug_Date_And_Time_Stamp ( void )
 	};
 
 	char		ampm[] = "AM";
-    time_t		ltime;
-    struct tm *	today;
+	time_t		ltime;
+	struct tm *	today;
 
     /*-------------------------------------------------------------------------
 	 *Convert to time structure and adjust for PM if necessary.
 	 */
-    time( &ltime );
-    today = localtime( &ltime );
-    if( today->tm_hour > 12 ) {
+	time( &ltime );
+	today = localtime( &ltime );
+	if( today->tm_hour > 12 ) {
 		strcpy( ampm, "PM" );
 		today->tm_hour -= 12;
-    }
+	}
 	if( today->tm_hour == 0 ) {		/* Adjust if midnight hour. */
 		today->tm_hour = 12;
 	}

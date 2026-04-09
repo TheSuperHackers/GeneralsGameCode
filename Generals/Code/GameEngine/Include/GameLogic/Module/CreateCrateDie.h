@@ -55,14 +55,14 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    DieModuleData::buildFieldParse(p);
+		DieModuleData::buildFieldParse(p);
 
 		static const FieldParse dataFieldParse[] =
 		{
 			{ "CrateData",	CreateCrateDieModuleData::parseCrateData,		nullptr, 0 },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
+		p.add(dataFieldParse);
 	}
 
 	static void parseCrateData( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ );

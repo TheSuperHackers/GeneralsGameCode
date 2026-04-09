@@ -247,7 +247,7 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 		::AIL_waveOutClose (m_Driver2D);
 		success = 2;
 		WWDEBUG_SAY (("WWAudio: Detected 2D DirectSound emulation, switching to WaveOut."));
-   }
+	}
 
 	// If we couldn't open the direct sound device, then use the
 	// default wave out device
@@ -1124,7 +1124,7 @@ WWAudioClass::Free_Completed_Sounds ()
 		for (int index = 0; index < m_CompletedSounds.Count (); index ++) {
 			AudibleSoundClass *sound_obj = m_CompletedSounds[index];
 
-         WWASSERT(sound_obj != nullptr); //TSS 05/24/99
+			WWASSERT(sound_obj != nullptr); //TSS 05/24/99
 
 			// Remove this sound from the playlist
 			bool found = false;

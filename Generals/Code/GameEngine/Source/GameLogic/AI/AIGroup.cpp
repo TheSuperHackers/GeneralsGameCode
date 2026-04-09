@@ -1552,26 +1552,26 @@ void clampWaypointPosition( Coord3D &position, Int margin )
 	Region3D mapExtent;
 	TheTerrainLogic->getExtent(&mapExtent);
 
-  // trim some fat off of all sides,
-  mapExtent.hi.x -= margin;
-  mapExtent.hi.y -= margin;
-  mapExtent.lo.x += margin;
-  mapExtent.lo.y += margin;
+	// trim some fat off of all sides,
+	mapExtent.hi.x -= margin;
+	mapExtent.hi.y -= margin;
+	mapExtent.lo.x += margin;
+	mapExtent.lo.y += margin;
 
 	if ( mapExtent.isInRegionNoZ( &position ) == FALSE )
-  {
-    if ( position.x > mapExtent.hi.x )
-      position.x = mapExtent.hi.x;
-    else if ( position.x < mapExtent.lo.x )
-      position.x = mapExtent.lo.x;
+	{
+		if ( position.x > mapExtent.hi.x )
+		position.x = mapExtent.hi.x;
+		else if ( position.x < mapExtent.lo.x )
+		position.x = mapExtent.lo.x;
 
-    if ( position.y > mapExtent.hi.y )
-      position.y = mapExtent.hi.y;
-    else if ( position.y < mapExtent.lo.y )
-      position.y = mapExtent.lo.y;
+		if ( position.y > mapExtent.hi.y )
+		position.y = mapExtent.hi.y;
+		else if ( position.y < mapExtent.lo.y )
+		position.y = mapExtent.lo.y;
 
-    position.z = TheTerrainLogic->getGroundHeight( position.x, position.y );
-  }
+		position.z = TheTerrainLogic->getGroundHeight( position.x, position.y );
+	}
 }
 
 
@@ -1817,30 +1817,30 @@ const Real CIRCLE = ( 2.0f * PI );
 
 void getHelicopterOffset( Coord3D& posOut, Int idx )
 {
-  if (idx == 0)
-    return;
+	if (idx == 0)
+	return;
 
-  Real assumedHeliDiameter = 70.0f;
-  Real radius = assumedHeliDiameter;
-  Real circumference = radius * CIRCLE;
-  Real angle = 0;
-  Real angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
-  for (Int h = 1; h < idx; ++h )
-  {
-    angle += angleBetweenEachChopper;
+	Real assumedHeliDiameter = 70.0f;
+	Real radius = assumedHeliDiameter;
+	Real circumference = radius * CIRCLE;
+	Real angle = 0;
+	Real angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+	for (Int h = 1; h < idx; ++h )
+	{
+		angle += angleBetweenEachChopper;
 
-    if ( angle > CIRCLE )
-    {
-      radius += assumedHeliDiameter;
-      circumference = radius * CIRCLE;
-      angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
-      angle -= CIRCLE;
-    }
-  }
+		if ( angle > CIRCLE )
+		{
+			radius += assumedHeliDiameter;
+			circumference = radius * CIRCLE;
+			angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+			angle -= CIRCLE;
+		}
+	}
 
-  Coord3D tempCtr = posOut;
-  posOut.x = tempCtr.x + (sin(angle) * radius);
-  posOut.y = tempCtr.y + (cos(angle) * radius);
+	Coord3D tempCtr = posOut;
+	posOut.x = tempCtr.x + (sin(angle) * radius);
+	posOut.y = tempCtr.y + (cos(angle) * radius);
 
 }
 

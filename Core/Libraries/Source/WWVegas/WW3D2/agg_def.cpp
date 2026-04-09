@@ -889,7 +889,7 @@ AggregateLoaderClass::Load_W3D (ChunkLoadClass &chunk_load)
 		}
 	}
 
-    // Return a pointer to the prototype
+	// Return a pointer to the prototype
 	 return pprototype;
 }
 

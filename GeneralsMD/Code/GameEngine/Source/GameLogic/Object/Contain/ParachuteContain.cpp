@@ -68,7 +68,7 @@ ParachuteContainModuleData::ParachuteContainModuleData() :
 //-------------------------------------------------------------------------------------------------
 void ParachuteContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  OpenContainModuleData::buildFieldParse(p);
+	OpenContainModuleData::buildFieldParse(p);
 
 	static const FieldParse dataFieldParse[] =
 	{
@@ -81,7 +81,7 @@ void ParachuteContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "ParachuteOpenSound", INI::parseAudioEventRTS, nullptr, offsetof( ParachuteContainModuleData, m_parachuteOpenSound ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
@@ -343,10 +343,10 @@ UpdateSleepTime ParachuteContain::update()
 				parachuteAI->aiMoveToPosition( &target, CMD_FROM_AI );
 			}
 		}
-    else if ( rider )
+		else if ( rider )
 			rider->clearAndSetModelConditionState( MODELCONDITION_PARACHUTING, MODELCONDITION_FREEFALL );
 
-  }
+	}
 	draw->setDrawableHidden(!m_opened);
 
 	if (!m_opened || getContainCount() == 0)
@@ -566,9 +566,9 @@ void ParachuteContain::onRemoving( Object *rider )
 		rider->kill();
 	}
 
-  // Note: for future enhancement of this feature, we should test the object against the cell type he is on,
-  // using obj->getAI()->hasLocomotorForSurface( __ ). We cshould not assume here that the parachutist can not
-  // find happiness on cliffs or water or whatever.
+	// Note: for future enhancement of this feature, we should test the object against the cell type he is on,
+	// using obj->getAI()->hasLocomotorForSurface( __ ). We cshould not assume here that the parachutist can not
+	// find happiness on cliffs or water or whatever.
 
 
 }
