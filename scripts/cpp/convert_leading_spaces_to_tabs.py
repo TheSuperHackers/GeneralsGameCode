@@ -18,12 +18,40 @@ Usage:
 import argparse
 import glob
 import os
+import re
 
 import tree_sitter_cpp as tscpp
 from tree_sitter import Language, Parser
 
 
 CPP_LANGUAGE = Language(tscpp.language())
+
+
+# Macros that confuse tree-sitter's C++ parser. These are expanded in the
+# source text before parsing (but not in the output). Replacements are
+# same-length to preserve byte offsets between the parsed and original text.
+MACRO_EXPANSIONS = [
+    (re.compile(rb'\bCALLBACK\b'),    b'        '),
+    (re.compile(rb'\bGCALL\b'),       b'     '),
+    (re.compile(rb'\bWINAPI\b'),      b'      '),
+    (re.compile(rb'\bIN\b'),          b'  '),
+    (re.compile(rb'\bOUT\b'),         b'   '),
+    (re.compile(rb'\bRO\b'),          b'  '),
+    (re.compile(rb'\bW3DNEW\b'),      b'new   '),
+    (re.compile(rb'\bNEW\b'),         b'new'),
+    (re.compile(rb'\b__RPC_FAR\b'),   b'         '),
+    (re.compile(rb'\b__RPC_STUB\b'),  b'          '),
+    (re.compile(rb'\b__asm\b'),       b'     '),
+    (re.compile(rb'\b_asm\b'),        b'    '),
+]
+
+
+def preprocess_for_parsing(code_bytes):
+    """Apply macro expansions to help tree-sitter parse the code."""
+    result = code_bytes
+    for pattern, replacement in MACRO_EXPANSIONS:
+        result = pattern.sub(replacement, result)
+    return result
 
 
 # Node types that create an indentation level for their children.
@@ -116,7 +144,8 @@ def process_file(filepath, dry_run=False, verbose=False):
         lines = lines[:-1]  # split adds an empty string after trailing \n
 
     code_bytes = content.encode('utf-8')
-    tree = parser.parse(code_bytes)
+    parse_bytes = preprocess_for_parsing(code_bytes)
+    tree = parser.parse(parse_bytes)
 
     # If the file has excessive parse errors, the AST is unreliable - skip it.
     # Only count top-level errors (not deeply nested ones from macro expansions).
