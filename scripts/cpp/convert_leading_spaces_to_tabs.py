@@ -174,16 +174,8 @@ def process_file(filepath, dry_run=False, verbose=False):
             new_lines.append(line)
             continue
 
-        # Skip mixed tab+space lines (e.g. tab then spaces for alignment)
-        # These need careful handling deferred to a later PR
-        if '\t' in leading_ws and ' ' in leading_ws:
-            new_lines.append(line)
-            skipped += 1
-            if verbose:
-                print(f"  SKIP mixed L{line_idx+1}: {line.rstrip()[:80]}")
-            continue
-
-        # This line has leading spaces. Use tree-sitter to determine depth.
+        # This line has spaces in its leading whitespace (possibly mixed with tabs).
+        # Use tree-sitter to determine the correct depth.
         # Find the AST node at the first non-whitespace character.
         col = len(leading_ws)
         node = tree.root_node.descendant_for_point_range(
