@@ -162,13 +162,14 @@ void View::setAngle( Real radians )
 	m_angle = WWMath::Normalize_Angle(radians);
 }
 
+#define CLAMP_VIEW_PITCH 1
 /**
  * Rotate the view around the horizontal (X) axis to the given angle.
  */
 void View::setPitch( Real radians )
 {
-#if 1
-	m_pitch = std::clamp(radians, DEG_TO_RADF(0.1f), DEG_TO_RADF(89.9f));
+#if CLAMP_VIEW_PITCH
+	m_pitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
 #else
 	m_pitch = WWMath::Normalize_Angle(radians);
 #endif
@@ -176,8 +177,8 @@ void View::setPitch( Real radians )
 
 void View::setDefaultPitch( Real radians )
 {
-#if 1
-	m_defaultPitch = std::clamp(radians, DEG_TO_RADF(0.1f), DEG_TO_RADF(89.9f));
+#if CLAMP_VIEW_PITCH
+	m_defaultPitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
 #else
 	m_defaultPitch = WWMath::Normalize_Angle(radians);
 #endif
