@@ -52,7 +52,7 @@ enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 constexpr const Real ViewDefaultPitchRadians = DEG_TO_RADF(37.5f);
-constexpr const Real ViewDefaultAngleRadians = DEG_TO_RADF(0.0f);
+constexpr const Real ViewDefaultYawRadians = DEG_TO_RADF(0.0f);
 
 // ------------------------------------------------------------------------------------------------
 enum PickType CPP_11(: Int)

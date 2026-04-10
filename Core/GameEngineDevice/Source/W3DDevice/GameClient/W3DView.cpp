@@ -265,7 +265,7 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	// This is strange math which would need special attention when changed.
 	sourcePos.Z = getCameraOffsetZ();
 	sourcePos.Y = -(sourcePos.Z / tan(ViewDefaultPitchRadians));
-	sourcePos.X = -(sourcePos.Y * tan(ViewDefaultAngleRadians));
+	sourcePos.X = -(sourcePos.Y * tan(ViewDefaultYawRadians));
 
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV
@@ -290,7 +290,7 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	const Real heightScale = 1.0f - (groundLevel / sourcePos.Z);
 
 	// construct a matrix to rotate around the up vector by the given angle
-	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle - ViewDefaultAngleRadians );
+	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle - ViewDefaultYawRadians );
 
 	// construct a matrix to rotate around the left vector by the given angle
 	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch - ViewDefaultPitchRadians );
