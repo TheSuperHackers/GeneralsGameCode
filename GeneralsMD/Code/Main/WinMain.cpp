@@ -70,17 +70,18 @@
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
+#include "../OnlineServices_Init.h"
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
 HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
 HWND ApplicationHWnd = nullptr;  ///< our application window handle
-Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
+Win32Mouse* TheWin32Mouse = nullptr;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
-const Char *g_strFile = "data\\Generals.str";
-const Char *g_csfFile = "data\\%s\\Generals.csf";
-const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
+const Char* g_strFile = "data\\Generals.str";
+const Char* g_csfFile = "data\\%s\\Generals.csf";
+const char* gAppPrefix = ""; /// So WB can have a different debug log file name.
 
 static Bool gInitializing = false;
 static Bool gDoPaint = true;
@@ -91,7 +92,7 @@ static HBITMAP gLoadScreenBitmap = nullptr;
 //#define DEBUG_WINDOWS_MESSAGES
 
 #ifdef DEBUG_WINDOWS_MESSAGES
-static const char *messageToString(unsigned int message)
+static const char* messageToString(unsigned int message)
 {
 	static char name[32];
 
@@ -223,7 +224,7 @@ static const char *messageToString(unsigned int message)
 	case WM_MBUTTONDOWN: return  "WM_MBUTTONDOWN";
 	case WM_MBUTTONUP: return  "WM_MBUTTONUP";
 	case WM_MBUTTONDBLCLK: return  "WM_MBUTTONDBLCLK";
-//	case WM_MOUSEWHEEL: return  "WM_MOUSEWHEEL";
+		//	case WM_MOUSEWHEEL: return  "WM_MOUSEWHEEL";
 	case WM_PARENTNOTIFY: return  "WM_PARENTNOTIFY";
 	case WM_ENTERMENULOOP: return  "WM_ENTERMENULOOP";
 	case WM_EXITMENULOOP: return  "WM_EXITMENULOOP";
@@ -256,8 +257,8 @@ static const char *messageToString(unsigned int message)
 	case WM_IME_CHAR: return  "WM_IME_CHAR";
 	case WM_IME_KEYDOWN: return  "WM_IME_KEYDOWN";
 	case WM_IME_KEYUP: return  "WM_IME_KEYUP";
-//	case WM_MOUSEHOVER: return  "WM_MOUSEHOVER";
-//	case WM_MOUSELEAVE: return  "WM_MOUSELEAVE";
+		//	case WM_MOUSEHOVER: return  "WM_MOUSEHOVER";
+		//	case WM_MOUSELEAVE: return  "WM_MOUSELEAVE";
 	case WM_CUT: return  "WM_CUT";
 	case WM_COPY: return  "WM_COPY";
 	case WM_PASTE: return  "WM_PASTE";
@@ -293,16 +294,16 @@ static const char *messageToString(unsigned int message)
 // WndProc ====================================================================
 /** Window Procedure */
 //=============================================================================
-LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
-													WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
+	WPARAM wParam, LPARAM lParam)
 {
 
 	try
 	{
 		// First let the IME manager do it's stuff.
-		if ( TheIMEManager )
+		if (TheIMEManager)
 		{
-			if ( TheIMEManager->serviceIMEMessage( hWnd, message, wParam, lParam ) )
+			if (TheIMEManager->serviceIMEMessage(hWnd, message, wParam, lParam))
 			{
 				// The manager intercepted an IME message so return the result
 				return TheIMEManager->result();
@@ -310,350 +311,350 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 		}
 
 #ifdef	DEBUG_WINDOWS_MESSAGES
-		static msgCount=0;
+		static msgCount = 0;
 		char testString[256];
-		sprintf(testString,"\n%d: %s (%X,%X)", msgCount++,messageToString(message), wParam, lParam);
+		sprintf(testString, "\n%d: %s (%X,%X)", msgCount++, messageToString(message), wParam, lParam);
 		OutputDebugString(testString);
 #endif
 
 		// handle all window messages
-		switch( message )
+		switch (message)
 		{
 			//-------------------------------------------------------------------------
-			case WM_NCHITTEST:
-				// Prevent the user from selecting the menu in fullscreen mode
-				if( !TheGlobalData->m_windowed )
-					return HTCLIENT;
-				break;
+		case WM_NCHITTEST:
+			// Prevent the user from selecting the menu in fullscreen mode
+			if (!TheGlobalData->m_windowed)
+				return HTCLIENT;
+			break;
 
 			//-------------------------------------------------------------------------
-			case WM_POWERBROADCAST:
-				switch( wParam )
-				{
-					#ifndef PBT_APMQUERYSUSPEND
-						#define PBT_APMQUERYSUSPEND 0x0000
-					#endif
-					case PBT_APMQUERYSUSPEND:
-						// At this point, the app should save any data for open
-						// network connections, files, etc., and prepare to go into
-						// a suspended mode.
-						return TRUE;
-
-					#ifndef PBT_APMRESUMESUSPEND
-						#define PBT_APMRESUMESUSPEND 0x0007
-					#endif
-					case PBT_APMRESUMESUSPEND:
-						// At this point, the app should recover any data, network
-						// connections, files, etc., and resume running from when
-						// the app was suspended.
-						return TRUE;
-				}
-				break;
-			//-------------------------------------------------------------------------
-			case WM_SYSCOMMAND:
-				// Prevent moving/sizing and power loss in fullscreen mode
-				switch( wParam )
-				{
-					case SC_KEYMENU:
-						// TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
-						return 1;
-					case SC_MOVE:
-					case SC_SIZE:
-					case SC_MAXIMIZE:
-					case SC_MONITORPOWER:
-						if( !TheGlobalData->m_windowed )
-							return 1;
-						break;
-				}
-				break;
-
-			case WM_QUERYENDSESSION:
+		case WM_POWERBROADCAST:
+			switch (wParam)
 			{
-				TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
-				return 0;	//don't allow Windows to shutdown while game is running.
-			}
-
-			// ------------------------------------------------------------------------
-			case WM_CLOSE:
-				if (!TheGameEngine->getQuitting())
-				{
-					//user is exiting without using the menus
-
-					//This method didn't work in cinematics because we don't process messages.
-					//But it's the cleanest way to exit that's similar to using menus.
-					TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
-
-					//This method used to disable quitting.  We just put up the options screen instead.
-					//TheMessageStream->appendMessage(GameMessage::MSG_META_OPTIONS);
-
-					//This method works everywhere but isn't as clean at shutting down.
-					//TheGameEngine->checkAbnormalQuitting();	//old way to log disconnections for ALT-F4
-					//TheGameEngine->reset();
-					//TheGameEngine->setQuitting(TRUE);
-					//_exit(EXIT_SUCCESS);
-				}
-				return 0;
-
-			//-------------------------------------------------------------------------
-			case WM_MOVE:
-			{
-				if (TheMouse)
-					TheMouse->refreshCursorCapture();
-
-				break;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_SIZE:
-			{
-				// When W3D initializes, it resizes the window.  So stop repainting.
-				if (!gInitializing)
-					gDoPaint = false;
-
-				if (TheMouse)
-					TheMouse->refreshCursorCapture();
-
-				break;
-			}
-
-			// ------------------------------------------------------------------------
-			case WM_SETFOCUS:
-			{
-				//
-				// reset the state of our keyboard cause we haven't been paying
-				// attention to the keys while focus was away
-				//
-				if (TheKeyboard)
-					TheKeyboard->resetKeys();
-
-				if (TheMouse)
-					TheMouse->regainFocus();
-
-				break;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_KILLFOCUS:
-			{
-				if (TheKeyboard)
-					TheKeyboard->resetKeys();
-
-				if (TheMouse)
-				{
-					TheMouse->loseFocus();
-
-					if (TheMouse->isCursorInside())
-					{
-						TheMouse->onCursorMovedOutside();
-					}
-				}
-
-				break;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_ACTIVATEAPP:
-			{
-				if ((bool) wParam != isWinMainActive)
-				{
-					// TheSuperHackers @bugfix xezon 11/05/2025 This event originally called DX8Wrapper::Reset_Device,
-					// intended to clear resources on a lost device in fullscreen, but effectively also in
-					// windowed mode, if the DXMaximizedWindowedMode shim was applied in newer versions of Windows,
-					// which lead to unfortunate application crashing. Resetting the device on WM_ACTIVATEAPP instead
-					// of TestCooperativeLevel() == D3DERR_DEVICENOTRESET is not a requirement. There are other code
-					// paths that take care of that.
-
-					isWinMainActive = (BOOL) wParam;
-
-					if (TheGameEngine)
-						TheGameEngine->setIsActive(isWinMainActive);
-
-					if (isWinMainActive)
-					{
-						//restore mouse cursor to our custom version.
-						if (TheWin32Mouse)
-							TheWin32Mouse->setCursor(TheWin32Mouse->getMouseCursor());
-					}
-				}
-				return 0;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_ACTIVATE:
-			{
-				Int active = LOWORD( wParam );
-
-				if( active == WA_INACTIVE )
-				{
-					if (TheAudio)
-						TheAudio->muteAudio(AudioManager::MuteAudioReason_WindowFocus);
-				}
-				else
-				{
-					if (TheAudio)
-						TheAudio->unmuteAudio(AudioManager::MuteAudioReason_WindowFocus);
-
-					// Cursor can only be captured after one of the activation events.
-					if (TheMouse)
-						TheMouse->refreshCursorCapture();
-				}
-				break;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_KEYDOWN:
-			{
-				Int key = (Int)wParam;
-
-				switch( key )
-				{
-					case VK_ESCAPE:
-					{
-						PostQuitMessage( 0 );
-						break;
-					}
-				}
-				return 0;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_LBUTTONDOWN:
-			case WM_LBUTTONUP:
-			case WM_LBUTTONDBLCLK:
-
-			case WM_MBUTTONDOWN:
-			case WM_MBUTTONUP:
-			case WM_MBUTTONDBLCLK:
-
-			case WM_RBUTTONDOWN:
-			case WM_RBUTTONUP:
-			case WM_RBUTTONDBLCLK:
-			{
-				if( TheWin32Mouse )
-					TheWin32Mouse->addWin32Event( message, wParam, lParam, TheMessageTime );
-
-				return 0;
-			}
-
-			//-------------------------------------------------------------------------
-			case 0x020A: // WM_MOUSEWHEEL
-			{
-				if( TheWin32Mouse == nullptr )
-					return 0;
-
-				long x = (long) LOWORD(lParam);
-				long y = (long) HIWORD(lParam);
-				RECT rect;
-
-				// ignore when outside of client area
-				GetWindowRect( ApplicationHWnd, &rect );
-				if( x < rect.left || x > rect.right || y < rect.top || y > rect.bottom )
-					return 0;
-
-				TheWin32Mouse->addWin32Event( message, wParam, lParam, TheMessageTime );
-				return 0;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_MOUSEMOVE:
-			{
-				if( TheWin32Mouse == nullptr )
-					return 0;
-
-				// ignore when window is not active
-				if( !isWinMainActive )
-					return 0;
-
-				Int x = (Int)LOWORD( lParam );
-				Int y = (Int)HIWORD( lParam );
-				RECT rect;
-
-				// ignore when outside of client area
-				GetClientRect( ApplicationHWnd, &rect );
-				if( x < rect.left || x > rect.right || y < rect.top || y > rect.bottom )
-				{
-					if ( TheMouse->isCursorInside() )
-					{
-						TheMouse->onCursorMovedOutside();
-					}
-					return 0;
-				}
-
-				if( !TheMouse->isCursorInside() )
-				{
-					TheMouse->onCursorMovedInside();
-				}
-
-				TheWin32Mouse->addWin32Event( message, wParam, lParam, TheMessageTime );
-				return 0;
-			}
-
-			//-------------------------------------------------------------------------
-			case WM_SETCURSOR:
-			{
-				if (TheWin32Mouse && (HWND)wParam == ApplicationHWnd)
-					TheWin32Mouse->setCursor(TheWin32Mouse->getMouseCursor());
-				return TRUE;	//tell Windows not to reset mouse cursor image to default.
-			}
-
-			case WM_PAINT:
-			{
-				if (gDoPaint) {
-					PAINTSTRUCT paint;
-					HDC dc = ::BeginPaint(hWnd, &paint);
-#if 0
-					::SetTextColor(dc, RGB(255,255,255));
-					::SetBkColor(dc, RGB(0,0,0));
-					::TextOut(dc, 30, 30, "Loading Command & Conquer Generals...", 37);
+#ifndef PBT_APMQUERYSUSPEND
+#define PBT_APMQUERYSUSPEND 0x0000
 #endif
-					if (gLoadScreenBitmap!=nullptr) {
-						Int savContext = ::SaveDC(dc);
-						HDC tmpDC = ::CreateCompatibleDC(dc);
-						HBITMAP savBitmap = (HBITMAP)::SelectObject(tmpDC, gLoadScreenBitmap);
-						::BitBlt(dc, 0, 0, DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT, tmpDC, 0, 0, SRCCOPY);
-						::SelectObject(tmpDC, savBitmap);
-						::DeleteDC(tmpDC);
-						::RestoreDC(dc, savContext);
-					}
-					::EndPaint(hWnd, &paint);
-					return TRUE;
-				}
+			case PBT_APMQUERYSUSPEND:
+				// At this point, the app should save any data for open
+				// network connections, files, etc., and prepare to go into
+				// a suspended mode.
+				return TRUE;
+
+#ifndef PBT_APMRESUMESUSPEND
+#define PBT_APMRESUMESUSPEND 0x0007
+#endif
+			case PBT_APMRESUMESUSPEND:
+				// At this point, the app should recover any data, network
+				// connections, files, etc., and resume running from when
+				// the app was suspended.
+				return TRUE;
+			}
+			break;
+			//-------------------------------------------------------------------------
+		case WM_SYSCOMMAND:
+			// Prevent moving/sizing and power loss in fullscreen mode
+			switch (wParam)
+			{
+			case SC_KEYMENU:
+				// TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
+				return 1;
+			case SC_MOVE:
+			case SC_SIZE:
+			case SC_MAXIMIZE:
+			case SC_MONITORPOWER:
+				if (!TheGlobalData->m_windowed)
+					return 1;
 				break;
 			}
+			break;
 
-			case WM_ERASEBKGND:
+		case WM_QUERYENDSESSION:
+		{
+			TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
+			return 0;	//don't allow Windows to shutdown while game is running.
+		}
+
+		// ------------------------------------------------------------------------
+		case WM_CLOSE:
+			if (!TheGameEngine->getQuitting())
 			{
-				if (!gDoPaint)
-					return TRUE;	//we don't need to erase the background because we always draw entire window.
-				break;
+				//user is exiting without using the menus
+
+				//This method didn't work in cinematics because we don't process messages.
+				//But it's the cleanest way to exit that's similar to using menus.
+				TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
+
+				//This method used to disable quitting.  We just put up the options screen instead.
+				//TheMessageStream->appendMessage(GameMessage::MSG_META_OPTIONS);
+
+				//This method works everywhere but isn't as clean at shutting down.
+				//TheGameEngine->checkAbnormalQuitting();	//old way to log disconnections for ALT-F4
+				//TheGameEngine->reset();
+				//TheGameEngine->setQuitting(TRUE);
+				//_exit(EXIT_SUCCESS);
 			}
+			return 0;
 
-// Well, it was a nice idea, but we don't get a message for an ejection.
-// (Really unfortunate, actually.) I'm leaving this in in-case some one wants
-// to trap a different device change (for instance, removal of a mouse) - jkmcd
-#if 0
-			case WM_DEVICECHANGE:
+			//-------------------------------------------------------------------------
+		case WM_MOVE:
+		{
+			if (TheMouse)
+				TheMouse->refreshCursorCapture();
+
+			break;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_SIZE:
+		{
+			// When W3D initializes, it resizes the window.  So stop repainting.
+			if (!gInitializing)
+				gDoPaint = false;
+
+			if (TheMouse)
+				TheMouse->refreshCursorCapture();
+
+			break;
+		}
+
+		// ------------------------------------------------------------------------
+		case WM_SETFOCUS:
+		{
+			//
+			// reset the state of our keyboard cause we haven't been paying
+			// attention to the keys while focus was away
+			//
+			if (TheKeyboard)
+				TheKeyboard->resetKeys();
+
+			if (TheMouse)
+				TheMouse->regainFocus();
+
+			break;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_KILLFOCUS:
+		{
+			if (TheKeyboard)
+				TheKeyboard->resetKeys();
+
+			if (TheMouse)
 			{
-				if (((UINT) wParam) == DBT_DEVICEREMOVEPENDING)
+				TheMouse->loseFocus();
+
+				if (TheMouse->isCursorInside())
 				{
-					DEV_BROADCAST_HDR *hdr = (DEV_BROADCAST_HDR*) lParam;
-					if (!hdr) {
-						break;
-					}
-
-					if (hdr->dbch_devicetype != DBT_DEVTYP_VOLUME)  {
-						break;
-					}
-
-					// Lets discuss how Windows is a flaming pile of poo. I'm now casting the header
-					// directly into the structure, because its the one I want, and this is just how
-					// its done. I hate Windows. - jkmcd
-					DEV_BROADCAST_VOLUME *vol = (DEV_BROADCAST_VOLUME*) (hdr);
-
-					return TRUE;
+					TheMouse->onCursorMovedOutside();
 				}
+			}
+
+			break;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_ACTIVATEAPP:
+		{
+			if ((bool)wParam != isWinMainActive)
+			{
+				// TheSuperHackers @bugfix xezon 11/05/2025 This event originally called DX8Wrapper::Reset_Device,
+				// intended to clear resources on a lost device in fullscreen, but effectively also in
+				// windowed mode, if the DXMaximizedWindowedMode shim was applied in newer versions of Windows,
+				// which lead to unfortunate application crashing. Resetting the device on WM_ACTIVATEAPP instead
+				// of TestCooperativeLevel() == D3DERR_DEVICENOTRESET is not a requirement. There are other code
+				// paths that take care of that.
+
+				isWinMainActive = (BOOL)wParam;
+
+				if (TheGameEngine)
+					TheGameEngine->setIsActive(isWinMainActive);
+
+				if (isWinMainActive)
+				{
+					//restore mouse cursor to our custom version.
+					if (TheWin32Mouse)
+						TheWin32Mouse->setCursor(TheWin32Mouse->getMouseCursor());
+				}
+			}
+			return 0;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_ACTIVATE:
+		{
+			Int active = LOWORD(wParam);
+
+			if (active == WA_INACTIVE)
+			{
+				if (TheAudio)
+					TheAudio->muteAudio(AudioManager::MuteAudioReason_WindowFocus);
+			}
+			else
+			{
+				if (TheAudio)
+					TheAudio->unmuteAudio(AudioManager::MuteAudioReason_WindowFocus);
+
+				// Cursor can only be captured after one of the activation events.
+				if (TheMouse)
+					TheMouse->refreshCursorCapture();
+			}
+			break;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_KEYDOWN:
+		{
+			Int key = (Int)wParam;
+
+			switch (key)
+			{
+			case VK_ESCAPE:
+			{
+				PostQuitMessage(0);
 				break;
 			}
+			}
+			return 0;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_LBUTTONDBLCLK:
+
+		case WM_MBUTTONDOWN:
+		case WM_MBUTTONUP:
+		case WM_MBUTTONDBLCLK:
+
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+		case WM_RBUTTONDBLCLK:
+		{
+			if (TheWin32Mouse)
+				TheWin32Mouse->addWin32Event(message, wParam, lParam, TheMessageTime);
+
+			return 0;
+		}
+
+		//-------------------------------------------------------------------------
+		case 0x020A: // WM_MOUSEWHEEL
+		{
+			if (TheWin32Mouse == nullptr)
+				return 0;
+
+			long x = (long)LOWORD(lParam);
+			long y = (long)HIWORD(lParam);
+			RECT rect;
+
+			// ignore when outside of client area
+			GetWindowRect(ApplicationHWnd, &rect);
+			if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom)
+				return 0;
+
+			TheWin32Mouse->addWin32Event(message, wParam, lParam, TheMessageTime);
+			return 0;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_MOUSEMOVE:
+		{
+			if (TheWin32Mouse == nullptr)
+				return 0;
+
+			// ignore when window is not active
+			if (!isWinMainActive)
+				return 0;
+
+			Int x = (Int)LOWORD(lParam);
+			Int y = (Int)HIWORD(lParam);
+			RECT rect;
+
+			// ignore when outside of client area
+			GetClientRect(ApplicationHWnd, &rect);
+			if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom)
+			{
+				if (TheMouse->isCursorInside())
+				{
+					TheMouse->onCursorMovedOutside();
+				}
+				return 0;
+			}
+
+			if (!TheMouse->isCursorInside())
+			{
+				TheMouse->onCursorMovedInside();
+			}
+
+			TheWin32Mouse->addWin32Event(message, wParam, lParam, TheMessageTime);
+			return 0;
+		}
+
+		//-------------------------------------------------------------------------
+		case WM_SETCURSOR:
+		{
+			if (TheWin32Mouse && (HWND)wParam == ApplicationHWnd)
+				TheWin32Mouse->setCursor(TheWin32Mouse->getMouseCursor());
+			return TRUE;	//tell Windows not to reset mouse cursor image to default.
+		}
+
+		case WM_PAINT:
+		{
+			if (gDoPaint) {
+				PAINTSTRUCT paint;
+				HDC dc = ::BeginPaint(hWnd, &paint);
+#if 0
+				::SetTextColor(dc, RGB(255, 255, 255));
+				::SetBkColor(dc, RGB(0, 0, 0));
+				::TextOut(dc, 30, 30, "Loading Command & Conquer Generals...", 37);
+#endif
+				if (gLoadScreenBitmap != nullptr) {
+					Int savContext = ::SaveDC(dc);
+					HDC tmpDC = ::CreateCompatibleDC(dc);
+					HBITMAP savBitmap = (HBITMAP)::SelectObject(tmpDC, gLoadScreenBitmap);
+					::BitBlt(dc, 0, 0, DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT, tmpDC, 0, 0, SRCCOPY);
+					::SelectObject(tmpDC, savBitmap);
+					::DeleteDC(tmpDC);
+					::RestoreDC(dc, savContext);
+				}
+				::EndPaint(hWnd, &paint);
+				return TRUE;
+			}
+			break;
+		}
+
+		case WM_ERASEBKGND:
+		{
+			if (!gDoPaint)
+				return TRUE;	//we don't need to erase the background because we always draw entire window.
+			break;
+		}
+
+		// Well, it was a nice idea, but we don't get a message for an ejection.
+		// (Really unfortunate, actually.) I'm leaving this in in-case some one wants
+		// to trap a different device change (for instance, removal of a mouse) - jkmcd
+#if 0
+		case WM_DEVICECHANGE:
+		{
+			if (((UINT)wParam) == DBT_DEVICEREMOVEPENDING)
+			{
+				DEV_BROADCAST_HDR* hdr = (DEV_BROADCAST_HDR*)lParam;
+				if (!hdr) {
+					break;
+				}
+
+				if (hdr->dbch_devicetype != DBT_DEVTYP_VOLUME) {
+					break;
+				}
+
+				// Lets discuss how Windows is a flaming pile of poo. I'm now casting the header
+				// directly into the structure, because its the one I want, and this is just how
+				// its done. I hate Windows. - jkmcd
+				DEV_BROADCAST_VOLUME* vol = (DEV_BROADCAST_VOLUME*)(hdr);
+
+				return TRUE;
+			}
+			break;
+		}
 #endif
 		}
 
@@ -664,45 +665,54 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 		// no rethrow
 	}
 
-//In full-screen mode, only pass these messages onto the default windows handler.
-//Appears to fix issues with dual monitor systems but doesn't seem safe?
-///@todo: Look into proper support for dual monitor systems.
-/*	if (!TheGlobalData->m_windowed)
-	switch (message)
-	{
-		case WM_PAINT:
-		case WM_NCCREATE:
-		case WM_NCDESTROY:
-		case WM_NCCALCSIZE:
-		case WM_NCPAINT:
-				return DefWindowProc( hWnd, message, wParam, lParam );
-	}
-	return 0;*/
+	//In full-screen mode, only pass these messages onto the default windows handler.
+	//Appears to fix issues with dual monitor systems but doesn't seem safe?
+	///@todo: Look into proper support for dual monitor systems.
+	/*	if (!TheGlobalData->m_windowed)
+		switch (message)
+		{
+			case WM_PAINT:
+			case WM_NCCREATE:
+			case WM_NCDESTROY:
+			case WM_NCCALCSIZE:
+			case WM_NCPAINT:
+					return DefWindowProc( hWnd, message, wParam, lParam );
+		}
+		return 0;*/
 
-	return DefWindowProc( hWnd, message, wParam, lParam );
+	// Complex-text patch: use the wide DefWindowProc so WM_CHAR continues
+	// to deliver UTF-16 code points instead of ANSI-codepage bytes.
+	return DefWindowProcW(hWnd, message, wParam, lParam);
 
 }
 
 // initializeAppWindows =======================================================
 /** Register windows class and create application windows. */
 //=============================================================================
-static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWindowed )
+static Bool initializeAppWindows(HINSTANCE hInstance, Int nCmdShow, Bool runWindowed)
 {
 	DWORD windowStyle;
 	Int startWidth = DEFAULT_DISPLAY_WIDTH,
-			startHeight = DEFAULT_DISPLAY_HEIGHT;
+		startHeight = DEFAULT_DISPLAY_HEIGHT;
 
 	// register the window class
+	//
+	// Complex-text patch: register a *wide* window class so that WM_CHAR
+	// messages carry true UTF-16 code points in wParam. With the original
+	// ANSI RegisterClass, Windows converts WM_CHAR through the active
+	// ANSI code page (e.g. Windows-1256 when an Arabic keyboard layout is
+	// selected), which destroys the upper byte and causes Arabic input to
+	// be mis-rendered as Latin-1 accented characters.
 
-  WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
-                       LoadIcon (hInstance, MAKEINTRESOURCE(IDI_ApplicationIcon)),
-                       nullptr/*LoadCursor(nullptr, IDC_ARROW)*/,
-                       (HBRUSH)GetStockObject(BLACK_BRUSH), nullptr,
-	                     TEXT("Game Window") };
-  RegisterClass( &wndClass );
+	WNDCLASSW wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
+						 LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ApplicationIcon)),
+						 nullptr/*LoadCursor(nullptr, IDC_ARROW)*/,
+						 (HBRUSH)GetStockObject(BLACK_BRUSH), nullptr,
+						   L"Game Window" };
+	RegisterClassW(&wndClass);
 
-   // Create our main window
-	windowStyle =  WS_POPUP|WS_VISIBLE;
+	// Create our main window
+	windowStyle = WS_POPUP | WS_VISIBLE;
 	if (runWindowed)
 		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_CAPTION;
 	else
@@ -713,44 +723,51 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	rect.top = 0;
 	rect.right = startWidth;
 	rect.bottom = startHeight;
-	AdjustWindowRect (&rect, windowStyle, FALSE);
+	AdjustWindowRect(&rect, windowStyle, FALSE);
 	if (runWindowed) {
 		// Makes the normal debug 800x600 window center in the screen.
 		startWidth = DEFAULT_DISPLAY_WIDTH;
-		startHeight= DEFAULT_DISPLAY_HEIGHT;
+		startHeight = DEFAULT_DISPLAY_HEIGHT;
 	}
 
 	gInitializing = true;
 
-  HWND hWnd = CreateWindow( TEXT("Game Window"),
-                            TEXT("Command and Conquer Generals"),
-                            windowStyle,
-														(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2), // original position X
-														(GetSystemMetrics( SM_CYSCREEN ) / 2) - (startHeight / 2),// original position Y
-														// Lorenzen nudged the window higher
-														// so the constantdebug report would
-														// not get obliterated by assert windows, thank you.
-														//(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2),   //this works with any screen res
-														//(GetSystemMetrics( SM_CYSCREEN ) / 25) - (startHeight / 25),//this works with any screen res
-														rect.right-rect.left,
-														rect.bottom-rect.top,
-														nullptr,
-														nullptr,
-														hInstance,
-														nullptr );
+	// Complex-text patch: CreateWindowW matches the wide class registered
+	// above so the HWND is genuinely Unicode-aware.
+	HWND hWnd = CreateWindowW(L"Game Window",
+		L"Command and Conquer Generals",
+		windowStyle,
+		(GetSystemMetrics(SM_CXSCREEN) / 2) - (startWidth / 2), // original position X
+		(GetSystemMetrics(SM_CYSCREEN) / 2) - (startHeight / 2),// original position Y
+		// Lorenzen nudged the window higher
+		// so the constantdebug report would
+		// not get obliterated by assert windows, thank you.
+		//(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2),   //this works with any screen res
+		//(GetSystemMetrics( SM_CYSCREEN ) / 25) - (startHeight / 25),//this works with any screen res
+		rect.right - rect.left,
+		rect.bottom - rect.top,
+		nullptr,
+		nullptr,
+		hInstance,
+		nullptr);
 
 
 	if (!runWindowed)
-	{	SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
+	{
+#if defined(GENERALS_ONLINE_WINDOWED_FULLSCREEN)
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
+#else
+		SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+#endif
 	}
 	else
-		SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
 	SetFocus(hWnd);
 
 	SetForegroundWindow(hWnd);
-	ShowWindow( hWnd, nCmdShow );
-	UpdateWindow( hWnd );
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
 	// save our application window handle for future use
 	ApplicationHWnd = hWnd;
@@ -769,9 +786,9 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 // UnHandledExceptionFilter ===================================================
 /** Handler for unhandled win32 exceptions. */
 //=============================================================================
-static LONG WINAPI UnHandledExceptionFilter( struct _EXCEPTION_POINTERS* e_info )
+static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
 {
-	DumpExceptionInfo( e_info->ExceptionRecord->ExceptionCode, e_info );
+	DumpExceptionInfo(e_info->ExceptionRecord->ExceptionCode, e_info);
 #ifdef RTS_ENABLE_CRASHDUMP
 	if (TheMiniDumper && TheMiniDumper->IsInitialized())
 	{
@@ -788,18 +805,18 @@ static LONG WINAPI UnHandledExceptionFilter( struct _EXCEPTION_POINTERS* e_info 
 // WinMain ====================================================================
 /** Application entry point */
 //=============================================================================
-Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                      LPSTR lpCmdLine, Int nCmdShow )
+Int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	LPSTR lpCmdLine, Int nCmdShow)
 {
 	Int exitcode = 1;
 
 #ifdef RTS_PROFILE
-  Profile::StartRange("init");
+	Profile::StartRange("init");
 #endif
 
 	try {
 
-		SetUnhandledExceptionFilter( UnHandledExceptionFilter );
+		SetUnhandledExceptionFilter(UnHandledExceptionFilter);
 		//
 		// there is something about checkin in and out the .dsp and .dsw files
 		// that blows the working directory information away on each of the
@@ -818,22 +835,22 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		initMemoryManager();
 
 		/// @todo remove this force set of working directory later
-		Char buffer[ _MAX_PATH ];
-		GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
-		if (Char *pEnd = strrchr(buffer, '\\'))
+		Char buffer[_MAX_PATH];
+		GetModuleFileName(nullptr, buffer, sizeof(buffer));
+		if (Char* pEnd = strrchr(buffer, '\\'))
 		{
 			*pEnd = 0;
 		}
 		::SetCurrentDirectory(buffer);
 
 
-		#ifdef RTS_DEBUG
-			// Turn on Memory heap tracking
-			int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
-			tmpFlag |= (_CRTDBG_LEAK_CHECK_DF|_CRTDBG_ALLOC_MEM_DF);
-			tmpFlag &= ~_CRTDBG_CHECK_CRT_DF;
-			_CrtSetDbgFlag( tmpFlag );
-		#endif
+#ifdef RTS_DEBUG
+		// Turn on Memory heap tracking
+		int tmpFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+		tmpFlag |= (_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
+		tmpFlag &= ~_CRTDBG_CHECK_CRT_DF;
+		_CrtSetDbgFlag(tmpFlag);
+#endif
 
 
 
@@ -847,22 +864,22 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
-		const char *fileName = "Install_Final.bmp";
-		static const char *localizedPathFormat = "Data/%s/";
-		sprintf(filePath,localizedPathFormat, GetRegistryLanguage().str());
+		const char* fileName = "Install_Final.bmp";
+		static const char* localizedPathFormat = "Data/%s/";
+		sprintf(filePath, localizedPathFormat, GetRegistryLanguage().str());
 		strlcat(filePath, fileName, ARRAY_SIZE(filePath));
-		FILE *fileImage = fopen(filePath, "r");
+		FILE* fileImage = fopen(filePath, "r");
 		if (fileImage) {
 			fclose(fileImage);
-			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
+			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED | LR_LOADFROMFILE);
 		}
 		else {
-			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, fileName, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
+			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, fileName, IMAGE_BITMAP, 0, 0, LR_SHARED | LR_LOADFROMFILE);
 		}
 #else
 
 		// in release, the file only ever lives in the root dir
-		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
+		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED | LR_LOADFROMFILE);
 #endif
 
 		CommandLine::parseCommandLineForStartup();
@@ -872,15 +889,17 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		// register windows class and create application window
-		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
+		if (!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
 			return exitcode;
 		}
 
+		NGMP_OnlineServicesManager::AttemptLoadSteam();
+
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
 
-		if (gLoadScreenBitmap!=nullptr) {
+		if (gLoadScreenBitmap != nullptr) {
 			::DeleteObject(gLoadScreenBitmap);
 			gLoadScreenBitmap = nullptr;
 		}
@@ -893,9 +912,21 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		// Set up version info
 		TheVersion = NEW Version;
+
+		// TODO_NGMP: Better solution
+#if defined(GENERALS_ONLINE)
+		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, GENERALS_ONLINE_VERSION, GENERALS_ONLINE_NET_VERSION,
+	#if !defined(_DEBUG)
+			AsciiString("Generals Online Development Team | GitHub Buildserver"), AsciiString(""),
+	#else
+			AsciiString("Generals Online Development Team | Development Test Build"), AsciiString(""),
+	#endif
+			AsciiString(__TIME__), AsciiString(__DATE__));
+#else
 		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
 			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
 			AsciiString(__TIME__), AsciiString(__DATE__));
+#endif
 
 		// TheSuperHackers @refactor The instance mutex now lives in its own class.
 
@@ -924,12 +955,12 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		delete TheVersion;
 		TheVersion = nullptr;
 
-	#ifdef MEMORYPOOL_DEBUG
+#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
-	#endif
-	#if defined(RTS_DEBUG)
+#endif
+#if defined(RTS_DEBUG)
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
-	#endif
+#endif
 
 		shutdownMemoryManager();
 
@@ -955,9 +986,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 // CreateGameEngine ===========================================================
 /** Create the Win32 game engine we're going to use */
 //=============================================================================
-GameEngine *CreateGameEngine()
+GameEngine* CreateGameEngine()
 {
-	Win32GameEngine *engine;
+	Win32GameEngine* engine;
 
 	engine = NEW Win32GameEngine;
 	//game engine may not have existed when app got focus so make sure it

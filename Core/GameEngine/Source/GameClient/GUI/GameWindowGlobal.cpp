@@ -203,22 +203,44 @@ Int GameWindowManager::winIsDigit( Int c )
 }
 
 // GameWindowManager::winIsAscii ==============================================
-/** You implementation of whether or not character is ascii */
+/** You implementation of whether or not character is ascii.
+ *
+ * Complex-text patch: the original implementation used iswascii, which
+ * only accepts code points 0..127 and thereby filtered out every
+ * non-Latin character (Arabic, Hebrew, Cyrillic, CJK, accented Latin,
+ * etc.) before it could reach the text-entry buffer. We now accept any
+ * printable BMP code point (>= 0x20) that is not a Unicode control
+ * character. This keeps legitimate ASCII/Latin behaviour intact while
+ * letting complex scripts through the GadgetTextEntry aSCIIOnly gate.
+ */
 //=============================================================================
 Int GameWindowManager::winIsAscii( Int c )
 {
 
-	return iswascii( c );
+	// Reject C0/C1 control ranges but allow everything else in the BMP.
+	if ( c < 0x20 ) return 0;
+	if ( c >= 0x7F && c < 0xA0 ) return 0;
+	return 1;
 
 }
 
 // GameWindowManager::winIsAlNum ==============================================
-/** Your implementation of whether or not character is alpha numeric */
+/** Your implementation of whether or not character is alpha numeric.
+ *
+ * Complex-text patch: iswalnum is locale-dependent and in the default C
+ * locale rejects every non-ASCII letter. We additionally accept any
+ * printable non-control code point above 0x7F so Arabic, Hebrew, and
+ * other complex scripts pass the alphaNumericalOnly filter on text
+ * entry widgets.
+ */
 //=============================================================================
 Int GameWindowManager::winIsAlNum( Int c )
 {
 
-	return iswalnum( c );
+	if ( iswalnum( c ) ) return 1;
+	// Accept printable non-control code points above ASCII.
+	if ( c >= 0xA0 ) return 1;
+	return 0;
 
 }
 

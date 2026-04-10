@@ -657,7 +657,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 	}
 	return 0;*/
 
-	return DefWindowProc( hWnd, message, wParam, lParam );
+	// Complex-text patch: use DefWindowProcW so WM_CHAR messages are
+	// delivered as UTF-16 code units instead of being transcoded through
+	// the process ANSI codepage. Without this, Arabic/Hebrew/CJK input
+	// arrives as Latin-1 gibberish when the system ANSI codepage is not
+	// Windows-1256 / 1255 / 932 etc.
+	return DefWindowProcW( hWnd, message, wParam, lParam );
 
 }
 
@@ -672,12 +677,16 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 	// register the window class
 
-  WNDCLASS wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
+  // Complex-text patch: register a wide (Unicode) window class so the
+  // window receives WM_CHAR as UTF-16. The ANSI class would otherwise
+  // convert characters through the current system ANSI codepage,
+  // corrupting Arabic/Hebrew/CJK input.
+  WNDCLASSW wndClass = { CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, WndProc, 0, 0, hInstance,
                        LoadIcon (hInstance, MAKEINTRESOURCE(IDI_ApplicationIcon)),
                        nullptr/*LoadCursor(nullptr, IDC_ARROW)*/,
                        (HBRUSH)GetStockObject(BLACK_BRUSH), nullptr,
-	                     TEXT("Game Window") };
-  RegisterClass( &wndClass );
+	                     L"Game Window" };
+  RegisterClassW( &wndClass );
 
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
@@ -700,8 +709,11 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 	gInitializing = true;
 
-  HWND hWnd = CreateWindow( TEXT("Game Window"),
-                            TEXT("Command and Conquer Generals"),
+  // Complex-text patch: use CreateWindowW with wide string literals so
+  // the window title and class are registered as UTF-16, matching the
+  // WNDCLASSW registration above.
+  HWND hWnd = CreateWindowW( L"Game Window",
+                            L"Command and Conquer Generals",
                             windowStyle,
 														(GetSystemMetrics( SM_CXSCREEN ) / 2) - (startWidth / 2), // original position X
 														(GetSystemMetrics( SM_CYSCREEN ) / 2) - (startHeight / 2),// original position Y
