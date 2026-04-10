@@ -218,8 +218,10 @@ Int GameWindowManager::winIsAscii( Int c )
 {
 
 	// Reject C0/C1 control ranges but allow everything else in the BMP.
-	if ( c < 0x20 ) return 0;
-	if ( c >= 0x7F && c < 0xA0 ) return 0;
+	if ( c < 0x20 )
+		return 0;
+	if ( c >= 0x7F && c < 0xA0 )
+		return 0;
 	return 1;
 
 }
@@ -237,9 +239,11 @@ Int GameWindowManager::winIsAscii( Int c )
 Int GameWindowManager::winIsAlNum( Int c )
 {
 
-	if ( iswalnum( c ) ) return 1;
+	if ( iswalnum( c ) )
+		return 1;
 	// Accept printable non-control code points above ASCII.
-	if ( c >= 0xA0 ) return 1;
+	if ( c >= 0xA0 )
+		return 1;
 	return 0;
 
 }
