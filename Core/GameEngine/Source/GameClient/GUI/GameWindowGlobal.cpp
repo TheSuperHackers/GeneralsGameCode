@@ -193,12 +193,34 @@ Int GameWindowManager::winFontHeight( GameFont *font )
 }
 
 // GameWindowManager::winIsDigit ==============================================
-/** You implementation of whether or not character is a digit */
+/** You implementation of whether or not character is a digit.
+ *
+ * Complex-text patch: iswdigit is locale-dependent and in the default
+ * C locale only accepts ASCII 0-9. To stay consistent with the widened
+ * winIsAlNum / winIsAscii filters we additionally accept the common
+ * script-specific decimal digit ranges (Arabic-Indic, Extended
+ * Arabic-Indic, Devanagari, Bengali, etc.) so that digit-only text
+ * entry widgets work for users typing native numerals.
+ */
 //=============================================================================
 Int GameWindowManager::winIsDigit( Int c )
 {
 
-	return iswdigit( c );
+	if ( iswdigit( c ) )
+		return 1;
+	// Arabic-Indic digits (U+0660..U+0669)
+	if ( c >= 0x0660 && c <= 0x0669 )
+		return 1;
+	// Extended Arabic-Indic digits (U+06F0..U+06F9)
+	if ( c >= 0x06F0 && c <= 0x06F9 )
+		return 1;
+	// Devanagari digits (U+0966..U+096F)
+	if ( c >= 0x0966 && c <= 0x096F )
+		return 1;
+	// Bengali digits (U+09E6..U+09EF)
+	if ( c >= 0x09E6 && c <= 0x09EF )
+		return 1;
+	return 0;
 
 }
 
