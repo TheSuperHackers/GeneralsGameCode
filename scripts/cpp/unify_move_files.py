@@ -4,6 +4,7 @@
 
 import os
 import shutil
+import filecmp
 from enum import Enum
 
 
@@ -78,6 +79,14 @@ def unify_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     fromOppositeGamePath = get_game_path(fromOppositeGame)
     fromGamePath = get_game_path(fromGame)
     toGamePath = get_game_path(toGame)
+
+    # Safety Identical Check
+    fullFromPath = os.path.join(fromGamePath, os.path.normpath(fromFile))
+    fullOppositePath = os.path.join(fromOppositeGamePath, os.path.normpath(fromFile))
+
+    if not filecmp.cmp(fullFromPath, fullOppositePath, shallow=False):
+        print(f"ERROR: Files are not identical! Skipping to prevent data loss: {fromFile}")
+        return
 
     fromFirstFolderIndex = fromFile.find("/")
     toFirstFolderIndex = toFile.find("/")
