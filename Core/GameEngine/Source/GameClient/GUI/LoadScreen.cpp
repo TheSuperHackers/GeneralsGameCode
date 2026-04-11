@@ -1101,7 +1101,7 @@ void ChallengeLoadScreen::init( GameInfo *game )
 		{
 			if (GameClient::isMovieAbortRequested())
 			{
-				break;
+				return;
 			}
 			Sleep(1);
 		}

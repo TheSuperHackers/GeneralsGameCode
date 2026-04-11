@@ -219,6 +219,7 @@ public:
 	UnsignedInt getGamePauseFrame() const { return m_pauseFrame; }
 	void setGamePaused( Bool paused, Bool pauseMusic = TRUE, Bool pauseInput = TRUE );
 	Bool isGamePaused();
+	Bool canOpenQuitMenu();
 	Bool getInputEnabledMemory() const { return m_inputEnabledMemory; }
 
 	void processProgress(Int playerId, Int percentage);

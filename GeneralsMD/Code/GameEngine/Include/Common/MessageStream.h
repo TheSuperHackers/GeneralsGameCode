@@ -757,6 +757,7 @@ public:
 
 	virtual GameMessage *appendMessage( GameMessage::Type type );		///< Append a message to the end of the stream
 	virtual GameMessage *insertMessage( GameMessage::Type type, GameMessage *messageToInsertAfter );	// Insert message after messageToInsertAfter.
+	virtual Bool canAddMessage() const;											///< Return true if a message can be added to the stream
 
 	// Methods NOT Inherited ------------------------------------------------------------------------
 	void propagateMessages();													///< Propagate messages through attached translators

@@ -873,6 +873,11 @@ void MessageStream::update()
 
 }
 
+Bool MessageStream::canAddMessage() const
+{
+	return (ThePlayerList != nullptr);
+}
+
 /**
  * Create a new message of the given message type and append it
  * to this message stream.  Return the message such that any data

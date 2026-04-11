@@ -4188,24 +4188,26 @@ void GameLogic::exitGame()
 }
 
 // ------------------------------------------------------------------------------------------------
+
+Bool GameLogic::canOpenQuitMenu()
+{
+	return (TheGameEngine->isActive() && (!TheInGameUI || !TheInGameUI->isQuitMenuVisible()) && !isLoadingMap() && !isLoadingSave() && !isIntroMoviePlaying() && (TheScriptEngine == nullptr || !TheScriptEngine->isGameEnding()));
+}
+
 void GameLogic::quit(Bool toDesktop, Bool force)
 {
+	const Bool isNotLoading = (!isLoadingMap() && !isLoadingSave());
+
 	if (isInGame())
 	{
 		if (isInInteractiveGame())
 		{
 			if (force == FALSE)
 			{
-				// TheSuperHackers @info Check TheInGameUI to prevent a potential early-startup or late-shutdown crash.
-				if (TheGameEngine->isActive() && (!TheInGameUI || !TheInGameUI->isQuitMenuVisible()))
+				if (canOpenQuitMenu())
 				{
-					// TheSuperHackers @info For window X-button clicks (force == FALSE), show the quit menu.
-					// We verify we are not loading. Toggling the UI during a load screen would crash.
-					if (!isLoadingMap() && !isLoadingSave())
-					{
-						ToggleQuitMenu();
-						return;
-					}
+					ToggleQuitMenu();
+					return;
 				}
 			}
 			
@@ -4223,7 +4225,7 @@ void GameLogic::quit(Bool toDesktop, Bool force)
 
 		setGamePaused(FALSE);
 
-		if (TheScriptEngine && !isLoadingMap() && !isLoadingSave())
+		if (TheScriptEngine && isNotLoading)
 		{
 			TheScriptEngine->forceUnfreezeTime();
 			TheScriptEngine->doUnfreezeTime();
@@ -4234,14 +4236,14 @@ void GameLogic::quit(Bool toDesktop, Bool force)
 			if (isInMultiplayerGame())
 			{
 				m_quitToDesktopAfterMatch = TRUE;
-				if (!isLoadingMap() && !isLoadingSave())
+				if (isNotLoading)
 				{
 					exitGame();
 				}
 			}
 			else
 			{
-				if (!isLoadingMap() && !isLoadingSave())
+				if (isNotLoading)
 				{
 					clearGameData();
 				}
