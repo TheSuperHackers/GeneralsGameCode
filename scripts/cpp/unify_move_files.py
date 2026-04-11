@@ -84,6 +84,10 @@ def unify_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     fullFromPath = os.path.join(fromGamePath, os.path.normpath(fromFile))
     fullOppositePath = os.path.join(fromOppositeGamePath, os.path.normpath(fromFile))
 
+    if not os.path.exists(fullFromPath) or not os.path.exists(fullOppositePath):
+        print(f"ERROR: One or both files do not exist! Skipping: {fromFile}")
+        return
+
     if not filecmp.cmp(fullFromPath, fullOppositePath, shallow=False):
         print(f"ERROR: Files are not identical! Skipping to prevent data loss: {fromFile}")
         return
