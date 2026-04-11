@@ -116,7 +116,7 @@ public:
 	virtual void beginBatch();
 	virtual void endBatch();
 	virtual void flush();
-	virtual Bool isBatching() { return m_isBatching; }
+	virtual Bool isBatching() const { return m_isBatching; }
 
 	virtual void step() {}; ///< Do one fixed time step
 	virtual void draw() override;																		///< Redraw the entire display

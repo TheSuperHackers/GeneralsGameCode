@@ -228,7 +228,7 @@ void W3DDisplayString::draw( Int x, Int y, Color color, Color dropColor, Int xDr
 
 	TheDisplay->flush();
 
-	if(m_useHotKey)
+	if (m_useHotKey)
 	{
 		m_textRendererHotKey.Render();
 	}
