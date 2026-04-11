@@ -594,6 +594,14 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 				m_keyDownInfos[key].setKeyModState((MappableKeyModState)newModState);
 			}
     }
+		else
+		{
+			if (newModState != NONE)
+			{
+				// Forget that this key and mod state are pressed.
+				m_keyDownInfos[key].clearKeyModState((MappableKeyModState)newModState);
+			}
+		}
 
     m_lastModState = newModState;
 	}
