@@ -551,9 +551,8 @@ void W3DView::calcCameraAreaConstraints()
 		m_cameraAreaConstraints.lo.y = mapRegion.lo.y + offset;
 		m_cameraAreaConstraints.hi.y = mapRegion.hi.y - offset;
 
+		m_cameraAreaConstraintsValid = true;
 	}
-
-	m_cameraAreaConstraintsValid = true;
 }
 
 //-------------------------------------------------------------------------------------------------
