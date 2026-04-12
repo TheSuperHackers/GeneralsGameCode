@@ -31,6 +31,8 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "WWMath/wwmath.h"
+
 #include "Common/BuildAssistant.h"
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
@@ -806,8 +808,8 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 	if (myFactoryExitWidth>0) {
 		myExitPos = *worldPos;
 		checkMyExit = true;
-		Real c = (Real)cos(angle);
-		Real s = (Real)sin(angle);
+		Real c = WWMath::Cos(angle);
+		Real s = WWMath::Sin(angle);
 		Real offset = build->getTemplateGeometryInfo().getMajorRadius() + myFactoryExitWidth/2.0f;
 		myExitPos.x += c*offset;
 		myExitPos.y += s*offset;
@@ -854,8 +856,8 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		if (themFactoryExitWidth>0) {
 			hisExitPos = *them->getPosition();
 			checkHisExit = true;
-			Real c = (Real)cos(them->getOrientation());
-			Real s = (Real)sin(them->getOrientation());
+			Real c = WWMath::Cos(them->getOrientation());
+			Real s = WWMath::Sin(them->getOrientation());
 			Real offset = them->getGeometryInfo().getMajorRadius() + themFactoryExitWidth/2.0f;
 			hisExitPos.x += c*offset;
 			hisExitPos.y += s*offset;
@@ -1435,7 +1437,7 @@ Bool BuildAssistant::moveObjectsForConstruction( const ThingTemplate *whatToBuil
 	Bool anyUnmovables = false;
 	MemoryPoolObjectHolder hold( iter );
 
-	Real radius = sqrt(pow(gi.getMajorRadius(), 2) + pow(gi.getMinorRadius(), 2));
+	Real radius = WWMath::Sqrt(gi.getMajorRadius() * gi.getMajorRadius() + gi.getMinorRadius() * gi.getMinorRadius());
 	radius *= 1.4f;	// Fudge the distance,
 
 	for( Object *them = iter->first(); them; them = iter->next() )

@@ -39,6 +39,7 @@
 #include "always.h"
 #include <math.h>
 #include <float.h>
+#include "fdlibm_det.h"
 #include <assert.h>
 
 /*
@@ -104,22 +105,16 @@ static WWINLINE float Fabs(float val)
 	return *(float*)&value;
 }
 
+#ifndef RETAIL_COMPATIBLE_CRC
 static WWINLINE int Float_To_Int_Chop(const float& f);
 static WWINLINE int Float_To_Int_Floor(const float& f);
+#endif
 
-#if defined(_MSC_VER) && defined(_M_IX86)
-static WWINLINE float Cos(float val);
-static WWINLINE float Sin(float val);
-static WWINLINE float Sqrt(float val);
-static WWINLINE float Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
-static WWINLINE long	 Float_To_Long(float f);
-#else
 static WWINLINE float Cos(float val);
 static WWINLINE float Sin(float val);
 static WWINLINE float Sqrt(float val);
 static WWINLINE float Inv_Sqrt(float a);
 static WWINLINE long	Float_To_Long(float f);
-#endif
 
 
 static WWINLINE float Fast_Sin(float val);
@@ -133,13 +128,21 @@ static WWINLINE float Fast_Asin(float val);
 static WWINLINE float Asin(float val);
 
 
-static WWINLINE float		Atan(float x) { return static_cast<float>(atan(x)); }
-static WWINLINE float		Atan2(float y,float x) { return static_cast<float>(atan2(y,x)); }
+static WWINLINE float		Atan(float x) { return static_cast<float>(fdlibm_atan(x)); }
+static WWINLINE float		Atan2(float y, float x) { return static_cast<float>(fdlibm_atan2(y, x)); }
+static WWINLINE float		Tan(float x) { return static_cast<float>(fdlibm_tan(x)); }
+static WWINLINE float		Sinh(float x) { return static_cast<float>(fdlibm_sinh(x)); }
+static WWINLINE float		Cosh(float x) { return static_cast<float>(fdlibm_cosh(x)); }
+static WWINLINE float		Tanh(float x) { return static_cast<float>(fdlibm_tanh(x)); }
+static WWINLINE float		Exp(float x) { return static_cast<float>(fdlibm_exp(x)); }
+static WWINLINE float		Log(float x) { return static_cast<float>(fdlibm_log(x)); }
+static WWINLINE float		Log10(float x) { return static_cast<float>(fdlibm_log10(x)); }
+static WWINLINE float		Pow(float x, float y) { return static_cast<float>(fdlibm_pow(x, y)); }
 static WWINLINE float		Sign(float val);
 static WWINLINE float		Ceil(float val) { return ceilf(val); }
 static WWINLINE float		Floor(float val) { return floorf(val); }
 static WWINLINE float		Round(float val) { return floorf(val + 0.5f); }
-static WWINLINE bool			Fast_Is_Float_Positive(const float & val);
+static WWINLINE bool			Fast_Is_Float_Positive(const float& val);
 static WWINLINE bool			Is_Power_Of_2(const unsigned int val);
 
 static float		Random_Float();
@@ -313,80 +316,33 @@ WWINLINE bool WWMath::Is_Valid_Double(double x)
 // Float to long
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
 WWINLINE long WWMath::Float_To_Long(float f)
 {
-	long i;
-
-	__asm {
-		fld [f]
-		fistp [i]
-	}
-
-	return i;
+	return (long)(f + (f >= 0.0f ? 0.5f : -0.5f));
 }
-#else
-WWINLINE long WWMath::Float_To_Long(float f)
-{
-	return (long) f;
-}
-#endif
 
 WWINLINE long WWMath::Float_To_Long(double f)
 {
-#if defined(_MSC_VER) && defined(_M_IX86)
-	long retval;
-	__asm fld	qword ptr [f]
-	__asm fistp dword ptr [retval]
-	return retval;
-#else
-	return (long) f;
-#endif
+	return (long)(f + (f >= 0.0 ? 0.5 : -0.5));
 }
 
 // ----------------------------------------------------------------------------
 // Cos
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
 WWINLINE float WWMath::Cos(float val)
 {
-	float retval;
-	__asm {
-		fld [val]
-		fcos
-		fstp [retval]
-	}
-	return retval;
+	return (float)fdlibm_cos((double)val);
 }
-#else
-WWINLINE float WWMath::Cos(float val)
-{
-	return cosf(val);
-}
-#endif
 
 // ----------------------------------------------------------------------------
 // Sin
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
 WWINLINE float WWMath::Sin(float val)
 {
-	float retval;
-	__asm {
-		fld [val]
-		fsin
-		fstp [retval]
-	}
-	return retval;
+	return (float)fdlibm_sin((double)val);
 }
-#else
-WWINLINE float WWMath::Sin(float val)
-{
-	return sinf(val);
-}
-#endif
 
 // ----------------------------------------------------------------------------
 // Fast, table based sin
@@ -516,7 +472,7 @@ WWINLINE float WWMath::Fast_Acos(float val)
 
 WWINLINE float WWMath::Acos(float val)
 {
-	return (float)acos(val);
+	return (float)fdlibm_acos((double)val);
 }
 
 // ----------------------------------------------------------------------------
@@ -553,31 +509,19 @@ WWINLINE float WWMath::Fast_Asin(float val)
 
 WWINLINE float WWMath::Asin(float val)
 {
-	return (float)asin(val);
+	return (float)fdlibm_asin((double)val);
 }
 
 // ----------------------------------------------------------------------------
 // Sqrt
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
 WWINLINE float WWMath::Sqrt(float val)
 {
-	float retval;
-	__asm {
-		fld [val]
-		fsqrt
-		fstp [retval]
-	}
-	return retval;
+	return (float)sqrt((double)val);
 }
-#else
-WWINLINE float WWMath::Sqrt(float val)
-{
-	return (float)sqrt(val);
-}
-#endif
 
+#ifndef RETAIL_COMPATIBLE_CRC
 WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
 {
     int a	= *reinterpret_cast<const int*>(&f);				// take bit pattern of float into a register
@@ -603,68 +547,16 @@ WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 	r = ((r & expsign) ^ (sign)) + ((!((mantissa<<8)&imask)&(expsign^((a-1)>>31)))&sign);	// if (fabs(value)<1.0) value = 0; copy sign; if (value < 0 && value==(int)(value)) value++;
 	return r;
 }
+#endif
 
 // ----------------------------------------------------------------------------
 // Inverse square root
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float WWMath::Inv_Sqrt(float a)
+WWINLINE float WWMath::Inv_Sqrt(float number)
 {
-	float retval;
-
-	__asm {
-		mov		eax, 0be6eb508h
-		mov		DWORD PTR [esp-12],03fc00000h ;  1.5 on the stack
-		sub		eax, DWORD PTR [a]; a
-		sub		DWORD PTR [a], 800000h ; a/2 a=Y0
-		shr		eax, 1     ; firs approx in eax=R0
-		mov		DWORD PTR [esp-8], eax
-
-		fld		DWORD PTR [esp-8] ;r
-		fmul	st, st            ;r*r
-		fld		DWORD PTR [esp-8] ;r
-		fxch	st(1)
-		fmul	DWORD PTR [a];a ;r*r*y0
-		fld		DWORD PTR [esp-12];load 1.5
-		fld		st(0)
-		fsub	st,st(2)			   ;r1 = 1.5 - y1
-		;x1 = st(3)
-		;y1 = st(2)
-		;1.5 = st(1)
-		;r1 = st(0)
-
-		fld		st(1)
-		fxch	st(1)
-		fmul	st(3),st			; y2=y1*r1*...
-		fmul	st(3),st			; y2=y1*r1*r1
-		fmulp	st(4),st            ; x2=x1*r1
-		fsub	st,st(2)               ; r2=1.5-y2
-		;x2=st(3)
-		;y2=st(2)
-		;1.5=st(1)
-		;r2 = st(0)
-
-		fmul	st(2),st			;y3=y2*r2*...
-		fmul	st(3),st			;x3=x2*r2
-		fmulp	st(2),st			;y3=y2*r2*r2
-		fxch	st(1)
-		fsubp	st(1),st			;r3= 1.5 - y3
-		;x3 = st(1)
-		;r3 = st(0)
-		fmulp	st(1), st
-
-		fstp retval
-	}
-
-	return retval;
+	return 1.0f / WWMath::Sqrt(number);
 }
-#else
-WWINLINE float WWMath::Inv_Sqrt(float val)
-{
-	return 1.0f / (float)sqrt(val);
-}
-#endif
 
 WWINLINE float WWMath::Normalize_Angle(float angle)
 {

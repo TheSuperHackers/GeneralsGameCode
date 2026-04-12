@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, January 2002
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "WWMath/wwmath.h"
 
 #include "Common/ActionManager.h"
 #include "Common/BuildAssistant.h"
@@ -1883,8 +1884,8 @@ void getHelicopterOffset( Coord3D& posOut, Int idx )
   }
 
   Coord3D tempCtr = posOut;
-  posOut.x = tempCtr.x + (sin(angle) * radius);
-  posOut.y = tempCtr.y + (cos(angle) * radius);
+  posOut.x = tempCtr.x + (WWMath::Sin(angle) * radius);
+  posOut.y = tempCtr.y + (WWMath::Cos(angle) * radius);
 
 }
 

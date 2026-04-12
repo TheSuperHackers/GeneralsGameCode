@@ -28,6 +28,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "WWMath/wwmath.h"
 
 #include "Common/GameMemory.h"
 #include "Common/GlobalData.h"
@@ -672,8 +673,8 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		}
 
 		if (angle > PI/3) break;
-		Real s = sin(angle);
-		Real c = cos(angle);
+		Real s = WWMath::Sin(angle);
+		Real c = WWMath::Cos(angle);
 
 // TheSuperHackers @info helmutbuhler 21/04/2025 This debug mutates the code to become CRC incompatible
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
@@ -1038,8 +1039,8 @@ void AISkirmishPlayer::adjustBuildList(BuildListInfo *list)
 
 	angle += 3*PI/4;
 
-	Real s = sin(angle);
-	Real c = cos(angle);
+	Real s = WWMath::Sin(angle);
+	Real c = WWMath::Cos(angle);
 
 	cur = list;
 	while (cur) {
