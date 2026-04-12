@@ -36,7 +36,6 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 void PopulateColorComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGame, Bool isObserver = FALSE);
 void PopulatePlayerTemplateComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGame, Bool allowObservers );
 void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGame, Bool isObserver = FALSE);
-void PopulateStartingCashComboBox(GameWindow *comboBox, GameInfo *myGame);
 
 void EnableSlotListUpdates( Bool val );
 Bool AreSlotListUpdatesEnabled();
