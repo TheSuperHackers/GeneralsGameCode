@@ -2814,6 +2814,11 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 		Real constA=3*m_riverVOrigin;
 
+		// TheSuperHackers @bugfix Apply shroud per-vertex to avoid double-darkening at river borders.
+		// The old separate multiplicative shroud pass darkened the entire framebuffer, including
+		// already-shrouded terrain showing through transparent river edges.
+		W3DShroud *shroud = TheTerrainRenderObject ? TheTerrainRenderObject->getShroud() : nullptr;
+
 		for (i=0; i<(pTrig->getNumPoints()/2); i++)
 		{
 			Real x,y;
@@ -2834,7 +2839,16 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->y=y;
 
 			vb->z=innerPt.z;
-			vb->diffuse= diffuse;
+
+			if (shroud) {
+				Int cellX = REAL_TO_INT_FLOOR(x / shroud->getCellWidth());
+				Int cellY = REAL_TO_INT_FLOOR(y / shroud->getCellHeight());
+				W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
+				Real shroudScale = (Real)level / 255.0f;
+				vb->diffuse = REAL_TO_INT(shadeB * shroudScale) | (REAL_TO_INT(shadeG * shroudScale) << 8) | (REAL_TO_INT(shadeR * shroudScale) << 16) | (diffuse & 0xff000000);
+			} else {
+				vb->diffuse = diffuse;
+			}
 
 			Real wobbleConst=-m_riverVOrigin+vScale*(Real)i + WWMath::Fast_Sin(2*PI*(vScale*(Real)i) - constA)/22.0f;
  			//old slower version
@@ -2856,7 +2870,16 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->x=x;
 			vb->y=y;
 			vb->z=outerPt.z;
-			vb->diffuse= diffuse;
+
+			if (shroud) {
+				Int cellX = REAL_TO_INT_FLOOR(x / shroud->getCellWidth());
+				Int cellY = REAL_TO_INT_FLOOR(y / shroud->getCellHeight());
+				W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
+				Real shroudScale = (Real)level / 255.0f;
+				vb->diffuse = REAL_TO_INT(shadeB * shroudScale) | (REAL_TO_INT(shadeG * shroudScale) << 8) | (REAL_TO_INT(shadeR * shroudScale) << 16) | (diffuse & 0xff000000);
+			} else {
+				vb->diffuse = diffuse;
+			}
  			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v1=wobbleConst;
@@ -2908,19 +2931,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	if (TheWaterTransparency->m_additiveBlend)
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
 
-	//do second pass to apply the shroud on water plane
-	if (TheTerrainRenderObject->getShroud())
-	{
-		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
-		W3DShaderManager::setShader(W3DShaderManager::ST_SHROUD_TEXTURE, 0);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-		//Shroud shader uses z-compare of EQUAL which wouldn't work on water because it doesn't
-		//write to the zbuffer.  Change to LESSEQUAL.
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-		DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
-		W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
-	}
+	// TheSuperHackers @bugfix Shroud is now applied per-vertex above, removing the old
+	// separate multiplicative shroud pass that caused double-darkening at river borders.
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, cull);
 
 
