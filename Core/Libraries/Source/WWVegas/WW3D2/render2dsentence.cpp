@@ -1152,8 +1152,6 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 	else
 		Build_Sentence_Not_Centered(text, hkX, hkY);
 
-	return;
-
 }
 
 

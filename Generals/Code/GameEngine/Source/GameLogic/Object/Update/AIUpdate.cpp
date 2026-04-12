@@ -3536,7 +3536,6 @@ void AIUpdateInterface::privateRepair( Object *obj, CommandSourceType cmdSource 
 {
 
 	// there is no "default" way for generic objects to repair each other
-	return;
 
 }
 
@@ -3549,7 +3548,6 @@ void AIUpdateInterface::privatePickUpPrisoner( Object *prisoner, CommandSourceTy
 {
 
 	// there is no "default" way for generic units to pick up prisoners
-	return;
 
 }
 #endif
@@ -3563,7 +3561,6 @@ void AIUpdateInterface::privateReturnPrisoners( Object *prison, CommandSourceTyp
 {
 
 	// there is no "default" way for generic units to return prisoners
-	return;
 
 }
 #endif
@@ -3576,7 +3573,6 @@ void AIUpdateInterface::privateResumeConstruction( Object *obj, CommandSourceTyp
 {
 
 	// there is no "default" way for generic objects to resume construction
-	return;
 
 }
 

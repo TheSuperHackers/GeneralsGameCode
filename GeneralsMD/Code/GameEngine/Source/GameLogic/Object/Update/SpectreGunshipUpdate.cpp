@@ -822,8 +822,6 @@ void SpectreGunshipUpdate::disengageAndDepartAO( Object *gunship )
 
   cleanUp();
 
-  return;
-
 }
 
 

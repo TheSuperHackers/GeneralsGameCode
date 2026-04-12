@@ -97,7 +97,6 @@ void HTreeClass::Init_Default()
 	strcpy(Pivot[0].Name,"RootTransform");
 	//::strcpy (Name, "Default");
 	Name[0] = 0;
-	return ;
 
 
 

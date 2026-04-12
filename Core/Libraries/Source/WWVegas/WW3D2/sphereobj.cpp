@@ -1131,8 +1131,6 @@ void SphereRenderObjClass::animate ()
 		}
 	}
 
-	return ;
-
 }
 
 
@@ -1683,7 +1681,6 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	//	Fill in the DCG array
 	//
 	Set_Alpha_Vector (alpha_vector, inverse_alpha, IsAdditive, true);
-	return ;
 
 }
 

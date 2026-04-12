@@ -1538,7 +1538,6 @@ CMainFrame::OnLightAmbient (void)
     // Show the ambient light dialog
     CAmbientLightDialog ambientLightDialog (this);
     ambientLightDialog.DoModal ();
-    return ;
 
 }
 

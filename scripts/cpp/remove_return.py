@@ -43,10 +43,18 @@ def main():
             newLines = []
             for index,line in enumerate(lines):
                 if index+1 < len(lines):
-                    line = apply_fix(line, lines[index+1])
+                    nextLineIndex = index + 1
+                    nextLine = lines[nextLineIndex]
+                    while (nextLine.isspace() or nextLine == "") and nextLineIndex+1 < len(lines):
+                        nextLineIndex += 1
+                        nextLine = lines[nextLineIndex]
+
+                    line = apply_fix(line, nextLine)
+
                     if line == "":
                         while (newLines and newLines[-1].isspace()) or (newLines and newLines[-1] == ""):
                             newLines.pop()
+
                 newLines.append(line)
 
             file.writelines(newLines)
