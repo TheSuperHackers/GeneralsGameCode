@@ -429,7 +429,7 @@ Bool W3DView::zoomCameraToDesiredHeight()
 	if (fabs(adjustZoom) >= 0.001f)
 	{
 		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
-		const Real adjustFactor = TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
+		const Real adjustFactor = std::min(TheGlobalData->m_cameraAdjustSpeed * fpsRatio, 1.0f);
 		m_zoom += adjustZoom * adjustFactor;
 		return true;
 	}
@@ -441,12 +441,12 @@ Bool W3DView::zoomCameraToDesiredHeight()
 // This is essential to correctly center the camera above the ground when playing.
 Bool W3DView::movePivotToGround()
 {
-	const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
-	const Real adjustFactor = TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
 	const Real groundLevel = m_groundLevel;
 	const Real groundLevelDiff = m_terrainHeightAtPivot - groundLevel;
 	if (fabs(groundLevelDiff) > 0.1f)
 	{
+		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
+		const Real adjustFactor = std::min(TheGlobalData->m_cameraAdjustSpeed * fpsRatio, 1.0f);
 		// Adjust the ground level. This will change the world height of the camera.
 		m_groundLevel += groundLevelDiff * adjustFactor;
 
