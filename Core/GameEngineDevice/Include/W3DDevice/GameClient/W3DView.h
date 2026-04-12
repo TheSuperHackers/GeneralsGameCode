@@ -280,7 +280,6 @@ private:
 	Coord2D m_scrollAmount;													///< scroll speed
 	Real m_scrollAmountCutoffSqr;										///< scroll speed at which we do not adjust height
 
-	Real m_groundLevel;															///< height of ground.
 #if PRESERVE_RETAIL_SCRIPTED_CAMERA
 	// TheSuperHackers @tweak Uses the initial ground level for preserving the original look of the scripted camera,
 	// because alterations to the ground level do affect the positioning in subtle ways.

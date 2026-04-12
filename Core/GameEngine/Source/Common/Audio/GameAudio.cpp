@@ -282,16 +282,16 @@ void AudioManager::reset()
 //-------------------------------------------------------------------------------------------------
 void AudioManager::update()
 {
-	Coord3D groundPos, microphonePos;
-	TheTacticalView->getPosition( &groundPos );
+	Coord3D microphonePos;
+	Coord3D cameraPivot = TheTacticalView->getPosition();
 	Real angle = TheTacticalView->getAngle();
 	Matrix3D rot = Matrix3D::Identity;
 	rot.Rotate_Z( angle );
 	Vector3 forward( 0, 1, 0 );
 	rot.mulVector3( forward );
 
-	Real desiredHeight = m_audioSettings->m_microphoneDesiredHeightAboveTerrain;
-	Real maxPercentage = m_audioSettings->m_microphoneMaxPercentageBetweenGroundAndCamera;
+	const Real desiredHeight = m_audioSettings->m_microphoneDesiredHeightAboveTerrain + cameraPivot.z;
+	const Real maxPercentage = m_audioSettings->m_microphoneMaxPercentageBetweenGroundAndCamera;
 
 	Coord3D lookTo;
 	lookTo.set(forward.X, forward.Y, forward.Z);
@@ -303,7 +303,7 @@ void AudioManager::update()
 	Coord3D cameraPos = TheTacticalView->get3DCameraPosition();
 	Coord3D groundToCameraVector;
 	groundToCameraVector.set( &cameraPos );
-	groundToCameraVector.sub( &groundPos );
+	groundToCameraVector.sub( &cameraPivot );
 	Real bestScaleFactor;
 
 	if( cameraPos.z <= desiredHeight || groundToCameraVector.z <= 0.0f )
@@ -324,8 +324,7 @@ void AudioManager::update()
 	groundToCameraVector.scale( bestScaleFactor );
 
 	//Set the microphone to be the ground position adjusted for terrain plus the vector we just calculated.
-	groundPos.z = TheTerrainLogic->getGroundHeight( groundPos.x, groundPos.y );
-	microphonePos.set( &groundPos );
+	microphonePos.set( &cameraPivot );
 	microphonePos.add( &groundToCameraVector );
 
 	//Viola! A properly placed microphone.

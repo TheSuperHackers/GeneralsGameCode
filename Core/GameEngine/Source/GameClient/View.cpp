@@ -136,12 +136,11 @@ void View::zoom( Real height )
  */
 void View::lookAt( const Coord3D *o )
 {
-
 	/// @todo this needs to be changed to be 3D, this is still old 2D stuff
-	Coord3D pos = *getPosition();
+	Coord2D pos = getPosition2D();
 	pos.x = o->x - m_width * 0.5f;
 	pos.y = o->y - m_height * 0.5f;
-	setPosition(&pos);
+	setPosition2D(pos);
 }
 
 /**
@@ -218,10 +217,7 @@ void View::setHeightAboveGround(Real z)
  */
 void View::getLocation( ViewLocation *location )
 {
-
-	const Coord3D *pos = getPosition();
-	location->init( pos->x, pos->y, pos->z, getAngle(), getPitch(), getZoom() );
-
+	location->init( getPosition(), getAngle(), getPitch(), getZoom() );
 }
 
 
@@ -232,11 +228,10 @@ void View::setLocation( const ViewLocation *location )
 {
 	if ( location->isValid() )
 	{
-		setPosition(&location->getPosition());
+		setPosition(location->getPosition());
 		setAngle(location->getAngle());
 		setPitch(location->getPitch());
 		setZoom(location->getZoom());
-		forceRedraw();
 	}
 
 }
@@ -302,8 +297,7 @@ void View::xfer( Xfer *xfer )
 	setAngle( angle );
 
 	// view position
-	Coord3D viewPos;
-	getPosition( &viewPos );
+	Coord3D viewPos = getPosition();
 	xfer->xferReal( &viewPos.x );
 	xfer->xferReal( &viewPos.y );
 	xfer->xferReal( &viewPos.z );

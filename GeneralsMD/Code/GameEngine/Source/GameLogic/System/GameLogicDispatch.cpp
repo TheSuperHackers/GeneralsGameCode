@@ -1966,7 +1966,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					// TheSuperHackers @info Definitely call in user mode to ensure the camera operates with auto-zoom
 					// over terrain elevations, because the Replay Camera does not store the absolute camera location,
 					// but key parameters relative to the terrain height at the camera pivot.
-					TheTacticalView->userSetPosition(&pos);
+					TheTacticalView->userSetPosition(pos);
 					TheTacticalView->userSetAngle(angle);
 					TheTacticalView->userSetPitch(pitch);
 					TheTacticalView->userSetZoom(zoom);
