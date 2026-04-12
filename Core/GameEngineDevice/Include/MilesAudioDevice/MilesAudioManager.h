@@ -336,7 +336,7 @@ class MilesAudioManager : public AudioManager
 class MilesAudioManagerDummy : public MilesAudioManager
 {
 #if defined(RTS_DEBUG)
-	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
+	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) override {}
 #endif
 	virtual void stopAudio(AudioAffect which) override {}
 	virtual void pauseAudio(AudioAffect which) override {}
