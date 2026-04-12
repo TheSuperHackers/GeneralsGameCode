@@ -379,8 +379,7 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-MetaEventTranslator::MetaEventTranslator() :
-	m_lastModState(0)
+MetaEventTranslator::MetaEventTranslator()
 {
 	for (Int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
 		m_nextUpShouldCreateDoubleClick[i] = FALSE;
@@ -440,7 +439,10 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 	if (t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_RAW_KEY_UP)
 	{
-		Int systemKey = msg->getArgument(0)->integer;
+		const Int systemKey = msg->getArgument(0)->integer;
+		const Int keyState = msg->getArgument(1)->integer;
+
+		MappableKeyType key = (MappableKeyType)systemKey;
 		switch (systemKey)
 		{
 		case KEY_LCTRL:
@@ -449,10 +451,8 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 		case KEY_RSHIFT:
 		case KEY_LALT:
 		case KEY_RALT:
-			systemKey = KEY_NONE;
+			key = MK_NONE;
 		}
-		const MappableKeyType key = (MappableKeyType)systemKey;
-		const Int keyState = msg->getArgument(1)->integer;
 
 		// for our purposes here, we don't care to distinguish between right and left keys,
 		// so just fudge a little to simplify things.
@@ -473,7 +473,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			newModState |= ALT;
 		}
 
-		const Bool modStateRemoved = newModState < m_lastModState;
+		const Bool modStateRemoved = (key == MK_NONE) && (t == GameMessage::MSG_RAW_KEY_UP);
 
 		if (modStateRemoved)
 		{
@@ -575,8 +575,6 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			}
 		}
 
-		}
-
 		if (t == GameMessage::MSG_RAW_KEY_DOWN)
     {
 #ifdef DUMP_ALL_KEYS_TO_LOG
@@ -598,12 +596,14 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 		{
 			if (newModState != NONE)
 			{
+				DEBUG_ASSERTCRASH(key != MK_NONE, ("Key is expected to be not MK_NONE"));
+
 				// Forget that this key and mod state are pressed.
 				m_keyDownInfos[key].clearKeyModState((MappableKeyModState)newModState);
 			}
 		}
 
-    m_lastModState = newModState;
+		}
 	}
 
 

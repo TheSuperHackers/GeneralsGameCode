@@ -431,8 +431,6 @@ private:
 		UnsignedByte m_modStateBits; ///< Fits all combinations of CTRL+ALT+SHIFT, storing 1 bit for each
 	};
 
-	Int m_lastModState;	// really a MappableKeyModState
-
 	KeyDownInfo m_keyDownInfos[KEY_COUNT];
 
 	enum { NUM_MOUSE_BUTTONS = 3 };
