@@ -748,13 +748,17 @@ void DumbProjectileBehavior::crc( Xfer *xfer )
 /** Xfer method
 	* Version Info:
 	* 1: Initial version
-	* 2: Added m_currentFlightPathStep for mid-flight save/load */
+	* 2: TheSuperHackers @bugfix Added m_currentFlightPathStep for mid-flight save/load. */
 // ------------------------------------------------------------------------------------------------
 void DumbProjectileBehavior::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 1;
+#else
 	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
