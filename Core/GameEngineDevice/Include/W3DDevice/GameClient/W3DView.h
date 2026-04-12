@@ -303,7 +303,7 @@ private:
 	Bool movePivotToGround();
 	void updateCameraAreaConstraints();
 	void calcCameraAreaConstraints(); ///< Recalculates the camera area constraints
-	Real calcCameraAreaOffset(Real maxEdgeZ, Bool isLookingDown);
+	Real calcCameraAreaOffset(Real maxEdgeZ);
 	void clipCameraIntoAreaConstraints();
 	Bool isWithinCameraAreaConstraints() const;
 	Bool isWithinCameraHeightConstraints() const;

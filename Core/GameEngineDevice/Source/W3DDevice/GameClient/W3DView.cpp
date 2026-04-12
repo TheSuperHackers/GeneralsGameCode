@@ -539,9 +539,9 @@ void W3DView::calcCameraAreaConstraints()
 		Matrix3D prevCameraTransform = m_3DCamera->Get_Transform();
 		m_3DCamera->Set_Transform(cameraTransform);
 
-		const Vector3 cameraForward = -cameraTransform.Get_Z_Vector();
-		const Bool isLookingDown = cameraForward.Z <= 0.0f;
-		Real offset = calcCameraAreaOffset(m_groundLevel, isLookingDown);
+		Real offset = calcCameraAreaOffset(m_groundLevel);
+		offset = std::min(offset, (mapRegion.hi.x - mapRegion.lo.x) / 2);
+		offset = std::min(offset, (mapRegion.hi.y - mapRegion.lo.y) / 2);
 
 		// Revert the 3D camera transform.
 		m_3DCamera->Set_Transform(prevCameraTransform);
@@ -551,26 +551,32 @@ void W3DView::calcCameraAreaConstraints()
 		m_cameraAreaConstraints.lo.y = mapRegion.lo.y + offset;
 		m_cameraAreaConstraints.hi.y = mapRegion.hi.y - offset;
 
-		m_cameraAreaConstraintsValid = true;
 	}
+
+	m_cameraAreaConstraintsValid = true;
 }
 
 //-------------------------------------------------------------------------------------------------
-Real W3DView::calcCameraAreaOffset(Real maxEdgeZ, Bool isLookingDown)
+Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
 {
 	Coord2D center;
 	ICoord2D screen;
 	Vector3 rayStart;
 	Vector3 rayEnd;
 
-	//Pick at the center
+	// Pick at the center
 	screen.x = 0.5f * getWidth() + m_originX;
 	screen.y = 0.5f * getHeight() + m_originY;
 	getPickRay(&screen, &rayStart, &rayEnd);
 
+	// Looking at the horizon would yield infinite numbers.
+	if (fabs(rayStart.Z - rayEnd.Z) < 1.0f)
+		return 1e+6f;
+
 	center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
 	center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
 
+	const Bool isLookingDown = rayStart.Z >= rayEnd.Z;
 	const Real height = isLookingDown ? getHeight() : 0.0f;
 	screen.y = height + m_originY;
 	getPickRay(&screen, &rayStart, &rayEnd);
@@ -1555,7 +1561,10 @@ void W3DView::update()
 		return; // don't draw - makes it faster :) jba.
 	}
 
-	updateCameraAreaConstraints();
+	if (!didScriptedMovement)
+	{
+		updateCameraAreaConstraints();
+	}
 
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
 	if (m_recalcCamera || m_isCameraSlaved)
