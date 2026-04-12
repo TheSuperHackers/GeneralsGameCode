@@ -495,7 +495,7 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 					if (keyDownModState == NONE)
 						continue;
 
-					if (BitsAreSet(keyDownModState, newModState))
+					if (BitsAreSet(newModState, keyDownModState))
 						continue;
 
 					// Forget that this key and mod state are pressed.
