@@ -659,18 +659,28 @@ void OpenKeyboardOptionsMenu( void )
 	if (s_keyboardOptionsLayout)
 		return; // already open
 
+	// Create our layout the same way Shell::doPush does
+	s_keyboardOptionsLayout = TheWindowManager->winCreateLayout( "Menus/KeyboardOptionsMenu.wnd" );
+	if (!s_keyboardOptionsLayout)
+	{
+		// .wnd file is missing — show a message box so the user knows what to do
+		MessageBoxA( NULL,
+			"Could not open Keyboard Options menu.\n\n"
+			"The file 'Window/Menus/KeyboardOptionsMenu.wnd' was not found.\n"
+			"Please copy the .wnd patch files from the Patch/ folder\n"
+			"in the repository to your Zero Hour installation directory.",
+			"Keyboard Options - Missing File",
+			MB_OK | MB_ICONWARNING );
+		return;
+	}
+
 	// Hide the OptionsMenu overlay so it doesn't show behind us
 	WindowLayout *optLayout = TheShell->getOptionsLayout( FALSE );
 	if (optLayout)
 		optLayout->hide( TRUE );
 
-	// Create our layout the same way Shell::doPush does
-	s_keyboardOptionsLayout = TheWindowManager->winCreateLayout( "Menus/KeyboardOptionsMenu.wnd" );
-	if (s_keyboardOptionsLayout)
-	{
-		s_keyboardOptionsLayout->runInit( NULL );
-		s_keyboardOptionsLayout->bringForward();
-	}
+	s_keyboardOptionsLayout->runInit( nullptr );
+	s_keyboardOptionsLayout->bringForward();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -985,7 +995,18 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 								}
 							}
 
-							// Apply the override (even with conflict — just warn)
+							// Show conflict warning if another command already uses this key
+							if (conflict && staticTextDescription)
+							{
+								AsciiString warnA;
+								warnA.format("WARNING: '%s' is already used by %s",
+									asciiToUpper(newKey).str(), conflictName.str());
+								UnicodeString warnU;
+								warnU.translate(warnA);
+								GadgetStaticTextSetText(staticTextDescription, warnU);
+							}
+
+							// Apply the override (even with conflict — user was warned)
 							TheHotKeyManager->setOverride(entry.m_name, newKey);
 							TheHotKeyManager->saveOverrides();
 

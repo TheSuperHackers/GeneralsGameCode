@@ -98,9 +98,21 @@ public:
 	AsciiString searchHotKey( const AsciiString& label);
 	AsciiString searchHotKey( const UnicodeString& uStr );
 
+	// --- Custom hotkey overrides (per-CommandButton remapping) ---
+	void        setOverride( const AsciiString& commandButtonName, const AsciiString& newKey );
+	void        removeOverride( const AsciiString& commandButtonName );
+	AsciiString getOverride( const AsciiString& commandButtonName ) const;
+	void        clearAllOverrides();
+	void        loadOverrides();   ///< Load saved overrides from user preferences file
+	void        saveOverrides();   ///< Persist current overrides to user preferences file
+
+	typedef std::map<AsciiString, AsciiString> OverrideMap;
+	const OverrideMap& getOverrides() const { return m_hotKeyOverrides; }
+
 private:
 	typedef std::map<AsciiString, HotKey> HotKeyMap;
-	HotKeyMap m_hotKeyMap;
+	HotKeyMap   m_hotKeyMap;
+	OverrideMap m_hotKeyOverrides;  ///< CommandButton name -> replacement hotkey char
 };
 extern HotKeyManager *TheHotKeyManager;
 //-----------------------------------------------------------------------------
