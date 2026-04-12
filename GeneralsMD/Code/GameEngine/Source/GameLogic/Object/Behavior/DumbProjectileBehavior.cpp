@@ -747,13 +747,14 @@ void DumbProjectileBehavior::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Added m_currentFlightPathStep for mid-flight save/load */
 // ------------------------------------------------------------------------------------------------
 void DumbProjectileBehavior::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -804,6 +805,12 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 	// lifespan frame
 	xfer->xferUnsignedInt( &m_lifespanFrame );
 
+	// TheSuperHackers @bugfix Serialize current flight path step so projectiles can resume mid-flight on load.
+	if( version >= 2 )
+	{
+		xfer->xferInt( &m_currentFlightPathStep );
+	}
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -814,5 +821,11 @@ void DumbProjectileBehavior::loadPostProcess()
 
 	// extend base class
 	UpdateModule::loadPostProcess();
+
+	// TheSuperHackers @bugfix Rebuild flight path on load to prevent immediate detonation of in-flight projectiles.
+	if( m_flightPathSegments > 0 )
+	{
+		calcFlightPath( false );
+	}
 
 }
