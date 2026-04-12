@@ -959,6 +959,7 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 				{
 					// Get the typed key from the text entry field
 					EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
+					if (!e || !e->text) return MSG_HANDLED;
 					UnicodeString typed = e->text->getText();
 					if (typed.getLength() > 0)
 					{
