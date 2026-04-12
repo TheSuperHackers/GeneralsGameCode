@@ -628,6 +628,7 @@ void GameEngine::init()
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), nullptr, fname.str(), "Data\\INI\\CommandMap");
 
 		TheMetaMap->generateMetaMap();
+		TheMetaMap->verifyMetaMap();
 
 #if defined(RTS_DEBUG)
 		ini.loadFileDirectory("Data\\INI\\CommandMapDebug", INI_LOAD_MULTIFILE, nullptr);
