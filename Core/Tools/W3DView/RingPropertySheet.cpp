@@ -53,7 +53,6 @@ RingPropertySheetClass::RingPropertySheetClass
 {
 	REF_PTR_SET (m_RenderObj, ring);
 	Initialize ();
-	return ;
 }
 
 
@@ -74,7 +73,6 @@ RingPropertySheetClass::RingPropertySheetClass
 {
 	REF_PTR_SET (m_RenderObj, ring);
 	Initialize ();
-	return ;
 }
 
 
@@ -86,7 +84,6 @@ RingPropertySheetClass::RingPropertySheetClass
 RingPropertySheetClass::~RingPropertySheetClass (void)
 {
 	REF_PTR_RELEASE (m_RenderObj);
-	return ;
 }
 
 
@@ -213,8 +210,6 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 		m_ColorPage.Set_Ring (m_RenderObj);
 		m_ScalePage.Set_Ring (m_RenderObj);
 	}
-
-	return ;
 }
 
 
@@ -227,7 +222,6 @@ void
 RingPropertySheetClass::Update_Object (void)
 {
 	Add_Object_To_Viewer ();
-	return ;
 }
 
 
@@ -265,7 +259,6 @@ RingPropertySheetClass::Initialize (void)
 	m_GeneralPage.m_psp.dwFlags	|= PSP_PREMATURE;
 	m_ColorPage.m_psp.dwFlags		|= PSP_PREMATURE;
 	m_ScalePage.m_psp.dwFlags		|= PSP_PREMATURE;
-	return ;
 }
 
 
@@ -284,6 +277,5 @@ RingPropertySheetClass::Create_New_Object (void)
 	//	Display the new object
 	//
 	::GetCurrentDocument ()->DisplayObject (m_RenderObj);
-	return ;
 }
 

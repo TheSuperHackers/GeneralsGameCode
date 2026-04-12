@@ -55,7 +55,6 @@ ColorPickerClass::ColorPickerClass (void)
 	  m_CurrentHue (0),
 	  CWnd ()
 {
-	return ;
 }
 
 
@@ -71,7 +70,6 @@ ColorPickerClass::~ColorPickerClass (void)
 	}
 
 	Free_Bitmap ();
-	return ;
 }
 
 
@@ -108,8 +106,6 @@ ColorPickerClass::OnPaint (void)
 		::SelectObject (m_hMemDC, hold_bmp);
 		Paint_Marker ();
 	}
-
-	return ;
 }
 
 
@@ -138,8 +134,6 @@ RegisterColorPicker (HINSTANCE hinst)
 		// Let the windows manager know about this global class
 		::RegisterClass (&wndclass);
 	}
-
-	return ;
 }
 
 
@@ -337,7 +331,6 @@ ColorPickerClass::Create_Bitmap (void)
 
 	// Paint the color range into this bitmap
 	Paint_DIB (m_iWidth, m_iHeight, m_pBits);
-	return ;
 }
 
 
@@ -369,8 +362,6 @@ ColorPickerClass::Fill_Rect
 			pbits[index++] = red;
 		}
 	}
-
-	return ;
 }
 
 
@@ -428,7 +419,6 @@ Polar_To_Rect (float radius, float angle, float &x, float &y)
 {
 	x = radius * float(cos(angle));
 	y = radius * float(sin(angle));
-	return ;
 }
 
 
@@ -447,8 +437,6 @@ Rect_To_Polar (float x, float y, float &radius, float &angle)
 		radius = (float)::sqrt ((x * x) + (y * y));
 		angle = (float)::atan2 (y, x);
 	}
-
-	return ;
 }
 
 
@@ -498,7 +486,6 @@ RGB_to_Hue (int red_val, int green_val, int blue_val, float &hue, float &value)
 	}
 
 	value = (float)::fabs (hue_radius / 255);
-	return ;
 }
 
 
@@ -682,8 +669,6 @@ ColorPickerClass::Paint_DIB
 		// Increment the current color component
 		(*pcurr_component) = (*pcurr_component) + curr_inc;
 	}
-
-	return ;
 }
 
 
@@ -703,7 +688,6 @@ ColorPickerClass::Free_Bitmap (void)
 
 	m_iWidth = 0;
 	m_iHeight = 0;
-	return ;
 }
 
 
@@ -729,7 +713,6 @@ ColorPickerClass::OnSize
 	// Determine the new point based on the current color
 	//m_CurrentColor = RGB (128, 222, 199);
 	//m_CurrentPoint = Point_From_Color (m_CurrentColor);
-	return ;
 }
 
 
@@ -792,7 +775,6 @@ ColorPickerClass::OnLButtonDown
 
 	// Allow the base class to process this message
 	CWnd::OnLButtonDown (nFlags, point);
-	return ;
 }
 
 
@@ -816,7 +798,6 @@ ColorPickerClass::OnLButtonUp
 
 	// Allow the base class to process this message
 	CWnd::OnLButtonUp (nFlags, point);
-	return ;
 }
 
 
@@ -861,7 +842,6 @@ ColorPickerClass::OnMouseMove
 
 	// Allow the base class to process this message
 	CWnd::OnMouseMove (nFlags, point);
-	return ;
 }
 
 
@@ -882,8 +862,6 @@ ColorPickerClass::Calc_Display_Rect (RECT &rect)
 		rect.top += 1;
 		rect.bottom -= 1;
 	}
-
-	return ;
 }
 
 
@@ -916,7 +894,6 @@ ColorPickerClass::Erase_Marker (void)
 	}
 
 	::ReleaseDC (m_hWnd, hdc);
-	return ;
 }
 
 
@@ -951,7 +928,6 @@ ColorPickerClass::Paint_Marker (void)
 	}
 
 	::ReleaseDC (m_hWnd, hdc);
-	return ;
 }
 
 
@@ -970,7 +946,6 @@ ColorPickerClass::Select_Color (int red, int green, int blue)
 	// Refresh the window
 	InvalidateRect (nullptr, FALSE);
 	UpdateWindow ();
-	return ;
 }
 
 
@@ -985,5 +960,4 @@ ColorPickerClass::Get_Current_Color (int *red, int *green, int *blue)
 	(*red)	= GetRValue (m_CurrentColor);
 	(*green)	= GetGValue (m_CurrentColor);
 	(*blue)	= GetBValue (m_CurrentColor);
-	return ;
 }

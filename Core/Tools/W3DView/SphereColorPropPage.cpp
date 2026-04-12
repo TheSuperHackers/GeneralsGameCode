@@ -55,7 +55,6 @@ SphereColorPropPageClass::SphereColorPropPageClass (SphereRenderObjClass *sphere
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -66,7 +65,6 @@ SphereColorPropPageClass::SphereColorPropPageClass (SphereRenderObjClass *sphere
 /////////////////////////////////////////////////////////////
 SphereColorPropPageClass::~SphereColorPropPageClass (void)
 {
-	return ;
 }
 
 
@@ -82,7 +80,6 @@ SphereColorPropPageClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(SphereColorPropPageClass)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -139,8 +136,6 @@ SphereColorPropPageClass::Initialize (void)
 			m_OrigVectorChannel.Add_Key (m_RenderObj->Get_Vector (), 0);
 		}
 	}
-
-	return ;
 }
 
 
@@ -254,7 +249,6 @@ SphereColorPropPageClass::OnDestroy (void)
 	}
 
 	CPropertyPage::OnDestroy();
-	return ;
 }
 
 
@@ -449,7 +443,6 @@ SphereColorPropPageClass::OnCancel (void)
 	m_RenderObj->Set_Flag (SphereRenderObjClass::USE_INVERSE_ALPHA, m_InvertVector);
 
 	CPropertyPage::OnCancel ();
-	return ;
 }
 
 
@@ -482,7 +475,6 @@ SphereColorPropPageClass::Update_Opacities (void)
 	//
 	m_RenderObj->Set_Alpha_Channel (m_AlphaChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 
@@ -515,7 +507,6 @@ SphereColorPropPageClass::Update_Colors (void)
 	//
 	m_RenderObj->Set_Color_Channel (m_ColorChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 
@@ -552,7 +543,6 @@ SphereColorPropPageClass::Update_Vectors (void)
 	//
 	m_RenderObj->Set_Vector_Channel (m_VectorChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 
@@ -577,7 +567,6 @@ SphereColorPropPageClass::OnOpacityVectorCheck (void)
 	//
 	m_RenderObj->Set_Flag (SphereRenderObjClass::USE_ALPHA_VECTOR, is_checked);
 	SetModified ();
-	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -600,5 +589,4 @@ SphereColorPropPageClass::OnInvertVectorCheck (void)
 	//
 	m_RenderObj->Set_Flag (SphereRenderObjClass::USE_INVERSE_ALPHA, is_checked);
 	SetModified ();
-	return ;
 }

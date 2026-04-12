@@ -195,7 +195,6 @@ ColorPickerDialogClass::ColorPickerDialogClass
 	//{{AFX_DATA_INIT(ColorPickerDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -210,7 +209,6 @@ ColorPickerDialogClass::Create_Form (CWnd *parent)
 	Create (IDD_COLOR_FORM, parent);
 	SetProp (m_hWnd, "COLORPICKERDLGCLASS", (HANDLE)this);
 	m_bDeleteOnClose = true;
-	return ;
 }
 
 
@@ -228,7 +226,6 @@ ColorPickerDialogClass::DoDataExchange (CDataExchange *pDX)
 	DDX_Control(pDX, IDC_GREEN_SPIN, m_GreenSpin);
 	DDX_Control(pDX, IDC_RED_SPIN, m_RedSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -312,7 +309,6 @@ ColorPickerDialogClass::Update_Red_Bar (void)
 	m_RedColorBar->Set_Selection_Pos (m_CurrentRed);
 	m_RedColorBar->Modify_Point (0, 0, 0, (float)m_CurrentGreen, (float)m_CurrentBlue);
 	m_RedColorBar->Modify_Point (1, 255, 255, (float)m_CurrentGreen, (float)m_CurrentBlue);
-	return ;
 }
 
 
@@ -327,7 +323,6 @@ ColorPickerDialogClass::Update_Green_Bar (void)
 	m_GreenColorBar->Set_Selection_Pos (m_CurrentGreen);
 	m_GreenColorBar->Modify_Point (0, 0, m_CurrentRed, 0, m_CurrentBlue);
 	m_GreenColorBar->Modify_Point (1, 255, m_CurrentRed, 255, m_CurrentBlue);
-	return ;
 }
 
 
@@ -342,7 +337,6 @@ ColorPickerDialogClass::Update_Blue_Bar (void)
 	m_BlueColorBar->Set_Selection_Pos (m_CurrentBlue);
 	m_BlueColorBar->Modify_Point (0, 0, m_CurrentRed, m_CurrentGreen, 0);
 	m_BlueColorBar->Modify_Point (1, 255, m_CurrentRed, m_CurrentGreen, 255);
-	return ;
 }
 
 
@@ -355,7 +349,6 @@ void
 ColorPickerDialogClass::Update_Current_Color_Bar (void)
 {
 	m_CurrentColorBar->Modify_Point (0, 0, m_CurrentRed, m_CurrentGreen, m_CurrentBlue);
-	return ;
 }
 
 
@@ -395,8 +388,6 @@ ColorPickerDialogClass::Update_Whiteness_Bar (void)
 		float start_blue = (m_CurrentBlue - whiteness) / (1 - percent);
 		m_WhitenessColorBar->Modify_Point (0, 0, start_red, start_green, start_blue);
 	}*/
-
-	return ;
 }
 
 
@@ -562,8 +553,6 @@ ColorPickerDialogClass::Update_Color
 	// If a callback is registered, call it.
 	if (m_UpdateCallback)
 		m_UpdateCallback((int)red, (int)green, (int)blue, m_CallArg);
-
-	return ;
 }
 
 
@@ -593,7 +582,6 @@ ColorPickerDialogClass::OnReset (void)
 					  m_OrigGreen,
 					  m_OrigBlue,
 					  UPDATE_COLOR_BARS| UPDATE_WHITENESS | UPDATE_HUE_PICKER);
-	return ;
 }
 
 LRESULT ColorPickerDialogClass::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -647,7 +635,5 @@ ColorPickerDialogClass::PostNcDestroy (void)
 	if (m_bDeleteOnClose) {
 		delete this;
 	}
-
-	return ;
 }
 

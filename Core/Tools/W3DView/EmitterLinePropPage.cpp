@@ -110,8 +110,6 @@ EmitterLinePropPageClass::Initialize (void)
 		m_UPerSec = uvrate.X;
 		m_VPerSec = uvrate.Y;
 	}
-
-	return ;
 }
 
 BOOL EmitterLinePropPageClass::OnInitDialog()

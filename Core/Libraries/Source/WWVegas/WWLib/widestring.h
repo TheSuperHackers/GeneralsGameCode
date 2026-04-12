@@ -192,8 +192,6 @@ WideStringClass::WideStringClass (int initial_len, bool hint_temporary)
 {
 	Get_String (initial_len, hint_temporary);
 	m_Buffer[0]	= m_NullChar;
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -205,7 +203,6 @@ WideStringClass::WideStringClass (WCHAR ch, bool hint_temporary)
 {
 	Get_String (2, hint_temporary);
 	(*this) = ch;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -220,7 +217,6 @@ WideStringClass::WideStringClass (const WideStringClass &string, bool hint_tempo
 	}
 
 	(*this) = string;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -236,7 +232,6 @@ WideStringClass::WideStringClass (const WCHAR *string, bool hint_temporary)
 	}
 
 	(*this) = string;
-	return ;
 }
 
 
@@ -252,7 +247,6 @@ WideStringClass::WideStringClass (const char *string, bool hint_temporary)
 	}
 
 	(*this) = string;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -262,7 +256,6 @@ inline
 WideStringClass::~WideStringClass ()
 {
 	Free_String ();
-	return ;
 }
 
 
@@ -427,8 +420,6 @@ WideStringClass::Erase (int start_index, int char_count)
 
 		Store_Length( wcslen(m_Buffer) );
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -684,8 +675,6 @@ WideStringClass::Set_Buffer_And_Allocated_Length (WCHAR *buffer, int length)
 	} else {
 		WWASSERT (length == 0);
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -734,8 +723,6 @@ WideStringClass::Store_Allocated_Length (int allocated_length)
 	} else {
 		WWASSERT (allocated_length == 0);
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -753,8 +740,6 @@ WideStringClass::Store_Length (int length)
 	} else {
 		WWASSERT (length == 0);
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////

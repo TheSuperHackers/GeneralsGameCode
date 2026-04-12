@@ -125,8 +125,6 @@ SoundCullObjClass::Set_Transform (const Matrix3D &transform)
 		m_SoundObj->Set_Transform (m_Transform);
 		Set_Cull_Box (Get_Bounding_Box ());
 	}
-
-	return ;
 }
 
 
@@ -140,8 +138,6 @@ SoundCullObjClass::Set_Sound_Obj (SoundSceneObjClass *sound_obj)
 		m_Transform = m_SoundObj->Get_Transform ();
 		Set_Cull_Box (Get_Bounding_Box ());
 	}
-
-	return ;
 }
 
 

@@ -159,7 +159,6 @@ TextureListNodeClass::Free_Subobj_List (void)
 	}
 
 	m_SubObjectList.Delete_All ();
-	return ;
 }
 
 

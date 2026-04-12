@@ -144,7 +144,6 @@ WWAudioClass::WWAudioClass ()
 
 	// Create a new sound scene to manage our 3D sounds...
 	m_SoundScene = W3DNEW SoundSceneClass;
-	return;
 }
 
 
@@ -172,7 +171,6 @@ WWAudioClass::~WWAudioClass ()
 	//	Free the list of logical "types".
 	//
 	Reset_Logical_Types ();
-	return;
 }
 
 
@@ -201,7 +199,6 @@ WWAudioClass::Flush_Cache ()
 	}
 
 	m_CurrentCacheSize = 0;
-	return;
 }
 
 
@@ -1106,7 +1103,6 @@ WWAudioClass::Flush_Playlist ()
 
 	// Free the list structure
 	m_Playlist.Delete_All ();
-	return;
 }
 
 
@@ -1145,8 +1141,6 @@ WWAudioClass::Free_Completed_Sounds ()
 		// Try to give a play-handle back to a sound that was priority-bumped.
 		Reprioritize_Playlist ();
 	}
-
-	return;
 }
 
 
@@ -1304,8 +1298,6 @@ WWAudioClass::Reprioritize_Playlist ()
 	if (sound_to_get_handle != nullptr) {
 		sound_to_get_handle->Allocate_Miles_Handle ();
 	}
-
-	return;
 }
 
 
@@ -1338,8 +1330,6 @@ WWAudioClass::On_Frame_Update (unsigned int milliseconds)
 		AudibleSoundClass *sound_obj = m_Playlist[index];
 		sound_obj->On_Frame_Update (milliseconds);
 	}
-
-	return;
 }
 
 
@@ -1362,7 +1352,6 @@ WWAudioClass::Release_2D_Handles ()
 	}
 
 	m_2DSampleHandles.Delete_All ();
-	return;
 }
 
 
@@ -1393,8 +1382,6 @@ WWAudioClass::Allocate_2D_Handles ()
 		// Record our actual number of available 2D sample handles
 		m_Max2DSamples = m_2DSampleHandles.Count ();
 	}
-
-	return;
 }
 
 
@@ -1590,8 +1577,6 @@ WWAudioClass::Build_3D_Driver_List ()
 			//m_Driver3D = info->driver;
 		}
 	}
-
-	return;
 }
 
 
@@ -1637,7 +1622,6 @@ WWAudioClass::Free_3D_Driver_List ()
 	// Clear the list
 	//
 	m_Driver3DList.Delete_All ();
-	return;
 }
 
 
@@ -1840,8 +1824,6 @@ WWAudioClass::Allocate_3D_Handles ()
 			}
 		}
 	}
-
-	return;
 }
 
 
@@ -1866,7 +1848,6 @@ WWAudioClass::Release_3D_Handles ()
 	}
 
 	m_3DSampleHandles.Delete_All ();
-	return;
 }
 
 
@@ -1918,8 +1899,6 @@ WWAudioClass::ReAssign_2D_Handles ()
 			sound_obj->Allocate_Miles_Handle ();
 		}
 	}
-
-	return;
 }
 
 
@@ -1942,8 +1921,6 @@ WWAudioClass::ReAssign_3D_Handles ()
 			sound_obj->Allocate_Miles_Handle ();
 		}
 	}
-
-	return;
 }
 
 
@@ -1964,8 +1941,6 @@ WWAudioClass::Remove_2D_Sound_Handles ()
 			sound_obj->Free_Miles_Handle ();
 		}
 	}
-
-	return;
 }
 
 
@@ -1986,8 +1961,6 @@ WWAudioClass::Remove_3D_Sound_Handles ()
 			sound_obj->Free_Miles_Handle ();
 		}
 	}
-
-	return;
 }
 
 
@@ -2011,8 +1984,6 @@ WWAudioClass::Set_Sound_Effects_Volume (float volume)
 			sound_obj->Update_Volume ();
 		}
 	}
-
-	return;
 }
 
 
@@ -2036,8 +2007,6 @@ WWAudioClass::Set_Music_Volume (float volume)
 			sound_obj->Update_Volume ();
 		}
 	}
-
-	return;
 }
 
 
@@ -2113,7 +2082,6 @@ WWAudioClass::Initialize (const char *registry_subkey_name)
 	//
 	::AIL_set_file_callbacks (File_Open_Callback, File_Close_Callback,
 		File_Seek_Callback, File_Read_Callback);
-	return ;
 }
 
 
@@ -2146,8 +2114,6 @@ WWAudioClass::Initialize
 			m_ReverbFilter = (HPROVIDER)INVALID_MILES_HANDLE;
 		}
 	}
-
-	return;
 }
 
 
@@ -2203,7 +2169,6 @@ WWAudioClass::Shutdown ()
 	// Shutdown Miles Sound System
 	//
 	::AIL_shutdown ();
-	return;
 }
 
 
@@ -2216,7 +2181,6 @@ void
 WWAudioClass::Register_EOS_Callback (LPFNEOSCALLBACK callback, DWORD user_param)
 {
 	m_EOSCallbackList.Add_Callback (callback, user_param);
-	return;
 }
 
 
@@ -2229,7 +2193,6 @@ void
 WWAudioClass::UnRegister_EOS_Callback (LPFNEOSCALLBACK callback)
 {
 	m_EOSCallbackList.Remove_Callback (callback);
-	return;
 }
 
 
@@ -2242,7 +2205,6 @@ void
 WWAudioClass::Register_Text_Callback (LPFNTEXTCALLBACK callback, DWORD user_param)
 {
 	m_TextCallbackList.Add_Callback (callback, user_param);
-	return;
 }
 
 
@@ -2255,7 +2217,6 @@ void
 WWAudioClass::UnRegister_Text_Callback (LPFNTEXTCALLBACK callback)
 {
 	m_TextCallbackList.Remove_Callback (callback);
-	return;
 }
 
 
@@ -2284,8 +2245,6 @@ WWAudioClass::Fire_Text_Callback (AudibleSoundClass *sound_obj, const StringClas
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -2319,8 +2278,6 @@ WWAudioClass::Allow_Sound_Effects (bool onoff)
 			}
 		}
 	}
-
-	return;
 }
 
 
@@ -2355,8 +2312,6 @@ WWAudioClass::Allow_Music (bool onoff)
 			}
 		}
 	}
-
-	return;
 }
 
 
@@ -2451,8 +2406,6 @@ WWAudioClass::Return_File (FileClass *file)
 	} else {
 		SAFE_DELETE (file);
 	}
-
-	return;
 }
 
 
@@ -2489,7 +2442,6 @@ void
 WWAudioClass::Add_Logical_Type (int id, LPCTSTR display_name)
 {
 	m_LogicalTypes.Add (LOGICAL_TYPE_STRUCT (id, display_name));
-	return ;
 }
 
 
@@ -2502,7 +2454,6 @@ void
 WWAudioClass::Reset_Logical_Types ()
 {
 	m_LogicalTypes.Delete_All ();
-	return ;
 }
 
 
@@ -2778,8 +2729,6 @@ WWAudioClass::File_Close_Callback (void *file_handle)
 			Get_Instance ()->Return_File (file);
 		}
 	}
-
-	return ;
 }
 
 

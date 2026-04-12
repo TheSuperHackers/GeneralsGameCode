@@ -92,8 +92,6 @@ AnimatedSoundOptionsDialogClass::OnSoundDefinitionLibraryBrowseButton (void)
 	if (dialog.DoModal () == IDOK) {
 		SetDlgItemText (IDC_SOUND_DEFINITION_LIBRARY_EDIT, dialog.GetPathName ());
 	}
-
-	return ;
 }
 
 
@@ -118,8 +116,6 @@ AnimatedSoundOptionsDialogClass::OnSoundIniBrowseButton (void)
 	if (dialog.DoModal () == IDOK) {
 		SetDlgItemText (IDC_SOUND_INI_EDIT, dialog.GetPathName ());
 	}
-
-	return ;
 }
 
 
@@ -151,7 +147,6 @@ AnimatedSoundOptionsDialogClass::OnOK (void)
 	theApp.WriteProfileString ("Config", "AnimSoundDataPath", sound_data_path);
 
 	Load_Animated_Sound_Settings ();
-	return ;
 }
 
 
@@ -224,7 +219,6 @@ AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
 	//	Add a sub-directory to the file factory for audio use
 	//
 	_TheSimpleFileFactory->Append_Sub_Directory (sound_data_path);
-	return ;
 }
 
 
@@ -253,6 +247,4 @@ AnimatedSoundOptionsDialogClass::OnSoundPathBrowseButton (void)
 		CString path = ::Strip_Filename_From_Path (dialog.GetPathName ());
 		SetDlgItemText (IDC_SOUND_FILE_PATH_EDIT, path);
 	}
-
-	return ;
 }

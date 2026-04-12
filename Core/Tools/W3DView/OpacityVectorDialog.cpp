@@ -51,7 +51,6 @@ OpacityVectorDialogClass::OpacityVectorDialogClass(CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(OpacityVectorDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -68,7 +67,6 @@ OpacityVectorDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER_Z, m_SliderZ);
 	DDX_Control(pDX, IDC_SLIDER_Y, m_SliderY);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -186,7 +184,6 @@ OpacityVectorDialogClass::OnOK (void)
 {
 	m_Value = Update_Value ();
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -199,7 +196,6 @@ void
 OpacityVectorDialogClass::Update_Object (void)
 {
 	Update_Object (Update_Value ());
-	return ;
 }
 
 
@@ -268,8 +264,6 @@ OpacityVectorDialogClass::Update_Object (const AlphaVectorStruct &value)
 			break;
 		}
 	}
-
-	return ;
 }
 
 
@@ -283,7 +277,6 @@ OpacityVectorDialogClass::OnCancel (void)
 {
 	Update_Object (m_Value);
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -306,7 +299,6 @@ OpacityVectorDialogClass::OnHScroll
 	Update_Object ();
 
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
-	return ;
 }
 
 

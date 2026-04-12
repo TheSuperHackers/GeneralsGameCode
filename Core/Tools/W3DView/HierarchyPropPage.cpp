@@ -51,7 +51,6 @@ CHierarchyPropPage::CHierarchyPropPage (const CString &stringHierarchyName)
 	//}}AFX_DATA_INIT
 
     m_stringHierarchyName = stringHierarchyName;
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -60,7 +59,6 @@ CHierarchyPropPage::CHierarchyPropPage (const CString &stringHierarchyName)
 //
 CHierarchyPropPage::~CHierarchyPropPage (void)
 {
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -74,7 +72,6 @@ CHierarchyPropPage::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CHierarchyPropPage)
 	DDX_Control(pDX, IDC_SUBOBJECT_LIST, m_subObjectListCtrl);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -178,5 +175,4 @@ CHierarchyPropPage::OnDblclkSubObjectList
     }
 
 	(*pResult) = 0;
-    return ;
 }

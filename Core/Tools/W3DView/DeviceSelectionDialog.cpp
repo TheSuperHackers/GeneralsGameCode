@@ -55,7 +55,6 @@ CDeviceSelectionDialog::CDeviceSelectionDialog
 	//{{AFX_DATA_INIT(CDeviceSelectionDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -70,7 +69,6 @@ CDeviceSelectionDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CDeviceSelectionDialog)
 	DDX_Control(pDX, IDC_RENDER_DEVICE_COMBO, m_deviceListComboBox);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -140,8 +138,6 @@ CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
 		// Update the static controls with the information from the device
 		UpdateDeviceDescription ();
 	}
-
-	return ;
 }
 
 
@@ -167,7 +163,6 @@ CDeviceSelectionDialog::UpdateDeviceDescription (void)
 	SetDlgItemText (IDC_HARDWARE_NAME_STATIC, device_desc.Get_Hardware_Name());
 	SetDlgItemText (IDC_HARDWARE_VENDOR_STATIC, device_desc.Get_Hardware_Vendor());
 	SetDlgItemText (IDC_HARDWARE_CHIPSET_STATIC, device_desc.Get_Hardware_Chipset());
-	return ;
 }
 
 
@@ -193,7 +188,6 @@ CDeviceSelectionDialog::OnOK (void)
 
 	// Allow the base class to process this message
 	CDialog::OnOK();
-	return ;
 }
 
 

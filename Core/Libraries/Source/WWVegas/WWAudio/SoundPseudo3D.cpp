@@ -57,7 +57,6 @@ SimplePersistFactoryClass<SoundPseudo3DClass, CHUNKID_PSEUDO_SOUND3D> _PseudoSou
 ////////////////////////////////////////////////////////////////////////////////////////////////
 SoundPseudo3DClass::SoundPseudo3DClass ()
 {
-	return ;
 }
 
 
@@ -70,7 +69,6 @@ SoundPseudo3DClass::SoundPseudo3DClass (const SoundPseudo3DClass &src)
 	:	Sound3DClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -82,7 +80,6 @@ SoundPseudo3DClass::SoundPseudo3DClass (const SoundPseudo3DClass &src)
 SoundPseudo3DClass::~SoundPseudo3DClass ()
 {
 	Free_Miles_Handle ();
-	return ;
 }
 
 
@@ -109,7 +106,6 @@ void
 SoundPseudo3DClass::Set_Miles_Handle (MILES_HANDLE handle)
 {
 	AudibleSoundClass::Set_Miles_Handle (handle);
-	return ;
 }
 
 
@@ -123,7 +119,6 @@ SoundPseudo3DClass::Initialize_Miles_Handle ()
 {
 	AudibleSoundClass::Initialize_Miles_Handle ();
 	Update_Pseudo_Volume ();
-	return ;
 }
 
 
@@ -163,8 +158,6 @@ SoundPseudo3DClass::Update_Pseudo_Volume (float distance)
 		//
 		m_SoundHandle->Set_Sample_Volume (int(volume * 127.0F));
 	}
-
-	return ;
 }
 
 
@@ -192,8 +185,6 @@ SoundPseudo3DClass::Update_Pseudo_Volume ()
 		//
 		Update_Pseudo_Volume (distance);
 	}
-
-	return ;
 }
 
 
@@ -231,8 +222,6 @@ SoundPseudo3DClass::Update_Pseudo_Pan ()
 		//
 		m_SoundHandle->Set_Sample_Pan (S32(pan * 127.0F));
 	}
-
-	return ;
 }
 
 
@@ -245,7 +234,6 @@ void
 SoundPseudo3DClass::Allocate_Miles_Handle ()
 {
 	AudibleSoundClass::Allocate_Miles_Handle ();
-	return ;
 }
 
 
@@ -258,7 +246,6 @@ void
 SoundPseudo3DClass::Free_Miles_Handle ()
 {
 	AudibleSoundClass::Free_Miles_Handle ();
-	return ;
 }
 
 

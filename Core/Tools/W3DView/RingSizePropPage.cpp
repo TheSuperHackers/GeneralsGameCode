@@ -63,7 +63,6 @@ RingSizePropPageClass::RingSizePropPageClass (RingRenderObjClass *ring)
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -74,7 +73,6 @@ RingSizePropPageClass::RingSizePropPageClass (RingRenderObjClass *ring)
 /////////////////////////////////////////////////////////////
 RingSizePropPageClass::~RingSizePropPageClass (void)
 {
-	return ;
 }
 
 
@@ -93,7 +91,6 @@ RingSizePropPageClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_OUTER_SIZE_X_SPIN, m_OuterSizeXSpin);
 	DDX_Control(pDX, IDC_OUTER_SIZE_Y_SPIN, m_OuterSizeYSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -137,8 +134,6 @@ RingSizePropPageClass::Initialize (void)
 			m_OrigOuterScaleChannel.Add_Key (m_RenderObj->Get_Outer_Scale (), 0);
 		}
 	}
-
-	return ;
 }
 
 
@@ -340,7 +335,6 @@ void
 RingSizePropPageClass::OnDestroy (void)
 {
 	CPropertyPage::OnDestroy();
-	return ;
 }
 
 
@@ -524,7 +518,6 @@ RingSizePropPageClass::OnCancel (void)
 	m_RenderObj->Set_Outer_Scale_Channel (m_OrigOuterScaleChannel);
 
 	CPropertyPage::OnCancel ();
-	return ;
 }
 
 
@@ -623,7 +616,6 @@ RingSizePropPageClass::Update_Inner_Scale_Array (void)
 	//
 	m_RenderObj->Set_Inner_Scale_Channel (m_InnerScaleChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 
@@ -722,7 +714,6 @@ RingSizePropPageClass::Update_Outer_Scale_Array (void)
 	//
 	m_RenderObj->Set_Outer_Scale_Channel (m_OuterScaleChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 

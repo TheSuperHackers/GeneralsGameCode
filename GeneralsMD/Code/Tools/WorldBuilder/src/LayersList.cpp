@@ -785,7 +785,6 @@ void LayersList::OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 
 	mCurrentlyEditingLabel = AsciiString(str);
 	(*pResult) = 0;
-	return;
 }
 
 void LayersList::OnEndEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
@@ -815,8 +814,6 @@ void LayersList::OnEndEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult)
 	pTree->SetItemText(ptvdi->item.hItem, layerIt->layerName.str());
 
 	mCurrentlyEditingLabel = AsciiString::TheEmptyString;
-
-	return;
 }
 
 

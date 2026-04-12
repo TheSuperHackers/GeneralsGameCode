@@ -86,7 +86,6 @@ inline
 ParameterListClass::~ParameterListClass ()
 {
 	Free_Parameters ();
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -107,8 +106,6 @@ ParameterListClass::Add (void *data, const char *param_name, ParameterClass::Typ
 	if (new_param != nullptr) {
 		DynamicVectorClass<ParameterClass *>::Add (new_param);
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -123,8 +120,6 @@ ParameterListClass::Add (ParameterClass *new_param)
 	if (new_param != nullptr) {
 		DynamicVectorClass<ParameterClass *>::Add (new_param);
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -144,5 +139,4 @@ ParameterListClass::Free_Parameters ()
 
 	Delete_All();
 //	m_Parameters.Delete_All ();
-	return ;
 }

@@ -48,7 +48,6 @@ ColorSelectionDialogClass::ColorSelectionDialogClass
 	//{{AFX_DATA_INIT(ColorSelectionDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -69,7 +68,6 @@ ColorSelectionDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER_GREEN, m_GreenSlider);
 	DDX_Control(pDX, IDC_SLIDER_RED, m_RedSlider);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -138,7 +136,6 @@ ColorSelectionDialogClass::OnOK (void)
 
 	// Allow the base class to process this message
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -159,7 +156,6 @@ ColorSelectionDialogClass::OnHScroll
 
 	// Allow the base class to process this message
 	CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-	return ;
 }
 
 
@@ -179,7 +175,6 @@ ColorSelectionDialogClass::OnPaint (void)
 
 	// Update the window that displays the color the user has selected
 	Paint_Color_Window ();
-	return ;
 }
 
 
@@ -203,7 +198,6 @@ ColorSelectionDialogClass::Paint_Color_Window (void)
 
 	// Let the window know it doesn't need to be repainted
 	m_ColorWindow.ValidateRect (nullptr);
-	return;
 }
 
 
@@ -228,8 +222,6 @@ ColorSelectionDialogClass::OnGrayscaleCheck (void)
 		// Update the window that displays the color the user has selected
 		Paint_Color_Window ();
 	}
-
-	return ;
 }
 
 
@@ -250,8 +242,6 @@ ColorSelectionDialogClass::OnChangeBlueEdit (void)
 		// Reset the cursor to the end of the edit box
 		SendDlgItemMessage (IDC_BLUE_EDIT, EM_SETSEL, (WPARAM)(int)10, (LPARAM)(int)20);
 	}
-
-	return ;
 }
 
 
@@ -272,8 +262,6 @@ ColorSelectionDialogClass::OnChangeGreenEdit (void)
 		// Reset the cursor to the end of the edit box
 		SendDlgItemMessage (IDC_GREEN_EDIT, EM_SETSEL, (WPARAM)(int)10, (LPARAM)(int)20);
 	}
-
-	return ;
 }
 
 
@@ -294,8 +282,6 @@ ColorSelectionDialogClass::OnChangeRedEdit (void)
 		// Reset the cursor to the end of the edit box
 		SendDlgItemMessage (IDC_RED_EDIT, EM_SETSEL, (WPARAM)(int)10, (LPARAM)(int)20);
 	}
-
-	return ;
 }
 
 
@@ -341,5 +327,4 @@ ColorSelectionDialogClass::Update_Sliders (int slider_id)
 
 	// Update the window that displays the color the user has selected
 	Paint_Color_Window ();
-	return ;
 }

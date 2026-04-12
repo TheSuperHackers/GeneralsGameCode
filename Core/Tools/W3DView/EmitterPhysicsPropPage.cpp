@@ -56,7 +56,6 @@ EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass (EmitterInstanceListCla
 	//{{AFX_DATA_INIT(EmitterPhysicsPropPageClass)
 	//}}AFX_DATA_INIT
 	Initialize ();
-	return ;
 }
 
 
@@ -68,7 +67,6 @@ EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass (EmitterInstanceListCla
 EmitterPhysicsPropPageClass::~EmitterPhysicsPropPageClass (void)
 {
 	SAFE_DELETE (m_Randomizer);
-	return;
 }
 
 
@@ -92,7 +90,6 @@ EmitterPhysicsPropPageClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ACCELERATION_Y_SPIN, m_AccelYSpin);
 	DDX_Control(pDX, IDC_ACCELERATION_X_SPIN, m_AccelXSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -123,8 +120,6 @@ EmitterPhysicsPropPageClass::Initialize (void)
 		m_InheritanceFactor	= m_pEmitterList->Get_Vel_Inherit ();
 		m_Randomizer			= m_pEmitterList->Get_Velocity_Random ();
 	}
-
-	return ;
 }
 
 
@@ -236,8 +231,6 @@ EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom (void)
 			SetModified ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -376,7 +369,5 @@ EmitterPhysicsPropPageClass::On_Setting_Changed (UINT ctrl_id)
 		}
 		break;
 	}
-
-	return ;
 }
 

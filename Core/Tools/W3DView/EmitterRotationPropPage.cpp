@@ -339,8 +339,6 @@ EmitterRotationPropPageClass::Update_Rotations (void)
 			m_Rotations.Values[index - 1] = Denormalize_Rotation(m_RotationBar->Get_Graph_Percent (index) );
 		}
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -415,6 +413,4 @@ EmitterRotationPropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Rotation_Keyframes (m_Rotations, m_InitialOrientationRandom);
 		m_Lifetime = lifetime;
 	}
-
-	return ;
 }

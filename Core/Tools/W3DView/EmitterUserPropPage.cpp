@@ -51,7 +51,6 @@ EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pe
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	Initialize ();
-	return ;
 }
 
 
@@ -61,7 +60,6 @@ EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pe
 //
 EmitterUserPropPageClass::~EmitterUserPropPageClass (void)
 {
-	return;
 }
 
 
@@ -77,7 +75,6 @@ EmitterUserPropPageClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(EmitterUserPropPageClass)
 	DDX_Control(pDX, IDC_TYPE_COMBO, m_TypeCombo);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -102,8 +99,6 @@ EmitterUserPropPageClass::Initialize (void)
 		m_iType			= m_pEmitterList->Get_User_Type ();
 		m_UserString	= m_pEmitterList->Get_User_String ();
 	}
-
-	return ;
 }
 
 
@@ -161,7 +156,6 @@ void
 EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -173,5 +167,4 @@ void
 EmitterUserPropPageClass::OnSelchangeTypeCombo (void)
 {
 	SetModified ();
-	return ;
 }

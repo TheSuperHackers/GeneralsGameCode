@@ -360,8 +360,6 @@ void Network::init()
 #if defined(RTS_DEBUG)
 	m_networkOn = TRUE;
 #endif
-
-	return;
 }
 
 void Network::setSawCRCMismatch()

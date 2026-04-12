@@ -45,7 +45,6 @@
 //////////////////////////////////////////////////////////////////////
 ListenerHandleClass::ListenerHandleClass ()
 {
-	return ;
 }
 
 
@@ -56,5 +55,4 @@ ListenerHandleClass::ListenerHandleClass ()
 //////////////////////////////////////////////////////////////////////
 ListenerHandleClass::~ListenerHandleClass ()
 {
-	return ;
 }

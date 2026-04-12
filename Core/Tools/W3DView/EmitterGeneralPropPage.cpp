@@ -55,7 +55,6 @@ EmitterGeneralPropPageClass::EmitterGeneralPropPageClass (EmitterInstanceListCla
 	//{{AFX_DATA_INIT(EmitterGeneralPropPageClass)
 	//}}AFX_DATA_INIT
 	Initialize ();
-	return ;
 }
 
 
@@ -65,7 +64,6 @@ EmitterGeneralPropPageClass::EmitterGeneralPropPageClass (EmitterInstanceListCla
 //
 EmitterGeneralPropPageClass::~EmitterGeneralPropPageClass (void)
 {
-	return;
 }
 
 
@@ -82,7 +80,6 @@ EmitterGeneralPropPageClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RENDER_MODE_COMBO, m_RenderModeCombo);
 	DDX_Control(pDX, IDC_PARTICLE_LIFETIME_SPIN, m_LifetimeSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -116,8 +113,6 @@ EmitterGeneralPropPageClass::Initialize (void)
 		m_EmitterName	= m_pEmitterList->Get_Name ();
 		m_pEmitterList->Get_Shader (m_Shader);
 	}
-
-	return ;
 }
 
 
@@ -146,8 +141,6 @@ EmitterGeneralPropPageClass::Add_Shader_To_Combo
 			SendDlgItemMessage (IDC_SHADER_COMBO, CB_SETCURSEL, (WPARAM)index);
 		}
 	}
-
-	return ;
 }
 
 
@@ -269,8 +262,6 @@ EmitterGeneralPropPageClass::OnBrowseButton (void)
 		SetDlgItemText (IDC_FILENAME_EDIT, openFileDialog.GetPathName ());
 		SetModified ();
 	}
-
-	return ;
 }
 
 
@@ -282,7 +273,6 @@ void
 EmitterGeneralPropPageClass::OnChangeFilenameEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -294,7 +284,6 @@ void
 EmitterGeneralPropPageClass::OnChangeNameEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -332,7 +321,6 @@ void
 EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -344,7 +332,6 @@ void
 EmitterGeneralPropPageClass::OnSelchangeShaderCombo (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -408,6 +395,5 @@ EmitterGeneralPropPageClass::OnParticleLifetimeCheck (void)
 	}
 
 	SetModified ();
-	return ;
 }
 

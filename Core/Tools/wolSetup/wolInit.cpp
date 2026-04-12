@@ -210,7 +210,5 @@ void checkInstalledWolapiVersion( void )
 
 	// Grab path info from registry
 	getPathsFromRegistry();
-
-	return;
 }
 

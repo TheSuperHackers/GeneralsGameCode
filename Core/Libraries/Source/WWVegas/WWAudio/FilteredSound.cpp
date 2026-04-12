@@ -59,7 +59,6 @@ SimplePersistFactoryClass<FilteredSoundClass, CHUNKID_FILTERED_SOUND> _FilteredS
 FilteredSoundClass::FilteredSoundClass ()
 	:	m_hFilter ((HPROVIDER)INVALID_MILES_HANDLE)
 {
-	return ;
 }
 
 
@@ -73,7 +72,6 @@ FilteredSoundClass::FilteredSoundClass (const FilteredSoundClass &src)
 		SoundPseudo3DClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -84,7 +82,6 @@ FilteredSoundClass::FilteredSoundClass (const FilteredSoundClass &src)
 /////////////////////////////////////////////////////////////////////////////////
 FilteredSoundClass::~FilteredSoundClass ()
 {
-	return ;
 }
 
 
@@ -140,7 +137,6 @@ FilteredSoundClass::Initialize_Miles_Handle ()
 	}
 
 	Update_Volume ();
-	return ;
 }
 
 
@@ -166,8 +162,6 @@ FilteredSoundClass::Update_Volume ()
 			Update_Pseudo_Volume (distance);
 		}
 	}
-
-	return ;
 }
 
 

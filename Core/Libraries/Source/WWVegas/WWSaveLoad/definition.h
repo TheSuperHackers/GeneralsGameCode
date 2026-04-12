@@ -136,7 +136,6 @@ DefinitionClass::DefinitionClass ()
 		m_SaveEnabled (true),
 		m_DefinitionMgrLink (-1)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -145,7 +144,6 @@ DefinitionClass::DefinitionClass ()
 inline
 DefinitionClass::~DefinitionClass ()
 {
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +162,6 @@ inline void
 DefinitionClass::Set_Name (const char *new_name)
 {
 	m_Name = new_name;
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

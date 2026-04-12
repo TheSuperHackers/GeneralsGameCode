@@ -119,7 +119,6 @@ CW3DViewDoc::CW3DViewDoc (void)
 	// Read the camera animation settings from the registry
 	m_bAnimateCamera = ((BOOL)theApp.GetProfileInt ("Config", "AnimateCamera", 0)) == TRUE;
 	m_bAutoCameraReset = ((BOOL)theApp.GetProfileInt ("Config", "ResetCamera", 1)) == TRUE;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -131,7 +130,6 @@ CW3DViewDoc::~CW3DViewDoc (void)
 {
     CleanupResources ();
 	 REF_PTR_RELEASE (m_pCursor);
-    return ;
 }
 
 
@@ -246,8 +244,6 @@ CW3DViewDoc::CleanupResources (void)
 			REF_PTR_RELEASE (m_pCAnimation);
 			REF_PTR_RELEASE (m_pCRenderObj);
     }
-
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -324,8 +320,6 @@ CW3DViewDoc::Serialize(CArchive& ar)
 	{
 		// TODO: add loading code here
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -462,7 +456,6 @@ CW3DViewDoc::InitScene (void)
 
 	Load_Camera_Settings ();
 	m_IsInitialized = true;
-	return ;
 }
 
 
@@ -569,8 +562,6 @@ CW3DViewDoc::LoadAssetsFromFile (LPCTSTR lpszPathName)
 	if (current_view != nullptr) {
 		current_view->Allow_Update (true);
 	}
-
-	return ;
 }
 
 
@@ -586,7 +577,6 @@ CW3DViewDoc::Reload_Displayed_Object (void)
 	//SAFE_ADD_REF (m_pCRenderObj);
 	//DisplayObject (m_pCRenderObj, false, false);
 	//SAFE_RELEASE_REF (m_pCRenderObj);
-	return ;
 }
 
 
@@ -643,8 +633,6 @@ CW3DViewDoc::Display_Emitter
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -757,8 +745,6 @@ CW3DViewDoc::DisplayObject
             }
 		  }
     }
-
-    return ;
 }
 
 
@@ -788,8 +774,6 @@ CW3DViewDoc::ResetAnimation (void)
 																					m_pCAnimation->Get_Num_Frames () - 1,
 																					frame_rate * anim_speed);
 	}
-
-	return ;
 }
 
 
@@ -841,8 +825,6 @@ CW3DViewDoc::StepAnimation (int iFrameInc)
 
 		Update_Camera ();
 	}
-
-	return ;
 }
 
 
@@ -906,8 +888,6 @@ CW3DViewDoc::PlayAnimation
 		  Update_Camera ();
 		  Play_Animation_Sound ();
     }
-
-    return ;
 }
 
 
@@ -933,8 +913,6 @@ CW3DViewDoc::Play_Animation_Sound (void)
 		  ::PlaySound (sound_filename, nullptr, SND_FILENAME | SND_ASYNC | SND_NODEFAULT);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1005,8 +983,6 @@ CW3DViewDoc::PlayAnimation
 		  Update_Camera ();
 		  Play_Animation_Sound ();
     }
-
-    return ;
 }
 
 
@@ -1071,8 +1047,6 @@ CW3DViewDoc::Update_Camera (void)
 			pcamera->Set_Transform (new_transform);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1125,8 +1099,6 @@ CW3DViewDoc::UpdateFrame (float relativeTimeSlice)
 
 		Update_Camera ();
 	}
-
-	return ;
 }
 
 
@@ -1307,8 +1279,6 @@ CW3DViewDoc::SetBackgroundBMP (LPCTSTR pszBackgroundBMP)
         // Remember what our current background BMP is
         m_stringBackgroundBMP = pszBackgroundBMP;
     }
-
-    return ;
 }
 
 
@@ -1864,8 +1834,6 @@ CW3DViewDoc::SetBackgroundObject (LPCTSTR pszBackgroundObjectName)
         // Remember this for later...
         m_stringBackgroundObject = pszBackgroundObjectName;
     }
-
-    return ;
 }
 
 
@@ -1906,8 +1874,6 @@ CW3DViewDoc::Remove_Object_From_Scene (RenderObjClass *prender_obj)
 	if (m_pCScene != nullptr) {
 		prender_obj->Remove ();
 	}
-
-	return ;
 }
 
 
@@ -2263,8 +2229,6 @@ CW3DViewDoc::Auto_Assign_Bones (void)
 			Update_Aggregate_Prototype (*m_pCRenderObj);
 		}
 	}
-
-	return ;
 }
 
 
@@ -2365,7 +2329,6 @@ CW3DViewDoc::Update_Aggregate_Prototype (RenderObjClass &render_obj)
 	// Add this prototype to the asset manager
 	WW3DAssetManager::Get_Instance ()->Remove_Prototype (pdefinition->Get_Name ());
 	WW3DAssetManager::Get_Instance ()->Add_Prototype (pprototype);
-	return ;
 }
 
 
@@ -2384,7 +2347,6 @@ CW3DViewDoc::Update_LOD_Prototype (HLodClass &hlod)
 	// Add this prototype to the asset manager
 	WW3DAssetManager::Get_Instance ()->Remove_Prototype (pdefinition->Get_Name ());
 	WW3DAssetManager::Get_Instance ()->Add_Prototype (pprototype);
-	return ;
 }
 
 
@@ -2402,8 +2364,6 @@ CW3DViewDoc::Animate_Camera (bool banimate)
 	if (m_bAnimateCamera == false) {
 		::AfxGetMainWnd ()->SendMessage (WM_COMMAND, MAKEWPARAM (IDM_CAMERA_RESET, 0));
 	}
-
-	return ;
 }
 
 
@@ -2503,8 +2463,6 @@ CW3DViewDoc::Make_Movie (void)
 
 	// Restore the mouse cursor to its previous visibility state.
 	Show_Cursor(restore_cursor);
-
-	return ;
 }
 
 
@@ -2548,8 +2506,6 @@ CW3DViewDoc::Build_Emitter_List
 
 		emitter_list->Add_Emitter ((ParticleEmitterClass *)render_obj);
 	}
-
-	return ;
 }
 
 
@@ -2566,7 +2522,6 @@ CW3DViewDoc::Show_Cursor (bool onoff)
 	}
 
 	m_pCursor->Set_Hidden (!onoff);
-	return ;
 }
 
 
@@ -2591,7 +2546,6 @@ void
 CW3DViewDoc::Set_Cursor (LPCTSTR resource_name)
 {
 	m_pCursor->Set_Texture (::Load_RC_Texture (resource_name));
-	return ;
 }
 
 
@@ -2608,8 +2562,6 @@ CW3DViewDoc::Create_Cursor (void)
 		m_pCursor->Set_Window (GetGraphicView ()->m_hWnd);
 		m_pCursor->Set_Texture (::Load_RC_Texture ("cursor.tga"));
 	}
-
-	return ;
 }
 
 
@@ -2671,7 +2623,6 @@ CW3DViewDoc::Update_Particle_Count (void)
 {
 	int particles = Count_Particles ();
 	((CMainFrame *)::AfxGetMainWnd ())->Update_Particle_Count (particles);
-	return ;
 }
 
 
@@ -2710,8 +2661,6 @@ CW3DViewDoc::Switch_LOD (int increment, RenderObjClass *render_obj)
 			((HLodClass *)render_obj)->Set_LOD_Level (current_lod + increment);
 		}
 	}
-
-	return ;
 }
 
 
@@ -2748,8 +2697,6 @@ CW3DViewDoc::Toggle_Alternate_Materials(RenderObjClass * render_obj)
 			Toggle_Alternate_Materials(sub_obj);
 		}
 	}
-
-	return;
 }
 
 
@@ -2862,8 +2809,6 @@ CW3DViewDoc::Copy_Assets_To_Dir (LPCTSTR directory)
 		message.Format ("Unable to find file for asset: %s.", asset_name);
 		::MessageBox (::AfxGetMainWnd ()->m_hWnd, message, "File Not Found", MB_ICONEXCLAMATION | MB_OK);
 	}
-
-	return ;
 }
 
 
@@ -2887,8 +2832,6 @@ CW3DViewDoc::Set_Texture_Path1 (LPCTSTR path)
 		m_TexturePath1 = path;
 		theApp.WriteProfileString ("Config", "TexturePath1", m_TexturePath1);
 	}
-
-	return ;
 }
 
 
@@ -2911,8 +2854,6 @@ CW3DViewDoc::Set_Texture_Path2 (LPCTSTR path)
 		m_TexturePath2 = path;
 		theApp.WriteProfileString ("Config", "TexturePath2", m_TexturePath2);
 	}
-
-	return ;
 }
 
 
@@ -2973,8 +2914,6 @@ CW3DViewDoc::Import_Facial_Animation (const CString &heirarchy_name, const CStri
 		REF_PTR_RELEASE (new_anim);
 		SAFE_DELETE (anim_desc_file);
 	}
-
-	return ;
 }
 
 
@@ -3032,8 +2971,6 @@ CW3DViewDoc::Save_Camera_Settings (void)
 		theApp.WriteProfileString ("Config", "znear", znear_string);
 		theApp.WriteProfileString ("Config", "zfar", zfar_string);
 	}
-
-	return ;
 }
 
 
@@ -3087,8 +3024,6 @@ CW3DViewDoc::Load_Camera_Settings (void)
 			}
 		}
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////

@@ -46,7 +46,6 @@ Draw_Sunken_Rect
 	::Draw_Vert_Line (pbits, rect.right-1,	rect.top,		height,	::GetSysColor (COLOR_3DHIGHLIGHT),	scanline_size);
 	::Draw_Horz_Line (pbits, rect.left,		rect.top,		width,	::GetSysColor (COLOR_3DSHADOW),		scanline_size);
 	::Draw_Horz_Line (pbits, rect.left,		rect.bottom-1, width,	::GetSysColor (COLOR_3DHIGHLIGHT),	scanline_size);
-	return ;
 }
 
 
@@ -70,7 +69,6 @@ Draw_Raised_Rect
 	::Draw_Vert_Line (pbits, rect.right-1,	rect.top,		height,	::GetSysColor (COLOR_3DSHADOW),		scanline_size);
 	::Draw_Horz_Line (pbits, rect.left,		rect.top,		width,	::GetSysColor (COLOR_3DHIGHLIGHT),	scanline_size);
 	::Draw_Horz_Line (pbits, rect.left,		rect.bottom-1, width,	::GetSysColor (COLOR_3DSHADOW),		scanline_size);
-	return ;
 }
 
 
@@ -122,8 +120,6 @@ Frame_Rect
 		pbits[index + 2]	= red;
 		index += scanline_size;
 	}
-
-	return ;
 }
 
 
@@ -153,8 +149,6 @@ Draw_Vert_Line
 		pbits[index + 2]	= red;
 		index += scanline_size;
 	}
-
-	return ;
 }
 
 
@@ -183,8 +177,6 @@ Draw_Horz_Line
 		pbits[index++] = green;
 		pbits[index++] = red;
 	}
-
-	return ;
 }
 
 

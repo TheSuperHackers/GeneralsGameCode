@@ -44,7 +44,6 @@ CameraDistanceDialogClass::CameraDistanceDialogClass(CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CameraDistanceDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -60,7 +59,6 @@ CameraDistanceDialogClass::DoDataExchange (CDataExchange *pDX)
 	//{{AFX_DATA_MAP(CameraDistanceDialogClass)
 	DDX_Control(pDX, IDC_DISTANCE_SPIN, m_DistanceSpinCtrl);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -101,7 +99,6 @@ CameraDistanceDialogClass::OnOK (void)
 	float distance = ::GetDlgItemFloat (m_hWnd, IDC_DISTANCE_EDIT);
 	CGraphicView *graphic_view = ::Get_Graphic_View ();
 	graphic_view->Set_Camera_Distance (distance);
-	return ;
 }
 
 

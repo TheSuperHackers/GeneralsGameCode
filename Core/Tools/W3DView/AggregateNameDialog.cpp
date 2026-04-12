@@ -54,7 +54,6 @@ AggregateNameDialogClass::AggregateNameDialogClass (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(AggregateNameDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -71,7 +70,6 @@ AggregateNameDialogClass::AggregateNameDialogClass
 	: m_Name (def_name),
 	  CDialog (resource_id, pParent)
 {
-	return ;
 }
 
 
@@ -86,7 +84,6 @@ AggregateNameDialogClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(AggregateNameDialogClass)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -105,7 +102,6 @@ AggregateNameDialogClass::OnOK (void)
 {
 	GetDlgItemText (IDC_AGGREGATE_NAME, m_Name);
 	CDialog::OnOK ();
-	return ;
 }
 
 

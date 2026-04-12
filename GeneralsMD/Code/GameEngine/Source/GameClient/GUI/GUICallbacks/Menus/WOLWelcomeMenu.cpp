@@ -407,8 +407,6 @@ void UpdateLocalPlayerStats()
 	{
 		PopulatePlayerInfoWindows( "WOLQuickMatchMenu.wnd" );
 	}
-
-	return;
 }
 
 static Bool raiseMessageBoxes = FALSE;

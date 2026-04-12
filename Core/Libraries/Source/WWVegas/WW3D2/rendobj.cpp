@@ -1173,8 +1173,6 @@ void RenderObjClass::Add_Dependencies_To_List
 			file_list.Add (::Filename_From_Asset_Name (base_model_name));
 		}
 	}
-
-	return;
 }
 
 

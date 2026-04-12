@@ -56,7 +56,6 @@ CFancyToolbar::CFancyToolbar (void)
     RegisterFancyToolbarClass ();
 
     ::memset (m_pButtonArray, 0, sizeof (m_pButtonArray));
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -81,8 +80,6 @@ CFancyToolbar::~CFancyToolbar (void)
             m_pButtonArray[iButton].hBMPDn = nullptr;
         }
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -108,8 +105,6 @@ CFancyToolbar::RegisterFancyToolbarClass (void)
         // Register the class with windows
         ::RegisterClass (&classInfo);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -120,7 +115,6 @@ void
 CFancyToolbar::OnPaint ()
 {
     Paint ();
-    return ;
 }
 
 
@@ -180,8 +174,6 @@ CFancyToolbar::DrawButton
         ::SelectObject (hMemDC, hOldBMP);
         DeleteDC (hMemDC);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -207,7 +199,6 @@ CFancyToolbar::AddButton
     m_pButtonArray[iButton].buttonType = buttonType;
     m_pButtonArray[iButton].currentState = StateUp;
     m_pButtonArray[iButton].bVisible = TRUE;
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -261,7 +252,6 @@ CFancyToolbar::Paint (void)
 
     // Let the window know its done painting
     ::ValidateRect (m_hWnd, nullptr);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -361,8 +351,6 @@ CFancyToolbar::OnLButtonDown
     {
         CControlBar::OnLButtonDown (nFlags, point);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -417,8 +405,6 @@ CFancyToolbar::OnLButtonUp
     {
         CControlBar::OnLButtonUp (nFlags, point);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -428,7 +414,6 @@ CFancyToolbar::OnLButtonUp
 void
 CFancyToolbar::OnDraw (CDC* pDC)
 {
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -478,8 +463,6 @@ CFancyToolbar::SetButtonState
             bFound = TRUE;
         }
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////

@@ -56,7 +56,6 @@ VolumeRandomDialogClass::VolumeRandomDialogClass (Vector3Randomizer *randomizer,
 	//{{AFX_DATA_INIT(VolumeRandomDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -77,7 +76,6 @@ VolumeRandomDialogClass::DoDataExchange (CDataExchange *pDX)
 	DDX_Control(pDX, IDC_BOX_Y_SPIN, m_BoxYSpin);
 	DDX_Control(pDX, IDC_BOX_X_SPIN, m_BoxXSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -130,7 +128,6 @@ VolumeRandomDialogClass::OnOK (void)
 	}
 
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -228,7 +225,6 @@ void
 VolumeRandomDialogClass::OnBoxRadio (void)
 {
 	Update_Enable_State ();
-	return ;
 }
 
 
@@ -241,7 +237,6 @@ void
 VolumeRandomDialogClass::OnCylinderRadio (void)
 {
 	Update_Enable_State ();
-	return ;
 }
 
 
@@ -254,7 +249,6 @@ void
 VolumeRandomDialogClass::OnSphereRadio (void)
 {
 	Update_Enable_State ();
-	return ;
 }
 
 
@@ -294,7 +288,6 @@ VolumeRandomDialogClass::Update_Enable_State (void)
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_CYLINDER_RADIUS_SPIN), enable_cylinder_ctrls);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_CYLINDER_HEIGHT_EDIT), enable_cylinder_ctrls);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_CYLINDER_HEIGHT_SPIN), enable_cylinder_ctrls);
-	return ;
 }
 
 

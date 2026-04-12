@@ -108,8 +108,6 @@ EmitterLineGroupPropPageClass::Initialize (void)
 			}
 		}
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -195,8 +193,6 @@ EmitterLineGroupPropPageClass::Update_Blur_Times (void)
 			m_BlurTimes.Values[index - 1] = Denormalize_Blur_Time(m_BlurTimeBar->Get_Graph_Percent (index) );
 		}
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -223,8 +219,6 @@ EmitterLineGroupPropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Blur_Time_Keyframes (m_BlurTimes);
 		m_Lifetime = lifetime;
 	}
-
-	return ;
 }
 
 BOOL EmitterLineGroupPropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)

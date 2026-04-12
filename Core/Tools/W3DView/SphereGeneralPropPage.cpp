@@ -51,7 +51,6 @@ SphereGeneralPropPageClass::SphereGeneralPropPageClass (SphereRenderObjClass *sp
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -62,7 +61,6 @@ SphereGeneralPropPageClass::SphereGeneralPropPageClass (SphereRenderObjClass *sp
 /////////////////////////////////////////////////////////////
 SphereGeneralPropPageClass::~SphereGeneralPropPageClass()
 {
-	return ;
 }
 
 void
@@ -72,7 +70,6 @@ SphereGeneralPropPageClass::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(SphereGeneralPropPageClass)
 	DDX_Control(pDX, IDC_LIFETIME_SPIN, m_LifetimeSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -112,8 +109,6 @@ SphereGeneralPropPageClass::Initialize (void)
 		m_Name		= m_RenderObj->Get_Name ();
 		m_Shader		= m_RenderObj->Get_Shader ();
 	}
-
-	return ;
 }
 
 
@@ -144,8 +139,6 @@ SphereGeneralPropPageClass::Add_Shader_To_Combo
 			SendDlgItemMessage (IDC_SHADER_COMBO, CB_SETCURSEL, (WPARAM)index);
 		}
 	}
-
-	return ;
 }
 
 
@@ -265,8 +258,6 @@ SphereGeneralPropPageClass::OnBrowseButton (void)
 		SetDlgItemText (IDC_FILENAME_EDIT, dialog.GetPathName ());
 		SetModified ();
 	}
-
-	return ;
 }
 
 
@@ -279,7 +270,6 @@ void
 SphereGeneralPropPageClass::OnChangeFilenameEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -292,7 +282,6 @@ void
 SphereGeneralPropPageClass::OnChangeNameEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -332,7 +321,6 @@ void
 SphereGeneralPropPageClass::OnChangeLifetimeEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -345,7 +333,6 @@ void
 SphereGeneralPropPageClass::OnSelchangeShaderCombo (void)
 {
 	SetModified ();
-	return ;
 }
 
 

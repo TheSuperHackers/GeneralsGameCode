@@ -60,7 +60,6 @@ ScreenCursorClass::ScreenCursorClass (void)
 		m_hWnd (nullptr)
 {
 	Initialize ();
-	return ;
 }
 
 
@@ -79,7 +78,6 @@ ScreenCursorClass::ScreenCursorClass (const ScreenCursorClass &src)
 		RenderObjClass (src)
 {
 	Initialize ();
-	return ;
 }
 
 
@@ -92,7 +90,6 @@ ScreenCursorClass::~ScreenCursorClass (void)
 {
 	REF_PTR_RELEASE (m_pTexture);
 	REF_PTR_RELEASE (m_pVertMaterial);
-	return ;
 }
 
 
@@ -141,7 +138,6 @@ ScreenCursorClass::Initialize (void)
 	m_UVs[2].Y = 1.0F;
 	m_UVs[3].X = 1.0F;
 	m_UVs[3].Y = 1.0F;
-	return ;
 }
 
 
@@ -160,8 +156,6 @@ ScreenCursorClass::Set_Texture (TextureClass *texture)
 		m_Width	= m_pTexture->Get_Width();
 		m_Height	= m_pTexture->Get_Height();
 	}
-
-	return ;
 }
 
 
@@ -244,7 +238,6 @@ ScreenCursorClass::On_Frame_Update (void)
 	m_Verticies[3].X = x_max;
 	m_Verticies[3].Y = y_max;
 	m_Verticies[3].Z = z_pos;
-	return ;
 }
 
 
@@ -319,8 +312,6 @@ ScreenCursorClass::Render (RenderInfoClass &rinfo)
 		FACE_COUNT*3,
 		0,
 		VERTEX_COUNT*2);
-
-	return ;
 }
 
 
@@ -362,8 +353,6 @@ ScreenCursorClass::Notify_Added (SceneClass * scene)
 	if (scene != nullptr) {
 		scene->Register (this, SceneClass::ON_FRAME_UPDATE);
 	}
-
-	return ;
 }
 
 
@@ -378,6 +367,4 @@ ScreenCursorClass::Notify_Removed (SceneClass * scene)
 	if (scene != nullptr) {
 		scene->Unregister (this, SceneClass::ON_FRAME_UPDATE);
 	}
-
-	return ;
 }

@@ -102,7 +102,6 @@ ViewerAssetMgrClass::Get_Texture (const char * tga_filename, MipCountType mip_le
 void
 ViewerAssetMgrClass::Open_Texture_File_Cache (const char * /*prefix*/)
 {
-	return ;
 }
 
 
@@ -114,5 +113,4 @@ ViewerAssetMgrClass::Open_Texture_File_Cache (const char * /*prefix*/)
 void
 ViewerAssetMgrClass::Close_Texture_File_Cache (void)
 {
-	return ;
 }

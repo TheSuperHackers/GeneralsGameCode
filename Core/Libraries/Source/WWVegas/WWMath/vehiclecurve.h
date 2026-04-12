@@ -164,7 +164,6 @@ VehicleCurveClass::Set_Key (int i,const Vector3 & point)
 {
 	m_IsDirty = true;
 	Curve3DClass::Set_Key (i, point);
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -185,7 +184,6 @@ VehicleCurveClass::Remove_Key (int i)
 {
 	m_IsDirty = true;
 	Curve3DClass::Remove_Key (i);
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -196,5 +194,4 @@ VehicleCurveClass::Clear_Keys ()
 {
 	m_IsDirty = true;
 	Curve3DClass::Clear_Keys ();
-	return ;
 }

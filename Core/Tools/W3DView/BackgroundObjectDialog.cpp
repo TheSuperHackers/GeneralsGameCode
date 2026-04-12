@@ -44,7 +44,6 @@ CBackgroundObjectDialog::CBackgroundObjectDialog (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CBackgroundObjectDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -58,7 +57,6 @@ CBackgroundObjectDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CBackgroundObjectDialog)
 	DDX_Control(pDX, IDC_HIERARCHY_LIST, m_heirarchyListCtrl);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -180,8 +178,6 @@ CBackgroundObjectDialog::OnOK (void)
 	    // Allow the base class to process this message
         CDialog::OnOK ();
     }
-
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -218,7 +214,6 @@ CBackgroundObjectDialog::OnItemChangedHierarchyList
     }
 
 	*pResult = 0;
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -235,6 +230,4 @@ CBackgroundObjectDialog::OnClear (void)
         // Clear the selection state from this entry
         m_heirarchyListCtrl.SetItemState (iIndex, 0, LVIS_SELECTED);
     }
-
-	return ;
 }

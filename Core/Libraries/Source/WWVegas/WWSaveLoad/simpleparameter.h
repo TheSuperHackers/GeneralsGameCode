@@ -93,7 +93,6 @@ SimpleParameterClass<T, type>::SimpleParameterClass (void *data, const char *nam
 {
 	Set_Name (name);
 	m_Data = (T *)data;
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +126,6 @@ SimpleParameterClass<T, type>::Set_Value (const T &new_value)
 {
 	(*m_Data) = new_value;
 	Set_Modified ();
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -150,7 +148,6 @@ SimpleParameterClass<T, type>::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

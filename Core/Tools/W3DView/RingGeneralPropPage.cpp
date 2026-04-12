@@ -51,7 +51,6 @@ RingGeneralPropPageClass::RingGeneralPropPageClass (RingRenderObjClass *ring)
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -62,7 +61,6 @@ RingGeneralPropPageClass::RingGeneralPropPageClass (RingRenderObjClass *ring)
 /////////////////////////////////////////////////////////////
 RingGeneralPropPageClass::~RingGeneralPropPageClass()
 {
-	return ;
 }
 
 void
@@ -73,7 +71,6 @@ RingGeneralPropPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXTURE_TILE_SPIN, m_TextureTileSpin);
 	DDX_Control(pDX, IDC_LIFETIME_SPIN, m_LifetimeSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -114,8 +111,6 @@ RingGeneralPropPageClass::Initialize (void)
 		m_Name		= m_RenderObj->Get_Name ();
 		m_Shader		= m_RenderObj->Get_Shader ();
 	}
-
-	return ;
 }
 
 
@@ -146,8 +141,6 @@ RingGeneralPropPageClass::Add_Shader_To_Combo
 			SendDlgItemMessage (IDC_SHADER_COMBO, CB_SETCURSEL, (WPARAM)index);
 		}
 	}
-
-	return ;
 }
 
 
@@ -274,8 +267,6 @@ RingGeneralPropPageClass::OnBrowseButton (void)
 		SetDlgItemText (IDC_FILENAME_EDIT, dialog.GetPathName ());
 		SetModified ();
 	}
-
-	return ;
 }
 
 
@@ -288,7 +279,6 @@ void
 RingGeneralPropPageClass::OnChangeFilenameEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -301,7 +291,6 @@ void
 RingGeneralPropPageClass::OnChangeNameEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -341,7 +330,6 @@ void
 RingGeneralPropPageClass::OnChangeLifetimeEdit (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -354,7 +342,6 @@ void
 RingGeneralPropPageClass::OnSelchangeShaderCombo (void)
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -400,6 +387,5 @@ void
 RingGeneralPropPageClass::OnChangeTextureTileEdit (void)
 {
 	SetModified ();
-	return ;
 }
 

@@ -44,7 +44,6 @@ ScaleDialogClass::ScaleDialogClass (float scale, CWnd* pParent,
 	//{{AFX_DATA_INIT(ScaleDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -60,7 +59,6 @@ ScaleDialogClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(ScaleDialogClass)
 	DDX_Control(pDX, IDC_SIZE_SPIN, m_ScaleSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -117,7 +115,6 @@ ScaleDialogClass::OnOK (void)
 	}
 
 	CDialog::OnOK ();
-	return ;
 }
 
 

@@ -51,7 +51,6 @@ CSceneLightDialog::CSceneLightDialog(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(CSceneLightDialog)
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 
@@ -72,7 +71,6 @@ CSceneLightDialog::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER_GREEN, m_greenSlider);
 	DDX_Control(pDX, IDC_SLIDER_RED, m_redSlider);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -238,7 +236,6 @@ CSceneLightDialog::OnHScroll
 
 	// Allow the base class to process this message
 	CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-	return ;
 }
 
 
@@ -277,7 +274,6 @@ CSceneLightDialog::OnCancel (void)
 
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -375,8 +371,6 @@ CSceneLightDialog::OnGrayscaleCheck (void)
 		color.Z = float(m_blueSlider.GetPos ()) / 100.00F;
 		Update_Light (color);
 	}
-
-	return ;
 }
 
 
@@ -388,7 +382,6 @@ void
 CSceneLightDialog::OnChannelBothRadio (void)
 {
 	m_CurrentChannel = BOTH;
-	return ;
 }
 
 
@@ -404,7 +397,6 @@ CSceneLightDialog::OnChannelDiffuseRadio (void)
 	::GetCurrentDocument ()->GetSceneLight ()->Get_Diffuse (&color);
 	Set_Color_Control_State (color);
 	m_CurrentChannel = DIFFUSE;
-	return ;
 }
 
 
@@ -420,7 +412,6 @@ CSceneLightDialog::OnChannelSpecularRadio (void)
 	::GetCurrentDocument ()->GetSceneLight ()->Get_Specular (&color);
 	Set_Color_Control_State (color);
 	m_CurrentChannel = SPECULAR;
-	return ;
 }
 
 
@@ -446,8 +437,6 @@ CSceneLightDialog::Update_Light (const Vector3 &color)
 			pCDoc->GetSceneLight ()->Set_Specular (color);
 		}
 	}
-
-	return ;
 }
 
 
@@ -470,7 +459,6 @@ CSceneLightDialog::Set_Color_Control_State (const Vector3 &color)
 	m_redSlider.SetPos (int(color.X * 100.0F));
 	m_greenSlider.SetPos (int(color.Y * 100.0F));
 	m_blueSlider.SetPos (int(color.Z * 100.0F));
-	return ;
 }
 
 
@@ -491,8 +479,6 @@ CSceneLightDialog::Update_Attenuation (void)
 		float end = ::GetDlgItemFloat (m_hWnd, IDC_END_ATTENUATION_EDIT);
 		pCDoc->GetSceneLight ()->Set_Far_Attenuation_Range (start, end);
 	}
-
-	return ;
 }
 
 
@@ -523,8 +509,6 @@ CSceneLightDialog::Update_Distance (float distance)
 		// Update the attenuation settings
 		pCDoc->GetSceneLight ()->Set_Position (new_pos);
 	}
-
-	return ;
 }
 
 
@@ -541,7 +525,6 @@ CSceneLightDialog::Update_Attenuation_Controls (void)
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_START_ATTENUATION_SPIN), enable);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_END_ATTENUATION_EDIT), enable);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_END_ATTENUATION_SPIN), enable);
-	return ;
 }
 
 
@@ -559,5 +542,4 @@ CSceneLightDialog::OnAttenuationCheck (void)
 
 	// Update the dialog controls to reflect the new setting
 	Update_Attenuation_Controls ();
-	return ;
 }

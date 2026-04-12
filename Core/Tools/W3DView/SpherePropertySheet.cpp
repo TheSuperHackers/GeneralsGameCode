@@ -53,7 +53,6 @@ SpherePropertySheetClass::SpherePropertySheetClass
 {
 	REF_PTR_SET (m_RenderObj, sphere);
 	Initialize ();
-	return ;
 }
 
 
@@ -74,7 +73,6 @@ SpherePropertySheetClass::SpherePropertySheetClass
 {
 	REF_PTR_SET (m_RenderObj, sphere);
 	Initialize ();
-	return ;
 }
 
 
@@ -86,7 +84,6 @@ SpherePropertySheetClass::SpherePropertySheetClass
 SpherePropertySheetClass::~SpherePropertySheetClass (void)
 {
 	REF_PTR_RELEASE (m_RenderObj);
-	return ;
 }
 
 
@@ -213,8 +210,6 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 		m_ColorPage.Set_Sphere (m_RenderObj);
 		m_ScalePage.Set_Sphere (m_RenderObj);
 	}
-
-	return ;
 }
 
 
@@ -227,7 +222,6 @@ void
 SpherePropertySheetClass::Update_Object (void)
 {
 	Add_Object_To_Viewer ();
-	return ;
 }
 
 
@@ -265,7 +259,6 @@ SpherePropertySheetClass::Initialize (void)
 	m_GeneralPage.m_psp.dwFlags	|= PSP_PREMATURE;
 	m_ColorPage.m_psp.dwFlags		|= PSP_PREMATURE;
 	m_ScalePage.m_psp.dwFlags		|= PSP_PREMATURE;
-	return ;
 }
 
 
@@ -284,6 +277,5 @@ SpherePropertySheetClass::Create_New_Object (void)
 	//	Display the new object
 	//
 	::GetCurrentDocument ()->DisplayObject (m_RenderObj);
-	return ;
 }
 

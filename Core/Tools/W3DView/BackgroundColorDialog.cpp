@@ -165,7 +165,6 @@ CBackgroundColorDialog::OnHScroll
 
 	// Allow the base class to process this message
     CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -195,8 +194,6 @@ CBackgroundColorDialog::OnGrayscaleCheck (void)
             pCDoc->SetBackgroundColor (colorSettings);
         }
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -222,7 +219,6 @@ CBackgroundColorDialog::OnCancel (void)
 
 	// Allow the base class to process this message
     CDialog::OnCancel();
-    return ;
 }
 
 //////////////////////////////////////////////////////////////

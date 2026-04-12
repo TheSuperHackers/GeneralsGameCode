@@ -53,7 +53,6 @@ CAssetPropertySheet::CAssetPropertySheet
 
     // Add this page to the property sheet
     AddPage (m_pCPropertyPage);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,7 +61,6 @@ CAssetPropertySheet::CAssetPropertySheet
 //
 CAssetPropertySheet::~CAssetPropertySheet ()
 {
-    return ;
 }
 
 

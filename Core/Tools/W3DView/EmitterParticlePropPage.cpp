@@ -56,7 +56,6 @@ EmitterParticlePropPageClass::EmitterParticlePropPageClass (EmitterInstanceListC
 	//{{AFX_DATA_INIT(EmitterParticlePropPageClass)
 	//}}AFX_DATA_INIT
 	Initialize ();
-	return ;
 }
 
 
@@ -67,7 +66,6 @@ EmitterParticlePropPageClass::EmitterParticlePropPageClass (EmitterInstanceListC
 EmitterParticlePropPageClass::~EmitterParticlePropPageClass (void)
 {
 	SAFE_DELETE (m_Randomizer);
-	return;
 }
 
 
@@ -85,7 +83,6 @@ EmitterParticlePropPageClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EMISSION_RATE_SPIN, m_EmitionRateSpin);
 	DDX_Control(pDX, IDC_MAX_PARTICLES_SPIN, m_MaxParticlesSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -115,8 +112,6 @@ EmitterParticlePropPageClass::Initialize (void)
 		m_MaxParticles	= m_pEmitterList->Get_Max_Emissions ();
 		m_Randomizer	= m_pEmitterList->Get_Creation_Volume ();
 	}
-
-	return ;
 }
 
 
@@ -249,8 +244,6 @@ EmitterParticlePropPageClass::OnSpecifyCreationVolume (void)
 		m_Randomizer = dialog.Get_Randomizer ();
 		SetModified ();
 	}
-
-	return ;
 }
 
 
@@ -294,5 +287,4 @@ EmitterParticlePropPageClass::OnMaxParticlesCheck (void)
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_SPIN), enable);
 
 	SetModified ();
-	return ;
 }

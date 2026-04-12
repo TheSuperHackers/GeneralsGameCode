@@ -161,8 +161,6 @@ Do_Version_Check (void)
 	if (Compare_EXE_Version ((int)::AfxGetInstanceHandle (), filename) < 0) {
 		::MessageBox (nullptr, "There is a newer version of the W3DViewer, please run W3DUpdate to upgrade your local copy.", "Version Info", MB_ICONEXCLAMATION | MB_OK | MB_SETFOREGROUND | MB_SYSTEMMODAL);
 	}
-
-	return ;
 }
 
 

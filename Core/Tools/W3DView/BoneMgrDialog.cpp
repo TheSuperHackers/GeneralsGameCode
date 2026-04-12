@@ -54,7 +54,6 @@ BoneMgrDialogClass::BoneMgrDialogClass
 	//{{AFX_DATA_INIT(BoneMgrDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -70,7 +69,6 @@ BoneMgrDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_OBJECT_COMBO, m_ObjectCombo);
 	DDX_Control(pDX, IDC_BONE_TREE, m_BoneTree);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -231,7 +229,6 @@ BoneMgrDialogClass::Fill_Bone_Item
 	}
 
 	REF_PTR_RELEASE (porig_model);
-	return ;
 }
 
 
@@ -282,7 +279,6 @@ BoneMgrDialogClass::OnSelchangedBoneTree
 	Update_Controls (pNMTreeView->itemNew.hItem);
 
 	(*pResult) = 0;
-	return ;
 }
 
 
@@ -307,8 +303,6 @@ BoneMgrDialogClass::OnSelchangeObjectCombo (void)
 		SetDlgItemText (IDC_ATTACH_BUTTON, "&Attach");
 		m_bAttach = true;
 	}
-
-	return ;
 }
 
 
@@ -375,7 +369,6 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 	CString text;
 	text.Format ("Bone: %s", static_cast<const char*>(m_BoneName));
 	SetDlgItemText (IDC_BONE_GROUPBOX, text);
-	return ;
 }
 
 
@@ -393,7 +386,6 @@ BoneMgrDialogClass::OnDestroy (void)
 
 	// Allow the base class to process this message
 	CDialog::OnDestroy ();
-	return ;
 }
 
 
@@ -413,7 +405,6 @@ BoneMgrDialogClass::OnOK (void)
 
 	// Allow the base class to process this message
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -432,7 +423,6 @@ BoneMgrDialogClass::OnCancel (void)
 
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -492,7 +482,6 @@ BoneMgrDialogClass::OnAttachButton (void)
 	m_BoneTree.InvalidateRect (nullptr, TRUE);
 	m_BoneTree.UpdateWindow ();
 	Update_Controls (hbone_item);
-	return ;
 }
 
 
@@ -535,7 +524,5 @@ BoneMgrDialogClass::Remove_Object_From_Bone
 			break ;
 		}
 	}
-
-	return ;
 }
 

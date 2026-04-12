@@ -41,7 +41,6 @@ RestrictedFileDialogClass::RestrictedFileDialogClass(BOOL bOpenFileDialog, LPCTS
 		CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags, lpszFilter, pParentWnd)
 {
 	m_ExpectedFilename = lpszFileName;
-	return ;
 }
 
 
@@ -61,7 +60,6 @@ RestrictedFileDialogClass::OnFileNameChange (void)
 {
 	// Force the original filename into the filename control
 	CommDlg_OpenSave_SetControlText (::GetParent (m_hWnd), 0x480, (LPCTSTR)m_ExpectedFilename);
-	return ;
 }
 
 
@@ -96,5 +94,4 @@ RestrictedFileDialogClass::OnInitDone (void)
 	// Disable the controls we don't want the user to change
 	::EnableWindow (::GetDlgItem (::GetParent (m_hWnd), 0x480), FALSE);
 	::EnableWindow (::GetDlgItem (::GetParent (m_hWnd), 0x470), FALSE);
-	return ;
 }

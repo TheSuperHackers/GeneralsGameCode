@@ -54,8 +54,6 @@ DialogToolbarClass::DialogToolbarClass (void)
 	//{{AFX_DATA_INIT(DialogToolbarClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-
-	return ;
 }
 
 #ifdef RTS_DEBUG
@@ -97,8 +95,6 @@ DialogToolbarClass::Enable_Button
 	if (!(style & TBBS_SEPARATOR)) {
 		SetButtonStyle (index, style);
 	}
-
-	return ;
 }
 
 
@@ -120,7 +116,6 @@ DialogToolbarClass::OnIdleUpdateCmdUI (WPARAM, LPARAM)
 void
 DialogToolbarClass::OnInitialUpdate (void)
 {
-	return ;
 }
 
 

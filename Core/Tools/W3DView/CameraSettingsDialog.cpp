@@ -46,7 +46,6 @@ CameraSettingsDialogClass::CameraSettingsDialogClass(CWnd* pParent /*=nullptr*/)
 {
 	//{{AFX_DATA_INIT(CameraSettingsDialogClass)
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -66,7 +65,6 @@ CameraSettingsDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_NEAR_CLIP_SPIN, m_NearClipSpin);
 	DDX_Control(pDX, IDC_HFOV_SPIN, m_HFOVSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -184,7 +182,6 @@ CameraSettingsDialogClass::OnOK (void)
 	}
 
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -203,7 +200,6 @@ CameraSettingsDialogClass::OnFovCheck (void)
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_VFOV_EDIT), manual_fov);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_HFOV_EDIT), manual_fov);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_LENS_EDIT), manual_fov);
-	return ;
 }
 
 
@@ -220,7 +216,6 @@ CameraSettingsDialogClass::OnClipPlaneCheck (void)
 	::EnableWindow (m_FarClipSpin, manual_planes);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_NEAR_CLIP_EDIT), manual_planes);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_FAR_CLIP_EDIT), manual_planes);
-	return ;
 }
 
 
@@ -268,7 +263,6 @@ CameraSettingsDialogClass::OnReset (void)
 	float vfov = camera->Get_Vertical_FOV ();
 	float lens = ((::atan ((18.0F / 1000.0F)) / vfov) * 2.0F) * 1000.0F;
 	::SetDlgItemFloat (m_hWnd, IDC_LENS_EDIT, lens);
-	return ;
 }
 
 
@@ -329,8 +323,6 @@ CameraSettingsDialogClass::Update_Camera_Lens (void)
 		float lens				= (constant / (::tan (DEG_TO_RAD (hfov) / 2))) * 1000.0F;
 		::SetDlgItemFloat (m_hWnd, IDC_LENS_EDIT, lens);
 	}
-
-	return ;
 }
 
 
@@ -361,7 +353,6 @@ CameraSettingsDialogClass::Update_FOV (void)
 		::SetDlgItemFloat (m_hWnd, IDC_HFOV_EDIT, RAD_TO_DEG (hfov));
 		::SetDlgItemFloat (m_hWnd, IDC_VFOV_EDIT, RAD_TO_DEG (vfov));
 	}
-	return ;
 }
 
 

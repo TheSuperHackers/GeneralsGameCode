@@ -58,7 +58,6 @@ EmitterSizePropPageClass::EmitterSizePropPageClass (EmitterInstanceListClass *pe
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -76,7 +75,6 @@ EmitterSizePropPageClass::~EmitterSizePropPageClass (void)
 	// Free the current setting arrays
 	SAFE_DELETE_ARRAY (m_CurrentSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_CurrentSizes.Values);
-	return ;
 }
 
 
@@ -129,8 +127,6 @@ EmitterSizePropPageClass::Initialize (void)
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -345,8 +341,6 @@ EmitterSizePropPageClass::Update_Sizes (void)
 			m_CurrentSizes.Values[index - 1] = m_SizeBar->Get_Graph_Percent (index) * m_MaxSize;
 		}
 	}
-
-	return ;
 }
 
 
@@ -409,8 +403,6 @@ EmitterSizePropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Size_Keyframes (m_CurrentSizes);
 		m_Lifetime = lifetime;
 	}
-
-	return ;
 }
 
 

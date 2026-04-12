@@ -56,7 +56,6 @@ MeshDeformSaveSetClass::Reset (void)
 
 	m_DeformData.Delete_All ();
 	m_CurrentKeyFrame = nullptr;
-	return ;
 }
 
 
@@ -78,7 +77,6 @@ MeshDeformSaveSetClass::Begin_Keyframe (float state)
 	//	Add this new keyframe to the end of our list
 	//
 	m_DeformData.Add (m_CurrentKeyFrame);
-	return ;
 }
 
 
@@ -91,7 +89,6 @@ void
 MeshDeformSaveSetClass::End_Keyframe (void)
 {
 	m_CurrentKeyFrame = nullptr;
-	return ;
 }
 
 
@@ -126,8 +123,6 @@ MeshDeformSaveSetClass::Add_Vert
 		//
 		m_CurrentKeyFrame->deform_list.Add (data);
 	}
-
-	return ;
 }
 
 
@@ -152,8 +147,6 @@ MeshDeformSaveSetClass::Replace_Deform_Data
 		key_frame->deform_list.Delete_All ();
 		key_frame->deform_list = list;
 	}
-
-	return ;
 }
 
 

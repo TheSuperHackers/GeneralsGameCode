@@ -2663,8 +2663,6 @@ void ParticleBufferClass::Get_Color_Key_Frames (ParticlePropertyStruct<Vector3> 
 			colors.Values[index - 1] = start_color + (delta * time_delta);
 		}
 	}
-
-	return ;
 }
 
 void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> &opacities) const
@@ -2719,8 +2717,6 @@ void ParticleBufferClass::Get_Opacity_Key_Frames (ParticlePropertyStruct<float> 
 			opacities.Values[index - 1] = start_alpha + (delta * time_delta);
 		}
 	}
-
-	return ;
 }
 
 
@@ -2776,8 +2772,6 @@ void ParticleBufferClass::Get_Size_Key_Frames (ParticlePropertyStruct<float> &si
 			sizes.Values[index - 1]	= start_size + (delta * time_delta);
 		}
 	}
-
-	return ;
 }
 
 
@@ -2838,8 +2832,6 @@ void ParticleBufferClass::Get_Rotation_Key_Frames (ParticlePropertyStruct<float>
 			rotations.Values[index - 1]	= (start_rotation + (delta * time_delta)) * 1000.0f;
 		}
 	}
-
-	return ;
 }
 
 
@@ -2895,8 +2887,6 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 			frames.Values[index - 1]	= start_frame + (delta * time_delta);
 		}
 	}
-
-	return ;
 }
 
 void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const
@@ -2951,8 +2941,6 @@ void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float
 			blurtimes.Values[index - 1]	= start_blurtime + (delta * time_delta);
 		}
 	}
-
-	return ;
 }
 
 void ParticleBufferClass::Set_LOD_Max_Screen_Size(int lod_level,float max_screen_size)

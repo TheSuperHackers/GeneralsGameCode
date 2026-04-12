@@ -126,8 +126,6 @@ WideStringClass::Get_String (int length, bool is_temp)
 			Set_Buffer_And_Allocated_Length (Allocate_Buffer (length), length);
 		}
 	}
-
-	return ;
 }
 
 
@@ -154,8 +152,6 @@ WideStringClass::Resize (int new_len)
 		//
 		Set_Buffer_And_Allocated_Length (new_buffer, new_len);
 	}
-
-	return ;
 }
 
 
@@ -181,7 +177,6 @@ WideStringClass::Uninitialised_Grow (int new_len)
 	// Whenever this function is called, clear the cached length
 	//
 	Store_Length (0);
-	return ;
 }
 
 
@@ -232,8 +227,6 @@ WideStringClass::Free_String ()
 		//
 		m_Buffer = m_EmptyString;
 	}
-
-	return ;
 }
 
 
@@ -311,7 +304,6 @@ WideStringClass::Format (const WCHAR *format, ...)
 void
 WideStringClass::Release_Resources ()
 {
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////

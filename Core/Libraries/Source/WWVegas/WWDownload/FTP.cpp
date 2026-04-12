@@ -1813,7 +1813,6 @@ void Cftp::GetDownloadFilename(const char *localname, char *downloadname, size_t
 	name.replace(" ","_");
 	sprintf(downloadname,"download\\%s_%d.tmp",name.get(),m_iFileSize);
 	*/
-	return;
 }
 
 

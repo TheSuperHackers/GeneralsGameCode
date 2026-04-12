@@ -1068,8 +1068,6 @@ void HTreeClass::Get_Bone_Control(int boneindex, Matrix3D & relative_tm) const
 	} else {
 		relative_tm.Make_Identity ();
 	}
-
-	return ;
 }
 
 HTreeClass * HTreeClass::Alter_Avatar_HTree( const HTreeClass *tree, Vector3 &scale)

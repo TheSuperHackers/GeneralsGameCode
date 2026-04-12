@@ -141,7 +141,6 @@ ViewerSceneClass::Visibility_Check (CameraClass *camera)
    Visibility_Checked = true;
 
 	//SimpleSceneClass::Visibility_Check (camera);
-	return ;
 }
 
 void

@@ -46,7 +46,7 @@ HandScrollTool::HandScrollTool(void) :
 /// Shows the terrain materials options panel.
 void HandScrollTool::activate()
 {
-	return; // Hand scroll tool intentionally doesn't change tool panel.
+	// Hand scroll tool intentionally doesn't change tool panel.
 }
 
 /// Destructor

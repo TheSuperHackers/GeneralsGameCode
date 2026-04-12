@@ -70,7 +70,6 @@ EmitterPropertySheetClass::EmitterPropertySheetClass
 {
 	m_pEmitterList = emitter_list;
 	Initialize ();
-	return ;
 }
 
 
@@ -89,7 +88,6 @@ EmitterPropertySheetClass::EmitterPropertySheetClass
 {
 	m_pEmitterList = emitter_list;
 	Initialize ();
-	return ;
 }
 
 
@@ -100,7 +98,6 @@ EmitterPropertySheetClass::EmitterPropertySheetClass
 EmitterPropertySheetClass::~EmitterPropertySheetClass (void)
 {
 	SAFE_DELETE (m_pEmitterList);
-	return ;
 }
 
 
@@ -231,8 +228,6 @@ EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 		m_pEmitterList->Free_List ();
 		pdoc->Build_Emitter_List (m_pEmitterList, m_pEmitterList->Get_Name ());
 	}
-
-	return ;
 }
 
 
@@ -275,7 +270,6 @@ EmitterPropertySheetClass::Update_Emitter (void)
 	m_ColorPage.Set_Emitter (m_pEmitterList);
 	m_UserPage.Set_Emitter (m_pEmitterList);
 	m_SizePage.Set_Emitter (m_pEmitterList);*/
-	return ;
 }
 
 
@@ -328,8 +322,6 @@ EmitterPropertySheetClass::Initialize (void)
 	AddPage (&m_LineGroupPage);
 
 	m_GeneralPage.Set_Parent(this);
-
-	return ;
 }
 
 
@@ -509,7 +501,6 @@ EmitterPropertySheetClass::Create_New_Emitter (void)
 	SAFE_DELETE_ARRAY (opacity.KeyTimes);
 	SAFE_DELETE_ARRAY (size.Values);
 	SAFE_DELETE_ARRAY (size.KeyTimes);*/
-	return ;
 }
 
 

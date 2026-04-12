@@ -83,7 +83,6 @@ LogicalListenerClass::LogicalListenerClass ()
 		m_Position (0, 0, 0),
 		m_Timestamp (0)
 {
-	return ;
 }
 
 
@@ -94,7 +93,6 @@ LogicalListenerClass::LogicalListenerClass ()
 ////////////////////////////////////////////////////////////////////////////////////////////////
 LogicalListenerClass::~LogicalListenerClass ()
 {
-	return ;
 }
 
 
@@ -115,8 +113,6 @@ LogicalListenerClass::Add_To_Scene (bool /*start_playing*/)
 		m_Scene = scene;
 		scene->Add_Logical_Listener (this);
 	}
-
-	return ;
 }
 
 
@@ -137,8 +133,6 @@ LogicalListenerClass::Remove_From_Scene ()
 		m_Scene = nullptr;
 		m_PhysWrapper = nullptr;
 	}
-
-	return ;
 }
 
 

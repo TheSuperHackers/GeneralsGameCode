@@ -122,8 +122,6 @@ EmitterFramePropPageClass::Initialize (void)
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -351,8 +349,6 @@ EmitterFramePropPageClass::Update_Frames (void)
 			m_Frames.Values[index - 1] = Denormalize_Frame(m_FrameBar->Get_Graph_Percent (index) );
 		}
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -415,6 +411,4 @@ EmitterFramePropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Frame_Keyframes (m_Frames);
 		m_Lifetime = lifetime;
 	}
-
-	return ;
 }

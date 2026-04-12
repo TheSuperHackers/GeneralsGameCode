@@ -2069,8 +2069,6 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 			}
 		}
 	}
-
-	return;
 }
 
 static unsigned statistics_requested=0;

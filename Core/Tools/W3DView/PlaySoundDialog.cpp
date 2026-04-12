@@ -45,7 +45,6 @@ PlaySoundDialogClass::PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent /*=nu
 	//{{AFX_DATA_INIT(PlaySoundDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -61,7 +60,6 @@ PlaySoundDialogClass::DoDataExchange (CDataExchange *pDX)
 	//{{AFX_DATA_MAP(PlaySoundDialogClass)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -86,8 +84,6 @@ PlaySoundDialogClass::OnPlaySoundEffect (void)
 		SoundObj->Stop ();
 		SoundObj->Play ();
 	}
-
-	return ;
 }
 
 
@@ -103,7 +99,6 @@ PlaySoundDialogClass::OnCancel (void)
 	REF_PTR_RELEASE (SoundObj);
 
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -151,7 +146,5 @@ PlaySoundDialogClass::OnStopSoundEffect (void)
 	if (SoundObj != nullptr) {
 		SoundObj->Stop ();
 	}
-
-	return ;
 }
 

@@ -315,8 +315,6 @@ void SphereRenderObjClass::Generate_Shared_Mesh_Arrays (const AlphaVectorStruct 
 
 		Sphere_Array_Valid = true;
 	}
-
-	return ;
 }
 
 
@@ -1078,8 +1076,6 @@ void SphereRenderObjClass::Update_On_Visibility()
 	} else if ((Is_Not_Hidden_At_All () == false) && Is_Animating ()) {
 		Stop_Animating ();
 	}
-
-	return ;
 }
 
 
@@ -1156,7 +1152,6 @@ PrototypeClass * SphereLoaderClass::Load_W3D(ChunkLoadClass & cload)
 SpherePrototypeClass::SpherePrototypeClass ()
 {
 	::memset (&Definition, 0, sizeof (Definition));
-	return ;
 }
 
 SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
@@ -1201,12 +1196,10 @@ SpherePrototypeClass::SpherePrototypeClass(SphereRenderObjClass *sphere)
 	AlphaChannel	= sphere->Peek_Alpha_Channel ();
 	ScaleChannel	= sphere->Peek_Scale_Channel ();
 	VectorChannel	= sphere->Peek_Vector_Channel ();
-	return ;
 }
 
 SpherePrototypeClass::~SpherePrototypeClass ()
 {
-	return ;
 }
 
 enum
@@ -1478,8 +1471,6 @@ void	SphereMeshClass::Set_Alpha_Vector (const AlphaVectorStruct &v, bool inverse
 			Set_DCG (is_additive, idx, 1.0F - temp);
 		}
 	}
-
-	return ;
 }
 
 

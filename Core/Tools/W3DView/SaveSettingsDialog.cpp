@@ -46,7 +46,6 @@ CSaveSettingsDialog::CSaveSettingsDialog (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CSaveSettingsDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -61,7 +60,6 @@ CSaveSettingsDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CSaveSettingsDialog)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -126,8 +124,6 @@ CSaveSettingsDialog::OnBrowseButton (void)
         // Put the path into the filename edit control
         SetDlgItemText (IDC_FILENAME_EDIT, saveFileDialog.GetPathName ());
     }
-
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -140,7 +136,6 @@ CSaveSettingsDialog::OnUpdateFilenameEdit (void)
     // Set the enabled state of the OK button
     // based on the values of the control
     FixOKEnableState ();
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -192,8 +187,6 @@ CSaveSettingsDialog::OnOK (void)
         // Allow the base class to process this message
         CDialog::OnOK ();
     }
-
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -247,7 +240,5 @@ CSaveSettingsDialog::FixOKEnableState (void)
         // Disable the OK button
         ::EnableWindow (::GetDlgItem (m_hWnd, IDOK), FALSE);
     }
-
-    return ;
 }
 

@@ -162,7 +162,6 @@ CAmbientLightDialog::OnHScroll
 
 	// Allow the base class to process this message
     CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -188,7 +187,6 @@ CAmbientLightDialog::OnCancel (void)
 
 	// Allow the base class to process this message
     CDialog::OnCancel();
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -242,7 +240,5 @@ CAmbientLightDialog::OnGrayscaleCheck (void)
             pCDoc->GetScene ()->Set_Ambient_Light (lightSettings);
         }
     }
-
-    return ;
 }
 

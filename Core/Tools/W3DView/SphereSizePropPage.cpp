@@ -61,7 +61,6 @@ SphereSizePropPageClass::SphereSizePropPageClass (SphereRenderObjClass *sphere)
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -72,7 +71,6 @@ SphereSizePropPageClass::SphereSizePropPageClass (SphereRenderObjClass *sphere)
 /////////////////////////////////////////////////////////////
 SphereSizePropPageClass::~SphereSizePropPageClass (void)
 {
-	return ;
 }
 
 
@@ -90,7 +88,6 @@ SphereSizePropPageClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SIZE_Y_SPIN, m_SizeYSpin);
 	DDX_Control(pDX, IDC_SIZE_X_SPIN, m_SizeXSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -122,8 +119,6 @@ SphereSizePropPageClass::Initialize (void)
 			m_OrigScaleChannel.Add_Key (m_RenderObj->Get_Scale (), 0);
 		}
 	}
-
-	return ;
 }
 
 
@@ -275,7 +270,6 @@ void
 SphereSizePropPageClass::OnDestroy (void)
 {
 	CPropertyPage::OnDestroy();
-	return ;
 }
 
 
@@ -418,7 +412,6 @@ SphereSizePropPageClass::OnCancel (void)
 	m_RenderObj->Set_Scale_Channel (m_ScaleChannel);
 
 	CPropertyPage::OnCancel ();
-	return ;
 }
 
 
@@ -541,7 +534,6 @@ SphereSizePropPageClass::Update_Scale_Array (void)
 	//
 	m_RenderObj->Set_Scale_Channel (m_ScaleChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 

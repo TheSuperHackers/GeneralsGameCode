@@ -65,7 +65,6 @@ __inline void Delimit_Path (LPTSTR path)
 	if (::lstrlen (path) > 0 && path[::lstrlen (path) - 1] != '\\') {
 		::lstrcat (path, "\\");
 	}
-	return ;
 }
 
 __inline void Delimit_Path (CString &path)
@@ -73,7 +72,6 @@ __inline void Delimit_Path (CString &path)
 	if (path[::lstrlen (path) - 1] != '\\') {
 		path += CString ("\\");
 	}
-	return ;
 }
 
 
