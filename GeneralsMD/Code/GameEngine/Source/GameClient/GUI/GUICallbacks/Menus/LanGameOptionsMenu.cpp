@@ -858,6 +858,8 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		slot->setNATBehavior(FirewallHelperClass::FIREWALL_TYPE_SIMPLE);
 		game->setMap( pref.getPreferredMap() );
     game->setStartingCash( pref.getStartingCash() );
+    // TheSuperHackers @bugfix Re-populate starting cash combo box after applying user preferences.
+    PopulateStartingCashComboBox(comboBoxStartingCash, game);
     game->setSuperweaponRestriction( pref.getSuperweaponRestricted() ? 1 : 0 );
 		AsciiString lowerMap = pref.getPreferredMap();
 		lowerMap.toLower();

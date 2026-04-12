@@ -1377,6 +1377,8 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 		// This should probably be enforced at the gamespy level as well, to prevent exploits.
 		Int isUsingStats = TheGameSpyGame->getUseStats();
 		game->setStartingCash( isUsingStats? TheMultiplayerSettings->getDefaultStartingMoney() : customPref.getStartingCash() );
+		// TheSuperHackers @bugfix Re-populate starting cash combo box after applying user preferences.
+		PopulateStartingCashComboBox(comboBoxStartingCash, game);
 		game->setSuperweaponRestriction( isUsingStats? 0 : customPref.getSuperweaponRestricted() ? 1 : 0 );
 		if (isUsingStats)
 			game->setOldFactionsOnly( 0 );

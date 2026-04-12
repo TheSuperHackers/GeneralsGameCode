@@ -1317,6 +1317,8 @@ void SkirmishGameOptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 
   TheSkirmishGameInfo->setStartingCash( prefs.getStartingCash() );
+  // TheSuperHackers @bugfix Re-populate starting cash combo box after applying user preferences.
+  PopulateStartingCashComboBox(comboBoxStartingCash, TheSkirmishGameInfo);
   TheSkirmishGameInfo->setSuperweaponRestriction( prefs.getSuperweaponRestricted() ? 1 : 0 );
 
   TheSkirmishGameInfo->setMap(prefs.getPreferredMap());
