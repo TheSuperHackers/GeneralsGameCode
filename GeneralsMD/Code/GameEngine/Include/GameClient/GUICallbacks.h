@@ -130,6 +130,8 @@ extern void KeyboardOptionsMenuUpdate( WindowLayout *layout, void *userData );
 extern void KeyboardOptionsMenuShutdown( WindowLayout *layout, void *userData );
 extern WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
 extern WindowMsgHandledType KeyboardOptionsMenuInput( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );
+extern void OpenKeyboardOptionsMenu( void );   ///< open as overlay (no Shell push)
+extern void CloseKeyboardOptionsMenu( void );  ///< close overlay and return to Options
 
 // Lan Lobby Menu ----------------------------------------------------------------------------------
 extern void LanLobbyMenuInit( WindowLayout *layout, void *userData );
