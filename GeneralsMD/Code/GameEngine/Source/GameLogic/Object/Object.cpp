@@ -4212,6 +4212,7 @@ void Object::xfer( Xfer *xfer )
 	xfer->xferUser( m_disabledTillFrame, sizeof( UnsignedInt ) * DISABLED_COUNT );
 
 	// OK, now that we have xferred our status bits and disabled data, it's safe to set the team...
+	// TheSuperHackers @todo Refactor so that this code can be moved to loadPostProcess.
 	if( xfer->getXferMode() == XFER_LOAD )
 	{
 		Team *team = TheTeamFactory->findTeamByID( teamID );
