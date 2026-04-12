@@ -1618,7 +1618,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 template <typename Type>
 Type scanType(std::string_view token)
 {
-	DEBUG_ASSERTCRASH(!token.empty(), ("token is not expected empty"));
+	DEBUG_ASSERTCRASH(!token.empty(), ("token is not expected to be empty"));
 
 	// Unlike sscanf, std::from_chars cannot parse "+"
 	if (token[0] == '+')
