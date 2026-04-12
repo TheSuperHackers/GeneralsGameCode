@@ -1620,13 +1620,14 @@ Type scanType(std::string_view token)
 {
 	DEBUG_ASSERTCRASH(!token.empty(), ("token is not expected to be empty"));
 
-	// Unlike sscanf, std::from_chars cannot parse "+"
+	// Unlike sscanf, std::from_chars cannot parse "+".
+	// Consume the plus symbol to accommodate custom ini files that have numbers prefixed with a plus.
 	if (token[0] == '+')
 	{
 		token.remove_prefix(1);
 	}
 
-	// Unlike sscanf, std::from_chars cannot parse "-" as unsigned integer
+	// Unlike sscanf, std::from_chars cannot parse "-" as unsigned integer.
 	std::conditional_t<std::is_integral_v<Type>, Int64, Type> result{};
 	const auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), result);
 
