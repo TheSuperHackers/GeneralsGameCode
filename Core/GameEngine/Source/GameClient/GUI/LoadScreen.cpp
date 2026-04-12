@@ -1105,10 +1105,6 @@ void ChallengeLoadScreen::init( GameInfo *game )
 			}
 			Sleep(1);
 		}
-		if (!m_videoStream->isFrameReady())
-		{
-			return;
-		}
 		m_videoStream->frameDecompress();
 		m_videoStream->frameRender(m_videoBuffer);
 		if(m_videoBuffer)

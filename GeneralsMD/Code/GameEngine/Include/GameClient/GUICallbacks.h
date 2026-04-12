@@ -373,6 +373,7 @@ extern WindowMsgHandledType EstablishConnectionsControlInput( GameWindow *window
 
 // The in game quit menu --------------------------------------------------------------------------
 extern void destroyQuitMenu();
+extern Bool canOpenQuitMenu();
 extern void ToggleQuitMenu();
 extern void HideQuitMenu();
 extern WindowMsgHandledType QuitMenuSystem( GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2 );

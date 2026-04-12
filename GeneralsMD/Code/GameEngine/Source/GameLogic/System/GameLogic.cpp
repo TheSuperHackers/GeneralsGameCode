@@ -4189,11 +4189,6 @@ void GameLogic::exitGame()
 
 // ------------------------------------------------------------------------------------------------
 
-Bool GameLogic::canOpenQuitMenu()
-{
-	return (TheGameEngine->isActive() && (!TheInGameUI || !TheInGameUI->isQuitMenuVisible()) && !isLoadingMap() && !isLoadingSave() && !isIntroMoviePlaying() && (TheScriptEngine == nullptr || !TheScriptEngine->isGameEnding()));
-}
-
 void GameLogic::quit(Bool toDesktop, Bool force)
 {
 	const Bool isNotLoading = (!isLoadingMap() && !isLoadingSave());

@@ -251,12 +251,17 @@ void HideQuitMenu()
 
 }
 
+Bool canOpenQuitMenu()
+{
+	return (TheGameEngine->isActive() && (!TheInGameUI || !TheInGameUI->isQuitMenuVisible()) && !TheGameLogic->isLoadingMap() && !TheGameLogic->isLoadingSave() && !TheGameLogic->isIntroMoviePlaying() && (TheScriptEngine == nullptr || !TheScriptEngine->isGameEnding()));
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Toggle visibility of the quit menu */
 //-------------------------------------------------------------------------------------------------
 void ToggleQuitMenu()
 {
-	if (!isVisible && !TheGameLogic->canOpenQuitMenu())
+	if (!isVisible && !canOpenQuitMenu())
 		return;
 
 	// BGC- If we are currently in the disconnect screen, don't let the quit menu come up.
