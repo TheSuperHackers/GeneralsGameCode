@@ -733,7 +733,7 @@ private:
 	Bool m_hiddenByStealth;			///< drawable is hidden due to stealth
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
-	Bool m_useExtrapolation;            ///< True if currently gliding
+	Bool m_useExtrapolation;				///< True if currently gliding
   Bool m_ambientSoundEnabled;
   Bool m_ambientSoundEnabledFromScript;
 

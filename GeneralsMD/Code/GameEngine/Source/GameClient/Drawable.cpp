@@ -5669,7 +5669,7 @@ void Drawable::applySubFrameExtrapolation(ProjectileUpdateInterface* pui)
 	if (v && alpha > 0.0f && m_object)
 	{
 		m_visualExtrapolationMtx = *m_object->getTransformMatrix();
-		m_visualExtrapolationMtx.Adjust_Translation(*(Vector3*)v * (alpha > 1.0f ? 1.0f : alpha));
+		m_visualExtrapolationMtx.Adjust_Translation(Vector3(v->x, v->y, v->z) * (alpha > 1.0f ? 1.0f : alpha));
 		m_useExtrapolation = TRUE;
 	}
 	else
