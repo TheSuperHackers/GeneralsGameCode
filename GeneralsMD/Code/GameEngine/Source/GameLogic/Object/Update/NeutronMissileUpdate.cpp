@@ -256,7 +256,6 @@ void NeutronMissileUpdate::doLaunch()
 
 	// fall
 	Coord3D pos = *getObject()->getPosition();
-	Coord3D oldPos = pos;
 
 	pos.x += m_vel.x;
 	pos.y += m_vel.y;
@@ -339,7 +338,6 @@ void NeutronMissileUpdate::doAttack()
 {
 	Matrix3D mx;
 	Real speed = getNeutronMissileUpdateModuleData()->m_relativeSpeed;
-	Coord3D oldPos = *getObject()->getPosition();
 
 	if (getNeutronMissileUpdateModuleData()->m_targetFromDirectlyAbove && m_reachedIntermediatePos)
 		speed *= STRAIGHT_DOWN_SLOW_FACTOR;
