@@ -653,7 +653,7 @@ protected:
 private:
 
 	const Locomotor* getLocomotor() const;
-	void applySubFrameExtrapolation(ProjectileUpdateInterface* pui);
+	void applySubFrameExtrapolation(const Coord3D* velocity);
 
 	// note, these are lazily allocated!
 	TintEnvelope*		m_selectionFlashEnvelope;	///< used for selection flash, works WITH m_colorTintEnvelope
