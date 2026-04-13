@@ -505,7 +505,7 @@ void W3DView::updateCameraAreaConstraints()
 /*
 Note the following restrictions on camera constraints!
 
--- they assume that all maps are height 'm_groundLevel' at the edges.
+-- they assume that all maps are raised to the common ground level at the edges.
 		(since you need to add some "buffer" around the edges of your map
 		anyway, this shouldn't be an issue.)
 
@@ -1865,9 +1865,7 @@ void W3DView::draw()
 	if( TheGlobalData->m_debugCamera )
 	{
 		UnsignedInt c = 0xaaffffff;
-		Coord3D worldPos;
-		worldPos.x = getPosition().x;
-		worldPos.y = getPosition().y;
+		Coord3D worldPos = getPosition();
 		worldPos.z = TheTerrainLogic->getGroundHeight(worldPos.x, worldPos.y);
 
 		Coord3D p1, p2;
@@ -3305,9 +3303,7 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 		m_freezeTimeForCameraMovement = false;
 		View::setAngle(m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints]);
 
-		Coord3D pos;
-		pos.x = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints].x;
-		pos.y = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints].y;
+		Coord3D pos = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints];
 		pos.z = m_mcwpInfo.groundHeight[m_mcwpInfo.numWaypoints];
 		setPosition(pos);
 		// Note - assuming that the scripter knows what he is doing, we adjust the constraints so that
