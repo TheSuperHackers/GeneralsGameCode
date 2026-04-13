@@ -43,8 +43,8 @@ set(WW3D2_SRC
     distlod.cpp
     distlod.h
     dllist.h
-    #dx8caps.cpp
-    #dx8caps.h
+    dx8caps.cpp
+    dx8caps.h
     #dx8fvf.cpp
     #dx8fvf.h
     #dx8indexbuffer.cpp
@@ -62,8 +62,8 @@ set(WW3D2_SRC
     #dx8vertexbuffer.h
     dx8webbrowser.cpp
     dx8webbrowser.h
-    #dx8wrapper.cpp
-    #dx8wrapper.h
+    dx8wrapper.cpp
+    dx8wrapper.h
     dynamesh.cpp
     dynamesh.h
     font3d.cpp

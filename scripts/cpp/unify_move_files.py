@@ -126,6 +126,36 @@ def unify_move_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     move_file(fromGame, fromFile, toGame, toFile)
 
 
+def unify_file_lib(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
+    assert(toGame == Game.CORE)
+
+    fromOppositeGame = get_opposite_game(fromGame)
+    fromOppositeGamePath = get_game_path(fromOppositeGame)
+    fromGamePath = get_game_path(fromGame)
+    toGamePath = get_game_path(toGame)
+
+    fromFirstFolderIndex = fromFile.rfind("/")
+    toFirstFolderIndex = toFile.rfind("/")
+    assert(fromFirstFolderIndex > 0)
+    assert(toFirstFolderIndex > 0)
+
+    fromFirstFolderName = fromFile[:fromFirstFolderIndex]
+    toFirstFolderName = toFile[:toFirstFolderIndex]
+    fromFileInCmake = fromFile[fromFirstFolderIndex+1:]
+    toFileInCmake = toFile[toFirstFolderIndex+1:]
+
+    fromOppositeCmakeFile = os.path.join(fromOppositeGamePath, fromFirstFolderName, "CMakeLists.txt")
+    fromCmakeFile = os.path.join(fromGamePath, fromFirstFolderName, "CMakeLists.txt")
+    toCmakeFile = os.path.join(toGamePath, toFirstFolderName, "CMakeLists.txt")
+
+    modify_cmakelists(fromOppositeCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(fromCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(toCmakeFile, toFileInCmake, CmakeModifyType.REMOVE_COMMENT)
+
+    delete_file(fromOppositeGame, fromFile)
+    move_file(fromGame, fromFile, toGame, toFile)
+
+
 def unify_move_file_lib(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     assert(toGame == Game.CORE)
 
@@ -438,6 +468,10 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/AIPathfind.h", Game.CORE, "GameEngine/Include/GameLogic/AIPathfind.h")
 
     #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/shdlib.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/shdlib.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp")
 
     return
 
