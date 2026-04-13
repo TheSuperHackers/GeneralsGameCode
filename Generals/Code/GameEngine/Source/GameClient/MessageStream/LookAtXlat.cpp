@@ -136,6 +136,7 @@ LookAtTranslator::LookAtTranslator() :
 	m_isScrolling(false),
 	m_isRotating(false),
 	m_isPitching(false),
+	m_isPitchingToDefault(false),
 	m_isChangingFOV(false),
 	m_middleButtonDownTimeMsec(0),
 	m_lastPlaneID(INVALID_DRAWABLE_ID),
@@ -389,6 +390,15 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			}
 
 #if defined(RTS_DEBUG)
+			if (m_isPitchingToDefault)
+			{
+				constexpr const Real Scale = 0.01f;
+				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
+				TheTacticalView->userSetDefaultPitch( TheTacticalView->getDefaultPitch() - angle );
+				TheTacticalView->userSetPitchToDefault();
+				m_anchor = msg->getArgument( 0 )->pixel;
+			}
+
 			// adjust the field of view
 			if (m_isChangingFOV)
 			{
@@ -567,6 +577,29 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 		// ------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
+		case GameMessage::MSG_META_DEMO_BEGIN_ADJUST_DEFAULTPITCH:
+		{
+			DEBUG_ASSERTCRASH(!m_isPitchingToDefault, ("hmm, mismatched m_isPitchingToDefault"));
+			m_isPitchingToDefault = true;
+			m_anchor = m_currentPos;
+			disp = DESTROY_MESSAGE;
+			break;
+		}
+#endif // #if defined(RTS_DEBUG)
+
+		// ------------------------------------------------------------------------
+#if defined(RTS_DEBUG)
+		case GameMessage::MSG_META_DEMO_END_ADJUST_DEFAULTPITCH:
+		{
+			DEBUG_ASSERTCRASH(m_isPitchingToDefault, ("hmm, mismatched m_isPitchingToDefault"));
+			m_isPitchingToDefault = false;
+			disp = DESTROY_MESSAGE;
+			break;
+		}
+#endif // #if defined(RTS_DEBUG)
+
+		// ------------------------------------------------------------------------
+#if defined(RTS_DEBUG)
 		case GameMessage::MSG_META_DEMO_DESHROUD:
 		{
 			ThePartitionManager->revealMapForPlayerPermanently( ThePlayerList->getLocalPlayer()->getPlayerIndex() );
@@ -722,5 +755,6 @@ void LookAtTranslator::resetModes()
 	m_isScrolling = FALSE;
 	m_isRotating = FALSE;
 	m_isPitching = FALSE;
+	m_isPitchingToDefault = FALSE;
 	m_isChangingFOV = FALSE;
 }

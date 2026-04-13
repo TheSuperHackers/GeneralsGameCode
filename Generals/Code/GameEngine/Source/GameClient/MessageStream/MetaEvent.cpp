@@ -229,6 +229,8 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_PLAY_OBJECTIVE_MOVIE6",								GameMessage::MSG_META_DEMO_PLAY_OBJECTIVE_MOVIE6 },
 	{ "DEMO_BEGIN_ADJUST_PITCH",									GameMessage::MSG_META_DEMO_BEGIN_ADJUST_PITCH },
 	{ "DEMO_END_ADJUST_PITCH",										GameMessage::MSG_META_DEMO_END_ADJUST_PITCH },
+	{ "DEMO_BEGIN_ADJUST_DEFAULTPITCH",						GameMessage::MSG_META_DEMO_BEGIN_ADJUST_DEFAULTPITCH },
+	{ "DEMO_END_ADJUST_DEFAULTPITCH",							GameMessage::MSG_META_DEMO_END_ADJUST_DEFAULTPITCH },
 	{ "DEMO_BEGIN_ADJUST_FOV",										GameMessage::MSG_META_DEMO_BEGIN_ADJUST_FOV },
 	{ "DEMO_END_ADJUST_FOV",											GameMessage::MSG_META_DEMO_END_ADJUST_FOV },
 	{ "DEMO_LOCK_CAMERA_TO_PLANES",								GameMessage::MSG_META_DEMO_LOCK_CAMERA_TO_PLANES },
@@ -834,6 +836,28 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_key = MK_B;
 			map->m_transition = DOWN;
 			map->m_modState = ALT;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_BEGIN_ADJUST_DEFAULTPITCH);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_COMMA;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_END_ADJUST_DEFAULTPITCH);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_COMMA;
+			map->m_transition = UP;
+			map->m_modState = CTRL;
 			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
