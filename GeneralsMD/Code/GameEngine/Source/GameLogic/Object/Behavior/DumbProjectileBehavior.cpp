@@ -121,6 +121,7 @@ DumbProjectileBehavior::DumbProjectileBehavior( Thing *thing, const ModuleData* 
 	m_extraBonusFlags = 0;
 
   m_hasDetonated = FALSE;
+  m_logicStepVelocity.zero();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -579,6 +580,8 @@ void DumbProjectileBehavior::detonate()
 UpdateSleepTime DumbProjectileBehavior::update()
 {
 	const DumbProjectileBehaviorModuleData* d = getDumbProjectileBehaviorModuleData();
+	m_logicStepVelocity.zero();
+	Coord3D oldPos = *getObject()->getPosition();
 
 	if (m_lifespanFrame != 0 && TheGameLogic->getFrame() >= m_lifespanFrame)
 	{
@@ -713,6 +716,16 @@ UpdateSleepTime DumbProjectileBehavior::update()
 	}
 
 	++m_currentFlightPathStep;
+
+	if (m_currentFlightPathStep < (Int)m_flightPath.size())
+	{
+		m_logicStepVelocity = m_flightPath[m_currentFlightPathStep];
+		m_logicStepVelocity.sub( &flightStep ); // flightStep is currentPos
+	}
+	else
+	{
+		m_logicStepVelocity.zero();
+	}
 
 	return UPDATE_SLEEP_NONE;//This no longer flys with physics, so it needs to not sleep
 }

@@ -94,6 +94,7 @@ public:
 	virtual ObjectID projectileGetLauncherID() const override { return m_launcherID; }
 	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ) override {}
 	virtual void projectileNowJammed() override {}
+	virtual const Coord3D* getProjectileLogicVelocity() const override { return &m_logicStepVelocity; }
 
 protected:
 
@@ -109,6 +110,7 @@ private:
 	VecCoord3D						m_flightPath;							///< The frame by frame flight path in a Bezier curve
 	Coord3D								m_flightPathStart;				///< where flight path started (in case we must regen it)
 	Coord3D								m_flightPathEnd;					///< where flight path ends (in case we must regen it)
+	Coord3D								m_logicStepVelocity;			///< Logic frame velocity vector
 	Real									m_flightPathSpeed;				///< flight path speed (in case we must regen it)
 	Int										m_flightPathSegments;			///< number of segments in the flightpath (in case we must regen it)
 	Int										m_currentFlightPathStep;	///< Our current index in the flight path vector.  Quicker than popping off.

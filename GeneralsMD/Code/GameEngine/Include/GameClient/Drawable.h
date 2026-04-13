@@ -48,6 +48,7 @@ class DrawModule;
 class ClientUpdateModule;
 class View;
 class Locomotor;
+class ProjectileUpdateInterface;
 class Anim2D;
 class Shadow;
 class ModuleInfo;
@@ -652,6 +653,7 @@ protected:
 private:
 
 	const Locomotor* getLocomotor() const;
+	void applySubFrameExtrapolation(ProjectileUpdateInterface* pui);
 
 	// note, these are lazily allocated!
 	TintEnvelope*		m_selectionFlashEnvelope;	///< used for selection flash, works WITH m_colorTintEnvelope
@@ -711,6 +713,7 @@ private:
 
 	Matrix3D m_instance;				///< The instance matrix that holds the initial/default position & orientation
 	Real m_instanceScale;				///< the uniform scale factor applied to the instance matrix before it is sent to W3D.
+	Matrix3D m_visualExtrapolationMtx;  ///< Decoupled visual glide matrix
 
 	DrawableInfo				m_drawableInfo;		///< structure pointed to by W3D render objects so they know which drawable they belong to.
 
@@ -730,6 +733,7 @@ private:
 	Bool m_hiddenByStealth;			///< drawable is hidden due to stealth
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
+	Bool m_useExtrapolation;            ///< True if currently gliding
   Bool m_ambientSoundEnabled;
   Bool m_ambientSoundEnabledFromScript;
 
