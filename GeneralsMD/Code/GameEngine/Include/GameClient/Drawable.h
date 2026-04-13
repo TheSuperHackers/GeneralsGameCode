@@ -734,10 +734,15 @@ private:
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
 	Bool m_useExtrapolation;				///< True if currently gliding
+	const Coord3D* m_logicVelocityPtr;		///< Cached pointer to logic velocity for smoothing
   Bool m_ambientSoundEnabled;
   Bool m_ambientSoundEnabledFromScript;
 
   Bool m_receivesDynamicLights;
+
+public:
+	void setLogicVelocity(const Coord3D* velocity);
+	static void clearLogicVelocity(Object* obj);
 
 #ifdef DIRTY_CONDITION_FLAGS
 	Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info

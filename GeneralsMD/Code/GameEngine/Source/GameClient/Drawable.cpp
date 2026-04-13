@@ -412,6 +412,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatusBits statu
 	m_instanceScale = thingTemplate->getAssetScale();// * fuzzyScale;
 	m_useExtrapolation = FALSE;
 	m_visualExtrapolationMtx.Make_Identity();
+	m_logicVelocityPtr = nullptr;
 
 	// initially not bound to an object
 	m_object = nullptr;
@@ -1149,16 +1150,9 @@ void Drawable::updateDrawable()
 	UnsignedInt now = TheGameLogic->getFrame();
 	Object *obj = getObject();
 
-	if (obj)
+	if (m_logicVelocityPtr != nullptr)
 	{
-		for (BehaviorModule** m = obj->getBehaviorModules(); m && *m; ++m)
-		{
-			if (ProjectileUpdateInterface* pui = (*m)->getProjectileUpdateInterface())
-			{
-				applySubFrameExtrapolation(pui->getProjectileLogicVelocity());
-				break;
-			}
-		}
+		applySubFrameExtrapolation(m_logicVelocityPtr);
 	}
 
 	{
@@ -5659,7 +5653,16 @@ void TintEnvelope::loadPostProcess()
 {
 
 }
+void Drawable::setLogicVelocity(const Coord3D* velocity) 
+{ 
+	m_logicVelocityPtr = velocity; 
+}
 
+void Drawable::clearLogicVelocity(Object* obj)
+{
+	if (obj && obj->getDrawable())
+		obj->getDrawable()->setLogicVelocity(nullptr);
+}
 
 void Drawable::applySubFrameExtrapolation(const Coord3D* v)
 {
