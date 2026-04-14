@@ -58,8 +58,7 @@ View::View()
 	m_snapImmediate = FALSE;
 	m_terrainHeightAtPivot = 0.0f;
 	m_zoom = 0.0f;
-	m_pos.x = 0;
-	m_pos.y = 0;
+	m_pos.zero();
 	m_width = 0;
 	m_height = 0;
 	m_angle = 0.0f;
@@ -90,8 +89,7 @@ void View::init()
 	m_height = DEFAULT_VIEW_HEIGHT;
 	m_originX = DEFAULT_VIEW_ORIGIN_X;
 	m_originY = DEFAULT_VIEW_ORIGIN_Y;
-	m_pos.x = 0;
-	m_pos.y = 0;
+	m_pos.zero();
 	m_angle = 0.0f;
 	m_cameraLock = INVALID_ID;
 	m_cameraLockDrawable = nullptr;
