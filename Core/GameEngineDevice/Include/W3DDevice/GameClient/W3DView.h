@@ -57,7 +57,6 @@ typedef struct
 	Real		waySegLength[MAX_WAYPOINTS+2];	// Length of each segment;
 	Real		cameraAngle[MAX_WAYPOINTS+2];	// Camera Angle;
 	Int			timeMultiplier[MAX_WAYPOINTS+2];	// Time speedup factor.
-	Real		groundHeight[MAX_WAYPOINTS+1];	// Ground height.
 	Real		totalTimeMilliseconds;					// Num of ms to do this movement.
 	Real		elapsedTimeMilliseconds;				// Time since start.
 	Real		totalDistance;								// Total length of paths.

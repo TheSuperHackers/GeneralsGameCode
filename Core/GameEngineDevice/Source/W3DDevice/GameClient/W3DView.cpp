@@ -3068,7 +3068,7 @@ void W3DView::setupWaypointPath(Bool orient)
 		Real factor2 = curDistance / m_mcwpInfo.totalDistance;
 		Real factor1 = 1.0-factor2;
 		m_mcwpInfo.timeMultiplier[i] = m_timeMultiplier;
-		m_mcwpInfo.groundHeight[i] = m_pos.z*factor1 + newGround*factor2;
+		m_mcwpInfo.waypoints[i].z = m_pos.z*factor1 + newGround*factor2;
 		curDistance += m_mcwpInfo.waySegLength[i];
 		//DEBUG_LOG(("New Index %d, angle %.2f", i, m_mcwpInfo.cameraAngle[i]*180/PI));
 	}
@@ -3079,9 +3079,8 @@ void W3DView::setupWaypointPath(Bool orient)
 	Coord3D prev = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints-1];
 	m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints+1].x += cur.x-prev.x;
 	m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints+1].y += cur.y-prev.y;
+	m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints+1].z = newGround;
 	m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints+1] = m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints];
-	m_mcwpInfo.groundHeight[m_mcwpInfo.numWaypoints+1] = newGround;
-
 
 	cur = m_mcwpInfo.waypoints[2];
 	prev = m_mcwpInfo.waypoints[1];
@@ -3304,7 +3303,6 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 		View::setAngle(m_mcwpInfo.cameraAngle[m_mcwpInfo.numWaypoints]);
 
 		Coord3D pos = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints];
-		pos.z = m_mcwpInfo.groundHeight[m_mcwpInfo.numWaypoints];
 		setPosition(pos);
 		// Note - assuming that the scripter knows what he is doing, we adjust the constraints so that
 		// the scripted action can occur.
@@ -3407,8 +3405,8 @@ void W3DView::moveAlongWaypointPath(Real milliseconds)
 	result.y += factor*(end.y-start.y);
 	result.x += (1-factor)*factor*(mid.x-end.x + mid.x-start.x);
 	result.y += (1-factor)*factor*(mid.y-end.y + mid.y-start.y);
-	result.z = m_mcwpInfo.groundHeight[m_mcwpInfo.curSegment]*factor1 +
-			m_mcwpInfo.groundHeight[m_mcwpInfo.curSegment+1]*factor2;
+	result.z = m_mcwpInfo.waypoints[m_mcwpInfo.curSegment].z*factor1 +
+			m_mcwpInfo.waypoints[m_mcwpInfo.curSegment+1].z*factor2;
 /*
 	DEBUG_LOG(("Dx %.2f, dy %.2f, DeltaANgle = %.2f, %.2f DeltaGround %.2f", m_pos.x-result.x, m_pos.y-result.y, deltaAngle, result.z, result.z-m_pos.z));
 */
