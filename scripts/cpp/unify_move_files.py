@@ -467,11 +467,14 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp", Game.CORE, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/AIPathfind.h", Game.CORE, "GameEngine/Include/GameLogic/AIPathfind.h")
 
+    #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.h")
+    #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.cpp")
     #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/shdlib.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/shdlib.h")
-    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.h")
-    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp")
+    
 
     return
 
