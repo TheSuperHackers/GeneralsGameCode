@@ -56,6 +56,7 @@
 #include "Common/Xfer.h"
 #include "Common/GameLOD.h"
 
+#include "GameClient/Color.h"
 #include "GameClient/Water.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/PolygonTrigger.h"
@@ -164,6 +165,19 @@ static ShaderClass zFillAlphaShader(SC_ZFILL_BLEND3);
 static ShaderClass blendStagesShader(SC_DETAIL_BLEND);
 
 WaterRenderObjClass *TheWaterRenderObj=nullptr; ///<global water rendering object
+
+static Int getRiverVertexDiffuseWithShroud(W3DShroud *shroud, Real x, Real y, Real shadeR, Real shadeG, Real shadeB, Int diffuse)
+{
+	Int cellX = (Int)(x / shroud->getCellWidth());
+	Int cellY = (Int)(y / shroud->getCellHeight());
+	W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
+	Real shroudScale = (Real)level / 255.0f;
+	return GameMakeColor(
+		REAL_TO_INT(shadeR * shroudScale),
+		REAL_TO_INT(shadeG * shroudScale),
+		REAL_TO_INT(shadeB * shroudScale),
+		(diffuse >> 24) & 0xff);
+}
 
 void doSkyBoxSet(Bool startDraw)
 {
@@ -2814,9 +2828,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 		Real constA=3*m_riverVOrigin;
 
-		// TheSuperHackers @bugfix Apply shroud per-vertex to avoid double-darkening at river borders.
-		// The old separate multiplicative shroud pass darkened the entire framebuffer, including
-		// already-shrouded terrain showing through transparent river edges.
+		// TheSuperHackers @bugfix afc-afc0 14/04/2026 Apply shroud per-vertex to avoid double-darkening
+		// at river borders.
 		W3DShroud *shroud = TheTerrainRenderObject ? TheTerrainRenderObject->getShroud() : nullptr;
 
 		for (i=0; i<(pTrig->getNumPoints()/2); i++)
@@ -2841,11 +2854,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->z=innerPt.z;
 
 			if (shroud) {
-				Int cellX = REAL_TO_INT_FLOOR(x / shroud->getCellWidth());
-				Int cellY = REAL_TO_INT_FLOOR(y / shroud->getCellHeight());
-				W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
-				Real shroudScale = (Real)level / 255.0f;
-				vb->diffuse = REAL_TO_INT(shadeB * shroudScale) | (REAL_TO_INT(shadeG * shroudScale) << 8) | (REAL_TO_INT(shadeR * shroudScale) << 16) | (diffuse & 0xff000000);
+				vb->diffuse = getRiverVertexDiffuseWithShroud(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
 			} else {
 				vb->diffuse = diffuse;
 			}
@@ -2872,11 +2881,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->z=outerPt.z;
 
 			if (shroud) {
-				Int cellX = REAL_TO_INT_FLOOR(x / shroud->getCellWidth());
-				Int cellY = REAL_TO_INT_FLOOR(y / shroud->getCellHeight());
-				W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
-				Real shroudScale = (Real)level / 255.0f;
-				vb->diffuse = REAL_TO_INT(shadeB * shroudScale) | (REAL_TO_INT(shadeG * shroudScale) << 8) | (REAL_TO_INT(shadeR * shroudScale) << 16) | (diffuse & 0xff000000);
+				vb->diffuse = getRiverVertexDiffuseWithShroud(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
 			} else {
 				vb->diffuse = diffuse;
 			}
@@ -2931,8 +2936,6 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	if (TheWaterTransparency->m_additiveBlend)
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
 
-	// TheSuperHackers @bugfix Shroud is now applied per-vertex above, removing the old
-	// separate multiplicative shroud pass that caused double-darkening at river borders.
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, cull);
 
 
