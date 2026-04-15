@@ -437,6 +437,9 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 		((usage&USAGE_DYNAMIC) ? D3DUSAGE_DYNAMIC : 0)|
 		((usage&USAGE_NPATCHES) ? D3DUSAGE_NPATCHES : 0)|
 		((usage&USAGE_SOFTWAREPROCESSING) ? D3DUSAGE_SOFTWAREPROCESSING : 0);
+	if (!DX8Wrapper::Get_Current_Caps()->Support_TnL()) {
+		usage_flags|=D3DUSAGE_SOFTWAREPROCESSING;
+	}
 
 	// New Code
 	if (!DX8Wrapper::Get_Current_Caps()->Support_TnL()) {
