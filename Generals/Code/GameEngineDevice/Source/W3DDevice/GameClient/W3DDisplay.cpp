@@ -553,7 +553,7 @@ void W3DDisplay::onBeginBatch()
 
 void W3DDisplay::onEndBatch()
 {
-	SAFE_RELEASE(m_batchTexture);
+	REF_PTR_RELEASE(m_batchTexture);
 }
 
 void W3DDisplay::onFlush()
