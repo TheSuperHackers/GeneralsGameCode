@@ -16,6 +16,29 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : ww3d                                                         *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/dx8fvf.h                               $*
+ *                                                                                             *
+ *              Original Author:: Jani Penttinen                                               *
+ *                                                                                             *
+ *                      $Author:: Kenny Mitchell                                               *
+ *                                                                                             *
+ *                     $Modtime:: 06/26/02 5:06p                                             $*
+ *                                                                                             *
+ *                    $Revision:: 7                                                          $*
+ *                                                                                             *
+ * 06/26/02 KM VB Vertex format update for shaders                                       *
+ * 07/17/02 KM VB Vertex format update for displacement mapping                               *
+ * 08/01/02 KM VB Vertex format update for cube mapping                               *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #include "dx8fvf.h"
 #include "wwstring.h"
 #include <d3dx8core.h>

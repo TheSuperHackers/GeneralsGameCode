@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                      $Author:: Kenny Mitchell                                               *
  *                                                                                             *
- *                     $Modtime:: 7/09/01 8:15p                                               $*
+ *                     $Modtime:: 06/26/02 5:06p                                             $*
  *                                                                                             *
- *                    $Revision:: 25                                                          $*
+ *                    $Revision:: 26                                                          $*
  *                                                                                             *
+ * 06/26/02 KM VB Vertex format size update for shaders                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
