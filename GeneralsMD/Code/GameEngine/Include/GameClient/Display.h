@@ -113,9 +113,13 @@ public:
 	virtual	Bool isClippingEnabled() = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
+	// TheSuperHackers @info start batching 2D draw operations.
 	virtual void beginBatch();
+	// TheSuperHackers @info stop batching and flush pending 2D draw operations.
 	virtual void endBatch();
+	// TheSuperHackers @info flush pending 2D draw operations without ending the batch.
 	virtual void flush();
+	// TheSuperHackers @info returns true if currently batching 2D draw operations.
 	virtual Bool isBatching() const { return m_isBatching; }
 
 	virtual void step() {}; ///< Do one fixed time step

@@ -406,6 +406,7 @@ void Display::endBatch()
 		return;
 	}
 	m_isBatching = FALSE;
+	onFlush();
 	onEndBatch();
 }
 

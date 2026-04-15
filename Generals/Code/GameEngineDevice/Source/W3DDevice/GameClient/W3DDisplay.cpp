@@ -553,12 +553,7 @@ void W3DDisplay::onBeginBatch()
 
 void W3DDisplay::onEndBatch()
 {
-	onFlush();
-	if (m_batchTexture)
-	{
-		m_batchTexture->Release_Ref();
-		m_batchTexture = nullptr;
-	}
+	SAFE_RELEASE(m_batchTexture);
 }
 
 void W3DDisplay::onFlush()
@@ -2225,7 +2220,6 @@ void W3DDisplay::drawOpenRect( Int startX, Int startY, Int width, Int height,
 																				startX + width, startY + height ),
 														 lineWidth, lineColor );
 
-		// render it now!
 		if (!m_isBatching)
 		{
 			m_2DRender->Render();
@@ -2245,7 +2239,6 @@ void W3DDisplay::drawFillRect( Int startX, Int startY, Int width, Int height,
 																	 startX + width, startY + height ),
 												0, 0, color );
 
-	// render it now!
 	if (!m_isBatching)
 	{
 		m_2DRender->Render();
@@ -2403,7 +2396,6 @@ void W3DDisplay::drawRectClock(Int startX, Int startY, Int width, Int height, In
 		}
 	}
 
-	// render it now!
 	if (!m_isBatching)
 	{
 		m_2DRender->Render();
@@ -2583,7 +2575,6 @@ void W3DDisplay::drawRemainingRectClock(Int startX, Int startY, Int width, Int h
 		}
 	}
 
-	// render it now!
 	if (!m_isBatching)
 	{
 		m_2DRender->Render();
@@ -2605,10 +2596,10 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 
 	if (m_isClippedEnabled)
 	{
-		if (	endX <= m_clipRegion.lo.x ||
-				endY <= m_clipRegion.lo.y ||
-				startX >= m_clipRegion.hi.x ||
-				startY >= m_clipRegion.hi.y)
+		if (endX <= m_clipRegion.lo.x ||
+			endY <= m_clipRegion.lo.y ||
+			startX >= m_clipRegion.hi.x ||
+			startY >= m_clipRegion.hi.y)
 		{
 			return;	//nothing to render
 		}
