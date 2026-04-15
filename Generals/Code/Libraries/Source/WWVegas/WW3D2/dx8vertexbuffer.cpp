@@ -458,8 +458,10 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 
 	WWDEBUG_SAY(("Vertex buffer creation failed, trying to release assets..."));
 
-	// Vertex buffer creation failed.  Must be out of memory. Try releasing all our D3D assets and re-creating
-	// them.
+	// Vertex buffer creation failed, so try releasing least used textures and flushing the mesh cache.
+
+	// Free all textures that haven't been used in the last 5 seconds
+	TextureClass::Invalidate_Old_Unused_Textures(5000);
 
 	// Invalidate the mesh cache
 	WW3D::_Invalidate_Mesh_Cache();
