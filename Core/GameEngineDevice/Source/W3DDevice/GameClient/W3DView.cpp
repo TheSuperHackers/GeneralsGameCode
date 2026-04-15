@@ -400,8 +400,8 @@ void W3DView::buildCameraTransform( Matrix3D *transform, const Vector3 &sourcePo
 						// WST 10.22.2002. Update the Listener positions used by audio system
 						//--------------------------------------------------------------------
 						Vector3 position = transform->Get_Translation();
-						Coord3D coord = { position.X, position.Y, position.Z };
-						View::setPosition(coord);
+						Coord2D coord = { position.X, position.Y };
+						View::setPosition2D(coord);
 						break;
 					}
 				}
