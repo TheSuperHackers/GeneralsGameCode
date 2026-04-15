@@ -836,7 +836,7 @@ DynamicVBAccessClass::WriteLockClass::WriteLockClass(DynamicVBAccessClass* dynam
 	switch (DynamicVBAccess->Get_Type()) {
 	case BUFFER_TYPE_DYNAMIC_DX8:
 #ifdef VERTEX_BUFFER_LOG
-/*		{
+		{
 		WWASSERT(!dx8_lock);
 		dx8_lock++;
 		StringClass fvf_name;
@@ -847,7 +847,6 @@ DynamicVBAccessClass::WriteLockClass::WriteLockClass(DynamicVBAccessClass* dynam
 			DynamicVBAccess->VertexBuffer->FVF_Info().Get_FVF_Size(),
 			fvf_name));
 		}
-*/
 #endif
 		WWASSERT(_DynamicDX8VertexBuffer);
 //		WWASSERT(!_DynamicDX8VertexBuffer->Engine_Refs());
@@ -879,10 +878,9 @@ DynamicVBAccessClass::WriteLockClass::~WriteLockClass()
 	switch (DynamicVBAccess->Get_Type()) {
 	case BUFFER_TYPE_DYNAMIC_DX8:
 #ifdef VERTEX_BUFFER_LOG
-/*		dx8_lock--;
+		dx8_lock--;
 		WWASSERT(!dx8_lock);
 		WWDEBUG_SAY(("DynamicVertexBuffer->Unlock()"));
-*/
 #endif
 		DX8_Assert();
 		DX8_ErrorCode(static_cast<DX8VertexBufferClass*>(DynamicVBAccess->VertexBuffer)->Get_DX8_Vertex_Buffer()->Unlock());
