@@ -406,7 +406,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		{
 			m_lastMouseMoveTimeMsec = timeGetTime();
 
-			const Int spin = msg->getArgument( 1 )->integer;
+			const Real spin = msg->getArgument( 1 )->real;
 			const Real zoom = -spin * View::ZoomHeightPerSecond;
 			TheTacticalView->userZoom(zoom);
 

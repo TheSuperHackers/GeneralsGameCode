@@ -824,10 +824,8 @@ void Mouse::createStreamMessages()
 		{
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_MOUSE_WHEEL );
 			msg->appendPixelArgument( m_currMouse.pos );
-			// TheSuperHackers @bugfix Guarantee non-zero wheel delta to preserve scroll direction for touchpad input
-			Int wheelTicks = m_currMouse.wheelPos / MOUSE_WHEEL_DELTA;
-			wheelTicks = m_currMouse.wheelPos > 0 ? max( 1, wheelTicks ) : min( -1, wheelTicks );
-			msg->appendIntegerArgument( wheelTicks );
+			// TheSuperHackers @bugfix Use float wheel delta to preserve fractional values from touchpad input
+			msg->appendRealArgument( m_currMouse.wheelPos / (Real)MOUSE_WHEEL_DELTA );
 			msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 		}
 

@@ -131,7 +131,7 @@ public:
 		MSG_RAW_MOUSE_RIGHT_DOUBLE_CLICK,						///< (pixel, modifiers, time)
 		MSG_RAW_MOUSE_RIGHT_BUTTON_UP,							///< (pixel, modifiers, time)
 		MSG_RAW_MOUSE_RIGHT_DRAG,										///< drag of the mouse with a button held down
-		MSG_RAW_MOUSE_WHEEL,												///< (Int spin, + is away, - is toward user)
+		MSG_RAW_MOUSE_WHEEL,												///< (Real spin, + is away, - is toward user)
 		MSG_RAW_MOUSE_END,
 
 		MSG_RAW_KEY_DOWN,														///< (KeyDefType) the given key was pressed (uses Microsoft VK_ codes)
