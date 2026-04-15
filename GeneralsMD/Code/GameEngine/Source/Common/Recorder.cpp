@@ -71,9 +71,10 @@ static const UnsignedInt desyncOffset = frameCountOffset + sizeof(UnsignedInt);
 static const UnsignedInt quitEarlyOffset = desyncOffset + sizeof(Bool);
 static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
 
-static void writeAtHeaderOffset(File* file, Int offset, const void* data, Int dataSize)
+static void writeAtOffset(File* file, Int offset, const void* data, Int dataSize)
 {
 	UnsignedInt fileSize = file->size();
+	DEBUG_ASSERTCRASH((UnsignedInt)(offset + dataSize) <= fileSize, ("writeAtOffset would exceed file size!"));
 	if (file->seek(offset, File::seekMode::START) == offset)
 	{
 		file->write(data, dataSize);
@@ -108,7 +109,7 @@ void RecorderClass::logGameStart(AsciiString options)
 
 	time(&startTime);
 	replay_time_t tmp = (replay_time_t)startTime;
-	writeAtHeaderOffset(m_file, startTimeOffset, &tmp, sizeof(tmp));
+	writeAtOffset(m_file, startTimeOffset, &tmp, sizeof(tmp));
 
 #if defined(RTS_DEBUG)
 	if (TheNetwork && TheGlobalData->m_saveStats)
@@ -142,7 +143,7 @@ void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 	}
 	Bool flag = TRUE;
 	Int playerSlotDisconOffset = disconOffset + slot * sizeof(Bool);
-	writeAtHeaderOffset(m_file, playerSlotDisconOffset, &flag, sizeof(flag));
+	writeAtOffset(m_file, playerSlotDisconOffset, &flag, sizeof(flag));
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
@@ -166,7 +167,7 @@ void RecorderClass::logCRCMismatch()
 		return;
 
 	Bool flag = TRUE;
-	writeAtHeaderOffset(m_file, desyncOffset, &flag, sizeof(flag));
+	writeAtOffset(m_file, desyncOffset, &flag, sizeof(flag));
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
@@ -194,8 +195,8 @@ void RecorderClass::logGameEnd()
 	time(&t);
 	UnsignedInt frameCount = TheGameLogic->getFrame();
 	replay_time_t tmp = (replay_time_t)t;
-	writeAtHeaderOffset(m_file, endTimeOffset, &tmp, sizeof(tmp));
-	writeAtHeaderOffset(m_file, frameCountOffset, &frameCount, sizeof(frameCount));
+	writeAtOffset(m_file, endTimeOffset, &tmp, sizeof(tmp));
+	writeAtOffset(m_file, frameCountOffset, &frameCount, sizeof(frameCount));
 
 #if defined(RTS_DEBUG)
 	if (TheNetwork && TheGlobalData->m_saveStats)
