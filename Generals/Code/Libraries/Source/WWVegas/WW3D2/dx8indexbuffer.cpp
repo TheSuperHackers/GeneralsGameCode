@@ -43,6 +43,7 @@
 #include "dx8caps.h"
 #include "sphere.h"
 #include "thread.h"
+#include "wwmemlog.h"
 
 #define DEFAULT_IB_SIZE 5000
 
@@ -318,6 +319,7 @@ SortingIndexBufferClass::SortingIndexBufferClass(unsigned short index_count_)
 	:
 	IndexBufferClass(BUFFER_TYPE_SORTING,index_count_)
 {
+	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(index_count);
 
 	index_buffer=W3DNEWARRAY unsigned short[index_count];
@@ -438,6 +440,7 @@ DynamicIBAccessClass::WriteLockClass::~WriteLockClass()
 
 void DynamicIBAccessClass::Allocate_DX8_Dynamic_Buffer()
 {
+	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(!_DynamicDX8IndexBufferInUse);
 	_DynamicDX8IndexBufferInUse=true;
 
@@ -473,6 +476,7 @@ void DynamicIBAccessClass::Allocate_DX8_Dynamic_Buffer()
 
 void DynamicIBAccessClass::Allocate_Sorting_Dynamic_Buffer()
 {
+	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(!_DynamicSortingIndexArrayInUse);
 	_DynamicSortingIndexArrayInUse=true;
 

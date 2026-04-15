@@ -43,6 +43,7 @@
 #include "dx8fvf.h"
 #include "dx8caps.h"
 #include "thread.h"
+#include "wwmemlog.h"
 #include <d3dx8core.h>
 
 #define DEFAULT_VB_SIZE 5000
@@ -78,6 +79,7 @@ VertexBufferClass::VertexBufferClass(unsigned type_, unsigned FVF, unsigned shor
 	type(type_),
 	engine_refs(0)
 {
+	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(VertexCount);
 	WWASSERT(type==BUFFER_TYPE_DX8 || type==BUFFER_TYPE_SORTING);
 	WWASSERT(FVF != 0);
@@ -284,6 +286,7 @@ SortingVertexBufferClass::SortingVertexBufferClass(unsigned short VertexCount)
 	:
 	VertexBufferClass(BUFFER_TYPE_SORTING, dynamic_fvf_type, VertexCount)
 {
+	WWMEMLOG(MEM_RENDERER);
 	VertexBuffer=W3DNEWARRAY VertexFormatXYZNDUV2[VertexCount];
 }
 
@@ -759,6 +762,7 @@ void DynamicVBAccessClass::_Deinit()
 
 void DynamicVBAccessClass::Allocate_DX8_Dynamic_Buffer()
 {
+	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(!_DynamicDX8VertexBufferInUse);
 	_DynamicDX8VertexBufferInUse=true;
 
@@ -795,6 +799,7 @@ void DynamicVBAccessClass::Allocate_DX8_Dynamic_Buffer()
 
 void DynamicVBAccessClass::Allocate_Sorting_Dynamic_Buffer()
 {
+	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(!_DynamicSortingVertexArrayInUse);
 	_DynamicSortingVertexArrayInUse=true;
 
