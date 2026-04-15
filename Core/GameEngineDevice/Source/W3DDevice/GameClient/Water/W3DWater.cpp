@@ -166,16 +166,19 @@ static ShaderClass blendStagesShader(SC_DETAIL_BLEND);
 
 WaterRenderObjClass *TheWaterRenderObj=nullptr; ///<global water rendering object
 
-static Int getRiverVertexDiffuseWithShroud(W3DShroud *shroud, Real x, Real y, Real shadeR, Real shadeG, Real shadeB, Int diffuse)
+static Int getRiverVertexDiffuse(W3DShroud *shroud, Real x, Real y, Real shadeR, Real shadeG, Real shadeB, Int diffuse)
 {
+	if (!shroud)
+		return diffuse;
+
 	Int cellX = (Int)(x / shroud->getCellWidth());
 	Int cellY = (Int)(y / shroud->getCellHeight());
 	W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
 	Real shroudScale = (Real)level / 255.0f;
 	return GameMakeColor(
-		REAL_TO_INT(shadeR * shroudScale),
-		REAL_TO_INT(shadeG * shroudScale),
-		REAL_TO_INT(shadeB * shroudScale),
+		(Int)(shadeR * shroudScale),
+		(Int)(shadeG * shroudScale),
+		(Int)(shadeB * shroudScale),
 		(diffuse >> 24) & 0xff);
 }
 
@@ -2853,11 +2856,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 			vb->z=innerPt.z;
 
-			if (shroud) {
-				vb->diffuse = getRiverVertexDiffuseWithShroud(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
-			} else {
-				vb->diffuse = diffuse;
-			}
+			vb->diffuse = getRiverVertexDiffuse(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
 
 			Real wobbleConst=-m_riverVOrigin+vScale*(Real)i + WWMath::Fast_Sin(2*PI*(vScale*(Real)i) - constA)/22.0f;
  			//old slower version
@@ -2880,11 +2879,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->y=y;
 			vb->z=outerPt.z;
 
-			if (shroud) {
-				vb->diffuse = getRiverVertexDiffuseWithShroud(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
-			} else {
-				vb->diffuse = diffuse;
-			}
+			vb->diffuse = getRiverVertexDiffuse(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
  			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v1=wobbleConst;
