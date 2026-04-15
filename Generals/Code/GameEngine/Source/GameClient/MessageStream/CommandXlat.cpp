@@ -3929,8 +3929,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					mode = FM_VIEW_MB_PAN_ALPHA;
 				}
 				saturate = !saturate;
-				Coord3D curpos;
-				TheTacticalView->getPosition(&curpos);
+				Coord3D curpos = TheTacticalView->getPosition();
 				curpos.x += 200;
 				curpos.y += 200;
 				TheTacticalView->setViewFilterPos(&curpos);

@@ -4803,8 +4803,7 @@ void ScriptActions::doRadarRevertNormal()
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doScreenShake( UnsignedInt intensity )
 {
-	Coord3D pos;
-	TheTacticalView->getPosition( &pos );
+	Coord3D pos = TheTacticalView->getPosition();
 	TheTacticalView->shake( &pos, (View::CameraShakeType)intensity );
 }
 

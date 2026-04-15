@@ -1176,8 +1176,7 @@ void W3DDisplay::gatherDebugStats()
 		m_displayStrings[TerrainStats]->setText( unibuffer );
 
 		// misc debug info
-		Coord3D camPos;
-		TheTacticalView->getPosition(&camPos);
+		Coord3D camPos = TheTacticalView->getPosition();
 		Real zoom = TheTacticalView->getZoom();
 		Real pitch = TheTacticalView->getPitch();
 		Real FXPitch = TheTacticalView->getFXPitch();
