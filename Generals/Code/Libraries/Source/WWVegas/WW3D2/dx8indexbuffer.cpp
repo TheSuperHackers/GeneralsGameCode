@@ -297,12 +297,42 @@ DX8IndexBufferClass::DX8IndexBufferClass(unsigned short index_count_,UsageType u
 		usage_flags|=D3DUSAGE_SOFTWAREPROCESSING;
 	}
 
-	DX8CALL(CreateIndexBuffer(
+	HRESULT ret;
+	DX8CALL_HRES(CreateIndexBuffer(
 		sizeof(WORD)*index_count,
 		usage_flags,
 		D3DFMT_INDEX16,
 		(usage&USAGE_DYNAMIC) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
-		&index_buffer));
+		&index_buffer), ret);
+
+	if (SUCCEEDED(ret)) {
+		return;
+	}
+
+	WWDEBUG_SAY(("Index buffer creation failed, trying to release assets..."));
+
+	// Vertex buffer creation failed, so try releasing least used textures and flushing the mesh cache.
+
+	// Free all textures that haven't been used in the last 5 seconds
+	TextureClass::Invalidate_Old_Unused_Textures(5000);
+
+	// Invalidate the mesh cache
+	WW3D::_Invalidate_Mesh_Cache();
+
+	// Try again...
+	ret=DX8Wrapper::_Get_D3D_Device8()->CreateIndexBuffer(
+		sizeof(WORD)*index_count,
+		usage_flags,
+		D3DFMT_INDEX16,
+		(usage&USAGE_DYNAMIC) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED,
+		&index_buffer);
+
+	if (SUCCEEDED(ret)) {
+		WWDEBUG_SAY(("...Index buffer creation successful"));
+	}
+
+	// If it still fails it is fatal
+	DX8_ErrorCode(ret);
 }
 
 // ----------------------------------------------------------------------------
