@@ -45,7 +45,7 @@ IMPLEMENT_DYNCREATE(CAnimationPropPage, CPropertyPage)
 //
 //  CAnimationPropPage
 //
-CAnimationPropPage::CAnimationPropPage (void)
+CAnimationPropPage::CAnimationPropPage ()
     : CPropertyPage(CAnimationPropPage::IDD)
 {
 	//{{AFX_DATA_INIT(CAnimationPropPage)
@@ -58,7 +58,7 @@ CAnimationPropPage::CAnimationPropPage (void)
 //
 //  CAnimationPropPage
 //
-CAnimationPropPage::~CAnimationPropPage (void)
+CAnimationPropPage::~CAnimationPropPage ()
 {
     return ;
 }
@@ -89,7 +89,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CAnimationPropPage::OnInitDialog (void)
+CAnimationPropPage::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog ();

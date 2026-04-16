@@ -81,7 +81,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-ResolutionDialogClass::OnInitDialog (void)
+ResolutionDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -175,7 +175,7 @@ ResolutionDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ResolutionDialogClass::OnOK (void)
+ResolutionDialogClass::OnOK ()
 {
 	CDialog::OnOK ();
 

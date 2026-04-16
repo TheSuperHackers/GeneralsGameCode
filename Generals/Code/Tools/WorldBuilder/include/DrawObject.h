@@ -43,16 +43,16 @@ class DrawObject : public RenderObjClass
 
 public:
 
-	DrawObject(void);
+	DrawObject();
 	DrawObject(const DrawObject & src);
 	DrawObject & operator = (const DrawObject &);
-	virtual ~DrawObject(void) override;
+	virtual ~DrawObject() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone(void) const override;
-	virtual int						Class_ID(void) const override;
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
 	virtual void					Render(RenderInfoClass & rinfo) override;
 //	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 //	virtual void 					Set_Transform(const Matrix3D &m);
@@ -68,15 +68,15 @@ public:
 	virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 
 
-//	virtual int					 	Get_Num_Polys(void) const;
-//	virtual const char *		 	Get_Name(void) const;
+//	virtual int					 	Get_Num_Polys() const;
+//	virtual const char *		 	Get_Name() const;
 //	virtual void				 	Set_Name(const char * name);
 
-//	unsigned int					Get_Flags(void)  { return Flags; }
+//	unsigned int					Get_Flags()  { return Flags; }
 //	void								Set_Flags(unsigned int flags) { Flags = flags; }
 //	void								Set_Flag(unsigned int flag, Bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
 
-	Int freeMapResources(void);
+	Int freeMapResources();
 
 	void setDrawObjects(Bool val, Bool waypoints, Bool poly) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly;}
 	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}
@@ -88,9 +88,9 @@ public:
 	static void setBrushFeedbackParms(Bool square, Int width, Int featherWidth)
 														{ m_squareFeedback = square; m_brushWidth=width;
 															m_meshFeedback = false; m_brushFeatherWidth = featherWidth;}
-	static void disableFeedback(void) {m_disableFeedback = true;};
-	static void enableFeedback(void) {m_disableFeedback = false;};
-	static Bool isFeedbackEnabled(void) { return !m_disableFeedback;};
+	static void disableFeedback() {m_disableFeedback = true;};
+	static void enableFeedback() {m_disableFeedback = false;};
+	static Bool isFeedbackEnabled() { return !m_disableFeedback;};
 	static void setFeedbackPos(Coord3D pos);
 
 	static void setWaypointDragFeedback(const Coord3D &start, const Coord3D &end);
@@ -100,7 +100,7 @@ public:
 
 
 
-	MeshClass *peekMesh(void) {return m_moldMesh;};
+	MeshClass *peekMesh() {return m_moldMesh;};
 	void getMeshBounds(SphereClass *pSphere) {*pSphere = m_moldMeshBounds;};
 
 protected:
@@ -155,16 +155,16 @@ protected: // static state vars.
 	static Real								m_rampWidth;
 
 protected:
-	int initData(void);
+	int initData();
 	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
 	void updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOpen);
-	void updateFeedbackVB(void);
-	void updateMeshVB(void);
-	void updateRampVB(void);
-	void updateWaypointVB(void);
-	void updateForWater(void);
-	void updateBoundaryVB(void);
-	void updateAmbientSoundVB(void);
+	void updateFeedbackVB();
+	void updateMeshVB();
+	void updateRampVB();
+	void updateWaypointVB();
+	void updateForWater();
+	void updateBoundaryVB();
+	void updateAmbientSoundVB();
 
 };
 

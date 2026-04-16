@@ -61,7 +61,7 @@ protected:
 		//
 		//	Public methods
 		//
-		const CString &			Get_Name (void) const				{ return m_Name; }
+		const CString &			Get_Name () const				{ return m_Name; }
 		void							Set_Name (const CString &name)	{ m_Name = name; }
 
 	private:

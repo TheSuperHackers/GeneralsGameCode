@@ -52,7 +52,7 @@ protected:
 	Real m_intensity;
 
 protected:
-	void setShadowColor(void);
+	void setShadowColor();
 
 	// Generated message map functions
 	//{{AFX_MSG(ShadowOptions)

@@ -93,7 +93,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CSceneLightDialog::OnInitDialog (void)
+CSceneLightDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -247,7 +247,7 @@ CSceneLightDialog::OnHScroll
 //  OnCancel
 //
 void
-CSceneLightDialog::OnCancel (void)
+CSceneLightDialog::OnCancel ()
 {
 	// Get a pointer to the document so we can change the scene light's
 	// settings and position
@@ -361,7 +361,7 @@ CSceneLightDialog::WindowProc
 //  OnGrayscaleCheck
 //
 void
-CSceneLightDialog::OnGrayscaleCheck (void)
+CSceneLightDialog::OnGrayscaleCheck ()
 {
 	if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK)) {
 
@@ -385,7 +385,7 @@ CSceneLightDialog::OnGrayscaleCheck (void)
 //  OnChannelBothRadio
 //
 void
-CSceneLightDialog::OnChannelBothRadio (void)
+CSceneLightDialog::OnChannelBothRadio ()
 {
 	m_CurrentChannel = BOTH;
 	return ;
@@ -397,7 +397,7 @@ CSceneLightDialog::OnChannelBothRadio (void)
 //  OnChannelDiffuseRadio
 //
 void
-CSceneLightDialog::OnChannelDiffuseRadio (void)
+CSceneLightDialog::OnChannelDiffuseRadio ()
 {
 	// Reset the UI to reflect the current diffuse color
 	Vector3 color;
@@ -413,7 +413,7 @@ CSceneLightDialog::OnChannelDiffuseRadio (void)
 //  OnChannelSpecularRadio
 //
 void
-CSceneLightDialog::OnChannelSpecularRadio (void)
+CSceneLightDialog::OnChannelSpecularRadio ()
 {
 	// Reset the UI to reflect the current specular color
 	Vector3 color;
@@ -479,7 +479,7 @@ CSceneLightDialog::Set_Color_Control_State (const Vector3 &color)
 //  Update_Attenuation
 //
 void
-CSceneLightDialog::Update_Attenuation (void)
+CSceneLightDialog::Update_Attenuation ()
 {
 	// Get a pointer to the document so we can change the scene light's
 	// settings
@@ -533,7 +533,7 @@ CSceneLightDialog::Update_Distance (float distance)
 //  Update_Attenuation_Controls
 //
 void
-CSceneLightDialog::Update_Attenuation_Controls (void)
+CSceneLightDialog::Update_Attenuation_Controls ()
 {
 	// Enable or disable the attenuation controls based on the group's checkstate
 	BOOL enable = (SendDlgItemMessage (IDC_ATTENUATION_CHECK, BM_GETCHECK) == 1);
@@ -550,7 +550,7 @@ CSceneLightDialog::Update_Attenuation_Controls (void)
 //  OnAttenuationCheck
 //
 void
-CSceneLightDialog::OnAttenuationCheck (void)
+CSceneLightDialog::OnAttenuationCheck ()
 {
 	// Update the scene light to reflect the new setting
 	bool enable = (SendDlgItemMessage (IDC_ATTENUATION_CHECK, BM_GETCHECK) == 1);

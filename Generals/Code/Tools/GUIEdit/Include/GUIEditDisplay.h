@@ -63,10 +63,10 @@ class GUIEditDisplay : public Display
 
 public:
 
-	GUIEditDisplay( void );
-	virtual ~GUIEditDisplay( void ) override;
+	GUIEditDisplay();
+	virtual ~GUIEditDisplay() override;
 
-	virtual void draw( void ) override { };
+	virtual void draw() override { };
 
 	/// draw a line on the display in pixel coordinates with the specified color
 	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
@@ -89,20 +89,20 @@ public:
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) override;
 	/// image clipping support
 	virtual void setClipRegion( IRegion2D *region ) override;
-	virtual Bool isClippingEnabled( void ) override;
+	virtual Bool isClippingEnabled() override;
 	virtual void enableClipping( Bool onoff ) override;
 
 	// These are stub functions to allow compilation:
 
 	/// Create a video buffer that can be used for this display
-	virtual VideoBuffer*	createVideoBuffer( void ) override { return nullptr; }
+	virtual VideoBuffer*	createVideoBuffer() override { return nullptr; }
 
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) override { }
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 																Int endX, Int endY ) override { }
-	virtual void takeScreenShot(void) override { }
-	virtual void toggleMovieCapture(void) override {}
+	virtual void takeScreenShot() override { }
+	virtual void toggleMovieCapture() override {}
 
 	// methods that we need to stub
 	virtual void setTimeOfDay( TimeOfDay tod ) override {}
@@ -113,7 +113,7 @@ public:
 	virtual void clearShroud() override {}
 	virtual void preloadModelAssets( AsciiString model ) override {}
 	virtual void preloadTextureAssets( AsciiString texture ) override {}
-	virtual void toggleLetterBox(void) override {}
+	virtual void toggleLetterBox() override {}
 	virtual void enableLetterBox(Bool enable) override {}
 #if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path) {}
@@ -123,9 +123,9 @@ public:
 	virtual void dumpAssetUsage(const char* mapname) {}
 #endif
 
-	virtual Real getAverageFPS(void) override { return 0; }
-	virtual Real getCurrentFPS(void) override { return 0; }
-	virtual Int getLastFrameDrawCalls( void ) override { return 0; }
+	virtual Real getAverageFPS() override { return 0; }
+	virtual Real getCurrentFPS() override { return 0; }
+	virtual Int getLastFrameDrawCalls() override { return 0; }
 
 protected:
 

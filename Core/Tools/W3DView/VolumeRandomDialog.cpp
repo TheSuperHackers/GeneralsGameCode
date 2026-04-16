@@ -96,7 +96,7 @@ END_MESSAGE_MAP()
 //
 ////////////////////////////////////////////////////////////////////
 void
-VolumeRandomDialogClass::OnOK (void)
+VolumeRandomDialogClass::OnOK ()
 {
 	if (SendDlgItemMessage (IDC_BOX_RADIO, BM_GETCHECK) == 1) {
 
@@ -140,7 +140,7 @@ VolumeRandomDialogClass::OnOK (void)
 //
 ////////////////////////////////////////////////////////////////////
 BOOL
-VolumeRandomDialogClass::OnInitDialog (void)
+VolumeRandomDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -225,7 +225,7 @@ VolumeRandomDialogClass::OnInitDialog (void)
 //
 ////////////////////////////////////////////////////////////////////
 void
-VolumeRandomDialogClass::OnBoxRadio (void)
+VolumeRandomDialogClass::OnBoxRadio ()
 {
 	Update_Enable_State ();
 	return ;
@@ -238,7 +238,7 @@ VolumeRandomDialogClass::OnBoxRadio (void)
 //
 ////////////////////////////////////////////////////////////////////
 void
-VolumeRandomDialogClass::OnCylinderRadio (void)
+VolumeRandomDialogClass::OnCylinderRadio ()
 {
 	Update_Enable_State ();
 	return ;
@@ -251,7 +251,7 @@ VolumeRandomDialogClass::OnCylinderRadio (void)
 //
 ////////////////////////////////////////////////////////////////////
 void
-VolumeRandomDialogClass::OnSphereRadio (void)
+VolumeRandomDialogClass::OnSphereRadio ()
 {
 	Update_Enable_State ();
 	return ;
@@ -264,7 +264,7 @@ VolumeRandomDialogClass::OnSphereRadio (void)
 //
 ////////////////////////////////////////////////////////////////////
 void
-VolumeRandomDialogClass::Update_Enable_State (void)
+VolumeRandomDialogClass::Update_Enable_State ()
 {
 	bool enable_box_ctrls = (SendDlgItemMessage (IDC_BOX_RADIO, BM_GETCHECK) == 1);
 	bool enable_sphere_ctrls = (SendDlgItemMessage (IDC_SPHERE_RADIO, BM_GETCHECK) == 1);

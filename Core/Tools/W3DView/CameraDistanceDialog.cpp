@@ -76,7 +76,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-CameraDistanceDialogClass::OnInitDialog (void)
+CameraDistanceDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -94,7 +94,7 @@ CameraDistanceDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-CameraDistanceDialogClass::OnOK (void)
+CameraDistanceDialogClass::OnOK ()
 {
 	CDialog::OnOK ();
 

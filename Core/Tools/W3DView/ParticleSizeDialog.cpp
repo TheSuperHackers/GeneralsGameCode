@@ -78,7 +78,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-ParticleSizeDialogClass::OnInitDialog (void)
+ParticleSizeDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -93,7 +93,7 @@ ParticleSizeDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ParticleSizeDialogClass::OnOK (void)
+ParticleSizeDialogClass::OnOK ()
 {
 	m_Size = GetDlgItemFloat (m_hWnd, IDC_SIZE_EDIT);
 	CDialog::OnOK ();

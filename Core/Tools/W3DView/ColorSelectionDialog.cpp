@@ -90,7 +90,7 @@ END_MESSAGE_MAP()
 //	ColorSelectionDialogClass
 //
 BOOL
-ColorSelectionDialogClass::OnInitDialog (void)
+ColorSelectionDialogClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -131,7 +131,7 @@ ColorSelectionDialogClass::OnInitDialog (void)
 //	ColorSelectionDialogClass
 //
 void
-ColorSelectionDialogClass::OnOK (void)
+ColorSelectionDialogClass::OnOK ()
 {
 	// Record the color
 	m_Color = m_PaintColor;
@@ -168,7 +168,7 @@ ColorSelectionDialogClass::OnHScroll
 //	OnPaint
 //
 void
-ColorSelectionDialogClass::OnPaint (void)
+ColorSelectionDialogClass::OnPaint ()
 {
 	CPaintDC dc (this);
 
@@ -188,7 +188,7 @@ ColorSelectionDialogClass::OnPaint (void)
 //	Paint_Color_Window
 //
 void
-ColorSelectionDialogClass::Paint_Color_Window (void)
+ColorSelectionDialogClass::Paint_Color_Window ()
 {
 	// Get the client coords of the 'color' window
 	CRect rect;
@@ -212,7 +212,7 @@ ColorSelectionDialogClass::Paint_Color_Window (void)
 //	OnGrayscaleCheck
 //
 void
-ColorSelectionDialogClass::OnGrayscaleCheck (void)
+ColorSelectionDialogClass::OnGrayscaleCheck ()
 {
 	// Is the checkbox checked?
 	if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK)) {
@@ -238,7 +238,7 @@ ColorSelectionDialogClass::OnGrayscaleCheck (void)
 //	OnChangeBlueEdit
 //
 void
-ColorSelectionDialogClass::OnChangeBlueEdit (void)
+ColorSelectionDialogClass::OnChangeBlueEdit ()
 {
 	if (::IsWindow (m_BlueSlider)) {
 		int value = GetDlgItemInt (IDC_BLUE_EDIT);
@@ -260,7 +260,7 @@ ColorSelectionDialogClass::OnChangeBlueEdit (void)
 //	OnChangeGreenEdit
 //
 void
-ColorSelectionDialogClass::OnChangeGreenEdit (void)
+ColorSelectionDialogClass::OnChangeGreenEdit ()
 {
 	if (::IsWindow (m_GreenSlider)) {
 		int value = GetDlgItemInt (IDC_GREEN_EDIT);
@@ -282,7 +282,7 @@ ColorSelectionDialogClass::OnChangeGreenEdit (void)
 //	OnChangeRedEdit
 //
 void
-ColorSelectionDialogClass::OnChangeRedEdit (void)
+ColorSelectionDialogClass::OnChangeRedEdit ()
 {
 	if (::IsWindow (m_RedSlider)) {
 		int value = GetDlgItemInt (IDC_RED_EDIT);

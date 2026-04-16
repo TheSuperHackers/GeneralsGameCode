@@ -30,7 +30,7 @@ class CellWidth : public CDialog
 public:
 	CellWidth(int cellWidth, CWnd* pParent = nullptr);   // standard constructor
 
-	int GetCellWidth(void) {return mCellWidth;};
+	int GetCellWidth() {return mCellWidth;};
 // Dialog Data
 	//{{AFX_DATA(CellWidth)
 	enum { IDD = IDD_CellWidth };

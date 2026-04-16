@@ -84,7 +84,7 @@ BOOL ScriptConditionsDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void ScriptConditionsDlg::loadList(void)
+void ScriptConditionsDlg::loadList()
 {
 	Int count = 0;
 	ScriptDialog::updateScriptWarning(m_script);

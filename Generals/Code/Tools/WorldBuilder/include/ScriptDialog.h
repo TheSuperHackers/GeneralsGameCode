@@ -31,9 +31,9 @@ public:
 	unsigned short int m_groupIndex;	 // 12 bits
 	unsigned short int m_scriptIndex; // 12 bits
 
-	ListType(void) {m_objType=BOGUS_TYPE;m_playerIndex=0;m_groupIndex = 0; m_scriptIndex=0;}
+	ListType() {m_objType=BOGUS_TYPE;m_playerIndex=0;m_groupIndex = 0; m_scriptIndex=0;}
 
-	Int ListToInt(void) { return((m_objType<<28)+(m_playerIndex<<24)+(m_groupIndex<<12)+m_scriptIndex);}
+	Int ListToInt() { return((m_objType<<28)+(m_playerIndex<<24)+(m_groupIndex<<12)+m_scriptIndex);}
 
 	void IntToList(int i) {m_objType = ((i)>>28)&0x0F; m_playerIndex = ((i)>>24)&0x0F; m_groupIndex = ((i)>>12)&0x0FFF; m_scriptIndex = (i)&0x0FFF;}
 };
@@ -80,12 +80,12 @@ public:
 
 // Implementation
 public:
-	static void updateWarnings(void);
+	static void updateWarnings();
 	static void updateScriptWarning(Script *pScript);
 
 	/// To allow CSDTreeCtrl access to these member functions of ScriptDialog
-	Script *friend_getCurScript(void);
-	ScriptGroup *friend_getCurGroup(void);
+	Script *friend_getCurScript();
+	ScriptGroup *friend_getCurGroup();
 
 protected:
 	ListType	m_curSelection;
@@ -107,8 +107,8 @@ protected:
 	HTREEITEM addPlayer(Int playerIndx);
 	void addScriptList(HTREEITEM hPlayer, Int playerIndex, ScriptList *pSL);
 	void doDropOn(HTREEITEM hDrop, HTREEITEM hTarget);
-	Script *getCurScript(void);
-	ScriptGroup *getCurGroup(void);
+	Script *getCurScript();
+	ScriptGroup *getCurGroup();
 	void reloadPlayer(Int playerIndex, ScriptList *pSL);
 	HTREEITEM findItem(ListType sel, Bool failSafe = FALSE);
 	void insertScript(Script *pNewScript);

@@ -67,7 +67,7 @@ EmitterSizePropPageClass::EmitterSizePropPageClass (EmitterInstanceListClass *pe
 //  ~EmitterSizePropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterSizePropPageClass::~EmitterSizePropPageClass (void)
+EmitterSizePropPageClass::~EmitterSizePropPageClass ()
 {
 	// Free the original setting arrays
 	SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
@@ -107,7 +107,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterSizePropPageClass::Initialize (void)
+EmitterSizePropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigSizes.Values);
@@ -140,7 +140,7 @@ EmitterSizePropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterSizePropPageClass::OnInitDialog (void)
+EmitterSizePropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -183,7 +183,7 @@ EmitterSizePropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterSizePropPageClass::OnApply (void)
+EmitterSizePropPageClass::OnApply ()
 {
 	/*SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigSizes.Values);
@@ -309,7 +309,7 @@ EmitterSizePropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterSizePropPageClass::Update_Sizes (void)
+EmitterSizePropPageClass::Update_Sizes ()
 {
 	float position = 0;
 	float red = 0;

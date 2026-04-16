@@ -105,7 +105,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 /////////////////////////////////////////////////////////////
-void EmitterRotationPropPageClass::Initialize (void)
+void EmitterRotationPropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_Rotations.KeyTimes);
 	SAFE_DELETE_ARRAY (m_Rotations.Values);
@@ -303,7 +303,7 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterRotationPropPageClass::Update_Rotations (void)
+EmitterRotationPropPageClass::Update_Rotations ()
 {
 	float position = 0;
 	float red = 0;

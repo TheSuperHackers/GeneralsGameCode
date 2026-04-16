@@ -68,12 +68,12 @@ protected:
 	CTreeCtrl								m_terrainTreeView;
 
 protected:
-	void updateTextures(void);
+	void updateTextures();
 	void addTerrain(const char *pPath, Int terrainNdx, HTREEITEM parent);
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 
 public:
-	static Int getBlendTexClass(void) {return m_currentBlendTexture;}
+	static Int getBlendTexClass() {return m_currentBlendTexture;}
 
 	static void setBlendTexClass(Int texClass);
 

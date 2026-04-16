@@ -80,7 +80,7 @@ IMPLEMENT_DYNCREATE(CDataTreeView, CTreeView)
 //  CDataTreeView
 //
 ////////////////////////////////////////////////////////////////////////////
-CDataTreeView::CDataTreeView (void)
+CDataTreeView::CDataTreeView ()
         : m_hMaterialsRoot (nullptr),
 			 m_hMeshRoot  (nullptr),
 			 m_hMeshCollectionRoot (nullptr),
@@ -110,7 +110,7 @@ CDataTreeView::CDataTreeView (void)
 //
 //  ~CDataTreeView
 //
-CDataTreeView::~CDataTreeView (void)
+CDataTreeView::~CDataTreeView ()
 {
     return ;
 }
@@ -175,7 +175,7 @@ CDataTreeView::PreCreateWindow (CREATESTRUCT& cs)
 //  OnInitialUpdate
 //
 void
-CDataTreeView::OnInitialUpdate (void)
+CDataTreeView::OnInitialUpdate ()
 {
 	// Allow the base class to process this message
     CTreeView::OnInitialUpdate ();
@@ -190,7 +190,7 @@ CDataTreeView::OnInitialUpdate (void)
 //  CreateRootNodes
 //
 void
-CDataTreeView::CreateRootNodes (void)
+CDataTreeView::CreateRootNodes ()
 {
 	// Insert all the root nodes
 	m_hMaterialsRoot		= GetTreeCtrl ().InsertItem ("Materials", m_iMaterialIcon, m_iMaterialIcon);
@@ -248,7 +248,7 @@ CDataTreeView::OnCreate (LPCREATESTRUCT lpCreateStruct)
 //  Load_Materials_Into_Tree
 //
 void
-CDataTreeView::Load_Materials_Into_Tree (void)
+CDataTreeView::Load_Materials_Into_Tree ()
 {
 	// Get an iterator from the asset manager that we can
 	// use to enumerate the currently loaded textures
@@ -286,7 +286,7 @@ CDataTreeView::Load_Materials_Into_Tree (void)
 //  LoadAssetsIntoTree
 //
 void
-CDataTreeView::LoadAssetsIntoTree (void)
+CDataTreeView::LoadAssetsIntoTree ()
 {
 	// Turn off repainting
 	GetTreeCtrl ().SetRedraw (FALSE);
@@ -442,7 +442,7 @@ CDataTreeView::LoadAssetsIntoTree (void)
 //  LoadAnimationsIntoTree
 //
 void
-CDataTreeView::LoadAnimationsIntoTree (void)
+CDataTreeView::LoadAnimationsIntoTree ()
 {
     // Get an iterator from the asset manager that we can
     // use to enumerate the currently loaded assets
@@ -1115,7 +1115,7 @@ CDataTreeView::OnDeleteItem
 //  Get_Current_Asset_Info
 //
 AssetInfoClass *
-CDataTreeView::Get_Current_Asset_Info (void) const
+CDataTreeView::Get_Current_Asset_Info () const
 {
 	AssetInfoClass *asset_info = nullptr;
 
@@ -1137,7 +1137,7 @@ CDataTreeView::Get_Current_Asset_Info (void) const
 //  Get_Current_Render_Obj
 //
 RenderObjClass *
-CDataTreeView::Get_Current_Render_Obj (void) const
+CDataTreeView::Get_Current_Render_Obj () const
 {
 	RenderObjClass *prender_obj = nullptr;
 
@@ -1164,7 +1164,7 @@ CDataTreeView::Get_Current_Render_Obj (void) const
 //  GetCurrentSelectionName
 //
 LPCTSTR
-CDataTreeView::GetCurrentSelectionName (void)
+CDataTreeView::GetCurrentSelectionName ()
 {
 	LPCTSTR pname = nullptr;
 
@@ -1190,7 +1190,7 @@ CDataTreeView::GetCurrentSelectionName (void)
 //  GetCurrentSelectionType
 //
 ASSET_TYPE
-CDataTreeView::GetCurrentSelectionType (void)
+CDataTreeView::GetCurrentSelectionType ()
 {
 	ASSET_TYPE type = TypeUnknown;
 
@@ -1374,7 +1374,7 @@ CDataTreeView::Refresh_Asset
 //  Select_Next
 //
 void
-CDataTreeView::Select_Next (void)
+CDataTreeView::Select_Next ()
 {
 	//
 	//	Get the selected entry in the tree control
@@ -1400,7 +1400,7 @@ CDataTreeView::Select_Next (void)
 //  Select_Prev
 //
 void
-CDataTreeView::Select_Prev (void)
+CDataTreeView::Select_Prev ()
 {
 	//
 	//	Get the selected entry in the tree control
@@ -1427,7 +1427,7 @@ CDataTreeView::Select_Prev (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CDataTreeView::Reload_Lightmap_Models (void)
+CDataTreeView::Reload_Lightmap_Models ()
 {
 	Free_Child_Models (m_hMeshCollectionRoot);
 	Free_Child_Models (m_hHierarchyRoot);

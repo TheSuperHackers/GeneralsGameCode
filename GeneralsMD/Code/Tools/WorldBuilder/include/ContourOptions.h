@@ -73,9 +73,9 @@ protected:
 	CSliderCtrl m_contourWidthSlider;		///< Brush width slider control.
 
 public:
-	static Int getContourWidth(void) {return m_contourWidth;};  ///<Returns width.
-	static Int getContourOffset(void) {return m_contourOffset;}; ///<Returns offset.
-	static Int getContourStep(void) {return m_contourStep;}; ///<Returns step.
+	static Int getContourWidth() {return m_contourWidth;};  ///<Returns width.
+	static Int getContourOffset() {return m_contourOffset;}; ///<Returns offset.
+	static Int getContourStep() {return m_contourStep;}; ///<Returns step.
 
 
 };

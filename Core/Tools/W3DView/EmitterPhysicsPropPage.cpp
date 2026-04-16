@@ -65,7 +65,7 @@ EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass (EmitterInstanceListCla
 //  ~EmitterPhysicsPropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterPhysicsPropPageClass::~EmitterPhysicsPropPageClass (void)
+EmitterPhysicsPropPageClass::~EmitterPhysicsPropPageClass ()
 {
 	SAFE_DELETE (m_Randomizer);
 	return;
@@ -109,7 +109,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterPhysicsPropPageClass::Initialize (void)
+EmitterPhysicsPropPageClass::Initialize ()
 {
 	SAFE_DELETE (m_Randomizer);
 	if (m_pEmitterList != nullptr) {
@@ -134,7 +134,7 @@ EmitterPhysicsPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterPhysicsPropPageClass::OnInitDialog (void)
+EmitterPhysicsPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -164,7 +164,7 @@ EmitterPhysicsPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterPhysicsPropPageClass::OnApply (void)
+EmitterPhysicsPropPageClass::OnApply ()
 {
 	//
 	//	Read the velocity settings
@@ -221,7 +221,7 @@ EmitterPhysicsPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom (void)
+EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom ()
 {
 	VolumeRandomDialogClass dialog (m_Randomizer, this);
 	if (dialog.DoModal () == IDOK) {

@@ -327,7 +327,7 @@ typedef enum
 //  CMainFrame
 //
 ////////////////////////////////////////////////////////////////////////////
-CMainFrame::CMainFrame (void)
+CMainFrame::CMainFrame ()
     : m_currentAssetType (TypeUnknown),
       m_bShowAnimationBar (TRUE),
 		m_bInitialized (FALSE)
@@ -341,7 +341,7 @@ CMainFrame::CMainFrame (void)
 //  ~CMainFrame
 //
 ////////////////////////////////////////////////////////////////////////////
-CMainFrame::~CMainFrame (void)
+CMainFrame::~CMainFrame ()
 {
     return ;
 }
@@ -448,7 +448,7 @@ CMainFrame::OnCreate (LPCREATESTRUCT lpCreateStruct)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::Restore_Window_State (void)
+CMainFrame::Restore_Window_State ()
 {
 	//
 	// Read the cached window information from the registry
@@ -478,7 +478,7 @@ CMainFrame::Restore_Window_State (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::RestoreOriginalSize (void)
+CMainFrame::RestoreOriginalSize ()
 {
 	// Resize the window so its the same size it was when the application loaded
 	SetWindowPos (nullptr, 0, 0, m_OrigRect.right-m_OrigRect.left, m_OrigRect.bottom-m_OrigRect.top, SWP_NOMOVE | SWP_NOZORDER);
@@ -715,7 +715,7 @@ CMainFrame::WindowProc
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectProperties (void)
+CMainFrame::OnObjectProperties ()
 {
     // Dislay the properties for the currently selected object.
     ShowObjectProperties ();
@@ -729,7 +729,7 @@ CMainFrame::OnObjectProperties (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::ShowObjectProperties (void)
+CMainFrame::ShowObjectProperties ()
 {
 	// Get a pointer to the 'graphic' pane's window
     CDataTreeView *pCDataTreeView = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
@@ -976,7 +976,7 @@ CMainFrame::OnSelectionChanged (ASSET_TYPE newAssetType)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLodGenerate (void)
+CMainFrame::OnLodGenerate ()
 {
 	// Get a pointer to the 'data' pane's window
 	CDataTreeView *ptree_view = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
@@ -1183,7 +1183,7 @@ CMainFrame::UpdateCameraDistance (float cameraDistance)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnFileOpen (void)
+CMainFrame::OnFileOpen ()
 {
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetActiveDocument ();
 	if (doc == nullptr) {
@@ -1241,7 +1241,7 @@ CMainFrame::OnFileOpen (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAniSpeed (void)
+CMainFrame::OnAniSpeed ()
 {
     CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     if (pCGraphicView)
@@ -1265,7 +1265,7 @@ CMainFrame::OnAniSpeed (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAniStop (void)
+CMainFrame::OnAniStop ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1289,7 +1289,7 @@ CMainFrame::OnAniStop (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAniStart (void)
+CMainFrame::OnAniStart ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1315,7 +1315,7 @@ CMainFrame::OnAniStart (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAniPause (void)
+CMainFrame::OnAniPause ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1354,7 +1354,7 @@ CMainFrame::OnAniPause (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraBack (void)
+CMainFrame::OnCameraBack ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1374,7 +1374,7 @@ CMainFrame::OnCameraBack (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraBottom (void)
+CMainFrame::OnCameraBottom ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1394,7 +1394,7 @@ CMainFrame::OnCameraBottom (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraFront (void)
+CMainFrame::OnCameraFront ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1414,7 +1414,7 @@ CMainFrame::OnCameraFront (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraLeft (void)
+CMainFrame::OnCameraLeft ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1434,7 +1434,7 @@ CMainFrame::OnCameraLeft (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraReset (void)
+CMainFrame::OnCameraReset ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1464,7 +1464,7 @@ CMainFrame::OnCameraReset (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraRight (void)
+CMainFrame::OnCameraRight ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1484,7 +1484,7 @@ CMainFrame::OnCameraRight (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraTop (void)
+CMainFrame::OnCameraTop ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1504,7 +1504,7 @@ CMainFrame::OnCameraTop (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectRotateZ (void)
+CMainFrame::OnObjectRotateZ ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1538,7 +1538,7 @@ CMainFrame::OnObjectRotateZ (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectRotateY (void)
+CMainFrame::OnObjectRotateY ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1561,7 +1561,7 @@ CMainFrame::OnObjectRotateY (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectRotateX (void)
+CMainFrame::OnObjectRotateX ()
 {
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
     ASSERT (pCGraphicView);
@@ -1585,7 +1585,7 @@ CMainFrame::OnObjectRotateX (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLightAmbient (void)
+CMainFrame::OnLightAmbient ()
 {
     // Show the ambient light dialog
     CAmbientLightDialog ambientLightDialog (this);
@@ -1601,7 +1601,7 @@ CMainFrame::OnLightAmbient (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLightScene (void)
+CMainFrame::OnLightScene ()
 {
     // Show the scene light dialog
     CSceneLightDialog sceneLightDialog (this);
@@ -1616,7 +1616,7 @@ CMainFrame::OnLightScene (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBackgroundColor (void)
+CMainFrame::OnBackgroundColor ()
 {
     // Show the background color
     CBackgroundColorDialog backgroundColorDialog (this);
@@ -1646,7 +1646,7 @@ CMainFrame::OnUpdateBackgroundFog (CCmdUI* pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBackgroundFog (void)
+CMainFrame::OnBackgroundFog ()
 {
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)GetActiveDocument ();
 	if (pdoc) {
@@ -1663,7 +1663,7 @@ CMainFrame::OnBackgroundFog (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBackgroundBMP (void)
+CMainFrame::OnBackgroundBMP ()
 {
     // Show the background BMP dialog
     CBackgroundBMPDialog backgroundBMPDialog (this);
@@ -1678,7 +1678,7 @@ CMainFrame::OnBackgroundBMP (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSaveSettings (void)
+CMainFrame::OnSaveSettings ()
 {
     // Show the save settings dialog
     CSaveSettingsDialog saveSettingsDialog (this);
@@ -1693,7 +1693,7 @@ CMainFrame::OnSaveSettings (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLoadSettings (void)
+CMainFrame::OnLoadSettings ()
 {
     // Get the active document
     CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -1724,7 +1724,7 @@ CMainFrame::OnLoadSettings (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLODSetSwitch (void)
+CMainFrame::OnLODSetSwitch ()
 {
     // Display the edit LOD dialog
     CEditLODDialog editLODDialog (this);
@@ -1739,7 +1739,7 @@ CMainFrame::OnLODSetSwitch (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLODSave (void)
+CMainFrame::OnLODSave ()
 {
 	// Get the controlling doc object so we can have it save the
 	// LOD for us.
@@ -1758,7 +1758,7 @@ CMainFrame::OnLODSave (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLODSaveAll (void)
+CMainFrame::OnLODSaveAll ()
 {
     MessageBox ("Not implemented yet.", "Test", MB_OK | MB_ICONEXCLAMATION);
     return ;
@@ -1771,7 +1771,7 @@ CMainFrame::OnLODSaveAll (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBackgroundObject (void)
+CMainFrame::OnBackgroundObject ()
 {
     // Display the background object dialog
 	CBackgroundObjectDialog backgroundObjectDialog (this);
@@ -1827,7 +1827,7 @@ CMainFrame::OnUpdateViewObjectBar (CCmdUI* pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnViewAnimationBar (void)
+CMainFrame::OnViewAnimationBar ()
 {
     if (m_animationToolbar.IsWindowVisible () == FALSE)
     {
@@ -1856,7 +1856,7 @@ CMainFrame::OnViewAnimationBar (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnViewObjectBar (void)
+CMainFrame::OnViewObjectBar ()
 {
     if (m_objectToolbar.IsWindowVisible () == FALSE)
     {
@@ -1879,7 +1879,7 @@ CMainFrame::OnViewObjectBar (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAniStepFwd (void)
+CMainFrame::OnAniStepFwd ()
 {
     // Get the current doc
     CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -1899,7 +1899,7 @@ CMainFrame::OnAniStepFwd (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAniStepBkwd (void)
+CMainFrame::OnAniStepBkwd ()
 {
     // Get the current doc
     CW3DViewDoc *pCDoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -1919,7 +1919,7 @@ CMainFrame::OnAniStepBkwd (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectReset (void)
+CMainFrame::OnObjectReset ()
 {
     // Get the graphic view
     CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
@@ -1939,7 +1939,7 @@ CMainFrame::OnObjectReset (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraAllowRotateX (void)
+CMainFrame::OnCameraAllowRotateX ()
 {
     // Get the graphic view
     CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
@@ -1977,7 +1977,7 @@ CMainFrame::OnCameraAllowRotateX (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraAllowRotateY (void)
+CMainFrame::OnCameraAllowRotateY ()
 {
     // Get the graphic view
     CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
@@ -2015,7 +2015,7 @@ CMainFrame::OnCameraAllowRotateY (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraAllowRotateZ (void)
+CMainFrame::OnCameraAllowRotateZ ()
 {
     // Get the graphic view
     CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
@@ -2238,7 +2238,7 @@ CMainFrame::Select_Device (bool show_dlg)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnDeviceChange (void)
+CMainFrame::OnDeviceChange ()
 {
 #ifdef WW3D_DX8
 	Select_Device (true);
@@ -2255,7 +2255,7 @@ CMainFrame::OnDeviceChange (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnViewFullscreen (void)
+CMainFrame::OnViewFullscreen ()
 {
 #ifdef WW3D_DX8
 	CGraphicView *pCGraphicView = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
@@ -2318,7 +2318,7 @@ CMainFrame::OnGetMinMaxInfo (MINMAXINFO FAR* lpMMI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCreateEmitter (void)
+CMainFrame::OnCreateEmitter ()
 {
 	// Clear the current display
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -2341,7 +2341,7 @@ CMainFrame::OnCreateEmitter (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnEditEmitter (void)
+CMainFrame::OnEditEmitter ()
 {
 	// Get a pointer to the doc object
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -2384,7 +2384,7 @@ CMainFrame::OnUpdateEditEmitter (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnScaleEmitter (void)
+CMainFrame::OnScaleEmitter ()
 {
 	// Get a pointer to the doc object
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -2440,7 +2440,7 @@ CMainFrame::OnUpdateScaleEmitter (CCmdUI* pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSaveEmitter (void)
+CMainFrame::OnSaveEmitter ()
 {
 	((CW3DViewDoc *)GetActiveDocument ())->Save_Selected_Emitter ();
 	return ;
@@ -2466,7 +2466,7 @@ CMainFrame::OnUpdateSaveEmitter (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBoneAutoAssign (void)
+CMainFrame::OnBoneAutoAssign ()
 {
 	((CW3DViewDoc *)GetActiveDocument ())->Auto_Assign_Bones ();
 	return ;
@@ -2479,7 +2479,7 @@ CMainFrame::OnBoneAutoAssign (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBoneManagement (void)
+CMainFrame::OnBoneManagement ()
 {
 	// Get the currently selected hierarchy model
 	RenderObjClass *prender_obj = ((CW3DViewDoc *)GetActiveDocument ())->GetDisplayedObject ();
@@ -2498,7 +2498,7 @@ CMainFrame::OnBoneManagement (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSaveAggregate (void)
+CMainFrame::OnSaveAggregate ()
 {
 	((CW3DViewDoc *)GetActiveDocument ())->Save_Selected_Aggregate ();
 	return ;
@@ -2511,7 +2511,7 @@ CMainFrame::OnSaveAggregate (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraAnimate (void)
+CMainFrame::OnCameraAnimate ()
 {
 	// Toggel the animated state
 	bool banimated = ((CW3DViewDoc *)GetActiveDocument ())->Is_Camera_Animated ();
@@ -2565,7 +2565,7 @@ CMainFrame::OnUpdateSaveAggregate (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraResetOnLoad (void)
+CMainFrame::OnCameraResetOnLoad ()
 {
 	// Toggle the auto reset state of the menu option
 	CW3DViewDoc *pdoc = (CW3DViewDoc *)GetActiveDocument ();
@@ -2594,7 +2594,7 @@ CMainFrame::OnUpdateCameraResetOnLoad (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectRotateYBack (void)
+CMainFrame::OnObjectRotateYBack ()
 {
 	CGraphicView *pgraphic_view = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	ASSERT (pgraphic_view != nullptr);
@@ -2616,7 +2616,7 @@ CMainFrame::OnObjectRotateYBack (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectRotateZBack (void)
+CMainFrame::OnObjectRotateZBack ()
 {
 	CGraphicView *pgraphic_view = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	ASSERT (pgraphic_view != nullptr);
@@ -2638,7 +2638,7 @@ CMainFrame::OnObjectRotateZBack (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLightRotateY (void)
+CMainFrame::OnLightRotateY ()
 {
 	CGraphicView *pgraphic_view = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	ASSERT (pgraphic_view != nullptr);
@@ -2660,7 +2660,7 @@ CMainFrame::OnLightRotateY (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLightRotateYBack (void)
+CMainFrame::OnLightRotateYBack ()
 {
 	CGraphicView *pgraphic_view = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	ASSERT (pgraphic_view != nullptr);
@@ -2682,7 +2682,7 @@ CMainFrame::OnLightRotateYBack (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLightRotateZ (void)
+CMainFrame::OnLightRotateZ ()
 {
 	CGraphicView *pgraphic_view = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	ASSERT (pgraphic_view != nullptr);
@@ -2704,7 +2704,7 @@ CMainFrame::OnLightRotateZ (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLightRotateZBack (void)
+CMainFrame::OnLightRotateZBack ()
 {
 	CGraphicView *pgraphic_view = (CGraphicView *)m_wndSplitter.GetPane (0, 1);
 	ASSERT (pgraphic_view != nullptr);
@@ -2726,7 +2726,7 @@ CMainFrame::OnLightRotateZBack (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnDestroy (void)
+CMainFrame::OnDestroy ()
 {
 	CRect rect;
 	WINDOWPLACEMENT wnd_info = { sizeof (WINDOWPLACEMENT), 0 };
@@ -2763,7 +2763,7 @@ CMainFrame::OnDestroy (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnDecLight (void)
+CMainFrame::OnDecLight ()
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
 	LightClass *plight = pdoc->GetSceneLight ();
@@ -2792,7 +2792,7 @@ CMainFrame::OnDecLight (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnIncLight (void)
+CMainFrame::OnIncLight ()
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
 	LightClass *plight = pdoc->GetSceneLight ();
@@ -2821,7 +2821,7 @@ CMainFrame::OnIncLight (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnDecAmbientLight (void)
+CMainFrame::OnDecAmbientLight ()
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
 	if (pdoc->GetScene () != nullptr) {
@@ -2844,7 +2844,7 @@ CMainFrame::OnDecAmbientLight (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnIncAmbientLight (void)
+CMainFrame::OnIncAmbientLight ()
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
 	if (pdoc->GetScene () != nullptr) {
@@ -2878,7 +2878,7 @@ void CMainFrame::OnUpdateLightingExpose (CCmdUI *pcmdui)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnMakeAggregate (void)
+CMainFrame::OnMakeAggregate ()
 {
 	// Show the name dialog to the user
 	AggregateNameDialogClass dialog (this);
@@ -2912,7 +2912,7 @@ CMainFrame::OnMakeAggregate (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnRenameAggregate (void)
+CMainFrame::OnRenameAggregate ()
 {
 	// Get a pointer to the current aggregate
 	RenderObjClass *prender_obj = (::GetCurrentDocument ())->GetDisplayedObject ();
@@ -3013,7 +3013,7 @@ CMainFrame::OnCmdMsg
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCrashApp (void)
+CMainFrame::OnCrashApp ()
 {
 	// Usefull HACK to get the program to crash when needed...
 	LPTSTR hack = nullptr;
@@ -3028,7 +3028,7 @@ CMainFrame::OnCrashApp (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLODRecordScreenArea (void)
+CMainFrame::OnLODRecordScreenArea ()
 {
 	// Make sure the current object is an LOD
 	RenderObjClass *prender_obj = ::GetCurrentDocument ()->GetDisplayedObject ();
@@ -3062,7 +3062,7 @@ CMainFrame::OnLODRecordScreenArea (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLODIncludeNull (void)
+CMainFrame::OnLODIncludeNull ()
 {
 	// Make sure the current object is an LOD
 	RenderObjClass *prender_obj = ::GetCurrentDocument ()->GetDisplayedObject ();
@@ -3109,7 +3109,7 @@ CMainFrame::OnUpdateLODIncludeNull (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLodPrevLevel (void)
+CMainFrame::OnLodPrevLevel ()
 {
 	::GetCurrentDocument ()->Switch_LOD (-1);
 	return ;
@@ -3144,7 +3144,7 @@ CMainFrame::OnUpdateLodPrevLevel (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLodNextLevel (void)
+CMainFrame::OnLodNextLevel ()
 {
 	::GetCurrentDocument ()->Switch_LOD (1);
 	return ;
@@ -3180,7 +3180,7 @@ CMainFrame::OnUpdateLodNextLevel (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnLodAutoswitch (void)
+CMainFrame::OnLodAutoswitch ()
 {
 	// Toggle the autoswitch setting
 	ViewerSceneClass *pscene = ::GetCurrentDocument ()->GetScene ();
@@ -3229,7 +3229,7 @@ CMainFrame::OnUpdateMakeMovie (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnMakeMovie (void)
+CMainFrame::OnMakeMovie ()
 {
 	// Force a resolution change
 	//WW3D::Set_Resolution (800, 600, g_iBitsPerPixel, 0);
@@ -3245,7 +3245,7 @@ CMainFrame::OnMakeMovie (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSaveScreenshot (void)
+CMainFrame::OnSaveScreenshot ()
 {
 	// Get the directory where this executable was run from
 	TCHAR filename[MAX_PATH];
@@ -3284,7 +3284,7 @@ CMainFrame::OnSaveScreenshot (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::Update_Emitters_List (void)
+CMainFrame::Update_Emitters_List ()
 {
 	::EnableMenuItem (::GetSubMenu (::GetMenu (m_hWnd), 3), 3, MF_BYPOSITION | MF_ENABLED);
 	HMENU hsub_menu = Get_Emitters_List_Menu ();
@@ -3318,7 +3318,7 @@ CMainFrame::Update_Emitters_List (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSlideshowDown (void)
+CMainFrame::OnSlideshowDown ()
 {
 	CDataTreeView *data_tree = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
 	if (data_tree != nullptr) {
@@ -3335,7 +3335,7 @@ CMainFrame::OnSlideshowDown (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSlideshowUp (void)
+CMainFrame::OnSlideshowUp ()
 {
 	CDataTreeView *data_tree = (CDataTreeView *)m_wndSplitter.GetPane (0, 0);
 	if (data_tree != nullptr) {
@@ -3381,7 +3381,7 @@ CMainFrame::OnUpdateAdvancedAnim(CCmdUI* pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCameraSettings (void)
+CMainFrame::OnCameraSettings ()
 {
 	CameraSettingsDialogClass dialog (this);
 	dialog.DoModal ();
@@ -3395,7 +3395,7 @@ CMainFrame::OnCameraSettings (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCopyScreenSize (void)
+CMainFrame::OnCopyScreenSize ()
 {
 	//
 	//	Determine the current screen size of the displayed object
@@ -3438,7 +3438,7 @@ CMainFrame::OnCopyScreenSize (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnListMissingTextures (void)
+CMainFrame::OnListMissingTextures ()
 {
 	//
 	//	Get the list of missing textures and preset it to the user
@@ -3467,7 +3467,7 @@ CMainFrame::OnListMissingTextures (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCopyAssets (void)
+CMainFrame::OnCopyAssets ()
 {
 	CString path;
 	if (::Browse_For_Folder (m_hWnd, nullptr, path)) {
@@ -3512,7 +3512,7 @@ CMainFrame::OnUpdateCopyAssets (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnTexturePath (void)
+CMainFrame::OnTexturePath ()
 {
 	TexturePathDialogClass dialog (this);
 	dialog.DoModal ();
@@ -3526,7 +3526,7 @@ CMainFrame::OnTexturePath (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnChangeResolution (void)
+CMainFrame::OnChangeResolution ()
 {
 #ifdef WW3D_DX8
 	ResolutionDialogClass dialog (this);
@@ -3544,7 +3544,7 @@ CMainFrame::OnChangeResolution (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCreateSphere (void)
+CMainFrame::OnCreateSphere ()
 {
 	// Clear the current display
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetActiveDocument ();
@@ -3567,7 +3567,7 @@ CMainFrame::OnCreateSphere (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCreateRing (void)
+CMainFrame::OnCreateRing ()
 {
 	// Clear the current display
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetActiveDocument ();
@@ -3590,7 +3590,7 @@ CMainFrame::OnCreateRing (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnEditPrimitive (void)
+CMainFrame::OnEditPrimitive ()
 {
 	// Get a pointer to the doc object
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetActiveDocument ();
@@ -3649,7 +3649,7 @@ CMainFrame::OnUpdateEditPrimitive (CCmdUI *pCmdUI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnExportPrimitive (void)
+CMainFrame::OnExportPrimitive ()
 {
 	((CW3DViewDoc *)GetActiveDocument ())->Save_Selected_Primitive ();
 	return ;
@@ -3695,7 +3695,7 @@ void CMainFrame::OnKillSceneLight()
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnPrelitMultipass (void)
+CMainFrame::OnPrelitMultipass ()
 {
 	if (WW3D::Get_Prelit_Mode () != WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS) {
 
@@ -3736,7 +3736,7 @@ CMainFrame::OnUpdatePrelitMultipass (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnPrelitMultitex (void)
+CMainFrame::OnPrelitMultitex ()
 {
 	if (WW3D::Get_Prelit_Mode () != WW3D::PRELIT_MODE_LIGHTMAP_MULTI_TEXTURE) {
 
@@ -3777,7 +3777,7 @@ CMainFrame::OnUpdatePrelitMultitex (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnPrelitVertex (void)
+CMainFrame::OnPrelitVertex ()
 {
 	if (WW3D::Get_Prelit_Mode () != WW3D::PRELIT_MODE_VERTEX) {
 
@@ -3820,7 +3820,7 @@ CMainFrame::OnUpdatePrelitVertex (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnAddToLineup (void)
+CMainFrame::OnAddToLineup ()
 {
 	// Display a dialog that will let the user choose a render object
 	// to add to the current scene. The reason I call it a lineup is
@@ -3889,7 +3889,7 @@ void CMainFrame::OnUpdateAddToLineup(CCmdUI* pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnImportFacialAnims (void)
+CMainFrame::OnImportFacialAnims ()
 {
 	//
 	// Look up the currently selected hierarchy
@@ -3971,7 +3971,7 @@ CMainFrame::OnUpdateImportFacialAnims (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnRestrictAnims (void)
+CMainFrame::OnRestrictAnims ()
 {
 	CDataTreeView *data_tree = ::GetCurrentDocument ()->GetDataTreeView ();
 	if (data_tree != nullptr) {
@@ -4009,7 +4009,7 @@ CMainFrame::OnUpdateRestrictAnims (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnBindSubobjectLod (void)
+CMainFrame::OnBindSubobjectLod ()
 {
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetActiveDocument ();
 	if (doc != nullptr && doc->GetDisplayedObject () != nullptr) {
@@ -4056,7 +4056,7 @@ CMainFrame::OnUpdateBindSubobjectLod (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnSetCameraDistance (void)
+CMainFrame::OnSetCameraDistance ()
 {
 	CameraDistanceDialogClass dialog (this);
 	dialog.DoModal ();
@@ -4070,7 +4070,7 @@ CMainFrame::OnSetCameraDistance (void)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnObjectAlternateMaterials (void)
+CMainFrame::OnObjectAlternateMaterials ()
 {
 	::GetCurrentDocument ()->Toggle_Alternate_Materials ();
 	return ;
@@ -4083,7 +4083,7 @@ CMainFrame::OnObjectAlternateMaterials (void)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnCreateSoundObject (void)
+CMainFrame::OnCreateSoundObject ()
 {
 	SoundEditDialogClass dialog (this);
 	dialog.DoModal ();
@@ -4097,7 +4097,7 @@ CMainFrame::OnCreateSoundObject (void)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnEditSoundObject (void)
+CMainFrame::OnEditSoundObject ()
 {
 	//
 	// Get a pointer to the doc object
@@ -4143,7 +4143,7 @@ CMainFrame::OnUpdateEditSoundObject (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnExportSoundObj (void)
+CMainFrame::OnExportSoundObj ()
 {
 	((CW3DViewDoc *)GetActiveDocument ())->Save_Selected_Sound_Object ();
 	return ;
@@ -4169,7 +4169,7 @@ CMainFrame::OnUpdateExportSoundObj (CCmdUI *pCmdUI)
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnWireframeMode (void)
+CMainFrame::OnWireframeMode ()
 {
 	ViewerSceneClass *scene = ::GetCurrentDocument ()->GetScene ();
 
@@ -4456,7 +4456,7 @@ void CMainFrame::OnSetGamma()
 //
 //////////////////////////////////////////////////////////////////////////
 void
-CMainFrame::OnEditAnimatedSoundsOptions (void)
+CMainFrame::OnEditAnimatedSoundsOptions ()
 {
 	AnimatedSoundOptionsDialogClass dialog (this);
 	dialog.DoModal ();

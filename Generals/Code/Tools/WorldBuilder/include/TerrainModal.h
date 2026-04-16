@@ -67,12 +67,12 @@ protected:
 protected:
 	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
-	void updateLabel(void);
-	void updateTextures(void);
+	void updateLabel();
+	void updateTextures();
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);
 
 public:
-	Int getNewNdx(void) {return m_currentFgTexture;};
+	Int getNewNdx() {return m_currentFgTexture;};
 
 };
 

@@ -95,7 +95,7 @@ SpecialAbilityUpdate::~SpecialAbilityUpdate()
 }
 
 /*------------------------------------------------------------------------------------------------
-void SpecialAbilityUpdate::update( void )
+void SpecialAbilityUpdate::update()
 
 This is the brains of the entire special ability update. There are several optional steps and
 variations that can be processed for any particular type of special ability. A special ability

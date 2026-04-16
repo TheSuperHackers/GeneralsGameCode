@@ -78,18 +78,18 @@ public:
 	//	Inline accessors
 	//
 
-	RingRenderObjClass *		Get_Ring (void) const							{ return m_RenderObj; }
+	RingRenderObjClass *		Get_Ring () const							{ return m_RenderObj; }
 	void							Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
-	bool							Is_Data_Valid (void) const						{ return m_bValid; }
+	bool							Is_Data_Valid () const						{ return m_bValid; }
 
 protected:
 
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void				Initialize (void);
-	void				Update_Colors (void);
-	void				Update_Opacities (void);
+	void				Initialize ();
+	void				Update_Colors ();
+	void				Update_Opacities ();
 
 private:
 

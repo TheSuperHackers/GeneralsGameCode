@@ -333,7 +333,7 @@ void PingThreadClass::Thread_Function()
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
 
-HANDLE WINAPI IcmpCreateFile(VOID); /* INVALID_HANDLE_VALUE on error */
+HANDLE WINAPI IcmpCreateFile(); /* INVALID_HANDLE_VALUE on error */
 BOOL WINAPI IcmpCloseHandle(HANDLE IcmpHandle); /* FALSE on error */
 
 /* Note 2: For the most part, you can refer to RFC 791 for detials
@@ -442,7 +442,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    char achRepData[sizeof(ICMPECHO) + BUFSIZE];
 
 
-   HANDLE ( WINAPI *lpfnIcmpCreateFile )( VOID ) = nullptr;
+   HANDLE ( WINAPI *lpfnIcmpCreateFile )() = nullptr;
    BOOL ( WINAPI *lpfnIcmpCloseHandle )( HANDLE ) = nullptr;
    DWORD (WINAPI *lpfnIcmpSendEcho)(HANDLE, DWORD, LPVOID, WORD, LPVOID,
                                     LPVOID, DWORD, DWORD) = nullptr;

@@ -63,7 +63,7 @@
 // ImageInfo::ImageInfo =======================================================
 /** */
 //=============================================================================
-ImageInfo::ImageInfo( void )
+ImageInfo::ImageInfo()
 {
 
 	m_area = 0;
@@ -91,7 +91,7 @@ ImageInfo::ImageInfo( void )
 // ImageInfo::~ImageInfo ======================================================
 /** */
 //=============================================================================
-ImageInfo::~ImageInfo( void )
+ImageInfo::~ImageInfo()
 {
 
 	delete [] m_path;

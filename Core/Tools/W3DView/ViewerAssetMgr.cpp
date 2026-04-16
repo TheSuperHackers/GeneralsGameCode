@@ -112,7 +112,7 @@ ViewerAssetMgrClass::Open_Texture_File_Cache (const char * /*prefix*/)
 //
 ////////////////////////////////////////////////////////////////////////
 void
-ViewerAssetMgrClass::Close_Texture_File_Cache (void)
+ViewerAssetMgrClass::Close_Texture_File_Cache ()
 {
 	return ;
 }

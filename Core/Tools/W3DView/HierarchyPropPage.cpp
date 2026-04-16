@@ -58,7 +58,7 @@ CHierarchyPropPage::CHierarchyPropPage (const CString &stringHierarchyName)
 //
 //  CHierarchyPropPage
 //
-CHierarchyPropPage::~CHierarchyPropPage (void)
+CHierarchyPropPage::~CHierarchyPropPage ()
 {
     return ;
 }
@@ -92,7 +92,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CHierarchyPropPage::OnInitDialog (void)
+CHierarchyPropPage::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog();

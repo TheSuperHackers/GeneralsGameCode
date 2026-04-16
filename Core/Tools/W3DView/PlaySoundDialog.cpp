@@ -79,7 +79,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-PlaySoundDialogClass::OnPlaySoundEffect (void)
+PlaySoundDialogClass::OnPlaySoundEffect ()
 {
 	ASSERT (SoundObj != nullptr);
 	if (SoundObj != nullptr) {
@@ -97,7 +97,7 @@ PlaySoundDialogClass::OnPlaySoundEffect (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-PlaySoundDialogClass::OnCancel (void)
+PlaySoundDialogClass::OnCancel ()
 {
 	SoundObj->Stop ();
 	REF_PTR_RELEASE (SoundObj);
@@ -113,7 +113,7 @@ PlaySoundDialogClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-PlaySoundDialogClass::OnInitDialog (void)
+PlaySoundDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -145,7 +145,7 @@ PlaySoundDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-PlaySoundDialogClass::OnStopSoundEffect (void)
+PlaySoundDialogClass::OnStopSoundEffect ()
 {
 	ASSERT (SoundObj != nullptr);
 	if (SoundObj != nullptr) {

@@ -89,11 +89,11 @@ protected:
 		//
 		//	Protected methods
 		//
-		void							Initialize (void);
-		ParticleEmitterClass *	Create_Emitter (void);
-		void							Update_Emitter (void);
-		void							Add_Emitter_To_Viewer (void);
-		void							Create_New_Emitter (void);
+		void							Initialize ();
+		ParticleEmitterClass *	Create_Emitter ();
+		void							Update_Emitter ();
+		void							Add_Emitter_To_Viewer ();
+		void							Create_New_Emitter ();
 
 	private:
 

@@ -87,7 +87,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CAnimationSpeed::OnInitDialog (void)
+CAnimationSpeed::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -174,7 +174,7 @@ CAnimationSpeed::OnHScroll
 //  OnDestroy
 //
 void
-CAnimationSpeed::OnDestroy (void)
+CAnimationSpeed::OnDestroy ()
 {
     m_iInitialPercent = m_speedSlider.GetPos ();
 	CDialog::OnDestroy();
@@ -186,7 +186,7 @@ CAnimationSpeed::OnDestroy (void)
 //  OnBlend
 //
 void
-CAnimationSpeed::OnBlend (void)
+CAnimationSpeed::OnBlend ()
 {
     // Get a pointer to the doc so we can get at the current scene
     // pointer.

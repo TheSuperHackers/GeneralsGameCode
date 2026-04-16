@@ -93,7 +93,7 @@ void TeamObjectProperties::OnOK()
 	_PropertiesToDict();
 }
 
-void TeamObjectProperties::updateTheUI(void)
+void TeamObjectProperties::updateTheUI()
 {
 	_DictToHealth();
 	_DictToHPs();
@@ -112,7 +112,7 @@ void TeamObjectProperties::updateTheUI(void)
 	_DictToStoppingDistance();
 }
 
-void TeamObjectProperties::_DictToHealth(void)
+void TeamObjectProperties::_DictToHealth()
 {
 	Int value = 100;
 	Bool exists;
@@ -153,7 +153,7 @@ void TeamObjectProperties::_DictToHealth(void)
 	}
 }
 
-void TeamObjectProperties::_DictToHPs(void)
+void TeamObjectProperties::_DictToHPs()
 {
 	Int value = -1;
 	Bool exists;
@@ -178,7 +178,7 @@ void TeamObjectProperties::_DictToHPs(void)
 	}
 }
 
-void TeamObjectProperties::_DictToEnabled(void)
+void TeamObjectProperties::_DictToEnabled()
 {
 	Bool enabled = true;
 	Bool exists;
@@ -192,7 +192,7 @@ void TeamObjectProperties::_DictToEnabled(void)
 	}
 }
 
-void TeamObjectProperties::_DictToDestructible(void)
+void TeamObjectProperties::_DictToDestructible()
 {
 	Bool destructible = true;
 	Bool exists;
@@ -206,7 +206,7 @@ void TeamObjectProperties::_DictToDestructible(void)
 	}
 }
 
-void TeamObjectProperties::_DictToUnsellable(void)
+void TeamObjectProperties::_DictToUnsellable()
 {
 	Bool unsellable = false;
 	Bool exists;
@@ -220,7 +220,7 @@ void TeamObjectProperties::_DictToUnsellable(void)
 	}
 }
 
-void TeamObjectProperties::_DictToPowered(void)
+void TeamObjectProperties::_DictToPowered()
 {
 	Bool powered = true;
 	Bool exists;
@@ -235,7 +235,7 @@ void TeamObjectProperties::_DictToPowered(void)
 
 }
 
-void TeamObjectProperties::_DictToAggressiveness(void)
+void TeamObjectProperties::_DictToAggressiveness()
 {
 	Int value = 0;
 	Bool exists;
@@ -259,7 +259,7 @@ void TeamObjectProperties::_DictToAggressiveness(void)
 	}
 }
 
-void TeamObjectProperties::_DictToVisibilityRange(void)
+void TeamObjectProperties::_DictToVisibilityRange()
 {
 	Int distance = 0;
 	Bool exists;
@@ -279,7 +279,7 @@ void TeamObjectProperties::_DictToVisibilityRange(void)
 	}
 }
 
-void TeamObjectProperties::_DictToVeterancy(void)
+void TeamObjectProperties::_DictToVeterancy()
 {
 	Int value = 0;
 	Bool exists;
@@ -293,7 +293,7 @@ void TeamObjectProperties::_DictToVeterancy(void)
 	}
 }
 
-void TeamObjectProperties::_DictToWeather(void)
+void TeamObjectProperties::_DictToWeather()
 {
 	Int value = 0;
 	Bool exists;
@@ -307,7 +307,7 @@ void TeamObjectProperties::_DictToWeather(void)
 	pItem->SetCurSel(value);
 }
 
-void TeamObjectProperties::_DictToTime(void)
+void TeamObjectProperties::_DictToTime()
 {
 	Int value = 0;
 	Bool exists;
@@ -321,7 +321,7 @@ void TeamObjectProperties::_DictToTime(void)
 	pItem->SetCurSel(value);
 }
 
-void TeamObjectProperties::_DictToShroudClearingDistance(void)
+void TeamObjectProperties::_DictToShroudClearingDistance()
 {
 	Int distance = 0;
 	Bool exists;
@@ -341,7 +341,7 @@ void TeamObjectProperties::_DictToShroudClearingDistance(void)
 	}
 }
 
-void TeamObjectProperties::_DictToRecruitableAI(void)
+void TeamObjectProperties::_DictToRecruitableAI()
 {
  	Bool recruitableAI = true;
  	Bool exists;
@@ -355,7 +355,7 @@ void TeamObjectProperties::_DictToRecruitableAI(void)
 	}
 }
 
-void TeamObjectProperties::_DictToSelectable(void)
+void TeamObjectProperties::_DictToSelectable()
 {
 	Bool selectable = true;
 	Bool exists;
@@ -369,7 +369,7 @@ void TeamObjectProperties::_DictToSelectable(void)
 	}
 }
 
-void TeamObjectProperties::_DictToStoppingDistance(void)
+void TeamObjectProperties::_DictToStoppingDistance()
 {
 	Real stoppingDistance = 1.0f;
 	Bool exists = false;
@@ -389,7 +389,7 @@ void TeamObjectProperties::_DictToStoppingDistance(void)
 	}
 }
 
-void TeamObjectProperties::_HealthToDict(void)
+void TeamObjectProperties::_HealthToDict()
 {
 	Int value;
 	static char buf[1024];
@@ -420,7 +420,7 @@ void TeamObjectProperties::_HealthToDict(void)
 	m_dictToEdit->setInt(TheKey_teamObjectInitialHealth, value);
 }
 
-void TeamObjectProperties::_EnabledToDict(void)
+void TeamObjectProperties::_EnabledToDict()
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_Enabled);
 	Bool isChecked = (owner->GetCheck() != 0);
@@ -429,7 +429,7 @@ void TeamObjectProperties::_EnabledToDict(void)
 }
 
 
-void TeamObjectProperties::_IndestructibleToDict(void)
+void TeamObjectProperties::_IndestructibleToDict()
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_Indestructible);
 	Bool isChecked = (owner->GetCheck() != 0);
@@ -437,7 +437,7 @@ void TeamObjectProperties::_IndestructibleToDict(void)
 	m_dictToEdit->setBool(TheKey_teamObjectIndestructible, isChecked);
 }
 
-void TeamObjectProperties::_UnsellableToDict(void)
+void TeamObjectProperties::_UnsellableToDict()
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_Unsellable);
 	Bool isChecked = (owner->GetCheck() != 0);
@@ -445,7 +445,7 @@ void TeamObjectProperties::_UnsellableToDict(void)
 	m_dictToEdit->setBool(TheKey_teamObjectUnsellable, isChecked);
 }
 
-void TeamObjectProperties::_PoweredToDict(void)
+void TeamObjectProperties::_PoweredToDict()
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_Powered);
 	Bool isChecked = (owner->GetCheck() != 0);
@@ -453,7 +453,7 @@ void TeamObjectProperties::_PoweredToDict(void)
 	m_dictToEdit->setBool(TheKey_teamObjectPowered, isChecked);
 }
 
-void TeamObjectProperties::_AggressivenessToDict(void)
+void TeamObjectProperties::_AggressivenessToDict()
 {
 	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Aggressiveness);
 	static char buf[1024];
@@ -475,7 +475,7 @@ void TeamObjectProperties::_AggressivenessToDict(void)
 	m_dictToEdit->setInt(TheKey_teamObjectAggressiveness, value);
 }
 
-void TeamObjectProperties::_VisibilityToDict(void)
+void TeamObjectProperties::_VisibilityToDict()
 {
 	int value = -1;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_VisionDistance);
@@ -491,7 +491,7 @@ void TeamObjectProperties::_VisibilityToDict(void)
 	}
 }
 
-void TeamObjectProperties::_VeterancyToDict(void)
+void TeamObjectProperties::_VeterancyToDict()
 {
 	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Veterancy);
 	static char buf[1024];
@@ -504,7 +504,7 @@ void TeamObjectProperties::_VeterancyToDict(void)
 	m_dictToEdit->setInt(TheKey_teamObjectVeterancy, value);
 }
 
-void TeamObjectProperties::_WeatherToDict(void)
+void TeamObjectProperties::_WeatherToDict()
 {
 	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Weather);
 	static char buf[1024];
@@ -513,7 +513,7 @@ void TeamObjectProperties::_WeatherToDict(void)
 	m_dictToEdit->setInt(TheKey_teamObjectWeather, curSel);
 }
 
-void TeamObjectProperties::_TimeToDict(void)
+void TeamObjectProperties::_TimeToDict()
 {
 	CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Time);
 	static char buf[1024];
@@ -522,7 +522,7 @@ void TeamObjectProperties::_TimeToDict(void)
 	m_dictToEdit->setInt(TheKey_teamObjectTime, curSel);
 }
 
-void TeamObjectProperties::_ShroudClearingDistanceToDict(void)
+void TeamObjectProperties::_ShroudClearingDistanceToDict()
 {
 	int value = -1;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ShroudClearingDistance);
@@ -538,7 +538,7 @@ void TeamObjectProperties::_ShroudClearingDistanceToDict(void)
 	}
 }
 
-void TeamObjectProperties::_RecruitableAIToDict(void)
+void TeamObjectProperties::_RecruitableAIToDict()
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_RecruitableAI);
 	Bool isChecked = (owner->GetCheck() != 0);
@@ -546,7 +546,7 @@ void TeamObjectProperties::_RecruitableAIToDict(void)
 	m_dictToEdit->setBool(TheKey_teamObjectRecruitableAI, isChecked);
 }
 
-void TeamObjectProperties::_SelectableToDict(void)
+void TeamObjectProperties::_SelectableToDict()
 {
 	CButton *owner = (CButton*) GetDlgItem(IDC_MAPOBJECT_Selectable);
 	Bool isChecked = (owner->GetCheck() != 0);
@@ -568,7 +568,7 @@ void TeamObjectProperties::_HPsToDict()
 	m_dictToEdit->setInt(TheKey_teamObjectMaxHPs, value);
 }
 
-void TeamObjectProperties::_StoppingDistanceToDict(void)
+void TeamObjectProperties::_StoppingDistanceToDict()
 {
 	Real value;
 	static char buf[1024];

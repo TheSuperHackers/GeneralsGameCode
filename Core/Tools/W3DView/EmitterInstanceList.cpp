@@ -40,7 +40,7 @@
 //	~EmitterInstanceListClass
 //
 /////////////////////////////////////////////////////////////////////
-EmitterInstanceListClass::~EmitterInstanceListClass (void)
+EmitterInstanceListClass::~EmitterInstanceListClass ()
 {
 	Free_List ();
 	return ;
@@ -53,7 +53,7 @@ EmitterInstanceListClass::~EmitterInstanceListClass (void)
 //
 /////////////////////////////////////////////////////////////////////
 void
-EmitterInstanceListClass::Free_List (void)
+EmitterInstanceListClass::Free_List ()
 {
 	//
 	//	Release our hold on each of the emitter pointers

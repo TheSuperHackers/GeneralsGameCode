@@ -59,7 +59,7 @@ EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pe
 //
 //  ~EmitterUserPropPageClass
 //
-EmitterUserPropPageClass::~EmitterUserPropPageClass (void)
+EmitterUserPropPageClass::~EmitterUserPropPageClass ()
 {
 	return;
 }
@@ -94,7 +94,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 void
-EmitterUserPropPageClass::Initialize (void)
+EmitterUserPropPageClass::Initialize ()
 {
 	if (m_pEmitterList != nullptr) {
 
@@ -112,7 +112,7 @@ EmitterUserPropPageClass::Initialize (void)
 //  OnInitDialog
 //
 BOOL
-EmitterUserPropPageClass::OnInitDialog (void)
+EmitterUserPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -136,7 +136,7 @@ EmitterUserPropPageClass::OnInitDialog (void)
 //  OnApply
 //
 BOOL
-EmitterUserPropPageClass::OnApply (void)
+EmitterUserPropPageClass::OnApply ()
 {
 	// Get the settings from the controls
 	m_iType = m_TypeCombo.GetCurSel ();
@@ -158,7 +158,7 @@ EmitterUserPropPageClass::OnApply (void)
 //  OnChangeProgrammerSettingsEdit
 //
 void
-EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit (void)
+EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit ()
 {
 	SetModified ();
 	return ;
@@ -170,7 +170,7 @@ EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit (void)
 //  OnSelchangeTypeCombo
 //
 void
-EmitterUserPropPageClass::OnSelchangeTypeCombo (void)
+EmitterUserPropPageClass::OnSelchangeTypeCombo ()
 {
 	SetModified ();
 	return ;

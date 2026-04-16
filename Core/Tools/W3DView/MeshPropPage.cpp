@@ -59,7 +59,7 @@ CMeshPropPage::CMeshPropPage (const CString &stringMeshName)
 //
 //  ~CMeshPropPage
 //
-CMeshPropPage::~CMeshPropPage (void)
+CMeshPropPage::~CMeshPropPage ()
 {
     return ;
 }
@@ -93,7 +93,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CMeshPropPage::OnInitDialog (void)
+CMeshPropPage::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog();

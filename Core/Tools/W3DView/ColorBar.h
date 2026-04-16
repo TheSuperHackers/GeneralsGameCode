@@ -142,14 +142,14 @@ protected:
 		bool				Set_Graph_Percent (int index, float percent);
 		float				Get_Graph_Percent (int index);
 		bool				Delete_Point (int index);
-		void				Clear_Points (void);
+		void				Clear_Points ();
 
-		int				Get_Point_Count (void) const { return m_iColorPoints; }
+		int				Get_Point_Count () const { return m_iColorPoints; }
 		bool				Get_Point (int index, float *position, float *red, float *green, float *blue);
 
 		int				Marker_From_Point (CPoint point);
 		void				Set_Selection_Pos (float pos);
-		float				Get_Selection_Pos (void) const { return m_SelectionPos; }
+		float				Get_Selection_Pos () const { return m_SelectionPos; }
 		void				Get_Color (float position, float *red, float *green, float *blue);
 
 		void				Get_Range (float &min, float &max) const	{ min = m_MinPos; max = m_MaxPos; }
@@ -195,20 +195,20 @@ protected:
 		//
 		//	Protected methods
 		//
-		void				Paint_DIB (void);
-		void				Create_Bitmap (void);
-		void				Free_Bitmap (void);
-		void				Free_Marker_Bitmap (void);
+		void				Paint_DIB ();
+		void				Create_Bitmap ();
+		void				Free_Bitmap ();
+		void				Free_Marker_Bitmap ();
 		void				Paint_Bar_Horz (int x_pos, int y_pos, int width, int height, UCHAR *pbits);
 		void				Paint_Bar_Vert (int x_pos, int y_pos, int width, int height, UCHAR *pbits);
-		void				Update_Point_Info (void);
-		void				Load_Key_Frame_BMP (void);
+		void				Update_Point_Info ();
+		void				Load_Key_Frame_BMP ();
 		void				Paint_Key_Frame (int x_pos, int y_pos);
 		void				Paint_Screen (HDC hwnd_dc);
 		void				Get_Selection_Rectangle (CRect &rect);
 		void				Move_Selection (CPoint point, bool send_notify = true);
 		void				Move_Selection (float new_pos, bool send_notify = true);
-		void				Repaint (void);
+		void				Repaint ();
 
 	private:
 

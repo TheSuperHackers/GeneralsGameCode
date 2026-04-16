@@ -75,13 +75,13 @@ protected:
 	MovePolygonUndoable *m_moveUndoable;
 	Int									 m_originalHeight;
 protected:
-	void updateTheUI(void);
+	void updateTheUI();
 	void changeWaypointLabel(Int editControlID, NameKeyType key);
 
 public:
-	static void update(void);
-	static MapObject *getSingleSelectedWaypoint(void);
-	static PolygonTrigger *getSingleSelectedPolygon(void);
+	static void update();
+	static MapObject *getSingleSelectedWaypoint();
+	static PolygonTrigger *getSingleSelectedPolygon();
 	static Bool isUnique(AsciiString name, MapObject* theMapObj = nullptr);
 	static AsciiString GenerateUniqueName(Int id);
 

@@ -129,7 +129,7 @@ BOOL CameraOptions::getReal(Int ctrlID, Real *rVal)
 	return false;
 }
 
-void CameraOptions::stuffValuesIntoFields( void )
+void CameraOptions::stuffValuesIntoFields()
 {
 	WbView3d * p3View = CWorldBuilderDoc::GetActive3DView();
 	if (p3View)
@@ -155,7 +155,7 @@ void CameraOptions::stuffValuesIntoFields( void )
 	}
 }
 
-void CameraOptions::update( void )
+void CameraOptions::update()
 {
 	stuffValuesIntoFields();
 }

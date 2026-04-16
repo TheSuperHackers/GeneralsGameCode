@@ -110,7 +110,7 @@ static void writeBufferToFile( FILE *fp, char *buffer )
 // clearBufferToSpaces ========================================================
 /** Clear the buffer to all spaces */
 //=============================================================================
-static void clearBufferToSpaces( void )
+static void clearBufferToSpaces()
 {
 	Int i;
 

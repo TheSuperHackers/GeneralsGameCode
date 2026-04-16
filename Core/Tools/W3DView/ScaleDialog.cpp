@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-ScaleDialogClass::OnInitDialog (void)
+ScaleDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -98,7 +98,7 @@ ScaleDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ScaleDialogClass::OnOK (void)
+ScaleDialogClass::OnOK ()
 {
 	int pos = m_ScaleSpin.GetPos();
 	if (pos & 0xffff0000) {

@@ -64,7 +64,7 @@ SphereColorPropPageClass::SphereColorPropPageClass (SphereRenderObjClass *sphere
 //	~SphereColorPropPageClass
 //
 /////////////////////////////////////////////////////////////
-SphereColorPropPageClass::~SphereColorPropPageClass (void)
+SphereColorPropPageClass::~SphereColorPropPageClass ()
 {
 	return ;
 }
@@ -101,7 +101,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::Initialize (void)
+SphereColorPropPageClass::Initialize ()
 {
 	m_ColorChannel.Reset ();
 	m_OrigColorChannel.Reset ();
@@ -150,7 +150,7 @@ SphereColorPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereColorPropPageClass::OnInitDialog (void)
+SphereColorPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -226,7 +226,7 @@ SphereColorPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereColorPropPageClass::OnApply (void)
+SphereColorPropPageClass::OnApply ()
 {
 	// Allow the base class to process this message
 	return CPropertyPage::OnApply ();
@@ -239,7 +239,7 @@ SphereColorPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::OnDestroy (void)
+SphereColorPropPageClass::OnDestroy ()
 {
 	//
 	//	Free the alpha vectors associated with the keys...
@@ -436,7 +436,7 @@ SphereColorPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::OnCancel (void)
+SphereColorPropPageClass::OnCancel ()
 {
 	//
 	//	Reset the object to its original state
@@ -459,7 +459,7 @@ SphereColorPropPageClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::Update_Opacities (void)
+SphereColorPropPageClass::Update_Opacities ()
 {
 	m_AlphaChannel.Reset ();
 
@@ -492,7 +492,7 @@ SphereColorPropPageClass::Update_Opacities (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::Update_Colors (void)
+SphereColorPropPageClass::Update_Colors ()
 {
 	m_ColorChannel.Reset ();
 
@@ -525,7 +525,7 @@ SphereColorPropPageClass::Update_Colors (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::Update_Vectors (void)
+SphereColorPropPageClass::Update_Vectors ()
 {
 	m_VectorChannel.Reset ();
 
@@ -562,7 +562,7 @@ SphereColorPropPageClass::Update_Vectors (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::OnOpacityVectorCheck (void)
+SphereColorPropPageClass::OnOpacityVectorCheck ()
 {
 	bool is_checked = (IsDlgButtonChecked (IDC_OPACITY_VECTOR_CHECK) == 1);
 
@@ -586,7 +586,7 @@ SphereColorPropPageClass::OnOpacityVectorCheck (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereColorPropPageClass::OnInvertVectorCheck (void)
+SphereColorPropPageClass::OnInvertVectorCheck ()
 {
 	bool is_checked = (IsDlgButtonChecked (IDC_INVERT_VECTOR_CHECK) == 1);
 

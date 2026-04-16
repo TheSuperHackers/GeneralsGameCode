@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CSaveSettingsDialog::OnInitDialog (void)
+CSaveSettingsDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -97,7 +97,7 @@ CSaveSettingsDialog::OnInitDialog (void)
 //  OnBrowseButton
 //
 void
-CSaveSettingsDialog::OnBrowseButton (void)
+CSaveSettingsDialog::OnBrowseButton ()
 {
 	 TCHAR szFileName[MAX_PATH];
 	 ::GetModuleFileName (nullptr, szFileName, sizeof (szFileName));
@@ -135,7 +135,7 @@ CSaveSettingsDialog::OnBrowseButton (void)
 //  OnUpdateFilenameEdit
 //
 void
-CSaveSettingsDialog::OnUpdateFilenameEdit (void)
+CSaveSettingsDialog::OnUpdateFilenameEdit ()
 {
     // Set the enabled state of the OK button
     // based on the values of the control
@@ -148,7 +148,7 @@ CSaveSettingsDialog::OnUpdateFilenameEdit (void)
 //  OnUpdateFilenameEdit
 //
 void
-CSaveSettingsDialog::OnOK (void)
+CSaveSettingsDialog::OnOK ()
 {
     // Assume we want to allow the base class to process this message
     BOOL bAllowDefaultProcessing = TRUE;
@@ -227,7 +227,7 @@ CSaveSettingsDialog::OnCommand
 //  FixOKEnableState
 //
 void
-CSaveSettingsDialog::FixOKEnableState (void)
+CSaveSettingsDialog::FixOKEnableState ()
 {
     // Determine which (if any) checkboxes are checked
     int iValidSel = 0;

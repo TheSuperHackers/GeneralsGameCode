@@ -61,7 +61,7 @@ static void calcNewLight(Int lr, Int fb, Vector3 *newLight)
 	newLight->Rotate_Z(zAngle);
 }
 
-void GlobalLightOptions::updateEditFields(void)
+void GlobalLightOptions::updateEditFields()
 {
 	m_updating = true;
 	CString str;

@@ -2530,7 +2530,7 @@ void W3DView::initHeightForMap()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::resetPivotToGround( void )
+void W3DView::resetPivotToGround()
 {
 	m_groundLevel = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints

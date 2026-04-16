@@ -32,8 +32,8 @@ class WorldHeightMapEdit;
 class EyedropperTool : public Tool
 {
 public:
-	EyedropperTool(void);
-	virtual ~EyedropperTool(void) override;
+	EyedropperTool();
+	virtual ~EyedropperTool() override;
 
 public:
 	/// Perform tool on mouse down.

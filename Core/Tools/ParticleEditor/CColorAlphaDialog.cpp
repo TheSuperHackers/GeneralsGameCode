@@ -61,7 +61,7 @@ CColorAlphaDialog::CColorAlphaDialog(UINT nIDTemplate, CWnd* pParentWnd) :
 										CDialog(nIDTemplate, pParentWnd)
 {}
 
-void CColorAlphaDialog::InitPanel( void )
+void CColorAlphaDialog::InitPanel()
 {
 	CString custColor;
 	custColor = AfxGetApp()->GetProfileString("Custom Colors", "Color1", "0");

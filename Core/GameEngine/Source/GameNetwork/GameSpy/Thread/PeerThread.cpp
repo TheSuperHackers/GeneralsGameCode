@@ -586,7 +586,7 @@ void GameSpyPeerMessageQueue::addRequest( const PeerRequest& req )
 	m_requests.push(req);
 }
 
-//PeerRequest GameSpyPeerMessageQueue::getRequest( void )
+//PeerRequest GameSpyPeerMessageQueue::getRequest()
 Bool GameSpyPeerMessageQueue::getRequest( PeerRequest& req )
 {
 	MutexClass::LockClass m(m_requestMutex, 0);
@@ -612,7 +612,7 @@ void GameSpyPeerMessageQueue::addResponse( const PeerResponse& resp )
 	m_responses.push(resp);
 }
 
-//PeerResponse GameSpyPeerMessageQueue::getResponse( void )
+//PeerResponse GameSpyPeerMessageQueue::getResponse()
 Bool GameSpyPeerMessageQueue::getResponse( PeerResponse& resp )
 {
 	MutexClass::LockClass m(m_responseMutex, 0);

@@ -79,7 +79,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CBackgroundBMPDialog::OnInitDialog (void)
+CBackgroundBMPDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -104,7 +104,7 @@ CBackgroundBMPDialog::OnInitDialog (void)
 //  OnOK
 //
 void
-CBackgroundBMPDialog::OnOK (void)
+CBackgroundBMPDialog::OnOK ()
 {
     // Gett a pointer to the current document
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
@@ -135,7 +135,7 @@ CBackgroundBMPDialog::OnOK (void)
 //  OnBrowse
 //
 void
-CBackgroundBMPDialog::OnBrowse (void)
+CBackgroundBMPDialog::OnBrowse ()
 {
     // Get a pointer to the current document
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();

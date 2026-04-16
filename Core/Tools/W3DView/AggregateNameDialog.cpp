@@ -101,7 +101,7 @@ END_MESSAGE_MAP()
 //	OnOK
 //
 void
-AggregateNameDialogClass::OnOK (void)
+AggregateNameDialogClass::OnOK ()
 {
 	GetDlgItemText (IDC_AGGREGATE_NAME, m_Name);
 	CDialog::OnOK ();
@@ -114,7 +114,7 @@ AggregateNameDialogClass::OnOK (void)
 //	OnInitDialog
 //
 BOOL
-AggregateNameDialogClass::OnInitDialog (void)
+AggregateNameDialogClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();

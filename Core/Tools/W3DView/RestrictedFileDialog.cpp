@@ -57,7 +57,7 @@ END_MESSAGE_MAP()
 //	OnFileNameChange
 //
 void
-RestrictedFileDialogClass::OnFileNameChange (void)
+RestrictedFileDialogClass::OnFileNameChange ()
 {
 	// Force the original filename into the filename control
 	CommDlg_OpenSave_SetControlText (::GetParent (m_hWnd), 0x480, (LPCTSTR)m_ExpectedFilename);
@@ -70,7 +70,7 @@ RestrictedFileDialogClass::OnFileNameChange (void)
 //	OnFileNameOK
 //
 BOOL
-RestrictedFileDialogClass::OnFileNameOK (void)
+RestrictedFileDialogClass::OnFileNameOK ()
 {
 	// Force the original filename into the filename control
 	CommDlg_OpenSave_SetControlText (::GetParent (m_hWnd), 0x480, (LPCTSTR)m_ExpectedFilename);
@@ -91,7 +91,7 @@ RestrictedFileDialogClass::OnFileNameOK (void)
 //	OnInitDone
 //
 void
-RestrictedFileDialogClass::OnInitDone (void)
+RestrictedFileDialogClass::OnInitDone ()
 {
 	// Disable the controls we don't want the user to change
 	::EnableWindow (::GetDlgItem (::GetParent (m_hWnd), 0x480), FALSE);

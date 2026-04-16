@@ -42,13 +42,13 @@ Bool WaypointTool::m_isActive = false;
 
 
 /// Constructor
-WaypointTool::WaypointTool(void) :
+WaypointTool::WaypointTool() :
 	Tool(ID_WAYPOINT_TOOL, IDC_WAYPOINT)
 {
 }
 
 /// Destructor
-WaypointTool::~WaypointTool(void)
+WaypointTool::~WaypointTool()
 {
 }
 

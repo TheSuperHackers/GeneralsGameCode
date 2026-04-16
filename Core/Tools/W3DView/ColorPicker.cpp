@@ -43,7 +43,7 @@ static char THIS_FILE[] = __FILE__;
 //
 // ColorPickerClass
 //
-ColorPickerClass::ColorPickerClass (void)
+ColorPickerClass::ColorPickerClass ()
 	: m_hBitmap (nullptr),
 	  m_iWidth (0),
 	  m_iHeight (0),
@@ -63,7 +63,7 @@ ColorPickerClass::ColorPickerClass (void)
 //
 // ~ColorPickerClass
 //
-ColorPickerClass::~ColorPickerClass (void)
+ColorPickerClass::~ColorPickerClass ()
 {
 	if (m_hMemDC != nullptr) {
 		::DeleteObject (m_hMemDC);
@@ -93,7 +93,7 @@ END_MESSAGE_MAP()
 // OnPaint
 //
 void
-ColorPickerClass::OnPaint (void)
+ColorPickerClass::OnPaint ()
 {
 	CPaintDC dc (this);
 
@@ -297,7 +297,7 @@ ColorPickerClass::Create
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ColorPickerClass::Create_Bitmap (void)
+ColorPickerClass::Create_Bitmap ()
 {
 	// Start fresh
 	Free_Bitmap ();
@@ -693,7 +693,7 @@ ColorPickerClass::Paint_DIB
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ColorPickerClass::Free_Bitmap (void)
+ColorPickerClass::Free_Bitmap ()
 {
 	if (m_hBitmap != nullptr) {
 		::DeleteObject (m_hBitmap);
@@ -893,7 +893,7 @@ ColorPickerClass::Calc_Display_Rect (RECT &rect)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ColorPickerClass::Erase_Marker (void)
+ColorPickerClass::Erase_Marker ()
 {
 	HDC hdc = ::GetDC (m_hWnd);
 	if (m_hMemDC != nullptr) {
@@ -926,7 +926,7 @@ ColorPickerClass::Erase_Marker (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ColorPickerClass::Paint_Marker (void)
+ColorPickerClass::Paint_Marker ()
 {
 	HDC hdc = ::GetDC (m_hWnd);
 	if (m_hMemDC != nullptr) {

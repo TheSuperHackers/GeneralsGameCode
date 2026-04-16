@@ -93,7 +93,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::Initialize (void)
+SphereGeneralPropPageClass::Initialize ()
 {
 	if (m_RenderObj != nullptr) {
 
@@ -155,7 +155,7 @@ SphereGeneralPropPageClass::Add_Shader_To_Combo
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereGeneralPropPageClass::OnInitDialog (void)
+SphereGeneralPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -191,7 +191,7 @@ SphereGeneralPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereGeneralPropPageClass::OnApply (void)
+SphereGeneralPropPageClass::OnApply ()
 {
 	// Get the data from the dialog controls
 	GetDlgItemText (IDC_NAME_EDIT, m_Name);
@@ -251,7 +251,7 @@ SphereGeneralPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnBrowseButton (void)
+SphereGeneralPropPageClass::OnBrowseButton ()
 {
 	CFileDialog dialog (	TRUE,
 								".tga",
@@ -276,7 +276,7 @@ SphereGeneralPropPageClass::OnBrowseButton (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnChangeFilenameEdit (void)
+SphereGeneralPropPageClass::OnChangeFilenameEdit ()
 {
 	SetModified ();
 	return ;
@@ -289,7 +289,7 @@ SphereGeneralPropPageClass::OnChangeFilenameEdit (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnChangeNameEdit (void)
+SphereGeneralPropPageClass::OnChangeNameEdit ()
 {
 	SetModified ();
 	return ;
@@ -329,7 +329,7 @@ SphereGeneralPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnChangeLifetimeEdit (void)
+SphereGeneralPropPageClass::OnChangeLifetimeEdit ()
 {
 	SetModified ();
 	return ;
@@ -342,7 +342,7 @@ SphereGeneralPropPageClass::OnChangeLifetimeEdit (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereGeneralPropPageClass::OnSelchangeShaderCombo (void)
+SphereGeneralPropPageClass::OnSelchangeShaderCombo ()
 {
 	SetModified ();
 	return ;

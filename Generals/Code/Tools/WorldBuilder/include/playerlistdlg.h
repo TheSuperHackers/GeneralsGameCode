@@ -55,8 +55,8 @@ protected:
 	Int					m_curPlayerIdx;
 	CButtonShowColor	m_colorButton;
 
-	void updateTheUI(void);
-	void PopulateColorComboBox(void);
+	void updateTheUI();
+	void PopulateColorComboBox();
 	void SelectColor(RGBColor rgb);
 
 	// Generated message map functions

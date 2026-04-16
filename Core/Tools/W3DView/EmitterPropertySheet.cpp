@@ -97,7 +97,7 @@ EmitterPropertySheetClass::EmitterPropertySheetClass
 //
 //  EmitterPropertySheetClass
 //
-EmitterPropertySheetClass::~EmitterPropertySheetClass (void)
+EmitterPropertySheetClass::~EmitterPropertySheetClass ()
 {
 	SAFE_DELETE (m_pEmitterList);
 	return ;
@@ -189,7 +189,7 @@ EmitterPropertySheetClass::WindowProc
 //  Add_Emitter_To_Viewer
 //
 void
-EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
+EmitterPropertySheetClass::Add_Emitter_To_Viewer ()
 {
 	CW3DViewDoc *pdoc = ::GetCurrentDocument ();
 	if ((pdoc != nullptr) && (m_pEmitterList != nullptr)) {
@@ -241,7 +241,7 @@ EmitterPropertySheetClass::Add_Emitter_To_Viewer (void)
 //  Update_Emitter
 //
 void
-EmitterPropertySheetClass::Update_Emitter (void)
+EmitterPropertySheetClass::Update_Emitter ()
 {
 	//
 	//	Update those pages that are dependent on the particle's
@@ -284,7 +284,7 @@ EmitterPropertySheetClass::Update_Emitter (void)
 //  Initialize
 //
 void
-EmitterPropertySheetClass::Initialize (void)
+EmitterPropertySheetClass::Initialize ()
 {
 	if (m_pEmitterList == nullptr) {
 		Create_New_Emitter ();
@@ -338,7 +338,7 @@ EmitterPropertySheetClass::Initialize (void)
 //  Create_Emitter
 //
 /*ParticleEmitterClass *
-EmitterPropertySheetClass::Create_Emitter (void)
+EmitterPropertySheetClass::Create_Emitter ()
 {
 	//
 	//	Read the particle settings
@@ -422,7 +422,7 @@ EmitterPropertySheetClass::Create_Emitter (void)
 //  Create_New_Emitter
 //
 void
-EmitterPropertySheetClass::Create_New_Emitter (void)
+EmitterPropertySheetClass::Create_New_Emitter ()
 {
 	ParticlePropertyStruct<Vector3> color;
 	color.Start = Vector3 (1, 1, 1);

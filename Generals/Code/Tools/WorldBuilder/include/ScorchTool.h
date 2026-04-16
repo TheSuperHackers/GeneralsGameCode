@@ -31,8 +31,8 @@ class MapObject;
 class ScorchTool : public Tool
 {
 public:
-	ScorchTool(void);
-	virtual ~ScorchTool(void) override;
+	ScorchTool();
+	virtual ~ScorchTool() override;
 
 protected:
 	Coord3D m_mouseDownPt;

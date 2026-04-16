@@ -93,14 +93,14 @@ public:
 	static void setHeight(Real height);
 	static void setAngle(Int angle);
 
-	static Real getHeight(void) {return m_currentHeight;};
-	static Real getScale(void) {return m_currentScale;};
-	static Int getAngle(void) {return m_currentAngle;};
+	static Real getHeight() {return m_currentHeight;};
+	static Real getScale() {return m_currentScale;};
+	static Int getAngle() {return m_currentAngle;};
 	static MeshMoldOptions *m_staticThis;
-	static Bool isDoingPreview(void) {return m_doingPreview;};
-	static Bool isRaisingOnly(void) {return m_raiseOnly;};
-	static Bool isLoweringOnly(void) {return m_lowerOnly;};
-	static AsciiString getModelName(void) {if (m_staticThis) return m_staticThis->m_meshModelName; return "";};
+	static Bool isDoingPreview() {return m_doingPreview;};
+	static Bool isRaisingOnly() {return m_raiseOnly;};
+	static Bool isLoweringOnly() {return m_lowerOnly;};
+	static AsciiString getModelName() {if (m_staticThis) return m_staticThis->m_meshModelName; return "";};
 
 public:	 //PopupSliderOwner methods.
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;

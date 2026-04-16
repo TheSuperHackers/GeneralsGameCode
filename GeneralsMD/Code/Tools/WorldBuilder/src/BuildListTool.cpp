@@ -43,7 +43,7 @@ Bool BuildListTool::m_isActive = false;
 PickUnitDialog* BuildListTool::m_static_pickBuildingDlg = nullptr;
 
 /// Constructor
-BuildListTool::BuildListTool(void) :
+BuildListTool::BuildListTool() :
 	Tool(ID_BUILD_LIST_TOOL, IDC_BUILD_LIST_TOOL),
 	m_rotateCursor(nullptr),
 	m_pointerCursor(nullptr),
@@ -54,11 +54,11 @@ BuildListTool::BuildListTool(void) :
 }
 
 /// Destructor
-BuildListTool::~BuildListTool(void)
+BuildListTool::~BuildListTool()
 {
 }
 
-void BuildListTool::createWindow(void)
+void BuildListTool::createWindow()
 {
 	CRect frameRect;
 	frameRect.top = ::AfxGetApp()->GetProfileInt(BUILD_PICK_PANEL_SECTION, "Top", 0);
@@ -73,7 +73,7 @@ void BuildListTool::createWindow(void)
 	m_created = true;
 }
 
-Bool BuildListTool::isDoingAdd(void)
+Bool BuildListTool::isDoingAdd()
 {
 	if (!m_created) {
 		return false;
@@ -133,7 +133,7 @@ void BuildListTool::deactivate()
 }
 
 /** Set the cursor. */
-void BuildListTool::setCursor(void)
+void BuildListTool::setCursor()
 {
 	if (isDoingAdd()) {
 		Tool::setCursor();	// Default cursor is the adding cursor

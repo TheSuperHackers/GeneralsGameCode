@@ -33,18 +33,18 @@ int DebugWindowDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return CDialog::OnCreate(lpCreateStruct);
 }
 
-HWND DebugWindowDialog::GetMainWndHWND(void)
+HWND DebugWindowDialog::GetMainWndHWND()
 {
 	return mMainWndHWND;
 }
 
-void DebugWindowDialog::ForcePause(void)
+void DebugWindowDialog::ForcePause()
 {
 	mNumberOfStepsAllowed = 0;
 	_UpdatePauseButton();
 }
 
-void DebugWindowDialog::ForceContinue(void)
+void DebugWindowDialog::ForceContinue()
 {
 	mNumberOfStepsAllowed = -1;
 	_UpdatePauseButton();
@@ -88,7 +88,7 @@ void DebugWindowDialog::OnClearWindows()
 	_RebuildVarsString();
 }
 
-bool DebugWindowDialog::CanProceed(void)
+bool DebugWindowDialog::CanProceed()
 {
 	if (mNumberOfStepsAllowed < 0) {
 		return true;
@@ -104,7 +104,7 @@ bool DebugWindowDialog::CanProceed(void)
 	return true;
 }
 
-bool DebugWindowDialog::RunAppFast(void)
+bool DebugWindowDialog::RunAppFast()
 {
 	return mRunFast;
 }
@@ -147,7 +147,7 @@ void DebugWindowDialog::SetFrameNumber(int frameNumber)
 	}
 }
 
-void DebugWindowDialog::_RebuildVarsString(void)
+void DebugWindowDialog::_RebuildVarsString()
 {
 	int cursorPosBeg, cursorPosEnd;
 	((CEdit*)GetDlgItem(IDC_Variables))->GetSel(cursorPosBeg, cursorPosEnd);
@@ -168,7 +168,7 @@ void DebugWindowDialog::_RebuildVarsString(void)
 	((CEdit*)GetDlgItem(IDC_Variables))->GetSel(cursorPosBeg, cursorPosEnd);
 }
 
-void DebugWindowDialog::_RebuildMesgString(void)
+void DebugWindowDialog::_RebuildMesgString()
 {
 	mMessagesString = "";
 
@@ -183,7 +183,7 @@ void DebugWindowDialog::_RebuildMesgString(void)
 	((CEdit*)GetDlgItem(IDC_Messages))->SetSel(mMessagesString.length(), mMessagesString.length(), false);
 }
 
-void DebugWindowDialog::_UpdatePauseButton(void)
+void DebugWindowDialog::_UpdatePauseButton()
 {
 	// huh huh huhuh he said pButt
 	CButton* pButt = (CButton*) GetDlgItem(IDC_Pause);

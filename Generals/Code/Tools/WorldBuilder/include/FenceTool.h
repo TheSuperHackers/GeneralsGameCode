@@ -41,8 +41,8 @@ protected:
 	Int				m_objectCount;
 
 public:
-	FenceTool(void);
-	virtual ~FenceTool(void) override;
+	FenceTool();
+	virtual ~FenceTool() override;
 
 protected:
 	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers);

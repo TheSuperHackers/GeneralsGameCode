@@ -151,7 +151,7 @@ LayersList::~LayersList()
 	delete mTree;
 }
 
-void LayersList::resetLayers(void)
+void LayersList::resetLayers()
 {
 	// @todo Default needs to be a localizable string
 	Layer defaultLayer;
@@ -307,7 +307,7 @@ Bool LayersList::isLayerHidden(IN AsciiString layerToTest)
 	return (!layerIt->show);
 }
 
-void LayersList::updateUIFromList(void)
+void LayersList::updateUIFromList()
 {
 	if (!m_performUpdates) {
 		return;

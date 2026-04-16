@@ -52,7 +52,7 @@ class RampTool : public Tool
 		virtual void activate() override;
 		virtual void deactivate() override; ///< Become not the current tool.
 
-		virtual Bool followsTerrain(void) override;
+		virtual Bool followsTerrain() override;
 
 		virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 		virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;

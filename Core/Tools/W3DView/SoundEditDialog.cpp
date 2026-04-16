@@ -73,7 +73,7 @@ SoundEditDialogClass::SoundEditDialogClass (CWnd *parent)
 // ~SoundEditDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-SoundEditDialogClass::~SoundEditDialogClass (void)
+SoundEditDialogClass::~SoundEditDialogClass ()
 {
 	REF_PTR_RELEASE (SoundRObj);
 	return;
@@ -132,7 +132,7 @@ void SoundEditDialogClass::Dump(CDumpContext& dc) const
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-SoundEditDialogClass::OnInitDialog (void)
+SoundEditDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -223,7 +223,7 @@ SoundEditDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::OnOK (void)
+SoundEditDialogClass::OnOK ()
 {
 	CString name;
 	GetDlgItemText (IDC_NAME_EDIT, name);
@@ -307,7 +307,7 @@ SoundEditDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 AudibleSoundClass *
-SoundEditDialogClass::Create_Sound_Object (void)
+SoundEditDialogClass::Create_Sound_Object ()
 {
 	AudibleSoundClass *sound = nullptr;
 
@@ -380,7 +380,7 @@ SoundEditDialogClass::Create_Sound_Object (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::OnBrowse (void)
+SoundEditDialogClass::OnBrowse ()
 {
 	//
 	// Determine what filename and path to initially display in the dialog
@@ -424,7 +424,7 @@ SoundEditDialogClass::OnBrowse (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::On2DRadio (void)
+SoundEditDialogClass::On2DRadio ()
 {
 	Update_Enable_State ();
 	return ;
@@ -437,7 +437,7 @@ SoundEditDialogClass::On2DRadio (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::On3DRadio (void)
+SoundEditDialogClass::On3DRadio ()
 {
 	Update_Enable_State ();
 	return ;
@@ -450,7 +450,7 @@ SoundEditDialogClass::On3DRadio (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::Update_Enable_State (void)
+SoundEditDialogClass::Update_Enable_State ()
 {
 	bool enable_3d = (SendDlgItemMessage (IDC_3D_RADIO, BM_GETCHECK) == 1);
 
@@ -467,7 +467,7 @@ SoundEditDialogClass::Update_Enable_State (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::OnPlay (void)
+SoundEditDialogClass::OnPlay ()
 {
 	//
 	//	Get the current filename
@@ -490,7 +490,7 @@ SoundEditDialogClass::OnPlay (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-SoundEditDialogClass::OnCancel (void)
+SoundEditDialogClass::OnCancel ()
 {
 	CDialog::OnCancel ();
 	return ;

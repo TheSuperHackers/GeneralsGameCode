@@ -38,7 +38,7 @@ inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 static const Int MAX_SCROLL = 1000;
 
 /// Constructor
-HandScrollTool::HandScrollTool(void) :
+HandScrollTool::HandScrollTool() :
 	Tool(ID_HAND_SCROLL_TOOL, IDC_HAND_SCROLL)
 {
 }
@@ -50,7 +50,7 @@ void HandScrollTool::activate()
 }
 
 /// Destructor
-HandScrollTool::~HandScrollTool(void)
+HandScrollTool::~HandScrollTool()
 {
 }
 

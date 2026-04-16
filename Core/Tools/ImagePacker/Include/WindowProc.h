@@ -53,8 +53,8 @@
 extern BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 																			WPARAM wParam, LPARAM lParam );
 
-extern HWND MakePreviewDisplay( void );
-extern void UpdatePreviewWindow( void );
+extern HWND MakePreviewDisplay();
+extern void UpdatePreviewWindow();
 extern LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 																		 WPARAM wParam, LPARAM lParam );
 

@@ -35,8 +35,8 @@ class MovePolygonUndoable;
 class PolygonTool : public Tool
 {
 public:
-	PolygonTool(void);
-	virtual ~PolygonTool(void) override;
+	PolygonTool();
+	virtual ~PolygonTool() override;
 
 protected:
 	Coord3D m_poly_mouseDownPt;
@@ -65,19 +65,19 @@ protected:
 	void startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
 
 public:
-	static Bool isActive(void) {return m_poly_isActive;};
-	static Bool deleteSelectedPolygon(void);
+	static Bool isActive() {return m_poly_isActive;};
+	static Bool deleteSelectedPolygon();
 	static Bool isSelected(PolygonTrigger *pTrig) {return (pTrig && (pTrig==m_poly_curSelectedPolygon));};
-	static Int getSelectedPointNdx(void) {return m_poly_dragPointNdx;};
+	static Int getSelectedPointNdx() {return m_poly_dragPointNdx;};
 	static PolygonTrigger *pickPolygon(Coord3D loc, CPoint viewPt, WbView* pView);
-	static Bool isSelectedOpen(void) {return m_poly_isAdding;};
+	static Bool isSelectedOpen() {return m_poly_isAdding;};
 
 public:
 	/// Perform tool on mouse down.
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void setCursor(void) override;
+	virtual void setCursor() override;
 	virtual void activate() override; ///< Become the current tool.
 	virtual void deactivate() override; ///< Become not the current tool.
 };

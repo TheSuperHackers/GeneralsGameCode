@@ -42,8 +42,8 @@ private:
 	MapObject* findSegment(const Coord3D *pLoc, Coord3D *outLoc);
 
 public:
-	RoadTool(void);
-	virtual ~RoadTool(void) override;
+	RoadTool();
+	virtual ~RoadTool() override;
 
 public:
 	static Bool snap(Coord3D *pLoc, Bool skipLast);

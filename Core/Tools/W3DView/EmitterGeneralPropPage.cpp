@@ -63,7 +63,7 @@ EmitterGeneralPropPageClass::EmitterGeneralPropPageClass (EmitterInstanceListCla
 //
 //  ~EmitterGeneralPropPageClass
 //
-EmitterGeneralPropPageClass::~EmitterGeneralPropPageClass (void)
+EmitterGeneralPropPageClass::~EmitterGeneralPropPageClass ()
 {
 	return;
 }
@@ -103,7 +103,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 void
-EmitterGeneralPropPageClass::Initialize (void)
+EmitterGeneralPropPageClass::Initialize ()
 {
 	if (m_pEmitterList != nullptr) {
 
@@ -156,7 +156,7 @@ EmitterGeneralPropPageClass::Add_Shader_To_Combo
 //  OnInitDialog
 //
 BOOL
-EmitterGeneralPropPageClass::OnInitDialog (void)
+EmitterGeneralPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -203,7 +203,7 @@ EmitterGeneralPropPageClass::OnInitDialog (void)
 //  OnApply
 //
 BOOL
-EmitterGeneralPropPageClass::OnApply (void)
+EmitterGeneralPropPageClass::OnApply ()
 {
 	// Get the data from the dialog controls
 	GetDlgItemText (IDC_NAME_EDIT, m_EmitterName);
@@ -255,7 +255,7 @@ EmitterGeneralPropPageClass::OnApply (void)
 //  OnBrowseButton
 //
 void
-EmitterGeneralPropPageClass::OnBrowseButton (void)
+EmitterGeneralPropPageClass::OnBrowseButton ()
 {
 	CFileDialog openFileDialog (TRUE,
 										 ".tga",
@@ -279,7 +279,7 @@ EmitterGeneralPropPageClass::OnBrowseButton (void)
 //  OnChangeFilenameEdit
 //
 void
-EmitterGeneralPropPageClass::OnChangeFilenameEdit (void)
+EmitterGeneralPropPageClass::OnChangeFilenameEdit ()
 {
 	SetModified ();
 	return ;
@@ -291,7 +291,7 @@ EmitterGeneralPropPageClass::OnChangeFilenameEdit (void)
 //  OnChangeNameEdit
 //
 void
-EmitterGeneralPropPageClass::OnChangeNameEdit (void)
+EmitterGeneralPropPageClass::OnChangeNameEdit ()
 {
 	SetModified ();
 	return ;
@@ -329,7 +329,7 @@ EmitterGeneralPropPageClass::OnNotify
 //  OnChangeParticleLifetimeEdit
 //
 void
-EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void)
+EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit ()
 {
 	SetModified ();
 	return ;
@@ -341,7 +341,7 @@ EmitterGeneralPropPageClass::OnChangeParticleLifetimeEdit (void)
 //  OnSelchangeShaderCombo
 //
 void
-EmitterGeneralPropPageClass::OnSelchangeShaderCombo (void)
+EmitterGeneralPropPageClass::OnSelchangeShaderCombo ()
 {
 	SetModified ();
 	return ;
@@ -396,7 +396,7 @@ EmitterGeneralPropPageClass::OnCommand
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterGeneralPropPageClass::OnParticleLifetimeCheck (void)
+EmitterGeneralPropPageClass::OnParticleLifetimeCheck ()
 {
 	bool enable = (SendDlgItemMessage (IDC_PARTICLE_LIFETIME_CHECK, BM_GETCHECK) == 1);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_PARTICLE_LIFETIME_EDIT), enable);

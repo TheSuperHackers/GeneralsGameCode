@@ -37,14 +37,14 @@
 
 
 /// Constructor
-TileTool::TileTool(void) :
+TileTool::TileTool() :
 	Tool(ID_TILE_TOOL, IDC_TILE_CURSOR)
 {
 	m_htMapEditCopy = nullptr;
 }
 
 /// Destructor
-TileTool::~TileTool(void)
+TileTool::~TileTool()
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 }
@@ -182,7 +182,7 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 Int BigTileTool::m_currentWidth = 0;
 
 /// Constructor
-BigTileTool::BigTileTool(void)
+BigTileTool::BigTileTool()
 {
 	m_toolID = ID_BIG_TILE_TOOL;
 }

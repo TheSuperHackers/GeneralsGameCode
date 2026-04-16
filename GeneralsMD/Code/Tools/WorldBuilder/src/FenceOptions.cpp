@@ -66,7 +66,7 @@ FenceOptions::FenceOptions(CWnd* pParent /*=nullptr*/)
 }
 
 
-FenceOptions::~FenceOptions(void)
+FenceOptions::~FenceOptions()
 {
 	deleteInstance(m_objectsList);
 	m_objectsList = nullptr;
@@ -306,7 +306,7 @@ void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const cha
 
 }
 
-Bool FenceOptions::hasSelectedObject(void)
+Bool FenceOptions::hasSelectedObject()
 {
 	// If we have no selected object, return false.
 	if (m_currentObjectIndex==-1) return false;

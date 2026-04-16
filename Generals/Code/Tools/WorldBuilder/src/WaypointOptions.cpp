@@ -56,7 +56,7 @@ void WaypointOptions::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-MapObject *WaypointOptions::getSingleSelectedWaypoint(void)
+MapObject *WaypointOptions::getSingleSelectedWaypoint()
 {
 	MapObject *theMapObj = nullptr;
 //	Bool found = false;
@@ -77,7 +77,7 @@ MapObject *WaypointOptions::getSingleSelectedWaypoint(void)
 	return(nullptr);
 }
 
-PolygonTrigger *WaypointOptions::getSingleSelectedPolygon(void)
+PolygonTrigger *WaypointOptions::getSingleSelectedPolygon()
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (pDoc==nullptr) return nullptr;
@@ -96,7 +96,7 @@ PolygonTrigger *WaypointOptions::getSingleSelectedPolygon(void)
 	return(nullptr);
 }
 
-void WaypointOptions::updateTheUI(void)
+void WaypointOptions::updateTheUI()
 {
 	Tool *curTool = ((CWorldBuilderApp*)AfxGetApp())->getCurTool();
 
@@ -273,7 +273,7 @@ void WaypointOptions::updateTheUI(void)
 	}
 }
 
-void WaypointOptions::update(void)
+void WaypointOptions::update()
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();

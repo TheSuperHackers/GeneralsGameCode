@@ -48,10 +48,10 @@ class EmissionPanelPoint : public ISwapablePanel
 {
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelPoint};
-		virtual DWORD GetIDD( void ) { return IDD; }
+		virtual DWORD GetIDD() { return IDD; }
 		EmissionPanelPoint(UINT nIDTemplate = EmissionPanelPoint::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
@@ -66,10 +66,10 @@ class EmissionPanelLine : public ISwapablePanel
 {
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelLine};
-		virtual DWORD GetIDD( void ) { return IDD; }
+		virtual DWORD GetIDD() { return IDD; }
 		EmissionPanelLine(UINT nIDTemplate = EmissionPanelLine::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
@@ -84,10 +84,10 @@ class EmissionPanelBox : public ISwapablePanel
 {
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelBox};
-		virtual DWORD GetIDD( void ) { return IDD; }
+		virtual DWORD GetIDD() { return IDD; }
 		EmissionPanelBox(UINT nIDTemplate = EmissionPanelBox::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
@@ -102,10 +102,10 @@ class EmissionPanelSphere : public ISwapablePanel
 {
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelSphere};
-		virtual DWORD GetIDD( void ) { return IDD; }
+		virtual DWORD GetIDD() { return IDD; }
 		EmissionPanelSphere(UINT nIDTemplate = EmissionPanelSphere::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
@@ -120,10 +120,10 @@ class EmissionPanelCylinder : public ISwapablePanel
 {
 	public:
 		enum {IDD = IDD_PSEd_EmissionPanelCylinder};
-		virtual DWORD GetIDD( void ) { return IDD; }
+		virtual DWORD GetIDD() { return IDD; }
 		EmissionPanelCylinder(UINT nIDTemplate = EmissionPanelCylinder::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI

@@ -82,12 +82,12 @@ class HierarchyView
 
 public:
 
-	HierarchyView( void );
-	~HierarchyView( void );
+	HierarchyView();
+	~HierarchyView();
 
-	void init( void );
-	void reset( void );
-	void shutdown( void );
+	void init();
+	void reset();
+	void shutdown();
 
 	char *getWindowTreeName( GameWindow *window );
 	void addWindow( GameWindow *window, HierarchyOption option );  ///< add a window to the view
@@ -96,8 +96,8 @@ public:
 	void updateWindowName( GameWindow *window );  ///< update tree entry based on name
 	void selectWindow( GameWindow *window );  ///< select window
 
-	HWND getTreeHandle( void );  ///< get the tree control handle
-	HWND getHierarchyHandle( void );  ///< get window handle for the whole dialog
+	HWND getTreeHandle();  ///< get the tree control handle
+	HWND getHierarchyHandle();  ///< get window handle for the whole dialog
 
 	void setDialogPos( ICoord2D *pos );
 	void getDialogPos( ICoord2D *pos );
@@ -106,15 +106,15 @@ public:
 
 	void setDragWindow( GameWindow *window );
 	void setDragTarget( GameWindow *window );
-	GameWindow *getDragWindow( void );
-	GameWindow *getDragTarget( void );
+	GameWindow *getDragWindow();
+	GameWindow *getDragTarget();
 	void moveWindowAheadOf( GameWindow *window, GameWindow *aheadOf );  ///< move hierarchy representation
 	void moveWindowChildOf( GameWindow *window, GameWindow *parent );  ///< move hierarchy representation
 
 	Bool validateDragDropOperation( GameWindow *source, GameWindow *target );
 
 	void setPopupTarget( GameWindow *window );  ///< set target for popup menu
-	GameWindow *getPopupTarget( void );  ///< get the popup target window
+	GameWindow *getPopupTarget();  ///< get the popup target window
 
 	HTREEITEM treePointToItem( Int x, Int y );  ///< translate mouse pos to item location
 	GameWindow *getWindowFromItem( HTREEITEM treeItem );  ///< get game window from user data in the tree item
@@ -160,14 +160,14 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline HWND HierarchyView::getTreeHandle( void ) { return m_tree; }
-inline HWND HierarchyView::getHierarchyHandle( void ) { return m_dialog; }
+inline HWND HierarchyView::getTreeHandle() { return m_tree; }
+inline HWND HierarchyView::getHierarchyHandle() { return m_dialog; }
 inline void HierarchyView::setDragWindow( GameWindow *window ) { m_dragWindow = window; }
 inline void HierarchyView::setDragTarget( GameWindow *window ) { m_dragTarget = window; }
-inline GameWindow *HierarchyView::getDragWindow( void ) { return m_dragWindow; }
-inline GameWindow *HierarchyView::getDragTarget( void ) { return m_dragTarget; }
+inline GameWindow *HierarchyView::getDragWindow() { return m_dragWindow; }
+inline GameWindow *HierarchyView::getDragTarget() { return m_dragTarget; }
 inline void HierarchyView::setPopupTarget( GameWindow *window ) { m_popupTarget = window; }
-inline GameWindow *HierarchyView::getPopupTarget( void ) { return m_popupTarget; }
+inline GameWindow *HierarchyView::getPopupTarget() { return m_popupTarget; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern HierarchyView *TheHierarchyView;  ///< singleton for our view

@@ -55,7 +55,7 @@ public:
 // Implementation
 protected:
 
-	void FillListCtrl (void);
+	void FillListCtrl ();
 
 	CAdvancedAnimSheet *m_Sheet;
 

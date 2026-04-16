@@ -54,23 +54,23 @@ protected:
 	HCURSOR m_moveCursor;
 
 protected:
-	void checkForPropertiesPanel(void);
+	void checkForPropertiesPanel();
 
 public:
-	PointerTool(void);
-	virtual ~PointerTool(void) override;
+	PointerTool();
+	virtual ~PointerTool() override;
 
 public:
 	/// Clear the selection on activate or deactivate.
 	virtual void activate() override;
 	virtual void deactivate() override;
 
-	virtual void setCursor(void) override;
+	virtual void setCursor() override;
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 
 public:
-	static void clearSelection(void); ///< Clears the selected objects selected flags.
+	static void clearSelection(); ///< Clears the selected objects selected flags.
 	static Bool allowPick(MapObject* pMapObj, WbView* pView);
 };

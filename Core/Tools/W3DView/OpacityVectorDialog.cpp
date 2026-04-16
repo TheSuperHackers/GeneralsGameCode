@@ -86,7 +86,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-OpacityVectorDialogClass::OnInitDialog (void)
+OpacityVectorDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -182,7 +182,7 @@ OpacityVectorDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacityVectorDialogClass::OnOK (void)
+OpacityVectorDialogClass::OnOK ()
 {
 	m_Value = Update_Value ();
 	CDialog::OnOK ();
@@ -196,7 +196,7 @@ OpacityVectorDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacityVectorDialogClass::Update_Object (void)
+OpacityVectorDialogClass::Update_Object ()
 {
 	Update_Object (Update_Value ());
 	return ;
@@ -209,7 +209,7 @@ OpacityVectorDialogClass::Update_Object (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 AlphaVectorStruct
-OpacityVectorDialogClass::Update_Value (void)
+OpacityVectorDialogClass::Update_Value ()
 {
 	AlphaVectorStruct value;
 
@@ -279,7 +279,7 @@ OpacityVectorDialogClass::Update_Object (const AlphaVectorStruct &value)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacityVectorDialogClass::OnCancel (void)
+OpacityVectorDialogClass::OnCancel ()
 {
 	Update_Object (m_Value);
 	CDialog::OnCancel ();

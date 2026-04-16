@@ -182,7 +182,7 @@ LayersList::~LayersList()
 	delete mTree;
 }
 
-void LayersList::resetLayers(void)
+void LayersList::resetLayers()
 {
 	// @todo Default needs to be a localizable string
 	Layer defaultLayer;
@@ -416,7 +416,7 @@ Bool LayersList::isLayerHidden(IN AsciiString layerToTest)
 	return (!layerIt->show);
 }
 
-void LayersList::updateUIFromList(void)
+void LayersList::updateUIFromList()
 {
 	if (!m_performUpdates) {
 		return;
@@ -1185,7 +1185,7 @@ void LayersList::OnMergeViewSelection(UINT commandID)
 
 
 //WST 11/23/2002
-void LayersList::unselectAllMapObjects(void)
+void LayersList::unselectAllMapObjects()
 {
 	MapObject *mapObject = MapObject::getFirstMapObject();
 	while (mapObject) {
@@ -1194,7 +1194,7 @@ void LayersList::unselectAllMapObjects(void)
 	}
 }
 
-void LayersList::unselectAllPolygonTriggers(void)
+void LayersList::unselectAllPolygonTriggers()
 {
 	PolygonTrigger *trigger = PolygonTrigger::getFirstPolygonTrigger();
 	while (trigger) {

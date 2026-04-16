@@ -80,7 +80,7 @@ BOOL ScriptActionsTrue::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void ScriptActionsTrue::loadList(void)
+void ScriptActionsTrue::loadList()
 {
 	m_action = nullptr;
 	ScriptDialog::updateScriptWarning(m_script);

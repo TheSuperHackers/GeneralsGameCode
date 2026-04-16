@@ -77,18 +77,18 @@ protected:
 	static Int					 m_waterPointSpacing;
 	static Bool m_creatingWaterAreas; ///< True if we are creating flood fill water polygons, rather than dropping single points.
 protected:
-	void updateTheUI(void);
-	void startUpdateHeight(void);
-	void updateHeight(void);
-	void endUpdateHeight(void);
+	void updateTheUI();
+	void startUpdateHeight();
+	void updateHeight();
+	void endUpdateHeight();
 	PolygonTrigger *adjustCount(PolygonTrigger *trigger, Int firstPt, Int lastPt, Int desiredPointCount);
 
 public:
-	static void update(void);
+	static void update();
 	static void setHeight(Int height);
-	static Int getHeight(void) { return m_waterHeight;};
-	static Int getSpacing(void) { return m_waterPointSpacing;};
-	static Bool getCreatingWaterAreas(void) {return m_creatingWaterAreas;}
+	static Int getHeight() { return m_waterHeight;};
+	static Int getSpacing() { return m_waterPointSpacing;};
+	static Bool getCreatingWaterAreas() {return m_creatingWaterAreas;}
 
 public:
 

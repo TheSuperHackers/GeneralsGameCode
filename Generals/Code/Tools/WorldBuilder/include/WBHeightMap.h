@@ -24,7 +24,7 @@ class WBHeightMap : public HeightMapRenderObjClass
 {
 
 public:
-	WBHeightMap(void);
+	WBHeightMap();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface (W3D methods)
@@ -36,11 +36,11 @@ public:
 	virtual Real getMaxCellHeight(Real x, Real y);	///< returns maximum height of the 4 cell corners.
 
 	void setDrawEntireMap(Bool entire) {m_drawEntireMap = entire;};
-	Bool getDrawEntireMap(void) {return m_drawEntireMap;};
+	Bool getDrawEntireMap() {return m_drawEntireMap;};
 	void setFlattenHeights(Bool flat);
 
 protected:
-	void flattenHeights(void);
+	void flattenHeights();
 protected:
 	Bool m_drawEntireMap;
 	Bool m_flattenHeights;

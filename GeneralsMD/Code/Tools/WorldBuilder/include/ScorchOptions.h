@@ -64,8 +64,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	static MapObject *getSingleSelectedScorch(void);
-	void updateTheUI(void);
+	static MapObject *getSingleSelectedScorch();
+	void updateTheUI();
 	WBPopupSliderButton m_radiusPopup;
 	std::vector<Dict*> m_allSelectedDicts;
 	Bool		m_updating; ///<true if the ui is updating itself.
@@ -73,15 +73,15 @@ private:
 	static Scorches	m_scorchtype;
 	static Real		m_scorchsize;
 	static ScorchOptions* m_staticThis;
-	void changeSize(void);
-	void changeScorch(void);
-	void getAllSelectedDicts(void);
+	void changeSize();
+	void changeScorch();
+	void getAllSelectedDicts();
 	Dict** getAllSelectedDictsData();
 
 public:
-	static void update(void);
-	static Scorches getScorchType(void) {return m_scorchtype;}
-	static Real getScorchSize(void) {return m_scorchsize;}
+	static void update();
+	static Scorches getScorchType() {return m_scorchtype;}
+	static Real getScorchSize() {return m_scorchsize;}
 
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;

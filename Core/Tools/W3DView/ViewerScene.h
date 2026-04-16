@@ -55,10 +55,10 @@ class ViewerSceneClass : public SimpleSceneClass
 		//
 		//	Public constructors/destructors
 		//
-		ViewerSceneClass (void)
+		ViewerSceneClass ()
 			: m_AllowLODSwitching (false)		{ }
 
-		virtual ~ViewerSceneClass (void)		{ }
+		virtual ~ViewerSceneClass ()		{ }
 
 
 		///////////////////////////////////////////////////////////////////
@@ -77,23 +77,23 @@ class ViewerSceneClass : public SimpleSceneClass
 		//	Inline accessors
 		//
 		virtual void				Allow_LOD_Switching (bool onoff)			{ m_AllowLODSwitching = onoff; }
-		virtual bool				Are_LODs_Switching (void)					{ return m_AllowLODSwitching; }
+		virtual bool				Are_LODs_Switching ()					{ return m_AllowLODSwitching; }
 
 		//
 		// General methods
 		//
 		virtual void				Add_To_Lineup (RenderObjClass *obj);
-		virtual void				Clear_Lineup (void);
-		virtual AABoxClass		Get_Line_Up_Bounding_Box (void);
+		virtual void				Clear_Lineup ();
+		virtual AABoxClass		Get_Line_Up_Bounding_Box ();
 		bool							Can_Line_Up (RenderObjClass *obj);
 		bool							Can_Line_Up (int class_id);
-		void							Recalculate_Fog_Planes (void);
-		virtual SphereClass		Get_Bounding_Sphere (void);
+		void							Recalculate_Fog_Planes ();
+		virtual SphereClass		Get_Bounding_Sphere ();
 
 		//
 		// Line-Up list iteration
 		//
-		virtual SceneIterator *	Create_Line_Up_Iterator (void);
+		virtual SceneIterator *	Create_Line_Up_Iterator ();
 		virtual void				Destroy_Line_Up_Iterator (SceneIterator *iterator);
 
 	private:

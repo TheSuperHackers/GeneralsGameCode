@@ -576,7 +576,7 @@ void CTeamsDialog::OnMoveDownTeam()
 	updateUI(REBUILD_ALL);
 }
 
-void CTeamsDialog::validateTeamOwners( void )
+void CTeamsDialog::validateTeamOwners()
 {
 	Int numTeams = m_sides.getNumTeams();
 	for (Int i = 0; i < numTeams; ++i) {

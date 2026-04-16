@@ -88,7 +88,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-OpacitySettingsDialogClass::OnInitDialog (void)
+OpacitySettingsDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -112,7 +112,7 @@ OpacitySettingsDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacitySettingsDialogClass::OnOK (void)
+OpacitySettingsDialogClass::OnOK ()
 {
 	m_Opacity = m_OpacityBar->Get_Selection_Pos ();
 	CDialog::OnOK ();

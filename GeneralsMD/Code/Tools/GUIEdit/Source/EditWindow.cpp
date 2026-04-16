@@ -310,7 +310,7 @@ LRESULT CALLBACK EditWindow::editProc( HWND hWnd, UINT message,
 // EditWindow::registerEditWindowClass ========================================
 /** Register a class with the windows OS for an edit window */
 //=============================================================================
-void EditWindow::registerEditWindowClass( void )
+void EditWindow::registerEditWindowClass()
 {
 	WNDCLASSEX wcex;
 	ATOM atom;
@@ -345,7 +345,7 @@ void EditWindow::registerEditWindowClass( void )
 // EditWindow::EditWindow =====================================================
 /** */
 //=============================================================================
-EditWindow::EditWindow( void )
+EditWindow::EditWindow()
 {
 
 	m_pulse = 0;
@@ -396,7 +396,7 @@ EditWindow::EditWindow( void )
 // EditWindow::~EditWindow ====================================================
 /** */
 //=============================================================================
-EditWindow::~EditWindow( void )
+EditWindow::~EditWindow()
 {
 
 	// call the shutdown
@@ -490,7 +490,7 @@ void EditWindow::init( UnsignedInt clientWidth, UnsignedInt clientHeight )
 // EditWindow::shutdown =======================================================
 /** Shutdown edit window */
 //=============================================================================
-void EditWindow::shutdown( void )
+void EditWindow::shutdown()
 {
 
 	// delete 2d renderer
@@ -524,7 +524,7 @@ void EditWindow::shutdown( void )
 // EditWindow::updatePulse ====================================================
 /** Update pulse from timer message */
 //=============================================================================
-void EditWindow::updatePulse( void )
+void EditWindow::updatePulse()
 {
 	static Bool dir = 1;
 	static Int stepSize = 4;
@@ -1201,7 +1201,7 @@ void EditWindow::drawHiddenOutlines( GameWindow *windowList, Color c )
 /** Draw any visual feedback to the user about selection boxes or windows
 	* that are selected, draggin windows etc */
 //=============================================================================
-void EditWindow::drawUIFeedback( void )
+void EditWindow::drawUIFeedback()
 {
 	WindowSelectionEntry *select;
 	Int color = m_pulse * 2;
@@ -1412,7 +1412,7 @@ void EditWindow::drawUIFeedback( void )
 // EditWindow::drawGrid =======================================================
 /** Draw the grid */
 //=============================================================================
-void EditWindow::drawGrid( void )
+void EditWindow::drawGrid()
 {
 //	HDC hdc = GetDC( getWindowHandle() );
 	Int res = TheEditor->getGridResolution();
@@ -1468,7 +1468,7 @@ void EditWindow::drawGrid( void )
 // EditWindow::draw ===========================================================
 /** Draw the edit window */
 //=============================================================================
-void EditWindow::draw( void )
+void EditWindow::draw()
 {
 	// allow W3D to update its internals
 	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
@@ -1726,7 +1726,7 @@ void EditWindow::drawImage( const Image *image,
 // EditWindow::getBackgroundColor =============================================
 /** Get the background color for the edit window */
 //=============================================================================
-RGBColorReal EditWindow::getBackgroundColor( void )
+RGBColorReal EditWindow::getBackgroundColor()
 {
 
 	return m_backgroundColor;

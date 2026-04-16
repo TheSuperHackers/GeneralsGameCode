@@ -43,7 +43,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 CW3DViewDoc *
-GetCurrentDocument (void)
+GetCurrentDocument ()
 {
     // Assume failure
     CW3DViewDoc *pCDoc = nullptr;
@@ -701,7 +701,7 @@ Get_File_Time
 //  Are_Glide_Drivers_Acceptable
 //
 bool
-Are_Glide_Drivers_Acceptable (void)
+Are_Glide_Drivers_Acceptable ()
 {
 	// Assume success
 	bool retval = true;
@@ -865,7 +865,7 @@ Copy_File
 //
 ////////////////////////////////////////////////////////////////////////////
 CGraphicView *
-Get_Graphic_View (void)
+Get_Graphic_View ()
 {
 	CGraphicView *view = nullptr;
 

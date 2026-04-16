@@ -51,7 +51,7 @@
 //	ScreenCursorClass
 //
 ///////////////////////////////////////////////////////////////////
-ScreenCursorClass::ScreenCursorClass (void)
+ScreenCursorClass::ScreenCursorClass ()
 	:	m_ScreenPos (0, 0),
 		m_pTexture (nullptr),
 		m_pVertMaterial (nullptr),
@@ -88,7 +88,7 @@ ScreenCursorClass::ScreenCursorClass (const ScreenCursorClass &src)
 //	~ScreenCursorClass
 //
 ///////////////////////////////////////////////////////////////////
-ScreenCursorClass::~ScreenCursorClass (void)
+ScreenCursorClass::~ScreenCursorClass ()
 {
 	REF_PTR_RELEASE (m_pTexture);
 	REF_PTR_RELEASE (m_pVertMaterial);
@@ -102,7 +102,7 @@ ScreenCursorClass::~ScreenCursorClass (void)
 //
 ///////////////////////////////////////////////////////////////////
 void
-ScreenCursorClass::Initialize (void)
+ScreenCursorClass::Initialize ()
 {
 	REF_PTR_RELEASE(m_pVertMaterial);
 
@@ -171,7 +171,7 @@ ScreenCursorClass::Set_Texture (TextureClass *texture)
 //
 ///////////////////////////////////////////////////////////////////
 void
-ScreenCursorClass::On_Frame_Update (void)
+ScreenCursorClass::On_Frame_Update ()
 {
 	//
 	//	Get the current cursor position in screen coords

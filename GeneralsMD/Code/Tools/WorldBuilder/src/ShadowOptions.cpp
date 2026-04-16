@@ -61,7 +61,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // ShadowOptions message handlers
 
-void ShadowOptions::setShadowColor(void)
+void ShadowOptions::setShadowColor()
 {
 	Int r, g, b, shift;
 

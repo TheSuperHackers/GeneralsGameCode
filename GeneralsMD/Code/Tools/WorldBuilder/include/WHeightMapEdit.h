@@ -36,7 +36,7 @@ public:
 	CProcessNode *m_next;
 public:
 	CProcessNode(Int x, Int y):m_x(x),m_y(y),m_next(nullptr),m_len(0) {};
-	~CProcessNode(void) { };
+	~CProcessNode() { };
 };
 
 #define MAX_TILES_PER_CLASS 100
@@ -73,7 +73,7 @@ protected:
 	static void loadBitmap(char *path, const char *uiName);
 	static void loadDirectoryOfImages(const char *path);
 	static void loadImagesFromTerrainType( TerrainType *terrain );
-	static void loadBaseImages(void);
+	static void loadBaseImages();
 	Int allocateTiles(Int textureClass);
 	Int allocateEdgeTiles(Int textureClass);
 	void blendToThisClass(Int xIndex, Int yIndex, Int textureClass, Int edgeClass);
@@ -96,18 +96,18 @@ public: // construction
 	WorldHeightMapEdit(Int xExtent, Int yExtent, UnsignedByte initialHeight, Int border); ///< create.
 	WorldHeightMapEdit(WorldHeightMapEdit *pThis);								///< duplicate.
 	WorldHeightMapEdit(ChunkInputStream *pStrm);											///< read from file.
-	virtual ~WorldHeightMapEdit(void) override;													    ///< destroy.
+	virtual ~WorldHeightMapEdit() override;													    ///< destroy.
 
 	void saveToFile(DataChunkOutput &chunkWriter);
-	WorldHeightMapEdit *duplicate(void);
+	WorldHeightMapEdit *duplicate();
 
-	static void init(void);
-	static void shutdown(void);
+	static void init();
+	static void shutdown();
 
 public: /// Status methods.
-	void clearStatus(void) {m_warnTooManyTex = false;m_warnTooManyBlend = false;};
-	Bool tooManyTextures(void) {return m_warnTooManyTex;};
-	Bool tooManyBlends(void) {return m_warnTooManyBlend;};
+	void clearStatus() {m_warnTooManyTex = false;m_warnTooManyBlend = false;};
+	Bool tooManyTextures() {return m_warnTooManyTex;};
+	Bool tooManyBlends() {return m_warnTooManyBlend;};
 	Bool canFitTexture(Int textureClass);  ///< Returns true if we can fit this texture.
 
 public: // Editing methods.
@@ -120,42 +120,42 @@ public: // Editing methods.
 	void setCliff(Int xIndex, Int yIndex, Bool impassable) {setCliffState(xIndex, yIndex, impassable);}
 	Bool setTileNdx(Int xIndex, Int yIndex, Int textureClass, Bool singleTile);
 	Bool floodFill(Int xIndex, Int yIndex, Int textureClass, Bool doReplace);
-	static Int getNumTexClasses(void) {return m_numGlobalTextureClasses;};
+	static Int getNumTexClasses() {return m_numGlobalTextureClasses;};
 	static AsciiString getTexClassName(int ndx) {return m_globalTextureClasses[ndx].name;}
 	static AsciiString getTexClassUiName(int ndx) ;
 	static Int getTexClassNumTiles(int ndx) {return m_globalTextureClasses[ndx].numTiles;}
 	static Int getTexClassIsBlendEdge(int ndx) {return m_globalTextureClasses[ndx].isBlendEdgeTile;}
 
 	void addObject(MapObject *pMapObj);  ///< Adds a map object to the front of the list.
-	void removeFirstObject(void);	 ///< Removes the first map object from the list.
+	void removeFirstObject();	 ///< Removes the first map object from the list.
 
 	Bool isTexClassUsed(Int textureClass);
 	Int getFirstTile(Int textureClass);
 
-	Bool optimizeTiles(void); ///< Optimizes tile allocations.
+	Bool optimizeTiles(); ///< Optimizes tile allocations.
 
-	void showTileStatusInfo(void); ///< pops up a dialog box with tile mem usage.
+	void showTileStatusInfo(); ///< pops up a dialog box with tile mem usage.
 
 
-	Bool selectDuplicates(void); ///< Selects any duplicate map objects.
-	Bool selectSimilar(void); ///< Selects any duplicate map objects.
-	Bool selectInvalidTeam(void); ///< Selects any objects with invalid teams.
+	Bool selectDuplicates(); ///< Selects any duplicate map objects.
+	Bool selectSimilar(); ///< Selects any duplicate map objects.
+	Bool selectInvalidTeam(); ///< Selects any objects with invalid teams.
 
 	Bool resize(Int newXSize, Int newYSize, Int newHeight, Int newBorder, Bool anchorTop, Bool anchorBottom,
 							Bool anchorLeft, Bool anchorRight, Coord3D *pObjOffset);
-	Bool remapTextures(void); ///< returns true if the operation had an effect.
-	void reloadTextures(void); ///< Reloads textures from disk.
-	void resetResources(void); ///< Releases textures in preparation for device reset.
+	Bool remapTextures(); ///< returns true if the operation had an effect.
+	void reloadTextures(); ///< Reloads textures from disk.
+	void resetResources(); ///< Releases textures in preparation for device reset.
 
-	void dbgVerifyAfterUndo(void); ///< Verifies the structures are still consistent.
+	void dbgVerifyAfterUndo(); ///< Verifies the structures are still consistent.
 	Bool doCliffAdjustment(Int xIndex, Int yIndex);
-	Bool removeCliffMapping(void);
+	Bool removeCliffMapping();
 
-	Int getNumBoundaries(void) const ;
+	Int getNumBoundaries() const ;
 	void getBoundary(Int ndx, ICoord2D* border) const;
 	void addBoundary(ICoord2D* boundaryToAdd);
 	void changeBoundary(Int ndx, ICoord2D *border);
-	void removeLastBoundary(void);
+	void removeLastBoundary();
 
 	// outNdx must not be null, but outHandle can be.
 	// outHandle: 0 means BL, 1 means TL, 2 means TR, 3 means BR

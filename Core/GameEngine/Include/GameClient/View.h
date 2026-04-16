@@ -408,8 +408,8 @@ public:
 	}
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) override {}
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override {}
-	virtual void drawView( void ) override {}
-	virtual void updateView(void) override {}
+	virtual void drawView() override {}
+	virtual void updateView() override {}
 	virtual void stepView() override {}
 	virtual void setGuardBandBias( const Coord2D *gb ) override {}
 	virtual Bool isDoingScriptedCamera() override { return false; }

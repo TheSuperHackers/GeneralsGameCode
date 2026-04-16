@@ -24,7 +24,7 @@ class CButtonShowColor : public CButton
 		RGBColor m_color;
 
 	public:
-		const RGBColor& getColor(void) const { return m_color; }
+		const RGBColor& getColor() const { return m_color; }
 		void setColor(Int color) { m_color.setFromInt(color); }
 		void setColor(const RGBColor& color) { m_color = color; }
 		virtual ~CButtonShowColor() override;

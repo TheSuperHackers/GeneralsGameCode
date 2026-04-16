@@ -91,7 +91,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CEditLODDialog::OnInitDialog (void)
+CEditLODDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -167,7 +167,7 @@ CEditLODDialog::OnInitDialog (void)
 //  OnOK
 //
 void
-CEditLODDialog::OnOK (void)
+CEditLODDialog::OnOK ()
 {
 
     // Get a pointer to the doc
@@ -215,7 +215,7 @@ CEditLODDialog::OnOK (void)
 //  OnCancel
 //
 void
-CEditLODDialog::OnCancel (void)
+CEditLODDialog::OnCancel ()
 {
 	// Allow the base class to process this message
     CDialog::OnCancel ();
@@ -399,7 +399,7 @@ CEditLODDialog::EnableControls (BOOL bEnable)
 //  OnUpdateSwitchDnEdit
 //
 void
-CEditLODDialog::OnUpdateSwitchDnEdit (void)
+CEditLODDialog::OnUpdateSwitchDnEdit ()
 {
     // Get the switching distance from the edit control
     CString stringTemp;
@@ -424,7 +424,7 @@ CEditLODDialog::OnUpdateSwitchDnEdit (void)
 //
 //  OnUpdateSwitchUpEdit
 //
-void CEditLODDialog::OnUpdateSwitchUpEdit (void)
+void CEditLODDialog::OnUpdateSwitchUpEdit ()
 {
     // Get the switching distance from the edit control
     CString stringTemp;
@@ -449,7 +449,7 @@ void CEditLODDialog::OnUpdateSwitchUpEdit (void)
 //
 //  OnRecalc
 //
-void CEditLODDialog::OnRecalc (void)
+void CEditLODDialog::OnRecalc ()
 {
     // Get the up switching distance from the edit control
     CString stringTemp;

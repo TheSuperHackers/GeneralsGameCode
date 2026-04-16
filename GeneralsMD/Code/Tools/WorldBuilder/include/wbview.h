@@ -129,8 +129,8 @@ public:
 	virtual void rotateCamera(Real delta) { }
 	virtual void pitchCamera(Real delta) { }
 
-	virtual Int getPickPixels(void) {return 4;}
-	virtual EditorSortingType GetPickConstraint(void) {return m_pickConstraint;}
+	virtual Int getPickPixels() {return 4;}
+	virtual EditorSortingType GetPickConstraint() {return m_pickConstraint;}
 
 public:
 	CWorldBuilderDoc *WbDoc() { return ((CWorldBuilderDoc*)GetDocument()); }
@@ -141,17 +141,17 @@ public:
 	virtual MapObject *picked3dObjectInView(CPoint viewPt) {return nullptr;};
 	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt) {return nullptr;};
 
-	Bool isPolygonTriggerVisible(void) {return m_showPolygonTriggers;};
-	Bool isWaypointVisible(void) {return m_showWaypoints;};
-	Bool isNamesVisible(void) {return m_showNames;};
+	Bool isPolygonTriggerVisible() {return m_showPolygonTriggers;};
+	Bool isWaypointVisible() {return m_showWaypoints;};
+	Bool isNamesVisible() {return m_showNames;};
 	void setShowModels(Bool show) {m_showModels = show;}
-	Bool getShowModels(void) { return m_showModels;}
-	Bool getShowTerrain(void) { return m_showTerrain;}
+	Bool getShowModels() { return m_showModels;}
+	Bool getShowTerrain() { return m_showTerrain;}
 
 	void setShowGarrisoned(Bool show) {m_showGarrisoned = show;}
-	Bool getShowGarrisoned(void) { return m_showGarrisoned;}
+	Bool getShowGarrisoned() { return m_showGarrisoned;}
 
-	virtual Bool isDoingPitch( void ) { return false; }
+	virtual Bool isDoingPitch() { return false; }
 
 // Operations
 public:

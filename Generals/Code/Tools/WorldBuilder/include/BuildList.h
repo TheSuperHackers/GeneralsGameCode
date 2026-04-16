@@ -36,7 +36,7 @@ class BuildList : public COptionsPanel, public PopupSliderOwner
 public:
  	BuildList(CWnd* pParent = nullptr);   ///< standard constructor
 
-	virtual ~BuildList(void) override;   ///< standard destructor
+	virtual ~BuildList() override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(BuildList)
@@ -89,12 +89,12 @@ protected:
 	static Bool			m_updating;
 
 protected:
-	void loadSides(void);
-	void updateCurSide(void);
+	void loadSides();
+	void updateCurSide();
 
 public:
 	static void addBuilding(Coord3D loc, Real angle, AsciiString name);
-	static void update(void) {if (m_staticThis) m_staticThis->loadSides();};
+	static void update() {if (m_staticThis) m_staticThis->loadSides();};
 	static void setSelectedBuildList(BuildListInfo *pInfo);
 
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;

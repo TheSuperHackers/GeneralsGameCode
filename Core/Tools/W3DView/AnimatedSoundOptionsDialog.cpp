@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-AnimatedSoundOptionsDialogClass::OnSoundDefinitionLibraryBrowseButton (void)
+AnimatedSoundOptionsDialogClass::OnSoundDefinitionLibraryBrowseButton ()
 {
 	CFileDialog dialog (	TRUE,
 								".ddb",
@@ -103,7 +103,7 @@ AnimatedSoundOptionsDialogClass::OnSoundDefinitionLibraryBrowseButton (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-AnimatedSoundOptionsDialogClass::OnSoundIniBrowseButton (void)
+AnimatedSoundOptionsDialogClass::OnSoundIniBrowseButton ()
 {
 	CFileDialog dialog (	TRUE,
 								".ini",
@@ -129,7 +129,7 @@ AnimatedSoundOptionsDialogClass::OnSoundIniBrowseButton (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-AnimatedSoundOptionsDialogClass::OnOK (void)
+AnimatedSoundOptionsDialogClass::OnOK ()
 {
 	CDialog::OnOK ();
 
@@ -161,7 +161,7 @@ AnimatedSoundOptionsDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-AnimatedSoundOptionsDialogClass::OnInitDialog (void)
+AnimatedSoundOptionsDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -186,7 +186,7 @@ AnimatedSoundOptionsDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
+AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings ()
 {
 	//
 	//	Start fresh
@@ -234,7 +234,7 @@ AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-AnimatedSoundOptionsDialogClass::OnSoundPathBrowseButton (void)
+AnimatedSoundOptionsDialogClass::OnSoundPathBrowseButton ()
 {
 	RestrictedFileDialogClass dialog (	TRUE,
 													".wav",

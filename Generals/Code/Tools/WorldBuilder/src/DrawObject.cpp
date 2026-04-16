@@ -128,12 +128,12 @@ void DrawObject::stopWaypointDragFeedback()
 
 
 
-DrawObject::~DrawObject(void)
+DrawObject::~DrawObject()
 {
 	freeMapResources();
 }
 
-DrawObject::DrawObject(void) :
+DrawObject::DrawObject() :
 	m_drawObjects(true),
 	m_drawPolygonAreas(true),
 	m_indexBuffer(nullptr),
@@ -191,18 +191,18 @@ void DrawObject::Get_Obj_Space_Bounding_Box(AABoxClass & box) const
 	box.Init(minPt,maxPt);
 }
 
-Int DrawObject::Class_ID(void) const
+Int DrawObject::Class_ID() const
 {
 	return RenderObjClass::CLASSID_UNKNOWN;
 }
 
-RenderObjClass * DrawObject::Clone(void) const
+RenderObjClass * DrawObject::Clone() const
 {
 	return new DrawObject(*this);
 }
 
 
-Int DrawObject::freeMapResources(void)
+Int DrawObject::freeMapResources()
 {
 
 	REF_PTR_RELEASE(m_indexBuffer);
@@ -230,7 +230,7 @@ Int DrawObject::freeMapResources(void)
 #define SELECT_PYRAMID_HEIGHT (1.0f)
 
 
-Int DrawObject::initData(void)
+Int DrawObject::initData()
 {
 	Int i;
 
@@ -274,7 +274,7 @@ Int DrawObject::initData(void)
 
 /** updateMeshVB puts mesh mold triangles into m_vertexFeedback. */
 
-void DrawObject::updateMeshVB(void)
+void DrawObject::updateMeshVB()
 {
 	const Int theAlpha = 64;
 
@@ -428,7 +428,7 @@ void DrawObject::updateMeshVB(void)
 
 /** updateRampVB puts the ramps into a vertex buffer. */
 
-void DrawObject::updateRampVB(void)
+void DrawObject::updateRampVB()
 {
 	const Int theAlpha = 64;
 
@@ -544,7 +544,7 @@ void DrawObject::updateRampVB(void)
 }
 
 /** updateBoundaryVB puts boundaries into m_vertexFeedback. */
-void DrawObject::updateBoundaryVB(void)
+void DrawObject::updateBoundaryVB()
 {
 //	const Int theAlpha = 64;
 
@@ -722,7 +722,7 @@ static const Int poleWidth = 2;
 static const Int flagHeight = 10;
 static const Int flagWidth = 10;
 
-void DrawObject::updateAmbientSoundVB(void)
+void DrawObject::updateAmbientSoundVB()
 {
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
@@ -831,7 +831,7 @@ void DrawObject::updateAmbientSoundVB(void)
 
 /** updateMeshVB puts waypoint path triangles into m_vertexFeedback. */
 
-void DrawObject::updateWaypointVB(void)
+void DrawObject::updateWaypointVB()
 {
 //	const Int theAlpha = 64;
 
@@ -1164,7 +1164,7 @@ void DrawObject::updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOp
 
 /** updateFeedbackVB puts brush feedback triangles into m_vertexFeedback. */
 
-void DrawObject::updateFeedbackVB(void)
+void DrawObject::updateFeedbackVB()
 {
 	const Int theAlpha = 64;
 	m_feedbackVertexCount = 0;
@@ -1293,7 +1293,7 @@ static Int xpSign(const ICoord3D &v1, const ICoord3D &v2) {
 
 /** updateForWater puts a blue rectangle into the vertex buffer. */
 
-void DrawObject::updateForWater(void)
+void DrawObject::updateForWater()
 {
 }
 

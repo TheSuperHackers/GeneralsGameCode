@@ -123,7 +123,7 @@ protected:
 	void applyAngle(Int lightIndex=0);
 	void showLightFeedback(Int lightIndex=0);
 	void applyColor(Int lightIndex=0);
-	void updateEditFields(void);
+	void updateEditFields();
 	void stuffValuesIntoFields(Int lightIndex = 0);
 public:
 

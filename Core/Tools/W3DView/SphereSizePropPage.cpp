@@ -70,7 +70,7 @@ SphereSizePropPageClass::SphereSizePropPageClass (SphereRenderObjClass *sphere)
 //	~SphereSizePropPageClass
 //
 /////////////////////////////////////////////////////////////
-SphereSizePropPageClass::~SphereSizePropPageClass (void)
+SphereSizePropPageClass::~SphereSizePropPageClass ()
 {
 	return ;
 }
@@ -107,7 +107,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-SphereSizePropPageClass::Initialize (void)
+SphereSizePropPageClass::Initialize ()
 {
 	m_ScaleChannel.Reset ();
 	m_OrigScaleChannel.Reset ();
@@ -133,7 +133,7 @@ SphereSizePropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereSizePropPageClass::OnInitDialog (void)
+SphereSizePropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -259,7 +259,7 @@ SphereSizePropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-SphereSizePropPageClass::OnApply (void)
+SphereSizePropPageClass::OnApply ()
 {
 	// Allow the base class to process this message
 	return CPropertyPage::OnApply ();
@@ -272,7 +272,7 @@ SphereSizePropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereSizePropPageClass::OnDestroy (void)
+SphereSizePropPageClass::OnDestroy ()
 {
 	CPropertyPage::OnDestroy();
 	return ;
@@ -410,7 +410,7 @@ SphereSizePropPageClass::OnCommand
 //
 /////////////////////////////////////////////////////////////
 void
-SphereSizePropPageClass::OnCancel (void)
+SphereSizePropPageClass::OnCancel ()
 {
 	//
 	//	Reset the object to its original state
@@ -428,7 +428,7 @@ SphereSizePropPageClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereSizePropPageClass::Update_Scale_Array (void)
+SphereSizePropPageClass::Update_Scale_Array ()
 {
 	m_ScaleChannel.Reset ();
 

@@ -78,7 +78,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-TexturePathDialogClass::OnInitDialog (void)
+TexturePathDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -96,7 +96,7 @@ TexturePathDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnOK (void)
+TexturePathDialogClass::OnOK ()
 {
 	CString path1;
 	CString path2;
@@ -118,7 +118,7 @@ TexturePathDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnBrowse1 (void)
+TexturePathDialogClass::OnBrowse1 ()
 {
 	CString initial_path;
 	GetDlgItemText (IDC_PATH1, initial_path);
@@ -138,7 +138,7 @@ TexturePathDialogClass::OnBrowse1 (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnBrowse2 (void)
+TexturePathDialogClass::OnBrowse2 ()
 {
 	CString initial_path;
 	GetDlgItemText (IDC_PATH2, initial_path);

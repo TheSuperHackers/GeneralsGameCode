@@ -48,7 +48,7 @@ BEGIN_MESSAGE_MAP(DialogToolbarClass, CToolBar)
 END_MESSAGE_MAP()
 
 
-DialogToolbarClass::DialogToolbarClass (void)
+DialogToolbarClass::DialogToolbarClass ()
 	: CToolBar ()
 {
 	//{{AFX_DATA_INIT(DialogToolbarClass)
@@ -118,7 +118,7 @@ DialogToolbarClass::OnIdleUpdateCmdUI (WPARAM, LPARAM)
 //	OnInitialUpdate
 //
 void
-DialogToolbarClass::OnInitialUpdate (void)
+DialogToolbarClass::OnInitialUpdate ()
 {
 	return ;
 }

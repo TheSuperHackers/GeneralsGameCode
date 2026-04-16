@@ -90,7 +90,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 void
-EmitterLinePropPageClass::Initialize (void)
+EmitterLinePropPageClass::Initialize ()
 {
 	if (m_pEmitterList != nullptr) {
 

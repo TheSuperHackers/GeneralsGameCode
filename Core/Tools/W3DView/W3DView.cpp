@@ -84,7 +84,7 @@ END_MESSAGE_MAP()
 //
 // CW3DViewApp construction
 //
-CW3DViewApp::CW3DViewApp (void)
+CW3DViewApp::CW3DViewApp ()
 	: m_bInitialized (false)
 {
 	// TODO: add construction code here,
@@ -146,7 +146,7 @@ WinMain
 //
 ////////////////////////////////////////////////////////////
 void
-Do_Version_Check (void)
+Do_Version_Check ()
 {
 	char curr_filename[MAX_PATH];
 	::GetModuleFileName (nullptr, curr_filename, MAX_PATH);
@@ -170,7 +170,7 @@ Do_Version_Check (void)
 //
 // InitInstance
 //
-BOOL CW3DViewApp::InitInstance (void)
+BOOL CW3DViewApp::InitInstance ()
 {
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size
@@ -316,7 +316,7 @@ void CW3DViewApp::OnAppAbout()
 /*
 **
 */
-void Debug_Refs(void)
+void Debug_Refs()
 {
 #ifdef RTS_DEBUG
 	TRACE("Detecting Active Refs...\r\n");
@@ -442,7 +442,7 @@ fnTopLevelWindowSearch
 //	OnInitDialog
 //
 BOOL
-CAboutDlg::OnInitDialog (void)
+CAboutDlg::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();

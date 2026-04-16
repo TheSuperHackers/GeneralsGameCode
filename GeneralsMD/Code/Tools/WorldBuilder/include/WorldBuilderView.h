@@ -100,13 +100,13 @@ protected:
 
 public:
 	/// Get the current draw size in pixels in the 2d window of one height map cell.
-	Int getCellSize(void) {return m_cellSize;}
+	Int getCellSize() {return m_cellSize;}
 
 	/// Sets the current draw size.
 	void setCellSize(Int cellSize);
 
 	/// Set whether contours are drawn.
-	Bool getShowContours(void) {return m_showContours;}
+	Bool getShowContours() {return m_showContours;}
 	/// Set whether contours are drawn.
 	void setShowContours(Bool show);
 	/// Update the center to match a center point from the 3d view.

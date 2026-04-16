@@ -83,7 +83,7 @@ SpherePropertySheetClass::SpherePropertySheetClass
 // ~SpherePropertySheetClass
 //
 /////////////////////////////////////////////////////////////////////////////
-SpherePropertySheetClass::~SpherePropertySheetClass (void)
+SpherePropertySheetClass::~SpherePropertySheetClass ()
 {
 	REF_PTR_RELEASE (m_RenderObj);
 	return ;
@@ -175,7 +175,7 @@ SpherePropertySheetClass::WindowProc
 //
 /////////////////////////////////////////////////////////////
 void
-SpherePropertySheetClass::Add_Object_To_Viewer (void)
+SpherePropertySheetClass::Add_Object_To_Viewer ()
 {
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
 	if ((doc != nullptr) && (m_RenderObj != nullptr)) {
@@ -224,7 +224,7 @@ SpherePropertySheetClass::Add_Object_To_Viewer (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SpherePropertySheetClass::Update_Object (void)
+SpherePropertySheetClass::Update_Object ()
 {
 	Add_Object_To_Viewer ();
 	return ;
@@ -237,7 +237,7 @@ SpherePropertySheetClass::Update_Object (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SpherePropertySheetClass::Initialize (void)
+SpherePropertySheetClass::Initialize ()
 {
 	if (m_RenderObj == nullptr) {
 		Create_New_Object ();
@@ -275,7 +275,7 @@ SpherePropertySheetClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SpherePropertySheetClass::Create_New_Object (void)
+SpherePropertySheetClass::Create_New_Object ()
 {
 	m_RenderObj = new SphereRenderObjClass;
 	m_RenderObj->Set_Name ("Sphere");

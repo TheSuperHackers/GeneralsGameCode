@@ -98,7 +98,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterFramePropPageClass::Initialize (void)
+EmitterFramePropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_Frames.KeyTimes);
 	SAFE_DELETE_ARRAY (m_Frames.Values);
@@ -315,7 +315,7 @@ BOOL EmitterFramePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* 
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterFramePropPageClass::Update_Frames (void)
+EmitterFramePropPageClass::Update_Frames ()
 {
 	float position = 0;
 	float red = 0;

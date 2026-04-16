@@ -48,7 +48,7 @@ const TCHAR * const TOOLBAR_CLASS_NAME      = TEXT ("FANCYTOOLBAR");
 //
 //  CFancyToolbar
 //
-CFancyToolbar::CFancyToolbar (void)
+CFancyToolbar::CFancyToolbar ()
     : m_iButtons (0),
       m_iCurrentButton (-1)
 {
@@ -63,7 +63,7 @@ CFancyToolbar::CFancyToolbar (void)
 //
 //  ~CFancyToolbar
 //
-CFancyToolbar::~CFancyToolbar (void)
+CFancyToolbar::~CFancyToolbar ()
 {
     for (int iButton = 0; iButton < m_iButtons; iButton ++)
     {
@@ -90,7 +90,7 @@ CFancyToolbar::~CFancyToolbar (void)
 //  RegisterFancyToolbarClass
 //
 void
-CFancyToolbar::RegisterFancyToolbarClass (void)
+CFancyToolbar::RegisterFancyToolbarClass ()
 {
     // Is this class already registered?
     WNDCLASS classInfo = { 0 };
@@ -215,7 +215,7 @@ CFancyToolbar::AddButton
 //  Paint
 //
 void
-CFancyToolbar::Paint (void)
+CFancyToolbar::Paint ()
 {
     // Get the window's DC
     HDC hDC = ::GetDC (m_hWnd);

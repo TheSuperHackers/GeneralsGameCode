@@ -88,7 +88,7 @@ END_MESSAGE_MAP()
 //
 //  CW3DViewDoc
 //
-CW3DViewDoc::CW3DViewDoc (void)
+CW3DViewDoc::CW3DViewDoc ()
     : m_pCScene (nullptr),
       m_pC2DScene (nullptr),
 		m_pCursorScene (nullptr),
@@ -127,7 +127,7 @@ CW3DViewDoc::CW3DViewDoc (void)
 //  ~CW3DViewDoc
 //
 ///////////////////////////////////////////////////////////////
-CW3DViewDoc::~CW3DViewDoc (void)
+CW3DViewDoc::~CW3DViewDoc ()
 {
     CleanupResources ();
 	 REF_PTR_RELEASE (m_pCursor);
@@ -141,7 +141,7 @@ CW3DViewDoc::~CW3DViewDoc (void)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::CleanupResources (void)
+CW3DViewDoc::CleanupResources ()
 {
     if (m_pC2DScene)
     {
@@ -256,7 +256,7 @@ CW3DViewDoc::CleanupResources (void)
 //
 ///////////////////////////////////////////////////////////////
 BOOL
-CW3DViewDoc::OnNewDocument (void)
+CW3DViewDoc::OnNewDocument ()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
@@ -350,7 +350,7 @@ void CW3DViewDoc::Dump(CDumpContext& dc) const
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::InitScene (void)
+CW3DViewDoc::InitScene ()
 {
 	if (m_pCScene == nullptr) {
 
@@ -580,7 +580,7 @@ CW3DViewDoc::LoadAssetsFromFile (LPCTSTR lpszPathName)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Reload_Displayed_Object (void)
+CW3DViewDoc::Reload_Displayed_Object ()
 {
 	GetDataTreeView ()->Display_Asset ();
 	//SAFE_ADD_REF (m_pCRenderObj);
@@ -768,7 +768,7 @@ CW3DViewDoc::DisplayObject
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::ResetAnimation (void)
+CW3DViewDoc::ResetAnimation ()
 {
 	if (m_pCAnimation != nullptr) {
 
@@ -917,7 +917,7 @@ CW3DViewDoc::PlayAnimation
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Play_Animation_Sound (void)
+CW3DViewDoc::Play_Animation_Sound ()
 {
 	if (m_pCAnimation != nullptr) {
 	  CString animation_name = m_pCAnimation->Get_Name ();
@@ -1048,7 +1048,7 @@ Get_Camera_Transform (RenderObjClass *render_obj, Matrix3D &tm)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Update_Camera (void)
+CW3DViewDoc::Update_Camera ()
 {
 	// Should we update the camera's position as well?
 	if (m_bAnimateCamera && m_pCRenderObj != nullptr) {
@@ -1136,7 +1136,7 @@ CW3DViewDoc::UpdateFrame (float relativeTimeSlice)
 //
 ///////////////////////////////////////////////////////////////
 CDataTreeView *
-CW3DViewDoc::GetDataTreeView (void)
+CW3DViewDoc::GetDataTreeView ()
 {
     CDataTreeView *pCDataTreeView = nullptr;
 
@@ -1159,7 +1159,7 @@ CW3DViewDoc::GetDataTreeView (void)
 //
 ///////////////////////////////////////////////////////////////
 CGraphicView *
-CW3DViewDoc::GetGraphicView (void)
+CW3DViewDoc::GetGraphicView ()
 {
     CGraphicView *pCGrephicView = nullptr;
 
@@ -1725,7 +1725,7 @@ CW3DViewDoc::SaveSettings
 //
 ///////////////////////////////////////////////////////////////
 bool
-CW3DViewDoc::Save_Selected_LOD (void)
+CW3DViewDoc::Save_Selected_LOD ()
 {
 	// Assume failure
 	bool retval = false;
@@ -1917,7 +1917,7 @@ CW3DViewDoc::Remove_Object_From_Scene (RenderObjClass *prender_obj)
 //
 ///////////////////////////////////////////////////////////////
 bool
-CW3DViewDoc::Save_Selected_Primitive (void)
+CW3DViewDoc::Save_Selected_Primitive ()
 {
 	// Assume failure
 	bool retval = false;
@@ -2053,7 +2053,7 @@ CW3DViewDoc::Save_Current_Ring (const CString &filename)
 //
 ///////////////////////////////////////////////////////////////
 bool
-CW3DViewDoc::Save_Selected_Emitter (void)
+CW3DViewDoc::Save_Selected_Emitter ()
 {
 	// Assume failure
 	bool retval = false;
@@ -2136,7 +2136,7 @@ CW3DViewDoc::Save_Current_Emitter (const CString &filename)
 //
 ///////////////////////////////////////////////////////////////
 bool
-CW3DViewDoc::Save_Selected_Sound_Object (void)
+CW3DViewDoc::Save_Selected_Sound_Object ()
 {
 	bool retval = false;
 
@@ -2238,7 +2238,7 @@ CW3DViewDoc::Save_Current_Sound_Object (const CString &filename)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Auto_Assign_Bones (void)
+CW3DViewDoc::Auto_Assign_Bones ()
 {
 	if (m_pCRenderObj != nullptr) {
 		bool bupdate_prototype = false;
@@ -2274,7 +2274,7 @@ CW3DViewDoc::Auto_Assign_Bones (void)
 //
 ///////////////////////////////////////////////////////////////
 bool
-CW3DViewDoc::Save_Selected_Aggregate (void)
+CW3DViewDoc::Save_Selected_Aggregate ()
 {
 	// Assume failure
 	bool retval = false;
@@ -2413,7 +2413,7 @@ CW3DViewDoc::Animate_Camera (bool banimate)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Make_Movie (void)
+CW3DViewDoc::Make_Movie ()
 {
 	// Hide the mouse cursor when we're making a movie.
 	bool restore_cursor = Is_Cursor_Shown();
@@ -2576,7 +2576,7 @@ CW3DViewDoc::Show_Cursor (bool onoff)
 //
 ///////////////////////////////////////////////////////////////
 bool
-CW3DViewDoc::Is_Cursor_Shown (void) const
+CW3DViewDoc::Is_Cursor_Shown () const
 {
 	return m_pCursor != nullptr && m_pCursor->Is_Not_Hidden_At_All ();
 }
@@ -2601,7 +2601,7 @@ CW3DViewDoc::Set_Cursor (LPCTSTR resource_name)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Create_Cursor (void)
+CW3DViewDoc::Create_Cursor ()
 {
 	if (m_pCursor == nullptr) {
 		m_pCursor = new ScreenCursorClass;
@@ -2667,7 +2667,7 @@ CW3DViewDoc::Count_Particles (RenderObjClass *render_obj)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Update_Particle_Count (void)
+CW3DViewDoc::Update_Particle_Count ()
 {
 	int particles = Count_Particles ();
 	((CMainFrame *)::AfxGetMainWnd ())->Update_Particle_Count (particles);
@@ -2984,7 +2984,7 @@ CW3DViewDoc::Import_Facial_Animation (const CString &heirarchy_name, const CStri
 //
 ///////////////////////////////////////////////////////////////
 const HTreeClass *
-CW3DViewDoc::Get_Current_HTree (void) const
+CW3DViewDoc::Get_Current_HTree () const
 {
 	const HTreeClass *htree = nullptr;
 
@@ -3002,7 +3002,7 @@ CW3DViewDoc::Get_Current_HTree (void) const
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Save_Camera_Settings (void)
+CW3DViewDoc::Save_Camera_Settings ()
 {
 	theApp.WriteProfileInt ("Config", "UseManualFOV", m_ManualFOV);
 	theApp.WriteProfileInt ("Config", "UseManualClipPlanes", m_ManualClipPlanes);
@@ -3043,7 +3043,7 @@ CW3DViewDoc::Save_Camera_Settings (void)
 //
 ///////////////////////////////////////////////////////////////
 void
-CW3DViewDoc::Load_Camera_Settings (void)
+CW3DViewDoc::Load_Camera_Settings ()
 {
 	m_ManualFOV				= (theApp.GetProfileInt ("Config", "UseManualFOV", 0) == TRUE);
 	m_ManualClipPlanes	= (theApp.GetProfileInt ("Config", "UseManualClipPlanes", 0) == TRUE);

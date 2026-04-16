@@ -247,17 +247,17 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 /* The purpose of these two functions is to allow
 the inner class CSDTreeCtrl the ability to check
 what Script and ScriptGroup belong to the cursor location */
-Script *ScriptDialog::friend_getCurScript(void)
+Script *ScriptDialog::friend_getCurScript()
 {
 	return getCurScript();
 }
 
-ScriptGroup *ScriptDialog::friend_getCurGroup(void)
+ScriptGroup *ScriptDialog::friend_getCurGroup()
 {
 	return getCurGroup();
 }
 
-Script *ScriptDialog::getCurScript(void)
+Script *ScriptDialog::getCurScript()
 {
 	if (m_curSelection.m_objType == ListType::SCRIPT_IN_PLAYER_TYPE || m_curSelection.m_objType == ListType::SCRIPT_IN_GROUP_TYPE) {
 		ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
@@ -286,7 +286,7 @@ Script *ScriptDialog::getCurScript(void)
 	return nullptr;
 }
 
-ScriptGroup *ScriptDialog::getCurGroup(void)
+ScriptGroup *ScriptDialog::getCurGroup()
 {
 	ScriptList *pSL = m_sides.getSideInfo(m_curSelection.m_playerIndex)->getScriptList();
 	if (m_curSelection.m_objType == ListType::PLAYER_TYPE) {
@@ -474,7 +474,7 @@ void ScriptDialog::patchScriptParametersForGC(Script *pScript)
 }
 
 /*Checks all script parameters for obsolete values (example: mission disk using GC_ templates)*/
-void ScriptDialog::checkParametersForGC(void)
+void ScriptDialog::checkParametersForGC()
 {
 	SidesList *sidesListP = TheSidesList;
 	Int i;

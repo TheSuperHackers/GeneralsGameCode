@@ -62,7 +62,7 @@ RingColorPropPageClass::RingColorPropPageClass (RingRenderObjClass *ring)
 //	~RingColorPropPageClass
 //
 /////////////////////////////////////////////////////////////
-RingColorPropPageClass::~RingColorPropPageClass (void)
+RingColorPropPageClass::~RingColorPropPageClass ()
 {
 	return ;
 }
@@ -97,7 +97,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::Initialize (void)
+RingColorPropPageClass::Initialize ()
 {
 	m_ColorChannel.Reset ();
 	m_OrigColorChannel.Reset ();
@@ -133,7 +133,7 @@ RingColorPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingColorPropPageClass::OnInitDialog (void)
+RingColorPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -185,7 +185,7 @@ RingColorPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingColorPropPageClass::OnApply (void)
+RingColorPropPageClass::OnApply ()
 {
 	// Allow the base class to process this message
 	return CPropertyPage::OnApply ();
@@ -198,7 +198,7 @@ RingColorPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::OnDestroy (void)
+RingColorPropPageClass::OnDestroy ()
 {
 	CPropertyPage::OnDestroy();
 	return ;
@@ -305,7 +305,7 @@ RingColorPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::OnCancel (void)
+RingColorPropPageClass::OnCancel ()
 {
 	//
 	//	Reset the object to its original state
@@ -324,7 +324,7 @@ RingColorPropPageClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::Update_Opacities (void)
+RingColorPropPageClass::Update_Opacities ()
 {
 	m_AlphaChannel.Reset ();
 
@@ -357,7 +357,7 @@ RingColorPropPageClass::Update_Opacities (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::Update_Colors (void)
+RingColorPropPageClass::Update_Colors ()
 {
 	m_ColorChannel.Reset ();
 

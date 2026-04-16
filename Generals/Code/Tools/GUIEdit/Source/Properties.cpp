@@ -1719,42 +1719,42 @@ Bool HandleCommonDialogMessages( HWND hWndDialog, UINT message,
 
 // GetProprsEnabledTextColor ==================================================
 //=============================================================================
-Color GetPropsEnabledTextColor( void )
+Color GetPropsEnabledTextColor()
 {
 	return textDrawData[ enabledTextIndex ].color;
 }
 
 // GetPropsEnabledTextBorderColor =============================================
 //=============================================================================
-Color GetPropsEnabledTextBorderColor( void )
+Color GetPropsEnabledTextBorderColor()
 {
 	return textDrawData[ enabledTextIndex ].borderColor;
 }
 
 // GetProprsDisabledTextColor =================================================
 //=============================================================================
-Color GetPropsDisabledTextColor( void )
+Color GetPropsDisabledTextColor()
 {
 	return textDrawData[ disabledTextIndex ].color;
 }
 
 // GetPropsDisabledTextBorderColor ============================================
 //=============================================================================
-Color GetPropsDisabledTextBorderColor( void )
+Color GetPropsDisabledTextBorderColor()
 {
 	return textDrawData[ disabledTextIndex ].borderColor;
 }
 
 // GetProprsHiliteTextColor ===================================================
 //=============================================================================
-Color GetPropsHiliteTextColor( void )
+Color GetPropsHiliteTextColor()
 {
 	return textDrawData[ hiliteTextIndex ].color;
 }
 
 // GetPropsHiliteTextBorderColor ==============================================
 //=============================================================================
-Color GetPropsHiliteTextBorderColor( void )
+Color GetPropsHiliteTextBorderColor()
 {
 	return textDrawData[ hiliteTextIndex ].borderColor;
 }

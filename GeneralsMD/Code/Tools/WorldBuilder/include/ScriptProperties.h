@@ -54,7 +54,7 @@ public:
 public:
 	void setScript(Script *pScript) {m_script = pScript;}
 protected:
-	void enableControls(void);
+	void enableControls();
 
 protected:
 	Script *m_script;

@@ -42,9 +42,9 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	virtual void			OnFileNameChange (void);
-	virtual BOOL			OnFileNameOK (void);
-	virtual void			OnInitDone (void);
+	virtual void			OnFileNameChange ();
+	virtual BOOL			OnFileNameOK ();
+	virtual void			OnInitDone ();
 
 	private:
 		CString				m_ExpectedFilename;

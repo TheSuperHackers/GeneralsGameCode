@@ -86,7 +86,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-CameraSettingsDialogClass::OnInitDialog (void)
+CameraSettingsDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -134,7 +134,7 @@ CameraSettingsDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-CameraSettingsDialogClass::OnOK (void)
+CameraSettingsDialogClass::OnOK ()
 {
 	CW3DViewDoc *doc				= ::GetCurrentDocument ();
 	CGraphicView *graphic_view = doc->GetGraphicView ();
@@ -194,7 +194,7 @@ CameraSettingsDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-CameraSettingsDialogClass::OnFovCheck (void)
+CameraSettingsDialogClass::OnFovCheck ()
 {
 	bool manual_fov = (SendDlgItemMessage (IDC_FOV_CHECK, BM_GETCHECK) == 1);
 	::EnableWindow (m_VFOVSpin, manual_fov);
@@ -213,7 +213,7 @@ CameraSettingsDialogClass::OnFovCheck (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-CameraSettingsDialogClass::OnClipPlaneCheck (void)
+CameraSettingsDialogClass::OnClipPlaneCheck ()
 {
 	bool manual_planes = (SendDlgItemMessage (IDC_CLIP_PLANE_CHECK, BM_GETCHECK) == 1);
 	::EnableWindow (m_NearClipSpin, manual_planes);
@@ -230,7 +230,7 @@ CameraSettingsDialogClass::OnClipPlaneCheck (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-CameraSettingsDialogClass::OnReset (void)
+CameraSettingsDialogClass::OnReset ()
 {
 	CW3DViewDoc *doc				= ::GetCurrentDocument ();
 	CGraphicView *graphic_view = doc->GetGraphicView ();
@@ -314,7 +314,7 @@ CameraSettingsDialogClass::OnNotify
 //
 ////////////////////////////////////////////////////////////////////
 void
-CameraSettingsDialogClass::Update_Camera_Lens (void)
+CameraSettingsDialogClass::Update_Camera_Lens ()
 {
 	//
 	//	Get the current vertical FOV settings
@@ -340,7 +340,7 @@ CameraSettingsDialogClass::Update_Camera_Lens (void)
 //
 ////////////////////////////////////////////////////////////////////
 void
-CameraSettingsDialogClass::Update_FOV (void)
+CameraSettingsDialogClass::Update_FOV ()
 {
 	//
 	//	Get the current camera lens setting

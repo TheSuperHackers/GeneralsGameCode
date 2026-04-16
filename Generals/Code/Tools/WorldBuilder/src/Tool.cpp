@@ -41,7 +41,7 @@ Tool::Tool(Int toolID, Int cursorID)
 
 
 /// Destructor
-Tool::~Tool(void)
+Tool::~Tool()
 {
 	if (m_cursor) {
 		::DestroyCursor(m_cursor);
@@ -57,7 +57,7 @@ void Tool::activate()
 }
 
 
-void Tool::setCursor(void)
+void Tool::setCursor()
 {
 		if (m_cursor == nullptr) {
 			m_cursor = AfxGetApp()->LoadCursor(MAKEINTRESOURCE(m_cursorID));

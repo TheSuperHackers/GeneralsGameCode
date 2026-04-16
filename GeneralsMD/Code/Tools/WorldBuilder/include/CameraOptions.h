@@ -67,7 +67,7 @@ protected:
 	void	putReal( Int ctrlID, Real val );
 	void	putAsciiString( Int ctrlID, AsciiString val );
 	BOOL	getReal( Int ctrlID, Real *rVal );
-	void	stuffValuesIntoFields( void );
+	void	stuffValuesIntoFields();
 	void	applyCameraPitch( Real pitch );
 
 	WBPopupSliderButton m_pitchPopup;
@@ -80,7 +80,7 @@ public: // popup slider interface.
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
 public:
-	void update( void );
+	void update();
 
 };
 

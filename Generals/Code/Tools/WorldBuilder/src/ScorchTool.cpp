@@ -38,13 +38,13 @@
 //
 
 /// Constructor
-ScorchTool::ScorchTool(void) :
+ScorchTool::ScorchTool() :
 	Tool(ID_SCORCH_TOOL, IDC_SCORCH)
 {
 }
 
 /// Destructor
-ScorchTool::~ScorchTool(void)
+ScorchTool::~ScorchTool()
 {
 }
 

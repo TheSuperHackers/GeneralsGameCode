@@ -49,17 +49,17 @@ class EmitterInstanceListClass : public ParticleEmitterDefClass
 		///////////////////////////////////////////////////////
 		// Public constructors/destructors
 		///////////////////////////////////////////////////////
-		EmitterInstanceListClass (void)		{ }
+		EmitterInstanceListClass ()		{ }
 		EmitterInstanceListClass (const EmitterInstanceListClass &src)
 			: ParticleEmitterDefClass (src)	{ }
 
-		virtual ~EmitterInstanceListClass (void);
+		virtual ~EmitterInstanceListClass ();
 
 		///////////////////////////////////////////////////////
 		// Public methods
 		///////////////////////////////////////////////////////
 		virtual void			Add_Emitter (ParticleEmitterClass *emitter);
-		virtual void			Free_List (void);
+		virtual void			Free_List ();
 
 		///////////////////////////////////////////////////////
 		// Derived overrides

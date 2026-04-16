@@ -35,16 +35,16 @@ protected:
 	CPoint							m_prevViewPt;
 
 public:
-	TileTool(void);
-	virtual ~TileTool(void) override;
+	TileTool();
+	virtual ~TileTool() override;
 
 public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual WorldHeightMapEdit *getHeightMap(void) override {return m_htMapEditCopy;};
+	virtual WorldHeightMapEdit *getHeightMap() override {return m_htMapEditCopy;};
 	virtual void activate() override; ///< Become the current tool.
-	virtual Int getWidth(void) {return 1;};
+	virtual Int getWidth() {return 1;};
 };
 
 /*************************************************************************
@@ -60,9 +60,9 @@ public:
 	virtual void activate() override; ///< Become the current tool.
 
 public:
-	BigTileTool(void);
+	BigTileTool();
 
 	static void setWidth(Int width) ;
-	virtual Int getWidth(void) override {return m_currentWidth;};
+	virtual Int getWidth() override {return m_currentWidth;};
 
 };

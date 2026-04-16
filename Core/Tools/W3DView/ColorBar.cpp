@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 //
 // ColorBarClass
 //
-ColorBarClass::ColorBarClass (void)
+ColorBarClass::ColorBarClass ()
 	: m_hBitmap (nullptr),
 	  m_iBMPWidth (0),
 	  m_iBMPHeight (0),
@@ -122,7 +122,7 @@ ColorBarClass::ColorBarClass (void)
 //
 // ~ColorBarClass
 //
-ColorBarClass::~ColorBarClass (void)
+ColorBarClass::~ColorBarClass ()
 {
 	if (m_hMemDC != nullptr) {
 		::DeleteObject (m_hMemDC);
@@ -314,7 +314,7 @@ ColorBarClass::Create
 // Create_Bitmap
 //
 void
-ColorBarClass::Create_Bitmap (void)
+ColorBarClass::Create_Bitmap ()
 {
 	// Start fresh
 	Free_Bitmap ();
@@ -407,7 +407,7 @@ ColorBarClass::Create_Bitmap (void)
 // Free_Bitmap
 //
 void
-ColorBarClass::Free_Bitmap (void)
+ColorBarClass::Free_Bitmap ()
 {
 	if (m_hBitmap != nullptr) {
 		::DeleteObject (m_hBitmap);
@@ -622,7 +622,7 @@ ColorBarClass::Paint_Bar_Horz
 // Paint_DIB
 //
 void
-ColorBarClass::Paint_DIB (void)
+ColorBarClass::Paint_DIB ()
 {
 	CRect frame_rect = m_ColorArea;
 	frame_rect.InflateRect (1, 1);
@@ -721,7 +721,7 @@ ColorBarClass::Paint_DIB (void)
 // OnPaint
 //
 void
-ColorBarClass::OnPaint (void)
+ColorBarClass::OnPaint ()
 {
 	CPaintDC dc (this);
 	Paint_Screen (dc);
@@ -1063,7 +1063,7 @@ ColorBarClass::Set_Range
 // Update_Point_Info
 //
 void
-ColorBarClass::Update_Point_Info (void)
+ColorBarClass::Update_Point_Info ()
 {
 	int width = m_ColorArea.Width ();
 	int height = m_ColorArea.Height ();
@@ -1139,7 +1139,7 @@ ColorBarClass::Update_Point_Info (void)
 // Free_Marker_Bitmap
 //
 void
-ColorBarClass::Free_Marker_Bitmap (void)
+ColorBarClass::Free_Marker_Bitmap ()
 {
 	if (m_KeyFrameDIB != nullptr) {
 		::DeleteObject (m_KeyFrameDIB);
@@ -1156,7 +1156,7 @@ ColorBarClass::Free_Marker_Bitmap (void)
 // Load_Key_Frame_BMP
 //
 void
-ColorBarClass::Load_Key_Frame_BMP (void)
+ColorBarClass::Load_Key_Frame_BMP ()
 {
 	Free_Marker_Bitmap ();
 
@@ -1816,7 +1816,7 @@ ColorBarClass::Get_Color
 // Clear_Points
 //
 void
-ColorBarClass::Clear_Points (void)
+ColorBarClass::Clear_Points ()
 {
 	// Reset the point count
 	m_iColorPoints = 1;
@@ -1924,7 +1924,7 @@ ColorBarClass::Set_Redraw (bool redraw)
 // Repaint
 //
 void
-ColorBarClass::Repaint (void)
+ColorBarClass::Repaint ()
 {
 	InvalidateRect (nullptr, FALSE);
 	if (m_bRedraw) {

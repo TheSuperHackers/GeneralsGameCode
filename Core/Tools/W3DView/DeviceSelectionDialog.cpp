@@ -89,7 +89,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CDeviceSelectionDialog::OnInitDialog (void)
+CDeviceSelectionDialog::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -131,7 +131,7 @@ CDeviceSelectionDialog::OnInitDialog (void)
 //  OnSelchangeRenderDeviceCombo
 //
 void
-CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
+CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo ()
 {
 	int index = m_deviceListComboBox.GetCurSel ();
 	if (index != CB_ERR) {
@@ -150,7 +150,7 @@ CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
 //  UpdateDeviceDescription
 //
 void
-CDeviceSelectionDialog::UpdateDeviceDescription (void)
+CDeviceSelectionDialog::UpdateDeviceDescription ()
 {
 	const RenderDeviceDescClass &device_desc = WW3D::Get_Render_Device_Desc ();
 
@@ -176,7 +176,7 @@ CDeviceSelectionDialog::UpdateDeviceDescription (void)
 //  OnOK
 //
 void
-CDeviceSelectionDialog::OnOK (void)
+CDeviceSelectionDialog::OnOK ()
 {
 	// Ask the combobox for its current selection
 	m_iDeviceIndex = m_deviceListComboBox.GetItemData (m_deviceListComboBox.GetCurSel ());
@@ -202,7 +202,7 @@ CDeviceSelectionDialog::OnOK (void)
 //  DoModal
 //
 int
-CDeviceSelectionDialog::DoModal (void)
+CDeviceSelectionDialog::DoModal ()
 {
 	BOOL bFoundDevice = FALSE;
 	int iReturn = IDOK;

@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CBackgroundObjectDialog::OnInitDialog (void)
+CBackgroundObjectDialog::OnInitDialog ()
 {
     // Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -155,7 +155,7 @@ CBackgroundObjectDialog::OnInitDialog (void)
 //  OnInitDialog
 //
 void
-CBackgroundObjectDialog::OnOK (void)
+CBackgroundObjectDialog::OnOK ()
 {
     // Get a pointer to the doc
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
@@ -226,7 +226,7 @@ CBackgroundObjectDialog::OnItemChangedHierarchyList
 //  OnClear
 //
 void
-CBackgroundObjectDialog::OnClear (void)
+CBackgroundObjectDialog::OnClear ()
 {
     // Get the current selection (if any)
     int iIndex = m_heirarchyListCtrl.GetNextItem (-1, LVNI_ALL | LVNI_SELECTED);

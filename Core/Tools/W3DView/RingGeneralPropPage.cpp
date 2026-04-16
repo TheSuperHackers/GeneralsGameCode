@@ -95,7 +95,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::Initialize (void)
+RingGeneralPropPageClass::Initialize ()
 {
 	if (m_RenderObj != nullptr) {
 
@@ -157,7 +157,7 @@ RingGeneralPropPageClass::Add_Shader_To_Combo
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingGeneralPropPageClass::OnInitDialog (void)
+RingGeneralPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -199,7 +199,7 @@ RingGeneralPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingGeneralPropPageClass::OnApply (void)
+RingGeneralPropPageClass::OnApply ()
 {
 	// Get the data from the dialog controls
 	GetDlgItemText (IDC_NAME_EDIT, m_Name);
@@ -260,7 +260,7 @@ RingGeneralPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnBrowseButton (void)
+RingGeneralPropPageClass::OnBrowseButton ()
 {
 	CFileDialog dialog (	TRUE,
 								".tga",
@@ -285,7 +285,7 @@ RingGeneralPropPageClass::OnBrowseButton (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnChangeFilenameEdit (void)
+RingGeneralPropPageClass::OnChangeFilenameEdit ()
 {
 	SetModified ();
 	return ;
@@ -298,7 +298,7 @@ RingGeneralPropPageClass::OnChangeFilenameEdit (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnChangeNameEdit (void)
+RingGeneralPropPageClass::OnChangeNameEdit ()
 {
 	SetModified ();
 	return ;
@@ -338,7 +338,7 @@ RingGeneralPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnChangeLifetimeEdit (void)
+RingGeneralPropPageClass::OnChangeLifetimeEdit ()
 {
 	SetModified ();
 	return ;
@@ -351,7 +351,7 @@ RingGeneralPropPageClass::OnChangeLifetimeEdit (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnSelchangeShaderCombo (void)
+RingGeneralPropPageClass::OnSelchangeShaderCombo ()
 {
 	SetModified ();
 	return ;
@@ -397,7 +397,7 @@ RingGeneralPropPageClass::OnCommand
 //
 /////////////////////////////////////////////////////////////
 void
-RingGeneralPropPageClass::OnChangeTextureTileEdit (void)
+RingGeneralPropPageClass::OnChangeTextureTileEdit ()
 {
 	SetModified ();
 	return ;

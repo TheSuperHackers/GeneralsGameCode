@@ -71,7 +71,7 @@ EmitterColorPropPageClass::EmitterColorPropPageClass (EmitterInstanceListClass *
 //  ~EmitterColorPropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterColorPropPageClass::~EmitterColorPropPageClass (void)
+EmitterColorPropPageClass::~EmitterColorPropPageClass ()
 {
 	// Free the original setting arrays
 	SAFE_DELETE_ARRAY (m_OrigColors.KeyTimes);
@@ -122,7 +122,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterColorPropPageClass::Initialize (void)
+EmitterColorPropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_OrigColors.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigColors.Values);
@@ -156,7 +156,7 @@ EmitterColorPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterColorPropPageClass::OnInitDialog (void)
+EmitterColorPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -238,7 +238,7 @@ EmitterColorPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterColorPropPageClass::OnApply (void)
+EmitterColorPropPageClass::OnApply ()
 {
 	/*SAFE_DELETE_ARRAY (m_OrigColors.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigColors.Values);
@@ -262,7 +262,7 @@ EmitterColorPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterColorPropPageClass::OnDestroy (void)
+EmitterColorPropPageClass::OnDestroy ()
 {
 	CPropertyPage::OnDestroy();
 	return ;
@@ -416,7 +416,7 @@ EmitterColorPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterColorPropPageClass::OnCancel (void)
+EmitterColorPropPageClass::OnCancel ()
 {
 	//
 	//	Reset the emitter to its original state
@@ -435,7 +435,7 @@ EmitterColorPropPageClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterColorPropPageClass::Update_Opacities (void)
+EmitterColorPropPageClass::Update_Opacities ()
 {
 	float position = 0;
 	float red = 0;
@@ -483,7 +483,7 @@ EmitterColorPropPageClass::Update_Opacities (void)
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterColorPropPageClass::Update_Colors (void)
+EmitterColorPropPageClass::Update_Colors ()
 {
 	float position = 0;
 	float red = 0;

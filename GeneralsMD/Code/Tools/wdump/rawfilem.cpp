@@ -359,7 +359,7 @@ bool RawFileMClass::Is_Available(int forced)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RawFileMClass::Close(void)
+void RawFileMClass::Close()
 {
 	/*
 	**	If the file is open, then close it. If the file is already closed, then just return. This
@@ -611,7 +611,7 @@ int RawFileMClass::Seek(int pos, int dir)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileMClass::Size(void)
+int RawFileMClass::Size()
 {
 	int size = 0;
 
@@ -674,7 +674,7 @@ int RawFileMClass::Size(void)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileMClass::Create(void)
+int RawFileMClass::Create()
 {
 	Close();
 	if (Open(WRITE)) {
@@ -712,7 +712,7 @@ int RawFileMClass::Create(void)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileMClass::Delete(void)
+int RawFileMClass::Delete()
 {
 	/*
 	**	If the file was open, then it must be closed first.
@@ -773,7 +773,7 @@ int RawFileMClass::Delete(void)
  *   11/14/1995 DRD : Created.                                                                 *
  *   07/13/1996 JLB : Handles win32 method.                                                    *
  *=============================================================================================*/
-unsigned long RawFileMClass::Get_Date_Time(void)
+unsigned long RawFileMClass::Get_Date_Time()
 {
 	BY_HANDLE_FILE_INFORMATION info;
 

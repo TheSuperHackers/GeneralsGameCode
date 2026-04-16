@@ -67,7 +67,7 @@
 Bool localIsUnderwater( Real x, Real y);
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-MapPreview::MapPreview(void )
+MapPreview::MapPreview()
 {
 	memset(m_pixelBuffer, 0xffffffff, sizeof(m_pixelBuffer));
 }

@@ -84,7 +84,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterLineGroupPropPageClass::Initialize (void)
+EmitterLineGroupPropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_BlurTimes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_BlurTimes.Values);
@@ -159,7 +159,7 @@ BOOL EmitterLineGroupPropPageClass::OnInitDialog()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterLineGroupPropPageClass::Update_Blur_Times (void)
+EmitterLineGroupPropPageClass::Update_Blur_Times ()
 {
 	float position = 0;
 	float red = 0;

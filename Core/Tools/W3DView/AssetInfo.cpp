@@ -46,7 +46,7 @@
 //	Initialize
 //
 void
-AssetInfoClass::Initialize (void)
+AssetInfoClass::Initialize ()
 {
 	// If this isn't a material, then try to get its hierarchy name (if there is one)
 	if (m_AssetType != TypeMaterial) {

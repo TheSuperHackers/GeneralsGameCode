@@ -84,10 +84,10 @@ public:
 
 	void showOptionsDialog(Int dialogID);
 	void OnEditGloballightoptions();
-	void ResetWindowPositions(void);
-	void adjustWindowSize(void);
-	Bool isAutoSaving(void) {return m_autoSaving;};
-	void handleCameraChange(void);
+	void ResetWindowPositions();
+	void adjustWindowSize();
+	Bool isAutoSaving() {return m_autoSaving;};
+	void handleCameraChange();
 	void onEditScripts();
 
 protected:  // control bar embedded members

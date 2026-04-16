@@ -72,7 +72,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CBackgroundColorDialog::OnInitDialog (void)
+CBackgroundColorDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -173,7 +173,7 @@ CBackgroundColorDialog::OnHScroll
 //  OnGrayscaleCheck
 //
 void
-CBackgroundColorDialog::OnGrayscaleCheck (void)
+CBackgroundColorDialog::OnGrayscaleCheck ()
 {
     if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK))
     {
@@ -204,7 +204,7 @@ CBackgroundColorDialog::OnGrayscaleCheck (void)
 //  OnCancel
 //
 void
-CBackgroundColorDialog::OnCancel (void)
+CBackgroundColorDialog::OnCancel ()
 {
     Vector3 colorSettings;
     colorSettings.X = float(m_initialRed) / 100.00F;

@@ -69,7 +69,7 @@ IMPLEMENT_DYNCREATE(CGraphicView, CView)
 //  CGraphicView
 //
 ////////////////////////////////////////////////////////////////////////////
-CGraphicView::CGraphicView (void)
+CGraphicView::CGraphicView ()
     : m_bInitialized (FALSE),
       m_pCamera (nullptr),
       m_TimerID (0),
@@ -181,7 +181,7 @@ CGraphicView::OnCreate (LPCREATESTRUCT lpCreateStruct)
 //
 ////////////////////////////////////////////////////////////////////////////
 BOOL
-CGraphicView::InitializeGraphicView (void)
+CGraphicView::InitializeGraphicView ()
 {
 	// Assume failure
 	BOOL bReturn = FALSE;
@@ -316,7 +316,7 @@ CGraphicView::OnSize
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::OnDestroy (void)
+CGraphicView::OnDestroy ()
 {
 	// Allow the base class to process this message
 	CView::OnDestroy ();
@@ -357,7 +357,7 @@ CGraphicView::OnDestroy (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::OnInitialUpdate (void)
+CGraphicView::OnInitialUpdate ()
 {
 	// Allow the base class to process this message
     CView::OnInitialUpdate ();
@@ -582,7 +582,7 @@ CGraphicView::RepaintView
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::UpdateDisplay (void)
+CGraphicView::UpdateDisplay ()
 {
 	// Get the document to display
     CW3DViewDoc* doc = (CW3DViewDoc *)GetDocument();
@@ -1314,7 +1314,7 @@ CGraphicView::Reset_Camera_To_Display_Object (RenderObjClass &render_object)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::Load_Default_Dat (void)
+CGraphicView::Load_Default_Dat ()
 {
 	// Get the directory where this executable was run from
 	TCHAR filename[MAX_PATH];
@@ -1590,7 +1590,7 @@ CGraphicView::SetAllowedCameraRotation (CAMERA_ROTATION cameraRotation)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::ResetObject (void)
+CGraphicView::ResetObject ()
 {
     // Get the current document
     CW3DViewDoc *doc = ::GetCurrentDocument ();
@@ -1630,7 +1630,7 @@ CGraphicView::OnGetMinMaxInfo (MINMAXINFO FAR* lpMMI)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::Rotate_Object (void)
+CGraphicView::Rotate_Object ()
 {
 	// Get the document to display
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
@@ -1678,7 +1678,7 @@ CGraphicView::Rotate_Object (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::Rotate_Light (void)
+CGraphicView::Rotate_Light ()
 {
 	// Get the document to display
 	CW3DViewDoc *doc = (CW3DViewDoc *)GetDocument();
@@ -1762,7 +1762,7 @@ CGraphicView::Set_FOV (double hfov, double vfov, bool force)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CGraphicView::Reset_FOV (void)
+CGraphicView::Reset_FOV ()
 {
 	int cx = 0;
 	int cy = 0;

@@ -72,7 +72,7 @@ RingSizePropPageClass::RingSizePropPageClass (RingRenderObjClass *ring)
 //	~RingSizePropPageClass
 //
 /////////////////////////////////////////////////////////////
-RingSizePropPageClass::~RingSizePropPageClass (void)
+RingSizePropPageClass::~RingSizePropPageClass ()
 {
 	return ;
 }
@@ -110,7 +110,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-RingSizePropPageClass::Initialize (void)
+RingSizePropPageClass::Initialize ()
 {
 	m_InnerScaleChannel.Reset ();
 	m_OrigInnerScaleChannel.Reset ();
@@ -148,7 +148,7 @@ RingSizePropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingSizePropPageClass::OnInitDialog (void)
+RingSizePropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -324,7 +324,7 @@ RingSizePropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingSizePropPageClass::OnApply (void)
+RingSizePropPageClass::OnApply ()
 {
 	// Allow the base class to process this message
 	return CPropertyPage::OnApply ();
@@ -337,7 +337,7 @@ RingSizePropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingSizePropPageClass::OnDestroy (void)
+RingSizePropPageClass::OnDestroy ()
 {
 	CPropertyPage::OnDestroy();
 	return ;
@@ -515,7 +515,7 @@ RingSizePropPageClass::OnCommand
 //
 /////////////////////////////////////////////////////////////
 void
-RingSizePropPageClass::OnCancel (void)
+RingSizePropPageClass::OnCancel ()
 {
 	//
 	//	Reset the object to its original state
@@ -534,7 +534,7 @@ RingSizePropPageClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingSizePropPageClass::Update_Inner_Scale_Array (void)
+RingSizePropPageClass::Update_Inner_Scale_Array ()
 {
 	m_InnerScaleChannel.Reset ();
 
@@ -633,7 +633,7 @@ RingSizePropPageClass::Update_Inner_Scale_Array (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingSizePropPageClass::Update_Outer_Scale_Array (void)
+RingSizePropPageClass::Update_Outer_Scale_Array ()
 {
 	m_OuterScaleChannel.Reset ();
 

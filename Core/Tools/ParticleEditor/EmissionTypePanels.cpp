@@ -45,7 +45,7 @@ EmissionPanelPoint::EmissionPanelPoint(UINT nIDTemplate, CWnd* pParentWnd) : ISw
 
 }
 
-void EmissionPanelPoint::InitPanel( void )
+void EmissionPanelPoint::InitPanel()
 {
 
 }
@@ -78,7 +78,7 @@ EmissionPanelLine::EmissionPanelLine(UINT nIDTemplate, CWnd* pParentWnd) : ISwap
 
 }
 
-void EmissionPanelLine::InitPanel( void )
+void EmissionPanelLine::InitPanel()
 {
 
 }
@@ -215,7 +215,7 @@ EmissionPanelBox::EmissionPanelBox(UINT nIDTemplate, CWnd* pParentWnd) : ISwapab
 
 }
 
-void EmissionPanelBox::InitPanel( void )
+void EmissionPanelBox::InitPanel()
 {
 
 }
@@ -302,7 +302,7 @@ EmissionPanelSphere::EmissionPanelSphere(UINT nIDTemplate, CWnd* pParentWnd) : I
 
 }
 
-void EmissionPanelSphere::InitPanel( void )
+void EmissionPanelSphere::InitPanel()
 {
 
 }
@@ -359,7 +359,7 @@ EmissionPanelCylinder::EmissionPanelCylinder(UINT nIDTemplate, CWnd* pParentWnd)
 
 }
 
-void EmissionPanelCylinder::InitPanel( void )
+void EmissionPanelCylinder::InitPanel()
 {
 
 }

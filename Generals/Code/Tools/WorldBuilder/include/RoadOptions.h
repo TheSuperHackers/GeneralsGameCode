@@ -35,7 +35,7 @@ class RoadOptions : public COptionsPanel
 public:
 	RoadOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	virtual ~RoadOptions(void) override;   ///< standard destructor
+	virtual ~RoadOptions() override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(RoadOptions)
@@ -86,19 +86,19 @@ protected:
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	Bool findAndSelect(HTREEITEM parent, AsciiString label);
 	Bool setRoadTreeViewSelection(HTREEITEM parent, Int selection);
-	void updateLabel(void);
+	void updateLabel();
 	void ChangeRoadType(AsciiString newRoad);
-	void SelectConnected(void);
+	void SelectConnected();
 
 public:
-	static AsciiString getCurRoadName(void) {return m_currentRoadName;}
-	static Bool isBridge(void) {return (m_currentRoadIndex >= m_numberOfRoads);}
-	static Bool isAngled(void) {return m_angleCorners;}
-	static Bool isTightCurve(void) {return m_tightCurve;}
-	static Bool isJoin(void) {return m_doJoin;}
-	static void updateSelection(void);
-	static Bool selectionIsRoadsOnly(void);
-	void applyToSelection(void);
+	static AsciiString getCurRoadName() {return m_currentRoadName;}
+	static Bool isBridge() {return (m_currentRoadIndex >= m_numberOfRoads);}
+	static Bool isAngled() {return m_angleCorners;}
+	static Bool isTightCurve() {return m_tightCurve;}
+	static Bool isJoin() {return m_doJoin;}
+	static void updateSelection();
+	static Bool selectionIsRoadsOnly();
+	void applyToSelection();
 };
 
 //{{AFX_INSERT_LOCATION}}

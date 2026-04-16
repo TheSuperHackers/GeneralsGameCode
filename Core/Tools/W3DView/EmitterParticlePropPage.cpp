@@ -64,7 +64,7 @@ EmitterParticlePropPageClass::EmitterParticlePropPageClass (EmitterInstanceListC
 //
 //  ~EmitterParticlePropPageClass
 //
-EmitterParticlePropPageClass::~EmitterParticlePropPageClass (void)
+EmitterParticlePropPageClass::~EmitterParticlePropPageClass ()
 {
 	SAFE_DELETE (m_Randomizer);
 	return;
@@ -102,7 +102,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 void
-EmitterParticlePropPageClass::Initialize (void)
+EmitterParticlePropPageClass::Initialize ()
 {
 	SAFE_DELETE (m_Randomizer);
 	if (m_pEmitterList != nullptr) {
@@ -125,7 +125,7 @@ EmitterParticlePropPageClass::Initialize (void)
 //  OnInitDialog
 //
 BOOL
-EmitterParticlePropPageClass::OnInitDialog (void)
+EmitterParticlePropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -154,7 +154,7 @@ EmitterParticlePropPageClass::OnInitDialog (void)
 //  OnApply
 //
 BOOL
-EmitterParticlePropPageClass::OnApply (void)
+EmitterParticlePropPageClass::OnApply ()
 {
 	//
 	//	Get the data from the controls
@@ -237,7 +237,7 @@ EmitterParticlePropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterParticlePropPageClass::OnSpecifyCreationVolume (void)
+EmitterParticlePropPageClass::OnSpecifyCreationVolume ()
 {
 	VolumeRandomDialogClass dialog (m_Randomizer, this);
 	if (dialog.DoModal () == IDOK) {
@@ -287,7 +287,7 @@ EmitterParticlePropPageClass::OnCommand
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterParticlePropPageClass::OnMaxParticlesCheck (void)
+EmitterParticlePropPageClass::OnMaxParticlesCheck ()
 {
 	BOOL enable = SendDlgItemMessage (IDC_MAX_PARTICLES_CHECK, BM_GETCHECK);
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_MAX_PARTICLES_EDIT), enable);

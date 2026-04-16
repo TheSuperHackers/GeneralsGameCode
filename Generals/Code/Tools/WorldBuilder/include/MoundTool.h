@@ -41,14 +41,14 @@ protected:
 	static Int m_brushFeather;
 
 public:
-	MoundTool(void);
-	virtual ~MoundTool(void) override;
+	MoundTool();
+	virtual ~MoundTool() override;
 
 public:
-	static Int getMoundHeight(void) {return m_moundHeight;};
+	static Int getMoundHeight() {return m_moundHeight;};
 	static void setMoundHeight(Int height);
-	static Int getWidth(void) {return m_brushWidth;};  ///<Returns width.
-	static Int getFeather(void) {return m_brushFeather;}; ///<Returns feather.
+	static Int getWidth() {return m_brushWidth;};  ///<Returns width.
+	static Int getFeather() {return m_brushFeather;}; ///<Returns feather.
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 
@@ -56,7 +56,7 @@ public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual WorldHeightMapEdit *getHeightMap(void) override {return m_htMapEditCopy;};
+	virtual WorldHeightMapEdit *getHeightMap() override {return m_htMapEditCopy;};
 	virtual void activate() override; ///< Become the current tool.
 };
 
@@ -66,6 +66,6 @@ public:
 class DigTool : public MoundTool
 {
 public:
-	DigTool(void);
+	DigTool();
 
 };

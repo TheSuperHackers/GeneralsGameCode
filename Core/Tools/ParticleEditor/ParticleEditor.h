@@ -39,7 +39,7 @@ class CDebugWindowApp : public CWinApp
 	public:
 		CDebugWindowApp();
 		~CDebugWindowApp();
-		DebugWindowDialog* GetDialogWindow(void);
+		DebugWindowDialog* GetDialogWindow();
 		void SetDialogWindow(DebugWindowDialog* pWnd);
 
 	protected:

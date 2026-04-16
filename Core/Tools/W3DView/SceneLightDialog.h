@@ -80,8 +80,8 @@ protected:
 		void				Set_Color_Control_State (const Vector3 &color);
 		void				Update_Light (const Vector3 &color);
 		void				Update_Distance (float distance);
-		void				Update_Attenuation (void);
-		void				Update_Attenuation_Controls (void);
+		void				Update_Attenuation ();
+		void				Update_Attenuation_Controls ();
 
 	private:
 

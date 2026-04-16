@@ -53,12 +53,12 @@ void CellSizeToolBar::CellSizeChanged(Int cellSize)
 	}
 }
 
-CellSizeToolBar::~CellSizeToolBar(void)
+CellSizeToolBar::~CellSizeToolBar()
 {
 	m_staticThis = nullptr;
 }
 
-void CellSizeToolBar::SetupSlider(void)
+void CellSizeToolBar::SetupSlider()
 {
 	CWnd *pWnd = GetDlgItem(ID_SLIDER);
 	CRect rect;
