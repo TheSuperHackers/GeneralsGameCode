@@ -11338,10 +11338,20 @@ void Pathfinder::crc( Xfer *xfer )
 
 	xfer->xferInt(&m_numWallPieces);
 	CRCDEBUG_LOG(("m_numWallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
-	for (Int i=0; i<MAX_WALL_PIECES; ++i)
+
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @fix The original code effectively accessed m_numWallPieces 128 times,
+	// because it used &m_wallPieces[MAX_WALL_PIECES] which is out-of-bounds and points to m_numWallPieces.
+	static_assert(sizeof(Int) == sizeof(ObjectID), "Type sizes must be equal for correct xfer");
+
+	for (Int i = 0; i < MAX_WALL_PIECES; ++i)
 	{
-		xfer->xferObjectID(&m_wallPieces[MAX_WALL_PIECES]);
+		xfer->xferInt(&m_numWallPieces);
 	}
+#else
+	xfer->xferUser(m_wallPieces, sizeof(m_wallPieces));
+#endif
+
 	CRCDEBUG_LOG(("m_wallPieces: %8.8X", ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferReal(&m_wallHeight);

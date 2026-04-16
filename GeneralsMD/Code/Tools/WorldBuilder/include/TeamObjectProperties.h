@@ -36,7 +36,7 @@ class TeamObjectProperties : public CPropertyPage
 // Construction
 public:
 	TeamObjectProperties(Dict* dictToEdit = nullptr);
-	~TeamObjectProperties();
+	virtual ~TeamObjectProperties() override;
 
 // Dialog Data
 	//{{AFX_DATA(MapObjectProps)
@@ -48,8 +48,8 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TeamObjectProperties)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 // Implementation

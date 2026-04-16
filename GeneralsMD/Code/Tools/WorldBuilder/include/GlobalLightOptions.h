@@ -53,7 +53,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(GlobalLightOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -61,7 +61,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(GlobalLightOptions)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnChangeFrontBackEdit();
@@ -73,8 +73,8 @@ protected:
 	afx_msg void OnColorPress();
 	afx_msg void OnResetLights();
 	afx_msg void OnClose();
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -127,9 +127,9 @@ protected:
 	void stuffValuesIntoFields(Int lightIndex = 0);
 public:
 
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
-	virtual void PopSliderChanged(const long sliderID, long theVal);
-	virtual void PopSliderFinished(const long sliderID, long theVal);
+	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void PopSliderChanged(const long sliderID, long theVal) override;
+	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
 };
 

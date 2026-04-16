@@ -97,8 +97,8 @@ public:
 	Bool ParseWaypointData(DataChunkInput &file, DataChunkInfo *info, void *userData);
 
 public: // overridden
-	virtual BOOL DoSave(LPCTSTR lpszPathName, BOOL bReplace = TRUE);
-	virtual BOOL DoFileSave();
+	virtual BOOL DoSave(LPCTSTR lpszPathName, BOOL bReplace = TRUE) override;
+	virtual BOOL DoFileSave() override;
 
 // Attributes
 public:
@@ -156,15 +156,15 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWorldBuilderDoc)
 	public:
-	virtual BOOL OnNewDocument();
-	virtual void Serialize(CArchive& ar);
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	virtual BOOL CanCloseFrame(CFrameWnd* pFrame);
+	virtual BOOL OnNewDocument() override;
+	virtual void Serialize(CArchive& ar) override;
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
+	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~CWorldBuilderDoc();
+	virtual ~CWorldBuilderDoc() override;
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

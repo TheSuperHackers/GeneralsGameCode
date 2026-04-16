@@ -83,7 +83,7 @@ void parseUpgradePair( INI *ini, void *instance, void *store, const void *userDa
 		throw INI_INVALID_DATA;
 
 
-	token = ini->getNextTokenOrNull( ini->getSepsColon() );
+	token = ini->getNextToken( ini->getSepsColon() );
 	if ( stricmp(token, "Boost") == 0 )
 		info.amount = INI::scanInt(ini->getNextToken( ini->getSepsColon() ));
 	else

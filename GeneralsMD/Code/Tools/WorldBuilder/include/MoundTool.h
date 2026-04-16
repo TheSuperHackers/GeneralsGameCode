@@ -42,7 +42,7 @@ protected:
 
 public:
 	MoundTool(void);
-	~MoundTool(void);
+	virtual ~MoundTool(void) override;
 
 public:
 	static Int getMoundHeight(void) {return m_moundHeight;};
@@ -53,11 +53,11 @@ public:
 	static void setFeather(Int feather);
 
 public:
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
-	virtual void activate(); ///< Become the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual WorldHeightMapEdit *getHeightMap(void) override {return m_htMapEditCopy;};
+	virtual void activate() override; ///< Become the current tool.
 };
 
 /*************************************************************************

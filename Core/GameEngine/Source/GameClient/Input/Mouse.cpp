@@ -824,7 +824,8 @@ void Mouse::createStreamMessages()
 		{
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_MOUSE_WHEEL );
 			msg->appendPixelArgument( m_currMouse.pos );
-			msg->appendIntegerArgument( m_currMouse.wheelPos / 120 );  // wheel delta
+			// TheSuperHackers @bugfix Use float wheel delta to preserve fractional values from touchpad input
+			msg->appendRealArgument( m_currMouse.wheelPos / (Real)MOUSE_WHEEL_DELTA );
 			msg->appendIntegerArgument( TheKeyboard->getModifierFlags() );
 		}
 

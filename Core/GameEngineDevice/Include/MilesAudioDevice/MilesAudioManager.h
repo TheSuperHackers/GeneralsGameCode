@@ -137,8 +137,8 @@ class MilesAudioManager : public AudioManager
 
 	public:
 #if defined(RTS_DEBUG)
-		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = nullptr );
-		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
+		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = nullptr ) override;
+		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd ) override; ///< Add an audio event (event must be declared in an INI file)
 #endif
 
 		// from AudioDevice
@@ -330,3 +330,53 @@ class MilesAudioManager : public AudioManager
 
 };
 
+// TheSuperHackers @feature helmutbuhler 17/05/2025 AudioManager that does almost nothing. Useful for headless mode.
+// @bugfix Caball009 26/03/2026 Scripts may require the actual audio file length to function properly, which is important for the CRC computation.
+// The Miles AudioManager handles the device opening / closure, so that getFileLengthMS can function as intended.
+class MilesAudioManagerDummy : public MilesAudioManager
+{
+#if defined(RTS_DEBUG)
+	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) override {}
+#endif
+	virtual void stopAudio(AudioAffect which) override {}
+	virtual void pauseAudio(AudioAffect which) override {}
+	virtual void resumeAudio(AudioAffect which) override {}
+	virtual void pauseAmbient(Bool shouldPause) override {}
+	virtual void killAudioEventImmediately(AudioHandle audioEvent) override {}
+	virtual void nextMusicTrack() override {}
+	virtual void prevMusicTrack() override {}
+	virtual Bool isMusicPlaying() const override { return false; }
+	virtual Bool hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const override { return false; }
+	virtual AsciiString getMusicTrackName() const override { return ""; }
+	//virtual void openDevice() override {}
+	//virtual void closeDevice() override {}
+	//virtual void* getDevice() override { return nullptr; }
+	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) override {}
+	virtual UnsignedInt getProviderCount() const override { return 0; };
+	virtual AsciiString getProviderName(UnsignedInt providerNum) const override { return ""; }
+	virtual UnsignedInt getProviderIndex(AsciiString providerName) const override { return 0; }
+	virtual void selectProvider(UnsignedInt providerNdx) override {}
+	virtual void unselectProvider() override {}
+	virtual UnsignedInt getSelectedProvider() const override { return 0; }
+	virtual void setSpeakerType(UnsignedInt speakerType) override {}
+	virtual UnsignedInt getSpeakerType() override { return 0; }
+	virtual UnsignedInt getNum2DSamples() const override { return 0; }
+	virtual UnsignedInt getNum3DSamples() const override { return 0; }
+	virtual UnsignedInt getNumStreams() const override { return 0; }
+	virtual Bool doesViolateLimit(AudioEventRTS* event) const override { return false; }
+	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const override { return false; }
+	virtual Bool isPlayingAlready(AudioEventRTS* event) const override { return false; }
+	virtual Bool isObjectPlayingVoice(UnsignedInt objID) const override { return false; }
+	virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) override {}
+	virtual void removePlayingAudio(AsciiString eventName) override {}
+	virtual void removeAllDisabledAudio() override {}
+	virtual Bool has3DSensitiveStreamsPlaying() const override { return false; }
+	virtual void* getHandleForBink() override { return nullptr; }
+	virtual void releaseHandleForBink() override {}
+	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) override {}
+	virtual void setPreferredProvider(AsciiString providerNdx) override {}
+	virtual void setPreferredSpeaker(AsciiString speakerType) override {}
+	//virtual Real getFileLengthMS(AsciiString strToLoad) const override { return 0.0f; }
+	virtual void closeAnySamplesUsingFile(const void* fileToClose) override {}
+	virtual void setDeviceListenerPosition() override {}
+};

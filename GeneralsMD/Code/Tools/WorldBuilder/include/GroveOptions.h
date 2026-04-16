@@ -46,10 +46,10 @@ class GroveOptions : public COptionsPanel
 
 	public:
 		GroveOptions(CWnd* pParent = nullptr);
-		~GroveOptions();
+		virtual ~GroveOptions() override;
 		void makeMain(void);
 
-		virtual BOOL OnInitDialog();
+		virtual BOOL OnInitDialog() override;
 		int getNumTrees(void);
 		int getNumType(int type);
 		AsciiString getTypeName(int type);
@@ -69,7 +69,7 @@ class GroveOptions : public COptionsPanel
 		afx_msg void _updateGroveMakeup(void);
 		afx_msg void _updatePlacementAllowed(void);
 
-		virtual void OnOK();
+		virtual void OnOK() override;
 		virtual void OnClose();
 	DECLARE_MESSAGE_MAP()
 };

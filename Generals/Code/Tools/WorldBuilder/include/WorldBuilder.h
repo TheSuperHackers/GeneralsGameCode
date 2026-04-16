@@ -71,14 +71,14 @@ class CWorldBuilderApp : public CWinApp
 {
 public:
 	CWorldBuilderApp();
-	~CWorldBuilderApp();
+	virtual ~CWorldBuilderApp() override;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWorldBuilderApp)
 	public:
-	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual BOOL InitInstance() override;
+	virtual int ExitInstance() override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -181,7 +181,7 @@ public:
 
 	/// Handles command messages.
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra,
-						  AFX_CMDHANDLERINFO* pHandlerInfo);
+						  AFX_CMDHANDLERINFO* pHandlerInfo) override;
 };
 
 inline CWorldBuilderApp *WbApp() { return (CWorldBuilderApp*)::AfxGetApp(); }

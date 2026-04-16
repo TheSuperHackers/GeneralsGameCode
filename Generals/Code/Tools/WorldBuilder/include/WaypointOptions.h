@@ -47,9 +47,9 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WaypointOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -57,7 +57,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(WaypointOptions)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnChangeWaypointnameEdit();
 	afx_msg void OnChangeSelectedWaypoint();
 	afx_msg void OnEditWaypointLocationX();

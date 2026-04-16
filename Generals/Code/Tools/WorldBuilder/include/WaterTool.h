@@ -36,7 +36,7 @@ class WaterTool : public PolygonTool
 {
 public:
 	WaterTool(void);
-	~WaterTool(void);
+	virtual ~WaterTool(void) override;
 
 protected:
 	static Bool		m_water_isActive;
@@ -48,12 +48,12 @@ public:
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void setCursor(void);
-	virtual void activate(); ///< Become the current tool.
-	virtual void deactivate(); ///< Become not the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void setCursor(void) override;
+	virtual void activate() override; ///< Become the current tool.
+	virtual void deactivate() override; ///< Become not the current tool.
 
 protected:
 	void fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);

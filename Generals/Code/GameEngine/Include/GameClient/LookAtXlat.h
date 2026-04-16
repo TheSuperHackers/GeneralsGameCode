@@ -74,7 +74,8 @@ private:
 	Real m_anchorAngle;
 	Bool m_isScrolling;				// set to true if we are in the act of RMB scrolling
 	Bool m_isRotating;					// set to true if we are in the act of MMB rotating
-	Bool m_isPitching;					// set to true if we are in the act of ALT pitch rotation
+	Bool m_isPitching;					// set to true if we are in the act of pitch rotation
+	Bool m_isPitchingToDefault; // set to true if we are in the act of default pitch rotation
 	Bool m_isChangingFOV;			// set to true if we are in the act of changing the field of view
 	UnsignedInt m_middleButtonDownTimeMsec;				// real-time in milliseconds when middle button goes down
 	DrawableID m_lastPlaneID;

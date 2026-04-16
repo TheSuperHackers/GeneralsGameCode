@@ -34,7 +34,7 @@ class ScriptConditionsDlg : public CPropertyPage
 // Construction
 public:
 	ScriptConditionsDlg();
-	~ScriptConditionsDlg();
+	virtual ~ScriptConditionsDlg() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptConditionsDlg)
@@ -48,7 +48,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(ScriptConditionsDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -71,7 +71,7 @@ protected:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(ScriptConditionsDlg)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnEditCondition();
 	afx_msg void OnSelchangeConditionList();
 	afx_msg void OnDblclkConditionList();

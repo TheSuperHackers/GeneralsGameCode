@@ -4603,6 +4603,12 @@ void ScriptActions::doCameraStopTetherNamed()
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doCameraSetDefault(Real pitch, Real angle, Real maxHeight)
 {
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	// TheSuperHackers @tweak To preserve the original scripted camera values, offset them by default ones.
+	pitch = -pitch + ViewDefaultPitchRadians;
+	angle = angle + ViewDefaultYawRadians;
+#endif
+
 	TheTacticalView->setDefaultView(pitch, angle, maxHeight);
 }
 

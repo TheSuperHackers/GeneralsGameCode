@@ -783,7 +783,7 @@ void DX8Wrapper::Enumerate_Devices()
 
 bool DX8Wrapper::Set_Any_Render_Device()
 {
-	// Then fullscreen
+	// Try fullscreen first
 	int dev_number = 0;
 	for (; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,0,false)) {
@@ -791,7 +791,7 @@ bool DX8Wrapper::Set_Any_Render_Device()
 		}
 	}
 
-	// Try windowed first
+	// Then windowed
 	for (dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;
@@ -1346,10 +1346,6 @@ bool DX8Wrapper::Registry_Load_Render_Device( const char * sub_key, bool resize_
 			WWDEBUG_SAY(( "Invalid texture depth %d, switching to 16 bits", TextureBitDepth));
 			TextureBitDepth=16;
 		}
-
-
-//		_RenderDeviceDescriptionTable.
-
 
 		if ( Set_Render_Device( name, width,height,depth,windowed, resize_window ) != true) {
 			if (depth==16) depth=32;
@@ -2273,7 +2269,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 				}
 				else {
 					Set_DX8_Light(index,nullptr);
-					SNAPSHOT_SAY((" clearing light to NULL"));
+					SNAPSHOT_SAY((" clearing light to null"));
 				}
 			}
 		}
@@ -3040,8 +3036,6 @@ void DX8Wrapper::Set_Light(unsigned index,const LightClass &light)
 void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 {
 	// Shader light environment support															*
-//	if (Light_Environment && light_env && (*Light_Environment)==(*light_env)) return;
-
 	Light_Environment=light_env;
 
 	if (light_env)
@@ -3838,7 +3832,7 @@ void DX8Wrapper::Apply_Default_State()
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {
-		SNAPSHOT_SAY(("Clearing light %d to NULL",index));
+		SNAPSHOT_SAY(("Clearing light %d to null",index));
 		Set_DX8_Light(index,nullptr);
 	}
 

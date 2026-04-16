@@ -82,7 +82,7 @@ class LayersList : public CDialog
 	public:
 		enum { IDD = IDD_LAYERSLIST };
 		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = nullptr);
-		virtual ~LayersList();
+		virtual ~LayersList() override;
 
 		void resetLayers();
 		void addMapObjectToLayersList(IN MapObject *objToAdd, AsciiString layerToAddTo = AsciiString(TheDefaultLayerName.c_str()));
@@ -139,9 +139,9 @@ class LayersList : public CDialog
 		void removeMapObjectFromLayer(IN MapObject *objToRemove, IN ListLayerIt *layerIt = nullptr, IN ListMapObjectPtrIt *MapObjectIt = nullptr);
 
 	protected:
-		virtual void OnOK();
-		virtual void OnCancel();
-		virtual BOOL OnInitDialog();
+		virtual void OnOK() override;
+		virtual void OnCancel() override;
+		virtual BOOL OnInitDialog() override;
 
 		afx_msg void OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult);
 		afx_msg void OnEndEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult);

@@ -34,6 +34,7 @@
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
 #include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
+#include "WWMath/wwmath.h"
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480
@@ -50,7 +51,9 @@ enum FilterTypes CPP_11(: Int);
 enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
+constexpr const Real ViewDefaultPitchRadians = DEG_TO_RADF(37.5f);
+constexpr const Real ViewDefaultYawRadians = DEG_TO_RADF(0.0f);
+
 // ------------------------------------------------------------------------------------------------
 enum PickType CPP_11(: Int)
 {
@@ -177,8 +180,11 @@ public:
 
 	virtual void setAngle( Real radians );															///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual Real getAngle() { return m_angle; }										///< Return current camera angle
+	virtual Real getDefaultAngle() { return m_defaultAngle; }			///< Return current default camera angle
 	virtual void setPitch( Real radians );															///< Rotate the view around the horizontal axis to the given angle (pitch)
 	virtual Real getPitch() { return m_pitch; }										///< Return current camera pitch
+	virtual void setDefaultPitch( Real radians );												///< Set new default camera pitch. It affects the camera distance to the ground
+	virtual Real getDefaultPitch() { return m_defaultPitch; }						///< Return current default camera pitch
 	virtual void setAngleToDefault();															///< Set the view angle back to default
 	virtual void setPitchToDefault();															///< Set the view pitch back to default
 	void setPosition( const Coord3D *pos ) { m_pos = *pos; }
@@ -199,6 +205,7 @@ public:
 	Bool userSetAngle(Real radians)                      { return doUserAction(&View::setAngle, radians); }
 	Bool userSetAngleToDefault()                         { return doUserAction(&View::setAngleToDefault); }
 	Bool userSetPitch(Real radians)                      { return doUserAction(&View::setPitch, radians); }
+	Bool userSetDefaultPitch(Real radians)               { return doUserAction(&View::setDefaultPitch, radians); }
 	Bool userSetPitchToDefault()                         { return doUserAction(&View::setPitchToDefault); }
 	Bool userZoom(Real height)                           { return doUserAction(&View::zoom, height); }
 	Bool userSetZoom(Real z)                             { return doUserAction(&View::setZoom, z); }

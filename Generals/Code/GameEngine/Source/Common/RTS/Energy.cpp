@@ -169,6 +169,8 @@ void Energy::addPowerBonus( Object *obj )
 	if( obj == nullptr )
 		return;
 
+	DEBUG_ASSERTCRASH(!obj->isDisabled(), ("power bonus should not be added to disabled power plant"));
+
 	addProduction(obj->getTemplate()->getEnergyBonus());
 
 	// sanity

@@ -31,7 +31,7 @@ class ScriptProperties : public CPropertyPage
 // Construction
 public:
 	ScriptProperties();
-	~ScriptProperties();
+	virtual ~ScriptProperties() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptProperties)
@@ -45,9 +45,9 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(ScriptProperties)
 	public:
-	virtual BOOL OnSetActive();
+	virtual BOOL OnSetActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation

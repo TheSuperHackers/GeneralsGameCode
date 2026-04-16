@@ -160,128 +160,128 @@ protected:
 	Int m_originX, m_originY;																		///< Location of top/left view corner
 
 protected:
-	virtual View *prependViewToList( View *list ) {return nullptr;};		///< Prepend this view to the given list, return the new list
-	virtual View *getNextView( void ) { return nullptr; }				///< Return next view in the set
+	virtual View *prependViewToList( View *list ) override {return nullptr;};		///< Prepend this view to the given list, return the new list
+	virtual View *getNextView( void ) override { return nullptr; }				///< Return next view in the set
 public:
 
-	virtual void init( void ){};
+	virtual void init( void ) override {};
 
-	virtual UnsignedInt getID( void ) { return 1; }
+	virtual UnsignedInt getID( void ) override { return 1; }
 
-	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ){return nullptr;};			///< pick drawable given the screen pixel coords
+	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) override {return nullptr;};			///< pick drawable given the screen pixel coords
 
 	/// all drawables in the 2D screen region will call the 'callback'
 	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion,
 																				Bool (*callback)( Drawable *draw, void *userData ),
-																				void *userData ) {return 0;};
-  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
-	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {};  ///< transform screen coord to a point on the 3D terrain
-	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {};  ///< transform screen point to world point at the specified world Z value
+																				void *userData ) override {return 0;};
+  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) override { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
+	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) override {};  ///< transform screen coord to a point on the 3D terrain
+	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override {};  ///< transform screen point to world point at the specified world Z value
 	virtual void getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 																							Coord3D *bottomRight, Coord3D *bottomLeft,
-																							Real z ){};
+																							Real z ) override {};
 
-	virtual void drawView( void ) {};															///< Render the world visible in this view.
-	virtual void updateView( void ) {};															///< Render the world visible in this view.
-	virtual void stepView() {}; ///< Update view for every fixed time step
+	virtual void drawView( void ) override {};															///< Render the world visible in this view.
+	virtual void updateView( void ) override {};															///< Render the world visible in this view.
+	virtual void stepView() override {}; ///< Update view for every fixed time step
 
-	virtual void setZoomLimited( Bool limit ) {}			///< limit the zoom height
-	virtual Bool isZoomLimited( void ) { return TRUE; }							///< get status of zoom limit
+	virtual void setZoomLimited( Bool limit ) override {}			///< limit the zoom height
+	virtual Bool isZoomLimited( void ) const override { return TRUE; }							///< get status of zoom limit
 
-	virtual void setWidth( Int width ) { m_width = width; }
-	virtual Int getWidth( void ) { return m_width; }
-	virtual void setHeight( Int height ) { m_height = height; }
-	virtual Int getHeight( void ) { return m_height; }
-	virtual void setOrigin( Int x, Int y) { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display
-	virtual void getOrigin( Int *x, Int *y) { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
+	virtual void setWidth( Int width ) override { m_width = width; }
+	virtual Int getWidth( void ) override { return m_width; }
+	virtual void setHeight( Int height ) override { m_height = height; }
+	virtual Int getHeight( void ) override { return m_height; }
+	virtual void setOrigin( Int x, Int y) override { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display
+	virtual void getOrigin( Int *x, Int *y) override { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
-	virtual void forceRedraw() { }
+	virtual void forceRedraw() override { }
 
-	virtual Bool isDoingScriptedCamera() { return false; }
-	virtual void stopDoingScriptedCamera() {}
+	virtual Bool isDoingScriptedCamera() override { return false; }
+	virtual void stopDoingScriptedCamera() override {}
 
-	virtual void lookAt( const Coord3D *o ){};														///< Center the view on the given coordinate
-	virtual void initHeightForMap( void ) {};														///<  Init the camera height for the map at the current position.
+	virtual void lookAt( const Coord3D *o ) override {};											///< Center the view on the given coordinate
+	virtual void initHeightForMap( void ) override {};												///<  Init the camera height for the map at the current position.
 	virtual void scrollBy( Coord2D *delta ){};														///< Shift the view by the given delta
 	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter,
-														Bool orient, Real easeIn, Real easeOut) {lookAt(o);};
+														Bool orient, Real easeIn, Real easeOut) override {lookAt(o);};
 	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter,
-														Bool orient, Real easeIn, Real easeOut) {};
-	virtual Bool isCameraMovementFinished(void) {return true;};
- 	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn, Real easeOut) {}; ///< Move camera to location, and reset to default angle & zoom.
- 	virtual void rotateCamera(Real rotations, Int frames, Real easeIn, Real easeOut) {}; ///< Rotate camera about current viewpoint.
-	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn, Real easeOut) {};	///< Rotate camera to face an object, and hold on it
-	virtual void cameraModFinalZoom(Real finalZoom, Real easeIn, Real easeOut){};			 ///< Final zoom for current camera movement.
-	virtual void cameraModRollingAverage(Int framesToAverage){}; ///< Number of frames to average movement for current camera movement.
-	virtual void cameraModFinalTimeMultiplier(Int finalMultiplier){}; ///< Final time multiplier for current camera movement.
-	virtual void cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut){};		 ///< Final pitch for current camera movement.
-	virtual void cameraModFreezeTime(void){}					///< Freezes time during the next camera movement.
-	virtual void cameraModFreezeAngle(void){}					///< Freezes time during the next camera movement.
-	virtual void cameraModLookToward(Coord3D *pLoc){}			///< Sets a look at point during camera movement.
-	virtual void cameraModFinalLookToward(Coord3D *pLoc){}			///< Sets a look at point during camera movement.
-	virtual void cameraModFinalMoveTo(Coord3D *pLoc){ };			///< Sets a final move to.
-	virtual Bool isTimeFrozen(void){ return false;}					///< Freezes time during the next camera movement.
-	virtual Int	 getTimeMultiplier(void) {return 1;};				///< Get the time multiplier.
-	virtual void setTimeMultiplier(Int multiple) {}; ///< Set the time multiplier.
-	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) {};
-	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut ) {};
-	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut ) {};
+														Bool orient, Real easeIn, Real easeOut) override {};
+	virtual Bool isCameraMovementFinished(void) override {return true;};
+	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn, Real easeOut) override {}; ///< Move camera to location, and reset to default angle & zoom.
+	virtual void rotateCamera(Real rotations, Int frames, Real easeIn, Real easeOut) override {}; ///< Rotate camera about current viewpoint.
+	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn, Real easeOut) override {};	///< Rotate camera to face an object, and hold on it
+	virtual void cameraModFinalZoom(Real finalZoom, Real easeIn, Real easeOut) override {};			 ///< Final zoom for current camera movement.
+	virtual void cameraModRollingAverage(Int framesToAverage) override {}; ///< Number of frames to average movement for current camera movement.
+	virtual void cameraModFinalTimeMultiplier(Int finalMultiplier) override {}; ///< Final time multiplier for current camera movement.
+	virtual void cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut) override {};		 ///< Final pitch for current camera movement.
+	virtual void cameraModFreezeTime(void) override {}					///< Freezes time during the next camera movement.
+	virtual void cameraModFreezeAngle(void) override {}					///< Freezes time during the next camera movement.
+	virtual void cameraModLookToward(Coord3D *pLoc) override {}			///< Sets a look at point during camera movement.
+	virtual void cameraModFinalLookToward(Coord3D *pLoc) override {}			///< Sets a look at point during camera movement.
+	virtual void cameraModFinalMoveTo(Coord3D *pLoc) override { };			///< Sets a final move to.
+	virtual Bool isTimeFrozen(void) override { return false;}					///< Freezes time during the next camera movement.
+	virtual Int	 getTimeMultiplier(void) override {return 1;};				///< Get the time multiplier.
+	virtual void setTimeMultiplier(Int multiple) override {}; ///< Set the time multiplier.
+	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) override {};
+	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut ) override {};
+	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut ) override {};
 
-	virtual void setAngle( Real angle ){};																///< Rotate the view around the up axis to the given angle
-	virtual Real getAngle( void ) { return 0; }
-	virtual void setPitch( Real angle ){};																	///< Rotate the view around the horizontal axis to the given angle
-	virtual Real getPitch( void ) { return 0; }							///< Return current camera pitch
-	virtual void setAngleToDefault( void ) {}											///< Set the view angle back to default
-	virtual void setPitchToDefault( void ) {}											///< Set the view pitch back to default
+	virtual void setAngle( Real angle ) override {};																///< Rotate the view around the up axis to the given angle
+	virtual Real getAngle( void ) override { return 0; }
+	virtual void setPitch( Real angle ) override {};																	///< Rotate the view around the horizontal axis to the given angle
+	virtual Real getPitch( void ) override { return 0; }							///< Return current camera pitch
+	virtual void setAngleToDefault( void ) override {}											///< Set the view angle back to default
+	virtual void setPitchToDefault( void ) override {}											///< Set the view pitch back to default
 	virtual void getPosition(Coord3D *pos) {}											///< Return camera position
 
-	virtual Real getHeightAboveGround() { return 1; }
-	virtual void setHeightAboveGround(Real z) { }
-	virtual Real getZoom() { return 1; }
-	virtual void setZoom(Real z) { }
+	virtual Real getHeightAboveGround() override { return 1; }
+	virtual void setHeightAboveGround(Real z) override { }
+	virtual Real getZoom() override { return 1; }
+	virtual void setZoom(Real z) override { }
 	virtual void zoomIn( void ) {  }																			///< Zoom in, closer to the ground, limit to min
 	virtual void zoomOut( void ) {  }																		///< Zoom out, farther away from the ground, limit to max
-	virtual void setZoomToDefault( void ) { }														///< Set zoom to default value
+	virtual void setZoomToDefault( void ) override { }														///< Set zoom to default value
 	virtual Real getMaxZoom( void ) { return 0.0f; }
-	virtual void setOkToAdjustHeight( Bool val ) { }						///< Set this to adjust camera height
+	virtual void setOkToAdjustHeight( Bool val ) override { }						///< Set this to adjust camera height
 
-	virtual Real getTerrainHeightAtPivot() { return 0.0f; }
-	virtual Real getCurrentHeightAboveGround() { return 0.0f; }
+	virtual Real getTerrainHeightAtPivot() override { return 0.0f; }
+	virtual Real getCurrentHeightAboveGround() override { return 0.0f; }
 
-	virtual void getLocation ( ViewLocation *location ) {};								///< write the view's current location in to the view location object
-	virtual void setLocation ( const ViewLocation *location ){};								///< set the view's current location from to the view location object
+	virtual void getLocation ( ViewLocation *location ) override {};								///< write the view's current location in to the view location object
+	virtual void setLocation ( const ViewLocation *location ) override {};								///< set the view's current location from to the view location object
 
-	virtual ObjectID getCameraLock() const { return INVALID_ID; }
-	virtual void setCameraLock(ObjectID id) {  }
-	virtual void snapToCameraLock( void ) {  }
-	virtual void setSnapMode( CameraLockType lockType, Real lockDist ) {  }
+	virtual ObjectID getCameraLock() const override { return INVALID_ID; }
+	virtual void setCameraLock(ObjectID id) override {  }
+	virtual void snapToCameraLock( void ) override {  }
+	virtual void setSnapMode( CameraLockType lockType, Real lockDist ) override {  }
 
-	virtual Drawable *getCameraLockDrawable() const { return nullptr; }
-	virtual void setCameraLockDrawable(Drawable *drawable) { }
+	virtual Drawable *getCameraLockDrawable() const override { return nullptr; }
+	virtual void setCameraLockDrawable(Drawable *drawable) override { }
 
-	virtual void setMouseLock( Bool mouseLocked ) {}					///< lock/unlock the mouse input to the tactical view
-	virtual Bool isMouseLocked( void ) { return FALSE; }			///< is the mouse input locked to the tactical view?
+	virtual void setMouseLock( Bool mouseLocked ) override {}					///< lock/unlock the mouse input to the tactical view
+	virtual Bool isMouseLocked( void ) override { return FALSE; }			///< is the mouse input locked to the tactical view?
 
-	virtual void setFieldOfView( Real angle ) {};							///< Set the horizontal field of view angle
-	virtual Real getFieldOfView( void ) {return 0;};										///< Get the horizontal field of view angle
+	virtual void setFieldOfView( Real angle ) override {};							///< Set the horizontal field of view angle
+	virtual Real getFieldOfView( void ) override {return 0;};										///< Get the horizontal field of view angle
 
-	virtual Bool setViewFilterMode(enum FilterModes) {return FALSE;}	///<stub
-	virtual void setViewFilterPos(const Coord3D *pos) {};	///<stub
-	virtual void setFadeParameters(Int fadeFrames, Int direction) {};	///<stub
-	virtual void set3DWireFrameMode(Bool enable) { }; ///<stub
-	virtual Bool setViewFilter(		enum FilterTypes m_viewFilterMode) { return FALSE;}	///<stub
-	virtual enum FilterModes	 getViewFilterMode(void) {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes	 getViewFilterType(void) {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(enum FilterModes) override {return FALSE;}	///<stub
+	virtual void setViewFilterPos(const Coord3D *pos) override {};	///<stub
+	virtual void setFadeParameters(Int fadeFrames, Int direction) override {};	///<stub
+	virtual void set3DWireFrameMode(Bool enable) override { }; ///<stub
+	virtual Bool setViewFilter(		enum FilterTypes m_viewFilterMode) override { return FALSE;}	///<stub
+	virtual enum FilterModes	 getViewFilterMode(void) override {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual enum FilterTypes	 getViewFilterType(void) override {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
 
-	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType ) {};
+	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType ) override {};
 
-	virtual Real getFXPitch( void ) const { return 1.0f; }
-	virtual void forceCameraAreaConstraintRecalc(void) { }
-	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn, Real easeOut, Bool reverseRotation) {};	///< Rotate camera to face an object, and hold on it
+	virtual Real getFXPitch( void ) const override { return 1.0f; }
+	virtual void forceCameraAreaConstraintRecalc(void) override { }
+	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn, Real easeOut, Bool reverseRotation) override {};	///< Rotate camera to face an object, and hold on it
 
-	virtual const Coord3D& get3DCameraPosition() const { static Coord3D dummy; return dummy; }							///< Returns the actual camera position
+	virtual const Coord3D& get3DCameraPosition() const override { static Coord3D dummy; return dummy; }							///< Returns the actual camera position
 
-	virtual void setGuardBandBias( const Coord2D *gb ) {};
+	virtual void setGuardBandBias( const Coord2D *gb ) override {};
 
 };
 
@@ -297,10 +297,10 @@ class SkeletonSceneClass : public RTS3DScene
 {
 public:
 	SkeletonSceneClass(void) : m_testPass(nullptr) { }
-	~SkeletonSceneClass(void) { REF_PTR_RELEASE(m_testPass); }
+	virtual ~SkeletonSceneClass(void) override { REF_PTR_RELEASE(m_testPass); }
 
 	void					Set_Material_Pass(MaterialPassClass * pass)	{ REF_PTR_SET(m_testPass, pass); }
-	virtual void Remove_Render_Object(RenderObjClass * obj);
+	virtual void Remove_Render_Object(RenderObjClass * obj) override;
 
 	Bool safeContains(RenderObjClass *obj);
 

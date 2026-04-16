@@ -58,17 +58,17 @@ protected:
 
 public:
 	PointerTool(void);
-	~PointerTool(void);
+	virtual ~PointerTool(void) override;
 
 public:
 	/// Clear the selection on activate or deactivate.
-	virtual void activate();
-	virtual void deactivate();
+	virtual void activate() override;
+	virtual void deactivate() override;
 
-	virtual void setCursor(void);
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
+	virtual void setCursor(void) override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 
 public:
 	static void clearSelection(void); ///< Clears the selected objects selected flags.

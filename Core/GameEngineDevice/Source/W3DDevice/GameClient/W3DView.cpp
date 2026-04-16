@@ -264,8 +264,8 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	// TheSuperHackers @info The default pitch affects the look-at distance to the target.
 	// This is strange math which would need special attention when changed.
 	sourcePos.Z = getCameraOffsetZ();
-	sourcePos.Y = -(sourcePos.Z / tan(TheGlobalData->m_cameraPitch * (PI / 180.0)));
-	sourcePos.X = -(sourcePos.Y * tan(TheGlobalData->m_cameraYaw * (PI / 180.0)));
+	sourcePos.Y = -(sourcePos.Z / tan(ViewDefaultPitchRadians));
+	sourcePos.X = -(sourcePos.Y * tan(ViewDefaultYawRadians));
 
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV
@@ -285,13 +285,15 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	targetPos.Y = 0;
 	targetPos.Z = 0;
 
+	// TheSuperHackers @info Scales the source position later by this much
+	// to achieve the intended camera height. Must not scale before pitching!
 	const Real heightScale = 1.0f - (groundLevel / sourcePos.Z);
 
 	// construct a matrix to rotate around the up vector by the given angle
-	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
+	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle - ViewDefaultYawRadians );
 
 	// construct a matrix to rotate around the left vector by the given angle
-	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch );
+	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch - ViewDefaultPitchRadians );
 
 	// rotate camera position (pitch, then angle)
 #ifdef ALLOW_TEMPORARIES
@@ -429,7 +431,7 @@ Bool W3DView::zoomCameraToDesiredHeight()
 	if (fabs(adjustZoom) >= 0.001f)
 	{
 		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
-		const Real adjustFactor = TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
+		const Real adjustFactor = std::min(TheGlobalData->m_cameraAdjustSpeed * fpsRatio, 1.0f);
 		m_zoom += adjustZoom * adjustFactor;
 		return true;
 	}
@@ -441,12 +443,12 @@ Bool W3DView::zoomCameraToDesiredHeight()
 // This is essential to correctly center the camera above the ground when playing.
 Bool W3DView::movePivotToGround()
 {
-	const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
-	const Real adjustFactor = TheGlobalData->m_cameraAdjustSpeed * fpsRatio;
 	const Real groundLevel = m_groundLevel;
 	const Real groundLevelDiff = m_terrainHeightAtPivot - groundLevel;
 	if (fabs(groundLevelDiff) > 0.1f)
 	{
+		const Real fpsRatio = TheFramePacer->getBaseOverUpdateFpsRatio();
+		const Real adjustFactor = std::min(TheGlobalData->m_cameraAdjustSpeed * fpsRatio, 1.0f);
 		// Adjust the ground level. This will change the world height of the camera.
 		m_groundLevel += groundLevelDiff * adjustFactor;
 
@@ -539,9 +541,9 @@ void W3DView::calcCameraAreaConstraints()
 		Matrix3D prevCameraTransform = m_3DCamera->Get_Transform();
 		m_3DCamera->Set_Transform(cameraTransform);
 
-		const Vector3 cameraForward = -cameraTransform.Get_Z_Vector();
-		const Bool isLookingDown = cameraForward.Z <= 0.0f;
-		Real offset = calcCameraAreaOffset(m_groundLevel, isLookingDown);
+		Real offset = calcCameraAreaOffset(m_groundLevel);
+		offset = std::min(offset, (mapRegion.hi.x - mapRegion.lo.x) / 2);
+		offset = std::min(offset, (mapRegion.hi.y - mapRegion.lo.y) / 2);
 
 		// Revert the 3D camera transform.
 		m_3DCamera->Set_Transform(prevCameraTransform);
@@ -556,21 +558,26 @@ void W3DView::calcCameraAreaConstraints()
 }
 
 //-------------------------------------------------------------------------------------------------
-Real W3DView::calcCameraAreaOffset(Real maxEdgeZ, Bool isLookingDown)
+Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
 {
 	Coord2D center;
 	ICoord2D screen;
 	Vector3 rayStart;
 	Vector3 rayEnd;
 
-	//Pick at the center
+	// Pick at the center
 	screen.x = 0.5f * getWidth() + m_originX;
 	screen.y = 0.5f * getHeight() + m_originY;
 	getPickRay(&screen, &rayStart, &rayEnd);
 
+	// Looking at the horizon would yield infinite numbers.
+	if (fabs(rayStart.Z - rayEnd.Z) < 1.0f)
+		return 1e+6f;
+
 	center.x = Vector3::Find_X_At_Z(maxEdgeZ, rayStart, rayEnd);
 	center.y = Vector3::Find_Y_At_Z(maxEdgeZ, rayStart, rayEnd);
 
+	const Bool isLookingDown = rayStart.Z >= rayEnd.Z;
 	const Real height = isLookingDown ? getHeight() : 0.0f;
 	screen.y = height + m_originY;
 	getPickRay(&screen, &rayStart, &rayEnd);
@@ -1555,7 +1562,10 @@ void W3DView::update()
 		return; // don't draw - makes it faster :) jba.
 	}
 
-	updateCameraAreaConstraints();
+	if (!didScriptedMovement)
+	{
+		updateCameraAreaConstraints();
+	}
 
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
 	if (m_recalcCamera || m_isCameraSlaved)
@@ -2060,6 +2070,16 @@ void W3DView::setPitch( Real radians )
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DView::setDefaultPitch( Real radians )
+{
+	View::setDefaultPitch( radians );
+
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Set the view angle back to default */
 //-------------------------------------------------------------------------------------------------
 void W3DView::setAngleToDefault()
@@ -2090,7 +2110,7 @@ void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 {
 	// MDC - we no longer want to rotate maps (design made all of them right to begin with)
 	//	m_defaultAngle = angle * M_PI/180.0f;
-	m_defaultPitch = pitch;
+	setDefaultPitch(pitch);
 	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight*maxHeight;
 	if (m_minHeightAboveGround > m_maxHeightAboveGround)
 		m_maxHeightAboveGround = m_minHeightAboveGround;
