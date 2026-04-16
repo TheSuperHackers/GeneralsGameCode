@@ -160,6 +160,9 @@ typedef void (*BuildMultiIniFieldProc)(MultiIniFieldParse& p);
 //-------------------------------------------------------------------------------------------------
 class INI
 {
+	INI(const INI&) CPP_11(= delete);
+	INI& operator=(const INI&) CPP_11(= delete);
+
 public:
 	INI();
 

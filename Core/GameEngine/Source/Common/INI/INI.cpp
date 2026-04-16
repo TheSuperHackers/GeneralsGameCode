@@ -1578,7 +1578,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ const char* INI::getNextToken(const char* seps /*= getSeps()*/)
+/*static*/ const char* INI::getNextToken(const char* seps)
 {
 	const char *token = ::strtok(nullptr, seps);
 	if (!token)
@@ -1587,7 +1587,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static*/ const char* INI::getNextTokenOrNull(const char* seps /*= getSeps()*/)
+/*static*/ const char* INI::getNextTokenOrNull(const char* seps)
 {
 	const char *token = ::strtok(nullptr, seps);
 	return token;
@@ -1853,8 +1853,8 @@ void INI::parseSoundsList( INI* ini, void *instance, void *store, const void* /*
 	std::vector<AsciiString> *vec = (std::vector<AsciiString>*) store;
 	vec->clear();
 
-	constexpr const char* SEPS = " \t,=";
-	for (const char* token = ini->getNextTokenOrNull(SEPS); token; token = ini->getNextTokenOrNull(SEPS))
+	constexpr const char* Seps = " \t,=";
+	for (const char* token = ini->getNextTokenOrNull(Seps); token; token = ini->getNextTokenOrNull(Seps))
 	{
 		vec->push_back(token);
 	}
