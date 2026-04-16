@@ -1425,7 +1425,6 @@ void DX8SkinFVFCategoryContainer::Render()
 
 	WWASSERT(renderedVertexCount==VisibleVertexCount);
 
-
 	clearVisibleSkinList();
 }
 
