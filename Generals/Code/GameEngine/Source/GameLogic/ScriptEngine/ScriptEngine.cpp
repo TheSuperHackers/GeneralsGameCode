@@ -198,7 +198,7 @@ void AttackPriorityInfo::dumpPriorityInfo()
 	for (AttackPriorityMap::const_iterator it = m_priorityMap->begin(); it != m_priorityMap->end(); ++it) {
 		const ThingTemplate *tThing = (*it).first;
 		Int priority = (*it).second;
-		(void)tThing; ()priority;
+		(void)tThing; (void)priority;
 		DEBUG_LOG(("  Thing '%s' priority %d",tThing->getName().str(), priority));
 	}
 }
