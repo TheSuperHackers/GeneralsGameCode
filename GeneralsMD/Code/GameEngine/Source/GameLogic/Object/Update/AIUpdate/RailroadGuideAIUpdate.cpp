@@ -320,7 +320,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 		m_whistleSound.setPlayingHandle(TheAudio->addAudioEvent( &m_whistleSound ));
 
 
-	Real dist = (Real)sqrtf( dlt.x*dlt.x + dlt.y*dlt.y + dlt.z*dlt.z);
+	Real dist = (Real)Sqrt( dlt.x*dlt.x + dlt.y*dlt.y + dlt.z*dlt.z);
 	Real usRadius = obj->getGeometryInfo().getMajorRadius();
 	Real themRadius = other->getGeometryInfo().getMajorRadius();
 	Real overlap = ((usRadius + themRadius) - dist) + 1;// the plus 1 makes them go just outside of me.

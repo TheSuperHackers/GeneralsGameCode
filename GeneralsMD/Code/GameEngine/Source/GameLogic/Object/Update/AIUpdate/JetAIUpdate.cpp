@@ -1071,7 +1071,7 @@ public:
 		}
 		else
 		{
-			Real dist = sqrtf(dSqr);
+			Real dist = Sqrt(dSqr);
 			if (dist<1) dist = 1;
 			pos.x += PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
 			pos.y += PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);

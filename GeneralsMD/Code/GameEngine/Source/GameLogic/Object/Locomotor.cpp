@@ -2087,7 +2087,7 @@ Real Locomotor::calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real cu
 			//	thus
 			// a = 2(dz - v t)/t^2
 			//	and
-			// t = (-v +- sqrt(v*v + 2*a*dz))/a
+			// t = (-v +- Sqrt(v*v + 2*a*dz))/a
 			//
 			// but if we assume t=1, then
 			//	a=2(dz-v)

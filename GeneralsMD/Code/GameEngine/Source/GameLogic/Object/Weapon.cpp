@@ -860,7 +860,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		Real attackRangeSqr = sqr(getAttackRange(bonus));
 		if (distSqr > attackRangeSqr)
 		{
-			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?",sqrtf(distSqr),sqrtf(attackRangeSqr)));
+			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?",Sqrt(distSqr),Sqrt(attackRangeSqr)));
 
 			//-extraLogging
 			#if defined(RTS_DEBUG)
@@ -882,7 +882,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		if (distSqr < minAttackRangeSqr-0.5f && !isProjectileDetonation)
 #endif
 		{
-			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
+			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?",Sqrt(distSqr),Sqrt(minAttackRangeSqr)));
 
 			//-extraLogging
 			#if defined(RTS_DEBUG)

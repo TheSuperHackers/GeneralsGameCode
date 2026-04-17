@@ -29,3 +29,4 @@ Real Tan(Real);
 Real ACos(Real);
 Real ASin(Real x);
 Real Atan2(Real y, Real x);
+Real Sqrt(Real x);

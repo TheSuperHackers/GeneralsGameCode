@@ -623,7 +623,7 @@ inline Bool z_collideTest_Sphere_Nonsphere(CollideTestProc xyproc, const Collide
 		// find the radius of the slice of the sphere that is at b_bot
 		CollideInfo amod = *a;
 		amod.position.z = b_bot;
-		amod.geom.setMajorRadius((Real)sqrtf(sqr(a->geom.getMajorRadius()) - sqr(b_bot - a->position.z)));
+		amod.geom.setMajorRadius((Real)Sqrt(sqr(a->geom.getMajorRadius()) - sqr(b_bot - a->position.z)));
 		if (xyproc(&amod, b, cinfo))
 		{
 			// if you want to have 'end' collisions, you should add something like:
@@ -641,7 +641,7 @@ inline Bool z_collideTest_Sphere_Nonsphere(CollideTestProc xyproc, const Collide
 	{
 		CollideInfo amod = *a;
 		amod.position.z = b_top;
-		amod.geom.setMajorRadius((Real)sqrtf(sqr(a->geom.getMajorRadius()) - sqr(a->position.z - b_top)));
+		amod.geom.setMajorRadius((Real)Sqrt(sqr(a->geom.getMajorRadius()) - sqr(a->position.z - b_top)));
 		if (xyproc(&amod, b, cinfo))
 		{
 			// if you want to have 'end' collisions, you should add something like:
@@ -829,7 +829,7 @@ static Bool distCalcProc_BoundaryAndBoundary_2D(
 
 	if (totalRad > 0.0f)
 	{
-		Real actualDist = sqrtf(actualDistSqr);
+		Real actualDist = Sqrt(actualDistSqr);
 		Real shrunkenDist = actualDist - totalRad;
 		if (shrunkenDist <= 0.0f)
 		{
@@ -917,7 +917,7 @@ static Bool distCalcProc_BoundaryAndBoundary_3D(
 	Real totalRad = (geomA?geomA->getBoundingSphereRadius():0) + (geomB?geomB->getBoundingSphereRadius():0);
 	if (totalRad > 0.0f)
 	{
-		Real actualDist = sqrtf(actualDistSqr);
+		Real actualDist = Sqrt(actualDistSqr);
 		Real shrunkenDist = actualDist - totalRad;
 		if (shrunkenDist <= 0.0f)
 		{
@@ -2228,7 +2228,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 			}
 			case GEOMETRY_BOX:
 			{
-				Real diagonal = (Real)(sqrtf(majorRadius*majorRadius + minorRadius*minorRadius));
+				Real diagonal = (Real)(Sqrt(majorRadius*majorRadius + minorRadius*minorRadius));
 				Int cells = ThePartitionManager->worldToCellDist(diagonal*2) + 1;
 				result = cells * cells;
 				break;
@@ -3219,7 +3219,7 @@ Int PartitionManager::calcMinRadius(const ICoord2D& cur)
 	}
 
 	// double, not real
-	double dist = sqrtf(minDistSqr);
+	double dist = Sqrt(minDistSqr);
 	Int minRadius = REAL_TO_INT_CEIL( dist / m_cellSize );
 
 	return minRadius;
@@ -3507,7 +3507,7 @@ Object *PartitionManager::getClosestObjects(
 	}
 	if (closestDistArg)
 	{
-		*closestDistArg = (Real)sqrtf(closestDistSqr);
+		*closestDistArg = (Real)Sqrt(closestDistSqr);
 	}
 
 #ifdef RTS_DEBUG
@@ -3634,7 +3634,7 @@ Real PartitionManager::getRelativeAngle2D( const Object *obj, const Coord3D *pos
 	v.y = pos->y - objPos.y;
 	v.z = 0.0f;
 
-	Real dist = (Real)sqrtf(sqr(v.x) + sqr(v.y));
+	Real dist = (Real)Sqrt(sqr(v.x) + sqr(v.y));
 
 	// normalize
 	if (dist == 0.0f)
@@ -4568,7 +4568,7 @@ Int PartitionManager::iterateCellsBreadthFirst(const Coord3D *pos, CellBreadthFi
 //-----------------------------------------------------------------------------
 static Real calcDist2D(Real x1, Real y1, Real x2, Real y2)
 {
-	return sqrtf(sqr(x1-x2) + sqr(y1-y2));
+	return Sqrt(sqr(x1-x2) + sqr(y1-y2));
 }
 
 //-----------------------------------------------------------------------------

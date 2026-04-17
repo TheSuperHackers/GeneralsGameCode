@@ -77,6 +77,11 @@ Real Atan2(Real y, Real x)
 	return WWMath::Atan2(y, x);
 }
 
+Real Sqrt(Real x)
+{
+	return WWMath::Sqrt(x);
+}
+
 #ifdef REGENERATE_TRIG_TABLES
 void initTrig()
 {

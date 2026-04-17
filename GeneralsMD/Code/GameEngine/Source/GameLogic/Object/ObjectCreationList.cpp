@@ -290,7 +290,7 @@ public:
 			Real dy = primary->y - secondary->y;
 
 			//Calc length
-			Real length = sqrt( dx*dx + dy*dy );
+			Real length = Sqrt( dx*dx + dy*dy );
 
 			//Normalize length
 			dx /= length;

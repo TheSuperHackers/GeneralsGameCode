@@ -2369,7 +2369,7 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 		center.z = 0.0f;  // irrelevant
 
 		// the max radius to scan around us is the diagonal of the bounding region
-		Real maxDist = sqrt( affectedRegion.width() * affectedRegion.width() +
+		Real maxDist = Sqrt( affectedRegion.width() * affectedRegion.width() +
 												 affectedRegion.height() * affectedRegion.height() );
 
 		// scan the objects in the area of the water affected
@@ -2879,7 +2879,7 @@ void TerrainLogic::createCraterInTerrain(Object *obj)
 			deltaX = ( i * MAP_XY_FACTOR ) - pos->x;
 			deltaY = ( j * MAP_XY_FACTOR ) - pos->y;
 
-      Real distance = sqrt( sqr( deltaX ) + sqr( deltaY ) );
+      Real distance = Sqrt( sqr( deltaX ) + sqr( deltaY ) );
 
 			if ( distance < radius ) //inside circle
       {

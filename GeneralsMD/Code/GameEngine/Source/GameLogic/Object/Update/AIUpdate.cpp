@@ -2272,7 +2272,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor()
 							}
 							else
 							{
-								Real dist = sqrtf(dSqr);
+								Real dist = Sqrt(dSqr);
 								if (dist<1) dist = 1;
 								pos.x += 2*PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
 								pos.y += 2*PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);
@@ -2473,7 +2473,7 @@ Real AIUpdateInterface::getLocomotorDistanceToGoal()
 					dest = m_path->getLastNode()->getPosition();
 				}
 				Real distance = ThePartitionManager->getDistanceSquared( me, dest, FROM_CENTER_3D );
-				return sqrt( distance );// Other paths return dots of normalized vectors, so one sqrt ain't so bad
+				return Sqrt( distance );// Other paths return dots of normalized vectors, so one sqrt ain't so bad
 			}
 			else
 			{
@@ -2505,7 +2505,7 @@ Real AIUpdateInterface::getLocomotorDistanceToGoal()
 				{
 					if (sqr(dist) > distSqr)
 					{
-						return sqrt(distSqr);
+						return Sqrt(distSqr);
 					}
 					else
 					{
@@ -2514,7 +2514,7 @@ Real AIUpdateInterface::getLocomotorDistanceToGoal()
 				}
 
 				if (dist<PATHFIND_CELL_SIZE_F || sqr(dist) < distSqr)
-					return sqrtf(distSqr);
+					return Sqrt(distSqr);
 				else
 					return dist;
 
