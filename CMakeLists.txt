@@ -64,7 +64,7 @@ endif()
 
 include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
-include(cmake/fdlibm.cmake)
+include(cmake/gamemath.cmake)
 include(cmake/lzhl.cmake)
 
 if (IS_VS6_BUILD)
