@@ -34,6 +34,7 @@
 
 #include "Lib/BaseType.h"
 #include "Lib/trig.h"
+#include "WWMath/wwmath.h"
 
 #define TWOPI			6.28318530718f
 #define DEG2RAD 	0.0174532925199f
@@ -48,32 +49,37 @@
 
 Real Sin(Real x)
 {
-	return sinf(x);
+	return WWMath::Sin(x);
 }
 
 Real Cos(Real x)
 {
-	return cosf(x);
+	return WWMath::Cos(x);
 }
 
 Real Tan(Real x)
 {
-	return tanf(x);
+	return WWMath::Tan(x);
 }
 
 Real ACos(Real x)
 {
-	return acosf(x);
+	return WWMath::Acos(x);
 }
 
 Real ASin(Real x)
 {
-	return asinf(x);
+	return WWMath::Asin(x);
 }
 
 Real Atan2(Real y, Real x)
 {
-	return atan2f(y, x);
+	return WWMath::Atan2(y, x);
+}
+
+Real Sqrt(Real x)
+{
+	return WWMath::Sqrt(x);
 }
 
 #ifdef REGENERATE_TRIG_TABLES
