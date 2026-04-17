@@ -1299,7 +1299,7 @@ void RailroadBehavior::updatePositionTrackDistance( PullInfo *pullerInfo, PullIn
 	trackPosDelta.z = 0;
 	Real dx = pullerInfo->towHitchPosition.x - turnPos.x;
 	Real dy = pullerInfo->towHitchPosition.y - turnPos.y;
-	Real desiredAngle = atan2(dy, dx);
+	Real desiredAngle = Atan2(dy, dx);
 
 
 	Real relAngle = stdAngleDiff(desiredAngle, obj->getTransformMatrix()->Get_Z_Rotation());

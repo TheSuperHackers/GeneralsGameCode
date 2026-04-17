@@ -1108,7 +1108,7 @@ StateReturnType RecoverFromOffMapState::update() // Success if we should try aga
 		enterCoord.z = owner->getPosition()->z;
 	owner->setPosition(&enterCoord);
 
-	Real enterAngle = atan2(ai->getMoveToPos()->y - enterCoord.y, ai->getMoveToPos()->x - enterCoord.x);
+	Real enterAngle = Atan2(ai->getMoveToPos()->y - enterCoord.y, ai->getMoveToPos()->x - enterCoord.x);
 	owner->setOrientation(enterAngle);
 
 	PhysicsBehavior* physics = owner->getPhysics();

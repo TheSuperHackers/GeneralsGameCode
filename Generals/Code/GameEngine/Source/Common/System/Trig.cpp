@@ -71,6 +71,11 @@ Real ASin(Real x)
 	return asinf(x);
 }
 
+Real Atan2(Real y, Real x)
+{
+	return atan2f(y, x);
+}
+
 #ifdef REGENERATE_TRIG_TABLES
 void initTrig()
 {
