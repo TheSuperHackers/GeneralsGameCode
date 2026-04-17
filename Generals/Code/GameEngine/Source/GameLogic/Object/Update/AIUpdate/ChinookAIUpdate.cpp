@@ -159,7 +159,7 @@ public:
 		Region3D terrainExtent;
 		TheTerrainLogic->getExtent( &terrainExtent );
 		const Real FUDGE = 1.2f;
-		Real HUGE_DIST = FUDGE * sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
+		Real HUGE_DIST = FUDGE * Sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
 
 		exitCoord.x += dir->x * HUGE_DIST;
 		exitCoord.y += dir->y * HUGE_DIST;

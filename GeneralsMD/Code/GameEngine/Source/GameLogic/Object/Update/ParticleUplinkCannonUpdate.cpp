@@ -526,7 +526,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				//First determine the factor of time completed (ranges between 0.0 and 1.0)
 				Real factor = (Real)(now - orbitalBirthFrame) / (Real)(orbitalDeathFrame - orbitalBirthFrame);
 
-				//We're generating a swath that travels the points between sin( -1PI ) and sin( 1PI )
+				//We're generating a swath that travels the points between Sin( -1PI ) and Sin( 1PI )
 				Real radians = (factor * TWO_PI) - PI;
 				Real cxDistance = (factor * data->m_swathOfDeathDistance ) - (data->m_swathOfDeathDistance * 0.5f); //cx is cartesian x
 
@@ -553,7 +553,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				cartesianTargetVector.Normalize();
 
 				Real dotProduct = Vector2::Dot_Product( buildingToTargetVector, cartesianTargetVector );
-				dotProduct = __min( 0.99999f, __max( -0.99999f, dotProduct ) ); //Account for numerical errors.  Also, acos(-1.00000) is coming out QNAN on the superweapon general map.  Heh.
+				dotProduct = __min( 0.99999f, __max( -0.99999f, dotProduct ) ); //Account for numerical errors.  Also, ACos(-1.00000) is coming out QNAN on the superweapon general map.  Heh.
 				Real angle = (Real)ACos( dotProduct );
 
 				if( buildingToTargetVector.Y >= 0 )

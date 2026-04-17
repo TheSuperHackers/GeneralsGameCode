@@ -457,7 +457,7 @@ public:
 
 		Coord3D intermedPt;
 		Bool intermed = false;
-		Real orient = atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
+		Real orient = Atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
 		if (fabs(stdAngleDiff(orient, ppinfo.parkingOrientation)) > PI/128)
 		{
 			intermedPt.z = (ppinfo.parkingSpace.z + ppinfo.runwayPrep.z) * 0.5f;
@@ -884,7 +884,7 @@ public:
 		}
 		else
 		{
-			Real dist = sqrtf(dSqr);
+			Real dist = Sqrt(dSqr);
 			if (dist<1) dist = 1;
 			pos.x += PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
 			pos.y += PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);
@@ -2070,7 +2070,7 @@ void JetAIUpdate::positionLockon()
 	Real dx = getObject()->getPosition()->x - pos.x;
 	Real dy = getObject()->getPosition()->y - pos.y;
 	if (dx || dy)
-		m_lockonDrawable->setOrientation(atan2(dy, dx));
+		m_lockonDrawable->setOrientation(Atan2(dy, dx));
 
 	// the Gaussian sum, to avoid keeping a running total:
 	//

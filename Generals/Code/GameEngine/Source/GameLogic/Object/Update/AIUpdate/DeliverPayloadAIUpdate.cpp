@@ -201,8 +201,8 @@ UpdateSleepTime DeliverPayloadAIUpdate::update()
 				{
 					//Calc strafe ratio
 					Real startDiveDistance = getData()->m_diveStartDistance;
-					Real endDiveDistance = sqrt( endDiveDistanceSquared );
-					Real currentDistance = sqrt( currentDistanceSquared );
+					Real endDiveDistance = Sqrt( endDiveDistanceSquared );
+					Real currentDistance = Sqrt( currentDistanceSquared );
 
 					Real diveRatio = (startDiveDistance - currentDistance) / (startDiveDistance - endDiveDistance);
 
@@ -367,7 +367,7 @@ Bool DeliverPayloadAIUpdate::isCloseEnoughToTarget()
 	if ( inBound )
 		allowedDistanceSqr = sqr(getAllowedDistanceToTarget() + getPreOpenDistance());
 
-	//DEBUG_LOG(("Dist to target is %f (allowed %f)",sqrt(currentDistanceSqr),sqrt(allowedDistanceSqr)));
+	//DEBUG_LOG(("Dist to target is %f (allowed %f)",Sqrt(currentDistanceSqr),Sqrt(allowedDistanceSqr)));
 
 
 	if ( allowedDistanceSqr > currentDistanceSqr )
@@ -1081,7 +1081,7 @@ StateReturnType RecoverFromOffMapState::update() // Success if we should try aga
 		enterCoord.z = owner->getPosition()->z;
 	owner->setPosition(&enterCoord);
 
-	Real enterAngle = atan2(ai->getMoveToPos()->y - enterCoord.y, ai->getMoveToPos()->x - enterCoord.x);
+	Real enterAngle = Atan2(ai->getMoveToPos()->y - enterCoord.y, ai->getMoveToPos()->x - enterCoord.x);
 	owner->setOrientation(enterAngle);
 
 	PhysicsBehavior* physics = owner->getPhysics();
@@ -1121,7 +1121,7 @@ StateReturnType HeadOffMapState::onEnter() // Give move order out of town
 	Region3D terrainExtent;
 	TheTerrainLogic->getExtent( &terrainExtent );
 	const Real FUDGE = 1.2f;
-	Real HUGE_DIST = FUDGE * sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
+	Real HUGE_DIST = FUDGE * Sqrt(sqr(terrainExtent.hi.x - terrainExtent.lo.x) + sqr(terrainExtent.hi.y - terrainExtent.lo.y));
 
 	exitCoord.x += dir->x * HUGE_DIST;
 	exitCoord.y += dir->y * HUGE_DIST;

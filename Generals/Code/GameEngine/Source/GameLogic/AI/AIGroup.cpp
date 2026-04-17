@@ -1839,8 +1839,8 @@ void getHelicopterOffset( Coord3D& posOut, Int idx )
   }
 
   Coord3D tempCtr = posOut;
-  posOut.x = tempCtr.x + (sin(angle) * radius);
-  posOut.y = tempCtr.y + (cos(angle) * radius);
+  posOut.x = tempCtr.x + (Sin(angle) * radius);
+  posOut.y = tempCtr.y + (Cos(angle) * radius);
 
 }
 

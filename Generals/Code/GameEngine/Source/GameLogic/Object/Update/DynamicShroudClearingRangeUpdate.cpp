@@ -166,8 +166,8 @@ void DynamicShroudClearingRangeUpdate::animateGridDecals()
 
 	for (int d = 0; d < GRID_FX_DECAL_COUNT; ++d)
 	{
-		pos.x = ctr->x + (sinf(angle) * radius);
-		pos.y = ctr->y + (cosf(angle) * radius);
+		pos.x = ctr->x + (Sin(angle) * radius);
+		pos.y = ctr->y + (Cos(angle) * radius);
 
 		pos.x -= ((Int)pos.x)%23;
 		pos.y -= ((Int)pos.y)%23;

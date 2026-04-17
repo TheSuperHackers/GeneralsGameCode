@@ -1468,7 +1468,7 @@ void makeAlignToNormalMatrix( Real angle, const Coord3D& pos, const Coord3D& nor
 	/*
 		It is extremely important that the resulting matrix is such that
 		the xvector points in the angle we specified; specifically,
-		that atan2(xvec.y, xvec.x) == angle. So we must construct
+		that Atan2(xvec.y, xvec.x) == angle. So we must construct
 		the matrix carefully to ensure this!
 	*/
 	x.x = Cos( angle );

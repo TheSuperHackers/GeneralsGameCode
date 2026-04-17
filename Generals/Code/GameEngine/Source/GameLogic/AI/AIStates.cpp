@@ -3572,7 +3572,7 @@ StateReturnType AIAttackMoveToState::update()
 		if (distSqr < sqr(ATTACK_CLOSE_ENOUGH_CELLS*PATHFIND_CELL_SIZE_F)) {
 			return ret;
 		}
-		DEBUG_LOG(("AIAttackMoveToState::update Distance from goal %f, retrying.", sqrt(distSqr)));
+		DEBUG_LOG(("AIAttackMoveToState::update Distance from goal %f, retrying.", Sqrt(distSqr)));
 
 		ret = STATE_CONTINUE;
 		m_retryCount--;
@@ -3802,16 +3802,16 @@ void AIFollowWaypointPathState::computeGoal(Bool useGroupOffsets)
 	if (m_priorWaypoint) {
 		dx = dest.x - m_priorWaypoint->getLocation()->x;
 		dy = dest.y - m_priorWaypoint->getLocation()->y;
-		angle = atan2(dy, dx);
+		angle = Atan2(dy, dx);
 		Real deltaAngle = angle - m_angle;
-		Real s = sin(deltaAngle);
-		Real c = cos(deltaAngle);
+		Real s = Sin(deltaAngle);
+		Real c = Cos(deltaAngle);
 		Real x = m_groupOffset.x * c - m_groupOffset.y * s;
 		Real y = m_groupOffset.y * c + m_groupOffset.x * s;
 		m_groupOffset.x = x;
 		m_groupOffset.y = y;
 	}	else {
-		angle = atan2(dy, dx);
+		angle = Atan2(dy, dx);
 	}
 	m_angle = angle;
 #endif
