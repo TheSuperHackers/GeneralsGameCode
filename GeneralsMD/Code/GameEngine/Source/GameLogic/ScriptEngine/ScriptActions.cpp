@@ -3003,11 +3003,16 @@ void ScriptActions::doCameraMotionBlurJump(const AsciiString& waypointName, Bool
 			};
 		}
 		if (passed)
+		{
+			TheTacticalView->setUserControlled(false);
 			TheTacticalView->setViewFilterPos(&pos);
+		}
 	}
 	if (!passed)
-	{	//if we failed to apply the filter, we still need to get the camera to the target
+	{
+		//if we failed to apply the filter, we still need to get the camera to the target
 		//so do it another way:
+		TheTacticalView->setUserControlled(false);
 		TheTacticalView->lookAt(&pos);
 	}
 }

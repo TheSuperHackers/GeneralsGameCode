@@ -2495,9 +2495,17 @@ void W3DView::lookAt( const Coord3D *o )
 		}
 	}
 
-	setPosition(pos);
+	Coord2D pos2D = { pos.x, pos.y };
+	setPosition2D(pos2D);
 
 	resetPivotToGround();
+
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	if (!m_isUserControlled)
+	{
+		m_zoom = getDesiredZoom(m_pos.x, m_pos.y);
+	}
+#endif
 
 	removeScriptedState(Scripted_Rotate | Scripted_CameraLock | Scripted_MoveOnWaypointPath);
 	m_CameraArrivedAtWaypointOnPathFlag = false;
@@ -2509,20 +2517,29 @@ void W3DView::lookAt( const Coord3D *o )
 //-------------------------------------------------------------------------------------------------
 void W3DView::initHeightForMap()
 {
-	resetPivotToGround();
-
 #if PRESERVE_RETAIL_SCRIPTED_CAMERA
 	// jba - starting ground level can't exceed this height.
 	constexpr const Real MAX_GROUND_LEVEL = 120.0f;
 	const Real accurateGroundLevel = TheTerrainLogic->getGroundHeight(m_pos.x, m_pos.y);
 	m_initialGroundLevel = min(MAX_GROUND_LEVEL, accurateGroundLevel);
 #endif
+
+	resetPivotToGround();
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void W3DView::resetPivotToGround( void )
 {
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	if (!m_isUserControlled)
+	{
+		m_pos.z = m_initialGroundLevel;
+		m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints
+		m_recalcCamera = true;
+		return;
+	}
+#endif
 	m_pos.z = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints
 	m_recalcCamera = true;

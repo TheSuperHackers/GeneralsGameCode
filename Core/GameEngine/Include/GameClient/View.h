@@ -221,6 +221,8 @@ public:
 	Bool userSetCameraLockDrawable(Drawable *drawable)   { return doUserAction(&View::setCameraLockDrawable, drawable); }
 
 	void lockUserControlUntilFrame(UnsignedInt frame) { m_userControlLockedUntilFrame = frame; } ///< Locks the user control over camera until the given frame is reached.
+
+	virtual void setUserControlled(Bool value) { m_isUserControlled = value; }
 	Bool isUserControlLocked() const;
 
 	// for debugging
@@ -272,8 +274,6 @@ protected:
 
 	virtual View *prependViewToList( View *list );							///< Prepend this view to the given list, return the new list
 	virtual View *getNextView() { return m_next; }				///< Return next view in the set
-
-	virtual void setUserControlled(Bool value) { m_isUserControlled = value; }
 
 private:
 
