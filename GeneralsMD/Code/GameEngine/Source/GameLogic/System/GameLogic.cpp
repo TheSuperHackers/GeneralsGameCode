@@ -4197,7 +4197,7 @@ void GameLogic::quit(Bool toDesktop, Bool force)
 	{
 		if (isInInteractiveGame())
 		{
-			if (force == FALSE)
+			if (force == FALSE || isInInteractiveGame())
 			{
 				if (canOpenQuitMenu())
 				{
