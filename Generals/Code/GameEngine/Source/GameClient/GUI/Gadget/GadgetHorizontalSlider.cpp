@@ -394,8 +394,8 @@ WindowMsgHandledType GadgetHorizontalSliderSystem( GameWindow *window, UnsignedI
 			Int newPos = (Int)mData1;
 			GameWindow *child = window->winGetChild();
 
-			if( newPos < s->minVal || newPos > s->maxVal )
-				break;
+			// TheSuperHackers @info position bounds check has been removed as it
+			// resets custom option.ini settings to 0. Has no effect on slider UI.
 
 			s->position = newPos;
 
