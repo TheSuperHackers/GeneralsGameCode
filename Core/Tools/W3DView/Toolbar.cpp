@@ -48,7 +48,7 @@ const TCHAR * const TOOLBAR_CLASS_NAME      = TEXT ("FANCYTOOLBAR");
 //
 //  CFancyToolbar
 //
-CFancyToolbar::CFancyToolbar (void)
+CFancyToolbar::CFancyToolbar ()
     : m_iButtons (0),
       m_iCurrentButton (-1)
 {
@@ -56,14 +56,13 @@ CFancyToolbar::CFancyToolbar (void)
     RegisterFancyToolbarClass ();
 
     ::memset (m_pButtonArray, 0, sizeof (m_pButtonArray));
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
 //
 //  ~CFancyToolbar
 //
-CFancyToolbar::~CFancyToolbar (void)
+CFancyToolbar::~CFancyToolbar ()
 {
     for (int iButton = 0; iButton < m_iButtons; iButton ++)
     {
@@ -81,8 +80,6 @@ CFancyToolbar::~CFancyToolbar (void)
             m_pButtonArray[iButton].hBMPDn = nullptr;
         }
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -90,7 +87,7 @@ CFancyToolbar::~CFancyToolbar (void)
 //  RegisterFancyToolbarClass
 //
 void
-CFancyToolbar::RegisterFancyToolbarClass (void)
+CFancyToolbar::RegisterFancyToolbarClass ()
 {
     // Is this class already registered?
     WNDCLASS classInfo = { 0 };
@@ -108,8 +105,6 @@ CFancyToolbar::RegisterFancyToolbarClass (void)
         // Register the class with windows
         ::RegisterClass (&classInfo);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -120,7 +115,6 @@ void
 CFancyToolbar::OnPaint ()
 {
     Paint ();
-    return ;
 }
 
 
@@ -180,8 +174,6 @@ CFancyToolbar::DrawButton
         ::SelectObject (hMemDC, hOldBMP);
         DeleteDC (hMemDC);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -207,7 +199,6 @@ CFancyToolbar::AddButton
     m_pButtonArray[iButton].buttonType = buttonType;
     m_pButtonArray[iButton].currentState = StateUp;
     m_pButtonArray[iButton].bVisible = TRUE;
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -215,7 +206,7 @@ CFancyToolbar::AddButton
 //  Paint
 //
 void
-CFancyToolbar::Paint (void)
+CFancyToolbar::Paint ()
 {
     // Get the window's DC
     HDC hDC = ::GetDC (m_hWnd);
@@ -261,7 +252,6 @@ CFancyToolbar::Paint (void)
 
     // Let the window know its done painting
     ::ValidateRect (m_hWnd, nullptr);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -361,8 +351,6 @@ CFancyToolbar::OnLButtonDown
     {
         CControlBar::OnLButtonDown (nFlags, point);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -417,8 +405,6 @@ CFancyToolbar::OnLButtonUp
     {
         CControlBar::OnLButtonUp (nFlags, point);
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -428,7 +414,6 @@ CFancyToolbar::OnLButtonUp
 void
 CFancyToolbar::OnDraw (CDC* pDC)
 {
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -478,8 +463,6 @@ CFancyToolbar::SetButtonState
             bFound = TRUE;
         }
     }
-
-    return ;
 }
 
 //////////////////////////////////////////////////////////////

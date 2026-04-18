@@ -81,8 +81,6 @@ MeshModelClass::MeshModelClass() :
 	CurMatDesc = DefMatDesc;
 
 	MatInfo = NEW_REF( MaterialInfoClass, () );
-
-	return ;
 }
 
 MeshModelClass::MeshModelClass(const MeshModelClass & that) :
@@ -101,7 +99,6 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 	CurMatDesc = DefMatDesc;
 
 	clone_materials(that);
-	return ;
 }
 
 MeshModelClass::~MeshModelClass()
@@ -166,8 +163,6 @@ void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 	AlternateMatDesc = nullptr;
 
 	CurMatDesc = DefMatDesc;
-
-	return ;
 }
 
 void MeshModelClass::Register_For_Rendering()

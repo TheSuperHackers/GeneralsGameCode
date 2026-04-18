@@ -264,8 +264,8 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	// TheSuperHackers @info The default pitch affects the look-at distance to the target.
 	// This is strange math which would need special attention when changed.
 	sourcePos.Z = getCameraOffsetZ();
-	sourcePos.Y = -(sourcePos.Z / tan(TheGlobalData->m_cameraPitch * (PI / 180.0)));
-	sourcePos.X = -(sourcePos.Y * tan(TheGlobalData->m_cameraYaw * (PI / 180.0)));
+	sourcePos.Y = -(sourcePos.Z / tan(ViewDefaultPitchRadians));
+	sourcePos.X = -(sourcePos.Y * tan(ViewDefaultYawRadians));
 
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV
@@ -285,13 +285,15 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	targetPos.Y = 0;
 	targetPos.Z = 0;
 
+	// TheSuperHackers @info Scales the source position later by this much
+	// to achieve the intended camera height. Must not scale before pitching!
 	const Real heightScale = 1.0f - (groundLevel / sourcePos.Z);
 
 	// construct a matrix to rotate around the up vector by the given angle
-	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
+	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle - ViewDefaultYawRadians );
 
 	// construct a matrix to rotate around the left vector by the given angle
-	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch );
+	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch - ViewDefaultPitchRadians );
 
 	// rotate camera position (pitch, then angle)
 #ifdef ALLOW_TEMPORARIES
@@ -2068,6 +2070,16 @@ void W3DView::setPitch( Real radians )
 }
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DView::setDefaultPitch( Real radians )
+{
+	View::setDefaultPitch( radians );
+
+	m_cameraAreaConstraintsValid = false;
+	m_recalcCamera = true;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Set the view angle back to default */
 //-------------------------------------------------------------------------------------------------
 void W3DView::setAngleToDefault()
@@ -2098,7 +2110,7 @@ void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 {
 	// MDC - we no longer want to rotate maps (design made all of them right to begin with)
 	//	m_defaultAngle = angle * M_PI/180.0f;
-	m_defaultPitch = pitch;
+	setDefaultPitch(pitch);
 	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight*maxHeight;
 	if (m_minHeightAboveGround > m_maxHeightAboveGround)
 		m_maxHeightAboveGround = m_minHeightAboveGround;
@@ -2518,7 +2530,7 @@ void W3DView::initHeightForMap()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::resetPivotToGround( void )
+void W3DView::resetPivotToGround()
 {
 	m_groundLevel = getHeightAroundPos(m_pos.x, m_pos.y);
 	m_cameraAreaConstraintsValid = false; // possible ground level change invalidates camera constraints

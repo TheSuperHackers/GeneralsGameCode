@@ -128,7 +128,7 @@ static Int theFlashCount = 0;
 
 static void		WWDebug_Message_Callback(DebugType type, const char * message);
 static void		WWAssert_Callback(const char * message);
-static void		Debug_Refs(void);
+static void		Debug_Refs();
 
 // ----------------------------------------------------------------------------
 static void WWDebug_Message_Callback(DebugType type, const char * message)
@@ -160,12 +160,12 @@ protected:
 
 protected:
 	virtual View *prependViewToList( View *list ) override {return nullptr;};		///< Prepend this view to the given list, return the new list
-	virtual View *getNextView( void ) override { return nullptr; }				///< Return next view in the set
+	virtual View *getNextView() override { return nullptr; }				///< Return next view in the set
 public:
 
-	virtual void init( void ) override {};
+	virtual void init() override {};
 
-	virtual UnsignedInt getID( void ) override { return 1; }
+	virtual UnsignedInt getID() override { return 1; }
 
 	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) override {return nullptr;};			///< pick drawable given the screen pixel coords
 
@@ -180,17 +180,17 @@ public:
 																							Coord3D *bottomRight, Coord3D *bottomLeft,
 																							Real z ) override {};
 
-	virtual void drawView( void ) override {};															///< Render the world visible in this view.
-	virtual void updateView( void ) override {};															///< Render the world visible in this view.
+	virtual void drawView() override {};															///< Render the world visible in this view.
+	virtual void updateView() override {};															///< Render the world visible in this view.
 	virtual void stepView() override {}; ///< Update view for every fixed time step
 
 	virtual void setZoomLimited( Bool limit ) override {}			///< limit the zoom height
-	virtual Bool isZoomLimited( void ) const override { return TRUE; }							///< get status of zoom limit
+	virtual Bool isZoomLimited() const override { return TRUE; }							///< get status of zoom limit
 
 	virtual void setWidth( Int width ) override { m_width = width; }
-	virtual Int getWidth( void ) override { return m_width; }
+	virtual Int getWidth() override { return m_width; }
 	virtual void setHeight( Int height ) override { m_height = height; }
-	virtual Int getHeight( void ) override { return m_height; }
+	virtual Int getHeight() override { return m_height; }
 	virtual void setOrigin( Int x, Int y) override { m_originX=x; m_originY=y;}				///< Sets location of top-left view corner on display
 	virtual void getOrigin( Int *x, Int *y) override { *x=m_originX; *y=m_originY;}			///< Return location of top-left view corner on display
 
@@ -200,13 +200,13 @@ public:
 	virtual void stopDoingScriptedCamera() override {}
 
 	virtual void lookAt( const Coord3D *o ) override {};											///< Center the view on the given coordinate
-	virtual void initHeightForMap( void ) override {};												///<  Init the camera height for the map at the current position.
+	virtual void initHeightForMap() override {};												///<  Init the camera height for the map at the current position.
 	virtual void scrollBy( Coord2D *delta ){};														///< Shift the view by the given delta
 	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter,
 														Bool orient) {lookAt(o);};
 	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter,
 														Bool orient) {};
-	virtual Bool isCameraMovementFinished(void) override {return true;};
+	virtual Bool isCameraMovementFinished() override {return true;};
 	virtual void resetCamera(const Coord3D *location, Int frames) {}; ///< Move camera to location, and reset to default angle & zoom.
 	virtual void rotateCamera(Real rotations, Int frames) {}; ///< Rotate camera about current viewpoint.
 	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds) {};	///< Rotate camera to face an object, and hold on it
@@ -214,34 +214,34 @@ public:
 	virtual void cameraModRollingAverage(Int framesToAverage) override {}; ///< Number of frames to average movement for current camera movement.
 	virtual void cameraModFinalTimeMultiplier(Int finalMultiplier) override {}; ///< Final time multiplier for current camera movement.
 	virtual void cameraModFinalPitch(Real finalPitch){};		 ///< Final pitch for current camera movement.
-	virtual void cameraModFreezeTime(void) override {}					///< Freezes time during the next camera movement.
-	virtual void cameraModFreezeAngle(void) override {}					///< Freezes time during the next camera movement.
+	virtual void cameraModFreezeTime() override {}					///< Freezes time during the next camera movement.
+	virtual void cameraModFreezeAngle() override {}					///< Freezes time during the next camera movement.
 	virtual void cameraModLookToward(Coord3D *pLoc) override {}			///< Sets a look at point during camera movement.
 	virtual void cameraModFinalLookToward(Coord3D *pLoc) override {}			///< Sets a look at point during camera movement.
 	virtual void cameraModFinalMoveTo(Coord3D *pLoc) override { };			///< Sets a final move to.
-	virtual Bool isTimeFrozen(void) override { return false;}					///< Freezes time during the next camera movement.
-	virtual Int	 getTimeMultiplier(void) override {return 1;};				///< Get the time multiplier.
+	virtual Bool isTimeFrozen() override { return false;}					///< Freezes time during the next camera movement.
+	virtual Int	 getTimeMultiplier() override {return 1;};				///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) override {}; ///< Set the time multiplier.
 	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) override {};
 	virtual void zoomCamera( Real finalZoom, Int milliseconds ) {};
 	virtual void pitchCamera( Real finalPitch, Int milliseconds ) {};
 
 	virtual void setAngle( Real angle ) override {};																///< Rotate the view around the up axis to the given angle
-	virtual Real getAngle( void ) override { return 0; }
+	virtual Real getAngle() override { return 0; }
 	virtual void setPitch( Real angle ) override {};																	///< Rotate the view around the horizontal axis to the given angle
-	virtual Real getPitch( void ) override { return 0; }							///< Return current camera pitch
-	virtual void setAngleToDefault( void ) override {}											///< Set the view angle back to default
-	virtual void setPitchToDefault( void ) override {}											///< Set the view pitch back to default
+	virtual Real getPitch() override { return 0; }							///< Return current camera pitch
+	virtual void setAngleToDefault() override {}											///< Set the view angle back to default
+	virtual void setPitchToDefault() override {}											///< Set the view pitch back to default
 	virtual void getPosition(Coord3D *pos) {}											///< Return camera position
 
 	virtual Real getHeightAboveGround() override { return 1; }
 	virtual void setHeightAboveGround(Real z) override { }
 	virtual Real getZoom() override { return 1; }
 	virtual void setZoom(Real z) override { }
-	virtual void zoomIn( void ) {  }																			///< Zoom in, closer to the ground, limit to min
-	virtual void zoomOut( void ) {  }																		///< Zoom out, farther away from the ground, limit to max
-	virtual void setZoomToDefault( void ) override { }														///< Set zoom to default value
-	virtual Real getMaxZoom( void ) { return 0.0f; }
+	virtual void zoomIn() {  }																			///< Zoom in, closer to the ground, limit to min
+	virtual void zoomOut() {  }																		///< Zoom out, farther away from the ground, limit to max
+	virtual void setZoomToDefault() override { }														///< Set zoom to default value
+	virtual Real getMaxZoom() { return 0.0f; }
 	virtual void setOkToAdjustHeight( Bool val ) override { }						///< Set this to adjust camera height
 
 	virtual Real getTerrainHeightAtPivot() override { return 0.0f; }
@@ -252,30 +252,30 @@ public:
 
 	virtual ObjectID getCameraLock() const override { return INVALID_ID; }
 	virtual void setCameraLock(ObjectID id) override {  }
-	virtual void snapToCameraLock( void ) override {  }
+	virtual void snapToCameraLock() override {  }
 	virtual void setSnapMode( CameraLockType lockType, Real lockDist ) override {  }
 
 	virtual Drawable *getCameraLockDrawable() const override { return nullptr; }
 	virtual void setCameraLockDrawable(Drawable *drawable) override { }
 
 	virtual void setMouseLock( Bool mouseLocked ) override {}					///< lock/unlock the mouse input to the tactical view
-	virtual Bool isMouseLocked( void ) override { return FALSE; }			///< is the mouse input locked to the tactical view?
+	virtual Bool isMouseLocked() override { return FALSE; }			///< is the mouse input locked to the tactical view?
 
 	virtual void setFieldOfView( Real angle ) override {};							///< Set the horizontal field of view angle
-	virtual Real getFieldOfView( void ) override {return 0;};										///< Get the horizontal field of view angle
+	virtual Real getFieldOfView() override {return 0;};										///< Get the horizontal field of view angle
 
 	virtual Bool setViewFilterMode(enum FilterModes) override {return FALSE;}	///<stub
 	virtual void setViewFilterPos(const Coord3D *pos) override {};	///<stub
 	virtual void setFadeParameters(Int fadeFrames, Int direction) override {};	///<stub
 	virtual void set3DWireFrameMode(Bool enable) override { }; ///<stub
 	virtual Bool setViewFilter(		enum FilterTypes m_viewFilterMode) override { return FALSE;}	///<stub
-	virtual enum FilterModes	 getViewFilterMode(void) override {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes	 getViewFilterType(void) override {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual enum FilterModes	 getViewFilterMode() override {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual enum FilterTypes	 getViewFilterType() override {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
 
 	virtual void shake( const Coord3D *epicenter, CameraShakeType shakeType ) override {};
 
-	virtual Real getFXPitch( void ) const override { return 1.0f; }
-	virtual void forceCameraAreaConstraintRecalc(void) override { }
+	virtual Real getFXPitch() const override { return 1.0f; }
+	virtual void forceCameraAreaConstraintRecalc() override { }
 	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds) {};	///< Rotate camera to face an object, and hold on it
 
 	virtual const Coord3D& get3DCameraPosition() const override { static Coord3D dummy; return dummy; }							///< Returns the actual camera position
@@ -295,8 +295,8 @@ PlaceholderView bogusTacticalView;
 class SkeletonSceneClass : public RTS3DScene
 {
 public:
-	SkeletonSceneClass(void) : m_testPass(nullptr) { }
-	virtual ~SkeletonSceneClass(void) override { REF_PTR_RELEASE(m_testPass); }
+	SkeletonSceneClass() : m_testPass(nullptr) { }
+	virtual ~SkeletonSceneClass() override { REF_PTR_RELEASE(m_testPass); }
 
 	void					Set_Material_Pass(MaterialPassClass * pass)	{ REF_PTR_SET(m_testPass, pass); }
 	virtual void Remove_Render_Object(RenderObjClass * obj) override;
@@ -439,7 +439,7 @@ WbView3d::~WbView3d()
 	shutdownWW3D();
 }
 // ----------------------------------------------------------------------------
-void WbView3d::shutdownWW3D(void)
+void WbView3d::shutdownWW3D()
 {
 	if (m_ww3dInited) {
 		m_lightList.Reset_List();
@@ -496,7 +496,7 @@ void WbView3d::shutdownWW3D(void)
 //=============================================================================
 /** Releases all w3d assets, to prepare for Reset device call. */
 //=============================================================================
-void WbView3d::ReleaseResources(void)
+void WbView3d::ReleaseResources()
 {
 	if (TheTerrainRenderObject) {
 		TheTerrainRenderObject->ReleaseResources();
@@ -512,7 +512,7 @@ void WbView3d::ReleaseResources(void)
 //=============================================================================
 /** Reallocates all W3D assets after a reset.. */
 //=============================================================================
-void WbView3d::ReAcquireResources(void)
+void WbView3d::ReAcquireResources()
 {
 	if (TheTerrainRenderObject) {
 		TheTerrainRenderObject->ReAcquireResources();
@@ -554,7 +554,7 @@ void WbView3d::ReAcquireResources(void)
 }
 
 // ----------------------------------------------------------------------------
-void WbView3d::killTheTimer(void)
+void WbView3d::killTheTimer()
 {
 	if (m_timer != 0) {
 		KillTimer(m_timer);
@@ -962,7 +962,7 @@ void WbView3d::updateLights()
 }
 
 // ----------------------------------------------------------------------------
-void WbView3d::updateScorches(void)
+void WbView3d::updateScorches()
 {
 	TheTerrainRenderObject->clearAllScorches();
 	MapObject *pMapObj;
@@ -1806,7 +1806,7 @@ Bool WbView3d::viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real theZ)
 }
 
 // ----------------------------------------------------------------------------
-void WbView3d::updateHysteresis(void)
+void WbView3d::updateHysteresis()
 {
 	CRect client;
 	GetClientRect(&client);
@@ -1939,7 +1939,7 @@ Bool WbView3d::docToViewCoords(Coord3D curPt, CPoint* newPt)
 }
 
 // ----------------------------------------------------------------------------
-void WbView3d::redraw(void)
+void WbView3d::redraw()
 {
 	if (m_updateCount > 0) {
 		return;
@@ -2286,7 +2286,7 @@ void WbView3d::OnPaint()
 }
 
 
-void WbView3d::drawLabels(void)
+void WbView3d::drawLabels()
 {
 	CDC * pDC = GetDC();
 	drawLabels(pDC->m_hDC);
@@ -2613,7 +2613,7 @@ void WbView3d::setCameraPitch(Real absolutePitch)
 }
 
 // ----------------------------------------------------------------------------
-Real WbView3d::getCameraPitch(void)
+Real WbView3d::getCameraPitch()
 {
 	return m_FXPitch;
 }

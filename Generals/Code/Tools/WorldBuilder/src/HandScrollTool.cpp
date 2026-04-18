@@ -38,7 +38,7 @@ inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 static const Int MAX_SCROLL = 1000;
 
 /// Constructor
-HandScrollTool::HandScrollTool(void) :
+HandScrollTool::HandScrollTool() :
 	Tool(ID_HAND_SCROLL_TOOL, IDC_HAND_SCROLL)
 {
 }
@@ -46,11 +46,11 @@ HandScrollTool::HandScrollTool(void) :
 /// Shows the terrain materials options panel.
 void HandScrollTool::activate()
 {
-	return; // Hand scroll tool intentionally doesn't change tool panel.
+	// Hand scroll tool intentionally doesn't change tool panel.
 }
 
 /// Destructor
-HandScrollTool::~HandScrollTool(void)
+HandScrollTool::~HandScrollTool()
 {
 }
 

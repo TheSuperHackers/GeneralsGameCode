@@ -84,7 +84,7 @@ BOOL CAnimMixingPage::OnInitDialog()
 }
 
 
-void CAnimMixingPage::FillListCtrl (void)
+void CAnimMixingPage::FillListCtrl ()
 {
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.

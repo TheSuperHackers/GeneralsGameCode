@@ -35,7 +35,7 @@ class ObjectOptions : public COptionsPanel
 public:
 	ObjectOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	virtual ~ObjectOptions(void) override;   ///< standard destructor
+	virtual ~ObjectOptions() override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(ObjectOptions)
@@ -86,17 +86,17 @@ protected:
 	HTREEITEM _FindOrDont(const char* pLabel, HTREEITEM startPoint);
 	Bool setObjectTreeViewSelection(HTREEITEM parent, Int selection);
 	void updateLabel();
-	static MapObject *getCurMapObject(void);
+	static MapObject *getCurMapObject();
 
 public:
-	static const char * getCurObjectName(void) {return m_currentObjectName;};
+	static const char * getCurObjectName() {return m_currentObjectName;};
 	static MapObject *duplicateCurMapObjectForPlace(const Coord3D* loc, Real angle, Bool checkPlayers = true);
 	static MapObject *getObjectNamed(AsciiString name);
 	static Int getObjectNamedIndex(const AsciiString& name);
 	static void selectObject(const MapObject* pObj);
-	static Real getCurObjectHeight(void);
+	static Real getCurObjectHeight();
 	static void update();
-	static AsciiString getCurGdfName(void);
+	static AsciiString getCurGdfName();
 };
 
 //{{AFX_INSERT_LOCATION}}

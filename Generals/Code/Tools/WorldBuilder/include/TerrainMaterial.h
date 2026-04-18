@@ -82,21 +82,21 @@ protected:
 protected:
 	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
-	void updateLabel(void);
+	void updateLabel();
 
 public:
-	static Int getFgTexClass(void) {return m_currentFgTexture;}
-	static Int getBgTexClass(void) {return m_currentBgTexture;}
+	static Int getFgTexClass() {return m_currentFgTexture;}
+	static Int getBgTexClass() {return m_currentBgTexture;}
 
 	static void setFgTexClass(Int texClass);
 	static void setBgTexClass(Int texClass);
 	static void updateTextures(WorldHeightMapEdit *pMap);
-	static void updateTextureSelection(void);
+	static void updateTextureSelection();
 	static void setToolOptions(Bool singleCell);
 	static void setWidth(Int width);
 
-	static Bool isPaintingPathingInfo(void) {return m_paintingPathingInfo;}
-	static Bool isPaintingPassable(void) {return m_paintingPassable;}
+	static Bool isPaintingPathingInfo() {return m_paintingPathingInfo;}
+	static Bool isPaintingPassable() {return m_paintingPassable;}
 
 public:
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);

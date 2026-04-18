@@ -69,7 +69,7 @@ void RampTool::deactivate()
 	mIsMouseDown = false;
 }
 
-Bool RampTool::followsTerrain(void)
+Bool RampTool::followsTerrain()
 {
 	return true;
 }

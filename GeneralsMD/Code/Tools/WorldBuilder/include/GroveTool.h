@@ -49,8 +49,8 @@ protected:
 	virtual void activate() override;
 
 public:
-	GroveTool(void);
-	virtual ~GroveTool(void) override;
+	GroveTool();
+	virtual ~GroveTool() override;
 
 public:
 	/// Perform tool on mouse down.

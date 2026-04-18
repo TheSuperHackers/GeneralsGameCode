@@ -44,7 +44,6 @@ CBackgroundObjectDialog::CBackgroundObjectDialog (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CBackgroundObjectDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -58,7 +57,6 @@ CBackgroundObjectDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CBackgroundObjectDialog)
 	DDX_Control(pDX, IDC_HIERARCHY_LIST, m_heirarchyListCtrl);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -77,7 +75,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CBackgroundObjectDialog::OnInitDialog (void)
+CBackgroundObjectDialog::OnInitDialog ()
 {
     // Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -155,7 +153,7 @@ CBackgroundObjectDialog::OnInitDialog (void)
 //  OnInitDialog
 //
 void
-CBackgroundObjectDialog::OnOK (void)
+CBackgroundObjectDialog::OnOK ()
 {
     // Get a pointer to the doc
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
@@ -180,8 +178,6 @@ CBackgroundObjectDialog::OnOK (void)
 	    // Allow the base class to process this message
         CDialog::OnOK ();
     }
-
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -218,7 +214,6 @@ CBackgroundObjectDialog::OnItemChangedHierarchyList
     }
 
 	*pResult = 0;
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -226,7 +221,7 @@ CBackgroundObjectDialog::OnItemChangedHierarchyList
 //  OnClear
 //
 void
-CBackgroundObjectDialog::OnClear (void)
+CBackgroundObjectDialog::OnClear ()
 {
     // Get the current selection (if any)
     int iIndex = m_heirarchyListCtrl.GetNextItem (-1, LVNI_ALL | LVNI_SELECTED);
@@ -235,6 +230,4 @@ CBackgroundObjectDialog::OnClear (void)
         // Clear the selection state from this entry
         m_heirarchyListCtrl.SetItemState (iIndex, 0, LVIS_SELECTED);
     }
-
-	return ;
 }

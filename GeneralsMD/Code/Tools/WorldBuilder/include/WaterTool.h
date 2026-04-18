@@ -35,8 +35,8 @@ class MovePolygonUndoable;
 class WaterTool : public PolygonTool
 {
 public:
-	WaterTool(void);
-	virtual ~WaterTool(void) override;
+	WaterTool();
+	virtual ~WaterTool() override;
 
 protected:
 	static Bool		m_water_isActive;
@@ -44,14 +44,14 @@ protected:
 	Real	m_currentZ;
 
 public:
-	static Bool isActive(void) {return m_water_isActive;};
+	static Bool isActive() {return m_water_isActive;};
 
 public:
 	/// Perform tool on mouse down.
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void setCursor(void) override;
+	virtual void setCursor() override;
 	virtual void activate() override; ///< Become the current tool.
 	virtual void deactivate() override; ///< Become not the current tool.
 

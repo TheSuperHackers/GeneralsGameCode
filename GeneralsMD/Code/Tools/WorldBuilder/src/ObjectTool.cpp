@@ -38,13 +38,13 @@
 //
 	enum {HYSTERESIS = 3};
 /// Constructor
-ObjectTool::ObjectTool(void) :
+ObjectTool::ObjectTool() :
 	Tool(ID_PLACE_OBJECT_TOOL, IDC_PLACE_OBJECT)
 {
 }
 
 /// Destructor
-ObjectTool::~ObjectTool(void)
+ObjectTool::~ObjectTool()
 {
 }
 

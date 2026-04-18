@@ -71,58 +71,61 @@ static const UnsignedInt desyncOffset = frameCountOffset + sizeof(UnsignedInt);
 static const UnsignedInt quitEarlyOffset = desyncOffset + sizeof(Bool);
 static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
 
+static void writeAtOffset(File* file, Int offset, const void* data, Int dataSize)
+{
+	UnsignedInt fileSize = file->size();
+	DEBUG_ASSERTCRASH((UnsignedInt)(offset + dataSize) <= fileSize, ("writeAtOffset would exceed file size!"));
+	if (file->seek(offset, File::seekMode::START) == offset)
+	{
+		file->write(data, dataSize);
+	}
+#ifdef DEBUG_CRASHING
+	Int res =
+#endif
+	file->seek(fileSize, File::seekMode::START);
+	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
+}
+
+#if defined(RTS_DEBUG)
+static FILE* openStatsLogFile()
+{
+	unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
+	char computerName[MAX_COMPUTERNAME_LENGTH + 1];
+	if (!GetComputerName(computerName, &bufSize))
+	{
+		strcpy(computerName, "unknown");
+	}
+	AsciiString statsFile = TheGlobalData->m_baseStatsDir;
+	statsFile.concat(computerName);
+	statsFile.concat(".txt");
+	return fopen(statsFile.str(), "a+");
+}
+#endif
+
 void RecorderClass::logGameStart(AsciiString options)
 {
 	if (!m_file)
 		return;
 
 	time(&startTime);
-	UnsignedInt fileSize = m_file->size();
-	// move to appropriate offset
-	if ( m_file->seek(startTimeOffset, File::seekMode::START) == startTimeOffset )
-	{
-		// save off start time
-		replay_time_t tmp = (replay_time_t)startTime;
-		m_file->write(&tmp, sizeof(tmp));
-	}
-	// move back to end of stream
-#ifdef DEBUG_CRASHING
-	Int res =
-#endif
-	m_file->seek(fileSize, File::seekMode::START);
-	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
+	replay_time_t tmp = (replay_time_t)startTime;
+	writeAtOffset(m_file, startTimeOffset, &tmp, sizeof(tmp));
 
 #if defined(RTS_DEBUG)
 	if (TheNetwork && TheGlobalData->m_saveStats)
 	{
-		//if (TheLAN)
+		TheFileSystem->createDirectory(TheGlobalData->m_baseStatsDir);
+		FILE *logFP = openStatsLogFile();
+		if (!logFP)
 		{
-			unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
-			char computerName[MAX_COMPUTERNAME_LENGTH + 1];
-			if (!GetComputerName(computerName, &bufSize))
-			{
-				strcpy(computerName, "unknown");
-			}
-			AsciiString statsFile = TheGlobalData->m_baseStatsDir;
-			TheFileSystem->createDirectory(statsFile);
-			statsFile.concat(computerName);
-			statsFile.concat(".txt");
-			FILE *logFP = fopen(statsFile.str(), "a+");
-			if (!logFP)
-			{
-				// try again locally
-				TheWritableGlobalData->m_baseStatsDir = TheGlobalData->getPath_UserData();
-				statsFile = TheGlobalData->m_baseStatsDir;
-				statsFile.concat(computerName);
-				statsFile.concat(".txt");
-				logFP = fopen(statsFile.str(), "a+");
-			}
-			if (logFP)
-			{
-				struct tm *t2 = localtime(&startTime);
-				fprintf(logFP, "\nGame start at %s\tOptions are %s\n", asctime(t2), options.str());
-				fclose(logFP);
-			}
+			TheWritableGlobalData->m_baseStatsDir = TheGlobalData->getPath_UserData();
+			logFP = openStatsLogFile();
+		}
+		if (logFP)
+		{
+			struct tm *t2 = localtime(&startTime);
+			fprintf(logFP, "\nGame start at %s\tOptions are %s\n", asctime(t2), options.str());
+			fclose(logFP);
 		}
 	}
 #endif
@@ -138,35 +141,14 @@ void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 	{
 		return;
 	}
-	UnsignedInt fileSize = m_file->size();
-	// move to appropriate offset
+	Bool flag = TRUE;
 	Int playerSlotDisconOffset = disconOffset + slot * sizeof(Bool);
-	if ( m_file->seek(playerSlotDisconOffset, File::seekMode::START) == playerSlotDisconOffset )
-	{
-		// save off discon status
-		Bool flag = TRUE;
-		m_file->write(&flag, sizeof(flag));
-	}
-	// move back to end of stream
-#ifdef DEBUG_CRASHING
-	Int res =
-#endif
-	m_file->seek(fileSize, File::seekMode::START);
-	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
+	writeAtOffset(m_file, playerSlotDisconOffset, &flag, sizeof(flag));
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
 	{
-		unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
-		char computerName[MAX_COMPUTERNAME_LENGTH + 1];
-		if (!GetComputerName(computerName, &bufSize))
-		{
-			strcpy(computerName, "unknown");
-		}
-		AsciiString statsFile = TheGlobalData->m_baseStatsDir;
-		statsFile.concat(computerName);
-		statsFile.concat(".txt");
-		FILE *logFP = fopen(statsFile.str(), "a+");
+		FILE *logFP = openStatsLogFile();
 		if (logFP)
 		{
 			time_t t;
@@ -184,35 +166,14 @@ void RecorderClass::logCRCMismatch()
 	if (!m_file)
 		return;
 
-	UnsignedInt fileSize = m_file->size();
-	// move to appropriate offset
-	if ( m_file->seek(desyncOffset, File::seekMode::START) == desyncOffset )
-	{
-		// save off desync status
-		Bool flag = TRUE;
-		m_file->write(&flag, sizeof(flag));
-	}
-	// move back to end of stream
-#ifdef DEBUG_CRASHING
-	Int res =
-#endif
-	m_file->seek(fileSize, File::seekMode::START);
-	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
+	Bool flag = TRUE;
+	writeAtOffset(m_file, desyncOffset, &flag, sizeof(flag));
 
 #if defined(RTS_DEBUG)
 	if (TheGlobalData->m_saveStats)
 	{
 		m_wasDesync = TRUE;
-		unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
-		char computerName[MAX_COMPUTERNAME_LENGTH + 1];
-		if (!GetComputerName(computerName, &bufSize))
-		{
-			strcpy(computerName, "unknown");
-		}
-		AsciiString statsFile = TheGlobalData->m_baseStatsDir;
-		statsFile.concat(computerName);
-		statsFile.concat(".txt");
-		FILE *logFP = fopen(statsFile.str(), "a+");
+		FILE *logFP = openStatsLogFile();
 		if (logFP)
 		{
 			time_t t;
@@ -233,51 +194,22 @@ void RecorderClass::logGameEnd()
 	time_t t;
 	time(&t);
 	UnsignedInt frameCount = TheGameLogic->getFrame();
-	UnsignedInt fileSize = m_file->size();
-	// move to appropriate offset
-	if ( m_file->seek(endTimeOffset, File::seekMode::START) == endTimeOffset )
-	{
-		// save off end time
-		replay_time_t tmp = (replay_time_t)t;
-		m_file->write(&tmp, sizeof(tmp));
-	}
-	// move to appropriate offset
-	if ( m_file->seek(frameCountOffset, File::seekMode::START) == frameCountOffset )
-	{
-		// save off frameCount
-		m_file->write(&frameCount, sizeof(frameCount));
-	}
-	// move back to end of stream
-#ifdef DEBUG_CRASHING
-	Int res =
-#endif
-	m_file->seek(fileSize, File::seekMode::START);
-	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
+	replay_time_t tmp = (replay_time_t)t;
+	writeAtOffset(m_file, endTimeOffset, &tmp, sizeof(tmp));
+	writeAtOffset(m_file, frameCountOffset, &frameCount, sizeof(frameCount));
 
 #if defined(RTS_DEBUG)
 	if (TheNetwork && TheGlobalData->m_saveStats)
 	{
-		//if (TheLAN)
+		FILE *logFP = openStatsLogFile();
+		if (logFP)
 		{
-			unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
-			char computerName[MAX_COMPUTERNAME_LENGTH + 1];
-			if (!GetComputerName(computerName, &bufSize))
-			{
-				strcpy(computerName, "unknown");
-			}
-			AsciiString statsFile = TheGlobalData->m_baseStatsDir;
-			statsFile.concat(computerName);
-			statsFile.concat(".txt");
-			FILE *logFP = fopen(statsFile.str(), "a+");
-			if (logFP)
-			{
-				struct tm *t2 = localtime(&t);
-				time_t duration = t - startTime;
-				Int minutes = duration/60;
-				Int seconds = duration%60;
-				fprintf(logFP, "Game end at   %s(%d:%2.2d elapsed time)\n", asctime(t2), minutes, seconds);
-				fclose(logFP);
-			}
+			struct tm *t2 = localtime(&t);
+			time_t duration = t - startTime;
+			Int minutes = duration/60;
+			Int seconds = duration%60;
+			fprintf(logFP, "Game end at   %s(%d:%2.2d elapsed time)\n", asctime(t2), minutes, seconds);
+			fclose(logFP);
 		}
 	}
 #endif

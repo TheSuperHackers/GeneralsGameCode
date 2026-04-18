@@ -162,7 +162,6 @@ ParameterClass::ParameterClass ()
 	:	m_Name (nullptr),
 		IsModified (false)
 {
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +173,6 @@ ParameterClass::ParameterClass (const ParameterClass &src)
 		IsModified (false)
 {
 	(*this) = src;
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +182,6 @@ inline
 ParameterClass::~ParameterClass ()
 {
 	Set_Name (nullptr);
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -221,8 +218,6 @@ ParameterClass::Set_Name (const char *new_name)
 	if (new_name != nullptr) {
 		m_Name = ::strdup (new_name);
 	}
-
-	return ;
 }
 
 
@@ -242,7 +237,6 @@ inline void
 ParameterClass::Set_Units_Name (const char *new_name)
 {
 	m_UnitsName = new_name;
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

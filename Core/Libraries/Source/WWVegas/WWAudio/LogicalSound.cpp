@@ -80,7 +80,6 @@ LogicalSoundClass::LogicalSoundClass ()
 		m_NotifyDelayInMS (2000),
 		m_LastNotification (0)
 {
-	return ;
 }
 
 
@@ -91,7 +90,6 @@ LogicalSoundClass::LogicalSoundClass ()
 ////////////////////////////////////////////////////////////////////////////////////////////////
 LogicalSoundClass::~LogicalSoundClass ()
 {
-	return ;
 }
 
 
@@ -112,8 +110,6 @@ LogicalSoundClass::Add_To_Scene (bool /*start_playing*/)
 		m_Scene = scene;
 		scene->Add_Logical_Sound (this, m_IsSingleShot);
 	}
-
-	return ;
 }
 
 
@@ -135,8 +131,6 @@ LogicalSoundClass::Remove_From_Scene ()
 		m_PhysWrapper			= nullptr;
 		m_LastNotification	= 0;
 	}
-
-	return ;
 }
 
 

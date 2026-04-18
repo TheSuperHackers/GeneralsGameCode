@@ -60,7 +60,7 @@ public:
 
 // Implementation
 protected:
-	void getAllSelectedDicts(void);
+	void getAllSelectedDicts();
 	Dict** getAllSelectedDictsData();
 
 	static MapObjectProps *TheMapObjectProps;
@@ -70,7 +70,7 @@ protected:
 	const char* m_title;
 	MapObject *m_selectedObject;
 
-	void updateTheUI(void);
+	void updateTheUI();
 	void enableButtons();
 	int getSel();
 	WBPopupSliderButton m_heightSlider;
@@ -89,63 +89,63 @@ protected:
 	afx_msg void OnDblclkProperties();
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
-	afx_msg void _TeamToDict(void);
-	afx_msg void _NameToDict(void);
-	afx_msg void _HealthToDict(void);
-	afx_msg void _EnabledToDict(void);
-	afx_msg void _ScriptToDict(void);
-	afx_msg void _IndestructibleToDict(void);
-	afx_msg void _UnsellableToDict(void);
+	afx_msg void _TeamToDict();
+	afx_msg void _NameToDict();
+	afx_msg void _HealthToDict();
+	afx_msg void _EnabledToDict();
+	afx_msg void _ScriptToDict();
+	afx_msg void _IndestructibleToDict();
+	afx_msg void _UnsellableToDict();
 	afx_msg void _TargetableToDict();
-	afx_msg void _PoweredToDict(void);
-	afx_msg void _AggressivenessToDict(void);
-	afx_msg void _VisibilityToDict(void);
-	afx_msg void _VeterancyToDict(void);
-	afx_msg void _ShroudClearingDistanceToDict(void);
-	afx_msg void _RecruitableAIToDict(void);
-	afx_msg void _SelectableToDict(void);
-	afx_msg void _WeatherToDict(void);
-	afx_msg void _TimeToDict(void);
-	afx_msg void _PrebuiltUpgradesToDict(void);
-	afx_msg void SetZOffset(void);
-	afx_msg void SetAngle(void);
+	afx_msg void _PoweredToDict();
+	afx_msg void _AggressivenessToDict();
+	afx_msg void _VisibilityToDict();
+	afx_msg void _VeterancyToDict();
+	afx_msg void _ShroudClearingDistanceToDict();
+	afx_msg void _RecruitableAIToDict();
+	afx_msg void _SelectableToDict();
+	afx_msg void _WeatherToDict();
+	afx_msg void _TimeToDict();
+	afx_msg void _PrebuiltUpgradesToDict();
+	afx_msg void SetZOffset();
+	afx_msg void SetAngle();
 	afx_msg void _HPsToDict();
-	afx_msg void _StoppingDistanceToDict(void);
+	afx_msg void _StoppingDistanceToDict();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-	void _DictToTeam(void);
-	void _DictToName(void);
-	void _DictToHealth(void);
-	void _DictToHPs(void);
-	void _DictToEnabled(void);
-	void _DictToScript(void);
-	void _DictToDestructible(void);
-	void _DictToUnsellable(void);
-	void _DictToTargetable(void);
+	void _DictToTeam();
+	void _DictToName();
+	void _DictToHealth();
+	void _DictToHPs();
+	void _DictToEnabled();
+	void _DictToScript();
+	void _DictToDestructible();
+	void _DictToUnsellable();
+	void _DictToTargetable();
 
-	void _DictToPowered(void);
-	void _DictToAggressiveness(void);
-	void _DictToVisibilityRange(void);
-	void _DictToVeterancy(void);
-	void _DictToShroudClearingDistance(void);
+	void _DictToPowered();
+	void _DictToAggressiveness();
+	void _DictToVisibilityRange();
+	void _DictToVeterancy();
+	void _DictToShroudClearingDistance();
 	void _DictToRecruitableAI();
-	void _DictToSelectable(void);
-	void _DictToWeather(void);
-	void _DictToTime(void);
+	void _DictToSelectable();
+	void _DictToWeather();
+	void _DictToTime();
 	void ShowZOffset(MapObject* pMapObj);
 	void ShowAngle(MapObject* pMapObj);
-	void _DictToStoppingDistance(void);
-	void _DictToPrebuiltUpgrades(void);
+	void _DictToStoppingDistance();
+	void _DictToPrebuiltUpgrades();
 
 public:
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
-	static MapObject *getSingleSelectedMapObject(void);
-	static void update(void);
+	static MapObject *getSingleSelectedMapObject();
+	static void update();
 
 };
 

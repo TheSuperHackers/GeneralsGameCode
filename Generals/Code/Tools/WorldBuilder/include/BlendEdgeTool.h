@@ -35,8 +35,8 @@ protected:
 	Coord3D m_downPt;
 
 public:
-	BlendEdgeTool(void);
-	virtual ~BlendEdgeTool(void) override;
+	BlendEdgeTool();
+	virtual ~BlendEdgeTool() override;
 
 public:
 	/// Perform tool on mouse down.

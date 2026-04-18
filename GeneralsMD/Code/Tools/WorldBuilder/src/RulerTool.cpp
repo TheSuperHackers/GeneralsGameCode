@@ -35,7 +35,7 @@
 RulerTool*	RulerTool::m_staticThis = nullptr;
 
 /// Constructor
-RulerTool::RulerTool(void) :
+RulerTool::RulerTool() :
 Tool(ID_RULER_TOOL, IDC_POINTER)
 {
 	m_downPt3d.set(0.0f, 0.0f, 0.0f);
@@ -45,7 +45,7 @@ Tool(ID_RULER_TOOL, IDC_POINTER)
 }
 
 /// Destructor
-RulerTool::~RulerTool(void)
+RulerTool::~RulerTool()
 {
 }
 
@@ -72,7 +72,7 @@ void RulerTool::deactivate()
 }
 
 /** Set the cursor. */
-void RulerTool::setCursor(void)
+void RulerTool::setCursor()
 {
 	Tool::setCursor();
 }
@@ -177,7 +177,7 @@ int	RulerTool::getType()
 	return (m_staticThis->m_rulerType);
 }
 
-Real RulerTool::getLength(void)
+Real RulerTool::getLength()
 {
 	if (m_staticThis) {
 		return m_staticThis->m_savedLength;

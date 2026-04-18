@@ -47,7 +47,7 @@ Int	PolygonTool::m_poly_dragPointNdx = -1;
 enum {SNAP_DISTANCE = 5};
 
 /// Constructor
-PolygonTool::PolygonTool(void) :
+PolygonTool::PolygonTool() :
 	Tool(ID_POLYGON_TOOL, IDC_POLYGON),
 	m_poly_plusCursor(nullptr),
 	m_poly_moveCursor(nullptr)
@@ -57,7 +57,7 @@ PolygonTool::PolygonTool(void) :
 
 
 /// Destructor
-PolygonTool::~PolygonTool(void)
+PolygonTool::~PolygonTool()
 {
 	if (m_poly_plusCursor) {
 		::DestroyCursor(m_poly_plusCursor);
@@ -353,7 +353,7 @@ void PolygonTool::startMouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, 
 }
 
 /// Delete the selected polygon or point.
-Bool PolygonTool::deleteSelectedPolygon(void)
+Bool PolygonTool::deleteSelectedPolygon()
 {
 	if (m_poly_curSelectedPolygon) {
 		Bool found = false;
@@ -391,7 +391,7 @@ Bool PolygonTool::deleteSelectedPolygon(void)
 }
 
 /** Set the cursor. */
-void PolygonTool::setCursor(void)
+void PolygonTool::setCursor()
 {
 	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon)) {
 		if (m_poly_plusCursor == nullptr) {

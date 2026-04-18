@@ -135,7 +135,7 @@ static GameWindowMessage rawMouseToWindowMessage( const GameMessage *msg )
 
 		// ------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_WHEEL:
-			if( msg->getArgument( 1 )->integer > 0 )
+			if( msg->getArgument( 1 )->real > 0 )
 				gwm = GWM_WHEEL_UP;
 			else
 				gwm = GWM_WHEEL_DOWN;
@@ -284,7 +284,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
 
 			// get wheel position
-			Int wheelPos = msg->getArgument( 1 )->integer;
+			Real wheelPos = msg->getArgument( 1 )->real;
 
 			// process wheel event
 			GameWindowMessage gwm = rawMouseToWindowMessage( msg );
@@ -326,9 +326,10 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 				returnCode = WIN_INPUT_USED;
 			}
 
+			// TheSuperHackers @bugfix If the input is disabled, then only allow the ESC button to get through.
+			// Otherwise it would be possible to call user camera actions during scripted camera scenes.
 			if(returnCode != WIN_INPUT_USED
-				&& (key == KEY_ESC)
-				&& (BitIsSet( state, KEY_STATE_UP ))
+				&& (key != KEY_ESC)
 				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
 			{
 				returnCode = WIN_INPUT_USED;

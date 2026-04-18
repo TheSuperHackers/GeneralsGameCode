@@ -41,13 +41,13 @@ protected:
 	static Int m_brushHeight;
 
 public:
-	BrushTool(void);
-	virtual ~BrushTool(void) override;
+	BrushTool();
+	virtual ~BrushTool() override;
 
 public:
-	static Int getWidth(void) {return m_brushWidth;};  ///<Returns width.
-	static Int getFeather(void) {return m_brushFeather;}; ///<Returns feather.
-	static Int getHeight(void) {return m_brushHeight;}; ///<Returns height.
+	static Int getWidth() {return m_brushWidth;};  ///<Returns width.
+	static Int getFeather() {return m_brushFeather;}; ///<Returns feather.
+	static Int getHeight() {return m_brushHeight;}; ///<Returns height.
 	static void setWidth(Int width);
 	static void setFeather(Int feather);
 	static void setHeight(Int height);
@@ -56,8 +56,8 @@ public:
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual WorldHeightMapEdit *getHeightMap(void) override {return m_htMapEditCopy;};
+	virtual WorldHeightMapEdit *getHeightMap() override {return m_htMapEditCopy;};
 	virtual void activate() override; ///< Become the current tool.
-	virtual Bool followsTerrain(void) override {return false;};
+	virtual Bool followsTerrain() override {return false;};
 
 };

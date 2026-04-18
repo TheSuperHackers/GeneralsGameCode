@@ -497,7 +497,7 @@ BOOL CWorldBuilderApp::OnCmdMsg(UINT nID, int nCode, void* pExtra,
 //=============================================================================
 /** Sets the active tool to the pointer, and clears the selection. */
 //=============================================================================
-void CWorldBuilderApp::selectPointerTool(void)
+void CWorldBuilderApp::selectPointerTool()
 {
 	setActiveTool(&m_pointerTool);
 	// Clear selection.

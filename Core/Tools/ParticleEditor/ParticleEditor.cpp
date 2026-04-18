@@ -77,7 +77,7 @@ CDebugWindowApp::CDebugWindowApp()
 
 }
 
-DebugWindowDialog* CDebugWindowApp::GetDialogWindow(void)
+DebugWindowDialog* CDebugWindowApp::GetDialogWindow()
 {
 	return m_DialogWindow;
 }
@@ -97,7 +97,7 @@ CDebugWindowApp::~CDebugWindowApp()
 
 CDebugWindowApp theApp;
 
-void __declspec(dllexport) CreateParticleSystemDialog(void)
+void __declspec(dllexport) CreateParticleSystemDialog()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -117,7 +117,7 @@ void __declspec(dllexport) CreateParticleSystemDialog(void)
 	} catch (...) { }
 }
 
-void __declspec(dllexport) DestroyParticleSystemDialog(void)
+void __declspec(dllexport) DestroyParticleSystemDialog()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -131,7 +131,7 @@ void __declspec(dllexport) DestroyParticleSystemDialog(void)
 	} catch (...) { }
 }
 
-void __declspec(dllexport) RemoveAllParticleSystems(void)
+void __declspec(dllexport) RemoveAllParticleSystems()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -155,7 +155,7 @@ void __declspec(dllexport) AppendParticleSystem(const char* particleSystemName)
 	} catch (...) { }
 }
 
-void __declspec(dllexport) RemoveAllThingTemplates( void )
+void __declspec(dllexport) RemoveAllThingTemplates()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -181,7 +181,7 @@ void __declspec(dllexport) AppendThingTemplate( const char* thingTemplateName )
 }
 
 
-Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem( void )
+Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -231,7 +231,7 @@ void __declspec(dllexport) UpdateCurrentNumParticles( int currentParticleCount )
 	} catch (...) { }
 }
 
-int __declspec(dllexport) GetNewParticleCap( void )
+int __declspec(dllexport) GetNewParticleCap()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -299,7 +299,7 @@ void __declspec(dllexport) UpdateSystemUseParameters( ParticleSystemTemplate *pa
 	} catch(...) { }
 }
 
-Bool __declspec(dllexport) ShouldWriteINI( void )
+Bool __declspec(dllexport) ShouldWriteINI()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -313,7 +313,7 @@ Bool __declspec(dllexport) ShouldWriteINI( void )
 	return false;
 }
 
-Bool __declspec(dllexport) HasRequestedReload( void )
+Bool __declspec(dllexport) HasRequestedReload()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -327,7 +327,7 @@ Bool __declspec(dllexport) HasRequestedReload( void )
 	return false;
 }
 
-Bool __declspec(dllexport) ShouldBusyWait( void )
+Bool __declspec(dllexport) ShouldBusyWait()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -341,7 +341,7 @@ Bool __declspec(dllexport) ShouldBusyWait( void )
 	return false;
 }
 
-Bool __declspec(dllexport) ShouldUpdateParticleCap( void )
+Bool __declspec(dllexport) ShouldUpdateParticleCap()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -355,7 +355,7 @@ Bool __declspec(dllexport) ShouldUpdateParticleCap( void )
 	return false;
 }
 
-Bool __declspec(dllexport) ShouldReloadTextures( void )
+Bool __declspec(dllexport) ShouldReloadTextures()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -369,7 +369,7 @@ Bool __declspec(dllexport) ShouldReloadTextures( void )
 	return false;
 }
 
-Bool __declspec(dllexport) HasRequestedKillAllSystems( void )
+Bool __declspec(dllexport) HasRequestedKillAllSystems()
 {
 	try {
 		AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
@@ -383,7 +383,7 @@ Bool __declspec(dllexport) HasRequestedKillAllSystems( void )
 	return false;
 }
 
-int __declspec(dllexport) NextParticleEditorBehavior( void )
+int __declspec(dllexport) NextParticleEditorBehavior()
 {
 	try {
 		if (HasUpdatedSelectedParticleSystem()) {

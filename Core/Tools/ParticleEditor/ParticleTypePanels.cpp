@@ -48,7 +48,7 @@ ParticlePanelParticle::ParticlePanelParticle(UINT nIDTemplate, CWnd* pParentWnd)
 
 }
 
-void ParticlePanelParticle::InitPanel( void )
+void ParticlePanelParticle::InitPanel()
 {
 	CFileFind finder;
 
@@ -121,7 +121,7 @@ ParticlePanelDrawable::ParticlePanelDrawable(UINT nIDTemplate, CWnd* pParentWnd)
 
 }
 
-void ParticlePanelDrawable::InitPanel( void )
+void ParticlePanelDrawable::InitPanel()
 {
 
 }
@@ -172,7 +172,7 @@ void ParticlePanelDrawable::OnParticleSystemEdit()
 	pParent->signalParticleSystemEdit();
 }
 
-void ParticlePanelDrawable::clearAllThingTemplates( void )
+void ParticlePanelDrawable::clearAllThingTemplates()
 {
 	CComboBox *pWnd = (CComboBox*) GetDlgItem(IDC_PSEd_ParticleTypeDrawable);
 	if (!pWnd) {
@@ -192,7 +192,7 @@ ParticlePanelStreak::ParticlePanelStreak(UINT nIDTemplate, CWnd* pParentWnd) : P
 
 }
 
-void ParticlePanelStreak::InitPanel( void )
+void ParticlePanelStreak::InitPanel()
 {
 	ParticlePanelParticle::InitPanel();
 }

@@ -186,7 +186,7 @@ BOOL MapObjectProps::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-/*static*/ void MapObjectProps::update(void)
+/*static*/ void MapObjectProps::update()
 {
 	if (TheMapObjectProps)
 	{
@@ -194,7 +194,7 @@ BOOL MapObjectProps::OnInitDialog()
 	}
 }
 
-void MapObjectProps::updateTheUI(void)
+void MapObjectProps::updateTheUI()
 {
 	if (this != TheMapObjectProps) {
 		return;
@@ -235,7 +235,7 @@ void MapObjectProps::updateTheUI(void)
 	}
 }
 
-/*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject(void)
+/*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject()
 {
 	MapObject *pMapObj;
 	MapObject *theMapObj = nullptr;
@@ -347,7 +347,7 @@ void MapObjectProps::OnDblclkProperties()
 	OnEditprop();
 }
 
-void MapObjectProps::_DictToTeam(void)
+void MapObjectProps::_DictToTeam()
 {
 	int i;
 
@@ -374,7 +374,7 @@ void MapObjectProps::_DictToTeam(void)
 	owner->SetCurSel(i);
 }
 
-void MapObjectProps::_DictToName(void)
+void MapObjectProps::_DictToName()
 {
 	AsciiString name;
 	Bool exists;
@@ -388,7 +388,7 @@ void MapObjectProps::_DictToName(void)
 	}
 }
 
-void MapObjectProps::_DictToHealth(void)
+void MapObjectProps::_DictToHealth()
 {
 	Int value = 100;
 	Bool exists;
@@ -429,7 +429,7 @@ void MapObjectProps::_DictToHealth(void)
 	}
 }
 
-void MapObjectProps::_DictToHPs(void)
+void MapObjectProps::_DictToHPs()
 {
 	Int value = -1;
 	Bool exists;
@@ -454,7 +454,7 @@ void MapObjectProps::_DictToHPs(void)
 	}
 }
 
-void MapObjectProps::_DictToEnabled(void)
+void MapObjectProps::_DictToEnabled()
 {
 	Bool enabled = true;
 	Bool exists;
@@ -468,7 +468,7 @@ void MapObjectProps::_DictToEnabled(void)
 	}
 }
 
-void MapObjectProps::_DictToScript(void)
+void MapObjectProps::_DictToScript()
 {
 	if (!m_dictToEdit) {
 		return;
@@ -488,7 +488,7 @@ void MapObjectProps::_DictToScript(void)
 	}
 }
 
-void MapObjectProps::_DictToDestructible(void)
+void MapObjectProps::_DictToDestructible()
 {
 	Bool destructible = true;
 	Bool exists;
@@ -502,7 +502,7 @@ void MapObjectProps::_DictToDestructible(void)
 	}
 }
 
-void MapObjectProps::_DictToUnsellable(void)
+void MapObjectProps::_DictToUnsellable()
 {
 	Bool unsellable = false;
 	Bool exists;
@@ -532,7 +532,7 @@ void MapObjectProps::_DictToTargetable()
 	}
 }
 
-void MapObjectProps::_DictToPowered(void)
+void MapObjectProps::_DictToPowered()
 {
 	Bool powered = true;
 	Bool exists;
@@ -547,7 +547,7 @@ void MapObjectProps::_DictToPowered(void)
 
 }
 
-void MapObjectProps::_DictToAggressiveness(void)
+void MapObjectProps::_DictToAggressiveness()
 {
 	Int value = 0;
 	Bool exists;
@@ -571,7 +571,7 @@ void MapObjectProps::_DictToAggressiveness(void)
 	}
 }
 
-void MapObjectProps::_DictToVisibilityRange(void)
+void MapObjectProps::_DictToVisibilityRange()
 {
 	Int distance = 0;
 	Bool exists;
@@ -591,7 +591,7 @@ void MapObjectProps::_DictToVisibilityRange(void)
 	}
 }
 
-void MapObjectProps::_DictToVeterancy(void)
+void MapObjectProps::_DictToVeterancy()
 {
 	Int value = 0;
 	Bool exists;
@@ -605,7 +605,7 @@ void MapObjectProps::_DictToVeterancy(void)
 	}
 }
 
-void MapObjectProps::_DictToWeather(void)
+void MapObjectProps::_DictToWeather()
 {
 	Int value = 0;
 	Bool exists;
@@ -619,7 +619,7 @@ void MapObjectProps::_DictToWeather(void)
 	pItem->SetCurSel(value);
 }
 
-void MapObjectProps::_DictToTime(void)
+void MapObjectProps::_DictToTime()
 {
 	Int value = 0;
 	Bool exists;
@@ -633,7 +633,7 @@ void MapObjectProps::_DictToTime(void)
 	pItem->SetCurSel(value);
 }
 
-void MapObjectProps::_DictToShroudClearingDistance(void)
+void MapObjectProps::_DictToShroudClearingDistance()
 {
 	Int distance = 0;
 	Bool exists;
@@ -653,7 +653,7 @@ void MapObjectProps::_DictToShroudClearingDistance(void)
 	}
 }
 
-void MapObjectProps::_DictToRecruitableAI(void)
+void MapObjectProps::_DictToRecruitableAI()
 {
  	Bool recruitableAI = true;
  	Bool exists;
@@ -667,7 +667,7 @@ void MapObjectProps::_DictToRecruitableAI(void)
 	}
 }
 
-void MapObjectProps::_DictToSelectable(void)
+void MapObjectProps::_DictToSelectable()
 {
 	Bool selectable = true;
 	Bool exists;
@@ -681,7 +681,7 @@ void MapObjectProps::_DictToSelectable(void)
 	}
 }
 
-void MapObjectProps::_DictToStoppingDistance(void)
+void MapObjectProps::_DictToStoppingDistance()
 {
 	Real stoppingDistance = 1.0f;
 	Bool exists = false;
@@ -697,7 +697,7 @@ void MapObjectProps::_DictToStoppingDistance(void)
 	}
 }
 
-void MapObjectProps::_DictToPrebuiltUpgrades(void)
+void MapObjectProps::_DictToPrebuiltUpgrades()
 {
 	getAllSelectedDicts();
 
@@ -797,7 +797,7 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
 	} while (!upgradeString.isEmpty());
 }
 
-void MapObjectProps::_TeamToDict(void)
+void MapObjectProps::_TeamToDict()
 {
 	getAllSelectedDicts();
 
@@ -816,7 +816,7 @@ void MapObjectProps::_TeamToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_NameToDict(void)
+void MapObjectProps::_NameToDict()
 {
 	getAllSelectedDicts();
 
@@ -833,7 +833,7 @@ void MapObjectProps::_NameToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_HealthToDict(void)
+void MapObjectProps::_HealthToDict()
 {
 	getAllSelectedDicts();
 
@@ -871,7 +871,7 @@ void MapObjectProps::_HealthToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_PrebuiltUpgradesToDict(void)
+void MapObjectProps::_PrebuiltUpgradesToDict()
 {
 	getAllSelectedDicts();
 
@@ -934,7 +934,7 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
 
-void MapObjectProps::_EnabledToDict(void)
+void MapObjectProps::_EnabledToDict()
 {
 	getAllSelectedDicts();
 
@@ -950,7 +950,7 @@ void MapObjectProps::_EnabledToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_ScriptToDict(void)
+void MapObjectProps::_ScriptToDict()
 {
 	getAllSelectedDicts();
 
@@ -967,7 +967,7 @@ void MapObjectProps::_ScriptToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_IndestructibleToDict(void)
+void MapObjectProps::_IndestructibleToDict()
 {
 	getAllSelectedDicts();
 
@@ -983,7 +983,7 @@ void MapObjectProps::_IndestructibleToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_UnsellableToDict(void)
+void MapObjectProps::_UnsellableToDict()
 {
 	getAllSelectedDicts();
 
@@ -1017,7 +1017,7 @@ void MapObjectProps::_TargetableToDict()
 }
 
 
-void MapObjectProps::_PoweredToDict(void)
+void MapObjectProps::_PoweredToDict()
 {
 	getAllSelectedDicts();
 
@@ -1034,7 +1034,7 @@ void MapObjectProps::_PoweredToDict(void)
 
 }
 
-void MapObjectProps::_AggressivenessToDict(void)
+void MapObjectProps::_AggressivenessToDict()
 {
 	getAllSelectedDicts();
 
@@ -1064,7 +1064,7 @@ void MapObjectProps::_AggressivenessToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_VisibilityToDict(void)
+void MapObjectProps::_VisibilityToDict()
 {
 	getAllSelectedDicts();
 
@@ -1088,7 +1088,7 @@ void MapObjectProps::_VisibilityToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_VeterancyToDict(void)
+void MapObjectProps::_VeterancyToDict()
 {
 	getAllSelectedDicts();
 
@@ -1110,7 +1110,7 @@ void MapObjectProps::_VeterancyToDict(void)
 
 }
 
-void MapObjectProps::_WeatherToDict(void)
+void MapObjectProps::_WeatherToDict()
 {
 	getAllSelectedDicts();
 
@@ -1128,7 +1128,7 @@ void MapObjectProps::_WeatherToDict(void)
 
 }
 
-void MapObjectProps::_TimeToDict(void)
+void MapObjectProps::_TimeToDict()
 {
 	getAllSelectedDicts();
 
@@ -1146,7 +1146,7 @@ void MapObjectProps::_TimeToDict(void)
 
 }
 
-void MapObjectProps::_ShroudClearingDistanceToDict(void)
+void MapObjectProps::_ShroudClearingDistanceToDict()
 {
 	getAllSelectedDicts();
 
@@ -1170,7 +1170,7 @@ void MapObjectProps::_ShroudClearingDistanceToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_RecruitableAIToDict(void)
+void MapObjectProps::_RecruitableAIToDict()
 {
 	getAllSelectedDicts();
 
@@ -1186,7 +1186,7 @@ void MapObjectProps::_RecruitableAIToDict(void)
 	// Update is called by Do
 }
 
-void MapObjectProps::_SelectableToDict(void)
+void MapObjectProps::_SelectableToDict()
 {
 	getAllSelectedDicts();
 
@@ -1224,7 +1224,7 @@ void MapObjectProps::_HPsToDict()
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
 
-void MapObjectProps::_StoppingDistanceToDict(void)
+void MapObjectProps::_StoppingDistanceToDict()
 {
 	getAllSelectedDicts();
 
@@ -1269,7 +1269,7 @@ void MapObjectProps::ShowZOffset(MapObject *pMapObj)
 	edit->SetWindowText(buff);
 }
 
-void MapObjectProps::SetZOffset(void)
+void MapObjectProps::SetZOffset()
 {
 	Real value = 0.0f;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
@@ -1296,7 +1296,7 @@ void MapObjectProps::ShowAngle(MapObject *pMapObj)
 
 }
 
-void MapObjectProps::SetAngle(void)
+void MapObjectProps::SetAngle()
 {
 	Real angle = 0.0f;
 	CWnd* edit = GetDlgItem(IDC_MAPOBJECT_Angle);
@@ -1313,7 +1313,7 @@ void MapObjectProps::SetAngle(void)
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
 
-void MapObjectProps::getAllSelectedDicts(void)
+void MapObjectProps::getAllSelectedDicts()
 {
 	m_allSelectedDicts.clear();
 

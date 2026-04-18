@@ -259,8 +259,6 @@ StringClass::StringClass (bool hint_temporary)
 {
 	Get_String (MAX_TEMP_LEN, hint_temporary);
 	m_Buffer[0]	= m_NullChar;
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -272,8 +270,6 @@ StringClass::StringClass (int initial_len, bool hint_temporary)
 {
 	Get_String (initial_len, hint_temporary);
 	m_Buffer[0]	= m_NullChar;
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -285,7 +281,6 @@ StringClass::StringClass (TCHAR ch, bool hint_temporary)
 {
 	Get_String (2, hint_temporary);
 	(*this) = ch;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -300,7 +295,6 @@ StringClass::StringClass (const StringClass &string, bool hint_temporary)
 	}
 
 	(*this) = string;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -316,7 +310,6 @@ StringClass::StringClass (const TCHAR *string, bool hint_temporary)
 	}
 
 	(*this) = string;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -332,7 +325,6 @@ StringClass::StringClass (const WCHAR *string, bool hint_temporary)
 	}
 
 	(*this) = string;
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -342,7 +334,6 @@ inline
 StringClass::~StringClass ()
 {
 	Free_String ();
-	return ;
 }
 
 
@@ -477,8 +468,6 @@ StringClass::Erase (int start_index, int char_count)
 
 		Store_Length( len - char_count );
 	}
-
-	return ;
 }
 
 
@@ -700,8 +689,6 @@ StringClass::Set_Buffer_And_Allocated_Length (TCHAR *buffer, int length)
 	} else {
 		WWASSERT (length == 0);
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -750,8 +737,6 @@ StringClass::Store_Allocated_Length (int allocated_length)
 	} else {
 		WWASSERT (allocated_length == 0);
 	}
-
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -769,6 +754,4 @@ StringClass::Store_Length (int length)
 	} else {
 		WWASSERT (length == 0);
 	}
-
-	return ;
 }

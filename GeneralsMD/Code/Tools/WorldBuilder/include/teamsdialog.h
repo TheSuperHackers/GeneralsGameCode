@@ -82,12 +82,12 @@ protected:
 	};
 
 	void updateUI(Int whatToRebuild);
-	void validateTeamOwners( void );
+	void validateTeamOwners();
 	Bool isValidTeamOwner( AsciiString ownerName );
 	void doCorrectTeamOwnerDialog( TeamsInfo *ti );
 
 private:
-	void UpdateTeamsList(void);
+	void UpdateTeamsList();
 
 };
 

@@ -194,7 +194,6 @@ void PrimitiveAnimationChannelClass<T>::Set_Key (int index, const T &value, floa
 {
 	m_Data[index].Set_Value (value);
 	m_Data[index].Set_Time (time);
-	return ;
 }
 
 /////////////////////////////////////////////////////////
@@ -204,7 +203,6 @@ template<class T>
 void PrimitiveAnimationChannelClass<T>::Set_Key_Value (int index, const T &value)
 {
 	m_Data[index].Set_Value (value);
-	return ;
 }
 
 /////////////////////////////////////////////////////////
@@ -214,7 +212,6 @@ template<class T>
 void PrimitiveAnimationChannelClass<T>::Add_Key (const T &value, float time)
 {
 	m_Data.Add (KeyClass (value, time));
-	return ;
 }
 
 /////////////////////////////////////////////////////////
@@ -224,7 +221,6 @@ template<class T>
 void PrimitiveAnimationChannelClass<T>::Insert_Key (int index, const T &value, float time)
 {
 	m_Data.Insert (index, KeyClass (value, time));
-	return ;
 }
 
 /////////////////////////////////////////////////////////
@@ -234,7 +230,6 @@ template<class T>
 void PrimitiveAnimationChannelClass<T>::Delete_Key (int index)
 {
 	m_Data.Delete (index);
-	return ;
 }
 
 /////////////////////////////////////////////////////////
@@ -245,7 +240,6 @@ void PrimitiveAnimationChannelClass<T>::Reset ()
 {
 	m_Data.Delete_All ();
 	m_LastIndex = 0;
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -284,8 +278,6 @@ PrimitiveAnimationChannelClass<T>::Save (ChunkSaveClass &csave)
 		}
 
 	csave.End_Chunk ();
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -306,8 +298,6 @@ PrimitiveAnimationChannelClass<T>::Load (ChunkLoadClass &cload)
 
 		cload.Close_Chunk ();
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -333,8 +323,6 @@ PrimitiveAnimationChannelClass<T>::Load_Variables (ChunkLoadClass &cload)
 
 		cload.Close_Micro_Chunk ();
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////

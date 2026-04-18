@@ -27,7 +27,7 @@ CSwitchesDialog::CSwitchesDialog(UINT nIDTemplate, CWnd* pParentWnd) : CDialog(n
 
 }
 
-void CSwitchesDialog::InitPanel( void )
+void CSwitchesDialog::InitPanel()
 {
 
 }

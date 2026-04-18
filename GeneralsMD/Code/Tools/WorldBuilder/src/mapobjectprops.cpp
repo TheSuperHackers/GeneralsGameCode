@@ -190,7 +190,7 @@ int MapObjectProps::getSel()
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToTeam(void)
+void MapObjectProps::_DictToTeam()
 {
   int i;
 
@@ -219,7 +219,7 @@ void MapObjectProps::_DictToTeam(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToName(void)
+void MapObjectProps::_DictToName()
 {
   AsciiString name;
   Bool exists;
@@ -236,7 +236,7 @@ void MapObjectProps::_DictToName(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToScript(void)
+void MapObjectProps::_DictToScript()
 {
   if (!m_dictToEdit)
   {
@@ -258,7 +258,7 @@ void MapObjectProps::_DictToScript(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_TeamToDict(void)
+void MapObjectProps::_TeamToDict()
 {
   getAllSelectedDicts();
 
@@ -281,7 +281,7 @@ void MapObjectProps::_TeamToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_NameToDict(void)
+void MapObjectProps::_NameToDict()
 {
   getAllSelectedDicts();
 
@@ -304,7 +304,7 @@ void MapObjectProps::_NameToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_ScriptToDict(void)
+void MapObjectProps::_ScriptToDict()
 {
   getAllSelectedDicts();
 
@@ -326,7 +326,7 @@ void MapObjectProps::_ScriptToDict(void)
 
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToScale(void)
+void MapObjectProps::_DictToScale()
 {
 // Currently not in the Mission Disk.
 #if 0
@@ -362,7 +362,7 @@ void MapObjectProps::_DictToScale(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToWeather(void)
+void MapObjectProps::_DictToWeather()
 {
   Int value = 0;
   Bool exists;
@@ -377,7 +377,7 @@ void MapObjectProps::_DictToWeather(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToTime(void)
+void MapObjectProps::_DictToTime()
 {
   Int value = 0;
   Bool exists;
@@ -392,7 +392,7 @@ void MapObjectProps::_DictToTime(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_WeatherToDict(void)
+void MapObjectProps::_WeatherToDict()
 {
   getAllSelectedDicts();
 
@@ -413,7 +413,7 @@ void MapObjectProps::_WeatherToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_TimeToDict(void)
+void MapObjectProps::_TimeToDict()
 {
   getAllSelectedDicts();
 
@@ -434,7 +434,7 @@ void MapObjectProps::_TimeToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_ScaleToDict(void)
+void MapObjectProps::_ScaleToDict()
 {
 // Currently not in mission disk.
 #if 0
@@ -480,7 +480,7 @@ void MapObjectProps::ShowZOffset(MapObject *pMapObj)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::SetZOffset(void)
+void MapObjectProps::SetZOffset()
 {
   Real value = 0.0f;
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_ZOffset);
@@ -523,7 +523,7 @@ void MapObjectProps::ShowPosition(MapObject *pMapObj)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::SetAngle(void)
+void MapObjectProps::SetAngle()
 {
   Real angle = m_angle;
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_Angle);
@@ -548,7 +548,7 @@ void MapObjectProps::SetAngle(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::SetPosition(void)
+void MapObjectProps::SetPosition()
 {
   CWnd* edit = GetDlgItem(IDC_MAPOBJECT_XYPosition);
   CString cstr;
@@ -683,7 +683,7 @@ void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_PrebuiltUpgradesToDict(void)
+void MapObjectProps::_PrebuiltUpgradesToDict()
 {
   getAllSelectedDicts();
 
@@ -750,7 +750,7 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToPrebuiltUpgrades(void)
+void MapObjectProps::_DictToPrebuiltUpgrades()
 {
   getAllSelectedDicts();
 
@@ -851,7 +851,7 @@ void MapObjectProps::_DictToPrebuiltUpgrades(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToHealth(void)
+void MapObjectProps::_DictToHealth()
 {
 	Int value = 100;
 	Bool exists;
@@ -894,7 +894,7 @@ void MapObjectProps::_DictToHealth(void)
 
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToHPs(void)
+void MapObjectProps::_DictToHPs()
 {
 	Int value = -1;
 	Bool exists;
@@ -920,7 +920,7 @@ void MapObjectProps::_DictToHPs(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToEnabled(void)
+void MapObjectProps::_DictToEnabled()
 {
 	Bool enabled = true;
 	Bool exists;
@@ -936,7 +936,7 @@ void MapObjectProps::_DictToEnabled(void)
 
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToDestructible(void)
+void MapObjectProps::_DictToDestructible()
 {
 	Bool destructible = true;
 	Bool exists;
@@ -951,7 +951,7 @@ void MapObjectProps::_DictToDestructible(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToUnsellable(void)
+void MapObjectProps::_DictToUnsellable()
 {
 	Bool unsellable = false;
 	Bool exists;
@@ -983,7 +983,7 @@ void MapObjectProps::_DictToTargetable()
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToPowered(void)
+void MapObjectProps::_DictToPowered()
 {
 	Bool powered = true;
 	Bool exists;
@@ -999,7 +999,7 @@ void MapObjectProps::_DictToPowered(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToAggressiveness(void)
+void MapObjectProps::_DictToAggressiveness()
 {
 	Int value = 0;
 	Bool exists;
@@ -1024,7 +1024,7 @@ void MapObjectProps::_DictToAggressiveness(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToVisibilityRange(void)
+void MapObjectProps::_DictToVisibilityRange()
 {
 	Int distance = 0;
 	Bool exists;
@@ -1045,7 +1045,7 @@ void MapObjectProps::_DictToVisibilityRange(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToVeterancy(void)
+void MapObjectProps::_DictToVeterancy()
 {
 	Int value = 0;
 	Bool exists;
@@ -1060,7 +1060,7 @@ void MapObjectProps::_DictToVeterancy(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToShroudClearingDistance(void)
+void MapObjectProps::_DictToShroudClearingDistance()
 {
 	Int distance = 0;
 	Bool exists;
@@ -1081,7 +1081,7 @@ void MapObjectProps::_DictToShroudClearingDistance(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToRecruitableAI(void)
+void MapObjectProps::_DictToRecruitableAI()
 {
  	Bool recruitableAI = true;
  	Bool exists;
@@ -1096,7 +1096,7 @@ void MapObjectProps::_DictToRecruitableAI(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToSelectable(void)
+void MapObjectProps::_DictToSelectable()
 {
 	Int selectable = true;
 	Bool exists=false;
@@ -1114,7 +1114,7 @@ void MapObjectProps::_DictToSelectable(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToStoppingDistance(void)
+void MapObjectProps::_DictToStoppingDistance()
 {
 	Real stoppingDistance = 1.0f;
 	Bool exists = false;
@@ -1132,7 +1132,7 @@ void MapObjectProps::_DictToStoppingDistance(void)
 
 
 /// Move data from dialog controls to object
-void MapObjectProps::_HealthToDict(void)
+void MapObjectProps::_HealthToDict()
 {
 	getAllSelectedDicts();
 
@@ -1175,7 +1175,7 @@ void MapObjectProps::_HealthToDict(void)
 
 
 /// Move data from dialog controls to object
-void MapObjectProps::_EnabledToDict(void)
+void MapObjectProps::_EnabledToDict()
 {
 	getAllSelectedDicts();
 
@@ -1195,7 +1195,7 @@ void MapObjectProps::_EnabledToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_IndestructibleToDict(void)
+void MapObjectProps::_IndestructibleToDict()
 {
 	getAllSelectedDicts();
 
@@ -1215,7 +1215,7 @@ void MapObjectProps::_IndestructibleToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_UnsellableToDict(void)
+void MapObjectProps::_UnsellableToDict()
 {
 	getAllSelectedDicts();
 
@@ -1256,7 +1256,7 @@ void MapObjectProps::_TargetableToDict()
 
 
 /// Move data from dialog controls to object
-void MapObjectProps::_PoweredToDict(void)
+void MapObjectProps::_PoweredToDict()
 {
 	getAllSelectedDicts();
 
@@ -1276,7 +1276,7 @@ void MapObjectProps::_PoweredToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_AggressivenessToDict(void)
+void MapObjectProps::_AggressivenessToDict()
 {
 	getAllSelectedDicts();
 
@@ -1310,7 +1310,7 @@ void MapObjectProps::_AggressivenessToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_VisibilityToDict(void)
+void MapObjectProps::_VisibilityToDict()
 {
 	getAllSelectedDicts();
 
@@ -1338,7 +1338,7 @@ void MapObjectProps::_VisibilityToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_VeterancyToDict(void)
+void MapObjectProps::_VeterancyToDict()
 {
 	getAllSelectedDicts();
 
@@ -1363,7 +1363,7 @@ void MapObjectProps::_VeterancyToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_ShroudClearingDistanceToDict(void)
+void MapObjectProps::_ShroudClearingDistanceToDict()
 {
 	getAllSelectedDicts();
 
@@ -1391,7 +1391,7 @@ void MapObjectProps::_ShroudClearingDistanceToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_RecruitableAIToDict(void)
+void MapObjectProps::_RecruitableAIToDict()
 {
 	getAllSelectedDicts();
 
@@ -1411,7 +1411,7 @@ void MapObjectProps::_RecruitableAIToDict(void)
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_SelectableToDict(void)
+void MapObjectProps::_SelectableToDict()
 {
 	getAllSelectedDicts();
 
@@ -1462,7 +1462,7 @@ void MapObjectProps::_HPsToDict()
 }
 
 /// Move data from dialog controls to object
-void MapObjectProps::_StoppingDistanceToDict(void)
+void MapObjectProps::_StoppingDistanceToDict()
 {
 	getAllSelectedDicts();
 
@@ -1613,7 +1613,7 @@ BOOL MapObjectProps::OnInitDialog()
 }
 
 //---------------------------------------------------------------------------------------------------
-/*static*/ void MapObjectProps::update(void)
+/*static*/ void MapObjectProps::update()
 {
 	if (TheMapObjectProps)
 	{
@@ -1621,7 +1621,7 @@ BOOL MapObjectProps::OnInitDialog()
 	}
 }
 
-void MapObjectProps::updateTheUI(void)
+void MapObjectProps::updateTheUI()
 {
 	if (this != TheMapObjectProps) {
 		return;
@@ -1688,7 +1688,7 @@ void MapObjectProps::updateTheUI(MapObject *pMapObj)
 
 //---------------------------------------------------------------------------------------------------
 
-void MapObjectProps::InitSound(void)
+void MapObjectProps::InitSound()
 {
   CComboBox * priorityComboBox = (CComboBox *)GetDlgItem(IDC_PRIORITY_COMBO);
   DEBUG_ASSERTCRASH( priorityComboBox != nullptr, ("Cannot find sound priority combobox" ) );
@@ -1780,7 +1780,7 @@ void MapObjectProps::clearCustomizeFlag( CWorldBuilderDoc* pDoc, MultipleUndoabl
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::attachedSoundToDict(void)
+void MapObjectProps::attachedSoundToDict()
 {
   CComboBox * soundComboBox = (CComboBox *)GetDlgItem(IDC_SOUND_COMBO);
   if ( soundComboBox == nullptr )
@@ -1827,7 +1827,7 @@ void MapObjectProps::attachedSoundToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::customizeToDict(void)
+void MapObjectProps::customizeToDict()
 {
   CButton * customizeCheckbox = (CButton *)GetDlgItem(IDC_CUSTOMIZE_CHECKBOX);
   if ( customizeCheckbox == nullptr )
@@ -1861,7 +1861,7 @@ void MapObjectProps::customizeToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::enabledToDict(void)
+void MapObjectProps::enabledToDict()
 {
   CButton * enabledCheckbox = (CButton *)GetDlgItem(IDC_ENABLED_CHECKBOX);
   if ( enabledCheckbox == nullptr )
@@ -1884,7 +1884,7 @@ void MapObjectProps::enabledToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::loopingToDict(void)
+void MapObjectProps::loopingToDict()
 {
   CButton * loopingCheckbox = (CButton *)GetDlgItem(IDC_LOOPING_CHECKBOX);
   if ( loopingCheckbox == nullptr )
@@ -1907,7 +1907,7 @@ void MapObjectProps::loopingToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::loopCountToDict(void)
+void MapObjectProps::loopCountToDict()
 {
   CEdit * loopCountEdit = (CEdit *)GetDlgItem(IDC_LOOPCOUNT_EDIT);
   if ( loopCountEdit == nullptr )
@@ -1933,7 +1933,7 @@ void MapObjectProps::loopCountToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::minVolumeToDict(void)
+void MapObjectProps::minVolumeToDict()
 {
   CEdit * minVolumeEdit = (CEdit *)GetDlgItem(IDC_MIN_VOLUME_EDIT);
   if ( minVolumeEdit == nullptr )
@@ -1960,7 +1960,7 @@ void MapObjectProps::minVolumeToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::volumeToDict(void)
+void MapObjectProps::volumeToDict()
 {
   CEdit * volumeEdit = (CEdit *)GetDlgItem(IDC_VOLUME_EDIT);
   if ( volumeEdit == nullptr )
@@ -1988,7 +1988,7 @@ void MapObjectProps::volumeToDict(void)
 
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::minRangeToDict(void)
+void MapObjectProps::minRangeToDict()
 {
   CEdit * minRangeEdit = (CEdit *)GetDlgItem(IDC_MIN_RANGE_EDIT);
   if ( minRangeEdit == nullptr )
@@ -2014,7 +2014,7 @@ void MapObjectProps::minRangeToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::maxRangeToDict(void)
+void MapObjectProps::maxRangeToDict()
 {
   CEdit * maxRangeEdit = (CEdit *)GetDlgItem(IDC_MAX_RANGE_EDIT);
   if ( maxRangeEdit == nullptr )
@@ -2040,7 +2040,7 @@ void MapObjectProps::maxRangeToDict(void)
 }
 
 /// Move data from dialog controls to object(s)
-void MapObjectProps::priorityToDict(void)
+void MapObjectProps::priorityToDict()
 {
   CComboBox * priorityComboBox = (CComboBox *)GetDlgItem(IDC_PRIORITY_COMBO);
   if ( priorityComboBox == nullptr )
@@ -2798,7 +2798,7 @@ void MapObjectProps::enableButtons()
 }
 
 
-/*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject(void)
+/*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject()
 {
 	MapObject *pMapObj;
 	MapObject *theMapObj = nullptr;
@@ -2835,7 +2835,7 @@ void MapObjectProps::OnCancel()
 
 
 
-void MapObjectProps::getAllSelectedDicts(void)
+void MapObjectProps::getAllSelectedDicts()
 {
 	m_allSelectedDicts.clear();
 

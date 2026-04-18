@@ -3943,7 +3943,6 @@ void PathfindLayer::classifyLayerMapCell( Int i, Int j , PathfindCell *cell, Bri
 			}
 		}
 	}
-	return;
 }
 
 

@@ -75,15 +75,15 @@ public:
 	//
 	//	Inline accessors
 	//
-	EmitterInstanceListClass *	Get_Emitter (void) const { return m_pEmitterList; }
+	EmitterInstanceListClass *	Get_Emitter () const { return m_pEmitterList; }
 	void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-	bool								Is_Data_Valid (void) const { return m_bValid; }
+	bool								Is_Data_Valid () const { return m_bValid; }
 
 	void								Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> &blurtimes)	{ blurtimes = m_BlurTimes; }
 	void								On_Lifetime_Changed (float lifetime);
 
-	void								Initialize (void);
-	void								Update_Blur_Times (void);
+	void								Initialize ();
+	void								Update_Blur_Times ();
 
 private:
 

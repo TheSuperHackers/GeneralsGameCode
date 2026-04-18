@@ -74,7 +74,7 @@ ImagePacker *TheImagePacker = nullptr;
 // ImagePacker::createNewTexturePage ==========================================
 /** Create a new texture page and add to the list */
 //=============================================================================
-TexturePage *ImagePacker::createNewTexturePage( void )
+TexturePage *ImagePacker::createNewTexturePage()
 {
 	TexturePage *page;
 
@@ -119,7 +119,7 @@ TexturePage *ImagePacker::createNewTexturePage( void )
 	* Returns FALSE to cancel build
 	*/
 //=============================================================================
-Bool ImagePacker::validateImages( void )
+Bool ImagePacker::validateImages()
 {
 	UnsignedInt i;
 	ImageInfo *image;
@@ -192,7 +192,7 @@ Bool ImagePacker::validateImages( void )
 /** Pack all the images in the image list, starting from the top and
 	* working from there */
 //=============================================================================
-Bool ImagePacker::packImages( void )
+Bool ImagePacker::packImages()
 {
 	UnsignedInt i;
 	TexturePage *page = nullptr;
@@ -270,7 +270,7 @@ Bool ImagePacker::packImages( void )
 	* of the packed images along with a definition file for which images
 	* are where on the page */
 //=============================================================================
-void ImagePacker::writeFinalTextures( void )
+void ImagePacker::writeFinalTextures()
 {
 	TexturePage *page;
 	Bool errors = FALSE;
@@ -348,7 +348,7 @@ static Int sortImageCompare( const void *aa, const void *bb )
 // ImagePacker::sortImageList =================================================
 /** Sort the image list */
 //=============================================================================
-void ImagePacker::sortImageList( void )
+void ImagePacker::sortImageList()
 {
 
 	// sort all images so that largest area ones are first
@@ -450,7 +450,7 @@ void ImagePacker::addImagesInDirectory( char *dir )
 	* to cancel the process
 	*/
 //=============================================================================
-Bool ImagePacker::checkOutputDirectory( void )
+Bool ImagePacker::checkOutputDirectory()
 {
 	WIN32_FIND_DATA item;  // search item
 	HANDLE hFile;  // handle for search resources
@@ -559,7 +559,7 @@ Bool ImagePacker::checkOutputDirectory( void )
 // ImagePacker::resetPageList =================================================
 /** Clear the page list */
 //=============================================================================
-void ImagePacker::resetPageList( void )
+void ImagePacker::resetPageList()
 {
 	TexturePage *next;
 
@@ -581,7 +581,7 @@ void ImagePacker::resetPageList( void )
 // ImagePacker::resetImageDirectoryList =======================================
 /** Clear the image directory list */
 //=============================================================================
-void ImagePacker::resetImageDirectoryList( void )
+void ImagePacker::resetImageDirectoryList()
 {
 	ImageDirectory *next;
 
@@ -602,7 +602,7 @@ void ImagePacker::resetImageDirectoryList( void )
 // ImagePacker::resetImageList ================================================
 /** Clear the image list */
 //=============================================================================
-void ImagePacker::resetImageList( void )
+void ImagePacker::resetImageList()
 {
 
 	delete [] m_imageList;
@@ -859,7 +859,7 @@ void ImagePacker::addImage( char *path )
 // ImagePacker::generateINIFile ===============================================
 /** Generate the INI image file definition for the final packed images */
 //=============================================================================
-Bool ImagePacker::generateINIFile( void )
+Bool ImagePacker::generateINIFile()
 {
 	FILE *fp;
 	char filename[ _MAX_PATH ];
@@ -1092,7 +1092,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 // ImagePacker::ImagePacker ===================================================
 /** */
 //=============================================================================
-ImagePacker::ImagePacker( void )
+ImagePacker::ImagePacker()
 {
 
 	m_hWnd = nullptr;
@@ -1127,7 +1127,7 @@ ImagePacker::ImagePacker( void )
 // ImagePacker::~ImagePacker ==================================================
 /** */
 //=============================================================================
-ImagePacker::~ImagePacker( void )
+ImagePacker::~ImagePacker()
 {
 
 	// delete our lists
@@ -1143,7 +1143,7 @@ ImagePacker::~ImagePacker( void )
 // ImagePacker::init ==========================================================
 /** Initialize the image packer system */
 //=============================================================================
-Bool ImagePacker::init( void )
+Bool ImagePacker::init()
 {
 
 	// allocate a targa to read the headers for the images
@@ -1175,7 +1175,7 @@ void ImagePacker::statusMessage( const char *message )
 // ImagePacker::process =======================================================
 /** Run the packing process */
 //=============================================================================
-Bool ImagePacker::process( void )
+Bool ImagePacker::process()
 {
 
 	// build the output directory based on the base name of the output images

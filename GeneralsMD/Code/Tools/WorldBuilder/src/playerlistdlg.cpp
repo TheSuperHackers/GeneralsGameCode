@@ -435,7 +435,7 @@ void PlayerListDlg::OnSelchangePlayers()
 	updateTheUI();
 }
 
-void PlayerListDlg::updateTheUI(void)
+void PlayerListDlg::updateTheUI()
 {
 	char buffer[1024];
 

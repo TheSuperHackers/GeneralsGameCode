@@ -63,7 +63,7 @@ enum
 class MapPreview
 {
 public:
-	MapPreview(void );
+	MapPreview();
 	void save( CString mapName );
 private:
 	void interpolateColorForHeight( RGBColor *color, Real height, Real hiZ, Real midZ, Real loZ );

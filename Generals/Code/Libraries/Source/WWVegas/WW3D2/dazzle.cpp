@@ -537,8 +537,6 @@ void DazzleTypeClass::Calculate_Intensities(
 			halo_intensity*=1.0f-distance;	// Scale down intensity
 		}
 	}
-
-	return;
 }
 
 // ----------------------------------------------------------------------------

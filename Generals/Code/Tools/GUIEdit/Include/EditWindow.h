@@ -72,27 +72,27 @@ class EditWindow
 
 public:
 
-	EditWindow( void );
-	~EditWindow( void );
+	EditWindow();
+	~EditWindow();
 
 	/// initialize the edit window singleton
 	void init( UnsignedInt clientWidth, UnsignedInt clientHeight );
-	void shutdown( void );  ///< free all data
-	void draw( void );  ///< draw the edit window
+	void shutdown();  ///< free all data
+	void draw();  ///< draw the edit window
 
-	void updatePulse( void );  ///< pulse message from timer
+	void updatePulse();  ///< pulse message from timer
 
-	HWND getWindowHandle( void );  ///< get window handle
+	HWND getWindowHandle();  ///< get window handle
 	void setSize( ICoord2D *size );  ///< set width and height for edit window
 	void getSize( ICoord2D *size );  ///< get width and height for edit window
 
-	RGBColorReal getBackgroundColor( void );  ///< return the background color
+	RGBColorReal getBackgroundColor();  ///< return the background color
 	void setBackgroundColor( RGBColorReal color );  ///< set background color
 
 	void setDragMoveOrigin( ICoord2D *pos );  ///< for drag moving
 	void setDragMoveDest( ICoord2D *pos );  ///< for drag moving
-	ICoord2D getDragMoveOrigin( void );  ///< for keybord moving
-	ICoord2D getDragMoveDest( void );  ///< for keyboard moving
+	ICoord2D getDragMoveOrigin();  ///< for keybord moving
+	ICoord2D getDragMoveDest();  ///< for keyboard moving
 
 	void notifyWindowDeleted( GameWindow *window );  ///< window has been deleted
 
@@ -122,21 +122,21 @@ public:
 
 	/// image clipping support
 	void setClipRegion( IRegion2D *region ) {m_clipRegion = *region; m_isClippedEnabled = TRUE;}
-	Bool isClippingEnabled( void )	{ return m_isClippedEnabled; }
+	Bool isClippingEnabled()	{ return m_isClippedEnabled; }
 	void enableClipping( Bool onoff )	{ m_isClippedEnabled = onoff; }
 
 protected:
 
-	void registerEditWindowClass( void );  ///< register class with OS
+	void registerEditWindowClass();  ///< register class with OS
 
 	/// callback from windows, NOTE that it's static and has no this pointer
 	static LRESULT CALLBACK editProc( HWND hWnd, UINT message,
 																		WPARAM wParam, LPARAM lParam );
 
-	void drawGrid( void );  ///< draw the grid
+	void drawGrid();  ///< draw the grid
 	void drawSeeThruOutlines( GameWindow *windowList, Color c );
 	void drawHiddenOutlines( GameWindow *windowList, Color c );
-	void drawUIFeedback( void );  ///< draw UI visual feedback
+	void drawUIFeedback();  ///< draw UI visual feedback
 
 	/// if mouse is close to selected window allow resize
 	void handleResizeAvailable( Int mouseX, Int mouseY );
@@ -188,13 +188,13 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-inline HWND EditWindow::getWindowHandle( void ) { return m_editWindowHWnd; }
+inline HWND EditWindow::getWindowHandle() { return m_editWindowHWnd; }
 inline void EditWindow::getSize( ICoord2D *size ) { *size = m_size; }
 inline void EditWindow::getPopupMenuClickPos( ICoord2D *pos ) { *pos = m_popupMenuClickPos; }
 inline void EditWindow::setDragMoveDest( ICoord2D *pos ) { if( pos ) m_dragMoveDest = *pos; }
 inline void EditWindow::setDragMoveOrigin( ICoord2D *pos ) { if( pos ) m_dragMoveOrigin = *pos; }
-inline ICoord2D EditWindow::getDragMoveDest( void ) { return m_dragMoveDest; }
-inline ICoord2D EditWindow::getDragMoveOrigin( void ) { return m_dragMoveOrigin; }
+inline ICoord2D EditWindow::getDragMoveDest() { return m_dragMoveDest; }
+inline ICoord2D EditWindow::getDragMoveOrigin() { return m_dragMoveOrigin; }
 
 ///////////////////////////////////////////////////////////////////////////////
 // EXTERNALS //////////////////////////////////////////////////////////////////

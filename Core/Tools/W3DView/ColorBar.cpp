@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 //
 // ColorBarClass
 //
-ColorBarClass::ColorBarClass (void)
+ColorBarClass::ColorBarClass ()
 	: m_hBitmap (nullptr),
 	  m_iBMPWidth (0),
 	  m_iBMPHeight (0),
@@ -114,7 +114,6 @@ ColorBarClass::ColorBarClass (void)
 	m_ColorPoints[6].StartGreen = 0;
 	m_ColorPoints[6].StartBlue = 0;
 	m_ColorPoints[6].flags = POINT_VISIBLE | POINT_CAN_MOVE;*/
-	return ;
 }
 
 
@@ -122,7 +121,7 @@ ColorBarClass::ColorBarClass (void)
 //
 // ~ColorBarClass
 //
-ColorBarClass::~ColorBarClass (void)
+ColorBarClass::~ColorBarClass ()
 {
 	if (m_hMemDC != nullptr) {
 		::DeleteObject (m_hMemDC);
@@ -131,7 +130,6 @@ ColorBarClass::~ColorBarClass (void)
 
 	Free_Marker_Bitmap ();
 	Free_Bitmap ();
-	return ;
 }
 
 
@@ -176,8 +174,6 @@ RegisterColorBar (HINSTANCE hinst)
 		// Let the windows manager know about this global class
 		::RegisterClass (&wndclass);
 	}
-
-	return ;
 }
 
 
@@ -314,7 +310,7 @@ ColorBarClass::Create
 // Create_Bitmap
 //
 void
-ColorBarClass::Create_Bitmap (void)
+ColorBarClass::Create_Bitmap ()
 {
 	// Start fresh
 	Free_Bitmap ();
@@ -397,7 +393,6 @@ ColorBarClass::Create_Bitmap (void)
 	m_iScanlineSize = (m_iBMPWidth * 3) + alignment_offset;
 
 	Update_Point_Info ();
-	return ;
 }
 
 
@@ -407,7 +402,7 @@ ColorBarClass::Create_Bitmap (void)
 // Free_Bitmap
 //
 void
-ColorBarClass::Free_Bitmap (void)
+ColorBarClass::Free_Bitmap ()
 {
 	if (m_hBitmap != nullptr) {
 		::DeleteObject (m_hBitmap);
@@ -417,7 +412,6 @@ ColorBarClass::Free_Bitmap (void)
 
 	m_iBMPWidth = 0;
 	m_iBMPHeight = 0;
-	return ;
 }
 
 
@@ -438,7 +432,6 @@ ColorBarClass::OnSize
 
 	// Recreate the BMP to reflect the new window size
 	Create_Bitmap ();
-	return ;
 }
 
 
@@ -495,8 +488,6 @@ ColorBarClass::Paint_Bar_Vert
 			blue += m_ColorPoints[color_point].BlueInc;
 		}
 	}
-
-	return ;
 }
 
 
@@ -612,8 +603,6 @@ ColorBarClass::Paint_Bar_Horz
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -622,7 +611,7 @@ ColorBarClass::Paint_Bar_Horz
 // Paint_DIB
 //
 void
-ColorBarClass::Paint_DIB (void)
+ColorBarClass::Paint_DIB ()
 {
 	CRect frame_rect = m_ColorArea;
 	frame_rect.InflateRect (1, 1);
@@ -711,8 +700,6 @@ ColorBarClass::Paint_DIB (void)
 		frame.InflateRect (-1, -1);
 		::Frame_Rect (m_pBits, frame, RGB (255, 255, 255), m_iScanlineSize);
 	}
-
-	return ;
 }
 
 
@@ -721,11 +708,10 @@ ColorBarClass::Paint_DIB (void)
 // OnPaint
 //
 void
-ColorBarClass::OnPaint (void)
+ColorBarClass::OnPaint ()
 {
 	CPaintDC dc (this);
 	Paint_Screen (dc);
-	return ;
 }
 
 
@@ -783,8 +769,6 @@ ColorBarClass::Paint_Screen (HDC hwnd_dc)
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -1054,7 +1038,6 @@ ColorBarClass::Set_Range
 	m_MaxPos = max;
 
 	m_SelectionPos = m_MinPos;
-	return ;
 }
 
 
@@ -1063,7 +1046,7 @@ ColorBarClass::Set_Range
 // Update_Point_Info
 //
 void
-ColorBarClass::Update_Point_Info (void)
+ColorBarClass::Update_Point_Info ()
 {
 	int width = m_ColorArea.Width ();
 	int height = m_ColorArea.Height ();
@@ -1130,7 +1113,6 @@ ColorBarClass::Update_Point_Info (void)
 
 	// Repaint the color bar
 	Paint_DIB ();
-	return ;
 }
 
 
@@ -1139,15 +1121,13 @@ ColorBarClass::Update_Point_Info (void)
 // Free_Marker_Bitmap
 //
 void
-ColorBarClass::Free_Marker_Bitmap (void)
+ColorBarClass::Free_Marker_Bitmap ()
 {
 	if (m_KeyFrameDIB != nullptr) {
 		::DeleteObject (m_KeyFrameDIB);
 		m_KeyFrameDIB = nullptr;
 		m_pKeyFrameBits = nullptr;
 	}
-
-	return ;
 }
 
 
@@ -1156,7 +1136,7 @@ ColorBarClass::Free_Marker_Bitmap (void)
 // Load_Key_Frame_BMP
 //
 void
-ColorBarClass::Load_Key_Frame_BMP (void)
+ColorBarClass::Load_Key_Frame_BMP ()
 {
 	Free_Marker_Bitmap ();
 
@@ -1221,7 +1201,6 @@ ColorBarClass::Load_Key_Frame_BMP (void)
 	::SelectObject (htemp_dc, hold_bmp2);
 	::DeleteDC (htemp_dc);
 	::DeleteObject (hbmp);
-	return ;
 }
 
 
@@ -1266,8 +1245,6 @@ ColorBarClass::Paint_Key_Frame (int x_pos, int y_pos)
 			src_index += alignment_offset;
 		}
 	}
-
-	return ;
 }
 
 
@@ -1388,7 +1365,6 @@ ColorBarClass::OnLButtonDown
 	}
 
 	CWnd::OnLButtonDown (nFlags, point);
-	return ;
 }
 
 
@@ -1416,7 +1392,6 @@ ColorBarClass::OnLButtonUp
 	}
 
 	CWnd::OnLButtonUp (nFlags, point);
-	return ;
 }
 
 
@@ -1492,7 +1467,6 @@ ColorBarClass::OnMouseMove
 	}
 
 	CWnd::OnMouseMove (nFlags, point);
-	return ;
 }
 
 
@@ -1534,7 +1508,6 @@ ColorBarClass::OnKillFocus (CWnd *pNewWnd)
 	Repaint ();
 
 	CWnd::OnKillFocus (pNewWnd);
-	return ;
 }
 
 
@@ -1549,7 +1522,6 @@ ColorBarClass::OnSetFocus (CWnd *pOldWnd)
 	Repaint ();
 
 	CWnd::OnSetFocus(pOldWnd);
-	return ;
 }
 
 
@@ -1582,7 +1554,6 @@ ColorBarClass::OnKeyDown
 	}*/
 
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
-	return ;
 }
 
 
@@ -1608,7 +1579,6 @@ ColorBarClass::OnLButtonDblClk
 	}
 
 	CWnd::OnLButtonDblClk(nFlags, point);
-	return ;
 }
 
 
@@ -1643,8 +1613,6 @@ ColorBarClass::Get_Selection_Rectangle (CRect &rect)
 			rect.right ++;
 		}
 	}
-
-	return ;
 }
 
 
@@ -1661,7 +1629,6 @@ ColorBarClass::Set_Selection_Pos (float pos)
 
 	// Move the selection
 	Move_Selection (pos, false);
-	return ;
 }
 
 
@@ -1688,7 +1655,6 @@ ColorBarClass::Move_Selection (CPoint point, bool send_notify)
 
 	// Do the actual move
 	Move_Selection (new_pos, send_notify);
-	return ;
 }
 
 
@@ -1738,7 +1704,6 @@ ColorBarClass::Move_Selection (float new_pos, bool send_notify)
 		Paint_Screen (hwnd_dc);
 		::ReleaseDC (m_hWnd, hwnd_dc);
 	}
-	return ;
 }
 
 
@@ -1806,8 +1771,6 @@ ColorBarClass::Get_Color
 		(*green) += ticks * m_ColorPoints[key_index].GreenInc;
 		(*blue) += ticks * m_ColorPoints[key_index].BlueInc;
 	}
-
-	return ;
 }
 
 
@@ -1816,7 +1779,7 @@ ColorBarClass::Get_Color
 // Clear_Points
 //
 void
-ColorBarClass::Clear_Points (void)
+ColorBarClass::Clear_Points ()
 {
 	// Reset the point count
 	m_iColorPoints = 1;
@@ -1826,7 +1789,6 @@ ColorBarClass::Clear_Points (void)
 
 	// Force the window to be repainted
 	Repaint ();
-	return ;
 }
 
 
@@ -1914,8 +1876,6 @@ ColorBarClass::Set_Redraw (bool redraw)
 	if (m_bRedraw) {
 		UpdateWindow ();
 	}
-
-	return ;
 }
 
 
@@ -1924,12 +1884,10 @@ ColorBarClass::Set_Redraw (bool redraw)
 // Repaint
 //
 void
-ColorBarClass::Repaint (void)
+ColorBarClass::Repaint ()
 {
 	InvalidateRect (nullptr, FALSE);
 	if (m_bRedraw) {
 		UpdateWindow ();
 	}
-
-	return ;
 }

@@ -63,7 +63,6 @@ SoundRenderObjClass::SoundRenderObjClass ()
 		Sound (nullptr),
 		IsInitialized (false)
 {
-	return ;
 }
 
 
@@ -78,7 +77,6 @@ SoundRenderObjClass::SoundRenderObjClass (const SoundRenderObjClass &src)
 		IsInitialized (false)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -97,8 +95,6 @@ SoundRenderObjClass::~SoundRenderObjClass ()
 		Sound->Remove_From_Scene ();
 		REF_PTR_RELEASE (Sound);
 	}
-
-	return ;
 }
 
 
@@ -151,8 +147,6 @@ SoundRenderObjClass::Set_Sound (AudibleSoundDefinitionClass *definition)
 	if (definition != nullptr) {
 		Sound = (AudibleSoundClass *)definition->Create ();
 	}
-
-	return ;
 }
 
 
@@ -174,8 +168,6 @@ SoundRenderObjClass::On_Frame_Update ()
 		Sound->Attach_To_Object (nullptr);
 		Sound->Remove_From_Scene ();
 	}
-
-	return ;
 }
 
 
@@ -197,8 +189,6 @@ SoundRenderObjClass::Set_Hidden (int onoff)
 		IsInitialized = true;
 		Update_On_Visibility ();
 	}
-
-	return ;
 }
 
 
@@ -220,8 +210,6 @@ SoundRenderObjClass::Set_Visible (int onoff)
 		IsInitialized = true;
 		Update_On_Visibility ();
 	}
-
-	return ;
 }
 
 
@@ -243,8 +231,6 @@ SoundRenderObjClass::Set_Animation_Hidden (int onoff)
 		IsInitialized = true;
 		Update_On_Visibility ();
 	}
-
-	return ;
 }
 
 
@@ -266,8 +252,6 @@ SoundRenderObjClass::Set_Force_Visible (int onoff)
 		IsInitialized = true;
 		Update_On_Visibility ();
 	}
-
-	return ;
 }
 
 
@@ -314,8 +298,6 @@ SoundRenderObjClass::Update_On_Visibility ()
 			Sound->Remove_From_Scene ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -347,8 +329,6 @@ SoundRenderObjClass::Set_Flag (uint32 flag, bool onoff)
 	if (onoff) {
 		Flags |= flag;
 	}
-
-	return ;
 }
 
 
@@ -364,7 +344,6 @@ SoundRenderObjClass::Notify_Added (SceneClass *scene)
 	scene->Register (this, SceneClass::ON_FRAME_UPDATE);
 
 	Update_On_Visibility ();
-	return ;
 }
 
 
@@ -380,7 +359,6 @@ SoundRenderObjClass::Notify_Removed (SceneClass *scene)
 	RenderObjClass::Notify_Removed (scene);
 
 	Update_On_Visibility ();
-	return ;
 }
 
 
@@ -398,8 +376,6 @@ SoundRenderObjClass::Set_Transform (const Matrix3D &tm)
 		IsInitialized = true;
 		Update_On_Visibility ();
 	}
-
-	return ;
 }
 
 
@@ -417,8 +393,6 @@ SoundRenderObjClass::Set_Position (const Vector3 &pos)
 		IsInitialized = true;
 		Update_On_Visibility ();
 	}
-
-	return ;
 }
 
 
@@ -438,7 +412,6 @@ SoundRenderObjDefClass::SoundRenderObjDefClass ()
 	:	Version (W3D_CURRENT_SOUNDROBJ_VERSION),
 		Flags (SoundRenderObjClass::FLAG_STOP_WHEN_HIDDEN)
 {
-	return ;
 }
 
 
@@ -452,7 +425,6 @@ SoundRenderObjDefClass::SoundRenderObjDefClass (SoundRenderObjClass &render_obj)
 		Flags (SoundRenderObjClass::FLAG_STOP_WHEN_HIDDEN)
 {
 	Initialize (render_obj);
-	return ;
 }
 
 
@@ -466,7 +438,6 @@ SoundRenderObjDefClass::SoundRenderObjDefClass (const SoundRenderObjDefClass &sr
 		Flags (SoundRenderObjClass::FLAG_STOP_WHEN_HIDDEN)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -477,7 +448,6 @@ SoundRenderObjDefClass::SoundRenderObjDefClass (const SoundRenderObjDefClass &sr
 //////////////////////////////////////////////////////////////////////////////////
 SoundRenderObjDefClass::~SoundRenderObjDefClass ()
 {
-	return ;
 }
 
 
@@ -538,7 +508,6 @@ SoundRenderObjDefClass::Initialize (SoundRenderObjClass &render_obj)
 	//	Copy the name
 	//
 	Name = render_obj.Get_Name ();
-	return ;
 }
 
 

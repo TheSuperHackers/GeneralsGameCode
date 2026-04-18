@@ -197,7 +197,7 @@ static void saveData( HWND hWndDialog )
 /** Bring up the standard windows browser save as dialog and return
 	* filename selected */
 //=============================================================================
-char *saveAsDialog( void )
+char *saveAsDialog()
 {
 	static char filename[ _MAX_PATH ];
   OPENFILENAME ofn;
@@ -239,7 +239,7 @@ char *saveAsDialog( void )
 /** Bring up the standard windows browser open dialog and return
 	* filename selected */
 //=============================================================================
-char *openDialog( void )
+char *openDialog()
 {
 	static char filename[ _MAX_PATH ];
   OPENFILENAME ofn;
@@ -1477,7 +1477,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 // LayoutScheme::LayoutScheme =================================================
 /** */
 //=============================================================================
-LayoutScheme::LayoutScheme( void )
+LayoutScheme::LayoutScheme()
 {
 
 	strcpy( m_schemeFilename, "Default.ls" );
@@ -1495,7 +1495,7 @@ LayoutScheme::LayoutScheme( void )
 // LayoutScheme::~LayoutScheme ================================================
 /** */
 //=============================================================================
-LayoutScheme::~LayoutScheme( void )
+LayoutScheme::~LayoutScheme()
 {
 	Int i;
 
@@ -1519,7 +1519,7 @@ LayoutScheme::~LayoutScheme( void )
 // LayoutScheme::init =========================================================
 /** Init */
 //=============================================================================
-void LayoutScheme::init( void )
+void LayoutScheme::init()
 {
 	Int i;
 	ImageAndColorInfo *info;
@@ -2153,7 +2153,7 @@ void LayoutScheme::init( void )
 // LayoutScheme::openDialog ===================================================
 /** Bring up the layout scheme dialog box */
 //=============================================================================
-void LayoutScheme::openDialog( void )
+void LayoutScheme::openDialog()
 {
 
 	// save the scheme instance we're going to open the dialog on

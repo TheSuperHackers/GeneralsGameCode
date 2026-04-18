@@ -169,7 +169,6 @@ void RegistryClass::Get_Bin( const char * name, void *buffer, int buffer_size )
 
 	unsigned long size = buffer_size;
 	::RegQueryValueEx( (HKEY)Key, name, nullptr, nullptr, (LPBYTE)buffer, &size );
-	return ;
 }
 
 void	RegistryClass::Set_Bin( const char * name, const void *buffer, int buffer_size )
@@ -182,7 +181,6 @@ void	RegistryClass::Set_Bin( const char * name, const void *buffer, int buffer_s
 		return;
 	}
 	::RegSetValueEx( (HKEY)Key, name, 0, REG_BINARY, (LPBYTE)buffer, buffer_size );
-	return ;
 }
 
 void	RegistryClass::Get_String( const char * name, StringClass &string, const char *default_string )
@@ -204,8 +202,6 @@ void	RegistryClass::Get_String( const char * name, StringClass &string, const ch
 		::RegQueryValueEx ((HKEY)Key, name, nullptr, &type,
 			(LPBYTE)string.Get_Buffer (data_size), &data_size);
 	}
-
-	return ;
 }
 
 
@@ -260,8 +256,6 @@ void	RegistryClass::Get_Value_List( DynamicVectorClass<StringClass> &list )
 		//
 		list.Add( value_name );
 	}
-
-	return ;
 }
 
 void	RegistryClass::Delete_Value( const char * name)
@@ -270,7 +264,6 @@ void	RegistryClass::Delete_Value( const char * name)
 		return;
 	}
 	::RegDeleteValue( (HKEY)Key, name );
-	return ;
 }
 
 void	RegistryClass::Deleta_All_Values()
@@ -290,8 +283,6 @@ void	RegistryClass::Deleta_All_Values()
 	for (int index = 0; index < value_list.Count (); index ++) {
 		Delete_Value( value_list[index] );
 	}
-
-	return ;
 }
 
 
@@ -314,8 +305,6 @@ void	RegistryClass::Get_String( const WCHAR * name, WideStringClass &string, con
 		::RegQueryValueExW ((HKEY)Key, name, nullptr, &type,
 			(LPBYTE)string.Get_Buffer ((data_size / 2) + 1), &data_size);
 	}
-
-	return ;
 }
 
 
@@ -336,7 +325,6 @@ void	RegistryClass::Set_String( const WCHAR * name, const WCHAR *value )
 		return;
 	}
 	::RegSetValueExW ( (HKEY)Key, name, 0, REG_SZ, (LPBYTE)value, size );
-	return ;
 }
 
 

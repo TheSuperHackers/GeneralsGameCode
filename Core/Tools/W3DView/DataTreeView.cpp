@@ -80,7 +80,7 @@ IMPLEMENT_DYNCREATE(CDataTreeView, CTreeView)
 //  CDataTreeView
 //
 ////////////////////////////////////////////////////////////////////////////
-CDataTreeView::CDataTreeView (void)
+CDataTreeView::CDataTreeView ()
         : m_hMaterialsRoot (nullptr),
 			 m_hMeshRoot  (nullptr),
 			 m_hMeshCollectionRoot (nullptr),
@@ -102,7 +102,6 @@ CDataTreeView::CDataTreeView (void)
 			 m_RestrictAnims (true)
 
 {
-    return ;
 }
 
 
@@ -110,9 +109,8 @@ CDataTreeView::CDataTreeView (void)
 //
 //  ~CDataTreeView
 //
-CDataTreeView::~CDataTreeView (void)
+CDataTreeView::~CDataTreeView ()
 {
-    return ;
 }
 
 
@@ -133,7 +131,6 @@ END_MESSAGE_MAP()
 void
 CDataTreeView::OnDraw (CDC *pDC)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -175,13 +172,12 @@ CDataTreeView::PreCreateWindow (CREATESTRUCT& cs)
 //  OnInitialUpdate
 //
 void
-CDataTreeView::OnInitialUpdate (void)
+CDataTreeView::OnInitialUpdate ()
 {
 	// Allow the base class to process this message
     CTreeView::OnInitialUpdate ();
 
 	// TODO: Add your specialized code here and/or call the base class
-	return ;
 }
 
 
@@ -190,7 +186,7 @@ CDataTreeView::OnInitialUpdate (void)
 //  CreateRootNodes
 //
 void
-CDataTreeView::CreateRootNodes (void)
+CDataTreeView::CreateRootNodes ()
 {
 	// Insert all the root nodes
 	m_hMaterialsRoot		= GetTreeCtrl ().InsertItem ("Materials", m_iMaterialIcon, m_iMaterialIcon);
@@ -202,7 +198,6 @@ CDataTreeView::CreateRootNodes (void)
 	m_hEmitterRoot			= GetTreeCtrl ().InsertItem ("Emitter", m_iEmitterIcon, m_iEmitterIcon);
 	m_hPrimitivesRoot		= GetTreeCtrl ().InsertItem ("Primitives", m_iPrimitivesIcon, m_iPrimitivesIcon);
 	m_hSoundRoot			= GetTreeCtrl ().InsertItem ("Sounds", m_iSoundIcon, m_iSoundIcon);
-	return ;
 }
 
 
@@ -248,7 +243,7 @@ CDataTreeView::OnCreate (LPCREATESTRUCT lpCreateStruct)
 //  Load_Materials_Into_Tree
 //
 void
-CDataTreeView::Load_Materials_Into_Tree (void)
+CDataTreeView::Load_Materials_Into_Tree ()
 {
 	// Get an iterator from the asset manager that we can
 	// use to enumerate the currently loaded textures
@@ -276,8 +271,6 @@ CDataTreeView::Load_Materials_Into_Tree (void)
 			GetTreeCtrl ().SetItemData (tree_item, (ULONG)asset_info);
 		}
 	}
-
-	return ;
 }
 
 
@@ -286,7 +279,7 @@ CDataTreeView::Load_Materials_Into_Tree (void)
 //  LoadAssetsIntoTree
 //
 void
-CDataTreeView::LoadAssetsIntoTree (void)
+CDataTreeView::LoadAssetsIntoTree ()
 {
 	// Turn off repainting
 	GetTreeCtrl ().SetRedraw (FALSE);
@@ -434,7 +427,6 @@ CDataTreeView::LoadAssetsIntoTree (void)
 	// Force the window to be repainted
 	Invalidate (FALSE);
 	UpdateWindow ();
-	return ;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -442,7 +434,7 @@ CDataTreeView::LoadAssetsIntoTree (void)
 //  LoadAnimationsIntoTree
 //
 void
-CDataTreeView::LoadAnimationsIntoTree (void)
+CDataTreeView::LoadAnimationsIntoTree ()
 {
     // Get an iterator from the asset manager that we can
     // use to enumerate the currently loaded assets
@@ -529,8 +521,6 @@ CDataTreeView::LoadAnimationsIntoTree (void)
         delete pAnimEnum;
         pAnimEnum = nullptr;
     }
-
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -591,8 +581,6 @@ CDataTreeView::LoadAnimationsIntoTree (HTREEITEM hItem)
         delete pAnimEnum;
         pAnimEnum = nullptr;
     }
-
-    return ;
 }
 
 
@@ -731,8 +719,6 @@ CDataTreeView::Determine_Tree_Location
 			icon_index	= m_iLODIcon;
 			break;
 	}
-
-	return ;
 }
 
 
@@ -966,7 +952,6 @@ CDataTreeView::OnSelChanged
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 	Display_Asset (pNMTreeView->itemNew.hItem);
 	(*pResult) = 0;
-	return ;
 }
 
 
@@ -1074,8 +1059,6 @@ CDataTreeView::Display_Asset (HTREEITEM htree_item)
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -1106,7 +1089,6 @@ CDataTreeView::OnDeleteItem
 	// Reset the data associated with this entry
 	GetTreeCtrl ().SetItemData (pNMTreeView->itemOld.hItem, 0);
 	(*pResult) = 0;
-	return ;
 }
 
 
@@ -1115,7 +1097,7 @@ CDataTreeView::OnDeleteItem
 //  Get_Current_Asset_Info
 //
 AssetInfoClass *
-CDataTreeView::Get_Current_Asset_Info (void) const
+CDataTreeView::Get_Current_Asset_Info () const
 {
 	AssetInfoClass *asset_info = nullptr;
 
@@ -1137,7 +1119,7 @@ CDataTreeView::Get_Current_Asset_Info (void) const
 //  Get_Current_Render_Obj
 //
 RenderObjClass *
-CDataTreeView::Get_Current_Render_Obj (void) const
+CDataTreeView::Get_Current_Render_Obj () const
 {
 	RenderObjClass *prender_obj = nullptr;
 
@@ -1164,7 +1146,7 @@ CDataTreeView::Get_Current_Render_Obj (void) const
 //  GetCurrentSelectionName
 //
 LPCTSTR
-CDataTreeView::GetCurrentSelectionName (void)
+CDataTreeView::GetCurrentSelectionName ()
 {
 	LPCTSTR pname = nullptr;
 
@@ -1190,7 +1172,7 @@ CDataTreeView::GetCurrentSelectionName (void)
 //  GetCurrentSelectionType
 //
 ASSET_TYPE
-CDataTreeView::GetCurrentSelectionType (void)
+CDataTreeView::GetCurrentSelectionType ()
 {
 	ASSET_TYPE type = TypeUnknown;
 
@@ -1229,7 +1211,6 @@ CDataTreeView::OnDblclk
     }
 
 	(*pResult) = 0;
-    return ;
 }
 
 
@@ -1264,8 +1245,6 @@ CDataTreeView::Build_Render_Object_List
 			Build_Render_Object_List (asset_list, htree_item);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1364,8 +1343,6 @@ CDataTreeView::Refresh_Asset
 		Invalidate (FALSE);
 		UpdateWindow ();
 	}
-
-	return ;
 }
 
 
@@ -1374,7 +1351,7 @@ CDataTreeView::Refresh_Asset
 //  Select_Next
 //
 void
-CDataTreeView::Select_Next (void)
+CDataTreeView::Select_Next ()
 {
 	//
 	//	Get the selected entry in the tree control
@@ -1390,8 +1367,6 @@ CDataTreeView::Select_Next (void)
 			GetTreeCtrl ().SelectItem (hitem);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1400,7 +1375,7 @@ CDataTreeView::Select_Next (void)
 //  Select_Prev
 //
 void
-CDataTreeView::Select_Prev (void)
+CDataTreeView::Select_Prev ()
 {
 	//
 	//	Get the selected entry in the tree control
@@ -1416,8 +1391,6 @@ CDataTreeView::Select_Prev (void)
 			GetTreeCtrl ().SelectItem (hitem);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1427,12 +1400,11 @@ CDataTreeView::Select_Prev (void)
 //
 ////////////////////////////////////////////////////////////////////////////
 void
-CDataTreeView::Reload_Lightmap_Models (void)
+CDataTreeView::Reload_Lightmap_Models ()
 {
 	Free_Child_Models (m_hMeshCollectionRoot);
 	Free_Child_Models (m_hHierarchyRoot);
 	Free_Child_Models (m_hMeshRoot);
-	return ;
 }
 
 
@@ -1459,8 +1431,6 @@ CDataTreeView::Free_Child_Models (HTREEITEM parent_item)
 			WW3DAssetManager::Get_Instance ()->Remove_Prototype (asset_info->Get_Name ());
 		}
 	}
-
-	return ;
 }
 
 
@@ -1488,8 +1458,6 @@ Set_Highest_LOD (RenderObjClass *render_obj)
 			((HLodClass *)render_obj)->Set_LOD_Level (((HLodClass *)render_obj)->Get_Lod_Count () - 1);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1511,7 +1479,5 @@ CDataTreeView::Restrict_Anims (bool onoff)
 		CreateRootNodes ();
 		LoadAssetsIntoTree ();
 	}
-
-	return ;
 }
 

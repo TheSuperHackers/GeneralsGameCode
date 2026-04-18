@@ -48,7 +48,7 @@ class MoreParmsDialog : public CDialog
 		MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = nullptr);
 		virtual ~MoreParmsDialog();
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI

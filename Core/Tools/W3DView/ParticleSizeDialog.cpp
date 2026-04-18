@@ -43,7 +43,6 @@ ParticleSizeDialogClass::ParticleSizeDialogClass (float size, CWnd *pParent)
 	//{{AFX_DATA_INIT(ParticleSizeDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -59,7 +58,6 @@ ParticleSizeDialogClass::DoDataExchange (CDataExchange *pDX)
 	//{{AFX_DATA_MAP(ParticleSizeDialogClass)
 	DDX_Control(pDX, IDC_SIZE_SPIN, m_SizeSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -78,7 +76,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-ParticleSizeDialogClass::OnInitDialog (void)
+ParticleSizeDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -93,11 +91,10 @@ ParticleSizeDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ParticleSizeDialogClass::OnOK (void)
+ParticleSizeDialogClass::OnOK ()
 {
 	m_Size = GetDlgItemFloat (m_hWnd, IDC_SIZE_EDIT);
 	CDialog::OnOK ();
-	return ;
 }
 
 

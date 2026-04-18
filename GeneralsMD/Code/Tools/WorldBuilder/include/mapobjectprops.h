@@ -63,7 +63,7 @@ public:
 
 // Implementation
 protected:
-	void getAllSelectedDicts(void);
+	void getAllSelectedDicts();
 	Dict** getAllSelectedDictsData();
 
 	static MapObjectProps *TheMapObjectProps;
@@ -93,7 +93,7 @@ protected:
 	Coord3D m_position;
 
 	void deletePages();
-	void updateTheUI(void);
+	void updateTheUI();
 	void enableButtons();
 	int getSel();
 
@@ -109,82 +109,82 @@ protected:
 	afx_msg void OnRemoveprop();
 	afx_msg void OnDblclkProperties();
 
-	afx_msg void _TeamToDict(void);
-	afx_msg void _NameToDict(void);
-	afx_msg void _ScriptToDict(void);
-	afx_msg void _WeatherToDict(void);
-	afx_msg void _TimeToDict(void);
-	afx_msg void _ScaleToDict(void);
-	afx_msg void SetZOffset(void);
-	afx_msg void SetAngle(void);
-	afx_msg void SetPosition(void);
+	afx_msg void _TeamToDict();
+	afx_msg void _NameToDict();
+	afx_msg void _ScriptToDict();
+	afx_msg void _WeatherToDict();
+	afx_msg void _TimeToDict();
+	afx_msg void _ScaleToDict();
+	afx_msg void SetZOffset();
+	afx_msg void SetAngle();
+	afx_msg void SetPosition();
 	afx_msg void OnScaleOn();
 	afx_msg void OnScaleOff();
 	afx_msg void OnKillfocusMAPOBJECTXYPosition();
-	afx_msg void _PrebuiltUpgradesToDict(void);
-	afx_msg void _HealthToDict(void);
-	afx_msg void _EnabledToDict(void);
-	afx_msg void _IndestructibleToDict(void);
-	afx_msg void _UnsellableToDict(void);
+	afx_msg void _PrebuiltUpgradesToDict();
+	afx_msg void _HealthToDict();
+	afx_msg void _EnabledToDict();
+	afx_msg void _IndestructibleToDict();
+	afx_msg void _UnsellableToDict();
 	afx_msg void _TargetableToDict();
-	afx_msg void _PoweredToDict(void);
-	afx_msg void _AggressivenessToDict(void);
-	afx_msg void _VisibilityToDict(void);
-	afx_msg void _VeterancyToDict(void);
-	afx_msg void _ShroudClearingDistanceToDict(void);
-	afx_msg void _RecruitableAIToDict(void);
-	afx_msg void _SelectableToDict(void);
+	afx_msg void _PoweredToDict();
+	afx_msg void _AggressivenessToDict();
+	afx_msg void _VisibilityToDict();
+	afx_msg void _VeterancyToDict();
+	afx_msg void _ShroudClearingDistanceToDict();
+	afx_msg void _RecruitableAIToDict();
+	afx_msg void _SelectableToDict();
 	afx_msg void _HPsToDict();
-	afx_msg void _StoppingDistanceToDict(void);
-	afx_msg void attachedSoundToDict(void);
-	afx_msg void customizeToDict(void);
-	afx_msg void enabledToDict(void);
-	afx_msg void loopingToDict(void);
-	afx_msg void loopCountToDict(void);
-	afx_msg void minVolumeToDict(void);
-	afx_msg void volumeToDict(void);
-	afx_msg void minRangeToDict(void);
-	afx_msg void maxRangeToDict(void);
-	afx_msg void priorityToDict(void);
+	afx_msg void _StoppingDistanceToDict();
+	afx_msg void attachedSoundToDict();
+	afx_msg void customizeToDict();
+	afx_msg void enabledToDict();
+	afx_msg void loopingToDict();
+	afx_msg void loopCountToDict();
+	afx_msg void minVolumeToDict();
+	afx_msg void volumeToDict();
+	afx_msg void minRangeToDict();
+	afx_msg void maxRangeToDict();
+	afx_msg void priorityToDict();
 		//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-	void _DictToName(void);
-	void _DictToTeam(void);
-	void _DictToScript(void);
-	void _DictToScale(void);
-	void _DictToWeather(void);
-	void _DictToTime(void);
-	void _DictToPrebuiltUpgrades(void);
-	void _DictToHealth(void);
-	void _DictToHPs(void);
-	void _DictToEnabled(void);
-	void _DictToDestructible(void);
-	void _DictToUnsellable(void);
-	void _DictToTargetable(void);
+	void _DictToName();
+	void _DictToTeam();
+	void _DictToScript();
+	void _DictToScale();
+	void _DictToWeather();
+	void _DictToTime();
+	void _DictToPrebuiltUpgrades();
+	void _DictToHealth();
+	void _DictToHPs();
+	void _DictToEnabled();
+	void _DictToDestructible();
+	void _DictToUnsellable();
+	void _DictToTargetable();
 
-	void _DictToPowered(void);
-	void _DictToAggressiveness(void);
-	void _DictToVisibilityRange(void);
-	void _DictToVeterancy(void);
-	void _DictToShroudClearingDistance(void);
+	void _DictToPowered();
+	void _DictToAggressiveness();
+	void _DictToVisibilityRange();
+	void _DictToVeterancy();
+	void _DictToShroudClearingDistance();
 	void _DictToRecruitableAI();
-	void _DictToSelectable(void);
-	void _DictToStoppingDistance(void);
+	void _DictToSelectable();
+	void _DictToStoppingDistance();
 	void ShowZOffset(MapObject* pMapObj);
 	void ShowAngle(MapObject* pMapObj);
 	void ShowPosition(MapObject* pMapObj);
-	void dictToAttachedSound(void);
-	void dictToCustomize(void);
-	void dictToEnabled(void);
-	void dictToLooping(void);
-	void dictToLoopCount(void);
-	void dictToMinVolume(void);
-	void dictToVolume(void);
-	void dictToMinRange(void);
-	void dictToMaxRange(void);
-	void dictToPriority(void);
+	void dictToAttachedSound();
+	void dictToCustomize();
+	void dictToEnabled();
+	void dictToLooping();
+	void dictToLoopCount();
+	void dictToMinVolume();
+	void dictToVolume();
+	void dictToMinRange();
+	void dictToMaxRange();
+	void dictToPriority();
 
 	void clearCustomizeFlag( CWorldBuilderDoc* pDoc, MultipleUndoable * ownerUndoable );
 
@@ -194,15 +194,15 @@ protected:
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
 public:
-	static MapObject *getSingleSelectedMapObject(void);
-	static void update(void);
+	static MapObject *getSingleSelectedMapObject();
+	static void update();
 
 private:
   /// Disallow copying: Object is not set up to be copied
   MapObjectProps( const MapObjectProps & other ); // Deliberately undefined
   MapObjectProps & operator=( const MapObjectProps & other ); // Deliberately undefined
 	void updateTheUI(MapObject *pMapObj);
-	void InitSound(void);
+	void InitSound();
 };
 
 //{{AFX_INSERT_LOCATION}}

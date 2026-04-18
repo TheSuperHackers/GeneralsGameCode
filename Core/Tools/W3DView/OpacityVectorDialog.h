@@ -71,7 +71,7 @@ public:
 	////////////////////////////////////////////////////////////////
 	void								Set_Render_Obj (RenderObjClass *render_obj)			{ m_RenderObj = render_obj; }
 	void								Set_Vector (const AlphaVectorStruct &def_vector)	{ m_Value = def_vector; }
-	const AlphaVectorStruct &	Get_Vector (void) const										{ return m_Value; }
+	const AlphaVectorStruct &	Get_Vector () const										{ return m_Value; }
 	void								Set_Key_Index (int index)									{ m_KeyIndex = index; }
 
 private:
@@ -80,8 +80,8 @@ private:
 	//	Protected methods
 	////////////////////////////////////////////////////////////////
 	void						Update_Object (const AlphaVectorStruct &value);
-	void						Update_Object (void);
-	AlphaVectorStruct		Update_Value (void);
+	void						Update_Object ();
+	AlphaVectorStruct		Update_Value ();
 
 private:
 

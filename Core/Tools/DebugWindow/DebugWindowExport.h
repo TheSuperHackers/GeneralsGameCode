@@ -21,19 +21,19 @@
 // Declared extern C to prevent name mangling, which makes life very unhappy
 extern "C" {
 	// Called to create the dialog
-	void __declspec(dllexport) CreateDebugDialog(void);
+	void __declspec(dllexport) CreateDebugDialog();
 
 	// Called to (not surprisingly) destroy the dialog (and free the resources)
-	void __declspec(dllexport) DestroyDebugDialog(void);
+	void __declspec(dllexport) DestroyDebugDialog();
 
 	// Call this each frame to determine whether to continue or not
-	bool __declspec(dllexport) CanAppContinue(void);
+	bool __declspec(dllexport) CanAppContinue();
 
 	// Call this to force the app to continue. (Unpause if necessary.)
-	void __declspec(dllexport) ForceAppContinue(void);
+	void __declspec(dllexport) ForceAppContinue();
 
 	// Call this to tell the app to run really fast
-	bool __declspec(dllexport) RunAppFast(void);
+	bool __declspec(dllexport) RunAppFast();
 
 	// Call this to add a message to the script window
 	void __declspec(dllexport) AppendMessage(const char* messageToPass);

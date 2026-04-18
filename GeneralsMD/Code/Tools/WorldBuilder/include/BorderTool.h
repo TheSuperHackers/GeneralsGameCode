@@ -34,13 +34,13 @@ class BorderTool : public Tool
 		BorderTool();
 		virtual ~BorderTool() override;
 
-		Int getToolID(void) {return m_toolID;}
-		virtual void setCursor(void) override;
+		Int getToolID() {return m_toolID;}
+		virtual void setCursor() override;
 
 		virtual void activate() override;
 		virtual void deactivate() override;
 
-		virtual Bool followsTerrain(void) override { return false;	}
+		virtual Bool followsTerrain() override { return false;	}
 
 		virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 		virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;

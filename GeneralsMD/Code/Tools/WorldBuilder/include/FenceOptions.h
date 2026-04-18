@@ -35,7 +35,7 @@ class FenceOptions : public COptionsPanel
 public:
 	FenceOptions(CWnd* pParent = nullptr);   ///< standard constructor
 
-	virtual ~FenceOptions(void) override;   ///< standard destructor
+	virtual ~FenceOptions() override;   ///< standard destructor
 	enum { NAME_MAX_LEN = 64 };
 // Dialog Data
 	//{{AFX_DATA(FenceOptions)
@@ -84,10 +84,10 @@ protected:
 	void updateObjectOptions();
 
 public:
-	static void update(void);
-	static Bool hasSelectedObject(void);
-	static Real getFenceSpacing(void) {return m_fenceSpacing;}
-	static Real getFenceOffset(void) {return m_fenceOffset;}
+	static void update();
+	static Bool hasSelectedObject();
+	static Real getFenceSpacing() {return m_fenceSpacing;}
+	static Real getFenceOffset() {return m_fenceOffset;}
 };
 
 //{{AFX_INSERT_LOCATION}}

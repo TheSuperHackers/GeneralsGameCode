@@ -1425,7 +1425,6 @@ void DX8SkinFVFCategoryContainer::Render()
 
 	WWASSERT(renderedVertexCount==VisibleVertexCount);
 
-
 	clearVisibleSkinList();
 }
 
@@ -1455,6 +1454,7 @@ void DX8SkinFVFCategoryContainer::clearVisibleSkinList()
 	VisibleSkinTail = nullptr;
 	VisibleVertexCount = 0;
 }
+
 void DX8SkinFVFCategoryContainer::Add_Visible_Skin(MeshClass * mesh)
 {
 	if (mesh->Peek_Next_Visible_Skin() != nullptr || mesh == VisibleSkinTail)
@@ -1891,6 +1891,7 @@ void DX8TextureCategoryClass::Render()
 				}
 				else
 					oldMapper=nullptr;
+
 				if (mesh->Get_Alpha_Override() != 1.0)
 				{
 					if (mesh->Is_Additive())
@@ -1903,7 +1904,9 @@ void DX8TextureCategoryClass::Render()
 					DX8Wrapper::Set_Shader(theAlphaShader);
 					DX8Wrapper::Apply_Render_State_Changes();
 					DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,(int)((float)0x60*mesh->Get_Alpha_Override()));
+
 					renderer->Render(mesh->Get_Base_Vertex_Offset());
+
 					DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0x60);
 					vmaterial->Set_Opacity(oldOpacity);	//restore previous value
 					vmaterial->Set_Diffuse(oldDiffuse.X,oldDiffuse.Y,oldDiffuse.Z);
@@ -2131,8 +2134,6 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 			}
 		}
 	}
-
-	return;
 }
 
 static unsigned statistics_requested=0;

@@ -136,7 +136,7 @@ protected:
         //  Public Methods
         //
 
-        BOOL			InitializeGraphicView (void);
+        BOOL			InitializeGraphicView ();
 
         //
 		  //	Initial display methods
@@ -144,9 +144,9 @@ protected:
 		  void			Reset_Camera_To_Display_Sphere (SphereClass &sphere);
 		  void			Reset_Camera_To_Display_Object (RenderObjClass &physObject);
 		  void			Reset_Camera_To_Display_Emitter (ParticleEmitterClass &emitter);
-		  void			Load_Default_Dat (void);
+		  void			Load_Default_Dat ();
 
-        void			UpdateDisplay (void);
+        void			UpdateDisplay ();
         void			RepaintView (BOOL bUpdateAnimation = TRUE, DWORD ticks_to_use = 0);
         void			SetActiveUpdate (BOOL bActive)
 								{ m_bActive = bActive;
@@ -159,9 +159,9 @@ protected:
         //
         // Animation methods
         //
-        float					GetAnimationSpeed (void) const				{ return m_animationSpeed; }
+        float					GetAnimationSpeed () const				{ return m_animationSpeed; }
         void					SetAnimationSpeed (float animationSpeed)	{ m_animationSpeed = animationSpeed; }
-        ANIMATION_STATE		GetAnimationState (void) const				{ return m_animationState; }
+        ANIMATION_STATE		GetAnimationState () const				{ return m_animationState; }
         void					SetAnimationState (ANIMATION_STATE animationState);
 
         //
@@ -170,44 +170,44 @@ protected:
         void					SetAllowedCameraRotation (CAMERA_ROTATION cameraRotation);
         CAMERA_ROTATION		GetAllowedCameraRotation () const			{ return m_allowedCameraRotation; }
         void					SetCameraPos (CAMERA_POS cameraPos);
-        class CameraClass *GetCamera (void) const							{ return m_pCamera; }
+        class CameraClass *GetCamera () const							{ return m_pCamera; }
 
-		  float					Get_Camera_Distance (void) const				{ return m_CameraDistance; }
+		  float					Get_Camera_Distance () const				{ return m_CameraDistance; }
 		  void					Set_Camera_Distance (float dist);
 
 		  void					Set_Camera_Bone_Pos_X (bool onoff)			{ m_CameraBonePosX = onoff; }
-		  BOOL					Is_Camera_Bone_Pos_X (void) const			{ return m_CameraBonePosX; }
+		  BOOL					Is_Camera_Bone_Pos_X () const			{ return m_CameraBonePosX; }
 
         //
         // Object rotation methods
         //
-        void					ResetObject (void);
+        void					ResetObject ();
         void					RotateObject (OBJECT_ROTATION rotation);
-        OBJECT_ROTATION		GetObjectRotation (void) const				{ return m_objectRotation; }
+        OBJECT_ROTATION		GetObjectRotation () const				{ return m_objectRotation; }
 
         //
         // Light rotation methods
         //
         void					Rotate_Light (OBJECT_ROTATION rotation)	{ m_LightRotation = rotation; }
-        OBJECT_ROTATION		Get_Light_Rotation (void) const				{ return m_LightRotation; }
+        OBJECT_ROTATION		Get_Light_Rotation () const				{ return m_LightRotation; }
 
 			//
 			//	Fullscreen mode
 			//
-			BOOL					Is_Fullscreen (void) const						{ return !(BOOL)m_iWindowed; }
+			BOOL					Is_Fullscreen () const						{ return !(BOOL)m_iWindowed; }
 			void					Set_Fullscreen (bool fullscreen)				{ m_iWindowed = fullscreen ? 0 : 1; InitializeGraphicView (); }
 
 			//
 			//	Misc
 			//
-			RenderObjClass *	Get_Light_Mesh (void) const					{ return m_pLightMesh; }
-			Vector3 &			Get_Object_Center (void)						{ return m_ObjectCenter; }
+			RenderObjClass *	Get_Light_Mesh () const					{ return m_pLightMesh; }
+			Vector3 &			Get_Object_Center ()						{ return m_ObjectCenter; }
 
 			//
 			//	FOV methods
 			//
 			void					Set_FOV (double hfov, double vfov, bool force = false);
-			void					Reset_FOV (void);
+			void					Reset_FOV ();
 
     protected:
 
@@ -215,8 +215,8 @@ protected:
         //
         //  Protected methods
         //
-		  void					Rotate_Object (void);
-		  void					Rotate_Light (void);
+		  void					Rotate_Object ();
+		  void					Rotate_Light ();
 
     private:
 

@@ -172,16 +172,16 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	}
 
 	self->m_locomotorTemplates[set].clear();
-	for (const char* locoName = ini->getNextToken(); locoName; locoName = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		if (!*locoName || stricmp(locoName, "None") == 0)
+		if (!*token || stricmp(token, "None") == 0)
 			continue;
 
-		NameKeyType locoKey = NAMEKEY(locoName);
+		NameKeyType locoKey = NAMEKEY(token);
 		const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(locoKey);
 		if (!lt)
 		{
-			DEBUG_CRASH(("Locomotor %s not found!",locoName));
+			DEBUG_CRASH(("Locomotor %s not found!",token));
 			throw INI_INVALID_DATA;
 		}
 		self->m_locomotorTemplates[set].push_back(lt);
@@ -3536,7 +3536,6 @@ void AIUpdateInterface::privateRepair( Object *obj, CommandSourceType cmdSource 
 {
 
 	// there is no "default" way for generic objects to repair each other
-	return;
 
 }
 
@@ -3549,7 +3548,6 @@ void AIUpdateInterface::privatePickUpPrisoner( Object *prisoner, CommandSourceTy
 {
 
 	// there is no "default" way for generic units to pick up prisoners
-	return;
 
 }
 #endif
@@ -3563,7 +3561,6 @@ void AIUpdateInterface::privateReturnPrisoners( Object *prison, CommandSourceTyp
 {
 
 	// there is no "default" way for generic units to return prisoners
-	return;
 
 }
 #endif
@@ -3576,7 +3573,6 @@ void AIUpdateInterface::privateResumeConstruction( Object *obj, CommandSourceTyp
 {
 
 	// there is no "default" way for generic objects to resume construction
-	return;
 
 }
 

@@ -32,7 +32,7 @@ class CColorAlphaDialog : public CDialog
 		enum {IDD = IDD_PSEd_EditColorAndAlpha};
 		CColorAlphaDialog(UINT nIDTemplate = CColorAlphaDialog::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI

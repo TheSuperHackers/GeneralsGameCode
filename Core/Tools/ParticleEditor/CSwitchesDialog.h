@@ -28,12 +28,12 @@ class CSwitchesDialog : public CDialog
 		enum {IDD = IDD_PSEd_EditSwitchesDialog};
 		CSwitchesDialog(UINT nIDTemplate = CSwitchesDialog::IDD, CWnd* pParentWnd = nullptr);
 
-		void InitPanel( void );
+		void InitPanel();
 
 		// if true, updates the UI from the Particle System.
 		// if false, updates the Particle System from the UI
 		void performUpdate( IN Bool toUI );
-		DebugWindowDialog* GetDWDParent(void) { return (DebugWindowDialog*) GetParent(); }
+		DebugWindowDialog* GetDWDParent() { return (DebugWindowDialog*) GetParent(); }
 
 	protected:
 		afx_msg void OnParticleSystemEdit();

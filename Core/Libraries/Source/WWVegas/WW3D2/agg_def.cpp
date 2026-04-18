@@ -71,7 +71,6 @@ AggregateDefClass::AggregateDefClass ()
 	::memset (&m_Info, 0, sizeof (m_Info));
 	::memset (&m_MiscInfo, 0, sizeof (m_MiscInfo));
 	m_MiscInfo.OriginalClassID = RenderObjClass::CLASSID_HLOD;
-	return ;
 }
 
 
@@ -89,7 +88,6 @@ AggregateDefClass::AggregateDefClass (const AggregateDefClass &src)
 
 	// Invoke the assignment operator
 	(*this) = src;
-	return ;
 }
 
 
@@ -106,7 +104,6 @@ AggregateDefClass::AggregateDefClass (RenderObjClass &base_model)
 	m_MiscInfo.OriginalClassID = RenderObjClass::CLASSID_HLOD;
 
 	Initialize (base_model);
-	return ;
 }
 
 
@@ -125,7 +122,6 @@ AggregateDefClass::~AggregateDefClass ()
 	}
 
 	Free_Subobject_List ();
-	return ;
 }
 
 
@@ -187,7 +183,6 @@ AggregateDefClass::Free_Subobject_List ()
 
 	// Reset the lists contents
 	m_SubobjectList.Delete_All ();
-	return ;
 }
 
 
@@ -304,8 +299,6 @@ AggregateDefClass::Attach_Subobjects (RenderObjClass &base_model)
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -408,7 +401,6 @@ AggregateDefClass::Initialize (RenderObjClass &base_model)
 
 	// Release the model if necessary
 	REF_PTR_RELEASE (pvanilla_model);
-	return ;
 }
 
 
@@ -494,8 +486,6 @@ AggregateDefClass::Build_Subobject_List
 		}
 		node_list.Delete_All ();
 	}
-
-	return ;
 }
 
 
@@ -678,7 +668,6 @@ AggregateDefClass::Add_Subobject (const W3dAggregateSubobjectStruct &subobj_info
 
 	// Add this new entry to the list
 	m_SubobjectList.Add (pnew_entry);
-	return ;
 }
 
 

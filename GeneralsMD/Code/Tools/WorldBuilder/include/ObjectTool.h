@@ -36,8 +36,8 @@ protected:
 	Coord3D m_downPt3d;
 
 public:
-	ObjectTool(void);
-	virtual ~ObjectTool(void) override;
+	ObjectTool();
+	virtual ~ObjectTool() override;
 
 public:
 	static Real calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView);

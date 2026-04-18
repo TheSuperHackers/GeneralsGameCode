@@ -100,8 +100,6 @@ MeshDeformSaveClass::Initialize
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -138,8 +136,6 @@ MeshDeformSaveClass::Initialize
 			m_DeformSets.Add (save_set);
 		}
 	}
-
-	return ;
 }
 
 
@@ -159,7 +155,6 @@ MeshDeformSaveClass::Reset (void)
 	}
 
 	m_DeformSets.Delete_All ();
-	return ;
 }
 
 
@@ -366,8 +361,6 @@ MeshDeformSaveClass::Re_Index (MeshBuilderClass &builder)
 			set_save->Replace_Deform_Data (keyframe_index, temp_list);
 		}
 	}
-
-	return ;
 }*/
 
 

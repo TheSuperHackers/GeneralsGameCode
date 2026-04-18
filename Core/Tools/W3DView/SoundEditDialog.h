@@ -37,7 +37,7 @@ class SoundEditDialogClass : public CDialog
 {
 public:
 	SoundEditDialogClass (CWnd *parent);
-	virtual ~SoundEditDialogClass (void);
+	virtual ~SoundEditDialogClass ();
 
 // Form Data
 public:
@@ -85,15 +85,15 @@ public:
 	//	Public methods
 	///////////////////////////////////////////////////////
 	void							Set_Sound (SoundRenderObjClass *sound)	{ REF_PTR_SET (SoundRObj, sound); }
-	SoundRenderObjClass *	Get_Sound (void) const						{ if (SoundRObj != nullptr) SoundRObj->Add_Ref (); return SoundRObj; }
+	SoundRenderObjClass *	Get_Sound () const						{ if (SoundRObj != nullptr) SoundRObj->Add_Ref (); return SoundRObj; }
 
 protected:
 
 	///////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////
-	void							Update_Enable_State (void);
-	AudibleSoundClass *		Create_Sound_Object (void);
+	void							Update_Enable_State ();
+	AudibleSoundClass *		Create_Sound_Object ();
 
 private:
 

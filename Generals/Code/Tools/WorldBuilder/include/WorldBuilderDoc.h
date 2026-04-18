@@ -69,25 +69,25 @@ protected:	// waypoint stuff.
 	} m_waypointLinks[MAX_WAYPOINTS];
 	Int									m_numWaypointLinks;
 protected:
-	void updateWaypointTable(void);
-	void compressWaypointIds(void);
+	void updateWaypointTable();
+	void compressWaypointIds();
 	void updateLWL(MapObject *pWay, MapObject *pSrcWay);
 public:
 	void addWaypointLink(Int waypointID1, Int waypointID2);
 	void removeWaypointLink(Int waypointID1, Int waypointID2);
 	MapObject *getWaypointByID(Int waypointID);
-	Int getNumWaypointLinks(void) {return m_numWaypointLinks;};
+	Int getNumWaypointLinks() {return m_numWaypointLinks;};
 	void getWaypointLink(Int ndx, Int *waypoint1, Int *waypointID2);
 	Bool waypointLinkExists(Int waypointID1, Int waypointID2);
 	Bool isWaypointLinked(MapObject *pWay);
 	void updateLinkedWaypointLabels(MapObject *pWay);
 
 	// Boundary stuff
-	Int getNumBoundaries(void) const ;
+	Int getNumBoundaries() const ;
 	void getBoundary(Int ndx, ICoord2D* border) const;
 	void addBoundary(ICoord2D* boundaryToAdd);
 	void changeBoundary(Int ndx, ICoord2D *border);
-	void removeLastBoundary(void);
+	void removeLastBoundary();
 
 	// outNdx must not be null, but outHandle can be.
 	// outHandle: 0 means BL, 1 means TL, 2 means TR, 3 means BR
@@ -141,14 +141,14 @@ public:
 
 	void syncViewCenters(Real x, Real y);
 
-	Bool needAutoSave(void) {return m_needAutosave;};
+	Bool needAutoSave() {return m_needAutosave;};
 
-	Int getNextWaypointID(void) { return ++m_curWaypointID;};
+	Int getNextWaypointID() { return ++m_curWaypointID;};
 
 	void setNextWaypointID(Int newMax) { if (newMax>m_curWaypointID) m_curWaypointID = newMax;};
 
-	void autoSave(void);
-	void validate(void);
+	void autoSave();
+	void validate();
 // Operations
 public:
 

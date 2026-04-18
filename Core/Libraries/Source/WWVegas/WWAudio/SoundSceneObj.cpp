@@ -101,7 +101,6 @@ SoundSceneObjClass::SoundSceneObjClass ()
 	m_ID = m_NextAvailableID ++;
 
 	Register_Sound_Object (this);
-	return ;
 }
 
 
@@ -124,7 +123,6 @@ SoundSceneObjClass::SoundSceneObjClass (const SoundSceneObjClass &src)
 
 	(*this) = src;
 	Register_Sound_Object (this);
-	return ;
 }
 
 
@@ -138,7 +136,6 @@ SoundSceneObjClass::~SoundSceneObjClass ()
 	REF_PTR_RELEASE (m_UserObj);
 	REF_PTR_RELEASE (m_AttachedObject);
 	Unregister_Sound_Object (this);
-	return ;
 }
 
 
@@ -180,8 +177,6 @@ SoundSceneObjClass::Attach_To_Object
 	} else {
 		m_AttachedBone = -1;
 	}
-
-	return ;
 }
 
 
@@ -210,8 +205,6 @@ SoundSceneObjClass::Attach_To_Object
 		//
 		Apply_Auto_Position ();
 	}
-
-	return ;
 }
 
 
@@ -250,8 +243,6 @@ SoundSceneObjClass::Apply_Auto_Position ()
 		// Update the sound's transform
 		Set_Transform (transform);
 	}
-
-	return ;
 }
 
 
@@ -379,7 +370,6 @@ SoundSceneObjClass::Set_ID (uint32 id)
 	//	Reinsert the sound object in our sorted list
 	//
 	Register_Sound_Object (this);
-	return ;
 }
 
 
@@ -413,8 +403,6 @@ SoundSceneObjClass::Register_Sound_Object (SoundSceneObjClass *sound_obj)
 			m_GlobalSoundList.Insert (index, sound_obj);
 		}
 	}
-
-	return ;
 }
 
 
@@ -439,8 +427,6 @@ SoundSceneObjClass::Unregister_Sound_Object (SoundSceneObjClass *sound_obj)
 		//
 		m_GlobalSoundList.Delete (index);
 	}
-
-	return ;
 }
 
 

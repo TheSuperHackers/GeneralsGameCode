@@ -130,7 +130,7 @@ void GUIEditWindowManager::unlinkFromClipboard( GameWindow *window,
 /** Remove selection entries for child windows that also have ANY of
 	* their parents in the selection list. */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::removeSupervisedChildSelections( void )
+void GUIEditWindowManager::removeSupervisedChildSelections()
 {
 	WindowSelectionEntry *select, *next;
 	GameWindow *window, *parent;
@@ -176,7 +176,7 @@ void GUIEditWindowManager::removeSupervisedChildSelections( void )
 	* for the transition from "parent space" to "screen space" */
 //-------------------------------------------------------------------------------------------------
 /*
-void GUIEditWindowManager::orphanSelectedChildren( void )
+void GUIEditWindowManager::orphanSelectedChildren()
 {
 	WindowSelectionEntry *select;
 	GameWindow *window, *parent;
@@ -218,7 +218,7 @@ void GUIEditWindowManager::orphanSelectedChildren( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GUIEditWindowManager::GUIEditWindowManager( void )
+GUIEditWindowManager::GUIEditWindowManager()
 {
 
 	m_clipboard = nullptr;
@@ -231,7 +231,7 @@ GUIEditWindowManager::GUIEditWindowManager( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GUIEditWindowManager::~GUIEditWindowManager( void )
+GUIEditWindowManager::~GUIEditWindowManager()
 {
 
 	// the duplicate list is only used in the actual act of pasting
@@ -245,7 +245,7 @@ GUIEditWindowManager::~GUIEditWindowManager( void )
 //-------------------------------------------------------------------------------------------------
 /** initialize the system */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::init( void )
+void GUIEditWindowManager::init()
 {
 
 	// extending functionality
@@ -318,7 +318,7 @@ GameWindow *GUIEditWindowManager::winCreate( GameWindow *parent,
 //-------------------------------------------------------------------------------------------------
 /** Destroy all windows in the clipboard */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::resetClipboard( void )
+void GUIEditWindowManager::resetClipboard()
 {
 	GameWindow *window, *next;
 
@@ -359,7 +359,7 @@ void GUIEditWindowManager::resetClipboard( void )
 //-------------------------------------------------------------------------------------------------
 /** Is the clipboard empty */
 //-------------------------------------------------------------------------------------------------
-Bool GUIEditWindowManager::isClipboardEmpty( void )
+Bool GUIEditWindowManager::isClipboardEmpty()
 {
 
 	if( m_clipboard )
@@ -375,7 +375,7 @@ Bool GUIEditWindowManager::isClipboardEmpty( void )
 	* child the child will have no parent and will be adjusted to absolute
 	* screen coordinates with no parent */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::cutSelectedToClipboard( void )
+void GUIEditWindowManager::cutSelectedToClipboard()
 {
 
 	//
@@ -466,7 +466,7 @@ void GUIEditWindowManager::duplicateSelected( GameWindow *root )
 //-------------------------------------------------------------------------------------------------
 /** Copy the selected windows to the clipboard */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::copySelectedToClipboard( void )
+void GUIEditWindowManager::copySelectedToClipboard()
 {
 
 	// reset the contents of the clipboard
@@ -660,7 +660,7 @@ void GUIEditWindowManager::validateClipboardNames( GameWindow *root )
 //-------------------------------------------------------------------------------------------------
 /** Paste the contents of the clipboard into the window world */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::pasteClipboard( void )
+void GUIEditWindowManager::pasteClipboard()
 {
 	GameWindow *window, *next;
 	GameWindow *firstWindow = nullptr;
@@ -1408,7 +1408,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 /** Create a duplicate everything on the clipboard list and put it
 	* on the m_clipboardDup list for pasting */
 //-------------------------------------------------------------------------------------------------
-void GUIEditWindowManager::createClipboardDuplicate( void )
+void GUIEditWindowManager::createClipboardDuplicate()
 {
 	GameWindow *duplicate;
 	GameWindow *window;

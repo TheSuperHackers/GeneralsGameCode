@@ -86,7 +86,7 @@ protected:
 		bool						Is_Object_In_List (const char *passet_name, DynamicVectorClass <RenderObjClass *> &node_list);
 		bool						Is_Render_Obj_Already_Attached (const CString &name);
 		void						Update_Controls (HTREEITEM selected_item);
-		HTREEITEM				Get_Current_Bone_Item (void);
+		HTREEITEM				Get_Current_Bone_Item ();
 		void						Remove_Object_From_Bone (HTREEITEM bone_item, const CString &name);
 
 	private:

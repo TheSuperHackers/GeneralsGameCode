@@ -30,7 +30,7 @@
 #pragma once
 
 #include "Lib/BaseTypeCore.h"
-#include "wwmath.h"
+#include "WWMath/wwmath.h"
 
 //-----------------------------------------------------------------------------
 typedef wchar_t WideChar;  ///< multi-byte character representations

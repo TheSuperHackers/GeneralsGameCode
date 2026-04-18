@@ -102,8 +102,10 @@ void View::init()
 	m_minHeightAboveGround = TheGlobalData->m_minCameraHeight;
 	m_okToAdjustHeight = FALSE;
 
-	m_defaultAngle = 0.0f;
-	m_defaultPitch = 0.0f;
+	m_defaultAngle = DEG_TO_RADF(TheGlobalData->m_cameraYaw);
+	m_defaultPitch = DEG_TO_RADF(TheGlobalData->m_cameraPitch);
+	m_angle = m_defaultAngle;
+	m_pitch = m_defaultPitch;
 }
 
 void View::reset()
@@ -160,13 +162,26 @@ void View::setAngle( Real radians )
 	m_angle = WWMath::Normalize_Angle(radians);
 }
 
+#define CLAMP_VIEW_PITCH 1
 /**
  * Rotate the view around the horizontal (X) axis to the given angle.
  */
 void View::setPitch( Real radians )
 {
-	constexpr Real limit = PI/5.0f;
-	m_pitch = clamp(-limit, radians, limit);
+#if CLAMP_VIEW_PITCH
+	m_pitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+#else
+	m_pitch = WWMath::Normalize_Angle(radians);
+#endif
+}
+
+void View::setDefaultPitch( Real radians )
+{
+#if CLAMP_VIEW_PITCH
+	m_defaultPitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+#else
+	m_defaultPitch = WWMath::Normalize_Angle(radians);
+#endif
 }
 
 /**

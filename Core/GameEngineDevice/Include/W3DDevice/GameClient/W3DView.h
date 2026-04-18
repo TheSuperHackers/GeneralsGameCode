@@ -171,6 +171,7 @@ public:
 
 	virtual void setAngle( Real radians ) override;									///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual void setPitch( Real radians ) override;									///< Rotate the view around the horizontal axis to the given angle (pitch)
+	virtual void setDefaultPitch( Real radians ) override;						///< Set new default camera pitch. It affects the camera distance to the ground
 	virtual void setAngleToDefault() override;									///< Set the view angle back to default
 	virtual void setPitchToDefault() override;									///< Set the view pitch back to default
 

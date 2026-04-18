@@ -623,7 +623,6 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	*curVertexP += numV;
 	m_numVertex += numV;
 	m_numPolygons += numI/3;
-	return;
 }
 
 //=============================================================================

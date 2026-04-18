@@ -61,7 +61,7 @@ BEGIN_MESSAGE_MAP(ScorchOptions, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-MapObject *ScorchOptions::getSingleSelectedScorch(void)
+MapObject *ScorchOptions::getSingleSelectedScorch()
 {
 	MapObject *theMapObj = nullptr;
 //	Bool found = false;
@@ -82,7 +82,7 @@ MapObject *ScorchOptions::getSingleSelectedScorch(void)
 	return(nullptr);
 }
 
-void ScorchOptions::updateTheUI(void)
+void ScorchOptions::updateTheUI()
 {
 	m_updating = true;
 	MapObject *theMapObj = getSingleSelectedScorch();
@@ -102,7 +102,7 @@ void ScorchOptions::updateTheUI(void)
 	m_updating = false;
 }
 
-void ScorchOptions::update(void)
+void ScorchOptions::update()
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();
@@ -216,7 +216,7 @@ void ScorchOptions::PopSliderFinished(const long sliderID, long theVal)
 
 }
 
-void ScorchOptions::changeScorch(void)
+void ScorchOptions::changeScorch()
 {
 	getAllSelectedDicts();
 
@@ -231,7 +231,7 @@ void ScorchOptions::changeScorch(void)
 	pView->Invalidate();
 }
 
-void ScorchOptions::changeSize(void)
+void ScorchOptions::changeSize()
 {
 	getAllSelectedDicts();
 
@@ -246,7 +246,7 @@ void ScorchOptions::changeSize(void)
 	pView->Invalidate();
 }
 
-void ScorchOptions::getAllSelectedDicts(void)
+void ScorchOptions::getAllSelectedDicts()
 {
 	m_allSelectedDicts.clear();
 

@@ -56,6 +56,7 @@
 #include "Common/Xfer.h"
 #include "Common/GameLOD.h"
 
+#include "GameClient/Color.h"
 #include "GameClient/Water.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/PolygonTrigger.h"
@@ -164,6 +165,22 @@ static ShaderClass zFillAlphaShader(SC_ZFILL_BLEND3);
 static ShaderClass blendStagesShader(SC_DETAIL_BLEND);
 
 WaterRenderObjClass *TheWaterRenderObj=nullptr; ///<global water rendering object
+
+static Int getRiverVertexDiffuse(W3DShroud *shroud, Real x, Real y, Real shadeR, Real shadeG, Real shadeB, Int diffuse)
+{
+	if (!shroud)
+		return diffuse;
+
+	Int cellX = (Int)(x / shroud->getCellWidth());
+	Int cellY = (Int)(y / shroud->getCellHeight());
+	W3DShroudLevel level = shroud->getShroudLevel(cellX, cellY);
+	Real shroudScale = (Real)level / 255.0f;
+	return GameMakeColor(
+		(Int)(shadeR * shroudScale),
+		(Int)(shadeG * shroudScale),
+		(Int)(shadeB * shroudScale),
+		(diffuse >> 24) & 0xff);
+}
 
 void doSkyBoxSet(Bool startDraw)
 {
@@ -2814,6 +2831,10 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 		Real constA=3*m_riverVOrigin;
 
+		// TheSuperHackers @bugfix afc-afc0 14/04/2026 Apply shroud per-vertex to avoid double-darkening
+		// at river borders.
+		W3DShroud *shroud = TheTerrainRenderObject ? TheTerrainRenderObject->getShroud() : nullptr;
+
 		for (i=0; i<(pTrig->getNumPoints()/2); i++)
 		{
 			Real x,y;
@@ -2834,7 +2855,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->y=y;
 
 			vb->z=innerPt.z;
-			vb->diffuse= diffuse;
+
+			vb->diffuse = getRiverVertexDiffuse(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
 
 			Real wobbleConst=-m_riverVOrigin+vScale*(Real)i + WWMath::Fast_Sin(2*PI*(vScale*(Real)i) - constA)/22.0f;
  			//old slower version
@@ -2856,7 +2878,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 			vb->x=x;
 			vb->y=y;
 			vb->z=outerPt.z;
-			vb->diffuse= diffuse;
+
+			vb->diffuse = getRiverVertexDiffuse(shroud, x, y, shadeR, shadeG, shadeB, diffuse);
  			//old slower version
 			//vb->v1=-m_riverVOrigin+vScale*(Real)i + wobble(vScale*i, m_riverVOrigin, doWobble);
 			vb->v1=wobbleConst;
@@ -2908,19 +2931,6 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	if (TheWaterTransparency->m_additiveBlend)
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
 
-	//do second pass to apply the shroud on water plane
-	if (TheTerrainRenderObject->getShroud())
-	{
-		W3DShaderManager::setTexture(0,TheTerrainRenderObject->getShroud()->getShroudTexture());
-		W3DShaderManager::setShader(W3DShaderManager::ST_SHROUD_TEXTURE, 0);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-		//Shroud shader uses z-compare of EQUAL which wouldn't work on water because it doesn't
-		//write to the zbuffer.  Change to LESSEQUAL.
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-		DX8Wrapper::Draw_Triangles(	0,rectangleCount*2, 0,	(rectangleCount+1)*2);
-		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_ZFUNC, D3DCMP_EQUAL);
-		W3DShaderManager::resetShader(W3DShaderManager::ST_SHROUD_TEXTURE);
-	}
 	DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_CULLMODE, cull);
 
 

@@ -51,16 +51,14 @@ CHierarchyPropPage::CHierarchyPropPage (const CString &stringHierarchyName)
 	//}}AFX_DATA_INIT
 
     m_stringHierarchyName = stringHierarchyName;
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////
 //
 //  CHierarchyPropPage
 //
-CHierarchyPropPage::~CHierarchyPropPage (void)
+CHierarchyPropPage::~CHierarchyPropPage ()
 {
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -74,7 +72,6 @@ CHierarchyPropPage::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CHierarchyPropPage)
 	DDX_Control(pDX, IDC_SUBOBJECT_LIST, m_subObjectListCtrl);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -92,7 +89,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CHierarchyPropPage::OnInitDialog (void)
+CHierarchyPropPage::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog();
@@ -178,5 +175,4 @@ CHierarchyPropPage::OnDblclkSubObjectList
     }
 
 	(*pResult) = 0;
-    return ;
 }

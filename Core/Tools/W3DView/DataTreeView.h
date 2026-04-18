@@ -84,38 +84,38 @@ protected:
 		//	Asset insertion methods
 		//
 		bool					Add_Asset_To_Tree (LPCTSTR name, ASSET_TYPE type, bool bselect);
-		void					LoadAssetsIntoTree (void);
+		void					LoadAssetsIntoTree ();
 		void					Refresh_Asset (LPCTSTR new_name, LPCTSTR old_name, ASSET_TYPE type);
 
 		//
 		//	Animation insertion methods
 		//
-		void					LoadAnimationsIntoTree (void);
+		void					LoadAnimationsIntoTree ();
 		void					LoadAnimationsIntoTree (HTREEITEM hItem);
 
-	  bool					Are_Anims_Restricted (void) const			{ return m_RestrictAnims; }
+	  bool					Are_Anims_Restricted () const			{ return m_RestrictAnims; }
 	  void					Restrict_Anims (bool onoff);
 
 		//
 		//	Texture insertion methods
 		//
-		void					Load_Materials_Into_Tree (void);
+		void					Load_Materials_Into_Tree ();
 
 		//
 		//	Display methods
 		//
 		void					Display_Asset (HTREEITEM htree_item = nullptr);
-		void					Select_Next (void);
-		void					Select_Prev (void);
-		void					Reload_Lightmap_Models (void);
+		void					Select_Next ();
+		void					Select_Prev ();
+		void					Reload_Lightmap_Models ();
 
 		//
 		// Information methods
 		//
-		RenderObjClass *	Get_Current_Render_Obj (void) const;
-		AssetInfoClass *	Get_Current_Asset_Info (void) const;
-		LPCTSTR				GetCurrentSelectionName (void);
-		ASSET_TYPE			GetCurrentSelectionType (void);
+		RenderObjClass *	Get_Current_Render_Obj () const;
+		AssetInfoClass *	Get_Current_Asset_Info () const;
+		LPCTSTR				GetCurrentSelectionName ();
+		ASSET_TYPE			GetCurrentSelectionType ();
 		HTREEITEM			FindChildItem (HTREEITEM hParentItem, LPCTSTR pszChildItemName);
 		HTREEITEM			FindChildItem (HTREEITEM hParentItem, RenderObjClass *prender_obj);
 		HTREEITEM			FindFirstChildItemBasedOnHierarchyName (HTREEITEM hParentItem, LPCTSTR pszHierarchyName);
@@ -125,7 +125,7 @@ protected:
 		//
 		//	Initialization methods
 		//
-		void					CreateRootNodes (void);
+		void					CreateRootNodes ();
 
 	protected:
 

@@ -109,8 +109,6 @@ void W3DPropDraw::reactToTransformChange( const Matrix3D *oldMtx,
 void W3DPropDraw::doDrawModule(const Matrix3D* transformMtx)
 {
 
-	return;
-
 }
 
 // ------------------------------------------------------------------------------------------------

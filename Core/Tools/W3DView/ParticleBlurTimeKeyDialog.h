@@ -60,7 +60,7 @@ public:
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
-	float					Get_Blur_Time (void) const { return m_BlurTime; }
+	float					Get_Blur_Time () const { return m_BlurTime; }
 
 private:
 

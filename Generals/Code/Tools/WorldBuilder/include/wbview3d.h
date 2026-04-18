@@ -65,8 +65,8 @@ protected:
 public:
 
 	// DX8_CleanupHook methods
-	virtual void ReleaseResources(void) override;	///< Release all dx8 resources so the device can be reset.
-	virtual void ReAcquireResources(void) override;  ///< Reacquire all resources after device reset.
+	virtual void ReleaseResources() override;	///< Release all dx8 resources so the device can be reset.
+	virtual void ReAcquireResources() override;  ///< Reacquire all resources after device reset.
 
 // Operations
 public:
@@ -212,12 +212,12 @@ protected:
 	void initAssets();
 	void initWW3D();
 	void drawLabels(HDC hdc);
-	void drawLabels(void);
+	void drawLabels();
 	void shutdownWW3D();
 	void killTheTimer();
 	void render();
 	void setupCamera();
-	void updateHysteresis(void);
+	void updateHysteresis();
 	void updateLights();
 	void updateScorches();
 
@@ -246,11 +246,11 @@ public:
 	virtual void rotateCamera(Real delta) override;
 	virtual void pitchCamera(Real delta) override;
 	void setCameraPitch(Real absolutePitch);
-	Real getCameraPitch(void);
-	Real getHeightAboveGround(void) { return m_actualHeightAboveGround; }
-	Vector3 getCameraSource(void) { return m_cameraSource; }
-	Vector3 getCameraTarget(void) { return m_cameraTarget; }
-	Real getCameraAngle(void) { return m_cameraAngle; }
+	Real getCameraPitch();
+	Real getHeightAboveGround() { return m_actualHeightAboveGround; }
+	Vector3 getCameraSource() { return m_cameraSource; }
+	Vector3 getCameraTarget() { return m_cameraTarget; }
+	Real getCameraAngle() { return m_cameraAngle; }
 
 	virtual MapObject *picked3dObjectInView(CPoint viewPt) override;
 	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt) override;
@@ -261,16 +261,16 @@ public:
 	/// Removes all render objects.  Call when swithing to a new map.
 	void resetRenderObjects();
 
-	void stepTimeOfDay(void);
+	void stepTimeOfDay();
 
 	void reset3dEngineDisplaySize(Int width, Int height); ///< Closes & reinitializes w3d.
 	void setLighting(const GlobalData::TerrainLighting *tl, Int whichLighting, Int whichLight=0);
 
-	DrawObject *getDrawObject(void) {return m_drawObject;};
+	DrawObject *getDrawObject() {return m_drawObject;};
 
 	AsciiString getModelNameAndScale(MapObject *pMapObj, Real *scale, BodyDamageType curDamageState);
 
-	virtual Int getPickPixels(void) override {return m_pickPixels;}
+	virtual Int getPickPixels() override {return m_pickPixels;}
 	virtual Bool viewToDocCoordZ(CPoint curPt, Coord3D *newPt, Real Z) override;
 public:
 
@@ -285,11 +285,11 @@ public:
 	void setObjTracking(MapObject *pMapObj, Coord3D pos, Real angle, Bool show);
 	void setViewLayersList(Bool showLayersList) { m_showLayersList = showLayersList; }
 
-	Bool getShowMapBoundaryFeedback(void) const { return m_showMapBoundaries; }
-	Bool getShowAmbientSoundsFeedback(void) const { return m_showAmbientSounds; }
+	Bool getShowMapBoundaryFeedback() const { return m_showMapBoundaries; }
+	Bool getShowAmbientSoundsFeedback() const { return m_showAmbientSounds; }
 
-	void togglePitchAndRotation( void ) { m_doPitch = !m_doPitch; }
-	virtual Bool isDoingPitch( void ) override { return m_doPitch; }
+	void togglePitchAndRotation() { m_doPitch = !m_doPitch; }
+	virtual Bool isDoingPitch() override { return m_doPitch; }
 };
 
 inline UINT WbView3d::getLastDrawTime() { return m_time; }

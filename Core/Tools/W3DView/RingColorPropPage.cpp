@@ -53,7 +53,6 @@ RingColorPropPageClass::RingColorPropPageClass (RingRenderObjClass *ring)
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -62,9 +61,8 @@ RingColorPropPageClass::RingColorPropPageClass (RingRenderObjClass *ring)
 //	~RingColorPropPageClass
 //
 /////////////////////////////////////////////////////////////
-RingColorPropPageClass::~RingColorPropPageClass (void)
+RingColorPropPageClass::~RingColorPropPageClass ()
 {
-	return ;
 }
 
 
@@ -80,7 +78,6 @@ RingColorPropPageClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(RingColorPropPageClass)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -97,7 +94,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::Initialize (void)
+RingColorPropPageClass::Initialize ()
 {
 	m_ColorChannel.Reset ();
 	m_OrigColorChannel.Reset ();
@@ -122,8 +119,6 @@ RingColorPropPageClass::Initialize (void)
 			m_OrigAlphaChannel.Add_Key (m_RenderObj->Get_Alpha(), 0);
 		}
 	}
-
-	return ;
 }
 
 
@@ -133,7 +128,7 @@ RingColorPropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingColorPropPageClass::OnInitDialog (void)
+RingColorPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -185,7 +180,7 @@ RingColorPropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-RingColorPropPageClass::OnApply (void)
+RingColorPropPageClass::OnApply ()
 {
 	// Allow the base class to process this message
 	return CPropertyPage::OnApply ();
@@ -198,10 +193,9 @@ RingColorPropPageClass::OnApply (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::OnDestroy (void)
+RingColorPropPageClass::OnDestroy ()
 {
 	CPropertyPage::OnDestroy();
-	return ;
 }
 
 
@@ -305,7 +299,7 @@ RingColorPropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::OnCancel (void)
+RingColorPropPageClass::OnCancel ()
 {
 	//
 	//	Reset the object to its original state
@@ -314,7 +308,6 @@ RingColorPropPageClass::OnCancel (void)
 	m_RenderObj->Set_Alpha_Channel (m_OrigAlphaChannel);
 
 	CPropertyPage::OnCancel ();
-	return ;
 }
 
 
@@ -324,7 +317,7 @@ RingColorPropPageClass::OnCancel (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::Update_Opacities (void)
+RingColorPropPageClass::Update_Opacities ()
 {
 	m_AlphaChannel.Reset ();
 
@@ -347,7 +340,6 @@ RingColorPropPageClass::Update_Opacities (void)
 	//
 	m_RenderObj->Set_Alpha_Channel (m_AlphaChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 
 
@@ -357,7 +349,7 @@ RingColorPropPageClass::Update_Opacities (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingColorPropPageClass::Update_Colors (void)
+RingColorPropPageClass::Update_Colors ()
 {
 	m_ColorChannel.Reset ();
 
@@ -380,6 +372,5 @@ RingColorPropPageClass::Update_Colors (void)
 	//
 	m_RenderObj->Set_Color_Channel (m_ColorChannel);
 	m_RenderObj->Restart_Animation ();
-	return ;
 }
 

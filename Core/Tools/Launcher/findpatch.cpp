@@ -209,5 +209,4 @@ void Delete_Patches(ConfigFile &config)
     }
     FindClose(hFile);
   }
-  return;
 }

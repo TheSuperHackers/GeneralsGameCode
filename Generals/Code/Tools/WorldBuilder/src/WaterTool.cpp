@@ -41,7 +41,7 @@
 Bool WaterTool::m_water_isActive = false;
 
 /// Constructor
-WaterTool::WaterTool(void)
+WaterTool::WaterTool()
 {
 	m_toolID = ID_WATER_TOOL;
 	m_cursorID = IDC_WATER;
@@ -53,7 +53,7 @@ WaterTool::WaterTool(void)
 
 
 /// Destructor
-WaterTool::~WaterTool(void)
+WaterTool::~WaterTool()
 {
 	if (m_poly_plusCursor) {
 		::DestroyCursor(m_poly_plusCursor);
@@ -121,7 +121,7 @@ void WaterTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 
 
 /** Set the cursor. */
-void WaterTool::setCursor(void)
+void WaterTool::setCursor()
 {
 	if (m_poly_mouseUpPlus || (m_poly_isAdding && m_poly_curSelectedPolygon)) {
 		if (m_poly_plusCursor == nullptr) {

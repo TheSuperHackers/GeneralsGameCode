@@ -46,7 +46,7 @@ MoreParmsDialog::~MoreParmsDialog()
 
 }
 
-void MoreParmsDialog::InitPanel( void )
+void MoreParmsDialog::InitPanel()
 {
 	CComboBox* pCombo;
 

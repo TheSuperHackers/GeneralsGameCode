@@ -117,7 +117,7 @@ GUIEdit *TheEditor = nullptr;
 /** Bring up the standard windows browser save as dialog and return
 	* filename selected */
 //=============================================================================
-char *GUIEdit::saveAsDialog( void )
+char *GUIEdit::saveAsDialog()
 {
 	static char filename[ _MAX_PATH ];
   OPENFILENAME ofn;
@@ -159,7 +159,7 @@ char *GUIEdit::saveAsDialog( void )
 /** Bring up the standard windows browser open dialog and return
 	* filename selected */
 //=============================================================================
-char *GUIEdit::openDialog( void )
+char *GUIEdit::openDialog()
 {
 	static char filename[ _MAX_PATH ];
   OPENFILENAME ofn;
@@ -409,7 +409,7 @@ void GUIEdit::selectWindowsInRegion( IRegion2D *region )
 // GUIEdit::GUIEdit ===========================================================
 /** */
 //=============================================================================
-GUIEdit::GUIEdit( void )
+GUIEdit::GUIEdit()
 {
 
 	m_appInst = nullptr;
@@ -443,7 +443,7 @@ GUIEdit::GUIEdit( void )
 // GUIEdit::~GUIEdit ==========================================================
 /** */
 //=============================================================================
-GUIEdit::~GUIEdit( void )
+GUIEdit::~GUIEdit()
 {
 	delete TheHeaderTemplateManager;
 	TheHeaderTemplateManager = nullptr;
@@ -463,7 +463,7 @@ GUIEdit::~GUIEdit( void )
 // GUIEdit::init ==============================================================
 /** Initialize all the GUI edit data */
 //=============================================================================
-void GUIEdit::init( void )
+void GUIEdit::init()
 {
 
 	//
@@ -615,7 +615,7 @@ void GUIEdit::init( void )
 // GUIEdit::shutdown ==========================================================
 /** Shutdown our GUI edit application */
 //=============================================================================
-void GUIEdit::shutdown( void )
+void GUIEdit::shutdown()
 {
 
 	// write our configuration file
@@ -710,7 +710,7 @@ void GUIEdit::shutdown( void )
 // GUIEdit::update ============================================================
 /** Update method for our GUI edit application */
 //=============================================================================
-void GUIEdit::update( void )
+void GUIEdit::update()
 {
 
 	// update mouse info
@@ -1363,7 +1363,7 @@ void GUIEdit::clipCreationParamsToParent( GameWindow *parent,
 // GUIEdit::deleteAllWindows ==================================================
 /** Delete all windows in the editor */
 //=============================================================================
-void GUIEdit::deleteAllWindows( void )
+void GUIEdit::deleteAllWindows()
 {
 	GameWindow *window, *next;
 
@@ -3334,7 +3334,7 @@ GameWindow *GUIEdit::newStaticText( GameWindow *parent,
 // GUIEdit::createStatusBar ===================================================
 /** Create a status bar at the bottom of the editor */
 //=============================================================================
-void GUIEdit::createStatusBar( void )
+void GUIEdit::createStatusBar()
 {
 	RECT rect;
 	Int width;
@@ -3393,7 +3393,7 @@ void GUIEdit::statusMessage( StatusPart part, const char *message )
 // GUIEdit::createToolbar =====================================================
 /** Create the toolbar for the editor */
 //=============================================================================
-void GUIEdit::createToolbar( void )
+void GUIEdit::createToolbar()
 {
 
 }
@@ -3405,7 +3405,7 @@ void GUIEdit::createToolbar( void )
 // GUIEdit::newLayout =========================================================
 /** Reset the editor for a new layout */
 //=============================================================================
-Bool GUIEdit::newLayout( void )
+Bool GUIEdit::newLayout()
 {
 
 	// delete all windows
@@ -3426,7 +3426,7 @@ Bool GUIEdit::newLayout( void )
 // GUIEdit::menuExit ==========================================================
 /** The user clicked on exit in the menu and wishes to exit the editor */
 //=============================================================================
-Bool GUIEdit::menuExit( void )
+Bool GUIEdit::menuExit()
 {
 	Int result;
 
@@ -3473,7 +3473,7 @@ Bool GUIEdit::menuExit( void )
 // GUIEdit::menuNew ===========================================================
 /** file->new menu option */
 //=============================================================================
-Bool GUIEdit::menuNew( void )
+Bool GUIEdit::menuNew()
 {
 
 	//
@@ -3599,7 +3599,7 @@ void GUIEdit::revertDefaultCallbacks( GameWindow *root )
 // GUIEdit::menuOpen ==========================================================
 /** User has clicked on file->open */
 //=============================================================================
-Bool GUIEdit::menuOpen( void )
+Bool GUIEdit::menuOpen()
 {
 	char *filePath;
 
@@ -3699,7 +3699,7 @@ Bool GUIEdit::menuOpen( void )
 // GUIEdit::menuSave ==========================================================
 /** file->save menu option */
 //=============================================================================
-Bool GUIEdit::menuSave( void )
+Bool GUIEdit::menuSave()
 {
 	Bool success;
 
@@ -3730,7 +3730,7 @@ Bool GUIEdit::menuSave( void )
 // GUIEdit::menuSaveAs ========================================================
 /** file->saveAs menu option */
 //=============================================================================
-Bool GUIEdit::menuSaveAs( void )
+Bool GUIEdit::menuSaveAs()
 {
 	char *filePath;
 	Bool success;
@@ -3768,7 +3768,7 @@ Bool GUIEdit::menuSaveAs( void )
 // GUIEdit::menuCopy ==========================================================
 /** Copy selected windows into clipboard */
 //=============================================================================
-Bool GUIEdit::menuCopy( void )
+Bool GUIEdit::menuCopy()
 {
 	WindowSelectionEntry *select;
 
@@ -3796,7 +3796,7 @@ Bool GUIEdit::menuCopy( void )
 // GUIEdit::menuPaste =========================================================
 /** Paste contents of clipboard into current layout */
 //=============================================================================
-Bool GUIEdit::menuPaste( void )
+Bool GUIEdit::menuPaste()
 {
 
 	TheGUIEditWindowManager->pasteClipboard();
@@ -3807,7 +3807,7 @@ Bool GUIEdit::menuPaste( void )
 // GUIEdit::menuCut ===========================================================
 /** Cut selected windows into the clipboard */
 //=============================================================================
-Bool GUIEdit::menuCut( void )
+Bool GUIEdit::menuCut()
 {
 	WindowSelectionEntry *select;
 
@@ -3930,7 +3930,7 @@ void GUIEdit::unSelectWindow( GameWindow *window )
 // GUIEdit::clearSelections ===================================================
 /** Clear the entire selection list */
 //=============================================================================
-void GUIEdit::clearSelections( void )
+void GUIEdit::clearSelections()
 {
 
 	while( m_selectList )
@@ -3941,7 +3941,7 @@ void GUIEdit::clearSelections( void )
 // GUIEdit::selectionCount ====================================================
 /** How many items are selected */
 //=============================================================================
-Int GUIEdit::selectionCount( void )
+Int GUIEdit::selectionCount()
 {
 	WindowSelectionEntry *select;
 	Int count = 0;
@@ -3998,7 +3998,7 @@ void GUIEdit::notifyNewWindow( GameWindow *window )
 // GUIEdit::deleteSelected ====================================================
 /** Delete the windows in the selection list */
 //=============================================================================
-void GUIEdit::deleteSelected( void )
+void GUIEdit::deleteSelected()
 {
 	Int count = selectionCount();
 	Int i;
@@ -4040,7 +4040,7 @@ void GUIEdit::deleteSelected( void )
 	* the top of the window stack for all windows, for child windows it will
 	* bring them to the top of the child list for their parent */
 //=============================================================================
-void GUIEdit::bringSelectedToTop( void )
+void GUIEdit::bringSelectedToTop()
 {
 	Int count = selectionCount();
 
@@ -4138,7 +4138,7 @@ void GUIEdit::dragMoveSelectedWindows( ICoord2D *dragOrigin,
 // GUIEdit::getSelectList =====================================================
 /** Return the selection list */
 //=============================================================================
-WindowSelectionEntry *GUIEdit::getSelectList( void )
+WindowSelectionEntry *GUIEdit::getSelectList()
 {
 
 	return m_selectList;
@@ -4148,7 +4148,7 @@ WindowSelectionEntry *GUIEdit::getSelectList( void )
 // GUIEdit::getFirstSelected ==================================================
 /** Get the first GameWindow * from the selection list */
 //=============================================================================
-GameWindow *GUIEdit::getFirstSelected( void )
+GameWindow *GUIEdit::getFirstSelected()
 {
 
 	if( m_selectList )

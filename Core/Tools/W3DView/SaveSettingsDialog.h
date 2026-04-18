@@ -58,7 +58,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
     protected:
-        void FixOKEnableState (void);
+        void FixOKEnableState ();
 };
 
 //{{AFX_INSERT_LOCATION}}

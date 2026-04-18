@@ -119,10 +119,10 @@ class CFancyToolbar : public CControlBar
         //
         //  Protected Methods
         //
-        void Paint (void);
+        void Paint ();
         void DrawButton (HDC hDC, int iXPos, int iYPos, HBITMAP hBMP);
         int ButtonFromPoint (const CPoint &point);
-        void RegisterFancyToolbarClass (void);
+        void RegisterFancyToolbarClass ();
 
 	    //{{AFX_MSG(CFancyToolbar)
         afx_msg void OnPaint();

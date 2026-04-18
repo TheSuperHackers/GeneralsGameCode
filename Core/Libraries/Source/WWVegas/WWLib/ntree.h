@@ -149,7 +149,6 @@ void NTreeClass<T>::Reset ()
 
 		REF_PTR_RELEASE (m_Root);
 	}
-	return ;
 }
 
 
@@ -300,7 +299,6 @@ NTreeLeafClass<T>::~NTreeLeafClass ()
 	REF_PTR_RELEASE (m_Child);
 	REF_PTR_RELEASE (m_NextSibling);
 	REF_PTR_RELEASE (m_PrevSibling);
-	return;
 }
 
 /////////////////////////////////////////////////////////
@@ -394,7 +392,6 @@ void NTreeLeafClass<T>::Remove ()
 	REF_PTR_RELEASE (m_PrevSibling);
 
 	Release_Ref ();
-	return ;
 }
 
 
@@ -554,6 +551,4 @@ void SortedNTreeLeafClass<T>::Insertion_Sort (SortedNTreeLeafClass<T> *start, So
 			inserted = true;
 		}
 	}
-
-	return ;
 }

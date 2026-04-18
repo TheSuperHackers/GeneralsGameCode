@@ -61,7 +61,7 @@ static void calcNewLight(Int lr, Int fb, Vector3 *newLight)
 	newLight->Rotate_Z(zAngle);
 }
 
-void GlobalLightOptions::updateEditFields(void)
+void GlobalLightOptions::updateEditFields()
 {
 	m_updating = true;
 	CString str;
@@ -141,18 +141,16 @@ void GlobalLightOptions::applyAngle(Int lightIndex)
 static void SpitLights()
 {
 #ifdef DEBUG_LOGGING
-	CString lightstrings[100];
 	DEBUG_LOG(("GlobalLighting\n"));
 	Int redA, greenA, blueA;
 	Int redD, greenD, blueD;
 	Real x, y, z;
-	CString times[4];
-	CString lights[3];
+	const char* times[4];
 	times[0] = "Morning";
 	times[1] = "Afternoon";
 	times[2] = "Evening";
 	times[3] = "Night";
-
+	const char* lights[3];
 	lights[0] = "";
 	lights[1] = "2";
 	lights[2] = "3";

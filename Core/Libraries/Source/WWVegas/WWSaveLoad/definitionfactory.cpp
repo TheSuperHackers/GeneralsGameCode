@@ -48,7 +48,6 @@ DefinitionFactoryClass::DefinitionFactoryClass ()
 		m_PrevFactory (nullptr)
 {
 	DefinitionFactoryMgrClass::Register_Factory (this);
-	return ;
 }
 
 
@@ -60,5 +59,4 @@ DefinitionFactoryClass::DefinitionFactoryClass ()
 DefinitionFactoryClass::~DefinitionFactoryClass ()
 {
 	DefinitionFactoryMgrClass::Unregister_Factory (this);
-	return ;
 }

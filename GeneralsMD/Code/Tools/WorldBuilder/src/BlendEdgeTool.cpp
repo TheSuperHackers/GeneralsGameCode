@@ -33,13 +33,13 @@
 // BlendEdgeTool class.
 //
 /// Constructor
-BlendEdgeTool::BlendEdgeTool(void) :
+BlendEdgeTool::BlendEdgeTool() :
 	Tool(ID_BLEND_EDGE_TOOL, IDC_BLEND_EDGE)
 {
 }
 
 /// Destructor
-BlendEdgeTool::~BlendEdgeTool(void)
+BlendEdgeTool::~BlendEdgeTool()
 {
 }
 

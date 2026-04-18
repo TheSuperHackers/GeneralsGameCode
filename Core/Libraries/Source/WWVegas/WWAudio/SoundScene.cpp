@@ -90,7 +90,6 @@ SoundSceneClass::SoundSceneClass ()
 	m_LogicalCullingSystem.Re_Partition (m_MinExtents, m_MaxExtents, 100.00F);
 	m_ListenerCullingSystem.Re_Partition (m_MinExtents, m_MaxExtents, 40.00F);
 	m_StaticCullingSystem.Re_Partition ();
-	return ;
 }
 
 
@@ -103,7 +102,6 @@ SoundSceneClass::~SoundSceneClass ()
 {
 	REF_PTR_RELEASE (m_Listener);
 	REF_PTR_RELEASE (m_2ndListener);
-	return ;
 }
 
 
@@ -126,7 +124,6 @@ SoundSceneClass::Re_Partition
 
 	m_MinExtents = min_dimension;
 	m_MaxExtents = max_dimension;
-	return ;
 }
 
 
@@ -225,8 +222,6 @@ SoundSceneClass::Collect_Logical_Sounds (unsigned int milliseconds, int listener
 			single_shot_it.Prev ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -322,8 +317,6 @@ SoundSceneClass::Collect_Audible_Sounds
 			sound_obj->Set_Runtime_Priority (priority);
 		}
 	}
-
-	return ;
 }
 
 
@@ -507,8 +500,6 @@ SoundSceneClass::On_Frame_Update (unsigned int milliseconds)
 			m_LastSoundsAudible.Add (sound_obj);
 		}
 	}
-
-	return ;
 }
 
 
@@ -576,8 +567,6 @@ SoundSceneClass::Add_Sound
 			sound_obj->Play ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -638,8 +627,6 @@ SoundSceneClass::Remove_Sound
 		//
 		WWAudioThreadsClass::Add_Delayed_Release_Object (cull_obj);
 	}
-
-	return ;
 }
 
 
@@ -719,8 +706,6 @@ SoundSceneClass::Add_Static_Sound
 			//sound_obj->Add_Ref ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -778,8 +763,6 @@ SoundSceneClass::Remove_Static_Sound
 		//
 		WWAudioThreadsClass::Add_Delayed_Release_Object (cull_obj);
 	}
-
-	return ;
 }
 
 
@@ -840,8 +823,6 @@ SoundSceneClass::Add_Logical_Sound
 			Update_Sound (cullable_sound);
 		}
 	}
-
-	return ;
 }
 
 
@@ -928,8 +909,6 @@ SoundSceneClass::Remove_Logical_Sound
 			REF_PTR_RELEASE (sound_obj);
 		}
 	}
-
-	return ;
 }
 
 
@@ -955,8 +934,6 @@ SoundSceneClass::Add_Logical_Listener (LogicalListenerClass *listener_obj)
 			listener_obj->Add_Ref ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -981,8 +958,6 @@ SoundSceneClass::Remove_Logical_Listener (LogicalListenerClass *listener_obj)
 			listener_obj->Release_Ref ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -997,8 +972,6 @@ SoundSceneClass::Update_Sound (SoundCullObjClass *sound_obj)
 	if (sound_obj != nullptr) {
 		sound_obj->Set_Cull_Box(sound_obj->Get_Bounding_Box());
 	}
-
-	return ;
 }
 
 
@@ -1012,7 +985,6 @@ SoundSceneClass::Initialize ()
 {
 	m_Listener->Free_Miles_Handle ();
 	m_Listener->Allocate_Miles_Handle ();
-	return ;
 }
 
 
@@ -1122,8 +1094,6 @@ SoundSceneClass::Save_Static_Sounds (ChunkSaveClass &csave)
 			csave.End_Chunk ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -1151,8 +1121,6 @@ SoundSceneClass::Load_Static_Sounds (ChunkLoadClass &cload)
 
 		cload.Close_Chunk ();
 	}
-
-	return ;
 }
 
 
@@ -1275,8 +1243,6 @@ SoundSceneClass::Flush_Scene ()
 			Remove_Sound (sound_obj);
 		}
 	}
-
-	return ;
 }
 
 
@@ -1297,5 +1263,4 @@ SoundSceneClass::Set_2nd_Listener (Listener3DClass *listener)
 	}
 
 	REF_PTR_SET (m_2ndListener, listener);
-	return ;
 }

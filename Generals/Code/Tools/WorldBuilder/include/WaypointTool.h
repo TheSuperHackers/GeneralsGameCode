@@ -33,8 +33,8 @@ class MapObject;
 class WaypointTool : public Tool
 {
 public:
-	WaypointTool(void);
-	virtual ~WaypointTool(void) override;
+	WaypointTool();
+	virtual ~WaypointTool() override;
 
 protected:
 	Int m_downWaypointID;
@@ -45,7 +45,7 @@ protected:
 	MapObject *pickWaypoint(Coord3D loc);
 
 public:
-	static Bool isActive(void) {return m_isActive;};
+	static Bool isActive() {return m_isActive;};
 
 public:
 	/// Perform tool on mouse down.

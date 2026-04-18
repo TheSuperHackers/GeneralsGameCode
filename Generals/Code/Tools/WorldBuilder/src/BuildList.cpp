@@ -53,7 +53,7 @@ BuildList::BuildList(CWnd* pParent /*=nullptr*/)
 }
 
 
-BuildList::~BuildList(void)
+BuildList::~BuildList()
 {
 }
 
@@ -113,7 +113,7 @@ BOOL BuildList::OnInitDialog()
 }
 
 /// Load the sides in the sides list.
-void BuildList::loadSides(void)
+void BuildList::loadSides()
 {
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_SIDES_COMBO);
 	if (!pCombo) {
@@ -137,7 +137,7 @@ void BuildList::loadSides(void)
 }
 
 /// Updates the current side, loading it's build list.
-void BuildList::updateCurSide(void)
+void BuildList::updateCurSide()
 {
 	if (TheSidesList->getNumSides() < 1)
 		return;

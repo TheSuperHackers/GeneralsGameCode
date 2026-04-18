@@ -218,7 +218,6 @@ Find_Turn_Arc
 	Vector3 rel_center;
 	Matrix3D::Inverse_Transform_Vector (transform, *arc_center, &rel_center);
 	(*is_right_turn) = (rel_center.Y > 0);
-	return ;
 }
 
 
@@ -273,8 +272,6 @@ Find_Tangents
 	} else {
 		(*angle_out_delta) = 0;
 	}
-
-	return ;
 }
 
 
@@ -441,7 +438,6 @@ VehicleCurveClass::Update_Arc_List ()
 	}
 
 	m_IsDirty = false;
-	return ;
 }
 
 
@@ -580,7 +576,6 @@ VehicleCurveClass::Evaluate (float time, Vector3 *set_val)
 	//	Our Z value is just a linear interpolation
 	//
 	set_val->Z = Keys[index0].Point.Z + (Keys[index1].Point.Z - Keys[index0].Point.Z) * seg_time;
-	return ;
 }
 
 const PersistFactoryClass & VehicleCurveClass::Get_Factory() const
@@ -681,6 +676,4 @@ VehicleCurveClass::Load_Variables (ChunkLoadClass &cload)
 
 		cload.Close_Micro_Chunk ();
 	}
-
-	return ;
 }

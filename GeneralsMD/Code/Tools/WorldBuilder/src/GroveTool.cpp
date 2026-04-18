@@ -235,14 +235,14 @@ void GroveTool::plantGrove( Coord3D pos, Coord3D prevDir, Real baseHeight, Int l
 // GroveTool class.
 //
 /// Constructor
-GroveTool::GroveTool(void) :
+GroveTool::GroveTool() :
 	Tool(ID_GROVE_TOOL, IDC_GROVE)
 {
 		m_headMapObj = nullptr;
 }
 
 /// Destructor
-GroveTool::~GroveTool(void)
+GroveTool::~GroveTool()
 {
 	deleteInstance(m_headMapObj);
 }

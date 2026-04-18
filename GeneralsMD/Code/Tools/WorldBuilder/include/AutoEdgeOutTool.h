@@ -32,8 +32,8 @@ class WorldHeightMapEdit;
 class AutoEdgeOutTool : public Tool
 {
 public:
-	AutoEdgeOutTool(void);
-	virtual ~AutoEdgeOutTool(void) override;
+	AutoEdgeOutTool();
+	virtual ~AutoEdgeOutTool() override;
 
 public:
 	/// Perform tool on mouse down.

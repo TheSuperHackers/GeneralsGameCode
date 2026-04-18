@@ -65,7 +65,6 @@ __inline void Delimit_Path (LPTSTR path)
 	if (::lstrlen (path) > 0 && path[::lstrlen (path) - 1] != '\\') {
 		::lstrcat (path, "\\");
 	}
-	return ;
 }
 
 __inline void Delimit_Path (CString &path)
@@ -73,7 +72,6 @@ __inline void Delimit_Path (CString &path)
 	if (path[::lstrlen (path) - 1] != '\\') {
 		path += CString ("\\");
 	}
-	return ;
 }
 
 
@@ -86,8 +84,8 @@ class CGraphicView;
 //
 // Prototypes
 //
-class CW3DViewDoc *	GetCurrentDocument (void);
-CGraphicView *			Get_Graphic_View (void);
+class CW3DViewDoc *	GetCurrentDocument ();
+CGraphicView *			Get_Graphic_View ();
 void						Paint_Gradient (HWND hWnd, BYTE baseRed, BYTE baseGreen, BYTE baseBlue);
 void						CenterDialogAroundTreeView (HWND hDlg);
 
@@ -115,7 +113,7 @@ CString					Filename_From_Asset_Name (LPCTSTR asset_name);
 //	File routines
 //
 bool						Get_File_Time (LPCTSTR path, LPFILETIME pcreation_time, LPFILETIME paccess_time = nullptr, LPFILETIME pwrite_time = nullptr);
-bool						Are_Glide_Drivers_Acceptable (void);
+bool						Are_Glide_Drivers_Acceptable ();
 bool						Copy_File (LPCTSTR existing_filename, LPCTSTR new_filename, bool bforce_copy = false);
 
 //

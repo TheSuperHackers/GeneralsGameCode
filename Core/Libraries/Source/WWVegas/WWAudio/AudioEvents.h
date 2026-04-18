@@ -172,7 +172,6 @@ template <class T> void
 AudioCallbackListClass<T>::Add_Callback (T pointer, uint32 user_data)
 {
 	Add ( AUDIO_CALLBACK_STRUCT<T> (pointer, user_data));
-	return ;
 }
 
 
@@ -201,6 +200,4 @@ AudioCallbackListClass<T>::Remove_Callback (T pointer)
 			break;
 		}
 	}
-
-	return ;
 }

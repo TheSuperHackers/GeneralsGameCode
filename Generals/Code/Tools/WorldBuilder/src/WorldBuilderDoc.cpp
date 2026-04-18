@@ -193,7 +193,7 @@ public:
 		m_totalBytes += numBytes;
 		return(numBytes);
 	};
-	virtual void flush(void) {
+	virtual void flush() {
 		while (!m_cachedChunks.empty())//!m_cachedChunks.empty())
 		{
 			CachedChunk c = m_cachedChunks.front();
@@ -227,7 +227,7 @@ public:
 		m_totalBytes += numBytes;
 		return(numBytes);
 	};
-	virtual void flush(void) {
+	virtual void flush() {
 		if (!m_totalBytes)
 			return;
 		UnsignedByte *srcBuffer = NEW UnsignedByte[m_totalBytes];
@@ -452,7 +452,7 @@ AsciiString ConvertFaction(AsciiString name)
 	return AsciiString::TheEmptyString;
 }
 
-void CWorldBuilderDoc::validate(void)
+void CWorldBuilderDoc::validate()
 {
 	DEBUG_LOG(("Validating"));
 
@@ -793,7 +793,7 @@ Bool CWorldBuilderDoc::ParseWaypointData(DataChunkInput &file, DataChunkInfo *in
 	return true;
 }
 
-void CWorldBuilderDoc::autoSave(void)
+void CWorldBuilderDoc::autoSave()
 {
 	// srj sez: put autosave into our user data folder, not the ap dir
 	AsciiString autosave1 = TheGlobalData->getPath_UserData();
@@ -950,7 +950,7 @@ void CWorldBuilderDoc::OnEditUndo()
 	}
 }
 
-void CWorldBuilderDoc::OnTogglePitchAndRotation( void )
+void CWorldBuilderDoc::OnTogglePitchAndRotation()
 {
 	WbView3d * p3View = Get3DView();
 	if (p3View)
@@ -1584,7 +1584,7 @@ void CWorldBuilderDoc::OnUpdateWindow2dwindow(CCmdUI* pCmdUI)
 /** Renumbers the waypoints and the links that reference them, removing any
 unused ids. */
 //=============================================================================
-void CWorldBuilderDoc::compressWaypointIds(void)
+void CWorldBuilderDoc::compressWaypointIds()
 {
 	updateWaypointTable();
 	m_curWaypointID = 0;
@@ -1638,7 +1638,7 @@ void CWorldBuilderDoc::compressWaypointIds(void)
 table.  The waypoint table is used to locate waypoints by id, without searching
 the objects list. (See getWaypointByID()) */
 //=============================================================================
-void CWorldBuilderDoc::updateWaypointTable(void)
+void CWorldBuilderDoc::updateWaypointTable()
 {
 	if (m_waypointTableNeedsUpdate) {
 		m_waypointTableNeedsUpdate=false;
@@ -2089,7 +2089,7 @@ static void fprintUnit(FILE *theLogFile, Dict *teamDict, NameKeyType keyMinUnit,
 
 }
 
-void CWorldBuilderDoc::OnDumpDocToText(void)
+void CWorldBuilderDoc::OnDumpDocToText()
 {
 	MapObject *pMapObj = nullptr;
 	const char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
@@ -2570,7 +2570,7 @@ void CWorldBuilderDoc::OnRemoveclifftexmapping()
 	}
 }
 
-Int CWorldBuilderDoc::getNumBoundaries(void) const
+Int CWorldBuilderDoc::getNumBoundaries() const
 {
 	return m_heightMap->getNumBoundaries();
 }
@@ -2590,7 +2590,7 @@ void CWorldBuilderDoc::changeBoundary(Int ndx, ICoord2D *border)
 	m_heightMap->changeBoundary(ndx, border);
 }
 
-void CWorldBuilderDoc::removeLastBoundary(void)
+void CWorldBuilderDoc::removeLastBoundary()
 {
 	m_heightMap->removeLastBoundary();
 }

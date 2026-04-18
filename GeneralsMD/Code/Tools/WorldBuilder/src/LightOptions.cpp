@@ -49,7 +49,7 @@ void LightOptions::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-MapObject *LightOptions::getSingleSelectedLight(void)
+MapObject *LightOptions::getSingleSelectedLight()
 {
 	MapObject *pMapObj;
 	MapObject *theMapObj = nullptr;
@@ -70,7 +70,7 @@ MapObject *LightOptions::getSingleSelectedLight(void)
 }
 
 
-void LightOptions::updateTheUI(void)
+void LightOptions::updateTheUI()
 {
 	MapObject *theMapObj = getSingleSelectedLight();
 	if (!theMapObj) return;
@@ -114,7 +114,7 @@ void LightOptions::updateTheUI(void)
 	}
 }
 
-void LightOptions::update(void)
+void LightOptions::update()
 {
 	if (m_staticThis) {
 		m_staticThis->updateTheUI();

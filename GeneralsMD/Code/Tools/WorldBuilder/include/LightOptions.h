@@ -64,11 +64,11 @@ protected:
 	Bool		m_updating; ///<true if the ui is updating itself.
 
 protected:
-	void updateTheUI(void);
+	void updateTheUI();
 
 public:
-	static void update(void);
-	static MapObject *getSingleSelectedLight(void);
+	static void update();
+	static MapObject *getSingleSelectedLight();
 
 };
 

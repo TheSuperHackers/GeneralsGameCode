@@ -246,8 +246,6 @@ SoundSceneObjClass::On_Event
 				break;
 		}
 	}
-
-	return ;
 }
 
 
@@ -265,5 +263,4 @@ SoundSceneObjClass::Register_Callback
 {
 	m_RegisteredEvents = events;
 	m_pCallback = callback;
-	return ;
 }

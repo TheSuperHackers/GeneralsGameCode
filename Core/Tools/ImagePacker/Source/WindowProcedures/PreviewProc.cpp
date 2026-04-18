@@ -169,7 +169,7 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 // MakePreviewDisplay =========================================================
 /** */
 //=============================================================================
-HWND MakePreviewDisplay( void )
+HWND MakePreviewDisplay()
 {
 	WNDCLASSEX wcex;
 	const char *className = "PreviewDisplay";
@@ -218,7 +218,7 @@ HWND MakePreviewDisplay( void )
 // UpdatePreviewWindow ========================================================
 /** Update the preview window, if present */
 //=============================================================================
-void UpdatePreviewWindow( void )
+void UpdatePreviewWindow()
 {
 	HWND preview;
 

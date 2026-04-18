@@ -37,7 +37,7 @@
 //
 	enum {MAX_OBJECTS = 200};
 /// Constructor
-FenceTool::FenceTool(void) :
+FenceTool::FenceTool() :
 	Tool(ID_FENCE_TOOL, IDC_FENCE),
 		m_mapObjectList(nullptr),
 		m_objectCount(1)
@@ -47,7 +47,7 @@ FenceTool::FenceTool(void) :
 }
 
 /// Destructor
-FenceTool::~FenceTool(void)
+FenceTool::~FenceTool()
 {
 	deleteInstance(m_mapObjectList);
 	m_mapObjectList = nullptr;

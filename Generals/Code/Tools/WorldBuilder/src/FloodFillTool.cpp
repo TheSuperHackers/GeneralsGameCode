@@ -38,14 +38,14 @@
 Bool FloodFillTool::m_adjustCliffTextures = false;
 
 /// Constructor
-FloodFillTool::FloodFillTool(void) :
+FloodFillTool::FloodFillTool() :
 	Tool(ID_TILE_FLOOD_FILL, IDC_FLOOD_FILL),
 	m_cliffCursor(nullptr)
 {
 }
 
 /// Destructor
-FloodFillTool::~FloodFillTool(void)
+FloodFillTool::~FloodFillTool()
 {
 	if (m_cliffCursor) {
 		::DestroyCursor(m_cliffCursor);
@@ -63,7 +63,7 @@ void FloodFillTool::activate()
 }
 
 /** Set the cursor. */
-void FloodFillTool::setCursor(void)
+void FloodFillTool::setCursor()
 {
 	if (m_adjustCliffTextures) {
 		if (m_cliffCursor == nullptr) {

@@ -289,8 +289,6 @@ void MeshGeometryClass::Reset_Geometry(int polycount,int vertcount)
 		VertexNorm->Clear();
 #endif
 	}
-
-	return ;
 }
 
 

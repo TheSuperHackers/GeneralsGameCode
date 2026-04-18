@@ -82,7 +82,6 @@ TwiddlerClass::TwiddlerClass ()
 
 {
 	CLASSID_DEFIDLIST_PARAM (TwiddlerClass, m_DefinitionList, 0, m_IndirectClassID, "Preset List");
-	return ;
 }
 
 
@@ -93,7 +92,6 @@ TwiddlerClass::TwiddlerClass ()
 //////////////////////////////////////////////////////////////////////////////////
 TwiddlerClass::~TwiddlerClass ()
 {
-	return ;
 }
 
 

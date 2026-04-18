@@ -61,8 +61,8 @@ typedef ListLayer::iterator ListLayerIt;
 class CLLTreeCtrl : public CTreeCtrl
 {
 	public:
-		AsciiString getLastClickedLayer(void) {	return mLastClickedLayer; }
-		AsciiString getLastClickedObject(void) {	return mLastClickedObject; }
+		AsciiString getLastClickedLayer() {	return mLastClickedLayer; }
+		AsciiString getLastClickedObject() {	return mLastClickedObject; }
 
 	protected:
 		AsciiString mLastClickedLayer;
@@ -97,12 +97,12 @@ class LayersList : public CDialog
 
 		Bool isLayerHidden(IN AsciiString layerToTest);
 
-		void updateUIFromList(void);
+		void updateUIFromList();
 
 		void disableUpdates() { m_performUpdates = false; }
 		void enableUpdates() { m_performUpdates = true; updateUIFromList(); }
 
-		const ListLayer& GetAllLayers(void) const { return mLayers; }
+		const ListLayer& GetAllLayers() const { return mLayers; }
 
 		static MapObject *findObjectByUID(AsciiString objectIDToFind);
 

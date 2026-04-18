@@ -152,7 +152,6 @@ MeshDeformClass::ModifyObject
 	tri_obj->UpdateValidity (GEOM_CHAN_NUM, Interval (time, time + 1));
 	tri_obj->UpdateValidity (SELECT_CHAN_NUM, Interval (time, time + 1));
 	tri_obj->UpdateValidity (SUBSEL_TYPE_CHAN_NUM, Interval (time, time + 1));
-	return ;
 }
 
 
@@ -257,7 +256,6 @@ MeshDeformClass::BeginEditParams
 	// Restore the selection level.
 	///
 	max_interface->SetSubObjectLevel (1);
-	return ;
 }
 
 
@@ -299,7 +297,6 @@ MeshDeformClass::EndEditParams
 	// Release our hold on the max interface pointer
 	m_MaxInterface = nullptr;
 	m_pPanel = nullptr;
-	return ;
 }
 
 
@@ -339,7 +336,6 @@ MeshDeformClass::ActivateSubobjSel
 	** display attributes, and subselection type channels have changed
 	*/
 	NotifyDependents(FOREVER, VERTCOLOR_CHANNEL|SELECT_CHANNEL|DISP_ATTRIB_CHANNEL|SUBSEL_TYPE_CHANNEL, REFMSG_CHANGE);
-	return ;
 }
 
 
@@ -453,7 +449,6 @@ MeshDeformClass::SelectSubComponent
 	m_pPanel->Update_Vertex_Color ();
 	NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
 	m_bSetDirty = true;
-	return ;
 }
 
 
@@ -472,7 +467,6 @@ MeshDeformClass::GetSubObjectTMs
 )
 {
 	int test = 0;
-	return ;
 }
 
 
@@ -509,7 +503,6 @@ MeshDeformClass::GetSubObjectCenters
 
 	// Pass the 'selection' center onto MAX
 	callback->Center (box.Center (), 0);
-	return ;
 }
 
 
@@ -544,7 +537,6 @@ MeshDeformClass::ClearSelection (int selLevel)
 	*/
 	NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
 	m_bSetDirty = true;
-	return ;
 }
 
 static Point3 last_delta;
@@ -618,7 +610,6 @@ MeshDeformClass::Move
 	}
 
 	m_OperationName = "Move";
-	return ;
 }
 
 
@@ -692,7 +683,6 @@ MeshDeformClass::Scale
 	}
 
 	m_OperationName = "Scale";
-	return ;
 }
 
 
@@ -772,7 +762,6 @@ MeshDeformClass::Rotate
 	}
 
 	m_OperationName = "Rotate";
-	return ;
 }
 
 
@@ -826,7 +815,6 @@ MeshDeformClass::TransformStart (TimeValue time_val)
 	// Repaint the view
 	nodes.DisposeTemporary ();
 	NotifyDependents (FOREVER, PART_GEOM, REFMSG_CHANGE);
-	return ;
 }
 
 
@@ -844,7 +832,6 @@ MeshDeformClass::TransformFinish (TimeValue time_val)
 
 	// Accept the undo operation
 	theHold.Accept (m_OperationName);
-	return ;
 }
 
 
@@ -862,7 +849,6 @@ MeshDeformClass::TransformCancel (TimeValue time_val)
 
 	// Cancel the undo operation
 	theHold.Cancel ();
-	return ;
 }
 
 
@@ -882,8 +868,6 @@ MeshDeformClass::Set_Deform_State (float state)
 			m_pPanel->Update_Vertex_Color ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -961,7 +945,6 @@ MeshDeformClass::Set_Vertex_Color (const Point3 &color, bool button_up)
 	}
 
 	m_VertColorChanging = !button_up;
-	return ;
 }
 
 
@@ -1030,8 +1013,6 @@ MeshDeformClass::Get_Vertex_Color (Point3 &color)
 
 		nodes.DisposeTemporary ();
 	}
-
-	return ;
 }
 
 
@@ -1057,8 +1038,6 @@ MeshDeformClass::Update_UI (MeshDeformModData *mod_data)
 		m_pPanel->Set_Current_Set (m_CurrentSet);
 		m_pPanel->Set_Current_State (m_DeformState);
 	}
-
-	return ;
 }
 
 
@@ -1092,8 +1071,6 @@ MeshDeformClass::Auto_Apply (bool auto_apply)
 		// Cleanup
 		nodes.DisposeTemporary ();
 	}
-
-	return ;
 }
 
 
@@ -1137,8 +1114,6 @@ MeshDeformClass::Set_Max_Deform_Sets (int max)
 		NotifyDependents (FOREVER, PART_SELECT, REFMSG_CHANGE);
 		m_MaxInterface->RedrawViews (m_MaxInterface->GetTime ());
 	}
-
-	return ;
 }
 
 
@@ -1173,8 +1148,6 @@ MeshDeformClass::Update_Set_Count (void)
 		// Cleanup
 		nodes.DisposeTemporary ();
 	}
-
-	return ;
 }
 
 
@@ -1231,8 +1204,6 @@ MeshDeformClass::Set_Current_Set
 		// Update the current 'vertex color' on the UI panel
 		m_pPanel->Update_Vertex_Color ();
 	}
-
-	return ;
 }
 
 
@@ -1268,8 +1239,6 @@ MeshDeformClass::Update_Current_Set (void)
 		nodes.DisposeTemporary ();
 		m_bSetDirty = false;
 	}
-
-	return ;
 }
 
 

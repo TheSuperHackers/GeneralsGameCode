@@ -190,8 +190,6 @@ ParticleEmitterClass::~ParticleEmitterClass()
 		::free (UserString);
 		UserString = nullptr;
 	}
-
-	return ;
 }
 
 
@@ -843,7 +841,6 @@ ParticleEmitterClass::Set_Name (const char *pname)
 
 	// Copy the provided name
 	NameString = ::_strdup (pname);
-	return ;
 }
 
 
@@ -857,8 +854,6 @@ ParticleEmitterClass::Update_On_Visibility()
 	} else if ((!Is_Not_Hidden_At_All() || IsInvisible) && !Is_Stopped()) {
 		Stop ();
 	}
-
-	return ;
 }
 
 
@@ -880,5 +875,4 @@ ParticleEmitterClass::Add_Dependencies_To_List
 
 	// Allow the base class to process this call (extremely important)
 	RenderObjClass::Add_Dependencies_To_List (file_list, textures_only);
-	return ;
 }

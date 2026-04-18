@@ -117,5 +117,4 @@ inline void
 TwiddlerClass::Set_Indirect_Class_ID (uint32 class_id)
 {
 	m_IndirectClassID = class_id;
-	return ;
 }

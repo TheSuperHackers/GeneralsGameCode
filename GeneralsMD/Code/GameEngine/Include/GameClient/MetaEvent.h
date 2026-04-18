@@ -391,9 +391,11 @@ public:
 
 	static void parseMetaMap(INI* ini);
 
-	// TheSuperHackers @info Function to generate default key mappings
+	// TheSuperHackers @feature Function to generate default key mappings
 	// for actions that were not found in a CommandMap.ini
-	static void generateMetaMap();
+	void generateMetaMap();
+
+	void verifyMetaMap();
 
 	const MetaMapRec *getFirstMetaMapRec() const { return m_metaMaps; }
 };

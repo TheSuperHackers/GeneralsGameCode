@@ -45,14 +45,14 @@ Coord3D MeshMoldTool::m_toolPos;
 WorldHeightMapEdit *MeshMoldTool::m_htMapEditCopy = nullptr;
 
 /// Constructor
-MeshMoldTool::MeshMoldTool(void) :
+MeshMoldTool::MeshMoldTool() :
 	Tool(ID_MOLD_TOOL, IDC_MOLD_POINTER)
 {
 	m_offsettingZ = false;
 }
 
 /// Destructor
-MeshMoldTool::~MeshMoldTool(void)
+MeshMoldTool::~MeshMoldTool()
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 }

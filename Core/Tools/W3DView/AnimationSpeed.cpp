@@ -52,7 +52,6 @@ CAnimationSpeed::CAnimationSpeed (CWnd* pParent)
 	//{{AFX_DATA_INIT(CAnimationSpeed)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -66,7 +65,6 @@ CAnimationSpeed::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CAnimationSpeed)
 	DDX_Control(pDX, IDC_SPEED_SLIDER, m_speedSlider);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -87,7 +85,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CAnimationSpeed::OnInitDialog (void)
+CAnimationSpeed::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -166,7 +164,6 @@ CAnimationSpeed::OnHScroll
 
 	// Allow the base class to process this message
     CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -174,11 +171,10 @@ CAnimationSpeed::OnHScroll
 //  OnDestroy
 //
 void
-CAnimationSpeed::OnDestroy (void)
+CAnimationSpeed::OnDestroy ()
 {
     m_iInitialPercent = m_speedSlider.GetPos ();
 	CDialog::OnDestroy();
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -186,7 +182,7 @@ CAnimationSpeed::OnDestroy (void)
 //  OnBlend
 //
 void
-CAnimationSpeed::OnBlend (void)
+CAnimationSpeed::OnBlend ()
 {
     // Get a pointer to the doc so we can get at the current scene
     // pointer.
@@ -196,8 +192,6 @@ CAnimationSpeed::OnBlend (void)
         // Turn on/off the blending option
         pCDoc->SetAnimationBlend (SendDlgItemMessage (IDC_BLEND, BM_GETCHECK));
     }
-
-    return ;
 }
 
 void CAnimationSpeed::

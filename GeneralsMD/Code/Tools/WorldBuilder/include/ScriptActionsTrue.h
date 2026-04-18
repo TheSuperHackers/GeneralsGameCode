@@ -60,9 +60,9 @@ protected:
 	Int					m_index; // Index of whatever is currently selected.
 
 protected:
-	void enableUI(void);
-	void loadList(void);
-	Bool doMoveDown(void);
+	void enableUI();
+	void loadList();
+	Bool doMoveDown();
 
 protected:
 	// Generated message map functions

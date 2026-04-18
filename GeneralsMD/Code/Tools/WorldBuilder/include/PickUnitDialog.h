@@ -48,7 +48,7 @@ protected:
 public:
 	PickUnitDialog(CWnd* pParent = nullptr);   // standard constructor
 	PickUnitDialog(UINT id, CWnd* pParent = nullptr);   // standard constructor
-	virtual ~PickUnitDialog(void) override;   ///< standard destructor
+	virtual ~PickUnitDialog() override;   ///< standard destructor
 
 // Dialog Data
 	//{{AFX_DATA(PickUnitDialog)
@@ -76,12 +76,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	AsciiString getPickedUnit(void);
+	AsciiString getPickedUnit();
 	Bool IsAllowableType(EditorSortingType sort, Bool isBuildable);
 	void SetAllowableType(EditorSortingType sort);
-	const ThingTemplate* getPickedThing(void);
+	const ThingTemplate* getPickedThing();
 	void SetFactionOnly(Bool faction) {m_factionOnly = faction;}
-	void SetupAsPanel(void);
+	void SetupAsPanel();
 };
 
 class ReplaceUnitDialog : public PickUnitDialog

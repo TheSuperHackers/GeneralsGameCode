@@ -60,7 +60,7 @@ public:
 	/////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////
-	float					Get_Rotation (void) const { return m_Rotation; }
+	float					Get_Rotation () const { return m_Rotation; }
 
 private:
 

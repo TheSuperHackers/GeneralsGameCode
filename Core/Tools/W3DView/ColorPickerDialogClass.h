@@ -76,9 +76,9 @@ protected:
 		/////////////////////////////////////////////////////////////
 		//	Public methods
 		/////////////////////////////////////////////////////////////
-		int					Get_Red (void) const { return (int)m_CurrentRed; }
-		int					Get_Green (void) const { return (int)m_CurrentGreen; }
-		int					Get_Blue (void) const { return (int)m_CurrentBlue; }
+		int					Get_Red () const { return (int)m_CurrentRed; }
+		int					Get_Green () const { return (int)m_CurrentGreen; }
+		int					Get_Blue () const { return (int)m_CurrentBlue; }
 		void					Set_Color (int r, int g, int b)
 									{ Update_Color((float)r, (float)g, (float)b); }
 		void					Set_Original_Color (int r, int g, int b);
@@ -91,11 +91,11 @@ protected:
 		/////////////////////////////////////////////////////////////
 		//	Protected methods
 		/////////////////////////////////////////////////////////////
-		void					Update_Red_Bar (void);
-		void					Update_Green_Bar (void);
-		void					Update_Blue_Bar (void);
-		void					Update_Current_Color_Bar (void);
-		void					Update_Whiteness_Bar (void);
+		void					Update_Red_Bar ();
+		void					Update_Green_Bar ();
+		void					Update_Blue_Bar ();
+		void					Update_Current_Color_Bar ();
+		void					Update_Whiteness_Bar ();
 		void					Update_Color (float red, float green, float blue, DWORD flags = 0xFFFFFFFF);
 
 	private:

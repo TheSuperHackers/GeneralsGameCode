@@ -30,8 +30,8 @@
 class HandScrollTool : public Tool
 {
 public:
-	HandScrollTool(void);
-	virtual ~HandScrollTool(void) override;
+	HandScrollTool();
+	virtual ~HandScrollTool() override;
 
 protected:
 	enum {HYSTERESIS = 3};
@@ -48,5 +48,5 @@ public:
 	/// End scroll.
 	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void activate() override; ///< Become the current tool.
-	virtual Bool followsTerrain(void) override {return false;};
+	virtual Bool followsTerrain() override {return false;};
 };

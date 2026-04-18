@@ -119,16 +119,16 @@ protected:
 		//	Private member data
 		//
 		void				Paint_DIB (int width, int height, UCHAR *pbits);
-		void				Create_Bitmap (void);
-		void				Free_Bitmap (void);
+		void				Create_Bitmap ();
+		void				Free_Bitmap ();
 		void				Fill_Rect (UCHAR *pbits, const RECT &rect, COLORREF color, int scanline_size);
 		void				Frame_Rect (UCHAR *pbits, const RECT &rect, COLORREF color, int scanline_size);
 		void				Draw_Horz_Line (UCHAR *pbits, int x, int y, int len, COLORREF color, int scanline_size);
 		void				Draw_Vert_Line (UCHAR *pbits, int x, int y, int len, COLORREF color, int scanline_size);
 		COLORREF			Color_From_Point (int x, int y);
 		CPoint			Point_From_Color (COLORREF color);
-		void				Paint_Marker (void);
-		void				Erase_Marker (void);
+		void				Paint_Marker ();
+		void				Erase_Marker ();
 		void				Calc_Display_Rect (RECT &rect);
 
 

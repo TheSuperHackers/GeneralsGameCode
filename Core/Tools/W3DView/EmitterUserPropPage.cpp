@@ -51,7 +51,6 @@ EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pe
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	Initialize ();
-	return ;
 }
 
 
@@ -59,9 +58,8 @@ EmitterUserPropPageClass::EmitterUserPropPageClass (EmitterInstanceListClass *pe
 //
 //  ~EmitterUserPropPageClass
 //
-EmitterUserPropPageClass::~EmitterUserPropPageClass (void)
+EmitterUserPropPageClass::~EmitterUserPropPageClass ()
 {
-	return;
 }
 
 
@@ -77,7 +75,6 @@ EmitterUserPropPageClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(EmitterUserPropPageClass)
 	DDX_Control(pDX, IDC_TYPE_COMBO, m_TypeCombo);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -94,7 +91,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 void
-EmitterUserPropPageClass::Initialize (void)
+EmitterUserPropPageClass::Initialize ()
 {
 	if (m_pEmitterList != nullptr) {
 
@@ -102,8 +99,6 @@ EmitterUserPropPageClass::Initialize (void)
 		m_iType			= m_pEmitterList->Get_User_Type ();
 		m_UserString	= m_pEmitterList->Get_User_String ();
 	}
-
-	return ;
 }
 
 
@@ -112,7 +107,7 @@ EmitterUserPropPageClass::Initialize (void)
 //  OnInitDialog
 //
 BOOL
-EmitterUserPropPageClass::OnInitDialog (void)
+EmitterUserPropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -136,7 +131,7 @@ EmitterUserPropPageClass::OnInitDialog (void)
 //  OnApply
 //
 BOOL
-EmitterUserPropPageClass::OnApply (void)
+EmitterUserPropPageClass::OnApply ()
 {
 	// Get the settings from the controls
 	m_iType = m_TypeCombo.GetCurSel ();
@@ -158,10 +153,9 @@ EmitterUserPropPageClass::OnApply (void)
 //  OnChangeProgrammerSettingsEdit
 //
 void
-EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit (void)
+EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit ()
 {
 	SetModified ();
-	return ;
 }
 
 
@@ -170,8 +164,7 @@ EmitterUserPropPageClass::OnChangeProgrammerSettingsEdit (void)
 //  OnSelchangeTypeCombo
 //
 void
-EmitterUserPropPageClass::OnSelchangeTypeCombo (void)
+EmitterUserPropPageClass::OnSelchangeTypeCombo ()
 {
 	SetModified ();
-	return ;
 }

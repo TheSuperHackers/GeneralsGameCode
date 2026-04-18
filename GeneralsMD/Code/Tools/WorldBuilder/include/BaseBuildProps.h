@@ -62,10 +62,10 @@ private:
 
 public:
 	void setProps(AsciiString name, AsciiString script, Int health, Bool unsellable);
-	AsciiString getName(void) {return m_name;}
-	AsciiString getScript(void) {return m_script;}
-	Int getHealth(void) {return m_health;}
-	Bool getUnsellable(void) {return m_unsellable;}
+	AsciiString getName() {return m_name;}
+	AsciiString getScript() {return m_script;}
+	Int getHealth() {return m_health;}
+	Bool getUnsellable() {return m_unsellable;}
 };
 
 //{{AFX_INSERT_LOCATION}}
