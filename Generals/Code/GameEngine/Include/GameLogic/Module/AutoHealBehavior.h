@@ -162,6 +162,7 @@ protected:
 private:
 
 	void pulseHealObject( Object *obj );
+	void createEmitters();
 
 	ParticleSystemID m_radiusParticleSystemID;
 
