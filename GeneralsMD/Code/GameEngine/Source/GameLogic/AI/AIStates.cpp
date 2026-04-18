@@ -27,7 +27,7 @@
 // Author: Michael S. Booth, January 2002
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 
 #include "Common/ActionManager.h"
 #include "Common/AudioHandleSpecialValues.h"

@@ -21,7 +21,7 @@
 #include "Common/Diagnostic/SimulationMathCrc.h"
 #include "Common/XferCRC.h"
 #include "WWMath/matrix3d.h"
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 #include "GameLogic/FPUControl.h"
 
 #include <math.h>

@@ -34,7 +34,7 @@
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
 #include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480

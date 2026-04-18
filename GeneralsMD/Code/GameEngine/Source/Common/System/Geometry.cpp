@@ -31,7 +31,7 @@
 #define DEFINE_GEOMETRY_NAMES
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 #include "Common/Geometry.h"
 #include "Common/INI.h"
 #include "Common/RandomValue.h"

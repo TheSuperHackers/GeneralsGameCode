@@ -35,7 +35,7 @@
 #define DEFINE_LOCO_Z_NAMES
 #define DEFINE_LOCO_APPEARANCE_NAMES
 
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 
 #include "Common/INI.h"
 #include "GameLogic/GameLogic.h"

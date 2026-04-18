@@ -28,7 +28,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 
 // please talk to MDC (x36804) before taking this out
 #define NO_DEBUG_CRC

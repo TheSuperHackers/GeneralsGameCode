@@ -80,7 +80,7 @@ static void drawFramerateBar();
 #include "W3DDevice/GameClient/W3DDebugDisplay.h"
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 #include "WWLib/registry.h"
 #include "WW3D2/ww3d.h"
 #include "WW3D2/predlod.h"

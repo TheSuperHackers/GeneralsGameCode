@@ -28,7 +28,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "WWMath/wwmath.h"
+#include "wwmath.h"
 
 #include "Common/GameMemory.h"
 #include "Common/GlobalData.h"

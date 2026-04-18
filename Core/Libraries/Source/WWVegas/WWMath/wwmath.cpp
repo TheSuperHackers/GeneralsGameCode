@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
+#include "always.h"
 #include "wwmath.h"
 #include "wwhack.h"
 #include "lookuptable.h"

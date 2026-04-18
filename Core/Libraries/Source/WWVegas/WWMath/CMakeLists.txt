@@ -92,7 +92,7 @@ target_link_libraries(core_wwmath PRIVATE
 )
 
 if (NOT IS_VS6_BUILD)
-    target_link_libraries(core_wwmath PRIVATE gamemath)
+    target_link_libraries(core_wwmath PUBLIC gamemath)
 endif()
 
 # @todo Test its impact and see what to do with the legacy functions.
