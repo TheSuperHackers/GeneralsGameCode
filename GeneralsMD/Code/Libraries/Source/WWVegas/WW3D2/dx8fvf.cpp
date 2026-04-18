@@ -48,10 +48,10 @@ static unsigned Get_FVF_Vertex_Size(unsigned FVF)
 	return D3DXGetFVFVertexSize(FVF);
 }
 
-FVFInfoClass::FVFInfoClass(unsigned FVF_, unsigned vertex_size)
+FVFInfoClass::FVFInfoClass(unsigned FVF_)
 	:
 	FVF(FVF_),
-	fvf_size(FVF!=0 ? Get_FVF_Vertex_Size(FVF) : vertex_size)
+	fvf_size(Get_FVF_Vertex_Size(FVF))
 {
 	location_offset=0;
 	blend_offset=location_offset;

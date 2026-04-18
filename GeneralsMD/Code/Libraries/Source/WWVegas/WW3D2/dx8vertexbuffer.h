@@ -79,7 +79,7 @@ class VertexBufferClass : public W3DMPO, public RefCountClass
 	//W3DMPO_GLUE(VertexBufferClass)
 
 protected:
-	VertexBufferClass(unsigned type, unsigned FVF, unsigned short VertexCount, unsigned vertex_size=0);
+	VertexBufferClass(unsigned type, unsigned FVF, unsigned short VertexCount);
 	virtual ~VertexBufferClass() override;
 public:
 
@@ -211,7 +211,7 @@ public:
 		USAGE_NPATCHES=4
 	};
 
-	DX8VertexBufferClass(unsigned FVF, unsigned short VertexCount, UsageType usage=USAGE_DEFAULT, unsigned vertex_size=0); // Vertex size not used with FVF formats
+	DX8VertexBufferClass(unsigned FVF, unsigned short VertexCount, UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector3* normals, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
 	DX8VertexBufferClass(const Vector3* vertices, const Vector4* diffuse, const Vector2* tex_coords, unsigned short VertexCount,UsageType usage=USAGE_DEFAULT);
