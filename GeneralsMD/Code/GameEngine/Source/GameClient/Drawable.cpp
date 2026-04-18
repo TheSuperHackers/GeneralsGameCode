@@ -1962,8 +1962,8 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		// Calculate suspension info.
 		Real length = obj->getGeometryInfo().getMajorRadius();
 		Real width = obj->getGeometryInfo().getMinorRadius();
-		Real pitchHeight = length*Sin(m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch - groundPitch);
-		Real rollHeight = width*Sin(m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll - groundRoll);
+		Real pitchHeight = length*WWMath::Sin(m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch - groundPitch);
+		Real rollHeight = width*WWMath::Sin(m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll - groundRoll);
 		info.m_totalZ = fabs(pitchHeight)/4 + fabs(rollHeight)/4;
 		return; // maintain the same orientation while we fly through the air.
 	}
@@ -2056,8 +2056,8 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	// Calculate suspension info.
 	Real length = obj->getGeometryInfo().getMajorRadius();
 	Real width = obj->getGeometryInfo().getMinorRadius();
-	Real pitchHeight = length*Sin(info.m_totalPitch-groundPitch);
-	Real rollHeight = width*Sin(info.m_totalRoll-groundRoll);
+	Real pitchHeight = length*WWMath::Sin(info.m_totalPitch-groundPitch);
+	Real rollHeight = width*WWMath::Sin(info.m_totalRoll-groundRoll);
 	if (DO_WHEELS)
 	{
 		// calculate each wheel position
@@ -2257,8 +2257,8 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 		// Calculate suspension info.
 		Real length = obj->getGeometryInfo().getMajorRadius();
 		//Real width = obj->getGeometryInfo().getMinorRadius();
-		Real pitchHeight = length*Sin(m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch - groundPitch);
-		//Real rollHeight = width*Sin(m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll - groundRoll);
+		Real pitchHeight = length*WWMath::Sin(m_locoInfo->m_pitch + m_locoInfo->m_accelerationPitch - groundPitch);
+		//Real rollHeight = width*WWMath::Sin(m_locoInfo->m_roll + m_locoInfo->m_accelerationRoll - groundRoll);
 		info.m_totalZ = fabs(pitchHeight)/4;// + fabs(rollHeight)/4;
 		//return; // maintain the same orientation while we fly through the air.
 	}
@@ -2363,8 +2363,8 @@ void Drawable::calcPhysicsXformMotorcycle( const Locomotor *locomotor, PhysicsXf
 	// Calculate suspension info.
 	Real length = obj->getGeometryInfo().getMajorRadius();
 	Real width = obj->getGeometryInfo().getMinorRadius();
-	Real pitchHeight = length*Sin(info.m_totalPitch-groundPitch);
-	Real rollHeight = width*Sin(info.m_totalRoll-groundRoll);
+	Real pitchHeight = length*WWMath::Sin(info.m_totalPitch-groundPitch);
+	Real rollHeight = width*WWMath::Sin(info.m_totalRoll-groundRoll);
 	if (DO_WHEELS)
 	{
 		// calculate each wheel position
@@ -4195,8 +4195,8 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 		recoilAngle += PI;
 		if (m_locoInfo)
 		{
-			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle);
-			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle);
+			m_locoInfo->m_accelerationPitchRate += recoilAmount * WWMath::Cos(recoilAngle);
+			m_locoInfo->m_accelerationRollRate += recoilAmount * WWMath::Sin(recoilAngle);
 		}
 	}
 

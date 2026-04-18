@@ -425,7 +425,7 @@ UpdateSleepTime StealthUpdate::update()
 		}
 		else
 		{
-			draw->setEffectiveOpacity( 0.5f + ( Sin( m_pulsePhase ) * 0.5f ) );
+			draw->setEffectiveOpacity( 0.5f + ( WWMath::Sin( m_pulsePhase ) * 0.5f ) );
 			// between one half and full opacity
 			m_pulsePhase += m_pulsePhaseRate;
 		}

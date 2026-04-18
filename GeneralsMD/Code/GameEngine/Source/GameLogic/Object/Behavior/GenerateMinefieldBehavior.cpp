@@ -248,7 +248,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 
 	Real dx = posEnd.x - posStart.x;
 	Real dy = posEnd.y - posStart.y;
-	Real len = Sqrt(sqr(dx) + sqr(dy));
+	Real len = WWMath::Sqrt(sqr(dx) + sqr(dy));
 	Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
 	Real mineDiameter = mineRadius * 2.0f;
 	Real mineJitter = mineRadius*d->m_randomJitter;
@@ -320,8 +320,8 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 	for (Real angle = 0; angle < angleLim; angle += angleInc)
 	{
 		Coord3D pt;
-		pt.x = pos.x + radius * Cos(angle);
-		pt.y = pos.y + radius * Sin(angle);
+		pt.x = pos.x + radius * WWMath::Cos(angle);
+		pt.y = pos.y + radius * WWMath::Sin(angle);
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);

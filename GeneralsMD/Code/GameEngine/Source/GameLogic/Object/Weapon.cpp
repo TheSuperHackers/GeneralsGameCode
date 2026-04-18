@@ -860,7 +860,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		Real attackRangeSqr = sqr(getAttackRange(bonus));
 		if (distSqr > attackRangeSqr)
 		{
-			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?",Sqrt(distSqr),Sqrt(attackRangeSqr)));
+			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?",WWMath::Sqrt(distSqr),WWMath::Sqrt(attackRangeSqr)));
 
 			//-extraLogging
 			#if defined(RTS_DEBUG)
@@ -882,7 +882,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		if (distSqr < minAttackRangeSqr-0.5f && !isProjectileDetonation)
 #endif
 		{
-			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?",Sqrt(distSqr),Sqrt(minAttackRangeSqr)));
+			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?",WWMath::Sqrt(distSqr),WWMath::Sqrt(minAttackRangeSqr)));
 
 			//-extraLogging
 			#if defined(RTS_DEBUG)
@@ -2134,8 +2134,8 @@ Bool Weapon::computeApproachTarget(const Object *source, const Object *target, c
 		if (angleOffset != 0.0f)
 		{
 			Real angle = WWMath::Atan2(dir.y, dir.x);
-			dir.x = (Real)Cos(angle + angleOffset);
-			dir.y = (Real)Sin(angle + angleOffset);
+			dir.x = (Real)WWMath::Cos(angle + angleOffset);
+			dir.y = (Real)WWMath::Sin(angle + angleOffset);
 		}
 
 		// select a spot along the line between us, halfway between the min & max range.
@@ -2181,8 +2181,8 @@ Bool Weapon::computeApproachTarget(const Object *source, const Object *target, c
 		if (angleOffset != 0.0f)
 		{
 			Real angle = WWMath::Atan2(dir.y, dir.x);
-			dir.x = (Real)Cos(angle + angleOffset);
-			dir.y = (Real)Sin(angle + angleOffset);
+			dir.x = (Real)WWMath::Cos(angle + angleOffset);
+			dir.y = (Real)WWMath::Sin(angle + angleOffset);
 		}
 
 		// select a spot along the line between us, in range of our weapon

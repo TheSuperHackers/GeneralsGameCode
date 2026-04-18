@@ -718,8 +718,8 @@ void WaveGuideUpdate::doDamage()
 								// angle is rotated, because we computed from 'from' and 'to' points of
 								// the bridge going *across* the valley, not pointing *down* it
 								//
-								u.x = Cos( angle + modData->m_bridgeParticleAngleFudge );
-								u.y = Sin( angle + modData->m_bridgeParticleAngleFudge );
+								u.x = WWMath::Cos( angle + modData->m_bridgeParticleAngleFudge );
+								u.y = WWMath::Sin( angle + modData->m_bridgeParticleAngleFudge );
 								u.z = 0.0f;
 
 								y.crossProduct( &z, &u, &y );

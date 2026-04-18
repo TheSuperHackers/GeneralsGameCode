@@ -359,8 +359,8 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update()
 		// is *NOT* the angle the object is facing
 		//
 		Coord3D force;
-		force.x = DOUBLE_TO_REAL( Cos( m_forwardAngle ) ) * m_forwardSpeed;
-		force.y = DOUBLE_TO_REAL( Sin( m_forwardAngle ) ) * m_forwardSpeed;
+		force.x = DOUBLE_TO_REAL( WWMath::Cos( m_forwardAngle ) ) * m_forwardSpeed;
+		force.y = DOUBLE_TO_REAL( WWMath::Sin( m_forwardAngle ) ) * m_forwardSpeed;
 		force.z = 0.0f;
 		physics->applyMotiveForce( &force );
 

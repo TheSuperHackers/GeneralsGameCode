@@ -3956,8 +3956,8 @@ Bool PathfindLayer::isPointOnWall(ObjectID *wallPieces, Int numPieces, const Coo
 		Real major = obj->getGeometryInfo().getMajorRadius();
 		Real minor = (obj->getGeometryInfo().getGeomType() == GEOMETRY_SPHERE) ? obj->getGeometryInfo().getMajorRadius() : obj->getGeometryInfo().getMinorRadius();
 
-		Real c = (Real)Cos(-obj->getOrientation());
-		Real s = (Real)Sin(-obj->getOrientation());
+		Real c = (Real)WWMath::Cos(-obj->getOrientation());
+		Real s = (Real)WWMath::Sin(-obj->getOrientation());
 
 		// convert to a delta relative to rect ctr
 		Real ptx = pt->x - obj->getPosition()->x;
@@ -4224,8 +4224,8 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
  	Real halfsizeY = PATHFIND_CELL_SIZE_F/10.0f;
  	Real fenceOffset = obj->getTemplate()->getFenceXOffset();
 
- 	Real c = (Real)Cos(angle);
- 	Real s = (Real)Sin(angle);
+ 	Real c = (Real)WWMath::Cos(angle);
+ 	Real s = (Real)WWMath::Sin(angle);
 
  	const Real STEP_SIZE = PATHFIND_CELL_SIZE_F * 0.5f;	// in theory, should be PATHFIND_CELL_SIZE_F exactly, but needs to be smaller to avoid aliasing problems
  	Real ydx = s * STEP_SIZE;
@@ -4432,8 +4432,8 @@ void Pathfinder::internal_classifyObjectFootprint( Object *obj, Bool insert )
 			Real halfsizeX = obj->getGeometryInfo().getMajorRadius();
 			Real halfsizeY = obj->getGeometryInfo().getMinorRadius();
 
-			Real c = (Real)Cos(angle);
-			Real s = (Real)Sin(angle);
+			Real c = (Real)WWMath::Cos(angle);
+			Real s = (Real)WWMath::Sin(angle);
 
 			const Real STEP_SIZE = PATHFIND_CELL_SIZE_F * 0.5f;	// in theory, should be PATHFIND_CELL_SIZE_F exactly, but needs to be smaller to avoid aliasing problems
 			Real ydx = s * STEP_SIZE;

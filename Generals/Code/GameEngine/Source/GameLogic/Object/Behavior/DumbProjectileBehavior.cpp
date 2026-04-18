@@ -169,11 +169,11 @@ static Bool calcTrajectory(
 	Real dz = end.z - start.z;
 
 	// calculating the angle is trivial.
-	angle = Atan2(dy, dx);
+	angle = WWMath::Atan2(dy, dx);
 
 	// calculating the pitch requires a bit more effort.
 	Real horizDistSqr = sqr(dx) + sqr(dy);
-	Real horizDist = Sqrt(horizDistSqr);
+	Real horizDist = WWMath::Sqrt(horizDistSqr);
 
 	// calc the two possible pitches that will cover the given horizontal range.
 	// (this is actually only true if dz==0, but is a good first guess)
@@ -182,7 +182,7 @@ static Bool calcTrajectory(
 
 	// let's start by aiming directly for it. we know this isn't right (unless gravity
 	// is zero, which it's not) but is a good starting point...
-	Real theta = Atan2(dz, horizDist);
+	Real theta = WWMath::Atan2(dz, horizDist);
 	// if the angle isn't pretty shallow, we can get a better initial guess by using
 	// the code below...
 	const Real SHALLOW_ANGLE = 0.5f * PI / 180.0f;
@@ -191,7 +191,7 @@ static Bool calcTrajectory(
 		Real t = horizDist / velocity;
 		Real vz = (dz/t + 0.5f*gravity*t);
 		Real sineOfAngle = clamp(-1.0f, vz / velocity, 1.0f);
-		theta = ASin(sineOfAngle)*0.5f;
+		theta = WWMath::Asin(sineOfAngle)*0.5f;
 	}
 
 /*
@@ -203,7 +203,7 @@ static Bool calcTrajectory(
 	{
 		return false;
 	}
-	Real theta = ASin(sineOfAngle)*0.5f;
+	Real theta = WWMath::Asin(sineOfAngle)*0.5f;
 */
 
 	Real pitches[2];
@@ -225,10 +225,10 @@ static Bool calcTrajectory(
 		// calc the horiz-speed & time for each.
 		// note that time can only be negative for 90<angle<270, and since we
 		// ruled those out above, we're gold.
-		sinPitches[0] = Sin(pitches[0]);
-		sinPitches[1] = Sin(pitches[1]);
-		cosPitches[0] = Cos(pitches[0]);
-		cosPitches[1] = Cos(pitches[1]);
+		sinPitches[0] = WWMath::Sin(pitches[0]);
+		sinPitches[1] = WWMath::Sin(pitches[1]);
+		cosPitches[0] = WWMath::Cos(pitches[0]);
+		cosPitches[1] = WWMath::Cos(pitches[1]);
 		Real t0 = (horizDist / (velocity * cosPitches[0]));
 		Real t1 = (horizDist / (velocity * cosPitches[1]));
 
@@ -287,7 +287,7 @@ static Bool calcTrajectory(
 #endif
 
 		vx = velocity*cosPitches[preferred];
-		Real actualRange = (vx*(vz + Sqrt(root)))/gravity;
+		Real actualRange = (vx*(vz + WWMath::Sqrt(root)))/gravity;
 		const Real CLOSE_ENOUGH_RANGE = 5.0f;
 		if (tooClose || (actualRange < horizDist - CLOSE_ENOUGH_RANGE))
 		{
@@ -366,7 +366,7 @@ void DumbProjectileBehavior::projectileFireAtObjectOrPosition( const Object *vic
 		// Some weapons want to scale their start speed to the range
 		Real minRange = detWeap->getMinimumAttackRange();
 		Real maxRange = detWeap->getUnmodifiedAttackRange();
-		Real range = Sqrt(ThePartitionManager->getDistanceSquared( projectile, &victimPosToUse, FROM_CENTER_2D ) );
+		Real range = WWMath::Sqrt(ThePartitionManager->getDistanceSquared( projectile, &victimPosToUse, FROM_CENTER_2D ) );
 		Real rangeRatio = (range - minRange) / (maxRange - minRange);
 		m_flightPathSpeed = (rangeRatio * (weaponSpeed - minWeaponSpeed)) + minWeaponSpeed;
 	}
@@ -596,7 +596,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 			Real distVictimMovedSqr = sqr(delta.x) + sqr(delta.y) + sqr(delta.z);
 			if (distVictimMovedSqr > 0.1f)
 			{
-				Real distVictimMoved = Sqrt(distVictimMovedSqr);
+				Real distVictimMoved = WWMath::Sqrt(distVictimMovedSqr);
 				if (distVictimMoved > d->m_flightPathAdjustDistPerFrame)
 					distVictimMoved = d->m_flightPathAdjustDistPerFrame;
 				delta.normalize();

@@ -447,10 +447,10 @@ static Bool intersectInfiniteLine2D
 	Real& ix, Real& iy
 )
 {
-	Real bx = ax + Cos(ao);
-	Real by = ay + Sin(ao);
-	Real dx = cx + Cos(co);
-	Real dy = cy + Sin(co);
+	Real bx = ax + WWMath::Cos(ao);
+	Real by = ay + WWMath::Sin(ao);
+	Real dx = cx + WWMath::Cos(co);
+	Real dy = cy + WWMath::Sin(co);
 
 	Real denom = ((bx - ax) * (dy - cy) - (by - ay) * (dx - cx));
 	if (denom == 0.0f)
@@ -516,7 +516,7 @@ public:
 
 		Coord3D intermedPt;
 		Bool intermed = false;
-		Real orient = Atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
+		Real orient = WWMath::Atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
 		if (fabs(stdAngleDiff(orient, ppinfo.parkingOrientation)) > PI/128)
 		{
 			intermedPt.z = (ppinfo.parkingSpace.z + ppinfo.runwayPrep.z) * 0.5f;
@@ -1071,7 +1071,7 @@ public:
 		}
 		else
 		{
-			Real dist = Sqrt(dSqr);
+			Real dist = WWMath::Sqrt(dSqr);
 			if (dist<1) dist = 1;
 			pos.x += PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
 			pos.y += PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);
@@ -2289,15 +2289,15 @@ void JetAIUpdate::positionLockon()
 	Real dist = finalDist + (d->m_lockonInitialDist - finalDist) * frac;
 	Real angle = d->m_lockonAngleSpin * frac;
 
-	pos.x += Cos(angle) * dist;
-	pos.y += Sin(angle) * dist;
+	pos.x += WWMath::Cos(angle) * dist;
+	pos.y += WWMath::Sin(angle) * dist;
 	// pos.z is untouched
 
 	m_lockonDrawable->setPosition(&pos);
 	Real dx = getObject()->getPosition()->x - pos.x;
 	Real dy = getObject()->getPosition()->y - pos.y;
 	if (dx || dy)
-		m_lockonDrawable->setOrientation(Atan2(dy, dx));
+		m_lockonDrawable->setOrientation(WWMath::Atan2(dy, dx));
 
 	// the Gaussian sum, to avoid keeping a running total:
 	//

@@ -295,8 +295,8 @@ void TunnelContain::scatterToNearbyPosition(Object* obj)
 	Real dist = GameLogicRandomValueReal( minRadius, maxRadius );
 
 	Coord3D pos;
-	pos.x = dist * Cos( angle ) + containerPos->x;
-	pos.y = dist * Sin( angle ) + containerPos->y;
+	pos.x = dist * WWMath::Cos( angle ) + containerPos->x;
+	pos.y = dist * WWMath::Sin( angle ) + containerPos->y;
 	pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 
 	// set orientation

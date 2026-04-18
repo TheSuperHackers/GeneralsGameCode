@@ -167,7 +167,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 		bonus.clear();
 		Real fireRange = data->m_weaponTemplate->getAttackRange( bonus );
 		Object *me = getObject();
-		Real fDist = Sqrt( ThePartitionManager->getDistanceSquared( me, target, FROM_CENTER_2D ) );
+		Real fDist = WWMath::Sqrt( ThePartitionManager->getDistanceSquared( me, target, FROM_CENTER_2D ) );
 		if( fDist < fireRange )
 		{
 			//We are currently in range!
@@ -290,7 +290,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 			continue;
 		}
 
-		Real fDist = Sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );
+		Real fDist = WWMath::Sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );
 
 		if( fDist <= fireRange )
 		{
@@ -317,7 +317,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 					pos.add( other->getPosition() );
 
 					//Recalculate the distance.
-					fDist = Sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );
+					fDist = WWMath::Sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );
 				}
 			}
 

@@ -1516,11 +1516,11 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 		if (loco && !TheAI->pathfinder()->validMovementTerrain( LAYER_GROUND, loco, &startPosition)) {
 			// try front & back.
 			Real offset = getObject()->getGeometryInfo().getMajorRadius();
-			startPosition.x -= offset*Cos(exitAngle);
-			startPosition.y -= offset*Sin(exitAngle);
+			startPosition.x -= offset*WWMath::Cos(exitAngle);
+			startPosition.y -= offset*WWMath::Sin(exitAngle);
 			if (!TheAI->pathfinder()->validMovementTerrain(LAYER_GROUND, loco, &startPosition)) {
-				startPosition.x += 2*offset*Cos(exitAngle);
-				startPosition.y += 2*offset*Sin(exitAngle);
+				startPosition.x += 2*offset*WWMath::Cos(exitAngle);
+				startPosition.y += 2*offset*WWMath::Sin(exitAngle);
 				if (!TheAI->pathfinder()->validMovementTerrain(LAYER_GROUND, loco, &startPosition)) {
 					startPosition = *getObject()->getPosition();
 				}

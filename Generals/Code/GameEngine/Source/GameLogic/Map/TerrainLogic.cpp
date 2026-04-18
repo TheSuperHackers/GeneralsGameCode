@@ -339,8 +339,8 @@ Bridge::Bridge(Object *bridgeObj)
 	Real halfsizeY = bridgeObj->getGeometryInfo().getMinorRadius();
 	m_bridgeInfo.bridgeWidth = 2*halfsizeY;
 
-	Real c = (Real)Cos(angle);
-	Real s = (Real)Sin(angle);
+	Real c = (Real)WWMath::Cos(angle);
+	Real s = (Real)WWMath::Sin(angle);
 
 	m_bridgeInfo.fromLeft.set(pos->x-halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c - halfsizeX*s, pos->z);
 	m_bridgeInfo.toLeft.set(pos->x+halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c + halfsizeX*s, pos->z);
@@ -1468,11 +1468,11 @@ void makeAlignToNormalMatrix( Real angle, const Coord3D& pos, const Coord3D& nor
 	/*
 		It is extremely important that the resulting matrix is such that
 		the xvector points in the angle we specified; specifically,
-		that Atan2(xvec.y, xvec.x) == angle. So we must construct
+		that WWMath::Atan2(xvec.y, xvec.x) == angle. So we must construct
 		the matrix carefully to ensure this!
 	*/
-	x.x = Cos( angle );
-	x.y = Sin( angle );
+	x.x = WWMath::Cos( angle );
+	x.y = WWMath::Sin( angle );
 	x.z = 0.0f;
 //x.normalize();	-- redundant; is normalized by definition
 
@@ -2369,7 +2369,7 @@ void TerrainLogic::setWaterHeight( const WaterHandle *water, Real height, Real d
 		center.z = 0.0f;  // irrelavant
 
 		// the max radius to scan around us is the diagonal of the bounding region
-		Real maxDist = Sqrt( affectedRegion.width() * affectedRegion.width() +
+		Real maxDist = WWMath::Sqrt( affectedRegion.width() * affectedRegion.width() +
 												 affectedRegion.height() * affectedRegion.height() );
 
 		// scan the objects in the area of the water affected
@@ -2652,8 +2652,8 @@ void TerrainLogic::flattenTerrain(Object *obj)
 			Real halfsizeY = obj->getGeometryInfo().getMinorRadius();
 
 
-			Real c = (Real)Cos(angle);
-			Real s = (Real)Sin(angle);
+			Real c = (Real)WWMath::Cos(angle);
+			Real s = (Real)WWMath::Sin(angle);
 
 			Vector3 topLeft(pos->x-halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c - halfsizeX*s, 0);
 			Vector3 topRight(pos->x+halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c + halfsizeX*s, 0);

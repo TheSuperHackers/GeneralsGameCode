@@ -129,7 +129,7 @@ static Real tryToRotateVector3D(
 	// dot of two unit vectors is cos of angle between them.
 	Real cosine = Vector3::Dot_Product(curDir, goalDir);
 	// bound it in case of numerical error
-	Real angleBetween = (Real)ACos(clamp(-1.0f, cosine, 1.0f));
+	Real angleBetween = (Real)WWMath::Acos(clamp(-1.0f, cosine, 1.0f));
 
 	if (maxAngle < 0)
 	{
@@ -231,9 +231,9 @@ static void calcDirectionToApplyThrust(
 
 	Bool foundSolution = false;
 	Real distToGoalSqr = vecToGoal.Length2();
-	Real distToGoal = Sqrt(distToGoalSqr);
+	Real distToGoal = WWMath::Sqrt(distToGoalSqr);
 	Real curVelMagSqr = curVel.Length2();
-	Real curVelMag = Sqrt(curVelMagSqr);
+	Real curVelMag = WWMath::Sqrt(curVelMagSqr);
 	Real maxAccelSqr = sqr(maxAccel);
 
 	Real denom = curVelMagSqr - maxAccelSqr;
@@ -869,8 +869,8 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	{
 		// can't stay in one place; move in the desired direction at min speed.
 		Coord3D desiredPos = *obj->getPosition();
-		desiredPos.x += Cos(goalAngle) * minSpeed * 2;
-		desiredPos.y += Sin(goalAngle) * minSpeed * 2;
+		desiredPos.x += WWMath::Cos(goalAngle) * minSpeed * 2;
+		desiredPos.y += WWMath::Sin(goalAngle) * minSpeed * 2;
 		// pass a huge num for "dist to goal", so that we don't think we're nearing
 		// our destination and thus slow down...
 		const Real onPathDistToGoal = 99999.0f;
@@ -884,8 +884,8 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	{
 		DEBUG_ASSERTCRASH(m_template->m_appearance != LOCO_THRUST, ("THRUST should always have minspeeds!"));
 		Coord3D desiredPos = *obj->getPosition();
-		desiredPos.x += Cos(goalAngle) * 1000.0f;
-		desiredPos.y += Sin(goalAngle) * 1000.0f;
+		desiredPos.x += WWMath::Cos(goalAngle) * 1000.0f;
+		desiredPos.y += WWMath::Sin(goalAngle) * 1000.0f;
 		PhysicsTurningType rotating = rotateTowardsPosition(obj, desiredPos);
 		physics->setTurning(rotating);
 		handleBehaviorZ(obj, physics, *obj->getPosition());
@@ -971,7 +971,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	Real dx = goalPos.x - obj->getPosition()->x;
 	Real dy = goalPos.y - obj->getPosition()->y;
 	Real dz = goalPos.z - obj->getPosition()->z;
-	Real dist = Sqrt(dx*dx+dy*dy);
+	Real dist = WWMath::Sqrt(dx*dx+dy*dy);
 	if (dist>onPathDistToGoal)
 	{
 		if (!obj->isKindOf(KINDOF_PROJECTILE) && dist>2*onPathDistToGoal)
@@ -1083,7 +1083,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 			// Projectiles never stop braking once they start.  jba.
 			obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_BRAKING ) );
 			// Projectiles cheat in 3 dimensions.
-			dist = Sqrt(dx*dx+dy*dy+dz*dz);
+			dist = WWMath::Sqrt(dx*dx+dy*dy+dz*dz);
 			Real vel = physics->getVelocityMagnitude();
 			if (vel < MIN_VEL)
 				vel = MIN_VEL;
@@ -1258,7 +1258,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	Real angle = obj->getOrientation();
 //	Real relAngle = ThePartitionManager->getRelativeAngle2D( obj, &goalPos );
 //	Real desiredAngle = angle + relAngle;
-	Real desiredAngle = Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
+	Real desiredAngle = WWMath::Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
 	Real relAngle = stdAngleDiff(desiredAngle, angle);
 
 	Bool moveBackwards = false;
@@ -1341,8 +1341,8 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 			targetAngle += turnAmount;
 		}
 		Coord3D offset;
-		offset.x = Cos(targetAngle)*distance;
-		offset.y = Sin(targetAngle)*distance;
+		offset.x = WWMath::Cos(targetAngle)*distance;
+		offset.y = WWMath::Sin(targetAngle)*distance;
 		offset.z = 0;
 
 		const Coord3D* pos = obj->getPosition();
@@ -1533,7 +1533,7 @@ Bool Locomotor::fixInvalidPosition(Object* obj, PhysicsBehavior *physics)
 		//physics->clearAcceleration();
 
 		if (dot<0) {
-			dot = Sqrt(-dot);
+			dot = WWMath::Sqrt(-dot);
 			correctionNormalized.x *= dot*physics->getMass();
 			correctionNormalized.y *= dot*physics->getMass();
 			physics->applyMotiveForce(&correctionNormalized);
@@ -1597,7 +1597,7 @@ void Locomotor::moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, c
 	Real angle = obj->getOrientation();
 //	Real relAngle = ThePartitionManager->getRelativeAngle2D( obj, &goalPos );
 //	Real desiredAngle = angle + relAngle;
-	Real desiredAngle = Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
+	Real desiredAngle = WWMath::Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
 
 	if (m_template->m_wanderWidthFactor != 0.0f) {
 		Real angleLimit = PI/8 * m_template->m_wanderWidthFactor;
@@ -1730,7 +1730,7 @@ void Locomotor::moveTowardsPositionClimb(Object* obj, PhysicsBehavior *physics, 
 	Real angle = obj->getOrientation();
 //	Real relAngle = ThePartitionManager->getRelativeAngle2D( obj, &goalPos );
 //	Real desiredAngle = angle + relAngle;
-	Real desiredAngle = Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
+	Real desiredAngle = WWMath::Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
 	Real relAngle = stdAngleDiff(desiredAngle, angle);
 
 	if (moveBackwards) {
@@ -1821,7 +1821,7 @@ void Locomotor::moveTowardsPositionWings(Object* obj, PhysicsBehavior *physics, 
 			Real angleTowardPos =
 					(isNearlyZero(dx) && isNearlyZero(dy)) ?
 					obj->getOrientation() :
-					Atan2(dy, dx);
+					WWMath::Atan2(dy, dx);
 
 			Real aimDir = (PI - PI/8);
 			angleTowardPos += aimDir;
@@ -1831,8 +1831,8 @@ void Locomotor::moveTowardsPositionWings(Object* obj, PhysicsBehavior *physics, 
 
 			// project a spot "radius" dist away from it, in that dir
 			Coord3D desiredPos = goalPos;
-			desiredPos.x += Cos(angleTowardPos) * turnRadius;
-			desiredPos.y += Sin(angleTowardPos) * turnRadius;
+			desiredPos.x += WWMath::Cos(angleTowardPos) * turnRadius;
+			desiredPos.y += WWMath::Sin(angleTowardPos) * turnRadius;
 			moveTowardsPositionOther(obj, physics, desiredPos, 0, desiredSpeed);
 			return;
 		}
@@ -2055,7 +2055,7 @@ Real Locomotor::calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real cu
 			//	thus
 			// a = 2(dz - v t)/t^2
 			//	and
-			// t = (-v +- Sqrt(v*v + 2*a*dz))/a
+			// t = (-v +- WWMath::Sqrt(v*v + 2*a*dz))/a
 			//
 			// but if we assume t=1, then
 			//	a=2(dz-v)
@@ -2117,7 +2117,7 @@ PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3
 		Real dy = goalPos.y - turnPos.y;
 		// If we are very close to the goal, we twitch due to rounding error.  So just return. jba.
 		if (fabs(dx)<0.1f && fabs(dy)<0.1f) return TURN_NONE;
-		Real desiredAngle = Atan2(dy, dx);
+		Real desiredAngle = WWMath::Atan2(dy, dx);
 		Real amount = stdAngleDiff(desiredAngle, angle);
 		if (relAngle) *relAngle = amount;
 		if (amount>maxTurnRate) {
@@ -2132,14 +2132,14 @@ PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3
 
 #if 0
 		Coord3D desiredPos = *obj->getPosition();	// well, desired Dir, anyway
-		desiredPos.x += Cos(angle + amount) * radius;
-		desiredPos.y += Sin(angle + amount) * radius;
+		desiredPos.x += WWMath::Cos(angle + amount) * radius;
+		desiredPos.y += WWMath::Sin(angle + amount) * radius;
 
 
 		// so, the thing is, we want to rotate ourselves so that our *center* is rotated
 		// by the given amount, but the rotation must be around turnPos. so do a little
 		// back-calculation.
-		Real angleDesiredForTurnPos = Atan2(desiredPos.y - turnPos.y, desiredPos.x - turnPos.x);
+		Real angleDesiredForTurnPos = WWMath::Atan2(desiredPos.y - turnPos.y, desiredPos.x - turnPos.x);
 		amount = angleDesiredForTurnPos - angle;
 #endif
 		/// @todo srj -- there's probably a more efficient & more direct way to do this. find it.
@@ -2155,7 +2155,7 @@ PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3
 	}
 	else
 	{
-		Real desiredAngle = Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
+		Real desiredAngle = WWMath::Atan2(goalPos.y - obj->getPosition()->y, goalPos.x - obj->getPosition()->x);
 		Real amount = stdAngleDiff(desiredAngle, angle);
 		if (relAngle) *relAngle = amount;
 		if (amount>maxTurnRate) {
@@ -2488,7 +2488,7 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 		Real angleTowardMaintainPos =
 				(isNearlyZero(dx) && isNearlyZero(dy)) ?
 				obj->getOrientation() :
-				Atan2(dy, dx);
+				WWMath::Atan2(dy, dx);
 
 		Real aimDir = (PI - PI/8);
 		if (turnRadius < 0)
@@ -2500,8 +2500,8 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 
 		// project a spot "radius" dist away from it, in that dir
 		Coord3D desiredPos = m_maintainPos;
-		desiredPos.x += Cos(angleTowardMaintainPos) * turnRadius;
-		desiredPos.y += Sin(angleTowardMaintainPos) * turnRadius;
+		desiredPos.x += WWMath::Cos(angleTowardMaintainPos) * turnRadius;
+		desiredPos.y += WWMath::Sin(angleTowardMaintainPos) * turnRadius;
 		moveTowardsPositionWings(obj, physics, desiredPos, 0, m_template->m_minSpeed);
 	}
 }

@@ -230,7 +230,7 @@ set(WW3D2_SRC
     ww3dformat.cpp
     ww3dformat.h
     ww3dids.h
-    ww3dtrig.h
+
 )
 
 add_library(corei_ww3d2 INTERFACE)

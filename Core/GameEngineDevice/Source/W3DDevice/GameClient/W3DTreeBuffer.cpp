@@ -351,10 +351,10 @@ void W3DTreeBuffer::updateSway(const BreezeInfo& info)
 {
 	Int i;
 	for	(i=0; i<NUM_SWAY_ENTRIES; i++) {
-		Real factor = Cos(i*2.0f*PI/(NUM_SWAY_ENTRIES+1.0f));
+		Real factor = WWMath::Cos(i*2.0f*PI/(NUM_SWAY_ENTRIES+1.0f));
 		Real angle = info.m_lean + (info.m_intensity  * factor);
-		Real S = Sin(angle);
-		Real C = Cos(angle);
+		Real S = WWMath::Sin(angle);
+		Real C = WWMath::Cos(angle);
 		m_swayOffsets[i].X = info.m_directionVec.x * S;
 		m_swayOffsets[i].Y = info.m_directionVec.y * S;
 		m_swayOffsets[i].Z = C - 1.0f;

@@ -121,7 +121,7 @@ void SwayClientUpdate::clientUpdate()
 	m_curValue += m_curDelta * timeScale;
 	if (m_curValue > 2*PI)
 		m_curValue -= 2*PI;
-	Real cosine = Cos(m_curValue);
+	Real cosine = WWMath::Cos(m_curValue);
 
 	Real targetAngle = cosine * m_curAngleLimit + m_leanAngle;
 	Real deltaAngle = targetAngle - m_curAngle;

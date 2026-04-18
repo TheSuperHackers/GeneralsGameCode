@@ -84,8 +84,8 @@ void W3DRopeDraw::buildSegments()
 		SegInfo info;
 
 		Real axis = GameClientRandomValueReal(0, 2*PI);
-		info.wobbleAxisX = Cos(axis);
-		info.wobbleAxisY = Sin(axis);
+		info.wobbleAxisX = WWMath::Cos(axis);
+		info.wobbleAxisY = WWMath::Sin(axis);
 		info.line = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
 																	 Vector3(pos.x,pos.y,pos.z+eachLen),
 																	 m_width * 0.5f,  // width
@@ -186,7 +186,7 @@ void W3DRopeDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	if (!m_segments.empty())
 	{
-		Real deflection = Sin(m_curWobblePhase) * m_wobbleAmp;
+		Real deflection = WWMath::Sin(m_curWobblePhase) * m_wobbleAmp;
 		const Coord3D* pos = getDrawable()->getPosition();
 		Vector3 start(pos->x, pos->y, pos->z + m_curZOffset);
 		Real eachLen = m_curLen / m_segments.size();

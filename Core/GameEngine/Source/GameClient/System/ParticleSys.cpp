@@ -584,8 +584,8 @@ void Particle::doWindMotion()
 																		(noForceDistance - fullForceDistance)));
 
 		// integrate the wind motion into the position
-		m_pos.x += (Cos( windAngle ) * windForceStrength);
-		m_pos.y += (Sin( windAngle ) * windForceStrength);
+		m_pos.x += (WWMath::Cos( windAngle ) * windForceStrength);
+		m_pos.y += (WWMath::Sin( windAngle ) * windForceStrength);
 
 	}
 
@@ -3518,7 +3518,7 @@ static Real angleBetween(const Coord2D *vecA, const Coord2D *vecB)
 		return 0.0f;
 	}
 
-	Real theta = ACos( cosTheta );
+	Real theta = WWMath::Acos( cosTheta );
 
 	if (vecB->x > 0) {
 		return theta;

@@ -608,8 +608,8 @@ StateReturnType AIRappelState::update()
 														bldg->getGeometryInfo().getBoundingCircleRadius());
 					Real angle = GameLogicRandomValueReal( PI, 2*PI );//Downish.
 					Coord3D startPosition = *bldg->getPosition();
-					startPosition.x += offset * Cos( angle );
-					startPosition.y += offset * Sin( angle );
+					startPosition.x += offset * WWMath::Cos( angle );
+					startPosition.y += offset * WWMath::Sin( angle );
 					startPosition.z = TheTerrainLogic->getGroundHeight( startPosition.x, startPosition.y );
 
 					obj->setPosition( &startPosition );
@@ -3675,7 +3675,7 @@ StateReturnType AIAttackMoveToState::update()
 		if (distSqr < sqr(ATTACK_CLOSE_ENOUGH_CELLS*PATHFIND_CELL_SIZE_F)) {
 			return ret;
 		}
-		DEBUG_LOG(("AIAttackMoveToState::update Distance from goal %f, retrying.", Sqrt(distSqr)));
+		DEBUG_LOG(("AIAttackMoveToState::update Distance from goal %f, retrying.", WWMath::Sqrt(distSqr)));
 
 		ret = STATE_CONTINUE;
 		m_retryCount--;

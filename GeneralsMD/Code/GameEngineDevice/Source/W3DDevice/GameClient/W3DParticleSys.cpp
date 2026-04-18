@@ -348,8 +348,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		Coord3D worldStart, worldEnd;
 		ICoord2D pixelStart, pixelEnd;
 		sys->getPosition( &worldStart );
-		worldEnd.x = Cos( sys->getWindAngle() ) * 50.0f + worldStart.x;
-		worldEnd.y = Sin( sys->getWindAngle() ) * 50.0f + worldStart.y;
+		worldEnd.x = WWMath::Cos( sys->getWindAngle() ) * 50.0f + worldStart.x;
+		worldEnd.y = WWMath::Sin( sys->getWindAngle() ) * 50.0f + worldStart.y;
 		worldEnd.z = worldStart.z;
 		TheTacticalView->worldToScreen( &worldStart, &pixelStart );
 		TheTacticalView->worldToScreen( &worldEnd, &pixelEnd );

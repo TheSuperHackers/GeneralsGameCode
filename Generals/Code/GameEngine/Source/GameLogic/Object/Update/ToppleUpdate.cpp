@@ -185,13 +185,13 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	// yeah, it assumes the models are constructed appropriately, but is a cheap way
 	// of minimizing the problem. (srj)
 	Real curAngleX = normalizeAngle(getObject()->getOrientation());
-	Real toppleAngle = normalizeAngle(Atan2(m_toppleDirection.y, m_toppleDirection.x));
+	Real toppleAngle = normalizeAngle(WWMath::Atan2(m_toppleDirection.y, m_toppleDirection.x));
 	if (d->m_toppleLeftOrRightOnly)
 	{
 		// it's a fence or such, and can only topple left or right, so pick the closest
 		toppleAngle = angleClosestTo(curAngleX + PI/2, curAngleX - PI/2, toppleAngle);
-		m_toppleDirection.x = Cos(toppleAngle);
-		m_toppleDirection.y = Sin(toppleAngle);
+		m_toppleDirection.x = WWMath::Cos(toppleAngle);
+		m_toppleDirection.y = WWMath::Sin(toppleAngle);
 
 		// go ahead and remove it from the pathfinder now, rather than waiting for the topple to
 		// finish.... since we might be in a slightly different position when toppled, which can

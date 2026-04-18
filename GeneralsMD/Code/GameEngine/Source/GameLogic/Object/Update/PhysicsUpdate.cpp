@@ -93,7 +93,7 @@ static Real angleBetweenVectors(const Coord3D& inCurDir, const Coord3D& inGoalDi
 	Real cosine = Vector3::Dot_Product(curDir, goalDir);
 
 	// bound it in case of numerical error
-	Real angleBetween = (Real)ACos(clamp(-1.0f, cosine, 1.0f));
+	Real angleBetween = (Real)WWMath::Acos(clamp(-1.0f, cosine, 1.0f));
 
 	return angleBetween;
 }
@@ -102,7 +102,7 @@ static Real angleBetweenVectors(const Coord3D& inCurDir, const Coord3D& inGoalDi
 static Real heightToSpeed(Real height)
 {
 	// don't bother trying to remember how far we've fallen; instead,
-	// back-calc it from our speed & gravity... v = Sqrt(2*g*h)
+	// back-calc it from our speed & gravity... v = WWMath::Sqrt(2*g*h)
 	return WWMath::Sqrt(fabs(2.0f * TheGlobalData->m_gravity * height));
 }
 
@@ -144,7 +144,7 @@ PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
 static void parseHeightToSpeed( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
 {
 	// don't bother trying to remember how far we've fallen; instead,
-	// back-calc it from our speed & gravity... v = Sqrt(2*g*h)
+	// back-calc it from our speed & gravity... v = WWMath::Sqrt(2*g*h)
 	Real height = INI::scanReal(ini->getNextToken());
 	*(Real *)store = heightToSpeed(height);
 }
@@ -850,7 +850,7 @@ UpdateSleepTime PhysicsBehavior::update()
 
 		//
 		// don't bother trying to remember how far we've fallen; instead,
-		// we back-calc it from our speed & gravity... v = Sqrt(2*g*h).
+		// we back-calc it from our speed & gravity... v = WWMath::Sqrt(2*g*h).
 		// (note that m_minFallSpeedForDamage is always POSITIVE.)
 		//
 		// also note: since projectiles are immune to falling damage, don't
@@ -944,7 +944,7 @@ Real PhysicsBehavior::getVelocityMagnitude() const
 {
 	if (m_velMag == INVALID_VEL_MAG)
 	{
-		m_velMag = (Real)Sqrt( sqr(m_vel.x) + sqr(m_vel.y) + sqr(m_vel.z) );
+		m_velMag = (Real)WWMath::Sqrt( sqr(m_vel.x) + sqr(m_vel.y) + sqr(m_vel.z) );
 	}
 	return m_velMag;
 }
@@ -964,9 +964,9 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	Real dot = vx + vy;
 
 	Real speedSquared = vx*vx + vy*vy;
-//	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow Sqrt()!") );// lorenzen... sanity check
+//	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow WWMath::Sqrt()!") );// lorenzen... sanity check
 
-	Real speed = (Real)Sqrt( speedSquared );
+	Real speed = (Real)WWMath::Sqrt( speedSquared );
 
 	if (dot >= 0.0f)
 		return speed;
@@ -989,7 +989,7 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 
 	Real dot = vx + vy + vz;
 
-	Real speed = (Real)Sqrt( vx*vx + vy*vy + vz*vz );
+	Real speed = (Real)WWMath::Sqrt( vx*vx + vy*vy + vz*vz );
 
 	if (dot >= 0.0f)
 		return speed;
@@ -1036,7 +1036,7 @@ void PhysicsBehavior::scrubVelocity2D( Real desiredVelocity )
 	}
 	else
 	{
-		Real curVelocity = Sqrt(m_vel.x*m_vel.x + m_vel.y*m_vel.y);
+		Real curVelocity = WWMath::Sqrt(m_vel.x*m_vel.x + m_vel.y*m_vel.y);
 		if (desiredVelocity > curVelocity)
 		{
 			return;
@@ -1321,7 +1321,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 
 	m_lastCollidee = other->getID();
 
-	Real dist = Sqrt(distSqr);
+	Real dist = WWMath::Sqrt(distSqr);
 	Real overlap = usRadius + themRadius - dist;
 
 	// if objects are coincident, dist is zero, so force would be infinite -- clearly

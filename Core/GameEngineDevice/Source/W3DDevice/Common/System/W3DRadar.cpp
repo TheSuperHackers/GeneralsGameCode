@@ -403,16 +403,16 @@ void W3DRadar::drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int hei
 
 	// create a triangle around the event
 	angle = 0.0f - addAngle;
-	tri[ 0 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( Cos( angle ) ) * eventSize) + event->radarLoc.x );
-	tri[ 0 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( Sin( angle ) ) * eventSize) + event->radarLoc.y );
+	tri[ 0 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Cos( angle ) ) * eventSize) + event->radarLoc.x );
+	tri[ 0 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Sin( angle ) ) * eventSize) + event->radarLoc.y );
 
 	angle = 2.0f * PI / 3.0f - addAngle;
-	tri[ 1 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( Cos( angle ) ) * eventSize) + event->radarLoc.x );
-	tri[ 1 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( Sin( angle ) ) * eventSize) + event->radarLoc.y );
+	tri[ 1 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Cos( angle ) ) * eventSize) + event->radarLoc.x );
+	tri[ 1 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Sin( angle ) ) * eventSize) + event->radarLoc.y );
 
 	angle = -2.0f * PI / 3.0f - addAngle;
-	tri[ 2 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( Cos( angle ) ) * eventSize) + event->radarLoc.x );
-	tri[ 2 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( Sin( angle ) ) * eventSize) + event->radarLoc.y );
+	tri[ 2 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Cos( angle ) ) * eventSize) + event->radarLoc.x );
+	tri[ 2 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Sin( angle ) ) * eventSize) + event->radarLoc.y );
 
 	// translate radar coords to screen coords
 	radarToPixel( &tri[ 0 ], &tri[ 0 ], pixelX, pixelY, width, height );
@@ -502,16 +502,16 @@ void W3DRadar::drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int he
 
 	// create a triangle around the event
 	angle = 0.0f - addAngle;
-	tri[ 0 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( Cos( angle ) ) * eventSize) + event->radarLoc.x );
-	tri[ 0 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( Sin( angle ) ) * eventSize) + event->radarLoc.y );
+	tri[ 0 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Cos( angle ) ) * eventSize) + event->radarLoc.x );
+	tri[ 0 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Sin( angle ) ) * eventSize) + event->radarLoc.y );
 
 	angle = 2.0f * PI / 3.0f - addAngle;
-	tri[ 1 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( Cos( angle ) ) * eventSize) + event->radarLoc.x );
-	tri[ 1 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( Sin( angle ) ) * eventSize) + event->radarLoc.y );
+	tri[ 1 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Cos( angle ) ) * eventSize) + event->radarLoc.x );
+	tri[ 1 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Sin( angle ) ) * eventSize) + event->radarLoc.y );
 
 	angle = -2.0f * PI / 3.0f - addAngle;
-	tri[ 2 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( Cos( angle ) ) * eventSize) + event->radarLoc.x );
-	tri[ 2 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( Sin( angle ) ) * eventSize) + event->radarLoc.y );
+	tri[ 2 ].x = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Cos( angle ) ) * eventSize) + event->radarLoc.x );
+	tri[ 2 ].y = REAL_TO_INT( (DOUBLE_TO_REAL( WWMath::Sin( angle ) ) * eventSize) + event->radarLoc.y );
 
 	// translate radar coords to screen coords
 	radarToPixel( &tri[ 0 ], &tri[ 0 ], pixelX, pixelY, width, height );

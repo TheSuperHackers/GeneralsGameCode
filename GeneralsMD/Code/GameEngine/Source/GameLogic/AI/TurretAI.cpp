@@ -1117,7 +1117,7 @@ StateReturnType TurretAIAimTurretState::update()
 
  			Real actualPitch;
  			if( v.length() > 0 )
- 				actualPitch = ASin( v.z / v.length() );
+ 				actualPitch = WWMath::Asin( v.z / v.length() );
  			else
  				actualPitch = 0;// Don't point at NAN, just point at 0 if they are right on us
 

@@ -319,8 +319,8 @@ void SlavedUpdate::doAttackLogic( const Object *target )
 		//Allow me to wander away from the pinnedPosition.
 		Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 		m_guardPointOffset.zero();
-		m_guardPointOffset.x += data->m_attackWanderRange * Cos( randomDirection );
-		m_guardPointOffset.y += data->m_attackWanderRange * Sin( randomDirection );
+		m_guardPointOffset.x += data->m_attackWanderRange * WWMath::Cos( randomDirection );
+		m_guardPointOffset.y += data->m_attackWanderRange * WWMath::Sin( randomDirection );
 
 		//Offset our pinned position by our random offset.
 		attackPosition.x += m_guardPointOffset.x;
@@ -382,8 +382,8 @@ void SlavedUpdate::doScoutLogic( const Coord3D *mastersDestination )
 		//Allow me to wander away from the pinnedPosition.
 		Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 		m_guardPointOffset.zero();
-		m_guardPointOffset.x += data->m_scoutWanderRange * Cos( randomDirection );
-		m_guardPointOffset.y += data->m_scoutWanderRange * Sin( randomDirection );
+		m_guardPointOffset.x += data->m_scoutWanderRange * WWMath::Cos( randomDirection );
+		m_guardPointOffset.y += data->m_scoutWanderRange * WWMath::Sin( randomDirection );
 
 		//Offset our pinned position by our random offset.
 		scoutPosition.x += m_guardPointOffset.x;
@@ -412,8 +412,8 @@ void SlavedUpdate::doGuardLogic( Coord3D *pinnedPosition )
 		// recalc where we want to be if we wander around
 		Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 		m_guardPointOffset.zero();
-		m_guardPointOffset.x += data->m_guardMaxRange * Cos( randomDirection );
-		m_guardPointOffset.y += data->m_guardMaxRange * Sin( randomDirection );
+		m_guardPointOffset.x += data->m_guardMaxRange * WWMath::Cos( randomDirection );
+		m_guardPointOffset.y += data->m_guardMaxRange * WWMath::Sin( randomDirection );
 
 		pinnedPosition->x += m_guardPointOffset.x;
 		pinnedPosition->y += m_guardPointOffset.y;
@@ -679,8 +679,8 @@ void SlavedUpdate::moveToNewRepairSpot()
 		//Allow me to wander away from the pinnedPosition.
 		Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 		m_guardPointOffset.set( master->getPosition() );
-		m_guardPointOffset.x += data->m_repairRange * Cos( randomDirection );
-		m_guardPointOffset.y += data->m_repairRange * Sin( randomDirection );
+		m_guardPointOffset.x += data->m_repairRange * WWMath::Cos( randomDirection );
+		m_guardPointOffset.y += data->m_repairRange * WWMath::Sin( randomDirection );
 		m_guardPointOffset.z = TheTerrainLogic->getGroundHeight( m_guardPointOffset.x, m_guardPointOffset.y );
 		Real altitude = GameLogicRandomValueReal( data->m_repairMinAltitude, data->m_repairMaxAltitude );
 		m_guardPointOffset.z += altitude;
@@ -713,8 +713,8 @@ void SlavedUpdate::startSlavedEffects( const Object *slaver )
 	// Decide where our pinned stray point is
 	Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 	m_guardPointOffset.zero();
-	m_guardPointOffset.x += data->m_guardMaxRange * Cos( randomDirection );
-	m_guardPointOffset.y += data->m_guardMaxRange * Sin( randomDirection );
+	m_guardPointOffset.x += data->m_guardMaxRange * WWMath::Cos( randomDirection );
+	m_guardPointOffset.y += data->m_guardMaxRange * WWMath::Sin( randomDirection );
 
 	// mark selves as not selectable
 	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );

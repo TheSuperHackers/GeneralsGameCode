@@ -30,7 +30,7 @@
 #pragma once
 
 #include "Lib/BaseTypeCore.h"
-#include "Lib/trig.h"
+#include "wwmath.h"
 
 //-----------------------------------------------------------------------------
 typedef wchar_t WideChar;  ///< multi-byte character representations
@@ -270,7 +270,7 @@ inline Real Coord2D::toAngle() const
 	else if (c > 1.0)
 		c = 1.0;
 
-	Real value = (Real)ACos( (Real)c );
+	Real value = (Real)WWMath::ACos( (Real)c );
 
 	// Determine sign by checking Z component of dir cross vector
 	// Note this is assumes 2D, and is identical to dotting the perpendicular of v with dir
@@ -295,7 +295,7 @@ inline Real Coord2D::toAngle() const
 	else if (c > 1.0f)
 		c = 1.0f;
 
-	return y < 0.0f ? -ACos(c) : ACos(c);
+	return y < 0.0f ? -WWMath::ACos(c) : WWMath::ACos(c);
 #endif
 }
 

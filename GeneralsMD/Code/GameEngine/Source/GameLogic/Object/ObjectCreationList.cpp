@@ -290,7 +290,7 @@ public:
 			Real dy = primary->y - secondary->y;
 
 			//Calc length
-			Real length = Sqrt( dx*dx + dy*dy );
+			Real length = WWMath::Sqrt( dx*dx + dy*dy );
 
 			//Normalize length
 			dx /= length;
@@ -298,14 +298,14 @@ public:
 
 			//Rotate 90 degrees CCW.
 			Real radians = 90.0f * PI / 180.0f;
-			Real s = Sin( radians );
-			Real c = Cos( radians );
+			Real s = WWMath::Sin( radians );
+			Real c = WWMath::Cos( radians );
 			CCWx = dx * c + dy * -s + dx;
 			CCWy = dx * s + dy * c + dy;
 
 			//Rotate 90 degrees CW
-			s = Sin( -radians );
-			c = Cos( -radians );
+			s = WWMath::Sin( -radians );
+			c = WWMath::Cos( -radians );
 			CWx = dx * c + dy * -s + dx;
 			CWy = dx * s + dy * c + dy;
 		}
@@ -352,17 +352,17 @@ public:
 			{
 				Real randomRadius = GameLogicRandomValueReal(0, m_errorRadius );
 				Real randomAngle = GameLogicRandomValueReal(0, PI*2 );
-				targetPos.x += randomRadius * Cos( randomAngle );
-				targetPos.y += randomRadius * Sin( randomAngle );
+				targetPos.x += randomRadius * WWMath::Cos( randomAngle );
+				targetPos.y += randomRadius * WWMath::Sin( randomAngle );
 			}
 
 
-			Real orient = Atan2( moveToPos.y - startPos.y, moveToPos.x - startPos.x);
+			Real orient = WWMath::Atan2( moveToPos.y - startPos.y, moveToPos.x - startPos.x);
 			if( m_data.m_distToTarget > 0 )
 			{
 				const Real SLOP = 1.5f;
-				startPos.x -= Cos(orient) * m_data.m_distToTarget * SLOP;
-				startPos.y -= Sin(orient) * m_data.m_distToTarget * SLOP;
+				startPos.x -= WWMath::Cos(orient) * m_data.m_distToTarget * SLOP;
+				startPos.y -= WWMath::Sin(orient) * m_data.m_distToTarget * SLOP;
 			}
 
 			Object *transport;
@@ -1105,7 +1105,7 @@ protected:
 
 				objUp->applyForce(&force);
 				if (m_orientInForceDirection)
-					orientation = Atan2(force.y, force.x);
+					orientation = WWMath::Atan2(force.y, force.x);
 
 			}
 		}
@@ -1193,7 +1193,7 @@ protected:
 				objUp->applyForce(&force);
 				if (m_orientInForceDirection)
 				{
-					orientation = Atan2(force.y, force.x);
+					orientation = WWMath::Atan2(force.y, force.x);
 				}
 				DUMPREAL(orientation);
 				objUp->setAngles(orientation, 0, 0);

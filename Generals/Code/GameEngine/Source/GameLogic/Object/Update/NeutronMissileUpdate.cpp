@@ -294,7 +294,7 @@ static Real calcTransform(const Object* obj, const Coord3D *pos, Real maxTurnRat
 	else if (c > 1.0)
 		c = 1.0;
 
-	Real angle = (Real)ACos( c );
+	Real angle = (Real)WWMath::Acos( c );
 
 	Vector3 newDir;
 	if (fabs(angle) < maxTurnRate)
@@ -418,7 +418,7 @@ void NeutronMissileUpdate::doAttack()
 	pos.z += m_vel.z;
 
 //DEBUG_LOG(("vel %f accel %f z %f",m_vel.length(),m_accel.length(), pos.z));
-//Real vm = Sqrt(m_vel.x*m_vel.x+m_vel.y*m_vel.y+m_vel.z*m_vel.z);
+//Real vm = WWMath::Sqrt(m_vel.x*m_vel.x+m_vel.y*m_vel.y+m_vel.z*m_vel.z);
 //DEBUG_LOG(("vel is %f %f %f (%f)",m_vel.x,m_vel.y,m_vel.z,vm));
 	getObject()->setTransformMatrix( &mx );
 	getObject()->setPosition( &pos );
@@ -512,7 +512,7 @@ UpdateSleepTime NeutronMissileUpdate::update()
 	if (m_noTurnDistLeft > 0.0f && oldPosValid)
 	{
 		Coord3D newPos = *getObject()->getPosition();
-		Real distThisTurn = Sqrt(sqr(newPos.x-oldPos.x) + sqr(newPos.y-oldPos.y) + sqr(newPos.z-oldPos.z));
+		Real distThisTurn = WWMath::Sqrt(sqr(newPos.x-oldPos.x) + sqr(newPos.y-oldPos.y) + sqr(newPos.z-oldPos.z));
 		//DEBUG_LOG(("noTurnDist goes from %f to %f",m_noTurnDistLeft,m_noTurnDistLeft-distThisTurn));
 		m_noTurnDistLeft -= distThisTurn;
 	}

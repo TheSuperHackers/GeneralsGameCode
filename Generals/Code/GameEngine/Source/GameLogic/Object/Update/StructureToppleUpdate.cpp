@@ -158,15 +158,15 @@ void StructureToppleUpdate::beginStructureTopple(const DamageInfo *damageInfo)
 			toppleAngle = m_toppleDirection.toAngle();
 			toppleAngle += GameLogicRandomValueReal(-PI/8, PI/8);
 		}
-		m_toppleDirection.x = Cos(toppleAngle);
-		m_toppleDirection.y = Sin(toppleAngle);
+		m_toppleDirection.x = WWMath::Cos(toppleAngle);
+		m_toppleDirection.y = WWMath::Sin(toppleAngle);
 		TheScriptEngine->adjustToppleDirection(getObject(), &m_toppleDirection);
 
 		Real averageRadius = (building->getGeometryInfo().getMajorRadius() + building->getGeometryInfo().getMinorRadius()) / 2;
 		Real explosionRadius = averageRadius * 0.90;
 
-		m_delayBurstLocation.x = building->getPosition()->x + explosionRadius * Cos(toppleAngle);
-		m_delayBurstLocation.y = building->getPosition()->y + explosionRadius * Sin(toppleAngle);
+		m_delayBurstLocation.x = building->getPosition()->x + explosionRadius * WWMath::Cos(toppleAngle);
+		m_delayBurstLocation.y = building->getPosition()->y + explosionRadius * WWMath::Sin(toppleAngle);
 		m_delayBurstLocation.z = TheTerrainLogic->getGroundHeight(m_delayBurstLocation.x, m_delayBurstLocation.y);
 
 		doToppleStartFX(building, damageInfo);
@@ -231,7 +231,7 @@ UpdateSleepTime StructureToppleUpdate::update()
 	// The building is in the process of falling over.
 	if (m_toppleState == TOPPLESTATE_TOPPLING) {
 		UnsignedInt now = TheGameLogic->getFrame();
-		Real toppleAcceleration = TOPPLE_ACCELERATION_FACTOR * (Sin(m_accumulatedAngle) * (1.0 - m_structuralIntegrity));
+		Real toppleAcceleration = TOPPLE_ACCELERATION_FACTOR * (WWMath::Sin(m_accumulatedAngle) * (1.0 - m_structuralIntegrity));
 //		DEBUG_LOG(("toppleAcceleration = %f", toppleAcceleration));
 		m_toppleVelocity += toppleAcceleration;
 //		DEBUG_LOG(("m_toppleVelocity = %f", m_toppleVelocity));
@@ -368,8 +368,8 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 	// Do this because the amount of ground that is affected will be different if the building falls
 	// in different orientations.
 	Real angle = orientationAngle - toppleAngle;
-	Real minorComponent = building->getGeometryInfo().getMinorRadius() * Cos(angle);
-	Real majorComponent = building->getGeometryInfo().getMajorRadius() * Sin(angle);
+	Real minorComponent = building->getGeometryInfo().getMinorRadius() * WWMath::Cos(angle);
+	Real majorComponent = building->getGeometryInfo().getMajorRadius() * WWMath::Sin(angle);
 
 	Coord3D temp3D;
 	temp3D.x = majorComponent;
@@ -385,7 +385,7 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 	}
 
 	// The furthest away from the base of the building to explode on.
-	Real maxDistance = m_buildingHeight * (1.0 - Sin(theta));
+	Real maxDistance = m_buildingHeight * (1.0 - WWMath::Sin(theta));
 
 	/*
 	 * Fire explosions at regular intervals across the area that the building is currently
@@ -396,14 +396,14 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 //	Coord3D target;
 	Real j = m_lastCrushedLocation;
 	for (; j < maxDistance; j += WEAPON_SPACING_PERPENDICULAR) {
-		jcos = j * Cos(toppleAngle);
-		jsin = j * Sin(toppleAngle);
+		jcos = j * WWMath::Cos(toppleAngle);
+		jsin = j * WWMath::Sin(toppleAngle);
 		doDamageLine(building, wt, jcos, jsin, facingWidth, toppleAngle);
 	}
 
 
-	jcos = maxDistance * Cos(toppleAngle);
-	jsin = maxDistance * Sin(toppleAngle);
+	jcos = maxDistance * WWMath::Cos(toppleAngle);
+	jsin = maxDistance * WWMath::Sin(toppleAngle);
 	doDamageLine(building, wt, jcos, jsin, facingWidth, toppleAngle);
 
 	m_lastCrushedLocation = j;
@@ -424,8 +424,8 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
 
 	for (Real i = -facingWidth; i < facingWidth; i += WEAPON_SPACING_PARALLEL)
 	{
-		target.x = building->getPosition()->x + jcos + (i * Sin(toppleAngle));
-		target.y = building->getPosition()->y + jsin + (i * Cos(toppleAngle));
+		target.x = building->getPosition()->x + jcos + (i * WWMath::Sin(toppleAngle));
+		target.y = building->getPosition()->y + jsin + (i * WWMath::Cos(toppleAngle));
 		target.z = TheTerrainLogic->getGroundHeight(target.x, target.y);
 
 	  TheWeaponStore->createAndFireTempWeapon(wt, building, &target);
@@ -436,8 +436,8 @@ void StructureToppleUpdate::doDamageLine(Object *building, const WeaponTemplate*
 	}
 
 	// Make sure there are weapons fired and FX done on the edge of the building.
-	target.x = building->getPosition()->x + jcos + (facingWidth * Sin(toppleAngle));
-	target.y = building->getPosition()->y + jsin + (facingWidth * Cos(toppleAngle));
+	target.x = building->getPosition()->x + jcos + (facingWidth * WWMath::Sin(toppleAngle));
+	target.y = building->getPosition()->y + jsin + (facingWidth * WWMath::Cos(toppleAngle));
 	target.z = TheTerrainLogic->getGroundHeight(target.x, target.y);
 
   TheWeaponStore->createAndFireTempWeapon(wt, building, &target);
