@@ -334,8 +334,8 @@ static LRESULT CALLBACK tabControlPropertiesCallback( HWND hWndDialog,
 							tabData->tabEdge = TP_BOTTOM_SIDE;
 
 						//safeties
-						tabData->tabCount = max( tabData->tabCount, 1 );
-						tabData->tabCount = min( tabData->tabCount, NUM_TAB_PANES );
+						tabData->tabCount = max( tabData->tabCount, (Int)1 );
+						tabData->tabCount = min( tabData->tabCount, (Int)NUM_TAB_PANES );
 
 						GadgetTabControlComputeTabRegion( tabControl );
 						GadgetTabControlResizeSubPanes( tabControl );
