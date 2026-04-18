@@ -39,11 +39,14 @@
 #include "always.h"
 #include <math.h>
 #include <float.h>
-#include "gmath.h"
 #include <assert.h>
 
+// TheSuperHackers @fix VC6 does not support long long or <stdint.h> required by GameMath (gmath.h).
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+#include "gmath.h"
 #ifdef RETAIL_COMPATIBLE_CRC
 #define USE_DETERMINISTIC_MATH
+#endif
 #endif
 
  /*

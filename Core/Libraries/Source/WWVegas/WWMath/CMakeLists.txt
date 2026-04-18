@@ -89,8 +89,11 @@ target_link_libraries(core_wwmath PRIVATE
     core_wwcommon
     corei_always
     core_wwsaveload
-    gamemath
 )
+
+if (NOT IS_VS6_BUILD)
+    target_link_libraries(core_wwmath PRIVATE gamemath)
+endif()
 
 # @todo Test its impact and see what to do with the legacy functions.
 #add_compile_definitions(core_wwmath PUBLIC ALLOW_TEMPORARIES) # Enables legacy math with "temporaries"
