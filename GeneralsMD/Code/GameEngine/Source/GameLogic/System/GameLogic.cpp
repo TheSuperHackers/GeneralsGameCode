@@ -4197,13 +4197,10 @@ void GameLogic::quit(Bool toDesktop, Bool force)
 	{
 		if (isInInteractiveGame())
 		{
-			if (force == FALSE || isInInteractiveGame())
+			if (canOpenQuitMenu())
 			{
-				if (canOpenQuitMenu())
-				{
-					ToggleQuitMenu();
-					return;
-				}
+				ToggleQuitMenu();
+				return;
 			}
 			
 			if (isInMultiplayerGame() && !isInSkirmishGame() && TheGameInfo && !TheGameInfo->isSandbox())
