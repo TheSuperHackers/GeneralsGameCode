@@ -122,7 +122,8 @@ UpdateSleepTime GrantStealthBehavior::update()
 	if ( self->isEffectivelyDead())
 		return UPDATE_SLEEP_FOREVER;
 
-	// TheSuperHackers @bugfix stephanmeesters 14/03/2026 Delay emitter creation until update
+	// TheSuperHackers @bugfix stephanmeesters 18/04/2026 Delay emitter creation until update, to ensure that the particle
+	// systems are not created before ParticleManager has xfer-loaded.
 	createEmitters();
 
 	const GrantStealthBehaviorModuleData *d = getGrantStealthBehaviorModuleData();

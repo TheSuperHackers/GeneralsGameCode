@@ -673,7 +673,8 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (velMult.z > 1.0f)
 		velMult.z = 1.0f;
 
-	// TheSuperHackers @bugfix 14/03/2026 Delay emitter creation until draw
+	// TheSuperHackers @bugfix stephanmeesters 18/04/2026 Delay emitter creation until draw, to ensure that the particle
+	// systems are not created before ParticleManager has xfer-loaded.
 	createTreadEmitters();
 
 	for (size_t i = 0; i < ARRAY_SIZE(m_treadDebrisIDs); ++i)
