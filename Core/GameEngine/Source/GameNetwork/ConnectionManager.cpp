@@ -154,14 +154,7 @@ static Bool hasValidTransferFileContent(const AsciiString& filePath, const Unsig
 	switch (fileType)
 	{
 	case TransferFileType_Map:
-	{
-		if (dataSize < 4 || memcmp(data, "CkMp", 4) != 0)
-		{
-			DEBUG_LOG(("Map file '%s' has invalid magic bytes.", filePath.str()));
-			return false;
-		}
 		break;
-	}
 
 	case TransferFileType_Ini:
 	{
