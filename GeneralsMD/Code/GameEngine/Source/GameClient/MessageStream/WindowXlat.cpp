@@ -326,9 +326,10 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 				returnCode = WIN_INPUT_USED;
 			}
 
+			// TheSuperHackers @bugfix If the input is disabled, then only allow the ESC button to get through.
+			// Otherwise it would be possible to call user camera actions during scripted camera scenes.
 			if(returnCode != WIN_INPUT_USED
-				&& (key == KEY_ESC)
-				&& (BitIsSet( state, KEY_STATE_UP ))
+				&& (key != KEY_ESC)
 				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
 			{
 				returnCode = WIN_INPUT_USED;
