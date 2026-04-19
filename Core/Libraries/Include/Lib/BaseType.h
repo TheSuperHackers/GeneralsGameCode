@@ -74,6 +74,40 @@ inline NUM highestBit(NUM x)
 	return static_cast<NUM>(y & ~(y >> 1));
 }
 
+template <typename PTR>
+inline PTR maxPtr(PTR x, PTR y) noexcept
+{
+	static_assert(std::is_pointer<PTR>::value, "maxPtr is for pointer types only!");
+
+	if (x == nullptr)
+		return y;
+
+	if (y == nullptr)
+		return x;
+
+	if (x > y)
+		return x;
+
+	return y;
+}
+
+template <typename PTR>
+inline PTR minPtr(PTR x, PTR y) noexcept
+{
+	static_assert(std::is_pointer<PTR>::value, "minPtr is for pointer types only!");
+
+	if (x == nullptr)
+		return y;
+
+	if (y == nullptr)
+		return x;
+
+	if (x < y)
+		return x;
+
+	return y;
+}
+
 // TheSuperHackers @refactor JohnsterID 24/01/2026 Add lowercase min/max templates for GameEngine layer.
 // GameEngine code typically uses BaseType.h, but may include WWVegas headers (which define min/max in always.h).
 // Header guard prevents duplicate definitions. VC6's <algorithm> lacks std::min/std::max.

@@ -134,6 +134,8 @@ struct FileInfo {
 // TheSuperHackers @bugfix xezon 26/10/2025 Adds a mutex to the file exist map to try prevent
 // application hangs during level load after the file exist map was corrupted because of writes
 // from multiple threads.
+//
+// TheSuperHackers @feature Mauller 24/04/2026 Add extension removal functions
 //===============================
 class FileSystem : public SubsystemInterface
 {
@@ -157,6 +159,9 @@ public:
 
 	static AsciiString normalizePath(const AsciiString& path);	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
 	static Bool isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath);	///< determines if a file path is within a base path. Both paths must be absolute, but do not need to exist.
+
+	static bool removeExtension(AsciiString& path);
+	static bool removeExtension(UnicodeString& path);
 
 protected:
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
