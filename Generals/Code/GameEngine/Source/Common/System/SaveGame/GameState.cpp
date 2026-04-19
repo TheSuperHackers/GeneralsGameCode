@@ -844,18 +844,6 @@ static AsciiString getMapLeafAndDirName(const AsciiString& in)
 }
 
 // ------------------------------------------------------------------------------------------------
-static AsciiString removeExtension(const AsciiString& in)
-{
-	if (const char* end = in.reverseFind('.'))
-	{
-		const char* begin = in.str();
-		return AsciiString(begin, end - begin);
-	}
-
-	return in;
-}
-
-// ------------------------------------------------------------------------------------------------
 const char* PORTABLE_SAVE				= "Save\\";
 const char* PORTABLE_MAPS				= "Maps\\";
 const char* PORTABLE_USER_MAPS	= "UserData\\Maps\\";
