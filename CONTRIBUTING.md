@@ -152,3 +152,12 @@ When attempting to **Rebase and Merge** a Pull Request, then all commits will tr
 ### Change log documentation
 
 *Work in progress.*
+
+
+## AI code generation guidelines
+
+Creating changes with LLM generated code is generally allowed. The author is responsible for verifying that all generated code is human readable, maintainable and logically correct. Furthermore, all generated code needs to be tested and verified. The author is not allowed to outsource the polishing of the generated code to the human code reviewers. In a Pull Request, generated code needs to be announced as such and to what extent it was polished by human intervention.
+
+### New code contributors and AI generated code
+
+New code contributors are discouraged from creating Pull Requests with thousands of lines changed or added with the help of LLMs. Reason being, human code reviewers cannot attend such volumes at the risk of wasting precious time with poorly generated and polished code.
