@@ -307,6 +307,16 @@ public:
 	int compareNoCase(const WideChar* s) const;
 
 	/**
+		Conceptually identical to wcschr().
+	*/
+	const WideChar* find(WideChar c) const;
+
+	/**
+		Conceptually identical to wcsrchr().
+	*/
+	const WideChar* reverseFind(WideChar c) const;
+
+	/**
 		return true iff self starts with the given string.
 	*/
 	Bool startsWith(const WideChar* p) const;
@@ -483,6 +493,18 @@ inline int UnicodeString::compareNoCase(const WideChar* s) const
 {
 	validate();
 	return _wcsicmp(this->str(), s);
+}
+
+// -----------------------------------------------------
+inline const WideChar* UnicodeString::find(WideChar c) const
+{
+	return wcschr(this->str(), c);
+}
+
+// -----------------------------------------------------
+inline const WideChar* UnicodeString::reverseFind(WideChar c) const
+{
+	return wcsrchr(this->str(), c);
 }
 
 // -----------------------------------------------------
