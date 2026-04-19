@@ -958,15 +958,13 @@ void WaterTracksRenderSystem::saveTracks()
 		return;
 
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
-	char path[256];
-
-	strlcpy(path, fileName.str(), ARRAY_SIZE(path));
-	strlcat(path, ".wak", ARRAY_SIZE(path));
+	FileSystem::removeExtension(fileName);
+	fileName.concat(".wak");
 
 	WaterTracksObj *umod;
 	Int trackCount=0;
 
-	FILE *fp=fopen(path,"wb");
+	FILE *fp=fopen(fileName.str(), "wb");
 
 	if (fp)
 	{
@@ -994,12 +992,10 @@ void WaterTracksRenderSystem::loadTracks()
 		return;
 
 	AsciiString fileName=TheTerrainLogic->getSourceFilename();
-	char path[256];
+	FileSystem::removeExtension(fileName);
+	fileName.concat(".wak");
 
-	strlcpy(path, fileName.str(), ARRAY_SIZE(path));
-	strlcat(path, ".wak", ARRAY_SIZE(path));
-
-	File *file = TheFileSystem->openFile(path, File::READ | File::BINARY);
+	File *file = TheFileSystem->openFile(fileName.str(), File::READ | File::BINARY);
 	WaterTracksObj *umod;
 	Int trackCount=0;
 	Int flipU=0;
