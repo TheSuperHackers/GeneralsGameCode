@@ -284,6 +284,10 @@ public:
 	// Used for pointing cameras at targets.
 	void	Look_At(const Vector3 &p,const Vector3 &t,float roll);
 
+	// Points the negative Z axis at dir.
+	// Used for looking with cameras into directions.
+	void Look_At_Dir(const Vector3 &pos, const Vector3 &dir, float roll);
+
 	// Previous look_at function follows the camera coordinate convention.
 	// This one follows the object convention used in Commando and G.  I
 	// special cased this convention since it is used so much by us rather

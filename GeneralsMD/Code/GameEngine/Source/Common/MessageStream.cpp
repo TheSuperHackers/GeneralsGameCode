@@ -88,15 +88,14 @@ GameMessage::~GameMessage()
  */
 const GameMessageArgumentType *GameMessage::getArgument( Int argIndex ) const
 {
-	static const GameMessageArgumentType junk = { 0 };
-
 	int i=0;
 	for( GameMessageArgument *a = m_argList; a; a=a->m_next, i++ )
 		if (i == argIndex)
 			return &a->m_data;
 
 	DEBUG_CRASH(("argument not found"));
-	return &junk;
+	static const GameMessageArgumentType zero = { 0 };
+	return &zero;
 }
 
 /**

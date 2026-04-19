@@ -548,6 +548,9 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				msg->appendRealArgument( currentView.getZoom() );
 				msg->appendIntegerArgument( (Int)TheMouse->getMouseCursor() );
 				msg->appendPixelArgument( m_currentPos );
+				// TheSuperHackers @tweak Save 3D camera position and direction to recover optimal playback precision
+				msg->appendLocationArgument( TheTacticalView->get3DCameraPosition() );
+				msg->appendLocationArgument( TheTacticalView->get3DCameraDirection() );
 			}
 			break;
 		}

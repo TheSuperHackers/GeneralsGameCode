@@ -203,6 +203,11 @@ struct RealRange
 		hi = 0.0f;
 	}
 
+	bool is(Real value) const
+	{
+		return lo == value && hi == value;
+	}
+
 	// combine the given range with us such that we now encompass
 	// both ranges
 	void combine( RealRange &other )
@@ -220,6 +225,11 @@ struct Coord2D
 	{
 		x = 0.0f;
 		y = 0.0f;
+	}
+
+	bool is(Real value) const
+	{
+		return x == value && y == value;
 	}
 
 	Real length() const { return (Real)sqrt( x*x + y*y ); }
@@ -309,6 +319,11 @@ struct ICoord2D
 		y = 0;
 	}
 
+	bool is(Int value) const
+	{
+		return x == value && y == value;
+	}
+
 	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
 };
 
@@ -320,6 +335,11 @@ struct Region2D
 	{
 		lo.zero();
 		hi.zero();
+	}
+
+	bool is(Real value) const
+	{
+		return lo.is(value) && hi.is(value);
 	}
 
 	Real width() const { return hi.x - lo.x; }
@@ -335,6 +355,11 @@ struct IRegion2D
 	{
 		lo.zero();
 		hi.zero();
+	}
+
+	bool is(Int value) const
+	{
+		return lo.is(value) && hi.is(value);
 	}
 
 	Int width() const { return hi.x - lo.x; }
@@ -374,6 +399,11 @@ struct Coord3D
 		x = 0.0f;
 		y = 0.0f;
 		z = 0.0f;
+	}
+
+	bool is(Real value) const
+	{
+		return x == value && y == value && z == value;
 	}
 
 	void add( const Coord3D *a )
@@ -438,6 +468,11 @@ struct ICoord3D
 		y = 0;
 		z = 0;
 	}
+
+	bool is(Int value) const
+	{
+		return x == value && y == value && z == value;
+	}
 };
 
 // For alternative see AABoxClass
@@ -450,6 +485,11 @@ struct Region3D
 	Real depth() const { return hi.z - lo.z; }
 
 	void zero() { lo.zero(); hi.zero(); }
+
+	bool is(Real value) const
+	{
+		return lo.is(value) && hi.is(value);
+	}
 
 	void setFromPointsNoZ(const Coord3D* points, Int count)
 	{
@@ -513,6 +553,11 @@ struct IRegion3D
 	{
 		lo.zero();
 		hi.zero();
+	}
+
+	bool is(Int value) const
+	{
+		return lo.is(value) && hi.is(value);
 	}
 
 	Int width() const { return hi.x - lo.x; }

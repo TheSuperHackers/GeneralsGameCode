@@ -137,6 +137,11 @@ public:
 	virtual void 					Set_Transform(const Matrix3D &m) override;
 	virtual void 					Set_Position(const Vector3 &v) override;
 
+	// Get camera directions
+	Vector3								Get_Right_Dir() const;
+	Vector3								Get_Forward_Dir() const;
+	Vector3								Get_Up_Dir() const;
+
   	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Bounding Volumes
 	/////////////////////////////////////////////////////////////////////////////

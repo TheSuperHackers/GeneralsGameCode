@@ -192,7 +192,9 @@ public:
 	const Coord3D &getPosition() const { return m_pos; } ///< Returns position camera is looking at
 	Coord2D getPosition2D() const { Coord2D c = { m_pos.x, m_pos.y }; return c; } ///< Returns position camera is looking at
 
-	virtual const Coord3D& get3DCameraPosition() const = 0;							///< Returns the actual camera position
+	virtual Coord3D get3DCameraPosition() const { Coord3D c={0,0,0}; return c; } ///< Returns the actual camera position
+	virtual Coord3D get3DCameraDirection() const { Coord3D c={0,0,0}; return c; } ///< Returns the actual camera view direction
+	virtual void set3DCameraLookAt(const Coord3D &pos, const Coord3D &dir, Real roll) {} ///< Set the actual camera position and view direction
 
 	virtual Real getZoom() { return m_zoom; }
 	virtual void setZoom(Real z) { m_zoom = z; }
@@ -395,11 +397,6 @@ public:
 		return 0;
 	}
 	virtual void forceRedraw() override {}
-	virtual const Coord3D& get3DCameraPosition() const override
-	{
-		static Coord3D zero = {0,0,0};
-		return zero;
-	}
 	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) override
 	{
 		return WTS_INVALID;

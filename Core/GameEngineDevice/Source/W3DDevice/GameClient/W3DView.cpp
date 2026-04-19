@@ -705,13 +705,27 @@ Real W3DView::getMaxZoom(Real x, Real y) const
 //-------------------------------------------------------------------------------------------------
 /** set the transform matrix of m_3DCamera, based on m_pos & m_angle */
 //-------------------------------------------------------------------------------------------------
-void W3DView::setCameraTransform()
+void W3DView::updateCameraTransform()
 {
 	if (TheGlobalData->m_headless)
 		return;
 
-	m_cameraHasMovedSinceRequest = true;
+	updateCameraClipPlanes();
 
+	Vector3 sourcePos;
+	Vector3 targetPos;
+	buildCameraPosition(sourcePos, targetPos);
+
+	Matrix3D cameraTransform;
+	buildCameraTransform(&cameraTransform, sourcePos, targetPos);
+
+	setCameraTransform(cameraTransform);
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DView::updateCameraClipPlanes()
+{
 	Real farZ = 1200.0f;
 
 	if (m_useRealZoomCam)	//WST 10.19.2002
@@ -730,18 +744,19 @@ void W3DView::setCameraTransform()
 	}
 
 	m_3DCamera->Set_Clip_Planes(NearZ, farZ);
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DView::setCameraTransform(const Matrix3D &transform)
+{
+	m_cameraHasMovedSinceRequest = true;
 
 #if defined(RTS_DEBUG)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
 #endif
 
-	// rebuild it (even if we just did it due to camera constraints)
-	Vector3 sourcePos;
-	Vector3 targetPos;
-	buildCameraPosition(sourcePos, targetPos);
-	Matrix3D cameraTransform;
-	buildCameraTransform(&cameraTransform, sourcePos, targetPos);
-	m_3DCamera->Set_Transform( cameraTransform );
+	m_3DCamera->Set_Transform(transform);
 
 	if (TheTerrainRenderObject)
 	{
@@ -790,12 +805,33 @@ void W3DView::init()
 }
 
 //-------------------------------------------------------------------------------------------------
-const Coord3D& W3DView::get3DCameraPosition() const
+Coord3D W3DView::get3DCameraPosition() const
 {
 	Vector3 camera = m_3DCamera->Get_Position();
-	static Coord3D pos;
-	pos.set( camera.X, camera.Y, camera.Z );
+	Coord3D pos = { camera.X, camera.Y, camera.Z };
 	return pos;
+}
+
+//-------------------------------------------------------------------------------------------------
+Coord3D W3DView::get3DCameraDirection() const
+{
+	Vector3 forward = m_3DCamera->Get_Forward_Dir();
+	Coord3D dir = { forward.X, forward.Y, forward.Z };
+	return dir;
+}
+
+//-------------------------------------------------------------------------------------------------
+void W3DView::set3DCameraLookAt(const Coord3D &pos, const Coord3D &dir, Real roll)
+{
+	Vector3 camPos(pos.x, pos.y, pos.z);
+	Vector3 camDir(dir.x, dir.y, dir.z);
+	Matrix3D transform;
+	transform.Look_At_Dir(camPos, camDir, roll);
+
+	updateCameraClipPlanes();
+	setCameraTransform(transform);
+
+	m_recalcCamera = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1560,7 +1596,7 @@ void W3DView::update()
 	// (gth) C&C3 if m_isCameraSlaved then force the camera to update each frame
 	if (m_recalcCamera || m_isCameraSlaved)
 	{
-		setCameraTransform();
+		updateCameraTransform();
 		m_recalcCamera = false;
 	}
 
