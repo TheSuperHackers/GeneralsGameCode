@@ -439,6 +439,21 @@ void SDL3Mouse::initCursorResources(void)
 	}
 }
 
+void SDL3Mouse::freeCursorResources(void)
+{
+	for (Int cursor = 0; cursor < Mouse::NUM_MOUSE_CURSORS; cursor++)
+	{
+		for (Int direction = 0; direction < MAX_2D_CURSOR_DIRECTIONS; direction++)
+		{
+			if (cursorResources[cursor][direction])
+			{
+				delete cursorResources[cursor][direction];
+				cursorResources[cursor][direction] = nullptr;
+			}
+		}
+	}
+}
+
 AnimatedCursor* SDL3Mouse::loadCursorFromFile(const char* filepath)
 {
 	return loadANI(filepath);
@@ -859,6 +874,7 @@ SDL3InputManager::SDL3InputManager()
 SDL3InputManager::~SDL3InputManager()
 {
 	closeGamepad();
+	SDL3Mouse::freeCursorResources();
 	TheSDL3InputManager = nullptr;
 }
 
@@ -1081,6 +1097,11 @@ void SDL3InputManager::processGamepadInput()
 		SDL_GetMouseState(&mx, &my);
 		motionEvent.motion.x = mx + motionEvent.motion.xrel;
 		motionEvent.motion.y = my + motionEvent.motion.yrel;
+
+		if (m_SDLWindow)
+		{
+			motionEvent.motion.windowID = SDL_GetWindowID(m_SDLWindow);
+		}
 		
 		addMouseSDLEvent(motionEvent);
 		SDL_WarpMouseInWindow(nullptr, motionEvent.motion.x, motionEvent.motion.y);
