@@ -60,10 +60,19 @@
 #include "GameLogic/GameLogic.h"  ///< @todo for demo, remove
 #include "GameClient/Mouse.h"
 #include "GameClient/IMEManager.h"
-#include "Win32Device/GameClient/Win32Mouse.h"
-#include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/version.h"
 #include "BuildVersion.h"
+
+#if SAGE_USE_SDL3
+    #include <SDL3/SDL.h>
+    #include "SDL3GameEngine.h"
+    #include "GameClient/Keyboard.h"
+    SDL_Window* TheSDL3Window = nullptr;
+#else
+    #include "Win32Device/Common/Win32GameEngine.h"
+	#include "Win32Device/GameClient/Win32Mouse.h"
+#endif
+
 #include "GeneratedVersion.h"
 #include "resource.h"
 
@@ -87,6 +96,9 @@ static Bool gDoPaint = true;
 static Bool isWinMainActive = false;
 
 static HBITMAP gLoadScreenBitmap = nullptr;
+#if SAGE_USE_SDL3
+static SDL_Surface* gLoadScreenSurface = nullptr;
+#endif
 
 //#define DEBUG_WINDOWS_MESSAGES
 
@@ -855,14 +867,23 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		if (fileImage) {
 			fclose(fileImage);
 			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
+#if SAGE_USE_SDL3
+			gLoadScreenSurface = SDL_LoadBMP(filePath);
+#endif
 		}
 		else {
 			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, fileName, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
+#if SAGE_USE_SDL3
+			gLoadScreenSurface = SDL_LoadBMP(fileName);
+#endif
 		}
 #else
 
 		// in release, the file only ever lives in the root dir
 		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
+#if SAGE_USE_SDL3
+		gLoadScreenSurface = SDL_LoadBMP("Install_Final.bmp");
+#endif
 #endif
 
 #ifdef RTS_ENABLE_CRASHDUMP
@@ -871,18 +892,78 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 		// register windows class and create application window
+#if SAGE_USE_SDL3
+		if (!TheGlobalData->m_headless)
+		{
+			if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD) == 0)
+			{
+				DEBUG_LOG(("SDL_Init failed: %s", SDL_GetError()));
+				return exitcode;
+			}
+
+			Uint32 flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
+			if (!TheGlobalData->m_windowed) flags |= SDL_WINDOW_FULLSCREEN;
+
+			TheSDL3Window = SDL_CreateWindow("Command & Conquer Generals", 800, 600, flags);
+			if (!TheSDL3Window)
+			{
+				DEBUG_LOG(("SDL_CreateWindow failed: %s", SDL_GetError()));
+				return exitcode;
+			}
+
+			// Retrieve the native HWND from the SDL window for D3D compatibility
+			SDL_PropertiesID props = SDL_GetWindowProperties(TheSDL3Window);
+			ApplicationHWnd = (HWND)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+			
+			// Set initial window size from global data if available
+			Int startWidth = TheGlobalData->m_xResolution;
+			Int startHeight = TheGlobalData->m_yResolution;
+			if (startWidth > 0 && startHeight > 0)
+			{
+				SDL_SetWindowSize(TheSDL3Window, startWidth, startHeight);
+			}
+			
+			SDL_ShowWindow(TheSDL3Window);
+			isWinMainActive = true;
+
+			// Draw the splash screen immediately for SDL3 using safe software surface (8-line modernization)
+			if (gLoadScreenSurface != nullptr)
+			{
+				SDL_Surface* screen = SDL_GetWindowSurface(TheSDL3Window);
+				if (screen)
+				{
+					SDL_ClearSurface(screen, 0.0f, 0.0f, 0.0f, 1.0f);
+					float bitmapAspect = 800.0f / 600.0f;
+					int drawWidth = (float)screen->w / screen->h > bitmapAspect ? (int)(screen->h * bitmapAspect) : screen->w;
+					int drawHeight = (float)screen->w / screen->h > bitmapAspect ? screen->h : (int)(screen->w / bitmapAspect);
+					SDL_Rect destRect = { (screen->w - drawWidth) / 2, (screen->h - drawHeight) / 2, drawWidth, drawHeight };
+					SDL_BlitSurfaceScaled(gLoadScreenSurface, NULL, screen, &destRect, SDL_SCALEMODE_LINEAR);
+					SDL_UpdateWindowSurface(TheSDL3Window);
+				}
+			}
+
+		}
+#else
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
 			return exitcode;
 		}
+#endif
 
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
 
-		if (gLoadScreenBitmap!=nullptr) {
+#if SAGE_USE_SDL3
+		if (gLoadScreenSurface != nullptr) {
+			SDL_DestroySurface(gLoadScreenSurface);
+			gLoadScreenSurface = nullptr;
+		}
+#else
+		if (gLoadScreenBitmap != nullptr) {
 			::DeleteObject(gLoadScreenBitmap);
 			gLoadScreenBitmap = nullptr;
 		}
+#endif
 
 
 		// BGC - initialize COM
@@ -956,6 +1037,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 //=============================================================================
 GameEngine *CreateGameEngine()
 {
+#if SAGE_USE_SDL3
+	SDL3GameEngine *engine = NEW SDL3GameEngine;
+	engine->setIsActive(isWinMainActive);
+	return engine;
+#else
 	Win32GameEngine *engine;
 
 	engine = NEW Win32GameEngine;
@@ -964,5 +1050,5 @@ GameEngine *CreateGameEngine()
 	engine->setIsActive(isWinMainActive);
 
 	return engine;
-
+#endif
 }

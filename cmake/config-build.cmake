@@ -9,6 +9,16 @@ option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 
+# Enable SDL3 by default for modern builds
+if(NOT IS_VS6_BUILD)
+    option(SAGE_USE_SDL3 "Enable SDL3 input/window backend" ON)
+    if(SAGE_USE_SDL3)
+        target_compile_definitions(core_config INTERFACE SAGE_USE_SDL3=1)
+    endif()
+else()
+    set(SAGE_USE_SDL3 OFF CACHE BOOL "Enable SDL3 input/window backend" FORCE)
+endif()
+
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
     set(RTS_BUILD_ZEROHOUR TRUE)
     message("You must select one project to build, building Zero Hour by default.")
