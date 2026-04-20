@@ -1981,7 +1981,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					{
 						// TheSuperHackers @feature Override all the settings above with real camera position and view direction.
 						// This ensures that the camera looks EXACTLY like it was at the time of recording, no matter how the
-						// View is configured or tweaked. Note that the above setting are still required to set regardless, because
+						// View is configured or tweaked. Note that the above settings are still required to set regardless, because
 						// when the replay camera is exited, then the pivot position and angles will be needed to build the camera
 						// where it was left off.
 						const Coord3D camPos = msg->getArgument( 6 )->location;
