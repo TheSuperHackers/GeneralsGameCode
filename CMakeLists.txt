@@ -55,7 +55,6 @@ endif()
 # Find/Add build dependencies and stubs shared by all projects
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/dx8.cmake)
-    include(cmake/sdl3.cmake)
 endif()
 
 if (IS_VS6_BUILD)
@@ -73,6 +72,10 @@ else()
 endif()
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
+
+if(SAGE_USE_SDL3 AND NOT IS_VS6_BUILD)
+    include(cmake/sdl3.cmake)
+endif()
 
 if(RTS_BUILD_OPTION_PROFILE_TRACY)
     include(cmake/tracy.cmake)

@@ -1,5 +1,9 @@
 include(FetchContent)
 
+if(NOT SAGE_USE_SDL3 OR IS_VS6_BUILD)
+    return()
+endif()
+
 # GeneralsX @build felipebraz 17/04/2026 SDL3 Dependency
 # Download and build SDL3 from source as a static library.
 # This avoids manual installation and keeps the repository clean.
