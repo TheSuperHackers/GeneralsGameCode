@@ -141,7 +141,7 @@ set(GAMEENGINE_SRC
     Include/Common/XferDeepCRC.h
     Include/Common/XferLoad.h
     Include/Common/XferSave.h
-#    Include/GameClient/Anim2D.h
+    Include/GameClient/Anim2D.h
 #    Include/GameClient/AnimateWindowManager.h
 #    Include/GameClient/CampaignManager.h
     Include/GameClient/ChallengeGenerals.h
@@ -153,10 +153,10 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/ControlBarResizer.h
 #    Include/GameClient/ControlBarScheme.h
     Include/GameClient/Credits.h
-#    Include/GameClient/DebugDisplay.h
+    Include/GameClient/DebugDisplay.h
 #    Include/GameClient/Diplomacy.h
 #    Include/GameClient/DisconnectMenu.h
-#    Include/GameClient/Display.h
+    Include/GameClient/Display.h
     Include/GameClient/DisplayString.h
     Include/GameClient/DisplayStringManager.h
 #    Include/GameClient/Drawable.h
@@ -194,7 +194,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/HeaderTemplate.h
 #    Include/GameClient/HintSpy.h
 #    Include/GameClient/HotKey.h
-#    Include/GameClient/Image.h
+    Include/GameClient/Image.h
     Include/GameClient/IMEManager.h
 #    Include/GameClient/InGameUI.h
     Include/GameClient/Keyboard.h
@@ -206,16 +206,16 @@ set(GAMEENGINE_SRC
     Include/GameClient/MapUtil.h
 #    Include/GameClient/MessageBox.h
 #    Include/GameClient/MetaEvent.h
-#    Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
-#    Include/GameClient/Module/BeaconClientUpdate.h
-#    Include/GameClient/Module/SwayClientUpdate.h
+    Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
+    Include/GameClient/Module/BeaconClientUpdate.h
+    Include/GameClient/Module/SwayClientUpdate.h
     Include/GameClient/Mouse.h
     Include/GameClient/ParabolicEase.h
     Include/GameClient/ParticleSys.h
 #    Include/GameClient/PlaceEventTranslator.h
     Include/GameClient/ProcessAnimateWindow.h
     Include/GameClient/RadiusDecal.h
-#    Include/GameClient/RayEffect.h
+    Include/GameClient/RayEffect.h
     Include/GameClient/SelectionInfo.h
 #    Include/GameClient/SelectionXlat.h
 #    Include/GameClient/Shadow.h
@@ -694,13 +694,13 @@ set(GAMEENGINE_SRC
     Source/GameClient/ClientInstance.cpp
     Source/GameClient/Color.cpp
     Source/GameClient/Credits.cpp
-#    Source/GameClient/Display.cpp
+    Source/GameClient/Display.cpp
     Source/GameClient/DisplayString.cpp
     Source/GameClient/DisplayStringManager.cpp
 #    Source/GameClient/Drawable.cpp
-#    Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp
-#    Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp
-#    Source/GameClient/Drawable/Update/SwayClientUpdate.cpp
+    Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp
+    Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp
+    Source/GameClient/Drawable/Update/SwayClientUpdate.cpp
     Source/GameClient/DrawGroupInfo.cpp
 #    Source/GameClient/Eva.cpp
     Source/GameClient/FXList.cpp
@@ -823,13 +823,13 @@ set(GAMEENGINE_SRC
     Source/GameClient/SelectionInfo.cpp
     Source/GameClient/Snow.cpp
     Source/GameClient/Statistics.cpp
-#    Source/GameClient/System/Anim2D.cpp
+    Source/GameClient/System/Anim2D.cpp
 #    Source/GameClient/System/CampaignManager.cpp
     Source/GameClient/System/Debug/AudioDebugDisplay.cpp
-#    Source/GameClient/System/DebugDisplay.cpp
-#    Source/GameClient/System/Image.cpp
+    Source/GameClient/System/DebugDisplay.cpp
+    Source/GameClient/System/Image.cpp
     Source/GameClient/System/ParticleSys.cpp
-#    Source/GameClient/System/RayEffect.cpp
+    Source/GameClient/System/RayEffect.cpp
     Source/GameClient/System/Smudge.cpp
     Source/GameClient/Terrain/TerrainRoads.cpp
     Source/GameClient/Terrain/TerrainVisual.cpp

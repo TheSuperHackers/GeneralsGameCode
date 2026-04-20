@@ -475,6 +475,22 @@ def main():
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp")
     
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Display.cpp", Game.CORE, "GameEngine/Source/GameClient/Display.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Display.h", Game.CORE, "GameEngine/Include/GameClient/Display.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Anim2D.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Anim2D.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Anim2D.h", Game.CORE, "GameEngine/Include/GameClient/Anim2D.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Image.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Image.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Image.h", Game.CORE, "GameEngine/Include/GameClient/Image.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/DebugDisplay.cpp", Game.CORE, "GameEngine/Source/GameClient/System/DebugDisplay.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/DebugDisplay.h", Game.CORE, "GameEngine/Include/GameClient/DebugDisplay.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/RayEffect.cpp", Game.CORE, "GameEngine/Source/GameClient/System/RayEffect.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/RayEffect.h", Game.CORE, "GameEngine/Include/GameClient/RayEffect.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp", Game.CORE, "GameEngine/Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h", Game.CORE, "GameEngine/Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp", Game.CORE, "GameEngine/Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Module/BeaconClientUpdate.h", Game.CORE, "GameEngine/Include/GameClient/Module/BeaconClientUpdate.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Drawable/Update/SwayClientUpdate.cpp", Game.CORE, "GameEngine/Source/GameClient/Drawable/Update/SwayClientUpdate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Module/SwayClientUpdate.h", Game.CORE, "GameEngine/Include/GameClient/Module/SwayClientUpdate.h")
 
     return
 
