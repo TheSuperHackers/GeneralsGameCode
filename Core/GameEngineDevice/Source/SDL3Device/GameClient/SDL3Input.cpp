@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -58,7 +58,6 @@ SDL3InputManager* TheSDL3InputManager = nullptr;
 struct AnimatedCursor {
 	std::array<SDL_Cursor*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameCursors;
 	std::array<SDL_Surface*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameSurfaces;
-	int m_currentFrame = 0;
 	int m_frameCount = 0;
 	int m_frameRate = 0; // the time a frame is displayed in 1/60th of a second
 
@@ -95,7 +94,7 @@ struct AnimatedCursor {
 
 		Uint64 now = SDL_GetTicks();
 		size_t index = (m_frameRate > 0)
-			? (size_t)((now * 60 / 1000) / m_frameRate) % m_frameCount
+			? (size_t)((now * 60 / 1000) / m_frameRate) % (size_t)std::min((int)m_frameCount, MAX_2D_CURSOR_ANIM_FRAMES)
 			: 0;
 		return m_frameCursors[index];
 	}
@@ -213,7 +212,7 @@ static AnimatedCursor* loadANI(const char* filepath)
 			}
 
 			ANIHeader *ani_header = (ANIHeader*)getChunkData(chunk);
-			cursor->m_frameCount = ani_header->frames;
+			cursor->m_frameCount = (int)std::min((unsigned int)ani_header->frames, (unsigned int)MAX_2D_CURSOR_ANIM_FRAMES);
 			cursor->m_frameRate = ani_header->displayRate;
 		}
 		else if (chunk->id == list_id && chunk->type == fram_id)
@@ -1084,7 +1083,7 @@ void SDL3InputManager::processGamepadInput()
 		motionEvent.motion.y = my + motionEvent.motion.yrel;
 		
 		addMouseSDLEvent(motionEvent);
-		SDL_WarpMouseInWindow(NULL, motionEvent.motion.x, motionEvent.motion.y);
+		SDL_WarpMouseInWindow(nullptr, motionEvent.motion.x, motionEvent.motion.y);
 	}
 
 	float rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
