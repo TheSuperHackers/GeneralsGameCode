@@ -136,6 +136,7 @@ jobs:
             -Password "${{ secrets.GITHUB_TOKEN }}"
           & $nuget setapikey "${{ secrets.GITHUB_TOKEN }}" `
             -Source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          "VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}\triplets" >> $env:GITHUB_ENV
           "VCPKG_INSTALL_OPTIONS=--x-abi-tools-use-exact-versions" >> $env:GITHUB_ENV
 
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}${{ inputs.ffmpeg && '+ffmpeg' || '' }} Preset
