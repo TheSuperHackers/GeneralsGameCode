@@ -55,7 +55,6 @@ endif()
 # Find/Add build dependencies and stubs shared by all projects
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/dx8.cmake)
-    include(cmake/sdl3.cmake)
 endif()
 
 # Define a dummy stlport target when not on VC6.
@@ -69,6 +68,10 @@ include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/stb.cmake)
+
+if(SAGE_USE_SDL3 AND NOT IS_VS6_BUILD)
+    include(cmake/sdl3.cmake)
+endif()
 
 if (IS_VS6_BUILD)
     # The original max sdk does not compile against a modern compiler.
