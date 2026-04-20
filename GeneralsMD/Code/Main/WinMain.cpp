@@ -384,6 +384,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 			// ------------------------------------------------------------------------
 			case WM_CLOSE:
+				// TheSuperHackers @feature Both Alt F4 and Window Close show the quit menu in a match before allowing the quit
+				// A disconnect is logged for both methods
 				if (TheGameEngine && !TheGameEngine->getQuitting())
 				{
 					if (TheMessageStream && TheMessageStream->canAddMessage())
