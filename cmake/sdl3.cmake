@@ -20,15 +20,19 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
     )
 
     # Official SDL configuration for a unified build tree
-    set(SDL_SHARED ON CACHE BOOL "" FORCE)
-    set(SDL_STATIC OFF CACHE BOOL "" FORCE)
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    set(SDL_SHARED OFF CACHE BOOL "" FORCE)
+    set(SDL_STATIC ON CACHE BOOL "" FORCE)
     set(SDLIMAGE_VENDORED OFF CACHE BOOL "" FORCE)
-    set(SDLIMAGE_ZLIB ON CACHE BOOL "" FORCE)
-    set(SDLIMAGE_PNG ON CACHE BOOL "" FORCE)
-    set(SDLIMAGE_APNG ON CACHE BOOL "" FORCE)
+    set(SDLIMAGE_SHARED OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_STATIC ON CACHE BOOL "" FORCE)
+    set(SDLIMAGE_ZLIB OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_PNG OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_APNG OFF CACHE BOOL "" FORCE)
 
-    # Making them available in order ensures SDL3_image can see the SDL3 targets
-    FetchContent_MakeAvailable(SDL3 SDL3_image)
+    # Populate SDL3 and SDL3_image
+    FetchContent_MakeAvailable(SDL3)
+    FetchContent_MakeAvailable(SDL3_image)
 endif()
 
 # Uniform aliases to ensure linking works across both discovery methods
@@ -37,4 +41,16 @@ if(TARGET SDL3::SDL3-shared AND NOT TARGET SDL3::SDL3)
 endif()
 if(TARGET SDL3::SDL3-static AND NOT TARGET SDL3::SDL3)
     add_library(SDL3::SDL3 ALIAS SDL3::SDL3-static)
+endif()
+
+# Centralized dependency restoration for SDL3 static builds.
+# We apply these directly to the SDL3-static target so it correctly handles its own needs.
+if(TARGET SDL3-static)
+    target_link_libraries(SDL3-static INTERFACE 
+        ws2_32.lib 
+        winmm.lib
+        imm32.lib
+        version.lib
+        setupapi.lib
+    )
 endif()

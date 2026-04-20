@@ -48,6 +48,7 @@ jobs:
               - 'Core/**'
               - 'Dependencies/**'
               - 'Tests/**'
+              - 'triplets/**'
               - 'vcpkg.json'
 
       - name: Changes Summary
