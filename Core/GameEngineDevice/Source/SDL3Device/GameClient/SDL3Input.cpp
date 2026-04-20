@@ -1044,6 +1044,11 @@ void SDL3InputManager::virtualPulseMouse(Uint8 button, bool down)
 	SDL_GetMouseState(&mx, &my);
 	clickEvent.button.x = mx;
 	clickEvent.button.y = my;
+
+	if (m_window)
+	{
+		clickEvent.button.windowID = SDL_GetWindowID(m_window);
+	}
 	
 	addMouseSDLEvent(clickEvent);
 }
