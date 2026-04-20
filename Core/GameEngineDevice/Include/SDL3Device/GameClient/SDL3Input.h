@@ -143,7 +143,7 @@ private:
 class SDL3InputManager
 {
 public:
-	SDL3InputManager();
+	SDL3InputManager(SDL_Window* window);
 	virtual ~SDL3InputManager();
 
 	void update();
@@ -180,6 +180,9 @@ private:
 	// Gamepad management
 	void openFirstGamepad();
 	void closeGamepad();
+
+	SDL_Window* m_window;
+	SDL_Gamepad* m_gamepad;
 	void processGamepadInput();
 	void handleGamepadButton(SDL_GamepadButton button, bool& currentState, bool isDown, std::function<void(bool)> action);
 	
@@ -200,7 +203,6 @@ private:
 	UnsignedInt m_keyNextGet;
 
 	// Gamepad state
-	SDL_Gamepad* m_gamepad;
 	GamepadState m_state;
 
 	Bool m_precisionMode;

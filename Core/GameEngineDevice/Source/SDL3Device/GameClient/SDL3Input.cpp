@@ -853,8 +853,9 @@ KeyVal SDL3Keyboard::translateScanCodeToKeyVal(unsigned char scan)
 /**
  * Lifecycle
  */
-SDL3InputManager::SDL3InputManager()
-	: m_mouseNextFree(0),
+SDL3InputManager::SDL3InputManager(SDL_Window* window)
+	: m_window(window),
+	  m_mouseNextFree(0),
 	  m_mouseNextGet(0),
 	  m_keyNextFree(0),
 	  m_keyNextGet(0),
@@ -1098,9 +1099,9 @@ void SDL3InputManager::processGamepadInput()
 		motionEvent.motion.x = mx + motionEvent.motion.xrel;
 		motionEvent.motion.y = my + motionEvent.motion.yrel;
 
-		if (m_SDLWindow)
+		if (m_window)
 		{
-			motionEvent.motion.windowID = SDL_GetWindowID(m_SDLWindow);
+			motionEvent.motion.windowID = SDL_GetWindowID(m_window);
 		}
 		
 		addMouseSDLEvent(motionEvent);

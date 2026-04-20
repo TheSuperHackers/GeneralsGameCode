@@ -161,7 +161,7 @@ void SDL3GameEngine::init(void)
 
 	// Initialize the unified input manager
 	if (!TheSDL3InputManager) {
-		NEW SDL3InputManager();
+		TheSDL3InputManager = new SDL3InputManager(m_SDLWindow);
 	}
 
 	// Call parent init to initialize game subsystems
