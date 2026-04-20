@@ -3432,7 +3432,7 @@ Bool Object::getHealthBoxDimensions(Real &healthBoxHeight, Real &healthBoxWidth)
 	if( isKindOf( KINDOF_STRUCTURE ) )
 	{
 		//enforce healthBoxHeightMinimum/Maximum
-		healthBoxHeight = min(3.0f, max(5.0f, maxHP/50));
+		healthBoxHeight = min(defaultHealthBoxHeight, max(5.0f, maxHP/50));
 		//enforce healthBoxWidthMinimum/Maximum
 		healthBoxWidth = min(150.0f, max(100.0f, maxHP/10));
 		return true;
@@ -3440,7 +3440,7 @@ Bool Object::getHealthBoxDimensions(Real &healthBoxHeight, Real &healthBoxWidth)
 	else if ( isKindOf(KINDOF_MOB_NEXUS) )
 	{
 		//enforce healthBoxHeightMinimum/Maximum
-		healthBoxHeight = min(3.0f, max(5.0f, maxHP/50));
+		healthBoxHeight = min(defaultHealthBoxHeight, max(5.0f, maxHP/50));
 		//enforce healthBoxWidthMinimum/Maximum
 		healthBoxWidth = min(100.0f, max(66.0f, maxHP/10));
 		return true;
@@ -3454,7 +3454,7 @@ Bool Object::getHealthBoxDimensions(Real &healthBoxHeight, Real &healthBoxWidth)
 	else
 	{
 		//enforce healthBoxHeightMinimum/Maximum
-		healthBoxHeight = min(3.0f, max(5.0f, maxHP/50));
+		healthBoxHeight = min(defaultHealthBoxHeight, max(5.0f, maxHP/50));
 		//enforce healthBoxWidthMinimum/Maximum
 		healthBoxWidth = min(150.0f, max(35.0f, maxHP/10));
 		return true;
@@ -3470,7 +3470,7 @@ Bool Object::getHealthBoxDimensions(Real &healthBoxHeight, Real &healthBoxWidth)
 
 	//just add the major and minor axes
 	Real size = MAX(20.0f, MIN(150.0f, (getGeometryInfo().getMajorRadius() + getGeometryInfo().getMinorRadius())) );
-	healthBoxHeight = 3.0f;
+	healthBoxHeight = defaultHealthBoxHeight;
 	healthBoxWidth = MAX(20.0f, size * 2.0f);
 	return TRUE;
 
