@@ -59,6 +59,7 @@ public:
 	virtual void reset(void) override;
 	virtual void update(void) override;
 	virtual void initCursorResources(void) override;
+	static void freeCursorResources(void);
 
 	// Mouse interface
 	virtual void setCursor(MouseCursor cursor) override;
