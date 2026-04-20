@@ -1,0 +1,19 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
+    "default-registry": {
+        "kind": "git",
+        "repository": "https://github.com/microsoft/vcpkg",
+        "baseline": "b02e341c927f16d991edbd915d8ea43eac52096c"
+    },
+    "registries": [
+        {
+            "kind": "git",
+            "repository": "https://github.com/microsoft/vcpkg",
+            "baseline": "256acc64012b23a13041d8705805e1f23b43a024",
+            "packages": [
+                "sdl3",
+                "sdl3-image"
+            ]
+        }
+    ]
+}
