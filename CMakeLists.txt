@@ -55,6 +55,7 @@ endif()
 # Find/Add build dependencies and stubs shared by all projects
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/dx8.cmake)
+    include(cmake/sdl3.cmake)
 endif()
 
 if (IS_VS6_BUILD)
