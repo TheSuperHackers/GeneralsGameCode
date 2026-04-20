@@ -16,6 +16,10 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+** Derived from the GeneralsX branch by fbraz3
+*/
+
 #include "Lib/BaseType.h"
 
 #define _USE_MATH_DEFINES
