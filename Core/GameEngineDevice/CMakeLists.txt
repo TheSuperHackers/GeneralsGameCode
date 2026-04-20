@@ -246,9 +246,8 @@ target_link_libraries(corei_gameenginedevice_public INTERFACE
 # Export SDL3 dependencies for modern builds
 if(SAGE_USE_SDL3 AND NOT IS_VS6_BUILD)
     target_link_libraries(corei_gameenginedevice_public INTERFACE
-        SDL3::Headers
-        SDL3::SDL3-static
-        SDL3_image::SDL3_image-static
+        SDL3::SDL3
+        SDL3_image::SDL3_image
     )
 endif()
 
