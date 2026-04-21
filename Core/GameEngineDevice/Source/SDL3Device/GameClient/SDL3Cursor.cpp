@@ -35,51 +35,6 @@
 // Initialize static member
 AnimatedCursor* SDL3CursorManager::m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS] = { nullptr };
 
-// RIFF/ANI parsing helpers (moved from SDL3Input.cpp)
-typedef std::array<char, 4> FourCC;
-constexpr FourCC riff_id = {'R', 'I', 'F', 'F'};
-constexpr FourCC acon_id = {'A', 'C', 'O', 'N'};
-constexpr FourCC anih_id = {'a', 'n', 'i', 'h'};
-constexpr FourCC fram_id = {'f', 'r', 'a', 'm'};
-constexpr FourCC icon_id = {'i', 'c', 'o', 'n'};
-constexpr FourCC list_id = {'L', 'I', 'S', 'T'};
-
-struct ANIHeader
-{
-	uint32_t size;
-	uint32_t frames;
-	uint32_t steps;
-	uint32_t width;
-	uint32_t height;
-	uint32_t bitsPerPixel;
-	uint32_t planes;
-	uint32_t displayRate;
-	uint32_t flags;
-};
-
-struct RIFFChunk
-{
-	FourCC id;
-	uint32_t size;
-	FourCC type;
-};
-
-static RIFFChunk* getNextChunk(RIFFChunk* chunk, const char* buffer_end)
-{
-	if (!chunk) return nullptr;
-	char* next = (char*)chunk + 8 + chunk->size;
-	if (chunk->size % 2 != 0) next++;
-	if (next >= buffer_end) return nullptr;
-	return (RIFFChunk*)next;
-}
-
-static void* getChunkData(RIFFChunk* chunk)
-{
-	if (chunk->id == list_id || chunk->id == riff_id)
-		return (char*)chunk + 12;
-	return (char*)chunk + 8;
-}
-
 void SDL3CursorManager::init()
 {
     // Cursors are typically initialized via initResources when the Mouse device is ready
@@ -143,9 +98,9 @@ AnimatedCursor* SDL3CursorManager::loadANI(const char* filepath)
 	}
 
 	Int size = file->size();
-	if (size < (Int)sizeof(RIFFChunk))
+	if (size <= 0)
 	{
-		DEBUG_LOG(("loadANI: File too small [%s]", filepath));
+		DEBUG_LOG(("loadANI: File is empty [%s]", filepath));
 		file->close();
 		return nullptr;
 	}
@@ -159,96 +114,47 @@ AnimatedCursor* SDL3CursorManager::loadANI(const char* filepath)
 	}
 	file->close();
 
-	char* buffer_start = file_buffer.get();
-	char* buffer_end = buffer_start + size;
-
-	RIFFChunk *riff_header = (RIFFChunk*)buffer_start;
-	if (riff_header->id != riff_id || riff_header->type != acon_id)
-	{
-		DEBUG_LOG(("loadANI: Not a valid RIFF/ACON file [%s]", filepath));
-		return nullptr;
-	}
-
 	DEBUG_LOG(("loadANI: Loading %s", filepath));
 	
-    std::vector<SDL_CursorFrameInfo> frames;
-    int frameRate = 0;
-    int hot_spot_x = 0;
-    int hot_spot_y = 0;
-    bool hot_spot_set = false;
+    SDL_IOStream *io = SDL_IOFromConstMem(file_buffer.get(), (size_t)size);
+    if (!io) return nullptr;
 
-	// Top level chunks start after the RIFF header (8 bytes + 'ACON' = 12 bytes)
-	RIFFChunk* chunk = (RIFFChunk*)(buffer_start + 12);
-
-	while (chunk != nullptr && (char *)chunk + 8 <= buffer_end)
-	{
-		if (chunk->id == anih_id)
-		{
-			if (chunk->size >= sizeof(ANIHeader))
-			{
-			    ANIHeader *ani_header = (ANIHeader*)getChunkData(chunk);
-			    frameRate = ani_header->displayRate; // Display rate in 1/60th of a second
-			}
-		}
-		else if (chunk->id == list_id && chunk->type == fram_id)
-		{
-			RIFFChunk *frame = (RIFFChunk*)((char *)chunk + 12);
-			char* list_end = (char*)chunk + 8 + chunk->size;
-			if (list_end > buffer_end) list_end = buffer_end;
-
-			while (frame != nullptr && (char *)frame + 8 <= list_end)
-			{
-				if (frame->id == icon_id)
-				{
-					if ((char*)frame + 8 + frame->size <= list_end)
-					{
-						const void *frame_buffer = getChunkData(frame);
-						SDL_IOStream *io_stream = SDL_IOFromConstMem(frame_buffer, frame->size);
-						if (io_stream)
-						{
-							SDL_Surface *surface = IMG_LoadTyped_IO(io_stream, true, "ico");
-							if (surface)
-							{
-                                if (!hot_spot_set)
-                                {
-								    SDL_PropertiesID props = SDL_GetSurfaceProperties(surface);
-								    hot_spot_x = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_X_NUMBER, 0);
-								    hot_spot_y = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_Y_NUMBER, 0);
-                                    hot_spot_set = true;
-                                }
-
-                                SDL_CursorFrameInfo info;
-                                info.surface = surface;
-                                // SAGE's displayRate is in 1/60th of a second. SDL3 wants milliseconds.
-                                info.duration = (frameRate * 1000) / 60;
-                                frames.push_back(info);
-							}
-						}
-					}
-				}
-				frame = getNextChunk(frame, list_end);
-			}
-		}
-		chunk = getNextChunk(chunk, buffer_end);
-	}
-
-    if (frames.empty()) return nullptr;
-
-    std::unique_ptr<AnimatedCursor> cursor(new AnimatedCursor());
-    if (frames.size() == 1)
+    // Use SDL3_image to load the animation (handles RIFF/ANI container and frame decoding)
+    IMG_Animation *anim = IMG_LoadAnimation_IO(io, true);
+    if (!anim) 
     {
-        cursor->m_cursor = SDL_CreateColorCursor(frames[0].surface, hot_spot_x, hot_spot_y);
+        DEBUG_LOG(("loadANI: IMG_LoadAnimation_IO failed for [%s]: %s", filepath, SDL_GetError()));
+        return nullptr;
+    }
+
+    if (anim->count == 0)
+    {
+        IMG_FreeAnimation(anim);
+        return nullptr;
+    }
+
+    // Get hotspots from the first frame's properties (SDL3_image sets these for ICO/CUR)
+    SDL_PropertiesID props = SDL_GetSurfaceProperties(anim->frames[0]);
+    int hot_spot_x = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_X_NUMBER, 0);
+    int hot_spot_y = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_Y_NUMBER, 0);
+
+    // Create the animated cursor resource
+    std::unique_ptr<AnimatedCursor> cursor(new AnimatedCursor());
+    if (anim->count == 1)
+    {
+        cursor->m_cursor = SDL_CreateColorCursor(anim->frames[0], hot_spot_x, hot_spot_y);
     }
     else
     {
-        cursor->m_cursor = SDL_CreateAnimatedCursor(frames.data(), (int)frames.size(), hot_spot_x, hot_spot_y);
+        std::vector<SDL_CursorFrameInfo> frames(anim->count);
+        for (int i = 0; i < anim->count; i++)
+        {
+            frames[i].surface = anim->frames[i];
+            frames[i].duration = (Uint32)anim->delays[i];
+        }
+        cursor->m_cursor = SDL_CreateAnimatedCursor(frames.data(), anim->count, hot_spot_x, hot_spot_y);
     }
 
-    // Clean up all surfaces
-    for (auto& f : frames)
-    {
-        SDL_DestroySurface(f.surface);
-    }
-
+    IMG_FreeAnimation(anim);
 	return cursor.release();
 }
