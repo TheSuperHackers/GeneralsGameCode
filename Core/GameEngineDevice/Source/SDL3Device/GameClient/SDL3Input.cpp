@@ -32,7 +32,6 @@
 #include <memory>
 #include <SDL3/SDL.h>
 #include "SDL3Device/GameClient/SDL3Cursor.h"
-#include <windows.h> // For timeGetTime()
 
 #include "SDL3Device/GameClient/SDL3Input.h"
 #include "Common/Debug.h"
@@ -61,20 +60,11 @@ SDL3Mouse::SDL3Mouse(SDL_Window* window)
 	  m_IsCaptured(false),
 	  m_IsVisible(true),
 	  m_LostFocus(false),
-	  m_LeftButtonDownTime(0),
-	  m_RightButtonDownTime(0),
-	  m_MiddleButtonDownTime(0),
 	  m_directionFrame(0),
 	  m_accumulatedDeltaX(0.0f),
 	  m_accumulatedDeltaY(0.0f),
 	  m_activeSDLCursor(nullptr)
 {
-	m_LeftButtonDownPos.x = 0;
-	m_LeftButtonDownPos.y = 0;
-	m_RightButtonDownPos.x = 0;
-	m_RightButtonDownPos.y = 0;
-	m_MiddleButtonDownPos.x = 0;
-	m_MiddleButtonDownPos.y = 0;
 }
 
 /**
@@ -464,7 +454,7 @@ void SDL3Keyboard::getKey(KeyboardIO *key)
 	key->key = keyDef;
 	key->status = KeyboardIO::STATUS_UNUSED;
 	key->state = keyEvent.down ? KEY_STATE_DOWN : KEY_STATE_UP;
-	key->keyDownTimeMsec = keyEvent.down ? timeGetTime() : 0;
+	key->keyDownTimeMsec = keyEvent.down ? (Uint32)SDL_GetTicks() : 0;
 
 	SDL_Keymod mod = keyEvent.mod;
 	if (mod & SDL_KMOD_LSHIFT) key->state |= KEY_STATE_LSHIFT;

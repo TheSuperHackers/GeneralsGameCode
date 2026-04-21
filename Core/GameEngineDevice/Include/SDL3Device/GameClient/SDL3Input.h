@@ -85,14 +85,6 @@ private:
 	Bool m_IsVisible;
 	Bool m_LostFocus;
 	
-	Uint32 m_LeftButtonDownTime;
-	Uint32 m_RightButtonDownTime;
-	Uint32 m_MiddleButtonDownTime;
-	
-	ICoord2D m_LeftButtonDownPos;
-	ICoord2D m_RightButtonDownPos;
-	ICoord2D m_MiddleButtonDownPos;
-	
 	Int m_directionFrame;
 
 	float m_accumulatedDeltaX;
