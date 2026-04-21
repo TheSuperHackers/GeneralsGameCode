@@ -31,7 +31,7 @@
 #include <functional>
 #include <memory>
 #include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
+#include "SDL3Device/GameClient/SDL3Cursor.h"
 #include <windows.h> // For timeGetTime()
 
 #include "SDL3Device/GameClient/SDL3Input.h"
@@ -48,214 +48,9 @@
 // GLOBALS ---------------------------------------------------------------------
 SDL3InputManager* TheSDL3InputManager = nullptr;
 
-// ============================================================================
+/// ============================================================================
 // SDL3MOUSE IMPLEMENTATION
 // ============================================================================
-
-/**
- * AnimatedCursor - Helper struct for cursor animation
- */
-struct AnimatedCursor {
-	std::array<SDL_Cursor*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameCursors;
-	std::array<SDL_Surface*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameSurfaces;
-	int m_frameCount = 0;
-	int m_frameRate = 0; // the time a frame is displayed in 1/60th of a second
-
-	AnimatedCursor()
-	{
-		m_frameCursors.fill(nullptr);
-		m_frameSurfaces.fill(nullptr);
-	}
-
-	~AnimatedCursor()
-	{
-		for (int i = 0; i < MAX_2D_CURSOR_ANIM_FRAMES; i++)
-		{
-			if (m_frameCursors[i])
-			{
-				SDL_DestroyCursor(m_frameCursors[i]);
-				m_frameCursors[i] = nullptr;
-			}
-			if (m_frameSurfaces[i])
-			{
-				SDL_DestroySurface(m_frameSurfaces[i]);
-				m_frameSurfaces[i] = nullptr;
-			}
-		}
-	}
-
-	/**
-	 * Get the active frame cursor based on current system time
-	 */
-	SDL_Cursor* getActiveFrame() const
-	{
-		if (m_frameCount <= 0) return nullptr;
-		if (m_frameCount == 1) return m_frameCursors[0];
-
-		Uint64 now = SDL_GetTicks();
-		size_t index = (m_frameRate > 0)
-			? (size_t)((now * 60 / 1000) / m_frameRate) % (size_t)std::min((int)m_frameCount, MAX_2D_CURSOR_ANIM_FRAMES)
-			: 0;
-		return m_frameCursors[index];
-	}
-};
-
-// Global cursor resources array
-static AnimatedCursor* cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
-
-// RIFF/ANI parsing helpers
-typedef std::array<char, 4> FourCC;
-constexpr FourCC riff_id = {'R', 'I', 'F', 'F'};
-constexpr FourCC acon_id = {'A', 'C', 'O', 'N'};
-constexpr FourCC anih_id = {'a', 'n', 'i', 'h'};
-constexpr FourCC fram_id = {'f', 'r', 'a', 'm'};
-constexpr FourCC icon_id = {'i', 'c', 'o', 'n'};
-constexpr FourCC list_id = {'L', 'I', 'S', 'T'};
-
-struct ANIHeader
-{
-	uint32_t size;
-	uint32_t frames;
-	uint32_t steps;
-	uint32_t width;
-	uint32_t height;
-	uint32_t bitsPerPixel;
-	uint32_t planes;
-	uint32_t displayRate;
-	uint32_t flags;
-};
-
-struct RIFFChunk
-{
-	FourCC id;
-	uint32_t size;
-	FourCC type;
-};
-
-static RIFFChunk* getNextChunk(RIFFChunk* chunk, const char* buffer_end)
-{
-	if (!chunk) return nullptr;
-	
-	// Size check: Chunk header is at least 8 bytes (ID + Size). 
-	char* next = (char*)chunk + 8 + chunk->size;
-	
-	// RIFF chunks are padded to 2 bytes
-	if (chunk->size % 2 != 0) next++;
-
-	if (next >= buffer_end) return nullptr;
-	return (RIFFChunk*)next;
-}
-
-static void* getChunkData(RIFFChunk* chunk)
-{
-	// For LIST and RIFF, type is at +8, data starts at +12
-	if (chunk->id == list_id || chunk->id == riff_id)
-		return (char*)chunk + 12;
-	
-	// For others, data starts at +8
-	return (char*)chunk + 8;
-}
-
-/**
- * loadANI - Dedicated standalone RIFF/ANI parser (Hardened)
- */
-static AnimatedCursor* loadANI(const char* filepath)
-{
-	File* file = TheFileSystem->openFile(filepath, File::READ | File::BINARY);
-	if (!file)
-	{
-		DEBUG_LOG(("loadANI: Failed to open ANI cursor [%s]", filepath));
-		return nullptr;
-	}
-
-	Int size = file->size();
-	if (size < (Int)sizeof(RIFFChunk))
-	{
-		DEBUG_LOG(("loadANI: File too small [%s]", filepath));
-		file->close();
-		return nullptr;
-	}
-
-	std::unique_ptr<char[]> file_buffer(new char[size]);
-	if (file->read(file_buffer.get(), size) != size)
-	{
-		DEBUG_LOG(("loadANI: Failed to read ANI cursor [%s]", filepath));
-		file->close();
-		return nullptr;
-	}
-	file->close();
-
-	char* buffer_start = file_buffer.get();
-	char* buffer_end = buffer_start + size;
-
-	RIFFChunk *riff_header = (RIFFChunk*)buffer_start;
-	if (riff_header->id != riff_id || riff_header->type != acon_id)
-	{
-		DEBUG_LOG(("loadANI: Not a valid RIFF/ACON file [%s]", filepath));
-		return nullptr;
-	}
-
-	DEBUG_LOG(("loadANI: Loading %s", filepath));
-	std::unique_ptr<AnimatedCursor> cursor(new AnimatedCursor());
-
-	// Top level chunks start after the RIFF header (8 bytes + 'ACON' = 12 bytes)
-	RIFFChunk* chunk = (RIFFChunk*)(buffer_start + 12);
-
-	while (chunk != nullptr && (char *)chunk + 8 <= buffer_end)
-	{
-		if (chunk->id == anih_id)
-		{
-			if (chunk->size < sizeof(ANIHeader))
-			{
-				DEBUG_LOG(("loadANI: Invalid ANI header size"));
-				return nullptr;
-			}
-
-			ANIHeader *ani_header = (ANIHeader*)getChunkData(chunk);
-			cursor->m_frameCount = (int)std::min((unsigned int)ani_header->frames, (unsigned int)MAX_2D_CURSOR_ANIM_FRAMES);
-			cursor->m_frameRate = ani_header->displayRate;
-		}
-		else if (chunk->id == list_id && chunk->type == fram_id)
-		{
-			int frame_index = 0;
-			// Sub-chunks in LIST start after the header + type (12 bytes)
-			RIFFChunk *frame = (RIFFChunk*)((char *)chunk + 12);
-			char* list_end = (char*)chunk + 8 + chunk->size;
-			if (list_end > buffer_end) list_end = buffer_end;
-
-			while (frame != nullptr && (char *)frame + 8 <= list_end)
-			{
-				if (frame->id == icon_id)
-				{
-					if ((char*)frame + 8 + frame->size <= list_end)
-					{
-						const void *frame_buffer = getChunkData(frame);
-						SDL_IOStream *io_stream = SDL_IOFromConstMem(frame_buffer, frame->size);
-						if (io_stream)
-						{
-							SDL_Surface *surface = cursor->m_frameSurfaces[frame_index] = IMG_LoadTyped_IO(io_stream, true, "ico");
-							if (surface)
-							{
-								SDL_PropertiesID props = SDL_GetSurfaceProperties(surface);
-								int hot_spot_x = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_X_NUMBER, 0);
-								int hot_spot_y = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_Y_NUMBER, 0);
-
-								cursor->m_frameCursors[frame_index++] = SDL_CreateColorCursor(surface, hot_spot_x, hot_spot_y);
-							}
-						}
-					}
-				}
-
-				if (frame_index >= MAX_2D_CURSOR_ANIM_FRAMES) break;
-				frame = getNextChunk(frame, list_end);
-			}
-		}
-		
-		chunk = getNextChunk(chunk, buffer_end);
-	}
-
-	return cursor.release();
-}
 
 /**
  * Constructor - Initialize SDL3Mouse with window handle
@@ -269,13 +64,10 @@ SDL3Mouse::SDL3Mouse(SDL_Window* window)
 	  m_LeftButtonDownTime(0),
 	  m_RightButtonDownTime(0),
 	  m_MiddleButtonDownTime(0),
-	  m_LastFrameNumber(0),
 	  m_directionFrame(0),
-	  m_inputFrame(0),
 	  m_accumulatedDeltaX(0.0f),
 	  m_accumulatedDeltaY(0.0f),
-	  m_activeSDLCursor(nullptr),
-	  m_cursorDirty(false)
+	  m_activeSDLCursor(nullptr)
 {
 	m_LeftButtonDownPos.x = 0;
 	m_LeftButtonDownPos.y = 0;
@@ -323,8 +115,6 @@ void SDL3Mouse::reset(void)
 void SDL3Mouse::update(void)
 {
 	Mouse::update();
-
-	m_inputFrame++;
 
 	if (m_LostFocus)
 	{
@@ -385,12 +175,8 @@ void SDL3Mouse::update(void)
 	}
 	else
 	{
-		AnimatedCursor* animated = cursorResources[cursor][m_directionFrame];
-		if (animated)
-		{
-			requestedHandle = animated->getActiveFrame();
-		}
-		else
+		requestedHandle = SDL3CursorManager::getCursor(cursor, m_directionFrame);
+		if (!requestedHandle)
 		{
 			bUseDefaultCursor = true;
 		}
@@ -398,11 +184,8 @@ void SDL3Mouse::update(void)
 
 	if (bUseDefaultCursor)
 	{
-		if (cursorResources[NORMAL][0])
-		{
-			requestedHandle = cursorResources[NORMAL][0]->m_frameCursors[0];
-		}
-		else
+		requestedHandle = SDL3CursorManager::getCursor(NORMAL, 0);
+		if (!requestedHandle)
 		{
 			requestedHandle = SDL_GetDefaultCursor();
 		}
@@ -413,8 +196,6 @@ void SDL3Mouse::update(void)
 		SDL_SetCursor(requestedHandle);
 		m_activeSDLCursor = requestedHandle;
 	}
-	
-	m_cursorDirty = false;
 }
 
 /**
@@ -422,41 +203,12 @@ void SDL3Mouse::update(void)
  */
 void SDL3Mouse::initCursorResources(void)
 {
-	for (Int cursor=FIRST_CURSOR; cursor<NUM_MOUSE_CURSORS; cursor++)
-	{
-		for (Int direction=0; direction<m_cursorInfo[cursor].numDirections; direction++)
-		{	if (!cursorResources[cursor][direction] && !m_cursorInfo[cursor].textureName.isEmpty())
-			{	char resourcePath[256];
-				if (m_cursorInfo[cursor].numDirections > 1)
-					snprintf(resourcePath, sizeof(resourcePath), "Data/Cursors/%s%d.ani", m_cursorInfo[cursor].textureName.str(), direction);
-				else
-					snprintf(resourcePath, sizeof(resourcePath), "Data/Cursors/%s.ani", m_cursorInfo[cursor].textureName.str());
-
-				cursorResources[cursor][direction]=loadCursorFromFile(resourcePath);
-				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s\n",resourcePath));
-			}
-		}
-	}
+	SDL3CursorManager::initResources(this);
 }
 
 void SDL3Mouse::freeCursorResources(void)
 {
-	for (Int cursor = 0; cursor < Mouse::NUM_MOUSE_CURSORS; cursor++)
-	{
-		for (Int direction = 0; direction < MAX_2D_CURSOR_DIRECTIONS; direction++)
-		{
-			if (cursorResources[cursor][direction])
-			{
-				delete cursorResources[cursor][direction];
-				cursorResources[cursor][direction] = nullptr;
-			}
-		}
-	}
-}
-
-AnimatedCursor* SDL3Mouse::loadCursorFromFile(const char* filepath)
-{
-	return loadANI(filepath);
+	SDL3CursorManager::shutdown();
 }
 
 /**
@@ -471,7 +223,6 @@ void SDL3Mouse::setCursor(MouseCursor cursor)
 
 	Mouse::setCursor( cursor );
 	m_currentCursor = cursor;
-	m_cursorDirty = true;
 }
 
 /**
