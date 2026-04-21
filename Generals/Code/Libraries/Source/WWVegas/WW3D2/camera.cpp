@@ -289,6 +289,21 @@ void CameraClass::Set_Position(const Vector3 &v)
 }
 
 
+Vector3 CameraClass::Get_Right_Dir() const
+{
+	return Get_Transform().Get_X_Vector();
+}
+
+Vector3 CameraClass::Get_Forward_Dir() const
+{
+	return -Get_Transform().Get_Z_Vector();
+}
+
+Vector3 CameraClass::Get_Up_Dir() const
+{
+	return Get_Transform().Get_Y_Vector();
+}
+
 /***********************************************************************************************
  * CameraClass::Set_View_Plane -- control over the view plane                                  *
  *                                                                                             *

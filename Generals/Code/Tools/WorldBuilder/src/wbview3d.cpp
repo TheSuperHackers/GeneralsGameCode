@@ -276,9 +276,7 @@ public:
 
 	virtual Real getFXPitch() const override { return 1.0f; }
 	virtual void forceCameraAreaConstraintRecalc() override { }
-	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds) {};	///< Rotate camera to face an object, and hold on it
-
-	virtual const Coord3D& get3DCameraPosition() const override { static Coord3D dummy; return dummy; }							///< Returns the actual camera position
+	virtual void rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, Real easeIn, Real easeOut, Bool reverseRotation) override {};	///< Rotate camera to face an object, and hold on it
 
 	virtual void setGuardBandBias( const Coord2D *gb ) override {};
 
