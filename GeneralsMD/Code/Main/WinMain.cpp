@@ -895,7 +895,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #if SAGE_USE_SDL3
 		if (!TheGlobalData->m_headless)
 		{
-			if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD) == 0)
+			if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD))
 			{
 				DEBUG_LOG(("SDL_Init failed: %s", SDL_GetError()));
 				return exitcode;
