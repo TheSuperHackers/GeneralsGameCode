@@ -26,7 +26,6 @@
 
 // SYSTEM INCLUDES
 #include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
 #include <array>
 #include <functional>
 
@@ -36,7 +35,6 @@
 #include "GameClient/KeyDefs.h"
 
 // FORWARD REFERENCES
-struct AnimatedCursor;
 class SDL3InputManager;
 
 // GLOBALS ---------------------------------------------------------------------
@@ -82,9 +80,6 @@ private:
 	// Scale raw SDL window coordinates to game internal resolution
 	void scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& scaledX, int& scaledY);
 	
-	// Load cursor from ANI file (fighter19 pattern)
-	AnimatedCursor* loadCursorFromFile(const char* filepath);
-
 	SDL_Window* m_Window;
 	Bool m_IsCaptured;
 	Bool m_IsVisible;
@@ -93,20 +88,17 @@ private:
 	Uint32 m_LeftButtonDownTime;
 	Uint32 m_RightButtonDownTime;
 	Uint32 m_MiddleButtonDownTime;
-	UnsignedInt m_LastFrameNumber;
 	
 	ICoord2D m_LeftButtonDownPos;
 	ICoord2D m_RightButtonDownPos;
 	ICoord2D m_MiddleButtonDownPos;
 	
 	Int m_directionFrame;
-	UnsignedInt m_inputFrame;
 
 	float m_accumulatedDeltaX;
 	float m_accumulatedDeltaY;
 	
 	SDL_Cursor* m_activeSDLCursor;
-	Bool m_cursorDirty;
 };
 
 // SDL3Keyboard ---------------------------------------------------------------
