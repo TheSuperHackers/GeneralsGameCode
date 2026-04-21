@@ -861,7 +861,7 @@ void SDL3InputManager::processGamepadInput()
 		}
 		
 		addMouseSDLEvent(motionEvent);
-		SDL_WarpMouseInWindow(nullptr, motionEvent.motion.x, motionEvent.motion.y);
+		SDL_WarpMouseInWindow(m_window, motionEvent.motion.x, motionEvent.motion.y);
 	}
 
 	float rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
