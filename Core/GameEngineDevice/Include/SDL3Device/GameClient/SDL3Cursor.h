@@ -63,8 +63,6 @@ public:
     static void initResources(Mouse* mouse);
 
 private:
-    static AnimatedCursor* loadCursorFromFile(const char* filepath);
     static AnimatedCursor* loadANI(const char* filepath);
-
     static AnimatedCursor* m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
 };
