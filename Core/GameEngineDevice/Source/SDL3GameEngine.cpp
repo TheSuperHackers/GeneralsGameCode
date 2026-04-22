@@ -149,19 +149,18 @@ void SDL3GameEngine::init(void)
 	// Verify window was created by SDL3Main integration
 	extern SDL_Window* TheSDL3Window;
 	extern HWND ApplicationHWnd;
-	
-	if (!TheSDL3Window || !ApplicationHWnd) {
-		return;
-	}
 
-	// Store window reference locally
-	m_SDLWindow = TheSDL3Window;
-	m_IsInitialized = true;
-	m_IsActive = true;
+	if (TheSDL3Window && ApplicationHWnd)
+	{
+		// Store window reference locally
+		m_SDLWindow = TheSDL3Window;
+		m_IsInitialized = true;
+		m_IsActive = true;
 
-	// Initialize the unified input manager
-	if (!TheSDL3InputManager) {
-		TheSDL3InputManager = new SDL3InputManager(m_SDLWindow);
+		// Initialize the unified input manager
+		if (!TheSDL3InputManager) {
+			TheSDL3InputManager = new SDL3InputManager(m_SDLWindow);
+		}
 	}
 
 	// Call parent init to initialize game subsystems
