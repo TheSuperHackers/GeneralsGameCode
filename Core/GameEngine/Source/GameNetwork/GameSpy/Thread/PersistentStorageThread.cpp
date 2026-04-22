@@ -860,10 +860,8 @@ void PSThreadClass::Thread_Function()
 					if (tryConnect())
 					{
 						NewGame(0);
-#ifdef DEBUG_LOGGING
-						Int res =
-#endif // DEBUG_LOGGING
-							SendGameSnapShot(nullptr, req.results.c_str(), SNAP_FINAL);
+						MAYBE_UNUSED Int res = SendGameSnapShot(nullptr, req.results.c_str(), SNAP_FINAL);
+						(void)res;
 						DEBUG_LOG(("Just sent game results - res was %d", res));
 						FreeGame(nullptr);
 					}

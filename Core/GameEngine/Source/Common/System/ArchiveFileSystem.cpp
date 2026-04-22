@@ -230,10 +230,8 @@ void ArchiveFileSystem::loadMods()
 
 	if (TheGlobalData->m_modDir.isNotEmpty())
 	{
-#ifdef DEBUG_LOGGING
-		Bool ret =
-#endif
-		loadBigFilesFromDirectory(TheGlobalData->m_modDir, "*.big", TRUE);
+		MAYBE_UNUSED Bool ret = loadBigFilesFromDirectory(TheGlobalData->m_modDir, "*.big", TRUE);
+		(void)ret;
 		DEBUG_ASSERTLOG(ret, ("loadBigFilesFromDirectory(%s) returned FALSE!", TheGlobalData->m_modDir.str()));
 	}
 }

@@ -79,10 +79,8 @@ static void writeAtOffset(File* file, Int offset, const void* data, Int dataSize
 	{
 		file->write(data, dataSize);
 	}
-#ifdef DEBUG_CRASHING
-	Int res =
-#endif
-	file->seek(fileSize, File::seekMode::START);
+	MAYBE_UNUSED Int res = file->seek(fileSize, File::seekMode::START);
+	(void)res;
 	DEBUG_ASSERTCRASH(res == fileSize, ("Could not seek to end of file!"));
 }
 

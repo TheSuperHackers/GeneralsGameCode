@@ -559,10 +559,8 @@ void GameSpyInfo::markAsStagingRoomJoiner( Int game )
 		GameSpyStagingRoom *info = it->second;
 		info->cleanUpSlotPointers();
 		AsciiString options = GameInfoToAsciiString(info);
-#ifdef DEBUG_CRASHING
-		Bool res =
-#endif
-		ParseAsciiStringToGameInfo(&m_localStagingRoom, options);
+		MAYBE_UNUSED Bool res = ParseAsciiStringToGameInfo(&m_localStagingRoom, options);
+		(void)res;
 		DEBUG_ASSERTCRASH(res, ("Could not parse game info \"%s\"", options.str()));
 		m_localStagingRoom.setInGame();
 		m_localStagingRoom.setLocalName(m_localName);
