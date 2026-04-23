@@ -45,6 +45,7 @@ static void drawFramerateBar();
 #include "Common/ThingFactory.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
+#include "Common/PerfTrace.h"
 #include "Common/FileSystem.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Player.h"
@@ -1828,28 +1829,33 @@ AGAIN:
 	}
 
 	do {
+		Int numRenderTargetPolygons = 0;
+		Int numRenderTargetVertices = 0;
+		{
+			PerfTrace::ScopedRenderTimer renderSubmitTimer(PerfTrace::RENDER_TIMER_SUBMIT);
 
-		// update all views of the world - recomputes data which will affect drawing
-		if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) == D3D_OK)
-		{	//Checking if we have the device before updating views because the heightmap crashes otherwise while
-			//trying to refresh the visible terrain geometry.
-//			if(TheGlobalData->m_loadScreenRender != TRUE)
-				updateViews();
+			// update all views of the world - recomputes data which will affect drawing
+			if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) == D3D_OK)
+			{	//Checking if we have the device before updating views because the heightmap crashes otherwise while
+				//trying to refresh the visible terrain geometry.
+//				if(TheGlobalData->m_loadScreenRender != TRUE)
+					updateViews();
 
-			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
-				TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture
+				if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
+					TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture
 
-			//Can't render into textures while rendering to screen so these textures need to be updated
-			//before we enter main rendering loop.
-			if (TheW3DProjectedShadowManager)
-				TheW3DProjectedShadowManager->updateRenderTargetTextures();
+				//Can't render into textures while rendering to screen so these textures need to be updated
+				//before we enter main rendering loop.
+				if (TheW3DProjectedShadowManager)
+					TheW3DProjectedShadowManager->updateRenderTargetTextures();
+			}
+
+			Debug_Statistics::End_Statistics();	//record number of polygons rendered in RenderTargetTextures.
+
+			//Store number of polygons rendered in renderTargetTextures.
+			numRenderTargetPolygons = Debug_Statistics::Get_DX8_Polygons();
+			numRenderTargetVertices = Debug_Statistics::Get_DX8_Vertices();
 		}
-
-		Debug_Statistics::End_Statistics();	//record number of polygons rendered in RenderTargetTextures.
-
-		//Store number of polygons rendered in renderTargetTextures.
-		Int numRenderTargetPolygons=Debug_Statistics::Get_DX8_Polygons();
-		Int numRenderTargetVertices=Debug_Statistics::Get_DX8_Vertices();
 
 		// start render block
 		#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
@@ -1862,6 +1868,7 @@ AGAIN:
 			static Bool couldRender = true;
 			if ((TheGlobalData->m_breakTheMovie == FALSE) && (TheGlobalData->m_disableRender == false) && WW3D::Begin_Render( true, true, Vector3( 0.0f, 0.0f, 0.0f ), TheWaterTransparency->m_minWaterOpacity ) == WW3D_ERROR_OK)
 			{
+				PerfTrace::ScopedRenderTimer drawTimer(PerfTrace::RENDER_TIMER_DRAW);
 
 				if(TheGlobalData->m_loadScreenRender == TRUE)
 				{

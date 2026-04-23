@@ -89,6 +89,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/Override.h
 #    Include/Common/PartitionSolver.h
 #    Include/Common/PerfMetrics.h
+    Include/Common/PerfTrace.h
 #    Include/Common/PerfTimer.h
 #    Include/Common/Player.h
 #    Include/Common/PlayerList.h
@@ -581,6 +582,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/GameLOD.cpp
 #    Source/Common/GameMain.cpp
     Source/Common/GameUtility.cpp
+    Source/Common/PerfTrace.cpp
 #    Source/Common/GlobalData.cpp
     Source/Common/INI/INI.cpp
 #    Source/Common/INI/INIAiData.cpp

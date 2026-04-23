@@ -29,6 +29,7 @@
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
 #include "Common/LocalFileSystem.h"
+#include "Common/PerfTrace.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
 #include "GameClient/ClientInstance.h"
@@ -167,6 +168,32 @@ Int parseFullViewport(char *args[], int num)
 {
 	TheWritableGlobalData->m_viewportHeightScale = 1.0f;
 
+	return 1;
+}
+
+Int parsePerfTrace(char *args[], int)
+{
+	PerfTrace::SetEnabled(TRUE);
+	return 1;
+}
+
+Int parsePerfTraceFrames(char *args[], int argc)
+{
+	if (argc > 1)
+	{
+		PerfTrace::SetSampleFrames(atoi(args[1]));
+		return 2;
+	}
+	return 1;
+}
+
+Int parsePerfTraceSpikeMS(char *args[], int argc)
+{
+	if (argc > 1)
+	{
+		PerfTrace::SetSpikeMS(static_cast<Real>(atof(args[1])));
+		return 2;
+	}
 	return 1;
 }
 
@@ -1173,6 +1200,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
+	{ "-perfTrace", parsePerfTrace },
+	{ "-perfTraceFrames", parsePerfTraceFrames },
+	{ "-perfTraceSpikeMS", parsePerfTraceSpikeMS },
 
 	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
 	{ "-forcefullviewport", parseFullViewport },

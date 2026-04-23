@@ -454,11 +454,16 @@ public:
 
 	Bool isWaitingForPath() const {return m_waitingForPath;}
 	Bool isAttackPath() const {return m_isAttackPath;} ///< True if we have a path to an attack location.
+	Bool isApproachPath() const {return m_isApproachPath;}
+	Bool isSafePath() const {return m_isSafePath;}
 	void cancelPath(); ///< Called if we no longer need the path.
 	Path* getPath() { return m_path; }				///< return the agent's current path
 	const Path* getPath() const { return m_path; }				///< return the agent's current path
 	void destroyPath();												///< destroy the current path, setting it to null
 	UnsignedInt getPathAge() const { return TheGameLogic->getFrame() - m_pathTimestamp; }	///< return the "age" of the path
+	const Coord3D *getRequestedDestination() const { return &m_requestedDestination; }
+	const Coord3D *getRequestedDestination2() const { return &m_requestedDestination2; }
+	ObjectID getRequestedVictimID() const { return m_requestedVictimID; }
 	Bool isPathAvailable( const Coord3D *destination ) const; ///< does a path exist between us and the destination
 	Bool isQuickPathAvailable( const Coord3D *destination ) const;  ///< does a path (using quick pathfind) exist between us and the destination
 	Int getNumFramesBlocked() const {return m_blockedFrames;}

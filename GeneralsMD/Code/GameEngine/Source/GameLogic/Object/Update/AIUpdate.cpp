@@ -73,6 +73,11 @@
 
 #define SLEEPY_AI
 
+namespace
+{
+	const Int PATHFIND_QUEUE_RETRY_FRAMES = 2;
+}
+
 
 //-------------------------------------------------------------------------------------------------
 AIUpdateModuleData::AIUpdateModuleData()
@@ -478,6 +483,7 @@ will be processed when we get to the front of the pathfind queue. jba */
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 {
+	const UnsignedInt currentFrame = TheGameLogic->getFrame();
 
 	if (m_locomotorSet.getValidSurfaces() == 0) {
 		DEBUG_CRASH(("Attempting to path immobile unit."));
@@ -496,7 +502,10 @@ void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 		return;
 	}
 	m_waitingForPath = TRUE;
-	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
+	if (m_queueForPathFrame != 0 && currentFrame < m_queueForPathFrame) {
+		return;
+	}
+	if (m_pathTimestamp > currentFrame-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
 		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 1 second",
 			//TheGameLogic->getFrame()));
@@ -512,13 +521,17 @@ void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 		}
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 
 }
 
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::requestAttackPath( ObjectID victimID, const Coord3D* victimPos )
 {
+	const UnsignedInt currentFrame = TheGameLogic->getFrame();
+
 	if (m_locomotorSet.getValidSurfaces() == 0) {
 		DEBUG_CRASH(("Attempting to path immobile unit."));
 	}
@@ -529,19 +542,26 @@ void AIUpdateInterface::requestAttackPath( ObjectID victimID, const Coord3D* vic
 	m_isApproachPath = FALSE;
 	m_isSafePath = FALSE;
 	m_waitingForPath = TRUE;
-	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
+	if (m_queueForPathFrame != 0 && currentFrame < m_queueForPathFrame) {
+		return;
+	}
+	if (m_pathTimestamp > currentFrame-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
 		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second",TheGameLogic->getFrame()));
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		setLocomotorGoalNone();
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::requestApproachPath( Coord3D *destination )
 {
+	const UnsignedInt currentFrame = TheGameLogic->getFrame();
+
 	if (m_locomotorSet.getValidSurfaces() == 0) {
 		DEBUG_CRASH(("Attempting to path immobile unit."));
 	}
@@ -553,19 +573,26 @@ void AIUpdateInterface::requestApproachPath( Coord3D *destination )
 	m_isApproachPath = TRUE;
 	m_isSafePath = FALSE;
 	m_waitingForPath = TRUE;
-	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
+	if (m_queueForPathFrame != 0 && currentFrame < m_queueForPathFrame) {
+		return;
+	}
+	if (m_pathTimestamp > currentFrame-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
 		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second",TheGameLogic->getFrame()));
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 // Requests a safe path away from the repulsor.
 void AIUpdateInterface::requestSafePath( ObjectID repulsor )
 {
+	const UnsignedInt currentFrame = TheGameLogic->getFrame();
+
 	if (repulsor != m_repulsor1) {
 		m_repulsor2 = m_repulsor1; // save the prior repulsor.
 	}
@@ -577,13 +604,18 @@ void AIUpdateInterface::requestSafePath( ObjectID repulsor )
 	m_isApproachPath = FALSE;
 	m_isSafePath = TRUE;
 	m_waitingForPath = TRUE;
-	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
+	if (m_queueForPathFrame != 0 && currentFrame < m_queueForPathFrame) {
+		return;
+	}
+	if (m_pathTimestamp > currentFrame-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
 		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second",TheGameLogic->getFrame()));
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 }
 
 enum {WAYPOINT_PATH_LIMIT=1024};
@@ -1066,8 +1098,11 @@ UpdateSleepTime AIUpdateInterface::update()
 	{
 		if (now >= m_queueForPathFrame)
 		{
-			TheAI->pathfinder()->queueForPath(getObject()->getID());
-			setQueueForPathTime(0);
+			if (TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+				setQueueForPathTime(0);
+			} else {
+				setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+			}
 		}
 		else
 		{

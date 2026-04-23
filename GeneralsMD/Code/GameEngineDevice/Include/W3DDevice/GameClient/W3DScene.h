@@ -47,6 +47,7 @@
 class W3DDynamicLight;
 class LightClass;
 class Drawable;
+struct DrawableInfo;
 enum CustomScenePassModes CPP_11(: Int);
 class MaterialPassClass;
 class W3DShroudMaterialPassClass;
@@ -60,6 +61,12 @@ class RTS3DScene : public SimpleSceneClass, public SubsystemInterface
 {
 
 public:
+	struct FrameRenderEntry
+	{
+		RenderObjClass *m_renderObject;
+		DrawableInfo *m_drawInfo;
+		Drawable *m_drawable;
+	};
 
 	RTS3DScene();  ///< RTSScene constructor
 	virtual ~RTS3DScene() override;  ///< RTSScene destructor
@@ -99,13 +106,17 @@ public:
 	void doRender(CameraClass * cam);
 
 protected:
-	void renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, Int localPlayerIndex);
+	void renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, Int localPlayerIndex,
+		DrawableInfo *cachedDrawInfo = nullptr, Drawable *cachedDraw = nullptr);
 	void updateFixedLightEnvironments(RenderInfoClass & rinfo);
 	void flushTranslucentObjects(RenderInfoClass & rinfo);
 	void flushOccludedObjects(RenderInfoClass & rinfo);
 	void flagOccludedObjects(CameraClass * camera);
 	void flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo);
 	void updatePlayerColorPasses();
+	void ensureVisibleRenderEntryCapacity(Int desiredCapacity);
+	void clearVisibleRenderObjectSnapshot();
+	void appendVisibleRenderObject(RenderObjClass *robj, DrawableInfo *drawInfo, Drawable *draw);
 
 protected:
 	RefRenderObjListClass	m_dynamicLightList;
@@ -116,6 +127,7 @@ protected:
 	LightClass						*m_infantryLight[LightEnvironmentClass::MAX_LIGHTS];	///< The global direction light modified to make infantry easier to see.
 	Int m_numGlobalLights;			///<number of global lights
 	LightEnvironmentClass	m_defaultLightEnv;		///<default light environment applied to objects without custom/dynamic lighting.
+	LightEnvironmentClass	m_defaultInfantryLightEnv;	///<default light environment for infantry when only global lights apply.
 	LightEnvironmentClass	m_foggedLightEnv;		///<default light environment applied to objects without custom/dynamic lighting.
 
 	W3DShroudMaterialPassClass	*m_shroudMaterialPass;	///< Custom render pass which applies shrouds to objects
@@ -135,6 +147,9 @@ protected:
 	Int m_numPotentialOccluders;
 	Int m_numPotentialOccludees;
 	Int m_numNonOccluderOrOccludee;
+	FrameRenderEntry *m_visibleRenderEntries;	///< packed main-pass render snapshot for the current scene pass.
+	Int m_visibleRenderObjectCount;
+	Int m_visibleRenderObjectCapacity;
 
 	CameraClass *m_camera;
 };

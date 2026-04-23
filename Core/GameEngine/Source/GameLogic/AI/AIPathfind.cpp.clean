@@ -1,4 +1,4 @@
-/*
+﻿/*
 **	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
@@ -27,12 +27,9 @@
 // Author: Michael S. Booth, October 2001
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include <cstring>
-
 #include "GameLogic/AIPathfind.h"
 
 #include "Common/PerfTimer.h"
-#include "Common/PerfTrace.h"
 #include "Common/Player.h"
 #include "Common/CRCDebug.h"
 #include "Common/GlobalData.h"
@@ -111,119 +108,6 @@ struct TCheckMovementInfo
 
 inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 
-static UnsignedInt getPerfTraceFrame()
-{
-	return TheGameLogic ? TheGameLogic->getFrame() : 0;
-}
-
-static PerfTrace::PathRequestClass getPathRequestClass(const AIUpdateInterface *ai)
-{
-	if (ai == nullptr)
-	{
-		return PerfTrace::PATH_REQUEST_EXPLICIT_MOVE;
-	}
-	if (ai->isSafePath())
-	{
-		return PerfTrace::PATH_REQUEST_SAFE_PATH_OR_AUTONOMOUS;
-	}
-	if (ai->isAttackPath())
-	{
-		return PerfTrace::PATH_REQUEST_ATTACK_MOVE_OR_ATTACK_PATH;
-	}
-	if (ai->isApproachPath() || ai->isBlockedAndStuck())
-	{
-		return PerfTrace::PATH_REQUEST_PATCH_OR_REPATH;
-	}
-	return PerfTrace::PATH_REQUEST_EXPLICIT_MOVE;
-}
-
-static Int getPathRequestPriority(const PerfTrace::PathRequestClass requestClass)
-{
-	switch (requestClass)
-	{
-		case PerfTrace::PATH_REQUEST_EXPLICIT_MOVE: return 3;
-		case PerfTrace::PATH_REQUEST_ATTACK_MOVE_OR_ATTACK_PATH: return 2;
-		case PerfTrace::PATH_REQUEST_PATCH_OR_REPATH: return 1;
-		case PerfTrace::PATH_REQUEST_SAFE_PATH_OR_AUTONOMOUS: return 0;
-		default: return 0;
-	}
-}
-
-Bool Pathfinder::isHighPriorityRequestClass(UnsignedByte requestClassByte)
-{
-	const PerfTrace::PathRequestClass rc = static_cast<PerfTrace::PathRequestClass>(requestClassByte);
-	return rc == PerfTrace::PATH_REQUEST_EXPLICIT_MOVE || rc == PerfTrace::PATH_REQUEST_ATTACK_MOVE_OR_ATTACK_PATH;
-}
-
-static Coord3D getPathRequestDestination(const AIUpdateInterface *ai)
-{
-	Coord3D dest;
-	dest.zero();
-	if (ai != nullptr)
-	{
-		dest = *ai->getRequestedDestination();
-	}
-	return dest;
-}
-
-static UnsignedInt hashPathRequestValue(UnsignedInt seed, UnsignedInt value)
-{
-	return (seed ^ value) * 16777619u;
-}
-
-static UnsignedInt getPathRequestGoalFingerprint(const AIUpdateInterface *ai)
-{
-	UnsignedInt hash = 2166136261u;
-	if (ai == nullptr)
-	{
-		return hash;
-	}
-
-	const Coord3D *primary = ai->getRequestedDestination();
-	const Coord3D *secondary = ai->getRequestedDestination2();
-	const Int primaryX = REAL_TO_INT_FLOOR(primary->x / PATHFIND_CELL_SIZE_F);
-	const Int primaryY = REAL_TO_INT_FLOOR(primary->y / PATHFIND_CELL_SIZE_F);
-	const Int secondaryX = REAL_TO_INT_FLOOR(secondary->x / PATHFIND_CELL_SIZE_F);
-	const Int secondaryY = REAL_TO_INT_FLOOR(secondary->y / PATHFIND_CELL_SIZE_F);
-
-	hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(primaryX));
-	hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(primaryY));
-	hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(secondaryX));
-	hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(secondaryY));
-	hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(ai->getRequestedVictimID()));
-	return hash;
-}
-
-static UnsignedInt getPathRequestLocomotorFingerprint(const Object *obj, const AIUpdateInterface *ai)
-{
-	UnsignedInt hash = 2166136261u;
-	hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(obj ? obj->getLayer() : LAYER_GROUND));
-	if (ai != nullptr)
-	{
-		hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(ai->getCurLocomotorSetType()));
-		hash = hashPathRequestValue(hash, static_cast<UnsignedInt>(ai->getLocomotorSet().getValidSurfaces()));
-	}
-	return hash;
-}
-
-static UnsignedInt getRepathCooldownFrames(const Int queueDepth, const PerfTrace::PathRequestClass requestClass)
-{
-	if (queueDepth < static_cast<Int>(PATHFIND_REPATH_CONGESTION_THRESHOLD))
-	{
-		return 0;
-	}
-
-	switch (requestClass)
-	{
-		case PerfTrace::PATH_REQUEST_PATCH_OR_REPATH:
-			return PATHFIND_REPATH_COOLDOWN_PATCH_FRAMES;
-		case PerfTrace::PATH_REQUEST_SAFE_PATH_OR_AUTONOMOUS:
-			return PATHFIND_REPATH_COOLDOWN_SAFE_FRAMES;
-		default:
-			return 0;
-	}
-}
-
 //-----------------------------------------------------------------------------------
 static Int frameToShowObstacles;
 
@@ -231,6 +115,9 @@ constexpr const UnsignedInt ZONE_UPDATE_FREQUENCY = 300;
 constexpr const UnsignedInt MAX_CELL_COUNT = 500;
 constexpr const UnsignedInt MAX_ADJUSTMENT_CELL_COUNT = 400;
 constexpr const UnsignedInt MAX_SAFE_PATH_CELL_COUNT = 2000;
+
+constexpr const UnsignedInt PATHFIND_CELLS_PER_FRAME = 5000; // Number of cells we will search pathfinding per frame.
+constexpr const UnsignedInt CELL_INFOS_TO_ALLOCATE = 30000;
 
 //-----------------------------------------------------------------------------------
 PathNode::PathNode() :
@@ -585,158 +472,6 @@ void Path::updateLastNode( const Coord3D *pos )
 	}
 }
 
-static Bool isPhase3GroupSpreadActive(const Object *obj, Coord2D *offsetOut = nullptr)
-{
-	const Int PHASE3_MIN_GROUP_MEMBERS = 6;
-
-	if (obj == nullptr)
-	{
-		return false;
-	}
-
-	Coord2D offset;
-	obj->getFormationOffset(&offset);
-	const Real offsetLenSqr = offset.x * offset.x + offset.y * offset.y;
-	if (offsetLenSqr < sqr(PATHFIND_CELL_SIZE_F * 0.75f))
-	{
-		return false;
-	}
-
-	Object *mutableObj = const_cast<Object *>(obj);
-	AIGroup *group = mutableObj->getGroup();
-	if (obj->getFormationID() == NO_FORMATION_ID)
-	{
-		if (group == nullptr || group->getCount() < PHASE3_MIN_GROUP_MEMBERS)
-		{
-			return false;
-		}
-	}
-
-	if (offsetOut != nullptr)
-	{
-		*offsetOut = offset;
-	}
-	return true;
-}
-
-static Real computePathSegmentLength(const PathNode *anchor, const PathNode *node)
-{
-	Real pathLength = 0.0f;
-	for (const PathNode *cur = anchor; cur != nullptr && cur != node; cur = cur->getNext())
-	{
-		const PathNode *next = cur->getNext();
-		if (next == nullptr)
-		{
-			break;
-		}
-
-		const Real dx = next->getPosition()->x - cur->getPosition()->x;
-		const Real dy = next->getPosition()->y - cur->getPosition()->y;
-		pathLength += sqrt(dx * dx + dy * dy);
-	}
-	return pathLength;
-}
-
-static Bool shouldPreserveGroupSpreadOptimization(const Object *obj, const PathNode *anchor, const PathNode *node)
-{
-	Coord2D offset;
-	if (!isPhase3GroupSpreadActive(obj, &offset))
-	{
-		return false;
-	}
-
-	const Real directDx = node->getPosition()->x - anchor->getPosition()->x;
-	const Real directDy = node->getPosition()->y - anchor->getPosition()->y;
-	const Real directLength = sqrt(directDx * directDx + directDy * directDy);
-	if (directLength < PATHFIND_CELL_SIZE_F * 4.0f)
-	{
-		return false;
-	}
-
-	const Real pathLength = computePathSegmentLength(anchor, node);
-	if (pathLength <= directLength + PATHFIND_CELL_SIZE_F * 1.5f)
-	{
-		return false;
-	}
-
-	const Real invLength = 1.0f / directLength;
-	Coord2D right;
-	right.x = -directDy * invLength;
-	right.y = directDx * invLength;
-	const Real desiredLateral = offset.x * right.x + offset.y * right.y;
-	return fabs(desiredLateral) >= PATHFIND_CELL_SIZE_F * 0.5f;
-}
-
-static Int getPhase3LaneBiasCost(
-	const Object *obj,
-	const ICoord2D &startCellNdx,
-	const PathfindCell *goalCell,
-	const ICoord2D &candidateCell,
-	const TCheckMovementInfo &info)
-{
-	Coord2D offset;
-	if (!isPhase3GroupSpreadActive(obj, &offset) || goalCell == nullptr)
-	{
-		return 0;
-	}
-
-	const Int PHASE3_COST_ORTHOGONAL = 10;
-
-	Real axisX = static_cast<Real>(goalCell->getXIndex() - startCellNdx.x);
-	Real axisY = static_cast<Real>(goalCell->getYIndex() - startCellNdx.y);
-	const Real axisLenSqr = axisX * axisX + axisY * axisY;
-	if (axisLenSqr < 1.0f)
-	{
-		return 0;
-	}
-
-	const Real axisLen = sqrt(axisLenSqr);
-	axisX /= axisLen;
-	axisY /= axisLen;
-
-	Coord2D right;
-	right.x = -axisY;
-	right.y = axisX;
-	const Real desiredLateral = offset.x * right.x + offset.y * right.y;
-	if (fabs(desiredLateral) < PATHFIND_CELL_SIZE_F * 0.5f)
-	{
-		return 0;
-	}
-
-	const Real relX = static_cast<Real>(candidateCell.x - goalCell->getXIndex()) * PATHFIND_CELL_SIZE_F;
-	const Real relY = static_cast<Real>(candidateCell.y - goalCell->getYIndex()) * PATHFIND_CELL_SIZE_F;
-	const Real candidateLateral = relX * right.x + relY * right.y;
-
-	Int laneBiasCost = 0;
-	if ((desiredLateral > 0.0f && candidateLateral < -PATHFIND_CELL_SIZE_F * 0.5f)
-		|| (desiredLateral < 0.0f && candidateLateral > PATHFIND_CELL_SIZE_F * 0.5f))
-	{
-		laneBiasCost += 2 * PHASE3_COST_ORTHOGONAL;
-	}
-
-	const Real lateralDelta = fabs(candidateLateral - desiredLateral);
-	if (lateralDelta > PATHFIND_CELL_SIZE_F)
-	{
-		const Real scaled = MIN(2.5f, lateralDelta / (PATHFIND_CELL_SIZE_F * 2.0f));
-		laneBiasCost += static_cast<Int>(scaled * PHASE3_COST_ORTHOGONAL);
-	}
-
-	if (info.allyMoving)
-	{
-		laneBiasCost += PHASE3_COST_ORTHOGONAL;
-	}
-	if (info.allyGoal)
-	{
-		laneBiasCost += PHASE3_COST_ORTHOGONAL;
-	}
-	if (info.allyFixedCount > 1)
-	{
-		laneBiasCost += (info.allyFixedCount - 1) * PHASE3_COST_ORTHOGONAL;
-	}
-
-	return laneBiasCost;
-}
-
 /**
  * Optimize the path by checking line of sight
  */
@@ -843,7 +578,7 @@ void Path::optimize( const Object *obj, LocomotorSurfaceTypeMask acceptableSurfa
 					isPassable = true;
 				}
 			}
-			if (isPassable && !shouldPreserveGroupSpreadOptimization(obj, anchor, node))
+			if (isPassable)
 			{
 				// anchor can directly see this node, make it next in the optimized path
 				anchor->setNextOptimized( node );
@@ -1371,16 +1106,21 @@ Real Path::computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos )
 
 PathfindCellInfo *PathfindCellInfo::s_infoArray = nullptr;
 PathfindCellInfo *PathfindCellInfo::s_firstFree = nullptr;
-static PathfindCellInfoArena s_cellInfoArena;
 
 #if RETAIL_COMPATIBLE_PATHFINDING
+// TheSuperHackers @info This variable is here so the code will run down the retail compatible path till a failure mode is hit
+// The pathfinding will then switch over to the corrected pathfinding code for SH clients
 Bool s_useFixedPathfinding = false;
 Bool s_forceCleanCells = false;
 
 void PathfindCellInfo::forceCleanPathFindCellInfos()
 {
-	s_cellInfoArena.reset();
-	s_cellInfoArena.init();
+	for (Int i = 0; i < CELL_INFOS_TO_ALLOCATE - 1; i++) {
+		s_infoArray[i].m_nextOpen = nullptr;
+		s_infoArray[i].m_prevOpen = nullptr;
+		s_infoArray[i].m_open = FALSE;
+		s_infoArray[i].m_closed = FALSE;
+	}
 }
 
 void Pathfinder::forceCleanCells()
@@ -1392,7 +1132,6 @@ void Pathfinder::forceCleanCells()
 
 	PathfindCellInfo::forceCleanPathFindCellInfos();
 	m_openList.reset();
-	m_openHeap.reset();
 	m_closedList.reset();
 
 	for (int j = 0; j <= m_extent.hi.y; ++j) {
@@ -1414,300 +1153,84 @@ void Pathfinder::forceCleanCells()
 }
 #endif
 
-PathfindCellHeap::PathfindCellHeap()
-	: m_capacity(0), m_size(0), m_data(nullptr)
-{
-	grow();
-}
-
-PathfindCellHeap::~PathfindCellHeap()
-{
-	delete[] m_data;
-	m_data = nullptr;
-	m_capacity = 0;
-	m_size = 0;
-}
-
-void PathfindCellHeap::reset()
-{
-	m_size = 0;
-}
-
-void PathfindCellHeap::clear()
-{
-	m_size = 0;
-}
-
-void PathfindCellHeap::grow()
-{
-	Int newCapacity = m_capacity == 0 ? INITIAL_CAPACITY : m_capacity * 2;
-	PathfindCell **newData = MSGNEW("PathfindHeap") PathfindCell*[newCapacity];
-	if (m_data && m_size > 0)
-	{
-		std::memcpy(newData, m_data, m_size * sizeof(PathfindCell *));
-	}
-	delete[] m_data;
-	m_data = newData;
-	m_capacity = newCapacity;
-}
-
-static Bool pathfindHeapLess(const PathfindCell *lhs, const PathfindCell *rhs)
-{
-	if (lhs->getTotalCost() != rhs->getTotalCost())
-	{
-		return lhs->getTotalCost() < rhs->getTotalCost();
-	}
-	return lhs->getOpenInsertOrder() < rhs->getOpenInsertOrder();
-}
-
-void PathfindCellHeap::push(PathfindCell *cell)
-{
-	if (m_size >= m_capacity)
-	{
-		grow();
-	}
-	m_data[m_size] = cell;
-	Int idx = m_size;
-	m_size++;
-	while (idx > 0)
-	{
-		Int parent = (idx - 1) / 2;
-		if (!pathfindHeapLess(m_data[idx], m_data[parent]))
-		{
-			break;
-		}
-		PathfindCell *tmp = m_data[parent];
-		m_data[parent] = m_data[idx];
-		m_data[idx] = tmp;
-		idx = parent;
-	}
-}
-
-PathfindCell *PathfindCellHeap::pop()
-{
-	if (m_size == 0)
-	{
-		return nullptr;
-	}
-	PathfindCell *result = m_data[0];
-	m_size--;
-	if (m_size > 0)
-	{
-		m_data[0] = m_data[m_size];
-		Int idx = 0;
-		for (;;)
-		{
-			Int left = 2 * idx + 1;
-			Int right = 2 * idx + 2;
-			Int smallest = idx;
-			if (left < m_size && pathfindHeapLess(m_data[left], m_data[smallest]))
-			{
-				smallest = left;
-			}
-			if (right < m_size && pathfindHeapLess(m_data[right], m_data[smallest]))
-			{
-				smallest = right;
-			}
-			if (smallest == idx)
-			{
-				break;
-			}
-			PathfindCell *tmp = m_data[idx];
-			m_data[idx] = m_data[smallest];
-			m_data[smallest] = tmp;
-			idx = smallest;
-		}
-	}
-	return result;
-}
-
-PathfindCellInfoArena::PathfindCellInfoArena()
-	: m_blocks(nullptr), m_blockCount(0), m_blockCapacity(0),
-	  m_firstFree(nullptr), m_liveCount(0), m_peakLive(0),
-	  m_allocFailures(0), m_totalCapacity(0)
-{
-}
-
-PathfindCellInfoArena::~PathfindCellInfoArena()
-{
-	reset();
-}
-
-void PathfindCellInfoArena::init()
-{
-	reset();
-	m_blockCapacity = 4;
-	m_blocks = MSGNEW("PathfindArena") Block[m_blockCapacity];
-	m_blockCount = 0;
-	m_firstFree = nullptr;
-
-	Int initialCount = CELL_INFOS_INITIAL;
-	PathfindCellInfo *block = MSGNEW("PathfindCellInfo") PathfindCellInfo[initialCount];
-	if (m_blockCount >= m_blockCapacity)
-	{
-		Int newCap = m_blockCapacity * 2;
-		Block *newBlocks = MSGNEW("PathfindArena") Block[newCap];
-		for (Int i = 0; i < m_blockCount; i++)
-		{
-			newBlocks[i] = m_blocks[i];
-		}
-		delete[] m_blocks;
-		m_blocks = newBlocks;
-		m_blockCapacity = newCap;
-	}
-	m_blocks[m_blockCount].data = block;
-	m_blocks[m_blockCount].count = initialCount;
-	m_blockCount++;
-	m_totalCapacity += initialCount;
-
-	for (Int i = initialCount - 1; i >= 0; i--)
-	{
-		block[i].m_isFree = true;
-		block[i].m_pathParent = m_firstFree;
-		m_firstFree = &block[i];
-	}
-}
-
-void PathfindCellInfoArena::reset()
-{
-	for (Int i = 0; i < m_blockCount; i++)
-	{
-		delete[] m_blocks[i].data;
-	}
-	delete[] m_blocks;
-	m_blocks = nullptr;
-	m_blockCount = 0;
-	m_blockCapacity = 0;
-	m_firstFree = nullptr;
-	m_liveCount = 0;
-	m_peakLive = 0;
-	m_allocFailures = 0;
-	m_totalCapacity = 0;
-}
-
-PathfindCellInfo *PathfindCellInfoArena::alloc(PathfindCell *cell, const ICoord2D &pos)
-{
-	if (!m_firstFree)
-	{
-		Int growCount = CELL_INFOS_ARENA_BLOCK;
-		PathfindCellInfo *block = MSGNEW("PathfindCellInfo") PathfindCellInfo[growCount];
-		if (!block)
-		{
-			m_allocFailures++;
-			return nullptr;
-		}
-		if (m_blockCount >= m_blockCapacity)
-		{
-			Int newCap = m_blockCapacity * 2;
-			Block *newBlocks = MSGNEW("PathfindArena") Block[newCap];
-			for (Int i = 0; i < m_blockCount; i++)
-			{
-				newBlocks[i] = m_blocks[i];
-			}
-			delete[] m_blocks;
-			m_blocks = newBlocks;
-			m_blockCapacity = newCap;
-		}
-		m_blocks[m_blockCount].data = block;
-		m_blocks[m_blockCount].count = growCount;
-		m_blockCount++;
-		m_totalCapacity += growCount;
-
-		for (Int i = growCount - 1; i >= 0; i--)
-		{
-			block[i].m_isFree = true;
-			block[i].m_pathParent = m_firstFree;
-			m_firstFree = &block[i];
-		}
-	}
-
-	PathfindCellInfo *info = m_firstFree;
-	m_firstFree = info->m_pathParent;
-	info->m_isFree = false;
-	info->m_cell = cell;
-	info->m_pos = pos;
-	info->m_nextOpen = nullptr;
-	info->m_prevOpen = nullptr;
-	info->m_pathParent = nullptr;
-	info->m_costSoFar = 0;
-	info->m_totalCost = 0;
-	info->m_openInsertOrder = 0;
-	info->m_open = 0;
-	info->m_closed = 0;
-	info->m_obstacleID = INVALID_ID;
-	info->m_goalUnitID = INVALID_ID;
-	info->m_posUnitID = INVALID_ID;
-	info->m_goalAircraftID = INVALID_ID;
-	info->m_obstacleIsFence = false;
-	info->m_obstacleIsTransparent = false;
-	info->m_blockedByAlly = false;
-
-	m_liveCount++;
-	if (m_liveCount > m_peakLive)
-	{
-		m_peakLive = m_liveCount;
-	}
-	return info;
-}
-
-void PathfindCellInfoArena::free(PathfindCellInfo *info)
-{
-	DEBUG_ASSERTCRASH(!info->m_isFree, ("Double free of PathfindCellInfo."));
-	info->m_pathParent = m_firstFree;
-	m_firstFree = info;
-	info->m_isFree = true;
-	m_liveCount--;
-}
-
+/**
+ * Allocates a pool of pathfind cell infos.
+ */
 void PathfindCellInfo::allocateCellInfos()
 {
 	releaseCellInfos();
-	s_cellInfoArena.init();
-	s_infoArray = nullptr;
-	s_firstFree = nullptr;
+	s_infoArray = MSGNEW("PathfindCellInfo") PathfindCellInfo[CELL_INFOS_TO_ALLOCATE];	// pool[]ify
+	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_pathParent = nullptr;
+	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_isFree = true;
+	s_firstFree = s_infoArray;
+	for (Int i=0; i<CELL_INFOS_TO_ALLOCATE-1; i++) {
+		s_infoArray[i].m_pathParent = &s_infoArray[i+1];
+		s_infoArray[i].m_isFree = true;
+	}
 }
 
+/**
+ * Releases a pool of pathfind cell infos.
+ */
 void PathfindCellInfo::releaseCellInfos()
 {
-	s_cellInfoArena.reset();
+	if (s_infoArray==nullptr) {
+		return; // haven't allocated any yet.
+	}
+	Int count=0;
+	while (s_firstFree) {
+		count++;
+		DEBUG_ASSERTCRASH(s_firstFree->m_isFree, ("Should be freed."));
+		s_firstFree = s_firstFree->m_pathParent;
+	}
+	DEBUG_ASSERTCRASH(count==CELL_INFOS_TO_ALLOCATE, ("Error - Allocated cellinfos."));
+	delete[] s_infoArray;
 	s_infoArray = nullptr;
 	s_firstFree = nullptr;
 }
 
-PathfindCellInfo *PathfindCellInfo::getACellInfo(PathfindCell *cell, const ICoord2D &pos)
+/**
+ * Gets a pathfindcellinfo.
+ */
+PathfindCellInfo *PathfindCellInfo::getACellInfo(PathfindCell *cell,const ICoord2D &pos)
 {
-	PathfindCellInfo *info = s_cellInfoArena.alloc(cell, pos);
-	if (!info)
-	{
-		DEBUG_CRASH(("Ran out of pathfind cell infos in arena."));
+	PathfindCellInfo *info = s_firstFree;
+	if (s_firstFree) {
+		DEBUG_ASSERTCRASH(s_firstFree->m_isFree, ("Should be freed."));
+		s_firstFree = s_firstFree->m_pathParent;
+		info->m_isFree = false;  // Just allocated it.
+		info->m_cell = cell;
+		info->m_pos = pos;
+
+		info->m_nextOpen = nullptr;
+		info->m_prevOpen = nullptr;
+		info->m_pathParent = nullptr;
+		info->m_costSoFar = 0;
+		info->m_totalCost = 0;
+		info->m_open = 0;
+		info->m_closed = 0;
+		info->m_obstacleID = INVALID_ID;
+		info->m_goalUnitID = INVALID_ID;
+		info->m_posUnitID = INVALID_ID;
+		info->m_goalAircraftID = INVALID_ID;
+		info->m_obstacleIsFence = false;
+		info->m_obstacleIsTransparent = false;
+		info->m_blockedByAlly = false;
 	}
 	return info;
 }
 
+/**
+ * Returns a pathfindcellinfo.
+ */
 void PathfindCellInfo::releaseACellInfo(PathfindCellInfo *theInfo)
 {
 	DEBUG_ASSERTCRASH(!theInfo->m_isFree, ("Shouldn't be free."));
-	s_cellInfoArena.free(theInfo);
-}
-
-Int PathfindCellInfo::getCellInfoPeakLive()
-{
-	return s_cellInfoArena.getPeakLive();
-}
-
-Int PathfindCellInfo::getCellInfoLiveCount()
-{
-	return s_cellInfoArena.getLiveCount();
-}
-
-Int PathfindCellInfo::getCellInfoAllocFailures()
-{
-	return s_cellInfoArena.getAllocFailures();
-}
-
-Int PathfindCellInfo::getCellInfoPoolCapacity()
-{
-	return s_cellInfoArena.getPoolCapacity();
+	//@ todo -fix this assert on usa04.  jba.
+	//DEBUG_ASSERTCRASH(theInfo->m_obstacleID==0, ("Shouldn't be obstacle."));
+	theInfo->m_pathParent = s_firstFree;
+	s_firstFree = theInfo;
+	s_firstFree->m_isFree = true;
 }
 
 //-----------------------------------------------------------------------------------
@@ -2193,8 +1716,6 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 	if (list.m_head == nullptr)
 	{
 		list.m_head = this;
-		list.m_tail = this;
-		list.m_count = 1;
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = nullptr;
 		return;
@@ -2231,9 +1752,7 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 		previousCell->m_info->m_nextOpen = this->m_info;
 		m_info->m_prevOpen = previousCell->m_info;
 		m_info->m_nextOpen = nullptr;
-		list.m_tail = this;
 	}
-	list.m_count++;
 }
 #endif
 
@@ -2252,7 +1771,6 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 		m_info->m_nextOpen = nullptr;
 		list.m_head = this;
 		list.m_tail = this;
-		list.m_count = 1;
 		return;
 	}
 
@@ -2282,7 +1800,6 @@ void PathfindCell::forwardInsertionSort(PathfindCellList& list)
 
 	current->m_info->m_nextOpen = this->m_info;
 	m_info->m_prevOpen = current->m_info;
-	list.m_count++;
 }
 
 // Reverse insertion sort, returns early if the list is being initialized or we are appending the list
@@ -2300,7 +1817,6 @@ void PathfindCell::reverseInsertionSort(PathfindCellList& list)
 		m_info->m_nextOpen = nullptr;
 		list.m_tail = this;
 		list.m_head = this;
-		list.m_count = 1;
 		return;
 	}
 
@@ -2330,56 +1846,34 @@ void PathfindCell::reverseInsertionSort(PathfindCellList& list)
 
 	current->m_info->m_prevOpen = this->m_info;
 	m_info->m_nextOpen = current->m_info;
-	list.m_count++;
 }
 
+/// put self on "open" list in ascending cost order, return new list
 void PathfindCell::putOnSortedOpenList( PathfindCellList &list )
 {
-	PerfTrace::NoteNodesInserted(getPerfTraceFrame());
-	Pathfinder *pf = TheAI ? TheAI->pathfinder() : nullptr;
-	if (pf && pf->m_useHeapOpenList)
-	{
-		DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
-		DEBUG_ASSERTCRASH(m_info->m_closed == FALSE && m_info->m_open == FALSE, ("Serious error - Invalid flags. jba"));
-		m_info->m_open = true;
-		m_info->m_closed = false;
-		m_info->m_openInsertOrder = pf->m_nextOpenInsertOrder++;
-		pf->m_openHeap.push(this);
-		PerfTrace::NoteOpenListPeak(getPerfTraceFrame(), pf->m_openHeap.size());
-		return;
-	}
 #if RETAIL_COMPATIBLE_PATHFINDING
 	if (!s_useFixedPathfinding) {
 		forwardInsertionSortRetailCompatible(list);
-		PerfTrace::NoteOpenListPeak(getPerfTraceFrame(), list.size());
 		return;
 	}
 #endif
 
+	// TheSuperHackers @performance Mauller 20/03/2026 Implement reverse insertion sorting.
+	// Long and complex paths often append PathfindCell's, with high total path costs, to the open list.
+	// Appending and reverse traversal allow faster insertion of these cells, reducing pathfinding overhead by 50 - 66%.
 	if (list.canReverseSort(*this)) {
 		reverseInsertionSort(list);
 	}
 	else {
 		forwardInsertionSort(list);
 	}
-	PerfTrace::NoteOpenListPeak(getPerfTraceFrame(), list.size());
 }
 
 /// remove self from "open" list
 void PathfindCell::removeFromOpenList( PathfindCellList &list )
 {
-	PerfTrace::NoteNodesPopped(getPerfTraceFrame());
 	DEBUG_ASSERTCRASH(m_info, ("Has to have info."));
 	DEBUG_ASSERTCRASH(m_info->m_closed==FALSE && m_info->m_open==TRUE, ("Serious error - Invalid flags. jba"));
-	Pathfinder *pf = TheAI ? TheAI->pathfinder() : nullptr;
-	if (pf && pf->m_useHeapOpenList)
-	{
-		m_info->m_open = false;
-		m_info->m_nextOpen = nullptr;
-		m_info->m_prevOpen = nullptr;
-		m_info->m_openInsertOrder = 0;
-		return;
-	}
 	if (m_info->m_nextOpen)
 		m_info->m_nextOpen->m_prevOpen = m_info->m_prevOpen;
 	else {
@@ -2394,9 +1888,6 @@ void PathfindCell::removeFromOpenList( PathfindCellList &list )
 	m_info->m_open = false;
 	m_info->m_nextOpen = nullptr;
 	m_info->m_prevOpen = nullptr;
-	if (list.m_count > 0)
-		list.m_count--;
-	m_info->m_openInsertOrder = 0;
 
 }
 
@@ -2431,9 +1922,6 @@ Int PathfindCell::releaseOpenList( PathfindCellList &list )
 		curInfo->m_nextOpen = nullptr;
 		curInfo->m_prevOpen = nullptr;
 		curInfo->m_open = FALSE;
-		curInfo->m_openInsertOrder = 0;
-		if (list.m_count > 0)
-			list.m_count--;
 		cur->releaseInfo();
 	}
 	return count;
@@ -2469,8 +1957,6 @@ Int PathfindCell::releaseClosedList( PathfindCellList &list )
 		curInfo->m_nextOpen = nullptr;
 		curInfo->m_prevOpen = nullptr;
 		curInfo->m_closed = FALSE;
-		if (list.m_count > 0)
-			list.m_count--;
 		cur->releaseInfo();
 	}
 	return count;
@@ -2493,10 +1979,6 @@ void PathfindCell::putOnClosedList( PathfindCellList &list )
 			list.m_head->m_info->m_prevOpen = this->m_info;
 
 		list.m_head = this;
-		if (list.m_tail == nullptr)
-			list.m_tail = this;
-		list.m_count++;
-		PerfTrace::NoteClosedListPeak(getPerfTraceFrame(), list.size());
 	}
 
 }
@@ -2517,8 +1999,6 @@ void PathfindCell::removeFromClosedList( PathfindCellList &list )
 	m_info->m_closed = false;
 	m_info->m_nextOpen = nullptr;
 	m_info->m_prevOpen = nullptr;
-	if (list.m_count > 0)
-		list.m_count--;
 
 }
 
@@ -4578,9 +4058,7 @@ void Pathfinder::reset()
 	m_extent.lo.x=m_extent.lo.y=m_extent.hi.x=m_extent.hi.y=0;
 	m_logicalExtent.lo.x=m_logicalExtent.lo.y=m_logicalExtent.hi.x=m_logicalExtent.hi.y=0;
 	m_openList.reset();
-	m_openHeap.reset();
 	m_closedList.reset();
-	m_useHeapOpenList = true;
 
 	m_ignoreObstacleID = INVALID_ID;
 	m_isTunneling = false;
@@ -4590,10 +4068,6 @@ void Pathfinder::reset()
 	// pathfind grid cells have not been classified yet
 	m_isMapReady = false;
 	m_cumulativeCellsAllocated = 0;
-	m_requestCellBudget = 0;
-	m_recentlyServicedCursor = 0;
-	m_nextQueuedRequestSequence = 1;
-	m_nextOpenInsertOrder = 1;
 
 	debugPathPos.x = 0.0f;
 	debugPathPos.y = 0.0f;
@@ -4606,17 +4080,6 @@ void Pathfinder::reset()
 
 	for (m_queuePRHead=0; m_queuePRHead<PATHFIND_QUEUE_LEN; m_queuePRHead++) {
 		m_queuedPathfindRequests[m_queuePRHead] = INVALID_ID;
-		m_queuedRequestFrames[m_queuePRHead] = 0;
-		m_queuedRequestClasses[m_queuePRHead] = static_cast<UnsignedByte>(PerfTrace::PATH_REQUEST_EXPLICIT_MOVE);
-		m_queuedRequestDestinations[m_queuePRHead].zero();
-		m_queuedRequestGoalFingerprints[m_queuePRHead] = 0;
-		m_queuedRequestLocomotorFingerprints[m_queuePRHead] = 0;
-		m_queuedRequestSequences[m_queuePRHead] = 0;
-		m_recentlyServicedRequestIDs[m_queuePRHead] = INVALID_ID;
-		m_recentlyServicedRequestFrames[m_queuePRHead] = 0;
-		m_recentlyServicedRequestClasses[m_queuePRHead] = static_cast<UnsignedByte>(PerfTrace::PATH_REQUEST_EXPLICIT_MOVE);
-		m_recentlyServicedGoalFingerprints[m_queuePRHead] = 0;
-		m_recentlyServicedCooldownUntilFrames[m_queuePRHead] = 0;
 	}
 	m_queuePRHead = 0;
 	m_queuePRTail = 0;
@@ -5327,8 +4790,6 @@ void Pathfinder::newMap()
  */
 void Pathfinder::classifyMap()
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_ZONE_UPDATE);
-	PerfTrace::NoteZoneRecomputes(getPerfTraceFrame());
 
 	Int i, j;
 	// for now, sample cell corners and classify cell accordingly
@@ -5411,188 +4872,6 @@ void Pathfinder::classifyMap()
 void Pathfinder::forceMapRecalculation()
 {
 	classifyMap();
-}
-
-Int Pathfinder::getQueuedPathRequestCount() const
-{
-	Int count = m_queuePRTail - m_queuePRHead;
-	if (count < 0)
-	{
-		count += PATHFIND_QUEUE_LEN;
-	}
-	return count;
-}
-
-void Pathfinder::clearQueuedRequestSlot(Int slot)
-{
-	m_queuedPathfindRequests[slot] = INVALID_ID;
-	m_queuedRequestFrames[slot] = 0;
-	m_queuedRequestClasses[slot] = static_cast<UnsignedByte>(PerfTrace::PATH_REQUEST_EXPLICIT_MOVE);
-	m_queuedRequestDestinations[slot].zero();
-	m_queuedRequestGoalFingerprints[slot] = 0;
-	m_queuedRequestLocomotorFingerprints[slot] = 0;
-	m_queuedRequestSequences[slot] = 0;
-}
-
-void Pathfinder::removeQueuedRequestAt(Int slot)
-{
-	if (m_queuePRHead == m_queuePRTail)
-	{
-		return;
-	}
-
-	Int current = slot;
-	Int next = current + 1;
-	if (next >= PATHFIND_QUEUE_LEN)
-	{
-		next = 0;
-	}
-
-	while (next != m_queuePRTail)
-	{
-		m_queuedPathfindRequests[current] = m_queuedPathfindRequests[next];
-		m_queuedRequestFrames[current] = m_queuedRequestFrames[next];
-		m_queuedRequestClasses[current] = m_queuedRequestClasses[next];
-		m_queuedRequestDestinations[current] = m_queuedRequestDestinations[next];
-		m_queuedRequestGoalFingerprints[current] = m_queuedRequestGoalFingerprints[next];
-		m_queuedRequestLocomotorFingerprints[current] = m_queuedRequestLocomotorFingerprints[next];
-		m_queuedRequestSequences[current] = m_queuedRequestSequences[next];
-
-		current = next;
-		next++;
-		if (next >= PATHFIND_QUEUE_LEN)
-		{
-			next = 0;
-		}
-	}
-
-	clearQueuedRequestSlot(current);
-	m_queuePRTail = current;
-}
-
-void Pathfinder::getQueueAgeMetrics(const UnsignedInt currentFrame, Int &oldestAll, Int &oldestExplicit) const
-{
-	oldestAll = 0;
-	oldestExplicit = 0;
-
-	Int slot = m_queuePRHead;
-	while (slot != m_queuePRTail)
-	{
-		if (m_queuedPathfindRequests[slot] != INVALID_ID)
-		{
-			const Int age = static_cast<Int>(currentFrame - m_queuedRequestFrames[slot]);
-			if (age > oldestAll)
-			{
-				oldestAll = age;
-			}
-			if (m_queuedRequestClasses[slot] == static_cast<UnsignedByte>(PerfTrace::PATH_REQUEST_EXPLICIT_MOVE)
-				&& age > oldestExplicit)
-			{
-				oldestExplicit = age;
-			}
-		}
-
-		++slot;
-		if (slot >= PATHFIND_QUEUE_LEN)
-		{
-			slot = 0;
-		}
-	}
-}
-
-void Pathfinder::getGridMetrics(Int &mapCellsX, Int &mapCellsY, Int &mapCellsTotal,
-	Int &logicalCellsX, Int &logicalCellsY, Int &logicalCellsTotal,
-	Int &zoneBlockCountX, Int &zoneBlockCountY, Int &zoneBlockCountTotal) const
-{
-	mapCellsX = m_extent.hi.x >= m_extent.lo.x ? (m_extent.hi.x - m_extent.lo.x + 1) : 0;
-	mapCellsY = m_extent.hi.y >= m_extent.lo.y ? (m_extent.hi.y - m_extent.lo.y + 1) : 0;
-	mapCellsTotal = mapCellsX * mapCellsY;
-
-	logicalCellsX = m_logicalExtent.hi.x >= m_logicalExtent.lo.x ? (m_logicalExtent.hi.x - m_logicalExtent.lo.x + 1) : 0;
-	logicalCellsY = m_logicalExtent.hi.y >= m_logicalExtent.lo.y ? (m_logicalExtent.hi.y - m_logicalExtent.lo.y + 1) : 0;
-	logicalCellsTotal = logicalCellsX * logicalCellsY;
-
-	zoneBlockCountX = mapCellsX > 0 ? ((mapCellsX + PathfindZoneManager::ZONE_BLOCK_SIZE - 1) / PathfindZoneManager::ZONE_BLOCK_SIZE) : 0;
-	zoneBlockCountY = mapCellsY > 0 ? ((mapCellsY + PathfindZoneManager::ZONE_BLOCK_SIZE - 1) / PathfindZoneManager::ZONE_BLOCK_SIZE) : 0;
-	zoneBlockCountTotal = zoneBlockCountX * zoneBlockCountY;
-}
-
-void Pathfinder::computeFootprintMetrics(const Object *obj, Int &sideCells, Int &areaCells, Int &radius, Bool &center)
-{
-	sideCells = 0;
-	areaCells = 0;
-	radius = 0;
-	center = false;
-
-	if (obj == nullptr)
-	{
-		return;
-	}
-
-	getRadiusAndCenter(obj, radius, center);
-	sideCells = radius * 2 + (center ? 1 : 0);
-	if (sideCells < 1)
-	{
-		sideCells = 1;
-	}
-	areaCells = sideCells * sideCells;
-}
-
-void Pathfinder::beginOpenSearch(PathfindCell *startCell)
-{
-#if RETAIL_COMPATIBLE_PATHFINDING
-	if (!s_useFixedPathfinding)
-	{
-		m_useHeapOpenList = false;
-		m_openHeap.reset();
-		m_openList.reset(startCell);
-		if (startCell)
-		{
-			PerfTrace::NoteOpenListPeak(getPerfTraceFrame(), m_openList.size());
-		}
-		return;
-	}
-#endif
-
-	m_openList.reset();
-	m_openHeap.reset();
-	m_useHeapOpenList = true;
-	m_nextOpenInsertOrder = 1;
-	if (startCell)
-	{
-		startCell->putOnSortedOpenList(m_openList);
-	}
-}
-
-Bool Pathfinder::hasOpenCells() const
-{
-	return !m_openList.empty() || (m_useHeapOpenList && !m_openHeap.empty());
-}
-
-PathfindCell *Pathfinder::popNextOpenCell()
-{
-	PathfindCell *parentCell = nullptr;
-	if (m_useHeapOpenList)
-	{
-		while (!m_openHeap.empty())
-		{
-			parentCell = m_openHeap.pop();
-			if (!parentCell || !parentCell->hasInfo() || !parentCell->getOpen())
-			{
-				continue;
-			}
-
-			parentCell->removeFromOpenList(m_openList);
-			return parentCell;
-		}
-	}
-	if (!m_openList.empty())
-	{
-		parentCell = m_openList.getHead();
-		parentCell->removeFromOpenList(m_openList);
-		return parentCell;
-	}
-	return nullptr;
 }
 
 /**
@@ -5718,38 +4997,17 @@ Bool Pathfinder::validMovementTerrain( PathfindLayerEnum layer, const Locomotor*
 //
 void Pathfinder::cleanOpenAndClosedLists() {
 	Int count = 0;
-	if (m_useHeapOpenList) {
-		while (!m_openHeap.empty()) {
-			PathfindCell *cell = m_openHeap.pop();
-			if (cell && cell->hasInfo()) {
-				PathfindCellInfo *info = cell->m_info;
-#if RETAIL_COMPATIBLE_PATHFINDING
-				if (!info && !s_useFixedPathfinding) {
-					s_useFixedPathfinding = true;
-					s_forceCleanCells = true;
-					break;
-				}
-#endif
-				if (info) {
-					info->m_nextOpen = nullptr;
-					info->m_prevOpen = nullptr;
-					info->m_open = FALSE;
-					info->m_openInsertOrder = 0;
-					cell->releaseInfo();
-					count++;
-				}
-			}
-		}
-		m_openHeap.reset();
-		m_openList.reset();
-	} else if (!m_openList.empty()) {
+	if (!m_openList.empty()) {
 		count += PathfindCell::releaseOpenList(m_openList);
 		m_openList.reset();
 	}
 
 #if RETAIL_COMPATIBLE_PATHFINDING
+	// TheSuperHackers @info this is here as the map cells are contained within the pathfinder and cannot be cleaned externally.
+	// If the crash mode within PathfindCell::releaseOpenList is hit, it will set s_forceCleanCells to allow the system to cleanly recover.
 	if (s_forceCleanCells) {
 		forceCleanCells();
+		// TheSuperHackers @info cells on the closed list are forcefully cleaned up by this point
 		s_forceCleanCells = false;
 	}
 #endif
@@ -5760,6 +5018,8 @@ void Pathfinder::cleanOpenAndClosedLists() {
 	}
 
 #if RETAIL_COMPATIBLE_PATHFINDING
+	// TheSuperHackers @info this is here and performs the same function as the above block, but for when the crash occurs within the closed list.
+	// If the crash mode within PathfindCell::releaseClosedList is hit, it will set s_forceCleanCells to allow the system to cleanly recover.
 	if (s_forceCleanCells) {
 		forceCleanCells();
 		s_forceCleanCells = false;
@@ -5803,9 +5063,6 @@ Bool Pathfinder::validMovementPosition( Bool isCrusher, LocomotorSurfaceTypeMask
  */
 Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, PathfindLayerEnum layer, Int iRadius, Bool centerInCell)
 {
-	const UnsignedInt frame = getPerfTraceFrame();
-	PerfTrace::ScopedPathTimer timer(frame, PerfTrace::PATH_TIMER_CHECK_DESTINATION);
-
 	// If obj==nullptr, means we are checking for any ground units present.  jba.
 	Int numCellsAbove = iRadius;
 	if (centerInCell) numCellsAbove++;
@@ -5822,7 +5079,6 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 		for (j=cellY-iRadius; j<cellY+numCellsAbove; j++) {
 			PathfindCell	*cell = getCell(layer, i, j);
 			if (!cell) {
-				PerfTrace::NoteBlockedByTerrainChecks(frame);
 				return false; // off the map, so can't place here.
 			}
 
@@ -5833,24 +5089,17 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 				if (cell->getGoalAircraft() == objID) {
 					continue;
 				}
-				PerfTrace::NoteBlockedByUnitChecks(frame);
 				return false;
 			}
 
 			if (cell->getType()==PathfindCell::CELL_OBSTACLE) {
 				if (cell->isObstaclePresent( ignoreId ))
 					continue;
-				PerfTrace::NoteBlockedByTerrainChecks(frame);
 				return false;
 			}
 
 #if !(RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING)
 			if (IS_IMPASSABLE(cell->getType())) {
-				if (cell->getType() == PathfindCell::CELL_BRIDGE_IMPASSABLE)
-				{
-					PerfTrace::NoteBridgeSpecialTerrainChecks(frame);
-				}
-				PerfTrace::NoteBlockedByTerrainChecks(frame);
 				return false;
 			}
 #endif
@@ -5873,7 +5122,6 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 			}
 
 			if (!obj) {
-				PerfTrace::NoteBlockedByUnitChecks(frame);
 				return false;
 			}
 			Object *unit = TheGameLogic->findObjectByID(goalUnitID);
@@ -5883,13 +5131,11 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
 
 			// order matters: we want to know if I consider it to be an ally, not vice versa
 			if (obj->getRelationship(unit) == ALLIES) {
-				PerfTrace::NoteBlockedByUnitChecks(frame);
 				return false; 	// Don't usurp your allies goals.  jba.
 			}
 			if (cell->getFlags()==PathfindCell::UNIT_PRESENT_FIXED) {
 				Bool canCrush = obj->canCrushOrSquish(unit, TEST_CRUSH_OR_SQUISH);
 				if (!canCrush) {
-					PerfTrace::NoteBlockedByUnitChecks(frame);
 					return false; // Don't move to an occupied cell.
 				}
 			}
@@ -5905,9 +5151,6 @@ Bool Pathfinder::checkDestination(const Object *obj, Int cellX, Int cellY, Pathf
  */
 Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 {
-	const UnsignedInt frame = getPerfTraceFrame();
-	PerfTrace::ScopedPathTimer timer(frame, PerfTrace::PATH_TIMER_CHECK_FOR_MOVEMENT);
-
 	info.allyFixedCount = 0;
 	info.allyMoving = false;
 	info.allyGoal = false;
@@ -5934,7 +5177,6 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 		for (j=info.cell.y-info.radius; j<info.cell.y+numCellsAbove; j++) {
 			PathfindCell	*cell = getCell(info.layer,i, j);
 			if (!cell) {
-				PerfTrace::NoteBlockedByTerrainChecks(frame);
 				return false; // off the map, so can't move here.
 			}
 
@@ -5990,12 +5232,10 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 			// order matters: we want to know if I consider it to be an ally, not vice versa
 			if (obj->getRelationship(unit) == ALLIES) {
 				if (!unit->getAIUpdateInterface()) {
-					PerfTrace::NoteBlockedByUnitChecks(frame);
 					return false; // can't path through not-idle units.
 				}
 #if RTS_GENERALS && RETAIL_COMPATIBLE_PATHFINDING
 				if (!unit->getAIUpdateInterface()->isIdle()) {
-					PerfTrace::NoteBlockedByUnitChecks(frame);
 					return false; // can't path through not-idle units.
 				}
 #endif
@@ -6017,7 +5257,6 @@ Bool Pathfinder::checkForMovement(const Object *obj, TCheckMovementInfo &info)
 				Bool canCrush = obj->canCrushOrSquish( unit, TEST_CRUSH_OR_SQUISH );
 				if (!canCrush) {
 					info.enemyFixed = true;
-					PerfTrace::NoteBlockedByUnitChecks(frame);
 				}
 			}
 		}
@@ -6572,19 +5811,9 @@ Bool Pathfinder::adjustToPossibleDestination(Object *obj, const LocomotorSet& lo
  */
 Bool Pathfinder::queueForPath(ObjectID id)
 {
-	const UnsignedInt frame = getPerfTraceFrame();
-	Object *queuedObj = TheGameLogic ? TheGameLogic->findObjectByID(id) : nullptr;
-	AIUpdateInterface *queuedAI = queuedObj ? queuedObj->getAIUpdateInterface() : nullptr;
-	const PerfTrace::PathRequestClass requestClass = getPathRequestClass(queuedAI);
-	const Coord3D requestedDest = getPathRequestDestination(queuedAI);
-	const UnsignedInt goalFingerprint = getPathRequestGoalFingerprint(queuedAI);
-	const UnsignedInt locomotorFingerprint = getPathRequestLocomotorFingerprint(queuedObj, queuedAI);
-
-	PerfTrace::NotePathRequestAttempt(frame, requestClass);
-
 #ifdef DEBUG_LOGGING
 	{
-		Object *tmpObj = queuedObj;
+		Object *tmpObj = TheGameLogic->findObjectByID(id);
 		if (tmpObj) {
 			AIUpdateInterface *tmpAI = tmpObj->getAIUpdateInterface();
 			if (tmpAI) {
@@ -6595,71 +5824,10 @@ Bool Pathfinder::queueForPath(ObjectID id)
 	}
 #endif
 
-	Int recentMatch = -1;
-	for (Int recentSlot = 0; recentSlot < PATHFIND_QUEUE_LEN; recentSlot++)
-	{
-		if (m_recentlyServicedRequestIDs[recentSlot] != id)
-		{
-			continue;
-		}
-		if (recentMatch < 0 || m_recentlyServicedRequestFrames[recentSlot] >= m_recentlyServicedRequestFrames[recentMatch])
-		{
-			recentMatch = recentSlot;
-		}
-	}
-
-	if (recentMatch >= 0)
-	{
-		const Int recentSlot = recentMatch;
-		const PerfTrace::PathRequestClass recentClass =
-			static_cast<PerfTrace::PathRequestClass>(m_recentlyServicedRequestClasses[recentSlot]);
-		const Bool sameGoal = m_recentlyServicedGoalFingerprints[recentSlot] == goalFingerprint;
-		const Bool strongerThanRecent =
-			getPathRequestPriority(requestClass) > getPathRequestPriority(recentClass);
-		const Bool sameFrame = m_recentlyServicedRequestFrames[recentSlot] == frame;
-		const Bool coolingDown = m_recentlyServicedCooldownUntilFrames[recentSlot] > frame;
-
-		if ((sameFrame || coolingDown) && !strongerThanRecent)
-		{
-			PerfTrace::NotePathRequestDuplicate(frame, requestClass);
-			if (sameGoal)
-			{
-				PerfTrace::NoteQueueSuppressedSameGoal(frame);
-			}
-			else
-			{
-				PerfTrace::NoteQueueSuppressedWeakerThanExisting(frame);
-			}
-			PerfTrace::NotePathQueueDepth(frame, getQueuedPathRequestCount());
-			return true;
-		}
-	}
-
 	/* Check & see if we are already queued. */
 	Int slot = m_queuePRHead;
 	while (slot != m_queuePRTail) {
 		if (m_queuedPathfindRequests[slot] == id) {
-			PerfTrace::NotePathRequestDuplicate(frame, requestClass);
-			const PerfTrace::PathRequestClass existingClass = static_cast<PerfTrace::PathRequestClass>(m_queuedRequestClasses[slot]);
-			const Bool sameGoal = existingClass == requestClass
-				&& m_queuedRequestGoalFingerprints[slot] == goalFingerprint
-				&& m_queuedRequestLocomotorFingerprints[slot] == locomotorFingerprint;
-			if (sameGoal) {
-				PerfTrace::NoteQueueSuppressedSameGoal(frame);
-			}
-			else if (getPathRequestPriority(requestClass) > getPathRequestPriority(existingClass)) {
-				PerfTrace::NoteQueueReplaced(frame);
-				m_queuedRequestClasses[slot] = static_cast<UnsignedByte>(requestClass);
-				m_queuedRequestFrames[slot] = frame;
-				m_queuedRequestDestinations[slot] = requestedDest;
-				m_queuedRequestGoalFingerprints[slot] = goalFingerprint;
-				m_queuedRequestLocomotorFingerprints[slot] = locomotorFingerprint;
-				m_queuedRequestSequences[slot] = m_nextQueuedRequestSequence++;
-			}
-			else {
-				PerfTrace::NoteQueueSuppressedWeakerThanExisting(frame);
-			}
-			PerfTrace::NotePathQueueDepth(frame, getQueuedPathRequestCount());
 			return true;
 		}
 		slot++;
@@ -6674,64 +5842,11 @@ Bool Pathfinder::queueForPath(ObjectID id)
 		nextSlot = 0;
 	}
 	if (nextSlot==m_queuePRHead) {
-		if (getPathRequestPriority(requestClass) > 0)
-		{
-			Int replacementSlot = -1;
-			UnsignedInt replacementSequence = 0;
-			Int scanSlot = m_queuePRHead;
-			while (scanSlot != m_queuePRTail)
-			{
-				if (m_queuedPathfindRequests[scanSlot] != INVALID_ID)
-				{
-					const PerfTrace::PathRequestClass queuedClass =
-						static_cast<PerfTrace::PathRequestClass>(m_queuedRequestClasses[scanSlot]);
-					if (getPathRequestPriority(requestClass) > getPathRequestPriority(queuedClass))
-					{
-						if (replacementSlot < 0 || m_queuedRequestSequences[scanSlot] < replacementSequence)
-						{
-							replacementSlot = scanSlot;
-							replacementSequence = m_queuedRequestSequences[scanSlot];
-						}
-					}
-				}
-
-				scanSlot++;
-				if (scanSlot >= PATHFIND_QUEUE_LEN)
-				{
-					scanSlot = 0;
-				}
-			}
-
-			if (replacementSlot >= 0)
-			{
-				PerfTrace::NoteQueueReplaced(frame);
-				m_queuedPathfindRequests[replacementSlot] = id;
-				m_queuedRequestFrames[replacementSlot] = frame;
-				m_queuedRequestClasses[replacementSlot] = static_cast<UnsignedByte>(requestClass);
-				m_queuedRequestDestinations[replacementSlot] = requestedDest;
-				m_queuedRequestGoalFingerprints[replacementSlot] = goalFingerprint;
-				m_queuedRequestLocomotorFingerprints[replacementSlot] = locomotorFingerprint;
-				m_queuedRequestSequences[replacementSlot] = m_nextQueuedRequestSequence++;
-				PerfTrace::NotePathRequestEnqueued(frame, requestClass);
-				PerfTrace::NotePathQueueDepth(frame, getQueuedPathRequestCount());
-				return true;
-			}
-		}
-
-		PerfTrace::NotePathRequestFailed(frame, requestClass);
 		DEBUG_CRASH(("Ran out of pathfind queue slots."));
 		return false;
 	}
 	m_queuedPathfindRequests[m_queuePRTail] = id;
-	m_queuedRequestFrames[m_queuePRTail] = frame;
-	m_queuedRequestClasses[m_queuePRTail] = static_cast<UnsignedByte>(requestClass);
-	m_queuedRequestDestinations[m_queuePRTail] = requestedDest;
-	m_queuedRequestGoalFingerprints[m_queuePRTail] = goalFingerprint;
-	m_queuedRequestLocomotorFingerprints[m_queuePRTail] = locomotorFingerprint;
-	m_queuedRequestSequences[m_queuePRTail] = m_nextQueuedRequestSequence++;
 	m_queuePRTail = nextSlot;
-	PerfTrace::NotePathRequestEnqueued(frame, requestClass);
-	PerfTrace::NotePathQueueDepth(frame, getQueuedPathRequestCount());
 	return true;
 }
 
@@ -6924,15 +6039,11 @@ Path *Pathfinder::getAircraftPath( const Object *obj, const Coord3D *to )
 //DECLARE_PERF_TIMER(processPathfindQueue)
 void Pathfinder::processPathfindQueue()
 {
-	const UnsignedInt frame = getPerfTraceFrame();
-	PerfTrace::ScopedPathTimer timer(frame, PerfTrace::PATH_TIMER_PATHFIND_UPDATE);
-
 	//USE_PERF_TIMER(processPathfindQueue)
 	if (!m_isMapReady) {
 		return;
 	}
 #ifdef DEBUG_QPF
-	Int pathsFound = 0;
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 	__int64 startTime64;
@@ -6944,8 +6055,6 @@ void Pathfinder::processPathfindQueue()
 #endif
 
 	if (m_zoneManager.needToCalculateZones()) {
-		PerfTrace::ScopedPathTimer zoneTimer(frame, PerfTrace::PATH_TIMER_ZONE_UPDATE);
-		PerfTrace::NoteZoneRecomputes(frame);
 		m_zoneManager.calculateZones(m_map, m_layers, m_extent);
 		return;
 	}
@@ -6962,92 +6071,28 @@ void Pathfinder::processPathfindQueue()
 	bounds.hi.y--;
 	m_logicalExtent = bounds;
 
-	m_cumulativeCellsAllocated = 0;
-	PerfTrace::NotePathQueueDepth(frame, getQueuedPathRequestCount());
-	Int oldestQueueAge = 0;
-	Int oldestExplicitQueueAge = 0;
-	getQueueAgeMetrics(frame, oldestQueueAge, oldestExplicitQueueAge);
-	PerfTrace::NoteQueueOldestAge(frame, oldestQueueAge);
-	PerfTrace::NoteQueueExplicitOldestAge(frame, oldestExplicitQueueAge);
-	PerfTrace::NoteCellInfoPeakLive(frame, PathfindCellInfo::getCellInfoPeakLive());
-	PerfTrace::NoteCellInfoAllocFailures(frame, PathfindCellInfo::getCellInfoAllocFailures());
-	PerfTrace::NoteCellInfoPoolCapacity(frame, PathfindCellInfo::getCellInfoPoolCapacity());
-
-	for (Int pass = 1; pass <= 2; pass++)
-	{
-		while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
-			m_queuePRTail != m_queuePRHead)
-		{
-			Int slot = m_queuePRHead;
-			Bool found = false;
-			Int scanSlot = slot;
-			Int queueLen = getQueuedPathRequestCount();
-
-			for (Int scanned = 0; scanned < queueLen; scanned++)
-			{
-				if (m_queuedPathfindRequests[scanSlot] != INVALID_ID)
-				{
-					const UnsignedByte slotClass = m_queuedRequestClasses[scanSlot];
-					const Bool isHigh = isHighPriorityRequestClass(slotClass);
-					if ((pass == 1 && isHigh) || (pass == 2 && !isHigh))
-					{
-						slot = scanSlot;
-						found = true;
-						break;
-					}
-				}
-				scanSlot++;
-				if (scanSlot >= PATHFIND_QUEUE_LEN) scanSlot = 0;
-			}
-
-			if (!found) break;
-
-			PerfTrace::ScopedPathTimer dispatchTimer(frame, PerfTrace::PATH_TIMER_PATH_REQUEST_DISPATCH);
-			PerfTrace::NoteQueueServicePass(frame, pass);
-
-			Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[slot]);
-			const PerfTrace::PathRequestClass requestClass =
-				static_cast<PerfTrace::PathRequestClass>(m_queuedRequestClasses[slot]);
-			const Int waitFrames = static_cast<Int>(frame - m_queuedRequestFrames[slot]);
-			const UnsignedInt goalFingerprint = m_queuedRequestGoalFingerprints[slot];
-			removeQueuedRequestAt(slot);
-
-			PerfTrace::NotePathRequestProcessed(frame, requestClass);
-			PerfTrace::NoteMaxQueueWaitFrames(frame, waitFrames);
-
-			if (obj)
-			{
-				AIUpdateInterface *ai = obj->getAIUpdateInterface();
-				if (ai)
-				{
-					const Bool isHigh = isHighPriorityRequestClass(static_cast<UnsignedByte>(requestClass));
-					m_requestCellBudget = isHigh ? PATHFIND_CELLS_PER_REQUEST_EXPLICIT : PATHFIND_CELLS_PER_REQUEST_LOW;
-					PerfTrace::NoteRequestCellBudget(frame, m_requestCellBudget);
-					const UnsignedInt cooldownFrames = getRepathCooldownFrames(getQueuedPathRequestCount(), requestClass);
-					const Int recentSlot = m_recentlyServicedCursor;
-					m_recentlyServicedRequestIDs[recentSlot] = obj->getID();
-					m_recentlyServicedRequestFrames[recentSlot] = frame;
-					m_recentlyServicedRequestClasses[recentSlot] = static_cast<UnsignedByte>(requestClass);
-					m_recentlyServicedGoalFingerprints[recentSlot] = goalFingerprint;
-					m_recentlyServicedCooldownUntilFrames[recentSlot] = frame + cooldownFrames;
-					m_recentlyServicedCursor++;
-					if (m_recentlyServicedCursor >= PATHFIND_QUEUE_LEN)
-					{
-						m_recentlyServicedCursor = 0;
-					}
-
-					const Int cellsBefore = m_cumulativeCellsAllocated;
-					ai->doPathfind(this);
-					PerfTrace::NoteLongestSingleRequestCells(frame, m_cumulativeCellsAllocated - cellsBefore);
+	m_cumulativeCellsAllocated = 0;	// Number of pathfind cells examined.
 #ifdef DEBUG_QPF
-					pathsFound++;
+	Int pathsFound = 0;
 #endif
-				}
+	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
+		m_queuePRTail!=m_queuePRHead) {
+		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
+		m_queuedPathfindRequests[m_queuePRHead] = INVALID_ID;
+		if (obj) {
+			AIUpdateInterface *ai = obj->getAIUpdateInterface();
+			if (ai) {
+				ai->doPathfind(this);
+#ifdef DEBUG_QPF
+				pathsFound++;
+#endif
 			}
-			PerfTrace::NotePathQueueDepth(frame, getQueuedPathRequestCount());
+		}
+		m_queuePRHead = m_queuePRHead+1;
+		if (m_queuePRHead >= PATHFIND_QUEUE_LEN) {
+			m_queuePRHead = 0;
 		}
 	}
-	PerfTrace::NotePathCells(frame, m_cumulativeCellsAllocated);
 #ifdef DEBUG_QPF
 	if (pathsFound>0) {
 #ifdef DEBUG_LOGGING
@@ -7358,7 +6403,6 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 			if (info.allyMoving && dx<10 && dy<10) {
 				newCostSoFar += 3*COST_DIAGONAL;
 			}
-			newCostSoFar += getPhase3LaneBiasCost(obj, startCellNdx, goalCell, newCellCoord, info);
 
 			if (newCell->getType() == PathfindCell::CELL_CLIFF && !newCell->getPinched() ) {
 				Coord3D fromPos;
@@ -7485,7 +6529,6 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 													 const Coord3D *rawTo)
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_ASTAR_EXPAND);
 	//CRCDEBUG_LOG(("Pathfinder::findPath()"));
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("internal find path..."));
@@ -7620,27 +6663,32 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 
 	parentCell->startPathfind(goalCell);
 
-	beginOpenSearch(parentCell);
+	// initialize "open" list to contain start cell
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
+	// "closed" list is initially empty
 	m_closedList.reset();
 
 	Int cellCount = 0;
 
-	Int requestBudget = m_requestCellBudget > 0 ? m_requestCellBudget : PATHFIND_CELLS_PER_REQUEST_EXPLICIT;
-
-	while (hasOpenCells())
+	//
+	// Continue search until "open" list is empty, or
+	// until goal is found.
+	//
+	while( !m_openList.empty() )
 	{
-		if (m_cumulativeCellsAllocated + cellCount >= PATHFIND_CELLS_PER_FRAME)
-		{
-			break;
-		}
-		if (cellCount >= requestBudget)
-		{
-			break;
-		}
-
-		parentCell = popNextOpenCell();
-		if (!parentCell) break;
+		// take head cell off of open list - it has lowest estimated total path cost
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		if (parentCell == goalCell)
 		{
@@ -7689,11 +6737,6 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 		checkChangeLayers(parentCell);
 
 		cellCount += examineNeighboringCells(parentCell, goalCell, locomotorSet, isHuman, centerInCell, radius, startCellNdx, obj, NO_ATTACK);
-
-		if (m_useHeapOpenList)
-		{
-			PerfTrace::NoteOpenListPeak(getPerfTraceFrame(), m_openHeap.size());
-		}
 
 	}
 
@@ -8182,7 +7225,16 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	parentCell->startPathfind(goalCell);
 
 	// initialize "open" list to contain start cell
-	beginOpenSearch(parentCell);
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
@@ -8197,13 +7249,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	// until goal is found.
 	//
 	Int cellCount = 0;
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		if (parentCell == goalCell)
 		{
@@ -8662,7 +7712,17 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		goalBlockNdx.y = -1;
 	}
 
-	beginOpenSearch(parentCell);
+	// initialize "open" list to contain start cell
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	if (parentCell->getLayer()!=LAYER_GROUND) {
 		PathfindLayerEnum layer = parentCell->getLayer();
@@ -8671,16 +7731,11 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		ICoord2D toNdx;
 		m_layers[layer].getStartCellIndex(&ndx);
 		m_layers[layer].getEndCellIndex(&toNdx);
-		PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
+ 		PathfindCell *cell = getCell(LAYER_GROUND, toNdx.x, toNdx.y);
 		PathfindCell *startCell = getCell(LAYER_GROUND, ndx.x, ndx.y);
 		if (cell && startCell) {
 			// Close parent cell;
-			parentCell = popNextOpenCell();
-			if (!parentCell) {
-				cleanOpenAndClosedLists();
-				goalCell->releaseInfo();
-				return nullptr;
-			}
+			parentCell->removeFromOpenList(m_openList);
 			parentCell->putOnClosedList(m_closedList);
 			if (!startCell->allocateInfo(ndx)) {
 				// TheSuperHackers @info We need to forcefully cleanup dangling pathfinding cells if this failure condition is hit in retail
@@ -8742,13 +7797,11 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		zoneStorageType parentZone;
 		if (parentCell->getLayer()==LAYER_GROUND) {
@@ -9473,7 +8526,16 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 	parentCell->startPathfind(goalCell);
 
 	// initialize "open" list to contain start cell
-	beginOpenSearch(parentCell);
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
@@ -9482,13 +8544,11 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		// put parent cell onto closed list - its evaluation is finished - Retail compatible behaviour
 #if RETAIL_COMPATIBLE_PATHFINDING
@@ -9665,7 +8725,6 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 																	Coord3D *rawTo, Bool blocked, Real pathCostMultiplier, Bool moveAllies)
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_ASTAR_EXPAND);
 	//CRCDEBUG_LOG(("Pathfinder::findClosestPath()"));
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
@@ -9809,27 +8868,33 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	Real closestDistScreenSqr = FLT_MAX;
 
 	// initialize "open" list to contain start cell
-	beginOpenSearch(parentCell);
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
 	Int count = 0;
-
 	//
 	// Continue search until "open" list is empty, or
 	// until goal is found.
 	//
 	Bool foundGoal = false;
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		Real dx;
 		Real dy;
 		Real distSqr;
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		if (parentCell == goalCell)
 		{
@@ -11184,7 +10249,6 @@ void Pathfinder::removeUnitFromPathfindMap(  Object *obj )
 
 Bool Pathfinder::moveAllies(Object *obj, Path *path)
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_MOVE_ALLIES);
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("*** WARNING *** DOING DO_UNIT_TIMINGS!!!!")
@@ -11272,7 +10336,6 @@ if (g_UT_startTiming) return false;
 #endif
 
 				//DEBUG_LOG(("Moving ally"));
-				PerfTrace::NoteRepathTriggered(getPerfTraceFrame());
 				otherObj->getAI()->aiMoveAwayFromUnit(obj, CMD_FROM_AI);
 			}
 		}
@@ -11350,7 +10413,17 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	}
 	parentCell->startPathfind(nullptr);
 
-	beginOpenSearch(parentCell);
+	// initialize "open" list to contain start cell
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
@@ -11365,13 +10438,11 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	boxHalfWidth += otherRadius*PATHFIND_CELL_SIZE_F;
 	if (otherCenter) boxHalfWidth+=PATHFIND_CELL_SIZE_F/2;
 
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Region2D bounds;
 		Coord3D cellCenter;
@@ -11473,7 +10544,6 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet,
 		Path *originalPath, Bool blocked )
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_ASTAR_EXPAND);
 	//CRCDEBUG_LOG(("Pathfinder::patchPath()"));
 #ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
@@ -11520,7 +10590,16 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	parentCell->startPathfind( nullptr);
 
 	// initialize "open" list to contain start cell
-	beginOpenSearch(parentCell);
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
@@ -11604,13 +10683,11 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		return nullptr;
 	}
 
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D cellCenter;
 		adjustCoordToCell(parentCell->getXIndex(), parentCell->getYIndex(), centerInCell, cellCenter, parentCell->getLayer());
@@ -11696,7 +10773,6 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Object *victim, const Coord3D* victimPos, const Weapon *weapon )
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_ASTAR_EXPAND);
 	if (!m_isMapReady)
 		return nullptr; // Should always be ok.
 
@@ -11808,7 +10884,16 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	}
 
 	// initialize "open" list to contain start cell
-	beginOpenSearch(parentCell);
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
@@ -11828,13 +10913,11 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		checkLOS = true;
 	}
 
-	while (hasOpenCells())
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D cellCenter;
 		adjustCoordToCell(parentCell->getXIndex(), parentCell->getYIndex(), centerInCell, cellCenter, parentCell->getLayer());
@@ -12045,7 +11128,6 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotorSet,
 		const Coord3D *from, const Coord3D* repulsorPos1, const Coord3D* repulsorPos2, Real repulsorRadius)
 {
-	PerfTrace::ScopedPathTimer timer(getPerfTraceFrame(), PerfTrace::PATH_TIMER_ASTAR_EXPAND);
 	//CRCDEBUG_LOG(("Pathfinder::findSafePath()"));
 	if (m_isMapReady == false) return nullptr; // Should always be ok.
 #if defined(RTS_DEBUG)
@@ -12083,18 +11165,32 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	parentCell->startPathfind( nullptr);
 
 	// initialize "open" list to contain start cell
-	beginOpenSearch(parentCell);
+#if RETAIL_COMPATIBLE_PATHFINDING
+	if (!s_useFixedPathfinding) {
+		m_openList.reset(parentCell);
+	}
+	else
+#endif
+	{
+		m_openList.reset();
+		parentCell->putOnSortedOpenList(m_openList);
+	}
 
 	// "closed" list is initially empty
 	m_closedList.reset();
+
+	//
+	// Continue search until "open" list is empty, or
+	// until goal is found.
+	//
+
 	Real farthestDistanceSqr = 0;
-	while (hasOpenCells())
+
+	while( !m_openList.empty() )
 	{
 		// take head cell off of open list - it has lowest estimated total path cost
-		parentCell = popNextOpenCell();
-		if (!parentCell) {
-			break;
-		}
+		parentCell = m_openList.getHead();
+		parentCell->removeFromOpenList(m_openList);
 
 		Coord3D cellCenter;
 		adjustCoordToCell(parentCell->getXIndex(), parentCell->getYIndex(), centerInCell, cellCenter, parentCell->getLayer());
@@ -12113,7 +11209,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 		if (distSqr>repulsorDistSqr) {
 			ok = true;
 		}
-		if (!hasOpenCells() && cellCount>0) {
+		if (m_openList.empty() && cellCount>0) {
 			ok = true; // exhausted the search space, just take the last cell.
 		}
 		if (distSqr > farthestDistanceSqr) {

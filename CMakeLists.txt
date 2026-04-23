@@ -35,6 +35,7 @@ project(genzh LANGUAGES C CXX)
 
 # This file handles extra settings wanted/needed for different compilers.
 include(cmake/compilers.cmake)
+include(cmake/msvc-atl.cmake)
 
 # Debug symbol stripping for Release builds (MinGW)
 include(cmake/debug_strip.cmake)

@@ -106,6 +106,9 @@ protected:
 	void flagOccludedObjects(CameraClass * camera);
 	void flushOccludedObjectsIntoStencil(RenderInfoClass & rinfo);
 	void updatePlayerColorPasses();
+	void ensureVisibleRenderObjectCapacity(Int desiredCapacity);
+	void clearVisibleRenderObjectSnapshot();
+	void appendVisibleRenderObject(RenderObjClass *robj);
 
 protected:
 	RefRenderObjListClass	m_dynamicLightList;
@@ -116,6 +119,7 @@ protected:
 	LightClass						*m_infantryLight[LightEnvironmentClass::MAX_LIGHTS];	///< The global direction light modified to make infantry easier to see.
 	Int m_numGlobalLights;			///<number of global lights
 	LightEnvironmentClass	m_defaultLightEnv;		///<default light environment applied to objects without custom/dynamic lighting.
+	LightEnvironmentClass	m_defaultInfantryLightEnv;	///<default light environment for infantry when only global lights apply.
 	LightEnvironmentClass	m_foggedLightEnv;		///<default light environment applied to objects without custom/dynamic lighting.
 
 	W3DShroudMaterialPassClass	*m_shroudMaterialPass;	///< Custom render pass which applies shrouds to objects
@@ -134,6 +138,9 @@ protected:
 	Int m_numPotentialOccluders;
 	Int m_numPotentialOccludees;
 	Int m_numNonOccluderOrOccludee;
+	RenderObjClass **m_visibleRenderObjects;	///< main-pass render snapshot for the current scene pass.
+	Int m_visibleRenderObjectCount;
+	Int m_visibleRenderObjectCapacity;
 
 	CameraClass *m_camera;
 };

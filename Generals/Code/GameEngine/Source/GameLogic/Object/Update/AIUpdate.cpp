@@ -73,6 +73,11 @@
 
 #define SLEEPY_AI
 
+namespace
+{
+	const Int PATHFIND_QUEUE_RETRY_FRAMES = 2;
+}
+
 
 //-------------------------------------------------------------------------------------------------
 AIUpdateModuleData::AIUpdateModuleData()
@@ -507,7 +512,9 @@ void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 		}
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 
 }
 
@@ -530,7 +537,9 @@ void AIUpdateInterface::requestAttackPath( ObjectID victimID, const Coord3D* vic
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -553,7 +562,9 @@ void AIUpdateInterface::requestApproachPath( Coord3D *destination )
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -577,7 +588,9 @@ void AIUpdateInterface::requestSafePath( ObjectID repulsor )
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
-	TheAI->pathfinder()->queueForPath(getObject()->getID());
+	if (!TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+		setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+	}
 }
 
 enum {WAYPOINT_PATH_LIMIT=1024};
@@ -1060,8 +1073,11 @@ UpdateSleepTime AIUpdateInterface::update()
 	{
 		if (now >= m_queueForPathFrame)
 		{
-			TheAI->pathfinder()->queueForPath(getObject()->getID());
-			setQueueForPathTime(0);
+			if (TheAI->pathfinder()->queueForPath(getObject()->getID())) {
+				setQueueForPathTime(0);
+			} else {
+				setQueueForPathTime(PATHFIND_QUEUE_RETRY_FRAMES);
+			}
 		}
 		else
 		{

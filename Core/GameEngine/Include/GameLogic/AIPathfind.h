@@ -57,6 +57,18 @@ class PathfindCell;
 
 //----------------------------------------------------------------------------------------------------------
 
+constexpr const UnsignedInt PATHFIND_CELLS_PER_FRAME = 5000;
+constexpr const UnsignedInt PATHFIND_CELLS_PER_REQUEST_EXPLICIT = 2500;
+constexpr const UnsignedInt PATHFIND_CELLS_PER_REQUEST_LOW = 1500;
+constexpr const UnsignedInt CELL_INFOS_INITIAL = 30000;
+constexpr const UnsignedInt CELL_INFOS_ARENA_BLOCK = 8192;
+constexpr const UnsignedInt PATHFIND_QUEUE_LEN = 512;
+constexpr const UnsignedInt PATHFIND_REPATH_CONGESTION_THRESHOLD = 96;
+constexpr const UnsignedInt PATHFIND_REPATH_COOLDOWN_PATCH_FRAMES = 2;
+constexpr const UnsignedInt PATHFIND_REPATH_COOLDOWN_SAFE_FRAMES = 3;
+
+//----------------------------------------------------------------------------------------------------------
+
 /**
  * PathNodes are used to create a final Path to return from the
  * pathfinder.  Note that these are not used during the A* search.
@@ -208,6 +220,8 @@ enum {MAX_WALL_PIECES = 128};
 class PathfindCellInfo
 {
 	friend class PathfindCell;
+	friend class PathfindCellInfoArena;
+	friend class Pathfinder;
 public:
 #if RETAIL_COMPATIBLE_PATHFINDING
 	static void forceCleanPathFindCellInfos();
@@ -217,6 +231,11 @@ public:
 
 	static PathfindCellInfo * getACellInfo(PathfindCell *cell, const ICoord2D &pos);
 	static void releaseACellInfo(PathfindCellInfo *theInfo);
+
+	static Int getCellInfoPeakLive();
+	static Int getCellInfoLiveCount();
+	static Int getCellInfoAllocFailures();
+	static Int getCellInfoPoolCapacity();
 
 protected:
 	static PathfindCellInfo *s_infoArray;
@@ -229,6 +248,7 @@ protected:
 	PathfindCell *m_cell;															///< Cell this info belongs to currently.
 
 	UnsignedShort m_totalCost, m_costSoFar;	///< cost estimates for A* search
+	UnsignedInt m_openInsertOrder;										///< Stable heap tie-break to preserve deterministic insertion order.
 
 	/// have to include cell's coordinates, since cells are often accessed via pointer only
 	ICoord2D m_pos;
@@ -248,21 +268,66 @@ protected:
 	UnsignedInt m_closed:1;												///< place for marking this cell as on the closed list
 };
 
+class PathfindCellHeap
+{
+public:
+	PathfindCellHeap();
+	~PathfindCellHeap();
+	void reset();
+	Bool empty() const { return m_size == 0; }
+	Int size() const { return m_size; }
+	void push(PathfindCell *cell);
+	PathfindCell *pop();
+	void clear();
+	static const Int INITIAL_CAPACITY = 4096;
+private:
+	void grow();
+	Int m_capacity;
+	Int m_size;
+	PathfindCell **m_data;
+};
+
+class PathfindCellInfoArena
+{
+public:
+	PathfindCellInfoArena();
+	~PathfindCellInfoArena();
+	void init();
+	void reset();
+	PathfindCellInfo *alloc(PathfindCell *cell, const ICoord2D &pos);
+	void free(PathfindCellInfo *info);
+	Int getPeakLive() const { return m_peakLive; }
+	Int getLiveCount() const { return m_liveCount; }
+	Int getAllocFailures() const { return m_allocFailures; }
+	Int getPoolCapacity() const { return m_totalCapacity; }
+private:
+	struct Block { PathfindCellInfo *data; Int count; };
+	Block *m_blocks;
+	Int m_blockCount;
+	Int m_blockCapacity;
+	PathfindCellInfo *m_firstFree;
+	Int m_liveCount;
+	Int m_peakLive;
+	Int m_allocFailures;
+	Int m_totalCapacity;
+};
+
 // TheSuperHackers @info The PathfindCellList class acts as a new management class for the pathfindcell open and closed lists
 class PathfindCellList
 {
 	friend class PathfindCell;
 
 public:
-	PathfindCellList() : m_head(nullptr), m_tail(nullptr) {}
+	PathfindCellList() : m_head(nullptr), m_tail(nullptr), m_count(0) {}
 
 #if RETAIL_COMPATIBLE_PATHFINDING
-	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; m_tail = nullptr; }
+	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; m_tail = newHead; m_count = newHead ? 1 : 0; }
 #else
-	void reset() { m_head = nullptr; m_tail = nullptr; }
+	void reset() { m_head = nullptr; m_tail = nullptr; m_count = 0; }
 #endif
 
 	PathfindCell* getHead() const { return m_head; }
+	Int size() const { return m_count; }
 
 	Bool empty() const { return m_head == nullptr; }
 
@@ -271,6 +336,7 @@ public:
 private:
 	PathfindCell* m_head;
 	PathfindCell* m_tail;
+	Int m_count;
 };
 
 /**
@@ -281,6 +347,7 @@ private:
  */
 class PathfindCell
 {
+	friend class Pathfinder;
 public:
 
 	enum CellType
@@ -375,6 +442,7 @@ public:
 	inline Bool getClosed() const {return m_info->m_closed;}
 	inline UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
 	inline UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
+	inline UnsignedInt getOpenInsertOrder() const { return m_info ? m_info->m_openInsertOrder : 0; }
 
 	inline UnsignedInt getTotalCostDifference(PathfindCell& other) const;
 
@@ -490,8 +558,6 @@ private:
 
 #define PATHFIND_CELL_SIZE		10
 #define PATHFIND_CELL_SIZE_F	10.0f
-
-enum { PATHFIND_QUEUE_LEN=512};
 
 struct TCheckMovementInfo;
 
@@ -639,6 +705,8 @@ public:
  */
 class Pathfinder : PathfindServicesInterface, public Snapshot
 {
+	friend class PathfindCell;
+
 // The following routines are private, but available through the doPathfind callback to aiInterface. jba.
 private:
 	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to) override;	///< Find a short, valid path between given locations
@@ -776,6 +844,12 @@ public:
 	void removeWallPiece(Object *wallPiece);  // Removes a wall piece.
 	Real getWallHeight() {return m_wallHeight;}
 	Bool isPointOnWall(const Coord3D *pos);
+	Int getQueuedPathRequestCount() const;
+	void getQueueAgeMetrics(UnsignedInt currentFrame, Int &oldestAll, Int &oldestExplicit) const;
+	void getGridMetrics(Int &mapCellsX, Int &mapCellsY, Int &mapCellsTotal,
+		Int &logicalCellsX, Int &logicalCellsY, Int &logicalCellsTotal,
+		Int &zoneBlockCountX, Int &zoneBlockCountY, Int &zoneBlockCountTotal) const;
+	void computeFootprintMetrics(const Object *obj, Int &sideCells, Int &areaCells, Int &radius, Bool &center);
 
 	void updateLayer(Object *obj, PathfindLayerEnum layer); ///< Updates object's layer.
 
@@ -818,6 +892,8 @@ protected:
 	Int checkPathCost(Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
 		const Coord3D *to);
 
+	static Bool isHighPriorityRequestClass(UnsignedByte requestClassByte);
+
 	void tightenPath(Object *obj, const LocomotorSet& locomotorSet, Coord3D *from,
 		const Coord3D *to);
 
@@ -855,6 +931,8 @@ protected:
 	void classifyUnitFootprint( Object *obj, Bool insert, Bool remove, Bool update );	/** Classify the cells under the given object If 'insert' is true, object is being added */
 	/// Convert world coordinate to array index
 	void worldToGrid( const Coord3D *pos, ICoord2D *cellIndex );
+	void clearQueuedRequestSlot(Int slot);
+	void removeQueuedRequestAt(Int slot);
 
 	Bool evaluateCell(PathfindCell* newCell, PathfindCell *parentCell,
 									const LocomotorSet& locomotorSet,
@@ -869,6 +947,9 @@ protected:
 
 	void  prependCells( Path *path, const Coord3D *fromPos,
 																	PathfindCell *goalCell, Bool center ); ///< Add pathfind cells to a path.
+	void beginOpenSearch(PathfindCell *startCell);
+	Bool hasOpenCells() const;
+	PathfindCell *popNextOpenCell();
 
 	void debugShowSearch( Bool pathFound );				///< Show all cells touched in the last search
 	static LocomotorSurfaceTypeMask validLocomotorSurfacesForCellType(PathfindCell::CellType t);
@@ -888,11 +969,13 @@ private:
 	IRegion2D m_extent;														///< Grid extent limits
 	IRegion2D m_logicalExtent;										///< Logical grid extent limits
 
-	PathfindCellList m_openList;									///< Cells ready to be explored
-	PathfindCellList m_closedList;								///< Cells already explored
+	PathfindCellList m_openList;
+	PathfindCellHeap m_openHeap;
+	PathfindCellList m_closedList;
+	Bool m_useHeapOpenList;
 
-	Bool m_isMapReady;														///< True if all cells of map have been classified
-	Bool m_isTunneling;														///< True if path started in an obstacle
+	Bool m_isMapReady;
+	Bool m_isTunneling;
 
 	Int m_frameToShowObstacles;										///< Time to redraw obstacles.  For debug output.
 
@@ -914,9 +997,24 @@ private:
 
 	// Pathfind queue
 	ObjectID			m_queuedPathfindRequests[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_queuedRequestFrames[PATHFIND_QUEUE_LEN];
+	UnsignedByte m_queuedRequestClasses[PATHFIND_QUEUE_LEN];
+	Coord3D			m_queuedRequestDestinations[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_queuedRequestGoalFingerprints[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_queuedRequestLocomotorFingerprints[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_queuedRequestSequences[PATHFIND_QUEUE_LEN];
 	Int						m_queuePRHead;
 	Int						m_queuePRTail;
 	Int						m_cumulativeCellsAllocated;
+	Int						m_requestCellBudget;
+	ObjectID			m_recentlyServicedRequestIDs[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_recentlyServicedRequestFrames[PATHFIND_QUEUE_LEN];
+	UnsignedByte m_recentlyServicedRequestClasses[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_recentlyServicedGoalFingerprints[PATHFIND_QUEUE_LEN];
+	UnsignedInt	m_recentlyServicedCooldownUntilFrames[PATHFIND_QUEUE_LEN];
+	Int						m_recentlyServicedCursor;
+	UnsignedInt	m_nextQueuedRequestSequence;
+	UnsignedInt	m_nextOpenInsertOrder;
 
 #if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 public:

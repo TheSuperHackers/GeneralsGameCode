@@ -49,6 +49,7 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
+#include "Common/PerfTrace.h"
 #include "Common/RandomValue.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/ModuleFactory.h"
@@ -946,6 +947,9 @@ void GameEngine::execute()
 	// pretty basic for now
 	while( !m_quitting )
 	{
+		const DWORD frameStartMS = timeGetTime();
+		PerfTrace::BeginEngineFrame();
+		Bool logicUpdated = FALSE;
 
 		//if (TheGlobalData->m_vTune)
 		{
@@ -983,6 +987,7 @@ void GameEngine::execute()
 				{
 					// compute a frame
 					update();
+					logicUpdated = TheGameLogic != nullptr && TheGameLogic->hasUpdated();
 				}
 				catch (INIException e)
 				{
@@ -1007,6 +1012,8 @@ void GameEngine::execute()
 				}
 			}
 
+			const double frameMS = static_cast<double>(timeGetTime() - frameStartMS);
+			PerfTrace::EndEngineFrame(logicUpdated, frameMS);
 			TheFramePacer->update();
 		}
 
@@ -1020,6 +1027,8 @@ void GameEngine::execute()
 #endif
 
 	}
+
+	PerfTrace::Shutdown();
 }
 
 /** -----------------------------------------------------------------------------------------------

@@ -27,6 +27,7 @@
 // Author: Michael S. Booth, January 2002
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <algorithm>
 
 #include "Common/ActionManager.h"
 #include "Common/BuildAssistant.h"
@@ -55,6 +56,287 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
+
+namespace
+{
+const Int PHASE3_MIN_SPREAD_UNITS = 6;
+const Real PHASE3_MIN_SPREAD_OFFSET = PATHFIND_CELL_SIZE_F * 0.75f;
+const Int MASS_COMMAND_STAGGER_THRESHOLD = 128;
+const Int MASS_COMMAND_COHORT_SIZE = 96;
+const Int MASS_COMMAND_MAX_DELAY_FRAMES = 48;
+
+struct Phase3SpreadCandidate
+{
+	Object *object;
+	AIUpdateInterface *ai;
+	Real radius;
+	Real lateral;
+	Real forward;
+	ObjectID id;
+};
+
+static Bool comparePhase3SpreadCandidate(const Phase3SpreadCandidate &lhs, const Phase3SpreadCandidate &rhs)
+{
+	if (lhs.radius > rhs.radius + 0.1f)
+	{
+		return true;
+	}
+	if (lhs.radius + 0.1f < rhs.radius)
+	{
+		return false;
+	}
+	if (lhs.forward > rhs.forward + PATHFIND_CELL_SIZE_F)
+	{
+		return true;
+	}
+	if (lhs.forward + PATHFIND_CELL_SIZE_F < rhs.forward)
+	{
+		return false;
+	}
+	if (lhs.lateral < rhs.lateral - PATHFIND_CELL_SIZE_F)
+	{
+		return true;
+	}
+	if (lhs.lateral > rhs.lateral + PATHFIND_CELL_SIZE_F)
+	{
+		return false;
+	}
+	return lhs.id < rhs.id;
+}
+
+static void computePhase3MoveAxes(const Coord3D &center, const Coord3D &goal, Coord2D &forward, Coord2D &right)
+{
+	forward.x = goal.x - center.x;
+	forward.y = goal.y - center.y;
+	if (forward.lengthSqr() < sqr(PATHFIND_CELL_SIZE_F))
+	{
+		forward.x = 0.0f;
+		forward.y = 1.0f;
+	}
+	else
+	{
+		forward.normalize();
+	}
+
+	right.x = -forward.y;
+	right.y = forward.x;
+}
+
+static void clearGeneratedFormationOffsets(const std::list<Object *> &memberList)
+{
+	for (std::list<Object *>::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		Object *obj = *it;
+		if (obj == nullptr || obj->getFormationID() != NO_FORMATION_ID)
+		{
+			continue;
+		}
+
+		Coord2D offset;
+		offset.x = 0.0f;
+		offset.y = 0.0f;
+		obj->setFormationOffset(offset);
+	}
+}
+
+static Int assignPhase3SpreadOffsets(const std::list<Object *> &memberList, const Coord3D &center, const Coord3D &goal)
+{
+	std::vector<Phase3SpreadCandidate> candidates;
+	candidates.reserve(memberList.size());
+
+	Coord2D forward;
+	Coord2D right;
+	computePhase3MoveAxes(center, goal, forward, right);
+
+	Real radiusSum = 0.0f;
+	Real maxRadius = PATHFIND_CELL_SIZE_F * 0.5f;
+
+	for (std::list<Object *>::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		Object *obj = *it;
+		if (obj == nullptr || obj->isDisabledByType(DISABLED_HELD) || obj->isKindOf(KINDOF_IMMOBILE))
+		{
+			continue;
+		}
+
+		AIUpdateInterface *ai = obj->getAIUpdateInterface();
+		if (ai == nullptr)
+		{
+			continue;
+		}
+
+		Phase3SpreadCandidate candidate;
+		candidate.object = obj;
+		candidate.ai = ai;
+		candidate.radius = MAX(obj->getGeometryInfo().getBoundingCircleRadius(), PATHFIND_CELL_SIZE_F * 0.5f);
+		const Coord3D *pos = obj->getPosition();
+		const Real dx = pos->x - center.x;
+		const Real dy = pos->y - center.y;
+		candidate.lateral = dx * right.x + dy * right.y;
+		candidate.forward = dx * forward.x + dy * forward.y;
+		candidate.id = obj->getID();
+		candidates.push_back(candidate);
+		radiusSum += candidate.radius;
+		maxRadius = MAX(maxRadius, candidate.radius);
+	}
+
+	if (static_cast<Int>(candidates.size()) < PHASE3_MIN_SPREAD_UNITS)
+	{
+		clearGeneratedFormationOffsets(memberList);
+		return 0;
+	}
+
+	std::sort(candidates.begin(), candidates.end(), comparePhase3SpreadCandidate);
+
+	const Real averageRadius = radiusSum / candidates.size();
+	Real laneSpacing = MAX(PATHFIND_CELL_SIZE_F * 1.75f, averageRadius * 2.35f);
+	laneSpacing = MAX(laneSpacing, maxRadius * 1.7f);
+	Real rowSpacing = MAX(PATHFIND_CELL_SIZE_F * 1.75f, averageRadius * 2.15f);
+	rowSpacing = MAX(rowSpacing, maxRadius * 1.85f);
+
+	Int columns = 1;
+	while (columns * columns < static_cast<Int>(candidates.size()))
+	{
+		++columns;
+	}
+	columns = MAX(3, MIN(columns, 8));
+
+	for (Int index = 0; index < static_cast<Int>(candidates.size()); ++index)
+	{
+		const Int row = index / columns;
+		const Int column = index % columns;
+		Int laneIndex = 0;
+		if (column > 0)
+		{
+			const Int lane = (column + 1) / 2;
+			laneIndex = (column & 1) ? lane : -lane;
+		}
+
+		const Real sizeBias = MAX(0.0f, candidates[index].radius - averageRadius) * 0.35f;
+		const Real forwardOffset = -(row * rowSpacing + sizeBias);
+		const Real lateralOffset = laneIndex * laneSpacing;
+
+		Coord2D offset;
+		offset.x = forward.x * forwardOffset + right.x * lateralOffset;
+		offset.y = forward.y * forwardOffset + right.y * lateralOffset;
+		candidates[index].object->setFormationOffset(offset);
+	}
+
+	return static_cast<Int>(candidates.size());
+}
+
+static Bool shouldUsePhase3Spread(const std::list<Object *> &memberList, Bool addWaypoint, Bool isFormation)
+{
+	if (addWaypoint || isFormation)
+	{
+		return false;
+	}
+
+	Int movableCount = 0;
+	for (std::list<Object *>::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		Object *obj = *it;
+		if (obj == nullptr || obj->isDisabledByType(DISABLED_HELD) || obj->isKindOf(KINDOF_IMMOBILE))
+		{
+			continue;
+		}
+
+		if (obj->getAIUpdateInterface() != nullptr)
+		{
+			++movableCount;
+			if (movableCount >= PHASE3_MIN_SPREAD_UNITS)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+static Bool isMassCommandPathCandidate(Object *obj, AIUpdateInterface *ai)
+{
+	if (obj == nullptr || ai == nullptr)
+	{
+		return false;
+	}
+	if (obj->isDisabledByType(DISABLED_HELD) || obj->isKindOf(KINDOF_IMMOBILE))
+	{
+		return false;
+	}
+	return ai->isDoingGroundMovement();
+}
+
+static Int countMassCommandPathCandidates(const std::list<Object *> &memberList)
+{
+	Int count = 0;
+	for (std::list<Object *>::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
+	{
+		Object *obj = *it;
+		AIUpdateInterface *ai = obj ? obj->getAIUpdateInterface() : nullptr;
+		if (isMassCommandPathCandidate(obj, ai))
+		{
+			++count;
+		}
+	}
+	return count;
+}
+
+static Int computeMassCommandPathDelayFrames(Int totalCandidates, Int scheduledIndex, AIUpdateInterface *ai)
+{
+	if (totalCandidates < MASS_COMMAND_STAGGER_THRESHOLD || ai == nullptr || !ai->isDoingGroundMovement())
+	{
+		return 0;
+	}
+	if (ai->isBlockedAndStuck() || ai->isWaitingForPath())
+	{
+		return 0;
+	}
+
+	Int delayFrames = scheduledIndex / MASS_COMMAND_COHORT_SIZE;
+	if (delayFrames > MASS_COMMAND_MAX_DELAY_FRAMES)
+	{
+		delayFrames = MASS_COMMAND_MAX_DELAY_FRAMES;
+	}
+	return delayFrames;
+}
+
+static void applyMassCommandPathDelay(AIUpdateInterface *ai, Int totalCandidates, Int &scheduledIndex)
+{
+	if (ai == nullptr || !ai->isDoingGroundMovement())
+	{
+		return;
+	}
+
+	ai->setQueueForPathTime(computeMassCommandPathDelayFrames(totalCandidates, scheduledIndex, ai));
+	++scheduledIndex;
+}
+
+static void computeFormationOffsetDestination(
+	Coord3D *dest,
+	const Coord3D *groupDest,
+	Object *obj,
+	AIUpdateInterface *ai,
+	Bool updateGoal)
+{
+	Coord2D offset;
+	obj->getFormationOffset(&offset);
+
+	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(groupDest);
+	dest->x = groupDest->x + offset.x;
+	dest->y = groupDest->y + offset.y;
+	dest->z = TheTerrainLogic->getLayerHeight(dest->x, dest->y, layer);
+
+	if (ai != nullptr && ai->isDoingGroundMovement())
+	{
+		TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), dest, groupDest);
+		if (updateGoal)
+		{
+			TheAI->pathfinder()->updateGoal(obj, dest, LAYER_GROUND);
+		}
+	}
+}
+}
 
 
 /**
@@ -1076,6 +1358,9 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 	Real dx, dy;
 	Coord3D center;
 	if (!getCenter( &center )) return;
+	const Int totalMassCommandCandidates =
+		(cmdSource == CMD_FROM_PLAYER) ? countMassCommandPathCandidates(m_memberList) : 0;
+	Int scheduledMassCommandCandidates = 0;
 
 
 	PathNode *startNode = nullptr;
@@ -1142,6 +1427,14 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 			theUnit->setFormationOffset(offset);
 		}
 		theUnit->getFormationOffset(&offset);
+		if (!ai->isDoingGroundMovement())
+		{
+			Coord3D dest;
+			computeFormationOffsetDestination(&dest, &endPoint, theUnit, ai, false);
+			ai->aiMoveToPosition(&dest, cmdSource);
+			continue;
+		}
+
 		if (startNode) {
 			std::vector<Coord3D> path;
 			PathNode *node = startNode;
@@ -1159,14 +1452,14 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 			dest.x += offset.x;
 			dest.y += offset.y;
 
-			TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, nullptr);
+			TheAI->pathfinder()->adjustDestination(theUnit, ai->getLocomotorSet(), &dest, &endPoint);
 			TheAI->pathfinder()->updateGoal(theUnit, &dest, LAYER_GROUND);
 			path.push_back(dest);
 			ai->aiFollowPath( &path, nullptr, cmdSource );
 		}	else {
-			Coord3D dest = endPoint;
-			dest.x += offset.x;
-			dest.y += offset.y;
+			Coord3D dest;
+			computeFormationOffsetDestination(&dest, &endPoint, theUnit, ai, true);
+			applyMassCommandPathDelay(ai, totalMassCommandCandidates, scheduledMassCommandCandidates);
 			ai->aiMoveToPosition( &dest, cmdSource );
 		}
 
@@ -1602,19 +1895,16 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 	Coord2D max;
 	Coord3D dest;
 	Bool tightenGroup = FALSE;
+	Bool usePhase3Spread = FALSE;
+	const Int totalMassCommandCandidates =
+		(cmdSource == CMD_FROM_PLAYER) ? countMassCommandPathCandidates(m_memberList) : 0;
+	Int scheduledMassCommandCandidates = 0;
 
 	Bool isFormation = getMinMaxAndCenter( &min, &max, &center );
 	if (addWaypoint)
   {
     isFormation = false;
   }
-
-
-	if (!addWaypoint && !isFormation) {
-		friend_computeGroundPath(pos, cmdSource);
-		didInfantry = friend_moveInfantryToPos(pos, cmdSource);
-		didVehicles = friend_moveVehicleToPos(pos, cmdSource);
-	}
 	if (m_dirty)
 		recompute();
 
@@ -1660,6 +1950,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 
 	if (tightenGroup)
 	{
+		clearGeneratedFormationOffsets(m_memberList);
 		isFormation = false;
 		if (!addWaypoint) {
 			Int dx = (max.x-min.x)/PATHFIND_CELL_SIZE_F;
@@ -1676,6 +1967,21 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 		friend_computeGroundPath(pos, cmdSource);
 		friend_moveFormationToPos(pos, cmdSource);
 		return;
+	}
+
+	usePhase3Spread = shouldUsePhase3Spread(m_memberList, addWaypoint, isFormation);
+	if (usePhase3Spread)
+	{
+		assignPhase3SpreadOffsets(m_memberList, center, position);
+		friend_computeGroundPath(pos, cmdSource);
+		friend_moveFormationToPos(pos, cmdSource);
+		return;
+	}
+	clearGeneratedFormationOffsets(m_memberList);
+	if (!addWaypoint && !isFormation) {
+		friend_computeGroundPath(pos, cmdSource);
+		didInfantry = friend_moveInfantryToPos(pos, cmdSource);
+		didVehicles = friend_moveVehicleToPos(pos, cmdSource);
 	}
 
 	// Move.
@@ -1782,6 +2088,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 
 		if( !addWaypoint )
 		{
+			applyMassCommandPathDelay(ai, totalMassCommandCandidates, scheduledMassCommandCandidates);
 			ai->aiMoveToPosition( &dest, cmdSource );
 		}
 		else
@@ -2326,16 +2633,51 @@ void AIGroup::groupAttackPosition( const Coord3D *pos, Int maxShotsToFire, Comma
  */
 void AIGroup::groupAttackMoveToPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 {
+	if (pos == nullptr)
+	{
+		return;
+	}
+
+	Coord3D center;
+	Coord2D min;
+	Coord2D max;
+	Coord3D attackPos = *pos;
+	const Int totalMassCommandCandidates =
+		(cmdSource == CMD_FROM_PLAYER) ? countMassCommandPathCandidates(m_memberList) : 0;
+	Int scheduledMassCommandCandidates = 0;
+	Bool isFormation = getMinMaxAndCenter(&min, &max, &center);
+	const Bool usePhase3Spread = shouldUsePhase3Spread(m_memberList, false, isFormation);
+
+	if (isFormation)
+	{
+		// Preserve explicit player formations on attack-move as well.
+	}
+	else if (usePhase3Spread)
+	{
+		assignPhase3SpreadOffsets(m_memberList, center, attackPos);
+	}
+	else
+	{
+		clearGeneratedFormationOffsets(m_memberList);
+	}
+
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
 		AIUpdateInterface *ai = (*i)->getAIUpdateInterface();
 		if (ai)
 		{
+			Coord3D unitDest = attackPos;
+			if (isFormation || usePhase3Spread)
+			{
+				computeFormationOffsetDestination(&unitDest, &attackPos, *i, ai, true);
+			}
+
+			applyMassCommandPathDelay(ai, totalMassCommandCandidates, scheduledMassCommandCandidates);
 			if ((*i)->isAbleToAttack())
-				ai->aiAttackMoveToPosition( pos, maxShotsToFire, cmdSource );
+				ai->aiAttackMoveToPosition( &unitDest, maxShotsToFire, cmdSource );
 			else
-				ai->aiMoveToPosition( pos, cmdSource );
+				ai->aiMoveToPosition( &unitDest, cmdSource );
 		}
 	}
 }
