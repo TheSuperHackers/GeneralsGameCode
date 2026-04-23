@@ -384,8 +384,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 			// ------------------------------------------------------------------------
 			case WM_CLOSE:
-				// TheSuperHackers @feature Both Alt F4 and Window Close show the quit menu in a match before allowing the quit
-				// A disconnect is logged for both methods
+				// TheSuperHackers @feature Intercept Alt+F4/Close to show the quit menu in-game. 
+				// Repeating the command when the menu is visible triggers a Self-Destruct followed by a sequenced quit.
+				// If not in a match (e.g. main menu), the command instantly closes the application.
 				if (TheGameEngine && !TheGameEngine->getQuitting())
 				{
 					if (TheMessageStream && TheMessageStream->canAddMessage())
