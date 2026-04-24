@@ -66,7 +66,6 @@
 #include "GeneratedVersion.h"
 #include "resource.h"
 
-#include <rts/profile.h>
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
