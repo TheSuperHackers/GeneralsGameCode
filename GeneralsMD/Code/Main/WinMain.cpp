@@ -297,7 +297,6 @@ static const char *messageToString(unsigned int message)
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 													WPARAM wParam, LPARAM lParam )
 {
-	static Bool isAltF4 = FALSE;
 
 	try
 	{
@@ -354,11 +353,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_SYSCOMMAND:
 				// Prevent moving/sizing and power loss in fullscreen mode
-				if ((wParam & 0xFFF0) == SC_CLOSE)
-				{
-					isAltF4 = (GetKeyState(VK_MENU) < 0) && (GetKeyState(VK_F4) < 0);
-				}
-
 				switch( wParam & 0xFFF0 )
 				{
 					case SC_KEYMENU:
@@ -378,8 +372,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			{
 				if (TheMessageStream && TheMessageStream->canAddMessage())
 				{
-					GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
-					msg->appendBooleanArgument(TRUE); // Force quit on Windows shutdown
+					TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
 				}
 				else if (TheGameEngine)
 				{
@@ -397,15 +390,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				{
 					if (TheMessageStream && TheMessageStream->canAddMessage())
 					{
-						GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
-						msg->appendBooleanArgument(isAltF4);
+						TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
 					}
 					else
 					{
 						TheGameEngine->setQuitting(TRUE);
 					}
 				}
-				isAltF4 = FALSE;
 				return 0;
 
 			//-------------------------------------------------------------------------
