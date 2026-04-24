@@ -6072,9 +6072,7 @@ void Pathfinder::processPathfindQueue()
 	m_logicalExtent = bounds;
 
 	m_cumulativeCellsAllocated = 0;	// Number of pathfind cells examined.
-#ifdef DEBUG_QPF
 	Int pathsFound = 0;
-#endif
 	while (m_cumulativeCellsAllocated < PATHFIND_CELLS_PER_FRAME &&
 		m_queuePRTail!=m_queuePRHead) {
 		Object *obj = TheGameLogic->findObjectByID(m_queuedPathfindRequests[m_queuePRHead]);
@@ -6083,15 +6081,17 @@ void Pathfinder::processPathfindQueue()
 			AIUpdateInterface *ai = obj->getAIUpdateInterface();
 			if (ai) {
 				ai->doPathfind(this);
-#ifdef DEBUG_QPF
 				pathsFound++;
-#endif
 			}
 		}
 		m_queuePRHead = m_queuePRHead+1;
 		if (m_queuePRHead >= PATHFIND_QUEUE_LEN) {
 			m_queuePRHead = 0;
 		}
+	}
+	if (pathsFound > 0) {
+		PROFILER_PLOT("PathfindCells", (double)m_cumulativeCellsAllocated);
+		PROFILER_PLOT("PathfindPaths", (double)pathsFound);
 	}
 #ifdef DEBUG_QPF
 	if (pathsFound>0) {

@@ -3160,6 +3160,8 @@ void GameLogic::update()
 	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
+	PROFILER_PLOT("LogicFrame", static_cast<int64_t>(now));
+
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
