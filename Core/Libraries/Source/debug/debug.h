@@ -81,7 +81,7 @@
 */
 
 // Define which libraries to use.
-#if defined(RTS_DEBUG) || defined(RTS_PROFILE)
+#if defined(RTS_DEBUG) || defined(RTS_PROFILE_LEGACY)
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #endif
@@ -90,7 +90,7 @@
 #  define HAS_OPT
 #endif
 
-#if defined(RTS_PROFILE)
+#if defined(RTS_PROFILE_LEGACY)
 #  define HAS_PROFILE
 #endif
 

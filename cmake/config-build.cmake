@@ -73,5 +73,5 @@ else()
 endif()
 
 if(RTS_BUILD_OPTION_PROFILE)
-    target_compile_definitions(core_config INTERFACE RTS_PROFILE)
+    target_compile_definitions(core_config INTERFACE RTS_PROFILE_LEGACY)
 endif()
