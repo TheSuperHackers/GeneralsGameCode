@@ -70,6 +70,7 @@ static void drawFramerateBar();
 #include "W3DDevice/GameClient/W3DGameClient.h"
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
+#include "W3DDevice/GameClient/W3DProfilerFrameCapture.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DScene.h"
@@ -358,6 +359,10 @@ W3DDisplay::W3DDisplay()
 	m_batchMode = DRAW_IMAGE_ALPHA;
 	m_batchGrayscale = FALSE;
 	m_batchNeedsInit = FALSE;
+
+#ifdef PROFILER_ENABLED
+	m_profilerFrameCapture = NEW W3DProfilerFrameCapture();
+#endif
 }
 
 // W3DDisplay::~W3DDisplay ====================================================
@@ -365,6 +370,10 @@ W3DDisplay::W3DDisplay()
 //=============================================================================
 W3DDisplay::~W3DDisplay()
 {
+#ifdef PROFILER_ENABLED
+	delete m_profilerFrameCapture;
+	m_profilerFrameCapture = nullptr;
+#endif
 
 	// get rid of the debug display
 	delete m_debugDisplay;
@@ -1967,6 +1976,13 @@ AGAIN:
 #ifdef PERF_TIMERS
 				TheGraphDraw->render();
 				TheGraphDraw->clear();
+#endif
+
+#ifdef PROFILER_ENABLED
+				if (m_profilerFrameCapture && !TheGlobalData->m_headless)
+				{
+					m_profilerFrameCapture->Capture(getWidth(), getHeight());
+				}
 #endif
 				// render is all done!
 				WW3D::End_Render();

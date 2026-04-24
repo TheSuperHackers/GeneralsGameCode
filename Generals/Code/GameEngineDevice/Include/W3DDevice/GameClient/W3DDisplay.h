@@ -35,6 +35,7 @@
 
 #include "GameClient/Display.h"
 #include "WW3D2/lightenvironment.h"
+#include "W3DDevice/GameClient/W3DProfilerFrameCapture.h"
 
 class VideoBuffer;
 class W3DDebugDisplay;
@@ -181,6 +182,10 @@ protected:
 
 #if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;
+#endif
+
+#ifdef PROFILER_ENABLED
+	W3DProfilerFrameCapture *m_profilerFrameCapture;
 #endif
 
 	enum
