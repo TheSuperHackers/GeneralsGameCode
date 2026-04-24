@@ -117,20 +117,43 @@ static void normAngle(Real &angle)
 	angle = WWMath::Normalize_Angle(angle);
 }
 
-#define TERRAIN_SAMPLE_SIZE 40.0f
-static Real getHeightAroundPos(Real x, Real y)
+
+Real W3DView::getHeightAroundPos(Real x, Real y, Real terrainSampleSize) const
 {
-	// terrain height + desired height offset == cameraOffset * actual zoom
 	Real terrainHeight = TheTerrainLogic->getGroundHeight(x, y);
 
-	// find best approximation of max terrain height we can see
-	Real terrainHeightMax = terrainHeight;
-	terrainHeightMax = max(terrainHeightMax, TheTerrainLogic->getGroundHeight(x+TERRAIN_SAMPLE_SIZE, y-TERRAIN_SAMPLE_SIZE));
-	terrainHeightMax = max(terrainHeightMax, TheTerrainLogic->getGroundHeight(x-TERRAIN_SAMPLE_SIZE, y-TERRAIN_SAMPLE_SIZE));
-	terrainHeightMax = max(terrainHeightMax, TheTerrainLogic->getGroundHeight(x+TERRAIN_SAMPLE_SIZE, y+TERRAIN_SAMPLE_SIZE));
-	terrainHeightMax = max(terrainHeightMax, TheTerrainLogic->getGroundHeight(x-TERRAIN_SAMPLE_SIZE, y+TERRAIN_SAMPLE_SIZE));
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	// TheSuperHackers @info xezon 06/12/2025 To preserve the exact look of the original scripted camera
+	// it is not possible to change the terrain height sampling method during cinematic scenes.
+	const Bool useSmoothTerrainSample = m_isUserControlled;
+#else
+	const Bool useSmoothTerrainSample = true;
+#endif
+	if (useSmoothTerrainSample)
+	{
+		// TheSuperHackers @tweak Now finds approximation of average terrain height instead of maximum terrain height.
+		// 4 additional sample points around the center point will be averaged.
+		//      (-s)      
+		//                
+		// (-s)   0    (s)
+		//                
+		//       (s)      
+		terrainHeight += TheTerrainLogic->getGroundHeight(x+terrainSampleSize, y-terrainSampleSize);
+		terrainHeight += TheTerrainLogic->getGroundHeight(x-terrainSampleSize, y-terrainSampleSize);
+		terrainHeight += TheTerrainLogic->getGroundHeight(x+terrainSampleSize, y+terrainSampleSize);
+		terrainHeight += TheTerrainLogic->getGroundHeight(x-terrainSampleSize, y+terrainSampleSize);
+		terrainHeight /= 5;
+	}
+	else
+	{
+		// find best approximation of max terrain height we can see
+		terrainHeight = max(terrainHeight, TheTerrainLogic->getGroundHeight(x+terrainSampleSize, y-terrainSampleSize));
+		terrainHeight = max(terrainHeight, TheTerrainLogic->getGroundHeight(x-terrainSampleSize, y-terrainSampleSize));
+		terrainHeight = max(terrainHeight, TheTerrainLogic->getGroundHeight(x+terrainSampleSize, y+terrainSampleSize));
+		terrainHeight = max(terrainHeight, TheTerrainLogic->getGroundHeight(x-terrainSampleSize, y+terrainSampleSize));
+	}
 
-	return terrainHeightMax;
+	return terrainHeight;
 }
 
 
@@ -1900,6 +1923,8 @@ void W3DView::draw()
 #if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugCamera )
 	{
+		constexpr const Real TERRAIN_SAMPLE_SIZE = 40.0f;
+
 		UnsignedInt c = 0xaaffffff;
 		Coord3D worldPos = getPosition();
 		worldPos.z = TheTerrainLogic->getGroundHeight(worldPos.x, worldPos.y);

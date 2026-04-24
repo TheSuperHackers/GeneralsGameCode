@@ -292,6 +292,7 @@ private:
 	Bool m_recalcCameraConstraintsAfterScrolling; ///< Recalculates the camera area constraints after the user has moved the camera
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
+	Real getHeightAroundPos(Real x, Real y, Real terrainSampleSize = 40.0f) const;
 	Real getCameraOffsetZ() const;
 	Real getDesiredHeight(Real x, Real y) const;
 	Real getDesiredZoom(Real x, Real y) const;
