@@ -27,6 +27,43 @@
 // Proxy header for profile module
 //////////////////////////////////////////////////////////////////////////////
 
-#  pragma once
+#pragma once
 
+#if defined(RTS_PROFILE_LEGACY)
 #include "../../Source/profile/profile.h"
+#endif
+
+#if defined(RTS_PROFILE_TRACY)
+
+#include <tracy/Tracy.hpp>
+
+#define PROFILER_ENABLED
+#define PROFILER_FRAME_IMAGE_SIZE 256 // Horizontal size of the frame image in pixels.
+#define PROFILER_FRAME_IMAGE_INTERVAL_MS 500 // Will capture every render frame if set to 0
+#define PROFILER_SECTION ZoneScoped
+#define PROFILER_SECTION_NAME(name) ZoneScopedN(name)
+#define PROFILER_SECTION_COLOR(color) ZoneScopedC(color)
+#define PROFILER_SECTION_NAMECOLOR(name, color) ZoneScopedNC(name, color)
+#define PROFILER_FRAME_MARK FrameMark
+#define PROFILER_FRAME_MARK_NAME(name) FrameMarkNamed(name)
+#define PROFILER_FRAME_IMAGE(image, width, height, offset, flip) FrameImage(image, width, height, offset, flip)
+#define PROFILER_MSG(txt, size) TracyMessage(txt, size)
+#define PROFILER_PLOT(name, value) TracyPlot(name, value)
+#define PROFILER_IS_CONNECTED TracyIsConnected
+
+#else
+
+#define PROFILER_FRAME_IMAGE_SIZE 0
+#define PROFILER_FRAME_IMAGE_INTERVAL_MS 0
+#define PROFILER_SECTION ((void)0)
+#define PROFILER_SECTION_NAME(name) ((void)0)
+#define PROFILER_SECTION_COLOR(color) ((void)0)
+#define PROFILER_SECTION_NAMECOLOR(name, color) ((void)0)
+#define PROFILER_FRAME_MARK ((void)0)
+#define PROFILER_FRAME_MARK_NAME(name) ((void)0)
+#define PROFILER_FRAME_IMAGE(image, width, height, offset, flip) ((void)0)
+#define PROFILER_MSG(txt, size) ((void)0)
+#define PROFILER_PLOT(name, value) ((void)0)
+#define PROFILER_IS_CONNECTED false
+
+#endif
