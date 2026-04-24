@@ -170,6 +170,8 @@ public:
 
 	virtual void notifyOthersOfCurrentFrame() override;														///< Tells all the other players what frame we are on.
 	virtual void notifyOthersOfNewFrame(UnsignedInt frame) override;								///< Tells all the other players that we are on a new frame.
+	virtual void resyncToFrame(UnsignedInt frame) override;												///< Resume-from-replay catchup resync: fill empty frame data through frame+runAhead.
+	virtual Int setLogicFrameRate(Int fps) override;															///< Override the network's per-frame timing rate; returns previous rate.
 
 	virtual Int  getExecutionFrame() override;																			///< Returns the next valid frame for simultaneous command execution.
 
@@ -450,6 +452,16 @@ void Network::attachTransport(Transport *transport) {
  * Does this command need to be transfered to the other game clients?
  */
 Bool Network::isTransferCommand(GameMessage *msg) {
+	// During resume-from-replay catchup every peer is independently
+	// injecting commands from its own (deterministic, identical) local
+	// .rep, so re-broadcasting those commands over the network would
+	// double them on the receiver. Treat all messages as non-transfer
+	// during catchup so they flow through processCommand instead, which
+	// also kicks the per-frame tick loop forward and lets lockstep
+	// advance at the elevated frame-rate cap.
+	if (TheRecorder && TheRecorder->isResumeCatchupMode()) {
+		return FALSE;
+	}
 	if ((msg != nullptr) && ((msg->getType() > GameMessage::MSG_BEGIN_NETWORK_MESSAGES) && (msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES))) {
 		return TRUE;
 	}
@@ -716,7 +728,13 @@ void Network::update()
 	if (AllCommandsReady(TheGameLogic->getFrame())) { // If all the commands are ready for the next frame...
 		m_conMgr->handleAllCommandsReady();
 //		DEBUG_LOG(("Network::update - frame %d is ready", TheGameLogic->getFrame()));
-		if (timeForNewFrame()) { // This needs to come after any other pre-frame execution checks as this changes the timing variables.
+		// During resume-from-replay catchup, skip the per-frame TIMING gate
+		// (timeForNewFrame()) so frames advance as fast as lockstep allows.
+		// AllCommandsReady above is the SYNC gate and is still enforced, so
+		// peers stay in lockstep — we're just removing the artificial
+		// realtime rate cap.
+		const Bool inCatchup = (TheRecorder && TheRecorder->isResumeCatchupMode());
+		if (inCatchup || timeForNewFrame()) { // This needs to come after any other pre-frame execution checks as this changes the timing variables.
 			RelayCommandsToCommandList(TheGameLogic->getFrame());	// Put the commands for the next frame on TheCommandList.
 			m_frameDataReady = TRUE; // Tell the GameEngine to run the commands for the new frame.
 		}
@@ -1047,4 +1065,33 @@ void Network::notifyOthersOfNewFrame(UnsignedInt frame) {
 	if (m_conMgr != nullptr) {
 		m_conMgr->notifyOthersOfNewFrame(frame);
 	}
+}
+
+// Resume-from-replay catchup: temporarily crank up the network's logic frame
+// rate so timeForNewFrame() lets us tick faster than the normal 30 fps cap.
+// Returns the previous frame rate so the caller can restore it.
+Int Network::setLogicFrameRate(Int fps) {
+	Int prev = m_frameRate;
+	m_frameRate = fps > 0 ? fps : 1;
+	return prev;
+}
+
+void Network::resyncToFrame(UnsignedInt frame) {
+	if (m_conMgr == nullptr)
+		return;
+
+	// Catchup advanced game logic past the network's lockstep bookkeeping
+	// because canUpdateNetworkGameLogic was bypassed and Network::processCommand
+	// (which normally drives processFrameTick each logic frame) didn't run.
+	// Drive every missed frame-tick now so peers' FrameDataManager queues
+	// populate to the catchup point, and zero out the runAhead window so
+	// isFrameDataReady() will be true at frame and onwards.
+	const UnsignedInt targetExecFrame = frame + m_runAhead;
+	for (Int i = m_lastFrameCompleted + 1; i < (Int)targetExecFrame; ++i) {
+		m_conMgr->processFrameTick(i);
+	}
+	m_lastFrameCompleted = (Int)targetExecFrame - 1;
+
+	m_conMgr->zeroFrames(frame, m_runAhead + 1);
+	m_conMgr->notifyOthersOfNewFrame(frame);
 }

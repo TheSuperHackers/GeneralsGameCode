@@ -105,7 +105,7 @@ UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 
 //-------------------------------------------------------------------------------------------------
 
-static Bool readReplayMapInfo(const AsciiString& filename, RecorderClass::ReplayHeader &header, ReplayGameInfo &info, const MapMetaData *&mapData)
+Bool readReplayMapInfo(const AsciiString& filename, RecorderClass::ReplayHeader &header, ReplayGameInfo &info, const MapMetaData *&mapData)
 {
 	header.forPlayback = FALSE;
 	header.filename = filename;

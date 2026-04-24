@@ -23,6 +23,7 @@
 #include "WW3D2/dllist.h"
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
+#include <Utility/hash_map_adapter.h>
 
 #define SET_SMUDGE_PARAMETERS(smudge,pos,offset,size,opacity) (smudge->m_pos=pos;smudge->m_offset=offset;smudge->m_size=size;smudge->m_opacity=opacity;)
 
@@ -47,7 +48,11 @@ struct Smudge : public DLNodeClass<Smudge>
 	smudgeVertex m_verts[5];	//5 vertices of this smudge (in counter-clockwise order, starting at top-left, ending in center.)
 };
 
-#ifdef USING_STLPORT
+// VC6's STLport provides std::hash as a non-template class rather than a
+// primary template, so an explicit template<> specialization of it is
+// invalid there. Skip it on VC6; the typedef below uses a local hasher so
+// it no longer depends on a std::hash specialization existing.
+#if defined(USING_STLPORT) && !(defined(_MSC_VER) && _MSC_VER <= 1200)
 namespace std
 {
 	template<> struct hash<Smudge::Identifier>
@@ -55,7 +60,12 @@ namespace std
 		size_t operator()(Smudge::Identifier id) const { return reinterpret_cast<size_t>(id); }
 	};
 }
-#endif // USING_STLPORT
+#endif // USING_STLPORT && !VC6
+
+struct SmudgeIdentifierHash
+{
+	size_t operator()(Smudge::Identifier id) const { return reinterpret_cast<size_t>(id); }
+};
 
 struct SmudgeSet : public DLNodeClass<SmudgeSet>
 {
@@ -77,7 +87,7 @@ struct SmudgeSet : public DLNodeClass<SmudgeSet>
 	Int getUsedSmudgeCount() { return m_usedSmudgeCount; }	///<active smudges that need rendering.
 
 private:
-	typedef std::hash_map<Smudge::Identifier, Smudge *> SmudgeIdToPtrMap;
+	typedef std::hash_map<Smudge::Identifier, Smudge *, SmudgeIdentifierHash> SmudgeIdToPtrMap;
 
 	DLListClass<Smudge> m_usedSmudgeList;	///<list of smudges in this set.
 	SmudgeIdToPtrMap m_usedSmudgeMap;

@@ -50,7 +50,8 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_RECORD,
 	RECORDERMODETYPE_PLAYBACK,
 	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
-	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
+	RECORDERMODETYPE_NONE, // this is a valid state to be in on the shell map, or in saved games
+	RECORDERMODETYPE_RESUME_CATCHUP       // Resume-from-replay: feed replay commands into an active LAN game until handoff frame. Kept LAST so existing values are preserved.
 };
 
 class CRCInfo;
@@ -115,6 +116,19 @@ public:
 
 	RecorderModeType getMode();												///< Returns the current operating mode.
 	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
+	Bool isResumeCatchupMode() const { return m_mode == RECORDERMODETYPE_RESUME_CATCHUP; }
+	// Returns true whenever the recorder is driving local playback and local
+	// user input should be suppressed / not fed into TheCommandList.
+	Bool isSuppressingLocalInput() const { return isPlaybackMode() || isResumeCatchupMode(); }
+
+	// Resume-from-replay. Opens the given replay file, skips past the header,
+	// and sets the recorder into RECORDERMODETYPE_RESUME_CATCHUP. While in
+	// catchup, update() reads commands per frame from the file and injects
+	// them into TheCommandList, running alongside a live LAN session. When
+	// the current game frame reaches handoffFrame (or the file ends), the
+	// catchup ends and the recorder returns to NONE so live input takes over.
+	Bool startResumeCatchup(AsciiString filename, UnsignedInt handoffFrame);
+	void updateResumeCatchup();
 	void initControls();															///< Show or Hide the Replay controls
 
 	static AsciiString getReplayDir();								///< Returns the directory that holds the replay files.
@@ -174,6 +188,9 @@ protected:
 	Int m_originalGameMode; // valid in replays
 
 	UnsignedInt m_nextFrame;												///< The Frame that the next message is to be executed on.  This can be -1.
+	UnsignedInt m_resumeHandoffFrame;								///< During RESUME_CATCHUP, the frame at which to stop injecting replay commands and return to NONE.
+	Int m_resumeSavedFpsLimit;											///< During RESUME_CATCHUP, the FPS limit at start so we can restore at handoff.
+	Int m_resumeSavedNetFrameRate;									///< During RESUME_CATCHUP, the network's logic frame rate at start so we can restore at handoff.
 };
 
 extern RecorderClass *TheRecorder;

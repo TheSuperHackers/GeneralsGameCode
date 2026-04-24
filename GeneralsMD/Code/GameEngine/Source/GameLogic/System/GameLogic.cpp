@@ -2618,7 +2618,15 @@ void GameLogic::processCommandList( CommandList *list )
 		logicMessageDispatcher( msg, nullptr );
 	}
 
-	if (m_shouldValidateCRCs && !TheNetwork->sawCRCMismatch())
+	// Skip CRC validation while in resume-from-replay catchup. Each client
+	// races through its own deterministic .rep at its own pace (FF mode
+	// bypasses the network frame-data gate), so CRCs from different clients
+	// at the same wall-clock moment correspond to different logic frames
+	// and would always mismatch. Validation resumes naturally at handoff
+	// when the recorder mode returns to NONE.
+	const Bool inCatchup = (TheRecorder && TheRecorder->isResumeCatchupMode());
+
+	if (m_shouldValidateCRCs && !TheNetwork->sawCRCMismatch() && !inCatchup)
 	{
 		Bool sawCRCMismatch = FALSE;
 		Int numPlayers = 0;

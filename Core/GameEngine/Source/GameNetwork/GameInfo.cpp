@@ -316,6 +316,8 @@ void GameInfo::reset()
 	m_mapSize = 0;
   m_superweaponRestriction = 0;
   m_startingCash = TheGlobalData->m_defaultStartingCash;
+	m_resumeReplayFile.clear();
+	m_resumeHandoffFrame = 0;
 
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
@@ -930,6 +932,15 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 		game->getStartingCash().countMoney(), game->oldFactionsOnly() ? 'Y' : 'N' );
 #endif
 
+	// Resume-from-replay arming. Only emitted when armed so unarmed games
+	// still round-trip bit-identically through the serializer.
+	if (!game->getResumeReplayFile().isEmpty())
+	{
+		AsciiString resume;
+		resume.format("RF=%s;RHF=%u;", game->getResumeReplayFile().str(), game->getResumeHandoffFrame());
+		optionsString.concat(resume);
+	}
+
 	//add player info for each slot
 	optionsString.concat(slotListID);
 	optionsString.concat('=');
@@ -1021,6 +1032,8 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 	Int useStats = TRUE;
   Money startingCash = TheGlobalData->m_defaultStartingCash;
   UnsignedShort restriction = 0; // Always the default
+	AsciiString resumeReplayFile;
+	UnsignedInt resumeHandoffFrame = 0;
 
 	Bool sawMap = FALSE;
 	Bool sawMapCRC = FALSE;
@@ -1117,6 +1130,14 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			seed = atoi(val.str());
 			sawSeed = true;
 //			DEBUG_LOG(("ParseAsciiStringToGameInfo - random seed is %d", seed));
+		}
+		else if (key.compare("RF") == 0)
+		{
+			resumeReplayFile = val;
+		}
+		else if (key.compare("RHF") == 0)
+		{
+			resumeHandoffFrame = (UnsignedInt)strtoul(val.str(), nullptr, 10);
 		}
 		else if (key.compare("C") == 0)
 		{
@@ -1508,6 +1529,8 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		game->setSuperweaponRestriction(restriction);
 		game->setStartingCash(startingCash);
 		game->setOldFactionsOnly(oldFactionsOnly);
+		game->setResumeReplayFile(resumeReplayFile);
+		game->setResumeHandoffFrame(resumeHandoffFrame);
 
 		return true;
 	}
