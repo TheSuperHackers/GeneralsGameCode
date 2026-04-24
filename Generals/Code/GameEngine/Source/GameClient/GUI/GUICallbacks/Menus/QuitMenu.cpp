@@ -253,7 +253,12 @@ void HideQuitMenu()
 
 Bool canOpenQuitMenu()
 {
-	return (TheGameEngine->isActive() && (!TheInGameUI || !TheInGameUI->isQuitMenuVisible()) && !TheGameLogic->isLoadingMap() && !TheGameLogic->isLoadingSave() && !TheGameLogic->isIntroMoviePlaying() && (TheScriptEngine == nullptr || !TheScriptEngine->isGameEnding()));
+	return (TheGameEngine->isActive() 
+		&& (!TheInGameUI || !TheInGameUI->isQuitMenuVisible()) 
+		&& !TheGameLogic->isLoadingMap() 
+		&& !TheGameLogic->isLoadingSave() 
+		&& !TheGameLogic->isIntroMoviePlaying() 
+		&& (TheScriptEngine == nullptr || !TheScriptEngine->isGameEnding()));
 }
 
 //-------------------------------------------------------------------------------------------------

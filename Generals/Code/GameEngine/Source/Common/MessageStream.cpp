@@ -841,9 +841,9 @@ void MessageStream::update()
 
 }
 
-Bool MessageStream::canAddMessage() const
+Bool MessageStream::isLocalPlayerReady() const
 {
-	return (ThePlayerList != nullptr);
+	return (ThePlayerList != nullptr && ThePlayerList->getLocalPlayer() != nullptr);
 }
 
 /**
