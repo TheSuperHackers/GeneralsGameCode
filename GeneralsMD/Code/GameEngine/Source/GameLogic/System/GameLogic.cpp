@@ -2404,7 +2404,11 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE( "GUI:FastForwardInstructions", L"Press F to toggle Fast Forward" ) );
   }
 
-
+#ifdef PROFILER_ENABLED
+	AsciiString message;
+	message.format("GameStart: %s", TheGlobalData->m_mapName.str());
+	PROFILER_MSG(message.str(), message.getLength());
+#endif
 }
 
 //-----------------------------------------------------------------------------------------
@@ -4215,6 +4219,12 @@ void GameLogic::exitGame()
 	TheScriptEngine->doUnfreezeTime();
 
 	TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+
+#ifdef PROFILER_ENABLED
+	AsciiString message;
+	message.format("GameEnd: %s", TheGlobalData->m_mapName.str());
+	PROFILER_MSG(message.str(), message.getLength());
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
