@@ -511,6 +511,8 @@ DECLARE_PERF_TIMER(GameClient_draw)
 void GameClient::update()
 {
 	USE_PERF_TIMER(GameClient_update)
+	PROFILER_FRAME_MARK;
+	PROFILER_SECTION_COLOR(0x2196F3);
 	// create the FRAME_TICK message
 	GameMessage *frameMsg = TheMessageStream->appendMessage( GameMessage::MSG_FRAME_TICK );
 	frameMsg->appendTimestampArgument( getFrame() );
