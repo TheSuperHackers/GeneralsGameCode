@@ -4189,7 +4189,7 @@ void GameLogic::exitGame()
 
 // ------------------------------------------------------------------------------------------------
 
-void GameLogic::quit(Bool toDesktop, Bool force)
+void GameLogic::quit(Bool toDesktop)
 {
 	const Bool isNotLoading = (!isLoadingMap() && !isLoadingSave());
 

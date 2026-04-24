@@ -297,6 +297,7 @@ static const char *messageToString(unsigned int message)
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 													WPARAM wParam, LPARAM lParam )
 {
+	static Bool isAltF4 = FALSE;
 
 	try
 	{
@@ -353,7 +354,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_SYSCOMMAND:
 				// Prevent moving/sizing and power loss in fullscreen mode
-				switch( wParam )
+				if ((wParam & 0xFFF0) == SC_CLOSE)
+				{
+					isAltF4 = (GetKeyState(VK_MENU) < 0) && (GetKeyState(VK_F4) < 0);
+				}
+
+				switch( wParam & 0xFFF0 )
 				{
 					case SC_KEYMENU:
 						// TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
@@ -391,10 +397,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				{
 					if (TheMessageStream && TheMessageStream->canAddMessage())
 					{
-						Bool altDown = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
-						Bool f4Down = (GetAsyncKeyState(VK_F4) & 0x8000) != 0;
-						Bool isAltF4 = altDown && f4Down;
-
 						GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
 						msg->appendBooleanArgument(isAltF4);
 					}
@@ -403,6 +405,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						TheGameEngine->setQuitting(TRUE);
 					}
 				}
+				isAltF4 = FALSE;
 				return 0;
 
 			//-------------------------------------------------------------------------

@@ -3702,8 +3702,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		
 		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
 		{
-			Bool force = msg->getArgument(0)->boolean;
-			TheGameLogic->quit(TRUE, force);
+			TheGameLogic->quit(TRUE);
 			disp = DESTROY_MESSAGE;
 			break;
 		}
