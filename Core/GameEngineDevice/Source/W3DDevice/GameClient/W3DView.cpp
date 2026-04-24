@@ -133,11 +133,9 @@ Real W3DView::getHeightAroundPos(Real x, Real y, Real terrainSampleSize) const
 	{
 		// TheSuperHackers @tweak Now finds approximation of average terrain height instead of maximum terrain height.
 		// 4 additional sample points around the center point will be averaged.
-		//      (-s)      
-		//                
-		// (-s)   0    (s)
-		//                
-		//       (s)      
+		// (3)   (2)
+		//    (1)   
+		// (5)   (4)
 		terrainHeight += TheTerrainLogic->getGroundHeight(x+terrainSampleSize, y-terrainSampleSize);
 		terrainHeight += TheTerrainLogic->getGroundHeight(x-terrainSampleSize, y-terrainSampleSize);
 		terrainHeight += TheTerrainLogic->getGroundHeight(x+terrainSampleSize, y+terrainSampleSize);
