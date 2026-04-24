@@ -28,7 +28,7 @@ target_include_directories(corei_imagepacker INTERFACE
 target_link_libraries(corei_imagepacker INTERFACE
     comctl32
     core_debug
-    core_profile
+    core_profile_legacy
     core_wwcommon
     imm32
     vfw32
