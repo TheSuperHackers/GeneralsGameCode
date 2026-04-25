@@ -37,6 +37,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
+#include "Common/MapObject.h"
 #include "Common/STLTypedefs.h"
 #include "GameClient/ParabolicEase.h"
 #include "GameClient/View.h"
@@ -48,7 +49,7 @@ class Drawable;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 enum {MAX_WAYPOINTS=25};
 
-constexpr const Real TERRAIN_SAMPLE_SIZE = 40.0f;
+constexpr const Real TERRAIN_SAMPLE_SIZE = MAP_XY_FACTOR * 4;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
