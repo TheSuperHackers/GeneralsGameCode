@@ -767,8 +767,8 @@ void W3DView::updateCameraClipPlanes()
 	{
 		if (TheGlobalData->m_drawEntireTerrain || m_FXPitch < 0.95f)
 		{
-			//need to extend far clip plane so entire terrain can be visible
-			farZ = 1200.0f * MAP_XY_FACTOR;
+			//Extend far clip plane so entire terrain can be visible
+			farZ *= 10.0f;
 		}
 	}
 
