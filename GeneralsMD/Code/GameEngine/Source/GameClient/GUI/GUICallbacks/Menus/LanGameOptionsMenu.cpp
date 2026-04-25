@@ -61,6 +61,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/ReplayMenu.h"
 #include "GameNetwork/GUIUtil.h"
+#include "GameNetwork/RandomAssign.h"
 
 
 extern char *LANnextScreen;
@@ -122,6 +123,7 @@ static NameKeyType textEntryChatID = NAMEKEY_INVALID;
 static NameKeyType textEntryMapDisplayID = NAMEKEY_INVALID;
 static NameKeyType buttonBackID = NAMEKEY_INVALID;
 static NameKeyType buttonStartID = NAMEKEY_INVALID;
+static NameKeyType buttonRandomizeID = NAMEKEY_INVALID;
 static NameKeyType buttonEmoteID = NAMEKEY_INVALID;
 static NameKeyType buttonSelectMapID = NAMEKEY_INVALID;
 static NameKeyType buttonResumeFromReplayID = NAMEKEY_INVALID;
@@ -132,6 +134,7 @@ static NameKeyType windowMapID = NAMEKEY_INVALID;
 static GameWindow *parentLanGameOptions = nullptr;
 static GameWindow *buttonBack = nullptr;
 static GameWindow *buttonStart = nullptr;
+static GameWindow *buttonRandomize = nullptr;
 static GameWindow *buttonSelectMap = nullptr;
 static GameWindow *buttonResumeFromReplay = nullptr;
 static GameWindow *buttonEmote = nullptr;
@@ -912,6 +915,7 @@ void InitLanGameGadgets()
 	parentLanGameOptionsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:LanGameOptionsMenuParent" );
 	buttonBackID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonBack" );
 	buttonStartID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonStart" );
+	buttonRandomizeID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonRandomize" );
 	textEntryChatID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:TextEntryChat" );
 	textEntryMapDisplayID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:TextEntryMapDisplay" );
 	listboxChatWindowLanGameID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ListboxChatWindowLanGame" );
@@ -935,6 +939,8 @@ void InitLanGameGadgets()
 		buttonResumeFromReplay->winEnable( TheLAN && TheLAN->AmIHost() );
 	buttonStart = TheWindowManager->winGetWindowFromId( parentLanGameOptions,buttonStartID  );
 	DEBUG_ASSERTCRASH(buttonStart, ("Could not find the buttonStart"));
+	buttonRandomize = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonRandomizeID );
+	DEBUG_ASSERTCRASH(buttonRandomize, ("Could not find the buttonRandomize"));
 	buttonBack = TheWindowManager->winGetWindowFromId( parentLanGameOptions,  buttonBackID);
 	DEBUG_ASSERTCRASH(buttonBack, ("Could not find the buttonBack"));
 	listboxChatWindowLanGame = TheWindowManager->winGetWindowFromId( parentLanGameOptions, listboxChatWindowLanGameID );
@@ -1039,6 +1045,7 @@ void DeinitLanGameGadgets()
 	buttonResumeFromReplay = nullptr;
 	buttonStart = nullptr;
 	buttonBack = nullptr;
+	buttonRandomize = nullptr;
 	listboxChatWindowLanGame = nullptr;
 	textEntryChat = nullptr;
 	textEntryMapDisplay = nullptr;
@@ -1135,6 +1142,7 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s", TheLAN->GetMyGame()->getMap().str()));
 		buttonStart->winSetText(TheGameText->fetch("GUI:Accept"));
 		buttonSelectMap->winEnable( FALSE );
+		buttonRandomize->winEnable( FALSE );
     checkboxLimitSuperweapons->winEnable( FALSE ); // Can look but only host can touch
     comboBoxStartingCash->winEnable( FALSE );      // Ditto
 		TheLAN->GetMyGame()->setMapCRC( TheLAN->GetMyGame()->getMapCRC() );		// force a recheck
@@ -1520,6 +1528,16 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					mapSelectLayout->hide( FALSE );
 					mapSelectLayout->bringForward();
 
+				}
+				else if ( controlID == buttonRandomizeID )
+				{
+					if (TheLAN->AmIHost())
+					{
+						std::vector<Int> lockedTemplates = buildLockedTemplates();
+						performRandomAssign(TheLAN->GetMyGame(), lockedTemplates);
+						TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
+						lanUpdateSlotList();
+					}
 				}
 				else if ( controlID == buttonResumeFromReplayID )
 				{
