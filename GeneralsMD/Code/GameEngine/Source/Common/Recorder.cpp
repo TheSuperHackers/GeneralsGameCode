@@ -48,6 +48,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/OptionPreferences.h"
 #include "Common/StatsExporter.h"
+#include "Common/StatsUploader.h"
 #include "Common/version.h"
 
 constexpr const char s_genrep[] = "GENREP";
@@ -690,12 +691,54 @@ void RecorderClass::stopRecording() {
 			archiveReplay(m_fileName);
 	}
 
-	// Stats export: emit the gzipped JSON next to the replay we just wrote.
-	// Self-gates on exportingActive, so this is a no-op for non-host LAN
-	// peers, replay viewing, single-player campaigns, and any path that
-	// didn't call StatsExporterBeginRecording.
+	// Stats + replay upload: only fires for hosts of multiplayer/skirmish
+	// (the conditions under which StatsExporterBeginRecording was called in
+	// GameLogic::startNewGame). For non-host peers, replay viewers, and
+	// single-player campaigns, exportingActive is FALSE and both the stats
+	// export and the replay upload are skipped.
+	//
+	// Order: stats first, replay second. The replay upload runs even if the
+	// stats upload failed — UploadStatsToServer is best-effort and logs
+	// errors but does not propagate them, so control just falls through.
 	if (!m_fileName.isEmpty())
+	{
+		const bool wasCollecting = StatsExporterIsActive();
 		ExportGameStatsJSON(getReplayDir(), m_fileName);
+
+		if (wasCollecting && !TheGlobalData->m_replayUrl.isEmpty())
+		{
+			AsciiString replayPath = getReplayDir();
+			replayPath.concat(m_fileName);
+
+			FILE *rf = fopen(replayPath.str(), "rb");
+			if (rf != nullptr)
+			{
+				fseek(rf, 0, SEEK_END);
+				long size = ftell(rf);
+				fseek(rf, 0, SEEK_SET);
+				if (size > 0)
+				{
+					void *fileData = malloc(static_cast<size_t>(size));
+					if (fileData != nullptr)
+					{
+						if (fread(fileData, 1, static_cast<size_t>(size), rf) == static_cast<size_t>(size))
+						{
+							printf("[replay] Uploading %ld bytes to %s\n", size, TheGlobalData->m_replayUrl.str());
+							fflush(stdout);
+							UploadReplayToServer(TheGlobalData->m_replayUrl, fileData, static_cast<unsigned int>(size), GetGameLogicRandomSeed());
+						}
+						free(fileData);
+					}
+				}
+				fclose(rf);
+			}
+			else
+			{
+				printf("[replay] ERROR: Failed to read %s for upload\n", replayPath.str());
+				fflush(stdout);
+			}
+		}
+	}
 
 	m_fileName.clear();
 }

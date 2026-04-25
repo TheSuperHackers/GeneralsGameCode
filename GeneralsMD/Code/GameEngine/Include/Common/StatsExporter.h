@@ -34,6 +34,12 @@ void StatsExporterCollectSnapshot();
 /// Begin recording stats for a new replay. Activates recording and resets all stored data.
 void StatsExporterBeginRecording();
 
+/// Returns true between StatsExporterBeginRecording() and ExportGameStatsJSON().
+/// Used by Recorder::stopRecording to decide whether to do the replay upload
+/// (we only upload if we were collecting for this game — i.e., host of a
+/// multiplayer/skirmish match).
+bool StatsExporterIsActive();
+
 /// Record a kill event with full context (called from Object::scoreTheKill).
 void StatsExporterRecordKill(const Object *killer, const Object *victim, const DamageInfo *damageInfo);
 

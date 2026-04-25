@@ -448,6 +448,16 @@ Int parseStatsUrl(char *args[], int num)
 	return 1;
 }
 
+Int parseReplayUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_replayUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1190,6 +1200,10 @@ static CommandLineParam paramsForStartup[] =
 	// URL to POST gzipped stats JSON after export. Defaults to the project
 	// stats endpoint; pass an empty string ("") to skip upload.
 	{ "-statsUrl", parseStatsUrl },
+
+	// URL to POST the replay file after stats are uploaded. Defaults to
+	// the project replay endpoint; pass an empty string ("") to skip.
+	{ "-replayUrl", parseReplayUrl },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

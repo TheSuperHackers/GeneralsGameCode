@@ -26,7 +26,15 @@
 
 #pragma comment(lib, "wininet.lib")
 
-void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed)
+// Shared HTTP POST helper. Posts arbitrary bytes to a URL with the given
+// Content-Type and an X-Game-Seed header. Logs status to stdout; does not
+// propagate errors to the caller (game-end uploads are best-effort).
+static void httpPostBytes(const AsciiString& url,
+                          const void *data,
+                          unsigned int dataLen,
+                          unsigned int seed,
+                          const char *contentType,
+                          const char *logTag)
 {
 	if (url.isEmpty() || data == nullptr || dataLen == 0)
 		return;
@@ -44,7 +52,7 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 
 	if (!InternetCrackUrlA(url.str(), 0, 0, &uc))
 	{
-		printf("Stats upload: failed to parse URL \"%s\"\n", url.str());
+		printf("%s upload: failed to parse URL \"%s\"\n", logTag, url.str());
 		return;
 	}
 
@@ -59,14 +67,14 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 	HINTERNET hInternet = InternetOpenA("GeneralsStatsExporter/1.0", INTERNET_OPEN_TYPE_PRECONFIG, nullptr, nullptr, 0);
 	if (hInternet == nullptr)
 	{
-		printf("Stats upload: InternetOpen failed (%lu)\n", GetLastError());
+		printf("%s upload: InternetOpen failed (%lu)\n", logTag, GetLastError());
 		return;
 	}
 
 	HINTERNET hConnect = InternetConnectA(hInternet, hostBuf, port, nullptr, nullptr, INTERNET_SERVICE_HTTP, 0, 0);
 	if (hConnect == nullptr)
 	{
-		printf("Stats upload: InternetConnect failed (%lu)\n", GetLastError());
+		printf("%s upload: InternetConnect failed (%lu)\n", logTag, GetLastError());
 		InternetCloseHandle(hInternet);
 		return;
 	}
@@ -74,7 +82,7 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 	HINTERNET hRequest = HttpOpenRequestA(hConnect, "POST", pathBuf, nullptr, nullptr, nullptr, flags, 0);
 	if (hRequest == nullptr)
 	{
-		printf("Stats upload: HttpOpenRequest failed (%lu)\n", GetLastError());
+		printf("%s upload: HttpOpenRequest failed (%lu)\n", logTag, GetLastError());
 		InternetCloseHandle(hConnect);
 		InternetCloseHandle(hInternet);
 		return;
@@ -82,7 +90,7 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 
 	// Build headers
 	char headers[512];
-	sprintf(headers, "Content-Type: application/gzip\r\nX-Game-Seed: %u\r\n", seed);
+	sprintf(headers, "Content-Type: %s\r\nX-Game-Seed: %u\r\n", contentType, seed);
 
 	BOOL result = HttpSendRequestA(hRequest, headers, (DWORD)strlen(headers), const_cast<void*>(data), dataLen);
 
@@ -91,14 +99,24 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 		DWORD statusCode = 0;
 		DWORD statusSize = sizeof(statusCode);
 		HttpQueryInfoA(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &statusCode, &statusSize, nullptr);
-		printf("Stats upload: %s -> %lu\n", url.str(), statusCode);
+		printf("%s upload: %s -> %lu\n", logTag, url.str(), statusCode);
 	}
 	else
 	{
-		printf("Stats upload: HttpSendRequest failed (%lu)\n", GetLastError());
+		printf("%s upload: HttpSendRequest failed (%lu)\n", logTag, GetLastError());
 	}
 
 	InternetCloseHandle(hRequest);
 	InternetCloseHandle(hConnect);
 	InternetCloseHandle(hInternet);
+}
+
+void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed)
+{
+	httpPostBytes(url, data, dataLen, seed, "application/gzip", "Stats");
+}
+
+void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed)
+{
+	httpPostBytes(url, data, dataLen, seed, "application/octet-stream", "Replay");
 }

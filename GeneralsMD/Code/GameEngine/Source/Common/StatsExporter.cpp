@@ -451,6 +451,11 @@ void StatsExporterBeginRecording()
 	s_state.resetData();
 }
 
+bool StatsExporterIsActive()
+{
+	return s_state.exportingActive ? true : false;
+}
+
 //-----------------------------------------------------------------------------
 
 void StatsExporterRecordKill(const Object *killer, const Object *victim, const DamageInfo *damageInfo)
@@ -693,24 +698,27 @@ static void writeStateChangeEventsJson(gzFile f)
 
 static void writeTimeSeriesJson(gzFile f)
 {
+	// VC6 leaks for-loop variables into the enclosing scope, so declare
+	// the loop counter once and reuse it across the three snapshot loops.
+	size_t s;
 	gzputs(f, "{\"players\":[");
 	for (Int pi = 0; pi < s_state.gamePlayerCount; ++pi)
 	{
 		if (pi > 0) gzputc(f, ',');
 		gzprintf(f, "{\"index\":%d,\"money\":[", pi + 1);
-		for (size_t s = 0; s < s_state.snapshots.size(); ++s)
+		for (s = 0; s < s_state.snapshots.size(); ++s)
 		{
 			if (s > 0) gzputc(f, ',');
 			gzprintf(f, "%u", s_state.snapshots[s].players[pi].money);
 		}
 		gzputs(f, "],\"moneyEarned\":[");
-		for (size_t s = 0; s < s_state.snapshots.size(); ++s)
+		for (s = 0; s < s_state.snapshots.size(); ++s)
 		{
 			if (s > 0) gzputc(f, ',');
 			gzprintf(f, "%d", s_state.snapshots[s].players[pi].moneyEarned);
 		}
 		gzputs(f, "],\"moneySpent\":[");
-		for (size_t s = 0; s < s_state.snapshots.size(); ++s)
+		for (s = 0; s < s_state.snapshots.size(); ++s)
 		{
 			if (s > 0) gzputc(f, ',');
 			gzprintf(f, "%d", s_state.snapshots[s].players[pi].moneySpent);

@@ -127,6 +127,9 @@ public:
 	// URL to POST compressed stats JSON after export.
 	AsciiString m_statsUrl;
 
+	// URL to POST the replay file after stats are uploaded.
+	AsciiString m_replayUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

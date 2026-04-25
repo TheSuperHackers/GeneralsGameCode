@@ -20,8 +20,17 @@
 class AsciiString;
 
 /// Upload gzip-compressed stats data to a REST endpoint via HTTP POST.
+/// Sends Content-Type: application/gzip with the X-Game-Seed header.
 /// @param url Full URL including path (e.g. "http://server:8080/stats")
 /// @param data Pointer to gzip-compressed data
 /// @param dataLen Length of compressed data in bytes
 /// @param seed Game seed for the X-Game-Seed header
 void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed);
+
+/// Upload a replay file to a REST endpoint via HTTP POST.
+/// Sends Content-Type: application/octet-stream with the X-Game-Seed header.
+/// @param url Full URL including path (e.g. "https://www.radarvan.com/api/upload_replay")
+/// @param data Pointer to the replay file's raw bytes
+/// @param dataLen Length of replay data in bytes
+/// @param seed Game seed for the X-Game-Seed header
+void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed);
