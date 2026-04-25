@@ -737,14 +737,22 @@ void W3DView::updateCameraTransform()
 	Vector3 targetPos;
 	buildCameraPosition(sourcePos, targetPos);
 
-	// TheSuperHackers @fix Moves the camera above the terrain.
-	// Uses averaged terrain height sampling to reduce bumpy movements.
-	const Real minAcceptableCameraHeight = getHeightAroundPos(sourcePos.X, sourcePos.Y, MAP_XY_FACTOR) + NearZ;
-	if (sourcePos.Z < minAcceptableCameraHeight)
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+	const Bool clipCameraAboveTerrain = m_isUserControlled;
+#else
+	const Bool clipCameraAboveTerrain = true;
+#endif
+	if (clipCameraAboveTerrain)
 	{
-		const Real repositionZ = minAcceptableCameraHeight - sourcePos.Z;
-		sourcePos.Z += repositionZ;
-		targetPos.Z += repositionZ;
+		// TheSuperHackers @fix Moves the camera above the terrain.
+		// Uses averaged terrain height sampling to reduce bumpy movements.
+		const Real minAcceptableCameraHeight = getHeightAroundPos(sourcePos.X, sourcePos.Y, MAP_XY_FACTOR) + NearZ;
+		if (sourcePos.Z < minAcceptableCameraHeight)
+		{
+			const Real repositionZ = minAcceptableCameraHeight - sourcePos.Z;
+			sourcePos.Z += repositionZ;
+			targetPos.Z += repositionZ;
+		}
 	}
 
 	Matrix3D cameraTransform;
