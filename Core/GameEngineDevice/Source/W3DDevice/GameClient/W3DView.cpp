@@ -737,7 +737,8 @@ void W3DView::updateCameraTransform()
 	Vector3 targetPos;
 	buildCameraPosition(sourcePos, targetPos);
 
-	// TheSuperHackers @fix Moves the camera above the terrain. Uses a bit smoothing to reduce bumpy movements.
+	// TheSuperHackers @fix Moves the camera above the terrain.
+	// Uses averaged terrain height sampling to reduce bumpy movements.
 	const Real minAcceptableCameraHeight = getHeightAroundPos(sourcePos.X, sourcePos.Y, MAP_XY_FACTOR) + NearZ;
 	if (sourcePos.Z < minAcceptableCameraHeight)
 	{
