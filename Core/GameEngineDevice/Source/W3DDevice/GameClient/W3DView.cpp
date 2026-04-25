@@ -1921,8 +1921,6 @@ void W3DView::draw()
 #if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugCamera )
 	{
-		constexpr const Real TERRAIN_SAMPLE_SIZE = 40.0f;
-
 		UnsignedInt c = 0xaaffffff;
 		Coord3D worldPos = getPosition();
 		worldPos.z = TheTerrainLogic->getGroundHeight(worldPos.x, worldPos.y);

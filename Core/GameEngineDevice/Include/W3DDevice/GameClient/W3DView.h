@@ -48,6 +48,8 @@ class Drawable;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 enum {MAX_WAYPOINTS=25};
 
+constexpr const Real TERRAIN_SAMPLE_SIZE = 40.0f;
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 typedef struct
@@ -292,7 +294,7 @@ private:
 	Bool m_recalcCameraConstraintsAfterScrolling; ///< Recalculates the camera area constraints after the user has moved the camera
 	Bool m_recalcCamera; ///< Recalculates the camera transform in the next render update
 
-	Real getHeightAroundPos(Real x, Real y, Real terrainSampleSize = 40.0f) const;
+	Real getHeightAroundPos(Real x, Real y, Real terrainSampleSize = TERRAIN_SAMPLE_SIZE) const;
 	Real getCameraOffsetZ() const;
 	Real getDesiredHeight(Real x, Real y) const;
 	Real getDesiredZoom(Real x, Real y) const;
