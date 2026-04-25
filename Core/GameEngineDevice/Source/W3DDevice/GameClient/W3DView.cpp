@@ -747,20 +747,28 @@ void W3DView::updateCameraTransform()
 //-------------------------------------------------------------------------------------------------
 void W3DView::updateCameraClipPlanes()
 {
-	Real farZ = 1200.0f;
+	// TheSuperHackers @bugfix Extends the initial far Z from 1200 because that is not enough at
+	// default max height 310 and default pitch 37.5.
+	static_assert(WorldHeightMap::NORMAL_DRAW_WIDTH == WorldHeightMap::NORMAL_DRAW_HEIGHT, "Expects squared draw area");
+	Real farZ = (WorldHeightMap::NORMAL_DRAW_WIDTH * 1.08f) * MAP_XY_FACTOR;
+
+	const Real heightMultiplicator = m_heightAboveGround / ViewDefaultMaxHeightAboveTerrain;
+	farZ *= heightMultiplicator;
 
 	if (m_useRealZoomCam)	//WST 10.19.2002
 	{
-		if (m_FXPitch<0.95f)
+		if (m_FXPitch < 0.95f)
 		{
-			farZ = farZ / m_FXPitch; //Extend far Z when we pitch up for RealZoomCam
+			//Extend far Z when we pitch up for RealZoomCam
+			farZ /= m_FXPitch;
 		}
 	}
 	else
 	{
-		if ((TheGlobalData->m_drawEntireTerrain) || (m_FXPitch<0.95f || m_zoom>1.05))
-		{	//need to extend far clip plane so entire terrain can be visible
-			farZ *= MAP_XY_FACTOR;
+		if (TheGlobalData->m_drawEntireTerrain || m_FXPitch < 0.95f)
+		{
+			//need to extend far clip plane so entire terrain can be visible
+			farZ = 1200.0f * MAP_XY_FACTOR;
 		}
 	}
 
