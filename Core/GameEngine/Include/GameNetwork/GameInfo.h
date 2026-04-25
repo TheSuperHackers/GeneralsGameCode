@@ -219,6 +219,13 @@ public:
 	void setCRCInterval( Int val ) { m_crcInterval = (val<100)?val:100; }
 	Int getCRCInterval() const { return m_crcInterval; }
 
+	// Resume-from-replay arming. When non-empty, clients use the replay's
+	// recorded seed for InitRandom and enter local replay catchup on start.
+	void setResumeReplayFile( AsciiString f ) { m_resumeReplayFile = f; }
+	AsciiString getResumeReplayFile() const   { return m_resumeReplayFile; }
+	void setResumeHandoffFrame( UnsignedInt f ) { m_resumeHandoffFrame = f; }
+	UnsignedInt getResumeHandoffFrame() const   { return m_resumeHandoffFrame; }
+
 	Bool haveWeSurrendered() { return m_surrendered; }
 	void markAsSurrendered() { m_surrendered = TRUE; }
 
@@ -253,6 +260,11 @@ protected:
   Money         m_startingCash;
   UnsignedShort m_superweaponRestriction;
   Bool m_oldFactionsOnly; // Only USA, China, GLA -- not USA Air Force General, GLA Toxic General, et al
+	// Appended at the END so introducing them doesn't shift the offsets of
+	// any pre-existing member (protects against partial-recompile / ABI drift
+	// when this header is edited).
+	AsciiString m_resumeReplayFile;
+	UnsignedInt m_resumeHandoffFrame;
 };
 
 extern GameInfo *TheGameInfo;

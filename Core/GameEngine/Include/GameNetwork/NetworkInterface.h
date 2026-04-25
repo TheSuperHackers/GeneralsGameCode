@@ -116,6 +116,17 @@ public:
 	virtual void notifyOthersOfCurrentFrame() = 0;					///< Tells all the other players what frame we are on.
 	virtual void notifyOthersOfNewFrame(UnsignedInt frame) = 0;							///< Tells all the other players that we are on a new frame.
 
+	// Resume-from-replay catchup: after the FF'd catchup phase advances
+	// game logic past where the network's per-frame command queues are,
+	// fill those queues with empty entries so isFrameDataReady() will be
+	// true for the catchup window and lockstep can resume from frame.
+	virtual void resyncToFrame(UnsignedInt frame) = 0;
+
+	// Resume-from-replay catchup: override the network's internal logic
+	// frame-rate cap so timeForNewFrame() lets frames advance faster than
+	// the normal 30 fps. Returns the previous frame rate for restoration.
+	virtual Int setLogicFrameRate(Int fps) = 0;
+
 	virtual Int  getExecutionFrame() = 0;																			///< Returns the next valid frame for simultaneous command execution.
 
 #if defined(RTS_DEBUG)

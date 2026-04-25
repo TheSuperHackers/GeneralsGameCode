@@ -858,8 +858,10 @@ Bool GameEngine::canUpdateRegularGameLogic()
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	const Bool useFastMode = TheGlobalData->m_TiVOFastMode;
-#else	//always allow this cheat key if we're in a replay game.
-	const Bool useFastMode = TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame();
+#else	//always allow this cheat key if we're in a replay game or resume-from-replay catchup.
+	const Bool useFastMode = TheGlobalData->m_TiVOFastMode
+		&& (TheGameLogic->isInReplayGame()
+			|| (TheRecorder && TheRecorder->isResumeCatchupMode()));
 #endif
 
 	if (useFastMode || !enabled || logicTimeScaleFps >= maxRenderFps)

@@ -3187,7 +3187,11 @@ Coord2D InGameUI::getScrollAmount()
 //-------------------------------------------------------------------------------------------------
 void InGameUI::setGUICommand( const CommandButton *command )
 {
-	if (TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK)
+	// Suppress local UI commands during both classic replay playback and
+	// resume-from-replay catchup. Catchup injects recorded commands from
+	// the replay file; local clicks during this window would produce
+	// diverging commands and break the deterministic catchup.
+	if (TheRecorder->isSuppressingLocalInput())
 		return;
 
 	// sanity
