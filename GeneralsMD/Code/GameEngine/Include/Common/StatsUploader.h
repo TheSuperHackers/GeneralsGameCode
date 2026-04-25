@@ -34,3 +34,28 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 /// @param dataLen Length of replay data in bytes
 /// @param seed Game seed for the X-Game-Seed header
 void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed);
+
+/// Ask the server whether it already has the map identified by mapCRC.
+/// Issues an HTTP GET to "<checkUrl>?crc=<hex>" and inspects the response
+/// body. Returns true only if the server explicitly returns "false"
+/// (case-insensitive, leading/trailing whitespace ignored). Network errors,
+/// non-2xx responses, "true" responses, and an empty checkUrl all return
+/// false (i.e. "don't bother uploading").
+/// @param checkUrl Full URL of the existence-check endpoint
+/// @param mapCRC The map's stored CRC (from MapMetaData::m_CRC)
+bool MapMissingFromServer(const AsciiString& checkUrl, unsigned int mapCRC);
+
+/// Upload a single map asset (the .map file or its .tga preview) to a REST
+/// endpoint via HTTP POST. Sends Content-Type: application/octet-stream plus
+/// X-Map-CRC, X-Map-Name, X-Map-File, and X-Game-Seed headers. Both calls
+/// for the same map share the same X-Map-CRC so the server can group them.
+/// @param uploadUrl Full URL of the map-upload endpoint
+/// @param data Pointer to the raw asset bytes
+/// @param dataLen Length of the asset data in bytes
+/// @param mapCRC The map's CRC for the X-Map-CRC header
+/// @param mapName The map's path/name for the X-Map-Name header
+/// @param fileKind Identifier for X-Map-File ("map" or "preview")
+/// @param seed Game seed for the X-Game-Seed header
+void UploadMapToServer(const AsciiString& uploadUrl, const void *data, unsigned int dataLen,
+                       unsigned int mapCRC, const AsciiString& mapName,
+                       const char *fileKind, unsigned int seed);

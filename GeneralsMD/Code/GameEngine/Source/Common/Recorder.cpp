@@ -36,9 +36,11 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/InGameUI.h"
+#include "GameClient/MapUtil.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameText.h"
 
+#include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/GameMessageParser.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
@@ -736,6 +738,72 @@ void RecorderClass::stopRecording() {
 			{
 				printf("[replay] ERROR: Failed to read %s for upload\n", replayPath.str());
 				fflush(stdout);
+			}
+		}
+
+		// Map check + conditional map upload. Runs after the replay step;
+		// independent of whether the replay/stats upload succeeded. We
+		// look up the played map's CRC from the cache, ask the server
+		// whether it already has it, and (if not) upload both the .map
+		// file and its .tga preview, tagged via X-Map-File so the server
+		// can correlate them by their shared X-Map-CRC.
+		if (wasCollecting && !TheGlobalData->m_mapCheckUrl.isEmpty()
+			&& TheMapCache != nullptr && TheGlobalData != nullptr)
+		{
+			AsciiString mapName = TheGlobalData->m_mapName;
+			const MapMetaData *md = TheMapCache->findMap(mapName);
+			if (md == nullptr || md->m_CRC == 0)
+			{
+				printf("[map] No cached metadata for \"%s\", skipping map check\n", mapName.str());
+				fflush(stdout);
+			}
+			else if (MapMissingFromServer(TheGlobalData->m_mapCheckUrl, md->m_CRC)
+				&& !TheGlobalData->m_mapUploadUrl.isEmpty())
+			{
+				// Read each asset via the universal filesystem so it
+				// works for both BIG-resident shipped maps and on-disk
+				// user/transferred maps. The preview path is derived
+				// from the .map path via GetPreviewFromMap.
+				const AsciiString assetPaths[2] = {
+					md->m_fileName,
+					GetPreviewFromMap(md->m_fileName)
+				};
+				const char * const assetKinds[2] = { "map", "preview" };
+
+				for (Int ai = 0; ai < 2; ++ai)
+				{
+					const AsciiString &assetPath = assetPaths[ai];
+					const char *kind = assetKinds[ai];
+
+					File *assetFile = TheFileSystem->openFile(assetPath.str(), File::READ);
+					if (assetFile == nullptr)
+					{
+						printf("[map] %s asset \"%s\" not found, skipping\n",
+							kind, assetPath.str());
+						fflush(stdout);
+						continue;
+					}
+
+					Int assetSize = assetFile->size();
+					char *assetBytes = assetFile->readEntireAndClose(); // closes the file
+					if (assetBytes != nullptr && assetSize > 0)
+					{
+						printf("[map] Uploading %s \"%s\" (crc=%u, %d bytes) to %s\n",
+							kind, assetPath.str(), md->m_CRC, assetSize,
+							TheGlobalData->m_mapUploadUrl.str());
+						fflush(stdout);
+						UploadMapToServer(TheGlobalData->m_mapUploadUrl,
+							assetBytes, static_cast<unsigned int>(assetSize),
+							md->m_CRC, md->m_fileName, kind, GetGameLogicRandomSeed());
+					}
+					else
+					{
+						printf("[map] ERROR: readEntireAndClose returned no data for %s \"%s\"\n",
+							kind, assetPath.str());
+						fflush(stdout);
+					}
+					delete[] assetBytes;
+				}
 			}
 		}
 	}

@@ -130,6 +130,14 @@ public:
 	// URL to POST the replay file after stats are uploaded.
 	AsciiString m_replayUrl;
 
+	// URL to GET ?crc=<hex> to check whether the server already has the
+	// map that was just played. Body "false" triggers a map upload.
+	AsciiString m_mapCheckUrl;
+
+	// URL to POST the map file when the check URL reports the server
+	// doesn't already have it.
+	AsciiString m_mapUploadUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

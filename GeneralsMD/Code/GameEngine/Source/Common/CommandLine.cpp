@@ -458,6 +458,26 @@ Int parseReplayUrl(char *args[], int num)
 	return 1;
 }
 
+Int parseMapCheckUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_mapCheckUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
+Int parseMapUploadUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_mapUploadUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1204,6 +1224,16 @@ static CommandLineParam paramsForStartup[] =
 	// URL to POST the replay file after stats are uploaded. Defaults to
 	// the project replay endpoint; pass an empty string ("") to skip.
 	{ "-replayUrl", parseReplayUrl },
+
+	// URL to GET ?crc=<hex> to ask the server whether it already has the
+	// played map. Body "false" triggers a map upload to -mapUploadUrl.
+	// Pass an empty string ("") to skip the check (and the upload).
+	{ "-mapCheckUrl", parseMapCheckUrl },
+
+	// URL to POST the .map file when the check URL reports the server
+	// doesn't already have it. Pass an empty string ("") to skip the
+	// upload even if the check reports false.
+	{ "-mapUploadUrl", parseMapUploadUrl },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
