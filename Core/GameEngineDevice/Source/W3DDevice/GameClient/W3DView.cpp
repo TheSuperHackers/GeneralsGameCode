@@ -752,8 +752,8 @@ void W3DView::updateCameraClipPlanes()
 	static_assert(WorldHeightMap::NORMAL_DRAW_WIDTH == WorldHeightMap::NORMAL_DRAW_HEIGHT, "Expects squared draw area");
 	Real farZ = (WorldHeightMap::NORMAL_DRAW_WIDTH * 1.08f) * MAP_XY_FACTOR;
 
-	const Real heightMultiplicator = m_heightAboveGround / ViewDefaultMaxHeightAboveTerrain;
-	farZ *= heightMultiplicator;
+	const Real heightMultiplier = m_heightAboveGround / ViewDefaultMaxHeightAboveTerrain;
+	farZ *= std::max(heightMultiplier, 1.0f);
 
 	if (m_useRealZoomCam)	//WST 10.19.2002
 	{
