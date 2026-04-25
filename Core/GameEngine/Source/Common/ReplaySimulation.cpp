@@ -21,8 +21,10 @@
 #include "Common/ReplaySimulation.h"
 
 #include "Common/GameEngine.h"
+#include "Common/GlobalData.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
+#include "Common/StatsExporter.h"
 #include "Common/WorkerProcess.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
@@ -81,6 +83,8 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 		printf("Simulating Replay \"%s\"\n", filename.str());
 		fflush(stdout);
 		DWORD startTimeMillis = GetTickCount();
+		if (TheGlobalData->m_exportStats)
+			StatsExporterBeginRecording();
 		if (TheRecorder->simulateReplay(filename))
 		{
 			UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
@@ -99,6 +103,8 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 					fflush(stdout);
 				}
 				TheGameLogic->UPDATE();
+				if (TheGlobalData->m_exportStats)
+					StatsExporterCollectSnapshot();
 				if (TheRecorder->sawCRCMismatch())
 				{
 					numErrors++;
@@ -110,6 +116,8 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 			printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
 					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
 			fflush(stdout);
+			if (TheGlobalData->m_exportStats)
+				ExportGameStatsJSON(TheRecorder->getReplayDir(), filename);
 		}
 		else
 		{
@@ -171,11 +179,20 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 			UnicodeString filenameWide;
 			filenameWide.translate(filenames[filenamePositionStarted]);
 			UnicodeString command;
-			command.format(L"\"%s\"%s%s -replay \"%s\"",
+			command.format(L"\"%s\"%s%s%s -replay \"%s\"",
 				exePath,
 				TheGlobalData->m_windowed ? L" -win" : L"",
 				TheGlobalData->m_headless ? L" -headless" : L"",
+				TheGlobalData->m_exportStats ? L" -exportStats" : L"",
 				filenameWide.str());
+			if (!TheGlobalData->m_statsUrl.isEmpty())
+			{
+				UnicodeString statsUrlWide;
+				statsUrlWide.translate(TheGlobalData->m_statsUrl);
+				command.concat(L" -statsUrl \"");
+				command.concat(statsUrlWide);
+				command.concat(L"\"");
+			}
 
 			processes.push_back(WorkerProcess());
 			processes.back().startProcess(command);

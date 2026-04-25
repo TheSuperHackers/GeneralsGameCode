@@ -121,6 +121,12 @@ public:
 	// Run game without graphics, input or audio.
 	Bool m_headless;
 
+	// Export game stats as JSON alongside replay file.
+	Bool m_exportStats;
+
+	// URL to POST compressed stats JSON after export.
+	AsciiString m_statsUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

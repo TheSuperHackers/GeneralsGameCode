@@ -47,6 +47,7 @@
 #include "Common/RandomValue.h"
 #include "Common/CRCDebug.h"
 #include "Common/OptionPreferences.h"
+#include "Common/StatsExporter.h"
 #include "Common/version.h"
 
 constexpr const char s_genrep[] = "GENREP";
@@ -688,6 +689,14 @@ void RecorderClass::stopRecording() {
 		if (m_archiveReplays)
 			archiveReplay(m_fileName);
 	}
+
+	// Stats export: emit the gzipped JSON next to the replay we just wrote.
+	// Self-gates on exportingActive, so this is a no-op for non-host LAN
+	// peers, replay viewing, single-player campaigns, and any path that
+	// didn't call StatsExporterBeginRecording.
+	if (!m_fileName.isEmpty())
+		ExportGameStatsJSON(getReplayDir(), m_fileName);
+
 	m_fileName.clear();
 }
 

@@ -48,6 +48,7 @@
 
 #include "Common/ActionManager.h"
 #include "Common/BuildAssistant.h"
+#include "Common/StatsExporter.h"
 #include "Common/CRCDebug.h"
 #include "Common/DisabledTypes.h"
 #include "Common/GameState.h"
@@ -1558,6 +1559,10 @@ void Player::onUnitCreated( Object *factory, Object *unit )
 
 	// increment our scorekeeper
 	m_scoreKeeper.addObjectBuilt(unit);
+	m_scoreKeeper.addMoneySpent(unit->getTemplate()->calcCostToBuild(this));
+
+	if (TheGlobalData->m_exportStats)
+		StatsExporterRecordBuild(factory, unit);
 
 	// ai notification callback
 	if( m_ai )
@@ -1647,6 +1652,8 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 	if (isRebuild == FALSE) {
 		m_scoreKeeper.addObjectBuilt(structure);
 		m_scoreKeeper.addMoneySpent(structure->getTemplate()->calcCostToBuild(this));
+		if (TheGlobalData->m_exportStats)
+			StatsExporterRecordBuild(builder, structure);
 	}
 
 	structure->friend_adjustPowerForPlayer(TRUE);

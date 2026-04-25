@@ -424,6 +424,30 @@ Int parseHeadless(char *args[], int num)
 	return 1;
 }
 
+Int parseExportStats(char *args[], int num)
+{
+	// Stats export is on by default; this flag is kept for backward
+	// compatibility with the headless-replay invocation pattern.
+	TheWritableGlobalData->m_exportStats = TRUE;
+	return 1;
+}
+
+Int parseNoStats(char *args[], int num)
+{
+	TheWritableGlobalData->m_exportStats = FALSE;
+	return 1;
+}
+
+Int parseStatsUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_statsUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1155,6 +1179,17 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// Export game stats as gzipped JSON alongside replay file. On by default
+	// for hosts of multiplayer/skirmish games and for headless replays.
+	{ "-exportStats", parseExportStats },
+
+	// Disable stats export entirely (no file, no upload).
+	{ "-noStats", parseNoStats },
+
+	// URL to POST gzipped stats JSON after export. Defaults to the project
+	// stats endpoint; pass an empty string ("") to skip upload.
+	{ "-statsUrl", parseStatsUrl },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

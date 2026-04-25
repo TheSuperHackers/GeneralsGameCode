@@ -52,6 +52,7 @@
 #include "Common/RandomValue.h"
 #include "Common/Recorder.h"
 #include "Common/StatsCollector.h"
+#include "Common/StatsExporter.h"
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
 #include "Common/ThingTemplate.h"
@@ -2281,6 +2282,26 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			TheStatsCollector->reset();
 		}
 
+		// Stats export: kick off live-game collection for hosts of
+		// multiplayer or for skirmish games. Replay viewing,
+		// single-player campaign, and the shell are intentionally
+		// skipped (replays would duplicate the original game's stats,
+		// and single-player is scripted, not a real match). The
+		// headless-replay path is driven separately by ReplaySimulation,
+		// which calls Begin/Collect/Export itself; that path runs in
+		// GAME_REPLAY mode so this hook stays inactive.
+		if (TheGlobalData->m_exportStats
+			&& (m_gameMode == GAME_LAN
+				|| m_gameMode == GAME_INTERNET
+				|| m_gameMode == GAME_SKIRMISH))
+		{
+			Bool isHost = TRUE;
+			if (m_gameMode == GAME_LAN || m_gameMode == GAME_INTERNET)
+				isHost = (TheGameInfo != nullptr && TheGameInfo->amIHost());
+			if (isHost)
+				StatsExporterBeginRecording();
+		}
+
 ///		ShowControlBar(FALSE);
 
 		// explicitly set the Control bar to Observer Mode
@@ -3754,6 +3775,12 @@ void GameLogic::update()
 	{
 		TheStatsCollector->update();
 	}
+
+	// Stats export snapshot. Self-gates on exportingActive, so this is a
+	// cheap no-op unless StatsExporterBeginRecording was called in
+	// startNewGame (host of a live multiplayer/skirmish game) or by
+	// ReplaySimulation (headless replay).
+	StatsExporterCollectSnapshot();
 
 	// Update the Recorder
 	{
