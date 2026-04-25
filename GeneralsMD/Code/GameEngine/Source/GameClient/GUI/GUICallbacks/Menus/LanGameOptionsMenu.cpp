@@ -76,7 +76,8 @@ static bool s_isIniting = FALSE;
 // when the host picks a valid replay from the ReplayMenu; consumed by
 // StartPressed. Stored as a fixed char array rather than AsciiString so
 // no non-POD static constructor runs during CRT init. Cleared on LAN
-// lobby init so leaving and re-entering the lobby disarms cleanly.
+// lobby teardown (DeinitLanGameGadgets) so a stale arm cannot leak into
+// the next lobby session.
 static const Int HANDOFF_FRAMES_BEFORE_END = 600; // 10 seconds at 30 logic fps
 static Bool s_resumeArmed = FALSE;
 static char s_resumeArmedFilename[64] = {0};
@@ -1039,6 +1040,11 @@ void InitLanGameGadgets()
 
 void DeinitLanGameGadgets()
 {
+	// Disarm any pending resume-from-replay selection so it doesn't survive
+	// into a future lobby session (e.g. after Start, after a dropped
+	// connection, or any exit path that doesn't go through the Back button).
+	ClearResumeFromReplayArm();
+
 	parentLanGameOptions = nullptr;
 	buttonEmote = nullptr;
 	buttonSelectMap = nullptr;
