@@ -796,6 +796,11 @@ void GameClient::updateHeadless()
 
 Bool GameClient::isMovieAbortRequested()
 {
+	if (TheGameEngine)
+	{
+		TheGameEngine->serviceWindowsOS();
+	}
+
 	// TheSuperHackers @feature User can skip video by pressing ESC
 	if (TheKeyboard)
 	{
@@ -808,18 +813,17 @@ Bool GameClient::isMovieAbortRequested()
 		}
 	}
 
-	// TheSuperHackers @feature Service OS for Window Close / Alt-F4 events
-	if (TheGameEngine)
+	if (TheGameEngine && TheGameEngine->getQuitting())
 	{
-		TheGameEngine->serviceWindowsOS();
+		return TRUE;
 	}
 
-	if (TheMessageStream)
+	if (TheMessageStream && TheMessageStream->containsMessageOfType(GameMessage::MSG_META_DEMO_INSTANT_QUIT))
 	{
-		TheMessageStream->propagateMessages();
+		return TRUE;
 	}
-	
-	if ((TheGameEngine && TheGameEngine->getQuitting()) || (TheGameLogic && TheGameLogic->isQuitToDesktopRequested()))
+
+	if (TheGameLogic && TheGameLogic->isQuitToDesktopRequested())
 	{
 		return TRUE;
 	}
