@@ -367,13 +367,16 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 			case WM_QUERYENDSESSION:
 			{
-				if (TheMessageStream && TheMessageStream->isReadyForMessages())
+				if (TheGameEngine && !TheGameEngine->getQuitting())
 				{
-					TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
-				}
-				else if (TheGameEngine)
-				{
-					TheGameEngine->setQuitting(TRUE);
+					if (TheMessageStream && TheMessageStream->isReadyForMessages())
+					{
+						TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
+					}
+					else
+					{
+						TheGameEngine->setQuitting(TRUE);
+					}
 				}
 				return 0;	//don't allow Windows to shutdown while game is running.
 			}
