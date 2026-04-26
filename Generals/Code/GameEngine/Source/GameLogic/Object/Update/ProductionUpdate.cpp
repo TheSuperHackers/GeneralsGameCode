@@ -194,6 +194,7 @@ ProductionUpdate::ProductionUpdate( Thing *thing, const ModuleData* moduleData )
 	m_clearFlags.clear();
 	m_setFlags.clear();
 	m_flagsDirty = FALSE;
+	m_specialPowerConstructionCommandButton = nullptr;
 
 }
 

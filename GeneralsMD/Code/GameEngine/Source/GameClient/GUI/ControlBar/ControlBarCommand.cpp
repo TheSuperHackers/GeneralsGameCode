@@ -1164,7 +1164,6 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 			}
 
-
 			break;
 		}
 
@@ -1382,7 +1381,6 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 
       if ( obj->isDisabledByType( DISABLED_SUBDUED ) )
         return COMMAND_RESTRICTED;
-
 
 			break;
 		}

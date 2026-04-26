@@ -1112,6 +1112,12 @@ Bool Object::hasAnyDamageWeapon() const
 }
 
 //=============================================================================
+UnsignedInt Object::getMostPercentReadyToFireAnyWeapon() const
+{
+	return m_weaponSet.getMostPercentReadyToFireAnyWeapon();
+}
+
+//=============================================================================
 Bool Object::hasWeaponToDealDamageType(DamageType typeToDeal) const
 {
 	return m_weaponSet.hasWeaponToDealDamageType(typeToDeal);
@@ -2798,6 +2804,12 @@ void Object::clearWeaponSetFlag(WeaponSetType wst)
 Bool Object::hasSpecialPower( SpecialPowerType type ) const
 {
 	return TEST_SPECIALPOWERMASK( m_specialPowerBits, type );
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool Object::hasAnySpecialPower() const
+{
+  return SPECIALPOWERMASK_ANY_SET( m_specialPowerBits );
 }
 
 //-------------------------------------------------------------------------------------------------

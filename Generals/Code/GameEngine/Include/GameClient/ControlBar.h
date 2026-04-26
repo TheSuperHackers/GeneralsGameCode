@@ -56,6 +56,7 @@ class ControlBarSchemeManager;
 class UpgradeTemplate;
 class ControlBarResizer;
 class GameWindowTransitionsHandler;
+class DisplayString;
 
 enum ProductionID CPP_11(: Int);
 
@@ -96,6 +97,8 @@ enum CommandOption CPP_11(: Int)
 	SCRIPT_ONLY									= 0x00080000, // Only a script can use this command (not by users)
 	IGNORES_UNDERPOWERED				= 0x00100000, // this button isn't disabled if its object is merely underpowered
 	USES_MINE_CLEARING_WEAPONSET= 0x00200000,	// uses the special mine-clearing weaponset, even if not current
+	CAN_USE_WAYPOINTS						= 0x00400000, // button has option to use a waypoint path
+	MUST_BE_STOPPED							= 0x00800000, // Unit must be stopped in order to be able to use button.
 };
 
 #ifdef DEFINE_COMMAND_OPTION_NAMES
@@ -127,6 +130,8 @@ static const char *const TheCommandOptionNames[] =
 	"SCRIPT_ONLY",
 	"IGNORES_UNDERPOWERED",
 	"USES_MINE_CLEARING_WEAPONSET",
+	"CAN_USE_WAYPOINTS",
+	"MUST_BE_STOPPED",
 
 	nullptr
 };
@@ -181,7 +186,7 @@ enum GUICommandType CPP_11(: Int)
 	GUI_COMMAND_FIRE_WEAPON,							///< fire a weapon
 	GUI_COMMAND_SPECIAL_POWER,						///< do a special power
 	GUI_COMMAND_PURCHASE_SCIENCE,					///< purchase science
-	GUI_COMMAND_HACK_INTERNET,						///< Hey author, write me!
+	GUI_COMMAND_HACK_INTERNET,						///< gain income from the ether (by hacking the internet)
 	GUI_COMMAND_TOGGLE_OVERCHARGE,				///< Overcharge command for power plants
 #ifdef ALLOW_SURRENDER
 	GUI_COMMAND_POW_RETURN_TO_PRISON,			///< POW Truck, return to prison
@@ -189,9 +194,10 @@ enum GUICommandType CPP_11(: Int)
 	GUI_COMMAND_COMBATDROP,								///< rappel contents to ground or bldg
 	GUI_COMMAND_SWITCH_WEAPON,						///< switch weapon use
 
-	//Context senstive command modes
+	//Context sensitive command modes
 	GUICOMMANDMODE_HIJACK_VEHICLE,
 	GUICOMMANDMODE_CONVERT_TO_CARBOMB,
+	GUICOMMANDMODE_SABOTAGE_BUILDING,
 #ifdef ALLOW_SURRENDER
 	GUICOMMANDMODE_PICK_UP_PRISONER,			///< POW Truck assigned to pick up a specific prisoner
 #endif
@@ -199,7 +205,14 @@ enum GUICommandType CPP_11(: Int)
 	// context-insensitive command mode(s)
 	GUICOMMANDMODE_PLACE_BEACON,
 
-	GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER,			///< do a special power from localPlayer's command center, regardless of selection
+	GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT,			///< do a special power from localPlayer's command center, regardless of selection
+#if RTS_GENERALS
+	GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER = GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT, ///< Legacy name
+#endif
+	GUI_COMMAND_SPECIAL_POWER_CONSTRUCT,					///< do a special power using the construct building interface
+	GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT, ///< do a shortcut special power using the construct building interface
+
+	GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE,
 
 	// add more commands here, don't forget to update the string command list below too ...
 
@@ -241,11 +254,19 @@ static const char *const TheGuiCommandNames[] =
 	"SWITCH_WEAPON",
 	"HIJACK_VEHICLE",
 	"CONVERT_TO_CARBOMB",
+	"SABOTAGE_BUILDING",
 #ifdef ALLOW_SURRENDER
 	"PICK_UP_PRISONER",
 #endif
 	"PLACE_BEACON",
-	"SPECIAL_POWER_FROM_COMMAND_CENTER",
+#if RTS_GENERALS
+	"SPECIAL_POWER_FROM_COMMAND_CENTER", ///< Legacy name
+#else
+	"SPECIAL_POWER_FROM_SHORTCUT",
+#endif
+	"SPECIAL_POWER_CONSTRUCT",
+	"SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT",
+	"SELECT_ALL_UNITS_OF_TYPE",
 
 	nullptr
 };
@@ -386,16 +407,16 @@ private:
 /** Command sets are collections of configurable command buttons.  They are used in the
 	* command context sensitive window in the battle user interface */
 //-------------------------------------------------------------------------------------------------
-enum { MAX_COMMANDS_PER_SET = 12 };  // user interface max button limit for commands
+enum { MAX_COMMANDS_PER_SET = 18 };  // user interface max is 14 (but internally it's 18 for script only buttons!)
 enum { MAX_RIGHT_HUD_UPGRADE_CAMEOS = 5};
 enum {
-			 MAX_PURCHASE_SCIENCE_RANK_1 = 3,
-			 MAX_PURCHASE_SCIENCE_RANK_3 = 12,
-			 MAX_PURCHASE_SCIENCE_RANK_8 = 1,
+			 MAX_PURCHASE_SCIENCE_RANK_1 = 4,
+			 MAX_PURCHASE_SCIENCE_RANK_3 = 15,
+			 MAX_PURCHASE_SCIENCE_RANK_8 = 4,
 			};
 enum { MAX_STRUCTURE_INVENTORY_BUTTONS = 10 }; // there are this many physical buttons in "inventory" windows for structures
 enum { MAX_BUILD_QUEUE_BUTTONS = 9 };// physical button count for the build queue
-enum { MAX_SPECIAL_POWER_SHORTCUTS = 5};
+enum { MAX_SPECIAL_POWER_SHORTCUTS = 11};
 class CommandSet : public Overridable
 {
 
@@ -760,6 +781,11 @@ public:
 	void initSpecialPowershortcutBar( Player *player);
 
 	void triggerRadarAttackGlow();
+
+	void drawSpecialPowerShortcutMultiplierText();
+
+	Bool hasAnyShortcutSelection() const;
+
 protected:
 	void updateRadarAttackGlow ();
 
@@ -824,7 +850,7 @@ protected:
 	static void populateInvDataCallback( Object *obj, void *userData );
 
 	// the following methods are for updating the currently showing context
-	CommandAvailability getCommandAvailability( const CommandButton *command, Object *obj, GameWindow *win, Bool forceDisabledEvaluation = FALSE ) const;
+	CommandAvailability getCommandAvailability( const CommandButton *command, Object *obj, GameWindow *win, GameWindow *applyToWin = nullptr, Bool forceDisabledEvaluation = FALSE ) const;
 	void updateContextMultiSelect();
 	void updateContextPurchaseScience();
 	void updateContextCommand();
@@ -893,6 +919,7 @@ protected:
 	GameWindow *m_sciencePurchaseWindowsRank8[ MAX_PURCHASE_SCIENCE_RANK_8 ];			///< command window controls for easy access
 	GameWindow *m_specialPowerShortcutButtons[ MAX_SPECIAL_POWER_SHORTCUTS ];
 	GameWindow *m_specialPowerShortcutButtonParents[ MAX_SPECIAL_POWER_SHORTCUTS ];
+	DisplayString *m_shortcutDisplayStrings[ MAX_SPECIAL_POWER_SHORTCUTS ];
 	Int m_currentlyUsedSpecialPowersButtons; ///< Value will be <= MAX_SPECIAL_POWER_SHORTCUTS;
 
 

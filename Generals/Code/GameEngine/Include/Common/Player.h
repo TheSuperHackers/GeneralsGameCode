@@ -276,6 +276,22 @@ public:
 			if he has multiple, return one arbitrarily. */
 	Object* findNaturalCommandCenter();
 
+	Object* findAnyExistingObjectWithThingTemplate( const ThingTemplate *thing );
+
+	// Finds a short-cut firing special power of specified type returning the first ready power or
+	// the most ready if none ready.
+	Object* findMostReadyShortcutSpecialPowerOfType( SpecialPowerType spType );
+
+	//Find specified thing template's most ready weapon.
+	Object* findMostReadyShortcutWeaponForThing( const ThingTemplate *thing, UnsignedInt &mostReadyPercentage );
+	Object* findMostReadyShortcutSpecialPowerForThing( const ThingTemplate *thing, UnsignedInt &mostReadyPercentage );
+
+	// Finds a short-cut firing special power of any type arbitrarily.
+	Bool hasAnyShortcutSpecialPower();
+
+	// Counts available shortcut special power of specified type that can fire now.
+	Int countReadyShortcutSpecialPowersOfType( SpecialPowerType spType );
+
 	/// return t if the player has the given science, either intrinsically, via specialization, or via capture.
 	Bool hasScience(ScienceType t) const;
 	Bool isScienceDisabled( ScienceType t ) const;	///< Can't purchase this science because of script reasons.

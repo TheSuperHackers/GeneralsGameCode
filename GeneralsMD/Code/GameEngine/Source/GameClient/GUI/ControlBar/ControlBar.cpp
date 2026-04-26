@@ -194,12 +194,16 @@ void ControlBar::populatePurchaseScience( Player* player )
 	commandSet8 = findCommandSet(player->getPlayerTemplate()->getPurchaseScienceCommandSetRank8()); // TEMP WILL CHANGE TO PROPER WAY ONCE WORKING
 
 	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_1; i++ )
-		m_sciencePurchaseWindowsRank1[i]->winHide(TRUE);
-	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_3; i++ )
-		m_sciencePurchaseWindowsRank3[i]->winHide(TRUE);
-	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ )
-		m_sciencePurchaseWindowsRank8[i]->winHide(TRUE);
+		if (m_sciencePurchaseWindowsRank1[i] != nullptr)
+			m_sciencePurchaseWindowsRank1[i]->winHide(TRUE);
 
+	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_3; i++ )
+		if (m_sciencePurchaseWindowsRank3[i] != nullptr)
+			m_sciencePurchaseWindowsRank3[i]->winHide(TRUE);
+
+	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ )
+		if (m_sciencePurchaseWindowsRank8[i] != nullptr)
+			m_sciencePurchaseWindowsRank8[i]->winHide(TRUE);
 
 	// if no command set match is found hide all the buttons
 	if( commandSet1 == nullptr ||
@@ -211,6 +215,8 @@ void ControlBar::populatePurchaseScience( Player* player )
 	const CommandButton *commandButton;
 	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_1; i++ )
 	{
+		if (m_sciencePurchaseWindowsRank1[i] == nullptr)
+			continue;
 
 		// get command button
 		commandButton = commandSet1->getCommandButton(i);
@@ -271,6 +277,8 @@ void ControlBar::populatePurchaseScience( Player* player )
 
 	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_3; i++ )
 	{
+		if (m_sciencePurchaseWindowsRank3[i] == nullptr)
+			continue;
 
 		// get command button
 		commandButton = commandSet3->getCommandButton(i);
@@ -334,6 +342,8 @@ void ControlBar::populatePurchaseScience( Player* player )
 
 	for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ )
 	{
+		if (m_sciencePurchaseWindowsRank8[i] == nullptr)
+			continue;
 
 		// get command button
 		commandButton = commandSet8->getCommandButton(i);
@@ -400,15 +410,16 @@ void ControlBar::populatePurchaseScience( Player* player )
 		GadgetStaticTextSetText(win, tempUS);
 	}
 
-// redundant to StaticTextTitle in the Zero Hour context
-/*
+#if RTS_GENERALS
 	win = TheWindowManager->winGetWindowFromId( m_contextParent[ CP_PURCHASE_SCIENCE ], TheNameKeyGenerator->nameToKey( "GeneralsExpPoints.wnd:StaticTextLevel" ) );
 	if(win)
 	{
 		tempUS.format(TheGameText->fetch("SCIENCE:Rank"), player->getRankLevel());
 		GadgetStaticTextSetText(win, tempUS);
 	}
-*/
+#else
+	// redundant to StaticTextTitle in the Zero Hour context
+#endif
 
 	win = TheWindowManager->winGetWindowFromId( m_contextParent[ CP_PURCHASE_SCIENCE ], TheNameKeyGenerator->nameToKey( "GeneralsExpPoints.wnd:ProgressBarExperience" ) );
 	if(win)
@@ -1145,7 +1156,8 @@ void ControlBar::init()
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
 			m_sciencePurchaseWindowsRank1[ i ] =
 				TheWindowManager->winGetWindowFromId( m_contextParent[ CP_PURCHASE_SCIENCE ], id );
-			m_sciencePurchaseWindowsRank1[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			if (m_sciencePurchaseWindowsRank1[ i ] != nullptr)
+				m_sciencePurchaseWindowsRank1[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 		}
 		for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_3; i++ )
 		{
@@ -1153,7 +1165,8 @@ void ControlBar::init()
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
 			m_sciencePurchaseWindowsRank3[ i ] =
 				TheWindowManager->winGetWindowFromId( m_contextParent[ CP_PURCHASE_SCIENCE ], id );
-			m_sciencePurchaseWindowsRank3[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			if (m_sciencePurchaseWindowsRank3[ i ] != nullptr)
+				m_sciencePurchaseWindowsRank3[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 		}
 
 		for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ )
@@ -1162,7 +1175,8 @@ void ControlBar::init()
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
 			m_sciencePurchaseWindowsRank8[ i ] =
 				TheWindowManager->winGetWindowFromId( m_contextParent[ CP_PURCHASE_SCIENCE ], id );
-			m_sciencePurchaseWindowsRank8[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			if (m_sciencePurchaseWindowsRank8[ i ] != nullptr)
+				m_sciencePurchaseWindowsRank8[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 		}
 
 		// keep a pointer to the window making up the right HUD display
@@ -2623,7 +2637,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 				setPortraitByObject( nullptr );
 				return;
 			}
-      StealthUpdate *stealth = obj->getStealth();
+			StealthUpdate *stealth = obj->getStealth();
 			if( stealth && stealth->isDisguised() )
 			{
 				//Fake player upgrades too!
@@ -3267,14 +3281,18 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 		id = TheNameKeyGenerator->nameToKey( windowName.str() );
 		m_specialPowerShortcutButtons[ i ] =
 			TheWindowManager->winGetWindowFromId( m_specialPowerShortcutParent, id );
-		m_specialPowerShortcutButtons[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
-		// Oh god... this is a total hack for shortcut buttons to handle rendering text top left corner...
-		m_specialPowerShortcutButtons[ i ]->winSetStatus( WIN_STATUS_SHORTCUT_BUTTON );
 
-		windowName.format( parentName, i+1 );
-		id = TheNameKeyGenerator->nameToKey( windowName.str() );
-		m_specialPowerShortcutButtonParents[ i ] =
-			TheWindowManager->winGetWindowFromId( m_specialPowerShortcutParent, id );
+		if (m_specialPowerShortcutButtons[ i ] != nullptr)
+		{
+			m_specialPowerShortcutButtons[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			// Oh god... this is a total hack for shortcut buttons to handle rendering text top left corner...
+			m_specialPowerShortcutButtons[ i ]->winSetStatus( WIN_STATUS_SHORTCUT_BUTTON );
+
+			windowName.format( parentName, i+1 );
+			id = TheNameKeyGenerator->nameToKey( windowName.str() );
+			m_specialPowerShortcutButtonParents[ i ] =
+				TheWindowManager->winGetWindowFromId( m_specialPowerShortcutParent, id );
+		}
 	}
 
 }
@@ -3657,7 +3675,6 @@ void ControlBar::updateSpecialPowerShortcut()
 				win->winEnable( TRUE );
 				break;
 		}
-
 	}
 }
 

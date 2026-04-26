@@ -66,6 +66,7 @@ public:
 	virtual void markSpecialPowerTriggered( const Coord3D *location ) = 0;
 	virtual void startPowerRecharge() = 0;
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
+	virtual Bool isScriptOnly() const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -79,9 +80,10 @@ public:
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	const SpecialPowerTemplate *m_specialPowerTemplate;		///< pointer to the special power template
-	Bool	m_updateModuleStartsAttack;	///< update module determines when the special power actually starts! If true, update module is required.
-	Bool m_startsPaused; ///< Paused on creation, someone else will have to unpause (like upgrade module, or script)
-	AudioEventRTS					m_initiateSound;
+	AudioEventRTS			m_initiateSound;
+	Bool							m_updateModuleStartsAttack;	///< update module determines when the special power actually starts! If true, update module is required.
+	Bool							m_startsPaused; ///< Paused on creation, someone else will have to unpause (like upgrade module, or script)
+	Bool							m_scriptedSpecialPowerOnly;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -151,6 +153,8 @@ public:
 	*/
 	virtual void startPowerRecharge() override;
 	virtual const AudioEventRTS& getInitiateSound() const override;
+
+	virtual Bool isScriptOnly() const override;
 
 protected:
 

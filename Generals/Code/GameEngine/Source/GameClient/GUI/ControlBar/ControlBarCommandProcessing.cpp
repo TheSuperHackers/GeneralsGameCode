@@ -57,6 +57,42 @@
 #include "GameLogic/Module/ProductionUpdate.h"
 
 
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+struct SelectObjectsInfo
+{
+	const ThingTemplate *thingTemplate;
+	GameMessage *msg;
+};
+
+//-------------------------------------------------------------------------------------------------
+
+void selectObjectOfType( Object* obj, void* selectObjectsInfo )
+{
+	SelectObjectsInfo *soInfo = (SelectObjectsInfo*)selectObjectsInfo;
+	if( !obj || !soInfo )
+	{
+		return;
+	}
+
+	//Do the templates match?
+	if( obj->getTemplate()->isEquivalentTo( soInfo->thingTemplate ) )
+	{
+		//Okay, then add it to the selected group.
+		soInfo->msg->appendObjectIDArgument( obj->getID() );
+
+		Drawable *draw = obj->getDrawable();
+		if( draw )
+		{
+			TheInGameUI->selectDrawable( draw );
+		}
+	}
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+
 //-------------------------------------------------------------------------------------------------
 /** Process a button transition message from the window system that should be for one of
 	* our GUI commands */
@@ -97,12 +133,13 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 	}
 
 	// sanity, we won't process messages if we have no source object,
-	// unless we're CB_CONTEXT_PURCHASE_SCIENCE or GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER
+	// unless we're CB_CONTEXT_PURCHASE_SCIENCE or GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT
 	if( m_currContext != CB_CONTEXT_MULTI_SELECT &&
 			commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE &&
-			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER &&
-			(m_currentSelectedDrawable == nullptr ||
-			 m_currentSelectedDrawable->getObject() == nullptr) )
+			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT &&
+			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT &&
+			commandButton->getCommandType() != GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE &&
+			(m_currentSelectedDrawable == nullptr || m_currentSelectedDrawable->getObject() == nullptr) )
 	{
 
 		if( m_currContext != CB_CONTEXT_NONE )
@@ -139,7 +176,9 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 	Object *obj = nullptr;
 	if( m_currContext != CB_CONTEXT_MULTI_SELECT &&
 			commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE &&
-			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER)
+			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT &&
+			commandButton->getCommandType() != GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT &&
+			commandButton->getCommandType() != GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE )
 		obj = m_currentSelectedDrawable->getObject();
 
 	//@todo Kris -- Special case code so convoy trucks can detonate nuke trucks -- if other things need this,
@@ -228,6 +267,97 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			// tell the UI that we want to build something so we get a building at the cursor
 			TheInGameUI->placeBuildAvailable( commandButton->getThingTemplate(), m_currentSelectedDrawable );
+
+			break;
+
+		}
+
+
+		case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
+		{
+			//Determine the object that would construct it.
+			const SpecialPowerTemplate *spTemplate = commandButton->getSpecialPowerTemplate();
+			SpecialPowerType spType = spTemplate->getSpecialPowerType();
+			Object* obj = ThePlayerList->getLocalPlayer()->findMostReadyShortcutSpecialPowerOfType( spType );
+			if( !obj )
+				break;
+			Drawable *draw = obj->getDrawable();
+
+			const ThingTemplate *whatToBuild = commandButton->getThingTemplate();
+
+			CanMakeType cmt = TheBuildAssistant->canMakeUnit( obj, whatToBuild );
+			if (cmt == CANMAKE_NO_MONEY)
+			{
+				TheEva->setShouldPlay(EVA_InsufficientFunds);
+				TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
+				break;
+			}
+			else if (cmt == CANMAKE_QUEUE_FULL)
+			{
+				TheInGameUI->message( "GUI:ProductionQueueFull" );
+				break;
+			}
+			else if (cmt == CANMAKE_PARKING_PLACES_FULL)
+			{
+				TheInGameUI->message( "GUI:ParkingPlacesFull" );
+				break;
+			}
+			else if( cmt == CANMAKE_MAXED_OUT_FOR_PLAYER )
+			{
+				TheInGameUI->message( "GUI:UnitMaxedOut" );
+				break;
+			}
+
+			// tell the UI that we want to build something so we get a building at the cursor
+			TheInGameUI->placeBuildAvailable( commandButton->getThingTemplate(), draw );
+
+			ProductionUpdateInterface* pu = obj->getProductionUpdateInterface();
+			if( pu )
+			{
+				pu->setSpecialPowerConstructionCommandButton( commandButton );
+			}
+
+			break;
+		}
+		case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT:
+		{
+			// sanity
+			if( m_currentSelectedDrawable == nullptr )
+				break;
+
+			const ThingTemplate *whatToBuild = commandButton->getThingTemplate();
+
+			CanMakeType cmt = TheBuildAssistant->canMakeUnit( obj, whatToBuild );
+			if (cmt == CANMAKE_NO_MONEY)
+			{
+				TheEva->setShouldPlay(EVA_InsufficientFunds);
+				TheInGameUI->message( "GUI:NotEnoughMoneyToBuild" );
+				break;
+			}
+			else if (cmt == CANMAKE_QUEUE_FULL)
+			{
+				TheInGameUI->message( "GUI:ProductionQueueFull" );
+				break;
+			}
+			else if (cmt == CANMAKE_PARKING_PLACES_FULL)
+			{
+				TheInGameUI->message( "GUI:ParkingPlacesFull" );
+				break;
+			}
+			else if( cmt == CANMAKE_MAXED_OUT_FOR_PLAYER )
+			{
+				TheInGameUI->message( "GUI:UnitMaxedOut" );
+				break;
+			}
+
+			// tell the UI that we want to build something so we get a building at the cursor
+			TheInGameUI->placeBuildAvailable( commandButton->getThingTemplate(), m_currentSelectedDrawable );
+
+			ProductionUpdateInterface* pu = obj->getProductionUpdateInterface();
+			if( pu )
+			{
+				pu->setSpecialPowerConstructionCommandButton( commandButton );
+			}
 
 			break;
 
@@ -503,6 +633,38 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			break;
 		}
 
+		case GUI_COMMAND_SELECT_ALL_UNITS_OF_TYPE:
+		{
+			Player* localPlayer = ThePlayerList->getLocalPlayer();
+			if( !localPlayer )
+			{
+				break;
+			}
+
+			const ThingTemplate *thing = commandButton->getThingTemplate();
+			if( !thing )
+			{
+				break;
+			}
+
+			//deselect other units
+			TheInGameUI->deselectAllDrawables();
+
+			// create a new group.
+			GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
+
+			//New group or add to group? Passed in value is true if we are creating a new group.
+			teamMsg->appendBooleanArgument( TRUE );
+
+			//Iterate through the player's entire team and select each member that matches the template.
+			SelectObjectsInfo info;
+			info.thingTemplate = thing;
+			info.msg = teamMsg;
+			localPlayer->iterateObjects( selectObjectOfType, (void*)&info );
+
+			break;
+		}
+
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_WAYPOINTS:
 			break;
@@ -547,6 +709,8 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				break;  // exit case
 
 			}
+
+      //what if container is subdued... assert a logic failure, perhaps?
 
 			// send message to exit
 			GameMessage *exitMsg = TheMessageStream->appendMessage( GameMessage::MSG_EXIT );
@@ -669,17 +833,20 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		}
 
 		//---------------------------------------------------------------------------------------------
-		case GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER:
+		case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
 		{
-			Object* cmdCenter = ThePlayerList->getLocalPlayer()->findNaturalCommandCenter();
-			if (cmdCenter == nullptr)
+			const SpecialPowerTemplate *spTemplate = commandButton->getSpecialPowerTemplate();
+			SpecialPowerType spType = spTemplate->getSpecialPowerType();
+
+			Object* obj = ThePlayerList->getLocalPlayer()->findMostReadyShortcutSpecialPowerOfType( spType );
+			if( !obj )
 				break;
 
 			// command needs no additional data, send the message
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_SPECIAL_POWER );
-			msg->appendIntegerArgument( commandButton->getSpecialPowerTemplate()->getID() );
+			msg->appendIntegerArgument( spTemplate->getID() );
 			msg->appendIntegerArgument( commandButton->getOptions() );
-			msg->appendObjectIDArgument( cmdCenter->getID() );
+			msg->appendObjectIDArgument( obj->getID() );
 			break;
 
 		}

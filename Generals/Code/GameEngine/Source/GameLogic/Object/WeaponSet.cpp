@@ -1003,6 +1003,28 @@ Weapon* WeaponSet::findWaypointFollowingCapableWeapon()
 }
 
 //-------------------------------------------------------------------------------------------------
+UnsignedInt WeaponSet::getMostPercentReadyToFireAnyWeapon() const
+{
+	UnsignedInt mostReady = 0;
+	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	{
+		if( m_weapons[ i ] )
+		{
+			UnsignedInt percentage = (UnsignedInt)(m_weapons[ i ]->getPercentReadyToFire() * 100.0f);
+			if( percentage > mostReady )
+			{
+				mostReady = percentage;
+			}
+			if( mostReady >= 100 )
+			{
+				return mostReady;
+			}
+		}
+	}
+	return mostReady;
+}
+
+//-------------------------------------------------------------------------------------------------
 // A special type of command demands that you use this (normally unchooseable) weapon
 // until told otherwise.
 Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockType )

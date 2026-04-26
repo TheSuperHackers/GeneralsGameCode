@@ -455,6 +455,7 @@ public:
 	Bool hasAnyDamageWeapon() const; //Kris: a should be used for real weapons that directly inflict damage... not deploy, hack, etc.
 	Bool hasWeaponToDealDamageType(DamageType typeToDeal) const;
 	Real getLargestWeaponRange() const;
+	UnsignedInt getMostPercentReadyToFireAnyWeapon() const;
 
 	Weapon* getWeaponInWeaponSlot(WeaponSlotType wslot) const { return m_weaponSet.getWeaponInWeaponSlot(wslot); }
 
@@ -525,6 +526,7 @@ public:
 	/// return true if the template has the specified special power flag set
 	// @todo: inline
 	Bool hasSpecialPower( SpecialPowerType type ) const;
+	Bool hasAnySpecialPower() const;
 
 	void setWeaponBonusCondition(WeaponBonusConditionType wst) { m_weaponBonusCondition |= (1 << wst); }
 	void clearWeaponBonusCondition(WeaponBonusConditionType wst) { m_weaponBonusCondition &= ~(1 << wst); }
