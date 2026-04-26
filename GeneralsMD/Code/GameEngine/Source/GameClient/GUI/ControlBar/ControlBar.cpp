@@ -3502,6 +3502,9 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 				}
 			}
 
+			DEBUG_ASSERTCRASH(m_specialPowerShortcutButtons[ currentButton ] != nullptr, ("m_specialPowerShortcutButtons[%d] is null", currentButton));
+			DEBUG_ASSERTCRASH(m_specialPowerShortcutButtonParents[ currentButton ] != nullptr, ("m_specialPowerShortcutButtonParents[%d] is null", currentButton));
+
 			// make sure the window is not hidden
 			m_specialPowerShortcutButtons[ currentButton ]->winHide( FALSE );
 			m_specialPowerShortcutButtonParents[ currentButton ]->winHide( FALSE );

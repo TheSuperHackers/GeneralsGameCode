@@ -74,9 +74,23 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 	// parse the ini definition
 	ini->initFromINI( button, button->getFieldParse() );
 
+	const SpecialPowerTemplate *spTemplate = button->getSpecialPowerTemplate();
+
+	// TheSuperHackers @tweak Make sure Special Power buttons have a Special Power template.
+	switch (button->getCommandType())
+	{
+	case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
+	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT:
+	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
+	{
+		DEBUG_ASSERTCRASH(spTemplate != nullptr,
+			("[LINE: %d in '%s'] CommandButton %s has is a SPECIAL_POWER but is missing a SpecialPower field",
+				ini->getLineNum(), ini->getFilename().str(), name.str()));
+		break;
+	}
+	}
 
 	//Make sure buttons with special power templates also have the appropriate option set.
-	const SpecialPowerTemplate *spTemplate = button->getSpecialPowerTemplate();
 	Bool needsTemplate = BitIsSet( button->getOptions(), NEED_SPECIAL_POWER_SCIENCE );
 	if( spTemplate && !needsTemplate )
 	{
