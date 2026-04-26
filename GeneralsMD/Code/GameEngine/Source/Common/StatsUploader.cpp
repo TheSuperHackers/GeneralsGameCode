@@ -159,9 +159,93 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 	httpPostBytes(url, data, dataLen, "application/gzip", nullptr, seed, "Stats upload");
 }
 
-void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed)
+// Sanitize a filename for the multipart Content-Disposition header. Strips
+// any path components (forward or back slashes), and any double-quote /
+// CR / LF that would break the header. Output is bounded by outCap.
+static void sanitizeMultipartFilename(const char *src, char *out, unsigned int outCap)
 {
-	httpPostBytes(url, data, dataLen, "application/octet-stream", nullptr, seed, "Replay upload");
+	if (outCap == 0)
+		return;
+	if (src == nullptr) src = "";
+	// VC6 leaks for-loop variables into the enclosing scope, so declare
+	// the iterator once and reuse it across the two scans.
+	const char *p;
+	// Skip to last path separator
+	const char *base = src;
+	for (p = src; *p != '\0'; ++p)
+	{
+		if (*p == '/' || *p == '\\')
+			base = p + 1;
+	}
+	if (*base == '\0')
+		base = "replay.rep";
+	unsigned int n = 0;
+	for (p = base; *p != '\0' && n + 1 < outCap; ++p)
+	{
+		char c = *p;
+		if (c == '"' || c == '\r' || c == '\n')
+			c = '_';
+		out[n++] = c;
+	}
+	out[n] = '\0';
+}
+
+// Issue an HTTP POST as multipart/form-data with a single binary part.
+// The request body is built in a single malloc'd buffer (header + bytes +
+// trailer) and posted via the shared openHttpRequest plumbing. Best-effort;
+// logs status to stdout.
+static void httpPostMultipartFile(const AsciiString& url,
+                                  const char *fieldName,
+                                  const char *filename,
+                                  const void *data,
+                                  unsigned int dataLen,
+                                  unsigned int seed,
+                                  const char *logTag)
+{
+	if (data == nullptr || dataLen == 0)
+		return;
+
+	// Boundary: long enough that random collision with binary file bytes
+	// is negligible. Must not appear inside the file payload preceded by
+	// "\r\n--".
+	static const char boundary[] = "----GeneralsReplayBoundaryK8nQv2pXr9TfH3";
+
+	char prefix[512];
+	int prefixLen = sprintf(prefix,
+		"--%s\r\n"
+		"Content-Disposition: form-data; name=\"%.63s\"; filename=\"%.255s\"\r\n"
+		"Content-Type: application/octet-stream\r\n"
+		"\r\n",
+		boundary, fieldName, filename);
+
+	char trailer[64];
+	int trailerLen = sprintf(trailer, "\r\n--%s--\r\n", boundary);
+
+	if (prefixLen <= 0 || trailerLen <= 0)
+		return;
+
+	unsigned int bodyLen = (unsigned int)prefixLen + dataLen + (unsigned int)trailerLen;
+	char *body = (char *)malloc(bodyLen);
+	if (body == nullptr)
+		return;
+	memcpy(body, prefix, (size_t)prefixLen);
+	memcpy(body + prefixLen, data, dataLen);
+	memcpy(body + prefixLen + dataLen, trailer, (size_t)trailerLen);
+
+	char contentType[128];
+	sprintf(contentType, "multipart/form-data; boundary=%s", boundary);
+
+	httpPostBytes(url, body, bodyLen, contentType, nullptr, seed, logTag);
+
+	free(body);
+}
+
+void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen,
+                          const AsciiString& filename, unsigned int seed)
+{
+	char nameBuf[256];
+	sanitizeMultipartFilename(filename.isEmpty() ? nullptr : filename.str(), nameBuf, sizeof(nameBuf));
+	httpPostMultipartFile(url, "file", nameBuf, data, dataLen, seed, "Replay upload");
 }
 
 void UploadMapToServer(const AsciiString& uploadUrl, const void *data, unsigned int dataLen,

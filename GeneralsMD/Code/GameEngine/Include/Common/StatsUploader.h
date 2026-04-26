@@ -27,13 +27,16 @@ class AsciiString;
 /// @param seed Game seed for the X-Game-Seed header
 void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed);
 
-/// Upload a replay file to a REST endpoint via HTTP POST.
-/// Sends Content-Type: application/octet-stream with the X-Game-Seed header.
+/// Upload a replay file to a REST endpoint via HTTP POST as
+/// multipart/form-data with a single "file" part. Sends the X-Game-Seed
+/// header alongside the standard multipart Content-Type.
 /// @param url Full URL including path (e.g. "https://www.radarvan.com/api/upload_replay")
 /// @param data Pointer to the replay file's raw bytes
 /// @param dataLen Length of replay data in bytes
+/// @param filename Filename to advertise in the multipart part (e.g. "00000000.rep")
 /// @param seed Game seed for the X-Game-Seed header
-void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed);
+void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen,
+                          const AsciiString& filename, unsigned int seed);
 
 /// Ask the server whether it already has the map identified by mapCRC.
 /// Issues an HTTP GET to "<checkUrl>?crc=<hex>" and inspects the response

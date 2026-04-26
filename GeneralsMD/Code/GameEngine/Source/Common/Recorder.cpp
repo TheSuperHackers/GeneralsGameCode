@@ -727,7 +727,7 @@ void RecorderClass::stopRecording() {
 						{
 							printf("[replay] Uploading %ld bytes to %s\n", size, TheGlobalData->m_replayUrl.str());
 							fflush(stdout);
-							UploadReplayToServer(TheGlobalData->m_replayUrl, fileData, static_cast<unsigned int>(size), GetGameLogicRandomSeed());
+							UploadReplayToServer(TheGlobalData->m_replayUrl, fileData, static_cast<unsigned int>(size), m_fileName, GetGameLogicRandomSeed());
 						}
 						free(fileData);
 					}
