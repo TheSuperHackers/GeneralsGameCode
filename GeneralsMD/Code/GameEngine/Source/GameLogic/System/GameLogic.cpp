@@ -286,6 +286,8 @@ GameLogic::GameLogic()
 	m_loadingMap = FALSE;
 	m_loadingSave = FALSE;
 	m_clearingGameData = FALSE;
+
+	m_startedGamesCount = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1137,6 +1139,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	// reset the frame counter
 	m_frame = 0;
 	m_hasUpdated = FALSE;
+	m_startedGamesCount += isInInteractiveGame(m_gameMode);
 
 #ifdef DEBUG_CRC
 	// TheSuperHackers @info helmutbuhler 04/09/2025
