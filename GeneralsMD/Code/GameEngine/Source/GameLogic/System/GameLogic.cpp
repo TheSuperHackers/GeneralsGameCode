@@ -2452,7 +2452,7 @@ void GameLogic::createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D 
 //-----------------------------------------------------------------------------------------
 static void findAndSelectCommandCenter(Object *obj, void* alreadyFound)
 {
-	if (!((*(Bool*)alreadyFound)) && obj && obj->isKindOf(KINDOF_COMMANDCENTER) )
+	if (!((*(Bool*)alreadyFound)) && obj->isKindOf(KINDOF_COMMANDCENTER) )
 	{
 		((*(Bool*)alreadyFound)) = TRUE;
 		TheGameLogic->selectObject(obj, TRUE, obj->getControllingPlayer()->getPlayerMask(), obj->isLocallyControlled());

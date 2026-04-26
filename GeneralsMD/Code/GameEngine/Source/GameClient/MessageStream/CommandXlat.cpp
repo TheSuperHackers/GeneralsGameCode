@@ -97,8 +97,6 @@
 void countObjects(Object *obj, void *userData)
 {
 	Int *numObjects = (Int *)userData;
-	if (!numObjects || !obj)
-		return;
 
 	DEBUG_LOG(("Looking at obj %d (%s) - isEffectivelyDead()==%d, isDestroyed==%d, numObjects==%d",
 		obj->getID(), obj->getTemplate()->getName().str(), obj->isEffectivelyDead(), obj->isDestroyed(), *numObjects));
@@ -109,9 +107,6 @@ void countObjects(Object *obj, void *userData)
 
 void printObjects(Object *obj, void *userData)
 {
-	if (!obj)
-		return;
-
 	Bool isDead = obj->isEffectivelyDead() || obj->isDestroyed();
 	Bool isInert = obj->isKindOf(KINDOF_INERT);
 	AsciiString statusStr = (isDead)?"Dead":(isInert)?"Inert":"Living";
@@ -912,10 +907,6 @@ struct CommandCenterLocator
 
 void findCommandCenterOrMostExpensiveBuilding(Object* obj, void* vccl)
 {
-	if (!obj) {
-		return;
-	}
-
 	CommandCenterLocator *ccl = (CommandCenterLocator*) vccl;
 
 	// here's the deal. We want to get the first Command Center in the list.
@@ -965,9 +956,7 @@ struct HeroHolder
 
 void amIAHero(Object* obj, void* heroHolder)
 {
-
-
-	if (!obj || ((HeroHolder*)heroHolder)->hero != nullptr)
+	if (((HeroHolder*)heroHolder)->hero != nullptr)
 	{
 		return;
 	}

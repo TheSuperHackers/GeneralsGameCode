@@ -648,7 +648,7 @@ void findDrone( Object *obj, void *droneInfo )
 {
 	DroneInfo *dInfo = (DroneInfo*)droneInfo;
 
-	if( !dInfo->found && obj )
+	if( !dInfo->found )
 	{
 		if( obj->isKindOf( KINDOF_DRONE ) && obj->getProducerID() == dInfo->owner->getID() )
 		{

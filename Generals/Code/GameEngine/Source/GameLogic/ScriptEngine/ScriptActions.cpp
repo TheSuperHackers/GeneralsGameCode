@@ -92,20 +92,17 @@ extern void oversizeTheTerrain(Int amount);
 // or the indicator color. this allows us to force the situation. (srj)
 static void updateTeamAndPlayerStuff( Object *obj, void *userData )
 {
-	if (obj)
-	{
-		obj->updateUpgradeModules();
+	obj->updateUpgradeModules();
 
-		// srj sez: apparently we have to do this too, since Team::setControllingPlayer
-		// does not. Might make more sense to do it there, but am scared to at this point.
-		Drawable* draw = obj->getDrawable();
-		if (draw)
-		{
-			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-				draw->setIndicatorColor(obj->getNightIndicatorColor());
-			else
-				draw->setIndicatorColor(obj->getIndicatorColor());
-		}
+	// srj sez: apparently we have to do this too, since Team::setControllingPlayer
+	// does not. Might make more sense to do it there, but am scared to at this point.
+	Drawable* draw = obj->getDrawable();
+	if (draw)
+	{
+		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+			draw->setIndicatorColor(obj->getNightIndicatorColor());
+		else
+			draw->setIndicatorColor(obj->getIndicatorColor());
 	}
 }
 //-------------------------------------------------------------------------------------------------

@@ -88,7 +88,7 @@ void findDozerCommandSet( Object *object, void *userData )
 	{
 		return;
 	}
-	if( object && object->isKindOf( KINDOF_DOZER ) )
+	if( object->isKindOf( KINDOF_DOZER ) )
 	{
 		dozerCommandSet = TheControlBar->findCommandSet( object->getCommandSetString() );
 	}
@@ -284,10 +284,6 @@ void AcademyStats::init( const Player *player )
 static void updateAcademyStats( Object *obj, void *userData )
 {
 	AcademyStats *academy = (AcademyStats*)userData;
-	if( !obj || !academy )
-	{
-		return;
-	}
 
 	if( academy->isFirstUpdate() )
 	{

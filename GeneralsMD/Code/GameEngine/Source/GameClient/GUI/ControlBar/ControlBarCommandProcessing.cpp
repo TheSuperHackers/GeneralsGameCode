@@ -71,10 +71,6 @@ struct SelectObjectsInfo
 void selectObjectOfType( Object* obj, void* selectObjectsInfo )
 {
 	SelectObjectsInfo *soInfo = (SelectObjectsInfo*)selectObjectsInfo;
-	if( !obj || !soInfo )
-	{
-		return;
-	}
 
 	//Do the templates match?
 	if( obj->getTemplate()->isEquivalentTo( soInfo->thingTemplate ) )
