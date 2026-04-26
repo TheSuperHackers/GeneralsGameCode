@@ -468,6 +468,16 @@ void GameEngine::init()
 
 		TheArchiveFileSystem->loadMods();
 
+		// Re-parse GameData.ini after loadMods so a mod-supplied
+		// Data\INI\GameData.ini actually takes effect. The earlier parse
+		// at the GlobalData initSubsystem call happens before loadMods
+		// has registered the mod BIG, so without this re-read the engine
+		// only ever sees the retail GameData.ini even when -mod is used.
+		// Other INIs (Water, Weather, etc., below) are already loaded
+		// post-loadMods and so don't need this treatment.
+		ini.loadFileDirectory( "Data\\INI\\Default\\GameData", INI_LOAD_OVERWRITE, &xferCRC );
+		ini.loadFileDirectory( "Data\\INI\\GameData", INI_LOAD_OVERWRITE, &xferCRC );
+
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
 		TheGameLODManager->init();
