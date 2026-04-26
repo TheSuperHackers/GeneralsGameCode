@@ -367,7 +367,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 			case WM_QUERYENDSESSION:
 			{
-				if (TheMessageStream && TheMessageStream->isLocalPlayerReady())
+				if (TheMessageStream && TheMessageStream->isReadyForMessages())
 				{
 					TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
 				}
@@ -385,7 +385,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				// If not in a match (e.g. main menu), the command instantly closes the application.
 				if (TheGameEngine && !TheGameEngine->getQuitting())
 				{
-					if (TheMessageStream && TheMessageStream->isLocalPlayerReady())
+					if (TheMessageStream && TheMessageStream->isReadyForMessages())
 					{
 						TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
 					}
