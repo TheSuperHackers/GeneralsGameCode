@@ -19,7 +19,7 @@
 !define EXENAME       "generalszh_zulu.exe"
 !define BIGNAME       "Zulu.big"
 !define USERDATALEAF  "Command and Conquer Generals Zero Hour Data"
-!define LAUNCHARGS    "-quickstart -win -mod Zulu.big"
+!define LAUNCHARGS    "-mod Zulu.big"
 !define UNINSTREGKEY  "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 
 Name        "${APPNAME}"

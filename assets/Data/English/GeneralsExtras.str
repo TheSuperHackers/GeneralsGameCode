@@ -1,0 +1,51 @@
+// GeneralsExtras.str
+// Additional GUI strings shipped with the Zulu mod. Loaded by
+// GameTextManager::initAdditionalStringFile() after loadMods, augmenting
+// (never overriding) Generals.csf. Format mirrors the standard .str format:
+//   Label
+//   "Text"
+//   END
+
+GUI:ResumeArmed
+"Resume armed. The next game start will continue the replay."
+END
+
+GUI:ResumeArmedStatus
+"Resume armed: %hs (handoff at frame %u)."
+END
+
+GUI:ResumeCountMismatch
+"Lobby has %d players but the replay has %d. Match the lobby roster to the replay before resuming."
+END
+
+GUI:ResumeHandoffComplete
+"Replay handoff complete. Game continues live."
+END
+
+GUI:ResumeHeaderUnreadable
+"Replay file could not be read."
+END
+
+GUI:ResumeHostMismatch
+"Lobby host '%ls' does not match replay host '%ls'."
+END
+
+GUI:ResumeMissingPlayer
+"Replay player '%ls' is not present in the lobby."
+END
+
+GUI:ResumeNoLobby
+"You must be hosting a LAN lobby to arm a resume."
+END
+
+GUI:ResumeReady
+"Replay ready to resume."
+END
+
+GUI:ResumeTooShort
+"Replay is too short to resume from."
+END
+
+GUI:ResumeVersionMismatch
+"Replay was recorded with a different game version."
+END

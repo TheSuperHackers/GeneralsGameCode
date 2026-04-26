@@ -468,15 +468,16 @@ void GameEngine::init()
 
 		TheArchiveFileSystem->loadMods();
 
-		// Re-parse GameData.ini after loadMods so a mod-supplied
-		// Data\INI\GameData.ini actually takes effect. The earlier parse
-		// at the GlobalData initSubsystem call happens before loadMods
-		// has registered the mod BIG, so without this re-read the engine
-		// only ever sees the retail GameData.ini even when -mod is used.
-		// Other INIs (Water, Weather, etc., below) are already loaded
-		// post-loadMods and so don't need this treatment.
-		ini.loadFileDirectory( "Data\\INI\\Default\\GameData", INI_LOAD_OVERWRITE, &xferCRC );
-		ini.loadFileDirectory( "Data\\INI\\GameData", INI_LOAD_OVERWRITE, &xferCRC );
+		// Load mod-supplied additional GUI strings, if present. These augment
+		// (never override) Generals.csf and survive map reset. The file lives
+		// next to Generals.csf and is resolved via the archive file system, so
+		// it can be shipped inside a mod BIG.
+		if (TheGameText)
+		{
+			AsciiString extraStr;
+			extraStr.format("Data\\%s\\GeneralsExtras.str", GetRegistryLanguage().str());
+			TheGameText->initAdditionalStringFile(extraStr);
+		}
 
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;

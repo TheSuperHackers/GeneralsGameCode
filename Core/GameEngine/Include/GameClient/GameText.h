@@ -86,6 +86,10 @@ class GameTextInterface : public SubsystemInterface
 
 		virtual void					initMapStringFile( const AsciiString& filename ) = 0;
 
+		// Loads an additional .str file whose entries are appended (never override
+		// the primary CSF/STR table). Survives map reset, unlike map strings.
+		virtual void					initAdditionalStringFile( const AsciiString& filename ) = 0;
+
 #if __cplusplus < 201103L // TheSuperHackers @todo Remove function when abandoning VC6
 		inline UnicodeString FETCH_OR_SUBSTITUTE_FORMAT( const Char *label, const WideChar *substituteFormat, ... )
 		{
