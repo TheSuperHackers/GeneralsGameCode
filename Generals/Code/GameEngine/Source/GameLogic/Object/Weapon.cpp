@@ -1051,8 +1051,8 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 			Coord3D firingOffset;
 			firingOffset.zero();
-			firingOffset.x = scatterRadius * WWMath::Cos( scatterAngleRadian );
-			firingOffset.y = scatterRadius * WWMath::Sin( scatterAngleRadian );
+			firingOffset.x = scatterRadius * WWMath::CosTrig( scatterAngleRadian );
+			firingOffset.y = scatterRadius * WWMath::SinTrig( scatterAngleRadian );
 
 			projectileDestination.x += firingOffset.x;
 			projectileDestination.y += firingOffset.y;
@@ -1934,8 +1934,8 @@ Bool Weapon::computeApproachTarget(const Object *source, const Object *target, c
 		if (angleOffset != 0.0f)
 		{
 			Real angle = WWMath::Atan2(dir.y, dir.x);
-			dir.x = (Real)WWMath::Cos(angle + angleOffset);
-			dir.y = (Real)WWMath::Sin(angle + angleOffset);
+			dir.x = (Real)WWMath::CosTrig(angle + angleOffset);
+			dir.y = (Real)WWMath::SinTrig(angle + angleOffset);
 		}
 
 		// select a spot along the line between us, halfway between the min & max range.
@@ -1981,8 +1981,8 @@ Bool Weapon::computeApproachTarget(const Object *source, const Object *target, c
 		if (angleOffset != 0.0f)
 		{
 			Real angle = WWMath::Atan2(dir.y, dir.x);
-			dir.x = (Real)WWMath::Cos(angle + angleOffset);
-			dir.y = (Real)WWMath::Sin(angle + angleOffset);
+			dir.x = (Real)WWMath::CosTrig(angle + angleOffset);
+			dir.y = (Real)WWMath::SinTrig(angle + angleOffset);
 		}
 
 		// select a spot along the line between us, in range of our weapon

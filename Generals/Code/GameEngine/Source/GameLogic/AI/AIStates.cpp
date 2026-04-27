@@ -604,8 +604,8 @@ StateReturnType AIRappelState::update()
 														bldg->getGeometryInfo().getBoundingCircleRadius());
 					Real angle = GameLogicRandomValueReal( PI, 2*PI );//Downish.
 					Coord3D startPosition = *bldg->getPosition();
-					startPosition.x += offset * WWMath::Cos( angle );
-					startPosition.y += offset * WWMath::Sin( angle );
+					startPosition.x += offset * WWMath::CosTrig( angle );
+					startPosition.y += offset * WWMath::SinTrig( angle );
 					startPosition.z = TheTerrainLogic->getGroundHeight( startPosition.x, startPosition.y );
 
 					obj->setPosition( &startPosition );
@@ -3804,8 +3804,8 @@ void AIFollowWaypointPathState::computeGoal(Bool useGroupOffsets)
 		dy = dest.y - m_priorWaypoint->getLocation()->y;
 		angle = WWMath::Atan2(dy, dx);
 		Real deltaAngle = angle - m_angle;
-		Real s = WWMath::Sin(deltaAngle);
-		Real c = WWMath::Cos(deltaAngle);
+		Real s = WWMath::SinTrig(deltaAngle);
+		Real c = WWMath::CosTrig(deltaAngle);
 		Real x = m_groupOffset.x * c - m_groupOffset.y * s;
 		Real y = m_groupOffset.y * c + m_groupOffset.x * s;
 		m_groupOffset.x = x;

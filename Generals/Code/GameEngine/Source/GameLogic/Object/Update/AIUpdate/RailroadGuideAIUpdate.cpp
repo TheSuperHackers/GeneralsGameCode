@@ -1184,8 +1184,8 @@ void alignToTerrain( Real angle, const Coord3D& pos, const Coord3D& normal, Matr
 
 	z = normal;
 
-	x.x = WWMath::Cos( angle );
-	x.y = WWMath::Sin( angle );
+	x.x = WWMath::CosTrig( angle );
+	x.y = WWMath::SinTrig( angle );
 	x.z = 0.0f;
 	if (z.z != 0.0f)
 	{

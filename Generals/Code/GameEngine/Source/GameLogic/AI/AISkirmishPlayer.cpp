@@ -663,8 +663,8 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		}
 
 		if (angle > PI/3) break;
-		Real s = WWMath::Sin(angle);
-		Real c = WWMath::Cos(angle);
+		Real s = WWMath::SinTrig(angle);
+		Real c = WWMath::CosTrig(angle);
 
 // TheSuperHackers @info helmutbuhler 21/04/2025 This debug mutates the code to become CRC incompatible
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
@@ -1029,8 +1029,8 @@ void AISkirmishPlayer::adjustBuildList(BuildListInfo *list)
 
 	angle += 3*PI/4;
 
-	Real s = WWMath::Sin(angle);
-	Real c = WWMath::Cos(angle);
+	Real s = WWMath::SinTrig(angle);
+	Real c = WWMath::CosTrig(angle);
 
 	cur = list;
 	while (cur) {

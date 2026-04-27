@@ -1839,8 +1839,8 @@ void getHelicopterOffset( Coord3D& posOut, Int idx )
   }
 
   Coord3D tempCtr = posOut;
-  posOut.x = tempCtr.x + (WWMath::Sin(angle) * radius);
-  posOut.y = tempCtr.y + (WWMath::Cos(angle) * radius);
+  posOut.x = tempCtr.x + (WWMath::SinTrig(angle) * radius);
+  posOut.y = tempCtr.y + (WWMath::CosTrig(angle) * radius);
 
 }
 

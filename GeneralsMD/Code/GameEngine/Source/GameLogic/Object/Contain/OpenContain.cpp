@@ -737,8 +737,8 @@ void OpenContain::scatterToNearbyPosition(Object* rider)
 	Real dist = GameLogicRandomValueReal( minRadius, maxRadius );
 
 	Coord3D pos;
-	pos.x = dist * WWMath::Cos( angle ) + containerPos->x;
-	pos.y = dist * WWMath::Sin( angle ) + containerPos->y;
+	pos.x = dist * WWMath::CosTrig( angle ) + containerPos->x;
+	pos.y = dist * WWMath::SinTrig( angle ) + containerPos->y;
 	pos.z = TheTerrainLogic->getLayerHeight( pos.x, pos.y, theContainer->getLayer() );
 
 	// set orientation

@@ -339,8 +339,8 @@ Bridge::Bridge(Object *bridgeObj)
 	Real halfsizeY = bridgeObj->getGeometryInfo().getMinorRadius();
 	m_bridgeInfo.bridgeWidth = 2*halfsizeY;
 
-	Real c = (Real)WWMath::Cos(angle);
-	Real s = (Real)WWMath::Sin(angle);
+	Real c = (Real)WWMath::CosTrig(angle);
+	Real s = (Real)WWMath::SinTrig(angle);
 
 	m_bridgeInfo.fromLeft.set(pos->x-halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c - halfsizeX*s, pos->z);
 	m_bridgeInfo.toLeft.set(pos->x+halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c + halfsizeX*s, pos->z);
@@ -1471,8 +1471,8 @@ void makeAlignToNormalMatrix( Real angle, const Coord3D& pos, const Coord3D& nor
 		that WWMath::Atan2(xvec.y, xvec.x) == angle. So we must construct
 		the matrix carefully to ensure this!
 	*/
-	x.x = WWMath::Cos( angle );
-	x.y = WWMath::Sin( angle );
+	x.x = WWMath::CosTrig( angle );
+	x.y = WWMath::SinTrig( angle );
 	x.z = 0.0f;
 //x.normalize();	-- redundant; is normalized by definition
 
@@ -2652,8 +2652,8 @@ void TerrainLogic::flattenTerrain(Object *obj)
 			Real halfsizeY = obj->getGeometryInfo().getMinorRadius();
 
 
-			Real c = (Real)WWMath::Cos(angle);
-			Real s = (Real)WWMath::Sin(angle);
+			Real c = (Real)WWMath::CosTrig(angle);
+			Real s = (Real)WWMath::SinTrig(angle);
 
 			Vector3 topLeft(pos->x-halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c - halfsizeX*s, 0);
 			Vector3 topRight(pos->x+halfsizeX*c-halfsizeY*s, pos->y + halfsizeY*c + halfsizeX*s, 0);

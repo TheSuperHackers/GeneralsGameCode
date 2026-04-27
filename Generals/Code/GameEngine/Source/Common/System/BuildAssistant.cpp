@@ -752,8 +752,8 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 	if (myFactoryExitWidth>0) {
 		myExitPos = *worldPos;
 		checkMyExit = true;
-		Real c = (Real)WWMath::Cos(angle);
-		Real s = (Real)WWMath::Sin(angle);
+		Real c = (Real)WWMath::CosTrig(angle);
+		Real s = (Real)WWMath::SinTrig(angle);
 		Real offset = build->getTemplateGeometryInfo().getMajorRadius() + myFactoryExitWidth/2.0f;
 		myExitPos.x += c*offset;
 		myExitPos.y += s*offset;
@@ -787,8 +787,8 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		if (themFactoryExitWidth>0) {
 			hisExitPos = *them->getPosition();
 			checkHisExit = true;
-			Real c = (Real)WWMath::Cos(them->getOrientation());
-			Real s = (Real)WWMath::Sin(them->getOrientation());
+			Real c = (Real)WWMath::CosTrig(them->getOrientation());
+			Real s = (Real)WWMath::SinTrig(them->getOrientation());
 			Real offset = them->getGeometryInfo().getMajorRadius() + themFactoryExitWidth/2.0f;
 			hisExitPos.x += c*offset;
 			hisExitPos.y += s*offset;

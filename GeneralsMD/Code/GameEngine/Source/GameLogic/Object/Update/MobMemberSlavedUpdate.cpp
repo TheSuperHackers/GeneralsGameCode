@@ -358,8 +358,8 @@ void MobMemberSlavedUpdate::doCatchUpLogic( Coord3D *pos )
 	Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 	Real randomRadius = GameLogicRandomValue( 0, data->m_noNeedToCatchUpRadius );
 	nuPos.set(pos);
-	nuPos.x += randomRadius * WWMath::Cos( randomDirection );
-	nuPos.y += randomRadius * WWMath::Sin( randomDirection );
+	nuPos.x += randomRadius * WWMath::CosTrig( randomDirection );
+	nuPos.y += randomRadius * WWMath::SinTrig( randomDirection );
 	nuPos.z = TheTerrainLogic->getGroundHeight( nuPos.x, nuPos.y );
 
 	AIUpdateInterface *ai = getObject()->getAIUpdateInterface();

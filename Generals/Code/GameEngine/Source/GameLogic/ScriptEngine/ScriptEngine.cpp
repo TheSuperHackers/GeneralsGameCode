@@ -4584,8 +4584,8 @@ void ScriptEngine::reset()
 	}
 
 	m_breezeInfo.m_direction = PI/3;
-	m_breezeInfo.m_directionVec.x = WWMath::Sin(m_breezeInfo.m_direction);
-	m_breezeInfo.m_directionVec.y = WWMath::Cos(m_breezeInfo.m_direction);
+	m_breezeInfo.m_directionVec.x = WWMath::SinTrig(m_breezeInfo.m_direction);
+	m_breezeInfo.m_directionVec.y = WWMath::CosTrig(m_breezeInfo.m_direction);
 	m_breezeInfo.m_intensity = 0.07f*PI/4;
 	m_breezeInfo.m_lean = 0.07f*PI/4;
 	m_breezeInfo.m_breezePeriod = LOGICFRAMES_PER_SECOND * 5;
@@ -5707,8 +5707,8 @@ void ScriptEngine::setSway( ScriptAction *pAction )
 	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters."));
 	++m_breezeInfo.m_breezeVersion;
 	m_breezeInfo.m_direction = pAction->getParameter(0)->getReal();
-	m_breezeInfo.m_directionVec.x = WWMath::Sin(m_breezeInfo.m_direction);
-	m_breezeInfo.m_directionVec.y = WWMath::Cos(m_breezeInfo.m_direction);
+	m_breezeInfo.m_directionVec.x = WWMath::SinTrig(m_breezeInfo.m_direction);
+	m_breezeInfo.m_directionVec.y = WWMath::CosTrig(m_breezeInfo.m_direction);
 	m_breezeInfo.m_intensity = pAction->getParameter(1)->getReal();
 	m_breezeInfo.m_lean = pAction->getParameter(2)->getReal();
 	m_breezeInfo.m_breezePeriod = pAction->getParameter(3)->getInt();

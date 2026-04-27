@@ -889,8 +889,8 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	{
 		// can't stay in one place; move in the desired direction at min speed.
 		Coord3D desiredPos = *obj->getPosition();
-		desiredPos.x += WWMath::Cos(goalAngle) * minSpeed * 2;
-		desiredPos.y += WWMath::Sin(goalAngle) * minSpeed * 2;
+		desiredPos.x += WWMath::CosTrig(goalAngle) * minSpeed * 2;
+		desiredPos.y += WWMath::SinTrig(goalAngle) * minSpeed * 2;
 		// pass a huge num for "dist to goal", so that we don't think we're nearing
 		// our destination and thus slow down...
 		const Real onPathDistToGoal = 99999.0f;
@@ -904,8 +904,8 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	{
 		DEBUG_ASSERTCRASH(m_template->m_appearance != LOCO_THRUST, ("THRUST should always have minspeeds!"));
 		Coord3D desiredPos = *obj->getPosition();
-		desiredPos.x += WWMath::Cos(goalAngle) * 1000.0f;
-		desiredPos.y += WWMath::Sin(goalAngle) * 1000.0f;
+		desiredPos.x += WWMath::CosTrig(goalAngle) * 1000.0f;
+		desiredPos.y += WWMath::SinTrig(goalAngle) * 1000.0f;
 		PhysicsTurningType rotating = rotateTowardsPosition(obj, desiredPos);
 		physics->setTurning(rotating);
 		handleBehaviorZ(obj, physics, *obj->getPosition());
@@ -1373,8 +1373,8 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 			targetAngle += turnAmount;
 		}
 		Coord3D offset;
-		offset.x = WWMath::Cos(targetAngle)*distance;
-		offset.y = WWMath::Sin(targetAngle)*distance;
+		offset.x = WWMath::CosTrig(targetAngle)*distance;
+		offset.y = WWMath::SinTrig(targetAngle)*distance;
 		offset.z = 0;
 
 		const Coord3D* pos = obj->getPosition();
@@ -1863,8 +1863,8 @@ void Locomotor::moveTowardsPositionWings(Object* obj, PhysicsBehavior *physics, 
 
 			// project a spot "radius" dist away from it, in that dir
 			Coord3D desiredPos = goalPos;
-			desiredPos.x += WWMath::Cos(angleTowardPos) * turnRadius;
-			desiredPos.y += WWMath::Sin(angleTowardPos) * turnRadius;
+			desiredPos.x += WWMath::CosTrig(angleTowardPos) * turnRadius;
+			desiredPos.y += WWMath::SinTrig(angleTowardPos) * turnRadius;
 			moveTowardsPositionOther(obj, physics, desiredPos, 0, desiredSpeed);
 			return;
 		}
@@ -2164,8 +2164,8 @@ PhysicsTurningType Locomotor::rotateObjAroundLocoPivot(Object* obj, const Coord3
 
 #if 0
 		Coord3D desiredPos = *obj->getPosition();	// well, desired Dir, anyway
-		desiredPos.x += WWMath::Cos(angle + amount) * radius;
-		desiredPos.y += WWMath::Sin(angle + amount) * radius;
+		desiredPos.x += WWMath::CosTrig(angle + amount) * radius;
+		desiredPos.y += WWMath::SinTrig(angle + amount) * radius;
 
 
 		// so, the thing is, we want to rotate ourselves so that our *center* is rotated
@@ -2533,8 +2533,8 @@ void Locomotor::maintainCurrentPositionWings(Object* obj, PhysicsBehavior *physi
 
 		// project a spot "radius" dist away from it, in that dir
 		Coord3D desiredPos = m_maintainPos;
-		desiredPos.x += WWMath::Cos(angleTowardMaintainPos) * turnRadius;
-		desiredPos.y += WWMath::Sin(angleTowardMaintainPos) * turnRadius;
+		desiredPos.x += WWMath::CosTrig(angleTowardMaintainPos) * turnRadius;
+		desiredPos.y += WWMath::SinTrig(angleTowardMaintainPos) * turnRadius;
 		moveTowardsPositionWings(obj, physics, desiredPos, 0, m_template->m_minSpeed);
 	}
 }

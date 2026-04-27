@@ -327,8 +327,8 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 		info->parkingSpace = d->m_parkInHangars ? ppi->m_hangarStart : ppi->m_location;
 		if (parkingOffset != 0.0f)
 		{
-			info->parkingSpace.x += parkingOffset * WWMath::Cos(ppi->m_orientation);
-			info->parkingSpace.y += parkingOffset * WWMath::Sin(ppi->m_orientation);
+			info->parkingSpace.x += parkingOffset * WWMath::CosTrig(ppi->m_orientation);
+			info->parkingSpace.y += parkingOffset * WWMath::SinTrig(ppi->m_orientation);
 		}
 		info->runwayPrep = ppi->m_prep;
 		info->parkingOrientation = d->m_parkInHangars ? ppi->m_hangarStartOrient : ppi->m_orientation;

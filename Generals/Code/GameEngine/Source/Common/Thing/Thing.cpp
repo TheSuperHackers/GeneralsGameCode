@@ -109,8 +109,8 @@ const Coord3D* Thing::getUnitDirectionVector2D() const
 	if (!(m_cacheFlags & VALID_DIRVECTOR))
 	{
 		Real angle = getOrientation();
-		m_cachedDirVector.x = WWMath::Cos( angle );
-		m_cachedDirVector.y = WWMath::Sin( angle );
+		m_cachedDirVector.x = WWMath::CosTrig( angle );
+		m_cachedDirVector.y = WWMath::SinTrig( angle );
 		m_cachedDirVector.z = 0;
 		m_cacheFlags |= VALID_DIRVECTOR;
 	}
@@ -229,8 +229,8 @@ void Thing::setOrientation( Real angle )
 		z.y = 0.0f;
 		z.z = 1.0f;
 
-		u.x = WWMath::Cos(angle);
-		u.y = WWMath::Sin(angle);
+		u.x = WWMath::CosTrig(angle);
+		u.y = WWMath::SinTrig(angle);
 		u.z = 0.0f;
 
 		y.crossProduct( &z, &u, &y );

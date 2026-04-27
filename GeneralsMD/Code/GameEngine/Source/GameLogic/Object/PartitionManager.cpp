@@ -407,8 +407,8 @@ static void testRotatedPointsAgainstRect(
 	Real major = a->geom.getMajorRadius();
 	Real minor = (a->geom.getGeomType() == GEOMETRY_SPHERE) ? a->geom.getMajorRadius() : a->geom.getMinorRadius();
 
-	Real c = (Real)WWMath::Cos(-a->angle);
-	Real s = (Real)WWMath::Sin(-a->angle);
+	Real c = (Real)WWMath::CosTrig(-a->angle);
+	Real s = (Real)WWMath::SinTrig(-a->angle);
 
 	for (Int i = 0; i < 4; ++i, ++pts)
 	{
@@ -441,8 +441,8 @@ static void rectToFourPoints(
 	Coord2D pts[]
 )
 {
-	Real c = (Real)WWMath::Cos(a->angle);
-	Real s = (Real)WWMath::Sin(a->angle);
+	Real c = (Real)WWMath::CosTrig(a->angle);
+	Real s = (Real)WWMath::SinTrig(a->angle);
 
 	Real exc = a->geom.getMajorRadius()*c;
 	Real eyc = a->geom.getMinorRadius()*c;
@@ -1780,8 +1780,8 @@ void PartitionData::doRectFill(
 	Real angle
 )
 {
-	Real c = (Real)WWMath::Cos(angle);
-	Real s = (Real)WWMath::Sin(angle);
+	Real c = (Real)WWMath::CosTrig(angle);
+	Real s = (Real)WWMath::SinTrig(angle);
 
 	Real actualCellSize = ThePartitionManager->getCellSize();
 	Real stepSize = actualCellSize * 0.5f; // in theory, should be getCellSize() exactly, but needs to be smaller to avoid aliasing problems
@@ -3794,8 +3794,8 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 
 	// compute the spot on the terrain we've picked
 	Coord3D pos;
-	pos.x = dist * WWMath::Cos( angle ) + center->x;
-	pos.y = dist * WWMath::Sin( angle ) + center->y;
+	pos.x = dist * WWMath::CosTrig( angle ) + center->x;
+	pos.y = dist * WWMath::SinTrig( angle ) + center->y;
 
 	PathfindLayerEnum layer = LAYER_GROUND;
 	if ((options->flags & FPF_USE_HIGHEST_LAYER) != 0)

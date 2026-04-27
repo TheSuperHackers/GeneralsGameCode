@@ -639,7 +639,7 @@ UpdateSleepTime PhysicsBehavior::update()
 				Real xy = WWMath::Sqrt(sqr(xvec.X) + sqr(xvec.Y));
 				Real pitchAngle = WWMath::Atan2(xvec.Z, xy);
 				Real remainingAngle = (offset > 0) ? ((PI/2) - pitchAngle) : (-(PI/2) + pitchAngle);
-				Real s = WWMath::Sin(remainingAngle);
+				Real s = WWMath::SinTrig(remainingAngle);
 				pitchRateToUse *= s;
 			}
 

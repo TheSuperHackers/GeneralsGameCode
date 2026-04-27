@@ -280,8 +280,8 @@ void GeometryInfo::get2DBounds(const Coord3D& geomCenter, Real angle, Region2D& 
 
 		case GEOMETRY_BOX:
 		{
-			Real c = WWMath::Cos(angle);
-			Real s = WWMath::Sin(angle);
+			Real c = WWMath::CosTrig(angle);
+			Real s = WWMath::SinTrig(angle);
 			Real exc = m_majorRadius*c;
 			Real eyc = m_minorRadius*c;
 			Real exs = m_majorRadius*s;
@@ -399,8 +399,8 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt) const
 #else
 			Real radius = GameLogicRandomValueReal(0.0f, m_boundingCircleRadius);
 			Real angle = GameLogicRandomValueReal(-PI, PI);
-			pt.x = radius * WWMath::Cos(angle);
-			pt.y = radius * WWMath::Sin(angle);
+			pt.x = radius * WWMath::CosTrig(angle);
+			pt.y = radius * WWMath::SinTrig(angle);
 			pt.z = 0.0f;
 #endif
 			break;

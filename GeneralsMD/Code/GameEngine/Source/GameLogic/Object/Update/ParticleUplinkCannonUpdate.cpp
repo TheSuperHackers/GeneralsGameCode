@@ -526,12 +526,12 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				//First determine the factor of time completed (ranges between 0.0 and 1.0)
 				Real factor = (Real)(now - orbitalBirthFrame) / (Real)(orbitalDeathFrame - orbitalBirthFrame);
 
-				//We're generating a swath that travels the points between WWMath::Sin( -1PI ) and WWMath::Sin( 1PI )
+				//We're generating a swath that travels the points between WWMath::SinTrig( -1PI ) and WWMath::SinTrig( 1PI )
 				Real radians = (factor * TWO_PI) - PI;
 				Real cxDistance = (factor * data->m_swathOfDeathDistance ) - (data->m_swathOfDeathDistance * 0.5f); //cx is cartesian x
 
 				//Now calculate the amplitude value.
-				Real height = WWMath::Sin( radians );
+				Real height = WWMath::SinTrig( radians );
 				Real cxHeight = height * data->m_swathOfDeathAmplitude;
 
 				Coord3D buildingToInitialTargetVector;

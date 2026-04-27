@@ -289,14 +289,14 @@ public:
 
 			//Rotate 90 degrees CCW.
 			Real radians = 90.0f * PI / 180.0f;
-			Real s = WWMath::Sin( radians );
-			Real c = WWMath::Cos( radians );
+			Real s = WWMath::SinTrig( radians );
+			Real c = WWMath::CosTrig( radians );
 			CCWx = dx * c + dy * -s + dx;
 			CCWy = dx * s + dy * c + dy;
 
 			//Rotate 90 degrees CW
-			s = WWMath::Sin( -radians );
-			c = WWMath::Cos( -radians );
+			s = WWMath::SinTrig( -radians );
+			c = WWMath::CosTrig( -radians );
 			CWx = dx * c + dy * -s + dx;
 			CWy = dx * s + dy * c + dy;
 		}
@@ -343,8 +343,8 @@ public:
 			{
 				Real randomRadius = GameLogicRandomValueReal(0, m_errorRadius );
 				Real randomAngle = GameLogicRandomValueReal(0, PI*2 );
-				targetPos.x += randomRadius * WWMath::Cos( randomAngle );
-				targetPos.y += randomRadius * WWMath::Sin( randomAngle );
+				targetPos.x += randomRadius * WWMath::CosTrig( randomAngle );
+				targetPos.y += randomRadius * WWMath::SinTrig( randomAngle );
 			}
 
 
@@ -352,8 +352,8 @@ public:
 			if( m_data.m_distToTarget > 0 )
 			{
 				const Real SLOP = 1.5f;
-				startPos.x -= WWMath::Cos(orient) * m_data.m_distToTarget * SLOP;
-				startPos.y -= WWMath::Sin(orient) * m_data.m_distToTarget * SLOP;
+				startPos.x -= WWMath::CosTrig(orient) * m_data.m_distToTarget * SLOP;
+				startPos.y -= WWMath::SinTrig(orient) * m_data.m_distToTarget * SLOP;
 			}
 
 			Object *transport;

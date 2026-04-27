@@ -225,10 +225,10 @@ static Bool calcTrajectory(
 		// calc the horiz-speed & time for each.
 		// note that time can only be negative for 90<angle<270, and since we
 		// ruled those out above, we're gold.
-		sinPitches[0] = WWMath::Sin(pitches[0]);
-		sinPitches[1] = WWMath::Sin(pitches[1]);
-		cosPitches[0] = WWMath::Cos(pitches[0]);
-		cosPitches[1] = WWMath::Cos(pitches[1]);
+		sinPitches[0] = WWMath::SinTrig(pitches[0]);
+		sinPitches[1] = WWMath::SinTrig(pitches[1]);
+		cosPitches[0] = WWMath::CosTrig(pitches[0]);
+		cosPitches[1] = WWMath::CosTrig(pitches[1]);
 		Real t0 = (horizDist / (velocity * cosPitches[0]));
 		Real t1 = (horizDist / (velocity * cosPitches[1]));
 

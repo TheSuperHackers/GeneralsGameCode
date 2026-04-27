@@ -304,8 +304,8 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 	for (Real angle = 0; angle < angleLim; angle += angleInc)
 	{
 		Coord3D pt;
-		pt.x = pos.x + radius * WWMath::Cos(angle);
-		pt.y = pos.y + radius * WWMath::Sin(angle);
+		pt.x = pos.x + radius * WWMath::CosTrig(angle);
+		pt.y = pos.y + radius * WWMath::SinTrig(angle);
 		pt.z = TheTerrainLogic->getGroundHeight( pt.x, pt.y );
 		offsetBySmallRandomAmount(pt, mineJitter);
 		placeMineAt(pt, mineTemplate, team, obj);

@@ -398,10 +398,10 @@ static Bool intersectInfiniteLine2D
 	Real& ix, Real& iy
 )
 {
-	Real bx = ax + WWMath::Cos(ao);
-	Real by = ay + WWMath::Sin(ao);
-	Real dx = cx + WWMath::Cos(co);
-	Real dy = cy + WWMath::Sin(co);
+	Real bx = ax + WWMath::CosTrig(ao);
+	Real by = ay + WWMath::SinTrig(ao);
+	Real dx = cx + WWMath::CosTrig(co);
+	Real dy = cy + WWMath::SinTrig(co);
 
 	Real denom = ((bx - ax) * (dy - cy) - (by - ay) * (dx - cx));
 	if (denom == 0.0f)
@@ -2062,8 +2062,8 @@ void JetAIUpdate::positionLockon()
 	Real dist = finalDist + (d->m_lockonInitialDist - finalDist) * frac;
 	Real angle = d->m_lockonAngleSpin * frac;
 
-	pos.x += WWMath::Cos(angle) * dist;
-	pos.y += WWMath::Sin(angle) * dist;
+	pos.x += WWMath::CosTrig(angle) * dist;
+	pos.y += WWMath::SinTrig(angle) * dist;
 	// pos.z is untouched
 
 	m_lockonDrawable->setPosition(&pos);

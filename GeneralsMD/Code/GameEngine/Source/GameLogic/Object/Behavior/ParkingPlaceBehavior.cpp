@@ -354,8 +354,8 @@ Bool ParkingPlaceBehavior::reserveSpace(ObjectID id, Real parkingOffset, Parking
 		calcPPInfo( id, info );
 		if (parkingOffset != 0.0f)
 		{
-			info->parkingSpace.x += parkingOffset * WWMath::Cos(ppi->m_orientation);
-			info->parkingSpace.y += parkingOffset * WWMath::Sin(ppi->m_orientation);
+			info->parkingSpace.x += parkingOffset * WWMath::CosTrig(ppi->m_orientation);
+			info->parkingSpace.y += parkingOffset * WWMath::SinTrig(ppi->m_orientation);
 		}
 	}
 
