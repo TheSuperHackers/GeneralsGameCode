@@ -85,7 +85,7 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
 	{
 		DEBUG_ASSERTCRASH(spTemplate != nullptr,
-			("[LINE: %d in '%s'] CommandButton %s has is a SPECIAL_POWER but is missing a SpecialPower field",
+			("[LINE: %d in '%s'] CommandButton %s is a SPECIAL_POWER but is missing a SpecialPower field",
 				ini->getLineNum(), ini->getFilename().str(), name.str()));
 		break;
 	}
