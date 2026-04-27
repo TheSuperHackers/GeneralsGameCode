@@ -79,6 +79,7 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 	// TheSuperHackers @tweak Make sure Special Power buttons have a Special Power template.
 	switch (button->getCommandType())
 	{
+	case GUI_COMMAND_SPECIAL_POWER:
 	case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
 	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT:
 	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
