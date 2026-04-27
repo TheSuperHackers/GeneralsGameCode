@@ -871,7 +871,7 @@ TexturePage::TexturePage( Int width, Int height )
 // TexturePage::~TexturePage ==================================================
 /**  */
 //=============================================================================
-TexturePage::~TexturePage( void )
+TexturePage::~TexturePage()
 {
 
 	// delete the canvas
@@ -1170,7 +1170,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 /** Generate the final packed texture given all the images that have
 	* already been assigned to this page */
 //=============================================================================
-Bool TexturePage::generateTexture( void )
+Bool TexturePage::generateTexture()
 {
 
 	// sanity

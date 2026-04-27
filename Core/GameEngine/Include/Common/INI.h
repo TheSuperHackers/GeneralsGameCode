@@ -160,13 +160,11 @@ typedef void (*BuildMultiIniFieldProc)(MultiIniFieldParse& p);
 //-------------------------------------------------------------------------------------------------
 class INI
 {
-  INI(const INI&);
-  INI& operator=(const INI&);
+	INI(const INI&) CPP_11(= delete);
+	INI& operator=(const INI&) CPP_11(= delete);
 
 public:
-
 	INI();
-	~INI();
 
 	// TheSuperHackers @feature xezon 19/08/2025
 	// Load a specific INI file by name and/or INI files from a directory (and its subdirectories).
@@ -251,11 +249,12 @@ public:
 	AsciiString getFilename() const { return m_filename; }
 	INILoadType getLoadType() const { return m_loadType; }
 	UnsignedInt getLineNum() const { return m_lineNum; }
-	const char *getSeps() const { return m_seps; }
-	const char *getSepsPercent() const { return m_sepsPercent; }
-	const char *getSepsColon() const { return m_sepsColon; }
-	const char *getSepsQuote() { return m_sepsQuote; }
 	Bool isEOF() const { return m_endOfFile; }
+	static const char *getSeps()        { return " \n\r\t="; }   ///< default delimiters for strtok parsing
+	static const char *getSepsPercent() { return " \n\r\t=%%"; } ///< default delimiters & percent delimiter
+	static const char *getSepsColon()   { return " \n\r\t=:"; }  ///< default delimiters & colon delimiter
+	static const char *getSepsQuote()   { return "\"\n="; }      ///< delimiters to represent a quoted ascii string
+	static const char *getEndToken()    { return "End"; }        ///< token to represent an end of data block
 
 	void initFromINI( void *what, const FieldParse* parseTable );
 	void initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList );
@@ -321,20 +320,19 @@ public:
 	static void parseVeterancyLevelFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseSoundsList( INI* ini, void *instance, void *store, const void* /*userData*/ );
 
-
 	/**
-		return the next token. if seps is null (or omitted), the standard seps are used.
+		return the next token. if seps is not specified, the standard seps are used.
 
 		this will *never* return null; if there are no more tokens, an exception will be thrown.
 	*/
-	const char* getNextToken(const char* seps = nullptr);
+	static const char* getNextToken(const char* seps = getSeps());
 
 	/**
 		just like getNextToken(), except that null is returned if no more tokens are present
 		(rather than throwing an exception). usually you should call getNextToken(),
 		but for some cases this is handier (ie, parsing a variable-length number of tokens).
 	*/
-	const char* getNextTokenOrNull(const char* seps = nullptr);
+	static const char* getNextTokenOrNull(const char* seps = getSeps());
 
 	/**
 		This is called when the next thing you expect is something like:
@@ -346,7 +344,7 @@ public:
 
 		If "Tag" is not the next token, an error is thrown.
 	*/
-	const char* getNextSubToken(const char* expected);
+	static const char* getNextSubToken(const char* expected);
 
 	/**
 		return the next ascii string. this is usually the same the result of getNextToken(),
@@ -400,14 +398,9 @@ protected:
 	unsigned m_readBufferUsed;                ///< number of bytes in read buffer
 
 	AsciiString m_filename;										///< filename of file currently loading
-	INILoadType m_loadType;										///< load time for current file
+	INILoadType m_loadType;										///< load type for current file
 	UnsignedInt m_lineNum;										///< current line number that's been read
 	char m_buffer[ INI_MAX_CHARS_PER_LINE+1 ];///< buffer to read file contents into
-	const char *m_seps;												///< for strtok parsing
-	const char *m_sepsPercent;								///< m_seps with percent delimiter as well
-	const char *m_sepsColon;									///< m_seps with colon delimiter as well
-	const char *m_sepsQuote;									///< token to represent a quoted ascii string
-	const char *m_blockEndToken;							///< token to represent end of data block
 	Bool m_endOfFile;													///< TRUE when we've hit EOF
 #ifdef DEBUG_CRASHING
 	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE+1 ];	///< first line of cur block

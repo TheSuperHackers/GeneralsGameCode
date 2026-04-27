@@ -51,7 +51,6 @@ OpacityVectorDialogClass::OpacityVectorDialogClass(CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(OpacityVectorDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -68,7 +67,6 @@ OpacityVectorDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER_Z, m_SliderZ);
 	DDX_Control(pDX, IDC_SLIDER_Y, m_SliderY);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -86,7 +84,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-OpacityVectorDialogClass::OnInitDialog (void)
+OpacityVectorDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -182,11 +180,10 @@ OpacityVectorDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacityVectorDialogClass::OnOK (void)
+OpacityVectorDialogClass::OnOK ()
 {
 	m_Value = Update_Value ();
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -196,10 +193,9 @@ OpacityVectorDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacityVectorDialogClass::Update_Object (void)
+OpacityVectorDialogClass::Update_Object ()
 {
 	Update_Object (Update_Value ());
-	return ;
 }
 
 
@@ -209,7 +205,7 @@ OpacityVectorDialogClass::Update_Object (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 AlphaVectorStruct
-OpacityVectorDialogClass::Update_Value (void)
+OpacityVectorDialogClass::Update_Value ()
 {
 	AlphaVectorStruct value;
 
@@ -268,8 +264,6 @@ OpacityVectorDialogClass::Update_Object (const AlphaVectorStruct &value)
 			break;
 		}
 	}
-
-	return ;
 }
 
 
@@ -279,11 +273,10 @@ OpacityVectorDialogClass::Update_Object (const AlphaVectorStruct &value)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacityVectorDialogClass::OnCancel (void)
+OpacityVectorDialogClass::OnCancel ()
 {
 	Update_Object (m_Value);
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -306,7 +299,6 @@ OpacityVectorDialogClass::OnHScroll
 	Update_Object ();
 
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
-	return ;
 }
 
 

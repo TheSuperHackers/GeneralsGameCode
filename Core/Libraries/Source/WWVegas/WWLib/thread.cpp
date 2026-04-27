@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define _WIN32_WINNT 0x0400
 
 #include "thread.h"
 #include "Except.h"

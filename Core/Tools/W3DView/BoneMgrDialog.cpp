@@ -54,7 +54,6 @@ BoneMgrDialogClass::BoneMgrDialogClass
 	//{{AFX_DATA_INIT(BoneMgrDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -70,7 +69,6 @@ BoneMgrDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_OBJECT_COMBO, m_ObjectCombo);
 	DDX_Control(pDX, IDC_BONE_TREE, m_BoneTree);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -89,7 +87,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-BoneMgrDialogClass::OnInitDialog (void)
+BoneMgrDialogClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -231,7 +229,6 @@ BoneMgrDialogClass::Fill_Bone_Item
 	}
 
 	REF_PTR_RELEASE (porig_model);
-	return ;
 }
 
 
@@ -282,7 +279,6 @@ BoneMgrDialogClass::OnSelchangedBoneTree
 	Update_Controls (pNMTreeView->itemNew.hItem);
 
 	(*pResult) = 0;
-	return ;
 }
 
 
@@ -291,7 +287,7 @@ BoneMgrDialogClass::OnSelchangedBoneTree
 //	OnSelchangeObjectCombo
 //
 void
-BoneMgrDialogClass::OnSelchangeObjectCombo (void)
+BoneMgrDialogClass::OnSelchangeObjectCombo ()
 {
 	// Get the name of the currently selected render object
 	CString name;
@@ -307,8 +303,6 @@ BoneMgrDialogClass::OnSelchangeObjectCombo (void)
 		SetDlgItemText (IDC_ATTACH_BUTTON, "&Attach");
 		m_bAttach = true;
 	}
-
-	return ;
 }
 
 
@@ -375,7 +369,6 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 	CString text;
 	text.Format ("Bone: %s", static_cast<const char*>(m_BoneName));
 	SetDlgItemText (IDC_BONE_GROUPBOX, text);
-	return ;
 }
 
 
@@ -384,7 +377,7 @@ BoneMgrDialogClass::Update_Controls (HTREEITEM selected_item)
 //	OnDestroy
 //
 void
-BoneMgrDialogClass::OnDestroy (void)
+BoneMgrDialogClass::OnDestroy ()
 {
 	// Free the state image list we associated with the control
 	CImageList *pimagelist = m_BoneTree.GetImageList (TVSIL_NORMAL);
@@ -393,7 +386,6 @@ BoneMgrDialogClass::OnDestroy (void)
 
 	// Allow the base class to process this message
 	CDialog::OnDestroy ();
-	return ;
 }
 
 
@@ -402,7 +394,7 @@ BoneMgrDialogClass::OnDestroy (void)
 //	OnOK
 //
 void
-BoneMgrDialogClass::OnOK (void)
+BoneMgrDialogClass::OnOK ()
 {
 	// Simply forget about the backup we made
 	REF_PTR_RELEASE (m_pBackupModel);
@@ -413,7 +405,6 @@ BoneMgrDialogClass::OnOK (void)
 
 	// Allow the base class to process this message
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -422,7 +413,7 @@ BoneMgrDialogClass::OnOK (void)
 //	OnCancel
 //
 void
-BoneMgrDialogClass::OnCancel (void)
+BoneMgrDialogClass::OnCancel ()
 {
 	CWaitCursor wait_cursor;
 
@@ -432,7 +423,6 @@ BoneMgrDialogClass::OnCancel (void)
 
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -441,7 +431,7 @@ BoneMgrDialogClass::OnCancel (void)
 //	OnAttachButton
 //
 void
-BoneMgrDialogClass::OnAttachButton (void)
+BoneMgrDialogClass::OnAttachButton ()
 {
 	// Get the name of the currently selected render object
 	CString name;
@@ -492,7 +482,6 @@ BoneMgrDialogClass::OnAttachButton (void)
 	m_BoneTree.InvalidateRect (nullptr, TRUE);
 	m_BoneTree.UpdateWindow ();
 	Update_Controls (hbone_item);
-	return ;
 }
 
 
@@ -501,7 +490,7 @@ BoneMgrDialogClass::OnAttachButton (void)
 //	Get_Current_Bone_Item
 //
 HTREEITEM
-BoneMgrDialogClass::Get_Current_Bone_Item (void)
+BoneMgrDialogClass::Get_Current_Bone_Item ()
 {
 	// Get the currently selected item and its parent
 	HTREEITEM htree_item = m_BoneTree.GetSelectedItem ();
@@ -535,7 +524,5 @@ BoneMgrDialogClass::Remove_Object_From_Bone
 			break ;
 		}
 	}
-
-	return ;
 }
 

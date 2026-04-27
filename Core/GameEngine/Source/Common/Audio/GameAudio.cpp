@@ -282,16 +282,16 @@ void AudioManager::reset()
 //-------------------------------------------------------------------------------------------------
 void AudioManager::update()
 {
-	Coord3D groundPos, microphonePos;
-	TheTacticalView->getPosition( &groundPos );
+	Coord3D cameraPivot = TheTacticalView->getPosition();
 	Real angle = TheTacticalView->getAngle();
 	Matrix3D rot = Matrix3D::Identity;
 	rot.Rotate_Z( angle );
 	Vector3 forward( 0, 1, 0 );
 	rot.mulVector3( forward );
 
-	Real desiredHeight = m_audioSettings->m_microphoneDesiredHeightAboveTerrain;
-	Real maxPercentage = m_audioSettings->m_microphoneMaxPercentageBetweenGroundAndCamera;
+	const Real desiredHeightRel = m_audioSettings->m_microphoneDesiredHeightAboveTerrain;
+	const Real desiredHeightAbs = desiredHeightRel + cameraPivot.z;
+	const Real maxPercentage = m_audioSettings->m_microphoneMaxPercentageBetweenGroundAndCamera;
 
 	Coord3D lookTo;
 	lookTo.set(forward.X, forward.Y, forward.Z);
@@ -303,10 +303,10 @@ void AudioManager::update()
 	Coord3D cameraPos = TheTacticalView->get3DCameraPosition();
 	Coord3D groundToCameraVector;
 	groundToCameraVector.set( &cameraPos );
-	groundToCameraVector.sub( &groundPos );
+	groundToCameraVector.sub( &cameraPivot );
 	Real bestScaleFactor;
 
-	if( cameraPos.z <= desiredHeight || groundToCameraVector.z <= 0.0f )
+	if( cameraPos.z <= desiredHeightAbs || groundToCameraVector.z <= 0.0f )
 	{
 		//Use the percentage calculation!
 		bestScaleFactor = maxPercentage;
@@ -314,7 +314,7 @@ void AudioManager::update()
 	else
 	{
 		//Calculate the stopping position of the groundToCameraVector when we force z to be m_microphoneDesiredHeightAboveTerrain
-		Real zScale = desiredHeight / groundToCameraVector.z;
+		Real zScale = desiredHeightRel / groundToCameraVector.z;
 
 		//Use the smallest of the two scale calculations
 		bestScaleFactor = MIN( maxPercentage, zScale );
@@ -324,8 +324,8 @@ void AudioManager::update()
 	groundToCameraVector.scale( bestScaleFactor );
 
 	//Set the microphone to be the ground position adjusted for terrain plus the vector we just calculated.
-	groundPos.z = TheTerrainLogic->getGroundHeight( groundPos.x, groundPos.y );
-	microphonePos.set( &groundPos );
+	Coord3D microphonePos;
+	microphonePos.set( &cameraPivot );
 	microphonePos.add( &groundToCameraVector );
 
 	//Viola! A properly placed microphone.

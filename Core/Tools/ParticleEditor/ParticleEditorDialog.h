@@ -57,23 +57,23 @@ class DebugWindowDialog : public CDialog
 		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = nullptr);
 		virtual ~DebugWindowDialog();
 
-		void InitPanel( void );
-		HWND GetMainWndHWND( void );
+		void InitPanel();
+		HWND GetMainWndHWND();
 		void addParticleSystem( IN const char *particleSystem );
 		void addThingTemplate( IN const char *thingTemplate );
-		void clearAllParticleSystems( void );
-		void clearAllThingTemplates( void );
-		Bool hasSelectionChanged( void );
+		void clearAllParticleSystems();
+		void clearAllThingTemplates();
+		Bool hasSelectionChanged();
 		void getSelectedSystemName( OUT char *bufferToCopyInto ) const;
 		void getSelectedParticleAsciiStringParm( IN int parmNum, OUT char *bufferToCopyInto ) const;
 		void updateParticleAsciiStringParm( IN int parmNum, IN const char *bufferToCopyFrom );
 		void updateCurrentParticleCap( IN int particleCap );
 		void updateCurrentNumParticles( IN int particleCount );
-		int getNewParticleCap( void );
+		int getNewParticleCap();
 
 		void updateCurrentParticleSystem( IN ParticleSystemTemplate *particleTemplate );
 		void updateSystemUseParameters( IN ParticleSystemTemplate *particleTemplate );
-		void signalParticleSystemEdit( void );
+		void signalParticleSystemEdit();
 
 
 		// The purpose of these is to add as few friends as possible to the particle system classes.
@@ -241,19 +241,19 @@ class DebugWindowDialog : public CDialog
 		void getWindAngleChangeFromSystem( IN Int parmNum, OUT Real& angle ) const;
 		void updateWindAngleChangeToSystem( IN Int parmNum, IN const Real& angle );
 
-		Bool shouldWriteINI( void );
-		Bool hasRequestedReload( void );
-		Bool shouldBusyWait( void );
-		Bool shouldUpdateParticleCap( void );
-		Bool shouldReloadTextures( void );
-		Bool shouldKillAllParticleSystems( void );
+		Bool shouldWriteINI();
+		Bool hasRequestedReload();
+		Bool shouldBusyWait();
+		Bool shouldUpdateParticleCap();
+		Bool shouldReloadTextures();
+		Bool shouldKillAllParticleSystems();
 
 
 
-		const std::list<std::string> &getAllThingTemplates( void ) const { return m_listOfThingTemplates; }
-		const std::list<std::string> &getAllParticleSystems( void ) const { return m_listOfParticleSystems; }
+		const std::list<std::string> &getAllThingTemplates() const { return m_listOfThingTemplates; }
+		const std::list<std::string> &getAllParticleSystems() const { return m_listOfParticleSystems; }
 
-		ParticleSystemTemplate *getCurrentParticleSystem( void ) { return m_particleSystem; }
+		ParticleSystemTemplate *getCurrentParticleSystem() { return m_particleSystem; }
 
 	protected:
 		HWND			mMainWndHWND;

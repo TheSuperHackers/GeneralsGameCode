@@ -69,7 +69,7 @@
 // GUIEditDisplay::GUIEditDisplay =============================================
 /** */
 //=============================================================================
-GUIEditDisplay::GUIEditDisplay( void )
+GUIEditDisplay::GUIEditDisplay()
 {
 
 }
@@ -77,7 +77,7 @@ GUIEditDisplay::GUIEditDisplay( void )
 // GUIEditDisplay::~GUIEditDisplay ============================================
 /** */
 //=============================================================================
-GUIEditDisplay::~GUIEditDisplay( void )
+GUIEditDisplay::~GUIEditDisplay()
 {
 
 }
@@ -151,7 +151,7 @@ void GUIEditDisplay::setClipRegion( IRegion2D *region )
 // GUIEditDisplay::isClippingEnabled ==============================================
 /** returns current state of 2D image clipping */
 //=============================================================================
-Bool GUIEditDisplay::isClippingEnabled( void )
+Bool GUIEditDisplay::isClippingEnabled()
 {
 	return	TheEditWindow->isClippingEnabled();
 }

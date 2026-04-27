@@ -43,7 +43,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 TextFileClass::TextFileClass ()
 {
-	return ;
 }
 
 
@@ -55,7 +54,6 @@ TextFileClass::TextFileClass ()
 TextFileClass::TextFileClass (char const *filename)
 	:	RawFileClass (filename)
 {
-	return ;
 }
 
 
@@ -66,7 +64,6 @@ TextFileClass::TextFileClass (char const *filename)
 ///////////////////////////////////////////////////////////////////////////////
 TextFileClass::~TextFileClass ()
 {
-	return ;
 }
 
 

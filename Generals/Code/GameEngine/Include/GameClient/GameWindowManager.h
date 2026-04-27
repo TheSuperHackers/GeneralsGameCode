@@ -77,12 +77,12 @@ friend class GameWindow;
 public:
 
 	GameWindowManager();
-	virtual ~GameWindowManager();
+	virtual ~GameWindowManager() override;
 
 	//-----------------------------------------------------------------------------------------------
-	virtual void init();		///< initialize function
-	virtual void reset();		///< reset the system
-	virtual void update();  ///< update method, called once per frame
+	virtual void init() override;		///< initialize function
+	virtual void reset() override;		///< reset the system
+	virtual void update() override;  ///< update method, called once per frame
 
 	virtual GameWindow *allocateNewWindow() = 0;  ///< new game window
 
@@ -384,31 +384,31 @@ extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window,
 class GameWindowManagerDummy : public GameWindowManager
 {
 public:
-	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id);
-	virtual GameWindow *winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info);
+	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id) override;
+	virtual GameWindow *winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info) override;
 
-	virtual GameWindow *allocateNewWindow() { return newInstance(GameWindowDummy); }
+	virtual GameWindow *allocateNewWindow() override { return newInstance(GameWindowDummy); }
 
-	virtual GameWinDrawFunc getPushButtonImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getPushButtonDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getCheckBoxImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getCheckBoxDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getRadioButtonImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getRadioButtonDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getTabControlImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getTabControlDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getListBoxImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getListBoxDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getComboBoxImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getComboBoxDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getHorizontalSliderDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getVerticalSliderDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getProgressBarImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getProgressBarDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getStaticTextImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getStaticTextDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getTextEntryImageDrawFunc() { return nullptr; }
-	virtual GameWinDrawFunc getTextEntryDrawFunc() { return nullptr; }
+	virtual GameWinDrawFunc getPushButtonImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getPushButtonDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getCheckBoxImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getCheckBoxDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getRadioButtonImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getRadioButtonDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getTabControlImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getTabControlDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getListBoxImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getListBoxDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getComboBoxImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getComboBoxDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getHorizontalSliderDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getVerticalSliderDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getProgressBarImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getProgressBarDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getStaticTextImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getStaticTextDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getTextEntryImageDrawFunc() override { return nullptr; }
+	virtual GameWinDrawFunc getTextEntryDrawFunc() override { return nullptr; }
 };

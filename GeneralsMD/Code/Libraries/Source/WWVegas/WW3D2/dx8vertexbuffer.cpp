@@ -74,7 +74,7 @@ static int _VertexBufferTotalSize;
 //
 // ----------------------------------------------------------------------------
 
-VertexBufferClass::VertexBufferClass(unsigned type_, unsigned FVF, unsigned short vertex_count_, unsigned vertex_size)
+VertexBufferClass::VertexBufferClass(unsigned type_, unsigned FVF, unsigned short vertex_count_)
 	:
 	VertexCount(vertex_count_),
 	type(type_),
@@ -83,8 +83,8 @@ VertexBufferClass::VertexBufferClass(unsigned type_, unsigned FVF, unsigned shor
 	WWMEMLOG(MEM_RENDERER);
 	WWASSERT(VertexCount);
 	WWASSERT(type==BUFFER_TYPE_DX8 || type==BUFFER_TYPE_SORTING);
-	WWASSERT((FVF!=0 && vertex_size==0) || (FVF==0 && vertex_size!=0));
-	fvf_info=W3DNEW FVFInfoClass(FVF,vertex_size);
+	WWASSERT(FVF != 0);
+	fvf_info=W3DNEW FVFInfoClass(FVF);
 
 	_VertexBufferCount++;
 	_VertexBufferTotalVertices+=VertexCount;
@@ -307,9 +307,9 @@ SortingVertexBufferClass::~SortingVertexBufferClass()
 
 //	bool dynamic=false,bool softwarevp=false);
 
-DX8VertexBufferClass::DX8VertexBufferClass(unsigned FVF, unsigned short vertex_count_, UsageType usage, unsigned vertex_size)
+DX8VertexBufferClass::DX8VertexBufferClass(unsigned FVF, unsigned short vertex_count_, UsageType usage)
 	:
-	VertexBufferClass(BUFFER_TYPE_DX8, FVF, vertex_count_, vertex_size),
+	VertexBufferClass(BUFFER_TYPE_DX8, FVF, vertex_count_),
 	VertexBuffer(nullptr)
 {
 	Create_Vertex_Buffer(usage);

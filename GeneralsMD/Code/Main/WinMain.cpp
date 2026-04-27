@@ -67,7 +67,6 @@
 #include "GeneratedVersion.h"
 #include "resource.h"
 
-#include <rts/profile.h>
 #ifdef RTS_ENABLE_CRASHDUMP
 #include "Common/MiniDumper.h"
 #endif
@@ -712,7 +711,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed)
-		windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
+		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_CAPTION;
 	else
 		windowStyle |= WS_EX_TOPMOST | WS_SYSMENU;
 
@@ -801,7 +800,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	Int exitcode = 1;
 
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
   Profile::StartRange("init");
 #endif
 
@@ -851,7 +850,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined(RTS_DEBUG) || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE_LEGACY
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];

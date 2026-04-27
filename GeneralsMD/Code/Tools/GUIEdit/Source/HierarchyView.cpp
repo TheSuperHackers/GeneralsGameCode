@@ -743,7 +743,7 @@ void HierarchyView::addWindowToTree( GameWindow *window,
 // HierarchyView::HierarchyView ===============================================
 /** */
 //=============================================================================
-HierarchyView::HierarchyView( void )
+HierarchyView::HierarchyView()
 {
 
 	m_dialog = nullptr;
@@ -759,7 +759,7 @@ HierarchyView::HierarchyView( void )
 // HierarchyView::~HierarchyView ==============================================
 /** */
 //=============================================================================
-HierarchyView::~HierarchyView( void )
+HierarchyView::~HierarchyView()
 {
 
 	// call the shutdown
@@ -770,7 +770,7 @@ HierarchyView::~HierarchyView( void )
 // HierarchyView::init =========================================================
 /** Create the control palette */
 //=============================================================================
-void HierarchyView::init( void )
+void HierarchyView::init()
 {
 	RECT dialogRect;
 	RECT appRect;
@@ -813,7 +813,7 @@ void HierarchyView::init( void )
 // HierarchyView::reset =======================================================
 /** Reset everything about our hierarchy view */
 //=============================================================================
-void HierarchyView::reset( void )
+void HierarchyView::reset()
 {
 
 	// reset the tree control
@@ -829,7 +829,7 @@ void HierarchyView::reset( void )
 // HierarchyView::shutdown ====================================================
 /** Destroy the control palette and all data associated with it */
 //=============================================================================
-void HierarchyView::shutdown( void )
+void HierarchyView::shutdown()
 {
 
 	// destroy the control palette window

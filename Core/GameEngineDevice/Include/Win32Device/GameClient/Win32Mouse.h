@@ -63,30 +63,30 @@ class Win32Mouse : public Mouse
 public:
 
 	Win32Mouse();
-	virtual ~Win32Mouse();
+	virtual ~Win32Mouse() override;
 
-	virtual void init();		///< init mouse, extend this functionality, do not replace
-	virtual void reset();		///< reset the system
-	virtual void update();	///< update
-	virtual void initCursorResources();	///< load windows resources needed for 2d cursors.
+	virtual void init() override;		///< init mouse, extend this functionality, do not replace
+	virtual void reset() override;		///< reset the system
+	virtual void update() override;	///< update
+	virtual void initCursorResources() override;	///< load windows resources needed for 2d cursors.
 
-	virtual void setCursor( MouseCursor cursor );		///< set mouse cursor
+	virtual void setCursor( MouseCursor cursor ) override;		///< set mouse cursor
 
-	virtual void setVisibility(Bool visible);
+	virtual void setVisibility(Bool visible) override;
 
-	virtual void loseFocus();
-	virtual void regainFocus();
+	virtual void loseFocus() override;
+	virtual void regainFocus() override;
 
 	/// add an event from a win32 window procedure
 	void addWin32Event( UINT msg, WPARAM wParam, LPARAM lParam, DWORD time );
 
 protected:
 
-	virtual void capture(); ///< capture the mouse
-	virtual void releaseCapture(); ///< release mouse capture
+	virtual void capture() override; ///< capture the mouse
+	virtual void releaseCapture() override; ///< release mouse capture
 
 	/// get the next event available in the buffer
-	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush );
+	virtual UnsignedByte getMouseEvent( MouseIO *result, Bool flush ) override;
 
 	/// translate a win32 mouse event to our own info
 	void translateEvent( UnsignedInt eventIndex, MouseIO *result );

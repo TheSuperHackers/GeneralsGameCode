@@ -808,10 +808,8 @@ void StopAsyncDNSCheck()
 {
 	if (s_asyncDNSThreadHandle)
 	{
-#ifdef DEBUG_CRASHING
-		Int res =
-#endif
-			TerminateThread(s_asyncDNSThreadHandle,0);
+		MAYBE_UNUSED Int res = TerminateThread(s_asyncDNSThreadHandle, 0);
+		(void)res;
 		DEBUG_ASSERTCRASH(res, ("Could not terminate the Async DNS Lookup thread!"));	// Thread still not killed!
 	}
 	s_asyncDNSThreadHandle = nullptr;

@@ -88,7 +88,6 @@ TextureMgrDialogClass::TextureMgrDialogClass
 	//{{AFX_DATA_INIT(TextureMgrDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -103,7 +102,6 @@ TextureMgrDialogClass::DoDataExchange (CDataExchange *pDX)
 	//{{AFX_DATA_MAP(TextureMgrDialogClass)
 	DDX_Control(pDX, IDC_MESH_TEXTURE_LIST_CTRL, m_ListCtrl);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -164,7 +162,6 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Meshes (void)
 	m_bContainsMeshes = true;
 	m_Toolbar.Enable_Button (IDC_BACK, false);
 	m_Toolbar.Enable_Button (IDC_PROPAGATE, true);
-	return ;
 }
 
 
@@ -199,7 +196,6 @@ TextureMgrDialogClass::Fill_List_Ctrl_With_Textures (TextureListNodeClass &paren
 	m_bContainsMeshes = false;
 	m_Toolbar.Enable_Button (IDC_BACK, true);
 	m_Toolbar.Enable_Button (IDC_PROPAGATE, false);
-	return ;
 }
 
 
@@ -297,8 +293,6 @@ TextureMgrDialogClass::Add_Subobjs_To_List (RenderObjClass *prender_obj)
 		// Add all the mesh's textures to this list
 		Add_Textures_To_Node ((MeshClass *)prender_obj, pnode);
 	}
-
-	return ;
 }
 
 
@@ -338,8 +332,6 @@ TextureMgrDialogClass::Add_Textures_To_Node
 		// Release our hold on this pointer
 		REF_PTR_RELEASE (pmat_info);
 	}
-
-	return ;
 }
 
 
@@ -374,7 +366,6 @@ TextureMgrDialogClass::OnOK (void)
 {
 	// Allow the base class to process this message
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -387,7 +378,6 @@ TextureMgrDialogClass::OnCancel (void)
 {
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -468,7 +458,6 @@ TextureMgrDialogClass::OnDblclkMeshTextureListCtrl
 	}
 
 	(*pResult) = 0;
-	return ;
 }
 
 
@@ -494,7 +483,6 @@ TextureMgrDialogClass::OnKeydownMeshTextureListCtrl
 	}
 
 	(*pResult) = 0;
-	return ;
 }
 
 
@@ -525,7 +513,6 @@ TextureMgrDialogClass::OnDestroy (void)
 
 	// Allow the base class to process this message
 	CDialog::OnDestroy ();
-	return ;
 }
 
 
@@ -540,8 +527,6 @@ TextureMgrDialogClass::OnBack (void)
 	if (m_bContainsMeshes == false) {
 		Fill_List_Ctrl_With_Meshes ();
 	}
-
-	return ;
 }
 
 
@@ -554,7 +539,6 @@ TextureMgrDialogClass::OnDetails (void)
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_REPORT);
-	return ;
 }
 
 
@@ -567,7 +551,6 @@ TextureMgrDialogClass::OnLarge (void)
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_ICON);
-	return ;
 }
 
 
@@ -580,7 +563,6 @@ TextureMgrDialogClass::OnList (void)
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_LIST);
-	return ;
 }
 
 
@@ -593,7 +575,6 @@ TextureMgrDialogClass::OnSmall (void)
 {
 	LONG style = ::GetWindowLong (m_ListCtrl, GWL_STYLE);
 	SetWindowLong (m_ListCtrl, GWL_STYLE, (style & (~LVS_TYPEMASK)) | LVS_SMALLICON);
-	return ;
 }
 
 
@@ -702,8 +683,6 @@ TextureMgrDialogClass::Insert_Texture_Details
 		// Associate the node with the list entry
 		m_ListCtrl.SetItemData (index, (DWORD)pnode);
 	}
-
-	return ;
 }
 
 
@@ -773,8 +752,6 @@ TextureMgrDialogClass::OnPropagate (void)
 			}
 		}
 	}
-
-	return ;
 }
 
 

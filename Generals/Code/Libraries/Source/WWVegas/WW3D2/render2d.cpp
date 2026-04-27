@@ -67,7 +67,6 @@ Render2DClass::Render2DClass( TextureClass* tex ) :
 {
 	Set_Texture( tex );
    Shader = Get_Default_Shader();
-	return ;
 }
 
 Render2DClass::~Render2DClass()
@@ -504,7 +503,6 @@ void	Render2DClass::Add_Rect( const RectClass & rect, float border_width, uint32
 		fill_rect.Bottom	-= border_width - 1;
 	}
 	Add_Quad (fill_rect, fill_color);
-	return ;
 }
 
 void	Render2DClass::Add_Outline( const RectClass & rect, float width, unsigned long color )

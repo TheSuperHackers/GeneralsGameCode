@@ -181,9 +181,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 
@@ -595,15 +595,15 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 	void xferDrawableModules( Xfer *xfer );
 
 	void	startAmbientSound( BodyDamageType dt, TimeOfDay tod, Bool onlyIfPermanent = false );
 
-	Drawable *asDrawableMeth() { return this; }
-	const Drawable *asDrawableMeth() const { return this; }
+	virtual Drawable *asDrawableMeth() override { return this; }
+	virtual const Drawable *asDrawableMeth() const override { return this; }
 
 	Module** getModuleList(ModuleType i)
 	{
@@ -644,7 +644,7 @@ protected:
 	void validatePos() const;
 #endif
 
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override;
 	void updateHiddenStatus();
 
 	void replaceModelConditionStateInDrawable();

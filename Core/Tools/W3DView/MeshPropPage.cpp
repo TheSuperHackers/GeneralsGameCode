@@ -52,16 +52,14 @@ CMeshPropPage::CMeshPropPage (const CString &stringMeshName)
 	//}}AFX_DATA_INIT
 
     m_stringMeshName = stringMeshName;
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////
 //
 //  ~CMeshPropPage
 //
-CMeshPropPage::~CMeshPropPage (void)
+CMeshPropPage::~CMeshPropPage ()
 {
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -75,7 +73,6 @@ CMeshPropPage::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CMeshPropPage)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -93,7 +90,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CMeshPropPage::OnInitDialog (void)
+CMeshPropPage::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CPropertyPage::OnInitDialog();
@@ -184,5 +181,4 @@ void CMeshPropPage::OnClose()
 	// TODO: Add your message handler code here and/or call default
 
 	CPropertyPage::OnClose();
-    return ;
 }

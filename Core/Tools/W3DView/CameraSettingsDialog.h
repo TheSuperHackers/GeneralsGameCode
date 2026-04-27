@@ -68,8 +68,8 @@ protected:
 	///////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////
-	void			Update_Camera_Lens (void);
-	void			Update_FOV (void);
+	void			Update_Camera_Lens ();
+	void			Update_FOV ();
 };
 
 //{{AFX_INSERT_LOCATION}}

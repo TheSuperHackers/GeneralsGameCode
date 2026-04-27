@@ -39,7 +39,7 @@ BorderTool::~BorderTool()
 
 }
 
-void BorderTool::setCursor(void)
+void BorderTool::setCursor()
 {
 
 }

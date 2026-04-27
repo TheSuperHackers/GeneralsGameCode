@@ -167,13 +167,15 @@ void PowerPlantUpgrade::loadPostProcess()
 
 	// Most upgrade modules have state change effects that are themselves saved.  This one is a fire and forget.
 	// So we need to re-fire on load if we are turned on.
-	if( isAlreadyUpgraded() )
+	if (isAlreadyUpgraded())
 	{
-		Player *player = getObject()->getControllingPlayer();
+		Object* obj = getObject();
+		Player* player = obj->getControllingPlayer();
 
-		// add the new power production to the object
-		if( player )
-			player->addPowerBonus(getObject());
+		if (player && !obj->isDisabled())
+		{
+			player->addPowerBonus(obj);
+		}
 	}
 
 }

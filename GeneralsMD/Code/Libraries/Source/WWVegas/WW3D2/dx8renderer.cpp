@@ -806,27 +806,17 @@ void DX8RigidFVFCategoryContainer::Render()
 	AnythingToRender=false;
 
 	DX8Wrapper::Set_Vertex_Buffer(vertex_buffer);
-
 	DX8Wrapper::Set_Index_Buffer(index_buffer,0);
 
 	SNAPSHOT_SAY(("DX8RigidFVFCategoryContainer::Render()"));
-	// The Z-biasing was causing more problems than they solved.
-	// Disabling it for now HY.
-	//int zbias=0;
-	//DX8Wrapper::Set_DX8_ZBias(zbias);
 	for (unsigned p=0;p<passes;++p) {
 		SNAPSHOT_SAY(("Pass: %d",p));
 		while (DX8TextureCategoryClass * tex = visible_texture_category_list[p].Remove_Head()) {
 			tex->Render();
 		}
-		//zbias++;
-		//if (zbias>15) zbias=15;
-		//DX8Wrapper::Set_DX8_ZBias(zbias);
 	}
 
 	Render_Procedural_Material_Passes();
-
-	//DX8Wrapper::Set_DX8_ZBias(0);
 }
 
 // ----------------------------------------------------------------------------
@@ -1435,7 +1425,6 @@ void DX8SkinFVFCategoryContainer::Render()
 
 	WWASSERT(renderedVertexCount==VisibleVertexCount);
 
-
 	clearVisibleSkinList();
 }
 
@@ -1465,6 +1454,7 @@ void DX8SkinFVFCategoryContainer::clearVisibleSkinList()
 	VisibleSkinTail = nullptr;
 	VisibleVertexCount = 0;
 }
+
 void DX8SkinFVFCategoryContainer::Add_Visible_Skin(MeshClass * mesh)
 {
 	if (mesh->Peek_Next_Visible_Skin() != nullptr || mesh == VisibleSkinTail)
@@ -1901,6 +1891,7 @@ void DX8TextureCategoryClass::Render()
 				}
 				else
 					oldMapper=nullptr;
+
 				if (mesh->Get_Alpha_Override() != 1.0)
 				{
 					if (mesh->Is_Additive())
@@ -1913,7 +1904,9 @@ void DX8TextureCategoryClass::Render()
 					DX8Wrapper::Set_Shader(theAlphaShader);
 					DX8Wrapper::Apply_Render_State_Changes();
 					DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,(int)((float)0x60*mesh->Get_Alpha_Override()));
+
 					renderer->Render(mesh->Get_Base_Vertex_Offset());
+
 					DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHAREF,0x60);
 					vmaterial->Set_Opacity(oldOpacity);	//restore previous value
 					vmaterial->Set_Diffuse(oldDiffuse.X,oldDiffuse.Y,oldDiffuse.Z);
@@ -2141,8 +2134,6 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 			}
 		}
 	}
-
-	return;
 }
 
 static unsigned statistics_requested=0;

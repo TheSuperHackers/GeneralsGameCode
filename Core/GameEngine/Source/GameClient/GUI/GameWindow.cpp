@@ -1579,7 +1579,6 @@ void GameWinDefaultTooltip( GameWindow *window,
 														WinInstanceData *instData,
 														UnsignedInt mouse )
 {
-	return;
 
 }
 
@@ -1588,8 +1587,6 @@ void GameWinDefaultTooltip( GameWindow *window,
 //=============================================================================
 void GameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 {
-
-	return;
 
 }
 

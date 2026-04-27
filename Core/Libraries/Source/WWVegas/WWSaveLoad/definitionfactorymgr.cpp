@@ -214,7 +214,6 @@ DefinitionFactoryMgrClass::Register_Factory (DefinitionFactoryClass *factory)
 	WWASSERT (factory->m_NextFactory == 0);
 	WWASSERT (factory->m_PrevFactory == 0);
 	Link_Factory (factory);
-	return ;
 }
 
 
@@ -228,7 +227,6 @@ DefinitionFactoryMgrClass::Unregister_Factory (DefinitionFactoryClass *factory)
 {
 	WWASSERT (factory != 0);
 	Unlink_Factory (factory);
-	return ;
 }
 
 
@@ -253,7 +251,6 @@ DefinitionFactoryMgrClass::Link_Factory (DefinitionFactoryClass *factory)
 
 	// Point the head of the list at this factory now
 	_FactoryListHead = factory;
-	return ;
 }
 
 
@@ -291,5 +288,4 @@ DefinitionFactoryMgrClass::Unlink_Factory (DefinitionFactoryClass *factory)
 	// factory is now un-linked
 	factory->m_NextFactory = nullptr;
 	factory->m_PrevFactory = nullptr;
-	return ;
 }

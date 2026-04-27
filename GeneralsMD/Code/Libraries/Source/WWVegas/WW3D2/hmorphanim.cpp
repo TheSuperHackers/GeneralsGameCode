@@ -91,7 +91,6 @@ bool TimeCodedMorphKeysClass::Save_W3D(ChunkSaveClass & csave)
 void TimeCodedMorphKeysClass::Add_Key (uint32 morph_frame, uint32 pose_frame)
 {
 	Keys.Add (MorphKeyStruct (morph_frame, pose_frame));
-	return ;
 }
 
 void TimeCodedMorphKeysClass::Get_Morph_Info(float morph_frame,int * pose_frame0,int * pose_frame1,float * fraction)
@@ -466,8 +465,6 @@ void HMorphAnimClass::Resolve_Pivot_Channels()
 			}
 		}
 	}
-
-	return ;
 }
 
 void HMorphAnimClass::Set_Name(const char * name)
@@ -492,8 +489,6 @@ void HMorphAnimClass::Set_Name(const char * name)
 		strlcpy(AnimName, separator + 1, ARRAY_SIZE(AnimName));
 		strlcpy(HierarchyName, full_name, ARRAY_SIZE(HierarchyName));
 	}
-
-	return ;
 }
 
 void HMorphAnimClass::Free_Morph()

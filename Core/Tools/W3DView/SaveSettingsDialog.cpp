@@ -46,7 +46,6 @@ CSaveSettingsDialog::CSaveSettingsDialog (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CSaveSettingsDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -61,7 +60,6 @@ CSaveSettingsDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CSaveSettingsDialog)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -77,7 +75,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CSaveSettingsDialog::OnInitDialog (void)
+CSaveSettingsDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -97,7 +95,7 @@ CSaveSettingsDialog::OnInitDialog (void)
 //  OnBrowseButton
 //
 void
-CSaveSettingsDialog::OnBrowseButton (void)
+CSaveSettingsDialog::OnBrowseButton ()
 {
 	 TCHAR szFileName[MAX_PATH];
 	 ::GetModuleFileName (nullptr, szFileName, sizeof (szFileName));
@@ -126,8 +124,6 @@ CSaveSettingsDialog::OnBrowseButton (void)
         // Put the path into the filename edit control
         SetDlgItemText (IDC_FILENAME_EDIT, saveFileDialog.GetPathName ());
     }
-
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -135,12 +131,11 @@ CSaveSettingsDialog::OnBrowseButton (void)
 //  OnUpdateFilenameEdit
 //
 void
-CSaveSettingsDialog::OnUpdateFilenameEdit (void)
+CSaveSettingsDialog::OnUpdateFilenameEdit ()
 {
     // Set the enabled state of the OK button
     // based on the values of the control
     FixOKEnableState ();
-	return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -148,7 +143,7 @@ CSaveSettingsDialog::OnUpdateFilenameEdit (void)
 //  OnUpdateFilenameEdit
 //
 void
-CSaveSettingsDialog::OnOK (void)
+CSaveSettingsDialog::OnOK ()
 {
     // Assume we want to allow the base class to process this message
     BOOL bAllowDefaultProcessing = TRUE;
@@ -192,8 +187,6 @@ CSaveSettingsDialog::OnOK (void)
         // Allow the base class to process this message
         CDialog::OnOK ();
     }
-
-    return ;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -227,7 +220,7 @@ CSaveSettingsDialog::OnCommand
 //  FixOKEnableState
 //
 void
-CSaveSettingsDialog::FixOKEnableState (void)
+CSaveSettingsDialog::FixOKEnableState ()
 {
     // Determine which (if any) checkboxes are checked
     int iValidSel = 0;
@@ -247,7 +240,5 @@ CSaveSettingsDialog::FixOKEnableState (void)
         // Disable the OK button
         ::EnableWindow (::GetDlgItem (m_hWnd, IDOK), FALSE);
     }
-
-    return ;
 }
 

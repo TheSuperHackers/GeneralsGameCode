@@ -32,11 +32,11 @@ class WorldHeightMapEdit;
 class EyedropperTool : public Tool
 {
 public:
-	EyedropperTool(void);
-	~EyedropperTool(void);
+	EyedropperTool();
+	virtual ~EyedropperTool() override;
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void activate(); ///< Become the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void activate() override; ///< Become the current tool.
 };

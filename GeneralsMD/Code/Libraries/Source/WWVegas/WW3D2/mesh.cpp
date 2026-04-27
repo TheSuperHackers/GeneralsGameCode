@@ -1492,7 +1492,6 @@ void MeshClass::Add_Dependencies_To_List
 	}
 
 	RenderObjClass::Add_Dependencies_To_List (file_list, textures_only);
-	return ;
 }
 
 

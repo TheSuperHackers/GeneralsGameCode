@@ -126,7 +126,7 @@ UpdateSleepTime OverchargeBehavior::update()
 			enable( FALSE );
 
 			// do some UI info for the local user if this is theirs
-			if( ThePlayerList->getLocalPlayer() == us->getControllingPlayer() )
+			if( us->isLocallyControlled() )
 			{
 
 				// print msg
@@ -317,7 +317,15 @@ void OverchargeBehavior::loadPostProcess()
 	UpdateModule::loadPostProcess();
 
 	// Our effect is a fire and forget effect, not an upgrade state that is itself saved, so need to re-fire.
-	if( m_overchargeActive && getObject()->getControllingPlayer() )
-		getObject()->getControllingPlayer()->addPowerBonus( getObject() );
+	if (m_overchargeActive)
+	{
+		Object* obj = getObject();
+		Player* player = obj->getControllingPlayer();
+
+		if (player && !obj->isDisabled())
+		{
+			player->addPowerBonus(obj);
+		}
+	}
 
 }

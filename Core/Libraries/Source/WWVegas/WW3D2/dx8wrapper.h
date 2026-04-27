@@ -74,10 +74,6 @@ const unsigned MAX_VERTEX_SHADER_CONSTANTS=96;
 const unsigned MAX_PIXEL_SHADER_CONSTANTS=8;
 const unsigned MAX_SHADOW_MAPS=1;
 
-#define prevVer
-#define nextVer
-
-
 enum {
 	BUFFER_TYPE_DX8,
 	BUFFER_TYPE_SORTING,
@@ -95,22 +91,48 @@ class DynamicVBAccessClass;
 class IndexBufferClass;
 class DynamicIBAccessClass;
 class TextureClass;
-class ZTextureClass;
 class LightClass;
 class SurfaceClass;
-class DX8Caps;
 
-#define DX8_RECORD_MATRIX_CHANGE()				matrix_changes++
-#define DX8_RECORD_MATERIAL_CHANGE()			material_changes++
-#define DX8_RECORD_VERTEX_BUFFER_CHANGE()		vertex_buffer_changes++
-#define DX8_RECORD_INDEX_BUFFER_CHANGE()		index_buffer_changes++
-#define DX8_RECORD_LIGHT_CHANGE()				light_changes++
-#define DX8_RECORD_TEXTURE_CHANGE()				texture_changes++
-#define DX8_RECORD_RENDER_STATE_CHANGE()		render_state_changes++
-#define DX8_RECORD_TEXTURE_STAGE_STATE_CHANGE() texture_stage_state_changes++
-#define DX8_RECORD_DRAW_CALLS()					draw_calls++
+struct DX8FrameStatistics
+{
+	DX8FrameStatistics() :
+		matrix_changes(0),
+		material_changes(0),
+		vertex_buffer_changes(0),
+		index_buffer_changes(0),
+		light_changes(0),
+		texture_changes(0),
+		render_state_changes(0),
+		texture_stage_state_changes(0),
+		dx8_calls(0),
+		draw_calls(0)
+	{
+	}
 
-extern unsigned number_of_DX8_calls;
+	unsigned matrix_changes;
+	unsigned material_changes;
+	unsigned vertex_buffer_changes;
+	unsigned index_buffer_changes;
+	unsigned light_changes;
+	unsigned texture_changes;
+	unsigned render_state_changes;
+	unsigned texture_stage_state_changes;
+	unsigned dx8_calls;
+	unsigned draw_calls;
+};
+
+#define DX8_RECORD_MATRIX_CHANGE()				FrameStatistics.matrix_changes++
+#define DX8_RECORD_MATERIAL_CHANGE()			FrameStatistics.material_changes++
+#define DX8_RECORD_VERTEX_BUFFER_CHANGE()		FrameStatistics.vertex_buffer_changes++
+#define DX8_RECORD_INDEX_BUFFER_CHANGE()		FrameStatistics.index_buffer_changes++
+#define DX8_RECORD_LIGHT_CHANGE()				FrameStatistics.light_changes++
+#define DX8_RECORD_TEXTURE_CHANGE()				FrameStatistics.texture_changes++
+#define DX8_RECORD_RENDER_STATE_CHANGE()		FrameStatistics.render_state_changes++
+#define DX8_RECORD_TEXTURE_STAGE_STATE_CHANGE() FrameStatistics.texture_stage_state_changes++
+#define DX8_RECORD_DX8_CALLS()					FrameStatistics.dx8_calls++
+#define DX8_RECORD_DRAW_CALLS()					FrameStatistics.draw_calls++
+
 extern bool _DX8SingleThreaded;
 
 void DX8_Assert();
@@ -123,14 +145,14 @@ WWINLINE void DX8_ErrorCode(unsigned res)
 }
 
 #ifdef WWDEBUG
-#define DX8CALL_HRES(x,res) DX8_Assert(); res = DX8Wrapper::_Get_D3D_Device8()->x; DX8_ErrorCode(res); number_of_DX8_calls++;
-#define DX8CALL(x) DX8_Assert(); DX8_ErrorCode(DX8Wrapper::_Get_D3D_Device8()->x); number_of_DX8_calls++;
-#define DX8CALL_D3D(x) DX8_Assert(); DX8_ErrorCode(DX8Wrapper::_Get_D3D8()->x); number_of_DX8_calls++;
+#define DX8CALL_HRES(x,res) DX8_Assert(); res = DX8Wrapper::_Get_D3D_Device8()->x; DX8_ErrorCode(res); DX8Wrapper::Increment_DX8_CallCount();
+#define DX8CALL(x) DX8_Assert(); DX8_ErrorCode(DX8Wrapper::_Get_D3D_Device8()->x); DX8Wrapper::Increment_DX8_CallCount();
+#define DX8CALL_D3D(x) DX8_Assert(); DX8_ErrorCode(DX8Wrapper::_Get_D3D8()->x); DX8Wrapper::Increment_DX8_CallCount();
 #define DX8_THREAD_ASSERT() if (_DX8SingleThreaded) { WWASSERT_PRINT(DX8Wrapper::_Get_Main_Thread_ID()==ThreadClass::_Get_Current_Thread_ID(),"DX8Wrapper::DX8 calls must be called from the main thread!"); }
 #else
-#define DX8CALL_HRES(x,res) res = DX8Wrapper::_Get_D3D_Device8()->x; number_of_DX8_calls++;
-#define DX8CALL(x) DX8Wrapper::_Get_D3D_Device8()->x; number_of_DX8_calls++;
-#define DX8CALL_D3D(x) DX8Wrapper::_Get_D3D8()->x; number_of_DX8_calls++;
+#define DX8CALL_HRES(x,res) res = DX8Wrapper::_Get_D3D_Device8()->x; DX8Wrapper::Increment_DX8_CallCount();
+#define DX8CALL(x) DX8Wrapper::_Get_D3D_Device8()->x; DX8Wrapper::Increment_DX8_CallCount();
+#define DX8CALL_D3D(x) DX8Wrapper::_Get_D3D8()->x; DX8Wrapper::Increment_DX8_CallCount();
 #define DX8_THREAD_ASSERT() ;
 #endif
 
@@ -178,7 +200,6 @@ struct RenderStateStruct
 	TextureBaseClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
-  //unsigned lightsHash;
 	D3DMATRIX world;
 	D3DMATRIX view;
 	unsigned vertex_buffer_types[MAX_VERTEX_STREAMS];
@@ -295,7 +316,6 @@ public:
 
 	// Set_ and Get_Transform() functions take the matrix in Westwood convention format.
 
-	static void Set_DX8_ZBias(int zbias);
 	static void Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix,float znear, float zfar);	// pointer to 16 matrices
 
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
@@ -319,11 +339,6 @@ public:
 	static void Set_Light_Environment(LightEnvironmentClass* light_env);
 	static LightEnvironmentClass* Get_Light_Environment() { return Light_Environment; }
 	static void Set_Fog(bool enable, const Vector3 &color, float start, float end);
-
-	static WWINLINE const D3DLIGHT8& Peek_Light(unsigned index);
-	static WWINLINE bool Is_Light_Enabled(unsigned index);
-
-	static bool Validate_Device();
 
 	// Deferred
 
@@ -425,18 +440,9 @@ public:
 	*/
 	static void Begin_Statistics();
 	static void End_Statistics();
-	static unsigned Get_Last_Frame_Matrix_Changes();
-	static unsigned Get_Last_Frame_Material_Changes();
-	static unsigned Get_Last_Frame_Vertex_Buffer_Changes();
-	static unsigned Get_Last_Frame_Index_Buffer_Changes();
-	static unsigned Get_Last_Frame_Light_Changes();
-	static unsigned Get_Last_Frame_Texture_Changes();
-	static unsigned Get_Last_Frame_Render_State_Changes();
-	static unsigned Get_Last_Frame_Texture_Stage_State_Changes();
-	static unsigned Get_Last_Frame_DX8_Calls();
-	static unsigned Get_Last_Frame_Draw_Calls();
-
+	static const DX8FrameStatistics& Get_Last_Frame_Statistics();
 	static unsigned long Get_FrameCount();
+	static void Increment_DX8_CallCount() { DX8_RECORD_DX8_CALLS(); }
 
 	// Needed by shader class
 	static bool						Get_Fog_Enable() { return FogEnable; }
@@ -599,6 +605,9 @@ protected:
 	static void	Set_Texture_Bitdepth(int depth)	{ WWASSERT(depth==16 || depth==32); TextureBitDepth = depth; }
 	static int	Get_Texture_Bitdepth()			{ return TextureBitDepth; }
 
+	static void Set_MSAA_Mode(D3DMULTISAMPLE_TYPE mode) { MultiSampleAntiAliasing = mode; }
+	static D3DMULTISAMPLE_TYPE Get_MSAA_Mode() { return MultiSampleAntiAliasing; }
+
 	static void	Set_Swap_Interval(int swap);
 	static int	Get_Swap_Interval();
 	static void Set_Polygon_Mode(int mode);
@@ -637,10 +646,8 @@ protected:
 	static int								TextureBitDepth;
 	static bool								IsWindowed;
 	static D3DFORMAT					DisplayFormat;
+	static D3DMULTISAMPLE_TYPE	MultiSampleAntiAliasing;
 
-	static D3DMATRIX						old_world;
-	static D3DMATRIX						old_view;
-	static D3DMATRIX						old_prj;
 
 	// shader system updates KJM v
 	static DWORD							Vertex_Shader;
@@ -650,7 +657,6 @@ protected:
 	static Vector4							Pixel_Shader_Constants[MAX_PIXEL_SHADER_CONSTANTS];
 
 	static LightEnvironmentClass*		Light_Environment;
-	static RenderInfoClass*				Render_Info;
 
 	static DWORD							Vertex_Processing_Behavior;
 
@@ -669,15 +675,7 @@ protected:
 	static bool								FogEnable;
 	static D3DCOLOR						FogColor;
 
-	static unsigned						matrix_changes;
-	static unsigned						material_changes;
-	static unsigned						vertex_buffer_changes;
-	static unsigned						index_buffer_changes;
-	static unsigned						light_changes;
-	static unsigned						texture_changes;
-	static unsigned						render_state_changes;
-	static unsigned						texture_stage_state_changes;
-	static unsigned						draw_calls;
+	static DX8FrameStatistics			FrameStatistics;
 	static bool								CurrentDX8LightEnables[4];
 
 	static unsigned long FrameCount;
@@ -1213,26 +1211,6 @@ WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& 
 	}
 }
 
-WWINLINE void DX8Wrapper::Set_DX8_ZBias(int zbias)
-{
-	if (zbias==ZBias) return;
-	if (zbias>15) zbias=15;
-	if (zbias<0) zbias=0;
-	ZBias=zbias;
-
-	if (!Get_Current_Caps()->Support_ZBias() && ZNear!=ZFar) {
-		D3DMATRIX tmp=ProjectionMatrix;
-		float tmp_zbias=ZBias;
-		tmp_zbias*=(1.0f/16.0f);
-		tmp_zbias*=1.0f / (ZFar - ZNear);
-		tmp.m[2][2]-=tmp_zbias*tmp.m[3][2];
-		DX8CALL(SetTransform(D3DTS_PROJECTION,&tmp));
-	}
-	else {
-		Set_DX8_Render_State (D3DRS_ZBIAS, ZBias);
-	}
-}
-
 WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m)
 {
 	switch ((int)transform) {
@@ -1312,17 +1290,6 @@ WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4
 	}
 }
 
-WWINLINE const D3DLIGHT8& DX8Wrapper::Peek_Light(unsigned index)
-{
-	return render_state.Lights[index];
-}
-
-WWINLINE bool DX8Wrapper::Is_Light_Enabled(unsigned index)
-{
-	return render_state.LightEnable[index];
-}
-
-
 WWINLINE void DX8Wrapper::Set_Render_State(const RenderStateStruct& state)
 {
 	int i;
@@ -1391,7 +1358,6 @@ WWINLINE RenderStateStruct::RenderStateStruct()
 	unsigned i;
 	for (i=0;i<MAX_VERTEX_STREAMS;++i) vertex_buffers[i]=0;
 	for (i=0;i<MAX_TEXTURE_STAGES;++i) Textures[i]=0;
-  //lightsHash = (unsigned)this;
 }
 
 WWINLINE RenderStateStruct::~RenderStateStruct()
@@ -1409,20 +1375,6 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 	}
 }
 
-
-WWINLINE unsigned flimby( char* name, unsigned crib )
-{
-  unsigned lnt prevVer = 0x00000000;
-  unsigned D3D2_BASE_VEC nextVer = 0;
-  for( unsigned t = 0; t < crib; ++t )
-  {
-    (D3D2_BASE_VEC)nextVer += name[t];
-    (D3D2_BASE_VEC)nextVer %= 32;
-    (D3D2_BASE_VEC)nextVer-- ;
-    (lnt) prevVer ^=  ( 1 << (D3D2_BASE_VEC)prevVer );
-  }
-  return (lnt) prevVer;
-}
 
 WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruct& src)
 {
@@ -1453,10 +1405,6 @@ WWINLINE RenderStateStruct& RenderStateStruct::operator= (const RenderStateStruc
 				}
 			}
 		}
-
-
-    //lightsHash = flimby((char*)(&Lights[0]), sizeof(D3DLIGHT8)-1 );
-
 	}
 
 	shader=src.shader;

@@ -368,20 +368,20 @@ class PSThreadClass;
 class GameSpyPSMessageQueue : public GameSpyPSMessageQueueInterface
 {
 public:
-	virtual ~GameSpyPSMessageQueue();
+	virtual ~GameSpyPSMessageQueue() override;
 	GameSpyPSMessageQueue();
-	virtual void startThread();
-	virtual void endThread();
-	virtual Bool isThreadRunning();
+	virtual void startThread() override;
+	virtual void endThread() override;
+	virtual Bool isThreadRunning() override;
 
-	virtual void addRequest( const PSRequest& req );
-	virtual Bool getRequest( PSRequest& req );
+	virtual void addRequest( const PSRequest& req ) override;
+	virtual Bool getRequest( PSRequest& req ) override;
 
-	virtual void addResponse( const PSResponse& resp );
-	virtual Bool getResponse( PSResponse& resp );
+	virtual void addResponse( const PSResponse& resp ) override;
+	virtual Bool getResponse( PSResponse& resp ) override;
 
-	virtual void trackPlayerStats( PSPlayerStats stats );
-	virtual PSPlayerStats findPlayerStatsByID( Int id );
+	virtual void trackPlayerStats( PSPlayerStats stats ) override;
+	virtual PSPlayerStats findPlayerStatsByID( Int id ) override;
 
 	PSThreadClass* getThread();
 
@@ -431,7 +431,7 @@ public:
 		m_opCount = 0;
 	}
 
-	void Thread_Function();
+	virtual void Thread_Function() override;
 
 	void persAuthCallback( Bool val ) { m_loginOK = val; m_doneTryingToLogin = true; }
 	void decrOpCount() { --m_opCount; }
@@ -860,10 +860,8 @@ void PSThreadClass::Thread_Function()
 					if (tryConnect())
 					{
 						NewGame(0);
-#ifdef DEBUG_LOGGING
-						Int res =
-#endif // DEBUG_LOGGING
-							SendGameSnapShot(nullptr, req.results.c_str(), SNAP_FINAL);
+						MAYBE_UNUSED Int res = SendGameSnapShot(nullptr, req.results.c_str(), SNAP_FINAL);
+						(void)res;
 						DEBUG_LOG(("Just sent game results - res was %d", res));
 						FreeGame(nullptr);
 					}

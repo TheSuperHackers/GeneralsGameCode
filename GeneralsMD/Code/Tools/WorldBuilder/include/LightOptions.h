@@ -44,9 +44,9 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(LightOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -54,7 +54,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(LightOptions)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnChangeLightEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -64,11 +64,11 @@ protected:
 	Bool		m_updating; ///<true if the ui is updating itself.
 
 protected:
-	void updateTheUI(void);
+	void updateTheUI();
 
 public:
-	static void update(void);
-	static MapObject *getSingleSelectedLight(void);
+	static void update();
+	static MapObject *getSingleSelectedLight();
 
 };
 

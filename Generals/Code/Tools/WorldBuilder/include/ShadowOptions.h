@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ShadowOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -52,7 +52,7 @@ protected:
 	Real m_intensity;
 
 protected:
-	void setShadowColor(void);
+	void setShadowColor();
 
 	// Generated message map functions
 	//{{AFX_MSG(ShadowOptions)
@@ -60,7 +60,7 @@ protected:
 	afx_msg void OnChangeBaEdit();
 	afx_msg void OnChangeGaEdit();
 	afx_msg void OnChangeRaEdit();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

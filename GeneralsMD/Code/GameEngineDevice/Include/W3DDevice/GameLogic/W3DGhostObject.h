@@ -45,15 +45,15 @@ class W3DGhostObject: public GhostObject
 
 public:
 	W3DGhostObject();
-	virtual ~W3DGhostObject();
-	virtual void snapShot(int playerIndex);
-	virtual void updateParentObject(Object *object, PartitionData *mod);
-	virtual void freeSnapShot(int playerIndex);
+	virtual ~W3DGhostObject() override;
+	virtual void snapShot(int playerIndex) override;
+	virtual void updateParentObject(Object *object, PartitionData *mod) override;
+	virtual void freeSnapShot(int playerIndex) override;
 
 protected:
-	virtual void crc( Xfer *xfer);
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 	void removeParentObject();
 	void restoreParentObject();	///< restore the original non-ghosted object to scene.
 	Bool addToScene(int playerIndex);
@@ -73,19 +73,19 @@ class W3DGhostObjectManager : public GhostObjectManager
 {
 public:
 	W3DGhostObjectManager();
-	virtual ~W3DGhostObjectManager();
-	virtual void reset();
-	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
-	virtual void removeGhostObject(GhostObject *mod);
-	virtual void setLocalPlayerIndex(int playerIndex);
-	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount);
-	virtual void releasePartitionData();
-	virtual void restorePartitionData();
+	virtual ~W3DGhostObjectManager() override;
+	virtual void reset() override;
+	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) override;
+	virtual void removeGhostObject(GhostObject *mod) override;
+	virtual void setLocalPlayerIndex(int playerIndex) override;
+	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) override;
+	virtual void releasePartitionData() override;
+	virtual void restorePartitionData() override;
 
 protected:
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	///@todo this list should really be part of the device independent base class (CBD 12-3-2002)
 	W3DGhostObject	*m_freeModules;

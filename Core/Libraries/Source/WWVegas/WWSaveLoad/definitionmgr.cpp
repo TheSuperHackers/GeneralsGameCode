@@ -85,7 +85,6 @@ HashTemplateClass<StringClass, DynamicVectorClass<DefinitionClass*>*>* Definitio
 //////////////////////////////////////////////////////////////////////////////////
 DefinitionMgrClass::DefinitionMgrClass ()
 {
-	return ;
 }
 
 
@@ -97,7 +96,6 @@ DefinitionMgrClass::DefinitionMgrClass ()
 DefinitionMgrClass::~DefinitionMgrClass ()
 {
 	Free_Definitions ();
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -327,8 +325,6 @@ DefinitionMgrClass::List_Available_Definitions ()
 			WWDEBUG_SAY(("  >%s<", curr_def->Get_Name ()));
 		}
 	}
-
-	return ;
 }
 
 
@@ -351,8 +347,6 @@ DefinitionMgrClass::List_Available_Definitions (int superclass_id)
 	{
 		WWDEBUG_SAY(("  >%s<", definition->Get_Name ()));
 	}
-
-	return ;
 }
 
 
@@ -525,8 +519,6 @@ DefinitionMgrClass::Prepare_Definition_Array ()
 		_MaxDefinitionCount		= new_size;
 	}
 	if (!DefinitionHash) DefinitionHash=W3DNEW HashTemplateClass<StringClass, DynamicVectorClass<DefinitionClass*>*>;
-
-	return ;
 }
 
 
@@ -618,8 +610,6 @@ DefinitionMgrClass::Register_Definition (DefinitionClass *definition)
 			_DefinitionCount ++;
 		}
 	}
-
-	return ;
 }
 
 
@@ -648,8 +638,6 @@ DefinitionMgrClass::Unregister_Definition (DefinitionClass *definition)
 		definition->m_DefinitionMgrLink = -1;
 		_DefinitionCount --;
 	}
-
-	return ;
 }
 
 

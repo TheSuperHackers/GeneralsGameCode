@@ -52,12 +52,12 @@ class SoundManager : public SubsystemInterface
 {
 	public:
 		SoundManager();
-		virtual ~SoundManager();
+		virtual ~SoundManager() override;
 
-		virtual void init();										///< Initializes the sounds system
-		virtual void postProcessLoad();
-		virtual void update();									///< Services sounds tasks. Called by AudioInterface
-		virtual void reset();										///< Reset the sounds system
+		virtual void init() override;										///< Initializes the sounds system
+		virtual void postProcessLoad() override;
+		virtual void update() override;									///< Services sounds tasks. Called by AudioInterface
+		virtual void reset() override;										///< Reset the sounds system
 
 		virtual void loseFocus();								///< Called when application loses focus
 		virtual void regainFocus();							///< Called when application regains focus

@@ -53,7 +53,6 @@ RingPropertySheetClass::RingPropertySheetClass
 {
 	REF_PTR_SET (m_RenderObj, ring);
 	Initialize ();
-	return ;
 }
 
 
@@ -74,7 +73,6 @@ RingPropertySheetClass::RingPropertySheetClass
 {
 	REF_PTR_SET (m_RenderObj, ring);
 	Initialize ();
-	return ;
 }
 
 
@@ -83,10 +81,9 @@ RingPropertySheetClass::RingPropertySheetClass
 // ~RingPropertySheetClass
 //
 /////////////////////////////////////////////////////////////////////////////
-RingPropertySheetClass::~RingPropertySheetClass (void)
+RingPropertySheetClass::~RingPropertySheetClass ()
 {
 	REF_PTR_RELEASE (m_RenderObj);
-	return ;
 }
 
 
@@ -175,7 +172,7 @@ RingPropertySheetClass::WindowProc
 //
 /////////////////////////////////////////////////////////////
 void
-RingPropertySheetClass::Add_Object_To_Viewer (void)
+RingPropertySheetClass::Add_Object_To_Viewer ()
 {
 	CW3DViewDoc *doc = ::GetCurrentDocument ();
 	if ((doc != nullptr) && (m_RenderObj != nullptr)) {
@@ -213,8 +210,6 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 		m_ColorPage.Set_Ring (m_RenderObj);
 		m_ScalePage.Set_Ring (m_RenderObj);
 	}
-
-	return ;
 }
 
 
@@ -224,10 +219,9 @@ RingPropertySheetClass::Add_Object_To_Viewer (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingPropertySheetClass::Update_Object (void)
+RingPropertySheetClass::Update_Object ()
 {
 	Add_Object_To_Viewer ();
-	return ;
 }
 
 
@@ -237,7 +231,7 @@ RingPropertySheetClass::Update_Object (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingPropertySheetClass::Initialize (void)
+RingPropertySheetClass::Initialize ()
 {
 	if (m_RenderObj == nullptr) {
 		Create_New_Object ();
@@ -265,7 +259,6 @@ RingPropertySheetClass::Initialize (void)
 	m_GeneralPage.m_psp.dwFlags	|= PSP_PREMATURE;
 	m_ColorPage.m_psp.dwFlags		|= PSP_PREMATURE;
 	m_ScalePage.m_psp.dwFlags		|= PSP_PREMATURE;
-	return ;
 }
 
 
@@ -275,7 +268,7 @@ RingPropertySheetClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 void
-RingPropertySheetClass::Create_New_Object (void)
+RingPropertySheetClass::Create_New_Object ()
 {
 	m_RenderObj = new RingRenderObjClass;
 	m_RenderObj->Set_Name ("Ring");
@@ -284,6 +277,5 @@ RingPropertySheetClass::Create_New_Object (void)
 	//	Display the new object
 	//
 	::GetCurrentDocument ()->DisplayObject (m_RenderObj);
-	return ;
 }
 

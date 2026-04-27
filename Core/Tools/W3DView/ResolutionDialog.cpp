@@ -48,7 +48,6 @@ ResolutionDialogClass::ResolutionDialogClass(CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(ResolutionDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -64,7 +63,6 @@ ResolutionDialogClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(ResolutionDialogClass)
 	DDX_Control(pDX, IDC_RESOLUTION_LIST_CTRL, m_ListCtrl);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -81,7 +79,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-ResolutionDialogClass::OnInitDialog (void)
+ResolutionDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -175,7 +173,7 @@ ResolutionDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-ResolutionDialogClass::OnOK (void)
+ResolutionDialogClass::OnOK ()
 {
 	CDialog::OnOK ();
 
@@ -214,8 +212,6 @@ ResolutionDialogClass::OnOK (void)
 			::Get_Graphic_View ()->Set_Fullscreen (fullscreen);
 		}
 	}
-
-	return ;
 }
 
 
@@ -237,5 +233,4 @@ ResolutionDialogClass::OnDblclkResolutionListCtrl
 	}
 
 	(*pResult) = 0;
-	return ;
 }

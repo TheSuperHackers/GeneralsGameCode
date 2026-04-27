@@ -67,14 +67,14 @@ public:
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
 	DefinitionMgrClass ();
-	~DefinitionMgrClass ();
+	virtual ~DefinitionMgrClass () override;
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual uint32					Chunk_ID () const;
+	virtual uint32					Chunk_ID () const override;
 
 	// Type identification
 	static DefinitionClass *	Find_Definition (uint32 id, bool twiddle = true);
@@ -111,10 +111,10 @@ protected:
 	/////////////////////////////////////////////////////////////////////
 
 	// From SaveLoadSubSystemClass
-	virtual bool					Contains_Data () const;
-	virtual bool					Save (ChunkSaveClass &csave);
-	virtual bool					Load (ChunkLoadClass &cload);
-	virtual const char*			Name () const						{ return "DefinitionMgrClass"; }
+	virtual bool					Contains_Data () const override;
+	virtual bool					Save (ChunkSaveClass &csave) override;
+	virtual bool					Load (ChunkLoadClass &cload) override;
+	virtual const char*			Name () const override { return "DefinitionMgrClass"; }
 
 	// Persistence methods
 	bool								Save_Objects (ChunkSaveClass &csave);

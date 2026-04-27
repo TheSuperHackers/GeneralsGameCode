@@ -34,6 +34,7 @@
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
 #include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
+#include "WWMath/wwmath.h"
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480
@@ -50,7 +51,10 @@ enum FilterTypes CPP_11(: Int);
 enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------------------
+constexpr const Real ViewDefaultPitchRadians = DEG_TO_RADF(37.5f);
+constexpr const Real ViewDefaultYawRadians = DEG_TO_RADF(0.0f);
+constexpr const Real ViewDefaultMaxHeightAboveTerrain = 310.0f;
+
 // ------------------------------------------------------------------------------------------------
 enum PickType CPP_11(: Int)
 {
@@ -131,7 +135,8 @@ public:
 	virtual void forceRedraw() = 0;
 
 	virtual void lookAt( const Coord3D *o );														///< Center the view on the given coordinate
-	virtual void initHeightForMap() {};														///<  Init the camera height for the map at the current position.
+	virtual void initHeightForMap() {};														///< Init the camera height for the map at the current position.
+	virtual void resetPivotToGround() {};													///< Set the camera pivot to the terrain height at the current position.
 	virtual void scrollBy( const Coord2D *delta );														///< Shift the view by the given delta
 
 	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter, Bool orient, Real easeIn=0.0f, Real easeOut=0.0f) { lookAt( o ); }
@@ -176,14 +181,21 @@ public:
 
 	virtual void setAngle( Real radians );															///< Rotate the view around the vertical axis to the given angle (yaw)
 	virtual Real getAngle() { return m_angle; }										///< Return current camera angle
+	virtual Real getDefaultAngle() { return m_defaultAngle; }			///< Return current default camera angle
 	virtual void setPitch( Real radians );															///< Rotate the view around the horizontal axis to the given angle (pitch)
 	virtual Real getPitch() { return m_pitch; }										///< Return current camera pitch
+	virtual void setDefaultPitch( Real radians );												///< Set new default camera pitch. It affects the camera distance to the ground
+	virtual Real getDefaultPitch() { return m_defaultPitch; }						///< Return current default camera pitch
 	virtual void setAngleToDefault();															///< Set the view angle back to default
 	virtual void setPitchToDefault();															///< Set the view pitch back to default
-	void setPosition( const Coord3D *pos ) { m_pos = *pos; }
-	void getPosition(Coord3D *pos) { *pos = m_pos;}							///< Returns position camera is looking at (z will be zero)
+	void setPosition( const Coord3D &pos ) { m_pos = pos; }
+	void setPosition2D( const Coord2D &pos ) { m_pos.x = pos.x; m_pos.y = pos.y; }
+	const Coord3D &getPosition() const { return m_pos; } ///< Returns position camera is looking at
+	Coord2D getPosition2D() const { Coord2D c = { m_pos.x, m_pos.y }; return c; } ///< Returns position camera is looking at
 
-	virtual const Coord3D& get3DCameraPosition() const = 0;							///< Returns the actual camera position
+	virtual Coord3D get3DCameraPosition() const { Coord3D c={0,0,0}; return c; } ///< Returns the actual camera position
+	virtual Coord3D get3DCameraDirection() const { Coord3D c={0,0,0}; return c; } ///< Returns the actual camera view direction
+	virtual void set3DCameraLookAt(const Coord3D &pos, const Coord3D &dir, Real roll) {} ///< Set the actual camera position and view direction
 
 	virtual Real getZoom() { return m_zoom; }
 	virtual void setZoom(Real z) { m_zoom = z; }
@@ -194,22 +206,26 @@ public:
 	virtual void setOkToAdjustHeight( Bool val ) { m_okToAdjustHeight = val; }	///< Set this to adjust camera height
 
 	// TheSuperHackers @info Functions to call for user camera controls, not by the scripted camera.
-	Bool userSetPosition(const Coord3D *pos)             { return doUserAction(&View::setPosition, pos); }
+	Bool userSetPosition(const Coord3D &pos)             { return doUserAction(&View::setPosition, pos); }
 	Bool userSetAngle(Real radians)                      { return doUserAction(&View::setAngle, radians); }
 	Bool userSetAngleToDefault()                         { return doUserAction(&View::setAngleToDefault); }
 	Bool userSetPitch(Real radians)                      { return doUserAction(&View::setPitch, radians); }
+	Bool userSetDefaultPitch(Real radians)               { return doUserAction(&View::setDefaultPitch, radians); }
 	Bool userSetPitchToDefault()                         { return doUserAction(&View::setPitchToDefault); }
 	Bool userZoom(Real height)                           { return doUserAction(&View::zoom, height); }
 	Bool userSetZoom(Real z)                             { return doUserAction(&View::setZoom, z); }
 	Bool userSetZoomToDefault()                          { return doUserAction(&View::setZoomToDefault); }
 	Bool userSetFieldOfView(Real angle)                  { return doUserAction(&View::setFieldOfView, angle); }
 	Bool userLookAt(const Coord3D *o)                    { return doUserAction(&View::lookAt, o); }
+	Bool userResetPivotToGround()                        { return doUserAction(&View::resetPivotToGround); }
 	Bool userScrollBy(const Coord2D *delta)              { return doUserAction(&View::scrollBy, delta); }
 	Bool userSetLocation(const ViewLocation *location)   { return doUserAction(&View::setLocation, location); }
 	Bool userSetCameraLock(ObjectID id)                  { return doUserAction(&View::setCameraLock, id); }
 	Bool userSetCameraLockDrawable(Drawable *drawable)   { return doUserAction(&View::setCameraLockDrawable, drawable); }
 
 	void lockUserControlUntilFrame(UnsignedInt frame) { m_userControlLockedUntilFrame = frame; } ///< Locks the user control over camera until the given frame is reached.
+
+	virtual void setUserControlled(Bool value) { m_isUserControlled = value; }
 	Bool isUserControlLocked() const;
 
 	// for debugging
@@ -255,16 +271,12 @@ protected:
 	friend class Display;
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess() { }
-
-	const Coord3D *getPosition() const { return &m_pos; }
+	virtual void crc( Xfer *xfer ) override { }
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override { }
 
 	virtual View *prependViewToList( View *list );							///< Prepend this view to the given list, return the new list
 	virtual View *getNextView() { return m_next; }				///< Return next view in the set
-
-	virtual void setUserControlled(Bool value) { m_isUserControlled = value; }
 
 private:
 
@@ -300,7 +312,7 @@ protected:
 	UnsignedInt m_userControlLockedUntilFrame;									///< Locks the user control over camera until the given frame is reached
 	Bool m_isUserControlled;																		///< True if the user moved the camera last, false if the scripted camera moved the camera last
 
-	Coord3D m_pos;																							///< Pivot of the camera, in world coordinates // TheSuperHackers @todo Make this Coord2D or use the Z component
+	Coord3D m_pos;																							///< Pivot of the camera, in world coordinates
 	Int m_width, m_height;																			///< Dimensions of the view
 	Int m_originX, m_originY;																		///< Location of top/left view corner
 
@@ -337,43 +349,69 @@ protected:
 // ------------------------------------------------------------------------------------------------
 class ViewLocation
 {
-	friend class View;
-	friend class LookAtTranslator;
+public:
 
-	protected:
-		Bool m_valid;																								///< Is this location valid
-		Coord3D m_pos;																							///< Position of this view, in world coordinates
-		Real m_angle;																								///< Angle at which view has been rotated about the Z axis
-		Real m_pitch;																								///< Angle at which view has been rotated about the Y axis
-		Real m_zoom;																								///< Current zoom value
+	ViewLocation()
+	{
+		m_valid = false;
+		m_pos.zero();
+		m_angle = 0.0f;
+		m_pitch = 0.0f;
+		m_zoom = 0.0f;
+	}
 
-	public:
+	Bool isValid() const { return m_valid; }
+	const Coord3D& getPosition() const { return m_pos; }
+	Real getAngle() const { return m_angle; }
+	Real getPitch() const { return m_pitch; }
+	Real getZoom() const { return m_zoom; }
 
-		ViewLocation()
-		{
-			m_valid = FALSE;
-			m_pos.zero();
-			m_angle = 0.0f;
-			m_pitch = 0.0f;
-			m_zoom = 0.0f;
-		}
+	void init(Coord3D pos, Real angle, Real pitch, Real zoom)
+	{
+		m_valid = true;
+		m_pos = pos;
+		m_angle = angle;
+		m_pitch = pitch;
+		m_zoom = zoom;
+	}
 
-		const Coord3D& getPosition() const { return m_pos; }
-		Bool isValid() const { return m_valid; }
-		Real getAngle() const { return m_angle; }
-		Real getPitch() const { return m_pitch; }
-		Real getZoom() const { return m_zoom; }
+private:
 
-		void init(Real x, Real y, Real z, Real angle, Real pitch, Real zoom)
-		{
-			m_pos.x = x;
-			m_pos.y = y;
-			m_pos.z = z;
-			m_angle = angle;
-			m_pitch = pitch;
-			m_zoom = zoom;
-			m_valid = true;
-		}
+	Bool m_valid;					///< Is this location valid
+	Coord3D m_pos;				///< Position of this view, in world coordinates
+	Real m_angle;					///< Angle at which view has been rotated about the Z axis
+	Real m_pitch;					///< Angle at which view has been rotated about the Y axis
+	Real m_zoom;					///< Current zoom value
+};
+
+// TheSuperHackers @feature bobtista 31/01/2026
+// View that does nothing. Used for Headless Mode.
+class ViewDummy : public View
+{
+public:
+	virtual Drawable *pickDrawable( const ICoord2D *screen, Bool forceAttack, PickType pickType ) override
+	{
+		return nullptr;
+	}
+	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion, Bool (*callback)( Drawable *draw, void *userData ), void *userData ) override
+	{
+		return 0;
+	}
+	virtual void forceRedraw() override {}
+	virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) override
+	{
+		return WTS_INVALID;
+	}
+	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) override {}
+	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override {}
+	virtual void drawView() override {}
+	virtual void updateView() override {}
+	virtual void stepView() override {}
+	virtual void setGuardBandBias( const Coord2D *gb ) override {}
+	virtual Bool isDoingScriptedCamera() override { return false; }
+	virtual void stopDoingScriptedCamera() override {}
+
+	// Do not override View::xfer(). The base implementation must run to serialize valid view state for save file compatibility.
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////

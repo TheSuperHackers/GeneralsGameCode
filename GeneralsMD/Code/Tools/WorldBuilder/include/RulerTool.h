@@ -34,22 +34,22 @@ protected:
 	static RulerTool*	m_staticThis;
 
 public:
-	RulerTool(void);
-	~RulerTool(void);
+	RulerTool();
+	virtual ~RulerTool() override;
 
 public:
 	/// Clear the selection on activate or deactivate.
-	virtual void activate();
-	virtual void deactivate();
+	virtual void activate() override;
+	virtual void deactivate() override;
 
-	virtual void setCursor(void);
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual Bool followsTerrain(void) {return false;};
+	virtual void setCursor() override;
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual Bool followsTerrain() override {return false;};
 
 	static void setLength(Real length);
 	static Bool switchType();
 	static int	getType();
-	static Real getLength(void);
+	static Real getLength();
 
 };

@@ -123,7 +123,7 @@ public:
 	{
 	}
 
-	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
@@ -170,7 +170,7 @@ public:
 	{
 	}
 
-	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
@@ -252,12 +252,12 @@ public:
 		m_transportName.clear();
 	}
 
-	virtual Object* create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		return create( primaryObj, primary, secondary, true, lifetimeFrames );
 	}
 
-	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
@@ -610,7 +610,7 @@ public:
 	{
 	}
 
-	virtual Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		if (primary)
 		{
@@ -641,7 +641,7 @@ public:
 		return nullptr;
 	}
 
-	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		DEBUG_CRASH(("You must call this effect with an object, not a location"));
 		return nullptr;
@@ -765,7 +765,7 @@ public:
 		m_offset.zero();
 	}
 
-	virtual Object* create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		if (primary)
 		{
@@ -781,7 +781,7 @@ public:
 		return nullptr;
 	}
 
-	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const override
 	{
 		if (primary)
 		{
@@ -1351,12 +1351,12 @@ protected:
 	static void parseDebrisObjectNames( INI* ini, void *instance, void *store, const void* /*userData*/ )
 	{
 		GenericObjectCreationNugget* debrisNugget = (GenericObjectCreationNugget*)instance;
-		for (const char* debrisName = ini->getNextToken(); debrisName; debrisName = ini->getNextTokenOrNull())
+		for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 		{
 			if (TheGlobalData->m_preloadAssets)
-				debrisModelNamesGlobalHack.push_back(debrisName);
-			debrisNugget->m_names.push_back(AsciiString(debrisName));
-			debrisName = ini->getNextTokenOrNull();
+				debrisModelNamesGlobalHack.push_back(token);
+			debrisNugget->m_names.push_back(AsciiString(token));
+			token = ini->getNextTokenOrNull();
 		}
 	}
 

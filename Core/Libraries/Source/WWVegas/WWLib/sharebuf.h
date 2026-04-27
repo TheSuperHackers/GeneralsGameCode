@@ -51,7 +51,7 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 	public:
 		ShareBufferClass(int count, const char* msg);
 		ShareBufferClass(const ShareBufferClass & that);
-		~ShareBufferClass();
+		virtual ~ShareBufferClass() override;
 
 		// Get the internal pointer to the array
 		// CAUTION! This pointer is not refcounted so only use it in a context

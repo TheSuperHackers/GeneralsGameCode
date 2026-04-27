@@ -48,7 +48,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Listener3DClass::Listener3DClass ()
 {
-	return ;
 }
 
 
@@ -60,7 +59,6 @@ Listener3DClass::Listener3DClass ()
 Listener3DClass::~Listener3DClass ()
 {
 	Free_Miles_Handle ();
-	return ;
 }
 
 
@@ -86,8 +84,6 @@ Listener3DClass::Initialize_Miles_Handle ()
 		// Associate this object instance with the handle
 		m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, (void *)this);
 	}
-
-	return ;
 }
 
 
@@ -99,7 +95,6 @@ Listener3DClass::Initialize_Miles_Handle ()
 void
 Listener3DClass::Allocate_Miles_Handle ()
 {
-	return ;
 }
 
 
@@ -111,7 +106,6 @@ Listener3DClass::Allocate_Miles_Handle ()
 void
 Listener3DClass::Free_Miles_Handle ()
 {
-	return ;
 }
 
 
@@ -124,7 +118,6 @@ void
 Listener3DClass::On_Added_To_Scene ()
 {
 	Allocate_Miles_Handle ();
-	return ;
 }
 
 
@@ -137,6 +130,5 @@ void
 Listener3DClass::On_Removed_From_Scene ()
 {
 	Free_Miles_Handle ();
-	return ;
 }
 

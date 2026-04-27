@@ -54,7 +54,7 @@ void TerrainModal::DoDataExchange(CDataExchange* pDX)
 }
 
 
-void TerrainModal::updateLabel(void)
+void TerrainModal::updateLabel()
 {
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (!pDoc) return;
@@ -221,7 +221,7 @@ void TerrainModal::addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent)
 }
 
 //* Create the tree view of textures from the textures in pMap. */
-void TerrainModal::updateTextures(void)
+void TerrainModal::updateTextures()
 {
 	m_terrainTreeView.DeleteAllItems();
 	Int i;

@@ -548,7 +548,7 @@ static void parsePrerequisiteUnit( INI* ini, void *instance, void * /*store*/, c
 
 	ProductionPrerequisite prereq;
 	Bool orUnitWithPrevious = FALSE;
-	for (const char *token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		prereq.addUnitPrereq( AsciiString( token ), orUnitWithPrevious );
 		orUnitWithPrevious = TRUE;

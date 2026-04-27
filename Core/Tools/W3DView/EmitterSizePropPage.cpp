@@ -58,7 +58,6 @@ EmitterSizePropPageClass::EmitterSizePropPageClass (EmitterInstanceListClass *pe
 	//}}AFX_DATA_INIT
 
 	Initialize ();
-	return ;
 }
 
 
@@ -67,7 +66,7 @@ EmitterSizePropPageClass::EmitterSizePropPageClass (EmitterInstanceListClass *pe
 //  ~EmitterSizePropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterSizePropPageClass::~EmitterSizePropPageClass (void)
+EmitterSizePropPageClass::~EmitterSizePropPageClass ()
 {
 	// Free the original setting arrays
 	SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
@@ -76,7 +75,6 @@ EmitterSizePropPageClass::~EmitterSizePropPageClass (void)
 	// Free the current setting arrays
 	SAFE_DELETE_ARRAY (m_CurrentSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_CurrentSizes.Values);
-	return ;
 }
 
 
@@ -107,7 +105,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterSizePropPageClass::Initialize (void)
+EmitterSizePropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigSizes.Values);
@@ -129,8 +127,6 @@ EmitterSizePropPageClass::Initialize (void)
 			}
 		}
 	}
-
-	return ;
 }
 
 
@@ -140,7 +136,7 @@ EmitterSizePropPageClass::Initialize (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterSizePropPageClass::OnInitDialog (void)
+EmitterSizePropPageClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CPropertyPage::OnInitDialog ();
@@ -183,7 +179,7 @@ EmitterSizePropPageClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////
 BOOL
-EmitterSizePropPageClass::OnApply (void)
+EmitterSizePropPageClass::OnApply ()
 {
 	/*SAFE_DELETE_ARRAY (m_OrigSizes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_OrigSizes.Values);
@@ -309,7 +305,7 @@ EmitterSizePropPageClass::OnNotify
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterSizePropPageClass::Update_Sizes (void)
+EmitterSizePropPageClass::Update_Sizes ()
 {
 	float position = 0;
 	float red = 0;
@@ -345,8 +341,6 @@ EmitterSizePropPageClass::Update_Sizes (void)
 			m_CurrentSizes.Values[index - 1] = m_SizeBar->Get_Graph_Percent (index) * m_MaxSize;
 		}
 	}
-
-	return ;
 }
 
 
@@ -409,8 +403,6 @@ EmitterSizePropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Size_Keyframes (m_CurrentSizes);
 		m_Lifetime = lifetime;
 	}
-
-	return ;
 }
 
 

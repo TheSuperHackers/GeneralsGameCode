@@ -383,9 +383,9 @@ protected:
 
 protected:
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 
@@ -457,11 +457,11 @@ class LocomotorStore : public SubsystemInterface
 public:
 
 	LocomotorStore();
-	~LocomotorStore();
+	virtual ~LocomotorStore() override;
 
-	void init() { };
-	void reset();
-	void update();
+	virtual void init() override { };
+	virtual void reset() override;
+	virtual void update() override;
 
 	/**
 		Find the LocomotorTemplate with the given name. If no such LocomotorTemplate exists, return null.

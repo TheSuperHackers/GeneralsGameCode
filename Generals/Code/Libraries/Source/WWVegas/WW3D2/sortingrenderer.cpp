@@ -16,6 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : ww3d                                                         *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/ww3d2/sortingrenderer.cpp                    $*
+ *                                                                                             *
+ *              Original Author:: Greg Hjelstrom                                               *
+ *                                                                                             *
+ *                       Author : Kenny Mitchell                                               *
+ *                                                                                             *
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 2                                                           $*
+ *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
+ * 06/27/02 KM Changes to max texture stage caps																*
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 #include "sortingrenderer.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
@@ -25,10 +47,13 @@
 #include "d3d8.h"
 #include "d3dx8math.h"
 #include "statistics.h"
+#include <wwprofile.h>
+#include <algorithm>
+
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
-unsigned DEFAULT_SORTING_POLY_COUNT = 16384;	// (count * 3) must be less than 65536
-unsigned DEFAULT_SORTING_VERTEX_COUNT = 32768;	// count must be less than 65536
+static unsigned DEFAULT_SORTING_POLY_COUNT = 16384;	// (count * 3) must be less than 65536
+static unsigned DEFAULT_SORTING_VERTEX_COUNT = 32768;	// count must be less than 65536
 
 void SortingRendererClass::SetMinVertexBufferSize( unsigned val )
 {
@@ -329,6 +354,9 @@ void SortingRendererClass::Insert_Triangles(
 		return;
 	}
 
+	SNAPSHOT_SAY(("SortingRenderer::Insert(start_i: %d, polygons : %d, min_vi: %d, vertex_count: %d)",
+		start_index,polygon_count,min_vertex_index,vertex_count));
+
 
 	DX8_RECORD_SORTING_RENDER(polygon_count,vertex_count);
 
@@ -338,7 +366,7 @@ void SortingRendererClass::Insert_Triangles(
 
  	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 
 	state->bounding_sphere=bounding_sphere;
@@ -347,7 +375,7 @@ void SortingRendererClass::Insert_Triangles(
 	state->min_vertex_index=min_vertex_index;
 	state->vertex_count=vertex_count;
 
-	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
+	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
@@ -393,7 +421,7 @@ void SortingRendererClass::Insert_Triangles(
 		WWASSERT(idx2<state->vertex_count);
 		WWASSERT(idx3<state->vertex_count);
 	}
-#endif
+#endif // WWDEBUG
 }
 
 // ----------------------------------------------------------------------------
@@ -421,7 +449,9 @@ void SortingRendererClass::Insert_Triangles(
 void Release_Refs(SortingNodeStruct* state)
 {
 	int i;
-	REF_PTR_RELEASE(state->sorting_state.vertex_buffer);
+	for (i=0;i<MAX_VERTEX_STREAMS;++i) {
+		REF_PTR_RELEASE(state->sorting_state.vertex_buffers[i]);
+	}
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
 	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
@@ -460,17 +490,8 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 {
 	DX8Wrapper::Set_Shader(render_state.shader);
 
-/*	if (render_state.material) render_state.material->Apply();
-*/
 	DX8Wrapper::Set_Material(render_state.material);
 
-/*	if (render_state.Textures[2]) render_state.Textures[2]->Apply();
-	if (render_state.Textures[3]) render_state.Textures[3]->Apply();
-	if (render_state.Textures[4]) render_state.Textures[4]->Apply();
-	if (render_state.Textures[5]) render_state.Textures[5]->Apply();
-	if (render_state.Textures[6]) render_state.Textures[6]->Apply();
-	if (render_state.Textures[7]) render_state.Textures[7]->Apply();
-*/
 	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i)
 	{
 		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
@@ -520,7 +541,6 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
-	unsigned node_id;
 	// Fill dynamic index buffer with sorting index buffer vertices
 	unsigned * node_id_array=Get_Node_Id_Array(overlapping_polygon_count);
 	float* polygon_z_array=Get_Polygon_Z_Array(overlapping_polygon_count);
@@ -539,12 +559,12 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 		unsigned polygon_array_offset=0;
 		unsigned vertex_array_offset=0;
-		for (node_id=0;node_id<overlapping_node_count;++node_id) {
+		for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
 			SortingNodeStruct* state=overlapping_nodes[node_id];
 			float* vertex_z_array=Get_Vertex_Z_Array(state->vertex_count);
 
 			VertexFormatXYZNDUV2* src_verts=nullptr;
-			SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
+			SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 			WWASSERT(vertex_buffer);
 			src_verts=vertex_buffer->VertexBuffer;
 			WWASSERT(src_verts);
@@ -633,7 +653,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
 		ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
 
-		for (a=0;a<overlapping_polygon_count;++a) {
+		for (unsigned a=0;a<overlapping_polygon_count;++a) {
 			sorted_polygon_index_array[a]=tis[a].tri;
 		}
 	}
@@ -647,7 +667,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 	unsigned count_to_render=1;
 	unsigned start_index=0;
-	node_id=tis[0].idx;
+	unsigned node_id=tis[0].idx;
 	for (unsigned i=1;i<overlapping_polygon_count;++i) {
 		if (node_id!=tis[i].idx) {
 			SortingNodeStruct* state=overlapping_nodes[node_id];
@@ -696,6 +716,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 void SortingRendererClass::Flush()
 {
+	WWPROFILE("SortingRenderer::Flush");
 	Matrix4x4 old_view;
 	Matrix4x4 old_world;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
@@ -705,7 +726,7 @@ void SortingRendererClass::Flush()
 		state->Remove();
 
 		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-			(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)) {
+			(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)) {
 			Insert_To_Sorting_Pool(state);
 		}
 		else {
@@ -803,7 +824,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
-		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
+		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
 	state->start_index=start_index;
@@ -811,7 +832,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 	state->polygon_count=polygon_count * layerCount;//THIS IS VOLUME_PARTICLE SPECIFIC
 	state->vertex_count=vertex_count * layerCount;//THIS IS VOLUME_PARTICLE SPECIFIC
 
-	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffer);
+	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
@@ -845,23 +866,4 @@ void SortingRendererClass::Insert_VolumeParticle(
 		node=node->Succ();
 	}
 	if (!node) sorted_list.Add_Tail(state);
-
-//#ifdef WWDEBUG
-//	unsigned short* indices=nullptr;
-//	SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
-//	WWASSERT(index_buffer);
-//	indices=index_buffer->index_buffer;
-//	WWASSERT(indices);
-//	indices+=state->start_index;
-//	indices+=state->sorting_state.iba_offset;
-//
-//	for (int i=0;i<state->polygon_count;++i) {
-//		unsigned short idx1=indices[i*3]-state->min_vertex_index;
-//		unsigned short idx2=indices[i*3+1]-state->min_vertex_index;
-//		unsigned short idx3=indices[i*3+2]-state->min_vertex_index;
-//		WWASSERT(idx1<state->vertex_count);
-//		WWASSERT(idx2<state->vertex_count);
-//		WWASSERT(idx3<state->vertex_count);
-//	}
-//#endif
 }

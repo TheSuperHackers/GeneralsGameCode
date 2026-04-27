@@ -416,9 +416,9 @@ extern void StoreColor( StateIdentifier id, Color color, Color borderColor );
 extern void LoadFontCombo( HWND comboBox, GameFont *currFont );
 extern GameFont *GetSelectedFontFromCombo( HWND combo );
 
-extern Color GetPropsEnabledTextColor( void );
-extern Color GetPropsEnabledTextBorderColor( void );
-extern Color GetPropsDisabledTextColor( void );
-extern Color GetPropsDisabledTextBorderColor( void );
-extern Color GetPropsHiliteTextColor( void );
-extern Color GetPropsHiliteTextBorderColor( void );
+extern Color GetPropsEnabledTextColor();
+extern Color GetPropsEnabledTextBorderColor();
+extern Color GetPropsDisabledTextColor();
+extern Color GetPropsDisabledTextBorderColor();
+extern Color GetPropsHiliteTextColor();
+extern Color GetPropsHiliteTextBorderColor();

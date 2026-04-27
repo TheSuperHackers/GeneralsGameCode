@@ -95,7 +95,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CAdvancedAnimSheet message handlers
 
-int CAdvancedAnimSheet::GetAnimCount (void)
+int CAdvancedAnimSheet::GetAnimCount ()
 {
 	if (AnimsValid)
 		return AnimCount;
@@ -109,7 +109,7 @@ int CAdvancedAnimSheet::GetAnimCount (void)
 }
 
 
-HAnimClass ** CAdvancedAnimSheet::GetAnims (void)
+HAnimClass ** CAdvancedAnimSheet::GetAnims ()
 {
 	if (AnimsValid)
 		return Anims;
@@ -122,7 +122,7 @@ HAnimClass ** CAdvancedAnimSheet::GetAnims (void)
 }
 
 
-void CAdvancedAnimSheet::LoadAnims (void)
+void CAdvancedAnimSheet::LoadAnims ()
 {
 	// Get the current render object and it's HTree. If it doesn't have
 	// an HTree, then it's not animating and we're not interested.

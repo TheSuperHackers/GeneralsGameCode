@@ -76,6 +76,14 @@ void SmudgeManager::reset()
 	}
 }
 
+void SmudgeManager::resetDraw()
+{
+	SmudgeSet* smudgeSet = m_usedSmudgeSetList.Head();
+	for (; smudgeSet; smudgeSet = smudgeSet->Succ()) {
+		smudgeSet->resetDraw();
+	}
+}
+
 SmudgeSet *SmudgeManager::addSmudgeSet()
 {
 	SmudgeSet* set=m_freeSmudgeSetList.Head();
@@ -89,11 +97,24 @@ SmudgeSet *SmudgeManager::addSmudgeSet()
 	return set;
 }
 
-void SmudgeManager::removeSmudgeSet(SmudgeSet &mySmudge)
+void SmudgeManager::removeSmudgeSet(SmudgeSet *&smudgeSet)
 {
-	mySmudge.Remove();	//remove from used list
-	m_freeSmudgeSetList.Add_Head(&mySmudge);	//add to free list.
+	smudgeSet->Remove();	//remove from used list
+	m_freeSmudgeSetList.Add_Head(smudgeSet);	//add to free list.
+	smudgeSet = nullptr;
 }
+
+Smudge *SmudgeManager::findSmudge(Smudge::Identifier identifier)
+{
+	SmudgeSet *smudgeSet = m_usedSmudgeSetList.Head();
+	for (; smudgeSet; smudgeSet = smudgeSet->Succ()) {
+		if (Smudge *smudge = smudgeSet->findSmudge(identifier)) {
+			return smudge;
+		}
+	}
+	return nullptr;
+}
+
 
 SmudgeSet::SmudgeSet()
 {
@@ -113,26 +134,50 @@ void SmudgeSet::reset()
 		m_usedSmudgeList.Remove_Head ();
 		m_freeSmudgeList.Add_Head(head);	//add to free list
 	}
+
+	m_usedSmudgeMap.clear();
+	m_usedSmudgeCount = 0;
 }
 
-Smudge *SmudgeSet::addSmudgeToSet()
+void SmudgeSet::resetDraw()
 {
-	Smudge* smudge=m_freeSmudgeList.Head();
+	Smudge* smudge = m_usedSmudgeList.Head();
+	for (; smudge; smudge = smudge->Succ()) {
+		smudge->m_draw = false;
+	}
+}
+
+Smudge *SmudgeSet::addSmudgeToSet(Smudge::Identifier identifier)
+{
+	DEBUG_ASSERTCRASH(m_usedSmudgeMap.find(identifier) == m_usedSmudgeMap.end(),
+		("SmudgeSet::addSmudgeToSet: identifier already present"));
+
+	Smudge* smudge = m_freeSmudgeList.Head();
 	if (smudge) {
 		smudge->Remove();	//remove from free list
-		m_usedSmudgeList.Add_Tail(smudge);	//add to used list.
-		m_usedSmudgeCount++;
-		return smudge;
+	} else {
+		smudge = W3DNEW Smudge();
 	}
-	smudge=W3DNEW Smudge();
+	smudge->m_identifier = identifier;
 	m_usedSmudgeList.Add_Tail(smudge);	//add to used list.
+	m_usedSmudgeMap[identifier] = smudge;
 	m_usedSmudgeCount++;
 	return smudge;
 }
 
-void SmudgeSet::removeSmudgeFromSet(Smudge &mySmudge)
+void SmudgeSet::removeSmudgeFromSet(Smudge *&smudge)
 {
-	mySmudge.Remove();	//remove from used list.
-	m_freeSmudgeList.Add_Head(&mySmudge);	//add to free list
+	m_usedSmudgeMap.erase(smudge->m_identifier);
+	smudge->Remove();	//remove from used list.
+	m_freeSmudgeList.Add_Head(smudge);	//add to free list
+	smudge = nullptr;
 	m_usedSmudgeCount--;
+}
+
+Smudge *SmudgeSet::findSmudge(Smudge::Identifier identifier)
+{
+	SmudgeIdToPtrMap::const_iterator it = m_usedSmudgeMap.find(identifier);
+	if (it != m_usedSmudgeMap.end())
+		return it->second;
+	return nullptr;
 }

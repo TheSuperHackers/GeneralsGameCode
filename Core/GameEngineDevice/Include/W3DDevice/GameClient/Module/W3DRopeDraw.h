@@ -47,20 +47,20 @@ public:
 	W3DRopeDraw( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual void doDrawModule(const Matrix3D* transformMtx);
-	virtual void setShadowsEnabled(Bool enable) { }
-	virtual void releaseShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void setFullyObscuredByShroud(Bool fullyObscured) { }
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) { }
-	virtual void reactToGeometryChange() { }
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
+	virtual void setShadowsEnabled(Bool enable) override { }
+	virtual void releaseShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override { }
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override { }
+	virtual void reactToGeometryChange() override { }
 
-	virtual void initRopeParms(Real length, Real width, const RGBColor& color, Real wobbleLen, Real wobbleAmp, Real wobbleRate);
-	virtual void setRopeCurLen(Real length);
-	virtual void setRopeSpeed(Real curSpeed, Real maxSpeed, Real accel);
+	virtual void initRopeParms(Real length, Real width, const RGBColor& color, Real wobbleLen, Real wobbleAmp, Real wobbleRate) override;
+	virtual void setRopeCurLen(Real length) override;
+	virtual void setRopeSpeed(Real curSpeed, Real maxSpeed, Real accel) override;
 
-	virtual RopeDrawInterface* getRopeDrawInterface() { return this; }
-	virtual const RopeDrawInterface* getRopeDrawInterface() const { return this; }
+	virtual RopeDrawInterface* getRopeDrawInterface() override { return this; }
+	virtual const RopeDrawInterface* getRopeDrawInterface() const override { return this; }
 
 private:
 

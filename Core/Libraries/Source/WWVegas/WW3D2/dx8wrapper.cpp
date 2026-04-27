@@ -91,6 +91,10 @@ const int DEFAULT_RESOLUTION_WIDTH = 640;
 const int DEFAULT_RESOLUTION_HEIGHT = 480;
 const int DEFAULT_BIT_DEPTH = 32;
 const int DEFAULT_TEXTURE_BIT_DEPTH = 16;
+const D3DMULTISAMPLE_TYPE DEFAULT_MSAA = D3DMULTISAMPLE_NONE;
+
+DX8FrameStatistics DX8Wrapper::FrameStatistics;
+static DX8FrameStatistics LastFrameStatistics;
 
 bool DX8Wrapper_IsWindowed = true;
 
@@ -114,10 +118,7 @@ int								DX8Wrapper::BitDepth										= DEFAULT_BIT_DEPTH;
 int								DX8Wrapper::TextureBitDepth							= DEFAULT_TEXTURE_BIT_DEPTH;
 bool								DX8Wrapper::IsWindowed									= false;
 D3DFORMAT					DX8Wrapper::DisplayFormat	= D3DFMT_UNKNOWN;
-
-D3DMATRIX						DX8Wrapper::old_world;
-D3DMATRIX						DX8Wrapper::old_view;
-D3DMATRIX						DX8Wrapper::old_prj;
+D3DMULTISAMPLE_TYPE DX8Wrapper::MultiSampleAntiAliasing	= DEFAULT_MSAA;
 
 // shader system additions KJM v
 DWORD								DX8Wrapper::Vertex_Shader								= 0;
@@ -127,7 +128,6 @@ Vector4							DX8Wrapper::Vertex_Shader_Constants[MAX_VERTEX_SHADER_CONSTANTS];
 Vector4							DX8Wrapper::Pixel_Shader_Constants[MAX_PIXEL_SHADER_CONSTANTS];
 
 LightEnvironmentClass*		DX8Wrapper::Light_Environment							= nullptr;
-RenderInfoClass*				DX8Wrapper::Render_Info									= nullptr;
 
 DWORD								DX8Wrapper::Vertex_Processing_Behavior				= 0;
 ZTextureClass*					DX8Wrapper::Shadow_Map[MAX_SHADOW_MAPS];
@@ -153,15 +153,6 @@ IDirect3DSurface8 *			DX8Wrapper::DefaultRenderTarget						= nullptr;
 IDirect3DSurface8 *			DX8Wrapper::DefaultDepthBuffer						= nullptr;
 bool								DX8Wrapper::IsRenderToTexture							= false;
 
-unsigned							DX8Wrapper::matrix_changes								= 0;
-unsigned							DX8Wrapper::material_changes							= 0;
-unsigned							DX8Wrapper::vertex_buffer_changes					= 0;
-unsigned							DX8Wrapper::index_buffer_changes                = 0;
-unsigned							DX8Wrapper::light_changes								= 0;
-unsigned							DX8Wrapper::texture_changes							= 0;
-unsigned							DX8Wrapper::render_state_changes						= 0;
-unsigned							DX8Wrapper::texture_stage_state_changes			= 0;
-unsigned							DX8Wrapper::draw_calls									= 0;
 unsigned							DX8Wrapper::_MainThreadID								= 0;
 bool								DX8Wrapper::CurrentDX8LightEnables[4];
 bool								DX8Wrapper::IsDeviceLost;
@@ -181,20 +172,6 @@ D3DADAPTER_IDENTIFIER8		DX8Wrapper::CurrentAdapterIdentifier;
 unsigned long DX8Wrapper::FrameCount = 0;
 
 bool								_DX8SingleThreaded										= false;
-
-unsigned							number_of_DX8_calls										= 0;
-static unsigned				last_frame_matrix_changes								= 0;
-static unsigned				last_frame_material_changes							= 0;
-static unsigned				last_frame_vertex_buffer_changes						= 0;
-static unsigned				last_frame_index_buffer_changes						= 0;
-static unsigned				last_frame_light_changes								= 0;
-static unsigned				last_frame_texture_changes								= 0;
-static unsigned				last_frame_render_state_changes						= 0;
-static unsigned				last_frame_texture_stage_state_changes				= 0;
-static unsigned				last_frame_number_of_DX8_calls						= 0;
-static unsigned				last_frame_draw_calls									= 0;
-
-static D3DDISPLAYMODE DesktopMode;
 
 static D3DPRESENT_PARAMETERS								_PresentParameters;
 static DynamicVectorClass<StringClass>					_RenderDeviceNameTable;
@@ -299,10 +276,6 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 
 	for (int light=0;light<4;++light) CurrentDX8LightEnables[light]=false;
 
-	::ZeroMemory(&old_world, sizeof(D3DMATRIX));
-	::ZeroMemory(&old_view, sizeof(D3DMATRIX));
-	::ZeroMemory(&old_prj, sizeof(D3DMATRIX));
-
 	//old_vertex_shader; TODO
 	//old_sr_shader;
 	//current_shader;
@@ -380,11 +353,6 @@ void DX8Wrapper::Shutdown()
 		}
 	}
 
-	if (D3DInterface) {
-		UINT newRefCount=D3DInterface->Release();
-		D3DInterface=nullptr;
-	}
-
 	if (D3D8Lib) {
 		FreeLibrary(D3D8Lib);
 		D3D8Lib = nullptr;
@@ -409,7 +377,10 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits()
 	** Initialize any other subsystems inside of WW3D
 	*/
 	MissingTexture::_Init();
-	TextureFilterClass::_Init_Filters((TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter());
+	TextureFilterClass::_Init_Filters(
+		(TextureFilterClass::TextureFilterMode)WW3D::Get_Texture_Filter(),
+		(TextureFilterClass::AnisotropicFilterMode)WW3D::Get_Anisotropy_Level()
+	);
 	TheDX8MeshRenderer.Init();
 	SHD_INIT;
 	BoxRenderObjClass::Init();
@@ -442,16 +413,6 @@ void DX8Wrapper::Set_Default_Global_Render_States()
 
 //	Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_CW);
 	// Set dither mode here?
-}
-
-//MW: I added this for 'Generals'.
-bool DX8Wrapper::Validate_Device()
-{	DWORD numPasses=0;
-	HRESULT hRes;
-
-	hRes=_Get_D3D_Device8()->ValidateDevice(&numPasses);
-
-	return (hRes == D3D_OK);
 }
 
 void DX8Wrapper::Invalidate_Cached_Render_States()
@@ -560,8 +521,6 @@ bool DX8Wrapper::Create_Device()
 		return false;
 	}
 
-#ifndef _XBOX
-
 	Vertex_Processing_Behavior=(caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT) ?
 		D3DCREATE_MIXED_VERTEXPROCESSING : D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 
@@ -570,10 +529,6 @@ bool DX8Wrapper::Create_Device()
 	{
 		Vertex_Processing_Behavior|=D3DCREATE_PUREDEVICE;
 	}*/
-
-#else // XBOX
-	Vertex_Processing_Behavior=D3DCREATE_PUREDEVICE;
-#endif // XBOX
 
 #ifdef CREATE_DX8_MULTI_THREADED
 	Vertex_Processing_Behavior|=D3DCREATE_MULTITHREADED;
@@ -831,7 +786,7 @@ void DX8Wrapper::Enumerate_Devices()
 
 bool DX8Wrapper::Set_Any_Render_Device()
 {
-	// Then fullscreen
+	// Try fullscreen first
 	int dev_number = 0;
 	for (; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,0,false)) {
@@ -839,7 +794,7 @@ bool DX8Wrapper::Set_Any_Render_Device()
 		}
 	}
 
-	// Try windowed first
+	// Then windowed
 	for (dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;
@@ -939,7 +894,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 		// Resize the window to fit this resolution
 		if (!IsWindowed)
 		{
-			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
+			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, 0);
 
 			DEBUG_LOG(("Window resized to w:%d h:%d", width, height));
 		}
@@ -992,9 +947,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	if (width != -1)		ResolutionWidth = width;
 	if (height != -1)		ResolutionHeight = height;
 
-	// Initialize Render2DClass Screen Resolution
-	Render2DClass::Set_Screen_Resolution( RectClass( 0, 0, ResolutionWidth, ResolutionHeight ) );
-
 	if (bits != -1)		BitDepth = bits;
 	if (windowed != -1)	IsWindowed = (windowed != 0);
 	DX8Wrapper_IsWindowed = IsWindowed;
@@ -1025,7 +977,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	_PresentParameters.BackBufferHeight = ResolutionHeight;
 	_PresentParameters.BackBufferCount = IsWindowed ? 1 : 2;
 
-	_PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
 	//I changed this to discard all the time (even when full-screen) since that the most efficient. 07-16-03 MW:
 	_PresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;//IsWindowed ? D3DSWAPEFFECT_DISCARD : D3DSWAPEFFECT_FLIP;		// Shouldn't this be D3DSWAPEFFECT_FLIP?
 	_PresentParameters.hDeviceWindow = _Hwnd;
@@ -1099,7 +1050,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	}
 
 	/*
-	** Time to actually create the device.
+	** Set default for depth stencil format if auto Z buffer failed.
 	*/
 	if (_PresentParameters.AutoDepthStencilFormat==D3DFMT_UNKNOWN) {
 		if (BitDepth==32) {
@@ -1110,6 +1061,40 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 		}
 	}
 
+	/*
+	** Check the devices support for the requested MSAA mode then setup the multi sample type
+	*/
+	if (MultiSampleAntiAliasing > D3DMULTISAMPLE_NONE) {
+
+		HRESULT hrBack = D3DInterface->CheckDeviceMultiSampleType(
+			CurRenderDevice,
+			D3DDEVTYPE_HAL,
+			_PresentParameters.BackBufferFormat,
+			IsWindowed,
+			MultiSampleAntiAliasing
+		);
+
+		HRESULT hrDepth = D3DInterface->CheckDeviceMultiSampleType(
+			CurRenderDevice,
+			D3DDEVTYPE_HAL,
+			_PresentParameters.AutoDepthStencilFormat,
+			IsWindowed,
+			MultiSampleAntiAliasing
+		);
+
+		if (FAILED(hrBack) || FAILED(hrDepth)) {
+			// IF we fail then disable MSAA entirely.
+			// External code needs to retrieve the configured MSAA mode after device creation
+			WWDEBUG_SAY(("Requested MSAA Mode Not Supported"));
+			MultiSampleAntiAliasing = D3DMULTISAMPLE_NONE;
+		}
+	}
+
+	_PresentParameters.MultiSampleType = MultiSampleAntiAliasing;
+
+	/*
+	** Time to actually create the device.
+	*/
 	StringClass displayFormat;
 	StringClass backbufferFormat;
 
@@ -1129,6 +1114,11 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 		ret = Create_Device();
 
 	WWDEBUG_SAY(("Reset/Create_Device done, reset_device=%d, restore_assets=%d", reset_device, restore_assets));
+
+	if (ret)
+	{
+		Render2DClass::Set_Screen_Resolution( RectClass( 0, 0, ResolutionWidth, ResolutionHeight ) );
+	}
 
 	return ret;
 }
@@ -1281,8 +1271,6 @@ void DX8Wrapper::Get_Device_Resolution(int & set_w,int & set_h,int & set_bits,bo
 	set_h = ResolutionHeight;
 	set_bits = BitDepth;
 	set_windowed = IsWindowed;
-
-	return ;
 }
 
 void DX8Wrapper::Get_Render_Target_Resolution(int & set_w,int & set_h,int & set_bits,bool & set_windowed)
@@ -1301,8 +1289,6 @@ void DX8Wrapper::Get_Render_Target_Resolution(int & set_w,int & set_h,int & set_
 	} else {
 		Get_Device_Resolution (set_w, set_h, set_bits, set_windowed);
 	}
-
-	return ;
 }
 
 bool DX8Wrapper::Registry_Save_Render_Device( const char * sub_key )
@@ -1359,10 +1345,6 @@ bool DX8Wrapper::Registry_Load_Render_Device( const char * sub_key, bool resize_
 			WWDEBUG_SAY(( "Invalid texture depth %d, switching to 16 bits", TextureBitDepth));
 			TextureBitDepth=16;
 		}
-
-
-//		_RenderDeviceDescriptionTable.
-
 
 		if ( Set_Render_Device( name, width,height,depth,windowed, resize_window ) != true) {
 			if (depth==16) depth=32;
@@ -1641,67 +1623,25 @@ bool DX8Wrapper::Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 
 void DX8Wrapper::Reset_Statistics()
 {
-	matrix_changes	= 0;
-	material_changes = 0;
-	vertex_buffer_changes = 0;
-	index_buffer_changes = 0;
-	light_changes = 0;
-	texture_changes = 0;
-	render_state_changes =0;
-	texture_stage_state_changes =0;
-	draw_calls =0;
-
-	number_of_DX8_calls = 0;
-	last_frame_matrix_changes = 0;
-	last_frame_material_changes = 0;
-	last_frame_vertex_buffer_changes = 0;
-	last_frame_index_buffer_changes = 0;
-	last_frame_light_changes = 0;
-	last_frame_texture_changes = 0;
-	last_frame_render_state_changes = 0;
-	last_frame_texture_stage_state_changes = 0;
-	last_frame_number_of_DX8_calls = 0;
-	last_frame_draw_calls =0;
+	FrameStatistics = DX8FrameStatistics();
+	LastFrameStatistics = DX8FrameStatistics();
 }
 
 void DX8Wrapper::Begin_Statistics()
 {
-	matrix_changes=0;
-	material_changes=0;
-	vertex_buffer_changes=0;
-	index_buffer_changes=0;
-	light_changes=0;
-	texture_changes = 0;
-	render_state_changes =0;
-	texture_stage_state_changes =0;
-	number_of_DX8_calls=0;
-	draw_calls=0;
+	FrameStatistics = DX8FrameStatistics();
 }
 
 void DX8Wrapper::End_Statistics()
 {
-	last_frame_matrix_changes=matrix_changes;
-	last_frame_material_changes=material_changes;
-	last_frame_vertex_buffer_changes=vertex_buffer_changes;
-	last_frame_index_buffer_changes=index_buffer_changes;
-	last_frame_light_changes=light_changes;
-	last_frame_texture_changes = texture_changes;
-	last_frame_render_state_changes = render_state_changes;
-	last_frame_texture_stage_state_changes = texture_stage_state_changes;
-	last_frame_number_of_DX8_calls=number_of_DX8_calls;
-	last_frame_draw_calls=draw_calls;
+	LastFrameStatistics = FrameStatistics;
 }
 
-unsigned DX8Wrapper::Get_Last_Frame_Matrix_Changes()			{ return last_frame_matrix_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Material_Changes()		{ return last_frame_material_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Vertex_Buffer_Changes()	{ return last_frame_vertex_buffer_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Index_Buffer_Changes()	{ return last_frame_index_buffer_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Light_Changes()			{ return last_frame_light_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Texture_Changes()			{ return last_frame_texture_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Render_State_Changes()	{ return last_frame_render_state_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_Texture_Stage_State_Changes()	{ return last_frame_texture_stage_state_changes; }
-unsigned DX8Wrapper::Get_Last_Frame_DX8_Calls()					{ return last_frame_number_of_DX8_calls; }
-unsigned DX8Wrapper::Get_Last_Frame_Draw_Calls()				{ return last_frame_draw_calls; }
+const DX8FrameStatistics& DX8Wrapper::Get_Last_Frame_Statistics()
+{
+	return LastFrameStatistics;
+}
+
 unsigned long DX8Wrapper::Get_FrameCount() {return FrameCount;}
 
 void DX8_Assert()
@@ -1738,7 +1678,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 			hr=_Get_D3D_Device8()->Present(nullptr, nullptr, nullptr, nullptr);
 		}
 
-		number_of_DX8_calls++;
+		DX8_RECORD_DX8_CALLS();
 
 		if (SUCCEEDED(hr)) {
 #ifdef EXTENDED_STATS
@@ -1847,7 +1787,7 @@ void DX8Wrapper::Clear(bool clear_color, bool clear_z_stencil, const Vector3 &co
 	IDirect3DSurface8* depthbuffer;
 
 	_Get_D3D_Device8()->GetDepthStencilSurface(&depthbuffer);
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	if (depthbuffer)
 	{
@@ -2328,7 +2268,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 				}
 				else {
 					Set_DX8_Light(index,nullptr);
-					SNAPSHOT_SAY((" clearing light to NULL"));
+					SNAPSHOT_SAY((" clearing light to null"));
 				}
 			}
 		}
@@ -3095,8 +3035,6 @@ void DX8Wrapper::Set_Light(unsigned index,const LightClass &light)
 void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 {
 	// Shader light environment support															*
-//	if (Light_Environment && light_env && (*Light_Environment)==(*light_env)) return;
-
 	Light_Environment=light_env;
 
 	if (light_env)
@@ -3209,7 +3147,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	// Use the current display format if format isn't specified
 	if (format==WW3D_FORMAT_UNKNOWN) {
@@ -3275,7 +3213,7 @@ void DX8Wrapper::Create_Render_Target
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	// Use the current display format if format isn't specified
 	if (format==WW3D_FORMAT_UNKNOWN)
@@ -3402,14 +3340,11 @@ DX8Wrapper::Set_Render_Target(IDirect3DSwapChain8 *swap_chain)
 	}
 
 	IsRenderToTexture = false;
-
-	return ;
 }
 
 void
 DX8Wrapper::Set_Render_Target(IDirect3DSurface8 *render_target, bool use_default_depth_buffer)
 {
-//#ifndef _XBOX
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
 
@@ -3523,8 +3458,6 @@ DX8Wrapper::Set_Render_Target(IDirect3DSurface8 *render_target, bool use_default
 //	}
 
 	IsRenderToTexture = false;
-	return ;
-//#endif // XBOX
 }
 
 
@@ -3538,7 +3471,6 @@ void DX8Wrapper::Set_Render_Target
 	IDirect3DSurface8* depth_buffer
 )
 {
-//#ifndef _XBOX
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
 
@@ -3638,7 +3570,6 @@ void DX8Wrapper::Set_Render_Target
 	}
 
 	IsRenderToTexture=true;
-//#endif // XBOX
 }
 
 
@@ -3680,7 +3611,7 @@ void DX8Wrapper::Flush_DX8_Resource_Manager(unsigned int bytes)
 unsigned int DX8Wrapper::Get_Free_Texture_RAM()
 {
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 	return DX8Wrapper::_Get_D3D_Device8()->GetAvailableTextureMem();
 }
 
@@ -3696,7 +3627,7 @@ void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrat
 	float oo_gamma=1.0f/gamma;
 
 	DX8_Assert();
-	number_of_DX8_calls++;
+	DX8_RECORD_DX8_CALLS();
 
 	DWORD flag=(calibrate?D3DSGR_CALIBRATE:D3DSGR_NO_CALIBRATION);
 
@@ -3897,7 +3828,7 @@ void DX8Wrapper::Apply_Default_State()
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {
-		SNAPSHOT_SAY(("Clearing light %d to NULL",index));
+		SNAPSHOT_SAY(("Clearing light %d to null",index));
 		Set_DX8_Light(index,nullptr);
 	}
 

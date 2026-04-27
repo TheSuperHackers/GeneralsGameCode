@@ -47,6 +47,6 @@ class Bitmap2DObjClass : public DynamicScreenMeshClass
 			bool center, bool additive, bool colorizable = false, bool ignore_alpha = false);
 		Bitmap2DObjClass( const Bitmap2DObjClass & src) : DynamicScreenMeshClass(src) {}
 
-		virtual RenderObjClass * 	Clone() const;
-		virtual int						Class_ID() const { return CLASSID_BITMAP2D; }
+		virtual RenderObjClass * 	Clone() const override;
+		virtual int						Class_ID() const override { return CLASSID_BITMAP2D; }
 };

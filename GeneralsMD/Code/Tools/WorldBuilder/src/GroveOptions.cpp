@@ -27,7 +27,7 @@
 
 /*extern*/ GroveOptions *TheGroveOptions = nullptr;
 
-void GroveOptions::makeMain(void)
+void GroveOptions::makeMain()
 {
 	TheGroveOptions = this;
 }
@@ -37,7 +37,7 @@ GroveOptions::GroveOptions(CWnd* pParent)
 
 }
 
-int GroveOptions::getNumTrees(void)
+int GroveOptions::getNumTrees()
 {
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
 	if (!pWnd) {
@@ -117,7 +117,7 @@ AsciiString GroveOptions::getTypeName(int type)
 	return cstr.GetBuffer(0);
 }
 
-int GroveOptions::getTotalTreePerc(void)
+int GroveOptions::getTotalTreePerc()
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 
@@ -133,7 +133,7 @@ int GroveOptions::getTotalTreePerc(void)
 	return -1;
 }
 
-Bool GroveOptions::getCanPlaceInWater(void)
+Bool GroveOptions::getCanPlaceInWater()
 {
 	CButton* pButt;
 
@@ -144,7 +144,7 @@ Bool GroveOptions::getCanPlaceInWater(void)
 	return false;
 }
 
-Bool GroveOptions::getCanPlaceOnCliffs(void)
+Bool GroveOptions::getCanPlaceOnCliffs()
 {
 	CButton* pButt;
 
@@ -172,7 +172,7 @@ GroveOptions::~GroveOptions()
 }
 
 
-void GroveOptions::_setTreesToLists(void)
+void GroveOptions::_setTreesToLists()
 {
 	CString str;
 	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); it++) {
@@ -245,7 +245,7 @@ void GroveOptions::_setTreesToLists(void)
 	}
 }
 
-void GroveOptions::_buildTreeList(void)
+void GroveOptions::_buildTreeList()
 {
 	const ThingTemplate* pTemplate;
 	for (pTemplate = TheThingFactory->firstTemplate(); pTemplate; pTemplate = pTemplate->friend_getNextTemplate()) {
@@ -258,7 +258,7 @@ void GroveOptions::_buildTreeList(void)
 	}
 }
 
-void GroveOptions::_setDefaultRatios(void)
+void GroveOptions::_setDefaultRatios()
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 	int defaultRatio;
@@ -299,7 +299,7 @@ void GroveOptions::_setDefaultRatios(void)
 	}
 }
 
-void GroveOptions::_setDefaultNumTrees(void)
+void GroveOptions::_setDefaultNumTrees()
 {
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
 	if (!pWnd) {
@@ -313,7 +313,7 @@ void GroveOptions::_setDefaultNumTrees(void)
 	pWnd->SetWindowText(buff);
 }
 
-void GroveOptions::_setDefaultPlacementAllowed(void)
+void GroveOptions::_setDefaultPlacementAllowed()
 {
 	CButton* pButt;
 	int state;
@@ -332,7 +332,7 @@ void GroveOptions::_setDefaultPlacementAllowed(void)
 }
 
 
-void GroveOptions::_updateTreeWeights(void)
+void GroveOptions::_updateTreeWeights()
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 	int val = 0;
@@ -384,7 +384,7 @@ void GroveOptions::_updateTreeWeights(void)
 	}
 }
 
-void GroveOptions::_updateTreeCount(void)
+void GroveOptions::_updateTreeCount()
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 	CWnd* pWnd = GetDlgItem(IDC_Grove_NumberTrees);
@@ -395,7 +395,7 @@ void GroveOptions::_updateTreeCount(void)
 	}
 }
 
-void GroveOptions::_updateGroveMakeup(void)
+void GroveOptions::_updateGroveMakeup()
 {
 	for (int type = 1; type <= 5; ++type) {
 		CComboBox *pComboBox;
@@ -430,7 +430,7 @@ void GroveOptions::_updateGroveMakeup(void)
 	}
 }
 
-void GroveOptions::_updatePlacementAllowed(void)
+void GroveOptions::_updatePlacementAllowed()
 {
 	// huh huh huh-huh
 	CButton* pButt;

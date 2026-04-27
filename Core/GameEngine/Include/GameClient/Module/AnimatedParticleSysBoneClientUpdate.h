@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: BeaconClientUpdate.h ////////////////////////////////////////////////////////////////////
-// Author: Matthew D. Campbell, August 2002
-// Desc:   Beacon client update module
+// FILE: AnimatedParticleSysBoneClientUpdate.h //////////////////////////////////////////////////////////////////
+// Author: Mark Lorenzen, October 2002
+// Desc:   client update module to translate particle systems with animation
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -34,41 +34,25 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
-class ParticleSystem;
 
-//-------------------------------------------------------------------------------------------------
-class BeaconClientUpdateModuleData : public ClientUpdateModuleData
-{
-public:
-	UnsignedInt m_framesBetweenRadarPulses;
-	UnsignedInt m_radarPulseDuration;
-
-	BeaconClientUpdateModuleData();
-	~BeaconClientUpdateModuleData();
-	static void buildFieldParse(MultiIniFieldParse& p);
-};
-
-//-------------------------------------------------------------------------------------------------
-/** The tree way client update module */
-//-------------------------------------------------------------------------------------------------
-class BeaconClientUpdate : public ClientUpdateModule
+class AnimatedParticleSysBoneClientUpdate : public ClientUpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BeaconClientUpdate, "BeaconClientUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BeaconClientUpdate, BeaconClientUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AnimatedParticleSysBoneClientUpdate, "AnimatedParticleSysBoneClientUpdate" )
+	MAKE_STANDARD_MODULE_MACRO( AnimatedParticleSysBoneClientUpdate );
 
 public:
 
-	BeaconClientUpdate( Thing *thing, const ModuleData* moduleData );
+	AnimatedParticleSysBoneClientUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate();
-	void hideBeacon();
+	virtual void clientUpdate() override;
+
 
 protected:
 
-	ParticleSystemID m_particleSystemID;
-	UnsignedInt m_lastRadarPulse;
+
+	UnsignedInt m_life;
 
 };

@@ -61,7 +61,6 @@
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/CRCDebug.h"
-#include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
@@ -848,21 +847,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		}
 	}
 
-	if (TheSystemIsUnicode)
-	{
-		::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
-	}
-	else
-	{
-		// However, if we're using the default version of the message box, we need to
-		// translate the string into an AsciiString
-		AsciiString promptA, mesgA;
-		promptA.translate(prompt);
-		mesgA.translate(mesg);
-		//Make sure main window is not TOP_MOST
-		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
-		::MessageBoxA(nullptr, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
-	}
+	::MessageBoxW(nullptr, mesg.str(), prompt.str(), MB_OK | MB_SYSTEMMODAL | MB_ICONERROR);
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];

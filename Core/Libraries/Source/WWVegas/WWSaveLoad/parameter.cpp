@@ -202,7 +202,6 @@ ParameterClass::Construct (Type type, void *data, const char *name)
 StringParameterClass::StringParameterClass (StringClass *string)
 	:	m_String (string)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -214,7 +213,6 @@ StringParameterClass::StringParameterClass (const StringParameterClass &src)
 	:	m_String (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -282,7 +280,6 @@ StringParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -314,8 +311,6 @@ StringParameterClass::Set_String (const char * string)
 		Set_Modified ();
 		(*m_String) = string;
 	}
-
-	return ;
 }
 
 
@@ -334,7 +329,6 @@ StringParameterClass::Set_String (const char * string)
 FilenameParameterClass::FilenameParameterClass (StringClass *string)
 	:	StringParameterClass (string)
 {
-	return ;
 }
 
 
@@ -347,7 +341,6 @@ FilenameParameterClass::FilenameParameterClass (const FilenameParameterClass &sr
 	:	StringParameterClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -401,7 +394,6 @@ FilenameParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	StringParameterClass::Copy_Value (src);
-	return ;
 }
 
 //*******************************************************************************************//
@@ -449,7 +441,6 @@ void TextureFilenameParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	StringParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -468,7 +459,6 @@ void TextureFilenameParameterClass::Copy_Value (const ParameterClass &src)
 SoundFilenameParameterClass::SoundFilenameParameterClass (StringClass *string)
 	:	FilenameParameterClass (string)
 {
-	return ;
 }
 
 
@@ -481,7 +471,6 @@ SoundFilenameParameterClass::SoundFilenameParameterClass (const SoundFilenamePar
 	:	FilenameParameterClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -526,7 +515,6 @@ SoundFilenameParameterClass::operator== (const SoundFilenameParameterClass &src)
 EnumParameterClass::EnumParameterClass (int *value)
 	:	m_Value (value)
 {
-	return ;
 }
 
 
@@ -539,7 +527,6 @@ EnumParameterClass::EnumParameterClass (const EnumParameterClass &src)
 	:	m_Value (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -611,7 +598,6 @@ EnumParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -624,7 +610,6 @@ void
 EnumParameterClass::Add_Value (const char *display_name, int value)
 {
 	m_List.Add (ENUM_VALUE(display_name, value));
-	return ;
 }
 
 
@@ -665,7 +650,6 @@ EnumParameterClass::Add_Values (const char *first_name, int first_value, ...)
 	}
 
 	va_end (arg_list);
-	return ;
 }
 
 
@@ -685,7 +669,6 @@ EnumParameterClass::Add_Values (const char *first_name, int first_value, ...)
 PhysDefParameterClass::PhysDefParameterClass (int *id)
 	:	m_Value (id)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -697,7 +680,6 @@ PhysDefParameterClass::PhysDefParameterClass (const PhysDefParameterClass &src)
 	:	m_Value (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -764,7 +746,6 @@ PhysDefParameterClass::Copy_Value (const ParameterClass &/*src*/)
 	//
 	//	We don't allow the value to be copied
 	//
-	return ;
 }
 
 
@@ -783,7 +764,6 @@ PhysDefParameterClass::Copy_Value (const ParameterClass &/*src*/)
 ModelDefParameterClass::ModelDefParameterClass (int *id)
 	:	m_Value (id)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -795,7 +775,6 @@ ModelDefParameterClass::ModelDefParameterClass (const ModelDefParameterClass &sr
 	:	m_Value (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -862,7 +841,6 @@ ModelDefParameterClass::Copy_Value (const ParameterClass &/*src*/)
 	//
 	//	We don't allow the value to be copied
 	//
-	return ;
 }
 
 
@@ -880,7 +858,6 @@ ModelDefParameterClass::Copy_Value (const ParameterClass &/*src*/)
 DefParameterClass::DefParameterClass (int *id)
 	:	m_Value (id)
 {
-	return ;
 }
 
 
@@ -893,7 +870,6 @@ DefParameterClass::DefParameterClass (const DefParameterClass &src)
 	:	m_Value (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -962,7 +938,6 @@ DefParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -983,7 +958,6 @@ GenericDefParameterClass::GenericDefParameterClass (int *id)
 	:	m_ClassID (0),
 		DefParameterClass (id)
 {
-	return ;
 }
 
 
@@ -997,7 +971,6 @@ GenericDefParameterClass::GenericDefParameterClass (const GenericDefParameterCla
 		DefParameterClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1065,7 +1038,6 @@ GenericDefParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1084,7 +1056,6 @@ GenericDefParameterClass::Copy_Value (const ParameterClass &src)
 GameObjDefParameterClass::GameObjDefParameterClass (int *id)
 	:	DefParameterClass (id)
 {
-	return ;
 }
 
 
@@ -1097,7 +1068,6 @@ GameObjDefParameterClass::GameObjDefParameterClass (const GameObjDefParameterCla
 	:	DefParameterClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1165,7 +1135,6 @@ GameObjDefParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1184,7 +1153,6 @@ GameObjDefParameterClass::Copy_Value (const ParameterClass &src)
 WeaponObjDefParameterClass::WeaponObjDefParameterClass (int *id)
 	:	GameObjDefParameterClass (id)
 {
-	return ;
 }
 
 
@@ -1197,7 +1165,6 @@ WeaponObjDefParameterClass::WeaponObjDefParameterClass (const WeaponObjDefParame
 	:	GameObjDefParameterClass (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1266,7 +1233,6 @@ WeaponObjDefParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	GameObjDefParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1285,7 +1251,6 @@ WeaponObjDefParameterClass::Copy_Value (const ParameterClass &src)
 AmmoObjDefParameterClass::AmmoObjDefParameterClass (int *id)
 	:	GameObjDefParameterClass (id)
 {
-	return ;
 }
 
 
@@ -1298,7 +1263,6 @@ AmmoObjDefParameterClass::AmmoObjDefParameterClass (const AmmoObjDefParameterCla
 	:	GameObjDefParameterClass (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1367,7 +1331,6 @@ AmmoObjDefParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	GameObjDefParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1386,7 +1349,6 @@ AmmoObjDefParameterClass::Copy_Value (const ParameterClass &src)
 ExplosionObjDefParameterClass::ExplosionObjDefParameterClass (int *id)
 	:	GameObjDefParameterClass (id)
 {
-	return ;
 }
 
 
@@ -1399,7 +1361,6 @@ ExplosionObjDefParameterClass::ExplosionObjDefParameterClass (const ExplosionObj
 	:	GameObjDefParameterClass (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1468,7 +1429,6 @@ ExplosionObjDefParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	GameObjDefParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1487,7 +1447,6 @@ ExplosionObjDefParameterClass::Copy_Value (const ParameterClass &src)
 SoundDefParameterClass::SoundDefParameterClass (int *id)
 	:	DefParameterClass (id)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1499,7 +1458,6 @@ SoundDefParameterClass::SoundDefParameterClass (const SoundDefParameterClass &sr
 	:	DefParameterClass (src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1570,7 +1528,6 @@ ScriptParameterClass::ScriptParameterClass (StringClass *name, StringClass *para
 	:	m_ScriptName (name),
 		m_ScriptParams (params)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1583,7 +1540,6 @@ ScriptParameterClass::ScriptParameterClass (const ScriptParameterClass &src)
 		m_ScriptParams (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1665,7 +1621,6 @@ ScriptParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1686,7 +1641,6 @@ DefIDListParameterClass::DefIDListParameterClass (DynamicVectorClass<int> *list)
 		m_ClassID (0),
 		m_SelectedClassID (nullptr)
 {
-	return ;
 }
 
 
@@ -1701,7 +1655,6 @@ DefIDListParameterClass::DefIDListParameterClass (const DefIDListParameterClass 
 		m_SelectedClassID (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1799,7 +1752,6 @@ DefIDListParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1818,7 +1770,6 @@ DefIDListParameterClass::Copy_Value (const ParameterClass &src)
 ZoneParameterClass::ZoneParameterClass (OBBoxClass *box)
 	:	m_OBBox (box)
 {
-	return ;
 }
 
 
@@ -1831,7 +1782,6 @@ ZoneParameterClass::ZoneParameterClass (const ZoneParameterClass &src)
 	:	m_OBBox (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -1904,7 +1854,6 @@ ZoneParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -1923,7 +1872,6 @@ ZoneParameterClass::Copy_Value (const ParameterClass &src)
 FilenameListParameterClass::FilenameListParameterClass (DynamicVectorClass<StringClass> *list)
 	:	m_FilenameList (list)
 {
-	return ;
 }
 
 
@@ -1936,7 +1884,6 @@ FilenameListParameterClass::FilenameListParameterClass (const FilenameListParame
 	:	m_FilenameList (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -2020,7 +1967,6 @@ FilenameListParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -2044,7 +1990,6 @@ ScriptListParameterClass::ScriptListParameterClass
 	:	m_NameList (name_list),
 		m_ParamList (param_list)
 {
-	return ;
 }
 
 
@@ -2058,7 +2003,6 @@ ScriptListParameterClass::ScriptListParameterClass (const ScriptListParameterCla
 		m_ParamList (nullptr)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -2164,7 +2108,6 @@ ScriptListParameterClass::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 
@@ -2183,7 +2126,6 @@ ScriptListParameterClass::Copy_Value (const ParameterClass &src)
 SeparatorParameterClass::SeparatorParameterClass (const SeparatorParameterClass &src)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -2239,5 +2181,4 @@ void
 SeparatorParameterClass::Copy_Value (const ParameterClass &src)
 {
 	ParameterClass::Copy_Value (src);
-	return ;
 }

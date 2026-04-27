@@ -72,6 +72,13 @@ class WW3D
 {
 public:
 
+	enum MultiSampleModeEnum {
+		MULTISAMPLE_MODE_NONE = 0,
+		MULTISAMPLE_MODE_2X = 2,
+		MULTISAMPLE_MODE_4X = 4,
+		MULTISAMPLE_MODE_8X = 8
+	};
+
 	enum PrelitModeEnum {
 		PRELIT_MODE_VERTEX,
 		PRELIT_MODE_LIGHTMAP_MULTI_PASS,
@@ -135,6 +142,9 @@ public:
 	// 0 = bilinear, 1 = trilinear, 2 = anisotropic
 	static void					Set_Texture_Filter(int filter);
 	static int					Get_Texture_Filter() { return TextureFilter; }
+
+	static void					Set_Anisotropy_Level(int level);
+	static int					Get_Anisotropy_Level() { return AnisotropyLevel; }
 
 	/*
 	** Rendering functions
@@ -258,6 +268,9 @@ public:
 
 	static void					Set_Texture_Bitdepth(int bitdepth);
 	static int					Get_Texture_Bitdepth();
+
+	static void					Set_MSAA_Mode(MultiSampleModeEnum mode);
+	static MultiSampleModeEnum Get_MSAA_Mode();
 
 	static void					Set_Mesh_Draw_Mode (MeshDrawModeEnum mode)	{ MeshDrawMode = mode; }
 	static MeshDrawModeEnum Get_Mesh_Draw_Mode ()								{ return (MeshDrawMode); }
@@ -386,6 +399,7 @@ private:
 	static bool							ExposePrelit;
 
 	static int							TextureFilter;
+	static int							AnisotropyLevel;
 
 	static bool							SnapshotActivated;
 	static bool							ThumbnailEnabled;

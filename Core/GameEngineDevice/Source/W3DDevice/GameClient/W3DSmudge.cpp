@@ -70,8 +70,11 @@ void W3DSmudgeManager::ReleaseResources()
 	REF_PTR_RELEASE(m_indexBuffer);
 }
 
-//Make sure (SMUDGE_DRAW_SIZE * 12) < 65535 because that's the max index buffer size.
+
 #define SMUDGE_DRAW_SIZE	500	//draw at most 50 smudges per call. Tweak value to improve CPU/GPU parallelism.
+
+static_assert(SMUDGE_DRAW_SIZE * 5 < 0x10000, "Vertex index exceeds 16-bit limit");
+
 
 void W3DSmudgeManager::ReAcquireResources()
 {
@@ -237,16 +240,20 @@ Bool W3DSmudgeManager::testHardwareSupport()
 
 		//bottom right
 		v[0].p = Vector4( BLOCK_SIZE-0.5f, BLOCK_SIZE-0.5f, 0.0f, 1.0f );
-		v[0].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();	v[0].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
+		v[0].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();
+		v[0].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
 		//top right
 		v[1].p = Vector4( BLOCK_SIZE-0.5f, 0-0.5f, 0.0f, 1.0f );
-		v[1].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();	v[1].v = 0;
+		v[1].u = BLOCK_SIZE/(Real)TheDisplay->getWidth();
+		v[1].v = 0;
 		//bottom left
 		v[2].p = Vector4(  0-0.5f, BLOCK_SIZE-0.5f, 0.0f, 1.0f );
-		v[2].u = 0;	v[2].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
+		v[2].u = 0;
+		v[2].v = BLOCK_SIZE/(Real)TheDisplay->getHeight();
 		//top left
 		v[3].p = Vector4(  0-0.5f,  0-0.5f, 0.0f, 1.0f );
-		v[3].u = 0;	v[3].v = 0;
+		v[3].u = 0;
+		v[3].v = 0;
 
 		v[0].color = UNIQUE_COLOR;
 		v[1].color = UNIQUE_COLOR;
@@ -359,7 +366,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	Int count = 0;
 
 	if (set)
-	{	//there are possibly some smudges to render, so make sure background particles have finished drawing.
+	{
+		//there are possibly some smudges to render, so make sure background particles have finished drawing.
 		SortingRendererClass::Flush();	//draw sorted translucent polys like particles.
 	}
 
@@ -367,8 +375,11 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	{
 		Smudge *smudge=set->getUsedSmudgeList().Head();
 
-		while (smudge)
+		for (; smudge; smudge = smudge->Succ())
 		{
+			if (!smudge->m_draw)
+				continue;
+
 			//Get view-space center
 			Matrix3D::Transform_Vector(view,smudge->m_pos,&vsVert);
 
@@ -377,6 +388,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 			//Do center vertex outside 'for' loop since it's different.
 			verts[4].pos = vsVert;
+
+			Vector2 offset = smudge->m_offset;
 
 			for (Int i=0; i<4; i++)
 			{
@@ -390,34 +403,28 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 				Vector2 &thisUV=verts[i].uv;
 
-				//Clamp coordinates so we're not referencing texels outside the view.
-				if (thisUV.X > texClampX)
-					smudge->m_offset.X = 0;
-				else
-				if (thisUV.X < 0)
-					smudge->m_offset.X = 0;
+				// Zero coordinates that fall outside valid texel bounds
+				if (thisUV.X < 0 || thisUV.X > texClampX)
+					offset.X = 0;
 
-				if (thisUV.Y > texClampY)
-					smudge->m_offset.Y = 0;
-				else
-				if (thisUV.Y < 0)
-					smudge->m_offset.Y = 0;
-
+				if (thisUV.Y < 0 || thisUV.Y > texClampY)
+					offset.Y = 0;
 			}
 
 			//Finish center vertex
 			//Ge uv coordinates by interpolating corner uv coordinates and applying desired offset.
 			uvSpanX=verts[3].uv.X - verts[0].uv.X;
 			uvSpanY=verts[1].uv.Y - verts[0].uv.Y;
-			verts[4].uv.X=verts[0].uv.X+uvSpanX*(0.5f+smudge->m_offset.X);
-			verts[4].uv.Y=verts[0].uv.Y+uvSpanY*(0.5f+smudge->m_offset.X);
+			verts[4].uv.X=verts[0].uv.X+uvSpanX*(0.5f+offset.X);
+			verts[4].uv.Y=verts[0].uv.Y+uvSpanY*(0.5f+offset.Y);
 
 			count++;	//increment visible smudge count.
-			smudge=smudge->Succ();
 		}
 
 		set=set->Succ();	//advance to next node.
 	}
+
+	m_smudgeCountLastFrame = count;
 
 	if (!count)
 	{
@@ -481,13 +488,17 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 			{
 				Smudge *smudge=remainingSmudgeStart;
 
-				while (smudge)
+				for (; smudge; smudge=smudge->Succ())
 				{
+					if (!smudge->m_draw)
+						continue;
+
 					Smudge::smudgeVertex *smVerts = smudge->m_verts;
 
 					//Check if we exceeded maximum number of smudges allowed per draw call.
 					if (smudgesInRenderBatch >= count)
-					{	remainingSmudgeStart = smudge;
+					{
+						remainingSmudgeStart = smudge;
 						goto flushSmudges;
 					}
 
@@ -512,7 +523,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 					}
 
 					smudgesInRenderBatch++;
-					smudge=smudge->Succ();
 				}
 
 				set=set->Succ();	//advance to next node.
@@ -520,11 +530,12 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 				if (set)	//start next batch at beginning of set.
 					remainingSmudgeStart = set->getUsedSmudgeList().Head();
 			}
-flushSmudges:
-			DX8Wrapper::Set_Vertex_Buffer(vb_access);
 		}
 
-		DX8Wrapper::Draw_Triangles(	0,smudgesInRenderBatch*4, 0, smudgesInRenderBatch*5);
+flushSmudges:
+		DX8Wrapper::Set_Vertex_Buffer(vb_access);
+
+		DX8Wrapper::Draw_Triangles(0,smudgesInRenderBatch*4, 0, smudgesInRenderBatch*5);
 
 //Debug Code which draws outline around smudge
 /*		DX8Wrapper::_Get_D3D_Device8()->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);

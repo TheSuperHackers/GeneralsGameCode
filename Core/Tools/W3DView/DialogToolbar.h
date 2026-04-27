@@ -45,8 +45,8 @@
 class DialogToolbarClass : public CToolBar
 {
 	public:
-		DialogToolbarClass (void);
-		virtual ~DialogToolbarClass (void) {}
+		DialogToolbarClass ();
+		virtual ~DialogToolbarClass () {}
 
 // Form Data
 public:

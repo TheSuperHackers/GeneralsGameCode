@@ -162,7 +162,7 @@ public:
 
 																				// If object was created but not Init'd, ThreadID will be -1 and Count == 0
 																				// If object was created and Init'd, ThreadID will not be -1.  We expect Count to return to 1 after all Pop's
-	~ActiveCategoryStackClass()									{ WWASSERT((ThreadID == -1 && Count == 0) || (ThreadID != -1 && Count == 1)); }
+	virtual ~ActiveCategoryStackClass() override							{ WWASSERT((ThreadID == -1 && Count == 0) || (ThreadID != -1 && Count == 1)); }
 
 	ActiveCategoryStackClass & operator = (const ActiveCategoryStackClass & that);
 
@@ -300,10 +300,8 @@ WWINLINE void Lock_Mem_Log_Mutex()
 #if MEMLOG_USE_MUTEX
 
 	void * mutex = Get_Mem_Log_Mutex();
-#ifdef DEBUG_CRASHING
-	int res =
-#endif
-		WaitForSingleObject(mutex,INFINITE);
+	MAYBE_UNUSED int res = WaitForSingleObject(mutex,INFINITE);
+	(void)res;
 	WWASSERT(res==WAIT_OBJECT_0);
 	_MemLogLockCounter++;
 #endif
@@ -344,10 +342,8 @@ WWINLINE void Unlock_Mem_Log_Mutex()
 
 	void * mutex = Get_Mem_Log_Mutex();
 	_MemLogLockCounter--;
-#ifdef DEBUG_CRASHING
-	int res=
-#endif
-		ReleaseMutex(mutex);
+	MAYBE_UNUSED int res = ReleaseMutex(mutex);
+	(void)res;
 	WWASSERT(res);
 
 #endif

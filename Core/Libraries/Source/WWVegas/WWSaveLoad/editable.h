@@ -96,7 +96,6 @@ EditableClass::Lock_Parameter (int i)
 inline void
 EditableClass::Unlock_Parameter (int i)
 {
-	return ;
 }
 
 //#define	PARAM_EDITING_ON

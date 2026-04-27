@@ -46,26 +46,26 @@ public:
 	W3DStatusCircle();
 	W3DStatusCircle(const W3DStatusCircle & src);
 	W3DStatusCircle & operator = (const W3DStatusCircle &);
-	~W3DStatusCircle();
+	virtual ~W3DStatusCircle() override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual RenderObjClass *	Clone() const;
-	virtual int						Class_ID() const;
-	virtual void					Render(RenderInfoClass & rinfo);
+	virtual RenderObjClass *	Clone() const override;
+	virtual int						Class_ID() const override;
+	virtual void					Render(RenderInfoClass & rinfo) override;
 //	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
 //	virtual void 					Set_Transform(const Matrix3D &m);
 //	virtual void 					Set_Position(const Vector3 &v);
 //TODO: MW: do these later - only needed for collision detection
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
+	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
 //	virtual Bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
 //	virtual Bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
 //	virtual Bool					Intersect_AABox(AABoxIntersectionTestClass & boxtest);
 //	virtual Bool					Intersect_OBBox(OBBoxIntersectionTestClass & boxtest);
 
-	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
-    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const override;
+    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const override;
 
 
 //	virtual int					 	Get_Num_Polys() const;

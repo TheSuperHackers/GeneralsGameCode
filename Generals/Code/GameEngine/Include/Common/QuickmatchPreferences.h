@@ -42,7 +42,7 @@ class QuickMatchPreferences : public UserPreferences
 {
 public:
 	QuickMatchPreferences();
-	virtual ~QuickMatchPreferences();
+	virtual ~QuickMatchPreferences() override;
 
 	void setMapSelected(const AsciiString& mapName, Bool selected);
 	Bool isMapSelected(const AsciiString& mapName);

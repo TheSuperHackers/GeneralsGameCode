@@ -121,8 +121,8 @@ private:
 public:
 	SimpleObjectIterator();
 //~SimpleObjectIterator();	// provided by MPO
-	Object *first() { return firstWithNumeric(nullptr); }
-	Object *next() { return nextWithNumeric(nullptr); }
+	virtual Object *first() override { return firstWithNumeric(nullptr); }
+	virtual Object *next() override { return nextWithNumeric(nullptr); }
 
 	Object *firstWithNumeric(Real *num = nullptr) { reset(); return nextWithNumeric(num); }
 	Object *nextWithNumeric(Real *num = nullptr);

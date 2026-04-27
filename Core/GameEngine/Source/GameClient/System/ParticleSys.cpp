@@ -44,6 +44,7 @@
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/ParticleSys.h"
+#include "GameClient/Smudge.h"
 
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
@@ -3003,6 +3004,43 @@ void ParticleSystemManager::update()
 			deleteInstance(sys);
 		}
 	}
+
+	const Bool drawSmudge = TheSmudgeManager && TheSmudgeManager->getHardwareSupport() && TheGlobalData->m_useHeatEffects;
+
+	if (drawSmudge)
+	{
+		// TheSuperHackers @bugfix The smudge time step is now decoupled from the render update.
+		// This clears all prior smudges and recreates them for all current smudge particles.
+
+		TheSmudgeManager->reset();
+		SmudgeSet *set = TheSmudgeManager->addSmudgeSet(); //global smudge set through which all smudges are rendered.
+
+		for (ParticleSystemManager::ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end(); ++it)
+		{
+			ParticleSystem *sys = (*it);
+			if (!sys)
+				continue;
+
+			// only look at particle/point style systems
+			if (sys->isUsingDrawables())
+				continue;
+
+			// temporary hack that checks if texture name starts with "SMUD" - if so, we can assume it's a smudge type
+			if (/*sys->isUsingSmudge()*/ *((DWORD *)sys->getParticleTypeName().str()) == 0x44554D53)
+			{
+				for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
+				{
+					const Coord3D *pos = p->getPosition();
+					Smudge *smudge = set->addSmudgeToSet(p);
+					smudge->m_pos.Set(pos->x, pos->y, pos->z);
+					smudge->m_offset.Set(GameClientRandomValueReal(-0.06f,0.06f), GameClientRandomValueReal(-0.06f,0.06f));
+					smudge->m_size = p->getSize();
+					smudge->m_opacity = p->getAlpha();
+					smudge->m_draw = false;
+				}
+			}
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3346,6 +3384,8 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 	}
 	else
 	{
+		DEBUG_ASSERTCRASH(m_allParticleSystemList.empty(), ("ParticleSystemManager: particle systems list is expected empty at start of xfer-load."));
+
 		const ParticleSystemTemplate *systemTemplate;
 
 		// read each particle system

@@ -299,7 +299,6 @@ HLodDefClass::HLodDefClass(HLodClass &src_lod) :
 	ProxyArray(nullptr)
 {
 	Initialize (src_lod);
-	return ;
 }
 
 
@@ -318,7 +317,6 @@ HLodDefClass::HLodDefClass(HLodClass &src_lod) :
 HLodDefClass::~HLodDefClass()
 {
 	Free ();
-	return ;
 }
 
 
@@ -347,8 +345,6 @@ void HLodDefClass::Free()
 	LodCount = 0;
 
 	REF_PTR_RELEASE(ProxyArray);
-
-	return ;
 }
 
 
@@ -412,8 +408,6 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 			Lod[index].BoneIndex = bone_indicies;
 		}
 	}
-
-	return;
 }
 
 
@@ -1147,7 +1141,6 @@ HLodClass::HLodClass(const HLodDefClass & def) :
 
 	Update_Sub_Object_Bits();
 	Update_Obj_Space_Bounding_Volumes();
-	return ;
 }
 
 
@@ -1219,7 +1212,6 @@ HLodClass::HLodClass(const HModelDefClass & def) :
 
 	Update_Sub_Object_Bits();
 	Update_Obj_Space_Bounding_Volumes();
-	return ;
 }
 
 
@@ -1585,8 +1577,6 @@ void HLodClass::Set_Max_Screen_Size(int lod_index, float size)
 		// Ensure lod is no less than minimum allowed
 		if (CurLod < minlod) Set_LOD_Level(minlod);
 	}
-
-	return ;
 }
 
 
@@ -2020,8 +2010,6 @@ void HLodClass::Include_NULL_Lod(bool include)
 
 	// Ensure lod is no less than minimum allowed
 	if (CurLod < minlod) Set_LOD_Level(minlod);
-
-	return ;
 }
 
 
@@ -3640,6 +3628,5 @@ void HLodClass::Set_Hidden(int onoff)
 	}
 
 	Animatable3DObjClass::Set_Hidden(onoff);
-	return ;
 }
 

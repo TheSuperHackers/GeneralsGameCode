@@ -63,7 +63,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////////
 	//	Public operators
 	//////////////////////////////////////////////////////////////////////////////
-	bool				operator== (const ParameterClass &src);
+	virtual bool				operator== (const ParameterClass &src) override;
 
 	///////////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -72,8 +72,8 @@ public:
 	void				Set_Value (const T &new_value);
 
 	// From Parameter class
-	ParameterClass::Type	Get_Type () const;
-	void						Copy_Value (const ParameterClass &src);
+	virtual ParameterClass::Type	Get_Type () const override;
+	virtual void						Copy_Value (const ParameterClass &src) override;
 
 private:
 
@@ -93,7 +93,6 @@ SimpleParameterClass<T, type>::SimpleParameterClass (void *data, const char *nam
 {
 	Set_Name (name);
 	m_Data = (T *)data;
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +126,6 @@ SimpleParameterClass<T, type>::Set_Value (const T &new_value)
 {
 	(*m_Data) = new_value;
 	Set_Modified ();
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -150,7 +148,6 @@ SimpleParameterClass<T, type>::Copy_Value (const ParameterClass &src)
 	}
 
 	ParameterClass::Copy_Value (src);
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -82,21 +82,21 @@ public:
 	//
 	//	Inline accessors
 	//
-	RingRenderObjClass *	Get_Ring (void) const					{ return m_RenderObj; }
+	RingRenderObjClass *	Get_Ring () const					{ return m_RenderObj; }
 	void						Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
-	bool						Is_Data_Valid (void) const				{ return m_bValid; }
+	bool						Is_Data_Valid () const				{ return m_bValid; }
 
-	const CString &		Get_Name (void) const					{ return m_Name; }
-	const CString &		Get_Texture_Filename (void) const	{ return m_TextureFilename; }
-	float						Get_Lifetime (void) const				{ return m_Lifetime; }
-	const ShaderClass &	Get_Shader (void) const					{ return m_Shader; }
+	const CString &		Get_Name () const					{ return m_Name; }
+	const CString &		Get_Texture_Filename () const	{ return m_TextureFilename; }
+	float						Get_Lifetime () const				{ return m_Lifetime; }
+	const ShaderClass &	Get_Shader () const					{ return m_Shader; }
 
 protected:
 
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void						Initialize (void);
+	void						Initialize ();
 	void						Add_Shader_To_Combo (ShaderClass &shader, LPCTSTR name);
 
 private:

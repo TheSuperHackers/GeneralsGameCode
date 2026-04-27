@@ -31,8 +31,8 @@ class WorldHeightMapEdit;
 class FloodFillTool : public Tool
 {
 public:
-	FloodFillTool(void);
-	~FloodFillTool(void);
+	FloodFillTool();
+	virtual ~FloodFillTool() override;
 
 protected:
 	Int			m_textureClassToDraw; ///< The texture to fill with.  Foreground for mousedDown, background for mouseDownRt.
@@ -40,11 +40,11 @@ protected:
 	static Bool m_adjustCliffTextures;
 
 public:
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void activate(); ///< Become the current tool.
-	virtual void setCursor(void);
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void activate() override; ///< Become the current tool.
+	virtual void setCursor() override;
 
-	Bool getAdjustCliffs(void) {return m_adjustCliffTextures;}
+	Bool getAdjustCliffs() {return m_adjustCliffTextures;}
 	void setAdjustCliffs(Bool val) {m_adjustCliffTextures = val;}
 
 };

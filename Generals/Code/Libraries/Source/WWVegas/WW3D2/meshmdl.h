@@ -133,7 +133,7 @@ class GapFillerClass : public W3DMPO
 public:
 	GapFillerClass(MeshModelClass* mmc);
 	GapFillerClass(const GapFillerClass& that);
-	~GapFillerClass();
+	virtual ~GapFillerClass() override;
 
 	WWINLINE const TriIndex* Get_Polygon_Array() const { return PolygonArray; }
 	WWINLINE unsigned Get_Polygon_Count() const { return PolygonCount; }
@@ -154,7 +154,7 @@ public:
 
 	MeshModelClass();
 	MeshModelClass(const MeshModelClass & that);
-	~MeshModelClass();
+	virtual ~MeshModelClass() override;
 
 	MeshModelClass & operator = (const MeshModelClass & that);
 	void							Reset(int polycount,int vertcount,int passcount);
@@ -224,7 +224,7 @@ public:
 	void							Make_Color_Array_Unique(int array_index=0);
 
 	// Load the w3d file format
-	WW3DErrorType				Load_W3D(ChunkLoadClass & cload);
+	virtual WW3DErrorType				Load_W3D(ChunkLoadClass & cload) override;
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//	Decal interface

@@ -70,20 +70,23 @@ void GameSlot::reset()
 	m_disconnected = FALSE;
 	m_port = 0;
 	m_isMuted = FALSE;
+	m_hasSavedOriginalSetup = FALSE;
 	m_origPlayerTemplate = -1;
 	m_origStartPos = -1;
 	m_origColor = -1;
 }
 
-void GameSlot::saveOffOriginalInfo()
+void GameSlot::saveOriginalSetup()
 {
-	DEBUG_LOG(("GameSlot::saveOffOriginalInfo() - orig was color=%d, pos=%d, house=%d",
+	DEBUG_LOG(("GameSlot::saveOriginalSetup() - orig was color=%d, pos=%d, house=%d",
 		m_origColor, m_origStartPos, m_origPlayerTemplate));
 	m_origPlayerTemplate = m_playerTemplate;
 	m_origStartPos = m_startPos;
 	m_origColor = m_color;
-	DEBUG_LOG(("GameSlot::saveOffOriginalInfo() - color=%d, pos=%d, house=%d",
+	DEBUG_LOG(("GameSlot::saveOriginalSetup() - color=%d, pos=%d, house=%d",
 		m_color, m_startPos, m_playerTemplate));
+
+	m_hasSavedOriginalSetup = TRUE;
 }
 
 static Int getSlotIndex(const GameSlot *slot)
@@ -1597,7 +1600,7 @@ void SkirmishGameInfo::xfer( Xfer *xfer )
 			m_slot[slot]->setPlayerTemplate(origPlayerTemplate);
 			m_slot[slot]->setStartPos(origStartPos);
 			m_slot[slot]->setColor(origColor);
-			m_slot[slot]->saveOffOriginalInfo();
+			m_slot[slot]->saveOriginalSetup();
 
 			m_slot[slot]->setTeamNumber(teamNumber);
 			m_slot[slot]->setColor(color);

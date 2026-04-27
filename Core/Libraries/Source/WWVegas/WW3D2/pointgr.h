@@ -228,6 +228,6 @@ class SegmentGroupClass : public PointGroupClass
 {
 public:
 	SegmentGroupClass();
-	virtual ~SegmentGroupClass();
+	virtual ~SegmentGroupClass() override;
 
 };

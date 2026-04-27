@@ -91,12 +91,12 @@ class ProcessAnimateWindowSlideFromRight : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromRight();
-	virtual ~ProcessAnimateWindowSlideFromRight();
+	virtual ~ProcessAnimateWindowSlideFromRight() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -114,12 +114,12 @@ class ProcessAnimateWindowSlideFromLeft : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromLeft();
-	virtual ~ProcessAnimateWindowSlideFromLeft();
+	virtual ~ProcessAnimateWindowSlideFromLeft() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -137,12 +137,12 @@ class ProcessAnimateWindowSlideFromTop : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromTop();
-	virtual ~ProcessAnimateWindowSlideFromTop();
+	virtual ~ProcessAnimateWindowSlideFromTop() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -158,12 +158,12 @@ class ProcessAnimateWindowSlideFromTopFast : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromTopFast();
-	virtual ~ProcessAnimateWindowSlideFromTopFast();
+	virtual ~ProcessAnimateWindowSlideFromTopFast() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -181,12 +181,12 @@ class ProcessAnimateWindowSlideFromBottom : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromBottom();
-	virtual ~ProcessAnimateWindowSlideFromBottom();
+	virtual ~ProcessAnimateWindowSlideFromBottom() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting
@@ -203,12 +203,12 @@ class ProcessAnimateWindowSpiral : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSpiral();
-	virtual ~ProcessAnimateWindowSpiral();
+	virtual ~ProcessAnimateWindowSpiral() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 	Real m_deltaTheta;
 	Int m_maxR;
@@ -221,13 +221,13 @@ class ProcessAnimateWindowSlideFromBottomTimed : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromBottomTimed();
-	virtual ~ProcessAnimateWindowSlideFromBottomTimed();
+	virtual ~ProcessAnimateWindowSlideFromBottomTimed() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void setMaxDuration(UnsignedInt maxDuration) { m_maxDuration = maxDuration; }
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void setMaxDuration(UnsignedInt maxDuration) override { m_maxDuration = maxDuration; }
 
 private:
 	UnsignedInt m_maxDuration;
@@ -239,12 +239,12 @@ class ProcessAnimateWindowSlideFromRightFast : public ProcessAnimateWindow
 public:
 
 	ProcessAnimateWindowSlideFromRightFast();
-	virtual ~ProcessAnimateWindowSlideFromRightFast();
+	virtual ~ProcessAnimateWindowSlideFromRightFast() override;
 
-	virtual void initAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 );
-	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin );
-	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin );
+	virtual void initAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual void initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay = 0 ) override;
+	virtual Bool updateAnimateWindow( wnd::AnimateWindow *animWin ) override;
+	virtual Bool reverseAnimateWindow( wnd::AnimateWindow *animWin ) override;
 private:
 Coord2D m_maxVel;  // top speed windows travel in x and y
 Int m_slowDownThreshold;  // when windows get this close to their resting

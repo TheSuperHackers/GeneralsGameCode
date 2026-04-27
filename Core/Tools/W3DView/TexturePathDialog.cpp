@@ -44,7 +44,6 @@ TexturePathDialogClass::TexturePathDialogClass(CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(TexturePathDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -60,7 +59,6 @@ TexturePathDialogClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(TexturePathDialogClass)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -78,7 +76,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-TexturePathDialogClass::OnInitDialog (void)
+TexturePathDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog ();
 
@@ -96,7 +94,7 @@ TexturePathDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnOK (void)
+TexturePathDialogClass::OnOK ()
 {
 	CString path1;
 	CString path2;
@@ -108,7 +106,6 @@ TexturePathDialogClass::OnOK (void)
 	doc->Set_Texture_Path2 (path2);
 
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -118,7 +115,7 @@ TexturePathDialogClass::OnOK (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnBrowse1 (void)
+TexturePathDialogClass::OnBrowse1 ()
 {
 	CString initial_path;
 	GetDlgItemText (IDC_PATH1, initial_path);
@@ -127,8 +124,6 @@ TexturePathDialogClass::OnBrowse1 (void)
 	if (::Browse_For_Folder (m_hWnd, initial_path, path)) {
 		SetDlgItemText (IDC_PATH1, path);
 	}
-
-	return ;
 }
 
 
@@ -138,7 +133,7 @@ TexturePathDialogClass::OnBrowse1 (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-TexturePathDialogClass::OnBrowse2 (void)
+TexturePathDialogClass::OnBrowse2 ()
 {
 	CString initial_path;
 	GetDlgItemText (IDC_PATH2, initial_path);
@@ -147,7 +142,5 @@ TexturePathDialogClass::OnBrowse2 (void)
 	if (::Browse_For_Folder (m_hWnd, initial_path, path)) {
 		SetDlgItemText (IDC_PATH2, path);
 	}
-
-	return ;
 }
 

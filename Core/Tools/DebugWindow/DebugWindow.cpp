@@ -76,7 +76,7 @@ CDebugWindowApp::CDebugWindowApp()
 	m_DialogWindow = nullptr;
 }
 
-DebugWindowDialog* CDebugWindowApp::GetDialogWindow(void)
+DebugWindowDialog* CDebugWindowApp::GetDialogWindow()
 {
 	return m_DialogWindow;
 }
@@ -96,7 +96,7 @@ CDebugWindowApp::~CDebugWindowApp()
 
 CDebugWindowApp theApp;
 
-void __declspec(dllexport) CreateDebugDialog(void)
+void __declspec(dllexport) CreateDebugDialog()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
 
@@ -112,7 +112,7 @@ void __declspec(dllexport) CreateDebugDialog(void)
 	theApp.SetDialogWindow(tmpWnd);
 }
 
-void __declspec(dllexport) DestroyDebugDialog(void)
+void __declspec(dllexport) DestroyDebugDialog()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
 	DebugWindowDialog* tmpWnd = theApp.GetDialogWindow();
@@ -125,7 +125,7 @@ void __declspec(dllexport) DestroyDebugDialog(void)
 
 }
 
-bool __declspec(dllexport) CanAppContinue(void)
+bool __declspec(dllexport) CanAppContinue()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
 
@@ -138,7 +138,7 @@ bool __declspec(dllexport) CanAppContinue(void)
 	return pDbg->CanProceed();
 }
 
-void __declspec(dllexport) ForceAppContinue(void)
+void __declspec(dllexport) ForceAppContinue()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
 
@@ -151,7 +151,7 @@ void __declspec(dllexport) ForceAppContinue(void)
 	pDbg->ForceContinue();
 }
 
-bool __declspec(dllexport) RunAppFast(void)
+bool __declspec(dllexport) RunAppFast()
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState( ));
 

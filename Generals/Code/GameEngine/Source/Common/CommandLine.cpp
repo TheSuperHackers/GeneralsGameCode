@@ -414,6 +414,13 @@ Int parseHeadless(char *args[], int num)
 	TheWritableGlobalData->m_playIntro = FALSE;
 	TheWritableGlobalData->m_afterIntro = TRUE;
 	TheWritableGlobalData->m_playSizzle = FALSE;
+
+	// TheSuperHackers @fix bobtista 03/02/2026 Set DX8Wrapper_IsWindowed to false in headless
+	// mode so that ignoringAsserts() works correctly throughout the entire process lifetime,
+	// including during shutdown after TheGlobalData has been destroyed.
+	extern bool DX8Wrapper_IsWindowed;
+	DX8Wrapper_IsWindowed = false;
+
 	return 1;
 }
 

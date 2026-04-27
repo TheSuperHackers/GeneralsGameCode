@@ -262,6 +262,8 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_PLAY_OBJECTIVE_MOVIE6",								GameMessage::MSG_META_DEMO_PLAY_OBJECTIVE_MOVIE6 },
 	{ "DEMO_BEGIN_ADJUST_PITCH",									GameMessage::MSG_META_DEMO_BEGIN_ADJUST_PITCH },
 	{ "DEMO_END_ADJUST_PITCH",										GameMessage::MSG_META_DEMO_END_ADJUST_PITCH },
+	{ "DEMO_BEGIN_ADJUST_DEFAULTPITCH",						GameMessage::MSG_META_DEMO_BEGIN_ADJUST_DEFAULTPITCH },
+	{ "DEMO_END_ADJUST_DEFAULTPITCH",							GameMessage::MSG_META_DEMO_END_ADJUST_DEFAULTPITCH },
 	{ "DEMO_BEGIN_ADJUST_FOV",										GameMessage::MSG_META_DEMO_BEGIN_ADJUST_FOV },
 	{ "DEMO_END_ADJUST_FOV",											GameMessage::MSG_META_DEMO_END_ADJUST_FOV },
 	{ "DEMO_LOCK_CAMERA_TO_PLANES",								GameMessage::MSG_META_DEMO_LOCK_CAMERA_TO_PLANES },
@@ -466,9 +468,6 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 		for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
 		{
-			DEBUG_ASSERTCRASH(map->m_meta > GameMessage::MSG_BEGIN_META_MESSAGES &&
-				map->m_meta < GameMessage::MSG_END_META_MESSAGES, ("hmm, expected only meta-msgs here"));
-
 			if (!isMessageUsable(map->m_usableIn))
 				continue;
 
@@ -725,14 +724,14 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 }
 
 //-------------------------------------------------------------------------------------------------
-/*static */ void MetaMap::generateMetaMap()
+void MetaMap::generateMetaMap()
 {
 	// TheSuperHackers @info A default mapping for MSG_META_SELECT_ALL_AIRCRAFT would be useful for Generals
 	// but is not recommended, because it will cause key mapping conflicts with original game languages.
 
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_INCREASE_MAX_RENDER_FPS);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_INCREASE_MAX_RENDER_FPS);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_KPPLUS;
@@ -743,7 +742,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DECREASE_MAX_RENDER_FPS);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_DECREASE_MAX_RENDER_FPS);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_KPMINUS;
@@ -754,7 +753,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_INCREASE_LOGIC_TIME_SCALE);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_INCREASE_LOGIC_TIME_SCALE);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_KPPLUS;
@@ -765,7 +764,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DECREASE_LOGIC_TIME_SCALE);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_DECREASE_LOGIC_TIME_SCALE);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_KPMINUS;
@@ -776,7 +775,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_TOGGLE_PLAYER_OBSERVER);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_M;
@@ -787,7 +786,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is mostly useful for Generals.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_F;
@@ -798,7 +797,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_P;
@@ -809,7 +808,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE_ALT);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE_ALT);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_P;
@@ -820,7 +819,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_STEP_FRAME);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_O;
@@ -831,7 +830,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME_ALT);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_STEP_FRAME_ALT);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_O;
@@ -842,7 +841,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER);
 		if (map->m_key == MK_NONE) {
 			map->m_key = MK_I;
 			map->m_transition = DOWN;
@@ -854,7 +853,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		}
 	}
 	{
-		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_LEFT);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_LEFT);
 		if (map->m_key == MK_NONE) {
 			map->m_key = MK_KP4;
 			map->m_transition = DOWN;
@@ -863,7 +862,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		}
 	}
 	{
-		MetaMapRec* map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_RIGHT);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_ALT_CAMERA_ROTATE_RIGHT);
 		if (map->m_key == MK_NONE) {
 			map->m_key = MK_KP6;
 			map->m_transition = DOWN;
@@ -875,7 +874,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 #if defined(RTS_DEBUG)
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_REMOVE_PREREQ);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_DEMO_REMOVE_PREREQ);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_P;
@@ -886,7 +885,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 	}
 	{
 		// Is useful for Generals and Zero Hour.
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_FREE_BUILD);
+		MetaMapRec *map = getMetaMapRec(GameMessage::MSG_META_DEMO_FREE_BUILD);
 		if (map->m_key == MK_NONE)
 		{
 			map->m_key = MK_B;
@@ -895,7 +894,43 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_BEGIN_ADJUST_DEFAULTPITCH);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_COMMA;
+			map->m_transition = DOWN;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_DEMO_END_ADJUST_DEFAULTPITCH);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_COMMA;
+			map->m_transition = UP;
+			map->m_modState = CTRL;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
 #endif // defined(RTS_DEBUG)
+}
+
+//-------------------------------------------------------------------------------------------------
+void MetaMap::verifyMetaMap()
+{
+#ifdef DEBUG_CRASHING
+	for (const MetaMapRec *map = getFirstMetaMapRec(); map; map = map->m_next)
+	{
+		DEBUG_ASSERTCRASH(
+			map->m_meta > GameMessage::MSG_BEGIN_META_MESSAGES &&
+			map->m_meta < GameMessage::MSG_END_META_MESSAGES,
+			("hmm, expected only meta-msgs here"));
+	}
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -48,24 +48,24 @@ public:
 
 	GameFileClass(char const *filename);
 	GameFileClass();
-	virtual ~GameFileClass();
+	virtual ~GameFileClass() override;
 
-	virtual char const * File_Name() const;
-	virtual char const * Set_Name(char const *filename);
+	virtual char const * File_Name() const override;
+	virtual char const * Set_Name(char const *filename) override;
 
 	// (gth) had to re-instate these functions in the base class, for now just give empty implementations...
-	virtual int Create() { assert(0); return 1; }
-	virtual int Delete() { assert(0); return 1; }
+	virtual int Create() override { assert(0); return 1; }
+	virtual int Delete() override { assert(0); return 1; }
 
-	virtual bool Is_Available(int forced=false);
-	virtual bool Is_Open() const;
-	virtual int Open(char const *filename, int rights=READ);
-	virtual int Open(int rights=READ);
-	virtual int Read(void *buffer, int len);
-	virtual int Seek(int pos, int dir=SEEK_CUR);
-	virtual int Size();
-	virtual int Write(void const *buffer, int len);
-	virtual void Close();
+	virtual bool Is_Available(int forced=false) override;
+	virtual bool Is_Open() const override;
+	virtual int Open(char const *filename, int rights=READ) override;
+	virtual int Open(int rights=READ) override;
+	virtual int Read(void *buffer, int len) override;
+	virtual int Seek(int pos, int dir=SEEK_CUR) override;
+	virtual int Size() override;
+	virtual int Write(void const *buffer, int len) override;
+	virtual void Close() override;
 
 protected:
 
@@ -84,10 +84,10 @@ protected:
 class	W3DFileSystem : public FileFactoryClass {
 public:
 	W3DFileSystem();
-	~W3DFileSystem();
+	virtual ~W3DFileSystem() override;
 
-	virtual FileClass * Get_File( char const *filename );
-	virtual void Return_File( FileClass *file );
+	virtual FileClass * Get_File( char const *filename ) override;
+	virtual void Return_File( FileClass *file ) override;
 
 private:
 

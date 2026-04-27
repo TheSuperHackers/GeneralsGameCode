@@ -40,14 +40,14 @@
 // RoadTool class.
 //
 /// Constructor
-RoadTool::RoadTool(void) :
+RoadTool::RoadTool() :
 	Tool(ID_ROAD_TOOL, IDC_ROAD)
 {
 	m_mapObj = nullptr;
 }
 
 /// Destructor
-RoadTool::~RoadTool(void)
+RoadTool::~RoadTool()
 {
 	m_mapObj = nullptr;
 }

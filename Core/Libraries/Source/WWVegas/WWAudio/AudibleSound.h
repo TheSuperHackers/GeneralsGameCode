@@ -126,7 +126,7 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		AudibleSoundClass (const AudibleSoundClass &src);
 		AudibleSoundClass ();
-		virtual ~AudibleSoundClass ();
+		virtual ~AudibleSoundClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -143,12 +143,12 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Conversion methods
 		//////////////////////////////////////////////////////////////////////
-		virtual AudibleSoundClass *	As_AudibleSoundClass() 	{ return this; }
+		virtual AudibleSoundClass *	As_AudibleSoundClass() override { return this; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool				On_Frame_Update (unsigned int milliseconds);
+		virtual bool				On_Frame_Update (unsigned int milliseconds) override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	State control methods
@@ -235,24 +235,24 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Set_Position (const Vector3 &position);
-		virtual Vector3		Get_Position () const							{ return m_Transform.Get_Translation (); }
+		virtual void			Set_Position (const Vector3 &position) override;
+		virtual Vector3		Get_Position () const override { return m_Transform.Get_Translation (); }
 
-		virtual void			Set_Listener_Transform (const Matrix3D &tm)	{ m_ListenerTransform = tm; }
-		virtual void			Set_Transform (const Matrix3D &transform);
-		virtual Matrix3D		Get_Transform () const							{ return m_Transform; }
+		virtual void			Set_Listener_Transform (const Matrix3D &tm) override { m_ListenerTransform = tm; }
+		virtual void			Set_Transform (const Matrix3D &transform) override;
+		virtual Matrix3D		Get_Transform () const override { return m_Transform; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Culling methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Cull_Sound (bool culled = true);
-		virtual bool			Is_Sound_Culled () const { return m_IsCulled; }
+		virtual void			Cull_Sound (bool culled = true) override;
+		virtual bool			Is_Sound_Culled () const override { return m_IsCulled; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Scene integration
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Add_To_Scene (bool start_playing = true);
-		virtual void			Remove_From_Scene ();
+		virtual void			Add_To_Scene (bool start_playing = true) override;
+		virtual void			Remove_From_Scene () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Attenuation settings
@@ -261,8 +261,8 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//
 		//	This is the distance where the sound can not be heard any longer.  (its vol is 0)
 		//
-		virtual void			Set_DropOff_Radius (float radius = 1);
-		virtual float			Get_DropOff_Radius () const	{ return m_DropOffRadius; }
+		virtual void			Set_DropOff_Radius (float radius = 1) override;
+		virtual float			Get_DropOff_Radius () const override { return m_DropOffRadius; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
@@ -287,9 +287,9 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	From PersistClass
 		//////////////////////////////////////////////////////////////////////
-		const PersistFactoryClass &	Get_Factory () const;
-		bool									Save (ChunkSaveClass &csave);
-		bool									Load (ChunkLoadClass &cload);
+		virtual const PersistFactoryClass &	Get_Factory () const override;
+		virtual bool									Save (ChunkSaveClass &csave) override;
+		virtual bool									Load (ChunkLoadClass &cload) override;
 
 	protected:
 
@@ -388,16 +388,16 @@ public:
 	//	Public constructors/destructors
 	//////////////////////////////////////////////////////////////
 	AudibleSoundDefinitionClass ();
-	virtual ~AudibleSoundDefinitionClass () { }
+	virtual ~AudibleSoundDefinitionClass () override { }
 
 	// From DefinitionClass
-	virtual uint32								Get_Class_ID () const;
+	virtual uint32								Get_Class_ID () const override;
 
 	// From PersistClass
-	virtual const PersistFactoryClass &	Get_Factory () const;
-	virtual bool								Save (ChunkSaveClass &csave);
-	virtual bool								Load (ChunkLoadClass &cload);
-	virtual PersistClass *					Create () const;
+	virtual const PersistFactoryClass &	Get_Factory () const override;
+	virtual bool								Save (ChunkSaveClass &csave) override;
+	virtual bool								Load (ChunkLoadClass &cload) override;
+	virtual PersistClass *					Create () const override;
 	virtual AudibleSoundClass *			Create_Sound (int classid_hint) const;
 
 	// Initialization

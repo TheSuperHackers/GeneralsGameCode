@@ -387,6 +387,7 @@ void W3DInGameUI::reset()
 //-------------------------------------------------------------------------------------------------
 void W3DInGameUI::draw()
 {
+	TheDisplay->beginBatch();
 	preDraw();
 
 	// draw selection region if drag selecting
@@ -438,6 +439,8 @@ void W3DInGameUI::draw()
 #ifdef EXTENDED_STATS
 	}
 #endif
+
+	TheDisplay->endBatch();
 
 }
 

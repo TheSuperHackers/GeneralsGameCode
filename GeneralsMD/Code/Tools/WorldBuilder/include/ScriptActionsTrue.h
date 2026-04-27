@@ -33,7 +33,7 @@ class ScriptActionsTrue : public CPropertyPage
 // Construction
 public:
 	ScriptActionsTrue();
-	~ScriptActionsTrue();
+	virtual ~ScriptActionsTrue() override;
 
 // Dialog Data
 	//{{AFX_DATA(ScriptActionsTrue)
@@ -47,7 +47,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(ScriptActionsTrue)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -60,14 +60,14 @@ protected:
 	Int					m_index; // Index of whatever is currently selected.
 
 protected:
-	void enableUI(void);
-	void loadList(void);
-	Bool doMoveDown(void);
+	void enableUI();
+	void loadList();
+	Bool doMoveDown();
 
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(ScriptActionsTrue)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnEditAction();
 	afx_msg void OnSelchangeActionList();
 	afx_msg void OnDblclkActionList();

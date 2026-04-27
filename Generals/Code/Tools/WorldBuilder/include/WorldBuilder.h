@@ -71,14 +71,14 @@ class CWorldBuilderApp : public CWinApp
 {
 public:
 	CWorldBuilderApp();
-	~CWorldBuilderApp();
+	virtual ~CWorldBuilderApp() override;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWorldBuilderApp)
 	public:
-	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual BOOL InitInstance() override;
+	virtual int ExitInstance() override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -132,7 +132,7 @@ protected:
 	MapObject					*m_pasteMapObjList;	///< List of copied/cut map objects.
 
 protected:
-	void deletePasteObjList(void)
+	void deletePasteObjList()
 	{
 		deleteInstance(m_pasteMapObjList);
 		m_pasteMapObjList = nullptr;
@@ -143,13 +143,13 @@ public:
 	CDocTemplate *Get3dTemplate() { return m_3dtemplate; }
 
 	/// Set the brush tool as the active tool.
-	void selectBrushTool(void) { setActiveTool(&m_brushTool); }
+	void selectBrushTool() { setActiveTool(&m_brushTool); }
 
 	/// Set the pointer tool as the active tool.
-	void selectPointerTool(void);
+	void selectPointerTool();
 
 	/// Set the hand tool as the cur tool (but not active tool)
-	void selectHandToolTemp(void) { m_curTool = &m_handScrollTool; }
+	void selectHandToolTemp() { m_curTool = &m_handScrollTool; }
 
 	/// Set the tool that will be active.
 	void setActiveTool(Tool *newTool);
@@ -163,17 +163,17 @@ public:
 	void updateCurTool(Bool forceHand);
 
 	/// Switch to the poly tool if we aren't already.
-	void setPolyTool(void){ setActiveTool(&m_polygonTool); };
+	void setPolyTool(){ setActiveTool(&m_polygonTool); };
 
 	/// Return true if the hand scroll tool is active.
-	Bool isHandScroll(void) {return m_curTool == &m_handScrollTool; }
+	Bool isHandScroll() {return m_curTool == &m_handScrollTool; }
 
 	void lockCurTool()		{ DEBUG_ASSERTCRASH(!m_lockCurTool,("already locked")); m_lockCurTool = 1; }
 	void unlockCurTool()	{ m_lockCurTool = 0; }
 	Bool isCurToolLocked()	{ return m_lockCurTool != 0; }
 
 	/// Note - read only data - make yourself a copy.
-	MapObject *getMapObjPasteList(void) { return(m_pasteMapObjList);};
+	MapObject *getMapObjPasteList() { return(m_pasteMapObjList);};
 
 	/// Note - the app owns this, and will delete it on close.
 	void setMapObjPasteList(MapObject *list) { deletePasteObjList(); m_pasteMapObjList = list; };
@@ -181,7 +181,7 @@ public:
 
 	/// Handles command messages.
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra,
-						  AFX_CMDHANDLERINFO* pHandlerInfo);
+						  AFX_CMDHANDLERINFO* pHandlerInfo) override;
 };
 
 inline CWorldBuilderApp *WbApp() { return (CWorldBuilderApp*)::AfxGetApp(); }

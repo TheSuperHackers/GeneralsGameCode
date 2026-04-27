@@ -2921,8 +2921,7 @@ Bool Player::doesObjectQualifyForBattlePlan( Object *obj ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-// note, bonus is an in-out parm.
-void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonusesData *bonus )
+void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, const BattlePlanBonusesData *bonus )
 {
 	DUMPBATTLEPLANBONUSES(bonus, this, nullptr);
 	Bool addBonus = false;
@@ -2976,22 +2975,24 @@ void Player::changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonus
 	else if( removeBonus )
 	{
 		//First, inverse the bonuses
-		bonus->m_armorScalar				= 1.0f / __max( bonus->m_armorScalar, 0.01f );
-		bonus->m_sightRangeScalar		= 1.0f / __max( bonus->m_sightRangeScalar, 0.01f );
-		if( bonus->m_bombardment > 0 )
+		BattlePlanBonusesData invertedBonus = *bonus;
+
+		invertedBonus.m_armorScalar = 1.0f / __max(bonus->m_armorScalar, 0.01f);
+		invertedBonus.m_sightRangeScalar = 1.0f / __max(bonus->m_sightRangeScalar, 0.01f);
+		if (invertedBonus.m_bombardment > 0)
 		{
-			bonus->m_bombardment			= -1;
+			invertedBonus.m_bombardment = -1;
 		}
-		if( bonus->m_holdTheLine > 0 )
+		if (invertedBonus.m_holdTheLine > 0)
 		{
-			bonus->m_holdTheLine			= -1;
+			invertedBonus.m_holdTheLine = -1;
 		}
-		if( bonus->m_searchAndDestroy > 0 )
+		if (invertedBonus.m_searchAndDestroy > 0)
 		{
-			bonus->m_searchAndDestroy	= -1;
+			invertedBonus.m_searchAndDestroy = -1;
 		}
 
-		applyBattlePlanBonusesForPlayerObjects( bonus );
+		applyBattlePlanBonusesForPlayerObjects(&invertedBonus);
 	}
 }
 
@@ -3152,7 +3153,16 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonusesData
 	}
 
 	DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, nullptr);
+#if RETAIL_COMPATIBLE_CRC
 	iterateObjects( localApplyBattlePlanBonusesToObject, const_cast<BattlePlanBonusesData *>(bonus) );
+#else
+	// TheSuperHackers @bugfix Stubbjax 05/02/2026 Apply all bonuses the player has rather than just the most recent.
+	BattlePlanBonusesData newBonus = *m_battlePlanBonuses;
+	newBonus.m_armorScalar = bonus->m_armorScalar;
+	newBonus.m_sightRangeScalar = bonus->m_sightRangeScalar;
+
+	iterateObjects(localApplyBattlePlanBonusesToObject, &newBonus);
+#endif
 }
 
 

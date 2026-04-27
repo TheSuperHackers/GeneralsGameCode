@@ -55,23 +55,23 @@ protected:
 	static Bool	m_isActive;
 
 public:
-	BuildListTool(void);
-	~BuildListTool(void);
+	BuildListTool();
+	virtual ~BuildListTool() override;
 
 private:
-	void createWindow(void);
-	Bool isDoingAdd(void);
+	void createWindow();
+	Bool isDoingAdd();
 
 public:
-	static void addBuilding(void);
-	static Bool isActive(void) {return m_isActive;};
+	static void addBuilding();
+	static Bool isActive() {return m_isActive;};
 
 public:
 	/// Perform tool on mouse down.
-	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
-	virtual void setCursor(void);
-	virtual void activate(); ///< Become the current tool.
-	virtual void deactivate(); ///< Become not the current tool.
+	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
+	virtual void setCursor() override;
+	virtual void activate() override; ///< Become the current tool.
+	virtual void deactivate() override; ///< Become not the current tool.
 };

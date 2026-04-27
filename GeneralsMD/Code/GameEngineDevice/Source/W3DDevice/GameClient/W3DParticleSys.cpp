@@ -115,10 +115,6 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	/// @todo lorenzen sez: this should be debug only:
 	m_onScreenParticleCount = 0;
 
-	Int visibleSmudgeCount = 0;
-	if (TheSmudgeManager)
-		TheSmudgeManager->setSmudgeCountLastFrame(0);	//keep track of visible smudges
-
  	const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
 	AABoxClass bbox;
 
@@ -141,9 +137,12 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 	m_fieldParticleCount = 0;
 
-	SmudgeSet *set=nullptr;
-	if (TheSmudgeManager)
-		set=TheSmudgeManager->addSmudgeSet();	//global smudge set through which all smudges are rendered.
+	const Bool drawSmudge = TheSmudgeManager && TheSmudgeManager->getHardwareSupport() && TheGlobalData->m_useHeatEffects;
+
+	if (drawSmudge)
+	{
+		TheSmudgeManager->resetDraw();
+	}
 
 	ParticleSystemManager::ParticleSystemList &particleSysList = TheParticleSystemManager->getAllParticleSystems();
 	for( ParticleSystemManager::ParticleSystemListIt it = particleSysList.begin(); it != particleSysList.end(); ++it)
@@ -160,9 +159,8 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		//temporary hack that checks if texture name starts with "SMUD" - if so, we can assume it's a smudge type
 		if (/*sys->isUsingSmudge()*/ *((DWORD *)sys->getParticleTypeName().str()) == 0x44554D53)
 		{
-			if (TheSmudgeManager && ((W3DSmudgeManager*)TheSmudgeManager)->getHardwareSupport() && TheGlobalData->m_useHeatEffects)
+			if (drawSmudge)
 			{
-				//set-up all the per-particle
 				for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
 				{
 					const Coord3D *pos = p->getPosition();
@@ -178,13 +176,11 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 					if (WWMath::Fabs( pos->z - bcZ ) > ( beZ + psize ) )
 						continue;
 
-					Smudge *smudge = set->addSmudgeToSet();
-
-					smudge->m_pos.Set( pos->x, pos->y, pos->z );
-					smudge->m_offset.Set( GameClientRandomValueReal(-0.06f,0.06f), GameClientRandomValueReal(-0.03f,0.03f) );
-					smudge->m_size = psize;
-					smudge->m_opacity = p->getAlpha();
-					visibleSmudgeCount++;
+					if (Smudge *smudge = TheSmudgeManager->findSmudge(p))
+					{
+						// The particle is in view. Draw the smudge!
+						smudge->m_draw = true;
+					}
 				}
 			}
 			continue;
@@ -376,7 +372,5 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	if(TheSmudgeManager)
 	{
 		((W3DSmudgeManager *)TheSmudgeManager)->render(rinfo);
-		TheSmudgeManager->reset();	//clear all the smudges after rendering since we fill again each frame.
-		TheSmudgeManager->setSmudgeCountLastFrame(visibleSmudgeCount);
 	}
 }

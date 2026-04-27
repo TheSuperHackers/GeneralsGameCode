@@ -44,7 +44,7 @@
 interface ISwapablePanel : public CDialog
 {
 	ISwapablePanel(UINT nIDTemplate = 0, CWnd* pParentWnd = nullptr) : CDialog(nIDTemplate, pParentWnd) {}
-	virtual DWORD GetIDD( void ) = 0;
+	virtual DWORD GetIDD() = 0;
 	virtual void performUpdate( IN Bool toUI ) = 0;
-	virtual void InitPanel( void ) = 0;
+	virtual void InitPanel() = 0;
 };

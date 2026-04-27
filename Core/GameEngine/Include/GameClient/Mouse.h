@@ -268,20 +268,20 @@ public:
 public:
 
 	Mouse();
-	virtual ~Mouse();
+	virtual ~Mouse() override;
 
 	// you may need to extend these for your device
 	virtual void parseIni();	///< parse ini settings associated with mouse (do this before init()).
-	virtual void init();		///< init mouse, extend this functionality, do not replace
-	virtual void reset();		///< Reset the system
-	virtual void update();  ///< update the state of the mouse position and buttons
+	virtual void init() override;		///< init mouse, extend this functionality, do not replace
+	virtual void reset() override;		///< Reset the system
+	virtual void update() override;  ///< update the state of the mouse position and buttons
 	virtual void initCursorResources()=0;	///< needed so Win32 cursors can load resources before D3D device created.
 
 	virtual void createStreamMessages();  /**< given state of device, create
 																									 messages and put them on the
 																									 stream for the raw state. */
 
-	virtual void draw();													///< draw the mouse
+	virtual void draw() override;													///< draw the mouse
 	virtual void setPosition( Int x, Int y );						///< set the mouse position
 	virtual void setCursor( MouseCursor cursor ) = 0;		///< set mouse cursor
 
@@ -424,14 +424,14 @@ protected:
 // Mouse that does nothing. Used for Headless Mode.
 class MouseDummy : public Mouse
 {
-	virtual void parseIni() {}
-	virtual void update() {}
-	virtual void initCursorResources() {}
-	virtual void createStreamMessages() {}
-	virtual void setCursor(MouseCursor cursor) {}
-	virtual void capture() {}
-	virtual void releaseCapture() {}
-	virtual UnsignedByte getMouseEvent(MouseIO *result, Bool flush) { return MOUSE_NONE; }
+	virtual void parseIni() override {}
+	virtual void update() override {}
+	virtual void initCursorResources() override {}
+	virtual void createStreamMessages() override {}
+	virtual void setCursor(MouseCursor cursor) override {}
+	virtual void capture() override {}
+	virtual void releaseCapture() override {}
+	virtual UnsignedByte getMouseEvent(MouseIO *result, Bool flush) override { return MOUSE_NONE; }
 };
 
 

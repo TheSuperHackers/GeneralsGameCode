@@ -40,7 +40,7 @@ Int FeatherTool::m_radius = 0;
 
 //
 /// Constructor
-FeatherTool::FeatherTool(void) :
+FeatherTool::FeatherTool() :
 	Tool(ID_FEATHERTOOL, IDC_BRUSH_CROSS)
 {
 	m_htMapEditCopy = nullptr;
@@ -49,7 +49,7 @@ FeatherTool::FeatherTool(void) :
 }
 
 /// Destructor
-FeatherTool::~FeatherTool(void)
+FeatherTool::~FeatherTool()
 {
 	REF_PTR_RELEASE(m_htMapEditCopy);
 	REF_PTR_RELEASE(m_htMapFeatherCopy);

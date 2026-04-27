@@ -81,12 +81,6 @@
 
 #include "ww3d.h"
 
-//#define KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
-#ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
-	#include "GameLogic/Module/ParkingPlaceBehavior.h"
-#endif
-
-
 #define VERY_TRANSPARENT_MATERIAL_PASS_OPACITY (0.001f)
 #define MATERIAL_PASS_OPACITY_FADE_SCALAR (0.8f)
 
@@ -2791,10 +2785,6 @@ void Drawable::drawIconUI()
 
 		//Moved this to last so that it shows up over contained and ammo icons.
 		drawVeterancy( healthBarRegion );
-
-#ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
-		drawUIText();
-#endif
 	}
 }
 
@@ -3173,48 +3163,6 @@ void Drawable::drawUIText()
 													TheDrawGroupInfo->m_dropShadowOffsetY);
 
 	}
-
-#ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
-	if( obj->testStatus( OBJECT_STATUS_DECK_HEIGHT_OFFSET ) )
-	{
-		Object *carrier = TheGameLogic->findObjectByID( obj->getProducerID() );
-		if( carrier )
-		{
-			for (BehaviorModule** i = carrier->getBehaviorModules(); *i; ++i)
-			{
-				ParkingPlaceBehaviorInterface *pp = (*i)->getParkingPlaceBehaviorInterface();
-				if( pp )
-				{
-					Int index = pp->getSpaceIndex( obj->getID() );
-
-					Int xPos = healthBarRegion->lo.x;
-					Int yPos = healthBarRegion->lo.y;
-
-					if (TheDrawGroupInfo->m_usingPixelOffsetX) {
-						xPos += TheDrawGroupInfo->m_pixelOffsetX;
-					} else {
-						xPos += (healthBarRegion->width() * TheDrawGroupInfo->m_percentOffsetX);
-					}
-
-					if (TheDrawGroupInfo->m_usingPixelOffsetY) {
-						yPos += TheDrawGroupInfo->m_pixelOffsetY;
-					} else {
-						yPos += (healthBarRegion->width() * TheDrawGroupInfo->m_percentOffsetY);
-					}
-
-					m_groupNumber = TheDisplayStringManager->getGroupNumeralString(index);
-
-
-					m_groupNumber->draw(xPos, yPos, color,
-															TheDrawGroupInfo->m_colorForTextDropShadow,
-															TheDrawGroupInfo->m_dropShadowOffsetX,
-															TheDrawGroupInfo->m_dropShadowOffsetY);
-					break;
-				}
-			}
-		}
-	}
-#endif
 }
 
 // ------------------------------------------------------------------------------------------------

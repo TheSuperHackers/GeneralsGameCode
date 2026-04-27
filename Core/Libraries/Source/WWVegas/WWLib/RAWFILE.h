@@ -81,26 +81,26 @@ class RawFileClass : public FileClass
 		RawFileClass();
 		RawFileClass (RawFileClass const & f);
 		RawFileClass & operator = (RawFileClass const & f);
-		virtual ~RawFileClass();
+		virtual ~RawFileClass() override;
 
-		virtual char const * File_Name() const;
-		virtual char const * Set_Name(char const *filename);
-		virtual int Create();
-		virtual int Delete();
-		virtual bool Is_Available(int forced=false);
-		virtual bool Is_Open() const;
-		virtual int Open(char const *filename, int rights=READ);
-		virtual int Open(int rights=READ);
-		virtual int Read(void *buffer, int size);
-		virtual int Seek(int pos, int dir=SEEK_CUR);
-		virtual int Size();
-		virtual int Write(void const *buffer, int size);
-		virtual void Close();
-		virtual unsigned long Get_Date_Time();
-		virtual bool Set_Date_Time(unsigned long datetime);
+		virtual char const * File_Name() const override;
+		virtual char const * Set_Name(char const *filename) override;
+		virtual int Create() override;
+		virtual int Delete() override;
+		virtual bool Is_Available(int forced=false) override;
+		virtual bool Is_Open() const override;
+		virtual int Open(char const *filename, int rights=READ) override;
+		virtual int Open(int rights=READ) override;
+		virtual int Read(void *buffer, int size) override;
+		virtual int Seek(int pos, int dir=SEEK_CUR) override;
+		virtual int Size() override;
+		virtual int Write(void const *buffer, int size) override;
+		virtual void Close() override;
+		virtual unsigned long Get_Date_Time() override;
+		virtual bool Set_Date_Time(unsigned long datetime) override;
 		virtual void Error(int error, int canretry = false, char const * filename=nullptr);
 		virtual void Bias(int start, int length=-1);
-		virtual void * Get_File_Handle() { return Handle; }
+		virtual void * Get_File_Handle() override { return Handle; }
 
 		virtual void	Attach (void *handle, int rights=READ);
 		virtual void	Detach ();

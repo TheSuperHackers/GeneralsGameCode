@@ -87,7 +87,7 @@ static void helper_pickAllWaypointsInPath( Int sourceID, CWorldBuilderDoc *pDoc,
 //
 
 /// Constructor
-PointerTool::PointerTool(void) :
+PointerTool::PointerTool() :
 	m_modifyUndoable(nullptr),
 	m_curObject(nullptr),
 	m_rotateCursor(nullptr),
@@ -99,7 +99,7 @@ PointerTool::PointerTool(void) :
 }
 
 /// Destructor
-PointerTool::~PointerTool(void)
+PointerTool::~PointerTool()
 {
 	REF_PTR_RELEASE(m_modifyUndoable); // belongs to pDoc now.
 	if (m_rotateCursor) {
@@ -111,7 +111,7 @@ PointerTool::~PointerTool(void)
 }
 
 /// See if a single obj is selected that has properties.
-void PointerTool::checkForPropertiesPanel(void)
+void PointerTool::checkForPropertiesPanel()
 {
 	MapObject *theMapObj = WaypointOptions::getSingleSelectedWaypoint();
 	PolygonTrigger *theTrigger = WaypointOptions::getSingleSelectedPolygon();
@@ -144,7 +144,7 @@ void PointerTool::checkForPropertiesPanel(void)
 }
 
 /// Clear the selection..
-void PointerTool::clearSelection(void) ///< Clears the selected objects selected flags.
+void PointerTool::clearSelection() ///< Clears the selected objects selected flags.
 {
 	// Clear selection.
 	MapObject *pObj = MapObject::getFirstMapObject();
@@ -188,7 +188,7 @@ void PointerTool::deactivate()
 }
 
 /** Set the cursor. */
-void PointerTool::setCursor(void)
+void PointerTool::setCursor()
 {
 	if (m_mouseUpRotate) {
 		if (m_rotateCursor == nullptr) {

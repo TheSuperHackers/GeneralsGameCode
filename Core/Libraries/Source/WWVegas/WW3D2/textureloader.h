@@ -272,19 +272,19 @@ class CubeTextureLoadTaskClass : public TextureLoadTaskClass
 public:
 	CubeTextureLoadTaskClass();
 
-	virtual void			Destroy						();
-	virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority);
-	virtual void			Deinit						();
+	virtual void			Destroy						() override;
+	virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority) override;
+	virtual void			Deinit						() override;
 
 protected:
-	virtual bool			Begin_Compressed_Load	();
-	virtual bool			Begin_Uncompressed_Load	();
+	virtual bool			Begin_Compressed_Load	() override;
+	virtual bool			Begin_Uncompressed_Load	() override;
 
-	virtual bool			Load_Compressed_Mipmap	();
-//	virtual bool			Load_Uncompressed_Mipmap();
+	virtual bool			Load_Compressed_Mipmap	() override;
+//	virtual bool			Load_Uncompressed_Mipmap() override;
 
-	virtual void			Lock_Surfaces				();
-	virtual void			Unlock_Surfaces			();
+	virtual void			Lock_Surfaces				() override;
+	virtual void			Unlock_Surfaces			() override;
 
 private:
 	unsigned char*			Get_Locked_CubeMap_Surface_Pointer(unsigned int face, unsigned int level);
@@ -301,18 +301,18 @@ class VolumeTextureLoadTaskClass : public TextureLoadTaskClass
 public:
 	VolumeTextureLoadTaskClass();
 
-	virtual void			Destroy						();
-	virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority);
+	virtual void			Destroy						() override;
+	virtual void			Init							(TextureBaseClass *tc, TaskType type, PriorityType priority) override;
 
 protected:
-	virtual bool			Begin_Compressed_Load	();
-	virtual bool			Begin_Uncompressed_Load	();
+	virtual bool			Begin_Compressed_Load	() override;
+	virtual bool			Begin_Uncompressed_Load	() override;
 
-	virtual bool			Load_Compressed_Mipmap	();
-//	virtual bool			Load_Uncompressed_Mipmap();
+	virtual bool			Load_Compressed_Mipmap	() override;
+//	virtual bool			Load_Uncompressed_Mipmap() override;
 
-	virtual void			Lock_Surfaces				();
-	virtual void			Unlock_Surfaces			();
+	virtual void			Lock_Surfaces				() override;
+	virtual void			Unlock_Surfaces			() override;
 
 private:
 	unsigned char*			Get_Locked_Volume_Pointer(unsigned int level);

@@ -57,7 +57,7 @@ RoadOptions::RoadOptions(CWnd* pParent /*=nullptr*/)
 }
 
 
-RoadOptions::~RoadOptions(void)
+RoadOptions::~RoadOptions()
 {
 	m_currentRoadName.clear();
 }
@@ -86,7 +86,7 @@ END_MESSAGE_MAP()
 // RoadOptions data access method.
 
 
-void RoadOptions::updateLabel(void)
+void RoadOptions::updateLabel()
 {
 	const char *tName = getCurRoadName().str();
 
@@ -97,7 +97,7 @@ void RoadOptions::updateLabel(void)
 }
 
 /** Returns true if only one or more roads is selected. */
-Bool RoadOptions::selectionIsRoadsOnly(void)
+Bool RoadOptions::selectionIsRoadsOnly()
 {
 //	MapObject *theMapObj = nullptr;
 	Bool foundRoad = false;
@@ -116,7 +116,7 @@ Bool RoadOptions::selectionIsRoadsOnly(void)
 }
 
 /** Returns true if only one or more roads is selected. */
-void RoadOptions::updateSelection(void)
+void RoadOptions::updateSelection()
 {
 //	MapObject *theMapObj = nullptr;
 	Int angled = 0;
@@ -189,7 +189,7 @@ void RoadOptions::updateSelection(void)
 }
 
 /** Applies road corner flags and road type to selection. */
-void RoadOptions::applyToSelection(void)
+void RoadOptions::applyToSelection()
 {
 	Int flagMask = FLAG_ROAD_CORNER_ANGLED | FLAG_ROAD_CORNER_TIGHT;
 	Int flagVal = 0;
@@ -438,7 +438,7 @@ Bool RoadOptions::setRoadTreeViewSelection(HTREEITEM parent, Int selection)
 	return(false);
 }
 
-void RoadOptions::SelectConnected(void)
+void RoadOptions::SelectConnected()
 {
 	std::list<MapObject*> roadSegs;
 	std::list<MapObject*> connectedSegs;

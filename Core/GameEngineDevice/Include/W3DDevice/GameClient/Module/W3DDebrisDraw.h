@@ -54,21 +54,21 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the draw method
-	virtual void doDrawModule(const Matrix3D* transformMtx);
+	virtual void doDrawModule(const Matrix3D* transformMtx) override;
 
-	virtual void setShadowsEnabled(Bool enable);
-	virtual void releaseShadows() {};	///< we don't care about preserving temporary shadows.
-	virtual void allocateShadows() {};	///< we don't care about preserving temporary shadows.
+	virtual void setShadowsEnabled(Bool enable) override;
+	virtual void releaseShadows() override {};	///< we don't care about preserving temporary shadows.
+	virtual void allocateShadows() override {};	///< we don't care about preserving temporary shadows.
 
-	virtual void setFullyObscuredByShroud(Bool fullyObscured);
-	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
-	virtual void reactToGeometryChange() { }
+	virtual void setFullyObscuredByShroud(Bool fullyObscured) override;
+	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) override;
+	virtual void reactToGeometryChange() override { }
 
-	virtual void setModelName(AsciiString name, Color color, ShadowType t);
-	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX);
+	virtual void setModelName(AsciiString name, Color color, ShadowType t) override;
+	virtual void setAnimNames(AsciiString initial, AsciiString flying, AsciiString finalAnim, const FXList* finalFX) override;
 
-	virtual DebrisDrawInterface* getDebrisDrawInterface() { return this; }
-	virtual const DebrisDrawInterface* getDebrisDrawInterface() const { return this; }
+	virtual DebrisDrawInterface* getDebrisDrawInterface() override { return this; }
+	virtual const DebrisDrawInterface* getDebrisDrawInterface() const override { return this; }
 
 private:
 

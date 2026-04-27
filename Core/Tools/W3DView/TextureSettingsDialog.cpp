@@ -81,7 +81,6 @@ TextureSettingsDialogClass::TextureSettingsDialogClass
 	//}}AFX_DATA_INIT
 	REF_PTR_SET (m_pTexture, ptexture);
 	REF_PTR_SET (m_pOriginalTexture, poriginal_texture);
-	return ;
 }
 
 
@@ -94,7 +93,6 @@ TextureSettingsDialogClass::~TextureSettingsDialogClass (void)
 	SR_RELEASE (m_pTexture);
 	SR_RELEASE (m_pOriginalTexture);
 	SR_RELEASE (m_pStartingTexture);
-	return ;
 }
 
 
@@ -111,7 +109,6 @@ TextureSettingsDialogClass::DoDataExchange (CDataExchange *pDX)
 	DDX_Control(pDX, IDC_FPS_SPIN, m_FrameRateSpin);
 	DDX_Control(pDX, IDC_FRAME_COUNT_SPIN, m_FrameCountSpin);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -189,7 +186,6 @@ TextureSettingsDialogClass::Load_Texture_Settings (void)
 
 	// Release our hold on the texture
 	SR_RELEASE (ptexture);
-	return ;
 }
 
 
@@ -237,8 +233,6 @@ TextureSettingsDialogClass::Fill_Controls (TextureClass *ptexture)
 		SendDlgItemMessage (IDC_CLAMPU_CHECK, BM_SETCHECK, (WPARAM)(psource->Get_U_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP));
 		SendDlgItemMessage (IDC_CLAMPV_CHECK, BM_SETCHECK, (WPARAM)(psource->Get_V_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP));
 	}
-
-	return ;
 }
 
 
@@ -315,8 +309,6 @@ TextureSettingsDialogClass::Fill_Animation_Controls (TextureClass *ptexture)
 	} else {
 		m_TypeCombo.SetCurSel (0);
 	}
-
-	return ;
 }
 
 
@@ -332,7 +324,6 @@ TextureSettingsDialogClass::OnOK (void)
 
 	// Allow the base class to process this message
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -348,7 +339,6 @@ TextureSettingsDialogClass::OnCancel (void)
 
 	// Allow the base class to process this message
 	CDialog::OnCancel ();
-	return ;
 }
 
 
@@ -367,7 +357,6 @@ TextureSettingsDialogClass::OnAnimationCheck (void)
 	::EnableWindow (m_TypeCombo, benable);
 	::EnableWindow (m_FrameRateSpin, benable);
 	::EnableWindow (m_FrameCountSpin, benable);
-	return ;
 }
 
 
@@ -437,7 +426,6 @@ TextureSettingsDialogClass::OnDestroy (void)
 
 	// Allow the base class to process this message
 	CDialog::OnDestroy ();
-	return ;
 }
 
 
@@ -470,8 +458,6 @@ TextureSettingsDialogClass::OnBrowseButton (void)
 		// Enable the apply button
 		::EnableWindow (::GetDlgItem (m_hWnd, IDC_APPLY), TRUE);
 	}
-
-	return ;
 }
 
 
@@ -511,8 +497,6 @@ TextureSettingsDialogClass::Paint_Thumbnail (void)
 		::DeleteDC (hmem_dc);
 		::ValidateRect (hchild_wnd, nullptr);
 	}
-
-	return ;
 }
 
 
@@ -536,8 +520,6 @@ TextureSettingsDialogClass::OnRestore (void)
 		// Disable the apply button because we just did...
 		::EnableWindow (::GetDlgItem (m_hWnd, IDC_APPLY), FALSE);
 	}
-
-	return ;
 }
 
 
@@ -645,7 +627,6 @@ TextureSettingsDialogClass::OnApply (void)
 
 	// Disable the apply button because we just did...
 	::EnableWindow (::GetDlgItem (m_hWnd, IDC_APPLY), FALSE);
-	return ;
 }
 
 #endif //WW3D_DX8

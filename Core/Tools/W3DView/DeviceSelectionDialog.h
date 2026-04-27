@@ -71,7 +71,7 @@ protected:
             { return m_DriverName; }
 
     protected:
-        void UpdateDeviceDescription (void);
+        void UpdateDeviceDescription ();
 
     private:
         BOOL		m_bLookupCachedInfo;

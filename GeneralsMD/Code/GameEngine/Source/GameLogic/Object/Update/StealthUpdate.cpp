@@ -327,8 +327,7 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 	}
 
 	//We need all required status or else we fail
-	// If we have any requirements
-	if( data->m_requiredStatus.any()  &&  !self->getStatusBits().testForAll( data->m_requiredStatus ) )
+	if( !self->getStatusBits().testForAll( data->m_requiredStatus ) )
 		return FALSE;
 
 	//If we have any forbidden statii, then fail

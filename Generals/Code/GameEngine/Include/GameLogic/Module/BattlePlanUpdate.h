@@ -162,6 +162,7 @@ public:
 	virtual void onObjectCreated() override;
 	virtual void onDelete() override;
 	virtual UpdateSleepTime update() override;
+	virtual void onCapture(Player* oldOwner, Player* newOwner) override;
 
 	virtual CommandOption getCommandOption() const override;
 protected:

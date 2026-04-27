@@ -324,7 +324,7 @@ void RiderChangeContain::onRemoving( Object *rider )
 		if( containDraw && riderDraw )
 		{
 			//Create the selection message for the rider if it's ours and SELECTED!
-			if( bike->getControllingPlayer() == ThePlayerList->getLocalPlayer() && containDraw->isSelected() )
+			if( bike->isLocallyControlled() && containDraw->isSelected() )
 			{
 				GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
 				teamMsg->appendBooleanArgument( FALSE );// not creating new team so pass false

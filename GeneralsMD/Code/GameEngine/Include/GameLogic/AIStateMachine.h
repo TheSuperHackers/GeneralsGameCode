@@ -136,9 +136,9 @@ public:
 	 */
 	AIStateMachine( Object *owner, AsciiString name );
 
-	virtual void clear();
-	virtual StateReturnType resetToDefaultState();
-	virtual StateReturnType setState( StateID newStateID );
+	virtual void clear() override;
+	virtual StateReturnType resetToDefaultState() override;
+	virtual StateReturnType setState( StateID newStateID ) override;
 
 	/// @todo Rethink state parameter passing. Continuing in this fashion will have a pile of params in the machine (MSB)
 	void setGoalPath( std::vector<Coord3D>* path );
@@ -161,16 +161,16 @@ public:
 	StateID getTemporaryState() const {return m_temporaryState?m_temporaryState->getID():INVALID_STATE_ID;}
 
 public:	// overrides.
-	virtual StateReturnType updateStateMachine();				///< run one step of the machine
+	virtual StateReturnType updateStateMachine() override;				///< run one step of the machine
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getCurrentStateName() const ;
 #endif
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	std::vector<Coord3D>	m_goalPath;					///< defines a simple path to follow
@@ -202,9 +202,9 @@ enum StateType CPP_11(: Int)
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-----------------------------------------------------------------------------------------------------------
@@ -225,16 +225,16 @@ public:
 		LOOK_FOR_TARGETS,
 		DO_NOT_LOOK_FOR_TARGETS
 	};
-	virtual Bool isIdle() const { return true; }
+	virtual Bool isIdle() const override { return true; }
 	AIIdleState( StateMachine *machine, AIIdleTargetingType shouldLookForTargets);
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 EMPTY_DTOR(AIIdleState)
@@ -258,9 +258,9 @@ public:
 		m_goalLayer = LAYER_INVALID;
 	}
 
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 
@@ -283,9 +283,9 @@ private:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	enum { MIN_REPATH_TIME = 10 };										///< minimum # of frames must elapse before re-pathing
@@ -318,15 +318,15 @@ protected:
 	Bool m_targetIsBldg;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 public:
 	AIRappelState( StateMachine *machine );
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIRappelState)
 
@@ -339,15 +339,15 @@ class AIBusyState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIBusyState, "AIBusyState")
 public:
 	AIBusyState( StateMachine *machine ) : State( machine, "AIBusyState" ) { }
-	virtual StateReturnType onEnter() { return STATE_CONTINUE; }
-	virtual void onExit( StateExitType status ) { }
-	virtual StateReturnType update() { return STATE_CONTINUE; }
-	virtual Bool isBusy() const { return true; }
+	virtual StateReturnType onEnter() override { return STATE_CONTINUE; }
+	virtual void onExit( StateExitType status ) override { }
+	virtual StateReturnType update() override { return STATE_CONTINUE; }
+	virtual Bool isBusy() const override { return true; }
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 
 };
 EMPTY_DTOR(AIBusyState)
@@ -363,9 +363,9 @@ protected:
 	Bool m_isMoveTo;
 public:
 	AIMoveToState( StateMachine *machine );
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 };
 EMPTY_DTOR(AIMoveToState)
 
@@ -378,11 +378,11 @@ class AIMoveOutOfTheWayState : public AIInternalMoveToState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveOutOfTheWayState, "AIMoveOutOfTheWayState")
 public:
 	AIMoveOutOfTheWayState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIMoveOutOfTheWayState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
-	virtual Bool computePath();												///< compute the path
+	virtual Bool computePath() override;												///< compute the path
 
 };
 EMPTY_DTOR(AIMoveOutOfTheWayState)
@@ -405,17 +405,17 @@ public:
 		m_checkForPath = false;
 		m_okToRepathTimes = 0;
 	}
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
 protected:
-	virtual Bool computePath();												///< compute the path
+	virtual Bool computePath() override;												///< compute the path
 	Int m_okToRepathTimes;
 	Bool m_checkForPath;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 EMPTY_DTOR(AIMoveAndTightenState)
 
@@ -428,11 +428,11 @@ class AIMoveAwayFromRepulsorsState : public AIMoveAndTightenState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIMoveAwayFromRepulsorsState, "AIMoveAwayFromRepulsorsState")
 public:
 	AIMoveAwayFromRepulsorsState( StateMachine *machine ) : AIMoveAndTightenState( machine, "AIMoveAwayFromRepulsors" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
-	virtual Bool computePath();												///< compute the path
+	virtual Bool computePath() override;												///< compute the path
 
 };
 EMPTY_DTOR(AIMoveAwayFromRepulsorsState)
@@ -455,18 +455,18 @@ public:
 		// we're setting m_isInitialApproach to true in the constructor because we want the first pass
 		// through this state to allow a unit to attack incidental targets (if it is turreted)
 	}
-	virtual Bool isAttack() const { return TRUE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return TRUE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
-	virtual Bool computePath();												///< compute the path
+	virtual Bool computePath() override;												///< compute the path
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 
@@ -504,18 +504,18 @@ public:
 		// we're setting m_isInitialApproach to true in the constructor because we want the first pass
 		// through this state to allow a unit to attack incidental targets (if it is turreted)
 	}
-	virtual Bool isAttack() const { return TRUE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return TRUE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
-	virtual Bool computePath();												///< compute the path
+	virtual Bool computePath() override;												///< compute the path
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 
@@ -547,19 +547,19 @@ public:
 		// we're setting m_isInitialApproach to true in the constructor because we want the first pass
 		// through this state to allow a unit to attack incidental targets (if it is turreted)
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
-	virtual Bool computePath();												///< compute the path
+	virtual Bool computePath() override;												///< compute the path
 
 private:
 	Int			m_delayCounter;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 EMPTY_DTOR(AIPickUpCrateState)
 
@@ -574,10 +574,10 @@ public:
 	AIAttackMoveToState( StateMachine *machine );
 	//virtual ~AIAttackMoveToState();
 
-	virtual Bool isAttack() const { return m_attackMoveMachine ? m_attackMoveMachine->isInAttackState() : FALSE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return m_attackMoveMachine ? m_attackMoveMachine->isInAttackState() : FALSE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
@@ -591,9 +591,9 @@ protected:
 	Int						m_retryCount;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-----------------------------------------------------------------------------------------------------------
@@ -615,15 +615,15 @@ public:
 	{
 		m_angle = 0.0f;
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	Coord2D m_groupOffset;
@@ -657,15 +657,15 @@ public:
 	AIFollowWaypointPathExactState( StateMachine *machine, Bool asGroup ) : m_moveAsGroup(asGroup),
 		m_lastWaypoint(nullptr),
 		AIInternalMoveToState( machine, "AIFollowWaypointPathExactState" ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	const Waypoint *m_lastWaypoint;
@@ -684,11 +684,11 @@ public:
 	AIAttackFollowWaypointPathState( StateMachine *machine, Bool asGroup );
 	//virtual ~AIAttackFollowWaypointPathState();
 
-	virtual Bool isAttack() const { return m_attackFollowMachine ? m_attackFollowMachine->isInAttackState() : FALSE; }
+	virtual Bool isAttack() const override { return m_attackFollowMachine ? m_attackFollowMachine->isInAttackState() : FALSE; }
 
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
@@ -698,9 +698,9 @@ protected:
 	StateMachine *m_attackFollowMachine;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 };
 
 //-----------------------------------------------------------------------------------------------------------
@@ -719,15 +719,15 @@ public:
 		m_timer = 0;
 		m_waitFrames = 0;
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	Int		m_waitFrames;
@@ -749,15 +749,15 @@ public:
 		m_waitFrames = 0;
 		m_timer = 0;
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	void computeWanderGoal();
@@ -781,14 +781,14 @@ public:
 		setName("AIPanicState");
 #endif
 	}
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	Int		m_waitFrames;
@@ -811,9 +811,9 @@ public:
 		m_index(0),
 		m_retryCount(10),
 		AIInternalMoveToState( machine, name ) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
 protected:
 
@@ -823,9 +823,9 @@ protected:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	Int m_index;																		///< current path index
@@ -847,14 +847,14 @@ public:
 	{
 		m_origin.zero();
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	Coord3D m_origin;													///< current position - set as goal on exit in case we follow with MoveToAndDelete.
@@ -873,14 +873,14 @@ public:
 	{
 		m_appendGoalPosition = FALSE;
 	}
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	Bool m_appendGoalPosition;
@@ -900,15 +900,15 @@ public:
 		m_setLocomotor(false)
 	{
 	}
-	virtual Bool isAttack() const { return TRUE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return TRUE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 private:
 	const Bool m_isAttackingObject;
 	Bool m_canTurnInPlace;
@@ -923,12 +923,12 @@ class AIWaitState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIWaitState, "AIWaitState")
 public:
 	AIWaitState( StateMachine *machine ) : State( machine,"AIWaitState" ) { }
-	virtual StateReturnType update();
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIWaitState)
 
@@ -953,15 +953,15 @@ public:
 		m_att(att)
 	{
 	}
-	virtual Bool isAttack() const { return TRUE; }
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType onEnter();
+	virtual Bool isAttack() const override { return TRUE; }
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType onEnter() override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 private:
 	NotifyWeaponFiredInterface *const m_att;		// this is NOT owned by us and should not be freed
 };
@@ -983,16 +983,16 @@ public:
 	AIAttackState( StateMachine *machine, Bool follow, Bool attackingObject, Bool forceAttacking, AttackExitConditionsInterface* attackParameters);
 	//~AIAttackState();
 
-	virtual Bool isAttack() const { return TRUE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return TRUE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 
-	virtual void notifyFired() { /* nothing */ }
-	virtual void notifyNewVictimChosen(Object* victim);
-	virtual const Coord3D* getOriginalVictimPos() const { return &m_originalVictimPos; }
-	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const { return true; }
-	virtual Bool isAttackingObject() const { return m_isAttackingObject; }
+	virtual void notifyFired() override { /* nothing */ }
+	virtual void notifyNewVictimChosen(Object* victim) override;
+	virtual const Coord3D* getOriginalVictimPos() const override { return &m_originalVictimPos; }
+	virtual Bool isWeaponSlotOkToFire(WeaponSlotType wslot) const override { return true; }
+	virtual Bool isAttackingObject() const override { return m_isAttackingObject; }
 	virtual Bool isForceAttacking() const { return m_isForceAttacking; }
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
@@ -1000,9 +1000,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 
@@ -1027,10 +1027,10 @@ public:
 			State( machine , "AIAttackSquadState") {	}
 	//~AIAttackSquadState();
 
-	virtual Bool isAttack() const { return m_attackSquadMachine ? m_attackSquadMachine->isInAttackState() : FALSE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return m_attackSquadMachine ? m_attackSquadMachine->isInAttackState() : FALSE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 	Object *chooseVictim();
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
@@ -1039,9 +1039,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	StateMachine *m_attackSquadMachine;						///< state sub-machine for attack behavior
@@ -1053,14 +1053,14 @@ class AIDeadState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIDeadState, "AIDeadState")
 public:
 	AIDeadState( StateMachine *machine ) : State( machine, "AIDeadState" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ){};
-	virtual void xfer( Xfer *xfer ){XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
-	virtual void loadPostProcess(){};
+	virtual void crc( Xfer *xfer ) override {};
+	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void loadPostProcess() override {};
 };
 EMPTY_DTOR(AIDeadState)
 
@@ -1071,19 +1071,19 @@ class AIDockState : public State
 public:
 	AIDockState( StateMachine *machine ) : State( machine, "AIDockState" ), m_dockMachine(nullptr), m_usingPrecisionMovement(FALSE) { }
 	//~AIDockState();
-	virtual Bool isAttack() const { return m_dockMachine ? m_dockMachine->isInAttackState() : FALSE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return m_dockMachine ? m_dockMachine->isInAttackState() : FALSE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	StateMachine *m_dockMachine;				///< state sub-machine for docking behavior
@@ -1100,14 +1100,14 @@ protected:
 	ObjectID m_entryToClear;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 public:
 	AIEnterState( StateMachine *machine ) : AIInternalMoveToState( machine, "AIEnterState" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 };
 EMPTY_DTOR(AIEnterState)
 
@@ -1119,14 +1119,14 @@ protected:
 	ObjectID m_entryToClear;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 public:
 	AIExitState( StateMachine *machine ) : State( machine, "AIExitState" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 };
 EMPTY_DTOR(AIExitState)
 
@@ -1138,14 +1138,14 @@ protected:
 	ObjectID m_entryToClear;
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 public:
 	AIExitInstantlyState( StateMachine *machine ) : State( machine, "AIExitInstantlyState" ) { }
-	virtual StateReturnType onEnter();
-	virtual StateReturnType update();
-	virtual void onExit( StateExitType status );
+	virtual StateReturnType onEnter() override;
+	virtual StateReturnType update() override;
+	virtual void onExit( StateExitType status ) override;
 };
 EMPTY_DTOR(AIExitInstantlyState)
 
@@ -1163,19 +1163,19 @@ public:
 		m_guardMachine = nullptr;
 	}
 	//~AIGuardState();
-	virtual Bool isAttack() const;
-	virtual Bool isGuardIdle() const;
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override;
+	virtual Bool isGuardIdle() const override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	AIGuardMachine *m_guardMachine;					///< state sub-machine for guard behavior
@@ -1191,18 +1191,18 @@ class AIGuardRetaliateState : public State
 public:
 	AIGuardRetaliateState( StateMachine *machine ) : State( machine, "AIGuardRetaliateState" ), m_guardRetaliateMachine(nullptr) {}
 	//~AIGuardRetaliateState();
-	virtual Bool isAttack() const;
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	AIGuardRetaliateMachine *m_guardRetaliateMachine;					///< state sub-machine for retaliate behavior
@@ -1221,18 +1221,18 @@ public:
 		m_guardMachine = nullptr;
 	}
 	//~AIGuardState();
-	virtual Bool isAttack() const;
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	AITNGuardMachine *m_guardMachine;					///< state sub-machine for guard behavior
@@ -1251,19 +1251,19 @@ public:
 		m_nextEnemyScanTime = 0;
 	}
 	//~AIHuntState();
-	virtual Bool isAttack() const;
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override;
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	StateMachine* m_huntMachine;					///< state sub-machine for hunt behavior
@@ -1282,19 +1282,19 @@ public:
 	AIAttackAreaState( StateMachine *machine ) : State( machine, "AIAttackAreaState" ), m_attackMachine(nullptr),
 		m_nextEnemyScanTime(0) { }
 	//~AIAttackAreaState();
-	virtual Bool isAttack() const { return m_attackMachine ? m_attackMachine->isInAttackState() : FALSE; }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual Bool isAttack() const override { return m_attackMachine ? m_attackMachine->isInAttackState() : FALSE; }
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const ;
 #endif
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 	StateMachine *m_attackMachine;					///< state sub-machine for attack behavior
@@ -1310,14 +1310,14 @@ class AIFaceState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AIFaceState, "AIFaceState")
 public:
 	AIFaceState( StateMachine *machine, Bool obj ) : State( machine, "AIFaceState" ), m_canTurnInPlace(false), m_obj(obj) { }
-	virtual StateReturnType onEnter();
-	virtual void onExit( StateExitType status );
-	virtual StateReturnType update();
+	virtual StateReturnType onEnter() override;
+	virtual void onExit( StateExitType status ) override;
+	virtual StateReturnType update() override;
 protected:
 	// snapshot interface .
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	const Bool m_obj;

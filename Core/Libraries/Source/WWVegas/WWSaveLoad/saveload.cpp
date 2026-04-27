@@ -303,5 +303,4 @@ void SaveLoadSystemClass::Unlink_Factory(PersistFactoryClass * fact)
 void Force_Link_WWSaveLoad ()
 {
 	FORCE_LINK( Twiddler );
-	return ;
 }

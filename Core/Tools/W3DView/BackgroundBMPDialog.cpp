@@ -45,7 +45,6 @@ CBackgroundBMPDialog::CBackgroundBMPDialog (CWnd* pParent /*=nullptr*/)
 	//{{AFX_DATA_INIT(CBackgroundBMPDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -61,7 +60,6 @@ CBackgroundBMPDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CBackgroundBMPDialog)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -79,7 +77,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CBackgroundBMPDialog::OnInitDialog (void)
+CBackgroundBMPDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -104,7 +102,7 @@ CBackgroundBMPDialog::OnInitDialog (void)
 //  OnOK
 //
 void
-CBackgroundBMPDialog::OnOK (void)
+CBackgroundBMPDialog::OnOK ()
 {
     // Gett a pointer to the current document
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
@@ -127,7 +125,6 @@ CBackgroundBMPDialog::OnOK (void)
 
 	// Allow the base class to process this message
     CDialog::OnOK ();
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -135,7 +132,7 @@ CBackgroundBMPDialog::OnOK (void)
 //  OnBrowse
 //
 void
-CBackgroundBMPDialog::OnBrowse (void)
+CBackgroundBMPDialog::OnBrowse ()
 {
     // Get a pointer to the current document
     CW3DViewDoc *pCDoc = ::GetCurrentDocument ();
@@ -155,6 +152,4 @@ CBackgroundBMPDialog::OnBrowse (void)
             SetDlgItemText (IDC_FILENAME_EDIT, openFileDialog.GetPathName ());
         }
     }
-
-    return ;
 }

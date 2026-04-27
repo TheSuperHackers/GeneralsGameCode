@@ -43,7 +43,7 @@ VelocityPanelOrtho::VelocityPanelOrtho(UINT nIDTemplate, CWnd* pParentWnd) : ISw
 
 }
 
-void VelocityPanelOrtho::InitPanel( void )
+void VelocityPanelOrtho::InitPanel()
 {
 
 }
@@ -177,7 +177,7 @@ VelocityPanelSphere::VelocityPanelSphere(UINT nIDTemplate, CWnd* pParentWnd) : I
 
 }
 
-void VelocityPanelSphere::InitPanel( void )
+void VelocityPanelSphere::InitPanel()
 {
 
 }
@@ -248,7 +248,7 @@ VelocityPanelHemisphere::VelocityPanelHemisphere(UINT nIDTemplate, CWnd* pParent
 
 }
 
-void VelocityPanelHemisphere::InitPanel( void )
+void VelocityPanelHemisphere::InitPanel()
 {
 
 }
@@ -318,7 +318,7 @@ VelocityPanelCylinder::VelocityPanelCylinder(UINT nIDTemplate, CWnd* pParentWnd)
 
 }
 
-void VelocityPanelCylinder::InitPanel( void )
+void VelocityPanelCylinder::InitPanel()
 {
 
 }
@@ -420,7 +420,7 @@ VelocityPanelOutward::VelocityPanelOutward(UINT nIDTemplate, CWnd* pParentWnd) :
 
 }
 
-void VelocityPanelOutward::InitPanel( void )
+void VelocityPanelOutward::InitPanel()
 {
 
 }

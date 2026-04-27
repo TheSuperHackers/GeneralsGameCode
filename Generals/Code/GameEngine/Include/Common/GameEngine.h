@@ -55,11 +55,11 @@ class GameEngine : public SubsystemInterface
 public:
 
 	GameEngine();
-	virtual ~GameEngine();
+	virtual ~GameEngine() override;
 
-	virtual void init();								///< Init engine by creating client and logic
-	virtual void reset();								///< reset system to starting state
-	virtual void update();							///< per frame update
+	virtual void init() override;								///< Init engine by creating client and logic
+	virtual void reset() override;								///< reset system to starting state
+	virtual void update() override;							///< per frame update
 
 	virtual void execute();											/**< The "main loop" of the game engine.
 																								 It will not return until the game exits. */
@@ -93,10 +93,10 @@ protected:
 	virtual ModuleFactory *createModuleFactory() = 0;			///< Factory for modules
 	virtual ThingFactory *createThingFactory() = 0;				///< Factory for the thing factory
 	virtual FunctionLexicon *createFunctionLexicon() = 0;	///< Factory for Function Lexicon
-	virtual Radar *createRadar() = 0;											///< Factory for radar
+	virtual Radar *createRadar(Bool dummy) = 0;						///< Factory for radar
 	virtual WebBrowser *createWebBrowser() = 0;						///< Factory for embedded browser
-	virtual ParticleSystemManager* createParticleSystemManager() = 0;
-	virtual AudioManager *createAudioManager() = 0;				///< Factory for Audio Manager
+	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) = 0;
+	virtual AudioManager *createAudioManager(Bool dummy) = 0;				///< Factory for Audio Manager
 
 	Real m_logicTimeAccumulator; ///< Frame time accumulated towards submitting a new logic frame
 

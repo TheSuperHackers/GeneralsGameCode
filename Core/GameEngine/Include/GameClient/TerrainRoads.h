@@ -199,11 +199,11 @@ class TerrainRoadCollection : public SubsystemInterface
 public:
 
 	TerrainRoadCollection();
-	~TerrainRoadCollection();
+	virtual ~TerrainRoadCollection() override;
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	virtual void init() override { }
+	virtual void reset() override { }
+	virtual void update() override { }
 
 	TerrainRoadType *findRoad( AsciiString name );		///< find road with matching name
 	TerrainRoadType *newRoad( AsciiString name );			///< allocate new road, assign name, and link to list

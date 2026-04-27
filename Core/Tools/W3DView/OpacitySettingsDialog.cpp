@@ -56,7 +56,6 @@ OpacitySettingsDialogClass::OpacitySettingsDialogClass (float opacity, CWnd *pPa
 	//{{AFX_DATA_INIT(OpacitySettingsDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -72,7 +71,6 @@ OpacitySettingsDialogClass::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(OpacitySettingsDialogClass)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -88,7 +86,7 @@ END_MESSAGE_MAP()
 //
 /////////////////////////////////////////////////////////////////////////////
 BOOL
-OpacitySettingsDialogClass::OnInitDialog (void)
+OpacitySettingsDialogClass::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -112,9 +110,8 @@ OpacitySettingsDialogClass::OnInitDialog (void)
 //
 /////////////////////////////////////////////////////////////////////////////
 void
-OpacitySettingsDialogClass::OnOK (void)
+OpacitySettingsDialogClass::OnOK ()
 {
 	m_Opacity = m_OpacityBar->Get_Selection_Pos ();
 	CDialog::OnOK ();
-	return ;
 }

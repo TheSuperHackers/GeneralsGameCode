@@ -32,6 +32,7 @@ FrameRateLimit::FrameRateLimit()
 
 Real FrameRateLimit::wait(UnsignedInt maxFps)
 {
+	PROFILER_SECTION;
 	LARGE_INTEGER tick;
 	QueryPerformanceCounter(&tick);
 	double elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;

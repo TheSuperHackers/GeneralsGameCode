@@ -54,7 +54,7 @@ public:
 
 // Implementation
 protected:
-	void		FillListControl (void);
+	void		FillListControl ();
 	int		FindItem (const char *item_name);
 	void		MakeChannelStr(int bone_idx, HAnimClass* hanim, char channels[6]);
 

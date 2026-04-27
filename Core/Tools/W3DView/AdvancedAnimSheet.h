@@ -52,8 +52,8 @@ public:
 // Operations
 public:
 
-	int				GetAnimCount (void);
-	HAnimClass **	GetAnims (void);
+	int				GetAnimCount ();
+	HAnimClass **	GetAnims ();
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -67,7 +67,7 @@ public:
 	// Generated message map functions
 protected:
 
-	void				LoadAnims (void);
+	void				LoadAnims ();
 
 	HAnimClass		*Anims[MAX_REPORT_ANIMS];
 	int				AnimCount;

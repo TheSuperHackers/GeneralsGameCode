@@ -107,12 +107,6 @@ enum WW3DZFormat
 	WW3D_ZFORMAT_D16, // 16-bit z-buffer bit depth.
 	WW3D_ZFORMAT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel.
 	WW3D_ZFORMAT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel.
-#ifdef _XBOX
-	WW3D_ZFORMAT_LIN_D24S8,
-	WW3D_ZFORMAT_LIN_F24S8,
-	WW3D_ZFORMAT_LIN_D16,
-	WW3D_ZFORMAT_LIN_F16,
-#endif
 	WW3D_ZFORMAT_COUNT
 };
 

@@ -67,7 +67,7 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 	Bool foundAddOrSub = false;
 
 	// loop through all tokens
-	for (const char *token = ini->getNextTokenOrNull(); token != nullptr; token = ini->getNextTokenOrNull())
+	for (const char *token = ini->getNextTokenOrNull(); token; token = ini->getNextTokenOrNull())
 	{
 		if (str)
 		{

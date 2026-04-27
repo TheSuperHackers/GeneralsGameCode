@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(BaseBuildProps)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -49,8 +49,8 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(BaseBuildProps)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -62,10 +62,10 @@ private:
 
 public:
 	void setProps(AsciiString name, AsciiString script, Int health, Bool unsellable);
-	AsciiString getName(void) {return m_name;}
-	AsciiString getScript(void) {return m_script;}
-	Int getHealth(void) {return m_health;}
-	Bool getUnsellable(void) {return m_unsellable;}
+	AsciiString getName() {return m_name;}
+	AsciiString getScript() {return m_script;}
+	Int getHealth() {return m_health;}
+	Bool getUnsellable() {return m_unsellable;}
 };
 
 //{{AFX_INSERT_LOCATION}}

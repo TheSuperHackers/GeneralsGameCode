@@ -78,6 +78,8 @@ enum GameMode CPP_11(: Int)
 	GAME_NONE
 };
 
+const char* toString(GameMode mode);
+
 enum
 {
 	CRC_CACHED,
@@ -101,12 +103,12 @@ class GameLogic : public SubsystemInterface, public Snapshot
 public:
 
 	GameLogic();
-	virtual ~GameLogic();
+	virtual ~GameLogic() override;
 
 	// subsystem methods
-	virtual void init();															///< Initialize or re-initialize the instance
-	virtual void reset();															///< Reset the logic system
-	virtual void update();														///< update the world
+	virtual void init() override;															///< Initialize or re-initialize the instance
+	virtual void reset() override;															///< Reset the logic system
+	virtual void update() override;														///< update the world
 
 	void preUpdate();
 
@@ -259,9 +261,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 private:
 
@@ -354,7 +356,7 @@ private:
 
 	/// factory for TheTerrainLogic, called from init()
 	virtual TerrainLogic *createTerrainLogic();
-	virtual GhostObjectManager *createGhostObjectManager();
+	virtual GhostObjectManager *createGhostObjectManager(bool dummy = false);
 
 	GameMode m_gameMode;
 	Int m_rankLevelLimit;

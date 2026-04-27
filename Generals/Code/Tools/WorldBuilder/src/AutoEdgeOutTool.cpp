@@ -33,13 +33,13 @@
 // AutoEdgeOutTool class.
 //
 /// Constructor
-AutoEdgeOutTool::AutoEdgeOutTool(void) :
+AutoEdgeOutTool::AutoEdgeOutTool() :
 	Tool(ID_AUTO_EDGE_OUT_TOOL, IDC_AUTO_EDGE_OUT)
 {
 }
 
 /// Destructor
-AutoEdgeOutTool::~AutoEdgeOutTool(void)
+AutoEdgeOutTool::~AutoEdgeOutTool()
 {
 }
 

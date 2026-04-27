@@ -61,8 +61,8 @@ typedef ListLayer::iterator ListLayerIt;
 class CLLTreeCtrl : public CTreeCtrl
 {
 	public:
-		AsciiString getLastClickedLayer(void) {	return mLastClickedLayer; }
-		AsciiString getLastClickedObject(void) {	return mLastClickedObject; }
+		AsciiString getLastClickedLayer() {	return mLastClickedLayer; }
+		AsciiString getLastClickedObject() {	return mLastClickedObject; }
 
 	protected:
 		AsciiString mLastClickedLayer;
@@ -82,7 +82,7 @@ class LayersList : public CDialog
 	public:
 		enum { IDD = IDD_LAYERSLIST };
 		LayersList(UINT nIDTemplate = LayersList::IDD, CWnd *parentWnd = nullptr);
-		virtual ~LayersList();
+		virtual ~LayersList() override;
 
 		void resetLayers();
 		void addMapObjectToLayersList(IN MapObject *objToAdd, AsciiString layerToAddTo = AsciiString(TheDefaultLayerName.c_str()));
@@ -97,12 +97,12 @@ class LayersList : public CDialog
 
 		Bool isLayerHidden(IN AsciiString layerToTest);
 
-		void updateUIFromList(void);
+		void updateUIFromList();
 
 		void disableUpdates() { m_performUpdates = false; }
 		void enableUpdates() { m_performUpdates = true; updateUIFromList(); }
 
-		const ListLayer& GetAllLayers(void) const { return mLayers; }
+		const ListLayer& GetAllLayers() const { return mLayers; }
 
 		static MapObject *findObjectByUID(AsciiString objectIDToFind);
 
@@ -139,9 +139,9 @@ class LayersList : public CDialog
 		void removeMapObjectFromLayer(IN MapObject *objToRemove, IN ListLayerIt *layerIt = nullptr, IN ListMapObjectPtrIt *MapObjectIt = nullptr);
 
 	protected:
-		virtual void OnOK();
-		virtual void OnCancel();
-		virtual BOOL OnInitDialog();
+		virtual void OnOK() override;
+		virtual void OnCancel() override;
+		virtual BOOL OnInitDialog() override;
 
 		afx_msg void OnBeginEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult);
 		afx_msg void OnEndEditLabel(NMHDR *pNotifyStruct, LRESULT* pResult);

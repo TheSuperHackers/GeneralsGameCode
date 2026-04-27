@@ -85,15 +85,15 @@ class GridCullSystemClass : public CullSystemClass
 public:
 
 	GridCullSystemClass();
-	~GridCullSystemClass();
+	virtual ~GridCullSystemClass() override;
 
-	virtual void		Collect_Objects(const Vector3 & point);
-	virtual void		Collect_Objects(const AABoxClass & box);
-	virtual void		Collect_Objects(const OBBoxClass & box);
-	virtual void		Collect_Objects(const FrustumClass & frustum);
+	virtual void		Collect_Objects(const Vector3 & point) override;
+	virtual void		Collect_Objects(const AABoxClass & box) override;
+	virtual void		Collect_Objects(const OBBoxClass & box) override;
+	virtual void		Collect_Objects(const FrustumClass & frustum) override;
 
 	virtual void		Re_Partition(const Vector3 & min,const Vector3 & max,float objdim);
-	virtual void		Update_Culling(CullableClass * obj);
+	virtual void		Update_Culling(CullableClass * obj) override;
 
 	virtual void		Load(ChunkLoadClass & cload);
 	virtual void		Save(ChunkSaveClass & csave);
@@ -245,7 +245,7 @@ class GridLinkClass : public CullLinkClass, public AutoPoolClass<GridLinkClass,2
 {
 public:
 	GridLinkClass(GridCullSystemClass * system);
-	virtual ~GridLinkClass();
+	virtual ~GridLinkClass() override;
 
 	int									GridAddress;		// address in the grid.
 	CullableClass *					Prev;					// prev object in this cell

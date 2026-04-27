@@ -33,12 +33,12 @@ protected:
 
 protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	virtual LRESULT WindowProc( UINT message, WPARAM wParam, LPARAM lParam );
+	virtual LRESULT WindowProc( UINT message, WPARAM wParam, LPARAM lParam ) override;
 	DECLARE_MESSAGE_MAP()
 
 public:
-	~CellSizeToolBar(void);
-	void SetupSlider(void);
+	virtual ~CellSizeToolBar() override;
+	void SetupSlider();
 	static void CellSizeChanged(Int cellSize);
 
 };

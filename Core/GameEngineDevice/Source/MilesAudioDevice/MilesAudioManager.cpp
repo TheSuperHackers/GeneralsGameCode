@@ -134,9 +134,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		AIL_MSS_version(buffer, 128);
 	}
 
-	Coord3D lookPos;
-	TheTacticalView->getPosition( &lookPos );
-	lookPos.z = TheTerrainLogic->getGroundHeight( lookPos.x, lookPos.y );
+	Coord3D lookPos = TheTacticalView->getPosition();
 	const Coord3D *mikePos = TheAudio->getListenerPosition();
 	Coord3D distanceVector = TheTacticalView->get3DCameraPosition();
 	distanceVector.sub( mikePos );

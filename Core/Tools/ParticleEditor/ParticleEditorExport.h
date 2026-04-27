@@ -25,23 +25,23 @@ class ParticleSystemTemplate;
 // Declared extern C to prevent name mangling, which makes life very unhappy
 extern "C" {
 	// Called to create the dialog
-	void __declspec(dllexport) CreateParticleSystemDialog( void );
+	void __declspec(dllexport) CreateParticleSystemDialog();
 
 	// Called to (not surprisingly) destroy the dialog (and free the resources)
-	void __declspec(dllexport) DestroyParticleSystemDialog( void );
+	void __declspec(dllexport) DestroyParticleSystemDialog();
 
-	void __declspec(dllexport) RemoveAllParticleSystems( void );
+	void __declspec(dllexport) RemoveAllParticleSystems();
 	void __declspec(dllexport) AppendParticleSystem( const char* particleSystemName );
-	void __declspec(dllexport) RemoveAllThingTemplates( void );
+	void __declspec(dllexport) RemoveAllThingTemplates();
 	void __declspec(dllexport) AppendThingTemplate( const char* thingTemplateName );
 
-	Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem( void );
+	Bool __declspec(dllexport) HasUpdatedSelectedParticleSystem();
 
 	void __declspec(dllexport) GetSelectedParticleSystemName( char *bufferToCopyInto );
 
 	void __declspec(dllexport) UpdateCurrentParticleCap( int currentParticleCap );
 	void __declspec(dllexport) UpdateCurrentNumParticles( int currentParticleCount );
-	int __declspec(dllexport) GetNewParticleCap( void );
+	int __declspec(dllexport) GetNewParticleCap();
 
 
 #	define PARM_ParticleTypeName		0x00
@@ -57,10 +57,10 @@ extern "C" {
 	void __declspec(dllexport) UpdateCurrentParticleSystem( ParticleSystemTemplate *particleTemplate );
 	void __declspec(dllexport) UpdateSystemUseParameters( ParticleSystemTemplate *particleTemplate );
 
-	Bool __declspec(dllexport) ShouldWriteINI( void );
-	Bool __declspec(dllexport) ShouldBusyWait( void );
-	Bool __declspec(dllexport) ShouldUpdateParticleCap( void );
-	Bool __declspec(dllexport) ShouldReloadTextures( void );
+	Bool __declspec(dllexport) ShouldWriteINI();
+	Bool __declspec(dllexport) ShouldBusyWait();
+	Bool __declspec(dllexport) ShouldUpdateParticleCap();
+	Bool __declspec(dllexport) ShouldReloadTextures();
 
 
 #	define PEB_Continue								0x00
@@ -76,7 +76,7 @@ extern "C" {
 #	define PEB_Error									0xFF
 
 
-	int __declspec(dllexport) NextParticleEditorBehavior( void );
+	int __declspec(dllexport) NextParticleEditorBehavior();
 
 
 }

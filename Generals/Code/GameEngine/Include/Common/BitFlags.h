@@ -126,12 +126,12 @@ public:
 
 	Bool operator==(const BitFlags& that) const
 	{
-		return this->m_bits == that.m_bits;
+		return m_bits == that.m_bits;
 	}
 
 	Bool operator!=(const BitFlags& that) const
 	{
-		return this->m_bits != that.m_bits;
+		return m_bits != that.m_bits;
 	}
 
 	void set(Int i, Int val = 1)
@@ -147,28 +147,19 @@ public:
 	//Tests for any bits that are set in both.
 	Bool testForAny( const BitFlags& that ) const
 	{
-		BitFlags tmp = *this;
-		tmp.m_bits &= that.m_bits;
-		return tmp.m_bits.any();
+		return (m_bits & that.m_bits).any();
 	}
 
 	//All argument bits must be set in our bits too in order to return TRUE
 	Bool testForAll( const BitFlags& that ) const
 	{
-		DEBUG_ASSERTCRASH( that.any(), ("BitFlags::testForAll is always true if you ask about zero flags.  Did you mean that?") );
-
-		BitFlags tmp = *this;
-		tmp.m_bits.flip();
-		tmp.m_bits &= that.m_bits;
-		return !tmp.m_bits.any();
+		return (m_bits & that.m_bits) == that.m_bits;
 	}
 
 	//None of the argument bits must be set in our bits in order to return TRUE
 	Bool testForNone( const BitFlags& that ) const
 	{
-		BitFlags tmp = *this;
-		tmp.m_bits &= that.m_bits;
-		return !tmp.m_bits.any();
+		return (m_bits & that.m_bits).none();
 	}
 
 	Int size() const
@@ -198,58 +189,38 @@ public:
 
 	Int countIntersection(const BitFlags& that) const
 	{
-		BitFlags tmp = *this;
-		tmp.m_bits &= that.m_bits;
-		return tmp.m_bits.count();
+		return (m_bits & that.m_bits).count();
 	}
 
 	Int countInverseIntersection(const BitFlags& that) const
 	{
-		BitFlags tmp = *this;
-		tmp.m_bits.flip();
-		tmp.m_bits &= that.m_bits;
-		return tmp.m_bits.count();
+		return (~m_bits & that.m_bits).count();
 	}
 
 	Bool anyIntersectionWith(const BitFlags& that) const
 	{
-		/// @todo srj -- improve me.
-		BitFlags tmp = that;
-		tmp.m_bits &= m_bits;
-		return tmp.m_bits.any();
+		return (m_bits & that.m_bits).any();
 	}
 
-	void clear(const BitFlags& clr)
+	void clear(const BitFlags& that)
 	{
-		m_bits &= ~clr.m_bits;
+		m_bits &= ~that.m_bits;
 	}
 
-	void set(const BitFlags& set)
+	void set(const BitFlags& that)
 	{
-		m_bits |= set.m_bits;
+		m_bits |= that.m_bits;
 	}
 
-	void clearAndSet(const BitFlags& clr, const BitFlags& set)
+	void clearAndSet(const BitFlags& flagsToClear, const BitFlags& flagsToSet)
 	{
-		m_bits &= ~clr.m_bits;
-		m_bits |= set.m_bits;
+		clear(flagsToClear);
+		set(flagsToSet);
 	}
 
 	Bool testSetAndClear(const BitFlags& mustBeSet, const BitFlags& mustBeClear) const
 	{
-		/// @todo srj -- improve me.
-		BitFlags tmp = *this;
-		tmp.m_bits &= mustBeClear.m_bits;
-		if (tmp.m_bits.any())
-			return false;
-
-		tmp = *this;
-		tmp.m_bits.flip();
-		tmp.m_bits &= mustBeSet.m_bits;
-		if (tmp.m_bits.any())
-			return false;
-
-		return true;
+		return testForNone(mustBeClear) && testForAll(mustBeSet);
 	}
 
 	// TheSuperHackers @info Function for rare use cases where we must access the flags as an integer.

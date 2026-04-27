@@ -50,11 +50,11 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MeshMoldOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	virtual void OnOK(){return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel(){return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -93,19 +93,19 @@ public:
 	static void setHeight(Real height);
 	static void setAngle(Int angle);
 
-	static Real getHeight(void) {return m_currentHeight;};
-	static Real getScale(void) {return m_currentScale;};
-	static Int getAngle(void) {return m_currentAngle;};
+	static Real getHeight() {return m_currentHeight;};
+	static Real getScale() {return m_currentScale;};
+	static Int getAngle() {return m_currentAngle;};
 	static MeshMoldOptions *m_staticThis;
-	static Bool isDoingPreview(void) {return m_doingPreview;};
-	static Bool isRaisingOnly(void) {return m_raiseOnly;};
-	static Bool isLoweringOnly(void) {return m_lowerOnly;};
-	static AsciiString getModelName(void) {if (m_staticThis) return m_staticThis->m_meshModelName; return "";};
+	static Bool isDoingPreview() {return m_doingPreview;};
+	static Bool isRaisingOnly() {return m_raiseOnly;};
+	static Bool isLoweringOnly() {return m_lowerOnly;};
+	static AsciiString getModelName() {if (m_staticThis) return m_staticThis->m_meshModelName; return "";};
 
 public:	 //PopupSliderOwner methods.
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial);
-	virtual void PopSliderChanged(const long sliderID, long theVal);
-	virtual void PopSliderFinished(const long sliderID, long theVal);
+	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void PopSliderChanged(const long sliderID, long theVal) override;
+	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 };
 
 //{{AFX_INSERT_LOCATION}}

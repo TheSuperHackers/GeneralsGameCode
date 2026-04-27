@@ -199,7 +199,7 @@ void Profile::StartRange(const char *range)
 
   if (active)
   {
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
     m_frameNames[k].funcIndex=ProfileFuncLevelTracer::FrameStart();
     DASSERT(m_frameNames[k].funcIndex>=0);
 #endif
@@ -250,7 +250,7 @@ void Profile::AppendRange(const char *range)
 
   if (active)
   {
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
     m_frameNames[k].funcIndex=ProfileFuncLevelTracer::FrameStart();
     DASSERT(m_frameNames[k].funcIndex>=0);
 #endif
@@ -281,7 +281,7 @@ void Profile::StopRange(const char *range)
   // stop recording
   m_frameNames[k].isRecording=false;
   if (
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
     m_frameNames[k].funcIndex>=0 ||
 #endif
     m_frameNames[k].highIndex>=0
@@ -300,7 +300,7 @@ void Profile::StopRange(const char *range)
     }
     else
       atIndex=m_frameNames[k].lastGlobalIndex;
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
     if (m_frameNames[k].funcIndex>=0)
       ProfileFuncLevelTracer::FrameEnd(m_frameNames[k].funcIndex,atIndex);
     if (m_frameNames[k].highIndex>=0)
@@ -329,7 +329,7 @@ const char *Profile::GetFrameName(unsigned frame)
 
 void Profile::ClearTotals()
 {
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
   ProfileFuncLevelTracer::ClearTotals();
 #endif
   ProfileId::ClearTotals();
@@ -372,7 +372,7 @@ bool Profile::SimpleMatch(const char *str, const char *pattern)
 
 static void ProfileShutdown()
 {
-#ifdef RTS_PROFILE
+#ifdef RTS_PROFILE_LEGACY
   ProfileFuncLevelTracer::Shutdown();
 #endif
   ProfileId::Shutdown();

@@ -103,7 +103,6 @@ void CashHackSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real an
 		return;
 
 	// only allowed at objects
-	return;
 }
 
 //-------------------------------------------------------------------------------------------------

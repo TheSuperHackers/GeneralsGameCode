@@ -35,13 +35,13 @@
 // EyedropperTool class.
 //
 /// Constructor
-EyedropperTool::EyedropperTool(void) :
+EyedropperTool::EyedropperTool() :
 	Tool(ID_EYEDROPPER_TOOL, IDC_EYEDROPPER)
 {
 }
 
 /// Destructor
-EyedropperTool::~EyedropperTool(void)
+EyedropperTool::~EyedropperTool()
 {
 }
 

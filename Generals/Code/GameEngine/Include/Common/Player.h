@@ -165,9 +165,9 @@ public:
 
 protected:
 
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 };
 
@@ -345,7 +345,7 @@ public:
 	//it's possible for multiple strategy centers to have the same plan, so we need
 	//to keep track of that like radar. Keep in mind multiple strategy centers with
 	//same plan do not stack, but different strategy centers with different plans do.
-	void changeBattlePlan( BattlePlanStatus plan, Int delta, BattlePlanBonusesData *bonus );
+	void changeBattlePlan( BattlePlanStatus plan, Int delta, const BattlePlanBonusesData *bonus );
 	Int getNumBattlePlansActive() const { return m_bombardBattlePlans + m_holdTheLineBattlePlans + m_searchAndDestroyBattlePlans; }
 	Int getBattlePlansActiveSpecific( BattlePlanStatus plan ) const;
 	void applyBattlePlanBonusesForObject( Object *obj ) const;	//New object or converted object gaining our current battle plan bonuses.
@@ -695,9 +695,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	void deleteUpgradeList();															///< delete all our upgrades
 

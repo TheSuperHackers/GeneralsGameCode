@@ -70,7 +70,7 @@ class GameTextInterface : public SubsystemInterface
 
 	public:
 
-		virtual ~GameTextInterface() {};
+		virtual ~GameTextInterface() override {};
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = nullptr ) = 0;		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = nullptr ) = 0;		///< Returns the associated labeled unicode text ; TheSuperHackers @todo Remove

@@ -88,11 +88,11 @@ class CrateSystem : public SubsystemInterface
 {
 public:
 	CrateSystem();
-	~CrateSystem();
+	virtual ~CrateSystem() override;
 
-	void init();
-	void reset();
-	void update(){}
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override {}
 
 	const CrateTemplate *findCrateTemplate(AsciiString name) const;
 	CrateTemplate *friend_findCrateTemplate(AsciiString name);

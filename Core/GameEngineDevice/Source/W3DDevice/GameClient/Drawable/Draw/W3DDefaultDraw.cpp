@@ -153,8 +153,6 @@ void W3DDefaultDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 	}
 #endif
-
-	return;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -213,11 +213,11 @@ class TerrainTypeCollection : public SubsystemInterface
 public:
 
 	TerrainTypeCollection();
-	~TerrainTypeCollection();
+	virtual ~TerrainTypeCollection() override;
 
-	void init() { }
-	void reset() { }
-	void update() { }
+	virtual void init() override { }
+	virtual void reset() override { }
+	virtual void update() override { }
 
 	TerrainType *findTerrain( AsciiString name );		///< find terrain by name
 	TerrainType *newTerrain( AsciiString name );			///< allocate a new terrain

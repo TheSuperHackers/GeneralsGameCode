@@ -22,6 +22,7 @@ target_sources(corei_libraries_include PRIVATE
 )
 target_link_libraries(corei_always INTERFACE
     core_config
+    core_profile_tracy
     core_utility
     corei_libraries_include
     resources

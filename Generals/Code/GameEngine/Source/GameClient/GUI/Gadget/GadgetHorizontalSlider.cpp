@@ -394,13 +394,14 @@ WindowMsgHandledType GadgetHorizontalSliderSystem( GameWindow *window, UnsignedI
 			Int newPos = (Int)mData1;
 			GameWindow *child = window->winGetChild();
 
-			if( newPos < s->minVal || newPos > s->maxVal )
-				break;
+			// TheSuperHackers @fix No longer reject out of bounds positions to prevent
+			// reset of custom option.ini settings to 0.
 
 			s->position = newPos;
 
 			// Translate to window coords
 			newPos = (Int)((newPos - s->minVal) * s->numTicks);
+			newPos = clamp(0, newPos, (Int)((s->maxVal - s->minVal) * s->numTicks));
 
 			child->winSetPosition( newPos , HORIZONTAL_SLIDER_THUMB_POSITION );
 			break;

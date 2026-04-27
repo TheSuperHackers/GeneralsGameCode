@@ -58,8 +58,7 @@ View::View()
 	m_snapImmediate = FALSE;
 	m_terrainHeightAtPivot = 0.0f;
 	m_zoom = 0.0f;
-	m_pos.x = 0;
-	m_pos.y = 0;
+	m_pos.zero();
 	m_width = 0;
 	m_height = 0;
 	m_angle = 0.0f;
@@ -90,8 +89,7 @@ void View::init()
 	m_height = DEFAULT_VIEW_HEIGHT;
 	m_originX = DEFAULT_VIEW_ORIGIN_X;
 	m_originY = DEFAULT_VIEW_ORIGIN_Y;
-	m_pos.x = 0;
-	m_pos.y = 0;
+	m_pos.zero();
 	m_angle = 0.0f;
 	m_cameraLock = INVALID_ID;
 	m_cameraLockDrawable = nullptr;
@@ -102,8 +100,10 @@ void View::init()
 	m_minHeightAboveGround = TheGlobalData->m_minCameraHeight;
 	m_okToAdjustHeight = FALSE;
 
-	m_defaultAngle = 0.0f;
-	m_defaultPitch = 0.0f;
+	m_defaultAngle = DEG_TO_RADF(TheGlobalData->m_cameraYaw);
+	m_defaultPitch = DEG_TO_RADF(TheGlobalData->m_cameraPitch);
+	m_angle = m_defaultAngle;
+	m_pitch = m_defaultPitch;
 }
 
 void View::reset()
@@ -134,12 +134,11 @@ void View::zoom( Real height )
  */
 void View::lookAt( const Coord3D *o )
 {
-
 	/// @todo this needs to be changed to be 3D, this is still old 2D stuff
-	Coord3D pos = *getPosition();
+	Coord2D pos = getPosition2D();
 	pos.x = o->x - m_width * 0.5f;
 	pos.y = o->y - m_height * 0.5f;
-	setPosition(&pos);
+	setPosition2D(pos);
 }
 
 /**
@@ -160,13 +159,26 @@ void View::setAngle( Real radians )
 	m_angle = WWMath::Normalize_Angle(radians);
 }
 
+#define CLAMP_VIEW_PITCH 1
 /**
  * Rotate the view around the horizontal (X) axis to the given angle.
  */
 void View::setPitch( Real radians )
 {
-	constexpr Real limit = PI/5.0f;
-	m_pitch = clamp(-limit, radians, limit);
+#if CLAMP_VIEW_PITCH
+	m_pitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+#else
+	m_pitch = WWMath::Normalize_Angle(radians);
+#endif
+}
+
+void View::setDefaultPitch( Real radians )
+{
+#if CLAMP_VIEW_PITCH
+	m_defaultPitch = clamp(DEG_TO_RADF(0.1f), radians, DEG_TO_RADF(89.9f));
+#else
+	m_defaultPitch = WWMath::Normalize_Angle(radians);
+#endif
 }
 
 /**
@@ -203,10 +215,7 @@ void View::setHeightAboveGround(Real z)
  */
 void View::getLocation( ViewLocation *location )
 {
-
-	const Coord3D *pos = getPosition();
-	location->init( pos->x, pos->y, pos->z, getAngle(), getPitch(), getZoom() );
-
+	location->init( getPosition(), getAngle(), getPitch(), getZoom() );
 }
 
 
@@ -215,13 +224,12 @@ void View::getLocation( ViewLocation *location )
  */
 void View::setLocation( const ViewLocation *location )
 {
-	if ( location->m_valid )
+	if ( location->isValid() )
 	{
-		setPosition(&location->m_pos);
-		setAngle(location->m_angle);
-		setPitch(location->m_pitch);
-		setZoom(location->m_zoom);
-		forceRedraw();
+		setPosition(location->getPosition());
+		setAngle(location->getAngle());
+		setPitch(location->getPitch());
+		setZoom(location->getZoom());
 	}
 
 }
@@ -287,8 +295,7 @@ void View::xfer( Xfer *xfer )
 	setAngle( angle );
 
 	// view position
-	Coord3D viewPos;
-	getPosition( &viewPos );
+	Coord3D viewPos = getPosition();
 	xfer->xferReal( &viewPos.x );
 	xfer->xferReal( &viewPos.y );
 	xfer->xferReal( &viewPos.z );

@@ -249,8 +249,6 @@ MeshDeformPanelClass::On_Command
 		case IDC_MAX_SETS_EDIT:
 			break;
 	}
-
-	return ;
 }
 
 
@@ -272,8 +270,6 @@ MeshDeformPanelClass::Set_Deformer (MeshDeformClass *obj)
 		// Now update the current vertex color
 		Update_Vertex_Color ();
 	}
-
-	return ;
 }
 
 
@@ -292,8 +288,6 @@ MeshDeformPanelClass::Update_Vertex_Color (void)
 		m_pMeshDeformer->Get_Vertex_Color (color);
 		m_pColorSwatch->SetColor (RGB (int(color.x * 255.0F), int(color.y * 255.0F), int(color.z * 255.0F)), FALSE);
 	}
-
-	return ;
 }
 
 
@@ -320,8 +314,6 @@ MeshDeformPanelClass::Set_Max_Sets
 		// Update the deformer
 		m_pMeshDeformer->Set_Max_Deform_Sets (max);
 	}
-
-	return ;
 }
 
 
@@ -347,8 +339,6 @@ MeshDeformPanelClass::Set_Current_Set
 		// Update the deformer
 		m_pMeshDeformer->Set_Current_Set (set, true);
 	}
-
-	return ;
 }
 
 
@@ -361,5 +351,4 @@ void
 MeshDeformPanelClass::Set_Current_State (float state)
 {
 	::SendDlgItemMessage (m_hWnd, IDC_STATE_SLIDER, TBM_SETPOS, (WPARAM)TRUE, LPARAM(state * 10.0F));
-	return ;
 }

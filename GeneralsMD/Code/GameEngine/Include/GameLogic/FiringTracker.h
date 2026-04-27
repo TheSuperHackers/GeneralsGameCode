@@ -57,9 +57,9 @@ public:
 	Int getNumConsecutiveShotsAtVictim( const Object *victim ) const;
 
 	/// this is never disabled, since we want disabled things to continue to slowly "spin down"... (srj)
-	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
-	virtual UpdateSleepTime update();	///< See if spin down is needed because we haven't shot in a while
+	virtual UpdateSleepTime update() override;	///< See if spin down is needed because we haven't shot in a while
 
 protected:
 
@@ -68,7 +68,7 @@ protected:
 		user update modules, so it redefines this. Please don't redefine this
 		for other modules without very careful deliberation. (srj)
 	*/
-	virtual SleepyUpdatePhase getUpdatePhase() const
+	virtual SleepyUpdatePhase getUpdatePhase() const override
 	{
 		return PHASE_FINAL;
 	}

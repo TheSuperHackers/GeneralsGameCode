@@ -64,7 +64,6 @@ PresetExportOptionsDialogClass::PresetExportOptionsDialogClass (Interface *maxin
 	CurrentPane (-1)
 {
 	::memset (PaneWnds, 0, sizeof (PaneWnds));
-	return ;
 }
 
 
@@ -75,7 +74,6 @@ PresetExportOptionsDialogClass::PresetExportOptionsDialogClass (Interface *maxin
 ////////////////////////////////////////////////////////////////////////////////////////
 PresetExportOptionsDialogClass::~PresetExportOptionsDialogClass (void)
 {
-	return ;
 }
 
 
@@ -501,8 +499,6 @@ PresetExportOptionsDialogClass::Show_Settings_Pane (int pane_id)
 		}
 		CurrentPane = pane_id;
 	}
-
-	return ;
 }
 
 
@@ -564,8 +560,6 @@ PresetExportOptionsDialogClass::Create_Settings_Panes (void)
 								group_rect.top + (height / 2) - ((rect.bottom - rect.top) / 2),
 								0, 0, SWP_NOSIZE);
 	}
-
-	return ;
 }
 
 
@@ -584,8 +578,6 @@ PresetExportOptionsDialogClass::Destroy_Settings_Panes (void)
 		::DestroyWindow (PaneWnds[index]);
 		PaneWnds[index] = nullptr;
 	}
-
-	return ;
 }
 
 
@@ -652,8 +644,6 @@ PresetExportOptionsDialogClass::Determine_Preset_Type (void)
 		Show_Settings_Pane (PANE_ANIM_HLOD);
 		SendDlgItemMessage (Wnd, IDC_ANIM_HLOD_RADIO, BM_SETCHECK, (WPARAM)TRUE, 0L);
 	}
-
-	return ;
 }
 
 
@@ -711,8 +701,6 @@ PresetExportOptionsDialogClass::Initialize_Controls (void)
 			::SetProp (::GetDlgItem (pane_wnd, IDC_RANGE_HIGH_SPIN), "ISpinnerControl", (HANDLE)high_spin);
 		}
 	}
-
-	return ;
 }
 
 
@@ -800,8 +788,6 @@ PresetExportOptionsDialogClass::Update_Controls (void)
 			high_spin->SetValue (Options->EndFrame, FALSE);
 		}
 	}
-
-	return ;
 }
 
 
@@ -908,7 +894,5 @@ PresetExportOptionsDialogClass::Save_Settings (void)
 	if (::memcmp (Options, &OrigOptions, sizeof (OrigOptions)) != 0) {
 		SetSaveRequiredFlag (true);
 	}
-
-	return ;
 }
 

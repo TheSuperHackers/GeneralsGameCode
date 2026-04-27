@@ -54,7 +54,7 @@ public:
 	LayerClass();
 	LayerClass(SceneClass * s,CameraClass * c,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
 	LayerClass(const LayerClass & src);
-	~LayerClass();
+	virtual ~LayerClass() override;
 
 
 	/*

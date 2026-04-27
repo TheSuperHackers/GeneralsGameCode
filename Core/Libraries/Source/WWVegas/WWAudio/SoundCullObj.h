@@ -61,7 +61,7 @@ class SoundCullObjClass : public MultiListObjectClass, public CullableClass
 			: m_SoundObj (nullptr),
 			  m_Transform (1) {}
 
-		virtual ~SoundCullObjClass () { REF_PTR_RELEASE (m_SoundObj); }
+		virtual ~SoundCullObjClass () override { REF_PTR_RELEASE (m_SoundObj); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Get the 'bounds' of this sound
@@ -125,8 +125,6 @@ SoundCullObjClass::Set_Transform (const Matrix3D &transform)
 		m_SoundObj->Set_Transform (m_Transform);
 		Set_Cull_Box (Get_Bounding_Box ());
 	}
-
-	return ;
 }
 
 
@@ -140,8 +138,6 @@ SoundCullObjClass::Set_Sound_Obj (SoundSceneObjClass *sound_obj)
 		m_Transform = m_SoundObj->Get_Transform ();
 		Set_Cull_Box (Get_Bounding_Box ());
 	}
-
-	return ;
 }
 
 

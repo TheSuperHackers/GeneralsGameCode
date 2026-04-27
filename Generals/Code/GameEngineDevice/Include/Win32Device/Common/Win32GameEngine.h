@@ -33,6 +33,7 @@
 #pragma once
 
 #include "Common/GameEngine.h"
+#include "GameClient/ParticleSys.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "MilesAudioDevice/MilesAudioManager.h"
@@ -58,27 +59,27 @@ class Win32GameEngine : public GameEngine
 public:
 
 	Win32GameEngine();
-	virtual ~Win32GameEngine();
+	virtual ~Win32GameEngine() override;
 
-	virtual void init();															///< initialization
-	virtual void reset();															///< reset engine
-	virtual void update();														///< update the game engine
-	virtual void serviceWindowsOS();									///< allow windows maintenance in background
+	virtual void init() override;															///< initialization
+	virtual void reset() override;															///< reset engine
+	virtual void update() override;														///< update the game engine
+	virtual void serviceWindowsOS() override;									///< allow windows maintenance in background
 
 protected:
 
-	virtual GameLogic *createGameLogic();							///< factory for game logic
- 	virtual GameClient *createGameClient();						///< factory for game client
-	virtual ModuleFactory *createModuleFactory();			///< factory for creating modules
-	virtual ThingFactory *createThingFactory();				///< factory for the thing factory
-	virtual FunctionLexicon *createFunctionLexicon(); ///< factory for function lexicon
-	virtual LocalFileSystem *createLocalFileSystem(); ///< factory for local file system
-	virtual ArchiveFileSystem *createArchiveFileSystem();	///< factory for archive file system
+	virtual GameLogic *createGameLogic() override;							///< factory for game logic
+ 	virtual GameClient *createGameClient() override;						///< factory for game client
+	virtual ModuleFactory *createModuleFactory() override;			///< factory for creating modules
+	virtual ThingFactory *createThingFactory() override;				///< factory for the thing factory
+	virtual FunctionLexicon *createFunctionLexicon() override; ///< factory for function lexicon
+	virtual LocalFileSystem *createLocalFileSystem() override; ///< factory for local file system
+	virtual ArchiveFileSystem *createArchiveFileSystem() override;	///< factory for archive file system
 	virtual NetworkInterface *createNetwork();				///< Factory for the network
-	virtual Radar *createRadar();											///< Factory for radar
-	virtual WebBrowser *createWebBrowser();						///< Factory for embedded browser
-	virtual AudioManager *createAudioManager();				///< Factory for audio device
-	virtual ParticleSystemManager* createParticleSystemManager();
+	virtual Radar *createRadar(Bool dummy) override;						///< Factory for radar
+	virtual WebBrowser *createWebBrowser() override;						///< Factory for embedded browser
+	virtual AudioManager *createAudioManager(Bool dummy) override;				///< Factory for audio device
+	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) override;
 
 
 protected:
@@ -93,9 +94,24 @@ inline ThingFactory *Win32GameEngine::createThingFactory() { return NEW W3DThing
 inline FunctionLexicon *Win32GameEngine::createFunctionLexicon() { return NEW W3DFunctionLexicon; }
 inline LocalFileSystem *Win32GameEngine::createLocalFileSystem() { return NEW Win32LocalFileSystem; }
 inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem() { return NEW Win32BIGFileSystem; }
-inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager() { return NEW W3DParticleSystemManager; }
+inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager(Bool dummy)
+{
+	if (dummy)
+		return NEW ParticleSystemManagerDummy;
+	return NEW W3DParticleSystemManager;
+}
 
 inline NetworkInterface *Win32GameEngine::createNetwork() { return NetworkInterface::createNetwork(); }
-inline Radar *Win32GameEngine::createRadar() { return NEW W3DRadar; }
+inline Radar *Win32GameEngine::createRadar(Bool dummy)
+{
+	if (dummy)
+		return NEW RadarDummy;
+	return NEW W3DRadar;
+}
 inline WebBrowser *Win32GameEngine::createWebBrowser() { return NEW CComObject<W3DWebBrowser>; }
-inline AudioManager *Win32GameEngine::createAudioManager() { return NEW MilesAudioManager; }
+inline AudioManager *Win32GameEngine::createAudioManager(Bool dummy)
+{
+	if (dummy)
+		return NEW MilesAudioManagerDummy;
+	return NEW MilesAudioManager;
+}

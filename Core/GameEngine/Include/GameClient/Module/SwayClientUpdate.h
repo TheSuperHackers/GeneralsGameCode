@@ -22,9 +22,9 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: AnimatedParticleSysBoneClientUpdate.h //////////////////////////////////////////////////////////////////
-// Author: Mark Lorenzen, October 2002
-// Desc:   client update module to translate particle systems with animation
+// FILE: SwayClientUpdate.h ////////////////////////////////////////////////////////////////////
+// Author: Matthew D. Campbell, May 2002
+// Desc:   Tree sway client update module
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -35,24 +35,35 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
 
-class AnimatedParticleSysBoneClientUpdate : public ClientUpdateModule
+//-------------------------------------------------------------------------------------------------
+/** The tree way client update module */
+//-------------------------------------------------------------------------------------------------
+class SwayClientUpdate : public ClientUpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AnimatedParticleSysBoneClientUpdate, "AnimatedParticleSysBoneClientUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( AnimatedParticleSysBoneClientUpdate );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SwayClientUpdate, "SwayClientUpdate" )
+	MAKE_STANDARD_MODULE_MACRO( SwayClientUpdate );
 
 public:
 
-	AnimatedParticleSysBoneClientUpdate( Thing *thing, const ModuleData* moduleData );
+	SwayClientUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate();
+	virtual void clientUpdate() override;
 
+	void stopSway() { m_swaying = false; }
 
 protected:
 
+	Real			m_curValue;
+	Real			m_curAngle;
+	Real			m_curDelta;
+	Real			m_curAngleLimit;
+	Real			m_leanAngle;							///<Angle that the tree leans away from the wind.
+	Short			m_curVersion;
+	Bool			m_swaying;
+	Bool			m_unused;
 
-	UnsignedInt m_life;
-
+	void updateSway();
 };

@@ -80,6 +80,7 @@ VertexBufferClass::VertexBufferClass(unsigned type_, unsigned FVF, unsigned shor
 {
 	WWASSERT(VertexCount);
 	WWASSERT(type==BUFFER_TYPE_DX8 || type==BUFFER_TYPE_SORTING);
+	WWASSERT(FVF != 0);
 	fvf_info=W3DNEW FVFInfoClass(FVF);
 
 	_VertexBufferCount++;

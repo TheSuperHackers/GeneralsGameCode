@@ -40,7 +40,7 @@ class TeamGeneric : public CPropertyPage
 
 
 	protected: // Windows Functions
-		virtual BOOL OnInitDialog();
+		virtual BOOL OnInitDialog() override;
 		afx_msg void _scriptsToDict();
 		afx_msg void OnScriptAdjust();
 		DECLARE_MESSAGE_MAP()

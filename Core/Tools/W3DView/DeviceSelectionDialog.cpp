@@ -55,7 +55,6 @@ CDeviceSelectionDialog::CDeviceSelectionDialog
 	//{{AFX_DATA_INIT(CDeviceSelectionDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-    return ;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -70,7 +69,6 @@ CDeviceSelectionDialog::DoDataExchange (CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CDeviceSelectionDialog)
 	DDX_Control(pDX, IDC_RENDER_DEVICE_COMBO, m_deviceListComboBox);
 	//}}AFX_DATA_MAP
-    return ;
 }
 
 
@@ -89,7 +87,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CDeviceSelectionDialog::OnInitDialog (void)
+CDeviceSelectionDialog::OnInitDialog ()
 {
 	CDialog::OnInitDialog();
 
@@ -131,7 +129,7 @@ CDeviceSelectionDialog::OnInitDialog (void)
 //  OnSelchangeRenderDeviceCombo
 //
 void
-CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
+CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo ()
 {
 	int index = m_deviceListComboBox.GetCurSel ();
 	if (index != CB_ERR) {
@@ -140,8 +138,6 @@ CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
 		// Update the static controls with the information from the device
 		UpdateDeviceDescription ();
 	}
-
-	return ;
 }
 
 
@@ -150,7 +146,7 @@ CDeviceSelectionDialog::OnSelchangeRenderDeviceCombo (void)
 //  UpdateDeviceDescription
 //
 void
-CDeviceSelectionDialog::UpdateDeviceDescription (void)
+CDeviceSelectionDialog::UpdateDeviceDescription ()
 {
 	const RenderDeviceDescClass &device_desc = WW3D::Get_Render_Device_Desc ();
 
@@ -167,7 +163,6 @@ CDeviceSelectionDialog::UpdateDeviceDescription (void)
 	SetDlgItemText (IDC_HARDWARE_NAME_STATIC, device_desc.Get_Hardware_Name());
 	SetDlgItemText (IDC_HARDWARE_VENDOR_STATIC, device_desc.Get_Hardware_Vendor());
 	SetDlgItemText (IDC_HARDWARE_CHIPSET_STATIC, device_desc.Get_Hardware_Chipset());
-	return ;
 }
 
 
@@ -176,7 +171,7 @@ CDeviceSelectionDialog::UpdateDeviceDescription (void)
 //  OnOK
 //
 void
-CDeviceSelectionDialog::OnOK (void)
+CDeviceSelectionDialog::OnOK ()
 {
 	// Ask the combobox for its current selection
 	m_iDeviceIndex = m_deviceListComboBox.GetItemData (m_deviceListComboBox.GetCurSel ());
@@ -193,7 +188,6 @@ CDeviceSelectionDialog::OnOK (void)
 
 	// Allow the base class to process this message
 	CDialog::OnOK();
-	return ;
 }
 
 
@@ -202,7 +196,7 @@ CDeviceSelectionDialog::OnOK (void)
 //  DoModal
 //
 int
-CDeviceSelectionDialog::DoModal (void)
+CDeviceSelectionDialog::DoModal ()
 {
 	BOOL bFoundDevice = FALSE;
 	int iReturn = IDOK;

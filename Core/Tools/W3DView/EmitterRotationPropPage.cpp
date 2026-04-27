@@ -105,7 +105,7 @@ END_MESSAGE_MAP()
 //  Initialize
 //
 /////////////////////////////////////////////////////////////
-void EmitterRotationPropPageClass::Initialize (void)
+void EmitterRotationPropPageClass::Initialize ()
 {
 	SAFE_DELETE_ARRAY (m_Rotations.KeyTimes);
 	SAFE_DELETE_ARRAY (m_Rotations.Values);
@@ -303,7 +303,7 @@ BOOL EmitterRotationPropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESUL
 //
 /////////////////////////////////////////////////////////////
 void
-EmitterRotationPropPageClass::Update_Rotations (void)
+EmitterRotationPropPageClass::Update_Rotations ()
 {
 	float position = 0;
 	float red = 0;
@@ -339,8 +339,6 @@ EmitterRotationPropPageClass::Update_Rotations (void)
 			m_Rotations.Values[index - 1] = Denormalize_Rotation(m_RotationBar->Get_Graph_Percent (index) );
 		}
 	}
-
-	return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -415,6 +413,4 @@ EmitterRotationPropPageClass::On_Lifetime_Changed (float lifetime)
 		m_pEmitterList->Set_Rotation_Keyframes (m_Rotations, m_InitialOrientationRandom);
 		m_Lifetime = lifetime;
 	}
-
-	return ;
 }

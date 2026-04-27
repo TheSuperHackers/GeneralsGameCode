@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ExportScriptsOptions)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -53,18 +53,18 @@ protected:
 	static Bool m_sides;
 
 public:
-	Bool getDoUnits(void) {return m_units;}
-	Bool getDoWaypoints(void) {return m_waypoints;}
-	Bool getDoTriggers(void) {return m_triggers;}
-	Bool getDoAllScripts(void) {return m_allScripts;}
-	Bool getDoSides(void) {return m_sides;}
+	Bool getDoUnits() {return m_units;}
+	Bool getDoWaypoints() {return m_waypoints;}
+	Bool getDoTriggers() {return m_triggers;}
+	Bool getDoAllScripts() {return m_allScripts;}
+	Bool getDoSides() {return m_sides;}
 
 protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(ExportScriptsOptions)
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

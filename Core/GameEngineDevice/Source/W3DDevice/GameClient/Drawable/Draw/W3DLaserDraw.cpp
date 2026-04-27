@@ -418,8 +418,6 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 		}
 	}
-
-	return;
 }
 
 // ------------------------------------------------------------------------------------------------

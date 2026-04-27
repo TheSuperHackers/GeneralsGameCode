@@ -71,7 +71,7 @@ END_MESSAGE_MAP()
 //  OnInitDialog
 //
 BOOL
-CAmbientLightDialog::OnInitDialog (void)
+CAmbientLightDialog::OnInitDialog ()
 {
 	// Allow the base class to process this message
     CDialog::OnInitDialog ();
@@ -162,7 +162,6 @@ CAmbientLightDialog::OnHScroll
 
 	// Allow the base class to process this message
     CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -170,7 +169,7 @@ CAmbientLightDialog::OnHScroll
 //  OnCancel
 //
 void
-CAmbientLightDialog::OnCancel (void)
+CAmbientLightDialog::OnCancel ()
 {
     Vector3 lightSettings;
     lightSettings.X = float(m_initialRed) / 100.00F;
@@ -188,7 +187,6 @@ CAmbientLightDialog::OnCancel (void)
 
 	// Allow the base class to process this message
     CDialog::OnCancel();
-    return ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -220,7 +218,7 @@ CAmbientLightDialog::WindowProc
 //  OnGrayscaleCheck
 //
 void
-CAmbientLightDialog::OnGrayscaleCheck (void)
+CAmbientLightDialog::OnGrayscaleCheck ()
 {
     if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK))
     {
@@ -242,7 +240,5 @@ CAmbientLightDialog::OnGrayscaleCheck (void)
             pCDoc->GetScene ()->Set_Ambient_Light (lightSettings);
         }
     }
-
-    return ;
 }
 

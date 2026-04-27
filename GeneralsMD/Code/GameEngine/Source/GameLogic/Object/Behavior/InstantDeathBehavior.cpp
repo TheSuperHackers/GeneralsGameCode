@@ -62,7 +62,7 @@ InstantDeathBehaviorModuleData::InstantDeathBehaviorModuleData()
 static void parseFX( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
-	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		const FXList *fxl = TheFXListStore->findFXList((token));	// could be null! this is OK!
 		self->m_fx.push_back(fxl);
@@ -73,7 +73,7 @@ static void parseFX( INI* ini, void *instance, void * /*store*/, const void* /*u
 static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
-	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null! this is OK!
 		self->m_ocls.push_back(ocl);
@@ -84,7 +84,7 @@ static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*
 static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
-	for (const char* token = ini->getNextToken(); token != nullptr; token = ini->getNextTokenOrNull())
+	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
 		const WeaponTemplate *wt = TheWeaponStore->findWeaponTemplate(token);	// could be null! this is OK!
 		self->m_weapons.push_back(wt);

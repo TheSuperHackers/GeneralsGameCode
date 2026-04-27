@@ -56,7 +56,7 @@ class AssetInfoClass
 		//
 		//  Public constructors/destructors
 		//
-		AssetInfoClass (void)
+		AssetInfoClass ()
 			: m_AssetType (TypeUnknown),
 			  m_dwUserData (0L),
 			  m_pRenderObj (nullptr)			{ Initialize (); }
@@ -67,7 +67,7 @@ class AssetInfoClass
 			  m_dwUserData (user_data),
 			  m_pRenderObj (nullptr)			{ REF_PTR_SET (m_pRenderObj, prender_obj); Initialize (); }
 
-		virtual ~AssetInfoClass (void)	{ REF_PTR_RELEASE (m_pRenderObj); }
+		virtual ~AssetInfoClass ()	{ REF_PTR_RELEASE (m_pRenderObj); }
 
 		//////////////////////////////////////////////////////////////
 		//
@@ -77,14 +77,14 @@ class AssetInfoClass
 		//
 		//  Inline accessors
 		//
-		const CString &	Get_Name (void) const						{ return m_Name; }
-		const CString &	Get_Hierarchy_Name (void) const			{ return m_HierarchyName; }
-		const CString &	Get_Original_Name (void) const			{ return m_OriginalName; }
-		ASSET_TYPE			Get_Type (void) const						{ return m_AssetType; }
-		DWORD					Get_User_Number (void) const				{ return m_dwUserData; }
-		const CString &	Get_User_String (void) const				{ return m_UserString; }
-		RenderObjClass *	Get_Render_Obj (void) const				{ if (m_pRenderObj) m_pRenderObj->Add_Ref(); return m_pRenderObj; }
-		RenderObjClass *	Peek_Render_Obj (void) const				{ return m_pRenderObj; }
+		const CString &	Get_Name () const						{ return m_Name; }
+		const CString &	Get_Hierarchy_Name () const			{ return m_HierarchyName; }
+		const CString &	Get_Original_Name () const			{ return m_OriginalName; }
+		ASSET_TYPE			Get_Type () const						{ return m_AssetType; }
+		DWORD					Get_User_Number () const				{ return m_dwUserData; }
+		const CString &	Get_User_String () const				{ return m_UserString; }
+		RenderObjClass *	Get_Render_Obj () const				{ if (m_pRenderObj) m_pRenderObj->Add_Ref(); return m_pRenderObj; }
+		RenderObjClass *	Peek_Render_Obj () const				{ return m_pRenderObj; }
 		void					Set_Name (LPCTSTR pname)					{ m_Name = pname; }
 		void					Set_Hierarchy_Name (LPCTSTR pname)		{ m_HierarchyName = pname; }
 		void					Set_Type (ASSET_TYPE type)					{ m_AssetType = type; }
@@ -95,7 +95,7 @@ class AssetInfoClass
 		//
 		//	Information methods
 		//
-		bool					Can_Asset_Have_Animations (void) const	{ return bool(m_HierarchyName.GetLength () > 0); }
+		bool					Can_Asset_Have_Animations () const	{ return bool(m_HierarchyName.GetLength () > 0); }
 
 	protected:
 
@@ -103,7 +103,7 @@ class AssetInfoClass
 		//
 		//  Protected methods
 		//
-		void					Initialize (void);
+		void					Initialize ();
 
 
 	private:

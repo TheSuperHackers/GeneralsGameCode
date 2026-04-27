@@ -393,8 +393,6 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 
 		delete ini_file;
 	}
-
-	return ;
 }
 
 
@@ -425,7 +423,6 @@ AnimatedSoundMgrClass::Shutdown ()
 	}
 
 	AnimSoundLists.Delete_All ();
-	return ;
 }
 
 

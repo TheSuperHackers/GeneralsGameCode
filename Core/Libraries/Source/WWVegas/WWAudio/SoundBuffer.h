@@ -62,7 +62,7 @@ class SoundBufferClass : public RefCountClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		SoundBufferClass ();
-		virtual ~SoundBufferClass ();
+		virtual ~SoundBufferClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public operators
@@ -139,30 +139,30 @@ class StreamSoundBufferClass : public SoundBufferClass
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
 		StreamSoundBufferClass ();
-		virtual ~StreamSoundBufferClass ();
+		virtual ~StreamSoundBufferClass () override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	File methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool			Load_From_File (const char *filename);
-		virtual bool			Load_From_File (FileClass &file);
+		virtual bool			Load_From_File (const char *filename) override;
+		virtual bool			Load_From_File (FileClass &file) override;
 
 		//////////////////////////////////////////////////////////////////////
 		//	Memory methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool			Load_From_Memory (unsigned char *mem_buffer, unsigned long size) { return false; }
+		virtual bool			Load_From_Memory (unsigned char *mem_buffer, unsigned long size) override { return false; }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Type methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool			Is_Streaming () const		{ return true; }
+		virtual bool			Is_Streaming () const override { return true; }
 
 	protected:
 
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			Free_Buffer ();
+		virtual void			Free_Buffer () override;
 		virtual bool			Load_From_File (HANDLE hfile, unsigned long size, unsigned long offset);
 
 		//////////////////////////////////////////////////////////////////////

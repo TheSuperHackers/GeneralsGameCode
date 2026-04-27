@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -66,6 +66,7 @@ Display::Display()
 
 	m_currentlyPlayingMovie.clear();
 	m_letterBoxFadeStartTime = 0;
+	m_isBatching = FALSE;
 }
 
 /**
@@ -386,4 +387,33 @@ void Display::setDebugDisplayCallback( DebugDisplayCallback *callback, void *use
 Display::DebugDisplayCallback *Display::getDebugDisplayCallback()
 {
 	return m_debugDisplayCallback;
+}
+
+void Display::beginBatch()
+{
+	if (m_isBatching)
+	{
+		return;
+	}
+	m_isBatching = TRUE;
+	onBeginBatch();
+}
+
+void Display::endBatch()
+{
+	if (!m_isBatching)
+	{
+		return;
+	}
+	onFlush();
+	m_isBatching = FALSE;
+	onEndBatch();
+}
+
+void Display::flush()
+{
+	if (m_isBatching)
+	{
+		onFlush();
+	}
 }

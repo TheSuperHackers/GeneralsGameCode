@@ -54,7 +54,6 @@ AnimationCompressionSettingsDialogClass::AnimationCompressionSettingsDialogClass
 	Wnd (nullptr),
 	ParentWnd (parent_wnd)
 {
-	return ;
 }
 
 
@@ -65,7 +64,6 @@ AnimationCompressionSettingsDialogClass::AnimationCompressionSettingsDialogClass
 ////////////////////////////////////////////////////////////////////////////////////////
 AnimationCompressionSettingsDialogClass::~AnimationCompressionSettingsDialogClass (void)
 {
-	return ;
 }
 
 
@@ -244,7 +242,6 @@ AnimationCompressionSettingsDialogClass::Initialize_Controls (void)
 
 	::sprintf (string, "%f", Options->CompressAnimationRotationError);
 	::SetDlgItemText (Wnd, IDC_MAX_ROT_ERROR_EDIT, string);
-	return ;
 }
 
 
@@ -287,5 +284,4 @@ AnimationCompressionSettingsDialogClass::Save_Settings (void)
 	::GetDlgItemText (Wnd, IDC_MAX_ROT_ERROR_EDIT, string, sizeof (string));
 	float rot_error = ::atof (string);
 	Options->CompressAnimationRotationError = rot_error;
-	return ;
 }

@@ -33,7 +33,7 @@
   \brief The function level profiler.
 
   Note that this class exists even if the current build configuration
-  is not RTS_PROFILE. In these cases all calls will simply return
+  is not RTS_PROFILE_LEGACY. In these cases all calls will simply return
   empty data.
 */
 class ProfileFuncLevel

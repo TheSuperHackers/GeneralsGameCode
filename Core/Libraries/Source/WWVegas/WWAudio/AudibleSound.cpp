@@ -161,7 +161,6 @@ AudibleSoundClass::AudibleSoundClass ()
 		m_StartOffset (0),
 		m_PitchFactor (1.0F)
 {
-	return ;
 }
 
 
@@ -196,7 +195,6 @@ AudibleSoundClass::AudibleSoundClass (const AudibleSoundClass &src)
 		m_PitchFactor (1.0F)
 {
 	(*this) = src;
-	return ;
 }
 
 
@@ -221,7 +219,6 @@ AudibleSoundClass::~AudibleSoundClass ()
 	}
 
 	Free_Miles_Handle ();
-	return ;
 }
 
 
@@ -293,8 +290,6 @@ AudibleSoundClass::Set_Buffer (SoundBufferClass *buffer)
 	if (resume) {
 		Play ();
 	}
-
-	return ;
 }
 
 
@@ -522,8 +517,6 @@ AudibleSoundClass::Seek (unsigned long milliseconds)
 			m_SoundHandle->Set_Sample_MS_Position (m_CurrentPosition);
 		}
 	}
-
-	return ;
 }
 
 
@@ -564,8 +557,6 @@ AudibleSoundClass::Set_Miles_Handle (MILES_HANDLE handle)
 		//
 		Initialize_Miles_Handle ();
 	}
-
-	return ;
 }
 
 
@@ -639,8 +630,6 @@ AudibleSoundClass::Initialize_Miles_Handle ()
 		//
 		m_SoundHandle->Set_Sample_User_Data (INFO_OBJECT_PTR, (void *)this);
 	}
-
-	return ;
 }
 
 
@@ -674,8 +663,6 @@ AudibleSoundClass::Free_Miles_Handle ()
 		delete m_SoundHandle;
 		m_SoundHandle = nullptr;
 	}
-
-	return ;
 }
 
 
@@ -722,8 +709,6 @@ AudibleSoundClass::Set_Pan (float pan)
 	if (m_SoundHandle != nullptr) {
 		m_SoundHandle->Set_Sample_Pan (int(m_Pan * 127.0F));
 	}
-
-	return ;
 }
 
 
@@ -755,8 +740,6 @@ AudibleSoundClass::Set_Pitch_Factor (float factor)
 			m_SoundHandle->Set_Sample_Playback_Rate (new_rate);
 		}
 	}
-
-	return ;
 }
 
 
@@ -794,8 +777,6 @@ AudibleSoundClass::Set_Playback_Rate (int rate_in_hz)
 	if (m_SoundHandle != nullptr) {
 		m_SoundHandle->Set_Sample_Playback_Rate (rate_in_hz);
 	}
-
-	return ;
 }
 
 
@@ -841,8 +822,6 @@ AudibleSoundClass::Set_Volume (float volume)
 		float real_volume = Determine_Real_Volume ();
 		m_SoundHandle->Set_Sample_Volume (int(real_volume * 127.0F));
 	}
-
-	return ;
 }
 
 
@@ -875,8 +854,6 @@ AudibleSoundClass::Set_Loop_Count (int count)
 	if (m_SoundHandle != nullptr) {
 		m_SoundHandle->Set_Sample_Loop_Count (m_LoopCount);
 	}
-
-	return ;
 }
 
 
@@ -893,7 +870,6 @@ AudibleSoundClass::Set_Priority (float priority)
 	// Cache the normalized priority
 	m_Priority = min (priority, 1.0F);
 	m_Priority = max (m_Priority, 0.0F);
-	return ;
 }
 
 
@@ -957,8 +933,6 @@ AudibleSoundClass::Update_Play_Position ()
 		// Trigger the 'end loop' event
 		On_Loop_End ();
 	}
-
-	return ;
 }
 
 
@@ -976,8 +950,6 @@ AudibleSoundClass::Allocate_Miles_Handle ()
 	if (m_SoundHandle == nullptr) {
 		Set_Miles_Handle ((MILES_HANDLE)WWAudioClass::Get_Instance ()->Get_2D_Sample (*this));
 	}
-
-	return ;
 }
 
 
@@ -1004,8 +976,6 @@ AudibleSoundClass::On_Loop_End ()
 	} else {
 		Restart_Loop ();
 	}
-
-	return ;
 }
 
 
@@ -1073,8 +1043,6 @@ AudibleSoundClass::Cull_Sound (bool culled)
 			Allocate_Miles_Handle ();
 		}
 	}
-
-	return ;
 }
 
 
@@ -1090,7 +1058,6 @@ AudibleSoundClass::Set_Transform (const Matrix3D &transform)
 	m_PrevTransform	= m_Transform;
 	m_Transform			= transform;
 	Set_Dirty ();
-	return ;
 }
 
 
@@ -1105,7 +1072,6 @@ AudibleSoundClass::Set_Position (const Vector3 &position)
 	// Update our internal transform
 	m_Transform.Set_Translation (position);
 	Set_Dirty ();
-	return ;
 }
 
 
@@ -1126,8 +1092,6 @@ AudibleSoundClass::Add_To_Scene (bool start_playing)
 		m_Scene = scene;
 		scene->Add_Static_Sound (this, start_playing);
 	}
-
-	return ;
 }
 
 
@@ -1148,8 +1112,6 @@ AudibleSoundClass::Remove_From_Scene ()
 		m_Scene = nullptr;
 		m_PhysWrapper = nullptr;
 	}
-
-	return ;
 }
 
 
@@ -1163,7 +1125,6 @@ AudibleSoundClass::Set_DropOff_Radius (float radius)
 {
 	m_DropOffRadius = radius;
 	Set_Dirty ();
-	return ;
 }
 
 
@@ -1196,8 +1157,6 @@ AudibleSoundClass::Re_Sync (AudibleSoundClass &src)
 	if (m_State != STATE_PLAYING) {
 		Free_Miles_Handle ();
 	}
-
-	return ;
 }
 
 
@@ -1220,8 +1179,6 @@ AudibleSoundClass::Free_Conversion ()
 	if ((m_IsCulled == false) && (m_State == STATE_PLAYING)) {
 		Allocate_Miles_Handle ();
 	}
-
-	return ;
 }
 
 
@@ -1260,8 +1217,6 @@ AudibleSoundClass::Convert_To_Filtered ()
 
 		Free_Miles_Handle ();
 	}
-
-	return ;
 }
 
 
@@ -1360,8 +1315,6 @@ AudibleSoundDefinitionClass::AudibleSoundDefinitionClass ()
 #endif
 
 	NAMED_EDITABLE_PARAM (AudibleSoundDefinitionClass, ParameterClass::TYPE_COLOR, m_AttenuationSphereColor, "Sphere Color");
-
-	return ;
 }
 
 // SKB: Put here because of conficts with CLASSID_???? with other projects.
@@ -1413,8 +1366,6 @@ AudibleSoundDefinitionClass::Initialize_From_Sound (AudibleSoundClass *sound)
 			m_MaxVolRadius = sound_3d->Get_Max_Vol_Radius ();
 		}
 	}
-
-	return ;
 }
 
 

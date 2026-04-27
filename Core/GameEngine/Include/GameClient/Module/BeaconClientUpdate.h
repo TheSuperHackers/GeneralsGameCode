@@ -22,9 +22,9 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// FILE: SwayClientUpdate.h ////////////////////////////////////////////////////////////////////
-// Author: Matthew D. Campbell, May 2002
-// Desc:   Tree sway client update module
+// FILE: BeaconClientUpdate.h ////////////////////////////////////////////////////////////////////
+// Author: Matthew D. Campbell, August 2002
+// Desc:   Beacon client update module
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -34,36 +34,41 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
+class ParticleSystem;
+
+//-------------------------------------------------------------------------------------------------
+class BeaconClientUpdateModuleData : public ClientUpdateModuleData
+{
+public:
+	UnsignedInt m_framesBetweenRadarPulses;
+	UnsignedInt m_radarPulseDuration;
+
+	BeaconClientUpdateModuleData();
+	virtual ~BeaconClientUpdateModuleData() override;
+	static void buildFieldParse(MultiIniFieldParse& p);
+};
 
 //-------------------------------------------------------------------------------------------------
 /** The tree way client update module */
 //-------------------------------------------------------------------------------------------------
-class SwayClientUpdate : public ClientUpdateModule
+class BeaconClientUpdate : public ClientUpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SwayClientUpdate, "SwayClientUpdate" )
-	MAKE_STANDARD_MODULE_MACRO( SwayClientUpdate );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BeaconClientUpdate, "BeaconClientUpdate" )
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BeaconClientUpdate, BeaconClientUpdateModuleData );
 
 public:
 
-	SwayClientUpdate( Thing *thing, const ModuleData* moduleData );
+	BeaconClientUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
-	virtual void clientUpdate();
-
-	void stopSway() { m_swaying = false; }
+	virtual void clientUpdate() override;
+	void hideBeacon();
 
 protected:
 
-	Real			m_curValue;
-	Real			m_curAngle;
-	Real			m_curDelta;
-	Real			m_curAngleLimit;
-	Real			m_leanAngle;							///<Angle that the tree leans away from the wind.
-	Short			m_curVersion;
-	Bool			m_swaying;
-	Bool			m_unused;
+	ParticleSystemID m_particleSystemID;
+	UnsignedInt m_lastRadarPulse;
 
-	void updateSway();
 };

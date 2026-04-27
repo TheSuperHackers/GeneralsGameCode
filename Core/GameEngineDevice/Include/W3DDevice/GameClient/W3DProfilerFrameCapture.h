@@ -1,6 +1,6 @@
 /*
-**	Command & Conquer Generals(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Command & Conquer Generals Zero Hour(tm)
+**	Copyright 2026 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,16 +16,28 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-////////////////////////////////////////////////////////////////////////////////
-//																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
-//																																						//
-////////////////////////////////////////////////////////////////////////////////
-
-// FILE: SystemInfo.h /////////////////////////////////////////////////////////////////////////////
-// Booleans about the System
-// Author: John K. McDonald, December 2002
-
 #pragma once
 
-extern const Bool TheSystemIsUnicode;
+#ifdef PROFILER_ENABLED
+
+#include "Lib/BaseType.h"
+#include <vector>
+
+class W3DProfilerFrameCapture
+{
+public:
+	W3DProfilerFrameCapture();
+	~W3DProfilerFrameCapture();
+
+	void Capture(UnsignedInt displayWidth, UnsignedInt displayHeight);
+
+private:
+	bool ShouldReuseLastCapture(UnsignedInt currentTimeMs) const;
+
+	DWORD m_swizzleShader = 0;
+	UnsignedInt m_lastCaptureTimeMs = 0;
+	UnsignedInt m_lastCaptureHeight = 0;
+	std::vector<UnsignedByte> m_lastCapturePixels;
+};
+
+#endif // PROFILER_ENABLED

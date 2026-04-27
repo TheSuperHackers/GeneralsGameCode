@@ -322,7 +322,7 @@ private:
 public:
 	PartitionFilterLiveMapEnemies(const Object *obj) : m_obj(obj) { }
 
-	virtual Bool allow(Object *objOther)
+	virtual Bool allow(Object *objOther) override
 	{
 		// this is way fast (bit test) so do it first.
 		if (objOther->isEffectivelyDead())
@@ -821,8 +821,6 @@ void SpectreGunshipUpdate::disengageAndDepartAO( Object *gunship )
 
 
   cleanUp();
-
-  return;
 
 }
 

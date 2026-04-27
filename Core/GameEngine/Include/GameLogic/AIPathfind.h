@@ -177,9 +177,9 @@ public:
 
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 protected:
 	enum {MAX_CPOP=20};			///< Max times we will return the cached cpop.
@@ -254,16 +254,23 @@ class PathfindCellList
 	friend class PathfindCell;
 
 public:
-	PathfindCellList() : m_head(nullptr) {}
+	PathfindCellList() : m_head(nullptr), m_tail(nullptr) {}
 
-	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; }
+#if RETAIL_COMPATIBLE_PATHFINDING
+	void reset(PathfindCell* newHead = nullptr) { m_head = newHead; m_tail = nullptr; }
+#else
+	void reset() { m_head = nullptr; m_tail = nullptr; }
+#endif
 
 	PathfindCell* getHead() const { return m_head; }
 
 	Bool empty() const { return m_head == nullptr; }
 
+	Bool canReverseSort(PathfindCell& currentCell) const;
+
 private:
 	PathfindCell* m_head;
+	PathfindCell* m_tail;
 };
 
 /**
@@ -334,6 +341,9 @@ public:
 	// Forward insertion sort, in ascending cost order
 	void forwardInsertionSort(PathfindCellList& list);
 
+	// Reverse insertion sort, in ascending cost order
+	void reverseInsertionSort(PathfindCellList& list);
+
 	/// put self on "open" list in ascending cost order
 	void putOnSortedOpenList( PathfindCellList &list );
 
@@ -353,6 +363,7 @@ public:
 	static Int releaseOpenList( PathfindCellList &list );
 
 	inline PathfindCell *getNextOpen() {return m_info->m_nextOpen?m_info->m_nextOpen->m_cell: nullptr;}
+	inline PathfindCell *getPrevOpen() {return m_info->m_prevOpen?m_info->m_prevOpen->m_cell: nullptr;}
 
 	inline UnsignedShort getXIndex() const {return m_info->m_pos.x;}
 	inline UnsignedShort getYIndex() const {return m_info->m_pos.y;}
@@ -364,6 +375,8 @@ public:
 	inline Bool getClosed() const {return m_info->m_closed;}
 	inline UnsignedInt getCostSoFar() const {return m_info->m_costSoFar;}
 	inline UnsignedInt getTotalCost() const {return m_info->m_totalCost;}
+
+	inline UnsignedInt getTotalCostDifference(PathfindCell& other) const;
 
 	inline void setCostSoFar(UnsignedInt cost) { if( m_info ) m_info->m_costSoFar = cost;}
 	inline void setTotalCost(UnsignedInt cost) { if( m_info ) m_info->m_totalCost = cost;}
@@ -628,25 +641,25 @@ class Pathfinder : PathfindServicesInterface, public Snapshot
 {
 // The following routines are private, but available through the doPathfind callback to aiInterface. jba.
 private:
-	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to);	///< Find a short, valid path between given locations
+	virtual Path *findPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to) override;	///< Find a short, valid path between given locations
 	/** Find a short, valid path to a location NEAR the to location.
 		This succeeds when the destination is unreachable (like inside a building).
 		If the destination is unreachable, it will adjust the to point.  */
 	virtual Path *findClosestPath( Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
-		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies );
+		Coord3D *to, Bool blocked, Real pathCostMultiplier, Bool moveAllies ) override;
 
 	/** Find a short, valid path to a location that obj can attack victim from.  */
 	virtual Path *findAttackPath( const Object *obj, const LocomotorSet& locomotorSet, const Coord3D *from,
-		const Object *victim, const Coord3D* victimPos, const Weapon *weapon );
+		const Object *victim, const Coord3D* victimPos, const Weapon *weapon ) override;
 
 	/** Find a short, valid path to a location that is away from the repulsors.  */
 	virtual Path *findSafePath( const Object *obj, const LocomotorSet& locomotorSet,
-		const Coord3D *from, const Coord3D* repulsorPos1, const Coord3D* repulsorPos2, Real repulsorRadius );
+		const Coord3D *from, const Coord3D* repulsorPos1, const Coord3D* repulsorPos2, Real repulsorRadius ) override;
 
 	/** Patch to the exiting path from the current position, either because we became blocked,
   or because we had to move off the path to avoid other units. */
 	virtual Path *patchPath( const Object *obj, const LocomotorSet& locomotorSet,
-		Path *originalPath, Bool blocked );
+		Path *originalPath, Bool blocked ) override;
 
 public:
 	Pathfinder();
@@ -655,9 +668,9 @@ public:
 	void reset();														///< Reset system in preparation for new map
 
 	// --------------- inherited from Snapshot interface --------------
-	void crc( Xfer *xfer );
-	void xfer( Xfer *xfer );
-	void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Bool clientSafeQuickDoesPathExist( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain & buildings check - fast)
 	Bool clientSafeQuickDoesPathExistForUI( const LocomotorSet& locomotorSet, const Coord3D *from, const Coord3D *to );  ///< Can we build any path at all between the locations	(terrain only - fast)
@@ -904,6 +917,11 @@ private:
 	Int						m_queuePRHead;
 	Int						m_queuePRTail;
 	Int						m_cumulativeCellsAllocated;
+
+#if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
+public:
+	Bool					m_classifyFenceZeroInit;
+#endif
 };
 
 

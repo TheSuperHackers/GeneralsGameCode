@@ -92,7 +92,7 @@ int DebugWindowDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return CDialog::OnCreate(lpCreateStruct);
 }
 
-void DebugWindowDialog::InitPanel( void )
+void DebugWindowDialog::InitPanel()
 {
 	CComboBox* pCombo;
 
@@ -194,7 +194,7 @@ void DebugWindowDialog::InitPanel( void )
 	}
 }
 
-HWND DebugWindowDialog::GetMainWndHWND(void)
+HWND DebugWindowDialog::GetMainWndHWND()
 {
 	return mMainWndHWND;
 }
@@ -234,7 +234,7 @@ void DebugWindowDialog::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-void DebugWindowDialog::clearAllParticleSystems(void)
+void DebugWindowDialog::clearAllParticleSystems()
 {
 	CComboBox* combo = (CComboBox*) GetDlgItem(IDC_PSEd_ParticleSystem);
 	if (!combo) {
@@ -245,7 +245,7 @@ void DebugWindowDialog::clearAllParticleSystems(void)
 	combo->ResetContent();
 }
 
-void DebugWindowDialog::clearAllThingTemplates( void )
+void DebugWindowDialog::clearAllThingTemplates()
 {
 	m_listOfThingTemplates.clear();
 	// this is a kindof(dirty_hack), because there's no way at runtime to verify that
@@ -296,7 +296,7 @@ void DebugWindowDialog::OnReloadTextures()
 	m_shouldReloadTextures = true;
 }
 
-Bool DebugWindowDialog::hasSelectionChanged(void)
+Bool DebugWindowDialog::hasSelectionChanged()
 {
 	if (m_changeHasOcurred) {
 		m_changeHasOcurred = false;
@@ -1596,7 +1596,7 @@ void DebugWindowDialog::OnParticleSystemEdit()
 	signalParticleSystemEdit();
 }
 
-void DebugWindowDialog::signalParticleSystemEdit( void )
+void DebugWindowDialog::signalParticleSystemEdit()
 {
 	performUpdate(false);
 }
@@ -1662,7 +1662,7 @@ void DebugWindowDialog::OnEditMoreParms()
 	}
 }
 
-Bool DebugWindowDialog::shouldWriteINI( void )
+Bool DebugWindowDialog::shouldWriteINI()
 {
 	if (m_shouldWriteINI) {
 		m_shouldWriteINI = false;
@@ -1672,7 +1672,7 @@ Bool DebugWindowDialog::shouldWriteINI( void )
 	return false;
 }
 
-Bool DebugWindowDialog::hasRequestedReload( void )
+Bool DebugWindowDialog::hasRequestedReload()
 {
 	if (m_shouldReload) {
 		m_shouldReload = false;
@@ -1682,12 +1682,12 @@ Bool DebugWindowDialog::hasRequestedReload( void )
 	return false;
 }
 
-Bool DebugWindowDialog::shouldBusyWait( void )
+Bool DebugWindowDialog::shouldBusyWait()
 {
 	return m_shouldBusyWait;
 }
 
-Bool DebugWindowDialog::shouldUpdateParticleCap( void )
+Bool DebugWindowDialog::shouldUpdateParticleCap()
 {
 	if (m_shouldUpdateParticleCap) {
 		m_shouldUpdateParticleCap = false;
@@ -1697,7 +1697,7 @@ Bool DebugWindowDialog::shouldUpdateParticleCap( void )
 	return false;
 }
 
-Bool DebugWindowDialog::shouldReloadTextures( void )
+Bool DebugWindowDialog::shouldReloadTextures()
 {
 	if (m_shouldReloadTextures) {
 		m_shouldReloadTextures = false;
@@ -1707,7 +1707,7 @@ Bool DebugWindowDialog::shouldReloadTextures( void )
 	return false;
 }
 
-Bool DebugWindowDialog::shouldKillAllParticleSystems( void )
+Bool DebugWindowDialog::shouldKillAllParticleSystems()
 {
 	if (m_shouldKillAllParticleSystems) {
 		m_shouldKillAllParticleSystems = false;
@@ -1722,7 +1722,7 @@ void DebugWindowDialog::OnSysCommand(UINT nID, LPARAM lParam)
 	CDialog::OnSysCommand(nID, lParam);
 }
 
-void DebugWindowDialog::OnReloadSystem( void )
+void DebugWindowDialog::OnReloadSystem()
 {
 	m_shouldReload = true;
 }
@@ -1776,7 +1776,7 @@ void DebugWindowDialog::updateCurrentNumParticles( IN int particleCount )
 	pWnd->SetWindowText(buff);
 }
 
-int DebugWindowDialog::getNewParticleCap( void )
+int DebugWindowDialog::getNewParticleCap()
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
 	CWnd *pWnd = GetDlgItem(IDC_PSEd_CurrentParticleCap);

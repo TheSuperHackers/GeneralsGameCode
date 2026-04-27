@@ -524,7 +524,6 @@ void VoxelClass::raw_set_vis(
 	if (k>=(int)ZDim) return;
 
 	VisData[i + j*XDim + k*XDim*YDim] = val;
-	return;
 }
 
 

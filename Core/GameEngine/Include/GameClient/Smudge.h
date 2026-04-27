@@ -28,39 +28,59 @@
 
 struct Smudge : public DLNodeClass<Smudge>
 {
+	typedef void *Identifier;
+
 	W3DMPO_GLUE(Smudge)
 
+	Identifier m_identifier;	//a number or pointer to identify this smudge
 	Vector3 m_pos;	//position of smudge center
 	Vector2 m_offset; // difference in position between "texture" extraction and re-insertion for center vertex
 	Real m_size;		//size of smudge in world space.
 	Real m_opacity;	//alpha of center vertex, corners are assumed at 0
+	Bool m_draw;	//whether this smudge needs to be drawn
 
 	struct smudgeVertex
-	{	Vector3 pos;	//world-space position of vertex
+	{
+		Vector3 pos;	//world-space position of vertex
 		Vector2 uv;	//uv coordinates of vertex
 	};
 	smudgeVertex m_verts[5];	//5 vertices of this smudge (in counter-clockwise order, starting at top-left, ending in center.)
 };
 
+#ifdef USING_STLPORT
+namespace std
+{
+	template<> struct hash<Smudge::Identifier>
+	{
+		size_t operator()(Smudge::Identifier id) const { return reinterpret_cast<size_t>(id); }
+	};
+}
+#endif // USING_STLPORT
+
 struct SmudgeSet : public DLNodeClass<SmudgeSet>
 {
-	W3DMPO_GLUE(SmudgeSet)
-
-public:
-
 	friend class SmudgeManager;
 
-	SmudgeSet();
-	virtual ~SmudgeSet();
-	void reset();
+	W3DMPO_GLUE(SmudgeSet)
 
-	Smudge *addSmudgeToSet();
-	void removeSmudgeFromSet ( Smudge &mySmudge);
+	SmudgeSet();
+	virtual ~SmudgeSet() override;
+
+	void reset();
+	void resetDraw();
+
+	Smudge *addSmudgeToSet(Smudge::Identifier identifier); ///< add and return a smudge to the set with the given identifier
+	void removeSmudgeFromSet(Smudge *&smudge); ///< remove and invalidate the given smudge
+	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge that belongs to this identifier
+
 	DLListClass<Smudge> &getUsedSmudgeList() { return m_usedSmudgeList;}
 	Int getUsedSmudgeCount() { return m_usedSmudgeCount; }	///<active smudges that need rendering.
 
 private:
+	typedef std::hash_map<Smudge::Identifier, Smudge *> SmudgeIdToPtrMap;
+
 	DLListClass<Smudge> m_usedSmudgeList;	///<list of smudges in this set.
+	SmudgeIdToPtrMap m_usedSmudgeMap;
 	static DLListClass<Smudge> m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
 	Int m_usedSmudgeCount;
 };
@@ -76,10 +96,12 @@ public:
 	virtual void ReleaseResources() {}
 	virtual void ReAcquireResources() {}
 
-	SmudgeSet *addSmudgeSet();
-	void removeSmudgeSet(SmudgeSet &mySmudge);
+	void resetDraw(); ///< reset whether all smudges need to be drawn
+
+	SmudgeSet *addSmudgeSet(); ///< add and return a new smudge set
+	void removeSmudgeSet(SmudgeSet *&smudgeSet); ///< remove and invalidate the given smudge set
+	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge from any smudge set
 	Int getSmudgeCountLastFrame() {return m_smudgeCountLastFrame;} ///<return number of smudges submitted last frame.
-	void setSmudgeCountLastFrame(Int count) { m_smudgeCountLastFrame = count;}
 	Bool getHardwareSupport() { return m_hardwareSupportStatus != SMUDGE_SUPPORT_NO;}
 
 protected:

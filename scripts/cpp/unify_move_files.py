@@ -126,6 +126,61 @@ def unify_move_file(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
     move_file(fromGame, fromFile, toGame, toFile)
 
 
+def unify_file_lib(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
+    assert(toGame == Game.CORE)
+
+    fromOppositeGame = get_opposite_game(fromGame)
+    fromOppositeGamePath = get_game_path(fromOppositeGame)
+    fromGamePath = get_game_path(fromGame)
+    toGamePath = get_game_path(toGame)
+
+    fromFirstFolderIndex = fromFile.rfind("/")
+    toFirstFolderIndex = toFile.rfind("/")
+    assert(fromFirstFolderIndex > 0)
+    assert(toFirstFolderIndex > 0)
+
+    fromFirstFolderName = fromFile[:fromFirstFolderIndex]
+    toFirstFolderName = toFile[:toFirstFolderIndex]
+    fromFileInCmake = fromFile[fromFirstFolderIndex+1:]
+    toFileInCmake = toFile[toFirstFolderIndex+1:]
+
+    fromOppositeCmakeFile = os.path.join(fromOppositeGamePath, fromFirstFolderName, "CMakeLists.txt")
+    fromCmakeFile = os.path.join(fromGamePath, fromFirstFolderName, "CMakeLists.txt")
+    toCmakeFile = os.path.join(toGamePath, toFirstFolderName, "CMakeLists.txt")
+
+    modify_cmakelists(fromOppositeCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(fromCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(toCmakeFile, toFileInCmake, CmakeModifyType.REMOVE_COMMENT)
+
+    delete_file(fromOppositeGame, fromFile)
+    move_file(fromGame, fromFile, toGame, toFile)
+
+
+def unify_move_file_lib(fromGame: Game, fromFile: str, toGame: Game, toFile: str):
+    assert(toGame == Game.CORE)
+
+    fromGamePath = get_game_path(fromGame)
+    toGamePath = get_game_path(toGame)
+
+    fromFirstFolderIndex = fromFile.rfind("/")
+    toFirstFolderIndex = toFile.rfind("/")
+    assert(fromFirstFolderIndex > 0)
+    assert(toFirstFolderIndex > 0)
+
+    fromFirstFolderName = fromFile[:fromFirstFolderIndex]
+    toFirstFolderName = toFile[:toFirstFolderIndex]
+    fromFileInCmake = fromFile[fromFirstFolderIndex+1:]
+    toFileInCmake = toFile[toFirstFolderIndex+1:]
+
+    fromCmakeFile = os.path.join(fromGamePath, fromFirstFolderName, "CMakeLists.txt")
+    toCmakeFile = os.path.join(toGamePath, toFirstFolderName, "CMakeLists.txt")
+
+    modify_cmakelists(fromCmakeFile, fromFileInCmake, CmakeModifyType.ADD_COMMENT)
+    modify_cmakelists(toCmakeFile, toFileInCmake, CmakeModifyType.REMOVE_COMMENT)
+
+    move_file(fromGame, fromFile, toGame, toFile)
+
+
 def main():
 
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/crc.h", Game.CORE, "GameEngine/Include/Common/crc.h")
@@ -411,6 +466,31 @@ def main():
 
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp", Game.CORE, "GameEngine/Source/GameLogic/AI/AIPathfind.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/AIPathfind.h", Game.CORE, "GameEngine/Include/GameLogic/AIPathfind.h")
+
+    #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.h")
+    #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8rendererdebugger.cpp")
+    #unify_move_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/shdlib.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/shdlib.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp")
+    
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Display.cpp", Game.CORE, "GameEngine/Source/GameClient/Display.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Display.h", Game.CORE, "GameEngine/Include/GameClient/Display.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Anim2D.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Anim2D.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Anim2D.h", Game.CORE, "GameEngine/Include/GameClient/Anim2D.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Image.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Image.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Image.h", Game.CORE, "GameEngine/Include/GameClient/Image.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/DebugDisplay.cpp", Game.CORE, "GameEngine/Source/GameClient/System/DebugDisplay.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/DebugDisplay.h", Game.CORE, "GameEngine/Include/GameClient/DebugDisplay.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/RayEffect.cpp", Game.CORE, "GameEngine/Source/GameClient/System/RayEffect.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/RayEffect.h", Game.CORE, "GameEngine/Include/GameClient/RayEffect.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp", Game.CORE, "GameEngine/Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h", Game.CORE, "GameEngine/Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp", Game.CORE, "GameEngine/Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Module/BeaconClientUpdate.h", Game.CORE, "GameEngine/Include/GameClient/Module/BeaconClientUpdate.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Drawable/Update/SwayClientUpdate.cpp", Game.CORE, "GameEngine/Source/GameClient/Drawable/Update/SwayClientUpdate.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Module/SwayClientUpdate.h", Game.CORE, "GameEngine/Include/GameClient/Module/SwayClientUpdate.h")
 
     return
 

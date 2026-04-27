@@ -80,17 +80,17 @@ public:
 	//	Inline accessors
 	//
 
-	SphereRenderObjClass *		Get_Sphere (void) const							{ return m_RenderObj; }
+	SphereRenderObjClass *		Get_Sphere () const							{ return m_RenderObj; }
 	void								Set_Sphere (SphereRenderObjClass *sphere)	{ m_RenderObj = sphere; Initialize (); }
-	bool								Is_Data_Valid (void) const						{ return m_bValid; }
+	bool								Is_Data_Valid () const						{ return m_bValid; }
 
 protected:
 
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void				Initialize (void);
-	void				Update_Scale_Array (void);
+	void				Initialize ();
+	void				Update_Scale_Array ();
 
 private:
 

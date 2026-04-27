@@ -81,20 +81,20 @@ public:
 	};
 
 	TexturePage( Int width, Int height );
-	~TexturePage( void );
+	~TexturePage();
 
 	Bool addImage( ImageInfo *image );  ///< try to add image to this page
 
 	void setID( Int id );  ///< set page id
-	Int getID( void );  ///< get page id
+	Int getID();  ///< get page id
 
-	Bool generateTexture( void );  ///< generate the final packed texture
+	Bool generateTexture();  ///< generate the final packed texture
 	Bool writeFile( char *baseFilename );  ///< write generated texture to file
 
-	ImageInfo *getFirstImage( void );  ///< get the first image in the list
+	ImageInfo *getFirstImage();  ///< get the first image in the list
 
-	Int getWidth( void );  ///< get width of texture page
-	Int getHeight( void );  ///< get height of texture page
+	Int getWidth();  ///< get width of texture page
+	Int getHeight();  ///< get height of texture page
 
 	// get rgb from final generated texture (putting this in for quick preview)
 	void getPixel( Int x, Int y, Byte *r, Byte *g, Byte *b, Byte *a = nullptr );
@@ -158,9 +158,9 @@ protected:
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 inline void TexturePage::setID( Int id ) { m_id = id; }
-inline Int TexturePage::getID( void ) { return m_id; }
-inline ImageInfo *TexturePage::getFirstImage( void ) { return m_imageList; }
-inline Int TexturePage::getWidth( void ) { return m_size.x; }
-inline Int TexturePage::getHeight( void ) { return m_size.y; }
+inline Int TexturePage::getID() { return m_id; }
+inline ImageInfo *TexturePage::getFirstImage() { return m_imageList; }
+inline Int TexturePage::getWidth() { return m_size.x; }
+inline Int TexturePage::getHeight() { return m_size.y; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////

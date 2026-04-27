@@ -157,11 +157,11 @@ class SpecialPowerStore : public SubsystemInterface
 public:
 
 	SpecialPowerStore();
-	~SpecialPowerStore();
+	virtual ~SpecialPowerStore() override;
 
-	virtual void init() { };
-	virtual void update() { };
-	virtual void reset();
+	virtual void init() override { };
+	virtual void update() override { };
+	virtual void reset() override;
 
 	const SpecialPowerTemplate *findSpecialPowerTemplate( AsciiString name ) { return findSpecialPowerTemplatePrivate(name); }
 	const SpecialPowerTemplate *findSpecialPowerTemplateByID( UnsignedInt id );

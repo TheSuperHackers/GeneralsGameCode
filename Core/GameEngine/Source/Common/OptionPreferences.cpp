@@ -66,6 +66,41 @@ Bool OptionPreferences::loadFromIniFile()
 	return load("Options.ini");
 }
 
+WW3D::MultiSampleModeEnum OptionPreferences::getAntiAliasing() const
+{
+	OptionPreferences::const_iterator it = find("AntiAliasing");
+	if (it == end())
+		return WW3D::MULTISAMPLE_MODE_NONE;
+
+	WW3D::MultiSampleModeEnum level = (WW3D::MultiSampleModeEnum)atoi(it->second.str());
+	level = clamp(WW3D::MULTISAMPLE_MODE_NONE, level, WW3D::MULTISAMPLE_MODE_8X);
+	level = highestBit(level);
+
+	return level;
+}
+
+TextureFilterClass::TextureFilterMode OptionPreferences::getTextureFilterMode() const
+{
+	OptionPreferences::const_iterator it = find("TextureFilter");
+	if (it == end())
+		return TextureFilterClass::TEXTURE_FILTER_BILINEAR;
+
+	return TextureFilterClass::getTextureFilterMode(it->second.str());
+}
+
+TextureFilterClass::AnisotropicFilterMode OptionPreferences::getTextureAnisotropyLevel() const
+{
+	OptionPreferences::const_iterator it = find("AnisotropyLevel");
+	if (it == end())
+		return TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X;
+
+	TextureFilterClass::AnisotropicFilterMode level = (TextureFilterClass::AnisotropicFilterMode)atoi(it->second.str());
+	level = clamp(TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_2X, level, TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC_16X);
+	level = highestBit(level);
+
+	return level;
+}
+
 Int OptionPreferences::getCampaignDifficulty()
 {
 	OptionPreferences::const_iterator it = find("CampaignDifficulty");

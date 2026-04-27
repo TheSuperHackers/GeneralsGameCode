@@ -76,7 +76,6 @@ SoundBufferClass::SoundBufferClass ()
 	  m_Channels (0),
 	  m_Type (WAVE_FORMAT_IMA_ADPCM)
 {
-	return ;
 }
 
 
@@ -88,7 +87,6 @@ SoundBufferClass::~SoundBufferClass ()
 {
 	SAFE_FREE (m_Filename);
 	Free_Buffer ();
-	return ;
 }
 
 
@@ -105,7 +103,6 @@ SoundBufferClass::Free_Buffer ()
 
 	// Make sure we reset the length
 	m_Length = 0L;
-	return ;
 }
 
 
@@ -138,8 +135,6 @@ SoundBufferClass::Determine_Stats (unsigned char *buffer)
 		float bytes_sec = float((m_Channels * m_Rate * m_Bits) >> 3);
 		m_Duration = (unsigned long)((((float)m_Length) / bytes_sec) * 1000.0F);
 	}
-
-	return ;
 }
 
 
@@ -154,8 +149,6 @@ SoundBufferClass::Set_Filename (const char *name)
 	if (name != nullptr) {
 		m_Filename = ::strdup (name);
 	}
-
-	return ;
 }
 
 
@@ -287,7 +280,6 @@ SoundBufferClass::Load_From_Memory
 StreamSoundBufferClass::StreamSoundBufferClass ()	:
 	  SoundBufferClass ()
 {
-	return ;
 }
 
 
@@ -297,7 +289,6 @@ StreamSoundBufferClass::StreamSoundBufferClass ()	:
 //
 StreamSoundBufferClass::~StreamSoundBufferClass ()
 {
-	return ;
 }
 
 
@@ -308,7 +299,6 @@ StreamSoundBufferClass::~StreamSoundBufferClass ()
 void
 StreamSoundBufferClass::Free_Buffer ()
 {
-	return ;
 }
 
 

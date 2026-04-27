@@ -54,14 +54,14 @@ public:
 
 	const HermiteSpline3DClass &operator= (const HermiteSpline3DClass &that);
 
-	virtual void		Evaluate(float time,Vector3 * set_val);
+	virtual void		Evaluate(float time,Vector3 * set_val) override;
 	virtual void		Evaluate_Derivative(float time,Vector3 * set_val);
-	virtual void		Set_Looping(bool onoff);
+	virtual void		Set_Looping(bool onoff) override;
 
-	virtual void		Set_Key(int i,const Vector3 & point);
-	virtual int			Add_Key(const Vector3 & point,float t);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys();
+	virtual void		Set_Key(int i,const Vector3 & point) override;
+	virtual int			Add_Key(const Vector3 & point,float t) override;
+	virtual void		Remove_Key(int i) override;
+	virtual void		Clear_Keys() override;
 
 	virtual void		Set_Tangents(int i,const Vector3 & in_tan,const Vector3 & out_tan);
 	virtual void		Get_Tangents(int i,Vector3 * set_in,Vector3 * set_out);
@@ -69,9 +69,9 @@ public:
 	virtual void		Update_Tangents() { TangentsDirty = false; }
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 
@@ -100,21 +100,21 @@ public:
 	HermiteSpline1DClass ()
 		: TangentsDirty (true) { }
 
-	virtual void		Evaluate(float time,float * set_val);
-	virtual void		Set_Looping(bool onoff);
+	virtual void		Evaluate(float time,float * set_val) override;
+	virtual void		Set_Looping(bool onoff) override;
 
-	virtual void		Set_Key(int i,float point,unsigned int extra=0);
-	virtual int			Add_Key(float point,float t,unsigned int extra=0);
-	virtual void		Remove_Key(int i);
-	virtual void		Clear_Keys();
+	virtual void		Set_Key(int i,float point,unsigned int extra=0) override;
+	virtual int			Add_Key(float point,float t,unsigned int extra=0) override;
+	virtual void		Remove_Key(int i) override;
+	virtual void		Clear_Keys() override;
 
 	virtual void		Set_Tangents(int i,float in_tan,float out_tan);
 	virtual void		Get_Tangents(int i,float * set_in,float * set_out);
 
 	// save-load support
-	virtual const PersistFactoryClass &	Get_Factory() const;
-	virtual bool								Save(ChunkSaveClass &csave);
-	virtual bool								Load(ChunkLoadClass &cload);
+	virtual const PersistFactoryClass &	Get_Factory() const override;
+	virtual bool								Save(ChunkSaveClass &csave) override;
+	virtual bool								Load(ChunkLoadClass &cload) override;
 
 protected:
 

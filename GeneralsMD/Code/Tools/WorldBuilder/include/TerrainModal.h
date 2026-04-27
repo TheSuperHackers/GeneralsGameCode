@@ -44,8 +44,8 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TerrainModal)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -53,7 +53,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(TerrainModal)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -67,12 +67,12 @@ protected:
 protected:
 	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
-	void updateLabel(void);
-	void updateTextures(void);
+	void updateLabel();
+	void updateTextures();
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);
 
 public:
-	Int getNewNdx(void) {return m_currentFgTexture;};
+	Int getNewNdx() {return m_currentFgTexture;};
 
 };
 

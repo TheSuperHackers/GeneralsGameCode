@@ -74,16 +74,16 @@ public:
 	W3DDisplayString();
 	// ~W3DDisplayString();  // destructor defined by memory pool
 
-	void notifyTextChanged();							///< called when text contents change
-	void draw( Int x, Int y, Color color, Color dropColor );  ///< render text
-	void draw( Int x, Int y, Color color, Color dropColor, Int xDrop, Int yDrop );  ///< render text with the drop shadow being at the offsets passed in
-	void getSize( Int *width, Int *height );		///< get render size
-	Int	getWidth( Int charPos = -1);
-	void setWordWrap( Int wordWrap );						///< set the word wrap width
-	void setWordWrapCentered( Bool isCentered ); ///< If this is set to true, the text on a new line is centered
-	void setFont( GameFont *font );							///< set a font for display
-	void setUseHotkey( Bool useHotkey, Color hotKeyColor = 0xffffffff );
-	void setClipRegion( IRegion2D *region );		///< clip text in this region
+	virtual void notifyTextChanged() override;							///< called when text contents change
+	virtual void draw( Int x, Int y, Color color, Color dropColor ) override;  ///< render text
+	virtual void draw( Int x, Int y, Color color, Color dropColor, Int xDrop, Int yDrop ) override;  ///< render text with the drop shadow being at the offsets passed in
+	virtual void getSize( Int *width, Int *height ) override;		///< get render size
+	virtual Int	getWidth( Int charPos = -1) override;
+	virtual void setWordWrap( Int wordWrap ) override;						///< set the word wrap width
+	virtual void setWordWrapCentered( Bool isCentered ) override; ///< If this is set to true, the text on a new line is centered
+	virtual void setFont( GameFont *font ) override;							///< set a font for display
+	virtual void setUseHotkey( Bool useHotkey, Color hotKeyColor = 0xffffffff ) override;
+	virtual void setClipRegion( IRegion2D *region ) override;		///< clip text in this region
 
 protected:
 

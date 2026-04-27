@@ -110,9 +110,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	Object *m_object;				///< the object
 	RadarObject *m_next;		///< next radar object
@@ -157,11 +157,11 @@ class Radar : public Snapshot,
 public:
 
 	Radar();
-	virtual ~Radar();
+	virtual ~Radar() override;
 
-	virtual void init() { }														///< subsystem initialization
-	virtual void reset();															///< subsystem reset
-	virtual void update();														///< subsystem per frame update
+	virtual void init() override { }														///< subsystem initialization
+	virtual void reset() override;															///< subsystem reset
+	virtual void update() override;														///< subsystem per frame update
 
 	// is the game window parameter the radar window
 	Bool isRadarWindow( GameWindow *window ) { return (m_radarWindow == window) && (m_radarWindow != nullptr); }
@@ -228,9 +228,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 	/// internal method for creating a radar event with specific colors
 	void internalCreateEvent( const Coord3D *world, RadarEventType type, Real secondsToLive,
@@ -304,7 +304,7 @@ extern Radar *TheRadar;  ///< the radar singleton extern
 class RadarDummy : public Radar
 {
 public:
-	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
-	virtual void clearShroud() { }
-	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
+	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) override { }
+	virtual void clearShroud() override { }
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) override { }
 };

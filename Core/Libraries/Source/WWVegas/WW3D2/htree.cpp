@@ -97,7 +97,6 @@ void HTreeClass::Init_Default()
 	strcpy(Pivot[0].Name,"RootTransform");
 	//::strcpy (Name, "Default");
 	Name[0] = 0;
-	return ;
 
 
 
@@ -1068,8 +1067,6 @@ void HTreeClass::Get_Bone_Control(int boneindex, Matrix3D & relative_tm) const
 	} else {
 		relative_tm.Make_Identity ();
 	}
-
-	return ;
 }
 
 HTreeClass * HTreeClass::Alter_Avatar_HTree( const HTreeClass *tree, Vector3 &scale)

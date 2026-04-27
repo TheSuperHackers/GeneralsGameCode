@@ -43,7 +43,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 CW3DViewDoc *
-GetCurrentDocument (void)
+GetCurrentDocument ()
 {
     // Assume failure
     CW3DViewDoc *pCDoc = nullptr;
@@ -105,8 +105,6 @@ CenterDialogAroundTreeView (HWND hDlg)
             }
         }
     }
-
-    return ;
 }
 
 /////////////////////////////////////////////////////////////
@@ -157,7 +155,6 @@ Paint_Gradient
 
     // Validate the contents of the window so the control won't paint itself
     ::ValidateRect (hWnd, nullptr);
-    return ;
 }
 
 
@@ -179,7 +176,6 @@ SetDlgItemFloat
 
 	// Pass the string onto the dialog control
 	::SetDlgItemText (hdlg, child_id, text);
-	return ;
 }
 
 
@@ -229,8 +225,6 @@ Initialize_Spinner
 	if (buddy != nullptr) {
 		::SetWindowFloat (*buddy, pos);
 	}
-
-	return ;
 }
 
 
@@ -267,8 +261,6 @@ Update_Spinner_Buddy (CSpinButtonCtrl &ctrl, int delta)
 			::SetWindowFloat (*buddy, value);
 		}
 	}
-
-	return ;
 }
 
 
@@ -305,8 +297,6 @@ Update_Spinner_Buddy (HWND hspinner, int delta)
 			::SetWindowFloat (hbuddy_wnd, value);
 		}
 	}
-
-	return ;
 }
 
 
@@ -328,7 +318,6 @@ Enable_Dialog_Controls (HWND dlg,bool onoff)
 			::EnableWindow(child,onoff);
 		}
 	}
-	return ;
 }
 
 
@@ -349,7 +338,6 @@ SetWindowFloat
 
 	// Pass the string onto the window
 	::SetWindowText (hwnd, text);
-	return ;
 }
 
 
@@ -562,8 +550,6 @@ Build_Emitter_List
 			REF_PTR_RELEASE (psub_obj);
 		}
 	}
-
-	return ;
 }
 
 
@@ -625,8 +611,6 @@ Rename_Aggregate_Prototype
 			WW3DAssetManager::Get_Instance ()->Add_Prototype (proto);
 		}
 	}
-
-	return ;
 }
 
 
@@ -701,7 +685,7 @@ Get_File_Time
 //  Are_Glide_Drivers_Acceptable
 //
 bool
-Are_Glide_Drivers_Acceptable (void)
+Are_Glide_Drivers_Acceptable ()
 {
 	// Assume success
 	bool retval = true;
@@ -782,8 +766,6 @@ Resolve_Path (CString &filename)
 		::Delimit_Path (path);
 		filename = CString (path) + filename;
 	}
-
-	return ;
 }
 
 
@@ -808,8 +790,6 @@ Find_Missing_Textures
 		Resolve_Path (full_path);
 		list.Add (full_path);
 	}
-
-	return ;
 }
 
 
@@ -865,7 +845,7 @@ Copy_File
 //
 ////////////////////////////////////////////////////////////////////////////
 CGraphicView *
-Get_Graphic_View (void)
+Get_Graphic_View ()
 {
 	CGraphicView *view = nullptr;
 

@@ -66,7 +66,7 @@ public:
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
 	DefinitionClass ();
-	virtual ~DefinitionClass ();
+	virtual ~DefinitionClass () override;
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -86,8 +86,8 @@ public:
 	virtual bool						Is_Valid_Config (StringClass &message);
 
 	// From PersistClass
-	virtual bool						Save (ChunkSaveClass &csave);
-	virtual bool						Load (ChunkLoadClass &cload);
+	virtual bool						Save (ChunkSaveClass &csave) override;
+	virtual bool						Load (ChunkLoadClass &cload) override;
 
 	// User data support
 	uint32								Get_User_Data () const		{ return m_GenericUserData; }
@@ -136,7 +136,6 @@ DefinitionClass::DefinitionClass ()
 		m_SaveEnabled (true),
 		m_DefinitionMgrLink (-1)
 {
-	return ;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -145,7 +144,6 @@ DefinitionClass::DefinitionClass ()
 inline
 DefinitionClass::~DefinitionClass ()
 {
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +162,6 @@ inline void
 DefinitionClass::Set_Name (const char *new_name)
 {
 	m_Name = new_name;
-	return ;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

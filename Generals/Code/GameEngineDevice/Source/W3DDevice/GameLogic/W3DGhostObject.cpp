@@ -68,9 +68,9 @@ class W3DRenderObjectSnapshot : public Snapshot
 
 protected:
 
-	virtual void crc( Xfer *xfer );
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess();
+	virtual void crc( Xfer *xfer ) override;
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override;
 
 #ifdef DEBUG_FOG_MEMORY
 	const char *m_robjName;		///<debug pointer so we know what this is a snapshot of.
@@ -153,7 +153,7 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 Bool W3DRenderObjectSnapshot::addToScene()
 {
-	if (W3DDisplay::m_3DScene != nullptr && !m_robj->Is_In_Scene())
+	if (!m_robj->Is_In_Scene())
 	{
 		W3DDisplay::m_3DScene->Add_Render_Object(m_robj);
 		return true;

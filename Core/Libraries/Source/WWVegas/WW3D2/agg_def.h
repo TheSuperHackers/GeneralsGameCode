@@ -209,15 +209,15 @@ class AggregatePrototypeClass : public W3DMPO, public PrototypeClass
 		//
 		//	Public methods
 		//
-		virtual const char *				Get_Name() const				{ return m_pDefinition->Get_Name (); }
-		virtual int									Get_Class_ID() const		{ return m_pDefinition->Class_ID (); }
-		virtual RenderObjClass *		Create ()								{ return m_pDefinition->Create (); }
-		virtual void								DeleteSelf()								{ delete this; }
+		virtual const char *				Get_Name() const override { return m_pDefinition->Get_Name (); }
+		virtual int									Get_Class_ID() const override { return m_pDefinition->Class_ID (); }
+		virtual RenderObjClass *		Create () override								{ return m_pDefinition->Create (); }
+		virtual void								DeleteSelf() override { delete this; }
 		virtual AggregateDefClass	*	Get_Definition () const { return m_pDefinition; }
 		virtual void								Set_Definition (AggregateDefClass *pdef) { m_pDefinition = pdef; }
 
 	protected:
-		virtual ~AggregatePrototypeClass ()					{ delete m_pDefinition; }
+		virtual ~AggregatePrototypeClass () override { delete m_pDefinition; }
 
 	private:
 
@@ -237,8 +237,8 @@ class AggregateLoaderClass : public PrototypeLoaderClass
 {
 	public:
 
-		virtual int						Chunk_Type ()  { return W3D_CHUNK_AGGREGATE; }
-		virtual PrototypeClass *	Load_W3D (ChunkLoadClass &chunk_load);
+		virtual int						Chunk_Type () override { return W3D_CHUNK_AGGREGATE; }
+		virtual PrototypeClass *	Load_W3D (ChunkLoadClass &chunk_load) override;
 };
 
 

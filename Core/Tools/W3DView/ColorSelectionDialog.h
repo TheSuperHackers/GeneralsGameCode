@@ -77,7 +77,7 @@ protected:
 		//
 		//	Public methods
 		//
-		const Vector3 &		Get_Color (void) const				{ return m_Color; }
+		const Vector3 &		Get_Color () const				{ return m_Color; }
 		void						Set_Color (const Vector3 &color) { m_Color = color; }
 
 	protected:
@@ -86,7 +86,7 @@ protected:
 		//
 		//	Inline accessors
 		//
-		void						Paint_Color_Window (void);
+		void						Paint_Color_Window ();
 		void						Update_Sliders (int slider_id);
 
 	private:

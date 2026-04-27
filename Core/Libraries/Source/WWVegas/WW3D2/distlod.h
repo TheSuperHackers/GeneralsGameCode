@@ -64,28 +64,28 @@ public:
 
 	DistLODClass(const DistLODDefClass & desc);
 	DistLODClass(const DistLODClass & that);
-	virtual ~DistLODClass();
-	virtual RenderObjClass *	Clone() const { return W3DNEW DistLODClass(*this); }
-	virtual int						Class_ID()	const { return CLASSID_DISTLOD; }
-	virtual int						Get_Num_Polys() const;
+	virtual ~DistLODClass() override;
+	virtual RenderObjClass *	Clone() const override { return W3DNEW DistLODClass(*this); }
+	virtual int						Class_ID()	const override { return CLASSID_DISTLOD; }
+	virtual int						Get_Num_Polys() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Rendering
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo);
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo);
+	virtual void					Render(RenderInfoClass & rinfo) override;
+	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Access each LOD individually through Get_Sub_Object.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void 					Set_Transform(const Matrix3D &m);
-	virtual void 					Set_Position(const Vector3 &v);
+	virtual void 					Set_Transform(const Matrix3D &m) override;
+	virtual void 					Set_Position(const Vector3 &v) override;
 
-	virtual int						Get_Num_Sub_Objects() const;
-	virtual RenderObjClass *	Get_Sub_Object(int index) const;
+	virtual int						Get_Num_Sub_Objects() const override;
+	virtual RenderObjClass *	Get_Sub_Object(int index) const override;
 
-	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index);
+	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Hierarchical Animation
@@ -94,36 +94,36 @@ public:
 	// animation-compatible) so the bone query functions simply pass to the top
 	// LOD.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation();
-	virtual void					Set_Animation( HAnimClass * motion, float frame, int anim_mode = ANIM_MODE_MANUAL);
-	virtual void					Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage);
-	virtual void					Set_Animation( HAnimComboClass * anim_combo);
-	virtual HAnimClass *			Peek_Animation();
-	virtual int						Get_Num_Bones();
-	virtual const char *			Get_Bone_Name(int bone_index);
-	virtual int						Get_Bone_Index(const char * bonename);
-	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename);
-	virtual const Matrix3D &	Get_Bone_Transform(int boneindex);
-	virtual void					Capture_Bone(int bindex);
-	virtual void					Release_Bone(int bindex);
-	virtual bool					Is_Bone_Captured(int bindex) const;
-	virtual void					Control_Bone(int bindex,const Matrix3D & tm,bool world_space_translation = false);
+	virtual void					Set_Animation() override;
+	virtual void					Set_Animation( HAnimClass * motion, float frame, int anim_mode = ANIM_MODE_MANUAL) override;
+	virtual void					Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage) override;
+	virtual void					Set_Animation( HAnimComboClass * anim_combo) override;
+	virtual HAnimClass *			Peek_Animation() override;
+	virtual int						Get_Num_Bones() override;
+	virtual const char *			Get_Bone_Name(int bone_index) override;
+	virtual int						Get_Bone_Index(const char * bonename) override;
+	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename) override;
+	virtual const Matrix3D &	Get_Bone_Transform(int boneindex) override;
+	virtual void					Capture_Bone(int bindex) override;
+	virtual void					Release_Bone(int bindex) override;
+	virtual bool					Is_Bone_Captured(int bindex) const override;
+	virtual void					Control_Bone(int bindex,const Matrix3D & tm,bool world_space_translation = false) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection, Ray Tracing
 	// Collision tests are performed on the top-level LOD.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest);
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest);
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest);
+	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
+	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest) override;
+	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Num_Snap_Points();
-	virtual void					Get_Snap_Point(int index,Vector3 * set);
-	virtual void					Scale(float scale);
-	virtual void					Scale(float scalex, float scaley, float scalez);
+	virtual int						Get_Num_Snap_Points() override;
+	virtual void					Get_Snap_Point(int index,Vector3 * set) override;
+	virtual void					Scale(float scale) override;
+	virtual void					Scale(float scalex, float scaley, float scalez) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// DistLOD Interface
@@ -163,8 +163,8 @@ class DistLODLoaderClass : public PrototypeLoaderClass
 {
 public:
 
-	virtual int						Chunk_Type ()  { return W3D_CHUNK_LODMODEL; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload);
+	virtual int						Chunk_Type () override { return W3D_CHUNK_LODMODEL; }
+	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
 };
 
 /*
@@ -220,13 +220,13 @@ class DistLODPrototypeClass : public W3DMPO, public PrototypeClass
 public:
 	DistLODPrototypeClass( DistLODDefClass *def ) { Definition = def; }
 
-	virtual const char *			Get_Name() const			{ return Definition->Get_Name(); }
-	virtual int								Get_Class_ID() const	{ return RenderObjClass::CLASSID_DISTLOD; }
-	virtual RenderObjClass *	Create();
-	virtual void							DeleteSelf()							{ delete this; }
+	virtual const char *			Get_Name() const override { return Definition->Get_Name(); }
+	virtual int								Get_Class_ID() const override { return RenderObjClass::CLASSID_DISTLOD; }
+	virtual RenderObjClass *	Create() override;
+	virtual void							DeleteSelf() override { delete this; }
 
 protected:
-	virtual ~DistLODPrototypeClass() { delete Definition; }
+	virtual ~DistLODPrototypeClass() override { delete Definition; }
 
 private:
 	DistLODDefClass *				Definition;

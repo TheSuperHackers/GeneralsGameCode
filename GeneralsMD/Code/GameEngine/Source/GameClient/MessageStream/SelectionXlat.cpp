@@ -976,7 +976,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			// 3) 3-D camera position has changed
 			m_deselectFeedbackAnchor = msg->getArgument( 0 )->pixel;
 			m_lastClick = (UnsignedInt) msg->getArgument( 2 )->integer;
-			TheTacticalView->getPosition(&m_deselectDownCameraPosition);
+			m_deselectDownCameraPosition = TheTacticalView->getPosition();
 
 			break;
 		}
@@ -984,8 +984,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
-			Coord3D cameraPos;
-			TheTacticalView->getPosition(&cameraPos);
+			Coord3D cameraPos = TheTacticalView->getPosition();
 			cameraPos.sub(&m_deselectDownCameraPosition);
 
 			ICoord2D pixel = msg->getArgument( 0 )->pixel;
@@ -1076,7 +1075,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			{
 				DEBUG_LOG(("META: select team %d",group));
 
-				UnsignedInt now = TheGameLogic->getFrame();
+				UnsignedInt now = timeGetTime();
 				if ( m_lastGroupSelTime == 0 )
 				{
 					m_lastGroupSelTime = now;
@@ -1085,7 +1084,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				Bool performSelection = TRUE;
 
 				// check for double-press to jump view
-				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
+				if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
 				{
 					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					// TheSuperHackers @bugfix Stubbjax 26/05/2025 Perform selection on double-press
@@ -1157,7 +1156,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			{
 				DEBUG_LOG(("META: select team %d",group));
 
-				UnsignedInt now = TheGameLogic->getFrame();
+				UnsignedInt now = timeGetTime();
 				if ( m_lastGroupSelTime == 0 )
 				{
 					m_lastGroupSelTime = now;
@@ -1165,7 +1164,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// check for double-press to jump view
 
-				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
+				if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
 				{
 					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();

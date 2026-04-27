@@ -140,7 +140,7 @@ void PickUnitDialog::SetAllowableType(EditorSortingType sort)
 	m_allowable[sort] = true;
 }
 
-void PickUnitDialog::SetupAsPanel(void)
+void PickUnitDialog::SetupAsPanel()
 {
 	CWnd *pWnd = GetDlgItem(IDCANCEL);
 	if (pWnd) {
@@ -381,7 +381,7 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 
 }
 
-AsciiString PickUnitDialog::getPickedUnit(void)
+AsciiString PickUnitDialog::getPickedUnit()
 {
 	if (m_currentObjectIndex >= 0) {
 		AsciiString retval(m_currentObjectName);
@@ -390,7 +390,7 @@ AsciiString PickUnitDialog::getPickedUnit(void)
 	return AsciiString::TheEmptyString;
 }
 
-const ThingTemplate* PickUnitDialog::getPickedThing(void)
+const ThingTemplate* PickUnitDialog::getPickedThing()
 {
 	if (m_currentObjectIndex >= 0) {
 		const ThingTemplate *tTemplate;

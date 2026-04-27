@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -64,11 +64,11 @@ public:
 	typedef void (DebugDisplayCallback)( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
 
 	Display();
-	virtual ~Display();
+	virtual ~Display() override;
 
-	virtual void init() { };																///< Initialize
-	virtual void reset();																		///< Reset system
-	virtual void update();																	///< Update system
+	virtual void init() override { };																///< Initialize
+	virtual void reset() override;																		///< Reset system
+	virtual void update() override;																	///< Update system
 
 	//---------------------------------------------------------------------------------------
 	// Display attribute methods
@@ -78,7 +78,7 @@ public:
 	virtual UnsignedInt getHeight() { return m_height; }		///< Returns the height of the display
 	virtual void setBitDepth( UnsignedInt bitDepth ) { m_bitDepth = bitDepth; }
 	virtual UnsignedInt getBitDepth() { return m_bitDepth; }
-	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowd/fullscreen flag
+	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowed/fullscreen flag
 	virtual Bool getWindowed() { return m_windowed; }				///< return widowed/fullscreen flag
 	virtual Bool setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed );	///<sets screen resolution/mode
 	virtual Int getDisplayModeCount() {return 0;}	///<return number of display modes/resolutions supported by video card.
@@ -113,8 +113,14 @@ public:
 	virtual	Bool isClippingEnabled() = 0;
 	virtual	void enableClipping( Bool onoff ) = 0;
 
+	// TheSuperHackers @performance Batching 2D draw operations to reduce state changes and draw call overhead.
+	virtual void beginBatch(); 									///< start batching 2D draw operations.
+	virtual void endBatch();   									///< stop batching and flush pending 2D draw operations.
+	virtual void flush();      									///< flush pending 2D draw operations without ending the batch.
+	virtual Bool isBatching() const { return m_isBatching; }	///< returns true if currently batching 2D draw operations.
+
 	virtual void step() {}; ///< Do one fixed time step
-	virtual void draw();																		///< Redraw the entire display
+	virtual void draw() override;																		///< Redraw the entire display
 	virtual void setTimeOfDay( TimeOfDay tod ) = 0;								///< Set the time of day for this display
 	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius,Real attenuationWidth,
 																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime//, Bool donut = FALSE
@@ -182,11 +188,15 @@ public:
 	virtual Int getLastFrameDrawCalls() = 0;  ///< returns the number of draw calls issued in the previous frame
 
 protected:
+	virtual void onBeginBatch() { }
+	virtual void onEndBatch() { }
+	virtual void onFlush() { }
 
 	virtual void deleteViews();   ///< delete all views
 	UnsignedInt m_width, m_height;			///< Dimensions of the display
 	UnsignedInt m_bitDepth;							///< bit depth of the display
 	Bool m_windowed;										///< TRUE when windowed, FALSE when fullscreen
+	Bool m_isBatching;
 	View *m_viewList;										///< All of the views into the world
 
 	// Cinematic text data

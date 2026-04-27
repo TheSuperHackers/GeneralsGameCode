@@ -148,12 +148,12 @@ class GameState : public SubsystemInterface,
 public:
 
 	GameState();
-	virtual ~GameState();
+	virtual ~GameState() override;
 
 	// subsystem interface
-	virtual void init();
-	virtual void reset();
-	virtual void update() { }
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override { }
 
 	// save game methods
 	SaveCode saveGame( AsciiString filename,
@@ -191,9 +191,9 @@ public:
 protected:
 
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) { }
-	virtual void xfer( Xfer *xfer );
-	virtual void loadPostProcess() { }
+	virtual void crc( Xfer *xfer ) override { }
+	virtual void xfer( Xfer *xfer ) override;
+	virtual void loadPostProcess() override { }
 
 private:
 

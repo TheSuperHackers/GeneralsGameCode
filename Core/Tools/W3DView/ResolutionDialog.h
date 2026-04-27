@@ -62,9 +62,9 @@ protected:
 	///////////////////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////////////////
-	int		Get_Width (void);
-	int		Get_Height (void);
-	int		Get_BPP (void);
+	int		Get_Width ();
+	int		Get_Height ();
+	int		Get_BPP ();
 
 private:
 

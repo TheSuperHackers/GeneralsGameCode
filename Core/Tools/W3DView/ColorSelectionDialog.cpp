@@ -48,7 +48,6 @@ ColorSelectionDialogClass::ColorSelectionDialogClass
 	//{{AFX_DATA_INIT(ColorSelectionDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
-	return ;
 }
 
 
@@ -69,7 +68,6 @@ ColorSelectionDialogClass::DoDataExchange (CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SLIDER_GREEN, m_GreenSlider);
 	DDX_Control(pDX, IDC_SLIDER_RED, m_RedSlider);
 	//}}AFX_DATA_MAP
-	return ;
 }
 
 
@@ -90,7 +88,7 @@ END_MESSAGE_MAP()
 //	ColorSelectionDialogClass
 //
 BOOL
-ColorSelectionDialogClass::OnInitDialog (void)
+ColorSelectionDialogClass::OnInitDialog ()
 {
 	// Allow the base class to process this message
 	CDialog::OnInitDialog ();
@@ -131,14 +129,13 @@ ColorSelectionDialogClass::OnInitDialog (void)
 //	ColorSelectionDialogClass
 //
 void
-ColorSelectionDialogClass::OnOK (void)
+ColorSelectionDialogClass::OnOK ()
 {
 	// Record the color
 	m_Color = m_PaintColor;
 
 	// Allow the base class to process this message
 	CDialog::OnOK ();
-	return ;
 }
 
 
@@ -159,7 +156,6 @@ ColorSelectionDialogClass::OnHScroll
 
 	// Allow the base class to process this message
 	CDialog::OnHScroll (nSBCode, nPos, pScrollBar);
-	return ;
 }
 
 
@@ -168,7 +164,7 @@ ColorSelectionDialogClass::OnHScroll
 //	OnPaint
 //
 void
-ColorSelectionDialogClass::OnPaint (void)
+ColorSelectionDialogClass::OnPaint ()
 {
 	CPaintDC dc (this);
 
@@ -179,7 +175,6 @@ ColorSelectionDialogClass::OnPaint (void)
 
 	// Update the window that displays the color the user has selected
 	Paint_Color_Window ();
-	return ;
 }
 
 
@@ -188,7 +183,7 @@ ColorSelectionDialogClass::OnPaint (void)
 //	Paint_Color_Window
 //
 void
-ColorSelectionDialogClass::Paint_Color_Window (void)
+ColorSelectionDialogClass::Paint_Color_Window ()
 {
 	// Get the client coords of the 'color' window
 	CRect rect;
@@ -203,7 +198,6 @@ ColorSelectionDialogClass::Paint_Color_Window (void)
 
 	// Let the window know it doesn't need to be repainted
 	m_ColorWindow.ValidateRect (nullptr);
-	return;
 }
 
 
@@ -212,7 +206,7 @@ ColorSelectionDialogClass::Paint_Color_Window (void)
 //	OnGrayscaleCheck
 //
 void
-ColorSelectionDialogClass::OnGrayscaleCheck (void)
+ColorSelectionDialogClass::OnGrayscaleCheck ()
 {
 	// Is the checkbox checked?
 	if (SendDlgItemMessage (IDC_GRAYSCALE_CHECK, BM_GETCHECK)) {
@@ -228,8 +222,6 @@ ColorSelectionDialogClass::OnGrayscaleCheck (void)
 		// Update the window that displays the color the user has selected
 		Paint_Color_Window ();
 	}
-
-	return ;
 }
 
 
@@ -238,7 +230,7 @@ ColorSelectionDialogClass::OnGrayscaleCheck (void)
 //	OnChangeBlueEdit
 //
 void
-ColorSelectionDialogClass::OnChangeBlueEdit (void)
+ColorSelectionDialogClass::OnChangeBlueEdit ()
 {
 	if (::IsWindow (m_BlueSlider)) {
 		int value = GetDlgItemInt (IDC_BLUE_EDIT);
@@ -250,8 +242,6 @@ ColorSelectionDialogClass::OnChangeBlueEdit (void)
 		// Reset the cursor to the end of the edit box
 		SendDlgItemMessage (IDC_BLUE_EDIT, EM_SETSEL, (WPARAM)(int)10, (LPARAM)(int)20);
 	}
-
-	return ;
 }
 
 
@@ -260,7 +250,7 @@ ColorSelectionDialogClass::OnChangeBlueEdit (void)
 //	OnChangeGreenEdit
 //
 void
-ColorSelectionDialogClass::OnChangeGreenEdit (void)
+ColorSelectionDialogClass::OnChangeGreenEdit ()
 {
 	if (::IsWindow (m_GreenSlider)) {
 		int value = GetDlgItemInt (IDC_GREEN_EDIT);
@@ -272,8 +262,6 @@ ColorSelectionDialogClass::OnChangeGreenEdit (void)
 		// Reset the cursor to the end of the edit box
 		SendDlgItemMessage (IDC_GREEN_EDIT, EM_SETSEL, (WPARAM)(int)10, (LPARAM)(int)20);
 	}
-
-	return ;
 }
 
 
@@ -282,7 +270,7 @@ ColorSelectionDialogClass::OnChangeGreenEdit (void)
 //	OnChangeRedEdit
 //
 void
-ColorSelectionDialogClass::OnChangeRedEdit (void)
+ColorSelectionDialogClass::OnChangeRedEdit ()
 {
 	if (::IsWindow (m_RedSlider)) {
 		int value = GetDlgItemInt (IDC_RED_EDIT);
@@ -294,8 +282,6 @@ ColorSelectionDialogClass::OnChangeRedEdit (void)
 		// Reset the cursor to the end of the edit box
 		SendDlgItemMessage (IDC_RED_EDIT, EM_SETSEL, (WPARAM)(int)10, (LPARAM)(int)20);
 	}
-
-	return ;
 }
 
 
@@ -341,5 +327,4 @@ ColorSelectionDialogClass::Update_Sliders (int slider_id)
 
 	// Update the window that displays the color the user has selected
 	Paint_Color_Window ();
-	return ;
 }

@@ -224,7 +224,7 @@ void BlendMaterial::addTerrain(const char *pPath, Int terrainNdx, HTREEITEM pare
 }
 
 //* Create the tree view of textures from the textures in pMap. */
-void BlendMaterial::updateTextures(void)
+void BlendMaterial::updateTextures()
 {
 	m_updating = true;
 	m_terrainTreeView.DeleteAllItems();

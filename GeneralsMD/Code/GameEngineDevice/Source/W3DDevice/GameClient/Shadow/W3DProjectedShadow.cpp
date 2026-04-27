@@ -151,9 +151,9 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 			m_shadowUV[0].Set(1.0f,0.0f,0.0f);	//u runs along world x axis
 			m_shadowUV[1].Set(0.0f,-1.0f,0.0f);	//v runs along world -y axis
 		}
-		~W3DShadowTexture() { REF_PTR_RELEASE(m_texture);}
+		virtual ~W3DShadowTexture() override { REF_PTR_RELEASE(m_texture);}
 
-		virtual	const char * Get_Key()	{ return m_namebuf;	}
+		virtual	const char * Get_Key() override { return m_namebuf;	}
 
 		Int init (RenderObjClass *robj);
 
@@ -2380,9 +2380,9 @@ class MissingTextureClass : public HashableClass {
 
 public:
 	MissingTextureClass( const char * name ) : Name( name ) {}
-	virtual	~MissingTextureClass() {}
+	virtual	~MissingTextureClass() override {}
 
-	virtual	const char * Get_Key()	{ return Name;	}
+	virtual	const char * Get_Key() override { return Name;	}
 
 private:
 	StringClass	Name;

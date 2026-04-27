@@ -36,14 +36,14 @@ class DebugWindowDialog : public CDialog
 		enum {IDD = IDD_DebugWindow};
 		DebugWindowDialog(UINT nIDTemplate = DebugWindowDialog::IDD, CWnd* pParentWnd = nullptr);
 
-		bool CanProceed(void);
-		bool RunAppFast(void);
+		bool CanProceed();
+		bool RunAppFast();
 		void AppendMessage(const std::string& messageToAppend);
 		void AdjustVariable(const std::string& varName, const std::string& varValue);
 		void SetFrameNumber(int frameNumber);
-		HWND GetMainWndHWND(void);
-		void ForcePause(void);
-		void ForceContinue(void);
+		HWND GetMainWndHWND();
+		void ForcePause();
+		void ForceContinue();
 
 	// This var shouldn't be here, but honsestly...
 	protected:
@@ -62,9 +62,9 @@ class DebugWindowDialog : public CDialog
 		VecPairString	mVariables;
 		VecString		mMessages;
 
-		void _RebuildVarsString(void);
-		void _RebuildMesgString(void);
-		void _UpdatePauseButton(void);
+		void _RebuildVarsString();
+		void _RebuildMesgString();
+		void _UpdatePauseButton();
 
 	protected:
 		afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

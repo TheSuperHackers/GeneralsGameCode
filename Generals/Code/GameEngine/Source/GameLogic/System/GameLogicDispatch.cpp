@@ -347,9 +347,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	DEBUG_ASSERTCRASH(msg != nullptr && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 
-	Player *thisPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
-	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')",
-																	msg->getPlayerIndex()) );
+	Player *msgPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
+	if (msgPlayer == nullptr)
+	{
+		DEBUG_CRASH(("logicMessageDispatcher: Processing message from unknown player (player index '%d')", msg->getPlayerIndex()));
+		return;
+	}
 
 	AIGroupPtr currentlySelectedGroup = nullptr;
 
@@ -362,9 +365,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				currentlySelectedGroup = TheAI->createGroup(); // can't do this outside a game - it'll cause sync errors galore.
 				CRCGEN_LOG(( "Creating AIGroup %d in GameLogic::logicMessageDispatcher()", currentlySelectedGroup?currentlySelectedGroup->getID():0 ));
 #if RETAIL_COMPATIBLE_AIGROUP
-				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup);
+				msgPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup);
 #else
-				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup.Peek());
+				msgPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup.Peek());
 #endif
 
 				// We can't issue commands to groups that contain units that don't belong to the issuing player, so pretend like
@@ -380,7 +383,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				// If there are any units that the player doesn't own, then remove them from the "currentlySelectedGroup"
 				if (currentlySelectedGroup)
-					if (currentlySelectedGroup->removeAnyObjectsNotOwnedByPlayer(thisPlayer))
+					if (currentlySelectedGroup->removeAnyObjectsNotOwnedByPlayer(msgPlayer))
 						currentlySelectedGroup = nullptr;
 
 				if(TheStatsCollector)
@@ -405,7 +408,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	if (commandName.isNotEmpty() /*&& msg->getType() != GameMessage::MSG_FRAME_TICK*/)
 	{
 		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)", getFrame(), commandName.str(),
-			msg->getPlayerIndex(), thisPlayer->getPlayerDisplayName().str()));
+			msgPlayer->getPlayerIndex(), msgPlayer->getPlayerDisplayName().str()));
 	}
 #endif
 #endif // DEBUG_LOGGING
@@ -526,10 +529,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
-				if ( obj->getControllingPlayer() != thisPlayer )
+				if ( obj->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 obj->getTemplate()->getName().str(),
 						 obj->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -691,10 +694,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -745,10 +748,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -800,10 +803,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -1074,7 +1077,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				break;
 
 			// sanity, the player must actually control this object
-			if( objectWantingToExit->getControllingPlayer() != thisPlayer )
+			if( objectWantingToExit->getControllingPlayer() != msgPlayer )
 				break;
 
 			objectWantingToExit->releaseWeaponLock(LOCKED_TEMPORARILY);	// release any temporary locks.
@@ -1253,10 +1256,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
-				if ( source->getControllingPlayer() != thisPlayer )
+				if ( source->getControllingPlayer() != msgPlayer )
 				{
 					DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
-						 thisPlayer->getPlayerDisplayName().str(),
+						 msgPlayer->getPlayerDisplayName().str(),
 						 source->getTemplate()->getName().str(),
 						 source->getControllingPlayer()->getPlayerDisplayName().str()) );
 					break;
@@ -1394,7 +1397,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				break;
 
 			// the player must actually control the producer object
-			if( producer->getControllingPlayer() != thisPlayer )
+			if( producer->getControllingPlayer() != msgPlayer )
 				break;
 
 			// producer must have a production update
@@ -1461,7 +1464,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				break;
 
 			// sanity, the player must control the producer
-			if( producer->getControllingPlayer() != thisPlayer )
+			if( producer->getControllingPlayer() != msgPlayer )
 				break;
 
 			// get the unit production interface
@@ -1545,7 +1548,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				break;
 
 			// the player sending this message must actually control this building
-			if( building->getControllingPlayer() != thisPlayer )
+			if( building->getControllingPlayer() != msgPlayer )
 				break;
 
 			// Check to make sure it is actually under construction
@@ -1555,8 +1558,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// OK, refund the money to the player, unless it is a rebuilding Hole.
 			if( !building->testStatus(OBJECT_STATUS_RECONSTRUCTING))
 			{
-				Money *money = thisPlayer->getMoney();
-				UnsignedInt amount = building->getTemplate()->calcCostToBuild( thisPlayer );
+				Money *money = msgPlayer->getMoney();
+				UnsignedInt amount = building->getTemplate()->calcCostToBuild( msgPlayer );
 				money->deposit( amount, TRUE, FALSE );
 			}
 
@@ -1635,13 +1638,6 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CREATE_SELECTED_GROUP:
 		{
 			Bool createNewGroup = msg->getArgument( 0 )->boolean;
-			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-
-			if (player == nullptr) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player number"));
-				break;
-			}
-
 			Bool firstObject = TRUE;
 
 			for (Int i = 1; i < msg->getArgumentCount(); ++i) {
@@ -1650,7 +1646,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					continue;
 				}
 
-				selectObject(obj, createNewGroup && firstObject, player->getPlayerMask());
+				selectObject(obj, createNewGroup && firstObject, msgPlayer->getPlayerMask());
 				firstObject = FALSE;
 			}
 
@@ -1661,13 +1657,6 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_REMOVE_FROM_SELECTED_GROUP:
 		{
-			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-
-			if (player == nullptr) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player number"));
-				break;
-			}
-
 			for (Int i = 0; i < msg->getArgumentCount(); ++i) {
 				ObjectID objID = msg->getArgument(i)->objectID;
 				Object *objToRemove = findObjectByID(objID);
@@ -1675,7 +1664,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					continue;
 				}
 
-				deselectObject(objToRemove, player->getPlayerMask());
+				deselectObject(objToRemove, msgPlayer->getPlayerMask());
 			}
 
 			break;
@@ -1685,11 +1674,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DESTROY_SELECTED_GROUP:
 		{
-			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
-			if (player != nullptr)
-			{
-				player->setCurrentlySelectedAIGroup(nullptr);
-			}
+			msgPlayer->setCurrentlySelectedAIGroup(nullptr);
 
 			break;
 
@@ -1706,23 +1691,23 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_PLACE_BEACON:
 		{
-			if (thisPlayer->getPlayerTemplate() == nullptr)
+			if (msgPlayer->getPlayerTemplate() == nullptr)
 				break;
 			Coord3D pos = msg->getArgument( 0 )->location;
 			Region3D r;
 			TheTerrainLogic->getExtent(&r);
 			if (!r.isInRegionNoZ(&pos))
 				pos = TheTerrainLogic->findClosestEdgePoint(&pos);
-			const ThingTemplate *thing = TheThingFactory->findTemplate( thisPlayer->getPlayerTemplate()->getBeaconTemplate() );
-			if (thing && !TheVictoryConditions->hasSinglePlayerBeenDefeated(thisPlayer))
+			const ThingTemplate *thing = TheThingFactory->findTemplate( msgPlayer->getPlayerTemplate()->getBeaconTemplate() );
+			if (thing && !TheVictoryConditions->hasSinglePlayerBeenDefeated(msgPlayer))
 			{
 				// how many does this player have active?
 				Int count;
-				thisPlayer->countObjectsByThingTemplate( 1, &thing, false, &count );
+				msgPlayer->countObjectsByThingTemplate( 1, &thing, false, &count );
 				DEBUG_LOG(("Player already has %d beacons active", count));
 				if (count >= TheMultiplayerSettings->getMaxBeaconsPerPlayer())
 				{
-					if (thisPlayer == ThePlayerList->getLocalPlayer())
+					if (msgPlayer == ThePlayerList->getLocalPlayer())
 					{
 						// tell the user
 						TheInGameUI->message( TheGameText->fetch("GUI:TooManyBeacons") );
@@ -1730,33 +1715,33 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						// play a sound
 						static AudioEventRTS aSound("BeaconPlacementFailed");
 						aSound.setPosition(&pos);
-						aSound.setPlayerIndex(thisPlayer->getPlayerIndex());
+						aSound.setPlayerIndex(msgPlayer->getPlayerIndex());
 						TheAudio->addAudioEvent(&aSound);
 					}
 
 					break;
 				}
-				Object *object = TheThingFactory->newObject( thing, thisPlayer->getDefaultTeam() );
+				Object *object = TheThingFactory->newObject( thing, msgPlayer->getDefaultTeam() );
 				object->setPosition( &pos );
 				object->setProducer(nullptr);
 
-				if (thisPlayer->getRelationship( ThePlayerList->getLocalPlayer()->getDefaultTeam() ) == ALLIES || ThePlayerList->getLocalPlayer()->isPlayerObserver())
+				if (msgPlayer->getRelationship( ThePlayerList->getLocalPlayer()->getDefaultTeam() ) == ALLIES || ThePlayerList->getLocalPlayer()->isPlayerObserver())
 				{
 					// tell the user
 					UnicodeString s;
-					s.format(TheGameText->fetch("GUI:BeaconPlaced"), thisPlayer->getPlayerDisplayName().str());
+					s.format(TheGameText->fetch("GUI:BeaconPlaced"), msgPlayer->getPlayerDisplayName().str());
 					TheInGameUI->message( s );
 
 					// play a sound
 					static AudioEventRTS aSound("BeaconPlaced");
-					aSound.setPlayerIndex(thisPlayer->getPlayerIndex());
+					aSound.setPlayerIndex(msgPlayer->getPlayerIndex());
 					aSound.setPosition(&pos);
 					TheAudio->addAudioEvent(&aSound);
 
 					// beacons are a rare event; play a nifty radar event thingy
 					TheRadar->createEvent( object->getPosition(), RADAR_EVENT_INFORMATION );
 
-					if (ThePlayerList->getLocalPlayer()->getRelationship(thisPlayer->getDefaultTeam()) == ALLIES)
+					if (ThePlayerList->getLocalPlayer()->getRelationship(msgPlayer->getDefaultTeam()) == ALLIES)
 						TheEva->setShouldPlay(EVA_BeaconDetected);
 
 					TheControlBar->markUIDirty(); // check if we should grey out the button
@@ -1792,7 +1777,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// play a sound
 				static AudioEventRTS aSound("BeaconPlacementFailed");
 				aSound.setPosition(&pos);
-				aSound.setPlayerIndex(thisPlayer->getPlayerIndex());
+				aSound.setPlayerIndex(msgPlayer->getPlayerIndex());
 				TheAudio->addAudioEvent(&aSound);
 			}
 			break;
@@ -1803,9 +1788,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 			AIGroupPtr allSelectedObjects = TheAI->createGroup();
 #if RETAIL_COMPATIBLE_AIGROUP
-			thisPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects); // need to act on all objects, so we can hide teammates' beacons.
+			msgPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects); // need to act on all objects, so we can hide teammates' beacons.
 #else
-			thisPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects.Peek()); // need to act on all objects, so we can hide teammates' beacons.
+			msgPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects.Peek()); // need to act on all objects, so we can hide teammates' beacons.
 #endif
 			if( allSelectedObjects )
 			{
@@ -1823,13 +1808,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						const ThingTemplate *thing = TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() );
 						if (thing && thing->isEquivalentTo(beacon->getTemplate()))
 						{
-							if (beacon->getControllingPlayer() == thisPlayer)
+							if (beacon->getControllingPlayer() == msgPlayer)
 							{
 								destroyObject(beacon); // the owner is telling it to go away.  such is life.
 
 								TheControlBar->markUIDirty(); // check if we should un-grey out the button
 							}
-							else if (thisPlayer == ThePlayerList->getLocalPlayer())
+							else if (msgPlayer == ThePlayerList->getLocalPlayer())
 							{
 								Drawable *beaconDrawable = beacon->getDrawable();
 								if (beaconDrawable)
@@ -1903,18 +1888,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				Int i=0;
 				for (; i<ThePlayerList->getPlayerCount(); ++i)
 				{
-					if (i != msg->getPlayerIndex())
+					if (i != msgPlayer->getPlayerIndex())
 					{
 						Player *otherPlayer = ThePlayerList->getNthPlayer(i);
-						if (thisPlayer->getRelationship(otherPlayer->getDefaultTeam()) == ALLIES &&
-							otherPlayer->getRelationship(thisPlayer->getDefaultTeam()) == ALLIES)
+						if (msgPlayer->getRelationship(otherPlayer->getDefaultTeam()) == ALLIES &&
+							otherPlayer->getRelationship(msgPlayer->getDefaultTeam()) == ALLIES)
 						{
 							if (TheVictoryConditions->hasSinglePlayerBeenDefeated(otherPlayer))
 								continue;
 
 							// a living ally!  hooray!
-							otherPlayer->transferAssetsFromThat(thisPlayer);
-							thisPlayer->killPlayer(); // just to be safe (and to kill beacons etc that don't transfer)
+							otherPlayer->transferAssetsFromThat(msgPlayer);
+							msgPlayer->killPlayer(); // just to be safe (and to kill beacons etc that don't transfer)
 							break;
 						}
 					}
@@ -1922,12 +1907,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				if (i == ThePlayerList->getPlayerCount())
 				{
 					// didn't find any allies.  die, loner!
-					thisPlayer->killPlayer();
+					msgPlayer->killPlayer();
 				}
 			}
 			else
 			{
-				thisPlayer->killPlayer();
+				msgPlayer->killPlayer();
 			}
 			// There is no reason to do any notification here, it now takes place in the victory conditions.
 			// bonehead.
@@ -1937,7 +1922,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_SET_REPLAY_CAMERA:
 		{
-			if (TheRecorder->isPlaybackMode() && TheGlobalData->m_useCameraInReplay && TheControlBar->getObserverLookAtPlayer() == thisPlayer)
+			if (TheRecorder->isPlaybackMode() && TheGlobalData->m_useCameraInReplay && TheControlBar->getObserverLookAtPlayer() == msgPlayer)
 			{
 				if (TheTacticalView->isCameraMovementFinished())
 				{
@@ -1945,11 +1930,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					const Real angle = msg->getArgument( 1 )->real;
 					const Real pitch = msg->getArgument( 2 )->real;
 					const Real zoom = msg->getArgument( 3 )->real;
+					const Mouse::MouseCursor mouseCursor = static_cast<Mouse::MouseCursor>(msg->getArgument( 4 )->integer);
+					const ICoord2D mousePos = msg->getArgument( 5 )->pixel;
 
 					// TheSuperHackers @info Definitely call in user mode to ensure the camera operates with auto-zoom
 					// over terrain elevations, because the Replay Camera does not store the absolute camera location,
 					// but key parameters relative to the terrain height at the camera pivot.
-					TheTacticalView->userSetPosition(&pos);
+					TheTacticalView->userSetPosition(pos);
 					TheTacticalView->userSetAngle(angle);
 					TheTacticalView->userSetPitch(pitch);
 					TheTacticalView->userSetZoom(zoom);
@@ -1958,13 +1945,26 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					const Coord2D scroll = {0, 0};
 					TheTacticalView->userScrollBy(&scroll);
 
-					// TheSuperHackers @fix xezon 18/09/2025 Lock the new location to avoid user input from changing the camera in this frame.
+					if (msg->getArgumentCount() >= 8)
+					{
+						// TheSuperHackers @feature Override all the settings above with real camera position and view direction.
+						// This ensures that the camera looks EXACTLY like it was at the time of recording, no matter how the
+						// View is configured or tweaked. Note that the above settings are still required to set regardless, because
+						// when the replay camera is exited, then the pivot position and angles will be needed to build the camera
+						// where it was left off.
+						const Coord3D camPos = msg->getArgument( 6 )->location;
+						const Coord3D camDir = msg->getArgument( 7 )->location;
+
+						TheTacticalView->setUserControlled(false);
+						TheTacticalView->set3DCameraLookAt(camPos, camDir, 0.0f);
+					}
+
+					// TheSuperHackers @fix Lock the new location to avoid user input from changing the camera in this frame.
 					TheTacticalView->lockUserControlUntilFrame( getFrame() + 1 );
 
 					if (!TheLookAtTranslator->hasMouseMovedRecently())
 					{
-						TheMouse->setCursor( (Mouse::MouseCursor)(msg->getArgument( 4 )->integer) );
-						ICoord2D mousePos = msg->getArgument( 5 )->pixel;
+						TheMouse->setCursor( mouseCursor );
 						TheMouse->setPosition( mousePos.x, mousePos.y );
 						TheLookAtTranslator->setCurrentPos( mousePos );
 					}
@@ -1985,13 +1985,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CREATE_TEAM8:
 		case GameMessage::MSG_CREATE_TEAM9:
 		{
-			Int playerIndex = msg->getPlayerIndex();
-			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for create team message"));
-
 			// TheSuperHackers @tweak Stubbjax 17/08/2025 The local player processes this message in CommandXlat for immediate assignment.
-			if (player && !player->isLocalPlayer())
-				player->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
+			if (!msgPlayer->isLocalPlayer())
+				msgPlayer->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 
 			break;
 		}
@@ -2007,16 +2003,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_SELECT_TEAM8:
 		case GameMessage::MSG_SELECT_TEAM9:
 		{
-			Int playerIndex = msg->getPlayerIndex();
-			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for select team message"));
-
-			if (player == nullptr)
-			{
-				break;
-			}
-
-			player->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0, msg);
+			msgPlayer->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0, msg);
 			break;
 		}
 
@@ -2031,16 +2018,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_ADD_TEAM8:
 		case GameMessage::MSG_ADD_TEAM9:
 		{
-			Int playerIndex = msg->getPlayerIndex();
-			Player *player = ThePlayerList->getNthPlayer(playerIndex);
-			DEBUG_ASSERTCRASH(player != nullptr, ("Could not find player for add team message"));
-
-			if (player == nullptr)
-			{
-				break;
-			}
-
-			player->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0, msg);
+			msgPlayer->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0, msg);
 			break;
 		}
 
@@ -2053,7 +2031,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				Int slotIndex = -1;
 				for (Int i=0; i<MAX_SLOTS; ++i)
 				{
-					if (thisPlayer->getPlayerType() == PLAYER_HUMAN && TheNetwork->getPlayerName(i) == thisPlayer->getPlayerDisplayName())
+					if (msgPlayer->getPlayerType() == PLAYER_HUMAN && TheNetwork->getPlayerName(i) == msgPlayer->getPlayerDisplayName())
 					{
 						slotIndex = i;
 						break;
@@ -2063,7 +2041,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				if (slotIndex < 0 || !TheNetwork->isPlayerConnected(slotIndex))
 					break;
 
-				if (thisPlayer->isLocalPlayer())
+				if (msgPlayer->isLocalPlayer())
 				{
 #if defined(RTS_DEBUG)
 					// don't even put this in release, cause someone might hack it.
@@ -2076,19 +2054,18 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 				}
 
-				//UnsignedInt oldCRC = m_cachedCRCs[msg->getPlayerIndex()];
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
 				//DEBUG_LOG(("Received CRC of %8.8X from %ls on frame %d", newCRC,
-					//thisPlayer->getPlayerDisplayName().str(), m_frame));
-				m_cachedCRCs[msg->getPlayerIndex()] = newCRC; // to mask problem: = (oldCRC < newCRC)?newCRC:oldCRC;
+					//msgPlayer->getPlayerDisplayName().str(), m_frame));
+				m_cachedCRCs[msgPlayer->getPlayerIndex()] = newCRC;
 			}
 			else if (TheRecorder && TheRecorder->isPlaybackMode())
 			{
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
 				//DEBUG_LOG(("Saw CRC of %X from player %d.  Our CRC is %X.  Arg count is %d",
-					//newCRC, thisPlayer->getPlayerIndex(), getCRC(), msg->getArgumentCount()));
+					//newCRC, msgPlayer->getPlayerIndex(), getCRC(), msg->getArgumentCount()));
 
-				TheRecorder->handleCRCMessage(newCRC, thisPlayer->getPlayerIndex(), (msg->getArgument(1)->boolean));
+				TheRecorder->handleCRCMessage(newCRC, msgPlayer->getPlayerIndex(), (msg->getArgument(1)->boolean));
 			}
 			break;
 
@@ -2100,10 +2077,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			ScienceType science = (ScienceType)msg->getArgument( 0 )->integer;
 
 			// sanity
-			if( science == SCIENCE_INVALID || thisPlayer == nullptr )
+			if( science == SCIENCE_INVALID )
 				break;
 
-			thisPlayer->attemptToPurchaseScience(science);
+			msgPlayer->attemptToPurchaseScience(science);
 
 			break;
 
@@ -2120,7 +2097,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 
 	/**/ /// @todo: multiplayer semantics
-	if (currentlySelectedGroup && TheRecorder->isPlaybackMode() && TheGlobalData->m_useCameraInReplay && TheControlBar->getObserverLookAtPlayer() == thisPlayer /*&& !TheRecorder->isMultiplayer()*/)
+	if (currentlySelectedGroup && TheRecorder->isPlaybackMode() && TheGlobalData->m_useCameraInReplay && TheControlBar->getObserverLookAtPlayer() == msgPlayer /*&& !TheRecorder->isMultiplayer()*/)
 	{
 		const VecObjectID& selectedObjects = currentlySelectedGroup->getAllIDs();
 		TheInGameUI->deselectAllDrawables();

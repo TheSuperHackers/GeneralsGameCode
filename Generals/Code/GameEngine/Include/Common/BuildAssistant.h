@@ -120,11 +120,11 @@ public:
 public:
 
 	BuildAssistant();
-	virtual ~BuildAssistant();
+	virtual ~BuildAssistant() override;
 
-	virtual void init();					///< for subsytem
-	virtual void reset();					///< for subsytem
-	virtual void update();				///< for subsytem
+	virtual void init() override;					///< for subsytem
+	virtual void reset() override;					///< for subsytem
+	virtual void update() override;				///< for subsytem
 
 	/// iterate the "footprint" area of a structure at the given "sample resolution"
 	void iterateFootprint( const ThingTemplate *build,
@@ -148,14 +148,14 @@ public:
 																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' at
 																								 UnsignedInt options,		// use LocationLegalToBuildOptions
-																								 Object *builderObject,
+																								 const Object *builderObject,
 																								 Player *player);
 
 	/// query if we can build at this location
 	virtual Bool isLocationClearOfObjects( const Coord3D *worldPos,
 																								 const ThingTemplate *build,
 																								 Real angle,  // angle to construct 'build' a
-																								 Object *builderObject,
+																								 const Object *builderObject,
 																								 UnsignedInt options,
 																								 Player *thePlayer);
 

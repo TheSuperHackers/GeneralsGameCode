@@ -119,12 +119,12 @@ class GUIEdit
 
 public:
 
-	GUIEdit( void );
-	~GUIEdit( void );
+	GUIEdit();
+	~GUIEdit();
 
-	void init( void );  ///< initialize data
-	void shutdown( void );  ///< shutdown all our data
-	void update( void );  ///< process the universe
+	void init();  ///< initialize data
+	void shutdown();  ///< shutdown all our data
+	void update();  ///< process the universe
 
 	Bool readConfigFile( const char *filename );  ///< read the configuration file
 	Bool writeConfigFile( const char *filename );  ///< write the configuration file
@@ -132,47 +132,47 @@ public:
 	void readFontFile( const char *filename );  ///< read file with available font definitions
 	void writeFontFile( const char *filename );  ///< write all loaded fonts to a file
 
-	char *getSaveFilename( void );
-	char *getSavePathAndFilename( void );
+	char *getSaveFilename();
+	char *getSavePathAndFilename();
 	void setSaveFile( const char *fullPathAndFilename );  ///< set filename to use for saving
 
-	HWND getWindowHandle( void );  ///< get window handle
-	HINSTANCE getInstance( void );  ///< get application instance
-	HWND getStatusBarWindowHandle( void );  ///< get status bar HWND
-	void createStatusBar( void );  ///< create status bar
+	HWND getWindowHandle();  ///< get window handle
+	HINSTANCE getInstance();  ///< get application instance
+	HWND getStatusBarWindowHandle();  ///< get status bar HWND
+	void createStatusBar();  ///< create status bar
 	void statusMessage( StatusPart part, const char *message );  ///< set status bar textl
-	void createToolbar( void );  ///< create the toolbar
+	void createToolbar();  ///< create the toolbar
 	void setCursor( CursorType type );  ///< set cursor
 
 	void setPropertyTarget( GameWindow *window );  ///< set window for property editing
-	GameWindow *getPropertyTarget( void );  ///< get window editing properties
+	GameWindow *getPropertyTarget();  ///< get window editing properties
 
 	void loadGUIEditFontLibrary( FontLibrary *library );  ///< fonts available in the editor
 
 	Bool isNameDuplicate( GameWindow *root, GameWindow *ignore, AsciiString name );
 
-	EditMode getMode( void );  ///< return the current mode
+	EditMode getMode();  ///< return the current mode
 	void setMode( EditMode mode );  ///< set the new mode
 
 	void setUnsaved( Bool unsaved );  ///< set unsaved flag to FALSE or TRUE
-	Bool newLayout( void );  ///< reset editor for new layout
+	Bool newLayout();  ///< reset editor for new layout
 
 	// grid settings
 	void setGridResolution( Int res );
-	Int getGridResolution( void );
+	Int getGridResolution();
 	void setGridVisible( Bool visible );
-	Bool isGridVisible( void );
+	Bool isGridVisible();
 	void setGridSnap( Bool on );
-	Bool isGridSnapOn( void );
+	Bool isGridSnapOn();
 	void setGridColor( RGBColorInt *color );
-	RGBColorInt *getGridColor( void );
+	RGBColorInt *getGridColor();
 	void gridSnapLocation( ICoord2D *source, ICoord2D *snapped );
 
 	// display options for hidden/see thru windows
 	void setShowHiddenOutlines( Bool show );
-	Bool getShowHiddenOutlines( void );
+	Bool getShowHiddenOutlines();
 	void setShowSeeThruOutlines( Bool show );
-	Bool getShowSeeThruOutlines( void );
+	Bool getShowSeeThruOutlines();
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// manipulating windows ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,16 +181,16 @@ public:
 	Bool windowIsGadget( GameWindow *window );  ///< is the window a gadget
 
 	// selection help ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	WindowSelectionEntry *getSelectList( void );  ///< get the selected list head
-	GameWindow *getFirstSelected( void );  ///< get first selected window
+	WindowSelectionEntry *getSelectList();  ///< get the selected list head
+	GameWindow *getFirstSelected();  ///< get first selected window
 	void moveWindowTo( GameWindow *window, Int x, Int y );  ///< move window
 	Bool isWindowSelected( GameWindow *window );  ///< is window selected
 	void selectWindow( GameWindow *window );  ///< add to selection list
 	void unSelectWindow( GameWindow *window );  ///< remove from selection list
-	void clearSelections( void );  ///< clear selection list
-	Int  selectionCount( void );  ///< return # of selected windows
-	void deleteSelected( void );  ///< delete selected windows
-	void bringSelectedToTop( void );  ///< bring selected windows to top
+	void clearSelections();  ///< clear selection list
+	Int  selectionCount();  ///< return # of selected windows
+	void deleteSelected();  ///< delete selected windows
+	void bringSelectedToTop();  ///< bring selected windows to top
 	/// select the windows that are FULLY in the region specified
 	void selectWindowsInRegion( IRegion2D *region );
 
@@ -223,7 +223,7 @@ public:
 
 	GameWindow *getWindowAtPos( Int x, Int y );  ///< get topmost window at pos
 
-	void deleteAllWindows( void );  ///< delete all windows in the editor
+	void deleteAllWindows();  ///< delete all windows in the editor
 	void removeWindowCleanup( GameWindow *window );  ///< to cleanup before delete
 	void deleteWindow( GameWindow *window );  ///< delete a game window
 
@@ -274,16 +274,16 @@ public:
 														 Int width, Int height );
 
 	// menu options ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Bool menuNew( void );  ///< start a new layout process
-	Bool menuOpen( void );  ///< hit open on menu
+	Bool menuNew();  ///< start a new layout process
+	Bool menuOpen();  ///< hit open on menu
 	void stripNameDecorations( GameWindow *root );		///< after a load
 	void revertDefaultCallbacks( GameWindow *root );  ///< after a load
-	Bool menuSave( void );  ///< hit save on menu
-	Bool menuSaveAs( void );  ///< hit save as on menu
-	Bool menuExit( void );  ///< exit application
-	Bool menuCopy( void );  ///< copy selected windows into copy buffer
-	Bool menuPaste( void );  ///< paste contents of copy buffer
-	Bool menuCut( void );  ///< cut selected windows into copy buffer
+	Bool menuSave();  ///< hit save on menu
+	Bool menuSaveAs();  ///< hit save as on menu
+	Bool menuExit();  ///< exit application
+	Bool menuCopy();  ///< copy selected windows into copy buffer
+	Bool menuPaste();  ///< paste contents of copy buffer
+	Bool menuCut();  ///< cut selected windows into copy buffer
 	void checkMenuItem( Int item );
 	void unCheckMenuItem( Int item );
 
@@ -291,14 +291,14 @@ public:
 	void setLayoutInit( AsciiString init );								///< set layout init function name
 	void setLayoutUpdate( AsciiString update );						///< set layout update function name
 	void setLayoutShutdown( AsciiString shutdown );				///< set layout shutdown function name
-	AsciiString getLayoutInit( void );										///< get layout init function name
-	AsciiString getLayoutUpdate( void );									///< get layout update function name
-	AsciiString getLayoutShutdown( void );								///< get layout shutdown function name
+	AsciiString getLayoutInit();										///< get layout init function name
+	AsciiString getLayoutUpdate();									///< get layout update function name
+	AsciiString getLayoutShutdown();								///< get layout shutdown function name
 
 protected:
 
-	char *saveAsDialog( void );  ///< save as standard browser
-	char *openDialog( void );  ///< open standard browser
+	char *saveAsDialog();  ///< save as standard browser
+	char *openDialog();  ///< open standard browser
 
 	void validateNames( GameWindow *root, char *filename, Bool *valid );
 	void updateRadioScreenIdentifiers( GameWindow *window, Int screenID );
@@ -343,30 +343,30 @@ protected:
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
-inline HWND GUIEdit::getWindowHandle( void ) { return m_appHWnd; }
-inline HINSTANCE GUIEdit::getInstance( void ) { return m_appInst; }
-inline HWND GUIEdit::getStatusBarWindowHandle( void ) { return m_statusBarHWnd; }
-inline EditMode GUIEdit::getMode( void ) { return m_mode; }
+inline HWND GUIEdit::getWindowHandle() { return m_appHWnd; }
+inline HINSTANCE GUIEdit::getInstance() { return m_appInst; }
+inline HWND GUIEdit::getStatusBarWindowHandle() { return m_statusBarHWnd; }
+inline EditMode GUIEdit::getMode() { return m_mode; }
 inline void GUIEdit::setPropertyTarget( GameWindow *window ) { m_propertyTarget = window; }
-inline GameWindow *GUIEdit::getPropertyTarget( void ) { return m_propertyTarget; }
-inline char *GUIEdit::getSaveFilename( void ) { return m_saveFilename; }
-inline char *GUIEdit::getSavePathAndFilename( void ) { return m_savePathAndFilename; }
+inline GameWindow *GUIEdit::getPropertyTarget() { return m_propertyTarget; }
+inline char *GUIEdit::getSaveFilename() { return m_saveFilename; }
+inline char *GUIEdit::getSavePathAndFilename() { return m_savePathAndFilename; }
 inline void GUIEdit::setGridResolution( Int res ) { m_gridResolution = res; }
-inline Int GUIEdit::getGridResolution( void ) { return m_gridResolution; }
+inline Int GUIEdit::getGridResolution() { return m_gridResolution; }
 inline void GUIEdit::setGridVisible( Bool visible ) { m_gridVisible = visible; }
-inline Bool GUIEdit::isGridVisible( void ) { return m_gridVisible; }
+inline Bool GUIEdit::isGridVisible() { return m_gridVisible; }
 inline void GUIEdit::setGridSnap( Bool on ) { m_snapToGrid = on; }
-inline Bool GUIEdit::isGridSnapOn( void ) { return m_snapToGrid; }
+inline Bool GUIEdit::isGridSnapOn() { return m_snapToGrid; }
 inline void GUIEdit::setGridColor( RGBColorInt *color ) { m_gridColor = *color; }
-inline RGBColorInt *GUIEdit::getGridColor( void ) { return &m_gridColor; }
-inline Bool GUIEdit::getShowHiddenOutlines( void ) { return m_showHiddenOutlines; }
-inline Bool GUIEdit::getShowSeeThruOutlines( void ) { return m_showSeeThruOutlines; }
+inline RGBColorInt *GUIEdit::getGridColor() { return &m_gridColor; }
+inline Bool GUIEdit::getShowHiddenOutlines() { return m_showHiddenOutlines; }
+inline Bool GUIEdit::getShowSeeThruOutlines() { return m_showSeeThruOutlines; }
 inline void GUIEdit::setLayoutInit( AsciiString init ) { m_layoutInitString = init; }
 inline void GUIEdit::setLayoutUpdate( AsciiString update ) { m_layoutUpdateString = update; }
 inline void GUIEdit::setLayoutShutdown( AsciiString shutdown ) { m_layoutShutdownString = shutdown; }
-inline AsciiString GUIEdit::getLayoutInit( void ) { return m_layoutInitString; }
-inline AsciiString GUIEdit::getLayoutUpdate( void ) { return m_layoutUpdateString; }
-inline AsciiString GUIEdit::getLayoutShutdown( void ) { return m_layoutShutdownString; }
+inline AsciiString GUIEdit::getLayoutInit() { return m_layoutInitString; }
+inline AsciiString GUIEdit::getLayoutUpdate() { return m_layoutUpdateString; }
+inline AsciiString GUIEdit::getLayoutShutdown() { return m_layoutShutdownString; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern GUIEdit *TheEditor;  ///< editor application singleton

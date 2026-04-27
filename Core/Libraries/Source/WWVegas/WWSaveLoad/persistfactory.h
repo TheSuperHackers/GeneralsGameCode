@@ -81,9 +81,9 @@ template <class T,int CHUNKID> class SimplePersistFactoryClass : public PersistF
 {
 public:
 
-	virtual uint32				Chunk_ID() const										{ return CHUNKID; }
-	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
-	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj) const;
+	virtual uint32				Chunk_ID() const override { return CHUNKID; }
+	virtual PersistClass *	Load(ChunkLoadClass & cload) const override;
+	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj) const override;
 
 	/*
 	** Internal chunk id's
