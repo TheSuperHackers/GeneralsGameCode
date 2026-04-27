@@ -157,9 +157,19 @@ static WWINLINE float Asin(float val);
 	static WWINLINE float		Log(float x) { return gm_logf(x); }
 	static WWINLINE float		Log10(float x) { return gm_log10f(x); }
 	static WWINLINE float		Pow(float x, float y) { return gm_powf(x, y); }
+	static WWINLINE float		SinTrig(float x) { return gm_sinf(x); }
+	static WWINLINE float		CosTrig(float x) { return gm_cosf(x); }
+	static WWINLINE float		TanTrig(float x) { return gm_tanf(x); }
+	static WWINLINE float		ACosTrig(float x) { return gm_acosf(x); }
+	static WWINLINE float		ASinTrig(float x) { return gm_asinf(x); }
 #else
 	static WWINLINE float		Atan(float x) { return static_cast<float>(atan(x)); }
 	static WWINLINE float		Atan2(float y,float x) { return static_cast<float>(atan2(y,x)); }
+	static WWINLINE float		SinTrig(float x) { return sinf(x); }
+	static WWINLINE float		CosTrig(float x) { return cosf(x); }
+	static WWINLINE float		TanTrig(float x) { return tanf(x); }
+	static WWINLINE float		ACosTrig(float x) { return acosf(x); }
+	static WWINLINE float		ASinTrig(float x) { return asinf(x); }
 #endif
 static WWINLINE float		Sign(float val);
 static WWINLINE float		Ceil(float val) { return ceilf(val); }
