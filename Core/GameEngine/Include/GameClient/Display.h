@@ -193,6 +193,7 @@ public:
 	virtual void setCinematicTextFrames( Int frames ) { m_cinematicTextFrames = frames; }
 
 	virtual Real getAverageFPS() = 0;	///< returns the average FPS.
+	virtual Real getLow1PercentFPS() = 0;	///< returns the 1% low FPS.
 	virtual Real getCurrentFPS() = 0;	///< returns the current FPS.
 	virtual Int getLastFrameDrawCalls() = 0;  ///< returns the number of draw calls issued in the previous frame
 
