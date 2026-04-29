@@ -391,6 +391,7 @@ W3DDisplay::W3DDisplay()
 	m_2DScene = nullptr;
 	m_3DInterfaceScene = nullptr;
 	m_averageFPS = TheGlobalData->m_framesPerSecondLimit;
+	m_low1PercentFPS = TheGlobalData->m_framesPerSecondLimit;
 #if defined(RTS_DEBUG)
 	m_timerAtCumuFPSStart = 0;
 #endif
@@ -1012,11 +1013,12 @@ const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first h
 
 void W3DDisplay::updateAverageFPS()
 {
-	constexpr const Int FPS_HISTORY_SIZE = 30;
-
-	static Int64 lastUpdateTime64 = 0;
-	static Int historyOffset = 0;
+	constexpr const Int FPS_HISTORY_SIZE = 1000;
 	static Real fpsHistory[FPS_HISTORY_SIZE] = {0};
+	static Real durationHistory[FPS_HISTORY_SIZE] = {0};
+	static Int historyOffset = 0;
+	static Int historyCount = 0;
+	static Int64 lastUpdateTime64 = 0;
 
 	const Int64 freq64 = getPerformanceCounterFrequency();
 	const Int64 time64 = getPerformanceCounter();
@@ -1028,21 +1030,73 @@ void W3DDisplay::updateAverageFPS()
 	}
 #endif
 
+	if (lastUpdateTime64 == 0)
+	{
+		lastUpdateTime64 = time64;
+		return;
+	}
+
 	const Int64 timeDiff = time64 - lastUpdateTime64;
 
 	// convert elapsed time to seconds
 	Real elapsedSeconds = (Real)timeDiff/(Real)freq64;
 
 	// append new sample to fps history.
-	if (historyOffset >= FPS_HISTORY_SIZE)
-		historyOffset = 0;
+	if (elapsedSeconds > 0)
+	{
+		m_currentFPS = 1.0f/elapsedSeconds;
+		fpsHistory[historyOffset] = m_currentFPS;
+		durationHistory[historyOffset] = elapsedSeconds;
+		historyOffset = (historyOffset + 1) % FPS_HISTORY_SIZE;
+		if (historyCount < FPS_HISTORY_SIZE) historyCount++;
+	}
 
-	m_currentFPS = 1.0f/elapsedSeconds;
-	fpsHistory[historyOffset++] = m_currentFPS;
+	// determine average frame rate over the last 0.5 seconds and 1% low over 3.0 seconds.
+	if (historyCount > 0)
+	{
+		Real timeSum = 0;
+		Real fpsSum = 0;
+		Int avgSamples = 0;
+		Int lowSamples = 0;
+		Bool avgDone = FALSE;
 
-	// determine average frame rate over our past history.
-	const Real sum = std::accumulate(fpsHistory, fpsHistory + FPS_HISTORY_SIZE, 0.0f);
-	m_averageFPS = sum / FPS_HISTORY_SIZE;
+		for (Int i = 0; i < historyCount; ++i)
+		{
+			Int idx = (historyOffset - 1 - i + FPS_HISTORY_SIZE) % FPS_HISTORY_SIZE;
+			timeSum += durationHistory[idx];
+			
+			lowSamples++;
+			
+			if (!avgDone)
+			{
+				fpsSum += fpsHistory[idx];
+				avgSamples++;
+				if (timeSum >= 0.5f) avgDone = TRUE;
+			}
+			
+			if (timeSum >= 3.0f) break;
+		}
+
+		m_averageFPS = avgSamples > 0 ? fpsSum / (Real)avgSamples : m_currentFPS;
+
+		// TheSuperHackers @feature One percent low FPS calculation (last 3.0 seconds)
+		// Throttle sorting to 1000ms intervals to match HUD refresh and save CPU
+		static UnsignedInt lastLowUpdate = 0;
+		UnsignedInt now = timeGetTime();
+		if (now - lastLowUpdate >= 1000)
+		{
+			lastLowUpdate = now;
+			static Real sortBuffer[FPS_HISTORY_SIZE];
+			for (Int i = 0; i < lowSamples; ++i)
+			{
+				Int idx = (historyOffset - 1 - i + FPS_HISTORY_SIZE) % FPS_HISTORY_SIZE;
+				sortBuffer[i] = fpsHistory[idx];
+			}
+			const Int lowCount = std::max(lowSamples / 100, 1);
+			std::nth_element(sortBuffer, sortBuffer + lowCount, sortBuffer + lowSamples);
+			m_low1PercentFPS = std::accumulate(sortBuffer, sortBuffer + lowCount, 0.0f) / (Real)lowCount;
+		}
+	}
 
 	lastUpdateTime64 = time64;
 }
@@ -1768,6 +1822,11 @@ void W3DDisplay::calculateTerrainLOD()
 Real W3DDisplay::getAverageFPS()
 {
 	return m_averageFPS;
+}
+
+Real W3DDisplay::getLow1PercentFPS()
+{
+	return m_low1PercentFPS;
 }
 
 Real W3DDisplay::getCurrentFPS()
