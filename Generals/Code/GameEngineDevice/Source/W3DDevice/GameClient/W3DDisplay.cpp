@@ -997,7 +997,10 @@ void W3DDisplay::updateAverageFPS()
 		fpsHistory[historyOffset] = m_currentFPS;
 		durationHistory[historyOffset] = elapsedSeconds;
 		historyOffset = (historyOffset + 1) % FPS_HISTORY_SIZE;
-		if (historyCount < FPS_HISTORY_SIZE) historyCount++;
+		if (historyCount < FPS_HISTORY_SIZE)
+		{
+			historyCount++;
+		}
 	}
 
 	// determine average frame rate over the last 0.5 seconds and 1% low over 3.0 seconds.
@@ -1020,10 +1023,16 @@ void W3DDisplay::updateAverageFPS()
 			{
 				fpsSum += fpsHistory[idx];
 				avgSamples++;
-				if (timeSum >= 0.5f) avgDone = TRUE;
+				if (timeSum >= 0.5f)
+				{
+					avgDone = TRUE;
+				}
 			}
 			
-			if (timeSum >= 3.0f) break;
+			if (timeSum >= 3.0f)
+			{
+				break;
+			}
 		}
 
 		m_averageFPS = avgSamples > 0 ? fpsSum / (Real)avgSamples : m_currentFPS;
