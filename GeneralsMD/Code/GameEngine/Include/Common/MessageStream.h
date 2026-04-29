@@ -503,7 +503,7 @@ public:
 																									* The selected team is created/augmented with the given team members.
 																									* Do not play their selection sounds.
 																									*/
-		MSG_DESTROY_SELECTED_GROUP,									///< (teamID) the given team is no longer valid
+		MSG_DESTROY_SELECTED_GROUP,									///< deselect currently selected objects (which can be none)
 		MSG_REMOVE_FROM_SELECTED_GROUP,							/**< (objectID1, objectID2, ... objectIDN)
 																									* Remove these units from the selected group. (N should almost always be 1)
 																									*/
