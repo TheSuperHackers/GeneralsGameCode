@@ -563,7 +563,10 @@ public:
 		MSG_EXECUTE_RAILED_TRANSPORT,								///< Execute railed transport sequence
 		MSG_COMBATDROP_AT_LOCATION,									///< dump out all rappellers
 		MSG_COMBATDROP_AT_OBJECT,										///< dump out all rappellers
+
+		// TheSuperHackers @todo MSG_AREA_SELECTION can be moved out of the network messages because it's currently unused by the game logic.
 		MSG_AREA_SELECTION,													///< (pixelRegion) rectangular selection area
+
 		MSG_DO_ATTACK_OBJECT,												///< (objectID, victim objectID)
 		MSG_DO_FORCE_ATTACK_OBJECT,									///< force attack the given object if picked
 		MSG_DO_FORCE_ATTACK_GROUND,									///< (locationID) bombard the given location if picked
