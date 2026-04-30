@@ -180,7 +180,7 @@ protected:
 	Real m_low1PercentFPS;	///<1% low fps.
 	Real m_currentFPS;		///<current fps value.
 
-	static constexpr Int FPS_HISTORY_SIZE = 5000;  // covers 5s at 1000 FPS, degrades gracefully beyond
+	enum { FPS_HISTORY_SIZE = 5000 }; // covers 5s at 1000 FPS, degrades gracefully beyond
 	Real m_fpsHistory[FPS_HISTORY_SIZE];
 	Real m_durationHistory[FPS_HISTORY_SIZE];
 	Int  m_historyOffset;
