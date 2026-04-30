@@ -162,7 +162,10 @@ protected:
 	void drawCurrentDebugDisplay();			///< draws current debug display
 	void calculateTerrainLOD();						///< Calculate terrain LOD.
 	void renderLetterBox(UnsignedInt time);							///< draw letter box border
-	void updateAverageFPS();	///< calculate the average and 1% low fps over time windows (0.5s and 3.0s).
+	void updatePerformanceMetrics(); ///< update the average and 1% low fps metrics.
+	void addFpsSample(Real elapsedSeconds); ///< add a new sample to the history buffer.
+	Real calculateAverageFPS(Real windowSeconds); ///< calculate average FPS over a time window.
+	Real calculateLow1PercentFPS(Real windowSeconds); ///< calculate 1% low FPS over a time window.
 	void setup2DRenderState(TextureClass *tex, DrawImageMode mode, Bool grayscale);
 	virtual void onBeginBatch() override;
 	virtual void onEndBatch() override;
@@ -176,6 +179,13 @@ protected:
 	Real m_averageFPS;		///< average fps over the last 0.5s.
 	Real m_low1PercentFPS;	///<1% low fps.
 	Real m_currentFPS;		///<current fps value.
+
+	static constexpr Int FPS_HISTORY_SIZE = 5000;  // covers 5s at 1000 FPS, degrades gracefully beyond
+	Real m_fpsHistory[FPS_HISTORY_SIZE];
+	Real m_durationHistory[FPS_HISTORY_SIZE];
+	Int  m_historyOffset;
+	Int  m_historyCount;
+	Int64 m_lastUpdateTime64;
 
 	TextureClass *m_batchTexture;
 	DrawImageMode m_batchMode;
