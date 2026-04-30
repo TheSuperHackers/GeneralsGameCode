@@ -277,7 +277,8 @@ void HotKeyManager::loadOverrides()
 	for (PreferenceMap::const_iterator it = prefs.begin(); it != prefs.end(); ++it)
 	{
 		const AsciiString& key = it->first;
-		if (key.getLength() > (Int)prefixLen)
+		if (key.getLength() > (Int)prefixLen
+			&& strncmp(key.str(), HOTKEY_OVERRIDE_PREFIX, prefixLen) == 0)
 		{
 			// strip "HotKey_" prefix to recover the CommandButton name
 			AsciiString cmdName = AsciiString(key.str() + prefixLen);

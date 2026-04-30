@@ -664,7 +664,7 @@ void OpenKeyboardOptionsMenu( void )
 	if (!s_keyboardOptionsLayout)
 	{
 		// .wnd file is missing — show a message box so the user knows what to do
-		MessageBoxA( NULL,
+		MessageBoxA( nullptr,
 			"Could not open Keyboard Options menu.\n\n"
 			"The file 'Window/Menus/KeyboardOptionsMenu.wnd' was not found.\n"
 			"Please copy the .wnd patch files from the Patch/ folder\n"
