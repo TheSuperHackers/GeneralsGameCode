@@ -183,6 +183,7 @@ protected:
 	enum { FPS_HISTORY_SIZE = 5000 }; // covers 5s at 1000 FPS, degrades gracefully beyond
 	Real m_fpsHistory[FPS_HISTORY_SIZE];
 	Real m_durationHistory[FPS_HISTORY_SIZE];
+	Real m_sortBuffer[FPS_HISTORY_SIZE];
 	Int  m_historyOffset;
 	Int  m_historyCount;
 	Int64 m_lastUpdateTime64;

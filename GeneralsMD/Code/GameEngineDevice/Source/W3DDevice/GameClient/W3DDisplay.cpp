@@ -1022,42 +1022,54 @@ const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first h
 
 void W3DDisplay::addFpsSample(Real elapsedSeconds)
 {
-	if (elapsedSeconds <= 0.0f) return;
+	if (elapsedSeconds <= 0.0f)
+	{
+		return;
+	}
 
 	m_currentFPS = 1.0f / elapsedSeconds;
 	m_fpsHistory[m_historyOffset] = m_currentFPS;
 	m_durationHistory[m_historyOffset] = elapsedSeconds;
 
 	m_historyOffset = (m_historyOffset + 1) % FPS_HISTORY_SIZE;
-	if (m_historyCount < FPS_HISTORY_SIZE) m_historyCount++;
+	if (m_historyCount < FPS_HISTORY_SIZE)
+	{
+		m_historyCount++;
+	}
 }
 
 Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 {
-	if (m_historyCount == 0) return m_currentFPS;
+	if (m_historyCount == 0)
+	{
+		return m_currentFPS;
+	}
 
 	Real timeSum = 0;
-	Real fpsSum = 0;
 	Int samples = 0;
 
 	for (Int i = 0; i < m_historyCount; ++i)
 	{
 		Int idx = (m_historyOffset - 1 - i + FPS_HISTORY_SIZE) % FPS_HISTORY_SIZE;
 		timeSum += m_durationHistory[idx];
-		fpsSum += m_fpsHistory[idx];
 		samples++;
 
-		if (timeSum >= windowSeconds) break;
+		if (timeSum >= windowSeconds)
+		{
+			break;
+		}
 	}
 
-	return (samples > 0) ? (fpsSum / (Real)samples) : m_currentFPS;
+	return (timeSum > 0) ? ((Real)samples / timeSum) : m_currentFPS;
 }
 
 Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 {
-	if (m_historyCount == 0) return m_currentFPS;
+	if (m_historyCount == 0)
+	{
+		return m_currentFPS;
+	}
 
-	static Real sortBuffer[FPS_HISTORY_SIZE];
 	Real timeSum = 0;
 	Int sampleCount = 0;
 	Int i;
@@ -1066,19 +1078,28 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 	{
 		Int idx = (m_historyOffset - 1 - i + FPS_HISTORY_SIZE) % FPS_HISTORY_SIZE;
 		timeSum += m_durationHistory[idx];
-		sortBuffer[sampleCount++] = m_fpsHistory[idx];
+		m_sortBuffer[sampleCount++] = m_fpsHistory[idx];
 
-		if (timeSum >= windowSeconds) break;
+		if (timeSum >= windowSeconds)
+		{
+			break;
+		}
 	}
 
-	if (sampleCount == 0) return m_currentFPS;
+	if (sampleCount == 0)
+	{
+		return m_currentFPS;
+	}
 
 	const Int bottomSampleCount = std::max((sampleCount + 99) / 100, 1);
 
-	std::nth_element(sortBuffer, sortBuffer + bottomSampleCount, sortBuffer + sampleCount);
+	std::nth_element(m_sortBuffer, m_sortBuffer + bottomSampleCount, m_sortBuffer + sampleCount);
 
 	Real lowSum = 0;
-	for (i = 0; i < bottomSampleCount; ++i) lowSum += sortBuffer[i];
+	for (i = 0; i < bottomSampleCount; ++i)
+	{
+		lowSum += m_sortBuffer[i];
+	}
 
 	return lowSum / (Real)bottomSampleCount;
 }
@@ -1089,7 +1110,10 @@ void W3DDisplay::updatePerformanceMetrics()
 	const Int64 time64 = getPerformanceCounter();
 
 #if defined(RTS_DEBUG)
-	if (TheGameLogic->getFrame() == START_CUMU_FRAME) m_timerAtCumuFPSStart = time64;
+	if (TheGameLogic->getFrame() == START_CUMU_FRAME)
+	{
+		m_timerAtCumuFPSStart = time64;
+	}
 #endif
 
 	if (m_lastUpdateTime64 == 0)
