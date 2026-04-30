@@ -1034,6 +1034,13 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 			}
 			else if( controlID == buttonResetAllID )
 			{
+				// Clear all custom hotkey overrides
+				if (TheHotKeyManager)
+				{
+					TheHotKeyManager->clearAllOverrides();
+					TheHotKeyManager->saveOverrides();
+				}
+
 				// populate category combo box
 				if (comboBoxCategoryList)
 					populateCategoryBox();
