@@ -224,6 +224,7 @@ public:
 		MSG_META_SELECT_HERO,                       ///< selects player's hero character, if exists...
 		MSG_META_SELECT_ALL,                        ///< selects all units across screen
 		MSG_META_SELECT_ALL_AIRCRAFT,								///< selects all air units just like select all
+		MSG_META_AREA_SELECTION,                    ///< rectangular selection area (pixelRegion)
 		MSG_META_SCATTER,														///< selected units scatter
 		MSG_META_STOP,															///< selected units stop
 		MSG_META_DEPLOY,														///< selected units 'deploy'
@@ -564,8 +565,8 @@ public:
 		MSG_COMBATDROP_AT_LOCATION,									///< dump out all rappellers
 		MSG_COMBATDROP_AT_OBJECT,										///< dump out all rappellers
 
-		// TheSuperHackers @todo MSG_AREA_SELECTION can be moved out of the network messages because it's currently unused by the game logic.
-		MSG_AREA_SELECTION,													///< (pixelRegion) rectangular selection area
+		// TheSuperHackers @todo Remove MSG_AREA_SELECTION_DEPRECATED when possible.
+		MSG_AREA_SELECTION_DEPRECATED,
 
 		MSG_DO_ATTACK_OBJECT,												///< (objectID, victim objectID)
 		MSG_DO_FORCE_ATTACK_OBJECT,									///< force attack the given object if picked
