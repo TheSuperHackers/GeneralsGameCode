@@ -2036,7 +2036,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_SELECT_TEAM8:
 		case GameMessage::MSG_SELECT_TEAM9:
 		{
-			msgPlayer->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0, msg);
+			msgPlayer->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0);
 			break;
 		}
 
@@ -2051,7 +2051,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_ADD_TEAM8:
 		case GameMessage::MSG_ADD_TEAM9:
 		{
-			msgPlayer->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0, msg);
+			msgPlayer->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0);
 			break;
 		}
 
