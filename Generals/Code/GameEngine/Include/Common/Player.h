@@ -620,10 +620,10 @@ public:
 	void processCreateTeamGameMessage(Int hotkeyNum, const GameMessage *msg);
 
 	/// time to select a hotkey team based on this GameMessage
-	void processSelectTeamGameMessage(Int hotkeyNum, GameMessage *msg);
+	void processSelectTeamGameMessage(Int hotkeyNum);
 
 	// add to the player's current selection this hotkey team.
-	void processAddTeamGameMessage(Int hotkeyNum, GameMessage *msg);
+	void processAddTeamGameMessage(Int hotkeyNum);
 
 	// fills an AIGroup object that is the currently selected group.
 	void getCurrentSelectionAsAIGroup(AIGroup *group);
