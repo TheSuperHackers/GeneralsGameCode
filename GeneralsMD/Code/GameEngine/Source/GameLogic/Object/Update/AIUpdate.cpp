@@ -5060,7 +5060,7 @@ void AIUpdateInterface::crc( Xfer *x )
 	* 2: Added m_demoralizedFramesLeft (behind ALLOW_DEMORALIZE)
 	* 3: Removed lastFrameMoved and repulsorCountdown; removed surrender and demoralize variables
 	* 4: Read m_curLocomotorSet from ini
-	* 5: Fixed out-of-bounds xfer of m_guardTargetType
+	* 5: TheSuperHackers @fix Fixed out-of-bounds xfer of m_guardTargetType
 	*/
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::xfer( Xfer *xfer )
@@ -5088,15 +5088,11 @@ void AIUpdateInterface::xfer( Xfer *xfer )
 	xfer->xferReal(&m_desiredSpeed);
 	xfer->xferUser(&m_lastCommandSource, sizeof(m_lastCommandSource));
 
-#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
-	if (TRUE)
-#else
 	if (version < 5)
-#endif
 	{
 		// TheSuperHackers @fix The original code effectively accessed m_guardTargetType[0], [1], [1], [2].
 		// The last one is out-of-bounds and points to m_locationToGuard.
-		static_assert(sizeof(m_locationToGuard) >= sizeof(m_guardTargetType[2]), "Type sizes must be right for correct xfer");
+		static_assert(sizeof(m_locationToGuard) >= sizeof(m_guardTargetType[2]), "Xfer size must not exceed variable size");
 
 		xfer->xferUser(&m_guardTargetType[0], sizeof(m_guardTargetType));
 		xfer->xferUser(&m_guardTargetType[1], sizeof(m_guardTargetType[1]));
