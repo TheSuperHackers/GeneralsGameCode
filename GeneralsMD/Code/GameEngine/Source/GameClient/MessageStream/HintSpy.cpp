@@ -97,14 +97,14 @@ GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage
 			break;
 
 		//-----------------------------------------------------------------------------
-		case GameMessage::MSG_AREA_SELECTION_HINT:
+		case GameMessage::MSG_BEGIN_AREA_SELECTION_HINT:
 			TheInGameUI->beginAreaSelectHint( msg );
 			break;
 
 		//-----------------------------------------------------------------------------
-		// An AREA_SELECTION_HINT is always followed by an AREA_SELECTION, so
+		// A BEGIN_AREA_SELECTION_HINT is always followed by an END_AREA_SELECTION_HINT, so
 		// watch for it to stop hinting.
-		case GameMessage::MSG_META_AREA_SELECTION:
+		case GameMessage::MSG_END_AREA_SELECTION_HINT:
 			TheInGameUI->endAreaSelectHint( msg );
 			break;
 
