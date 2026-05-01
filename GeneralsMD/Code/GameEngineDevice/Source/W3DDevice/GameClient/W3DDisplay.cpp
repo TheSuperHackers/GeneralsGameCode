@@ -1091,7 +1091,7 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 		return m_currentFPS;
 	}
 
-	const Int bottomSampleCount = std::max((sampleCount + 99) / 100, 1);
+	const Int bottomSampleCount = std::max((sampleCount + 50) / 100, 1);
 
 	std::nth_element(m_sortBuffer, m_sortBuffer + bottomSampleCount, m_sortBuffer + sampleCount);
 
