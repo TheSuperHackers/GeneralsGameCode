@@ -564,10 +564,7 @@ public:
 		MSG_EXECUTE_RAILED_TRANSPORT,								///< Execute railed transport sequence
 		MSG_COMBATDROP_AT_LOCATION,									///< dump out all rappellers
 		MSG_COMBATDROP_AT_OBJECT,										///< dump out all rappellers
-
-		// TheSuperHackers @todo Remove MSG_AREA_SELECTION_DEPRECATED when possible.
-		MSG_AREA_SELECTION_DEPRECATED,
-
+		MSG_AREA_SELECTION_DEPRECATED,              ///< TheSuperHackers @tweak former MSG_AREA_SELECTION is deprecated as network message.
 		MSG_DO_ATTACK_OBJECT,												///< (objectID, victim objectID)
 		MSG_DO_FORCE_ATTACK_OBJECT,									///< force attack the given object if picked
 		MSG_DO_FORCE_ATTACK_GROUND,									///< (locationID) bombard the given location if picked
