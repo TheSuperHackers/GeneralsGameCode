@@ -99,6 +99,7 @@ GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_BEGIN_AREA_SELECTION_HINT:
 			TheInGameUI->beginAreaSelectHint( msg );
+			disp = DESTROY_MESSAGE;
 			break;
 
 		//-----------------------------------------------------------------------------
