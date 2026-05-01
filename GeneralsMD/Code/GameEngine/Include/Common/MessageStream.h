@@ -445,8 +445,8 @@ public:
 		MSG_MOUSEOVER_LOCATION_HINT,								///< (location) The cursor is not over a drawable, but is here.
 		MSG_VALID_GUICOMMAND_HINT,									///< posted when the gui command is valid if the user clicked to execute it.
 		MSG_INVALID_GUICOMMAND_HINT,								///< posted when the gui command is not valid if the user were to click to attempt to execute it.
-		MSG_BEGIN_AREA_SELECTION_HINT,							///< rectangular selection area (pixelRegion) under construction, not confirmed
-		MSG_END_AREA_SELECTION_HINT,                ///< rectangular selection area (pixelRegion) finish construction
+		MSG_BEGIN_AREA_SELECTION_HINT,							///< (pixelRegion) rectangular selection area under construction, not confirmed
+		MSG_END_AREA_SELECTION_HINT,                ///< (pixelRegion) rectangular selection area finish construction
 
 		//Command hints
 		MSG_DO_ATTACK_OBJECT_HINT,									///< (victim objectID) If clicked, an attack would be ordered, "Current Selection" is assumed
