@@ -106,6 +106,7 @@ GameMessageDisposition HintSpyTranslator::translateGameMessage(const GameMessage
 		// watch for it to stop hinting.
 		case GameMessage::MSG_END_AREA_SELECTION_HINT:
 			TheInGameUI->endAreaSelectHint( msg );
+			disp = DESTROY_MESSAGE;
 			break;
 
 		//-----------------------------------------------------------------------------
