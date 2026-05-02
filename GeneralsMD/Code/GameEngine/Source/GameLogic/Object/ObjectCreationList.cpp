@@ -1011,7 +1011,7 @@ protected:
 				obj->getTemplate()->getName().str(), sourceObj->getVeterancyLevel(), sourceObj->getTemplate()->getName().str()));
 			VeterancyLevel v = sourceObj->getVeterancyLevel();
 
-			// TheSuperHackers @fix Caball009 22/04/2026 Disable audiovisual cues for a veterancy level change because this object was just created.
+			// TheSuperHackers @bugfix Caball009 22/04/2026 Disable audiovisual cues for a veterancy level change because this object was just created.
 			// Otherwise the cues would be at an incorrect position, because the object's matrix is not set yet.
 			obj->getExperienceTracker()->setVeterancyLevel(v, FALSE);
 
