@@ -1751,22 +1751,10 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 
 	if (m_map) {
 		Int newOrgX;
-		if (visMaxX-visMinX > m_x) {
-			newOrgX = (maxX+minX)/2-m_x/2.0;
-		} else {
-			newOrgX = (visMaxX+visMinX)/2-m_x/2.0;
-		}
-
 		Int newOrgY;
-		if (visMaxY - visMinY > m_y) {
-			newOrgY = visMinY+1;
-		}	else {
-			newOrgY = (visMaxY+visMinY)/2-m_y/2.0;
-		}
-		if (TheTacticalView->getFieldOfView() != 0) {
-			newOrgX = (visMaxX+visMinX)/2-m_x/2.0;
-			newOrgY = (visMaxY+visMinY)/2-m_y/2.0;
-		}
+		newOrgX = (visMaxX+visMinX)/2 - m_x/2.0;
+		newOrgY = (visMaxY+visMinY)/2 - m_y/2.0;
+
 		Int deltaX = newOrgX - m_map->getDrawOrgX();
 		Int deltaY = newOrgY - m_map->getDrawOrgY();
 		if (IABS(deltaX) > m_x/2 || IABS(deltaY)>m_x/2) {
