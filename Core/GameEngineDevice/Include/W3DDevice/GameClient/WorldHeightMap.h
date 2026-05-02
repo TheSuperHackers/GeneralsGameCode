@@ -108,6 +108,15 @@ class WorldHeightMap : public RefCountClass,
 #define NO_EVAL_TILING_MODES
 
 public:
+
+	struct DrawArea
+	{
+		Int originX;
+		Int originY;
+		Int sizeX;
+		Int sizeY;
+	};
+
 #ifdef EVAL_TILING_MODES
 	enum {TILE_4x4, TILE_6x6, TILE_8x8} m_tileMode;
 #endif
@@ -260,6 +269,8 @@ public:  // height map info.
 
 	void getUVForBlend(Int edgeClass, Region2D *range);
 
+	DrawArea createDrawArea(Int xOrg, Int yOrg);
+	Bool setDrawArea(const DrawArea& drawArea);
 	Bool setDrawOrg(Int xOrg, Int yOrg);
 
 	static void freeListOfMapObjects();

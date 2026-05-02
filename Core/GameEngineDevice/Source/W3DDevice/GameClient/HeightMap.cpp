@@ -1183,15 +1183,13 @@ void HeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 	}
 	Int dx = width-m_map->getDrawWidth();
 	Int dy = height-m_map->getDrawHeight();
- 	m_map->setDrawWidth(width);
+	m_map->setDrawWidth(width);
 	m_map->setDrawHeight(height);
 	dx /= 2;
 	dy /= 2;
 	Int newOrgX = m_map->getDrawOrgX()-dx;
-	Int newOrgy = m_map->getDrawOrgY()-dy;
-	if (newOrgX<0) newOrgX=0;
-	if (newOrgy<0) newOrgy=0;
-	m_map->setDrawOrg(newOrgX,newOrgy);
+	Int newOrgY = m_map->getDrawOrgY()-dy;
+	m_map->setDrawOrg(newOrgX,newOrgY);
 	m_originX = 0;
 	m_originY = 0;
 	if (m_shroud)
@@ -1742,11 +1740,13 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	newOrgX = (visMaxX+visMinX)/2 - m_x/2.0;
 	newOrgY = (visMaxY+visMinY)/2 - m_y/2.0;
 
+	WorldHeightMap::DrawArea newDrawArea = m_map->createDrawArea(newOrgX, newOrgY);
+
 	m_updating = true;
 	if (m_needFullUpdate)
 	{
 		m_needFullUpdate = false;
-		m_map->setDrawOrg(newOrgX, newOrgY);
+		m_map->setDrawArea(newDrawArea);
 		updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
 		m_updating = false;
 		return;
@@ -1754,14 +1754,15 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	else
 	{
 		constexpr const Int cellOffset = 1;
-		Int deltaX = newOrgX - m_map->getDrawOrgX();
-		Int deltaY = newOrgY - m_map->getDrawOrgY();
+		const Int deltaX = newDrawArea.originX - m_map->getDrawOrgX();
+		const Int deltaY = newDrawArea.originY - m_map->getDrawOrgY();
 
 		if (IABS(deltaX) > m_x/2 || IABS(deltaY)>m_x/2) {
-			m_map->setDrawOrg(newOrgX, newOrgY);
-			m_originY = 0;
-			m_originX = 0;
-			updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
+			if (m_map->setDrawArea(newDrawArea)) {
+				m_originY = 0;
+				m_originX = 0;
+				updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
+			}
 			m_updating = false;
 			return;
 		}
@@ -1770,7 +1771,6 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 			if (m_map->setDrawOrg(m_map->getDrawOrgX(), newOrgY)) {
 				Int minY = 0;
 				Int maxY = 0;
-				deltaY -= newOrgY - m_map->getDrawOrgY();
 				m_originY += deltaY;
 				if (m_originY >= m_y-1) m_originY -= m_y-1;
 				if (deltaY<0) {
@@ -1806,7 +1806,6 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 			if (m_map->setDrawOrg(newOrgX, m_map->getDrawOrgY())) {
 				Int minX = 0;
 				Int maxX = 0;
-				deltaX -= newOrgX - m_map->getDrawOrgX();
 				m_originX += deltaX;
 				if (m_originX >= m_x-1) m_originX -= m_x-1;
 				if (deltaX<0) {
