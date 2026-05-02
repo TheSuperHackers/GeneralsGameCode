@@ -73,7 +73,7 @@ public:
 	///allocate resources needed to render heightmap
 	virtual int initHeightData(Int width, Int height, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator, Bool updateExtraPassTiles=TRUE) override;
 	virtual Int freeMapResources() override;	///< free resources used to render heightmap
-	virtual void updateCenter(CameraClass *camera, RefRenderObjListIterator *pLightsIterator) override;
+	virtual void updateCenter(CameraClass *camera, const Vector3 *cameraPivot, RefRenderObjListIterator *pLightsIterator) override;
 
 	virtual void staticLightingChanged() override;
 	virtual	void adjustTerrainLOD(Int adj) override;

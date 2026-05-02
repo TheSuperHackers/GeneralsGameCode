@@ -1319,18 +1319,6 @@ Bool BaseHeightMapRenderObjClass::evaluateAsVisibleCliff(Int xIndex, Int yIndex,
 }
 
 //=============================================================================
-// BaseHeightMapRenderObjClass::oversizeTerrain
-//=============================================================================
-/** Sets the terrain oversize amount. */
-//=============================================================================
-void BaseHeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
-{
-	// Not needed with flat version. [3/20/2003]
-}
-
-
-
-//=============================================================================
 // BaseHeightMapRenderObjClass::Get_Obj_Space_Bounding_Sphere
 //=============================================================================
 /** WW3D method that returns object bounding sphere used in frustum culling*/
@@ -2394,7 +2382,7 @@ rendered portion of the terrain.  Only a 96x96 section is rendered at any time,
 even though maps can be up to 1024x1024.  This function determines which subset
 is rendered. */
 //=============================================================================
-void BaseHeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjListIterator *pLightsIterator)
+void BaseHeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *cameraPivot, RefRenderObjListIterator *pLightsIterator)
 {
 	if (m_map==nullptr) {
 		return;

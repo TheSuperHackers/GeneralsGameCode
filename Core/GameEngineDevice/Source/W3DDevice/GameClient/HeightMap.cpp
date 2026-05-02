@@ -1654,11 +1654,10 @@ static void calcVis(const FrustumClass & frustum, WorldHeightMap *pMap, Int minX
 //=============================================================================
 /** Updates the positioning of the drawn portion of the height map in the
 heightmap.  As the view slides around, this determines what is the actually
-rendered portion of the terrain.  Only a 96x96 section is rendered at any time,
-even though maps can be up to 1024x1024.  This function determines which subset
-is rendered. */
+rendered portion of the terrain. Only a small section is rendered at any time.
+*/
 //=============================================================================
-void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjListIterator *pLightsIterator)
+void HeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *cameraPivot, RefRenderObjListIterator *pLightsIterator)
 {
 	if (m_map==nullptr) {
 		return;
@@ -1669,105 +1668,127 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	if (m_vertexBufferTiles ==nullptr)
 		return;		//did not initialize resources yet.
 
-	BaseHeightMapRenderObjClass::updateCenter(camera, pLightsIterator);
+	BaseHeightMapRenderObjClass::updateCenter(camera, cameraPivot, pLightsIterator);
 
 	if (m_x >= m_map->getXExtent() && m_y >= m_map->getYExtent())
   {
 		return; // no need to center.
 	}
 
+	const Real cameraPitch = asin(fabs(camera->Get_Forward_Dir().Z));
 	Int newOrgX;
 	Int newOrgY;
 
-	// determine the ray corresponding to the camera and distance to projection plane
-	Matrix3D camera_matrix = camera->Get_Transform();
+	if (cameraPitch > ViewDefaultLowPitchRadians)
+	{
+		// TheSuperHackers @info This is the original code to determine the center position for the visible terrain area.
+		// It is relatively expensive and breaks when the frustum planes can no longer intersect with the terrain at low camera
+		// pitch or when the camera is too far from the terrain, but it is very accurate when the camera is close to the
+		// terrain. For now, we prefer to keep this code for the original camera pitch and above.
 
-	Vector3 camera_location  = camera->Get_Position();
+		// determine the ray corresponding to the camera and distance to projection plane
+		const Matrix3D& camera_matrix = camera->Get_Transform();
+		Vector3 camera_location  = camera->Get_Position();
+		Vector3 rayLocation;
+		Vector3 rayDirection;
+		Vector3 rayDirectionPt;
+		// the projected ray has the same origin as the camera
+		rayLocation = camera_location;
+		// determine the location of the screen coordinate in camera-model space
+		const ViewportClass &viewport = camera->Get_Viewport();
+		Int i, j, minHt;
 
-	Vector3 rayLocation;
-	Vector3 rayDirection;
-	Vector3 rayDirectionPt;
-	// the projected ray has the same origin as the camera
-	rayLocation = camera_location;
-	// determine the location of the screen coordinate in camera-model space
-	const ViewportClass &viewport = camera->Get_Viewport();
-	Int i, j, minHt;
-
-	Real intersectionZ;
-	minHt = m_map->getMaxHeightValue();
-	for (j=0; j<m_y; j+=4) {
-		for (i=0; i<m_x; i+=4) {
-			Short cur = m_map->getDisplayHeight(i,j);
-			if (cur<minHt) minHt = cur;
+		Real intersectionZ;
+		minHt = m_map->getMaxHeightValue();
+		for (j=0; j<m_y; j+=4) {
+			for (i=0; i<m_x; i+=4) {
+				Short cur = m_map->getDisplayHeight(i,j);
+				if (cur<minHt) minHt = cur;
+			}
 		}
-	}
-	intersectionZ = (float)minHt;
-//	float aspect = camera->Get_Aspect_Ratio();
+		intersectionZ = (float)minHt;
+	//	float aspect = camera->Get_Aspect_Ratio();
 
-	Vector2 min,max;
-	camera->Get_View_Plane(min,max);
-	float xscale = (max.X - min.X);
-	float yscale = (max.Y - min.Y);
+		Vector2 min,max;
+		camera->Get_View_Plane(min,max);
+		float xscale = (max.X - min.X);
+		float yscale = (max.Y - min.Y);
 
-	float zmod = -1.0; // Scene->vpd; // Note: view plane distance is now always 1.0 from the camera
-	float minX = 200000;
-	float maxX = -minX;
-	float minY = 200000;
-	float maxY = -minY;
-	for (i=0; i<2; i++) {
-		for (j=0; j<2; j++) {
-			float xmod = (-i + 0.5 + viewport.Min.X) * zmod * xscale;// / aspect;
-			float ymod = (j - 0.5 - viewport.Min.Y) * zmod * yscale;// * aspect;
+		float zmod = -1.0; // Scene->vpd; // Note: view plane distance is now always 1.0 from the camera
+		float minX = 200000;
+		float maxX = -minX;
+		float minY = 200000;
+		float maxY = -minY;
+		for (i=0; i<2; i++) {
+			for (j=0; j<2; j++) {
+				float xmod = (-i + 0.5 + viewport.Min.X) * zmod * xscale;// / aspect;
+				float ymod = (j - 0.5 - viewport.Min.Y) * zmod * yscale;// * aspect;
 
-			// transform the screen coordinates by the camera's matrix into world coordinates.
-			float x = zmod * camera_matrix[0][2] + xmod * camera_matrix[0][0] + ymod * camera_matrix[0][1];
-			float y = zmod * camera_matrix[1][2] + xmod * camera_matrix[1][0] + ymod * camera_matrix[1][1];
-			float z = zmod * camera_matrix[2][2] + xmod * camera_matrix[2][0] + ymod * camera_matrix[2][1];
+				// transform the screen coordinates by the camera's matrix into world coordinates.
+				float x = zmod * camera_matrix[0][2] + xmod * camera_matrix[0][0] + ymod * camera_matrix[0][1];
+				float y = zmod * camera_matrix[1][2] + xmod * camera_matrix[1][0] + ymod * camera_matrix[1][1];
+				float z = zmod * camera_matrix[2][2] + xmod * camera_matrix[2][0] + ymod * camera_matrix[2][1];
 
-			rayDirection.Set(x,y,z);
-			rayDirection.Normalize();
-			rayDirectionPt = rayLocation+rayDirection;
+				rayDirection.Set(x,y,z);
+				rayDirection.Normalize();
+				rayDirectionPt = rayLocation+rayDirection;
 
-			x = Vector3::Find_X_At_Z(intersectionZ, rayLocation, rayDirectionPt);
-			y = Vector3::Find_Y_At_Z(intersectionZ, rayLocation, rayDirectionPt);
-			if (x<minX) minX = x;
-			if (x>maxX) maxX = x;
-			if (y<minY) minY = y;
-			if (y>maxY) maxY = y;
+				x = Vector3::Find_X_At_Z(intersectionZ, rayLocation, rayDirectionPt);
+				y = Vector3::Find_Y_At_Z(intersectionZ, rayLocation, rayDirectionPt);
+				if (x<minX) minX = x;
+				if (x>maxX) maxX = x;
+				if (y<minY) minY = y;
+				if (y>maxY) maxY = y;
+			}
 		}
+
+		// convert back to cell indexes.
+		minX /= MAP_XY_FACTOR;
+		maxX /= MAP_XY_FACTOR;
+		minY /= MAP_XY_FACTOR;
+		maxY /= MAP_XY_FACTOR;
+
+		minX += m_map->getBorderSizeInline();
+		maxX += m_map->getBorderSizeInline();
+		minY += m_map->getBorderSizeInline();
+		maxY += m_map->getBorderSizeInline();
+
+		visMinX = m_map->getXExtent();
+		visMinY = m_map->getYExtent();
+		visMaxX = 0;
+		visMaxY = 0;
+
+		///< @todo find out why values go out of range
+		if (minX<0) minX=0;
+		if (minY<0) minY=0;
+		if (maxX > visMinX) maxX = visMinX;
+		if (maxY > visMinY) maxY = visMinY;
+
+		const FrustumClass & frustum = camera->Get_Frustum();
+		Int limit = (maxX-minX)/2;
+		if (limit > WIDE_STEP/2) {
+			limit=WIDE_STEP/2;
+		}
+		calcVis(frustum, m_map, minX-WIDE_STEP/2, minY-WIDE_STEP/2, maxX+WIDE_STEP/2, maxY+WIDE_STEP/2, limit);
+
+		newOrgX = (visMaxX+visMinX)/2 - m_x/2;
+		newOrgY = (visMaxY+visMinY)/2 - m_y/2;
 	}
+	else
+	{
+		// TheSuperHackers @fix Very fast approximation. Works well for all camera pitches, but is less accurate
+		// than the original implementation. Using this method for higher camera pitch would require to increase
+		// the normal draw width by at least one tile length.
+		const Real visibleTerrainEdgeLen = (m_x+m_y)/2 * MAP_XY_FACTOR;
+		const Real magicEdgeLenScale = 0.25f * visibleTerrainEdgeLen;
+		Vector3 viewDir = camera->Get_Forward_Dir();
+		Vector2 shiftPivot;
+		shiftPivot.X = viewDir.X * magicEdgeLenScale;
+		shiftPivot.Y = viewDir.Y * magicEdgeLenScale;
 
-	// convert back to cell indexes.
-	minX /= MAP_XY_FACTOR;
-	maxX /= MAP_XY_FACTOR;
-	minY /= MAP_XY_FACTOR;
-	maxY /= MAP_XY_FACTOR;
-
-	minX += m_map->getBorderSizeInline();
-	maxX += m_map->getBorderSizeInline();
-	minY += m_map->getBorderSizeInline();
-	maxY += m_map->getBorderSizeInline();
-
-	visMinX = m_map->getXExtent();
-	visMinY = m_map->getYExtent();
-	visMaxX = 0;
-	visMaxY = 0;
-
-	///< @todo find out why values go out of range
-	if (minX<0) minX=0;
-	if (minY<0) minY=0;
-	if (maxX > visMinX) maxX = visMinX;
-	if (maxY > visMinY) maxY = visMinY;
-
-	const FrustumClass & frustum = camera->Get_Frustum();
-	Int limit = (maxX-minX)/2;
-	if (limit > WIDE_STEP/2) {
-		limit=WIDE_STEP/2;
+		newOrgX = WWMath::Round((cameraPivot->X + shiftPivot.X)/MAP_XY_FACTOR) - m_x/2 + m_map->getBorderSizeInline();
+		newOrgY = WWMath::Round((cameraPivot->Y + shiftPivot.Y)/MAP_XY_FACTOR) - m_y/2 + m_map->getBorderSizeInline();
 	}
-	calcVis(frustum, m_map, minX-WIDE_STEP/2, minY-WIDE_STEP/2, maxX+WIDE_STEP/2, maxY+WIDE_STEP/2, limit);
-
-	newOrgX = (visMaxX+visMinX)/2 - m_x/2.0;
-	newOrgY = (visMaxY+visMinY)/2 - m_y/2.0;
 
 	WorldHeightMap::DrawArea newDrawArea = m_map->createDrawArea(newOrgX, newOrgY);
 

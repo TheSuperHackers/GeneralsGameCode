@@ -486,7 +486,7 @@ Bool W3DView::movePivotToGround()
 
 			// Adjust the strength of the repositioning for low camera pitch, because
 			// it feels bad to move the camera around when it looks over the terrain.
-			const Real pitch = WWMath::Asin(fabs(delta.Z) / delta.Length());
+			const Real pitch = asin(fabs(delta.Z) / delta.Length());
 			constexpr const Real lowerPitch = DEG_TO_RADF(15.f);
 			constexpr const Real upperPitch = DEG_TO_RADF(30.f);
 			Real repositionStrength = WWMath::Inverse_Lerp(lowerPitch, upperPitch, pitch);
@@ -3697,7 +3697,27 @@ void W3DView::updateTerrain()
 	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
 
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
-	TheTerrainRenderObject->updateCenter(m_3DCamera, it);
+	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
+	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
+	Int drawWidth;
+	Int drawHeight;
+
+	if (cameraPitch > ViewDefaultLowPitchRadians)
+	{
+		drawWidth = WorldHeightMap::NORMAL_DRAW_WIDTH;
+		drawHeight = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+	}
+	else
+	{
+		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
+		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
+		drawWidth = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+		drawHeight = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	}
+
+	TheTerrainRenderObject->setTerrainDrawSize(drawWidth, drawHeight);
+	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);
+
 	if (it)
 	{
 		W3DDisplay::m_3DScene->destroyLightsIterator(it);

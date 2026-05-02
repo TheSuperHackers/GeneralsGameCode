@@ -2050,7 +2050,7 @@ void WbView3d::redraw()
 		++m_updateCount;
 		Int curTicks = GetTickCount();
 		RefRenderObjListIterator lightListIt(&m_lightList);
-		m_heightMapRenderObj->updateCenter(m_camera, &lightListIt);
+		m_heightMapRenderObj->updateCenter(m_camera, &m_cameraTarget, &lightListIt);
 		m_heightMapRenderObj->On_Frame_Update();
 		--m_updateCount;
 
