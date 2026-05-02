@@ -243,7 +243,10 @@ void FlatHeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 	// Not needed with flat version. [3/20/2003]
 }
 
-
+void FlatHeightMapRenderObjClass::setTerrainDrawSize(Int width, Int height)
+{
+	// Not needed with flat version.
+}
 
 //=============================================================================
 // HeightMapRenderObjClass::doPartialUpdate

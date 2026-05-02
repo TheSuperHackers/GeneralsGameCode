@@ -123,7 +123,8 @@ public:
  	virtual void adjustTerrainLOD(Int adj);
 	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator) = 0;
 	virtual void staticLightingChanged();
-	virtual void oversizeTerrain(Int tilesToOversize);
+	virtual void oversizeTerrain(Int tilesToOversize) = 0; ///< Oversize the visible terrain area.
+	virtual void setTerrainDrawSize(Int width, Int height) = 0; ///< Resize the visible terrain area. Always defaults to oversize dimensions when oversize is set.
 	virtual void reset();
 
   void redirectToHeightmap( WorldHeightMap *pMap )

@@ -80,7 +80,8 @@ public:
 	virtual void reset() override;
 	virtual void doPartialUpdate(const IRegion2D &partialRange, WorldHeightMap *htMap, RefRenderObjListIterator *pLightsIterator) override;
 
-	virtual void oversizeTerrain(Int tilesToOversize) override;
+	virtual void oversizeTerrain(Int tilesToOversize) override; ///< Oversize the visible terrain area.
+	virtual void setTerrainDrawSize(Int width, Int height) override; ///< Resize the visible terrain area. Always defaults to oversize dimensions when oversize is set.
 
 	virtual int updateBlock(Int x0, Int y0, Int x1, Int y1, WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator) override;
 
@@ -93,6 +94,8 @@ protected:
 	VERTEX_FORMAT *m_vertexBufferBackup; ///< In memory copy of the vertex buffer data for quick update of dynamic lighting.
 	Int m_originX; ///<  Origin point in the grid.  Slides around.
 	Int m_originY; ///< Origin point in the grid.  Slides around.
+	Int m_oversizeDrawWidth; // Oversize draw width required by mission scripts for cinematic sequences.
+	Int m_oversizeDrawHeight; // Oversize draw height required by mission scripts for cinematic sequences.
 	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in a VB tile.
 	Int	m_numVBTilesX;	///<dimensions of array containing all the vertex buffers
 	Int	m_numVBTilesY;	///<dimensions of array containing all the vertex buffers

@@ -1048,6 +1048,8 @@ m_vertexBufferTiles(nullptr),
 m_vertexBufferBackup(nullptr),
 m_originX(0),
 m_originY(0),
+m_oversizeDrawWidth(0),
+m_oversizeDrawHeight(0),
 m_indexBuffer(nullptr),
 m_numVBTilesX(0),
 m_numVBTilesY(0),
@@ -1161,6 +1163,8 @@ void HeightMapRenderObjClass::ReAcquireResources()
 void HeightMapRenderObjClass::reset()
 {
 	BaseHeightMapRenderObjClass::reset();
+	m_oversizeDrawWidth = 0;
+	m_oversizeDrawHeight = 0;
 }
 
 //=============================================================================
@@ -1170,17 +1174,42 @@ void HeightMapRenderObjClass::reset()
 //=============================================================================
 void HeightMapRenderObjClass::oversizeTerrain(Int tilesToOversize)
 {
-	Int width = WorldHeightMap::NORMAL_DRAW_WIDTH;
-	Int height = WorldHeightMap::NORMAL_DRAW_HEIGHT;
-	if (tilesToOversize>0 && tilesToOversize<5)
+	if (tilesToOversize>0)
 	{
-		width += VERTEX_BUFFER_TILE_LENGTH * tilesToOversize;
-		height += VERTEX_BUFFER_TILE_LENGTH * tilesToOversize;
-		if (width>m_map->getXExtent())
-			width = m_map->getXExtent();
-		if (height>m_map->getYExtent())
-			height = m_map->getYExtent();
+		m_oversizeDrawWidth = WorldHeightMap::NORMAL_DRAW_WIDTH + VERTEX_BUFFER_TILE_LENGTH * tilesToOversize;
+		m_oversizeDrawHeight = WorldHeightMap::NORMAL_DRAW_HEIGHT + VERTEX_BUFFER_TILE_LENGTH * tilesToOversize;
+		m_oversizeDrawWidth = std::min(m_oversizeDrawWidth, m_map->getXExtent());
+		m_oversizeDrawHeight = std::min(m_oversizeDrawHeight, m_map->getYExtent());
+		setTerrainDrawSize(m_oversizeDrawWidth, m_oversizeDrawHeight);
 	}
+	else
+	{
+		m_oversizeDrawWidth = 0;
+		m_oversizeDrawHeight = 0;
+		Int width = std::min((Int)WorldHeightMap::NORMAL_DRAW_WIDTH, m_map->getXExtent());
+		Int height = std::min((Int)WorldHeightMap::NORMAL_DRAW_HEIGHT, m_map->getYExtent());
+		setTerrainDrawSize(width, height);
+	}
+}
+
+void HeightMapRenderObjClass::setTerrainDrawSize(Int width, Int height)
+{
+	if (m_map == nullptr)
+		return;
+
+	if (m_oversizeDrawWidth != 0)
+		width = m_oversizeDrawWidth;
+	else
+		width = std::min(width, m_map->getXExtent());
+
+	if (m_oversizeDrawHeight != 0)
+		height = m_oversizeDrawHeight;
+	else
+		height = std::min(height, m_map->getYExtent());
+
+	if (width == m_map->getDrawWidth() && height == m_map->getDrawHeight())
+		return;
+
 	Int dx = width-m_map->getDrawWidth();
 	Int dy = height-m_map->getDrawHeight();
 	m_map->setDrawWidth(width);
