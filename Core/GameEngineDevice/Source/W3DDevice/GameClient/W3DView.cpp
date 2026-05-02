@@ -80,6 +80,7 @@
 
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
@@ -617,7 +618,7 @@ Real W3DView::calcCameraAreaOffset(Real maxEdgeZ)
 //-------------------------------------------------------------------------------------------------
 void W3DView::clipCameraIntoAreaConstraints()
 {
-	constexpr const Real eps = 1e-6f;
+	constexpr const Real eps = 0.1f;
 	Coord2D pos = getPosition2D();
 	pos.x = clamp(m_cameraAreaConstraints.lo.x + eps, pos.x, m_cameraAreaConstraints.hi.x - eps);
 	pos.y = clamp(m_cameraAreaConstraints.lo.y + eps, pos.y, m_cameraAreaConstraints.hi.y - eps);
@@ -731,8 +732,6 @@ void W3DView::updateCameraTransform()
 	if (TheGlobalData->m_headless)
 		return;
 
-	updateCameraClipPlanes();
-
 	Vector3 sourcePos;
 	Vector3 targetPos;
 	buildCameraPosition(sourcePos, targetPos);
@@ -762,30 +761,75 @@ void W3DView::updateCameraTransform()
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @tweak The far clip plane is now generally aligned with the actual terrain
+// draw size. This is most useful for low camera angles.
 //-------------------------------------------------------------------------------------------------
-void W3DView::updateCameraClipPlanes()
+void W3DView::updateCameraClipPlanes(const Matrix3D &transform)
 {
-	// TheSuperHackers @bugfix Extends the initial far Z from 1200 because that is not enough at
-	// default max height 310 and default pitch 37.5.
-	static_assert(WorldHeightMap::NORMAL_DRAW_WIDTH == WorldHeightMap::NORMAL_DRAW_HEIGHT, "Expects squared draw area");
-	Real farZ = (WorldHeightMap::NORMAL_DRAW_WIDTH * 1.08f) * MAP_XY_FACTOR;
+	Real farZ;
 
-	const Real heightMultiplier = m_heightAboveGround / ViewDefaultMaxHeightAboveTerrain;
-	farZ *= std::max(heightMultiplier, 1.0f);
+	if (TheGlobalData->m_drawEntireTerrain)
+	{
+		farZ = 100000.0f;
+	}
+	else if (TheTerrainRenderObject && TheTerrainRenderObject->getMap())
+	{
+		WorldHeightMap *heightMap = TheTerrainRenderObject->getMap();
+
+		const Vector3 camPos = transform.Get_Translation();
+		const Vector3 camDir = -transform.Get_Z_Vector();
+
+		const Int loX = heightMap->getDrawOrgX() - heightMap->getBorderSize();
+		const Int loY = heightMap->getDrawOrgY() - heightMap->getBorderSize();
+		const Int hiX = loX + heightMap->getDrawWidth();
+		const Int hiY = loY + heightMap->getDrawHeight();
+
+		// Convert to world coordinates
+		const Real minX = loX * MAP_XY_FACTOR;
+		const Real minY = loY * MAP_XY_FACTOR;
+		const Real maxX = hiX * MAP_XY_FACTOR;
+		const Real maxY = hiY * MAP_XY_FACTOR;
+
+		const Real minZ = TheTerrainRenderObject->getMinHeight();
+
+		// Bounding sphere
+		Vector3 center;
+		center.X = (minX + maxX) * 0.5f;
+		center.Y = (minY + maxY) * 0.5f;
+		center.Z = minZ - 1.0f; // -1 to avoid Z clipping when looking straight down
+
+		// Half extents
+		const Real dx = (maxX - minX) * 0.5f;
+		const Real dy = (maxY - minY) * 0.5f;
+
+		// Project center
+		const Vector3 v = center - camPos;
+		const Real projectedDistanceToCenter = fabs(Vector3::Dot_Product(v, camDir));
+
+		// Project radius
+		const Real projectedRadiusToEdge = fabs(dx * camDir.X) + fabs(dy * camDir.Y);
+
+		// Final far plane
+		farZ = projectedDistanceToCenter + projectedRadiusToEdge;
+	}
+	else
+	{
+		farZ = WorldHeightMap::NORMAL_DRAW_WIDTH * MAP_XY_FACTOR;
+	}
 
 	if (m_useRealZoomCam)	//WST 10.19.2002
 	{
 		if (m_FXPitch < 0.95f)
 		{
-			//Extend far Z when we pitch up for RealZoomCam
+			// Extend far Z when we pitch up for RealZoomCam
 			farZ /= m_FXPitch;
 		}
 	}
 	else
 	{
-		if (TheGlobalData->m_drawEntireTerrain || m_FXPitch < 0.95f)
+		if (m_FXPitch < 0.95f)
 		{
-			//Extend far clip plane so entire terrain can be visible
+			// Extend far clip plane so entire terrain can be visible
 			farZ *= 10.0f;
 		}
 	}
@@ -809,6 +853,10 @@ void W3DView::setCameraTransform(const Matrix3D &transform)
 	{
 		updateTerrain();
 	}
+
+	// TheSuperHackers @info Camera clip planes must be updated after the terrain,
+	// because the new terrain draw size is needed to calculate the far clip plane.
+	updateCameraClipPlanes(transform);
 
 	// TheSuperHackers @fix Notify the Radar about the changed view always.
 	// This way the radar view box should always be in sync with the camera view.
@@ -875,7 +923,6 @@ void W3DView::set3DCameraLookAt(const Coord3D &pos, const Coord3D &dir, Real rol
 	Matrix3D transform;
 	transform.Look_At_Dir(camPos, camDir, roll);
 
-	updateCameraClipPlanes();
 	setCameraTransform(transform);
 
 	m_recalcCamera = false;
