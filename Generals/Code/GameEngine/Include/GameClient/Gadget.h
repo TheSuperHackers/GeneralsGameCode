@@ -276,8 +276,8 @@ typedef struct _EntryData
 
 	DisplayString *text;						///< the entry text
 	DisplayString *sText;						///< for displaying 'secret' text
-	DisplayString *constructText;		///< for foriegn text construction
-	Bool secretText;								///< If TRUE text appears as astericks
+	DisplayString *constructText;		///< for foreign text construction
+	Bool secretText;								///< If TRUE text appears as asterisks
 	Bool numericalOnly;							///< If TRUE only numbers are allowed as input
 	Bool alphaNumericalOnly;				///< If TRUE only numbers and letters are allowed as input
 	Bool aSCIIOnly;									///< If TRUE ascii allowed as input
@@ -296,7 +296,7 @@ typedef struct _EntryData
 
 	GameWindow *constructList;	// Listbox for construct list.
 	UnsignedShort charPos;			// Position of current character
-	UnsignedShort conCharPos;		// Position of current contruct character
+	UnsignedShort conCharPos;		// Position of current construct character
 
 } EntryData;
 
@@ -306,7 +306,10 @@ typedef struct _TextData
 {
 
 	DisplayString *text;  ///< the text data
-	Bool centered;
+	Bool centered;				///< horizontal
+	Bool centeredVertically;	///< vertical
+	Int leftMargin;					///< left justification margin width
+	Int topMargin;					///< top justification margin width
 
 } TextData;
 
@@ -427,7 +430,7 @@ typedef struct _PushButtonData
 	Color colorBorder;			///< The color for the border around the button
 	void *userData;					///< random additional data we can set
 	const Image *overlayImage; ///< An overlay image (like a veterancy symbol)
-	AsciiString altSound;		///< use an alternitive sound if one is set
+	AsciiString altSound;		///< use an alternative sound if one is set
 } PushButtonData;
 
 // TabControlData ------------------------------------------------------------

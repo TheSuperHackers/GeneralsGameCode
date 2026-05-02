@@ -121,8 +121,17 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	text->getSize( &width, &height );
 
 	// where to draw
-	textPos.x = origin.x + (size.x / 2) - (width / 2);
-	textPos.y = origin.y + (size.y / 2) - (height / 2);
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_SHORTCUT_BUTTON ) )
+	{
+		// Oh god... this is a total hack for shortcut buttons to handle rendering text top left corner...
+		textPos.x = origin.x + 2;
+		textPos.y = origin.y + 0;
+	}
+	else
+	{
+		textPos.x = origin.x + (size.x / 2) - (width / 2);
+		textPos.y = origin.y + (size.y / 2) - (height / 2);
+	}
 
 	// draw it
 	text->draw( textPos.x, textPos.y, textColor, dropColor );

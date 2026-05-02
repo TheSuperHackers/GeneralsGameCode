@@ -1134,6 +1134,13 @@ static Bool parseStaticTextData( const char *token, WinInstanceData *instData,
 	c = strtok( nullptr, seps );  // value
 	scanBool( c, textData->centered );
 
+	// @todo: add these  to GUIEdit options and output
+	// These are initialized here because any TextData constructor would never get called.
+	// The behavior with these defaults is the same as it was before these members were added.
+	textData->centeredVertically = TRUE;
+	textData->leftMargin = 7;
+	textData->topMargin = 7;
+
 	return TRUE;
 
 }
