@@ -527,6 +527,25 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ControlBar.h", Game.CORE, "GameEngine/Include/GameClient/ControlBar.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ControlBarResizer.h", Game.CORE, "GameEngine/Include/GameClient/ControlBarResizer.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/ControlBarScheme.h", Game.CORE, "GameEngine/Include/GameClient/ControlBarScheme.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBar.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBar.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarCommand.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarCommand.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarCommandProcessing.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarCommandProcessing.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarMultiSelect.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarMultiSelect.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarOCLTimer.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarOCLTimer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarObserver.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarObserver.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarPrintPositions.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarPrintPositions.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarResizer.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarResizer.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarScheme.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarScheme.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarStructureInventory.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarStructureInventory.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarUnderConstruction.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/ControlBar/ControlBarUnderConstruction.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp", Game.CORE, "GameEngine/Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/GUICallbacks/W3DControlBar.cpp")
+
     return
 
 
