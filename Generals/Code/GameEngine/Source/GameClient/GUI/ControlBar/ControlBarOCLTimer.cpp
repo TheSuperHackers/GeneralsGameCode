@@ -88,13 +88,44 @@ void ControlBar::populateOCLTimer( Object *creatorObject )
 
 	// set the sell button
 /// @todo srj -- remove hard-coding here, please
-	const CommandButton *commandButton = findCommandButton( "Command_Sell" );
 	NameKeyType id;
 	id = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:OCLTimerSellButton" );
 	GameWindow *win = TheWindowManager->winGetWindowFromId( parent, id );
-	setControlCommand( win, commandButton );
-	win->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 
+	if( !creatorObject->isKindOf(KINDOF_TECH_BUILDING) )
+	{
+		// Surgical bug fix.  srj is right, this is stupid.
+		const CommandButton *commandButton = findCommandButton( "Command_Sell" );
+		setControlCommand( win, commandButton );
+		win->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+	}
+	// Another last minute hack due to time constraint and feature creep
+	else if( creatorObject->isKindOf(KINDOF_TECH_BUILDING) && creatorObject->isKindOf(KINDOF_AUTO_RALLYPOINT) )
+	{
+		// This time we want a rally point button to show up instead of a sell button
+		const CommandButton *commandButton = findCommandButton( "Command_SetRallyPoint" );
+		setControlCommand( win, commandButton );
+		win->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+
+		//
+		// for objects that have a production exit interface, we may have a rally point set.
+		// if we do, we want to show that rally point in the world
+		//
+		ExitInterface *exit = creatorObject->getObjectExitInterface();
+		if( exit )
+		{
+			//
+			// if a rally point is set, show the rally point, if we don't have it set hide any rally
+			// point we might have visible
+			//
+			showRallyPoint( exit->getRallyPoint() );
+
+		}
+	}
+	else
+	{
+		win->winHide(TRUE);
+	}
 
 	// set the text percent and bar of our timer we are displaying
 	updateContextOCLTimer();

@@ -3561,10 +3561,16 @@ void ControlBar::updateSpecialPowerShortcut()
 	   || !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
 
+#if RTS_GENERALS
+	// Base Generals just needs a Command Center to show the shortcut bar
+	Bool hasValidShortcutButton = (ThePlayerList->getLocalPlayer()->findNaturalCommandCenter() != nullptr);
+#else
+	// Zero Hour looks for explicitly flagged shortcut powers or shortcut selection buttons
 	Bool hasShortcutSelectionButtons = hasAnyShortcutSelection();
 	Bool hasAnyShortcutSpecialPower = ThePlayerList->getLocalPlayer()->hasAnyShortcutSpecialPower();
 
 	Bool hasValidShortcutButton = hasShortcutSelectionButtons || hasAnyShortcutSpecialPower;
+#endif
 
 	if( hasValidShortcutButton
 		  && m_specialPowerShortcutParent->winIsHidden()
@@ -3776,8 +3782,13 @@ void ControlBar::showSpecialPowerShortcut()
 			break;
 		}
 	}
+#if RTS_GENERALS
+	if(dontAnimate || !ThePlayerList->getLocalPlayer()->findNaturalCommandCenter())
+		return;
+#else
 	if( dontAnimate || (!ThePlayerList->getLocalPlayer()->hasAnyShortcutSpecialPower() && !hasAnyShortcutSelection()) )
 		return;
+#endif
 	m_specialPowerShortcutParent->winHide(FALSE);
 	populateSpecialPowerShortcut(ThePlayerList->getLocalPlayer());
 

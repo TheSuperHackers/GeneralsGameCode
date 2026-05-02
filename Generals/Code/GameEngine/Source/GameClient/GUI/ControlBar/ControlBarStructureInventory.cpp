@@ -105,6 +105,16 @@ void ControlBar::populateStructureInventory( Object *building )
 	if(TheHotKeyManager)
 		TheHotKeyManager->reset();
 
+	// Start by hiding all the buttons.  Otherwise buttons we don't use will have the buttons
+	// the last thing selected left behind.
+	for( Int commandIndex = 0; commandIndex < MAX_COMMANDS_PER_SET; commandIndex++ )
+	{
+		if( m_commandWindows[commandIndex] )
+		{
+			m_commandWindows[commandIndex]->winHide(TRUE);
+		}
+	}
+
 	// get the contain module of the object
 	ContainModuleInterface *contain = building->getContain();
 	DEBUG_ASSERTCRASH( contain, ("Object in structure inventory does not contain a Contain Module") );
