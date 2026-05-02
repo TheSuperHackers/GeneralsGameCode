@@ -1128,8 +1128,7 @@ void HeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 											m_map->getDrawHeight(), m_map, nullptr);
 	staticLightingChanged();
 	if (TheTacticalView) {
-		TheTacticalView->setAngle(TheTacticalView->getAngle() + 1);
-		TheTacticalView->setAngle(TheTacticalView->getAngle() - 1);
+		TheTacticalView->forceRedraw();
 	}
 #endif
 }
@@ -1645,22 +1644,13 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 
 	BaseHeightMapRenderObjClass::updateCenter(camera, pLightsIterator);
 
-	m_updating = true;
-	if (m_needFullUpdate)
-  {
-		m_needFullUpdate = false;
-		updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
-		m_updating = false;
-		return;
-	}
-
 	if (m_x >= m_map->getXExtent() && m_y >= m_map->getYExtent())
   {
-		m_updating = false;
 		return; // no need to center.
 	}
 
-	constexpr const Int cellOffset = 1;
+	Int newOrgX;
+	Int newOrgY;
 
 	// determine the ray corresponding to the camera and distance to projection plane
 	Matrix3D camera_matrix = camera->Get_Transform();
@@ -1749,14 +1739,24 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	}
 	calcVis(frustum, m_map, minX-WIDE_STEP/2, minY-WIDE_STEP/2, maxX+WIDE_STEP/2, maxY+WIDE_STEP/2, limit);
 
-	if (m_map) {
-		Int newOrgX;
-		Int newOrgY;
-		newOrgX = (visMaxX+visMinX)/2 - m_x/2.0;
-		newOrgY = (visMaxY+visMinY)/2 - m_y/2.0;
+	newOrgX = (visMaxX+visMinX)/2 - m_x/2.0;
+	newOrgY = (visMaxY+visMinY)/2 - m_y/2.0;
 
+	m_updating = true;
+	if (m_needFullUpdate)
+	{
+		m_needFullUpdate = false;
+		m_map->setDrawOrg(newOrgX, newOrgY);
+		updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
+		m_updating = false;
+		return;
+	}
+	else
+	{
+		constexpr const Int cellOffset = 1;
 		Int deltaX = newOrgX - m_map->getDrawOrgX();
 		Int deltaY = newOrgY - m_map->getDrawOrgY();
+
 		if (IABS(deltaX) > m_x/2 || IABS(deltaY)>m_x/2) {
 			m_map->setDrawOrg(newOrgX, newOrgY);
 			m_originY = 0;
