@@ -418,7 +418,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				if (m_dragSelecting)
 				{
 					// insert area selection "hint" message into stream
-					GameMessage *hintMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION_HINT );
+					GameMessage *hintMsg = TheMessageStream->appendMessage( GameMessage::MSG_BEGIN_AREA_SELECTION_HINT );
 
 					// build rectangular region defined by the drag selection
 					IRegion2D pixelRegion;
@@ -508,7 +508,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					TheInGameUI->selectMatchingAcrossScreen();
 
 				// emit "picked" message
-				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );
+				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
 				pickMsg->appendDrawableIDArgument( picked->getID() );  /// note we are putting in a drawable id
 
 				if (TheInGameUI->isInPreferSelectionMode() && !listOfSelectedDrawables.empty()) {
@@ -857,7 +857,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				TheInGameUI->endAreaSelectHint(nullptr);
 
 				// insert area selection message into stream
-				GameMessage *dragMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );
+				GameMessage *dragMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
 
 				IRegion2D selectionRegion;
 				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );

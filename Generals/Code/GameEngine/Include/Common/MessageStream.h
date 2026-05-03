@@ -415,7 +415,8 @@ public:
 		MSG_MOUSEOVER_LOCATION_HINT,								///< (location) The cursor is not over a drawable, but is here.
 		MSG_VALID_GUICOMMAND_HINT,									///< posted when the gui command is valid if the user clicked to execute it.
 		MSG_INVALID_GUICOMMAND_HINT,								///< posted when the gui command is not valid if the user were to click to attempt to execute it.
-		MSG_AREA_SELECTION_HINT,										///< (pixelRegion) rectangular selection area under construction, not confirmed
+		MSG_BEGIN_AREA_SELECTION_HINT,							///< (pixelRegion) rectangular selection area under construction, not confirmed
+		MSG_END_AREA_SELECTION_HINT,                ///< (pixelRegion) rectangular selection area finish construction
 
 		//Command hints
 		MSG_DO_ATTACK_OBJECT_HINT,									///< (victim objectID) If clicked, an attack would be ordered, "Current Selection" is assumed
@@ -532,7 +533,7 @@ public:
 		MSG_EXECUTE_RAILED_TRANSPORT,								///< Execute railed transport sequence
 		MSG_COMBATDROP_AT_LOCATION,									///< dump out all rappellers
 		MSG_COMBATDROP_AT_OBJECT,										///< dump out all rappellers
-		MSG_AREA_SELECTION,													///< (pixelRegion) rectangular selection area
+		MSG_AREA_SELECTION_DEPRECATED,              ///< TheSuperHackers @tweak former MSG_AREA_SELECTION is deprecated as network message.
 		MSG_DO_ATTACK_OBJECT,												///< (objectID, victim objectID)
 		MSG_DO_FORCE_ATTACK_OBJECT,									///< force attack the given object if picked
 		MSG_DO_FORCE_ATTACK_GROUND,									///< (locationID) bombard the given location if picked
