@@ -280,6 +280,205 @@ static void lowerAscii(char *s)
 	}
 }
 
+// ---------------------------------------------------------------------------
+// Team balancing via HTTP GET.
+// ---------------------------------------------------------------------------
+
+// Percent-encode an ASCII byte sequence into a query-string fragment. Writes
+// at most outCap bytes (always null-terminated). Reserved characters become
+// %XX; the unreserved set per RFC 3986 passes through.
+static void urlEncode(const char *src, char *out, unsigned int outCap)
+{
+	if (outCap == 0) return;
+	static const char hex[] = "0123456789ABCDEF";
+	unsigned int o = 0;
+	for (const char *p = src; *p != '\0' && o + 4 < outCap; ++p)
+	{
+		unsigned char c = (unsigned char)*p;
+		bool unreserved = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+		                  (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '~';
+		if (unreserved)
+		{
+			out[o++] = (char)c;
+		}
+		else
+		{
+			out[o++] = '%';
+			out[o++] = hex[(c >> 4) & 0xF];
+			out[o++] = hex[c & 0xF];
+		}
+	}
+	out[o] = '\0';
+}
+
+// Extract the first JSON object key from a response body. Assumes keys do
+// not contain backslash-escaped quotes (player names won't).
+static bool extractFirstJsonKey(const char *body, AsciiString &outKey)
+{
+	const char *p = strchr(body, '"');
+	if (p == nullptr) return false;
+	++p;
+	const char *end = strchr(p, '"');
+	if (end == nullptr) return false;
+	outKey.set(p, (int)(end - p));
+	return !outKey.isEmpty();
+}
+
+BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
+                                          const std::vector<AsciiString>& playerNames)
+{
+	BalanceTeamsResult result;
+	result.success = false;
+
+	if (url.isEmpty())
+	{
+		result.errorMessage = "Team balance URL is not set.";
+		return result;
+	}
+	if (playerNames.empty())
+	{
+		result.errorMessage = "No players to balance.";
+		return result;
+	}
+
+	// Parse URL once so we can rebuild the path with our query string.
+	char hostBuf[256];
+	char pathBuf[1024];
+	URL_COMPONENTSA uc;
+	memset(&uc, 0, sizeof(uc));
+	uc.dwStructSize = sizeof(uc);
+	uc.lpszHostName = hostBuf;
+	uc.dwHostNameLength = sizeof(hostBuf);
+	uc.lpszUrlPath = pathBuf;
+	uc.dwUrlPathLength = sizeof(pathBuf);
+
+	if (!InternetCrackUrlA(url.str(), 0, 0, &uc))
+	{
+		result.errorMessage = "Failed to parse balance-teams URL.";
+		return result;
+	}
+
+	// Build full path with ?players=A&players=B&... appended (preserving any
+	// existing query string in the original URL path).
+	char fullPath[4096];
+	int fullLen = (int)strlen(pathBuf);
+	if (fullLen >= (int)sizeof(fullPath) - 1)
+	{
+		result.errorMessage = "Balance-teams URL path too long.";
+		return result;
+	}
+	memcpy(fullPath, pathBuf, (size_t)fullLen);
+	fullPath[fullLen] = '\0';
+	bool hasQuery = (strchr(fullPath, '?') != nullptr);
+	for (size_t i = 0; i < playerNames.size(); ++i)
+	{
+		char encoded[256];
+		urlEncode(playerNames[i].str(), encoded, sizeof(encoded));
+		const char *sep = hasQuery ? "&" : "?";
+		int remaining = (int)sizeof(fullPath) - fullLen;
+		int written = _snprintf(fullPath + fullLen, (size_t)remaining,
+		                        "%splayers=%s", sep, encoded);
+		if (written < 0 || written >= remaining)
+		{
+			result.errorMessage = "Too many players for balance-teams URL.";
+			return result;
+		}
+		fullLen += written;
+		hasQuery = true;
+	}
+
+	WinInetSession s;
+	if (!openHttpRequest(url, "GET", fullPath, "Balance teams", &s))
+	{
+		result.errorMessage = "Could not connect to balance-teams server.";
+		return result;
+	}
+
+	BOOL sent = HttpSendRequestA(s.hRequest, "Accept: application/json\r\n",
+	                             (DWORD)-1L, nullptr, 0);
+	if (!sent)
+	{
+		result.errorMessage.format("Balance-teams request failed (WinINet %lu).",
+		                           GetLastError());
+		closeHttpRequest(&s);
+		return result;
+	}
+
+	DWORD statusCode = 0;
+	DWORD statusSize = sizeof(statusCode);
+	HttpQueryInfoA(s.hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
+	               &statusCode, &statusSize, nullptr);
+	if (statusCode < 200 || statusCode >= 300)
+	{
+		result.errorMessage.format("Balance-teams server returned HTTP %lu.",
+		                           statusCode);
+		closeHttpRequest(&s);
+		return result;
+	}
+
+	// Read the response body up to a sensible cap (small JSON dict).
+	static const DWORD bodyCap = 16 * 1024;
+	char *body = (char *)malloc(bodyCap);
+	if (body == nullptr)
+	{
+		result.errorMessage = "Out of memory reading balance-teams response.";
+		closeHttpRequest(&s);
+		return result;
+	}
+	DWORD totalRead = 0;
+	for (;;)
+	{
+		DWORD bytesRead = 0;
+		if (!InternetReadFile(s.hRequest, body + totalRead,
+		                      bodyCap - 1 - totalRead, &bytesRead))
+			break;
+		if (bytesRead == 0) break;
+		totalRead += bytesRead;
+		if (totalRead >= bodyCap - 1) break;
+	}
+	body[totalRead] = '\0';
+	closeHttpRequest(&s);
+
+	AsciiString firstKey;
+	bool gotKey = extractFirstJsonKey(body, firstKey);
+	free(body);
+	if (!gotKey)
+	{
+		result.errorMessage = "Balance-teams response was empty.";
+		return result;
+	}
+
+	// Split the first key by commas. The API documents these as a plain
+	// comma-separated list of names; trim incidental whitespace just in case.
+	AsciiString current;
+	for (const char *p = firstKey.str(); *p != '\0'; ++p)
+	{
+		if (*p == ',')
+		{
+			if (!current.isEmpty())
+			{
+				result.team1.push_back(current);
+				current.clear();
+			}
+		}
+		else if (*p != ' ' && *p != '\t')
+		{
+			current.concat(*p);
+		}
+	}
+	if (!current.isEmpty())
+		result.team1.push_back(current);
+
+	if (result.team1.empty())
+	{
+		result.errorMessage = "Balance-teams response had no team-1 players.";
+		return result;
+	}
+
+	result.success = true;
+	return result;
+}
+
 bool MapMissingFromServer(const AsciiString& checkUrl, unsigned int mapCRC)
 {
 	if (checkUrl.isEmpty())

@@ -138,6 +138,11 @@ public:
 	// doesn't already have it.
 	AsciiString m_mapUploadUrl;
 
+	// URL to GET ?players=<name>&players=<name>... to fetch a balanced team
+	// split for the LAN lobby (used by the Randomize button when no teams
+	// are pre-set). Empty string disables the API call.
+	AsciiString m_balanceTeamsUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

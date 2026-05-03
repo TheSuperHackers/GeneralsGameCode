@@ -4,6 +4,8 @@
 #include "GameNetwork/GameInfo.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/MultiplayerSettings.h"
+#include "Common/GlobalData.h"
+#include "Common/StatsUploader.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/ChallengeGenerals.h"
 
@@ -326,4 +328,105 @@ std::vector<Int> buildLockedTemplates()
 		}
 	}
 	return lockedTemplates;
+}
+
+// Translate a slot's display name into the form expected by the
+// balance_teams API. AI slot names ("Easy Army", "Hard Army", ...) are
+// joined to a single token ("EasyArmy", "HardArmy") so the server's name
+// table doesn't have to care about spacing. Human names pass through.
+static AsciiString slotNameForApi(const GameSlot *slot)
+{
+	AsciiString out;
+	out.translate(slot->getName());
+	if (slot->isAI())
+	{
+		AsciiString joined;
+		for (const char *p = out.str(); *p != '\0'; ++p)
+		{
+			if (*p != ' ')
+				joined.concat(*p);
+		}
+		out = joined;
+	}
+	return out;
+}
+
+// True if every occupied non-observer slot has m_teamNumber == -1.
+static Bool allTeamsUnset(const GameInfo *game)
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot *slot = game->getConstSlot(i);
+		if (!slot || !slot->isOccupied())
+			continue;
+		if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+			continue;
+		if (slot->getTeamNumber() != -1)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+bool tryBalanceTeamsViaApi(GameInfo *game, AsciiString *outError)
+{
+	if (!game)
+		return true;
+
+	if (!allTeamsUnset(game))
+		return true;
+
+	// Collect names from occupied non-observer slots in slot order.
+	std::vector<AsciiString> names;
+	Int i;
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot *slot = game->getConstSlot(i);
+		if (!slot || !slot->isOccupied())
+			continue;
+		if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+			continue;
+
+		AsciiString asciiName = slotNameForApi(slot);
+		if (asciiName.isEmpty())
+			continue;
+		names.push_back(asciiName);
+	}
+
+	if (names.size() < 2)
+		return true; // nothing to balance
+
+	BalanceTeamsResult res = BalanceTeamsFromServer(TheGlobalData->m_balanceTeamsUrl, names);
+	if (!res.success)
+	{
+		if (outError)
+			*outError = res.errorMessage;
+		return false;
+	}
+
+	// Assign team 0 to slots whose name is in res.team1; everyone else gets
+	// team 1. resetAccepted() is left to the caller (performRandomAssign
+	// already does it).
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		GameSlot *slot = game->getSlot(i);
+		if (!slot || !slot->isOccupied())
+			continue;
+		if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+			continue;
+
+		AsciiString asciiName = slotNameForApi(slot);
+
+		Bool inTeam1 = FALSE;
+		for (size_t j = 0; j < res.team1.size(); ++j)
+		{
+			if (asciiName.compareNoCase(res.team1[j]) == 0)
+			{
+				inTeam1 = TRUE;
+				break;
+			}
+		}
+		slot->setTeamNumber(inTeam1 ? 0 : 1);
+	}
+
+	return true;
 }

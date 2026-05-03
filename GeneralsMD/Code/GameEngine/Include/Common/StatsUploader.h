@@ -17,7 +17,9 @@
 
 #pragma once
 
-class AsciiString;
+#include "Common/AsciiString.h"
+
+#include <vector>
 
 /// Upload gzip-compressed stats data to a REST endpoint via HTTP POST.
 /// Sends Content-Type: application/gzip with the X-Game-Seed header.
@@ -62,3 +64,21 @@ bool MapMissingFromServer(const AsciiString& checkUrl, unsigned int mapCRC);
 void UploadMapToServer(const AsciiString& uploadUrl, const void *data, unsigned int dataLen,
                        unsigned int mapCRC, const AsciiString& mapName,
                        const char *fileKind, unsigned int seed);
+
+/// Result of a balance_teams API call.
+struct BalanceTeamsResult
+{
+	bool success;
+	AsciiString errorMessage;            ///< populated when !success
+	std::vector<AsciiString> team1;      ///< populated when success: names assigned to team 1
+};
+
+/// Query the team-balancing endpoint with a list of player names. The endpoint
+/// returns a JSON object whose keys are comma-separated player lists ranked
+/// by balance score; the first key is treated as the best-balanced team-1
+/// split. Players not in the first key become team 2.
+/// Best-effort, blocking; uses WinINet's default timeouts.
+/// @param url Full URL of the balance_teams endpoint
+/// @param playerNames Lobby player names to balance (URL-encoded internally)
+BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
+                                          const std::vector<AsciiString>& playerNames);

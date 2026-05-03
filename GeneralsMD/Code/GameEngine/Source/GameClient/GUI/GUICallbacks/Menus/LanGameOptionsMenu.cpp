@@ -1539,6 +1539,18 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 				{
 					if (TheLAN->AmIHost())
 					{
+						// First, try to auto-balance teams via the API. No-op if
+						// teams are already set; surfaces network errors in chat
+						// without aborting the rest of the random assignment.
+						AsciiString balanceErr;
+						if (!tryBalanceTeamsViaApi(TheLAN->GetMyGame(), &balanceErr))
+						{
+							UnicodeString errU;
+							errU.translate(balanceErr);
+							TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(),
+								errU, LANAPI::LANCHAT_SYSTEM);
+						}
+
 						std::vector<Int> lockedTemplates = buildLockedTemplates();
 						performRandomAssign(TheLAN->GetMyGame(), lockedTemplates);
 						TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
