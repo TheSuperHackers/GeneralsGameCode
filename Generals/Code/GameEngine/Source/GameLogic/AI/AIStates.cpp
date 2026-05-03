@@ -6272,7 +6272,12 @@ StateReturnType AIExitState::update()
 		//GS.  The goal of unified ExitInterfaces dies a horrible death.  I can't ask Object for the exit,
 		// as removeFromContain is only in the Contain type.  I'm splitting the names in shame.
 		ExitInterface* goalExitInterface = goal->getContain() ? goal->getContain()->getContainExitInterface() : nullptr;
+#if RETAIL_COMPATIBLE_CRC
 		if( goalExitInterface == nullptr )
+#else
+		// TheSuperHackers @bugfix Stubbjax 03/05/2026 Stop trying to exit if the container is dead, as we are already ejected.
+		if (goalExitInterface == nullptr || goal->isEffectivelyDead())
+#endif
 			return STATE_FAILURE;
 
 		if( goalExitInterface->isExitBusy() )
