@@ -3555,16 +3555,32 @@ Bool ControlBar::hasAnyShortcutSelection() const
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool ControlBar::canShowSpecialPowerShortcut() const
+{
+#ifdef RTS_GENERALS
+	// Special Powers in Generals do not have the ShortcutPower flag set and therefore
+	// this function needs to assumes that shortcut special powers come from the Command Center.
+	if (ThePlayerList->getLocalPlayer()->findNaturalCommandCenter() != nullptr)
+		return true;
+#endif
+
+	if (hasAnyShortcutSelection())
+		return true;
+
+	if (ThePlayerList->getLocalPlayer()->hasAnyShortcutSpecialPower())
+		return true;
+
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 void ControlBar::updateSpecialPowerShortcut()
 {
 	if(!m_specialPowerShortcutParent || !m_specialPowerShortcutButtons
 	   || !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
 
-	Bool hasShortcutSelectionButtons = hasAnyShortcutSelection();
-	Bool hasAnyShortcutSpecialPower = ThePlayerList->getLocalPlayer()->hasAnyShortcutSpecialPower();
-
-	Bool hasValidShortcutButton = hasShortcutSelectionButtons || hasAnyShortcutSpecialPower;
+	const Bool hasValidShortcutButton = canShowSpecialPowerShortcut();
 
 	if( hasValidShortcutButton
 		  && m_specialPowerShortcutParent->winIsHidden()
@@ -3776,7 +3792,7 @@ void ControlBar::showSpecialPowerShortcut()
 			break;
 		}
 	}
-	if( dontAnimate || (!ThePlayerList->getLocalPlayer()->hasAnyShortcutSpecialPower() && !hasAnyShortcutSelection()) )
+	if( dontAnimate || !canShowSpecialPowerShortcut() )
 		return;
 	m_specialPowerShortcutParent->winHide(FALSE);
 	populateSpecialPowerShortcut(ThePlayerList->getLocalPlayer());
