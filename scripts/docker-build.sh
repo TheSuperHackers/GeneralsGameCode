@@ -59,7 +59,7 @@ Build Generals/Zero Hour on Linux using Docker (produces Windows executables).
 Options:
     -h, --help          Show this help message
     -g, --game GAME     Build specific game: 'zh' (Zero Hour), 'generals', or 'all' (default: all)
-    -t, --target TARGET Build specific CMake target (e.g., generalszh, WorldBuilderZH)
+    -t, --target TARGET Build specific CMake target (e.g., z_generals, z_worldbuilder)
     -c, --clean         Clean build directory before building
     -i, --interactive   Enter container shell for debugging
     --cmake             Force CMake reconfiguration
