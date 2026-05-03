@@ -6,6 +6,14 @@
 //   "Text"
 //   END
 
+GUI:Randomize
+"RANDOMIZE"
+END
+
+GUI:ResumeFromReplay
+"RESUME"
+END
+
 GUI:ResumeArmed
 "Resume armed. The next game start will continue the replay."
 END

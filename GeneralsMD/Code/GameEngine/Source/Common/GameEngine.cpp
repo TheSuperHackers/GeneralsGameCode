@@ -468,17 +468,6 @@ void GameEngine::init()
 
 		TheArchiveFileSystem->loadMods();
 
-		// Load mod-supplied additional GUI strings, if present. These augment
-		// (never override) Generals.csf and survive map reset. The file lives
-		// next to Generals.csf and is resolved via the archive file system, so
-		// it can be shipped inside a mod BIG.
-		if (TheGameText)
-		{
-			AsciiString extraStr;
-			extraStr.format("Data\\%s\\GeneralsExtras.str", GetRegistryLanguage().str());
-			TheGameText->initAdditionalStringFile(extraStr);
-		}
-
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
 		TheGameLODManager->init();
@@ -509,6 +498,17 @@ void GameEngine::init()
 		initSubsystem(TheDeepCRCSanityCheck, "TheDeepCRCSanityCheck", MSGNEW("GameEngineSubystem") DeepCRCSanityCheck, nullptr);
 #endif // DEBUG_CRC
 		initSubsystem(TheGameText, "TheGameText", CreateGameTextInterface(), nullptr);
+
+		// Load mod-supplied additional GUI strings, if present. These augment
+		// (never override) Generals.csf and survive map reset. Must run after
+		// TheGameText is constructed (its init parses the primary CSF) and
+		// after loadMods so the file can be shipped inside a mod BIG.
+		{
+			AsciiString extraStr;
+			extraStr.format("Data\\%s\\GeneralsExtras.str", GetRegistryLanguage().str());
+			TheGameText->initAdditionalStringFile(extraStr);
+		}
+
 		updateWindowTitle();
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
