@@ -1771,7 +1771,7 @@ void Player::transferAssetsFromThat(Player *that)
 	for (std::vector<const UpgradeTemplate*>::iterator cancelIt = upgradesToCancel.begin(); cancelIt != upgradesToCancel.end(); ++cancelIt)
 	{
 		const UpgradeTemplate* upgradeTemplate = *cancelIt;
-		that->iterateObjects(cancelUpgradeInProduction, (void*)upgradeTemplate);
+		that->iterateObjects(cancelUpgradeInProduction, const_cast<UpgradeTemplate*>(upgradeTemplate));
 	}
 
 	// TheSuperHackers @bugfix Stubbjax 03/02/2026 Ensure the in-progress upgrade mask is copied from 'that'
