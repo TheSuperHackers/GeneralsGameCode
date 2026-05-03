@@ -3558,8 +3558,8 @@ Bool ControlBar::hasAnyShortcutSelection() const
 Bool ControlBar::canShowSpecialPowerShortcut() const
 {
 #ifdef RTS_GENERALS
-	// Special Powers in Generals do not have the ShortcutPower flag set and therefore
-	// this function needs to assumes that shortcut special powers come from the Command Center.
+	// Special Powers in Generals do not have the ShortcutPower flag set and therefore this function
+	// is satisfied with the presence of a Command Center, which is supposed to host Special Powers.
 	if (ThePlayerList->getLocalPlayer()->findNaturalCommandCenter() != nullptr)
 		return true;
 #endif
