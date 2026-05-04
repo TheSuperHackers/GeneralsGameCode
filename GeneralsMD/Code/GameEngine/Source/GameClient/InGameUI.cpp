@@ -5677,6 +5677,9 @@ static const UnsignedInt FRAMES_BEFORE_EXPIRE_TO_FADE = LOGICFRAMES_PER_SECOND *
 // ------------------------------------------------------------------------------------------------
 void InGameUI::updateAndDrawWorldAnimations( void )
 {
+	// TheSuperHackers @tweak bobtista World animation Z-rise is now decoupled from the render update.
+	const Real zRiseTimeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
+
 	// go through all animations
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();
 			 it != m_worldAnimationList.end(); /*empty*/ )
@@ -5707,11 +5710,9 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			}
 
 			// update the Z value
-			// TheSuperHackers @tweak bobtista World animation Z-rise is now decoupled from the render update.
 			if( wad->m_zRisePerSecond )
 			{
-				const Real timeScale = TheFramePacer->getActualLogicTimeScaleOverFpsRatio();
-				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND * timeScale;
+				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND * zRiseTimeScale;
 			}
 
 		}

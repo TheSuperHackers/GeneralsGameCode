@@ -272,14 +272,33 @@ void TransitionGroup::init( void )
 void TransitionGroup::update( void )
 {
 	// TheSuperHackers @tweak bobtista GUI transition timing is now decoupled from the render update.
+	// Step every integer frame between the old and new accumulator value so discrete-state-machine
+	// transitions cannot skip a state when the render frame rate dips below the base rate.
 	const Real timeScale = TheFramePacer->getBaseOverUpdateFpsRatio();
-	m_currentFrame += m_directionMultiplier * timeScale; // we go forward or backwards depending.
-	TransitionWindowList::iterator it = m_transitionWindowList.begin();
-	while (it != m_transitionWindowList.end())
+	const Int prevFrame = (Int)m_currentFrame;
+	m_currentFrame += m_directionMultiplier * timeScale;
+	const Int newFrame = (Int)m_currentFrame;
+
+	if( newFrame == prevFrame )
 	{
-		TransitionWindow *tWin = *it;
-		tWin->update(m_currentFrame);
-		it++;
+		return;
+	}
+
+	const Int step = (newFrame > prevFrame) ? 1 : -1;
+	for( Int frame = prevFrame + step; frame != newFrame + step; frame += step )
+	{
+		TransitionWindowList::iterator it = m_transitionWindowList.begin();
+		while (it != m_transitionWindowList.end())
+		{
+			TransitionWindow *tWin = *it;
+			tWin->update(frame);
+			it++;
+		}
+
+		if( isFinished() )
+		{
+			break;
+		}
 	}
 }
 
