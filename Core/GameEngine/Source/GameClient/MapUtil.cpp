@@ -1001,6 +1001,125 @@ Int populateMapListbox( GameWindow *listbox, Bool useSystemMaps, Bool isMultipla
 	return populateMapListboxNoReset( listbox, useSystemMaps, isMultiplayer, mapToSelect );
 }
 
+//-------------------------------------------------------------------------------------------------
+// Case-insensitive substring search across two wide-char strings. Returns
+// true when needle is empty or appears anywhere inside haystack.
+static Bool wideContainsNoCase(const WideChar *haystack, const WideChar *needle)
+{
+	if (needle == nullptr || *needle == 0)
+		return TRUE;
+	if (haystack == nullptr)
+		return FALSE;
+
+	const size_t needleLen = wcslen(needle);
+	for (const WideChar *p = haystack; *p != 0; ++p)
+	{
+		if (_wcsnicmp(p, needle, needleLen) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
+// Sorts maps by display name (case-insensitive) so the merged system+user
+// list comes out alphabetically rather than in MapCache iteration order.
+struct UnicodeStringNoCaseLess
+{
+	bool operator()(const UnicodeString& a, const UnicodeString& b) const
+	{
+		return _wcsicmp(a.str(), b.str()) < 0;
+	}
+};
+
+//-------------------------------------------------------------------------------------------------
+Int populateMapListboxFiltered( GameWindow *listbox, Bool isMultiplayer, const UnicodeString& nameFilter, AsciiString mapToSelect )
+{
+	if (!TheMapCache)
+		return -1;
+	if (!listbox)
+		return -1;
+
+	GadgetListBoxReset( listbox );
+
+	MapListBoxData lbData;
+	lbData.listbox = listbox;
+	lbData.numLength = GadgetListBoxGetListLength( listbox );
+	lbData.numColumns = GadgetListBoxGetNumColumns( listbox );
+	lbData.mapToSelect = mapToSelect;
+	lbData.isMultiplayer = isMultiplayer;
+
+	if (lbData.numColumns > 1)
+	{
+		lbData.easyImage = TheMappedImageCollection->findImageByName("Star-Bronze");
+		lbData.mediumImage = TheMappedImageCollection->findImageByName("Star-Silver");
+		lbData.brutalImage = TheMappedImageCollection->findImageByName("Star-Gold");
+		lbData.maxBrutalImage = TheMappedImageCollection->findImageByName("RedYell_Star");
+		lbData.battleHonors = new SkirmishBattleHonors;
+
+		lbData.w = lbData.brutalImage ? lbData.brutalImage->getImageWidth() : 10;
+		lbData.w = min(GadgetListBoxGetColumnWidth(listbox, 0), lbData.w);
+		lbData.h = lbData.w;
+	}
+
+	// Collect candidate map filenames, sorted by display name. We deliberately
+	// pass an empty mapDir to addMapToMapListbox so its directory check
+	// (mapName.startsWithNoCase("")) accepts every entry — system and user
+	// maps end up in one merged list.
+	const WideChar *needle = nameFilter.isEmpty() ? nullptr : nameFilter.str();
+
+	typedef std::map<UnicodeString, AsciiString, UnicodeStringNoCaseLess> SortedDisplayToFile;
+	SortedDisplayToFile sorted;
+
+	MapCache::iterator it = TheMapCache->begin();
+	for (; it != TheMapCache->end(); ++it)
+	{
+		const MapMetaData &mapData = it->second;
+		if (mapData.m_isMultiplayer != isMultiplayer)
+			continue;
+		if (mapData.m_displayName.isEmpty())
+			continue;
+		if (!wideContainsNoCase(mapData.m_displayName.str(), needle))
+			continue;
+		sorted[mapData.m_displayName] = it->first;
+	}
+
+	const AsciiString emptyDir;
+
+	SortedDisplayToFile::const_iterator sIt = sorted.begin();
+	for (; sIt != sorted.end(); ++sIt)
+	{
+		MapCache::iterator mapCacheIt = TheMapCache->find(sIt->second);
+		if (mapCacheIt == TheMapCache->end())
+			continue;
+
+		if (!addMapToMapListbox(lbData, emptyDir, mapCacheIt->first, mapCacheIt->second))
+			break;
+	}
+
+	if (lbData.battleHonors)
+	{
+		delete lbData.battleHonors;
+		lbData.battleHonors = nullptr;
+	}
+
+	GadgetListBoxSetSelected(listbox, &lbData.selectionIndex, 1);
+
+	if (lbData.selectionIndex >= 0)
+	{
+		Int topIndex = GadgetListBoxGetTopVisibleEntry(listbox);
+		Int bottomIndex = GadgetListBoxGetBottomVisibleEntry(listbox);
+		Int rowsOnScreen = bottomIndex - topIndex;
+
+		if (lbData.selectionIndex >= bottomIndex)
+		{
+			Int newTop = max( 0, lbData.selectionIndex - max( 1, rowsOnScreen / 2 ) );
+			GadgetListBoxSetTopVisibleEntry( listbox, newTop );
+		}
+	}
+
+	return lbData.selectionIndex;
+}
+
 
 
 //-------------------------------------------------------------------------------------------------

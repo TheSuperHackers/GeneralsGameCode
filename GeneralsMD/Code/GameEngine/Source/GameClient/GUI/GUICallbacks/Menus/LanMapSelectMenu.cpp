@@ -40,6 +40,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetRadioButton.h"
+#include "GameClient/GadgetTextEntry.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GUIUtil.h"
@@ -50,11 +51,11 @@ static NameKeyType buttonBack = NAMEKEY_INVALID;
 static NameKeyType buttonOK = NAMEKEY_INVALID;
 static NameKeyType listboxMap = NAMEKEY_INVALID;
 static NameKeyType winMapPreviewID = NAMEKEY_INVALID;
+static NameKeyType textEntrySearchID = NAMEKEY_INVALID;
 static GameWindow *parent = nullptr;
 static GameWindow *mapList = nullptr;
 static GameWindow *winMapPreview = nullptr;
-static NameKeyType radioButtonSystemMapsID = NAMEKEY_INVALID;
-static NameKeyType radioButtonUserMapsID = NAMEKEY_INVALID;
+static GameWindow *textEntrySearch = nullptr;
 
 static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 static NameKeyType buttonMapStartPositionID[MAX_SLOTS] = { NAMEKEY_INVALID,NAMEKEY_INVALID,
@@ -102,6 +103,7 @@ static void NullifyControls()
 {
 	parent = nullptr;
 	mapList = nullptr;
+	textEntrySearch = nullptr;
 	if (winMapPreview)
 	{
 		winMapPreview->winSetUserData(nullptr);
@@ -126,30 +128,16 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 
 	TheWindowManager->winSetFocus( parent );
 
-	LANPreferences pref;
-	Bool usesSystemMapDir = pref.usesSystemMapDir();
-
-	const MapMetaData *mmd = TheMapCache->findMap(TheLAN->GetMyGame()->getMap());
-	if (mmd)
-	{
-		usesSystemMapDir = mmd->m_isOfficial;
-	}
-
-
 	buttonBack = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ButtonBack" );
 	buttonOK = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ButtonOK" );
 	listboxMap = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ListboxMap" );
 	winMapPreviewID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:WinMapPreview" );
+	textEntrySearchID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:TextEntrySearch" );
 
-	radioButtonSystemMapsID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:RadioButtonSystemMaps" );
-	radioButtonUserMapsID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:RadioButtonUserMaps" );
-	GameWindow *radioButtonSystemMaps = TheWindowManager->winGetWindowFromId( parent, radioButtonSystemMapsID );
-	GameWindow *radioButtonUserMaps = TheWindowManager->winGetWindowFromId( parent, radioButtonUserMapsID );
 	winMapPreview = TheWindowManager->winGetWindowFromId(parent, winMapPreviewID);
-	if (usesSystemMapDir)
-		GadgetRadioSetSelection( radioButtonSystemMaps, FALSE );
-	else
-		GadgetRadioSetSelection( radioButtonUserMaps, FALSE );
+	textEntrySearch = TheWindowManager->winGetWindowFromId(parent, textEntrySearchID);
+	if (textEntrySearch)
+		GadgetTextEntrySetText(textEntrySearch, UnicodeString::TheEmptyString);
 
 	AsciiString tmpString;
 	for (Int i = 0; i < MAX_SLOTS; i++)
@@ -169,7 +157,7 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	{
 		if (TheMapCache)
 			TheMapCache->updateCache();
-		populateMapListbox( mapList, usesSystemMapDir, TRUE, TheLAN->GetMyGame()->getMap() );
+		populateMapListboxFiltered( mapList, TRUE, UnicodeString::TheEmptyString, TheLAN->GetMyGame()->getMap() );
 	}
 }
 
@@ -312,31 +300,29 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 				}
 				break;
 			}
+		// --------------------------------------------------------------------------------------------
+		case GEM_UPDATE_TEXT:
+		{
+			GameWindow *control = (GameWindow *)mData1;
+			if (control != nullptr && mapList != nullptr &&
+			    control->winGetWindowId() == (Int)textEntrySearchID)
+			{
+				if (TheMapCache)
+					TheMapCache->updateCache();
+				UnicodeString filter = GadgetTextEntryGetText(control);
+				populateMapListboxFiltered( mapList, TRUE, filter,
+				                            TheLAN->GetMyGame()->getMap() );
+			}
+			break;
+		}
+
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-			if ( controlID == radioButtonSystemMapsID )
-			{
-				if (TheMapCache)
-					TheMapCache->updateCache();
-				populateMapListbox( mapList, TRUE, TRUE, TheLAN->GetMyGame()->getMap() );
-				LANPreferences pref;
-				pref["UseSystemMapDir"] = "yes";
-				pref.write();
-			}
-			else if ( controlID == radioButtonUserMapsID )
-			{
-				if (TheMapCache)
-					TheMapCache->updateCache();
-				populateMapListbox( mapList, FALSE, TRUE, TheLAN->GetMyGame()->getMap() );
-				LANPreferences pref;
-				pref["UseSystemMapDir"] = "no";
-				pref.write();
-			}
-			else if ( controlID == buttonBack )
+			if ( controlID == buttonBack )
 			{
 
 				if (mapSelectLayout)

@@ -139,6 +139,11 @@ extern TechAndSupplyImages TheSupplyAndTechImageLocations;
 
 Int populateMapListbox( GameWindow *listbox, Bool useSystemMaps, Bool isMultiplayer, AsciiString mapToSelect = AsciiString::TheEmptyString );		/// Read a list of maps from the run directory and fill in the listbox.  Return the selected index
 Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isMultiplayer, AsciiString mapToSelect = AsciiString::TheEmptyString );		/// Read a list of maps from the run directory and fill in the listbox.  Return the selected index
+
+// Fills the listbox with every map (system and user dirs combined) whose
+// display name contains nameFilter as a case-insensitive substring. An
+// empty filter matches every map. Used by the LAN map-select search box.
+Int populateMapListboxFiltered( GameWindow *listbox, Bool isMultiplayer, const UnicodeString& nameFilter, AsciiString mapToSelect = AsciiString::TheEmptyString );
 Bool isValidMap( AsciiString mapName, Bool isMultiplayer );						/// Validate a map
 Image *getMapPreviewImage( AsciiString mapName );
 AsciiString getDefaultMap( Bool isMultiplayer );											/// Find a valid map

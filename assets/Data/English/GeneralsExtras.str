@@ -10,6 +10,14 @@ GUI:Randomize
 "RANDOMIZE"
 END
 
+GUI:Search
+"Search:"
+END
+
+GUI:None
+" "
+END
+
 GUI:ResumeFromReplay
 "RESUME"
 END
