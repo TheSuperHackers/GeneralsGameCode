@@ -67,3 +67,7 @@ build.ninja
 ## Python
 __pycache__/
 *.pyc
+
+## Build-time radarvan auth key, compiled into the exe via
+## cmake/zuluclientkey.cmake. Never commit.
+/ZULUCLIENT_KEY

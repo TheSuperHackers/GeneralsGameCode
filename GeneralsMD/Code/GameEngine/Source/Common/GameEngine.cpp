@@ -468,6 +468,13 @@ void GameEngine::init()
 
 		TheArchiveFileSystem->loadMods();
 
+		// Re-apply Data\INI\GameData.ini after mods are mounted so a mod BIG
+		// can supply a partial GameData block that overlays specific fields
+		// (e.g. MaxCameraHeight) without having to redefine every field.
+		// xferCRC is included so modded clients have a distinct network/replay
+		// CRC from vanilla clients.
+		ini.loadFileDirectory( "Data\\INI\\GameData", INI_LOAD_OVERWRITE, &xferCRC );
+
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
 		TheGameLODManager->init();

@@ -19,6 +19,7 @@
 
 #include "Common/StatsUploader.h"
 #include "Common/AsciiString.h"
+#include "ZuluClientKey.h"
 
 #include <windows.h>
 #include <wininet.h>
@@ -100,6 +101,19 @@ static bool openHttpRequest(const AsciiString& url,
 		out->hConnect = nullptr;
 		out->hInternet = nullptr;
 		return false;
+	}
+
+	// Inject the build-time radarvan auth key as an Authorization header so
+	// every caller of openHttpRequest picks it up. ZULU_CLIENT_KEY is baked
+	// in from ./ZULUCLIENT_KEY by cmake/zuluclientkey.cmake; if the file is
+	// absent the macro is empty and we skip the header entirely.
+	if (ZULU_CLIENT_KEY[0] != '\0')
+	{
+		char authHeader[512];
+		int authLen = sprintf(authHeader, "Authorization: %s\r\n", ZULU_CLIENT_KEY);
+		if (authLen > 0)
+			HttpAddRequestHeadersA(out->hRequest, authHeader, (DWORD)authLen,
+				HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE);
 	}
 
 	return true;

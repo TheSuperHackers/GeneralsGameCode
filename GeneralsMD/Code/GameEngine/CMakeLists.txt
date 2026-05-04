@@ -1163,6 +1163,7 @@ target_include_directories(z_gameengine PUBLIC
 
 target_include_directories(z_gameengine PRIVATE
     Include/Precompiled
+    ${ZULU_CLIENT_KEY_GENERATED_DIR}
 )
 
 target_link_libraries(z_gameengine PRIVATE
