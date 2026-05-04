@@ -65,3 +65,23 @@ END
 GUI:ResumeVersionMismatch
 "Replay was recorded with a different game version."
 END
+
+Color:Maroon
+"Maroon"
+END
+
+Color:Lime
+"Lime"
+END
+
+Color:Brown
+"Brown"
+END
+
+Color:Silver
+"Silver"
+END
+
+Color:Black
+"Black"
+END
