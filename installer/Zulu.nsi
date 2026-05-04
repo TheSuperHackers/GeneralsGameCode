@@ -1,11 +1,12 @@
 ; Zulu installer for Command & Conquer: Generals Zero Hour
 ;
 ; Build with:  makensis installer/Zulu.nsi
+;          or: make installer   (drives this script with staged inputs)
 ; Output:      installer/Zulu_Setup.exe
 ;
-; Inputs (paths are relative to this script):
-;   ../generalszh_zulu.exe
-;   ../Zulu.big
+; Inputs default to ../generalszh_zulu.exe and ../Zulu.big (relative to this
+; script). The Makefile overrides them with /D to point at the staged copies
+; under build/installer-tmp/ so the repo root stays clean.
 ;
 ; Layout produced on the target machine:
 ;   <user-chosen install dir>\generalszh_zulu.exe
@@ -21,6 +22,16 @@
 !define USERDATALEAF  "Command and Conquer Generals Zero Hour Data"
 !define LAUNCHARGS    "-mod Zulu.big"
 !define UNINSTREGKEY  "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
+
+; Source paths for the files that get packed into the installer. The
+; Makefile passes /D overrides; the defaults preserve the historical
+; "binaries sit at the repo root" workflow.
+!ifndef EXE_SOURCE
+    !define EXE_SOURCE "..\${EXENAME}"
+!endif
+!ifndef BIG_SOURCE
+    !define BIG_SOURCE "..\${BIGNAME}"
+!endif
 
 Name        "${APPNAME}"
 OutFile     "Zulu_Setup.exe"
@@ -57,14 +68,16 @@ Section "Install ${APPNAME}" SecInstall
     SectionIn RO
 
     ; --- Game executable -> user-chosen install dir ----------------------
+    ; /oname forces the basename inside the installer to ${EXENAME} regardless
+    ; of how the staged input is named on disk.
     SetOutPath "$INSTDIR"
-    File "..\${EXENAME}"
+    File "/oname=${EXENAME}" "${EXE_SOURCE}"
 
     ; --- Mod BIG -> user data dir ---------------------------------------
     ; $DOCUMENTS resolves to the invoking user's Documents folder. With UAC
     ; elevation via the consent prompt this is still the original user.
     SetOutPath "$DOCUMENTS\${USERDATALEAF}"
-    File "..\${BIGNAME}"
+    File "/oname=${BIGNAME}" "${BIG_SOURCE}"
 
     ; --- Shortcuts -------------------------------------------------------
     ; CreateShortcut: target, args, icon-file, icon-index, start-options

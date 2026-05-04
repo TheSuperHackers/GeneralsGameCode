@@ -16,7 +16,6 @@ doxygen/
 *.o
 CMakeCache.txt
 CMakeFiles
-Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
@@ -71,3 +70,6 @@ __pycache__/
 ## Build-time radarvan auth key, compiled into the exe via
 ## cmake/zuluclientkey.cmake. Never commit.
 /ZULUCLIENT_KEY
+
+compile_commands.json
+installer/Zulu_Setup.exe
