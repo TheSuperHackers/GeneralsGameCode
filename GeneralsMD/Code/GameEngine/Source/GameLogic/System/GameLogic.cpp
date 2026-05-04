@@ -3799,7 +3799,7 @@ void GameLogic::update()
 			// Previously, if the disabled mask had any bits in common with the disabled-types-to-process mask,
 			// the update would be processed. Now, if any *other* bits are set in the disabled mask, the update
 			// is no longer processed.
-			if (!dis.any() || u->getDisabledTypesToProcess().testForAll(dis))
+			if (u->getDisabledTypesToProcess().testForAll(dis))
 #endif
 			{
 				USE_PERF_TIMER(GameLogic_update_normal)
@@ -3847,7 +3847,7 @@ void GameLogic::update()
 			// Previously, if the disabled mask had any bits in common with the disabled-types-to-process mask,
 			// the update would be processed. Now, if any *other* bits are set in the disabled mask, the update
 			// is no longer processed.
-			if (!dis.any() || u->getDisabledTypesToProcess().testForAll(dis))
+			if (u->getDisabledTypesToProcess().testForAll(dis))
 #endif
 			{
 				USE_PERF_TIMER(GameLogic_update_sleepy)
