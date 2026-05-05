@@ -707,7 +707,19 @@ void RecorderClass::stopRecording() {
 		const bool wasCollecting = StatsExporterIsActive();
 		ExportGameStatsJSON(getReplayDir(), m_fileName);
 
-		if (wasCollecting && !TheGlobalData->m_replayUrl.isEmpty())
+		// Telemetry uploads (replay + map) only fire if the game had at
+		// least two human players. Mirrors the gate inside
+		// ExportGameStatsJSON for the cncstats stats upload, so all three
+		// telemetry channels behave consistently. Logs once here so the
+		// skip is visible in stdout when debugging upload behaviour.
+		const bool hasMinHumans = StatsExporterHasMinHumansForUpload();
+		if (wasCollecting && !hasMinHumans)
+		{
+			printf("[telemetry] Skipping replay/map upload: fewer than 2 human players\n");
+			fflush(stdout);
+		}
+
+		if (wasCollecting && hasMinHumans && !TheGlobalData->m_replayUrl.isEmpty())
 		{
 			AsciiString replayPath = getReplayDir();
 			replayPath.concat(m_fileName);
@@ -747,7 +759,7 @@ void RecorderClass::stopRecording() {
 		// whether it already has it, and (if not) upload both the .map
 		// file and its .tga preview, tagged via X-Map-File so the server
 		// can correlate them by their shared X-Map-CRC.
-		if (wasCollecting && !TheGlobalData->m_mapCheckUrl.isEmpty()
+		if (wasCollecting && hasMinHumans && !TheGlobalData->m_mapCheckUrl.isEmpty()
 			&& TheMapCache != nullptr && TheGlobalData != nullptr)
 		{
 			AsciiString mapName = TheGlobalData->m_mapName;

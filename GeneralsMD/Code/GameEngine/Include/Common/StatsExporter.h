@@ -40,6 +40,13 @@ void StatsExporterBeginRecording();
 /// multiplayer/skirmish match).
 bool StatsExporterIsActive();
 
+/// Returns true if the current game has at least two human game-players.
+/// Used by Recorder::stopRecording and ExportGameStatsJSON to gate the
+/// end-of-game telemetry uploads (cncstats stats, radarvan replay, radarvan
+/// map) so we don't ship data for solo skirmishes, campaign missions, or
+/// replay-watch sessions where humans-vs-humans isn't actually happening.
+bool StatsExporterHasMinHumansForUpload();
+
 /// Record a kill event with full context (called from Object::scoreTheKill).
 void StatsExporterRecordKill(const Object *killer, const Object *victim, const DamageInfo *damageInfo);
 

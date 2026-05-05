@@ -134,6 +134,25 @@ static Bool isGamePlayer(Player *player)
 	return TRUE;
 }
 
+bool StatsExporterHasMinHumansForUpload()
+{
+	if (ThePlayerList == nullptr)
+		return false;
+
+	Int humans = 0;
+	const Int totalPlayers = ThePlayerList->getPlayerCount();
+	Int i;
+	for (i = 0; i < totalPlayers; ++i)
+	{
+		Player *player = ThePlayerList->getNthPlayer(i);
+		if (player == nullptr || !isGamePlayer(player))
+			continue;
+		if (player->getPlayerType() == PLAYER_HUMAN)
+			++humans;
+	}
+	return humans >= 2;
+}
+
 //-----------------------------------------------------------------------------
 
 struct PlayerSnapshotData
@@ -870,8 +889,11 @@ void ExportGameStatsJSON(const AsciiString& replayDir, const AsciiString& replay
 	printf("[stats] Wrote gzipped JSON to %s\n", statsPath.str());
 	fflush(stdout);
 
-	// Upload gzipped file to server if URL configured
-	if (!TheGlobalData->m_statsUrl.isEmpty())
+	// Upload gzipped file to server if URL configured. Skip uploads for
+	// games with fewer than two human players: solo skirmishes / campaign
+	// missions / replay watches don't represent humans-vs-humans data and
+	// would just pollute the cncstats dataset.
+	if (!TheGlobalData->m_statsUrl.isEmpty() && StatsExporterHasMinHumansForUpload())
 	{
 		FILE *rf = fopen(statsPath.str(), "rb");
 		if (rf != nullptr)
