@@ -197,7 +197,7 @@ void GameSlot::setMapAvailability( Bool hasMap )
 
 void GameSlot::setState( SlotState state, UnicodeString name, UnsignedInt IP )
 {
-	if (!(isAI() &&  (state == SLOT_EASY_AI || state == SLOT_MED_AI || state == SLOT_BRUTAL_AI)))
+	if (!(isAI() &&  (state == SLOT_EASY_AI || state == SLOT_MED_AI || state == SLOT_BRUTAL_AI || state == SLOT_TACTICAL_AI)))
 	{
 		m_color = -1;
 		m_startPos = -1;
@@ -234,6 +234,9 @@ void GameSlot::setState( SlotState state, UnicodeString name, UnsignedInt IP )
 		case SLOT_BRUTAL_AI:
 			m_name = TheGameText->fetch("GUI:HardAI");
 			break;
+		case SLOT_TACTICAL_AI:
+			m_name = TheGameText->fetch("GUI:TacticalAI");
+			break;
 		case SLOT_CLOSED:
 		default:
 			m_name = TheGameText->fetch("GUI:Closed");
@@ -252,12 +255,12 @@ Bool GameSlot::isHuman() const
 
 Bool GameSlot::isOccupied() const
 {
-	return m_state == SLOT_PLAYER || m_state == SLOT_EASY_AI || m_state == SLOT_MED_AI || m_state == SLOT_BRUTAL_AI;
+	return m_state == SLOT_PLAYER || m_state == SLOT_EASY_AI || m_state == SLOT_MED_AI || m_state == SLOT_BRUTAL_AI || m_state == SLOT_TACTICAL_AI;
 }
 
 Bool GameSlot::isAI() const
 {
-	return m_state == SLOT_EASY_AI || m_state == SLOT_MED_AI || m_state == SLOT_BRUTAL_AI;
+	return m_state == SLOT_EASY_AI || m_state == SLOT_MED_AI || m_state == SLOT_BRUTAL_AI || m_state == SLOT_TACTICAL_AI;
 }
 
 Bool GameSlot::isPlayer( AsciiString userName ) const
@@ -976,6 +979,8 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 				c = 'E';
 			else if (slot->getState() == SLOT_MED_AI)
 				c = 'M';
+			else if (slot->getState() == SLOT_TACTICAL_AI)
+				c = 'T';
 			else
 				c = 'H';
 			str.format("C%c,%d,%d,%d,%d:", c,
@@ -1371,6 +1376,12 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 								{
 									newSlot[i].setState(SLOT_BRUTAL_AI);
 									//DEBUG_LOG(("ParseAsciiStringToGameInfo - Brutal AI"));
+								}
+								break;
+								case 'T':
+								{
+									newSlot[i].setState(SLOT_TACTICAL_AI);
+									//DEBUG_LOG(("ParseAsciiStringToGameInfo - Tactical AI"));
 								}
 								break;
 								default:

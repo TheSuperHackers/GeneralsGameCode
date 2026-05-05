@@ -886,9 +886,13 @@ void Player::initFromDict(const Dict* d)
 		{
 			difficulty = (GameDifficulty) diffInt;
 		}
+		Bool isTacticalAI = d->getBool(TheKey_playerIsTacticalAI, &exists);
+		if (!exists)
+			isTacticalAI = FALSE;
 		if (m_ai)
 		{
 			m_ai->setAIDifficulty(difficulty);
+			m_ai->setIsTacticalAI(isTacticalAI);
 		}
 
 		if (!found)

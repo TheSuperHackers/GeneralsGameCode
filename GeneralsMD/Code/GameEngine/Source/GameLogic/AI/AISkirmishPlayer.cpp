@@ -44,6 +44,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/AISkirmishPlayer.h"
 #include "GameLogic/SidesList.h"
+#include "Common/Recorder.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/TerrainLogic.h"
@@ -968,6 +969,17 @@ void AISkirmishPlayer::update()
 //----------------------------------------------------------------------------------------------------------
 void AISkirmishPlayer::commitIdleArmy()
 {
+	// Gated behind the SLOT_TACTICAL_AI lobby option; vanilla Easy/Medium/Brutal
+	// AIs keep their classic behavior unchanged.
+	if (!isTacticalAI()) return;
+
+	// During replay/resume-catchup of older recordings, the original AI did
+	// not run this sweep — issuing new commands here would diverge from the
+	// recorded simulation. The recorder gates each AI feature on the replay's
+	// declared feature version.
+	if (TheRecorder && !TheRecorder->isAIFeatureEnabled(RecorderClass::ZULU_AI_FEATURE_IDLE_COMMIT))
+		return;
+
 	const Int IDLE_SWEEP_INTERVAL_SECONDS = 10;
 	const Int MIN_GARRISON_UNITS = 4;
 	const Int MIN_ATTACK_FORCE = 5;

@@ -981,6 +981,7 @@ void InitLanGameGadgets()
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:EasyAI"),white);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:MediumAI"),white);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:HardAI"),white);
+			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:TacticalAI"),white);
 			GadgetComboBoxSetSelectedPos(comboBoxPlayer[i],0);
 		}
 		/*
@@ -1459,19 +1460,24 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						  // Get
 						  Int pos = -1;
 						  GadgetComboBoxGetSelectedPos(comboBoxPlayer[i], &pos);
-						  if( pos != SLOT_PLAYER && pos >= 0)
+						  // Combo lays out Open/Closed/Easy/Medium/Brutal/Tactical at positions 0..5;
+						  // SlotState enum has Tactical=6 with SLOT_PLAYER=5 reserved for joining humans.
+						  // Vanilla had 5 entries so the legacy `pos != SLOT_PLAYER` guard was vestigial;
+						  // adding a 6th entry collided with that and silently dropped Tactical clicks.
+						  if( pos >= 0 )
 						  {
+							  SlotState newState = slotStateFromLobbyComboPos(pos);
 							  if( myGame->getLANSlot(i)->getState() == SLOT_PLAYER )
 							  {
 								  UnicodeString name = myGame->getPlayerName(i);
-								  myGame->getLANSlot(i)->setState(SlotState(pos));
+								  myGame->getLANSlot(i)->setState(newState);
 								  myGame->resetAccepted();
 								  TheLAN->OnPlayerLeave(name);
 							  }
-							  else if( myGame->getLANSlot(i)->getState() != pos )
+							  else if( myGame->getLANSlot(i)->getState() != newState )
 							  {
 								  Bool wasAI = (myGame->getLANSlot(i)->isAI());
-								  myGame->getLANSlot(i)->setState(SlotState(pos));
+								  myGame->getLANSlot(i)->setState(newState);
 								  Bool isAI = (myGame->getLANSlot(i)->isAI());
 								  if (wasAI || isAI)
 									  myGame->resetAccepted();

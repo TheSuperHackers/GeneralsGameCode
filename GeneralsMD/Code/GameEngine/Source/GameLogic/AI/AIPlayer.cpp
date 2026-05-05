@@ -97,6 +97,7 @@ m_curWarehouseID(INVALID_ID)
 	m_baseCenter.zero();
 	m_baseCenterSet = false;
 	m_difficulty = TheScriptEngine->getGlobalDifficulty();
+	m_isTacticalAI = false;
 	m_teamSeconds = TheAI->getAiData()->m_teamSeconds;
 }
 
@@ -3313,13 +3314,14 @@ void AIPlayer::crc( Xfer *xfer )
 	* 2: added m_teamSeconds delay.
 	* 3: Added m_curWarehouseID.
 	* 1: Reset back to 1 with major save file changes.
+	* 2: Added m_isTacticalAI (Zulu).
 */
 // ------------------------------------------------------------------------------------------------
 void AIPlayer::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3479,6 +3481,11 @@ void AIPlayer::xfer( Xfer *xfer )
 	xfer->xferBool( &m_dozerQueuedForRepair );
 	xfer->xferBool( &m_dozerIsRepairing );
 	xfer->xferInt( &m_bridgeTimer );
+
+	if (version >= 2)
+	{
+		xfer->xferBool( &m_isTacticalAI );
+	}
 
 }
 

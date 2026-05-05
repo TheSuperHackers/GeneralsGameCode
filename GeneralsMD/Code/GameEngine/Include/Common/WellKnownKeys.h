@@ -879,6 +879,14 @@ DEFINE_KEY(skirmishDifficulty)
 /**
 	Which: Player Properties
 	Type: Bool
+	Usage: (optional) true if this AI player should run Tactical-AI behaviors
+	(e.g. AISkirmishPlayer::commitIdleArmy()). Set when slot state is SLOT_TACTICAL_AI.
+*/
+DEFINE_KEY(playerIsTacticalAI)
+
+/**
+	Which: Player Properties
+	Type: Bool
 	Usage: (optional) if present, signifies if the player is the local player
 */
 DEFINE_KEY(multiplayerIsLocal)
