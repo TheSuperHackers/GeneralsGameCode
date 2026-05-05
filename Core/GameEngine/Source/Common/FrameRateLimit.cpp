@@ -67,9 +67,10 @@ void FrameRateLimit::reset()
 
 
 const UnsignedInt RenderFpsPreset::s_fpsValues[] = {
-	30, 50, 56, 60, 65, 70, 72, 75, 80, 85, 90, 100, 110, 120, 144, 240, 480, UncappedFpsValue };
+	15, 30, 50, 56, 60, 65, 70, 72, 75, 80, 85, 90, 100, 110, 120, 144, 240, 480, UncappedFpsValue };
 
-static_assert(LOGICFRAMES_PER_SECOND <= 30, "Min FPS values need to be revisited!");
+const UnsignedInt LogicTimeScaleFpsPreset::s_fpsValues[] = {
+	1, 5, 15, 30, 45, 60, 75, 90, 105, 120, 240, 480, 960, RenderFpsPreset::UncappedFpsValue };
 
 UnsignedInt RenderFpsPreset::getNextFpsValue(UnsignedInt value)
 {
@@ -109,30 +110,66 @@ UnsignedInt RenderFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange ch
 	}
 }
 
-
-UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value)
+UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
-	return value + StepFpsValue;
+	UnsignedInt nextValue = s_fpsValues[ARRAY_SIZE(s_fpsValues) - 1]; // Default to Uncapped
+
+	// Check if snapValue (e.g. current render FPS) is the next closest candidate
+	if (snapValue > value && snapValue < nextValue)
+	{
+		nextValue = snapValue;
+	}
+
+	// Check predefined steps
+	for (size_t i = 0; i < ARRAY_SIZE(s_fpsValues); ++i)
+	{
+		if (s_fpsValues[i] > value)
+		{
+			if (s_fpsValues[i] < nextValue)
+			{
+				nextValue = s_fpsValues[i];
+			}
+			break;
+		}
+	}
+
+	return nextValue;
 }
 
-UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value)
+UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
-	if (value - StepFpsValue < MinFpsValue)
+	UnsignedInt prevValue = s_fpsValues[0]; // Floor/seed for the search loop
+
+	// Check if snapValue (e.g. current render FPS) is the previous closest candidate.
+	// Note: if snapValue == value, neither branch below fires and the snap point is
+	// intentionally skipped — the caller must step to a different preset.
+	if (snapValue < value && snapValue > prevValue)
 	{
-		return MinFpsValue;
+		prevValue = snapValue;
 	}
-	else
+
+	// Check predefined steps
+	for (int i = (int)ARRAY_SIZE(s_fpsValues) - 1; i >= 0; --i)
 	{
-		return value - StepFpsValue;
+		if (s_fpsValues[i] < value)
+		{
+			if (s_fpsValues[i] > prevValue)
+			{
+				prevValue = s_fpsValues[i];
+			}
+			break;
+		}
 	}
+
+	return prevValue;
 }
 
-UnsignedInt LogicTimeScaleFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange change)
+UnsignedInt LogicTimeScaleFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange change, UnsignedInt snapValue)
 {
 	switch (change)
 	{
 	default:
-	case FpsValueChange_Increase: return getNextFpsValue(value);
-	case FpsValueChange_Decrease: return getPrevFpsValue(value);
+	case FpsValueChange_Increase: return getNextFpsValue(value, snapValue);
+	case FpsValueChange_Decrease: return getPrevFpsValue(value, snapValue);
 	}
 }

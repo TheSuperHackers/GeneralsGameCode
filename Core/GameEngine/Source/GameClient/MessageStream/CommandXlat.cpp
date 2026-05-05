@@ -210,37 +210,23 @@ bool changeLogicTimeScale(FpsValueChange change)
 		return false;
 
 	const UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
-	UnsignedInt maxRenderRemainder = LogicTimeScaleFpsPreset::StepFpsValue;
-	maxRenderRemainder -= maxRenderFps % LogicTimeScaleFpsPreset::StepFpsValue;
-	maxRenderRemainder %= LogicTimeScaleFpsPreset::StepFpsValue;
-
 	UnsignedInt logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
-	// Set the value to the max render fps value plus a bit when time scale is
-	// disabled. This ensures that the time scale does not re-enable with a
-	// 'surprise' value.
+
 	if (!TheFramePacer->isLogicTimeScaleEnabled())
 	{
-		logicTimeScaleFps = maxRenderFps + maxRenderRemainder;
+		logicTimeScaleFps = maxRenderFps;
 	}
-	// Ceil the value at the max render fps value plus a bit so that the next fps
-	// value decrease would undercut the max render fps at the correct step value.
-	// Example: render fps 72 -> logic value ceiled to 75 -> decreased to 70.
-	logicTimeScaleFps = min(logicTimeScaleFps, maxRenderFps + maxRenderRemainder);
-	logicTimeScaleFps = LogicTimeScaleFpsPreset::changeFpsValue(logicTimeScaleFps, change);
 
-	// Set value before potentially disabling it.
-	if (TheFramePacer->isLogicTimeScaleEnabled())
+	logicTimeScaleFps = LogicTimeScaleFpsPreset::changeFpsValue(logicTimeScaleFps, change, maxRenderFps);
+
+	// Ensure logic FPS never exceeds render FPS
+	if (logicTimeScaleFps > maxRenderFps && logicTimeScaleFps != RenderFpsPreset::UncappedFpsValue)
 	{
-		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
+		logicTimeScaleFps = maxRenderFps;
 	}
 
+	TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
 	TheFramePacer->enableLogicTimeScale(logicTimeScaleFps < maxRenderFps);
-
-	// Set value after potentially enabling it.
-	if (TheFramePacer->isLogicTimeScaleEnabled())
-	{
-		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
-	}
 
 	logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
 	const UnsignedInt actualLogicTimeScaleFps = TheFramePacer->getActualLogicTimeScaleFps();
