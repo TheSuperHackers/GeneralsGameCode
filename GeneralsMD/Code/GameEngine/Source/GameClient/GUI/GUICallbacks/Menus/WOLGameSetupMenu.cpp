@@ -1202,6 +1202,7 @@ void InitWOLGameGadgets()
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:EasyAI"),GameSpyColor[GSCOLOR_PLAYER_NORMAL]);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:MediumAI"),GameSpyColor[GSCOLOR_PLAYER_NORMAL]);
 			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:HardAI"),GameSpyColor[GSCOLOR_PLAYER_NORMAL]);
+			GadgetComboBoxAddEntry(comboBoxPlayer[i],TheGameText->fetch("GUI:TacticalAI"),GameSpyColor[GSCOLOR_PLAYER_NORMAL]);
 			GadgetComboBoxSetSelectedPos(comboBoxPlayer[i],0);
 		}
 
@@ -2632,6 +2633,9 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 						  GadgetComboBoxGetSelectedPos(comboBoxPlayer[i], &pos);
 						  if( pos != SLOT_PLAYER && pos >= 0)
 						  {
+							  // Combo lays out Open/Closed/Easy/Medium/Brutal/Tactical at positions 0..5;
+							  // SlotState enum has Tactical=6 with SLOT_PLAYER=5 reserved for joining humans.
+							  SlotState newState = slotStateFromLobbyComboPos(pos);
 							  if( myGame->getSlot(i)->getState() == SLOT_PLAYER )
 							  {
 								  PeerRequest req;
@@ -2645,16 +2649,16 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 								  TheGameSpyPeerMessageQueue->addRequest(req);
 
 								  UnicodeString name = myGame->getSlot(i)->getName();
-								  myGame->getSlot(i)->setState(SlotState(pos));
+								  myGame->getSlot(i)->setState(newState);
 								  myGame->resetAccepted();
 								  TheGameSpyInfo->setGameOptions();
 								  WOLDisplaySlotList();
 								  //TheLAN->OnPlayerLeave(name);
 							  }
-							  else if( myGame->getSlot(i)->getState() != pos )
+							  else if( myGame->getSlot(i)->getState() != newState )
 							  {
 								  Bool wasAI = (myGame->getSlot(i)->isAI());
-								  myGame->getSlot(i)->setState(SlotState(pos));
+								  myGame->getSlot(i)->setState(newState);
 								  Bool isAI = (myGame->getSlot(i)->isAI());
 								  myGame->resetAccepted();
 								  if (wasAI ^ isAI)

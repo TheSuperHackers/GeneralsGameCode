@@ -190,6 +190,11 @@ public:
 	/// Difficulty level for this player.
 	GameDifficulty getAIDifficulty() const;
 	void setAIDifficulty(GameDifficulty difficulty) {m_difficulty = difficulty;}
+
+	/// True if this AI player should run Tactical-AI behaviors (idle-army commit, etc.).
+	/// Set when the slot was a SLOT_TACTICAL_AI in the lobby.
+	Bool isTacticalAI() const { return m_isTacticalAI; }
+	void setIsTacticalAI(Bool t) { m_isTacticalAI = t; }
 	void buildBySupplies(Int minimumCash, const AsciiString &thingName ); ///< Builds a building by supplies.
 	void buildSpecificBuildingNearestTeam( const AsciiString &thingName, const Team *team );
 	void buildUpgrade(const AsciiString &upgrade ); ///< Builds an upgrade.
@@ -272,6 +277,7 @@ protected:
 	Int			m_frameLastBuildingBuilt;	///< When we built the last building.
 
 	GameDifficulty m_difficulty;
+	Bool		m_isTacticalAI;
 
 	Int			m_skillsetSelector;
 

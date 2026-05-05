@@ -450,7 +450,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 			}
 			else
 			{
-				GadgetComboBoxSetSelectedPos(comboPlayer[i], slot->getState(), TRUE);
+				GadgetComboBoxSetSelectedPos(comboPlayer[i], lobbyComboPosFromSlotState(slot->getState()), TRUE);
         if( buttonAccept &&  buttonAccept[i] )
 				  buttonAccept[i]->winHide(TRUE);
 			}

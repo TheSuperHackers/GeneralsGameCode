@@ -40,8 +40,28 @@ enum SlotState CPP_11(: Int)
 	SLOT_EASY_AI,
 	SLOT_MED_AI,
 	SLOT_BRUTAL_AI,
-	SLOT_PLAYER
+	SLOT_PLAYER,
+	// Zulu addition: combat strength matches Brutal but the AI also runs the
+	// idle-army-commit sweep (and any future smart-AI features). Added at the
+	// end so existing serialized SlotState values continue to deserialize.
+	SLOT_TACTICAL_AI
 };
+
+// Lobby player-combo translation. The LAN/WOL/Skirmish combo boxes lay out
+// Open/Closed/Easy/Medium/Brutal/Tactical at positions 0..5 (matching the
+// SlotState enum values for 0..4, with Tactical mapped to position 5 since
+// SLOT_PLAYER=5 is reserved for an actual joining human).
+inline SlotState slotStateFromLobbyComboPos(Int pos)
+{
+	if (pos == 5) return SLOT_TACTICAL_AI;
+	return (SlotState)pos;
+}
+
+inline Int lobbyComboPosFromSlotState(SlotState s)
+{
+	if (s == SLOT_TACTICAL_AI) return 5;
+	return (Int)s;
+}
 
 enum
 {
@@ -114,6 +134,7 @@ public:
 	Bool isHuman() const;															///< Is this slot occupied by a human player?
 	Bool isOccupied() const;													///< Is this slot occupied (by a human or an AI)?
 	Bool isAI() const;																///< Is this slot occupied by an AI?
+	Bool isTacticalAI() const { return m_state == SLOT_TACTICAL_AI; }	///< Is this slot a Tactical (smart) AI?
 	Bool isPlayer( AsciiString userName ) const;						///< Does this slot contain the given user?
 	Bool isPlayer( UnicodeString userName ) const;					///< Does this slot contain the given user?
 	Bool isPlayer( UnsignedInt ip ) const;									///< Is this slot at this IP?

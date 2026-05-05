@@ -171,6 +171,11 @@ void RefreshGameInfoWindow(GameInfo *gameInfo, UnicodeString gameName)
 					addedRow = GadgetListBoxAddEntryText(listBoxPlayers,TheGameText->fetch("GUI:HardAI"),playerColor,-1, 1);
 					break;
 				}
+				case SLOT_TACTICAL_AI:
+				{
+					addedRow = GadgetListBoxAddEntryText(listBoxPlayers,TheGameText->fetch("GUI:TacticalAI"),playerColor,-1, 1);
+					break;
+				}
 				default:
 					break;
 			}

@@ -140,6 +140,23 @@ public:
 
 	Bool isMultiplayer();												///< is this a multiplayer game (record OR playback)?
 
+	// Zulu replay extension. Replay-affecting AI features added by the Zulu
+	// mod are tagged with a monotonic feature-version. New binaries playing
+	// older replays disable any feature whose version exceeds what the replay
+	// declares, so older replays remain deterministically replayable. Old
+	// binaries cannot play new replays — that is by design.
+	enum
+	{
+		ZULU_AI_FEATURE_NONE        = 0,
+		ZULU_AI_FEATURE_IDLE_COMMIT = 1, ///< AISkirmishPlayer::commitIdleArmy()
+		ZULU_AI_FEATURE_CURRENT     = 1
+	};
+	// True if the AI feature at the given version should run this frame.
+	// Always true during live games / recording. During playback / resume-catchup
+	// / simulation-playback, true only if the loaded replay declared support
+	// for that feature version.
+	Bool isAIFeatureEnabled(UnsignedInt featureVersion) const;
+
 	Int getGameMode() { return m_originalGameMode; }
 
 	void logPlayerDisconnect(UnicodeString player, Int slot);
@@ -152,6 +169,11 @@ public:
 protected:
 	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
 	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
+
+	// Zulu replay extension block. Written immediately after maxFPS in the
+	// header and consumed at the same point on read.
+	void writeZuluReplayExtension();
+	void readZuluReplayExtension();
 	void archiveReplay(AsciiString fileName);					///< Move the specified replay file to the archive directory.
 
 	void logGameStart(AsciiString options);
@@ -191,6 +213,8 @@ protected:
 	UnsignedInt m_resumeHandoffFrame;								///< During RESUME_CATCHUP, the frame at which to stop injecting replay commands and return to NONE.
 	Int m_resumeSavedFpsLimit;											///< During RESUME_CATCHUP, the FPS limit at start so we can restore at handoff.
 	Int m_resumeSavedNetFrameRate;									///< During RESUME_CATCHUP, the network's logic frame rate at start so we can restore at handoff.
+
+	UnsignedInt m_replayAIFeatureVersion;						///< CURRENT for live games; loaded from the replay's extension block during playback.
 };
 
 extern RecorderClass *TheRecorder;

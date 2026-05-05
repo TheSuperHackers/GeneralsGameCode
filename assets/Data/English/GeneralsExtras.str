@@ -85,3 +85,7 @@ END
 Color:Black
 "Black"
 END
+
+GUI:TacticalAI
+"Tactical AI"
+END

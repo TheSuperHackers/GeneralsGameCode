@@ -1238,6 +1238,11 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 										slot->setState(SLOT_BRUTAL_AI);
 										++numPlayers;
 									}
+									else if (resp.stagingRoom.profileID[i] == SLOT_TACTICAL_AI)
+									{
+										slot->setState(SLOT_TACTICAL_AI);
+										++numPlayers;
+									}
 									else if (!resp.stagingRoomPlayerNames[i].empty())
 									{
 										UnicodeString nameUStr;

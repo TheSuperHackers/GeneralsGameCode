@@ -307,6 +307,7 @@ RecorderClass::RecorderClass()
 	m_archiveReplays = FALSE;
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
+	m_replayAIFeatureVersion = ZULU_AI_FEATURE_CURRENT;
 	init(); // just for the heck of it.
 }
 
@@ -314,6 +315,53 @@ RecorderClass::RecorderClass()
  * Destructor
  */
 RecorderClass::~RecorderClass() {
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Zulu replay extension block helpers.
+//----------------------------------------------------------------------------------------------------------
+void RecorderClass::writeZuluReplayExtension()
+{
+	const char zuluMagic[4] = {'Z','U','L','U'};
+	m_file->write(zuluMagic, sizeof(zuluMagic));
+	UnsignedInt version = ZULU_AI_FEATURE_CURRENT;
+	m_file->write(&version, sizeof(version));
+	m_replayAIFeatureVersion = version;
+}
+
+void RecorderClass::readZuluReplayExtension()
+{
+	// Try to consume the extension block. Vanilla / pre-Zulu replays will
+	// fail the magic check; rewind so the bytes we peeked at are interpreted
+	// as the start of the command stream, as before.
+	char magic[4] = {0,0,0,0};
+	Int pos = m_file->position();
+	Int got = m_file->read(magic, sizeof(magic));
+	if (got == (Int)sizeof(magic)
+		&& magic[0] == 'Z' && magic[1] == 'U' && magic[2] == 'L' && magic[3] == 'U')
+	{
+		UnsignedInt version = 0;
+		m_file->read(&version, sizeof(version));
+		m_replayAIFeatureVersion = version;
+		DEBUG_LOG(("RecorderClass: Zulu replay extension version %u", version));
+	}
+	else
+	{
+		m_file->seek(pos, File::START);
+		m_replayAIFeatureVersion = ZULU_AI_FEATURE_NONE;
+		DEBUG_LOG(("RecorderClass: vanilla replay; Zulu AI features disabled for playback"));
+	}
+}
+
+Bool RecorderClass::isAIFeatureEnabled(UnsignedInt featureVersion) const
+{
+	if (m_mode == RECORDERMODETYPE_PLAYBACK
+		|| m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK
+		|| m_mode == RECORDERMODETYPE_RESUME_CATCHUP)
+	{
+		return m_replayAIFeatureVersion >= featureVersion;
+	}
+	return TRUE;
 }
 
 /**
@@ -339,6 +387,7 @@ void RecorderClass::init() {
 	m_wasDesync = FALSE;
 	m_doingAnalysis = FALSE;
 	m_playbackFrameCount = 0;
+	m_replayAIFeatureVersion = ZULU_AI_FEATURE_CURRENT;
 
 	OptionPreferences optionPref;
 	m_archiveReplays = optionPref.getArchiveReplaysEnabled();
@@ -658,6 +707,11 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 
 	// Write maxFPS chosen
 	m_file->write(&maxFPS, sizeof(maxFPS));
+
+	// Zulu replay extension. Tags this replay with the AI feature version
+	// the recording binary supports, so older binaries reject the file via
+	// exeCRC mismatch and newer binaries can identify what features to run.
+	writeZuluReplayExtension();
 
 	DEBUG_LOG(("RecorderClass::startRecording() - diff=%d, mode=%d, FPS=%d", diff, originalGameMode, maxFPS));
 
@@ -1367,6 +1421,11 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	Int maxFPS = 0;
 	m_file->read(&maxFPS, sizeof(maxFPS));
 
+	// Zulu replay extension. Vanilla / pre-Zulu replays don't have this block;
+	// readZuluReplayExtension peeks for the magic and rewinds if absent so the
+	// next read still sees the start of the command stream.
+	readZuluReplayExtension();
+
 	DEBUG_LOG(("RecorderClass::playbackFile() - original game was mode %d", m_originalGameMode));
 
 	// TheSuperHackers @fix helmutbuhler 03/04/2025
@@ -1925,6 +1984,9 @@ Bool RecorderClass::startResumeCatchup(AsciiString filename, UnsignedInt handoff
 	m_file->read(&rankPoints, sizeof(rankPoints));
 	Int maxFPS = 0;
 	m_file->read(&maxFPS, sizeof(maxFPS));
+
+	// Mirror playbackFile's handling of the Zulu extension block.
+	readZuluReplayExtension();
 
 	m_mode = RECORDERMODETYPE_RESUME_CATCHUP;
 	m_resumeHandoffFrame = handoffFrame;
