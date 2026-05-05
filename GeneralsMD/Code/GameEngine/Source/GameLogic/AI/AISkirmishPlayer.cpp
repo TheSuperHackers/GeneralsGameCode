@@ -47,6 +47,7 @@
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/TerrainLogic.h"
+#include "GameLogic/Weapon.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 #include "GameLogic/Module/RebuildHoleBehavior.h"
@@ -75,7 +76,8 @@ m_curLeftFlankRightDefenseAngle(0),
 m_curRightFlankLeftDefenseAngle(0),
 m_curRightFlankRightDefenseAngle(0),
 m_frameToCheckEnemy(0),
-m_currentEnemy(nullptr)
+m_currentEnemy(nullptr),
+m_nextIdleSweepFrame(0)
 
 {
 	m_frameLastBuildingBuilt = TheGameLogic->getFrame();
@@ -498,9 +500,10 @@ void AISkirmishPlayer::acquireEnemy()
 
 			Coord3D enemyPos = m_baseCenter;
 			Region2D bounds;
-			getPlayerStructureBounds(&bounds, i);
-			enemyPos.x = bounds.lo.x + bounds.width()/2;
-			enemyPos.y = bounds.lo.y + bounds.height()/2;
+			Coord2D meanPos;
+			getPlayerStructureBounds(&bounds, i, FALSE, &meanPos);
+			enemyPos.x = meanPos.x;
+			enemyPos.y = meanPos.y;
 			Real curDistSqr = sqr(enemyPos.x-m_baseCenter.x) + sqr(enemyPos.y-m_baseCenter.y);
 
 			//Fudge for in bad shape.	 If an enemy is crippled, concentrate on the other ones.
@@ -953,6 +956,143 @@ void AISkirmishPlayer::doTeamBuilding()
 void AISkirmishPlayer::update()
 {
 	AIPlayer::update();
+	commitIdleArmy();
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Idle Army Commit: backstops the script-driven team flow. Skirmish maps
+// rely on .scb scripts to dispatch attack teams; once those scripts stop
+// firing (or when surviving units of dead teams remain on a still-existing
+// team blocking maxInstances), combat units pile up in the base. This sweep
+// gathers the surplus and group-attacks the current enemy.
+//----------------------------------------------------------------------------------------------------------
+void AISkirmishPlayer::commitIdleArmy()
+{
+	const Int IDLE_SWEEP_INTERVAL_SECONDS = 10;
+	const Int MIN_GARRISON_UNITS = 4;
+	const Int MIN_ATTACK_FORCE = 5;
+
+	UnsignedInt curFrame = TheGameLogic->getFrame();
+	if (curFrame < m_nextIdleSweepFrame) return;
+	m_nextIdleSweepFrame = curFrame + IDLE_SWEEP_INTERVAL_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	Player *enemy = getAiEnemy();
+	if (!enemy) return;
+	if (!enemy->hasAnyBuildFacility() && !enemy->hasAnyUnits()) return;
+
+	// Teams that are mid-build or sitting at the rally point waiting for activation
+	// must be left alone — their units are about to receive scripted orders.
+	std::set<const Team*> reservedTeams;
+	{
+		DLINK_ITERATOR<TeamInQueue> bIter = iterate_TeamBuildQueue();
+		for (; !bIter.done(); bIter.advance())
+		{
+			TeamInQueue *t = bIter.cur();
+			if (t && t->m_team) reservedTeams.insert(t->m_team);
+		}
+		DLINK_ITERATOR<TeamInQueue> rIter = iterate_TeamReadyQueue();
+		for (; !rIter.done(); rIter.advance())
+		{
+			TeamInQueue *t = rIter.cur();
+			if (t && t->m_team) reservedTeams.insert(t->m_team);
+		}
+	}
+
+	// Walk every team this player owns and collect idle combat-capable units.
+	// Iteration order is deterministic across clients (linked lists, stable insertion order).
+	std::vector<Object*> eligible;
+	Player::PlayerTeamList::const_iterator pti;
+	for (pti = m_player->getPlayerTeams()->begin(); pti != m_player->getPlayerTeams()->end(); ++pti)
+	{
+		DLINK_ITERATOR<Team> ti = (*pti)->iterate_TeamInstanceList();
+		for (; !ti.done(); ti.advance())
+		{
+			Team *team = ti.cur();
+			if (!team) continue;
+			if (reservedTeams.find(team) != reservedTeams.end()) continue;
+
+			DLINK_ITERATOR<Object> oi = team->iterate_TeamMemberList();
+			for (; !oi.done(); oi.advance())
+			{
+				Object *obj = oi.cur();
+				if (!obj) continue;
+				if (obj->isKindOf(KINDOF_STRUCTURE)) continue;
+				if (obj->isKindOf(KINDOF_DOZER)) continue;
+				if (obj->isKindOf(KINDOF_HARVESTER)) continue;
+				if (obj->isKindOf(KINDOF_AIRCRAFT)) continue;
+				if (obj->isKindOf(KINDOF_DRONE)) continue;
+				if (!obj->isKindOf(KINDOF_INFANTRY) && !obj->isKindOf(KINDOF_VEHICLE)) continue;
+				if (!obj->isAbleToAttack()) continue;
+				if (!obj->hasAnyWeapon()) continue;
+				if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)) continue;
+				if (obj->getStatusBits().test(OBJECT_STATUS_SOLD)) continue;
+				AIUpdateInterface *ai = obj->getAIUpdateInterface();
+				if (!ai || !ai->isIdle()) continue;
+				eligible.push_back(obj);
+			}
+		}
+	}
+
+	Int total = (Int)eligible.size();
+	Int toSend = total - MIN_GARRISON_UNITS;
+	if (toSend < MIN_ATTACK_FORCE) return;
+
+	// Aim at the enemy structure closest to our base center. Real targets are
+	// always reachable terrain and always meaningful (vs. the bbox midpoint
+	// which can land in dead space between structure clusters). Per-unit
+	// auto-targeting still engages threats encountered along the way.
+	Object *closestStructure = nullptr;
+	Real closestDistSqr = 0.0f;
+	Player::PlayerTeamList::const_iterator eti;
+	for (eti = enemy->getPlayerTeams()->begin(); eti != enemy->getPlayerTeams()->end(); ++eti)
+	{
+		DLINK_ITERATOR<Team> tIter = (*eti)->iterate_TeamInstanceList();
+		for (; !tIter.done(); tIter.advance())
+		{
+			Team *team = tIter.cur();
+			if (!team) continue;
+			DLINK_ITERATOR<Object> oIter = team->iterate_TeamMemberList();
+			for (; !oIter.done(); oIter.advance())
+			{
+				Object *o = oIter.cur();
+				if (!o) continue;
+				if (!o->isKindOf(KINDOF_STRUCTURE)) continue;
+				if (o->isEffectivelyDead()) continue;
+				Coord3D p = *o->getPosition();
+				Real d = sqr(p.x - m_baseCenter.x) + sqr(p.y - m_baseCenter.y);
+				if (!closestStructure || d < closestDistSqr)
+				{
+					closestStructure = o;
+					closestDistSqr = d;
+				}
+			}
+		}
+	}
+	if (!closestStructure) return; // enemy has no structures; let scripts/auto-target handle.
+
+	Coord3D target = *closestStructure->getPosition();
+
+	AIGroupPtr theGroup = TheAI->createGroup();
+	if (!theGroup) return;
+
+	// First MIN_GARRISON_UNITS in iteration order stay home; the rest commit.
+	Int i;
+	for (i = MIN_GARRISON_UNITS; i < total; ++i)
+	{
+		theGroup->add(eligible[i]);
+	}
+
+	theGroup->groupAttackMoveToPosition(&target, NO_MAX_SHOTS_LIMIT, CMD_FROM_AI);
+
+	if (TheGlobalData->m_debugAI)
+	{
+		AsciiString msg;
+		msg.format("**AI** Idle army commit: sending %d units to attack %s structure '%s'",
+			toSend,
+			TheNameKeyGenerator->keyToName(enemy->getPlayerNameKey()).str(),
+			closestStructure->getTemplate()->getName().str());
+		TheScriptEngine->AppendDebugMessage(msg, false);
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -1186,13 +1326,14 @@ void AISkirmishPlayer::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info;
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Added m_nextIdleSweepFrame */
 // ------------------------------------------------------------------------------------------------
 void AISkirmishPlayer::xfer( Xfer *xfer )
 {
 
 	// version
-	XferVersion currentVersion = 1;
+	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1222,6 +1363,11 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 
 	// right flank right defense angle
 	xfer->xferReal( &m_curRightFlankRightDefenseAngle );
+
+	if (version >= 2)
+	{
+		xfer->xferUnsignedInt( &m_nextIdleSweepFrame );
+	}
 
 }
 
