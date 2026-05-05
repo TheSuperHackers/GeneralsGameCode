@@ -103,14 +103,14 @@ static bool openHttpRequest(const AsciiString& url,
 		return false;
 	}
 
-	// Inject the build-time radarvan auth key as an Authorization header so
-	// every caller of openHttpRequest picks it up. ZULU_CLIENT_KEY is baked
-	// in from ./ZULUCLIENT_KEY by cmake/zuluclientkey.cmake; if the file is
-	// absent the macro is empty and we skip the header entirely.
-	if (ZULU_CLIENT_KEY[0] != '\0')
+	// Inject the build-time radarvan auth key as an X-API-Key header so
+	// every caller of openHttpRequest picks it up. ZULU_CLIENT_KEY is
+	// baked in from GCP Secret Manager (secret zuluclientkey) by
+	// cmake/zuluclientkey.cmake; configure fails if the fetch fails, so
+	// the macro is guaranteed non-empty here.
 	{
 		char authHeader[512];
-		int authLen = sprintf(authHeader, "Authorization: %s\r\n", ZULU_CLIENT_KEY);
+		int authLen = sprintf(authHeader, "X-API-Key: %s\r\n", ZULU_CLIENT_KEY);
 		if (authLen > 0)
 			HttpAddRequestHeadersA(out->hRequest, authHeader, (DWORD)authLen,
 				HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE);

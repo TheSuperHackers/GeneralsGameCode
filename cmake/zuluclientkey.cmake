@@ -1,21 +1,24 @@
-# Reads the build-time radarvan auth key from ${CMAKE_SOURCE_DIR}/ZULUCLIENT_KEY
-# (gitignored) and writes it into a generated header that the game engine
-# includes. If the file is missing the key is empty and the runtime simply
-# skips the Authorization header.
+# Bakes the build-time radarvan auth key into a generated header that the
+# game engine includes. The key is supplied by the caller via either the
+# ZULU_CLIENT_KEY CMake cache variable (-DZULU_CLIENT_KEY=...) or the
+# ZULU_CLIENT_KEY environment variable. Configure fails if neither is set
+# so a release build cannot silently ship without a key. Fetching the
+# secret out of GCP Secret Manager is the caller's job (see Makefile),
+# which lets the docker build run without gcloud or GCP credentials.
 
-set(ZULU_CLIENT_KEY_FILE "${CMAKE_SOURCE_DIR}/ZULUCLIENT_KEY")
+if(NOT DEFINED ZULU_CLIENT_KEY OR ZULU_CLIENT_KEY STREQUAL "")
+    if(DEFINED ENV{ZULU_CLIENT_KEY} AND NOT "$ENV{ZULU_CLIENT_KEY}" STREQUAL "")
+        set(ZULU_CLIENT_KEY "$ENV{ZULU_CLIENT_KEY}")
+    endif()
+endif()
 
-if(EXISTS "${ZULU_CLIENT_KEY_FILE}")
-    file(READ "${ZULU_CLIENT_KEY_FILE}" ZULU_CLIENT_KEY_RAW)
-    string(STRIP "${ZULU_CLIENT_KEY_RAW}" ZULU_CLIENT_KEY)
-    # Re-run CMake configure when the key file changes so the generated
-    # header is rewritten and dependent translation units recompile.
-    set_property(DIRECTORY "${CMAKE_SOURCE_DIR}"
-        APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${ZULU_CLIENT_KEY_FILE}")
-else()
-    set(ZULU_CLIENT_KEY "")
-    message(STATUS "ZULUCLIENT_KEY not found at ${ZULU_CLIENT_KEY_FILE}; "
-                   "radarvan requests will be sent without Authorization.")
+string(STRIP "${ZULU_CLIENT_KEY}" ZULU_CLIENT_KEY)
+
+if(ZULU_CLIENT_KEY STREQUAL "")
+    message(FATAL_ERROR
+        "ZULU_CLIENT_KEY is not set. Pass it via -DZULU_CLIENT_KEY=... or "
+        "set the ZULU_CLIENT_KEY environment variable. The Makefile pulls "
+        "it from GCP Secret Manager (secret zuluclientkey) automatically.")
 endif()
 
 # Reject any character that would break out of the C string literal in the
@@ -23,7 +26,7 @@ endif()
 # backslashes, and CR/LF are not safe.
 if(ZULU_CLIENT_KEY MATCHES "[\"\\\\\r\n]")
     message(FATAL_ERROR
-        "ZULUCLIENT_KEY contains characters that cannot be embedded in a "
+        "ZULU_CLIENT_KEY contains characters that cannot be embedded in a "
         "C string literal (\", \\, CR, or LF).")
 endif()
 
