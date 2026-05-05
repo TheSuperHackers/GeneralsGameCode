@@ -251,7 +251,10 @@ protected:
 	void updateBridgeRepair();
 	Bool dozerInQueue();
 	Object *findSupplyCenter(Int minSupplies);
-	static void getPlayerStructureBounds(Region2D *bounds, Int playerNdx, Bool conservative = FALSE );
+	// If meanPos is non-null, also writes the arithmetic mean of the player's
+	// structure positions (true centroid). Falls back to bbox midpoint when the
+	// player has no structures, matching the bounds output.
+	static void getPlayerStructureBounds(Region2D *bounds, Int playerNdx, Bool conservative = FALSE, Coord2D *meanPos = nullptr );
 
 protected:
 

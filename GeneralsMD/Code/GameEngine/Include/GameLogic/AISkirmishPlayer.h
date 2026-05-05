@@ -100,6 +100,10 @@ protected:
 	void adjustBuildList(BuildListInfo *list);
 	Int getMyEnemyPlayerIndex();
 	void acquireEnemy();
+	// Periodically sweeps the AI's idle combat units into a group attack on the
+	// current enemy. Backstops the script-driven team flow so accumulated idle
+	// units don't sit in base late game.
+	void commitIdleArmy();
 
 protected:
 	Int m_curFrontBaseDefense; // First is 0.
@@ -113,5 +117,7 @@ protected:
 
 	UnsignedInt m_frameToCheckEnemy;
 	Player			*m_currentEnemy;
+
+	UnsignedInt m_nextIdleSweepFrame;
 
 };

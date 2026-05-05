@@ -3798,7 +3798,7 @@ void WorkOrder::loadPostProcess()
 /**
  * Get the bounds for a player's structure.
  */
-void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool conservative )
+void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool conservative, Coord2D *meanPos )
 {
 	Player::PlayerTeamList::const_iterator it;
 	Bool firstObject = true;
@@ -3806,6 +3806,9 @@ void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool c
 	bounds->hi.x = bounds->lo.x = bounds->hi.y = bounds->lo.y = 0;
 	Region2D objBounds;
 	objBounds.hi.x = objBounds.lo.x = objBounds.hi.y = objBounds.lo.y = 0;
+	Real sumX = 0.0f;
+	Real sumY = 0.0f;
+	Int sumCount = 0;
 
 	Player* pPlayer = ThePlayerList->getNthPlayer(playerNdx);
 	if (pPlayer == nullptr)
@@ -3860,6 +3863,9 @@ void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool c
 						if (bounds->hi.x<pos.x) bounds->hi.x = pos.x;
 						if (bounds->hi.y<pos.y) bounds->hi.y = pos.y;
 					}
+					sumX += pos.x;
+					sumY += pos.y;
+					++sumCount;
 				}
 			}
 		}
@@ -3867,5 +3873,19 @@ void AIPlayer::getPlayerStructureBounds( Region2D *bounds, Int playerNdx, Bool c
 	if (!firstStructure) {
 		// Player had no structures, so use unit bounds.
 		*bounds = objBounds;
+	}
+	if (meanPos)
+	{
+		if (sumCount > 0)
+		{
+			meanPos->x = sumX / (Real)sumCount;
+			meanPos->y = sumY / (Real)sumCount;
+		}
+		else
+		{
+			// No structures: fall back to bbox midpoint (matches bounds behavior).
+			meanPos->x = (bounds->lo.x + bounds->hi.x) * 0.5f;
+			meanPos->y = (bounds->lo.y + bounds->hi.y) * 0.5f;
+		}
 	}
 }
