@@ -19,6 +19,7 @@ if [ "${FORCE_CMAKE:-}" = "true" ] || [ ! -f  build/docker/build.ninja  ]; then
         -DCMAKE_DISABLE_PRECOMPILE_HEADERS=1 \
         -DCMAKE_C_COMPILER_WORKS=1 \
         -DCMAKE_CXX_COMPILER_WORKS=1 \
+        -DZULU_CLIENT_KEY="${ZULU_CLIENT_KEY:-}" \
         -B /build/cnc/build/docker
 fi
 

@@ -4,12 +4,16 @@
 #
 # Common invocations:
 #   make installer           build Zulu.big, build the exe, package Zulu_Setup.exe
+#   make installer-release   build the installer and upload it to GCS as a
+#                            versioned, publicly-downloadable object
 #   make zulu-big            just (re)pack assets/ into build/installer-tmp/Zulu.big
 #   make clean-installer     remove the staged tmp dir and the built setup exe
 
 BIG          ?= big
 NSIS         ?= makensis
 DOCKER_BUILD ?= ./scripts/docker-build.sh
+GCLOUD       ?= gcloud
+GCS_BUCKET   ?= zulu-installer
 
 ASSETS_DIR := assets
 BUILD_DIR  := build/docker
@@ -22,6 +26,14 @@ SOURCE_EXE := $(BUILD_DIR)/GeneralsMD/generalszh.exe
 NSI            := installer/Zulu.nsi
 INSTALLER_OUT  := installer/Zulu_Setup.exe
 
+# Single source of truth for the release version is APPVERSION inside the
+# NSI script. Keep this Make-side parser tolerant of whitespace/quoting so
+# the user can edit the .nsi without having to also touch the Makefile.
+APPVERSION   := $(shell sed -n 's/^!define[[:space:]]\+APPVERSION[[:space:]]\+"\([^"]*\)".*/\1/p' $(NSI))
+RELEASE_NAME  = Zulu_Setup_v$(APPVERSION).exe
+GCS_URI       = gs://$(GCS_BUCKET)/$(RELEASE_NAME)
+PUBLIC_URL    = https://storage.googleapis.com/$(GCS_BUCKET)/$(RELEASE_NAME)
+
 TMP_BIG := $(TMP_DIR)/$(BIG_NAME)
 TMP_EXE := $(TMP_DIR)/$(EXE_NAME)
 
@@ -33,7 +45,7 @@ ASSET_FILES := $(shell find $(ASSETS_DIR) -type f 2>/dev/null)
 # big-endian first-data offset = 16.
 EMPTY_BIG_BYTES := 'BIGF\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10'
 
-.PHONY: installer zulu-big zulu-exe clean-installer
+.PHONY: installer installer-release zulu-big zulu-exe clean-installer
 
 installer: $(INSTALLER_OUT)
 
@@ -82,3 +94,20 @@ $(TMP_DIR):
 
 clean-installer:
 	rm -rf "$(TMP_DIR)" "$(INSTALLER_OUT)"
+
+# Build the installer (via the regular pipeline) and publish it to GCS under
+# a version-stamped object name so each release has a stable shareable URL.
+# The ACL grant marks the uploaded object world-readable; if the bucket has
+# uniform bucket-level access enabled the per-object grant will fail, in
+# which case allUsers must be granted Storage Object Viewer at the bucket
+# level for the public URL to work.
+installer-release: $(INSTALLER_OUT)
+	@test -n "$(APPVERSION)" || { \
+		echo "ERROR: could not parse APPVERSION from $(NSI)"; exit 1; }
+	$(GCLOUD) storage cp "$(INSTALLER_OUT)" "$(GCS_URI)"
+	@$(GCLOUD) storage objects update "$(GCS_URI)" \
+		--add-acl-grant=entity=AllUsers,role=READER \
+		|| echo "[note] per-object ACL grant failed; if the bucket uses uniform bucket-level access, ensure allUsers is granted Storage Object Viewer at the bucket level."
+	@echo
+	@echo "Uploaded as: $(GCS_URI)"
+	@echo "Public URL : $(PUBLIC_URL)"
