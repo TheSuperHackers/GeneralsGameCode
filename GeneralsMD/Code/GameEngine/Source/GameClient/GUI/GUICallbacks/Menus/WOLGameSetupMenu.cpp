@@ -2631,10 +2631,12 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 						  // Get
 						  Int pos = -1;
 						  GadgetComboBoxGetSelectedPos(comboBoxPlayer[i], &pos);
-						  if( pos != SLOT_PLAYER && pos >= 0)
+						  // Combo lays out Open/Closed/Easy/Medium/Brutal/Tactical at positions 0..5;
+						  // SlotState enum has Tactical=6 with SLOT_PLAYER=5 reserved for joining humans.
+						  // Vanilla had 5 entries so the legacy `pos != SLOT_PLAYER` guard was vestigial;
+						  // adding a 6th entry collided with that and silently dropped Tactical clicks.
+						  if( pos >= 0 )
 						  {
-							  // Combo lays out Open/Closed/Easy/Medium/Brutal/Tactical at positions 0..5;
-							  // SlotState enum has Tactical=6 with SLOT_PLAYER=5 reserved for joining humans.
 							  SlotState newState = slotStateFromLobbyComboPos(pos);
 							  if( myGame->getSlot(i)->getState() == SLOT_PLAYER )
 							  {
