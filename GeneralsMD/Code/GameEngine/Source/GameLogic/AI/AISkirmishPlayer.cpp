@@ -363,11 +363,13 @@ Bool AISkirmishPlayer::isAGoodIdeaToBuildTeam( TeamPrototype *proto )
 	if (!proto->evaluateProductionCondition()) {
 		return false;
 	}
-	// check build limit
-	if (proto->countTeamInstances() >= proto->getTemplateInfo()->m_maxInstances){
+	// check build limit. Use the live-instance count so depleted teams whose
+	// only survivor is a lone straggler don't lock the prototype out of being
+	// rebuilt. Teams still under construction always count as occupying a slot.
+	if (proto->countTeamInstancesAlive() >= proto->getTemplateInfo()->m_maxInstances){
 		if (TheGlobalData->m_debugAI) {
 			AsciiString str;
-			str.format("Team %s not chosen - %d already exist.", proto->getName().str(), proto->countTeamInstances());
+			str.format("Team %s not chosen - %d already exist.", proto->getName().str(), proto->countTeamInstancesAlive());
 			TheScriptEngine->AppendDebugMessage(str, false);
 		}
 		return false;	// Max already built.

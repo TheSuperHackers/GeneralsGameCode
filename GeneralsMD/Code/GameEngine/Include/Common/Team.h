@@ -435,6 +435,13 @@ public:
 	Bool hasAnyObjects() const;
 
 	/**
+		Counts the team's living combat-capable members (non-dead, non-structure,
+		non-projectile, non-mine). Used by the AI to decide whether a previously
+		built team has been depleted enough that a fresh instance should be queued.
+	*/
+	Int countCombatMembers() const;
+
+	/**
 		a convenience routine to quickly check if all the units are idle.
 	*/
 	Bool isIdle() const;
@@ -576,6 +583,12 @@ public:
 
 	/// count the number of teams that have been instanced by this prototype
 	Int countTeamInstances();
+
+	/// Count team instances that the AI should consider as occupying a maxInstances
+	/// slot. An active team that has been chewed down below the template's minimum
+	/// recruit size no longer counts, so the AI can queue a replacement. Teams still
+	/// under construction always count so we don't double-build.
+	Int countTeamInstancesAlive();
 
 	/**
 		Checks & clears the flags that a team member entered or exited a trigger area, or was created.

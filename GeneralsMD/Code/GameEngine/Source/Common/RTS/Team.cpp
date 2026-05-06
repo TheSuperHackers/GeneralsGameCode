@@ -1003,6 +1003,37 @@ Int TeamPrototype::countTeamInstances()
 	return count;
 }
 
+// ------------------------------------------------------------------------
+// Counts only instances that should occupy a maxInstances slot from the AI's
+// perspective. An active team that has been chewed down below the template's
+// minimum recruit size no longer holds a slot, so the AI is free to queue a
+// fresh instance even if a lone straggler is still alive somewhere on the map.
+// Pre-activation teams (still in the build queue) always count, so we never
+// double-build. Lockstep-safe: deterministic iteration, no RNG, no time.
+Int TeamPrototype::countTeamInstancesAlive()
+{
+	Int minViable = 0;
+	Int u;
+	for (u = 0; u < m_teamTemplate.m_numUnitsInfo; ++u)
+		minViable += m_teamTemplate.m_unitsInfo[u].minUnits;
+	if (minViable < 1) minViable = 1;
+
+	Int count = 0;
+	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
+	{
+		Team *t = iter.cur();
+		if (!t) continue;
+		if (!t->isActive())
+		{
+			++count;
+			continue;
+		}
+		if (t->countCombatMembers() >= minViable)
+			++count;
+	}
+	return count;
+}
+
 
 // ------------------------------------------------------------------------
 Bool TeamPrototype::hasAnyBuildings() const
@@ -1798,6 +1829,25 @@ Bool Team::hasAnyObjects() const
 		return true;
 	}
 	return false;
+}
+
+// ------------------------------------------------------------------------
+Int Team::countCombatMembers() const
+{
+	Int n = 0;
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object *obj = iter.cur();
+		if (!obj) continue;
+		if (obj->isEffectivelyDead()) continue;
+		if (obj->isDestroyed()) continue;
+		if (obj->isKindOf(KINDOF_STRUCTURE)) continue;
+		if (obj->isKindOf(KINDOF_PROJECTILE)) continue;
+		if (obj->isKindOf(KINDOF_MINE)) continue;
+		if (obj->isKindOf(KINDOF_INERT)) continue;
+		++n;
+	}
+	return n;
 }
 
 // ------------------------------------------------------------------------
