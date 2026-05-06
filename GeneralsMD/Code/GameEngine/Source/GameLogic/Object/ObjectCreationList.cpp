@@ -1428,7 +1428,7 @@ protected:
 			}
 		}
 
-#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_RETAIL_BEHAVIOR
+#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_NO_XP_FROM_OCL_KILLS
 		ObjectID sinkID = sourceObj->getExperienceTracker()->getExperienceSink();
 		firstObject->getExperienceTracker()->setExperienceSink(sinkID != INVALID_ID ? sinkID : sourceObj->getID());
 #endif

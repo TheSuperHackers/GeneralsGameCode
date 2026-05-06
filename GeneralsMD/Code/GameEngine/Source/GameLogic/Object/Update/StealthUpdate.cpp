@@ -312,7 +312,7 @@ Bool StealthUpdate::allowedToStealth( Object *stealthOwner ) const
 
 	if( flags & STEALTH_NOT_WHILE_TAKING_DAMAGE && self->getBodyModule()->getLastDamageTimestamp() >= now - 1 )
 	{
-#if PRESERVE_RETAIL_BEHAVIOR
+#if PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR
 		//Only if it's not healing damage.
 		if( self->getBodyModule()->getLastDamageInfo()->in.m_damageType != DAMAGE_HEALING )
 #endif

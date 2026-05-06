@@ -1330,7 +1330,7 @@ void ChinookAIUpdate::aiDoCommand(const AICommandParms* parms)
 		{
 			const Real THRESH = 3.0f;
 			const Real THRESH_SQR = THRESH*THRESH;
-#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_BEHAVIOR
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_CHINOOK_PASSENGER_DUMPING
 			const bool allowExit = true;
 #else
 			// TheSuperHackers @bugfix Stubbjax 04/11/2025 Passengers are no longer all dumped in a single frame.
