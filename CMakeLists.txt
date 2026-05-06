@@ -22,6 +22,15 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
+# Disable cmcldeps for RC files. CMake's Windows-MSVC platform module wraps
+# the RC compile in cmcldeps to capture header deps via cl.exe /showIncludes,
+# but VC6's cl.exe does not understand /showIncludes and emits the warning
+# "Command line warning D4002 : ignoring unknown option '/showIncludes'".
+# cmcldeps records that warning text as if it were a header dependency, so
+# ninja sees a missing dep and rebuilds the .res (and re-links the exe) on
+# every invocation. Set this before the first project()/enable_language(RC).
+set(CMAKE_NINJA_CMCLDEPS_RC 0)
+
 include(FeatureSummary)
 include(CMakeDependentOption)
 
