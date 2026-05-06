@@ -448,7 +448,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{	"CameraAudibleRadius",				INI::parseReal,				nullptr,			offsetof( GlobalData, m_cameraAudibleRadius ) },
 	{ "GroupMoveClickToGatherAreaFactor", INI::parseReal,	nullptr,			offsetof( GlobalData, m_groupMoveClickToGatherFactor ) },
 
-#if !PRESERVE_RETAIL_BEHAVIOR
+#if ENABLE_MONEY_PER_MINUTE
 	{ "AllowMoneyPerMinuteForPlayer",	INI::parseBool,			nullptr,			offsetof( GlobalData, m_allowMoneyPerMinuteForPlayer ) },
 #endif
 

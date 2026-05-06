@@ -23,10 +23,6 @@
 // Note: Retail compatibility must not be broken before this project officially does.
 // Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
 
-#ifndef PRESERVE_RETAIL_BEHAVIOR
-#define PRESERVE_RETAIL_BEHAVIOR (1) // Retain behavior present in retail Generals 1.08 and Zero Hour 1.04
-#endif
-
 #ifndef PRESERVE_BUILDING_RESUMPTION_DELAY
 #define PRESERVE_BUILDING_RESUMPTION_DELAY (1)
 #endif
@@ -120,6 +116,10 @@
 
 #ifndef ENABLE_GAMETEXT_SUBSTITUTES
 #define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
+#endif
+
+#ifndef ENABLE_MONEY_PER_MINUTE
+#define ENABLE_MONEY_PER_MINUTE (0) // When enabled, a money-per-minute stat is calculated and displayed in-game
 #endif
 
 // Previously the configurable shroud sat behind #if defined(RTS_DEBUG)
