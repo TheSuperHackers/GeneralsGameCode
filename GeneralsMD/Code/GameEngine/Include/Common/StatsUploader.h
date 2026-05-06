@@ -71,6 +71,7 @@ struct BalanceTeamsResult
 	bool success;
 	AsciiString errorMessage;            ///< populated when !success
 	std::vector<AsciiString> team1;      ///< populated when success: names assigned to team 1
+	std::vector<AsciiString> allKnown;   ///< populated when success: every canonical name appearing in the response (across all keys). Lets the caller distinguish "slot did not match team1" from "slot was not recognized by the server at all"
 };
 
 /// Query the team-balancing endpoint with a list of player names. The endpoint

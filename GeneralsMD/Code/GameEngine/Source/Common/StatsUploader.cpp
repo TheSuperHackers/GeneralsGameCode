@@ -338,6 +338,59 @@ static bool extractFirstJsonKey(const char *body, AsciiString &outKey)
 	return !outKey.isEmpty();
 }
 
+// Extract every top-level key from a flat JSON object. The balance-teams
+// response is a dict whose values are floats, so every quoted token at the
+// object's top level is a key.
+static void extractAllJsonKeys(const char *body, std::vector<AsciiString> &outKeys)
+{
+	const char *p = body;
+	while (*p && *p != '{') ++p;
+	if (!*p) return;
+	++p;
+
+	while (*p)
+	{
+		while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r' || *p == ',')
+			++p;
+		if (*p == '}' || !*p) break;
+		if (*p != '"') break; // malformed; bail
+		++p;
+		const char *end = strchr(p, '"');
+		if (!end) break;
+		AsciiString k;
+		k.set(p, (int)(end - p));
+		if (!k.isEmpty())
+			outKeys.push_back(k);
+		p = end + 1;
+		// Skip the value (which is a number or null in the balance-teams API).
+		while (*p && *p != ',' && *p != '}') ++p;
+	}
+}
+
+// Split a comma-separated key like "Pancake,OneThree111" into individual
+// canonical names, trimming whitespace.
+static void splitCommaList(const AsciiString &key, std::vector<AsciiString> &out)
+{
+	AsciiString current;
+	for (const char *p = key.str(); *p != '\0'; ++p)
+	{
+		if (*p == ',')
+		{
+			if (!current.isEmpty())
+			{
+				out.push_back(current);
+				current.clear();
+			}
+		}
+		else if (*p != ' ' && *p != '\t')
+		{
+			current.concat(*p);
+		}
+	}
+	if (!current.isEmpty())
+		out.push_back(current);
+}
+
 BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
                                           const std::vector<AsciiString>& playerNames)
 {
@@ -453,40 +506,48 @@ BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
 	body[totalRead] = '\0';
 	closeHttpRequest(&s);
 
-	AsciiString firstKey;
-	bool gotKey = extractFirstJsonKey(body, firstKey);
+	std::vector<AsciiString> keys;
+	extractAllJsonKeys(body, keys);
 	free(body);
-	if (!gotKey)
+	if (keys.empty())
 	{
 		result.errorMessage = "Balance-teams response was empty.";
 		return result;
 	}
 
-	// Split the first key by commas. The API documents these as a plain
-	// comma-separated list of names; trim incidental whitespace just in case.
-	AsciiString current;
-	for (const char *p = firstKey.str(); *p != '\0'; ++p)
-	{
-		if (*p == ',')
-		{
-			if (!current.isEmpty())
-			{
-				result.team1.push_back(current);
-				current.clear();
-			}
-		}
-		else if (*p != ' ' && *p != '\t')
-		{
-			current.concat(*p);
-		}
-	}
-	if (!current.isEmpty())
-		result.team1.push_back(current);
-
+	// First key is the best-balanced split; the names there are team 1.
+	splitCommaList(keys[0], result.team1);
 	if (result.team1.empty())
 	{
 		result.errorMessage = "Balance-teams response had no team-1 players.";
 		return result;
+	}
+
+	// Union every name appearing in any key. The server fuzzy-resolves the
+	// names we sent (so "Pan" comes back as "Pancake") and silently drops names
+	// it doesn't recognize. allKnown lets the caller tell "slot belongs to
+	// team 2" apart from "the server didn't recognize this slot at all".
+	size_t k;
+	for (k = 0; k < keys.size(); ++k)
+	{
+		std::vector<AsciiString> names;
+		splitCommaList(keys[k], names);
+		size_t n;
+		for (n = 0; n < names.size(); ++n)
+		{
+			Bool dup = FALSE;
+			size_t a;
+			for (a = 0; a < result.allKnown.size(); ++a)
+			{
+				if (result.allKnown[a].compareNoCase(names[n]) == 0)
+				{
+					dup = TRUE;
+					break;
+				}
+			}
+			if (!dup)
+				result.allKnown.push_back(names[n]);
+		}
 	}
 
 	result.success = true;

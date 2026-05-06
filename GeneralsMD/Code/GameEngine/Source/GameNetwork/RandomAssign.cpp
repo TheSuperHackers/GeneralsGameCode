@@ -351,6 +351,65 @@ static AsciiString slotNameForApi(const GameSlot *slot)
 	return out;
 }
 
+// Hand-maintained aliases for slot-display-name <-> server-canonical-name
+// pairs that prefix matching can't bridge (e.g. a numeric in-game handle vs.
+// a spelled-out canonical). Either form may appear on either side of the
+// comparison.
+struct BalanceNameAlias { const char *a; const char *b; };
+static const BalanceNameAlias g_balanceNameAliases[] = {
+	{ "131", "OneThree111" },
+};
+static const size_t g_balanceNameAliasCount =
+	sizeof(g_balanceNameAliases) / sizeof(g_balanceNameAliases[0]);
+
+static Bool aliasMatch(const AsciiString &x, const AsciiString &y)
+{
+	for (size_t k = 0; k < g_balanceNameAliasCount; ++k)
+	{
+		const BalanceNameAlias &al = g_balanceNameAliases[k];
+		if ((x.compareNoCase(al.a) == 0 && y.compareNoCase(al.b) == 0) ||
+		    (x.compareNoCase(al.b) == 0 && y.compareNoCase(al.a) == 0))
+		{
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+// Case-insensitive prefix compare of two char arrays for `n` chars.
+static Bool prefixMatchNoCase(const char *a, const char *b, Int n)
+{
+	for (Int i = 0; i < n; ++i)
+	{
+		char ca = a[i];
+		char cb = b[i];
+		if (ca == 0 || cb == 0) return FALSE;
+		if (ca >= 'A' && ca <= 'Z') ca = (char)(ca + ('a' - 'A'));
+		if (cb >= 'A' && cb <= 'Z') cb = (char)(cb + ('a' - 'A'));
+		if (ca != cb) return FALSE;
+	}
+	return TRUE;
+}
+
+// The balance-teams server canonicalizes the names it receives ("Pan" comes
+// back as "Pancake", "Wild" as "WildCard"), so a slot's display name will
+// often differ from the form the server returns. Treat exact-equal-no-case as
+// the strongest signal, with case-insensitive prefix-match-in-either-direction
+// as the fallback. The 2-character minimum guards against single-letter
+// collisions.
+static Bool slotMatchesCanonical(const AsciiString &slotName, const AsciiString &canonical)
+{
+	if (slotName.compareNoCase(canonical) == 0) return TRUE;
+	if (aliasMatch(slotName, canonical)) return TRUE;
+	Int slen = slotName.getLength();
+	Int clen = canonical.getLength();
+	if (slen < 2 || clen < 2) return FALSE;
+	Int shortLen = (slen < clen) ? slen : clen;
+	return prefixMatchNoCase(slotName.str(), canonical.str(), shortLen);
+}
+
+struct BalanceSlotPlan { Int slotIdx; Int team; };
+
 // True if every occupied non-observer slot has m_teamNumber == -1.
 static Bool allTeamsUnset(const GameInfo *game)
 {
@@ -403,9 +462,16 @@ bool tryBalanceTeamsViaApi(GameInfo *game, AsciiString *outError)
 		return false;
 	}
 
-	// Assign team 0 to slots whose name is in res.team1; everyone else gets
-	// team 1. resetAccepted() is left to the caller (performRandomAssign
-	// already does it).
+	// Decide a target team per slot:
+	//   - matches a name in res.team1                   -> team 0
+	//   - matches a recognized name not in res.team1    -> team 1
+	//   - matches no canonical name (server didn't recognize) -> defer
+	// Deferred slots are then distributed to whichever team has fewer members,
+	// so a 4-player lobby with one unrecognized name still ends up 2v2 instead
+	// of dumping everything unmatched onto team 1.
+	std::vector<BalanceSlotPlan> plans;
+	plans.reserve(MAX_SLOTS);
+
 	for (i = 0; i < MAX_SLOTS; ++i)
 	{
 		GameSlot *slot = game->getSlot(i);
@@ -416,16 +482,66 @@ bool tryBalanceTeamsViaApi(GameInfo *game, AsciiString *outError)
 
 		AsciiString asciiName = slotNameForApi(slot);
 
-		Bool inTeam1 = FALSE;
-		for (size_t j = 0; j < res.team1.size(); ++j)
+		Int team = -1;
+		size_t j;
+		for (j = 0; j < res.team1.size() && team == -1; ++j)
 		{
-			if (asciiName.compareNoCase(res.team1[j]) == 0)
+			if (slotMatchesCanonical(asciiName, res.team1[j]))
+				team = 0;
+		}
+		if (team == -1)
+		{
+			for (j = 0; j < res.allKnown.size() && team == -1; ++j)
 			{
-				inTeam1 = TRUE;
-				break;
+				Bool isInTeam1 = FALSE;
+				size_t a;
+				for (a = 0; a < res.team1.size(); ++a)
+				{
+					if (res.allKnown[j].compareNoCase(res.team1[a]) == 0)
+					{
+						isInTeam1 = TRUE;
+						break;
+					}
+				}
+				if (isInTeam1) continue;
+				if (slotMatchesCanonical(asciiName, res.allKnown[j]))
+					team = 1;
 			}
 		}
-		slot->setTeamNumber(inTeam1 ? 0 : 1);
+
+		BalanceSlotPlan plan;
+		plan.slotIdx = i;
+		plan.team = team;
+		plans.push_back(plan);
+	}
+
+	Int t0count = 0, t1count = 0;
+	size_t pi;
+	for (pi = 0; pi < plans.size(); ++pi)
+	{
+		if (plans[pi].team == 0) ++t0count;
+		else if (plans[pi].team == 1) ++t1count;
+	}
+	for (pi = 0; pi < plans.size(); ++pi)
+	{
+		if (plans[pi].team != -1) continue;
+		if (t0count <= t1count)
+		{
+			plans[pi].team = 0;
+			++t0count;
+		}
+		else
+		{
+			plans[pi].team = 1;
+			++t1count;
+		}
+	}
+
+	for (pi = 0; pi < plans.size(); ++pi)
+	{
+		GameSlot *slot = game->getSlot(plans[pi].slotIdx);
+		if (!slot) continue;
+		slot->setTeamNumber(plans[pi].team);
 	}
 
 	return true;
