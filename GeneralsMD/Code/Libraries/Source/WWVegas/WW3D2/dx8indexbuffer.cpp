@@ -311,7 +311,7 @@ DX8IndexBufferClass::DX8IndexBufferClass(unsigned short index_count_,UsageType u
 
 	WWDEBUG_SAY(("Index buffer creation failed, trying to release assets..."));
 
-	// Vertex buffer creation failed, so try releasing least used textures and flushing the mesh cache.
+	// Index buffer creation failed, so try releasing least used textures and flushing the mesh cache.
 
 	// Free all textures that haven't been used in the last 5 seconds
 	TextureClass::Invalidate_Old_Unused_Textures(5000);
