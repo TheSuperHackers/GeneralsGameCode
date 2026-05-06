@@ -450,6 +450,9 @@ public:
 	/// Is this player a skirmish ai player?
 	Bool isSkirmishAIPlayer();
 
+	/// Is this player a TacticalAI (lobby slot was SLOT_TACTICAL_AI)?
+	Bool isTacticalAIPlayer() const;
+
 	/// Have the ai check for bridges.
 	virtual Bool checkBridges(Object *unit, Waypoint *way);
 

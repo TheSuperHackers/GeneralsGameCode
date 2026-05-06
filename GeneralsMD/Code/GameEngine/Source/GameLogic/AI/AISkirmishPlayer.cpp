@@ -33,6 +33,7 @@
 #include "Common/GlobalData.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
+#include "Common/PlayerTemplate.h"
 #include "Common/Team.h"
 #include "Common/ThingFactory.h"
 #include "Common/BuildAssistant.h"
@@ -57,6 +58,8 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameClient/TerrainVisual.h"
+#include "GameClient/Drawable.h"
+#include "GameClient/InGameUI.h"
 
 
 #define USE_DOZER 1
@@ -78,7 +81,10 @@ m_curRightFlankLeftDefenseAngle(0),
 m_curRightFlankRightDefenseAngle(0),
 m_frameToCheckEnemy(0),
 m_currentEnemy(nullptr),
-m_nextIdleSweepFrame(0)
+m_nextIdleSweepFrame(0),
+m_directiveBeaconID(INVALID_ID),
+m_nextDirectiveScanFrame(0),
+m_nextDirectiveAnnounceFrame(0)
 
 {
 	m_frameLastBuildingBuilt = TheGameLogic->getFrame();
@@ -957,6 +963,7 @@ void AISkirmishPlayer::doTeamBuilding()
 void AISkirmishPlayer::update()
 {
 	AIPlayer::update();
+	processBeaconDirective();
 	commitIdleArmy();
 }
 
@@ -988,9 +995,18 @@ void AISkirmishPlayer::commitIdleArmy()
 	if (curFrame < m_nextIdleSweepFrame) return;
 	m_nextIdleSweepFrame = curFrame + IDLE_SWEEP_INTERVAL_SECONDS * LOGICFRAMES_PER_SECOND;
 
+	// When a directive beacon is active, the beacon location takes the place
+	// of the regular enemy-structure target — units still attack-move, so they
+	// engage anything on the way.
+	Object *directiveBeacon = (m_directiveBeaconID != INVALID_ID)
+		? TheGameLogic->findObjectByID(m_directiveBeaconID)
+		: nullptr;
+
 	Player *enemy = getAiEnemy();
-	if (!enemy) return;
-	if (!enemy->hasAnyBuildFacility() && !enemy->hasAnyUnits()) return;
+	if (!directiveBeacon) {
+		if (!enemy) return;
+		if (!enemy->hasAnyBuildFacility() && !enemy->hasAnyUnits()) return;
+	}
 
 	// Teams that are mid-build or sitting at the rally point waiting for activation
 	// must be left alone — their units are about to receive scripted orders.
@@ -1053,36 +1069,40 @@ void AISkirmishPlayer::commitIdleArmy()
 	// always reachable terrain and always meaningful (vs. the bbox midpoint
 	// which can land in dead space between structure clusters). Per-unit
 	// auto-targeting still engages threats encountered along the way.
+	Coord3D target;
 	Object *closestStructure = nullptr;
-	Real closestDistSqr = 0.0f;
-	Player::PlayerTeamList::const_iterator eti;
-	for (eti = enemy->getPlayerTeams()->begin(); eti != enemy->getPlayerTeams()->end(); ++eti)
-	{
-		DLINK_ITERATOR<Team> tIter = (*eti)->iterate_TeamInstanceList();
-		for (; !tIter.done(); tIter.advance())
+	if (directiveBeacon) {
+		target = *directiveBeacon->getPosition();
+	} else {
+		Real closestDistSqr = 0.0f;
+		Player::PlayerTeamList::const_iterator eti;
+		for (eti = enemy->getPlayerTeams()->begin(); eti != enemy->getPlayerTeams()->end(); ++eti)
 		{
-			Team *team = tIter.cur();
-			if (!team) continue;
-			DLINK_ITERATOR<Object> oIter = team->iterate_TeamMemberList();
-			for (; !oIter.done(); oIter.advance())
+			DLINK_ITERATOR<Team> tIter = (*eti)->iterate_TeamInstanceList();
+			for (; !tIter.done(); tIter.advance())
 			{
-				Object *o = oIter.cur();
-				if (!o) continue;
-				if (!o->isKindOf(KINDOF_STRUCTURE)) continue;
-				if (o->isEffectivelyDead()) continue;
-				Coord3D p = *o->getPosition();
-				Real d = sqr(p.x - m_baseCenter.x) + sqr(p.y - m_baseCenter.y);
-				if (!closestStructure || d < closestDistSqr)
+				Team *team = tIter.cur();
+				if (!team) continue;
+				DLINK_ITERATOR<Object> oIter = team->iterate_TeamMemberList();
+				for (; !oIter.done(); oIter.advance())
 				{
-					closestStructure = o;
-					closestDistSqr = d;
+					Object *o = oIter.cur();
+					if (!o) continue;
+					if (!o->isKindOf(KINDOF_STRUCTURE)) continue;
+					if (o->isEffectivelyDead()) continue;
+					Coord3D p = *o->getPosition();
+					Real d = sqr(p.x - m_baseCenter.x) + sqr(p.y - m_baseCenter.y);
+					if (!closestStructure || d < closestDistSqr)
+					{
+						closestStructure = o;
+						closestDistSqr = d;
+					}
 				}
 			}
 		}
+		if (!closestStructure) return; // enemy has no structures; let scripts/auto-target handle.
+		target = *closestStructure->getPosition();
 	}
-	if (!closestStructure) return; // enemy has no structures; let scripts/auto-target handle.
-
-	Coord3D target = *closestStructure->getPosition();
 
 	AIGroupPtr theGroup = TheAI->createGroup();
 	if (!theGroup) return;
@@ -1099,12 +1119,133 @@ void AISkirmishPlayer::commitIdleArmy()
 	if (TheGlobalData->m_debugAI)
 	{
 		AsciiString msg;
-		msg.format("**AI** Idle army commit: sending %d units to attack %s structure '%s'",
-			toSend,
-			TheNameKeyGenerator->keyToName(enemy->getPlayerNameKey()).str(),
-			closestStructure->getTemplate()->getName().str());
+		if (directiveBeacon) {
+			msg.format("**AI** Idle army commit: sending %d units to ally beacon at (%.0f, %.0f)",
+				toSend, target.x, target.y);
+		} else {
+			msg.format("**AI** Idle army commit: sending %d units to attack %s structure '%s'",
+				toSend,
+				TheNameKeyGenerator->keyToName(enemy->getPlayerNameKey()).str(),
+				closestStructure->getTemplate()->getName().str());
+		}
 		TheScriptEngine->AppendDebugMessage(msg, false);
 	}
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Beacon Directive: a TacticalAI follows the most recently placed ally beacon
+// whose caption begins with "!attack" (case-insensitive). The beacon is treated
+// as an attack target by commitIdleArmy(); when the beacon is removed or its
+// caption no longer carries the prefix, the AI reverts to its default target
+// selection. Once per game-minute the lowest-index TacticalAI on the beacon
+// owner's team prints a local on-screen message naming the beacon owner; the
+// message is shown only on ally clients. Because the announcement is generated
+// deterministically inside the simulation, every client (and replay viewer)
+// produces the same message at the same frame without any network chat.
+//----------------------------------------------------------------------------------------------------------
+void AISkirmishPlayer::processBeaconDirective()
+{
+	if (!isTacticalAI()) return;
+
+	const Int DIRECTIVE_SCAN_INTERVAL_SECONDS  = 1;
+	const Int DIRECTIVE_ANNOUNCE_INTERVAL_SECS = 60;
+	static const WideChar PREFIX[] = L"!attack";
+
+	UnsignedInt curFrame = TheGameLogic->getFrame();
+	if (curFrame < m_nextDirectiveScanFrame) return;
+	m_nextDirectiveScanFrame = curFrame + DIRECTIVE_SCAN_INTERVAL_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	// Find the newest active directive beacon owned by an ally. Newest = highest
+	// ObjectID, which is monotonic and identical across clients, keeping the
+	// selection deterministic.
+	Object *bestBeacon = nullptr;
+	Player *beaconOwner = nullptr;
+	Int playerCount = ThePlayerList->getPlayerCount();
+	Int pi;
+	for (pi = 0; pi < playerCount; ++pi)
+	{
+		Player *ally = ThePlayerList->getNthPlayer(pi);
+		if (!ally || ally == m_player) continue;
+		if (!ally->isPlayerActive()) continue;
+		if (m_player->getRelationship(ally->getDefaultTeam()) != ALLIES) continue;
+		const PlayerTemplate *pt = ally->getPlayerTemplate();
+		if (!pt) continue;
+		const ThingTemplate *beaconTmpl = TheThingFactory->findTemplate(pt->getBeaconTemplate());
+		if (!beaconTmpl) continue;
+
+		Player::PlayerTeamList::const_iterator pti;
+		for (pti = ally->getPlayerTeams()->begin(); pti != ally->getPlayerTeams()->end(); ++pti)
+		{
+			DLINK_ITERATOR<Team> ti = (*pti)->iterate_TeamInstanceList();
+			for (; !ti.done(); ti.advance())
+			{
+				Team *team = ti.cur();
+				if (!team) continue;
+				DLINK_ITERATOR<Object> oi = team->iterate_TeamMemberList();
+				for (; !oi.done(); oi.advance())
+				{
+					Object *obj = oi.cur();
+					if (!obj) continue;
+					if (!obj->getTemplate()->isEquivalentTo(beaconTmpl)) continue;
+					Drawable *d = obj->getDrawable();
+					if (!d) continue;
+					UnicodeString cap = d->getCaptionText();
+					if (!cap.startsWithNoCase(PREFIX)) continue;
+					if (!bestBeacon || obj->getID() > bestBeacon->getID())
+					{
+						bestBeacon = obj;
+						beaconOwner = ally;
+					}
+				}
+			}
+		}
+	}
+
+	ObjectID newID = bestBeacon ? bestBeacon->getID() : INVALID_ID;
+	Bool switched = (newID != m_directiveBeaconID);
+	m_directiveBeaconID = newID;
+
+	if (newID == INVALID_ID)
+	{
+		// No active directive: drop announcement state so a future beacon
+		// re-announces immediately on switch.
+		m_nextDirectiveAnnounceFrame = 0;
+		return;
+	}
+
+	Bool dueAnnounce = switched || curFrame >= m_nextDirectiveAnnounceFrame;
+	if (!dueAnnounce) return;
+	m_nextDirectiveAnnounceFrame = curFrame + DIRECTIVE_ANNOUNCE_INTERVAL_SECS * LOGICFRAMES_PER_SECOND;
+
+	// Only the lowest-index TacticalAI ally of the beacon owner announces, so
+	// multiple TacticalAI players on the same team don't spam duplicates.
+	Int lowestAllyTacticalAIIndex = -1;
+	for (pi = 0; pi < playerCount; ++pi)
+	{
+		Player *p = ThePlayerList->getNthPlayer(pi);
+		if (!p || !p->isPlayerActive()) continue;
+		if (p != beaconOwner && beaconOwner->getRelationship(p->getDefaultTeam()) != ALLIES) continue;
+		if (!p->isTacticalAIPlayer()) continue;
+		lowestAllyTacticalAIIndex = pi;
+		break;
+	}
+	if (lowestAllyTacticalAIIndex != m_player->getPlayerIndex()) return;
+
+	// Display only on clients whose local player is allied to (or is) the beacon
+	// owner. The branch is purely cosmetic — sim state is identical everywhere.
+	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	if (!localPlayer) return;
+	Bool ally = (localPlayer == beaconOwner)
+		|| (localPlayer->getRelationship(beaconOwner->getDefaultTeam()) == ALLIES);
+	if (!ally) return;
+
+	RGBColor rgb;
+	rgb.setFromInt(beaconOwner->getPlayerColor());
+	UnicodeString announcement;
+	announcement.format(L"%ls is following %ls's beacon",
+		m_player->getPlayerDisplayName().str(),
+		beaconOwner->getPlayerDisplayName().str());
+	TheInGameUI->messageColor(&rgb, announcement);
 }
 
 //----------------------------------------------------------------------------------------------------------

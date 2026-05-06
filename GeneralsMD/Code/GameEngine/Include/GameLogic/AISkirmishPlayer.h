@@ -104,6 +104,9 @@ protected:
 	// current enemy. Backstops the script-driven team flow so accumulated idle
 	// units don't sit in base late game.
 	void commitIdleArmy();
+	// Scan ally beacons for the directive prefix; track the active directive
+	// beacon ID; announce on switch and on minute boundaries.
+	void processBeaconDirective();
 
 protected:
 	Int m_curFrontBaseDefense; // First is 0.
@@ -119,5 +122,10 @@ protected:
 	Player			*m_currentEnemy;
 
 	UnsignedInt m_nextIdleSweepFrame;
+
+	// Beacon directive ("!attack" prefix in an ally beacon's caption).
+	ObjectID    m_directiveBeaconID;
+	UnsignedInt m_nextDirectiveScanFrame;
+	UnsignedInt m_nextDirectiveAnnounceFrame;
 
 };
