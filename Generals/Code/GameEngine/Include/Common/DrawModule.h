@@ -204,6 +204,9 @@ public:
 	virtual void setAnimationCompletionTime(UnsignedInt numFrames) = 0;
 	virtual Bool updateBonesForClientParticleSystems() = 0;///< this will reposition particle systems on the fly ML
 
+	//Kris: Manually set a drawable's current animation to specific frame.
+	virtual void setAnimationFrame(int frame) = 0;
+
 	/**
 	  This call is used to pause or resume an animation.
 	*/

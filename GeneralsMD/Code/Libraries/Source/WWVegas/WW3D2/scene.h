@@ -220,7 +220,7 @@ public:
 	SimpleSceneClass();
 	virtual ~SimpleSceneClass() override;
 
-	virtual int	Get_Scene_ID()	{	return SCENE_ID_SIMPLE;	}
+	virtual int	Get_Scene_ID() const override	{	return SCENE_ID_SIMPLE;	}
 
 	virtual void Add_Render_Object(RenderObjClass * obj) override;
 	virtual void Remove_Render_Object(RenderObjClass * obj) override;
