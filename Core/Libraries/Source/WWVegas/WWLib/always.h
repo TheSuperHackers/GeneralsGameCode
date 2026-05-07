@@ -130,43 +130,22 @@ extern void* allocateFromW3DMemPool(void* p, int allocationSize, const char* msg
 extern void freeFromW3DMemPool(void* pool, void* p);
 
 // ----------------------------------------------------------------------------
-#define W3DMPO_GLUE(ARGCLASS) \
+#define W3DMPO_CODE(ARGCLASS) \
 private: \
 	static void* getClassMemoryPool() \
 	{ \
-		/* \
-			Note that this static variable will be initialized exactly once: the first time \
-			control flows over this section of code. This allows us to neatly resolve the \
-			order-of-execution problem for static variables, ensuring this is not executed \
-			prior to the initialization of TheMemoryPoolFactory. \
+		/*
+		construct on first first use to avoid static initialization order fiasco
+		that may occur if this were initialized prior to the initialization of TheMemoryPoolFactory.
 		*/ \
 		static void* The##ARGCLASS##Pool = createW3DMemPool(#ARGCLASS, sizeof(ARGCLASS)); \
 		return The##ARGCLASS##Pool; \
 	} \
-protected: \
-	virtual void glueEnforcer() const override { } \
 public: \
 	inline void* operator new(size_t s) { return allocateFromW3DMemPool(getClassMemoryPool(), s); } \
 	inline void operator delete(void *p) { freeFromW3DMemPool(getClassMemoryPool(), p); } \
 	inline void* operator new(size_t s, const char* msg, int unused) { return allocateFromW3DMemPool(getClassMemoryPool(), s, msg, unused); } \
 	inline void operator delete(void *p, const char* msg, int unused) { freeFromW3DMemPool(getClassMemoryPool(), p); } \
-
-// ----------------------------------------------------------------------------
-class W3DMPO
-{
-private:
-	static void* getClassMemoryPool()
-	{
-		assert(0);	// must replace this via W3DMPO_GLUE
-		return nullptr;
-	}
-protected:
-	// we never call this; it is present to cause compile errors in descendent classes
-	virtual void glueEnforcer() const = 0;
-public:
-	virtual ~W3DMPO() { /* nothing */ }
-};
-// ----------------------------------------------------------------------------
 
 #else
 
@@ -178,9 +157,7 @@ public:
 	#define NEW_REF( C, P )					( W3DNEW C P )
 	#define SET_REF_OWNER( P )			P
 
-	#define W3DMPO_GLUE(ARGCLASS)
-
-	class W3DMPO { };
+	#define W3DMPO_CODE(ARGCLASS)
 
 #endif // (gth) removing the generals memory stuff from W3D
 
