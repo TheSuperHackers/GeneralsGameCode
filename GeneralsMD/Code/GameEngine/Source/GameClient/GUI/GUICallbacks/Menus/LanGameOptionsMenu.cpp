@@ -58,6 +58,7 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/Recorder.h"
+#include "Common/StatsUploader.h"
 #include "GameClient/GameText.h"
 #include "GameClient/ReplayMenu.h"
 #include "GameNetwork/GUIUtil.h"
@@ -1549,7 +1550,8 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						// teams are already set; surfaces network errors in chat
 						// without aborting the rest of the random assignment.
 						AsciiString balanceErr;
-						if (!tryBalanceTeamsViaApi(TheLAN->GetMyGame(), &balanceErr))
+						Bool balanceOk = tryBalanceTeamsViaApi(TheLAN->GetMyGame(), &balanceErr);
+						if (!balanceOk)
 						{
 							UnicodeString errU;
 							errU.translate(balanceErr);
@@ -1561,6 +1563,86 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						performRandomAssign(TheLAN->GetMyGame(), lockedTemplates);
 						TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
 						lanUpdateSlotList();
+
+						// After a successful balance call (HTTP 200), ask the
+						// map_summary endpoint for a per-map history blurb and
+						// echo each line into the lobby chat.
+						if (balanceOk && !TheGlobalData->m_mapSummaryUrl.isEmpty())
+						{
+							LANGameInfo *summaryGame = TheLAN->GetMyGame();
+							std::vector<MapSummaryPlayer> roster;
+							for (Int si = 0; si < MAX_SLOTS; ++si)
+							{
+								const GameSlot *slot = summaryGame ? summaryGame->getConstSlot(si) : NULL;
+								if (!slot || !slot->isOccupied())
+									continue;
+								if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+									continue;
+								MapSummaryPlayer entry;
+								entry.name.translate(slot->getName());
+								if (slot->isAI())
+								{
+									AsciiString joined;
+									for (const char *p = entry.name.str(); *p != '\0'; ++p)
+									{
+										if (*p != ' ')
+											joined.concat(*p);
+									}
+									entry.name = joined;
+								}
+								if (entry.name.isEmpty())
+									continue;
+								entry.general = slot->getPlayerTemplate();
+								roster.push_back(entry);
+							}
+							if (!roster.empty())
+							{
+								// Use the map's display name (the name baked into
+								// the .map file), not the on-disk path, so the
+								// server keys on the same identifier players see.
+								// MapMetaData appends a " (N)" player-count suffix
+								// to m_displayName; strip that so the server gets
+								// the bare map title.
+								AsciiString mapName;
+								if (summaryGame && TheMapCache)
+								{
+									const MapMetaData *md = TheMapCache->findMap(summaryGame->getMap());
+									if (md && !md->m_displayName.isEmpty())
+										mapName.translate(md->m_displayName);
+								}
+								// Strip a trailing " (N)" / " (NN)" player-count
+								// suffix that MapMetaData appends to m_displayName.
+								const char *ms = mapName.str();
+								Int mlen = mapName.getLength();
+								if (mlen >= 4 && ms[mlen - 1] == ')')
+								{
+									Int mi = mlen - 2;
+									while (mi > 0 && ms[mi] >= '0' && ms[mi] <= '9')
+										--mi;
+									if (mi >= 1 && ms[mi] == '(' && ms[mi - 1] == ' ' && mi != mlen - 2)
+									{
+										AsciiString trimmed;
+										Int j;
+										for (j = 0; j < mi - 1; ++j)
+											trimmed.concat(ms[j]);
+										mapName = trimmed;
+									}
+								}
+								mapName.toLower();
+								MapSummaryResult summary = MapSummaryFromServer(
+									TheGlobalData->m_mapSummaryUrl, mapName, roster);
+								if (summary.success)
+								{
+									for (size_t li = 0; li < summary.lines.size(); ++li)
+									{
+										UnicodeString lineU;
+										lineU.translate(summary.lines[li]);
+										TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(),
+											lineU, LANAPI::LANCHAT_SYSTEM);
+									}
+								}
+							}
+						}
 					}
 				}
 				else if ( controlID == buttonResumeFromReplayID )

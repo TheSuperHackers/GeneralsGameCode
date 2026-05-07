@@ -143,6 +143,11 @@ public:
 	// are pre-set). Empty string disables the API call.
 	AsciiString m_balanceTeamsUrl;
 
+	// URL to POST a JSON map_name + players[{name, general}] body to fetch
+	// a human-readable map-history blurb that's printed to the lobby chat
+	// after the Randomize button runs. Empty string disables the call.
+	AsciiString m_mapSummaryUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
