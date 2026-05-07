@@ -1471,10 +1471,9 @@ Relationship Team::getRelationship(const Team *that) const
 	// do we have an override for that particular team? if so, return it.
 	if (!m_teamRelations->m_map.empty() && that != nullptr)
 	{
-		TeamRelationMapType::const_iterator it = m_teamRelations->m_map.find(that->getID());
-		if (it != m_teamRelations->m_map.end())
+		if (m_teamRelations->m_map.count(that->getID()))
 		{
-			return (*it).second;
+			return m_teamRelations->m_map[that->getID()];
 		}
 	}
 
@@ -1484,10 +1483,9 @@ Relationship Team::getRelationship(const Team *that) const
 		Player* thatPlayer = that->getControllingPlayer();
 		if (thatPlayer != nullptr)
 		{
-			PlayerRelationMapType::const_iterator it = m_playerRelations->m_map.find(thatPlayer->getPlayerIndex());
-			if (it != m_playerRelations->m_map.end())
+			if (m_playerRelations->m_map.count(thatPlayer->getPlayerIndex()))
 			{
-				return (*it).second;
+				return m_playerRelations->m_map[thatPlayer->getPlayerIndex()];
 			}
 		}
 	}
