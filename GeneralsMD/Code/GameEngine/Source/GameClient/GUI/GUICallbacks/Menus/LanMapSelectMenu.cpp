@@ -116,9 +116,22 @@ static const char *gadgetsToHide[] =
 	"StaticTextColor",
 	"TextEntryMapDisplay",
 	"ButtonSelectMap",
-	"ButtonStart",
 	"StaticTextMapPreview",
 
+	nullptr
+};
+
+// Bottom-row action buttons on the underlying LanGameOptions screen. They
+// stay visible while map-select is open (the panel doesn't cover them) but
+// must not be clickable. Greying them out — instead of hiding individually —
+// keeps the bottom row visually intact and gives uniform feedback that the
+// underlying screen is suspended.
+static const char *gadgetsToDisable[] =
+{
+	"ButtonStart",
+	"ButtonBack",
+	"ButtonRandomize",
+	"ButtonResumeFromReplay",
 	nullptr
 };
 static const char *perPlayerGadgetsToHide[] =
@@ -132,10 +145,15 @@ static const char *perPlayerGadgetsToHide[] =
 static void showLANGameOptionsUnderlyingGUIElements( Bool show )
 {
 	ShowUnderlyingGUIElements( show, layoutFilename, parentName, gadgetsToHide, perPlayerGadgetsToHide );
-	GameWindow *win	= TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey("LanGameOptionsMenu.wnd:ButtonBack") );
-	if(win)
-		win->winEnable( show );
 
+	AsciiString gadgetName;
+	for (const char **name = gadgetsToDisable; *name; ++name)
+	{
+		gadgetName.format("%s:%s", layoutFilename, *name);
+		GameWindow *win = TheWindowManager->winGetWindowFromId( nullptr, TheNameKeyGenerator->nameToKey(gadgetName) );
+		if (win)
+			win->winEnable( show );
+	}
 }
 
 static void NullifyControls()
