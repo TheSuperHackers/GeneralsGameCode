@@ -83,3 +83,30 @@ struct BalanceTeamsResult
 /// @param playerNames Lobby player names to balance (URL-encoded internally)
 BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
                                           const std::vector<AsciiString>& playerNames);
+
+/// One name + general (faction template index, as found in a replay header).
+struct MapSummaryPlayer
+{
+	AsciiString name;
+	int general;
+};
+
+/// Result of a map_summary API call. `success` is true only when the server
+/// returned HTTP 2xx. The body, if any, is split on '\n' (empty lines
+/// dropped) and surfaced in `lines`.
+struct MapSummaryResult
+{
+	bool success;
+	std::vector<AsciiString> lines;
+};
+
+/// Ask the map_summary endpoint for a human-readable blurb describing recent
+/// history on the given map for the given roster. POSTs a JSON body of the
+/// form { "map_name": "...", "players": [{"name": "...", "general": <int>}, ...] }.
+/// Best-effort, blocking; uses WinINet's default timeouts.
+/// @param url Full URL of the map_summary endpoint
+/// @param mapName Display name of the map
+/// @param players Roster (name + general index) to summarize
+MapSummaryResult MapSummaryFromServer(const AsciiString& url,
+                                      const AsciiString& mapName,
+                                      const std::vector<MapSummaryPlayer>& players);

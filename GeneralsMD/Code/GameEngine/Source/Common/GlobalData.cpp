@@ -642,6 +642,7 @@ GlobalData::GlobalData()
 	m_mapCheckUrl = "http://cncstats.computersrfun.org:8080/map_exists";
 	m_mapUploadUrl = "http://cncstats.computersrfun.org:8080/add_map";
 	m_balanceTeamsUrl = "https://www.radarvan.com/api/balance_teams/";
+	m_mapSummaryUrl = "https://www.radarvan.com/api/map_summary/";
 	m_windowed = 0;
 	m_xResolution = DEFAULT_DISPLAY_WIDTH;
 	m_yResolution = DEFAULT_DISPLAY_HEIGHT;

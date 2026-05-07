@@ -554,6 +554,181 @@ BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
 	return result;
 }
 
+// ---------------------------------------------------------------------------
+// Map summary blurb via HTTP POST.
+// ---------------------------------------------------------------------------
+
+// Append a JSON-escaped form of `src` to `out`. Escapes the characters that
+// would otherwise break out of a JSON string: backslash, double-quote, and
+// control characters. UTF-8 byte sequences pass through untouched.
+static void appendJsonEscaped(AsciiString &out, const char *src)
+{
+	for (const char *p = src; *p != '\0'; ++p)
+	{
+		unsigned char c = (unsigned char)*p;
+		switch (c)
+		{
+			case '"':  out.concat("\\\""); break;
+			case '\\': out.concat("\\\\"); break;
+			case '\b': out.concat("\\b");  break;
+			case '\f': out.concat("\\f");  break;
+			case '\n': out.concat("\\n");  break;
+			case '\r': out.concat("\\r");  break;
+			case '\t': out.concat("\\t");  break;
+			default:
+				if (c < 0x20)
+				{
+					char esc[8];
+					sprintf(esc, "\\u%04X", c);
+					out.concat(esc);
+				}
+				else
+				{
+					out.concat((char)c);
+				}
+				break;
+		}
+	}
+}
+
+MapSummaryResult MapSummaryFromServer(const AsciiString& url,
+                                      const AsciiString& mapName,
+                                      const std::vector<MapSummaryPlayer>& players)
+{
+	MapSummaryResult result;
+	result.success = false;
+
+	if (url.isEmpty())
+		return result;
+
+	// Build the JSON body: { "map_name": "...", "players": [{"name":"...","general":N}, ...] }
+	AsciiString body;
+	body.concat("{\"map_name\":\"");
+	appendJsonEscaped(body, mapName.isEmpty() ? "" : mapName.str());
+	body.concat("\",\"players\":[");
+	size_t i;
+	for (i = 0; i < players.size(); ++i)
+	{
+		if (i > 0)
+			body.concat(',');
+		body.concat("{\"name\":\"");
+		appendJsonEscaped(body, players[i].name.isEmpty() ? "" : players[i].name.str());
+		char gbuf[32];
+		sprintf(gbuf, "\",\"general\":%d}", players[i].general);
+		body.concat(gbuf);
+	}
+	body.concat("]}");
+
+	WinInetSession s;
+	if (!openHttpRequest(url, "POST", nullptr, "Map summary", &s))
+		return result;
+
+	const char *headers = "Content-Type: application/json\r\nAccept: application/json\r\n";
+	BOOL sent = HttpSendRequestA(s.hRequest, headers, (DWORD)strlen(headers),
+	                             const_cast<char*>(body.str()), (DWORD)body.getLength());
+	if (!sent)
+	{
+		printf("Map summary: HttpSendRequest failed (%lu)\n", GetLastError());
+		closeHttpRequest(&s);
+		return result;
+	}
+
+	DWORD statusCode = 0;
+	DWORD statusSize = sizeof(statusCode);
+	HttpQueryInfoA(s.hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
+	               &statusCode, &statusSize, nullptr);
+	if (statusCode < 200 || statusCode >= 300)
+	{
+		printf("Map summary: %s -> %lu\n", url.str(), statusCode);
+		closeHttpRequest(&s);
+		return result;
+	}
+
+	// Read the response body. The server returns a JSON string (a single
+	// quoted, possibly newline-bearing token). Cap at 16 KiB.
+	static const DWORD bodyCap = 16 * 1024;
+	char *resp = (char *)malloc(bodyCap);
+	if (resp == nullptr)
+	{
+		closeHttpRequest(&s);
+		return result;
+	}
+	DWORD totalRead = 0;
+	for (;;)
+	{
+		DWORD bytesRead = 0;
+		if (!InternetReadFile(s.hRequest, resp + totalRead,
+		                      bodyCap - 1 - totalRead, &bytesRead))
+			break;
+		if (bytesRead == 0) break;
+		totalRead += bytesRead;
+		if (totalRead >= bodyCap - 1) break;
+	}
+	resp[totalRead] = '\0';
+	closeHttpRequest(&s);
+
+	printf("Map summary: %s -> %lu\n", url.str(), statusCode);
+
+	// Strip a single layer of surrounding double-quotes if present (the
+	// endpoint returns a bare JSON string), and unescape \n / \" / \\ so
+	// the caller can split the text on real newlines.
+	const char *p = resp;
+	while (*p == ' ' || *p == '\t' || *p == '\r' || *p == '\n')
+		++p;
+	const char *end = resp + totalRead;
+	while (end > p && (end[-1] == ' ' || end[-1] == '\t' || end[-1] == '\r' || end[-1] == '\n'))
+		--end;
+	if (end > p && *p == '"' && end[-1] == '"')
+	{
+		++p;
+		--end;
+	}
+
+	AsciiString current;
+	while (p < end)
+	{
+		char c = *p++;
+		if (c == '\\' && p < end)
+		{
+			char n = *p++;
+			switch (n)
+			{
+				case 'n':
+					if (!current.isEmpty())
+					{
+						result.lines.push_back(current);
+						current.clear();
+					}
+					break;
+				case 'r':                          break;
+				case 't':  current.concat('\t');   break;
+				case '"':  current.concat('"');    break;
+				case '\\': current.concat('\\');   break;
+				case '/':  current.concat('/');    break;
+				default:   current.concat(n);      break;
+			}
+		}
+		else if (c == '\n')
+		{
+			if (!current.isEmpty())
+			{
+				result.lines.push_back(current);
+				current.clear();
+			}
+		}
+		else if (c != '\r')
+		{
+			current.concat(c);
+		}
+	}
+	if (!current.isEmpty())
+		result.lines.push_back(current);
+
+	free(resp);
+	result.success = true;
+	return result;
+}
+
 bool MapMissingFromServer(const AsciiString& checkUrl, unsigned int mapCRC)
 {
 	if (checkUrl.isEmpty())

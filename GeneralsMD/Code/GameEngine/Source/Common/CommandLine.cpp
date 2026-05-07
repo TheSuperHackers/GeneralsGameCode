@@ -488,6 +488,16 @@ Int parseBalanceTeamsUrl(char *args[], int num)
 	return 1;
 }
 
+Int parseMapSummaryUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_mapSummaryUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1241,6 +1251,10 @@ static CommandLineParam paramsForStartup[] =
 	// split (?players=<name>&players=<name>...). Pass an empty string ("")
 	// to disable the API call.
 	{ "-balanceTeamsUrl", parseBalanceTeamsUrl },
+
+	// URL the LAN-lobby Randomize button POSTs to fetch a map-history
+	// blurb (printed to lobby chat). Pass an empty string ("") to disable.
+	{ "-mapSummaryUrl", parseMapSummaryUrl },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
