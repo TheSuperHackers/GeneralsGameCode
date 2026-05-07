@@ -75,6 +75,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/VictoryConditions.h"
+#include "GameClient/Color.h"
 #include "GameClient/Display.h"
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/WindowLayout.h"
@@ -1421,7 +1422,7 @@ void populatePlayerInfo( Player *player, Int pos)
 {
 	if(!player || pos < 0 || pos >= MAX_SLOTS)
 		return;
-	Color color = player->getPlayerColor();
+	Color color = GameMakeColorReadable(player->getPlayerColor());
 	ScoreKeeper *scoreKpr = player->getScoreKeeper();
 	if(!scoreKpr)
 	{
@@ -2458,6 +2459,7 @@ void populateSideInfo( UnicodeString side,ScoreGather *sg, Int pos, Color color)
 {
 	if(pos < 0 || pos > MAX_SLOTS)
 		return;
+	color = GameMakeColorReadable(color);
 
 	AsciiString winName;
 	UnicodeString winValue;

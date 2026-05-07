@@ -85,3 +85,27 @@ extern void GameGetColorComponents( Color color,
 extern void GameGetColorComponentsReal( Color color, Real *red, Real *green, Real *blue, Real *alpha );
 
 extern Color GameDarkenColor( Color color, Int percent = 10 );
+
+// Lifts a color toward legibility on dark backgrounds without flattening
+// it out: pushes each channel additively (not by scaling) so very dark
+// hues stay recognizably themselves. Pure black -> dark gray; e.g.
+// ColorBlack (1,1,1) ends up around (80,80,80).
+inline Color GameMakeColorReadable( Color color )
+{
+	Int a = (color >> 24) & 0xff;
+	Int r = (color >> 16) & 0xff;
+	Int g = (color >>  8) & 0xff;
+	Int b =  color        & 0xff;
+
+	Int luminance = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+	const Int MIN_LUMINANCE = 80;
+	Int delta = MIN_LUMINANCE - luminance;
+	if (delta > 0)
+	{
+		r += delta; if (r > 255) r = 255;
+		g += delta; if (g > 255) g = 255;
+		b += delta; if (b > 255) b = 255;
+	}
+	return (a << 24) | (r << 16) | (g << 8) | b;
+}
