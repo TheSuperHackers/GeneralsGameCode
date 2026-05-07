@@ -42,7 +42,11 @@ typedef std::vector<ICoord2D> VecICoord2D;
 /** MapObject class
 Not ref counted.  Do not store pointers to this class.  */
 
-#define VERTEX_BUFFER_TILE_LENGTH 32 //tiles of side length 32 (grid of 33x33 vertices).
+// Bumped from 32 → 48 so the draw window (1 + 4*TILE = 193 cells = 1930 world units)
+// covers the wider on-ground footprint produced by GameData.ini's MaxCameraHeight=450
+// (1.5× the stock 300). At 32, edges past ~1290 units fell outside the vertex-buffer
+// window and rendered as a black strip.
+#define VERTEX_BUFFER_TILE_LENGTH 48 //tiles of side length 48 (grid of 49x49 vertices).
 #define VERTS_IN_BLOCK_ROW (VERTEX_BUFFER_TILE_LENGTH + 1)
 #define HEIGHTMAP_VERTEX_NUM (VERTEX_BUFFER_TILE_LENGTH * 2 * VERTEX_BUFFER_TILE_LENGTH * 2)
 #define HEIGHTMAP_POLYGON_NUM (VERTEX_BUFFER_TILE_LENGTH * VERTEX_BUFFER_TILE_LENGTH * 2)
