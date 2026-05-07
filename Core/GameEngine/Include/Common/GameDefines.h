@@ -24,7 +24,7 @@
 // Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
 
 #ifndef PRESERVE_BUILDING_RESUMPTION_DELAY
-#define PRESERVE_BUILDING_RESUMPTION_DELAY (0)
+#define PRESERVE_BUILDING_RESUMPTION_DELAY (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_CHINOOK_PASSENGER_DUMPING
@@ -36,11 +36,11 @@
 #endif
 
 #ifndef PRESERVE_MULTI_CRATE_PICKUP
-#define PRESERVE_MULTI_CRATE_PICKUP (0)
+#define PRESERVE_MULTI_CRATE_PICKUP (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_NO_XP_FROM_FLAME_KILLS
-#define PRESERVE_NO_XP_FROM_FLAME_KILLS (0)
+#define PRESERVE_NO_XP_FROM_FLAME_KILLS (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_NO_XP_FROM_OCL_KILLS
@@ -64,7 +64,7 @@
 #endif
 
 #ifndef PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR
-#define PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR (0)
+#define PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_TUNNEL_HEAL_STACKING
@@ -72,7 +72,7 @@
 #endif
 
 #ifndef PRESERVE_UNRELIABLE_FIRESTORMS
-#define PRESERVE_UNRELIABLE_FIRESTORMS (0)
+#define PRESERVE_UNRELIABLE_FIRESTORMS (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
 #ifndef PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION
