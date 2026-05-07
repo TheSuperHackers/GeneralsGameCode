@@ -66,6 +66,26 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static const char *mapExtension = ".map";
 
+// Bumped whenever MapCache.ini gains new fields the engine relies on (e.g.
+// cratePosition, techDerrickPosition). When updateCache() finds a standard
+// MapCache.ini missing this sentinel, it forces a rebuild from the .map files
+// so official maps pick up the new fields, mirroring -buildmapcache.
+static const char *MAP_CACHE_FORMAT_VERSION_TAG = "; MapCacheFormatVersion = 2";
+
+static Bool isMapCacheCompatible(const AsciiString &filename)
+{
+	File *fp = TheFileSystem->openFile(filename.str(), File::READ);
+	if (fp == nullptr)
+		return FALSE;
+	char buf[1024];
+	Int n = fp->read(buf, sizeof(buf) - 1);
+	fp->close();
+	if (n <= 0)
+		return FALSE;
+	buf[n] = '\0';
+	return strstr(buf, MAP_CACHE_FORMAT_VERSION_TAG) != nullptr;
+}
+
 static Int m_width = 0;						///< Height map width.
 static Int m_height = 0;					///< Height map height (y size of array).
 static Int m_borderSize = 0;			///< Non-playable border area.
@@ -77,6 +97,8 @@ static Dict worldDict = 0;
 static WaypointMap *m_waypoints = nullptr;
 static Coord3DList	m_supplyPositions;
 static Coord3DList	m_techPositions;
+static Coord3DList	m_cratePositions;
+static Coord3DList	m_techDerrickPositions;
 
 static Int m_mapDX = 0;
 static Int m_mapDY = 0;
@@ -144,11 +166,35 @@ static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void
 	}
 	else if (pThisOne->getThingTemplate() && pThisOne->getThingTemplate()->isKindOf(KINDOF_TECH_BUILDING))
 	{
-		m_techPositions.push_back(loc);
+		// Split derricks (template name contains "Derrick") from generic tech buildings
+		// so the lobby preview can render them with a distinct icon.
+		AsciiString templateLower = pThisOne->getThingTemplate()->getName();
+		templateLower.toLower();
+		if (strstr(templateLower.str(), "derrick") != nullptr)
+		{
+			m_techDerrickPositions.push_back(loc);
+		}
+		else
+		{
+			m_techPositions.push_back(loc);
+		}
 	}
 	else if (pThisOne->getThingTemplate() && pThisOne->getThingTemplate()->isKindOf(KINDOF_SUPPLY_SOURCE_ON_PREVIEW))
 	{
-		m_supplyPositions.push_back(loc);
+		// Match radarvan's split: small supply piles (template name contains
+		// "Small", e.g. SupplyPileSmall) render with a distinct icon; everything
+		// else (SupplyDock, SupplyWarehouse, regular SupplyPile, ToxinRepository)
+		// keeps the standard green Cash icon.
+		AsciiString templateLower = pThisOne->getThingTemplate()->getName();
+		templateLower.toLower();
+		if (strstr(templateLower.str(), "small") != nullptr)
+		{
+			m_cratePositions.push_back(loc);
+		}
+		else
+		{
+			m_supplyPositions.push_back(loc);
+		}
 	}
 
 	deleteInstance(pThisOne);
@@ -253,6 +299,8 @@ static void resetMap()
 
 	m_techPositions.clear();
 	m_supplyPositions.clear();
+	m_cratePositions.clear();
+	m_techDerrickPositions.clear();
 }
 
 static void getExtent( Region3D *extent )
@@ -345,6 +393,7 @@ void MapCache::writeCacheINI( const AsciiString &mapDir )
 
 	fprintf(fp, "; FILE: %s /////////////////////////////////////////////////////////////\n", filepath.str());
 	fprintf(fp, "; This INI file is auto-generated - do not modify\n");
+	fprintf(fp, "%s\n", MAP_CACHE_FORMAT_VERSION_TAG);
 	fprintf(fp, "; /////////////////////////////////////////////////////////////////////////////\n");
 
 	MapCache::iterator it = begin();
@@ -393,6 +442,18 @@ void MapCache::writeCacheINI( const AsciiString &mapDir )
 				pos = *itc3d;
 				fprintf(fp, "  supplyPosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
 			}
+			itc3d = md.m_cratePositions.begin();
+			for (; itc3d != md.m_cratePositions.end(); ++itc3d)
+			{
+				pos = *itc3d;
+				fprintf(fp, "  cratePosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
+			}
+			itc3d = md.m_techDerrickPositions.begin();
+			for (; itc3d != md.m_techDerrickPositions.end(); ++itc3d)
+			{
+				pos = *itc3d;
+				fprintf(fp, "  techDerrickPosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
+			}
 			fprintf(fp, "END\n\n");
 		}
 		else
@@ -410,6 +471,22 @@ void MapCache::updateCache()
 
 	const AsciiString mapDir = getMapDir();
 	const AsciiString userMapDir = getUserMapDir();
+
+	// If the on-disk standard cache predates the current MapCache.ini format
+	// (missing cratePosition / techDerrickPosition fields), force a rebuild this
+	// session so official maps pick up the new classifications. Without this,
+	// `loadMapsFromMapCacheINI(mapDir)` would later overwrite any freshly-parsed
+	// data with the stale on-disk version.
+	Bool stdCacheRebuilt = FALSE;
+	{
+		AsciiString stdCachePath;
+		stdCachePath.format("%s\\%s", mapDir.str(), m_mapCacheName);
+		if (TheFileSystem->doesFileExist(stdCachePath.str()) && !isMapCacheCompatible(stdCachePath))
+		{
+			DEBUG_LOG(("MapCache: %s missing format version, forcing rebuild this session\n", stdCachePath.str()));
+			TheWritableGlobalData->m_buildMapCache = TRUE;
+		}
+	}
 
 	// Create the standard map cache if required. Is only relevant for Mod developers.
 	// TheSuperHackers @tweak This step is done before loading any other map caches to not poison the cached state.
@@ -429,6 +506,7 @@ void MapCache::updateCache()
 			if (loadMapsFromDisk(mapDir, isOfficial, filterByAllowedMaps))
 			{
 				writeCacheINI(mapDir);
+				stdCacheRebuilt = TRUE;
 			}
 		}
 		m_doCreateStandardMapCacheINI = FALSE;
@@ -450,9 +528,17 @@ void MapCache::updateCache()
 
 	// Load standard maps from map cache last.
 	// This overwrites matching user maps to prevent munkees getting rowdy :)
-	if (m_doLoadStandardMapCacheINI)
+	// Skip if we just rebuilt the standard cache from disk this session: the
+	// in-memory entries are fresh, and the on-disk MapCache.ini may have failed
+	// to write (typical when the install dir isn't user-writable, e.g. Program
+	// Files). Reading it back would clobber the fresh data with stale entries.
+	if (m_doLoadStandardMapCacheINI && !stdCacheRebuilt)
 	{
 		loadMapsFromMapCacheINI(mapDir);
+		m_doLoadStandardMapCacheINI = FALSE;
+	}
+	else if (stdCacheRebuilt)
+	{
 		m_doLoadStandardMapCacheINI = FALSE;
 	}
 }
@@ -644,6 +730,8 @@ Bool MapCache::addMap(
 	md.m_timestamp.m_lowTimeStamp = fileInfo.timestampLow;
 	md.m_supplyPositions = m_supplyPositions;
 	md.m_techPositions = m_techPositions;
+	md.m_cratePositions = m_cratePositions;
+	md.m_techDerrickPositions = m_techDerrickPositions;
 	md.m_CRC = calcCRC(fname);
 
 	Bool exists = false;

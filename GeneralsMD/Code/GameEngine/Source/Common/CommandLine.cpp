@@ -719,14 +719,6 @@ Int parseParticleEdit(char *args[], int)
 }
 
 
-Int parseBuildMapCache(char *args[], int)
-{
-	TheWritableGlobalData->m_buildMapCache = true;
-
-	return 1;
-}
-
-
 #if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 Int parsePreload( char *args[], int num )
 {
@@ -1378,7 +1370,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-noshroud", parseNoShroud },
 #endif
 	{ "-forceBenchmark", parseForceBenchmark },
-	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
 	{ "-nofx", parseNoFX },
 	{ "-ignoresync", parseSync },
