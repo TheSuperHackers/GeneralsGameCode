@@ -712,13 +712,6 @@ void GameEngine::init()
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		if (TheGlobalData->m_buildMapCache)
-		{
-			// just quit, since the map cache has already updated
-			//populateMapListbox(nullptr, true, true);
-			m_quitting = TRUE;
-		}
-
 		// load the initial shell screen
 		//TheShell->push( "Menus/MainMenu.wnd" );
 

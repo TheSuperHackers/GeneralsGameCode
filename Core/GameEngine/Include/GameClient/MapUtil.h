@@ -50,6 +50,8 @@ class TechAndSupplyImages
 public:
 	ICoord2DList m_techPosList;
 	ICoord2DList m_supplyPosList;
+	ICoord2DList m_cratePosList;     ///< KINDOF_CRATE positions, drawn with the Zulu crate icon
+	ICoord2DList m_derrickPosList;   ///< Tech derricks, drawn with the Zulu derrick icon
 };
 
 struct WinTimeStamp
@@ -85,8 +87,10 @@ public:
 	WinTimeStamp m_timestamp;
 
 	WaypointMap m_waypoints;
-	Coord3DList m_supplyPositions;
-	Coord3DList m_techPositions;
+	Coord3DList m_supplyPositions;       ///< Supply docks (KINDOF_SUPPLY_SOURCE_ON_PREVIEW without KINDOF_CRATE)
+	Coord3DList m_techPositions;         ///< Generic tech buildings (not derricks)
+	Coord3DList m_cratePositions;        ///< KINDOF_CRATE objects
+	Coord3DList m_techDerrickPositions;  ///< Tech buildings whose template name contains "Derrick"
 	AsciiString m_fileName;
 };
 

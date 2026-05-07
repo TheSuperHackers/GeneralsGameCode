@@ -752,6 +752,26 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 			TheDisplay->drawImage(image, pixelX + it->x, pixelY + it->y, pixelX + it->x + SUPPLY_TECH_SIZE, pixelY + it->y +SUPPLY_TECH_SIZE);
 			it++;
 		}
+
+	// Zulu additions: derrick (above generic tech) and crate (above generic supply) icons.
+	image = TheMappedImageCollection->findImageByName("ZuluDerrickIcon");
+	it = TheSupplyAndTechImageLocations.m_derrickPosList.begin();
+	if (image)
+		while (it != TheSupplyAndTechImageLocations.m_derrickPosList.end())
+		{
+			TheDisplay->drawImage(image, pixelX + it->x, pixelY + it->y, pixelX + it->x + SUPPLY_TECH_SIZE, pixelY + it->y + SUPPLY_TECH_SIZE);
+			it++;
+		}
+
+	image = TheMappedImageCollection->findImageByName("ZuluCrateIcon");
+	it = TheSupplyAndTechImageLocations.m_cratePosList.begin();
+	if (image)
+		while (it != TheSupplyAndTechImageLocations.m_cratePosList.end())
+		{
+			TheDisplay->drawImage(image, pixelX + it->x, pixelY + it->y, pixelX + it->x + SUPPLY_TECH_SIZE, pixelY + it->y + SUPPLY_TECH_SIZE);
+			it++;
+		}
+
 	drawSkinnyBorder(pixelX - 1, pixelY - 1, width + 2, height + 2);
 }
 
