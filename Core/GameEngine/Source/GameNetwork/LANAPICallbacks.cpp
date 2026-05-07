@@ -38,6 +38,7 @@
 #include "Common/QuotedPrintable.h"
 #include "Common/RandomValue.h"
 #include "Common/UserPreferences.h"
+#include "GameClient/Color.h"
 #include "GameClient/GameText.h"
 #include "GameClient/LanguageFilter.h"
 #include "GameClient/MapUtil.h"
@@ -715,7 +716,7 @@ void LANAPI::OnChat( UnicodeString player, UnsignedInt ip, UnicodeString message
 						Int colorIndex = gs->getColor();
 						MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(colorIndex);
 						if (def)
-							chatColor = def->getColor();
+							chatColor = GameMakeColorReadable(def->getColor());
 					}
 				}
 			}

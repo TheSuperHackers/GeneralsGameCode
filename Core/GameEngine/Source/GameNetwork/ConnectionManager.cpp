@@ -39,6 +39,7 @@
 #include "Common/RandomValue.h"
 #include "Common/Recorder.h"
 
+#include "GameClient/Color.h"
 #include "GameClient/Diplomacy.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MessageBox.h"
@@ -790,7 +791,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	if ( ((1<<m_localSlot) & msg->getPlayerMask() ) && canSeeChat  )
 	{
 		RGBColor rgb;
-		rgb.setFromInt(player->getPlayerColor());
+		rgb.setFromInt(GameMakeColorReadable(player->getPlayerColor()));
 		TheInGameUI->messageColor(&rgb, L"%ls", unitext.str());
 
 		// feedback for received chat messages in-game
