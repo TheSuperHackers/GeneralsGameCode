@@ -89,3 +89,15 @@ END
 GUI:TacticalAI
 "Tactical AI"
 END
+
+GUI:FilterPlayers
+"Players:"
+END
+
+GUI:FilterPlayersAny
+"Any"
+END
+
+GUI:FilterPlayersFmt
+"%d Players"
+END

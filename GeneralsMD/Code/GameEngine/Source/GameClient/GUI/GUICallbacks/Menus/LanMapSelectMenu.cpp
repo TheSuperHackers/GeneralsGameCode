@@ -38,9 +38,11 @@
 #include "GameClient/Gadget.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameWindowManager.h"
+#include "GameClient/GadgetComboBox.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetRadioButton.h"
 #include "GameClient/GadgetTextEntry.h"
+#include "GameClient/GameText.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GUIUtil.h"
@@ -52,10 +54,47 @@ static NameKeyType buttonOK = NAMEKEY_INVALID;
 static NameKeyType listboxMap = NAMEKEY_INVALID;
 static NameKeyType winMapPreviewID = NAMEKEY_INVALID;
 static NameKeyType textEntrySearchID = NAMEKEY_INVALID;
+static NameKeyType comboBoxFilterPlayersID = NAMEKEY_INVALID;
 static GameWindow *parent = nullptr;
 static GameWindow *mapList = nullptr;
 static GameWindow *winMapPreview = nullptr;
 static GameWindow *textEntrySearch = nullptr;
+static GameWindow *comboBoxFilterPlayers = nullptr;
+
+// Player-count dropdown: index 0 is "Any" (filter value 0), entries 1..7 are
+// 2..8 players. Stored on each combo entry via SetItemData so the selection
+// callback reads the filter value back without parsing display text.
+static const Int FILTER_PLAYER_COUNT_MIN = 2;
+static const Int FILTER_PLAYER_COUNT_MAX = 8;
+
+static Int getCurrentPlayerCountFilter()
+{
+	if (!comboBoxFilterPlayers)
+		return 0;
+	Int selIndex = -1;
+	GadgetComboBoxGetSelectedPos(comboBoxFilterPlayers, &selIndex);
+	if (selIndex < 0)
+		return 0;
+	return (Int)GadgetComboBoxGetItemData(comboBoxFilterPlayers, selIndex);
+}
+
+static UnicodeString getCurrentNameFilter()
+{
+	if (!textEntrySearch)
+		return UnicodeString::TheEmptyString;
+	return GadgetTextEntryGetText(textEntrySearch);
+}
+
+static void repopulateMapList()
+{
+	if (!mapList)
+		return;
+	if (TheMapCache)
+		TheMapCache->updateCache();
+	populateMapListboxFiltered( mapList, TRUE, getCurrentNameFilter(),
+	                            getCurrentPlayerCountFilter(),
+	                            TheLAN->GetMyGame()->getMap() );
+}
 
 static GameWindow *buttonMapStartPosition[MAX_SLOTS] = {0};
 static NameKeyType buttonMapStartPositionID[MAX_SLOTS] = { NAMEKEY_INVALID,NAMEKEY_INVALID,
@@ -104,6 +143,7 @@ static void NullifyControls()
 	parent = nullptr;
 	mapList = nullptr;
 	textEntrySearch = nullptr;
+	comboBoxFilterPlayers = nullptr;
 	if (winMapPreview)
 	{
 		winMapPreview->winSetUserData(nullptr);
@@ -133,11 +173,35 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	listboxMap = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ListboxMap" );
 	winMapPreviewID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:WinMapPreview" );
 	textEntrySearchID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:TextEntrySearch" );
+	comboBoxFilterPlayersID = TheNameKeyGenerator->nameToKey( "LanMapSelectMenu.wnd:ComboBoxFilterPlayers" );
 
 	winMapPreview = TheWindowManager->winGetWindowFromId(parent, winMapPreviewID);
 	textEntrySearch = TheWindowManager->winGetWindowFromId(parent, textEntrySearchID);
 	if (textEntrySearch)
 		GadgetTextEntrySetText(textEntrySearch, UnicodeString::TheEmptyString);
+
+	comboBoxFilterPlayers = TheWindowManager->winGetWindowFromId(parent, comboBoxFilterPlayersID);
+	if (comboBoxFilterPlayers)
+	{
+		GadgetComboBoxReset(comboBoxFilterPlayers);
+		const Color white = GameMakeColor(255, 255, 255, 255);
+
+		// Index 0: "Any" — filter value 0 disables the player-count check.
+		Int idx = GadgetComboBoxAddEntry(comboBoxFilterPlayers,
+			TheGameText->fetch("GUI:FilterPlayersAny"), white);
+		GadgetComboBoxSetItemData(comboBoxFilterPlayers, idx, (void *)0);
+
+		const UnicodeString fmt = TheGameText->fetch("GUI:FilterPlayersFmt");
+		Int n;
+		for (n = FILTER_PLAYER_COUNT_MIN; n <= FILTER_PLAYER_COUNT_MAX; ++n)
+		{
+			UnicodeString label;
+			label.format(fmt.str(), n);
+			idx = GadgetComboBoxAddEntry(comboBoxFilterPlayers, label, white);
+			GadgetComboBoxSetItemData(comboBoxFilterPlayers, idx, (void *)n);
+		}
+		GadgetComboBoxSetSelectedPos(comboBoxFilterPlayers, 0);
+	}
 
 	AsciiString tmpString;
 	for (Int i = 0; i < MAX_SLOTS; i++)
@@ -155,9 +219,7 @@ void LanMapSelectMenuInit( WindowLayout *layout, void *userData )
 	mapList = TheWindowManager->winGetWindowFromId( parent, mapListID );
 	if( mapList )
 	{
-		if (TheMapCache)
-			TheMapCache->updateCache();
-		populateMapListboxFiltered( mapList, TRUE, UnicodeString::TheEmptyString, TheLAN->GetMyGame()->getMap() );
+		repopulateMapList();
 	}
 }
 
@@ -307,11 +369,19 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			if (control != nullptr && mapList != nullptr &&
 			    control->winGetWindowId() == (Int)textEntrySearchID)
 			{
-				if (TheMapCache)
-					TheMapCache->updateCache();
-				UnicodeString filter = GadgetTextEntryGetText(control);
-				populateMapListboxFiltered( mapList, TRUE, filter,
-				                            TheLAN->GetMyGame()->getMap() );
+				repopulateMapList();
+			}
+			break;
+		}
+
+		// --------------------------------------------------------------------------------------------
+		case GCM_SELECTED:
+		{
+			GameWindow *control = (GameWindow *)mData1;
+			if (control != nullptr && mapList != nullptr &&
+			    control->winGetWindowId() == (Int)comboBoxFilterPlayersID)
+			{
+				repopulateMapList();
 			}
 			break;
 		}
