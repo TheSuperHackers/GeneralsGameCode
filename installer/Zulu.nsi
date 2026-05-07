@@ -16,7 +16,7 @@
 ;     <install dir>\generalszh_zulu.exe -quickstart -win -mod Zulu.big
 
 !define APPNAME       "Zulu"
-!define APPVERSION    "1.0"
+!define APPVERSION    "1.1.0"
 !define EXENAME       "generalszh_zulu.exe"
 !define BIGNAME       "Zulu.big"
 !define USERDATALEAF  "Command and Conquer Generals Zero Hour Data"
