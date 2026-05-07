@@ -75,6 +75,10 @@
 #define PRESERVE_UNRELIABLE_FIRESTORMS (1)
 #endif
 
+#ifndef PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION
+#define PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION (1)
+#endif
+
 #ifndef PRESERVE_RETAIL_SCRIPTED_CAMERA
 #define PRESERVE_RETAIL_SCRIPTED_CAMERA (1) // Retain scripted camera behavior present in retail Generals 1.08 and Zero Hour 1.04
 #endif
