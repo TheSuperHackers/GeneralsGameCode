@@ -122,8 +122,8 @@
 #define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
 #endif
 
-#ifndef ENABLE_MONEY_PER_MINUTE
-#define ENABLE_MONEY_PER_MINUTE (0) // When enabled, a money-per-minute stat is calculated and displayed in-game
+#ifndef ALLOW_MONEY_PER_MINUTE_FOR_PLAYER
+#define ALLOW_MONEY_PER_MINUTE_FOR_PLAYER (0) // When enabled, a money-per-minute stat is calculated and displayed in-game
 #endif
 
 // Previously the configurable shroud sat behind #if defined(RTS_DEBUG)
