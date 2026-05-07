@@ -84,9 +84,19 @@ m_currentEnemy(nullptr),
 m_nextIdleSweepFrame(0),
 m_directiveBeaconID(INVALID_ID),
 m_nextDirectiveScanFrame(0),
-m_nextDirectiveAnnounceFrame(0)
+m_nextDirectiveAnnounceFrame(0),
+m_nextMilestoneCheckFrame(0),
+m_milestoneAnnouncedMask(0),
+m_synAnnounced(false),
+m_nextAttackAnnounceFrame(0),
+m_nextDistressSampleFrame(0),
+m_nextDistressAnnounceFrame(0),
+m_distressRingHead(0),
+m_distressRingFilled(0)
 
 {
+	Int i;
+	for (i = 0; i < 5; ++i) { m_distressHPRing[i] = 0.0f; m_distressCountRing[i] = 0; }
 	m_frameLastBuildingBuilt = TheGameLogic->getFrame();
 	p->setCanBuildUnits(true); // turn on ai production by default.
 }
@@ -966,6 +976,8 @@ void AISkirmishPlayer::update()
 {
 	AIPlayer::update();
 	processBeaconDirective();
+	announceMilestones();
+	processDistressSignal();
 	commitIdleArmy();
 }
 
@@ -1118,6 +1130,13 @@ void AISkirmishPlayer::commitIdleArmy()
 
 	theGroup->groupAttackMoveToPosition(&target, NO_MAX_SHOTS_LIMIT, CMD_FROM_AI);
 
+	// Ally chatter: announce attack-commit dispatches against an enemy structure.
+	// Beacon-directive dispatches are already announced via processBeaconDirective().
+	if (!directiveBeacon && enemy)
+	{
+		announceAttackCommit(&target, enemy);
+	}
+
 	if (TheGlobalData->m_debugAI)
 	{
 		AsciiString msg;
@@ -1248,6 +1267,245 @@ void AISkirmishPlayer::processBeaconDirective()
 		m_player->getPlayerDisplayName().str(),
 		beaconOwner->getPlayerDisplayName().str());
 	TheInGameUI->messageColor(&rgb, announcement);
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Ally Communication helpers
+//
+// All TacticalAI announcements use TheInGameUI->messageColor() inside the
+// deterministic simulation tick. Each client renders the same string at the
+// same frame; replays show the same announcements; no chat/network traffic.
+// Ally-only display is a cosmetic local-player relationship check on the
+// rendering side. The Syn/Dan easter egg drops the ally check so every player
+// sees it.
+//----------------------------------------------------------------------------------------------------------
+
+namespace {
+
+// Map quadrant label for a world position. Used to give attack-commit and
+// distress messages directional context ("base under attack — northeast!").
+const WideChar *quadrantLabel(const Coord3D &pos)
+{
+	Region3D bounds;
+	TheTerrainLogic->getMaximumPathfindExtent(&bounds);
+	Real cx = bounds.lo.x + bounds.width()  * 0.5f;
+	Real cy = bounds.lo.y + bounds.height() * 0.5f;
+	Real dx = pos.x - cx;
+	Real dy = pos.y - cy;
+	Real edgeMargin = (bounds.width() < bounds.height() ? bounds.width() : bounds.height()) * 0.15f;
+	if (fabsf(dx) < edgeMargin && fabsf(dy) < edgeMargin) return L"center";
+	if (dy >= 0 && dx >= 0) return L"northeast";
+	if (dy >= 0 && dx <  0) return L"northwest";
+	if (dy <  0 && dx >= 0) return L"southeast";
+	return L"southwest";
+}
+
+// True if `me` is the lowest-index TacticalAI player on `team` (the team being
+// the relationship reference: typically the announcing AI's own default team).
+// Used to dedup shared announcements when multiple TacticalAIs sit on one team.
+Bool isLowestIndexTacticalAIOnTeam(const Player *me)
+{
+	Int playerCount = ThePlayerList->getPlayerCount();
+	Int pi;
+	for (pi = 0; pi < playerCount; ++pi)
+	{
+		Player *p = ThePlayerList->getNthPlayer(pi);
+		if (!p || !p->isPlayerActive()) continue;
+		if (p != me && me->getRelationship(p->getDefaultTeam()) != ALLIES) continue;
+		if (!p->isTacticalAIPlayer()) continue;
+		return p == me;
+	}
+	return false;
+}
+
+// Render an ally-only message: a local cosmetic gate on the rendering side.
+void renderAllyMessage(const Player *speaker, const UnicodeString &text)
+{
+	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	if (!localPlayer) return;
+	Bool ally = (localPlayer == speaker)
+		|| (localPlayer->getRelationship(speaker->getDefaultTeam()) == ALLIES);
+	if (!ally) return;
+	RGBColor rgb;
+	rgb.setFromInt(speaker->getPlayerColor());
+	TheInGameUI->messageColor(&rgb, text);
+}
+
+// Render a message visible to every player.
+void renderBroadcastMessage(const Player *speaker, const UnicodeString &text)
+{
+	if (!ThePlayerList->getLocalPlayer()) return;
+	RGBColor rgb;
+	rgb.setFromInt(speaker->getPlayerColor());
+	TheInGameUI->messageColor(&rgb, text);
+}
+
+// Sum current HP and count of all of `p`'s living non-dozer non-harvester structures.
+void sampleStructures(const Player *p, Real *outHP, Int *outCount)
+{
+	Real hp = 0.0f;
+	Int count = 0;
+	Player::PlayerTeamList::const_iterator pti;
+	for (pti = p->getPlayerTeams()->begin(); pti != p->getPlayerTeams()->end(); ++pti)
+	{
+		DLINK_ITERATOR<Team> ti = (*pti)->iterate_TeamInstanceList();
+		for (; !ti.done(); ti.advance())
+		{
+			Team *team = ti.cur();
+			if (!team) continue;
+			DLINK_ITERATOR<Object> oi = team->iterate_TeamMemberList();
+			for (; !oi.done(); oi.advance())
+			{
+				Object *o = oi.cur();
+				if (!o) continue;
+				if (!o->isKindOf(KINDOF_STRUCTURE)) continue;
+				if (o->isEffectivelyDead()) continue;
+				BodyModuleInterface *body = o->getBodyModule();
+				if (!body) continue;
+				hp += body->getHealth();
+				++count;
+			}
+		}
+	}
+	*outHP = hp;
+	*outCount = count;
+}
+
+} // anonymous namespace
+
+//----------------------------------------------------------------------------------------------------------
+// Phase milestone announcements: at 5min ("MidGame") and 15min ("LateGame") of
+// game time, the lowest-index TacticalAI on each team posts a one-shot ally-
+// visible blurb. The 15min milestone also fires the Syn/Dan easter egg if this
+// AI's current target's display name is "Syn" — that one is broadcast to all.
+//----------------------------------------------------------------------------------------------------------
+void AISkirmishPlayer::announceMilestones()
+{
+	if (!isTacticalAI()) return;
+
+	const Int CHECK_INTERVAL_SECONDS = 1;
+	const UnsignedInt MIDGAME_FRAME  = 5  * 60 * LOGICFRAMES_PER_SECOND;
+	const UnsignedInt LATEGAME_FRAME = 15 * 60 * LOGICFRAMES_PER_SECOND;
+	const Int FLAG_MIDGAME  = 1 << 0;
+	const Int FLAG_LATEGAME = 1 << 1;
+
+	UnsignedInt curFrame = TheGameLogic->getFrame();
+	if (curFrame < m_nextMilestoneCheckFrame) return;
+	m_nextMilestoneCheckFrame = curFrame + CHECK_INTERVAL_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	if (curFrame >= MIDGAME_FRAME && !(m_milestoneAnnouncedMask & FLAG_MIDGAME))
+	{
+		m_milestoneAnnouncedMask |= FLAG_MIDGAME;
+		if (isLowestIndexTacticalAIOnTeam(m_player))
+		{
+			UnicodeString msg;
+			msg.format(L"%ls: massing forces for the mid-game push.",
+				m_player->getPlayerDisplayName().str());
+			renderAllyMessage(m_player, msg);
+		}
+	}
+
+	if (curFrame >= LATEGAME_FRAME && !(m_milestoneAnnouncedMask & FLAG_LATEGAME))
+	{
+		m_milestoneAnnouncedMask |= FLAG_LATEGAME;
+
+		// Syn/Dan easter egg: each TacticalAI checks its own current target.
+		// Per-player m_synAnnounced prevents repeat firing within one player.
+		Player *enemy = getAiEnemy();
+		if (enemy && !m_synAnnounced)
+		{
+			UnicodeString display = enemy->getPlayerDisplayName();
+			if (display.compareNoCase(L"Syn") == 0)
+			{
+				m_synAnnounced = true;
+				UnicodeString msg = UnicodeString(L"I'm coming for you Dan!");
+				renderBroadcastMessage(m_player, msg);
+			}
+		}
+
+		if (isLowestIndexTacticalAIOnTeam(m_player))
+		{
+			UnicodeString msg;
+			msg.format(L"%ls: late-game offensive committed.",
+				m_player->getPlayerDisplayName().str());
+			renderAllyMessage(m_player, msg);
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Distress signal: poll structure HP every 2s into a 5-slot ring (10s window).
+// Trigger when (a) total structure HP drops by more than DISTRESS_HP_DELTA over
+// the window, or (b) a structure was destroyed inside the window. Cooldown is
+// 45s and bypasses other ally-message cooldowns.
+//----------------------------------------------------------------------------------------------------------
+void AISkirmishPlayer::processDistressSignal()
+{
+	if (!isTacticalAI()) return;
+
+	const Int SAMPLE_INTERVAL_SECONDS    = 2;
+	const Int DISTRESS_COOLDOWN_SECONDS  = 45;
+	const Real DISTRESS_HP_DELTA         = 3000.0f;
+
+	UnsignedInt curFrame = TheGameLogic->getFrame();
+	if (curFrame < m_nextDistressSampleFrame) return;
+	m_nextDistressSampleFrame = curFrame + SAMPLE_INTERVAL_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	Real curHP = 0.0f;
+	Int  curCount = 0;
+	sampleStructures(m_player, &curHP, &curCount);
+
+	// Compare against the oldest entry in the ring (5 samples * 2s = 10s window).
+	Bool hasOldest = (m_distressRingFilled >= 5);
+	Real oldestHP = hasOldest ? m_distressHPRing[m_distressRingHead] : 0.0f;
+	Int oldestCount = hasOldest ? m_distressCountRing[m_distressRingHead] : 0;
+
+	// Write current sample into the slot that just became the new "head + 5",
+	// i.e. overwrite the oldest. Then advance head.
+	m_distressHPRing[m_distressRingHead] = curHP;
+	m_distressCountRing[m_distressRingHead] = curCount;
+	m_distressRingHead = (m_distressRingHead + 1) % 5;
+	if (m_distressRingFilled < 5) ++m_distressRingFilled;
+
+	if (!hasOldest) return;
+	if (curFrame < m_nextDistressAnnounceFrame) return;
+
+	Bool structureLost = (curCount < oldestCount);
+	Bool heavyDamage   = ((oldestHP - curHP) >= DISTRESS_HP_DELTA);
+	if (!structureLost && !heavyDamage) return;
+
+	m_nextDistressAnnounceFrame = curFrame + DISTRESS_COOLDOWN_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	// Quadrant of the player's base center, as the rough hot zone.
+	const WideChar *quad = quadrantLabel(m_baseCenter);
+	UnicodeString msg;
+	msg.format(L"%ls: under heavy attack — %ls!",
+		m_player->getPlayerDisplayName().str(), quad);
+	renderAllyMessage(m_player, msg);
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Attack-commit announcement: posted when commitIdleArmy() dispatches a force
+// against an enemy structure. 60s per-AI cooldown so several short dispatches
+// don't pile up. Beacon-directive dispatches are excluded by the caller; those
+// are already announced via processBeaconDirective().
+//----------------------------------------------------------------------------------------------------------
+void AISkirmishPlayer::announceAttackCommit(const Coord3D *target, Player *enemyPlayer)
+{
+	if (!target || !enemyPlayer) return;
+
+	const Int ATTACK_ANNOUNCE_COOLDOWN_SECONDS = 60;
+	UnsignedInt curFrame = TheGameLogic->getFrame();
+	if (curFrame < m_nextAttackAnnounceFrame) return;
+	m_nextAttackAnnounceFrame = curFrame + ATTACK_ANNOUNCE_COOLDOWN_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	const WideChar *quad = quadrantLabel(*target);
+	UnicodeString msg;
+	msg.format(L"%ls: attacking %ls — %ls.",
+		m_player->getPlayerDisplayName().str(),
+		enemyPlayer->getPlayerDisplayName().str(),
+		quad);
+	renderAllyMessage(m_player, msg);
 }
 
 //----------------------------------------------------------------------------------------------------------
