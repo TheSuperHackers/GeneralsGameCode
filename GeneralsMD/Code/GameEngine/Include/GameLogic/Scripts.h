@@ -971,6 +971,8 @@ public:
 		START_POSITION_IS,											// True if our start position matches.
 		NAMED_HAS_FREE_CONTAINER_SLOTS,					///< Kris -- Checks if any given container has any free slots.
 
+		PLAYER_IS_TACTICAL_AI,									// True if the resolved player was lobby-set to SLOT_TACTICAL_AI.
+
 		NUM_ITEMS		 // Always the last condition.
 	};
 

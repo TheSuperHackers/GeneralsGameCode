@@ -4832,6 +4832,15 @@ void ScriptEngine::init()
 	curTemplate->m_uiStrings[0] = " ";
 	curTemplate->m_uiStrings[1] = " has free container slots.";
 
+	curTemplate = &m_conditionTemplates[Condition::PLAYER_IS_TACTICAL_AI];
+	curTemplate->m_internalName = "PLAYER_IS_TACTICAL_AI";
+	curTemplate->m_uiName = "Player_/ Player is a Tactical AI (lobby slot SLOT_TACTICAL_AI).";
+	curTemplate->m_numParameters = 1;
+	curTemplate->m_parameters[0] = Parameter::SIDE;
+	curTemplate->m_numUiStrings = 2;
+	curTemplate->m_uiStrings[0] = " ";
+	curTemplate->m_uiStrings[1] = " is a Tactical AI player.";
+
 	curTemplate = &m_conditionTemplates[Condition::PLAYER_BUILT_UPGRADE];
 	curTemplate->m_internalName = "PLAYER_BUILT_UPGRADE";
 	curTemplate->m_uiName = "Player_/ Player built an upgrade.";

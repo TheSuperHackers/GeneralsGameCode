@@ -146,6 +146,7 @@ protected:
 	Bool evaluateCanPurchaseScience									(Parameter *pPlayerParm, Parameter *pScienceParm);
 	Bool evaluateSciencePurchasePoints							(Parameter *pPlayerParm, Parameter *pSciencePointParm);
 	Bool evaluateNamedHasFreeContainerSlots(Parameter *pUnitParm);
+	Bool evaluatePlayerIsTacticalAI(Parameter *pPlayerParm);
 	Bool evaluatePlayerDestroyedNOrMoreBuildings(Parameter *pPlayerParm, Parameter *pNumParm, Parameter *pOppenentParm);
 	Bool evaluateUnitHasObjectStatus(Parameter *pUnitParm, Parameter *pObjectStatus);
 	Bool evaluateTeamHasObjectStatus(Parameter *pTeamParm, Parameter *pObjectStatus, Bool entireTeam);
