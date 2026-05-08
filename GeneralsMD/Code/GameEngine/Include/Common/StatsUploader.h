@@ -40,6 +40,23 @@ void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int 
 void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen,
                           const AsciiString& filename, unsigned int seed);
 
+/// Allocate a new buffer that is the on-disk replay bytes followed by a
+/// fixed "ZUTG" trailer (magic + version + payload length) used to mark
+/// uploads sourced from the Zulu client. The on-disk file itself is
+/// never touched; this only exists to tag the upload-buffer copy so the
+/// server can distinguish Zulu uploads from third-party (e.g. gentool)
+/// uploads of the same file. Caller frees the returned buffer with free().
+/// Trailer layout (little-endian, 8 bytes total):
+///   [0..3] magic            "ZUTG"
+///   [4..5] version          0x0001
+///   [6..7] payload length   0x0000 (v1 has no payload)
+/// @param fileData Pointer to the raw on-disk replay bytes
+/// @param fileLen Length of fileData in bytes
+/// @param outLen On success, receives the length of the returned buffer
+/// @return Newly malloc'd buffer of length fileLen + 8, or nullptr on failure
+void *AppendZuluUploadTag(const void *fileData, unsigned int fileLen,
+                          unsigned int *outLen);
+
 /// Ask the server whether it already has the map identified by mapCRC.
 /// Issues an HTTP GET to "<checkUrl>?crc=<hex>" and inspects the response
 /// body. Returns true only if the server explicitly returns "false"
