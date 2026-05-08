@@ -2229,7 +2229,8 @@ Object *AIPlayer::findSupplyCenter(Int minimumCash)
 				Real radius = SUPPLY_CENTER_CLOSE_DIST + obj->getGeometryInfo().getBoundingCircleRadius();
 
 				PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_CASH_GENERATOR), KINDOFMASK_NONE);
-				PartitionFilterPlayer f2(m_player, true);	// Only find your own units.
+				// Match own + allied collectors so we don't double up on a pile an ally is already mining.
+				PartitionFilterPlayerAffiliation f2(m_player, (ALLOW_SAME_PLAYER | ALLOW_ALLIES), true);
 				PartitionFilterOnMap filterMapStatus;
 
 
@@ -2959,6 +2960,37 @@ void AIPlayer::doUpgradesAndSkills()
 	if (!checkScience) {
 		return;
 	}
+
+	// Vanilla America AI: hardcoded fixed-priority science order.
+	// SpyDrone -> Pathfinder -> DaisyCutter -> SpectreGunshipSolo -> A10 1/2/3.
+	if (m_player->getSide() == "America") {
+		static const char *const s_americaSciences[] = {
+			"SCIENCE_SpyDrone",
+			"SCIENCE_Pathfinder",
+			"SCIENCE_DaisyCutter",
+			"SCIENCE_SpectreGunshipSolo",
+			"SCIENCE_A10ThunderboltMissileStrike1",
+			"SCIENCE_A10ThunderboltMissileStrike2",
+			"SCIENCE_A10ThunderboltMissileStrike3",
+		};
+		const Int s_americaScienceCount = sizeof(s_americaSciences)/sizeof(s_americaSciences[0]);
+		Int sci;
+		for (sci = 0; sci < s_americaScienceCount; sci++) {
+			ScienceType science = TheScienceStore->getScienceFromInternalName(AsciiString(s_americaSciences[sci]));
+			if (science == SCIENCE_INVALID) continue;
+			if (m_player->isCapableOfPurchasingScience(science)) {
+				if (m_player->attemptToPurchaseScience(science)) {
+					AsciiString msg = TheNameKeyGenerator->keyToName(m_player->getPlayerNameKey());
+					msg.concat(" purchases (America override) ");
+					msg.concat(TheScienceStore->getInternalNameForScience(science));
+					msg.concat(".");
+					TheScriptEngine->AppendDebugMessage(msg, false);
+				}
+			}
+		}
+		return;
+	}
+
 	const AISideInfo *sideInfo = TheAI->getAiData()->m_sideInfo;
 	while (sideInfo) {
 		if (sideInfo->m_side == m_player->getSide()) {

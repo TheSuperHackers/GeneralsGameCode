@@ -31,6 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
+#include "Common/PlayerTemplate.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Xfer.h"
@@ -660,6 +661,31 @@ void TransportContain::onCapture( Player *oldOwner, Player *newOwner )
 			orderAllPassengersToExit( CMD_FROM_AI, FALSE );
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// America-family transports kick passengers out when the vehicle drops to red health,
+// so squishy infantry like Missile Defenders aren't trapped in a coffin on wheels.
+// Skip airborne transports (Chinook etc.) so we don't dump troops mid-flight.
+// ------------------------------------------------------------------------------------------------
+void TransportContain::onBodyDamageStateChange( const DamageInfo* /*damageInfo*/,
+																								BodyDamageType /*oldState*/,
+																								BodyDamageType newState )
+{
+	if (newState != BODY_REALLYDAMAGED) return;
+	if (getContainCount() <= 0) return;
+
+	Object *self = getObject();
+	if (self == nullptr) return;
+	if (self->isUsingAirborneLocomotor()) return;
+
+	const Player *owner = self->getControllingPlayer();
+	if (owner == nullptr) return;
+	const PlayerTemplate *tmpl = owner->getPlayerTemplate();
+	if (tmpl == nullptr) return;
+	if (tmpl->getBaseSide() != "America") return;
+
+	orderAllPassengersToExit( CMD_FROM_AI, FALSE );
 }
 
 // ------------------------------------------------------------------------------------------------
