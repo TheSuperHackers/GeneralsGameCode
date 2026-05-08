@@ -791,9 +791,20 @@ void RecorderClass::stopRecording() {
 					{
 						if (fread(fileData, 1, static_cast<size_t>(size), rf) == static_cast<size_t>(size))
 						{
-							printf("[replay] Uploading %ld bytes to %s\n", size, TheGlobalData->m_replayUrl.str());
-							fflush(stdout);
-							UploadReplayToServer(TheGlobalData->m_replayUrl, fileData, static_cast<unsigned int>(size), m_fileName, GetGameLogicRandomSeed());
+							// Append a ZUTG trailer so the server can distinguish
+							// uploads sourced from the Zulu client from third-party
+							// (e.g. gentool) uploads of the same on-disk file. The
+							// disk file itself is not modified.
+							unsigned int uploadLen = 0;
+							void *uploadBuf = AppendZuluUploadTag(fileData, static_cast<unsigned int>(size), &uploadLen);
+							if (uploadBuf != nullptr)
+							{
+								printf("[replay] Uploading %u bytes (incl. %u-byte ZUTG trailer) to %s\n",
+									uploadLen, uploadLen - static_cast<unsigned int>(size), TheGlobalData->m_replayUrl.str());
+								fflush(stdout);
+								UploadReplayToServer(TheGlobalData->m_replayUrl, uploadBuf, uploadLen, m_fileName, GetGameLogicRandomSeed());
+								free(uploadBuf);
+							}
 						}
 						free(fileData);
 					}

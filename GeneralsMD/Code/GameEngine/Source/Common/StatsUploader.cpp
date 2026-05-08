@@ -262,6 +262,29 @@ void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int
 	httpPostMultipartFile(url, "file", nameBuf, data, dataLen, seed, "Replay upload");
 }
 
+void *AppendZuluUploadTag(const void *fileData, unsigned int fileLen,
+                          unsigned int *outLen)
+{
+	static const unsigned char tag[8] = {
+		'Z', 'U', 'T', 'G',
+		0x01, 0x00,  // version 1, little-endian
+		0x00, 0x00,  // payload length 0
+	};
+	if (outLen != nullptr)
+		*outLen = 0;
+	if (fileData == nullptr || fileLen == 0)
+		return nullptr;
+	unsigned int newLen = fileLen + (unsigned int)sizeof(tag);
+	void *buf = malloc(newLen);
+	if (buf == nullptr)
+		return nullptr;
+	memcpy(buf, fileData, fileLen);
+	memcpy((char *)buf + fileLen, tag, sizeof(tag));
+	if (outLen != nullptr)
+		*outLen = newLen;
+	return buf;
+}
+
 void UploadMapToServer(const AsciiString& uploadUrl, const void *data, unsigned int dataLen,
                        unsigned int mapCRC, const AsciiString& mapName,
                        const char *fileKind, unsigned int seed)
