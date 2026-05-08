@@ -1435,9 +1435,11 @@ void AISkirmishPlayer::announceMilestones()
 
 //----------------------------------------------------------------------------------------------------------
 // Distress signal: poll structure HP every 2s into a 5-slot ring (10s window).
-// Trigger when (a) total structure HP drops by more than DISTRESS_HP_DELTA over
-// the window, or (b) a structure was destroyed inside the window. Cooldown is
-// 45s and bypasses other ally-message cooldowns.
+// Trigger when (a) total structure HP drops by at least DISTRESS_HP_DELTA over
+// the window, or (b) the structure count drops by at least DISTRESS_COUNT_DROP
+// inside the window. Earlier versions fired on any single structure loss, which
+// produced false-positives for things like a Patriot Missile being picked off.
+// Cooldown is 45s and bypasses other ally-message cooldowns.
 //----------------------------------------------------------------------------------------------------------
 void AISkirmishPlayer::processDistressSignal()
 {
@@ -1445,7 +1447,8 @@ void AISkirmishPlayer::processDistressSignal()
 
 	const Int SAMPLE_INTERVAL_SECONDS    = 2;
 	const Int DISTRESS_COOLDOWN_SECONDS  = 45;
-	const Real DISTRESS_HP_DELTA         = 3000.0f;
+	const Real DISTRESS_HP_DELTA         = 6000.0f;
+	const Int DISTRESS_COUNT_DROP        = 2;
 
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame < m_nextDistressSampleFrame) return;
@@ -1470,7 +1473,7 @@ void AISkirmishPlayer::processDistressSignal()
 	if (!hasOldest) return;
 	if (curFrame < m_nextDistressAnnounceFrame) return;
 
-	Bool structureLost = (curCount < oldestCount);
+	Bool structureLost = ((oldestCount - curCount) >= DISTRESS_COUNT_DROP);
 	Bool heavyDamage   = ((oldestHP - curHP) >= DISTRESS_HP_DELTA);
 	if (!structureLost && !heavyDamage) return;
 
@@ -1479,7 +1482,7 @@ void AISkirmishPlayer::processDistressSignal()
 	// Quadrant of the player's base center, as the rough hot zone.
 	const WideChar *quad = quadrantLabel(m_baseCenter);
 	UnicodeString msg;
-	msg.format(L"%ls: under heavy attack — %ls!",
+	msg.format(L"%ls: under heavy attack at %ls!",
 		m_player->getPlayerDisplayName().str(), quad);
 	renderAllyMessage(m_player, msg);
 }
@@ -1501,7 +1504,7 @@ void AISkirmishPlayer::announceAttackCommit(const Coord3D *target, Player *enemy
 
 	const WideChar *quad = quadrantLabel(*target);
 	UnicodeString msg;
-	msg.format(L"%ls: attacking %ls — %ls.",
+	msg.format(L"%ls: attacking %ls at %ls.",
 		m_player->getPlayerDisplayName().str(),
 		enemyPlayer->getPlayerDisplayName().str(),
 		quad);
