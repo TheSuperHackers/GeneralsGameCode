@@ -1627,6 +1627,18 @@ Bool ScriptConditions::evaluateNamedHasFreeContainerSlots(Parameter *pUnitParm)
 	return FALSE;
 }
 
+//-------------------------------------------------------------------------------------------------
+/** evaluatePlayerIsTacticalAI - True if the resolved player was lobby-set to SLOT_TACTICAL_AI. */
+//-------------------------------------------------------------------------------------------------
+Bool ScriptConditions::evaluatePlayerIsTacticalAI(Parameter *pPlayerParm)
+{
+	Player *player = playerFromParam(pPlayerParm);
+	if (!player) {
+		return false;
+	}
+	return player->isTacticalAIPlayer();
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedEnteredArea */
@@ -2866,6 +2878,8 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			return evaluateSciencePurchasePoints(pCondition->getParameter(0), pCondition->getParameter(1));
 		case Condition::NAMED_HAS_FREE_CONTAINER_SLOTS:
 			return evaluateNamedHasFreeContainerSlots(pCondition->getParameter(0));
+		case Condition::PLAYER_IS_TACTICAL_AI:
+			return evaluatePlayerIsTacticalAI(pCondition->getParameter(0));
 		case Condition::DEFUNCT_PLAYER_SELECTED_GENERAL:
 		case Condition::DEFUNCT_PLAYER_SELECTED_GENERAL_FROM_NAMED:
 			DEBUG_CRASH(("PLAYER_SELECTED_GENERAL script conditions are no longer in use"));

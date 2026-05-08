@@ -31,6 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
+#include "Common/PlayerTemplate.h"
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Xfer.h"
@@ -660,6 +661,40 @@ void TransportContain::onCapture( Player *oldOwner, Player *newOwner )
 			orderAllPassengersToExit( CMD_FROM_AI, FALSE );
 		}
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// Tactical-AI USA transports kick passengers out when the vehicle drops to red health,
+// so squishy infantry like Missile Defenders aren't trapped in a coffin on wheels.
+// Gated to Tactical AI only: humans have manual unload, and vanilla skirmish AI is
+// left alone to keep replay behavior unchanged. Scoped to USA sub-generals (vanilla,
+// Air Force, Laser, Super Weapon) to match the lobby AI's transport-doctrine.
+// Skip airborne transports (Chinook etc.) so we don't dump troops mid-flight.
+// ------------------------------------------------------------------------------------------------
+void TransportContain::onBodyDamageStateChange( const DamageInfo* /*damageInfo*/,
+																								BodyDamageType /*oldState*/,
+																								BodyDamageType newState )
+{
+	if (newState != BODY_REALLYDAMAGED) return;
+	if (getContainCount() <= 0) return;
+
+	Object *self = getObject();
+	if (self == nullptr) return;
+	if (self->isUsingAirborneLocomotor()) return;
+
+	const Player *owner = self->getControllingPlayer();
+	if (owner == nullptr) return;
+	if (!owner->isTacticalAIPlayer()) return;
+	const PlayerTemplate *tmpl = owner->getPlayerTemplate();
+	if (tmpl == nullptr) return;
+	// PlayerTemplate.ini's BaseSide for every USA sub-general (vanilla,
+	// Air Force, Laser, Super Weapon) is "USA"; the per-template Side
+	// field is "America"/"AmericaSuperWeaponGeneral"/etc. Match BaseSide
+	// so all four sub-generals trigger the eject without enumerating
+	// every Side variant.
+	if (tmpl->getBaseSide() != "USA") return;
+
+	orderAllPassengersToExit( CMD_FROM_AI, FALSE );
 }
 
 // ------------------------------------------------------------------------------------------------

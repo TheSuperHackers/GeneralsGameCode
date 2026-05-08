@@ -86,6 +86,10 @@ public:
 	virtual Bool isRiderChangeContain() const override { return FALSE; }
   virtual Bool isSpecialOverlordStyleContainer() const override {return FALSE;}
 
+	virtual void onBodyDamageStateChange( const DamageInfo* damageInfo,
+																				BodyDamageType oldState,
+																				BodyDamageType newState ) override;
+
 	virtual Int getContainMax() const override;
 
 	virtual Int getExtraSlotsInUse() override { return m_extraSlotsInUse; }///< Transports have the ability to carry guys how take up more than spot.

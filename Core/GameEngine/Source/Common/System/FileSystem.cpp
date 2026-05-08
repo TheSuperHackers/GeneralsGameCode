@@ -167,6 +167,19 @@ void		FileSystem::reset()
 }
 
 //============================================================================
+// Files we ship in our mod .big that must override any loose copy in the
+// install directory. Stock behavior prefers loose-on-disk over archive; for
+// these specific paths we flip that so our packaged version always wins.
+//============================================================================
+static Bool fileSystemPrefersArchive(const Char *filename)
+{
+	if (filename == nullptr) return FALSE;
+	AsciiString name(filename);
+	return (name.compareNoCase("Data\\Scripts\\SkirmishScripts.scb") == 0)
+		|| (name.compareNoCase("Data/Scripts/SkirmishScripts.scb") == 0);
+}
+
+//============================================================================
 // FileSystem::open
 //============================================================================
 
@@ -175,7 +188,9 @@ File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize
 	USE_PERF_TIMER(FileSystem)
 	File *file = nullptr;
 
-	if ( TheLocalFileSystem != nullptr )
+	const Bool preferArchive = fileSystemPrefersArchive(filename);
+
+	if ( TheLocalFileSystem != nullptr && !preferArchive )
 	{
 		if (instance != 0)
 		{
