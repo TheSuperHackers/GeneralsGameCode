@@ -60,9 +60,9 @@ protected:
 };
 
 
-class NullPrototypeClass : public W3DMPO, public PrototypeClass
+class NullPrototypeClass : public PrototypeClass
 {
-	W3DMPO_GLUE(NullPrototypeClass)
+	W3DMPO_CODE(NullPrototypeClass)
 public:
 	NullPrototypeClass();
 	NullPrototypeClass(const W3dNullObjectStruct &null);

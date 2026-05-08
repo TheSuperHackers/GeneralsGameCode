@@ -53,7 +53,7 @@ class INIClass;
 ** TextureMapperClass
 ** Base class for all texture mappers.
 */
-class TextureMapperClass : public W3DMPO, public RefCountClass
+class TextureMapperClass : public RefCountClass
 {
 	public:
 
@@ -106,7 +106,7 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 */
 class ScaleTextureMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(ScaleTextureMapperClass)
+	W3DMPO_CODE(ScaleTextureMapperClass)
 public:
 	ScaleTextureMapperClass(unsigned int stage);
 	ScaleTextureMapperClass(const Vector2 &scale, unsigned int stage);
@@ -129,7 +129,7 @@ protected:
 */
 class LinearOffsetTextureMapperClass : public ScaleTextureMapperClass
 {
-	W3DMPO_GLUE(LinearOffsetTextureMapperClass)
+	W3DMPO_CODE(LinearOffsetTextureMapperClass)
 public:
 	LinearOffsetTextureMapperClass(const Vector2 &offset_per_sec, const Vector2 &scale, unsigned int stage);
 	LinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -169,7 +169,7 @@ protected:
 */
 class GridTextureMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(GridTextureMapperClass)
+	W3DMPO_CODE(GridTextureMapperClass)
 public:
 	GridTextureMapperClass(float fps, unsigned int gridwidth_log2, unsigned int stage);
 	GridTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -211,7 +211,7 @@ protected:
 */
 class RotateTextureMapperClass : public ScaleTextureMapperClass
 {
-	W3DMPO_GLUE(RotateTextureMapperClass)
+	W3DMPO_CODE(RotateTextureMapperClass)
 public:
 	RotateTextureMapperClass(float rad_per_sec, const Vector2& center, unsigned int stage);
 	RotateTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -238,7 +238,7 @@ private:
 */
 class SineLinearOffsetTextureMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(SineLinearOffsetTextureMapperClass)
+	W3DMPO_CODE(SineLinearOffsetTextureMapperClass)
 public:
 	SineLinearOffsetTextureMapperClass(const Vector3 &uafp, const Vector3 &vafp, unsigned int stage);
 	SineLinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -265,7 +265,7 @@ private:
 */
 class StepLinearOffsetTextureMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(StepLinearOffsetTextureMapperClass)
+	W3DMPO_CODE(StepLinearOffsetTextureMapperClass)
 public:
 	StepLinearOffsetTextureMapperClass(const Vector2 &step, float steps_per_sec, unsigned int stage);
 	StepLinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -292,7 +292,7 @@ private:
 */
 class ZigZagLinearOffsetTextureMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(ZigZagLinearOffsetTextureMapperClass)
+	W3DMPO_CODE(ZigZagLinearOffsetTextureMapperClass)
 public:
 	ZigZagLinearOffsetTextureMapperClass(const Vector2 &speed, float period, unsigned int stage);
 	ZigZagLinearOffsetTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -321,7 +321,7 @@ private:
 
 class ClassicEnvironmentMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(ClassicEnvironmentMapperClass)
+	W3DMPO_CODE(ClassicEnvironmentMapperClass)
 public:
 	ClassicEnvironmentMapperClass(unsigned int stage) : TextureMapperClass(stage) { }
 	ClassicEnvironmentMapperClass(const ClassicEnvironmentMapperClass & src) : TextureMapperClass(src) { }
@@ -333,7 +333,7 @@ public:
 
 class EnvironmentMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(EnvironmentMapperClass)
+	W3DMPO_CODE(EnvironmentMapperClass)
 public:
 	EnvironmentMapperClass(unsigned int stage) : TextureMapperClass(stage) { }
 	EnvironmentMapperClass(const EnvironmentMapperClass & src) : TextureMapperClass(src) { }
@@ -345,7 +345,7 @@ public:
 
 class EdgeMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(EdgeMapperClass)
+	W3DMPO_CODE(EdgeMapperClass)
 public:
 	EdgeMapperClass(unsigned int stage);
 	EdgeMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -365,7 +365,7 @@ protected:
 
 class WSClassicEnvironmentMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(WSClassicEnvironmentMapperClass)
+	W3DMPO_CODE(WSClassicEnvironmentMapperClass)
 public:
 	WSClassicEnvironmentMapperClass(unsigned int stage) : TextureMapperClass(stage) { }
 	WSClassicEnvironmentMapperClass(const WSClassicEnvironmentMapperClass & src) : TextureMapperClass(src) { }
@@ -377,7 +377,7 @@ public:
 
 class WSEnvironmentMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(WSEnvironmentMapperClass)
+	W3DMPO_CODE(WSEnvironmentMapperClass)
 public:
 	WSEnvironmentMapperClass(unsigned int stage) : TextureMapperClass(stage) { }
 	WSEnvironmentMapperClass(const WSEnvironmentMapperClass & src) : TextureMapperClass(src) { }
@@ -389,7 +389,7 @@ public:
 
 class GridClassicEnvironmentMapperClass : public GridTextureMapperClass
 {
-	W3DMPO_GLUE(GridClassicEnvironmentMapperClass)
+	W3DMPO_CODE(GridClassicEnvironmentMapperClass)
 public:
 	GridClassicEnvironmentMapperClass(float fps,unsigned int gridwidth, unsigned int stage):GridTextureMapperClass(fps,gridwidth,stage) { }
 	GridClassicEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini,section,stage) { }
@@ -402,7 +402,7 @@ public:
 
 class GridEnvironmentMapperClass : public GridTextureMapperClass
 {
-	W3DMPO_GLUE(GridEnvironmentMapperClass)
+	W3DMPO_CODE(GridEnvironmentMapperClass)
 public:
 	GridEnvironmentMapperClass(float fps,unsigned int gridwidth, unsigned int stage):GridTextureMapperClass(fps,gridwidth,stage) { }
 	GridEnvironmentMapperClass(const INIClass &ini, const char *section, unsigned int stage) : GridTextureMapperClass(ini,section,stage) { }
@@ -421,7 +421,7 @@ public:
 // ----------------------------------------------------------------------------
 class ScreenMapperClass : public LinearOffsetTextureMapperClass
 {
-	W3DMPO_GLUE(ScreenMapperClass)
+	W3DMPO_CODE(ScreenMapperClass)
 public:
 	ScreenMapperClass(const Vector2 &offset_per_sec, const Vector2 &scale, unsigned int stage):LinearOffsetTextureMapperClass(offset_per_sec,scale,stage) { }
 	ScreenMapperClass(const INIClass &ini, const char *section, unsigned int stage):LinearOffsetTextureMapperClass(ini,section,stage) { }
@@ -437,7 +437,7 @@ public:
 */
 class RandomTextureMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(RandomTextureMapperClass)
+	W3DMPO_CODE(RandomTextureMapperClass)
 public:
 	RandomTextureMapperClass(float fps, unsigned int stage);
 	RandomTextureMapperClass(const INIClass &ini, const char *section, unsigned int stage);
@@ -466,7 +466,7 @@ protected:
 */
 class BumpEnvTextureMapperClass : public LinearOffsetTextureMapperClass
 {
-	W3DMPO_GLUE(BumpEnvTextureMapperClass)
+	W3DMPO_CODE(BumpEnvTextureMapperClass)
 public:
 	BumpEnvTextureMapperClass(float rad_per_sec, float scale_factor, const Vector2 & offset_per_sec, const Vector2 &scale, unsigned int stage);
 	BumpEnvTextureMapperClass(INIClass &ini, const char *section, unsigned int stage);

@@ -60,9 +60,9 @@ struct _D3DMATERIAL8;
 ** This is simply the typical W3D thin-wrapper around the surrender vertex material.
 ** The vertex material defines things like the lighting properties of a vertex.
 */
-class VertexMaterialClass : public W3DMPO, public RefCountClass
+class VertexMaterialClass : public RefCountClass
 {
-	W3DMPO_GLUE(VertexMaterialClass)
+	W3DMPO_CODE(VertexMaterialClass)
 
 	friend DX8Wrapper;
 

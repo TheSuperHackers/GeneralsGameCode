@@ -50,10 +50,8 @@ class SortingIndexBufferClass;
 
 // ----------------------------------------------------------------------------
 
-class IndexBufferClass : public W3DMPO, public RefCountClass
+class IndexBufferClass : public RefCountClass
 {
-	// nope, it's an ABC
-	//W3DMPO_GLUE(IndexBufferClass)
 protected:
 	virtual ~IndexBufferClass() override;
 public:
@@ -105,9 +103,9 @@ protected:
 
 // HY 2/14/01
 // Created
-class DynamicIBAccessClass : public W3DMPO
+class DynamicIBAccessClass
 {
-	W3DMPO_GLUE(DynamicIBAccessClass)
+	W3DMPO_CODE(DynamicIBAccessClass)
 
 	friend DX8Wrapper;
 	friend SortingRendererClass;
@@ -122,7 +120,7 @@ class DynamicIBAccessClass : public W3DMPO
 
 public:
 	DynamicIBAccessClass(unsigned short type, unsigned short index_count);
-	virtual ~DynamicIBAccessClass() override;
+	~DynamicIBAccessClass();
 
 	unsigned Get_Type() const { return Type; }
 	unsigned short Get_Index_Count() const { return IndexCount; }
@@ -155,7 +153,7 @@ public:
 */
 class DX8IndexBufferClass : public IndexBufferClass
 {
-	W3DMPO_GLUE(DX8IndexBufferClass)
+	W3DMPO_CODE(DX8IndexBufferClass)
 
 	friend IndexBufferClass::WriteLockClass;
 	friend IndexBufferClass::AppendLockClass;
@@ -183,7 +181,7 @@ private:
 
 class SortingIndexBufferClass : public IndexBufferClass
 {
-	W3DMPO_GLUE(SortingIndexBufferClass)
+	W3DMPO_CODE(SortingIndexBufferClass)
 
 	friend DX8Wrapper;
 	friend SortingRendererClass;

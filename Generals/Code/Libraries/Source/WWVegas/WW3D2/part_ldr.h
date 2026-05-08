@@ -312,9 +312,9 @@ inline void ParticleEmitterDefClass::Set_Line_Texture_Mapping_Mode(int mode)
 //
 //	ParticleEmitterPrototypeClass
 //
-class ParticleEmitterPrototypeClass : public W3DMPO, public PrototypeClass
+class ParticleEmitterPrototypeClass : public PrototypeClass
 {
-	W3DMPO_GLUE(ParticleEmitterPrototypeClass)
+	W3DMPO_CODE(ParticleEmitterPrototypeClass)
 	public:
 
 		///////////////////////////////////////////////////////////

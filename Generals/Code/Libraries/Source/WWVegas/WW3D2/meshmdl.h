@@ -117,9 +117,9 @@ struct VertexFormatXYZNDUV2;
 ** GapFillerClass
 ** This class is used to generate gap-filling polygons for "N-Patched" meshes
 */
-class GapFillerClass : public W3DMPO
+class GapFillerClass
 {
-	W3DMPO_GLUE(GapFillerClass)
+	W3DMPO_CODE(GapFillerClass)
 
 	TriIndex* PolygonArray;
 	unsigned PolygonCount;
@@ -133,7 +133,7 @@ class GapFillerClass : public W3DMPO
 public:
 	GapFillerClass(MeshModelClass* mmc);
 	GapFillerClass(const GapFillerClass& that);
-	virtual ~GapFillerClass() override;
+	~GapFillerClass();
 
 	WWINLINE const TriIndex* Get_Polygon_Array() const { return PolygonArray; }
 	WWINLINE unsigned Get_Polygon_Count() const { return PolygonCount; }
@@ -147,7 +147,7 @@ public:
 
 class MeshModelClass : public MeshGeometryClass
 {
-	W3DMPO_GLUE(MeshModelClass)
+	W3DMPO_CODE(MeshModelClass)
 	GapFillerClass* GapFiller;
 
 public:

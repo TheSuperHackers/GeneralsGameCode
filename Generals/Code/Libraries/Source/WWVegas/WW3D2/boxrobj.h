@@ -129,9 +129,9 @@ inline void BoxRenderObjClass::Set_Local_Min_Max(const Vector3 & min,const Vecto
 /*
 ** AABoxRenderObjClass -- RenderObject for axis-aligned collision boxes.
 */
-class AABoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
+class AABoxRenderObjClass : public BoxRenderObjClass
 {
-	W3DMPO_GLUE(AABoxRenderObjClass)
+	W3DMPO_CODE(AABoxRenderObjClass)
 public:
 
 	AABoxRenderObjClass();
@@ -180,9 +180,9 @@ inline const AABoxClass & AABoxRenderObjClass::Get_Box()
 /*
 ** OBBoxRenderObjClass - render object for oriented collision boxes
 */
-class OBBoxRenderObjClass : public W3DMPO, public BoxRenderObjClass
+class OBBoxRenderObjClass : public BoxRenderObjClass
 {
-	W3DMPO_GLUE(OBBoxRenderObjClass)
+	W3DMPO_CODE(OBBoxRenderObjClass)
 public:
 
 	OBBoxRenderObjClass();
@@ -237,9 +237,9 @@ public:
 /*
 ** Prototype for Box objects
 */
-class BoxPrototypeClass : public W3DMPO, public PrototypeClass
+class BoxPrototypeClass : public PrototypeClass
 {
-	W3DMPO_GLUE(BoxPrototypeClass)
+	W3DMPO_CODE(BoxPrototypeClass)
 public:
 	BoxPrototypeClass(W3dBoxStruct box);
 	virtual const char *				Get_Name() const override;

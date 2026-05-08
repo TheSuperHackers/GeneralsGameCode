@@ -60,7 +60,7 @@
 */
 class MatrixMapperClass : public TextureMapperClass
 {
-	W3DMPO_GLUE(MatrixMapperClass)
+	W3DMPO_CODE(MatrixMapperClass)
 public:
 
 	enum {

@@ -353,9 +353,9 @@ public:
 ** information needed to construct a particular instance of a dazzle.  Prototypes are
 ** stored in the asset manager and used to construct render objects when needed.
 */
-class DazzlePrototypeClass : public W3DMPO, public PrototypeClass
+class DazzlePrototypeClass : public PrototypeClass
 {
-	W3DMPO_GLUE(DazzlePrototypeClass)
+	W3DMPO_CODE(DazzlePrototypeClass)
 public:
 	DazzlePrototypeClass() : DazzleType(0)				{ }
 

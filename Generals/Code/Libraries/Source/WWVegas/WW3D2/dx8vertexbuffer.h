@@ -72,11 +72,8 @@ public:
 ** DX8VertexBufferClass
 ** This class wraps a DX8 vertex buffer.  Use the lock objects to modify or append to the vertex buffer.
 */
-class VertexBufferClass : public W3DMPO, public RefCountClass
+class VertexBufferClass : public RefCountClass
 {
-	// nope, an ABC
-	//W3DMPO_GLUE(VertexBufferClass)
-
 protected:
 	VertexBufferClass(unsigned type, unsigned FVF, unsigned short VertexCount);
 	virtual ~VertexBufferClass() override;
@@ -199,7 +196,7 @@ inline VertexFormatXYZNDUV2 * DynamicVBAccessClass::WriteLockClass::Get_Formatte
 */
 class DX8VertexBufferClass : public VertexBufferClass
 {
-	W3DMPO_GLUE(DX8VertexBufferClass)
+	W3DMPO_CODE(DX8VertexBufferClass)
 protected:
 	virtual ~DX8VertexBufferClass() override;
 public:
@@ -238,7 +235,7 @@ protected:
 */
 class SortingVertexBufferClass : public VertexBufferClass
 {
-	W3DMPO_GLUE(SortingVertexBufferClass)
+	W3DMPO_CODE(SortingVertexBufferClass)
 
 	friend DX8Wrapper;
 	friend SortingRendererClass;

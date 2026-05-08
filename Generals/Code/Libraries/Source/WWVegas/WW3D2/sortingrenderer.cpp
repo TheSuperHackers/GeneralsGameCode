@@ -214,7 +214,7 @@ void Sort (
 
 class SortingNodeStruct : public DLNodeClass<SortingNodeStruct>
 {
-	W3DMPO_GLUE(SortingNodeStruct)
+	W3DMPO_CODE(SortingNodeStruct)
 
 public:
 	RenderStateStruct sorting_state;
