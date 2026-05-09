@@ -33,12 +33,16 @@
 #include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
 #include "Common/GameUtility.h"
+#include "Common/GlobalData.h"
 #include "Common/KindOf.h"
+#include "Common/NameKeyGenerator.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/Radar.h"
 #include "Common/Recorder.h"
+
+#include <stdio.h>
 
 #include "GameClient/InGameUI.h"
 #include "GameClient/Diplomacy.h"
@@ -192,6 +196,41 @@ void VictoryConditions::update()
 
 			if (victoriousPlayer)
 				markAllianceVictorious(victoriousPlayer);
+
+			// Headless mode: emit a single, machine-parseable line on stdout so
+			// CI / test harnesses replaying .rep files can grep the winner out
+			// without parsing the game log. Format: [HEADLESS RESULT] kv pairs.
+			// Uses the internal player name (player0/player1/...) rather than
+			// the display name so the output is plain ASCII.
+			if (TheGlobalData && TheGlobalData->m_headless)
+			{
+				if (victoriousPlayer)
+				{
+					AsciiString winnerName = TheNameKeyGenerator->keyToName(victoriousPlayer->getPlayerNameKey());
+					AsciiString winnerSide = victoriousPlayer->getSide();
+					Int winnerIdx = victoriousPlayer->getPlayerIndex();
+					fprintf(stdout, "[HEADLESS RESULT] outcome=victory end_frame=%d winner_index=%d winner_side=%s winner_name=%s\n",
+						m_endFrame, winnerIdx, winnerSide.str(), winnerName.str());
+
+					// Also list every other player so a human-readable scoreboard
+					// is easy to assemble downstream.
+					for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+					{
+						Player *p = m_players[i];
+						if (!p || p == victoriousPlayer)
+							continue;
+						AsciiString pName = TheNameKeyGenerator->keyToName(p->getPlayerNameKey());
+						const char *role = areAllies(p, victoriousPlayer) ? "ally" : "defeated";
+						fprintf(stdout, "[HEADLESS RESULT] %s index=%d side=%s name=%s\n",
+							role, p->getPlayerIndex(), p->getSide().str(), pName.str());
+					}
+				}
+				else
+				{
+					fprintf(stdout, "[HEADLESS RESULT] outcome=draw end_frame=%d\n", m_endFrame);
+				}
+				fflush(stdout);
+			}
 		}
 	}
 
