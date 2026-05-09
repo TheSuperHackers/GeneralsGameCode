@@ -35,13 +35,28 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
 "
 )
 
-# Based on original binary values for these variables.
+# Defaults match the original retail binary's reported values. `make installer`
+# overrides these via -DZULU_VERSION_* (parsed out of APPVERSION in
+# installer/Zulu.nsi by the top-level Makefile) so the binary's TheVersion
+# matches the installer version, which in turn flows into every replay
+# header recorded by that binary (Recorder.cpp:608-615). Plain `cmake`
+# builds outside the Make pipeline keep the retail-style defaults.
+if(NOT DEFINED ZULU_VERSION_MAJOR)
+    set(ZULU_VERSION_MAJOR 1)
+endif()
+if(NOT DEFINED ZULU_VERSION_MINOR)
+    set(ZULU_VERSION_MINOR 4)
+endif()
+if(NOT DEFINED ZULU_VERSION_BUILDNUM)
+    set(ZULU_VERSION_BUILDNUM 601)
+endif()
+
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "#pragma once
 
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 4
-#define VERSION_BUILDNUM 601
+#define VERSION_MAJOR ${ZULU_VERSION_MAJOR}
+#define VERSION_MINOR ${ZULU_VERSION_MINOR}
+#define VERSION_BUILDNUM ${ZULU_VERSION_BUILDNUM}
 "
 )
 
