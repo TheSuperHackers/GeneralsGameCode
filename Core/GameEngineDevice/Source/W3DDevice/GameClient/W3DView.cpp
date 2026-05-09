@@ -726,7 +726,13 @@ void W3DView::updateCameraTransform()
 //-------------------------------------------------------------------------------------------------
 void W3DView::updateCameraClipPlanes()
 {
-	Real farZ = 1200.0f;
+	// Stock retail used farZ=1200 calibrated for MaxCameraHeight=300 (ratio 4:1).
+	// Scale with the configured ceiling so a higher MaxCameraHeight (e.g. 450 in
+	// GameData.ini) doesn't leave the far portion of the visible ground beyond the
+	// clip plane, which would render as a black band along the top of the screen
+	// (worst over tall terrain whose peaks reach even deeper in camera-Z).
+	Real farZ = 4.0f * TheGlobalData->m_maxCameraHeight;
+	if (farZ < 1200.0f) farZ = 1200.0f;
 
 	if (m_useRealZoomCam)	//WST 10.19.2002
 	{

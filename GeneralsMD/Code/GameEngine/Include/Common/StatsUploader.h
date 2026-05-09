@@ -101,11 +101,13 @@ struct BalanceTeamsResult
 BalanceTeamsResult BalanceTeamsFromServer(const AsciiString& url,
                                           const std::vector<AsciiString>& playerNames);
 
-/// One name + general (faction template index, as found in a replay header).
+/// One name + general (faction template index, as found in a replay header)
+/// + team (lobby team index from GameSlot::getTeamNumber(); -1 = no team).
 struct MapSummaryPlayer
 {
 	AsciiString name;
 	int general;
+	int team;
 };
 
 /// Result of a map_summary API call. `success` is true only when the server
@@ -119,7 +121,7 @@ struct MapSummaryResult
 
 /// Ask the map_summary endpoint for a human-readable blurb describing recent
 /// history on the given map for the given roster. POSTs a JSON body of the
-/// form { "map_name": "...", "players": [{"name": "...", "general": <int>}, ...] }.
+/// form { "map_name": "...", "players": [{"name": "...", "general": <int>, "team": <int>}, ...] }.
 /// Best-effort, blocking; uses WinINet's default timeouts.
 /// @param url Full URL of the map_summary endpoint
 /// @param mapName Display name of the map

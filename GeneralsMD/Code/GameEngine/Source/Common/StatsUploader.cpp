@@ -624,7 +624,7 @@ MapSummaryResult MapSummaryFromServer(const AsciiString& url,
 	if (url.isEmpty())
 		return result;
 
-	// Build the JSON body: { "map_name": "...", "players": [{"name":"...","general":N}, ...] }
+	// Build the JSON body: { "map_name": "...", "players": [{"name":"...","general":N,"team":T}, ...] }
 	AsciiString body;
 	body.concat("{\"map_name\":\"");
 	appendJsonEscaped(body, mapName.isEmpty() ? "" : mapName.str());
@@ -636,8 +636,8 @@ MapSummaryResult MapSummaryFromServer(const AsciiString& url,
 			body.concat(',');
 		body.concat("{\"name\":\"");
 		appendJsonEscaped(body, players[i].name.isEmpty() ? "" : players[i].name.str());
-		char gbuf[32];
-		sprintf(gbuf, "\",\"general\":%d}", players[i].general);
+		char gbuf[64];
+		sprintf(gbuf, "\",\"general\":%d,\"team\":%d}", players[i].general, players[i].team);
 		body.concat(gbuf);
 	}
 	body.concat("]}");
