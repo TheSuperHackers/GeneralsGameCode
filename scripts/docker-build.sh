@@ -171,6 +171,9 @@ run_build() {
         -e MAKE_TARGET="$target" \
         -e FORCE_CMAKE="$force_cmake" \
         -e ZULU_CLIENT_KEY="${ZULU_CLIENT_KEY:-}" \
+        -e ZULU_VERSION_MAJOR="${ZULU_VERSION_MAJOR:-}" \
+        -e ZULU_VERSION_MINOR="${ZULU_VERSION_MINOR:-}" \
+        -e ZULU_VERSION_BUILDNUM="${ZULU_VERSION_BUILDNUM:-}" \
         -v "$PROJECT_DIR:/build/cnc" \
         --rm \
         $docker_flags \

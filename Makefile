@@ -34,6 +34,16 @@ RELEASE_NAME  = Zulu_Setup_v$(APPVERSION).exe
 GCS_URI       = gs://$(GCS_BUCKET)/$(RELEASE_NAME)
 PUBLIC_URL    = https://storage.googleapis.com/$(GCS_BUCKET)/$(RELEASE_NAME)
 
+# Decompose APPVERSION ("major.minor.build") for the cmake build so the
+# binary's TheVersion (and therefore every replay it records) reports the
+# same version as the installer. Empty trailing components default to 0
+# so APPVERSION="1.1" still parses as 1.1.0. Forwarded to docker-build.sh
+# as ZULU_VERSION_* env vars; cmake is force-reconfigured below so the
+# new values are baked into BuildVersion.h on every Make-driven build.
+ZULU_VERSION_MAJOR    := $(or $(word 1,$(subst ., ,$(APPVERSION))),0)
+ZULU_VERSION_MINOR    := $(or $(word 2,$(subst ., ,$(APPVERSION))),0)
+ZULU_VERSION_BUILDNUM := $(or $(word 3,$(subst ., ,$(APPVERSION))),0)
+
 TMP_BIG := $(TMP_DIR)/$(BIG_NAME)
 TMP_EXE := $(TMP_DIR)/$(EXE_NAME)
 
@@ -71,9 +81,16 @@ $(TMP_BIG): $(ASSET_FILES) | $(TMP_DIR)
 # tmp dir under its installer name. We always invoke docker-build.sh so the
 # build system itself decides whether anything is stale; pinning to a single
 # Make timestamp would lie about the underlying source tree.
+#
+# --cmake forces a configure pass so the ZULU_VERSION_* env vars below
+# are picked up into BuildVersion.h. Without --cmake, ninja keeps the
+# previous configure's BuildVersion.h and the version doesn't update.
 .PHONY: docker-build-z_generals
 docker-build-z_generals:
-	$(DOCKER_BUILD) --target z_generals
+	ZULU_VERSION_MAJOR=$(ZULU_VERSION_MAJOR) \
+	ZULU_VERSION_MINOR=$(ZULU_VERSION_MINOR) \
+	ZULU_VERSION_BUILDNUM=$(ZULU_VERSION_BUILDNUM) \
+	$(DOCKER_BUILD) --cmake --target z_generals
 
 $(TMP_EXE): docker-build-z_generals | $(TMP_DIR)
 	cp "$(SOURCE_EXE)" "$@"
