@@ -126,6 +126,38 @@ void AISkirmishPlayer::processBaseBuilding()
 		BuildListInfo	*powerInfo = nullptr;
 		Bool isUnderPowered = !m_player->getEnergy()->hasSufficientPower();
 		Bool powerUnderConstruction = false;
+
+		// Tactical AI USA: scan ahead of the main loop for owned power plants.
+		// Two flags fall out of this:
+		//   1. taiUsaWantsFirstPower — true when no power plant is yet owned
+		//      (built or under construction). Used below to elevate the power
+		//      plant as the first base building, regardless of whether the
+		//      player currently reads as underpowered.
+		//   2. taiUsaPowerUnderConstruction — true when a power plant is
+		//      mid-build. Used in the main loop to skip later power plant
+		//      entries entirely so the AI doesn't dispatch a second dozer to
+		//      a parallel reactor (the existing post-loop powerUnderConstruction
+		//      guard only blocks the override, not the bldgPlan-via-iteration
+		//      path that fires when a later PP entry runs while bldgPlan is
+		//      still null).
+		Bool taiUsaWantsFirstPower = false;
+		Bool taiUsaPowerUnderConstruction = false;
+		if (isTacticalAI() && m_player->getBaseSide().compareNoCase("USA") == 0) {
+			Bool ownsAnyPower = false;
+			for (BuildListInfo *probe = m_player->getBuildList(); probe; probe = probe->getNext()) {
+				Object *existing = TheGameLogic->findObjectByID(probe->getObjectID());
+				if (!existing) continue;
+				if (existing->getControllingPlayer() != m_player) continue;
+				if (!existing->isKindOf(KINDOF_FS_POWER)) continue;
+				if (existing->isKindOf(KINDOF_CASH_GENERATOR)) continue;
+				ownsAnyPower = true;
+				if (existing->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION)) {
+					taiUsaPowerUnderConstruction = true;
+				}
+			}
+			taiUsaWantsFirstPower = !ownsAnyPower;
+		}
+
 		for( BuildListInfo *info = m_player->getBuildList(); info; info = info->getNext() )
 		{
 			AsciiString name = info->getTemplateName();
@@ -225,10 +257,17 @@ void AISkirmishPlayer::processBaseBuilding()
 			}
 			if (curPlan->isKindOf(KINDOF_FS_POWER)) {
 				if (powerPlan==nullptr && !curPlan->isKindOf(KINDOF_CASH_GENERATOR)) {
-					if (isUnderPowered || info->isAutomaticBuild()) {
+					if (isUnderPowered || info->isAutomaticBuild() || taiUsaWantsFirstPower) {
 						powerPlan = curPlan;
 						powerInfo = info;
 					}
+				}
+				// TAI USA: don't let a second power plant entry slip into bldgPlan
+				// via the bldgPlan==nullptr fallthrough below while one is already
+				// under construction; the post-loop force gate only protects the
+				// override path, not the line-257 first-buildable path.
+				if (taiUsaPowerUnderConstruction && !curPlan->isKindOf(KINDOF_CASH_GENERATOR)) {
+					continue;
 				}
 			}
 			if (!info->isAutomaticBuild()) {
