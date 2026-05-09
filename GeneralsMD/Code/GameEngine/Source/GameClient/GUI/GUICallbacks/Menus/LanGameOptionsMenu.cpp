@@ -1593,6 +1593,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 								if (entry.name.isEmpty())
 									continue;
 								entry.general = slot->getPlayerTemplate();
+								entry.team = slot->getTeamNumber();
 								roster.push_back(entry);
 							}
 							if (!roster.empty())
