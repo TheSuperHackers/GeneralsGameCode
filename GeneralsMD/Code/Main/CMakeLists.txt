@@ -92,6 +92,18 @@ if(MSVC)
     target_sources(z_generals PRIVATE
         RTS.RC
     )
+
+    # RTS.RC #include's BuildVersion.h, but the top-level CMakeLists.txt
+    # disables CMAKE_NINJA_CMCLDEPS_RC (required for VC6, whose cl.exe
+    # rejects /showIncludes) so ninja has no automatic dep tracking for
+    # RC #includes. Without the explicit OBJECT_DEPENDS below, bumping
+    # APPVERSION in installer/Zulu.nsi regenerates BuildVersion.h but
+    # ninja sees RTS.RC unchanged and never recompiles the .res — the
+    # exe ships with the stale FILEVERSION even though the linker also
+    # ran. The launcher avoids this entirely because its .rc.in goes
+    # through configure_file(), which updates the .rc's own mtime.
+    set_source_files_properties(RTS.RC PROPERTIES
+        OBJECT_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h")
 endif()
 
 # Strip debug symbols to separate file for MinGW Release builds
