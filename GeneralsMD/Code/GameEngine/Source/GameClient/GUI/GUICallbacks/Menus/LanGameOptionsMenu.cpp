@@ -1638,8 +1638,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 									{
 										UnicodeString lineU;
 										lineU.translate(summary.lines[li]);
-										TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(),
-											lineU, LANAPI::LANCHAT_SYSTEM);
+										TheLAN->RequestChat(lineU, LANAPI::LANCHAT_SYSTEM);
 									}
 								}
 							}
