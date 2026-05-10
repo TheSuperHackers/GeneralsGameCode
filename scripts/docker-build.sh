@@ -174,6 +174,7 @@ run_build() {
         -e ZULU_VERSION_MAJOR="${ZULU_VERSION_MAJOR:-}" \
         -e ZULU_VERSION_MINOR="${ZULU_VERSION_MINOR:-}" \
         -e ZULU_VERSION_BUILDNUM="${ZULU_VERSION_BUILDNUM:-}" \
+        -e ZULU_DISCORD_WEBHOOK_URL="${ZULU_DISCORD_WEBHOOK_URL:-}" \
         -v "$PROJECT_DIR:/build/cnc" \
         --rm \
         $docker_flags \

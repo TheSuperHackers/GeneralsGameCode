@@ -63,6 +63,13 @@ EMPTY_BIG_BYTES := 'BIGF\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10'
 
 .PHONY: installer installer-release zulu-big zulu-exe zulu-launcher clean-installer
 
+# Target-specific secret name that propagates down the prereq chain so the
+# docker-build-z_generals recipe knows which GCP Secret Manager secret to
+# pull the Discord webhook URL from. Plain `make zulu-exe` leaves this
+# empty and the recipe skips the fetch.
+installer:         DISCORD_WEBHOOK_SECRET := debug_discord_webhook
+installer-release: DISCORD_WEBHOOK_SECRET := discord_webhook
+
 installer: $(INSTALLER_OUT)
 
 zulu-big: $(TMP_BIG)
@@ -93,8 +100,27 @@ $(TMP_BIG): $(ASSET_FILES) | $(TMP_DIR)
 # --cmake forces a configure pass so the ZULU_VERSION_* env vars below
 # are picked up into BuildVersion.h. Without --cmake, ninja keeps the
 # previous configure's BuildVersion.h and the version doesn't update.
+#
+# DISCORD_WEBHOOK_SECRET, when set by a parent target (installer /
+# installer-release), names the GCP Secret Manager secret to fetch and
+# bake into the binary as ZULU_DISCORD_WEBHOOK_URL. Empty (the default
+# for plain `make zulu-exe`) skips the fetch entirely so dev builds keep
+# working without gcloud credentials. The secret must be non-empty when
+# requested; an empty payload aborts the build so a release never silently
+# ships with the feature disabled.
 .PHONY: docker-build-z_generals
 docker-build-z_generals:
+	@if [ -n "$(DISCORD_WEBHOOK_SECRET)" ] && [ -z "$$ZULU_DISCORD_WEBHOOK_URL" ]; then \
+		echo "[discord] fetching secret '$(DISCORD_WEBHOOK_SECRET)' from GCP Secret Manager..."; \
+		ZULU_DISCORD_WEBHOOK_URL=$$($(GCLOUD) secrets versions access latest --secret=$(DISCORD_WEBHOOK_SECRET)) \
+			|| { echo "ERROR: gcloud failed to read secret '$(DISCORD_WEBHOOK_SECRET)' (see error above)."; exit 1; }; \
+		if [ -z "$$ZULU_DISCORD_WEBHOOK_URL" ]; then \
+			echo "ERROR: secret '$(DISCORD_WEBHOOK_SECRET)' is empty."; \
+			exit 1; \
+		fi; \
+		export ZULU_DISCORD_WEBHOOK_URL; \
+		echo "[discord] webhook url loaded ($${#ZULU_DISCORD_WEBHOOK_URL} bytes)"; \
+	fi; \
 	ZULU_VERSION_MAJOR=$(ZULU_VERSION_MAJOR) \
 	ZULU_VERSION_MINOR=$(ZULU_VERSION_MINOR) \
 	ZULU_VERSION_BUILDNUM=$(ZULU_VERSION_BUILDNUM) \

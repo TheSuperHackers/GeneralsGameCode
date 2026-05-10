@@ -59,6 +59,7 @@
 #include "Common/MultiplayerSettings.h"
 #include "Common/Recorder.h"
 #include "Common/StatsUploader.h"
+#include "Common/LobbyDiscord.h"
 #include "GameClient/GameText.h"
 #include "GameClient/ReplayMenu.h"
 #include "GameNetwork/GUIUtil.h"
@@ -607,6 +608,13 @@ void StartPressed()
 				GadgetComboBoxSetSelectedPos(comboBoxPlayer[i], SLOT_CLOSED);
 			}
 		}
+		// Snapshot the lobby's preview map (with player labels at fixed
+		// start positions) and post it to the Discord webhook configured
+		// at build time. No-op when the build has no webhook URL or when
+		// fewer than 2 humans are in the lobby; gated host-side here so
+		// only one client posts per match. Blocking HTTP, mirroring the
+		// existing balance/map_summary calls.
+		PostLanLobbyMapToDiscord(myGame);
 		Int seconds = TheMultiplayerSettings->getStartCountdownTimerSeconds();
 		if (seconds)
 			TheLAN->RequestGameStartTimer(seconds);

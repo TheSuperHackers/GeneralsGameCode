@@ -592,6 +592,25 @@ public:
 	AsciiString m_modDir;
 	AsciiString m_modBIG;
 
+	// Zulu-side debug toggle, flipped on by passing -zulu_debug on the
+	// command line (the launcher forwards its own argv to the game exe
+	// verbatim, so this works whether you launch the exe directly or
+	// via ZuluLauncher.exe). Currently only used to relax the lobby
+	// Discord-post gate from "2+ humans" down to "1+ human" so a host
+	// can iterate the rendering with just themselves in the lobby. The
+	// flag is intentionally a generic catch-all so we can hang future
+	// debug-only behavior off the same lever without churning more
+	// command-line surface.
+	//
+	// Placed at the end of the public block so adding it does NOT shift
+	// the offsets of any preceding members. The VC6+ninja PCH dependency
+	// tracking is unreliable when GlobalData.h changes, and inserting a
+	// field mid-struct corrupts m_windowed in any TU that doesn't get
+	// recompiled (manifests as random windowed/fullscreen flips). Keep
+	// future Zulu fields here for the same reason; if you must reorder,
+	// run a clean rebuild.
+	Bool m_zuluDebug;
+
 	//-allAdvice feature
 	//Bool m_allAdvice;
 

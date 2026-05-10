@@ -112,6 +112,7 @@ set(GAMEENGINE_SRC
     Include/Common/StatsCollector.h
     Include/Common/StatsExporter.h
     Include/Common/StatsUploader.h
+    Include/Common/LobbyDiscord.h
 #    Include/Common/STLTypedefs.h
 #    Include/Common/StreamingArchiveFile.h
 #    Include/Common/SubsystemInterface.h
@@ -630,6 +631,7 @@ set(GAMEENGINE_SRC
     Source/Common/StatsCollector.cpp
     Source/Common/StatsExporter.cpp
     Source/Common/StatsUploader.cpp
+    Source/Common/LobbyDiscord.cpp
 #    Source/Common/System/ArchiveFile.cpp
 #    Source/Common/System/ArchiveFileSystem.cpp
 #    Source/Common/System/AsciiString.cpp
@@ -1164,6 +1166,7 @@ target_include_directories(z_gameengine PUBLIC
 target_include_directories(z_gameengine PRIVATE
     Include/Precompiled
     ${ZULU_CLIENT_KEY_GENERATED_DIR}
+    ${ZULU_DISCORD_WEBHOOK_GENERATED_DIR}
 )
 
 target_link_libraries(z_gameengine PRIVATE

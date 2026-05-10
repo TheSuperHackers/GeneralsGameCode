@@ -408,6 +408,17 @@ Int parseMapName(char *args[], int num)
 	return 1;
 }
 
+// Generic Zulu-side debug toggle. The launcher (ZuluLauncher) forwards its
+// own argv to the game exe verbatim, so passing -zulu_debug on either entry
+// point sets the same TheGlobalData->m_zuluDebug flag. See GlobalData.h
+// for the rationale; right now the only consumer is the lobby Discord
+// post helper, which uses it to drop the "2+ humans" gate to "1+ human".
+Int parseZuluDebug(char *args[], int num)
+{
+	TheWritableGlobalData->m_zuluDebug = TRUE;
+	return 1;
+}
+
 Int parseHeadless(char *args[], int num)
 {
 	TheWritableGlobalData->m_headless = TRUE;
@@ -1255,6 +1266,10 @@ static CommandLineParam paramsForStartup[] =
 	// URL the LAN-lobby Randomize button POSTs to fetch a map-history
 	// blurb (printed to lobby chat). Pass an empty string ("") to disable.
 	{ "-mapSummaryUrl", parseMapSummaryUrl },
+
+	// Generic Zulu debug flag. Forwarded by the launcher to the game exe
+	// as-is. See parseZuluDebug for the current consumers.
+	{ "-zulu_debug", parseZuluDebug },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
