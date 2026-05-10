@@ -529,11 +529,11 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 
 #if defined(RTS_DEBUG)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_AUDIODEBUG)
-#endif // defined(RTS_DEBUG)
+#endif
 
 #ifdef DUMP_PERF_STATS
 	CASE_LABEL(MSG_META_DEMO_PERFORM_STATISTICAL_DUMP)
-#endif // DUMP_PERF_STATS
+#endif
 
 	CASE_LABEL(MSG_META_PLACE_BEACON)
 	CASE_LABEL(MSG_META_REMOVE_BEACON)
