@@ -126,15 +126,13 @@ Section "Install ${APPNAME}" SecInstall
     WriteRegDWORD HKLM "${UNINSTREGKEY}" "NoModify" 1
     WriteRegDWORD HKLM "${UNINSTREGKEY}" "NoRepair" 1
 
-    ; --- Auto-relaunch the launcher when invoked silently ----------------
-    ; Silent invocations come from the launcher's update flow: at that
-    ; point the user already accepted the update prompt and consented to
-    ; UAC, so re-running the (now-updated) launcher gets them straight
-    ; back into the game with no further clicks. Inherits the installer's
-    ; elevation; the game runs elevated for this one launch only.
-    IfSilent 0 install_done
-        Exec '"$INSTDIR\${LAUNCHERNAME}" ${LAUNCHARGS}'
-    install_done:
+    ; Silent invocations come from the launcher's update flow. The
+    ; *calling* launcher (still running while we install) waits for us
+    ; to exit and then re-launches the game with the user's original
+    ; argv — so any extras like -zulu_debug carry through. We
+    ; intentionally do NOT Exec the launcher here, since that would
+    ; only know about the shortcut's hardcoded LAUNCHARGS and would
+    ; race the launcher's own relaunch.
 SectionEnd
 
 Section "Uninstall"

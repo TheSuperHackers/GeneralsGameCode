@@ -344,19 +344,41 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                 sei.lpDirectory = tempDir;
                 sei.nShow = SW_SHOWNORMAL;
                 if (ShellExecuteExA(&sei) && sei.hProcess) {
-                    // Hand off. The launcher exits immediately so the
-                    // installer can overwrite both the game .exe and the
-                    // launcher .exe itself. The installer's Section runs
-                    // ZuluLauncher.exe again at the end (see Zulu.nsi),
-                    // which then finds installed == latest and just
-                    // launches the game.
+                    // Wait for the elevated installer to finish so we
+                    // can re-launch the (now-updated) game exe with
+                    // the same args the user passed to *this* launcher
+                    // invocation. The NSIS script's post-install Exec
+                    // is intentionally removed: it only knew about the
+                    // shortcut's hardcoded LAUNCHARGS and would drop
+                    // anything extra (e.g. -zulu_debug) the user added
+                    // on the command line. The launcher .exe being
+                    // overwritten while we wait is fine — Windows
+                    // keeps the in-memory image valid until we exit.
+                    SetCursor(LoadCursorA(NULL, IDC_WAIT));
+                    WaitForSingleObject(sei.hProcess, INFINITE);
+                    SetCursor(LoadCursorA(NULL, IDC_ARROW));
+                    DWORD exitCode = 1;
+                    GetExitCodeProcess(sei.hProcess, &exitCode);
                     CloseHandle(sei.hProcess);
-                    return 0;
+
+                    if (exitCode == 0) {
+                        // Install succeeded. Fall through to
+                        // launchGame below; the path to the game exe
+                        // is unchanged across the in-place upgrade so
+                        // fwdArgs flows straight into the new binary.
+                    } else {
+                        MessageBoxA(NULL,
+                            "Zulu installer reported a failure. The "
+                            "game will be launched at the previously "
+                            "installed version.",
+                            kAppName, MB_OK | MB_ICONWARNING);
+                    }
+                } else {
+                    MessageBoxA(NULL,
+                        "Could not start the Zulu installer. The game will be "
+                        "launched at the installed version.",
+                        kAppName, MB_OK | MB_ICONWARNING);
                 }
-                MessageBoxA(NULL,
-                    "Could not start the Zulu installer. The game will be "
-                    "launched at the installed version.",
-                    kAppName, MB_OK | MB_ICONWARNING);
             } else {
                 MessageBoxA(NULL,
                     "Update download failed. The game will be launched at "
