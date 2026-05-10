@@ -474,7 +474,7 @@ def main():
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8caps.cpp")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8wrapper.cpp")
-    
+
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/Display.cpp", Game.CORE, "GameEngine/Source/GameClient/Display.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/Display.h", Game.CORE, "GameEngine/Include/GameClient/Display.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameClient/System/Anim2D.cpp", Game.CORE, "GameEngine/Source/GameClient/System/Anim2D.cpp")
@@ -526,6 +526,16 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTabControl.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTabControl.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DTextEntry.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp", Game.CORE, "GameEngineDevice/Source/W3DDevice/GameClient/GUI/Gadget/W3DVerticalSlider.cpp")
+
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/CaveSystem.h", Game.CORE, "GameEngine/Include/GameLogic/CaveSystem.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/CrateSystem.h", Game.CORE, "GameEngine/Include/GameLogic/CrateSystem.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/Damage.h", Game.CORE, "GameEngine/Include/GameLogic/Damage.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameLogic/RankInfo.h", Game.CORE, "GameEngine/Include/GameLogic/RankInfo.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/CaveSystem.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/CaveSystem.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/CrateSystem.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/CrateSystem.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/Damage.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/Damage.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/RankInfo.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/RankInfo.cpp")
 
     return
 

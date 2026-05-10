@@ -245,9 +245,9 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/AITNGuard.h
 #    Include/GameLogic/Armor.h
 #    Include/GameLogic/ArmorSet.h
-#    Include/GameLogic/CaveSystem.h
-#    Include/GameLogic/CrateSystem.h
-#    Include/GameLogic/Damage.h
+    Include/GameLogic/CaveSystem.h
+    Include/GameLogic/CrateSystem.h
+    Include/GameLogic/Damage.h
 #    Include/GameLogic/ExperienceTracker.h
 #    Include/GameLogic/FiringTracker.h
 #    Include/GameLogic/FPUControl.h
@@ -486,7 +486,7 @@ set(GAMEENGINE_SRC
 #    Include/GameLogic/PartitionManager.h
 #    Include/GameLogic/PolygonTrigger.h
 #    Include/GameLogic/Powers.h
-#    Include/GameLogic/RankInfo.h
+    Include/GameLogic/RankInfo.h
 #    Include/GameLogic/ScriptActions.h
 #    Include/GameLogic/ScriptConditions.h
 #    Include/GameLogic/ScriptEngine.h
@@ -1090,12 +1090,12 @@ set(GAMEENGINE_SRC
 #    Source/GameLogic/ScriptEngine/ScriptEngine.cpp
 #    Source/GameLogic/ScriptEngine/Scripts.cpp
 #    Source/GameLogic/ScriptEngine/VictoryConditions.cpp
-#    Source/GameLogic/System/CaveSystem.cpp
-#    Source/GameLogic/System/CrateSystem.cpp
-#    Source/GameLogic/System/Damage.cpp
+    Source/GameLogic/System/CaveSystem.cpp
+    Source/GameLogic/System/CrateSystem.cpp
+    Source/GameLogic/System/Damage.cpp
 #    Source/GameLogic/System/GameLogic.cpp
-#    Source/GameLogic/System/GameLogicDispatch.cpp
-#    Source/GameLogic/System/RankInfo.cpp
+    Source/GameLogic/System/GameLogicDispatch.cpp
+    Source/GameLogic/System/RankInfo.cpp
     Source/GameNetwork/Connection.cpp
     Source/GameNetwork/ConnectionManager.cpp
     Source/GameNetwork/DisconnectManager.cpp
