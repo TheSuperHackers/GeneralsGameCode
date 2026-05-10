@@ -487,6 +487,9 @@ void Player::init(const PlayerTemplate* pt)
 		deleteInstance(tof);
 	}
 
+	//Always off at the beginning of a game! Only GameLogic::update has
+	//the power to turn it on. Don't want to cause desyncs!
+	m_logicalRetaliationModeEnabled = FALSE;
 }
 
 //=============================================================================

@@ -651,6 +651,11 @@ public:
 	void setCashBounty(Real percentage) { m_cashBountyPercent = percentage; }
 	void doBountyForKill(const Object* killer, const Object* victim);
 
+	//Set via logical message. Options menu sets the client value in global data. Player::update()
+	//detects a change, and posts a message. When the message gets processed, this value gets set.
+	Bool isLogicalRetaliationModeEnabled() const { return m_logicalRetaliationModeEnabled; }
+	void setLogicalRetaliationModeEnabled( Bool set ) { m_logicalRetaliationModeEnabled = set; }
+
 private:
 
 	/** give the science. doesn't check prereqs, nor charge to purchase points...
@@ -805,4 +810,5 @@ private:
 	Squad									*m_currentSelection;		///< This player's currently selected group
 
 	Bool									m_isPlayerDead;
+	Bool									m_logicalRetaliationModeEnabled;
 };
