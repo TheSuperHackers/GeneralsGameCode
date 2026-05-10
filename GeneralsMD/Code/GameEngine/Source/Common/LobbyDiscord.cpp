@@ -980,6 +980,325 @@ static AsciiString toRenderableAscii(const UnicodeString& u)
 	return clean;
 }
 
+// One occupied (or empty) lobby slot, snapshotted at game-start so the
+// helper can iterate it without re-reading mutable LANGameSlot state.
+struct LobbySlotInfo
+{
+	bool occupied;
+	bool isHuman;
+	bool isObserver;
+	int  startPos;
+	int  templateIdx;
+	int  colorIdx;
+	int  team;
+	AsciiString displayName;
+	AsciiString factionAbbrev;
+};
+
+// Deep-copy an RGB PixBuf. Used to start each render variant (original
+// and mirror) from the same upscaled+icons "base" image without rebuilding
+// the expensive parts.
+static bool copyPixBuf(const PixBuf *src, PixBuf *dst)
+{
+	if (!src || !src->rgb || src->w <= 0 || src->h <= 0) return false;
+	dst->w = src->w;
+	dst->h = src->h;
+	dst->rgb = (unsigned char *)malloc((size_t)src->w * src->h * 3);
+	if (!dst->rgb) { dst->w = dst->h = 0; return false; }
+	memcpy(dst->rgb, src->rgb, (size_t)src->w * src->h * 3);
+	return true;
+}
+
+// Compute a "matchup-preserving mirror": each player on team A is paired
+// with a player on team B such that, in the mirror image, the two
+// players swap *identity* (name + team + color) while the
+// position+faction of each slot stays anchored. The intent is that the
+// rematch puts every player at their previous opponent's start playing
+// their previous opponent's faction — any per-player advantage in
+// terrain or faction is cancelled across the two games.
+//
+// Pairing rule: reflect each team-A player's position across the
+// perpendicular bisector of the two team centroids, then match each
+// team-A player to the team-B player nearest to that reflected point
+// (via min-cost bipartite matching on reflection-to-actual distances).
+//
+// Why not min-cost on raw player-to-player distance? The latter ties
+// frequently on symmetric layouts — e.g. on Combat Encounter's
+// left-vs-right split, "1↔3, 2↔4" (straight-across) and "1↔4, 2↔3"
+// (corner-mirrored) can have identical total distance and the tie
+// breaker silently picks the lex-first permutation rather than the
+// geometric mirror the host actually wants. Reflecting through the
+// team-split axis collapses the ambiguity: only the perm that respects
+// the map's symmetry minimizes distance-to-reflected-point.
+//
+// Returns true on success and fills `playerOverride[S]` with the slot
+// whose player identity should render at slot S in the mirror image.
+// Slots that are unoccupied/observer/random-start stay self-mapped.
+// Returns false (and the mirror post is skipped) when:
+//   * there aren't exactly two distinct teams among occupied slots, OR
+//   * the two teams have unequal player counts, OR
+//   * either team has zero players, OR
+//   * either team has more than MAX_PAIR (4) players (brute-force cap),
+//     OR
+//   * the two team centroids coincide (no meaningful split axis), OR
+//   * any required waypoint is missing.
+#define MAX_PAIR 4
+static bool computeMirrorSwap(const LobbySlotInfo *info,
+                              const MapMetaData *mmd,
+                              int playerOverride[MAX_SLOTS])
+{
+	int s;
+	for (s = 0; s < MAX_SLOTS; ++s) playerOverride[s] = s;
+	if (!mmd) return false;
+
+	// Partition occupied non-observer slots by team. We accept exactly
+	// two distinct team numbers; any third team aborts. Random teams
+	// (team < 0) also abort since "matchup" is undefined.
+	int teamLabel[2] = { -1, -1 };
+	int teamSlots[2][MAX_PAIR];
+	int teamCount[2] = { 0, 0 };
+	for (s = 0; s < MAX_SLOTS; ++s)
+	{
+		const LobbySlotInfo &si = info[s];
+		if (!si.occupied || si.isObserver) continue;
+		if (si.startPos < 0) return false;
+		if (si.team < 0) return false;
+
+		int bucket = -1;
+		if (teamLabel[0] == -1) { teamLabel[0] = si.team; bucket = 0; }
+		else if (si.team == teamLabel[0]) bucket = 0;
+		else if (teamLabel[1] == -1) { teamLabel[1] = si.team; bucket = 1; }
+		else if (si.team == teamLabel[1]) bucket = 1;
+		else return false; // third team
+		if (teamCount[bucket] >= MAX_PAIR) return false;
+		teamSlots[bucket][teamCount[bucket]++] = s;
+	}
+	if (teamCount[0] == 0 || teamCount[1] == 0) return false;
+	if (teamCount[0] != teamCount[1]) return false;
+
+	// Resolve start positions to world coords for the geometry below.
+	int n = teamCount[0];
+	Coord3D posA[MAX_PAIR], posB[MAX_PAIR];
+	int i;
+	for (i = 0; i < n; ++i)
+	{
+		AsciiString wp;
+		wp.format("Player_%d_Start", info[teamSlots[0][i]].startPos + 1);
+		WaypointMap::const_iterator it = mmd->m_waypoints.find(wp);
+		if (it == mmd->m_waypoints.end()) return false;
+		posA[i] = it->second;
+
+		wp.format("Player_%d_Start", info[teamSlots[1][i]].startPos + 1);
+		it = mmd->m_waypoints.find(wp);
+		if (it == mmd->m_waypoints.end()) return false;
+		posB[i] = it->second;
+	}
+
+	// Team centroids define the team-split direction; their
+	// perpendicular bisector is the mirror axis.
+	Real cAx = 0.0f, cAy = 0.0f, cBx = 0.0f, cBy = 0.0f;
+	for (i = 0; i < n; ++i)
+	{
+		cAx += posA[i].x; cAy += posA[i].y;
+		cBx += posB[i].x; cBy += posB[i].y;
+	}
+	cAx /= n; cAy /= n;
+	cBx /= n; cBy /= n;
+
+	Real splitX = cAx - cBx;
+	Real splitY = cAy - cBy;
+	double splitLen = sqrt((double)(splitX * splitX + splitY * splitY));
+	// Reject when the two teams overlap centroids (e.g. concentric or
+	// pathological layouts) — there's no meaningful axis to mirror over.
+	if (splitLen < 1.0)
+		return false;
+
+	Real nx = (Real)(splitX / splitLen);
+	Real ny = (Real)(splitY / splitLen);
+	Real mx = (cAx + cBx) * 0.5f;
+	Real my = (cAy + cBy) * 0.5f;
+
+	// Reflect each team-A position across the split axis. The axis
+	// passes through (mx, my) with unit normal (nx, ny):
+	//   reflect(P) = P - 2 * ((P - mid) · n) * n
+	// On a symmetric map this lands each posA[i] exactly on top of the
+	// corresponding team-B position; on imperfectly symmetric maps it
+	// lands close, and the min-cost matching below resolves which team-B
+	// position is actually nearest.
+	Coord3D rA[MAX_PAIR];
+	for (i = 0; i < n; ++i)
+	{
+		Real dx = posA[i].x - mx;
+		Real dy = posA[i].y - my;
+		Real dot = dx * nx + dy * ny;
+		rA[i].x = posA[i].x - 2.0f * dot * nx;
+		rA[i].y = posA[i].y - 2.0f * dot * ny;
+		rA[i].z = 0.0f;
+	}
+
+	// Min-cost perfect matching of (reflected-A positions) against
+	// (actual-B positions). Brute force over n! permutations; n <= 4.
+	int perm[MAX_PAIR];
+	int bestPerm[MAX_PAIR];
+	for (i = 0; i < n; ++i) perm[i] = i;
+	Real bestCost = 1e30f;
+	bool first = true;
+	for (;;)
+	{
+		Real cost = 0.0f;
+		int j;
+		for (j = 0; j < n; ++j)
+		{
+			Real dx = rA[j].x - posB[perm[j]].x;
+			Real dy = rA[j].y - posB[perm[j]].y;
+			cost += dx * dx + dy * dy;
+		}
+		if (first || cost < bestCost)
+		{
+			bestCost = cost;
+			for (j = 0; j < n; ++j) bestPerm[j] = perm[j];
+			first = false;
+		}
+		// Next lexicographic permutation of perm[0..n).
+		int k = n - 2;
+		while (k >= 0 && perm[k] >= perm[k + 1]) --k;
+		if (k < 0) break;
+		int l = n - 1;
+		while (perm[l] <= perm[k]) --l;
+		int t = perm[k]; perm[k] = perm[l]; perm[l] = t;
+		// Reverse perm[k+1..n).
+		int lo = k + 1, hi = n - 1;
+		while (lo < hi) { t = perm[lo]; perm[lo] = perm[hi]; perm[hi] = t; ++lo; --hi; }
+	}
+
+	// Apply: slot teamSlots[0][i] shows the player of teamSlots[1][bestPerm[i]]
+	// and vice versa.
+	for (i = 0; i < n; ++i)
+	{
+		int slotA = teamSlots[0][i];
+		int slotB = teamSlots[1][bestPerm[i]];
+		playerOverride[slotA] = slotB;
+		playerOverride[slotB] = slotA;
+	}
+	return true;
+}
+#undef MAX_PAIR
+
+// Draw player markers + name/faction/team labels on a pre-built PixBuf.
+//
+// `playerOverride`, if non-null, redirects the *player identity* drawn at
+// each slot: at slot S the renderer reads name/team/color from
+// info[playerOverride[S]] instead of info[S]. The slot's start position
+// and faction stay anchored to S itself, since the mirror semantic is
+// "faction stays at the location, player walks into it bringing their
+// team and color with them." For the original (non-mirror) render the
+// caller passes nullptr and slot self-mappings are used implicitly.
+//
+// Markers and labels run as two passes so a marker never lands on top of
+// an adjacent slot's label text.
+static void drawPlayerMarkersAndLabels(PixBuf *big,
+                                       const LobbySlotInfo *info,
+                                       const MapMetaData *mmd,
+                                       int scale,
+                                       const int *playerOverride)
+{
+	#define WORLD_TO_PX_X(wx) ((int)(((wx) - mmd->m_extent.lo.x) / (mmd->m_extent.hi.x - mmd->m_extent.lo.x) * big->w))
+	#define WORLD_TO_PX_Y(wy) ((int)((1.0f - ((wy) - mmd->m_extent.lo.y) / (mmd->m_extent.hi.y - mmd->m_extent.lo.y)) * big->h))
+
+	int slot;
+	for (slot = 0; slot < MAX_SLOTS; ++slot)
+	{
+		const LobbySlotInfo &si = info[slot];        // location anchor (position, faction)
+		if (!si.occupied || si.isObserver) continue;
+		if (si.startPos < 0) continue;
+		// Player whose name/team/color shows up at this location.
+		int playerSlot = (playerOverride && playerOverride[slot] >= 0) ? playerOverride[slot] : slot;
+		const LobbySlotInfo &pi = info[playerSlot];
+
+		AsciiString wp;
+		wp.format("Player_%d_Start", si.startPos + 1);
+		WaypointMap::const_iterator wpIt = mmd->m_waypoints.find(wp);
+		if (wpIt == mmd->m_waypoints.end()) continue;
+		const Coord3D &pos = wpIt->second;
+		int cx = WORLD_TO_PX_X(pos.x);
+		int cy = WORLD_TO_PX_Y(pos.y);
+
+		// Marker color follows the player.
+		unsigned char mr = 255, mg = 255, mb = 255;
+		if (TheMultiplayerSettings && pi.colorIdx >= 0)
+		{
+			MultiplayerColorDefinition *cd = TheMultiplayerSettings->getColor(pi.colorIdx);
+			if (cd)
+			{
+				RGBColor rc = cd->getRGBValue();
+				mr = (unsigned char)(rc.red   * 255.0f);
+				mg = (unsigned char)(rc.green * 255.0f);
+				mb = (unsigned char)(rc.blue  * 255.0f);
+			}
+		}
+
+		int markerR = 9 + scale;
+		drawCircleOutline(big, cx, cy, markerR + 2, 1, 0, 0, 0);
+		drawFilledCircle(big, cx, cy, markerR, mr, mg, mb);
+		drawCircleOutline(big, cx, cy, markerR, 2, 255, 255, 255);
+
+		char num[4];
+		sprintf(num, "%d", si.startPos + 1);
+		int numScale = (markerR >= 14) ? 2 : 1;
+		int numW = textWidthPx(num, numScale);
+		int numH = 8 * numScale;
+		drawTextStroked(big, cx - numW / 2, cy - numH / 2, num, numScale,
+		                255, 255, 255);
+	}
+
+	// Labels second pass.
+	for (slot = 0; slot < MAX_SLOTS; ++slot)
+	{
+		const LobbySlotInfo &si = info[slot];
+		if (!si.occupied || si.isObserver) continue;
+		if (si.startPos < 0) continue;
+		int playerSlot = (playerOverride && playerOverride[slot] >= 0) ? playerOverride[slot] : slot;
+		const LobbySlotInfo &pi = info[playerSlot];
+
+		AsciiString wp;
+		wp.format("Player_%d_Start", si.startPos + 1);
+		WaypointMap::const_iterator wpIt = mmd->m_waypoints.find(wp);
+		if (wpIt == mmd->m_waypoints.end()) continue;
+		const Coord3D &pos = wpIt->second;
+		int cx = WORLD_TO_PX_X(pos.x);
+		int cy = WORLD_TO_PX_Y(pos.y);
+		int markerR = 8 + scale;
+
+		// Name and team follow the player; faction stays at the location.
+		AsciiString line;
+		line = pi.displayName;
+		if (line.isEmpty()) line = "?";
+		line.concat(" (");
+		line.concat(si.factionAbbrev);
+		line.concat(") [");
+		if (pi.team >= 0)
+		{
+			char teamStr[8];
+			sprintf(teamStr, "%d", pi.team + 1);
+			line.concat(teamStr);
+		}
+		else
+		{
+			line.concat("FFA");
+		}
+		line.concat(']');
+
+		const int tScale = 1;
+		int tW = textWidthPx(line.str(), tScale);
+		int tx = cx - tW / 2;
+		int ty = cy + markerR + 4;
+		drawTextStroked(big, tx, ty, line.str(), tScale, 255, 255, 255);
+	}
+
+	#undef WORLD_TO_PX_X
+	#undef WORLD_TO_PX_Y
+}
+
 // In -zulu_debug mode, mirror status to the lobby chat window so the host
 // can watch the post pipeline progress without opening the debug log. No-op
 // outside zulu_debug so production hosts don't see [discord] spam.
@@ -1014,25 +1333,13 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	if (!game) { debugChat("no game info"); return; }
 
 	// Slot scan: count non-observer humans, build a fast-access roster.
-	struct SlotInfo
-	{
-		bool occupied;
-		bool isHuman;
-		bool isObserver;
-		int  startPos;
-		int  templateIdx;
-		int  colorIdx;
-		int  team;
-		AsciiString displayName;
-		AsciiString factionAbbrev;
-	};
-	SlotInfo info[MAX_SLOTS];
+	LobbySlotInfo info[MAX_SLOTS];
 	int slotIdx;
 	int humanCount = 0;
 	for (slotIdx = 0; slotIdx < MAX_SLOTS; ++slotIdx)
 	{
 		const GameSlot *slot = game->getConstSlot(slotIdx);
-		SlotInfo &si = info[slotIdx];
+		LobbySlotInfo &si = info[slotIdx];
 		si.occupied = false;
 		si.isHuman = false;
 		si.isObserver = false;
@@ -1182,124 +1489,18 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	}
 
 	#undef DRAW_ICON_OR_GLYPH
-
-	// Player start markers: filled disc in the slot's lobby color with a
-	// black halo + white border so it stays readable on any terrain. The
-	// number inside is the start-position digit (1..N) so labels and
-	// markers reference the same identity at a glance.
-	int slot;
-	for (slot = 0; slot < MAX_SLOTS; ++slot)
-	{
-		const SlotInfo &si = info[slot];
-		if (!si.occupied || si.isObserver) continue;
-		if (si.startPos < 0) continue; // random start: skip — not yet assigned
-		AsciiString waypointName;
-		waypointName.format("Player_%d_Start", si.startPos + 1);
-		WaypointMap::const_iterator wpIt = mmd->m_waypoints.find(waypointName);
-		if (wpIt == mmd->m_waypoints.end())
-			continue;
-		const Coord3D &pos = wpIt->second;
-		int cx = WORLD_TO_PX_X(pos.x);
-		int cy = WORLD_TO_PX_Y(pos.y);
-
-		// Resolve the player's lobby color via MultiplayerSettings.
-		// "Random" colors (-1) and any failed lookup fall back to white.
-		unsigned char mr = 255, mg = 255, mb = 255;
-		if (TheMultiplayerSettings && si.colorIdx >= 0)
-		{
-			MultiplayerColorDefinition *cd = TheMultiplayerSettings->getColor(si.colorIdx);
-			if (cd)
-			{
-				RGBColor rc = cd->getRGBValue();
-				mr = (unsigned char)(rc.red   * 255.0f);
-				mg = (unsigned char)(rc.green * 255.0f);
-				mb = (unsigned char)(rc.blue  * 255.0f);
-			}
-		}
-
-		// Marker geometry: scale with the upscale factor so the marker
-		// stays proportional to the map. Ring stack: outer black halo
-		// (1px), filled colored disc (markerR), white border (2px).
-		int markerR = 9 + scale;
-		drawCircleOutline(&big, cx, cy, markerR + 2, 1, 0, 0, 0);
-		drawFilledCircle(&big, cx, cy, markerR, mr, mg, mb);
-		drawCircleOutline(&big, cx, cy, markerR, 2, 255, 255, 255);
-
-		// Centered start-position digit. White-with-black-stroke so it
-		// stays readable on light marker colors (yellow, white, etc).
-		char num[4];
-		sprintf(num, "%d", si.startPos + 1);
-		int numScale = (markerR >= 14) ? 2 : 1;
-		int numW = textWidthPx(num, numScale);
-		int numH = 8 * numScale;
-		drawTextStroked(&big, cx - numW / 2, cy - numH / 2, num, numScale,
-		                255, 255, 255);
-	}
-
-	// Player labels (drawn after every marker so text is never hidden):
-	// "<name> (<faction>) [<team>]" in stroked white. Matches radarvan's
-	// fontSize 9 + textShadow look — small white text with black halo
-	// rather than an opaque backing rectangle. Team uses 1-based output
-	// to match radarvan's "Team 1/2/3/4" UI ("[FFA]" when teamNumber<0).
-	for (slot = 0; slot < MAX_SLOTS; ++slot)
-	{
-		const SlotInfo &si = info[slot];
-		if (!si.occupied || si.isObserver) continue;
-		if (si.startPos < 0) continue;
-		AsciiString waypointName;
-		waypointName.format("Player_%d_Start", si.startPos + 1);
-		WaypointMap::const_iterator wpIt = mmd->m_waypoints.find(waypointName);
-		if (wpIt == mmd->m_waypoints.end())
-			continue;
-		const Coord3D &pos = wpIt->second;
-		int cx = WORLD_TO_PX_X(pos.x);
-		int cy = WORLD_TO_PX_Y(pos.y);
-		int markerR = 8 + scale;
-
-		AsciiString line;
-		line = si.displayName;
-		if (line.isEmpty()) line = "?";
-		line.concat(" (");
-		line.concat(si.factionAbbrev);
-		line.concat(") [");
-		if (si.team >= 0)
-		{
-			char teamStr[8];
-			sprintf(teamStr, "%d", si.team + 1);
-			line.concat(teamStr);
-		}
-		else
-		{
-			line.concat("FFA");
-		}
-		line.concat(']');
-
-		const int tScale = 1; // ~8px tall, close to radarvan's fontSize 9
-		int tW = textWidthPx(line.str(), tScale);
-		int tx = cx - tW / 2;
-		int ty = cy + markerR + 4;
-		drawTextStroked(&big, tx, ty, line.str(), tScale, 255, 255, 255);
-	}
-
 	#undef WORLD_TO_PX_X
 	#undef WORLD_TO_PX_Y
 
-	// Encode PNG.
-	unsigned char *png = nullptr;
-	unsigned int pngLen = 0;
-	if (!encodePng(&big, &png, &pngLen))
-	{
-		debugChat("png encode failed");
-		return;
-	}
-	debugChat("encoded png %ux%u (%u bytes), posting...", (unsigned)big.w, (unsigned)big.h, pngLen);
+	// At this point `big` is the "base" image: upscaled preview + neutral
+	// overlays. Both the original and the mirror render start from a
+	// fresh copy of this base so markers from one don't leak into the
+	// other. Sharing the expensive parts (upscale, icon load+scale, icon
+	// composite) between the two renders keeps the second post cheap.
 
-	// Build a small JSON content blurb naming the map and player count.
+	// JSON-escape the map's display name once for both posts.
 	AsciiString mapDisplayAscii;
 	mapDisplayAscii.translate(mmd->m_displayName);
-	// Defensively escape JSON specials in the map name and player names
-	// (limited set: backslash and double-quote). The label text itself
-	// already went through toRenderableAscii so it's printable ASCII.
 	AsciiString safeMap;
 	{
 		const char *p;
@@ -1309,18 +1510,100 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 			safeMap.concat(*p);
 		}
 	}
-	char json[512];
-	sprintf(json, "{\"content\":\"Lobby starting on **%.200s** (%d humans)\"}",
-	        safeMap.str(), humanCount);
 
-	char err[128] = {0};
-	unsigned long status = postPngToDiscord(kWebhookUrl, png, pngLen, "lobby.png", json, err, sizeof(err));
-	if (status >= 200 && status < 300)
-		debugChat("posted ok (HTTP %lu)", status);
-	else if (status != 0)
-		debugChat("HTTP %lu (Discord rejected)", status);
+	// Render + post variant. playerOverride==nullptr means "use the slot's
+	// own player identity" (original assignment). Non-null arrays
+	// redirect name/team/color at each slot to the slot whose player has
+	// walked into that location for the mirror. Position and faction
+	// always come from the slot itself. The variant's content string
+	// lands in the Discord message above the attachment.
+	struct RenderAndPost
+	{
+		static void run(const char *kWebhookUrl,
+		                const PixBuf *baseImg,
+		                const LobbySlotInfo *info,
+		                const MapMetaData *mmd,
+		                int scale,
+		                const int *playerOverride,
+		                const char *contentText,
+		                const char *filename)
+		{
+			PixBuf canvas;
+			if (!copyPixBuf(baseImg, &canvas))
+			{
+				debugChat("copy of base image failed");
+				return;
+			}
+			drawPlayerMarkersAndLabels(&canvas, info, mmd, scale, playerOverride);
+
+			unsigned char *png = nullptr;
+			unsigned int pngLen = 0;
+			if (!encodePng(&canvas, &png, &pngLen))
+			{
+				debugChat("png encode failed (%s)", filename);
+				return;
+			}
+			debugChat("encoded %s %ux%u (%u bytes), posting...",
+			          filename, (unsigned)canvas.w, (unsigned)canvas.h, pngLen);
+
+			char json[768];
+			sprintf(json, "{\"content\":\"%.500s\"}",
+			        (contentText && *contentText) ? contentText : "");
+
+			char err[128] = {0};
+			unsigned long status = postPngToDiscord(kWebhookUrl, png, pngLen,
+			                                       filename, json, err, sizeof(err));
+			if (status >= 200 && status < 300)
+				debugChat("posted ok (HTTP %lu, %s)", status, filename);
+			else if (status != 0)
+				debugChat("HTTP %lu (%s rejected)", status, filename);
+			else
+				debugChat("transport failed (%s): %s", filename, err[0] ? err : "(no detail)");
+
+			free(png);
+		}
+	};
+
+	// 1) Original assignment.
+	{
+		char content[256];
+		sprintf(content, "Lobby starting on **%.200s** (%d humans)",
+		        safeMap.str(), humanCount);
+		RenderAndPost::run(kWebhookUrl, &big, info, mmd, scale,
+		                   nullptr, content, "lobby.png");
+	}
+
+	// 2) Matchup-preserving mirror: pair each player with their geometric
+	//    matchup opponent on the other team via min-cost bipartite
+	//    matching, then swap the *players* (name + team + color) between
+	//    each paired slot. Position and faction stay anchored at each
+	//    location, so in the rematch every player ends up at their
+	//    previous opponent's start playing their previous opponent's
+	//    faction. Skipped on FFA / >2-team / unbalanced lobbies — see
+	//    computeMirrorSwap for the precise constraints.
+	int playerOverride[MAX_SLOTS];
+	if (computeMirrorSwap(info, mmd, playerOverride))
+	{
+		bool anySwapped = false;
+		int s;
+		for (s = 0; s < MAX_SLOTS; ++s)
+		{
+			if (playerOverride[s] != s) { anySwapped = true; break; }
+		}
+		if (anySwapped)
+		{
+			char content[256];
+			sprintf(content, "**Mirror** (players swap with their matched opponent; factions and start positions stay put)");
+			RenderAndPost::run(kWebhookUrl, &big, info, mmd, scale,
+			                   playerOverride, content, "lobby-mirror.png");
+		}
+		else
+		{
+			debugChat("mirror is a no-op (no players swapped)");
+		}
+	}
 	else
-		debugChat("transport failed: %s", err[0] ? err : "(no detail)");
-
-	free(png);
+	{
+		debugChat("mirror unavailable (need exactly 2 teams of equal, non-zero size)");
+	}
 }
