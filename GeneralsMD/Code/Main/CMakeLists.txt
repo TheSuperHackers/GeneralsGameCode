@@ -51,12 +51,16 @@ if(NOT DEFINED ZULU_VERSION_BUILDNUM)
     set(ZULU_VERSION_BUILDNUM 601)
 endif()
 
+# VERSION_STRING is consumed by RTS.RC's VERSIONINFO block (and any C/C++
+# code that wants a string form). Kept alongside the numeric macros so both
+# the game and the launcher read versions from one source of truth.
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "#pragma once
 
 #define VERSION_MAJOR ${ZULU_VERSION_MAJOR}
 #define VERSION_MINOR ${ZULU_VERSION_MINOR}
 #define VERSION_BUILDNUM ${ZULU_VERSION_BUILDNUM}
+#define VERSION_STRING \"${ZULU_VERSION_MAJOR}.${ZULU_VERSION_MINOR}.${ZULU_VERSION_BUILDNUM}\"
 "
 )
 
