@@ -66,13 +66,13 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static const char *mapExtension = ".map";
 
-// Bumped whenever MapCache.ini gains new fields the engine relies on (e.g.
-// cratePosition, techDerrickPosition). When updateCache() finds a standard
-// MapCache.ini missing this sentinel, it forces a rebuild from the .map files
-// so official maps pick up the new fields, mirroring -buildmapcache.
+// Sentinel written into ZuluMapCache.ini headers. Also used to detect vanilla
+// MapCache.ini files that earlier Zulu builds polluted with cratePosition /
+// techDerrickPosition fields (which crash the retail vanilla parser). Bump
+// when the on-disk Zulu cache format gains new fields the engine relies on.
 static const char *MAP_CACHE_FORMAT_VERSION_TAG = "; MapCacheFormatVersion = 2";
 
-static Bool isMapCacheCompatible(const AsciiString &filename)
+static Bool hasZuluFormatSentinel(const AsciiString &filename)
 {
 	File *fp = TheFileSystem->openFile(filename.str(), File::READ);
 	if (fp == nullptr)
@@ -84,6 +84,27 @@ static Bool isMapCacheCompatible(const AsciiString &filename)
 		return FALSE;
 	buf[n] = '\0';
 	return strstr(buf, MAP_CACHE_FORMAT_VERSION_TAG) != nullptr;
+}
+
+// If a previous Zulu build wrote vanilla's MapCache.ini, truncate it to zero
+// bytes so the next vanilla launch parses cleanly (and rebuilds from disk for
+// the user dir; standard dir may need -buildmapcache). Truncation reuses the
+// same write permission Zulu already had on the file; deletion would also
+// require directory write access, which is more permission-fragile.
+static void truncateIfZuluPolluted(const AsciiString &mapDir, const char *vanillaCacheName)
+{
+	AsciiString vanillaPath;
+	vanillaPath.format("%s\\%s", mapDir.str(), vanillaCacheName);
+
+	if (!TheFileSystem->doesFileExist(vanillaPath.str()))
+		return;
+	if (!hasZuluFormatSentinel(vanillaPath))
+		return;
+
+	DEBUG_LOG(("MapCache: %s was written by a prior Zulu build; truncating so vanilla can rebuild\n", vanillaPath.str()));
+	FILE *fp = fopen(vanillaPath.str(), "w");
+	if (fp != nullptr)
+		fclose(fp);
 }
 
 static Int m_width = 0;						///< Height map width.
@@ -359,6 +380,7 @@ void WaypointMap::update()
 }
 
 const char *const MapCache::m_mapCacheName = "MapCache.ini";
+const char *const MapCache::m_zuluMapCacheName = "ZuluMapCache.ini";
 
 AsciiString MapCache::getMapDir() const
 {
@@ -384,7 +406,7 @@ void MapCache::writeCacheINI( const AsciiString &mapDir )
 
 	TheFileSystem->createDirectory(mapDir);
 
-	filepath.concat(m_mapCacheName);
+	filepath.concat(m_zuluMapCacheName);
 	FILE *fp = fopen(filepath.str(), "w");
 	DEBUG_ASSERTCRASH(fp != nullptr, ("Failed to create %s", filepath.str()));
 	if (fp == nullptr) {
@@ -472,18 +494,22 @@ void MapCache::updateCache()
 	const AsciiString mapDir = getMapDir();
 	const AsciiString userMapDir = getUserMapDir();
 
-	// If the on-disk standard cache predates the current MapCache.ini format
-	// (missing cratePosition / techDerrickPosition fields), force a rebuild this
-	// session so official maps pick up the new classifications. Without this,
-	// `loadMapsFromMapCacheINI(mapDir)` would later overwrite any freshly-parsed
-	// data with the stale on-disk version.
+	// Clean up vanilla's MapCache.ini if a previous Zulu build polluted it with
+	// fields the retail vanilla parser doesn't understand. We don't share a
+	// cache file with vanilla anymore; Zulu uses ZuluMapCache.ini exclusively.
+	truncateIfZuluPolluted(mapDir, m_mapCacheName);
+	truncateIfZuluPolluted(userMapDir, m_mapCacheName);
+
+	// If our ZuluMapCache.ini is missing in the standard dir (fresh install or
+	// just-migrated from the shared MapCache.ini), force a rebuild from the
+	// .map files this session so official maps populate the new cache.
 	Bool stdCacheRebuilt = FALSE;
 	{
 		AsciiString stdCachePath;
-		stdCachePath.format("%s\\%s", mapDir.str(), m_mapCacheName);
-		if (TheFileSystem->doesFileExist(stdCachePath.str()) && !isMapCacheCompatible(stdCachePath))
+		stdCachePath.format("%s\\%s", mapDir.str(), m_zuluMapCacheName);
+		if (!TheFileSystem->doesFileExist(stdCachePath.str()))
 		{
-			DEBUG_LOG(("MapCache: %s missing format version, forcing rebuild this session\n", stdCachePath.str()));
+			DEBUG_LOG(("MapCache: %s missing, forcing rebuild this session\n", stdCachePath.str()));
 			TheWritableGlobalData->m_buildMapCache = TRUE;
 		}
 	}
@@ -586,7 +612,7 @@ void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir )
 {
 	INI ini;
 	AsciiString fname;
-	fname.format("%s\\%s", mapDir.str(), m_mapCacheName);
+	fname.format("%s\\%s", mapDir.str(), m_zuluMapCacheName);
 
 	if (TheFileSystem->doesFileExist(fname.str()))
 	{

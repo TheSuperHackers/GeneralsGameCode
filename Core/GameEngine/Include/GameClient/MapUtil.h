@@ -128,6 +128,7 @@ private:
 	void writeCacheINI(const AsciiString &mapDir);
 
 	static const char *const m_mapCacheName;
+	static const char *const m_zuluMapCacheName;
 
 	MapNameSet m_allowedMaps;
 	Bool m_doCreateStandardMapCacheINI;
