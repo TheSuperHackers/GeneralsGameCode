@@ -267,7 +267,12 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			reply.GameNotJoined.reason = LANAPIInterface::RET_GAME_STARTED;
 			reply.GameNotJoined.gameIP = m_localIP;
 			reply.GameNotJoined.playerIP = senderIP;
-			DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game already started."));
+			// Advertise the observer TCP port so the joiner can ask to spectate
+			// instead of just seeing an error dialog.
+			reply.GameNotJoined.observerPort =
+				(UnsignedShort)(NETWORK_BASE_PORT_NUMBER + LAN_OBSERVER_PORT_OFFSET);
+			DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game already started; offering observer port %u.",
+				reply.GameNotJoined.observerPort));
 		}
 		else
 		{
@@ -472,12 +477,23 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 	}
 }
 
+// Defined in LANAPICallbacks.cpp; the OnGameJoin handler reads these when
+// deciding whether to surface the "Watch as observer?" prompt.
+extern UnsignedInt   s_pendingObserveHostIP;
+extern UnsignedShort s_pendingObservePort;
+
 void LANAPI::handleJoinDeny( LANMessage *msg, UnsignedInt senderIP )
 {
 	if (msg->GameJoined.playerIP == m_localIP) // Is it for us?
 	{
 		if (m_pendingAction == ACT_JOIN) // Are we trying to join?
 		{
+			// Stash the host IP + observer-stream port if the host advertised
+			// one (only meaningful when reason == RET_GAME_STARTED). OnGameJoin
+			// uses these to render the observer prompt.
+			s_pendingObserveHostIP = msg->GameNotJoined.gameIP;
+			s_pendingObservePort   = msg->GameNotJoined.observerPort;
+
 			OnGameJoin(msg->GameNotJoined.reason, LookupGame(UnicodeString(msg->GameNotJoined.gameName)));
 			m_pendingAction = ACT_NONE;
 			m_expiration = 0;

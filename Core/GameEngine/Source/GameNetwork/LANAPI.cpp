@@ -87,11 +87,16 @@ LANAPI::LANAPI() : m_transport(nullptr)
 	m_lastUpdate = 0;
 	m_transport = new Transport;
 	m_isActive = TRUE;
+	m_observerHost = nullptr;
+	m_observerClient = nullptr;
+	m_observerClientPlaybackKicked = FALSE;
 }
 
 LANAPI::~LANAPI()
 {
 	reset();
+	stopObserverHost();
+	stopObserverClient();
 	delete m_transport;
 }
 
@@ -177,6 +182,10 @@ void LANAPI::reset()
 	m_isInLANMenu = TRUE;
 	m_currentGame = nullptr;
 
+	// Tear down any active observer session so a fresh LAN cycle doesn't
+	// inherit a stale listen socket or live client connection.
+	stopObserverHost();
+	stopObserverClient();
 }
 
 void LANAPI::sendMessage(LANMessage *msg, UnsignedInt ip /* = 0 */)
@@ -435,6 +444,9 @@ void LANAPI::update()
 	}
 	if(LANbuttonPushed)
 		return;
+
+	// Pump observer host accepts/streams and observer client recv/state.
+	updateObserver();
 	// Send out periodic I'm Here messages
 	if (now > s_resendDelta + m_lastResendTime)
 	{
@@ -1299,4 +1311,172 @@ void LANAPI::setIsActive(Bool isActive) {
 		}
 	}
 	m_isActive = isActive;
+}
+
+// =====================================================================
+// Observer mode
+// =====================================================================
+
+#include "Common/Recorder.h"
+
+void LANAPI::startObserverHost()
+{
+	if (!AmIHost())
+		return;
+	if (!m_observerHost)
+		m_observerHost = new LANObserverHost();
+	if (!m_observerHost->isRunning())
+	{
+		UnsignedShort port = (UnsignedShort)(NETWORK_BASE_PORT_NUMBER + LAN_OBSERVER_PORT_OFFSET);
+		if (!m_observerHost->start(port))
+		{
+			DEBUG_LOG(("LANAPI::startObserverHost - failed to start on port %u", port));
+			delete m_observerHost;
+			m_observerHost = nullptr;
+			return;
+		}
+	}
+	// Wire the host's currently-recording .rep file path. If recording hasn't
+	// started yet (we may be a frame early), the host will pick up the path
+	// on a subsequent updateObserver call via the same lookup.
+	if (TheRecorder)
+	{
+		AsciiString dir = RecorderClass::getReplayDir();
+		AsciiString file = RecorderClass::getLastReplayFileName();
+		file.concat(RecorderClass::getReplayExtention());
+		AsciiString full = dir;
+		full.concat(file);
+		m_observerHost->setReplayFile(full);
+	}
+}
+
+void LANAPI::stopObserverHost()
+{
+	if (m_observerHost)
+	{
+		m_observerHost->stop();
+		delete m_observerHost;
+		m_observerHost = nullptr;
+	}
+}
+
+void LANAPI::stopObserverClient()
+{
+	if (m_observerClient)
+	{
+		// Tell the recorder so it stops waiting at EOF.
+		if (TheRecorder)
+			TheRecorder->setLiveObserverStreamOpen(FALSE);
+		m_observerClient->close();
+		delete m_observerClient;
+		m_observerClient = nullptr;
+	}
+	m_observerClientPlaybackKicked = FALSE;
+}
+
+void LANAPI::RequestObserve(UnsignedInt hostIP, UnsignedShort observerPort)
+{
+	LANObsLog("RequestObserve: hostIP=%08X port=%u", hostIP, observerPort);
+	if (observerPort == 0)
+	{
+		LANObsLog("RequestObserve: aborting, no observer port");
+		DEBUG_LOG(("LANAPI::RequestObserve - no observer port advertised by host"));
+		return;
+	}
+
+	stopObserverClient();
+	m_observerClient = new LANObserverClient();
+
+	// Scratch file in the replay dir. Reuse a single name so we don't pile
+	// up junk; the file is rewritten each session.
+	AsciiString path = RecorderClass::getReplayDir();
+	path.concat("_live_observer");
+	path.concat(RecorderClass::getReplayExtention());
+
+	// hostIP arrives in HOST byte order from LANMessage payloads (consistent
+	// with how the rest of LANAPI deals with IPs). Sockets want network order.
+	UnsignedInt nbo = htonl(hostIP);
+
+	if (!m_observerClient->connect(nbo, observerPort, path))
+	{
+		DEBUG_LOG(("LANAPI::RequestObserve - connect kickoff failed"));
+		stopObserverClient();
+		return;
+	}
+	if (TheRecorder)
+		TheRecorder->setLiveObserverStreamOpen(TRUE);
+	m_observerClientPlaybackKicked = FALSE;
+	DEBUG_LOG(("LANAPI::RequestObserve - observing host %08X port %u", hostIP, observerPort));
+}
+
+void LANAPI::updateObserver()
+{
+	if (m_observerHost && m_observerHost->isRunning())
+	{
+		// Capture up to a handful of names per tick for chat notification.
+		UnicodeString newNames[4];
+		Int newCount = m_observerHost->update(newNames, 4);
+		for (Int i = 0; i < newCount; ++i)
+		{
+			UnicodeString msg;
+			msg.format(L"%s is now observing the game.", newNames[i].str());
+			OnChat(L"", 0, msg, LANCHAT_SYSTEM);
+		}
+	}
+
+	if (m_observerClient)
+	{
+		m_observerClient->update();
+
+		// Transition from snapshot-ready -> kick off playback (once).
+		if (!m_observerClientPlaybackKicked
+		    && m_observerClient->state() == LANObserverClient::STATE_READY
+		    && TheRecorder)
+		{
+			AsciiString path = m_observerClient->localFilePath();
+			// playbackFile expects a path relative to getReplayDir(); strip
+			// the dir prefix if present.
+			AsciiString dir = RecorderClass::getReplayDir();
+			AsciiString rel = path;
+			if (path.startsWith(dir.str()))
+				rel = path.str() + dir.getLength();
+
+			LANObsLog("kick playback: localPath='%s' rel='%s' snapshot=%u written=%u",
+				path.str(), rel.str(),
+				m_observerClient->snapshotSize(), m_observerClient->bytesReceived());
+			DEBUG_LOG(("LANAPI - observer kicking playbackFileLiveObserver('%s')", rel.str()));
+			if (TheRecorder->playbackFileLiveObserver(rel))
+			{
+				LANObsLog("playbackFileLiveObserver returned TRUE");
+				m_observerClient->markPlaybackStarted();
+				m_observerClientPlaybackKicked = TRUE;
+			}
+			else
+			{
+				LANObsLog("playbackFileLiveObserver returned FALSE; aborting");
+				DEBUG_LOG(("LANAPI - observer playbackFileLiveObserver failed; aborting"));
+				stopObserverClient();
+			}
+		}
+
+		// Stream closed: tell the recorder so it stops waiting at EOF.
+		if (m_observerClient && m_observerClient->isStreamClosed())
+		{
+			if (TheRecorder)
+				TheRecorder->setLiveObserverStreamOpen(FALSE);
+			// Don't delete the client object yet; the recorder may still be
+			// reading the buffered file. Cleanup happens at reset/dtor.
+		}
+
+		// User exited the live-observer playback (ESC, alt-F4, replay-end
+		// after stream closure, etc.). Clean up the network client now so
+		// the next observe attempt starts from a fresh state.
+		if (m_observerClientPlaybackKicked
+		    && TheRecorder
+		    && !TheRecorder->isLiveObserverMode())
+		{
+			DEBUG_LOG(("LANAPI - recorder exited LIVE_OBSERVER, dropping observer client"));
+			stopObserverClient();
+		}
+	}
 }

@@ -51,7 +51,8 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_PLAYBACK,
 	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
 	RECORDERMODETYPE_NONE, // this is a valid state to be in on the shell map, or in saved games
-	RECORDERMODETYPE_RESUME_CATCHUP       // Resume-from-replay: feed replay commands into an active LAN game until handoff frame. Kept LAST so existing values are preserved.
+	RECORDERMODETYPE_RESUME_CATCHUP,      // Resume-from-replay: feed replay commands into an active LAN game until handoff frame.
+	RECORDERMODETYPE_LIVE_OBSERVER        // LAN observer: identical to PLAYBACK except readNextFrame waits at EOF for more bytes to arrive over the network instead of stopping the playback.
 };
 
 class CRCInfo;
@@ -115,11 +116,20 @@ public:
 	Bool readReplayHeader( ReplayHeader& header );
 
 	RecorderModeType getMode();												///< Returns the current operating mode.
-	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
+	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK || m_mode == RECORDERMODETYPE_LIVE_OBSERVER; }
 	Bool isResumeCatchupMode() const { return m_mode == RECORDERMODETYPE_RESUME_CATCHUP; }
+	Bool isLiveObserverMode() const { return m_mode == RECORDERMODETYPE_LIVE_OBSERVER; }
 	// Returns true whenever the recorder is driving local playback and local
 	// user input should be suppressed / not fed into TheCommandList.
 	Bool isSuppressingLocalInput() const { return isPlaybackMode() || isResumeCatchupMode(); }
+
+	// LIVE_OBSERVER. Same as playbackFile() but flips the mode so that
+	// readNextFrame waits at EOF for more bytes rather than calling
+	// stopPlayback. The caller (the observer-stream client) tells us when
+	// the network stream has closed so we know when to actually stop.
+	Bool playbackFileLiveObserver(AsciiString filename);
+	void setLiveObserverStreamOpen(Bool open) { m_liveObserverStreamOpen = open; }
+	Bool isLiveObserverWaitingForBytes() const { return m_liveObserverWaitingForBytes; }
 
 	// Resume-from-replay. Opens the given replay file, skips past the header,
 	// and sets the recorder into RECORDERMODETYPE_RESUME_CATCHUP. While in
@@ -215,6 +225,22 @@ protected:
 	Int m_resumeSavedNetFrameRate;									///< During RESUME_CATCHUP, the network's logic frame rate at start so we can restore at handoff.
 
 	UnsignedInt m_replayAIFeatureVersion;						///< CURRENT for live games; loaded from the replay's extension block during playback.
+
+	// LIVE_OBSERVER state. m_liveObserverStreamOpen is owned by the observer
+	// network client and tells us whether to expect more bytes after EOF.
+	// m_liveObserverWaitingForBytes is set when readNextFrame hit EOF and
+	// updatePlayback should retry on the next tick instead of advancing.
+	// m_liveObserverRetryPos is the file position to reopen-and-seek-to on
+	// retry (the engine File's stdio buffer otherwise hides new bytes written
+	// by the host after our EOF).
+	// m_liveObserverFpsBoosted is TRUE while we're draining the initial
+	// snapshot at high FPS; cleared on first EOF when we drop back to
+	// m_liveObserverSavedFpsLimit and play in real-time.
+	Bool        m_liveObserverStreamOpen;
+	Bool        m_liveObserverWaitingForBytes;
+	Int         m_liveObserverRetryPos;
+	Bool        m_liveObserverFpsBoosted;
+	Int         m_liveObserverSavedFpsLimit;
 };
 
 extern RecorderClass *TheRecorder;
