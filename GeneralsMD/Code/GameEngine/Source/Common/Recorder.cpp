@@ -863,11 +863,11 @@ void RecorderClass::stopRecording() {
 			archiveReplay(m_fileName);
 	}
 
-	// Stats + replay upload: only fires for hosts of multiplayer/skirmish
-	// (the conditions under which StatsExporterBeginRecording was called in
-	// GameLogic::startNewGame). For non-host peers, replay viewers, and
-	// single-player campaigns, exportingActive is FALSE and both the stats
-	// export and the replay upload are skipped.
+	// Stats + replay upload: fires for every client in a LAN/Internet
+	// multiplayer game (the conditions under which
+	// StatsExporterBeginRecording was called in GameLogic::startNewGame).
+	// For replay viewers and single-player campaigns, exportingActive is
+	// FALSE and both the stats export and the replay upload are skipped.
 	//
 	// Order: stats first, replay second. The replay upload runs even if the
 	// stats upload failed — UploadStatsToServer is best-effort and logs
