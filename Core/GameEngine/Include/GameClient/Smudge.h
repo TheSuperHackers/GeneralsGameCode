@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Common/STLTypedefs.h"
 #include "WW3D2/dllist.h"
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
