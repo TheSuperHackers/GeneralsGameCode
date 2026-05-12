@@ -2301,18 +2301,22 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			TheStatsCollector->reset();
 		}
 
-		// Stats export: kick off live-game collection for hosts of LAN
-		// or Internet multiplayer games. Skirmish (vs. AI), replay
-		// viewing, single-player campaign, and the shell are
-		// intentionally skipped — replays would duplicate the original
-		// game's stats, and skirmish/single-player aren't competitive
-		// matches. The headless-replay path is driven separately by
-		// ReplaySimulation, which calls Begin/Collect/Export itself;
-		// that path runs in GAME_REPLAY mode so this hook stays inactive.
+		// Stats export: kick off live-game collection for every client
+		// in a LAN or Internet multiplayer game (host and non-host alike).
+		// Because the engine is deterministic lockstep, every client
+		// computes identical game state and produces equivalent stats /
+		// replays; uploading from all of them gives the server N copies
+		// per match rather than a single host-sourced upload, which is
+		// the intent. Skirmish (vs. AI), replay viewing, single-player
+		// campaign, and the shell are still skipped: replays would
+		// duplicate the original game's stats, and skirmish/single-player
+		// aren't competitive matches. The headless-replay path is driven
+		// separately by ReplaySimulation, which calls Begin/Collect/Export
+		// itself; that path runs in GAME_REPLAY mode so this hook stays
+		// inactive.
 		if (TheGlobalData->m_exportStats
 			&& (m_gameMode == GAME_LAN || m_gameMode == GAME_INTERNET)
-			&& TheGameInfo != nullptr
-			&& TheGameInfo->amIHost())
+			&& TheGameInfo != nullptr)
 		{
 			StatsExporterBeginRecording();
 		}
