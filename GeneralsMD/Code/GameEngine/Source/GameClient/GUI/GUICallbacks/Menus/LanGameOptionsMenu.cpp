@@ -608,13 +608,6 @@ void StartPressed()
 				GadgetComboBoxSetSelectedPos(comboBoxPlayer[i], SLOT_CLOSED);
 			}
 		}
-		// Snapshot the lobby's preview map (with player labels at fixed
-		// start positions) and post it to the Discord webhook configured
-		// at build time. No-op when the build has no webhook URL or when
-		// fewer than 2 humans are in the lobby; gated host-side here so
-		// only one client posts per match. Blocking HTTP, mirroring the
-		// existing balance/map_summary calls.
-		PostLanLobbyMapToDiscord(myGame);
 		Int seconds = TheMultiplayerSettings->getStartCountdownTimerSeconds();
 		if (seconds)
 			TheLAN->RequestGameStartTimer(seconds);
@@ -1571,6 +1564,15 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 						performRandomAssign(TheLAN->GetMyGame(), lockedTemplates);
 						TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
 						lanUpdateSlotList();
+
+						// Snapshot the lobby's preview map (with player labels
+						// at fixed start positions) and post it to the Discord
+						// webhook configured at build time. No-op when the build
+						// has no webhook URL or when fewer than 2 humans are in
+						// the lobby; gated host-side here so only one client
+						// posts per match. Blocking HTTP, mirroring the existing
+						// balance/map_summary calls.
+						PostLanLobbyMapToDiscord(TheLAN->GetMyGame());
 
 						// After a successful balance call (HTTP 200), ask the
 						// map_summary endpoint for a per-map history blurb and
