@@ -1127,6 +1127,9 @@ void GameLogic::setGameMode( GameMode mode )
 // ------------------------------------------------------------------------------------------------
 void GameLogic::startNewGame( Bool loadingSaveGame )
 {
+	LANObsLog("startNewGame entry: gameMode=%d m_startNewGame=%d savedGame=%d recorderMode=%d",
+		(int)m_gameMode, (int)m_startNewGame, (int)loadingSaveGame,
+		TheRecorder ? (int)TheRecorder->getMode() : -1);
 
 	#ifdef DUMP_PERF_STATS
 	__int64 startTime64;
@@ -1323,17 +1326,24 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		TheCampaignManager->SetVictorious(FALSE);
 	m_startNewGame = FALSE;
 
+	LANObsLog("startNewGame: past early-return; doing actual loading. mapName='%s'",
+		TheGlobalData ? TheGlobalData->m_mapName.str() : "(null)");
+
 	// update the loadscreen
 	if(m_loadScreen)
 		updateLoadProgress(LOAD_PROGRESS_POST_PARTICLE_INI_LOAD);
 
 	DEBUG_ASSERTCRASH(m_frame == 0, ("framecounter expected to be 0 here"));
 
+	LANObsLog("startNewGame: about to loadMapINI mapName='%s'",
+		TheGlobalData ? TheGlobalData->m_mapName.str() : "(null TheGlobalData)");
 	// before loading the map, load the map.ini file in the same directory.
 	loadMapINI( TheGlobalData->m_mapName );
 
+	LANObsLog("startNewGame: loadMapINI done; about to TheTerrainLogic->loadMap");
 	// load a map
 	TheTerrainLogic->loadMap( TheGlobalData->m_mapName, false );
+	LANObsLog("startNewGame: TheTerrainLogic->loadMap done");
 	// anytime the world's size changes, must reset the partition mgr
 	//ThePartitionManager->init();
 
@@ -1780,6 +1790,11 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// reveal the map for the permanent observer
 	Player *observerPlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
+	LANObsLog("startNewGame: observerPlayer=%p", observerPlayer);
+	if (!observerPlayer)
+	{
+		LANObsLog("startNewGame: NO ReplayObserver player found! crash incoming");
+	}
 	ThePartitionManager->revealMapForPlayerPermanently( observerPlayer->getPlayerIndex() );
 	DEBUG_LOG(("Reveal shroud for %ls whose index is %d", observerPlayer->getPlayerDisplayName().str(), observerPlayer->getPlayerIndex()));
 
@@ -2307,7 +2322,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		// explicitly set the Control bar to Observer Mode
 		if(m_gameMode == GAME_REPLAY )
 		{
+			LANObsLog("startNewGame: GAME_REPLAY changeLocalPlayer(observerPlayer=%p)", observerPlayer);
 			rts::changeLocalPlayer(observerPlayer);
+			LANObsLog("startNewGame: changeLocalPlayer done");
 
 			DEBUG_LOG(("Start of a replay game %ls, %d", localPlayer->getPlayerDisplayName().str(), localPlayer->getPlayerIndex()));
 		}

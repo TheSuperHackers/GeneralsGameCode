@@ -260,6 +260,14 @@ void LANAPI::OnGameStart()
 		// Set the seeds
 		InitRandom( m_currentGame->getSeed() );
 		DEBUG_LOG(("InitRandom( %d )", m_currentGame->getSeed()));
+
+		// Open the observer-streaming TCP listen socket if we're the host.
+		// Joiners who try to enter after this point are offered a "Watch as
+		// observer" prompt instead of a hard rejection.
+		if (m_currentGame->amIHost())
+		{
+			startObserverHost();
+		}
 	}
 }
 
@@ -502,6 +510,29 @@ void LANAPI::OnPlayerJoin( Int slot, UnicodeString playerName )
 	lanUpdateSlotList();
 }
 
+// Pending observer-prompt state stashed for the MessageBoxYesNo callbacks,
+// which are plain function pointers and have no userData parameter. Set by
+// handleJoinDeny in LANAPIhandlers.cpp (where the join-deny payload lives),
+// consumed here in OnGameJoin to decide whether to show the observer prompt.
+UnsignedInt   s_pendingObserveHostIP   = 0;
+UnsignedShort s_pendingObservePort     = 0;
+
+static void lanAcceptObserveCallback()
+{
+	if (TheLAN && s_pendingObservePort != 0)
+	{
+		((LANAPI *)TheLAN)->RequestObserve(s_pendingObserveHostIP, s_pendingObservePort);
+	}
+	s_pendingObserveHostIP = 0;
+	s_pendingObservePort   = 0;
+}
+
+static void lanDeclineObserveCallback()
+{
+	s_pendingObserveHostIP = 0;
+	s_pendingObservePort   = 0;
+}
+
 void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 {
 	if (ret == RET_OK)
@@ -523,6 +554,27 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 		options.format("NAT=%d", FirewallHelperClass::FIREWALL_TYPE_SIMPLE); // BGC: This is a LAN game, so there is no firewall.
 		RequestGameOptions( options, true );
 	}
+	else if (ret == RET_GAME_STARTED && s_pendingObservePort != 0)
+	{
+		// theGame may be null here because handleRequestJoin's deny payload
+		// for RET_GAME_STARTED doesn't set the game name; the joiner only
+		// needs the host IP + observer port, both already stashed by
+		// handleJoinDeny.
+		(void)theGame;
+		// Game's already started. Offer to spectate via the observer stream.
+		// The host advertised the TCP observer port in the JOIN_DENY payload;
+		// handleJoinDeny stashed it into s_pendingObservePort for us.
+		UnicodeString title, body;
+		title = TheGameText->fetch("LAN:JoinFailed");
+		body  = TheGameText->fetch("LAN:OfferObserveBody");
+		if (body.isEmpty())
+		{
+			// Fallback if the localization key hasn't been added yet so we
+			// still show something useful on dev builds.
+			body = L"This game is already in progress. Watch it as an observer?";
+		}
+		MessageBoxYesNo(title, body, lanAcceptObserveCallback, lanDeclineObserveCallback);
+	}
 	else if (ret != RET_BUSY)
 	{
 		/// @todo: re-enable lobby controls?  Error msgs?
@@ -530,6 +582,8 @@ void LANAPI::OnGameJoin( ReturnType ret, LANGameInfo *theGame )
 		title = TheGameText->fetch("LAN:JoinFailed");
 		body = getErrorStringFromReturnType(ret);
 		MessageBoxOk(title, body, nullptr);
+		s_pendingObserveHostIP = 0;
+		s_pendingObservePort   = 0;
 	}
 }
 

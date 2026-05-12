@@ -538,6 +538,7 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/LANAPI.h
     Include/GameNetwork/LANAPICallbacks.h
     Include/GameNetwork/LANGameInfo.h
+    Include/GameNetwork/LANObserverStream.h
     Include/GameNetwork/LANPlayer.h
     Include/GameNetwork/NAT.h
     Include/GameNetwork/NetCommandList.h
@@ -1130,6 +1131,7 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/LANAPICallbacks.cpp
     Source/GameNetwork/LANAPIhandlers.cpp
     Source/GameNetwork/LANGameInfo.cpp
+    Source/GameNetwork/LANObserverStream.cpp
     Source/GameNetwork/NAT.cpp
     Source/GameNetwork/NetCommandList.cpp
     Source/GameNetwork/NetCommandMsg.cpp

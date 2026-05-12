@@ -308,6 +308,11 @@ RecorderClass::RecorderClass()
 	m_nextFrame = 0;
 	m_wasDesync = FALSE;
 	m_replayAIFeatureVersion = ZULU_AI_FEATURE_CURRENT;
+	m_liveObserverStreamOpen      = FALSE;
+	m_liveObserverWaitingForBytes = FALSE;
+	m_liveObserverRetryPos        = 0;
+	m_liveObserverFpsBoosted      = FALSE;
+	m_liveObserverSavedFpsLimit   = 0;
 	init(); // just for the heck of it.
 }
 
@@ -411,6 +416,37 @@ void RecorderClass::reset() {
  * Do the update for this frame.
  */
 void RecorderClass::update() {
+	// LIVE_OBSERVER: keep TiVOFastMode forced off. The standard replay FF
+	// hotkey races the observer past the live edge and desyncs us from the
+	// host. Snapshot catch-up already runs at the high FPS limit set in
+	// playbackFileLiveObserver, so the user never needs manual FF here.
+	if (m_mode == RECORDERMODETYPE_LIVE_OBSERVER
+	    && TheGlobalData && TheGlobalData->m_TiVOFastMode)
+	{
+		TheWritableGlobalData->m_TiVOFastMode = FALSE;
+		if (TheInGameUI)
+			TheInGameUI->messageNoFormat(
+				TheGameText->FETCH_OR_SUBSTITUTE("GUI:LiveObserverNoFF",
+					L"Fast Forward is unavailable while observing a live game."));
+	}
+
+	// Diagnostic: every recorder update fires a one-liner in LIVE_OBSERVER
+	// mode so the trail in ObserverLog.txt shows ticks elapsing.
+	if (m_mode == RECORDERMODETYPE_LIVE_OBSERVER)
+		LANObsLog("Recorder::update tick mode=%d frame=%u", (int)m_mode,
+			TheGameLogic ? TheGameLogic->getFrame() : 0xFFFFFFFFu);
+
+	// LIVE_OBSERVER (joiner side) and RECORD (host side): TheLAN::update is
+	// only driven by the LAN lobby menu, so once we're in-game the observer
+	// host listen socket and client TCP recv stop being pumped. Drive them
+	// here every game frame instead. Safe no-op when no observer host/client
+	// is active.
+	if (TheLAN
+	    && (m_mode == RECORDERMODETYPE_LIVE_OBSERVER || m_mode == RECORDERMODETYPE_RECORD))
+	{
+		TheLAN->updateObserver();
+	}
+
 	if (m_mode == RECORDERMODETYPE_RESUME_CATCHUP) {
 		updateResumeCatchup();
 	} else if (m_mode == RECORDERMODETYPE_RECORD || m_mode == RECORDERMODETYPE_NONE) {
@@ -424,6 +460,18 @@ void RecorderClass::update() {
  * Do the update for the next frame of this playback.
  */
 void RecorderClass::updatePlayback() {
+	// LIVE_OBSERVER: per-tick checkpoint so the crash log can be correlated
+	// with what the playback was doing at the moment of the fault.
+	if (isLiveObserverMode())
+	{
+		LANObsLog("updatePlayback tick: gameFrame=%u m_nextFrame=%d filePos=%d waiting=%d streamOpen=%d",
+			TheGameLogic ? TheGameLogic->getFrame() : 0xFFFFFFFFu,
+			(Int)m_nextFrame,
+			m_file ? m_file->position() : -1,
+			m_liveObserverWaitingForBytes ? 1 : 0,
+			m_liveObserverStreamOpen ? 1 : 0);
+	}
+
 	// Remove any bad commands that have been inserted by the local user that shouldn't be
 	// executed during playback.
 	CullBadCommandsResult result = cullBadCommands();
@@ -436,6 +484,50 @@ void RecorderClass::updatePlayback() {
 		return;
 	}
 
+	// LIVE_OBSERVER: if we were waiting at EOF for more bytes from the host,
+	// try to re-read now. Updates to the host's .rep file aren't visible to
+	// our stdio read buffer until we close-and-reopen the File, so do that
+	// before retrying.
+	if (isLiveObserverMode() && m_liveObserverWaitingForBytes)
+	{
+		// If the stream has closed since we started waiting, finalize.
+		if (!m_liveObserverStreamOpen)
+		{
+			DEBUG_LOG(("RecorderClass::updatePlayback - LIVE_OBSERVER stream closed; ending playback"));
+			m_liveObserverWaitingForBytes = FALSE;
+			m_nextFrame = -1;
+			stopPlayback();
+			return;
+		}
+
+		if (m_file == nullptr)
+		{
+			// We already lost the file (a prior reopen failed); give up.
+			m_liveObserverWaitingForBytes = FALSE;
+			m_nextFrame = -1;
+			return;
+		}
+
+		AsciiString fname = m_file->getName();
+		m_file->close();
+		m_file = TheFileSystem->openFile(fname.str(), File::READ | File::BINARY);
+		if (m_file == nullptr)
+		{
+			DEBUG_LOG(("RecorderClass::updatePlayback - LIVE_OBSERVER reopen failed"));
+			m_liveObserverWaitingForBytes = FALSE;
+			m_nextFrame = -1;
+			return;
+		}
+		m_file->seek(m_liveObserverRetryPos, File::START);
+
+		// Retry the read. If it still fails, readNextFrame will re-arm
+		// m_liveObserverWaitingForBytes and we'll try again next tick.
+		m_liveObserverWaitingForBytes = FALSE;
+		readNextFrame();
+		if (m_liveObserverWaitingForBytes)
+			return;
+	}
+
 	if (m_nextFrame == -1) {
 		// This is reached if there are no more commands to be executed.
 		return;
@@ -446,8 +538,32 @@ void RecorderClass::updatePlayback() {
 
 	// While there are commands to be queued up for this frame, do it.
 	while (m_nextFrame == curFrame) {
+		Int posBeforeAppend = isLiveObserverMode() && m_file ? m_file->position() : 0;
 		appendNextCommand();	// append the next command to TheCommandQueue
+		Int posAfterAppend = isLiveObserverMode() && m_file ? m_file->position() : 0;
+		if (isLiveObserverMode())
+			LANObsLog("appendNextCommand frame=%d gameFrame=%u: %d -> %d (delta=%d)",
+				(Int)m_nextFrame, curFrame, posBeforeAppend, posAfterAppend,
+				posAfterAppend - posBeforeAppend);
 		readNextFrame();	// Read the next command's frame number for playback.
+		// LIVE_OBSERVER: if readNextFrame hit EOF, bail so the retry path
+		// runs next tick rather than spinning forever here.
+		if (isLiveObserverMode() && m_liveObserverWaitingForBytes)
+			break;
+	}
+
+	// LIVE_OBSERVER: once we hit EOF for the first time, we've drained the
+	// snapshot and are now at the live edge — drop the FPS limit back to
+	// normal so we don't keep racing ahead of the host. While catching up
+	// through the snapshot, FPS stays at 1000 (set in playbackFileLiveObserver).
+	if (isLiveObserverMode()
+	    && m_liveObserverWaitingForBytes
+	    && m_liveObserverFpsBoosted
+	    && TheFramePacer)
+	{
+		LANObsLog("caught up to live edge; restoring FPS limit %d", m_liveObserverSavedFpsLimit);
+		TheFramePacer->setFramesPerSecondLimit(m_liveObserverSavedFpsLimit);
+		m_liveObserverFpsBoosted = FALSE;
 	}
 }
 
@@ -1132,6 +1248,42 @@ Bool RecorderClass::simulateReplay(AsciiString filename)
 	return success;
 }
 
+// LAN observer entry point. Reuses the normal playback bootstrap (which reads
+// the header and queues MSG_NEW_GAME) and then flips into LIVE_OBSERVER mode
+// so readNextFrame waits at EOF instead of terminating playback. The caller
+// (LANObserverClient) must call setLiveObserverStreamOpen(TRUE) before this,
+// and setLiveObserverStreamOpen(FALSE) when the network stream closes so the
+// recorder knows when to finalize.
+Bool RecorderClass::playbackFileLiveObserver(AsciiString filename)
+{
+	LANObsLog("playbackFileLiveObserver entry: filename='%s'", filename.str());
+	Bool success = playbackFile(filename);
+	LANObsLog("playbackFile returned %s; m_nextFrame=%d", success?"TRUE":"FALSE", (Int)m_nextFrame);
+	if (success)
+	{
+		m_mode = RECORDERMODETYPE_LIVE_OBSERVER;
+		m_liveObserverWaitingForBytes = FALSE;
+		m_liveObserverRetryPos        = 0;
+
+		// Boost FPS while draining the initial snapshot so the observer
+		// catches up to the live edge fast. updatePlayback drops it back to
+		// the saved value on the first EOF. Same trick RESUME_CATCHUP uses.
+		if (TheFramePacer)
+		{
+			m_liveObserverSavedFpsLimit = TheFramePacer->getFramesPerSecondLimit();
+			if (m_liveObserverSavedFpsLimit <= 0)
+				m_liveObserverSavedFpsLimit = 30;
+			TheFramePacer->setFramesPerSecondLimit(1000);
+			TheWritableGlobalData->m_useFpsLimit = TRUE;
+			m_liveObserverFpsBoosted = TRUE;
+			LANObsLog("FPS boost: saved=%d, boosted to 1000", m_liveObserverSavedFpsLimit);
+		}
+
+		LANObsLog("mode set to LIVE_OBSERVER; file pos=%d", m_file ? m_file->position() : -1);
+	}
+	return success;
+}
+
 #if defined(RTS_DEBUG)
 Bool RecorderClass::analyzeReplay( AsciiString filename )
 {
@@ -1527,10 +1679,27 @@ AsciiString RecorderClass::readAsciiString() {
 /**
  * Read the frame number for the next command in the playback file. If the end of the file is reached, the playback
  * is stopped and the next frame is said to be -1.
+ *
+ * LIVE_OBSERVER mode: EOF means "host hasn't flushed the next frame yet" rather than
+ * "replay is over." We rewind the file position so a future retry can re-read this
+ * spot, set m_liveObserverWaitingForBytes, and leave m_nextFrame alone so
+ * updatePlayback won't advance.
  */
 void RecorderClass::readNextFrame() {
+	Int posBefore = m_file->position();
 	Int bytesRead = m_file->read(&m_nextFrame, sizeof(m_nextFrame));
 	if (bytesRead != sizeof(m_nextFrame)) {
+		if (isLiveObserverMode() && m_liveObserverStreamOpen)
+		{
+			// Roll back any partial read and wait for more bytes to arrive.
+			// The retry in updatePlayback closes-and-reopens the file so the
+			// engine File's stdio buffer doesn't keep telling us EOF after
+			// new bytes have actually been appended.
+			m_liveObserverRetryPos        = posBefore;
+			m_liveObserverWaitingForBytes = TRUE;
+			DEBUG_LOG(("RecorderClass::readNextFrame - LIVE_OBSERVER EOF at pos %d, will retry", posBefore));
+			return;
+		}
 		DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
 		m_nextFrame = -1;
 		stopPlayback();

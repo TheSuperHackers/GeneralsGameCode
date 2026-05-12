@@ -33,6 +33,7 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/LANPlayer.h"
 #include "GameNetwork/LANGameInfo.h"
+#include "GameNetwork/LANObserverStream.h"
 
 //static const Int g_lanPlayerNameLength = 20;
 static const Int g_lanPlayerNameLength = 12; // reduced length because of game option length
@@ -236,6 +237,10 @@ struct LANMessage
 			UnsignedInt gameIP;
 			UnsignedInt playerIP;
 			LANAPIInterface::ReturnType reason;
+			// When reason == RET_GAME_STARTED, the host fills in the TCP
+			// port where it is streaming the live replay for observers.
+			// 0 means "no observer mode available" (legacy host).
+			UnsignedShort observerPort;
 		} GameNotJoined;
 
 		// Accept is sent with SET_ACCEPT
@@ -385,6 +390,42 @@ protected:
 	AsciiString					m_lastGameopt; /// @todo: hack for demo - remove this
 
 	Bool								m_isActive;			///< is the game currently active?
+
+	// Observer mode. m_observerHost is non-null on the host while a game is in
+	// progress; it accepts incoming TCP observer connections and streams the
+	// host's growing .rep file. m_observerClient is non-null on a joining
+	// player who chose to spectate; it pulls bytes into a local .rep file
+	// and signals the recorder when the snapshot is buffered and when the
+	// stream eventually closes.
+	LANObserverHost*			m_observerHost;
+	LANObserverClient*		m_observerClient;
+	Bool									m_observerClientPlaybackKicked; // we called playbackFileLiveObserver already
+
+public:
+	// Observer mode entry points (called from UI / callbacks).
+
+	// Joining player accepted the "Watch as observer" prompt. Opens TCP to
+	// the host and starts buffering bytes into a scratch .rep file.
+	void RequestObserve(UnsignedInt hostIP, UnsignedShort observerPort);
+
+	// Host accessors used by chat notifications etc.
+	Int   getObserverCount() const { return m_observerHost ? m_observerHost->observerCount() : 0; }
+	Bool  isObservingClient() const { return m_observerClient != nullptr; }
+
+public:
+	// Observer state-machine pump. Normally invoked from update() at the LAN
+	// lobby's tick cadence, but also callable from the game loop while a
+	// LIVE_OBSERVER playback is running, since LANAPI::update() is only
+	// driven by the LAN lobby menu and stops once playback starts.
+	void updateObserver();
+
+protected:
+	// Host-side hook: open the observer listen socket and arm streaming
+	// against the recorder's current file. Safe to call multiple times.
+	void startObserverHost();
+	void stopObserverHost();
+	// Client-side teardown.
+	void stopObserverClient();
 
 protected:
 	void sendMessage(LANMessage *msg, UnsignedInt ip = 0); // Convenience function
