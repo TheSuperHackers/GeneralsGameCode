@@ -952,25 +952,26 @@ bool GameLogic::onEndPathBuild(GameMessage *msg)
 
 bool GameLogic::onSetRallyPoint(GameMessage *msg)
 {
+	Player *msgPlayer = getMessagePlayer(msg);
 	Object *obj = findObjectByID( msg->getArgument( 0 )->objectID );
 	Coord3D dest = msg->getArgument( 1 )->location;
 
-	if (obj)
-	{
+	if (!obj)
+		return false;
+
 #if !RETAIL_COMPATIBLE_CRC
-		// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
-		if ( obj->getControllingPlayer() != msgPlayer )
-		{
-			DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
-				msgPlayer->getPlayerDisplayName().str(),
-				obj->getTemplate()->getName().str(),
-				obj->getControllingPlayer()->getPlayerDisplayName().str()) );
-			return false;
-		}
+	// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
+	if ( obj->getControllingPlayer() != msgPlayer )
+	{
+		DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
+			msgPlayer->getPlayerDisplayName().str(),
+			obj->getTemplate()->getName().str(),
+			obj->getControllingPlayer()->getPlayerDisplayName().str()) );
+		return false;
+	}
 #endif
 
-		doSetRallyPoint( obj, dest );
-	}
+	doSetRallyPoint( obj, dest );
 
 	return true;
 }
@@ -1126,6 +1127,8 @@ bool GameLogic::onDoWeaponAtLocation(GameMessage *msg, AIGroupPtr &currentlySele
 
 bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
+	Player *msgPlayer = getMessagePlayer(msg);
+
 	// first argument is the special power ID
 	UnsignedInt specialPowerID = msg->getArgument( 0 )->integer;
 
@@ -1172,6 +1175,8 @@ bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelected
 
 bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
+	Player *msgPlayer = getMessagePlayer(msg);
+
 	const Bool hasAngle = msg->getArgumentCount() >= 6;
 	Int argumentIndex = 0;
 
@@ -1231,6 +1236,8 @@ bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &current
 
 bool GameLogic::onDoSpecialPowerAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
+	Player *msgPlayer = getMessagePlayer(msg);
+
 	// first argument is the special power ID
 	UnsignedInt specialPowerID = msg->getArgument( 0 )->integer;
 
@@ -1649,6 +1656,8 @@ bool GameLogic::onResumeConstruction(GameMessage *msg, AIGroupPtr &currentlySele
 
 bool GameLogic::onDoSpecialPowerOverrideDestination(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
+	Player *msgPlayer = getMessagePlayer(msg);
+
 	const Coord3D *loc = &msg->getArgument( 0 )->location;
 	SpecialPowerType spType = (SpecialPowerType)msg->getArgument( 1 )->integer;
 
