@@ -34,8 +34,8 @@ This is a developer-facing inventory, not a player-facing changelog.
 ## Visuals / UI
 
 - [player-colors.md](player-colors.md) — `GameMakeColorReadable`
-  luminance lift, `ZuluColors.ini` rename + Metallic Grey, fix for
-  ColorBlack rendering as red.
+  luminance lift, `ZuluColors.ini` rename + Metallic Grey,
+  `ColorBlack` removal.
 - [terrain-and-camera.md](terrain-and-camera.md) —
   `VERTEX_BUFFER_TILE_LENGTH` bump for `MaxCameraHeight=450` and
   `farZ` scaling fix for the black-top-band artifact.
