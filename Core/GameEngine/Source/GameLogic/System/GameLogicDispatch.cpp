@@ -952,7 +952,6 @@ bool GameLogic::onEndPathBuild(GameMessage *msg)
 
 bool GameLogic::onSetRallyPoint(GameMessage *msg)
 {
-	Player *msgPlayer = getMessagePlayer(msg);
 	Object *obj = findObjectByID( msg->getArgument( 0 )->objectID );
 	Coord3D dest = msg->getArgument( 1 )->location;
 
@@ -961,6 +960,7 @@ bool GameLogic::onSetRallyPoint(GameMessage *msg)
 
 #if !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @fix stephanmeesters 11/03/2026 Validate the owner of the source object
+	Player *msgPlayer = getMessagePlayer(msg);
 	if ( obj->getControllingPlayer() != msgPlayer )
 	{
 		DEBUG_CRASH( ("MSG_SET_RALLY_POINT: Player '%ls' attempted to set the rally point of object '%s' owned by player '%ls'.",
@@ -1127,8 +1127,6 @@ bool GameLogic::onDoWeaponAtLocation(GameMessage *msg, AIGroupPtr &currentlySele
 
 bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
-	Player *msgPlayer = getMessagePlayer(msg);
-
 	// first argument is the special power ID
 	UnsignedInt specialPowerID = msg->getArgument( 0 )->integer;
 
@@ -1142,6 +1140,7 @@ bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelected
 	{
 #if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+		Player *msgPlayer = getMessagePlayer(msg);
 		if ( source->getControllingPlayer() != msgPlayer )
 		{
 			DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
@@ -1175,8 +1174,6 @@ bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelected
 
 bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
-	Player *msgPlayer = getMessagePlayer(msg);
-
 	const Bool hasAngle = msg->getArgumentCount() >= 6;
 	Int argumentIndex = 0;
 
@@ -1203,6 +1200,7 @@ bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &current
 	{
 #if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+		Player *msgPlayer = getMessagePlayer(msg);
 		if ( source->getControllingPlayer() != msgPlayer )
 		{
 			DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_LOCATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
@@ -1236,7 +1234,6 @@ bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &current
 
 bool GameLogic::onDoSpecialPowerAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
-	Player *msgPlayer = getMessagePlayer(msg);
 
 	// first argument is the special power ID
 	UnsignedInt specialPowerID = msg->getArgument( 0 )->integer;
@@ -1259,6 +1256,7 @@ bool GameLogic::onDoSpecialPowerAtObject(GameMessage *msg, AIGroupPtr &currently
 	{
 #if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+		Player *msgPlayer = getMessagePlayer(msg);
 		if ( source->getControllingPlayer() != msgPlayer )
 		{
 			DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_AT_OBJECT: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
@@ -1657,7 +1655,6 @@ bool GameLogic::onResumeConstruction(GameMessage *msg, AIGroupPtr &currentlySele
 
 bool GameLogic::onDoSpecialPowerOverrideDestination(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
-	Player *msgPlayer = getMessagePlayer(msg);
 
 	const Coord3D *loc = &msg->getArgument( 0 )->location;
 	SpecialPowerType spType = (SpecialPowerType)msg->getArgument( 1 )->integer;
@@ -1669,6 +1666,7 @@ bool GameLogic::onDoSpecialPowerOverrideDestination(GameMessage *msg, AIGroupPtr
 	{
 #if !RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @fix stephanmeesters 01/03/2026 Validate the origin of the source object
+		Player *msgPlayer = getMessagePlayer(msg);
 		if ( source->getControllingPlayer() != msgPlayer )
 		{
 			DEBUG_CRASH( ("MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION: Player '%ls' attempted to control the object '%s' owned by player '%ls'.",
