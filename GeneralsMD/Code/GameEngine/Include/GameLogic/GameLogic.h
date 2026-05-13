@@ -352,9 +352,9 @@ private:
 	bool onSell(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 	bool onToggleOvercharge(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 #ifdef ALLOW_SURRENDER
-	bool onDoSurrender(GameMessage *msg);
-	bool onPickUpPrisoner(GameMessage *msg);
-	bool onReturnToPrison(GameMessage *msg);
+	bool onDoSurrender(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onPickUpPrisoner(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onReturnToPrison(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 #endif
 	bool onCreateSelectedGroup(GameMessage *msg);
 	bool onRemoveFromSelectedGroup(GameMessage *msg);

@@ -702,17 +702,17 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #ifdef ALLOW_SURRENDER
 		case GameMessage::MSG_DO_SURRENDER:
 		{
-			onDoSurrender(msg);
+			onDoSurrender(msg, currentlySelectedGroup);
 			break;
 		}
 		case GameMessage::MSG_PICK_UP_PRISONER:
 		{
-			onPickUpPrisoner(msg);
+			onPickUpPrisoner(msg, currentlySelectedGroup);
 			break;
 		}
 		case GameMessage::MSG_RETURN_TO_PRISON:
 		{
-			onReturnToPrison(msg);
+			onReturnToPrison(msg, currentlySelectedGroup);
 			break;
 		}
 #endif
@@ -1421,6 +1421,7 @@ bool GameLogic::onDoCheer(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 }
 
 #if defined(RTS_DEBUG) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
 bool GameLogic::onDebugKillSelection(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	//All selected units die
@@ -1978,7 +1979,7 @@ bool GameLogic::onToggleOvercharge(GameMessage *msg, AIGroupPtr &currentlySelect
 
 #ifdef ALLOW_SURRENDER
 
-bool GameLogic::onDoSurrender(GameMessage *msg)
+bool GameLogic::onDoSurrender(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	//All selected units surrender
 	if( currentlySelectedGroup )
@@ -1991,7 +1992,7 @@ bool GameLogic::onDoSurrender(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onPickUpPrisoner(GameMessage *msg)
+bool GameLogic::onPickUpPrisoner(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *prisoner = TheGameLogic->findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -2005,7 +2006,7 @@ bool GameLogic::onPickUpPrisoner(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onReturnToPrison(GameMessage *msg)
+bool GameLogic::onReturnToPrison(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// use selected group
 	if( currentlySelectedGroup )
@@ -2014,7 +2015,7 @@ bool GameLogic::onReturnToPrison(GameMessage *msg)
 	return true;
 }
 
-#endif // ALLOW_SURRENDER
+#endif
 
 bool GameLogic::onCreateSelectedGroup(GameMessage *msg)
 {
