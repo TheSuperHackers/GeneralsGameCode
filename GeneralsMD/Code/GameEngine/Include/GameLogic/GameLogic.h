@@ -295,8 +295,6 @@ private:
 	void remakeSleepyUpdate();
 	void validateSleepyUpdate() const;
 
-	static void createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D *pos, Real angle);
-
 	bool onNewGame(GameMessage *msg);
 	bool onClearGameData(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 	bool onBeginPathBuild(GameMessage *msg);
@@ -369,6 +367,8 @@ private:
 	bool onAddTeam(GameMessage *msg);
 	bool onLogicCrc(GameMessage *msg);
 	bool onPurchaseScience(GameMessage *msg);
+
+	static void createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D *pos, Real angle);
 
 private:
 
