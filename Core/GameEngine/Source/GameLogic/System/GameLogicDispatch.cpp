@@ -2279,7 +2279,7 @@ bool GameLogic::onSelfDestruct(GameMessage *msg)
 					// a living ally!  hooray!
 					otherPlayer->transferAssetsFromThat(msgPlayer);
 					msgPlayer->killPlayer(); // just to be safe (and to kill beacons etc that don't transfer)
-					return false;
+					break;
 				}
 			}
 		}
@@ -2391,7 +2391,7 @@ bool GameLogic::onLogicCrc(GameMessage *msg)
 			if (msgPlayer->getPlayerType() == PLAYER_HUMAN && TheNetwork->getPlayerName(i) == msgPlayer->getPlayerDisplayName())
 			{
 				slotIndex = i;
-				return false;
+				break;
 			}
 		}
 
