@@ -5,16 +5,33 @@
 # before invoking the docker build, mirroring how the radarvan client key
 # is handled in zuluclientkey.cmake.
 #
-# Configure does NOT fail when the variable is unset so dev builds (raw
-# `cmake ..` without an installer pipeline) keep working; the engine code
-# treats an empty URL as "feature disabled" at runtime. The Makefile is
-# what enforces "build fails if the secret is missing" by aborting the
-# `gcloud secrets versions access` step before docker is even invoked.
+# Value resolution and the cache:
+#  - When the env var is set and non-empty, FORCE-update the CMake cache.
+#    A `make installer` run that fetches a fresh secret will replace the
+#    previously cached value, and the configure_file step below will then
+#    rewrite the generated header with the new URL.
+#  - When the env var is unset (the typical case for any `--cmake` pass
+#    that didn't fetch the secret — `docker-build-z_launcher`, an
+#    in-build cmake regen, an IDE-driven reconfigure), the cached value
+#    from the previous configure is reused. This is the bit that prevents
+#    `DiscordWebhook.h` from silently resetting to "" mid-build when a
+#    sibling recipe in the same shared build dir reconfigures without
+#    the env var in scope.
+#  - If neither the env nor the cache has a value, the generated header
+#    falls through to an empty string. The engine code treats an empty
+#    URL as "feature disabled" at runtime, so plain `cmake ..` dev builds
+#    keep working.
 
-if(NOT DEFINED ZULU_DISCORD_WEBHOOK_URL OR ZULU_DISCORD_WEBHOOK_URL STREQUAL "")
-    if(DEFINED ENV{ZULU_DISCORD_WEBHOOK_URL} AND NOT "$ENV{ZULU_DISCORD_WEBHOOK_URL}" STREQUAL "")
-        set(ZULU_DISCORD_WEBHOOK_URL "$ENV{ZULU_DISCORD_WEBHOOK_URL}")
-    endif()
+if(DEFINED ENV{ZULU_DISCORD_WEBHOOK_URL} AND NOT "$ENV{ZULU_DISCORD_WEBHOOK_URL}" STREQUAL "")
+    set(ZULU_DISCORD_WEBHOOK_URL "$ENV{ZULU_DISCORD_WEBHOOK_URL}" CACHE STRING
+        "Discord webhook URL baked into LobbyDiscord.cpp at build time." FORCE)
+endif()
+
+# Make sure the variable is defined as a local for configure_file even when
+# nothing has supplied a value yet (first dev `cmake ..` with no env, no
+# cache).
+if(NOT DEFINED ZULU_DISCORD_WEBHOOK_URL)
+    set(ZULU_DISCORD_WEBHOOK_URL "")
 endif()
 
 string(STRIP "${ZULU_DISCORD_WEBHOOK_URL}" ZULU_DISCORD_WEBHOOK_URL)

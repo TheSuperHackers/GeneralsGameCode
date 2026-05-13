@@ -1159,6 +1159,17 @@ add_library(z_gameengine STATIC)
 
 target_sources(z_gameengine PRIVATE ${GAMEENGINE_SRC})
 
+# LobbyDiscord.cpp #include's the cmake-generated DiscordWebhook.h, but the
+# top-level CMakeLists.txt disables CMAKE_NINJA_CMCLDEPS_RC because VC6's
+# cl.exe rejects /showIncludes — without that, the ninja CXX rule has no
+# automatic dep tracking for transitive headers. Wire the dependency
+# explicitly here so re-running cmake with a new ZULU_DISCORD_WEBHOOK_URL
+# (which configure_file rewrites into the generated header) actually
+# triggers a recompile of LobbyDiscord.cpp.obj. Same pattern Main's
+# CMakeLists.txt uses for BuildVersion.h on RTS.RC.
+set_source_files_properties(Source/Common/LobbyDiscord.cpp PROPERTIES
+    OBJECT_DEPENDS "${ZULU_DISCORD_WEBHOOK_GENERATED_DIR}/DiscordWebhook.h")
+
 target_include_directories(z_gameengine PUBLIC
     Include
 )
