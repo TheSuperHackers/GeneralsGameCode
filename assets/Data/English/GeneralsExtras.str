@@ -105,3 +105,7 @@ END
 GUI:FilterPlayersFmt
 "%d Players"
 END
+
+LAN:OfferObserveBody
+"This game is already in progress. Watch it as an observer?"
+END
