@@ -30,15 +30,23 @@
 void UploadStatsToServer(const AsciiString& url, const void *data, unsigned int dataLen, unsigned int seed);
 
 /// Upload a replay file to a REST endpoint via HTTP POST as
-/// multipart/form-data with a single "file" part. Sends the X-Game-Seed
-/// header alongside the standard multipart Content-Type.
+/// multipart/form-data. Sends the binary replay as the "file" part and
+/// up to four optional identifier fields the radarvan server stores on
+/// the ReplayFile row: mac_id (MAC of the adapter whose IPv4 matches
+/// the user's LAN-IP option, falling back to the first enumerated
+/// adapter when none matches), board_id (SMBIOS system UUID), the
+/// supplied player_name (UTF-8 encoded), and client_version (from
+/// TheVersion). Fields whose values cannot be determined are simply
+/// omitted from the form.
 /// @param url Full URL including path (e.g. "https://www.radarvan.com/api/upload_replay")
 /// @param data Pointer to the replay file's raw bytes
 /// @param dataLen Length of replay data in bytes
 /// @param filename Filename to advertise in the multipart part (e.g. "00000000.rep")
 /// @param seed Game seed for the X-Game-Seed header
+/// @param playerName In-game name the uploader played under (UTF-8). Empty to omit.
 void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen,
-                          const AsciiString& filename, unsigned int seed);
+                          const AsciiString& filename, unsigned int seed,
+                          const AsciiString& playerName);
 
 /// Allocate a new buffer that is the on-disk replay bytes followed by a
 /// fixed "ZUTG" trailer (magic + version + payload length) used to mark

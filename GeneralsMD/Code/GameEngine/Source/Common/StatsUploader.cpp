@@ -19,6 +19,8 @@
 
 #include "Common/StatsUploader.h"
 #include "Common/AsciiString.h"
+#include "Common/OptionPreferences.h"
+#include "Common/version.h"
 #include "ZuluClientKey.h"
 
 #include <windows.h>
@@ -27,6 +29,55 @@
 #include <string.h>
 
 #pragma comment(lib, "wininet.lib")
+
+// VC6's bundled Platform SDK predates iphlpapi.h and the
+// GetSystemFirmwareTable declaration in winbase.h, so we resolve both
+// APIs at runtime via LoadLibrary/GetProcAddress and forward-declare just
+// the structs we touch. These layouts have been stable across every
+// Windows SDK that ships them (Win2000+ for iphlpapi, XP SP2+ for
+// GetSystemFirmwareTable).
+
+#define LOCAL_MAX_ADAPTER_NAME_LENGTH        256
+#define LOCAL_MAX_ADAPTER_DESCRIPTION_LENGTH 128
+#define LOCAL_MAX_ADAPTER_ADDRESS_LENGTH     8
+
+struct LocalIpAddressString
+{
+	char String[16];
+};
+
+struct LocalIpAddrString
+{
+	LocalIpAddrString *Next;
+	LocalIpAddressString IpAddress;
+	LocalIpAddressString IpMask;
+	DWORD Context;
+};
+
+struct LocalIpAdapterInfo
+{
+	LocalIpAdapterInfo *Next;
+	DWORD ComboIndex;
+	char AdapterName[LOCAL_MAX_ADAPTER_NAME_LENGTH + 4];
+	char Description[LOCAL_MAX_ADAPTER_DESCRIPTION_LENGTH + 4];
+	UINT AddressLength;
+	BYTE Address[LOCAL_MAX_ADAPTER_ADDRESS_LENGTH];
+	DWORD Index;
+	UINT Type;
+	UINT DhcpEnabled;
+	LocalIpAddrString *CurrentIpAddress;
+	LocalIpAddrString IpAddressList;
+	LocalIpAddrString GatewayList;
+	LocalIpAddrString DhcpServer;
+	BOOL HaveWins;
+	LocalIpAddrString PrimaryWinsServer;
+	LocalIpAddrString SecondaryWinsServer;
+	DWORD LeaseObtained;
+	DWORD LeaseExpires;
+};
+
+typedef DWORD (WINAPI *FnGetAdaptersInfo)(LocalIpAdapterInfo *, ULONG *);
+typedef UINT (WINAPI *FnGetSystemFirmwareTable)(DWORD, DWORD, PVOID, DWORD);
 
 // Internal: open a WinINet request handle for either a GET or POST.
 // Returns nullptr on any failure (logs to stdout). On success the caller
@@ -204,15 +255,26 @@ static void sanitizeMultipartFilename(const char *src, char *out, unsigned int o
 	out[n] = '\0';
 }
 
-// Issue an HTTP POST as multipart/form-data with a single binary part.
-// The request body is built in a single malloc'd buffer (header + bytes +
-// trailer) and posted via the shared openHttpRequest plumbing. Best-effort;
-// logs status to stdout.
+// One text part (form field) in a multipart/form-data body. Empty `value`
+// signals "omit this field"; the caller is expected to skip it. The `value`
+// bytes are emitted verbatim, so non-ASCII (e.g. UTF-8 player names) is the
+// caller's responsibility.
+struct MultipartTextField
+{
+	const char *name;
+	AsciiString value;
+};
+
+// Issue an HTTP POST as multipart/form-data with one binary part plus any
+// number of text parts. Skips any text field whose value is empty so we
+// don't bake a sentinel into the form.
 static void httpPostMultipartFile(const AsciiString& url,
                                   const char *fieldName,
                                   const char *filename,
                                   const void *data,
                                   unsigned int dataLen,
+                                  const MultipartTextField *textFields,
+                                  unsigned int textFieldCount,
                                   unsigned int seed,
                                   const char *logTag)
 {
@@ -224,8 +286,28 @@ static void httpPostMultipartFile(const AsciiString& url,
 	// "\r\n--".
 	static const char boundary[] = "----GeneralsReplayBoundaryK8nQv2pXr9TfH3";
 
-	char prefix[512];
-	int prefixLen = sprintf(prefix,
+	// Build the text-field block first so we know its size up front. Each
+	// part is "--<boundary>\r\nContent-Disposition: form-data; name=\"X\"\r\n\r\n<value>\r\n".
+	AsciiString textBlock;
+	unsigned int ti;
+	for (ti = 0; ti < textFieldCount; ++ti)
+	{
+		const MultipartTextField &tf = textFields[ti];
+		if (tf.name == nullptr || tf.name[0] == '\0' || tf.value.isEmpty())
+			continue;
+		char header[256];
+		sprintf(header,
+			"--%s\r\n"
+			"Content-Disposition: form-data; name=\"%.63s\"\r\n"
+			"\r\n",
+			boundary, tf.name);
+		textBlock.concat(header);
+		textBlock.concat(tf.value);
+		textBlock.concat("\r\n");
+	}
+
+	char filePrefix[512];
+	int filePrefixLen = sprintf(filePrefix,
 		"--%s\r\n"
 		"Content-Disposition: form-data; name=\"%.63s\"; filename=\"%.255s\"\r\n"
 		"Content-Type: application/octet-stream\r\n"
@@ -235,16 +317,25 @@ static void httpPostMultipartFile(const AsciiString& url,
 	char trailer[64];
 	int trailerLen = sprintf(trailer, "\r\n--%s--\r\n", boundary);
 
-	if (prefixLen <= 0 || trailerLen <= 0)
+	if (filePrefixLen <= 0 || trailerLen <= 0)
 		return;
 
-	unsigned int bodyLen = (unsigned int)prefixLen + dataLen + (unsigned int)trailerLen;
+	unsigned int textLen = (unsigned int)textBlock.getLength();
+	unsigned int bodyLen = textLen + (unsigned int)filePrefixLen + dataLen + (unsigned int)trailerLen;
 	char *body = (char *)malloc(bodyLen);
 	if (body == nullptr)
 		return;
-	memcpy(body, prefix, (size_t)prefixLen);
-	memcpy(body + prefixLen, data, dataLen);
-	memcpy(body + prefixLen + dataLen, trailer, (size_t)trailerLen);
+	unsigned int pos = 0;
+	if (textLen > 0)
+	{
+		memcpy(body, textBlock.str(), (size_t)textLen);
+		pos += textLen;
+	}
+	memcpy(body + pos, filePrefix, (size_t)filePrefixLen);
+	pos += (unsigned int)filePrefixLen;
+	memcpy(body + pos, data, dataLen);
+	pos += dataLen;
+	memcpy(body + pos, trailer, (size_t)trailerLen);
 
 	char contentType[128];
 	sprintf(contentType, "multipart/form-data; boundary=%s", boundary);
@@ -254,12 +345,267 @@ static void httpPostMultipartFile(const AsciiString& url,
 	free(body);
 }
 
+// ---------------------------------------------------------------------------
+// Per-machine identifiers: MAC of the LAN-IP-tied adapter, and SMBIOS UUID.
+// Both are best-effort and quietly produce an empty string on failure so the
+// caller can just omit the form field.
+// ---------------------------------------------------------------------------
+
+// Format the first six bytes of `mac` as 12 uppercase hex chars with no
+// separators. Matches gentool's `5211058E5C33`-style display.
+static void macBytesToHex(const unsigned char *mac, AsciiString &out)
+{
+	static const char hex[] = "0123456789ABCDEF";
+	char buf[13];
+	int b;
+	for (b = 0; b < 6; ++b)
+	{
+		buf[b * 2 + 0] = hex[(mac[b] >> 4) & 0xF];
+		buf[b * 2 + 1] = hex[mac[b] & 0xF];
+	}
+	buf[12] = '\0';
+	out = buf;
+}
+
+// Format a host-byte-order IPv4 address as dotted decimal "A.B.C.D" so it
+// can be compared against the dotted strings GetAdaptersInfo returns.
+static void formatIpv4Dotted(UnsignedInt ipHostOrder, char *out, unsigned int outCap)
+{
+	if (outCap == 0)
+		return;
+	unsigned int a = (ipHostOrder >> 24) & 0xFF;
+	unsigned int b = (ipHostOrder >> 16) & 0xFF;
+	unsigned int c = (ipHostOrder >>  8) & 0xFF;
+	unsigned int d = ipHostOrder & 0xFF;
+	_snprintf(out, outCap, "%u.%u.%u.%u", a, b, c, d);
+	out[outCap - 1] = '\0';
+}
+
+// Enumerate Windows IPv4 adapters and return the MAC of the adapter whose
+// IPv4 list contains `wantIpHostOrder`. If no adapter matches (or
+// `wantIpHostOrder` is 0), returns the MAC of the first enumerated adapter
+// that has a 6-byte physical address. This mirrors gentool's fallback so a
+// Zulu client without an explicit LAN-IP selection still emits the same
+// identifier gentool would have.
+static AsciiString getLocalMacIdHex(UnsignedInt wantIpHostOrder)
+{
+	AsciiString result;
+
+	HMODULE hMod = LoadLibraryA("iphlpapi.dll");
+	if (hMod == nullptr)
+		return result;
+	FnGetAdaptersInfo getAdaptersInfo = (FnGetAdaptersInfo)GetProcAddress(hMod, "GetAdaptersInfo");
+	if (getAdaptersInfo == nullptr)
+	{
+		FreeLibrary(hMod);
+		return result;
+	}
+
+	ULONG bufLen = 16 * 1024;
+	LocalIpAdapterInfo *info = (LocalIpAdapterInfo *)malloc(bufLen);
+	if (info == nullptr)
+	{
+		FreeLibrary(hMod);
+		return result;
+	}
+
+	DWORD status = getAdaptersInfo(info, &bufLen);
+	if (status == ERROR_BUFFER_OVERFLOW)
+	{
+		free(info);
+		info = (LocalIpAdapterInfo *)malloc(bufLen);
+		if (info == nullptr)
+		{
+			FreeLibrary(hMod);
+			return result;
+		}
+		status = getAdaptersInfo(info, &bufLen);
+	}
+	if (status != ERROR_SUCCESS)
+	{
+		free(info);
+		FreeLibrary(hMod);
+		return result;
+	}
+
+	char wantDotted[16];
+	wantDotted[0] = '\0';
+	if (wantIpHostOrder != 0)
+		formatIpv4Dotted(wantIpHostOrder, wantDotted, sizeof(wantDotted));
+
+	AsciiString firstMac;
+	LocalIpAdapterInfo *p;
+	for (p = info; p != nullptr; p = p->Next)
+	{
+		if (p->AddressLength < 6)
+			continue;
+
+		if (firstMac.isEmpty())
+			macBytesToHex(p->Address, firstMac);
+
+		if (wantDotted[0] != '\0')
+		{
+			LocalIpAddrString *ip;
+			for (ip = &p->IpAddressList; ip != nullptr; ip = ip->Next)
+			{
+				if (strcmp(ip->IpAddress.String, wantDotted) == 0)
+				{
+					macBytesToHex(p->Address, result);
+					free(info);
+					FreeLibrary(hMod);
+					return result;
+				}
+			}
+		}
+	}
+
+	free(info);
+	FreeLibrary(hMod);
+	if (result.isEmpty())
+		result = firstMac;
+	return result;
+}
+
+// Read the system SMBIOS table via GetSystemFirmwareTable('RSMB', ...) and
+// return the type 1 (System Information) UUID as a canonical dashed string
+// "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX". On SMBIOS 2.6+ the first three
+// fields are stored little-endian and are byte-swapped here to match what
+// `wmic csproduct get UUID` shows. Returns empty on failure or all-zero/all-
+// FF UUID (the latter being SMBIOS's "not present" sentinel).
+static AsciiString getBoardIdDashed()
+{
+	AsciiString result;
+
+	HMODULE hMod = GetModuleHandleA("kernel32.dll");
+	if (hMod == nullptr)
+		return result;
+	FnGetSystemFirmwareTable getSysFwTable =
+		(FnGetSystemFirmwareTable)GetProcAddress(hMod, "GetSystemFirmwareTable");
+	if (getSysFwTable == nullptr)
+		return result; // pre-XP-SP2 host; quietly skip.
+
+	const DWORD provider = 'RSMB'; // big-endian 'R','S','M','B'
+	DWORD bufSize = getSysFwTable(provider, 0, nullptr, 0);
+	if (bufSize == 0)
+		return result;
+
+	BYTE *buf = (BYTE *)malloc(bufSize);
+	if (buf == nullptr)
+		return result;
+
+	DWORD got = getSysFwTable(provider, 0, buf, bufSize);
+	if (got == 0 || got > bufSize)
+	{
+		free(buf);
+		return result;
+	}
+
+	// RawSMBIOSData header: Used20CallingMethod, MajorVer, MinorVer,
+	// DmiRevision, Length (DWORD), then SMBIOSTableData[Length].
+	if (got < 8)
+	{
+		free(buf);
+		return result;
+	}
+	BYTE majorVer = buf[1];
+	BYTE minorVer = buf[2];
+	DWORD tableLen = *(DWORD *)(buf + 4);
+	if (tableLen + 8 > got)
+		tableLen = got - 8;
+	BYTE *table = buf + 8;
+
+	const bool littleEndianFields = (majorVer > 2) || (majorVer == 2 && minorVer >= 6);
+
+	BYTE *cur = table;
+	BYTE *end = table + tableLen;
+	while (cur + 4 <= end)
+	{
+		BYTE type = cur[0];
+		BYTE structLen = cur[1];
+		if (structLen < 4 || cur + structLen > end)
+			break;
+
+		if (type == 1 && structLen >= 0x18)
+		{
+			// UUID is 16 bytes at offset 8 of the formatted area.
+			const BYTE *u = cur + 8;
+
+			// Detect "not present" sentinels per the SMBIOS spec.
+			bool allZero = true;
+			bool allFF = true;
+			int i;
+			for (i = 0; i < 16; ++i)
+			{
+				if (u[i] != 0x00) allZero = false;
+				if (u[i] != 0xFF) allFF = false;
+			}
+			if (!allZero && !allFF)
+			{
+				BYTE swapped[16];
+				if (littleEndianFields)
+				{
+					swapped[0] = u[3]; swapped[1] = u[2]; swapped[2] = u[1]; swapped[3] = u[0];
+					swapped[4] = u[5]; swapped[5] = u[4];
+					swapped[6] = u[7]; swapped[7] = u[6];
+					memcpy(swapped + 8, u + 8, 8);
+				}
+				else
+				{
+					memcpy(swapped, u, 16);
+				}
+
+				char outBuf[40];
+				sprintf(outBuf,
+					"%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+					swapped[0], swapped[1], swapped[2], swapped[3],
+					swapped[4], swapped[5],
+					swapped[6], swapped[7],
+					swapped[8], swapped[9],
+					swapped[10], swapped[11], swapped[12], swapped[13], swapped[14], swapped[15]);
+				result = outBuf;
+			}
+			break;
+		}
+
+		// Skip the formatted area, then walk the trailing string set:
+		// strings are null-terminated; the set ends with a double null.
+		BYTE *next = cur + structLen;
+		if (next >= end) break;
+		while (next < end - 1 && !(next[0] == 0 && next[1] == 0))
+			++next;
+		next += 2;
+		if (next <= cur) break;
+		cur = next;
+	}
+
+	free(buf);
+	return result;
+}
+
 void UploadReplayToServer(const AsciiString& url, const void *data, unsigned int dataLen,
-                          const AsciiString& filename, unsigned int seed)
+                          const AsciiString& filename, unsigned int seed,
+                          const AsciiString& playerName)
 {
 	char nameBuf[256];
 	sanitizeMultipartFilename(filename.isEmpty() ? nullptr : filename.str(), nameBuf, sizeof(nameBuf));
-	httpPostMultipartFile(url, "file", nameBuf, data, dataLen, seed, "Replay upload");
+
+	// Populate the optional identifier fields. Each helper returns an empty
+	// AsciiString on failure; httpPostMultipartFile drops empty fields.
+	OptionPreferences prefs;
+	UnsignedInt lanIp = prefs.getLANIPAddress();
+
+	MultipartTextField fields[4];
+	fields[0].name = "mac_id";
+	fields[0].value = getLocalMacIdHex(lanIp);
+	fields[1].name = "board_id";
+	fields[1].value = getBoardIdDashed();
+	fields[2].name = "player_name";
+	fields[2].value = playerName;
+	fields[3].name = "client_version";
+	fields[3].value = (TheVersion != nullptr) ? TheVersion->getAsciiVersion() : AsciiString();
+
+	httpPostMultipartFile(url, "file", nameBuf, data, dataLen,
+		fields, 4, seed, "Replay upload");
 }
 
 void *AppendZuluUploadTag(const void *fileData, unsigned int fileLen,

@@ -41,6 +41,7 @@
 #include "GameClient/GameText.h"
 
 #include "GameNetwork/FileTransfer.h"
+#include "GameNetwork/GameInfo.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/GameMessageParser.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
@@ -894,6 +895,48 @@ void RecorderClass::stopRecording() {
 			AsciiString replayPath = getReplayDir();
 			replayPath.concat(m_fileName);
 
+			// Look up the local lobby slot's display name and UTF-8 encode
+			// it so the server can record who uploaded this copy of the
+			// replay. The radarvan endpoint accepts this as an optional
+			// form field; if we can't determine it, we send empty and the
+			// upload helper just omits the field.
+			AsciiString playerNameUtf8;
+			if (TheGameInfo != nullptr)
+			{
+				Int localSlot = TheGameInfo->getLocalSlotNum();
+				if (localSlot >= 0)
+				{
+					const GameSlot *s = TheGameInfo->getConstSlot(localSlot);
+					if (s != nullptr)
+					{
+						UnicodeString w = s->getName();
+						const WideChar *p = w.str();
+						if (p != nullptr)
+						{
+							for (; *p != L'\0'; ++p)
+							{
+								unsigned int c = static_cast<unsigned int>(*p);
+								if (c < 0x80)
+								{
+									playerNameUtf8.concat(static_cast<char>(c));
+								}
+								else if (c < 0x800)
+								{
+									playerNameUtf8.concat(static_cast<char>(0xC0 | (c >> 6)));
+									playerNameUtf8.concat(static_cast<char>(0x80 | (c & 0x3F)));
+								}
+								else
+								{
+									playerNameUtf8.concat(static_cast<char>(0xE0 | (c >> 12)));
+									playerNameUtf8.concat(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
+									playerNameUtf8.concat(static_cast<char>(0x80 | (c & 0x3F)));
+								}
+							}
+						}
+					}
+				}
+			}
+
 			FILE *rf = fopen(replayPath.str(), "rb");
 			if (rf != nullptr)
 			{
@@ -918,7 +961,8 @@ void RecorderClass::stopRecording() {
 								printf("[replay] Uploading %u bytes (incl. %u-byte ZUTG trailer) to %s\n",
 									uploadLen, uploadLen - static_cast<unsigned int>(size), TheGlobalData->m_replayUrl.str());
 								fflush(stdout);
-								UploadReplayToServer(TheGlobalData->m_replayUrl, uploadBuf, uploadLen, m_fileName, GetGameLogicRandomSeed());
+								UploadReplayToServer(TheGlobalData->m_replayUrl, uploadBuf, uploadLen, m_fileName,
+									GetGameLogicRandomSeed(), playerNameUtf8);
 								free(uploadBuf);
 							}
 						}
