@@ -587,6 +587,9 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 		NetCommandType cmdType = msg->getCommand()->getNetCommandType();
 		if (cmdType == NETCOMMANDTYPE_GAMECOMMAND) {
 			GameMessage *gmsg = ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage();
+#if RETAIL_COMPATIBLE_CRC
+			TheCommandList->appendMessage(gmsg);
+#else
 			if (isTransferCommand(gmsg)) {
 				//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), gmsg->getCommandAsString(), TheGameLogic->getFrame()));
 				TheCommandList->appendMessage(gmsg);
@@ -595,6 +598,7 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 					msg->getCommand()->getPlayerID(), gmsg->getCommandAsString()));
 				deleteInstance(gmsg);
 			}
+#endif
 		} else {
 			processFrameSynchronizedNetCommand(msg);
 		}
