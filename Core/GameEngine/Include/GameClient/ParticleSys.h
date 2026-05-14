@@ -180,8 +180,10 @@ public:
 
 	Particle( ParticleSystem *system, const ParticleInfo *data );
 
-	Bool update();												///< update this particle's behavior - return false if dead
-	void doWindMotion();									///< do wind motion (if present) from particle system
+	Bool update(); ///< update this particle's behavior - return false if dead
+
+	void draw(); ///< render update
+	void doWindMotion(); ///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 
@@ -681,6 +683,12 @@ public:
 
 protected:
 
+	struct VisibilityState
+	{
+		VisibilityState() : isShrouded(false) {}
+		Bool isShrouded;
+	};
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
@@ -690,6 +698,8 @@ protected:
 																		ParticlePriorityType priority,
 																		Bool forceCreate = FALSE );	///< factory method for particles
 
+	void updateTransform();
+	VisibilityState updateVisibility( Int localPlayerIndex );
 
 	const ParticleInfo *generateParticleInfo( Int particleNum, Int particleCount );	///< generate a new, random set of ParticleInfo
 	const Coord3D *computeParticlePosition();		///< compute a position based on emission properties
