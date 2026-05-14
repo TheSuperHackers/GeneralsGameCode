@@ -226,13 +226,14 @@ bool changeLogicTimeScale(FpsValueChange change)
 	}
 
 	const bool enableTimescale = (logicTimeScaleFps < maxRenderFps);
+
 	// TheSuperHackers @info Preserve the last real FPS in m_logicTimeScaleFPS so re-enabling timescale resumes from a sane value.
 	if (enableTimescale)
 	{
 		TheFramePacer->setLogicTimeScaleFps(logicTimeScaleFps);
 	}
-	TheFramePacer->enableLogicTimeScale(enableTimescale);
 
+	TheFramePacer->enableLogicTimeScale(enableTimescale);
 	logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
 	const UnsignedInt actualLogicTimeScaleFps = TheFramePacer->getActualLogicTimeScaleFps();
 	const Real actualLogicTimeScaleRatio = TheFramePacer->getActualLogicTimeScaleRatio();

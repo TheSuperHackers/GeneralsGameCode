@@ -113,7 +113,7 @@ UnsignedInt RenderFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange ch
 
 UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
-	UnsignedInt nextValue = s_fpsValues[ARRAY_SIZE(s_fpsValues) - 1]; // Default to Uncapped
+	UnsignedInt nextValue = s_fpsValues[ARRAY_SIZE(s_fpsValues) - 1]; // Defaults to Uncapped
 
 	// Check if snapValue (e.g. current render FPS) is the next closest candidate
 	if (snapValue > value && snapValue < nextValue)
@@ -124,11 +124,12 @@ UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, Unsigned
 	// Check predefined steps
 	for (size_t i = 0; i < ARRAY_SIZE(s_fpsValues); ++i)
 	{
-		if (s_fpsValues[i] > value)
+		const UnsignedInt fpsValue = s_fpsValues[i];
+		if (fpsValue > value)
 		{
-			if (s_fpsValues[i] < nextValue)
+			if (fpsValue < nextValue)
 			{
-				nextValue = s_fpsValues[i];
+				nextValue = fpsValue;
 			}
 			break;
 		}
@@ -144,7 +145,7 @@ UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value, Unsigned
 	// Check if snapValue (e.g. current render FPS) is the previous closest candidate.
 	// Note: if snapValue == value, neither branch below fires and the snap point is
 	// intentionally skipped — the caller must step to a different preset.
-	if (snapValue < value && snapValue > prevValue)
+	if (snapValue > prevValue && snapValue < value)
 	{
 		prevValue = snapValue;
 	}
@@ -152,11 +153,12 @@ UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value, Unsigned
 	// Check predefined steps
 	for (int i = (int)ARRAY_SIZE(s_fpsValues) - 1; i >= 0; --i)
 	{
-		if (s_fpsValues[i] < value)
+		const UnsignedInt fpsValue = s_fpsValues[i];
+		if (fpsValue < value)
 		{
-			if (s_fpsValues[i] > prevValue)
+			if (fpsValue > prevValue)
 			{
-				prevValue = s_fpsValues[i];
+				prevValue = fpsValue;
 			}
 			break;
 		}
@@ -169,8 +171,14 @@ UnsignedInt LogicTimeScaleFpsPreset::changeFpsValue(UnsignedInt value, FpsValueC
 {
 	switch (change)
 	{
-	default:
-	case FpsValueChange_Increase: return getNextFpsValue(value, snapValue);
-	case FpsValueChange_Decrease: return getPrevFpsValue(value, snapValue);
+		case FpsValueChange_Increase:
+			return getNextFpsValue(value, snapValue);
+
+		case FpsValueChange_Decrease:
+			return getPrevFpsValue(value, snapValue);
+
+		default:
+			assert(false);
+			return value;
 	}
 }
