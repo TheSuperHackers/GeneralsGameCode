@@ -90,14 +90,14 @@ protected:
 	UnsignedInt m_localPlayer;
 };
 
-CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
+inline CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
 {
 	m_localPlayer = localPlayer;
 	m_skippedOne = !isMultiplayer;
 	m_sawCRCMismatch = FALSE;
 }
 
-void CRCInfo::addCRC(UnsignedInt val)
+inline void CRCInfo::addCRC(UnsignedInt val)
 {
 	// TheSuperHackers @fix helmutbuhler 03/04/2025
 	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
@@ -114,7 +114,7 @@ void CRCInfo::addCRC(UnsignedInt val)
 	//DEBUG_LOG(("CRCInfo::addCRC() - crc %8.8X pushes list to %d entries (full=%d)", val, m_data.size(), !m_data.empty()));
 }
 
-UnsignedInt CRCInfo::readCRC()
+inline UnsignedInt CRCInfo::readCRC()
 {
 	if (m_data.empty())
 	{
