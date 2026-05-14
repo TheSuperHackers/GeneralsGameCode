@@ -71,6 +71,11 @@ enum RecorderModeType CPP_11(: Int) {
 class CRCInfo
 {
 public:
+	CRCInfo() :
+		m_sawCRCMismatch(FALSE),
+		m_skippedOne(FALSE),
+		m_localPlayer(0)
+	{}
 	CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
 	void addCRC(UnsignedInt val);
 	UnsignedInt readCRC();
@@ -83,7 +88,6 @@ public:
 	Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
 
 protected:
-
 	Bool m_sawCRCMismatch;
 	Bool m_skippedOne;
 	std::list<UnsignedInt> m_data;
@@ -160,7 +164,7 @@ public:
 public:
 	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
 protected:
-	CRCInfo *m_crcInfo;
+	CRCInfo m_crcInfo;
 public:
 
 	// read in info relating to a replay, conditionally setting up m_file for playback
