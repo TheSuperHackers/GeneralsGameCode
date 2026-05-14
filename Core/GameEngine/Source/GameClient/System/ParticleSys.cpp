@@ -390,12 +390,11 @@ Bool Particle::update()
 			}
 		}
 		else
+		{
 			m_alphaRate = 0.0f;
+		}
 
-		if (m_alpha < 0.0f)
-			m_alpha = 0.0f;
-		else if (m_alpha > 1.0f)
-			m_alpha = 1.0f;
+		m_alpha = clamp(0.0f, m_alpha, 1.0f);
 	}
 
 	//
@@ -427,6 +426,7 @@ Bool Particle::update()
 	// if we've gone totally invisible, destroy ourselves
 	if (isInvisible())
 		return false;
+
 	return true;
 }
 
@@ -467,7 +467,8 @@ void Particle::draw()
 #endif
 	m_angularRateZ *= m_angularDamping;
 
-	if (m_particleUpTowardsEmitter) {
+	if (m_particleUpTowardsEmitter)
+	{
 		// adjust the up position back towards the particle
 		static const Coord2D upVec = { 0.0f, 1.0f };
 		Coord2D emitterDir;
@@ -486,40 +487,20 @@ void Particle::draw()
 	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
 	{
 		m_alpha += m_alphaRate;
-
-		if (m_alpha < 0.0f)
-			m_alpha = 0.0f;
-		else if (m_alpha > 1.0f)
-			m_alpha = 1.0f;
+		m_alpha = clamp(0.0f, m_alpha, 1.0f);
 	}
 
 	//
 	// Update color
 	//
-	m_color.red += m_colorRate.red;
-	m_color.green += m_colorRate.green;
-	m_color.blue += m_colorRate.blue;
+	m_color += m_colorRate;
 
 	/// @todo Rethink this - at least its name
-	m_color.red += m_colorScale;
-	m_color.green += m_colorScale;
-	m_color.blue += m_colorScale;
+	m_color += m_colorScale;
 
-	if (m_color.red < 0.0f)
-		m_color.red = 0.0f;
-	else if (m_color.red > 1.0f)
-		m_color.red = 1.0f;
-
-	if (m_color.green < 0.0f)
-		m_color.green = 0.0f;
-	else if (m_color.green > 1.0f)
-		m_color.green = 1.0f;
-
-	if (m_color.blue < 0.0f)
-		m_color.blue = 0.0f;
-	else if (m_color.blue > 1.0f)
-		m_color.blue = 1.0f;
-
+	m_color.red = clamp(0.0f, m_color.red, 1.0f);
+	m_color.green = clamp(0.0f, m_color.green, 1.0f);
+	m_color.blue = clamp(0.0f, m_color.blue, 1.0f);
 
 	// reset the acceleration for accumulation next frame
 	m_accel.x = 0.0f;
