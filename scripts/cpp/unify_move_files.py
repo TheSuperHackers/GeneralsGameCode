@@ -536,6 +536,15 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/Damage.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/Damage.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/RankInfo.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/RankInfo.cpp")
+    
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8fvf.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8fvf.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8renderer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8renderer.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8fvf.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8fvf.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8renderer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8renderer.cpp")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.cpp")
 
     return
 
