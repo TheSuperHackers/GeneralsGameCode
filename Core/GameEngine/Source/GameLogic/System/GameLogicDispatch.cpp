@@ -2120,10 +2120,9 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	}
 
 #if RETAIL_COMPATIBLE_AIGROUP
-	// TheSuperHackers @bugfix xezon 28/06/2025 This hack avoids crashing when players are selected during Replay playback.
-	// It can read data from an already deleted AIGroup and return this function when its member size is 0, signifying that
-	// it is indeed deleted.
-	if (currentlySelectedGroup && currentlySelectedGroup->getCount() == 0)
+	// TheSuperHackers @bugfix xezon/Caball009 14/05/2026 This hack avoids crashing when players are selected during Replay playback.
+	// The current AI group may have been destroyed, and its memory deallocated, in which case it shouldn't be used.
+	if (currentlySelectedGroup && !TheAI->doesGroupExist(currentlySelectedGroup))
 		return;
 #endif
 
