@@ -373,6 +373,66 @@ void Particle::applyForce( const Coord3D *force )
 // ------------------------------------------------------------------------------------------------
 Bool Particle::update()
 {
+	draw();
+
+	//
+	// Update alpha (if used)
+	//
+	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
+	{
+		if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
+		{
+			if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
+			{
+				m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
+				m_alphaTargetKey++;
+				computeAlphaRate();
+			}
+		}
+		else
+			m_alphaRate = 0.0f;
+
+		if (m_alpha < 0.0f)
+			m_alpha = 0.0f;
+		else if (m_alpha > 1.0f)
+			m_alpha = 1.0f;
+	}
+
+	//
+	// Update color
+	//
+	if (m_colorTargetKey < MAX_KEYFRAMES && m_colorKey[ m_colorTargetKey ].frame)
+	{
+		if (TheGameClient->getFrame() - m_createTimestamp >= m_colorKey[ m_colorTargetKey ].frame)
+		{
+			// can't set, because of colorscale
+			// m_color = m_colorKey[ m_colorTargetKey ].color;
+			m_colorTargetKey++;
+			computeColorRate();
+		}
+	}
+	else
+	{
+		m_colorRate.red = 0.0f;
+		m_colorRate.green = 0.0f;
+		m_colorRate.blue = 0.0f;
+	}
+
+	// monitor lifetime
+	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
+		return false;
+
+	DEBUG_ASSERTCRASH( m_lifetimeLeft, ( "A particle has an infinite lifetime..." ));
+
+	// if we've gone totally invisible, destroy ourselves
+	if (isInvisible())
+		return false;
+	return true;
+}
+
+// ------------------------------------------------------------------------------------------------
+void Particle::draw()
+{
 	// integrate acceleration into velocity
 	m_vel.x += m_accel.x;
 	m_vel.y += m_accel.y;
@@ -423,22 +483,9 @@ Bool Particle::update()
 	//
 	// Update alpha (if used)
 	//
-
 	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
 	{
 		m_alpha += m_alphaRate;
-
-		if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
-		{
-			if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
-			{
-				m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
-				m_alphaTargetKey++;
-				computeAlphaRate();
-			}
-		}
-		else
-			m_alphaRate = 0.0f;
 
 		if (m_alpha < 0.0f)
 			m_alpha = 0.0f;
@@ -446,30 +493,12 @@ Bool Particle::update()
 			m_alpha = 1.0f;
 	}
 
-
 	//
 	// Update color
 	//
 	m_color.red += m_colorRate.red;
 	m_color.green += m_colorRate.green;
 	m_color.blue += m_colorRate.blue;
-
-	if (m_colorTargetKey < MAX_KEYFRAMES && m_colorKey[ m_colorTargetKey ].frame)
-	{
-		if (TheGameClient->getFrame() - m_createTimestamp >= m_colorKey[ m_colorTargetKey ].frame)
-		{
-			// can't set, because of colorscale
-			// m_color = m_colorKey[ m_colorTargetKey ].color;
-			m_colorTargetKey++;
-			computeColorRate();
-		}
-	}
-	else
-	{
-		m_colorRate.red = 0.0f;
-		m_colorRate.green = 0.0f;
-		m_colorRate.blue = 0.0f;
-	}
 
 	/// @todo Rethink this - at least its name
 	m_color.red += m_colorScale;
@@ -496,17 +525,6 @@ Bool Particle::update()
 	m_accel.x = 0.0f;
 	m_accel.y = 0.0f;
 	m_accel.z = 0.0f;
-
-	// monitor lifetime
-	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
-		return false;
-
-	DEBUG_ASSERTCRASH( m_lifetimeLeft, ( "A particle has an infinite lifetime..." ));
-
-	// if we've gone totally invisible, destroy ourselves
-	if (isInvisible())
-		return false;
-	return true;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1919,114 +1937,15 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	if (m_windMotion != ParticleSystemInfo::WIND_MOTION_NOT_USED )
 		updateWindMotion();
 
-	// if this system is attached to a Drawable/Object, update the current transform
-	// matrix so generated particles' are relative to the parent Drawable's
-	// position and orientation
-	Bool transformSet = false;
-	const Matrix3D *parentXfrm = nullptr;
-	Bool isShrouded = false;
+	//
+	// Update shrouding and drawable/object lifetime for the particle system
+	//
+	VisibilityState visibilityState = updateVisibility(localPlayerIndex);
 
-	if (m_attachedToDrawableID)
-	{
-		Drawable *attachedTo = TheGameClient->findDrawableByID( m_attachedToDrawableID );
-
-		if (attachedTo)
-		{
-			if (attachedTo->getFullyObscuredByShroud())
-				isShrouded = true;
-
-			parentXfrm = attachedTo->getTransformMatrix();
-			m_lastPos = m_pos;
-			m_pos = *attachedTo->getPosition();
-		}
-		else
-		{
-			// Drawable has been destroyed - lose our attachment to it
-			m_attachedToDrawableID = INVALID_DRAWABLE_ID;
-
-			// destroy ourselves
-			destroy();
-		}
-	}
-	else if (m_attachedToObjectID)
-	{
-		Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID );
-
-		if (objectAttachedTo)
-		{
-			if (!isShrouded)
-				isShrouded = (objectAttachedTo->getShroudedStatus(localPlayerIndex) >= OBJECTSHROUD_FOGGED);
-
-			const Drawable * draw = objectAttachedTo->getDrawable();
-			if ( draw )
-				parentXfrm = draw->getTransformMatrix();
-			else
-				parentXfrm = objectAttachedTo->getTransformMatrix();
-
-			m_lastPos = m_pos;
-			m_pos = *objectAttachedTo->getPosition();
-		}
-		else
-		{
-			// Drawable has been destroyed - lose our attachment to it
-			m_attachedToObjectID = INVALID_ID;
-
-			// destroy ourselves
-			destroy();
-		}
-	}
-
-	if (parentXfrm)
-	{
-		if (m_skipParentXfrm)
-		{
-			//this particle system is already in world space so no need to apply parent xform.
-			m_transform = m_localTransform;
-		}
-		else
-		{
-			// if system has its own local transform, concatenate them
-			if (m_isLocalIdentity == false)
-	#ifdef ALLOW_TEMPORARIES
-				m_transform = (*parentXfrm) * m_localTransform;
-	#else
-				m_transform.mul(*parentXfrm, m_localTransform);
-	#endif
-			else
-				m_transform = *parentXfrm;
-		}
-
-		m_isIdentity = false;
-		transformSet = true;
-	}
-
-
-	if (transformSet == false)
-	{
-		if (m_isLocalIdentity == false)
-		{
-			m_transform = m_localTransform;
-			m_isIdentity = false;
-		}
-		else
-		{
-			m_isIdentity = true;
-		}
-	}
-
-	// if we are controlled by a particle, its position is local origin
-	if (m_controlParticle)
-	{
-		const Coord3D *controlPos = m_controlParticle->getPosition();
-		/// @todo Concatenate this, instead of overriding (MSB)
-		m_transform.Set_X_Translation( controlPos->x );
-		m_transform.Set_Y_Translation( controlPos->y );
-		m_transform.Set_Z_Translation( controlPos->z );
-		m_isIdentity = false;
-		m_lastPos = m_pos;
-		m_pos = *controlPos;
-	}
-
+	//
+	// Update position and rotation of the particle system
+	//
+	updateTransform();
 
 	//
 	// Generate new particles if the system hasn't been 'stopped' or 'destroyed'
@@ -2036,7 +1955,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	{
 		if (m_isForever || (m_isForever == false && m_systemLifetimeLeft > 0))
 		{
-			if (!isShrouded && m_isStopped == false && m_masterSystem == nullptr)
+			if (!visibilityState.isShrouded && m_isStopped == false && m_masterSystem == nullptr)
 			{
 				if (m_burstDelayLeft == 0)
 				{
@@ -2146,6 +2065,128 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	}
 
 	return true;
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystem::updateTransform()
+{
+	// if this system is attached to a Drawable/Object, update the current transform
+	// matrix so generated particles' are relative to the parent Drawable's
+	// position and orientation
+	Bool transformSet = false;
+	const Matrix3D *parentXfrm = nullptr;
+
+	if (m_attachedToDrawableID)
+	{
+		if (Drawable *attachedTo = TheGameClient->findDrawableByID( m_attachedToDrawableID ))
+		{
+			parentXfrm = attachedTo->getTransformMatrix();
+			m_lastPos = m_pos;
+			m_pos = *attachedTo->getPosition();
+		}
+	}
+	else if (m_attachedToObjectID)
+	{
+		if (Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID ))
+		{
+			if (const Drawable * draw = objectAttachedTo->getDrawable())
+				parentXfrm = draw->getTransformMatrix();
+			else
+				parentXfrm = objectAttachedTo->getTransformMatrix();
+
+			m_lastPos = m_pos;
+			m_pos = *objectAttachedTo->getPosition();
+		}
+	}
+
+	if (parentXfrm)
+	{
+		if (m_skipParentXfrm)
+		{
+			//this particle system is already in world space so no need to apply parent xform.
+			m_transform = m_localTransform;
+		}
+		else
+		{
+			// if system has its own local transform, concatenate them
+			if (m_isLocalIdentity == false)
+	#ifdef ALLOW_TEMPORARIES
+				m_transform = (*parentXfrm) * m_localTransform;
+	#else
+				m_transform.mul(*parentXfrm, m_localTransform);
+	#endif
+			else
+				m_transform = *parentXfrm;
+		}
+
+		m_isIdentity = false;
+		transformSet = true;
+	}
+
+	if (transformSet == false)
+	{
+		if (m_isLocalIdentity == false)
+		{
+			m_transform = m_localTransform;
+			m_isIdentity = false;
+		}
+		else
+		{
+			m_isIdentity = true;
+		}
+	}
+
+	// if we are controlled by a particle, its position is local origin
+	if (m_controlParticle)
+	{
+		const Coord3D *controlPos = m_controlParticle->getPosition();
+		/// @todo Concatenate this, instead of overriding (MSB)
+		m_transform.Set_X_Translation( controlPos->x );
+		m_transform.Set_Y_Translation( controlPos->y );
+		m_transform.Set_Z_Translation( controlPos->z );
+		m_isIdentity = false;
+		m_lastPos = m_pos;
+		m_pos = *controlPos;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+ParticleSystem::VisibilityState ParticleSystem::updateVisibility( Int localPlayerIndex )
+{
+	VisibilityState visibilityState;
+
+	if (m_attachedToDrawableID)
+	{
+		if (Drawable *attachedTo = TheGameClient->findDrawableByID( m_attachedToDrawableID ))
+		{
+			visibilityState.isShrouded = attachedTo->getFullyObscuredByShroud();
+		}
+		else
+		{
+			// Drawable has been destroyed - lose our attachment to it
+			m_attachedToDrawableID = INVALID_DRAWABLE_ID;
+
+			// destroy ourselves
+			destroy();
+		}
+	}
+	else if (m_attachedToObjectID)
+	{
+		if (Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID ))
+		{
+			visibilityState.isShrouded = objectAttachedTo->getShroudedStatus(localPlayerIndex) >= OBJECTSHROUD_FOGGED;
+		}
+		else
+		{
+			// Drawable has been destroyed - lose our attachment to it
+			m_attachedToObjectID = INVALID_ID;
+
+			// destroy ourselves
+			destroy();
+		}
+	}
+
+	return visibilityState;
 }
 
 // ------------------------------------------------------------------------------------------------
