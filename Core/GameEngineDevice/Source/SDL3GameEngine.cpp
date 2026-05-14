@@ -51,54 +51,64 @@
 #include "StdDevice/Common/StdBIGFileSystem.h"
 
 // Extern globals for input devices (set by GameClient)
-extern Mouse *TheMouse;
-extern Keyboard *TheKeyboard;
-extern GameWindowManager *TheWindowManager;
+extern Mouse* TheMouse;
+extern Keyboard* TheKeyboard;
+extern GameWindowManager* TheWindowManager;
 
-namespace {
+namespace
+{
 
 Bool DecodeNextUtf8Codepoint(const char* text, size_t length, size_t& offset, UnsignedInt& outCodepoint)
 {
 	outCodepoint = 0;
-	if (!text || offset >= length) {
+	if (!text || offset >= length)
+	{
 		return false;
 	}
 
 	const unsigned char first = static_cast<unsigned char>(text[offset]);
-	if (first == 0) {
+	if (first == 0)
+	{
 		return false;
 	}
 
-	if (first < 0x80) {
+	if (first < 0x80)
+	{
 		outCodepoint = first;
 		offset += 1;
 		return true;
 	}
 
-	if ((first & 0xE0) == 0xC0 && offset + 1 < length) {
+	if ((first & 0xE0) == 0xC0 && offset + 1 < length)
+	{
 		const unsigned char second = static_cast<unsigned char>(text[offset + 1]);
-		if ((second & 0xC0) == 0x80) {
+		if ((second & 0xC0) == 0x80)
+		{
 			outCodepoint = ((first & 0x1F) << 6) | (second & 0x3F);
 			offset += 2;
 			return true;
 		}
 	}
 
-	if ((first & 0xF0) == 0xE0 && offset + 2 < length) {
+	if ((first & 0xF0) == 0xE0 && offset + 2 < length)
+	{
 		const unsigned char second = static_cast<unsigned char>(text[offset + 1]);
 		const unsigned char third = static_cast<unsigned char>(text[offset + 2]);
-		if ((second & 0xC0) == 0x80 && (third & 0xC0) == 0x80) {
+		if ((second & 0xC0) == 0x80 && (third & 0xC0) == 0x80)
+		{
 			outCodepoint = ((first & 0x0F) << 12) | ((second & 0x3F) << 6) | (third & 0x3F);
 			offset += 3;
 			return true;
 		}
 	}
 
-	if ((first & 0xF8) == 0xF0 && offset + 3 < length) {
+	if ((first & 0xF8) == 0xF0 && offset + 3 < length)
+	{
 		const unsigned char second = static_cast<unsigned char>(text[offset + 1]);
 		const unsigned char third = static_cast<unsigned char>(text[offset + 2]);
 		const unsigned char fourth = static_cast<unsigned char>(text[offset + 3]);
-		if ((second & 0xC0) == 0x80 && (third & 0xC0) == 0x80 && (fourth & 0xC0) == 0x80) {
+		if ((second & 0xC0) == 0x80 && (third & 0xC0) == 0x80 && (fourth & 0xC0) == 0x80)
+		{
 			outCodepoint = ((first & 0x07) << 18) | ((second & 0x3F) << 12) | ((third & 0x3F) << 6) | (fourth & 0x3F);
 			offset += 4;
 			return true;
@@ -110,18 +120,18 @@ Bool DecodeNextUtf8Codepoint(const char* text, size_t length, size_t& offset, Un
 	return false;
 }
 
-}
+}    // namespace
 
 /**
  * Constructor: Initialize SDL3 game engine state
  */
 SDL3GameEngine::SDL3GameEngine()
-	: GameEngine(),
-	  m_SDLWindow(nullptr),
-	  m_IsInitialized(false),
-	  m_IsActive(false),
-	  m_IsTextInputActive(false),
-	  m_TextInputFocusWindow(nullptr)
+	: GameEngine()
+	, m_SDLWindow(nullptr)
+	, m_IsInitialized(false)
+	, m_IsActive(false)
+	, m_IsTextInputActive(false)
+	, m_TextInputFocusWindow(nullptr)
 {
 }
 
@@ -130,13 +140,15 @@ SDL3GameEngine::SDL3GameEngine()
  */
 SDL3GameEngine::~SDL3GameEngine()
 {
-	if (m_SDLWindow && m_IsTextInputActive) {
+	if (m_SDLWindow && m_IsTextInputActive)
+	{
 		SDL_StopTextInput(m_SDLWindow);
 		m_IsTextInputActive = false;
 		m_TextInputFocusWindow = nullptr;
 	}
 
-	if (TheSDL3InputManager) {
+	if (TheSDL3InputManager)
+	{
 		delete TheSDL3InputManager;
 	}
 }
@@ -158,7 +170,8 @@ void SDL3GameEngine::init(void)
 		m_IsActive = true;
 
 		// Initialize the unified input manager
-		if (!TheSDL3InputManager) {
+		if (!TheSDL3InputManager)
+		{
 			TheSDL3InputManager = new SDL3InputManager(m_SDLWindow);
 		}
 	}
@@ -172,7 +185,8 @@ void SDL3GameEngine::init(void)
  */
 void SDL3GameEngine::reset(void)
 {
-	if (m_SDLWindow && m_IsTextInputActive) {
+	if (m_SDLWindow && m_IsTextInputActive)
+	{
 		SDL_StopTextInput(m_SDLWindow);
 		m_IsTextInputActive = false;
 		m_TextInputFocusWindow = nullptr;
@@ -196,20 +210,22 @@ void SDL3GameEngine::update(void)
 		{
 			// Prevent CPU/GPU pinning while alt-tabbed
 			SDL_Delay(5);
-			
+
 			// Stay responsive to events (so we can see when we're un-minimized)
 			pollSDL3Events();
 
 			// Keep the LAN subsystem alive to prevent multiplayer disconnects
-			if (TheLAN != nullptr) {
+			if (TheLAN != nullptr)
+			{
 				TheLAN->setIsActive(isActive());
 				TheLAN->update();
 			}
 
 			// If we are in a network game, we must NOT stay in this loop,
 			// as the engine needs to keep pumping logic frames to avoid desyncs.
-			if (getQuitting() || (TheGameLogic && (TheGameLogic->isInInternetGame() || TheGameLogic->isInLanGame()))) {
-				break; 
+			if (getQuitting() || (TheGameLogic && (TheGameLogic->isInInternetGame() || TheGameLogic->isInLanGame())))
+			{
+				break;
 			}
 		}
 	}
@@ -244,7 +260,8 @@ void SDL3GameEngine::setIsActive(Bool isActive)
  */
 void SDL3GameEngine::pollSDL3Events(void)
 {
-	if (!m_SDLWindow || !TheSDL3InputManager) {
+	if (!m_SDLWindow || !TheSDL3InputManager)
+	{
 		return;
 	}
 
@@ -254,14 +271,16 @@ void SDL3GameEngine::pollSDL3Events(void)
 	TheSDL3InputManager->update();
 
 	// Check if we should quit
-	if (TheSDL3InputManager->isQuitting()) {
+	if (TheSDL3InputManager->isQuitting())
+	{
 		m_quitting = true;
 	}
 }
 
 void SDL3GameEngine::updateTextInputState(void)
 {
-	if (!m_SDLWindow || !TheWindowManager) {
+	if (!m_SDLWindow || !TheWindowManager)
+	{
 		return;
 	}
 
@@ -269,15 +288,21 @@ void SDL3GameEngine::updateTextInputState(void)
 	const Bool wantsTextInput =
 		focusedWindow != nullptr && BitIsSet(focusedWindow->winGetStyle(), GWS_ENTRY_FIELD);
 
-	if (wantsTextInput) {
-		if (!m_IsTextInputActive) {
-			if (SDL_StartTextInput(m_SDLWindow)) {
+	if (wantsTextInput)
+	{
+		if (!m_IsTextInputActive)
+		{
+			if (SDL_StartTextInput(m_SDLWindow))
+			{
 				m_IsTextInputActive = true;
 			}
 		}
 		m_TextInputFocusWindow = focusedWindow;
-	} else {
-		if (m_IsTextInputActive) {
+	}
+	else
+	{
+		if (m_IsTextInputActive)
+		{
 			SDL_StopTextInput(m_SDLWindow);
 			m_IsTextInputActive = false;
 		}
@@ -287,32 +312,39 @@ void SDL3GameEngine::updateTextInputState(void)
 
 void SDL3GameEngine::forwardTextInputEvent(const char* utf8Text)
 {
-	if (!utf8Text || !TheWindowManager) {
+	if (!utf8Text || !TheWindowManager)
+	{
 		return;
 	}
 
 	GameWindow* targetWindow = m_TextInputFocusWindow;
-	if (!targetWindow || !BitIsSet(targetWindow->winGetStyle(), GWS_ENTRY_FIELD)) {
+	if (!targetWindow || !BitIsSet(targetWindow->winGetStyle(), GWS_ENTRY_FIELD))
+	{
 		return;
 	}
 
 	const size_t textLength = strlen(utf8Text);
 	size_t offset = 0;
-	while (offset < textLength) {
+	while (offset < textLength)
+	{
 		UnsignedInt codepoint = 0;
-		if (!DecodeNextUtf8Codepoint(utf8Text, textLength, offset, codepoint)) {
+		if (!DecodeNextUtf8Codepoint(utf8Text, textLength, offset, codepoint))
+		{
 			continue;
 		}
 
-		if (codepoint == 0 || codepoint > 0x10FFFFU) {
+		if (codepoint == 0 || codepoint > 0x10FFFFU)
+		{
 			continue;
 		}
 
-		if (codepoint >= 0xD800U && codepoint <= 0xDFFFU) {
+		if (codepoint >= 0xD800U && codepoint <= 0xDFFFU)
+		{
 			continue;
 		}
 
-		if (codepoint > 0xFFFFU) {
+		if (codepoint > 0xFFFFU)
+		{
 			continue;
 		}
 
@@ -325,42 +357,42 @@ void SDL3GameEngine::forwardTextInputEvent(const char* utf8Text)
  * Factory Methods for GameEngine subsystems
  */
 
-LocalFileSystem *SDL3GameEngine::createLocalFileSystem(void)
+LocalFileSystem* SDL3GameEngine::createLocalFileSystem(void)
 {
 	return NEW StdLocalFileSystem;
 }
 
-ArchiveFileSystem *SDL3GameEngine::createArchiveFileSystem(void)
+ArchiveFileSystem* SDL3GameEngine::createArchiveFileSystem(void)
 {
 	return NEW StdBIGFileSystem;
 }
 
-GameLogic *SDL3GameEngine::createGameLogic(void)
+GameLogic* SDL3GameEngine::createGameLogic(void)
 {
 	return NEW W3DGameLogic;
 }
 
-GameClient *SDL3GameEngine::createGameClient(void)
+GameClient* SDL3GameEngine::createGameClient(void)
 {
 	return NEW W3DGameClient;
 }
 
-ModuleFactory *SDL3GameEngine::createModuleFactory(void)
+ModuleFactory* SDL3GameEngine::createModuleFactory(void)
 {
 	return NEW W3DModuleFactory;
 }
 
-ThingFactory *SDL3GameEngine::createThingFactory(void)
+ThingFactory* SDL3GameEngine::createThingFactory(void)
 {
 	return NEW W3DThingFactory;
 }
 
-FunctionLexicon *SDL3GameEngine::createFunctionLexicon(void)
+FunctionLexicon* SDL3GameEngine::createFunctionLexicon(void)
 {
 	return NEW W3DFunctionLexicon;
 }
 
-Radar *SDL3GameEngine::createRadar(Bool dummy)
+Radar* SDL3GameEngine::createRadar(Bool dummy)
 {
 	(void)dummy;
 	return NEW W3DRadar;
@@ -372,12 +404,12 @@ ParticleSystemManager* SDL3GameEngine::createParticleSystemManager(Bool dummy)
 	return NEW W3DParticleSystemManager;
 }
 
-WebBrowser *SDL3GameEngine::createWebBrowser(void)
+WebBrowser* SDL3GameEngine::createWebBrowser(void)
 {
 	return nullptr;
 }
 
-AudioManager *SDL3GameEngine::createAudioManager(Bool dummy)
+AudioManager* SDL3GameEngine::createAudioManager(Bool dummy)
 {
 	if (dummy)
 		return NEW MilesAudioManagerDummy;

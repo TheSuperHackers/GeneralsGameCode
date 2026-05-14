@@ -32,20 +32,23 @@
 /**
  * AnimatedCursor - Wrapper for SDL3 native animated cursors
  */
-struct AnimatedCursor {
-    SDL_Cursor* m_cursor;
+struct AnimatedCursor
+{
+	SDL_Cursor* m_cursor;
 
-    AnimatedCursor() : m_cursor(nullptr) {}
-    ~AnimatedCursor()
-    {
-        if (m_cursor)
-        {
-            SDL_DestroyCursor(m_cursor);
-            m_cursor = nullptr;
-        }
-    }
+	AnimatedCursor()
+		: m_cursor(nullptr)
+	{}
+	~AnimatedCursor()
+	{
+		if (m_cursor)
+		{
+			SDL_DestroyCursor(m_cursor);
+			m_cursor = nullptr;
+		}
+	}
 
-    SDL_Cursor* getCursor() const { return m_cursor; }
+	SDL_Cursor* getCursor() const { return m_cursor; }
 };
 
 /**
@@ -54,15 +57,15 @@ struct AnimatedCursor {
 class SDL3CursorManager
 {
 public:
-    static void init();
-    static void shutdown();
+	static void init();
+	static void shutdown();
 
-    static SDL_Cursor* getCursor(Mouse::MouseCursor cursor, int direction);
-    
-    // Internal loader used by Mouse implementation
-    static void initResources(Mouse* mouse);
+	static SDL_Cursor* getCursor(Mouse::MouseCursor cursor, int direction);
+
+	// Internal loader used by Mouse implementation
+	static void initResources(Mouse* mouse);
 
 private:
-    static AnimatedCursor* loadANI(const char* filepath);
-    static AnimatedCursor* m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
+	static AnimatedCursor* loadANI(const char* filepath);
+	static AnimatedCursor* m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
 };
