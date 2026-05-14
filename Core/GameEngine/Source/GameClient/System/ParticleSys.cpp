@@ -510,7 +510,7 @@ void Particle::draw()
 	else if (m_color.red > 1.0f)
 		m_color.red = 1.0f;
 
-	if (m_color.red < 0.0f)
+	if (m_color.green < 0.0f)
 		m_color.green = 0.0f;
 	else if (m_color.green > 1.0f)
 		m_color.green = 1.0f;
