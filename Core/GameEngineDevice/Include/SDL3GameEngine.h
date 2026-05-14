@@ -66,28 +66,28 @@ public:
 	virtual void setIsActive(Bool isActive) override;
 
 	// Factory methods (override GameEngine)
-	virtual LocalFileSystem *createLocalFileSystem(void) override;
-	virtual ArchiveFileSystem *createArchiveFileSystem(void) override;
-	virtual GameLogic *createGameLogic(void) override;
-	virtual GameClient *createGameClient(void) override;
-	virtual ModuleFactory *createModuleFactory(void) override;
-	virtual ThingFactory *createThingFactory(void) override;
-	virtual FunctionLexicon *createFunctionLexicon(void) override;
-	virtual Radar *createRadar(Bool dummy) override;
-	virtual WebBrowser *createWebBrowser(void) override;
+	virtual LocalFileSystem* createLocalFileSystem(void) override;
+	virtual ArchiveFileSystem* createArchiveFileSystem(void) override;
+	virtual GameLogic* createGameLogic(void) override;
+	virtual GameClient* createGameClient(void) override;
+	virtual ModuleFactory* createModuleFactory(void) override;
+	virtual ThingFactory* createThingFactory(void) override;
+	virtual FunctionLexicon* createFunctionLexicon(void) override;
+	virtual Radar* createRadar(Bool dummy) override;
+	virtual WebBrowser* createWebBrowser(void) override;
 	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) override;
-	virtual AudioManager *createAudioManager(Bool dummy) override;
+	virtual AudioManager* createAudioManager(Bool dummy) override;
 
 	// SDL3 specific
 	virtual SDL_Window* getSDLWindow(void) const { return m_SDLWindow; }
 	virtual void forwardTextInputEvent(const char* utf8Text);
 
 protected:
-	SDL_Window*		m_SDLWindow;
-	Bool			m_IsInitialized;
-	Bool			m_IsActive;
-	Bool			m_IsTextInputActive;
-	GameWindow*	m_TextInputFocusWindow;
+	SDL_Window* m_SDLWindow;
+	Bool m_IsInitialized;
+	Bool m_IsActive;
+	Bool m_IsTextInputActive;
+	GameWindow* m_TextInputFocusWindow;
 
 	// Event processing
 	void pollSDL3Events(void);

@@ -66,30 +66,30 @@ public:
 	virtual void regainFocus() override;
 
 	// SDL3-specific methods
-	void addSDLEvent(SDL_Event *event);
-	
+	void addSDLEvent(SDL_Event* event);
+
 protected:
 	virtual void capture(void) override;
 	virtual void releaseCapture(void) override;
-	virtual UnsignedByte getMouseEvent(MouseIO *result, Bool flush) override;
+	virtual UnsignedByte getMouseEvent(MouseIO* result, Bool flush) override;
 
 private:
 	// Event translation from SDL_Event (Clean Slate implementation)
-	void translateEvent(const SDL_Event& event, MouseIO *result);
+	void translateEvent(const SDL_Event& event, MouseIO* result);
 
 	// Scale raw SDL window coordinates to game internal resolution
 	void scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& scaledX, int& scaledY);
-	
+
 	SDL_Window* m_Window;
 	Bool m_IsCaptured;
 	Bool m_IsVisible;
 	Bool m_LostFocus;
-	
+
 	Int m_directionFrame;
 
 	float m_accumulatedDeltaX;
 	float m_accumulatedDeltaY;
-	
+
 	SDL_Cursor* m_activeSDLCursor;
 };
 
@@ -109,12 +109,12 @@ public:
 
 	// Keyboard interface
 	virtual Bool getCapsState(void) override;
-	
+
 	// SDL3-specific methods
-	void addSDLEvent(SDL_Event *event);
+	void addSDLEvent(SDL_Event* event);
 
 protected:
-	virtual void getKey(KeyboardIO *key) override;
+	virtual void getKey(KeyboardIO* key) override;
 	virtual KeyVal translateScanCodeToKeyVal(unsigned char scan);
 
 private:
@@ -131,11 +131,11 @@ public:
 	virtual ~SDL3InputManager();
 
 	void update();
-	
+
 	// Buffer access
 	Bool getNextMouseEvent(SDL_Event& outEvent);
 	Bool getNextKeyboardEvent(SDL_Event& outEvent);
-	
+
 	void addMouseSDLEvent(const SDL_Event& event);
 	void addKeyboardSDLEvent(const SDL_Event& event);
 
@@ -148,12 +148,14 @@ public:
 	static constexpr float DEFAULT_CURSOR_SPEED = 800.0f;
 
 private:
-	struct GamepadState {
+	struct GamepadState
+	{
 		bool buttonState[SDL_GAMEPAD_BUTTON_COUNT];
 		bool stickLeft, stickRight, stickUp, stickDown;
 		bool ltDown, rtDown;
 
-		GamepadState() {
+		GamepadState()
+		{
 			memset(buttonState, 0, sizeof(buttonState));
 			stickLeft = stickRight = stickUp = stickDown = false;
 			ltDown = rtDown = false;
@@ -169,7 +171,7 @@ private:
 	SDL_Gamepad* m_gamepad;
 	void processGamepadInput();
 	void handleGamepadButton(SDL_GamepadButton button, bool& currentState, bool isDown, std::function<void(bool)> action);
-	
+
 	// Virtual event injection
 	void virtualPulseKey(SDL_Scancode scancode, bool down);
 	void virtualPulseMouse(Uint8 button, bool down);
@@ -177,7 +179,7 @@ private:
 	// Event buffers
 	static const UnsignedInt MAX_MOUSE_EVENTS = 256;
 	static const UnsignedInt MAX_KEY_EVENTS = 256;
-	
+
 	SDL_Event m_mouseEvents[MAX_MOUSE_EVENTS];
 	UnsignedInt m_mouseNextFree;
 	UnsignedInt m_mouseNextGet;
