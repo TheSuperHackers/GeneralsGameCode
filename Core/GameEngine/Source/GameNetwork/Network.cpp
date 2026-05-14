@@ -595,7 +595,7 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 				//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), gmsg->getCommandAsString(), TheGameLogic->getFrame()));
 				TheCommandList->appendMessage(gmsg);
 			} else {
-				DEBUG_LOG(("Network::RelayCommandsToCommandList - rejecting GameMessage from player %d of type %s, which is not a valid networking type.",
+				DEBUG_LOG(("Network::RelayCommandsToCommandList - rejecting GameMessage from player %d of type %s, which is not a valid network type.",
 					gmsg->getPlayerIndex(), gmsg->getCommandAsString()));
 				deleteInstance(gmsg);
 			}
