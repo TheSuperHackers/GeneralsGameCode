@@ -586,8 +586,15 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 	while (msg != nullptr) {
 		NetCommandType cmdType = msg->getCommand()->getNetCommandType();
 		if (cmdType == NETCOMMANDTYPE_GAMECOMMAND) {
-			//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage()->getCommandAsString(), TheGameLogic->getFrame()));
-			TheCommandList->appendMessage(((NetGameCommandMsg *)msg->getCommand())->constructGameMessage());
+			GameMessage *gmsg = ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage();
+			if (isTransferCommand(gmsg)) {
+				//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), gmsg->getCommandAsString(), TheGameLogic->getFrame()));
+				TheCommandList->appendMessage(gmsg);
+			} else {
+				DEBUG_LOG(("Network::RelayCommandsToCommandList - rejecting GameMessage from player %d of type %s, which is not a valid networking type.",
+					msg->getCommand()->getPlayerID(), gmsg->getCommandAsString()));
+				deleteInstance(gmsg);
+			}
 		} else {
 			processFrameSynchronizedNetCommand(msg);
 		}
