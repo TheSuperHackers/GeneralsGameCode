@@ -586,16 +586,17 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 	while (msg != nullptr) {
 		NetCommandType cmdType = msg->getCommand()->getNetCommandType();
 		if (cmdType == NETCOMMANDTYPE_GAMECOMMAND) {
-			GameMessage *gmsg = ((NetGameCommandMsg *)msg->getCommand())->constructGameMessage();
+			GameMessage* gmsg = static_cast<NetGameCommandMsg*>(msg->getCommand())->constructGameMessage();
 #if RETAIL_COMPATIBLE_CRC
 			TheCommandList->appendMessage(gmsg);
 #else
+			// TheSuperHackers @fix stephanmeesters 14/05/2026 Verify allowed network type of incoming GameMessages
 			if (isTransferCommand(gmsg)) {
 				//DEBUG_LOG(("Network::RelayCommandsToCommandList - appending command %d of type %s to command list on frame %d", msg->getCommand()->getID(), gmsg->getCommandAsString(), TheGameLogic->getFrame()));
 				TheCommandList->appendMessage(gmsg);
 			} else {
 				DEBUG_LOG(("Network::RelayCommandsToCommandList - rejecting GameMessage from player %d of type %s, which is not a valid networking type.",
-					msg->getCommand()->getPlayerID(), gmsg->getCommandAsString()));
+					gmsg->getPlayerIndex(), gmsg->getCommandAsString()));
 				deleteInstance(gmsg);
 			}
 #endif
