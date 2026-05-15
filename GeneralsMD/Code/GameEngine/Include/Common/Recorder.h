@@ -53,90 +53,50 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
-// TheSuperHackers @info helmutbuhler 03/04/2025
-// Some info about CRC:
-// In each game, each peer periodically calculates a CRC from the local gamestate and sends that
-// in a message to all peers (including itself) so that everyone can check that the crc is synchronous.
-// In a network game, there is a delay between sending the CRC message and receiving it. This is
-// necessary because if you were to wait each frame for all messages from all peers, things would go
-// horribly slow.
-// But this delay is not a problem for CRC checking because everyone receives the CRC in the same frame
-// and every peer just makes sure all the received CRCs are equal.
-// While playing replays, this is a problem however: The CRC messages in the replays appear on the frame
-// they were received, which can be a few frames delayed if it was a network game. And if we were to
-// compare those with the local gamestate, they wouldn't sync up.
-// So, in order to fix this, we need to queue up our local CRCs,
-// so that we can check it with the crc messages that come later.
-// This class is basically that queue.
-class CRCInfo
-{
-public:
-	CRCInfo() :
-		m_sawCRCMismatch(FALSE),
-		m_skippedOne(FALSE),
-		m_localPlayer(0)
-	{}
-	CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
-	void addCRC(UnsignedInt val);
-	UnsignedInt readCRC();
-
-	int GetQueueSize() const { return m_data.size(); }
-
-	UnsignedInt getLocalPlayer() { return m_localPlayer; }
-
-	void setSawCRCMismatch() { m_sawCRCMismatch = TRUE; }
-	Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
-
-protected:
-	Bool m_sawCRCMismatch;
-	Bool m_skippedOne;
-	std::list<UnsignedInt> m_data;
-	UnsignedInt m_localPlayer;
-};
-
-inline CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
-{
-	m_localPlayer = localPlayer;
-	m_skippedOne = !isMultiplayer;
-	m_sawCRCMismatch = FALSE;
-}
-
-inline void CRCInfo::addCRC(UnsignedInt val)
-{
-	// TheSuperHackers @fix helmutbuhler 03/04/2025
-	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
-	// Perhaps this happens because the network is not yet set up on frame 0.
-	// So we also don't queue up the first local crc message, otherwise the crc
-	// messages wouldn't match up anymore and we'd desync immediately during playback.
-	if (!m_skippedOne)
-	{
-		m_skippedOne = TRUE;
-		return;
-	}
-
-	m_data.push_back(val);
-	//DEBUG_LOG(("CRCInfo::addCRC() - crc %8.8X pushes list to %d entries (full=%d)", val, m_data.size(), !m_data.empty()));
-}
-
-inline UnsignedInt CRCInfo::readCRC()
-{
-	if (m_data.empty())
-	{
-		DEBUG_LOG(("CRCInfo::readCRC() - bailing, full=0, size=%d", m_data.size()));
-		return 0;
-	}
-
-	UnsignedInt val = m_data.front();
-	m_data.pop_front();
-	//DEBUG_LOG(("CRCInfo::readCRC() - returning %8.8X, full=%d, size=%d", val, !m_data.empty(), m_data.size()));
-	return val;
-}
-
 class RecorderClass : public SubsystemInterface {
+protected:
+	// TheSuperHackers @info helmutbuhler 03/04/2025
+	// Some info about CRC:
+	// In each game, each peer periodically calculates a CRC from the local gamestate and sends that
+	// in a message to all peers (including itself) so that everyone can check that the crc is synchronous.
+	// In a network game, there is a delay between sending the CRC message and receiving it. This is
+	// necessary because if you were to wait each frame for all messages from all peers, things would go
+	// horribly slow.
+	// But this delay is not a problem for CRC checking because everyone receives the CRC in the same frame
+	// and every peer just makes sure all the received CRCs are equal.
+	// While playing replays, this is a problem however: The CRC messages in the replays appear on the frame
+	// they were received, which can be a few frames delayed if it was a network game. And if we were to
+	// compare those with the local gamestate, they wouldn't sync up.
+	// So, in order to fix this, we need to queue up our local CRCs,
+	// so that we can check it with the crc messages that come later.
+	// This class is basically that queue.
+	class CRCInfo
+	{
+	public:
+		CRCInfo();
+		CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
+		void addCRC(UnsignedInt val);
+		UnsignedInt readCRC();
+
+		int GetQueueSize() const { return m_data.size(); }
+
+		UnsignedInt getLocalPlayer() { return m_localPlayer; }
+
+		void setSawCRCMismatch() { m_sawCRCMismatch = TRUE; }
+		Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
+
+	protected:
+		Bool m_sawCRCMismatch;
+		Bool m_skippedOne;
+		UnsignedInt m_localPlayer;
+		std::list<UnsignedInt> m_data;
+	};
+
+	CRCInfo m_crcInfo;
+
 public:
 	struct ReplayHeader;
 
-public:
 	RecorderClass();																	///< Constructor.
 	virtual ~RecorderClass() override;													///< Destructor.
 
@@ -163,9 +123,6 @@ public:
 
 public:
 	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
-protected:
-	CRCInfo m_crcInfo;
-public:
 
 	// read in info relating to a replay, conditionally setting up m_file for playback
 	struct ReplayHeader
