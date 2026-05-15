@@ -100,6 +100,50 @@ static FILE* openStatsLogFile()
 }
 #endif
 
+RecorderClass::CRCInfo::CRCInfo() :
+	m_sawCRCMismatch(FALSE),
+	m_skippedOne(FALSE),
+	m_localPlayer(0)
+{}
+
+RecorderClass::CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
+{
+	m_sawCRCMismatch = FALSE;
+	m_skippedOne = !isMultiplayer;
+	m_localPlayer = localPlayer;
+}
+
+void RecorderClass::CRCInfo::addCRC(UnsignedInt val)
+{
+	// TheSuperHackers @fix helmutbuhler 03/04/2025
+	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
+	// Perhaps this happens because the network is not yet set up on frame 0.
+	// So we also don't queue up the first local crc message, otherwise the crc
+	// messages wouldn't match up anymore and we'd desync immediately during playback.
+	if (!m_skippedOne)
+	{
+		m_skippedOne = TRUE;
+		return;
+	}
+
+	m_data.push_back(val);
+	//DEBUG_LOG(("CRCInfo::addCRC() - crc %8.8X pushes list to %d entries (full=%d)", val, m_data.size(), !m_data.empty()));
+}
+
+UnsignedInt RecorderClass::CRCInfo::readCRC()
+{
+	if (m_data.empty())
+	{
+		DEBUG_LOG(("CRCInfo::readCRC() - bailing, full=0, size=%d", m_data.size()));
+		return 0;
+	}
+
+	UnsignedInt val = m_data.front();
+	m_data.pop_front();
+	//DEBUG_LOG(("CRCInfo::readCRC() - returning %8.8X, full=%d, size=%d", val, !m_data.empty(), m_data.size()));
+	return val;
+}
+
 void RecorderClass::logGameStart(AsciiString options)
 {
 	if (!m_file)
