@@ -41,7 +41,6 @@ public:
 
 	enum CommandEvaluateType { DO_COMMAND, DO_HINT, EVALUATE_ONLY };
 
-
 	GameMessage::Type evaluateForceAttack( Drawable *draw, const Coord3D *pos, CommandEvaluateType type );
 	GameMessage::Type evaluateContextCommand( Drawable *draw, const Coord3D *pos, CommandEvaluateType type );
 
@@ -64,6 +63,10 @@ private:
 	GameMessage::Type issueSpecialPowerCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos, Object* ignoreSelObj );
 	GameMessage::Type issueFireWeaponCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos );
 	GameMessage::Type issueCombatDropCommand( const CommandButton *command, CommandEvaluateType commandType, Drawable *target, const Coord3D *pos );
+	
+	void normalizeContextInputs( Drawable*& draw, Object*& obj, Drawable*& drawableInWay );
+	GameMessage::Type handleWaypointModeCommand( const Coord3D* pos, Drawable* draw, const CommandEvaluateType& type );
+	void normalizeGuiCommandTarget( const CommandButton* command, Drawable*& draw, Object*& obj );
 
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
 };

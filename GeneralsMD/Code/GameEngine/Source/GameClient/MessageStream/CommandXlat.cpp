@@ -1540,30 +1540,18 @@ GameMessage::Type CommandTranslator::evaluateForceAttack( Drawable *draw, const 
 	return retVal;
 }
 
-// ------------------------------------------------------------------------------------------------
-/** This method and the order of operations in the check here, determine what command would
-	* actually happen (if type parameter == DO_COMMAND) if the user clicked on the drawable
-	* 'draw'.  If type == DO_HINT, then the user hasn't actually clicked, but has moused over
-	* the drawable 'draw' and we want to generate a hint message as to what the actual
-	* command would be if clicked
-	* NOTE: draw can be null, in which case we give a hint for the location */
-// ------------------------------------------------------------------------------------------------
-GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
-																														 const Coord3D *pos,
-																														 CommandEvaluateType type )
-{
-	Object *obj = draw ? draw->getObject() : nullptr;
-	Drawable *drawableInWay = draw;
-
+// TheSuperHackers @refactor RiQQ 15/5/2026 Extracted from evaluateContextCommand monolith. Preparation for proper refactor
+void CommandTranslator::normalizeContextInputs(Drawable*& draw, Object*& obj, Drawable*& drawableInWay) {
 	//This piece of code is used to prevent interaction with unselectable objects or masked objects. When we
 	//call this function, we typically pass in both a position and a drawable (if applicable), so if the
 	//drawable is invalid... then convert it to a position to be evaluated instead.
 	//Added: shrubberies are the exception for interactions...
 	//Removed: GS Took out ObjectStatusUnselectable, since that status only prevents selection, not everything
-	if( obj == nullptr ||
-			( obj->getStatusBits().test( OBJECT_STATUS_MASKED ) &&
-			!obj->isKindOf(KINDOF_SHRUBBERY) && !obj->isKindOf(KINDOF_FORCEATTACKABLE) ) )
-	{
+	if ( obj == nullptr ||
+		( obj->getStatusBits().test( OBJECT_STATUS_MASKED ) &&
+		!obj->isKindOf(KINDOF_SHRUBBERY) &&
+		!obj->isKindOf(KINDOF_FORCEATTACKABLE) )
+	) {
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
 		//a position interaction.
 		draw = nullptr;
@@ -1576,116 +1564,143 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 		obj = nullptr;
 	}
 
-	if( TheInGameUI->isInForceMoveToMode() )
-	{
+	if ( TheInGameUI->isInForceMoveToMode() ) {
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
 		//a position interaction.
 		draw = nullptr;
 		obj = nullptr;
-	} else if (TheInGameUI->isInForceAttackMode() ) {
+	}
+	else if (TheInGameUI->isInForceAttackMode() ) {
 		// setting the drawableInWay to draw will allow us to force attack in the issue move command
 		// if there is a location to which we should attack.
 		drawableInWay = draw;
 	}
+}
 
+// TheSuperHackers @refactor RiQQ 15/5/2026 Extracted from evaluateContextCommand monolith. Preparation for proper refactor
+GameMessage::Type CommandTranslator::handleWaypointModeCommand(const Coord3D* pos, Drawable* draw, const CommandEvaluateType& type) {
 	GameMessage::Type msgType = GameMessage::MSG_INVALID;
+
+	//Override any *other* commands with waypoint commands.
+	if( type == DO_COMMAND || type == EVALUATE_ONLY ) {
+		if( TheTerrainLogic ) {
+			msgType = issueMoveToLocationCommand( pos, draw, type );
+		}
+	}
+	else {
+		msgType = GameMessage::MSG_ADD_WAYPOINT_HINT;
+		GameMessage* hintMessage = TheMessageStream->appendMessage( msgType );
+		hintMessage->appendLocationArgument( *pos );
+	}
+
+	return msgType;
+}
+
+// TheSuperHackers @refactor RiQQ 15/5/2026 Extracted from evaluateContextCommand monolith. Preparation for proper refactor
+void CommandTranslator::normalizeGuiCommandTarget( const CommandButton* command, Drawable*& draw, Object*& obj ) {
+	if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) ) {
+		//If our object is a shrubbery, and we don't allow targeting it... then null it out.
+		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
+		//a position interaction.
+		draw = nullptr;
+		obj = nullptr;
+	}
+
+	if( obj && obj->isKindOf( KINDOF_MINE ) && !BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) ) {
+		//If our object is a mine, and we don't allow targeting it... then null it out.
+		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
+		//a position interaction.
+		draw = nullptr;
+		obj = nullptr;
+	}
+
+	//Kris: September 27, 2002
+	//Added relationship tests to make sure we're not attempting a context-command on a restricted relationship.
+	//This case prevents rebels from using tranq darts on allies.
+	if( obj && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) ) {
+		Relationship relationship = ThePlayerList->getLocalPlayer()->getRelationship( obj->getTeam() );
+
+		switch( relationship ) {
+			case ALLIES:
+				if( !BitIsSet( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) ) {
+					draw = nullptr;
+					obj = nullptr;
+				}
+				break;
+			case ENEMIES:
+				if( !BitIsSet( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) ) {
+					draw = nullptr;
+					obj = nullptr;
+				}
+				break;
+			case NEUTRAL:
+				if( !BitIsSet( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) ) {
+					draw = nullptr;
+					obj = nullptr;
+				}
+				break;
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+/** This method and the order of operations in the check here, determine what command would
+	* actually happen (if type parameter == DO_COMMAND) if the user clicked on the drawable
+	* 'draw'.  If type == DO_HINT, then the user hasn't actually clicked, but has moused over
+	* the drawable 'draw' and we want to generate a hint message as to what the actual
+	* command would be if clicked
+	* NOTE: draw can be null, in which case we give a hint for the location */
+// ------------------------------------------------------------------------------------------------
+GameMessage::Type CommandTranslator::evaluateContextCommand(
+	Drawable *draw,
+	const Coord3D *pos,
+	CommandEvaluateType type
+) {
+	Object *obj = draw ? draw->getObject() : nullptr;
+	Drawable *drawableInWay = draw;
+	normalizeContextInputs(draw, obj, drawableInWay);
 
 	// Then we should determine if the game currently prefers selection events. If it does, then return
 	// the invalid message.
-	if (obj) {
-		if (obj->isLocallyControlled() && TheInGameUI->isInPreferSelectionMode()) {
-			return msgType;
-		}
+	if (obj && obj->isLocallyControlled() && TheInGameUI->isInPreferSelectionMode()) {
+		return GameMessage::MSG_INVALID;
 	}
 
 	// Kris: Now that we can select non-controllable units/structures, don't allow any actions to be performed.
 	const CommandButton *command = TheInGameUI->getGUICommand();
+	GameMessage::Type msgType = GameMessage::MSG_INVALID;
 
-	if (command && command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON)
-	{
+	if (command && command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON) {
 		msgType = GameMessage::MSG_VALID_GUICOMMAND_HINT;
 		TheMessageStream->appendMessage(msgType);
+		return msgType;
 	}
-	else if( TheInGameUI->areSelectedObjectsControllable()
-			|| (command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT))
-	{
-		GameMessage *hintMessage;
+	
+	const bool canPerformActions = (
+		TheInGameUI->areSelectedObjectsControllable() || 
+		(command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
+	);
+	if ( !canPerformActions ) {
+		return GameMessage::MSG_INVALID;
+	}
 
-		if( TheInGameUI->isInWaypointMode() )
-		{
-			//Override any *other* commands with waypoint commands.
-			if( type == DO_COMMAND || type == EVALUATE_ONLY )
-			{
-				if( TheTerrainLogic )
-				{
-					msgType = issueMoveToLocationCommand( pos, draw, type );
-				}
+	{
+		if( TheInGameUI->isInWaypointMode() ) {
+			msgType = handleWaypointModeCommand(pos, draw, type);
+			if (msgType != GameMessage::MSG_INVALID) {
+				return msgType;
 			}
-			else
-			{
-				msgType = GameMessage::MSG_ADD_WAYPOINT_HINT;
-				hintMessage = TheMessageStream->appendMessage( msgType );
-				hintMessage->appendLocationArgument( *pos );
-			}
-			return msgType;
 		}
 
 		CanAttackResult result;
+		GameMessage *hintMessage;
 
 		if(command &&
 			(command->isContextCommand()
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT))
 		{
-			if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
-			{
-				//If our object is a shrubbery, and we don't allow targeting it... then null it out.
-				//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
-				//a position interaction.
-				draw = nullptr;
-				obj = nullptr;
-			}
-
-			if( obj && obj->isKindOf( KINDOF_MINE ) && !BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) )
-			{
-				//If our object is a mine, and we don't allow targeting it... then null it out.
-				//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
-				//a position interaction.
-				draw = nullptr;
-				obj = nullptr;
-			}
-
-			//Kris: September 27, 2002
-			//Added relationship tests to make sure we're not attempting a context-command on a restricted relationship.
-			//This case prevents rebels from using tranq darts on allies.
-			if( obj && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
-			{
-				Relationship relationship = ThePlayerList->getLocalPlayer()->getRelationship( obj->getTeam() );
-				switch( relationship )
-				{
-					case ALLIES:
-						if( !BitIsSet( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) )
-						{
-							draw = nullptr;
-							obj = nullptr;
-						}
-						break;
-					case ENEMIES:
-						if( !BitIsSet( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) )
-						{
-							draw = nullptr;
-							obj = nullptr;
-						}
-						break;
-					case NEUTRAL:
-						if( !BitIsSet( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) )
-						{
-							draw = nullptr;
-							obj = nullptr;
-						}
-						break;
-				}
-			}
+            normalizeGuiCommandTarget( command, draw, obj );
 
 			Bool currentlyValid = FALSE;
 			ObjectID objectID = obj ? obj->getID() : INVALID_ID;
