@@ -174,6 +174,7 @@ public:
 	GameMessage *constructGameMessage() const;
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
+	GameMessage::Type getGameMessageType() const;
 
 	virtual Select getSmallNetPacketSelect() const override;
 
