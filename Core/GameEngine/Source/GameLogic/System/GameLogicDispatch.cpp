@@ -2120,7 +2120,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	}
 
 #if RETAIL_COMPATIBLE_AIGROUP
-	// TheSuperHackers @bugfix xezon/Caball009 14/05/2026 This hack avoids crashing when players are selected during Replay playback.
+	// TheSuperHackers @bugfix xezon/Caball009 14/05/2026 This fix avoids crashing when players are selected during Replay playback.
 	// The current AI group may have been destroyed, and its memory deallocated, in which case it shouldn't be used.
 	if (currentlySelectedGroup && !TheAI->doesGroupExist(currentlySelectedGroup))
 		return;
