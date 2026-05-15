@@ -753,6 +753,8 @@ public:
 	virtual void reset() override;									///< reset the manager and all particle systems
 	virtual void update() override;								///< update all particle systems
 
+	virtual Bool isDummy() const { return false; }
+
 	virtual Int getOnScreenParticleCount() = 0;   ///< returns the number of particles on screen
   virtual void setOnScreenParticleCount(int count);
 
@@ -761,8 +763,7 @@ public:
 	ParticleSystemTemplate *newTemplate( const AsciiString &name );
 
 	/// given a template, instantiate a particle system
-	ParticleSystem *createParticleSystem( const ParticleSystemTemplate *sysTemplate,
-																				Bool createSlaves = TRUE );
+	virtual ParticleSystem *createParticleSystem( const ParticleSystemTemplate *sysTemplate, Bool createSlaves = TRUE );
 
 	/** given a template, instantiate a particle system.
 		if attachTo is not null, attach the particle system to the given object.
@@ -835,14 +836,52 @@ private:
 	ParticleSystemIDMap m_systemMap; ///< a hash map of all particle systems
 };
 
+
 // TheSuperHackers @feature bobtista 31/01/2026
-// ParticleSystemManager that does nothing. Used for Headless Mode.
+// ParticleSystemManager that does nothing. Cannot create particle systems and templates. Used for Headless Mode.
 class ParticleSystemManagerDummy : public ParticleSystemManager
 {
+#if RETAIL_COMPATIBLE_CRC
+	struct StaticParticleSystemTemplate : public ParticleSystemTemplate
+	{
+		StaticParticleSystemTemplate()
+			: ParticleSystemTemplate("dummy") {}
+	};
+	struct StaticParticleSystem : public ParticleSystem
+	{
+		StaticParticleSystem(const StaticParticleSystemTemplate *sysTemplate)
+			: ParticleSystem(sysTemplate, ParticleSystemID(0), TRUE) {}
+	};
+#endif
+
 public:
+#if RETAIL_COMPATIBLE_CRC
+	// Must not overload init to keep loading the particle system templates,
+	// which are unfortunately needed to preserve the correct logic crc.
+#else
+	virtual void init() override {}
+	virtual void reset() override {}
+#endif
+	virtual void update() override {}
+
+	virtual Bool isDummy() const override { return true; }
+
 	virtual Int getOnScreenParticleCount() override { return 0; }
 	virtual void doParticles(RenderInfoClass &rinfo) override {}
 	virtual void queueParticleRender() override {}
+
+	virtual ParticleSystem *createParticleSystem(const ParticleSystemTemplate *sysTemplate, Bool createSlaves = TRUE) override
+	{
+#if RETAIL_COMPATIBLE_CRC
+		if (sysTemplate == nullptr)
+			return nullptr;
+		static StaticParticleSystemTemplate dummyTemplate;
+		static StaticParticleSystem dummySystem(&dummyTemplate);
+		return &dummySystem;
+#else
+		return nullptr;
+#endif
+	}
 
 protected:
 	virtual void crc( Xfer *xfer ) override {}
