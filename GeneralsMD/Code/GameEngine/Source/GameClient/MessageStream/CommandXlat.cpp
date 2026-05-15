@@ -1686,10 +1686,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand(
 
 	{
 		if( TheInGameUI->isInWaypointMode() ) {
-			msgType = handleWaypointModeCommand(pos, draw, type);
-			if (msgType != GameMessage::MSG_INVALID) {
-				return msgType;
-			}
+			return handleWaypointModeCommand(pos, draw, type);
 		}
 
 		CanAttackResult result;
