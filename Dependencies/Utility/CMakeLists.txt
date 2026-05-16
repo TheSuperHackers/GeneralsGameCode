@@ -4,6 +4,7 @@ set(UTILITY_SRC
     Utility/endian_compat.h
     Utility/fstream_adapter.h
     Utility/hash_map_adapter.h
+    Utility/interlocked_adapter.h
     Utility/intrin_compat.h
     Utility/iostream_adapter.h
     Utility/mem_compat.h
