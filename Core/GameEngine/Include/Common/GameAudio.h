@@ -177,11 +177,10 @@ class AudioManager : public SubsystemInterface
 		AsciiString prevTrackName(const AsciiString& currentTrack );
 
 		// changing music tracks
-		virtual void nextMusicTrack() = 0;
-		virtual void prevMusicTrack() = 0;
+		virtual AsciiString nextMusicTrack() = 0;
+		virtual AsciiString prevMusicTrack() = 0;
 		virtual Bool isMusicPlaying() const = 0;
 		virtual Bool hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const = 0;
-		virtual AsciiString getMusicTrackName() const = 0;
 
 		virtual void setAudioEventEnabled( AsciiString eventToAffect, Bool enable );
 		virtual void setAudioEventVolumeOverride( AsciiString eventToAffect, Real newVolume );
