@@ -24,6 +24,9 @@
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
 
+// TheSuperHackers @bugfix Include hash_map_adapter.h so that std::hash is visible as a class template before this header specializes std::hash<Smudge::Identifier> and uses std::hash_map below. Without this, translation units that include Smudge.h without having pulled in <hash_map> beforehand (e.g. W3DSmudge.cpp) fail to compile under STLport. Fixes #2674.
+#include <Utility/hash_map_adapter.h>
+
 #define SET_SMUDGE_PARAMETERS(smudge,pos,offset,size,opacity) (smudge->m_pos=pos;smudge->m_offset=offset;smudge->m_size=size;smudge->m_opacity=opacity;)
 
 struct Smudge : public DLNodeClass<Smudge>
