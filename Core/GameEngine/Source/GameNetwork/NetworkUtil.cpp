@@ -154,16 +154,18 @@ Bool CommandRequiresAck(const NetCommandMsg* msg)
 	return DoesCommandRequireACommandID(msg->getNetCommandType());
 }
 
-Bool IsCommandSynchronized(NetCommandType type) {
-	if ((type == NETCOMMANDTYPE_GAMECOMMAND) ||
-			(type == NETCOMMANDTYPE_FRAMEINFO) ||
-			(type == NETCOMMANDTYPE_PLAYERLEAVE) ||
-			(type == NETCOMMANDTYPE_DESTROYPLAYER) ||
-			(type == NETCOMMANDTYPE_RUNAHEAD))
-	{
+Bool IsCommandSynchronized(NetCommandType type)
+{
+	switch (type) {
+	case NETCOMMANDTYPE_FRAMEINFO:
+	case NETCOMMANDTYPE_GAMECOMMAND:
+	case NETCOMMANDTYPE_PLAYERLEAVE:
+	case NETCOMMANDTYPE_RUNAHEAD:
+	case NETCOMMANDTYPE_DESTROYPLAYER:
 		return TRUE;
+	default:
+		return FALSE;
 	}
-	return FALSE;
 }
 
 /**
