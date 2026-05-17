@@ -182,8 +182,8 @@ public:
 
 	Bool update(); ///< update this particle's behavior - return false if dead
 
-	void draw(); ///< render update
-	void doWindMotion(); ///< do wind motion (if present) from particle system
+	void draw( Real timeScale ); ///< render update
+	void doWindMotion( Real timeScale ); ///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 
@@ -206,6 +206,8 @@ public:
 
 	UnsignedInt getPersonality() { return m_personality; };
 	void setPersonality(UnsignedInt p) { m_personality = p; };
+
+	UnsignedInt getElapsedFrames() const;
 
 protected:
 
@@ -271,6 +273,8 @@ public:
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
 
+	void validate();
+
 	Bool m_isOneShot;														///< if true, destroy system after one burst has occurred
 
 	enum ParticleShaderType
@@ -321,7 +325,7 @@ public:
 	};
 
 
-	RandomKeyframe m_alphaKey[ MAX_KEYFRAMES ];
+	RandomKeyframe m_alphaKey[ MAX_KEYFRAMES ];	///< alpha of particle
 	RGBColorKeyframe m_colorKey[ MAX_KEYFRAMES ];	///< color of particle
 
 	typedef Int Color;
@@ -597,6 +601,8 @@ public:
 	virtual Bool update( Int localPlayerIndex );								///< update this particle system, return false if dead
 	void updateWindMotion();							///< update wind motion
 
+	void draw( Real timeScale ); ///< render update
+
 	void setControlParticle( Particle *p );			///< set control particle
 
 	void start();													///< (re)start a stopped particle system
@@ -767,6 +773,11 @@ protected:
 /**
  * The particle system manager, responsible for maintaining all ParticleSystems
  */
+// TheSuperHackers @tweak The particle render update is now decoupled from the logic step.
+// The lifetime management and the velocity and rate changes remain coupled to the logic step.
+// The render updates integrate exactly one logic time step per logic frame, regardless of how many render updates
+// fall into it, so the particles follow the same course as in the original update.
+//
 class ParticleSystemManager : public SubsystemInterface,
 															public Snapshot
 {
@@ -783,7 +794,8 @@ public:
 
 	virtual void init() override;									///< initialize the manager
 	virtual void reset() override;									///< reset the manager and all particle systems
-	virtual void update() override;								///< update all particle systems
+	virtual void update() override;								///< logic update for all particle systems
+	virtual void draw() override;									///< render update for all particle systems
 
 	virtual Bool isDummy() const { return false; }
 
@@ -853,6 +865,9 @@ protected:
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
 
+	void completeLogicFrameDrawUpdate(); ///< render update for the rest of the current logic frame
+	void drawSystems( Real timeScale ); ///< render update for all particle systems
+
 	Particle *m_allParticlesHead[ NUM_PARTICLE_PRIORITIES ];
 	Particle *m_allParticlesTail[ NUM_PARTICLE_PRIORITIES ];
 
@@ -864,8 +879,8 @@ protected:
 	UnsignedInt m_fieldParticleCount; ///< this does not need to be xfered, since it is evaluated every frame
 	UnsignedInt m_particleSystemCount;
 	Int m_onScreenParticleCount;                ///< number of particles displayed on screen per frame
-	UnsignedInt m_lastLogicFrameUpdate;
 	Int m_localPlayerIndex;	///<used to tell particle systems which particles can be skipped due to player shroud status
+	Real m_drawnLogicFramePhase; ///< How far the render updates have integrated the current logic frame, ranging 0 to 1.
 
 private:
 	TemplateMap m_templateMap;		///< a hash map of all particle system templates
@@ -891,6 +906,7 @@ public:
 	virtual void reset() override {}
 #endif
 	virtual void update() override {}
+	virtual void draw() override {}
 
 	virtual Bool isDummy() const override { return true; }
 

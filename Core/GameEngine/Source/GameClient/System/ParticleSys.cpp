@@ -31,6 +31,7 @@
 
 #define DEFINE_PARTICLE_SYSTEM_NAMES
 
+#include "Common/FramePacer.h"
 #include "Common/GameState.h"
 #include "Common/INI.h"
 #include "Common/PerfTimer.h"
@@ -193,11 +194,40 @@ void ParticleInfo::xfer( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
+/** Validate alpha key frames */
+// ------------------------------------------------------------------------------------------------
+template <typename KeyframeType>
+static void validateAlphaKeyframes(KeyframeType *keys, Int keysSize)
+{
+	for (Int i = 1; i < keysSize; ++i)
+	{
+		UnsignedInt &prevFrame = keys[i - 1].frame;
+		UnsignedInt &currFrame = keys[i].frame;
+
+		// The key frames behind the first one end the sequence with frame zero.
+		if (currFrame == 0)
+			break;
+
+		if (currFrame <= prevFrame)
+		{
+			DEBUG_LOG(("validateAlphaKeyframes - Alpha%d is on frame %u and does not follow frame %u. It is moved to frame %u",
+				i + 1, currFrame, prevFrame, prevFrame + 1));
+
+			currFrame = prevFrame + 1;
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Load post process */
 // ------------------------------------------------------------------------------------------------
 void ParticleInfo::loadPostProcess()
 {
-
+	// TheSuperHackers @bugfix A key frame that does not come after its predecessor has no interval to
+	// ramp over. Its infinite rate would remain in the alpha, because the alpha reaches its key frame
+	// values without being set to them. Such a key frame is therefore moved to the frame after its
+	// predecessor. The color key frames are not validated, to keep their original look.
+	validateAlphaKeyframes(m_alphaKey, ARRAY_SIZE(m_alphaKey));
 }
 
 /** Load post process */
@@ -231,9 +261,8 @@ void Particle::computeAlphaRate()
 		return;
 	}
 
-	Real delta = m_alphaKey[ m_alphaTargetKey ].value - m_alphaKey[ m_alphaTargetKey-1 ].value;
 	UnsignedInt time = m_alphaKey[ m_alphaTargetKey ].frame - m_alphaKey[ m_alphaTargetKey-1 ].frame;
-
+	Real delta = m_alphaKey[ m_alphaTargetKey ].value - m_alphaKey[ m_alphaTargetKey-1 ].value;
 	m_alphaRate = delta/time;
 }
 
@@ -310,16 +339,38 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 		m_alphaKey[i] = info->m_alphaKey[i];
 
 	m_alpha = m_alphaKey[0].value;
+#if PRESERVE_RETAIL_PARTICLES
+	// The original implementation ramps towards the second key frame from the creation frame, which reaches its value one
+	// frame early, or runs past it until its frame is reached if the first key frame starts later.
 	m_alphaTargetKey = 1;
 	computeAlphaRate();
+#else
+	// TheSuperHackers @tweak The first key frame holds its value until its frame has passed, and is therefore the first
+	// key frame to advance to.
+	m_alphaTargetKey = 0;
+	m_alphaRate = 0.0f;
+#endif
 
 	// set up colors
 	for( i=0; i<MAX_KEYFRAMES; i++ )
 		m_colorKey[i] = info->m_colorKey[i];
 
 	m_color = m_colorKey[0].color;
+#if PRESERVE_RETAIL_PARTICLES
+	// The original implementation ramps towards the second key frame from the creation frame and therefore runs past its
+	// color. Unlike the alpha, the color is not overwritten with the key frame value, so this offset remains for the rest
+	// of the life of the particle. This can cause visual glitches, such as greenish flames from Dragon Tanks
+	// and Inferno Cannons.
 	m_colorTargetKey = 1;
 	computeColorRate();
+#else
+	// TheSuperHackers @tweak The first key frame holds its color until its frame has passed, like the alpha does, so that
+	// every key frame interval ends exactly on its key frame.
+	m_colorTargetKey = 0;
+	m_colorRate.red = 0.0f;
+	m_colorRate.green = 0.0f;
+	m_colorRate.blue = 0.0f;
+#endif
 
 	m_colorScale = info->m_colorScale;
 
@@ -372,18 +423,72 @@ void Particle::applyForce( const Coord3D *force )
 // ------------------------------------------------------------------------------------------------
 Bool Particle::update()
 {
-	draw();
+	// monitor lifetime
+	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
+		return false;
+
+	DEBUG_ASSERTCRASH( m_lifetimeLeft, ( "A particle has an infinite lifetime..." ));
+
+	// TheSuperHackers @info The logic update changes the velocity and the rates, and the render update only
+	// integrates them, because a rate that stays constant over a logic frame splits into any number of render
+	// steps without changing the result.
+
+	// integrate acceleration into velocity
+	m_vel.x += m_accel.x;
+	m_vel.y += m_accel.y;
+	m_vel.z += m_accel.z;
+
+	m_vel.x *= m_velDamping;
+	m_vel.y *= m_velDamping;
+	m_vel.z *= m_velDamping;
+
+	// reset the acceleration for accumulation next frame
+	m_accel.x = 0.0f;
+	m_accel.y = 0.0f;
+	m_accel.z = 0.0f;
+
+	const UnsignedInt frameCount = getElapsedFrames();
+
+	// TheSuperHackers @info Skip the rest of the logic update on the creation frame. No render update has
+	// integrated this particle yet, so its rates must stay at their initial values for this frame, and testing
+	// it for invisibility would delete a particle that the later render update is about to fade in.
+	if (frameCount == 0)
+	{
+		return true;
+	}
+
+#if PARTICLE_USE_XY_ROTATION
+	m_angularRateX *= m_angularDamping;
+	m_angularRateY *= m_angularDamping;
+#endif
+	m_angularRateZ *= m_angularDamping;
+
+	m_sizeRate *= m_sizeRateDamping;
+
+	// TheSuperHackers @info A key frame is passed in the logic frame after its frame, because the render update after
+	// this logic update applies the next rate. This ends every key frame interval exactly on its key frame, so the alpha
+	// reaches its key frame values without being set to them. Only the key frames behind the first one end the sequence
+	// with frame zero.
 
 	//
 	// Update alpha (if used)
 	//
 	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
 	{
-		if (m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame)
+#if PRESERVE_RETAIL_PARTICLES
+		// The first key frame interval starts on the creation frame and therefore arrives at its key frame early.
+		// On the key frame, the alpha is set to the key frame value and held for that frame.
+		if (m_alphaTargetKey == 1 && frameCount == m_alphaKey[ 1 ].frame)
 		{
-			if (TheGameClient->getFrame() - m_createTimestamp >= m_alphaKey[ m_alphaTargetKey ].frame)
+			m_alpha = m_alphaKey[ 1 ].value;
+			m_alphaRate = 0.0f;
+		}
+#endif
+
+		if ((m_alphaTargetKey < MAX_KEYFRAMES && m_alphaKey[ m_alphaTargetKey ].frame != 0) || m_alphaTargetKey == 0)
+		{
+			if (frameCount > m_alphaKey[ m_alphaTargetKey ].frame)
 			{
-				m_alpha = m_alphaKey[ m_alphaTargetKey ].value;
 				m_alphaTargetKey++;
 				computeAlphaRate();
 			}
@@ -392,19 +497,15 @@ Bool Particle::update()
 		{
 			m_alphaRate = 0.0f;
 		}
-
-		m_alpha = clamp(0.0f, m_alpha, 1.0f);
 	}
 
 	//
 	// Update color
 	//
-	if (m_colorTargetKey < MAX_KEYFRAMES && m_colorKey[ m_colorTargetKey ].frame)
+	if ((m_colorTargetKey < MAX_KEYFRAMES && m_colorKey[ m_colorTargetKey ].frame != 0) || m_colorTargetKey == 0)
 	{
-		if (TheGameClient->getFrame() - m_createTimestamp >= m_colorKey[ m_colorTargetKey ].frame)
+		if (frameCount > m_colorKey[ m_colorTargetKey ].frame)
 		{
-			// can't set, because of colorscale
-			// m_color = m_colorKey[ m_colorTargetKey ].color;
 			m_colorTargetKey++;
 			computeColorRate();
 		}
@@ -416,12 +517,6 @@ Bool Particle::update()
 		m_colorRate.blue = 0.0f;
 	}
 
-	// monitor lifetime
-	if (m_lifetimeLeft && --m_lifetimeLeft == 0)
-		return false;
-
-	DEBUG_ASSERTCRASH( m_lifetimeLeft, ( "A particle has an infinite lifetime..." ));
-
 	// if we've gone totally invisible, destroy ourselves
 	if (isInvisible())
 		return false;
@@ -430,41 +525,27 @@ Bool Particle::update()
 }
 
 // ------------------------------------------------------------------------------------------------
-void Particle::draw()
+void Particle::draw(Real timeScale)
 {
-	// integrate acceleration into velocity
-	m_vel.x += m_accel.x;
-	m_vel.y += m_accel.y;
-	m_vel.z += m_accel.z;
-
-	m_vel.x *= m_velDamping;
-	m_vel.y *= m_velDamping;
-	m_vel.z *= m_velDamping;
-
 	// integrate velocity into position
 	const Coord3D *driftVel = m_system->getDriftVelocity();
-	m_pos.x += m_vel.x + driftVel->x;
-	m_pos.y += m_vel.y + driftVel->y;
-	m_pos.z += m_vel.z + driftVel->z;
+	m_pos.x += (m_vel.x + driftVel->x) * timeScale;
+	m_pos.y += (m_vel.y + driftVel->y) * timeScale;
+	m_pos.z += (m_vel.z + driftVel->z) * timeScale;
 
 	// integrate the wind (if specified) into position
 	ParticleSystemInfo::WindMotion windMotion = m_system->getWindMotion();
 
 	// see if we should even do anything
 	if( windMotion != ParticleSystemInfo::WIND_MOTION_NOT_USED )
-		doWindMotion();
+		doWindMotion(timeScale);
 
 	// update orientation
 #if PARTICLE_USE_XY_ROTATION
-	m_angleX += m_angularRateX;
-	m_angleY += m_angularRateY;
+	m_angleX += m_angularRateX * timeScale;
+	m_angleY += m_angularRateY * timeScale;
 #endif
-	m_angleZ += m_angularRateZ;
-#if PARTICLE_USE_XY_ROTATION
-	m_angularRateX *= m_angularDamping;
-	m_angularRateY *= m_angularDamping;
-#endif
-	m_angularRateZ *= m_angularDamping;
+	m_angleZ += m_angularRateZ * timeScale;
 
 	if (m_particleUpTowardsEmitter)
 	{
@@ -477,40 +558,34 @@ void Particle::draw()
 	}
 
 	// update size
-	m_size += m_sizeRate;
-	m_sizeRate *= m_sizeRateDamping;
+	m_size += m_sizeRate * timeScale;
 
 	//
 	// Update alpha (if used)
 	//
 	if (m_system->getShaderType() != ParticleSystemInfo::ADDITIVE)
 	{
-		m_alpha += m_alphaRate;
+		m_alpha += m_alphaRate * timeScale;
 		m_alpha = clamp(0.0f, m_alpha, 1.0f);
 	}
 
 	//
 	// Update color
 	//
-	m_color += m_colorRate;
+	m_color += m_colorRate * timeScale;
 
 	/// @todo Rethink this - at least its name
-	m_color += m_colorScale;
+	m_color += m_colorScale * timeScale;
 
 	m_color.red = clamp(0.0f, m_color.red, 1.0f);
 	m_color.green = clamp(0.0f, m_color.green, 1.0f);
 	m_color.blue = clamp(0.0f, m_color.blue, 1.0f);
-
-	// reset the acceleration for accumulation next frame
-	m_accel.x = 0.0f;
-	m_accel.y = 0.0f;
-	m_accel.z = 0.0f;
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Do wind motion as specified by the particle system template, if present */
 // ------------------------------------------------------------------------------------------------
-void Particle::doWindMotion()
+void Particle::doWindMotion(Real timeScale)
 {
 
 	// get the angle of the wind
@@ -574,7 +649,7 @@ void Particle::doWindMotion()
 	Real distFromWind = v.length();
 	if( distFromWind < noForceDistance )
 	{
-		Real windForceStrength = 2.0f * m_windRandomness;
+		Real windForceStrength = 2.0f * m_windRandomness * timeScale;
 
 		// only apply force if still within the circle of influence
 		if( distFromWind > fullForceDistance )
@@ -598,6 +673,12 @@ ParticlePriorityType Particle::getPriority()
 }
 
 // ------------------------------------------------------------------------------------------------
+UnsignedInt Particle::getElapsedFrames() const
+{
+	return TheGameClient->getFrame() - m_createTimestamp;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Return true if this particle is invisible */
 // ------------------------------------------------------------------------------------------------
 Bool Particle::isInvisible()
@@ -605,20 +686,23 @@ Bool Particle::isInvisible()
 	switch (m_system->getShaderType())
 	{
 		case ParticleSystemInfo::ADDITIVE:
-			// if color is black, this particle is invisible
-
 			// check that we're not in the process of going to another color
-			if (m_colorKey[ m_colorTargetKey ].frame == 0)
+			if (m_colorTargetKey >= MAX_KEYFRAMES || m_colorKey[ m_colorTargetKey ].frame == 0)
 			{
+				// if color is black, this particle is invisible
 				if (m_color.red < 0.01f && m_color.green < 0.01f && m_color.blue < 0.01f)
 					return true;
 			}
 			return false;
 
 		case ParticleSystemInfo::ALPHA:
-			// if alpha is zero, this particle is invisible
-			if (m_alpha < 0.01f)
-				return true;
+			// TheSuperHackers @fix Check that we're not in the process of going to another alpha.
+			if (m_alphaTargetKey >= MAX_KEYFRAMES || m_alphaKey[ m_alphaTargetKey ].frame == 0)
+			{
+				// if alpha is zero, this particle is invisible
+				if (m_alpha < 0.01f)
+					return true;
+			}
 			return false;
 
 		case ParticleSystemInfo::ALPHA_TEST:
@@ -626,11 +710,10 @@ Bool Particle::isInvisible()
 			return false;
 
 		case ParticleSystemInfo::MULTIPLY:
-			// if color is white, this particle is invisible
-
 			// check that we're not in the process of going to another color
-			if (m_colorKey[ m_colorTargetKey ].frame == 0)
+			if (m_colorTargetKey >= MAX_KEYFRAMES || m_colorKey[ m_colorTargetKey ].frame == 0)
 			{
+				// if color is white, this particle is invisible
 				if (m_color.red > 0.99f && m_color.green > 0.99f && m_color.blue > 0.99f)
 					return true;
 			}
@@ -1078,7 +1161,34 @@ void ParticleSystemInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemInfo::loadPostProcess()
 {
+	validate();
+}
 
+// ------------------------------------------------------------------------------------------------
+void ParticleSystemInfo::validate()
+{
+	// TheSuperHackers @info Initialize all volume particles that lack ini configuration to the optimum depth of 6
+	// In retail, volume particle depth was not configurable through ini and was hard coded to a particle depth of 6
+	if (m_particleType == ParticleSystemInfo::VOLUME_PARTICLE)
+	{
+		if (m_volumeParticleDepth == INVALID_VOLUME_PARTICLE_DEPTH)
+			m_volumeParticleDepth = OPTIMUM_VOLUME_PARTICLE_DEPTH;
+	}
+	else
+	{
+		m_volumeParticleDepth = DEFAULT_VOLUME_PARTICLE_DEPTH;
+	}
+
+#if PRESERVE_RETAIL_PARTICLES
+	// TheSuperHackers @info Hack to allow isUsingSmudge() functionality with retail smudge particles
+	// The retail data template for smudge particles is not correctly configured with the smudge particle type
+	if (m_particleType != ParticleSystemInfo::SMUDGE && m_particleTypeName.startsWithNoCase("SMUDGE."))
+	{
+		m_particleType = ParticleSystemInfo::SMUDGE;
+	}
+#endif
+
+	validateAlphaKeyframes(m_alphaKey, ARRAY_SIZE(m_alphaKey));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1168,7 +1278,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	else
 		m_isForever = true;
 
-	m_accumulatedSizeBonus = 0;
+	m_accumulatedSizeBonus = 0.0f;
 
 	m_velDamping = sysTemplate->m_velDamping;
 
@@ -1778,7 +1888,7 @@ Particle *ParticleSystem::createParticle( const ParticleInfo *info,
 
 		//
 		// Check if particle is below priorities we allow for this FPS or if it being skipped because
-		// all particesl are being skipped (excluding special fps independent particles at
+		// all particles are being skipped (excluding special fps independent particles at
 		// getMinDynamicParticleSkipPriority())
 		//
 		if( priority < TheGameLODManager->getMinDynamicParticlePriority() ||
@@ -1975,7 +2085,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 	//
 	if (m_isDestroyed == false)
 	{
-		if (m_isForever || (m_isForever == false && m_systemLifetimeLeft > 0))
+		if (m_isForever || m_systemLifetimeLeft > 0)
 		{
 			if (!visibilityState.isShrouded && m_isStopped == false && m_masterSystem == nullptr)
 			{
@@ -2239,6 +2349,23 @@ ParticleSystem::VisibilityState ParticleSystem::updateVisibility( Int localPlaye
 	}
 
 	return visibilityState;
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystem::draw(Real timeScale)
+{
+	if (TheGlobalData->m_useFX == FALSE)
+		return;
+
+	if (m_delayLeft != 0)
+		return;
+
+	Particle *p = m_systemParticlesHead;
+	while (p)
+	{
+		p->draw(timeScale);
+		p = p->m_systemNext;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2962,26 +3089,7 @@ ParticleSystemTemplate::~ParticleSystemTemplate()
 // ------------------------------------------------------------------------------------------------
 void ParticleSystemTemplate::validate()
 {
-	// TheSuperHackers @info Initialise all volume particles that lack ini configuration to the optimum depth of 6
-	// In retail, volume particle depth was not configurable through ini and was hard coded to a particle depth of 6
-	if (m_particleType == ParticleSystemInfo::VOLUME_PARTICLE)
-	{
-		if (m_volumeParticleDepth == INVALID_VOLUME_PARTICLE_DEPTH)
-			m_volumeParticleDepth = OPTIMUM_VOLUME_PARTICLE_DEPTH;
-	}
-	else
-	{
-		m_volumeParticleDepth = DEFAULT_VOLUME_PARTICLE_DEPTH;
-	}
-
-#if PRESERVE_RETAIL_PARTICLES
-	// TheSuperHackers @info Hack to allow isUsingSmudge() functionality with retail smudge particles
-	// The retail data template for smudge particles is not correctly configured with the smudge particle type
-	if (m_particleType != ParticleSystemInfo::SMUDGE && m_particleTypeName.startsWithNoCase("SMUDGE."))
-	{
-		m_particleType = ParticleSystemInfo::SMUDGE;
-	}
-#endif
+	ParticleSystemInfo::validate();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3012,8 +3120,8 @@ ParticleSystemManager::ParticleSystemManager()
 
 	m_onScreenParticleCount = 0;
 	m_localPlayerIndex = 0;
+	m_drawnLogicFramePhase = 1.0f;
 
-	m_lastLogicFrameUpdate = 0;
 	m_particleCount = 0;
 	m_fieldParticleCount = 0;
 	m_particleSystemCount = 0;
@@ -3099,7 +3207,8 @@ void ParticleSystemManager::reset()
 
 	m_uniqueSystemID = INVALID_PARTICLE_SYSTEM_ID;
 
-	m_lastLogicFrameUpdate = -1;
+	m_drawnLogicFramePhase = 1.0f;
+
 	// leave templates as-is
 }
 
@@ -3109,18 +3218,15 @@ void ParticleSystemManager::reset()
 //DECLARE_PERF_TIMER(ParticleSystemManager)
 void ParticleSystemManager::update()
 {
-	if (m_lastLogicFrameUpdate == TheGameLogic->getFrame()) {
-		return;
-	}
-
-	// update the last logic frame.
-	m_lastLogicFrameUpdate = TheGameLogic->getFrame();
-
 	//USE_PERF_TIMER(ParticleSystemManager)
+
+	// TheSuperHackers @tweak Complete the render update of the previous logic frame before the logic update
+	// changes the rates, so that every logic frame integrates exactly one logic time step.
+	completeLogicFrameDrawUpdate();
+
 	ParticleSystemListIt it = m_allParticleSystemList.begin();
 	while( it != m_allParticleSystemList.end() )
 	{
-		// TheSuperHackers @info Must increment the list iterator before potential element erasure from the list.
 		ParticleSystem* sys = *it++;
 		DEBUG_ASSERTCRASH(sys != nullptr, ("ParticleSystemManager::update: ParticleSystem is null"));
 
@@ -3165,6 +3271,46 @@ void ParticleSystemManager::update()
 				}
 			}
 		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystemManager::draw()
+{
+	// TheSuperHackers @tweak Integrate the part of the logic frame that the render time
+	// has advanced into since the last render update.
+	const Real logicFramePhase = TheFramePacer->getLogicFramePhase();
+	if (logicFramePhase > m_drawnLogicFramePhase)
+	{
+		const Real timeScale = logicFramePhase - m_drawnLogicFramePhase;
+		drawSystems(timeScale);
+		m_drawnLogicFramePhase = logicFramePhase;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystemManager::completeLogicFrameDrawUpdate()
+{
+	const Real timeScale = 1.0f - m_drawnLogicFramePhase;
+	if (timeScale > 0.0f)
+	{
+		drawSystems(timeScale);
+	}
+	m_drawnLogicFramePhase = 0.0f;
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystemManager::drawSystems(Real timeScale)
+{
+	DEBUG_ASSERTCRASH(timeScale > 0.0f, ("ParticleSystemManager::drawSystems: timeScale %f is not greater than zero", timeScale));
+
+	ParticleSystemListIt it = m_allParticleSystemList.begin();
+	while( it != m_allParticleSystemList.end() )
+	{
+		ParticleSystem* sys = *it++;
+		DEBUG_ASSERTCRASH(sys != nullptr, ("ParticleSystemManager::drawSystems: ParticleSystem is null"));
+
+		sys->draw(timeScale);
 	}
 }
 
