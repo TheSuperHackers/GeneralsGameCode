@@ -228,7 +228,6 @@ protected:
 	// most of the particle data is derived from ParticleInfo
 
 	Coord3D						m_accel;														///< current acceleration
-	Coord3D						m_lastPos;													///< previous position
 	UnsignedInt				m_lifetimeLeft;									///< lifetime remaining, if zero -> destroy
 	UnsignedInt				m_createTimestamp;							///< frame this particle was created
 
