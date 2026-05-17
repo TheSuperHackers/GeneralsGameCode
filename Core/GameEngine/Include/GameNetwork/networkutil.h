@@ -31,7 +31,7 @@ UnsignedInt AssembleIp(UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedB
 UnsignedInt ResolveIP(AsciiString host);
 UnsignedShort GenerateNextCommandID();
 Bool DoesCommandRequireACommandID(NetCommandType type);
-Bool CommandRequiresAck(NetCommandMsg *msg);
+Bool CommandRequiresAck(const NetCommandMsg *msg);
 Bool CommandRequiresDirectSend(NetCommandMsg *msg);
 Bool IsCommandSynchronized(NetCommandType type);
 const char* GetNetCommandTypeAsString(NetCommandType type);

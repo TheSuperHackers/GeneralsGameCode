@@ -149,30 +149,9 @@ Bool DoesCommandRequireACommandID(NetCommandType type)
 /**
  * Returns true if this type of network command requires an ack.
  */
-Bool CommandRequiresAck(NetCommandMsg *msg) {
-	if ((msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_PLAYERLEAVE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DESTROYPLAYER) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_RUNAHEADMETRICS) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_RUNAHEAD) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_CHAT) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTVOTE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTPLAYER) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_LOADCOMPLETE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_TIMEOUTSTART) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_WRAPPER) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FILE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FILEANNOUNCE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FILEPROGRESS) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTPLAYER) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTSCREENOFF) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FRAMERESENDREQUEST))
-	{
-		return TRUE;
-	}
-	return FALSE;
+Bool CommandRequiresAck(const NetCommandMsg* msg)
+{
+	return DoesCommandRequireACommandID(msg->getNetCommandType());
 }
 
 Bool IsCommandSynchronized(NetCommandType type) {
