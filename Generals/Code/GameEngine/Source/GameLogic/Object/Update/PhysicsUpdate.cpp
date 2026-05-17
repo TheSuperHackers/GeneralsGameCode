@@ -1258,16 +1258,19 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 #else
 						// TheSuperHackers @bugfix Stubbjax 17/05/2026 Prevent building collisions from dealing collateral damage to other objects.
 						const WeaponTemplate* weaponTemplate = getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoBuildingWeaponTemplate;
-						WeaponBonus nullBonus;
+						if (weaponTemplate != nullptr)
+						{
+							WeaponBonus nullBonus;
 
-						DamageInfo damageInfo;
-						damageInfo.in.m_damageType = weaponTemplate->getDamageType();
-						damageInfo.in.m_deathType = weaponTemplate->getDeathType();
-						damageInfo.in.m_sourceID = obj->getID();
-						damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
+							DamageInfo damageInfo;
+							damageInfo.in.m_damageType = weaponTemplate->getDamageType();
+							damageInfo.in.m_deathType = weaponTemplate->getDeathType();
+							damageInfo.in.m_sourceID = obj->getID();
+							damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
 
-						other->attemptDamage(&damageInfo);
-						FXList::doFXObj(weaponTemplate->getFireFX(obj->getVeterancyLevel()), obj);
+							other->attemptDamage(&damageInfo);
+							FXList::doFXObj(weaponTemplate->getFireFX(obj->getVeterancyLevel()), obj);
+						}
 #endif
 					}
 					TheGameLogic->destroyObject(obj);
