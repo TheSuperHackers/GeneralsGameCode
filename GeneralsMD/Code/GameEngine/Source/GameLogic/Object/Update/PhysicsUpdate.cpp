@@ -34,6 +34,7 @@
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#include "GameClient/FXList.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -1403,6 +1404,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 							damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
 
 							other->attemptDamage(&damageInfo);
+							FXList::doFXObj(weaponTemplate->getFireFX(obj->getVeterancyLevel()), obj);
 						}
 #endif
 					}
