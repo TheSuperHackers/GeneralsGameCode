@@ -497,7 +497,7 @@ AIGroup *AI::findGroup( UnsignedInt id )
 	return nullptr;
 }
 
-Bool AI::doesGroupExist(AIGroup* group)
+Bool AI::doesGroupExist(AIGroup* group) const
 {
 	return std::find(m_groupList.begin(), m_groupList.end(), group) != m_groupList.end();
 }
