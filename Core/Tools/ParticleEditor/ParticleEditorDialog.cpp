@@ -962,8 +962,8 @@ void DebugWindowDialog::updateSizeDampingToSystem( IN Int parmNum, IN const Real
 
 	switch (parmNum)
 	{
-		case 0: m_particleSystem->m_sizeRateDamping.m_low = sizeDamping; return;
-		case 1: m_particleSystem->m_sizeRateDamping.m_high = sizeDamping; return;
+		case 0: m_particleSystem->m_sizeRateDamping.m_low = pfx::clampDampingValue(sizeDamping); return;
+		case 1: m_particleSystem->m_sizeRateDamping.m_high = pfx::clampDampingValue(sizeDamping); return;
 		default: return;
 	};
 }
@@ -1529,7 +1529,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angularDamping.m_low = atof(buff);
+				m_particleSystem->m_angularDamping.m_low = pfx::clampDampingValue(atof(buff));
 			}
 		}
 
@@ -1540,7 +1540,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_angularDamping.m_high = atof(buff);
+				m_particleSystem->m_angularDamping.m_high = pfx::clampDampingValue(atof(buff));
 			}
 		}
 
@@ -1551,7 +1551,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_velDamping.m_low = atof(buff);
+				m_particleSystem->m_velDamping.m_low = pfx::clampDampingValue(atof(buff));
 			}
 		}
 
@@ -1562,7 +1562,7 @@ void DebugWindowDialog::performUpdate( IN Bool toUI )
 				pWnd->SetWindowText(buff);
 			} else {
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
-				m_particleSystem->m_velDamping.m_high = atof(buff);
+				m_particleSystem->m_velDamping.m_high = pfx::clampDampingValue(atof(buff));
 			}
 		}
 	}
