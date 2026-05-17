@@ -32,14 +32,16 @@ static const Int WOL_NAME_LEN = 64;
 /// Max number of commands per frame
 static const Int MAX_COMMANDS = 256;
 
-extern Int MIN_LOGIC_FRAMES;
-extern Int MAX_FRAMES_AHEAD;
-extern Int MIN_RUNAHEAD;
+// TheSuperHackers @tweak Mauller 26/08/2025 reduce the minimum runahead from 10
+// This lets network games run at latencies down to 133ms when the network conditions allow
+static const Int MIN_LOGIC_FRAMES = 5;
+static const Int MAX_FRAMES_AHEAD = 128;
+static const Int MIN_RUNAHEAD = 4;
 
 // FRAME_DATA_LENGTH needs to be MAX_FRAMES_AHEAD+1 because a player on a different
 // computer can send commands for a frame that is one beyond twice the max runahead.
-extern Int FRAME_DATA_LENGTH;
-extern Int FRAMES_TO_KEEP;
+static const Int FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD + 1) * 2;
+static const Int FRAMES_TO_KEEP = (MAX_FRAMES_AHEAD / 2) + 1;
 
 // This is the connection numbering: 1-8 are for players
 enum ConnectionNumbers CPP_11(: Int)
