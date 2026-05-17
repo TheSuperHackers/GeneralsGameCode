@@ -180,8 +180,8 @@ public:
 
 	Bool update(); ///< update this particle's behavior - return false if dead
 
-	void draw(); ///< render update
-	void doWindMotion(); ///< do wind motion (if present) from particle system
+	void draw( Real timeScale ); ///< render update
+	void doWindMotion( Real timeScale ); ///< do wind motion (if present) from particle system
 
 	void applyForce( const Coord3D *force );		///< add the given acceleration
 
@@ -578,7 +578,9 @@ public:
 	void attachToObject( const Object *obj );									///< attach this particle system to an Object
 
 	virtual Bool update( Int localPlayerIndex );								///< update this particle system, return false if dead
-	void updateWindMotion();							///< update wind motion
+
+	void draw( Real timeScale ); ///< render update
+	void updateWindMotion( Real timeScale ); ///< update wind motion
 
 	void setControlParticle( Particle *p );			///< set control particle
 
@@ -677,7 +679,7 @@ protected:
 																		ParticlePriorityType priority,
 																		Bool forceCreate = FALSE );	///< factory method for particles
 
-	void updateTransform();
+	void updateTransform(bool logicUpdate);
 	void updateParentTransform(const Matrix3D &parentXfrm);
 	void updateLocalTransform();
 
@@ -749,6 +751,9 @@ protected:
 /**
  * The particle system manager, responsible for maintaining all ParticleSystems
  */
+// TheSuperHacker @tweak The particle render update is now decoupled from the logic step.
+// The lifetime management remains coupled to the logic step.
+//
 class ParticleSystemManager : public SubsystemInterface,
 															public Snapshot
 {
@@ -765,7 +770,8 @@ public:
 
 	virtual void init() override;									///< initialize the manager
 	virtual void reset() override;									///< reset the manager and all particle systems
-	virtual void update() override;								///< update all particle systems
+	virtual void update() override;								///< logic update for all particle systems
+	virtual void draw() override;									///< render update for all particle systems
 
 	virtual Bool isDummy() const { return false; }
 
@@ -846,7 +852,6 @@ protected:
 	UnsignedInt m_fieldParticleCount; ///< this does not need to be xfered, since it is evaluated every frame
 	UnsignedInt m_particleSystemCount;
 	Int m_onScreenParticleCount;                ///< number of particles displayed on screen per frame
-	UnsignedInt m_lastLogicFrameUpdate;
 	Int m_localPlayerIndex;	///<used to tell particle systems which particles can be skipped due to player shroud status
 
 private:
@@ -873,6 +878,7 @@ public:
 	virtual void reset() override {}
 #endif
 	virtual void update() override {}
+	virtual void draw() override {}
 
 	virtual Bool isDummy() const override { return true; }
 
