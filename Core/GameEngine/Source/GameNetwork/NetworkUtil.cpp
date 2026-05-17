@@ -173,20 +173,23 @@ Bool IsCommandSynchronized(NetCommandType type)
  * rather than going through the packet router.  This should really only be used by commands
  * used on the disconnect screen.
  */
-Bool CommandRequiresDirectSend(NetCommandMsg *msg) {
-	if ((msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTVOTE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTPLAYER) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_LOADCOMPLETE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_TIMEOUTSTART) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FILE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FILEANNOUNCE) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FILEPROGRESS) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTSCREENOFF) ||
-			(msg->getNetCommandType() == NETCOMMANDTYPE_FRAMERESENDREQUEST)) {
+Bool CommandRequiresDirectSend(const NetCommandMsg* msg)
+{
+	switch (msg->getNetCommandType()) {
+	case NETCOMMANDTYPE_LOADCOMPLETE:
+	case NETCOMMANDTYPE_TIMEOUTSTART:
+	case NETCOMMANDTYPE_FILE:
+	case NETCOMMANDTYPE_FILEANNOUNCE:
+	case NETCOMMANDTYPE_FILEPROGRESS:
+	case NETCOMMANDTYPE_FRAMERESENDREQUEST:
+	case NETCOMMANDTYPE_DISCONNECTPLAYER:
+	case NETCOMMANDTYPE_DISCONNECTVOTE:
+	case NETCOMMANDTYPE_DISCONNECTFRAME:
+	case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
 		return TRUE;
+	default:
+		return FALSE;
 	}
-	return FALSE;
 }
 
 const char* GetNetCommandTypeAsString(NetCommandType type) {

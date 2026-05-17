@@ -32,7 +32,7 @@ UnsignedInt ResolveIP(AsciiString host);
 UnsignedShort GenerateNextCommandID();
 Bool DoesCommandRequireACommandID(NetCommandType type);
 Bool CommandRequiresAck(const NetCommandMsg *msg);
-Bool CommandRequiresDirectSend(NetCommandMsg *msg);
+Bool CommandRequiresDirectSend(const NetCommandMsg *msg);
 Bool IsCommandSynchronized(NetCommandType type);
 const char* GetNetCommandTypeAsString(NetCommandType type);
 
