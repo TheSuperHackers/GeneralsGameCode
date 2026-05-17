@@ -683,6 +683,9 @@ protected:
 																		Bool forceCreate = FALSE );	///< factory method for particles
 
 	void updateTransform();
+	void applyParentTransform(const Matrix3D &parentXfrm);
+	void applyLocalTransform();
+
 	VisibilityState updateVisibility( Int localPlayerIndex );
 
 	const ParticleInfo *generateParticleInfo( Int particleNum, Int particleCount );	///< generate a new, random set of ParticleInfo
