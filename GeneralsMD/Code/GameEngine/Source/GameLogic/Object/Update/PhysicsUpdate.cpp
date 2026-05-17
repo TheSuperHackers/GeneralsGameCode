@@ -34,6 +34,7 @@
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#include "GameClient/FXList.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -1377,7 +1378,22 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 					// fall into a building. if a vehicle, blow up. then destroy ourself (not die), regardless.
 					if (obj->isKindOf(KINDOF_VEHICLE))
 					{
+#if RETAIL_COMPATIBLE_CRC
 						TheWeaponStore->createAndFireTempWeapon(getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoBuildingWeaponTemplate, obj, obj->getPosition());
+#else
+						// TheSuperHackers @bugfix Stubbjax 17/05/2026 Prevent building collisions from dealing collateral damage to other objects.
+						const WeaponTemplate* weaponTemplate = getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoBuildingWeaponTemplate;
+						WeaponBonus nullBonus;
+
+						DamageInfo damageInfo;
+						damageInfo.in.m_damageType = weaponTemplate->getDamageType();
+						damageInfo.in.m_deathType = weaponTemplate->getDeathType();
+						damageInfo.in.m_sourceID = obj->getID();
+						damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
+
+						other->attemptDamage(&damageInfo);
+						FXList::doFXObj(weaponTemplate->getFireFX(obj->getVeterancyLevel()), obj);
+#endif
 					}
 					TheGameLogic->destroyObject(obj);
 					return;
