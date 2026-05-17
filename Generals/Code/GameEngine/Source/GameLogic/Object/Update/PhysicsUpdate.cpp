@@ -1267,15 +1267,18 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 #else
 						// TheSuperHackers @bugfix Stubbjax 19/04/2026 Prevent non-building collisions from repeatedly dealing collateral damage to other objects.
 						const WeaponTemplate* weaponTemplate = getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoNonBuildingWeaponTemplate;
-						WeaponBonus nullBonus;
+						if (weaponTemplate != nullptr)
+						{
+							WeaponBonus nullBonus;
 
-						DamageInfo damageInfo;
-						damageInfo.in.m_damageType = weaponTemplate->getDamageType();
-						damageInfo.in.m_deathType = weaponTemplate->getDeathType();
-						damageInfo.in.m_sourceID = obj->getID();
-						damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
+							DamageInfo damageInfo;
+							damageInfo.in.m_damageType = weaponTemplate->getDamageType();
+							damageInfo.in.m_deathType = weaponTemplate->getDeathType();
+							damageInfo.in.m_sourceID = obj->getID();
+							damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
 
-						other->attemptDamage(&damageInfo);
+							other->attemptDamage(&damageInfo);
+						}
 #endif
 					}
 				}
