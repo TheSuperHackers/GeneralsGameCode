@@ -282,7 +282,6 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 #endif
 	m_angleZ = info->m_angleZ;
 
-	m_lastPos.zero();
 	m_windRandomness = info->m_windRandomness;
 	m_particleUpTowardsEmitter = info->m_particleUpTowardsEmitter;
 	m_emitterPos = info->m_emitterPos;
@@ -653,13 +652,19 @@ void Particle::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Removed unused m_lastPos
+	*/
 // ------------------------------------------------------------------------------------------------
 void Particle::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -673,7 +678,11 @@ void Particle::xfer( Xfer *xfer )
 	xfer->xferCoord3D( &m_accel );
 
 	// last position
-	xfer->xferCoord3D( &m_lastPos );
+	if (version <= 1)
+	{
+		Coord3D m_lastPos = {0};
+		xfer->xferCoord3D( &m_lastPos );
+	}
 
 	// lifetime left
 	xfer->xferUnsignedInt( &m_lifetimeLeft );
