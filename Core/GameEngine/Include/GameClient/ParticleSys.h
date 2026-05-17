@@ -678,6 +678,9 @@ protected:
 																		Bool forceCreate = FALSE );	///< factory method for particles
 
 	void updateTransform();
+	void updateParentTransform(const Matrix3D &parentXfrm);
+	void updateLocalTransform();
+
 	VisibilityState updateVisibility( Int localPlayerIndex );
 
 	const ParticleInfo *generateParticleInfo( Int particleNum, Int particleCount );	///< generate a new, random set of ParticleInfo
@@ -713,8 +716,10 @@ protected:
 	Real							m_delayCoeff;										///< scalar value multiplied by burst delay
 	Real							m_sizeCoeff;										///< scalar value multiplied by initial size
 
-	Coord3D						m_pos;													///< this is the position to emit at.
-	Coord3D						m_lastPos;											///< this is the previous position we emitted at.
+	Coord3D						m_logicalPos;										///< this is the current logic position to emit at.
+																										///< Can be different from the actual emitter transform
+																										///< if the render update is faster than the logic step.
+	Coord3D						m_lastLogicalPos;								///< this is the previous logic position we emitted at.
 
 	ParticleSystem *	m_slaveSystem;									///< if non-null, another system this one has control of
 	ParticleSystemID	m_slaveSystemID;								///< id of slave system (if present)

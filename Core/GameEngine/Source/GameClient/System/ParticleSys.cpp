@@ -1081,8 +1081,8 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_template = sysTemplate;
 	m_systemID = id;
 
-	m_lastPos.zero();
-	m_pos.zero();
+	m_logicalPos.zero();
+	m_lastLogicalPos.zero();
 	m_velCoeff.zero();
 
 	m_attachedToDrawableID = INVALID_DRAWABLE_ID;
@@ -1806,17 +1806,19 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 		// transform particle position to world coordinates
 		Vector3 p, pr;
 
-		Coord3D emissionAdjustment;	// this is the adjustment for inter-frame emission
 		// @todo : This should work, if m_lastPos = m_pos is removed from here but it doesn't.
 		// @todo : Investigate why. jkmcd
 		if (m_isFirstPos) {
-			m_lastPos = m_pos;
+			m_lastLogicalPos = m_logicalPos;
 			m_isFirstPos = false;
 		}
 
-		emissionAdjustment.x = (1 - (INT_TO_REAL(particleNum) / particleCount)) * (m_pos.x - m_lastPos.x);
-		emissionAdjustment.y = (1 - (INT_TO_REAL(particleNum) / particleCount)) * (m_pos.y - m_lastPos.y);
-		emissionAdjustment.z = (1 - (INT_TO_REAL(particleNum) / particleCount)) * (m_pos.z - m_lastPos.z);
+		Coord3D frameDeltaPos = m_logicalPos - m_lastLogicalPos;
+
+		Coord3D emissionAdjustment;	// this is the adjustment for inter-frame emission
+		emissionAdjustment.x = (1 - (INT_TO_REAL(particleNum) / particleCount)) * frameDeltaPos.x;
+		emissionAdjustment.y = (1 - (INT_TO_REAL(particleNum) / particleCount)) * frameDeltaPos.y;
+		emissionAdjustment.z = (1 - (INT_TO_REAL(particleNum) / particleCount)) * frameDeltaPos.z;
 
 		p.X = info.m_pos.x;
 		p.Y = info.m_pos.y;
@@ -2060,72 +2062,6 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 // ------------------------------------------------------------------------------------------------
 void ParticleSystem::updateTransform()
 {
-	// if this system is attached to a Drawable/Object, update the current transform
-	// matrix so generated particles' are relative to the parent Drawable's
-	// position and orientation
-	Bool transformSet = false;
-	const Matrix3D *parentXfrm = nullptr;
-
-	if (m_attachedToDrawableID)
-	{
-		if (Drawable *attachedTo = TheGameClient->findDrawableByID( m_attachedToDrawableID ))
-		{
-			parentXfrm = attachedTo->getTransformMatrix();
-			m_lastPos = m_pos;
-			m_pos = *attachedTo->getPosition();
-		}
-	}
-	else if (m_attachedToObjectID)
-	{
-		if (Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID ))
-		{
-			if (const Drawable * draw = objectAttachedTo->getDrawable())
-				parentXfrm = draw->getTransformMatrix();
-			else
-				parentXfrm = objectAttachedTo->getTransformMatrix();
-
-			m_lastPos = m_pos;
-			m_pos = *objectAttachedTo->getPosition();
-		}
-	}
-
-	if (parentXfrm)
-	{
-		if (m_skipParentXfrm)
-		{
-			//this particle system is already in world space so no need to apply parent xform.
-			m_transform = m_localTransform;
-		}
-		else
-		{
-			// if system has its own local transform, concatenate them
-			if (m_isLocalIdentity == false)
-	#ifdef ALLOW_TEMPORARIES
-				m_transform = (*parentXfrm) * m_localTransform;
-	#else
-				m_transform.mul(*parentXfrm, m_localTransform);
-	#endif
-			else
-				m_transform = *parentXfrm;
-		}
-
-		m_isIdentity = false;
-		transformSet = true;
-	}
-
-	if (transformSet == false)
-	{
-		if (m_isLocalIdentity == false)
-		{
-			m_transform = m_localTransform;
-			m_isIdentity = false;
-		}
-		else
-		{
-			m_isIdentity = true;
-		}
-	}
-
 	// if we are controlled by a particle, its position is local origin
 	if (m_controlParticle)
 	{
@@ -2135,8 +2071,94 @@ void ParticleSystem::updateTransform()
 		m_transform.Set_Y_Translation( controlPos->y );
 		m_transform.Set_Z_Translation( controlPos->z );
 		m_isIdentity = false;
-		m_lastPos = m_pos;
-		m_pos = *controlPos;
+		m_lastLogicalPos = m_logicalPos;
+		m_logicalPos = *controlPos;
+		return;
+	}
+
+	// if this system is attached to a Drawable/Object, update the current transform
+	// matrix so generated particles' are relative to the parent Drawable's
+	// position and orientation, otherwise use the local transform.
+	if (m_attachedToDrawableID)
+	{
+		if (Drawable *attachedTo = TheGameClient->findDrawableByID( m_attachedToDrawableID ))
+		{
+			updateParentTransform( *attachedTo->getTransformMatrix() );
+
+			m_lastLogicalPos = m_logicalPos;
+			m_logicalPos = *attachedTo->getPosition();
+		}
+		else
+		{
+			updateLocalTransform();
+		}
+	}
+	else if (m_attachedToObjectID)
+	{
+		if (Object *objectAttachedTo = TheGameLogic->findObjectByID( m_attachedToObjectID ))
+		{
+			if (const Drawable * draw = objectAttachedTo->getDrawable())
+			{
+				updateParentTransform( *draw->getTransformMatrix() );
+			}
+			else
+			{
+				updateParentTransform( *objectAttachedTo->getTransformMatrix() );
+			}
+
+			m_lastLogicalPos = m_logicalPos;
+			m_logicalPos = *objectAttachedTo->getPosition();
+		}
+		else
+		{
+			updateLocalTransform();
+		}
+	}
+	else
+	{
+		updateLocalTransform();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystem::updateParentTransform(const Matrix3D &parentXfrm)
+{
+	if (m_skipParentXfrm)
+	{
+		//this particle system is already in world space so no need to apply parent xform.
+		updateLocalTransform();
+	}
+	else
+	{
+		// if system has its own local transform, concatenate them
+		if (!m_isLocalIdentity)
+		{
+#ifdef ALLOW_TEMPORARIES
+			m_transform = parentXfrm * m_localTransform;
+#else
+			m_transform.mul(parentXfrm, m_localTransform);
+#endif
+		}
+		else
+		{
+			m_transform = parentXfrm;
+		}
+
+		m_isIdentity = false;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+void ParticleSystem::updateLocalTransform()
+{
+	if (!m_isLocalIdentity)
+	{
+		m_transform = m_localTransform;
+		m_isIdentity = false;
+	}
+	else
+	{
+		m_isIdentity = true;
 	}
 }
 
@@ -2557,10 +2579,10 @@ void ParticleSystem::xfer( Xfer *xfer )
 	xfer->xferReal( &m_sizeCoeff );
 
 	// position
-	xfer->xferCoord3D( &m_pos );
+	xfer->xferCoord3D( &m_logicalPos );
 
 	// last position
-	xfer->xferCoord3D( &m_lastPos );
+	xfer->xferCoord3D( &m_lastLogicalPos );
 
 	// is first pos
 	xfer->xferBool( &m_isFirstPos );
