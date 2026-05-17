@@ -1866,6 +1866,8 @@ AGAIN:
 //			if(TheGlobalData->m_loadScreenRender != TRUE)
 				updateViews();
 
+			TheParticleSystemManager->DRAW();
+
 			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
 				TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture
 
