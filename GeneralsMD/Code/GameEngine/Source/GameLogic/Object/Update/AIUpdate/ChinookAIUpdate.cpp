@@ -1199,15 +1199,11 @@ UpdateSleepTime ChinookAIUpdate::update()
       if ( GameClientRandomValueReal( 0.0f, chopperElevation ) < 5.0f )
       {
 	      const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( getChinookAIUpdateModuleData()->m_rotorWashParticleSystem );
-	      ParticleSystem *system;
-	      if( tmp )
-	      {
-		      system = TheParticleSystemManager->createParticleSystem( tmp );
-		      if( system )
-		      {
-			      system->setPosition( &pos );
-		      }
-	      }
+	      ParticleSystem *system = TheParticleSystemManager->createParticleSystem( tmp );
+		  if( system )
+		  {
+			  system->setPosition( &pos );
+		  }
       }
 
     }

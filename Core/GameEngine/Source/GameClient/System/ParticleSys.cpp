@@ -2061,9 +2061,9 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 							if (m_attachedSystemName.isEmpty() == false)
 							{
 								const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( m_attachedSystemName );
-								if (tmp)
+								ParticleSystem *sys = TheParticleSystemManager->createParticleSystem( tmp, TRUE );
+								if (sys)
 								{
-									ParticleSystem *sys = TheParticleSystemManager->createParticleSystem( tmp, TRUE );
 									sys->setControlParticle( p );
 									p->controlParticleSystem( sys );
 								}
@@ -2867,9 +2867,7 @@ ParticleSystem *ParticleSystemTemplate::createSlaveSystem( Bool createSlaves ) c
 	if (m_slaveTemplate == nullptr && m_slaveSystemName.isEmpty() == false)
 		m_slaveTemplate = TheParticleSystemManager->findTemplate( m_slaveSystemName );
 
-	ParticleSystem *slave = nullptr;
-	if (m_slaveTemplate)
-		slave = TheParticleSystemManager->createParticleSystem( m_slaveTemplate, createSlaves );
+	ParticleSystem *slave = TheParticleSystemManager->createParticleSystem( m_slaveTemplate, createSlaves );
 
 	return slave;
 }

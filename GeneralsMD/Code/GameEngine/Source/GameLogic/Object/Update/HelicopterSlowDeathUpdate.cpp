@@ -229,41 +229,38 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 	locomotor->setMaxBraking( modData->m_maxBraking );
 
 	// attach particle system to bone if present
-	if( modData->m_attachParticleSystem )
+	ParticleSystem *pSys = TheParticleSystemManager->createParticleSystem( modData->m_attachParticleSystem );
+	if( pSys )
 	{
-		ParticleSystem *pSys = TheParticleSystemManager->createParticleSystem( modData->m_attachParticleSystem );
-		if( pSys )
+
+		// where do the offset attachment to
+		if( modData->m_attachParticleBone.isEmpty() == FALSE )
+		{
+			Drawable *draw = getObject()->getDrawable();
+
+			if( draw )
+			{
+				Coord3D pos;
+
+				if( draw->getPristineBonePositions( modData->m_attachParticleBone.str(), 0, &pos, nullptr, 1 ) )
+					pSys->setPosition( &pos );
+
+			}
+
+		}
+		else
 		{
 
-			// where do the offset attachment to
-			if( modData->m_attachParticleBone.isEmpty() == FALSE )
-			{
-				Drawable *draw = getObject()->getDrawable();
-
-				if( draw )
-				{
-					Coord3D pos;
-
-					if( draw->getPristineBonePositions( modData->m_attachParticleBone.str(), 0, &pos, nullptr, 1 ) )
-						pSys->setPosition( &pos );
-
-				}
-
-			}
-			else
-			{
-
-				// use location coord specified ... it will be zero if not given which is center of obj anyway
-				pSys->setPosition( &modData->m_attachParticleLoc );
-
-			}
-
-			// attach the particle system to the object
-			pSys->attachToObject( getObject() );
+			// use location coord specified ... it will be zero if not given which is center of obj anyway
+			pSys->setPosition( &modData->m_attachParticleLoc );
 
 		}
 
+		// attach the particle system to the object
+		pSys->attachToObject( getObject() );
+
 	}
+
 
 
 
