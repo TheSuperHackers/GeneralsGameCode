@@ -32,6 +32,7 @@
 #define NO_DEBUG_CRC
 
 #include "Common/PerfTimer.h"
+#include "Common/Player.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameClient/FXList.h"
@@ -1266,6 +1267,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 							damageInfo.in.m_damageType = weaponTemplate->getDamageType();
 							damageInfo.in.m_deathType = weaponTemplate->getDeathType();
 							damageInfo.in.m_sourceID = obj->getID();
+							damageInfo.in.m_sourcePlayerMask = obj->getControllingPlayer() ? obj->getControllingPlayer()->getPlayerMask() : 0;
 							damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
 
 							other->attemptDamage(&damageInfo);
