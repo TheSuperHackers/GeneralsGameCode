@@ -197,7 +197,10 @@ const char* GetNetCommandTypeAsString(NetCommandType type)
 #define CASE_LABEL(x) case x: return #x;
 
 	switch (type) {
-	default: return "NETCOMMANDTYPE_UNKNOWN";
+	CASE_LABEL(NETCOMMANDTYPE_UNKNOWN)
+	default:
+		DEBUG_CRASH(("Unhandled NetCommandType in GetNetCommandTypeAsString"));
+		return "<NETCOMMANDTYPE_INVALID>";
 
 	CASE_LABEL(NETCOMMANDTYPE_ACKBOTH)
 	CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE1)
