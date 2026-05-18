@@ -27,10 +27,10 @@
 #include "Lib/BaseType.h"
 #include "Common/MessageStream.h"
 
-static const Int WOL_NAME_LEN = 64;
+static constexpr const Int WOL_NAME_LEN = 64;
 
 /// Max number of commands per frame
-static const Int MAX_COMMANDS = 256;
+static constexpr const Int MAX_COMMANDS = 256;
 
 // TheSuperHackers @tweak Mauller 26/08/2025 reduce the minimum runahead from 10
 // This lets network games run at latencies down to 133ms when the network conditions allow
@@ -87,7 +87,7 @@ static constexpr const Int MAX_MESSAGES = 256;
  * Command packet - contains frame #, total # of commands, and each command.  This is what gets sent
  * to each player every frame
  */
-static const Int numCommandsPerCommandPacket = (MAX_NETWORK_MESSAGE_LEN - sizeof(UnsignedInt) - sizeof(UnsignedShort))/sizeof(GameMessage);
+static constexpr const Int numCommandsPerCommandPacket = (MAX_NETWORK_MESSAGE_LEN - sizeof(UnsignedInt) - sizeof(UnsignedShort))/sizeof(GameMessage);
 #pragma pack(push, 1)
 struct CommandPacket
 {
@@ -195,38 +195,38 @@ enum PlayerLeaveCode CPP_11(: Int) {
 };
 
 // Magic number for identifying a Generals packet.
-static const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D;
+static constexpr const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D;
 
 // The number of fps history entries.
-//static const Int NETWORK_FPS_HISTORY_LENGTH = 30;
+//static constexpr const Int NETWORK_FPS_HISTORY_LENGTH = 30;
 
 // The number of ping history entries.
-//static const Int NETWORK_LATENCY_HISTORY_LENGTH = 200;
+//static constexpr const Int NETWORK_LATENCY_HISTORY_LENGTH = 200;
 
 // The number of miliseconds between run ahead metrics things
-//static const Int NETWORK_RUN_AHEAD_METRICS_TIME = 5000;
+//static constexpr const Int NETWORK_RUN_AHEAD_METRICS_TIME = 5000;
 
 // The number of cushion values to keep.
-//static const Int NETWORK_CUSHION_HISTORY_LENGTH = 10;
+//static constexpr const Int NETWORK_CUSHION_HISTORY_LENGTH = 10;
 
 // The amount of slack in the run ahead value.  This is the percentage of the calculated run ahead that is added.
-//static const Int NETWORK_RUN_AHEAD_SLACK = 20;
+//static constexpr const Int NETWORK_RUN_AHEAD_SLACK = 20;
 
 // The number of seconds between when the connections to each player send a keep-alive packet.
 // This should be less than 30 just to keep firewall ports open.
-//static const Int NETWORK_KEEPALIVE_DELAY = 20;
+//static constexpr const Int NETWORK_KEEPALIVE_DELAY = 20;
 
 // The number of milliseconds between when the game gets stuck on a frame for a network stall and
 // and when the disconnect dialog comes up.
-//static const Int NETWORK_DISCONNECT_TIME = 5000;
+//static constexpr const Int NETWORK_DISCONNECT_TIME = 5000;
 
 // The number of miliseconds between when a player's last disconnect keep alive command
 // was received and when they are considered disconnected from the game.
-//static const Int NETWORK_PLAYER_TIMEOUT_TIME = 60000;
+//static constexpr const Int NETWORK_PLAYER_TIMEOUT_TIME = 60000;
 
 // The base port number used for the transport socket.  A players slot number is added to this
 // value to get their actual port number.
-static const Int NETWORK_BASE_PORT_NUMBER = 8088;
+static constexpr const Int NETWORK_BASE_PORT_NUMBER = 8088;
 
 // the singleton
 class NetworkInterface;
