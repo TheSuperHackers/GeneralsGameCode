@@ -198,10 +198,6 @@ const char* GetNetCommandTypeAsString(NetCommandType type)
 
 	switch (type) {
 	CASE_LABEL(NETCOMMANDTYPE_UNKNOWN)
-	default:
-		DEBUG_CRASH(("Unhandled NetCommandType in GetNetCommandTypeAsString"));
-		return "<NETCOMMANDTYPE_INVALID>";
-
 	CASE_LABEL(NETCOMMANDTYPE_ACKBOTH)
 	CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE1)
 	CASE_LABEL(NETCOMMANDTYPE_ACKSTAGE2)
@@ -233,6 +229,9 @@ const char* GetNetCommandTypeAsString(NetCommandType type)
 	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTFRAME)
 	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTSCREENOFF)
 	CASE_LABEL(NETCOMMANDTYPE_DISCONNECTEND)
+	default:
+		DEBUG_CRASH(("Unhandled NetCommandType in GetNetCommandTypeAsString"));
+		return "<NETCOMMANDTYPE_INVALID>";
 	}
 
 #undef CASE_LABEL
