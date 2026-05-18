@@ -53,13 +53,38 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
-class CRCInfo;
+class RecorderClass : public SubsystemInterface
+{
+protected:
+	// TheSuperHackers @info helmutbuhler 03/04/2025
+	// The game periodically generates CRC checksums from the local game state to keep clients in sync.
+	// In network games, messages are queued until all clients are ready.
+	// Replays lack runahead or network latency, so local CRC messages must be buffered until 'remote' CRCs are processed.
+	// This class provides that buffering with a queue.
+	class CRCInfo
+	{
+	public:
+		CRCInfo();
+		CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
+		void addCRC(UnsignedInt val);
+		UnsignedInt readCRC();
+		int GetQueueSize() const { return m_data.size(); }
+		UnsignedInt getLocalPlayer() const { return m_localPlayer; }
+		void setSawCRCMismatch() { m_sawCRCMismatch = TRUE; }
+		Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
 
-class RecorderClass : public SubsystemInterface {
+	protected:
+		Bool m_sawCRCMismatch;
+		Bool m_skippedOne;
+		UnsignedInt m_localPlayer;
+		std::list<UnsignedInt> m_data;
+	};
+
+	CRCInfo m_crcInfo;
+
 public:
 	struct ReplayHeader;
 
-public:
 	RecorderClass();																	///< Constructor.
 	virtual ~RecorderClass() override;													///< Destructor.
 
@@ -86,9 +111,6 @@ public:
 
 public:
 	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
-protected:
-	CRCInfo *m_crcInfo;
-public:
 
 	// read in info relating to a replay, conditionally setting up m_file for playback
 	struct ReplayHeader
