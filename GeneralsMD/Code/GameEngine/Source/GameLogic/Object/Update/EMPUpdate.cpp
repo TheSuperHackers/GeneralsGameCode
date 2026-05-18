@@ -451,7 +451,9 @@ UpdateSleepTime LeafletDropBehavior::update()
 	  const ParticleSystemTemplate *tmp = data->m_leafletFXParticleSystem;
 	  ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
 	  if (sys)
+	  {
 		  sys->attachToObject(getObject());
+	  }
 
     m_fxFired = TRUE; // hey, at least we tried.
   }

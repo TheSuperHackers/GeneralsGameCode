@@ -263,7 +263,6 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 
 
 
-
 }
 
 
