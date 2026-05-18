@@ -56,11 +56,14 @@ enum RecorderModeType CPP_11(: Int) {
 class RecorderClass : public SubsystemInterface
 {
 protected:
-	// TheSuperHackers @info helmutbuhler 03/04/2025
-	// The game periodically generates CRC checksums from the local game state to keep clients in sync.
-	// In network games, messages are queued until all clients are ready.
-	// Replays lack runahead or network latency, so local CRC messages must be buffered until 'remote' CRCs are processed.
-	// This class provides that buffering with a queue.
+	// TheSuperHackers @info helmutbuhler 03/04/2025 CRC overview:
+	// Each peer periodically computes a CRC from its local game state and broadcasts it to all peers, including itself,
+	// to verify synchronization. CRC messages are received a few frames later in network games to avoid stalling every
+	// frame while waiting for all peers. This works because all peers compare the same received CRCs on the same frame.
+	//
+	// Replays are different: recorded CRC messages appear on the frame they were originally received, so directly
+	// comparing them against the current local state would mismatch. To handle this, local CRCs must be queued until the
+	// corresponding replay CRC messages arrive. This class implements that queue.
 	class CRCInfo
 	{
 	public:
