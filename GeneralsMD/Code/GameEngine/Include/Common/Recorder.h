@@ -53,23 +53,14 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
-class RecorderClass : public SubsystemInterface {
+class RecorderClass : public SubsystemInterface
+{
 protected:
 	// TheSuperHackers @info helmutbuhler 03/04/2025
-	// Some info about CRC:
-	// In each game, each peer periodically calculates a CRC from the local gamestate and sends that
-	// in a message to all peers (including itself) so that everyone can check that the crc is synchronous.
-	// In a network game, there is a delay between sending the CRC message and receiving it. This is
-	// necessary because if you were to wait each frame for all messages from all peers, things would go
-	// horribly slow.
-	// But this delay is not a problem for CRC checking because everyone receives the CRC in the same frame
-	// and every peer just makes sure all the received CRCs are equal.
-	// While playing replays, this is a problem however: The CRC messages in the replays appear on the frame
-	// they were received, which can be a few frames delayed if it was a network game. And if we were to
-	// compare those with the local gamestate, they wouldn't sync up.
-	// So, in order to fix this, we need to queue up our local CRCs,
-	// so that we can check it with the crc messages that come later.
-	// This class is basically that queue.
+	// The game periodically generates CRC checksums from the local game state to keep clients in sync.
+	// In network games, messages are queued until all clients are ready.
+	// Replays lack runahead or network latency, so local CRC messages must be buffered until 'remote' CRCs are processed.
+	// This class provides that buffering with a queue.
 	class CRCInfo
 	{
 	public:
@@ -77,11 +68,8 @@ protected:
 		CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
 		void addCRC(UnsignedInt val);
 		UnsignedInt readCRC();
-
 		int GetQueueSize() const { return m_data.size(); }
-
-		UnsignedInt getLocalPlayer() { return m_localPlayer; }
-
+		UnsignedInt getLocalPlayer() const { return m_localPlayer; }
 		void setSawCRCMismatch() { m_sawCRCMismatch = TRUE; }
 		Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
 
