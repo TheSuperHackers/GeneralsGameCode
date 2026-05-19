@@ -180,7 +180,7 @@ protected:
 	Real m_low1PercentFPS;	///<1% low fps.
 	Real m_currentFPS;		///<current fps value.
 
-	enum { FPS_HISTORY_SIZE = 5000 }; // covers 5s at 1000 FPS, degrades gracefully beyond
+	enum { FPS_HISTORY_SIZE = 4096 }; ; // degrades gracefully beyond this size
 	Real m_fpsHistory[FPS_HISTORY_SIZE];
 	Real m_durationHistory[FPS_HISTORY_SIZE];
 	Real m_sortBuffer[FPS_HISTORY_SIZE];

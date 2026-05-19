@@ -6099,19 +6099,22 @@ void InGameUI::drawRenderFps(Int &x, Int &y)
 		updateRenderFpsString();
 	}
 
-	UnsignedInt renderFpsLimit = 0u;
+	UnsignedInt renderFpsLimit = RenderFpsPreset::UncappedFpsValue;
 	if (TheGlobalData->m_useFpsLimit)
 	{
 		renderFpsLimit = (UnsignedInt)TheFramePacer->getFramesPerSecondLimit();
-		if (renderFpsLimit == RenderFpsPreset::UncappedFpsValue)
-		{
-			renderFpsLimit = 0u;
-		}
 	}
 	if (renderFpsLimit != m_lastRenderFpsLimit)
 	{
 		UnicodeString fpsLimitStr;
-		fpsLimitStr.format(L"[%u]", renderFpsLimit);
+		if (renderFpsLimit == RenderFpsPreset::UncappedFpsValue)
+		{
+			fpsLimitStr.format(L"[X]");
+		}
+		else
+		{
+			fpsLimitStr.format(L"[%u]", renderFpsLimit);
+		}
 		m_renderFpsLimitString->setText(fpsLimitStr);
 		m_lastRenderFpsLimit = renderFpsLimit;
 	}

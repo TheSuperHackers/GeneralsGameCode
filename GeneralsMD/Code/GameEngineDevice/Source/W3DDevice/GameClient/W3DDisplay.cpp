@@ -413,12 +413,13 @@ W3DDisplay::W3DDisplay()
 	m_batchNeedsInit = FALSE;
 
 	m_historyOffset = 0;
-	m_historyCount = 0;
+	m_historyCount = 1;
 	m_lastUpdateTime64 = 0;
+	m_currentFPS = 30.0f;
 	for (Int h = 0; h < FPS_HISTORY_SIZE; ++h)
 	{
-		m_fpsHistory[h] = 0.0f;
-		m_durationHistory[h] = 0.0f;
+		m_fpsHistory[h] = 30.0f;
+		m_durationHistory[h] = 1.0f / 30.0f;
 	}
 
 #ifdef PROFILER_ENABLED
@@ -977,6 +978,7 @@ void W3DDisplay::init()
 
 	// we're now online
 	m_initialized = true;
+	m_lastUpdateTime64 = getPerformanceCounter();
 	if( TheGlobalData->m_displayDebug )
 	{
 		m_debugDisplayCallback = StatDebugDisplay;
@@ -1022,16 +1024,16 @@ const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first h
 
 void W3DDisplay::addFpsSample(Real elapsedSeconds)
 {
-	if (elapsedSeconds <= 0.0f)
+	if (elapsedSeconds < 0.0001f)
 	{
-		return;
+		elapsedSeconds = 0.0001f;
 	}
 
 	m_currentFPS = 1.0f / elapsedSeconds;
 	m_fpsHistory[m_historyOffset] = m_currentFPS;
 	m_durationHistory[m_historyOffset] = elapsedSeconds;
 
-	m_historyOffset = (m_historyOffset + 1) % FPS_HISTORY_SIZE;
+	m_historyOffset = (m_historyOffset + 1) & (FPS_HISTORY_SIZE - 1);
 	if (m_historyCount < FPS_HISTORY_SIZE)
 	{
 		m_historyCount++;
@@ -1040,17 +1042,13 @@ void W3DDisplay::addFpsSample(Real elapsedSeconds)
 
 Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 {
-	if (m_historyCount == 0)
-	{
-		return m_currentFPS;
-	}
-
 	Real timeSum = 0;
 	Int samples = 0;
 
+	Int idx = m_historyOffset - 1;
 	for (Int i = 0; i < m_historyCount; ++i)
 	{
-		Int idx = (m_historyOffset - 1 - i + FPS_HISTORY_SIZE) % FPS_HISTORY_SIZE;
+		if (idx < 0) idx += FPS_HISTORY_SIZE;
 		timeSum += m_durationHistory[idx];
 		samples++;
 
@@ -1058,6 +1056,7 @@ Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 		{
 			break;
 		}
+		--idx;
 	}
 
 	return (timeSum > 0) ? ((Real)samples / timeSum) : m_currentFPS;
@@ -1065,18 +1064,14 @@ Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 
 Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 {
-	if (m_historyCount == 0)
-	{
-		return m_currentFPS;
-	}
-
 	Real timeSum = 0;
 	Int sampleCount = 0;
 	Int i;
 
+	Int idx = m_historyOffset - 1;
 	for (i = 0; i < m_historyCount; ++i)
 	{
-		Int idx = (m_historyOffset - 1 - i + FPS_HISTORY_SIZE) % FPS_HISTORY_SIZE;
+		if (idx < 0) idx += FPS_HISTORY_SIZE;
 		timeSum += m_durationHistory[idx];
 		m_sortBuffer[sampleCount++] = m_fpsHistory[idx];
 
@@ -1084,6 +1079,7 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 		{
 			break;
 		}
+		--idx;
 	}
 
 	if (sampleCount == 0)
@@ -1116,21 +1112,15 @@ void W3DDisplay::updatePerformanceMetrics()
 	}
 #endif
 
-	if (m_lastUpdateTime64 == 0)
-	{
-		m_lastUpdateTime64 = time64;
-		return;
-	}
-
 	const Int64 timeDiff = time64 - m_lastUpdateTime64;
 	Real elapsedSeconds = (Real)timeDiff / (Real)freq64;
 
 	addFpsSample(elapsedSeconds);
-	m_averageFPS = calculateAverageFPS(0.5f);
+	m_averageFPS = calculateAverageFPS(1.0f); // 1.0s window for smooth Dynamic LOD tracking and UI matching
 
 	static UnsignedInt lastLowUpdate = 0;
 	UnsignedInt now = timeGetTime();
-	if (now - lastLowUpdate >= 1000)
+	if (now - lastLowUpdate >= 100) // update low 1% metrics at 100ms intervals instead of 1000ms since it is now extremely cheap
 	{
 		lastLowUpdate = now;
 		m_low1PercentFPS = calculateLow1PercentFPS(3.0f);
