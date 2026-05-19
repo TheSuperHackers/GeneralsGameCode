@@ -907,6 +907,30 @@ void GameEngine::update()
 {
 	USE_PERF_TIMER(GameEngine_update)
 	{
+		// During resume-from-replay catchup, render is the dominant cost in
+		// the main loop iteration (logic ticks happen on every iteration
+		// regardless; the lockstep gate is fast enough on LAN that catchup
+		// is bound by per-iteration work, not by network ack latency). We
+		// throttle render to ~2fps during catchup so players can scroll
+		// the camera without giving back most of the speedup from skipping
+		// render. The lead-in (last 10 logic seconds before handoff)
+		// renders every frame for a realtime preview.
+		const Bool inCatchup = TheRecorder
+			&& TheRecorder->isResumeCatchupMode();
+		const Bool inLeadIn = inCatchup
+			&& TheRecorder->isResumeCatchupLeadIn();
+		Bool catchupSkipRender = inCatchup && !inLeadIn;
+		if (catchupSkipRender)
+		{
+			static UnsignedInt s_lastCatchupRenderMs = 0;
+			const UnsignedInt nowMs = timeGetTime();
+			if (nowMs - s_lastCatchupRenderMs >= 500)
+			{
+				s_lastCatchupRenderMs = nowMs;
+				catchupSkipRender = FALSE;
+			}
+		}
+
 		{
 			// VERIFY CRC needs to be in this code block.  Please to not pull TheGameLogic->update() inside this block.
 			VERIFY_CRC
@@ -916,7 +940,10 @@ void GameEngine::update()
 			/// @todo Move audio init, update, etc, into GameClient update
 
 			TheAudio->UPDATE();
-			TheGameClient->UPDATE();
+			if (catchupSkipRender)
+				TheGameClient->updateHeadless();
+			else
+				TheGameClient->UPDATE();
 			TheMessageStream->propagateMessages();
 
 			if (TheNetwork != nullptr)
@@ -931,7 +958,10 @@ void GameEngine::update()
 
 		if (canUpdateLogic)
 		{
-			TheGameClient->step();
+			// step() advances W3DDisplay view animations — only meaningful
+			// if we're rendering this frame.
+			if (!catchupSkipRender)
+				TheGameClient->step();
 			TheGameLogic->UPDATE();
 		}
 		else if (canUpdateScript)
