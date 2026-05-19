@@ -2017,9 +2017,15 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CREATE_TEAM8:
 		case GameMessage::MSG_CREATE_TEAM9:
 		{
-			// TheSuperHackers @tweak Stubbjax 17/08/2025 The local player processes this message in CommandXlat for immediate assignment.
-			if (!msgPlayer->isLocalPlayer())
-				msgPlayer->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
+			// Process for every player (including the local sender) at the
+			// network-delivered logic frame so all clients mutate m_squads
+			// at the same frame. The prior "immediate in CommandXlat for the
+			// local player" optimization (Stubbjax 17/08/2025) created a
+			// runahead-sized window where the sender's m_squads led every
+			// remote's view, leaking into the CRC via ReplaceObjectUpgrade's
+			// getSquadNumberForObject() read and via the per-message
+			// AIGroup creation in logicMessageDispatcher.
+			msgPlayer->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
 
 			break;
 		}
