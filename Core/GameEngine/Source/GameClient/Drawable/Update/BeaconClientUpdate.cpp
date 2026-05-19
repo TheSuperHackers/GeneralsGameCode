@@ -97,10 +97,11 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 
 			DEBUG_ASSERTCRASH(particleTemplate, ("Could not find particle system %s", templateName.str()));
 
-			system = TheParticleSystemManager->createParticleSystem( particleTemplate );
-			if (system)
+			if (particleTemplate)
 			{
-				system->attachToDrawable( draw );
+				system = TheParticleSystemManager->createParticleSystem( particleTemplate );
+				if (system)
+					system->attachToDrawable( draw );
 			}
 			else// This is a failsafe... if someone has monkeyed with the particle system names, or the MP house colors
 			{// THis this will whip up a new particle system to match the house color provided
