@@ -329,7 +329,12 @@ void Network::init()
 	m_conMgr->init();
 
 	m_lastFrame = 0;
-	m_runAhead = min(max(30, MIN_RUNAHEAD), MAX_FRAMES_AHEAD/2); ///< @todo: don't hard-code the run-ahead.
+	// Initial run-ahead before the adaptive metrics converge. 30 frames (1s)
+	// was a holdover from dial-up. On modern broadband actual measured latency
+	// is ~100ms, which the adaptive loop in ConnectionManager::updateRunAhead
+	// will settle to within a second or two. Start closer to that so the very
+	// first command of the game doesn't pay a full 1s of input lag.
+	m_runAhead = min(max(MIN_RUNAHEAD * 2, MIN_RUNAHEAD), MAX_FRAMES_AHEAD/2); ///< @todo: don't hard-code the run-ahead.
 	m_frameRate = 30;
 	m_lastExecutionFrame = m_runAhead - 1; // subtract 1 since we're starting on frame 0
 	m_lastFrameCompleted = m_runAhead - 1; // subtract 1 since we're starting on frame 0
