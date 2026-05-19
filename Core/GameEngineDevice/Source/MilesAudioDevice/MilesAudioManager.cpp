@@ -652,7 +652,7 @@ void MilesAudioManager::pauseAmbient( Bool shouldPause )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
+void MilesAudioManager::playAudioEvent( AudioEventRTS*& event )
 {
 #ifdef INTENSIVE_AUDIO_DEBUG
 	DEBUG_LOG(("MILES (%d) - Processing play request: %d (%s)", TheGameLogic->getFrame(), event->getPlayingHandle(), event->getEventName().str()));
@@ -710,15 +710,16 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 
 			// Put this on here, so that the audio event RTS will be cleaned up regardless.
 			audio->m_audioEventRTS = event;
+			event = nullptr;
 			audio->m_stream = stream;
 			audio->m_type = PAT_Stream;
 
 			if (stream) {
-				if ((info->m_soundType == AT_Streaming) && event->getUninterruptible()) {
+				if ((info->m_soundType == AT_Streaming) && audio->m_audioEventRTS->getUninterruptible()) {
 					setDisallowSpeech(TRUE);
 	 			}
-				AIL_set_stream_volume_pan(stream, getEffectiveVolume(event), 0.5f);
-				playStream(event, stream);
+				AIL_set_stream_volume_pan(stream, getEffectiveVolume(audio->m_audioEventRTS), 0.5f);
+				playStream(audio->m_audioEventRTS, stream);
 				m_playingStreams.push_back(audio);
 				audio = nullptr;
 			}
@@ -779,13 +780,14 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				}
 				// Push it onto the list of playing things
 				audio->m_audioEventRTS = event;
+				event = nullptr;
 				audio->m_3DSample = sample3D;
 				audio->m_file = nullptr;
 				audio->m_type = PAT_3DSample;
 				m_playing3DSounds.push_back(audio);
 
 				if (sample3D) {
-					audio->m_file = playSample3D(event, sample3D);
+					audio->m_file = playSample3D(audio->m_audioEventRTS, sample3D);
 					m_sound->notifyOf3DSampleStart();
 				}
 
@@ -850,13 +852,14 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 
 				// Push it onto the list of playing things
 				audio->m_audioEventRTS = event;
+				event = nullptr;
 				audio->m_sample = sample;
 				audio->m_file = nullptr;
 				audio->m_type = PAT_Sample;
 				m_playingSounds.push_back(audio);
 
 				if (sample) {
-					audio->m_file = playSample(event, sample);
+					audio->m_file = playSample(audio->m_audioEventRTS, sample);
 					m_sound->notifyOf2DSampleStart();
 				}
 

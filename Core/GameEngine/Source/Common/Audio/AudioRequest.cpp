@@ -30,5 +30,8 @@
 
 AudioRequest::~AudioRequest()
 {
-
+	if (m_usePendingEvent)
+	{
+		delete m_pendingEvent;
+	}
 }
