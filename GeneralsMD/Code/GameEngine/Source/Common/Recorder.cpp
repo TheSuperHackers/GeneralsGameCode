@@ -2278,6 +2278,32 @@ void RecorderClass::updateResumeCatchup()
 		}
 	}
 
+	// NOTE: cullBadCommands() intentionally skipped during catchup.
+	// cullBadCommands strips any command in the MSG_BEGIN_NETWORK_MESSAGES
+	// range from TheCommandList, which includes exactly the commands we
+	// just appended via appendNextCommand. During pure single-player
+	// playback the cull runs before injection so the sequence is fine, but
+	// here the live LAN network layer is also writing into TheCommandList
+	// each frame — culling in the middle is not safe. Local UI input is
+	// already suppressed via InGameUI::setGUICommand, which is the right
+	// gate for this mode.
+
+	// Inject every command recorded for this frame. Bounded by the handoff
+	// frame so we never drain past the handover even if curFrame somehow
+	// runs ahead. We do this BEFORE the handoff exit check so the handoff
+	// frame ITSELF gets its recorded commands injected: GameLogic's CRC
+	// validator runs in processCommandList immediately after the recorder
+	// update, and with inCatchup=FALSE post-exit it expects MSG_LOGIC_CRC
+	// from every connected player. Live peer CRCs may not have arrived yet
+	// during the FF-speed run-up, so without the .rep's recorded CRCs in
+	// TheCommandList the validator fires "Not enough CRCs!" and the
+	// handoff frame fails on every client.
+	while (m_nextFrame == curFrame && curFrame <= m_resumeHandoffFrame)
+	{
+		appendNextCommand();
+		readNextFrame();
+	}
+
 	// Handoff condition: we've reached the handoff frame OR the replay file
 	// ran out of commands before we got there.
 	if (curFrame >= m_resumeHandoffFrame || m_nextFrame == (UnsignedInt)-1)
@@ -2314,23 +2340,6 @@ void RecorderClass::updateResumeCatchup()
 
 		DEBUG_LOG(("RecorderClass::updateResumeCatchup - handoff at frame %u", curFrame));
 		return;
-	}
-
-	// NOTE: cullBadCommands() intentionally skipped during catchup.
-	// cullBadCommands strips any command in the MSG_BEGIN_NETWORK_MESSAGES
-	// range from TheCommandList, which includes exactly the commands we
-	// just appended via appendNextCommand. During pure single-player
-	// playback the cull runs before injection so the sequence is fine, but
-	// here the live LAN network layer is also writing into TheCommandList
-	// each frame — culling in the middle is not safe. Local UI input is
-	// already suppressed via InGameUI::setGUICommand, which is the right
-	// gate for this mode.
-
-	// Inject every command recorded for this frame.
-	while (m_nextFrame == curFrame)
-	{
-		appendNextCommand();
-		readNextFrame();
 	}
 }
 
