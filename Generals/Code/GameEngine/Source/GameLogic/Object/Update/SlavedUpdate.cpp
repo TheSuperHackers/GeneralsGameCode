@@ -616,30 +616,27 @@ void SlavedUpdate::setRepairState( RepairStates repairState )
 				if( !data->m_weldingSysName.isEmpty() )
 				{
 					const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( data->m_weldingSysName );
-					if( tmp )
+					ParticleSystem *weldingSys = TheParticleSystemManager->createParticleSystem(tmp);
+					if( weldingSys )
 					{
-						ParticleSystem *weldingSys = TheParticleSystemManager->createParticleSystem(tmp);
-						if( weldingSys )
+						Coord3D pos;
+						//Get the bone position
+						if( draw->getPristineBonePositions( data->m_weldingFXBone.str(), 0, &pos, nullptr, 1 ) )
 						{
-							Coord3D pos;
-							//Get the bone position
-							if( draw->getPristineBonePositions( data->m_weldingFXBone.str(), 0, &pos, nullptr, 1 ) )
-							{
-								pos.add( obj->getPosition() );
-							}
-							else
-							{
-								pos.set( obj->getPosition() );
-							}
-
-							weldingSys->setPosition( &pos );
-							Real time = (Real)(m_framesToWait * LOGICFRAMES_PER_SECOND);
-							weldingSys->setLifetimeRange( time, time );
-
-							AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_repairSparks;
-							soundToPlay.setPosition( &pos );
-							TheAudio->addAudioEvent( &soundToPlay );
+							pos.add( obj->getPosition() );
 						}
+						else
+						{
+							pos.set( obj->getPosition() );
+						}
+
+						weldingSys->setPosition( &pos );
+						Real time = (Real)(m_framesToWait * LOGICFRAMES_PER_SECOND);
+						weldingSys->setLifetimeRange( time, time );
+
+						AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_repairSparks;
+						soundToPlay.setPosition( &pos );
+						TheAudio->addAudioEvent( &soundToPlay );
 					}
 				}
 

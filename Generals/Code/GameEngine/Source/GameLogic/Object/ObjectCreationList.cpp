@@ -959,9 +959,9 @@ protected:
 		if (!m_particleSysName.isEmpty())
 		{
 			const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate(m_particleSysName);
-			if (tmp)
+			ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
+			if (sys)
 			{
-				ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
 				sys->attachToObject(obj);
 			}
 		}
