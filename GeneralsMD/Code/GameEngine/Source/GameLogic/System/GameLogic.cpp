@@ -4272,6 +4272,11 @@ void GameLogic::exitGame()
 
 void GameLogic::quit(Bool toDesktop)
 {
+	if (TheGlobalData && TheGlobalData->m_headless)
+	{
+		return;
+	}
+
 	const Bool isNotLoading = (!isLoadingMap() && !isLoadingSave());
 
 	if (isInGame())

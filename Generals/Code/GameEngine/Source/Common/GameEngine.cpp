@@ -299,6 +299,15 @@ GameEngine::~GameEngine()
 #endif
 }
 
+void GameEngine::setQuitting( Bool quitting )
+{
+	if (quitting && TheGlobalData && TheGlobalData->m_headless)
+	{
+		return;
+	}
+	m_quitting = quitting;
+}
+
 //-------------------------------------------------------------------------------------------------
 Bool GameEngine::isTimeFrozen()
 {
