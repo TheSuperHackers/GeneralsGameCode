@@ -437,7 +437,7 @@ UpdateSleepTime TunnelContain::update()
 	if (controllingPlayer)
 	{
 		TunnelTracker *tunnelSystem = controllingPlayer->getTunnelSystem();
-#if PRESERVE_TUNNEL_HEAL_STACKING || RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_TUNNEL_HEAL_STACKING
 		if (tunnelSystem)
 		{
 			const TunnelContainModuleData* modData = getTunnelContainModuleData();
