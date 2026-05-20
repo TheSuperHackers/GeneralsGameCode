@@ -109,3 +109,37 @@ END
 LAN:OfferObserveBody
 "This game is already in progress. Watch it as an observer?"
 END
+
+// ScoreScreen.wnd column headers. Each shows a dollar-value aggregate from
+// ScoreKeeper: built/lost/killed for units and buildings, sourced from
+// buildCost summed across each player's m_objectsBuilt / m_objectsLost /
+// m_objectsDestroyed maps.
+GUI:ScoreUnitBuilt
+"Unit $ Built"
+END
+
+GUI:ScoreUnitLost
+"Unit $ Lost"
+END
+
+GUI:ScoreUnitKilled
+"Unit $ Killed"
+END
+
+GUI:ScoreBldgBuilt
+"Bldg $ Built"
+END
+
+GUI:ScoreBldgLost
+"Bldg $ Lost"
+END
+
+GUI:ScoreBldgKilled
+"Bldg $ Killed"
+END
+
+// Repurposes the retail-vestigial Score column to show
+// (value killed) / (income) * 100, or "-" when no income was earned.
+GUI:ScoreEfficiency
+"Efficiency"
+END

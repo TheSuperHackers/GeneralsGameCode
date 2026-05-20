@@ -407,7 +407,7 @@ static Int sumBuildCost(const ScoreKeeper::ObjectCountMap *map, Bool wantStructu
 			continue;
 		const Bool isStructure = t->isKindOf(KINDOF_STRUCTURE);
 		if (isStructure == wantStructures)
-			total += it->second * (Int)t->getBuildCost();
+			total += it->second * (Int)t->friend_getBuildCost();
 	}
 	return total;
 }

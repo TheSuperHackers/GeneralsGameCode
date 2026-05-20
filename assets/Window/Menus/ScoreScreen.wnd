@@ -145,8 +145,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 63 34,
-                   BOTTOMRIGHT: 187 64,
+      SCREENRECT = UPPERLEFT: 65 34,
+                   BOTTOMRIGHT: 158 64,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayerName";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -194,8 +194,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 184 33,
-                   BOTTOMRIGHT: 258 65,
+      SCREENRECT = UPPERLEFT: 158 33,
+                   BOTTOMRIGHT: 228 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -207,7 +207,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "Unit $ Built";
+      TEXT = "GUI:ScoreUnitBuilt";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -243,8 +243,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 256 33,
-                   BOTTOMRIGHT: 333 65,
+      SCREENRECT = UPPERLEFT: 228 33,
+                   BOTTOMRIGHT: 298 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -256,7 +256,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "Unit $ Lost";
+      TEXT = "GUI:ScoreUnitLost";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -292,8 +292,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 327 33,
-                   BOTTOMRIGHT: 408 65,
+      SCREENRECT = UPPERLEFT: 298 33,
+                   BOTTOMRIGHT: 368 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -305,7 +305,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "GUI:UnitsKilled";
+      TEXT = "GUI:ScoreUnitKilled";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -341,8 +341,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 33,
-                   BOTTOMRIGHT: 495 65,
+      SCREENRECT = UPPERLEFT: 368 33,
+                   BOTTOMRIGHT: 438 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsConstructed";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -354,7 +354,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "Bldg $ Built";
+      TEXT = "GUI:ScoreBldgBuilt";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -390,8 +390,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 489 33,
-                   BOTTOMRIGHT: 573 65,
+      SCREENRECT = UPPERLEFT: 438 33,
+                   BOTTOMRIGHT: 508 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -403,7 +403,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "Bldg $ Lost";
+      TEXT = "GUI:ScoreBldgLost";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -439,8 +439,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 33,
-                   BOTTOMRIGHT: 756 65,
+      SCREENRECT = UPPERLEFT: 578 33,
+                   BOTTOMRIGHT: 678 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextSuppliesCollected";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -488,8 +488,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 33,
-                   BOTTOMRIGHT: 800 65,
+      SCREENRECT = UPPERLEFT: 678 33,
+                   BOTTOMRIGHT: 798 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextEfficiencyHeader";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -501,7 +501,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "Efficiency";
+      TEXT = "GUI:ScoreEfficiency";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -537,8 +537,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 575 33,
-                   BOTTOMRIGHT: 659 65,
+      SCREENRECT = UPPERLEFT: 508 33,
+                   BOTTOMRIGHT: 578 65,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -550,7 +550,7 @@ WINDOW
       FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
-      TEXT = "GUI:BuildingsKilled";
+      TEXT = "GUI:ScoreBldgKilled";
       TEXTCOLOR = ENABLED:  186 255 12 255, ENABLEDBORDER:  0 0 0 255,
                   DISABLED: 192 192 192 255, DISABLEDBORDER: 64 64 64 255,
                   HILITE:   128 128 255 255, HILITEBORDER:   0 0 128 255;
@@ -1569,8 +1569,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 156,
-                   BOTTOMRIGHT: 490 188,
+      SCREENRECT = UPPERLEFT: 368 156,
+                   BOTTOMRIGHT: 438 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1619,7 +1619,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 156,
-                   BOTTOMRIGHT: 189 188,
+                   BOTTOMRIGHT: 158 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1667,8 +1667,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 156,
-                   BOTTOMRIGHT: 258 188,
+      SCREENRECT = UPPERLEFT: 158 156,
+                   BOTTOMRIGHT: 228 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1716,8 +1716,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 156,
-                   BOTTOMRIGHT: 330 188,
+      SCREENRECT = UPPERLEFT: 228 156,
+                   BOTTOMRIGHT: 298 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1765,8 +1765,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 156,
-                   BOTTOMRIGHT: 402 188,
+      SCREENRECT = UPPERLEFT: 298 156,
+                   BOTTOMRIGHT: 368 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1814,8 +1814,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 156,
-                   BOTTOMRIGHT: 658 188,
+      SCREENRECT = UPPERLEFT: 508 156,
+                   BOTTOMRIGHT: 578 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1863,8 +1863,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 156,
-                   BOTTOMRIGHT: 574 188,
+      SCREENRECT = UPPERLEFT: 438 156,
+                   BOTTOMRIGHT: 508 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1912,8 +1912,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 156,
-                   BOTTOMRIGHT: 756 188,
+      SCREENRECT = UPPERLEFT: 578 156,
+                   BOTTOMRIGHT: 678 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1961,8 +1961,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 156,
-                   BOTTOMRIGHT: 800 188,
+      SCREENRECT = UPPERLEFT: 678 156,
+                   BOTTOMRIGHT: 798 188,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2010,8 +2010,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 188,
-                   BOTTOMRIGHT: 330 220,
+      SCREENRECT = UPPERLEFT: 228 188,
+                   BOTTOMRIGHT: 298 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2059,8 +2059,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 188,
-                   BOTTOMRIGHT: 258 220,
+      SCREENRECT = UPPERLEFT: 158 188,
+                   BOTTOMRIGHT: 228 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2109,7 +2109,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 188,
-                   BOTTOMRIGHT: 189 220,
+                   BOTTOMRIGHT: 158 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2157,8 +2157,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 188,
-                   BOTTOMRIGHT: 402 220,
+      SCREENRECT = UPPERLEFT: 298 188,
+                   BOTTOMRIGHT: 368 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2206,8 +2206,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 188,
-                   BOTTOMRIGHT: 574 220,
+      SCREENRECT = UPPERLEFT: 438 188,
+                   BOTTOMRIGHT: 508 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2255,8 +2255,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 188,
-                   BOTTOMRIGHT: 658 220,
+      SCREENRECT = UPPERLEFT: 508 188,
+                   BOTTOMRIGHT: 578 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2304,8 +2304,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 188,
-                   BOTTOMRIGHT: 756 220,
+      SCREENRECT = UPPERLEFT: 578 188,
+                   BOTTOMRIGHT: 678 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2353,8 +2353,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 188,
-                   BOTTOMRIGHT: 800 220,
+      SCREENRECT = UPPERLEFT: 678 188,
+                   BOTTOMRIGHT: 798 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2402,8 +2402,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 188,
-                   BOTTOMRIGHT: 490 220,
+      SCREENRECT = UPPERLEFT: 368 188,
+                   BOTTOMRIGHT: 438 220,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2451,8 +2451,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 220,
-                   BOTTOMRIGHT: 490 252,
+      SCREENRECT = UPPERLEFT: 368 220,
+                   BOTTOMRIGHT: 438 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2501,7 +2501,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 220,
-                   BOTTOMRIGHT: 189 252,
+                   BOTTOMRIGHT: 158 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2549,8 +2549,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 220,
-                   BOTTOMRIGHT: 258 252,
+      SCREENRECT = UPPERLEFT: 158 220,
+                   BOTTOMRIGHT: 228 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2598,8 +2598,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 220,
-                   BOTTOMRIGHT: 330 252,
+      SCREENRECT = UPPERLEFT: 228 220,
+                   BOTTOMRIGHT: 298 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2647,8 +2647,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 220,
-                   BOTTOMRIGHT: 402 252,
+      SCREENRECT = UPPERLEFT: 298 220,
+                   BOTTOMRIGHT: 368 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2696,8 +2696,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 220,
-                   BOTTOMRIGHT: 658 252,
+      SCREENRECT = UPPERLEFT: 508 220,
+                   BOTTOMRIGHT: 578 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2745,8 +2745,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 220,
-                   BOTTOMRIGHT: 574 252,
+      SCREENRECT = UPPERLEFT: 438 220,
+                   BOTTOMRIGHT: 508 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2794,8 +2794,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 220,
-                   BOTTOMRIGHT: 756 252,
+      SCREENRECT = UPPERLEFT: 578 220,
+                   BOTTOMRIGHT: 678 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2843,8 +2843,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 220,
-                   BOTTOMRIGHT: 800 252,
+      SCREENRECT = UPPERLEFT: 678 220,
+                   BOTTOMRIGHT: 798 252,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2892,8 +2892,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 252,
-                   BOTTOMRIGHT: 490 284,
+      SCREENRECT = UPPERLEFT: 368 252,
+                   BOTTOMRIGHT: 438 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2942,7 +2942,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 252,
-                   BOTTOMRIGHT: 189 284,
+                   BOTTOMRIGHT: 158 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2990,8 +2990,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 252,
-                   BOTTOMRIGHT: 258 284,
+      SCREENRECT = UPPERLEFT: 158 252,
+                   BOTTOMRIGHT: 228 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3039,8 +3039,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 252,
-                   BOTTOMRIGHT: 330 284,
+      SCREENRECT = UPPERLEFT: 228 252,
+                   BOTTOMRIGHT: 298 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3088,8 +3088,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 252,
-                   BOTTOMRIGHT: 402 284,
+      SCREENRECT = UPPERLEFT: 298 252,
+                   BOTTOMRIGHT: 368 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3137,8 +3137,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 252,
-                   BOTTOMRIGHT: 658 284,
+      SCREENRECT = UPPERLEFT: 508 252,
+                   BOTTOMRIGHT: 578 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3186,8 +3186,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 252,
-                   BOTTOMRIGHT: 574 284,
+      SCREENRECT = UPPERLEFT: 438 252,
+                   BOTTOMRIGHT: 508 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3235,8 +3235,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 252,
-                   BOTTOMRIGHT: 756 284,
+      SCREENRECT = UPPERLEFT: 578 252,
+                   BOTTOMRIGHT: 678 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3284,8 +3284,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 252,
-                   BOTTOMRIGHT: 800 284,
+      SCREENRECT = UPPERLEFT: 678 252,
+                   BOTTOMRIGHT: 798 284,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3333,8 +3333,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 284,
-                   BOTTOMRIGHT: 490 316,
+      SCREENRECT = UPPERLEFT: 368 284,
+                   BOTTOMRIGHT: 438 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3382,8 +3382,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 284,
-                   BOTTOMRIGHT: 258 316,
+      SCREENRECT = UPPERLEFT: 158 284,
+                   BOTTOMRIGHT: 228 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3432,7 +3432,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 284,
-                   BOTTOMRIGHT: 189 316,
+                   BOTTOMRIGHT: 158 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3480,8 +3480,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 284,
-                   BOTTOMRIGHT: 330 316,
+      SCREENRECT = UPPERLEFT: 228 284,
+                   BOTTOMRIGHT: 298 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3529,8 +3529,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 284,
-                   BOTTOMRIGHT: 402 316,
+      SCREENRECT = UPPERLEFT: 298 284,
+                   BOTTOMRIGHT: 368 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3578,8 +3578,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 284,
-                   BOTTOMRIGHT: 658 316,
+      SCREENRECT = UPPERLEFT: 508 284,
+                   BOTTOMRIGHT: 578 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3627,8 +3627,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 284,
-                   BOTTOMRIGHT: 574 316,
+      SCREENRECT = UPPERLEFT: 438 284,
+                   BOTTOMRIGHT: 508 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3676,8 +3676,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 284,
-                   BOTTOMRIGHT: 756 316,
+      SCREENRECT = UPPERLEFT: 578 284,
+                   BOTTOMRIGHT: 678 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3725,8 +3725,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 284,
-                   BOTTOMRIGHT: 800 316,
+      SCREENRECT = UPPERLEFT: 678 284,
+                   BOTTOMRIGHT: 798 316,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3774,8 +3774,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 316,
-                   BOTTOMRIGHT: 490 348,
+      SCREENRECT = UPPERLEFT: 368 316,
+                   BOTTOMRIGHT: 438 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3824,7 +3824,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 316,
-                   BOTTOMRIGHT: 189 348,
+                   BOTTOMRIGHT: 158 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3872,8 +3872,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 316,
-                   BOTTOMRIGHT: 258 348,
+      SCREENRECT = UPPERLEFT: 158 316,
+                   BOTTOMRIGHT: 228 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3921,8 +3921,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 316,
-                   BOTTOMRIGHT: 330 348,
+      SCREENRECT = UPPERLEFT: 228 316,
+                   BOTTOMRIGHT: 298 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3970,8 +3970,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 316,
-                   BOTTOMRIGHT: 402 348,
+      SCREENRECT = UPPERLEFT: 298 316,
+                   BOTTOMRIGHT: 368 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4019,8 +4019,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 316,
-                   BOTTOMRIGHT: 658 348,
+      SCREENRECT = UPPERLEFT: 508 316,
+                   BOTTOMRIGHT: 578 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4068,8 +4068,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 316,
-                   BOTTOMRIGHT: 574 348,
+      SCREENRECT = UPPERLEFT: 438 316,
+                   BOTTOMRIGHT: 508 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4117,8 +4117,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 316,
-                   BOTTOMRIGHT: 756 348,
+      SCREENRECT = UPPERLEFT: 578 316,
+                   BOTTOMRIGHT: 678 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4166,8 +4166,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 316,
-                   BOTTOMRIGHT: 800 348,
+      SCREENRECT = UPPERLEFT: 678 316,
+                   BOTTOMRIGHT: 798 348,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4215,8 +4215,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 348,
-                   BOTTOMRIGHT: 490 380,
+      SCREENRECT = UPPERLEFT: 368 348,
+                   BOTTOMRIGHT: 438 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4264,8 +4264,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 64 348,
-                   BOTTOMRIGHT: 188 380,
+      SCREENRECT = UPPERLEFT: 65 348,
+                   BOTTOMRIGHT: 158 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4313,8 +4313,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 187 348,
-                   BOTTOMRIGHT: 259 380,
+      SCREENRECT = UPPERLEFT: 158 348,
+                   BOTTOMRIGHT: 228 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4362,8 +4362,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 348,
-                   BOTTOMRIGHT: 330 380,
+      SCREENRECT = UPPERLEFT: 228 348,
+                   BOTTOMRIGHT: 298 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4411,8 +4411,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 348,
-                   BOTTOMRIGHT: 402 380,
+      SCREENRECT = UPPERLEFT: 298 348,
+                   BOTTOMRIGHT: 368 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4460,8 +4460,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 348,
-                   BOTTOMRIGHT: 658 380,
+      SCREENRECT = UPPERLEFT: 508 348,
+                   BOTTOMRIGHT: 578 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4509,8 +4509,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 348,
-                   BOTTOMRIGHT: 574 380,
+      SCREENRECT = UPPERLEFT: 438 348,
+                   BOTTOMRIGHT: 508 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4558,8 +4558,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 348,
-                   BOTTOMRIGHT: 756 380,
+      SCREENRECT = UPPERLEFT: 578 348,
+                   BOTTOMRIGHT: 678 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4607,8 +4607,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 348,
-                   BOTTOMRIGHT: 800 380,
+      SCREENRECT = UPPERLEFT: 678 348,
+                   BOTTOMRIGHT: 798 380,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4656,8 +4656,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 490 124,
-                   BOTTOMRIGHT: 574 156,
+      SCREENRECT = UPPERLEFT: 438 124,
+                   BOTTOMRIGHT: 508 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4706,7 +4706,7 @@ WINDOW
     WINDOW
       WINDOWTYPE = STATICTEXT;
       SCREENRECT = UPPERLEFT: 65 124,
-                   BOTTOMRIGHT: 189 156,
+                   BOTTOMRIGHT: 158 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4754,8 +4754,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 186 124,
-                   BOTTOMRIGHT: 258 156,
+      SCREENRECT = UPPERLEFT: 158 124,
+                   BOTTOMRIGHT: 228 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4803,8 +4803,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 258 124,
-                   BOTTOMRIGHT: 330 156,
+      SCREENRECT = UPPERLEFT: 228 124,
+                   BOTTOMRIGHT: 298 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4852,8 +4852,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 330 124,
-                   BOTTOMRIGHT: 402 156,
+      SCREENRECT = UPPERLEFT: 298 124,
+                   BOTTOMRIGHT: 368 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4901,8 +4901,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 574 124,
-                   BOTTOMRIGHT: 658 156,
+      SCREENRECT = UPPERLEFT: 508 124,
+                   BOTTOMRIGHT: 578 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4950,8 +4950,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 658 124,
-                   BOTTOMRIGHT: 756 156,
+      SCREENRECT = UPPERLEFT: 578 124,
+                   BOTTOMRIGHT: 678 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4999,8 +4999,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 756 124,
-                   BOTTOMRIGHT: 800 156,
+      SCREENRECT = UPPERLEFT: 678 124,
+                   BOTTOMRIGHT: 798 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -5048,8 +5048,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 402 124,
-                   BOTTOMRIGHT: 490 156,
+      SCREENRECT = UPPERLEFT: 368 124,
+                   BOTTOMRIGHT: 438 156,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
