@@ -811,6 +811,7 @@ protected:
 		{
 			LabelType_Team,
 			LabelType_Money,
+			LabelType_MoneyPerMinute,
 			LabelType_Rank,
 			LabelType_Xp,
 
@@ -821,6 +822,7 @@ protected:
 		{
 			ValueType_Team,
 			ValueType_Money,
+			ValueType_MoneyPerMinute,
 			ValueType_Rank,
 			ValueType_Xp,
 			ValueType_Name,
