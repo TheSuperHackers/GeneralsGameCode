@@ -350,7 +350,7 @@ void GenerateMinefieldBehavior::placeMinesInFootprint(const GeometryInfo& geom, 
 		Int maxRetry = 100;
 		do
 		{
-			geom.makeRandomOffsetWithinFootprint(pt);
+			geom.makeGameLogicRandomOffsetWithinFootprint(pt);
 			pt.x += target->x;
 			pt.y += target->y;
 			pt.z += target->z;

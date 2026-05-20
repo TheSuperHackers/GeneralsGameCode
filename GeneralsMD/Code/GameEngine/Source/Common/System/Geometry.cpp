@@ -376,9 +376,18 @@ Bool GeometryInfo::isPointInFootprint(const Coord3D& geomCenter, const Coord3D& 
 }
 
 //=============================================================================
-void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt) const
+static void makeRandomOffsetWithinFootprint(
+	Real (*randomReal)(Real lo, Real hi),
+	GeometryType type,
+	Real majorRadius,
+	Real minorRadius,
+	Real boundingCircleRadius,
+	Coord3D& pt)
 {
-	switch(m_type)
+#if 1
+	(void)boundingCircleRadius;
+#endif
+	switch(type)
 	{
 		case GEOMETRY_SPHERE:
 		case GEOMETRY_CYLINDER:
@@ -386,18 +395,18 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt) const
 #if 1
 			// this is a better technique than the more obvious radius-and-angle
 			// one, below, because the latter tends to clump more towards the center.
-			Real maxDistSqr = sqr(m_majorRadius);
+			Real maxDistSqr = sqr(majorRadius);
 			Real distSqr;
 			do
 			{
-				pt.x = GameLogicRandomValueReal(-m_majorRadius, m_majorRadius);
-				pt.y = GameLogicRandomValueReal(-m_majorRadius, m_majorRadius);
+				pt.x = randomReal(-majorRadius, majorRadius);
+				pt.y = randomReal(-majorRadius, majorRadius);
 				pt.z = 0.0f;
 				distSqr = sqr(pt.x) + sqr(pt.y);
 			} while (distSqr > maxDistSqr);
 #else
-			Real radius = GameLogicRandomValueReal(0.0f, m_boundingCircleRadius);
-			Real angle = GameLogicRandomValueReal(-PI, PI);
+			Real radius = randomReal(0.0f, boundingCircleRadius);
+			Real angle = randomReal(-PI, PI);
 			pt.x = radius * Cos(angle);
 			pt.y = radius * Sin(angle);
 			pt.z = 0.0f;
@@ -407,8 +416,8 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt) const
 
 		case GEOMETRY_BOX:
 		{
-			pt.x = GameLogicRandomValueReal(-m_majorRadius, m_majorRadius);
-			pt.y = GameLogicRandomValueReal(-m_minorRadius, m_minorRadius);
+			pt.x = randomReal(-majorRadius, majorRadius);
+			pt.y = randomReal(-minorRadius, minorRadius);
 			pt.z = 0.0f;
 			break;
 		}
@@ -416,9 +425,14 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt) const
 }
 
 //=============================================================================
-void GeometryInfo::makeRandomOffsetOnPerimeter(Coord3D& pt) const
+static void makeRandomOffsetOnPerimeter(
+	Real (*randomReal)(Real lo, Real hi),
+	GeometryType type,
+	Real majorRadius,
+	Real minorRadius,
+	Coord3D& pt)
 {
-	switch(m_type)
+	switch(type)
 	{
 		case GEOMETRY_SPHERE:
 		case GEOMETRY_CYLINDER:
@@ -434,32 +448,63 @@ void GeometryInfo::makeRandomOffsetOnPerimeter(Coord3D& pt) const
 
 		case GEOMETRY_BOX:
 		{
-			if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+			if( randomReal( 0.0f, 1.0f ) < 0.5f )
 			{
 				//Pick random point on x axis.
-				pt.x = GameLogicRandomValueReal(-m_majorRadius, m_majorRadius);
+				pt.x = randomReal(-majorRadius, majorRadius);
 
 				//Min or max the y axis value
-				if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
-					pt.y = -m_minorRadius;
+				if( randomReal( 0.0f, 1.0f ) < 0.5f )
+					pt.y = -minorRadius;
 				else
-					pt.y = m_minorRadius;
+					pt.y = minorRadius;
 			}
 			else
 			{
 				//Pick random point on y axis.
-				pt.y = GameLogicRandomValueReal(-m_minorRadius, m_minorRadius);
+				pt.y = randomReal(-minorRadius, minorRadius);
 
 				//Min or max the x axis value
-				if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
-					pt.x = -m_majorRadius;
+				if( randomReal( 0.0f, 1.0f ) < 0.5f )
+					pt.x = -majorRadius;
 				else
-					pt.x = m_majorRadius;
+					pt.x = majorRadius;
 			}
 			pt.z = 0.0f;
 			break;
 		}
 	};
+}
+
+//-----------------------------------------------------------------------------
+static Real GameLogicGeometryRandomReal(Real lo, Real hi)
+{
+	return GameLogicRandomValueReal(lo, hi);
+}
+
+static Real GameClientGeometryRandomReal(Real lo, Real hi)
+{
+	return GameClientRandomValueReal(lo, hi);
+}
+
+void GeometryInfo::makeGameLogicRandomOffsetWithinFootprint(Coord3D& pt) const
+{
+	makeRandomOffsetWithinFootprint(GameLogicGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, m_boundingCircleRadius, pt);
+}
+
+void GeometryInfo::makeGameClientRandomOffsetWithinFootprint(Coord3D& pt) const
+{
+	makeRandomOffsetWithinFootprint(GameClientGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, m_boundingCircleRadius, pt);
+}
+
+void GeometryInfo::makeGameLogicRandomOffsetOnPerimeter(Coord3D& pt) const
+{
+	makeRandomOffsetOnPerimeter(GameLogicGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, pt);
+}
+
+void GeometryInfo::makeGameClientRandomOffsetOnPerimeter(Coord3D& pt) const
+{
+	makeRandomOffsetOnPerimeter(GameClientGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, pt);
 }
 
 //=============================================================================
