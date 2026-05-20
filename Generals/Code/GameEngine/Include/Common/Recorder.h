@@ -83,8 +83,6 @@ protected:
 		std::list<UnsignedInt> m_data;
 	};
 
-	CRCInfo m_crcInfo;
-
 public:
 	struct ReplayHeader;
 
@@ -183,6 +181,7 @@ protected:
 
 	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
 
+	CRCInfo m_crcInfo;
 	File* m_file;
 	AsciiString m_fileName;
 	Int m_currentFilePosition;
