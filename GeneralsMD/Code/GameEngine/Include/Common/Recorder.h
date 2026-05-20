@@ -118,6 +118,14 @@ public:
 	RecorderModeType getMode();												///< Returns the current operating mode.
 	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK || m_mode == RECORDERMODETYPE_LIVE_OBSERVER; }
 	Bool isResumeCatchupMode() const { return m_mode == RECORDERMODETYPE_RESUME_CATCHUP; }
+	// True during the lead-in window of resume-from-replay catchup (last
+	// few seconds before handoff, currently 10 logic seconds). Callers
+	// use this to re-enable normally-skipped catchup work — e.g. the
+	// renderer — so players see realtime motion just before control is
+	// handed back. Returns false when not in catchup, when handoff is
+	// closer than the lead-in window to the start of catchup, or once
+	// catchup has ended.
+	Bool isResumeCatchupLeadIn() const;
 	Bool isLiveObserverMode() const { return m_mode == RECORDERMODETYPE_LIVE_OBSERVER; }
 	// Returns true whenever the recorder is driving local playback and local
 	// user input should be suppressed / not fed into TheCommandList.

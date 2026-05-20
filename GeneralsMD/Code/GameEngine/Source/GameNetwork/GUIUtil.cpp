@@ -465,8 +465,12 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				if (comboPlayer[i])
 					comboPlayer[i]->winEnable( FALSE );
 			}
-			//if( i == myGame->getLocalSlotNum())
-      if((comboColor[i] != nullptr) && BitIsSet(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
+			// Always repopulate, even when disabled. Disabled combos still
+			// display a selection, and after a host-driven slot reorder
+			// (e.g. resume-from-replay) the new color may not exist in the
+			// stale dropdown, so SetSelectedPos below would silently leave
+			// the old label showing.
+      if (comboColor[i] != nullptr)
 				PopulateColorComboBox(i, comboColor, myGame, myGame->getConstSlot(i)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER);
 			Int max, idx;
 			if (comboColor[i] != nullptr) {

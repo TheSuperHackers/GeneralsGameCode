@@ -2170,6 +2170,21 @@ Bool RecorderClass::isMultiplayer()
 	return false;
 }
 
+// Resume-from-replay lead-in window. Logic frames before the handoff at
+// which we drop the FF rate caps AND re-enable the renderer so players
+// see a realtime preview before control is handed back. 300 = 10s at
+// 30 logic fps.
+static const UnsignedInt FF_OFF_LEAD_FRAMES = 300;
+
+Bool RecorderClass::isResumeCatchupLeadIn() const
+{
+	if (!isResumeCatchupMode())
+		return false;
+	const UnsignedInt curFrame = TheGameLogic ? TheGameLogic->getFrame() : 0;
+	return (m_resumeHandoffFrame >= FF_OFF_LEAD_FRAMES
+		&& curFrame >= m_resumeHandoffFrame - FF_OFF_LEAD_FRAMES);
+}
+
 /**
  * Resume-from-replay catchup: open the given replay file, skip past the
  * header, prime the first frame of commands, and switch the recorder into
@@ -2257,14 +2272,57 @@ void RecorderClass::updateResumeCatchup()
 {
 	UnsignedInt curFrame = TheGameLogic ? TheGameLogic->getFrame() : 0;
 
+	// Catchup progress: shows where we are without having to render the
+	// game. Window title updates every 30 logic frames so the OS title bar
+	// ticks visibly (1Hz at retail rate, ~30Hz during FF); DEBUG_LOG fires
+	// every 300 logic frames so the timeline in DebugLogFile.txt stays
+	// readable. Statics re-init when curFrame walks backward (new catchup
+	// session), so back-to-back resumes report from frame 0 each time.
+	static UnsignedInt s_progressStartFrame      = 0;
+	static UnsignedInt s_progressStartMs         = 0;
+	static UnsignedInt s_progressNextReportFrame = 0;
+	if (s_progressStartFrame == 0 || curFrame < s_progressStartFrame)
+	{
+		s_progressStartFrame      = curFrame;
+		s_progressStartMs         = timeGetTime();
+		s_progressNextReportFrame = curFrame;
+	}
+	if (curFrame >= s_progressNextReportFrame)
+	{
+		const UnsignedInt nowMs        = timeGetTime();
+		const UnsignedInt elapsedMs    = nowMs - s_progressStartMs;
+		const UnsignedInt elapsedFrame = curFrame - s_progressStartFrame;
+		const Real fps = elapsedMs > 0
+			? (Real)elapsedFrame * 1000.0f / (Real)elapsedMs
+			: 0.0f;
+		extern HWND ApplicationHWnd;
+		if (ApplicationHWnd)
+		{
+			char buf[128];
+			snprintf(buf, sizeof(buf),
+				"Generals - Catchup: frame %u / %u  (%.0f logic fps)",
+				curFrame, m_resumeHandoffFrame, fps);
+			::SetWindowTextA(ApplicationHWnd, buf);
+		}
+		// One log line per 300 frames (10 logic seconds of recorded game).
+		// s_progressNextReportFrame is advanced by 30 below, so checking
+		// modulo 300 lets every 10th report through.
+		if (elapsedFrame == 0 || (elapsedFrame % 300) < 30)
+		{
+			DEBUG_LOG(("Catchup progress: frame %u / %u  (%u/%u done, %.1f logic fps wall-clock, %u ms elapsed)",
+				curFrame, m_resumeHandoffFrame,
+				elapsedFrame,
+				m_resumeHandoffFrame > s_progressStartFrame ? m_resumeHandoffFrame - s_progressStartFrame : 0,
+				fps, elapsedMs));
+		}
+		s_progressNextReportFrame = curFrame + 30;
+	}
+
 	// Drop both rate caps back to normal once we're within 10 seconds (300
 	// logic frames at 30fps) of the handoff so players see a realtime preview
 	// before control is handed back. If the handoff is closer than that to
 	// the start of catchup, just stay at the elevated rate.
-	const UnsignedInt FF_OFF_LEAD_FRAMES = 300;
-	const Bool inLeadIn =
-		(m_resumeHandoffFrame >= FF_OFF_LEAD_FRAMES
-			&& curFrame >= m_resumeHandoffFrame - FF_OFF_LEAD_FRAMES);
+	const Bool inLeadIn = isResumeCatchupLeadIn();
 	if (inLeadIn)
 	{
 		if (TheFramePacer
@@ -2276,6 +2334,32 @@ void RecorderClass::updateResumeCatchup()
 		{
 			TheNetwork->setLogicFrameRate(m_resumeSavedNetFrameRate);
 		}
+	}
+
+	// NOTE: cullBadCommands() intentionally skipped during catchup.
+	// cullBadCommands strips any command in the MSG_BEGIN_NETWORK_MESSAGES
+	// range from TheCommandList, which includes exactly the commands we
+	// just appended via appendNextCommand. During pure single-player
+	// playback the cull runs before injection so the sequence is fine, but
+	// here the live LAN network layer is also writing into TheCommandList
+	// each frame — culling in the middle is not safe. Local UI input is
+	// already suppressed via InGameUI::setGUICommand, which is the right
+	// gate for this mode.
+
+	// Inject every command recorded for this frame. Bounded by the handoff
+	// frame so we never drain past the handover even if curFrame somehow
+	// runs ahead. We do this BEFORE the handoff exit check so the handoff
+	// frame ITSELF gets its recorded commands injected: GameLogic's CRC
+	// validator runs in processCommandList immediately after the recorder
+	// update, and with inCatchup=FALSE post-exit it expects MSG_LOGIC_CRC
+	// from every connected player. Live peer CRCs may not have arrived yet
+	// during the FF-speed run-up, so without the .rep's recorded CRCs in
+	// TheCommandList the validator fires "Not enough CRCs!" and the
+	// handoff frame fails on every client.
+	while (m_nextFrame == curFrame && curFrame <= m_resumeHandoffFrame)
+	{
+		appendNextCommand();
+		readNextFrame();
 	}
 
 	// Handoff condition: we've reached the handoff frame OR the replay file
@@ -2314,23 +2398,6 @@ void RecorderClass::updateResumeCatchup()
 
 		DEBUG_LOG(("RecorderClass::updateResumeCatchup - handoff at frame %u", curFrame));
 		return;
-	}
-
-	// NOTE: cullBadCommands() intentionally skipped during catchup.
-	// cullBadCommands strips any command in the MSG_BEGIN_NETWORK_MESSAGES
-	// range from TheCommandList, which includes exactly the commands we
-	// just appended via appendNextCommand. During pure single-player
-	// playback the cull runs before injection so the sequence is fine, but
-	// here the live LAN network layer is also writing into TheCommandList
-	// each frame — culling in the middle is not safe. Local UI input is
-	// already suppressed via InGameUI::setGUICommand, which is the right
-	// gate for this mode.
-
-	// Inject every command recorded for this frame.
-	while (m_nextFrame == curFrame)
-	{
-		appendNextCommand();
-		readNextFrame();
 	}
 }
 

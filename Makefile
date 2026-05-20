@@ -7,6 +7,9 @@
 #   make installer-release   build the installer and upload it to GCS as a
 #                            versioned, publicly-downloadable object
 #   make zulu-big            just (re)pack assets/ into build/installer-tmp/Zulu.big
+#   make zulu-exe            build the shipping Release exe
+#   make zulu-exe-log        build a Release exe with DEBUG_LOGGING + DEBUG_CRASHING
+#                            (no debug CRT; same DLL deps as the shipping exe)
 #   make clean-installer     remove the staged tmp dir and the built setup exe
 
 BIG          ?= big
@@ -21,6 +24,7 @@ TMP_DIR    := build/installer-tmp
 
 BIG_NAME      := Zulu.big
 EXE_NAME      := generalszh_zulu.exe
+EXE_LOG_NAME  := generalszh_zulu_log.exe
 LAUNCHER_NAME := ZuluLauncher.exe
 SOURCE_EXE      := $(BUILD_DIR)/GeneralsMD/generalszh.exe
 SOURCE_LAUNCHER := $(BUILD_DIR)/launcher/ZuluLauncher.exe
@@ -51,6 +55,7 @@ ZULU_VERSION_BUILDNUM := $(or $(word 3,$(subst ., ,$(APPVERSION))),0)
 
 TMP_BIG      := $(TMP_DIR)/$(BIG_NAME)
 TMP_EXE      := $(TMP_DIR)/$(EXE_NAME)
+TMP_EXE_LOG  := $(TMP_DIR)/$(EXE_LOG_NAME)
 TMP_LAUNCHER := $(TMP_DIR)/$(LAUNCHER_NAME)
 
 ASSET_FILES := $(shell find $(ASSETS_DIR) -type f 2>/dev/null)
@@ -61,7 +66,7 @@ ASSET_FILES := $(shell find $(ASSETS_DIR) -type f 2>/dev/null)
 # big-endian first-data offset = 16.
 EMPTY_BIG_BYTES := 'BIGF\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10'
 
-.PHONY: installer installer-release zulu-big zulu-exe zulu-launcher clean-installer
+.PHONY: installer installer-release zulu-big zulu-exe zulu-exe-log zulu-launcher clean-installer
 
 # Target-specific secret name that propagates down the prereq chain so the
 # docker-build-z_generals recipe knows which GCP Secret Manager secret to
@@ -75,6 +80,8 @@ installer: $(INSTALLER_OUT)
 zulu-big: $(TMP_BIG)
 
 zulu-exe: $(TMP_EXE)
+
+zulu-exe-log: $(TMP_EXE_LOG)
 
 zulu-launcher: $(TMP_LAUNCHER)
 
@@ -128,6 +135,26 @@ docker-build-z_generals:
 
 $(TMP_EXE): docker-build-z_generals | $(TMP_DIR)
 	cp "$(SOURCE_EXE)" "$@"
+
+# Logging variant: same Release build (no debug CRT, same DLL deps as the
+# shipping exe), but with DEBUG_LOGGING + DEBUG_CRASHING compiled in. Writes
+# DebugLogFile.txt next to the running .exe at runtime. Built via the
+# vc6-releaselog cmake preset; --cmake forces reconfigure since this shares
+# build/docker with the regular Release build and the cached preset would
+# otherwise stick.
+.PHONY: docker-build-z_generals-log
+docker-build-z_generals-log:
+	PRESET=vc6-releaselog \
+	ZULU_VERSION_MAJOR=$(ZULU_VERSION_MAJOR) \
+	ZULU_VERSION_MINOR=$(ZULU_VERSION_MINOR) \
+	ZULU_VERSION_BUILDNUM=$(ZULU_VERSION_BUILDNUM) \
+	$(DOCKER_BUILD) --cmake --target z_generals
+
+$(TMP_EXE_LOG): docker-build-z_generals-log | $(TMP_DIR)
+	cp "$(SOURCE_EXE)" "$@"
+	@echo
+	@echo "Logging exe ready: $@"
+	@echo "Ship this to the rejoiner VM; DebugLogFile.txt will land next to the .exe."
 
 # Launcher build, mirroring the game-exe rule. Same ZULU_VERSION_* env
 # vars so the launcher's embedded VS_VERSION_INFO matches the game's.
