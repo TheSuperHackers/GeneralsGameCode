@@ -184,6 +184,17 @@ struct ScoreGather
 	Int m_totalBuildingsDestroyed;		///< The total number of Buildings we've destroyed
 	Int m_totalBuildingsBuilt;				///< The total number of buildings we've constructed
 	Int m_totalBuildingsLost;					///< The total number of our buildings lost
+
+	// Aggregate value (sum of buildCost) totals. The four built/lost
+	// totals replace their count siblings on the score screen; the two
+	// destroyed totals feed the efficiency column (value killed / income).
+	Int m_totalUnitsBuiltValue;
+	Int m_totalUnitsLostValue;
+	Int m_totalUnitsDestroyedValue;
+	Int m_totalBuildingsBuiltValue;
+	Int m_totalBuildingsLostValue;
+	Int m_totalBuildingsDestroyedValue;
+
 	const Image *m_sideImage;
 };
 void populateSideInfo( UnicodeString side,ScoreGather *sg, Int pos, Color color);
@@ -1451,20 +1462,20 @@ void populatePlayerInfo( Player *player, Int pos)
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
 
-	// set the total units built
+	// set the total units built (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->getTotalUnitsBuilt());
+	winValue.format(L"%d", scoreKpr->getTotalUnitsBuiltValue());
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total units Lost
+	// set the total units Lost (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->getTotalUnitsLost());
+	winValue.format(L"%d", scoreKpr->getTotalUnitsLostValue());
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
@@ -1478,20 +1489,20 @@ void populatePlayerInfo( Player *player, Int pos)
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsBuilt
+	// set the total BuildingsBuilt (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->getTotalBuildingsBuilt());
+	winValue.format(L"%d", scoreKpr->getTotalBuildingsBuiltValue());
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsLost
+	// set the total BuildingsLost (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->getTotalBuildingsLost());
+	winValue.format(L"%d", scoreKpr->getTotalBuildingsLostValue());
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
@@ -1536,16 +1547,26 @@ void populatePlayerInfo( Player *player, Int pos)
 		}
 	}
 
-	// set the Score
-	/*
-winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
+	// set the Score field — repurposed as the efficiency column. Efficiency
+	// = (value of units + buildings killed) / income * 100. The layout's
+	// header still reads "Score" since the .wnd ships in a packed .big; the
+	// number underneath is what matters.
+	winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->calculateScore());
+	{
+		const Int earned = scoreKpr->getTotalMoneyEarned();
+		const Int killedValue = scoreKpr->getTotalUnitsDestroyedValue()
+			+ scoreKpr->getTotalBuildingsDestroyedValue();
+		if (earned > 0)
+			winValue.format(L"%d%%", (killedValue * 100) / earned);
+		else
+			winValue.set(L"-");
+	}
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
-*/
+
 	// set the Buttons
 //	winName.format("ScoreScreen.wnd:ButtonAdd%d", pos);
 	//	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
@@ -2185,6 +2206,12 @@ void grabSinglePlayerInfo()
 		sg.m_totalUnitsBuilt = 0;
 		sg.m_totalUnitsDestroyed = 0;
 		sg.m_totalUnitsLost = 0;
+		sg.m_totalUnitsBuiltValue = 0;
+		sg.m_totalUnitsLostValue = 0;
+		sg.m_totalUnitsDestroyedValue = 0;
+		sg.m_totalBuildingsBuiltValue = 0;
+		sg.m_totalBuildingsLostValue = 0;
+		sg.m_totalBuildingsDestroyedValue = 0;
 		sg.m_sideImage = nullptr;
 		Bool populate = FALSE;
 		Color color;
@@ -2208,6 +2235,12 @@ void grabSinglePlayerInfo()
 						sg.m_totalUnitsBuilt += sk->getTotalUnitsBuilt();
 						sg.m_totalUnitsDestroyed += sk->getTotalUnitsDestroyed();
 						sg.m_totalUnitsLost += sk->getTotalUnitsLost();
+						sg.m_totalUnitsBuiltValue       += sk->getTotalUnitsBuiltValue();
+						sg.m_totalUnitsLostValue        += sk->getTotalUnitsLostValue();
+						sg.m_totalUnitsDestroyedValue   += sk->getTotalUnitsDestroyedValue();
+						sg.m_totalBuildingsBuiltValue   += sk->getTotalBuildingsBuiltValue();
+						sg.m_totalBuildingsLostValue    += sk->getTotalBuildingsLostValue();
+						sg.m_totalBuildingsDestroyedValue += sk->getTotalBuildingsDestroyedValue();
 						sg.m_sideImage = player->getPlayerTemplate()->getSideIconImage();
 						color = player->getPlayerColor();
 						populate = TRUE;
@@ -2297,13 +2330,11 @@ void hideWindows( Int pos )
 		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 		win->winHide(TRUE);
 
-		// set the total score
-		/*
-winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
+		// hide the score (efficiency) column for slots we're not using
+		winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
 		win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 		DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 		win->winHide(TRUE);
-*/
 
 		// Set the Game Winner marker
 		winName.format("ScoreScreen.wnd:GameWindowWinner%d", i);
@@ -2389,13 +2420,11 @@ void setObserverWindows( Player *player, Int i )
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
 
-	// set the total score
-	/*
-winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
+	// hide the score (efficiency) column for observers
+	winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
-*/
 
 	// Set the Game Winner marker
 	winName.format("ScoreScreen.wnd:GameWindowWinner%d", i);
@@ -2478,20 +2507,20 @@ void populateSideInfo( UnicodeString side,ScoreGather *sg, Int pos, Color color)
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
 
-	// set the total units built
+	// set the total units built (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", sg->m_totalUnitsBuilt);
+	winValue.format(L"%d", sg->m_totalUnitsBuiltValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total units Lost
+	// set the total units Lost (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", sg->m_totalUnitsLost);
+	winValue.format(L"%d", sg->m_totalUnitsLostValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
@@ -2505,20 +2534,20 @@ void populateSideInfo( UnicodeString side,ScoreGather *sg, Int pos, Color color)
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsBuilt
+	// set the total BuildingsBuilt (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", sg->m_totalBuildingsBuilt);
+	winValue.format(L"%d", sg->m_totalBuildingsBuiltValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsLost
+	// set the total BuildingsLost (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", sg->m_totalBuildingsLost);
+	winValue.format(L"%d", sg->m_totalBuildingsLostValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
@@ -2541,16 +2570,23 @@ void populateSideInfo( UnicodeString side,ScoreGather *sg, Int pos, Color color)
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the Score
-	/*
-winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
+	// set the Score field — repurposed as the efficiency column.
+	// Efficiency = (value killed) / income * 100 across the aggregated side.
+	winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	winValue.format(L"%d", scoreKpr->calculateScore());
+	{
+		const Int earned = sg->m_totalMoneyEarned;
+		const Int killedValue = sg->m_totalUnitsDestroyedValue
+			+ sg->m_totalBuildingsDestroyedValue;
+		if (earned > 0)
+			winValue.format(L"%d%%", (killedValue * 100) / earned);
+		else
+			winValue.set(L"-");
+	}
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
-*/
 
 	// set a marker for who won and lost
 	winName.format("ScoreScreen.wnd:GameWindowWinner%d", pos);
