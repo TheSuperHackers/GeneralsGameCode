@@ -14,6 +14,8 @@ if(NOT Stb_FOUND)
 
 	FetchContent_MakeAvailable(stb)
 
-	add_library(stb INTERFACE)
-	target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+	set(Stb_INCLUDE_DIR ${stb_SOURCE_DIR})
 endif()
+
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE ${Stb_INCLUDE_DIR})
