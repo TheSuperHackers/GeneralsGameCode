@@ -1409,19 +1409,20 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
             sys->attachToObject(target);
             sys->setPosition( &offs );
             sys->setSystemLifetime( data->m_effectDuration * durationInterleaveFactor ); //lifetime of the system, not the particles
+
           }
+        }
 
 #if RETAIL_COMPATIBLE_CRC
-          // TheSuperHackers @fix stephanmeesters 18/05/2026 Fix issue where the creation of a certain particle system
-          // would influence game logic CRC due to the incorrect usage of game logic RNG. This code block is required to
-          // forward the game logic RNG and keep things consistent.
-          if(sys)
-          {
-            Coord3D offs = { 0,0,0 };
-            target->getGeometryInfo().makeGameLogicRandomOffsetWithinFootprint(offs);
-          }
-#endif
+        // TheSuperHackers @fix stephanmeesters 18/05/2026 Fix issue where the creation of a certain particle system
+        // would influence game logic CRC due to the incorrect usage of game logic RNG. This code block is required to
+        // forward the game logic RNG and keep things consistent.
+        if(tmp)
+        {
+          Coord3D offs = { 0,0,0 };
+          target->getGeometryInfo().makeGameLogicRandomOffsetWithinFootprint(offs);
         }
+#endif
       }
       break;
     }

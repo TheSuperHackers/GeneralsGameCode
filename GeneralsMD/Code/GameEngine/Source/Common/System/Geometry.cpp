@@ -424,59 +424,6 @@ static void makeRandomOffsetWithinFootprint(
 	};
 }
 
-//=============================================================================
-static void makeRandomOffsetOnPerimeter(
-	Real (*randomReal)(Real lo, Real hi),
-	GeometryType type,
-	Real majorRadius,
-	Real minorRadius,
-	Coord3D& pt)
-{
-	switch(type)
-	{
-		case GEOMETRY_SPHERE:
-		case GEOMETRY_CYLINDER:
-		{
-			DEBUG_CRASH( ("GeometryInfo::makeRandomOffsetOnPerimeter() not implemented for SPHERE or CYLINDER extents. Using position.") );
-
-			//Kris: Did not have time nor need to support non-box extents. I added this feature for script placement
-			//      of boobytraps.
-			pt.x = 0.0f;
-			pt.y = 0.0f;
-			break;
-		}
-
-		case GEOMETRY_BOX:
-		{
-			if( randomReal( 0.0f, 1.0f ) < 0.5f )
-			{
-				//Pick random point on x axis.
-				pt.x = randomReal(-majorRadius, majorRadius);
-
-				//Min or max the y axis value
-				if( randomReal( 0.0f, 1.0f ) < 0.5f )
-					pt.y = -minorRadius;
-				else
-					pt.y = minorRadius;
-			}
-			else
-			{
-				//Pick random point on y axis.
-				pt.y = randomReal(-minorRadius, minorRadius);
-
-				//Min or max the x axis value
-				if( randomReal( 0.0f, 1.0f ) < 0.5f )
-					pt.x = -majorRadius;
-				else
-					pt.x = majorRadius;
-			}
-			pt.z = 0.0f;
-			break;
-		}
-	};
-}
-
-//-----------------------------------------------------------------------------
 static Real GameLogicGeometryRandomReal(Real lo, Real hi)
 {
 	return GameLogicRandomValueReal(lo, hi);
@@ -497,14 +444,51 @@ void GeometryInfo::makeGameClientRandomOffsetWithinFootprint(Coord3D& pt) const
 	makeRandomOffsetWithinFootprint(GameClientGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, m_boundingCircleRadius, pt);
 }
 
-void GeometryInfo::makeGameLogicRandomOffsetOnPerimeter(Coord3D& pt) const
+//=============================================================================
+void GeometryInfo::makeRandomOffsetOnPerimeter(Coord3D& pt) const
 {
-	makeRandomOffsetOnPerimeter(GameLogicGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, pt);
-}
+	switch(m_type)
+	{
+		case GEOMETRY_SPHERE:
+		case GEOMETRY_CYLINDER:
+		{
+			DEBUG_CRASH( ("GeometryInfo::makeRandomOffsetOnPerimeter() not implemented for SPHERE or CYLINDER extents. Using position.") );
 
-void GeometryInfo::makeGameClientRandomOffsetOnPerimeter(Coord3D& pt) const
-{
-	makeRandomOffsetOnPerimeter(GameClientGeometryRandomReal, m_type, m_majorRadius, m_minorRadius, pt);
+			//Kris: Did not have time nor need to support non-box extents. I added this feature for script placement
+			//      of boobytraps.
+			pt.x = 0.0f;
+			pt.y = 0.0f;
+			break;
+		}
+
+		case GEOMETRY_BOX:
+		{
+			if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+			{
+				//Pick random point on x axis.
+				pt.x = GameLogicRandomValueReal(-m_majorRadius, m_majorRadius);
+
+				//Min or max the y axis value
+				if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+					pt.y = -m_minorRadius;
+				else
+					pt.y = m_minorRadius;
+			}
+			else
+			{
+				//Pick random point on y axis.
+				pt.y = GameLogicRandomValueReal(-m_minorRadius, m_minorRadius);
+
+				//Min or max the x axis value
+				if( GameLogicRandomValueReal( 0.0f, 1.0f ) < 0.5f )
+					pt.x = -m_majorRadius;
+				else
+					pt.x = m_majorRadius;
+			}
+			pt.z = 0.0f;
+			break;
+		}
+	};
 }
 
 //=============================================================================

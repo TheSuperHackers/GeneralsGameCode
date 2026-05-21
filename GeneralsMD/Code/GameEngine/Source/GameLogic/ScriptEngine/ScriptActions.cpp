@@ -3729,7 +3729,7 @@ void ScriptActions::doNamedSetBoobytrapped( const AsciiString& thingTemplateName
 				{
 					//The charge gets positioned randomly on the outside of the perimeter of the victim.
 					Coord3D pos;
-					obj->getGeometryInfo().makeGameLogicRandomOffsetOnPerimeter( pos );
+					obj->getGeometryInfo().makeRandomOffsetOnPerimeter( pos );
 
 					//Get the angle and transform matrix from the obj... then transform the calculated
 					//position
@@ -3768,7 +3768,7 @@ void ScriptActions::doTeamSetBoobytrapped( const AsciiString& thingTemplateName,
 				{
 					//The charge gets positioned randomly on the outside of the perimeter of the victim.
 					Coord3D pos;
-					obj->getGeometryInfo().makeGameLogicRandomOffsetOnPerimeter( pos );
+					obj->getGeometryInfo().makeRandomOffsetOnPerimeter( pos );
 
 					//Get the angle and transform matrix from the obj... then transform the calculated
 					//position

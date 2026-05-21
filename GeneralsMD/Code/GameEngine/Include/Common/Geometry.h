@@ -172,9 +172,8 @@ public:
 	void get2DBounds(const Coord3D& geomCenter, Real angle, Region2D& bounds	) const;
 
 	void makeGameLogicRandomOffsetWithinFootprint(Coord3D& pt) const;
-	void makeGameLogicRandomOffsetOnPerimeter(Coord3D& pt) const;
 	void makeGameClientRandomOffsetWithinFootprint(Coord3D& pt) const;
-	void makeGameClientRandomOffsetOnPerimeter(Coord3D& pt) const;
+	void makeRandomOffsetOnPerimeter(Coord3D& pt) const; //Chooses a random point on the extent border.
 
 	void clipPointToFootprint(const Coord3D& geomCenter, Coord3D& ptToClip) const;
 
