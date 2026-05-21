@@ -67,20 +67,14 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 {
 	char leafname[_MAX_FNAME];
 	char pathname[_MAX_PATH];
-	static int jpegFrameNumber = 1;
-	static int pngFrameNumber = 1;
-
-	int* frameNumber = (format == SCREENSHOT_JPEG) ? &jpegFrameNumber : &pngFrameNumber;
 	const char* extension = (format == SCREENSHOT_JPEG) ? "jpg" : "png";
 
-	Bool done = false;
-	while (!done) {
-		sprintf(leafname, "sshot%.3d.%s", (*frameNumber)++, extension);
-		strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
-		strlcat(pathname, leafname, ARRAY_SIZE(pathname));
-		if (_access(pathname, 0) == -1)
-			done = true;
-	}
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	sprintf(leafname, "sshot_%04d%02d%02d_%02d%02d%02d_%03d.%s",
+		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
+	strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
+	strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 
 	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
 	SurfaceClass::SurfaceDescription surfaceDesc;
