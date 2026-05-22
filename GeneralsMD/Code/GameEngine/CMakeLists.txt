@@ -1170,6 +1170,9 @@ target_sources(z_gameengine PRIVATE ${GAMEENGINE_SRC})
 set_source_files_properties(Source/Common/LobbyDiscord.cpp PROPERTIES
     OBJECT_DEPENDS "${ZULU_DISCORD_WEBHOOK_GENERATED_DIR}/DiscordWebhook.h")
 
+set_source_files_properties(Source/Common/StatsUploader.cpp PROPERTIES
+    OBJECT_DEPENDS "${ZULU_CLIENT_KEY_GENERATED_DIR}/ZuluClientKey.h")
+
 target_include_directories(z_gameengine PUBLIC
     Include
 )
