@@ -330,28 +330,22 @@ void EMPUpdate::doDisableAttack()
 							sys->setSystemLifetime(MAX(0, data->m_disabledDuration - 30));
 							sys->setInitialDelay(GameClientRandomValue(1,100));
 						}
+
+#if RETAIL_COMPATIBLE_CRC
+						// TheSuperHackers @fix stephanmeesters 18/05/2026 Fix issue where the creation of a certain particle system
+						// would influence game logic CRC due to the incorrect usage of game logic RNG. This code block is required to
+						// forward the game logic RNG and keep things consistent.
+						if (sys)
+						{
+							Coord3D offs = { 0,0,0 };
+							curVictim->getGeometryInfo().makeGameLogicRandomOffsetWithinFootprint(offs);
+							static_cast<void>(GameLogicRandomValue(0, 1));
+							static_cast<void>(GameLogicRandomValue(0, 1));
+						}
+#endif
 					}
 				}
 
-#if RETAIL_COMPATIBLE_CRC
-				// TheSuperHackers @fix stephanmeesters 18/05/2026 Fix issue where the creation of a certain particle system
-				// would influence game logic CRC due to the incorrect usage of game logic RNG. This code block is required to
-				// forward the game logic RNG and keep things consistent.
-				if(tmp)
-				{
-					Real victimHeight = curVictim->getGeometryInfo().getMaxHeightAbovePosition();
-					Real victimFootprintArea = curVictim->getGeometryInfo().getFootprintArea();
-					Real victimVolume = victimFootprintArea * MIN(victimHeight, 10.0f);
-					UnsignedInt emitterCount = MAX(15, REAL_TO_INT_CEIL(data->m_sparksPerCubicFoot * victimVolume));
-					for (UnsignedInt e = 0 ; e < emitterCount; ++e)
-					{
-						Coord3D offs = { 0,0,0 };
-						curVictim->getGeometryInfo().makeGameLogicRandomOffsetWithinFootprint(offs);
-						static_cast<void>(GameLogicRandomValue(0, 1));
-						static_cast<void>(GameLogicRandomValue(0, 1));
-					}
-				}
-#endif
 			}
 		}
 	}

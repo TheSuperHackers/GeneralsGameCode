@@ -412,33 +412,29 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 
 					}
 
-				}
-
-			}
-
 #if RETAIL_COMPATIBLE_CRC
-			// TheSuperHackers @fix stephanmeesters 18/05/2026 Fix issue where the creation of a certain particle system
-			// would influence game logic CRC due to the incorrect usage of game logic RNG. This code block is required to
-			// forward the game logic RNG and keep things consistent.
-			if(pSystemT)
-			{
-				if( lastDamageInfo == nullptr ||
-					getDamageTypeFlag( modData->m_damageParticleTypes, lastDamageInfo->in.m_damageType ) )
-				{
-					const FXLocInfo* locInfo = &modData->m_particleSystem[newState][i].locInfo;
-					if( locInfo->locType == FX_DAMAGE_LOC_TYPE_BONE && locInfo->randomBone && draw )
+					// TheSuperHackers @fix stephanmeesters 18/05/2026 Fix issue where the creation of a certain particle system
+					// would influence game logic CRC due to the incorrect usage of game logic RNG. This code block is required to
+					// forward the game logic RNG and keep things consistent.
+					if ( pSystem )
 					{
-						const Int MAX_BONES = 32;
-						Coord3D positions[ MAX_BONES ];
-						Int boneCount = draw->getPristineBonePositions( locInfo->boneName.str(), 1, positions, nullptr, MAX_BONES );
-						if( boneCount > 0 )
+						const FXLocInfo* locInfo = &modData->m_particleSystem[newState][i].locInfo;
+						if( locInfo->locType == FX_DAMAGE_LOC_TYPE_BONE && locInfo->randomBone && draw )
 						{
-							static_cast<void>(GameLogicRandomValue( 0, boneCount - 1 ));
+							const Int MAX_BONES = 32;
+							Coord3D positions[ MAX_BONES ];
+							Int boneCount = draw->getPristineBonePositions( locInfo->boneName.str(), 1, positions, nullptr, MAX_BONES );
+							if( boneCount > 0 )
+							{
+								static_cast<void>(GameLogicRandomValue( 0, boneCount - 1 ));
+							}
 						}
 					}
-				}
-			}
 #endif
+
+				}
+
+			}
 		}
 
 	}
