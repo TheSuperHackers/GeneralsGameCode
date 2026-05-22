@@ -467,22 +467,22 @@ Real GameLogicRandomVariable::getValue() const
 }
 
 
-Int LogicRandomValueClass::GetGameRandomValue( Int lo, Int hi, const char *file, Int line ) const
+Int LogicRandomValueClass::GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const
 {
 	return GetGameLogicRandomValue(lo, hi, file, line);
 }
 
-Real LogicRandomValueClass::GetGameRandomValueReal( Real lo, Real hi, const char *file, Int line ) const
+Real LogicRandomValueClass::GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const
 {
 	return GetGameLogicRandomValueReal(lo, hi, file, line);
 }
 
-Int ClientRandomValueClass::GetGameRandomValue( Int lo, Int hi, const char *file, Int line ) const
+Int ClientRandomValueClass::GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const
 {
 	return GetGameClientRandomValue(lo, hi, file, line);
 }
 
-Real ClientRandomValueClass::GetGameRandomValueReal( Real lo, Real hi, const char *file, Int line ) const
+Real ClientRandomValueClass::GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const
 {
 	return GetGameClientRandomValueReal(lo, hi, file, line);
 }

@@ -37,22 +37,22 @@ extern UnsignedInt GetGameLogicRandomSeedCRC();///< Get the seed (used for CRCs)
 
 struct RandomValueClass
 {
-	virtual Int GetGameRandomValue( Int lo, Int hi, const char *file, Int line ) const = 0;
-	virtual Real GetGameRandomValueReal( Real lo, Real hi, const char *file, Int line ) const = 0;
+	virtual Int GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const = 0;
+	virtual Real GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const = 0;
 };
 struct LogicRandomValueClass final : RandomValueClass
 {
-	virtual Int GetGameRandomValue( Int lo, Int hi, const char *file, Int line ) const override;
-	virtual Real GetGameRandomValueReal( Real lo, Real hi, const char *file, Int line ) const override;
+	virtual Int GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const override;
+	virtual Real GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const override;
 };
 struct ClientRandomValueClass final : RandomValueClass
 {
-	virtual Int GetGameRandomValue( Int lo, Int hi, const char *file, Int line ) const override;
-	virtual Real GetGameRandomValueReal( Real lo, Real hi, const char *file, Int line ) const override;
+	virtual Int GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const override;
+	virtual Real GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const override;
 };
 
 // use these macros to access the random value functions
-#define GameRandomValue(randomValueClass, hi, lo) randomValueClass.GetGameRandomValue( lo, hi, __FILE__, __LINE__ )
-#define GameRandomValueReal(randomValueClass, hi, lo) randomValueClass.GetGameRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define RandomValueInt(randomValueClass, hi, lo) randomValueClass.GetRandomValueInt( lo, hi, __FILE__, __LINE__ )
+#define RandomValueReal(randomValueClass, hi, lo) randomValueClass.GetRandomValueReal( lo, hi, __FILE__, __LINE__ )
 
 //--------------------------------------------------------------------------------------------------------------

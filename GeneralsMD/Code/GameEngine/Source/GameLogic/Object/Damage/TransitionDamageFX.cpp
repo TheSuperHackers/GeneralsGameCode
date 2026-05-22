@@ -290,7 +290,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw, cons
 				return locInfo->loc;
 
 			// pick one of the bone positions
-			Int pick = GameRandomValue( random, 0, boneCount - 1 );
+			Int pick = RandomValueInt( random, 0, boneCount - 1 );
 			return positions[ pick ];
 
 		}

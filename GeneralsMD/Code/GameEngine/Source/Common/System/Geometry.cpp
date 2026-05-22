@@ -390,14 +390,14 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt, const RandomValu
 			Real distSqr;
 			do
 			{
-				pt.x = GameRandomValueReal(random, -m_majorRadius, m_majorRadius);
-				pt.y = GameRandomValueReal(random, -m_majorRadius, m_majorRadius);
+				pt.x = RandomValueReal(random, -m_majorRadius, m_majorRadius);
+				pt.y = RandomValueReal(random, -m_majorRadius, m_majorRadius);
 				pt.z = 0.0f;
 				distSqr = sqr(pt.x) + sqr(pt.y);
 			} while (distSqr > maxDistSqr);
 #else
-			Real radius = GameRandomValueReal(random, 0.0f, m_boundingCircleRadius);
-			Real angle = GameRandomValueReal(random, -PI, PI);
+			Real radius = RandomValueReal(random, 0.0f, m_boundingCircleRadius);
+			Real angle = RandomValueReal(random, -PI, PI);
 			pt.x = radius * Cos(angle);
 			pt.y = radius * Sin(angle);
 			pt.z = 0.0f;
@@ -407,8 +407,8 @@ void GeometryInfo::makeRandomOffsetWithinFootprint(Coord3D& pt, const RandomValu
 
 		case GEOMETRY_BOX:
 		{
-			pt.x = GameRandomValueReal(random, -m_majorRadius, m_majorRadius);
-			pt.y = GameRandomValueReal(random, -m_minorRadius, m_minorRadius);
+			pt.x = RandomValueReal(random, -m_majorRadius, m_majorRadius);
+			pt.y = RandomValueReal(random, -m_minorRadius, m_minorRadius);
 			pt.z = 0.0f;
 			break;
 		}
