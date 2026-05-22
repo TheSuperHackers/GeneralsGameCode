@@ -850,7 +850,7 @@ class ParticleSystemManagerDummy : public ParticleSystemManager
 	struct StaticParticleSystem : public ParticleSystem
 	{
 		StaticParticleSystem(const StaticParticleSystemTemplate *sysTemplate)
-			: ParticleSystem(sysTemplate, ParticleSystemID(0), TRUE) {}
+			: ParticleSystem(sysTemplate, ParticleSystemID(0), false) {}
 	};
 #endif
 
