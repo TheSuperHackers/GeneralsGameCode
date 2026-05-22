@@ -52,7 +52,7 @@ struct ClientRandomValueClass final : RandomValueClass
 };
 
 // use these macros to access the random value functions
-#define RandomValueInt(randomValueClass, hi, lo) randomValueClass.GetRandomValueInt( lo, hi, __FILE__, __LINE__ )
-#define RandomValueReal(randomValueClass, hi, lo) randomValueClass.GetRandomValueReal( lo, hi, __FILE__, __LINE__ )
+#define RandomValueInt(randomValueClass, lo, hi) randomValueClass.GetRandomValueInt( lo, hi, __FILE__, __LINE__ )
+#define RandomValueReal(randomValueClass, lo, hi) randomValueClass.GetRandomValueReal( lo, hi, __FILE__, __LINE__ )
 
 //--------------------------------------------------------------------------------------------------------------
