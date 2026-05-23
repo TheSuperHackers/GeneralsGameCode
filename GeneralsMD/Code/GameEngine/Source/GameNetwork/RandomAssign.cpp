@@ -537,6 +537,29 @@ bool tryBalanceTeamsViaApi(GameInfo *game, AsciiString *outError)
 		}
 	}
 
+	// Ensure the host (slot 0) ends up on team 0 (UI "Team 1"). If the host
+	// landed on team 1 because of how the server split names, flip both teams
+	// so the host's side is always Team 1.
+	Int hostTeam = -1;
+	for (pi = 0; pi < plans.size(); ++pi)
+	{
+		if (plans[pi].slotIdx == 0)
+		{
+			hostTeam = plans[pi].team;
+			break;
+		}
+	}
+	if (hostTeam == 1)
+	{
+		for (pi = 0; pi < plans.size(); ++pi)
+		{
+			if (plans[pi].team == 0)
+				plans[pi].team = 1;
+			else if (plans[pi].team == 1)
+				plans[pi].team = 0;
+		}
+	}
+
 	for (pi = 0; pi < plans.size(); ++pi)
 	{
 		GameSlot *slot = game->getSlot(plans[pi].slotIdx);
