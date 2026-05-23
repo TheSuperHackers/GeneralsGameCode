@@ -951,8 +951,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 189 72,
-                   BOTTOMRIGHT: 249 120,
+      SCREENRECT = UPPERLEFT: 163 72,
+                   BOTTOMRIGHT: 223 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoUnitsCreated";
       STATUS = ENABLED+IMAGE;
@@ -998,8 +998,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 261 72,
-                   BOTTOMRIGHT: 321 120,
+      SCREENRECT = UPPERLEFT: 233 72,
+                   BOTTOMRIGHT: 293 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoUnitsLost";
       STATUS = ENABLED+IMAGE;
@@ -1045,8 +1045,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 336 72,
-                   BOTTOMRIGHT: 396 120,
+      SCREENRECT = UPPERLEFT: 303 72,
+                   BOTTOMRIGHT: 363 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoUnitsDestroyed";
       STATUS = ENABLED+IMAGE;
@@ -1092,8 +1092,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 417 72,
-                   BOTTOMRIGHT: 477 120,
+      SCREENRECT = UPPERLEFT: 373 72,
+                   BOTTOMRIGHT: 433 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoBuildingCreated";
       STATUS = ENABLED+IMAGE;
@@ -1139,8 +1139,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 500 72,
-                   BOTTOMRIGHT: 560 120,
+      SCREENRECT = UPPERLEFT: 443 72,
+                   BOTTOMRIGHT: 503 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoBuildingLost";
       STATUS = ENABLED+IMAGE;
@@ -1186,8 +1186,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 587 72,
-                   BOTTOMRIGHT: 647 120,
+      SCREENRECT = UPPERLEFT: 513 72,
+                   BOTTOMRIGHT: 573 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoBuildingDestroyed";
       STATUS = ENABLED+IMAGE;
@@ -1233,8 +1233,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 675 72,
-                   BOTTOMRIGHT: 735 120,
+      SCREENRECT = UPPERLEFT: 598 72,
+                   BOTTOMRIGHT: 658 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoSuppliesCollected";
       STATUS = ENABLED+IMAGE;
@@ -1250,6 +1250,53 @@ WINDOW
                   DISABLED: 255 255 255 0, DISABLEDBORDER: 255 255 255 0,
                   HILITE:   255 255 255 0, HILITEBORDER:   255 255 255 0;
       ENABLEDDRAWDATA = IMAGE: SuppliesCollected, COLOR: 0 0 0 255, BORDERCOLOR: 0 0 0 255,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
+      DISABLEDDRAWDATA = IMAGE: NoImage, COLOR: 0 0 64 255, BORDERCOLOR: 0 0 0 255,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
+      HILITEDRAWDATA = IMAGE: NoImage, COLOR: 0 0 255 255, BORDERCOLOR: 0 0 0 255,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
+                       IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
+    END
+    CHILD
+    WINDOW
+      WINDOWTYPE = USER;
+      SCREENRECT = UPPERLEFT: 708 72,
+                   BOTTOMRIGHT: 768 120,
+                   CREATIONRESOLUTION: 800 600;
+      NAME = "ScoreScreen.wnd:CameoEfficiency";
+      STATUS = ENABLED+IMAGE;
+      STYLE = USER;
+      SYSTEMCALLBACK = "[None]";
+      INPUTCALLBACK = "[None]";
+      TOOLTIPCALLBACK = "[None]";
+      DRAWCALLBACK = "[None]";
+      FONT = NAME: "Times New Roman", SIZE: 14, BOLD: 0;
+      HEADERTEMPLATE = "[NONE]";
+      TOOLTIPDELAY = -1;
+      TEXTCOLOR = ENABLED:  255 255 255 0, ENABLEDBORDER:  255 255 255 0,
+                  DISABLED: 255 255 255 0, DISABLEDBORDER: 255 255 255 0,
+                  HILITE:   255 255 255 0, HILITEBORDER:   255 255 255 0;
+      ENABLEDDRAWDATA = IMAGE: EfficiencyIcon, COLOR: 0 0 0 255, BORDERCOLOR: 0 0 0 255,
                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                         IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
