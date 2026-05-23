@@ -860,14 +860,23 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 		{
 			if(gs->getStartPos() >=0 && gs->getStartPos() < mmd.m_numPlayers && gs->getPlayerTemplate() > PLAYERTEMPLATE_MIN )
 			{
+				GameWindow *btn = buttonMapStartPositions[gs->getStartPos()];
 				AsciiString displayNumber;
 				displayNumber.format("NUMBER:%d",i + 1);
-				GadgetButtonSetText(buttonMapStartPositions[gs->getStartPos()], TheGameText->fetch(displayNumber));
+				GadgetButtonSetText(btn, TheGameText->fetch(displayNumber));
 				//added start position tooltip
 				//Fixed again to show the right number , ie "i + 1"
 				UnicodeString temp;
 				temp.format(TheGameText->fetch("TOOLTIP:StartPositionN"), i + 1);
-				buttonMapStartPositions[gs->getStartPos()]->winSetTooltip(temp);
+				btn->winSetTooltip(temp);
+
+				// Tint the start-position marker by the slot's team color so the
+				// mini-map preview matches the team-number dropdown.
+				Int team = gs->getTeamNumber();
+				Color col = (team >= 0)
+					? GetTeamUiColor(team)
+					: GameMakeColor(255, 255, 255, 255);
+				GadgetTextEntrySetTextColor(btn, col);
 			}
 		}
 	}
