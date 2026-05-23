@@ -27,6 +27,8 @@
 
 #pragma once
 
+#include "GameClient/Color.h"
+
 class GameWindow;
 class GameInfo;
 
@@ -37,6 +39,10 @@ void PopulateColorComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myG
 void PopulatePlayerTemplateComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGame, Bool allowObservers );
 void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGame, Bool isObserver = FALSE);
 void PopulateStartingCashComboBox(GameWindow *comboBox, GameInfo *myGame);
+
+// Lobby team-number text color. teamNumber is 0-based (team 1 = 0, etc.);
+// negative values (no team) return white.
+Color GetTeamUiColor( Int teamNumber );
 
 void EnableSlotListUpdates( Bool val );
 Bool AreSlotListUpdatesEnabled();

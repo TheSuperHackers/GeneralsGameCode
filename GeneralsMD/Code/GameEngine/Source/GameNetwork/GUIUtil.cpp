@@ -291,6 +291,20 @@ void PopulatePlayerTemplateComboBox(Int comboBox, GameWindow *comboArray[], Game
 
 // -----------------------------------------------------------------------------
 
+// Maps 0-based team index to the dropdown / mini-map text color used in
+// the lobby. Negative input (the "no team" entry) returns white.
+Color GetTeamUiColor( Int teamNumber )
+{
+	switch (teamNumber)
+	{
+		case 0: return GameMakeColor(255, 220,  60, 255); // Team 1: Yellow
+		case 1: return GameMakeColor(255,  60,  60, 255); // Team 2: Red
+		case 2: return GameMakeColor(200, 100, 255, 255); // Team 3: Purple
+		case 3: return GameMakeColor( 60, 120, 255, 255); // Team 4: Blue
+	}
+	return GameMakeColor(255, 255, 255, 255);
+}
+
 void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGame, Bool isObserver)
 {
 	Int numTeams = MAX_SLOTS/2;
@@ -313,7 +327,7 @@ void PopulateTeamComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myGa
 		AsciiString teamStr;
 		teamStr.format("Team:%d", c + 1);
 		teamName = TheGameText->fetch(teamStr.str());
-		newIndex = GadgetComboBoxAddEntry(comboArray[comboBox], teamName, def->getColor());
+		newIndex = GadgetComboBoxAddEntry(comboArray[comboBox], teamName, GetTeamUiColor(c));
 		GadgetComboBoxSetItemData(comboArray[comboBox], newIndex, (void *)c);
 	}
 	GadgetComboBoxSetSelectedPos(comboArray[comboBox], 0);
