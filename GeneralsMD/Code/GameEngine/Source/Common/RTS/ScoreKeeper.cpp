@@ -390,6 +390,64 @@ Int ScoreKeeper::getTotalUnitsDestroyed()
 	return count;
 }
 
+// Sum (count * buildCost) across a map, filtered by KINDOF_STRUCTURE so
+// we can distinguish unit value from building value. Entries already
+// passed addObjectBuilt/Lost/Destroyed's scoring gates, so non-structure
+// entries are guaranteed to be score-worthy units. const-iterates a
+// non-const map by passing the map address through the function param.
+static Int sumBuildCost(const ScoreKeeper::ObjectCountMap *map, Bool wantStructures)
+{
+	Int total = 0;
+	if (map == nullptr)
+		return 0;
+	for (ScoreKeeper::ObjectCountMap::const_iterator it = map->begin(); it != map->end(); ++it)
+	{
+		const ThingTemplate *t = it->first;
+		if (t == nullptr)
+			continue;
+		const Bool isStructure = t->isKindOf(KINDOF_STRUCTURE);
+		if (isStructure == wantStructures)
+			total += it->second * (Int)t->friend_getBuildCost();
+	}
+	return total;
+}
+
+Int ScoreKeeper::getTotalUnitsBuiltValue() const
+{
+	return sumBuildCost(&m_objectsBuilt, FALSE);
+}
+
+Int ScoreKeeper::getTotalUnitsLostValue() const
+{
+	return sumBuildCost(&m_objectsLost, FALSE);
+}
+
+Int ScoreKeeper::getTotalUnitsDestroyedValue() const
+{
+	Int total = 0;
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		total += sumBuildCost(&m_objectsDestroyed[i], FALSE);
+	return total;
+}
+
+Int ScoreKeeper::getTotalBuildingsBuiltValue() const
+{
+	return sumBuildCost(&m_objectsBuilt, TRUE);
+}
+
+Int ScoreKeeper::getTotalBuildingsLostValue() const
+{
+	return sumBuildCost(&m_objectsLost, TRUE);
+}
+
+Int ScoreKeeper::getTotalBuildingsDestroyedValue() const
+{
+	Int total = 0;
+	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		total += sumBuildCost(&m_objectsDestroyed[i], TRUE);
+	return total;
+}
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------

@@ -89,6 +89,23 @@ public:
 	Int getTotalBuildingsDestroyed();
 	Int getTotalBuildingsBuilt() { return m_totalBuildingsBuilt; }
 	Int getTotalBuildingsLost() { return m_totalBuildingsLost; }
+
+	// Value (sum of buildCost) versions of the count accessors above.
+	// Built/lost iterate this scorekeeper's own object maps; destroyed
+	// iterates the per-target-player destroyed maps and counts ALL
+	// kills (including friendly fire) to match getTotalUnitsDestroyed()
+	// / getTotalBuildingsDestroyed() behavior. Each helper walks the
+	// underlying ObjectCountMap once and filters entries by
+	// KINDOF_STRUCTURE: structures count toward "buildings", everything
+	// else (units that made it into the map already pass the scoring
+	// kind-of gate in addObjectBuilt/addObjectDestroyed/addObjectLost)
+	// counts toward "units".
+	Int getTotalUnitsBuiltValue() const;
+	Int getTotalUnitsLostValue() const;
+	Int getTotalUnitsDestroyedValue() const;
+	Int getTotalBuildingsBuiltValue() const;
+	Int getTotalBuildingsLostValue() const;
+	Int getTotalBuildingsDestroyedValue() const;
 	Int getTotalTechBuildingsCaptured() { return m_totalTechBuildingsCaptured; }
 	Int getTotalFactionBuildingsCaptured() { return m_totalFactionBuildingsCaptured; }
 	Int getTotalObjectsBuilt( const ThingTemplate *pTemplate ); // get a count of objects built matching a specific thing template
@@ -102,6 +119,10 @@ protected:
 	virtual void crc( Xfer *xfer ) override;
 	virtual void xfer( Xfer *xfer ) override;
 	virtual void loadPostProcess() override;
+
+public:
+	typedef std::map<const ThingTemplate *, Int> ObjectCountMap;
+	typedef ObjectCountMap::iterator ObjectCountMapIt;
 
 private:
 
@@ -119,8 +140,6 @@ private:
 
 	Int m_myPlayerIdx;								///< We need to not score kills on ourselves... so we need to know who we are
 
-	typedef std::map<const ThingTemplate *, Int> ObjectCountMap;
-	typedef ObjectCountMap::iterator ObjectCountMapIt;
 	ObjectCountMap m_objectsBuilt;			///< How many and what kinds of objects did we build
 	ObjectCountMap m_objectsDestroyed[MAX_PLAYER_COUNT];		///< How many and what kinds and who's did we kill
 	ObjectCountMap m_objectsLost;				///< how many and what kinds of objects did we loose
