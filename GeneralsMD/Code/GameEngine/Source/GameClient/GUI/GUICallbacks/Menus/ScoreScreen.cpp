@@ -225,6 +225,58 @@ static void zeroAverages(ScoreAverages &a)
 	a.efficiencyPct = 0;
 }
 
+// Per-column min/max captured across the displayed rows. Used to outline
+// the "best" cell in green and the "worst" in red for each column. Loss
+// columns invert: the lowest loss is best, the highest is worst.
+struct ScoreExtremes
+{
+	Int unitsBuiltMin, unitsBuiltMax;
+	Int unitsLostMin, unitsLostMax;
+	Int unitsKilledMin, unitsKilledMax;
+	Int bldgBuiltMin, bldgBuiltMax;
+	Int bldgLostMin, bldgLostMax;
+	Int bldgKilledMin, bldgKilledMax;
+	Int suppliesMin, suppliesMax;
+	Int efficiencyMin, efficiencyMax;
+};
+
+static void seedExtreme(Int v, Int &lo, Int &hi, Bool seen)
+{
+	if (!seen)
+	{
+		lo = v;
+		hi = v;
+		return;
+	}
+	if (v < lo) lo = v;
+	if (v > hi) hi = v;
+}
+
+static const Color kHighlightBest    = GameMakeColor( 60, 200,  60, 255);  // muted green border
+static const Color kHighlightWorst   = GameMakeColor(220,  60,  60, 255);  // muted red border
+static const Color kHighlightDefault = GameMakeColor(  2,   1,   1,   0);  // matches .wnd transparent default
+
+// Outline the cell green if its value is the column's "best" and red if it
+// is the column's "worst". lowIsBest=TRUE inverts the comparison for loss
+// columns. When every row is tied (lo == hi) we clear back to default so
+// the screen does not light up like a Christmas tree.
+static void applyCellHighlight(GameWindow *win, Int value, Int lo, Int hi, Bool lowIsBest)
+{
+	if (!win)
+		return;
+	Color border = kHighlightDefault;
+	if (lo != hi)
+	{
+		const Int best  = lowIsBest ? lo : hi;
+		const Int worst = lowIsBest ? hi : lo;
+		if (value == best)
+			border = kHighlightBest;
+		else if (value == worst)
+			border = kHighlightWorst;
+	}
+	win->winSetEnabledBorderColor(0, border);
+}
+
 // Per-player efficiency in whole percent. Zero income means undefined; we
 // fold it to 0 so the row still participates in the average.
 static Int computeEfficiencyPct(Int killedValue, Int earned)
@@ -1538,7 +1590,7 @@ static inline int CheckForApocalypse( ScoreKeeper *s, const char* szWeapon )
 /** Populate the various windows with the information about the game based on each player's score
 		keeper. */
 //-------------------------------------------------------------------------------------------------
-void populatePlayerInfo( Player *player, Int pos, const ScoreAverages &avgs)
+void populatePlayerInfo( Player *player, Int pos, const ScoreAverages &avgs, const ScoreExtremes *ex)
 {
 	if(!player || pos < 0 || pos >= MAX_SLOTS)
 		return;
@@ -1575,63 +1627,92 @@ void populatePlayerInfo( Player *player, Int pos, const ScoreAverages &avgs)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalUnitsBuiltValue(), avgs.unitsBuiltValue, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalUnitsBuiltValue();
+		formatDollarCell(v, avgs.unitsBuiltValue, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->unitsBuiltMin, ex->unitsBuiltMax, FALSE);
+	}
 	win->winHide(FALSE);
 
-	// set the total units Lost (value, not count)
+	// set the total units Lost (value, not count). Lost columns invert:
+	// the lowest loss is best (green), the highest is worst (red).
 	winName.format("ScoreScreen.wnd:StaticTextUnitsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalUnitsLostValue(), avgs.unitsLostValue, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalUnitsLostValue();
+		formatDollarCell(v, avgs.unitsLostValue, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->unitsLostMin, ex->unitsLostMax, TRUE);
+	}
 	win->winHide(FALSE);
 
 	// set the total units Destroyed (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsDestroyed%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalUnitsDestroyedValue(), avgs.unitsKilledValue, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalUnitsDestroyedValue();
+		formatDollarCell(v, avgs.unitsKilledValue, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->unitsKilledMin, ex->unitsKilledMax, FALSE);
+	}
 	win->winHide(FALSE);
 
 	// set the total BuildingsBuilt (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalBuildingsBuiltValue(), avgs.bldgBuiltValue, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalBuildingsBuiltValue();
+		formatDollarCell(v, avgs.bldgBuiltValue, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->bldgBuiltMin, ex->bldgBuiltMax, FALSE);
+	}
 	win->winHide(FALSE);
 
-	// set the total BuildingsLost (value, not count)
+	// set the total BuildingsLost (value, not count). Lost column inverts.
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalBuildingsLostValue(), avgs.bldgLostValue, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalBuildingsLostValue();
+		formatDollarCell(v, avgs.bldgLostValue, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->bldgLostMin, ex->bldgLostMax, TRUE);
+	}
 	win->winHide(FALSE);
 
 	// set the total BuildingsDestroyed (value, not count)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalBuildingsDestroyedValue(), avgs.bldgKilledValue, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalBuildingsDestroyedValue();
+		formatDollarCell(v, avgs.bldgKilledValue, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->bldgKilledMin, ex->bldgKilledMax, FALSE);
+	}
 	win->winHide(FALSE);
 
 	// set the total Resources
 	winName.format("ScoreScreen.wnd:StaticTextResources%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(scoreKpr->getTotalMoneyEarned(), avgs.suppliesCollected, winValue);
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+	{
+		const Int v = scoreKpr->getTotalMoneyEarned();
+		formatDollarCell(v, avgs.suppliesCollected, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, v, ex->suppliesMin, ex->suppliesMax, FALSE);
+	}
 	win->winHide(FALSE);
 
 	if( player == ThePlayerList->getLocalPlayer() )
@@ -1666,10 +1747,12 @@ void populatePlayerInfo( Player *player, Int pos, const ScoreAverages &avgs)
 	{
 		const Int killedValue = scoreKpr->getTotalUnitsDestroyedValue()
 			+ scoreKpr->getTotalBuildingsDestroyedValue();
+		const Int pct = computeEfficiencyPct(killedValue, scoreKpr->getTotalMoneyEarned());
 		formatEfficiencyCell(killedValue, scoreKpr->getTotalMoneyEarned(), avgs.efficiencyPct, winValue);
+		GadgetStaticTextSetText(win, winValue);
+		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
+		if (ex) applyCellHighlight(win, pct, ex->efficiencyMin, ex->efficiencyMax, FALSE);
 	}
-	GadgetStaticTextSetText(win, winValue);
-	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
 	// set the Buttons
@@ -2205,10 +2288,12 @@ void grabMultiPlayerInfo()
 	}
 	hideWindows(playerCount);
 
-	// Pass 1: accumulate column totals across non-observer rows so the
-	// per-cell deltas can be expressed against the average row.
+	// Pass 1: accumulate column totals + per-column min/max across non-observer
+	// rows so we can render per-cell deltas vs the average and outline the
+	// "best" / "worst" cell in each column.
 	ScoreAverages avgs;
 	zeroAverages(avgs);
+	ScoreExtremes ex;
 	Int rowCount = 0;
 	RevScoreMapIt revIt;
 	for ( revIt = scores.rbegin(); revIt != scores.rend(); ++revIt)
@@ -2221,6 +2306,7 @@ void grabMultiPlayerInfo()
 			continue;
 		const Int killedValue = sk->getTotalUnitsDestroyedValue()
 			+ sk->getTotalBuildingsDestroyedValue();
+		const Int eff = computeEfficiencyPct(killedValue, sk->getTotalMoneyEarned());
 		avgs.unitsBuiltValue   += sk->getTotalUnitsBuiltValue();
 		avgs.unitsLostValue    += sk->getTotalUnitsLostValue();
 		avgs.unitsKilledValue  += sk->getTotalUnitsDestroyedValue();
@@ -2228,7 +2314,16 @@ void grabMultiPlayerInfo()
 		avgs.bldgLostValue     += sk->getTotalBuildingsLostValue();
 		avgs.bldgKilledValue   += sk->getTotalBuildingsDestroyedValue();
 		avgs.suppliesCollected += sk->getTotalMoneyEarned();
-		avgs.efficiencyPct     += computeEfficiencyPct(killedValue, sk->getTotalMoneyEarned());
+		avgs.efficiencyPct     += eff;
+		const Bool seen = rowCount > 0;
+		seedExtreme(sk->getTotalUnitsBuiltValue(),       ex.unitsBuiltMin,   ex.unitsBuiltMax,   seen);
+		seedExtreme(sk->getTotalUnitsLostValue(),        ex.unitsLostMin,    ex.unitsLostMax,    seen);
+		seedExtreme(sk->getTotalUnitsDestroyedValue(),   ex.unitsKilledMin,  ex.unitsKilledMax,  seen);
+		seedExtreme(sk->getTotalBuildingsBuiltValue(),   ex.bldgBuiltMin,    ex.bldgBuiltMax,    seen);
+		seedExtreme(sk->getTotalBuildingsLostValue(),    ex.bldgLostMin,     ex.bldgLostMax,     seen);
+		seedExtreme(sk->getTotalBuildingsDestroyedValue(),ex.bldgKilledMin,  ex.bldgKilledMax,   seen);
+		seedExtreme(sk->getTotalMoneyEarned(),           ex.suppliesMin,     ex.suppliesMax,     seen);
+		seedExtreme(eff,                                  ex.efficiencyMin,   ex.efficiencyMax,   seen);
 		++rowCount;
 	}
 	if (rowCount > 0)
@@ -2242,6 +2337,11 @@ void grabMultiPlayerInfo()
 		avgs.suppliesCollected /= rowCount;
 		avgs.efficiencyPct     /= rowCount;
 	}
+	// grabMultiPlayerInfo serves every per-player row path (skirmish, LAN,
+	// internet, replay-of-MP). Each row is one player so column min/max
+	// outlining is meaningful here. The solo path (grabSinglePlayerInfo)
+	// passes nullptr to skip highlighting since its rows are heterogeneous.
+	const ScoreExtremes *exPtr = (rowCount > 0) ? &ex : nullptr;
 
 	Int count = 0;
 	// display the players based on Score
@@ -2251,7 +2351,7 @@ void grabMultiPlayerInfo()
 		if(p->isPlayerObserver())
 			setObserverWindows( p, count );
 		else
-			populatePlayerInfo( p, count, avgs);
+			populatePlayerInfo( p, count, avgs, exPtr);
 		count ++;
 	}
 
@@ -2474,7 +2574,7 @@ void grabSinglePlayerInfo()
 	Int playerCount = 0;
 	if (displayLocal)
 	{
-		populatePlayerInfo(displayLocal, playerCount, avgs);
+		populatePlayerInfo(displayLocal, playerCount, avgs, nullptr);
 		++playerCount;
 	}
 	for (j = 0; j < sideCount; ++j)
