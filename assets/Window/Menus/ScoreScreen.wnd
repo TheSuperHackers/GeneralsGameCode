@@ -145,8 +145,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 34,
-                   BOTTOMRIGHT: 158 64,
+      SCREENRECT = UPPERLEFT: 72 28,
+                   BOTTOMRIGHT: 150 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayerName";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -155,7 +155,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:PlayerName";
@@ -194,8 +194,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 33,
-                   BOTTOMRIGHT: 228 65,
+      SCREENRECT = UPPERLEFT: 150 28,
+                   BOTTOMRIGHT: 227 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -204,7 +204,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreUnitBuilt";
@@ -243,8 +243,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 33,
-                   BOTTOMRIGHT: 298 65,
+      SCREENRECT = UPPERLEFT: 227 28,
+                   BOTTOMRIGHT: 304 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -253,7 +253,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreUnitLost";
@@ -292,8 +292,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 33,
-                   BOTTOMRIGHT: 368 65,
+      SCREENRECT = UPPERLEFT: 304 28,
+                   BOTTOMRIGHT: 381 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -302,7 +302,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreUnitKilled";
@@ -341,8 +341,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 33,
-                   BOTTOMRIGHT: 438 65,
+      SCREENRECT = UPPERLEFT: 381 28,
+                   BOTTOMRIGHT: 458 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsConstructed";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -351,7 +351,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreBldgBuilt";
@@ -390,8 +390,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 33,
-                   BOTTOMRIGHT: 508 65,
+      SCREENRECT = UPPERLEFT: 458 28,
+                   BOTTOMRIGHT: 535 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -400,7 +400,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreBldgLost";
@@ -439,8 +439,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 33,
-                   BOTTOMRIGHT: 678 65,
+      SCREENRECT = UPPERLEFT: 612 28,
+                   BOTTOMRIGHT: 689 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextSuppliesCollected";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -449,7 +449,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ResourcesCollected";
@@ -488,8 +488,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 33,
-                   BOTTOMRIGHT: 798 65,
+      SCREENRECT = UPPERLEFT: 689 28,
+                   BOTTOMRIGHT: 767 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextEfficiencyHeader";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -498,7 +498,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreEfficiency";
@@ -537,8 +537,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 33,
-                   BOTTOMRIGHT: 578 65,
+      SCREENRECT = UPPERLEFT: 535 28,
+                   BOTTOMRIGHT: 612 70,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed";
       STATUS = ENABLED+WRAP_CENTERED;
@@ -547,7 +547,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "GUI:ScoreBldgKilled";
@@ -951,8 +951,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 163 72,
-                   BOTTOMRIGHT: 223 120,
+      SCREENRECT = UPPERLEFT: 158 72,
+                   BOTTOMRIGHT: 218 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoUnitsCreated";
       STATUS = ENABLED+IMAGE;
@@ -998,8 +998,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 233 72,
-                   BOTTOMRIGHT: 293 120,
+      SCREENRECT = UPPERLEFT: 235 72,
+                   BOTTOMRIGHT: 295 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoUnitsLost";
       STATUS = ENABLED+IMAGE;
@@ -1045,8 +1045,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 303 72,
-                   BOTTOMRIGHT: 363 120,
+      SCREENRECT = UPPERLEFT: 312 72,
+                   BOTTOMRIGHT: 372 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoUnitsDestroyed";
       STATUS = ENABLED+IMAGE;
@@ -1092,8 +1092,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 373 72,
-                   BOTTOMRIGHT: 433 120,
+      SCREENRECT = UPPERLEFT: 389 72,
+                   BOTTOMRIGHT: 449 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoBuildingCreated";
       STATUS = ENABLED+IMAGE;
@@ -1139,8 +1139,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 443 72,
-                   BOTTOMRIGHT: 503 120,
+      SCREENRECT = UPPERLEFT: 466 72,
+                   BOTTOMRIGHT: 526 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoBuildingLost";
       STATUS = ENABLED+IMAGE;
@@ -1186,8 +1186,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 513 72,
-                   BOTTOMRIGHT: 573 120,
+      SCREENRECT = UPPERLEFT: 543 72,
+                   BOTTOMRIGHT: 603 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoBuildingDestroyed";
       STATUS = ENABLED+IMAGE;
@@ -1233,8 +1233,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 598 72,
-                   BOTTOMRIGHT: 658 120,
+      SCREENRECT = UPPERLEFT: 620 72,
+                   BOTTOMRIGHT: 680 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoSuppliesCollected";
       STATUS = ENABLED+IMAGE;
@@ -1280,8 +1280,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = USER;
-      SCREENRECT = UPPERLEFT: 708 72,
-                   BOTTOMRIGHT: 768 120,
+      SCREENRECT = UPPERLEFT: 698 72,
+                   BOTTOMRIGHT: 758 120,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:CameoEfficiency";
       STATUS = ENABLED+IMAGE;
@@ -1616,8 +1616,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 156,
-                   BOTTOMRIGHT: 438 188,
+      SCREENRECT = UPPERLEFT: 381 156,
+                   BOTTOMRIGHT: 457 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1626,7 +1626,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -1665,8 +1665,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 156,
-                   BOTTOMRIGHT: 158 188,
+      SCREENRECT = UPPERLEFT: 72 156,
+                   BOTTOMRIGHT: 149 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1675,7 +1675,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -1709,13 +1709,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 156,
-                   BOTTOMRIGHT: 228 188,
+      SCREENRECT = UPPERLEFT: 150 156,
+                   BOTTOMRIGHT: 226 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1724,7 +1724,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "##";
@@ -1763,8 +1763,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 156,
-                   BOTTOMRIGHT: 298 188,
+      SCREENRECT = UPPERLEFT: 227 156,
+                   BOTTOMRIGHT: 303 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1773,7 +1773,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -1812,8 +1812,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 156,
-                   BOTTOMRIGHT: 368 188,
+      SCREENRECT = UPPERLEFT: 304 156,
+                   BOTTOMRIGHT: 380 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1822,7 +1822,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -1861,8 +1861,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 156,
-                   BOTTOMRIGHT: 578 188,
+      SCREENRECT = UPPERLEFT: 535 156,
+                   BOTTOMRIGHT: 611 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1871,7 +1871,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -1910,8 +1910,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 156,
-                   BOTTOMRIGHT: 508 188,
+      SCREENRECT = UPPERLEFT: 458 156,
+                   BOTTOMRIGHT: 534 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1920,7 +1920,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -1959,8 +1959,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 156,
-                   BOTTOMRIGHT: 678 188,
+      SCREENRECT = UPPERLEFT: 612 156,
+                   BOTTOMRIGHT: 688 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -1969,7 +1969,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -2008,8 +2008,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 156,
-                   BOTTOMRIGHT: 798 188,
+      SCREENRECT = UPPERLEFT: 689 156,
+                   BOTTOMRIGHT: 766 187,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore1";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2018,7 +2018,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -2057,8 +2057,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 188,
-                   BOTTOMRIGHT: 298 220,
+      SCREENRECT = UPPERLEFT: 227 188,
+                   BOTTOMRIGHT: 303 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2067,7 +2067,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -2106,8 +2106,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 188,
-                   BOTTOMRIGHT: 228 220,
+      SCREENRECT = UPPERLEFT: 150 188,
+                   BOTTOMRIGHT: 226 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2116,7 +2116,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -2155,8 +2155,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 188,
-                   BOTTOMRIGHT: 158 220,
+      SCREENRECT = UPPERLEFT: 72 188,
+                   BOTTOMRIGHT: 149 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2165,7 +2165,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -2199,13 +2199,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 188,
-                   BOTTOMRIGHT: 368 220,
+      SCREENRECT = UPPERLEFT: 304 188,
+                   BOTTOMRIGHT: 380 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2214,7 +2214,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -2253,8 +2253,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 188,
-                   BOTTOMRIGHT: 508 220,
+      SCREENRECT = UPPERLEFT: 458 188,
+                   BOTTOMRIGHT: 534 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2263,7 +2263,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -2302,8 +2302,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 188,
-                   BOTTOMRIGHT: 578 220,
+      SCREENRECT = UPPERLEFT: 535 188,
+                   BOTTOMRIGHT: 611 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2312,7 +2312,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -2351,8 +2351,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 188,
-                   BOTTOMRIGHT: 678 220,
+      SCREENRECT = UPPERLEFT: 612 188,
+                   BOTTOMRIGHT: 688 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2361,7 +2361,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -2400,8 +2400,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 188,
-                   BOTTOMRIGHT: 798 220,
+      SCREENRECT = UPPERLEFT: 689 188,
+                   BOTTOMRIGHT: 766 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2410,7 +2410,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -2449,8 +2449,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 188,
-                   BOTTOMRIGHT: 438 220,
+      SCREENRECT = UPPERLEFT: 381 188,
+                   BOTTOMRIGHT: 457 219,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt2";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2459,7 +2459,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buidings Built";
@@ -2498,8 +2498,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 220,
-                   BOTTOMRIGHT: 438 252,
+      SCREENRECT = UPPERLEFT: 381 220,
+                   BOTTOMRIGHT: 457 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2508,7 +2508,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buidings Built";
@@ -2547,8 +2547,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 220,
-                   BOTTOMRIGHT: 158 252,
+      SCREENRECT = UPPERLEFT: 72 220,
+                   BOTTOMRIGHT: 149 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2557,7 +2557,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -2591,13 +2591,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 220,
-                   BOTTOMRIGHT: 228 252,
+      SCREENRECT = UPPERLEFT: 150 220,
+                   BOTTOMRIGHT: 226 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2606,7 +2606,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -2645,8 +2645,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 220,
-                   BOTTOMRIGHT: 298 252,
+      SCREENRECT = UPPERLEFT: 227 220,
+                   BOTTOMRIGHT: 303 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2655,7 +2655,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -2694,8 +2694,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 220,
-                   BOTTOMRIGHT: 368 252,
+      SCREENRECT = UPPERLEFT: 304 220,
+                   BOTTOMRIGHT: 380 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2704,7 +2704,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -2743,8 +2743,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 220,
-                   BOTTOMRIGHT: 578 252,
+      SCREENRECT = UPPERLEFT: 535 220,
+                   BOTTOMRIGHT: 611 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2753,7 +2753,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -2792,8 +2792,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 220,
-                   BOTTOMRIGHT: 508 252,
+      SCREENRECT = UPPERLEFT: 458 220,
+                   BOTTOMRIGHT: 534 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2802,7 +2802,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -2841,8 +2841,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 220,
-                   BOTTOMRIGHT: 678 252,
+      SCREENRECT = UPPERLEFT: 612 220,
+                   BOTTOMRIGHT: 688 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2851,7 +2851,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -2890,8 +2890,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 220,
-                   BOTTOMRIGHT: 798 252,
+      SCREENRECT = UPPERLEFT: 689 220,
+                   BOTTOMRIGHT: 766 251,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore3";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2900,7 +2900,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -2939,8 +2939,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 252,
-                   BOTTOMRIGHT: 438 284,
+      SCREENRECT = UPPERLEFT: 381 252,
+                   BOTTOMRIGHT: 457 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2949,7 +2949,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buidings Built";
@@ -2988,8 +2988,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 252,
-                   BOTTOMRIGHT: 158 284,
+      SCREENRECT = UPPERLEFT: 72 252,
+                   BOTTOMRIGHT: 149 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -2998,7 +2998,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -3032,13 +3032,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 252,
-                   BOTTOMRIGHT: 228 284,
+      SCREENRECT = UPPERLEFT: 150 252,
+                   BOTTOMRIGHT: 226 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3047,7 +3047,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -3086,8 +3086,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 252,
-                   BOTTOMRIGHT: 298 284,
+      SCREENRECT = UPPERLEFT: 227 252,
+                   BOTTOMRIGHT: 303 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3096,7 +3096,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -3135,8 +3135,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 252,
-                   BOTTOMRIGHT: 368 284,
+      SCREENRECT = UPPERLEFT: 304 252,
+                   BOTTOMRIGHT: 380 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3145,7 +3145,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -3184,8 +3184,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 252,
-                   BOTTOMRIGHT: 578 284,
+      SCREENRECT = UPPERLEFT: 535 252,
+                   BOTTOMRIGHT: 611 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3194,7 +3194,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -3233,8 +3233,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 252,
-                   BOTTOMRIGHT: 508 284,
+      SCREENRECT = UPPERLEFT: 458 252,
+                   BOTTOMRIGHT: 534 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3243,7 +3243,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -3282,8 +3282,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 252,
-                   BOTTOMRIGHT: 678 284,
+      SCREENRECT = UPPERLEFT: 612 252,
+                   BOTTOMRIGHT: 688 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3292,7 +3292,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -3331,8 +3331,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 252,
-                   BOTTOMRIGHT: 798 284,
+      SCREENRECT = UPPERLEFT: 689 252,
+                   BOTTOMRIGHT: 766 283,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore4";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3341,7 +3341,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -3380,8 +3380,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 284,
-                   BOTTOMRIGHT: 438 316,
+      SCREENRECT = UPPERLEFT: 381 284,
+                   BOTTOMRIGHT: 457 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3390,7 +3390,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buidings Built";
@@ -3429,8 +3429,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 284,
-                   BOTTOMRIGHT: 228 316,
+      SCREENRECT = UPPERLEFT: 150 284,
+                   BOTTOMRIGHT: 226 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3439,7 +3439,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -3478,8 +3478,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 284,
-                   BOTTOMRIGHT: 158 316,
+      SCREENRECT = UPPERLEFT: 72 284,
+                   BOTTOMRIGHT: 149 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3488,7 +3488,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -3522,13 +3522,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 284,
-                   BOTTOMRIGHT: 298 316,
+      SCREENRECT = UPPERLEFT: 227 284,
+                   BOTTOMRIGHT: 303 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3537,7 +3537,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -3576,8 +3576,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 284,
-                   BOTTOMRIGHT: 368 316,
+      SCREENRECT = UPPERLEFT: 304 284,
+                   BOTTOMRIGHT: 380 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3586,7 +3586,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -3625,8 +3625,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 284,
-                   BOTTOMRIGHT: 578 316,
+      SCREENRECT = UPPERLEFT: 535 284,
+                   BOTTOMRIGHT: 611 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3635,7 +3635,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -3674,8 +3674,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 284,
-                   BOTTOMRIGHT: 508 316,
+      SCREENRECT = UPPERLEFT: 458 284,
+                   BOTTOMRIGHT: 534 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3684,7 +3684,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -3723,8 +3723,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 284,
-                   BOTTOMRIGHT: 678 316,
+      SCREENRECT = UPPERLEFT: 612 284,
+                   BOTTOMRIGHT: 688 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3733,7 +3733,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -3772,8 +3772,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 284,
-                   BOTTOMRIGHT: 798 316,
+      SCREENRECT = UPPERLEFT: 689 284,
+                   BOTTOMRIGHT: 766 315,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore5";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3782,7 +3782,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -3821,8 +3821,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 316,
-                   BOTTOMRIGHT: 438 348,
+      SCREENRECT = UPPERLEFT: 381 316,
+                   BOTTOMRIGHT: 457 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3831,7 +3831,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buidings Built";
@@ -3870,8 +3870,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 316,
-                   BOTTOMRIGHT: 158 348,
+      SCREENRECT = UPPERLEFT: 72 316,
+                   BOTTOMRIGHT: 149 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3880,7 +3880,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -3914,13 +3914,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 316,
-                   BOTTOMRIGHT: 228 348,
+      SCREENRECT = UPPERLEFT: 150 316,
+                   BOTTOMRIGHT: 226 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3929,7 +3929,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -3968,8 +3968,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 316,
-                   BOTTOMRIGHT: 298 348,
+      SCREENRECT = UPPERLEFT: 227 316,
+                   BOTTOMRIGHT: 303 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -3978,7 +3978,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -4017,8 +4017,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 316,
-                   BOTTOMRIGHT: 368 348,
+      SCREENRECT = UPPERLEFT: 304 316,
+                   BOTTOMRIGHT: 380 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4027,7 +4027,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -4066,8 +4066,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 316,
-                   BOTTOMRIGHT: 578 348,
+      SCREENRECT = UPPERLEFT: 535 316,
+                   BOTTOMRIGHT: 611 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4076,7 +4076,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -4115,8 +4115,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 316,
-                   BOTTOMRIGHT: 508 348,
+      SCREENRECT = UPPERLEFT: 458 316,
+                   BOTTOMRIGHT: 534 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4125,7 +4125,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -4164,8 +4164,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 316,
-                   BOTTOMRIGHT: 678 348,
+      SCREENRECT = UPPERLEFT: 612 316,
+                   BOTTOMRIGHT: 688 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4174,7 +4174,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -4213,8 +4213,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 316,
-                   BOTTOMRIGHT: 798 348,
+      SCREENRECT = UPPERLEFT: 689 316,
+                   BOTTOMRIGHT: 766 347,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore6";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4223,7 +4223,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -4262,8 +4262,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 348,
-                   BOTTOMRIGHT: 438 380,
+      SCREENRECT = UPPERLEFT: 381 348,
+                   BOTTOMRIGHT: 457 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4272,7 +4272,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buidings Built";
@@ -4311,8 +4311,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 348,
-                   BOTTOMRIGHT: 158 380,
+      SCREENRECT = UPPERLEFT: 72 348,
+                   BOTTOMRIGHT: 149 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4321,7 +4321,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -4355,13 +4355,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 348,
-                   BOTTOMRIGHT: 228 380,
+      SCREENRECT = UPPERLEFT: 150 348,
+                   BOTTOMRIGHT: 226 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4370,7 +4370,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";
@@ -4409,8 +4409,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 348,
-                   BOTTOMRIGHT: 298 380,
+      SCREENRECT = UPPERLEFT: 227 348,
+                   BOTTOMRIGHT: 303 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4419,7 +4419,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -4458,8 +4458,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 348,
-                   BOTTOMRIGHT: 368 380,
+      SCREENRECT = UPPERLEFT: 304 348,
+                   BOTTOMRIGHT: 380 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4468,7 +4468,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -4507,8 +4507,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 348,
-                   BOTTOMRIGHT: 578 380,
+      SCREENRECT = UPPERLEFT: 535 348,
+                   BOTTOMRIGHT: 611 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4517,7 +4517,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -4556,8 +4556,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 348,
-                   BOTTOMRIGHT: 508 380,
+      SCREENRECT = UPPERLEFT: 458 348,
+                   BOTTOMRIGHT: 534 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4566,7 +4566,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -4605,8 +4605,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 348,
-                   BOTTOMRIGHT: 678 380,
+      SCREENRECT = UPPERLEFT: 612 348,
+                   BOTTOMRIGHT: 688 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4615,7 +4615,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -4654,8 +4654,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 348,
-                   BOTTOMRIGHT: 798 380,
+      SCREENRECT = UPPERLEFT: 689 348,
+                   BOTTOMRIGHT: 766 379,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore7";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4664,7 +4664,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -4703,8 +4703,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 438 124,
-                   BOTTOMRIGHT: 508 156,
+      SCREENRECT = UPPERLEFT: 458 124,
+                   BOTTOMRIGHT: 534 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsLost0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4713,7 +4713,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Lost";
@@ -4752,8 +4752,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 65 124,
-                   BOTTOMRIGHT: 158 156,
+      SCREENRECT = UPPERLEFT: 72 124,
+                   BOTTOMRIGHT: 149 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextPlayer0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4762,7 +4762,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "PlayerName";
@@ -4796,13 +4796,13 @@ WINDOW
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0,
                        IMAGE: NoImage, COLOR: 255 255 255 0, BORDERCOLOR: 255 255 255 0;
-      STATICTEXTDATA = CENTERED: 0;
+      STATICTEXTDATA = CENTERED: 1;
     END
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 158 124,
-                   BOTTOMRIGHT: 228 156,
+      SCREENRECT = UPPERLEFT: 150 124,
+                   BOTTOMRIGHT: 226 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsBuilt0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4811,7 +4811,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "##";
@@ -4850,8 +4850,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 228 124,
-                   BOTTOMRIGHT: 298 156,
+      SCREENRECT = UPPERLEFT: 227 124,
+                   BOTTOMRIGHT: 303 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsLost0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4860,7 +4860,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Lost";
@@ -4899,8 +4899,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 298 124,
-                   BOTTOMRIGHT: 368 156,
+      SCREENRECT = UPPERLEFT: 304 124,
+                   BOTTOMRIGHT: 380 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextUnitsDestroyed0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4909,7 +4909,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Destroyed";
@@ -4948,8 +4948,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 508 124,
-                   BOTTOMRIGHT: 578 156,
+      SCREENRECT = UPPERLEFT: 535 124,
+                   BOTTOMRIGHT: 611 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsDestroyed0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -4958,7 +4958,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Buildings Killed";
@@ -4997,8 +4997,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 578 124,
-                   BOTTOMRIGHT: 678 156,
+      SCREENRECT = UPPERLEFT: 612 124,
+                   BOTTOMRIGHT: 688 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextResources0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -5007,7 +5007,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "$$$";
@@ -5046,8 +5046,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 678 124,
-                   BOTTOMRIGHT: 798 156,
+      SCREENRECT = UPPERLEFT: 689 124,
+                   BOTTOMRIGHT: 766 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextScore0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -5056,7 +5056,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "0%";
@@ -5095,8 +5095,8 @@ WINDOW
     CHILD
     WINDOW
       WINDOWTYPE = STATICTEXT;
-      SCREENRECT = UPPERLEFT: 368 124,
-                   BOTTOMRIGHT: 438 156,
+      SCREENRECT = UPPERLEFT: 381 124,
+                   BOTTOMRIGHT: 457 155,
                    CREATIONRESOLUTION: 800 600;
       NAME = "ScoreScreen.wnd:StaticTextBuildingsBuilt0";
       STATUS = ENABLED+NOINPUT+NOFOCUS;
@@ -5105,7 +5105,7 @@ WINDOW
       INPUTCALLBACK = "[None]";
       TOOLTIPCALLBACK = "[None]";
       DRAWCALLBACK = "[None]";
-      FONT = NAME: "Arial", SIZE: 10, BOLD: 0;
+      FONT = NAME: "Arial", SIZE: 9, BOLD: 0;
       HEADERTEMPLATE = "LabelRegular";
       TOOLTIPDELAY = -1;
       TEXT = "Units Built";

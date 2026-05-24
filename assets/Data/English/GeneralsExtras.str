@@ -113,29 +113,31 @@ END
 // ScoreScreen.wnd column headers. Each shows a dollar-value aggregate from
 // ScoreKeeper: built/lost/killed for units and buildings, sourced from
 // buildCost summed across each player's m_objectsBuilt / m_objectsLost /
-// m_objectsDestroyed maps.
+// m_objectsDestroyed maps. The cells themselves carry the $ prefix and the
+// "k" magnitude suffix, so the headers stay unit-free and can wrap onto a
+// second line (like Supplies Collected) when they get long.
 GUI:ScoreUnitBuilt
-"Unit $ Built"
+"Unit Value Built"
 END
 
 GUI:ScoreUnitLost
-"Unit $ Lost"
+"Unit Value Lost"
 END
 
 GUI:ScoreUnitKilled
-"Unit $ Killed"
+"Unit Value Killed"
 END
 
 GUI:ScoreBldgBuilt
-"Bldg $ Built"
+"Bldg Value Built"
 END
 
 GUI:ScoreBldgLost
-"Bldg $ Lost"
+"Bldg Value Lost"
 END
 
 GUI:ScoreBldgKilled
-"Bldg $ Killed"
+"Bldg Value Killed"
 END
 
 // Repurposes the retail-vestigial Score column to show
