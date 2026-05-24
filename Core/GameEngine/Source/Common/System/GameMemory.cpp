@@ -1775,12 +1775,16 @@ Int MemoryPool::releaseEmpties()
 	ScopedCriticalSection scopedCriticalSection(TheMemoryPoolCriticalSection);
 
 	Int released = 0;
+	Int blobCount = countBlobsInPool();
 
 	for (MemoryPoolBlob* blob = m_firstBlob; blob;)
 	{
 		MemoryPoolBlob* pNext = blob->getNextInList();
-		if (blob->getUsedBlockCount() == 0)
+		if (blob->getUsedBlockCount() == 0 && blobCount > 1)
+		{
 			released += freeBlob(blob);
+			--blobCount;
+		}
 		blob = pNext;
 	}
 	return released;
@@ -3294,10 +3298,36 @@ void operator delete(void *p)
 
 //-----------------------------------------------------------------------------
 /**
+	overload for sized global operator delete; send requests to TheDynamicMemoryAllocator.
+*/
+void operator delete(void *p, size_t size)
+{
+	(void)size;
+	++theLinkTester;
+	preMainInitMemoryManager();
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
+	TheDynamicMemoryAllocator->freeBytes(p);
+}
+
+//-----------------------------------------------------------------------------
+/**
 	overload for global operator delete[]; send requests to TheDynamicMemoryAllocator.
 */
 void operator delete[](void *p)
 {
+	++theLinkTester;
+	preMainInitMemoryManager();
+	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
+	TheDynamicMemoryAllocator->freeBytes(p);
+}
+
+//-----------------------------------------------------------------------------
+/**
+	overload for sized global operator delete[]; send requests to TheDynamicMemoryAllocator.
+*/
+void operator delete[](void *p, size_t size)
+{
+	(void)size;
 	++theLinkTester;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("must init memory manager before calling global operator delete"));
