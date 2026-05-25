@@ -763,7 +763,7 @@ public:
 	ParticleSystemTemplate *newTemplate( const AsciiString &name );
 
 	/// given a template, instantiate a particle system
-	virtual ParticleSystem *createParticleSystem( const ParticleSystemTemplate *sysTemplate, Bool createSlaves = TRUE );
+	ParticleSystem *createParticleSystem( const ParticleSystemTemplate *sysTemplate, Bool createSlaves = TRUE );
 
 	/** given a template, instantiate a particle system.
 		if attachTo is not null, attach the particle system to the given object.
@@ -838,22 +838,10 @@ private:
 
 
 // TheSuperHackers @feature bobtista 31/01/2026
-// ParticleSystemManager that does nothing. Cannot create particle systems and templates. Used for Headless Mode.
+// ParticleSystemManager that does nothing. Used for Headless Mode.
+// Generally does not load particle system templates. Certainly does not create particle systems.
 class ParticleSystemManagerDummy : public ParticleSystemManager
 {
-#if RETAIL_COMPATIBLE_CRC
-	struct StaticParticleSystemTemplate : public ParticleSystemTemplate
-	{
-		StaticParticleSystemTemplate()
-			: ParticleSystemTemplate("dummy") {}
-	};
-	struct StaticParticleSystem : public ParticleSystem
-	{
-		StaticParticleSystem(const StaticParticleSystemTemplate *sysTemplate)
-			: ParticleSystem(sysTemplate, ParticleSystemID(0), false) {}
-	};
-#endif
-
 public:
 #if RETAIL_COMPATIBLE_CRC
 	// Must not overload init to keep loading the particle system templates,
@@ -869,19 +857,6 @@ public:
 	virtual Int getOnScreenParticleCount() override { return 0; }
 	virtual void doParticles(RenderInfoClass &rinfo) override {}
 	virtual void queueParticleRender() override {}
-
-	virtual ParticleSystem *createParticleSystem(const ParticleSystemTemplate *sysTemplate, Bool createSlaves = TRUE) override
-	{
-#if RETAIL_COMPATIBLE_CRC
-		if (sysTemplate == nullptr)
-			return nullptr;
-		static StaticParticleSystemTemplate dummyTemplate;
-		static StaticParticleSystem dummySystem(&dummyTemplate);
-		return &dummySystem;
-#else
-		return nullptr;
-#endif
-	}
 
 protected:
 	virtual void crc( Xfer *xfer ) override {}
