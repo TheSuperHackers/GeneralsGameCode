@@ -306,7 +306,7 @@ void EMPUpdate::doDisableAttack()
 					{
 #if RETAIL_COMPATIBLE_CRC
 						// TheSuperHackers @fix The particle system is now decoupled from the logic crc
-						// and the legacy logic random values are preserved here.
+						// and the side effects on the logic random seed values are preserved for retail compatibility.
 						{
 							Coord3D offs = {0,0,0};
 							curVictim->getGeometryInfo().makeRandomOffsetWithinFootprint( offs, LogicRandomValueClass() );

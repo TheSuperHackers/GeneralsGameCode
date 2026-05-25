@@ -389,7 +389,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 				{
 #if RETAIL_COMPATIBLE_CRC
 					// TheSuperHackers @fix The particle system is now decoupled from the logic crc
-					// and the legacy logic random values are preserved here.
+					// and the side effects on the logic random seed values are preserved for retail compatibility.
 					getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw, LogicRandomValueClass() );
 #endif
 
