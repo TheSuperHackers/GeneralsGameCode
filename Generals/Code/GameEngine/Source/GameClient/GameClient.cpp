@@ -750,15 +750,6 @@ void GameClient::step()
 	TheDisplay->step();
 }
 
-void GameClient::updateHeadless()
-{
-	// TheSuperHackers @info helmutbuhler 03/05/2025 bobtista 02/02/2026
-	// Update particles to prevent accumulation in headless mode. Particles are generated
-	// during GameLogic and only cleaned up during rendering. update() lets particles finish
-	// their lifecycle naturally instead of abruptly removing them with reset().
-	TheParticleSystemManager->update();
-}
-
 Bool GameClient::isMovieAbortRequested()
 {
 	if (TheGameEngine)
