@@ -253,7 +253,7 @@ void TransitionDamageFX::onDelete()
 /** Given an FXLoc info struct, return the effect position that we are supposed to use.
 	* The position is local to to the object */
 //-------------------------------------------------------------------------------------------------
-static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
+static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw, const RandomValueClass &random = LogicRandomValueClass() )
 {
 
 	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is null") );
@@ -290,7 +290,7 @@ static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 				return locInfo->loc;
 
 			// pick one of the bone positions
-			Int pick = GameLogicRandomValue( 0, boneCount - 1 );
+			Int pick = RandomValueInt( random, 0, boneCount - 1 );
 			return positions[ pick ];
 
 		}
@@ -387,6 +387,11 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 				if( lastDamageInfo == nullptr ||
 						getDamageTypeFlag( modData->m_damageParticleTypes, lastDamageInfo->in.m_damageType ) )
 				{
+#if RETAIL_COMPATIBLE_CRC
+					// TheSuperHackers @fix The particle system is now decoupled from the logic crc
+					// and the side effects on the logic random seed values are preserved for retail compatibility.
+					getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw, LogicRandomValueClass() );
+#endif
 
 					// create a new particle system based on the template provided
 					ParticleSystem* pSystem = TheParticleSystemManager->createParticleSystem( pSystemT );
@@ -394,7 +399,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 					{
 
 						// get the what is the position we're going to played the effect at
-						pos = getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw );
+						pos = getLocalEffectPos( &modData->m_particleSystem[ newState ][ i ].locInfo, draw, ClientRandomValueClass() );
 
 						//
 						// set position on system given any bone position provided, the bone position is
