@@ -306,7 +306,7 @@ private:
 	bool onDoWeaponAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 	bool onDoSwitchWeapons(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 	bool onSetMineClearingDetail(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
-	bool onEnableRetaliationMode(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onEnableRetaliationMode(GameMessage *msg);
 	bool onDoWeaponAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 	bool onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
 	bool onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);

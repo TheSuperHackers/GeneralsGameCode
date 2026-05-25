@@ -487,7 +487,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		}
 		case GameMessage::MSG_ENABLE_RETALIATION_MODE:
 		{
-			onEnableRetaliationMode(msg, currentlySelectedGroup);
+			onEnableRetaliationMode(msg);
 			break;
 		}
 		case GameMessage::MSG_DO_WEAPON_AT_LOCATION:
@@ -1079,7 +1079,7 @@ bool GameLogic::onSetMineClearingDetail(GameMessage *msg, AIGroupPtr &currentlyS
 	return true;
 }
 
-bool GameLogic::onEnableRetaliationMode(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onEnableRetaliationMode(GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
