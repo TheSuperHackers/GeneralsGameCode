@@ -2422,6 +2422,7 @@ bool GameLogic::onLogicCrc(GameMessage *msg)
 
 		TheRecorder->handleCRCMessage(newCRC, msgPlayer->getPlayerIndex(), (msg->getArgument(1)->boolean));
 	}
+
 	return true;
 }
 
