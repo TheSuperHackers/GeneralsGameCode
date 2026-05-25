@@ -1356,12 +1356,12 @@ bool GameLogic::onDoGuardObject(GameMessage *msg, AIGroupPtr &currentlySelectedG
 {
 	Object* obj = findObjectByID( msg->getArgument( 0 )->objectID );
 	if (!obj)
-			return false;
+		return false;
 
 	GuardMode gm = (GuardMode)msg->getArgument( 1 )->integer;
 	if (currentlySelectedGroup)
 	{
-			currentlySelectedGroup->groupGuardObject(obj, gm, CMD_FROM_PLAYER);
+		currentlySelectedGroup->groupGuardObject(obj, gm, CMD_FROM_PLAYER);
 	}
 
 	return true;
