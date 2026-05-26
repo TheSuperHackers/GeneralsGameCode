@@ -469,8 +469,19 @@ UpdateSleepTime TransportContain::update()
 {
 	const TransportContainModuleData *moduleData = getTransportContainModuleData();
 
-	if( m_payloadCreated == FALSE )
+	if (m_payloadCreated == FALSE)
+	{
+#if RETAIL_COMPATIBLE_CRC
 		createPayload();
+#else
+		// TheSuperHackers @bugfix Caball009 25/05/2026 Don't create payload
+		// for destroyed object to avoid an invalid state for the payload.
+		if (!getObject()->isDestroyed())
+		{
+			createPayload();
+		}
+#endif
+	}
 
 	if( moduleData && moduleData->m_healthRegen )
 	{
