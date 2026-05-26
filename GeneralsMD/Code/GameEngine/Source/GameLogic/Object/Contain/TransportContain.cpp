@@ -475,7 +475,7 @@ UpdateSleepTime TransportContain::update()
 		createPayload();
 #else
 		// TheSuperHackers @bugfix Caball009 25/05/2026 Don't create payload
-		// for destroyed object to avoid an invalid state for the payload.
+		// for destroyed object to avoid leaving the payload in an invalid state.
 		if (!getObject()->isDestroyed())
 		{
 			createPayload();
