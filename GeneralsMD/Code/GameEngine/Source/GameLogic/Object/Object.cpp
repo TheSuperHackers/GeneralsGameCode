@@ -777,9 +777,6 @@ void Object::onDestroy()
 	if (m_containedBy)
 	{
 #if RETAIL_COMPATIBLE_CRC
-		DEBUG_ASSERTCRASH(TheGameLogic->findObjectByID(m_containedByID) == m_containedBy,
-			("contained by pointer is out of sync with contained by ID"));
-
 		if (m_containedByID == INVALID_ID)
 		{
 			// TheSuperHackers @bugfix Caball009 25/05/2026 Due to a potential use-after-free bug that cannot be fixed
@@ -788,9 +785,15 @@ void Object::onDestroy()
 			// as the begin / end iterator for STLPort and MSVC std::list implementations depends on dynamically allocated memory.
 			DEBUG_CRASH(("container object must be valid; this looks like use-after-free"));
 		}
-		else if (ContainModuleInterface* contained = m_containedBy->getContain())
+		else
 		{
-			contained->removeFromContain(this);
+			DEBUG_ASSERTCRASH(TheGameLogic->findObjectByID(m_containedByID) == m_containedBy,
+				("contained by pointer is out of sync with contained by ID"));
+
+			if (ContainModuleInterface* contained = m_containedBy->getContain())
+			{
+				contained->removeFromContain(this);
+			}
 		}
 #else
 		if (ContainModuleInterface* contained = m_containedBy->getContain())
