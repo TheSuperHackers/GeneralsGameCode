@@ -4287,12 +4287,14 @@ void Object::xfer( Xfer *xfer )
 		// our responsibility.
 		if( xfer->getXferMode() == XFER_SAVE )
 		{
+			// TheSuperHackers @tweak Contained by ID is already set with retail compatibility; don't overwrite it.
+#if !RETAIL_COMPATIBLE_CRC
 			if( m_containedBy != nullptr )
 				m_containedByID = m_containedBy->getID();
 			else
 				m_containedByID = INVALID_ID;
+#endif
 		}
-
 
 		xfer->xferObjectID( &m_containedByID );
 	}
