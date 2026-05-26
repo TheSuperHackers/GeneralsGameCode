@@ -713,16 +713,16 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 			}
 
 			// Put this on here, so that the audio event RTS will be cleaned up regardless.
-			audio->m_audioEventRTS = req->releasePendingEvent();
+			audio->m_audioEventRTS = event = req->releasePendingEvent();
 			audio->m_stream = stream;
 			audio->m_type = PAT_Stream;
 
 			if (stream) {
-				if ((info->m_soundType == AT_Streaming) && audio->m_audioEventRTS->getUninterruptible()) {
+				if ((info->m_soundType == AT_Streaming) && event->getUninterruptible()) {
 					setDisallowSpeech(TRUE);
 	 			}
-				AIL_set_stream_volume_pan(stream, getEffectiveVolume(audio->m_audioEventRTS), 0.5f);
-				playStream(audio->m_audioEventRTS, stream);
+				AIL_set_stream_volume_pan(stream, getEffectiveVolume(event), 0.5f);
+				playStream(event, stream);
 				m_playingStreams.push_back(audio);
 				audio = nullptr;
 			}
@@ -782,14 +782,14 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 					sample3D = nullptr;
 				}
 				// Push it onto the list of playing things
-				audio->m_audioEventRTS = req->releasePendingEvent();
+				audio->m_audioEventRTS = event = req->releasePendingEvent();
 				audio->m_3DSample = sample3D;
 				audio->m_file = nullptr;
 				audio->m_type = PAT_3DSample;
 				m_playing3DSounds.push_back(audio);
 
 				if (sample3D) {
-					audio->m_file = playSample3D(audio->m_audioEventRTS, sample3D);
+					audio->m_file = playSample3D(event, sample3D);
 					m_sound->notifyOf3DSampleStart();
 				}
 
@@ -853,14 +853,14 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				}
 
 				// Push it onto the list of playing things
-				audio->m_audioEventRTS = req->releasePendingEvent();
+				audio->m_audioEventRTS = event = req->releasePendingEvent();
 				audio->m_sample = sample;
 				audio->m_file = nullptr;
 				audio->m_type = PAT_Sample;
 				m_playingSounds.push_back(audio);
 
 				if (sample) {
-					audio->m_file = playSample(audio->m_audioEventRTS, sample);
+					audio->m_file = playSample(event, sample);
 					m_sound->notifyOf2DSampleStart();
 				}
 
