@@ -692,6 +692,8 @@ void Object::onContainedBy( Object *containedBy )
 	m_containedByFrame = TheGameLogic->getFrame();
 
 #if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info Set INVALID_ID if the container object was destroyed
+	// to indicate that the pointer will become a dangling pointer in the next frame.
 	if (containedBy && !containedBy->isDestroyed())
 	{
 		m_containedByID = containedBy->getID();
@@ -790,15 +792,15 @@ void Object::onDestroy()
 			DEBUG_ASSERTCRASH(TheGameLogic->findObjectByID(m_containedByID) == m_containedBy,
 				("contained by pointer is out of sync with contained by ID"));
 
-			if (ContainModuleInterface* contained = m_containedBy->getContain())
+			if (ContainModuleInterface* contain = m_containedBy->getContain())
 			{
-				contained->removeFromContain(this);
+				contain->removeFromContain(this);
 			}
 		}
 #else
-		if (ContainModuleInterface* contained = m_containedBy->getContain())
+		if (ContainModuleInterface* contain = m_containedBy->getContain())
 		{
-			contained->removeFromContain(this);
+			contain->removeFromContain(this);
 		}
 #endif
 	}
@@ -4288,16 +4290,16 @@ void Object::xfer( Xfer *xfer )
 		// No, the contain module is just going to friend_ reach in and set this for us.
 		// Containers more complicated than Open (like Tunnel) can't do that.  Our variable,
 		// our responsibility.
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @tweak Contained by ID is already set with retail compatibility; don't overwrite it.
 		if( xfer->getXferMode() == XFER_SAVE )
 		{
-			// TheSuperHackers @tweak Contained by ID is already set with retail compatibility; don't overwrite it.
-#if !RETAIL_COMPATIBLE_CRC
 			if( m_containedBy != nullptr )
 				m_containedByID = m_containedBy->getID();
 			else
 				m_containedByID = INVALID_ID;
-#endif
 		}
+#endif
 
 		xfer->xferObjectID( &m_containedByID );
 	}
