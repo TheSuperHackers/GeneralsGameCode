@@ -700,6 +700,9 @@ void Object::onContainedBy( Object *containedBy )
 	{
 		m_containedByID = INVALID_ID;
 	}
+#else
+	DEBUG_ASSERTCRASH(containedBy == nullptr || !containedBy->isDestroyed(),
+		("Object::onContainedBy - Adding into a destroyed container"));
 #endif
 
   handlePartitionCellMaintenance(); // which should unlook me now that I am contained
@@ -773,27 +776,28 @@ void Object::onDestroy()
 	// This is the old cleanUpContain safeguard.  Say goodbye so they don't try to look us up.
 	if (m_containedBy)
 	{
+#if RETAIL_COMPATIBLE_CRC
+		DEBUG_ASSERTCRASH(TheGameLogic->findObjectByID(m_containedByID) == m_containedBy,
+			("contained by pointer is out of sync with contained by ID"));
+
+		if (m_containedByID == INVALID_ID)
+		{
+			// TheSuperHackers @bugfix Caball009 25/05/2026 Due to a potential use-after-free bug that cannot be fixed
+			// with retail compatibility, the 'contained by' pointer of this object may point to an already destroyed object.
+			// Avoid removing this object from the contain list, because it could crash the game,
+			// as the begin / end iterator for STLPort and MSVC std::list implementations depends on dynamically allocated memory.
+			DEBUG_CRASH(("container object must be valid; this looks like use-after-free"));
+		}
+		else if (ContainModuleInterface* contained = m_containedBy->getContain())
+		{
+			contained->removeFromContain(this);
+		}
+#else
 		if (ContainModuleInterface* contained = m_containedBy->getContain())
 		{
-#if RETAIL_COMPATIBLE_CRC
-			if (m_containedByID == INVALID_ID)
-			{
-				// TheSuperHackers @bugfix Caball009 25/05/2026 Due to a potential use-after-free bug that cannot be fixed
-				// with retail compatibility, the 'contained by' pointer of this object may point to an already destroyed object.
-				// Avoid removing this object from the contain list, because it could crash the game,
-				// as the begin / end iterator for STLPort and MSVC std::list implementations depends on dynamically allocated memory.
-				DEBUG_CRASH(("container object must be valid; this looks like use-after-free"));
-			}
-			else
-			{
-				DEBUG_ASSERTCRASH(TheGameLogic->findObjectByID(m_containedByID) == m_containedBy,
-					("contained by pointer is out of sync with contained by ID"));
-				contained->removeFromContain(this);
-			}
-#else
 			contained->removeFromContain(this);
-#endif
 		}
+#endif
 	}
 
 	//
