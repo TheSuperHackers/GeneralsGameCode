@@ -292,6 +292,13 @@ void OpenContain::addToContain( Object *rider )
 	if( rider == nullptr )
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Caball009 25/05/2026 Ensure the occupant is only added to a non-destroyed
+	// container to avoid an invalid state and use-after-free bugs when accessing the contained by pointer.
+	if (getObject()->isDestroyed())
+		return;
+#endif
+
 	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Ensure the rider is not destroyed to prevent a
 	// likely crash if it enters the container on the same frame. If this occurs with an unpatched
 	// client present in a match, the game has a small chance to mismatch.
