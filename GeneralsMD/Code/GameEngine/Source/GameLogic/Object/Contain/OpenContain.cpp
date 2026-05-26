@@ -343,6 +343,13 @@ void OpenContain::addToContain( Object *rider )
 	if (isEnclosingContainerFor( rider ))
 	{
 		addOrRemoveObjFromWorld(rider, false);
+
+		// TheSuperHackers @tweak This shouldn't happen but make the occupants visible if it does.
+		if (getObject()->isEffectivelyDead() || getObject()->isDestroyed())
+		{
+			if (Drawable* drawable = rider->getDrawable())
+				drawable->setDrawableHidden(FALSE);
+		}
 	}
 
 #if RETAIL_COMPATIBLE_CRC
