@@ -247,9 +247,17 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 		// remove rider from partition manager
 		ThePartitionManager->unRegisterObject( obj );
 
-		// hide the drawable associated with rider
-		if( obj->getDrawable() )
-			obj->getDrawable()->setDrawableHidden( true );
+		if (Drawable* drawable = obj->getDrawable())
+		{
+#if RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @tweak This shouldn't happen but don't make the occupant invisible if it does.
+			if (!(getObject()->isEffectivelyDead() || getObject()->isDestroyed()))
+#endif
+			{
+				// hide the drawable associated with rider
+				drawable->setDrawableHidden(true);
+			}
+		}
 
 		// remove object from pathfind map
 		TheAI->pathfinder()->removeObjectFromPathfindMap( obj );
@@ -358,13 +366,6 @@ void OpenContain::addToContain( Object *rider )
 	if (isEnclosingContainerFor( rider ))
 	{
 		addOrRemoveObjFromWorld(rider, false);
-
-		// TheSuperHackers @tweak This shouldn't happen but make the occupant visible if it does.
-		if (getObject()->isEffectivelyDead() || getObject()->isDestroyed())
-		{
-			if (Drawable* drawable = rider->getDrawable())
-				drawable->setDrawableHidden(FALSE);
-		}
 	}
 
 #if RETAIL_COMPATIBLE_CRC
