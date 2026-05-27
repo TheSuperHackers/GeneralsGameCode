@@ -118,34 +118,32 @@ GUI:LiveObserverNoFF
 "Fast Forward is unavailable while observing a live game."
 END
 
-// ScoreScreen.wnd column headers. Each shows a dollar-value aggregate from
-// ScoreKeeper: built/lost/killed for units and buildings, sourced from
-// buildCost summed across each player's m_objectsBuilt / m_objectsLost /
-// m_objectsDestroyed maps. The cells themselves carry the $ prefix and the
-// "k" magnitude suffix, so the headers stay unit-free and can wrap onto a
-// second line (like Supplies Collected) when they get long.
+// ScoreScreen.wnd column headers. Each cell stacks a raw count on top of
+// the dollar-value aggregate ($X.XXk with a percent delta from the column
+// average), so the headers stay short and the "$" in the value line
+// disambiguates which number is which.
 GUI:ScoreUnitBuilt
-"Unit Value Built"
+"Units Built"
 END
 
 GUI:ScoreUnitLost
-"Unit Value Lost"
+"Units Lost"
 END
 
 GUI:ScoreUnitKilled
-"Unit Value Killed"
+"Units Killed"
 END
 
 GUI:ScoreBldgBuilt
-"Bldg Value Built"
+"Buildings Built"
 END
 
 GUI:ScoreBldgLost
-"Bldg Value Lost"
+"Buildings Lost"
 END
 
 GUI:ScoreBldgKilled
-"Bldg Value Killed"
+"Buildings Killed"
 END
 
 // Repurposes the retail-vestigial Score column to show

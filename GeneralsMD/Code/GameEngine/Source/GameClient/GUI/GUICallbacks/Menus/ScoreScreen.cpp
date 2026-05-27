@@ -349,6 +349,18 @@ static void formatDollarCell(Int value, Int avg, UnicodeString &out)
 	appendPercentDelta(value, avg, out);
 }
 
+// Compose a two-line cell with the raw count stacked above the dollar value:
+//   12
+//   $1.20k (-15%)
+// The static-text renderer treats '\n' as a hard line break, and the data
+// cells carry WRAP_CENTERED so each line centers individually.
+static void formatCountAndValueCell(Int count, Int value, Int avg, UnicodeString &out)
+{
+	UnicodeString dollarLine;
+	formatDollarCell(value, avg, dollarLine);
+	out.format(L"%d\n%s", count, dollarLine.str());
+}
+
 // Compose "Z% (+Y%)" for the efficiency column cell. Empty-income players
 // render as "0% (...)" since the average treats them the same way.
 static void formatEfficiencyCell(Int killedValue, Int earned, Int avgPct, UnicodeString &out)
@@ -1629,73 +1641,73 @@ void populatePlayerInfo( Player *player, Int pos, const ScoreAverages &avgs, con
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	{
 		const Int v = scoreKpr->getTotalUnitsBuiltValue();
-		formatDollarCell(v, avgs.unitsBuiltValue, winValue);
+		formatCountAndValueCell(scoreKpr->getTotalUnitsBuilt(), v, avgs.unitsBuiltValue, winValue);
 		GadgetStaticTextSetText(win, winValue);
 		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 		if (ex) applyCellHighlight(win, v, ex->unitsBuiltMin, ex->unitsBuiltMax, FALSE);
 	}
 	win->winHide(FALSE);
 
-	// set the total units Lost (value, not count). Lost columns invert:
-	// the lowest loss is best (green), the highest is worst (red).
+	// set the total units Lost (count + value). Lost columns invert: the
+	// lowest loss is best (green), the highest is worst (red).
 	winName.format("ScoreScreen.wnd:StaticTextUnitsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	{
 		const Int v = scoreKpr->getTotalUnitsLostValue();
-		formatDollarCell(v, avgs.unitsLostValue, winValue);
+		formatCountAndValueCell(scoreKpr->getTotalUnitsLost(), v, avgs.unitsLostValue, winValue);
 		GadgetStaticTextSetText(win, winValue);
 		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 		if (ex) applyCellHighlight(win, v, ex->unitsLostMin, ex->unitsLostMax, TRUE);
 	}
 	win->winHide(FALSE);
 
-	// set the total units Destroyed (value, not count)
+	// set the total units Destroyed (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsDestroyed%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	{
 		const Int v = scoreKpr->getTotalUnitsDestroyedValue();
-		formatDollarCell(v, avgs.unitsKilledValue, winValue);
+		formatCountAndValueCell(scoreKpr->getTotalUnitsDestroyed(), v, avgs.unitsKilledValue, winValue);
 		GadgetStaticTextSetText(win, winValue);
 		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 		if (ex) applyCellHighlight(win, v, ex->unitsKilledMin, ex->unitsKilledMax, FALSE);
 	}
 	win->winHide(FALSE);
 
-	// set the total BuildingsBuilt (value, not count)
+	// set the total BuildingsBuilt (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	{
 		const Int v = scoreKpr->getTotalBuildingsBuiltValue();
-		formatDollarCell(v, avgs.bldgBuiltValue, winValue);
+		formatCountAndValueCell(scoreKpr->getTotalBuildingsBuilt(), v, avgs.bldgBuiltValue, winValue);
 		GadgetStaticTextSetText(win, winValue);
 		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 		if (ex) applyCellHighlight(win, v, ex->bldgBuiltMin, ex->bldgBuiltMax, FALSE);
 	}
 	win->winHide(FALSE);
 
-	// set the total BuildingsLost (value, not count). Lost column inverts.
+	// set the total BuildingsLost (count + value). Lost column inverts.
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	{
 		const Int v = scoreKpr->getTotalBuildingsLostValue();
-		formatDollarCell(v, avgs.bldgLostValue, winValue);
+		formatCountAndValueCell(scoreKpr->getTotalBuildingsLost(), v, avgs.bldgLostValue, winValue);
 		GadgetStaticTextSetText(win, winValue);
 		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 		if (ex) applyCellHighlight(win, v, ex->bldgLostMin, ex->bldgLostMax, TRUE);
 	}
 	win->winHide(FALSE);
 
-	// set the total BuildingsDestroyed (value, not count)
+	// set the total BuildingsDestroyed (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	{
 		const Int v = scoreKpr->getTotalBuildingsDestroyedValue();
-		formatDollarCell(v, avgs.bldgKilledValue, winValue);
+		formatCountAndValueCell(scoreKpr->getTotalBuildingsDestroyed(), v, avgs.bldgKilledValue, winValue);
 		GadgetStaticTextSetText(win, winValue);
 		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 		if (ex) applyCellHighlight(win, v, ex->bldgKilledMin, ex->bldgKilledMax, FALSE);
@@ -2827,56 +2839,56 @@ void populateSideInfo( UnicodeString side, ScoreGather *sg, Int pos, Color color
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
 	win->winHide(TRUE);
 
-	// set the total units built (value, not count)
+	// set the total units built (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(sg->m_totalUnitsBuiltValue, avgs.unitsBuiltValue, winValue);
+	formatCountAndValueCell(sg->m_totalUnitsBuilt, sg->m_totalUnitsBuiltValue, avgs.unitsBuiltValue, winValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total units Lost (value, not count)
+	// set the total units Lost (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(sg->m_totalUnitsLostValue, avgs.unitsLostValue, winValue);
+	formatCountAndValueCell(sg->m_totalUnitsLost, sg->m_totalUnitsLostValue, avgs.unitsLostValue, winValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total units Destroyed (value, not count)
+	// set the total units Destroyed (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextUnitsDestroyed%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(sg->m_totalUnitsDestroyedValue, avgs.unitsKilledValue, winValue);
+	formatCountAndValueCell(sg->m_totalUnitsDestroyed, sg->m_totalUnitsDestroyedValue, avgs.unitsKilledValue, winValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsBuilt (value, not count)
+	// set the total BuildingsBuilt (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsBuilt%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(sg->m_totalBuildingsBuiltValue, avgs.bldgBuiltValue, winValue);
+	formatCountAndValueCell(sg->m_totalBuildingsBuilt, sg->m_totalBuildingsBuiltValue, avgs.bldgBuiltValue, winValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsLost (value, not count)
+	// set the total BuildingsLost (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsLost%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(sg->m_totalBuildingsLostValue, avgs.bldgLostValue, winValue);
+	formatCountAndValueCell(sg->m_totalBuildingsLost, sg->m_totalBuildingsLostValue, avgs.bldgLostValue, winValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
 
-	// set the total BuildingsDestroyed (value, not count)
+	// set the total BuildingsDestroyed (count + value)
 	winName.format("ScoreScreen.wnd:StaticTextBuildingsDestroyed%d", pos);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	formatDollarCell(sg->m_totalBuildingsDestroyedValue, avgs.bldgKilledValue, winValue);
+	formatCountAndValueCell(sg->m_totalBuildingsDestroyed, sg->m_totalBuildingsDestroyedValue, avgs.bldgKilledValue, winValue);
 	GadgetStaticTextSetText(win, winValue);
 	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 	win->winHide(FALSE);
