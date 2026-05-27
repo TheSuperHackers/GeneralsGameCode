@@ -35,6 +35,7 @@
 #include "Common/RandomValue.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
+#include "GameClient/MessageBox.h"
 #include "Common/UserPreferences.h"
 #include "GameLogic/GameLogic.h"
 
@@ -90,6 +91,8 @@ LANAPI::LANAPI() : m_transport(nullptr)
 	m_observerHost = nullptr;
 	m_observerClient = nullptr;
 	m_observerClientPlaybackKicked = FALSE;
+	m_observerProgressLastMs = 0;
+	m_observerProgressLastBytes = 0;
 }
 
 LANAPI::~LANAPI()
@@ -1372,6 +1375,8 @@ void LANAPI::stopObserverClient()
 		m_observerClient = nullptr;
 	}
 	m_observerClientPlaybackKicked = FALSE;
+	m_observerProgressLastMs = 0;
+	m_observerProgressLastBytes = 0;
 }
 
 void LANAPI::RequestObserve(UnsignedInt hostIP, UnsignedShort observerPort)
@@ -1428,6 +1433,31 @@ void LANAPI::updateObserver()
 	{
 		m_observerClient->update();
 
+		// Periodic snapshot-download progress as a lobby chat line so the user
+		// can see the join is doing something during the catch-up wait, which
+		// scales with game length. Throttled to once per second and only while
+		// the snapshot is still arriving (BUFFERING + non-zero declared size).
+		if (m_observerClient->state() == LANObserverClient::STATE_BUFFERING
+		    && m_observerClient->snapshotSize() > 0)
+		{
+			UnsignedInt now      = timeGetTime();
+			UnsignedInt received = m_observerClient->bytesReceived();
+			UnsignedInt total    = m_observerClient->snapshotSize();
+			Bool timeElapsed = (now - m_observerProgressLastMs) >= 1000u;
+			if (m_observerProgressLastMs == 0 || timeElapsed)
+			{
+				UnsignedInt pct  = total ? (UnsignedInt)((UnsignedInt64)received * 100u / total) : 0;
+				Real receivedMB  = (Real)received / (1024.0f * 1024.0f);
+				Real totalMB     = (Real)total    / (1024.0f * 1024.0f);
+				UnicodeString msg;
+				msg.format(L"Downloading replay: %.1f / %.1f MB (%u%%)",
+					receivedMB, totalMB, pct);
+				OnChat(L"", 0, msg, LANCHAT_SYSTEM);
+				m_observerProgressLastMs    = now;
+				m_observerProgressLastBytes = received;
+			}
+		}
+
 		// Transition from snapshot-ready -> kick off playback (once).
 		if (!m_observerClientPlaybackKicked
 		    && m_observerClient->state() == LANObserverClient::STATE_READY
@@ -1456,6 +1486,12 @@ void LANAPI::updateObserver()
 				LANObsLog("playbackFileLiveObserver returned FALSE; aborting");
 				DEBUG_LOG(("LANAPI - observer playbackFileLiveObserver failed; aborting"));
 				stopObserverClient();
+				// Surface the failure so the user isn't left staring at the
+				// lobby wondering what happened. Most common cause: the host's
+				// snapshot was incomplete or the .rep prefix didn't parse.
+				UnicodeString title = TheGameText->fetch("LAN:JoinFailed");
+				UnicodeString body  = TheGameText->fetch("LAN:ObserveFailedBody");
+				MessageBoxOk(title, body, NULL);
 			}
 		}
 

@@ -400,6 +400,8 @@ protected:
 	LANObserverHost*			m_observerHost;
 	LANObserverClient*		m_observerClient;
 	Bool									m_observerClientPlaybackKicked; // we called playbackFileLiveObserver already
+	UnsignedInt						m_observerProgressLastMs;       // last time we posted a download-progress chat line
+	UnsignedInt						m_observerProgressLastBytes;    // bytes reported at the last progress post
 
 public:
 	// Observer mode entry points (called from UI / callbacks).

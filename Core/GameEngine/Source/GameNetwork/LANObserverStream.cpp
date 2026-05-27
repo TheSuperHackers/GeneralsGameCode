@@ -204,6 +204,13 @@ void LANObserverHost::acceptNew(UnicodeString* outNames, Int outNamesCap, Int& o
 			conn->readHandle = fopen(m_replayPath.str(), "rb");
 			if (conn->readHandle)
 			{
+				// Disable stdio buffering on the read handle. With buffering on,
+				// once fread hits EOF at the live edge, fseek-to-current-position
+				// won't reliably invalidate the stale buffer and subsequent reads
+				// keep returning EOF even after the recorder appends and flushes
+				// new bytes. _IONBF bypasses the buffer and reads straight through
+				// to the OS file each call.
+				setvbuf(conn->readHandle, NULL, _IONBF, 0);
 				fseek(conn->readHandle, 0, SEEK_END);
 				long sz = ftell(conn->readHandle);
 				if (sz < 0) sz = 0;
