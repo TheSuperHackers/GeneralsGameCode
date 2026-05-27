@@ -179,7 +179,7 @@ static Int getRiverVertexDiffuse(W3DShroud *shroud, Real x, Real y, Real shadeR,
 		(Int)(shadeR * shroudScale),
 		(Int)(shadeG * shroudScale),
 		(Int)(shadeB * shroudScale),
-		(diffuse >> 24) & 0xff);
+		((diffuse >> 24) & 0xff) * shroudScale);
 }
 
 void doSkyBoxSet(Bool startDraw)
