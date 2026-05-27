@@ -77,30 +77,29 @@ UnsignedInt Version::getVersionNumber() const
 	return m_major << 16 | m_minor;
 }
 
+// TheSuperHackers @tweak Always render the version as plain
+// "major.minor.buildNum" so the in-game string matches APPVERSION from
+// installer/Zulu.nsi (the single source of truth wired through the
+// ZULU_VERSION_* defines in CMakeLists.txt). Retail's localized Version:Format2
+// from generals.csf is "v%hd.%02hd" which would zero-pad minor and drop the
+// build number entirely, masking APPVERSION bumps in the Release UI.
 AsciiString Version::getAsciiVersion() const
 {
 	AsciiString version;
 
-	if (m_showFullVersion)
+	if (m_showFullVersion && m_localBuildNum)
 	{
-		if (!m_localBuildNum)
-		{
-			version.format("%d.%d.%d", m_major, m_minor, m_buildNum);
-		}
-		else
-		{
-			AsciiString user = getAsciiBuildUserOrGitCommitAuthorName();
-			// User name requires at least 2 characters
-			if (user.getLength() < 2)
-				user.concat("xx");
+		AsciiString user = getAsciiBuildUserOrGitCommitAuthorName();
+		// User name requires at least 2 characters
+		if (user.getLength() < 2)
+			user.concat("xx");
 
-			version.format("%d.%d.%d.%d%c%c", m_major, m_minor, m_buildNum, m_localBuildNum,
-				user.getCharAt(0), user.getCharAt(1));
-		}
+		version.format("%d.%d.%d.%d%c%c", m_major, m_minor, m_buildNum, m_localBuildNum,
+			user.getCharAt(0), user.getCharAt(1));
 	}
 	else
 	{
-		version.format("%d.%d", m_major, m_minor);
+		version.format("%d.%d.%d", m_major, m_minor, m_buildNum);
 	}
 
 #ifdef RTS_DEBUG
@@ -114,26 +113,19 @@ UnicodeString Version::getUnicodeVersion() const
 {
 	UnicodeString version;
 
-	if (m_showFullVersion)
+	if (m_showFullVersion && m_localBuildNum)
 	{
-		if (!m_localBuildNum)
-		{
-			version.format(TheGameText->fetch("Version:Format3").str(), m_major, m_minor, m_buildNum);
-		}
-		else
-		{
-			UnicodeString user = getUnicodeBuildUserOrGitCommitAuthorName();
-			// User name requires at least 2 characters
-			if (user.getLength() < 2)
-				user.concat(L"xx");
+		UnicodeString user = getUnicodeBuildUserOrGitCommitAuthorName();
+		// User name requires at least 2 characters
+		if (user.getLength() < 2)
+			user.concat(L"xx");
 
-			version.format(TheGameText->fetch("Version:Format4").str(), m_major, m_minor, m_buildNum, m_localBuildNum,
-				user.getCharAt(0), user.getCharAt(1));
-		}
+		version.format(L"%d.%d.%d.%d%c%c", m_major, m_minor, m_buildNum, m_localBuildNum,
+			user.getCharAt(0), user.getCharAt(1));
 	}
 	else
 	{
-		version.format(TheGameText->fetch("Version:Format2").str(), m_major, m_minor);
+		version.format(L"%d.%d.%d", m_major, m_minor, m_buildNum);
 	}
 
 #ifdef RTS_DEBUG
