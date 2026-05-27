@@ -262,8 +262,8 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	// TheSuperHackers @info The default pitch affects the look-at distance to the target.
 	// This is strange math which would need special attention when changed.
 	sourcePos.Z = getCameraOffsetZ();
-	sourcePos.Y = -(sourcePos.Z / tan(ViewDefaultPitchRadians));
-	sourcePos.X = -(sourcePos.Y * tan(ViewDefaultYawRadians));
+	sourcePos.Y = -(sourcePos.Z / tan(TheGlobalData->m_cameraPitch * (PI / 180.0)));
+	sourcePos.X = -(sourcePos.Y * tan(TheGlobalData->m_cameraYaw * (PI / 180.0)));
 
 	// set position of camera itself
 	if (m_useRealZoomCam) //WST 10/10/2002 Real Zoom using FOV
@@ -284,10 +284,10 @@ void W3DView::buildCameraPosition( Vector3& sourcePos, Vector3& targetPos )
 	const Real heightScale = 1.0f - (pos.z / sourcePos.Z);
 
 	// construct a matrix to rotate around the up vector by the given angle
-	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle - ViewDefaultYawRadians );
+	const Matrix3D angleTransform( Vector3( 0.0f, 0.0f, 1.0f ), angle );
 
 	// construct a matrix to rotate around the left vector by the given angle
-	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch - ViewDefaultPitchRadians );
+	const Matrix3D pitchTransform( Vector3( -1.0f, 0.0f, 0.0f ), pitch );
 
 	// rotate camera position (pitch, then angle)
 #ifdef ALLOW_TEMPORARIES
@@ -2144,8 +2144,15 @@ void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 {
 	// MDC - we no longer want to rotate maps (design made all of them right to begin with)
 	//	m_defaultAngle = angle * M_PI/180.0f;
-	setDefaultPitch(pitch);
-	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight*maxHeight;
+	m_defaultPitch = pitch;
+
+	// Scale max camera height by aspect ratio so wider displays get a
+	// proportionally wider zoom-out ceiling (ported from Generals Online).
+	const Real baseAspectRatio = 800.0f / 600.0f;
+	const Real currentAspectRatio = (Real)TheDisplay->getWidth() / (Real)TheDisplay->getHeight();
+	const Real aspectWidthScale = fabs(1.0f + (currentAspectRatio - baseAspectRatio));
+
+	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight * maxHeight * aspectWidthScale;
 	if (m_minHeightAboveGround > m_maxHeightAboveGround)
 		m_maxHeightAboveGround = m_minHeightAboveGround;
 }
