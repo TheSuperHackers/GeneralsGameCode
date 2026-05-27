@@ -54,15 +54,24 @@ endif()
 # VERSION_STRING is consumed by RTS.RC's VERSIONINFO block (and any C/C++
 # code that wants a string form). Kept alongside the numeric macros so both
 # the game and the launcher read versions from one source of truth.
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
+# Compare-and-write so the file's mtime only bumps when the version actually
+# changes; otherwise every `--cmake` reconfigure would force a WinMain.cpp
+# recompile via OBJECT_DEPENDS below.
+set(_zulu_build_version_content
 "#pragma once
 
 #define VERSION_MAJOR ${ZULU_VERSION_MAJOR}
 #define VERSION_MINOR ${ZULU_VERSION_MINOR}
 #define VERSION_BUILDNUM ${ZULU_VERSION_BUILDNUM}
 #define VERSION_STRING \"${ZULU_VERSION_MAJOR}.${ZULU_VERSION_MINOR}.${ZULU_VERSION_BUILDNUM}\"
-"
-)
+")
+set(_zulu_build_version_existing "")
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h")
+    file(READ "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h" _zulu_build_version_existing)
+endif()
+if(NOT _zulu_build_version_existing STREQUAL _zulu_build_version_content)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h "${_zulu_build_version_content}")
+endif()
 
 if(MSVC)
     target_link_options(z_generals PRIVATE "/NODEFAULTLIB:libci.lib")
@@ -77,6 +86,15 @@ target_sources(z_generals PRIVATE
     WinMain.cpp
     WinMain.h
 )
+
+# WinMain.cpp #include's BuildVersion.h and GeneratedVersion.h. VC6's cl.exe
+# rejects /showIncludes, so the top-level CMakeLists.txt disables ninja's
+# header-dependency scanning. Without this explicit OBJECT_DEPENDS, bumping
+# APPVERSION regenerates BuildVersion.h but ninja never recompiles
+# WinMain.cpp, so TheVersion->setVersion() keeps reporting whatever VERSION_*
+# macros were live the last time WinMain.obj was actually built.
+set_source_files_properties(WinMain.cpp PROPERTIES
+    OBJECT_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h;${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h")
 
 # RC files optional for MinGW builds
 # Icon: LoadIcon() handles missing resource gracefully (uses default system icon)
@@ -93,15 +111,10 @@ if(MSVC)
         RTS.RC
     )
 
-    # RTS.RC #include's BuildVersion.h, but the top-level CMakeLists.txt
-    # disables CMAKE_NINJA_CMCLDEPS_RC (required for VC6, whose cl.exe
-    # rejects /showIncludes) so ninja has no automatic dep tracking for
-    # RC #includes. Without the explicit OBJECT_DEPENDS below, bumping
-    # APPVERSION in installer/Zulu.nsi regenerates BuildVersion.h but
-    # ninja sees RTS.RC unchanged and never recompiles the .res — the
-    # exe ships with the stale FILEVERSION even though the linker also
-    # ran. The launcher avoids this entirely because its .rc.in goes
-    # through configure_file(), which updates the .rc's own mtime.
+    # RTS.RC #include's BuildVersion.h; same ninja header-tracking problem
+    # as WinMain.cpp above. Without this, bumping APPVERSION leaves the .res
+    # unmodified and the exe ships with the stale FILEVERSION. The launcher
+    # avoids this entirely because its .rc.in goes through configure_file().
     set_source_files_properties(RTS.RC PROPERTIES
         OBJECT_DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h")
 endif()
