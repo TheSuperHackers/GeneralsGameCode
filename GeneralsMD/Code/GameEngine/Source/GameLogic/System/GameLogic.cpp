@@ -3748,6 +3748,27 @@ void GameLogic::update()
 	UnsignedInt now = getFrame();
 	TheGameClient->setFrame(now);
 
+	// LIVE_OBSERVER: if the previous tick left us waiting for more bytes from
+	// the host, pump only the recorder this tick. All the sim work below
+	// (scripts, terrain, the CRC calc, processCommandList, normal/sleepy
+	// updates, AI, partition, weapon/loco/victory stores) has side effects on
+	// RNG and object state, and running it again at the same m_frame would
+	// advance local state past the host's. The previous frame-pause fix kept
+	// m_frame from incrementing but didn't stop the sim systems from re-ticking
+	// for that frame, which is what causes the CRC mismatch the user reported
+	// once the observer catches up. If bytes arrive during this pump and clear
+	// the waiting flag, fall through and run the rest of the tick normally,
+	// but skip the redundant recorder call further down so updatePlayback's
+	// while loop doesn't apply the same commands twice.
+	Bool recorderUpdatedAtTop = FALSE;
+	if (TheRecorder && TheRecorder->isLiveObserverWaitingForBytes())
+	{
+		TheRecorder->UPDATE();
+		recorderUpdatedAtTop = TRUE;
+		if (TheRecorder->isLiveObserverWaitingForBytes())
+			return;
+	}
+
 	// update (execute) scripts
 	{
 		TheScriptEngine->UPDATE();
@@ -3805,7 +3826,10 @@ void GameLogic::update()
 
 	// Update the Recorder
 	{
-		TheRecorder->UPDATE();
+		// Skip if the top-of-tick observer pump already ran the recorder this
+		// frame; otherwise we'd play back the same commands twice.
+		if (!recorderUpdatedAtTop)
+			TheRecorder->UPDATE();
 	}
 
 	// process client commands

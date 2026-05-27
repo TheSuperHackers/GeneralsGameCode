@@ -839,6 +839,14 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	*/
 
 	/// @todo Need to write game options when there are some to be written.
+
+	// Flush the header to disk before any commands arrive. Without this, a LAN
+	// observer that connects within the first frame or two of game start would
+	// see an empty .rep on disk (the recorder's stdio buffer holds the header
+	// until the first MSG_BEGIN_NETWORK_MESSAGES range write triggers
+	// updateRecord's needFlush block). That empty-file snapshot makes the
+	// joiner's playbackFile fail in readReplayHeader and silently abort.
+	m_file->flush();
 }
 
 /**
