@@ -1189,16 +1189,18 @@ static bool computeMirrorSwap(const LobbySlotInfo *info,
 //   * a tick bar along the bottom edge, one major tick every 300 world
 //     units (= 10 seconds of USA dozer travel at Speed=30 in
 //     Locomotor.ini AmericaVehicleDozerLocomotor), with per-tick labels
-//     in seconds and an "USA dozer travel" caption; and
+//     in seconds and a "USA dozer travel = CC vision" caption; and
 //
-//   * a single Command Center vision reference ring tucked into the
-//     top-left corner (Object AmericaCommandCenter, VisionRange=300 in
-//     FactionBuilding.ini).
+//   * a Command Center vision reference ring (Object AmericaCommandCenter,
+//     VisionRange=300 in FactionBuilding.ini) centered on each occupied
+//     non-observer slot's Player_N_Start waypoint, so the host can see
+//     the vision radius each player starts with.
 //
 // CC vision radius and 10 s of dozer travel both equal 300 world units,
 // so a single 300-unit basis describes both legend elements. Drawn onto
 // the base image so original + mirror renders both inherit the legend.
-static void drawScaleLegend(PixBuf *big, const MapMetaData *mmd)
+static void drawScaleLegend(PixBuf *big, const MapMetaData *mmd,
+                            const LobbySlotInfo *info)
 {
 	if (!big || !mmd) return;
 	float worldW = mmd->m_extent.hi.x - mmd->m_extent.lo.x;
@@ -1250,40 +1252,38 @@ static void drawScaleLegend(PixBuf *big, const MapMetaData *mmd)
 		drawText(big, lx, labelBaselineY, lbl, textScale,
 		         255, 255, 255, false, 0, 0, 0);
 	}
-	// Caption above the bar.
-	const char *cap = "USA dozer travel";
+	// Caption above the bar. Connects the bar's 300-wu segment to the
+	// CC vision ring radius drawn at each start.
+	const char *cap = "USA dozer travel = CC vision";
 	int cw = textWidthPx(cap, textScale);
 	int captionX = barX0 + (barPx - cw) / 2;
 	if (captionX < barX0) captionX = barX0;
 	drawText(big, captionX, barTopY - glyphPx - 3, cap, textScale,
 	         255, 255, 255, false, 0, 0, 0);
 
-	// ---- Top-left CC vision reference ring ----
+	// ---- Per-start CC vision rings ----
+	if (!info) return;
 	// Pick the tighter axis so the ring never exaggerates the radius if
 	// the map's pixel-per-world ratios differ.
 	float pxPerWU = pxPerWUx < pxPerWUy ? pxPerWUx : pxPerWUy;
 	int ringR = (int)(kSegmentWU * pxPerWU + 0.5f);
-	if (ringR < 12) return;
-	int rmargin = 12;
-	int rcx = rmargin + ringR;
-	int rcy = rmargin + ringR;
-	// Bail if the ring would dominate the image (tiny map) — better no
-	// ring than a ring covering everything.
-	if (rcx + ringR > big->w / 2 || rcy + ringR > big->h / 2) return;
-	drawCircleOutline(big, rcx, rcy, ringR + 1, 1, 0, 0, 0);
-	drawCircleOutline(big, rcx, rcy, ringR, 1, 255, 255, 255);
-	// Center crosshair so the radius reads as "from-here-out", not a
-	// floating ring.
-	fillRect(big, rcx - 4, rcy - 1, 9, 2, 255, 255, 255);
-	fillRect(big, rcx - 1, rcy - 4, 2, 9, 255, 255, 255);
-	// Label below the ring.
-	const char *rlbl = "CC vision";
-	int rw = textWidthPx(rlbl, textScale);
-	int rlx = rcx - rw / 2;
-	int rly = rcy + ringR + 3;
-	if (rlx < 1) rlx = 1;
-	if (rly + glyphPx < big->h)
-		drawTextStroked(big, rlx, rly, rlbl, textScale, 255, 255, 255);
+	if (ringR < 8) return; // too small to read as a circle
+	int s;
+	for (s = 0; s < MAX_SLOTS; ++s)
+	{
+		const LobbySlotInfo &si = info[s];
+		if (!si.occupied || si.isObserver) continue;
+		if (si.startPos < 0) continue;
+		AsciiString wp;
+		wp.format("Player_%d_Start", si.startPos + 1);
+		WaypointMap::const_iterator wpIt = mmd->m_waypoints.find(wp);
+		if (wpIt == mmd->m_waypoints.end()) continue;
+		const Coord3D &pos = wpIt->second;
+		int cx = (int)((pos.x - mmd->m_extent.lo.x) / worldW * big->w);
+		int cy = (int)((1.0f - (pos.y - mmd->m_extent.lo.y) / worldH) * big->h);
+		drawCircleOutline(big, cx, cy, ringR + 1, 1, 0, 0, 0);
+		drawCircleOutline(big, cx, cy, ringR, 1, 255, 255, 255);
+	}
 }
 
 // Draw player markers + name/faction/team labels on a pre-built PixBuf.
@@ -1594,9 +1594,10 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	#undef WORLD_TO_PX_X
 	#undef WORLD_TO_PX_Y
 
-	// Paper-map scale legend (bottom tick bar + top-left CC vision ring)
-	// drawn onto the base so both render variants pick it up for free.
-	drawScaleLegend(&big, mmd);
+	// Paper-map scale legend (bottom tick bar + CC vision ring at each
+	// occupied start) drawn onto the base so both render variants pick
+	// it up for free.
+	drawScaleLegend(&big, mmd, info);
 
 	// At this point `big` is the "base" image: upscaled preview + neutral
 	// overlays. Both the original and the mirror render start from a
