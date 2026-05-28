@@ -1184,6 +1184,108 @@ static bool computeMirrorSwap(const LobbySlotInfo *info,
 }
 #undef MAX_PAIR
 
+// Draw a paper-map-style scale onto the upscaled base preview:
+//
+//   * a tick bar along the bottom edge, one major tick every 300 world
+//     units (= 10 seconds of USA dozer travel at Speed=30 in
+//     Locomotor.ini AmericaVehicleDozerLocomotor), with per-tick labels
+//     in seconds and an "USA dozer travel" caption; and
+//
+//   * a single Command Center vision reference ring tucked into the
+//     top-left corner (Object AmericaCommandCenter, VisionRange=300 in
+//     FactionBuilding.ini).
+//
+// CC vision radius and 10 s of dozer travel both equal 300 world units,
+// so a single 300-unit basis describes both legend elements. Drawn onto
+// the base image so original + mirror renders both inherit the legend.
+static void drawScaleLegend(PixBuf *big, const MapMetaData *mmd)
+{
+	if (!big || !mmd) return;
+	float worldW = mmd->m_extent.hi.x - mmd->m_extent.lo.x;
+	float worldH = mmd->m_extent.hi.y - mmd->m_extent.lo.y;
+	if (worldW <= 0.0f || worldH <= 0.0f) return;
+
+	const float kSegmentWU = 300.0f; // CC vision radius == 10s dozer travel
+	float pxPerWUx = (float)big->w / worldW;
+	float pxPerWUy = (float)big->h / worldH;
+	int segmentPxX = (int)(kSegmentWU * pxPerWUx + 0.5f);
+	if (segmentPxX < 16) return; // ticks too close to read
+
+	int textScale = (big->w >= 700) ? 2 : 1;
+	int glyphPx = 8 * textScale;
+
+	// ---- Bottom tick bar ----
+	int barMargin = 8;
+	int maxBarPx = big->w - 2 * barMargin;
+	int numSegs = maxBarPx / segmentPxX;
+	if (numSegs < 1) return;
+	if (numSegs > 8) numSegs = 8;
+	int barPx = numSegs * segmentPxX;
+	int barX0 = barMargin;
+	int tickH = textScale * 6;
+	int barBottomY = big->h - barMargin;
+	int labelBaselineY = barBottomY - glyphPx;
+	int barBaseY = labelBaselineY - 3;
+	int barTopY = barBaseY - tickH;
+
+	// Black backing strip behind the bar + labels for legibility on any
+	// terrain. Sized to cover the caption above and the seconds labels
+	// below the ticks.
+	fillRect(big, barX0 - 4, barTopY - glyphPx - 6,
+	         barPx + 8, glyphPx * 2 + tickH + 10, 0, 0, 0);
+	// Bar baseline.
+	fillRect(big, barX0, barBaseY - 1, barPx, 2, 255, 255, 255);
+	// Ticks + per-tick seconds labels.
+	int i;
+	for (i = 0; i <= numSegs; ++i)
+	{
+		int tx = barX0 + i * segmentPxX;
+		fillRect(big, tx - 1, barTopY, 2, tickH, 255, 255, 255);
+		char lbl[8];
+		sprintf(lbl, "%ds", i * 10);
+		int lw = textWidthPx(lbl, textScale);
+		int lx = tx - lw / 2;
+		if (lx < 1) lx = 1;
+		if (lx + lw > big->w - 1) lx = big->w - 1 - lw;
+		drawText(big, lx, labelBaselineY, lbl, textScale,
+		         255, 255, 255, false, 0, 0, 0);
+	}
+	// Caption above the bar.
+	const char *cap = "USA dozer travel";
+	int cw = textWidthPx(cap, textScale);
+	int captionX = barX0 + (barPx - cw) / 2;
+	if (captionX < barX0) captionX = barX0;
+	drawText(big, captionX, barTopY - glyphPx - 3, cap, textScale,
+	         255, 255, 255, false, 0, 0, 0);
+
+	// ---- Top-left CC vision reference ring ----
+	// Pick the tighter axis so the ring never exaggerates the radius if
+	// the map's pixel-per-world ratios differ.
+	float pxPerWU = pxPerWUx < pxPerWUy ? pxPerWUx : pxPerWUy;
+	int ringR = (int)(kSegmentWU * pxPerWU + 0.5f);
+	if (ringR < 12) return;
+	int rmargin = 12;
+	int rcx = rmargin + ringR;
+	int rcy = rmargin + ringR;
+	// Bail if the ring would dominate the image (tiny map) — better no
+	// ring than a ring covering everything.
+	if (rcx + ringR > big->w / 2 || rcy + ringR > big->h / 2) return;
+	drawCircleOutline(big, rcx, rcy, ringR + 1, 1, 0, 0, 0);
+	drawCircleOutline(big, rcx, rcy, ringR, 1, 255, 255, 255);
+	// Center crosshair so the radius reads as "from-here-out", not a
+	// floating ring.
+	fillRect(big, rcx - 4, rcy - 1, 9, 2, 255, 255, 255);
+	fillRect(big, rcx - 1, rcy - 4, 2, 9, 255, 255, 255);
+	// Label below the ring.
+	const char *rlbl = "CC vision";
+	int rw = textWidthPx(rlbl, textScale);
+	int rlx = rcx - rw / 2;
+	int rly = rcy + ringR + 3;
+	if (rlx < 1) rlx = 1;
+	if (rly + glyphPx < big->h)
+		drawTextStroked(big, rlx, rly, rlbl, textScale, 255, 255, 255);
+}
+
 // Draw player markers + name/faction/team labels on a pre-built PixBuf.
 //
 // `playerOverride`, if non-null, redirects the *player identity* drawn at
@@ -1491,6 +1593,10 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	#undef DRAW_ICON_OR_GLYPH
 	#undef WORLD_TO_PX_X
 	#undef WORLD_TO_PX_Y
+
+	// Paper-map scale legend (bottom tick bar + top-left CC vision ring)
+	// drawn onto the base so both render variants pick it up for free.
+	drawScaleLegend(&big, mmd);
 
 	// At this point `big` is the "base" image: upscaled preview + neutral
 	// overlays. Both the original and the mirror render start from a
