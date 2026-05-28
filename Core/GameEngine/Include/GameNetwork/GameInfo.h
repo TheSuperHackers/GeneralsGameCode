@@ -48,19 +48,34 @@ enum SlotState CPP_11(: Int)
 };
 
 // Lobby player-combo translation. The LAN/WOL/Skirmish combo boxes lay out
-// Open/Closed/Easy/Medium/Brutal/Tactical at positions 0..5 (matching the
-// SlotState enum values for 0..4, with Tactical mapped to position 5 since
-// SLOT_PLAYER=5 is reserved for an actual joining human).
+// Open(0)/Closed(1)/Tactical(2)/Hard(3)/Medium(4)/Easy(5) so the AI tiers run
+// strongest-first in the dropdown.
 inline SlotState slotStateFromLobbyComboPos(Int pos)
 {
-	if (pos == 5) return SLOT_TACTICAL_AI;
-	return (SlotState)pos;
+	switch (pos)
+	{
+		case 0: return SLOT_OPEN;
+		case 1: return SLOT_CLOSED;
+		case 2: return SLOT_TACTICAL_AI;
+		case 3: return SLOT_BRUTAL_AI;
+		case 4: return SLOT_MED_AI;
+		case 5: return SLOT_EASY_AI;
+	}
+	return SLOT_OPEN;
 }
 
 inline Int lobbyComboPosFromSlotState(SlotState s)
 {
-	if (s == SLOT_TACTICAL_AI) return 5;
-	return (Int)s;
+	switch (s)
+	{
+		case SLOT_OPEN:        return 0;
+		case SLOT_CLOSED:      return 1;
+		case SLOT_TACTICAL_AI: return 2;
+		case SLOT_BRUTAL_AI:   return 3;
+		case SLOT_MED_AI:      return 4;
+		case SLOT_EASY_AI:     return 5;
+		default:               return 0;
+	}
 }
 
 enum
