@@ -177,6 +177,23 @@ static inline void putPixel(PixBuf *b, int x, int y, unsigned char r, unsigned c
 	p[0] = r; p[1] = g; p[2] = bl;
 }
 
+// Source-over alpha blend of (r,g,bl) at coverage `alpha` (0..255) onto the
+// existing pixel. Used for translucent overlays like the scale grid where
+// fully opaque lines would fight the underlying terrain.
+static inline void blendPixel(PixBuf *b, int x, int y,
+                              unsigned char r, unsigned char g, unsigned char bl,
+                              unsigned char alpha)
+{
+	if (x < 0 || y < 0 || x >= b->w || y >= b->h)
+		return;
+	unsigned char *p = b->rgb + (y * b->w + x) * 3;
+	unsigned int a = alpha;
+	unsigned int ia = 255 - a;
+	p[0] = (unsigned char)((r  * a + p[0] * ia) / 255);
+	p[1] = (unsigned char)((g  * a + p[1] * ia) / 255);
+	p[2] = (unsigned char)((bl * a + p[2] * ia) / 255);
+}
+
 static void fillRect(PixBuf *b, int x, int y, int w, int h, unsigned char r, unsigned char g, unsigned char bl)
 {
 	int x0 = x < 0 ? 0 : x;
@@ -1186,19 +1203,21 @@ static bool computeMirrorSwap(const LobbySlotInfo *info,
 
 // Draw a paper-map-style scale onto the upscaled base preview:
 //
-//   * a tick bar along the bottom edge, one major tick every 300 world
-//     units (= 10 seconds of USA dozer travel at Speed=30 in
-//     Locomotor.ini AmericaVehicleDozerLocomotor), with per-tick labels
-//     in seconds and a "USA dozer travel = CC vision" caption; and
+//   * a faint white grid every 300 world units (alpha-blended so terrain
+//     stays readable). 300 wu = 10 s of USA dozer travel at Speed=30 in
+//     Locomotor.ini AmericaVehicleDozerLocomotor and also = CC vision
+//     radius (Object AmericaCommandCenter, VisionRange=300 in
+//     FactionBuilding.ini), so one grid cell = one ring radius;
 //
-//   * a Command Center vision reference ring (Object AmericaCommandCenter,
-//     VisionRange=300 in FactionBuilding.ini) centered on each occupied
-//     non-observer slot's Player_N_Start waypoint, so the host can see
-//     the vision radius each player starts with.
+//   * notches with seconds labels along the bottom and left edges (0 s
+//     at the bottom-left corner, increasing rightward and upward); plus
+//     a small "s = USA dozer travel" caption in the top-right corner;
 //
-// CC vision radius and 10 s of dozer travel both equal 300 world units,
-// so a single 300-unit basis describes both legend elements. Drawn onto
-// the base image so original + mirror renders both inherit the legend.
+//   * a CC vision reference ring centered on each occupied non-observer
+//     slot's Player_N_Start waypoint.
+//
+// Drawn onto the base image so the original and mirror renders both
+// inherit the legend.
 static void drawScaleLegend(PixBuf *big, const MapMetaData *mmd,
                             const LobbySlotInfo *info)
 {
@@ -1211,55 +1230,78 @@ static void drawScaleLegend(PixBuf *big, const MapMetaData *mmd,
 	float pxPerWUx = (float)big->w / worldW;
 	float pxPerWUy = (float)big->h / worldH;
 	int segmentPxX = (int)(kSegmentWU * pxPerWUx + 0.5f);
-	if (segmentPxX < 16) return; // ticks too close to read
+	int segmentPxY = (int)(kSegmentWU * pxPerWUy + 0.5f);
+	if (segmentPxX < 16 || segmentPxY < 16) return; // ticks too close to read
 
-	int textScale = (big->w >= 700) ? 2 : 1;
-	int glyphPx = 8 * textScale;
+	const int textScale = 1;
+	const int glyphPx = 8 * textScale;
+	const int tickLen = 10;
+	const unsigned char kGridAlpha = 60; // ~24%, low enough to not fight terrain
 
-	// ---- Bottom tick bar ----
-	int barMargin = 8;
-	int maxBarPx = big->w - 2 * barMargin;
-	int numSegs = maxBarPx / segmentPxX;
-	if (numSegs < 1) return;
-	if (numSegs > 8) numSegs = 8;
-	int barPx = numSegs * segmentPxX;
-	int barX0 = barMargin;
-	int tickH = textScale * 6;
-	int barBottomY = big->h - barMargin;
-	int labelBaselineY = barBottomY - glyphPx;
-	int barBaseY = labelBaselineY - 3;
-	int barTopY = barBaseY - tickH;
+	int i, j;
 
-	// Black backing strip behind the bar + labels for legibility on any
-	// terrain. Sized to cover the caption above and the seconds labels
-	// below the ticks.
-	fillRect(big, barX0 - 4, barTopY - glyphPx - 6,
-	         barPx + 8, glyphPx * 2 + tickH + 10, 0, 0, 0);
-	// Bar baseline.
-	fillRect(big, barX0, barBaseY - 1, barPx, 2, 255, 255, 255);
-	// Ticks + per-tick seconds labels.
-	int i;
-	for (i = 0; i <= numSegs; ++i)
+	// ---- Faint grid every 300 wu ----
+	// Stops short of the edge tick zone so the notches stay crisp.
+	int gridStopY = big->h - tickLen - 1;
+	int gridStartX = tickLen + 1;
+	for (i = 1; i * segmentPxX < big->w; ++i)
 	{
-		int tx = barX0 + i * segmentPxX;
-		fillRect(big, tx - 1, barTopY, 2, tickH, 255, 255, 255);
+		int gx = i * segmentPxX;
+		for (j = 0; j <= gridStopY; ++j)
+			blendPixel(big, gx, j, 255, 255, 255, kGridAlpha);
+	}
+	for (i = 1; i * segmentPxY < big->h; ++i)
+	{
+		int gy = big->h - 1 - i * segmentPxY; // 0s at bottom edge
+		for (j = gridStartX; j < big->w; ++j)
+			blendPixel(big, j, gy, 255, 255, 255, kGridAlpha);
+	}
+
+	// ---- Bottom edge notches + seconds labels ----
+	int numSegsX = (big->w - 1) / segmentPxX;
+	if (numSegsX > 12) numSegsX = 12; // sanity cap; very wide previews
+	for (i = 0; i <= numSegsX; ++i)
+	{
+		int tx = i * segmentPxX;
+		// 1px-wide white tick over a 3px-wide black backing so the tick
+		// reads against any terrain color.
+		fillRect(big, tx - 1, big->h - tickLen - 1, 3, tickLen + 1, 0, 0, 0);
+		fillRect(big, tx,     big->h - tickLen,     1, tickLen,     255, 255, 255);
 		char lbl[8];
 		sprintf(lbl, "%ds", i * 10);
 		int lw = textWidthPx(lbl, textScale);
 		int lx = tx - lw / 2;
 		if (lx < 1) lx = 1;
 		if (lx + lw > big->w - 1) lx = big->w - 1 - lw;
-		drawText(big, lx, labelBaselineY, lbl, textScale,
-		         255, 255, 255, false, 0, 0, 0);
+		int ly = big->h - tickLen - glyphPx - 2;
+		drawTextStroked(big, lx, ly, lbl, textScale, 255, 255, 255);
 	}
-	// Caption above the bar. Connects the bar's 300-wu segment to the
-	// CC vision ring radius drawn at each start.
-	const char *cap = "USA dozer travel = CC vision";
+
+	// ---- Left edge notches + seconds labels ----
+	// Skip i==0: the bottom edge's "0s" already labels the origin.
+	int numSegsY = (big->h - 1) / segmentPxY;
+	if (numSegsY > 12) numSegsY = 12;
+	for (i = 1; i <= numSegsY; ++i)
+	{
+		int ty = big->h - 1 - i * segmentPxY;
+		fillRect(big, 0, ty - 1, tickLen + 1, 3, 0, 0, 0);
+		fillRect(big, 0, ty,     tickLen,     1, 255, 255, 255);
+		char lbl[8];
+		sprintf(lbl, "%ds", i * 10);
+		int ly = ty - glyphPx / 2;
+		if (ly < 1) ly = 1;
+		if (ly + glyphPx > big->h - 1) ly = big->h - 1 - glyphPx;
+		int lx = tickLen + 3;
+		drawTextStroked(big, lx, ly, lbl, textScale, 255, 255, 255);
+	}
+
+	// ---- Top-right corner caption ----
+	const char *cap = "s = USA dozer travel";
 	int cw = textWidthPx(cap, textScale);
-	int captionX = barX0 + (barPx - cw) / 2;
-	if (captionX < barX0) captionX = barX0;
-	drawText(big, captionX, barTopY - glyphPx - 3, cap, textScale,
-	         255, 255, 255, false, 0, 0, 0);
+	int captionX = big->w - cw - 4;
+	int captionY = 3;
+	if (captionX < 1) captionX = 1;
+	drawTextStroked(big, captionX, captionY, cap, textScale, 255, 255, 255);
 
 	// ---- Per-start CC vision rings ----
 	if (!info) return;
@@ -1594,9 +1636,9 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	#undef WORLD_TO_PX_X
 	#undef WORLD_TO_PX_Y
 
-	// Paper-map scale legend (bottom tick bar + CC vision ring at each
-	// occupied start) drawn onto the base so both render variants pick
-	// it up for free.
+	// Paper-map scale legend (faint 300-wu grid + edge notches with
+	// seconds labels + CC vision ring at each occupied start) drawn onto
+	// the base so both render variants pick it up for free.
 	drawScaleLegend(&big, mmd, info);
 
 	// At this point `big` is the "base" image: upscaled preview + neutral
