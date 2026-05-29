@@ -465,7 +465,6 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			newModState |= ALT;
 		}
 
-
 		for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
 		{
 			if (!isMessageUsable(map->m_usableIn))

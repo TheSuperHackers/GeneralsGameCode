@@ -53,6 +53,14 @@
 
 #include "GameLogic/GameLogic.h" // for TheGameLogic->getFrame()
 
+
+#define dont_DUMP_ALL_KEYS_TO_LOG
+
+
+#ifdef DUMP_ALL_KEYS_TO_LOG
+#include "GameClient/Keyboard.h"
+#endif
+
 MetaMap *TheMetaMap = nullptr;
 
 
@@ -174,6 +182,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "BEGIN_CAMERA_ZOOM_OUT",										GameMessage::MSG_META_BEGIN_CAMERA_ZOOM_OUT },
 	{ "END_CAMERA_ZOOM_OUT",											GameMessage::MSG_META_END_CAMERA_ZOOM_OUT },
 	{ "CAMERA_RESET",															GameMessage::MSG_META_CAMERA_RESET },
+	{ "TOGGLE_CAMERA_TRACKING_DRAWABLE",					GameMessage::MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE },
 	{ "TOGGLE_FAST_FORWARD_REPLAY",								GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
 	{ "TOGGLE_PAUSE",															GameMessage::MSG_META_TOGGLE_PAUSE },
 	{ "TOGGLE_PAUSE_ALT",													GameMessage::MSG_META_TOGGLE_PAUSE_ALT },
@@ -181,8 +190,33 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "STEP_FRAME_ALT",														GameMessage::MSG_META_STEP_FRAME_ALT },
 	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+	{ "CHEAT_RUNSCRIPT1",								        	GameMessage::MSG_CHEAT_RUNSCRIPT1 },
+	{ "CHEAT_RUNSCRIPT2",								        	GameMessage::MSG_CHEAT_RUNSCRIPT2 },
+	{ "CHEAT_RUNSCRIPT3",								        	GameMessage::MSG_CHEAT_RUNSCRIPT3 },
+	{ "CHEAT_RUNSCRIPT4",								        	GameMessage::MSG_CHEAT_RUNSCRIPT4 },
+	{ "CHEAT_RUNSCRIPT5",								        	GameMessage::MSG_CHEAT_RUNSCRIPT5 },
+	{ "CHEAT_RUNSCRIPT6",								        	GameMessage::MSG_CHEAT_RUNSCRIPT6 },
+	{ "CHEAT_RUNSCRIPT7",								        	GameMessage::MSG_CHEAT_RUNSCRIPT7 },
+	{ "CHEAT_RUNSCRIPT8",								        	GameMessage::MSG_CHEAT_RUNSCRIPT8 },
+	{ "CHEAT_RUNSCRIPT9",								        	GameMessage::MSG_CHEAT_RUNSCRIPT9 },
+	{ "CHEAT_TOGGLE_SPECIAL_POWER_DELAYS",	      GameMessage::MSG_CHEAT_TOGGLE_SPECIAL_POWER_DELAYS },
+  { "CHEAT_SWITCH_TEAMS",							        	GameMessage::MSG_CHEAT_SWITCH_TEAMS },
+	{ "CHEAT_KILL_SELECTION",						        	GameMessage::MSG_CHEAT_KILL_SELECTION },
+	{ "CHEAT_TOGGLE_HAND_OF_GOD_MODE",		        GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE },
+	{ "CHEAT_INSTANT_BUILD",							        GameMessage::MSG_CHEAT_INSTANT_BUILD },
+	{ "CHEAT_DESHROUD",									          GameMessage::MSG_CHEAT_DESHROUD },
+	{ "CHEAT_ADD_CASH",									          GameMessage::MSG_CHEAT_ADD_CASH },
+	{ "CHEAT_GIVE_ALL_SCIENCES",					        GameMessage::MSG_CHEAT_GIVE_ALL_SCIENCES },
+  { "CHEAT_GIVE_SCIENCEPURCHASEPOINTS",        	GameMessage::MSG_CHEAT_GIVE_SCIENCEPURCHASEPOINTS },
+  { "CHEAT_SHOW_HEALTH",                        GameMessage::MSG_CHEAT_SHOW_HEALTH },
+  { "CHEAT_TOGGLE_MESSAGE_TEXT",                GameMessage::MSG_CHEAT_TOGGLE_MESSAGE_TEXT },
+
+#endif
+
 #if defined(RTS_DEBUG)
 	{ "HELP",																			GameMessage::MSG_META_HELP },
+
 	{ "DEMO_TOGGLE_BEHIND_BUILDINGS",							GameMessage::MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS },
 	{ "DEMO_LOD_DECREASE",												GameMessage::MSG_META_DEMO_LOD_DECREASE },
 	{ "DEMO_LOD_INCREASE",												GameMessage::MSG_META_DEMO_LOD_INCREASE },
@@ -250,7 +284,8 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_TOGGLE_GREEN_VIEW",										GameMessage::MSG_META_DEMO_TOGGLE_GREEN_VIEW },
 	{ "DEMO_TOGGLE_MOTION_BLUR_ZOOM",							GameMessage::MSG_META_DEMO_TOGGLE_MOTION_BLUR_ZOOM },
 	{ "DEMO_SHOW_EXTENTS",												GameMessage::MSG_META_DEBUG_SHOW_EXTENTS },
-	{ "DEMO_SHOW_HEALTH",													GameMessage::MSG_META_DEBUG_SHOW_HEALTH },
+  { "DEMO_SHOW_AUDIO_LOCATIONS",								GameMessage::MSG_META_DEBUG_SHOW_AUDIO_LOCATIONS },
+  { "DEMO_SHOW_HEALTH",													GameMessage::MSG_META_DEBUG_SHOW_HEALTH },
 	{ "DEMO_GIVE_VETERANCY",											GameMessage::MSG_META_DEBUG_GIVE_VETERANCY },
 	{ "DEMO_TAKE_VETERANCY",											GameMessage::MSG_META_DEBUG_TAKE_VETERANCY },
 	{ "DEMO_BATTLE_CRY",													GameMessage::MSG_META_DEMO_BATTLE_CRY },
@@ -266,6 +301,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_DESHROUD",														GameMessage::MSG_META_DEMO_DESHROUD },
 	{ "DEMO_ENSHROUD",														GameMessage::MSG_META_DEMO_ENSHROUD },
 	{ "DEMO_TOGGLE_AI_DEBUG",											GameMessage::MSG_META_DEMO_TOGGLE_AI_DEBUG },
+	{ "DEMO_TOGGLE_SUPPLY_CENTER_PLACEMENT",			GameMessage::MSG_META_DEMO_TOGGLE_SUPPLY_CENTER_PLACEMENT },
 	{ "DEMO_TOGGLE_NO_DRAW",											GameMessage::MSG_NO_DRAW },
 	{ "DEMO_CYCLE_LOD_LEVEL",											GameMessage::MSG_META_DEMO_CYCLE_LOD_LEVEL },
 	{ "DEMO_DUMP_ASSETS",													GameMessage::MSG_META_DEBUG_DUMP_ASSETS},
@@ -302,6 +338,9 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEBUG_DUMP_ALL_PLAYER_OBJECTS",						GameMessage::MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS },
 	{ "DEMO_WIN",																	GameMessage::MSG_META_DEBUG_WIN },
 	{ "DEMO_TOGGLE_DEBUG_STATS",									GameMessage::MSG_META_DEMO_TOGGLE_DEBUG_STATS },
+	{ "DEBUG_OBJECT_ID_PERFORMANCE",							GameMessage::MSG_META_DEBUG_OBJECT_ID_PERFORMANCE },
+	{ "DEBUG_DRAWABLE_ID_PERFORMANCE",						GameMessage::MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE },
+	{ "DEBUG_SLEEPY_UPDATE_PERFORMANCE",					GameMessage::MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE },
 #endif // defined(RTS_DEBUG)
 
 
@@ -499,9 +538,28 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			}
 		}
 
+
+
 		if (t == GameMessage::MSG_RAW_KEY_DOWN)
+    {
 			m_lastKeyDown = key;
-		m_lastModState = newModState;
+
+
+#ifdef DUMP_ALL_KEYS_TO_LOG
+
+		          WideChar Wkey = TheKeyboard->getPrintableKey(key, 0);
+		          UnicodeString uKey;
+		          uKey.set(&Wkey);
+		          AsciiString aKey;
+		          aKey.translate(uKey);
+  	          DEBUG_LOG(("^%s ", aKey.str()));
+#endif
+
+    }
+
+
+
+    m_lastModState = newModState;
 	}
 
 
