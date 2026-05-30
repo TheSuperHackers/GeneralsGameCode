@@ -35,7 +35,7 @@
 #include "Common/Overridable.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
-//static const Int NUM_GENERALS = 12;  // ChallengeMenu.wnd dependent
+// static const Int NUM_GENERALS = 12;  // ChallengeMenu.wnd dependent
 #define NUM_GENERALS (12)
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -55,14 +55,14 @@ private:
 	AsciiString m_strBioRank;
 	AsciiString m_strBioBranch;
 	AsciiString m_strBioClassNumber;
-	Image *m_imageBioPortraitSmall;
-	Image *m_imageBioPortraitLarge;
+	Image* m_imageBioPortraitSmall;
+	Image* m_imageBioPortraitLarge;
 	AsciiString m_strCampaign;
 	AsciiString m_strPlayerTemplateName;
 	AsciiString m_strPortraitMovieLeftName;
 	AsciiString m_strPortraitMovieRightName;
-	Image *m_imageDefeated;
-	Image *m_imageVictorious;
+	Image* m_imageDefeated;
+	Image* m_imageVictorious;
 	AsciiString m_strDefeated;
 	AsciiString m_strVictorious;
 	AsciiString m_strSelectionSound;
@@ -72,16 +72,15 @@ private:
 	AsciiString m_strWinSound;
 	AsciiString m_strLossSound;
 	AsciiString m_strPreviewSound;
-	AsciiString m_strNameSound ;
-
+	AsciiString m_strNameSound;
 
 public:
-	GeneralPersona() :
-		m_imageBioPortraitSmall(nullptr),
-		m_imageBioPortraitLarge(nullptr)
+	GeneralPersona()
+		: m_imageBioPortraitSmall(nullptr)
+		, m_imageBioPortraitLarge(nullptr)
 	{
 	}
-//	~GeneralPersona();
+	//	~GeneralPersona();
 
 	Bool isStartingEnabled() const { return m_bStartsEnabled; }
 	const AsciiString& getBioName() const { return m_strBioName; }
@@ -91,22 +90,25 @@ public:
 	const AsciiString& getBioRank() const { return m_strBioRank; }
 	const AsciiString& getBioClassNumber() const { return m_strBioClassNumber; }
 	const AsciiString& getBioBranch() const { return m_strBioBranch; }
-	const Image *getBioPortraitSmall() const { return m_imageBioPortraitSmall; }
-	const Image *getBioPortraitLarge() const { return m_imageBioPortraitLarge; }
+	const Image* getBioPortraitSmall() const { return m_imageBioPortraitSmall; }
+	const Image* getBioPortraitLarge() const { return m_imageBioPortraitLarge; }
 	const AsciiString& getPortraitMovieLeftName() const { return m_strPortraitMovieLeftName; }
 	const AsciiString& getPortraitMovieRightName() const { return m_strPortraitMovieRightName; }
 	const AsciiString& getCampaign() const { return m_strCampaign; }
-	const AsciiString& getPlayerTemplateName() const { return m_strPlayerTemplateName; }	// template name, as parsed in from ini
-	const Image *getImageDefeated() const { return m_imageDefeated; }
-	const Image *getImageVictorious() const { return m_imageVictorious; }
+	const AsciiString& getPlayerTemplateName() const { return m_strPlayerTemplateName; }    // template name, as parsed in from ini
+	const Image* getImageDefeated() const { return m_imageDefeated; }
+	const Image* getImageVictorious() const { return m_imageVictorious; }
 	const AsciiString& getStringDefeated() const { return m_strDefeated; }
 	const AsciiString& getStringVictorious() const { return m_strVictorious; }
 	const AsciiString& getSelectionSound() const { return m_strSelectionSound; }
-	const AsciiString& getRandomTauntSound() const {
-		switch (rand()%3) // don't care about distribution or exactly how random this is
+	const AsciiString& getRandomTauntSound() const
+	{
+		switch (rand() % 3)    // don't care about distribution or exactly how random this is
 		{
-			case 0:	return m_strTauntSound1;
-			case 1: return m_strTauntSound2;
+			case 0:
+				return m_strTauntSound1;
+			case 1:
+				return m_strTauntSound2;
 		}
 		return m_strTauntSound3;
 	}
@@ -116,16 +118,15 @@ public:
 	const AsciiString& getNameSound() const { return m_strNameSound; }
 };
 
-
 class ChallengeGenerals
 {
 
 private:
-	/*const*/ GeneralPersona m_position[ NUM_GENERALS ];
-	Int m_PlayerTemplateNum;		// the template number as ThePlayerTemplateStore has it
-	GameDifficulty m_currentDifficulty; // the last selected game difficulty for the challenge generals
+	/*const*/ GeneralPersona m_position[NUM_GENERALS];
+	Int m_PlayerTemplateNum;    // the template number as ThePlayerTemplateStore has it
+	GameDifficulty m_currentDifficulty;    // the last selected game difficulty for the challenge generals
 
-	static void parseGeneralPersona( INI* ini, void *instance, void *store, const void *userData );
+	static void parseGeneralPersona(INI* ini, void* instance, void* store, const void* userData);
 
 public:
 	ChallengeGenerals();
@@ -133,23 +134,21 @@ public:
 
 	void init();
 	const GeneralPersona* getChallengeGenerals() const { return m_position; }
-	const FieldParse* getFieldParse() const { return s_fieldParseTable; }	// for INI file parsing
-	const GeneralPersona* getPlayerGeneralByCampaignName( AsciiString name ) const;
-	const GeneralPersona* getGeneralByGeneralName( AsciiString name ) const;
-	const GeneralPersona* getGeneralByTemplateName( AsciiString name ) const;
+	const FieldParse* getFieldParse() const { return s_fieldParseTable; }    // for INI file parsing
+	const GeneralPersona* getPlayerGeneralByCampaignName(AsciiString name) const;
+	const GeneralPersona* getGeneralByGeneralName(AsciiString name) const;
+	const GeneralPersona* getGeneralByTemplateName(AsciiString name) const;
 
-	void setCurrentPlayerTemplateNum( Int playerTemplateNum) { m_PlayerTemplateNum = playerTemplateNum; }
+	void setCurrentPlayerTemplateNum(Int playerTemplateNum) { m_PlayerTemplateNum = playerTemplateNum; }
 	Int getCurrentPlayerTemplateNum() { return m_PlayerTemplateNum; }
 
-	void setCurrentDifficulty( GameDifficulty diff ) { m_currentDifficulty = diff; }
+	void setCurrentDifficulty(GameDifficulty diff) { m_currentDifficulty = diff; }
 	GameDifficulty getCurrentDifficulty() { return m_currentDifficulty; }
+
 protected:
 	static const FieldParse s_fieldParseTable[];
-
 };
 
-
-
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern ChallengeGenerals *TheChallengeGenerals;
-extern ChallengeGenerals *createChallengeGenerals();
+extern ChallengeGenerals* TheChallengeGenerals;
+extern ChallengeGenerals* createChallengeGenerals();

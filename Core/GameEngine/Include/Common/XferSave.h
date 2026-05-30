@@ -45,28 +45,25 @@ class XferSave : public Xfer
 {
 
 public:
-
 	XferSave();
 	virtual ~XferSave() override;
 
 	// Xfer methods
-	virtual void open( AsciiString identifier ) override;		///< open file for writing
-	virtual void close() override;											///< close file
-	virtual Int beginBlock() override;									///< write placeholder block size
-	virtual void endBlock() override;									///< backup to last begin block and write size
-	virtual void skip( Int dataSize ) override;							///< skipping during a write is a no-op
+	virtual void open(AsciiString identifier) override;    ///< open file for writing
+	virtual void close() override;    ///< close file
+	virtual Int beginBlock() override;    ///< write placeholder block size
+	virtual void endBlock() override;    ///< backup to last begin block and write size
+	virtual void skip(Int dataSize) override;    ///< skipping during a write is a no-op
 
-	virtual void xferSnapshot( Snapshot *snapshot ) override;		///< entry point for xfering a snapshot
+	virtual void xferSnapshot(Snapshot* snapshot) override;    ///< entry point for xfering a snapshot
 
 	// xfer methods
-	virtual void xferAsciiString( AsciiString *asciiStringData ) override;  ///< xfer ascii string (need our own)
-	virtual void xferUnicodeString( UnicodeString *unicodeStringData ) override;	///< xfer unicode string (need our own);
+	virtual void xferAsciiString(AsciiString* asciiStringData) override;    ///< xfer ascii string (need our own)
+	virtual void xferUnicodeString(UnicodeString* unicodeStringData) override;    ///< xfer unicode string (need our own);
 
 protected:
+	virtual void xferImplementation(void* data, Int dataSize) override;    ///< the xfer implementation
 
-	virtual void xferImplementation( void *data, Int dataSize ) override;		///< the xfer implementation
-
-	FILE * m_fileFP;																			///< pointer to file
-	XferBlockData *m_blockStack;													///< stack of block data
-
+	FILE* m_fileFP;    ///< pointer to file
+	XferBlockData* m_blockStack;    ///< stack of block data
 };

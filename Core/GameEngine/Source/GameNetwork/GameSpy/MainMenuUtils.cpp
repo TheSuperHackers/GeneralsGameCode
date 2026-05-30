@@ -29,11 +29,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include <fcntl.h>
 
-//#include "Common/Registry.h"
+// #include "Common/Registry.h"
 #include "Common/UserPreferences.h"
 #include "Common/version.h"
 #include "GameClient/GameText.h"
@@ -54,25 +54,25 @@
 #include "WWDownload/Registry.h"
 #include "WWDownload/urlBuilder.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static Bool checkingForPatchBeforeGameSpy = FALSE;
 static Int checksLeftBeforeOnline = 0;
-static Int timeThroughOnline = 0; // used to avoid having old callbacks cause problems
+static Int timeThroughOnline = 0;    // used to avoid having old callbacks cause problems
 static Bool mustDownloadPatch = FALSE;
 static Bool cantConnectBeforeOnline = FALSE;
 static std::list<QueuedDownload> queuedDownloads;
 
-static char *MOTDBuffer = nullptr;
-static char *configBuffer = nullptr;
-GameWindow *onlineCancelWindow = nullptr;
+static char* MOTDBuffer = nullptr;
+static char* configBuffer = nullptr;
+GameWindow* onlineCancelWindow = nullptr;
 
 static Bool s_asyncDNSThreadDone = TRUE;
 static Bool s_asyncDNSThreadSucceeded = FALSE;
 static Bool s_asyncDNSLookupInProgress = FALSE;
 static HANDLE s_asyncDNSThreadHandle = nullptr;
-enum {
+enum
+{
 	LOOKUP_INPROGRESS,
 	LOOKUP_FAILED,
 	LOOKUP_SUCCEEDED,
@@ -94,10 +94,10 @@ void StartDownloadingPatches()
 		return;
 	}
 
-	WindowLayout *layout;
-	layout = TheWindowManager->winCreateLayout( "Menus/DownloadMenu.wnd" );
+	WindowLayout* layout;
+	layout = TheWindowManager->winCreateLayout("Menus/DownloadMenu.wnd");
 	layout->runInit();
-	layout->hide( FALSE );
+	layout->hide(FALSE);
 	layout->bringForward();
 	HandleCanceledDownload(FALSE);
 	DEBUG_ASSERTCRASH(TheDownloadManager, ("No download manager!"));
@@ -108,7 +108,7 @@ void StartDownloadingPatches()
 		{
 			QueuedDownload q = *it;
 			TheDownloadManager->queueFileForDownload(q.server, q.userName, q.password,
-				q.file, q.localFile, q.regKey, q.tryResume);
+			                                         q.file, q.localFile, q.regKey, q.tryResume);
 			queuedDownloads.pop_front();
 			it = queuedDownloads.begin();
 		}
@@ -148,7 +148,7 @@ static Bool hasWriteAccess()
 
 	remove(filename);
 
-	int handle = _open( filename, _O_CREAT | _O_RDWR, _S_IREAD | _S_IWRITE);
+	int handle = _open(filename, _O_CREAT | _O_RDWR, _S_IREAD | _S_IWRITE);
 	if (handle == -1)
 	{
 		return false;
@@ -177,7 +177,7 @@ static void startOnline()
 {
 	checkingForPatchBeforeGameSpy = FALSE;
 
-	DEBUG_ASSERTCRASH(checksLeftBeforeOnline==0, ("starting online with pending callbacks"));
+	DEBUG_ASSERTCRASH(checksLeftBeforeOnline == 0, ("starting online with pending callbacks"));
 	if (onlineCancelWindow)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
@@ -187,8 +187,8 @@ static void startOnline()
 	if (cantConnectBeforeOnline)
 	{
 		MessageBoxOk(TheGameText->fetch("GUI:CannotConnectToServservTitle"),
-			TheGameText->fetch("GUI:CannotConnectToServserv"),
-			noPatchBeforeOnlineCallback);
+		             TheGameText->fetch("GUI:CannotConnectToServserv"),
+		             noPatchBeforeOnlineCallback);
 		return;
 	}
 	if (!queuedDownloads.empty())
@@ -196,29 +196,29 @@ static void startOnline()
 		if (!hasWriteAccess())
 		{
 			MessageBoxOk(TheGameText->fetch("GUI:Error"),
-				TheGameText->fetch("GUI:MustHaveAdminRights"),
-				noPatchBeforeOnlineCallback);
+			             TheGameText->fetch("GUI:MustHaveAdminRights"),
+			             noPatchBeforeOnlineCallback);
 		}
 		else if (mustDownloadPatch)
 		{
 			MessageBoxOkCancel(TheGameText->fetch("GUI:PatchAvailable"),
-				TheGameText->fetch("GUI:MustPatchForOnline"),
-				patchBeforeOnlineCallback, noPatchBeforeOnlineCallback);
+			                   TheGameText->fetch("GUI:MustPatchForOnline"),
+			                   patchBeforeOnlineCallback, noPatchBeforeOnlineCallback);
 		}
 		else
 		{
 			MessageBoxYesNo(TheGameText->fetch("GUI:PatchAvailable"),
-				TheGameText->fetch("GUI:CanPatchForOnline"),
-				patchBeforeOnlineCallback, noPatchBeforeOnlineCallback);
+			                TheGameText->fetch("GUI:CanPatchForOnline"),
+			                patchBeforeOnlineCallback, noPatchBeforeOnlineCallback);
 		}
 		return;
 	}
 
 	TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_ONLINE_SELECTED]);
 
-	DEBUG_ASSERTCRASH( !TheGameSpyBuddyMessageQueue, ("TheGameSpyBuddyMessageQueue exists!") );
-	DEBUG_ASSERTCRASH( !TheGameSpyPeerMessageQueue, ("TheGameSpyPeerMessageQueue exists!") );
-	DEBUG_ASSERTCRASH( !TheGameSpyInfo, ("TheGameSpyInfo exists!") );
+	DEBUG_ASSERTCRASH(!TheGameSpyBuddyMessageQueue, ("TheGameSpyBuddyMessageQueue exists!"));
+	DEBUG_ASSERTCRASH(!TheGameSpyPeerMessageQueue, ("TheGameSpyPeerMessageQueue exists!"));
+	DEBUG_ASSERTCRASH(!TheGameSpyInfo, ("TheGameSpyInfo exists!"));
 	SetUpGameSpy(MOTDBuffer, configBuffer);
 
 	delete[] MOTDBuffer;
@@ -232,12 +232,12 @@ static void startOnline()
 	pref.load("GameSpyLogin.ini");
 	UserPreferences::const_iterator it = pref.find("useProfiles");
 	if (it != pref.end() && it->second.compareNoCase("yes") == 0)
-#endif // ALLOW_NON_PROFILED_LOGIN
-		TheShell->push( "Menus/GameSpyLoginProfile.wnd" );
+#endif    // ALLOW_NON_PROFILED_LOGIN
+		TheShell->push("Menus/GameSpyLoginProfile.wnd");
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	else
-		TheShell->push( "Menus/GameSpyLoginQuick.wnd" );
-#endif // ALLOW_NON_PROFILED_LOGIN
+		TheShell->push("Menus/GameSpyLoginQuick.wnd");
+#endif    // ALLOW_NON_PROFILED_LOGIN
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -266,21 +266,21 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 	{
 		// no user/pass combo - move the file into it's proper place
 		filePath = user;
-		user = ""; // LFeenanEA - Credentials removed as per Security requirements
+		user = "";    // LFeenanEA - Credentials removed as per Security requirements
 		pass = "";
 		success = TRUE;
 	}
 
 	AsciiString fileStr = filePath;
-	const char *s = filePath.reverseFind('/');
+	const char* s = filePath.reverseFind('/');
 	if (s)
-		fileStr = s+1;
+		fileStr = s + 1;
 	AsciiString fileName = "patches\\";
 	fileName.concat(fileStr);
 
 	DEBUG_LOG(("download URL split: %d [%s] [%s] [%s] [%s] [%s] [%s]",
-		success, connectionType.str(), server.str(), user.str(), pass.str(),
-		filePath.str(), fileName.str()));
+	           success, connectionType.str(), server.str(), user.str(), pass.str(),
+	           filePath.str(), fileName.str()));
 
 	if (!success)
 		return;
@@ -297,7 +297,7 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 	while (it != queuedDownloads.end())
 	{
 		if (it->localFile == q.localFile)
-			return; // don't add it if it exists already (because we can check multiple times)
+			return;    // don't add it if it exists already (because we can check multiple times)
 		++it;
 	}
 
@@ -306,8 +306,8 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
-															char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool motdCallback(GHTTPRequest request, GHTTPResult result,
+                              char* buffer, GHTTPByteCount bufferLen, void* param)
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -319,10 +319,10 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 	delete[] MOTDBuffer;
 	MOTDBuffer = NEW char[bufferLen];
 	memcpy(MOTDBuffer, buffer, bufferLen);
-	MOTDBuffer[bufferLen-1] = 0;
+	MOTDBuffer[bufferLen - 1] = 0;
 
 	--checksLeftBeforeOnline;
-	DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
+	DEBUG_ASSERTCRASH(checksLeftBeforeOnline >= 0, ("Too many callbacks"));
 	if (onlineCancelWindow && !checksLeftBeforeOnline)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
@@ -330,7 +330,7 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 	}
 
 	DEBUG_LOG(("------- Got MOTD before going online -------"));
-	DEBUG_LOG(("%s", (MOTDBuffer)?MOTDBuffer:""));
+	DEBUG_LOG(("%s", (MOTDBuffer) ? MOTDBuffer : ""));
 	DEBUG_LOG(("--------------------------------------------"));
 
 	if (!checksLeftBeforeOnline)
@@ -341,8 +341,8 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
-																char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool configCallback(GHTTPRequest request, GHTTPResult result,
+                                char* buffer, GHTTPByteCount bufferLen, void* param)
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -374,11 +374,11 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 
 	configBuffer = NEW char[bufferLen];
 	memcpy(configBuffer, buffer, bufferLen);
-	configBuffer[bufferLen-1] = 0;
+	configBuffer[bufferLen - 1] = 0;
 
 	AsciiString fname;
 	fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
-	FILE *fp = fopen(fname.str(), "wb");
+	FILE* fp = fopen(fname.str(), "wb");
 	if (fp)
 	{
 		fwrite(configBuffer, bufferLen, 1, fp);
@@ -386,7 +386,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 	}
 
 	--checksLeftBeforeOnline;
-	DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
+	DEBUG_ASSERTCRASH(checksLeftBeforeOnline >= 0, ("Too many callbacks"));
 	if (onlineCancelWindow && !checksLeftBeforeOnline)
 	{
 		TheWindowManager->winDestroy(onlineCancelWindow);
@@ -403,8 +403,8 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
-																		char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool configHeadCallback(GHTTPRequest request, GHTTPResult result,
+                                    char* buffer, GHTTPByteCount bufferLen, void* param)
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -417,9 +417,9 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 	if (result == GHTTPSuccess)
 	{
-		DEBUG_LOG(("Headers are [%s]", ghttpGetHeaders( request )));
+		DEBUG_LOG(("Headers are [%s]", ghttpGetHeaders(request)));
 
-		AsciiString headers(ghttpGetHeaders( request ));
+		AsciiString headers(ghttpGetHeaders(request));
 		AsciiString line;
 		while (headers.nextToken(&line, "\n\r"))
 		{
@@ -433,7 +433,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 				Int fileLen = 0;
 				AsciiString fname;
 				fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
-				FILE *fp = fopen(fname.str(), "rb");
+				FILE* fp = fopen(fname.str(), "rb");
 				if (fp)
 				{
 					fseek(fp, 0, SEEK_END);
@@ -445,7 +445,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 				{
 					// we don't need to download the MOTD again
 					--checksLeftBeforeOnline;
-					DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
+					DEBUG_ASSERTCRASH(checksLeftBeforeOnline >= 0, ("Too many callbacks"));
 					if (onlineCancelWindow && !checksLeftBeforeOnline)
 					{
 						TheWindowManager->winDestroy(onlineCancelWindow);
@@ -457,12 +457,12 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 					AsciiString fname;
 					fname.format("%sGeneralsOnline\\Config.txt", TheGlobalData->getPath_UserData().str());
-					FILE *fp = fopen(fname.str(), "rb");
+					FILE* fp = fopen(fname.str(), "rb");
 					if (fp)
 					{
 						configBuffer = NEW char[fileLen];
 						fread(configBuffer, fileLen, 1, fp);
-						configBuffer[fileLen-1] = 0;
+						configBuffer[fileLen - 1] = 0;
 						fclose(fp);
 
 						DEBUG_LOG(("Got Config before going online"));
@@ -481,14 +481,14 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 	std::string gameURL, mapURL;
 	std::string configURL, motdURL;
 	FormatURLFromRegistry(gameURL, mapURL, configURL, motdURL);
-	ghttpGet( configURL.c_str(), GHTTPFalse, configCallback, param );
+	ghttpGet(configURL.c_str(), GHTTPFalse, configCallback, param);
 
 	return GHTTPTrue;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool gamePatchCheckCallback(GHTTPRequest request, GHTTPResult result, char* buffer, GHTTPByteCount bufferLen, void* param)
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -498,7 +498,7 @@ static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult resul
 	}
 
 	--checksLeftBeforeOnline;
-	DEBUG_ASSERTCRASH(checksLeftBeforeOnline>=0, ("Too many callbacks"));
+	DEBUG_ASSERTCRASH(checksLeftBeforeOnline >= 0, ("Too many callbacks"));
 
 	DEBUG_LOG(("Result=%d, buffer=[%s], len=%d", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
@@ -525,7 +525,7 @@ static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult resul
 		if (ok && type == "patch")
 		{
 			DEBUG_LOG(("Saw a patch: %d/[%s]", atoi(req.str()), url.str()));
-			queuePatch( atoi(req.str()), url );
+			queuePatch(atoi(req.str()), url);
 			if (atoi(req.str()))
 			{
 				mustDownloadPatch = TRUE;
@@ -555,7 +555,7 @@ void CancelPatchCheckCallbackAndReopenDropdown()
 void CancelPatchCheckCallback()
 {
 	s_asyncDNSLookupInProgress = FALSE;
-	HandleCanceledDownload(FALSE); // don't dropdown
+	HandleCanceledDownload(FALSE);    // don't dropdown
 	checkingForPatchBeforeGameSpy = FALSE;
 	checksLeftBeforeOnline = 0;
 	if (onlineCancelWindow)
@@ -574,7 +574,7 @@ void CancelPatchCheckCallback()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool overallStatsCallback(GHTTPRequest request, GHTTPResult result, char* buffer, GHTTPByteCount bufferLen, void* param)
 {
 	DEBUG_LOG(("overallStatsCallback() - Result=%d, len=%d", result, bufferLen));
 	if (result != GHTTPSuccess)
@@ -586,9 +586,9 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 	OverallStats USA, China, GLA;
 	AsciiString message = buffer;
 
-	Int state = STATS_MAX; // STATS_MAX == none
+	Int state = STATS_MAX;    // STATS_MAX == none
 	AsciiString line;
-	OverallStats *stats = nullptr;
+	OverallStats* stats = nullptr;
 	while (message.nextToken(&line, "\n"))
 	{
 		line.trim();
@@ -630,15 +630,15 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 			message.nextToken(&lossesLine, "\n");
 			while (totalLine.isNotEmpty() && !isdigit(totalLine.getCharAt(0)))
 			{
-				totalLine = totalLine.str()+1;
+				totalLine = totalLine.str() + 1;
 			}
 			while (winsLine.isNotEmpty() && !isdigit(winsLine.getCharAt(0)))
 			{
-				winsLine = winsLine.str()+1;
+				winsLine = winsLine.str() + 1;
 			}
 			while (lossesLine.isNotEmpty() && !isdigit(lossesLine.getCharAt(0)))
 			{
-				lossesLine = lossesLine.str()+1;
+				lossesLine = lossesLine.str() + 1;
 			}
 			if (totalLine.isNotEmpty() && winsLine.isNotEmpty() && lossesLine.isNotEmpty())
 			{
@@ -652,7 +652,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 	HandleOverallStats(USA, China, GLA);
 #elif RTS_ZEROHOUR
-	HandleOverallStats( buffer, bufferLen );
+	HandleOverallStats(buffer, bufferLen);
 #endif
 
 	return GHTTPTrue;
@@ -660,7 +660,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool numPlayersOnlineCallback(GHTTPRequest request, GHTTPResult result, char* buffer, GHTTPByteCount bufferLen, void* param)
 {
 	DEBUG_LOG(("numPlayersOnlineCallback() - Result=%d, buffer=[%s], len=%d", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
@@ -670,7 +670,7 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 
 	AsciiString message = buffer;
 	message.trim();
-	const char *s = message.reverseFind('\\');
+	const char* s = message.reverseFind('\\');
 	if (!s)
 	{
 		return GHTTPTrue;
@@ -690,9 +690,9 @@ static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult res
 void CheckOverallStats()
 {
 #if RTS_GENERALS
-	const char *const url = "http://gamestats.gamespy.com/ccgenerals/display.html";
+	const char* const url = "http://gamestats.gamespy.com/ccgenerals/display.html";
 #elif RTS_ZEROHOUR
-	const char *const url = "http://gamestats.gamespy.com/ccgenzh/display.html";
+	const char* const url = "http://gamestats.gamespy.com/ccgenzh/display.html";
 #endif
 	ghttpGet(url, GHTTPFalse, overallStatsCallback, nullptr);
 }
@@ -702,18 +702,18 @@ void CheckOverallStats()
 void CheckNumPlayersOnline()
 {
 #if RTS_GENERALS
-	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals";
+	const char* const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenerals";
 #elif RTS_ZEROHOUR
-	const char *const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh";
+	const char* const url = "http://launch.gamespyarcade.com/software/launch/arcadecount2.dll?svcname=ccgenzh";
 #endif
 	ghttpGet(url, GHTTPFalse, numPlayersOnlineCallback, nullptr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-DWORD WINAPI asyncGethostbynameThreadFunc( void * szName )
+DWORD WINAPI asyncGethostbynameThreadFunc(void* szName)
 {
-	HOSTENT *he = gethostbyname( (const char *)szName );
+	HOSTENT* he = gethostbyname((const char*)szName);
 
 	if (he)
 	{
@@ -730,36 +730,36 @@ DWORD WINAPI asyncGethostbynameThreadFunc( void * szName )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-int asyncGethostbyname(char * szName)
+int asyncGethostbyname(char* szName)
 {
-	static int            stat = 0;
-	static unsigned long  threadid;
+	static int stat = 0;
+	static unsigned long threadid;
 
-	if( stat == 0 )
+	if (stat == 0)
 	{
 		/* Kick off gethostname thread */
 		s_asyncDNSThreadDone = FALSE;
-		s_asyncDNSThreadHandle = CreateThread( nullptr, 0, asyncGethostbynameThreadFunc, szName, 0, &threadid );
+		s_asyncDNSThreadHandle = CreateThread(nullptr, 0, asyncGethostbynameThreadFunc, szName, 0, &threadid);
 
-		if( s_asyncDNSThreadHandle == nullptr )
+		if (s_asyncDNSThreadHandle == nullptr)
 		{
-			return( LOOKUP_FAILED );
+			return (LOOKUP_FAILED);
 		}
 		stat = 1;
 	}
-	if( stat == 1 )
+	if (stat == 1)
 	{
-		if( s_asyncDNSThreadDone )
+		if (s_asyncDNSThreadDone)
 		{
 			/* Thread finished */
 			stat = 0;
 			s_asyncDNSLookupInProgress = FALSE;
 			s_asyncDNSThreadHandle = nullptr;
-			return( (s_asyncDNSThreadSucceeded)?LOOKUP_SUCCEEDED:LOOKUP_FAILED );
+			return ((s_asyncDNSThreadSucceeded) ? LOOKUP_SUCCEEDED : LOOKUP_FAILED);
 		}
 	}
 
-	return( LOOKUP_INPROGRESS );
+	return (LOOKUP_INPROGRESS);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -775,15 +775,15 @@ void HTTPThinkWrapper()
 	{
 		Char hostname[] = "servserv.generals.ea.com";
 		Int ret = asyncGethostbyname(hostname);
-		switch(ret)
+		switch (ret)
 		{
-		case LOOKUP_FAILED:
-			cantConnectBeforeOnline = TRUE;
-			startOnline();
-			break;
-		case LOOKUP_SUCCEEDED:
-			reallyStartPatchCheck();
-			break;
+			case LOOKUP_FAILED:
+				cantConnectBeforeOnline = TRUE;
+				startOnline();
+				break;
+			case LOOKUP_SUCCEEDED:
+				reallyStartPatchCheck();
+				break;
 		}
 	}
 
@@ -795,9 +795,9 @@ void HTTPThinkWrapper()
 		}
 		catch (...)
 		{
-			isHttpOk = FALSE; // we can't abort the login, since we might be done with the
-												// required checks and are fetching extras.  If it is a required
-												// check, we'll time out normally.
+			isHttpOk = FALSE;    // we can't abort the login, since we might be done with the
+			                     // required checks and are fetching extras.  If it is a required
+			                     // check, we'll time out normally.
 		}
 	}
 }
@@ -810,7 +810,7 @@ void StopAsyncDNSCheck()
 	{
 		MAYBE_UNUSED Int res = TerminateThread(s_asyncDNSThreadHandle, 0);
 		(void)res;
-		DEBUG_ASSERTCRASH(res, ("Could not terminate the Async DNS Lookup thread!"));	// Thread still not killed!
+		DEBUG_ASSERTCRASH(res, ("Could not terminate the Async DNS Lookup thread!"));    // Thread still not killed!
 	}
 	s_asyncDNSThreadHandle = nullptr;
 	s_asyncDNSLookupInProgress = FALSE;
@@ -826,20 +826,20 @@ void StartPatchCheck()
 	checksLeftBeforeOnline = 0;
 
 	onlineCancelWindow = MessageBoxCancel(TheGameText->fetch("GUI:CheckingForPatches"),
-		TheGameText->fetch("GUI:CheckingForPatches"), CancelPatchCheckCallbackAndReopenDropdown);
+	                                      TheGameText->fetch("GUI:CheckingForPatches"), CancelPatchCheckCallbackAndReopenDropdown);
 
 	s_asyncDNSLookupInProgress = TRUE;
 	Char hostname[] = "servserv.generals.ea.com";
 	Int ret = asyncGethostbyname(hostname);
-	switch(ret)
+	switch (ret)
 	{
-	case LOOKUP_FAILED:
-		cantConnectBeforeOnline = TRUE;
-		startOnline();
-		break;
-	case LOOKUP_SUCCEEDED:
-		reallyStartPatchCheck();
-		break;
+		case LOOKUP_FAILED:
+			cantConnectBeforeOnline = TRUE;
+			startOnline();
+			break;
+		case LOOKUP_SUCCEEDED:
+			reallyStartPatchCheck();
+			break;
 	}
 }
 
@@ -868,10 +868,10 @@ static void reallyStartPatchCheck()
 	DEBUG_LOG(("Map patch check: [%s]", mapURL.c_str()));
 	DEBUG_LOG(("Config: [%s]", configURL.c_str()));
 	DEBUG_LOG(("MOTD: [%s]", motdURL.c_str()));
-	ghttpGet(gameURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)timeThroughOnline);
-	ghttpGet(mapURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)timeThroughOnline);
-	ghttpHead(configURL.c_str(), GHTTPFalse, configHeadCallback, (void *)timeThroughOnline);
-	ghttpGet(motdURL.c_str(), GHTTPFalse, motdCallback, (void *)timeThroughOnline);
+	ghttpGet(gameURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void*)timeThroughOnline);
+	ghttpGet(mapURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void*)timeThroughOnline);
+	ghttpHead(configURL.c_str(), GHTTPFalse, configHeadCallback, (void*)timeThroughOnline);
+	ghttpGet(motdURL.c_str(), GHTTPFalse, motdCallback, (void*)timeThroughOnline);
 
 	// check total game stats
 	CheckOverallStats();

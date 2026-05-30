@@ -57,18 +57,18 @@ class GameWindow;
 class VideoBuffer;
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
-#define WIN_STATE_HILITED 	0x00000002	// Mouse is over window or has focus
-#define WIN_STATE_SELECTED	0x00000004	// Window has been selected
+#define WIN_STATE_HILITED 0x00000002    // Mouse is over window or has focus
+#define WIN_STATE_SELECTED 0x00000004    // Window has been selected
 
 enum
 {
 	MAX_WINDOW_NAME_LEN = 64,
 	/** how many elements there are for each of the draw states for the inst
-		* data of a window, note if you increase this you must update the parsing
-		* tables make sure you can parse the new fields from the window scrip
-		* files */
+	 * data of a window, note if you increase this you must update the parsing
+	 * tables make sure you can parse the new fields from the window scrip
+	 * files */
 	MAX_DRAW_DATA = 9,
-	MAX_TEXT_LABEL = 128  ///< max length of text label
+	MAX_TEXT_LABEL = 128    ///< max length of text label
 };
 
 // WinDrawData ----------------------------------------------------------------
@@ -76,18 +76,17 @@ enum
 struct WinDrawData
 {
 
-	const Image *image;
+	const Image* image;
 	Color color;
 	Color borderColor;
-
 };
 
 // TextDrawData ---------------------------------------------------------------
 //-----------------------------------------------------------------------------
 struct TextDrawData
 {
-	Color color;  ///< the text color
-	Color borderColor;  ///< outline color
+	Color color;    ///< the text color
+	Color borderColor;    ///< outline color
 };
 
 // WinInstanceData ------------------------------------------------------------
@@ -99,81 +98,78 @@ class WinInstanceData
 {
 
 public:
-
-	WinInstanceData();  ///< constructor automatically runs init()
+	WinInstanceData();    ///< constructor automatically runs init()
 	virtual ~WinInstanceData();
 
-	void init();  ///< initialize default values if desired
-
+	void init();    ///< initialize default values if desired
 
 	// setting text
-	void setTooltipText( UnicodeString tip );  ///< set tooltip text
-	void setText( UnicodeString text );  ///< set instance text text
+	void setTooltipText(UnicodeString tip);    ///< set tooltip text
+	void setText(UnicodeString text);    ///< set instance text text
 
 	// a couple of nice access methods
-	UnicodeString getTooltipText();		///< get tooltip text
-	UnicodeString getText();					///< get instance text
-	Int getTextLength();						///< get number of chars in instance text
-	Int getTooltipTextLength();						///< get number of chars in tooltip text
-	UnsignedInt getStyle();				///< return window style
-	UnsignedInt getStatus();			///< return window status
-	UnsignedInt getState();				///< return window state
-	GameWindow *getOwner();				///< return window owner
-	GameFont	 *getFont();				///< return window font
+	UnicodeString getTooltipText();    ///< get tooltip text
+	UnicodeString getText();    ///< get instance text
+	Int getTextLength();    ///< get number of chars in instance text
+	Int getTooltipTextLength();    ///< get number of chars in tooltip text
+	UnsignedInt getStyle();    ///< return window style
+	UnsignedInt getStatus();    ///< return window status
+	UnsignedInt getState();    ///< return window state
+	GameWindow* getOwner();    ///< return window owner
+	GameFont* getFont();    ///< return window font
 
-	DisplayString *getTextDisplayString();			///< return the text display string
-	DisplayString *getTooltipDisplayString();		///< return the tooltip display string
+	DisplayString* getTextDisplayString();    ///< return the text display string
+	DisplayString* getTooltipDisplayString();    ///< return the tooltip display string
 
-	void setVideoBuffer( VideoBuffer * videoBuffer );	///< set the videobuffer to display a video frame
+	void setVideoBuffer(VideoBuffer* videoBuffer);    ///< set the videobuffer to display a video frame
 
-// NOTE if you add data to this make sure you update winSetInstanceData()
-// NOTE if you add data to this make sure you update winSetInstanceData()
-// NOTE if you add data to this make sure you update winSetInstanceData()
+	// NOTE if you add data to this make sure you update winSetInstanceData()
+	// NOTE if you add data to this make sure you update winSetInstanceData()
+	// NOTE if you add data to this make sure you update winSetInstanceData()
 
 	/** @todo you may want to make these data members protected, they are public
 	because of the legacy of porting all this code in from Nox, but they
 	really should be protected and have the rest of the code use access
 	functions to edit them */
 
-  Int m_id;								            // Id of the window (used mainly for scripts)
-  Int m_state;                 // Flags indicating state of window
-  UnsignedInt m_style;         // Flags indicating style of window
-	UnsignedInt m_status;	       // Status bits for this window (mirrored in GameWindow)
-  GameWindow *m_owner;
+	Int m_id;    // Id of the window (used mainly for scripts)
+	Int m_state;    // Flags indicating state of window
+	UnsignedInt m_style;    // Flags indicating style of window
+	UnsignedInt m_status;    // Status bits for this window (mirrored in GameWindow)
+	GameWindow* m_owner;
 
-	WinDrawData m_enabledDrawData[ MAX_DRAW_DATA ];  ///< image/color info for enabled state
-	WinDrawData m_disabledDrawData[ MAX_DRAW_DATA ];  ///< image/color info for disabled state
-	WinDrawData m_hiliteDrawData[ MAX_DRAW_DATA ];  ///< image/color info for hilite state
+	WinDrawData m_enabledDrawData[MAX_DRAW_DATA];    ///< image/color info for enabled state
+	WinDrawData m_disabledDrawData[MAX_DRAW_DATA];    ///< image/color info for disabled state
+	WinDrawData m_hiliteDrawData[MAX_DRAW_DATA];    ///< image/color info for hilite state
 
-	TextDrawData m_enabledText;   ///< enabled text colors
-	TextDrawData m_disabledText;  ///< disabled text colors
-	TextDrawData m_hiliteText;		///< hilite text colors
-	TextDrawData m_imeCompositeText;///< IME composite text colors
+	TextDrawData m_enabledText;    ///< enabled text colors
+	TextDrawData m_disabledText;    ///< disabled text colors
+	TextDrawData m_hiliteText;    ///< hilite text colors
+	TextDrawData m_imeCompositeText;    ///< IME composite text colors
 
-  ICoord2D	m_imageOffset;		 // dx, dy for blitting bkgnd images
+	ICoord2D m_imageOffset;    // dx, dy for blitting bkgnd images
 
-	GameFont *m_font;								 // font which this window should use
+	GameFont* m_font;    // font which this window should use
 
-	AsciiString m_textLabelString;  ///< text label from window file if present
-	AsciiString m_decoratedNameString;  ///< window text name from GUIEdit
-	AsciiString m_tooltipString;  ///< tooltip Label from window file if present
+	AsciiString m_textLabelString;    ///< text label from window file if present
+	AsciiString m_decoratedNameString;    ///< window text name from GUIEdit
+	AsciiString m_tooltipString;    ///< tooltip Label from window file if present
 
-	AsciiString m_headerTemplateName;		///< name of the template we're going to base our font off of.
+	AsciiString m_headerTemplateName;    ///< name of the template we're going to base our font off of.
 
-  Int m_tooltipDelay;           ///< desired delay before showing tooltip
+	Int m_tooltipDelay;    ///< desired delay before showing tooltip
 
-	DisplayString *m_text;				 ///< generic text for any window to display
-	DisplayString *m_tooltip;		 ///< tooltip for display
+	DisplayString* m_text;    ///< generic text for any window to display
+	DisplayString* m_tooltip;    ///< tooltip for display
 
-	//NOTE Video Buffer cannot be transferred to another window.
-	VideoBuffer *m_videoBuffer;			///< Each window can be made to play a video in it.
+	// NOTE Video Buffer cannot be transferred to another window.
+	VideoBuffer* m_videoBuffer;    ///< Each window can be made to play a video in it.
 
-// NOTE if you add data to this make sure you update winSetInstanceData()
-// NOTE if you add data to this make sure you update winSetInstanceData()
-// NOTE if you add data to this make sure you update winSetInstanceData()
+	// NOTE if you add data to this make sure you update winSetInstanceData()
+	// NOTE if you add data to this make sure you update winSetInstanceData()
+	// NOTE if you add data to this make sure you update winSetInstanceData()
 
 protected:
-
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -182,32 +178,31 @@ protected:
 inline UnsignedInt WinInstanceData::getStyle() { return m_style; }
 inline UnsignedInt WinInstanceData::getStatus() { return m_status; }
 inline UnsignedInt WinInstanceData::getState() { return m_state; }
-inline GameWindow *WinInstanceData::getOwner() { return m_owner; }
-inline GameFont		*WinInstanceData::getFont() { return m_font; }
-inline DisplayString *WinInstanceData::getTextDisplayString() { return m_text; }
-inline DisplayString *WinInstanceData::getTooltipDisplayString() { return m_tooltip; }
+inline GameWindow* WinInstanceData::getOwner() { return m_owner; }
+inline GameFont* WinInstanceData::getFont() { return m_font; }
+inline DisplayString* WinInstanceData::getTextDisplayString() { return m_text; }
+inline DisplayString* WinInstanceData::getTooltipDisplayString() { return m_tooltip; }
 inline UnicodeString WinInstanceData::getTooltipText()
 {
-	if( m_tooltip )
+	if (m_tooltip)
 		return m_tooltip->getText();
 	return UnicodeString::TheEmptyString;
-
 }
 inline UnicodeString WinInstanceData::getText()
 {
-	if( m_text )
+	if (m_text)
 		return m_text->getText();
 	return UnicodeString::TheEmptyString;
 }
 inline Int WinInstanceData::getTextLength()
 {
-	if( m_text )
+	if (m_text)
 		return m_text->getTextLength();
 	return 0;
 }
 inline Int WinInstanceData::getTooltipTextLength()
 {
-	if( m_tooltip )
+	if (m_tooltip)
 		return m_tooltip->getTextLength();
 	return 0;
 }

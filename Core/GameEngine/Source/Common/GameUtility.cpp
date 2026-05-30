@@ -47,7 +47,7 @@ static void changePlayerCommon(Player* player)
 	TheInGameUI->deselectAllDrawables();
 }
 
-} // namespace detail
+}    // namespace detail
 
 bool localPlayerHasRadar()
 {
@@ -123,11 +123,11 @@ void changeObservedPlayer(Player* player)
 	{
 		TheControlBar->setObservedPlayer(player);
 
-		Player *becomePlayer = player;
+		Player* becomePlayer = player;
 		if (becomePlayer == nullptr)
 			becomePlayer = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey("ReplayObserver"));
 		detail::changePlayerCommon(becomePlayer);
 	}
 }
 
-} // namespace rts
+}    // namespace rts

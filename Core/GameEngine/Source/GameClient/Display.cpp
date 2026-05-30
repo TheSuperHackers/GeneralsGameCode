@@ -26,7 +26,7 @@
 // The implementation of the Display class
 // Author: Michael S. Booth, March 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/Display.h"
 #include "GameClient/Mouse.h"
@@ -34,12 +34,11 @@
 #include "GameClient/DisplayStringManager.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GlobalLanguage.h"
-//#include "GameLogic/ScriptEngine.h"
-//#include "GameLogic/GameLogic.h"
+// #include "GameLogic/ScriptEngine.h"
+// #include "GameLogic/GameLogic.h"
 
 /// The Display singleton instance.
-Display *TheDisplay = nullptr;
-
+Display* TheDisplay = nullptr;
 
 Display::Display()
 {
@@ -58,7 +57,7 @@ Display::Display()
 	m_cinematicText = AsciiString::TheEmptyString;
 	m_cinematicFont = nullptr;
 	m_cinematicTextFrames = 0;
-	m_movieHoldTime	= -1;
+	m_movieHoldTime = -1;
 	m_copyrightHoldTime = -1;
 	m_elapsedMovieTime = 0;
 	m_elapsedCopywriteTime = 0;
@@ -78,17 +77,16 @@ Display::~Display()
 	stopMovie();
 	// delete all our views if present
 	deleteViews();
-
 }
 
 /**
-	* Delete all views in the Display
-	*/
+ * Delete all views in the Display
+ */
 void Display::deleteViews()
 {
 	View *v, *next;
 
-	for( v = m_viewList; v; v = next )
+	for (v = m_viewList; v; v = next)
 	{
 		next = v->getNextView();
 		delete v;
@@ -100,10 +98,10 @@ void Display::deleteViews()
  * Attach the given view to the world
  * @todo Rethink the "attachView" notion...
  */
-void Display::attachView( View *view )
+void Display::attachView(View* view)
 {
 	// prepend to head of list
-	m_viewList = view->prependViewToList( m_viewList );
+	m_viewList = view->prependViewToList(m_viewList);
 }
 
 /**
@@ -112,9 +110,8 @@ void Display::attachView( View *view )
 void Display::drawViews()
 {
 
-	for( View *v = m_viewList; v; v = v->getNextView() )
+	for (View* v = m_viewList; v; v = v->getNextView())
 		v->drawView();
-
 }
 
 /**
@@ -124,17 +121,15 @@ void Display::drawViews()
 void Display::updateViews()
 {
 
-	for( View *v = m_viewList; v; v = v->getNextView() )
+	for (View* v = m_viewList; v; v = v->getNextView())
 		v->updateView();
-
 }
 
 void Display::stepViews()
 {
 
-	for( View *v = m_viewList; v; v = v->getNextView() )
+	for (View* v = m_viewList; v; v = v->getNextView())
 		v->stepView();
-
 }
 
 /// Redraw the entire display
@@ -145,59 +140,56 @@ void Display::draw()
 
 	// redraw the in-game user interface
 	/// @todo Switch between in-game and shell interfaces
-
 }
 
 /** Sets screen resolution/mode*/
-Bool Display::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed )
+Bool Display::setDisplayMode(UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed)
 {
-	//Get old values
-	UnsignedInt oldDisplayHeight=getHeight();
-	UnsignedInt oldDisplayWidth=getWidth();
-	Int oldViewWidth=TheTacticalView->getWidth();
-	Int oldViewHeight=TheTacticalView->getHeight();
-	Int oldViewOriginX,oldViewOriginY;
-	TheTacticalView->getOrigin(&oldViewOriginX,&oldViewOriginY);
+	// Get old values
+	UnsignedInt oldDisplayHeight = getHeight();
+	UnsignedInt oldDisplayWidth = getWidth();
+	Int oldViewWidth = TheTacticalView->getWidth();
+	Int oldViewHeight = TheTacticalView->getHeight();
+	Int oldViewOriginX, oldViewOriginY;
+	TheTacticalView->getOrigin(&oldViewOriginX, &oldViewOriginY);
 
 	setWidth(xres);
 	setHeight(yres);
 
-	//Adjust view to match previous proportions
-	TheTacticalView->setWidth((Real)oldViewWidth/(Real)oldDisplayWidth*(Real)xres);
-	TheTacticalView->setHeight((Real)oldViewHeight/(Real)oldDisplayHeight*(Real)yres);
-	TheTacticalView->setOrigin((Real)oldViewOriginX/(Real)oldDisplayWidth*(Real)xres,
-	(Real)oldViewOriginY/(Real)oldDisplayHeight*(Real)yres);
+	// Adjust view to match previous proportions
+	TheTacticalView->setWidth((Real)oldViewWidth / (Real)oldDisplayWidth * (Real)xres);
+	TheTacticalView->setHeight((Real)oldViewHeight / (Real)oldDisplayHeight * (Real)yres);
+	TheTacticalView->setOrigin((Real)oldViewOriginX / (Real)oldDisplayWidth * (Real)xres,
+	                           (Real)oldViewOriginY / (Real)oldDisplayHeight * (Real)yres);
 	return TRUE;
 }
 
 // Display::setWidth ==========================================================
 /** Set the width of the display */
 //=============================================================================
-void Display::setWidth( UnsignedInt width )
+void Display::setWidth(UnsignedInt width)
 {
 
 	// set the new width
 	m_width = width;
 
 	// set the new mouse limits
-	if( TheMouse )
+	if (TheMouse)
 		TheMouse->setMouseLimits();
-
 }
 
 // Display::setHeight =========================================================
 /** Set the height of the display */
 //=============================================================================
-void Display::setHeight( UnsignedInt height )
+void Display::setHeight(UnsignedInt height)
 {
 
 	// se the new height
 	m_height = height;
 
 	// set the new mouse limits
-	if( TheMouse )
+	if (TheMouse)
 		TheMouse->setMouseLimits();
-
 }
 
 //============================================================================
@@ -206,14 +198,14 @@ void Display::setHeight( UnsignedInt height )
 // minCopyrightLength
 //============================================================================
 
-void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength )
+void Display::playLogoMovie(AsciiString movieName, Int minMovieLength, Int minCopyrightLength)
 {
 
 	stopMovie();
 
-	m_videoStream = TheVideoPlayer->open( movieName );
+	m_videoStream = TheVideoPlayer->open(movieName);
 
-	if ( m_videoStream == nullptr )
+	if (m_videoStream == nullptr)
 	{
 		return;
 	}
@@ -221,34 +213,30 @@ void Display::playLogoMovie( AsciiString movieName, Int minMovieLength, Int minC
 	m_currentlyPlayingMovie = movieName;
 	m_movieHoldTime = minMovieLength;
 	m_copyrightHoldTime = minCopyrightLength;
-	m_elapsedMovieTime = timeGetTime();  // we're using time get time because legal wants actual "Seconds"
+	m_elapsedMovieTime = timeGetTime();    // we're using time get time because legal wants actual "Seconds"
 
 	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
+	if (m_videoBuffer == nullptr ||
+	    !m_videoBuffer->allocate(m_videoStream->width(),
+	                             m_videoStream->height()))
 	{
 		stopMovie();
 		return;
 	}
-
 }
 
 //============================================================================
 // Display::playMovie
 //============================================================================
 
-void Display::playMovie( AsciiString movieName)
+void Display::playMovie(AsciiString movieName)
 {
 
 	stopMovie();
 
+	m_videoStream = TheVideoPlayer->open(movieName);
 
-
-	m_videoStream = TheVideoPlayer->open( movieName );
-
-	if ( m_videoStream == nullptr )
+	if (m_videoStream == nullptr)
 	{
 		return;
 	}
@@ -256,15 +244,13 @@ void Display::playMovie( AsciiString movieName)
 	m_currentlyPlayingMovie = movieName;
 
 	m_videoBuffer = createVideoBuffer();
-	if (	m_videoBuffer == nullptr ||
-				!m_videoBuffer->allocate(	m_videoStream->width(),
-													m_videoStream->height())
-		)
+	if (m_videoBuffer == nullptr ||
+	    !m_videoBuffer->allocate(m_videoStream->width(),
+	                             m_videoStream->height()))
 	{
 		stopMovie();
 		return;
 	}
-
 }
 
 //============================================================================
@@ -276,17 +262,18 @@ void Display::stopMovie()
 	delete m_videoBuffer;
 	m_videoBuffer = nullptr;
 
-	if ( m_videoStream )
+	if (m_videoStream)
 	{
 		m_videoStream->close();
 		m_videoStream = nullptr;
 	}
 
-	if (!m_currentlyPlayingMovie.isEmpty()) {
-		//TheScriptEngine->notifyOfCompletedVideo(m_currentlyPlayingMovie); // Removing this sync-error cause MDC
+	if (!m_currentlyPlayingMovie.isEmpty())
+	{
+		// TheScriptEngine->notifyOfCompletedVideo(m_currentlyPlayingMovie); // Removing this sync-error cause MDC
 		m_currentlyPlayingMovie = AsciiString::TheEmptyString;
 	}
-	if(m_copyrightDisplayString)
+	if (m_copyrightDisplayString)
 	{
 		TheDisplayStringManager->freeDisplayString(m_copyrightDisplayString);
 		m_copyrightDisplayString = nullptr;
@@ -301,35 +288,36 @@ void Display::stopMovie()
 
 void Display::update()
 {
-	if ( m_videoStream && m_videoBuffer )
+	if (m_videoStream && m_videoBuffer)
 	{
-		if ( m_videoStream->isFrameReady())
+		if (m_videoStream->isFrameReady())
 		{
 			m_videoStream->frameDecompress();
-			m_videoStream->frameRender( m_videoBuffer );
-			if( m_videoStream->frameIndex() != m_videoStream->frameCount() - 1)
+			m_videoStream->frameRender(m_videoBuffer);
+			if (m_videoStream->frameIndex() != m_videoStream->frameCount() - 1)
 				m_videoStream->frameNext();
-			else if( m_copyrightHoldTime >= 0 ||m_movieHoldTime >= 0 )
+			else if (m_copyrightHoldTime >= 0 || m_movieHoldTime >= 0)
 			{
-				if( m_elapsedCopywriteTime == 0 && m_elapsedCopywriteTime >= 0)
+				if (m_elapsedCopywriteTime == 0 && m_elapsedCopywriteTime >= 0)
 				{
-					//display the copyrighttext;
+					// display the copyrighttext;
 					deleteInstance(m_copyrightDisplayString);
 					m_copyrightDisplayString = TheDisplayStringManager->newDisplayString();
 					m_copyrightDisplayString->setText(TheGameText->fetch("GUI:EACopyright"));
 					if (TheGlobalLanguageData && TheGlobalLanguageData->m_copyrightFont.name.isNotEmpty())
-					{	FontDesc	*fontdesc=&TheGlobalLanguageData->m_copyrightFont;
+					{
+						FontDesc* fontdesc = &TheGlobalLanguageData->m_copyrightFont;
 						m_copyrightDisplayString->setFont(TheFontLibrary->getFont(fontdesc->name,
-							TheGlobalLanguageData->adjustFontSize(fontdesc->size),
-							fontdesc->bold));
+						                                                          TheGlobalLanguageData->adjustFontSize(fontdesc->size),
+						                                                          fontdesc->bold));
 					}
 					else
 						m_copyrightDisplayString->setFont(TheFontLibrary->getFont("Courier",
-						TheGlobalLanguageData->adjustFontSize(12), TRUE));
+						                                                          TheGlobalLanguageData->adjustFontSize(12), TRUE));
 					m_elapsedCopywriteTime = timeGetTime();
 				}
-				if(m_movieHoldTime + m_elapsedMovieTime < timeGetTime() &&
-						m_copyrightHoldTime + m_elapsedCopywriteTime < timeGetTime())
+				if (m_movieHoldTime + m_elapsedMovieTime < timeGetTime() &&
+				    m_copyrightHoldTime + m_elapsedCopywriteTime < timeGetTime())
 				{
 					m_movieHoldTime = -1;
 					m_elapsedMovieTime = 0;
@@ -351,13 +339,13 @@ void Display::update()
 
 void Display::reset()
 {
-	//Remove letterbox border that may have been enabled by a script
+	// Remove letterbox border that may have been enabled by a script
 	m_letterBoxFadeLevel = 0;
 	m_letterBoxEnabled = FALSE;
 	stopMovie();
 
 	// Reset all views that need resetting
-	for( View *v = m_viewList; v; v = v->getNextView() )
+	for (View* v = m_viewList; v; v = v->getNextView())
 		v->reset();
 }
 
@@ -374,7 +362,7 @@ Bool Display::isMoviePlaying()
 // Display::setDebugDisplayCallback
 //============================================================================
 
-void Display::setDebugDisplayCallback( DebugDisplayCallback *callback, void *userData )
+void Display::setDebugDisplayCallback(DebugDisplayCallback* callback, void* userData)
 {
 	m_debugDisplayCallback = callback;
 	m_debugDisplayUserData = userData;
@@ -384,7 +372,7 @@ void Display::setDebugDisplayCallback( DebugDisplayCallback *callback, void *use
 // Display::getDebugDisplayCallback
 //============================================================================
 
-Display::DebugDisplayCallback *Display::getDebugDisplayCallback()
+Display::DebugDisplayCallback* Display::getDebugDisplayCallback()
 {
 	return m_debugDisplayCallback;
 }

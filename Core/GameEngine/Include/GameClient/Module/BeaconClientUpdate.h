@@ -54,12 +54,11 @@ public:
 class BeaconClientUpdate : public ClientUpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BeaconClientUpdate, "BeaconClientUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( BeaconClientUpdate, BeaconClientUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BeaconClientUpdate, "BeaconClientUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(BeaconClientUpdate, BeaconClientUpdateModuleData);
 
 public:
-
-	BeaconClientUpdate( Thing *thing, const ModuleData* moduleData );
+	BeaconClientUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// the client update callback
@@ -67,8 +66,6 @@ public:
 	void hideBeacon();
 
 protected:
-
 	ParticleSystemID m_particleSystemID;
 	UnsignedInt m_lastRadarPulse;
-
 };

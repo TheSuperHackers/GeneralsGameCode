@@ -64,7 +64,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/WindowVideoManager.h"
 #include "GameClient/GameWindow.h"
@@ -87,29 +87,28 @@ WindowVideo::WindowVideo()
 	m_videoStream = nullptr;
 	m_movieName.clear();
 	m_state = WINDOW_VIDEO_STATE_STOP;
-
 }
 
 WindowVideo::~WindowVideo()
 {
 	// Don't Delete the window, only set it's video buffer to null
-	if(m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( nullptr );
+	if (m_win)
+		m_win->winGetInstanceData()->setVideoBuffer(nullptr);
 	m_win = nullptr;
 
 	delete m_videoBuffer;
 	m_videoBuffer = nullptr;
 
-	if ( m_videoStream )
+	if (m_videoStream)
 	{
 		m_videoStream->close();
 		m_videoStream = nullptr;
 	}
 }
 
-void WindowVideo::init( GameWindow *win, AsciiString movieName,
-												WindowVideoPlayType playType,
-												VideoBuffer *videoBuffer, VideoStreamInterface *videoStream)
+void WindowVideo::init(GameWindow* win, AsciiString movieName,
+                       WindowVideoPlayType playType,
+                       VideoBuffer* videoBuffer, VideoStreamInterface* videoStream)
 {
 	m_win = win;
 	m_movieName = movieName;
@@ -117,19 +116,19 @@ void WindowVideo::init( GameWindow *win, AsciiString movieName,
 	m_videoBuffer = videoBuffer;
 	m_videoStream = videoStream;
 	m_state = WINDOW_VIDEO_STATE_PLAY;
-	if(m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( m_videoBuffer );
+	if (m_win)
+		m_win->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
 }
 
-void WindowVideo::setWindowState( WindowVideoStates state )
+void WindowVideo::setWindowState(WindowVideoStates state)
 {
 	m_state = state;
 
-	if(m_state == WINDOW_VIDEO_STATE_STOP && m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( nullptr );
+	if (m_state == WINDOW_VIDEO_STATE_STOP && m_win)
+		m_win->winGetInstanceData()->setVideoBuffer(nullptr);
 
-	if((m_state == WINDOW_VIDEO_STATE_PLAY || m_state == WINDOW_VIDEO_STATE_PAUSE )&& m_win)
-		m_win->winGetInstanceData()->setVideoBuffer( m_videoBuffer );
+	if ((m_state == WINDOW_VIDEO_STATE_PLAY || m_state == WINDOW_VIDEO_STATE_PAUSE) && m_win)
+		m_win->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
 }
 
 //-----------------------------------------------------------------------------
@@ -138,9 +137,9 @@ void WindowVideo::setWindowState( WindowVideoStates state )
 WindowVideoManager::WindowVideoManager()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
-	while(it != m_playingVideos.end())
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
+		WindowVideo* winVid = it->second;
 		delete winVid;
 		it++;
 	}
@@ -148,22 +147,19 @@ WindowVideoManager::WindowVideoManager()
 
 	m_stopAllMovies = FALSE;
 	m_pauseAllMovies = FALSE;
-
 }
 
 WindowVideoManager::~WindowVideoManager()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
-	while(it != m_playingVideos.end())
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
+		WindowVideo* winVid = it->second;
 		delete winVid;
 		it++;
 	}
 	m_playingVideos.clear();
-
 }
-
 
 void WindowVideoManager::init()
 {
@@ -176,9 +172,9 @@ void WindowVideoManager::init()
 void WindowVideoManager::reset()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
-	while(it != m_playingVideos.end())
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
+		WindowVideo* winVid = it->second;
 		delete winVid;
 		it++;
 	}
@@ -192,54 +188,54 @@ void WindowVideoManager::update()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
 
-	if(m_pauseAllMovies || m_stopAllMovies)
+	if (m_pauseAllMovies || m_stopAllMovies)
 		return;
 
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
+	// Iterate through the maps
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
+		WindowVideo* winVid = it->second;
 
-		if(!winVid)
+		if (!winVid)
 		{
 			DEBUG_CRASH(("There's No WindowVideo in the m_playignVideos list"));
 			return;
 		}
-		GameWindow *win = winVid->getWin();
+		GameWindow* win = winVid->getWin();
 
-		if(winVid->getState() == WINDOW_VIDEO_STATE_HIDDEN && (win->winIsHidden() == FALSE))
+		if (winVid->getState() == WINDOW_VIDEO_STATE_HIDDEN && (win->winIsHidden() == FALSE))
 		{
 			resumeMovie(win);
 		}
 
-		if(winVid->getState() == WINDOW_VIDEO_STATE_PLAY && win->winIsHidden())
+		if (winVid->getState() == WINDOW_VIDEO_STATE_PLAY && win->winIsHidden())
 		{
 			hideMovie(win);
 		}
 
 		// Only advance the frame if we're playing
-		if(winVid->getState() != WINDOW_VIDEO_STATE_PLAY)
+		if (winVid->getState() != WINDOW_VIDEO_STATE_PLAY)
 		{
 			it++;
 			continue;
 		}
 
 		// Get the Stream and the buffer to update for each animation
-		VideoStreamInterface *videoStream = winVid->getVideoStream();
-		VideoBuffer *videoBuffer = winVid->getVideoBuffer();
+		VideoStreamInterface* videoStream = winVid->getVideoStream();
+		VideoBuffer* videoBuffer = winVid->getVideoBuffer();
 
-		if ( videoStream && videoBuffer )
+		if (videoStream && videoBuffer)
 		{
-			if ( videoStream->isFrameReady())
+			if (videoStream->isFrameReady())
 			{
 				videoStream->frameDecompress();
-				videoStream->frameRender( videoBuffer );
+				videoStream->frameRender(videoBuffer);
 				videoStream->frameNext();
 
 				// If we reach frame Index of 0, we might have to pause, or loop.
-				if ( videoStream->frameIndex() == 0 )
+				if (videoStream->frameIndex() == 0)
 				{
-					if(winVid->getPlayType() == WINDOW_PLAY_MOVIE_ONCE)
+					if (winVid->getPlayType() == WINDOW_PLAY_MOVIE_ONCE)
 						stopMovie(win);
 					else if (winVid->getPlayType() == WINDOW_PLAY_MOVIE_SHOW_LAST_FRAME)
 						pauseMovie(win);
@@ -251,30 +247,29 @@ void WindowVideoManager::update()
 	}
 }
 
-void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, WindowVideoPlayType playType )
+void WindowVideoManager::playMovie(GameWindow* win, AsciiString movieName, WindowVideoPlayType playType)
 {
 	// if we already have a movie playing for that window, kill it.
-	stopAndRemoveMovie( win );
+	stopAndRemoveMovie(win);
 
 	// create the new stream
-	VideoStreamInterface *videoStream = TheVideoPlayer->open( movieName );
-	if ( videoStream == nullptr )
+	VideoStreamInterface* videoStream = TheVideoPlayer->open(movieName);
+	if (videoStream == nullptr)
 	{
 		return;
 	}
 
 	// Create the new buffer
-	VideoBuffer *videoBuffer = TheDisplay->createVideoBuffer();
-	if (	videoBuffer == nullptr ||
-				!videoBuffer->allocate(	videoStream->width(),
-													videoStream->height())
-		)
+	VideoBuffer* videoBuffer = TheDisplay->createVideoBuffer();
+	if (videoBuffer == nullptr ||
+	    !videoBuffer->allocate(videoStream->width(),
+	                           videoStream->height()))
 	{
 		// If we failed to create the buffer...
 		delete videoBuffer;
 		videoBuffer = nullptr;
 
-		if ( videoStream )
+		if (videoStream)
 		{
 			videoStream->close();
 			videoStream = nullptr;
@@ -284,10 +279,10 @@ void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, Wind
 	}
 
 	// now that we have everything, create the new WindowVideo Structure
-	WindowVideo *winVid = NEW WindowVideo;
+	WindowVideo* winVid = NEW WindowVideo;
 
 	// init it.
-	winVid->init( win, movieName,playType,videoBuffer,videoStream);
+	winVid->init(win, movieName, playType, videoBuffer, videoStream);
 
 	// add it to our map.
 	m_playingVideos[win] = winVid;
@@ -296,59 +291,57 @@ void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, Wind
 	m_stopAllMovies = FALSE;
 }
 
-
-void WindowVideoManager::pauseMovie( GameWindow *win )
+void WindowVideoManager::pauseMovie(GameWindow* win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
+	if (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-		winVid->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
+		WindowVideo* winVid = it->second;
+		if (winVid)
+			winVid->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
 	}
-
 }
-void WindowVideoManager::hideMovie( GameWindow *win )
+void WindowVideoManager::hideMovie(GameWindow* win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
+	if (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
-		winVid->setWindowState(WINDOW_VIDEO_STATE_HIDDEN);
+		WindowVideo* winVid = it->second;
+		if (winVid)
+			winVid->setWindowState(WINDOW_VIDEO_STATE_HIDDEN);
 	}
 }
 
-void WindowVideoManager::resumeMovie( GameWindow *win )
+void WindowVideoManager::resumeMovie(GameWindow* win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
+	if (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
+		WindowVideo* winVid = it->second;
+		if (winVid)
 			winVid->setWindowState(WINDOW_VIDEO_STATE_PLAY);
 	}
 	m_pauseAllMovies = FALSE;
 	m_stopAllMovies = FALSE;
 }
 
-void WindowVideoManager::stopMovie( GameWindow *win )
+void WindowVideoManager::stopMovie(GameWindow* win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
+	if (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
+		WindowVideo* winVid = it->second;
+		if (winVid)
 			winVid->setWindowState(WINDOW_VIDEO_STATE_STOP);
 	}
 }
 
-void WindowVideoManager::stopAndRemoveMovie( GameWindow *win )
+void WindowVideoManager::stopAndRemoveMovie(GameWindow* win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
+	if (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
+		WindowVideo* winVid = it->second;
 		delete winVid;
 		m_playingVideos.erase(it);
 	}
@@ -357,11 +350,11 @@ void WindowVideoManager::stopAndRemoveMovie( GameWindow *win )
 void WindowVideoManager::stopAllMovies()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
+	// Iterate through the maps
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
+		WindowVideo* winVid = it->second;
+		if (winVid)
 			winVid->setWindowState(WINDOW_VIDEO_STATE_STOP);
 		it++;
 	}
@@ -373,11 +366,11 @@ void WindowVideoManager::stopAllMovies()
 void WindowVideoManager::pauseAllMovies()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
+	// Iterate through the maps
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
+		WindowVideo* winVid = it->second;
+		if (winVid)
 			winVid->setWindowState(WINDOW_VIDEO_STATE_PAUSE);
 		it++;
 	}
@@ -389,11 +382,11 @@ void WindowVideoManager::pauseAllMovies()
 void WindowVideoManager::resumeAllMovies()
 {
 	WindowVideoMap::iterator it = m_playingVideos.begin();
-	//Iterate through the maps
-	while(it != m_playingVideos.end())
+	// Iterate through the maps
+	while (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
+		WindowVideo* winVid = it->second;
+		if (winVid)
 			winVid->setWindowState(WINDOW_VIDEO_STATE_PLAY);
 		it++;
 	}
@@ -401,13 +394,13 @@ void WindowVideoManager::resumeAllMovies()
 	m_pauseAllMovies = FALSE;
 }
 
-Int WindowVideoManager::getWinState( GameWindow *win )
+Int WindowVideoManager::getWinState(GameWindow* win)
 {
 	WindowVideoMap::iterator it = m_playingVideos.find(win);
-	if(it != m_playingVideos.end())
+	if (it != m_playingVideos.end())
 	{
-		WindowVideo *winVid = it->second;
-		if(winVid)
+		WindowVideo* winVid = it->second;
+		if (winVid)
 			return winVid->getState();
 	}
 	return WINDOW_VIDEO_STATE_STOP;

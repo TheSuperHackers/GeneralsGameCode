@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
@@ -61,12 +60,14 @@ class UDP;
 **
 */
 
-struct SpareSocketStruct {
-	UDP *udp;
+struct SpareSocketStruct
+{
+	UDP* udp;
 	UnsignedShort port;
 };
 
-enum FirewallDetectionState CPP_11(: Int) {
+enum FirewallDetectionState CPP_11( : Int)
+{
 	DETECTIONSTATE_IDLE,
 	DETECTIONSTATE_BEGIN,
 	DETECTIONSTATE_TEST1,
@@ -82,24 +83,26 @@ enum FirewallDetectionState CPP_11(: Int) {
 #pragma pack(push, 1)
 
 // size = 16 bytes
-struct ManglerData {
-		unsigned int		CRC;
-		unsigned short	magic;
-		unsigned short	PacketID;
-		unsigned short	MyMangledPortNumber;
-		unsigned short	OriginalPortNumber;
-		unsigned char		MyMangledAddress[4];
-		unsigned char		NetCommandType;
-		unsigned char		BlitzMe;
-		unsigned short	Padding;
+struct ManglerData
+{
+	unsigned int CRC;
+	unsigned short magic;
+	unsigned short PacketID;
+	unsigned short MyMangledPortNumber;
+	unsigned short OriginalPortNumber;
+	unsigned char MyMangledAddress[4];
+	unsigned char NetCommandType;
+	unsigned char BlitzMe;
+	unsigned short Padding;
 };
 
 // size = TransportMessageHeader + ManglerData + 10 bytes = 26 bytes
-struct ManglerMessage {
-        ManglerData							data;
-        int											length;
-        unsigned int						ip;
-        unsigned short					port;
+struct ManglerMessage
+{
+	ManglerData data;
+	int length;
+	unsigned int ip;
+	unsigned short port;
 };
 
 #pragma pack(pop)
@@ -107,201 +110,202 @@ struct ManglerMessage {
 static const Int MAX_NUM_MANGLERS = 4;
 static const UnsignedShort MANGLER_PORT = 4321;
 
-class FirewallHelperClass {
+class FirewallHelperClass
+{
 
-	public:
+public:
+	/*
+	** Enumeration of firewall behaviors we can detect.
+	**
+	** It is assumed that all port mangling firewalls change the mangled source port in response to
+	** an application source port change.
+	*/
+	typedef enum tFirewallBehaviorType
+	{
 
-		/*
-		** Enumeration of firewall behaviors we can detect.
-		**
-		** It is assumed that all port mangling firewalls change the mangled source port in response to
-		** an application source port change.
-		*/
-		typedef enum tFirewallBehaviorType {
-
-			FIREWALL_MIN = 0,
-
-			/*
-			** Just used as an initialiser.
-			*/
-			FIREWALL_TYPE_UNKNOWN = 0,
-
-			/*
-			** This is a simple, non-port translating firewall, or there is no firewall at all.
-			*/
-			FIREWALL_TYPE_SIMPLE = 1,
-
-			/*
-			** This is a firewall/NAT with port mangling but it's pretty dumb - it uses the same mangled
-			** source port regardless of the destination address.
-			*/
-			FIREWALL_TYPE_DUMB_MANGLING = 2,
-
-			/*
-			** This is a smarter firewall/NAT with port mangling that uses different mangled source ports
-			** for different destination IPs.
-			*/
-			FIREWALL_TYPE_SMART_MANGLING = 4,
-
-			/*
-			** This is a firewall that exhibits the bug as seen in the Netgear firewalls. A previously good
-			** source port mapping will change in response to unsolicited traffic from a known IP.
-			*/
-			FIREWALL_TYPE_NETGEAR_BUG = 8,
-
-			/*
-			** This firewall has a simple absolute offset port allocation scheme.
-			*/
-			FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION = 16,
-
-			/*
-			** This firewall has a relative offset port allocation scheme. For these firewalls, we have to
-			** subtract the actual source port from the mangled source port to discover the allocation scheme.
-			** The mangled port number is based in part on the original source port number.
-			*/
-			FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION = 32,
-
-			/*
-			** This firewall mangles source ports differently depending on the destination port.
-			*/
-			FIREWALL_TYPE_DESTINATION_PORT_DELTA = 64,
-
-			FIREWALL_MAX = 128
-
-		} FirewallBehaviorType;
-
-
-
-		FirewallHelperClass();
-		virtual ~FirewallHelperClass();
-		Bool detectFirewall();
-		UnsignedShort getRawFirewallBehavior() {return((UnsignedShort)m_behavior);}
-		Short getSourcePortAllocationDelta();
-		Int getFirewallHardness(FirewallBehaviorType behavior);
-		Int getFirewallRetries(FirewallBehaviorType behavior);
-		void setSourcePortPoolStart(Int port) {m_sourcePortPool = port;};
-		Int getSourcePortPool() {return(m_sourcePortPool);};
-		void readFirewallBehavior();
-		void reset();
-		Bool behaviorDetectionUpdate();
-
-		FirewallBehaviorType getFirewallBehavior();
-		void writeFirewallBehavior();
-
-		void flagNeedToRefresh(Bool flag);
-
-		static void getManglerName(Int manglerIndex, Char *nameBuf);
-		Bool sendToManglerFromPort(UnsignedInt address, UnsignedShort port, UnsignedShort packetID, Bool blitzme = FALSE);
-		UnsignedShort getManglerResponse(UnsignedShort packetID, Int time = 0);
-		Bool openSpareSocket(UnsignedShort port);
-		void closeSpareSocket(UnsignedShort port);
-		void closeAllSpareSockets();
-		UnsignedShort getNextTemporarySourcePort(Int skip);
-
-		Bool detectionBeginUpdate();
-		Bool detectionTest1Update();
-		Bool detectionTest2Update();
-		Bool detectionTest3Update();
-		Bool detectionTest3WaitForResponsesUpdate();
-		Bool detectionTest4Stage1Update();
-		Bool detectionTest4Stage2Update();
-		Bool detectionTest5Update();
-
+		FIREWALL_MIN = 0,
 
 		/*
-		** Behavior query functions.
+		** Just used as an initialiser.
 		*/
-		Bool isNAT() {
-			if (m_behavior == FIREWALL_TYPE_UNKNOWN || (m_behavior & FIREWALL_TYPE_SIMPLE) != 0) {
-				return(FALSE);
-			}
-			return(TRUE);
-		};
-
-		Bool isNAT(FirewallBehaviorType behavior) {
-			if (behavior == FIREWALL_TYPE_UNKNOWN || (behavior & FIREWALL_TYPE_SIMPLE) != 0) {
-				return(FALSE);
-			}
-			return(TRUE);
-		};
-
-		Bool isNetgear(FirewallBehaviorType behavior) {
-			if ((behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-				return(TRUE);
-			}
-			return(FALSE);
-		};
-
-		Bool isNetgear() {
-			if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-				return(TRUE);
-			}
-			return(FALSE);
-		};
-
-
-
-	private:
-
-		Int getNATPortAllocationScheme(Int numPorts, UnsignedShort *originalPorts, UnsignedShort *mangledPorts, Bool &relativeDelta, Bool &looksGood);
-		void detectFirewallBehavior(/*Bool &canRecord*/);
-		Bool getReferencePort();
-
-		SpareSocketStruct * findSpareSocketByPort(UnsignedShort port);
-		ManglerMessage * findEmptyMessage();
-
-		void byteAdjust(ManglerData *data);
+		FIREWALL_TYPE_UNKNOWN = 0,
 
 		/*
-		** How does our firewall behave?
+		** This is a simple, non-port translating firewall, or there is no firewall at all.
 		*/
-		FirewallBehaviorType m_behavior;
+		FIREWALL_TYPE_SIMPLE = 1,
 
 		/*
-		** How did the firewall behave the last time we ran the game.
+		** This is a firewall/NAT with port mangling but it's pretty dumb - it uses the same mangled
+		** source port regardless of the destination address.
 		*/
-		FirewallBehaviorType m_lastBehavior;
+		FIREWALL_TYPE_DUMB_MANGLING = 2,
 
 		/*
-		** What is the delta in our firewalls NAT port allocation scheme.
+		** This is a smarter firewall/NAT with port mangling that uses different mangled source ports
+		** for different destination IPs.
 		*/
-		Int m_sourcePortAllocationDelta;
+		FIREWALL_TYPE_SMART_MANGLING = 4,
 
 		/*
-		** What was the delta the last time we ran?
+		** This is a firewall that exhibits the bug as seen in the Netgear firewalls. A previously good
+		** source port mapping will change in response to unsolicited traffic from a known IP.
 		*/
-		Int m_lastSourcePortAllocationDelta;
+		FIREWALL_TYPE_NETGEAR_BUG = 8,
 
 		/*
-		** Source ports used only to discover port allocation patterns.
-		** Needs to be static so that previous communications with the manglers
-		** don't affect the current one.
+		** This firewall has a simple absolute offset port allocation scheme.
 		*/
-		static Int m_sourcePortPool;
+		FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION = 16,
 
 		/*
-		** Spare sockets used for detecting mangling and such.
+		** This firewall has a relative offset port allocation scheme. For these firewalls, we have to
+		** subtract the actual source port from the mangled source port to discover the allocation scheme.
+		** The mangled port number is based in part on the original source port number.
 		*/
-		SpareSocketStruct m_spareSockets[MAX_SPARE_SOCKETS];
+		FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION = 32,
 
-		UnsignedInt m_manglers[MAX_NUM_MANGLERS];
-		Int m_numManglers;
+		/*
+		** This firewall mangles source ports differently depending on the destination port.
+		*/
+		FIREWALL_TYPE_DESTINATION_PORT_DELTA = 64,
 
-		UnsignedShort m_sparePorts[MAX_SPARE_SOCKETS];
-		UnsignedShort m_mangledPorts[MAX_SPARE_SOCKETS];
-		UnsignedShort m_packetID;
+		FIREWALL_MAX = 128
 
-		ManglerMessage m_messages[MAX_SPARE_SOCKETS];
+	} FirewallBehaviorType;
 
-		FirewallDetectionState m_currentState;
-		time_t m_timeoutStart;
-		time_t m_timeoutLength;
+	FirewallHelperClass();
+	virtual ~FirewallHelperClass();
+	Bool detectFirewall();
+	UnsignedShort getRawFirewallBehavior() { return ((UnsignedShort)m_behavior); }
+	Short getSourcePortAllocationDelta();
+	Int getFirewallHardness(FirewallBehaviorType behavior);
+	Int getFirewallRetries(FirewallBehaviorType behavior);
+	void setSourcePortPoolStart(Int port) { m_sourcePortPool = port; };
+	Int getSourcePortPool() { return (m_sourcePortPool); };
+	void readFirewallBehavior();
+	void reset();
+	Bool behaviorDetectionUpdate();
 
-		Int m_numResponses;
-		Int m_currentTry;
+	FirewallBehaviorType getFirewallBehavior();
+	void writeFirewallBehavior();
+
+	void flagNeedToRefresh(Bool flag);
+
+	static void getManglerName(Int manglerIndex, Char* nameBuf);
+	Bool sendToManglerFromPort(UnsignedInt address, UnsignedShort port, UnsignedShort packetID, Bool blitzme = FALSE);
+	UnsignedShort getManglerResponse(UnsignedShort packetID, Int time = 0);
+	Bool openSpareSocket(UnsignedShort port);
+	void closeSpareSocket(UnsignedShort port);
+	void closeAllSpareSockets();
+	UnsignedShort getNextTemporarySourcePort(Int skip);
+
+	Bool detectionBeginUpdate();
+	Bool detectionTest1Update();
+	Bool detectionTest2Update();
+	Bool detectionTest3Update();
+	Bool detectionTest3WaitForResponsesUpdate();
+	Bool detectionTest4Stage1Update();
+	Bool detectionTest4Stage2Update();
+	Bool detectionTest5Update();
+
+	/*
+	** Behavior query functions.
+	*/
+	Bool isNAT()
+	{
+		if (m_behavior == FIREWALL_TYPE_UNKNOWN || (m_behavior & FIREWALL_TYPE_SIMPLE) != 0)
+		{
+			return (FALSE);
+		}
+		return (TRUE);
+	};
+
+	Bool isNAT(FirewallBehaviorType behavior)
+	{
+		if (behavior == FIREWALL_TYPE_UNKNOWN || (behavior & FIREWALL_TYPE_SIMPLE) != 0)
+		{
+			return (FALSE);
+		}
+		return (TRUE);
+	};
+
+	Bool isNetgear(FirewallBehaviorType behavior)
+	{
+		if ((behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0)
+		{
+			return (TRUE);
+		}
+		return (FALSE);
+	};
+
+	Bool isNetgear()
+	{
+		if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0)
+		{
+			return (TRUE);
+		}
+		return (FALSE);
+	};
+
+private:
+	Int getNATPortAllocationScheme(Int numPorts, UnsignedShort* originalPorts, UnsignedShort* mangledPorts, Bool& relativeDelta, Bool& looksGood);
+	void detectFirewallBehavior(/*Bool &canRecord*/);
+	Bool getReferencePort();
+
+	SpareSocketStruct* findSpareSocketByPort(UnsignedShort port);
+	ManglerMessage* findEmptyMessage();
+
+	void byteAdjust(ManglerData* data);
+
+	/*
+	** How does our firewall behave?
+	*/
+	FirewallBehaviorType m_behavior;
+
+	/*
+	** How did the firewall behave the last time we ran the game.
+	*/
+	FirewallBehaviorType m_lastBehavior;
+
+	/*
+	** What is the delta in our firewalls NAT port allocation scheme.
+	*/
+	Int m_sourcePortAllocationDelta;
+
+	/*
+	** What was the delta the last time we ran?
+	*/
+	Int m_lastSourcePortAllocationDelta;
+
+	/*
+	** Source ports used only to discover port allocation patterns.
+	** Needs to be static so that previous communications with the manglers
+	** don't affect the current one.
+	*/
+	static Int m_sourcePortPool;
+
+	/*
+	** Spare sockets used for detecting mangling and such.
+	*/
+	SpareSocketStruct m_spareSockets[MAX_SPARE_SOCKETS];
+
+	UnsignedInt m_manglers[MAX_NUM_MANGLERS];
+	Int m_numManglers;
+
+	UnsignedShort m_sparePorts[MAX_SPARE_SOCKETS];
+	UnsignedShort m_mangledPorts[MAX_SPARE_SOCKETS];
+	UnsignedShort m_packetID;
+
+	ManglerMessage m_messages[MAX_SPARE_SOCKETS];
+
+	FirewallDetectionState m_currentState;
+	time_t m_timeoutStart;
+	time_t m_timeoutLength;
+
+	Int m_numResponses;
+	Int m_currentTry;
 };
 
-
-
-extern FirewallHelperClass *TheFirewallHelper;
-FirewallHelperClass * createFirewallHelper();
+extern FirewallHelperClass* TheFirewallHelper;
+FirewallHelperClass* createFirewallHelper();

@@ -42,56 +42,56 @@ be specialized code.
 
 class NetPacket;
 
-typedef std::list<NetPacket *> NetPacketList;
-typedef std::list<NetPacket *>::iterator NetPacketListIter;
+typedef std::list<NetPacket*> NetPacketList;
+typedef std::list<NetPacket*>::iterator NetPacketListIter;
 
 class NetPacket : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(NetPacket, "NetPacket")
 public:
 	NetPacket();
-	NetPacket(TransportMessage *msg);
-	//virtual ~NetPacket();
+	NetPacket(TransportMessage* msg);
+	// virtual ~NetPacket();
 
 	void init();
 	void reset();
 	void setAddress(Int addr, Int port);
-	Bool addCommand(NetCommandRef *msg);
+	Bool addCommand(NetCommandRef* msg);
 	Int getNumCommands();
 
-	NetCommandList *getCommandList();
+	NetCommandList* getCommandList();
 
-	static NetCommandRef *ConstructNetCommandMsgFromRawData(const UnsignedByte *data, UnsignedInt dataLength);
-	static NetPacketList ConstructBigCommandPacketList(NetCommandRef *ref);
+	static NetCommandRef* ConstructNetCommandMsgFromRawData(const UnsignedByte* data, UnsignedInt dataLength);
+	static NetPacketList ConstructBigCommandPacketList(NetCommandRef* ref);
 
-	UnsignedByte *getData();
+	UnsignedByte* getData();
 	Int getLength();
 	UnsignedInt getAddr();
 	UnsignedShort getPort();
 
 	// This function returns the size of the command without any compression, repetition, etc.
 	// i.e. All of the required fields are taken into account when returning the size.
-	static UnsignedInt GetBufferSizeNeededForCommand(NetCommandMsg *msg);
+	static UnsignedInt GetBufferSizeNeededForCommand(NetCommandMsg* msg);
 
 protected:
-	Bool isAckRepeat(NetCommandRef *msg);
-	Bool isAckBothRepeat(NetCommandRef *msg);
-	Bool isAckStage1Repeat(NetCommandRef *msg);
-	Bool isAckStage2Repeat(NetCommandRef *msg);
-	Bool isFrameRepeat(NetCommandRef *msg);
+	Bool isAckRepeat(NetCommandRef* msg);
+	Bool isAckBothRepeat(NetCommandRef* msg);
+	Bool isAckStage1Repeat(NetCommandRef* msg);
+	Bool isAckStage2Repeat(NetCommandRef* msg);
+	Bool isFrameRepeat(NetCommandRef* msg);
 
-	static void dumpPacketToLog(const UnsignedByte *packet, Int packetLen);
+	static void dumpPacketToLog(const UnsignedByte* packet, Int packetLen);
 
 protected:
-	UnsignedByte		m_packet[MAX_PACKET_SIZE];
-	Int							m_packetLen;
-	UnsignedInt			m_addr;
-	Int							m_numCommands;
-	NetCommandRef*	m_lastCommand;
-	UnsignedInt			m_lastFrame;
-	UnsignedShort		m_port;
-	UnsignedShort		m_lastCommandID;
-	UnsignedByte		m_lastPlayerID;
-	UnsignedByte		m_lastCommandType;
-	UnsignedByte		m_lastRelay;
+	UnsignedByte m_packet[MAX_PACKET_SIZE];
+	Int m_packetLen;
+	UnsignedInt m_addr;
+	Int m_numCommands;
+	NetCommandRef* m_lastCommand;
+	UnsignedInt m_lastFrame;
+	UnsignedShort m_port;
+	UnsignedShort m_lastCommandID;
+	UnsignedByte m_lastPlayerID;
+	UnsignedByte m_lastCommandType;
+	UnsignedByte m_lastRelay;
 };

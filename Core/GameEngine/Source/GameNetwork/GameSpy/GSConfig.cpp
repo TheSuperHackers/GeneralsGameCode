@@ -29,36 +29,35 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 #include "GameNetwork/RankPointValue.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
-GameSpyConfigInterface *TheGameSpyConfig = nullptr;
+GameSpyConfigInterface* TheGameSpyConfig = nullptr;
 
 class GameSpyConfig : public GameSpyConfigInterface
 {
 public:
-	GameSpyConfig( AsciiString config );
+	GameSpyConfig(AsciiString config);
 	virtual ~GameSpyConfig() override {}
 
 	// Pings
-	virtual std::list<AsciiString> getPingServers() override	{ return m_pingServers; }
-	virtual Int getNumPingRepetitions() override							{ return m_pingReps; }
-	virtual Int getPingTimeoutInMs() override								{ return m_pingTimeout; }
-	virtual Int getPingCutoffGood() override				{	return m_pingCutoffGood; }
-	virtual Int getPingCutoffBad() override				{ return m_pingCutoffBad;	}
+	virtual std::list<AsciiString> getPingServers() override { return m_pingServers; }
+	virtual Int getNumPingRepetitions() override { return m_pingReps; }
+	virtual Int getPingTimeoutInMs() override { return m_pingTimeout; }
+	virtual Int getPingCutoffGood() override { return m_pingCutoffGood; }
+	virtual Int getPingCutoffBad() override { return m_pingCutoffBad; }
 
 	// QM
-	virtual std::list<AsciiString> getQMMaps() override			{ return m_qmMaps; }
-	virtual Int getQMBotID() override												{ return m_qmBotID; }
-	virtual Int getQMChannel() override											{ return m_qmChannel; }
-	virtual void setQMChannel(Int channel) override							{ m_qmChannel = channel; }
+	virtual std::list<AsciiString> getQMMaps() override { return m_qmMaps; }
+	virtual Int getQMBotID() override { return m_qmBotID; }
+	virtual Int getQMChannel() override { return m_qmChannel; }
+	virtual void setQMChannel(Int channel) override { m_qmChannel = channel; }
 
 	// Player Info
 	virtual Int getPointsForRank(Int rank) override;
@@ -67,7 +66,7 @@ public:
 	virtual Bool getManglerLocation(Int index, AsciiString& host, UnsignedShort& port) override;
 
 	// Ladder / Any other external parsing
-	virtual AsciiString getLeftoverConfig() override					{ return m_leftoverConfig; }
+	virtual AsciiString getLeftoverConfig() override { return m_leftoverConfig; }
 
 	// NAT Timeouts
 	virtual Int getTimeBetweenRetries() override { return m_natRetryInterval; }
@@ -103,7 +102,7 @@ protected:
 
 	Bool m_restrictGamesToLobby;
 
-	std::set<Int> m_vip; // VIP people
+	std::set<Int> m_vip;    // VIP people
 
 	Int m_rankPoints[MAX_RANKS];
 
@@ -122,13 +121,15 @@ GameSpyConfigInterface* GameSpyConfigInterface::create(AsciiString config)
 class SectionChecker
 {
 public:
-	typedef std::list<const Bool *> SectionList;
-	void addVar(const Bool *var) { m_bools.push_back(var); }
+	typedef std::list<const Bool*> SectionList;
+	void addVar(const Bool* var) { m_bools.push_back(var); }
 	Bool isInSection();
+
 protected:
-	 SectionList m_bools;
+	SectionList m_bools;
 };
-Bool SectionChecker::isInSection() {
+Bool SectionChecker::isInSection()
+{
 	Bool ret = FALSE;
 	for (SectionList::const_iterator it = m_bools.begin(); it != m_bools.end(); ++it)
 	{
@@ -139,20 +140,20 @@ Bool SectionChecker::isInSection() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-GameSpyConfig::GameSpyConfig( AsciiString config ) :
-m_natRetryInterval(1000),
-m_natMaxManglerRetries(25),
-m_natManglerRetryInterval(300),
-m_natKeepaliveInterval(15000),
-m_natPortTimeout(10000),
-m_natRoundTimeout(10000),
-m_pingReps(1),
-m_pingTimeout(1000),
-m_pingCutoffGood(300),
-m_pingCutoffBad(600),
-m_restrictGamesToLobby(FALSE),
-m_qmBotID(0),
-m_qmChannel(0)
+GameSpyConfig::GameSpyConfig(AsciiString config)
+	: m_natRetryInterval(1000)
+	, m_natMaxManglerRetries(25)
+	, m_natManglerRetryInterval(300)
+	, m_natKeepaliveInterval(15000)
+	, m_natPortTimeout(10000)
+	, m_natRoundTimeout(10000)
+	, m_pingReps(1)
+	, m_pingTimeout(1000)
+	, m_pingCutoffGood(300)
+	, m_pingCutoffBad(600)
+	, m_restrictGamesToLobby(FALSE)
+	, m_qmBotID(0)
+	, m_qmChannel(0)
 {
 	m_rankPoints[0] = 0;
 	m_rankPoints[1] = 5;
@@ -187,8 +188,8 @@ m_qmChannel(0)
 
 	while (config.nextToken(&line, "\n"))
 	{
-		if (line.getCharAt(line.getLength()-1) == '\r')
-			line.removeLastChar();	// there is a trailing '\r'
+		if (line.getCharAt(line.getLength() - 1) == '\r')
+			line.removeLastChar();    // there is a trailing '\r'
 
 		line.trim();
 
@@ -332,19 +333,19 @@ m_qmChannel(0)
 			mapName = TheGameState->portableMapPathToRealMapPath(TheGameState->realMapPathToPortableMapPath(mapName));
 			mapName.toLower();
 
-			// [SKB: Jul 01 2003 @ 6:43pm] :
-			// German2 is missing some maps because of content.  But, we need the m_qmMaps
-			// to contain same number of strings as the Retail version so that the
-			// QM Bot thinks that they have the same number of maps.
-			#if RTS_GENERALS
+// [SKB: Jul 01 2003 @ 6:43pm] :
+// German2 is missing some maps because of content.  But, we need the m_qmMaps
+// to contain same number of strings as the Retail version so that the
+// QM Bot thinks that they have the same number of maps.
+#if RTS_GENERALS
 			m_qmMaps.push_back(mapName);
-			#else
-			const MapMetaData *md = TheMapCache->findMap(mapName);
+#else
+			const MapMetaData* md = TheMapCache->findMap(mapName);
 			if (md)
 			{
 				m_qmMaps.push_back(mapName);
 			}
-			#endif
+#endif
 		}
 		else if (inQMBot)
 		{
@@ -445,15 +446,16 @@ m_qmChannel(0)
 			m_leftoverConfig.concat('\n');
 		}
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 Int GameSpyConfig::getPointsForRank(Int rank)
 {
-	if (rank >= MAX_RANKS) rank = MAX_RANKS-1;
-	if (rank < 0) rank = 0;
+	if (rank >= MAX_RANKS)
+		rank = MAX_RANKS - 1;
+	if (rank < 0)
+		rank = 0;
 	return m_rankPoints[rank];
 }
 

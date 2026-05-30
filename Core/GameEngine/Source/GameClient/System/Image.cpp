@@ -31,7 +31,7 @@
 //						all parts of the engine that need images.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_IMAGE_STATUS_NAMES
 #include "Lib/BaseType.h"
@@ -43,25 +43,25 @@
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse Image::m_imageFieldParseTable[] =
-{
+	{
 
-	{ "Texture",				INI::parseAsciiString,							nullptr, 		offsetof( Image, m_filename ) },
-	{ "TextureWidth",		INI::parseInt,											nullptr, 		offsetof( Image, m_textureSize.x ) },
-	{ "TextureHeight",	INI::parseInt,											nullptr, 		offsetof( Image, m_textureSize.y ) },
-	{ "Coords",					Image::parseImageCoords,						nullptr, 		offsetof( Image, m_UVCoords ) },
-	{ "Status",					Image::parseImageStatus,						nullptr, 		offsetof( Image, m_status ) },
+		{"Texture", INI::parseAsciiString, nullptr, offsetof(Image, m_filename)},
+		{"TextureWidth", INI::parseInt, nullptr, offsetof(Image, m_textureSize.x)},
+		{"TextureHeight", INI::parseInt, nullptr, offsetof(Image, m_textureSize.y)},
+		{"Coords", Image::parseImageCoords, nullptr, offsetof(Image, m_UVCoords)},
+		{"Status", Image::parseImageStatus, nullptr, offsetof(Image, m_status)},
 
-	{ nullptr,							nullptr,																nullptr, 		0 }
+		{nullptr, nullptr, nullptr, 0}
 
 };
 
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
 /** Parse an image coordinates in the form of
-	*
-	* COORDS = Left:AAA Top:BBB Right:CCC Bottom:DDD */
+ *
+ * COORDS = Left:AAA Top:BBB Right:CCC Bottom:DDD */
 //-------------------------------------------------------------------------------------------------
-void Image::parseImageCoords( INI* ini, void *instance, void *store, const void* /*userData*/ )
+void Image::parseImageCoords(INI* ini, void* instance, void* store, const void* /*userData*/)
 {
 	Int left = INI::scanInt(ini->getNextSubToken("Left"));
 	Int top = INI::scanInt(ini->getNextSubToken("Top"));
@@ -69,7 +69,7 @@ void Image::parseImageCoords( INI* ini, void *instance, void *store, const void*
 	Int bottom = INI::scanInt(ini->getNextSubToken("Bottom"));
 
 	// get the image we're storing in
-	Image *theImage = (Image *)instance;
+	Image* theImage = (Image*)instance;
 
 	//
 	// store the UV coords based on what we've read in and the texture size
@@ -83,33 +83,32 @@ void Image::parseImageCoords( INI* ini, void *instance, void *store, const void*
 	uvCoords.hi.y = (Real)bottom;
 
 	// adjust the coords by texture size
-	const ICoord2D *textureSize = theImage->getTextureSize();
-	if( textureSize->x )
+	const ICoord2D* textureSize = theImage->getTextureSize();
+	if (textureSize->x)
 	{
 		uvCoords.lo.x /= (Real)textureSize->x;
 		uvCoords.hi.x /= (Real)textureSize->x;
 	}
-	if( textureSize->y )
+	if (textureSize->y)
 	{
 		uvCoords.lo.y /= (Real)textureSize->y;
 		uvCoords.hi.y /= (Real)textureSize->y;
 	}
 
 	// store the uv coords
-	theImage->setUV( &uvCoords );
+	theImage->setUV(&uvCoords);
 
 	// compute the image size based on the coords we read and store
 	ICoord2D imageSize;
 	imageSize.x = right - left;
 	imageSize.y = bottom - top;
-	theImage->setImageSize( &imageSize );
-
+	theImage->setImageSize(&imageSize);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Parse the image status line */
 //-------------------------------------------------------------------------------------------------
-void Image::parseImageStatus( INI* ini, void *instance, void *store, const void* /*userData*/)
+void Image::parseImageStatus(INI* ini, void* instance, void* store, const void* /*userData*/)
 {
 	// use existing INI parsing for the bit strings
 	INI::parseBitString32(ini, instance, store, imageStatusNames);
@@ -119,22 +118,20 @@ void Image::parseImageStatus( INI* ini, void *instance, void *store, const void*
 	// they were computed from the page location rect, which was for the rotated image
 	// (see ImagePacker tool for more details)
 	//
-	UnsignedInt *theStatusBits = (UnsignedInt *)store;
-	if( BitIsSet( *theStatusBits, IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+	UnsignedInt* theStatusBits = (UnsignedInt*)store;
+	if (BitIsSet(*theStatusBits, IMAGE_STATUS_ROTATED_90_CLOCKWISE))
 	{
-		Image *theImage = (Image *)instance;
+		Image* theImage = (Image*)instance;
 		ICoord2D imageSize;
 
-		imageSize.x = theImage->getImageHeight();  // note it's height not width
-		imageSize.y = theImage->getImageWidth();   // note it's width not height
-		theImage->setImageSize( &imageSize );
-
+		imageSize.x = theImage->getImageHeight();    // note it's height not width
+		imageSize.y = theImage->getImageWidth();    // note it's width not height
+		theImage->setImageSize(&imageSize);
 	}
-
 }
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-ImageCollection *TheMappedImageCollection = nullptr;  ///< mapped images
+ImageCollection* TheMappedImageCollection = nullptr;    ///< mapped images
 
 // PUBLIC FUNCTIONS////////////////////////////////////////////////////////////////////////////////
 //-------------------------------------------------------------------------------------------------
@@ -154,40 +151,36 @@ Image::Image()
 	m_imageSize.y = 0;
 	m_rawTextureData = nullptr;
 	m_status = IMAGE_STATUS_NONE;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Image::~Image()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Set a status bit into the existing status, return the previous status
-	* bit collection from before the set */
+ * bit collection from before the set */
 //-------------------------------------------------------------------------------------------------
-UnsignedInt Image::setStatus( UnsignedInt bit )
+UnsignedInt Image::setStatus(UnsignedInt bit)
 {
 	UnsignedInt prevStatus = m_status;
 
-	BitSet( m_status, bit );
+	BitSet(m_status, bit);
 	return prevStatus;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Clear a status bit from the existing status, return the previous
-	* status bit collection from before the clear */
+ * status bit collection from before the clear */
 //-------------------------------------------------------------------------------------------------
-UnsignedInt Image::clearStatus( UnsignedInt bit )
+UnsignedInt Image::clearStatus(UnsignedInt bit)
 {
 	UnsignedInt prevStatus = m_status;
 
-	BitClear( m_status, bit );
+	BitClear(m_status, bit);
 	return prevStatus;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,20 +197,20 @@ ImageCollection::ImageCollection()
 //-------------------------------------------------------------------------------------------------
 ImageCollection::~ImageCollection()
 {
-  for (ImageMap::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
-    deleteInstance(i->second);
+	for (ImageMap::iterator i = m_imageMap.begin(); i != m_imageMap.end(); ++i)
+		deleteInstance(i->second);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** adds the given image to the collection, transfers ownership to this object */
 //-------------------------------------------------------------------------------------------------
-void ImageCollection::addImage( Image *image )
+void ImageCollection::addImage(Image* image)
 {
-  m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName())]=image;
+	m_imageMap[TheNameKeyGenerator->nameToLowercaseKey(image->getName())] = image;
 }
 
 //-------------------------------------------------------------------------------------------------
-const Image *ImageCollection::findImage( NameKeyType namekey ) const
+const Image* ImageCollection::findImage(NameKeyType namekey) const
 {
 	ImageMap::const_iterator i = m_imageMap.find(namekey);
 	return i == m_imageMap.end() ? nullptr : i->second;
@@ -226,7 +219,7 @@ const Image *ImageCollection::findImage( NameKeyType namekey ) const
 //-------------------------------------------------------------------------------------------------
 /** Find an image given the image name */
 //-------------------------------------------------------------------------------------------------
-const Image *ImageCollection::findImageByName( const AsciiString& name ) const
+const Image* ImageCollection::findImageByName(const AsciiString& name) const
 {
 	return findImage(TheNameKeyGenerator->nameToLowercaseKey(name));
 }
@@ -234,40 +227,38 @@ const Image *ImageCollection::findImageByName( const AsciiString& name ) const
 //-------------------------------------------------------------------------------------------------
 /** Find an image given the image name */
 //-------------------------------------------------------------------------------------------------
-const Image *ImageCollection::findImageByName( const char* name ) const
+const Image* ImageCollection::findImageByName(const char* name) const
 {
 	return findImage(TheNameKeyGenerator->nameToLowercaseKey(name));
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Load this image collection with all the images specified in the INI files
-	* for the proper texture size directory */
+ * for the proper texture size directory */
 //-------------------------------------------------------------------------------------------------
-void ImageCollection::load( Int textureSize )
+void ImageCollection::load(Int textureSize)
 {
-	char buffer[ _MAX_PATH ];
+	char buffer[_MAX_PATH];
 	INI ini;
 	// first load in the user created mapped image files if we have them.
 	WIN32_FIND_DATA findData;
 	AsciiString userDataPath;
-	if(TheGlobalData)
+	if (TheGlobalData)
 	{
-		userDataPath.format("%sINI\\MappedImages\\*.ini",TheGlobalData->getPath_UserData().str());
-		if(FindFirstFile(userDataPath.str(), &findData) !=INVALID_HANDLE_VALUE)
+		userDataPath.format("%sINI\\MappedImages\\*.ini", TheGlobalData->getPath_UserData().str());
+		if (FindFirstFile(userDataPath.str(), &findData) != INVALID_HANDLE_VALUE)
 		{
-			userDataPath.format("%sINI\\MappedImages",TheGlobalData->getPath_UserData().str());
-			ini.loadDirectory(userDataPath, INI_LOAD_OVERWRITE, nullptr );
+			userDataPath.format("%sINI\\MappedImages", TheGlobalData->getPath_UserData().str());
+			ini.loadDirectory(userDataPath, INI_LOAD_OVERWRITE, nullptr);
 		}
 	}
 
 	// construct path to the mapped images folder of the correct texture size
-	sprintf( buffer, "Data\\INI\\MappedImages\\TextureSize_%d", textureSize );
+	sprintf(buffer, "Data\\INI\\MappedImages\\TextureSize_%d", textureSize);
 
 	// load all the ine files in that directory
 
-	ini.loadDirectory( AsciiString( buffer ), INI_LOAD_OVERWRITE, nullptr );
+	ini.loadDirectory(AsciiString(buffer), INI_LOAD_OVERWRITE, nullptr);
 
-	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, nullptr );
-
-
+	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", INI_LOAD_OVERWRITE, nullptr);
 }

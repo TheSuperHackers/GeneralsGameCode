@@ -33,7 +33,7 @@
 
 class AudioEventRTS;
 
-enum RequestType CPP_11(: Int)
+enum RequestType CPP_11( : Int)
 {
 	AR_Play,
 	AR_Pause,
@@ -42,7 +42,7 @@ enum RequestType CPP_11(: Int)
 
 struct AudioRequest : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AudioRequest, "AudioRequest" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AudioRequest, "AudioRequest")
 
 public:
 	AudioEventRTS* releasePendingEvent();
@@ -50,7 +50,7 @@ public:
 	RequestType m_request;
 	union
 	{
-		AudioEventRTS *m_pendingEvent;
+		AudioEventRTS* m_pendingEvent;
 		AudioHandle m_handleToInteractOn;
 	};
 	Bool m_usePendingEvent;

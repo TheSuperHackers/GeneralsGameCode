@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -71,58 +71,54 @@
 // GadgetCheckBoxInput ========================================================
 /** Handle input for check box */
 //=============================================================================
-WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
-													WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetCheckBoxInput(GameWindow* window, UnsignedInt msg,
+                                         WindowMsgData mData1, WindowMsgData mData2)
 {
-	WinInstanceData *instData = window->winGetInstanceData();
+	WinInstanceData* instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
 
-				BitSet( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_MOUSE_ENTERING,
-																						(WindowMsgData)window,
-																						mData1 );
-				//TheWindowManager->winSetFocus( window );
-
+				BitSet(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+				                                   GBM_MOUSE_ENTERING,
+				                                   (WindowMsgData)window,
+				                                   mData1);
+				// TheWindowManager->winSetFocus( window );
 			}
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
 
-				BitClear( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_MOUSE_LEAVING,
-																						(WindowMsgData)window,
-																						mData1 );
+				BitClear(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+				                                   GBM_MOUSE_LEAVING,
+				                                   (WindowMsgData)window,
+				                                   mData1);
 			}
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
 		{
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(), GGM_LEFT_DRAG,
-																					(WindowMsgData)window, mData1 );
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(), GGM_LEFT_DRAG,
+			                                   (WindowMsgData)window, mData1);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -130,14 +126,13 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		{
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_UP:
 		{
 
-			if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) == FALSE )
+			if (BitIsSet(instData->getState(), WIN_STATE_HILITED) == FALSE)
 			{
 				// this up click was not meant for this button
 				return MSG_IGNORED;
@@ -146,12 +141,10 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 			// Toggle the check state
 			instData->m_state ^= WIN_STATE_SELECTED;
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(), GBM_SELECTED,
-																					(WindowMsgData)window, mData1 );
-
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(), GBM_SELECTED,
+			                                   (WindowMsgData)window, mData1);
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -165,12 +158,12 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_RIGHT_UP:
 		{
 			// Need to be specially marked to care about right mouse events
-			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
+			if (BitIsSet(instData->getState(), WIN_STATE_SELECTED))
 			{
-				TheWindowManager->winSendSystemMsg( instData->getOwner(), GBM_SELECTED_RIGHT,
-																						(WindowMsgData)window, mData1 );
+				TheWindowManager->winSendSystemMsg(instData->getOwner(), GBM_SELECTED_RIGHT,
+				                                   (WindowMsgData)window, mData1);
 
-				BitClear( instData->m_state, WIN_STATE_SELECTED );
+				BitClear(instData->m_state, WIN_STATE_SELECTED);
 			}
 			else
 			{
@@ -184,7 +177,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_CHAR:
 		{
 
-			switch( mData1 )
+			switch (mData1)
 			{
 
 				// --------------------------------------------------------------------
@@ -192,18 +185,17 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				case KEY_SPACE:
 				{
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
 						// Toggle the check state
 						instData->m_state ^= WIN_STATE_SELECTED;
 
-						TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																								GBM_SELECTED,
-																								(WindowMsgData)window,
-																								0 );
+						TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+						                                   GBM_SELECTED,
+						                                   (WindowMsgData)window,
+						                                   0);
 					}
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
@@ -212,10 +204,9 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				case KEY_TAB:
 				{
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 						TheWindowManager->winNextTab(window);
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
@@ -223,10 +214,9 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				case KEY_LEFT:
 				{
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 						TheWindowManager->winPrevTab(window);
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
@@ -234,13 +224,10 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				{
 
 					return MSG_IGNORED;
-
 				}
-
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -248,29 +235,26 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		{
 
 			return MSG_IGNORED;
-
 		}
-
 	}
 
 	return MSG_HANDLED;
-
 }
 
 // GadgetCheckBoxSystem =======================================================
 /** Handle system messages for check box */
 //=============================================================================
-WindowMsgHandledType GadgetCheckBoxSystem( GameWindow *window, UnsignedInt msg,
-													 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetCheckBoxSystem(GameWindow* window, UnsignedInt msg,
+                                          WindowMsgData mData1, WindowMsgData mData2)
 {
-	WinInstanceData *instData = window->winGetInstanceData();
+	WinInstanceData* instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
 		// ------------------------------------------------------------------------
 		case GGM_SET_LABEL:
 		{
-			window->winSetText( *(UnicodeString*)mData1 );
+			window->winSetText(*(UnicodeString*)mData1);
 			break;
 		}
 
@@ -285,15 +269,15 @@ WindowMsgHandledType GadgetCheckBoxSystem( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
 
-			if( mData1 == FALSE )
-				BitClear( instData->m_state, WIN_STATE_HILITED );
+			if (mData1 == FALSE)
+				BitClear(instData->m_state, WIN_STATE_HILITED);
 			else
-				BitSet( instData->m_state, WIN_STATE_HILITED );
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																					GGM_FOCUS_CHANGE,
-																					mData1,
-																					window->winGetWindowId() );
-			if( mData1 == FALSE )
+				BitSet(instData->m_state, WIN_STATE_HILITED);
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+			                                   GGM_FOCUS_CHANGE,
+			                                   mData1,
+			                                   window->winGetWindowId());
+			if (mData1 == FALSE)
 				*(Bool*)mData2 = FALSE;
 			else
 				*(Bool*)mData2 = TRUE;
@@ -302,75 +286,70 @@ WindowMsgHandledType GadgetCheckBoxSystem( GameWindow *window, UnsignedInt msg,
 
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;
-
 }
 
 // GadgetCheckBoxSetText ======================================================
 /** Set the text for the control */
 //=============================================================================
-void GadgetCheckBoxSetText( GameWindow *g, UnicodeString text )
+void GadgetCheckBoxSetText(GameWindow* g, UnicodeString text)
 {
 
 	// sanity
-	if( g == nullptr )
+	if (g == nullptr)
 		return;
 
-	TheWindowManager->winSendSystemMsg( g, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
-
+	TheWindowManager->winSendSystemMsg(g, GGM_SET_LABEL, (WindowMsgData)&text, 0);
 }
 
 // GadgetCheckBoxSetChecked ============================================
 //=============================================================================
 /** Set the check state for the check box */
 //=============================================================================
-void GadgetCheckBoxSetChecked( GameWindow *g, Bool isChecked)
+void GadgetCheckBoxSetChecked(GameWindow* g, Bool isChecked)
 {
-	WinInstanceData *instData = g->winGetInstanceData();
+	WinInstanceData* instData = g->winGetInstanceData();
 	if (isChecked)
 	{
-		BitSet(instData->m_state,  WIN_STATE_SELECTED);
+		BitSet(instData->m_state, WIN_STATE_SELECTED);
 	}
 	else
 	{
-		BitClear(instData->m_state,  WIN_STATE_SELECTED);
+		BitClear(instData->m_state, WIN_STATE_SELECTED);
 	}
 
-	TheWindowManager->winSendSystemMsg( g->winGetOwner(), GBM_SELECTED,
-																					(WindowMsgData)g, 0 );
-
+	TheWindowManager->winSendSystemMsg(g->winGetOwner(), GBM_SELECTED,
+	                                   (WindowMsgData)g, 0);
 }
 
 // GadgetCheckBoxToggle ============================================
 //=============================================================================
 /** Toggle the check state for the check box */
 //=============================================================================
-void GadgetCheckBoxToggle( GameWindow *g)
+void GadgetCheckBoxToggle(GameWindow* g)
 {
-	WinInstanceData *instData = g->winGetInstanceData();
+	WinInstanceData* instData = g->winGetInstanceData();
 	Bool isChecked = BitIsSet(instData->m_state, WIN_STATE_SELECTED);
 	if (isChecked)
 	{
-		BitClear(instData->m_state,  WIN_STATE_SELECTED);
+		BitClear(instData->m_state, WIN_STATE_SELECTED);
 	}
 	else
 	{
-		BitSet(instData->m_state,  WIN_STATE_SELECTED);
+		BitSet(instData->m_state, WIN_STATE_SELECTED);
 	}
 
-	TheWindowManager->winSendSystemMsg( g->winGetOwner(), GBM_SELECTED,
-																					(WindowMsgData)g, 0 );
-
+	TheWindowManager->winSendSystemMsg(g->winGetOwner(), GBM_SELECTED,
+	                                   (WindowMsgData)g, 0);
 }
 
 // GadgetCheckBoxIsChecked ======================================================
 /** Check the check state */
 //=============================================================================
-Bool GadgetCheckBoxIsChecked( GameWindow *g )
+Bool GadgetCheckBoxIsChecked(GameWindow* g)
 {
-	WinInstanceData *instData = g->winGetInstanceData();
+	WinInstanceData* instData = g->winGetInstanceData();
 	return (BitIsSet(instData->m_state, WIN_STATE_SELECTED));
 }

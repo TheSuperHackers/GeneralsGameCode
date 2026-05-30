@@ -24,7 +24,7 @@
 
 /** FrameMetrics.cpp */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include <numeric>
 
@@ -42,13 +42,14 @@ FrameMetrics::FrameMetrics()
 	m_minimumCushion = 0;
 
 	m_pendingLatencies = NEW time_t[MAX_FRAMES_AHEAD];
-	for(Int i = 0; i < MAX_FRAMES_AHEAD; i++)
+	for (Int i = 0; i < MAX_FRAMES_AHEAD; i++)
 		m_pendingLatencies[i] = 0;
 	m_fpsList = NEW Real[TheGlobalData->m_networkFPSHistoryLength];
 	m_latencyList = NEW Real[TheGlobalData->m_networkLatencyHistoryLength];
 }
 
-FrameMetrics::~FrameMetrics() {
+FrameMetrics::~FrameMetrics()
+{
 	delete m_fpsList;
 	m_fpsList = nullptr;
 
@@ -59,38 +60,44 @@ FrameMetrics::~FrameMetrics() {
 	m_pendingLatencies = nullptr;
 }
 
-void FrameMetrics::init() {
+void FrameMetrics::init()
+{
 	m_averageFps = 30;
 	m_averageLatency = (Real)0.2;
 	m_minimumCushion = -1;
 
 	UnsignedInt i = 0;
-	for (; i < TheGlobalData->m_networkFPSHistoryLength; ++i) {
+	for (; i < TheGlobalData->m_networkFPSHistoryLength; ++i)
+	{
 		m_fpsList[i] = 30.0;
 	}
 	m_fpsListIndex = 0;
-	for (i = 0; i < TheGlobalData->m_networkLatencyHistoryLength; ++i) {
+	for (i = 0; i < TheGlobalData->m_networkLatencyHistoryLength; ++i)
+	{
 		m_latencyList[i] = (Real)0.2;
 	}
 	m_cushionIndex = 0;
 }
 
-void FrameMetrics::reset() {
+void FrameMetrics::reset()
+{
 	init();
 }
 
-void FrameMetrics::doPerFrameMetrics(UnsignedInt frame) {
+void FrameMetrics::doPerFrameMetrics(UnsignedInt frame)
+{
 	// Do the measurement of the fps.
 	time_t curTime = timeGetTime();
-	if ((curTime - m_lastFpsTimeThing) >= 1000) {
-//		if ((m_fpsListIndex % 16) == 0) {
-//			DEBUG_LOG(("FrameMetrics::doPerFrameMetrics - adding %f to fps history. average before: %f ", m_fpsList[m_fpsListIndex], m_averageFps));
-//		}
-		m_averageFps -= ((m_fpsList[m_fpsListIndex])) / TheGlobalData->m_networkFPSHistoryLength; // subtract out the old value from the average.
+	if ((curTime - m_lastFpsTimeThing) >= 1000)
+	{
+		//		if ((m_fpsListIndex % 16) == 0) {
+		//			DEBUG_LOG(("FrameMetrics::doPerFrameMetrics - adding %f to fps history. average before: %f ", m_fpsList[m_fpsListIndex], m_averageFps));
+		//		}
+		m_averageFps -= ((m_fpsList[m_fpsListIndex])) / TheGlobalData->m_networkFPSHistoryLength;    // subtract out the old value from the average.
 		m_fpsList[m_fpsListIndex] = TheDisplay->getAverageFPS();
-//		m_fpsList[m_fpsListIndex] = TheGameClient->getFrame() - m_fpsStartingFrame;
-		m_averageFps += ((Real)(m_fpsList[m_fpsListIndex])) / TheGlobalData->m_networkFPSHistoryLength; // add the new value to the average.
-//		DEBUG_LOG(("average after: %f", m_averageFps));
+		//		m_fpsList[m_fpsListIndex] = TheGameClient->getFrame() - m_fpsStartingFrame;
+		m_averageFps += ((Real)(m_fpsList[m_fpsListIndex])) / TheGlobalData->m_networkFPSHistoryLength;    // add the new value to the average.
+		//		DEBUG_LOG(("average after: %f", m_averageFps));
 		++m_fpsListIndex;
 		m_fpsListIndex %= TheGlobalData->m_networkFPSHistoryLength;
 		m_lastFpsTimeThing = curTime;
@@ -98,43 +105,50 @@ void FrameMetrics::doPerFrameMetrics(UnsignedInt frame) {
 
 	Int pendingLatenciesIndex = frame % MAX_FRAMES_AHEAD;
 	m_pendingLatencies[pendingLatenciesIndex] = curTime;
-
 }
 
-void FrameMetrics::processLatencyResponse(UnsignedInt frame) {
+void FrameMetrics::processLatencyResponse(UnsignedInt frame)
+{
 	time_t curTime = timeGetTime();
 	Int pendingIndex = frame % MAX_FRAMES_AHEAD;
 	time_t timeDiff = curTime - m_pendingLatencies[pendingIndex];
 
 	Int latencyListIndex = frame % TheGlobalData->m_networkLatencyHistoryLength;
-	m_latencyList[latencyListIndex] = (Real)timeDiff / (Real)1000; // convert to seconds from milliseconds.
+	m_latencyList[latencyListIndex] = (Real)timeDiff / (Real)1000;    // convert to seconds from milliseconds.
 	const Real latencySum = std::accumulate(m_latencyList, m_latencyList + TheGlobalData->m_networkLatencyHistoryLength, 0.0f);
 	m_averageLatency = latencySum / (Real)TheGlobalData->m_networkLatencyHistoryLength;
 
-	if (frame % 16 == 0) {
-//		DEBUG_LOG(("ConnectionManager::processFrameInfoAck - average latency = %f", m_averageLatency));
+	if (frame % 16 == 0)
+	{
+		//		DEBUG_LOG(("ConnectionManager::processFrameInfoAck - average latency = %f", m_averageLatency));
 	}
 }
 
-void FrameMetrics::addCushion(Int cushion) {
+void FrameMetrics::addCushion(Int cushion)
+{
 	++m_cushionIndex;
 	m_cushionIndex %= TheGlobalData->m_networkCushionHistoryLength;
-	if (m_cushionIndex == 0) {
+	if (m_cushionIndex == 0)
+	{
 		m_minimumCushion = -1;
 	}
-	if ((cushion < m_minimumCushion) || (m_minimumCushion == -1)) {
+	if ((cushion < m_minimumCushion) || (m_minimumCushion == -1))
+	{
 		m_minimumCushion = cushion;
 	}
 }
 
-Int FrameMetrics::getAverageFPS() {
+Int FrameMetrics::getAverageFPS()
+{
 	return (Int)m_averageFps;
 }
 
-Real FrameMetrics::getAverageLatency() {
+Real FrameMetrics::getAverageLatency()
+{
 	return m_averageLatency;
 }
 
-Int FrameMetrics::getMinimumCushion() {
+Int FrameMetrics::getMinimumCushion()
+{
 	return m_minimumCushion;
 }

@@ -38,13 +38,13 @@
 
 #ifdef DEBUG_CRC
 
-#include "Common/AsciiString.h"
-#include "GameLogic/GameLogic.h"
-#include "Lib/BaseType.h"
-#include "WWMath/vector3.h"
-#include "WWMath/matrix3d.h"
+	#include "Common/AsciiString.h"
+	#include "GameLogic/GameLogic.h"
+	#include "Lib/BaseType.h"
+	#include "WWMath/vector3.h"
+	#include "WWMath/matrix3d.h"
 
-	#define AS_INT(x) (*(Int *)(&x))
+	#define AS_INT(x) (*(Int*)(&x))
 	#define DUMPVEL DUMPCOORD3DNAMED(&m_vel, "m_vel")
 	#define DUMPACCEL DUMPCOORD3DNAMED(&m_accel, "m_accel")
 	#define DUMPVECTOR3(x) DUMPVECTOR3NAMED(x, #x)
@@ -56,70 +56,85 @@
 	#define DUMPREAL(x) DUMPREALNAMED(x, #x)
 	#define DUMPREALNAMED(x, y) dumpReal(x, y, __FILE__, __LINE__)
 
-	extern Int TheCRCFirstFrameToLog;
-	extern UnsignedInt TheCRCLastFrameToLog;
+extern Int TheCRCFirstFrameToLog;
+extern UnsignedInt TheCRCLastFrameToLog;
 
-	void dumpVector3(const Vector3 *v, AsciiString name, AsciiString fname, Int line);
-	void dumpCoord3D(const Coord3D *c, AsciiString name, AsciiString fname, Int line);
-	void dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fname, Int line);
-	void dumpReal(Real r, AsciiString name, AsciiString fname, Int line);
+void dumpVector3(const Vector3* v, AsciiString name, AsciiString fname, Int line);
+void dumpCoord3D(const Coord3D* c, AsciiString name, AsciiString fname, Int line);
+void dumpMatrix3D(const Matrix3D* m, AsciiString name, AsciiString fname, Int line);
+void dumpReal(Real r, AsciiString name, AsciiString fname, Int line);
 
-	void outputCRCDebugLines();
-	void CRCDebugStartNewGame();
-	void outputCRCDumpLines();
+void outputCRCDebugLines();
+void CRCDebugStartNewGame();
+void outputCRCDumpLines();
 
-	void addCRCDebugLine(const char *fmt, ...);
-	void addCRCDebugLineNoCounter(const char *fmt, ...);
-	void addCRCDumpLine(const char *fmt, ...);
-	void addCRCGenLine(const char *fmt, ...);
+void addCRCDebugLine(const char* fmt, ...);
+void addCRCDebugLineNoCounter(const char* fmt, ...);
+void addCRCDumpLine(const char* fmt, ...);
+void addCRCGenLine(const char* fmt, ...);
 	#define CRCDEBUG_LOG(x) addCRCDebugLine x
 	#define CRCDUMP_LOG(x) addCRCDumpLine x
 	#define CRCGEN_LOG(x) addCRCGenLine x
 
-	class CRCVerification
-	{
-	public:
-		CRCVerification();
-		~CRCVerification();
-	protected:
-		UnsignedInt m_startCRC;
-	};
+class CRCVerification
+{
+public:
+	CRCVerification();
+	~CRCVerification();
+
+protected:
+	UnsignedInt m_startCRC;
+};
 	#define VERIFY_CRC CRCVerification crcVerification;
 
-	extern Int lastCRCDebugFrame;
-	extern Int lastCRCDebugIndex;
+extern Int lastCRCDebugFrame;
+extern Int lastCRCDebugIndex;
 
-	extern Bool g_verifyClientCRC;
-	extern Bool g_clientDeepCRC;
+extern Bool g_verifyClientCRC;
+extern Bool g_clientDeepCRC;
 
-	extern Bool g_crcModuleDataFromClient;
-	extern Bool g_crcModuleDataFromLogic;
+extern Bool g_crcModuleDataFromClient;
+extern Bool g_crcModuleDataFromLogic;
 
-	extern Bool g_keepCRCSaves;
-	extern Bool g_saveDebugCRCPerFrame;
-	extern AsciiString g_saveDebugCRCPerFrameDir;
+extern Bool g_keepCRCSaves;
+extern Bool g_saveDebugCRCPerFrame;
+extern AsciiString g_saveDebugCRCPerFrameDir;
 
-	extern Bool g_logObjectCRCs;
+extern Bool g_logObjectCRCs;
 
-#else // DEBUG_CRC
+#else    // DEBUG_CRC
 
-	#define DUMPVEL {}
-	#define DUMPACCEL {}
-	#define DUMPVECTOR3(x) {}
-	#define DUMPVECTOR3NAMED(x, y) {}
-	#define DUMPCOORD3D(x) {}
-	#define DUMPCOORD3DNAMED(x, y) {}
-	#define DUMPMATRIX3D(x) {}
-	#define DUMPMATRIX3DNAMED(x, y) {}
+	#define DUMPVEL \
+		{}
+	#define DUMPACCEL \
+		{}
+	#define DUMPVECTOR3(x) \
+		{}
+	#define DUMPVECTOR3NAMED(x, y) \
+		{}
+	#define DUMPCOORD3D(x) \
+		{}
+	#define DUMPCOORD3DNAMED(x, y) \
+		{}
+	#define DUMPMATRIX3D(x) \
+		{}
+	#define DUMPMATRIX3DNAMED(x, y) \
+		{}
 
-	#define DUMPREAL(x) {}
-	#define DUMPREALNAMED(x, y) {}
+	#define DUMPREAL(x) \
+		{}
+	#define DUMPREALNAMED(x, y) \
+		{}
 
-	#define CRCDEBUG_LOG(x) {}
-	#define CRCDUMP_LOG(x) {}
-	#define CRCGEN_LOG(x) {}
+	#define CRCDEBUG_LOG(x) \
+		{}
+	#define CRCDUMP_LOG(x) \
+		{}
+	#define CRCGEN_LOG(x) \
+		{}
 
-	#define VERIFY_CRC {}
+	#define VERIFY_CRC \
+		{}
 
 #endif
 

@@ -26,7 +26,7 @@
 // Pseudo-random number generators
 // Author: Michael S. Booth, January 1998
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/RandomValue.h"
@@ -39,28 +39,25 @@
 #undef DEBUG_RANDOM_LOGIC
 #undef DETERMINISTIC
 
-//#define DEBUG_RANDOM_AUDIO
-//#define DEBUG_RANDOM_CLIENT
-//#define DEBUG_RANDOM_LOGIC
-//#define DETERMINISTIC       // to allow repetition for debugging
+// #define DEBUG_RANDOM_AUDIO
+// #define DEBUG_RANDOM_CLIENT
+// #define DEBUG_RANDOM_LOGIC
+// #define DETERMINISTIC       // to allow repetition for debugging
 
 static const Real theMultFactor = 1.0f / static_cast<float>(UINT_MAX);
 
 // Initial seed values.
 static UnsignedInt theGameAudioSeed[6] =
-{
-	0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L
-};
+	{
+		0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
 
 static UnsignedInt theGameClientSeed[6] =
-{
-	0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L
-};
+	{
+		0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
 
 static UnsignedInt theGameLogicSeed[6] =
-{
-	0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L
-};
+	{
+		0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
 
 static UnsignedInt theGameLogicBaseSeed = 0;
 
@@ -80,19 +77,19 @@ static void seedRandom(UnsignedInt SEED, UnsignedInt (&seed)[6])
 {
 	UnsignedInt ax;
 
-	ax = SEED;                      /* mov     eax,SEED                     */
-	ax += 0xf22d0e56;               /* add     eax,0f22d0e56h               */
-	seed[0] = ax;                   /* mov     seed,eax                     */
-	ax += 0x883126e9 - 0xf22d0e56;  /* add     eax,0883126e9h-0f22d0e56h    */
-	seed[1] = ax;                   /* mov     seed+4,eax                   */
-	ax += 0xc624dd2f - 0x883126e9;  /* add     eax,0c624dd2fh-0883126e9h    */
-	seed[2] = ax;                   /* mov     seed+8,eax                   */
-	ax += 0x0702c49c - 0xc624dd2f;  /* add     eax,00702c49ch-0c624dd2fh    */
-	seed[3] = ax;                   /* mov     seed+12,eax                  */
-	ax += 0x9e353f7d - 0x0702c49c;  /* add     eax,09e353f7dh-00702c49ch    */
-	seed[4] = ax;                   /* mov     seed+16,eax                  */
-	ax += 0x6fdf3b64 - 0x9e353f7d;  /* add     eax,06fdf3b64h-09e353f7dh    */
-	seed[5] = ax;                   /* mov     seed+20,eax                  */
+	ax = SEED; /* mov     eax,SEED                     */
+	ax += 0xf22d0e56; /* add     eax,0f22d0e56h               */
+	seed[0] = ax; /* mov     seed,eax                     */
+	ax += 0x883126e9 - 0xf22d0e56; /* add     eax,0883126e9h-0f22d0e56h    */
+	seed[1] = ax; /* mov     seed+4,eax                   */
+	ax += 0xc624dd2f - 0x883126e9; /* add     eax,0c624dd2fh-0883126e9h    */
+	seed[2] = ax; /* mov     seed+8,eax                   */
+	ax += 0x0702c49c - 0xc624dd2f; /* add     eax,00702c49ch-0c624dd2fh    */
+	seed[3] = ax; /* mov     seed+12,eax                  */
+	ax += 0x9e353f7d - 0x0702c49c; /* add     eax,09e353f7dh-00702c49ch    */
+	seed[4] = ax; /* mov     seed+16,eax                  */
+	ax += 0x6fdf3b64 - 0x9e353f7d; /* add     eax,06fdf3b64h-09e353f7dh    */
+	seed[5] = ax; /* mov     seed+20,eax                  */
 }
 
 void InitRandom()
@@ -104,7 +101,7 @@ void InitRandom()
 	seedRandom(0, theGameLogicSeed);
 	theGameLogicBaseSeed = 0;
 #else
-	const time_t seconds = time( nullptr );
+	const time_t seconds = time(nullptr);
 
 	seedRandom(seconds, theGameAudioSeed);
 	seedRandom(seconds, theGameClientSeed);
@@ -113,7 +110,7 @@ void InitRandom()
 #endif
 }
 
-void InitRandom( UnsignedInt seed )
+void InitRandom(UnsignedInt seed)
 {
 #ifdef DETERMINISTIC
 	seed = 0;
@@ -131,28 +128,30 @@ void InitRandom( UnsignedInt seed )
 
 // Add with carry. SUM is replaced with A + B + C, C is replaced with 1 if there was a carry, 0 if there wasn't.
 // A carry occurred if the sum is less than one of the inputs. This is addition, so carry can never be more than one.
-#define ADC(SUM, A, B, C) SUM = (A) + (B) + (C); C = ((SUM < (A)) || (SUM < (B)))
+#define ADC(SUM, A, B, C) \
+	SUM = (A) + (B) + (C);  \
+	C = ((SUM < (A)) || (SUM < (B)))
 
 static UnsignedInt randomValue(UnsignedInt (&seed)[6])
 {
 	UnsignedInt ax;
 	UnsignedInt c = 0;
 
-	ADC(ax, seed[5], seed[4], c);   /*  mov     ax,seed+20  */
+	ADC(ax, seed[5], seed[4], c); /*  mov     ax,seed+20  */
 	/*  add     ax,seed+16  */
-	seed[4] = ax;                   /*  mov     seed+8,ax   */
+	seed[4] = ax; /*  mov     seed+8,ax   */
 
-	ADC(ax, ax, seed[3], c);        /*  adc     ax,seed+12  */
-	seed[3] = ax;                   /*  mov     seed+12,ax  */
+	ADC(ax, ax, seed[3], c); /*  adc     ax,seed+12  */
+	seed[3] = ax; /*  mov     seed+12,ax  */
 
-	ADC(ax, ax, seed[2], c);        /*  adc     ax,seed+8   */
-	seed[2] = ax;                   /*  mov     seed+8,ax   */
+	ADC(ax, ax, seed[2], c); /*  adc     ax,seed+8   */
+	seed[2] = ax; /*  mov     seed+8,ax   */
 
-	ADC(ax, ax, seed[1], c);        /*  adc     ax,seed+4   */
-	seed[1] = ax;                   /*  mov     seed+4,ax   */
+	ADC(ax, ax, seed[1], c); /*  adc     ax,seed+4   */
+	seed[1] = ax; /*  mov     seed+4,ax   */
 
-	ADC(ax, ax, seed[0], c);        /*  adc     ax,seed+0   */
-	seed[0] = ax;                   /*  mov     seed+0,ax   */
+	ADC(ax, ax, seed[0], c); /*  adc     ax,seed+0   */
+	seed[0] = ax; /*  mov     seed+0,ax   */
 
 	/* Increment seed array, bubbling up the carries. */
 	if (!++seed[5])
@@ -185,7 +184,7 @@ static UnsignedInt randomValue(UnsignedInt (&seed)[6])
 //
 // Integer random value
 //
-Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line )
+Int GetGameAudioRandomValue(int lo, int hi, const char* file, int line)
 {
 	if (lo >= hi)
 		return hi;
@@ -194,8 +193,8 @@ Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line )
 	const Int rval = ((Int)(randomValue(theGameAudioSeed) % delta)) + lo;
 
 #ifdef DEBUG_RANDOM_AUDIO
-	DEBUG_LOG(( "%d: GetGameAudioRandomValue = %d (%d - %d), %s line %d",
-		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+	DEBUG_LOG(("%d: GetGameAudioRandomValue = %d (%d - %d), %s line %d",
+	           TheGameLogic->getFrame(), rval, lo, hi, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -205,7 +204,7 @@ Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line )
 //
 // Real valued random value
 //
-Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line )
+Real GetGameAudioRandomValueReal(Real lo, Real hi, const char* file, int line)
 {
 	if (lo >= hi)
 		return hi;
@@ -214,8 +213,8 @@ Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line )
 	const Real rval = ((Real)(randomValue(theGameAudioSeed)) * theMultFactor) * delta + lo;
 
 #ifdef DEBUG_RANDOM_AUDIO
-	DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d",
-		TheGameLogic->getFrame(), rval, file, line ));
+	DEBUG_LOG(("%d: GetGameAudioRandomValueReal = %f, %s line %d",
+	           TheGameLogic->getFrame(), rval, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -225,7 +224,7 @@ Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line )
 //
 // Integer random value
 //
-Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
+Int GetGameClientRandomValue(int lo, int hi, const char* file, int line)
 {
 	if (lo >= hi)
 		return hi;
@@ -234,8 +233,8 @@ Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
 	const Int rval = ((Int)(randomValue(theGameClientSeed) % delta)) + lo;
 
 #ifdef DEBUG_RANDOM_CLIENT
-	DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d",
-		TheGameLogic ? TheGameLogic->getFrame() : -1, rval, lo, hi, file, line ));
+	DEBUG_LOG(("%d: GetGameClientRandomValue = %d (%d - %d), %s line %d",
+	           TheGameLogic ? TheGameLogic->getFrame() : -1, rval, lo, hi, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -245,7 +244,7 @@ Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
 //
 // Real valued random value
 //
-Real GetGameClientRandomValueReal( Real lo, Real hi, const char *file, int line )
+Real GetGameClientRandomValueReal(Real lo, Real hi, const char* file, int line)
 {
 	if (lo >= hi)
 		return hi;
@@ -254,8 +253,8 @@ Real GetGameClientRandomValueReal( Real lo, Real hi, const char *file, int line 
 	const Real rval = ((Real)(randomValue(theGameClientSeed)) * theMultFactor) * delta + lo;
 
 #ifdef DEBUG_RANDOM_CLIENT
-	DEBUG_LOG(( "%d: GetGameClientRandomValueReal = %f, %s line %d",
-		TheGameLogic->getFrame(), rval, file, line ));
+	DEBUG_LOG(("%d: GetGameClientRandomValueReal = %f, %s line %d",
+	           TheGameLogic->getFrame(), rval, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -265,7 +264,7 @@ Real GetGameClientRandomValueReal( Real lo, Real hi, const char *file, int line 
 //
 // Integer random value
 //
-Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line )
+Int GetGameLogicRandomValue(int lo, int hi, const char* file, int line)
 {
 #if RETAIL_COMPATIBLE_CRC
 	const UnsignedInt delta = hi - lo + 1;
@@ -281,8 +280,8 @@ Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line )
 	const Int rval = ((Int)(randomValue(theGameLogicSeed) % delta)) + lo;
 
 #ifdef DEBUG_RANDOM_LOGIC
-	DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
-		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+	DEBUG_LOG(("%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
+	           TheGameLogic->getFrame(), rval, lo, hi, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -292,7 +291,7 @@ Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line )
 //
 // Real valued random value
 //
-Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
+Real GetGameLogicRandomValueReal(Real lo, Real hi, const char* file, int line)
 {
 #if RETAIL_COMPATIBLE_CRC
 	const Real delta = hi - lo;
@@ -308,8 +307,8 @@ Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
 	const Real rval = ((Real)(randomValue(theGameLogicSeed)) * theMultFactor) * delta + lo;
 
 #ifdef DEBUG_RANDOM_LOGIC
-	DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
-		TheGameLogic->getFrame(), rval, file, line ));
+	DEBUG_LOG(("%d: GetGameLogicRandomValueReal = %f, %s line %d",
+	           TheGameLogic->getFrame(), rval, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -322,7 +321,7 @@ Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
 // but should not result in a mismatch if they aren't synchronized; e.g. for scripted audio events.
 //
-Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line )
+Int GetGameLogicRandomValueUnchanged(int lo, int hi, const char* file, int line)
 {
 #if RETAIL_COMPATIBLE_CRC
 	return GetGameLogicRandomValue(lo, hi, file, line);
@@ -338,8 +337,8 @@ Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line
 	const Int rval = ((Int)(randomValue(seed) % delta)) + lo;
 
 #ifdef DEBUG_RANDOM_LOGIC
-	DEBUG_LOG(( "%d: GetGameLogicRandomValueUnchanged = %d (%d - %d), %s line %d",
-		TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+	DEBUG_LOG(("%d: GetGameLogicRandomValueUnchanged = %d (%d - %d), %s line %d",
+	           TheGameLogic->getFrame(), rval, lo, hi, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -352,7 +351,7 @@ Int GetGameLogicRandomValueUnchanged( int lo, int hi, const char *file, int line
 // The intended use case for this function are randomized values that are desirable to be synchronized across clients,
 // but should not result in a mismatch if they aren't synchronized; e.g. for scripted audio events.
 //
-Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, int line )
+Real GetGameLogicRandomValueRealUnchanged(Real lo, Real hi, const char* file, int line)
 {
 #if RETAIL_COMPATIBLE_CRC
 	return GetGameLogicRandomValueReal(lo, hi, file, line);
@@ -368,8 +367,8 @@ Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, i
 	const Real rval = ((Real)(randomValue(seed)) * theMultFactor) * delta + lo;
 
 #ifdef DEBUG_RANDOM_LOGIC
-	DEBUG_LOG(( "%d: GetGameLogicRandomValueRealUnchanged = %f, %s line %d",
-		TheGameLogic->getFrame(), rval, file, line ));
+	DEBUG_LOG(("%d: GetGameLogicRandomValueRealUnchanged = %f, %s line %d",
+	           TheGameLogic->getFrame(), rval, file, line));
 #endif
 
 	DEBUG_ASSERTCRASH(rval >= lo && rval <= hi, ("Bad random val"));
@@ -380,16 +379,15 @@ Real GetGameLogicRandomValueRealUnchanged( Real lo, Real hi, const char *file, i
 // GameClientRandomVariable
 //
 
-const char *const GameClientRandomVariable::DistributionTypeNames[] =
-{
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr
-};
+const char* const GameClientRandomVariable::DistributionTypeNames[] =
+	{
+		"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr};
 static_assert(ARRAY_SIZE(GameClientRandomVariable::DistributionTypeNames) == GameClientRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
-	define the range of random values, and the distribution of values
+  define the range of random values, and the distribution of values
 */
-void GameClientRandomVariable::setRange( Real low, Real high, DistributionType type )
+void GameClientRandomVariable::setRange(Real low, Real high, DistributionType type)
 {
 	DEBUG_ASSERTCRASH(!(m_type == CONSTANT && m_low != m_high), ("CONSTANT GameClientRandomVariables should have low == high"));
 	m_low = low;
@@ -402,17 +400,18 @@ void GameClientRandomVariable::setRange( Real low, Real high, DistributionType t
  */
 Real GameClientRandomVariable::getValue() const
 {
-	switch( m_type )
+	switch (m_type)
 	{
 		case CONSTANT:
 			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameClientRandomVariable"));
-			if (m_low == m_high) {
+			if (m_low == m_high)
+			{
 				return m_low;
 			}
 			FALLTHROUGH;
 
 		case UNIFORM:
-			return GameClientRandomValueReal( m_low, m_high );
+			return GameClientRandomValueReal(m_low, m_high);
 
 		default:
 			/// @todo fill in support for nonuniform GameClientRandomVariables.
@@ -425,16 +424,15 @@ Real GameClientRandomVariable::getValue() const
 // GameLogicRandomVariable
 //
 
-const char *const GameLogicRandomVariable::DistributionTypeNames[] =
-{
-	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr
-};
+const char* const GameLogicRandomVariable::DistributionTypeNames[] =
+	{
+		"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr};
 static_assert(ARRAY_SIZE(GameLogicRandomVariable::DistributionTypeNames) == GameLogicRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
-	define the range of random values, and the distribution of values
+  define the range of random values, and the distribution of values
 */
-void GameLogicRandomVariable::setRange( Real low, Real high, DistributionType type )
+void GameLogicRandomVariable::setRange(Real low, Real high, DistributionType type)
 {
 	DEBUG_ASSERTCRASH(!(m_type == CONSTANT && m_low != m_high), ("CONSTANT GameLogicRandomVariables should have low == high"));
 	m_low = low;
@@ -447,17 +445,18 @@ void GameLogicRandomVariable::setRange( Real low, Real high, DistributionType ty
  */
 Real GameLogicRandomVariable::getValue() const
 {
-	switch( m_type )
+	switch (m_type)
 	{
 		case CONSTANT:
 			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameLogicRandomVariable"));
-			if (m_low == m_high) {
+			if (m_low == m_high)
+			{
 				return m_low;
 			}
 			FALLTHROUGH;
 
 		case UNIFORM:
-			return GameLogicRandomValueReal( m_low, m_high );
+			return GameLogicRandomValueReal(m_low, m_high);
 
 		default:
 			/// @todo fill in support for nonuniform GameLogicRandomVariables.
@@ -466,23 +465,22 @@ Real GameLogicRandomVariable::getValue() const
 	}
 }
 
-
-Int LogicRandomValueClass::GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const
+Int LogicRandomValueClass::GetRandomValueInt(Int lo, Int hi, const char* file, Int line) const
 {
 	return GetGameLogicRandomValue(lo, hi, file, line);
 }
 
-Real LogicRandomValueClass::GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const
+Real LogicRandomValueClass::GetRandomValueReal(Real lo, Real hi, const char* file, Int line) const
 {
 	return GetGameLogicRandomValueReal(lo, hi, file, line);
 }
 
-Int ClientRandomValueClass::GetRandomValueInt( Int lo, Int hi, const char *file, Int line ) const
+Int ClientRandomValueClass::GetRandomValueInt(Int lo, Int hi, const char* file, Int line) const
 {
 	return GetGameClientRandomValue(lo, hi, file, line);
 }
 
-Real ClientRandomValueClass::GetRandomValueReal( Real lo, Real hi, const char *file, Int line ) const
+Real ClientRandomValueClass::GetRandomValueReal(Real lo, Real hi, const char* file, Int line) const
 {
 	return GetGameClientRandomValueReal(lo, hi, file, line);
 }

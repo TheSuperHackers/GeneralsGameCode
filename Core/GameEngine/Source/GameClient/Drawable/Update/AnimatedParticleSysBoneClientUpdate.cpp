@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/Drawable.h"
 #include "GameClient/Module/AnimatedParticleSysBoneClientUpdate.h"
@@ -45,33 +45,29 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AnimatedParticleSysBoneClientUpdate::AnimatedParticleSysBoneClientUpdate( Thing *thing, const ModuleData* moduleData ) :
-	ClientUpdateModule( thing, moduleData )
+AnimatedParticleSysBoneClientUpdate::AnimatedParticleSysBoneClientUpdate(Thing* thing, const ModuleData* moduleData)
+	: ClientUpdateModule(thing, moduleData)
 {
 	m_life = 0;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 AnimatedParticleSysBoneClientUpdate::~AnimatedParticleSysBoneClientUpdate()
 {
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** The client update callback. */
 //-------------------------------------------------------------------------------------------------
 void AnimatedParticleSysBoneClientUpdate::clientUpdate()
 {
-	//THIS IS HAPPENING CLIENT-SIDE
-	// I CAN DO WHAT I NEED HERE AND NOT HAVE TO BE LOGIC SYNC-SAFE
-
+	// THIS IS HAPPENING CLIENT-SIDE
+	//  I CAN DO WHAT I NEED HERE AND NOT HAVE TO BE LOGIC SYNC-SAFE
 
 	++m_life;
 
-	Drawable *draw = getDrawable();
+	Drawable* draw = getDrawable();
 	if (draw)
 	{
 
@@ -84,41 +80,34 @@ void AnimatedParticleSysBoneClientUpdate::clientUpdate()
 					break;
 			}
 		}
-
-
 	}
-
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::crc( Xfer *xfer )
+void AnimatedParticleSysBoneClientUpdate::crc(Xfer* xfer)
 {
 
 	// extend base class
-	ClientUpdateModule::crc( xfer );
-
+	ClientUpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void AnimatedParticleSysBoneClientUpdate::xfer( Xfer *xfer )
+void AnimatedParticleSysBoneClientUpdate::xfer(Xfer* xfer)
 {
 
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	ClientUpdateModule::xfer( xfer );
-
-
+	ClientUpdateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -129,5 +118,4 @@ void AnimatedParticleSysBoneClientUpdate::loadPostProcess()
 
 	// extend base class
 	ClientUpdateModule::loadPostProcess();
-
 }

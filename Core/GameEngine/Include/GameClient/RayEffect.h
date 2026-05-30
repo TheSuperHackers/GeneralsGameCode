@@ -42,10 +42,9 @@ class Drawable;
 struct RayEffectData
 {
 
-	const Drawable *draw;  ///< the drawable
-	Coord3D startLoc;  ///< start location for ray
-	Coord3D endLoc;  ///< end location for ray
-
+	const Drawable* draw;    ///< the drawable
+	Coord3D startLoc;    ///< start location for ray
+	Coord3D endLoc;    ///< end location for ray
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -55,36 +54,33 @@ class RayEffectSystem : public SubsystemInterface
 {
 
 public:
-
 	RayEffectSystem();
 	virtual ~RayEffectSystem() override;
 
 	virtual void init() override;
 	virtual void reset() override;
-	virtual void update() override { }
+	virtual void update() override {}
 
 	/// add a ray effect entry for this drawable
-	void addRayEffect( const Drawable *draw, const Coord3D *startLoc, const Coord3D *endLoc );
+	void addRayEffect(const Drawable* draw, const Coord3D* startLoc, const Coord3D* endLoc);
 
 	/// given a drawable, remove its effect from the system
-	void deleteRayEffect( const Drawable *draw );
+	void deleteRayEffect(const Drawable* draw);
 
 	/** given a drawable, if it is in the ray effect system list retrieve
 	the ray effect data for its entry */
-	void getRayEffectData( const Drawable *draw, RayEffectData *effectData );
+	void getRayEffectData(const Drawable* draw, RayEffectData* effectData);
 
 protected:
-
 	/// find an effect data entry based on the drawable
-	RayEffectData *findEntry( const Drawable *draw );
+	RayEffectData* findEntry(const Drawable* draw);
 
 	enum
 	{
 		MAX_RAY_EFFECTS = 128
 	};
-	RayEffectData m_effectData[ MAX_RAY_EFFECTS ];  ///< all the ray effects
-
+	RayEffectData m_effectData[MAX_RAY_EFFECTS];    ///< all the ray effects
 };
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
-extern RayEffectSystem *TheRayEffects;  ///< the ray effects singleton external
+extern RayEffectSystem* TheRayEffects;    ///< the ray effects singleton external

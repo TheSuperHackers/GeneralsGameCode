@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
@@ -68,51 +68,47 @@
 // doRadioUnselect ============================================================
 /** Do the unselect of matching group not including exception window */
 //=============================================================================
-static void doRadioUnselect( GameWindow *window, Int group, Int screen,
-												GameWindow *except )
+static void doRadioUnselect(GameWindow* window, Int group, Int screen,
+                            GameWindow* except)
 {
 
 	//
 	// if this is a radio button we have something to consider, but we
 	// will ignore the except window
 	//
-	if( window != except && BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	if (window != except && BitIsSet(window->winGetStyle(), GWS_RADIO_BUTTON))
 	{
-		RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
+		RadioButtonData* radioData = (RadioButtonData*)window->winGetUserData();
 
-		if( radioData->group == group && radioData->screen == screen )
+		if (radioData->group == group && radioData->screen == screen)
 		{
-			WinInstanceData *instData = window->winGetInstanceData();
+			WinInstanceData* instData = window->winGetInstanceData();
 
-			BitClear( instData->m_state, WIN_STATE_SELECTED );
-
+			BitClear(instData->m_state, WIN_STATE_SELECTED);
 		}
-
 	}
 
 	// recursively call on all my children
-	GameWindow *child;
+	GameWindow* child;
 
-	for( child = window->winGetChild(); child; child = child->winGetNext() )
-		doRadioUnselect( child, group, screen, except );
-
+	for (child = window->winGetChild(); child; child = child->winGetNext())
+		doRadioUnselect(child, group, screen, except);
 }
 
 // unselectOtherRadioOfGroup ==================================================
 /** Go through the entire window system, including child windows and
-	* unselect any radio buttons of the specified group, but not the
-	* window specified */
+ * unselect any radio buttons of the specified group, but not the
+ * window specified */
 //=============================================================================
-static void unselectOtherRadioOfGroup( Int group, Int screen,
-																			 GameWindow *except )
+static void unselectOtherRadioOfGroup(Int group, Int screen,
+                                      GameWindow* except)
 {
-	GameWindow *window = TheWindowManager->winGetWindowList();
+	GameWindow* window = TheWindowManager->winGetWindowList();
 
-	for( window = TheWindowManager->winGetWindowList();
-			 window;
-			 window = window->winGetNext() )
-		doRadioUnselect( window, group, screen, except );
-
+	for (window = TheWindowManager->winGetWindowList();
+	     window;
+	     window = window->winGetNext())
+		doRadioUnselect(window, group, screen, except);
 }
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
@@ -120,60 +116,56 @@ static void unselectOtherRadioOfGroup( Int group, Int screen,
 // GadgetRadioButtonInput =====================================================
 /** Handle input for radio button */
 //=============================================================================
-WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetRadioButtonInput(GameWindow* window, UnsignedInt msg,
+                                            WindowMsgData mData1, WindowMsgData mData2)
 {
-	WinInstanceData *instData = window->winGetInstanceData();
+	WinInstanceData* instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
 
-				BitSet( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( instData->getOwner(),
-																						GBM_MOUSE_ENTERING,
-																						(WindowMsgData)window,
-																						mData1 );
-				//TheWindowManager->winSetFocus( window );
-
+				BitSet(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(instData->getOwner(),
+				                                   GBM_MOUSE_ENTERING,
+				                                   (WindowMsgData)window,
+				                                   mData1);
+				// TheWindowManager->winSetFocus( window );
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet(instData->getStyle(), GWS_MOUSE_TRACK))
 			{
 
-				BitClear( instData->m_state, WIN_STATE_HILITED );
-				TheWindowManager->winSendSystemMsg( instData->getOwner(),
-																						GBM_MOUSE_LEAVING,
-																					  (WindowMsgData)window,
-																						mData1 );
+				BitClear(instData->m_state, WIN_STATE_HILITED);
+				TheWindowManager->winSendSystemMsg(instData->getOwner(),
+				                                   GBM_MOUSE_LEAVING,
+				                                   (WindowMsgData)window,
+				                                   mData1);
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
 		{
 
-			TheWindowManager->winSendSystemMsg( instData->getOwner(), GGM_LEFT_DRAG,
-																					(WindowMsgData)window, mData1 );
+			TheWindowManager->winSendSystemMsg(instData->getOwner(), GGM_LEFT_DRAG,
+			                                   (WindowMsgData)window, mData1);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -181,79 +173,73 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 		{
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_UP:
 		{
 
-			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
+			if (BitIsSet(instData->getState(), WIN_STATE_SELECTED) == FALSE)
 			{
-				RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
+				RadioButtonData* radioData = (RadioButtonData*)window->winGetUserData();
 
-				TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																						GBM_SELECTED,
-																						(WindowMsgData)window,
-																						mData1 );
+				TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+				                                   GBM_SELECTED,
+				                                   (WindowMsgData)window,
+				                                   mData1);
 
 				//
 				// unselect any windows in the system (including children) that
 				// are radio buttons with this same group and screen ID
 				//
-				if( radioData->group != 0 )
-					unselectOtherRadioOfGroup(radioData->group, radioData->screen, window );
+				if (radioData->group != 0)
+					unselectOtherRadioOfGroup(radioData->group, radioData->screen, window);
 
 				// this button is now selected
-				BitSet( instData->m_state, WIN_STATE_SELECTED );
-
+				BitSet(instData->m_state, WIN_STATE_SELECTED);
 			}
-			else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) == FALSE )
+			else if (BitIsSet(instData->getState(), WIN_STATE_HILITED) == FALSE)
 			{
 
 				// this up click was not meant for this button
 				return MSG_IGNORED;
-
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 
-			switch( mData1 )
+			switch (mData1)
 			{
 
 				// --------------------------------------------------------------------
 				case KEY_ENTER:
 				case KEY_SPACE:
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 					{
 
-						if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
+						if (BitIsSet(instData->getState(), WIN_STATE_SELECTED) == FALSE)
 						{
-							RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
+							RadioButtonData* radioData = (RadioButtonData*)window->winGetUserData();
 
-							TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																									GBM_SELECTED,
-																									(WindowMsgData)window,
-																									mData1 );
+							TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+							                                   GBM_SELECTED,
+							                                   (WindowMsgData)window,
+							                                   mData1);
 
 							//
 							// unselect any windows in the system (including children) that
 							// are radio buttons with this same group and screen ID
 							//
-							if( radioData->group != 0 )
-								unselectOtherRadioOfGroup(radioData->group, radioData->screen, window );
+							if (radioData->group != 0)
+								unselectOtherRadioOfGroup(radioData->group, radioData->screen, window);
 
 							// this button is now selected
-							BitSet( instData->m_state, WIN_STATE_SELECTED );
-
+							BitSet(instData->m_state, WIN_STATE_SELECTED);
 						}
-
 					}
 
 					break;
@@ -264,10 +250,9 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				case KEY_TAB:
 				{
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 						window->winNextTab();
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
@@ -275,10 +260,9 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				case KEY_LEFT:
 				{
 
-					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
+					if (BitIsSet(mData2, KEY_STATE_DOWN))
 						window->winPrevTab();
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
@@ -286,13 +270,10 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				{
 
 					return MSG_IGNORED;
-
 				}
-
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -300,67 +281,61 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 		{
 
 			return MSG_IGNORED;
-
 		}
-
 	}
 
 	return MSG_HANDLED;
-
 }
 
 // GadgetRadioButtonSystem ====================================================
 /** Handle system messages for radio button */
 //=============================================================================
-WindowMsgHandledType GadgetRadioButtonSystem( GameWindow *window, UnsignedInt msg,
-															WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GadgetRadioButtonSystem(GameWindow* window, UnsignedInt msg,
+                                             WindowMsgData mData1, WindowMsgData mData2)
 {
-	WinInstanceData *instData = window->winGetInstanceData();
+	WinInstanceData* instData = window->winGetInstanceData();
 
-	switch( msg )
+	switch (msg)
 	{
 
 		// ------------------------------------------------------------------------
 		case GBM_SET_SELECTION:
 		{
 
-			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
+			if (BitIsSet(instData->getState(), WIN_STATE_SELECTED) == FALSE)
 			{
 
 				// do we want to send a selected message?
-				if( (Bool)mData1 == TRUE )
+				if ((Bool)mData1 == TRUE)
 				{
 
-					TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																							GBM_SELECTED,
-																							(WindowMsgData)window,
-																							0 );
+					TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+					                                   GBM_SELECTED,
+					                                   (WindowMsgData)window,
+					                                   0);
 				}
 
 				//
 				// unselect any windows in the system (including children) that
 				// are radio buttons with this same group and screen ID
 				//
-				RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
-				if( radioData->group != 0 )
-					unselectOtherRadioOfGroup(radioData->group, radioData->screen, window );
+				RadioButtonData* radioData = (RadioButtonData*)window->winGetUserData();
+				if (radioData->group != 0)
+					unselectOtherRadioOfGroup(radioData->group, radioData->screen, window);
 
 				// this button is now selected
-				BitSet( instData->m_state, WIN_STATE_SELECTED );
-
+				BitSet(instData->m_state, WIN_STATE_SELECTED);
 			}
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GGM_SET_LABEL:
 		{
 
-			window->winSetText( *(UnicodeString*)mData1 );
+			window->winSetText(*(UnicodeString*)mData1);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
@@ -371,78 +346,69 @@ WindowMsgHandledType GadgetRadioButtonSystem( GameWindow *window, UnsignedInt ms
 		case GWM_DESTROY:
 		{
 			// free radio button user data
-			delete (RadioButtonData *)window->winGetUserData();
-			window->winSetUserData( nullptr );
+			delete (RadioButtonData*)window->winGetUserData();
+			window->winSetUserData(nullptr);
 
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:
 		{
 
-			if( mData1 == FALSE )
-				BitClear( instData->m_state, WIN_STATE_HILITED );
+			if (mData1 == FALSE)
+				BitClear(instData->m_state, WIN_STATE_HILITED);
 
-			TheWindowManager->winSendSystemMsg( window->winGetOwner(),
-																					GGM_FOCUS_CHANGE,
-																					mData1,
-																					window->winGetWindowId() );
+			TheWindowManager->winSendSystemMsg(window->winGetOwner(),
+			                                   GGM_FOCUS_CHANGE,
+			                                   mData1,
+			                                   window->winGetWindowId());
 
 			*(Bool*)mData2 = TRUE;
 			break;
-
 		}
 
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;
-
 }
 
 // GadgetRadioSetText =========================================================
 /** Set the text for the control */
 //=============================================================================
-void GadgetRadioSetText( GameWindow *g, UnicodeString text )
+void GadgetRadioSetText(GameWindow* g, UnicodeString text)
 {
 
 	// sanity
-	if( g == nullptr )
+	if (g == nullptr)
 		return;
 
-	TheWindowManager->winSendSystemMsg( g, GGM_SET_LABEL, (WindowMsgData)&text, 0 );
-
+	TheWindowManager->winSendSystemMsg(g, GGM_SET_LABEL, (WindowMsgData)&text, 0);
 }
 
 // GadgetRadioSetGroup ========================================================
 /** Set the group number for a radio button, only one radio button of
-	* a group can be selected at any given time */
+ * a group can be selected at any given time */
 //=============================================================================
-void GadgetRadioSetGroup( GameWindow *g, Int group, Int screen )
+void GadgetRadioSetGroup(GameWindow* g, Int group, Int screen)
 {
-	RadioButtonData *radioData = (RadioButtonData *)g->winGetUserData();
+	RadioButtonData* radioData = (RadioButtonData*)g->winGetUserData();
 
 	radioData->group = group;
 	radioData->screen = screen;
-
 }
-
 
 // GadgetRadioSetText =========================================================
 /** Set the text for the control */
 //=============================================================================
-void GadgetRadioSetSelection( GameWindow *g, Bool sendMsg )
+void GadgetRadioSetSelection(GameWindow* g, Bool sendMsg)
 {
 
 	// sanity
-	if( g == nullptr )
+	if (g == nullptr)
 		return;
 
-	TheWindowManager->winSendSystemMsg( g, GBM_SET_SELECTION, (WindowMsgData)&sendMsg, 0 );
-
+	TheWindowManager->winSendSystemMsg(g, GBM_SET_SELECTION, (WindowMsgData)&sendMsg, 0);
 }
-

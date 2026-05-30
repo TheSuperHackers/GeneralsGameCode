@@ -42,7 +42,7 @@
 //----------------------------------------------------------------------------
 //         Includes
 //----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "Common/GameSounds.h"
@@ -73,7 +73,6 @@ SoundManager::~SoundManager()
 //-------------------------------------------------------------------------------------------------
 void SoundManager::init()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -86,7 +85,6 @@ void SoundManager::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 void SoundManager::update()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -99,31 +97,26 @@ void SoundManager::reset()
 //-------------------------------------------------------------------------------------------------
 void SoundManager::loseFocus()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 void SoundManager::regainFocus()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void SoundManager::setListenerPosition( const Coord3D *position )
+void SoundManager::setListenerPosition(const Coord3D* position)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void SoundManager::setViewRadius( Real viewRadius )
+void SoundManager::setViewRadius(Real viewRadius)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void SoundManager::setCameraAudibleDistance( Real audibleDistance )
+void SoundManager::setCameraAudibleDistance(Real audibleDistance)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -133,22 +126,26 @@ Real SoundManager::getCameraAudibleDistance()
 }
 
 //-------------------------------------------------------------------------------------------------
-void SoundManager::addAudioEvent(AudioEventRTS *&eventToAdd)
+void SoundManager::addAudioEvent(AudioEventRTS*& eventToAdd)
 {
-	if (m_num2DSamples == 0 && m_num3DSamples == 0) {
+	if (m_num2DSamples == 0 && m_num3DSamples == 0)
+	{
 		m_num2DSamples = TheAudio->getNum2DSamples();
 		m_num3DSamples = TheAudio->getNum3DSamples();
 	}
 
-	if (canPlayNow(eventToAdd)) {
+	if (canPlayNow(eventToAdd))
+	{
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG((" - appended to request list with handle '%d'.", (UnsignedInt) eventToAdd->getPlayingHandle()));
+		DEBUG_LOG((" - appended to request list with handle '%d'.", (UnsignedInt)eventToAdd->getPlayingHandle()));
 #endif
-		AudioRequest *audioRequest = TheAudio->allocateAudioRequest( true );
+		AudioRequest* audioRequest = TheAudio->allocateAudioRequest(true);
 		audioRequest->m_pendingEvent = eventToAdd;
 		audioRequest->m_request = AR_Play;
 		TheAudio->appendAudioRequest(audioRequest);
-	} else {
+	}
+	else
+	{
 		TheAudio->releaseAudioEventRTS(eventToAdd);
 	}
 }
@@ -168,7 +165,8 @@ void SoundManager::notifyOf3DSampleStart()
 //-------------------------------------------------------------------------------------------------
 void SoundManager::notifyOf2DSampleCompletion()
 {
-	if (m_numPlaying2DSamples > 0) {
+	if (m_numPlaying2DSamples > 0)
+	{
 		--m_numPlaying2DSamples;
 	}
 }
@@ -176,7 +174,8 @@ void SoundManager::notifyOf2DSampleCompletion()
 //-------------------------------------------------------------------------------------------------
 void SoundManager::notifyOf3DSampleCompletion()
 {
-	if (m_numPlaying3DSamples > 0) {
+	if (m_numPlaying3DSamples > 0)
+	{
 		--m_numPlaying3DSamples;
 	}
 }
@@ -194,13 +193,13 @@ Int SoundManager::getAvailable3DSamples()
 }
 
 //-------------------------------------------------------------------------------------------------
-AsciiString SoundManager::getFilenameForPlayFromAudioEvent( const AudioEventRTS *eventToGetFrom )
+AsciiString SoundManager::getFilenameForPlayFromAudioEvent(const AudioEventRTS* eventToGetFrom)
 {
 	return AsciiString::TheEmptyString;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SoundManager::canPlayNow( AudioEventRTS *event )
+Bool SoundManager::canPlayNow(AudioEventRTS* event)
 {
 	Bool retVal = false;
 	// 1) Are we muted because we're beyond our maximum distance?
@@ -214,10 +213,10 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 	// if so, kill them and start our sound
 	// if not, we're done. Can't play dude.
 
-	if( event->isPositionalAudio() && !BitIsSet( event->getAudioEventInfo()->m_type, ST_GLOBAL) && event->getAudioEventInfo()->m_priority != AP_CRITICAL )
+	if (event->isPositionalAudio() && !BitIsSet(event->getAudioEventInfo()->m_type, ST_GLOBAL) && event->getAudioEventInfo()->m_priority != AP_CRITICAL)
 	{
 		Coord3D distance = *TheAudio->getListenerPosition();
-		const Coord3D *pos = event->getCurrentPosition();
+		const Coord3D* pos = event->getCurrentPosition();
 		if (pos)
 		{
 			distance.sub(pos);
@@ -231,8 +230,8 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 
 			const Int localPlayerIndex = rts::getObservedOrLocalPlayer()->getPlayerIndex();
 
-			if( (event->getAudioEventInfo()->m_type & ST_SHROUDED) &&
-					 ThePartitionManager->getShroudStatusForPlayer(localPlayerIndex, pos) != CELLSHROUD_CLEAR )
+			if ((event->getAudioEventInfo()->m_type & ST_SHROUDED) &&
+			    ThePartitionManager->getShroudStatusForPlayer(localPlayerIndex, pos) != CELLSHROUD_CLEAR)
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG
 				DEBUG_LOG(("- culled due to shroud."));
@@ -252,20 +251,20 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 		else
 		{
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG(("- culled due to voice."));
+			DEBUG_LOG(("- culled due to voice."));
 #endif
 			return false;
 		}
 	}
 
-	if( TheAudio->doesViolateLimit( event ) )
+	if (TheAudio->doesViolateLimit(event))
 	{
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG(("- culled due to limit." ));
+		DEBUG_LOG(("- culled due to limit."));
 #endif
 		return false;
 	}
-	else if( isInterrupting( event ) )
+	else if (isInterrupting(event))
 	{
 		return true;
 	}
@@ -304,7 +303,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 		else
 		{
 #ifdef INTENSIVE_AUDIO_DEBUG
-			DEBUG_LOG(("- culled due to no channels available and non-interrupting." ));
+			DEBUG_LOG(("- culled due to no channels available and non-interrupting."));
 #endif
 			return false;
 		}
@@ -316,16 +315,17 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SoundManager::violatesVoice( AudioEventRTS *event )
+Bool SoundManager::violatesVoice(AudioEventRTS* event)
 {
-	if (event->getAudioEventInfo()->m_type & ST_VOICE) {
+	if (event->getAudioEventInfo()->m_type & ST_VOICE)
+	{
 		return (event->getObjectID() && TheAudio->isObjectPlayingVoice(event->getObjectID()));
 	}
 	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool SoundManager::isInterrupting( AudioEventRTS *event )
+Bool SoundManager::isInterrupting(AudioEventRTS* event)
 {
 	return event->getAudioEventInfo()->m_control & AC_INTERRUPT;
 }

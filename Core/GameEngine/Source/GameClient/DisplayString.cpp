@@ -45,7 +45,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
@@ -78,7 +78,6 @@ DisplayString::DisplayString()
 
 	m_next = nullptr;
 	m_prev = nullptr;
-
 }
 
 // DisplayString::~DisplayString ==============================================
@@ -89,13 +88,12 @@ DisplayString::~DisplayString()
 
 	// free any data
 	reset();
-
 }
 
 // DisplayString::setText =====================================================
 /** Copy the text to this instance */
 //=============================================================================
-void DisplayString::setText( UnicodeString text )
+void DisplayString::setText(UnicodeString text)
 {
 	if (text == m_textString)
 		return;
@@ -104,12 +102,11 @@ void DisplayString::setText( UnicodeString text )
 
 	// our text has now changed
 	notifyTextChanged();
-
 }
 
 // DisplayString::reset =======================================================
 /** Free and reset all the data for this string, effectively making this
-	* instance like brand new */
+ * instance like brand new */
 //=============================================================================
 void DisplayString::reset()
 {
@@ -118,7 +115,6 @@ void DisplayString::reset()
 
 	// no font
 	m_font = nullptr;
-
 }
 
 // DisplayString::removeLastChar ==============================================
@@ -130,43 +126,38 @@ void DisplayString::removeLastChar()
 
 	// our text has now changed
 	notifyTextChanged();
-
 }
 
 // DisplayString::truncateBy ==================================================
 /** Remove the last charCount characters from the string text */
 //=============================================================================
-void DisplayString::truncateBy( const Int charCount )
+void DisplayString::truncateBy(const Int charCount)
 {
 	m_textString.truncateBy(charCount);
 
 	// our text has now changed
 	notifyTextChanged();
-
 }
 
 // DisplayString::truncateTo ==================================================
 /** Remove the last characters from the string text so it's at the most
-	* maxLength characters long */
+ * maxLength characters long */
 //=============================================================================
-void DisplayString::truncateTo( const Int maxLength )
+void DisplayString::truncateTo(const Int maxLength)
 {
 	m_textString.truncateTo(maxLength);
 
 	// our text has now changed
 	notifyTextChanged();
-
 }
 
 // DisplayString::appendChar ==================================================
 /** Append character to the end of the string */
 //=============================================================================
-void DisplayString::appendChar( WideChar c )
+void DisplayString::appendChar(WideChar c)
 {
 	m_textString.concat(c);
 
 	// text has now changed
 	notifyTextChanged();
-
 }
-

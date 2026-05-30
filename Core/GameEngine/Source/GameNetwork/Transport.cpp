@@ -22,13 +22,11 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/crc.h"
 #include "GameNetwork/Transport.h"
 #include "GameNetwork/NetworkInterface.h"
-
 
 //--------------------------------------------------------------------------
 // Packet-level encryption is an XOR operation, for speed reasons.  To get
@@ -36,32 +34,34 @@
 // can be non-XOR'd.
 
 // This assumes the buf is a multiple of 4 bytes.  Extra is not encrypted.
-static inline void encryptBuf( unsigned char *buf, Int len )
+static inline void encryptBuf(unsigned char* buf, Int len)
 {
 	UnsignedInt mask = 0x0000Fade;
 
-	UnsignedInt *uintPtr = (UnsignedInt *) (buf);
+	UnsignedInt* uintPtr = (UnsignedInt*)(buf);
 
-	for (int i=0 ; i<len/4 ; i++) {
+	for (int i = 0; i < len / 4; i++)
+	{
 		*uintPtr = (*uintPtr) ^ mask;
 		*uintPtr = htonl(*uintPtr);
 		uintPtr++;
-		mask += 0x00000321; // just for fun
+		mask += 0x00000321;    // just for fun
 	}
 }
 
 // This assumes the buf is a multiple of 4 bytes.  Extra is not encrypted.
-static inline void decryptBuf( unsigned char *buf, Int len )
+static inline void decryptBuf(unsigned char* buf, Int len)
 {
 	UnsignedInt mask = 0x0000Fade;
 
-	UnsignedInt *uintPtr = (UnsignedInt *) (buf);
+	UnsignedInt* uintPtr = (UnsignedInt*)(buf);
 
-	for (int i=0 ; i<len/4 ; i++) {
+	for (int i = 0; i < len / 4; i++)
+	{
 		*uintPtr = htonl(*uintPtr);
 		*uintPtr = (*uintPtr) ^ mask;
 		uintPtr++;
-		mask += 0x00000321; // just for fun
+		mask += 0x00000321;    // just for fun
 	}
 }
 
@@ -78,12 +78,12 @@ Transport::~Transport()
 	reset();
 }
 
-Bool Transport::init( AsciiString ip, UnsignedShort port )
+Bool Transport::init(AsciiString ip, UnsignedShort port)
 {
 	return init(ResolveIP(ip), port);
 }
 
-Bool Transport::init( UnsignedInt ip, UnsignedShort port )
+Bool Transport::init(UnsignedInt ip, UnsignedShort port)
 {
 	// ----- Initialize Winsock -----
 	if (!m_winsockInit)
@@ -92,11 +92,13 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 		WSADATA wsadata;
 
 		int err = WSAStartup(verReq, &wsadata);
-		if (err != 0) {
+		if (err != 0)
+		{
 			return false;
 		}
 
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
+		{
 			WSACleanup();
 			return false;
 		}
@@ -112,11 +114,13 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 
 	int retval = -1;
 	time_t now = timeGetTime();
-	while ((retval != 0) && ((timeGetTime() - now) < 1000)) {
+	while ((retval != 0) && ((timeGetTime() - now) < 1000))
+	{
 		retval = m_udpsock->Bind(ip, port);
 	}
 
-	if (retval != 0) {
+	if (retval != 0)
+	{
 		DEBUG_CRASH(("Could not bind to 0x%8.8X:%d", ip, port));
 		DEBUG_LOG(("Transport::init - Failure to bind socket with error code %x", retval));
 		delete m_udpsock;
@@ -125,8 +129,8 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	}
 
 	// ------- Clear buffers --------
-	int i=0;
-	for (; i<MAX_MESSAGES; ++i)
+	int i = 0;
+	for (; i < MAX_MESSAGES; ++i)
 	{
 		m_outBuffer[i].length = 0;
 		m_inBuffer[i].length = 0;
@@ -134,7 +138,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 		m_delayedInBuffer[i].message.length = 0;
 #endif
 	}
-	for (i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		m_incomingBytes[i] = 0;
 		m_outgoingBytes[i] = 0;
@@ -187,7 +191,8 @@ Bool Transport::update()
 	return retval;
 }
 
-Bool Transport::doSend() {
+Bool Transport::doSend()
+{
 	if (!m_udpsock)
 	{
 		DEBUG_LOG(("Transport::doSend() - m_udpSock is null!"));
@@ -212,7 +217,7 @@ Bool Transport::doSend() {
 
 	// Send all messages
 	int i;
-	for (i=0; i<MAX_MESSAGES; ++i)
+	for (i = 0; i < MAX_MESSAGES; ++i)
 	{
 		if (m_outBuffer[i].length != 0)
 		{
@@ -223,24 +228,24 @@ Bool Transport::doSend() {
 			// Therefore, transmitted data needs to add the extra bytes of the network header to the payloads length
 			int bytesToSend = m_outBuffer[i].length + sizeof(TransportMessageHeader);
 			// Send this message
-			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
+			if ((bytesSent = m_udpsock->Write((unsigned char*)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
 			{
-				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
+				// DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				m_outgoingPackets[m_statisticsSlot]++;
 				m_outgoingBytes[m_statisticsSlot] += m_outBuffer[i].length + sizeof(TransportMessageHeader);
-				m_outBuffer[i].length = 0;  // Remove from queue
+				m_outBuffer[i].length = 0;    // Remove from queue
 				if (bytesSent != bytesToSend)
 				{
 					DEBUG_LOG(("Transport::doSend - wanted to send %d bytes, only sent %d bytes to %d.%d.%d.%d:%d",
-						bytesToSend, bytesSent,
-						PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
+					           bytesToSend, bytesSent,
+					           PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				}
 			}
 			else
 			{
-				//DEBUG_LOG(("Could not write to socket!!!  Not discarding message!"));
+				// DEBUG_LOG(("Could not write to socket!!!  Not discarding message!"));
 				retval = FALSE;
-				//DEBUG_LOG(("Transport::doSend returning FALSE"));
+				// DEBUG_LOG(("Transport::doSend returning FALSE"));
 			}
 		}
 	}
@@ -249,11 +254,11 @@ Bool Transport::doSend() {
 	// Latency simulation - deliver anything we're holding on to that is ready
 	if (m_useLatency)
 	{
-		for (i=0; i<MAX_MESSAGES; ++i)
+		for (i = 0; i < MAX_MESSAGES; ++i)
 		{
 			if (m_delayedInBuffer[i].message.length != 0 && m_delayedInBuffer[i].deliveryTime <= now)
 			{
-				for (int j=0; j<MAX_MESSAGES; ++j)
+				for (int j = 0; j < MAX_MESSAGES; ++j)
 				{
 					if (m_inBuffer[j].length == 0)
 					{
@@ -290,34 +295,34 @@ Bool Transport::doRecv()
 	// But the max network message size needs to include the bytes of the transport message header and equal the max udp payload
 	// Therefore, when receiving data we use the max udp payload size to receive the game packet payload and network header
 	TransportMessage incomingMessage;
-	unsigned char *buf = (unsigned char *)&incomingMessage;
+	unsigned char* buf = (unsigned char*)&incomingMessage;
 	int len = MAX_NETWORK_MESSAGE_LEN;
-//	DEBUG_LOG(("Transport::doRecv - checking"));
-	while ( (len=m_udpsock->Read(buf, MAX_NETWORK_MESSAGE_LEN, &from)) > 0 )
+	//	DEBUG_LOG(("Transport::doRecv - checking"));
+	while ((len = m_udpsock->Read(buf, MAX_NETWORK_MESSAGE_LEN, &from)) > 0)
 	{
 #if defined(RTS_DEBUG)
 		// Packet loss simulation
 		if (m_usePacketLoss)
 		{
-			if ( TheGlobalData->m_packetLoss >= GameClientRandomValue(0, 100) )
+			if (TheGlobalData->m_packetLoss >= GameClientRandomValue(0, 100))
 			{
 				continue;
 			}
 		}
 #endif
 
-//		DEBUG_LOG(("Transport::doRecv - Got something! len = %d", len));
+		//		DEBUG_LOG(("Transport::doRecv - Got something! len = %d", len));
 		// Decrypt the packet
-//		DEBUG_LOG_RAW(("buffer = "));
-//		for (Int munkee = 0; munkee < len; ++munkee) {
-//			DEBUG_LOG_RAW(("%02x", *(buf + munkee)));
-//		}
-//		DEBUG_LOG_RAW(("\n"));
+		//		DEBUG_LOG_RAW(("buffer = "));
+		//		for (Int munkee = 0; munkee < len; ++munkee) {
+		//			DEBUG_LOG_RAW(("%02x", *(buf + munkee)));
+		//		}
+		//		DEBUG_LOG_RAW(("\n"));
 		decryptBuf(buf, len);
 
 		incomingMessage.length = len - sizeof(TransportMessageHeader);
 
-		if (len <= sizeof(TransportMessageHeader) || !isGeneralsPacket( &incomingMessage ))
+		if (len <= sizeof(TransportMessageHeader) || !isGeneralsPacket(&incomingMessage))
 		{
 			DEBUG_LOG(("Transport::doRecv - unknownPacket! len = %d", len));
 			m_unknownPackets[m_statisticsSlot]++;
@@ -326,11 +331,11 @@ Bool Transport::doRecv()
 		}
 
 		// Something there; stick it somewhere
-//		DEBUG_LOG(("Saw %d bytes from %d:%d", len, ntohl(from.sin_addr.S_un.S_addr), ntohs(from.sin_port)));
+		//		DEBUG_LOG(("Saw %d bytes from %d:%d", len, ntohl(from.sin_addr.S_un.S_addr), ntohs(from.sin_port)));
 		m_incomingPackets[m_statisticsSlot]++;
 		m_incomingBytes[m_statisticsSlot] += len;
 
-		for (int i=0; i<MAX_MESSAGES; ++i)
+		for (int i = 0; i < MAX_MESSAGES; ++i)
 		{
 #if defined(RTS_DEBUG)
 			// Latency simulation
@@ -366,20 +371,22 @@ Bool Transport::doRecv()
 			}
 #endif
 		}
-		//DEBUG_ASSERTCRASH(i<MAX_MESSAGES, ("Message lost!"));
+		// DEBUG_ASSERTCRASH(i<MAX_MESSAGES, ("Message lost!"));
 	}
 
-	if (len == -1) {
+	if (len == -1)
+	{
 		// there was a socket error trying to perform a read.
-		//DEBUG_LOG(("Transport::doRecv returning FALSE"));
+		// DEBUG_LOG(("Transport::doRecv returning FALSE"));
 		retval = FALSE;
 	}
 
 	return retval;
 }
 
-Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedByte *buf, Int len /*,
-						  NetMessageFlags flags, Int id */)
+Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedByte* buf, Int len /*,
+              NetMessageFlags flags, Int id */
+)
 {
 	int i;
 
@@ -389,7 +396,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 		return false;
 	}
 
-	for (i=0; i<MAX_MESSAGES; ++i)
+	for (i = 0; i < MAX_MESSAGES; ++i)
 	{
 		if (m_outBuffer[i].length == 0)
 		{
@@ -398,19 +405,19 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 			memcpy(m_outBuffer[i].data, buf, len);
 			m_outBuffer[i].addr = addr;
 			m_outBuffer[i].port = port;
-//			m_outBuffer[i].header.flags = flags;
-//			m_outBuffer[i].header.id = id;
+			//			m_outBuffer[i].header.flags = flags;
+			//			m_outBuffer[i].header.id = id;
 			m_outBuffer[i].header.magic = GENERALS_MAGIC_NUMBER;
 
 			CRC crc;
-			crc.computeCRC( (unsigned char *)(&(m_outBuffer[i].header.magic)), m_outBuffer[i].length + sizeof(TransportMessageHeader) - sizeof(UnsignedInt) );
-//			DEBUG_LOG(("About to assign the CRC for the packet"));
+			crc.computeCRC((unsigned char*)(&(m_outBuffer[i].header.magic)), m_outBuffer[i].length + sizeof(TransportMessageHeader) - sizeof(UnsignedInt));
+			//			DEBUG_LOG(("About to assign the CRC for the packet"));
 			m_outBuffer[i].header.crc = crc.get();
 
 			// Encrypt packet
-//			DEBUG_LOG(("buffer: "));
-			encryptBuf((unsigned char *)&m_outBuffer[i], len + sizeof(TransportMessageHeader));
-//			DEBUG_LOG((""));
+			//			DEBUG_LOG(("buffer: "));
+			encryptBuf((unsigned char*)&m_outBuffer[i], len + sizeof(TransportMessageHeader));
+			//			DEBUG_LOG((""));
 
 			return true;
 		}
@@ -419,7 +426,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 	return false;
 }
 
-Bool Transport::isGeneralsPacket( TransportMessage *msg )
+Bool Transport::isGeneralsPacket(TransportMessage* msg)
 {
 	if (!msg)
 		return false;
@@ -428,8 +435,8 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 		return false;
 
 	CRC crc;
-//	crc.computeCRC( (unsigned char *)msg->data, msg->length );
-	crc.computeCRC( (unsigned char *)(&(msg->header.magic)), msg->length + sizeof(TransportMessageHeader) - sizeof(UnsignedInt) );
+	//	crc.computeCRC( (unsigned char *)msg->data, msg->length );
+	crc.computeCRC((unsigned char*)(&(msg->header.magic)), msg->length + sizeof(TransportMessageHeader) - sizeof(UnsignedInt));
 
 	if (crc.get() != msg->header.crc)
 		return false;
@@ -444,68 +451,65 @@ Bool Transport::isGeneralsPacket( TransportMessage *msg )
 Real Transport::getIncomingBytesPerSecond()
 {
 	Real val = 0.0;
-	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		if (i != m_statisticsSlot)
 			val += m_incomingBytes[i];
 	}
-	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
+	return val / (MAX_TRANSPORT_STATISTICS_SECONDS - 1);
 }
 
 Real Transport::getIncomingPacketsPerSecond()
 {
 	Real val = 0.0;
-	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		if (i != m_statisticsSlot)
 			val += m_incomingPackets[i];
 	}
-	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
+	return val / (MAX_TRANSPORT_STATISTICS_SECONDS - 1);
 }
 
 Real Transport::getOutgoingBytesPerSecond()
 {
 	Real val = 0.0;
-	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		if (i != m_statisticsSlot)
 			val += m_outgoingBytes[i];
 	}
-	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
+	return val / (MAX_TRANSPORT_STATISTICS_SECONDS - 1);
 }
 
 Real Transport::getOutgoingPacketsPerSecond()
 {
 	Real val = 0.0;
-	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		if (i != m_statisticsSlot)
 			val += m_outgoingPackets[i];
 	}
-	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
+	return val / (MAX_TRANSPORT_STATISTICS_SECONDS - 1);
 }
 
 Real Transport::getUnknownBytesPerSecond()
 {
 	Real val = 0.0;
-	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		if (i != m_statisticsSlot)
 			val += m_unknownBytes[i];
 	}
-	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
+	return val / (MAX_TRANSPORT_STATISTICS_SECONDS - 1);
 }
 
 Real Transport::getUnknownPacketsPerSecond()
 {
 	Real val = 0.0;
-	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i = 0; i < MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		if (i != m_statisticsSlot)
 			val += m_unknownPackets[i];
 	}
-	return val / (MAX_TRANSPORT_STATISTICS_SECONDS-1);
+	return val / (MAX_TRANSPORT_STATISTICS_SECONDS - 1);
 }
-
-
-

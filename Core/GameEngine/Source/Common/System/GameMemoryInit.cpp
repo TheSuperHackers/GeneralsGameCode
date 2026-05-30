@@ -41,7 +41,7 @@
 // Desc:      Memory manager
 //
 // ----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // SYSTEM INCLUDES
 
@@ -57,22 +57,22 @@ struct PoolSizeRec
 };
 
 #if RTS_GENERALS
-#include "GameMemoryInitDMA_Generals.inl"
-#include "GameMemoryInitPools_Generals.inl"
+	#include "GameMemoryInitDMA_Generals.inl"
+	#include "GameMemoryInitPools_Generals.inl"
 #elif RTS_ZEROHOUR
-#include "GameMemoryInitDMA_GeneralsMD.inl"
-#include "GameMemoryInitPools_GeneralsMD.inl"
+	#include "GameMemoryInitDMA_GeneralsMD.inl"
+	#include "GameMemoryInitPools_GeneralsMD.inl"
 #endif
 
 //-----------------------------------------------------------------------------
-void userMemoryManagerGetDmaParms(Int *numSubPools, const PoolInitRec **pParms)
+void userMemoryManagerGetDmaParms(Int* numSubPools, const PoolInitRec** pParms)
 {
 	*numSubPools = ARRAY_SIZE(DefaultDMA);
 	*pParms = DefaultDMA;
 }
 
 //-----------------------------------------------------------------------------
-void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount, Int& overflowAllocationCount)
+void userMemoryAdjustPoolSize(const char* poolName, Int& initialAllocationCount, Int& overflowAllocationCount)
 {
 	if (initialAllocationCount > 0)
 		return;
@@ -87,7 +87,7 @@ void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocationCount,
 		}
 	}
 
-	DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp",poolName));
+	DEBUG_CRASH(("Initial size for pool %s not found -- you should add it to MemoryInit.cpp", poolName));
 }
 
 //-----------------------------------------------------------------------------
@@ -98,7 +98,7 @@ static Int roundUpMemBound(Int i)
 	if (i < MEM_BOUND_ALIGNMENT)
 		return MEM_BOUND_ALIGNMENT;
 	else
-		return (i + (MEM_BOUND_ALIGNMENT-1)) & ~(MEM_BOUND_ALIGNMENT-1);
+		return (i + (MEM_BOUND_ALIGNMENT - 1)) & ~(MEM_BOUND_ALIGNMENT - 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void userMemoryManagerInitPools()
 		{
 			if (buf[0] == ';')
 				continue;
-			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow ) == 3)
+			if (sscanf(buf, "%s %d %d", poolName, &initial, &overflow) == 3)
 			{
 				for (PoolSizeRec* p = PoolSizes; p->name != nullptr; ++p)
 				{
@@ -137,7 +137,7 @@ void userMemoryManagerInitPools()
 						// currently, these must be multiples of 4. so round up.
 						p->initial = roundUpMemBound(initial);
 						p->overflow = roundUpMemBound(overflow);
-						break;	// from for-p
+						break;    // from for-p
 					}
 				}
 			}
@@ -145,4 +145,3 @@ void userMemoryManagerInitPools()
 		fclose(fp);
 	}
 }
-

@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Recorder.h"
 #include "GameClient/DisconnectMenu.h"
@@ -35,7 +34,6 @@
 #include "GameNetwork/GameSpy/PingThread.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
-
 DisconnectManager::DisconnectManager()
 {
 	Int i;
@@ -46,28 +44,34 @@ DisconnectManager::DisconnectManager()
 	m_haveNotifiedOtherPlayersOfCurrentFrame = FALSE;
 	m_timeOfDisconnectScreenOn = 0;
 
-	for( i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		m_packetRouterFallback[i] = 0;
 	}
 
 	m_packetRouterTimeout = 0;
-	for( i = 0; i < MAX_SLOTS -1; ++i) {
+	for (i = 0; i < MAX_SLOTS - 1; ++i)
+	{
 		m_playerTimeouts[i] = 0;
 	}
 
-	for( i = 0; i < MAX_SLOTS; ++i) {
-		for (Int j = 0; j < MAX_SLOTS; ++j) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		for (Int j = 0; j < MAX_SLOTS; ++j)
+		{
 			m_playerVotes[i][j].vote = FALSE;
 			m_playerVotes[i][j].frame = 0;
 		}
 	}
 }
 
-DisconnectManager::~DisconnectManager() {
+DisconnectManager::~DisconnectManager()
+{
 }
 
-void DisconnectManager::init() {
-	TheDisconnectMenu->hideScreen(); // make sure the screen starts out hidden.
+void DisconnectManager::init()
+{
+	TheDisconnectMenu->hideScreen();    // make sure the screen starts out hidden.
 	m_lastFrame = 0;
 	m_lastFrameTime = -1;
 	m_lastKeepAliveSendTime = -1;
@@ -76,14 +80,17 @@ void DisconnectManager::init() {
 	m_timeOfDisconnectScreenOn = 0;
 
 	Int i = 0;
-	for (; i < MAX_SLOTS; ++i) {
-		for (Int j = 0; j < MAX_SLOTS; ++j) {
+	for (; i < MAX_SLOTS; ++i)
+	{
+		for (Int j = 0; j < MAX_SLOTS; ++j)
+		{
 			m_playerVotes[i][j].vote = FALSE;
 			m_playerVotes[i][j].frame = 0;
 		}
 	}
 
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		m_disconnectFrames[i] = 0;
 		m_disconnectFramesReceived[i] = FALSE;
 	}
@@ -93,34 +100,42 @@ void DisconnectManager::init() {
 	m_pingsReceived = 0;
 }
 
-void DisconnectManager::update(ConnectionManager *conMgr) {
-	if (m_lastFrameTime == -1) {
+void DisconnectManager::update(ConnectionManager* conMgr)
+{
+	if (m_lastFrameTime == -1)
+	{
 		m_lastFrameTime = timeGetTime();
 	}
 
 	// The game logic stalls on the frame we are currently waiting for commands on,
 	// so we have to check for the current logic frame being one higher than
 	// the last one we had the commands ready for.
-	if (TheGameLogic->getFrame() == m_lastFrame) {
+	if (TheGameLogic->getFrame() == m_lastFrame)
+	{
 		time_t curTime = timeGetTime();
-		if ((curTime - m_lastFrameTime) > TheGlobalData->m_networkDisconnectTime) {
-			if (m_disconnectState == DISCONNECTSTATETYPE_SCREENOFF) {
+		if ((curTime - m_lastFrameTime) > TheGlobalData->m_networkDisconnectTime)
+		{
+			if (m_disconnectState == DISCONNECTSTATETYPE_SCREENOFF)
+			{
 				turnOnScreen(conMgr);
 			}
 			sendKeepAlive(conMgr);
 		}
-	} else {
+	}
+	else
+	{
 		nextFrame(TheGameLogic->getFrame(), conMgr);
 	}
 
-	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF) {
+	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF)
+	{
 		updateDisconnectStatus(conMgr);
 
 		// check to see if we need to send pings
 		if (m_pingFrame < TheGameLogic->getFrame())
 		{
 			time_t curTime = timeGetTime();
-			if ((curTime - m_lastFrameTime) > 10000) /// @todo: plug in some better measure here
+			if ((curTime - m_lastFrameTime) > 10000)    /// @todo: plug in some better measure here
 			{
 				m_pingFrame = TheGameLogic->getFrame();
 				m_pingsSent = 0;
@@ -129,17 +144,17 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 				// Send the pings
 				if (ThePinger)
 				{
-					//use next ping server
+					// use next ping server
 					static size_t serverIndex = 0;
 					serverIndex++;
 
 					AsciiStringList pingServers = TheGameSpyConfig->getPingServers();
 
-					if( serverIndex >= pingServers.size() )
-						serverIndex = 0;  //wrap back to first ping server
+					if (serverIndex >= pingServers.size())
+						serverIndex = 0;    // wrap back to first ping server
 
 					std::list<AsciiString>::iterator it = pingServers.begin();
-					for( size_t i = 0;  i < serverIndex;  i++ )
+					for (size_t i = 0; i < serverIndex; i++)
 						it++;
 
 					PingRequest req;
@@ -149,7 +164,7 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 					m_pingsSent = req.repetitions;
 					ThePinger->addRequest(req);
 					DEBUG_LOG(("DisconnectManager::update() - requesting %d pings of %d from %s",
-						req.repetitions, req.timeout, req.hostname.c_str()));
+					           req.repetitions, req.timeout, req.hostname.c_str()));
 				}
 			}
 		}
@@ -164,13 +179,13 @@ void DisconnectManager::update(ConnectionManager *conMgr) {
 				{
 					// wrong frame - we're not pinging yet
 					DEBUG_LOG(("DisconnectManager::update() - discarding ping of %d from %s (%d reps)",
-						resp.avgPing, resp.hostname.c_str(), resp.repetitions));
+					           resp.avgPing, resp.hostname.c_str(), resp.repetitions));
 				}
 				else
 				{
 					// right frame
 					DEBUG_LOG(("DisconnectManager::update() - keeping ping of %d from %s (%d reps)",
-						resp.avgPing, resp.hostname.c_str(), resp.repetitions));
+					           resp.avgPing, resp.hostname.c_str(), resp.repetitions));
 					if (resp.avgPing < 2000)
 					{
 						m_pingsReceived += resp.repetitions;
@@ -196,49 +211,63 @@ Int DisconnectManager::getPingsReceived()
 	return m_pingsReceived;
 }
 
-
-void DisconnectManager::updateDisconnectStatus(ConnectionManager *conMgr) {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (conMgr->isPlayerConnected(i)) {
+void DisconnectManager::updateDisconnectStatus(ConnectionManager* conMgr)
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (conMgr->isPlayerConnected(i))
+		{
 			Int slot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
-			if (slot != -1) {
+			if (slot != -1)
+			{
 				time_t curTime = timeGetTime();
 				time_t newTime = TheGlobalData->m_networkPlayerTimeoutTime - (curTime - m_playerTimeouts[slot]);
 
-// if someone is more than 2/3 timed out, lets get our frame numbers sync'd up.  Also if someone is voted out
-// lets do the same thing.
+				// if someone is more than 2/3 timed out, lets get our frame numbers sync'd up.  Also if someone is voted out
+				// lets do the same thing.
 
-				if (m_haveNotifiedOtherPlayersOfCurrentFrame == FALSE) {
-					if ((newTime < TheGlobalData->m_networkPlayerTimeoutTime / 3) || (isPlayerVotedOut(slot, conMgr) == TRUE)) {
+				if (m_haveNotifiedOtherPlayersOfCurrentFrame == FALSE)
+				{
+					if ((newTime < TheGlobalData->m_networkPlayerTimeoutTime / 3) || (isPlayerVotedOut(slot, conMgr) == TRUE))
+					{
 						TheNetwork->notifyOthersOfCurrentFrame();
 						m_haveNotifiedOtherPlayersOfCurrentFrame = TRUE;
 					}
 
 					DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - curTime = %d, m_timeOfDisconnectScreenOn = %d, curTime - m_timeOfDisconnectScreenOn = %d", curTime, m_timeOfDisconnectScreenOn, curTime - m_timeOfDisconnectScreenOn));
 
-					if (m_timeOfDisconnectScreenOn != 0) {
-						if ((curTime - m_timeOfDisconnectScreenOn) > TheGlobalData->m_networkDisconnectScreenNotifyTime) {
+					if (m_timeOfDisconnectScreenOn != 0)
+					{
+						if ((curTime - m_timeOfDisconnectScreenOn) > TheGlobalData->m_networkDisconnectScreenNotifyTime)
+						{
 							TheNetwork->notifyOthersOfCurrentFrame();
 							m_haveNotifiedOtherPlayersOfCurrentFrame = TRUE;
 						}
 					}
 				}
 
-				if ((newTime < 0) || (isPlayerVotedOut(slot, conMgr) == TRUE)) {
+				if ((newTime < 0) || (isPlayerVotedOut(slot, conMgr) == TRUE))
+				{
 					newTime = 0;
 					DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - player %d(translated slot %d) has been voted out or timed out", i, slot));
-					if (allOnSameFrame(conMgr) == TRUE) {
+					if (allOnSameFrame(conMgr) == TRUE)
+					{
 						DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - all on same frame"));
-						if (isLocalPlayerNextPacketRouter(conMgr) == TRUE) {
+						if (isLocalPlayerNextPacketRouter(conMgr) == TRUE)
+						{
 							DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - local player is next packet router"));
 							DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - about to do the disconnect procedure for player %d", i));
 							sendDisconnectCommand(i, conMgr);
 							disconnectPlayer(i, conMgr);
 							sendPlayerDestruct(i, conMgr);
-						} else {
+						}
+						else
+						{
 							DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - local player is not the next packet router"));
 						}
-					} else {
+					}
+					else
+					{
 						DEBUG_LOG(("DisconnectManager::updateDisconnectStatus - not all on same frame"));
 					}
 				}
@@ -248,102 +277,116 @@ void DisconnectManager::updateDisconnectStatus(ConnectionManager *conMgr) {
 	}
 }
 
-void DisconnectManager::updateWaitForPacketRouter(ConnectionManager *conMgr) {
-/*
-	time_t curTime = timeGetTime();
-	time_t newTime = TheGlobalData->m_networkPlayerTimeoutTime - (curTime - m_packetRouterTimeout);
-	if (newTime < 0) {
-		newTime = 0;
+void DisconnectManager::updateWaitForPacketRouter(ConnectionManager* conMgr)
+{
+	/*
+	  time_t curTime = timeGetTime();
+	  time_t newTime = TheGlobalData->m_networkPlayerTimeoutTime - (curTime - m_packetRouterTimeout);
+	  if (newTime < 0) {
+	    newTime = 0;
 
-		// The guy that we were hoping would be the new packet router isn't.  We're screwed, get out of the game.
+	    // The guy that we were hoping would be the new packet router isn't.  We're screwed, get out of the game.
 
-		DEBUG_LOG(("DisconnectManager::updateWaitForPacketRouter - timed out waiting for new packet router, quitting game"));
-		TheNetwork->quitGame();
-	}
-	TheDisconnectMenu->setPacketRouterTimeoutTime(newTime);
-*/
+	    DEBUG_LOG(("DisconnectManager::updateWaitForPacketRouter - timed out waiting for new packet router, quitting game"));
+	    TheNetwork->quitGame();
+	  }
+	  TheDisconnectMenu->setPacketRouterTimeoutTime(newTime);
+	*/
 }
 
-void DisconnectManager::processDisconnectCommand(NetCommandRef *ref, ConnectionManager *conMgr) {
-	NetCommandMsg *msg = ref->getCommand();
-	
-	switch (msg->getNetCommandType()) {
+void DisconnectManager::processDisconnectCommand(NetCommandRef* ref, ConnectionManager* conMgr)
+{
+	NetCommandMsg* msg = ref->getCommand();
+
+	switch (msg->getNetCommandType())
+	{
 		case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
 			processDisconnectKeepAlive(msg, conMgr);
 			break;
-			
+
 		case NETCOMMANDTYPE_DISCONNECTPLAYER:
 			processDisconnectPlayer(msg, conMgr);
 			break;
-			
+
 		case NETCOMMANDTYPE_PACKETROUTERQUERY:
 			processPacketRouterQuery(msg, conMgr);
 			break;
-			
+
 		case NETCOMMANDTYPE_PACKETROUTERACK:
 			processPacketRouterAck(msg, conMgr);
 			break;
-			
+
 		case NETCOMMANDTYPE_DISCONNECTVOTE:
 			processDisconnectVote(msg, conMgr);
 			break;
-			
+
 		case NETCOMMANDTYPE_DISCONNECTFRAME:
 			processDisconnectFrame(msg, conMgr);
 			break;
-			
+
 		case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
 			processDisconnectScreenOff(msg, conMgr);
 			break;
-			
+
 		default:
 			break;
 	}
 }
 
-void DisconnectManager::processDisconnectKeepAlive(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetDisconnectKeepAliveCommandMsg *cmdMsg = (NetDisconnectKeepAliveCommandMsg *)msg;
+void DisconnectManager::processDisconnectKeepAlive(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetDisconnectKeepAliveCommandMsg* cmdMsg = (NetDisconnectKeepAliveCommandMsg*)msg;
 	Int slot = translatedSlotPosition(cmdMsg->getPlayerID(), conMgr->getLocalPlayerID());
-	if (slot != -1) {
+	if (slot != -1)
+	{
 		resetPlayerTimeout(slot);
 	}
 }
 
-void DisconnectManager::processDisconnectPlayer(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetDisconnectPlayerCommandMsg *cmdMsg = (NetDisconnectPlayerCommandMsg *)msg;
+void DisconnectManager::processDisconnectPlayer(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetDisconnectPlayerCommandMsg* cmdMsg = (NetDisconnectPlayerCommandMsg*)msg;
 	DEBUG_LOG(("DisconnectManager::processDisconnectPlayer - Got disconnect player command from player %d.  Disconnecting player %d on frame %d", msg->getPlayerID(), cmdMsg->getDisconnectSlot(), cmdMsg->getDisconnectFrame()));
 	DEBUG_ASSERTCRASH(TheGameLogic->getFrame() == cmdMsg->getDisconnectFrame(), ("disconnecting player on the wrong frame!!!"));
 	disconnectPlayer(cmdMsg->getDisconnectSlot(), conMgr);
 }
 
-void DisconnectManager::processPacketRouterQuery(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetPacketRouterQueryCommandMsg *cmdMsg = (NetPacketRouterQueryCommandMsg *)msg;
+void DisconnectManager::processPacketRouterQuery(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetPacketRouterQueryCommandMsg* cmdMsg = (NetPacketRouterQueryCommandMsg*)msg;
 	DEBUG_LOG(("DisconnectManager::processPacketRouterQuery - got a packet router query command from player %d", msg->getPlayerID()));
 
-	if (conMgr->getPacketRouterSlot() == conMgr->getLocalPlayerID()) {
-		NetPacketRouterAckCommandMsg *ackmsg = newInstance(NetPacketRouterAckCommandMsg);
+	if (conMgr->getPacketRouterSlot() == conMgr->getLocalPlayerID())
+	{
+		NetPacketRouterAckCommandMsg* ackmsg = newInstance(NetPacketRouterAckCommandMsg);
 		ackmsg->setPlayerID(conMgr->getLocalPlayerID());
-		if (DoesCommandRequireACommandID(ackmsg->getNetCommandType()) == TRUE) {
+		if (DoesCommandRequireACommandID(ackmsg->getNetCommandType()) == TRUE)
+		{
 			ackmsg->setID(GenerateNextCommandID());
 		}
 		DEBUG_LOG(("DisconnectManager::processPacketRouterQuery - We are the new packet router, responding with an packet router ack. Local player is %d", ackmsg->getPlayerID()));
 		conMgr->sendLocalCommandDirect(ackmsg, 1 << cmdMsg->getPlayerID());
 		ackmsg->detach();
-	} else {
+	}
+	else
+	{
 		DEBUG_LOG(("DisconnectManager::processPacketRouterQuery - We are NOT the new packet router, these are not the droids you're looking for."));
 	}
 }
 
-void DisconnectManager::processPacketRouterAck(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetPacketRouterAckCommandMsg *cmdMsg = (NetPacketRouterAckCommandMsg *)msg;
+void DisconnectManager::processPacketRouterAck(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetPacketRouterAckCommandMsg* cmdMsg = (NetPacketRouterAckCommandMsg*)msg;
 	DEBUG_LOG(("DisconnectManager::processPacketRouterAck - got packet router ack command from player %d", msg->getPlayerID()));
 
-	if (conMgr->getPacketRouterSlot() == cmdMsg->getPlayerID()) {
+	if (conMgr->getPacketRouterSlot() == cmdMsg->getPlayerID())
+	{
 		DEBUG_LOG(("DisconnectManager::processPacketRouterAck - packet router command is from who it should be."));
 		resetPacketRouterTimeout();
 		Int currentPacketRouterSlot = conMgr->getPacketRouterSlot();
 		Int currentPacketRouterIndex = 0;
-		while ((currentPacketRouterSlot != conMgr->getPacketRouterFallbackSlot(currentPacketRouterIndex)) && (currentPacketRouterIndex < MAX_SLOTS)) {
+		while ((currentPacketRouterSlot != conMgr->getPacketRouterFallbackSlot(currentPacketRouterIndex)) && (currentPacketRouterIndex < MAX_SLOTS))
+		{
 			++currentPacketRouterIndex;
 		}
 		DEBUG_ASSERTCRASH((currentPacketRouterIndex < MAX_SLOTS), ("Invalid packet router index"));
@@ -352,16 +395,18 @@ void DisconnectManager::processPacketRouterAck(NetCommandMsg *msg, ConnectionMan
 		conMgr->resendPendingCommands();
 		m_currentPacketRouterIndex = currentPacketRouterIndex;
 		DEBUG_LOG(("DisconnectManager::processPacketRouterAck - Setting disconnect state to screen on."));
-		m_disconnectState = DISCONNECTSTATETYPE_SCREENON; ///< set it to screen on so that the next call to AllCommandsReady can set up everything for the next frame properly.
+		m_disconnectState = DISCONNECTSTATETYPE_SCREENON;    ///< set it to screen on so that the next call to AllCommandsReady can set up everything for the next frame properly.
 	}
 }
 
-void DisconnectManager::processDisconnectVote(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetDisconnectVoteCommandMsg *cmdMsg = (NetDisconnectVoteCommandMsg *)msg;
+void DisconnectManager::processDisconnectVote(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetDisconnectVoteCommandMsg* cmdMsg = (NetDisconnectVoteCommandMsg*)msg;
 	DEBUG_LOG(("DisconnectManager::processDisconnectVote - Got a disconnect vote for player %d command from player %d", cmdMsg->getSlot(), cmdMsg->getPlayerID()));
 	Int transSlot = translatedSlotPosition(msg->getPlayerID(), conMgr->getLocalPlayerID());
 
-	if (isPlayerInGame(transSlot, conMgr) == FALSE) {
+	if (isPlayerInGame(transSlot, conMgr) == FALSE)
+	{
 		// if they've been timed out, voted out, disconnected, don't count their vote.
 		return;
 	}
@@ -369,120 +414,145 @@ void DisconnectManager::processDisconnectVote(NetCommandMsg *msg, ConnectionMana
 	applyDisconnectVote(cmdMsg->getSlot(), cmdMsg->getVoteFrame(), cmdMsg->getPlayerID(), conMgr);
 }
 
-void DisconnectManager::processDisconnectFrame(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetDisconnectFrameCommandMsg *cmdMsg = (NetDisconnectFrameCommandMsg *)msg;
+void DisconnectManager::processDisconnectFrame(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetDisconnectFrameCommandMsg* cmdMsg = (NetDisconnectFrameCommandMsg*)msg;
 	const UnsignedInt playerID = cmdMsg->getPlayerID();
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
 
-	if (m_disconnectFrames[playerID] >= cmdMsg->getDisconnectFrame()) {
+	if (m_disconnectFrames[playerID] >= cmdMsg->getDisconnectFrame())
+	{
 		// this message isn't valid, we have a disconnect frame that is later than this already.
 		return;
 	}
 
-	if (m_disconnectFramesReceived[playerID] == TRUE) {
+	if (m_disconnectFramesReceived[playerID] == TRUE)
+	{
 		DEBUG_LOG(("DisconnectManager::processDisconnectFrame - Got two disconnect frames without an intervening disconnect screen off command from player %d. Frames are %d and %d", playerID, m_disconnectFrames[playerID], cmdMsg->getDisconnectFrame()));
 	}
 
 	DEBUG_LOG(("DisconnectManager::processDisconnectFrame - about to call resetPlayersVotes for player %d", playerID));
-	resetPlayersVotes(playerID, cmdMsg->getDisconnectFrame()-1, conMgr);
+	resetPlayersVotes(playerID, cmdMsg->getDisconnectFrame() - 1, conMgr);
 
 	m_disconnectFrames[playerID] = cmdMsg->getDisconnectFrame();
 	m_disconnectFramesReceived[playerID] = TRUE;
 	DEBUG_LOG(("DisconnectManager::processDisconnectFrame - Got a disconnect frame for player %d, frame = %d, local player is %d, local disconnect frame = %d, command id = %d", cmdMsg->getPlayerID(), cmdMsg->getDisconnectFrame(), conMgr->getLocalPlayerID(), m_disconnectFrames[conMgr->getLocalPlayerID()], cmdMsg->getID()));
 
-	if (playerID == conMgr->getLocalPlayerID()) {
+	if (playerID == conMgr->getLocalPlayerID())
+	{
 		DEBUG_LOG(("DisconnectManager::processDisconnectFrame - player %d is the local player", playerID));
 		// we just got the message from the local player, check to see if we need to send
 		// commands to anyone we already have heard from.
-		for (Int i = 0; i < MAX_SLOTS; ++i) {
-			if (i != playerID) {
+		for (Int i = 0; i < MAX_SLOTS; ++i)
+		{
+			if (i != playerID)
+			{
 				Int transSlot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
-				if (isPlayerInGame(transSlot, conMgr) == TRUE) {
-					if ((m_disconnectFrames[i] < m_disconnectFrames[playerID]) && (m_disconnectFramesReceived[i] == TRUE)) {
+				if (isPlayerInGame(transSlot, conMgr) == TRUE)
+				{
+					if ((m_disconnectFrames[i] < m_disconnectFrames[playerID]) && (m_disconnectFramesReceived[i] == TRUE))
+					{
 						DEBUG_LOG(("DisconnectManager::processDisconnectFrame - I have more frames than player %d, my frame = %d, their frame = %d", i, m_disconnectFrames[conMgr->getLocalPlayerID()], m_disconnectFrames[i]));
 						conMgr->sendFrameDataToPlayer(i, m_disconnectFrames[i]);
 					}
 				}
 			}
 		}
-	} else if ((m_disconnectFrames[playerID] < m_disconnectFrames[conMgr->getLocalPlayerID()]) && (m_disconnectFramesReceived[playerID] == TRUE)) {
+	}
+	else if ((m_disconnectFrames[playerID] < m_disconnectFrames[conMgr->getLocalPlayerID()]) && (m_disconnectFramesReceived[playerID] == TRUE))
+	{
 		DEBUG_LOG(("DisconnectManager::processDisconnectFrame - I have more frames than player %d, my frame = %d, their frame = %d", playerID, m_disconnectFrames[conMgr->getLocalPlayerID()], m_disconnectFrames[playerID]));
 		conMgr->sendFrameDataToPlayer(playerID, m_disconnectFrames[playerID]);
 	}
 }
 
-void DisconnectManager::processDisconnectScreenOff(NetCommandMsg *msg, ConnectionManager *conMgr) {
-	NetDisconnectScreenOffCommandMsg *cmdMsg = (NetDisconnectScreenOffCommandMsg *)msg;
+void DisconnectManager::processDisconnectScreenOff(NetCommandMsg* msg, ConnectionManager* conMgr)
+{
+	NetDisconnectScreenOffCommandMsg* cmdMsg = (NetDisconnectScreenOffCommandMsg*)msg;
 	UnsignedInt playerID = cmdMsg->getPlayerID();
 
 	DEBUG_LOG(("DisconnectManager::processDisconnectScreenOff - got a screen off command from player %d for frame %d", cmdMsg->getPlayerID(), cmdMsg->getNewFrame()));
 
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
 
 	UnsignedInt newFrame = cmdMsg->getNewFrame();
-	if (newFrame >= m_disconnectFrames[playerID]) {
+	if (newFrame >= m_disconnectFrames[playerID])
+	{
 		DEBUG_LOG(("DisconnectManager::processDisconnectScreenOff - resetting the disconnect screen status for player %d", playerID));
 		m_disconnectFramesReceived[playerID] = FALSE;
-		m_disconnectFrames[playerID] = newFrame; // just in case we get packets out of order and the disconnect screen off message gets here before the disconnect frame message.
+		m_disconnectFrames[playerID] = newFrame;    // just in case we get packets out of order and the disconnect screen off message gets here before the disconnect frame message.
 
 		DEBUG_LOG(("DisconnectManager::processDisconnectScreenOff - about to call resetPlayersVotes for player %d", playerID));
 		resetPlayersVotes(playerID, cmdMsg->getNewFrame(), conMgr);
 	}
 }
 
-void DisconnectManager::applyDisconnectVote(Int slot, UnsignedInt frame, Int fromSlot, ConnectionManager *conMgr) {
+void DisconnectManager::applyDisconnectVote(Int slot, UnsignedInt frame, Int fromSlot, ConnectionManager* conMgr)
+{
 	m_playerVotes[slot][fromSlot].vote = TRUE;
 	m_playerVotes[slot][fromSlot].frame = frame;
 	Int numVotes = countVotesForPlayer(slot);
 	DEBUG_LOG(("DisconnectManager::applyDisconnectVote - added a vote to disconnect slot %d, from slot %d, for frame %d, current votes are %d", slot, fromSlot, frame, numVotes));
 	Int transSlot = translatedSlotPosition(slot, conMgr->getLocalPlayerID());
-	if (transSlot != -1) {
+	if (transSlot != -1)
+	{
 		TheDisconnectMenu->updateVotes(transSlot, numVotes);
 	}
 }
 
-void DisconnectManager::nextFrame(UnsignedInt frame, ConnectionManager *conMgr) {
+void DisconnectManager::nextFrame(UnsignedInt frame, ConnectionManager* conMgr)
+{
 	m_lastFrame = frame;
 	m_lastFrameTime = timeGetTime();
 	resetPlayerTimeouts(conMgr);
 }
 
-void DisconnectManager::allCommandsReady(UnsignedInt frame, ConnectionManager *conMgr, Bool waitForPacketRouter) {
-		if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF) {
-			DEBUG_LOG(("DisconnectManager::allCommandsReady - setting screen state to off."));
+void DisconnectManager::allCommandsReady(UnsignedInt frame, ConnectionManager* conMgr, Bool waitForPacketRouter)
+{
+	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF)
+	{
+		DEBUG_LOG(("DisconnectManager::allCommandsReady - setting screen state to off."));
 
-			TheDisconnectMenu->hideScreen();
-			m_disconnectState = DISCONNECTSTATETYPE_SCREENOFF;
-			TheNetwork->notifyOthersOfNewFrame(frame);
+		TheDisconnectMenu->hideScreen();
+		m_disconnectState = DISCONNECTSTATETYPE_SCREENOFF;
+		TheNetwork->notifyOthersOfNewFrame(frame);
 
-			// reset the votes since we're moving to a new frame.
-			for (Int i = 0; i < MAX_SLOTS; ++i) {
-				m_playerVotes[i][conMgr->getLocalPlayerID()].vote = FALSE;
-			}
-
-			DEBUG_LOG(("DisconnectManager::allCommandsReady - resetting m_timeOfDisconnectScreenOn"));
-			m_timeOfDisconnectScreenOn = 0;
+		// reset the votes since we're moving to a new frame.
+		for (Int i = 0; i < MAX_SLOTS; ++i)
+		{
+			m_playerVotes[i][conMgr->getLocalPlayerID()].vote = FALSE;
 		}
+
+		DEBUG_LOG(("DisconnectManager::allCommandsReady - resetting m_timeOfDisconnectScreenOn"));
+		m_timeOfDisconnectScreenOn = 0;
+	}
 }
 
-Bool DisconnectManager::allowedToContinue() {
-	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF) {
+Bool DisconnectManager::allowedToContinue()
+{
+	if (m_disconnectState != DISCONNECTSTATETYPE_SCREENOFF)
+	{
 		return FALSE;
 	}
 	return TRUE;
 }
 
-void DisconnectManager::sendKeepAlive(ConnectionManager *conMgr) {
+void DisconnectManager::sendKeepAlive(ConnectionManager* conMgr)
+{
 	time_t curTime = timeGetTime();
 
-	if (((curTime - m_lastKeepAliveSendTime) > 500) || (m_lastKeepAliveSendTime == -1)) {
-		NetDisconnectKeepAliveCommandMsg *msg = newInstance(NetDisconnectKeepAliveCommandMsg);
+	if (((curTime - m_lastKeepAliveSendTime) > 500) || (m_lastKeepAliveSendTime == -1))
+	{
+		NetDisconnectKeepAliveCommandMsg* msg = newInstance(NetDisconnectKeepAliveCommandMsg);
 		msg->setPlayerID(conMgr->getLocalPlayerID());
-		if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
+		if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE)
+		{
 			msg->setID(GenerateNextCommandID());
 		}
 		conMgr->sendLocalCommandDirect(msg, 0xff ^ (1 << msg->getPlayerID()));
@@ -492,11 +562,14 @@ void DisconnectManager::sendKeepAlive(ConnectionManager *conMgr) {
 	}
 }
 
-void DisconnectManager::populateDisconnectScreen(ConnectionManager *conMgr) {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+void DisconnectManager::populateDisconnectScreen(ConnectionManager* conMgr)
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
 		UnicodeString name = conMgr->getPlayerName(i);
 		Int slot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
-		if (slot != -1) {
+		if (slot != -1)
+		{
 			TheDisconnectMenu->setPlayerName(slot, name);
 
 			Int numVotes = countVotesForPlayer(i);
@@ -505,49 +578,61 @@ void DisconnectManager::populateDisconnectScreen(ConnectionManager *conMgr) {
 	}
 }
 
-Int DisconnectManager::translatedSlotPosition(Int slot, Int localSlot) {
-	if (slot < localSlot) {
+Int DisconnectManager::translatedSlotPosition(Int slot, Int localSlot)
+{
+	if (slot < localSlot)
+	{
 		return slot;
 	}
 
-	if (slot == localSlot) {
+	if (slot == localSlot)
+	{
 		return -1;
 	}
 
 	return (slot - 1);
 }
 
-Int DisconnectManager::untranslatedSlotPosition(Int slot, Int localSlot) {
-	if (slot == -1) {
+Int DisconnectManager::untranslatedSlotPosition(Int slot, Int localSlot)
+{
+	if (slot == -1)
+	{
 		return localSlot;
 	}
 
-	if (slot < localSlot) {
+	if (slot < localSlot)
+	{
 		return slot;
 	}
 
 	return (slot + 1);
 }
 
-void DisconnectManager::resetPlayerTimeouts(ConnectionManager *conMgr) {
+void DisconnectManager::resetPlayerTimeouts(ConnectionManager* conMgr)
+{
 	// reset the player timeouts.
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
 		Int slot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
-		if (slot != -1) {
+		if (slot != -1)
+		{
 			resetPlayerTimeout(slot);
 		}
 	}
 }
 
-void DisconnectManager::resetPlayerTimeout(Int slot) {
+void DisconnectManager::resetPlayerTimeout(Int slot)
+{
 	m_playerTimeouts[slot] = timeGetTime();
 }
 
-void DisconnectManager::resetPacketRouterTimeout() {
+void DisconnectManager::resetPacketRouterTimeout()
+{
 	m_packetRouterTimeout = timeGetTime();
 }
 
-void DisconnectManager::turnOnScreen(ConnectionManager *conMgr) {
+void DisconnectManager::turnOnScreen(ConnectionManager* conMgr)
+{
 	TheDisconnectMenu->showScreen();
 	DEBUG_LOG(("DisconnectManager::turnOnScreen - turning on screen on frame %d", TheGameLogic->getFrame()));
 	m_disconnectState = DISCONNECTSTATETYPE_SCREENON;
@@ -562,16 +647,18 @@ void DisconnectManager::turnOnScreen(ConnectionManager *conMgr) {
 	DEBUG_LOG(("DisconnectManager::turnOnScreen - turned on screen at time %d", m_timeOfDisconnectScreenOn));
 }
 
-void DisconnectManager::disconnectPlayer(Int slot, ConnectionManager *conMgr) {
+void DisconnectManager::disconnectPlayer(Int slot, ConnectionManager* conMgr)
+{
 	DEBUG_LOG(("DisconnectManager::disconnectPlayer - Disconnecting slot number %d on frame %d", slot, TheGameLogic->getFrame()));
 	DEBUG_ASSERTCRASH((slot >= 0) && (slot < MAX_SLOTS), ("Attempting to disconnect an invalid slot number"));
-	if ((slot < 0) || (slot >= (MAX_SLOTS))) {
+	if ((slot < 0) || (slot >= (MAX_SLOTS)))
+	{
 		return;
 	}
 
 	if (TheGameInfo)
 	{
-		GameSlot *gSlot = TheGameInfo->getSlot( slot );
+		GameSlot* gSlot = TheGameInfo->getSlot(slot);
 		if (gSlot)
 		{
 			gSlot->markAsDisconnected();
@@ -580,7 +667,8 @@ void DisconnectManager::disconnectPlayer(Int slot, ConnectionManager *conMgr) {
 
 	Int transSlot = translatedSlotPosition(slot, conMgr->getLocalPlayerID());
 
-	if (transSlot != -1) {
+	if (transSlot != -1)
+	{
 		// Ignore any disconnect commands that tell us to disconnect ourselves.
 
 		// Get the disconnecting player off the disconnect window.
@@ -591,7 +679,8 @@ void DisconnectManager::disconnectPlayer(Int slot, ConnectionManager *conMgr) {
 		PlayerLeaveCode retcode = conMgr->disconnectPlayer(slot);
 		DEBUG_ASSERTCRASH((retcode != PLAYERLEAVECODE_UNKNOWN), ("Invalid player leave code"));
 
-		if (retcode == PLAYERLEAVECODE_PACKETROUTER) {
+		if (retcode == PLAYERLEAVECODE_PACKETROUTER)
+		{
 			DEBUG_LOG(("DisconnectManager::disconnectPlayer - disconnecting player was packet router."));
 
 			conMgr->resendPendingCommands();
@@ -599,21 +688,24 @@ void DisconnectManager::disconnectPlayer(Int slot, ConnectionManager *conMgr) {
 	}
 }
 
-void DisconnectManager::sendDisconnectCommand(Int slot, ConnectionManager *conMgr) {
+void DisconnectManager::sendDisconnectCommand(Int slot, ConnectionManager* conMgr)
+{
 	DEBUG_LOG(("DisconnectManager::sendDisconnectCommand - Sending disconnect command for slot number %d", slot));
 	DEBUG_ASSERTCRASH((slot >= 0) && (slot < MAX_SLOTS), ("Attempting to send a disconnect command for an invalid slot number"));
-	if ((slot < 0) || (slot >= (MAX_SLOTS))) {
+	if ((slot < 0) || (slot >= (MAX_SLOTS)))
+	{
 		return;
 	}
 
 	UnsignedInt disconnectFrame = getMaxDisconnectFrame();
 
 	// Need to do the NetDisconnectPlayerCommandMsg creation and sending here.
-	NetDisconnectPlayerCommandMsg *msg = newInstance(NetDisconnectPlayerCommandMsg);
+	NetDisconnectPlayerCommandMsg* msg = newInstance(NetDisconnectPlayerCommandMsg);
 	msg->setDisconnectSlot(slot);
 	msg->setDisconnectFrame(disconnectFrame);
 	msg->setPlayerID(conMgr->getLocalPlayerID());
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 
@@ -624,13 +716,15 @@ void DisconnectManager::sendDisconnectCommand(Int slot, ConnectionManager *conMg
 	msg->detach();
 }
 
-void DisconnectManager::sendVoteCommand(Int slot, ConnectionManager *conMgr) {
-	NetDisconnectVoteCommandMsg *msg = newInstance(NetDisconnectVoteCommandMsg);
+void DisconnectManager::sendVoteCommand(Int slot, ConnectionManager* conMgr)
+{
+	NetDisconnectVoteCommandMsg* msg = newInstance(NetDisconnectVoteCommandMsg);
 
 	msg->setPlayerID(conMgr->getLocalPlayerID());
 	msg->setSlot(slot);
 	msg->setVoteFrame(TheGameLogic->getFrame());
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE)
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 
@@ -639,10 +733,12 @@ void DisconnectManager::sendVoteCommand(Int slot, ConnectionManager *conMgr) {
 	msg->detach();
 }
 
-void DisconnectManager::voteForPlayerDisconnect(Int slot, ConnectionManager *conMgr) {
+void DisconnectManager::voteForPlayerDisconnect(Int slot, ConnectionManager* conMgr)
+{
 	Int transSlot = untranslatedSlotPosition(slot, conMgr->getLocalPlayerID());
 
-	if (m_playerVotes[transSlot][conMgr->getLocalPlayerID()].vote == FALSE) {
+	if (m_playerVotes[transSlot][conMgr->getLocalPlayerID()].vote == FALSE)
+	{
 		m_playerVotes[transSlot][conMgr->getLocalPlayerID()].vote = TRUE;
 
 		sendVoteCommand(transSlot, conMgr);
@@ -652,29 +748,37 @@ void DisconnectManager::voteForPlayerDisconnect(Int slot, ConnectionManager *con
 	}
 }
 
-void DisconnectManager::recalculatePacketRouterIndex(ConnectionManager *conMgr) {
+void DisconnectManager::recalculatePacketRouterIndex(ConnectionManager* conMgr)
+{
 	Int currentPacketRouterSlot = conMgr->getPacketRouterSlot();
 	m_currentPacketRouterIndex = 0;
-	while ((currentPacketRouterSlot != conMgr->getPacketRouterFallbackSlot(m_currentPacketRouterIndex)) && (m_currentPacketRouterIndex < MAX_SLOTS)) {
+	while ((currentPacketRouterSlot != conMgr->getPacketRouterFallbackSlot(m_currentPacketRouterIndex)) && (m_currentPacketRouterIndex < MAX_SLOTS))
+	{
 		++m_currentPacketRouterIndex;
 	}
 	DEBUG_ASSERTCRASH((m_currentPacketRouterIndex < MAX_SLOTS), ("Invalid packet router index"));
 }
 
-Bool DisconnectManager::allOnSameFrame(ConnectionManager *conMgr) {
+Bool DisconnectManager::allOnSameFrame(ConnectionManager* conMgr)
+{
 	Bool retval = TRUE;
-	for (Int i = 0; (i < MAX_SLOTS) && (retval == TRUE); ++i) {
+	for (Int i = 0; (i < MAX_SLOTS) && (retval == TRUE); ++i)
+	{
 		Int transSlot = translatedSlotPosition(i, conMgr->getLocalPlayerID());
-		if (transSlot == -1) {
+		if (transSlot == -1)
+		{
 			continue;
 		}
-		if ((conMgr->isPlayerConnected(i) == TRUE) && (isPlayerInGame(transSlot, conMgr) == TRUE)) {
+		if ((conMgr->isPlayerConnected(i) == TRUE) && (isPlayerInGame(transSlot, conMgr) == TRUE))
+		{
 			// ok, i is someone who is in the game and hasn't timed out yet or been voted out.
-			if (m_disconnectFramesReceived[i] == FALSE) {
+			if (m_disconnectFramesReceived[i] == FALSE)
+			{
 				// we don't know what frame they are on yet.
 				retval = FALSE;
 			}
-			if ((m_disconnectFramesReceived[i] == TRUE) && (m_disconnectFrames[conMgr->getLocalPlayerID()] != m_disconnectFrames[i])) {
+			if ((m_disconnectFramesReceived[i] == TRUE) && (m_disconnectFrames[conMgr->getLocalPlayerID()] != m_disconnectFrames[i]))
+			{
 				// We know their frame, but they aren't on the same frame as us.
 				retval = FALSE;
 			}
@@ -683,15 +787,18 @@ Bool DisconnectManager::allOnSameFrame(ConnectionManager *conMgr) {
 	return retval;
 }
 
-Bool DisconnectManager::isLocalPlayerNextPacketRouter(ConnectionManager *conMgr) {
+Bool DisconnectManager::isLocalPlayerNextPacketRouter(ConnectionManager* conMgr)
+{
 	UnsignedInt localSlot = conMgr->getLocalPlayerID();
 	UnsignedInt packetRouterSlot = conMgr->getPacketRouterSlot();
 	Int transSlot = translatedSlotPosition(packetRouterSlot, localSlot);
 
 	// stop when we have found a packet router that is connected
-	while ((transSlot != -1) && (isPlayerInGame(transSlot, conMgr) == FALSE)) {
+	while ((transSlot != -1) && (isPlayerInGame(transSlot, conMgr) == FALSE))
+	{
 		packetRouterSlot = conMgr->getNextPacketRouterSlot(packetRouterSlot);
-		if ((packetRouterSlot >= MAX_SLOTS) || (packetRouterSlot < 0)) {
+		if ((packetRouterSlot >= MAX_SLOTS) || (packetRouterSlot < 0))
+		{
 			// don't know who the next packet router is going to be,
 			// so this game is not going to go anywhere anymore.
 			DEBUG_CRASH(("no more players left to be the packet router, this shouldn't happen."));
@@ -700,20 +807,24 @@ Bool DisconnectManager::isLocalPlayerNextPacketRouter(ConnectionManager *conMgr)
 		transSlot = translatedSlotPosition(packetRouterSlot, localSlot);
 	}
 
-	if (packetRouterSlot == localSlot) {
+	if (packetRouterSlot == localSlot)
+	{
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-Bool DisconnectManager::hasPlayerTimedOut(Int slot) {
-	if (slot == -1) {
+Bool DisconnectManager::hasPlayerTimedOut(Int slot)
+{
+	if (slot == -1)
+	{
 		return FALSE;
 	}
 
 	time_t newTime = TheGlobalData->m_networkPlayerTimeoutTime - (timeGetTime() - m_playerTimeouts[slot]);
-	if (newTime <= 0) {
+	if (newTime <= 0)
+	{
 		return TRUE;
 	}
 
@@ -722,7 +833,8 @@ Bool DisconnectManager::hasPlayerTimedOut(Int slot) {
 
 // this function assumes that we are the packet router. (or at least that
 // we will be after everyone is getting disconnected)
-void DisconnectManager::sendPlayerDestruct(Int slot, ConnectionManager *conMgr) {
+void DisconnectManager::sendPlayerDestruct(Int slot, ConnectionManager* conMgr)
+{
 	UnsignedShort currentID = 0;
 	if (DoesCommandRequireACommandID(NETCOMMANDTYPE_DESTROYPLAYER))
 	{
@@ -730,10 +842,10 @@ void DisconnectManager::sendPlayerDestruct(Int slot, ConnectionManager *conMgr) 
 	}
 
 	DEBUG_LOG(("Queueing DestroyPlayer %d for frame %d on frame %d as command %d",
-		slot, TheNetwork->getExecutionFrame()+1, TheGameLogic->getFrame(), currentID));
+	           slot, TheNetwork->getExecutionFrame() + 1, TheGameLogic->getFrame(), currentID));
 
-	NetDestroyPlayerCommandMsg *netmsg = newInstance(NetDestroyPlayerCommandMsg);
-	netmsg->setExecutionFrame(TheNetwork->getExecutionFrame()+1);
+	NetDestroyPlayerCommandMsg* netmsg = newInstance(NetDestroyPlayerCommandMsg);
+	netmsg->setExecutionFrame(TheNetwork->getExecutionFrame() + 1);
 	netmsg->setPlayerID(conMgr->getLocalPlayerID());
 	netmsg->setID(currentID);
 	netmsg->setPlayerIndex(slot);
@@ -743,64 +855,80 @@ void DisconnectManager::sendPlayerDestruct(Int slot, ConnectionManager *conMgr) 
 
 // the 'slot' variable is supposed to be a translated slot position. (translated slot meaning
 // that it is the player's position in the disconnect menu)
-Bool DisconnectManager::isPlayerVotedOut(Int slot, ConnectionManager *conMgr) {
-	if (slot == -1) {
+Bool DisconnectManager::isPlayerVotedOut(Int slot, ConnectionManager* conMgr)
+{
+	if (slot == -1)
+	{
 		// we can't vote out ourselves.
 		return FALSE;
 	}
 	Int transSlot = untranslatedSlotPosition(slot, conMgr->getLocalPlayerID());
 	Int numVotes = countVotesForPlayer(transSlot);
-	if (numVotes >= (conMgr->getNumPlayers() - 1)) {
+	if (numVotes >= (conMgr->getNumPlayers() - 1))
+	{
 		return TRUE;
 	}
 	return FALSE;
 }
 
-UnsignedInt DisconnectManager::getMaxDisconnectFrame() {
+UnsignedInt DisconnectManager::getMaxDisconnectFrame()
+{
 	UnsignedInt retval = 0;
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_disconnectFrames[i] > retval) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_disconnectFrames[i] > retval)
+		{
 			retval = m_disconnectFrames[i];
 		}
 	}
 	return retval;
 }
 
-Bool DisconnectManager::isPlayerInGame(Int slot, ConnectionManager *conMgr) {
+Bool DisconnectManager::isPlayerInGame(Int slot, ConnectionManager* conMgr)
+{
 	Int transSlot = untranslatedSlotPosition(slot, conMgr->getLocalPlayerID());
 	DEBUG_ASSERTCRASH((transSlot >= 0) && (transSlot < MAX_SLOTS), ("invalid slot number"));
-	if (((transSlot < 0) || (transSlot >= MAX_SLOTS)) || conMgr->isPlayerConnected(transSlot) == FALSE) {
+	if (((transSlot < 0) || (transSlot >= MAX_SLOTS)) || conMgr->isPlayerConnected(transSlot) == FALSE)
+	{
 		return FALSE;
 	}
 
-	if (isPlayerVotedOut(slot, conMgr) == TRUE) {
+	if (isPlayerVotedOut(slot, conMgr) == TRUE)
+	{
 		return FALSE;
 	}
 
-	if (hasPlayerTimedOut(slot) == TRUE) {
+	if (hasPlayerTimedOut(slot) == TRUE)
+	{
 		return FALSE;
 	}
 
 	return TRUE;
 }
 
-void DisconnectManager::playerHasAdvancedAFrame(Int slot, UnsignedInt frame) {
+void DisconnectManager::playerHasAdvancedAFrame(Int slot, UnsignedInt frame)
+{
 	// if they have advanced beyond the frame they had been previously disconnecting on.
-	if (frame >= m_disconnectFrames[slot]) {
-		m_disconnectFrames[slot] = frame; // just in case we get a disconnect frame command after this is called.
+	if (frame >= m_disconnectFrames[slot])
+	{
+		m_disconnectFrames[slot] = frame;    // just in case we get a disconnect frame command after this is called.
 		m_disconnectFramesReceived[slot] = FALSE;
 	}
 }
 
-Int DisconnectManager::countVotesForPlayer(Int slot) {
-	if ((slot < 0) || (slot >= MAX_SLOTS)) {
+Int DisconnectManager::countVotesForPlayer(Int slot)
+{
+	if ((slot < 0) || (slot >= MAX_SLOTS))
+	{
 		return 0;
 	}
 
 	Int retval = 0;
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
 		// using TheGameLogic->getFrame() cause we might not have sent our disconnect frame yet.
-		if ((m_playerVotes[slot][i].vote == TRUE) && (m_playerVotes[slot][i].frame == TheGameLogic->getFrame())) {
+		if ((m_playerVotes[slot][i].vote == TRUE) && (m_playerVotes[slot][i].frame == TheGameLogic->getFrame()))
+		{
 			++retval;
 		}
 	}
@@ -808,12 +936,15 @@ Int DisconnectManager::countVotesForPlayer(Int slot) {
 	return retval;
 }
 
-void DisconnectManager::resetPlayersVotes(Int playerID, UnsignedInt frame, ConnectionManager *conMgr) {
+void DisconnectManager::resetPlayersVotes(Int playerID, UnsignedInt frame, ConnectionManager* conMgr)
+{
 	DEBUG_LOG(("DisconnectManager::resetPlayersVotes - resetting player %d's votes on frame %d", playerID, frame));
 
 	// we need to reset this player's votes that happened before or on the given frame.
-	for(Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_playerVotes[i][playerID].frame <= frame) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_playerVotes[i][playerID].frame <= frame)
+		{
 			DEBUG_LOG(("DisconnectManager::resetPlayersVotes - resetting player %d's vote for player %d from frame %d on frame %d", playerID, i, m_playerVotes[i][playerID].frame, frame));
 			m_playerVotes[i][playerID].vote = FALSE;
 		}
@@ -822,7 +953,8 @@ void DisconnectManager::resetPlayersVotes(Int playerID, UnsignedInt frame, Conne
 	Int numVotes = countVotesForPlayer(playerID);
 	DEBUG_LOG(("DisconnectManager::resetPlayersVotes - after adjusting votes, player %d has %d votes", playerID, numVotes));
 	Int transSlot = translatedSlotPosition(playerID, conMgr->getLocalPlayerID());
-	if (transSlot != -1) {
+	if (transSlot != -1)
+	{
 		TheDisconnectMenu->updateVotes(transSlot, numVotes);
 	}
 }

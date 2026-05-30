@@ -24,7 +24,7 @@
 
 ////////// NetPacket.cpp ///////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/NetPacket.h"
 #include "GameNetwork/NetCommandMsg.h"
@@ -33,8 +33,7 @@
 #include "GameNetwork/GameMessageParser.h"
 #include "GameNetwork/NetPacketStructs.h"
 
-
-static size_t constructNetCommandRef(NetCommandRef *&ref, SmallNetPacketCommandBase::CommandBase &base, NetPacketBuf buf)
+static size_t constructNetCommandRef(NetCommandRef*& ref, SmallNetPacketCommandBase::CommandBase& base, NetPacketBuf buf)
 {
 	size_t size = SmallNetPacketCommandBase::readMessage(ref, base, buf);
 
@@ -49,7 +48,8 @@ static size_t constructNetCommandRef(NetCommandRef *&ref, SmallNetPacketCommandB
 
 // This function assumes that all of the fields are either of default value or are
 // present in the raw data.
-NetCommandRef *NetPacket::ConstructNetCommandMsgFromRawData(const UnsignedByte *data, UnsignedInt dataLength) {
+NetCommandRef* NetPacket::ConstructNetCommandMsgFromRawData(const UnsignedByte* data, UnsignedInt dataLength)
+{
 	SmallNetPacketCommandBase::CommandBase commandBase;
 	commandBase.commandType.commandType = static_cast<UnsignedByte>(NETCOMMANDTYPE_GAMECOMMAND);
 	commandBase.relay.relay = 0;
@@ -58,7 +58,7 @@ NetCommandRef *NetPacket::ConstructNetCommandMsgFromRawData(const UnsignedByte *
 	commandBase.commandId.commandId = 0;
 
 	NetPacketBuf buf(data, dataLength);
-	NetCommandRef *ref = nullptr;
+	NetCommandRef* ref = nullptr;
 	constructNetCommandRef(ref, commandBase, buf);
 
 	if (ref == nullptr)
@@ -71,19 +71,21 @@ NetCommandRef *NetPacket::ConstructNetCommandMsgFromRawData(const UnsignedByte *
 	return ref;
 }
 
-NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
+NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef* ref)
+{
 	// if we don't have a unique command ID, then the wrapped command cannot
 	// be identified.  Therefore don't allow commands without a unique ID to
 	// be wrapped.
-	NetCommandMsg *msg = ref->getCommand();
+	NetCommandMsg* msg = ref->getCommand();
 
-	if (!DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (!DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		DEBUG_CRASH(("Trying to wrap a command that doesn't have a unique command ID"));
 		return NetPacketList();
 	}
 
-	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);  // need to implement.  I have a drinking problem.
-	UnsignedByte *bigPacketData = nullptr;
+	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);    // need to implement.  I have a drinking problem.
+	UnsignedByte* bigPacketData = nullptr;
 
 	NetPacketList packetList;
 
@@ -93,29 +95,33 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 	ref->getCommand()->copyBytesForNetPacket(bigPacketData, *ref);
 
 	// create the wrapper command message we'll be using.
-	NetWrapperCommandMsg *wrapperMsg = newInstance(NetWrapperCommandMsg);
+	NetWrapperCommandMsg* wrapperMsg = newInstance(NetWrapperCommandMsg);
 	// get the amount of space needed for the wrapper message, not including the wrapped command data.
 	UnsignedInt wrapperSize = GetBufferSizeNeededForCommand(wrapperMsg);
 	UnsignedInt commandSizePerPacket = MAX_PACKET_SIZE - wrapperSize;
 
 	UnsignedInt numChunks = bufferSize / commandSizePerPacket;
-	if ((bufferSize % commandSizePerPacket) > 0) {
+	if ((bufferSize % commandSizePerPacket) > 0)
+	{
 		++numChunks;
 	}
 	UnsignedInt currentChunk = 0;
 
 	// create the packets and the wrapper messages.
-	while (currentChunk < numChunks) {
-		NetPacket *packet = newInstance(NetPacket);
+	while (currentChunk < numChunks)
+	{
+		NetPacket* packet = newInstance(NetPacket);
 
 		UnsignedInt dataSizeThisPacket = commandSizePerPacket;
-		if ((bufferSize - bigPacketCurrentOffset) < dataSizeThisPacket) {
+		if ((bufferSize - bigPacketCurrentOffset) < dataSizeThisPacket)
+		{
 			dataSizeThisPacket = bufferSize - bigPacketCurrentOffset;
 		}
 		NetCommandDataChunk bigPacket(dataSizeThisPacket);
 		memcpy(bigPacket.data(), bigPacketData + bigPacketCurrentOffset, bigPacket.size());
 
-		if (DoesCommandRequireACommandID(wrapperMsg->getNetCommandType())) {
+		if (DoesCommandRequireACommandID(wrapperMsg->getNetCommandType()))
+		{
 			wrapperMsg->setID(GenerateNextCommandID());
 		}
 		wrapperMsg->setPlayerID(msg->getPlayerID());
@@ -130,11 +136,12 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 
 		bigPacketCurrentOffset += dataSizeThisPacket;
 
-		NetCommandRef *ref = NEW_NETCOMMANDREF(wrapperMsg);
+		NetCommandRef* ref = NEW_NETCOMMANDREF(wrapperMsg);
 		ref->setRelay(ref->getRelay());
 
-		if (packet->addCommand(ref) == FALSE) {
-			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::BeginBigCommandPacketList - failed to add a wrapper command to the packet")); // I still have a drinking problem.
+		if (packet->addCommand(ref) == FALSE)
+		{
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::BeginBigCommandPacketList - failed to add a wrapper command to the packet"));    // I still have a drinking problem.
 		}
 
 		packetList.push_back(packet);
@@ -153,11 +160,13 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 	return packetList;
 }
 
-UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
+UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg* msg)
+{
 	// This is where the fun begins...
 
-	if (msg == nullptr) {
-		return 0; // There was nothing to add.
+	if (msg == nullptr)
+	{
+		return 0;    // There was nothing to add.
 	}
 	// Use the virtual function for all command message types
 	return msg->getSizeForNetPacket();
@@ -166,14 +175,16 @@ UnsignedInt NetPacket::GetBufferSizeNeededForCommand(NetCommandMsg *msg) {
 /**
  * Constructor
  */
-NetPacket::NetPacket() {
+NetPacket::NetPacket()
+{
 	init();
 }
 
 /**
  * Constructor given raw transport data.
  */
-NetPacket::NetPacket(TransportMessage *msg) {
+NetPacket::NetPacket(TransportMessage* msg)
+{
 	init();
 	m_packetLen = msg->length;
 	memcpy(m_packet, msg->data, MAX_PACKET_SIZE);
@@ -185,7 +196,8 @@ NetPacket::NetPacket(TransportMessage *msg) {
 /**
  * Destructor
  */
-NetPacket::~NetPacket() {
+NetPacket::~NetPacket()
+{
 	deleteInstance(m_lastCommand);
 	m_lastCommand = nullptr;
 }
@@ -193,7 +205,8 @@ NetPacket::~NetPacket() {
 /**
  * Initialize all the member variable values.
  */
-void NetPacket::init() {
+void NetPacket::init()
+{
 	m_addr = 0;
 	m_port = 0;
 	m_numCommands = 0;
@@ -209,7 +222,8 @@ void NetPacket::init() {
 	m_lastCommand = nullptr;
 }
 
-void NetPacket::reset() {
+void NetPacket::reset()
+{
 	deleteInstance(m_lastCommand);
 	m_lastCommand = nullptr;
 
@@ -219,7 +233,8 @@ void NetPacket::reset() {
 /**
  * Set the address to which this packet is to be sent.
  */
-void NetPacket::setAddress(Int addr, Int port) {
+void NetPacket::setAddress(Int addr, Int port)
+{
 	m_addr = addr;
 	m_port = port;
 }
@@ -228,14 +243,16 @@ void NetPacket::setAddress(Int addr, Int port) {
  * Adds this command to the packet.  Returns false if there wasn't enough room
  * in the packet for this message, true otherwise.
  */
-Bool NetPacket::addCommand(NetCommandRef *msg) {
+Bool NetPacket::addCommand(NetCommandRef* msg)
+{
 	// This is where the fun begins...
 
-	if (msg == nullptr) {
-		return TRUE; // There was nothing to add, so it was successful.
+	if (msg == nullptr)
+	{
+		return TRUE;    // There was nothing to add, so it was successful.
 	}
 
-	NetCommandMsg *cmdMsg = msg->getCommand();
+	NetCommandMsg* cmdMsg = msg->getCommand();
 
 	Bool ackRepeat = FALSE;
 	Bool frameRepeat = FALSE;
@@ -257,14 +274,15 @@ Bool NetPacket::addCommand(NetCommandRef *msg) {
 	if (ackRepeat || frameRepeat)
 	{
 		// Is there enough room in the packet for this message?
-		if (NetPacketRepeatCommand::getSize() > (MAX_PACKET_SIZE - m_packetLen)) {
+		if (NetPacketRepeatCommand::getSize() > (MAX_PACKET_SIZE - m_packetLen))
+		{
 			return FALSE;
 		}
 
 		if (frameRepeat)
 		{
 			m_lastCommandID = cmdMsg->getID();
-			++m_lastFrame; // Need this cause we're actually advancing to the next frame by adding this command.
+			++m_lastFrame;    // Need this cause we're actually advancing to the next frame by adding this command.
 		}
 
 		m_packetLen += NetPacketRepeatCommand::copyBytes(m_packet + m_packetLen);
@@ -283,7 +301,8 @@ Bool NetPacket::addCommand(NetCommandRef *msg) {
 		const size_t msglen = cmdMsg->getSizeForSmallNetPacket(&select);
 
 		// Is there enough room in the packet for this message?
-		if (msglen > (MAX_PACKET_SIZE - m_packetLen)) {
+		if (msglen > (MAX_PACKET_SIZE - m_packetLen))
+		{
 			return FALSE;
 		}
 
@@ -314,89 +333,114 @@ Bool NetPacket::addCommand(NetCommandRef *msg) {
 	return TRUE;
 }
 
-Bool NetPacket::isFrameRepeat(NetCommandRef *msg) {
-	if (m_lastCommand == nullptr) {
+Bool NetPacket::isFrameRepeat(NetCommandRef* msg)
+{
+	if (m_lastCommand == nullptr)
+	{
 		return FALSE;
 	}
-	if (m_lastCommand->getCommand()->getNetCommandType() != NETCOMMANDTYPE_FRAMEINFO) {
+	if (m_lastCommand->getCommand()->getNetCommandType() != NETCOMMANDTYPE_FRAMEINFO)
+	{
 		return FALSE;
 	}
-	NetFrameCommandMsg *framemsg = (NetFrameCommandMsg *)(msg->getCommand());
-	NetFrameCommandMsg *lastmsg = (NetFrameCommandMsg *)(m_lastCommand->getCommand());
-	if (framemsg->getCommandCount() != 0) {
+	NetFrameCommandMsg* framemsg = (NetFrameCommandMsg*)(msg->getCommand());
+	NetFrameCommandMsg* lastmsg = (NetFrameCommandMsg*)(m_lastCommand->getCommand());
+	if (framemsg->getCommandCount() != 0)
+	{
 		return FALSE;
 	}
-	if (framemsg->getExecutionFrame() != (lastmsg->getExecutionFrame() + 1)) {
+	if (framemsg->getExecutionFrame() != (lastmsg->getExecutionFrame() + 1))
+	{
 		return FALSE;
 	}
-	if (msg->getRelay() != m_lastCommand->getRelay()) {
+	if (msg->getRelay() != m_lastCommand->getRelay())
+	{
 		return FALSE;
 	}
-	if (framemsg->getID() != (lastmsg->getID() + 1)) {
+	if (framemsg->getID() != (lastmsg->getID() + 1))
+	{
 		return FALSE;
 	}
 	return TRUE;
 }
 
-Bool NetPacket::isAckRepeat(NetCommandRef *msg) {
-	if (m_lastCommand == nullptr) {
+Bool NetPacket::isAckRepeat(NetCommandRef* msg)
+{
+	if (m_lastCommand == nullptr)
+	{
 		return FALSE;
 	}
-	if (m_lastCommand->getCommand()->getNetCommandType() != msg->getCommand()->getNetCommandType()) {
+	if (m_lastCommand->getCommand()->getNetCommandType() != msg->getCommand()->getNetCommandType())
+	{
 		return FALSE;
 	}
-	if (msg->getCommand()->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH) {
+	if (msg->getCommand()->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH)
+	{
 		return isAckBothRepeat(msg);
 	}
-	if (msg->getCommand()->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) {
+	if (msg->getCommand()->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1)
+	{
 		return isAckStage1Repeat(msg);
 	}
-	if (msg->getCommand()->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) {
+	if (msg->getCommand()->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2)
+	{
 		return isAckStage2Repeat(msg);
 	}
 	return FALSE;
 }
 
-Bool NetPacket::isAckBothRepeat(NetCommandRef *msg) {
-	NetAckBothCommandMsg *ack = (NetAckBothCommandMsg *)(msg->getCommand());
-	NetAckBothCommandMsg *lastAck = (NetAckBothCommandMsg *)(m_lastCommand->getCommand());
-	if (lastAck->getCommandID() != (ack->getCommandID() - 1)) {
+Bool NetPacket::isAckBothRepeat(NetCommandRef* msg)
+{
+	NetAckBothCommandMsg* ack = (NetAckBothCommandMsg*)(msg->getCommand());
+	NetAckBothCommandMsg* lastAck = (NetAckBothCommandMsg*)(m_lastCommand->getCommand());
+	if (lastAck->getCommandID() != (ack->getCommandID() - 1))
+	{
 		return FALSE;
 	}
-	if (lastAck->getOriginalPlayerID() != ack->getOriginalPlayerID()) {
+	if (lastAck->getOriginalPlayerID() != ack->getOriginalPlayerID())
+	{
 		return FALSE;
 	}
-	if (msg->getRelay() != m_lastCommand->getRelay()) {
-		return FALSE;
-	}
-	return TRUE;
-}
-
-Bool NetPacket::isAckStage1Repeat(NetCommandRef *msg) {
-	NetAckStage2CommandMsg *ack = (NetAckStage2CommandMsg *)(msg->getCommand());
-	NetAckStage2CommandMsg *lastAck = (NetAckStage2CommandMsg *)(m_lastCommand->getCommand());
-	if (lastAck->getCommandID() != (ack->getCommandID() - 1)) {
-		return FALSE;
-	}
-	if (lastAck->getOriginalPlayerID() != ack->getOriginalPlayerID()) {
-		return FALSE;
-	}
-	if (msg->getRelay() != m_lastCommand->getRelay()) {
+	if (msg->getRelay() != m_lastCommand->getRelay())
+	{
 		return FALSE;
 	}
 	return TRUE;
 }
 
-Bool NetPacket::isAckStage2Repeat(NetCommandRef *msg) {
-	NetAckStage2CommandMsg *ack = (NetAckStage2CommandMsg *)(msg->getCommand());
-	NetAckStage2CommandMsg *lastAck = (NetAckStage2CommandMsg *)(m_lastCommand->getCommand());
-	if (lastAck->getCommandID() != (ack->getCommandID() - 1)) {
+Bool NetPacket::isAckStage1Repeat(NetCommandRef* msg)
+{
+	NetAckStage2CommandMsg* ack = (NetAckStage2CommandMsg*)(msg->getCommand());
+	NetAckStage2CommandMsg* lastAck = (NetAckStage2CommandMsg*)(m_lastCommand->getCommand());
+	if (lastAck->getCommandID() != (ack->getCommandID() - 1))
+	{
 		return FALSE;
 	}
-	if (lastAck->getOriginalPlayerID() != ack->getOriginalPlayerID()) {
+	if (lastAck->getOriginalPlayerID() != ack->getOriginalPlayerID())
+	{
 		return FALSE;
 	}
-	if (msg->getRelay() != m_lastCommand->getRelay()) {
+	if (msg->getRelay() != m_lastCommand->getRelay())
+	{
+		return FALSE;
+	}
+	return TRUE;
+}
+
+Bool NetPacket::isAckStage2Repeat(NetCommandRef* msg)
+{
+	NetAckStage2CommandMsg* ack = (NetAckStage2CommandMsg*)(msg->getCommand());
+	NetAckStage2CommandMsg* lastAck = (NetAckStage2CommandMsg*)(m_lastCommand->getCommand());
+	if (lastAck->getCommandID() != (ack->getCommandID() - 1))
+	{
+		return FALSE;
+	}
+	if (lastAck->getOriginalPlayerID() != ack->getOriginalPlayerID())
+	{
+		return FALSE;
+	}
+	if (msg->getRelay() != m_lastCommand->getRelay())
+	{
 		return FALSE;
 	}
 	return TRUE;
@@ -405,8 +449,9 @@ Bool NetPacket::isAckStage2Repeat(NetCommandRef *msg) {
 /**
  * Returns the list of commands that are in this packet.
  */
-NetCommandList * NetPacket::getCommandList() {
-	NetCommandList *retval = newInstance(NetCommandList);
+NetCommandList* NetPacket::getCommandList()
+{
+	NetCommandList* retval = newInstance(NetCommandList);
 	retval->init();
 
 	// These need to be the same as the default values for m_lastPlayerID, m_lastFrame, etc.
@@ -415,9 +460,9 @@ NetCommandList * NetPacket::getCommandList() {
 	commandBase.relay.relay = 0;
 	commandBase.frame.frame = 0;
 	commandBase.playerId.playerId = 0;
-	commandBase.commandId.commandId = 1; // The first command is going to be
+	commandBase.commandId.commandId = 1;    // The first command is going to be
 
-	NetCommandRef *lastCommand = nullptr;
+	NetCommandRef* lastCommand = nullptr;
 
 	Int i = 0;
 	NetPacketBuf buf(m_packet, m_packetLen);
@@ -428,7 +473,7 @@ NetCommandList * NetPacket::getCommandList() {
 
 		if (!isRepeat)
 		{
-			NetCommandRef *ref = nullptr;
+			NetCommandRef* ref = nullptr;
 			i += constructNetCommandRef(ref, commandBase, buf.offset(i));
 
 			if (ref == nullptr)
@@ -441,11 +486,12 @@ NetCommandList * NetPacket::getCommandList() {
 			}
 
 			// increment to the next command ID.
-			if (DoesCommandRequireACommandID((NetCommandType)commandBase.commandType.commandType)) {
+			if (DoesCommandRequireACommandID((NetCommandType)commandBase.commandType.commandType))
+			{
 				++commandBase.commandId.commandId;
 			}
 
-			NetCommandMsg *msg = ref->getCommand();
+			NetCommandMsg* msg = ref->getCommand();
 			msg->attach();
 
 			// add the message to the list.
@@ -460,46 +506,51 @@ NetCommandList * NetPacket::getCommandList() {
 			i += NetPacketRepeatCommand::getSize();
 
 			// Repeat the last command, doing some funky cool byte-saving stuff
-			if (lastCommand == nullptr) {
+			if (lastCommand == nullptr)
+			{
 				DEBUG_CRASH(("Got a repeat command with no command to repeat."));
 			}
 
-			NetCommandMsg *msg = nullptr;
+			NetCommandMsg* msg = nullptr;
 
 			switch (commandBase.commandType.commandType)
 			{
-			case NETCOMMANDTYPE_ACKSTAGE1: {
-				msg = newInstance(NetAckStage1CommandMsg)();
-				NetAckStage1CommandMsg* laststageone = static_cast<NetAckStage1CommandMsg*>(lastCommand->getCommand());
-				((NetAckStage1CommandMsg*)msg)->setCommandID(laststageone->getCommandID() + 1);
-				((NetAckStage1CommandMsg*)msg)->setOriginalPlayerID(laststageone->getOriginalPlayerID());
-				break;
-			}
-			case NETCOMMANDTYPE_ACKSTAGE2: {
-				msg = newInstance(NetAckStage2CommandMsg)();
-				NetAckStage2CommandMsg* laststagetwo = static_cast<NetAckStage2CommandMsg*>(lastCommand->getCommand());
-				((NetAckStage2CommandMsg*)msg)->setCommandID(laststagetwo->getCommandID() + 1);
-				((NetAckStage2CommandMsg*)msg)->setOriginalPlayerID(laststagetwo->getOriginalPlayerID());
-				break;
-			}
-			case NETCOMMANDTYPE_ACKBOTH: {
-				msg = newInstance(NetAckBothCommandMsg)();
-				NetAckBothCommandMsg* lastboth = static_cast<NetAckBothCommandMsg*>(lastCommand->getCommand());
-				((NetAckBothCommandMsg*)msg)->setCommandID(lastboth->getCommandID() + 1);
-				((NetAckBothCommandMsg*)msg)->setOriginalPlayerID(lastboth->getOriginalPlayerID());
-				break;
-			}
-			case NETCOMMANDTYPE_FRAMEINFO: {
-				msg = newInstance(NetFrameCommandMsg)();
-				++commandBase.frame.frame; // this is set below.
-				((NetFrameCommandMsg*)msg)->setCommandCount(0);
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Read a repeated frame command, frame = %d, playerId = %d, commandId = %d",
-					commandBase.frame.frame, commandBase.playerId.playerId, commandBase.commandId.commandId));
-				break;
-			}
-			default:
-				DEBUG_CRASH(("Trying to repeat a command that shouldn't be repeated."));
-				continue;
+				case NETCOMMANDTYPE_ACKSTAGE1:
+				{
+					msg = newInstance(NetAckStage1CommandMsg)();
+					NetAckStage1CommandMsg* laststageone = static_cast<NetAckStage1CommandMsg*>(lastCommand->getCommand());
+					((NetAckStage1CommandMsg*)msg)->setCommandID(laststageone->getCommandID() + 1);
+					((NetAckStage1CommandMsg*)msg)->setOriginalPlayerID(laststageone->getOriginalPlayerID());
+					break;
+				}
+				case NETCOMMANDTYPE_ACKSTAGE2:
+				{
+					msg = newInstance(NetAckStage2CommandMsg)();
+					NetAckStage2CommandMsg* laststagetwo = static_cast<NetAckStage2CommandMsg*>(lastCommand->getCommand());
+					((NetAckStage2CommandMsg*)msg)->setCommandID(laststagetwo->getCommandID() + 1);
+					((NetAckStage2CommandMsg*)msg)->setOriginalPlayerID(laststagetwo->getOriginalPlayerID());
+					break;
+				}
+				case NETCOMMANDTYPE_ACKBOTH:
+				{
+					msg = newInstance(NetAckBothCommandMsg)();
+					NetAckBothCommandMsg* lastboth = static_cast<NetAckBothCommandMsg*>(lastCommand->getCommand());
+					((NetAckBothCommandMsg*)msg)->setCommandID(lastboth->getCommandID() + 1);
+					((NetAckBothCommandMsg*)msg)->setOriginalPlayerID(lastboth->getOriginalPlayerID());
+					break;
+				}
+				case NETCOMMANDTYPE_FRAMEINFO:
+				{
+					msg = newInstance(NetFrameCommandMsg)();
+					++commandBase.frame.frame;    // this is set below.
+					((NetFrameCommandMsg*)msg)->setCommandCount(0);
+					DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Read a repeated frame command, frame = %d, playerId = %d, commandId = %d",
+					                                  commandBase.frame.frame, commandBase.playerId.playerId, commandBase.commandId.commandId));
+					break;
+				}
+				default:
+					DEBUG_CRASH(("Trying to repeat a command that shouldn't be repeated."));
+					continue;
 			}
 
 			msg->setExecutionFrame(commandBase.frame.frame);
@@ -508,13 +559,15 @@ NetCommandList * NetPacket::getCommandList() {
 			msg->setID(commandBase.commandId.commandId);
 
 			// increment to the next command ID.
-			if (DoesCommandRequireACommandID((NetCommandType)commandBase.commandType.commandType)) {
+			if (DoesCommandRequireACommandID((NetCommandType)commandBase.commandType.commandType))
+			{
 				++commandBase.commandId.commandId;
 			}
 
 			// add the message to the list.
-			NetCommandRef *ref = retval->addMessage(msg);
-			if (ref != nullptr) {
+			NetCommandRef* ref = retval->addMessage(msg);
+			if (ref != nullptr)
+			{
 				ref->setRelay(commandBase.relay.relay);
 			}
 
@@ -532,51 +585,60 @@ NetCommandList * NetPacket::getCommandList() {
 /**
  * Returns the number of commands in this packet.  Only valid if the packet is locally constructed.
  */
-Int NetPacket::getNumCommands() {
+Int NetPacket::getNumCommands()
+{
 	return m_numCommands;
 }
 
 /**
  * Returns the address that this packet is to be sent to.  Only valid if the packet is locally constructed.
  */
-UnsignedInt NetPacket::getAddr() {
+UnsignedInt NetPacket::getAddr()
+{
 	return m_addr;
 }
 
 /**
  * Returns the port that this packet is to be sent to.  Only valid if the packet is locally constructed.
  */
-UnsignedShort NetPacket::getPort() {
+UnsignedShort NetPacket::getPort()
+{
 	return m_port;
 }
 
 /**
  * Returns the data of this packet.
  */
-UnsignedByte * NetPacket::getData() {
+UnsignedByte* NetPacket::getData()
+{
 	return m_packet;
 }
 
 /**
  * Returns the length of the packet.
  */
-Int NetPacket::getLength() {
+Int NetPacket::getLength()
+{
 	return m_packetLen;
 }
 
 /**
  * Dumps the packet to the debug log file
  */
-void NetPacket::dumpPacketToLog(const UnsignedByte *packet, Int packetLen) {
+void NetPacket::dumpPacketToLog(const UnsignedByte* packet, Int packetLen)
+{
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::dumpPacketToLog() - packet is %d bytes", packetLen));
 	Int numLines = packetLen / 8;
-	if ((packetLen % 8) != 0) {
+	if ((packetLen % 8) != 0)
+	{
 		++numLines;
 	}
-	for (Int dumpindex = 0; dumpindex < numLines; ++dumpindex) {
-		DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("\t%d\t", dumpindex*8));
-		for (Int dumpindex2 = 0; (dumpindex2 < 8) && ((dumpindex*8 + dumpindex2) < packetLen); ++dumpindex2) {
-			DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("%02x '%c' ", packet[dumpindex*8 + dumpindex2], packet[dumpindex*8 + dumpindex2]));
+	for (Int dumpindex = 0; dumpindex < numLines; ++dumpindex)
+	{
+		DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("\t%d\t", dumpindex * 8));
+		for (Int dumpindex2 = 0; (dumpindex2 < 8) && ((dumpindex * 8 + dumpindex2) < packetLen); ++dumpindex2)
+		{
+			DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("%02x '%c' ", packet[dumpindex * 8 + dumpindex2], packet[dumpindex * 8 + dumpindex2]));
 		}
 		DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("\n"));
 	}

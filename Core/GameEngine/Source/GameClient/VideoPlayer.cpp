@@ -45,7 +45,7 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Lib/BaseType.h"
 #include "GameClient/VideoPlayer.h"
@@ -54,43 +54,31 @@
 //         Externals
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-VideoPlayerInterface *TheVideoPlayer = nullptr;
+VideoPlayerInterface* TheVideoPlayer = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -100,49 +88,46 @@ VideoPlayerInterface *TheVideoPlayer = nullptr;
 // VideoBuffer::VideoBuffer
 //============================================================================
 
-VideoBuffer::VideoBuffer( Type format)
-: m_width(0),
-	m_height(0),
-	m_textureWidth(0),
-	m_textureHeight(0),
-	m_format(format),
-	m_pitch(0),
-	m_xPos(0),
-	m_yPos(0)
+VideoBuffer::VideoBuffer(Type format)
+	: m_width(0)
+	, m_height(0)
+	, m_textureWidth(0)
+	, m_textureHeight(0)
+	, m_format(format)
+	, m_pitch(0)
+	, m_xPos(0)
+	, m_yPos(0)
 {
 
-	if ( m_format >= NUM_TYPES || m_format < 0 )
+	if (m_format >= NUM_TYPES || m_format < 0)
 	{
 		m_format = TYPE_UNKNOWN;
 	}
-
 }
 
 //============================================================================
 // VideoBuffer::Rect
 //============================================================================
 
-RectClass VideoBuffer::Rect( Real x1, Real y1, Real x2, Real y2 )
+RectClass VideoBuffer::Rect(Real x1, Real y1, Real x2, Real y2)
 {
-	RectClass rect(0,0,0,0);
+	RectClass rect(0, 0, 0, 0);
 
-	if ( valid() )
+	if (valid())
 	{
 		rect.Set(
-						((Real)m_width/(Real)m_textureWidth)*x1, ((Real)m_height/(Real)m_textureHeight)*y1,
-						((Real)m_width/(Real)m_textureWidth)*x2, ((Real)m_height/(Real)m_textureHeight)*y2
-					);
+			((Real)m_width / (Real)m_textureWidth) * x1, ((Real)m_height / (Real)m_textureHeight) * y1,
+			((Real)m_width / (Real)m_textureWidth) * x2, ((Real)m_height / (Real)m_textureHeight) * y2);
 	}
 
 	return rect;
-
 }
 
 //============================================================================
 // VideoBuffer::free
 //============================================================================
 
-void	VideoBuffer::free()
+void VideoBuffer::free()
 {
 	m_width = 0;
 	m_height = 0;
@@ -155,9 +140,8 @@ void	VideoBuffer::free()
 //============================================================================
 
 VideoPlayer::VideoPlayer()
-: m_firstStream(nullptr)
+	: m_firstStream(nullptr)
 {
-
 }
 
 //============================================================================
@@ -168,7 +152,8 @@ VideoPlayer::~VideoPlayer()
 {
 	deinit();
 	// Set the video player to null if its us. (WB requires this.)
-	if (this == TheVideoPlayer) {
+	if (this == TheVideoPlayer)
+	{
 		TheVideoPlayer = nullptr;
 	}
 }
@@ -177,13 +162,13 @@ VideoPlayer::~VideoPlayer()
 // VideoPlayer::init
 //============================================================================
 
-void	VideoPlayer::init()
+void VideoPlayer::init()
 {
 	// Load this here so that WB doesn't have to link to BinkLib, costing us (potentially)
 	// an extra license.
 	INI ini;
-	ini.loadFileDirectory( "Data\\INI\\Default\\Video", INI_LOAD_OVERWRITE, nullptr );
-	ini.loadFileDirectory( "Data\\INI\\Video", INI_LOAD_OVERWRITE, nullptr );
+	ini.loadFileDirectory("Data\\INI\\Default\\Video", INI_LOAD_OVERWRITE, nullptr);
+	ini.loadFileDirectory("Data\\INI\\Video", INI_LOAD_OVERWRITE, nullptr);
 }
 
 //============================================================================
@@ -198,7 +183,7 @@ void VideoPlayer::deinit()
 // VideoPlayer::reset
 //============================================================================
 
-void	VideoPlayer::reset()
+void VideoPlayer::reset()
 {
 	closeAllStreams();
 }
@@ -207,42 +192,39 @@ void	VideoPlayer::reset()
 // VideoPlayer::update
 //============================================================================
 
-void	VideoPlayer::update()
+void VideoPlayer::update()
 {
 
-	VideoStreamInterface *stream = firstStream();
+	VideoStreamInterface* stream = firstStream();
 
-	while ( stream )
+	while (stream)
 	{
 		stream->update();
 		stream = stream->next();
 	}
-
 }
 
 //============================================================================
 // VideoPlayer::loseFocus
 //============================================================================
 
-void	VideoPlayer::loseFocus()
+void VideoPlayer::loseFocus()
 {
-
 }
 
 //============================================================================
 // VideoPlayer::regainFocus
 //============================================================================
 
-void	VideoPlayer::regainFocus()
+void VideoPlayer::regainFocus()
 {
-
 }
 
 //============================================================================
 // VideoPlayer::open
 //============================================================================
 
-VideoStreamInterface*	VideoPlayer::open( AsciiString movieTitle )
+VideoStreamInterface* VideoPlayer::open(AsciiString movieTitle)
 {
 	return nullptr;
 }
@@ -251,7 +233,7 @@ VideoStreamInterface*	VideoPlayer::open( AsciiString movieTitle )
 // VideoPlayer::load
 //============================================================================
 
-VideoStreamInterface*	VideoPlayer::load( AsciiString movieTitle )
+VideoStreamInterface* VideoPlayer::load(AsciiString movieTitle)
 {
 	return nullptr;
 }
@@ -269,11 +251,11 @@ VideoStreamInterface* VideoPlayer::firstStream()
 // VideoPlayer::closeAllStreams
 //============================================================================
 
-void	VideoPlayer::closeAllStreams()
+void VideoPlayer::closeAllStreams()
 {
-	VideoStreamInterface *stream ;
+	VideoStreamInterface* stream;
 
-	while ( (stream = firstStream()) != nullptr )
+	while ((stream = firstStream()) != nullptr)
 	{
 		stream->close();
 	}
@@ -283,20 +265,20 @@ void	VideoPlayer::closeAllStreams()
 // VideoPlayer::remove
 //============================================================================
 
-void VideoPlayer::remove( VideoStream *stream_to_remove )
+void VideoPlayer::remove(VideoStream* stream_to_remove)
 {
-	VideoStream *last = nullptr;
-	VideoStream *stream = (VideoStream*) firstStream();
+	VideoStream* last = nullptr;
+	VideoStream* stream = (VideoStream*)firstStream();
 
-	while ( stream != nullptr && stream != stream_to_remove )
+	while (stream != nullptr && stream != stream_to_remove)
 	{
 		last = stream;
-		stream = (VideoStream*) stream->next();
+		stream = (VideoStream*)stream->next();
 	}
 
-	if ( stream )
+	if (stream)
 	{
-		if ( last )
+		if (last)
 		{
 			last->m_next = stream->m_next;
 		}
@@ -310,10 +292,12 @@ void VideoPlayer::remove( VideoStream *stream_to_remove )
 //============================================================================
 // VideoPlayer::addVideo
 //============================================================================
-void VideoPlayer::addVideo( Video* videoToAdd )
+void VideoPlayer::addVideo(Video* videoToAdd)
 {
-	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it) {
-		if (it->m_internalName == videoToAdd->m_internalName) {
+	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it)
+	{
+		if (it->m_internalName == videoToAdd->m_internalName)
+		{
 			(*it) = (*videoToAdd);
 			return;
 		}
@@ -326,10 +310,12 @@ void VideoPlayer::addVideo( Video* videoToAdd )
 //============================================================================
 // VideoPlayer::removeVideo
 //============================================================================
-void VideoPlayer::removeVideo( Video* videoToRemove )
+void VideoPlayer::removeVideo(Video* videoToRemove)
 {
-	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it) {
-		if (it->m_internalName == videoToRemove->m_internalName) {
+	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it)
+	{
+		if (it->m_internalName == videoToRemove->m_internalName)
+		{
 			mVideosAvailableForPlay.erase(it);
 			return;
 		}
@@ -347,10 +333,12 @@ Int VideoPlayer::getNumVideos()
 //============================================================================
 // VideoPlayer::removeVideo
 //============================================================================
-const Video* VideoPlayer::getVideo( AsciiString movieTitle )
+const Video* VideoPlayer::getVideo(AsciiString movieTitle)
 {
-	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it) {
-		if (it->m_internalName == movieTitle) {
+	for (VecVideoIt it = mVideosAvailableForPlay.begin(); it != mVideosAvailableForPlay.end(); ++it)
+	{
+		if (it->m_internalName == movieTitle)
+		{
 			return &(*it);
 		}
 	}
@@ -360,9 +348,10 @@ const Video* VideoPlayer::getVideo( AsciiString movieTitle )
 //============================================================================
 // VideoPlayer::getVideo
 //============================================================================
-const Video* VideoPlayer::getVideo( Int index )
+const Video* VideoPlayer::getVideo(Int index)
 {
-	if (index < 0 || index >= mVideosAvailableForPlay.size()) {
+	if (index < 0 || index >= mVideosAvailableForPlay.size())
+	{
 		return nullptr;
 	}
 
@@ -374,10 +363,9 @@ const Video* VideoPlayer::getVideo( Int index )
 //============================================================================
 
 VideoStream::VideoStream()
-: m_next(nullptr),
-	m_player(nullptr)
+	: m_next(nullptr)
+	, m_player(nullptr)
 {
-
 }
 
 //============================================================================
@@ -387,12 +375,11 @@ VideoStream::VideoStream()
 VideoStream::~VideoStream()
 {
 
-	if ( m_player )
+	if (m_player)
 	{
-		m_player->remove( this );
+		m_player->remove(this);
 		m_player = nullptr;
 	}
-
 }
 
 //============================================================================
@@ -436,16 +423,14 @@ Bool VideoStream::isFrameReady()
 
 void VideoStream::frameDecompress()
 {
-
 }
 
 //============================================================================
 // VideoStream::frameRender
 //============================================================================
 
-void VideoStream::frameRender( VideoBuffer *buffer )
+void VideoStream::frameRender(VideoBuffer* buffer)
 {
-
 }
 
 //============================================================================
@@ -454,7 +439,6 @@ void VideoStream::frameRender( VideoBuffer *buffer )
 
 void VideoStream::frameNext()
 {
-
 }
 
 //============================================================================
@@ -470,7 +454,7 @@ Int VideoStream::frameIndex()
 // VideoStream::totalFrames
 //============================================================================
 
-Int	VideoStream::frameCount()
+Int VideoStream::frameCount()
 {
 	return 0;
 }
@@ -479,16 +463,15 @@ Int	VideoStream::frameCount()
 // VideoStream::frameGoto
 //============================================================================
 
-void VideoStream::frameGoto( Int index )
+void VideoStream::frameGoto(Int index)
 {
-
 }
 
 //============================================================================
 // VideoStream::height
 //============================================================================
 
-Int		VideoStream::height()
+Int VideoStream::height()
 {
 	return 0;
 }
@@ -497,16 +480,14 @@ Int		VideoStream::height()
 // VideoStream::width
 //============================================================================
 
-Int		VideoStream::width()
+Int VideoStream::width()
 {
 	return 0;
 }
 
-
 const FieldParse VideoPlayer::m_videoFieldParseTable[] =
-{
-	{ "Filename",								INI::parseAsciiString,							nullptr, offsetof( Video, m_filename) },
-	{ "Comment",								INI::parseAsciiString,							nullptr, offsetof( Video, m_commentForWB) },
-	{ nullptr,											nullptr,																nullptr, 0 },
+	{
+		{"Filename", INI::parseAsciiString, nullptr, offsetof(Video, m_filename)},
+		{"Comment", INI::parseAsciiString, nullptr, offsetof(Video, m_commentForWB)},
+		{nullptr, nullptr, nullptr, 0},
 };
-

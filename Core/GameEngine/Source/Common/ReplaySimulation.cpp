@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ReplaySimulation.h"
 
@@ -26,7 +26,6 @@
 #include "Common/WorkerProcess.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
-
 
 Bool ReplaySimulation::s_isRunning = false;
 UnsignedInt ReplaySimulation::s_replayIndex = 0;
@@ -45,9 +44,9 @@ int countProcessesRunning(const std::vector<WorkerProcess>& processes)
 	}
 	return numProcessesRunning;
 }
-} // namespace
+}    // namespace
 
-int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
+int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString>& filenames)
 {
 	int numErrors = 0;
 
@@ -86,14 +85,14 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 			UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
 			while (TheRecorder->isPlaybackInProgress())
 			{
-				const int progressFrameInterval = 10*60*LOGICFRAMES_PER_SECOND;
+				const int progressFrameInterval = 10 * 60 * LOGICFRAMES_PER_SECOND;
 				if (TheGameLogic->getFrame() != 0 && TheGameLogic->getFrame() % progressFrameInterval == 0)
 				{
 					// Print progress report
 					UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-					UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+					UnsignedInt realTimeSec = (GetTickCount() - startTimeMillis) / 1000;
 					printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
-							realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
+					       realTimeSec / 60, realTimeSec % 60, gameTimeSec / 60, gameTimeSec % 60, totalTimeSec / 60, totalTimeSec % 60);
 					fflush(stdout);
 				}
 				TheGameLogic->UPDATE();
@@ -104,9 +103,9 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 				}
 			}
 			UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-			UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
+			UnsignedInt realTimeSec = (GetTickCount() - startTimeMillis) / 1000;
 			printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
-					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
+			       realTimeSec / 60, realTimeSec % 60, gameTimeSec / 60, gameTimeSec % 60, totalTimeSec / 60, totalTimeSec % 60);
 			fflush(stdout);
 		}
 		else
@@ -119,15 +118,15 @@ int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString
 	{
 		printf("Simulation of all replays completed. Errors occurred: %d\n", numErrors);
 
-		UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
-		printf("Total Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
+		UnsignedInt realTime = (GetTickCount() - totalStartTimeMillis) / 1000;
+		printf("Total Time: %d:%02d:%02d\n", realTime / 60 / 60, realTime / 60 % 60, realTime % 60);
 		fflush(stdout);
 	}
 
 	return numErrors != 0 ? 1 : 0;
 }
 
-int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses)
+int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiString>& filenames, int maxProcesses)
 {
 	DWORD totalStartTimeMillis = GetTickCount();
 
@@ -151,7 +150,7 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 			if (!processes[0].isDone())
 				break;
 			AsciiString stdOutput = processes[0].getStdOutput();
-			printf("%d/%d %s", filenamePositionDone+1, (int)filenames.size(), stdOutput.str());
+			printf("%d/%d %s", filenamePositionDone + 1, (int)filenames.size(), stdOutput.str());
 			DWORD exitcode = processes[0].getExitCode();
 			if (exitcode != 0)
 				printf("Error!\n");
@@ -170,10 +169,10 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 			filenameWide.translate(filenames[filenamePositionStarted]);
 			UnicodeString command;
 			command.format(L"\"%s\"%s%s -replay \"%s\"",
-				exePath,
-				TheGlobalData->m_windowed ? L" -win" : L"",
-				TheGlobalData->m_headless ? L" -headless" : L"",
-				filenameWide.str());
+			               exePath,
+			               TheGlobalData->m_windowed ? L" -win" : L"",
+			               TheGlobalData->m_headless ? L" -headless" : L"",
+			               filenameWide.str());
 
 			processes.push_back(WorkerProcess());
 			processes.back().startProcess(command);
@@ -194,14 +193,14 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 
 	printf("Simulation of all replays completed. Errors occurred: %d\n", numErrors);
 
-	UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
-	printf("Total Wall Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
+	UnsignedInt realTime = (GetTickCount() - totalStartTimeMillis) / 1000;
+	printf("Total Wall Time: %d:%02d:%02d\n", realTime / 60 / 60, realTime / 60 % 60, realTime % 60);
 	fflush(stdout);
 
 	return numErrors != 0 ? 1 : 0;
 }
 
-std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::vector<AsciiString> &filenames)
+std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::vector<AsciiString>& filenames)
 {
 	// If some filename contains wildcards, search for actual filenames.
 	// Note that we cannot do this in parseReplay because we require TheLocalFileSystem initialized.
@@ -217,10 +216,10 @@ std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::v
 				int len = dir2.getLength();
 				while (len)
 				{
-					char c = dir2.getCharAt(len-1);
+					char c = dir2.getCharAt(len - 1);
 					if (c == '/' || c == '\\')
 					{
-						wildcard.set(wildcard.str()+dir2.getLength());
+						wildcard.set(wildcard.str() + dir2.getLength());
 						break;
 					}
 					dir2.removeLastChar();
@@ -243,7 +242,7 @@ std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::v
 	return filenamesResolved;
 }
 
-int ReplaySimulation::simulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses)
+int ReplaySimulation::simulateReplays(const std::vector<AsciiString>& filenames, int maxProcesses)
 {
 	std::vector<AsciiString> filenamesResolved = resolveFilenameWildcards(filenames);
 	if (maxProcesses == SIMULATE_REPLAYS_SEQUENTIAL)

@@ -39,88 +39,86 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<>
+template <>
 const char* const DamageTypeFlags::s_bitNameList[] =
-{
-	"EXPLOSION",
-	"CRUSH",
-	"ARMOR_PIERCING",
-	"SMALL_ARMS",
-	"GATTLING",
-	"RADIATION",
-	"FLAME",
-	"LASER",
-	"SNIPER",
-	"POISON",
-	"HEALING",
-	"UNRESISTABLE",
-	"WATER",
-	"DEPLOY",
-	"SURRENDER",
-	"HACK",
-	"KILL_PILOT",
-	"PENALTY",
-	"FALLING",
-	"MELEE",
-	"DISARM",
-	"HAZARD_CLEANUP",
-	"PARTICLE_BEAM",
-	"TOPPLING",
-	"INFANTRY_MISSILE",
-	"AURORA_BOMB",
-	"LAND_MINE",
-	"JET_MISSILES",
-	"STEALTHJET_MISSILES",
-	"MOLOTOV_COCKTAIL",
-	"COMANCHE_VULCAN",
+	{
+		"EXPLOSION",
+		"CRUSH",
+		"ARMOR_PIERCING",
+		"SMALL_ARMS",
+		"GATTLING",
+		"RADIATION",
+		"FLAME",
+		"LASER",
+		"SNIPER",
+		"POISON",
+		"HEALING",
+		"UNRESISTABLE",
+		"WATER",
+		"DEPLOY",
+		"SURRENDER",
+		"HACK",
+		"KILL_PILOT",
+		"PENALTY",
+		"FALLING",
+		"MELEE",
+		"DISARM",
+		"HAZARD_CLEANUP",
+		"PARTICLE_BEAM",
+		"TOPPLING",
+		"INFANTRY_MISSILE",
+		"AURORA_BOMB",
+		"LAND_MINE",
+		"JET_MISSILES",
+		"STEALTHJET_MISSILES",
+		"MOLOTOV_COCKTAIL",
+		"COMANCHE_VULCAN",
 #if RTS_GENERALS
-	"FLESHY_SNIPER",
+		"FLESHY_SNIPER",
 #endif
-	"SUBDUAL_MISSILE",
-	"SUBDUAL_VEHICLE",
-	"SUBDUAL_BUILDING",
-	"SUBDUAL_UNRESISTABLE",
-	"MICROWAVE",
-	"KILL_GARRISONED",
-	"STATUS",
+		"SUBDUAL_MISSILE",
+		"SUBDUAL_VEHICLE",
+		"SUBDUAL_BUILDING",
+		"SUBDUAL_UNRESISTABLE",
+		"MICROWAVE",
+		"KILL_GARRISONED",
+		"STATUS",
 
-	nullptr
-};
+		nullptr};
 static_assert(ARRAY_SIZE(DamageTypeFlags::s_bitNameList) == DamageTypeFlags::NumBits + 1, "Incorrect array size");
 
-DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE; 	// inits to all zeroes
+DamageTypeFlags DAMAGE_TYPE_FLAGS_NONE;    // inits to all zeroes
 DamageTypeFlags DAMAGE_TYPE_FLAGS_ALL(DamageTypeFlags::kInitSetAll);
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DamageInfo::xfer( Xfer *xfer )
+void DamageInfo::xfer(Xfer* xfer)
 {
 
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// xfer input
-	xfer->xferSnapshot( &in );
+	xfer->xferSnapshot(&in);
 
 	// xfer output
-	xfer->xferSnapshot( &out );
-
+	xfer->xferSnapshot(&out);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version
-	* 2: Damage FX override (Added for Zero Hour)
-	* 3: Shock wave and damage status type (Added for Zero Hour)
-*/
+ * Version Info:
+ * 1: Initial version
+ * 2: Damage FX override (Added for Zero Hour)
+ * 3: Shock wave and damage status type (Added for Zero Hour)
+ */
 // ------------------------------------------------------------------------------------------------
-void DamageInfoInput::xfer( Xfer *xfer )
+void DamageInfoInput::xfer(Xfer* xfer)
 {
 
 	// version
@@ -131,73 +129,70 @@ void DamageInfoInput::xfer( Xfer *xfer )
 #endif
 
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// source id
-	xfer->xferObjectID( &m_sourceID );
+	xfer->xferObjectID(&m_sourceID);
 
 	// source player mask
-	xfer->xferUser( &m_sourcePlayerMask, sizeof( PlayerMaskType ) );
+	xfer->xferUser(&m_sourcePlayerMask, sizeof(PlayerMaskType));
 
 	// damage type
-	xfer->xferUser( &m_damageType, sizeof( DamageType ) );
+	xfer->xferUser(&m_damageType, sizeof(DamageType));
 
 	// damage FX Override
-	if( version >= 2 )
-		xfer->xferUser( &m_damageFXOverride, sizeof( DamageType ) );
+	if (version >= 2)
+		xfer->xferUser(&m_damageFXOverride, sizeof(DamageType));
 
 	// death type
-	xfer->xferUser( &m_deathType, sizeof( DeathType ) );
+	xfer->xferUser(&m_deathType, sizeof(DeathType));
 
 	// amount
-	xfer->xferReal( &m_amount );
+	xfer->xferReal(&m_amount);
 
 	// kill no matter what (old versions default to FALSE).
-	if( currentVersion >= 2 )
+	if (currentVersion >= 2)
 	{
-		xfer->xferBool( &m_kill );
+		xfer->xferBool(&m_kill);
 	}
 
-	if( version >= 3 )
+	if (version >= 3)
 	{
-		xfer->xferUser( &m_damageStatusType, sizeof(ObjectStatusTypes) );//It's an enum
+		xfer->xferUser(&m_damageStatusType, sizeof(ObjectStatusTypes));    // It's an enum
 
 		xfer->xferCoord3D(&m_shockWaveVector);
-		xfer->xferReal( &m_shockWaveAmount );
-		xfer->xferReal( &m_shockWaveRadius );
-		xfer->xferReal( &m_shockWaveTaperOff );
+		xfer->xferReal(&m_shockWaveAmount);
+		xfer->xferReal(&m_shockWaveRadius);
+		xfer->xferReal(&m_shockWaveTaperOff);
 
 		AsciiString thingString = m_sourceTemplate ? m_sourceTemplate->getName() : AsciiString::TheEmptyString;
-		xfer->xferAsciiString( &thingString );
-		if( xfer->getXferMode() == XFER_LOAD )
+		xfer->xferAsciiString(&thingString);
+		if (xfer->getXferMode() == XFER_LOAD)
 		{
-			m_sourceTemplate = TheThingFactory->findTemplate( thingString );
+			m_sourceTemplate = TheThingFactory->findTemplate(thingString);
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DamageInfoOutput::xfer( Xfer *xfer )
+void DamageInfoOutput::xfer(Xfer* xfer)
 {
 
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// actual damage
-	xfer->xferReal( &m_actualDamageDealt );
+	xfer->xferReal(&m_actualDamageDealt);
 
 	// damage clipped
-	xfer->xferReal( &m_actualDamageClipped );
+	xfer->xferReal(&m_actualDamageClipped);
 
 	// no effect
-	xfer->xferBool( &m_noEffect );
-
+	xfer->xferBool(&m_noEffect);
 }
-

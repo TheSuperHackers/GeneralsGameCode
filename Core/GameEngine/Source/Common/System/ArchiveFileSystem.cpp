@@ -51,48 +51,35 @@
 #include "Common/AsciiString.h"
 #include "Common/PerfTimer.h"
 
-
 //----------------------------------------------------------------------------
 //         Externals
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Defines
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Types
 //----------------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------------
 //         Private Data
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Public Data
 //----------------------------------------------------------------------------
 
-ArchiveFileSystem *TheArchiveFileSystem = nullptr;
-
+ArchiveFileSystem* TheArchiveFileSystem = nullptr;
 
 //----------------------------------------------------------------------------
 //         Private Prototypes
 //----------------------------------------------------------------------------
 
-
-
 //----------------------------------------------------------------------------
 //         Private Functions
 //----------------------------------------------------------------------------
-
-
 
 //----------------------------------------------------------------------------
 //         Public Functions
@@ -108,14 +95,15 @@ ArchiveFileSystem::ArchiveFileSystem()
 ArchiveFileSystem::~ArchiveFileSystem()
 {
 	ArchiveFileMap::iterator iter = m_archiveFileMap.begin();
-	while (iter != m_archiveFileMap.end()) {
-		ArchiveFile *file = iter->second;
+	while (iter != m_archiveFileMap.end())
+	{
+		ArchiveFile* file = iter->second;
 		delete file;
 		iter++;
 	}
 }
 
-void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool overwrite)
+void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile* archiveFile, Bool overwrite)
 {
 
 	FilenameList filenameList;
@@ -126,7 +114,7 @@ void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool ove
 
 	while (it != filenameList.end())
 	{
-		ArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
+		ArchivedDirectoryInfo* dirInfo = &m_rootDirectory;
 
 		AsciiString path;
 		AsciiString token;
@@ -182,10 +170,9 @@ void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool ove
 					rangeIt1 = std::next(rangeIt0);
 
 					DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s, overwriting same file in %s",
-						it->str(),
-						rangeIt0->second->getName().str(),
-						rangeIt1->second->getName().str()
-					));
+					           it->str(),
+					           rangeIt0->second->getName().str(),
+					           rangeIt1->second->getName().str()));
 				}
 				else
 				{
@@ -193,10 +180,9 @@ void ArchiveFileSystem::loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool ove
 					rangeIt0 = std::prev(rangeIt1);
 
 					DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s, overwritten by same file in %s",
-						it->str(),
-						rangeIt1->second->getName().str(),
-						rangeIt0->second->getName().str()
-					));
+					           it->str(),
+					           rangeIt1->second->getName().str(),
+					           rangeIt0->second->getName().str()));
 				}
 			}
 			else
@@ -214,9 +200,10 @@ void ArchiveFileSystem::loadMods()
 {
 	if (TheGlobalData->m_modBIG.isNotEmpty())
 	{
-		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
+		ArchiveFile* archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
 
-		if (archiveFile != nullptr) {
+		if (archiveFile != nullptr)
+		{
 			DEBUG_LOG(("ArchiveFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
 			loadIntoDirectoryTree(archiveFile, TRUE);
 			m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;
@@ -236,7 +223,7 @@ void ArchiveFileSystem::loadMods()
 	}
 }
 
-Bool ArchiveFileSystem::doesFileExist(const Char *filename, FileInstance instance) const
+Bool ArchiveFileSystem::doesFileExist(const Char* filename, FileInstance instance) const
 {
 	ArchivedDirectoryInfoResult result = const_cast<ArchiveFileSystem*>(this)->getArchivedDirectoryInfo(filename);
 
@@ -287,7 +274,7 @@ ArchiveFileSystem::ArchivedDirectoryInfoResult ArchiveFileSystem::getArchivedDir
 	return result;
 }
 
-File * ArchiveFileSystem::openFile(const Char *filename, Int access, FileInstance instance)
+File* ArchiveFileSystem::openFile(const Char* filename, Int access, FileInstance instance)
 {
 	ArchiveFile* archive = getArchiveFile(filename, instance);
 
@@ -297,13 +284,15 @@ File * ArchiveFileSystem::openFile(const Char *filename, Int access, FileInstanc
 	return archive->openFile(filename, access);
 }
 
-Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance) const
+Bool ArchiveFileSystem::getFileInfo(const AsciiString& filename, FileInfo* fileInfo, FileInstance instance) const
 {
-	if (fileInfo == nullptr) {
+	if (fileInfo == nullptr)
+	{
 		return FALSE;
 	}
 
-	if (filename.isEmpty()) {
+	if (filename.isEmpty())
+	{
 		return FALSE;
 	}
 
@@ -326,14 +315,15 @@ ArchiveFile* ArchiveFileSystem::getArchiveFile(const AsciiString& filename, File
 
 	if (!range.valid())
 		return nullptr;
-	
+
 	return range.get()->second;
 }
 
-void ArchiveFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
+void ArchiveFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList& filenameList, Bool searchSubdirectories) const
 {
 	ArchiveFileMap::const_iterator it = m_archiveFileMap.begin();
-	while (it != m_archiveFileMap.end()) {
+	while (it != m_archiveFileMap.end())
+	{
 		it->second->getFileListInDirectory(currentDirectory, originalDirectory, searchName, filenameList, searchSubdirectories);
 		it++;
 	}

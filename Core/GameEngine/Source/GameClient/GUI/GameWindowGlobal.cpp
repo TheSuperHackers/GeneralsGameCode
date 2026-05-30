@@ -45,7 +45,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/Image.h"
@@ -71,170 +71,156 @@
 
 // GameWindowManager::winDrawImage ============================================
 /** draw image, coord are in screen and should be kepth within
-	* that box specified */
+ * that box specified */
 //=============================================================================
-void GameWindowManager::winDrawImage( const Image *image, Int startX, Int startY,
-																			Int endX, Int endY, Color color )
+void GameWindowManager::winDrawImage(const Image* image, Int startX, Int startY,
+                                     Int endX, Int endY, Color color)
 {
 
-	TheDisplay->drawImage( image, startX, startY, endX, endY, color );
-
+	TheDisplay->drawImage(image, startX, startY, endX, endY, color);
 }
 
 // GameWindowManager::winFillRect =============================================
 /** draw filled rect, coords are absolute screen coords */
 //=============================================================================
-void GameWindowManager::winFillRect( Color color, Real width,
-																		 Int startX, Int startY,
-																		 Int endX, Int endY )
+void GameWindowManager::winFillRect(Color color, Real width,
+                                    Int startX, Int startY,
+                                    Int endX, Int endY)
 {
 
-	TheDisplay->drawFillRect( startX, startY,
-														endX - startX, endY - startY,
-														color );
-
+	TheDisplay->drawFillRect(startX, startY,
+	                         endX - startX, endY - startY,
+	                         color);
 }
 
 // GameWindowManager::winOpenRect =============================================
 /** draw rect outline, coords are absolute screen coords */
 //=============================================================================
-void GameWindowManager::winOpenRect( Color color, Real width,
-																		 Int startX, Int startY,
-																		 Int endX, Int endY )
+void GameWindowManager::winOpenRect(Color color, Real width,
+                                    Int startX, Int startY,
+                                    Int endX, Int endY)
 {
 
-	TheDisplay->drawOpenRect( startX, startY,
-														endX - startX, endY - startY,
-														width, color );
-
+	TheDisplay->drawOpenRect(startX, startY,
+	                         endX - startX, endY - startY,
+	                         width, color);
 }
 
 // GameWindowManager::winDrawLine =============================================
 /** draw line, coords are absolute screen coords */
 //=============================================================================
-void GameWindowManager::winDrawLine( Color color, Real width,
-																		 Int startX, Int startY,
-																		 Int endX, Int endY )
+void GameWindowManager::winDrawLine(Color color, Real width,
+                                    Int startX, Int startY,
+                                    Int endX, Int endY)
 {
 
-	TheDisplay->drawLine( startX, startY, endX, endY, width, color );
-
+	TheDisplay->drawLine(startX, startY, endX, endY, width, color);
 }
 
 // GameWindowManager::winFindImage ============================================
 /** Given an image name, return an image loc to that image information.
-	* You may reorganize the image loc structure however you like to suit
-	* your individual project */
+ * You may reorganize the image loc structure however you like to suit
+ * your individual project */
 //=============================================================================
-const Image *GameWindowManager::winFindImage( const char *name )
+const Image* GameWindowManager::winFindImage(const char* name)
 {
 
-	assert( TheMappedImageCollection );
-	if( TheMappedImageCollection )
-		return TheMappedImageCollection->findImageByName( name );
+	assert(TheMappedImageCollection);
+	if (TheMappedImageCollection)
+		return TheMappedImageCollection->findImageByName(name);
 
 	return nullptr;
-
 }
 
 // GameWindowManager::winMakeColor ============================================
 /** Given RGBA, make a color, you can change color representation for your
-	* individual project needs */
+ * individual project needs */
 //=============================================================================
-Color GameWindowManager::winMakeColor( UnsignedByte red,
-																			 UnsignedByte green,
-																			 UnsignedByte blue,
-																			 UnsignedByte alpha )
+Color GameWindowManager::winMakeColor(UnsignedByte red,
+                                      UnsignedByte green,
+                                      UnsignedByte blue,
+                                      UnsignedByte alpha)
 {
 
-	return GameMakeColor( red, green, blue, alpha );
-
+	return GameMakeColor(red, green, blue, alpha);
 }
 
 // GameWindowManager::winFormatText ===========================================
 /** draw text to the screen */
 //=============================================================================
-void GameWindowManager::winFormatText( GameFont *font, UnicodeString text, Color color,
-																			 Int x, Int y, Int width, Int height )
+void GameWindowManager::winFormatText(GameFont* font, UnicodeString text, Color color,
+                                      Int x, Int y, Int width, Int height)
 {
 
 	/// @todo make all display string rendering go through here!
-
 }
 
 // GameWindowManager::winGetTextSize ==========================================
 /** get the extent size of text */
 //=============================================================================
-void GameWindowManager::winGetTextSize( GameFont *font, UnicodeString text,
-																				Int *width, Int *height, Int maxWidth )
+void GameWindowManager::winGetTextSize(GameFont* font, UnicodeString text,
+                                       Int* width, Int* height, Int maxWidth)
 {
 
 	/// @todo make display string size stuff go through here
 
-	if( width )
+	if (width)
 		*width = 0;
 
-	if( height )
+	if (height)
 		*height = 0;
-
 }
 
 // GameWindowManager::winFontHeight ===========================================
 /** Return the font height in pixels */
 //=============================================================================
-Int GameWindowManager::winFontHeight( GameFont *font )
+Int GameWindowManager::winFontHeight(GameFont* font)
 {
 
 	if (font == nullptr)
 		return 0;
 
 	return font->height;
-
 }
 
 // GameWindowManager::winIsDigit ==============================================
 /** You implementation of whether or not character is a digit */
 //=============================================================================
-Int GameWindowManager::winIsDigit( Int c )
+Int GameWindowManager::winIsDigit(Int c)
 {
 
-	return iswdigit( c );
-
+	return iswdigit(c);
 }
 
 // GameWindowManager::winIsAscii ==============================================
 /** You implementation of whether or not character is ascii */
 //=============================================================================
-Int GameWindowManager::winIsAscii( Int c )
+Int GameWindowManager::winIsAscii(Int c)
 {
 
-	return iswascii( c );
-
+	return iswascii(c);
 }
 
 // GameWindowManager::winIsAlNum ==============================================
 /** Your implementation of whether or not character is alpha numeric */
 //=============================================================================
-Int GameWindowManager::winIsAlNum( Int c )
+Int GameWindowManager::winIsAlNum(Int c)
 {
 
-	return iswalnum( c );
-
+	return iswalnum(c);
 }
 
 // GameWindowManager::winFindFont =============================================
 /** Get a font */
 //=============================================================================
-GameFont *GameWindowManager::winFindFont( AsciiString fontName,
-																					Int pointSize,
-																					Bool bold )
+GameFont* GameWindowManager::winFindFont(AsciiString fontName,
+                                         Int pointSize,
+                                         Bool bold)
 {
 
-	assert( TheFontLibrary );
-	if( TheFontLibrary )
-		return TheFontLibrary->getFont( fontName, pointSize, bold );
+	assert(TheFontLibrary);
+	if (TheFontLibrary)
+		return TheFontLibrary->getFont(fontName, pointSize, bold);
 
 	return nullptr;
-
 }
-

@@ -26,27 +26,25 @@
 // Part of header detangling
 // John McDonald, Aug 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameCommon.h"
 
-const char *const TheVeterancyNames[] =
-{
-	"REGULAR",
-	"VETERAN",
-	"ELITE",
-	"HEROIC",
-	nullptr
-};
+const char* const TheVeterancyNames[] =
+	{
+		"REGULAR",
+		"VETERAN",
+		"ELITE",
+		"HEROIC",
+		nullptr};
 static_assert(ARRAY_SIZE(TheVeterancyNames) == LEVEL_COUNT + 1, "Incorrect array size");
 
-const char *const TheRelationshipNames[] =
-{
-	"ENEMIES",
-	"NEUTRAL",
-	"ALLIES",
-	nullptr
-};
+const char* const TheRelationshipNames[] =
+	{
+		"ENEMIES",
+		"NEUTRAL",
+		"ALLIES",
+		nullptr};
 static_assert(ARRAY_SIZE(TheRelationshipNames) == RELATIONSHIP_COUNT + 1, "Incorrect array size");
 
 //-------------------------------------------------------------------------------------------------
@@ -55,15 +53,14 @@ Real normalizeAngle(Real angle)
 {
 	DEBUG_ASSERTCRASH(!_isnan(angle), ("Angle is NAN in normalizeAngle!"));
 
-	if( _isnan(angle) )
-		return 0;// ARGH!!!! Don't assert and then not handle it!  Error bad!  Fix error!
+	if (_isnan(angle))
+		return 0;    // ARGH!!!! Don't assert and then not handle it!  Error bad!  Fix error!
 
 	while (angle > PI)
-		angle -= 2*PI;
+		angle -= 2 * PI;
 
 	while (angle <= -PI)
-		angle += 2*PI;
+		angle += 2 * PI;
 
 	return angle;
 }
-

@@ -26,32 +26,32 @@
 // Westwood Online screen setup/teardown
 // Author: Matthew D. Campbell, November 2001
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/AudioEventRTS.h"
 
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MessageBox.h"
 #include "GameClient/ShellHooks.h"
-//#include "GameNetwork/GameSpy.h"
-//#include "GameNetwork/GameSpyGP.h"
+// #include "GameNetwork/GameSpy.h"
+// #include "GameNetwork/GameSpyGP.h"
 
 #include "GameNetwork/GameSpyOverlay.h"
-//#include "GameNetwork/GameSpy/PeerDefs.h"
+// #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
 void deleteNotificationBox();
 static void raiseOverlays();
 
 // Message boxes -------------------------------------
-static GameWindow *messageBoxWindow = nullptr;
+static GameWindow* messageBoxWindow = nullptr;
 static GameWinMsgBoxFunc okFunc = nullptr;
 static GameWinMsgBoxFunc cancelFunc = nullptr;
 static Bool reOpenPlayerInfoFlag = FALSE;
 /**
-	* messageBoxOK is called when a message box is destroyed
-	* by way of an OK button, so we can clear our pointers to it.
-	*/
+ * messageBoxOK is called when a message box is destroyed
+ * by way of an OK button, so we can clear our pointers to it.
+ */
 static void messageBoxOK()
 {
 	DEBUG_ASSERTCRASH(messageBoxWindow, ("Message box window went away without being there in the first place!"));
@@ -64,9 +64,9 @@ static void messageBoxOK()
 }
 
 /**
-	* messageBoxCancel is called when a message box is destroyed
-	* by way of a Cancel button, so we can clear our pointers to it.
-	*/
+ * messageBoxCancel is called when a message box is destroyed
+ * by way of a Cancel button, so we can clear our pointers to it.
+ */
 static void messageBoxCancel()
 {
 	DEBUG_ASSERTCRASH(messageBoxWindow, ("Message box window went away without being there in the first place!"));
@@ -79,10 +79,10 @@ static void messageBoxCancel()
 }
 
 /**
-	* clearGSMessageBoxes removes the current message box if
-	* one is present.  This is usually done when putting up a
-	* second messageBox.
-	*/
+ * clearGSMessageBoxes removes the current message box if
+ * one is present.  This is usually done when putting up a
+ * second messageBox.
+ */
 void ClearGSMessageBoxes()
 {
 	if (messageBoxWindow)
@@ -103,9 +103,9 @@ void ClearGSMessageBoxes()
 }
 
 /**
-	* GSMessageBoxOk puts up an OK dialog box and saves the
-	* pointers to it and its callbacks.
-	*/
+ * GSMessageBoxOk puts up an OK dialog box and saves the
+ * pointers to it and its callbacks.
+ */
 void GSMessageBoxOk(UnicodeString title, UnicodeString message, GameWinMsgBoxFunc newOkFunc)
 {
 	ClearGSMessageBoxes();
@@ -114,9 +114,9 @@ void GSMessageBoxOk(UnicodeString title, UnicodeString message, GameWinMsgBoxFun
 }
 
 /**
-	* GSMessageBoxOkCancel puts up an OK/Cancel dialog box and saves the
-	* pointers to it and its callbacks.
-	*/
+ * GSMessageBoxOkCancel puts up an OK/Cancel dialog box and saves the
+ * pointers to it and its callbacks.
+ */
 void GSMessageBoxOkCancel(UnicodeString title, UnicodeString message, GameWinMsgBoxFunc newOkFunc, GameWinMsgBoxFunc newCancelFunc)
 {
 	ClearGSMessageBoxes();
@@ -126,9 +126,9 @@ void GSMessageBoxOkCancel(UnicodeString title, UnicodeString message, GameWinMsg
 }
 
 /**
-	* GSMessageBoxYesNo puts up a Yes/No dialog box and saves the
-	* pointers to it and its callbacks.
-	*/
+ * GSMessageBoxYesNo puts up a Yes/No dialog box and saves the
+ * pointers to it and its callbacks.
+ */
 void GSMessageBoxYesNo(UnicodeString title, UnicodeString message, GameWinMsgBoxFunc newYesFunc, GameWinMsgBoxFunc newNoFunc)
 {
 	ClearGSMessageBoxes();
@@ -138,9 +138,9 @@ void GSMessageBoxYesNo(UnicodeString title, UnicodeString message, GameWinMsgBox
 }
 
 /**
-	* If the screen transitions underneath the dialog box, we
-	* need to raise it to keep it visible.
-	*/
+ * If the screen transitions underneath the dialog box, we
+ * need to raise it to keep it visible.
+ */
 void RaiseGSMessageBox()
 {
 	raiseOverlays();
@@ -154,43 +154,43 @@ void RaiseGSMessageBox()
 // Overlay screens -------------------------------------
 
 /**
-	* gsOverlays holds a list of the .wnd files used in GS overlays.
-	* The entries *MUST* be in the same order as the GSOverlayType enum.
-	*/
-static const char * gsOverlays[GSOVERLAY_MAX] =
-{
-	"Menus/PopupPlayerInfo.wnd",	// Player info (right-click)
-	"Menus/WOLMapSelectMenu.wnd",	// Map select
-	"Menus/WOLBuddyOverlay.wnd",	// Buddy list
-	"Menus/WOLPageOverlay.wnd",		// Find/page
-	"Menus/PopupHostGame.wnd",		// Hosting options (game name, password, etc)
-	"Menus/PopupJoinGame.wnd",		// Joining options (password, etc)
-	"Menus/PopupLadderSelect.wnd",// LadderSelect
-	"Menus/PopupLocaleSelect.wnd",// Prompt for user's locale
-	"Menus/OptionsMenu.wnd",			// popup options
+ * gsOverlays holds a list of the .wnd files used in GS overlays.
+ * The entries *MUST* be in the same order as the GSOverlayType enum.
+ */
+static const char* gsOverlays[GSOVERLAY_MAX] =
+	{
+		"Menus/PopupPlayerInfo.wnd",    // Player info (right-click)
+		"Menus/WOLMapSelectMenu.wnd",    // Map select
+		"Menus/WOLBuddyOverlay.wnd",    // Buddy list
+		"Menus/WOLPageOverlay.wnd",    // Find/page
+		"Menus/PopupHostGame.wnd",    // Hosting options (game name, password, etc)
+		"Menus/PopupJoinGame.wnd",    // Joining options (password, etc)
+		"Menus/PopupLadderSelect.wnd",    // LadderSelect
+		"Menus/PopupLocaleSelect.wnd",    // Prompt for user's locale
+		"Menus/OptionsMenu.wnd",    // popup options
 };
 
-static WindowLayout *overlayLayouts[GSOVERLAY_MAX] =
-{
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
-	nullptr,
+static WindowLayout* overlayLayouts[GSOVERLAY_MAX] =
+	{
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
 };
 
 static void buddyTryReconnect()
 {
 	BuddyRequest req;
 	req.buddyRequestType = BuddyRequest::BUDDYREQUEST_RELOGIN;
-	TheGameSpyBuddyMessageQueue->addRequest( req );
+	TheGameSpyBuddyMessageQueue->addRequest(req);
 }
 
-void GameSpyOpenOverlay( GSOverlayType overlay )
+void GameSpyOpenOverlay(GSOverlayType overlay)
 {
 	if (overlay == GSOVERLAY_BUDDY)
 	{
@@ -211,28 +211,28 @@ void GameSpyOpenOverlay( GSOverlayType overlay )
 		}
 		AudioEventRTS buttonClick("GUICommunicatorOpen");
 
-		if( TheAudio )
+		if (TheAudio)
 		{
-			TheAudio->addAudioEvent( &buttonClick );
+			TheAudio->addAudioEvent(&buttonClick);
 		}
 	}
 	if (overlayLayouts[overlay])
 	{
-		overlayLayouts[overlay]->hide( FALSE );
+		overlayLayouts[overlay]->hide(FALSE);
 		overlayLayouts[overlay]->bringForward();
 	}
 	else
 	{
-		overlayLayouts[overlay] = TheWindowManager->winCreateLayout( AsciiString( gsOverlays[overlay] ) );
+		overlayLayouts[overlay] = TheWindowManager->winCreateLayout(AsciiString(gsOverlays[overlay]));
 		overlayLayouts[overlay]->runInit();
-		overlayLayouts[overlay]->hide( FALSE );
+		overlayLayouts[overlay]->hide(FALSE);
 		overlayLayouts[overlay]->bringForward();
 	}
 }
 
-void GameSpyCloseOverlay( GSOverlayType overlay )
+void GameSpyCloseOverlay(GSOverlayType overlay)
 {
-	switch(overlay)
+	switch (overlay)
 	{
 		case GSOVERLAY_PLAYERINFO:
 			DEBUG_LOG(("Closing overlay GSOVERLAY_PLAYERINFO"));
@@ -257,13 +257,13 @@ void GameSpyCloseOverlay( GSOverlayType overlay )
 			break;
 		case GSOVERLAY_OPTIONS:
 			DEBUG_LOG(("Closing overlay GSOVERLAY_OPTIONS"));
-			if( overlayLayouts[overlay] )
+			if (overlayLayouts[overlay])
 			{
 				SignalUIInteraction(SHELL_SCRIPT_HOOK_OPTIONS_CLOSED);
 			}
 			break;
 	}
-	if( overlayLayouts[overlay] )
+	if (overlayLayouts[overlay])
 	{
 		overlayLayouts[overlay]->runShutdown();
 		overlayLayouts[overlay]->destroyWindows();
@@ -272,12 +272,12 @@ void GameSpyCloseOverlay( GSOverlayType overlay )
 	}
 }
 
-Bool GameSpyIsOverlayOpen( GSOverlayType overlay )
+Bool GameSpyIsOverlayOpen(GSOverlayType overlay)
 {
 	return (overlayLayouts[overlay] != nullptr);
 }
 
-void GameSpyToggleOverlay( GSOverlayType overlay )
+void GameSpyToggleOverlay(GSOverlayType overlay)
 {
 	if (GameSpyIsOverlayOpen(overlay))
 		GameSpyCloseOverlay(overlay);
@@ -287,7 +287,7 @@ void GameSpyToggleOverlay( GSOverlayType overlay )
 
 void raiseOverlays()
 {
-	for (int i=0; i<GSOVERLAY_MAX; ++i)
+	for (int i = 0; i < GSOVERLAY_MAX; ++i)
 	{
 		if (overlayLayouts[(GSOverlayType)i])
 		{
@@ -298,7 +298,7 @@ void raiseOverlays()
 
 void GameSpyCloseAllOverlays()
 {
-	for (int i=0; i<GSOVERLAY_MAX; ++i)
+	for (int i = 0; i < GSOVERLAY_MAX; ++i)
 	{
 		GameSpyCloseOverlay((GSOverlayType)i);
 	}
@@ -309,7 +309,7 @@ void GameSpyCloseAllOverlays()
 
 void GameSpyUpdateOverlays()
 {
-	for (int i=0; i<GSOVERLAY_MAX; ++i)
+	for (int i = 0; i < GSOVERLAY_MAX; ++i)
 	{
 		if (overlayLayouts[(GSOverlayType)i])
 		{
@@ -324,10 +324,9 @@ void ReOpenPlayerInfo()
 }
 void CheckReOpenPlayerInfo()
 {
-	if(!reOpenPlayerInfoFlag)
+	if (!reOpenPlayerInfoFlag)
 		return;
 
 	GameSpyOpenOverlay(GSOVERLAY_PLAYERINFO);
 	reOpenPlayerInfoFlag = FALSE;
-
 }

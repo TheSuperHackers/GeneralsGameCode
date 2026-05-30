@@ -18,27 +18,25 @@
 
 #pragma once
 
-#define allocateBytes(ARGCOUNT,ARGLITERAL)          allocateBytesImplementation(ARGCOUNT)
-#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL) allocateBytesDoNotZeroImplementation(ARGCOUNT)
-#define newInstanceDesc(ARGCLASS,ARGLITERAL)        new ARGCLASS
-#define newInstance(ARGCLASS)                       new ARGCLASS
-#define MSGNEW(MSG)                                 new
-#define NEW                                         new
-
+#define allocateBytes(ARGCOUNT, ARGLITERAL) allocateBytesImplementation(ARGCOUNT)
+#define allocateBytesDoNotZero(ARGCOUNT, ARGLITERAL) allocateBytesDoNotZeroImplementation(ARGCOUNT)
+#define newInstanceDesc(ARGCLASS, ARGLITERAL) new ARGCLASS
+#define newInstance(ARGCLASS) new ARGCLASS
+#define MSGNEW(MSG) new
+#define NEW new
 
 /**
-	The DynamicMemoryAllocator class is used to handle unpredictably-sized
-	allocation requests.
+  The DynamicMemoryAllocator class is used to handle unpredictably-sized
+  allocation requests.
 */
 class DynamicMemoryAllocator
 {
 public:
-
 	/// allocate bytes from this pool. (don't call directly; use allocateBytes() macro)
-	void *allocateBytesImplementation(Int numBytes);
+	void* allocateBytesImplementation(Int numBytes);
 
 	/// like allocateBytesImplementation, but zeroes the memory before returning
-	void *allocateBytesDoNotZeroImplementation(Int numBytes);
+	void* allocateBytesDoNotZeroImplementation(Int numBytes);
 
 #ifdef MEMORYPOOL_DEBUG
 	void debugIgnoreLeaksForThisBlock(void* pBlockPtr);
@@ -48,66 +46,60 @@ public:
 	void freeBytes(void* pMem);
 
 	/**
-		return the actual number of bytes that would be allocated
-		if you tried to allocate the given size.
+	  return the actual number of bytes that would be allocated
+	  if you tried to allocate the given size.
 	*/
 	Int getActualAllocationSize(Int numBytes);
 };
 
-
 /**
-	The class that manages all the MemoryPools and DynamicMemoryAllocators.
-	Usually you will create exactly one of these (TheMemoryPoolFactory)
-	and use it for everything.
+  The class that manages all the MemoryPools and DynamicMemoryAllocators.
+  Usually you will create exactly one of these (TheMemoryPoolFactory)
+  and use it for everything.
 */
 class MemoryPoolFactory
 {
 public:
-
-	void memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead = nullptr );
+	void memoryPoolUsageReport(const char* filename, FILE* appendToFileInstead = nullptr);
 
 #ifdef MEMORYPOOL_DEBUG
 
-	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp = nullptr );
+	void debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE* fp = nullptr);
 	void debugSetInitFillerIndex(Int index);
 
 #endif
 };
 
-
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
-protected: \
-	virtual ~ARGCLASS(); \
+protected:                                      \
+	virtual ~ARGCLASS();                          \
+                                                \
 public: /* include this line at the end to reset visibility to 'public' */
-
 
 #define MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ARGCLASS, ARGPOOLNAME) \
 	MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS)
 
-
 // this is the version for an Abstract Base Class, which will never be instantiated...
 #define MEMORY_POOL_GLUE_ABC(ARGCLASS) \
-protected: \
-	virtual ~ARGCLASS(); \
+protected:                             \
+	virtual ~ARGCLASS();                 \
+                                       \
 public: /* include this line at the end to reset visibility to 'public' */
 
-
 /**
-	This class is provided as a simple and safe way to integrate C++ object allocation
-	into MemoryPool usage. To use it, you must have your class inherit from
-	MemoryPoolObject, then put the macro MEMORY_POOL_GLUE(MyClassName, "MyPoolName")
-	at the start of your class definition. (This does not create the pool itself -- you
-	must create that manually using MemoryPoolFactory::createMemoryPool)
+  This class is provided as a simple and safe way to integrate C++ object allocation
+  into MemoryPool usage. To use it, you must have your class inherit from
+  MemoryPoolObject, then put the macro MEMORY_POOL_GLUE(MyClassName, "MyPoolName")
+  at the start of your class definition. (This does not create the pool itself -- you
+  must create that manually using MemoryPoolFactory::createMemoryPool)
 */
 class MemoryPoolObject
 {
 protected:
-
 	/** ensure that all destructors are virtual */
-	virtual ~MemoryPoolObject() { }
+	virtual ~MemoryPoolObject() {}
 
 public:
-
 	static void deleteInstanceInternal(MemoryPoolObject* mpo)
 	{
 		delete mpo;
@@ -119,29 +111,27 @@ inline void deleteInstance(MemoryPoolObject* mpo)
 	MemoryPoolObject::deleteInstanceInternal(mpo);
 }
 
-
 /**
-	Initialize the memory manager. Construct a new MemoryPoolFactory and
-	DynamicMemoryAllocator and store 'em in the singletons of the relevant
-	names.
+  Initialize the memory manager. Construct a new MemoryPoolFactory and
+  DynamicMemoryAllocator and store 'em in the singletons of the relevant
+  names.
 */
 extern void initMemoryManager();
 
 /**
-	return true if initMemoryManager() has been called.
-	return false if only preMainInitMemoryManager() has been called.
+  return true if initMemoryManager() has been called.
+  return false if only preMainInitMemoryManager() has been called.
 */
 extern Bool isMemoryManagerOfficiallyInited();
 
 /**
-	Shut down the memory manager. Throw away TheMemoryPoolFactory and
-	TheDynamicMemoryAllocator.
+  Shut down the memory manager. Throw away TheMemoryPoolFactory and
+  TheDynamicMemoryAllocator.
 */
 extern void shutdownMemoryManager();
 
-extern MemoryPoolFactory *TheMemoryPoolFactory;
-extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
-
+extern MemoryPoolFactory* TheMemoryPoolFactory;
+extern DynamicMemoryAllocator* TheDynamicMemoryAllocator;
 
 // TheSuperHackers @info
 // The new operator overloads will zero all memory after allocation.
@@ -149,18 +139,18 @@ extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
 // where data is not properly zero initialized. Disable these operators when fixing those issues.
 #ifndef DISABLE_GAMEMEMORY_NEW_OPERATORS
 
-extern void * __cdecl operator new(size_t size);
-extern void __cdecl operator delete(void *p);
+extern void* __cdecl operator new(size_t size);
+extern void __cdecl operator delete(void* p);
 
-extern void * __cdecl operator new[](size_t size);
-extern void __cdecl operator delete[](void *p);
+extern void* __cdecl operator new[](size_t size);
+extern void __cdecl operator delete[](void* p);
 
 // additional overloads to account for VC/MFC funky versions
-extern void* __cdecl operator new(size_t size, const char *, int);
-extern void __cdecl operator delete(void *p, const char *, int);
+extern void* __cdecl operator new(size_t size, const char*, int);
+extern void __cdecl operator delete(void* p, const char*, int);
 
-extern void* __cdecl operator new[](size_t size, const char *, int);
-extern void __cdecl operator delete[](void *p, const char *, int);
+extern void* __cdecl operator new[](size_t size, const char*, int);
+extern void __cdecl operator delete[](void* p, const char*, int);
 
 #endif
 

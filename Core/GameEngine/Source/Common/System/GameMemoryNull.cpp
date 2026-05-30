@@ -28,42 +28,42 @@ static Bool theMainInitFlag = false;
 // PUBLIC DATA
 // ----------------------------------------------------------------------------
 
-MemoryPoolFactory *TheMemoryPoolFactory = nullptr;
-DynamicMemoryAllocator *TheDynamicMemoryAllocator = nullptr;
+MemoryPoolFactory* TheMemoryPoolFactory = nullptr;
+DynamicMemoryAllocator* TheDynamicMemoryAllocator = nullptr;
 
 //-----------------------------------------------------------------------------
 // METHODS for DynamicMemoryAllocator
 //-----------------------------------------------------------------------------
 
 /**
-	allocate a chunk-o-bytes from this DMA and return it, but don't bother zeroing
-	out the block. if unable to allocate, throw ERROR_OUT_OF_MEMORY. this
-	function will never return null.
+  allocate a chunk-o-bytes from this DMA and return it, but don't bother zeroing
+  out the block. if unable to allocate, throw ERROR_OUT_OF_MEMORY. this
+  function will never return null.
 
   added code to make sure we're on a DWord boundary, throw exception if not
 */
-void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes)
+void* DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes)
 {
-	void *p = malloc(numBytes);
+	void* p = malloc(numBytes);
 	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	return p;
 }
 
 /**
-	allocate a chunk-o-bytes from this DMA and return it, and zero out the contents first.
-	if unable to allocate, throw ERROR_OUT_OF_MEMORY.
-	this function will never return null.
+  allocate a chunk-o-bytes from this DMA and return it, and zero out the contents first.
+  if unable to allocate, throw ERROR_OUT_OF_MEMORY.
+  this function will never return null.
 */
-void *DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes)
+void* DynamicMemoryAllocator::allocateBytesImplementation(Int numBytes)
 {
-	void* p = allocateBytesDoNotZeroImplementation(numBytes);	// throws on failure
+	void* p = allocateBytesDoNotZeroImplementation(numBytes);    // throws on failure
 	memset(p, 0, numBytes);
 	return p;
 }
 
 /**
-	free a chunk-o-bytes allocated by this dma. it's ok to pass null.
+  free a chunk-o-bytes allocated by this dma. it's ok to pass null.
 */
 void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 {
@@ -85,12 +85,12 @@ void DynamicMemoryAllocator::debugIgnoreLeaksForThisBlock(void* pBlockPtr)
 // METHODS for MemoryPoolFactory
 //-----------------------------------------------------------------------------
 
-void MemoryPoolFactory::memoryPoolUsageReport( const char* filename, FILE *appendToFileInstead )
+void MemoryPoolFactory::memoryPoolUsageReport(const char* filename, FILE* appendToFileInstead)
 {
 }
 
 #ifdef MEMORYPOOL_DEBUG
-void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE *fp )
+void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int endCheckpoint, FILE* fp)
 {
 }
 void MemoryPoolFactory::debugSetInitFillerIndex(Int index)
@@ -103,7 +103,7 @@ void MemoryPoolFactory::debugSetInitFillerIndex(Int index)
 //-----------------------------------------------------------------------------
 
 /**
-	Initialize the memory manager, and create TheMemoryPoolFactory and TheDynamicMemoryAllocator.
+  Initialize the memory manager, and create TheMemoryPoolFactory and TheDynamicMemoryAllocator.
 */
 void initMemoryManager()
 {
@@ -117,7 +117,7 @@ void initMemoryManager()
 	}
 	else
 	{
-			DEBUG_CRASH(("Null Memory Manager is already initialized"));
+		DEBUG_CRASH(("Null Memory Manager is already initialized"));
 	}
 
 	theMainInitFlag = true;
@@ -131,22 +131,22 @@ Bool isMemoryManagerOfficiallyInited()
 
 //-----------------------------------------------------------------------------
 /**
-	shutdown the memory manager and discard all memory. Note: if preMainInitMemoryManager()
-	was called prior to initMemoryManager(), this call will do nothing.
+  shutdown the memory manager and discard all memory. Note: if preMainInitMemoryManager()
+  was called prior to initMemoryManager(), this call will do nothing.
 */
 void shutdownMemoryManager()
 {
 	if (TheDynamicMemoryAllocator != nullptr)
 	{
 		TheDynamicMemoryAllocator->~DynamicMemoryAllocator();
-		free((void *)TheDynamicMemoryAllocator);
+		free((void*)TheDynamicMemoryAllocator);
 		TheDynamicMemoryAllocator = nullptr;
 	}
 
 	if (TheMemoryPoolFactory != nullptr)
 	{
 		TheMemoryPoolFactory->~MemoryPoolFactory();
-		free((void *)TheMemoryPoolFactory);
+		free((void*)TheMemoryPoolFactory);
 		TheMemoryPoolFactory = nullptr;
 	}
 
@@ -155,62 +155,61 @@ void shutdownMemoryManager()
 	DEBUG_SHUTDOWN();
 }
 
-
 #ifndef DISABLE_GAMEMEMORY_NEW_OPERATORS
 
-extern void * __cdecl operator new(size_t size)
+extern void* __cdecl operator new(size_t size)
 {
-	void *p = malloc(size);
+	void* p = malloc(size);
 	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
 }
 
-extern void __cdecl operator delete(void *p)
+extern void __cdecl operator delete(void* p)
 {
 	free(p);
 }
 
-extern void * __cdecl operator new[](size_t size)
+extern void* __cdecl operator new[](size_t size)
 {
-	void *p = malloc(size);
+	void* p = malloc(size);
 	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
 }
 
-extern void __cdecl operator delete[](void *p)
+extern void __cdecl operator delete[](void* p)
 {
 	free(p);
 }
 
 // additional overloads to account for VC/MFC funky versions
-extern void* __cdecl operator new(size_t size, const char *, int)
+extern void* __cdecl operator new(size_t size, const char*, int)
 {
-	void *p = malloc(size);
+	void* p = malloc(size);
 	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
 }
 
-extern void __cdecl operator delete(void *p, const char *, int)
+extern void __cdecl operator delete(void* p, const char*, int)
 {
 	free(p);
 }
 
-extern void* __cdecl operator new[](size_t size, const char *, int)
+extern void* __cdecl operator new[](size_t size, const char*, int)
 {
-	void *p = malloc(size);
+	void* p = malloc(size);
 	if (p == nullptr)
 		throw ERROR_OUT_OF_MEMORY;
 	memset(p, 0, size);
 	return p;
 }
 
-extern void __cdecl operator delete[](void *p, const char *, int)
+extern void __cdecl operator delete[](void* p, const char*, int)
 {
 	free(p);
 }

@@ -27,51 +27,52 @@
 // Author: Mark Wilczynski, June 2003
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the Game
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the Game
 #include "GameClient/Smudge.h"
 
-
-DLListClass<Smudge> SmudgeSet::m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
+DLListClass<Smudge> SmudgeSet::m_freeSmudgeList;    ///< list of unused smudges for use by SmudgeSets.
 
 SmudgeManager::SmudgeManager()
 {
-	m_smudgeCountLastFrame=0;
+	m_smudgeCountLastFrame = 0;
 	m_hardwareSupportStatus = SMUDGE_SUPPORT_UNKNOWN;
 }
 
 SmudgeManager::~SmudgeManager()
 {
-	reset();	//release all smudge sets and smudges to free pool.
+	reset();    // release all smudge sets and smudges to free pool.
 
 	SmudgeSet* head;
 
-	//free memory used by smudge sets
-	while ((head = m_freeSmudgeSetList.Head ()) != nullptr) {
-		m_freeSmudgeSetList.Remove_Head ();
+	// free memory used by smudge sets
+	while ((head = m_freeSmudgeSetList.Head()) != nullptr)
+	{
+		m_freeSmudgeSetList.Remove_Head();
 		delete head;
 	}
 
 	Smudge* head2;
-	//free memory used by smudges
-	while ((head2 = SmudgeSet::m_freeSmudgeList.Head ()) != nullptr) {
-		m_freeSmudgeSetList.Remove_Head ();
+	// free memory used by smudges
+	while ((head2 = SmudgeSet::m_freeSmudgeList.Head()) != nullptr)
+	{
+		m_freeSmudgeSetList.Remove_Head();
 		delete head2;
 	}
 }
 
 void SmudgeManager::init()
 {
-
 }
 
 void SmudgeManager::reset()
 {
 	SmudgeSet* head;
 
-	//Return all smudgeSets back to free pool.
-	while ((head = m_usedSmudgeSetList.Head ()) != nullptr) {
-		m_usedSmudgeSetList.Remove_Head ();
-		head->reset();	//free all smudges.
+	// Return all smudgeSets back to free pool.
+	while ((head = m_usedSmudgeSetList.Head()) != nullptr)
+	{
+		m_usedSmudgeSetList.Remove_Head();
+		head->reset();    // free all smudges.
 		m_freeSmudgeSetList.Add_Tail(head);
 	}
 }
@@ -79,46 +80,49 @@ void SmudgeManager::reset()
 void SmudgeManager::resetDraw()
 {
 	SmudgeSet* smudgeSet = m_usedSmudgeSetList.Head();
-	for (; smudgeSet; smudgeSet = smudgeSet->Succ()) {
+	for (; smudgeSet; smudgeSet = smudgeSet->Succ())
+	{
 		smudgeSet->resetDraw();
 	}
 }
 
-SmudgeSet *SmudgeManager::addSmudgeSet()
+SmudgeSet* SmudgeManager::addSmudgeSet()
 {
-	SmudgeSet* set=m_freeSmudgeSetList.Head();
-	if (set) {
-		set->Remove();	//remove from free list
-		m_usedSmudgeSetList.Add_Tail(set);	//add to used list.
+	SmudgeSet* set = m_freeSmudgeSetList.Head();
+	if (set)
+	{
+		set->Remove();    // remove from free list
+		m_usedSmudgeSetList.Add_Tail(set);    // add to used list.
 		return set;
 	}
-	set=W3DNEW SmudgeSet();
-	m_usedSmudgeSetList.Add_Tail(set);	//add to used list.
+	set = W3DNEW SmudgeSet();
+	m_usedSmudgeSetList.Add_Tail(set);    // add to used list.
 	return set;
 }
 
-void SmudgeManager::removeSmudgeSet(SmudgeSet *&smudgeSet)
+void SmudgeManager::removeSmudgeSet(SmudgeSet*& smudgeSet)
 {
-	smudgeSet->Remove();	//remove from used list
-	m_freeSmudgeSetList.Add_Head(smudgeSet);	//add to free list.
+	smudgeSet->Remove();    // remove from used list
+	m_freeSmudgeSetList.Add_Head(smudgeSet);    // add to free list.
 	smudgeSet = nullptr;
 }
 
-Smudge *SmudgeManager::findSmudge(Smudge::Identifier identifier)
+Smudge* SmudgeManager::findSmudge(Smudge::Identifier identifier)
 {
-	SmudgeSet *smudgeSet = m_usedSmudgeSetList.Head();
-	for (; smudgeSet; smudgeSet = smudgeSet->Succ()) {
-		if (Smudge *smudge = smudgeSet->findSmudge(identifier)) {
+	SmudgeSet* smudgeSet = m_usedSmudgeSetList.Head();
+	for (; smudgeSet; smudgeSet = smudgeSet->Succ())
+	{
+		if (Smudge* smudge = smudgeSet->findSmudge(identifier))
+		{
 			return smudge;
 		}
 	}
 	return nullptr;
 }
 
-
 SmudgeSet::SmudgeSet()
 {
-	m_usedSmudgeCount=0;
+	m_usedSmudgeCount = 0;
 }
 
 SmudgeSet::~SmudgeSet()
@@ -130,9 +134,10 @@ void SmudgeSet::reset()
 {
 	Smudge* head;
 
-	while ((head = m_usedSmudgeList.Head ()) != nullptr) {
-		m_usedSmudgeList.Remove_Head ();
-		m_freeSmudgeList.Add_Head(head);	//add to free list
+	while ((head = m_usedSmudgeList.Head()) != nullptr)
+	{
+		m_usedSmudgeList.Remove_Head();
+		m_freeSmudgeList.Add_Head(head);    // add to free list
 	}
 
 	m_usedSmudgeMap.clear();
@@ -142,39 +147,43 @@ void SmudgeSet::reset()
 void SmudgeSet::resetDraw()
 {
 	Smudge* smudge = m_usedSmudgeList.Head();
-	for (; smudge; smudge = smudge->Succ()) {
+	for (; smudge; smudge = smudge->Succ())
+	{
 		smudge->m_draw = false;
 	}
 }
 
-Smudge *SmudgeSet::addSmudgeToSet(Smudge::Identifier identifier)
+Smudge* SmudgeSet::addSmudgeToSet(Smudge::Identifier identifier)
 {
 	DEBUG_ASSERTCRASH(m_usedSmudgeMap.find(identifier) == m_usedSmudgeMap.end(),
-		("SmudgeSet::addSmudgeToSet: identifier already present"));
+	                  ("SmudgeSet::addSmudgeToSet: identifier already present"));
 
 	Smudge* smudge = m_freeSmudgeList.Head();
-	if (smudge) {
-		smudge->Remove();	//remove from free list
-	} else {
+	if (smudge)
+	{
+		smudge->Remove();    // remove from free list
+	}
+	else
+	{
 		smudge = W3DNEW Smudge();
 	}
 	smudge->m_identifier = identifier;
-	m_usedSmudgeList.Add_Tail(smudge);	//add to used list.
+	m_usedSmudgeList.Add_Tail(smudge);    // add to used list.
 	m_usedSmudgeMap[identifier] = smudge;
 	m_usedSmudgeCount++;
 	return smudge;
 }
 
-void SmudgeSet::removeSmudgeFromSet(Smudge *&smudge)
+void SmudgeSet::removeSmudgeFromSet(Smudge*& smudge)
 {
 	m_usedSmudgeMap.erase(smudge->m_identifier);
-	smudge->Remove();	//remove from used list.
-	m_freeSmudgeList.Add_Head(smudge);	//add to free list
+	smudge->Remove();    // remove from used list.
+	m_freeSmudgeList.Add_Head(smudge);    // add to free list
 	smudge = nullptr;
 	m_usedSmudgeCount--;
 }
 
-Smudge *SmudgeSet::findSmudge(Smudge::Identifier identifier)
+Smudge* SmudgeSet::findSmudge(Smudge::Identifier identifier)
 {
 	SmudgeIdToPtrMap::const_iterator it = m_usedSmudgeMap.find(identifier);
 	if (it != m_usedSmudgeMap.end())

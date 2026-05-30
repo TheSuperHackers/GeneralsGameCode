@@ -28,40 +28,37 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameClient/RayEffect.h"
 #include "GameClient/Drawable.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
-class RayEffectSystem *TheRayEffects = nullptr;
+class RayEffectSystem* TheRayEffects = nullptr;
 
 // PRIVATE METHODS ////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
 /** Find an effect entry given a drawable */
 //-------------------------------------------------------------------------------------------------
-RayEffectData *RayEffectSystem::findEntry( const Drawable *draw )
+RayEffectData* RayEffectSystem::findEntry(const Drawable* draw)
 {
 	Int i;
-	RayEffectData *effectData = nullptr;
+	RayEffectData* effectData = nullptr;
 
 	// find the matching effect data entry
-	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
+	for (i = 0; i < MAX_RAY_EFFECTS; i++)
 	{
 
-		if( m_effectData[ i ].draw == draw )
+		if (m_effectData[i].draw == draw)
 		{
 
-			effectData = &m_effectData[ i ];
-			break;  // exit for i
-
+			effectData = &m_effectData[i];
+			break;    // exit for i
 		}
-
 	}
 
 	return effectData;
-
 }
 
 // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////////
@@ -72,14 +69,12 @@ RayEffectSystem::RayEffectSystem()
 {
 
 	init();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 RayEffectSystem::~RayEffectSystem()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -89,15 +84,13 @@ void RayEffectSystem::init()
 {
 	Int i;
 
-	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
+	for (i = 0; i < MAX_RAY_EFFECTS; i++)
 	{
 
-		m_effectData[ i ].draw = nullptr;
-		m_effectData[ i ].startLoc.zero();
-		m_effectData[ i ].endLoc.zero();
-
+		m_effectData[i].draw = nullptr;
+		m_effectData[i].startLoc.zero();
+		m_effectData[i].endLoc.zero();
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -108,21 +101,20 @@ void RayEffectSystem::reset()
 
 	// nothing dynamic going on here, just initialize it
 	init();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** add a ray effect entry for this drawable */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::addRayEffect( const Drawable *draw,
-																	  const Coord3D *startLoc,
-																	  const Coord3D *endLoc )
+void RayEffectSystem::addRayEffect(const Drawable* draw,
+                                   const Coord3D* startLoc,
+                                   const Coord3D* endLoc)
 {
 	Int i;
-	RayEffectData *effectData = nullptr;
+	RayEffectData* effectData = nullptr;
 
 	// sanity
-	if( draw == nullptr || startLoc == nullptr || endLoc == nullptr )
+	if (draw == nullptr || startLoc == nullptr || endLoc == nullptr)
 		return;
 
 	/** @todo this should be more intelligent and should not be limited
@@ -130,75 +122,67 @@ void RayEffectSystem::addRayEffect( const Drawable *draw,
 	the demo anyway right now though */
 
 	// search for a free effect slot
-	for( i = 0; i < MAX_RAY_EFFECTS; i++ )
+	for (i = 0; i < MAX_RAY_EFFECTS; i++)
 	{
 
-		if( m_effectData[ i ].draw == nullptr )
+		if (m_effectData[i].draw == nullptr)
 		{
 
-			effectData = &m_effectData[ i ];
-			break;  // exit for
-
+			effectData = &m_effectData[i];
+			break;    // exit for
 		}
-
 	}
 
 	// if no free slots we can't do it
-	if( effectData == nullptr )
+	if (effectData == nullptr)
 		return;
 
 	// add the data to the entry
 	effectData->draw = draw;
 	effectData->startLoc = *startLoc;
 	effectData->endLoc = *endLoc;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** given a drawable, remove its effect from the system */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::deleteRayEffect( const Drawable *draw )
+void RayEffectSystem::deleteRayEffect(const Drawable* draw)
 {
-	RayEffectData *effectData = nullptr;
+	RayEffectData* effectData = nullptr;
 
 	// sanity
-	if( draw == nullptr )
+	if (draw == nullptr)
 		return;
 
 	// find the effect entry
-	effectData = findEntry( draw );
-	if( effectData )
+	effectData = findEntry(draw);
+	if (effectData)
 	{
 
 		// remove the data for this entry
 		effectData->draw = nullptr;
-
 	}
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** given a drawable, if it is in the ray effect system list retrieve
-	*	the ray effect data for its entry */
+ *	the ray effect data for its entry */
 //-------------------------------------------------------------------------------------------------
-void RayEffectSystem::getRayEffectData( const Drawable *draw,
-																			  RayEffectData *effectData )
+void RayEffectSystem::getRayEffectData(const Drawable* draw,
+                                       RayEffectData* effectData)
 {
-	RayEffectData *entry = nullptr;
+	RayEffectData* entry = nullptr;
 
 	// sanity
-	if( draw == nullptr || effectData == nullptr )
+	if (draw == nullptr || effectData == nullptr)
 		return;
 
 	// find the effect data entry
-	entry = findEntry( draw );
-	if( entry )
+	entry = findEntry(draw);
+	if (entry)
 	{
 
 		// data has been found, copy to parameter
 		*effectData = *entry;
-
 	}
-
 }
-

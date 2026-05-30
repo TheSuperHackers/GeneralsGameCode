@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CRCDebug.h"
 #include "Common/Debug.h"
@@ -33,7 +32,6 @@
 #include "GameNetwork/IPEnumeration.h"
 #include <cstdarg>
 
-
 #ifdef DEBUG_CRC
 
 static const Int MaxStrings = 64000;
@@ -42,38 +40,37 @@ static const Int MaxStringLen = 1024;
 static char DebugStrings[MaxStrings][MaxStringLen];
 static Int nextDebugString = 0;
 static Int numDebugStrings = 0;
-//static char DumpStrings[MaxStrings][MaxStringLen];
-//static Int nextDumpString = 0;
-//static Int numDumpStrings = 0;
+// static char DumpStrings[MaxStrings][MaxStringLen];
+// static Int nextDumpString = 0;
+// static Int numDumpStrings = 0;
 
-#define IS_FRAME_OK_TO_LOG TheGameLogic->isInGame() && !TheGameLogic->isInShellGame() && !TheDebugIgnoreSyncErrors && \
-	TheCRCFirstFrameToLog >= 0 && TheCRCFirstFrameToLog <= TheGameLogic->getFrame() \
-	&& TheGameLogic->getFrame() <= TheCRCLastFrameToLog
+	#define IS_FRAME_OK_TO_LOG TheGameLogic->isInGame() && !TheGameLogic->isInShellGame() && !TheDebugIgnoreSyncErrors && \
+															 TheCRCFirstFrameToLog >= 0 && TheCRCFirstFrameToLog <= TheGameLogic->getFrame() && TheGameLogic->getFrame() <= TheCRCLastFrameToLog
 
 CRCVerification::CRCVerification()
 {
-#ifdef DEBUG_LOGGING
-/**/
+	#ifdef DEBUG_LOGGING
+	/**/
 	if (g_verifyClientCRC && (IS_FRAME_OK_TO_LOG))
 	{
-		m_startCRC = TheGameLogic->getCRC(CRC_RECALC, (g_clientDeepCRC)?"clientPre.crc":"");
+		m_startCRC = TheGameLogic->getCRC(CRC_RECALC, (g_clientDeepCRC) ? "clientPre.crc" : "");
 	}
 	else
 	{
 		m_startCRC = 0;
 	}
-/**/
-#endif
+	/**/
+	#endif
 }
 
 CRCVerification::~CRCVerification()
 {
-#ifdef DEBUG_LOGGING
-/**/
+	#ifdef DEBUG_LOGGING
+	/**/
 	UnsignedInt endCRC = 0;
 	if (g_verifyClientCRC && (IS_FRAME_OK_TO_LOG))
 	{
-		endCRC = TheGameLogic->getCRC(CRC_RECALC, (g_clientDeepCRC)?"clientPost.crc":"");
+		endCRC = TheGameLogic->getCRC(CRC_RECALC, (g_clientDeepCRC) ? "clientPost.crc" : "");
 	}
 	DEBUG_ASSERTCRASH(!TheGameLogic->isInGame() || m_startCRC == endCRC, ("GameLogic changed outside of GameLogic::update() on frame %d!", TheGameLogic->getFrame()));
 	if (TheGameLogic->isInMultiplayerGame() && m_startCRC != endCRC)
@@ -84,8 +81,8 @@ CRCVerification::~CRCVerification()
 		}
 		CRCDEBUG_LOG(("GameLogic changed outside of GameLogic::update()!!!"));
 	}
-/**/
-#endif
+	/**/
+	#endif
 }
 
 void outputCRCDebugLines()
@@ -93,20 +90,22 @@ void outputCRCDebugLines()
 	IPEnumeration ips;
 	AsciiString fname;
 	fname.format("crcDebug%s.txt", ips.getMachineName().str());
-	FILE *fp = fopen(fname.str(), "wt");
+	FILE* fp = fopen(fname.str(), "wt");
 	int start = 0;
 	int end = nextDebugString;
 	if (numDebugStrings >= MaxStrings)
 		start = nextDebugString - MaxStrings;
 
-	for (Int i=start; i<end; ++i)
+	for (Int i = start; i < end; ++i)
 	{
-		const char *line = DebugStrings[ (i + MaxStrings) % MaxStrings ];
+		const char* line = DebugStrings[(i + MaxStrings) % MaxStrings];
 		DEBUG_LOG(("%s", line));
-		if (fp) fprintf(fp, "%s\n", line);
+		if (fp)
+			fprintf(fp, "%s\n", line);
 	}
 
-	if (fp) fclose(fp);
+	if (fp)
+		fclose(fp);
 }
 
 Int lastCRCDebugFrame = 0;
@@ -145,7 +144,7 @@ static void outputCRCDebugLinesPerFrame()
 		return;
 	AsciiString fname;
 	fname.format("%s/DebugFrame_%06d.txt", g_saveDebugCRCPerFrameDir.str(), lastCRCDebugFrame);
-	FILE *fp = fopen(fname.str(), "wt");
+	FILE* fp = fopen(fname.str(), "wt");
 	int start = 0;
 	int end = nextDebugString;
 	if (numDebugStrings >= MaxStrings)
@@ -155,10 +154,10 @@ static void outputCRCDebugLinesPerFrame()
 	if (!fp)
 		return;
 
-	for (Int i=start; i<end; ++i)
+	for (Int i = start; i < end; ++i)
 	{
-		const char *line = DebugStrings[ (i + MaxStrings) % MaxStrings ];
-		//DEBUG_LOG(("%s", line));
+		const char* line = DebugStrings[(i + MaxStrings) % MaxStrings];
+		// DEBUG_LOG(("%s", line));
 		fprintf(fp, "%s\n", line);
 	}
 
@@ -171,12 +170,12 @@ void outputCRCDumpLines()
 	int start = 0;
 	int end = nextDumpString;
 	if (numDumpStrings >= MaxStrings)
-		start = nextDumpString - MaxStrings;
+	  start = nextDumpString - MaxStrings;
 
 	for (Int i=start; i<end; ++i)
 	{
-		const char *line = DumpStrings[ (i + MaxStrings) % MaxStrings ];
-		DEBUG_LOG(("%s", line));
+	  const char *line = DumpStrings[ (i + MaxStrings) % MaxStrings ];
+	  DEBUG_LOG(("%s", line));
 	}
 	*/
 }
@@ -186,7 +185,7 @@ static AsciiString getFname(AsciiString path)
 	return path.reverseFind('\\') + 1;
 }
 
-static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
+static void addCRCDebugLineInternal(bool count, const char* fmt, va_list args)
 {
 	if (TheGameLogic == nullptr || !(IS_FRAME_OK_TO_LOG))
 		return;
@@ -204,9 +203,9 @@ static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 		DebugStrings[nextDebugString][0] = 0;
 	Int len = strlen(DebugStrings[nextDebugString]);
 
-	vsnprintf(DebugStrings[nextDebugString]+len, MaxStringLen-len, fmt, args);
+	vsnprintf(DebugStrings[nextDebugString] + len, MaxStringLen - len, fmt, args);
 
-	char *tmp = DebugStrings[nextDebugString];
+	char* tmp = DebugStrings[nextDebugString];
 	while (tmp && *tmp)
 	{
 		if (*tmp == '\r' || *tmp == '\n')
@@ -216,7 +215,7 @@ static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 		++tmp;
 	}
 
-	//DEBUG_LOG(("%s", DebugStrings[nextDebugString]));
+	// DEBUG_LOG(("%s", DebugStrings[nextDebugString]));
 
 	++nextDebugString;
 	++numDebugStrings;
@@ -224,42 +223,42 @@ static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 		nextDebugString = 0;
 }
 
-void addCRCDebugLine(const char *fmt, ...)
+void addCRCDebugLine(const char* fmt, ...)
 {
-    va_list args;
-    va_start(args, fmt);
-    addCRCDebugLineInternal(true, fmt, args);
-    va_end(args);
+	va_list args;
+	va_start(args, fmt);
+	addCRCDebugLineInternal(true, fmt, args);
+	va_end(args);
 }
 
-void addCRCDebugLineNoCounter(const char *fmt, ...)
+void addCRCDebugLineNoCounter(const char* fmt, ...)
 {
 	// TheSuperHackers @feature helmutbuhler 04/09/2025
 	// This version doesn't increase the lastCRCDebugIndex counter
 	// and can be used for logging lines that don't necessarily match up on all peers.
 	// (Otherwise the numbers would no longer match up and the diff would be very difficult to read)
-    va_list args;
-    va_start(args, fmt);
-    addCRCDebugLineInternal(false, fmt, args);
-    va_end(args);
+	va_list args;
+	va_start(args, fmt);
+	addCRCDebugLineInternal(false, fmt, args);
+	va_end(args);
 }
 
-void addCRCGenLine(const char *fmt, ...)
+void addCRCGenLine(const char* fmt, ...)
 {
 	if (!(IS_FRAME_OK_TO_LOG))
 		return;
 
 	static char buf[MaxStringLen];
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buf, MaxStringLen, fmt, va );
-	va_end( va );
+	va_start(va, fmt);
+	vsnprintf(buf, MaxStringLen, fmt, va);
+	va_end(va);
 	addCRCDebugLine("%s", buf);
 
-	//DEBUG_LOG(("%s", buf));
+	// DEBUG_LOG(("%s", buf));
 }
 
-void addCRCDumpLine(const char *fmt, ...)
+void addCRCDumpLine(const char* fmt, ...)
 {
 	/*
 	va_list va;
@@ -270,50 +269,54 @@ void addCRCDumpLine(const char *fmt, ...)
 	++nextDumpString;
 	++numDumpStrings;
 	if (nextDumpString == MaxStrings)
-		nextDumpString = 0;
-		*/
+	  nextDumpString = 0;
+	  */
 }
 
-void dumpVector3(const Vector3 *v, AsciiString name, AsciiString fname, Int line)
+void dumpVector3(const Vector3* v, AsciiString name, AsciiString fname, Int line)
 {
-	if (!(IS_FRAME_OK_TO_LOG)) return;
+	if (!(IS_FRAME_OK_TO_LOG))
+		return;
 	fname.toLower();
 	fname = getFname(fname);
 	addCRCDebugLine("dumpVector3() %s:%d %s %8.8X %8.8X %8.8X",
-		fname.str(), line, name.str(),
-		AS_INT(v->X), AS_INT(v->Y), AS_INT(v->Z));
+	                fname.str(), line, name.str(),
+	                AS_INT(v->X), AS_INT(v->Y), AS_INT(v->Z));
 }
 
-void dumpCoord3D(const Coord3D *c, AsciiString name, AsciiString fname, Int line)
+void dumpCoord3D(const Coord3D* c, AsciiString name, AsciiString fname, Int line)
 {
-	if (!(IS_FRAME_OK_TO_LOG)) return;
+	if (!(IS_FRAME_OK_TO_LOG))
+		return;
 	fname.toLower();
 	fname = getFname(fname);
 	addCRCDebugLine("dumpCoord3D() %s:%d %s %8.8X %8.8X %8.8X",
-		fname.str(), line, name.str(),
-		AS_INT(c->x), AS_INT(c->y), AS_INT(c->z));
+	                fname.str(), line, name.str(),
+	                AS_INT(c->x), AS_INT(c->y), AS_INT(c->z));
 }
 
-void dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fname, Int line)
+void dumpMatrix3D(const Matrix3D* m, AsciiString name, AsciiString fname, Int line)
 {
-	if (!(IS_FRAME_OK_TO_LOG)) return;
+	if (!(IS_FRAME_OK_TO_LOG))
+		return;
 	fname.toLower();
 	fname = getFname(fname);
-	const Real *matrix = (const Real *)m;
+	const Real* matrix = (const Real*)m;
 	addCRCDebugLine("dumpMatrix3D() %s:%d %s",
-		fname.str(), line, name.str());
-	for (Int i=0; i<3; ++i)
+	                fname.str(), line, name.str());
+	for (Int i = 0; i < 3; ++i)
 		addCRCDebugLine("      0x%08X 0x%08X 0x%08X 0x%08X",
-			AS_INT(matrix[(i<<2)+0]), AS_INT(matrix[(i<<2)+1]), AS_INT(matrix[(i<<2)+2]), AS_INT(matrix[(i<<2)+3]));
+		                AS_INT(matrix[(i << 2) + 0]), AS_INT(matrix[(i << 2) + 1]), AS_INT(matrix[(i << 2) + 2]), AS_INT(matrix[(i << 2) + 3]));
 }
 
 void dumpReal(Real r, AsciiString name, AsciiString fname, Int line)
 {
-	if (!(IS_FRAME_OK_TO_LOG)) return;
+	if (!(IS_FRAME_OK_TO_LOG))
+		return;
 	fname.toLower();
 	fname = getFname(fname);
 	addCRCDebugLine("dumpReal() %s:%d %s %8.8X (%f)",
-		fname.str(), line, name.str(), AS_INT(r), r);
+	                fname.str(), line, name.str(), AS_INT(r), r);
 }
 
-#endif // DEBUG_CRC
+#endif    // DEBUG_CRC
