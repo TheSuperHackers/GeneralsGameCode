@@ -40,6 +40,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <errno.h>
 
 #pragma comment(lib, "wininet.lib")
 
@@ -362,21 +363,57 @@ static bool upscaleNN(const PixBuf *src, int scale, PixBuf *dst)
 // so the file resolves equally from a .big archive or a loose file.
 // Decodes into a top-down RGB888 buffer.
 // =========================================================================
-static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
+// Format a short diagnostic string into errOut on failure. Each failure
+// branch sets a distinct message so the host log can tell "path missing"
+// apart from "open failed (e.g. AV sharing violation)" or a corrupt TGA
+// header without a separate trace. errOut may be nullptr; safe no-op then.
+static void setTgaErr(char *errOut, int errCap, const char *fmt, ...)
 {
+	if (errOut == nullptr || errCap <= 0)
+		return;
+	va_list ap;
+	va_start(ap, fmt);
+	_vsnprintf(errOut, errCap - 1, fmt, ap);
+	va_end(ap);
+	errOut[errCap - 1] = '\0';
+}
+
+static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out,
+                                  char *errOut, int errCap)
+{
+	if (errOut != nullptr && errCap > 0) errOut[0] = '\0';
 	out->w = out->h = 0;
 	out->rgb = nullptr;
 	if (path.isEmpty())
+	{
+		setTgaErr(errOut, errCap, "empty path");
 		return false;
+	}
 
 	File *f = TheFileSystem->openFile(path.str(), File::READ | File::BINARY);
 	if (!f)
+	{
+		// Capture errno + GetLastError immediately, before any other libc
+		// or Win32 call below can clobber them. doesFileExist distinguishes
+		// "path missing" (case/separator mismatch) from "path present but
+		// unopenable" (AV scanner sharing violation, ACL, file in use by
+		// the just-finished cncstats upload, etc.).
+		int e = errno;
+		DWORD le = GetLastError();
+		const char *eStr = strerror(e);
+		Bool exists = (TheFileSystem != nullptr)
+			&& TheFileSystem->doesFileExist(path.str());
+		setTgaErr(errOut, errCap,
+			"openFile failed (errno=%d \"%s\", GetLastError=%lu, exists=%s)",
+			e, eStr ? eStr : "?", (unsigned long)le, exists ? "yes" : "no");
 		return false;
+	}
 
 	int total = f->seek(0, File::END);
 	f->seek(0, File::START);
 	if (total < 18)
 	{
+		setTgaErr(errOut, errCap, "file too short (%d bytes)", total);
 		f->close();
 		return false;
 	}
@@ -384,11 +421,13 @@ static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
 	unsigned char *buf = (unsigned char *)malloc(total);
 	if (!buf)
 	{
+		setTgaErr(errOut, errCap, "malloc(%d) failed", total);
 		f->close();
 		return false;
 	}
 	if (f->read(buf, total) != total)
 	{
+		setTgaErr(errOut, errCap, "short read");
 		free(buf);
 		f->close();
 		return false;
@@ -403,13 +442,19 @@ static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
 	unsigned char pixDepth  = buf[16];
 	unsigned char descByte  = buf[17];
 
-	bool ok = (imgType == 2) // truecolor uncompressed
+	// imgType 2  = uncompressed TrueColor
+	// imgType 10 = RLE-compressed TrueColor (some map editors emit these)
+	bool ok = (imgType == 2 || imgType == 10)
 	          && (cmapType == 0)
 	          && (pixDepth == 24 || pixDepth == 32)
 	          && width > 0 && height > 0
 	          && width <= 4096 && height <= 4096;
 	if (!ok)
 	{
+		setTgaErr(errOut, errCap,
+			"bad header (imgType=%u cmapType=%u depth=%u %ux%u)",
+			(unsigned)imgType, (unsigned)cmapType, (unsigned)pixDepth,
+			(unsigned)width, (unsigned)height);
 		free(buf);
 		return false;
 	}
@@ -417,10 +462,91 @@ static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
 	int bpp = pixDepth / 8;
 	int dataOff = 18 + (int)idLen; // skip image-id field; no colormap for truecolor
 	int needed = width * height * bpp;
-	if (dataOff + needed > total)
+
+	// For uncompressed (imgType==2) the pixel stream lives in `buf` starting
+	// at dataOff. For RLE (imgType==10) we decode it once into rlePixels and
+	// then point at that. Either way, `pixelData` is the contiguous
+	// scanline-major BGR(A) buffer the row-loop below reads from.
+	const unsigned char *pixelData = nullptr;
+	unsigned char *rlePixels = nullptr;
+
+	if (imgType == 2)
 	{
-		free(buf);
-		return false;
+		if (dataOff + needed > total)
+		{
+			setTgaErr(errOut, errCap,
+				"pixel data truncated (need %d at offset %d, have %d)",
+				needed, dataOff, total);
+			free(buf);
+			return false;
+		}
+		pixelData = buf + dataOff;
+	}
+	else
+	{
+		// RLE decode. Each packet starts with a 1-byte header:
+		//   MSB set  -> run-length packet: (header & 0x7F)+1 copies of the
+		//               following single bpp-byte pixel
+		//   MSB clear-> raw packet: (header & 0x7F)+1 bpp-byte pixels follow
+		// Packets may cross scanline boundaries per the TGA spec, so we just
+		// fill the linear `needed`-byte buffer end-to-end without caring
+		// where each scanline begins.
+		rlePixels = (unsigned char *)malloc(needed);
+		if (rlePixels == nullptr)
+		{
+			setTgaErr(errOut, errCap, "RLE buffer malloc(%d) failed", needed);
+			free(buf);
+			return false;
+		}
+
+		int dstPos = 0;
+		int srcPos = dataOff;
+		while (dstPos < needed)
+		{
+			if (srcPos >= total)
+			{
+				setTgaErr(errOut, errCap,
+					"RLE truncated (need %d more bytes)", needed - dstPos);
+				free(rlePixels);
+				free(buf);
+				return false;
+			}
+			unsigned char pkt = buf[srcPos++];
+			int count = (int)(pkt & 0x7F) + 1;
+			int copyBytes = count * bpp;
+			if (dstPos + copyBytes > needed)
+				copyBytes = needed - dstPos; // clamp final packet
+			if (pkt & 0x80)
+			{
+				// Run-length: one pixel repeated.
+				if (srcPos + bpp > total)
+				{
+					setTgaErr(errOut, errCap, "RLE run pixel truncated");
+					free(rlePixels);
+					free(buf);
+					return false;
+				}
+				int i;
+				for (i = 0; i < copyBytes; ++i)
+					rlePixels[dstPos + i] = buf[srcPos + (i % bpp)];
+				srcPos += bpp;
+			}
+			else
+			{
+				// Raw: count pixels copied verbatim.
+				if (srcPos + copyBytes > total)
+				{
+					setTgaErr(errOut, errCap, "RLE raw run truncated");
+					free(rlePixels);
+					free(buf);
+					return false;
+				}
+				memcpy(rlePixels + dstPos, buf + srcPos, copyBytes);
+				srcPos += copyBytes;
+			}
+			dstPos += copyBytes;
+		}
+		pixelData = rlePixels;
 	}
 
 	out->w = width;
@@ -428,6 +554,8 @@ static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
 	out->rgb = (unsigned char *)malloc((size_t)width * height * 3);
 	if (!out->rgb)
 	{
+		setTgaErr(errOut, errCap, "out rgb malloc(%d) failed", width * height * 3);
+		if (rlePixels) free(rlePixels);
 		free(buf);
 		out->w = out->h = 0;
 		return false;
@@ -438,7 +566,7 @@ static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
 	for (y = 0; y < height; ++y)
 	{
 		int srcRow = topDown ? y : (height - 1 - y);
-		const unsigned char *src = buf + dataOff + srcRow * width * bpp;
+		const unsigned char *src = pixelData + srcRow * width * bpp;
 		unsigned char *dst = out->rgb + y * width * 3;
 		for (x = 0; x < width; ++x)
 		{
@@ -451,6 +579,7 @@ static bool loadTgaFromFileSystem(const AsciiString& path, PixBuf *out)
 		}
 	}
 
+	if (rlePixels) free(rlePixels);
 	free(buf);
 	return true;
 }
@@ -1540,9 +1669,13 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	tgaPath.concat(".tga");
 
 	PixBuf src;
-	if (!loadTgaFromFileSystem(tgaPath, &src))
+	char tgaErr[256];
+	tgaErr[0] = '\0';
+	if (!loadTgaFromFileSystem(tgaPath, &src, tgaErr, (int)sizeof(tgaErr)))
 	{
-		debugChat("preview tga not loadable: %s", tgaPath.str());
+		debugChat("preview tga not loadable: %s [%s]", tgaPath.str(), tgaErr);
+		printf("[discord] preview tga not loadable: %s [%s]\n",
+			tgaPath.str(), tgaErr);
 		return;
 	}
 	debugChat("loaded tga %dx%d from %s", src.w, src.h, tgaPath.str());
