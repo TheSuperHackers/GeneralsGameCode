@@ -137,6 +137,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 		TextureLoader::Validate_Texture_Size((unsigned int &)dstTextureWidth,(unsigned int &)dstTextureHeight, depth);
 	}
 
+
 	UnsignedInt srcWidth,srcHeight;
 
 	srcWidth=m_numCellsX;
@@ -624,13 +625,14 @@ void W3DShroud::render(CameraClass *cam)
 	if (visStartY < 0)
 		visStartY = 0;	//no shroud is applied in border area so it always starts at > 0
 
+	// Do it all [3/11/2003]
 	visStartX = 0;
 	visStartY = 0;
 
 	Int visEndX=visStartX+REAL_TO_INT_FLOOR((Real)(hm->getDrawWidth()-1)*MAP_XY_FACTOR/m_cellWidth)+1;	//size of rendered heightmap rectangle
 	Int visEndY=visStartY+REAL_TO_INT_FLOOR((Real)(hm->getDrawHeight()-1)*MAP_XY_FACTOR/m_cellHeight)+1;
 
-	
+	// Do it all [3/11/2003]
 	visEndX = m_numCellsX;
 	visEndY = m_numCellsY;
 
