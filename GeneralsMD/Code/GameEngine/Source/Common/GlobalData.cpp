@@ -644,6 +644,7 @@ GlobalData::GlobalData()
 	m_mapDownloadUrl = "http://cncstats.computersrfun.org:8080/get_map_file";
 	m_balanceTeamsUrl = "https://www.radarvan.com/api/balance_teams/";
 	m_mapSummaryUrl = "https://www.radarvan.com/api/map_summary/";
+	m_mapMatchCountsUrl = "https://www.radarvan.com/api/map_match_counts";
 	m_zuluDebug = FALSE;
 	m_windowed = 0;
 	m_xResolution = DEFAULT_DISPLAY_WIDTH;

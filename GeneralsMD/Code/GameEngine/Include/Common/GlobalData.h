@@ -154,6 +154,11 @@ public:
 	// after the Randomize button runs. Empty string disables the call.
 	AsciiString m_mapSummaryUrl;
 
+	// URL to GET a JSON array of {map, matchCount} entries the map-select
+	// dialogs use to annotate each listbox row with how often the map has
+	// been played. Empty string disables the call.
+	AsciiString m_mapMatchCountsUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;

@@ -519,6 +519,16 @@ Int parseMapSummaryUrl(char *args[], int num)
 	return 1;
 }
 
+Int parseMapMatchCountsUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_mapMatchCountsUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1281,6 +1291,11 @@ static CommandLineParam paramsForStartup[] =
 	// URL the LAN-lobby Randomize button POSTs to fetch a map-history
 	// blurb (printed to lobby chat). Pass an empty string ("") to disable.
 	{ "-mapSummaryUrl", parseMapSummaryUrl },
+
+	// URL the map-select dialogs GET to fetch a JSON array of
+	// {map, matchCount} entries, used to annotate each row with how
+	// often the map has been played. Pass an empty string ("") to disable.
+	{ "-mapMatchCountsUrl", parseMapMatchCountsUrl },
 
 	// Generic Zulu debug flag. Forwarded by the launcher to the game exe
 	// as-is. See parseZuluDebug for the current consumers.

@@ -45,6 +45,9 @@
 #include "Common/INI.h"
 #include "Common/QuotedPrintable.h"
 #include "Common/SkirmishBattleHonors.h"
+#if RTS_ZEROHOUR
+#include "Common/StatsUploader.h" // map_match_counts cache (Zulu fork)
+#endif
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/MapObject.h"
@@ -917,6 +920,21 @@ static Bool addMapToMapListbox(
 		/// @todo: mapDisplayName = TheGameText->fetch(mapMetaData.m_displayName.str());
 		mapDisplayName = mapMetaData.m_displayName;
 
+#if RTS_ZEROHOUR
+		// Tail the row with the radarvan match count, when it knows the map.
+		// Keep the suffix outside m_displayName so sorting/search still run on
+		// the canonical name. Singular/plural reads correctly on count == 1.
+		{
+			const int played = GetMapMatchCount(mapName);
+			if (played > 0)
+			{
+				UnicodeString suffix;
+				suffix.format(played == 1 ? L" (%d play)" : L" (%d plays)", played);
+				mapDisplayName.concat(suffix);
+			}
+		}
+#endif
+
 		Int index = -1;
 		Int imageItemData = -1;
 		if (lbData.numColumns > 1 && mapMetaData.m_isMultiplayer)
@@ -1037,6 +1055,14 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 
 	if (!listbox)
 		return -1;
+
+#if RTS_ZEROHOUR
+	// Refresh radarvan's per-map play counts so the rows can be annotated.
+	// The 60s TTL keeps this off the hot path for repeat populates (e.g. the
+	// LAN search box rebuilds every keystroke).
+	if (TheGlobalData != nullptr)
+		FetchMapMatchCountsIfStale(TheGlobalData->m_mapMatchCountsUrl, 60);
+#endif
 
 	MapListBoxData lbData;
 	lbData.listbox = listbox;
@@ -1163,6 +1189,13 @@ Int populateMapListboxFiltered( GameWindow *listbox, Bool isMultiplayer, const U
 		return -1;
 	if (!listbox)
 		return -1;
+
+#if RTS_ZEROHOUR
+	// Same TTL-gated refresh as populateMapListboxNoReset; the LAN search box
+	// hits this on every keystroke and must not block once the cache is warm.
+	if (TheGlobalData != nullptr)
+		FetchMapMatchCountsIfStale(TheGlobalData->m_mapMatchCountsUrl, 60);
+#endif
 
 	GadgetListBoxReset( listbox );
 

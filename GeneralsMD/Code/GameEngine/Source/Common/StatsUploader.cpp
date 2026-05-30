@@ -33,6 +33,8 @@
 #include <wininet.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <map>
 
 #pragma comment(lib, "wininet.lib")
 
@@ -1558,4 +1560,229 @@ bool MapMissingFromServer(const AsciiString& checkUrl, unsigned int mapCRC)
 	printf("Map check: crc=%u -> %lu, body=\"%s\", missing=%s\n",
 		mapCRC, statusCode, start, missing ? "true" : "false");
 	return missing;
+}
+
+// ---------------------------------------------------------------------------
+// Map match counts via HTTP GET. The endpoint returns a JSON array of
+// {"map": "<path>", "matchCount": N} entries where <path> is in the form
+// "maps/<folder>" for system maps and "userdata/maps/<folder>" for user maps,
+// lowercased and slash-separated. We cache the parsed table per-process for
+// a short window so each map-select dialog open performs at most one fetch
+// (and the LAN search-filter re-populates don't refetch on every keystroke).
+// ---------------------------------------------------------------------------
+
+static std::map<AsciiString, int> s_mapMatchCounts;
+static DWORD s_mapMatchCountsLastFetchTick = 0;
+static bool s_mapMatchCountsEverFetched = false;
+
+// Convert a MapCache key ("Maps\\Defcon6\\Defcon6.map" or the same with the
+// user-data path prefix) into the radarvan API form ("maps/defcon6" or
+// "userdata/maps/defcon6"). Empty string when the key can't be classified.
+static AsciiString normalizeMapCacheKeyForApi(const AsciiString& cacheKey)
+{
+	if (cacheKey.isEmpty())
+		return AsciiString::TheEmptyString;
+
+	AsciiString lc = cacheKey;
+	lc.toLower();
+
+	AsciiString flat;
+	{
+		const char *p;
+		for (p = lc.str(); *p != '\0'; ++p)
+			flat.concat((*p == '\\') ? '/' : *p);
+	}
+
+	AsciiString userFlat;
+	if (TheMapCache != nullptr)
+	{
+		AsciiString userDir = TheMapCache->getUserMapDir();
+		userDir.toLower();
+		const char *p;
+		for (p = userDir.str(); *p != '\0'; ++p)
+			userFlat.concat((*p == '\\') ? '/' : *p);
+	}
+
+	AsciiString out;
+	if (!userFlat.isEmpty() && flat.startsWith(userFlat.str()))
+	{
+		// <userdata>/maps/<folder>/<file>.map -> userdata/maps/<folder>/<file>.map
+		out = "userdata/maps";
+		out.concat(flat.str() + userFlat.getLength());
+	}
+	else if (flat.startsWith("maps/") || flat.compare("maps") == 0)
+	{
+		out = flat;
+	}
+	else
+	{
+		return AsciiString::TheEmptyString;
+	}
+
+	const char *lastSlash = strrchr(out.str(), '/');
+	if (lastSlash != nullptr)
+	{
+		AsciiString trimmed;
+		trimmed.set(out.str(), (int)(lastSlash - out.str()));
+		return trimmed;
+	}
+	return out;
+}
+
+void FetchMapMatchCountsIfStale(const AsciiString& url, unsigned int maxAgeSec)
+{
+	if (url.isEmpty())
+		return;
+
+	DWORD now = GetTickCount();
+	if (s_mapMatchCountsEverFetched &&
+	    (now - s_mapMatchCountsLastFetchTick) < maxAgeSec * 1000)
+		return;
+
+	// Bump the tick up-front so every failure path below cools down for the
+	// full TTL window. The LAN search box re-runs populateMapListboxFiltered
+	// on every keystroke; without this, a transient HTTP error would retry
+	// (and stall the UI) on each keystroke until the server came back.
+	s_mapMatchCountsLastFetchTick = now;
+
+	WinInetSession s;
+	if (!openHttpRequest(url, "GET", nullptr, "Map match counts", &s))
+		return;
+
+	BOOL sent = HttpSendRequestA(s.hRequest, "Accept: application/json\r\n",
+	                             (DWORD)-1L, nullptr, 0);
+	if (!sent)
+	{
+		printf("Map match counts: HttpSendRequest failed (%lu)\n", GetLastError());
+		closeHttpRequest(&s);
+		return;
+	}
+
+	DWORD statusCode = 0;
+	DWORD statusSize = sizeof(statusCode);
+	HttpQueryInfoA(s.hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
+	               &statusCode, &statusSize, nullptr);
+	if (statusCode < 200 || statusCode >= 300)
+	{
+		printf("Map match counts: %s -> %lu\n", url.str(), statusCode);
+		closeHttpRequest(&s);
+		return;
+	}
+
+	// Pull the whole body. A 500-entry response is ~30 KiB; keep slack so the
+	// table can grow without us bumping the cap.
+	static const DWORD bodyCap = 1024 * 1024;
+	char *body = (char *)malloc(bodyCap);
+	if (body == nullptr)
+	{
+		closeHttpRequest(&s);
+		return;
+	}
+	DWORD totalRead = 0;
+	bool readOk = true;
+	for (;;)
+	{
+		DWORD bytesRead = 0;
+		if (!InternetReadFile(s.hRequest, body + totalRead,
+		                      bodyCap - 1 - totalRead, &bytesRead))
+		{
+			// Mid-stream error: keep the prior cache. Re-using a partially
+			// downloaded body would silently drop most entries.
+			printf("Map match counts: InternetReadFile failed (%lu) after %lu bytes\n",
+				GetLastError(), totalRead);
+			readOk = false;
+			break;
+		}
+		if (bytesRead == 0) break;
+		totalRead += bytesRead;
+		if (totalRead >= bodyCap - 1)
+		{
+			// Hit our cap before EOF. We can't tell whether the next byte
+			// would have been the closing bracket, so treat this as truncated.
+			printf("Map match counts: body exceeded %lu byte cap; keeping prior cache\n",
+				bodyCap);
+			readOk = false;
+			break;
+		}
+	}
+	body[totalRead] = '\0';
+	closeHttpRequest(&s);
+
+	if (!readOk)
+	{
+		free(body);
+		return;
+	}
+
+	// Sanity-check: a healthy JSON-array response ends with ']' (after any
+	// trailing whitespace). If we don't see one, the response is truncated
+	// or a non-array error blob; in either case keep the previous cache so
+	// a hiccup doesn't wipe rows that were showing correct counts.
+	const char *tail = body + totalRead;
+	while (tail > body && (tail[-1] == ' ' || tail[-1] == '\t' ||
+	                       tail[-1] == '\r' || tail[-1] == '\n'))
+		--tail;
+	if (tail == body || tail[-1] != ']')
+	{
+		printf("Map match counts: response did not end with ']'; keeping prior cache\n");
+		free(body);
+		return;
+	}
+
+	// Walk the array. The response keys never contain escaped quotes (paths
+	// are vanilla ASCII path characters plus brackets and spaces), so a
+	// tolerant find-next-quoted-token parser is sufficient. Entries that are
+	// missing one of the two expected keys, or that carry a non-positive
+	// matchCount, are silently skipped; the loop keeps going so one bad
+	// entry doesn't poison the rest.
+	std::map<AsciiString, int> fresh;
+	const char *p = body;
+	while (*p != '\0')
+	{
+		const char *mkey = strstr(p, "\"map\"");
+		if (mkey == nullptr) break;
+		const char *brace = strchr(mkey, '}');
+		if (brace == nullptr) break;
+
+		const char *colon = strchr(mkey + 5, ':');
+		const char *q1 = (colon != nullptr) ? strchr(colon + 1, '"') : nullptr;
+		const char *q2 = (q1 != nullptr) ? strchr(q1 + 1, '"') : nullptr;
+		const char *ckey = strstr(mkey, "\"matchCount\"");
+		if (q1 != nullptr && q2 != nullptr && q2 < brace &&
+		    ckey != nullptr && ckey < brace)
+		{
+			AsciiString key;
+			key.set(q1 + 1, (int)(q2 - q1 - 1));
+			key.toLower();
+			const char *ccolon = strchr(ckey + 12, ':');
+			if (ccolon != nullptr && ccolon < brace)
+			{
+				++ccolon;
+				while (*ccolon == ' ' || *ccolon == '\t') ++ccolon;
+				int count = atoi(ccolon);
+				if (count > 0 && !key.isEmpty())
+					fresh[key] = count;
+			}
+		}
+		p = brace + 1;
+	}
+	free(body);
+
+	s_mapMatchCounts.swap(fresh);
+	s_mapMatchCountsEverFetched = true;
+	printf("Map match counts: fetched %u entries\n",
+		(unsigned)s_mapMatchCounts.size());
+}
+
+int GetMapMatchCount(const AsciiString& mapCacheKey)
+{
+	if (!s_mapMatchCountsEverFetched || mapCacheKey.isEmpty())
+		return 0;
+	AsciiString apiKey = normalizeMapCacheKeyForApi(mapCacheKey);
+	if (apiKey.isEmpty())
+		return 0;
+	std::map<AsciiString, int>::const_iterator it = s_mapMatchCounts.find(apiKey);
+	if (it == s_mapMatchCounts.end())
+		return 0;
+	return it->second;
 }
