@@ -569,6 +569,17 @@ void MapCache::updateCache()
 	}
 }
 
+void MapCache::refreshUserMaps()
+{
+	setFPMode();
+
+	const AsciiString userMapDir = getUserMapDir();
+	if (loadMapsFromDisk(userMapDir, FALSE))
+	{
+		writeCacheINI(userMapDir);
+	}
+}
+
 void MapCache::prepareUnseenMaps( const AsciiString &mapDir )
 {
 	MapCache::iterator it = begin();

@@ -32,7 +32,9 @@
 
 #include "Common/CustomMatchPreferences.h"
 #include "Common/GameEngine.h"
+#include "Common/GlobalData.h"
 #include "Common/MessageStream.h"
+#include "Common/StatsUploader.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetRadioButton.h"
@@ -446,6 +448,21 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 						TheGameSpyGame->getGameSpySlot(0)->setMapAvailability(TRUE);
 						TheGameSpyGame->setMapCRC( it->second.m_CRC );
 						TheGameSpyGame->setMapSize( it->second.m_filesize );
+
+						// Host-side cncstats upload: see LanMapSelectMenu.cpp for
+						// the matching LAN call. Pushes the .map and every
+						// sidecar on disk to the server (if it doesn't already
+						// have the CRC) so joining peers can fetch via HTTP
+						// instead of the at-launch P2P transfer.
+						if (TheGlobalData != nullptr)
+						{
+							UploadAllMapAssetsIfMissing(TheGlobalData->m_mapCheckUrl,
+								TheGlobalData->m_mapUploadUrl,
+								it->second.m_CRC,
+								it->second.m_fileName,
+								TheGameSpyGame->getMapContentsMask(),
+								0 /* no per-game seed in the lobby */);
+						}
 					}
 
 					TheGameSpyGame->adjustSlotsForMap(); // BGC- adjust the slots for the new map.

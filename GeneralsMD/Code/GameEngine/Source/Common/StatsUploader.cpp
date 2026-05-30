@@ -19,8 +19,14 @@
 
 #include "Common/StatsUploader.h"
 #include "Common/AsciiString.h"
+#include "Common/crc.h"
+#include "Common/FileSystem.h"
+#include "Common/File.h"
+#include "Common/GlobalData.h"
 #include "Common/OptionPreferences.h"
 #include "Common/version.h"
+#include "GameClient/MapUtil.h"
+#include "GameNetwork/FileTransfer.h"
 #include "ZuluClientKey.h"
 
 #include <windows.h>
@@ -649,6 +655,78 @@ void UploadMapToServer(const AsciiString& uploadUrl, const void *data, unsigned 
 	httpPostBytes(uploadUrl, data, dataLen, "application/octet-stream", extra, seed, "Map upload");
 }
 
+// Read a single file via TheFileSystem and POST it to the upload endpoint
+// under the given asset kind. Missing files are silently skipped (most
+// sidecars are optional). Logs every step so a failed lobby upload is
+// recoverable from stdout.
+static void uploadOneAssetIfPresent(const AsciiString& uploadUrl,
+                                    unsigned int mapCRC,
+                                    const AsciiString& mapName,
+                                    const AsciiString& assetPath,
+                                    const char *kind,
+                                    unsigned int seed)
+{
+	if (assetPath.isEmpty() || TheFileSystem == nullptr)
+		return;
+
+	File *assetFile = TheFileSystem->openFile(assetPath.str(), File::READ);
+	if (assetFile == nullptr)
+	{
+		// Sidecars are best-effort; "not present" is the common case.
+		return;
+	}
+
+	Int assetSize = assetFile->size();
+	char *assetBytes = assetFile->readEntireAndClose(); // also closes the file
+	if (assetBytes != nullptr && assetSize > 0)
+	{
+		printf("[map] Uploading %s \"%s\" (crc=%u, %d bytes) to %s\n",
+			kind, assetPath.str(), mapCRC, assetSize, uploadUrl.str());
+		fflush(stdout);
+		UploadMapToServer(uploadUrl, assetBytes, static_cast<unsigned int>(assetSize),
+			mapCRC, mapName, kind, seed);
+	}
+	else
+	{
+		printf("[map] ERROR: readEntireAndClose returned no data for %s \"%s\"\n",
+			kind, assetPath.str());
+		fflush(stdout);
+	}
+	delete[] assetBytes;
+}
+
+void UploadAllMapAssetsIfMissing(const AsciiString& checkUrl,
+                                 const AsciiString& uploadUrl,
+                                 unsigned int mapCRC,
+                                 const AsciiString& mapPath,
+                                 unsigned int contentsMask,
+                                 unsigned int seed)
+{
+	if (checkUrl.isEmpty() || uploadUrl.isEmpty() || mapPath.isEmpty() || mapCRC == 0)
+		return;
+
+	if (!MapMissingFromServer(checkUrl, mapCRC))
+		return;
+
+	// Always upload the .map itself; sidecars only if the host's contents
+	// mask says they're present. Mask bits mirror FileTransfer.cpp:264-275
+	// so the round-trip (host upload → peer download) covers exactly the
+	// same set the legacy P2P transfer would have moved.
+	uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, mapPath, "map", seed);
+	if (contentsMask & 2)
+		uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, GetPreviewFromMap(mapPath), "preview", seed);
+	if (contentsMask & 4)
+		uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, GetINIFromMap(mapPath), "ini", seed);
+	if (contentsMask & 8)
+		uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, GetStrFileFromMap(mapPath), "str", seed);
+	if (contentsMask & 16)
+		uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, GetSoloINIFromMap(mapPath), "solo", seed);
+	if (contentsMask & 32)
+		uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, GetAssetUsageFromMap(mapPath), "assets", seed);
+	if (contentsMask & 64)
+		uploadOneAssetIfPresent(uploadUrl, mapCRC, mapPath, GetReadmeFromMap(mapPath), "readme", seed);
+}
+
 // ---------------------------------------------------------------------------
 // Map existence check via HTTP GET.
 // ---------------------------------------------------------------------------
@@ -1096,6 +1174,303 @@ MapSummaryResult MapSummaryFromServer(const AsciiString& url,
 	free(resp);
 	result.success = true;
 	return result;
+}
+
+bool DownloadMapAssetFromServer(const AsciiString& downloadUrl,
+                                unsigned int mapCRC,
+                                const char *fileKind,
+                                unsigned int maxBytes,
+                                void **outData,
+                                unsigned int *outLen)
+{
+	if (outData == nullptr || outLen == nullptr)
+		return false;
+	*outData = nullptr;
+	*outLen = 0;
+
+	if (downloadUrl.isEmpty() || fileKind == nullptr || fileKind[0] == '\0')
+		return false;
+
+	// 16 MiB ceiling unless the caller asked for something smaller. Map files
+	// are typically a few hundred KB; the cap exists to keep a misbehaving
+	// server from forcing us into an unbounded allocation.
+	if (maxBytes == 0)
+		maxBytes = 16u * 1024u * 1024u;
+
+	// Build "<path>?crc=<dec>&kind=<sanitized>" appended to whatever query
+	// string the configured URL already carries.
+	char hostBuf[256];
+	char pathBuf[1024];
+	URL_COMPONENTSA uc;
+	memset(&uc, 0, sizeof(uc));
+	uc.dwStructSize = sizeof(uc);
+	uc.lpszHostName = hostBuf;
+	uc.dwHostNameLength = sizeof(hostBuf);
+	uc.lpszUrlPath = pathBuf;
+	uc.dwUrlPathLength = sizeof(pathBuf);
+
+	if (!InternetCrackUrlA(downloadUrl.str(), 0, 0, &uc))
+	{
+		printf("Map download: failed to parse URL \"%s\"\n", downloadUrl.str());
+		return false;
+	}
+
+	char kindEncoded[64];
+	urlEncode(fileKind, kindEncoded, sizeof(kindEncoded));
+
+	const char *separator = (strchr(pathBuf, '?') != nullptr) ? "&" : "?";
+	char fullPath[1536];
+	int wrote = _snprintf(fullPath, sizeof(fullPath), "%s%scrc=%u&kind=%s",
+		pathBuf, separator, mapCRC, kindEncoded);
+	if (wrote < 0 || wrote >= (int)sizeof(fullPath))
+	{
+		printf("Map download: URL too long for crc=%u kind=%s\n", mapCRC, fileKind);
+		return false;
+	}
+
+	WinInetSession s;
+	if (!openHttpRequest(downloadUrl, "GET", fullPath, "Map download", &s))
+		return false;
+
+	BOOL sent = HttpSendRequestA(s.hRequest, nullptr, 0, nullptr, 0);
+	if (!sent)
+	{
+		printf("Map download: HttpSendRequest failed (%lu)\n", GetLastError());
+		closeHttpRequest(&s);
+		return false;
+	}
+
+	DWORD statusCode = 0;
+	DWORD statusSize = sizeof(statusCode);
+	HttpQueryInfoA(s.hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
+		&statusCode, &statusSize, nullptr);
+
+	if (statusCode == 404)
+	{
+		// Server doesn't have this asset for this CRC. Quiet path; the
+		// caller is walking the kinds and skipping missing ones.
+		closeHttpRequest(&s);
+		return false;
+	}
+	if (statusCode < 200 || statusCode >= 300)
+	{
+		printf("Map download: crc=%u kind=%s -> %lu\n", mapCRC, fileKind, statusCode);
+		closeHttpRequest(&s);
+		return false;
+	}
+
+	// Reject up-front if the server advertises a Content-Length that exceeds
+	// our cap. Saves the allocation roundtrip on obvious overruns.
+	DWORD contentLen = 0;
+	DWORD contentLenSize = sizeof(contentLen);
+	if (HttpQueryInfoA(s.hRequest, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,
+		&contentLen, &contentLenSize, nullptr))
+	{
+		if (contentLen > maxBytes)
+		{
+			printf("Map download: crc=%u kind=%s body %lu > cap %u\n",
+				mapCRC, fileKind, contentLen, maxBytes);
+			closeHttpRequest(&s);
+			return false;
+		}
+	}
+
+	// Grow a heap buffer in chunks. Most map assets fit in the first read;
+	// the chunked grow handles chunked-transfer responses without a known
+	// Content-Length, and keeps the upper bound honest.
+	unsigned int cap = (contentLen > 0) ? (contentLen + 64u) : 65536u;
+	if (cap > maxBytes) cap = maxBytes;
+	unsigned char *buf = (unsigned char *)malloc(cap);
+	if (buf == nullptr)
+	{
+		closeHttpRequest(&s);
+		return false;
+	}
+
+	unsigned int total = 0;
+	for (;;)
+	{
+		if (total >= cap)
+		{
+			if (cap >= maxBytes)
+			{
+				printf("Map download: crc=%u kind=%s body exceeds cap %u\n",
+					mapCRC, fileKind, maxBytes);
+				free(buf);
+				closeHttpRequest(&s);
+				return false;
+			}
+			unsigned int newCap = cap * 2u;
+			if (newCap > maxBytes) newCap = maxBytes;
+			unsigned char *grown = (unsigned char *)realloc(buf, newCap);
+			if (grown == nullptr)
+			{
+				free(buf);
+				closeHttpRequest(&s);
+				return false;
+			}
+			buf = grown;
+			cap = newCap;
+		}
+
+		DWORD bytesRead = 0;
+		BOOL ok = InternetReadFile(s.hRequest, buf + total,
+			(DWORD)(cap - total), &bytesRead);
+		if (!ok)
+		{
+			printf("Map download: InternetReadFile failed (%lu) after %u bytes\n",
+				GetLastError(), total);
+			free(buf);
+			closeHttpRequest(&s);
+			return false;
+		}
+		if (bytesRead == 0)
+			break;
+		total += bytesRead;
+	}
+
+	closeHttpRequest(&s);
+
+	if (total == 0)
+	{
+		printf("Map download: crc=%u kind=%s empty body\n", mapCRC, fileKind);
+		free(buf);
+		return false;
+	}
+
+	printf("Map download: crc=%u kind=%s -> %u bytes\n", mapCRC, fileKind, total);
+	*outData = buf;
+	*outLen = total;
+	return true;
+}
+
+// Write a downloaded asset to disk, creating the containing directory if
+// missing. Returns true on a successful write. Frees `data` either way.
+static bool writeAssetToDisk(const AsciiString& path, void *data, unsigned int len)
+{
+	if (data == nullptr || len == 0)
+	{
+		if (data != nullptr) free(data);
+		return false;
+	}
+
+	// Make sure the per-map subdirectory exists. GetBasePathFromPath strips
+	// the filename and leaves the parent directory.
+	AsciiString dir = GetBasePathFromPath(path);
+	if (!dir.isEmpty() && TheFileSystem != nullptr)
+	{
+		TheFileSystem->createDirectory(dir);
+	}
+
+	File *fp = (TheFileSystem != nullptr)
+		? TheFileSystem->openFile(path.str(), File::CREATE | File::BINARY | File::WRITE)
+		: nullptr;
+	if (fp == nullptr)
+	{
+		printf("[map] Cannot open \"%s\" for writing\n", path.str());
+		fflush(stdout);
+		free(data);
+		return false;
+	}
+
+	Int wrote = fp->write(data, (Int)len);
+	fp->close();
+	free(data);
+
+	if (wrote != (Int)len)
+	{
+		printf("[map] Short write to \"%s\": %d of %u\n", path.str(), wrote, len);
+		fflush(stdout);
+		return false;
+	}
+	return true;
+}
+
+Bool DownloadAndInstallMap(const AsciiString& localMapPath,
+                           UnsignedInt mapCRC,
+                           UnsignedInt contentsMask)
+{
+	if (mapCRC == 0 || localMapPath.isEmpty())
+		return FALSE;
+	if (TheGlobalData == nullptr || TheGlobalData->m_mapDownloadUrl.isEmpty())
+		return FALSE;
+
+	const AsciiString downloadUrl = TheGlobalData->m_mapDownloadUrl;
+
+	// Fetch the .map first; if it doesn't come down clean, no point
+	// touching the rest. The .map is the only required asset.
+	void *mapData = nullptr;
+	unsigned int mapLen = 0;
+	if (!DownloadMapAssetFromServer(downloadUrl, mapCRC, "map", 0, &mapData, &mapLen))
+		return FALSE;
+
+	// Validate the bytes match the CRC the host advertised before we
+	// commit anything to disk. cncstats currently has no upload auth, so
+	// a malicious actor could overwrite a popular CRC with arbitrary
+	// content; this check is the only thing keeping us safe.
+	CRC theCRC;
+	theCRC.clear();
+	theCRC.computeCRC(mapData, (Int)mapLen);
+	UnsignedInt actualCRC = theCRC.get();
+	if (actualCRC != mapCRC)
+	{
+		printf("[map] Downloaded map crc mismatch: expected %u, got %u (rejecting)\n",
+			mapCRC, actualCRC);
+		fflush(stdout);
+		free(mapData);
+		return FALSE;
+	}
+
+	if (!writeAssetToDisk(localMapPath, mapData, mapLen))
+		return FALSE;
+	// writeAssetToDisk freed mapData
+
+	printf("[map] Installed downloaded map \"%s\" (crc=%u, %u bytes)\n",
+		localMapPath.str(), mapCRC, mapLen);
+	fflush(stdout);
+
+	// Sidecars: best-effort. Each bit in contentsMask tells us the host
+	// has that sidecar on its disk and therefore (presumably) uploaded
+	// it. If the GET 404s, the host's upload didn't make it or the
+	// server lost the file; either way we just skip and continue.
+	struct SidecarSpec
+	{
+		UnsignedInt mask;
+		const char *kind;
+		AsciiString path;
+	};
+	SidecarSpec sidecars[6];
+	sidecars[0].mask = 2;  sidecars[0].kind = "preview"; sidecars[0].path = GetPreviewFromMap(localMapPath);
+	sidecars[1].mask = 4;  sidecars[1].kind = "ini";     sidecars[1].path = GetINIFromMap(localMapPath);
+	sidecars[2].mask = 8;  sidecars[2].kind = "str";     sidecars[2].path = GetStrFileFromMap(localMapPath);
+	sidecars[3].mask = 16; sidecars[3].kind = "solo";    sidecars[3].path = GetSoloINIFromMap(localMapPath);
+	sidecars[4].mask = 32; sidecars[4].kind = "assets";  sidecars[4].path = GetAssetUsageFromMap(localMapPath);
+	sidecars[5].mask = 64; sidecars[5].kind = "readme";  sidecars[5].path = GetReadmeFromMap(localMapPath);
+
+	Int s;
+	for (s = 0; s < 6; ++s)
+	{
+		if ((contentsMask & sidecars[s].mask) == 0)
+			continue;
+		void *sd = nullptr;
+		unsigned int sl = 0;
+		if (!DownloadMapAssetFromServer(downloadUrl, mapCRC, sidecars[s].kind, 0, &sd, &sl))
+			continue;
+		if (writeAssetToDisk(sidecars[s].path, sd, sl))
+		{
+			printf("[map] Installed %s sidecar \"%s\" (%u bytes)\n",
+				sidecars[s].kind, sidecars[s].path.str(), sl);
+			fflush(stdout);
+		}
+	}
+
+	// Refresh MapCache so findMap() and getMapPreviewImage() see the new
+	// entry. Without this the lobby preview would stay blank until the
+	// next full game restart.
+	if (TheMapCache != nullptr)
+		TheMapCache->refreshUserMaps();
+
+	return TRUE;
 }
 
 bool MapMissingFromServer(const AsciiString& checkUrl, unsigned int mapCRC)

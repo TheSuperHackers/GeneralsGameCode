@@ -138,6 +138,12 @@ public:
 	// doesn't already have it.
 	AsciiString m_mapUploadUrl;
 
+	// URL to GET ?crc=<dec>&kind=<map|preview|ini|str|solo|assets|readme>
+	// to pull one stored map asset when a peer joins a lobby for a map it
+	// doesn't have locally. Empty string disables in-lobby map downloads
+	// (game falls back to the legacy at-launch P2P transfer).
+	AsciiString m_mapDownloadUrl;
+
 	// URL to GET ?players=<name>&players=<name>... to fetch a balanced team
 	// split for the LAN lobby (used by the Randomize button when no teams
 	// are pre-set). Empty string disables the API call.

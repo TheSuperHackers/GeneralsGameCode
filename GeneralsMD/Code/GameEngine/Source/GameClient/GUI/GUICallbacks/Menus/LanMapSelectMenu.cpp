@@ -31,8 +31,10 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
+#include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
 #include "Common/MessageStream.h"
+#include "Common/StatsUploader.h"
 #include "Common/UserPreferences.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
@@ -460,6 +462,22 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 
 						TheLAN->GetMyGame()->resetStartSpots();
 						TheLAN->GetMyGame()->adjustSlotsForMap(); // BGC- adjust the slots for the new map.
+
+						// Host-side cncstats upload: as soon as the host picks a
+						// map, push the .map + every sidecar on disk to the
+						// server (if it doesn't already have the CRC) so joining
+						// peers can pull it via HTTP instead of waiting for the
+						// at-launch P2P transfer. Helper no-ops when URLs are
+						// empty or the server already has the map.
+						if (TheGlobalData != nullptr)
+						{
+							UploadAllMapAssetsIfMissing(TheGlobalData->m_mapCheckUrl,
+								TheGlobalData->m_mapUploadUrl,
+								it->second.m_CRC,
+								it->second.m_fileName,
+								TheLAN->GetMyGame()->getMapContentsMask(),
+								0 /* no per-game seed in the lobby */);
+						}
 					}
 
 

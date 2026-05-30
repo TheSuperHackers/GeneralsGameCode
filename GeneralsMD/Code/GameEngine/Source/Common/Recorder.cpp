@@ -989,9 +989,10 @@ void RecorderClass::stopRecording() {
 		// Map check + conditional map upload. Runs after the replay step;
 		// independent of whether the replay/stats upload succeeded. We
 		// look up the played map's CRC from the cache, ask the server
-		// whether it already has it, and (if not) upload both the .map
-		// file and its .tga preview, tagged via X-Map-File so the server
-		// can correlate them by their shared X-Map-CRC.
+		// whether it already has it, and (if not) upload the .map plus
+		// every sidecar present on disk. The helper handles the missing-
+		// from-server check internally and silently skips sidecars that
+		// don't exist (sidecars are optional per-map).
 		if (wasCollecting && hasMinHumans && !TheGlobalData->m_mapCheckUrl.isEmpty()
 			&& TheMapCache != nullptr && TheGlobalData != nullptr)
 		{
@@ -1002,53 +1003,15 @@ void RecorderClass::stopRecording() {
 				printf("[map] No cached metadata for \"%s\", skipping map check\n", mapName.str());
 				fflush(stdout);
 			}
-			else if (MapMissingFromServer(TheGlobalData->m_mapCheckUrl, md->m_CRC)
-				&& !TheGlobalData->m_mapUploadUrl.isEmpty())
+			else
 			{
-				// Read each asset via the universal filesystem so it
-				// works for both BIG-resident shipped maps and on-disk
-				// user/transferred maps. The preview path is derived
-				// from the .map path via GetPreviewFromMap.
-				const AsciiString assetPaths[2] = {
-					md->m_fileName,
-					GetPreviewFromMap(md->m_fileName)
-				};
-				const char * const assetKinds[2] = { "map", "preview" };
-
-				for (Int ai = 0; ai < 2; ++ai)
-				{
-					const AsciiString &assetPath = assetPaths[ai];
-					const char *kind = assetKinds[ai];
-
-					File *assetFile = TheFileSystem->openFile(assetPath.str(), File::READ);
-					if (assetFile == nullptr)
-					{
-						printf("[map] %s asset \"%s\" not found, skipping\n",
-							kind, assetPath.str());
-						fflush(stdout);
-						continue;
-					}
-
-					Int assetSize = assetFile->size();
-					char *assetBytes = assetFile->readEntireAndClose(); // closes the file
-					if (assetBytes != nullptr && assetSize > 0)
-					{
-						printf("[map] Uploading %s \"%s\" (crc=%u, %d bytes) to %s\n",
-							kind, assetPath.str(), md->m_CRC, assetSize,
-							TheGlobalData->m_mapUploadUrl.str());
-						fflush(stdout);
-						UploadMapToServer(TheGlobalData->m_mapUploadUrl,
-							assetBytes, static_cast<unsigned int>(assetSize),
-							md->m_CRC, md->m_fileName, kind, GetGameLogicRandomSeed());
-					}
-					else
-					{
-						printf("[map] ERROR: readEntireAndClose returned no data for %s \"%s\"\n",
-							kind, assetPath.str());
-						fflush(stdout);
-					}
-					delete[] assetBytes;
-				}
+				// 0xFE = all sidecar bits set (2|4|8|16|32|64). The helper
+				// uploads whichever ones actually exist on disk; missing
+				// sidecars are skipped without warning.
+				UploadAllMapAssetsIfMissing(TheGlobalData->m_mapCheckUrl,
+					TheGlobalData->m_mapUploadUrl,
+					md->m_CRC, md->m_fileName, 0xFE,
+					GetGameLogicRandomSeed());
 			}
 		}
 	}

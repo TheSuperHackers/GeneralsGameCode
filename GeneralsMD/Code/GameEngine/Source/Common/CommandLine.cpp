@@ -489,6 +489,16 @@ Int parseMapUploadUrl(char *args[], int num)
 	return 1;
 }
 
+Int parseMapDownloadUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_mapDownloadUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseBalanceTeamsUrl(char *args[], int num)
 {
 	if (num > 1)
@@ -1257,6 +1267,11 @@ static CommandLineParam paramsForStartup[] =
 	// doesn't already have it. Pass an empty string ("") to skip the
 	// upload even if the check reports false.
 	{ "-mapUploadUrl", parseMapUploadUrl },
+
+	// URL to GET ?crc=<dec>&kind=<...> to pull one stored map asset when
+	// a lobby peer needs a map it doesn't have. Empty string disables
+	// in-lobby map downloads (falls back to launch-time P2P transfer).
+	{ "-mapDownloadUrl", parseMapDownloadUrl },
 
 	// URL the LAN-lobby Randomize button GETs to fetch a balanced team
 	// split (?players=<name>&players=<name>...). Pass an empty string ("")
