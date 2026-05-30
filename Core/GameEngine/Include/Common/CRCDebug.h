@@ -102,40 +102,26 @@ extern AsciiString g_saveDebugCRCPerFrameDir;
 
 extern Bool g_logObjectCRCs;
 
-#else    // DEBUG_CRC
+#else // DEBUG_CRC
+// clang-format off: [MACRO_COMPACT] - keep empty block macro on one line
+	#define DUMPVEL {}
+	#define DUMPACCEL {}
+	#define DUMPVECTOR3(x) {}
+	#define DUMPVECTOR3NAMED(x, y) {}
+	#define DUMPCOORD3D(x) {}
+	#define DUMPCOORD3DNAMED(x, y) {}
+	#define DUMPMATRIX3D(x) {}
+	#define DUMPMATRIX3DNAMED(x, y) {}
 
-	#define DUMPVEL \
-		{}
-	#define DUMPACCEL \
-		{}
-	#define DUMPVECTOR3(x) \
-		{}
-	#define DUMPVECTOR3NAMED(x, y) \
-		{}
-	#define DUMPCOORD3D(x) \
-		{}
-	#define DUMPCOORD3DNAMED(x, y) \
-		{}
-	#define DUMPMATRIX3D(x) \
-		{}
-	#define DUMPMATRIX3DNAMED(x, y) \
-		{}
+	#define DUMPREAL(x) {}
+	#define DUMPREALNAMED(x, y) {}
 
-	#define DUMPREAL(x) \
-		{}
-	#define DUMPREALNAMED(x, y) \
-		{}
+	#define CRCDEBUG_LOG(x) {}
+	#define CRCDUMP_LOG(x) {}
+	#define CRCGEN_LOG(x) {}
 
-	#define CRCDEBUG_LOG(x) \
-		{}
-	#define CRCDUMP_LOG(x) \
-		{}
-	#define CRCGEN_LOG(x) \
-		{}
-
-	#define VERIFY_CRC \
-		{}
-
+	#define VERIFY_CRC {}
+// clang-format on
 #endif
 
 extern Int NET_CRC_INTERVAL;

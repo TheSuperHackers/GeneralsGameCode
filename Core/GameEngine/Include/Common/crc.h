@@ -92,24 +92,27 @@ public:
 	#else
 		// ASM version, verified by comparing resulting data with C++ version data
 		unsigned* crcPtr = &crc;
+
+		// clang-format off: [INLINE_ASM] - Preserving manual alignment of assembly instructions
 		_asm
-			{
-      mov esi,[buf]
-      mov ecx,[len]
-      dec ecx
-      mov edi,[crcPtr]
-      mov ebx,dword ptr [edi]
-      xor eax,eax
-    lp:
-      mov al,byte ptr [esi]
-      shl ebx,1
-      inc esi
-      adc ebx,eax
-      dec ecx
-      jns lp
-      mov dword ptr [edi],ebx
-			}
-		;
+		{
+			mov esi, [buf]
+			mov ecx, [len]
+			dec ecx
+			mov edi, [crcPtr]
+			mov ebx, dword ptr [edi]
+			xor eax, eax
+		lp:
+			mov al, byte ptr [esi]
+			shl ebx, 1
+			inc esi
+			adc ebx, eax
+			dec ecx
+			jns lp
+			mov dword ptr [edi], ebx
+		};
+			// clang-format on
+
 	#endif
 	}
 
