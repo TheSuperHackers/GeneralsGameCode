@@ -53,13 +53,13 @@ PSRequest::PSRequest()
 
 //-------------------------------------------------------------------------
 
-#define DEBUG_MAP(x)                                        \
-	for (it = stats.x.begin(); it != stats.x.end(); ++it)     \
-	{                                                         \
-		if (it->second > 0)                                     \
-		{                                                       \
+#define DEBUG_MAP(x) \
+	for (it = stats.x.begin(); it != stats.x.end(); ++it) \
+	{ \
+		if (it->second > 0) \
+		{ \
 			DEBUG_LOG(("%s(%d): %d", #x, it->first, it->second)); \
-		}                                                       \
+		} \
 	}
 
 static void debugDumpPlayerStats(const PSPlayerStats& stats)
@@ -192,13 +192,13 @@ static void debugDumpPlayerStats(const PSPlayerStats& stats)
 
 //-------------------------------------------------------------------------
 
-#define INCORPORATE_MAP(x)                              \
+#define INCORPORATE_MAP(x) \
 	for (it = other.x.begin(); it != other.x.end(); ++it) \
-	{                                                     \
-		if (it->second > 0)                                 \
-		{                                                   \
-			x[it->first] = it->second;                        \
-		}                                                   \
+	{ \
+		if (it->second > 0) \
+		{ \
+			x[it->first] = it->second; \
+		} \
 	}
 
 void PSPlayerStats::incorporate(const PSPlayerStats& other)
@@ -1138,11 +1138,11 @@ void PSPlayerStats::reset()
 }
 
 //-------------------------------------------------------------------------
-#define CHECK(x)                          \
-	if (k == #x && generalMarker >= 0)      \
-	{                                       \
+#define CHECK(x) \
+	if (k == #x && generalMarker >= 0) \
+	{ \
 		s.x[generalMarker] = atoi(v.c_str()); \
-		continue;                             \
+		continue; \
 	}
 
 PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs(std::string kvPairs)
@@ -1332,14 +1332,14 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs(std::string kvP
 	return s;
 }
 
-#define ITERATE_OVER(x)                                        \
-	for (it = stats.x.begin(); it != stats.x.end(); ++it)        \
-	{                                                            \
-		if (it->second > 0)                                        \
-		{                                                          \
+#define ITERATE_OVER(x) \
+	for (it = stats.x.begin(); it != stats.x.end(); ++it) \
+	{ \
+		if (it->second > 0) \
+		{ \
 			sprintf(kvbuf, "\\" #x "%d\\%d", it->first, it->second); \
-			s.append(kvbuf);                                         \
-		}                                                          \
+			s.append(kvbuf); \
+		} \
 	}
 
 #include "Common/PlayerTemplate.h"

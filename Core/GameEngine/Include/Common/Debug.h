@@ -128,14 +128,14 @@ DEBUG_EXTERN_C int DebugGetFlags();
 DEBUG_EXTERN_C void DebugSetFlags(int flags);
 
 	#define DEBUG_INIT(f) \
-		do                  \
-		{                   \
-			DebugInit(f);     \
+		do \
+		{ \
+			DebugInit(f); \
 		} while (0)
 	#define DEBUG_SHUTDOWN() \
-		do                     \
-		{                      \
-			DebugShutdown();     \
+		do \
+		{ \
+			DebugShutdown(); \
 		} while (0)
 
 #else
@@ -164,42 +164,42 @@ enum
 extern const char* TheDebugLevels[DEBUG_LEVEL_MAX];
 
 	#define DEBUG_LOG(m) \
-		do                 \
-		{                  \
-			{                \
-				DebugLog m;    \
-			}                \
+		do \
+		{ \
+			{ \
+				DebugLog m; \
+			} \
 		} while (0)    // Log message with trailing new line character (LF)
 	#define DEBUG_LOG_RAW(m) \
-		do                     \
-		{                      \
-			{                    \
-				DebugLogRaw m;     \
-			}                    \
+		do \
+		{ \
+			{ \
+				DebugLogRaw m; \
+			} \
 		} while (0)    // Log message without trailing new line character (LF)
 	#define DEBUG_LOG_LEVEL(l, m) \
-		do                          \
-		{                           \
-			if (l & DebugLevelMask)   \
-			{                         \
-				DebugLog m;             \
-			}                         \
+		do \
+		{ \
+			if (l & DebugLevelMask) \
+			{ \
+				DebugLog m; \
+			} \
 		} while (0)
 	#define DEBUG_LOG_LEVEL_RAW(l, m) \
-		do                              \
-		{                               \
-			if (l & DebugLevelMask)       \
-			{                             \
-				DebugLogRaw m;              \
-			}                             \
+		do \
+		{ \
+			if (l & DebugLevelMask) \
+			{ \
+				DebugLogRaw m; \
+			} \
 		} while (0)
 	#define DEBUG_ASSERTLOG(c, m) \
-		do                          \
-		{                           \
-			{                         \
-				if (!(c))               \
-					DebugLog m;           \
-			}                         \
+		do \
+		{ \
+			{ \
+				if (!(c)) \
+					DebugLog m; \
+			} \
 		} while (0)
 
 #else
@@ -223,27 +223,27 @@ DEBUG_EXTERN_C void DebugCrash(const char* format, ...);
 */
 DEBUG_EXTERN_C char* TheCurrentIgnoreCrashPtr;
 
-	#define DEBUG_CRASH(m)                           \
-		do                                             \
-		{                                              \
-			{                                            \
-				static char ignoreCrash = 0;               \
-				if (!ignoreCrash)                          \
-				{                                          \
+	#define DEBUG_CRASH(m) \
+		do \
+		{ \
+			{ \
+				static char ignoreCrash = 0; \
+				if (!ignoreCrash) \
+				{ \
 					TheCurrentIgnoreCrashPtr = &ignoreCrash; \
-					DebugCrash m;                            \
-					TheCurrentIgnoreCrashPtr = nullptr;      \
-				}                                          \
-			}                                            \
+					DebugCrash m; \
+					TheCurrentIgnoreCrashPtr = nullptr; \
+				} \
+			} \
 		} while (0)
 
 	#define DEBUG_ASSERTCRASH(c, m) \
-		do                            \
-		{                             \
-			{                           \
-				if (!(c))                 \
-					DEBUG_CRASH(m);         \
-			}                           \
+		do \
+		{ \
+			{ \
+				if (!(c)) \
+					DEBUG_CRASH(m); \
+			} \
 		} while (0)
 
 // Note: RELEASE_CRASH(m) is now always defined.
@@ -264,14 +264,14 @@ DEBUG_EXTERN_C void ReleaseCrash(const char* reason);
 DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m);
 
 #define RELEASE_CRASH(m) \
-	do                     \
-	{                      \
-		ReleaseCrash(m);     \
+	do \
+	{ \
+		ReleaseCrash(m); \
 	} while (0)
 #define RELEASE_CRASHLOCALIZED(p, m) \
-	do                                 \
-	{                                  \
-		ReleaseCrashLocalized(p, m);     \
+	do \
+	{ \
+		ReleaseCrashLocalized(p, m); \
 	} while (0)
 
 #ifdef DEBUG_PROFILE
@@ -296,7 +296,7 @@ public:
 	double getAverageTime();    // averaged over all sessions, in milliseconds
 };
 
-	#define BEGIN_PROFILE(uniqueid)          \
+	#define BEGIN_PROFILE(uniqueid) \
 		static SimpleProfiler prof_##uniqueid; \
 		prof_##uniqueid.start();
 

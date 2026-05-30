@@ -126,7 +126,7 @@ void InitRandom(UnsignedInt seed)
 // Add with carry. SUM is replaced with A + B + C, C is replaced with 1 if there was a carry, 0 if there wasn't.
 // A carry occurred if the sum is less than one of the inputs. This is addition, so carry can never be more than one.
 #define ADC(SUM, A, B, C) \
-	SUM = (A) + (B) + (C);  \
+	SUM = (A) + (B) + (C); \
 	C = ((SUM < (A)) || (SUM < (B)))
 
 static UnsignedInt randomValue(UnsignedInt (&seed)[6])

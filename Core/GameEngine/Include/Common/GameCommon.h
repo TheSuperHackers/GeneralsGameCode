@@ -305,130 +305,130 @@ inline VeterancyLevelFlags clearVeterancyLevelFlag(VeterancyLevelFlags flags, Ve
 #define BOGUSPTR(p) ((((unsigned int)(p)) & 1) != 0)
 
 // ----------------------------------------------------------------------------------------------
-#define MAKE_DLINK_HEAD(OBJCLASS, LISTNAME)                                                           \
-public:                                                                                               \
-	inline DLINK_ITERATOR<OBJCLASS> iterate_##LISTNAME() const                                          \
-	{                                                                                                   \
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));                  \
+#define MAKE_DLINK_HEAD(OBJCLASS, LISTNAME) \
+public: \
+	inline DLINK_ITERATOR<OBJCLASS> iterate_##LISTNAME() const \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
 		return DLINK_ITERATOR<OBJCLASS>(m_dlinkhead_##LISTNAME.m_head, &OBJCLASS::dlink_next_##LISTNAME); \
-	}                                                                                                   \
-	inline OBJCLASS* getFirstItemIn_##LISTNAME() const                                                  \
-	{                                                                                                   \
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));                  \
-		return m_dlinkhead_##LISTNAME.m_head;                                                             \
-	}                                                                                                   \
-	inline Bool isInList_##LISTNAME(OBJCLASS* o) const                                                  \
-	{                                                                                                   \
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));                  \
-		return o->dlink_isInList_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);                              \
-	}                                                                                                   \
-	inline void prependTo_##LISTNAME(OBJCLASS* o)                                                       \
-	{                                                                                                   \
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));                  \
-		if (!isInList_##LISTNAME(o))                                                                      \
-			o->dlink_prependTo_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);                                  \
-	}                                                                                                   \
-	inline void removeFrom_##LISTNAME(OBJCLASS* o)                                                      \
-	{                                                                                                   \
-		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));                  \
-		if (isInList_##LISTNAME(o))                                                                       \
-			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head);                                 \
-	}                                                                                                   \
-	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS * o);                                             \
-	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = nullptr)                              \
-	{                                                                                                   \
-		while (m_dlinkhead_##LISTNAME.m_head)                                                             \
-		{                                                                                                 \
-			DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr"));                \
-			OBJCLASS* tmp = m_dlinkhead_##LISTNAME.m_head;                                                  \
-			removeFrom_##LISTNAME(tmp);                                                                     \
-			if (p)                                                                                          \
-				(*p)(tmp);                                                                                    \
-		}                                                                                                 \
-	}                                                                                                   \
-	inline void reverse_##LISTNAME()                                                                    \
-	{                                                                                                   \
-		OBJCLASS* cur = m_dlinkhead_##LISTNAME.m_head;                                                    \
-		OBJCLASS* prev = nullptr;                                                                         \
-		while (cur)                                                                                       \
-		{                                                                                                 \
-			OBJCLASS* originalNext = cur->dlink_next_##LISTNAME();                                          \
-			cur->dlink_swapLinks_##LISTNAME();                                                              \
-			prev = cur;                                                                                     \
-			cur = originalNext;                                                                             \
-		}                                                                                                 \
-		m_dlinkhead_##LISTNAME.m_head = prev;                                                             \
-	}                                                                                                   \
-                                                                                                      \
-private:                                                                                              \
-	/* a trick: init head to zero */                                                                    \
-	struct DLINKHEAD_##LISTNAME                                                                         \
-	{                                                                                                   \
-	public:                                                                                             \
-		OBJCLASS* m_head;                                                                                 \
-		inline DLINKHEAD_##LISTNAME()                                                                     \
-			: m_head(0)                                                                                     \
-		{}                                                                                                \
-		inline ~DLINKHEAD_##LISTNAME()                                                                    \
-		{ DEBUG_ASSERTCRASH(!m_head, ("destroying dlinkhead still in a list " #LISTNAME)); }              \
-	};                                                                                                  \
+	} \
+	inline OBJCLASS* getFirstItemIn_##LISTNAME() const \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		return m_dlinkhead_##LISTNAME.m_head; \
+	} \
+	inline Bool isInList_##LISTNAME(OBJCLASS* o) const \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		return o->dlink_isInList_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head); \
+	} \
+	inline void prependTo_##LISTNAME(OBJCLASS* o) \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		if (!isInList_##LISTNAME(o)) \
+			o->dlink_prependTo_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head); \
+	} \
+	inline void removeFrom_##LISTNAME(OBJCLASS* o) \
+	{ \
+		DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+		if (isInList_##LISTNAME(o)) \
+			o->dlink_removeFrom_##LISTNAME(&m_dlinkhead_##LISTNAME.m_head); \
+	} \
+	typedef void (*RemoveAllProc_##LISTNAME)(OBJCLASS * o); \
+	inline void removeAll_##LISTNAME(RemoveAllProc_##LISTNAME p = nullptr) \
+	{ \
+		while (m_dlinkhead_##LISTNAME.m_head) \
+		{ \
+			DEBUG_ASSERTCRASH(!BOGUSPTR(m_dlinkhead_##LISTNAME.m_head), ("bogus head ptr")); \
+			OBJCLASS* tmp = m_dlinkhead_##LISTNAME.m_head; \
+			removeFrom_##LISTNAME(tmp); \
+			if (p) \
+				(*p)(tmp); \
+		} \
+	} \
+	inline void reverse_##LISTNAME() \
+	{ \
+		OBJCLASS* cur = m_dlinkhead_##LISTNAME.m_head; \
+		OBJCLASS* prev = nullptr; \
+		while (cur) \
+		{ \
+			OBJCLASS* originalNext = cur->dlink_next_##LISTNAME(); \
+			cur->dlink_swapLinks_##LISTNAME(); \
+			prev = cur; \
+			cur = originalNext; \
+		} \
+		m_dlinkhead_##LISTNAME.m_head = prev; \
+	} \
+\
+private: \
+	/* a trick: init head to zero */ \
+	struct DLINKHEAD_##LISTNAME \
+	{ \
+	public: \
+		OBJCLASS* m_head; \
+		inline DLINKHEAD_##LISTNAME() \
+			: m_head(0) \
+		{} \
+		inline ~DLINKHEAD_##LISTNAME() \
+		{ DEBUG_ASSERTCRASH(!m_head, ("destroying dlinkhead still in a list " #LISTNAME)); } \
+	}; \
 	DLINKHEAD_##LISTNAME m_dlinkhead_##LISTNAME;
 
 // ----------------------------------------------------------------------------------------------
-#define MAKE_DLINK(OBJCLASS, LISTNAME)                                                                                                        \
-public:                                                                                                                                       \
-	OBJCLASS* dlink_prev_##LISTNAME() const { return m_dlink_##LISTNAME.m_prev; }                                                               \
-	OBJCLASS* dlink_next_##LISTNAME() const { return m_dlink_##LISTNAME.m_next; }                                                               \
-	void dlink_swapLinks_##LISTNAME()                                                                                                           \
-	{                                                                                                                                           \
-		OBJCLASS* originalNext = m_dlink_##LISTNAME.m_next;                                                                                       \
-		m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_prev;                                                                                    \
-		m_dlink_##LISTNAME.m_prev = originalNext;                                                                                                 \
-	}                                                                                                                                           \
-	Bool dlink_isInList_##LISTNAME(OBJCLASS* const* pListHead) const                                                                            \
-	{                                                                                                                                           \
+#define MAKE_DLINK(OBJCLASS, LISTNAME) \
+public: \
+	OBJCLASS* dlink_prev_##LISTNAME() const { return m_dlink_##LISTNAME.m_prev; } \
+	OBJCLASS* dlink_next_##LISTNAME() const { return m_dlink_##LISTNAME.m_next; } \
+	void dlink_swapLinks_##LISTNAME() \
+	{ \
+		OBJCLASS* originalNext = m_dlink_##LISTNAME.m_next; \
+		m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_prev; \
+		m_dlink_##LISTNAME.m_prev = originalNext; \
+	} \
+	Bool dlink_isInList_##LISTNAME(OBJCLASS* const* pListHead) const \
+	{ \
 		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-		return *pListHead == this || m_dlink_##LISTNAME.m_prev || m_dlink_##LISTNAME.m_next;                                                      \
-	}                                                                                                                                           \
-	void dlink_prependTo_##LISTNAME(OBJCLASS** pListHead)                                                                                       \
-	{                                                                                                                                           \
-		DEBUG_ASSERTCRASH(!dlink_isInList_##LISTNAME(pListHead), ("already in list " #LISTNAME));                                                 \
+		return *pListHead == this || m_dlink_##LISTNAME.m_prev || m_dlink_##LISTNAME.m_next; \
+	} \
+	void dlink_prependTo_##LISTNAME(OBJCLASS** pListHead) \
+	{ \
+		DEBUG_ASSERTCRASH(!dlink_isInList_##LISTNAME(pListHead), ("already in list " #LISTNAME)); \
 		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-		m_dlink_##LISTNAME.m_next = *pListHead;                                                                                                   \
-		if (*pListHead)                                                                                                                           \
-			(*pListHead)->m_dlink_##LISTNAME.m_prev = this;                                                                                         \
-		*pListHead = this;                                                                                                                        \
+		m_dlink_##LISTNAME.m_next = *pListHead; \
+		if (*pListHead) \
+			(*pListHead)->m_dlink_##LISTNAME.m_prev = this; \
+		*pListHead = this; \
 		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-	}                                                                                                                                           \
-	void dlink_removeFrom_##LISTNAME(OBJCLASS** pListHead)                                                                                      \
-	{                                                                                                                                           \
-		DEBUG_ASSERTCRASH(dlink_isInList_##LISTNAME(pListHead), ("not in list" #LISTNAME));                                                       \
+	} \
+	void dlink_removeFrom_##LISTNAME(OBJCLASS** pListHead) \
+	{ \
+		DEBUG_ASSERTCRASH(dlink_isInList_##LISTNAME(pListHead), ("not in list" #LISTNAME)); \
 		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-		if (m_dlink_##LISTNAME.m_next)                                                                                                            \
-			m_dlink_##LISTNAME.m_next->m_dlink_##LISTNAME.m_prev = m_dlink_##LISTNAME.m_prev;                                                       \
-		if (m_dlink_##LISTNAME.m_prev)                                                                                                            \
-			m_dlink_##LISTNAME.m_prev->m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_next;                                                       \
-		else                                                                                                                                      \
-			*pListHead = m_dlink_##LISTNAME.m_next;                                                                                                 \
-		m_dlink_##LISTNAME.m_prev = 0;                                                                                                            \
-		m_dlink_##LISTNAME.m_next = 0;                                                                                                            \
+		if (m_dlink_##LISTNAME.m_next) \
+			m_dlink_##LISTNAME.m_next->m_dlink_##LISTNAME.m_prev = m_dlink_##LISTNAME.m_prev; \
+		if (m_dlink_##LISTNAME.m_prev) \
+			m_dlink_##LISTNAME.m_prev->m_dlink_##LISTNAME.m_next = m_dlink_##LISTNAME.m_next; \
+		else \
+			*pListHead = m_dlink_##LISTNAME.m_next; \
+		m_dlink_##LISTNAME.m_prev = 0; \
+		m_dlink_##LISTNAME.m_next = 0; \
 		DEBUG_ASSERTCRASH(!BOGUSPTR(*pListHead) && !BOGUSPTR(m_dlink_##LISTNAME.m_next) && !BOGUSPTR(m_dlink_##LISTNAME.m_prev), ("bogus ptrs")); \
-	}                                                                                                                                           \
-                                                                                                                                              \
-private:                                                                                                                                      \
-	/* a trick: init links to zero */                                                                                                           \
-	struct DLINK_##LISTNAME                                                                                                                     \
-	{                                                                                                                                           \
-	public:                                                                                                                                     \
-		OBJCLASS* m_prev;                                                                                                                         \
-		OBJCLASS* m_next;                                                                                                                         \
-		inline DLINK_##LISTNAME()                                                                                                                 \
-			: m_prev(0)                                                                                                                             \
-			, m_next(0)                                                                                                                             \
-		{}                                                                                                                                        \
-		inline ~DLINK_##LISTNAME()                                                                                                                \
-		{ DEBUG_ASSERTCRASH(!m_prev && !m_next, ("destroying dlink still in a list " #LISTNAME)); }                                               \
-	};                                                                                                                                          \
+	} \
+\
+private: \
+	/* a trick: init links to zero */ \
+	struct DLINK_##LISTNAME \
+	{ \
+	public: \
+		OBJCLASS* m_prev; \
+		OBJCLASS* m_next; \
+		inline DLINK_##LISTNAME() \
+			: m_prev(0) \
+			, m_next(0) \
+		{} \
+		inline ~DLINK_##LISTNAME() \
+		{ DEBUG_ASSERTCRASH(!m_prev && !m_next, ("destroying dlink still in a list " #LISTNAME)); } \
+	}; \
 	DLINK_##LISTNAME m_dlink_##LISTNAME;
 
 // ------------------------------------------------------------------------

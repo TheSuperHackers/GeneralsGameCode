@@ -277,7 +277,7 @@ void GameResultsThreadClass::Thread_Function()
 
 #ifdef DEBUG_LOGGING
 	#define CASE(x) \
-		case (x):     \
+		case (x): \
 			return #x;
 
 static const char* getWSAErrorString(Int error)

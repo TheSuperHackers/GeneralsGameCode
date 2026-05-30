@@ -766,23 +766,23 @@ static void QRServerKeyCallback(
 
 #ifdef DEBUG_LOGGING
 	AsciiString val;
-	#define ADD(x)                 \
-		{                            \
+	#define ADD(x) \
+		{ \
 			qr2_buffer_add(buffer, x); \
-			val = x;                   \
+			val = x; \
 		}
-	#define ADDINT(x)                  \
-		{                                \
+	#define ADDINT(x) \
+		{ \
 			qr2_buffer_add_int(buffer, x); \
-			val.format("%d", x);           \
+			val.format("%d", x); \
 		}
 #else
-	#define ADD(x)                 \
-		{                            \
+	#define ADD(x) \
+		{ \
 			qr2_buffer_add(buffer, x); \
 		}
-	#define ADDINT(x)                  \
-		{                                \
+	#define ADDINT(x) \
+		{ \
 			qr2_buffer_add_int(buffer, x); \
 		}
 #endif
@@ -872,23 +872,23 @@ static void QRPlayerKeyCallback(
 #undef ADDINT
 #ifdef DEBUG_LOGGING
 	AsciiString val;
-	#define ADD(x)                 \
-		{                            \
+	#define ADD(x) \
+		{ \
 			qr2_buffer_add(buffer, x); \
-			val = x;                   \
+			val = x; \
 		}
-	#define ADDINT(x)                  \
-		{                                \
+	#define ADDINT(x) \
+		{ \
 			qr2_buffer_add_int(buffer, x); \
-			val.format("%d", x);           \
+			val.format("%d", x); \
 		}
 #else
-	#define ADD(x)                 \
-		{                            \
+	#define ADD(x) \
+		{ \
 			qr2_buffer_add(buffer, x); \
 		}
-	#define ADDINT(x)                  \
-		{                                \
+	#define ADDINT(x) \
+		{ \
 			qr2_buffer_add_int(buffer, x); \
 		}
 #endif

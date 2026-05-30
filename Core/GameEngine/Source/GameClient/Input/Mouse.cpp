@@ -462,11 +462,11 @@ Mouse::Mouse()
 	m_tooltipDelayTime = 50;
 
 #define setColor(x, r, g, b, a) \
-	{                             \
-		x.red = r;                  \
-		x.green = g;                \
-		x.blue = b;                 \
-		x.alpha = a;                \
+	{ \
+		x.red = r; \
+		x.green = g; \
+		x.blue = b; \
+		x.alpha = a; \
 	}
 	setColor(m_tooltipColorText, 220, 220, 220, 255);
 	setColor(m_tooltipColorHighlight, 255, 255, 0, 255);

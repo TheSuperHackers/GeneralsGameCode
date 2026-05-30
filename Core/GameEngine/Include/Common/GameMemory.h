@@ -572,163 +572,163 @@ public:
 	#define MEMORY_POOL_OBJECT_ALLOCATION_SLOP 16
 
 	// ----------------------------------------------------------------------------
-	#define GCMP_FIND(ARGCLASS, ARGPOOLNAME)                                                                                                                                                                                                                                \
-	private:                                                                                                                                                                                                                                                                \
-		static MemoryPool* getClassMemoryPool()                                                                                                                                                                                                                               \
-		{                                                                                                                                                                                                                                                                     \
-			/*                                                                                                                                                                                                                                                                  \
-			  Note that this static variable will be initialized exactly once: the first time                                                                                                                                                                                   \
-			  control flows over this section of code. This allows us to neatly resolve the                                                                                                                                                                                     \
-			  order-of-execution problem for static variables, ensuring this is not executed                                                                                                                                                                                    \
-			  prior to the initialization of TheMemoryPoolFactory.                                                                                                                                                                                                              \
-			*/                                                                                                                                                                                                                                                                  \
-			DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is null"));                                                                                                                                                                                          \
-			static MemoryPool* The##ARGCLASS##Pool = TheMemoryPoolFactory->findMemoryPool(ARGPOOLNAME);                                                                                                                                                                         \
-			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)", ARGPOOLNAME));                                                                                                                                             \
-			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS)));                                      \
+	#define GCMP_FIND(ARGCLASS, ARGPOOLNAME) \
+	private: \
+		static MemoryPool* getClassMemoryPool() \
+		{ \
+			/* \
+			  Note that this static variable will be initialized exactly once: the first time \
+			  control flows over this section of code. This allows us to neatly resolve the \
+			  order-of-execution problem for static variables, ensuring this is not executed \
+			  prior to the initialization of TheMemoryPoolFactory. \
+			*/ \
+			DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is null")); \
+			static MemoryPool* The##ARGCLASS##Pool = TheMemoryPoolFactory->findMemoryPool(ARGPOOLNAME); \
+			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)", ARGPOOLNAME)); \
+			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS) + MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
-			return The##ARGCLASS##Pool;                                                                                                                                                                                                                                         \
+			return The##ARGCLASS##Pool; \
 		}
 
 	// ----------------------------------------------------------------------------
-	#define GCMP_CREATE(ARGCLASS, ARGPOOLNAME, ARGINITIAL, ARGOVERFLOW)                                                                                                                                                                                                     \
-	private:                                                                                                                                                                                                                                                                \
-		static MemoryPool* getClassMemoryPool()                                                                                                                                                                                                                               \
-		{                                                                                                                                                                                                                                                                     \
-			/*                                                                                                                                                                                                                                                                  \
-			  Note that this static variable will be initialized exactly once: the first time                                                                                                                                                                                   \
-			  control flows over this section of code. This allows us to neatly resolve the                                                                                                                                                                                     \
-			  order-of-execution problem for static variables, ensuring this is not executed                                                                                                                                                                                    \
-			  prior to the initialization of TheMemoryPoolFactory.                                                                                                                                                                                                              \
-			*/                                                                                                                                                                                                                                                                  \
-			DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is null"));                                                                                                                                                                                          \
-			static MemoryPool* The##ARGCLASS##Pool = TheMemoryPoolFactory->createMemoryPool(ARGPOOLNAME, sizeof(ARGCLASS), ARGINITIAL, ARGOVERFLOW);                                                                                                                            \
-			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)", ARGPOOLNAME));                                                                                                                                             \
-			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS)));                                      \
+	#define GCMP_CREATE(ARGCLASS, ARGPOOLNAME, ARGINITIAL, ARGOVERFLOW) \
+	private: \
+		static MemoryPool* getClassMemoryPool() \
+		{ \
+			/* \
+			  Note that this static variable will be initialized exactly once: the first time \
+			  control flows over this section of code. This allows us to neatly resolve the \
+			  order-of-execution problem for static variables, ensuring this is not executed \
+			  prior to the initialization of TheMemoryPoolFactory. \
+			*/ \
+			DEBUG_ASSERTCRASH(TheMemoryPoolFactory, ("TheMemoryPoolFactory is null")); \
+			static MemoryPool* The##ARGCLASS##Pool = TheMemoryPoolFactory->createMemoryPool(ARGPOOLNAME, sizeof(ARGCLASS), ARGINITIAL, ARGOVERFLOW); \
+			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool, ("Pool \"%s\" not found (did you set it up in initMemoryPools?)", ARGPOOLNAME)); \
+			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() >= sizeof(ARGCLASS), ("Pool \"%s\" is too small for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
 			DEBUG_ASSERTCRASH(The##ARGCLASS##Pool->getAllocationSize() <= sizeof(ARGCLASS) + MEMORY_POOL_OBJECT_ALLOCATION_SLOP, ("Pool \"%s\" is too large for this class (currently %d, need %d)", ARGPOOLNAME, The##ARGCLASS##Pool->getAllocationSize(), sizeof(ARGCLASS))); \
-			return The##ARGCLASS##Pool;                                                                                                                                                                                                                                         \
+			return The##ARGCLASS##Pool; \
 		}
 
 	// ----------------------------------------------------------------------------
-	#define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS)                                                                                                                     \
-	protected:                                                                                                                                                          \
-		virtual ~ARGCLASS() override;                                                                                                                                     \
-                                                                                                                                                                      \
-	public:                                                                                                                                                             \
-		enum ARGCLASS##MagicEnum{ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0};                                                                                                    \
-                                                                                                                                                                      \
-	public:                                                                                                                                                             \
-		inline void* operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2)                                                                             \
-		{                                                                                                                                                                 \
+	#define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
+	protected: \
+		virtual ~ARGCLASS() override; \
+\
+	public: \
+		enum ARGCLASS##MagicEnum{ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0}; \
+\
+	public: \
+		inline void* operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
+		{ \
 			DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
-			return ARGCLASS::getClassMemoryPool()->allocateBlockImplementation(PASS_LITERALSTRING_ARG1);                                                                    \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
-	public:                                                                                                                                                             \
-		/*                                                                                                                                                                \
-		  Note that this delete operator can't be called directly; it is called                                                                                           \
-		  only if the analogous new operator is called, AND the constructor                                                                                               \
-		  throws an exception...                                                                                                                                          \
-		*/                                                                                                                                                                \
-		inline void operator delete(void* p, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2)                                                                            \
-		{                                                                                                                                                                 \
-			ARGCLASS::getClassMemoryPool()->freeBlock(p);                                                                                                                   \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
-	protected:                                                                                                                                                          \
-		/*                                                                                                                                                                \
-		  Make normal new and delete protected, so they can't be called by the outside world.                                                                             \
-		  Note that delete is funny, in that it can still be called by the class itself;                                                                                  \
-		  this is safe but not recommended, for consistency purposes. More problematically,                                                                               \
-		  it can be called by another class that has declared itself 'friend' to us.                                                                                      \
-		  In theory, this shouldn't work, since it may not use the right operator-delete,                                                                                 \
-		  and thus the wrong memory pool; in practice, it seems the right delete IS called                                                                                \
-		  in MSVC -- it seems to make operator delete virtual if the destructor is also virtual.                                                                          \
-		  At any rate, this is undocumented behavior as far as I can tell, so we put a big old                                                                            \
-		  crash into operator delete telling people to do the right thing and call deleteInstance                                                                         \
-		  instead -- it'd be nice if we could catch this at compile time, but catching it at                                                                              \
-		  runtime seems to be the best we can do...                                                                                                                       \
-		*/                                                                                                                                                                \
-		inline void* operator new(size_t s)                                                                                                                               \
-		{                                                                                                                                                                 \
-			DEBUG_CRASH(("This operator new should normally never be called... please use new(char*) instead."));                                                           \
+			return ARGCLASS::getClassMemoryPool()->allocateBlockImplementation(PASS_LITERALSTRING_ARG1); \
+		} \
+\
+	public: \
+		/* \
+		  Note that this delete operator can't be called directly; it is called \
+		  only if the analogous new operator is called, AND the constructor \
+		  throws an exception... \
+		*/ \
+		inline void operator delete(void* p, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
+		{ \
+			ARGCLASS::getClassMemoryPool()->freeBlock(p); \
+		} \
+\
+	protected: \
+		/* \
+		  Make normal new and delete protected, so they can't be called by the outside world. \
+		  Note that delete is funny, in that it can still be called by the class itself; \
+		  this is safe but not recommended, for consistency purposes. More problematically, \
+		  it can be called by another class that has declared itself 'friend' to us. \
+		  In theory, this shouldn't work, since it may not use the right operator-delete, \
+		  and thus the wrong memory pool; in practice, it seems the right delete IS called \
+		  in MSVC -- it seems to make operator delete virtual if the destructor is also virtual. \
+		  At any rate, this is undocumented behavior as far as I can tell, so we put a big old \
+		  crash into operator delete telling people to do the right thing and call deleteInstance \
+		  instead -- it'd be nice if we could catch this at compile time, but catching it at \
+		  runtime seems to be the best we can do... \
+		*/ \
+		inline void* operator new(size_t s) \
+		{ \
+			DEBUG_CRASH(("This operator new should normally never be called... please use new(char*) instead.")); \
 			DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
-			throw ERROR_BUG;                                                                                                                                                \
-			return 0;                                                                                                                                                       \
-		}                                                                                                                                                                 \
-		inline void operator delete(void* p)                                                                                                                              \
-		{                                                                                                                                                                 \
-			DEBUG_CRASH(("Please call deleteInstance instead of delete."));                                                                                                 \
-			ARGCLASS::getClassMemoryPool()->freeBlock(p);                                                                                                                   \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
-	private:                                                                                                                                                            \
-		virtual MemoryPool* getObjectMemoryPool() override                                                                                                                \
-		{                                                                                                                                                                 \
-			return ARGCLASS::getClassMemoryPool();                                                                                                                          \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
+			throw ERROR_BUG; \
+			return 0; \
+		} \
+		inline void operator delete(void* p) \
+		{ \
+			DEBUG_CRASH(("Please call deleteInstance instead of delete.")); \
+			ARGCLASS::getClassMemoryPool()->freeBlock(p); \
+		} \
+\
+	private: \
+		virtual MemoryPool* getObjectMemoryPool() override \
+		{ \
+			return ARGCLASS::getClassMemoryPool(); \
+		} \
+\
 	public: /* include this line at the end to reset visibility to 'public' */
 
 	// ----------------------------------------------------------------------------
 	#define MEMORY_POOL_GLUE(ARGCLASS, ARGPOOLNAME) \
-		MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS)       \
+		MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
 		GCMP_FIND(ARGCLASS, ARGPOOLNAME)
 
 	// ----------------------------------------------------------------------------
 	#define MEMORY_POOL_GLUE_WITH_EXPLICIT_CREATE(ARGCLASS, ARGPOOLNAME, ARGINITIAL, ARGOVERFLOW) \
-		MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS)                                                     \
+		MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
 		GCMP_CREATE(ARGCLASS, ARGPOOLNAME, ARGINITIAL, ARGOVERFLOW)
 
 	// ----------------------------------------------------------------------------
 	#define MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ARGCLASS, ARGPOOLNAME) \
-		MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS)                              \
+		MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
 		GCMP_CREATE(ARGCLASS, ARGPOOLNAME, -1, -1)
 
 	// ----------------------------------------------------------------------------
   // this is the version for an Abstract Base Class, which will never be instantiated...
-	#define MEMORY_POOL_GLUE_ABC(ARGCLASS)                                                                                                                              \
-	protected:                                                                                                                                                          \
-		virtual ~ARGCLASS() override;                                                                                                                                     \
-                                                                                                                                                                      \
-	public:                                                                                                                                                             \
-		enum ARGCLASS##MagicEnum{ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0};                                                                                                    \
-                                                                                                                                                                      \
-	protected:                                                                                                                                                          \
-		inline void* operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2)                                                                             \
-		{                                                                                                                                                                 \
-			DEBUG_CRASH(("this should be impossible to call (abstract base class)"));                                                                                       \
+	#define MEMORY_POOL_GLUE_ABC(ARGCLASS) \
+	protected: \
+		virtual ~ARGCLASS() override; \
+\
+	public: \
+		enum ARGCLASS##MagicEnum{ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0}; \
+\
+	protected: \
+		inline void* operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
+		{ \
+			DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 			DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
-			throw ERROR_BUG;                                                                                                                                                \
-			return 0;                                                                                                                                                       \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
-	protected:                                                                                                                                                          \
-		inline void operator delete(void* p, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2)                                                                            \
-		{                                                                                                                                                                 \
-			DEBUG_CRASH(("this should be impossible to call (abstract base class)"));                                                                                       \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
-	protected:                                                                                                                                                          \
-		inline void* operator new(size_t s)                                                                                                                               \
-		{                                                                                                                                                                 \
-			DEBUG_CRASH(("this should be impossible to call (abstract base class)"));                                                                                       \
+			throw ERROR_BUG; \
+			return 0; \
+		} \
+\
+	protected: \
+		inline void operator delete(void* p, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
+		{ \
+			DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
+		} \
+\
+	protected: \
+		inline void* operator new(size_t s) \
+		{ \
+			DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 			DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
-			throw ERROR_BUG;                                                                                                                                                \
-			return 0;                                                                                                                                                       \
-		}                                                                                                                                                                 \
-		inline void operator delete(void* p)                                                                                                                              \
-		{                                                                                                                                                                 \
-			DEBUG_CRASH(("this should be impossible to call (abstract base class)"));                                                                                       \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
-	private:                                                                                                                                                            \
-		virtual MemoryPool* getObjectMemoryPool() override                                                                                                                \
-		{                                                                                                                                                                 \
-			throw ERROR_BUG;                                                                                                                                                \
-			return 0;                                                                                                                                                       \
-		}                                                                                                                                                                 \
-                                                                                                                                                                      \
+			throw ERROR_BUG; \
+			return 0; \
+		} \
+		inline void operator delete(void* p) \
+		{ \
+			DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
+		} \
+\
+	private: \
+		virtual MemoryPool* getObjectMemoryPool() override \
+		{ \
+			throw ERROR_BUG; \
+			return 0; \
+		} \
+\
 	public: /* include this line at the end to reset visibility to 'public' */
 
 // ----------------------------------------------------------------------------

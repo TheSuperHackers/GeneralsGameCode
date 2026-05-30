@@ -407,8 +407,8 @@ void BuddyThreadClass::errorCallback(GPConnection* con, GPErrorArg* arg)
 	char errorCodeString[256];
 	char resultString[256];
 
-#define RESULT(x)             \
-	case x:                     \
+#define RESULT(x) \
+	case x: \
 		strcpy(resultString, #x); \
 		break;
 	switch (arg->result)
@@ -423,8 +423,8 @@ void BuddyThreadClass::errorCallback(GPConnection* con, GPErrorArg* arg)
 	}
 #undef RESULT
 
-#define ERRORCODE(x)             \
-	case x:                        \
+#define ERRORCODE(x) \
+	case x: \
 		strcpy(errorCodeString, #x); \
 		break;
 	switch (arg->errorCode)

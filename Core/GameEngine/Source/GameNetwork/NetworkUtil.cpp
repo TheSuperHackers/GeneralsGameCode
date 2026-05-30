@@ -190,7 +190,7 @@ Bool CommandRequiresDirectSend(const NetCommandMsg* msg)
 const char* GetNetCommandTypeAsString(NetCommandType type)
 {
 #define CASE_LABEL(x) \
-	case x:             \
+	case x: \
 		return #x;
 
 	switch (type)

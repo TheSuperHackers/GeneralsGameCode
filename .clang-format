@@ -68,7 +68,7 @@ BreakConstructorInitializers: BeforeComma
 # Prevent expanding/collapsing short blocks and functions to minimize diffs
 AllowShortFunctionsOnASingleLine: All
 AllowShortBlocksOnASingleLine: Always
-AlignEscapedNewlines: Left
+AlignEscapedNewlines: DontAlign
 
 # Handle custom legacy macros so the parser doesn't break
 Macros:

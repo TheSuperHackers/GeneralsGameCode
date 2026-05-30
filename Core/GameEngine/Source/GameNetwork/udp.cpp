@@ -40,7 +40,7 @@
 #ifdef DEBUG_LOGGING
 
 	#define CASE(x) \
-		case (x):     \
+		case (x): \
 			return #x;
 
 AsciiString GetWSAErrorString(Int error)

@@ -71,9 +71,9 @@ public:
 };
 
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
-protected:                                      \
-	virtual ~ARGCLASS();                          \
-                                                \
+protected: \
+	virtual ~ARGCLASS(); \
+\
 public: /* include this line at the end to reset visibility to 'public' */
 
 #define MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ARGCLASS, ARGPOOLNAME) \
@@ -81,9 +81,9 @@ public: /* include this line at the end to reset visibility to 'public' */
 
 // this is the version for an Abstract Base Class, which will never be instantiated...
 #define MEMORY_POOL_GLUE_ABC(ARGCLASS) \
-protected:                             \
-	virtual ~ARGCLASS();                 \
-                                       \
+protected: \
+	virtual ~ARGCLASS(); \
+\
 public: /* include this line at the end to reset visibility to 'public' */
 
 /**
