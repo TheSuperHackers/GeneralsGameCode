@@ -62,6 +62,8 @@
 #include "Common/MultiplayerSettings.h"
 #include "Common/Recorder.h"
 #include "Common/SpecialPower.h"
+#include "Common/StatsUploader.h"
+#include "GameNetwork/MapDownloadHook.h"
 #include "Common/TerrainTypes.h"
 #include "Common/Upgrade.h"
 #include "Common/OptionPreferences.h"
@@ -702,6 +704,13 @@ void GameEngine::init()
 		// initialize the MapCache
 		TheMapCache = MSGNEW("GameEngineSubsystem") MapCache;
 		TheMapCache->updateCache();
+
+		// Install the in-lobby map download hook. Engine-side LAN /
+		// GameSpy callbacks call TheMapDownloadHook when a peer joins a
+		// lobby for a map it doesn't have; the hook fetches it from the
+		// cncstats server and refreshes MapCache so the preview shows
+		// without a game restart. See MapDownloadHook.h.
+		TheMapDownloadHook = &DownloadAndInstallMap;
 
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////

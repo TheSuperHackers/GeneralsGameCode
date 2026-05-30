@@ -110,6 +110,14 @@ public:
 
 	void updateCache();
 
+	// Re-scan only the user maps directory and pick up any .map files
+	// that appeared since startup (e.g. mid-lobby peer/CDN downloads).
+	// Cheaper than updateCache() because it skips the standard-maps
+	// rebuild and the one-shot startup INI loads. Already-cached maps
+	// short-circuit on CRC, so the cost is dominated by directory walk
+	// plus parsing any newly-added .map files.
+	void refreshUserMaps();
+
 	AsciiString getMapDir() const;
 	AsciiString getUserMapDir() const;
 	AsciiString getMapExtension() const;

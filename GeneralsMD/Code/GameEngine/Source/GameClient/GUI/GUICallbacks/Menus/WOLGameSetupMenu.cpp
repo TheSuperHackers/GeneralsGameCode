@@ -62,6 +62,7 @@
 #include "GameNetwork/GameSpy/PersistentStorageDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
+#include "GameNetwork/MapDownloadHook.h"
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/GUIUtil.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
@@ -2063,6 +2064,32 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 								lastSlotlistTime = timeGetTime();
 								if ( (oldMapCRC ^ newMapCRC) || (!wasInGame && isInGame) )
 								{
+									// Peer-side cncstats download: see
+									// LANAPICallbacks.cpp for the matching LAN
+									// trigger. If the host just advertised a
+									// map we don't have, try to fetch it from
+									// cncstats now so the local slot's hasMap
+									// flips true before we tell the host.
+									if (TheMapDownloadHook != nullptr
+										&& !game->getSlot(newLocalSlotNum)->hasMap()
+										&& game->getMapCRC() != 0)
+									{
+										if (TheMapDownloadHook(game->getMap(),
+											game->getMapCRC(),
+											game->getMapContentsMask()))
+										{
+											// Re-run setMapCRC so GameInfo's
+											// per-slot mapAvailability flag is
+											// refreshed off the new MapCache
+											// state, then repaint the slot
+											// list (and via WOLDisplaySlotList,
+											// the game-options/preview panels)
+											// with the now-available map.
+											game->setMapCRC(game->getMapCRC());
+											WOLDisplaySlotList();
+										}
+									}
+
 									// it changed.  send it
 									UnicodeString hostName = TheGameSpyInfo->getCurrentStagingRoom()->getSlot(0)->getName();
 									AsciiString asciiName;

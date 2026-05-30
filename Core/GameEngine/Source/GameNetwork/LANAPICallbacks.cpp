@@ -46,6 +46,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/MapDownloadHook.h"
 #include "GameNetwork/networkutil.h"
 
 LANAPI *TheLAN = nullptr;
@@ -289,6 +290,33 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 		AsciiString oldOptions = GameInfoToAsciiString(m_currentGame); // save these off for if we get booted
 		if(ParseGameOptionsString(m_currentGame,options))
 		{
+			// Peer-side cncstats download: if the host just advertised a
+			// map CRC we don't have locally, fetch it from the cncstats
+			// server now so the lobby preview can show immediately
+			// (instead of waiting for the launch-time P2P transfer and
+			// requiring a game restart for the preview to load).
+			//
+			// Hook is set by GeneralsMD; null in classic Generals builds.
+			// On failure we fall through silently to the legacy at-launch
+			// P2P transfer in FileTransfer::DoAnyMapTransfers.
+			Int localSlot = m_currentGame->getLocalSlotNum();
+			if (TheMapDownloadHook != nullptr
+				&& localSlot >= 0
+				&& !m_currentGame->getConstSlot(localSlot)->hasMap()
+				&& m_currentGame->getMapCRC() != 0)
+			{
+				if (TheMapDownloadHook(m_currentGame->getMap(),
+					m_currentGame->getMapCRC(),
+					m_currentGame->getMapContentsMask()))
+				{
+					// Re-apply the host's CRC so GameInfo's local
+					// mapAvailability bit flips from false to true now
+					// that the file exists on disk and MapCache knows
+					// about it. setMapCRC re-runs the cache lookup.
+					m_currentGame->setMapCRC(m_currentGame->getMapCRC());
+				}
+			}
+
 			lanUpdateSlotList();
 			updateGameOptions();
 		}

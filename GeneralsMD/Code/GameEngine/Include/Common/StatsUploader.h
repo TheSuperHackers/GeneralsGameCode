@@ -90,6 +90,81 @@ void UploadMapToServer(const AsciiString& uploadUrl, const void *data, unsigned 
                        unsigned int mapCRC, const AsciiString& mapName,
                        const char *fileKind, unsigned int seed);
 
+/// Conditionally upload an entire map (the .map plus every sidecar the host
+/// has on disk) to the configured cncstats endpoint. Issues one
+/// missing-from-server check; if the server already has the CRC, no uploads
+/// happen. Otherwise the .map file is uploaded along with whatever subset
+/// of preview/.ini/.str/solo.ini/assetusage.txt/readme.txt the contentsMask
+/// indicates are present.
+///
+/// Best-effort and blocking; intended for lobby map-select (host side) and
+/// end-of-match upload (recorder side). Silently no-ops if either URL is
+/// empty, the map path is empty, or the missing-from-server check fails.
+///
+/// @param checkUrl Full URL of the map_exists endpoint (empty disables)
+/// @param uploadUrl Full URL of the add_map endpoint (empty disables)
+/// @param mapCRC The map's CRC for the missing-from-server check and the
+///        X-Map-CRC header on each upload
+/// @param mapPath The .map file path (typically MapMetaData::m_fileName)
+/// @param contentsMask GameInfo::getMapContentsMask() bitfield indicating
+///        which sidecars exist on disk: bit 2 = preview, 4 = map.ini,
+///        8 = map.str, 16 = solo.ini, 32 = assetusage.txt, 64 = readme.txt.
+///        Pass 0 to upload the .map only.
+/// @param seed Game seed for X-Game-Seed correlation
+void UploadAllMapAssetsIfMissing(const AsciiString& checkUrl,
+                                 const AsciiString& uploadUrl,
+                                 unsigned int mapCRC,
+                                 const AsciiString& mapPath,
+                                 unsigned int contentsMask,
+                                 unsigned int seed);
+
+/// Download a single map asset (the .map file, its preview, or one sidecar)
+/// from a REST endpoint via HTTP GET. Issues "<downloadUrl>?crc=<dec>&kind=<X>"
+/// and returns the response body on HTTP 200. The caller takes ownership of
+/// *outData and must release it with free().
+///
+/// 404 responses are treated as "asset not present" and return false without
+/// allocating; this lets callers walk every kind they want and silently skip
+/// the ones the server doesn't have. Non-2xx other than 404, network failures,
+/// and empty bodies all return false.
+///
+/// @param downloadUrl Full URL of the get_map_file endpoint (empty disables)
+/// @param mapCRC The map's CRC for the ?crc= query param
+/// @param fileKind Identifier matching the server's X-Map-File kinds
+///        ("map", "preview", "ini", "str", "solo", "assets", "readme")
+/// @param maxBytes Hard cap on the response body size in bytes. Bodies that
+///        report a larger Content-Length, or that overrun the cap mid-read,
+///        return false. Set to 0 to use an internal default (16 MiB).
+/// @param outData On success, receives a newly malloc'd buffer of the
+///        response body. Untouched on failure.
+/// @param outLen On success, receives the length of the buffer in bytes.
+///        Untouched on failure.
+/// @return true if the asset was fetched, false otherwise.
+bool DownloadMapAssetFromServer(const AsciiString& downloadUrl,
+                                unsigned int mapCRC,
+                                const char *fileKind,
+                                unsigned int maxBytes,
+                                void **outData,
+                                unsigned int *outLen);
+
+/// Download a full map (the .map plus the sidecars listed in contentsMask)
+/// from the configured cncstats endpoint and install it on disk at
+/// localMapPath (with sidecars derived via the FileTransfer.h helpers).
+/// Verifies the downloaded .map's CRC against the expected mapCRC before
+/// committing it; rejects the entire install on CRC mismatch. On success,
+/// refreshes MapCache so the new map shows up immediately in the lobby UI.
+///
+/// This is the registered MapDownloadHook implementation; it matches the
+/// MapDownloadHookFn signature so it can be installed at engine init.
+///
+/// Returns true only on a CRC-verified .map write (sidecars are best-effort
+/// and their failures don't gate the return value). Returns false if the
+/// download URL is empty, the .map download fails, the CRC doesn't match,
+/// the file write fails, or any required parameter is invalid.
+Bool DownloadAndInstallMap(const AsciiString& localMapPath,
+                           UnsignedInt mapCRC,
+                           UnsignedInt contentsMask);
+
 /// Result of a balance_teams API call.
 struct BalanceTeamsResult
 {
