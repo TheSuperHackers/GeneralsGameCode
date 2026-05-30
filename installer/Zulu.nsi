@@ -22,7 +22,7 @@
 ;   one UAC click and no extra shortcut clicks.
 
 !define APPNAME       "Zulu"
-!define APPVERSION    "1.2.4"
+!define APPVERSION    "1.2.6"
 !define EXENAME       "generalszh_zulu.exe"
 !define LAUNCHERNAME  "ZuluLauncher.exe"
 !define BIGNAME       "Zulu.big"
