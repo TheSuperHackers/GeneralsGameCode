@@ -1,0 +1,82 @@
+# ==============================================================================
+# Minimalist Clang-Format Configuration (Baseline)
+# ==============================================================================
+# ==============================================================================
+# CUSTOM CLANG-FORMAT OFF FLAGS
+# When disabling clang-format, please use one of the following standard flags
+# to explain why, making it easier to search and maintain the codebase:
+#
+# Usage: // clang-format off: [FLAG_NAME] - optional details
+#
+# Available Flags:
+# [LEGACY_VC6]     - For strict C++03 / VC6 compiler compatibility.
+# [MACRO_COMPACT]  - To prevent concise macros from multi-line wrapping.
+# [MACRO_INDENT]   - When the formatter messes up a macro's internal indentation.
+# [TABLE_ALIGN]    - For matrices, lookup tables, and 2D arrays alignment.
+# [MATH_ALIGN]     - For preserving manual spaces in complex math/logic formulas.
+# [X_MACRO]        - For structured X-Macro lists.
+# [INLINE_ASM]     - For preserving inline assembly instruction formatting.
+# [BITFIELD_ALIGN] - For aligning bitfield sizes (:) in structs / hardware maps.
+# [BITMASK_ALIGN]  - For visual alignment of bitwise operations and bit flags.
+# ==============================================================================
+Language: Cpp
+Standard: c++20
+
+# 1. Non-Destructive Core Setting
+# ------------------------------------------------------------------------------
+# Completely disable automatic line wrapping to preserve manual formatting.
+ColumnLimit: 0
+
+# 2. Indentation & Tabs
+# ------------------------------------------------------------------------------
+UseTab: AlignWithSpaces
+IndentWidth: 2
+TabWidth: 2
+ContinuationIndentWidth: 2
+AccessModifierOffset: -2
+IndentCaseLabels: true
+AlignTrailingComments: false
+SpacesBeforeTrailingComments: 4
+
+# 3. Braces Style: Allman
+# ------------------------------------------------------------------------------
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+AllowShortEnumsOnASingleLine: false
+
+# 4. Pointers & Spaces
+# ------------------------------------------------------------------------------
+PointerAlignment: Left
+SpacesInParentheses: false
+BreakConstructorInitializers: BeforeComma
+
+# 5. Legacy & Compatibility (VC6 / Custom Macros)
+# ------------------------------------------------------------------------------
+# Prevent expanding/collapsing short blocks and functions to minimize diffs
+AllowShortFunctionsOnASingleLine: All
+AllowShortBlocksOnASingleLine: Always
+AlignEscapedNewlines: Left
+
+# Handle custom legacy macros so the parser doesn't break
+Macros:
+  - CPP_11(x)=x
+
+IndentPPDirectives: BeforeHash
+ConstructorInitializerIndentWidth: 2
+
+# 6. Includes
+# ------------------------------------------------------------------------------
+SortIncludes: false
