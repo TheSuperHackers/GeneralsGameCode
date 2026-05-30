@@ -212,3 +212,20 @@ struct MapSummaryResult
 MapSummaryResult MapSummaryFromServer(const AsciiString& url,
                                       const AsciiString& mapName,
                                       const std::vector<MapSummaryPlayer>& players);
+
+/// Refresh the cached map_match_counts table from the radarvan endpoint if
+/// the last successful fetch is older than maxAgeSec, or if no fetch has
+/// happened yet this session. Best-effort and blocking; uses WinINet's
+/// default timeouts. Silently no-ops on empty URL or HTTP failure (in which
+/// case the previously cached table, if any, stays in place).
+/// @param url Full URL of the map_match_counts endpoint
+/// @param maxAgeSec How recent a cached snapshot must be to skip refetching
+void FetchMapMatchCountsIfStale(const AsciiString& url, unsigned int maxAgeSec);
+
+/// Look up how many recorded matches the radarvan server has for the map
+/// identified by mapCacheKey (a MapCache iterator key, i.e. the full
+/// lowercased filename with backslashes). The cache key is normalized to
+/// the radarvan API's "maps/<folder>" or "userdata/maps/<folder>" form
+/// before lookup. Returns 0 when no entry exists (no fetch yet, key
+/// unrecognized, or simply zero plays).
+int GetMapMatchCount(const AsciiString& mapCacheKey);
