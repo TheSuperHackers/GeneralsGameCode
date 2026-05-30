@@ -379,15 +379,11 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-MetaEventTranslator::MetaEventTranslator() :
-	m_lastKeyDown(MK_NONE),
-	m_lastModState(0)
+MetaEventTranslator::MetaEventTranslator()
 {
 	for (Int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
 		m_nextUpShouldCreateDoubleClick[i] = FALSE;
 	}
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -443,8 +439,20 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 	if (t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_RAW_KEY_UP)
 	{
-		MappableKeyType key = (MappableKeyType)msg->getArgument(0)->integer;
-		Int keyState = msg->getArgument(1)->integer;
+		const Int systemKey = msg->getArgument(0)->integer;
+		const Int keyState = msg->getArgument(1)->integer;
+
+		MappableKeyType key = (MappableKeyType)systemKey;
+		switch (systemKey)
+		{
+		case KEY_LCTRL:
+		case KEY_RCTRL:
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+		case KEY_LALT:
+		case KEY_RALT:
+			key = MK_NONE;
+		}
 
 		// for our purposes here, we don't care to distinguish between right and left keys,
 		// so just fudge a little to simplify things.
@@ -465,28 +473,58 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			newModState |= ALT;
 		}
 
+		const Bool modStateRemoved = (key == MK_NONE) && (t == GameMessage::MSG_RAW_KEY_UP);
+
+		if (modStateRemoved)
+		{
+			// TheSuperHackers @fix The key handler now ignores the order in which modifier keys are released.
+			// This avoids frustrating experiences where a wrong button release order would skip an important key event.
+
+			for (Int keyDownIndex = 0; keyDownIndex < ARRAY_SIZE(m_keyDownInfos); ++keyDownIndex)
+			{
+				const MappableKeyType keyDown = (MappableKeyType)keyDownIndex;
+				KeyDownInfo &keyDownInfo = m_keyDownInfos[keyDownIndex];
+
+				if (!keyDownInfo.isKeyDown())
+					continue;
+
+				for (UnsignedInt modStateIndex = 0; modStateIndex < KeyDownInfo::getMaxKeyModStateCount(); ++modStateIndex)
+				{
+					const MappableKeyModState keyDownModState = keyDownInfo.getKeyModState(modStateIndex);
+
+					if (keyDownModState == NONE)
+						continue;
+
+					if (BitsAreSet(newModState, keyDownModState))
+						continue;
+
+					// Forget that this key and mod state are pressed.
+					keyDownInfo.clearKeyModState(modStateIndex);
+
+					for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
+					{
+						if (!isMessageUsable(map->m_usableIn))
+							continue;
+
+						if (!(map->m_key == keyDown && map->m_modState == keyDownModState && map->m_transition == UP))
+							continue;
+
+						TheMessageStream->appendMessage(map->m_meta);
+						disp = DESTROY_MESSAGE;
+					}
+				}
+			}
+		}
+		else
+		{
+			// TheSuperHackers @info The regular key handler only triggers events when the mapped key is pressed,
+			// not when the modifier (CTRL, ALT, SHIFT) is pressed, unless the key is MK_NONE.
+
 		for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
 		{
 			if (!isMessageUsable(map->m_usableIn))
 				continue;
 
-			// check for the special case of mods-only-changed.
-			if (
-						map->m_key == MK_NONE &&
-						newModState != m_lastModState &&
-						(
-							(map->m_transition == UP && map->m_modState == m_lastModState) ||
-							(map->m_transition == DOWN && map->m_modState == newModState)
-						)
-					)
-			{
-				//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() Mods-only change: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
-				/*GameMessage *metaMsg =*/ TheMessageStream->appendMessage(map->m_meta);
-				disp = DESTROY_MESSAGE;
-				break;
-			}
-
-			// ok, now check for "normal" key transitions.
 			if (
 						map->m_key == key &&
 						map->m_modState == newModState &&
@@ -497,7 +535,6 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 						)
 					)
 			{
-
 				if( keyState & KEY_STATE_AUTOREPEAT )
 				{
 					// if it's an autorepeat of a "known" key, don't generate the meta-event,
@@ -538,13 +575,8 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			}
 		}
 
-
-
 		if (t == GameMessage::MSG_RAW_KEY_DOWN)
     {
-			m_lastKeyDown = key;
-
-
 #ifdef DUMP_ALL_KEYS_TO_LOG
 
 		          WideChar Wkey = TheKeyboard->getPrintableKey(key, 0);
@@ -554,12 +586,24 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 		          aKey.translate(uKey);
   	          DEBUG_LOG(("^%s ", aKey.str()));
 #endif
-
+			if (newModState != NONE)
+			{
+				// Remember that this key and mod state are pressed.
+				m_keyDownInfos[key].setKeyModState((MappableKeyModState)newModState);
+			}
     }
+		else
+		{
+			if (newModState != NONE)
+			{
+				DEBUG_ASSERTCRASH(key != MK_NONE, ("Key is expected to be not MK_NONE"));
 
+				// Forget that this key and mod state are pressed.
+				m_keyDownInfos[key].clearKeyModState((MappableKeyModState)newModState);
+			}
+		}
 
-
-    m_lastModState = newModState;
+		}
 	}
 
 
