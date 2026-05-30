@@ -49,11 +49,10 @@ typedef enum
 
 } ImageStatus;
 #ifdef DEFINE_IMAGE_STATUS_NAMES
-static const char* const imageStatusNames[] =
-	{
-		"ROTATED_90_CLOCKWISE",
-		"RAW_TEXTURE",
-		nullptr};
+static const char* const imageStatusNames[] = {
+	"ROTATED_90_CLOCKWISE",
+	"RAW_TEXTURE",
+	nullptr};
 #endif    // end DEFINE_IMAGE_STATUS_NAMES
 
 //-------------------------------------------------------------------------------------------------

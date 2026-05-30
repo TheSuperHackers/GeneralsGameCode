@@ -42,16 +42,15 @@
 #include "Common/NameKeyGenerator.h"
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse Image::m_imageFieldParseTable[] =
-	{
+const FieldParse Image::m_imageFieldParseTable[] = {
 
-		{"Texture", INI::parseAsciiString, nullptr, offsetof(Image, m_filename)},
-		{"TextureWidth", INI::parseInt, nullptr, offsetof(Image, m_textureSize.x)},
-		{"TextureHeight", INI::parseInt, nullptr, offsetof(Image, m_textureSize.y)},
-		{"Coords", Image::parseImageCoords, nullptr, offsetof(Image, m_UVCoords)},
-		{"Status", Image::parseImageStatus, nullptr, offsetof(Image, m_status)},
+	{"Texture", INI::parseAsciiString, nullptr, offsetof(Image, m_filename)},
+	{"TextureWidth", INI::parseInt, nullptr, offsetof(Image, m_textureSize.x)},
+	{"TextureHeight", INI::parseInt, nullptr, offsetof(Image, m_textureSize.y)},
+	{"Coords", Image::parseImageCoords, nullptr, offsetof(Image, m_UVCoords)},
+	{"Status", Image::parseImageStatus, nullptr, offsetof(Image, m_status)},
 
-		{nullptr, nullptr, nullptr, 0}
+	{nullptr, nullptr, nullptr, 0}
 
 };
 

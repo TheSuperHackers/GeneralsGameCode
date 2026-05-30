@@ -26,21 +26,19 @@
 
 #include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
-const char* const TimeOfDayNames[] =
-	{
-		"NONE",
-		"MORNING",
-		"AFTERNOON",
-		"EVENING",
-		"NIGHT",
+const char* const TimeOfDayNames[] = {
+	"NONE",
+	"MORNING",
+	"AFTERNOON",
+	"EVENING",
+	"NIGHT",
 
-		nullptr};
+	nullptr};
 static_assert(ARRAY_SIZE(TimeOfDayNames) == TIME_OF_DAY_COUNT + 1, "Incorrect array size");
 
-const char* const WeatherNames[] =
-	{
-		"NORMAL",
-		"SNOWY",
+const char* const WeatherNames[] = {
+	"NORMAL",
+	"SNOWY",
 
-		nullptr};
+	nullptr};
 static_assert(ARRAY_SIZE(WeatherNames) == WEATHER_COUNT + 1, "Incorrect array size");

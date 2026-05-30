@@ -77,14 +77,13 @@ enum
 	CREDIT_SPACE_OFFSET = 2
 };
 
-static const LookupListRec CreditStyleNames[] =
-	{
-		{"TITLE", CREDIT_STYLE_TITLE},
-		{"MINORTITLE", CREDIT_STYLE_POSITION},
-		{"NORMAL", CREDIT_STYLE_NORMAL},
-		{"COLUMN", CREDIT_STYLE_COLUMN},
-		// CREDIT_STYLE_BLANK
-		{nullptr, 0}};
+static const LookupListRec CreditStyleNames[] = {
+	{"TITLE", CREDIT_STYLE_TITLE},
+	{"MINORTITLE", CREDIT_STYLE_POSITION},
+	{"NORMAL", CREDIT_STYLE_NORMAL},
+	{"COLUMN", CREDIT_STYLE_COLUMN},
+	// CREDIT_STYLE_BLANK
+	{nullptr, 0}};
 static_assert(ARRAY_SIZE(CreditStyleNames) == MAX_CREDIT_STYLES, "Incorrect array size");
 
 class CreditsLine

@@ -112,13 +112,12 @@ void RankInfoStore::friend_parseRankDefinition(INI* ini)
 	{
 		Int rank = INI::scanInt(ini->getNextToken());
 
-		static const FieldParse myFieldParse[] =
-			{
-				{"RankName", INI::parseAndTranslateLabel, nullptr, offsetof(RankInfo, m_rankName)},
-				{"SkillPointsNeeded", INI::parseInt, nullptr, offsetof(RankInfo, m_skillPointsNeeded)},
-				{"SciencesGranted", INI::parseScienceVector, nullptr, offsetof(RankInfo, m_sciencesGranted)},
-				{"SciencePurchasePointsGranted", INI::parseUnsignedInt, nullptr, offsetof(RankInfo, m_sciencePurchasePointsGranted)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"RankName", INI::parseAndTranslateLabel, nullptr, offsetof(RankInfo, m_rankName)},
+			{"SkillPointsNeeded", INI::parseInt, nullptr, offsetof(RankInfo, m_skillPointsNeeded)},
+			{"SciencesGranted", INI::parseScienceVector, nullptr, offsetof(RankInfo, m_sciencesGranted)},
+			{"SciencePurchasePointsGranted", INI::parseUnsignedInt, nullptr, offsetof(RankInfo, m_sciencePurchasePointsGranted)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{

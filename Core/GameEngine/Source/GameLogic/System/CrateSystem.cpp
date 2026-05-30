@@ -183,15 +183,14 @@ CrateTemplate* CrateSystem::friend_findCrateTemplate(AsciiString name)
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
-const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] =
-	{
-		{"CreationChance", INI::parseReal, nullptr, offsetof(CrateTemplate, m_creationChance)},
-		{"VeterancyLevel", INI::parseIndexList, TheVeterancyNames, offsetof(CrateTemplate, m_veterancyLevel)},
-		{"KilledByType", KindOfMaskType::parseFromINI, nullptr, offsetof(CrateTemplate, m_killedByTypeKindof)},
-		{"CrateObject", CrateTemplate::parseCrateCreationEntry, nullptr, 0},
-		{"KillerScience", INI::parseScience, nullptr, offsetof(CrateTemplate, m_killerScience)},
-		{"OwnedByMaker", INI::parseBool, nullptr, offsetof(CrateTemplate, m_isOwnedByMaker)},
-		{nullptr, nullptr, nullptr, 0},
+const FieldParse CrateTemplate::TheCrateTemplateFieldParseTable[] = {
+	{"CreationChance", INI::parseReal, nullptr, offsetof(CrateTemplate, m_creationChance)},
+	{"VeterancyLevel", INI::parseIndexList, TheVeterancyNames, offsetof(CrateTemplate, m_veterancyLevel)},
+	{"KilledByType", KindOfMaskType::parseFromINI, nullptr, offsetof(CrateTemplate, m_killedByTypeKindof)},
+	{"CrateObject", CrateTemplate::parseCrateCreationEntry, nullptr, 0},
+	{"KillerScience", INI::parseScience, nullptr, offsetof(CrateTemplate, m_killerScience)},
+	{"OwnedByMaker", INI::parseBool, nullptr, offsetof(CrateTemplate, m_isOwnedByMaker)},
+	{nullptr, nullptr, nullptr, 0},
 };
 
 CrateTemplate::CrateTemplate()

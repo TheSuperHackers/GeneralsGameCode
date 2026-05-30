@@ -47,17 +47,14 @@
 static const Real theMultFactor = 1.0f / static_cast<float>(UINT_MAX);
 
 // Initial seed values.
-static UnsignedInt theGameAudioSeed[6] =
-	{
-		0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
+static UnsignedInt theGameAudioSeed[6] = {
+	0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
 
-static UnsignedInt theGameClientSeed[6] =
-	{
-		0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
+static UnsignedInt theGameClientSeed[6] = {
+	0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
 
-static UnsignedInt theGameLogicSeed[6] =
-	{
-		0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
+static UnsignedInt theGameLogicSeed[6] = {
+	0xf22d0e56L, 0x883126e9L, 0xc624dd2fL, 0x702c49cL, 0x9e353f7dL, 0x6fdf3b64L};
 
 static UnsignedInt theGameLogicBaseSeed = 0;
 
@@ -379,9 +376,8 @@ Real GetGameLogicRandomValueRealUnchanged(Real lo, Real hi, const char* file, in
 // GameClientRandomVariable
 //
 
-const char* const GameClientRandomVariable::DistributionTypeNames[] =
-	{
-		"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr};
+const char* const GameClientRandomVariable::DistributionTypeNames[] = {
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr};
 static_assert(ARRAY_SIZE(GameClientRandomVariable::DistributionTypeNames) == GameClientRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**
@@ -424,9 +420,8 @@ Real GameClientRandomVariable::getValue() const
 // GameLogicRandomVariable
 //
 
-const char* const GameLogicRandomVariable::DistributionTypeNames[] =
-	{
-		"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr};
+const char* const GameLogicRandomVariable::DistributionTypeNames[] = {
+	"CONSTANT", "UNIFORM", "GAUSSIAN", "TRIANGULAR", "LOW_BIAS", "HIGH_BIAS", nullptr};
 static_assert(ARRAY_SIZE(GameLogicRandomVariable::DistributionTypeNames) == GameLogicRandomVariable::DISTRIBUTION_COUNT + 1, "Incorrect array size");
 
 /**

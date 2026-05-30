@@ -68,13 +68,12 @@
 //-------------------------------------------------------------------------------------------------
 /** The INI data fields for music tracks */
 //-------------------------------------------------------------------------------------------------
-const FieldParse MusicTrack::m_musicTrackFieldParseTable[] =
-	{
+const FieldParse MusicTrack::m_musicTrackFieldParseTable[] = {
 
-		{"Filename", INI::parseAsciiString, nullptr, offsetof(MusicTrack, filename)},
-		{"Volume", INI::parsePercentToReal, nullptr, offsetof(MusicTrack, volume)},
-		{"Ambient", INI::parseBool, nullptr, offsetof(MusicTrack, ambient)},
-		{nullptr, nullptr, nullptr, 0},
+	{"Filename", INI::parseAsciiString, nullptr, offsetof(MusicTrack, filename)},
+	{"Volume", INI::parsePercentToReal, nullptr, offsetof(MusicTrack, volume)},
+	{"Ambient", INI::parseBool, nullptr, offsetof(MusicTrack, ambient)},
+	{nullptr, nullptr, nullptr, 0},
 };
 
 //-------------------------------------------------------------------------------------------------

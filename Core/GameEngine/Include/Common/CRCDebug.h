@@ -102,7 +102,7 @@ extern AsciiString g_saveDebugCRCPerFrameDir;
 
 extern Bool g_logObjectCRCs;
 
-#else // DEBUG_CRC
+#else    // DEBUG_CRC
 // clang-format off: [MACRO_COMPACT] - keep empty block macro on one line
 	#define DUMPVEL {}
 	#define DUMPACCEL {}

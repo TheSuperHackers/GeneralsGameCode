@@ -56,54 +56,52 @@ void ChallengeGenerals::init()
 
 void ChallengeGenerals::parseGeneralPersona(INI* ini, void* instance, void* store, const void* userData)
 {
-	static const FieldParse dataFieldParse[] =
-		{
-			{"StartsEnabled", INI::parseBool, nullptr, offsetof(GeneralPersona, m_bStartsEnabled)},
-			{"BioNameString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioName)},
-			{"BioDOBString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioDOB)},
-			{"BioBirthplaceString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioBirthplace)},
-			{"BioStrategyString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioStrategy)},
-			{"BioRankString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioRank)},
-			{"BioBranchString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioBranch)},
-			{"BioClassNumberString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioClassNumber)},
-			{"BioPortraitSmall", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageBioPortraitSmall)},
-			{"BioPortraitLarge", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageBioPortraitLarge)},
-			{"Campaign", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strCampaign)},
-			{"PlayerTemplate", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPlayerTemplateName)},
-			{"PortraitMovieLeftName", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPortraitMovieLeftName)},
-			{"PortraitMovieRightName", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPortraitMovieRightName)},
-			{"DefeatedImage", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageDefeated)},
-			{"VictoriousImage", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageVictorious)},
-			{"DefeatedString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strDefeated)},
-			{"VictoriousString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strVictorious)},
-			{"SelectionSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strSelectionSound)},
-			{"TauntSound1", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strTauntSound1)},
-			{"TauntSound2", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strTauntSound2)},
-			{"TauntSound3", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strTauntSound3)},
-			{"WinSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strWinSound)},
-			{"LossSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strLossSound)},
-			{"PreviewSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPreviewSound)},
-			{"NameSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strNameSound)},
+	static const FieldParse dataFieldParse[] = {
+		{"StartsEnabled", INI::parseBool, nullptr, offsetof(GeneralPersona, m_bStartsEnabled)},
+		{"BioNameString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioName)},
+		{"BioDOBString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioDOB)},
+		{"BioBirthplaceString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioBirthplace)},
+		{"BioStrategyString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioStrategy)},
+		{"BioRankString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioRank)},
+		{"BioBranchString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioBranch)},
+		{"BioClassNumberString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strBioClassNumber)},
+		{"BioPortraitSmall", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageBioPortraitSmall)},
+		{"BioPortraitLarge", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageBioPortraitLarge)},
+		{"Campaign", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strCampaign)},
+		{"PlayerTemplate", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPlayerTemplateName)},
+		{"PortraitMovieLeftName", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPortraitMovieLeftName)},
+		{"PortraitMovieRightName", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPortraitMovieRightName)},
+		{"DefeatedImage", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageDefeated)},
+		{"VictoriousImage", INI::parseMappedImage, nullptr, offsetof(GeneralPersona, m_imageVictorious)},
+		{"DefeatedString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strDefeated)},
+		{"VictoriousString", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strVictorious)},
+		{"SelectionSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strSelectionSound)},
+		{"TauntSound1", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strTauntSound1)},
+		{"TauntSound2", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strTauntSound2)},
+		{"TauntSound3", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strTauntSound3)},
+		{"WinSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strWinSound)},
+		{"LossSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strLossSound)},
+		{"PreviewSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strPreviewSound)},
+		{"NameSound", INI::parseAsciiString, nullptr, offsetof(GeneralPersona, m_strNameSound)},
 
-			{nullptr, nullptr, nullptr, 0}};
+		{nullptr, nullptr, nullptr, 0}};
 	ini->initFromINI(store, dataFieldParse);
 }
 
-const FieldParse ChallengeGenerals::s_fieldParseTable[] =
-	{
-		{"GeneralPersona0", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[0])},
-		{"GeneralPersona1", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[1])},
-		{"GeneralPersona2", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[2])},
-		{"GeneralPersona3", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[3])},
-		{"GeneralPersona4", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[4])},
-		{"GeneralPersona5", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[5])},
-		{"GeneralPersona6", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[6])},
-		{"GeneralPersona7", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[7])},
-		{"GeneralPersona8", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[8])},
-		{"GeneralPersona9", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[9])},
-		{"GeneralPersona10", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[10])},
-		{"GeneralPersona11", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[11])},
-		{nullptr, nullptr, nullptr, 0}};
+const FieldParse ChallengeGenerals::s_fieldParseTable[] = {
+	{"GeneralPersona0", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[0])},
+	{"GeneralPersona1", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[1])},
+	{"GeneralPersona2", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[2])},
+	{"GeneralPersona3", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[3])},
+	{"GeneralPersona4", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[4])},
+	{"GeneralPersona5", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[5])},
+	{"GeneralPersona6", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[6])},
+	{"GeneralPersona7", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[7])},
+	{"GeneralPersona8", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[8])},
+	{"GeneralPersona9", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[9])},
+	{"GeneralPersona10", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[10])},
+	{"GeneralPersona11", ChallengeGenerals::parseGeneralPersona, nullptr, offsetof(ChallengeGenerals, m_position[11])},
+	{nullptr, nullptr, nullptr, 0}};
 
 //-------------------------------------------------------------------------------------------------
 /** Parse Gen Challenge entries */

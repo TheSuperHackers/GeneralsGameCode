@@ -72,76 +72,73 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static const char* TheSpeakerTypes[] =
-	{
-		"2 Speakers",
-		"Headphones",
-		"Surround Sound",
-		"4 Speaker",
-		"5.1 Surround",
-		"7.1 Surround",
-		nullptr};
+static const char* TheSpeakerTypes[] = {
+	"2 Speakers",
+	"Headphones",
+	"Surround Sound",
+	"4 Speaker",
+	"5.1 Surround",
+	"7.1 Surround",
+	nullptr};
 
 static const Int TheSpeakerTypesCount = sizeof(TheSpeakerTypes) / sizeof(TheSpeakerTypes[0]);
 
 static void parseSpeakerType(INI* ini, void* instance, void* store, const void* userData);
 
 // Field Parse table for Audio Settings ///////////////////////////////////////////////////////////
-static const FieldParse audioSettingsFieldParseTable[] =
-	{
-		{"AudioRoot", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_audioRoot)},
-		{"SoundsFolder", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_soundsFolder)},
-		{"MusicFolder", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_musicFolder)},
-		{"StreamingFolder", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_streamingFolder)},
-		{"SoundsExtension", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_soundsExtension)},
+static const FieldParse audioSettingsFieldParseTable[] = {
+	{"AudioRoot", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_audioRoot)},
+	{"SoundsFolder", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_soundsFolder)},
+	{"MusicFolder", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_musicFolder)},
+	{"StreamingFolder", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_streamingFolder)},
+	{"SoundsExtension", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_soundsExtension)},
 
-		{"UseDigital", INI::parseBool, nullptr, offsetof(AudioSettings, m_useDigital)},
-		{"UseMidi", INI::parseBool, nullptr, offsetof(AudioSettings, m_useMidi)},
-		{"OutputRate", INI::parseInt, nullptr, offsetof(AudioSettings, m_outputRate)},
-		{"OutputBits", INI::parseInt, nullptr, offsetof(AudioSettings, m_outputBits)},
-		{"OutputChannels", INI::parseInt, nullptr, offsetof(AudioSettings, m_outputChannels)},
-		{"SampleCount2D", INI::parseInt, nullptr, offsetof(AudioSettings, m_sampleCount2D)},
-		{"SampleCount3D", INI::parseInt, nullptr, offsetof(AudioSettings, m_sampleCount3D)},
-		{"StreamCount", INI::parseInt, nullptr, offsetof(AudioSettings, m_streamCount)},
+	{"UseDigital", INI::parseBool, nullptr, offsetof(AudioSettings, m_useDigital)},
+	{"UseMidi", INI::parseBool, nullptr, offsetof(AudioSettings, m_useMidi)},
+	{"OutputRate", INI::parseInt, nullptr, offsetof(AudioSettings, m_outputRate)},
+	{"OutputBits", INI::parseInt, nullptr, offsetof(AudioSettings, m_outputBits)},
+	{"OutputChannels", INI::parseInt, nullptr, offsetof(AudioSettings, m_outputChannels)},
+	{"SampleCount2D", INI::parseInt, nullptr, offsetof(AudioSettings, m_sampleCount2D)},
+	{"SampleCount3D", INI::parseInt, nullptr, offsetof(AudioSettings, m_sampleCount3D)},
+	{"StreamCount", INI::parseInt, nullptr, offsetof(AudioSettings, m_streamCount)},
 
-		{"Preferred3DHW1", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[0])},
-		{"Preferred3DHW2", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[1])},
-		{"Preferred3DHW3", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[2])},
-		{"Preferred3DHW4", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[3])},
+	{"Preferred3DHW1", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[0])},
+	{"Preferred3DHW2", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[1])},
+	{"Preferred3DHW3", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[2])},
+	{"Preferred3DHW4", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[3])},
 
-		{"Preferred3DSW", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[4])},
+	{"Preferred3DSW", INI::parseAsciiString, nullptr, offsetof(AudioSettings, m_preferred3DProvider[4])},
 
-		{"Default2DSpeakerType", parseSpeakerType, nullptr, offsetof(AudioSettings, m_defaultSpeakerType2D)},
-		{"Default3DSpeakerType", parseSpeakerType, nullptr, offsetof(AudioSettings, m_defaultSpeakerType3D)},
+	{"Default2DSpeakerType", parseSpeakerType, nullptr, offsetof(AudioSettings, m_defaultSpeakerType2D)},
+	{"Default3DSpeakerType", parseSpeakerType, nullptr, offsetof(AudioSettings, m_defaultSpeakerType3D)},
 
-		{"MinSampleVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_minVolume)},
-		{"Use3DSoundRangeVolumeFade", INI::parseBool, nullptr, offsetof(AudioSettings, m_use3DSoundRangeVolumeFade)},
-		{"3DSoundRangeVolumeFadeExponent", INI::parseReal, nullptr, offsetof(AudioSettings, m_3DSoundRangeVolumeFadeExponent)},
-		{"GlobalMinRange", INI::parseInt, nullptr, offsetof(AudioSettings, m_globalMinRange)},
-		{"GlobalMaxRange", INI::parseInt, nullptr, offsetof(AudioSettings, m_globalMaxRange)},
-		{"TimeBetweenDrawableSounds", INI::parseDurationUnsignedInt, nullptr, offsetof(AudioSettings, m_drawableAmbientFrames)},
-		{"TimeToFadeAudio", INI::parseDurationUnsignedInt, nullptr, offsetof(AudioSettings, m_fadeAudioFrames)},
-		{"AudioFootprintInBytes", INI::parseUnsignedInt, nullptr, offsetof(AudioSettings, m_maxCacheSize)},
-		{"Relative2DVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_relative2DVolume)},
-		{"DefaultSoundVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultSoundVolume)},
-		{"Default3DSoundVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_default3DSoundVolume)},
-		{"DefaultSpeechVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultSpeechVolume)},
-		{"DefaultMusicVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultMusicVolume)},
-		{"DefaultMoneyTransactionVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultMoneyTransactionVolume)},
-		{"MicrophoneDesiredHeightAboveTerrain", INI::parseReal, nullptr, offsetof(AudioSettings, m_microphoneDesiredHeightAboveTerrain)},
-		{"MicrophoneMaxPercentageBetweenGroundAndCamera", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_microphoneMaxPercentageBetweenGroundAndCamera)},
-		{"ZoomMinDistance", INI::parseReal, nullptr, offsetof(AudioSettings, m_zoomMinDistance)},
-		{"ZoomMaxDistance", INI::parseReal, nullptr, offsetof(AudioSettings, m_zoomMaxDistance)},
-		{"ZoomSoundVolumePercentageAmount", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_zoomSoundVolumePercentageAmount)},
+	{"MinSampleVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_minVolume)},
+	{"Use3DSoundRangeVolumeFade", INI::parseBool, nullptr, offsetof(AudioSettings, m_use3DSoundRangeVolumeFade)},
+	{"3DSoundRangeVolumeFadeExponent", INI::parseReal, nullptr, offsetof(AudioSettings, m_3DSoundRangeVolumeFadeExponent)},
+	{"GlobalMinRange", INI::parseInt, nullptr, offsetof(AudioSettings, m_globalMinRange)},
+	{"GlobalMaxRange", INI::parseInt, nullptr, offsetof(AudioSettings, m_globalMaxRange)},
+	{"TimeBetweenDrawableSounds", INI::parseDurationUnsignedInt, nullptr, offsetof(AudioSettings, m_drawableAmbientFrames)},
+	{"TimeToFadeAudio", INI::parseDurationUnsignedInt, nullptr, offsetof(AudioSettings, m_fadeAudioFrames)},
+	{"AudioFootprintInBytes", INI::parseUnsignedInt, nullptr, offsetof(AudioSettings, m_maxCacheSize)},
+	{"Relative2DVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_relative2DVolume)},
+	{"DefaultSoundVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultSoundVolume)},
+	{"Default3DSoundVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_default3DSoundVolume)},
+	{"DefaultSpeechVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultSpeechVolume)},
+	{"DefaultMusicVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultMusicVolume)},
+	{"DefaultMoneyTransactionVolume", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_defaultMoneyTransactionVolume)},
+	{"MicrophoneDesiredHeightAboveTerrain", INI::parseReal, nullptr, offsetof(AudioSettings, m_microphoneDesiredHeightAboveTerrain)},
+	{"MicrophoneMaxPercentageBetweenGroundAndCamera", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_microphoneMaxPercentageBetweenGroundAndCamera)},
+	{"ZoomMinDistance", INI::parseReal, nullptr, offsetof(AudioSettings, m_zoomMinDistance)},
+	{"ZoomMaxDistance", INI::parseReal, nullptr, offsetof(AudioSettings, m_zoomMaxDistance)},
+	{"ZoomSoundVolumePercentageAmount", INI::parsePercentToReal, nullptr, offsetof(AudioSettings, m_zoomSoundVolumePercentageAmount)},
 
-		{nullptr, nullptr, nullptr, 0}};
+	{nullptr, nullptr, nullptr, 0}};
 
 // Singleton TheAudio /////////////////////////////////////////////////////////////////////////////
 AudioManager* TheAudio = nullptr;
 
-const char* const AudioManager::MuteAudioReasonNames[] =
-	{
-		"MuteAudioReason_WindowFocus",
+const char* const AudioManager::MuteAudioReasonNames[] = {
+	"MuteAudioReason_WindowFocus",
 };
 
 // AudioManager Device Independent functions //////////////////////////////////////////////////////

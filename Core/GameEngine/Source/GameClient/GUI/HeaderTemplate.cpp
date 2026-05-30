@@ -63,12 +63,11 @@
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-const FieldParse HeaderTemplateManager::m_headerFieldParseTable[] =
-	{
-		{"Font", INI::parseQuotedAsciiString, nullptr, offsetof(HeaderTemplate, m_fontName)},
-		{"Point", INI::parseInt, nullptr, offsetof(HeaderTemplate, m_point)},
-		{"Bold", INI::parseBool, nullptr, offsetof(HeaderTemplate, m_bold)},
-		{nullptr, nullptr, nullptr, 0},
+const FieldParse HeaderTemplateManager::m_headerFieldParseTable[] = {
+	{"Font", INI::parseQuotedAsciiString, nullptr, offsetof(HeaderTemplate, m_fontName)},
+	{"Point", INI::parseInt, nullptr, offsetof(HeaderTemplate, m_point)},
+	{"Bold", INI::parseBool, nullptr, offsetof(HeaderTemplate, m_bold)},
+	{nullptr, nullptr, nullptr, 0},
 };
 
 HeaderTemplateManager* TheHeaderTemplateManager = nullptr;

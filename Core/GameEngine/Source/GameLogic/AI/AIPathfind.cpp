@@ -7074,9 +7074,8 @@ Int Pathfinder::examineNeighboringCells(PathfindCell* parentCell, PathfindCell* 
 
 	Int cellCount = 0;
 	// expand search to neighboring orthogonal cells
-	static ICoord2D delta[] =
-		{
-			{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+	static ICoord2D delta[] = {
+		{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 	const Int numNeighbors = 8;
 	const Int firstDiagonal = 4;
 	ICoord2D newCellCoord;
@@ -8214,9 +8213,8 @@ Path* Pathfinder::findGroundPath(const Coord3D* from,
 		iterateCellsAlongLine(start, end, parentCell->getLayer(), groundCellsCallback, &info);
 
 		// expand search to neighboring orthogonal cells
-		static ICoord2D delta[] =
-			{
-				{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+		static ICoord2D delta[] = {
+			{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 		const Int numNeighbors = 8;
 		const Int firstDiagonal = 4;
 		ICoord2D newCellCoord;
@@ -9609,9 +9607,8 @@ Int Pathfinder::checkPathCost(Object* obj, const LocomotorSet& locomotorSet, con
 		checkChangeLayers(parentCell);
 
 		// expand search to neighboring orthogonal cells
-		static ICoord2D delta[] =
-			{
-				{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+		static ICoord2D delta[] = {
+			{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 		const Int numNeighbors = 8;
 		const Int firstDiagonal = 4;
 		ICoord2D newCellCoord;

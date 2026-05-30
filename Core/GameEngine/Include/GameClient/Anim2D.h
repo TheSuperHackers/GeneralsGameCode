@@ -53,16 +53,15 @@ enum Anim2DMode CPP_11( : Int)
 	ANIM_2D_NUM_MODES
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static const char* const Anim2DModeNames[] =
-	{
-		"NONE",
-		"ONCE",
-		"ONCE_BACKWARDS",
-		"LOOP",
-		"LOOP_BACKWARDS",
-		"PING_PONG",
-		"PING_PONG_BACKWARDS",
-		nullptr};
+static const char* const Anim2DModeNames[] = {
+	"NONE",
+	"ONCE",
+	"ONCE_BACKWARDS",
+	"LOOP",
+	"LOOP_BACKWARDS",
+	"PING_PONG",
+	"PING_PONG_BACKWARDS",
+	nullptr};
 static_assert(ARRAY_SIZE(Anim2DModeNames) == ANIM_2D_NUM_MODES + 1, "Incorrect array size");
 #endif
 

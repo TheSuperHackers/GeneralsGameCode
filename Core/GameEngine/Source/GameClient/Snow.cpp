@@ -102,22 +102,21 @@ SnowManager::~SnowManager()
 OVERRIDE<WeatherSetting> TheWeatherSetting = nullptr;
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] =
-	{
-		{"SnowTexture", INI::parseAsciiString, nullptr, offsetof(WeatherSetting, m_snowTexture)},
-		{"SnowFrequencyScaleX", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowFrequencyScaleX)},
-		{"SnowFrequencyScaleY", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowFrequencyScaleY)},
-		{"SnowAmplitude", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowAmplitude)},
-		{"SnowPointSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowPointSize)},
-		{"SnowMaxPointSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowMaxPointSize)},
-		{"SnowMinPointSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowMinPointSize)},
-		{"SnowQuadSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowQuadSize)},
-		{"SnowBoxDimensions", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowBoxDimensions)},
-		{"SnowBoxDensity", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowBoxDensity)},
-		{"SnowVelocity", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowVelocity)},
-		{"SnowPointSprites", INI::parseBool, nullptr, offsetof(WeatherSetting, m_usePointSprites)},
-		{"SnowEnabled", INI::parseBool, nullptr, offsetof(WeatherSetting, m_snowEnabled)},
-		{nullptr, nullptr, nullptr, 0},
+const FieldParse WeatherSetting::m_weatherSettingFieldParseTable[] = {
+	{"SnowTexture", INI::parseAsciiString, nullptr, offsetof(WeatherSetting, m_snowTexture)},
+	{"SnowFrequencyScaleX", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowFrequencyScaleX)},
+	{"SnowFrequencyScaleY", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowFrequencyScaleY)},
+	{"SnowAmplitude", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowAmplitude)},
+	{"SnowPointSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowPointSize)},
+	{"SnowMaxPointSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowMaxPointSize)},
+	{"SnowMinPointSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowMinPointSize)},
+	{"SnowQuadSize", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowQuadSize)},
+	{"SnowBoxDimensions", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowBoxDimensions)},
+	{"SnowBoxDensity", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowBoxDensity)},
+	{"SnowVelocity", INI::parseReal, nullptr, offsetof(WeatherSetting, m_snowVelocity)},
+	{"SnowPointSprites", INI::parseBool, nullptr, offsetof(WeatherSetting, m_usePointSprites)},
+	{"SnowEnabled", INI::parseBool, nullptr, offsetof(WeatherSetting, m_snowEnabled)},
+	{nullptr, nullptr, nullptr, 0},
 };
 
 //-------------------------------------------------------------------------------------------------

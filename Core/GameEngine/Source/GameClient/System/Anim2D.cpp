@@ -70,16 +70,15 @@ Anim2DTemplate::~Anim2DTemplate()
 // ------------------------------------------------------------------------------------------------
 /** Field parse table for 2D animation templates */
 // ---------i---------------------------------------------------------------------------------------
-const FieldParse Anim2DTemplate::s_anim2DFieldParseTable[] =
-	{
+const FieldParse Anim2DTemplate::s_anim2DFieldParseTable[] = {
 
-		{"NumberImages", Anim2DTemplate::parseNumImages, nullptr, 0},
-		{"Image", Anim2DTemplate::parseImage, nullptr, 0},
-		{"ImageSequence", Anim2DTemplate::parseImageSequence, nullptr, 0},
-		{"AnimationMode", INI::parseIndexList, Anim2DModeNames, offsetof(Anim2DTemplate, m_animMode)},
-		{"AnimationDelay", INI::parseDurationUnsignedShort, nullptr, offsetof(Anim2DTemplate, m_framesBetweenUpdates)},
-		{"RandomizeStartFrame", INI::parseBool, nullptr, offsetof(Anim2DTemplate, m_randomizeStartFrame)},
-		{nullptr, nullptr, nullptr, 0}
+	{"NumberImages", Anim2DTemplate::parseNumImages, nullptr, 0},
+	{"Image", Anim2DTemplate::parseImage, nullptr, 0},
+	{"ImageSequence", Anim2DTemplate::parseImageSequence, nullptr, 0},
+	{"AnimationMode", INI::parseIndexList, Anim2DModeNames, offsetof(Anim2DTemplate, m_animMode)},
+	{"AnimationDelay", INI::parseDurationUnsignedShort, nullptr, offsetof(Anim2DTemplate, m_framesBetweenUpdates)},
+	{"RandomizeStartFrame", INI::parseBool, nullptr, offsetof(Anim2DTemplate, m_randomizeStartFrame)},
+	{nullptr, nullptr, nullptr, 0}
 
 };
 

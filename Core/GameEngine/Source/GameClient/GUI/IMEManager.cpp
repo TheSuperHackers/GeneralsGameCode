@@ -192,104 +192,97 @@ protected:
 //----------------------------------------------------------------------------
 #ifdef DEBUG_IME
 
-IMEManager::MessageInfo IMEManager::m_mainMessageInfo[] =
-	{
-		{"WM_IME_SETCONTEXT", WM_IME_SETCONTEXT},
-		{"WM_IME_NOTIFY", WM_IME_NOTIFY},
-		{"WM_IME_CONTROL", WM_IME_CONTROL},
-		{"WM_IME_COMPOSITIONFULL", WM_IME_COMPOSITIONFULL},
-		{"WM_IME_SELECT", WM_IME_SELECT},
-		{"WM_IME_CHAR", WM_IME_CHAR},
+IMEManager::MessageInfo IMEManager::m_mainMessageInfo[] = {
+	{"WM_IME_SETCONTEXT", WM_IME_SETCONTEXT},
+	{"WM_IME_NOTIFY", WM_IME_NOTIFY},
+	{"WM_IME_CONTROL", WM_IME_CONTROL},
+	{"WM_IME_COMPOSITIONFULL", WM_IME_COMPOSITIONFULL},
+	{"WM_IME_SELECT", WM_IME_SELECT},
+	{"WM_IME_CHAR", WM_IME_CHAR},
 	#ifdef WM_IME_REQUST
-		{"WM_IME_REQUEST", WM_IME_REQUEST},
+	{"WM_IME_REQUEST", WM_IME_REQUEST},
 	#endif
-		{"WM_IME_KEYDOWN", WM_IME_KEYDOWN},
-		{"WM_IME_KEYUP", WM_IME_KEYUP},
-		{"WM_IME_STARTCOMPOSITION", WM_IME_STARTCOMPOSITION},
-		{"WM_IME_ENDCOMPOSITION", WM_IME_ENDCOMPOSITION},
-		{"WM_IME_COMPOSITION", WM_IME_COMPOSITION},
-		{"WM_IME_KEYLAST", WM_IME_KEYLAST},
-		{nullptr, 0}};
+	{"WM_IME_KEYDOWN", WM_IME_KEYDOWN},
+	{"WM_IME_KEYUP", WM_IME_KEYUP},
+	{"WM_IME_STARTCOMPOSITION", WM_IME_STARTCOMPOSITION},
+	{"WM_IME_ENDCOMPOSITION", WM_IME_ENDCOMPOSITION},
+	{"WM_IME_COMPOSITION", WM_IME_COMPOSITION},
+	{"WM_IME_KEYLAST", WM_IME_KEYLAST},
+	{nullptr, 0}};
 
-IMEManager::MessageInfo IMEManager::m_notifyInfo[] =
-	{
-		{"IMN_CLOSESTATUSWINDOW", IMN_CLOSESTATUSWINDOW},
-		{"IMN_OPENSTATUSWINDOW", IMN_OPENSTATUSWINDOW},
-		{"IMN_CHANGECANDIDATE", IMN_CHANGECANDIDATE},
-		{"IMN_CLOSECANDIDATE", IMN_CLOSECANDIDATE},
-		{"IMN_OPENCANDIDATE", IMN_OPENCANDIDATE},
-		{"IMN_SETCONVERSIONMODE", IMN_SETCONVERSIONMODE},
-		{"IMN_SETSENTENCEMODE", IMN_SETSENTENCEMODE},
-		{"IMN_SETOPENSTATUS", IMN_SETOPENSTATUS},
-		{"IMN_SETCANDIDATEPOS", IMN_SETCANDIDATEPOS},
-		{"IMN_SETCOMPOSITIONFONT", IMN_SETCOMPOSITIONFONT},
-		{"IMN_SETCOMPOSITIONWINDOW", IMN_SETCOMPOSITIONWINDOW},
-		{"IMN_SETSTATUSWINDOWPOS", IMN_SETSTATUSWINDOWPOS},
-		{"IMN_GUIDELINE", IMN_GUIDELINE},
-		{"IMN_PRIVATE", IMN_PRIVATE},
-		{nullptr, 0}};
+IMEManager::MessageInfo IMEManager::m_notifyInfo[] = {
+	{"IMN_CLOSESTATUSWINDOW", IMN_CLOSESTATUSWINDOW},
+	{"IMN_OPENSTATUSWINDOW", IMN_OPENSTATUSWINDOW},
+	{"IMN_CHANGECANDIDATE", IMN_CHANGECANDIDATE},
+	{"IMN_CLOSECANDIDATE", IMN_CLOSECANDIDATE},
+	{"IMN_OPENCANDIDATE", IMN_OPENCANDIDATE},
+	{"IMN_SETCONVERSIONMODE", IMN_SETCONVERSIONMODE},
+	{"IMN_SETSENTENCEMODE", IMN_SETSENTENCEMODE},
+	{"IMN_SETOPENSTATUS", IMN_SETOPENSTATUS},
+	{"IMN_SETCANDIDATEPOS", IMN_SETCANDIDATEPOS},
+	{"IMN_SETCOMPOSITIONFONT", IMN_SETCOMPOSITIONFONT},
+	{"IMN_SETCOMPOSITIONWINDOW", IMN_SETCOMPOSITIONWINDOW},
+	{"IMN_SETSTATUSWINDOWPOS", IMN_SETSTATUSWINDOWPOS},
+	{"IMN_GUIDELINE", IMN_GUIDELINE},
+	{"IMN_PRIVATE", IMN_PRIVATE},
+	{nullptr, 0}};
 
-IMEManager::MessageInfo IMEManager::m_requestInfo[] =
-	{
+IMEManager::MessageInfo IMEManager::m_requestInfo[] = {
 	#ifdef WM_IME_REQUST
-		{"IMR_COMPOSITIONWINDOW", IMR_COMPOSITIONWINDOW},
-		{"IMR_CANDIDATEWINDOW", IMR_CANDIDATEWINDOW},
-		{"IMR_COMPOSITIONFONT", IMR_COMPOSITIONFONT},
-		{"IMR_RECONVERTSTRING", IMR_RECONVERTSTRING},
-		{"IMR_CONFIRMRECONVERTSTRING", IMR_CONFIRMRECONVERTSTRING},
+	{"IMR_COMPOSITIONWINDOW", IMR_COMPOSITIONWINDOW},
+	{"IMR_CANDIDATEWINDOW", IMR_CANDIDATEWINDOW},
+	{"IMR_COMPOSITIONFONT", IMR_COMPOSITIONFONT},
+	{"IMR_RECONVERTSTRING", IMR_RECONVERTSTRING},
+	{"IMR_CONFIRMRECONVERTSTRING", IMR_CONFIRMRECONVERTSTRING},
 	#endif
-		{nullptr, 0}};
+	{nullptr, 0}};
 
-IMEManager::MessageInfo IMEManager::m_controlInfo[] =
-	{
-		{"IMC_GETCANDIDATEPOS", IMC_GETCANDIDATEPOS},
-		{"IMC_SETCANDIDATEPOS ", IMC_SETCANDIDATEPOS},
-		{"IMC_GETCOMPOSITIONFONT", IMC_GETCOMPOSITIONFONT},
-		{"IMC_SETCOMPOSITIONFONT", IMC_SETCOMPOSITIONFONT},
-		{"IMC_GETCOMPOSITIONWINDOW", IMC_GETCOMPOSITIONWINDOW},
-		{"IMC_SETCOMPOSITIONWINDOW", IMC_SETCOMPOSITIONWINDOW},
-		{"IMC_GETSTATUSWINDOWPOS", IMC_GETSTATUSWINDOWPOS},
-		{"IMC_SETSTATUSWINDOWPOS", IMC_SETSTATUSWINDOWPOS},
-		{"IMC_CLOSESTATUSWINDOW", IMC_CLOSESTATUSWINDOW},
-		{"IMC_OPENSTATUSWINDOW", IMC_OPENSTATUSWINDOW},
-		{nullptr, 0}};
+IMEManager::MessageInfo IMEManager::m_controlInfo[] = {
+	{"IMC_GETCANDIDATEPOS", IMC_GETCANDIDATEPOS},
+	{"IMC_SETCANDIDATEPOS ", IMC_SETCANDIDATEPOS},
+	{"IMC_GETCOMPOSITIONFONT", IMC_GETCOMPOSITIONFONT},
+	{"IMC_SETCOMPOSITIONFONT", IMC_SETCOMPOSITIONFONT},
+	{"IMC_GETCOMPOSITIONWINDOW", IMC_GETCOMPOSITIONWINDOW},
+	{"IMC_SETCOMPOSITIONWINDOW", IMC_SETCOMPOSITIONWINDOW},
+	{"IMC_GETSTATUSWINDOWPOS", IMC_GETSTATUSWINDOWPOS},
+	{"IMC_SETSTATUSWINDOWPOS", IMC_SETSTATUSWINDOWPOS},
+	{"IMC_CLOSESTATUSWINDOW", IMC_CLOSESTATUSWINDOW},
+	{"IMC_OPENSTATUSWINDOW", IMC_OPENSTATUSWINDOW},
+	{nullptr, 0}};
 
-IMEManager::MessageInfo IMEManager::m_setContextInfo[] =
-	{
-		{"CANDIDATEWINDOW1", ISC_SHOWUICANDIDATEWINDOW},
-		{"CANDIDATEWINDOW2", ISC_SHOWUICANDIDATEWINDOW << 1},
-		{"CANDIDATEWINDOW3", ISC_SHOWUICANDIDATEWINDOW << 2},
-		{"CANDIDATEWINDOW4", ISC_SHOWUICANDIDATEWINDOW << 3},
-		{"COMPOSITIONWINDOW", ISC_SHOWUICOMPOSITIONWINDOW},
-		{"GUIDELINE", ISC_SHOWUIGUIDELINE},
-		{nullptr, 0}};
+IMEManager::MessageInfo IMEManager::m_setContextInfo[] = {
+	{"CANDIDATEWINDOW1", ISC_SHOWUICANDIDATEWINDOW},
+	{"CANDIDATEWINDOW2", ISC_SHOWUICANDIDATEWINDOW << 1},
+	{"CANDIDATEWINDOW3", ISC_SHOWUICANDIDATEWINDOW << 2},
+	{"CANDIDATEWINDOW4", ISC_SHOWUICANDIDATEWINDOW << 3},
+	{"COMPOSITIONWINDOW", ISC_SHOWUICOMPOSITIONWINDOW},
+	{"GUIDELINE", ISC_SHOWUIGUIDELINE},
+	{nullptr, 0}};
 
-IMEManager::MessageInfo IMEManager::m_setCmodeInfo[] =
-	{
-		{"ALPHANUMERIC", IME_CMODE_ALPHANUMERIC},
-		{"NATIVE", IME_CMODE_NATIVE},
-		{"KATAKANA", IME_CMODE_KATAKANA},
-		{"LANGUAGE", IME_CMODE_LANGUAGE},
-		{"FULLSHAPE", IME_CMODE_FULLSHAPE},
-		{"ROMAN", IME_CMODE_ROMAN},
-		{"CHARCODE", IME_CMODE_CHARCODE},
-		{"HANJACONVERT", IME_CMODE_HANJACONVERT},
-		{"SOFTKBD", IME_CMODE_SOFTKBD},
-		{"NOCONVERSION", IME_CMODE_NOCONVERSION},
-		{"EUDC", IME_CMODE_EUDC},
-		{"SYMBOL", IME_CMODE_SYMBOL},
-		{"FIXED", IME_CMODE_FIXED},
-		{nullptr, 0}};
+IMEManager::MessageInfo IMEManager::m_setCmodeInfo[] = {
+	{"ALPHANUMERIC", IME_CMODE_ALPHANUMERIC},
+	{"NATIVE", IME_CMODE_NATIVE},
+	{"KATAKANA", IME_CMODE_KATAKANA},
+	{"LANGUAGE", IME_CMODE_LANGUAGE},
+	{"FULLSHAPE", IME_CMODE_FULLSHAPE},
+	{"ROMAN", IME_CMODE_ROMAN},
+	{"CHARCODE", IME_CMODE_CHARCODE},
+	{"HANJACONVERT", IME_CMODE_HANJACONVERT},
+	{"SOFTKBD", IME_CMODE_SOFTKBD},
+	{"NOCONVERSION", IME_CMODE_NOCONVERSION},
+	{"EUDC", IME_CMODE_EUDC},
+	{"SYMBOL", IME_CMODE_SYMBOL},
+	{"FIXED", IME_CMODE_FIXED},
+	{nullptr, 0}};
 
-IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] =
-	{
-		{"NONE", IME_SMODE_NONE},
-		{"PLAURALCLAUSE", IME_SMODE_PLAURALCLAUSE},
-		{"SINGLECONVERT", IME_SMODE_SINGLECONVERT},
-		{"AUTOMATIC", IME_SMODE_AUTOMATIC},
-		{"PHRASEPREDICT", IME_SMODE_PHRASEPREDICT},
-		{"CONVERSATION", IME_SMODE_CONVERSATION},
-		{nullptr, 0}};
+IMEManager::MessageInfo IMEManager::m_setSmodeInfo[] = {
+	{"NONE", IME_SMODE_NONE},
+	{"PLAURALCLAUSE", IME_SMODE_PLAURALCLAUSE},
+	{"SINGLECONVERT", IME_SMODE_SINGLECONVERT},
+	{"AUTOMATIC", IME_SMODE_AUTOMATIC},
+	{"PHRASEPREDICT", IME_SMODE_PHRASEPREDICT},
+	{"CONVERSATION", IME_SMODE_CONVERSATION},
+	{nullptr, 0}};
 
 #endif
 
@@ -905,20 +898,20 @@ Bool IMEManager::serviceIMEMessage(void* windowsHandle, UnsignedInt message, Int
 					return FALSE;
 				}
 				/*
-				          // pass the reset on through to the installed IME
-				          case IMN_SETCANDIDATEPOS:        //This message is sent when the IME is about to move the candidate window.
-				          case IMN_SETSTATUSWINDOWPOS:     //This message is sent when the status window position in the input context is updated.
-				            return FALSE;
-				          case IMN_OPENSTATUSWINDOW:       //This message is sent when an IME is about to create the status window.
-				            DEBUG_LOG(("Open Status Window"));
-				            return FALSE;
-				          case IMN_CLOSESTATUSWINDOW:      //This message is sent to the application when an input method editor (IME) is about to close the status window.
-				            DEBUG_LOG(("Close Status Window"));
-				            return FALSE;
-				          case IMN_SETOPENSTATUS:          //This message is sent when the open status of the input context is updated.
-				          case IMN_SETCOMPOSITIONFONT:     //This message is sent when the font of the input context is updated.
-				          case IMN_SETCOMPOSITIONWINDOW:   //This message is sent when the style or position of the composition window is updated.
-				          case IMN_PRIVATE:                //This message is for your own use, it seems.
+					        // pass the reset on through to the installed IME
+					        case IMN_SETCANDIDATEPOS:        //This message is sent when the IME is about to move the candidate window.
+					        case IMN_SETSTATUSWINDOWPOS:     //This message is sent when the status window position in the input context is updated.
+					          return FALSE;
+					        case IMN_OPENSTATUSWINDOW:       //This message is sent when an IME is about to create the status window.
+					          DEBUG_LOG(("Open Status Window"));
+					          return FALSE;
+					        case IMN_CLOSESTATUSWINDOW:      //This message is sent to the application when an input method editor (IME) is about to close the status window.
+					          DEBUG_LOG(("Close Status Window"));
+					          return FALSE;
+					        case IMN_SETOPENSTATUS:          //This message is sent when the open status of the input context is updated.
+					        case IMN_SETCOMPOSITIONFONT:     //This message is sent when the font of the input context is updated.
+					        case IMN_SETCOMPOSITIONWINDOW:   //This message is sent when the style or position of the composition window is updated.
+					        case IMN_PRIVATE:                //This message is for your own use, it seems.
 				*/
 				default:
 					m_result = 1;

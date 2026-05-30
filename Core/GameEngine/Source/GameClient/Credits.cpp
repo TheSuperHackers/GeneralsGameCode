@@ -62,20 +62,19 @@
 //-----------------------------------------------------------------------------
 CreditsManager* TheCredits = nullptr;
 
-const FieldParse CreditsManager::m_creditsFieldParseTable[] =
-	{
+const FieldParse CreditsManager::m_creditsFieldParseTable[] = {
 
-		{"ScrollRate", INI::parseInt, nullptr, offsetof(CreditsManager, m_scrollRate)},
-		{"ScrollRateEveryFrames", INI::parseInt, nullptr, offsetof(CreditsManager, m_scrollRatePerFrames)},
-		{"ScrollDown", INI::parseBool, nullptr, offsetof(CreditsManager, m_scrollDown)},
-		{"TitleColor", INI::parseColorInt, nullptr, offsetof(CreditsManager, m_titleColor)},
-		{"MinorTitleColor", INI::parseColorInt, nullptr, offsetof(CreditsManager, m_positionColor)},
-		{"NormalColor", INI::parseColorInt, nullptr, offsetof(CreditsManager, m_normalColor)},
-		{"Style", INI::parseLookupList, CreditStyleNames, offsetof(CreditsManager, m_currentStyle)},
-		{"Blank", CreditsManager::parseBlank, nullptr, 0},
-		{"Text", CreditsManager::parseText, nullptr, 0},
+	{"ScrollRate", INI::parseInt, nullptr, offsetof(CreditsManager, m_scrollRate)},
+	{"ScrollRateEveryFrames", INI::parseInt, nullptr, offsetof(CreditsManager, m_scrollRatePerFrames)},
+	{"ScrollDown", INI::parseBool, nullptr, offsetof(CreditsManager, m_scrollDown)},
+	{"TitleColor", INI::parseColorInt, nullptr, offsetof(CreditsManager, m_titleColor)},
+	{"MinorTitleColor", INI::parseColorInt, nullptr, offsetof(CreditsManager, m_positionColor)},
+	{"NormalColor", INI::parseColorInt, nullptr, offsetof(CreditsManager, m_normalColor)},
+	{"Style", INI::parseLookupList, CreditStyleNames, offsetof(CreditsManager, m_currentStyle)},
+	{"Blank", CreditsManager::parseBlank, nullptr, 0},
+	{"Text", CreditsManager::parseText, nullptr, 0},
 
-		{nullptr, nullptr, nullptr, 0}
+	{nullptr, nullptr, nullptr, 0}
 
 };
 

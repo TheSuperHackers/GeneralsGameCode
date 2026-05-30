@@ -157,30 +157,28 @@ void RaiseGSMessageBox()
  * gsOverlays holds a list of the .wnd files used in GS overlays.
  * The entries *MUST* be in the same order as the GSOverlayType enum.
  */
-static const char* gsOverlays[GSOVERLAY_MAX] =
-	{
-		"Menus/PopupPlayerInfo.wnd",    // Player info (right-click)
-		"Menus/WOLMapSelectMenu.wnd",    // Map select
-		"Menus/WOLBuddyOverlay.wnd",    // Buddy list
-		"Menus/WOLPageOverlay.wnd",    // Find/page
-		"Menus/PopupHostGame.wnd",    // Hosting options (game name, password, etc)
-		"Menus/PopupJoinGame.wnd",    // Joining options (password, etc)
-		"Menus/PopupLadderSelect.wnd",    // LadderSelect
-		"Menus/PopupLocaleSelect.wnd",    // Prompt for user's locale
-		"Menus/OptionsMenu.wnd",    // popup options
+static const char* gsOverlays[GSOVERLAY_MAX] = {
+	"Menus/PopupPlayerInfo.wnd",    // Player info (right-click)
+	"Menus/WOLMapSelectMenu.wnd",    // Map select
+	"Menus/WOLBuddyOverlay.wnd",    // Buddy list
+	"Menus/WOLPageOverlay.wnd",    // Find/page
+	"Menus/PopupHostGame.wnd",    // Hosting options (game name, password, etc)
+	"Menus/PopupJoinGame.wnd",    // Joining options (password, etc)
+	"Menus/PopupLadderSelect.wnd",    // LadderSelect
+	"Menus/PopupLocaleSelect.wnd",    // Prompt for user's locale
+	"Menus/OptionsMenu.wnd",    // popup options
 };
 
-static WindowLayout* overlayLayouts[GSOVERLAY_MAX] =
-	{
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
+static WindowLayout* overlayLayouts[GSOVERLAY_MAX] = {
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
 };
 
 static void buddyTryReconnect()

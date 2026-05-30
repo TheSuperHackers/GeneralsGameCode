@@ -42,50 +42,48 @@ UnsignedInt TerrainRoadCollection::m_idCounter = 0;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] =
-	{
+const FieldParse TerrainRoadType::m_terrainRoadFieldParseTable[] = {
 
-		{"Texture", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_texture)},
-		{"RoadWidth", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_roadWidth)},
-		{"RoadWidthInTexture", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_roadWidthInTexture)},
+	{"Texture", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_texture)},
+	{"RoadWidth", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_roadWidth)},
+	{"RoadWidthInTexture", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_roadWidthInTexture)},
 
-		{nullptr, nullptr, nullptr, 0},
+	{nullptr, nullptr, nullptr, 0},
 
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] =
-	{
+const FieldParse TerrainRoadType::m_terrainBridgeFieldParseTable[] = {
 
-		{"BridgeScale", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_bridgeScale)},
-		{"ScaffoldObjectName", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_scaffoldObjectName)},
-		{"ScaffoldSupportObjectName", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_scaffoldSupportObjectName)},
-		{"RadarColor", INI::parseRGBColor, nullptr, offsetof(TerrainRoadType, m_radarColor)},
+	{"BridgeScale", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_bridgeScale)},
+	{"ScaffoldObjectName", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_scaffoldObjectName)},
+	{"ScaffoldSupportObjectName", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_scaffoldSupportObjectName)},
+	{"RadarColor", INI::parseRGBColor, nullptr, offsetof(TerrainRoadType, m_radarColor)},
 
-		{"TransitionEffectsHeight", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_transitionEffectsHeight)},
-		{"NumFXPerType", INI::parseInt, nullptr, offsetof(TerrainRoadType, m_numFXPerType)},
+	{"TransitionEffectsHeight", INI::parseReal, nullptr, offsetof(TerrainRoadType, m_transitionEffectsHeight)},
+	{"NumFXPerType", INI::parseInt, nullptr, offsetof(TerrainRoadType, m_numFXPerType)},
 
-		{"BridgeModelName", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelName)},
-		{"Texture", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_texture)},
-		{"BridgeModelNameDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelNameDamaged)},
-		{"TextureDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_textureDamaged)},
-		{"BridgeModelNameReallyDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelNameReallyDamaged)},
-		{"TextureReallyDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_textureReallyDamaged)},
-		{"BridgeModelNameBroken", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelNameBroken)},
-		{"TextureBroken", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_textureBroken)},
+	{"BridgeModelName", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelName)},
+	{"Texture", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_texture)},
+	{"BridgeModelNameDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelNameDamaged)},
+	{"TextureDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_textureDamaged)},
+	{"BridgeModelNameReallyDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelNameReallyDamaged)},
+	{"TextureReallyDamaged", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_textureReallyDamaged)},
+	{"BridgeModelNameBroken", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_bridgeModelNameBroken)},
+	{"TextureBroken", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_textureBroken)},
 
-		{"TowerObjectNameFromLeft", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_FROM_LEFT])},
-		{"TowerObjectNameFromRight", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_FROM_RIGHT])},
-		{"TowerObjectNameToLeft", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_TO_LEFT])},
-		{"TowerObjectNameToRight", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_TO_RIGHT])},
+	{"TowerObjectNameFromLeft", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_FROM_LEFT])},
+	{"TowerObjectNameFromRight", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_FROM_RIGHT])},
+	{"TowerObjectNameToLeft", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_TO_LEFT])},
+	{"TowerObjectNameToRight", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_towerObjectName[BRIDGE_TOWER_TO_RIGHT])},
 
-		{"DamagedToSound", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_damageToSoundString[BODY_DAMAGED])},
-		{"RepairedToSound", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_repairedToSoundString[BODY_DAMAGED])},
-		{"TransitionToOCL", parseTransitionToOCL, nullptr, 0},
-		{"TransitionToFX", parseTransitionToFX, nullptr, 0},
+	{"DamagedToSound", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_damageToSoundString[BODY_DAMAGED])},
+	{"RepairedToSound", INI::parseAsciiString, nullptr, offsetof(TerrainRoadType, m_repairedToSoundString[BODY_DAMAGED])},
+	{"TransitionToOCL", parseTransitionToOCL, nullptr, 0},
+	{"TransitionToFX", parseTransitionToFX, nullptr, 0},
 
-		{nullptr, nullptr, nullptr, 0},
+	{nullptr, nullptr, nullptr, 0},
 
 };
 

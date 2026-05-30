@@ -2605,108 +2605,107 @@ void ParticleSystem::loadPostProcess()
 // ------------------------------------------------------------------------------------------------
 /** INI parse data */
 // ------------------------------------------------------------------------------------------------
-const FieldParse ParticleSystemTemplate::m_fieldParseTable[] =
-	{
-		{"Priority", INI::parseIndexList, ParticlePriorityNames, offsetof(ParticleSystemTemplate, m_priority)},
-		{"IsOneShot", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isOneShot)},
-		{"Shader", INI::parseIndexList, ParticleShaderTypeNames, offsetof(ParticleSystemTemplate, m_shaderType)},
-		{"Type", INI::parseIndexList, ParticleTypeNames, offsetof(ParticleSystemTemplate, m_particleType)},
-		{"ParticleName", INI::parseAsciiString, nullptr, offsetof(ParticleSystemTemplate, m_particleTypeName)},
+const FieldParse ParticleSystemTemplate::m_fieldParseTable[] = {
+	{"Priority", INI::parseIndexList, ParticlePriorityNames, offsetof(ParticleSystemTemplate, m_priority)},
+	{"IsOneShot", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isOneShot)},
+	{"Shader", INI::parseIndexList, ParticleShaderTypeNames, offsetof(ParticleSystemTemplate, m_shaderType)},
+	{"Type", INI::parseIndexList, ParticleTypeNames, offsetof(ParticleSystemTemplate, m_particleType)},
+	{"ParticleName", INI::parseAsciiString, nullptr, offsetof(ParticleSystemTemplate, m_particleTypeName)},
 #if PARTICLE_USE_XY_ROTATION
-		{"AngleX", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angleX)},
-		{"AngleY", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angleY)},
+	{"AngleX", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angleX)},
+	{"AngleY", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angleY)},
 #endif
-		{"AngleZ", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angleZ)},
+	{"AngleZ", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angleZ)},
 #if PARTICLE_USE_XY_ROTATION
-		{"AngularRateX", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularRateX)},
-		{"AngularRateY", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularRateY)},
+	{"AngularRateX", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularRateX)},
+	{"AngularRateY", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularRateY)},
 #endif
-		{"AngularRateZ", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularRateZ)},
-		{"AngularDamping", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularDamping)},
+	{"AngularRateZ", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularRateZ)},
+	{"AngularDamping", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_angularDamping)},
 
-		{"VelocityDamping", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_velDamping)},
-		{"Gravity", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_gravity)},
-		{"SlaveSystem", INI::parseAsciiString, nullptr, offsetof(ParticleSystemTemplate, m_slaveSystemName)},
-		{"SlavePosOffset", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_slavePosOffset)},
-		{"PerParticleAttachedSystem", INI::parseAsciiString, nullptr, offsetof(ParticleSystemTemplate, m_attachedSystemName)},
+	{"VelocityDamping", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_velDamping)},
+	{"Gravity", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_gravity)},
+	{"SlaveSystem", INI::parseAsciiString, nullptr, offsetof(ParticleSystemTemplate, m_slaveSystemName)},
+	{"SlavePosOffset", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_slavePosOffset)},
+	{"PerParticleAttachedSystem", INI::parseAsciiString, nullptr, offsetof(ParticleSystemTemplate, m_attachedSystemName)},
 
-		{"Lifetime", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_lifetime)},
-		{"SystemLifetime", INI::parseUnsignedInt, nullptr, offsetof(ParticleSystemTemplate, m_systemLifetime)},
+	{"Lifetime", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_lifetime)},
+	{"SystemLifetime", INI::parseUnsignedInt, nullptr, offsetof(ParticleSystemTemplate, m_systemLifetime)},
 
-		{"Size", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_startSize)},
-		{"StartSizeRate", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_startSizeRate)},
-		{"SizeRate", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_sizeRate)},
-		{"SizeRateDamping", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_sizeRateDamping)},
+	{"Size", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_startSize)},
+	{"StartSizeRate", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_startSizeRate)},
+	{"SizeRate", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_sizeRate)},
+	{"SizeRateDamping", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_sizeRateDamping)},
 
-		{"Alpha1", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[0])},
-		{"Alpha2", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[1])},
-		{"Alpha3", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[2])},
-		{"Alpha4", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[3])},
-		{"Alpha5", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[4])},
-		{"Alpha6", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[5])},
-		{"Alpha7", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[6])},
-		{"Alpha8", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[7])},
+	{"Alpha1", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[0])},
+	{"Alpha2", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[1])},
+	{"Alpha3", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[2])},
+	{"Alpha4", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[3])},
+	{"Alpha5", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[4])},
+	{"Alpha6", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[5])},
+	{"Alpha7", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[6])},
+	{"Alpha8", ParticleSystemTemplate::parseRandomKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_alphaKey[7])},
 
-		{"Color1", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[0])},
-		{"Color2", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[1])},
-		{"Color3", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[2])},
-		{"Color4", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[3])},
-		{"Color5", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[4])},
-		{"Color6", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[5])},
-		{"Color7", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[6])},
-		{"Color8", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[7])},
+	{"Color1", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[0])},
+	{"Color2", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[1])},
+	{"Color3", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[2])},
+	{"Color4", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[3])},
+	{"Color5", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[4])},
+	{"Color6", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[5])},
+	{"Color7", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[6])},
+	{"Color8", ParticleSystemTemplate::parseRGBColorKeyframe, nullptr, offsetof(ParticleSystemTemplate, m_colorKey[7])},
 
-		//	{ "COLOR",									ParticleSystemTemplate::parseRandomRGBColor,	nullptr,		offsetof( ParticleSystemTemplate, m_color ) },
-		{"ColorScale", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_colorScale)},
+	//	{ "COLOR",									ParticleSystemTemplate::parseRandomRGBColor,	nullptr,		offsetof( ParticleSystemTemplate, m_color ) },
+	{"ColorScale", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_colorScale)},
 
-		{"BurstDelay", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_burstDelay)},
-		{"BurstCount", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_burstCount)},
+	{"BurstDelay", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_burstDelay)},
+	{"BurstCount", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_burstCount)},
 
-		{"InitialDelay", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_initialDelay)},
+	{"InitialDelay", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_initialDelay)},
 
-		{"DriftVelocity", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_driftVelocity)},
-		{"VelocityType", INI::parseIndexList, EmissionVelocityTypeNames, offsetof(ParticleSystemTemplate, m_emissionVelocityType)},
-		{"VelOrthoX", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.ortho.x)},
-		{"VelOrthoY", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.ortho.y)},
-		{"VelOrthoZ", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.ortho.z)},
+	{"DriftVelocity", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_driftVelocity)},
+	{"VelocityType", INI::parseIndexList, EmissionVelocityTypeNames, offsetof(ParticleSystemTemplate, m_emissionVelocityType)},
+	{"VelOrthoX", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.ortho.x)},
+	{"VelOrthoY", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.ortho.y)},
+	{"VelOrthoZ", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.ortho.z)},
 
-		{"VelSpherical", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.spherical.speed)},
-		{"VelHemispherical", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.hemispherical.speed)},
+	{"VelSpherical", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.spherical.speed)},
+	{"VelHemispherical", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.hemispherical.speed)},
 
-		{"VelCylindricalRadial", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.cylindrical.radial)},
-		{"VelCylindricalNormal", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.cylindrical.normal)},
+	{"VelCylindricalRadial", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.cylindrical.radial)},
+	{"VelCylindricalNormal", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.cylindrical.normal)},
 
-		{"VelOutward", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.outward.speed)},
-		{"VelOutwardOther", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.outward.otherSpeed)},
+	{"VelOutward", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.outward.speed)},
+	{"VelOutwardOther", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemTemplate, m_emissionVelocity.outward.otherSpeed)},
 
-		{"VolumeType", INI::parseIndexList, EmissionVolumeTypeNames, offsetof(ParticleSystemTemplate, m_emissionVolumeType)},
-		{"VolLineStart", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.line.start)},
-		{"VolLineEnd", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.line.end)},
+	{"VolumeType", INI::parseIndexList, EmissionVolumeTypeNames, offsetof(ParticleSystemTemplate, m_emissionVolumeType)},
+	{"VolLineStart", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.line.start)},
+	{"VolLineEnd", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.line.end)},
 
-		{"VolBoxHalfSize", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.box.halfSize)},
+	{"VolBoxHalfSize", INI::parseCoord3D, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.box.halfSize)},
 
-		{"VolSphereRadius", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.sphere.radius)},
+	{"VolSphereRadius", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.sphere.radius)},
 
-		{"VolCylinderRadius", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.cylinder.radius)},
-		{"VolCylinderLength", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.cylinder.length)},
+	{"VolCylinderRadius", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.cylinder.radius)},
+	{"VolCylinderLength", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_emissionVolume.cylinder.length)},
 
-		{"IsHollow", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isEmissionVolumeHollow)},
-		{"IsGroundAligned", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isGroundAligned)},
-		{"IsEmitAboveGroundOnly", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isEmitAboveGroundOnly)},
-		{"IsParticleUpTowardsEmitter", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isParticleUpTowardsEmitter)},
+	{"IsHollow", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isEmissionVolumeHollow)},
+	{"IsGroundAligned", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isGroundAligned)},
+	{"IsEmitAboveGroundOnly", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isEmitAboveGroundOnly)},
+	{"IsParticleUpTowardsEmitter", INI::parseBool, nullptr, offsetof(ParticleSystemTemplate, m_isParticleUpTowardsEmitter)},
 
-		{"WindMotion", INI::parseIndexList, WindMotionNames, offsetof(ParticleSystemTemplate, m_windMotion)},
+	{"WindMotion", INI::parseIndexList, WindMotionNames, offsetof(ParticleSystemTemplate, m_windMotion)},
 
-		{"WindAngleChangeMin", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windAngleChangeMin)},
-		{"WindAngleChangeMax", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windAngleChangeMax)},
+	{"WindAngleChangeMin", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windAngleChangeMin)},
+	{"WindAngleChangeMax", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windAngleChangeMax)},
 
-		{"WindPingPongStartAngleMin", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionStartAngleMin)},
-		{"WindPingPongStartAngleMax", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionStartAngleMax)},
+	{"WindPingPongStartAngleMin", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionStartAngleMin)},
+	{"WindPingPongStartAngleMax", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionStartAngleMax)},
 
-		{"WindPingPongEndAngleMin", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionEndAngleMin)},
-		{"WindPingPongEndAngleMax", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionEndAngleMax)},
+	{"WindPingPongEndAngleMin", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionEndAngleMin)},
+	{"WindPingPongEndAngleMax", INI::parseReal, nullptr, offsetof(ParticleSystemTemplate, m_windMotionEndAngleMax)},
 
-		{nullptr, nullptr, nullptr, 0},
+	{nullptr, nullptr, nullptr, 0},
 };
 
 // ------------------------------------------------------------------------------------------------

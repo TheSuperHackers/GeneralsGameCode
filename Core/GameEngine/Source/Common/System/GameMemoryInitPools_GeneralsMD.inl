@@ -18,8 +18,7 @@
 
 // And please be careful of duplicates.  They are not rejected.
 // not const -- we might override from INI
-static PoolSizeRec PoolSizes[] =
-{
+static PoolSizeRec PoolSizes[] = {
 	{ "PartitionContactListNode", 2048, 512 },
 	{ "BattleshipUpdate", 32, 32 },
 	{ "FlyToDestAndDestroyUpdate", 32, 32 },

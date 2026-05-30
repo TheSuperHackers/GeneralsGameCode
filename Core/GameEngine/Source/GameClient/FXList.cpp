@@ -119,10 +119,9 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"Name", INI::parseAsciiString, nullptr, offsetof(SoundFXNugget, m_soundName)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"Name", INI::parseAsciiString, nullptr, offsetof(SoundFXNugget, m_soundName)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		SoundFXNugget* nugget = newInstance(SoundFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -215,17 +214,16 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"TracerName", INI::parseAsciiString, nullptr, offsetof(TracerFXNugget, m_tracerName)},
-				{"BoneName", INI::parseAsciiString, nullptr, offsetof(TracerFXNugget, m_boneName)},
-				{"Speed", INI::parseVelocityReal, nullptr, offsetof(TracerFXNugget, m_speed)},
-				{"DecayAt", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_decayAt)},
-				{"Length", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_length)},
-				{"Width", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_width)},
-				{"Color", INI::parseRGBColor, nullptr, offsetof(TracerFXNugget, m_color)},
-				{"Probability", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_probability)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"TracerName", INI::parseAsciiString, nullptr, offsetof(TracerFXNugget, m_tracerName)},
+			{"BoneName", INI::parseAsciiString, nullptr, offsetof(TracerFXNugget, m_boneName)},
+			{"Speed", INI::parseVelocityReal, nullptr, offsetof(TracerFXNugget, m_speed)},
+			{"DecayAt", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_decayAt)},
+			{"Length", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_length)},
+			{"Width", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_width)},
+			{"Color", INI::parseRGBColor, nullptr, offsetof(TracerFXNugget, m_color)},
+			{"Probability", INI::parseReal, nullptr, offsetof(TracerFXNugget, m_probability)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		TracerFXNugget* nugget = newInstance(TracerFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -282,12 +280,11 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"Name", INI::parseAsciiString, nullptr, offsetof(RayEffectFXNugget, m_templateName)},
-				{"PrimaryOffset", INI::parseCoord3D, nullptr, offsetof(RayEffectFXNugget, m_primaryOffset)},
-				{"SecondaryOffset", INI::parseCoord3D, nullptr, offsetof(RayEffectFXNugget, m_secondaryOffset)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"Name", INI::parseAsciiString, nullptr, offsetof(RayEffectFXNugget, m_templateName)},
+			{"PrimaryOffset", INI::parseCoord3D, nullptr, offsetof(RayEffectFXNugget, m_primaryOffset)},
+			{"SecondaryOffset", INI::parseCoord3D, nullptr, offsetof(RayEffectFXNugget, m_secondaryOffset)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		RayEffectFXNugget* nugget = newInstance(RayEffectFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -346,14 +343,13 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"Color", INI::parseRGBColor, nullptr, offsetof(LightPulseFXNugget, m_color)},
-				{"Radius", INI::parseReal, nullptr, offsetof(LightPulseFXNugget, m_radius)},
-				{"RadiusAsPercentOfObjectSize", INI::parsePercentToReal, nullptr, offsetof(LightPulseFXNugget, m_boundingCirclePct)},
-				{"IncreaseTime", INI::parseDurationUnsignedInt, nullptr, offsetof(LightPulseFXNugget, m_increaseFrames)},
-				{"DecreaseTime", INI::parseDurationUnsignedInt, nullptr, offsetof(LightPulseFXNugget, m_decreaseFrames)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"Color", INI::parseRGBColor, nullptr, offsetof(LightPulseFXNugget, m_color)},
+			{"Radius", INI::parseReal, nullptr, offsetof(LightPulseFXNugget, m_radius)},
+			{"RadiusAsPercentOfObjectSize", INI::parsePercentToReal, nullptr, offsetof(LightPulseFXNugget, m_boundingCirclePct)},
+			{"IncreaseTime", INI::parseDurationUnsignedInt, nullptr, offsetof(LightPulseFXNugget, m_increaseFrames)},
+			{"DecreaseTime", INI::parseDurationUnsignedInt, nullptr, offsetof(LightPulseFXNugget, m_decreaseFrames)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		LightPulseFXNugget* nugget = newInstance(LightPulseFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -394,10 +390,9 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"Type", parseShakeType, nullptr, offsetof(ViewShakeFXNugget, m_shake)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"Type", parseShakeType, nullptr, offsetof(ViewShakeFXNugget, m_shake)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		ViewShakeFXNugget* nugget = newInstance(ViewShakeFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -407,15 +402,14 @@ public:
 protected:
 	static void parseShakeType(INI* ini, void* instance, void* store, const void* /*userData*/)
 	{
-		static const LookupListRec shakeTypeNames[] =
-			{
-				{"SUBTLE", View::SHAKE_SUBTLE},
-				{"NORMAL", View::SHAKE_NORMAL},
-				{"STRONG", View::SHAKE_STRONG},
-				{"SEVERE", View::SHAKE_SEVERE},
-				{"CINE_EXTREME", View::SHAKE_CINE_EXTREME},
-				{"CINE_INSANE", View::SHAKE_CINE_INSANE},
-				{nullptr, 0}};
+		static const LookupListRec shakeTypeNames[] = {
+			{"SUBTLE", View::SHAKE_SUBTLE},
+			{"NORMAL", View::SHAKE_NORMAL},
+			{"STRONG", View::SHAKE_STRONG},
+			{"SEVERE", View::SHAKE_SEVERE},
+			{"CINE_EXTREME", View::SHAKE_CINE_EXTREME},
+			{"CINE_INSANE", View::SHAKE_CINE_INSANE},
+			{nullptr, 0}};
 		static_assert(ARRAY_SIZE(shakeTypeNames) == View::SHAKE_COUNT + 1, "Incorrect array size");
 
 		*(Int*)store = INI::scanLookupList(ini->getNextToken(), shakeTypeNames);
@@ -456,11 +450,10 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"Type", parseScorchType, nullptr, offsetof(TerrainScorchFXNugget, m_scorch)},
-				{"Radius", INI::parseReal, nullptr, offsetof(TerrainScorchFXNugget, m_radius)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"Type", parseScorchType, nullptr, offsetof(TerrainScorchFXNugget, m_scorch)},
+			{"Radius", INI::parseReal, nullptr, offsetof(TerrainScorchFXNugget, m_radius)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		TerrainScorchFXNugget* nugget = newInstance(TerrainScorchFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -470,15 +463,14 @@ public:
 protected:
 	static void parseScorchType(INI* ini, void* instance, void* store, const void* /*userData*/)
 	{
-		static const LookupListRec scorchTypeNames[] =
-			{
-				{"SCORCH_1", SCORCH_1},
-				{"SCORCH_2", SCORCH_2},
-				{"SCORCH_3", SCORCH_3},
-				{"SCORCH_4", SCORCH_4},
-				{"SHADOW_SCORCH", SHADOW_SCORCH},
-				{"RANDOM", -1},
-				{nullptr, 0}};
+		static const LookupListRec scorchTypeNames[] = {
+			{"SCORCH_1", SCORCH_1},
+			{"SCORCH_2", SCORCH_2},
+			{"SCORCH_3", SCORCH_3},
+			{"SCORCH_4", SCORCH_4},
+			{"SHADOW_SCORCH", SHADOW_SCORCH},
+			{"RANDOM", -1},
+			{nullptr, 0}};
 		static_assert(ARRAY_SIZE(scorchTypeNames) == SCORCH_COUNT + 2, "Incorrect array size");
 
 		*(Int*)store = INI::scanLookupList(ini->getNextToken(), scorchTypeNames);
@@ -553,23 +545,22 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"Name", INI::parseAsciiString, nullptr, offsetof(ParticleSystemFXNugget, m_name)},
-				{"Count", INI::parseInt, nullptr, offsetof(ParticleSystemFXNugget, m_count)},
-				{"Offset", INI::parseCoord3D, nullptr, offsetof(ParticleSystemFXNugget, m_offset)},
-				{"Radius", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemFXNugget, m_radius)},
-				{"Height", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemFXNugget, m_height)},
-				{"InitialDelay", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemFXNugget, m_delay)},
-				{"RotateX", INI::parseAngleReal, nullptr, offsetof(ParticleSystemFXNugget, m_rotateX)},
-				{"RotateY", INI::parseAngleReal, nullptr, offsetof(ParticleSystemFXNugget, m_rotateY)},
-				{"RotateZ", INI::parseAngleReal, nullptr, offsetof(ParticleSystemFXNugget, m_rotateZ)},
-				{"OrientToObject", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_orientToObject)},
-				{"Ricochet", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_ricochet)},
-				{"AttachToObject", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_attachToObject)},
-				{"CreateAtGroundHeight", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_createAtGroundHeight)},
-				{"UseCallersRadius", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_useCallersRadius)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"Name", INI::parseAsciiString, nullptr, offsetof(ParticleSystemFXNugget, m_name)},
+			{"Count", INI::parseInt, nullptr, offsetof(ParticleSystemFXNugget, m_count)},
+			{"Offset", INI::parseCoord3D, nullptr, offsetof(ParticleSystemFXNugget, m_offset)},
+			{"Radius", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemFXNugget, m_radius)},
+			{"Height", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemFXNugget, m_height)},
+			{"InitialDelay", INI::parseGameClientRandomVariable, nullptr, offsetof(ParticleSystemFXNugget, m_delay)},
+			{"RotateX", INI::parseAngleReal, nullptr, offsetof(ParticleSystemFXNugget, m_rotateX)},
+			{"RotateY", INI::parseAngleReal, nullptr, offsetof(ParticleSystemFXNugget, m_rotateY)},
+			{"RotateZ", INI::parseAngleReal, nullptr, offsetof(ParticleSystemFXNugget, m_rotateZ)},
+			{"OrientToObject", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_orientToObject)},
+			{"Ricochet", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_ricochet)},
+			{"AttachToObject", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_attachToObject)},
+			{"CreateAtGroundHeight", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_createAtGroundHeight)},
+			{"UseCallersRadius", INI::parseBool, nullptr, offsetof(ParticleSystemFXNugget, m_useCallersRadius)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		ParticleSystemFXNugget* nugget = newInstance(ParticleSystemFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -700,12 +691,11 @@ public:
 
 	static void parse(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 	{
-		static const FieldParse myFieldParse[] =
-			{
-				{"FX", INI::parseFXList, nullptr, offsetof(FXListAtBonePosFXNugget, m_fx)},
-				{"BoneName", INI::parseAsciiString, nullptr, offsetof(FXListAtBonePosFXNugget, m_boneName)},
-				{"OrientToBone", INI::parseBool, nullptr, offsetof(FXListAtBonePosFXNugget, m_orientToBone)},
-				{nullptr, nullptr, nullptr, 0}};
+		static const FieldParse myFieldParse[] = {
+			{"FX", INI::parseFXList, nullptr, offsetof(FXListAtBonePosFXNugget, m_fx)},
+			{"BoneName", INI::parseAsciiString, nullptr, offsetof(FXListAtBonePosFXNugget, m_boneName)},
+			{"OrientToBone", INI::parseBool, nullptr, offsetof(FXListAtBonePosFXNugget, m_orientToBone)},
+			{nullptr, nullptr, nullptr, 0}};
 
 		FXListAtBonePosFXNugget* nugget = newInstance(FXListAtBonePosFXNugget);
 		ini->initFromINI(nugget, myFieldParse);
@@ -750,17 +740,16 @@ EMPTY_DTOR(FXListAtBonePosFXNugget)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-static const FieldParse TheFXListFieldParse[] =
-	{
-		{"Sound", SoundFXNugget::parse, nullptr, 0},
-		{"RayEffect", RayEffectFXNugget::parse, nullptr, 0},
-		{"Tracer", TracerFXNugget::parse, nullptr, 0},
-		{"LightPulse", LightPulseFXNugget::parse, nullptr, 0},
-		{"ViewShake", ViewShakeFXNugget::parse, nullptr, 0},
-		{"TerrainScorch", TerrainScorchFXNugget::parse, nullptr, 0},
-		{"ParticleSystem", ParticleSystemFXNugget::parse, nullptr, 0},
-		{"FXListAtBonePos", FXListAtBonePosFXNugget::parse, nullptr, 0},
-		{nullptr, nullptr, nullptr, 0}};
+static const FieldParse TheFXListFieldParse[] = {
+	{"Sound", SoundFXNugget::parse, nullptr, 0},
+	{"RayEffect", RayEffectFXNugget::parse, nullptr, 0},
+	{"Tracer", TracerFXNugget::parse, nullptr, 0},
+	{"LightPulse", LightPulseFXNugget::parse, nullptr, 0},
+	{"ViewShake", ViewShakeFXNugget::parse, nullptr, 0},
+	{"TerrainScorch", TerrainScorchFXNugget::parse, nullptr, 0},
+	{"ParticleSystem", ParticleSystemFXNugget::parse, nullptr, 0},
+	{"FXListAtBonePos", FXListAtBonePosFXNugget::parse, nullptr, 0},
+	{nullptr, nullptr, nullptr, 0}};
 
 //-------------------------------------------------------------------------------------------------
 FXList::FXList()

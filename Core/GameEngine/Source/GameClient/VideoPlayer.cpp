@@ -485,9 +485,8 @@ Int VideoStream::width()
 	return 0;
 }
 
-const FieldParse VideoPlayer::m_videoFieldParseTable[] =
-	{
-		{"Filename", INI::parseAsciiString, nullptr, offsetof(Video, m_filename)},
-		{"Comment", INI::parseAsciiString, nullptr, offsetof(Video, m_commentForWB)},
-		{nullptr, nullptr, nullptr, 0},
+const FieldParse VideoPlayer::m_videoFieldParseTable[] = {
+	{"Filename", INI::parseAsciiString, nullptr, offsetof(Video, m_filename)},
+	{"Comment", INI::parseAsciiString, nullptr, offsetof(Video, m_commentForWB)},
+	{nullptr, nullptr, nullptr, 0},
 };
