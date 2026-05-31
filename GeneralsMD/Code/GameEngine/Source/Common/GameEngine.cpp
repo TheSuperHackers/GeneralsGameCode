@@ -276,6 +276,12 @@ GameEngine::~GameEngine()
 	delete TheSubsystemList;
 	TheSubsystemList = nullptr;
 
+	delete TheSkirmishGameInfo;
+	TheSkirmishGameInfo = nullptr;
+
+	delete TheChallengeGameInfo;
+	TheChallengeGameInfo = nullptr;
+
 	delete TheNetwork;
 	TheNetwork = nullptr;
 
