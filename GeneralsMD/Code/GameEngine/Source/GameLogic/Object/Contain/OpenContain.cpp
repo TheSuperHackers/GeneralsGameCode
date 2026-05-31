@@ -249,7 +249,7 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 
 		if (Drawable* drawable = obj->getDrawable())
 		{
-#if RETAIL_COMPATIBLE_CRC
+#if RTS_DEBUG
 			// TheSuperHackers @tweak This shouldn't happen but don't make the occupant invisible if it does.
 			if (!(getObject()->isEffectivelyDead() || getObject()->isDestroyed()))
 #endif
