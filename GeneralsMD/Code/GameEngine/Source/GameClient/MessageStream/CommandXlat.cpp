@@ -1541,7 +1541,8 @@ GameMessage::Type CommandTranslator::evaluateForceAttack( Drawable *draw, const 
 }
 
 // TheSuperHackers @refactor RiQQ 15/5/2026 Extracted from evaluateContextCommand monolith. Preparation for proper refactor
-void CommandTranslator::normalizeContextInputs(Drawable*& draw, Object*& obj, Drawable*& drawableInWay) {
+void CommandTranslator::normalizeContextInputs(Drawable*& draw, Object*& obj, Drawable*& drawableInWay)
+{
 	//This piece of code is used to prevent interaction with unselectable objects or masked objects. When we
 	//call this function, we typically pass in both a position and a drawable (if applicable), so if the
 	//drawable is invalid... then convert it to a position to be evaluated instead.
@@ -1551,7 +1552,8 @@ void CommandTranslator::normalizeContextInputs(Drawable*& draw, Object*& obj, Dr
 		( obj->getStatusBits().test( OBJECT_STATUS_MASKED ) &&
 		!obj->isKindOf(KINDOF_SHRUBBERY) &&
 		!obj->isKindOf(KINDOF_FORCEATTACKABLE) )
-	) {
+	)
+	{
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
 		//a position interaction.
 		draw = nullptr;
@@ -1559,18 +1561,21 @@ void CommandTranslator::normalizeContextInputs(Drawable*& draw, Object*& obj, Dr
 	}
 
 	// If the thing is a mine, and is locally controlled, then we should issue a moveto to its location.
-	if (obj && obj->isLocallyControlled() && obj->isKindOf(KINDOF_MINE)) {
+	if (obj && obj->isLocallyControlled() && obj->isKindOf(KINDOF_MINE))
+	{
 		draw = nullptr;
 		obj = nullptr;
 	}
 
-	if ( TheInGameUI->isInForceMoveToMode() ) {
+	if ( TheInGameUI->isInForceMoveToMode() )
+	{
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
 		//a position interaction.
 		draw = nullptr;
 		obj = nullptr;
 	}
-	else if (TheInGameUI->isInForceAttackMode() ) {
+	else if (TheInGameUI->isInForceAttackMode() )
+	{
 		// setting the drawableInWay to draw will allow us to force attack in the issue move command
 		// if there is a location to which we should attack.
 		drawableInWay = draw;
@@ -1578,16 +1583,20 @@ void CommandTranslator::normalizeContextInputs(Drawable*& draw, Object*& obj, Dr
 }
 
 // TheSuperHackers @refactor RiQQ 15/5/2026 Extracted from evaluateContextCommand monolith. Preparation for proper refactor
-GameMessage::Type CommandTranslator::handleWaypointModeCommand(const Coord3D* pos, Drawable* draw, const CommandEvaluateType& type) {
+GameMessage::Type CommandTranslator::handleWaypointModeCommand(const Coord3D* pos, Drawable* draw, const CommandEvaluateType& type)
+{
 	GameMessage::Type msgType = GameMessage::MSG_INVALID;
 
 	//Override any *other* commands with waypoint commands.
-	if( type == DO_COMMAND || type == EVALUATE_ONLY ) {
-		if( TheTerrainLogic ) {
+	if( type == DO_COMMAND || type == EVALUATE_ONLY )
+	{
+		if( TheTerrainLogic )
+		{
 			msgType = issueMoveToLocationCommand( pos, draw, type );
 		}
 	}
-	else {
+	else
+	{
 		msgType = GameMessage::MSG_ADD_WAYPOINT_HINT;
 		GameMessage* hintMessage = TheMessageStream->appendMessage( msgType );
 		hintMessage->appendLocationArgument( *pos );
@@ -1597,8 +1606,10 @@ GameMessage::Type CommandTranslator::handleWaypointModeCommand(const Coord3D* po
 }
 
 // TheSuperHackers @refactor RiQQ 15/5/2026 Extracted from evaluateContextCommand monolith. Preparation for proper refactor
-void CommandTranslator::normalizeGuiCommandTarget( const CommandButton* command, Drawable*& draw, Object*& obj ) {
-	if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) ) {
+void CommandTranslator::normalizeGuiCommandTarget( const CommandButton* command, Drawable*& draw, Object*& obj )
+{
+	if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
+	{
 		//If our object is a shrubbery, and we don't allow targeting it... then null it out.
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
 		//a position interaction.
@@ -1606,7 +1617,8 @@ void CommandTranslator::normalizeGuiCommandTarget( const CommandButton* command,
 		obj = nullptr;
 	}
 
-	if( obj && obj->isKindOf( KINDOF_MINE ) && !BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) ) {
+	if( obj && obj->isKindOf( KINDOF_MINE ) && !BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) )
+	{
 		//If our object is a mine, and we don't allow targeting it... then null it out.
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate
 		//a position interaction.
@@ -1617,24 +1629,29 @@ void CommandTranslator::normalizeGuiCommandTarget( const CommandButton* command,
 	//Kris: September 27, 2002
 	//Added relationship tests to make sure we're not attempting a context-command on a restricted relationship.
 	//This case prevents rebels from using tranq darts on allies.
-	if( obj && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) ) {
+	if( obj && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	{
 		Relationship relationship = ThePlayerList->getLocalPlayer()->getRelationship( obj->getTeam() );
 
-		switch( relationship ) {
+		switch( relationship )
+		{
 			case ALLIES:
-				if( !BitIsSet( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) ) {
+				if( !BitIsSet( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) )
+				{
 					draw = nullptr;
 					obj = nullptr;
 				}
 				break;
 			case ENEMIES:
-				if( !BitIsSet( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) ) {
+				if( !BitIsSet( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) )
+				{
 					draw = nullptr;
 					obj = nullptr;
 				}
 				break;
 			case NEUTRAL:
-				if( !BitIsSet( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) ) {
+				if( !BitIsSet( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) )
+				{
 					draw = nullptr;
 					obj = nullptr;
 				}
@@ -1662,7 +1679,8 @@ GameMessage::Type CommandTranslator::evaluateContextCommand(
 
 	// Then we should determine if the game currently prefers selection events. If it does, then return
 	// the invalid message.
-	if (obj && obj->isLocallyControlled() && TheInGameUI->isInPreferSelectionMode()) {
+	if (obj && obj->isLocallyControlled() && TheInGameUI->isInPreferSelectionMode())
+	{
 		return GameMessage::MSG_INVALID;
 	}
 
@@ -1670,7 +1688,8 @@ GameMessage::Type CommandTranslator::evaluateContextCommand(
 	const CommandButton *command = TheInGameUI->getGUICommand();
 	GameMessage::Type msgType = GameMessage::MSG_INVALID;
 
-	if (command && command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON) {
+	if (command && command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON)
+	{
 		msgType = GameMessage::MSG_VALID_GUICOMMAND_HINT;
 		TheMessageStream->appendMessage(msgType);
 		return msgType;
@@ -1680,12 +1699,14 @@ GameMessage::Type CommandTranslator::evaluateContextCommand(
 		TheInGameUI->areSelectedObjectsControllable() || 
 		(command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
 	);
-	if ( !canPerformActions ) {
+	if ( !canPerformActions )
+	{
 		return GameMessage::MSG_INVALID;
 	}
 
 	{
-		if( TheInGameUI->isInWaypointMode() ) {
+		if( TheInGameUI->isInWaypointMode() )
+		{
 			return handleWaypointModeCommand(pos, draw, type);
 		}
 
