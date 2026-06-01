@@ -9,7 +9,7 @@
         {
             "kind": "git",
             "repository": "https://github.com/microsoft/vcpkg",
-            "baseline": "256acc64012b23a13041d8705805e1f23b43a024",
+            "baseline": "f9ffbaa46ad8e284b2b74919f7e0ba259564d424",
             "packages": [
                 "sdl3",
                 "sdl3-image"
