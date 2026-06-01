@@ -583,7 +583,10 @@ void MetaEventTranslator::onKeyModStateRemoved(GameMessageDisposition &disp, Map
 				if (!isMessageUsable(map->m_usableIn))
 					continue;
 
-				if (!(map->m_key == keyDown && map->m_modState == keyDownModState && map->m_transition == UP))
+				const Bool isMatchingKeyCombo = map->m_key == keyDown && map->m_modState == keyDownModState;
+				const Bool isTransitionUp = map->m_transition == UP;
+
+				if (!(isMatchingKeyCombo && isTransitionUp))
 					continue;
 
 				TheMessageStream->appendMessage(map->m_meta);
@@ -604,13 +607,12 @@ void MetaEventTranslator::onKeyPressed(GameMessageDisposition &disp, Int systemK
 		if (!isMessageUsable(map->m_usableIn))
 			continue;
 
-		if (map->m_key == keyType &&
-				map->m_modState == keyModState && (
-					(map->m_transition == UP && (systemKeyState & KEY_STATE_UP))
-					|| (map->m_transition == DOWN && (systemKeyState & KEY_STATE_DOWN))
-					// || (map->m_transition == DOUBLEDOWN && (systemKeyState & KEY_STATE_DOWN) && m_lastKeyDown == key)
-				)
-			)
+		const Bool isMatchingKeyCombo = map->m_key == keyType && map->m_modState == keyModState;
+		const Bool isMatchingTransitionUp = map->m_transition == UP && (systemKeyState & KEY_STATE_UP) != 0;
+		const Bool isMatchingTransitionDown = map->m_transition == DOWN && (systemKeyState & KEY_STATE_DOWN) != 0;
+		//const Bool isMatchingTransitionDoubleDown = map->m_transition == DOUBLEDOWN && (systemKeyState & KEY_STATE_DOWN) && m_lastKeyDown == key;
+
+		if (isMatchingKeyCombo && (isMatchingTransitionUp || isMatchingTransitionDown /*|| isMatchingTransitionDoubleDown*/))
 		{
 			if( systemKeyState & KEY_STATE_AUTOREPEAT )
 			{
