@@ -91,7 +91,7 @@ public:
 	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowed/fullscreen flag
 	virtual Bool getWindowed() { return m_windowed; }				///< return widowed/fullscreen flag
 
-#if SAGE_USE_SDL3
+#if RTS_SDL3_ENABLE
 	virtual Bool getViewportRect( Int& x, Int& y, Int& width, Int& height ) const { return FALSE; }
 #endif
 

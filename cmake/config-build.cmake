@@ -11,12 +11,12 @@ option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
 
 # Enable SDL3 by default for modern builds
 if(NOT IS_VS6_BUILD)
-    option(SAGE_USE_SDL3 "Enable SDL3 input/window backend" ON)
-    if(SAGE_USE_SDL3)
-        target_compile_definitions(core_config INTERFACE SAGE_USE_SDL3=1)
+    option(RTS_SDL3_ENABLE "Enable SDL3 input/window backend" ON)
+    if(RTS_SDL3_ENABLE)
+        target_compile_definitions(core_config INTERFACE RTS_SDL3_ENABLE=1)
     endif()
 else()
-    set(SAGE_USE_SDL3 OFF CACHE BOOL "Enable SDL3 input/window backend" FORCE)
+    set(RTS_SDL3_ENABLE OFF CACHE BOOL "Enable SDL3 input/window backend" FORCE)
 endif()
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
