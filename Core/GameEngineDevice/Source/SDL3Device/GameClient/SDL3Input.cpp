@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-** Derived from the GeneralsX branch by fbraz3
-*/
+// Derived from the GeneralsX branch by fbraz3
 
 #include "Lib/BaseType.h"
 
@@ -44,16 +42,12 @@
 #include "GameLogic/GameLogic.h"
 #include "SDL3GameEngine.h"
 
-// GLOBALS ---------------------------------------------------------------------
 SDL3InputManager* TheSDL3InputManager = nullptr;
 
 /// ============================================================================
 // SDL3MOUSE IMPLEMENTATION
 // ============================================================================
 
-/**
- * Constructor - Initialize SDL3Mouse with window handle
- */
 SDL3Mouse::SDL3Mouse(SDL_Window* window)
 	: Mouse()
 	, m_Window(window)
@@ -67,17 +61,11 @@ SDL3Mouse::SDL3Mouse(SDL_Window* window)
 {
 }
 
-/**
- * Destructor
- */
 SDL3Mouse::~SDL3Mouse(void)
 {
 	releaseCapture();
 }
 
-/**
- * Initialize mouse subsystem
- */
 void SDL3Mouse::init(void)
 {
 	Mouse::init();
@@ -88,9 +76,6 @@ void SDL3Mouse::init(void)
 	setVisibility(TRUE);
 }
 
-/**
- * Reset mouse to default state
- */
 void SDL3Mouse::reset(void)
 {
 	Mouse::reset();
@@ -99,9 +84,6 @@ void SDL3Mouse::reset(void)
 	setVisibility(TRUE);
 }
 
-/**
- * Update mouse state (called per-frame)
- */
 void SDL3Mouse::update(void)
 {
 	Mouse::update();
@@ -189,9 +171,6 @@ void SDL3Mouse::update(void)
 	}
 }
 
-/**
- * Initialize cursor resources (load cursor images from ANI files)
- */
 void SDL3Mouse::initCursorResources(void)
 {
 	SDL3CursorManager::initResources(this);
@@ -202,9 +181,6 @@ void SDL3Mouse::freeCursorResources(void)
 	SDL3CursorManager::shutdown();
 }
 
-/**
- * Set mouse cursor type
- */
 void SDL3Mouse::setCursor(MouseCursor cursor)
 {
 	if (m_currentCursor == cursor)
@@ -216,9 +192,6 @@ void SDL3Mouse::setCursor(MouseCursor cursor)
 	m_currentCursor = cursor;
 }
 
-/**
- * Set cursor visibility
- */
 void SDL3Mouse::setVisibility(Bool visible)
 {
 	Mouse::setVisibility(visible);
@@ -233,26 +206,17 @@ void SDL3Mouse::setVisibility(Bool visible)
 	}
 }
 
-/**
- * Handle window losing focus
- */
 void SDL3Mouse::loseFocus()
 {
 	Mouse::loseFocus();
 	releaseCapture();
 }
 
-/**
- * Handle window regaining focus
- */
 void SDL3Mouse::regainFocus()
 {
 	Mouse::regainFocus();
 }
 
-/**
- * Capture mouse (confine to window)
- */
 void SDL3Mouse::capture(void)
 {
 	if (!m_Window || m_isCursorCaptured)
@@ -265,9 +229,6 @@ void SDL3Mouse::capture(void)
 	onCursorCaptured(true);
 }
 
-/**
- * Release mouse capture
- */
 void SDL3Mouse::releaseCapture(void)
 {
 	if (!m_isCursorCaptured)
@@ -284,9 +245,6 @@ void SDL3Mouse::releaseCapture(void)
 	onCursorCaptured(false);
 }
 
-/**
- * Get next mouse event from the centralized input manager
- */
 UnsignedByte SDL3Mouse::getMouseEvent(MouseIO* result, Bool flush)
 {
 	if (!TheSDL3InputManager)
@@ -313,9 +271,7 @@ void SDL3Mouse::addSDLEvent(SDL_Event* event)
 	}
 }
 
-//-----------------------------------------------------------------------------
-/** Unified event translation (Clean Slate Rewrite) */
-//-----------------------------------------------------------------------------
+// Unified event translation (Clean Slate Rewrite)
 void SDL3Mouse::translateEvent(const SDL_Event& event, MouseIO* result)
 {
 	if (!result)
@@ -433,29 +389,17 @@ void SDL3Mouse::scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& 
 // SDL3KEYBOARD IMPLEMENTATION
 // ============================================================================
 
-/**
- * Lifecycle
- */
 SDL3Keyboard::SDL3Keyboard(void)
 	: Keyboard()
 {}
 SDL3Keyboard::~SDL3Keyboard(void) {}
 
-/**
- * SubsystemInterface
- */
 void SDL3Keyboard::init(void) { Keyboard::init(); }
 void SDL3Keyboard::reset(void) { Keyboard::reset(); }
 void SDL3Keyboard::update(void) { Keyboard::update(); }
 
-/**
- * Keyboard Interface
- */
 Bool SDL3Keyboard::getCapsState(void) { return FALSE; }
 
-/**
- * SDL3-specific internal methods
- */
 void SDL3Keyboard::getKey(KeyboardIO* key)
 {
 	if (!TheSDL3InputManager)
@@ -732,9 +676,6 @@ KeyVal SDL3Keyboard::translateScanCodeToKeyVal(unsigned char scan)
 // SDL3INPUTMANAGER IMPLEMENTATION
 // ============================================================================
 
-/**
- * Lifecycle
- */
 SDL3InputManager::SDL3InputManager(SDL_Window* window)
 	: m_window(window)
 	, m_mouseNextFree(0)
@@ -761,9 +702,6 @@ SDL3InputManager::~SDL3InputManager()
 	TheSDL3InputManager = nullptr;
 }
 
-/**
- * Unified Event Loop
- */
 void SDL3InputManager::update()
 {
 	SDL_Event event;
@@ -839,9 +777,6 @@ void SDL3InputManager::update()
 	processGamepadInput();
 }
 
-/**
- * Buffer Management
- */
 Bool SDL3InputManager::getNextMouseEvent(SDL_Event& outEvent)
 {
 	if (m_mouseEvents[m_mouseNextGet].type == SDL_EVENT_FIRST)
@@ -886,9 +821,6 @@ void SDL3InputManager::addKeyboardSDLEvent(const SDL_Event& event)
 	m_keyNextFree = nextFree;
 }
 
-/**
- * Gamepad Logic
- */
 void SDL3InputManager::openFirstGamepad()
 {
 	int count = 0;

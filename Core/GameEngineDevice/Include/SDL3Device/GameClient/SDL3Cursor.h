@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-** Derived from the GeneralsX branch by fbraz3
-*/
+// Derived from the GeneralsX branch by fbraz3
 
 #pragma once
 
@@ -29,9 +27,6 @@
 // USER INCLUDES
 #include "GameClient/Mouse.h"
 
-/**
- * AnimatedCursor - Wrapper for SDL3 native animated cursors
- */
 struct AnimatedCursor
 {
 	SDL_Cursor* m_cursor;
@@ -51,9 +46,6 @@ struct AnimatedCursor
 	SDL_Cursor* getCursor() const { return m_cursor; }
 };
 
-/**
- * SDL3CursorManager - Manages loading and lifecycle of cursors
- */
 class SDL3CursorManager
 {
 public:
