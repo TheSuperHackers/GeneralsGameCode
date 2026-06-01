@@ -8,15 +8,15 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
 
     FetchContent_Declare(
         SDL3
-        URL https://github.com/libsdl-org/SDL/releases/download/release-3.4.4/SDL3-3.4.4.tar.gz
-        URL_HASH SHA256=EE712DBE6A89BB140BBFC2CE72358FB5EE5CC2240ABEABD54855012DB30B3864
+        URL https://github.com/libsdl-org/SDL/releases/download/release-3.4.10/SDL3-3.4.10.tar.gz
+        URL_HASH SHA256=12b34280415ec8418c864408b93d008a20a6530687ee613d60bfbd20411f2785
         OVERRIDE_FIND_PACKAGE
     )
 
     FetchContent_Declare(
         SDL3_image
-        URL https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.2/SDL3_image-3.4.2.tar.gz
-        URL_HASH SHA256=82fdb88cf1a9cbdc1c77797aaa3292e6d22ce12586be718c8ea43530df1536b4
+        URL https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.4/SDL3_image-3.4.4.tar.gz
+        URL_HASH SHA256=29751304a13d25ac513f24305fa25b06a6edd9607718c90129b8350d35fc5573
     )
 
     # Official SDL configuration for a unified build tree
