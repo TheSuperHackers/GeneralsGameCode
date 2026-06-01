@@ -173,7 +173,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_physics(nullptr),
 	m_geometryInfo(tt->getTemplateGeometryInfo()),
 	m_containedBy(nullptr),
-	m_xferContainedByID(INVALID_ID),
+	m_containedByID(INVALID_ID),
 	m_containedByFrame(0),
 	m_behaviors(nullptr),
 	m_body(nullptr),
@@ -621,6 +621,22 @@ void Object::onContainedBy( Object *containedBy )
 		clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	m_containedBy = containedBy;
 	m_containedByFrame = TheGameLogic->getFrame();
+
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info Set INVALID_ID if the container object was destroyed
+	// to indicate that the pointer will become a dangling pointer in the next frame.
+	if (containedBy && !containedBy->isDestroyed())
+	{
+		m_containedByID = containedBy->getID();
+	}
+	else
+	{
+		m_containedByID = INVALID_ID;
+	}
+#else
+	DEBUG_ASSERTCRASH(containedBy == nullptr || !containedBy->isDestroyed(),
+		("Object::onContainedBy - Adding into a destroyed container"));
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -631,6 +647,10 @@ void Object::onRemovedFrom( Object *removedFrom )
 	clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
 	m_containedBy = nullptr;
 	m_containedByFrame = 0;
+
+#if RETAIL_COMPATIBLE_CRC
+	m_containedByID = INVALID_ID;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -681,9 +701,33 @@ void Object::onDestroy()
 {
 
 	// This is the old cleanUpContain safeguard.  Say goodbye so they don't try to look us up.
-	if( m_containedBy && m_containedBy->getContain() )
+	if (m_containedBy)
 	{
-		m_containedBy->getContain()->removeFromContain( this );
+#if RETAIL_COMPATIBLE_CRC
+		if (m_containedByID == INVALID_ID)
+		{
+			// TheSuperHackers @bugfix Caball009 25/05/2026 Due to a potential use-after-free bug that cannot be fixed
+			// with retail compatibility, the 'contained by' pointer of this object may point to an already destroyed object.
+			// Avoid removing this object from the contain list, because it could crash the game,
+			// as the begin / end iterator for STLPort and MSVC std::list implementations depends on dynamically allocated memory.
+			DEBUG_CRASH(("container object must be valid; this looks like use-after-free"));
+		}
+		else
+		{
+			DEBUG_ASSERTCRASH(TheGameLogic->findObjectByID(m_containedByID) == m_containedBy,
+				("contained by pointer is out of sync with contained by ID"));
+
+			if (ContainModuleInterface* contain = m_containedBy->getContain())
+			{
+				contain->removeFromContain(this);
+			}
+		}
+#else
+		if (ContainModuleInterface* contain = m_containedBy->getContain())
+		{
+			contain->removeFromContain(this);
+		}
+#endif
 	}
 
 	//
@@ -3727,16 +3771,18 @@ void Object::xfer( Xfer *xfer )
 		// No, the contain module is just going to friend_ reach in and set this for us.
 		// Containers more complicated than Open (like Tunnel) can't do that.  Our variable,
 		// our responsibility.
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @tweak Contained by ID is already set with retail compatibility; don't overwrite it.
 		if( xfer->getXferMode() == XFER_SAVE )
 		{
 			if( m_containedBy != nullptr )
-				m_xferContainedByID = m_containedBy->getID();
+				m_containedByID = m_containedBy->getID();
 			else
-				m_xferContainedByID = INVALID_ID;
+				m_containedByID = INVALID_ID;
 		}
+#endif
 
-
-		xfer->xferObjectID( &m_xferContainedByID );
+		xfer->xferObjectID( &m_containedByID );
 	}
 
 	// contained by frame
@@ -3961,8 +4007,8 @@ void Object::xfer( Xfer *xfer )
 //-------------------------------------------------------------------------------------------------
 void Object::loadPostProcess()
 {
-	if( m_xferContainedByID != INVALID_ID )
-		m_containedBy = TheGameLogic->findObjectByID(m_xferContainedByID);
+	if( m_containedByID != INVALID_ID )
+		m_containedBy = TheGameLogic->findObjectByID(m_containedByID);
 	else
 		m_containedBy = nullptr;
 
