@@ -98,7 +98,7 @@ struct OpenAudioFile
 	const AudioEventInfo *m_eventInfo;	// Not mutable, unlike the one on AudioEventRTS.
 };
 
-typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString> > OpenFilesHash;
+typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> OpenFilesHash;
 typedef OpenFilesHash::iterator OpenFilesHashIt;
 
 class AudioFileCache

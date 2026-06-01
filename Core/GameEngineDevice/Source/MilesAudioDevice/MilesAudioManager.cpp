@@ -3014,7 +3014,7 @@ void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* event
 	event.generateFilename();
 	event.generatePlayInfo();
 
-	std::list<std::pair<AsciiString, Real> >::iterator it;
+	std::list<std::pair<AsciiString, Real>/**/>::iterator it;
 	for (it = m_adjustedVolumes.begin(); it != m_adjustedVolumes.end(); ++it) {
 		if (it->first == event.getEventName()) {
 			event.setVolume(it->second);
