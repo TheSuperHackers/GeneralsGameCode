@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-** Derived from the GeneralsX branch by fbraz3
-*/
+// Derived from the GeneralsX branch by fbraz3
 
 #pragma once
 
@@ -37,15 +35,10 @@
 // FORWARD REFERENCES
 class SDL3InputManager;
 
-// GLOBALS ---------------------------------------------------------------------
 extern SDL3InputManager* TheSDL3InputManager;
 
-// TYPE DEFINES ----------------------------------------------------------------
 typedef KeyDefType KeyVal;
 
-// SDL3Mouse ------------------------------------------------------------------
-/** Mouse interface using SDL3 APIs */
-//-----------------------------------------------------------------------------
 class SDL3Mouse : public Mouse
 {
 public:
@@ -93,9 +86,6 @@ private:
 	SDL_Cursor* m_activeSDLCursor;
 };
 
-// SDL3Keyboard ---------------------------------------------------------------
-/** Keyboard interface using SDL3 APIs */
-//-----------------------------------------------------------------------------
 class SDL3Keyboard : public Keyboard
 {
 public:
@@ -121,9 +111,6 @@ private:
 	void translateKeyEvent(const SDL_KeyboardEvent& event);
 };
 
-// SDL3InputManager -----------------------------------------------------------
-/** Unified manager for SDL3 input events */
-//-----------------------------------------------------------------------------
 class SDL3InputManager
 {
 public:

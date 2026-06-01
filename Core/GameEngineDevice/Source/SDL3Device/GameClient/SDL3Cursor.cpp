@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-** Derived from the GeneralsX branch by fbraz3
-*/
+// Derived from the GeneralsX branch by fbraz3
 
 #include "SDL3Device/GameClient/SDL3Cursor.h"
 #include <SDL3_image/SDL_image.h>
@@ -32,12 +30,10 @@
 #include "Common/file.h"
 #include "Common/FileSystem.h"
 
-// Initialize static member
 AnimatedCursor* SDL3CursorManager::m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS] = {nullptr};
 
 void SDL3CursorManager::init()
 {
-	// Cursors are typically initialized via initResources when the Mouse device is ready
 	shutdown();
 }
 

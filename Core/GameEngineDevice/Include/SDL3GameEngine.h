@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-** Derived from the GeneralsX branch by fbraz3
-*/
+// Derived from the GeneralsX branch by fbraz3
 
 #pragma once
 
@@ -45,12 +43,6 @@ class Radar;
 class WebBrowser;
 class ParticleSystemManager;
 
-/**
- * SDL3GameEngine
- *
- * GameEngine subclass that uses SDL3 for windowing and input.
- * Replaces or supplements Win32-specific window handling with SDL3.
- */
 class SDL3GameEngine : public GameEngine
 {
 public:

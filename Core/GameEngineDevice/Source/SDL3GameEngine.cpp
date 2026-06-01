@@ -16,9 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-** Derived from the GeneralsX branch by fbraz3
-*/
+// Derived from the GeneralsX branch by fbraz3
 
 #include "Lib/BaseType.h"
 
@@ -122,9 +120,6 @@ Bool DecodeNextUtf8Codepoint(const char* text, size_t length, size_t& offset, Un
 
 }    // namespace
 
-/**
- * Constructor: Initialize SDL3 game engine state
- */
 SDL3GameEngine::SDL3GameEngine()
 	: GameEngine()
 	, m_SDLWindow(nullptr)
@@ -135,9 +130,6 @@ SDL3GameEngine::SDL3GameEngine()
 {
 }
 
-/**
- * Destructor: Cleanup SDL3 resources
- */
 SDL3GameEngine::~SDL3GameEngine()
 {
 	if (m_SDLWindow && m_IsTextInputActive)
@@ -153,9 +145,6 @@ SDL3GameEngine::~SDL3GameEngine()
 	}
 }
 
-/**
- * From GameEngine: init() - initialize subsystems
- */
 void SDL3GameEngine::init(void)
 {
 	// Verify window was created by SDL3Main integration
@@ -180,9 +169,6 @@ void SDL3GameEngine::init(void)
 	GameEngine::init();
 }
 
-/**
- * From GameEngine: reset() - reset system to starting state
- */
 void SDL3GameEngine::reset(void)
 {
 	if (m_SDLWindow && m_IsTextInputActive)
@@ -194,9 +180,6 @@ void SDL3GameEngine::reset(void)
 	GameEngine::reset();
 }
 
-/**
- * From GameEngine: update() - per-frame update
- */
 void SDL3GameEngine::update(void)
 {
 	pollSDL3Events();
@@ -231,33 +214,21 @@ void SDL3GameEngine::update(void)
 	}
 }
 
-/**
- * From GameEngine: serviceWindowsOS() - native OS service
- */
 void SDL3GameEngine::serviceWindowsOS(void)
 {
 	pollSDL3Events();
 }
 
-/**
- * Check if game has OS focus
- */
 Bool SDL3GameEngine::isActive(void)
 {
 	return m_IsActive;
 }
 
-/**
- * Set OS focus status
- */
 void SDL3GameEngine::setIsActive(Bool isActive)
 {
 	m_IsActive = isActive;
 }
 
-/**
- * Poll and process SDL3 events
- */
 void SDL3GameEngine::pollSDL3Events(void)
 {
 	if (!m_SDLWindow || !TheSDL3InputManager)
@@ -352,10 +323,6 @@ void SDL3GameEngine::forwardTextInputEvent(const char* utf8Text)
 		TheWindowManager->winSendInputMsg(targetWindow, GWM_IME_CHAR, static_cast<WindowMsgData>(wideCharacter), 0);
 	}
 }
-
-/**
- * Factory Methods for GameEngine subsystems
- */
 
 LocalFileSystem* SDL3GameEngine::createLocalFileSystem(void)
 {
