@@ -357,13 +357,10 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 			if( data->m_particleSystemName.isNotEmpty() )
 			{
 				const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( data->m_particleSystemName );
-				if( tmp )
+				system = TheParticleSystemManager->createParticleSystem( tmp );
+				if( system )
 				{
-					system = TheParticleSystemManager->createParticleSystem( tmp );
-					if( system )
-					{
-						m_particleSystemID = system->getSystemID();
-					}
+					m_particleSystemID = system->getSystemID();
 				}
 			}
 
@@ -371,13 +368,10 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 			if( data->m_targetParticleSystemName.isNotEmpty() )
 			{
 				const ParticleSystemTemplate *tmp = TheParticleSystemManager->findTemplate( data->m_targetParticleSystemName );
-				if( tmp )
+				system = TheParticleSystemManager->createParticleSystem( tmp );
+				if( system )
 				{
-					system = TheParticleSystemManager->createParticleSystem( tmp );
-					if( system )
-					{
-						m_targetParticleSystemID = system->getSystemID();
-					}
+					m_targetParticleSystemID = system->getSystemID();
 				}
 			}
 		}

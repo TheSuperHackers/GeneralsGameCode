@@ -1400,11 +1400,20 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
         const ParticleSystemTemplate *tmp = data->m_disableFXParticleSystem;
         if (tmp)
         {
+#if RETAIL_COMPATIBLE_CRC
+          // TheSuperHackers @fix The particle system is now decoupled from the logic crc
+          // and the side effects on the logic random seed values are preserved for retail compatibility.
+          {
+            Coord3D offs = {0,0,0};
+            target->getGeometryInfo().makeRandomOffsetWithinFootprint( offs, LogicRandomValueClass() );
+          }
+#endif
+
           ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
           if (sys)
           {
             Coord3D offs = {0,0,0};
-            target->getGeometryInfo().makeRandomOffsetWithinFootprint( offs );
+            target->getGeometryInfo().makeRandomOffsetWithinFootprint( offs, ClientRandomValueClass() );
 
             sys->attachToObject(target);
             sys->setPosition( &offs );

@@ -235,14 +235,24 @@ void EMPUpdate::doDisableAttack()
 
 					for (UnsignedInt e = 0 ; e < emitterCount; ++e)
 					{
+#if RETAIL_COMPATIBLE_CRC
+						// TheSuperHackers @fix The particle system is now decoupled from the logic crc
+						// and the side effects on the logic random seed values are preserved for retail compatibility.
+						{
+							Coord3D offs = {0,0,0};
+							curVictim->getGeometryInfo().makeRandomOffsetWithinFootprint( offs, LogicRandomValueClass() );
+							GameLogicRandomValue(3, victimHeight);
+							GameLogicRandomValue(1, 100);
+						}
+#endif
 
 						ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);
 
 						if (sys)
 						{
 							Coord3D offs = {0,0,0};
-							curVictim->getGeometryInfo().makeRandomOffsetWithinFootprint( offs );
-							offs.z = GameLogicRandomValue(3, victimHeight);
+							curVictim->getGeometryInfo().makeRandomOffsetWithinFootprint( offs, ClientRandomValueClass() );
+							offs.z = GameClientRandomValue(3, victimHeight);
 
 							//This puts all the sparks within a quadrahemicycloid (rectangular dome) volume
 							//The same shape as a four cornered camping dome tent, for those with less Greek
@@ -259,7 +269,7 @@ void EMPUpdate::doDisableAttack()
 							sys->attachToObject(curVictim);
 							sys->setPosition( &offs );
 							sys->setSystemLifetime(MAX(0, data->m_disabledDuration - 30));
-							sys->setInitialDelay(GameLogicRandomValue(1,100));
+							sys->setInitialDelay(GameClientRandomValue(1,100));
 						}
 					}
 				}

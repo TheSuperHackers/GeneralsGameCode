@@ -247,9 +247,10 @@ void W3DTankTruckDraw::createWheelEmitters()
 		{
 			if (m_truckEffectIDs[i] == INVALID_PARTICLE_SYSTEM_ID)
 			{
-				if (const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*effectNames[i]))
+				const ParticleSystemTemplate *sysTemplate = TheParticleSystemManager->findTemplate(*effectNames[i]);
+				ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
+				if (particleSys)
 				{
-					ParticleSystem *particleSys = TheParticleSystemManager->createParticleSystem( sysTemplate );
 					particleSys->attachToObject(getDrawable()->getObject());
 					// important: mark it as do-not-save, since we'll just re-create it when we reload.
 					particleSys->setSaveable(FALSE);

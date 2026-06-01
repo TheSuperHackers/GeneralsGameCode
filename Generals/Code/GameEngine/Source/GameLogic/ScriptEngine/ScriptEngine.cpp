@@ -9442,15 +9442,12 @@ static void _updateAndSetCurrentSystem()
 			// to be a tiny memory overwrite, now it is a crash since destroy() now has a function call.
 
 			ParticleSystemTemplate *parentTemp = TheParticleSystemManager->findParentTemplate(pTemp->getName(), 0);
-			if (parentTemp) {
-				ParticleSystem *parentSystem = nullptr;
-				parentSystem = TheParticleSystemManager->createParticleSystem(parentTemp);
+			ParticleSystem *parentSystem = TheParticleSystemManager->createParticleSystem(parentTemp);
 
-				if (parentSystem) {
-					ParticleSystem::mergeRelatedParticleSystems(parentSystem, st_particleSystem, true);
-					parentSystem->stop();
-					parentSystem->destroy();
-				}
+			if (parentSystem) {
+				ParticleSystem::mergeRelatedParticleSystems(parentSystem, st_particleSystem, true);
+				parentSystem->stop();
+				parentSystem->destroy();
 			}
 
 			Coord3D pos;

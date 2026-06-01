@@ -526,8 +526,6 @@ void GameEngine::init()
 	DEBUG_LOG(("%s", Buf));////////////////////////////////////////////////////////////////////////////
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 		initSubsystem(TheAudio,"TheAudio", createAudioManager(TheGlobalData->m_headless), nullptr);
-		if (!TheAudio->isMusicAlreadyLoaded())
-			setQuitting(TRUE);
 
 #if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 		TheNameKeyGenerator->syncNameKeyID();
@@ -815,7 +813,7 @@ void GameEngine::resetSubsystems()
 }
 
 /// -----------------------------------------------------------------------------------------------
-Bool GameEngine::canUpdateGameLogic()
+Bool GameEngine::canUpdateGameLogic(UnsignedInt logicTimeQueryFlags)
 {
 	// Must be first.
 	TheGameLogic->preUpdate();
@@ -829,7 +827,7 @@ Bool GameEngine::canUpdateGameLogic()
 	}
 	else
 	{
-		return canUpdateRegularGameLogic();
+		return canUpdateRegularGameLogic(logicTimeQueryFlags);
 	}
 }
 
@@ -850,11 +848,10 @@ Bool GameEngine::canUpdateNetworkGameLogic()
 }
 
 /// -----------------------------------------------------------------------------------------------
-Bool GameEngine::canUpdateRegularGameLogic()
+Bool GameEngine::canUpdateRegularGameLogic(UnsignedInt logicTimeQueryFlags)
 {
-	const Bool enabled = TheFramePacer->isLogicTimeScaleEnabled();
-	const Int logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
-	const Int maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
+	const Int logicTimeScaleFps = TheFramePacer->getActualLogicTimeScaleFps(logicTimeQueryFlags);
+	const Int maxRenderFps = TheFramePacer->getActualFramesPerSecondLimit();
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	const Bool useFastMode = TheGlobalData->m_TiVOFastMode;
@@ -862,7 +859,7 @@ Bool GameEngine::canUpdateRegularGameLogic()
 	const Bool useFastMode = TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame();
 #endif
 
-	if (useFastMode || !enabled || logicTimeScaleFps >= maxRenderFps)
+	if (useFastMode || logicTimeScaleFps >= maxRenderFps)
 	{
 		// Logic time scale is uncapped or larger equal Render FPS. Update straight away.
 		return true;
@@ -912,7 +909,7 @@ void GameEngine::update()
 			}
 		}
 
-		const Bool canUpdate = canUpdateGameLogic();
+		const Bool canUpdate = canUpdateGameLogic(FramePacer::IgnoreFrozenTime | FramePacer::IgnoreHaltedGame);
 		const Bool canUpdateLogic = canUpdate && !TheFramePacer->isGameHalted() && !TheFramePacer->isTimeFrozen();
 		const Bool canUpdateScript = canUpdate && !TheFramePacer->isGameHalted();
 

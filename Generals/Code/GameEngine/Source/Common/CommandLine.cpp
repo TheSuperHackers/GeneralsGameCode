@@ -868,17 +868,6 @@ Int parseSelectAll( char *args[], int num )
 
 	return 1;
 }
-
-Int parseRunAhead( char *args[], Int num )
-{
-	if (num > 2)
-	{
-		MIN_RUNAHEAD = atoi(args[1]);
-		MAX_FRAMES_AHEAD = atoi(args[2]);
-		FRAME_DATA_LENGTH = (MAX_FRAMES_AHEAD + 1)*2;
-	}
-	return 3;
-}
 #endif
 
 
@@ -1279,7 +1268,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-logToCon", parseLogToConsole },
 	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
-	{ "-RunAhead", parseRunAhead },
 #if ENABLE_CONFIGURABLE_SHROUD
 	{ "-noshroud", parseNoShroud },
 #endif

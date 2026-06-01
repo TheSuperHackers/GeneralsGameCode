@@ -53,6 +53,14 @@
 
 #include "GameLogic/GameLogic.h" // for TheGameLogic->getFrame()
 
+
+#define dont_DUMP_ALL_KEYS_TO_LOG
+
+
+#ifdef DUMP_ALL_KEYS_TO_LOG
+#include "GameClient/Keyboard.h"
+#endif
+
 MetaMap *TheMetaMap = nullptr;
 
 
@@ -174,6 +182,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "BEGIN_CAMERA_ZOOM_OUT",										GameMessage::MSG_META_BEGIN_CAMERA_ZOOM_OUT },
 	{ "END_CAMERA_ZOOM_OUT",											GameMessage::MSG_META_END_CAMERA_ZOOM_OUT },
 	{ "CAMERA_RESET",															GameMessage::MSG_META_CAMERA_RESET },
+	{ "TOGGLE_CAMERA_TRACKING_DRAWABLE",					GameMessage::MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE },
 	{ "TOGGLE_FAST_FORWARD_REPLAY",								GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
 	{ "TOGGLE_PAUSE",															GameMessage::MSG_META_TOGGLE_PAUSE },
 	{ "TOGGLE_PAUSE_ALT",													GameMessage::MSG_META_TOGGLE_PAUSE_ALT },
@@ -181,8 +190,33 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "STEP_FRAME_ALT",														GameMessage::MSG_META_STEP_FRAME_ALT },
 	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+	{ "CHEAT_RUNSCRIPT1",								        	GameMessage::MSG_CHEAT_RUNSCRIPT1 },
+	{ "CHEAT_RUNSCRIPT2",								        	GameMessage::MSG_CHEAT_RUNSCRIPT2 },
+	{ "CHEAT_RUNSCRIPT3",								        	GameMessage::MSG_CHEAT_RUNSCRIPT3 },
+	{ "CHEAT_RUNSCRIPT4",								        	GameMessage::MSG_CHEAT_RUNSCRIPT4 },
+	{ "CHEAT_RUNSCRIPT5",								        	GameMessage::MSG_CHEAT_RUNSCRIPT5 },
+	{ "CHEAT_RUNSCRIPT6",								        	GameMessage::MSG_CHEAT_RUNSCRIPT6 },
+	{ "CHEAT_RUNSCRIPT7",								        	GameMessage::MSG_CHEAT_RUNSCRIPT7 },
+	{ "CHEAT_RUNSCRIPT8",								        	GameMessage::MSG_CHEAT_RUNSCRIPT8 },
+	{ "CHEAT_RUNSCRIPT9",								        	GameMessage::MSG_CHEAT_RUNSCRIPT9 },
+	{ "CHEAT_TOGGLE_SPECIAL_POWER_DELAYS",	      GameMessage::MSG_CHEAT_TOGGLE_SPECIAL_POWER_DELAYS },
+  { "CHEAT_SWITCH_TEAMS",							        	GameMessage::MSG_CHEAT_SWITCH_TEAMS },
+	{ "CHEAT_KILL_SELECTION",						        	GameMessage::MSG_CHEAT_KILL_SELECTION },
+	{ "CHEAT_TOGGLE_HAND_OF_GOD_MODE",		        GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE },
+	{ "CHEAT_INSTANT_BUILD",							        GameMessage::MSG_CHEAT_INSTANT_BUILD },
+	{ "CHEAT_DESHROUD",									          GameMessage::MSG_CHEAT_DESHROUD },
+	{ "CHEAT_ADD_CASH",									          GameMessage::MSG_CHEAT_ADD_CASH },
+	{ "CHEAT_GIVE_ALL_SCIENCES",					        GameMessage::MSG_CHEAT_GIVE_ALL_SCIENCES },
+  { "CHEAT_GIVE_SCIENCEPURCHASEPOINTS",        	GameMessage::MSG_CHEAT_GIVE_SCIENCEPURCHASEPOINTS },
+  { "CHEAT_SHOW_HEALTH",                        GameMessage::MSG_CHEAT_SHOW_HEALTH },
+  { "CHEAT_TOGGLE_MESSAGE_TEXT",                GameMessage::MSG_CHEAT_TOGGLE_MESSAGE_TEXT },
+
+#endif
+
 #if defined(RTS_DEBUG)
 	{ "HELP",																			GameMessage::MSG_META_HELP },
+
 	{ "DEMO_TOGGLE_BEHIND_BUILDINGS",							GameMessage::MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS },
 	{ "DEMO_LOD_DECREASE",												GameMessage::MSG_META_DEMO_LOD_DECREASE },
 	{ "DEMO_LOD_INCREASE",												GameMessage::MSG_META_DEMO_LOD_INCREASE },
@@ -250,7 +284,8 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_TOGGLE_GREEN_VIEW",										GameMessage::MSG_META_DEMO_TOGGLE_GREEN_VIEW },
 	{ "DEMO_TOGGLE_MOTION_BLUR_ZOOM",							GameMessage::MSG_META_DEMO_TOGGLE_MOTION_BLUR_ZOOM },
 	{ "DEMO_SHOW_EXTENTS",												GameMessage::MSG_META_DEBUG_SHOW_EXTENTS },
-	{ "DEMO_SHOW_HEALTH",													GameMessage::MSG_META_DEBUG_SHOW_HEALTH },
+  { "DEMO_SHOW_AUDIO_LOCATIONS",								GameMessage::MSG_META_DEBUG_SHOW_AUDIO_LOCATIONS },
+  { "DEMO_SHOW_HEALTH",													GameMessage::MSG_META_DEBUG_SHOW_HEALTH },
 	{ "DEMO_GIVE_VETERANCY",											GameMessage::MSG_META_DEBUG_GIVE_VETERANCY },
 	{ "DEMO_TAKE_VETERANCY",											GameMessage::MSG_META_DEBUG_TAKE_VETERANCY },
 	{ "DEMO_BATTLE_CRY",													GameMessage::MSG_META_DEMO_BATTLE_CRY },
@@ -266,6 +301,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEMO_DESHROUD",														GameMessage::MSG_META_DEMO_DESHROUD },
 	{ "DEMO_ENSHROUD",														GameMessage::MSG_META_DEMO_ENSHROUD },
 	{ "DEMO_TOGGLE_AI_DEBUG",											GameMessage::MSG_META_DEMO_TOGGLE_AI_DEBUG },
+	{ "DEMO_TOGGLE_SUPPLY_CENTER_PLACEMENT",			GameMessage::MSG_META_DEMO_TOGGLE_SUPPLY_CENTER_PLACEMENT },
 	{ "DEMO_TOGGLE_NO_DRAW",											GameMessage::MSG_NO_DRAW },
 	{ "DEMO_CYCLE_LOD_LEVEL",											GameMessage::MSG_META_DEMO_CYCLE_LOD_LEVEL },
 	{ "DEMO_DUMP_ASSETS",													GameMessage::MSG_META_DEBUG_DUMP_ASSETS},
@@ -302,6 +338,9 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEBUG_DUMP_ALL_PLAYER_OBJECTS",						GameMessage::MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS },
 	{ "DEMO_WIN",																	GameMessage::MSG_META_DEBUG_WIN },
 	{ "DEMO_TOGGLE_DEBUG_STATS",									GameMessage::MSG_META_DEMO_TOGGLE_DEBUG_STATS },
+	{ "DEBUG_OBJECT_ID_PERFORMANCE",							GameMessage::MSG_META_DEBUG_OBJECT_ID_PERFORMANCE },
+	{ "DEBUG_DRAWABLE_ID_PERFORMANCE",						GameMessage::MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE },
+	{ "DEBUG_SLEEPY_UPDATE_PERFORMANCE",					GameMessage::MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE },
 #endif // defined(RTS_DEBUG)
 
 
@@ -340,15 +379,11 @@ static const FieldParse TheMetaMapFieldParseTable[] =
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-MetaEventTranslator::MetaEventTranslator() :
-	m_lastKeyDown(MK_NONE),
-	m_lastModState(0)
+MetaEventTranslator::MetaEventTranslator()
 {
 	for (Int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
 		m_nextUpShouldCreateDoubleClick[i] = FALSE;
 	}
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -404,8 +439,20 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 	if (t == GameMessage::MSG_RAW_KEY_DOWN || t == GameMessage::MSG_RAW_KEY_UP)
 	{
-		MappableKeyType key = (MappableKeyType)msg->getArgument(0)->integer;
-		Int keyState = msg->getArgument(1)->integer;
+		const Int systemKey = msg->getArgument(0)->integer;
+		const Int keyState = msg->getArgument(1)->integer;
+
+		MappableKeyType key = (MappableKeyType)systemKey;
+		switch (systemKey)
+		{
+		case KEY_LCTRL:
+		case KEY_RCTRL:
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+		case KEY_LALT:
+		case KEY_RALT:
+			key = MK_NONE;
+		}
 
 		// for our purposes here, we don't care to distinguish between right and left keys,
 		// so just fudge a little to simplify things.
@@ -426,28 +473,58 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 			newModState |= ALT;
 		}
 
+		const Bool modStateRemoved = (key == MK_NONE) && (t == GameMessage::MSG_RAW_KEY_UP);
+
+		if (modStateRemoved)
+		{
+			// TheSuperHackers @fix The key handler now ignores the order in which modifier keys are released.
+			// This avoids frustrating experiences where a wrong button release order would skip an important key event.
+
+			for (Int keyDownIndex = 0; keyDownIndex < ARRAY_SIZE(m_keyDownInfos); ++keyDownIndex)
+			{
+				const MappableKeyType keyDown = (MappableKeyType)keyDownIndex;
+				KeyDownInfo &keyDownInfo = m_keyDownInfos[keyDownIndex];
+
+				if (!keyDownInfo.isKeyDown())
+					continue;
+
+				for (UnsignedInt modStateIndex = 0; modStateIndex < KeyDownInfo::getMaxKeyModStateCount(); ++modStateIndex)
+				{
+					const MappableKeyModState keyDownModState = keyDownInfo.getKeyModState(modStateIndex);
+
+					if (keyDownModState == NONE)
+						continue;
+
+					if (BitsAreSet(newModState, keyDownModState))
+						continue;
+
+					// Forget that this key and mod state are pressed.
+					keyDownInfo.clearKeyModState(modStateIndex);
+
+					for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
+					{
+						if (!isMessageUsable(map->m_usableIn))
+							continue;
+
+						if (!(map->m_key == keyDown && map->m_modState == keyDownModState && map->m_transition == UP))
+							continue;
+
+						TheMessageStream->appendMessage(map->m_meta);
+						disp = DESTROY_MESSAGE;
+					}
+				}
+			}
+		}
+		else
+		{
+			// TheSuperHackers @info The regular key handler only triggers events when the mapped key is pressed,
+			// not when the modifier (CTRL, ALT, SHIFT) is pressed, unless the key is MK_NONE.
+
 		for (const MetaMapRec *map = TheMetaMap->getFirstMetaMapRec(); map; map = map->m_next)
 		{
 			if (!isMessageUsable(map->m_usableIn))
 				continue;
 
-			// check for the special case of mods-only-changed.
-			if (
-						map->m_key == MK_NONE &&
-						newModState != m_lastModState &&
-						(
-							(map->m_transition == UP && map->m_modState == m_lastModState) ||
-							(map->m_transition == DOWN && map->m_modState == newModState)
-						)
-					)
-			{
-				//DEBUG_LOG(("Frame %d: MetaEventTranslator::translateGameMessage() Mods-only change: %s", TheGameLogic->getFrame(), findGameMessageNameByType(map->m_meta)));
-				/*GameMessage *metaMsg =*/ TheMessageStream->appendMessage(map->m_meta);
-				disp = DESTROY_MESSAGE;
-				break;
-			}
-
-			// ok, now check for "normal" key transitions.
 			if (
 						map->m_key == key &&
 						map->m_modState == newModState &&
@@ -458,7 +535,6 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 						)
 					)
 			{
-
 				if( keyState & KEY_STATE_AUTOREPEAT )
 				{
 					// if it's an autorepeat of a "known" key, don't generate the meta-event,
@@ -500,8 +576,34 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 		}
 
 		if (t == GameMessage::MSG_RAW_KEY_DOWN)
-			m_lastKeyDown = key;
-		m_lastModState = newModState;
+    {
+#ifdef DUMP_ALL_KEYS_TO_LOG
+
+		          WideChar Wkey = TheKeyboard->getPrintableKey(key, 0);
+		          UnicodeString uKey;
+		          uKey.set(&Wkey);
+		          AsciiString aKey;
+		          aKey.translate(uKey);
+  	          DEBUG_LOG(("^%s ", aKey.str()));
+#endif
+			if (newModState != NONE)
+			{
+				// Remember that this key and mod state are pressed.
+				m_keyDownInfos[key].setKeyModState((MappableKeyModState)newModState);
+			}
+    }
+		else
+		{
+			if (newModState != NONE)
+			{
+				DEBUG_ASSERTCRASH(key != MK_NONE, ("Key is expected to be not MK_NONE"));
+
+				// Forget that this key and mod state are pressed.
+				m_keyDownInfos[key].clearKeyModState((MappableKeyModState)newModState);
+			}
+		}
+
+		}
 	}
 
 

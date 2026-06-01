@@ -32,8 +32,10 @@
 #define NO_DEBUG_CRC
 
 #include "Common/PerfTimer.h"
+#include "Common/Player.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#include "GameClient/FXList.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
@@ -1252,7 +1254,26 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 					// fall into a building. if a vehicle, blow up. then destroy ourself (not die), regardless.
 					if (obj->isKindOf(KINDOF_VEHICLE))
 					{
+#if RETAIL_COMPATIBLE_CRC
 						TheWeaponStore->createAndFireTempWeapon(getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoBuildingWeaponTemplate, obj, obj->getPosition());
+#else
+						// TheSuperHackers @bugfix Stubbjax 17/05/2026 Prevent building collisions from dealing collateral damage to other objects.
+						const WeaponTemplate* weaponTemplate = getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoBuildingWeaponTemplate;
+						if (weaponTemplate != nullptr)
+						{
+							WeaponBonus nullBonus;
+
+							DamageInfo damageInfo;
+							damageInfo.in.m_damageType = weaponTemplate->getDamageType();
+							damageInfo.in.m_deathType = weaponTemplate->getDeathType();
+							damageInfo.in.m_sourceID = obj->getID();
+							damageInfo.in.m_sourcePlayerMask = obj->getControllingPlayer() ? obj->getControllingPlayer()->getPlayerMask() : 0;
+							damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
+
+							other->attemptDamage(&damageInfo);
+							FXList::doFXObj(weaponTemplate->getFireFX(obj->getVeterancyLevel()), obj);
+						}
+#endif
 					}
 					TheGameLogic->destroyObject(obj);
 					return;
@@ -1262,7 +1283,26 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 					// fall into a nonbuilding -- whatever. if we're a vehicle, quietly do a little damage.
 					if (obj->isKindOf(KINDOF_VEHICLE))
 					{
+#if RETAIL_COMPATIBLE_CRC
 						TheWeaponStore->createAndFireTempWeapon(getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoNonBuildingWeaponTemplate, obj, obj->getPosition());
+#else
+						// TheSuperHackers @bugfix Stubbjax 19/04/2026 Prevent non-building collisions from repeatedly dealing collateral damage to other objects.
+						const WeaponTemplate* weaponTemplate = getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoNonBuildingWeaponTemplate;
+						if (weaponTemplate != nullptr)
+						{
+							WeaponBonus nullBonus;
+
+							DamageInfo damageInfo;
+							damageInfo.in.m_damageType = weaponTemplate->getDamageType();
+							damageInfo.in.m_deathType = weaponTemplate->getDeathType();
+							damageInfo.in.m_sourceID = obj->getID();
+							damageInfo.in.m_sourcePlayerMask = obj->getControllingPlayer() ? obj->getControllingPlayer()->getPlayerMask() : 0;
+							damageInfo.in.m_amount = weaponTemplate->getPrimaryDamage(nullBonus);
+
+							other->attemptDamage(&damageInfo);
+							FXList::doFXObj(weaponTemplate->getFireFX(obj->getVeterancyLevel()), obj);
+						}
+#endif
 					}
 				}
 			}

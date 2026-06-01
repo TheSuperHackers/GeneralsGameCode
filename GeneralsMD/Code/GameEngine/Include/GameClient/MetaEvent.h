@@ -354,9 +354,84 @@ EMPTY_DTOR(MetaMapRec)
 class MetaEventTranslator : public GameMessageTranslator
 {
 private:
+	struct KeyDownInfo
+	{
+		KeyDownInfo() : m_modStateBits(0) {}
 
-	Int						m_lastKeyDown;	// really a MappableKeyType
-	Int						m_lastModState;	// really a MappableKeyModState
+		static UnsignedInt getMaxKeyModStateCount()
+		{
+			return 7;
+		}
+
+		static MappableKeyModState toKeyModState(UnsignedInt index)
+		{
+			switch (index)
+			{
+			case 0: return CTRL;
+			case 1: return ALT;
+			case 2: return SHIFT;
+			case 3: return CTRL_ALT;
+			case 4: return SHIFT_CTRL;
+			case 5: return SHIFT_ALT;
+			case 6: return SHIFT_ALT_CTRL;
+			}
+			return NONE;
+		}
+
+		static UnsignedInt toIndex(MappableKeyModState modState)
+		{
+			switch (modState)
+			{
+			case CTRL: return 0;
+			case ALT: return 1;
+			case SHIFT: return 2;
+			case CTRL_ALT: return 3;
+			case SHIFT_CTRL: return 4;
+			case SHIFT_ALT: return 5;
+			case SHIFT_ALT_CTRL: return 6;
+			}
+			return 7;
+		}
+
+		Bool isKeyDown() const
+		{
+			return m_modStateBits != 0;
+		}
+
+		MappableKeyModState getKeyModState(UnsignedInt index)
+		{
+			if (BitIsSet(m_modStateBits, 1 << index))
+			{
+				return toKeyModState(index);
+			}
+			return NONE;
+		}
+
+		void clearKeyModState(UnsignedInt index)
+		{
+			BitClear(m_modStateBits, 1 << index);
+		}
+
+		Bool hasKeyModState(MappableKeyModState modState) const
+		{
+			return BitIsSet(m_modStateBits, 1 << toIndex(modState));
+		}
+
+		void setKeyModState(MappableKeyModState modState)
+		{
+			BitSet(m_modStateBits, 1 << toIndex(modState));
+		}
+
+		void clearKeyModState(MappableKeyModState modState)
+		{
+			BitClear(m_modStateBits, 1 << toIndex(modState));
+		}
+
+	private:
+		UnsignedByte m_modStateBits; ///< Fits all combinations of CTRL+ALT+SHIFT, storing 1 bit for each
+	};
+
+	KeyDownInfo m_keyDownInfos[KEY_COUNT];
 
 	enum { NUM_MOUSE_BUTTONS = 3 };
 	ICoord2D m_mouseDownPosition[NUM_MOUSE_BUTTONS];

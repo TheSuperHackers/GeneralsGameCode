@@ -19,6 +19,7 @@
 #pragma once
 
 #include "GameNetwork/NetworkDefs.h"
+#include "stringex.h"
 
 class AsciiString;
 class UnicodeString;
@@ -56,11 +57,95 @@ class NetLoadCompleteCommandMsg;
 class NetTimeOutGameStartCommandMsg;
 
 ////////////////////////////////////////////////////////////////////////////////
+// Helper class to pass buffer pointer and size
+// Does not take ownership of the buffer.
+////////////////////////////////////////////////////////////////////////////////
+
+class NetPacketBuf
+{
+public:
+	NetPacketBuf(const UnsignedByte *data, size_t size)
+		: m_data(data)
+		, m_size(size)
+	{}
+
+	const UnsignedByte *data() const
+	{
+		return m_data;
+	}
+
+	UnsignedByte operator[](size_t index) const
+	{
+		return m_data[index];
+	}
+
+	size_t size() const
+	{
+		return m_size;
+	}
+
+	NetPacketBuf offset(size_t size) const
+	{
+		const size_t safeSize = min(size, m_size);
+		return NetPacketBuf(m_data + safeSize, m_size - safeSize);
+	}
+
+private:
+	const UnsignedByte *m_data;
+	size_t m_size;
+};
+
+////////////////////////////////////////////////////////////////////////////////
 // Helper functions for raw byte data handling
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace network
 {
+
+template<typename T>
+size_t readObject(T &value, NetPacketBuf src)
+{
+	const size_t readLen = min(sizeof(value), src.size());
+	memcpy(&value, src.data(), readLen);
+	return readLen;
+}
+
+inline size_t readBytes(UnsignedByte *dest, size_t destLen, NetPacketBuf src)
+{
+	const size_t readLen = min(destLen, src.size());
+	memcpy(dest, src.data(), readLen);
+	return readLen;
+}
+
+inline size_t readStringWithoutNull(UnicodeString &str, size_t maxStrLen, NetPacketBuf src)
+{
+	const size_t strLen = min(maxStrLen, src.size() / sizeof(WideChar));
+	const size_t cpyLen = strLen * sizeof(WideChar);
+
+	if (strLen > 0)
+	{
+		WideChar *strBuf = str.getBufferForRead(strLen);
+		memcpy(strBuf, src.data(), cpyLen);
+		strBuf[strLen] = 0;
+	}
+	return cpyLen;
+}
+
+inline size_t readStringWithNull(AsciiString &str, size_t maxStrLen, NetPacketBuf src)
+{
+	const size_t realStrLen = strnlen(reinterpret_cast<const char*>(src.data()), src.size());
+	const size_t usedStrLen = min(realStrLen, maxStrLen);
+	const size_t realCpyLen = realStrLen * sizeof(char);
+	const size_t usedCpyLen = usedStrLen * sizeof(char);
+
+	if (usedStrLen > 0)
+	{
+		char *strBuf = str.getBufferForRead(usedStrLen);
+		memcpy(strBuf, src.data(), usedCpyLen);
+		strBuf[usedStrLen] = 0;
+	}
+	return realCpyLen + sizeof(char);
+}
 
 template<typename T>
 size_t writePrimitive(UnsignedByte *dest, T value)
@@ -70,19 +155,19 @@ size_t writePrimitive(UnsignedByte *dest, T value)
 }
 
 template<typename T>
-size_t writeObject(UnsignedByte *dest, const T& value)
+size_t writeObject(UnsignedByte *dest, const T &value)
 {
 	memcpy(dest, &value, sizeof(value));
 	return sizeof(value);
 }
 
-inline size_t writeBytes(UnsignedByte *dest, const UnsignedByte* src, size_t len)
+inline size_t writeBytes(UnsignedByte *dest, const UnsignedByte *src, size_t len)
 {
 	memcpy(dest, src, len);
 	return len;
 }
 
-inline size_t writeStringWithoutNull(UnsignedByte *dest, const UnicodeString& value, size_t maxLen)
+inline size_t writeStringWithoutNull(UnsignedByte *dest, const UnicodeString &value, size_t maxLen)
 {
 	const size_t copyLen = std::min<size_t>(value.getLength(), maxLen);
 	const size_t copyBytes = copyLen * sizeof(WideChar);
@@ -90,7 +175,7 @@ inline size_t writeStringWithoutNull(UnsignedByte *dest, const UnicodeString& va
 	return copyBytes;
 }
 
-inline size_t writeStringWithNull(UnsignedByte *dest, const AsciiString& value)
+inline size_t writeStringWithNull(UnsignedByte *dest, const AsciiString &value)
 {
 	memcpy(dest, value.str(), value.getByteCount() + 1);
 	return static_cast<size_t>(value.getByteCount() + 1);
@@ -125,48 +210,48 @@ namespace NetPacketFieldTypes
 struct NetPacketCommandTypeField
 {
 	NetPacketCommandTypeField() : fieldType(NetPacketFieldTypes::CommandType) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 	UnsignedByte commandType;
 };
 
 struct NetPacketRelayField
 {
 	NetPacketRelayField() : fieldType(NetPacketFieldTypes::Relay) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 	UnsignedByte relay;
 };
 
 struct NetPacketFrameField
 {
 	NetPacketFrameField() : fieldType(NetPacketFieldTypes::Frame) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 	UnsignedInt frame;
 };
 
 struct NetPacketPlayerIdField
 {
 	NetPacketPlayerIdField() : fieldType(NetPacketFieldTypes::PlayerId) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 	UnsignedByte playerId;
 };
 
 struct NetPacketCommandIdField
 {
 	NetPacketCommandIdField() : fieldType(NetPacketFieldTypes::CommandId) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 	UnsignedShort commandId;
 };
 
 struct NetPacketDataField
 {
 	NetPacketDataField() : fieldType(NetPacketFieldTypes::Data) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 };
 
 struct NetPacketRepeatField
 {
 	NetPacketRepeatField() : fieldType(NetPacketFieldTypes::Repeat) {}
-	char fieldType;
+	const NetPacketFieldType fieldType;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,6 +307,9 @@ struct SmallNetPacketCommandBase
 
 	static size_t getSize(const SmallNetPacketCommandBaseSelect *select = nullptr);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref, const SmallNetPacketCommandBaseSelect *select = nullptr);
+	static size_t readMessage(NetCommandRef *&ref, CommandBase &base, NetPacketBuf buf);
+private:
+	static NetCommandMsg *constructNetCommandMsg(const CommandBase &base);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,6 +374,7 @@ struct NetPacketNoData
 
 	static size_t getSize(const NetCommandMsg &) { return 0; }
 	static size_t copyBytes(UnsignedByte *, const NetCommandRef &) { return 0; }
+	static size_t readMessage(NetCommandRef &, NetPacketBuf) { return 0; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -304,6 +393,7 @@ struct NetPacketAckCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketAckCommandBase
@@ -339,6 +429,7 @@ struct NetPacketFrameCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketFrameCommandBase
@@ -374,6 +465,7 @@ struct NetPacketPlayerLeaveCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketPlayerLeaveCommandBase
@@ -410,6 +502,7 @@ struct NetPacketRunAheadMetricsCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketRunAheadMetricsCommandBase
@@ -446,6 +539,7 @@ struct NetPacketRunAheadCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketRunAheadCommandBase
@@ -481,6 +575,7 @@ struct NetPacketDestroyPlayerCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketDestroyPlayerCommandBase
@@ -521,6 +616,7 @@ struct NetPacketKeepAliveCommandBase
 
 	static size_t getSize() { return sizeof(CommandBase); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -560,6 +656,7 @@ struct NetPacketDisconnectPlayerCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketDisconnectPlayerCommandBase
@@ -639,6 +736,7 @@ struct NetPacketDisconnectVoteCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketDisconnectVoteCommandBase
@@ -669,6 +767,7 @@ struct NetPacketChatCommandData
 
 	static size_t getSize(const NetCommandMsg &msg);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketChatCommandBase
@@ -699,6 +798,7 @@ struct NetPacketDisconnectChatCommandData
 
 	static size_t getSize(const NetCommandMsg &msg);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketDisconnectChatCommandBase
@@ -729,6 +829,7 @@ struct NetPacketGameCommandData
 
 	static size_t getSize(const NetCommandMsg &msg);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketGameCommandBase
@@ -769,6 +870,7 @@ struct NetPacketWrapperCommandData
 
 	static size_t getSize(const NetCommandMsg &msg);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketWrapperCommandBase
@@ -798,6 +900,7 @@ struct NetPacketFileCommandData
 
 	static size_t getSize(const NetCommandMsg &msg);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketFileCommandBase
@@ -828,6 +931,7 @@ struct NetPacketFileAnnounceCommandData
 
 	static size_t getSize(const NetCommandMsg &msg);
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketFileAnnounceCommandBase
@@ -864,6 +968,7 @@ struct NetPacketFileProgressCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketFileProgressCommandBase
@@ -899,6 +1004,7 @@ struct NetPacketProgressCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketProgressCommandBase
@@ -978,6 +1084,7 @@ struct NetPacketDisconnectFrameCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketDisconnectFrameCommandBase
@@ -1013,6 +1120,7 @@ struct NetPacketDisconnectScreenOffCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketDisconnectScreenOffCommandBase
@@ -1048,6 +1156,7 @@ struct NetPacketFrameResendRequestCommandData
 
 	static size_t getSize(const NetCommandMsg &msg) { return sizeof(FixedData); }
 	static size_t copyBytes(UnsignedByte *buffer, const NetCommandRef &ref);
+	static size_t readMessage(NetCommandRef &ref, NetPacketBuf buf);
 };
 
 struct NetPacketFrameResendRequestCommandBase

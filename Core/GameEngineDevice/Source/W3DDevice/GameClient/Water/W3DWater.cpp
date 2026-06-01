@@ -179,7 +179,7 @@ static Int getRiverVertexDiffuse(W3DShroud *shroud, Real x, Real y, Real shadeR,
 		(Int)(shadeR * shroudScale),
 		(Int)(shadeG * shroudScale),
 		(Int)(shadeB * shroudScale),
-		(diffuse >> 24) & 0xff);
+		((diffuse >> 24) & 0xff) * shroudScale);
 }
 
 void doSkyBoxSet(Bool startDraw)
@@ -926,9 +926,11 @@ void WaterRenderObjClass::ReAcquireResources()
 			tex t1	\n\
 			tex t2	\n\
 			tex t3\n\
-			mul r0,v0,t0 ; blend vertex color into t0. \n\
+			mul r0.rgb, v0, t0 ; blend vertex color into t0. \n\
+			mov r0.a, t0 ; keep vertex alpha from fading the base water. \n\
 			mul r1, t1, t2 ; mul\n\
-			add r0.rgb, r0, t3\n\
+			add r1.rgb, r1, t3\n\
+			mul r1.rgb, r1, v0.a\n\
 			+mul r0.a, r0, t3\n\
 			add r0.rgb, r0, r1\n";
 		hr = D3DXAssembleShader( shader, strlen(shader), 0, nullptr, &compiledShader, nullptr);

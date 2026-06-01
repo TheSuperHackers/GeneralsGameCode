@@ -945,33 +945,6 @@ Real AudioManager::getAudioLengthMS( const AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool AudioManager::isMusicAlreadyLoaded() const
-{
-	const AudioEventInfo *musicToLoad = nullptr;
-	AudioEventInfoHash::const_iterator it;
-	for (it = m_allAudioEventInfo.begin(); it != m_allAudioEventInfo.end(); ++it) {
-		if (it->second) {
-			const AudioEventInfo *aet = it->second;
-			if (aet->m_soundType == AT_Music) {
-				musicToLoad = aet;
-			}
-		}
-	}
-
-	if (!musicToLoad) {
-		return FALSE;
-	}
-
-	AudioEventRTS aud;
-	aud.setAudioEventInfo(musicToLoad);
-	aud.generateFilename();
-
-	AsciiString astr = aud.getFilename();
-
-	return (TheFileSystem->doesFileExist(astr.str()));
-}
-
-//-------------------------------------------------------------------------------------------------
 void AudioManager::findAllAudioEventsOfType( AudioType audioType, std::vector<AudioEventInfo*>& allEvents )
 {
 	AudioEventInfoHashIt it;

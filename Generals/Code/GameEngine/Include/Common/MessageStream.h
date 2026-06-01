@@ -272,6 +272,7 @@ public:
 		MSG_META_BEGIN_CAMERA_ZOOM_OUT,
 		MSG_META_END_CAMERA_ZOOM_OUT,
 		MSG_META_CAMERA_RESET,
+    MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE,
 		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,				///< Toggle the fast forward feature
 		MSG_META_TOGGLE_PAUSE,											///< TheSuperHackers @feature Toggle game pause
 		MSG_META_TOGGLE_PAUSE_ALT,									///< TheSuperHackers @feature Toggle game pause (alternative mapping)
@@ -279,6 +280,30 @@ public:
 		MSG_META_STEP_FRAME_ALT,										///< TheSuperHackers @feature Step one frame (alternative mapping)
 		MSG_META_DEMO_INSTANT_QUIT,									///< bail out of game immediately
 
+
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+    MSG_CHEAT_RUNSCRIPT1,										///< run script named "KEY_F1"
+		MSG_CHEAT_RUNSCRIPT2,										///< run script named "KEY_F2"
+		MSG_CHEAT_RUNSCRIPT3,										///< run script named "KEY_F3"
+		MSG_CHEAT_RUNSCRIPT4,										///< run script named "KEY_F4"
+		MSG_CHEAT_RUNSCRIPT5,										///< run script named "KEY_F5"
+		MSG_CHEAT_RUNSCRIPT6,										///< run script named "KEY_F6"
+		MSG_CHEAT_RUNSCRIPT7,										///< run script named "KEY_F7"
+		MSG_CHEAT_RUNSCRIPT8,										///< run script named "KEY_F8"
+		MSG_CHEAT_RUNSCRIPT9,										///< run script named "KEY_F9"
+		MSG_CHEAT_TOGGLE_SPECIAL_POWER_DELAYS,	///< Toggle special power delays on/off
+		MSG_CHEAT_SWITCH_TEAMS,									///< switch local control to another team
+		MSG_CHEAT_KILL_SELECTION,								///< kill the selected units (yeah!)
+		MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE,			///< do 100% damage to the selected units (w00t!)
+		MSG_CHEAT_INSTANT_BUILD,								///< All building is with a timer of 1
+		MSG_CHEAT_DESHROUD,											///< de-shroud the world for the local player
+		MSG_CHEAT_ADD_CASH,											///< adds 10000 cash to the player
+		MSG_CHEAT_GIVE_ALL_SCIENCES,						///< grant all grantable sciences
+		MSG_CHEAT_GIVE_SCIENCEPURCHASEPOINTS,		///< give yourself an SPP (but no rank change)
+		MSG_CHEAT_SHOW_HEALTH,									///< show object health
+    MSG_CHEAT_TOGGLE_MESSAGE_TEXT,          ///< hides/shows the onscreen messages
+
+#endif
 
 		// META items that are really for debug/demo/development use only...
 		// They do not get built into RELEASE builds.
@@ -339,10 +364,12 @@ public:
 		MSG_META_DEMO_ENSHROUD,											///< re-shroud the world for the local player
 		MSG_META_DEMO_DESHROUD,											///< de-shroud the world for the local player
 		MSG_META_DEBUG_SHOW_EXTENTS,								///< show object extents
-		MSG_META_DEBUG_SHOW_HEALTH,									///< show object health
+    MSG_META_DEBUG_SHOW_AUDIO_LOCATIONS,	  		///< show audio objects and radii
+    MSG_META_DEBUG_SHOW_HEALTH,									///< show object health
 		MSG_META_DEBUG_GIVE_VETERANCY,							///< give a veterancy level to selected objects
 		MSG_META_DEBUG_TAKE_VETERANCY,							///< take a veterancy level from selected objects
 		MSG_META_DEMO_TOGGLE_AI_DEBUG,							///< show/hide the ai debug stats
+		MSG_META_DEMO_TOGGLE_SUPPLY_CENTER_PLACEMENT, ///<start/stop dumping to file all thoughts about placing SupplyCenters
 		MSG_META_DEMO_TOGGLE_CAMERA_DEBUG,					///< show/hide the camera debug stats
 		MSG_META_DEMO_TOGGLE_AVI,										///< start capturing video
 		MSG_META_DEMO_TOGGLE_BW_VIEW,								///< enable/disable black & white camera mode
@@ -393,6 +420,9 @@ public:
 		MSG_META_DEBUG_TOGGLE_NETWORK,							///< toggle between having and not having network traffic.
 		MSG_META_DEBUG_DUMP_PLAYER_OBJECTS,					///< Dump numbers of objects owned by each player to the script debug window
 		MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS,			///< Dump numbers of objects owned by each player to the script debug window, and additional object info
+		MSG_META_DEBUG_OBJECT_ID_PERFORMANCE,				///< Run a mess of ObjectID lookups to see performance
+		MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE,			///< Run a mess of DrawableID lookups to see performance
+		MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE,		///< Peek at the size of the sleepy update vector
 
 		MSG_META_DEBUG_WIN,													///< Instant Win
 		MSG_META_DEMO_TOGGLE_DEBUG_STATS,						///< show/hide the debug stats
@@ -434,6 +464,7 @@ public:
 		MSG_ADD_WAYPOINT_HINT,											///< (location) If clicked, a waypoint will be added for currently selected units.
 		//Context command hints
 		MSG_HIJACK_HINT,								///< if clicked, selected unit(s) will attempt to take over vehicle.
+		MSG_SABOTAGE_HINT,
 		MSG_FIREBOMB_HINT,								///< throw a molotov cocktail
 		MSG_CONVERT_TO_CARBOMB_HINT,								///< if clicked, selected unit(s) will attempt to convert clicked object into a carbomb.
 		MSG_CAPTUREBUILDING_HINT,
@@ -576,7 +607,7 @@ public:
 
 		MSG_BEGIN_DEBUG_NETWORK_MESSAGES = 1900,		///< network messages that exist only in debug/internal builds. all grouped separately.
 
-#if defined(RTS_DEBUG)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		// all debug/internal-only messages must go here.
 		MSG_DEBUG_KILL_SELECTION,
 		MSG_DEBUG_HURT_OBJECT,
