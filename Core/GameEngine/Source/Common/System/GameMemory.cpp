@@ -187,7 +187,7 @@ struct UsedNPeak
 		, peakwaste(0)
 	{}
 };
-typedef std::map<const char*, UsedNPeak, std::less<const char*>/**/> UsedNPeakMap;
+typedef std::map<const char*, UsedNPeak, std::less<const char*> /**/> UsedNPeakMap;
 static UsedNPeakMap TheUsedNPeakMap;
 static Int doingIntenseDMA = 0;
 	#endif

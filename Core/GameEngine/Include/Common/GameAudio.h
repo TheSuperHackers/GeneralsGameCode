@@ -64,7 +64,7 @@ struct AudioRequest;
 struct AudioSettings;
 struct MiscAudio;
 
-typedef std::hash_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> AudioEventInfoHash;
+typedef std::hash_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString> /**/> AudioEventInfoHash;
 typedef AudioEventInfoHash::iterator AudioEventInfoHashIt;
 typedef UnsignedInt AudioHandle;
 
@@ -333,9 +333,9 @@ protected:
 	std::list<AudioRequest*> m_audioRequests;
 	std::vector<AsciiString> m_musicTracks;
 
-		AudioEventInfoHash m_allAudioEventInfo;
-		AudioHandle theAudioHandlePool;
-		std::list<std::pair<AsciiString, Real>/**/> m_adjustedVolumes;
+	AudioEventInfoHash m_allAudioEventInfo;
+	AudioHandle theAudioHandlePool;
+	std::list<std::pair<AsciiString, Real> /**/> m_adjustedVolumes;
 
 	Real m_musicVolume;
 	Real m_soundVolume;

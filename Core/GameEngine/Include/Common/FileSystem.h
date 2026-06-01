@@ -63,7 +63,7 @@
 //           Type Defines
 //----------------------------------------------------------------------------
 
-typedef std::set<AsciiString, rts::less_than_nocase<AsciiString>/**/> FilenameList;
+typedef std::set<AsciiString, rts::less_than_nocase<AsciiString> /**/> FilenameList;
 typedef FilenameList::iterator FilenameListIter;
 typedef UnsignedByte FileInstance;
 
@@ -177,7 +177,7 @@ protected:
 	typedef std::hash_map<
 		rts::string_key<AsciiString>, FileExistData,
 		rts::string_key_hash<AsciiString>,
-		rts::string_key_equal<AsciiString>/**/>
+		rts::string_key_equal<AsciiString> /**/>
 		FileExistMap;
 
 	mutable FileExistMap m_fileExist;
