@@ -637,11 +637,11 @@ GlobalData::GlobalData()
 	m_chipSetType = 0;
 	m_headless = FALSE;
 	m_exportStats = TRUE;
-	m_statsUrl = "http://cncstats.computersrfun.org:8080/stats";
+	m_statsUrl = "https://cncstats.computersrfun.org/stats";
 	m_replayUrl = "https://www.radarvan.com/api/upload_replay";
-	m_mapCheckUrl = "http://cncstats.computersrfun.org:8080/map_exists";
-	m_mapUploadUrl = "http://cncstats.computersrfun.org:8080/add_map";
-	m_mapDownloadUrl = "http://cncstats.computersrfun.org:8080/get_map_file";
+	m_mapCheckUrl = "https://cncstats.computersrfun.org/map_exists";
+	m_mapUploadUrl = "https://cncstats.computersrfun.org/add_map";
+	m_mapDownloadUrl = "https://cncstats.computersrfun.org/get_map_file";
 	m_balanceTeamsUrl = "https://www.radarvan.com/api/balance_teams/";
 	m_mapSummaryUrl = "https://www.radarvan.com/api/map_summary/";
 	m_mapMatchCountsUrl = "https://www.radarvan.com/api/map_match_counts";

@@ -28,6 +28,8 @@
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/FileTransfer.h"
 #include "ZuluClientKey.h"
+#include "CncStatsClientKey.h"
+#include "BuildVariant.h"
 
 #include <windows.h>
 #include <wininet.h>
@@ -162,16 +164,36 @@ static bool openHttpRequest(const AsciiString& url,
 		return false;
 	}
 
-	// Inject the build-time radarvan auth key as an X-API-Key header so
-	// every caller of openHttpRequest picks it up. ZULU_CLIENT_KEY is
-	// baked in from GCP Secret Manager (secret zuluclientkey) by
-	// cmake/zuluclientkey.cmake; configure fails if the fetch fails, so
-	// the macro is guaranteed non-empty here.
+	// Pick the auth scheme by host: cncstats uses Authorization: Bearer
+	// with its own key (CNCSTATS_ZULU_CLIENT_KEY from gcloud secret
+	// cncstats_zuluclientkey, baked in by cmake/cncstatsclientkey.cmake);
+	// everything else (radarvan) gets X-API-Key with ZULU_CLIENT_KEY (gcloud
+	// secret zuluclientkey, baked in by cmake/zuluclientkey.cmake).
+	// Configure fails if either secret is missing, so both macros are
+	// guaranteed non-empty here.
 	{
+		const bool isCncStats = (strstr(hostBuf, "cncstats") != nullptr);
 		char authHeader[512];
-		int authLen = sprintf(authHeader, "X-API-Key: %s\r\n", ZULU_CLIENT_KEY);
+		int authLen;
+		if (isCncStats)
+			authLen = sprintf(authHeader, "Authorization: Bearer %s\r\n", CNCSTATS_ZULU_CLIENT_KEY);
+		else
+			authLen = sprintf(authHeader, "X-API-Key: %s\r\n", ZULU_CLIENT_KEY);
 		if (authLen > 0)
 			HttpAddRequestHeadersA(out->hRequest, authHeader, (DWORD)authLen,
+				HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE);
+	}
+
+	// Tag every outbound request with the build variant ("dev-a1b2c3d" /
+	// "release-a1b2c3d") so radarvan and cncstats can filter dev traffic
+	// out of their dashboards. Baked in at configure time by
+	// cmake/buildvariant.cmake; defaults to "dev" so unsigned local
+	// builds are auto-tagged.
+	{
+		char variantHeader[256];
+		int variantLen = sprintf(variantHeader, "X-Zulu-Build: %s\r\n", ZULU_BUILD_VARIANT_TAG);
+		if (variantLen > 0)
+			HttpAddRequestHeadersA(out->hRequest, variantHeader, (DWORD)variantLen,
 				HTTP_ADDREQ_FLAG_ADD | HTTP_ADDREQ_FLAG_REPLACE);
 	}
 

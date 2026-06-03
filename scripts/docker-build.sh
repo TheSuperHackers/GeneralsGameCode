@@ -165,15 +165,26 @@ run_build() {
         fi
     fi
 
+    # Same pattern for the cncstats bearer token; cmake/cncstatsclientkey.cmake
+    # fails configure if neither the env var nor a -D override is set.
+    if [[ -z "${CNCSTATS_ZULU_CLIENT_KEY:-}" ]] && command -v gcloud &>/dev/null; then
+        if fetched_key=$(gcloud secrets versions access latest --secret=cncstats_zuluclientkey 2>/dev/null); then
+            export CNCSTATS_ZULU_CLIENT_KEY="$fetched_key"
+            print_info "Fetched CNCSTATS_ZULU_CLIENT_KEY from GCP Secret Manager"
+        fi
+    fi
+
     # shellcheck disable=SC2086
     docker run \
         -u "$(id -u):$(id -g)" \
         -e MAKE_TARGET="$target" \
         -e FORCE_CMAKE="$force_cmake" \
         -e ZULU_CLIENT_KEY="${ZULU_CLIENT_KEY:-}" \
+        -e CNCSTATS_ZULU_CLIENT_KEY="${CNCSTATS_ZULU_CLIENT_KEY:-}" \
         -e ZULU_VERSION_MAJOR="${ZULU_VERSION_MAJOR:-}" \
         -e ZULU_VERSION_MINOR="${ZULU_VERSION_MINOR:-}" \
         -e ZULU_VERSION_BUILDNUM="${ZULU_VERSION_BUILDNUM:-}" \
+        -e ZULU_BUILD_VARIANT="${ZULU_BUILD_VARIANT:-}" \
         -e ZULU_DISCORD_WEBHOOK_URL="${ZULU_DISCORD_WEBHOOK_URL:-}" \
         ${PRESET:+-e PRESET="$PRESET"} \
         -v "$PROJECT_DIR:/build/cnc" \
