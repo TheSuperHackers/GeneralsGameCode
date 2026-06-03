@@ -896,7 +896,7 @@ bool GameLogic::onNewGame(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onClearGameData(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onClearGameData(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 #if defined(RTS_DEBUG)
 	if (TheDisplay && TheGlobalData->m_dumpAssetUsage)
@@ -976,7 +976,7 @@ bool GameLogic::onSetRallyPoint(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onDoWeapon(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoWeapon(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	WeaponSlotType weaponSlot = (WeaponSlotType)msg->getArgument( 0 )->integer;
 	Int maxShotsToFire = msg->getArgument( 1 )->integer;
@@ -990,7 +990,7 @@ bool GameLogic::onDoWeapon(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onCombatdropAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onCombatdropAtObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *targetObject = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1014,7 +1014,7 @@ bool GameLogic::onCombatdropAtObject(GameMessage *msg, AIGroupPtr &currentlySele
 	return true;
 }
 
-bool GameLogic::onCombatdropAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onCombatdropAtLocation(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Coord3D targetLoc = msg->getArgument( 0 )->location;
 
@@ -1035,7 +1035,7 @@ bool GameLogic::onCombatdropAtLocation(GameMessage *msg, AIGroupPtr &currentlySe
 	return true;
 }
 
-bool GameLogic::onDoWeaponAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoWeaponAtObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// Lock the weapon choice to the right weapon, then give an attack command
 
@@ -1058,7 +1058,7 @@ bool GameLogic::onDoWeaponAtObject(GameMessage *msg, AIGroupPtr &currentlySelect
 	return true;
 }
 
-bool GameLogic::onDoSwitchWeapons(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoSwitchWeapons(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// use the selected group
 	WeaponSlotType weaponSlot = (WeaponSlotType)msg->getArgument( 0 )->integer;
@@ -1069,7 +1069,7 @@ bool GameLogic::onDoSwitchWeapons(GameMessage *msg, AIGroupPtr &currentlySelecte
 	return true;
 }
 
-bool GameLogic::onSetMineClearingDetail(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onSetMineClearingDetail(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	if( currentlySelectedGroup )
 	{
@@ -1108,7 +1108,7 @@ bool GameLogic::onEnableRetaliationMode(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onDoWeaponAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoWeaponAtLocation(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	WeaponSlotType weaponSlot = (WeaponSlotType)msg->getArgument( 0 )->integer;
 	Coord3D targetLoc = msg->getArgument( 1 )->location;
@@ -1125,7 +1125,7 @@ bool GameLogic::onDoWeaponAtLocation(GameMessage *msg, AIGroupPtr &currentlySele
 	return true;
 }
 
-bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoSpecialPower(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// first argument is the special power ID
 	UnsignedInt specialPowerID = msg->getArgument( 0 )->integer;
@@ -1172,7 +1172,7 @@ bool GameLogic::onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelected
 	return true;
 }
 
-bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoSpecialPowerAtLocation(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	const Bool hasAngle = msg->getArgumentCount() >= 6;
 	Int argumentIndex = 0;
@@ -1232,7 +1232,7 @@ bool GameLogic::onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &current
 	return true;
 }
 
-bool GameLogic::onDoSpecialPowerAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoSpecialPowerAtObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 
 	// first argument is the special power ID
@@ -1286,7 +1286,7 @@ bool GameLogic::onDoSpecialPowerAtObject(GameMessage *msg, AIGroupPtr &currently
 	return true;
 }
 
-bool GameLogic::onDoAttackmoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoAttackmoveto(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Coord3D dest = msg->getArgument( 0 )->location;
 
@@ -1299,7 +1299,7 @@ bool GameLogic::onDoAttackmoveto(GameMessage *msg, AIGroupPtr &currentlySelected
 	return true;
 }
 
-bool GameLogic::onDoForcemoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoForcemoveto(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Coord3D dest = msg->getArgument( 0 )->location;
 
@@ -1312,7 +1312,7 @@ bool GameLogic::onDoForcemoveto(GameMessage *msg, AIGroupPtr &currentlySelectedG
 	return true;
 }
 
-bool GameLogic::onDoMoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoMoveto(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Coord3D dest = msg->getArgument( 0 )->location;
 
@@ -1326,7 +1326,7 @@ bool GameLogic::onDoMoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onAddWaypoint(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onAddWaypoint(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Coord3D dest = msg->getArgument( 0 )->location;
 
@@ -1340,7 +1340,7 @@ bool GameLogic::onAddWaypoint(GameMessage *msg, AIGroupPtr &currentlySelectedGro
 	return true;
 }
 
-bool GameLogic::onDoGuardPosition(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoGuardPosition(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Coord3D loc = msg->getArgument( 0 )->location;
 	GuardMode gm = (GuardMode)msg->getArgument( 1 )->integer;
@@ -1352,7 +1352,7 @@ bool GameLogic::onDoGuardPosition(GameMessage *msg, AIGroupPtr &currentlySelecte
 	return true;
 }
 
-bool GameLogic::onDoGuardObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoGuardObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object* obj = findObjectByID( msg->getArgument( 0 )->objectID );
 	if (!obj)
@@ -1367,7 +1367,7 @@ bool GameLogic::onDoGuardObject(GameMessage *msg, AIGroupPtr &currentlySelectedG
 	return true;
 }
 
-bool GameLogic::onDoStop(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoStop(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	if (currentlySelectedGroup)
 	{
@@ -1377,7 +1377,7 @@ bool GameLogic::onDoStop(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onDoScatter(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoScatter(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	if (currentlySelectedGroup)
 	{
@@ -1387,7 +1387,7 @@ bool GameLogic::onDoScatter(GameMessage *msg, AIGroupPtr &currentlySelectedGroup
 	return true;
 }
 
-bool GameLogic::onCreateFormation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onCreateFormation(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	if (currentlySelectedGroup)
 	{
@@ -1407,7 +1407,7 @@ bool GameLogic::onClearIngamePopupMessage(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onDoCheer(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoCheer(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	//All selected units play cheer animation.
 	if( currentlySelectedGroup )
@@ -1420,7 +1420,7 @@ bool GameLogic::onDoCheer(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 
 #if defined(RTS_DEBUG) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 
-bool GameLogic::onDebugKillSelection(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDebugKillSelection(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	//All selected units die
 	if( currentlySelectedGroup )
@@ -1468,7 +1468,7 @@ bool GameLogic::onDebugKillObject(GameMessage *msg)
 
 #endif
 
-bool GameLogic::onEnter(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onEnter(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *enter = findObjectByID( msg->getArgument( 1 )->objectID );
 
@@ -1485,7 +1485,7 @@ bool GameLogic::onEnter(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onExit(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onExit(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	Object *objectWantingToExit = findObjectByID( msg->getArgument( 0 )->objectID );
@@ -1519,7 +1519,7 @@ bool GameLogic::onExit(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onEvacuate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onEvacuate(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// issue command for either single object or for selected group
 	//	AIGroup *group = TheAI->findGroup( *selectedGroupID );
@@ -1547,7 +1547,7 @@ bool GameLogic::onEvacuate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onExecuteRailedTransport(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onExecuteRailedTransport(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// issue command to currently selected objects
 	if( currentlySelectedGroup )
@@ -1556,7 +1556,7 @@ bool GameLogic::onExecuteRailedTransport(GameMessage *msg, AIGroupPtr &currently
 	return true;
 }
 
-bool GameLogic::onInternetHack(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onInternetHack(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 //			ObjectID sourceID = msg->getArgument( 0 )->objectID;
 	if( currentlySelectedGroup )
@@ -1568,7 +1568,7 @@ bool GameLogic::onInternetHack(GameMessage *msg, AIGroupPtr &currentlySelectedGr
 	return true;
 }
 
-bool GameLogic::onGetRepaired(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onGetRepaired(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *repairDepot = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1583,7 +1583,7 @@ bool GameLogic::onGetRepaired(GameMessage *msg, AIGroupPtr &currentlySelectedGro
 	return true;
 }
 
-bool GameLogic::onDock(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDock(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *dockBuilding = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1598,7 +1598,7 @@ bool GameLogic::onDock(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onGetHealed(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onGetHealed(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *healDest = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1613,7 +1613,7 @@ bool GameLogic::onGetHealed(GameMessage *msg, AIGroupPtr &currentlySelectedGroup
 	return true;
 }
 
-bool GameLogic::onDoRepair(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoRepair(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *repairTarget = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1631,7 +1631,7 @@ bool GameLogic::onDoRepair(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onResumeConstruction(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onResumeConstruction(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *constructTarget = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1653,7 +1653,7 @@ bool GameLogic::onResumeConstruction(GameMessage *msg, AIGroupPtr &currentlySele
 	return true;
 }
 
-bool GameLogic::onDoSpecialPowerOverrideDestination(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoSpecialPowerOverrideDestination(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 
 	const Coord3D *loc = &msg->getArgument( 0 )->location;
@@ -1697,7 +1697,7 @@ bool GameLogic::onDoSpecialPowerOverrideDestination(GameMessage *msg, AIGroupPtr
 	return true;
 }
 
-bool GameLogic::onDoAttackObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoAttackObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *enemy = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1714,7 +1714,7 @@ bool GameLogic::onDoAttackObject(GameMessage *msg, AIGroupPtr &currentlySelected
 	return true;
 }
 
-bool GameLogic::onDoForceAttackObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoForceAttackObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *enemy = findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -1731,7 +1731,7 @@ bool GameLogic::onDoForceAttackObject(GameMessage *msg, AIGroupPtr &currentlySel
 	return true;
 }
 
-bool GameLogic::onDoForceAttackGround(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoForceAttackGround(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	const Coord3D *pos = &msg->getArgument( 0 )->location;
 
@@ -1765,7 +1765,7 @@ bool GameLogic::onDoForceAttackGround(GameMessage *msg, AIGroupPtr &currentlySel
 	return true;
 }
 
-bool GameLogic::onQueueUpgrade(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onQueueUpgrade(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	const UpgradeTemplate *upgradeT = TheUpgradeCenter->findUpgradeByKey( (NameKeyType)(msg->getArgument( 1 )->integer) );
 	if (!upgradeT)	// sanity
@@ -1777,7 +1777,7 @@ bool GameLogic::onQueueUpgrade(GameMessage *msg, AIGroupPtr &currentlySelectedGr
 	return true;
 }
 
-bool GameLogic::onCancelUpgrade(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onCancelUpgrade(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -1807,7 +1807,7 @@ bool GameLogic::onCancelUpgrade(GameMessage *msg, AIGroupPtr &currentlySelectedG
 	return true;
 }
 
-bool GameLogic::onQueueUnitCreate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onQueueUnitCreate(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 #if RETAIL_COMPATIBLE_AIGROUP
 	Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
@@ -1840,7 +1840,7 @@ bool GameLogic::onQueueUnitCreate(GameMessage *msg, AIGroupPtr &currentlySelecte
 	return true;
 }
 
-bool GameLogic::onCancelUnitCreate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onCancelUnitCreate(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -1870,7 +1870,7 @@ bool GameLogic::onCancelUnitCreate(GameMessage *msg, AIGroupPtr &currentlySelect
 	return true;
 }
 
-bool GameLogic::onDozerConstruct(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDozerConstruct(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	const ThingTemplate *place;
 	Coord3D loc;
@@ -1918,7 +1918,7 @@ bool GameLogic::onDozerConstruct(GameMessage *msg, AIGroupPtr &currentlySelected
 	return true;
 }
 
-bool GameLogic::onDozerCancelConstruct(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDozerCancelConstruct(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -1957,7 +1957,7 @@ bool GameLogic::onDozerCancelConstruct(GameMessage *msg, AIGroupPtr &currentlySe
 	return true;
 }
 
-bool GameLogic::onSell(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onSell(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// use the selected group
 	if( currentlySelectedGroup )
@@ -1966,7 +1966,7 @@ bool GameLogic::onSell(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 	return true;
 }
 
-bool GameLogic::onToggleOvercharge(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onToggleOvercharge(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// use the selected group
 	if( currentlySelectedGroup )
@@ -1977,7 +1977,7 @@ bool GameLogic::onToggleOvercharge(GameMessage *msg, AIGroupPtr &currentlySelect
 
 #ifdef ALLOW_SURRENDER
 
-bool GameLogic::onDoSurrender(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onDoSurrender(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	//All selected units surrender
 	if( currentlySelectedGroup )
@@ -1990,7 +1990,7 @@ bool GameLogic::onDoSurrender(GameMessage *msg, AIGroupPtr &currentlySelectedGro
 	return true;
 }
 
-bool GameLogic::onPickUpPrisoner(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onPickUpPrisoner(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	Object *prisoner = TheGameLogic->findObjectByID( msg->getArgument( 0 )->objectID );
 
@@ -2004,7 +2004,7 @@ bool GameLogic::onPickUpPrisoner(GameMessage *msg, AIGroupPtr &currentlySelected
 	return true;
 }
 
-bool GameLogic::onReturnToPrison(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onReturnToPrison(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	// use selected group
 	if( currentlySelectedGroup )
@@ -2224,7 +2224,7 @@ bool GameLogic::onRemoveBeacon(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onSetBeaconText(GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
+bool GameLogic::onSetBeaconText(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlySelectedGroup)
 {
 	if( currentlySelectedGroup )
 	{
