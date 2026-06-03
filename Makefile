@@ -29,9 +29,21 @@ LAUNCHER_NAME := ZuluLauncher.exe
 SOURCE_EXE      := $(BUILD_DIR)/GeneralsMD/generalszh.exe
 SOURCE_LAUNCHER := $(BUILD_DIR)/launcher/ZuluLauncher.exe
 
-NSI            := installer/Zulu.nsi
-INSTALLER_OUT  := installer/Zulu_Setup.exe
-LATEST_JSON    := $(TMP_DIR)/latest.json
+NSI               := installer/Zulu.nsi
+INSTALLER_OUT     := installer/Zulu_Setup.exe
+INSTALLER_OUT_DEV := installer/Zulu_Setup_Dev.exe
+LATEST_JSON       := $(TMP_DIR)/latest.json
+LATEST_DEV_JSON   := $(TMP_DIR)/latest-dev.json
+
+# Dev artifact lives at a fixed name in the same GCS bucket so the dev
+# launcher can always pull the latest dev build from a stable URL; the
+# manifest sidecar (latest-dev.json) carries the SHA256 the launcher
+# uses to decide whether to prompt for an update.
+DEV_OBJECT_NAME       := Zulu-Installer-Dev.exe
+DEV_GCS_URI            = gs://$(GCS_BUCKET)/$(DEV_OBJECT_NAME)
+DEV_PUBLIC_URL         = https://storage.googleapis.com/$(GCS_BUCKET)/$(DEV_OBJECT_NAME)
+LATEST_DEV_GCS_URI     = gs://$(GCS_BUCKET)/latest-dev.json
+LATEST_DEV_PUBLIC_URL  = https://storage.googleapis.com/$(GCS_BUCKET)/latest-dev.json
 
 # Single source of truth for the release version is APPVERSION inside the
 # NSI script. Keep this Make-side parser tolerant of whitespace/quoting so
@@ -66,14 +78,19 @@ ASSET_FILES := $(shell find $(ASSETS_DIR) -type f 2>/dev/null)
 # big-endian first-data offset = 16.
 EMPTY_BIG_BYTES := 'BIGF\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10'
 
-.PHONY: installer installer-release zulu-big zulu-exe zulu-exe-log zulu-launcher clean-installer
+.PHONY: installer installer-release installer-dev zulu-big zulu-exe zulu-exe-log zulu-launcher clean-installer
 
-# Target-specific secret name that propagates down the prereq chain so the
-# docker-build-z_generals recipe knows which GCP Secret Manager secret to
-# pull the Discord webhook URL from. Plain `make zulu-exe` leaves this
-# empty and the recipe skips the fetch.
-installer:         DISCORD_WEBHOOK_SECRET := debug_discord_webhook
+# Target-specific variables that propagate down the prereq chain so the
+# docker-build-* recipes pick the right Discord webhook secret and bake
+# the right build-variant tag into the binaries. Plain `make zulu-exe`
+# leaves these empty: the discord fetch is skipped and the cmake
+# buildvariant module defaults the tag to "dev".
+installer:         DISCORD_WEBHOOK_SECRET := discord_webhook
+installer:         ZULU_BUILD_VARIANT     := release
 installer-release: DISCORD_WEBHOOK_SECRET := discord_webhook
+installer-release: ZULU_BUILD_VARIANT     := release
+installer-dev:     DISCORD_WEBHOOK_SECRET := debug_discord_webhook
+installer-dev:     ZULU_BUILD_VARIANT     := dev
 
 installer: $(INSTALLER_OUT)
 
@@ -109,12 +126,12 @@ $(TMP_BIG): $(ASSET_FILES) | $(TMP_DIR)
 # previous configure's BuildVersion.h and the version doesn't update.
 #
 # DISCORD_WEBHOOK_SECRET, when set by a parent target (installer /
-# installer-release), names the GCP Secret Manager secret to fetch and
-# bake into the binary as ZULU_DISCORD_WEBHOOK_URL. Empty (the default
-# for plain `make zulu-exe`) skips the fetch entirely so dev builds keep
-# working without gcloud credentials. The secret must be non-empty when
-# requested; an empty payload aborts the build so a release never silently
-# ships with the feature disabled.
+# installer-release / installer-dev), names the GCP Secret Manager secret
+# to fetch and bake into the binary as ZULU_DISCORD_WEBHOOK_URL. Empty
+# (the default for plain `make zulu-exe`) skips the fetch entirely so dev
+# builds keep working without gcloud credentials. The secret must be
+# non-empty when requested; an empty payload aborts the build so a release
+# never silently ships with the feature disabled.
 .PHONY: docker-build-z_generals
 docker-build-z_generals:
 	@if [ -n "$(DISCORD_WEBHOOK_SECRET)" ] && [ -z "$$ZULU_DISCORD_WEBHOOK_URL" ]; then \
@@ -131,6 +148,7 @@ docker-build-z_generals:
 	ZULU_VERSION_MAJOR=$(ZULU_VERSION_MAJOR) \
 	ZULU_VERSION_MINOR=$(ZULU_VERSION_MINOR) \
 	ZULU_VERSION_BUILDNUM=$(ZULU_VERSION_BUILDNUM) \
+	ZULU_BUILD_VARIANT=$(ZULU_BUILD_VARIANT) \
 	$(DOCKER_BUILD) --cmake --target z_generals
 
 $(TMP_EXE): docker-build-z_generals | $(TMP_DIR)
@@ -142,12 +160,28 @@ $(TMP_EXE): docker-build-z_generals | $(TMP_DIR)
 # vc6-releaselog cmake preset; --cmake forces reconfigure since this shares
 # build/docker with the regular Release build and the cached preset would
 # otherwise stick.
+#
+# Mirrors docker-build-z_generals's discord-secret fetch so installer-dev
+# (which depends on this recipe to get the log-enabled exe) can bake in
+# the debug discord webhook the same way installer bakes in the prod one.
 .PHONY: docker-build-z_generals-log
 docker-build-z_generals-log:
+	@if [ -n "$(DISCORD_WEBHOOK_SECRET)" ] && [ -z "$$ZULU_DISCORD_WEBHOOK_URL" ]; then \
+		echo "[discord] fetching secret '$(DISCORD_WEBHOOK_SECRET)' from GCP Secret Manager..."; \
+		ZULU_DISCORD_WEBHOOK_URL=$$($(GCLOUD) secrets versions access latest --secret=$(DISCORD_WEBHOOK_SECRET)) \
+			|| { echo "ERROR: gcloud failed to read secret '$(DISCORD_WEBHOOK_SECRET)' (see error above)."; exit 1; }; \
+		if [ -z "$$ZULU_DISCORD_WEBHOOK_URL" ]; then \
+			echo "ERROR: secret '$(DISCORD_WEBHOOK_SECRET)' is empty."; \
+			exit 1; \
+		fi; \
+		export ZULU_DISCORD_WEBHOOK_URL; \
+		echo "[discord] webhook url loaded ($${#ZULU_DISCORD_WEBHOOK_URL} bytes)"; \
+	fi; \
 	PRESET=vc6-releaselog \
 	ZULU_VERSION_MAJOR=$(ZULU_VERSION_MAJOR) \
 	ZULU_VERSION_MINOR=$(ZULU_VERSION_MINOR) \
 	ZULU_VERSION_BUILDNUM=$(ZULU_VERSION_BUILDNUM) \
+	ZULU_BUILD_VARIANT=$(ZULU_BUILD_VARIANT) \
 	$(DOCKER_BUILD) --cmake --target z_generals
 
 $(TMP_EXE_LOG): docker-build-z_generals-log | $(TMP_DIR)
@@ -163,6 +197,7 @@ docker-build-z_launcher:
 	ZULU_VERSION_MAJOR=$(ZULU_VERSION_MAJOR) \
 	ZULU_VERSION_MINOR=$(ZULU_VERSION_MINOR) \
 	ZULU_VERSION_BUILDNUM=$(ZULU_VERSION_BUILDNUM) \
+	ZULU_BUILD_VARIANT=$(ZULU_BUILD_VARIANT) \
 	$(DOCKER_BUILD) --cmake --target z_launcher
 
 $(TMP_LAUNCHER): docker-build-z_launcher | $(TMP_DIR)
@@ -185,6 +220,56 @@ $(TMP_DIR):
 
 clean-installer:
 	rm -rf "$(TMP_DIR)" "$(INSTALLER_OUT)"
+
+# Build a dev-tagged installer and publish it to GCS under a stable name
+# (Zulu-Installer-Dev.exe + latest-dev.json) so dev launchers always know
+# where to look. Uses the vc6-releaselog preset so dev builds ship with
+# DEBUG_LOGGING + DEBUG_CRASHING on by default - that's the whole reason
+# you'd cut a dev build.
+#
+# We rename the NSIS output to $(INSTALLER_OUT_DEV) so a later `make
+# installer` doesn't see a fresh installer/Zulu_Setup.exe on disk and
+# skip the build.
+installer-dev: $(TMP_BIG) $(TMP_EXE_LOG) $(TMP_LAUNCHER) $(NSI) | $(TMP_DIR)
+	@test -n "$(APPVERSION)" || { \
+		echo "ERROR: could not parse APPVERSION from $(NSI)"; exit 1; }
+	$(NSIS) \
+		-DBIG_SOURCE="../$(TMP_BIG)" \
+		-DEXE_SOURCE="../$(TMP_EXE_LOG)" \
+		-DLAUNCHER_SOURCE="../$(TMP_LAUNCHER)" \
+		$(NSI)
+	@rm -f "$(TMP_BIG)" "$(TMP_EXE_LOG)" "$(TMP_LAUNCHER)"
+	mv "$(INSTALLER_OUT)" "$(INSTALLER_OUT_DEV)"
+	$(GCLOUD) storage cp "$(INSTALLER_OUT_DEV)" "$(DEV_GCS_URI)"
+	@$(GCLOUD) storage objects update "$(DEV_GCS_URI)" \
+		--cache-control="no-cache, max-age=0" \
+		|| echo "[note] could not set cache-control on $(DEV_OBJECT_NAME)."
+	@$(GCLOUD) storage objects update "$(DEV_GCS_URI)" \
+		--add-acl-grant=entity=AllUsers,role=READER \
+		|| echo "[note] per-object ACL grant failed for $(DEV_OBJECT_NAME); rely on bucket-level allUsers grant."
+	@SIZE=$$(stat -c%s "$(INSTALLER_OUT_DEV)"); \
+	SHA=$$(sha256sum "$(INSTALLER_OUT_DEV)" | cut -d' ' -f1); \
+	printf '%s\n' \
+	    '{' \
+	    '  "version": "$(APPVERSION)",' \
+	    '  "url": "$(DEV_PUBLIC_URL)",' \
+	    "  \"size\": $$SIZE," \
+	    "  \"sha256\": \"$$SHA\"" \
+	    '}' > "$(LATEST_DEV_JSON)"
+	$(GCLOUD) storage cp "$(LATEST_DEV_JSON)" "$(LATEST_DEV_GCS_URI)"
+	@$(GCLOUD) storage objects update "$(LATEST_DEV_GCS_URI)" \
+		--content-type=application/json \
+		--cache-control="no-cache, max-age=0" \
+		|| echo "[note] could not set metadata on latest-dev.json."
+	@$(GCLOUD) storage objects update "$(LATEST_DEV_GCS_URI)" \
+		--add-acl-grant=entity=AllUsers,role=READER \
+		|| echo "[note] per-object ACL grant failed for latest-dev.json; rely on bucket-level allUsers grant."
+	@rm -f "$(LATEST_DEV_JSON)"
+	@echo
+	@echo "Uploaded dev installer: $(DEV_GCS_URI)"
+	@echo "Public URL:             $(DEV_PUBLIC_URL)"
+	@echo "Update manifest:        $(LATEST_DEV_GCS_URI)"
+	@echo "Manifest URL:           $(LATEST_DEV_PUBLIC_URL)"
 
 # Build the installer (via the regular pipeline) and publish it to GCS under
 # a version-stamped object name so each release has a stable shareable URL.

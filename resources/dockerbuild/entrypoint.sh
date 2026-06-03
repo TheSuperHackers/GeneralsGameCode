@@ -16,6 +16,9 @@ fi
 if [ -n "${ZULU_VERSION_BUILDNUM:-}" ]; then
     ZULU_VERSION_FLAGS+=("-DZULU_VERSION_BUILDNUM=${ZULU_VERSION_BUILDNUM}")
 fi
+if [ -n "${ZULU_BUILD_VARIANT:-}" ]; then
+    ZULU_VERSION_FLAGS+=("-DZULU_BUILD_VARIANT=${ZULU_BUILD_VARIANT}")
+fi
 
 if [ "${FORCE_CMAKE:-}" = "true" ] || [ ! -f  build/docker/build.ninja  ]; then
    wine /build/tools/cmake/bin/cmake.exe \
@@ -35,6 +38,7 @@ if [ "${FORCE_CMAKE:-}" = "true" ] || [ ! -f  build/docker/build.ninja  ]; then
         -DCMAKE_C_COMPILER_WORKS=1 \
         -DCMAKE_CXX_COMPILER_WORKS=1 \
         -DZULU_CLIENT_KEY="${ZULU_CLIENT_KEY:-}" \
+        -DCNCSTATS_ZULU_CLIENT_KEY="${CNCSTATS_ZULU_CLIENT_KEY:-}" \
         "${ZULU_VERSION_FLAGS[@]}" \
         -B /build/cnc/build/docker
 fi

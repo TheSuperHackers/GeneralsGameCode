@@ -1171,7 +1171,7 @@ set_source_files_properties(Source/Common/LobbyDiscord.cpp PROPERTIES
     OBJECT_DEPENDS "${ZULU_DISCORD_WEBHOOK_GENERATED_DIR}/DiscordWebhook.h")
 
 set_source_files_properties(Source/Common/StatsUploader.cpp PROPERTIES
-    OBJECT_DEPENDS "${ZULU_CLIENT_KEY_GENERATED_DIR}/ZuluClientKey.h")
+    OBJECT_DEPENDS "${ZULU_CLIENT_KEY_GENERATED_DIR}/ZuluClientKey.h;${CNCSTATS_ZULU_CLIENT_KEY_GENERATED_DIR}/CncStatsClientKey.h;${ZULU_BUILD_VARIANT_GENERATED_DIR}/BuildVariant.h")
 
 target_include_directories(z_gameengine PUBLIC
     Include
@@ -1180,7 +1180,9 @@ target_include_directories(z_gameengine PUBLIC
 target_include_directories(z_gameengine PRIVATE
     Include/Precompiled
     ${ZULU_CLIENT_KEY_GENERATED_DIR}
+    ${CNCSTATS_ZULU_CLIENT_KEY_GENERATED_DIR}
     ${ZULU_DISCORD_WEBHOOK_GENERATED_DIR}
+    ${ZULU_BUILD_VARIANT_GENERATED_DIR}
 )
 
 target_link_libraries(z_gameengine PRIVATE

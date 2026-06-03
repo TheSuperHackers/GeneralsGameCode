@@ -36,6 +36,12 @@ target_sources(z_launcher PRIVATE
     ZuluLauncher.cpp
 )
 
+# BuildVariant.h (cmake/buildvariant.cmake) baked at configure time tells
+# the launcher whether it's a dev or release build, which decides the
+# manifest URL and the update-comparison gate.
+set_source_files_properties(ZuluLauncher.cpp PROPERTIES
+    OBJECT_DEPENDS "${ZULU_BUILD_VARIANT_GENERATED_DIR}/BuildVariant.h")
+
 if(MSVC)
     # VS2005+ injects a default manifest; we ship our own, so turn it off
     # to avoid duplicate-manifest link warnings (same pattern as the game).
@@ -63,6 +69,7 @@ target_link_libraries(z_launcher PRIVATE
 target_include_directories(z_launcher PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${ZULU_BUILD_VARIANT_GENERATED_DIR}
 )
 
 if(MINGW AND COMMAND add_debug_strip_target)

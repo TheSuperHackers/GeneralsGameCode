@@ -27,22 +27,59 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "BuildVariant.h"
+
 // VC6 SDK predates these definitions.
 #ifndef INVALID_FILE_ATTRIBUTES
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
-static const char *kLatestJsonURL =
+// VC6's wincrypt.h hides the legacy CryptoAPI types behind a _WIN32_WINNT
+// guard that isn't tripped in this build, so we forward-declare just the
+// types/constants we touch and resolve the entry points out of advapi32
+// at runtime. Same pattern StatsUploader.cpp uses for GetAdaptersInfo.
+// The "handle" types are ULONG_PTR-sized in modern SDKs but only 32-bit
+// on 32-bit Windows (which is the only target VC6 can produce), so plain
+// unsigned long is ABI-compatible and avoids needing basetsd.h.
+typedef unsigned long LocalHCRYPTPROV;
+typedef unsigned long LocalHCRYPTHASH;
+typedef unsigned long LocalHCRYPTKEY;
+typedef DWORD         LocalALG_ID;
+
+#define LOCAL_CALG_SHA_256        0x0000800c
+#define LOCAL_PROV_RSA_AES        24
+#define LOCAL_CRYPT_VERIFYCONTEXT 0xF0000000
+#define LOCAL_HP_HASHVAL          2
+
+typedef BOOL (WINAPI *FnCryptAcquireContextA)(LocalHCRYPTPROV *, LPCSTR, LPCSTR, DWORD, DWORD);
+typedef BOOL (WINAPI *FnCryptReleaseContext)(LocalHCRYPTPROV, DWORD);
+typedef BOOL (WINAPI *FnCryptCreateHash)(LocalHCRYPTPROV, LocalALG_ID, LocalHCRYPTKEY, DWORD, LocalHCRYPTHASH *);
+typedef BOOL (WINAPI *FnCryptHashData)(LocalHCRYPTHASH, const BYTE *, DWORD, DWORD);
+typedef BOOL (WINAPI *FnCryptGetHashParam)(LocalHCRYPTHASH, DWORD, BYTE *, DWORD *, DWORD);
+typedef BOOL (WINAPI *FnCryptDestroyHash)(LocalHCRYPTHASH);
+
+// Manifest URL is variant-aware: dev launchers read latest-dev.json so dev
+// installs don't get dragged onto the public release line and vice versa.
+// Both manifests live under the same kAllowedURLPrefix, so the post-download
+// URL pin still applies to both code paths.
+static const char *kLatestJsonURLRelease =
     "https://storage.googleapis.com/zulu-installer/latest.json";
+static const char *kLatestJsonURLDev =
+    "https://storage.googleapis.com/zulu-installer/latest-dev.json";
 // Defense-in-depth: refuse to download/run anything whose URL isn't a public
 // object in our installer bucket. HTTPS to that bucket already authenticates
-// the origin; this pin just prevents a tampered latest.json from pointing
-// the elevated installer hand-off at an arbitrary external host.
+// the origin; this pin just prevents a tampered manifest from pointing the
+// elevated installer hand-off at an arbitrary external host.
 static const char *kAllowedURLPrefix =
     "https://storage.googleapis.com/zulu-installer/";
 static const char *kGameExeName  = "generalszh_zulu.exe";
-static const char *kInstallerLeaf = "Zulu_Setup_update.exe";
+static const char *kInstallerLeafRelease = "Zulu_Setup_update.exe";
+static const char *kInstallerLeafDev     = "Zulu_Setup_Dev_update.exe";
 static const char *kAppName       = "Zulu";
+
+static bool isDevBuild() {
+    return strcmp(ZULU_BUILD_VARIANT_KIND, "dev") == 0;
+}
 
 struct SemVer {
     unsigned major;
@@ -112,6 +149,67 @@ static bool jsonGetString(const char *json, const char *key,
     }
     out[i] = 0;
     return *p == '"';
+}
+
+// SHA-256 of an entire file, written as 64 lowercase hex chars + nul into
+// outHex. Returns false on any failure (file missing, advapi32 missing the
+// SHA-256 algorithm, read error). PROV_RSA_AES is the smallest provider
+// that exposes SHA-256; available on XP SP3+ and every supported Windows
+// after.
+static bool computeFileSha256Hex(const char *path, char *outHex, size_t outSize) {
+    if (outSize < 65) return false;
+
+    HMODULE advapi = LoadLibraryA("advapi32.dll");
+    if (!advapi) return false;
+    FnCryptAcquireContextA acquireCtx = (FnCryptAcquireContextA)GetProcAddress(advapi, "CryptAcquireContextA");
+    FnCryptReleaseContext  releaseCtx = (FnCryptReleaseContext) GetProcAddress(advapi, "CryptReleaseContext");
+    FnCryptCreateHash      createHash = (FnCryptCreateHash)     GetProcAddress(advapi, "CryptCreateHash");
+    FnCryptHashData        hashData   = (FnCryptHashData)       GetProcAddress(advapi, "CryptHashData");
+    FnCryptGetHashParam    getHashParam = (FnCryptGetHashParam) GetProcAddress(advapi, "CryptGetHashParam");
+    FnCryptDestroyHash     destroyHash = (FnCryptDestroyHash)   GetProcAddress(advapi, "CryptDestroyHash");
+    if (!acquireCtx || !releaseCtx || !createHash || !hashData || !getHashParam || !destroyHash) {
+        FreeLibrary(advapi);
+        return false;
+    }
+
+    HANDLE hF = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ, NULL,
+        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hF == INVALID_HANDLE_VALUE) { FreeLibrary(advapi); return false; }
+
+    LocalHCRYPTPROV hProv = 0;
+    LocalHCRYPTHASH hHash = 0;
+    bool ok = false;
+    if (acquireCtx(&hProv, NULL, NULL, LOCAL_PROV_RSA_AES, LOCAL_CRYPT_VERIFYCONTEXT)) {
+        if (createHash(hProv, LOCAL_CALG_SHA_256, 0, 0, &hHash)) {
+            BYTE buf[64 * 1024];
+            DWORD got = 0;
+            ok = true;
+            while (ReadFile(hF, buf, sizeof(buf), &got, NULL) && got > 0) {
+                if (!hashData(hHash, buf, got, 0)) { ok = false; break; }
+            }
+            if (ok) {
+                BYTE digest[32];
+                DWORD digestLen = sizeof(digest);
+                if (getHashParam(hHash, LOCAL_HP_HASHVAL, digest, &digestLen, 0)
+                        && digestLen == 32) {
+                    static const char hex[] = "0123456789abcdef";
+                    int i;
+                    for (i = 0; i < 32; ++i) {
+                        outHex[i * 2]     = hex[(digest[i] >> 4) & 0xF];
+                        outHex[i * 2 + 1] = hex[digest[i] & 0xF];
+                    }
+                    outHex[64] = 0;
+                } else {
+                    ok = false;
+                }
+            }
+            destroyHash(hHash);
+        }
+        releaseCtx(hProv, 0);
+    }
+    CloseHandle(hF);
+    FreeLibrary(advapi);
+    return ok;
 }
 
 static void applyTimeouts(HINTERNET hI, DWORD millis) {
@@ -279,6 +377,10 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         return 1;
     }
 
+    const bool devBuild = isDevBuild();
+    const char *manifestUrl = devBuild ? kLatestJsonURLDev : kLatestJsonURLRelease;
+    const char *installerLeaf = devBuild ? kInstallerLeafDev : kInstallerLeafRelease;
+
     SemVer installed = {0, 0, 0};
     bool haveInstalled = getFileVersion(gameExe, installed);
 
@@ -286,32 +388,54 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     bool haveLatest = false;
     char latestUrl[2048]; latestUrl[0] = 0;
     char latestVersion[64]; latestVersion[0] = 0;
+    char latestSha[80]; latestSha[0] = 0;
+    bool haveLatestSha = false;
 
-    char *json = httpGet(kLatestJsonURL, NULL);
+    char *json = httpGet(manifestUrl, NULL);
     if (json) {
         if (jsonGetString(json, "version", latestVersion, sizeof(latestVersion)) &&
             jsonGetString(json, "url", latestUrl, sizeof(latestUrl))) {
             haveLatest = parseSemVer(latestVersion, latest);
         }
+        haveLatestSha = jsonGetString(json, "sha256", latestSha, sizeof(latestSha));
         free(json);
     }
 
-    // Strict ">" guarantees we never downgrade. Equal versions or dev
-    // builds ahead of the published release just skip the update path.
-    bool needUpdate = haveInstalled && haveLatest &&
-                      semVerCompare(latest, installed) > 0 &&
-                      strncmp(latestUrl, kAllowedURLPrefix,
-                              strlen(kAllowedURLPrefix)) == 0;
+    const bool urlOk = (latestUrl[0] != 0) &&
+        (strncmp(latestUrl, kAllowedURLPrefix, strlen(kAllowedURLPrefix)) == 0);
+
+    // Dev gate: any SHA mismatch between the manifest and the installed exe
+    // triggers a prompt, since dev builds don't bump semver between rebuilds.
+    // Release gate: strict ">" semver comparison so we never downgrade.
+    char installedSha[80]; installedSha[0] = 0;
+    bool needUpdate = false;
+    if (devBuild) {
+        bool haveInstalledSha = computeFileSha256Hex(gameExe, installedSha, sizeof(installedSha));
+        needUpdate = haveLatestSha && haveInstalledSha && urlOk &&
+                     (_stricmp(latestSha, installedSha) != 0);
+    } else {
+        needUpdate = haveInstalled && haveLatest && urlOk &&
+                     semVerCompare(latest, installed) > 0;
+    }
 
     if (needUpdate) {
         char msg[512];
-        _snprintf(msg, sizeof(msg) - 1,
-            "A newer Zulu release is available.\n\n"
-            "Installed:  %u.%u.%u\n"
-            "Latest:     %s\n\n"
-            "Download and install the update now?",
-            installed.major, installed.minor, installed.build,
-            latestVersion);
+        if (devBuild) {
+            _snprintf(msg, sizeof(msg) - 1,
+                "A new Zulu dev build is available.\n\n"
+                "Installed SHA: %.12s...\n"
+                "Latest SHA:    %.12s...\n\n"
+                "Download and install the update now?",
+                installedSha, latestSha);
+        } else {
+            _snprintf(msg, sizeof(msg) - 1,
+                "A newer Zulu release is available.\n\n"
+                "Installed:  %u.%u.%u\n"
+                "Latest:     %s\n\n"
+                "Download and install the update now?",
+                installed.major, installed.minor, installed.build,
+                latestVersion);
+        }
         msg[sizeof(msg) - 1] = 0;
         int rc = MessageBoxA(NULL, msg, kAppName,
             MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON1);
@@ -320,7 +444,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             GetTempPathA(sizeof(tempDir), tempDir);
             char installerPath[MAX_PATH];
             _snprintf(installerPath, sizeof(installerPath) - 1, "%s%s",
-                tempDir, kInstallerLeaf);
+                tempDir, installerLeaf);
             installerPath[sizeof(installerPath) - 1] = 0;
 
             HCURSOR oldCursor = SetCursor(LoadCursorA(NULL, IDC_WAIT));
