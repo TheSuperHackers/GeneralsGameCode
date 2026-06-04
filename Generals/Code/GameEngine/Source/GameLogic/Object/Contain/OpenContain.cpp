@@ -234,6 +234,9 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 	}
 	else
 	{
+		DEBUG_ASSERTCRASH(!getObject()->isEffectivelyDead() && !getObject()->isDestroyed(),
+			("object shouldn't become an occupant of a dead or destroyed container object"));
+
 		// remove object from its group (if any)
 		obj->leaveGroup();
 
@@ -277,11 +280,26 @@ void OpenContain::addToContain( Object *rider )
 	if( rider == nullptr )
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Caball009 25/05/2026 Ensure the occupant is only added to a non-destroyed
+	// container to avoid an invalid state and use-after-free bugs when accessing the contained by pointer.
+	if (getObject()->isDestroyed())
+	{
+		DEBUG_CRASH(("'%s' is about to be added to '%s', which is destroyed",
+			rider->getTemplate()->getName().str(), getObject()->getTemplate()->getName().str()));
+		return;
+	}
+#endif
+
 	// TheSuperHackers @bugfix Stubbjax 06/02/2026 Ensure the rider is not destroyed to prevent a
 	// likely crash if it enters the container on the same frame. If this occurs with an unpatched
 	// client present in a match, the game has a small chance to mismatch.
 	if (rider->isDestroyed())
+	{
+		DEBUG_CRASH(("'%s', which is destroyed, is about to be added to '%s'",
+			rider->getTemplate()->getName().str(), getObject()->getTemplate()->getName().str()));
 		return;
+	}
 
 #if defined(RTS_DEBUG)
 	if( !isValidContainerFor( rider, false ) )
