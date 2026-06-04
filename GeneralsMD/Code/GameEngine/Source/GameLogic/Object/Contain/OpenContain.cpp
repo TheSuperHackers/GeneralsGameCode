@@ -241,23 +241,18 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 	}
 	else
 	{
+		DEBUG_ASSERTCRASH(!getObject()->isEffectivelyDead() && !getObject()->isDestroyed(),
+			("object shouldn't become an occupant of a dead or destroyed container object"));
+
 		// remove object from its group (if any)
 		obj->leaveGroup();
 
 		// remove rider from partition manager
 		ThePartitionManager->unRegisterObject( obj );
 
-		if (Drawable* drawable = obj->getDrawable())
-		{
-#if RTS_DEBUG
-			// TheSuperHackers @tweak This shouldn't happen but don't make the occupant invisible if it does.
-			if (!(getObject()->isEffectivelyDead() || getObject()->isDestroyed()))
-#endif
-			{
-				// hide the drawable associated with rider
-				drawable->setDrawableHidden(true);
-			}
-		}
+		// hide the drawable associated with rider
+		if( obj->getDrawable() )
+			obj->getDrawable()->setDrawableHidden( true );
 
 		// remove object from pathfind map
 		TheAI->pathfinder()->removeObjectFromPathfindMap( obj );
