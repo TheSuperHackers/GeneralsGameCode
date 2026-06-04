@@ -56,9 +56,6 @@ GameMessage::GameMessage( GameMessage::Type type )
 {
 	m_playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
 	m_type = type;
-	m_argList = nullptr;
-	m_argTail = nullptr;
-	m_argCount = 0;
 	m_list = nullptr;
 }
 
@@ -69,12 +66,8 @@ GameMessage::GameMessage( GameMessage::Type type )
 GameMessage::~GameMessage()
 {
 	// free all arguments
-	GameMessageArgument *arg, *nextArg;
-
-	for( arg = m_argList; arg; arg=nextArg )
-	{
-		nextArg = arg->m_next;
-		deleteInstance(arg);
+	for( size_t i = 0; i < m_argList.size(); ++i ) {
+		deleteInstance(m_argList[i]);
 	}
 
 	// detach message from list
@@ -84,14 +77,11 @@ GameMessage::~GameMessage()
 
 /**
  * Return the given argument union.
- * @todo This should be a more list-like interface.  Very inefficient.
  */
 const GameMessageArgumentType *GameMessage::getArgument( Int argIndex ) const
 {
-	int i=0;
-	for( GameMessageArgument *a = m_argList; a; a=a->m_next, i++ )
-		if (i == argIndex)
-			return &a->m_data;
+	if (static_cast<size_t>(argIndex) < m_argList.size())
+		return &m_argList[argIndex]->m_data;
 
 	DEBUG_CRASH(("argument not found"));
 	static const GameMessageArgumentType zero = { 0 };
@@ -103,17 +93,9 @@ const GameMessageArgumentType *GameMessage::getArgument( Int argIndex ) const
  */
 GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex ) const
 {
-	if (argIndex >= m_argCount) {
-		return ARGUMENTDATATYPE_UNKNOWN;
-	}
-	int i=0;
-	GameMessageArgument *a = m_argList;
-	for (; a && (i < argIndex); a=a->m_next, ++i );
+	if (static_cast<size_t>(argIndex) < m_argList.size())
+		return m_argList[argIndex]->m_type;
 
-	if (a != nullptr)
-	{
-		return a->m_type;
-	}
 	return ARGUMENTDATATYPE_UNKNOWN;
 }
 
@@ -124,21 +106,12 @@ GameMessageArgument *GameMessage::allocArg()
 {
 	// allocate a new argument
 	GameMessageArgument *arg = newInstance(GameMessageArgument);
+	m_argList.push_back(arg);
 
-	// add to end of argument list
-	if (m_argTail)
-		m_argTail->m_next = arg;
-	else
-	{
-		m_argList = arg;
-		m_argTail = arg;
-	}
-
-	arg->m_next = nullptr;
-	m_argTail = arg;
-
-	m_argCount++;
-
+	DEBUG_ASSERTCRASH(
+		m_argList.size() <= 255,
+		("If a GameMessage needs more than 255 arguments, it needs to be split up into multiple GameMessage's.")
+	);
 	return arg;
 }
 
