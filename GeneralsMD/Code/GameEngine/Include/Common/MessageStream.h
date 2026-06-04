@@ -82,7 +82,6 @@ class GameMessageArgument : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameMessageArgument, "GameMessageArgument")
 public:
-	GameMessageArgument*				m_next;									///< The next argument
 	GameMessageArgumentType			m_data;									///< The data storage of an argument
 	GameMessageArgumentDataType	m_type;									///< The type of the argument.
 };
@@ -637,7 +636,6 @@ public:
 	GameMessage *prev() { return m_prev; }		///< Return prev message in the stream
 
 	Type getType() const { return m_type; }					///< Return the message type
-	UnsignedByte getArgumentCount() const { return m_argCount; }	///< Return the number of arguments for this msg
 
 	const char *getCommandAsString() const; ///< returns a string representation of the command type.
 	static const char *getCommandTypeAsString(GameMessage::Type t);
@@ -660,8 +658,8 @@ public:
 
 	/**
 	 * Return the given argument union.
-	 * @todo This should be a more list-like interface.  Very inefficient.
 	 */
+	UnsignedByte getArgumentCount() const { return static_cast<UnsignedByte>(m_argList.size()); }
 	const GameMessageArgumentType *getArgument( Int argIndex ) const;
 	GameMessageArgumentDataType getArgumentDataType( Int argIndex ) const;
 
@@ -681,10 +679,7 @@ private:
 
 	Int m_playerIndex;													///< The Player who issued the command
 
-	/// @todo If a GameMessage needs more than 255 arguments, it needs to be split up into multiple GameMessage's.
-	UnsignedByte m_argCount;										///< The number of arguments of this message
-
-	GameMessageArgument *m_argList, *m_argTail;						///< This message's arguments
+	std::vector<GameMessageArgument*> m_argList;						///< This message's arguments
 
 	/// allocate a new argument, add it to list, return pointer to its data
 	GameMessageArgument *allocArg();

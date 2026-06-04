@@ -33,6 +33,7 @@
 #include "GameNetwork/NetPacketStructs.h"
 #include "Common/UnicodeString.h"
 
+class GameMessageArgument;
 class NetCommandRef;
 
 //-----------------------------------------------------------------------------
@@ -179,10 +180,8 @@ public:
 	virtual Select getSmallNetPacketSelect() const override;
 
 protected:
-	Int m_numArgs;
-	Int m_argSize;
 	GameMessage::Type m_type;
-	GameMessageArgument *m_argList, *m_argTail;
+	std::vector<GameMessageArgument*> m_argList;
 };
 
 //-----------------------------------------------------------------------------
