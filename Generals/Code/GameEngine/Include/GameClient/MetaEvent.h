@@ -441,6 +441,16 @@ public:
 	MetaEventTranslator();
 	virtual ~MetaEventTranslator() override;
 	virtual GameMessageDisposition translateGameMessage(const GameMessage *msg) override;
+
+private:
+	void onMouseEvent(const GameMessage *msg);
+
+	void onKeyEvent(const GameMessage *msg, GameMessageDisposition &disp);
+	void onKeyModStateRemoved(GameMessageDisposition &disp, MappableKeyModState keyModState);
+	void onKeyPressed(GameMessageDisposition &disp, Int systemKeyState, MappableKeyType keyType, MappableKeyModState keyModState);
+
+	static MappableKeyType getActionKeyType(Int systemKey); ///< CRTL, ALT, SHIFT will be treated as MK_NONE
+	static MappableKeyModState getKeyModState(Int systemKeyState); ///< Extract CTRL, ALT, SHIFT key mod state
 };
 
 //-----------------------------------------------------------------------------
