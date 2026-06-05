@@ -50,13 +50,13 @@ private:
 	Int m_objective;
 	Bool m_teamExists;				///< is there a currently selected "team"?
 
- 	// these are for determining if a drag occurred or it was just a sloppy click
- 	ICoord2D m_mouseRightDragAnchor;		// the location of a possible mouse drag start
- 	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
- 	UnsignedInt m_mouseRightDown;	// when the mouse down happened
- 	UnsignedInt m_mouseRightUp;		// when the mouse up happened
+	// these are for determining if a drag occurred or it was just a sloppy click
+	ICoord2D m_mouseRightDragAnchor;		// the location of a possible mouse drag start
+	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
+	UnsignedInt m_mouseRightDown;	// when the mouse down happened
+	UnsignedInt m_mouseRightUp;		// when the mouse up happened
 
-  	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
+	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
 	GameMessage::Type createAttackMessage( Drawable *draw, Drawable *other, CommandEvaluateType commandType );
 	GameMessage::Type createEnterMessage( Drawable *enter, CommandEvaluateType commandType );
 	GameMessage::Type issueMoveToLocationCommand( const Coord3D *pos, Drawable *drawableInWay, CommandEvaluateType commandType );

@@ -361,9 +361,7 @@ static CanAttackResult canObjectForceAttack( Object *obj, const Object *victim, 
 		//that try to force attack in a location beyond their reach (range, LOS, etc).
 		if( pos )
 		{
-
 			Object *testObj = obj;
-
 			if( obj->isKindOf( KINDOF_IMMOBILE ) || obj->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ) )
 			{
 				SpawnBehaviorInterface *spawnInterface = obj->getSpawnBehaviorInterface();
@@ -589,7 +587,7 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 					// Special case for GLA worker to use a different set of move voices when he has received the worker shoes upgrade
 					Player *player = obj->getControllingPlayer();
 					static const UpgradeTemplate *workerShoeTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_GLAWorkerShoes" );
-					if (player && player->hasUpgradeComplete(workerShoeTemplate))
+					if (player && workerShoeTemplate && player->hasUpgradeComplete(workerShoeTemplate))
 					{
 						if (obj->isKindOf(KINDOF_INFANTRY) && obj->isKindOf(KINDOF_DOZER) && obj->isKindOf(KINDOF_HARVESTER)) // Only Workers fit all 3
 						{
@@ -1212,7 +1210,9 @@ GameMessage::Type CommandTranslator::issueSpecialPowerCommand( const CommandButt
 			msg = TheMessageStream->appendMessage( msgType );
 			msg->appendIntegerArgument( command->getSpecialPowerTemplate()->getID() );
 			msg->appendLocationArgument( *pos );
+#if !(RTS_GENERALS && RETAIL_COMPATIBLE_NETWORKING)
 			msg->appendRealArgument( INVALID_ANGLE ); //We don't use the angle (unless we're using a construction special in PlaceEventTranslator).
+#endif
 			//Object in way.... some specials care, others don't
 			ObjectID targetID = (target && target->getObject()) ? target->getObject()->getID() : INVALID_ID;
 			msg->appendObjectIDArgument( targetID );
@@ -4050,14 +4050,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-		//------------------------------------------------------------------------------- DEMO MESSAGES
-
 #if defined(RTS_DEBUG)
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
-		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
 		//------------------------------------------------------------------------------- DEMO MESSAGES
-		//-----------------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS:
 		{
@@ -4727,7 +4721,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			disp = DESTROY_MESSAGE;
 			break;
-    }
+		}
 
 		//------------------------------------------------------------------------------- DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------

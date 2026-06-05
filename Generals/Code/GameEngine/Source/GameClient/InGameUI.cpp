@@ -1026,6 +1026,8 @@ InGameUI::InGameUI()
 	m_nextMoveHint = 0;
 	m_selectCount = 0;
 	m_frameSelectionChanged = 0;
+  m_duringDoubleClickAttackMoveGuardHintTimer = 0;
+  m_duringDoubleClickAttackMoveGuardHintStashedPosition.zero();
 	m_maxSelectCount = -1;
 	m_isScrolling = FALSE;
 	m_isSelecting = FALSE;
@@ -1489,10 +1491,30 @@ void InGameUI::handleRadiusCursor()
 		if( !rts::localPlayerHasRadar()  ||  (TheRadar->screenPixelToWorld( &mouseIO->pos, &pos ) == FALSE) )// if radar off, or point not on radar
 			TheTacticalView->screenToTerrain( &mouseIO->pos, &pos );
 
-		m_curRadiusCursor.setPosition(pos);	//world space position of center of decal
-		m_curRadiusCursor.update();
-	}
+
+    if ( TheGlobalData->m_doubleClickAttackMove && m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
+    {
+      m_curRadiusCursor.setOpacity( m_duringDoubleClickAttackMoveGuardHintTimer * 0.1f );
+  		m_curRadiusCursor.setPosition( m_duringDoubleClickAttackMoveGuardHintStashedPosition );	//world space position of center of decal
+
+    }
+    else
+    {
+  		m_curRadiusCursor.setPosition(pos);	//world space position of center of decal
+      m_curRadiusCursor.update();
+    }
+
+  }
 }
+
+
+void InGameUI::triggerDoubleClickAttackMoveGuardHint()
+{
+  m_duringDoubleClickAttackMoveGuardHintTimer = 11;
+	const MouseIO* mouseIO = TheMouse->getMouseStatus();
+	TheTacticalView->screenToTerrain( &mouseIO->pos, &m_duringDoubleClickAttackMoveGuardHintStashedPosition );
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** Handle the placement "icons" that appear at the cursor when we're putting down a
@@ -2787,6 +2809,24 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 		}
 	}
 //#endif
+
+
+	setRadiusCursorNone();
+  if ( TheGlobalData->m_doubleClickAttackMove )
+  {
+    if ( --m_duringDoubleClickAttackMoveGuardHintTimer > 0 )
+    {
+      setMouseCursor(Mouse::FORCE_ATTACK_GROUND);
+		  setRadiusCursor(RADIUSCURSOR_GUARD_AREA,
+										  nullptr,
+										  PRIMARY_WEAPON);
+      return;
+    }
+  }
+
+
+
+
 
 	// set cursor to normal if there is a window under the cursor
 	GameWindow *window = nullptr;

@@ -211,6 +211,7 @@ public:
 
 	virtual void enableLoadSounds( Bool enable ) override { m_loadSoundsEnabled = enable; }
 
+  virtual Object* getClosestRider ( const Coord3D *pos ) override;
 protected:
 
 	virtual void monitorConditionChanges();				///< check to see if we need to update our occupant postions from a model change or anything else

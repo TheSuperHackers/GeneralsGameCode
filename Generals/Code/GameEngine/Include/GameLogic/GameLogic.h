@@ -113,6 +113,9 @@ public:
 
 	void preUpdate();
 
+#if defined(RTS_DEBUG)
+	Int getNumberSleepyUpdates() const {return m_sleepyUpdates.size();} //For profiling, so not in Release.
+#endif
 	void processCommandList( CommandList *list );		///< process the command list
 
 	void prepareNewGame( GameMode gameMode, GameDifficulty diff, Int rankPoints );						///< prepare for new game

@@ -96,6 +96,12 @@ static void parseKindOfFromINI(INI* ini, void* instance, void *store, const void
 		// KINDOF_AIRFIELD became KINDOF_FS_AIRFIELD in Zero Hour.
 		kindOf->set(KINDOF_FS_AIRFIELD);
 	}
+
+	if (kindOf->test(KINDOF_DRONE))
+	{
+		// KINDOF_DRONE was implicitly KINDOF_NO_SELECT in Generals.
+		kindOf->set(KINDOF_NO_SELECT);
+	}
 #endif
 }
 
