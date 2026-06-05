@@ -1,5 +1,5 @@
 set(GAMEENGINE_SRC
-#    Include/Common/AcademyStats.h
+    Include/Common/AcademyStats.h
 #    Include/Common/ActionManager.h
     Include/Common/AddonCompat.h
     Include/Common/ArchiveFile.h
@@ -621,7 +621,7 @@ set(GAMEENGINE_SRC
     Source/Common/RandomValue.cpp
 #    Source/Common/Recorder.cpp
     Source/Common/ReplaySimulation.cpp
-#    Source/Common/RTS/AcademyStats.cpp
+    Source/Common/RTS/AcademyStats.cpp
 #    Source/Common/RTS/ActionManager.cpp
 #    Source/Common/RTS/Energy.cpp
 #    Source/Common/RTS/Handicap.cpp

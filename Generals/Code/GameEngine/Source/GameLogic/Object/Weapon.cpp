@@ -654,7 +654,7 @@ Bool WeaponTemplate::shouldProjectileCollideWith(
 	// horrible special case for airplanes sitting on airfields: the projectile might
 	// "collide" with the airfield's (invisible) collision geometry when a resting plane
 	// is targeted. we don't want this. special case it:
-	if (thingWeCollidedWith->isKindOf(KINDOF_AIRFIELD))
+	if (thingWeCollidedWith->isKindOf(KINDOF_FS_AIRFIELD))
 	{
 		//
 		// ok, so if we are an airfield, and our intended victim has a reserved space

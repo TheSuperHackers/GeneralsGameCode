@@ -900,7 +900,7 @@ ChinookAIUpdate::~ChinookAIUpdate()
 static ParkingPlaceBehaviorInterface* getPP(ObjectID id)
 {
 	Object* airfield = TheGameLogic->findObjectByID( id );
-	if (airfield == nullptr || airfield->isEffectivelyDead() || !airfield->isKindOf(KINDOF_AIRFIELD))
+	if (airfield == nullptr || airfield->isEffectivelyDead() || !airfield->isKindOf(KINDOF_FS_AIRFIELD))
 		return nullptr;
 
 	ParkingPlaceBehaviorInterface* pp = nullptr;

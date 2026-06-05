@@ -536,7 +536,7 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/Damage.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/Damage.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/GameLogicDispatch.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/GameLogic/System/RankInfo.cpp", Game.CORE, "GameEngine/Source/GameLogic/System/RankInfo.cpp")
-    
+
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8fvf.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8fvf.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8renderer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8renderer.h")
@@ -548,6 +548,9 @@ def main():
     
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.h")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp")
+
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Include/Common/AcademyStats.h", Game.CORE, "GameEngine/Include/Common/AcademyStats.h")
+    #unify_move_file(Game.ZEROHOUR, "GameEngine/Source/Common/RTS/AcademyStats.cpp", Game.CORE, "GameEngine/Source/Common/RTS/AcademyStats.cpp")
 
     return
 
