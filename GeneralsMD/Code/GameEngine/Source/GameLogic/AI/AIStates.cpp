@@ -6734,9 +6734,10 @@ StateReturnType AIGuardState::onEnter()
 	// now that essential parameters are set, set the machine's initial state
 	if (m_guardMachine->initDefaultState() == STATE_FAILURE)
 		return STATE_FAILURE;
-	return m_guardMachine->setState(AI_GUARD_RETURN);
 
 	obj->getControllingPlayer()->getAcademyStats()->recordGuardAbilityUsed();
+
+	return m_guardMachine->setState(AI_GUARD_RETURN);
 }
 
 //----------------------------------------------------------------------------------------------------------
