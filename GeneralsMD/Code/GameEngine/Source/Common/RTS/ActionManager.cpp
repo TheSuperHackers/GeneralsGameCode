@@ -487,12 +487,8 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 	// in the future)
 	//
 	Object *builder = TheGameLogic->findObjectByID( objectBeingConstructed->getBuilderID() );
-#if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_BEHAVIOR
-	if( builder )
-#else
-	// TheSuperHackers @bugfix Stubbjax 18/11/2025 Allow scaffold to be immediately resumed after builder death.
+	// Allow scaffold to be immediately resumed after builder death.
 	if (builder && !builder->isEffectivelyDead())
-#endif
 	{
 		AIUpdateInterface *ai = builder->getAI();
 		DEBUG_ASSERTCRASH( ai, ("Builder object does not have an AI interface!") );
