@@ -66,148 +66,86 @@ struct ShortVectorIStruct
 	unsigned short i;
 	unsigned short j;
 	unsigned short k;
-
-	ShortVectorIStruct(unsigned short i_,unsigned short j_,unsigned short k_) : i(i_),j(j_),k(k_) {}
-	ShortVectorIStruct() {}
 };
 
 struct TempIndexStruct
 {
 	ShortVectorIStruct tri;
 	unsigned short idx;
-
-	TempIndexStruct() {}
-	TempIndexStruct(const ShortVectorIStruct& tri_, unsigned short idx_)
-		:
-		tri(tri_),
-		idx(idx_)
-	{
-	}
+	float z;
 };
 
+bool operator <(const TempIndexStruct &l, const TempIndexStruct &r) { return l.z < r.z; }
+bool operator <=(const TempIndexStruct &l, const TempIndexStruct &r) { return l.z <= r.z; }
+bool operator >(const TempIndexStruct &l, const TempIndexStruct &r) { return l.z > r.z; }
+bool operator >=(const TempIndexStruct &l, const TempIndexStruct &r) { return l.z >= r.z; }
+bool operator ==(const TempIndexStruct &l, const TempIndexStruct &r) { return l.z == r.z; }
 // ----------------------------------------------------------------------------
-//
-// InsertionSort (T* array, K *keys, int l, int r)
-// Performs insertion sort on array 'array' elements [l-r]. Uses values from array
-// 'keys' as sort keys.
-//
-// ----------------------------------------------------------------------------
-
-template <class T, class K>
-void InsertionSort (
-	T* array,		// array to sort
-	K* keys,			// sort keys
-	int l,			//	first item
-	int r)			//	last item
+static
+void InsertionSort(TempIndexStruct *begin, TempIndexStruct *end)
 {
-	for (int i = l+1; i < r; i++) {
-		K v=keys[i];
-		T tv=array[i];
-		int j=i;
-
-		while (keys[j-1] > v) {
-			keys[j]=keys[j-1];
-			array[j]=array[j-1];
-			j--;
-			if (j == l) break;
-		};
-		keys[j]=v;
-		array[j]=tv;
+	for (TempIndexStruct *iter = begin + 1; iter < end; ++iter) {
+		TempIndexStruct val = iter[0];
+		TempIndexStruct *insert = iter;
+		while (insert != begin && insert[-1] > val) {
+			insert[0] = insert[-1];
+			insert -= 1;
+		}
+		insert[0] = val;
 	}
 }
 
 // ----------------------------------------------------------------------------
-//
-//	QuickSort (T* array, K* a, int l, int r)
-//
-//	Performs quicksort on array 'array'. Uses values from array 'keys' as sort keys.
-//
-// Once the length of the array to be sorted is less than 8, the routine calls
-// InsertionSort() to perform the actual sorting work.
-//
-// ----------------------------------------------------------------------------
-
-template <class T, class K>
-void QuickSort (
-	T* array,		//	array to sort
-	K* keys,			// sort keys
-	int l,			// first element
-	int r)			// last element
+static
+void Sort(TempIndexStruct *begin, TempIndexStruct *end)
 {
-	if (r-l <= 8) {
-		InsertionSort(array,keys,l,r+1);
-		return;
-	}
-
-	K t;
-	K v=keys[r];
-	T ttemp;
-	int i=l-1;
-	int j=r;
-
-	do {
-		do { i++; } while (i<r && keys[i]<v);
-		do { j--; } while (j>0 && keys[j]>v);
-
-		WWASSERT(j>=0);
-		WWASSERT(i<=r);
-
-		ttemp=array[i]; array[i]=array[j]; array[j]=ttemp;
-		t=keys[i]; keys[i]=keys[j]; keys[j]=t;
-	} while (j>i);
-
-	array[j]=array[i];
-	array[i]=array[r];
-	array[r]=ttemp;
-	keys[j]=keys[i];
-	keys[i]=keys[r];
-	keys[r]=t;
-
-	if (i-1>l) QuickSort(array,keys,l,i-1);
-	if (r>i+1) QuickSort(array,keys,i+1,r);
-}
-
-// ----------------------------------------------------------------------------
-//
-// Sorts and array. Uses values from array 'keys' as sort keys.
-//
-// ----------------------------------------------------------------------------
-
-template <class T, class K>
-void Sort (
-	T* array,		// array to sort
-	K *keys,	// sort keys
-	int count)		// array element count
-{
-	bool do_insertion = false;
-
-	if (count<=1) return;									// only one element.. return..
-
-	int c=0;														// count number of rise pairs
-	int i;
-	for (i = 1; i < count; i++)
-	if (keys[i] >= keys[i-1]) c++;
-
-	if (c+1 == count) return;								// array already sorted
-	if (c<50) do_insertion=true;							// array smaller than 50 should use insertion sort
-
-	if (c<count/3) {											// if array is not rising
-		T tmp;
-		K tval;
-
-		for (i=0;i<count/2;i++) {
-			int neg = count-1-i;
-
-			tmp=array[i]; array[i]=array[neg]; array[neg]=tmp;
-			tval=keys[i]; keys[i] = keys[neg]; keys[neg]=tval;
+	const int diff = end - begin;
+	if (diff <= 16) {
+		// Insertion sort has less overhead for small arrays
+		InsertionSort(begin, end);
+	} else {
+		// Choose the median of begin, mid, and (end - 1) as the partitioning element.
+		// Rearrange so that *(begin + 1) <= *begin <= *(end - 1).  These will be guard
+		// elements.
+		TempIndexStruct *mid = begin + diff/2;
+		std::swap(mid[0], begin[1]);
+		if (begin[1] > end[-1]) {
+			std::swap(begin[1], end[-1]);
+		}
+		if (begin[0] > end[-1]) {
+			std::swap(begin[0], end[-1]);
+		}
+		if (begin[1] > begin[0]) {
+			std::swap(begin[1], begin[0]);
 		}
 
-		if (!c) return;
+		// *begin is now the partitioning element
+		TempIndexStruct *begin1 = begin + 1;	// TODO: Temp fix until I find out who is passing me NaN
+		TempIndexStruct *end1 = end - 1;			// TODO: Temp fix until I find out who is passing me NaN
+		TempIndexStruct *left = begin + 1;
+		TempIndexStruct *right = end - 1;
+		for (;;) {
+#if 0		// TODO: Temp fix until I find out who is passing me NaN.
+			do ++left; while (left[0] < begin[0]);		// Scan up to find element >= than partition
+			do --right; while (right[0] > begin[0]);	// Scan down to find element <= than partition
+#else
+			do ++left; while (left < end1 && left[0] < begin[0]);		// Scan up to find element >= than partition
+			do --right; while (right > begin1 && right[0] > begin[0]);	// Scan down to find element <= than partition
+#endif
+			if (right < left) break;									// Pointers crossed.  Partitioning completed.
+			std::swap(left[0], right[0]);							// Exchange elements.
+		}
+		std::swap(begin[0], right[0]);							// Insert partition element
 
-		do_insertion = true;
+		// Sort the smaller subarray first then the larger
+		if (right - begin > end - (right + 1)) {
+			Sort(right + 1, end);
+			Sort(begin, right);
+		} else {
+			Sort(begin, right);
+			Sort(right + 1, end);
+		}
 	}
-	if (do_insertion) InsertionSort(array,keys,0,count);
-	else QuickSort(array,keys,0,count-1);			// quick sort
 }
 
 // ----------------------------------------------------------------------------
@@ -250,18 +188,8 @@ static SortingNodeStruct* Get_Sorting_Struct()
 //
 // ----------------------------------------------------------------------------
 
-static float* vertex_z_array;
-static float* polygon_z_array;
-static unsigned * node_id_array;
-static unsigned * sorted_node_id_array;
-static ShortVectorIStruct* polygon_index_array;
-static unsigned vertex_z_array_count;
-static unsigned polygon_z_array_count;
-static unsigned node_id_array_count;
-static unsigned sorted_node_id_array_count;
-static unsigned polygon_index_array_count;
-TempIndexStruct* temp_index_array;
-unsigned temp_index_array_count;
+static TempIndexStruct* temp_index_array;
+static unsigned temp_index_array_count;
 
 static TempIndexStruct* Get_Temp_Index_Array(unsigned count)
 {
@@ -274,67 +202,6 @@ static TempIndexStruct* Get_Temp_Index_Array(unsigned count)
 	}
 	return temp_index_array;
 }
-
-static float* Get_Vertex_Z_Array(unsigned count)
-{
-	if (count < DEFAULT_SORTING_VERTEX_COUNT)
-		count = DEFAULT_SORTING_VERTEX_COUNT;
-	if (count>vertex_z_array_count) {
-		delete[] vertex_z_array;
-		vertex_z_array=W3DNEWARRAY float[count];
-		vertex_z_array_count=count;
-	}
-	return vertex_z_array;
-}
-
-static float* Get_Polygon_Z_Array(unsigned count)
-{
-	if (count < DEFAULT_SORTING_POLY_COUNT)
-		count = DEFAULT_SORTING_POLY_COUNT;
-	if (count>polygon_z_array_count) {
-		delete[] polygon_z_array;
-		polygon_z_array=W3DNEWARRAY float[count];
-		polygon_z_array_count=count;
-	}
-	return polygon_z_array;
-}
-
-static unsigned * Get_Node_Id_Array(unsigned count)
-{
-	if (count < DEFAULT_SORTING_POLY_COUNT)
-		count = DEFAULT_SORTING_POLY_COUNT;
-	if (count>node_id_array_count) {
-		delete[] node_id_array;
-		node_id_array=W3DNEWARRAY unsigned[count];
-		node_id_array_count=count;
-	}
-	return node_id_array;
-}
-
-static unsigned * Get_Sorted_Node_Id_Array(unsigned count)
-{
-	if (count < DEFAULT_SORTING_POLY_COUNT)
-		count = DEFAULT_SORTING_POLY_COUNT;
-	if (count>sorted_node_id_array_count) {
-		delete[] sorted_node_id_array;
-		sorted_node_id_array=W3DNEWARRAY unsigned[count];
-		sorted_node_id_array_count=count;
-	}
-	return sorted_node_id_array;
-}
-
-static ShortVectorIStruct* Get_Polygon_Index_Array(unsigned count)
-{
-	if (count < DEFAULT_SORTING_POLY_COUNT)
-		count = DEFAULT_SORTING_POLY_COUNT;
-	if (count>polygon_index_array_count) {
-		delete[] polygon_index_array;
-		polygon_index_array=W3DNEWARRAY ShortVectorIStruct[count];
-		polygon_index_array_count=count;
-	}
-	return polygon_index_array;
-}
-
 
 // ----------------------------------------------------------------------------
 //
@@ -542,9 +409,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	// Fill dynamic index buffer with sorting index buffer vertices
-	unsigned * node_id_array=Get_Node_Id_Array(overlapping_polygon_count);
-	float* polygon_z_array=Get_Polygon_Z_Array(overlapping_polygon_count);
-	ShortVectorIStruct* polygon_idx_array=(ShortVectorIStruct*)Get_Polygon_Index_Array(overlapping_polygon_count);
+	TempIndexStruct* tis=Get_Temp_Index_Array(overlapping_polygon_count);
 
 	unsigned vertexAllocCount = overlapping_vertex_count;
 	if (DynamicVBAccessClass::Get_Default_Vertex_Count() < DEFAULT_SORTING_VERTEX_COUNT)
@@ -555,14 +420,12 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	DynamicVBAccessClass dyn_vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,vertexAllocCount/*overlapping_vertex_count*/);
 	{
 		DynamicVBAccessClass::WriteLockClass lock(&dyn_vb_access);
-		VertexFormatXYZNDUV2* dest_verts=lock.Get_Formatted_Vertex_Array();
+		VertexFormatXYZNDUV2* dest_verts=(VertexFormatXYZNDUV2 *)lock.Get_Formatted_Vertex_Array();
 
 		unsigned polygon_array_offset=0;
 		unsigned vertex_array_offset=0;
 		for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
 			SortingNodeStruct* state=overlapping_nodes[node_id];
-			float* vertex_z_array=Get_Vertex_Z_Array(state->vertex_count);
-
 			VertexFormatXYZNDUV2* src_verts=nullptr;
 			SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 			WWASSERT(vertex_buffer);
@@ -572,14 +435,14 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			src_verts+=state->sorting_state.index_base_offset;
 			src_verts+=state->min_vertex_index;
 
+			// If you have a crash in here and "dest_verts" points to illegal memory area,
+			// it is because D3D is in illegal state, and the only known cure is rebooting.
+			// This illegal state is usually caused by Quake3-engine powered games such as MOHAA.
+			memcpy(dest_verts, src_verts, sizeof(VertexFormatXYZNDUV2)*state->vertex_count);
+			dest_verts += state->vertex_count;
+
 			D3DXMATRIX d3d_mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
-			D3DXMatrixTranspose(&d3d_mtx,&d3d_mtx);
 			const Matrix4x4& mtx=(const Matrix4x4&)d3d_mtx;
-			unsigned i=0;
-			for (;i<state->vertex_count;++i,++src_verts) {
-				vertex_z_array[i] = (mtx[2][0] * src_verts->x + mtx[2][1] * src_verts->y + mtx[2][2] * src_verts->z + mtx[2][3]);
-				*dest_verts++=*src_verts;
-			}
 
 			unsigned short* indices=nullptr;
 			SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
@@ -589,41 +452,61 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			indices+=state->start_index;
 			indices+=state->sorting_state.iba_offset;
 
-			for (i=0;i<state->polygon_count;++i) {
-				unsigned short idx1=indices[i*3]-state->min_vertex_index;
-				unsigned short idx2=indices[i*3+1]-state->min_vertex_index;
-				unsigned short idx3=indices[i*3+2]-state->min_vertex_index;
-				WWASSERT(idx1<state->vertex_count);
-				WWASSERT(idx2<state->vertex_count);
-				WWASSERT(idx3<state->vertex_count);
-				float z1=vertex_z_array[idx1];
-				float z2=vertex_z_array[idx2];
-				float z3=vertex_z_array[idx3];
-				float z=(z1+z2+z3)/3.0f;
-				unsigned array_index=i+polygon_array_offset;
-				WWASSERT(array_index<overlapping_polygon_count);
-				polygon_z_array[array_index]=z;
-				node_id_array[array_index]=node_id;
-				polygon_idx_array[array_index]=ShortVectorIStruct(
-					idx1+vertex_array_offset,
-					idx2+vertex_array_offset,
-					idx3+vertex_array_offset);
+			if (mtx[0][2] == 0.0f && mtx[1][2] == 0.0f && mtx[3][2] == 0.0f && mtx[2][2] == 1.0f) {
+				// The common case for particle systems.
+				for (int i=0;i<state->polygon_count;++i) {
+					unsigned short idx1=indices[i*3]-state->min_vertex_index;
+					unsigned short idx2=indices[i*3+1]-state->min_vertex_index;
+					unsigned short idx3=indices[i*3+2]-state->min_vertex_index;
+					WWASSERT(idx1<state->vertex_count);
+					WWASSERT(idx2<state->vertex_count);
+					WWASSERT(idx3<state->vertex_count);
+					const VertexFormatXYZNDUV2 *v1 = src_verts + idx1;
+					const VertexFormatXYZNDUV2 *v2 = src_verts + idx2;
+					const VertexFormatXYZNDUV2 *v3 = src_verts + idx3;
+					unsigned array_index=i+polygon_array_offset;
+					WWASSERT(array_index<overlapping_polygon_count);
+					TempIndexStruct *tis_ptr = tis + array_index;
+					tis_ptr->tri.i = idx1 + vertex_array_offset;
+					tis_ptr->tri.j = idx2 + vertex_array_offset;
+					tis_ptr->tri.k = idx3 + vertex_array_offset;
+					tis_ptr->idx = node_id;
+					tis_ptr->z = (v1->z + v2->z + v3->z)/3.0f;
+					DEBUG_ASSERTCRASH((! _isnan(tis_ptr->z) && _finite(tis_ptr->z)), ("Triangle has invalid center"));
+				}
+			} else {
+				for (int i=0;i<state->polygon_count;++i) {
+					unsigned short idx1=indices[i*3]-state->min_vertex_index;
+					unsigned short idx2=indices[i*3+1]-state->min_vertex_index;
+					unsigned short idx3=indices[i*3+2]-state->min_vertex_index;
+					WWASSERT(idx1<state->vertex_count);
+					WWASSERT(idx2<state->vertex_count);
+					WWASSERT(idx3<state->vertex_count);
+					const VertexFormatXYZNDUV2 *v1 = src_verts + idx1;
+					const VertexFormatXYZNDUV2 *v2 = src_verts + idx2;
+					const VertexFormatXYZNDUV2 *v3 = src_verts + idx3;
+					unsigned array_index=i+polygon_array_offset;
+					WWASSERT(array_index<overlapping_polygon_count);
+					TempIndexStruct *tis_ptr = tis + array_index;
+					tis_ptr->tri.i = idx1 + vertex_array_offset;
+					tis_ptr->tri.j = idx2 + vertex_array_offset;
+					tis_ptr->tri.k = idx3 + vertex_array_offset;
+					tis_ptr->idx = node_id;
+					tis_ptr->z = (mtx[0][2]*(v1->x + v2->x + v3->x) +
+												mtx[1][2]*(v1->y + v2->y + v3->y) +
+												mtx[2][2]*(v1->z + v2->z + v3->z))/3.0f + mtx[3][2];
+					DEBUG_ASSERTCRASH((! _isnan(tis_ptr->z) && _finite(tis_ptr->z)), ("Triangle has invalid center"));
+				}
 			}
 
 			state->min_vertex_index=vertex_array_offset;
 
 			polygon_array_offset+=state->polygon_count;
 			vertex_array_offset+=state->vertex_count;
-
 		}
 	}
 
-	TempIndexStruct* tis=Get_Temp_Index_Array(overlapping_polygon_count);
-	unsigned a=0;
-	for (;a<overlapping_polygon_count;++a) {
-		tis[a]=TempIndexStruct(polygon_idx_array[a],node_id_array[a]);
-	}
-	Sort<TempIndexStruct,float>(tis,polygon_z_array,overlapping_polygon_count);
+	Sort(tis, tis + overlapping_polygon_count);
 
 /*	///@todo: Add code to break up rendering into multiple index buffer fills to allow more than 65536/3 triangles.  -MW
 	int total_overlapping_polygon_count = overlapping_polygon_count;
@@ -738,7 +621,10 @@ void SortingRendererClass::Flush()
 		}
 	}
 
+	bool old_enable=DX8Wrapper::_Is_Triangle_Draw_Enabled();
+	DX8Wrapper::_Enable_Triangle_Draw(_EnableTriangleDraw);
 	Flush_Sorting_Pool();
+	DX8Wrapper::_Enable_Triangle_Draw(old_enable);
 
 	DX8Wrapper::Set_Index_Buffer(nullptr,0);
 	DX8Wrapper::Set_Vertex_Buffer(nullptr);
@@ -775,21 +661,6 @@ void SortingRendererClass::Deinit()
 		delete head;
 	}
 
-	delete[] vertex_z_array;
-	vertex_z_array=nullptr;
-	vertex_z_array_count=0;
-	delete[] polygon_z_array;
-	polygon_z_array=nullptr;
-	polygon_z_array_count=0;
-	delete[] node_id_array;
-	node_id_array=nullptr;
-	node_id_array_count=0;
-	delete[] sorted_node_id_array;
-	sorted_node_id_array=nullptr;
-	sorted_node_id_array_count=0;
-	delete[] polygon_index_array;
-	polygon_index_array=nullptr;
-	polygon_index_array_count=0;
 	delete[] temp_index_array;
 	temp_index_array=nullptr;
 	temp_index_array_count=0;
