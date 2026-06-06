@@ -1457,7 +1457,6 @@ bool TextureLoadTaskClass::Begin_Compressed_Load()
 	Width		= width;
 	Height	= height;
 	Format	= Get_Valid_Texture_Format(orig_format, Texture->Is_Compression_Allowed());
-	Reduction = reduction;
 
 
 	if (!Texture->Is_Reducible() || Texture->MipLevelCount == MIP_LEVELS_1)
@@ -1479,9 +1478,13 @@ bool TextureLoadTaskClass::Begin_Compressed_Load()
 	// Otherwise take as many mip levels as the texture wants, not to exceed the count in file...
 	if (!mip_level_count)
 	{
-		reducedWidth >>= Reduction;
-		reducedHeight >>= Reduction;
-		mip_level_count = orig_mip_count-Reduction;//dds_file.Get_Mip_Level_Count();
+		if(reducedWidth !=4 && reducedHeight !=4)
+		{
+			reducedWidth >>= Reduction;
+			reducedHeight >>= Reduction;
+			mip_level_count = orig_mip_count-Reduction;//dds_file.Get_Mip_Level_Count();
+		}
+
 		if (mip_level_count < 1)
 			mip_level_count = 1;	//sanity check to make sure something gets loaded.
 	}
@@ -1835,6 +1838,7 @@ bool TextureLoadTaskClass::Load_Compressed_Mipmap()
 
 	if (Reduction)
 	{	for (unsigned int level = 0; level < Reduction; ++level) {
+			if (height == 4 || width == 4) break;
 			width		>>= 1;
 			height		>>= 1;
 		}
