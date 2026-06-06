@@ -545,6 +545,9 @@ def main():
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8indexbuffer.cpp")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8renderer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8renderer.cpp")
     #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/dx8vertexbuffer.cpp")
+    
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.h", Game.CORE, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.h")
+    #unify_file_lib(Game.ZEROHOUR, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp", Game.CORE, "Libraries/Source/WWVegas/WW3D2/sortingrenderer.cpp")
 
     return
 
