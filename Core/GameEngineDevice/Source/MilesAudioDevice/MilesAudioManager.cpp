@@ -1162,7 +1162,7 @@ void MilesAudioManager::freeAllMilesHandles()
 
 	// Walks through the available 2-D and 3-D handles and releases them
 	std::vector<HSAMPLE>::iterator it;
-	for ( it = m_availableSamples.begin(); it != m_availableSamples.end(); ) {
+	for ( it = m_availableSamples.begin(); it != m_availableSamples.end(); ++it ) {
 		HSAMPLE sample = *it;
 		AIL_release_sample_handle(sample);
 	}
@@ -1171,7 +1171,7 @@ void MilesAudioManager::freeAllMilesHandles()
 	m_num2DSamples = 0;
 
 	std::vector<H3DSAMPLE>::iterator it3D;
-	for ( it3D = m_available3DSamples.begin(); it3D != m_available3DSamples.end(); ) {
+	for ( it3D = m_available3DSamples.begin(); it3D != m_available3DSamples.end(); ++it3D ) {
 		H3DSAMPLE sample3D = *it3D;
 		AIL_release_3D_sample_handle(sample3D);
 	}
