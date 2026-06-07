@@ -195,7 +195,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		fprintf( fp, "Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No") );
 		fprintf( fp, "Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No") );
 		fprintf( fp, "Channels Available: " );
-		fprintf( fp, "%u Sounds    ", getAvailable3DSamples() );
+		fprintf( fp, "%u Sounds    ", getAvailable2DSamples() );
 		fprintf( fp, "%u 3D Sounds\n", getAvailable3DSamples() );
 		fprintf( fp, "Volume: ");
 		fprintf( fp, "Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f) );
