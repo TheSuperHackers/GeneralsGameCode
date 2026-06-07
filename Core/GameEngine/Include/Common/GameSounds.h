@@ -45,8 +45,8 @@
 #include "Common/GameAudio.h"
 #include "Common/GameType.h"
 
-// Forward declarations
 class AudioEventRTS;
+class DynamicAudioEventRTS;
 
 class SoundManager : public SubsystemInterface
 {
@@ -67,7 +67,7 @@ class SoundManager : public SubsystemInterface
 		virtual void setCameraAudibleDistance( Real audibleDistance );
 		virtual Real getCameraAudibleDistance();
 
-		virtual void addAudioEvent(AudioEventRTS *&eventToAdd);	// pre-copied
+		virtual Bool addAudioEvent(DynamicAudioEventRTS *eventToAdd);	// pre-copied
 
 		// empty string means that this sound wasn't found or some error occurred. CHECK FOR EMPTY STRING.
 		virtual AsciiString getFilenameForPlayFromAudioEvent( const AudioEventRTS *eventToGetFrom );
