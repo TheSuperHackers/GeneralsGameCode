@@ -165,9 +165,8 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		dd->printf("Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No"));
 		dd->printf("Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No"));
 		dd->printf("Channels Available: ");
-		dd->printf("%d Sounds    ", m_sound->getAvailableSamples());
-
-		dd->printf("%d(%d) 3D Sounds\n", m_sound->getAvailable3DSamples(), m_available3DSamples.size() );
+		dd->printf("%u Sounds    ", getAvailable2DSamples());
+		dd->printf("%u 3D Sounds\n", getAvailable3DSamples());
 		dd->printf("Volume: ");
 		dd->printf("Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f));
 		dd->printf("3DSound: %d    ", REAL_TO_INT(m_sound3DVolume * 100.0f));
@@ -196,8 +195,8 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		fprintf( fp, "Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No") );
 		fprintf( fp, "Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No") );
 		fprintf( fp, "Channels Available: " );
-		fprintf( fp, "%d Sounds    ", m_sound->getAvailableSamples() );
-		fprintf( fp, "%d 3D Sounds\n", m_sound->getAvailable3DSamples() );
+		fprintf( fp, "%u Sounds    ", getAvailable3DSamples() );
+		fprintf( fp, "%u 3D Sounds\n", getAvailable3DSamples() );
 		fprintf( fp, "Volume: ");
 		fprintf( fp, "Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f) );
 		fprintf( fp, "3DSound: %d    ", REAL_TO_INT(m_sound3DVolume * 100.0f) );
@@ -740,7 +739,6 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 
 				if (sample3D) {
 					audio->m_file = playSample3D(event, sample3D);
-					m_sound->notifyOf3DSampleStart();
 				}
 
 				if( !audio->m_file )
@@ -807,7 +805,6 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 
 				if (sample) {
 					audio->m_file = playSample(event, sample);
-					m_sound->notifyOf2DSampleStart();
 				}
 
 				if (!audio->m_file) {
@@ -1042,17 +1039,6 @@ void MilesAudioManager::stopPlayingAudio( PlayingAudio *release )
 	if (prevStatus != PS_Stopping) {
 		return;
 	}
-	if (release->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_SoundEffect) {
-		if (release->m_type == PAT_Sample) {
-			if (release->m_sample) {
-				m_sound->notifyOf2DSampleCompletion();
-			}
-		} else {
-			if (release->m_3DSample) {
-				m_sound->notifyOf3DSampleCompletion();
-			}
-		}
-	}
 	releaseMilesHandles(release);
 }
 
@@ -1175,20 +1161,22 @@ void MilesAudioManager::freeAllMilesHandles()
 	stopAllAudioImmediately();
 
 	// Walks through the available 2-D and 3-D handles and releases them
-	std::list<HSAMPLE>::iterator it;
+	std::vector<HSAMPLE>::iterator it;
 	for ( it = m_availableSamples.begin(); it != m_availableSamples.end(); ) {
 		HSAMPLE sample = *it;
 		AIL_release_sample_handle(sample);
-		it = m_availableSamples.erase(it);
 	}
+
+	m_availableSamples.clear();
 	m_num2DSamples = 0;
 
-	std::list<H3DSAMPLE>::iterator it3D;
+	std::vector<H3DSAMPLE>::iterator it3D;
 	for ( it3D = m_available3DSamples.begin(); it3D != m_available3DSamples.end(); ) {
 		H3DSAMPLE sample3D = *it3D;
 		AIL_release_3D_sample_handle(sample3D);
-		it3D = m_available3DSamples.erase(it3D);
 	}
+
+	m_available3DSamples.clear();
 	m_num3DSamples = 0;
 	m_numStreams = 0;
 }
@@ -1196,27 +1184,26 @@ void MilesAudioManager::freeAllMilesHandles()
 //-------------------------------------------------------------------------------------------------
 HSAMPLE MilesAudioManager::getFirst2DSample( AudioEventRTS *event )
 {
-	if (m_availableSamples.begin() != m_availableSamples.end()) {
-		HSAMPLE retSample = *m_availableSamples.begin();
-		m_availableSamples.erase(m_availableSamples.begin());
-		return (retSample);
+	if (!m_availableSamples.empty()) {
+		HSAMPLE retSample = m_availableSamples.back();
+		m_availableSamples.pop_back();
+		return retSample;
 	}
 
-	// Find the first sample of lower priority than my augmented priority that is interruptable and take its handle
-
+	// Find the first sample of lower priority than my augmented priority that is interruptible and take its handle
 	return nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
 H3DSAMPLE MilesAudioManager::getFirst3DSample( AudioEventRTS *event )
 {
-	if (m_available3DSamples.begin() != m_available3DSamples.end()) {
-		H3DSAMPLE retSample = *m_available3DSamples.begin();
-		m_available3DSamples.erase(m_available3DSamples.begin());
-		return (retSample);
+	if (!m_available3DSamples.empty()) {
+		H3DSAMPLE retSample = m_available3DSamples.back();
+		m_available3DSamples.pop_back();
+		return retSample;
 	}
 
-	// Find the first sample of lower priority than my augmented priority that is interruptable and take its handle
+	// Find the first sample of lower priority than my augmented priority that is interruptible and take its handle
 	return nullptr;
 }
 
@@ -1753,6 +1740,18 @@ UnsignedInt MilesAudioManager::getNum3DSamples() const
 UnsignedInt MilesAudioManager::getNumStreams() const
 {
 	return m_numStreams;
+}
+
+//-------------------------------------------------------------------------------------------------
+UnsignedInt MilesAudioManager::getAvailable2DSamples() const
+{
+	return (UnsignedInt)m_availableSamples.size();
+}
+
+//-------------------------------------------------------------------------------------------------
+UnsignedInt MilesAudioManager::getAvailable3DSamples() const
+{
+	return (UnsignedInt)m_available3DSamples.size();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2768,6 +2767,9 @@ void MilesAudioManager::initSamplePools()
 	if (!(isOn(AudioAffect_Sound3D) && isValidProvider())) {
 		return;
 	}
+
+	m_availableSamples.reserve(getAudioSettings()->m_sampleCount2D);
+	m_available3DSamples.reserve(getAudioSettings()->m_sampleCount3D);
 
 	int i = 0;
 	for (i = 0; i < getAudioSettings()->m_sampleCount2D; ++i) {
