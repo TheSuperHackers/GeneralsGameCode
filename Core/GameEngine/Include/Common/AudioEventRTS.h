@@ -199,14 +199,27 @@ protected:
 	PortionToPlay m_portionToPlayNext;	///< Which portion (attack, sound, decay) should be played next?
 };
 
-class DynamicAudioEventRTS : public MemoryPoolObject
+class DynamicAudioEventRTS : public MemoryPoolObject, public RefCountClass, public AudioEventRTS
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DynamicAudioEventRTS, "DynamicAudioEventRTS" )
 public:
 
-	DynamicAudioEventRTS() { }
-	DynamicAudioEventRTS(const AudioEventRTS& a) : m_event(a) { }
+	DynamicAudioEventRTS() {}
+	DynamicAudioEventRTS( const AsciiString& eventName ) : AudioEventRTS(eventName) {}
+	DynamicAudioEventRTS( const AsciiString& eventName, ObjectID ownerID ) : AudioEventRTS(eventName, ownerID) {}
+	DynamicAudioEventRTS( const AsciiString& eventName, DrawableID drawableID ) : AudioEventRTS(eventName, drawableID) {}
+	DynamicAudioEventRTS( const AsciiString& eventName, const Coord3D *positionOfAudio ) : AudioEventRTS(eventName, positionOfAudio) {}
 
-	AudioEventRTS	m_event;
+	DynamicAudioEventRTS(const AudioEventRTS& a) : AudioEventRTS(a) {}
+	DynamicAudioEventRTS& operator=( const AudioEventRTS& right )
+	{
+		*static_cast<AudioEventRTS*>(this) = right;
+		return *this;
+	}
+
+	void Delete_This() override
+	{
+		deleteInstance(this);
+	}
 };
 EMPTY_DTOR(DynamicAudioEventRTS)
