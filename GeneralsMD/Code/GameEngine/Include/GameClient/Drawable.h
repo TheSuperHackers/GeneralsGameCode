@@ -580,7 +580,7 @@ public:
   // Stuff for overriding ambient sound
   const AudioEventInfo * getBaseSoundAmbientInfo() const; //< Possible starting point if only some parameters are customized
   void enableAmbientSoundFromScript( Bool enable );
-  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == nullptr ? nullptr : &m_ambientSound->m_event; }
+  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == nullptr ? nullptr : m_ambientSound.Peek(); }
   void setCustomSoundAmbientOff(); //< Kill the ambient sound
   void setCustomSoundAmbientInfo( DynamicAudioEventInfo * customAmbientInfo ); //< Set ambient sound.
   void clearCustomSoundAmbient() { clearCustomSoundAmbient( true ); } //< Return to using defaults
@@ -700,7 +700,7 @@ private:
 
 	PhysicsXformInfo* m_physicsXform;
 
-	DynamicAudioEventRTS*	m_ambientSound;		///< sound module for ambient sound (lazily allocated)
+	RefCountPtr<DynamicAudioEventRTS> m_ambientSound;		///< sound module for ambient sound (lazily allocated)
 
 	Module** m_modules[NUM_DRAWABLE_MODULE_TYPES];
 

@@ -29,7 +29,6 @@
 #pragma once
 
 #include "Lib/BaseType.h"
-#include "WWLib/ref_ptr.h"
 
 #include "Common/Geometry.h"
 #include "Common/Snapshot.h"
