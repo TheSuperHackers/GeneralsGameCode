@@ -73,7 +73,7 @@ static const char *mapExtension = ".map";
 // MapCache.ini files that earlier Zulu builds polluted with cratePosition /
 // techDerrickPosition fields (which crash the retail vanilla parser). Bump
 // when the on-disk Zulu cache format gains new fields the engine relies on.
-static const char *MAP_CACHE_FORMAT_VERSION_TAG = "; MapCacheFormatVersion = 2";
+static const char *MAP_CACHE_FORMAT_VERSION_TAG = "; MapCacheFormatVersion = 4";
 
 static Bool hasZuluFormatSentinel(const AsciiString &filename)
 {
@@ -110,6 +110,26 @@ static void truncateIfZuluPolluted(const AsciiString &mapDir, const char *vanill
 		fclose(fp);
 }
 
+// If ZuluMapCache.ini was written by an older Zulu version (missing fields
+// we now rely on, e.g. garrisonablePosition introduced in format v3),
+// truncate it so the subsequent "missing cache" check triggers a fresh
+// rebuild from .map files this session.
+static void truncateIfStaleZuluCache(const AsciiString &mapDir, const char *zuluCacheName)
+{
+	AsciiString cachePath;
+	cachePath.format("%s\\%s", mapDir.str(), zuluCacheName);
+
+	if (!TheFileSystem->doesFileExist(cachePath.str()))
+		return;
+	if (hasZuluFormatSentinel(cachePath))
+		return; // current version, leave alone
+
+	DEBUG_LOG(("MapCache: %s has stale format sentinel; truncating to force rebuild\n", cachePath.str()));
+	FILE *fp = fopen(cachePath.str(), "w");
+	if (fp != nullptr)
+		fclose(fp);
+}
+
 static Int m_width = 0;						///< Height map width.
 static Int m_height = 0;					///< Height map height (y size of array).
 static Int m_borderSize = 0;			///< Non-playable border area.
@@ -123,6 +143,7 @@ static Coord3DList	m_supplyPositions;
 static Coord3DList	m_techPositions;
 static Coord3DList	m_cratePositions;
 static Coord3DList	m_techDerrickPositions;
+static Coord3DList	m_garrisonablePositions;
 
 static Int m_mapDX = 0;
 static Int m_mapDY = 0;
@@ -218,6 +239,25 @@ static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void
 		else
 		{
 			m_supplyPositions.push_back(loc);
+		}
+	}
+	else if (pThisOne->getThingTemplate())
+	{
+		// A building is garrisonable if its template has a GarrisonContain
+		// behavior module. KINDOF_GARRISONABLE_UNTIL_DESTROYED is a different,
+		// much narrower flag (means "keeps being garrisonable even when
+		// REALLY_DAMAGED"), set only on a handful of special-case buildings,
+		// so we can't rely on it to catch the ~60 civilian buildings typical
+		// of a city map.
+		const ModuleInfo &mods = pThisOne->getThingTemplate()->getBehaviorModuleInfo();
+		Int count = mods.getCount();
+		for (Int i = 0; i < count; ++i)
+		{
+			if (mods.getNthName(i) == "GarrisonContain")
+			{
+				m_garrisonablePositions.push_back(loc);
+				break;
+			}
 		}
 	}
 
@@ -325,6 +365,7 @@ static void resetMap()
 	m_supplyPositions.clear();
 	m_cratePositions.clear();
 	m_techDerrickPositions.clear();
+	m_garrisonablePositions.clear();
 }
 
 static void getExtent( Region3D *extent )
@@ -479,6 +520,12 @@ void MapCache::writeCacheINI( const AsciiString &mapDir )
 				pos = *itc3d;
 				fprintf(fp, "  techDerrickPosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
 			}
+			itc3d = md.m_garrisonablePositions.begin();
+			for (; itc3d != md.m_garrisonablePositions.end(); ++itc3d)
+			{
+				pos = *itc3d;
+				fprintf(fp, "  garrisonablePosition = X:%2.2f Y:%2.2f Z:%2.2f\n", pos.x, pos.y, pos.z);
+			}
 			fprintf(fp, "END\n\n");
 		}
 		else
@@ -503,16 +550,28 @@ void MapCache::updateCache()
 	truncateIfZuluPolluted(mapDir, m_mapCacheName);
 	truncateIfZuluPolluted(userMapDir, m_mapCacheName);
 
+	// Invalidate Zulu caches written under an older format version so the
+	// missing-file check below forces a session rebuild.
+	truncateIfStaleZuluCache(mapDir, m_zuluMapCacheName);
+	truncateIfStaleZuluCache(userMapDir, m_zuluMapCacheName);
+
 	// If our ZuluMapCache.ini is missing in the standard dir (fresh install or
 	// just-migrated from the shared MapCache.ini), force a rebuild from the
 	// .map files this session so official maps populate the new cache.
+	// Also force a rebuild when the file exists but lacks the current format
+	// sentinel — truncateIfStaleZuluCache above empties stale caches and
+	// they read as 0-byte files (not "missing"), so we'd otherwise skip the
+	// rebuild and miss new fields like garrisonablePosition.
 	Bool stdCacheRebuilt = FALSE;
 	{
 		AsciiString stdCachePath;
 		stdCachePath.format("%s\\%s", mapDir.str(), m_zuluMapCacheName);
-		if (!TheFileSystem->doesFileExist(stdCachePath.str()))
+		Bool exists = TheFileSystem->doesFileExist(stdCachePath.str());
+		Bool versionMatch = exists ? hasZuluFormatSentinel(stdCachePath) : FALSE;
+		if (!exists || !versionMatch)
 		{
-			DEBUG_LOG(("MapCache: %s missing, forcing rebuild this session\n", stdCachePath.str()));
+			DEBUG_LOG(("MapCache: %s missing or stale (exists=%d, versionMatch=%d), forcing rebuild this session\n",
+				stdCachePath.str(), (int)exists, (int)versionMatch));
 			TheWritableGlobalData->m_buildMapCache = TRUE;
 		}
 	}
@@ -772,6 +831,7 @@ Bool MapCache::addMap(
 	md.m_techPositions = m_techPositions;
 	md.m_cratePositions = m_cratePositions;
 	md.m_techDerrickPositions = m_techDerrickPositions;
+	md.m_garrisonablePositions = m_garrisonablePositions;
 	md.m_CRC = calcCRC(fname);
 
 	Bool exists = false;

@@ -26,6 +26,9 @@
 #include "Common/GlobalData.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/PlayerTemplate.h"
+#include "Common/DataChunk.h"
+#include "Common/MapReaderWriterInfo.h"
+#include "Common/MapObject.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Image.h"
 #include "GameNetwork/GameInfo.h"
@@ -324,35 +327,34 @@ static void drawSymbolCentered(PixBuf *b, int cx, int cy, char sym, int scale,
 	drawTextStroked(b, cx - w / 2, cy - h / 2, tmp, scale, fr, fg, fb);
 }
 
-// Nearest-neighbor upscale into a fresh buffer.
-static bool upscaleNN(const PixBuf *src, int scale, PixBuf *dst)
+// Nearest-neighbor resample of an RGB PixBuf to arbitrary (dstW, dstH).
+// Used to stretch the always-square 128x128 .tga preview into the world's
+// actual aspect ratio so the rendered map isn't visually squished.
+static bool scaleRGB_NN(const PixBuf *src, int dstW, int dstH, PixBuf *dst)
 {
-	if (scale < 1) scale = 1;
-	dst->w = src->w * scale;
-	dst->h = src->h * scale;
-	dst->rgb = (unsigned char *)malloc((size_t)dst->w * dst->h * 3);
+	if (dstW <= 0 || dstH <= 0 || !src || src->w <= 0 || src->h <= 0) return false;
+	dst->w = dstW;
+	dst->h = dstH;
+	dst->rgb = (unsigned char *)malloc((size_t)dstW * dstH * 3);
 	if (!dst->rgb)
 	{
 		dst->w = dst->h = 0;
 		return false;
 	}
-	int sy, sx, ry, rx;
-	for (sy = 0; sy < src->h; ++sy)
+	int y, x;
+	for (y = 0; y < dstH; ++y)
 	{
+		int sy = y * src->h / dstH;
+		if (sy >= src->h) sy = src->h - 1;
 		const unsigned char *srow = src->rgb + sy * src->w * 3;
-		for (ry = 0; ry < scale; ++ry)
+		unsigned char *drow = dst->rgb + y * dstW * 3;
+		for (x = 0; x < dstW; ++x)
 		{
-			unsigned char *drow = dst->rgb + (sy * scale + ry) * dst->w * 3;
-			unsigned char *dp = drow;
-			for (sx = 0; sx < src->w; ++sx)
-			{
-				const unsigned char *sp = srow + sx * 3;
-				for (rx = 0; rx < scale; ++rx)
-				{
-					dp[0] = sp[0]; dp[1] = sp[1]; dp[2] = sp[2];
-					dp += 3;
-				}
-			}
+			int sx = x * src->w / dstW;
+			if (sx >= src->w) sx = src->w - 1;
+			const unsigned char *sp = srow + sx * 3;
+			unsigned char *dp = drow + x * 3;
+			dp[0] = sp[0]; dp[1] = sp[1]; dp[2] = sp[2];
 		}
 	}
 	return true;
@@ -1592,6 +1594,155 @@ static void debugChat(const char *fmt, ...)
 }
 
 // =========================================================================
+// Cliff/impassable parsing.
+// -------------------------------------------------------------------------
+// Open the .map file ourselves and pull just the HeightMapData chunk's raw
+// height bytes (one byte per cell, multiplied by MAP_HEIGHT_SCALE for world
+// units). We then derive cliff cells from per-cell slope. This mirrors the
+// engine's initCliffFlagsFromHeights() fallback (WorldHeightMap.cpp):
+// a cell is "cliff" when the max-min of its four corner heights exceeds
+// PATHFIND_CLIFF_SLOPE_LIMIT_F (9.8 world units). Sidestepping the
+// BlendTileData chunk avoids depending on its version-gated layout (cliff
+// info ndxes, extra blend tiles, etc.) while still matching the engine's
+// own slope-derived passability for typical maps.
+// =========================================================================
+struct CliffHeightData
+{
+	int width;       // cells across (raw, including border)
+	int height;      // cells tall (raw, including border)
+	int borderSize;  // non-playable border in cells; playable origin = (border, border)
+	unsigned char *heights; // width*height bytes; owned by this struct
+	CliffHeightData() : width(0), height(0), borderSize(0), heights(nullptr) {}
+	~CliffHeightData() { free(heights); }
+};
+
+static Bool parseLobbyHeightMapChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
+{
+	CliffHeightData *out = (CliffHeightData *)userData;
+	out->width = file.readInt();
+	out->height = file.readInt();
+	if (info->version >= K_HEIGHT_MAP_VERSION_3)
+		out->borderSize = file.readInt();
+	else
+		out->borderSize = 0;
+
+	if (info->version >= K_HEIGHT_MAP_VERSION_4)
+	{
+		int numBorders = file.readInt();
+		int i;
+		for (i = 0; i < numBorders; ++i)
+		{
+			file.readInt(); // boundary.x (ignored; m_extent already covers playable region)
+			file.readInt(); // boundary.y
+		}
+	}
+
+	int dataSize = file.readInt();
+	if (dataSize <= 0 || dataSize != out->width * out->height)
+		return false;
+	if (out->heights) { free(out->heights); out->heights = nullptr; }
+	out->heights = (unsigned char *)malloc((size_t)dataSize);
+	if (!out->heights) return false;
+	file.readArrayOfBytes((char *)out->heights, dataSize);
+
+	if (info->version == K_HEIGHT_MAP_VERSION_1)
+	{
+		// Decimate 2:1 to match engine behavior for very old maps.
+		int newW = (out->width + 1) / 2;
+		int newH = (out->height + 1) / 2;
+		int i, j;
+		for (i = 0; i < newH; ++i)
+			for (j = 0; j < newW; ++j)
+				out->heights[i * newW + j] = out->heights[2 * i * out->width + 2 * j];
+		out->width = newW;
+		out->height = newH;
+	}
+	return true;
+}
+
+static bool loadCliffHeightData(const AsciiString &mapPath, CliffHeightData *out)
+{
+	CachedFileInputStream fileStrm;
+	if (!fileStrm.open(mapPath))
+		return false;
+	DataChunkInput file(&fileStrm);
+	file.registerParser("HeightMapData", AsciiString::TheEmptyString, parseLobbyHeightMapChunk, out);
+	try
+	{
+		if (!file.parse(out))
+			return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return out->heights != nullptr && out->width > 0 && out->height > 0;
+}
+
+// Alpha-blend a soft red tint over each cell whose 4-corner height span
+// exceeds PATHFIND_CLIFF_SLOPE_LIMIT_F. Threshold expressed in raw height
+// bytes for speed: 9.8 / MAP_HEIGHT_SCALE = 9.8 / 0.625 = 15.68, so any
+// span >= 16 bytes counts. Drawn after icons/scale so the tint goes on
+// top of the upscaled terrain; player markers and labels paint on top
+// of the tint afterwards.
+static void drawImpassableOverlay(PixBuf *big,
+                                  const MapMetaData *mmd,
+                                  const CliffHeightData *hm)
+{
+	if (!big || !mmd || !hm || !hm->heights) return;
+	if (hm->width < 2 || hm->height < 2) return;
+	float worldW = mmd->m_extent.hi.x - mmd->m_extent.lo.x;
+	float worldH = mmd->m_extent.hi.y - mmd->m_extent.lo.y;
+	if (worldW <= 0.0f || worldH <= 0.0f) return;
+
+	const int kThresholdBytes = 16; // ceil(9.8 / MAP_HEIGHT_SCALE)
+	const unsigned char tintR = 255, tintG = 60, tintB = 60;
+	const unsigned char tintA = 70;
+
+	int w = hm->width;
+	int h = hm->height;
+	int border = hm->borderSize;
+
+	int x, y;
+	for (y = 0; y < h - 1; ++y)
+	{
+		for (x = 0; x < w - 1; ++x)
+		{
+			unsigned char h1 = hm->heights[y * w + x];
+			unsigned char h2 = hm->heights[y * w + (x + 1)];
+			unsigned char h3 = hm->heights[(y + 1) * w + x];
+			unsigned char h4 = hm->heights[(y + 1) * w + (x + 1)];
+			unsigned char mn = h1, mx = h1;
+			if (h2 < mn) mn = h2; if (h2 > mx) mx = h2;
+			if (h3 < mn) mn = h3; if (h3 > mx) mx = h3;
+			if (h4 < mn) mn = h4; if (h4 > mx) mx = h4;
+			if ((int)mx - (int)mn < kThresholdBytes) continue;
+
+			// Cell (x, y) covers world rect [(x-border)*MAP_XY_FACTOR ..
+			// (x+1-border)*MAP_XY_FACTOR] in x; similarly in y. The extent
+			// already represents the playable region, so cells in the
+			// border map to negative/out-of-extent world coords and clip
+			// against big->w/big->h via blendPixel.
+			float wx0 = ((float)x - (float)border) * MAP_XY_FACTOR;
+			float wx1 = ((float)x + 1.0f - (float)border) * MAP_XY_FACTOR;
+			float wy0 = ((float)y - (float)border) * MAP_XY_FACTOR;
+			float wy1 = ((float)y + 1.0f - (float)border) * MAP_XY_FACTOR;
+			int px0 = (int)((wx0 - mmd->m_extent.lo.x) / worldW * big->w);
+			int px1 = (int)((wx1 - mmd->m_extent.lo.x) / worldW * big->w);
+			// World Y grows up; image Y grows down — flip and swap.
+			int py0 = (int)((1.0f - (wy1 - mmd->m_extent.lo.y) / worldH) * big->h);
+			int py1 = (int)((1.0f - (wy0 - mmd->m_extent.lo.y) / worldH) * big->h);
+			if (px0 > px1) { int t = px0; px0 = px1; px1 = t; }
+			if (py0 > py1) { int t = py0; py0 = py1; py1 = t; }
+			int ix, iy;
+			for (iy = py0; iy < py1; ++iy)
+				for (ix = px0; ix < px1; ++ix)
+					blendPixel(big, ix, iy, tintR, tintG, tintB, tintA);
+		}
+	}
+}
+
+// =========================================================================
 // Public entry point.
 // =========================================================================
 void PostLanLobbyMapToDiscord(LANGameInfo *game)
@@ -1680,27 +1831,72 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 	}
 	debugChat("loaded tga %dx%d from %s", src.w, src.h, tgaPath.str());
 
-	// Aim for ~1024 px on the long edge with a generous minimum (4x) so
-	// labels and overlay icons have room to breathe. Cap so the PNG
-	// stays comfortably under Discord's attachment limit.
-	int longEdge = src.w > src.h ? src.w : src.h;
-	int scale = 4;
-	if (longEdge > 0)
+	// Resample the TGA preview (always 128x128 — the WorldBuilder writes a
+	// fixed-size square regardless of the actual map dimensions) into the
+	// world's real aspect ratio so non-square maps stop looking squished.
+	// Aim for ~1024 px on the long edge so labels and overlay icons have
+	// room to breathe, and clamp so the PNG stays under Discord's
+	// attachment cap.
+	int outW, outH;
 	{
-		scale = 1024 / longEdge;
-		if (scale < 4) scale = 4;
-		if (scale > 12) scale = 12;
-		while (scale > 4 && longEdge * scale > 1600)
-			scale--;
+		float worldW = mmd->m_extent.hi.x - mmd->m_extent.lo.x;
+		float worldH = mmd->m_extent.hi.y - mmd->m_extent.lo.y;
+		if (worldW <= 0.0f || worldH <= 0.0f)
+		{
+			// Degenerate extent; fall back to TGA pixel aspect.
+			worldW = (float)src.w;
+			worldH = (float)src.h;
+		}
+		const int kTargetLongEdge = 1024;
+		const int kMaxLongEdge    = 1600;
+		const int kMinLongEdge    = 512;
+		if (worldW >= worldH)
+		{
+			outW = kTargetLongEdge;
+			outH = (int)((float)kTargetLongEdge * worldH / worldW + 0.5f);
+		}
+		else
+		{
+			outH = kTargetLongEdge;
+			outW = (int)((float)kTargetLongEdge * worldW / worldH + 0.5f);
+		}
+		if (outW < 1) outW = 1;
+		if (outH < 1) outH = 1;
+		// Enforce minimum long edge in case aspect-ratio math underflowed.
+		int curLong = outW > outH ? outW : outH;
+		if (curLong > kMaxLongEdge)
+		{
+			float k = (float)kMaxLongEdge / (float)curLong;
+			outW = (int)(outW * k + 0.5f);
+			outH = (int)(outH * k + 0.5f);
+		}
+		else if (curLong < kMinLongEdge)
+		{
+			float k = (float)kMinLongEdge / (float)curLong;
+			outW = (int)(outW * k + 0.5f);
+			outH = (int)(outH * k + 0.5f);
+		}
 	}
 
 	PixBuf big;
-	if (!upscaleNN(&src, scale, &big))
+	if (!scaleRGB_NN(&src, outW, outH, &big))
 	{
 		debugChat("upscale failed");
 		return;
 	}
-	debugChat("upscaled to %dx%d (scale x%d)", big.w, big.h, scale);
+	debugChat("resampled to %dx%d (world %.0fx%.0f)", big.w, big.h,
+		mmd->m_extent.hi.x - mmd->m_extent.lo.x,
+		mmd->m_extent.hi.y - mmd->m_extent.lo.y);
+
+	// Effective integer "scale" used by overlays sized in tga-pixel terms
+	// (player marker radius, etc.). Derived from the ratio of the bigger
+	// output edge to the bigger source edge so behavior stays close to the
+	// previous integer-scale code path.
+	int srcLong = src.w > src.h ? src.w : src.h;
+	int dstLong = big.w > big.h ? big.w : big.h;
+	int scale = srcLong > 0 ? dstLong / srcLong : 8;
+	if (scale < 4) scale = 4;
+	if (scale > 12) scale = 12;
 
 	// World -> upscaled-image pixel coordinate. Top-down image, world y
 	// grows up, so flip Y. extent is the full playable region from
@@ -1764,10 +1960,44 @@ void PostLanLobbyMapToDiscord(LANGameInfo *game)
 		for (it = mmd->m_techDerrickPositions.begin(); it != mmd->m_techDerrickPositions.end(); ++it)
 			DRAW_ICON_OR_GLYPH(haveDerrick, iconDerrick, 'D', 255, 221, 0, it->x, it->y);
 	}
+	// Garrisonable civilian buildings (KINDOF_GARRISONABLE_UNTIL_DESTROYED):
+	// a small white dot with a 1px black outline so it reads against any
+	// terrain. Sized smaller than the player markers so it doesn't get
+	// confused for a start position.
+	{
+		int dotR = iconSize / 5;
+		if (dotR < 3) dotR = 3;
+		Coord3DList::const_iterator it;
+		for (it = mmd->m_garrisonablePositions.begin(); it != mmd->m_garrisonablePositions.end(); ++it)
+		{
+			int gx = WORLD_TO_PX_X(it->x);
+			int gy = WORLD_TO_PX_Y(it->y);
+			drawFilledCircle(&big, gx, gy, dotR + 1, 0, 0, 0);
+			drawFilledCircle(&big, gx, gy, dotR, 255, 255, 255);
+		}
+	}
 
 	#undef DRAW_ICON_OR_GLYPH
 	#undef WORLD_TO_PX_X
 	#undef WORLD_TO_PX_Y
+
+	// Impassable cliff tint: live-parse the .map's HeightMapData chunk
+	// and blend a light red wash over every cell whose 4-corner height
+	// span crosses the engine's cliff slope threshold. Drawn before the
+	// scale legend so the grid lines render on top of the wash.
+	{
+		CliffHeightData hm;
+		AsciiString mapPath = game->getMap();
+		if (loadCliffHeightData(mapPath, &hm))
+		{
+			drawImpassableOverlay(&big, mmd, &hm);
+			debugChat("cliff overlay: %dx%d cells, border=%d", hm.width, hm.height, hm.borderSize);
+		}
+		else
+		{
+			debugChat("cliff overlay: heightmap parse failed for %s", mapPath.str());
+		}
+	}
 
 	// Paper-map scale legend (faint 300-wu grid + edge notches with
 	// seconds labels + CC vision ring at each occupied start) drawn onto
