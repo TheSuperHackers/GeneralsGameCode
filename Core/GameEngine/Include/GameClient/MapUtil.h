@@ -91,6 +91,7 @@ public:
 	Coord3DList m_techPositions;         ///< Generic tech buildings (not derricks)
 	Coord3DList m_cratePositions;        ///< KINDOF_CRATE objects
 	Coord3DList m_techDerrickPositions;  ///< Tech buildings whose template name contains "Derrick"
+	Coord3DList m_garrisonablePositions; ///< KINDOF_GARRISONABLE_UNTIL_DESTROYED civilian buildings
 	AsciiString m_fileName;
 };
 

@@ -60,6 +60,7 @@ public:
 	Coord3DList m_techPositions;
 	Coord3DList m_cratePositions;
 	Coord3DList m_techDerrickPositions;
+	Coord3DList m_garrisonablePositions;
 	static const FieldParse m_mapFieldParseTable[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse() const { return m_mapFieldParseTable; }
 };
@@ -99,6 +100,14 @@ void parseTechDerrickPositionCoord3D( INI* ini, void * instance, void * /*store*
 	mmdr->m_techDerrickPositions.push_front(coord3d);
 }
 
+void parseGarrisonablePositionCoord3D( INI* ini, void * instance, void * /*store*/, const void* /*userData*/ )
+{
+	MapMetaDataReader *mmdr = (MapMetaDataReader *)instance;
+	Coord3D coord3d;
+	INI::parseCoord3D(ini, nullptr, &coord3d, nullptr);
+	mmdr->m_garrisonablePositions.push_front(coord3d);
+}
+
 const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 {
 
@@ -118,6 +127,7 @@ const FieldParse MapMetaDataReader::m_mapFieldParseTable[] =
 	{ "techPosition",						parseTechPositionsCoord3D,	nullptr, 0 },
 	{ "cratePosition",					parseCratePositionCoord3D,	nullptr, 0 },
 	{ "techDerrickPosition",		parseTechDerrickPositionCoord3D,	nullptr, 0 },
+	{ "garrisonablePosition",		parseGarrisonablePositionCoord3D,	nullptr, 0 },
 
 	{ "Player_1_Start",					INI::parseCoord3D,	nullptr,	offsetof( MapMetaDataReader, m_waypoints ) },
 	{ "Player_2_Start",					INI::parseCoord3D,	nullptr,	offsetof( MapMetaDataReader, m_waypoints ) + sizeof(Coord3D) * 1 },
@@ -223,6 +233,13 @@ void INI::parseMapCacheDefinition( INI* ini )
 	while (it != mdr.m_techDerrickPositions.end())
 	{
 		md.m_techDerrickPositions.push_front(*it);
+		it++;
+	}
+
+	it = mdr.m_garrisonablePositions.begin();
+	while (it != mdr.m_garrisonablePositions.end())
+	{
+		md.m_garrisonablePositions.push_front(*it);
 		it++;
 	}
 
