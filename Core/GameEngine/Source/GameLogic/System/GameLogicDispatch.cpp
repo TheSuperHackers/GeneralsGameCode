@@ -853,7 +853,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 }
 
-bool GameLogic::onNewGame(GameMessage *msg)
+bool GameLogic::onNewGame(MAYBE_UNUSED GameMessage *msg)
 {
 #if !RETAIL_COMPATIBLE_CRC
 	// TheSuperHackers @fix stephanmeesters 11/03/2026
@@ -917,7 +917,7 @@ bool GameLogic::onClearGameData(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &curre
 	return true;
 }
 
-bool GameLogic::onBeginPathBuild(GameMessage *msg)
+bool GameLogic::onBeginPathBuild(MAYBE_UNUSED GameMessage *msg)
 {
 	DEBUG_LOG(("META: begin path build"));
 	DEBUG_ASSERTCRASH(!theBuildPlan, ("mismatched theBuildPlan"));
@@ -931,7 +931,7 @@ bool GameLogic::onBeginPathBuild(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onEndPathBuild(GameMessage *msg)
+bool GameLogic::onEndPathBuild(MAYBE_UNUSED GameMessage *msg)
 {
 	DEBUG_LOG(("META: end path build"));
 	DEBUG_ASSERTCRASH(theBuildPlan, ("mismatched theBuildPlan"));
@@ -950,7 +950,7 @@ bool GameLogic::onEndPathBuild(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onSetRallyPoint(GameMessage *msg)
+bool GameLogic::onSetRallyPoint(MAYBE_UNUSED GameMessage *msg)
 {
 	Object *obj = findObjectByID( msg->getArgument( 0 )->objectID );
 	Coord3D dest = msg->getArgument( 1 )->location;
@@ -1079,7 +1079,7 @@ bool GameLogic::onSetMineClearingDetail(MAYBE_UNUSED GameMessage *msg, AIGroupPt
 	return true;
 }
 
-bool GameLogic::onEnableRetaliationMode(GameMessage *msg)
+bool GameLogic::onEnableRetaliationMode(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -1397,7 +1397,7 @@ bool GameLogic::onCreateFormation(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &cur
 	return true;
 }
 
-bool GameLogic::onClearIngamePopupMessage(GameMessage *msg)
+bool GameLogic::onClearIngamePopupMessage(MAYBE_UNUSED GameMessage *msg)
 {
 	if( TheInGameUI )
 	{
@@ -1439,7 +1439,7 @@ bool GameLogic::onDebugKillSelection(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &
 	return true;
 }
 
-bool GameLogic::onDebugHurtObject(GameMessage *msg)
+bool GameLogic::onDebugHurtObject(MAYBE_UNUSED GameMessage *msg)
 {
 	Object* objToHurt = TheGameLogic->findObjectByID( msg->getArgument( 0 )->objectID );
 	if (objToHurt)
@@ -1455,7 +1455,7 @@ bool GameLogic::onDebugHurtObject(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onDebugKillObject(GameMessage *msg)
+bool GameLogic::onDebugKillObject(MAYBE_UNUSED GameMessage *msg)
 {
 	Object* objToHurt = TheGameLogic->findObjectByID( msg->getArgument( 0 )->objectID );
 	if (objToHurt)
@@ -2015,7 +2015,7 @@ bool GameLogic::onReturnToPrison(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &curr
 
 #endif
 
-bool GameLogic::onCreateSelectedGroup(GameMessage *msg)
+bool GameLogic::onCreateSelectedGroup(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	Bool createNewGroup = msg->getArgument( 0 )->boolean;
@@ -2034,7 +2034,7 @@ bool GameLogic::onCreateSelectedGroup(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onRemoveFromSelectedGroup(GameMessage *msg)
+bool GameLogic::onRemoveFromSelectedGroup(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -2051,7 +2051,7 @@ bool GameLogic::onRemoveFromSelectedGroup(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onDestroySelectedGroup(GameMessage *msg)
+bool GameLogic::onDestroySelectedGroup(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	msgPlayer->setCurrentlySelectedAIGroup(nullptr);
@@ -2059,7 +2059,7 @@ bool GameLogic::onDestroySelectedGroup(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onPlaceBeacon(GameMessage *msg)
+bool GameLogic::onPlaceBeacon(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -2158,7 +2158,7 @@ bool GameLogic::onPlaceBeacon(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onRemoveBeacon(GameMessage *msg)
+bool GameLogic::onRemoveBeacon(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	AIGroupPtr allSelectedObjects = TheAI->createGroup();
@@ -2255,7 +2255,7 @@ bool GameLogic::onSetBeaconText(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &curre
 	return true;
 }
 
-bool GameLogic::onSelfDestruct(GameMessage *msg)
+bool GameLogic::onSelfDestruct(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -2298,7 +2298,7 @@ bool GameLogic::onSelfDestruct(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onSetReplayCamera(GameMessage *msg)
+bool GameLogic::onSetReplayCamera(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 
@@ -2354,7 +2354,7 @@ bool GameLogic::onSetReplayCamera(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onCreateTeam(GameMessage *msg)
+bool GameLogic::onCreateTeam(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	msgPlayer->processCreateTeamGameMessage(msg->getType() - GameMessage::MSG_CREATE_TEAM0, msg);
@@ -2362,7 +2362,7 @@ bool GameLogic::onCreateTeam(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onSelectTeam(GameMessage *msg)
+bool GameLogic::onSelectTeam(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	msgPlayer->processSelectTeamGameMessage(msg->getType() - GameMessage::MSG_SELECT_TEAM0);
@@ -2370,7 +2370,7 @@ bool GameLogic::onSelectTeam(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onAddTeam(GameMessage *msg)
+bool GameLogic::onAddTeam(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	msgPlayer->processAddTeamGameMessage(msg->getType() - GameMessage::MSG_ADD_TEAM0);
@@ -2378,7 +2378,7 @@ bool GameLogic::onAddTeam(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onLogicCrc(GameMessage *msg)
+bool GameLogic::onLogicCrc(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	if (TheNetwork)
@@ -2426,7 +2426,7 @@ bool GameLogic::onLogicCrc(GameMessage *msg)
 	return true;
 }
 
-bool GameLogic::onPurchaseScience(GameMessage *msg)
+bool GameLogic::onPurchaseScience(MAYBE_UNUSED GameMessage *msg)
 {
 	Player *msgPlayer = getMessagePlayer(msg);
 	ScienceType science = (ScienceType)msg->getArgument( 0 )->integer;
