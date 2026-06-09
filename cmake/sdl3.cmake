@@ -15,8 +15,9 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
 
     FetchContent_Declare(
         SDL3_image
-        URL https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.4/SDL3_image-3.4.4.tar.gz
-        URL_HASH SHA256=29751304a13d25ac513f24305fa25b06a6edd9607718c90129b8350d35fc5573
+        # Pin to commit with ANI loader RIFF word-alignment chunk size parsing fix
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+        GIT_TAG 0e2eaa923ddea285dfa35c4bf0c0092d3799e2ee
     )
 
     # Official SDL configuration for a unified build tree
