@@ -15,7 +15,9 @@ if(NOT SDL3_FOUND OR NOT SDL3_image_FOUND)
 
     FetchContent_Declare(
         SDL3_image
-        # Pin to commit with ANI loader RIFF word-alignment chunk size parsing fix
+        # Pin to commit with the ANI loader RIFF word-alignment fix and legacy parsing relaxation.
+        # NOTE: The legacy asset parsing relaxation fix (commit 67da91c / 0e2eaa9) is not yet in the 
+        # official SDL_image 3.4.4 release. vcpkg builds will inherit this fix once 3.4.5+ is packaged.
         GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
         GIT_TAG 0e2eaa923ddea285dfa35c4bf0c0092d3799e2ee
     )

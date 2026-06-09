@@ -461,9 +461,9 @@ void SDL3Keyboard::addSDLEvent(SDL_Event* event)
 	}
 }
 
-KeyVal SDL3Keyboard::translateScanCodeToKeyVal(unsigned char scan)
+KeyVal SDL3Keyboard::translateScanCodeToKeyVal(SDL_Scancode scan)
 {
-	switch ((SDL_Scancode)scan)
+	switch (scan)
 	{
 		case SDL_SCANCODE_ESCAPE:
 			return KEY_ESC;
