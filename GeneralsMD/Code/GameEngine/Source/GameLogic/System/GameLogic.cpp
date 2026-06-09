@@ -52,6 +52,7 @@
 #include "Common/RandomValue.h"
 #include "Common/Recorder.h"
 #include "Common/StatsCollector.h"
+#include "Common/StatsExporter.h"
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
 #include "Common/ThingTemplate.h"
@@ -2302,6 +2303,8 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			TheStatsCollector = NEW StatsCollector;
 			TheStatsCollector->reset();
 		}
+		if (TheGlobalData->m_exportStats)
+			StatsExporterClearSnapshots();
 
 ///		ShowControlBar(FALSE);
 
@@ -3775,6 +3778,9 @@ void GameLogic::update()
 	{
 		TheStatsCollector->update();
 	}
+
+	if (TheGlobalData->m_exportStats)
+		StatsExporterCollectSnapshot();
 
 	// Update the Recorder
 	{

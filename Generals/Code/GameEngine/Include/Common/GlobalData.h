@@ -120,6 +120,10 @@ public:
 	// Run game without graphics, input or audio.
 	Bool m_headless;
 
+	// TheSuperHackers @feature bill-rich 11/03/2026
+	// Export game stats as JSON alongside replay file.
+	Bool m_exportStats;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
