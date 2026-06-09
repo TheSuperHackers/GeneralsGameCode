@@ -16,13 +16,9 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Derived from the GeneralsX branch by fbraz3
-
 #include "SDL3Device/GameClient/SDL3Cursor.h"
 #include <SDL3_image/SDL_image.h>
 #include <cstdio>
-#include <cstring>
-#include <algorithm>
 #include <vector>
 #include <memory>
 
@@ -99,17 +95,6 @@ AnimatedCursor* SDL3CursorManager::loadANI(const char* filepath)
 	std::vector<char> buf(size);
 	file->read(buf.data(), size);
 	file->close();
-
-	// thesuperhackers @info
-	// Command & Conquer Generals .ani files write the total file size as the `cbSize`
-	// field inside the RIFF header (offset 4) rather than `size - 8` bytes.
-	// The native SDL3_image ANI parser strictly validates that (offset + chunk_size) <= cbSize,
-	// causing it to fail at EOF with a truncated data error.
-	if (size >= 12 && memcmp(buf.data(), "RIFF", 4) == 0 && memcmp(buf.data() + 8, "ACON", 4) == 0)
-	{
-		Uint32 correct_cbSize = (Uint32)(size - 8);
-		memcpy(buf.data() + 4, &correct_cbSize, 4);
-	}
 
 	SDL_IOStream* io = SDL_IOFromConstMem(buf.data(), buf.size());
 	if (!io)
