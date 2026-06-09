@@ -143,7 +143,7 @@ SDL3GameEngine::~SDL3GameEngine()
 	}
 }
 
-void SDL3GameEngine::init(void)
+void SDL3GameEngine::init()
 {
 	// Verify window was created by SDL3Main integration
 	extern SDL_Window* TheSDL3Window;
@@ -167,7 +167,7 @@ void SDL3GameEngine::init(void)
 	GameEngine::init();
 }
 
-void SDL3GameEngine::reset(void)
+void SDL3GameEngine::reset()
 {
 	if (m_SDLWindow && m_IsTextInputActive)
 	{
@@ -178,7 +178,7 @@ void SDL3GameEngine::reset(void)
 	GameEngine::reset();
 }
 
-void SDL3GameEngine::update(void)
+void SDL3GameEngine::update()
 {
 	pollSDL3Events();
 	GameEngine::update();
@@ -212,12 +212,12 @@ void SDL3GameEngine::update(void)
 	}
 }
 
-void SDL3GameEngine::serviceWindowsOS(void)
+void SDL3GameEngine::serviceWindowsOS()
 {
 	pollSDL3Events();
 }
 
-Bool SDL3GameEngine::isActive(void)
+Bool SDL3GameEngine::isActive()
 {
 	return m_IsActive;
 }
@@ -227,7 +227,7 @@ void SDL3GameEngine::setIsActive(Bool isActive)
 	m_IsActive = isActive;
 }
 
-void SDL3GameEngine::pollSDL3Events(void)
+void SDL3GameEngine::pollSDL3Events()
 {
 	if (!m_SDLWindow || !TheSDL3InputManager)
 	{
@@ -246,7 +246,7 @@ void SDL3GameEngine::pollSDL3Events(void)
 	}
 }
 
-void SDL3GameEngine::updateTextInputState(void)
+void SDL3GameEngine::updateTextInputState()
 {
 	if (!m_SDLWindow || !TheWindowManager)
 	{
@@ -322,37 +322,37 @@ void SDL3GameEngine::forwardTextInputEvent(const char* utf8Text)
 	}
 }
 
-LocalFileSystem* SDL3GameEngine::createLocalFileSystem(void)
+LocalFileSystem* SDL3GameEngine::createLocalFileSystem()
 {
 	return NEW StdLocalFileSystem;
 }
 
-ArchiveFileSystem* SDL3GameEngine::createArchiveFileSystem(void)
+ArchiveFileSystem* SDL3GameEngine::createArchiveFileSystem()
 {
 	return NEW StdBIGFileSystem;
 }
 
-GameLogic* SDL3GameEngine::createGameLogic(void)
+GameLogic* SDL3GameEngine::createGameLogic()
 {
 	return NEW W3DGameLogic;
 }
 
-GameClient* SDL3GameEngine::createGameClient(void)
+GameClient* SDL3GameEngine::createGameClient()
 {
 	return NEW W3DGameClient;
 }
 
-ModuleFactory* SDL3GameEngine::createModuleFactory(void)
+ModuleFactory* SDL3GameEngine::createModuleFactory()
 {
 	return NEW W3DModuleFactory;
 }
 
-ThingFactory* SDL3GameEngine::createThingFactory(void)
+ThingFactory* SDL3GameEngine::createThingFactory()
 {
 	return NEW W3DThingFactory;
 }
 
-FunctionLexicon* SDL3GameEngine::createFunctionLexicon(void)
+FunctionLexicon* SDL3GameEngine::createFunctionLexicon()
 {
 	return NEW W3DFunctionLexicon;
 }
@@ -369,7 +369,7 @@ ParticleSystemManager* SDL3GameEngine::createParticleSystemManager(Bool dummy)
 	return NEW W3DParticleSystemManager;
 }
 
-WebBrowser* SDL3GameEngine::createWebBrowser(void)
+WebBrowser* SDL3GameEngine::createWebBrowser()
 {
 	return nullptr;
 }

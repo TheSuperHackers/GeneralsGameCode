@@ -59,12 +59,12 @@ SDL3Mouse::SDL3Mouse(SDL_Window* window)
 {
 }
 
-SDL3Mouse::~SDL3Mouse(void)
+SDL3Mouse::~SDL3Mouse()
 {
 	releaseCapture();
 }
 
-void SDL3Mouse::init(void)
+void SDL3Mouse::init()
 {
 	Mouse::init();
 
@@ -74,7 +74,7 @@ void SDL3Mouse::init(void)
 	setVisibility(TRUE);
 }
 
-void SDL3Mouse::reset(void)
+void SDL3Mouse::reset()
 {
 	Mouse::reset();
 
@@ -82,7 +82,7 @@ void SDL3Mouse::reset(void)
 	setVisibility(TRUE);
 }
 
-void SDL3Mouse::update(void)
+void SDL3Mouse::update()
 {
 	Mouse::update();
 
@@ -169,12 +169,12 @@ void SDL3Mouse::update(void)
 	}
 }
 
-void SDL3Mouse::initCursorResources(void)
+void SDL3Mouse::initCursorResources()
 {
 	SDL3CursorManager::initResources(this);
 }
 
-void SDL3Mouse::freeCursorResources(void)
+void SDL3Mouse::freeCursorResources()
 {
 	SDL3CursorManager::shutdown();
 }
@@ -215,7 +215,7 @@ void SDL3Mouse::regainFocus()
 	Mouse::regainFocus();
 }
 
-void SDL3Mouse::capture(void)
+void SDL3Mouse::capture()
 {
 	if (!m_Window || m_isCursorCaptured)
 	{
@@ -227,7 +227,7 @@ void SDL3Mouse::capture(void)
 	onCursorCaptured(true);
 }
 
-void SDL3Mouse::releaseCapture(void)
+void SDL3Mouse::releaseCapture()
 {
 	if (!m_isCursorCaptured)
 	{
@@ -387,16 +387,16 @@ void SDL3Mouse::scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& 
 // SDL3KEYBOARD IMPLEMENTATION
 // ============================================================================
 
-SDL3Keyboard::SDL3Keyboard(void)
+SDL3Keyboard::SDL3Keyboard()
 	: Keyboard()
 {}
-SDL3Keyboard::~SDL3Keyboard(void) {}
+SDL3Keyboard::~SDL3Keyboard() {}
 
-void SDL3Keyboard::init(void) { Keyboard::init(); }
-void SDL3Keyboard::reset(void) { Keyboard::reset(); }
-void SDL3Keyboard::update(void) { Keyboard::update(); }
+void SDL3Keyboard::init() { Keyboard::init(); }
+void SDL3Keyboard::reset() { Keyboard::reset(); }
+void SDL3Keyboard::update() { Keyboard::update(); }
 
-Bool SDL3Keyboard::getCapsState(void) { return FALSE; }
+Bool SDL3Keyboard::getCapsState() { return FALSE; }
 
 void SDL3Keyboard::getKey(KeyboardIO* key)
 {
