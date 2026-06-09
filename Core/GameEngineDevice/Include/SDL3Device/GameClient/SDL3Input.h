@@ -103,7 +103,7 @@ public:
 
 protected:
 	virtual void getKey(KeyboardIO* key) override;
-	virtual KeyVal translateScanCodeToKeyVal(unsigned char scan);
+	virtual KeyVal translateScanCodeToKeyVal(SDL_Scancode scan);
 
 private:
 	void translateKeyEvent(const SDL_KeyboardEvent& event);
