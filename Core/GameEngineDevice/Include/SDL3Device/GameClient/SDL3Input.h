@@ -41,14 +41,14 @@ class SDL3Mouse : public Mouse
 {
 public:
 	SDL3Mouse(SDL_Window* window);
-	virtual ~SDL3Mouse(void);
+	virtual ~SDL3Mouse();
 
 	// SubsystemInterface
-	virtual void init(void) override;
-	virtual void reset(void) override;
-	virtual void update(void) override;
-	virtual void initCursorResources(void) override;
-	static void freeCursorResources(void);
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
+	virtual void initCursorResources() override;
+	static void freeCursorResources();
 
 	// Mouse interface
 	virtual void setCursor(MouseCursor cursor) override;
@@ -60,8 +60,8 @@ public:
 	void addSDLEvent(SDL_Event* event);
 
 protected:
-	virtual void capture(void) override;
-	virtual void releaseCapture(void) override;
+	virtual void capture() override;
+	virtual void releaseCapture() override;
 	virtual UnsignedByte getMouseEvent(MouseIO* result, Bool flush) override;
 
 private:
@@ -87,16 +87,16 @@ private:
 class SDL3Keyboard : public Keyboard
 {
 public:
-	SDL3Keyboard(void);
-	virtual ~SDL3Keyboard(void);
+	SDL3Keyboard();
+	virtual ~SDL3Keyboard();
 
 	// SubsystemInterface
-	virtual void init(void) override;
-	virtual void reset(void) override;
-	virtual void update(void) override;
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
 
 	// Keyboard interface
-	virtual Bool getCapsState(void) override;
+	virtual Bool getCapsState() override;
 
 	// SDL3-specific methods
 	void addSDLEvent(SDL_Event* event);

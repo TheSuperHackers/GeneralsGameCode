@@ -48,28 +48,28 @@ public:
 	virtual ~SDL3GameEngine();
 
 	// GameEngine interface
-	virtual void init(void) override;
-	virtual void reset(void) override;
-	virtual void update(void) override;
-	virtual void serviceWindowsOS(void) override;
-	virtual Bool isActive(void) override;
+	virtual void init() override;
+	virtual void reset() override;
+	virtual void update() override;
+	virtual void serviceWindowsOS() override;
+	virtual Bool isActive() override;
 	virtual void setIsActive(Bool isActive) override;
 
 	// Factory methods (override GameEngine)
-	virtual LocalFileSystem* createLocalFileSystem(void) override;
-	virtual ArchiveFileSystem* createArchiveFileSystem(void) override;
-	virtual GameLogic* createGameLogic(void) override;
-	virtual GameClient* createGameClient(void) override;
-	virtual ModuleFactory* createModuleFactory(void) override;
-	virtual ThingFactory* createThingFactory(void) override;
-	virtual FunctionLexicon* createFunctionLexicon(void) override;
+	virtual LocalFileSystem* createLocalFileSystem() override;
+	virtual ArchiveFileSystem* createArchiveFileSystem() override;
+	virtual GameLogic* createGameLogic() override;
+	virtual GameClient* createGameClient() override;
+	virtual ModuleFactory* createModuleFactory() override;
+	virtual ThingFactory* createThingFactory() override;
+	virtual FunctionLexicon* createFunctionLexicon() override;
 	virtual Radar* createRadar(Bool dummy) override;
-	virtual WebBrowser* createWebBrowser(void) override;
+	virtual WebBrowser* createWebBrowser() override;
 	virtual ParticleSystemManager* createParticleSystemManager(Bool dummy) override;
 	virtual AudioManager* createAudioManager(Bool dummy) override;
 
 	// SDL3 specific
-	virtual SDL_Window* getSDLWindow(void) const { return m_SDLWindow; }
+	virtual SDL_Window* getSDLWindow() const { return m_SDLWindow; }
 	virtual void forwardTextInputEvent(const char* utf8Text);
 
 protected:
@@ -80,6 +80,6 @@ protected:
 	GameWindow* m_TextInputFocusWindow;
 
 	// Event processing
-	void pollSDL3Events(void);
-	void updateTextInputState(void);
+	void pollSDL3Events();
+	void updateTextInputState();
 };
