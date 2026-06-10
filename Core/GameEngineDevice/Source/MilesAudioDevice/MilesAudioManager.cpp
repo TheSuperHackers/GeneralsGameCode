@@ -902,7 +902,7 @@ void MilesAudioManager::killAudioEventImmediately( AudioHandle audioEvent )
 	for( ait = m_audioRequests.begin(); ait != m_audioRequests.end(); ait++ )
 	{
 		AudioRequest *req = (*ait);
-		if( req->m_request == AR_Play && req->m_handleToInteractOn == audioEvent )
+		if( req->m_usePendingEvent && req->m_pendingEvent->getPlayingHandle() == audioEvent )
 		{
 			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
