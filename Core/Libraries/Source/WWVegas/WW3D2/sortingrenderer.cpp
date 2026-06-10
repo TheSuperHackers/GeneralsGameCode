@@ -508,51 +508,57 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 	Sort(tis, tis + overlapping_polygon_count);
 
-/*	///@todo: Add code to break up rendering into multiple index buffer fills to allow more than 65536/3 triangles.  -MW
-	int total_overlapping_polygon_count = overlapping_polygon_count;
-	while (  > 0)
+	// TheSuperHackers @fix stephanmeesters 10/06/2026
+	// Split rendering into chunks to prevent a crash when exceeding the 16-bit index buffer limit.
+	static const unsigned MAX_INDEX_CHUNK = 65535;
+	unsigned chunkOffset = 0;
+	while (chunkOffset < overlapping_polygon_count)
 	{
-		if ((total_overlapping_polygon_count*3) > 65535)
-		{	//overflowed the index buffer, must break into multiple batches
-			overlapping_polygon_count = 65535/3;
+		unsigned chunkCount = overlapping_polygon_count - chunkOffset;
+		if (chunkCount * 3 > MAX_INDEX_CHUNK) {
+			chunkCount = MAX_INDEX_CHUNK / 3;
 		}
-		else
-			overlapping_polygon_count = total_overlapping_polygon_count;
 
-		//insert rendering code here!!
+		DynamicIBAccessClass dyn_ib_access(BUFFER_TYPE_DYNAMIC_DX8,chunkCount*3);
+		{
+			DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
+			ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
 
-		total_overlapping_polygon_count -= overlapping_polygon_count;
-	}
-*/
-	unsigned polygonAllocCount = overlapping_polygon_count;
-	if ((unsigned)(DynamicIBAccessClass::Get_Default_Index_Count()/3) < DEFAULT_SORTING_POLY_COUNT)
-		polygonAllocCount = DEFAULT_SORTING_POLY_COUNT;	//make sure that we force the DX8 index buffer to maximum size
-	if (overlapping_polygon_count > polygonAllocCount)
-		polygonAllocCount = overlapping_polygon_count;
-	WWASSERT(DEFAULT_SORTING_POLY_COUNT <= 1 || polygonAllocCount <= DEFAULT_SORTING_POLY_COUNT);
-
-	DynamicIBAccessClass dyn_ib_access(BUFFER_TYPE_DYNAMIC_DX8,polygonAllocCount*3);
-	{
-		DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
-		ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
-
-		for (unsigned a=0;a<overlapping_polygon_count;++a) {
-			sorted_polygon_index_array[a]=tis[a].tri;
+			for (unsigned a=0;a<chunkCount;++a) {
+				sorted_polygon_index_array[a]=tis[chunkOffset + a].tri;
+			}
 		}
-	}
 
-	// Set index buffer and render!
+		// Set index buffer and render!
 
-	DX8Wrapper::Set_Index_Buffer(dyn_ib_access,0); // Override with this buffer (do something to prevent need for this!)
-	DX8Wrapper::Set_Vertex_Buffer(dyn_vb_access); // Override with this buffer (do something to prevent need for this!)
+		DX8Wrapper::Set_Index_Buffer(dyn_ib_access,0); // Override with this buffer (do something to prevent need for this!)
+		DX8Wrapper::Set_Vertex_Buffer(dyn_vb_access); // Override with this buffer (do something to prevent need for this!)
 
-	DX8Wrapper::Apply_Render_State_Changes();
+		DX8Wrapper::Apply_Render_State_Changes();
 
-	unsigned count_to_render=1;
-	unsigned start_index=0;
-	unsigned node_id=tis[0].idx;
-	for (unsigned i=1;i<overlapping_polygon_count;++i) {
-		if (node_id!=tis[i].idx) {
+		unsigned count_to_render=1;
+		unsigned start_index=0;
+		unsigned node_id=tis[chunkOffset].idx;
+		for (unsigned i=chunkOffset + 1;i<chunkOffset + chunkCount;++i) {
+			if (node_id!=tis[i].idx) {
+				SortingNodeStruct* state=overlapping_nodes[node_id];
+				Apply_Render_State(state->sorting_state);
+
+				DX8Wrapper::Draw_Triangles(
+					start_index*3,
+					count_to_render,
+					state->min_vertex_index,
+					state->vertex_count);
+
+				count_to_render=0;
+				start_index=i - chunkOffset;
+				node_id=tis[i].idx;
+			}
+			count_to_render++;	//keep track of number of polygons of same kind
+		}
+
+		// Render any remaining polygons...
+		if (count_to_render) {
 			SortingNodeStruct* state=overlapping_nodes[node_id];
 			Apply_Render_State(state->sorting_state);
 
@@ -561,28 +567,13 @@ void SortingRendererClass::Flush_Sorting_Pool()
 				count_to_render,
 				state->min_vertex_index,
 				state->vertex_count);
-
-			count_to_render=0;
-			start_index=i;
-			node_id=tis[i].idx;
 		}
-		count_to_render++;	//keep track of number of polygons of same kind
-	}
 
-	// Render any remaining polygons...
-	if (count_to_render) {
-		SortingNodeStruct* state=overlapping_nodes[node_id];
-		Apply_Render_State(state->sorting_state);
-
-		DX8Wrapper::Draw_Triangles(
-			start_index*3,
-			count_to_render,
-			state->min_vertex_index,
-			state->vertex_count);
+		chunkOffset += chunkCount;
 	}
 
 	// Release all references and return nodes back to the clean list for the frame...
-	for (node_id=0;node_id<overlapping_node_count;++node_id) {
+	for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
 		SortingNodeStruct* state=overlapping_nodes[node_id];
 		Release_Refs(state);
 		clean_list.Add_Head(state);
