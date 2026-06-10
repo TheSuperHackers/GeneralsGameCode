@@ -510,7 +510,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 	// TheSuperHackers @fix stephanmeesters 10/06/2026
 	// Split rendering into chunks to prevent a crash when exceeding the 16-bit index buffer limit.
-	static const unsigned MAX_INDEX_CHUNK = 65535;
+	constexpr const unsigned MAX_INDEX_CHUNK = 65535;
 	unsigned chunkOffset = 0;
 	while (chunkOffset < overlapping_polygon_count)
 	{
@@ -518,6 +518,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		if (chunkCount * 3 > MAX_INDEX_CHUNK) {
 			chunkCount = MAX_INDEX_CHUNK / 3;
 		}
+		const unsigned chunkEnd = chunkOffset + chunkCount;
 
 		DynamicIBAccessClass dyn_ib_access(BUFFER_TYPE_DYNAMIC_DX8,chunkCount*3);
 		{
@@ -539,7 +540,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		unsigned count_to_render=1;
 		unsigned start_index=0;
 		unsigned node_id=tis[chunkOffset].idx;
-		for (unsigned i=chunkOffset + 1;i<chunkOffset + chunkCount;++i) {
+		for (unsigned i=chunkOffset + 1;i<chunkEnd;++i) {
 			if (node_id!=tis[i].idx) {
 				SortingNodeStruct* state=overlapping_nodes[node_id];
 				Apply_Render_State(state->sorting_state);
