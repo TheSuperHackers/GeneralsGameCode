@@ -8,15 +8,14 @@ option(RTS_BUILD_OPTION_PROFILE_TRACY "Build code with Tracy profiling enabled."
 option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF)
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 option(RTS_BUILD_OPTION_VC6_FULL_DEBUG "Build VC6 with full debug info." OFF)
+option(RTS_BUILD_OPTION_SDL3 "Enable SDL3 input/window backend" ON)
 
-# Enable SDL3 by default for modern builds
-if(NOT IS_VS6_BUILD)
-    option(RTS_SDL3_ENABLE "Enable SDL3 input/window backend" ON)
-    if(RTS_SDL3_ENABLE)
-        target_compile_definitions(core_config INTERFACE RTS_SDL3_ENABLE=1)
-    endif()
-else()
-    set(RTS_SDL3_ENABLE OFF CACHE BOOL "Enable SDL3 input/window backend" FORCE)
+if(IS_VS6_BUILD)
+    set(RTS_BUILD_OPTION_SDL3 OFF CACHE BOOL "Enable SDL3 input/window backend" FORCE)
+endif()
+
+if(RTS_BUILD_OPTION_SDL3)
+    target_compile_definitions(core_config INTERFACE RTS_SDL3_ENABLE=1)
 endif()
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
@@ -33,6 +32,7 @@ add_feature_info(DebugBuild RTS_BUILD_OPTION_DEBUG "Building as a \"Debug\" buil
 add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address sanitizer")
 add_feature_info(Vc6FullDebug RTS_BUILD_OPTION_VC6_FULL_DEBUG "Building VC6 with full debug info")
 add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
+add_feature_info(Sdl3Backend RTS_BUILD_OPTION_SDL3 "Building with SDL3 input/window backend")
 
 set(RTS_BUILD_OUTPUT_SUFFIX "" CACHE STRING "Suffix appended to output names of installable targets")
 

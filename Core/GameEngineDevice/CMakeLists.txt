@@ -198,7 +198,7 @@ set(GAMEENGINEDEVICE_SRC
 )
 
 # Add Core-level SDL3 implementation
-if(RTS_SDL3_ENABLE AND NOT IS_VS6_BUILD)
+if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
     list(APPEND GAMEENGINEDEVICE_SRC
         Include/SDL3GameEngine.h
         Include/SDL3Device/GameClient/SDL3Input.h
@@ -246,7 +246,7 @@ target_link_libraries(corei_gameenginedevice_public INTERFACE
 )
 
 # Export SDL3 dependencies for modern builds
-if(RTS_SDL3_ENABLE AND NOT IS_VS6_BUILD)
+if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
     target_link_libraries(corei_gameenginedevice_public INTERFACE
         SDL3::SDL3
         SDL3_image::SDL3_image
