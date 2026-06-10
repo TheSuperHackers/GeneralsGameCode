@@ -110,6 +110,10 @@ LAN:OfferObserveBody
 "This game is already in progress. Watch it as an observer?"
 END
 
+LAN:JoinFailed
+"Join Failed"
+END
+
 LAN:ObserveFailedBody
 "Could not start observing the game. The host's replay may be incomplete; try again in a moment."
 END

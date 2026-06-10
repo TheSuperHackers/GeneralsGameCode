@@ -76,11 +76,17 @@ static Bool setNonBlocking(Int fd)
 }
 
 // Max chunk to read from the source replay file per observer per tick.
-static const UnsignedInt OBS_READ_CHUNK_BYTES = 32 * 1024;
+// Sized so that at the host's recorder tick rate (~30 Hz) the catch-up
+// transfer for a long-running game completes in seconds rather than
+// minutes. 256 KB * 30 Hz = ~7.5 MB/s per observer, well below any LAN
+// bandwidth ceiling and well above replay growth rate.
+static const UnsignedInt OBS_READ_CHUNK_BYTES = 256 * 1024;
 // Max bytes to push to a socket per tick (caps a single observer's bandwidth).
-static const UnsignedInt OBS_SEND_CHUNK_BYTES = 32 * 1024;
-// Soft cap on send-buffer growth before we throttle file reads.
-static const UnsignedInt OBS_SEND_BUF_HIGH_WATER = 256 * 1024;
+static const UnsignedInt OBS_SEND_CHUNK_BYTES = 256 * 1024;
+// Soft cap on send-buffer growth before we throttle file reads. Allows a
+// few ticks of burst so a slow socket drain doesn't immediately starve
+// the next disk read.
+static const UnsignedInt OBS_SEND_BUF_HIGH_WATER = 4 * 1024 * 1024;
 
 
 // =====================================================================
@@ -376,6 +382,13 @@ Bool LANObserverClient::connect(UnsignedInt ipNetworkOrder, UnsignedShort port, 
 		CLOSE_SOCKET(fd);
 		return FALSE;
 	}
+	// Disable stdio buffering on the write handle. The recorder opens a
+	// separate engine File against the same path to drive playback; with
+	// default buffering the recorder's open can race ahead of an fwrite
+	// that hasn't yet hit the OS file, and readReplayHeader fails on a
+	// stale/short read. fflush after every write would also work but
+	// _IONBF keeps the bytes coherent under any future write path.
+	setvbuf(m_writeHandle, NULL, _IONBF, 0);
 
 	struct sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
