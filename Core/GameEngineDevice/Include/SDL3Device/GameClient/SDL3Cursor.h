@@ -19,10 +19,10 @@
 #pragma once
 
 #include "Lib/BaseType.h"
-#include <SDL3/SDL.h>
-#include <array>
 
-// USER INCLUDES
+#include <array>
+#include <SDL3/SDL.h>
+
 #include "GameClient/Mouse.h"
 
 struct AnimatedCursor

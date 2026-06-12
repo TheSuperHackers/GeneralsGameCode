@@ -65,7 +65,7 @@
 
 #if RTS_SDL3_ENABLE
     #include <SDL3/SDL.h>
-    #include "SDL3GameEngine.h"
+    #include "SDL3Device/Common/SDL3GameEngine.h"
     #include "GameClient/Keyboard.h"
     SDL_Window* TheSDL3Window = nullptr;
 #else

@@ -20,10 +20,10 @@
 
 #include "Lib/BaseType.h"
 
-#include "Common/GameEngine.h"
 #include <SDL3/SDL.h>
 
-// EXTERNALS
+#include "Common/GameEngine.h"
+
 // SDL3 window typically provided by WinMain integration
 extern SDL_Window* TheSDL3Window;
 

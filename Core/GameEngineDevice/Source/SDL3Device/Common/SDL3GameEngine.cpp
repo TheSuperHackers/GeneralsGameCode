@@ -18,33 +18,33 @@
 
 #include "Lib/BaseType.h"
 
-#include <SDL3/SDL.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <SDL3/SDL.h>
 
 #include "Common/GameEngine.h"
-#include "SDL3GameEngine.h"
-#include "SDL3Device/GameClient/SDL3Input.h"
-#include "MilesAudioDevice/MilesAudioManager.h"
-#include "GameClient/Mouse.h"
-#include "GameClient/Keyboard.h"
+#include "GameClient/Gadget.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
-#include "GameClient/Gadget.h"
+#include "GameClient/Keyboard.h"
+#include "GameClient/Mouse.h"
+#include "GameLogic/GameLogic.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "GameLogic/GameLogic.h"
-#include "W3DDevice/GameLogic/W3DGameLogic.h"
-#include "W3DDevice/GameClient/W3DGameClient.h"
-#include "W3DDevice/Common/W3DModuleFactory.h"
-#include "W3DDevice/Common/W3DThingFactory.h"
+#include "MilesAudioDevice/MilesAudioManager.h"
+#include "SDL3Device/Common/SDL3GameEngine.h"
+#include "SDL3Device/GameClient/SDL3Input.h"
+#include "StdDevice/Common/StdBIGFileSystem.h"
+#include "StdDevice/Common/StdLocalFileSystem.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
+#include "W3DDevice/Common/W3DModuleFactory.h"
 #include "W3DDevice/Common/W3DRadar.h"
+#include "W3DDevice/Common/W3DThingFactory.h"
+#include "W3DDevice/GameClient/W3DGameClient.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
-#include "StdDevice/Common/StdLocalFileSystem.h"
-#include "StdDevice/Common/StdBIGFileSystem.h"
+#include "W3DDevice/GameLogic/W3DGameLogic.h"
 
 // Extern globals for input devices (set by GameClient)
 extern Mouse* TheMouse;

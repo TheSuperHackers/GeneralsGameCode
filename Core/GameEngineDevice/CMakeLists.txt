@@ -200,10 +200,10 @@ set(GAMEENGINEDEVICE_SRC
 # Add Core-level SDL3 implementation
 if(RTS_BUILD_OPTION_SDL3 AND NOT IS_VS6_BUILD)
     list(APPEND GAMEENGINEDEVICE_SRC
-        Include/SDL3GameEngine.h
+        Include/SDL3Device/Common/SDL3GameEngine.h
         Include/SDL3Device/GameClient/SDL3Input.h
         Include/SDL3Device/GameClient/SDL3Cursor.h
-        Source/SDL3GameEngine.cpp
+        Source/SDL3Device/Common/SDL3GameEngine.cpp
         Source/SDL3Device/GameClient/SDL3Input.cpp
         Source/SDL3Device/GameClient/SDL3Cursor.cpp
     )
