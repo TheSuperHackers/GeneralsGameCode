@@ -3741,13 +3741,112 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
 		// and uses terrain oversize if it needs to enlarge.
 		dimensions.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
 		dimensions.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
-		return true;
+	}
+	else
+	{
+		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
+		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
+		dimensions.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+		dimensions.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
 	}
 
-	// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
-	// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
-	dimensions.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
-	dimensions.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	// TheSuperHackers @bugfix sailro 13/06/2026 Grow the terrain draw window to cover the visible ground
+	// when the camera is zoomed far out, for all maps.
+	//
+	// Terrain is only drawn within a window of tiles around the view center (the NORMAL/LOW_ANGLE sizes
+	// chosen above). When the camera is zoomed far out the visible ground reaches past that window, so the
+	// terrain there is not drawn and any map water shows through behind it. Many maps that have no real
+	// water still keep a map-sized "Default Water" polygon, which then makes the whole map look flooded.
+	// The legacy workaround was DrawEntireTerrain=Yes, which always draws the entire map and is very slow
+	// even at normal zoom (see TheSuperHackers/GeneralsGameCode#2743).
+	//
+	// Instead we size the window to the actual visible footprint: project the four view corners onto the
+	// ground plane (the same method updateCenter() uses to position the window) and grow the draw size just
+	// enough to span them. At normal zoom the footprint is smaller than the normal window, so this is a
+	// no-op and behavior is unchanged; the window only grows - bounded by the map extent - as the camera
+	// zooms out. The size is snapped to whole vertex-buffer tiles so the terrain reallocates only when a
+	// zoom threshold is crossed, and a single square size keeps it stable as the camera rotates.
+	//
+	// Only the user-controlled camera is grown this way; the scripted camera keeps the regular draw sizes
+	// (see above) and relies on terrain oversize.
+	const WorldHeightMap *map = m_isUserControlled ? TheTerrainRenderObject->getMap() : nullptr;
+	if (map)
+	{
+		const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
+		const Vector3 cameraLocation = m_3DCamera->Get_Position();
+		Vector2 viewPlaneMin, viewPlaneMax;
+		m_3DCamera->Get_View_Plane(viewPlaneMin, viewPlaneMax);
+		Vector2 viewportMin, viewportMax;
+		m_3DCamera->Get_Viewport(viewportMin, viewportMax);
+
+		const Real viewPlaneScaleX = viewPlaneMax.X - viewPlaneMin.X;
+		const Real viewPlaneScaleY = viewPlaneMax.Y - viewPlaneMin.Y;
+		const Real viewPlaneDist = -1.0f; // The view plane is always 1.0 from the camera, looking down -Z.
+		const Real groundZ = m_pos.z;
+
+		// Bound the projected corners to the map extent so a near horizontal corner ray - which meets the
+		// ground far away, behind the camera, or not at all - cannot produce a degenerate draw size.
+		const Int mapExtent = (map->getXExtent() > map->getYExtent()) ? map->getXExtent() : map->getYExtent();
+		const Real worldBound = (Real)mapExtent * MAP_XY_FACTOR;
+
+		Real footprintMinX = cameraLocation.X, footprintMaxX = cameraLocation.X;
+		Real footprintMinY = cameraLocation.Y, footprintMaxY = cameraLocation.Y;
+
+		for (Int i = 0; i < 2; ++i)
+		{
+			for (Int j = 0; j < 2; ++j)
+			{
+				const Real xMod = (-i + 0.5f + viewportMin.X) * viewPlaneDist * viewPlaneScaleX;
+				const Real yMod = ( j - 0.5f - viewportMin.Y) * viewPlaneDist * viewPlaneScaleY;
+
+				Vector3 rayDirection(
+					viewPlaneDist * cameraTransform[0][2] + xMod * cameraTransform[0][0] + yMod * cameraTransform[0][1],
+					viewPlaneDist * cameraTransform[1][2] + xMod * cameraTransform[1][0] + yMod * cameraTransform[1][1],
+					viewPlaneDist * cameraTransform[2][2] + xMod * cameraTransform[2][0] + yMod * cameraTransform[2][1]);
+				rayDirection.Normalize();
+				const Vector3 rayPoint = cameraLocation + rayDirection;
+
+				Real groundX = Vector3::Find_X_At_Z(groundZ, cameraLocation, rayPoint);
+				Real groundY = Vector3::Find_Y_At_Z(groundZ, cameraLocation, rayPoint);
+
+				// Clamp into [camera +/- worldBound]; the !(>=) form also rejects NaN from parallel rays.
+				if (!(groundX >= cameraLocation.X - worldBound))
+					groundX = cameraLocation.X - worldBound;
+				else if (groundX > cameraLocation.X + worldBound)
+					groundX = cameraLocation.X + worldBound;
+				if (!(groundY >= cameraLocation.Y - worldBound))
+					groundY = cameraLocation.Y - worldBound;
+				else if (groundY > cameraLocation.Y + worldBound)
+					groundY = cameraLocation.Y + worldBound;
+
+				if (groundX < footprintMinX)
+					footprintMinX = groundX;
+				if (groundX > footprintMaxX)
+					footprintMaxX = groundX;
+				if (groundY < footprintMinY)
+					footprintMinY = groundY;
+				if (groundY > footprintMaxY)
+					footprintMaxY = groundY;
+			}
+		}
+
+		// Use a single square size (the larger footprint dimension) so the window does not reallocate as the
+		// camera rotates, plus one tile block of margin to match the search padding updateCenter() applies.
+		const Real footprintSpanX = footprintMaxX - footprintMinX;
+		const Real footprintSpanY = footprintMaxY - footprintMinY;
+		const Real footprintSpan = (footprintSpanX > footprintSpanY) ? footprintSpanX : footprintSpanY;
+		Int footprintTiles = (Int)(footprintSpan / MAP_XY_FACTOR) + 1 + VERTEX_BUFFER_TILE_LENGTH;
+		if (footprintTiles > mapExtent)
+			footprintTiles = mapExtent;
+
+		// Snap up to 1 + N * VERTEX_BUFFER_TILE_LENGTH to match the engine's tile-based draw sizes.
+		const Int zoomDrawSize = ((footprintTiles - 1 + VERTEX_BUFFER_TILE_LENGTH) / VERTEX_BUFFER_TILE_LENGTH) * VERTEX_BUFFER_TILE_LENGTH + 1;
+		if (zoomDrawSize > dimensions.x)
+			dimensions.x = zoomDrawSize;
+		if (zoomDrawSize > dimensions.y)
+			dimensions.y = zoomDrawSize;
+	}
+
 	return true;
 }
 
