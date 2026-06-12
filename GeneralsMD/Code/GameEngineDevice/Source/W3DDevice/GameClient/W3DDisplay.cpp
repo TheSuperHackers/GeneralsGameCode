@@ -35,6 +35,8 @@ static void drawFramerateBar();
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <numeric>
+#include <algorithm>
+#include <functional>
 #include <stdlib.h>
 #include <windows.h>
 #include <io.h>
@@ -415,12 +417,9 @@ W3DDisplay::W3DDisplay()
 	m_historyOffset = 0;
 	m_historyCount = 1;
 	m_lastUpdateTime64 = 0;
+	m_lastLow1PercentUpdateMs = 0;
 	m_currentFPS = 30.0f;
-	for (Int h = 0; h < FPS_HISTORY_SIZE; ++h)
-	{
-		m_fpsHistory[h] = 30.0f;
-		m_durationHistory[h] = 1.0f / 30.0f;
-	}
+	std::fill(std::begin(m_durationHistory), std::end(m_durationHistory), (UnsignedShort)2083);
 
 #ifdef PROFILER_ENABLED
 	m_profilerFrameCapture = NEW W3DProfilerFrameCapture();
@@ -1024,14 +1023,11 @@ const UnsignedInt START_CUMU_FRAME = LOGICFRAMES_PER_SECOND / 2;	// skip first h
 
 void W3DDisplay::addFpsSample(Real elapsedSeconds)
 {
-	if (elapsedSeconds < 0.0001f)
-	{
-		elapsedSeconds = 0.0001f;
-	}
+	Int64 ticks = (Int64)(elapsedSeconds * 62500.0f + 0.5f);
+	UnsignedShort quantized = (ticks >= 65535) ? 65535 : (ticks <= 0 ? 1 : (UnsignedShort)ticks);
 
-	m_currentFPS = 1.0f / elapsedSeconds;
-	m_fpsHistory[m_historyOffset] = m_currentFPS;
-	m_durationHistory[m_historyOffset] = elapsedSeconds;
+	m_currentFPS = 62500.0f / (Real)quantized;
+	m_durationHistory[m_historyOffset] = quantized;
 
 	m_historyOffset = (m_historyOffset + 1) & (FPS_HISTORY_SIZE - 1);
 	if (m_historyCount < FPS_HISTORY_SIZE)
@@ -1042,44 +1038,42 @@ void W3DDisplay::addFpsSample(Real elapsedSeconds)
 
 Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 {
-	Real timeSum = 0;
+	UnsignedInt unitsSum = 0;
 	Int samples = 0;
+	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * 62500.0f);
 
-	Int idx = m_historyOffset - 1;
 	for (Int i = 0; i < m_historyCount; ++i)
 	{
-		if (idx < 0) idx += FPS_HISTORY_SIZE;
-		timeSum += m_durationHistory[idx];
+		Int idx = (m_historyOffset - 1 - i) & (FPS_HISTORY_SIZE - 1);
+		unitsSum += m_durationHistory[idx];
 		samples++;
 
-		if (timeSum >= windowSeconds)
+		if (unitsSum >= windowUnits)
 		{
 			break;
 		}
-		--idx;
 	}
 
-	return (timeSum > 0) ? ((Real)samples / timeSum) : m_currentFPS;
+	return (unitsSum > 0) ? ((Real)samples * 62500.0f / (Real)unitsSum) : m_currentFPS;
 }
 
 Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 {
-	Real timeSum = 0;
+	UnsignedInt unitsSum = 0;
 	Int sampleCount = 0;
-	Int i;
+	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * 62500.0f);
+	UnsignedShort sortBuffer[FPS_HISTORY_SIZE];
 
-	Int idx = m_historyOffset - 1;
-	for (i = 0; i < m_historyCount; ++i)
+	for (Int i = 0; i < m_historyCount; ++i)
 	{
-		if (idx < 0) idx += FPS_HISTORY_SIZE;
-		timeSum += m_durationHistory[idx];
-		m_sortBuffer[sampleCount++] = m_fpsHistory[idx];
+		Int idx = (m_historyOffset - 1 - i) & (FPS_HISTORY_SIZE - 1);
+		unitsSum += m_durationHistory[idx];
+		sortBuffer[sampleCount++] = m_durationHistory[idx];
 
-		if (timeSum >= windowSeconds)
+		if (unitsSum >= windowUnits)
 		{
 			break;
 		}
-		--idx;
 	}
 
 	if (sampleCount == 0)
@@ -1089,15 +1083,15 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 
 	const Int bottomSampleCount = std::max((sampleCount + 50) / 100, 1);
 
-	std::nth_element(m_sortBuffer, m_sortBuffer + bottomSampleCount, m_sortBuffer + sampleCount);
+	std::nth_element(sortBuffer, sortBuffer + bottomSampleCount, sortBuffer + sampleCount, std::greater<UnsignedShort>());
 
-	Real lowSum = 0;
-	for (i = 0; i < bottomSampleCount; ++i)
+	UnsignedInt durationUnitsSum = 0;
+	for (Int i = 0; i < bottomSampleCount; ++i)
 	{
-		lowSum += m_sortBuffer[i];
+		durationUnitsSum += sortBuffer[i];
 	}
 
-	return lowSum / (Real)bottomSampleCount;
+	return (durationUnitsSum > 0) ? ((Real)bottomSampleCount * 62500.0f / (Real)durationUnitsSum) : m_currentFPS;
 }
 
 void W3DDisplay::updatePerformanceMetrics()
@@ -1117,14 +1111,6 @@ void W3DDisplay::updatePerformanceMetrics()
 
 	addFpsSample(elapsedSeconds);
 	m_averageFPS = calculateAverageFPS(1.0f); // 1.0s window for smooth Dynamic LOD tracking and UI matching
-
-	static UnsignedInt lastLowUpdate = 0;
-	UnsignedInt now = timeGetTime();
-	if (now - lastLowUpdate >= 100) // update low 1% metrics at 100ms intervals instead of 1000ms since it is now extremely cheap
-	{
-		lastLowUpdate = now;
-		m_low1PercentFPS = calculateLow1PercentFPS(3.0f);
-	}
 
 	m_lastUpdateTime64 = time64;
 }
@@ -1854,6 +1840,12 @@ Real W3DDisplay::getAverageFPS()
 
 Real W3DDisplay::getLow1PercentFPS()
 {
+	UnsignedInt now = timeGetTime();
+	if (now - m_lastLow1PercentUpdateMs >= 1000)
+	{
+		m_low1PercentFPS = calculateLow1PercentFPS(3.0f);
+		m_lastLow1PercentUpdateMs = now;
+	}
 	return m_low1PercentFPS;
 }
 

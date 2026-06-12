@@ -176,17 +176,16 @@ protected:
 	Render2DClass *m_2DRender;								///< interface for common 2D functions
 	IRegion2D m_clipRegion;									///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
-	Real m_averageFPS;		///< average fps over the last 0.5s.
+	Real m_averageFPS;		///< average fps over the last 1.0s.
 	Real m_low1PercentFPS;	///<1% low fps.
 	Real m_currentFPS;		///<current fps value.
 
-	enum { FPS_HISTORY_SIZE = 4096 }; ; // degrades gracefully beyond this size
-	Real m_fpsHistory[FPS_HISTORY_SIZE];
-	Real m_durationHistory[FPS_HISTORY_SIZE];
-	Real m_sortBuffer[FPS_HISTORY_SIZE];
+	enum { FPS_HISTORY_SIZE = 4096 }; // degrades gracefully beyond this size
+	UnsignedShort m_durationHistory[FPS_HISTORY_SIZE];
 	Int  m_historyOffset;
 	Int  m_historyCount;
 	Int64 m_lastUpdateTime64;
+	UnsignedInt m_lastLow1PercentUpdateMs;
 
 	TextureClass *m_batchTexture;
 	DrawImageMode m_batchMode;
