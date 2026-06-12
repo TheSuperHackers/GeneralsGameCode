@@ -16,15 +16,15 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SDL3Device/GameClient/SDL3Cursor.h"
-#include <SDL3_image/SDL_image.h>
 #include <cstdio>
-#include <vector>
 #include <memory>
+#include <SDL3_image/SDL_image.h>
+#include <vector>
 
 #include "Common/Debug.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "SDL3Device/GameClient/SDL3Cursor.h"
 
 AnimatedCursor* SDL3CursorManager::m_cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS] = {nullptr};
 
