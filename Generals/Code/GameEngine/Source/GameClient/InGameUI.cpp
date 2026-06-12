@@ -1145,7 +1145,7 @@ InGameUI::InGameUI()
 	m_renderFpsPosition.x = kHudAnchorX;
 	m_renderFpsPosition.y = kHudAnchorY;
 	m_renderFpsColor = GameMakeColor( 255, 255, 0, 255 );
-	m_renderFpsLowColor = GameMakeColor( 180, 170, 120, 255 );
+	m_renderFpsLowColor = GameMakeColor( 190, 180, 130, 255 );
 	m_renderFpsLimitColor = GameMakeColor(119, 119, 119, 255);
 	m_renderFpsDropColor = GameMakeColor( 0, 0, 0, 255 );
 	m_renderFpsRefreshMs = 1000;
@@ -6052,7 +6052,7 @@ void InGameUI::updateRenderFpsString()
 	if (renderFpsLow != m_lastRenderFpsLow)
 	{
 		UnicodeString lowStr;
-		lowStr.format(L"(%u)", renderFpsLow);
+		lowStr.format(L"\x25BC%u", renderFpsLow);
 		m_renderFpsLowString->setText(lowStr);
 		m_lastRenderFpsLow = renderFpsLow;
 	}
@@ -6109,11 +6109,11 @@ void InGameUI::drawRenderFps(Int &x, Int &y)
 		UnicodeString fpsLimitStr;
 		if (renderFpsLimit == RenderFpsPreset::UncappedFpsValue)
 		{
-			fpsLimitStr.format(L"[X]");
+			fpsLimitStr.format(L"\x25B2X");
 		}
 		else
 		{
-			fpsLimitStr.format(L"[%u]", renderFpsLimit);
+			fpsLimitStr.format(L"\x25B2%u", renderFpsLimit);
 		}
 		m_renderFpsLimitString->setText(fpsLimitStr);
 		m_lastRenderFpsLimit = renderFpsLimit;

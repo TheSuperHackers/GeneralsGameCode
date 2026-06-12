@@ -419,7 +419,7 @@ W3DDisplay::W3DDisplay()
 	m_lastUpdateTime64 = 0;
 	m_lastLow1PercentUpdateMs = 0;
 	m_currentFPS = 30.0f;
-	std::fill(std::begin(m_durationHistory), std::end(m_durationHistory), (UnsignedShort)2083);
+	std::fill(m_durationHistory, m_durationHistory + FPS_HISTORY_SIZE, (UnsignedShort)2083);
 
 #ifdef PROFILER_ENABLED
 	m_profilerFrameCapture = NEW W3DProfilerFrameCapture();
@@ -1064,7 +1064,8 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * 62500.0f);
 	UnsignedShort sortBuffer[FPS_HISTORY_SIZE];
 
-	for (Int i = 0; i < m_historyCount; ++i)
+	Int i;
+	for (i = 0; i < m_historyCount; ++i)
 	{
 		Int idx = (m_historyOffset - 1 - i) & (FPS_HISTORY_SIZE - 1);
 		unitsSum += m_durationHistory[idx];
@@ -1086,7 +1087,7 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 	std::nth_element(sortBuffer, sortBuffer + bottomSampleCount, sortBuffer + sampleCount, std::greater<UnsignedShort>());
 
 	UnsignedInt durationUnitsSum = 0;
-	for (Int i = 0; i < bottomSampleCount; ++i)
+	for (i = 0; i < bottomSampleCount; ++i)
 	{
 		durationUnitsSum += sortBuffer[i];
 	}
