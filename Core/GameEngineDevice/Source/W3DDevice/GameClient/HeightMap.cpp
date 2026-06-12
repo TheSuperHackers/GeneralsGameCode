@@ -1207,6 +1207,23 @@ void HeightMapRenderObjClass::setTerrainDrawSize(Int width, Int height)
 	else
 		height = std::min(height, m_map->getYExtent());
 
+	// TheSuperHackers @bugfix sailro 13/06/2026 Apply the StretchTerrain and DrawEntireTerrain size
+	// overrides here so the requested size can match the stored full-map draw size. Otherwise the normal
+	// size is requested every frame and never matches, rebuilding the whole terrain (vertices and
+	// lighting) every frame and badly degrading performance. DrawEntireTerrain takes precedence.
+	if (TheGlobalData && TheGlobalData->m_stretchTerrain)
+	{
+		width = WorldHeightMap::STRETCH_DRAW_WIDTH;
+		height = WorldHeightMap::STRETCH_DRAW_HEIGHT;
+	}
+	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
+	{
+		width = m_map->getXExtent();
+		height = m_map->getYExtent();
+	}
+	width = std::min(width, m_map->getXExtent());
+	height = std::min(height, m_map->getYExtent());
+
 	if (width == m_map->getDrawWidth() && height == m_map->getDrawHeight())
 		return;
 
@@ -1672,6 +1689,17 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *c
 
 	if (m_x >= m_map->getXExtent() && m_y >= m_map->getYExtent())
   {
+		// TheSuperHackers @bugfix sailro 13/06/2026 The vertex grid already covers the whole terrain
+		// (small maps, or StretchTerrain/DrawEntireTerrain), so there is no scrolling to do. Still honor a
+		// pending full update here, otherwise lighting, texture or height changes would never be applied.
+		// This repaints only when an update is actually requested, not every frame.
+		if (m_needFullUpdate)
+		{
+			m_updating = true;
+			m_needFullUpdate = false;
+			updateBlock(0, 0, m_x-1, m_y-1, m_map, pLightsIterator);
+			m_updating = false;
+		}
 		return; // no need to center.
 	}
 
