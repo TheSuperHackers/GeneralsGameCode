@@ -373,7 +373,7 @@ void TextureLoader::Validate_Texture_Size
 	}
 
 	unsigned poweroftwodepth = 1;
-	while (poweroftwodepth< depth)
+	while (poweroftwodepth < depth)
 	{
 		poweroftwodepth <<= 1;
 	}
@@ -391,18 +391,22 @@ void TextureLoader::Validate_Texture_Size
 		poweroftwodepth=dx8caps.MaxVolumeExtent;
 	}
 
-	if (poweroftwowidth>poweroftwoheight)
+	const int maxTextureAspectRatio = dx8caps.MaxTextureAspectRatio;
+	if (maxTextureAspectRatio != 0)
 	{
-		while (poweroftwowidth/poweroftwoheight>8)
+		if (poweroftwowidth>poweroftwoheight)
 		{
-			poweroftwoheight*=2;
+			while (poweroftwowidth/poweroftwoheight > maxTextureAspectRatio)
+			{
+				poweroftwoheight*=2;
+			}
 		}
-	}
-	else
-	{
-		while (poweroftwoheight/poweroftwowidth>8)
+		else
 		{
-			poweroftwowidth*=2;
+			while (poweroftwoheight/poweroftwowidth > maxTextureAspectRatio)
+			{
+				poweroftwowidth*=2;
+			}
 		}
 	}
 
