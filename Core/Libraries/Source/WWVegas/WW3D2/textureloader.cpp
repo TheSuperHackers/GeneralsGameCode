@@ -391,7 +391,7 @@ void TextureLoader::Validate_Texture_Size
 		poweroftwodepth=dx8caps.MaxVolumeExtent;
 	}
 
-	const int maxTextureAspectRatio = dx8caps.MaxTextureAspectRatio;
+	const unsigned maxTextureAspectRatio = dx8caps.MaxTextureAspectRatio;
 	if (maxTextureAspectRatio != 0)
 	{
 		if (poweroftwowidth>poweroftwoheight)
