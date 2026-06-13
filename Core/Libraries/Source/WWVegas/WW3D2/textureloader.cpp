@@ -1564,18 +1564,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 
 	Width		= orig_width;
 	Height	= orig_height;
-	Reduction = orig_reduction;
-
-	if (!Texture->Is_Reducible() || Texture->MipLevelCount == MIP_LEVELS_1)
-		Reduction = 0;	//app doesn't want this texture to ever be reduced.
-	else
-	//Make sure we don't reduce below the level requested by the app
-	if (Texture->MipLevelCount != MIP_LEVELS_ALL && (Texture->MipLevelCount - Reduction) < 1)
-		Reduction = Texture->MipLevelCount - 1;
-
-	//Another sanity check
-	if (Reduction >= orig_mip_count)
-		Reduction = 0;	//should not be possible to get here, but check just in case.
+	Reduction = 0;
 
 	if (Format == WW3D_FORMAT_UNKNOWN)
 	{
@@ -1586,24 +1575,12 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load()
 		Format = Get_Valid_Texture_Format(Format, false);
 	}
 
-	int reducedWidth=Width;
-	int reducedHeight=Height;
-	int reducedMipCount=Texture->MipLevelCount;
-
-	if (Reduction)
-	{	//we don't care about specific levels so reduce them if needed.
-		reducedWidth >>= Reduction;
-		reducedHeight >>= Reduction;
-		if (reducedMipCount != MIP_LEVELS_ALL)
-			reducedMipCount -= Reduction;
-	}
-
 	D3DTexture = DX8Wrapper::_Create_DX8_Texture
 	(
-		reducedWidth,
-		reducedHeight,
+		Width,
+		Height,
 		Format,
-		(MipCountType)reducedMipCount,
+		Texture->MipLevelCount,
 #ifdef USE_MANAGED_TEXTURES
 		D3DPOOL_MANAGED
 #else
@@ -2195,6 +2172,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load()
 
 	Width		= orig_width;
 	Height	= orig_height;
+	Reduction = 0;
 
 	if (Format == WW3D_FORMAT_UNKNOWN)
 	{
@@ -2563,6 +2541,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load()
 	Width		= orig_width;
 	Height	= orig_height;
 	Depth		= orig_depth;
+	Reduction = 0;
 
 	if (Format == WW3D_FORMAT_UNKNOWN)
 	{
