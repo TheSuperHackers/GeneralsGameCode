@@ -5550,13 +5550,13 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 		return true;
 	}
 
-	// TheSuperHackers @info Expanding clockwise spiral search around center cell C. Each full lap walks right→down→left→up.
-	// After every pair of directions (right+down, then left+up) length of the segment grows by 1.
+	// TheSuperHackers @info Expanding counter-clockwise spiral search around center cell C. Each full lap walks right->up->left->down.
+	// After every pair of directions (right+up, then left+down) length of the segment grows by 1.
 	//
-	//    6  7  8  9
-	//    5  C  1  10
-	//    4  3  2  11
 	//    <------  12
+	//    4  3  2  11
+	//    5  C  1  10
+	//    6  7  8  9
 	//
 	Int limit = MAX_ADJUSTMENT_CELL_COUNT;
 	Int segmentLength = 1;
