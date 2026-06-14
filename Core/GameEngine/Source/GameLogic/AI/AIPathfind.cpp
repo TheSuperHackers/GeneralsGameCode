@@ -5385,18 +5385,15 @@ Bool Pathfinder::checkForAdjust(Object *obj, const LocomotorSet& locomotorSet, B
 	}
 	if (checkDestination(obj, cellX, cellY, layer, iRadius, center)) {
 		adjustCoordToCell(cellX, cellY,  center, adjustDest, cellP->getLayer());
-		Bool pathExists;
 		Bool adjustedPathExists;
 		if (obj->isKindOf(KINDOF_AIRCRAFT)) {
-			pathExists = true;
 			adjustedPathExists = true;
 		}	else {
-			pathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), dest);
-			adjustedPathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &adjustDest);
-			if (!pathExists) {
-				if (clientSafeQuickDoesPathExist( locomotorSet, dest, &adjustDest))	{
- 					adjustedPathExists = true;
-				}
+			Bool pathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), dest);
+			if (!pathExists && clientSafeQuickDoesPathExist( locomotorSet, dest, &adjustDest)) {
+				adjustedPathExists = true;
+			} else {
+				adjustedPathExists = clientSafeQuickDoesPathExist( locomotorSet, obj->getPosition(), &adjustDest);
 			}
 		}
 		if ( adjustedPathExists	) {
