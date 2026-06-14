@@ -451,7 +451,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 					//Special weapons are now always context commands...
 					//---------------------------------------------------------------------------------------
 					case GUI_COMMAND_SPECIAL_POWER:
-					case GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER:
+					case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
 					{
 						return KEEP_MESSAGE;
 						break;

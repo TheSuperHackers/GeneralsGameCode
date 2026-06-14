@@ -173,7 +173,25 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 	if (TheTacticalView && TheTacticalView->isMouseLocked())
 	{
-		return KEEP_MESSAGE;
+		//Kris: Aug 15, 2003
+		//Added the scrolling check that will not return KEEP_MESSAGE if we happen
+		//to in scrolling mode (via keyboard or mouse) and left click in the controlbar.
+		//Without this code, the left click goes through the interface ignoring buttons and blockage
+		//and ends up issuing orders right through the controlbar!
+		if( TheInGameUI->isScrolling() )
+		{
+			if( msg->getType() != GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP &&
+					msg->getType() != GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN )
+			{
+				//We're scrolling, but unless we're clicking the left button, get out.
+				return KEEP_MESSAGE;
+			}
+			//Pass through and handle button clicks or getting input blocked!
+		}
+		else
+		{
+			return KEEP_MESSAGE;
+		}
 	}
 
 	switch( msg->getType() )

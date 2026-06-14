@@ -27,19 +27,25 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/BuildAssistant.h"
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
+#include "Common/SpecialPower.h"
 #include "Common/ThingTemplate.h"
-#include "Common/BuildAssistant.h"
-
-#include "GameLogic/Object.h"
-#include "GameLogic/GameLogic.h"
 
 #include "GameClient/CommandXlat.h"
-#include "GameClient/PlaceEventTranslator.h"
+#include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
+#include "GameClient/PlaceEventTranslator.h"
+
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/Object.h"
+
+#include "GameLogic/Module/ProductionUpdate.h"
+
+
 
 //-------------------------------------------------------------------------------------------------
 PlaceEventTranslator::PlaceEventTranslator() : m_frameOfUpButton(-1)
@@ -218,13 +224,42 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 																												 BuildAssistant::TERRAIN_RESTRICTIONS |
 																												 BuildAssistant::CLEAR_PATH |
 																												 BuildAssistant::NO_OBJECT_OVERLAP |
-																												 BuildAssistant::SHROUD_REVEALED,
+																												 BuildAssistant::SHROUD_REVEALED |
+																												 BuildAssistant::IGNORE_STEALTHED |
+																												 BuildAssistant::FAIL_STEALTHED_WITHOUT_FEEDBACK,
 																												 builderObj, nullptr );
 				if( lbc == LBC_OK )
 				{
+					//Are we building this structure via the special power system? (special case for sneak attack)
+					if( builderObj )
+					{
+						ProductionUpdateInterface *puInterface = builderObj->getProductionUpdateInterface();
+						if( puInterface )
+						{
+							const CommandButton *commandButton = puInterface->getSpecialPowerConstructionCommandButton();
+							if( commandButton )
+							{
+								//If we get this far, then we aren't going to really build the object using the production update
+								//interface. Instead, we're going to trigger the special power to create it magically without a
+								//dozer/worker.
+								placeMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_SPECIAL_POWER_AT_LOCATION );
+								placeMsg->appendIntegerArgument( commandButton->getSpecialPowerTemplate()->getID() ); //The ID of the special power template.
+								placeMsg->appendLocationArgument( world ); //Position of special to be fired.
+								placeMsg->appendRealArgument( angle ); //Angle of special to be fired.
+								placeMsg->appendObjectIDArgument( INVALID_ID ); //There is no object in the way.
+								placeMsg->appendIntegerArgument( commandButton->getOptions() ); //Command button options.
+								placeMsg->appendObjectIDArgument( builderObj->getID() ); //The source object responsible for firing the special.
 
-					/** @todo Do not send local player id as argument once we have player ids
-					tied into all messages automatically */
+								// get out of pending placement mode, this will also clear the arrow anchor status
+								TheInGameUI->placeBuildAvailable( nullptr, nullptr );
+
+								// used the input
+								disp = DESTROY_MESSAGE;
+								m_frameOfUpButton = TheGameLogic->getFrame();
+								break;
+							}
+						}
+					}
 
 					// create the right kind of message
 					if( isLineBuild )
