@@ -2073,7 +2073,7 @@ void DozerAIUpdate::resumePreviousTask()
 	{
 		Object* target = TheGameLogic->findObjectByID(m_previousTaskInfo.m_targetObjectID);
 		if (!target || target->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
-			newTask(m_previousTask, TheGameLogic->findObjectByID(m_previousTaskInfo.m_targetObjectID));
+			newTask(m_previousTask, target);
 	}
 
 	m_previousTask = DOZER_TASK_INVALID;
