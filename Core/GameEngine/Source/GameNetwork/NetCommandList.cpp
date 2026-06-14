@@ -127,7 +127,7 @@ static bool isCommandIdNewer(UnsignedShort newVal, UnsignedShort oldVal)
 #if RETAIL_COMPATIBLE_NETWORKING
 	return newVal > oldVal;
 #else
-	// TheSuperHackers @info Caball009 14/06/2026 Ensure messages are sorted
+	// TheSuperHackers @bugfix Caball009 14/06/2026 Ensure messages are sorted
 	// chronologically by including a command id overflow check.
 	const UnsignedShort diff = newVal - oldVal;
 	return diff != 0 && diff < 0x8000;
