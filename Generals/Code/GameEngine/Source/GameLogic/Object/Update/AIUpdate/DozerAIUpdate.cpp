@@ -2000,7 +2000,13 @@ void DozerAIUpdate::newTask( DozerTask task, Object *target )
 		// multiple dozers/workers to double up on construction efforts
 		//
 		if( task == DOZER_TASK_BUILD )
+		{
+			// TheSuperHackers @bugfix Stubbjax 15/06/2026 Ignore the build task if the building is already complete.
+			if (target->getConstructionPercent() == CONSTRUCTION_COMPLETE)
+				return;
+
 			target->setBuilder( me );
+		}
 
 		m_dockPoint[ task ][ DOZER_DOCK_POINT_START ].valid			= TRUE;
 		m_dockPoint[ task ][ DOZER_DOCK_POINT_START ].location	= position;
