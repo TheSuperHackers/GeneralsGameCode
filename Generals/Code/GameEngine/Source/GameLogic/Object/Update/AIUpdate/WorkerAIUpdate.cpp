@@ -724,7 +724,6 @@ void WorkerAIUpdate::resumePreviousTask()
 	if (m_previousTask == DOZER_TASK_INVALID)
 		return;
 
-	// TheSuperHackers @bugfix Stubbjax 15/06/2026 Ignore the build task if the building is already complete.
 	if (m_previousTask == DOZER_TASK_BUILD)
 	{
 		Object* target = TheGameLogic->findObjectByID(m_previousTaskInfo.m_targetObjectID);
