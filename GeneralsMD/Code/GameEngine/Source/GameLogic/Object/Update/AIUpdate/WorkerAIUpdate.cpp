@@ -711,6 +711,18 @@ void WorkerAIUpdate::cancelAllTasks()
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Set the previous task so that we may return to it if we become temporarily incapacitated */
+//-------------------------------------------------------------------------------------------------
+void WorkerAIUpdate::setPreviousTask(DozerTask task)
+{
+	if (task == DOZER_TASK_INVALID)
+		return;
+
+	m_previousTask = task;
+	m_previousTaskInfo = m_task[task];
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Attempt to resume the previous task */
 //-------------------------------------------------------------------------------------------------
 void WorkerAIUpdate::resumePreviousTask()
@@ -803,9 +815,6 @@ void WorkerAIUpdate::internalCancelTask( DozerTask task )
 
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );
-
-	m_previousTask = task;
-	m_previousTaskInfo = m_task[task];
 
 	// remove the info for this task
 	m_task[ task ].m_targetObjectID = INVALID_ID;

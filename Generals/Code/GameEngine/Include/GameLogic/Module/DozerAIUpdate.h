@@ -141,6 +141,7 @@ public:
 	virtual void newTask( DozerTask task, Object *target ) = 0;	///< set a desire to do the requrested task
 	virtual void cancelTask( DozerTask task ) = 0;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
 	virtual void cancelAllTasks() = 0;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
+	virtual void setPreviousTask(DozerTask task) = 0;						///< set the previous task
 	virtual void resumePreviousTask() = 0;									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
@@ -242,6 +243,7 @@ public:
 	virtual void newTask( DozerTask task, Object *target ) override;	///< set a desire to do the requrested task
 	virtual void cancelTask( DozerTask task ) override;							///< cancel this task from the queue, if it's the current task the dozer will stop working on it
 	virtual void cancelAllTasks() override;													///< cancel all tasks from the queue, if it's the current task the dozer will stop working on it
+	virtual void setPreviousTask(DozerTask task) override;					///< set the previous task
 	virtual void resumePreviousTask() override;									///< resume the previous task if there was one
 
 	// internal methods to manage behavior from within the dozer state machine
