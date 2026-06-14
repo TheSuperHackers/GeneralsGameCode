@@ -5562,19 +5562,19 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	Int segmentLength = 1;
 	const ICoord2D directions[4] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
 	while (limit>0) {
-	 	for (Int dir = 0; dir < 4; dir++) {
-	 		for (Int count = segmentLength; count>0; count--) {
-	 			i+=directions[dir].x;
-	 			j+=directions[dir].y;
-	 			limit--;
-	 			if (checkForAdjust(obj, locomotorSet, isHuman, i, j, layer, iRadius, center, dest, groupDest)) {
-	 				return true;
-	 			}
-	 		}
-	 		if (dir & 1) {
-	 			segmentLength++;
-	 		}
-	 	}
+		for (Int dir = 0; dir < 4; dir++) {
+			for (Int count = segmentLength; count>0; count--) {
+				i+=directions[dir].x;
+				j+=directions[dir].y;
+				limit--;
+				if (checkForAdjust(obj, locomotorSet, isHuman, i, j, layer, iRadius, center, dest, groupDest)) {
+					return true;
+				}
+			}
+			if (dir & 1) {
+				segmentLength++;
+			}
+		}
 	}
 
 	if (groupDest) {
