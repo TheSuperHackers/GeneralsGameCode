@@ -60,12 +60,6 @@
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-// Lorenzen changed this to a member of SelectionTranslator, providing external access
-// name ly in rebuildholeexposedie, where we decide whether to create GLA Holes when hand-of-Godding
-//#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-//static Bool TheHandOfGodSelectionMode = false;
-//#endif
-
 #if defined(RTS_DEBUG)
 static Bool TheHurtSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
@@ -826,11 +820,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if (newDrawablesSelected == 1 && draw)
 				{
-
-
-#if defined(RTS_DEBUG)
-
-
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
           if (m_HandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
@@ -843,8 +833,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						disp = DESTROY_MESSAGE;
 						break;
 					}
-					else
+#endif
 
+#if defined(RTS_DEBUG)
           if (TheHurtSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
@@ -858,7 +849,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						break;
 					}
 
-  #ifdef DEBUG_OBJECT_ID_EXISTS
+#ifdef DEBUG_OBJECT_ID_EXISTS
 					if (TheDebugSelectionMode && draw && draw->getObject())
 					{
 						if (TheObjectIDToDebug == 0)
@@ -873,28 +864,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							break;
 						}
 					}
-  #endif
-
-#endif
-
-
-#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-          if (m_HandOfGodSelectionMode && draw)
-					{
-						Object* obj = draw->getObject();
-						if (obj)
-						{
-							TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
-							GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_KILL_OBJECT );
-							msg->appendObjectIDArgument(obj->getID());
-						}
-						disp = DESTROY_MESSAGE;
-						break;
-					}
-#endif
-
-
-        }
+#endif // DEBUG_OBJECT_ID_EXISTS
+#endif // RTS_DEBUG
+				}
 			}
 
 			if (disp == DESTROY_MESSAGE)

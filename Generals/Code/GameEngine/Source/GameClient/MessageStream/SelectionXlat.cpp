@@ -62,7 +62,6 @@
 //-----------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
 static Bool TheHurtSelectionMode = false;
-static Bool TheHandOfGodSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
 #endif
 
@@ -270,6 +269,10 @@ SelectionTranslator::SelectionTranslator()
 	m_selectCountMap.clear();
 
 	TheSelectionTranslator = this;
+
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+  m_HandOfGodSelectionMode = FALSE;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -637,11 +640,47 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			if (si.newCountMine > 0)
 			{
 				si.selectMine = TRUE;
-				if (si.newCountMine == 1 && si.newCountMineBuildings == 1)
+
+        // EXACTLY ONE CLICKED OR DRAGGED BUILDING
+				if ( si.newCountMineBuildings == 1 && si.newCountMine == 1 )
 				{
 					addToGroup = FALSE;
 					si.selectMineBuildings = TRUE;
+        }
+        else if ( si.newCountMineBuildings > 0 )////////////// SO SORRY, I KNOW THIS IS MICKEY MOUSE ///////////////////
+        { // What we are after here is to allow the drag select to get the building,
+          // if the other things in the list are going to be ignored anyway
+          // so we find out whether the other things are not selectible
+          // this came up with the new AmericaBuildingFireBase, which shows its contained
+          // but does not let you select them. The selection is propagated to the container
+          // in new code in SelectionInfo.cpp, in the static addDrawableToList();
+          // -Mark Lorenzen, 6/12/03
+          Bool onlyTheOneBuildingIsSelectableAnyway = TRUE;
+          DrawableID buildingID = INVALID_DRAWABLE_ID;
+          for (DrawableListIt it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
+				  {
+            const Drawable *d = *it;
+            if ( d->isKindOf( KINDOF_STRUCTURE ) )
+            {// make sure there is really only the one building in the list, as it may be multiply listed
+
+              if ( buildingID == INVALID_DRAWABLE_ID ) // this is the first building
+                buildingID = d->getID();
+              else if ( buildingID != d->getID() )//oops, more than one building!
+                onlyTheOneBuildingIsSelectableAnyway = FALSE;
+            }
+					  else if ( d->isSelectable() )
+              onlyTheOneBuildingIsSelectableAnyway = FALSE;
+
+            if ( ! onlyTheOneBuildingIsSelectableAnyway )
+              break;
+          }
+          if ( onlyTheOneBuildingIsSelectableAnyway )
+          {
+					  addToGroup = FALSE;
+					  si.selectMineBuildings = TRUE;
+          }
 				}
+
 			}
 			else if (si.newCountEnemies > 0 && si.newCountCivilians > 0 && si.newCountFriends > 0)
 			{
@@ -774,10 +813,15 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					}
 				}
 
+				if( newDrawablesSelected > 1 )
+				{
+					localPlayer->getAcademyStats()->recordDragSelection();
+				}
+
 				if (newDrawablesSelected == 1 && draw)
 				{
-#if defined(RTS_DEBUG)
-					if (TheHandOfGodSelectionMode && draw)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+          if (m_HandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
 						if (obj)
@@ -789,7 +833,10 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						disp = DESTROY_MESSAGE;
 						break;
 					}
-					else if (TheHurtSelectionMode && draw)
+#endif
+
+#if defined(RTS_DEBUG)
+          if (TheHurtSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
 						if (obj)
@@ -817,8 +864,8 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							break;
 						}
 					}
-#endif
-#endif
+#endif // DEBUG_OBJECT_ID_EXISTS
+#endif // RTS_DEBUG
 				}
 			}
 
@@ -877,6 +924,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
 						{
 							deselectAll();
+							m_lastGroupSelGroup = -1;
 						}
 						else
 						{
@@ -927,10 +975,10 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					//With a GUI command cancel, we want no other behavior.
 					disp = DESTROY_MESSAGE;
 					TheInGameUI->setScrolling( FALSE );
- 				}
+				}
 				else
 				{
- 					//In alternate mouse mode, right click still cancels building placement.
+					//In alternate mouse mode, right click still cancels building placement.
 					// TheSuperHackers @tweak Stubbjax 08/08/2025 Canceling building placement no longer deselects the builder.
 					if (TheInGameUI->getPendingPlaceSourceObjectID() != INVALID_ID)
 					{
@@ -940,12 +988,11 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						TheInGameUI->setScrolling(FALSE);
 					}
 					else if (!TheGlobalData->m_useAlternateMouse)
- 					{
+					{
 						//No GUI command mode, so deselect everyone if we're in regular mouse mode.
- 						deselectAll();
-						m_lastGroupSelGroup = -1;
- 					}
- 				}
+						deselectAll();
+					}
+				}
 			}
 
 			break;
@@ -1202,9 +1249,26 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
-			TheHandOfGodSelectionMode = !TheHandOfGodSelectionMode;
-			TheInGameUI->message( L"Hand-Of-God Mode is %s", TheHandOfGodSelectionMode ? L"ON" : L"OFF" );
-			disp = DESTROY_MESSAGE;
+			if ( !TheGameLogic->isInMultiplayerGame() )
+			{
+				m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
+				TheInGameUI->message( L"Meta Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
+				disp = DESTROY_MESSAGE;
+			}
+			break;
+		}
+#endif
+
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+		//-----------------------------------------------------------------------------------------
+		case GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE://NOTICE THE DIFFERENT NAME!!!!!!!!!!!!!!!!!!!!!!!!!!ML
+		{
+			if ( !TheGameLogic->isInMultiplayerGame() )
+			{
+				m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
+				TheInGameUI->message( L"Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
+				disp = DESTROY_MESSAGE;
+			}
 			break;
 		}
 #endif
@@ -1213,9 +1277,12 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
-			TheHurtSelectionMode = !TheHurtSelectionMode;
-			TheInGameUI->message( L"Hurt-Me Mode is %s", TheHurtSelectionMode ? L"ON" : L"OFF" );
-			disp = DESTROY_MESSAGE;
+			if ( !TheGameLogic->isInMultiplayerGame() )
+			{
+				TheHurtSelectionMode = !TheHurtSelectionMode;
+				TheInGameUI->message( L"Hurt-Me Mode is %s", TheHurtSelectionMode ? L"ON" : L"OFF" );
+				disp = DESTROY_MESSAGE;
+			}
 			break;
 		}
 #endif
