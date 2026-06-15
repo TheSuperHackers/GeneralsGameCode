@@ -5529,12 +5529,12 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	Bool center;
 	getRadiusAndCenter(obj, iRadius, center);
 	ICoord2D cell;
-	Coord3D adjustDest = *dest;
+	Coord3D cellDest = *dest;
 	if (!center) {
-		adjustDest.x += PATHFIND_CELL_SIZE_F/2;
-		adjustDest.y += PATHFIND_CELL_SIZE_F/2;
+		cellDest.x += PATHFIND_CELL_SIZE_F/2;
+		cellDest.y += PATHFIND_CELL_SIZE_F/2;
 	}
-	worldToCell( &adjustDest, &cell );
+	worldToCell( &cellDest, &cell );
 	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(dest);
 	if (groupDest) {
 		layer = TheTerrainLogic->getLayerForDestination(groupDest);
@@ -5543,9 +5543,24 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	Int i = cell.x;
 	Int j = cell.y;
 	// Check the center cell
-	if (checkForAdjust(obj, locomotorSet, isHuman, i,j, layer, iRadius, center, dest, groupDest)) {
+#if RETAIL_COMPATIBLE_CRC
+	if (checkForAdjust(obj, locomotorSet, isHuman, i, j, layer, iRadius, center, dest, groupDest)) {
 		return true;
 	}
+#else
+	Coord3D adjustDest = *dest;
+	if (checkForAdjust(obj, locomotorSet, isHuman, i, j, layer, iRadius, center, &adjustDest, groupDest)) {
+		// TheSuperHackers @fix stephanmeesters 15/06/2026 Destination adjustment always snaps to the nearest grid cell
+		// even when no adjustment is necessary because there are no obstructions. For single units this adjustment
+		// can be skipped in order to provide more predictable movement, which is especially noticeable for chinooks.
+		const Bool singleUnit = obj && obj->getGroup() && obj->getGroup()->getCount() == 1;
+		const Bool useExactDestination = isHuman && singleUnit;
+		if (!useExactDestination) {
+			*dest = adjustDest;
+		}
+		return true;
+	}
+#endif
 
 	// TheSuperHackers @info Expanding counter-clockwise spiral search around center cell C. Each full lap walks right->up->left->down.
 	// After every pair of directions (right+up, then left+down) length of the segment grows by 1.
