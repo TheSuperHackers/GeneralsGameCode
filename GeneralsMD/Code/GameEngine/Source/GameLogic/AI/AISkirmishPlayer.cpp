@@ -85,6 +85,9 @@ m_nextIdleSweepFrame(0),
 m_directiveBeaconID(INVALID_ID),
 m_nextDirectiveScanFrame(0),
 m_nextDirectiveAnnounceFrame(0),
+m_nextSurrenderCheckFrame(0),
+m_hasSurrendered(false),
+m_surrenderConsentAnnounced(false),
 m_nextMilestoneCheckFrame(0),
 m_milestoneAnnouncedMask(0),
 m_synAnnounced(false),
@@ -1015,6 +1018,7 @@ void AISkirmishPlayer::update()
 {
 	AIPlayer::update();
 	processBeaconDirective();
+	processSurrenderDirective();
 	announceMilestones();
 	processDistressSignal();
 	commitIdleArmy();
@@ -1306,6 +1310,132 @@ void AISkirmishPlayer::processBeaconDirective()
 		m_player->getPlayerDisplayName().str(),
 		beaconOwner->getPlayerDisplayName().str());
 	TheInGameUI->messageColor(&rgb, announcement);
+}
+
+//----------------------------------------------------------------------------------------------------------
+// Surrender Directive: when a human ally types "!surrender" in chat, the
+// receive-side ConnectionManager::processChat() latches m_surrenderConsented
+// on the sender (frame-synchronized, identical across clients). This method
+// then kills this AI player once (a) at least one human ally has consented
+// AND (b) every human on this team is no longer active. "!unsurrender"
+// clears the flag on the sending player.
+//----------------------------------------------------------------------------------------------------------
+void AISkirmishPlayer::processSurrenderDirective()
+{
+	if (m_hasSurrendered) return;
+	if (!m_player->isPlayerActive()) return;
+
+	const Int SURRENDER_CHECK_INTERVAL_SECONDS = 1;
+	UnsignedInt curFrame = TheGameLogic->getFrame();
+	if (curFrame < m_nextSurrenderCheckFrame) return;
+	m_nextSurrenderCheckFrame = curFrame + SURRENDER_CHECK_INTERVAL_SECONDS * LOGICFRAMES_PER_SECOND;
+
+	Bool anyHumanConsented = false;
+	Bool anyHumanActive = false;
+	Player *consentingHuman = nullptr;
+	Int lowestAIIndex = -1;
+
+	Int playerCount = ThePlayerList->getPlayerCount();
+	for (Int pi = 0; pi < playerCount; ++pi)
+	{
+		Player *ally = ThePlayerList->getNthPlayer(pi);
+		if (!ally) continue;
+		Bool onMyTeam = (ally == m_player)
+			|| (m_player->getRelationship(ally->getDefaultTeam()) == ALLIES);
+		if (!onMyTeam) continue;
+
+		if (ally->getPlayerType() == PLAYER_COMPUTER && ally->isPlayerActive() && lowestAIIndex < 0)
+		{
+			lowestAIIndex = pi;
+		}
+
+		if (ally == m_player) continue;
+		if (ally->getPlayerType() != PLAYER_HUMAN) continue;
+
+		if (ally->getSurrenderConsented())
+		{
+			anyHumanConsented = true;
+			if (!consentingHuman) consentingHuman = ally;
+		}
+		if (ally->isPlayerActive())
+		{
+			anyHumanActive = true;
+		}
+	}
+
+	// Dedup consent/withdrawal chatter: only the lowest-index active AI on this
+	// team prints the announcement. Every AI on the team still updates its own
+	// latch so each one's state remains consistent.
+	Bool iAmAnnouncer = (lowestAIIndex == m_player->getPlayerIndex());
+
+	// Ally-only one-shot notice when the first consent latches (cosmetic; sim
+	// state is identical across clients regardless of whether the message renders).
+	if (anyHumanConsented && !m_surrenderConsentAnnounced)
+	{
+		m_surrenderConsentAnnounced = true;
+		if (iAmAnnouncer && consentingHuman)
+		{
+			Player *localPlayer = ThePlayerList->getLocalPlayer();
+			if (localPlayer)
+			{
+				Bool isAlly = (localPlayer == consentingHuman)
+					|| (localPlayer->getRelationship(consentingHuman->getDefaultTeam()) == ALLIES);
+				if (isAlly)
+				{
+					RGBColor rgb;
+					rgb.setFromInt(consentingHuman->getPlayerColor());
+					UnicodeString announcement;
+					announcement.format(L"%ls has called for surrender. AI allies will give up once every human on the team is out.",
+						consentingHuman->getPlayerDisplayName().str());
+					TheInGameUI->messageColor(&rgb, announcement);
+				}
+			}
+		}
+	}
+	// If consent is withdrawn before all humans are out, announce once and allow
+	// the latch to fire again on a future "!surrender".
+	if (!anyHumanConsented && m_surrenderConsentAnnounced)
+	{
+		m_surrenderConsentAnnounced = false;
+		if (iAmAnnouncer)
+		{
+			Player *localPlayer = ThePlayerList->getLocalPlayer();
+			if (localPlayer)
+			{
+				Bool isAlly = (localPlayer == m_player)
+					|| (localPlayer->getRelationship(m_player->getDefaultTeam()) == ALLIES);
+				if (isAlly)
+				{
+					TheInGameUI->message(L"Surrender call withdrawn.");
+				}
+			}
+		}
+	}
+
+	if (!anyHumanConsented) return;
+	if (anyHumanActive) return;
+
+	// Trigger: kill this AI player. killPlayer() evacuates contains, kills units,
+	// zeros money, and sets the dead flag, which the existing defeat detection
+	// surfaces as a normal player elimination.
+	m_hasSurrendered = true;
+
+	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	if (localPlayer)
+	{
+		Bool isAlly = (localPlayer == m_player)
+			|| (localPlayer->getRelationship(m_player->getDefaultTeam()) == ALLIES);
+		if (isAlly)
+		{
+			RGBColor rgb;
+			rgb.setFromInt(m_player->getPlayerColor());
+			UnicodeString announcement;
+			announcement.format(L"%ls has surrendered.", m_player->getPlayerDisplayName().str());
+			TheInGameUI->messageColor(&rgb, announcement);
+		}
+	}
+
+	m_player->killPlayer();
 }
 
 //----------------------------------------------------------------------------------------------------------

@@ -625,6 +625,11 @@ public:
 	Bool isPlayerDead() const; // Favor !isPlayerActive() - this is used so OCLs don't give us stuff after death.
 	Bool isPlayerActive() const; // Player is alive and not observer. !isPlayerActive() is synonymous with observing.
 
+	// Surrender consent: human-driven "!surrender" / "!unsurrender" chat directive that
+	// authorizes AI allies to give up once every human on this team is out of the game.
+	void setSurrenderConsented(Bool consented) { m_surrenderConsented = consented; }
+	Bool getSurrenderConsented() const { return m_surrenderConsented; }
+
 	Bool didPlayerPreorder() const { return m_isPreorder; }
 
 	/// Grab the scorekeeper so we can score up in here!
@@ -832,4 +837,5 @@ private:
 
 	Bool									m_isPlayerDead;
 	Bool									m_logicalRetaliationModeEnabled;
+	Bool									m_surrenderConsented;	///< latched by "!surrender" chat; cleared by "!unsurrender"
 };
