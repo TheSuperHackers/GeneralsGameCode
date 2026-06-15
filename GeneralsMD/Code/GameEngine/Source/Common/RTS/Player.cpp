@@ -300,6 +300,7 @@ Player::Player( Int playerIndex )
 {
 	m_isPreorder = FALSE;
 	m_isPlayerDead = FALSE;
+	m_surrenderConsented = FALSE;
 
 	m_playerIndex = playerIndex;
 
@@ -359,6 +360,7 @@ void Player::init(const PlayerTemplate* pt)
 
 	m_isPreorder = FALSE;
 	m_isPlayerDead = FALSE;
+	m_surrenderConsented = FALSE;
 
 	m_radarCount = 0;
 	m_disableProofRadarCount = 0;

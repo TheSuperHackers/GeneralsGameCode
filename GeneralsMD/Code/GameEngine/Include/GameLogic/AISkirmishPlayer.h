@@ -107,6 +107,9 @@ protected:
 	// Scan ally beacons for the directive prefix; track the active directive
 	// beacon ID; announce on switch and on minute boundaries.
 	void processBeaconDirective();
+	// Once any human ally has "!surrender"-consented AND every human on this team
+	// is no longer active, kill this AI player. One-shot per game.
+	void processSurrenderDirective();
 	// Once-per-second phase milestone announcements (mid-game at 5min, late-game at 15min)
 	// plus the Syn/Dan broadcast easter egg fired at the late-game milestone.
 	void announceMilestones();
@@ -136,6 +139,11 @@ protected:
 	ObjectID    m_directiveBeaconID;
 	UnsignedInt m_nextDirectiveScanFrame;
 	UnsignedInt m_nextDirectiveAnnounceFrame;
+
+	// Surrender directive ("!surrender" / "!unsurrender" chat).
+	UnsignedInt m_nextSurrenderCheckFrame;
+	Bool        m_hasSurrendered;
+	Bool        m_surrenderConsentAnnounced;
 
 	// Ally communication: phase milestones, attack-commit, and distress signals.
 	UnsignedInt m_nextMilestoneCheckFrame;
