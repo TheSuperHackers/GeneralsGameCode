@@ -261,7 +261,9 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			m_anchor = msg->getArgument( 0 )->pixel;
 			m_currentPos = msg->getArgument( 0 )->pixel;
 
-			if (!TheInGameUI->isSelecting() && !m_isScrolling)
+			const Bool userWantsRMBScroll = !TheGlobalData->m_useAlternateMouse || TheGlobalData->m_useRightMouseScrollWithAlternateMouse;
+
+			if (userWantsRMBScroll && !TheInGameUI->isSelecting() && !m_isScrolling)
 			{
 				setScrolling(SCROLL_RMB);
 			}

@@ -1053,7 +1053,15 @@ GlobalData::GlobalData()
 	//-allAdvice feature
 	//m_allAdvice = FALSE;
 
+	m_useAlternateMouse = FALSE;
+#if RTS_GENERALS
+	// disable mouse scrolling in alternate mouse mode, per Harvard 7/15/03
+	m_useRightMouseScrollWithAlternateMouse = FALSE;
+#else
+	m_useRightMouseScrollWithAlternateMouse = TRUE;
+#endif
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
+	m_doubleClickAttackMove = FALSE;
 
 }
 
@@ -1194,6 +1202,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	// override INI values with user preferences
 	OptionPreferences optionPref;
 	TheWritableGlobalData->m_useAlternateMouse = optionPref.getAlternateMouseModeEnabled();
+	TheWritableGlobalData->m_useRightMouseScrollWithAlternateMouse = optionPref.getRightMouseScrollWithAlternateMouseEnabled();
 	TheWritableGlobalData->m_clientRetaliationModeEnabled = optionPref.getRetaliationModeEnabled();
 	TheWritableGlobalData->m_doubleClickAttackMove = optionPref.getDoubleClickAttackMoveEnabled();
 	TheWritableGlobalData->m_keyboardScrollFactor = optionPref.getScrollFactor();
