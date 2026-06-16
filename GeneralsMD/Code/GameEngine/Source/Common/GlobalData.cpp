@@ -645,6 +645,7 @@ GlobalData::GlobalData()
 	m_balanceTeamsUrl = "https://www.radarvan.com/api/balance_teams/";
 	m_mapSummaryUrl = "https://www.radarvan.com/api/map_summary/";
 	m_mapMatchCountsUrl = "https://www.radarvan.com/api/map_match_counts";
+	m_mapVoteUrl = "https://www.radarvan.com/api/map_vote/";
 	m_zuluDebug = FALSE;
 	m_windowed = 0;
 	m_xResolution = DEFAULT_DISPLAY_WIDTH;

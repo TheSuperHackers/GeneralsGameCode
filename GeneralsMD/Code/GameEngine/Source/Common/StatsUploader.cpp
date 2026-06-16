@@ -1200,6 +1200,217 @@ MapSummaryResult MapSummaryFromServer(const AsciiString& url,
 	return result;
 }
 
+// ---------------------------------------------------------------------------
+// Map vote (radarvan map_vote) via HTTP POST.
+// ---------------------------------------------------------------------------
+
+// Locate the first occurrence of "<key>" as a top-level JSON object key
+// inside body, and return a pointer to the first non-whitespace character
+// after its colon. Returns nullptr when the key isn't present or the
+// surrounding shape isn't recognized. Cheap and best-effort: assumes the
+// key name itself contains no backslash-escapes and that the body is a
+// well-formed flat object (no nested object whose keys collide with the
+// ones we look up).
+static const char *jsonValueStart(const char *body, const char *key)
+{
+	if (body == nullptr || key == nullptr || key[0] == '\0')
+		return nullptr;
+	size_t keyLen = strlen(key);
+	const char *p = body;
+	while ((p = strchr(p, '"')) != nullptr)
+	{
+		++p;
+		if (strncmp(p, key, keyLen) == 0 && p[keyLen] == '"')
+		{
+			const char *q = p + keyLen + 1;
+			while (*q == ' ' || *q == '\t' || *q == '\r' || *q == '\n')
+				++q;
+			if (*q != ':')
+			{
+				p = q;
+				continue;
+			}
+			++q;
+			while (*q == ' ' || *q == '\t' || *q == '\r' || *q == '\n')
+				++q;
+			return q;
+		}
+		// Skip to the matching closing quote so we don't trip into
+		// the middle of a string value.
+		const char *end = strchr(p, '"');
+		if (end == nullptr)
+			return nullptr;
+		p = end + 1;
+	}
+	return nullptr;
+}
+
+// Extract a JSON string value for the given top-level key. Returns true if
+// found and writes the unescaped value into outValue (handles \", \\, \n,
+// \r, \t, \/ ; everything else passes through). Returns false if the key
+// is missing or the value isn't a string.
+static bool jsonGetString(const char *body, const char *key, AsciiString &outValue)
+{
+	const char *p = jsonValueStart(body, key);
+	if (p == nullptr || *p != '"')
+		return false;
+	++p;
+	outValue.clear();
+	while (*p != '\0' && *p != '"')
+	{
+		if (*p == '\\' && p[1] != '\0')
+		{
+			char n = p[1];
+			switch (n)
+			{
+				case '"':  outValue.concat('"'); break;
+				case '\\': outValue.concat('\\'); break;
+				case '/':  outValue.concat('/'); break;
+				case 'n':  outValue.concat('\n'); break;
+				case 'r':  outValue.concat('\r'); break;
+				case 't':  outValue.concat('\t'); break;
+				default:   outValue.concat(n); break;
+			}
+			p += 2;
+		}
+		else
+		{
+			outValue.concat(*p++);
+		}
+	}
+	return true;
+}
+
+// Extract an unsigned integer JSON value for the given top-level key.
+// Returns true and writes the parsed number into outValue when present.
+static bool jsonGetUInt(const char *body, const char *key, unsigned int &outValue)
+{
+	const char *p = jsonValueStart(body, key);
+	if (p == nullptr)
+		return false;
+	if (*p < '0' || *p > '9')
+		return false;
+	unsigned int v = 0;
+	while (*p >= '0' && *p <= '9')
+	{
+		v = v * 10u + (unsigned int)(*p - '0');
+		++p;
+	}
+	outValue = v;
+	return true;
+}
+
+ChooseMapResult ChooseMapFromServer(const AsciiString& baseUrl,
+                                    const std::vector<AsciiString>& playerNames,
+                                    unsigned int playerCount)
+{
+	ChooseMapResult result;
+	result.success = false;
+	result.mapCRC = 0;
+	result.contentsMask = 0;
+
+	if (baseUrl.isEmpty())
+	{
+		result.errorMessage = "Map vote URL is not set.";
+		return result;
+	}
+
+	// Compose the full URL: baseUrl + "<playerCount>/choose". Append a
+	// separator slash if the configured base doesn't end with one.
+	AsciiString fullUrl = baseUrl;
+	if (fullUrl.getLength() == 0 || fullUrl.str()[fullUrl.getLength() - 1] != '/')
+		fullUrl.concat('/');
+	char seg[64];
+	sprintf(seg, "%u/choose", playerCount);
+	fullUrl.concat(seg);
+
+	// Build the JSON body: { "players": ["A","B",...] }
+	AsciiString body;
+	body.concat("{\"players\":[");
+	size_t i;
+	for (i = 0; i < playerNames.size(); ++i)
+	{
+		if (i > 0)
+			body.concat(',');
+		body.concat('"');
+		appendJsonEscaped(body, playerNames[i].isEmpty() ? "" : playerNames[i].str());
+		body.concat('"');
+	}
+	body.concat("]}");
+
+	WinInetSession s;
+	if (!openHttpRequest(fullUrl, "POST", nullptr, "Map vote", &s))
+	{
+		result.errorMessage = "Could not connect to map-vote server.";
+		return result;
+	}
+
+	const char *headers = "Content-Type: application/json\r\nAccept: application/json\r\n";
+	BOOL sent = HttpSendRequestA(s.hRequest, headers, (DWORD)strlen(headers),
+	                             const_cast<char*>(body.str()), (DWORD)body.getLength());
+	if (!sent)
+	{
+		result.errorMessage.format("Map vote request failed (WinINet %lu).",
+		                           GetLastError());
+		closeHttpRequest(&s);
+		return result;
+	}
+
+	DWORD statusCode = 0;
+	DWORD statusSize = sizeof(statusCode);
+	HttpQueryInfoA(s.hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
+	               &statusCode, &statusSize, nullptr);
+	if (statusCode < 200 || statusCode >= 300)
+	{
+		result.errorMessage.format("Map vote server returned HTTP %lu.", statusCode);
+		closeHttpRequest(&s);
+		return result;
+	}
+
+	static const DWORD bodyCap = 32 * 1024;
+	char *resp = (char *)malloc(bodyCap);
+	if (resp == nullptr)
+	{
+		result.errorMessage = "Out of memory reading map-vote response.";
+		closeHttpRequest(&s);
+		return result;
+	}
+	DWORD totalRead = 0;
+	for (;;)
+	{
+		DWORD bytesRead = 0;
+		if (!InternetReadFile(s.hRequest, resp + totalRead,
+		                      bodyCap - 1 - totalRead, &bytesRead))
+			break;
+		if (bytesRead == 0) break;
+		totalRead += bytesRead;
+		if (totalRead >= bodyCap - 1) break;
+	}
+	resp[totalRead] = '\0';
+	closeHttpRequest(&s);
+
+	printf("Map vote: %s -> %lu\n", fullUrl.str(), statusCode);
+
+	if (!jsonGetString(resp, "chosen_map", result.chosenMap) || result.chosenMap.isEmpty())
+	{
+		free(resp);
+		result.errorMessage = "Map vote response missing chosen_map.";
+		return result;
+	}
+
+	// Optional CDN-download fields. The server doesn't return these today,
+	// but the schema is reserved so the lookup-by-name fallback in the
+	// caller can be replaced with a CRC-verified install once the API ships
+	// them. All three are required together; partial sets are ignored.
+	jsonGetString(resp, "map_filename", result.mapFileName);
+	jsonGetUInt(resp, "map_crc", result.mapCRC);
+	jsonGetUInt(resp, "map_contents_mask", result.contentsMask);
+
+	free(resp);
+	result.success = true;
+	return result;
+}
+
 bool DownloadMapAssetFromServer(const AsciiString& downloadUrl,
                                 unsigned int mapCRC,
                                 const char *fileKind,

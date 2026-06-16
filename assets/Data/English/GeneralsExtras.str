@@ -22,6 +22,22 @@ GUI:ResumeFromReplay
 "RESUME"
 END
 
+GUI:MapVote
+"RADARVAN PICK"
+END
+
+GUI:MapVoteNotFound
+"Radarvan picked '%hs' but that map isn't installed locally."
+END
+
+GUI:MapVoteFailed
+"Radarvan map pick failed: %hs"
+END
+
+GUI:MapVoteApplied
+"Radarvan picked '%hs'."
+END
+
 GUI:ResumeArmed
 "Resume armed. The next game start will continue the replay."
 END
