@@ -213,6 +213,32 @@ MapSummaryResult MapSummaryFromServer(const AsciiString& url,
                                       const AsciiString& mapName,
                                       const std::vector<MapSummaryPlayer>& players);
 
+/// Result of a map_vote/<N>/choose API call.
+struct ChooseMapResult
+{
+	bool success;
+	AsciiString errorMessage;   ///< populated when !success
+	AsciiString chosenMap;      ///< populated when success: human-readable map name (e.g. "Hostile Dawn")
+	unsigned int mapCRC;        ///< populated when the server returns one; 0 means "not provided"
+	AsciiString mapFileName;    ///< populated when the server returns one (relative .map path); empty means "not provided"
+	unsigned int contentsMask;  ///< populated when the server returns one; 0 means "not provided"
+};
+
+/// Ask the map_vote/<playerCount>/choose endpoint to pick a map for the lobby.
+/// POSTs JSON {"players":[...]} and parses chosen_map from the response.
+/// The CRC / filename / contents_mask fields in the response are optional;
+/// when present they enable an automatic on-demand CDN download via
+/// DownloadAndInstallMap before the caller applies the map.
+/// Best-effort, blocking; uses WinINet's default timeouts.
+/// @param baseUrl Base URL of the map_vote endpoint, e.g.
+///        "https://www.radarvan.com/api/map_vote/". The handler appends
+///        "<playerCount>/choose" before sending.
+/// @param playerNames Lobby player names to send in the JSON body.
+/// @param playerCount Total occupied slots in the lobby (URL path segment).
+ChooseMapResult ChooseMapFromServer(const AsciiString& baseUrl,
+                                    const std::vector<AsciiString>& playerNames,
+                                    unsigned int playerCount);
+
 /// Refresh the cached map_match_counts table from the radarvan endpoint if
 /// the last successful fetch is older than maxAgeSec, or if no fetch has
 /// happened yet this session. Best-effort and blocking; uses WinINet's

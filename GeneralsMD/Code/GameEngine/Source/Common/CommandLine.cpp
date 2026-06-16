@@ -529,6 +529,16 @@ Int parseMapMatchCountsUrl(char *args[], int num)
 	return 1;
 }
 
+Int parseMapVoteUrl(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_mapVoteUrl = args[1];
+		return 2;
+	}
+	return 1;
+}
+
 Int parseReplay(char *args[], int num)
 {
 	if (num > 1)
@@ -1296,6 +1306,11 @@ static CommandLineParam paramsForStartup[] =
 	// {map, matchCount} entries, used to annotate each row with how
 	// often the map has been played. Pass an empty string ("") to disable.
 	{ "-mapMatchCountsUrl", parseMapMatchCountsUrl },
+
+	// Base URL the LAN-lobby "Radarvan Pick" button POSTs to: the handler
+	// appends "<playerCount>/choose" before sending {"players":[...]}.
+	// Pass an empty string ("") to disable.
+	{ "-mapVoteUrl", parseMapVoteUrl },
 
 	// Generic Zulu debug flag. Forwarded by the launcher to the game exe
 	// as-is. See parseZuluDebug for the current consumers.

@@ -129,6 +129,7 @@ static NameKeyType buttonStartID = NAMEKEY_INVALID;
 static NameKeyType buttonRandomizeID = NAMEKEY_INVALID;
 static NameKeyType buttonEmoteID = NAMEKEY_INVALID;
 static NameKeyType buttonSelectMapID = NAMEKEY_INVALID;
+static NameKeyType buttonMapVoteID = NAMEKEY_INVALID;
 static NameKeyType buttonResumeFromReplayID = NAMEKEY_INVALID;
 static NameKeyType checkboxLimitSuperweaponsID = NAMEKEY_INVALID;
 static NameKeyType comboBoxStartingCashID = NAMEKEY_INVALID;
@@ -139,6 +140,7 @@ static GameWindow *buttonBack = nullptr;
 static GameWindow *buttonStart = nullptr;
 static GameWindow *buttonRandomize = nullptr;
 static GameWindow *buttonSelectMap = nullptr;
+static GameWindow *buttonMapVote = nullptr;
 static GameWindow *buttonResumeFromReplay = nullptr;
 static GameWindow *buttonEmote = nullptr;
 static GameWindow *textEntryChat = nullptr;
@@ -924,6 +926,7 @@ void InitLanGameGadgets()
 	listboxChatWindowLanGameID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ListboxChatWindowLanGame" );
 	buttonEmoteID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonEmote" );
 	buttonSelectMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonSelectMap" );
+	buttonMapVoteID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonMapVote" );
 	buttonResumeFromReplayID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonResumeFromReplay" );
   checkboxLimitSuperweaponsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:CheckboxLimitSuperweapons" );
   comboBoxStartingCashID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ComboBoxStartingCash" );
@@ -936,6 +939,10 @@ void InitLanGameGadgets()
 	DEBUG_ASSERTCRASH(buttonEmote, ("Could not find the buttonEmote"));
 	buttonSelectMap = TheWindowManager->winGetWindowFromId( parentLanGameOptions,buttonSelectMapID  );
 	DEBUG_ASSERTCRASH(buttonSelectMap, ("Could not find the buttonSelectMap"));
+	buttonMapVote = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonMapVoteID );
+	// Button is optional: only present in builds of the .wnd that include the new entry. Guard access with nullptr checks.
+	if (buttonMapVote)
+		buttonMapVote->winEnable( TheLAN && TheLAN->AmIHost() );
 	buttonResumeFromReplay = TheWindowManager->winGetWindowFromId( parentLanGameOptions, buttonResumeFromReplayID );
 	// Button is optional: only present in builds of the .wnd that include the new entry. Guard access with nullptr checks.
 	if (buttonResumeFromReplay)
@@ -1051,6 +1058,7 @@ void DeinitLanGameGadgets()
 	parentLanGameOptions = nullptr;
 	buttonEmote = nullptr;
 	buttonSelectMap = nullptr;
+	buttonMapVote = nullptr;
 	buttonResumeFromReplay = nullptr;
 	buttonStart = nullptr;
 	buttonBack = nullptr;
@@ -1151,6 +1159,8 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 		//DEBUG_LOG(("LanGameOptionsMenuInit(): map is %s", TheLAN->GetMyGame()->getMap().str()));
 		buttonStart->winSetText(TheGameText->fetch("GUI:Accept"));
 		buttonSelectMap->winEnable( FALSE );
+		if (buttonMapVote)
+			buttonMapVote->winEnable( FALSE );
 		buttonRandomize->winEnable( FALSE );
     checkboxLimitSuperweapons->winEnable( FALSE ); // Can look but only host can touch
     comboBoxStartingCash->winEnable( FALSE );      // Ditto
@@ -1394,6 +1404,241 @@ WindowMsgHandledType LanGameOptionsMenuInput( GameWindow *window, UnsignedInt ms
 }
 
 
+// -----------------------------------------------------------------------------
+// Radarvan "Map Vote" button helpers
+// -----------------------------------------------------------------------------
+
+// Normalize a candidate display name for matching against the radarvan
+// response: lowercase + drop spaces. Spaces have to go because radarvan
+// stores some legacy entries with the folder name ("TournamentA") while
+// the engine's m_displayName uses the CSF-translated form with spaces
+// ("Tournament A"). Case folding handles "[RANK]" vs "[rank]" drift.
+static AsciiString normalizeMapNameForMatch(const UnicodeString &src)
+{
+	AsciiString out;
+	out.translate(src);
+	AsciiString stripped;
+	for (const char *p = out.str(); *p != '\0'; ++p)
+	{
+		if (*p != ' ')
+			stripped.concat(*p);
+	}
+	stripped.toLower();
+	return stripped;
+}
+
+// Locate a map in MapCache whose m_displayName matches the given
+// AsciiString. Strips two engine-added suffixes from m_displayName
+// before comparing:
+//   1) " (N)" / " (NN)" player-count suffix (appended for any
+//      multiplayer-eligible map).
+//   2) Trailing ".map" extension (unofficial maps derive
+//      m_displayName from the bare filename, official maps don't).
+// Comparison is case-insensitive and space-insensitive so the
+// server's "TournamentA" matches the engine's "Tournament A".
+// Returns the metadata pointer on match and writes the MapCache
+// iterator key (lowercase filename path the engine uses internally)
+// into *outKey. Returns nullptr when nothing matches.
+static const MapMetaData *findMapByDisplayName(const AsciiString &chosen, AsciiString *outKey)
+{
+	if (!TheMapCache || chosen.isEmpty())
+		return nullptr;
+	UnicodeString chosenU;
+	chosenU.translate(chosen);
+	AsciiString chosenNorm = normalizeMapNameForMatch(chosenU);
+	if (chosenNorm.isEmpty())
+		return nullptr;
+
+	for (MapCache::iterator it = TheMapCache->begin(); it != TheMapCache->end(); ++it)
+	{
+		UnicodeString display = it->second.m_displayName;
+
+		// Strip a trailing " (N)" / " (NN)" player-count suffix.
+		Int dlen = display.getLength();
+		if (dlen >= 4)
+		{
+			const WideChar *ds = display.str();
+			if (ds[dlen - 1] == L')')
+			{
+				Int di = dlen - 2;
+				while (di > 0 && ds[di] >= L'0' && ds[di] <= L'9')
+					--di;
+				if (di >= 1 && ds[di] == L'(' && ds[di - 1] == L' ' && di != dlen - 2)
+				{
+					UnicodeString trimmed;
+					Int j;
+					for (j = 0; j < di - 1; ++j)
+						trimmed.concat(ds[j]);
+					display = trimmed;
+					dlen = display.getLength();
+				}
+			}
+		}
+
+		// Strip a trailing ".map" extension (case-insensitive).
+		// Unofficial maps bake the filename into m_displayName so
+		// the extension survives into the visible name; official
+		// maps fetch a localized title and have no extension.
+		if (dlen >= 4)
+		{
+			const WideChar *ds = display.str();
+			WideChar c0 = ds[dlen - 4];
+			WideChar c1 = ds[dlen - 3];
+			WideChar c2 = ds[dlen - 2];
+			WideChar c3 = ds[dlen - 1];
+			if (c0 == L'.' &&
+				(c1 == L'm' || c1 == L'M') &&
+				(c2 == L'a' || c2 == L'A') &&
+				(c3 == L'p' || c3 == L'P'))
+			{
+				UnicodeString trimmed;
+				Int j;
+				for (j = 0; j < dlen - 4; ++j)
+					trimmed.concat(ds[j]);
+				display = trimmed;
+			}
+		}
+
+		AsciiString displayNorm = normalizeMapNameForMatch(display);
+		if (displayNorm == chosenNorm)
+		{
+			if (outKey)
+				*outKey = it->first;
+			return &it->second;
+		}
+	}
+	return nullptr;
+}
+
+// Host-only handler for the "Radarvan Pick" button. POSTs the lobby
+// roster to the configured map_vote endpoint, applies the chosen map
+// locally, and propagates via RequestGameOptions. All error states
+// surface as local SYSTEM chat lines so the host sees what went wrong
+// without aborting the lobby. The body sends humans-only names; the
+// URL path segment carries the total occupied-slot count (humans + AI
+// + observers) so the server picks from a pool sized to the actual
+// match.
+//
+// Forward-compat: when the server starts returning map_filename /
+// map_crc / map_contents_mask alongside chosen_map, the marked block
+// below auto-installs an unknown map via DownloadAndInstallMap
+// before the local-cache fallback fails. Until then, an unknown
+// chosen_map results in a chat error showing the picked name.
+static void handleMapVoteClick()
+{
+	if (!TheLAN || !TheLAN->AmIHost())
+		return;
+
+	LANGameInfo *game = TheLAN->GetMyGame();
+	if (!game)
+		return;
+
+	std::vector<AsciiString> humanNames;
+	unsigned int occupied = 0;
+	Int i;
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot *slot = game->getConstSlot(i);
+		if (!slot || !slot->isOccupied())
+			continue;
+		++occupied;
+		if (slot->isHuman())
+		{
+			AsciiString name;
+			name.translate(slot->getName());
+			if (!name.isEmpty())
+				humanNames.push_back(name);
+		}
+	}
+
+	if (humanNames.empty())
+	{
+		UnicodeString errU;
+		errU.format(TheGameText->fetch("GUI:MapVoteFailed"), "no human players");
+		TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), errU, LANAPI::LANCHAT_SYSTEM);
+		return;
+	}
+
+	ChooseMapResult res = ChooseMapFromServer(
+		TheGlobalData->m_mapVoteUrl, humanNames, occupied);
+	if (!res.success)
+	{
+		UnicodeString errU;
+		errU.format(TheGameText->fetch("GUI:MapVoteFailed"),
+			res.errorMessage.str());
+		TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), errU, LANAPI::LANCHAT_SYSTEM);
+		return;
+	}
+
+	AsciiString mapKey;
+	const MapMetaData *md = findMapByDisplayName(res.chosenMap, &mapKey);
+
+	// Forward-compat CDN-download hook. The server doesn't return
+	// these fields today (mapCRC == 0, mapFileName empty), so this
+	// branch is dormant. Once it does, an unknown chosen_map will be
+	// fetched + CRC-verified by DownloadAndInstallMap before the
+	// local-cache lookup retries, and the user-visible "not found"
+	// chat error stays as the final fallback for truly missing maps.
+	if (md == nullptr && !res.mapFileName.isEmpty() && res.mapCRC != 0)
+	{
+		if (DownloadAndInstallMap(res.mapFileName, res.mapCRC, res.contentsMask))
+		{
+			md = findMapByDisplayName(res.chosenMap, &mapKey);
+			if (md == nullptr && TheMapCache)
+			{
+				AsciiString key = res.mapFileName;
+				key.toLower();
+				md = TheMapCache->findMap(key);
+				if (md)
+					mapKey = key;
+			}
+		}
+	}
+
+	if (md == nullptr || mapKey.isEmpty())
+	{
+		UnicodeString errU;
+		errU.format(TheGameText->fetch("GUI:MapVoteNotFound"),
+			res.chosenMap.str());
+		TheLAN->OnChat(L"SYSTEM", TheLAN->GetLocalIP(), errU, LANAPI::LANCHAT_SYSTEM);
+		return;
+	}
+
+	game->setMap(mapKey);
+	game->getSlot(0)->setMapAvailability(true);
+	game->setMapCRC(md->m_CRC);
+	game->setMapSize(md->m_filesize);
+	game->resetStartSpots();
+	game->adjustSlotsForMap();
+
+	// Mirror the SelectMap confirm path: push the .map + sidecars to
+	// the cncstats CDN so joining peers without the map can pull it
+	// over HTTP instead of waiting for the P2P transfer at launch.
+	// Helper no-ops when URLs are empty or the server already has
+	// the map for this CRC.
+	if (TheGlobalData != nullptr)
+	{
+		UploadAllMapAssetsIfMissing(TheGlobalData->m_mapCheckUrl,
+			TheGlobalData->m_mapUploadUrl,
+			md->m_CRC,
+			md->m_fileName,
+			game->getMapContentsMask(),
+			0 /* no per-game seed in the lobby */);
+	}
+
+	// Drives updateGameOptions() (refreshes the map-name static text),
+	// lanUpdateSlotList() (refreshes player slot widgets), resets
+	// start positions, and re-sends RequestGameOptions to clients.
+	// Calling RequestGameOptions on its own updates engine state but
+	// leaves the lobby UI showing the previous map until the next
+	// re-init.
+	PostToLanGameOptions(SEND_GAME_OPTS);
+
+	UnicodeString okU;
+	okU.format(TheGameText->fetch("GUI:MapVoteApplied"), res.chosenMap.str());
+	TheLAN->RequestChat(okU, LANAPI::LANCHAT_SYSTEM);
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Lan Game Options menu window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -1541,6 +1786,10 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					mapSelectLayout->hide( FALSE );
 					mapSelectLayout->bringForward();
 
+				}
+				else if ( controlID == buttonMapVoteID )
+				{
+					handleMapVoteClick();
 				}
 				else if ( controlID == buttonRandomizeID )
 				{

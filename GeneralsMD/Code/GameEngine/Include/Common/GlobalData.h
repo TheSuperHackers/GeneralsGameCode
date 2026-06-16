@@ -159,6 +159,12 @@ public:
 	// been played. Empty string disables the call.
 	AsciiString m_mapMatchCountsUrl;
 
+	// Base URL for the LAN-lobby "Radarvan Pick" button. The handler POSTs
+	// {"players":[...]} to "<m_mapVoteUrl><playerCount>/choose" and uses
+	// the returned chosen_map name to set the lobby's map. Empty string
+	// disables the call (button no-ops with a chat error).
+	AsciiString m_mapVoteUrl;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
