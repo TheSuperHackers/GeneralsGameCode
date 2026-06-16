@@ -5543,7 +5543,7 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 	Int i = cell.x;
 	Int j = cell.y;
 	// Check the center cell
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_PATHFINDING
 	if (checkForAdjust(obj, locomotorSet, isHuman, i, j, layer, iRadius, center, dest, groupDest)) {
 		return true;
 	}
