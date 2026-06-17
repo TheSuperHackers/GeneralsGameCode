@@ -106,6 +106,10 @@ Color:Black
 "Black"
 END
 
+Color:Violet
+"Violet"
+END
+
 GUI:TacticalAI
 "Tactical AI"
 END
