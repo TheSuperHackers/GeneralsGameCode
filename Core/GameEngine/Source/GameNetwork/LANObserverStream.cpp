@@ -252,6 +252,11 @@ void LANObserverHost::acceptNew(UnicodeString* outNames, Int outNamesCap, Int& o
 			outNames[outCount++] = u;
 		}
 
+		LANObsLog("LANObserverHost: accepted observer TCP connection fd=%d from %u.%u.%u.%u snapshot=%u",
+			newFd,
+			(peer.sin_addr.s_addr) & 0xff, (peer.sin_addr.s_addr>>8) & 0xff,
+			(peer.sin_addr.s_addr>>16) & 0xff, (peer.sin_addr.s_addr>>24) & 0xff,
+			conn->snapshotSize);
 		DEBUG_LOG(("LANObserverHost - new observer fd=%d snapshot=%u",
 			newFd, conn->snapshotSize));
 	}
@@ -413,6 +418,9 @@ Bool LANObserverClient::connect(UnsignedInt ipNetworkOrder, UnsignedShort port, 
 	m_socketFd = fd;
 	m_localPath = localPath;
 	m_state = STATE_CONNECTING;
+	LANObsLog("LANObserverClient: TCP connect kickoff to %u.%u.%u.%u:%u (fd=%d)",
+		(ipNetworkOrder) & 0xff, (ipNetworkOrder>>8) & 0xff,
+		(ipNetworkOrder>>16) & 0xff, (ipNetworkOrder>>24) & 0xff, port, fd);
 	DEBUG_LOG(("LANObserverClient::connect - connecting fd=%d to port %u", fd, port));
 	return TRUE;
 }
@@ -454,12 +462,14 @@ void LANObserverClient::update()
 		Int err = SOCK_ERR_LAST;
 		if (rc < 0 && err != SOCK_ERR_WOULDBLOCK)
 		{
+			LANObsLog("LANObserverClient: TCP connect FAILED in poll (err=%d) - host not listening / unreachable", err);
 			DEBUG_LOG(("LANObserverClient - connect failed in poll (%d)", err));
 			m_state = STATE_CLOSED;
 			return;
 		}
 		// Optimistically transition to BUFFERING; the actual handshake we
 		// detect via the snapshot-size header arriving below.
+		LANObsLog("LANObserverClient: TCP connected; waiting for snapshot header");
 		m_state = STATE_BUFFERING;
 		// fall through to recv below
 	}

@@ -38,6 +38,7 @@
 #include "Common/UserPreferences.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/LANObserverStream.h" // for LANObsLog (release-mode observer diagnostics)
 #include "GameClient/MapUtil.h"
 
 void LANAPI::handleRequestLocations( LANMessage *msg, UnsignedInt senderIP )
@@ -257,6 +258,13 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 	{
 		return; // Not us.  Ignore it.
 	}
+	// Release-mode trace: confirms an inbound join request actually reached the
+	// host. If the joiner logs "sending UDP MSG_REQUEST_JOIN" but this line never
+	// appears, the request was lost on the wire (the lossy leg the robust observe
+	// path is designed to bypass).
+	LANObsLog("handleRequestJoin: received MSG_REQUEST_JOIN from %08X (inLobby=%d inProgress=%d)",
+		senderIP, m_inLobby ? 1 : 0,
+		(m_currentGame && m_currentGame->isGameInProgress()) ? 1 : 0);
 	LANMessage reply;
 	fillInLANMessage( &reply );
 	if (!m_inLobby && m_currentGame && m_currentGame->getIP(0) == m_localIP)
@@ -271,6 +279,8 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			// instead of just seeing an error dialog.
 			reply.GameNotJoined.observerPort =
 				(UnsignedShort)(NETWORK_BASE_PORT_NUMBER + LAN_OBSERVER_PORT_OFFSET);
+			LANObsLog("handleRequestJoin: game in progress; sending MSG_JOIN_DENY+observerPort=%u to %08X",
+				reply.GameNotJoined.observerPort, senderIP);
 			DEBUG_LOG(("LANAPI::handleRequestJoin - join denied because game already started; offering observer port %u.",
 				reply.GameNotJoined.observerPort));
 		}
