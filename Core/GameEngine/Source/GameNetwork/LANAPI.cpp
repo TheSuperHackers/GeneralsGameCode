@@ -329,6 +329,13 @@ void LANAPI::checkMOTD()
 
 extern Bool LANbuttonPushed;
 extern Bool LANSocketErrorDetected;
+
+// Defined in LANAPICallbacks.cpp; the observe prompt in OnGameJoin reads these
+// to know which host/port to connect to. RequestGameJoin sets them directly for
+// the robust (no-UDP-deny-needed) observe path below.
+extern UnsignedInt   s_pendingObserveHostIP;
+extern UnsignedShort s_pendingObservePort;
+
 void LANAPI::update()
 {
 	if(LANbuttonPushed)
@@ -646,6 +653,28 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 		return;
 	}
 
+	// Robust observe path: if we already know the game is in progress, don't
+	// depend on the host's UDP MSG_JOIN_DENY round-trip to learn the observer
+	// port. That handshake rides the lobby UDP socket, which the host services
+	// only on a throttled in-game pump and which competes with the in-game
+	// network flood, so it is lossy and gets lossier as a match goes on. The
+	// observer TCP port is deterministic (same formula the host uses in
+	// startObserverHost), so derive it locally, surface the observe prompt
+	// immediately, and let TCP handle connection reliability. The UDP join/deny
+	// flow below remains as a fallback for when our local in-progress flag is
+	// stale (e.g. the announce that would have set it was dropped).
+	if (game->isGameInProgress())
+	{
+		UnsignedInt   hostIP  = game->getSlot(0)->getIP();
+		UnsignedShort obsPort = (UnsignedShort)(NETWORK_BASE_PORT_NUMBER + LAN_OBSERVER_PORT_OFFSET);
+		LANObsLog("RequestGameJoin: game flagged in-progress; going direct to observer host=%08X port=%u (no UDP deny needed)",
+			hostIP, obsPort);
+		s_pendingObserveHostIP = hostIP;
+		s_pendingObservePort   = obsPort;
+		OnGameJoin( RET_GAME_STARTED, game );
+		return;
+	}
+
 	LANMessage msg;
 	msg.messageType = LANMessage::MSG_REQUEST_JOIN;
 	fillInLANMessage( &msg );
@@ -657,6 +686,8 @@ void LANAPI::RequestGameJoin( LANGameInfo *game, UnsignedInt ip /* = 0 */ )
 	GetStringFromRegistry("\\ergc", "", s);
 	strlcpy(msg.GameToJoin.serial, s.str(), ARRAY_SIZE(msg.GameToJoin.serial));
 
+	LANObsLog("RequestGameJoin: game not flagged in-progress; sending UDP MSG_REQUEST_JOIN to host=%08X",
+		msg.GameToJoin.gameIP);
 	sendMessage(&msg, ip);
 
 	m_pendingAction = ACT_JOIN;
