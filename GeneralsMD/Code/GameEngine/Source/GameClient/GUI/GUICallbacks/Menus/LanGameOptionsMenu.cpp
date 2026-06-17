@@ -1439,6 +1439,69 @@ static AsciiString normalizeMapNameForMatch(const UnicodeString &src)
 // Returns the metadata pointer on match and writes the MapCache
 // iterator key (lowercase filename path the engine uses internally)
 // into *outKey. Returns nullptr when nothing matches.
+// Find a locally-cached map by its CRC. The CRC is an exact key, so this
+// is far more reliable than the display-name matcher below: it survives
+// renamed folders, localized titles, and the " (N)" suffix games. On a
+// hit, writes the iterator key (lowercase filename path the engine uses
+// internally) into *outKey. Returns nullptr when crc is 0 or unmatched.
+static const MapMetaData *findMapByCRC(UnsignedInt crc, AsciiString *outKey)
+{
+	if (!TheMapCache || crc == 0)
+		return nullptr;
+
+	for (MapCache::iterator it = TheMapCache->begin(); it != TheMapCache->end(); ++it)
+	{
+		if (it->second.m_CRC == crc)
+		{
+			if (outKey)
+				*outKey = it->first;
+			return &it->second;
+		}
+	}
+	return nullptr;
+}
+
+// Build a local user-maps install path from a chosen map name, for when
+// the server supplies a CRC but no filename. cncstats serves the .map
+// purely by CRC, so the exact folder name here only has to be a valid,
+// unique path: DownloadAndInstallMap writes the bytes to it,
+// refreshUserMaps() reparses them, and the caller re-finds the map by CRC
+// afterward. Produces "<userMapDir>\<name>\<name>.map", mirroring the
+// engine's on-disk layout. Returns empty when the name has no usable
+// characters.
+static AsciiString deriveUserMapInstallPath(const AsciiString &chosenName)
+{
+	if (!TheMapCache || chosenName.isEmpty())
+		return AsciiString::TheEmptyString;
+
+	// Drop characters Windows forbids in a path component (and control
+	// chars); keep everything else verbatim.
+	AsciiString folder;
+	const char *p;
+	for (p = chosenName.str(); *p != '\0'; ++p)
+	{
+		unsigned char c = (unsigned char)*p;
+		if (c < 0x20)
+			continue;
+		if (c == '<' || c == '>' || c == ':' || c == '"' ||
+			c == '/' || c == '\\' || c == '|' || c == '?' || c == '*')
+			continue;
+		folder.concat((char)c);
+	}
+
+	// Trailing spaces and dots are illegal in Windows path components.
+	folder.trimEnd(' ');
+	folder.trimEnd('.');
+	folder.trimEnd(' ');
+	if (folder.isEmpty())
+		return AsciiString::TheEmptyString;
+
+	AsciiString out;
+	out.format("%s\\%s\\%s.map",
+		TheMapCache->getUserMapDir().str(), folder.str(), folder.str());
+	return out;
+}
+
 static const MapMetaData *findMapByDisplayName(const AsciiString &chosen, AsciiString *outKey)
 {
 	if (!TheMapCache || chosen.isEmpty())
@@ -1519,11 +1582,13 @@ static const MapMetaData *findMapByDisplayName(const AsciiString &chosen, AsciiS
 // + observers) so the server picks from a pool sized to the actual
 // match.
 //
-// Forward-compat: when the server starts returning map_filename /
-// map_crc / map_contents_mask alongside chosen_map, the marked block
-// below auto-installs an unknown map via DownloadAndInstallMap
-// before the local-cache fallback fails. Until then, an unknown
-// chosen_map results in a chat error showing the picked name.
+// The server returns the picked map's CRC (chosen_map_crc, as hex); the
+// lookup below is CRC-first, falling back to display-name matching. When
+// the host doesn't have the map locally, the marked block auto-installs
+// it from the cncstats CDN by CRC via DownloadAndInstallMap (deriving the
+// install path from the chosen name, since radarvan sends no filename)
+// before the local-cache lookup retries. An unknown map that the CDN also
+// lacks results in a chat error showing the picked name.
 static void handleMapVoteClick()
 {
 	if (!TheLAN || !TheLAN->AmIHost())
@@ -1570,23 +1635,41 @@ static void handleMapVoteClick()
 		return;
 	}
 
+	// CRC-first lookup: the server returns the picked map's CRC, which is
+	// an exact key into our local cache. Fall back to the fuzzy
+	// display-name matcher only when the CRC isn't known locally (or the
+	// server didn't send one).
 	AsciiString mapKey;
-	const MapMetaData *md = findMapByDisplayName(res.chosenMap, &mapKey);
+	const MapMetaData *md = findMapByCRC(res.mapCRC, &mapKey);
+	if (md == nullptr)
+		md = findMapByDisplayName(res.chosenMap, &mapKey);
 
-	// Forward-compat CDN-download hook. The server doesn't return
-	// these fields today (mapCRC == 0, mapFileName empty), so this
-	// branch is dormant. Once it does, an unknown chosen_map will be
-	// fetched + CRC-verified by DownloadAndInstallMap before the
-	// local-cache lookup retries, and the user-visible "not found"
-	// chat error stays as the final fallback for truly missing maps.
-	if (md == nullptr && !res.mapFileName.isEmpty() && res.mapCRC != 0)
+	// Not in the local cache: pull it from the cncstats CDN by CRC. The CDN
+	// serves the .map keyed purely by CRC, so all we need is res.mapCRC; the
+	// install path is res.mapFileName when the server provides one, otherwise
+	// derived from the chosen map name. radarvan sends no contents mask, so
+	// ask for every sidecar kind (missing ones just 404). DownloadAndInstallMap
+	// CRC-verifies the bytes against res.mapCRC before committing to disk and
+	// refreshes the cache; we then re-find the installed map by CRC.
+	if (md == nullptr && res.mapCRC != 0)
 	{
-		if (DownloadAndInstallMap(res.mapFileName, res.mapCRC, res.contentsMask))
+		AsciiString installPath = res.mapFileName;
+		if (installPath.isEmpty())
+			installPath = deriveUserMapInstallPath(res.chosenMap);
+
+		// 0x7E = preview|ini|str|solo|assets|readme; used when the server
+		// doesn't tell us which sidecars exist.
+		UnsignedInt mask = (res.contentsMask != 0) ? res.contentsMask : 0x7E;
+
+		if (!installPath.isEmpty() &&
+			DownloadAndInstallMap(installPath, res.mapCRC, mask))
 		{
-			md = findMapByDisplayName(res.chosenMap, &mapKey);
+			md = findMapByCRC(res.mapCRC, &mapKey);
+			if (md == nullptr)
+				md = findMapByDisplayName(res.chosenMap, &mapKey);
 			if (md == nullptr && TheMapCache)
 			{
-				AsciiString key = res.mapFileName;
+				AsciiString key = installPath;
 				key.toLower();
 				md = TheMapCache->findMap(key);
 				if (md)

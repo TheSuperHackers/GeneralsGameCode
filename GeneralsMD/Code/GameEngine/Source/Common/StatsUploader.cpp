@@ -1398,12 +1398,24 @@ ChooseMapResult ChooseMapFromServer(const AsciiString& baseUrl,
 		return result;
 	}
 
-	// Optional CDN-download fields. The server doesn't return these today,
-	// but the schema is reserved so the lookup-by-name fallback in the
-	// caller can be replaced with a CRC-verified install once the API ships
-	// them. All three are required together; partial sets are ignored.
+	// CRC of the picked map. radarvan returns it as an uppercase hex string
+	// under "chosen_map_crc" (e.g. "2778D1EA") and it equals the engine file
+	// CRC, which is exactly how the local map cache and the cncstats CDN are
+	// keyed. The caller uses it to match the map locally by CRC and, when
+	// missing, install it CRC-verified from the CDN. Fall back to a bare
+	// decimal "map_crc" for any older/alternate schema. A null value (the
+	// server's "no pick" case) leaves mapCRC at 0 and disables the download.
+	AsciiString crcStr;
+	if (jsonGetString(resp, "chosen_map_crc", crcStr) && !crcStr.isEmpty())
+		result.mapCRC = (unsigned int)strtoul(crcStr.str(), nullptr, 16);
+	else
+		jsonGetUInt(resp, "map_crc", result.mapCRC);
+
+	// Optional extras (not currently sent by radarvan): a relative .map path
+	// and the sidecar contents mask. When map_filename is absent the caller
+	// derives an install path from chosen_map; when the mask is absent it
+	// asks the CDN for every sidecar kind.
 	jsonGetString(resp, "map_filename", result.mapFileName);
-	jsonGetUInt(resp, "map_crc", result.mapCRC);
 	jsonGetUInt(resp, "map_contents_mask", result.contentsMask);
 
 	free(resp);
