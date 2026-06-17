@@ -5550,9 +5550,9 @@ Bool Pathfinder::adjustDestination(Object *obj, const LocomotorSet& locomotorSet
 #else
 	Coord3D adjustDest = *dest;
 	if (checkForAdjust(obj, locomotorSet, isHuman, i, j, layer, iRadius, center, &adjustDest, groupDest)) {
-		// TheSuperHackers @fix stephanmeesters 15/06/2026 Destination adjustment always snaps to the nearest grid cell
+		// TheSuperHackers @bugfix stephanmeesters 15/06/2026 Destination adjustment always snaps to the nearest grid cell
 		// even when no adjustment is necessary because there are no obstructions. For single units this adjustment
-		// can be skipped in order to provide more predictable movement, which is especially noticeable for chinooks.
+		// can be skipped in order to provide more accurate movement, which is especially noticeable for chinooks.
 		const Bool singleUnit = obj && obj->getGroup() && obj->getGroup()->getCount() == 1;
 		const Bool useExactDestination = isHuman && singleUnit;
 		if (!useExactDestination) {
