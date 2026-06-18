@@ -64,6 +64,12 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MetaEvent.h"
+#include "GameClient/HotKey.h"
+#include "GameClient/ControlBar.h"
+#include "Common/ThingTemplate.h"
+
+#include <vector>
+#include <cstring>
 
 #include "GameNetwork/FirewallHelper.h"
 #include "GameNetwork/IPEnumeration.h"
@@ -99,6 +105,75 @@ static GameWindow *textEntryAssignHotkey   = nullptr;
 static NameKeyType buttonAssignID = NAMEKEY_INVALID;
 static GameWindow *buttonAssign = nullptr;
 
+// The layout we create manually (not via Shell push/pop)
+static WindowLayout *s_keyboardOptionsLayout = nullptr;
+
+// ---------------------------------------------------------------------------
+// Custom hotkey categories — appended after the built-in MetaMap categories
+// ---------------------------------------------------------------------------
+enum FactionHotkeyCategory
+{
+	FACTION_USA = 0,
+	FACTION_CHINA,
+	FACTION_GLA,
+	FACTION_OTHER,
+	FACTION_COUNT
+};
+
+static const char* FactionCategoryNames[FACTION_COUNT] = {
+	"USA",
+	"China",
+	"GLA",
+	"Other"
+};
+
+// Simple uppercase helper (AsciiString only has toLower, not toUpper)
+static AsciiString asciiToUpper(const AsciiString& in)
+{
+	AsciiString result;
+	const char* s = in.str();
+	if (!s) return result;
+	char buf[256];
+	int i = 0;
+	for (; s[i] && i < 255; ++i)
+		buf[i] = (s[i] >= 'a' && s[i] <= 'z') ? (char)(s[i] - 32) : s[i];
+	buf[i] = '\0';
+	result.set(buf);
+	return result;
+}
+
+// We detect faction from the CommandButton name or its ThingTemplate name.
+static FactionHotkeyCategory detectFaction(const AsciiString& name)
+{
+	const char* s = name.str();
+	if (!s) return FACTION_OTHER;
+	// case-insensitive substring check
+	AsciiString lower = name;
+	lower.toLower();
+	const char* l = lower.str();
+	if (strstr(l, "america") || strstr(l, "usa"))
+		return FACTION_USA;
+	if (strstr(l, "china"))
+		return FACTION_CHINA;
+	if (strstr(l, "gla"))
+		return FACTION_GLA;
+	return FACTION_OTHER;
+}
+
+// Track which CommandButton is currently selected in the list (for faction mode)
+struct CmdBtnEntry
+{
+	AsciiString m_name;        // CommandButton name (key for overrides)
+	AsciiString m_textLabel;   // TextLabel (for default hotkey lookup)
+	UnicodeString m_displayName; // shown in list
+	AsciiString m_defaultKey;  // default hotkey from & marker
+};
+static std::vector<CmdBtnEntry> s_currentCmdBtnList;
+static Int s_selectedCmdBtnIndex = -1;
+
+// true when the combo box has a faction category selected (not a MetaMap category)
+static Bool s_isFactionCategory = FALSE;
+
 //use Bools to test if modifiers are used
 
 Bool shiftDown = false;
@@ -123,11 +198,23 @@ void populateCategoryBox()
 	AsciiString temp;
 	UnicodeString str;
 	GadgetComboBoxReset(comboBoxCategoryList);
+
+	// Built-in MetaMap categories (global hotkeys)
 	for ( i = 0; i < CATEGORY_NUM_CATEGORIES; ++i)
 	{
 		temp.format("GUI:%s", CategoryListName[i]);
 		str = TheGameText->fetch( temp );
 		index = GadgetComboBoxAddEntry(comboBoxCategoryList, str, color);
+	}
+
+	// Faction unit/building hotkey categories
+	for ( i = 0; i < FACTION_COUNT; ++i)
+	{
+		UnicodeString factionStr;
+		AsciiString aStr;
+		aStr.format("Unit Keys: %s", FactionCategoryNames[i]);
+		factionStr.translate(aStr);
+		GadgetComboBoxAddEntry(comboBoxCategoryList, factionStr, color);
 	}
 
 	GadgetComboBoxSetSelectedPos(comboBoxCategoryList, 0);
@@ -144,13 +231,17 @@ void setKeyDown( UnicodeString mod, Bool b )
 		altDown = b;
 }
 
-// initialized the command list box
+// initialized the command list box (MetaMap global hotkeys)
 void fillCommandListBox( MappableKeyCategories cat )
 {
 	if(!listBoxCommandList)
 		return;
 
 	GadgetListBoxReset(listBoxCommandList);
+	s_currentCmdBtnList.clear();
+	s_selectedCmdBtnIndex = -1;
+	s_isFactionCategory = FALSE;
+
 	Color color =  GameMakeColor(255,255,255,255);
 
 	for(const MetaMapRec *rec = TheMetaMap->getFirstMetaMapRec(); rec; rec = rec->m_next)
@@ -158,6 +249,83 @@ void fillCommandListBox( MappableKeyCategories cat )
 		if(rec->m_category == cat)
 			GadgetListBoxAddEntryText(listBoxCommandList, rec->m_displayName, color, -1, -1 );
 
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Fill the command list with CommandButtons matching the chosen faction
+// ---------------------------------------------------------------------------
+void fillCommandListBoxForFaction( FactionHotkeyCategory faction )
+{
+	if (!listBoxCommandList)
+		return;
+
+	GadgetListBoxReset(listBoxCommandList);
+	s_currentCmdBtnList.clear();
+	s_selectedCmdBtnIndex = -1;
+	s_isFactionCategory = TRUE;
+
+	Color color = GameMakeColor(255,255,255,255);
+
+	// Walk all CommandButtons registered in the ControlBar
+	ControlBar *cb = TheControlBar;
+	if (!cb) return;
+
+	const CommandButton *btn = cb->getCommandButtons();
+	for (; btn; btn = btn->getNext())
+	{
+		// Only consider buttons that have a text label (i.e. have a hotkey via &)
+		if (btn->getTextLabel().isEmpty())
+			continue;
+
+		// Determine faction from the button name (or its ThingTemplate if available)
+		AsciiString checkName = btn->getName();
+		if (btn->getThingTemplate())
+		{
+			// ThingTemplate name is often more faction-specific
+			AsciiString ttName = btn->getThingTemplate()->getName();
+			if (detectFaction(ttName) != FACTION_OTHER)
+				checkName = ttName;
+		}
+
+		FactionHotkeyCategory btnFaction = detectFaction(checkName);
+		if (btnFaction != faction)
+			continue;
+
+		// Get the default hotkey from the & marker in the translated text
+		AsciiString defaultKey;
+		if (TheHotKeyManager)
+			defaultKey = TheHotKeyManager->searchHotKey(btn->getTextLabel());
+
+		// Check for user override
+		AsciiString overrideKey;
+		if (TheHotKeyManager)
+			overrideKey = TheHotKeyManager->getOverride(btn->getName());
+
+		AsciiString displayKey = overrideKey.isNotEmpty() ? overrideKey : defaultKey;
+
+		// Build display string: "CommandName (Key)"
+		UnicodeString displayStr;
+		AsciiString aDisplay;
+		if (displayKey.isNotEmpty())
+		{
+			AsciiString upperKey = asciiToUpper(displayKey);
+			aDisplay.format("%s  (%s)", btn->getName().str(), upperKey.str());
+		}
+		else
+		{
+			aDisplay.format("%s", btn->getName().str());
+		}
+		displayStr.translate(aDisplay);
+
+		GadgetListBoxAddEntryText(listBoxCommandList, displayStr, color, -1, -1);
+
+		CmdBtnEntry entry;
+		entry.m_name = btn->getName();
+		entry.m_textLabel = btn->getTextLabel();
+		entry.m_displayName = displayStr;
+		entry.m_defaultKey = defaultKey;
+		s_currentCmdBtnList.push_back(entry);
 	}
 }
 
@@ -422,21 +590,32 @@ void KeyboardOptionsMenuInit( WindowLayout *layout, void *userData )
 
 
 	//special text entry box that needs its own function
-	textEntryAssignHotkey->winSetInputFunc( KeyboardTextEntryInput );
+	if (textEntryAssignHotkey)
+	{
+		textEntryAssignHotkey->winSetInputFunc( KeyboardTextEntryInput );
+	}
 
 	// populate category combo box
-	populateCategoryBox();
+	if (comboBoxCategoryList)
+		populateCategoryBox();
 
 	// populate command list
-	fillCommandListBox(CATEGORY_CONTROL);
+	if (listBoxCommandList)
+		fillCommandListBox(CATEGORY_CONTROL);
 
 	//disable textEntry until specific command is chosen
-	textEntryAssignHotkey->winEnable( false );
+	if (textEntryAssignHotkey)
+	{
+		textEntryAssignHotkey->winEnable( false );
 
-	//clear textEntry field
-	EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
-	e->text->setText( UnicodeString::TheEmptyString );
-	e->charPos = e->text->getTextLength();
+		//clear textEntry field
+		EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
+		if (e && e->text)
+		{
+			e->text->setText( UnicodeString::TheEmptyString );
+			e->charPos = e->text->getTextLength();
+		}
+	}
 
 	// set up these strings because they will be called a lot
 	alt   = TheGameText->fetch( "KEYBOARD:Alt+" );
@@ -447,7 +626,8 @@ void KeyboardOptionsMenuInit( WindowLayout *layout, void *userData )
 	layout->hide( FALSE );
 
 	// set keyboard focus to main parent
-	TheWindowManager->winSetFocus( parentKeyboardOptionsMenu );
+	if (parentKeyboardOptionsMenu)
+		TheWindowManager->winSetFocus( parentKeyboardOptionsMenu );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -455,11 +635,11 @@ void KeyboardOptionsMenuInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void KeyboardOptionsMenuShutdown( WindowLayout *layout, void *userData )
 {
-		// hide menu
+	// hide menu
 	layout->hide( TRUE );
 
-	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
+	// NOTE: We do NOT call TheShell->shutdownComplete() here because this
+	// layout is managed manually (not on the Shell stack).
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -468,6 +648,61 @@ void KeyboardOptionsMenuShutdown( WindowLayout *layout, void *userData )
 void KeyboardOptionsMenuUpdate( WindowLayout *layout, void *userData )
 {
 
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Open the KeyboardOptionsMenu as a manual overlay (not via Shell push).
+ *  This avoids interfering with the Shell stack and the OptionsMenu overlay. */
+//-------------------------------------------------------------------------------------------------
+void OpenKeyboardOptionsMenu( void )
+{
+	if (s_keyboardOptionsLayout)
+		return; // already open
+
+	// Create our layout the same way Shell::doPush does
+	s_keyboardOptionsLayout = TheWindowManager->winCreateLayout( "Menus/KeyboardOptionsMenu.wnd" );
+	if (!s_keyboardOptionsLayout)
+	{
+		// .wnd file is missing — show a message box so the user knows what to do
+		MessageBoxA( nullptr,
+			"Could not open Keyboard Options menu.\n\n"
+			"The file 'Window/Menus/KeyboardOptionsMenu.wnd' was not found.\n"
+			"Please copy the .wnd patch files from the Patch/ folder\n"
+			"in the repository to your Zero Hour installation directory.",
+			"Keyboard Options - Missing File",
+			MB_OK | MB_ICONWARNING );
+		return;
+	}
+
+	// Hide the OptionsMenu overlay so it doesn't show behind us
+	WindowLayout *optLayout = TheShell->getOptionsLayout( FALSE );
+	if (optLayout)
+		optLayout->hide( TRUE );
+
+	s_keyboardOptionsLayout->runInit( nullptr );
+	s_keyboardOptionsLayout->bringForward();
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Close the KeyboardOptionsMenu overlay and restore the OptionsMenu. */
+//-------------------------------------------------------------------------------------------------
+void CloseKeyboardOptionsMenu( void )
+{
+	if (s_keyboardOptionsLayout)
+	{
+		s_keyboardOptionsLayout->hide( TRUE );
+		s_keyboardOptionsLayout->destroyWindows();
+		deleteInstance( s_keyboardOptionsLayout );
+		s_keyboardOptionsLayout = nullptr;
+	}
+
+	// Show the OptionsMenu overlay again
+	WindowLayout *optLayout = TheShell->getOptionsLayout( FALSE );
+	if (optLayout)
+	{
+		optLayout->hide( FALSE );
+		optLayout->bringForward();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -570,24 +805,42 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
         Int selected;
         GadgetComboBoxGetSelectedPos(comboBoxCategoryList, &selected);
 
-				LookupListRec rec;
-				rec = CategoryListName[selected];
-				MappableKeyCategories cat = (MappableKeyCategories)(rec.value);
-				fillCommandListBox( cat );
+				if (selected < CATEGORY_NUM_CATEGORIES)
+				{
+					// Built-in MetaMap category
+					LookupListRec rec;
+					rec = CategoryListName[selected];
+					MappableKeyCategories cat = (MappableKeyCategories)(rec.value);
+					fillCommandListBox( cat );
+				}
+				else
+				{
+					// Faction unit-hotkey category
+					Int factionIdx = selected - CATEGORY_NUM_CATEGORIES;
+					if (factionIdx >= 0 && factionIdx < FACTION_COUNT)
+						fillCommandListBoxForFaction( (FactionHotkeyCategory)factionIdx );
+				}
 
 				//reset current hotkey description
-				GadgetStaticTextSetText( staticTextDescription, TheGameText->fetch( "GUI:NULL" ) );
+				if (staticTextDescription)
+					GadgetStaticTextSetText( staticTextDescription, TheGameText->fetch( "GUI:NULL" ) );
 
 				//reset current hotkey text
-				GadgetStaticTextSetText( staticTextCurrentHotkey, TheGameText->fetch( "GUI:NULL" ) );
+				if (staticTextCurrentHotkey)
+					GadgetStaticTextSetText( staticTextCurrentHotkey, TheGameText->fetch( "GUI:NULL" ) );
 
 				//clear textEntry field
-				EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
-				e->text->setText( UnicodeString::TheEmptyString );
-				e->charPos = e->text->getTextLength();
-
-				//disable textEntry until specific command is chosen
-				textEntryAssignHotkey->winEnable( false );
+				if (textEntryAssignHotkey)
+				{
+					EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
+					if (e && e->text)
+					{
+						e->text->setText( UnicodeString::TheEmptyString );
+						e->charPos = e->text->getTextLength();
+					}
+					//disable textEntry until specific command is chosen
+					textEntryAssignHotkey->winEnable( false );
+				}
 
       }
 			break;
@@ -604,38 +857,81 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 			{
 				Int selected;
 				GadgetListBoxGetSelected( listBoxCommandList,  &selected );
-				UnicodeString str;
-				str = GadgetListBoxGetText( listBoxCommandList, selected/*, Int column = 0*/ );
-				for(const MetaMapRec *rec = TheMetaMap->getFirstMetaMapRec(); rec; rec = rec->m_next)
+
+				if (s_isFactionCategory)
 				{
-					if(rec->m_displayName == str)
+					// --- Faction CommandButton hotkey mode ---
+					if (selected >= 0 && selected < (Int)s_currentCmdBtnList.size())
 					{
-						//set text in description window
-						GadgetStaticTextSetText( staticTextDescription, rec->m_description );
-						//set text in current hotkey text
-						MappableKeyType type = rec->m_key;
-						//enable text entry for assigning different hotkey
-						textEntryAssignHotkey->winEnable( true );
+						s_selectedCmdBtnIndex = selected;
+						const CmdBtnEntry& entry = s_currentCmdBtnList[selected];
 
-						for (const LookupListRec* keyName = KeyNames; keyName->name; keyName++)
+						// Show CommandButton name as description
+						UnicodeString descStr;
+						descStr.translate(entry.m_name);
+						if (staticTextDescription)
+							GadgetStaticTextSetText( staticTextDescription, descStr );
+
+						// Show current hotkey (override or default)
+						AsciiString currentKey;
+						if (TheHotKeyManager)
+							currentKey = TheHotKeyManager->getOverride(entry.m_name);
+						if (currentKey.isEmpty())
+							currentKey = entry.m_defaultKey;
+
+						if (currentKey.isNotEmpty())
 						{
-							if( keyName->value == type )
-							{
-								const char *cptr = keyName->name;
-								AsciiString aStr;
-								aStr.format( cptr );
-								UnicodeString uStr;
-								uStr.translate( aStr );
-
-								GadgetStaticTextSetText( staticTextCurrentHotkey, uStr );
-								break;
-							}
+							AsciiString upperKey = asciiToUpper(currentKey);
+							UnicodeString uKey;
+							uKey.translate(upperKey);
+							if (staticTextCurrentHotkey)
+								GadgetStaticTextSetText( staticTextCurrentHotkey, uKey );
+						}
+						else
+						{
+							if (staticTextCurrentHotkey)
+								GadgetStaticTextSetText( staticTextCurrentHotkey, TheGameText->fetch("GUI:NULL") );
 						}
 
-						break;
+						if (textEntryAssignHotkey)
+							textEntryAssignHotkey->winEnable( true );
 					}
 				}
+				else
+				{
+					// --- Original MetaMap global hotkey mode ---
+					UnicodeString str;
+					str = GadgetListBoxGetText( listBoxCommandList, selected );
+					s_selectedCmdBtnIndex = -1;
 
+					for(const MetaMapRec *rec = TheMetaMap->getFirstMetaMapRec(); rec; rec = rec->m_next)
+					{
+						if(rec->m_displayName == str)
+						{
+							if (staticTextDescription)
+								GadgetStaticTextSetText( staticTextDescription, rec->m_description );
+							MappableKeyType type = rec->m_key;
+							if (textEntryAssignHotkey)
+								textEntryAssignHotkey->winEnable( true );
+
+							for (const LookupListRec* keyName = KeyNames; keyName->name; keyName++)
+							{
+								if( keyName->value == type )
+								{
+									const char *cptr = keyName->name;
+									AsciiString aStr;
+									aStr.format( cptr );
+									UnicodeString uStr;
+									uStr.translate( aStr );
+									if (staticTextCurrentHotkey)
+										GadgetStaticTextSetText( staticTextCurrentHotkey, uStr );
+									break;
+								}
+							}
+							break;
+						}
+					}
+				}
 			}
 
 			break;
@@ -651,37 +947,129 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 			if( controlID == buttonBackID )
 			{
 
-				// go back one screen
-				TheShell->pop();
+				// Close our overlay and restore the OptionsMenu
+				CloseKeyboardOptionsMenu();
 
 			}
 			else if( controlID == buttonAssignID )
 			{
-				// check grammar in text field
+				if (s_isFactionCategory && s_selectedCmdBtnIndex >= 0
+						&& s_selectedCmdBtnIndex < (Int)s_currentCmdBtnList.size()
+						&& TheHotKeyManager && textEntryAssignHotkey)
+				{
+					// Get the typed key from the text entry field
+					EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
+					if (!e || !e->text) return MSG_HANDLED;
+					UnicodeString typed = e->text->getText();
+					if (typed.getLength() > 0)
+					{
+						// Extract the last character (the actual key, after any modifiers)
+						WideChar lastChar = typed.getCharAt(typed.getLength() - 1);
+						if (lastChar != L'+')
+						{
+							UnicodeString uKey;
+							uKey.concat(lastChar);
+							AsciiString newKey;
+							newKey.translate(uKey);
+
+							const CmdBtnEntry& entry = s_currentCmdBtnList[s_selectedCmdBtnIndex];
+
+							// Check for conflict — is this key already used by another button in the same faction list?
+							Bool conflict = FALSE;
+							AsciiString conflictName;
+							for (Int i = 0; i < (Int)s_currentCmdBtnList.size(); ++i)
+							{
+								if (i == s_selectedCmdBtnIndex)
+									continue;
+								const CmdBtnEntry& other = s_currentCmdBtnList[i];
+								AsciiString otherKey = TheHotKeyManager->getOverride(other.m_name);
+								if (otherKey.isEmpty())
+									otherKey = other.m_defaultKey;
+								otherKey.toLower();
+								AsciiString newKeyLower = newKey;
+								newKeyLower.toLower();
+								if (otherKey == newKeyLower)
+								{
+									conflict = TRUE;
+									conflictName = other.m_name;
+									break;
+								}
+							}
+
+							// Show conflict warning if another command already uses this key
+							if (conflict && staticTextDescription)
+							{
+								AsciiString warnA;
+								warnA.format("WARNING: '%s' is already used by %s",
+									asciiToUpper(newKey).str(), conflictName.str());
+								UnicodeString warnU;
+								warnU.translate(warnA);
+								GadgetStaticTextSetText(staticTextDescription, warnU);
+							}
+
+							// Apply the override (even with conflict — user was warned)
+							TheHotKeyManager->setOverride(entry.m_name, newKey);
+							TheHotKeyManager->saveOverrides();
+
+							// Update the current hotkey display
+							AsciiString upperKey = asciiToUpper(newKey);
+							UnicodeString uDisplay;
+							uDisplay.translate(upperKey);
+							GadgetStaticTextSetText(staticTextCurrentHotkey, uDisplay);
+
+							// Refresh the list to show updated key
+							Int comboSel;
+							GadgetComboBoxGetSelectedPos(comboBoxCategoryList, &comboSel);
+							Int factionIdx = comboSel - CATEGORY_NUM_CATEGORIES;
+							if (factionIdx >= 0 && factionIdx < FACTION_COUNT)
+								fillCommandListBoxForFaction((FactionHotkeyCategory)factionIdx);
+
+							// Clear the text entry
+							e->text->setText(UnicodeString::TheEmptyString);
+							e->charPos = 0;
+							textEntryAssignHotkey->winEnable(false);
+						}
+					}
+				}
 			}
 			else if( controlID == buttonResetAllID )
 			{
+				// Clear all custom hotkey overrides
+				if (TheHotKeyManager)
+				{
+					TheHotKeyManager->clearAllOverrides();
+					TheHotKeyManager->saveOverrides();
+				}
+
 				// populate category combo box
-				populateCategoryBox();
+				if (comboBoxCategoryList)
+					populateCategoryBox();
 
 				// populate command list
-				fillCommandListBox(CATEGORY_CONTROL);
+				if (listBoxCommandList)
+					fillCommandListBox(CATEGORY_CONTROL);
 
 				//reset current hotkey text
-				GadgetStaticTextSetText( staticTextCurrentHotkey, TheGameText->fetch( "GUI:NULL" ) );
+				if (staticTextCurrentHotkey)
+					GadgetStaticTextSetText( staticTextCurrentHotkey, TheGameText->fetch( "GUI:NULL" ) );
 
 				//clear textEntry field
-				EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
-				e->text->setText( UnicodeString::TheEmptyString );
-				e->charPos = e->text->getTextLength();
+				if (textEntryAssignHotkey)
+				{
+					EntryData *e = (EntryData *)textEntryAssignHotkey->winGetUserData();
+					if (e && e->text)
+					{
+						e->text->setText( UnicodeString::TheEmptyString );
+						e->charPos = e->text->getTextLength();
+					}
+					//disable text entry
+					textEntryAssignHotkey->winEnable( false );
+				}
 
 				//set all mods to false
 				setKeyDown(alt, false );
 				setKeyDown(ctrl, false );
 				setKeyDown(shift, false );
-
-				//disable text entry
-				textEntryAssignHotkey->winEnable( false );
 
 			}
 

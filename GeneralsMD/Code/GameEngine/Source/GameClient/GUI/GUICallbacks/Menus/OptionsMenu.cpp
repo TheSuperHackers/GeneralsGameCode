@@ -71,6 +71,10 @@
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
+#if defined(ENABLE_VOICE_CHAT)
+// VoiceOptionsUI removed — voice chat is now configured only via /voice slash commands.
+// #include "GameNetwork/GeneralsOnline/Voice/VoiceOptionsUI.h"
+#endif
 #include "WWDownload/Registry.h"
 #include "GameClient/MessageBox.h"
 
@@ -1429,6 +1433,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 
 
+	// Voice-chat options panel disabled — use /voice slash commands instead.
+
 	TheWindowManager->winSetModal(parent);
 	ignoreSelected = FALSE;
 }
@@ -1438,6 +1444,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 //-------------------------------------------------------------------------------------------------
 void OptionsMenuShutdown( WindowLayout *layout, void *userData )
 {
+	// VoiceOptionsUI::Teardown() removed with /voice-only configuration.
 /* moved into the back button stuff
 	if (pref)
 	{
@@ -1594,6 +1601,8 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
+			// VoiceOptionsUI event routing removed — /voice-only configuration.
+
 			if( controlID == buttonBack )
 			{
 				// go back one screen
@@ -1615,6 +1624,7 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 			}
 			else if (controlID == buttonAccept )
 			{
+				// VoiceOptionsUI::Save() removed — /voice slash commands persist directly.
 				saveOptions();
 
 				if (pref)
@@ -1658,7 +1668,7 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 			}
 			else if ( controlID == buttonKeyboardOptionsMenu )
 			{
-				TheShell->push( "Menus/KeyboardOptionsMenu.wnd" );
+				OpenKeyboardOptionsMenu();
 			}
 			else if(controlID == checkDrawAnchorID )
       {

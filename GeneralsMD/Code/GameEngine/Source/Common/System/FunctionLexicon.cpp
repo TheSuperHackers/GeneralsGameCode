@@ -294,6 +294,7 @@ static FunctionLexicon::TableEntry winLayoutUpdateTable[] =
 
 	{ NAMEKEY_INVALID, "MainMenuUpdate",                  (void*)MainMenuUpdate },
 	{ NAMEKEY_INVALID, "OptionsMenuUpdate",               (void*)OptionsMenuUpdate },
+	{ NAMEKEY_INVALID, "KeyboardOptionsMenuUpdate",       (void*)KeyboardOptionsMenuUpdate },
 	{ NAMEKEY_INVALID, "SinglePlayerMenuUpdate",          (void*)SinglePlayerMenuUpdate },
 	{ NAMEKEY_INVALID, "MapSelectMenuUpdate",             (void*)MapSelectMenuUpdate },
 	{ NAMEKEY_INVALID, "LanLobbyMenuUpdate",              (void*)LanLobbyMenuUpdate },

@@ -58,6 +58,7 @@
 #include "GameClient/Keyboard.h"
 #include "GameClient/GameText.h"
 #include "Common/AudioEventRTS.h"
+#include "Common/UserPreferences.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -132,6 +133,7 @@ HotKeyManager::~HotKeyManager()
 void HotKeyManager::init()
 {
 	m_hotKeyMap.clear();
+	loadOverrides();
 }
 
 //-----------------------------------------------------------------------------
@@ -224,6 +226,97 @@ AsciiString HotKeyManager::searchHotKey( const UnicodeString& uStr )
 
 //-----------------------------------------------------------------------------
 HotKeyManager *TheHotKeyManager = nullptr;
+
+//-----------------------------------------------------------------------------
+// HOTKEY OVERRIDE METHODS (custom per-CommandButton remapping)
+//-----------------------------------------------------------------------------
+
+static const char* HOTKEY_OVERRIDES_FILENAME = "HotKeyOverrides.ini";
+static const char* HOTKEY_OVERRIDE_PREFIX    = "HotKey_";
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::setOverride( const AsciiString& commandButtonName, const AsciiString& newKey )
+{
+	if (commandButtonName.isEmpty() || newKey.isEmpty())
+		return;
+	AsciiString lowerKey = newKey;
+	lowerKey.toLower();
+	m_hotKeyOverrides[commandButtonName] = lowerKey;
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::removeOverride( const AsciiString& commandButtonName )
+{
+	m_hotKeyOverrides.erase(commandButtonName);
+}
+
+//-----------------------------------------------------------------------------
+AsciiString HotKeyManager::getOverride( const AsciiString& commandButtonName ) const
+{
+	OverrideMap::const_iterator it = m_hotKeyOverrides.find(commandButtonName);
+	if (it != m_hotKeyOverrides.end())
+		return it->second;
+	return AsciiString::TheEmptyString;
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::clearAllOverrides()
+{
+	m_hotKeyOverrides.clear();
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::loadOverrides()
+{
+	m_hotKeyOverrides.clear();
+	UserPreferences prefs;
+	if (!prefs.load(HOTKEY_OVERRIDES_FILENAME))
+		return;  // no saved overrides, that's fine
+
+	const size_t prefixLen = strlen(HOTKEY_OVERRIDE_PREFIX);
+	for (PreferenceMap::const_iterator it = prefs.begin(); it != prefs.end(); ++it)
+	{
+		const AsciiString& key = it->first;
+		if (key.getLength() > (Int)prefixLen
+			&& strncmp(key.str(), HOTKEY_OVERRIDE_PREFIX, prefixLen) == 0)
+		{
+			// strip "HotKey_" prefix to recover the CommandButton name
+			AsciiString cmdName = AsciiString(key.str() + prefixLen);
+			AsciiString val = it->second;
+			val.toLower();
+			if (cmdName.isNotEmpty() && val.isNotEmpty())
+				m_hotKeyOverrides[cmdName] = val;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+void HotKeyManager::saveOverrides()
+{
+	UserPreferences prefs;
+	// don't bother loading existing file; we overwrite completely
+	prefs.load(HOTKEY_OVERRIDES_FILENAME);  // sets internal filename
+
+	// clear any old HotKey_ entries
+	for (PreferenceMap::iterator it = prefs.begin(); it != prefs.end(); )
+	{
+		if (strncmp(it->first.str(), HOTKEY_OVERRIDE_PREFIX, strlen(HOTKEY_OVERRIDE_PREFIX)) == 0)
+			it = prefs.erase(it);
+		else
+			++it;
+	}
+
+	// write current overrides
+	for (OverrideMap::const_iterator it = m_hotKeyOverrides.begin();
+			 it != m_hotKeyOverrides.end(); ++it)
+	{
+		AsciiString prefKey;
+		prefKey.format("%s%s", HOTKEY_OVERRIDE_PREFIX, it->first.str());
+		prefs.setAsciiString(prefKey, it->second);
+	}
+
+	prefs.write();
+}
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
