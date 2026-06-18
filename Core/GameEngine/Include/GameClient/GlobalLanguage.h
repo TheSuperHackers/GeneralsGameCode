@@ -49,13 +49,16 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "Common/SubsystemInterface.h"
+#include "Common/AsciiString.h"
+#include "Common/Language.h"
 #include "Common/STLTypedefs.h"
+#include "Common/SubsystemInterface.h"
 #include "GameClient/FontDesc.h"
+
+class INI;
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-class AsciiString;
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -89,6 +92,7 @@ public:
 	virtual void update() override {}
 
 	Real getResolutionFontSizeAdjustment() const;
+  LanguageID getLanguageIDEnumValue() const;
 	Int adjustFontSize(Int theFontSize); // Adjusts font size for resolution. jba.
 
 	void parseCustomDefinition();
@@ -125,6 +129,9 @@ public:
 	Real			m_resolutionFontSizeAdjustment;
 	Real			m_userResolutionFontSizeAdjustment;
 	ResolutionFontSizeMethod m_resolutionFontSizeMethod;
+	AsciiString m_languageID; // Map language setting to LanguageID. TheSuperHackers @feature
+	AsciiString m_languagePrefix; // Map language setting to .str prefix. TheSuperHackers @feature
+	Bool m_isRTL; // Is current language RTL? TheSuperHackers @feature
 	StringList m_localFonts; // List of the font filenames that are in our local directory
 };
 

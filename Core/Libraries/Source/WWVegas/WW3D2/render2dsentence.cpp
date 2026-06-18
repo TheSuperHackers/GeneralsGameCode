@@ -70,6 +70,7 @@ Render2DSentenceClass::Render2DSentenceClass () :
 	TextureSizeHint (0),
 	WrapWidth (0),
 	Centered (false),
+	RightAligned (false),
 	DrawExtents (0, 0, 0, 0),
 	ParseHotKey( false ),
 	useHardWordWrap( false)
@@ -148,6 +149,8 @@ Render2DSentenceClass::Reset ()
 
 	Cursor.Set (0, 0);
 	MonoSpaced = false;
+	Centered = false;
+	RightAligned = false;
 	ParseHotKey = false;
 
 	Release_Pending_Surfaces ();
@@ -834,7 +837,14 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 		//
 		// we now hold the length of the line and it's width lets set our cursor position to center it
 		//
-		Cursor.X = (int)((extent.X - line_width) / 2);
+		float boundary_width = (WrapWidth > 0) ? (float)WrapWidth : extent.X;
+		if (Centered)
+			Cursor.X = (int)((boundary_width - line_width) / 2);
+		else if (RightAligned)
+			Cursor.X = (int)(boundary_width - line_width);
+		else
+			Cursor.X = 0;
+
 		if(Cursor.X < 0)
 			Cursor.X = 0;
 		if(calcHotKeyX)
@@ -843,15 +853,34 @@ void	Render2DSentenceClass::Build_Sentence_Centered (const WCHAR *text, int *hkX
 			hotKeyPosX = Cursor.X + notCenteredHotkeyX;
 		}
 
+		WCHAR bidi_buf[1024];
+		const WCHAR* p_render_text = text;
+		if (RightAligned)
+		{
+			int bidi_len = (charCount + 1 < 1024) ? charCount + 1 : 1023;
+			wcsncpy(bidi_buf, text, bidi_len);
+			bidi_buf[bidi_len] = 0;
+			
+			// Only reorder the visible part (exclude trailing newline/space)
+			int actual_len = (int)wcslen(bidi_buf);
+			while (actual_len > 0 && (bidi_buf[actual_len-1] == L'\n' || bidi_buf[actual_len-1] == L'\r')) {
+				actual_len--;
+			}
+			Reorder_Line_BiDi(bidi_buf, actual_len);
+			p_render_text = bidi_buf;
+		}
+
 		for(int i = 0; i <= charCount; i++) {
-			WCHAR ch = *text++;
+			WCHAR ch = *p_render_text++;
+			if (p_render_text != text + 1) text++; // Advance original pointer only if we are using bidi_buf
 			dontBlit = false;
 			//
 			//	Determine how much horizontal space this character requires
 			//
-			if(ParseHotKey && (ch == L'&') && (*text != 0) && (*text > L' ') && (*text != L'\n'))
+			if(ParseHotKey && (ch == L'&') && (*p_render_text != 0) && (*p_render_text > L' ') && (*p_render_text != L'\n'))
 			{
-				ch = *text++;
+				ch = *p_render_text++;
+				if (p_render_text != text + 1) text++; // Advance original pointer only if we are using bidi_buf
 				dontBlit = true;
 			}
 			float char_spacing = Font->Get_Char_Spacing (ch);
@@ -984,16 +1013,29 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 
 	float char_height = Font->Get_Char_Height ();
 
+	WCHAR bidi_buf[1024];
+	const WCHAR* p_render_text = text;
+	if (RightAligned && !justCalcExtents)
+	{
+		int len = (int)wcslen(text);
+		int bidi_len = (len < 1024) ? len : 1023;
+		wcsncpy(bidi_buf, text, bidi_len);
+		bidi_buf[bidi_len] = 0;
+		Reorder_Line_BiDi(bidi_buf, (int)wcslen(bidi_buf));
+		p_render_text = bidi_buf;
+	}
+
 	//
 	//	Loop over all the characters in the string
 	//
-	while (text != nullptr) {
-		WCHAR ch = *text++;
+	while (p_render_text != nullptr) {
+		WCHAR ch = *p_render_text++;
+		text++; // Advance original pointer
 		dontBlit = false;
 		//
 		//	Determine how much horizontal space this character requires
 		//
-		if(ParseHotKey && (ch == L'&') && (*text != 0) && (*text > L' ') && (*text != L'\n'))
+		if(ParseHotKey && (ch == L'&') && (*p_render_text != 0) && (*p_render_text > L' ') && (*p_render_text != L'\n'))
 		{
 				hotKeyPosY = Cursor.Y;
 			if (calcHotKeyX)
@@ -1001,7 +1043,8 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 			else
 				hotKeyPosX = Cursor.X + TextureOffset.I -TextureStartX;//TextureOffset.I;
 
-			ch = *text++;
+			ch = *p_render_text++;
+			text++; // Advance original pointer
 			dontBlit = true;
 		}
 		float char_spacing = Font->Get_Char_Spacing (ch);
@@ -1040,7 +1083,7 @@ Vector2	Render2DSentenceClass::Build_Sentence_Not_Centered (const WCHAR *text, i
 					//
 					//	Find the length of the next word
 					//
-					const WCHAR *word	= text;
+					const WCHAR *word	= p_render_text;
 					float word_width	= char_spacing;
 					while ((*word != 0) && (*word > L' ')) {
 						if(ParseHotKey && (*word == L'&') && (*word+1 != 0) && (*word+1 > L' ') && (*word+1 != L'\n'))
@@ -1147,7 +1190,7 @@ Render2DSentenceClass::Build_Sentence (const WCHAR *text, int *hkX, int *hkY)
 	if (Font == nullptr)
 		return;
 
-	if(Centered && (WrapWidth > 0 || wcschr(text,L'\n')))
+	if(Centered || RightAligned)
 		Build_Sentence_Centered(text, hkX, hkY);
 	else
 		Build_Sentence_Not_Centered(text, hkX, hkY);
@@ -1746,5 +1789,56 @@ FontCharsClass::Free_Character_Arrays ()
 	for (int index = 0; index < 256; index ++) {
 		delete ASCIICharArray[index];
 		ASCIICharArray[index] = nullptr;
+	}
+}
+
+bool Render2DSentenceClass::Is_RTL_Char(WCHAR ch)
+{
+	// Arabic
+	if (ch >= 0x0600 && ch <= 0x06FF) return true;
+	if (ch >= 0x0750 && ch <= 0x07FF) return true;
+	if (ch >= 0x08A0 && ch <= 0x08FF) return true;
+	if (ch >= 0xFB50 && ch <= 0xFDFF) return true;
+	if (ch >= 0xFE70 && ch <= 0xFEFF) return true;
+	// Hebrew
+	if (ch >= 0x0590 && ch <= 0x05FF) return true;
+	return false;
+}
+
+void Render2DSentenceClass::Reorder_Line_BiDi(WCHAR* text, int len)
+{
+	if (len <= 1) return;
+
+	// 1. Reverse entire line
+	for (int i = 0; i < len / 2; ++i) {
+		WCHAR temp = text[i];
+		text[i] = text[len - 1 - i];
+		text[len - 1 - i] = temp;
+	}
+
+	// 2. Scan for LTR runs and reverse them back
+	int start = -1;
+	for (int i = 0; i <= len; ++i) {
+		WCHAR ch = (i < len) ? text[i] : 0;
+		bool is_ltr = (ch != 0) && !Is_RTL_Char(ch);
+		
+		// Heuristic: numbers and basic punctuation stay with the previous run direction if possible,
+		// but for this simple version we'll just treat everything non-RTL as LTR to fix readability.
+		// However, we don't want to flip single spaces/punctuation if they are just separators.
+		
+		if (is_ltr && start == -1) {
+			start = i;
+		} else if (!is_ltr && start != -1) {
+			int run_len = i - start;
+			if (run_len > 0) {
+				// Reverse the LTR run back
+				for (int j = 0; j < run_len / 2; ++j) {
+					WCHAR temp = text[start + j];
+					text[start + j] = text[start + run_len - 1 - j];
+					text[start + run_len - 1 - j] = temp;
+				}
+			}
+			start = -1;
+		}
 	}
 }

@@ -485,7 +485,7 @@ void GameEngine::init()
 
 		AsciiString fname;
 		fname.format("Data\\%s\\CommandMap", GetRegistryLanguage().str());
-		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), nullptr, fname.str(), "Data\\INI\\CommandMap");
+		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), nullptr, "Data\\INI\\CommandMap", fname.str());
 
 #if defined(RTS_DEBUG)
 		ini.loadFileDirectory("Data\\INI\\CommandMapDebug", INI_LOAD_MULTIFILE, nullptr);

@@ -159,6 +159,10 @@ public:
 																											return false;
 																										Centered = isCentered;
 																										return true;}
+	bool	Set_Right_Aligned( bool isRightAligned ) { if(RightAligned == isRightAligned)
+																			return false;
+																		RightAligned = isRightAligned;
+																		return true;}
 	void Set_Hot_Key_Parse( bool parseHotKey ){ ParseHotKey = parseHotKey; }
 	void Set_Use_Hard_Word_Wrap( bool useHardWrap){ useHardWordWrap = useHardWrap;	}
 	//
@@ -256,6 +260,12 @@ private:
 	bool												MonoSpaced;
 	float												WrapWidth;
 	bool												Centered;			// Determines whether or not to center each line
+	bool												RightAligned;		// Determines whether or not to right-align each line
+
+	// BiDi helpers
+	static bool								Is_RTL_Char(WCHAR ch);
+	void										Reorder_Line_BiDi(WCHAR* text, int len);
+
 	RectClass										ClipRect;
 	RectClass										DrawExtents;
 	bool												IsClippedEnabled;

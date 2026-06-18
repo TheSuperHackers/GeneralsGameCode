@@ -18,7 +18,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
+//  (c) 2001-2003 Electronic Arts Inc.                                        //
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -45,14 +45,17 @@
 //         Includes
 //----------------------------------------------------------------------------
 
-#include "PreRTS.h"
-#include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "Common/file.h"
+#include "PreRTS.h"
 
+
+#include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/PerfTimer.h"
+#include "Common/Registry.h"
 
 #include "Lib/PathUtil.h"
 
@@ -172,13 +175,29 @@ void		FileSystem::reset()
 // FileSystem::open
 //============================================================================
 
-File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize, FileInstance instance )
-{
-	USE_PERF_TIMER(FileSystem)
-	File *file = nullptr;
+File *FileSystem::openFile(const Char *filename, Int access, size_t bufferSize,
+                           FileInstance instance) {
+  USE_PERF_TIMER(FileSystem)
+  File *file = nullptr;
 
-	if ( TheLocalFileSystem != nullptr )
-	{
+  if (TheLocalFileSystem != nullptr) 
+  {
+#if !RETAIL_COMPATIBLE_CRC
+    // TheSuperHackers @mod prioritize localized Data/<RegistryLanguage>/ path
+    AsciiString lang = GetRegistryLanguage();
+    if (lang.isNotEmpty() && strnicmp(filename, "Data\\", 5) != 0 &&
+        strnicmp(filename, "Data/", 5) != 0) {
+      AsciiString localizedPath;
+      localizedPath.format("Data\\%s\\%s", lang.str(), filename);
+      if (TheLocalFileSystem->doesFileExist(localizedPath.str())) {
+        file = TheLocalFileSystem->openFile(localizedPath.str(), access,
+                                            bufferSize);
+        if (file != nullptr)
+          return file;
+      }
+    }
+#endif
+
 		if (instance != 0)
 		{
 			if (TheLocalFileSystem->doesFileExist(filename))
@@ -238,6 +257,21 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 				return FALSE;
 			if (instance <= it->second.instanceExists)
 				return TRUE;
+		}
+	}
+#endif
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @mod prioritize localized Data/<RegistryLanguage>/ path
+	AsciiString lang = GetRegistryLanguage();
+	if (lang.isNotEmpty() && strnicmp(filename, "Data\\", 5) != 0 &&
+		strnicmp(filename, "Data/", 5) != 0)
+	{
+		AsciiString localizedPath;
+		localizedPath.format("Data\\%s\\%s", lang.str(), filename);
+		if (TheLocalFileSystem->doesFileExist(localizedPath.str()))
+		{
+			return TRUE;
 		}
 	}
 #endif

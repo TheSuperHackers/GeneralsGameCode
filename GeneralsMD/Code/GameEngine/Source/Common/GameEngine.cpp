@@ -503,6 +503,13 @@ void GameEngine::init()
 #ifdef DEBUG_CRC
 		initSubsystem(TheDeepCRCSanityCheck, "TheDeepCRCSanityCheck", MSGNEW("GameEngineSubystem") DeepCRCSanityCheck, nullptr);
 #endif // DEBUG_CRC
+
+		DEBUG_LOG(("PROGRESS: Starting initSubsystem(TheGlobalLanguageData)"));
+		initSubsystem(TheGlobalLanguageData,"TheGlobalLanguageData",MSGNEW("GameEngineSubsystem") GlobalLanguage, nullptr); // must be before the game text
+		DEBUG_LOG(("PROGRESS: parseCustomDefinition"));
+		TheGlobalLanguageData->parseCustomDefinition();
+
+		DEBUG_LOG(("PROGRESS: Starting initSubsystem(TheGameText)"));
 		initSubsystem(TheGameText, "TheGameText", CreateGameTextInterface(), nullptr);
 		updateWindowTitle();
 
@@ -531,7 +538,9 @@ void GameEngine::init()
   startTime64 = endTime64;//Reset the clock ////////////////////////////////////////////////////////
 	DEBUG_LOG(("%s", Buf));////////////////////////////////////////////////////////////////////////////
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
-		initSubsystem(TheAudio,"TheAudio", createAudioManager(TheGlobalData->m_headless), nullptr);
+		initSubsystem(TheAudio,"TheAudio", TheGlobalData->m_headless ? NEW AudioManagerDummy : createAudioManager(), nullptr);
+		if (!TheAudio->isMusicAlreadyLoaded())
+			setQuitting(TRUE);
 
 #if RTS_ZEROHOUR && RETAIL_COMPATIBLE_CRC
 		TheNameKeyGenerator->syncNameKeyID();
@@ -629,7 +638,7 @@ void GameEngine::init()
 
 		AsciiString fname;
 		fname.format("Data\\%s\\CommandMap", GetRegistryLanguage().str());
-		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), nullptr, fname.str(), "Data\\INI\\CommandMap");
+		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), nullptr, "Data\\INI\\CommandMap", fname.str());
 
 #if defined(RTS_DEBUG)
 		ini.loadFileDirectory("Data\\INI\\CommandMapDebug", INI_LOAD_MULTIFILE, nullptr);

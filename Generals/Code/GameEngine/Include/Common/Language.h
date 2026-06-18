@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //																																						//
-//  (c) 2001-2003 Electronic Arts Inc.																				//
+//  (c) 2001-2003 Electronic Arts Inc.
+//  //
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -56,25 +57,25 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // IMPORTANT: Make sure this enum is identical to the one in Noxstring tool
-typedef enum
-{
+typedef enum {
 
-	LANGUAGE_ID_US = 0,
-	LANGUAGE_ID_UK,
-	LANGUAGE_ID_GERMAN,
-	LANGUAGE_ID_FRENCH,
-	LANGUAGE_ID_SPANISH,
-	LANGUAGE_ID_ITALIAN,
-	LANGUAGE_ID_JAPANESE,
-	LANGUAGE_ID_JABBER,
-	LANGUAGE_ID_KOREAN,
-	LANGUAGE_ID_UNKNOWN
+  LANGUAGE_ID_US = 0,
+  LANGUAGE_ID_UK,
+  LANGUAGE_ID_GERMAN,
+  LANGUAGE_ID_FRENCH,
+  LANGUAGE_ID_SPANISH,
+  LANGUAGE_ID_ITALIAN,
+  LANGUAGE_ID_JAPANESE,
+  LANGUAGE_ID_JABBER,
+  LANGUAGE_ID_KOREAN,
+  LANGUAGE_ID_UNKNOWN
 
 } LanguageID;
 
-#define GameArrayEnd(array) (array)[(sizeof(array)/sizeof((array)[0]))-1] = 0
+#define GameArrayEnd(array)                                                    \
+  (array)[(sizeof(array) / sizeof((array)[0])) - 1] = 0
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-extern LanguageID OurLanguage;  ///< our current language definition
+extern LanguageID OurLanguage; ///< our current language definition
