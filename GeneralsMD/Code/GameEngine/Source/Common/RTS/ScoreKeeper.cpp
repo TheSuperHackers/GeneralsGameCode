@@ -100,6 +100,8 @@ void ScoreKeeper::reset( Int playerIdx )
 	scoringBuildingDestroyMask.set(KINDOF_SCORE_DESTROY);
 
 	m_totalMoneyEarned = m_totalMoneySpent = 0;
+	for(int t = 0; t < INCOME_COUNT; ++t)
+		m_incomeByType[t] = 0;
 	m_totalUnitsLost = m_totalUnitsBuilt = 0;
 	m_totalBuildingsLost = m_totalBuildingsBuilt = 0;
 	m_totalFactionBuildingsCaptured = m_totalTechBuildingsCaptured = 0;
@@ -333,6 +335,17 @@ void ScoreKeeper::addObjectLost( const Object *o )
 	}
 }
 
+// Accumulate income into its source bucket. Kept independent of
+// m_totalMoneyEarned (and therefore of calculateScore) so adding source
+// tracking to deposit sites that historically were not counted as "earned"
+// (kill bounty, theft) does not change the displayed score.
+void ScoreKeeper::recordIncome( Int money, IncomeType type )
+{
+	if( type < 0 || type >= INCOME_COUNT )
+		type = INCOME_OTHER;
+	m_incomeByType[type] += money;
+}
+
 Int ScoreKeeper::calculateScore()
 {
 	Int score = 0;
@@ -539,13 +552,18 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @tweak Serialize per-source income breakdown */
 // ------------------------------------------------------------------------------------------------
 void ScoreKeeper::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -554,6 +572,12 @@ void ScoreKeeper::xfer( Xfer *xfer )
 
 	// money spent
 	xfer->xferInt( &m_totalMoneySpent );
+
+	// per-source income breakdown
+	if( version >= 2 )
+	{
+		xfer->xferUser( m_incomeByType, sizeof( m_incomeByType ) );
+	}
 
 	// units destroyed
 	xfer->xferUser( m_totalUnitsDestroyed, sizeof( Int ) * MAX_PLAYER_COUNT );

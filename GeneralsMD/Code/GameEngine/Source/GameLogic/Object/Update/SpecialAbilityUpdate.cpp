@@ -1495,7 +1495,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
         {
           //Steal the cash
           targetMoney->withdraw( cash );
-          objectMoney->deposit( cash );
+          objectMoney->deposit( cash, TRUE, TRUE, INCOME_THEFT );
           Player* controller = object->getControllingPlayer();
           if (controller)
             controller->getScoreKeeper()->addMoneyEarned( cash );

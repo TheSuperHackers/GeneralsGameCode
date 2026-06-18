@@ -97,6 +97,21 @@ void parseUpgradePair( INI *ini, void *instance, void *store, const void *userDa
 }
 
 //-----------------------------------------------------------------------------
+// Classify the income from an auto-deposit building for the per-source stats
+// breakdown. The same module powers oil derricks, GLA black markets and USA
+// supply drop zones, so we distinguish them by KindOf: tech buildings are
+// neutral/captured (oil derrick), supply dropzones are flagged explicitly,
+// everything else is a faction passive-income building (black market).
+static IncomeType getAutoDepositIncomeType( const Object *obj )
+{
+	if( obj->isKindOf( KINDOF_FS_SUPPLY_DROPZONE ) )
+		return INCOME_SUPPLY_DROP;
+	if( obj->isKindOf( KINDOF_TECH_BUILDING ) )
+		return INCOME_OIL_DERRICK;
+	return INCOME_BLACK_MARKET;
+}
+
+//-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 AutoDepositUpdate::AutoDepositUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
@@ -120,7 +135,7 @@ void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
 	if(!player || !m_awardInitialCaptureBonus || getAutoDepositUpdateModuleData()->m_initialCaptureBonus <= 0)
 		return;
 
-	player->getMoney()->deposit( getAutoDepositUpdateModuleData()->m_initialCaptureBonus );
+	player->getMoney()->deposit( getAutoDepositUpdateModuleData()->m_initialCaptureBonus, TRUE, TRUE, getAutoDepositIncomeType( getObject() ) );
 	player->getScoreKeeper()->addMoneyEarned( getAutoDepositUpdateModuleData()->m_initialCaptureBonus );
 
 	//Display cash income floating over the blacklotus
@@ -165,7 +180,7 @@ UpdateSleepTime AutoDepositUpdate::update()
 
 		if( modData->m_isActualMoney )
 		{
-			getObject()->getControllingPlayer()->getMoney()->deposit( moneyAmount );
+			getObject()->getControllingPlayer()->getMoney()->deposit( moneyAmount, TRUE, TRUE, getAutoDepositIncomeType( getObject() ) );
 			getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( modData->m_depositAmount);
 		}
 

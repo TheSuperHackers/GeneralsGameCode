@@ -156,7 +156,7 @@ Bool SabotageSupplyDropzoneCrateCollide::executeCrateBehavior( Object *other )
 		{
 			//Steal the cash
 			targetMoney->withdraw( cash );
-			objectMoney->deposit( cash );
+			objectMoney->deposit( cash, TRUE, TRUE, INCOME_THEFT );
 			Player* controller = obj->getControllingPlayer();
 			if (controller)
 				controller->getScoreKeeper()->addMoneyEarned( cash );

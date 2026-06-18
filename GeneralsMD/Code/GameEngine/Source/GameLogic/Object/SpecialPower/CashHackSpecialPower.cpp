@@ -154,7 +154,7 @@ void CashHackSpecialPower::doSpecialPowerAtObject( Object *victim, UnsignedInt c
 		{
 			//Steal the cash
 			targetMoney->withdraw( cash );
-			selfMoney->deposit( cash );
+			selfMoney->deposit( cash, TRUE, TRUE, INCOME_THEFT );
 			self->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( cash );
 
 			//Display cash income floating over the blacklotus

@@ -57,7 +57,7 @@ Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
 
 	money += getUpgradedSupplyBoost(other);
 
-	other->getControllingPlayer()->getMoney()->deposit( money );
+	other->getControllingPlayer()->getMoney()->deposit( money, TRUE, TRUE, INCOME_CRATE );
 	other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( money );
 
 	//Play a crate pickup sound.

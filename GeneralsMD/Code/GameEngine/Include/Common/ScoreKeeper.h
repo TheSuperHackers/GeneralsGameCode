@@ -52,6 +52,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
+#include "Common/IncomeType.h"
 #include "Common/Snapshot.h"
 
 //-----------------------------------------------------------------------------
@@ -73,6 +74,7 @@ public:
 
 	void addMoneySpent( Int money );								///< Adds money to the amount spent
 	void addMoneyEarned( Int money );								///< Adds money to the earned amount
+	void recordIncome( Int money, IncomeType type );	///< Attribute income to a source for the per-source breakdown
 
 	void addObjectBuilt( const Object *o );
 	void addObjectDestroyed( const Object *o );
@@ -83,6 +85,7 @@ public:
 
 	Int getTotalMoneyEarned() { return m_totalMoneyEarned; }
 	Int getTotalMoneySpent() { return m_totalMoneySpent; }
+	Int getIncomeByType( IncomeType type ) const { return (type >= 0 && type < INCOME_COUNT) ? m_incomeByType[type] : 0; }
 	Int getTotalUnitsDestroyed();
 	Int getTotalUnitsBuilt() { return m_totalUnitsBuilt; }
 	Int getTotalUnitsLost() { return m_totalUnitsLost; }
@@ -128,6 +131,7 @@ private:
 
 	Int m_totalMoneyEarned;						///< The total money that was harvested, refined, received in crates
 	Int m_totalMoneySpent;						///< The total money spent on units, buildings, repairs
+	Int m_incomeByType[INCOME_COUNT];	///< Income accumulated per source (see IncomeType); for the stats breakdown only, independent of m_totalMoneyEarned/score
 	Int m_totalUnitsDestroyed[MAX_PLAYER_COUNT];				///< The total number of enemies that we've killed
 	Int m_totalUnitsBuilt;						///< The total number of units we've created (created meaning that we built from a building)
 	Int m_totalUnitsLost;							///< The total number of our units lost
