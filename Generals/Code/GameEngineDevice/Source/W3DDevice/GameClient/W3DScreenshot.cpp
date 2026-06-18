@@ -16,8 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <io.h>
-
 #include "W3DDevice/GameClient/W3DScreenshot.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "Common/GlobalData.h"
@@ -53,8 +51,9 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 			break;
 	}
 
-	if (!result) {
-		OutputDebugStringA("Failed to write screenshot\n");
+	if (!result)
+	{
+		DEBUG_LOG(("Failed to write screenshot %s", data->pathname));
 	}
 
 	delete [] data->imageData;
@@ -76,6 +75,9 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
 	strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 
+	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
+	// Originally this code took the front buffer and tried to lock it. This does not work when the
+	// render view clips outside the desktop boundaries. It crashed the game.
 	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
 	SurfaceClass::SurfaceDescription surfaceDesc;
 	surface->Get_Description(surfaceDesc);
@@ -123,7 +125,9 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	surfaceCopy = nullptr;
 
 	if (quality <= 0 && format == SCREENSHOT_JPEG)
+	{
 		quality = TheGlobalData->m_jpegQuality;
+	}
 
 	ScreenshotThreadData* threadData = new ScreenshotThreadData();
 	threadData->imageData = image;
@@ -136,13 +140,16 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 
 	DWORD threadId;
 	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
-	if (hThread) {
+	if (hThread)
+	{
 		CloseHandle(hThread);
 
 		UnicodeString ufileName;
 		ufileName.translate(leafname);
 		TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
-	} else {
+	}
+	else
+	{
 		delete [] threadData->imageData;
 		delete threadData;
 	}
