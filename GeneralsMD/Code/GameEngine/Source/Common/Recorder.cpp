@@ -1718,6 +1718,24 @@ void RecorderClass::readNextFrame() {
 		DEBUG_LOG(("RecorderClass::readNextFrame - read failed on frame %d", TheGameLogic->getFrame()));
 		m_nextFrame = -1;
 		stopPlayback();
+		return;
+	}
+
+	// TheSuperHackers @bugfix Zulu replay uploads append an 8-byte "ZUTG"
+	// identification trailer to the bytes stored on the stats server (see
+	// AppendZuluUploadTag), so a replay downloaded from the server has those
+	// bytes after the final command frame. Without this guard readNextFrame
+	// reads the 'Z','U','T','G' magic as an enormous (~1.2 billion) frame
+	// number that the game frame can never reach, so playback never hits a
+	// clean EOF and the headless simulation loop spins forever. Treat the
+	// trailer as end of replay. A real frame number can never collide with
+	// this (~462 days at 30 logic frames/sec).
+	const unsigned char *magic = (const unsigned char *)&m_nextFrame;
+	if (magic[0] == 'Z' && magic[1] == 'U' && magic[2] == 'T' && magic[3] == 'G')
+	{
+		DEBUG_LOG(("RecorderClass::readNextFrame - reached ZUTG upload trailer at frame %d; ending playback", TheGameLogic->getFrame()));
+		m_nextFrame = -1;
+		stopPlayback();
 	}
 }
 
