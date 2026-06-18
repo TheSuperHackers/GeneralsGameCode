@@ -138,6 +138,10 @@ LAN:ObserveFailedBody
 "Could not start observing the game. The host's replay may be incomplete; try again in a moment."
 END
 
+LAN:ObserveMapMissingBody
+"Could not start observing the game. You do not have the map being played and it could not be downloaded."
+END
+
 GUI:LiveObserverNoFF
 "Fast Forward is unavailable while observing a live game."
 END

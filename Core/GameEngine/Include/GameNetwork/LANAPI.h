@@ -428,6 +428,11 @@ protected:
 	void stopObserverHost();
 	// Client-side teardown.
 	void stopObserverClient();
+	// Ensure the map referenced by the buffered live-observer snapshot is
+	// available locally (downloading it from the cncstats CDN if missing)
+	// before playback starts. Returns FALSE only when the map is genuinely
+	// missing and could not be obtained.
+	Bool ensureObserverMapAvailable(AsciiString relReplayPath);
 
 protected:
 	void sendMessage(LANMessage *msg, UnsignedInt ip = 0); // Convenience function
