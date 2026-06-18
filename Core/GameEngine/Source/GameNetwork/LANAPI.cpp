@@ -1352,6 +1352,24 @@ void LANAPI::setIsActive(Bool isActive) {
 // =====================================================================
 
 #include "Common/Recorder.h"
+#include "GameNetwork/MapDownloadHook.h"
+
+// Find a cached map by CRC. The MapCache is keyed by lowercased filename, but
+// the live-observer flow only knows the map by the CRC carried in the replay
+// header, so we scan. Returns the matching metadata, or NULL when no cached
+// map has that CRC (or the cache / crc is unusable).
+static const MapMetaData *findObserverMapByCRC(UnsignedInt crc)
+{
+	if (!TheMapCache || crc == 0)
+		return NULL;
+
+	for (MapCache::iterator it = TheMapCache->begin(); it != TheMapCache->end(); ++it)
+	{
+		if (it->second.m_CRC == crc)
+			return &it->second;
+	}
+	return NULL;
+}
 
 void LANAPI::startObserverHost()
 {
@@ -1445,6 +1463,93 @@ void LANAPI::RequestObserve(UnsignedInt hostIP, UnsignedShort observerPort)
 	DEBUG_LOG(("LANAPI::RequestObserve - observing host %08X port %u", hostIP, observerPort));
 }
 
+// Make sure the map referenced by the just-buffered live-observer snapshot
+// exists locally before we start playback. The observer stream never carries
+// the .map itself; we only learn which map is being played from the replay
+// header's GameInfo string. If the map is missing, loadMap() later fails
+// silently into black/corrupt terrain, so we fetch it from the cncstats CDN
+// here (the same TheMapDownloadHook used by the LAN/WOL join path).
+//
+// Returns TRUE when the map is available (already present, freshly installed,
+// or we couldn't even determine the map and should let playback proceed and
+// report its own failure). Returns FALSE only when the map is genuinely
+// missing and could not be obtained, so the caller should abort the join.
+Bool LANAPI::ensureObserverMapAvailable(AsciiString relReplayPath)
+{
+	if (!TheRecorder || !TheMapCache)
+		return TRUE; // can't check; behave as before and let playback proceed
+
+	// Peek the replay header to learn the map + CRC. forPlayback=FALSE reads
+	// the header and closes the file again without arming playback, so the
+	// playbackFileLiveObserver() call that follows is unaffected.
+	RecorderClass::ReplayHeader header;
+	header.filename = relReplayPath;
+	header.forPlayback = FALSE;
+	if (!TheRecorder->readReplayHeader(header))
+	{
+		LANObsLog("ensureObserverMapAvailable: readReplayHeader failed for '%s'", relReplayPath.str());
+		return TRUE; // let playbackFileLiveObserver surface the real failure
+	}
+
+	// readReplayHeader resets its own GameInfo before returning, so re-parse
+	// the raw options string into a local GameInfo to read the map identity.
+	ReplayGameInfo info;
+	info.reset();
+	info.enterGame();
+	if (!ParseAsciiStringToGameInfo(&info, header.gameOptions))
+	{
+		LANObsLog("ensureObserverMapAvailable: GameInfo parse failed; proceeding");
+		return TRUE;
+	}
+
+	AsciiString mapName = info.getMap();
+	UnsignedInt mapCRC  = info.getMapCRC();
+	Int         mapMask = info.getMapContentsMask();
+
+	// Already have it? CRC is the exact key; fall back to filename lookup.
+	if (findObserverMapByCRC(mapCRC) != NULL)
+		return TRUE;
+	if (!mapName.isEmpty() && TheMapCache->findMap(mapName) != NULL)
+		return TRUE;
+
+	// Missing locally. We need a CRC and the download hook to fetch it; the
+	// hook is null in classic Generals builds, in which case we can't recover.
+	if (mapCRC == 0 || mapName.isEmpty() || TheMapDownloadHook == NULL)
+	{
+		LANObsLog("ensureObserverMapAvailable: map '%s' missing and not fetchable (crc=%u hook=%d)",
+			mapName.str(), mapCRC, TheMapDownloadHook != NULL);
+		return FALSE;
+	}
+
+	// Let the user know the join is fetching the map (the download is a
+	// blocking call, same as the lobby map-vote / join paths).
+	UnicodeString msg;
+	msg.format(L"Downloading map for observer playback...");
+	OnChat(L"", 0, msg, LANCHAT_SYSTEM);
+
+	// The host's map name is a full relative .map path, so it doubles as the
+	// install path (mirrors the LAN join precedent in LANAPICallbacks.cpp).
+	// 0x7E = all sidecars (preview|ini|str|solo|assets|readme); use the
+	// header's mask when present, otherwise ask for everything. The hook
+	// CRC-verifies the bytes and refreshes the cache on success.
+	UnsignedInt mask = (mapMask != 0) ? (UnsignedInt)mapMask : 0x7E;
+	if (!TheMapDownloadHook(mapName, mapCRC, mask))
+	{
+		LANObsLog("ensureObserverMapAvailable: CDN download failed (crc=%u path='%s')",
+			mapCRC, mapName.str());
+		return FALSE;
+	}
+
+	// Confirm the refreshed cache now sees the installed map.
+	if (findObserverMapByCRC(mapCRC) != NULL)
+		return TRUE;
+	if (TheMapCache->findMap(mapName) != NULL)
+		return TRUE;
+
+	LANObsLog("ensureObserverMapAvailable: map still not in cache after download (crc=%u)", mapCRC);
+	return FALSE;
+}
+
 void LANAPI::updateObserver()
 {
 	if (m_observerHost && m_observerHost->isRunning())
@@ -1505,6 +1610,23 @@ void LANAPI::updateObserver()
 			LANObsLog("kick playback: localPath='%s' rel='%s' snapshot=%u written=%u",
 				path.str(), rel.str(),
 				m_observerClient->snapshotSize(), m_observerClient->bytesReceived());
+
+			// Make sure we actually have the map being played before starting
+			// playback; pull it from the cncstats CDN if not. Failing here
+			// (vs. blindly starting playback) avoids the silent black-terrain
+			// loadMap() failure when the observer lacks the map.
+			if (!ensureObserverMapAvailable(rel))
+			{
+				LANObsLog("observer map unavailable; aborting join");
+				DEBUG_LOG(("LANAPI - observer map unavailable; aborting"));
+				stopObserverClient();
+				m_observerClientPlaybackKicked = TRUE; // don't re-run the gate
+				UnicodeString title = TheGameText->fetch("LAN:JoinFailed");
+				UnicodeString body  = TheGameText->fetch("LAN:ObserveMapMissingBody");
+				MessageBoxOk(title, body, NULL);
+				return;
+			}
+
 			DEBUG_LOG(("LANAPI - observer kicking playbackFileLiveObserver('%s')", rel.str()));
 			if (TheRecorder->playbackFileLiveObserver(rel))
 			{
