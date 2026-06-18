@@ -50,6 +50,7 @@
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
+#include "Common/ScoreKeeper.h"
 #include "Common/Xfer.h"
 #include "GameLogic/GameLogic.h"
 
@@ -79,7 +80,7 @@ UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
 }
 
 // ------------------------------------------------------------------------------------------------
-void Money::deposit(UnsignedInt amountToDeposit, Bool playSound, Bool trackIncome)
+void Money::deposit(UnsignedInt amountToDeposit, Bool playSound, Bool trackIncome, IncomeType incomeType)
 {
 	if (amountToDeposit == 0)
 		return;
@@ -103,6 +104,13 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound, Bool trackIncom
 		if( player )
 		{
 			player->getAcademyStats()->recordIncome();
+
+			// Attribute this deposit to its income source for the per-source
+			// stats breakdown. Only genuine income is tracked: deposits made
+			// with trackIncome == FALSE (building sell refunds, money
+			// transfers on defeat, lobby/starting-cash setup) are excluded.
+			if( trackIncome )
+				player->getScoreKeeper()->recordIncome( (Int)amountToDeposit, incomeType );
 		}
 	}
 }

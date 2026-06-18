@@ -122,7 +122,7 @@ Bool SupplyCenterDockUpdate::action( Object* docker, Object *drone )
 	if( value > 0)
 	{
 		Money *ownerPlayerMoney = ownerPlayer->getMoney();
-		ownerPlayerMoney->deposit(value);
+		ownerPlayerMoney->deposit(value, TRUE, TRUE, INCOME_SUPPLY);
 		ownerPlayer->getScoreKeeper()->addMoneyEarned(value);
 
 

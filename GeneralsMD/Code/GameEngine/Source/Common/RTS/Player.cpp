@@ -2460,7 +2460,7 @@ void Player::doBountyForKill(const Object* killer, const Object* victim)
 	if( bounty )
 	{
 
-		getMoney()->deposit( bounty );
+		getMoney()->deposit( bounty, TRUE, TRUE, INCOME_BOUNTY );
 		m_scoreKeeper.addMoneyEarned( bounty );
 
 		//Display cash income floating over the recipient.

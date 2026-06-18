@@ -803,7 +803,7 @@ void POWTruckAIUpdate::unloadPrisonersToPrison( Object *prison )
 			{
 
 				// deposit the money
-				money->deposit( prisonUnloadData.bounty );
+				money->deposit( prisonUnloadData.bounty, TRUE, TRUE, INCOME_BOUNTY );
 				player->getScoreKeeper()->addMoneyEarned( prisonUnloadData.bounty );
 
 				// display text above the building

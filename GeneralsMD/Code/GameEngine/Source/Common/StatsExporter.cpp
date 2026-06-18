@@ -27,6 +27,8 @@
 #include "Common/ThingTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/AcademyStats.h"
+#include "Common/IncomeType.h"
+#include "Common/ScoreKeeper.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
@@ -161,6 +163,23 @@ struct PlayerSnapshotData
 	UnsignedInt money;
 	Int moneyEarned;
 	Int moneySpent;
+	Int incomeByType[INCOME_COUNT];	///< cumulative income per source as of this snapshot
+};
+
+// JSON key for each IncomeType, indexed by the enum value. Keep in sync with
+// the IncomeType enum in Common/IncomeType.h.
+static const char *const TheIncomeTypeJsonKeys[INCOME_COUNT] =
+{
+	"other",		// INCOME_OTHER
+	"supply",		// INCOME_SUPPLY
+	"hacker",		// INCOME_HACKER
+	"blackMarket",	// INCOME_BLACK_MARKET
+	"supplyDrop",	// INCOME_SUPPLY_DROP
+	"oilDerrick",	// INCOME_OIL_DERRICK
+	"bounty",		// INCOME_BOUNTY
+	"salvage",		// INCOME_SALVAGE
+	"crate",		// INCOME_CRATE
+	"theft",		// INCOME_THEFT
 };
 
 struct PlayerStateData
@@ -356,6 +375,8 @@ void StatsExporterCollectSnapshot()
 		pd.money = player->getMoney()->countMoney();
 		pd.moneyEarned = sk->getTotalMoneyEarned();
 		pd.moneySpent = sk->getTotalMoneySpent();
+		for (Int t = 0; t < INCOME_COUNT; ++t)
+			pd.incomeByType[t] = sk->getIncomeByType((IncomeType)t);
 
 		// Detect state changes and emit events
 		{
@@ -742,7 +763,23 @@ static void writeTimeSeriesJson(gzFile f)
 			if (s > 0) gzputc(f, ',');
 			gzprintf(f, "%d", s_state.snapshots[s].players[pi].moneySpent);
 		}
-		gzputs(f, "]}");
+		// Per-source cumulative income series, one array per source.
+		gzputs(f, "],\"incomeBySource\":{");
+		{
+			Int t;
+			for (t = 0; t < INCOME_COUNT; ++t)
+			{
+				if (t > 0) gzputc(f, ',');
+				gzprintf(f, "\"%s\":[", TheIncomeTypeJsonKeys[t]);
+				for (s = 0; s < s_state.snapshots.size(); ++s)
+				{
+					if (s > 0) gzputc(f, ',');
+					gzprintf(f, "%d", s_state.snapshots[s].players[pi].incomeByType[t]);
+				}
+				gzputc(f, ']');
+			}
+		}
+		gzputs(f, "}}");
 	}
 	gzputs(f, "]}");
 }
@@ -779,6 +816,19 @@ static void writePlayerJson(gzFile f, Player *player, Int gameIndex)
 		sk->getTotalMoneyEarned(),
 		sk->getTotalMoneySpent(),
 		sk->calculateScore());
+
+	// Per-source income breakdown. Sum may differ from moneyEarned: it also
+	// counts sources historically excluded from "earned" (bounty, theft).
+	gzputs(f, ",\"incomeBySource\":{");
+	{
+		Int t;
+		for (t = 0; t < INCOME_COUNT; ++t)
+		{
+			if (t > 0) gzputc(f, ',');
+			gzprintf(f, "\"%s\":%d", TheIncomeTypeJsonKeys[t], sk->getIncomeByType((IncomeType)t));
+		}
+	}
+	gzputc(f, '}');
 
 	if (academy != nullptr)
 	{
@@ -850,7 +900,7 @@ void ExportGameStatsJSON(const AsciiString& replayDir, const AsciiString& replay
 		return;
 	}
 
-	gzputs(f, "{\n\"version\":1,\n\"game\":{");
+	gzputs(f, "{\n\"version\":2,\n\"game\":{");
 	gzputs(f, "\"map\":");  gzPrintJsonStr(f, TheGlobalData->m_mapName.str());
 	gzputs(f, ",\"mode\":"); gzPrintJsonStr(f, gameModeToString(TheGameLogic->getGameMode()));
 	gzprintf(f, ",\"frameCount\":%u,\"seed\":%u,",

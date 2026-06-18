@@ -46,6 +46,7 @@
 
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
+#include "Common/IncomeType.h"
 #include "Common/Snapshot.h"
 
 class AudioEventRTS;
@@ -78,7 +79,7 @@ public:
 
 	/// returns the actual amount withdrawn, which may be less than you want. (sorry, can't go into debt...)
 	UnsignedInt withdraw(UnsignedInt amountToWithdraw, Bool playSound = TRUE);
-	void deposit(UnsignedInt amountToDeposit, Bool playSound = TRUE, Bool trackIncome = TRUE);
+	void deposit(UnsignedInt amountToDeposit, Bool playSound = TRUE, Bool trackIncome = TRUE, IncomeType incomeType = INCOME_OTHER);
 
 	void setStartingCash(UnsignedInt amount);
 	void updateIncomeBucket();
