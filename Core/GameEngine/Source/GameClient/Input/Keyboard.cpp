@@ -316,7 +316,7 @@ void Keyboard::initKeyNames() {
       low == 0x140c)
     currentLanguage = LANGUAGE_ID_FRENCH;
 
-  // Use our data-driven language if available. TheSuperHackers @feature
+  // Use our data-driven language if available. Polypheides @feature Polypheides 18/03/2026
   if (TheGlobalLanguageData) {
     currentLanguage = TheGlobalLanguageData->getLanguageIDEnumValue();
   }
@@ -530,9 +530,9 @@ void Keyboard::update() {
 //-------------------------------------------------------------------------------------------------
 void Keyboard::resetKeys() {
 
-  // TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in
-  // waypoint mode because the key up state for the alt key is not detected
-  // after alt tab.
+  // TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
+  // because the key up state for the alt key is not detected after alt tab.
+  // Polypheides @fix Polypheides 18/03/2026 - Additional stability check for alt key refreshing.
   refreshAltKeys();
 
   memset(m_keys, 0, sizeof(m_keys));

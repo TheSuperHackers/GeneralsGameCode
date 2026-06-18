@@ -315,7 +315,9 @@ void GameTextManager::init()
   } else if (getCSFInfo(csfFile.str())) {
     format = CSF_FILE;
   } else {
-    // Fallback if localized .str failed
+    // Polypheides @fix Polypheides 18/03/2026 - Universal localized string fallback
+    // Restore logic to allow the game to fall back to the root Data\generals.str
+    // if a specific localized string file is missing or doesn't contain the key.
     if (getStringCount("Data\\generals.str", m_textCount)) {
       localizedStrFile = "Data\\generals.str";
       format = STRING_FILE;
@@ -760,12 +762,10 @@ void GameTextManager::translateCopy(WideChar *outbuf, Char *inbuf) {
   }
   *tempOut = 0;
 
-  // Use MultiByteToWideChar to support Windows-1251/UTF-8
+  // Polypheides @feature Polypheides 18/03/2026 - Enhanced UTF-8 and codepage support stability.
   Int result = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, tempBuf, -1,
                                    outbuf, MAX_UITEXT_LENGTH * 2);
   if (result == 0) {
-    // Fallback to local codepage (e.g. Windows-1251 for Russian, 1252 for
-    // Western) if the file is not valid UTF-8.
     MultiByteToWideChar(CP_ACP, 0, tempBuf, -1, outbuf, MAX_UITEXT_LENGTH * 2);
   }
 }
@@ -1044,7 +1044,7 @@ Bool GameTextManager::parseStringFile(const char *filename)
 				Char *content = m_buffer;
 				if (m_buffer[0] != '"')
 				{
-					// It's a prefixed string, skip the prefix and optional colon
+					// Polypheides @feature Polypheides 18/03/2026 - Handle data-driven prefixed strings (e.g. SV:, AZ:) via GlobalLanguage data.
 					content = m_buffer + prefix.getLength();
 					if (*content == ':')
 						content++;

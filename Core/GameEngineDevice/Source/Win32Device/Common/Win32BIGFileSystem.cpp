@@ -156,15 +156,15 @@ ArchiveFile *Win32BIGFileSystem::openArchiveFile(const Char *filename) {
     char *finalPath = buffer;
     AsciiString path = finalPath;
 
-    // TheSuperHackers @feature 17/03/2026
-    // Universal Asset Fallback (Dual-Layer):
-    // Simplified logic that identifies "\English\" at any level after "Data"
+    // Polypheides @feature Polypheides 18/03/2026 - Universal Asset Fallback
+    // (Dual-Layer)
     AsciiString registryLang = GetRegistryLanguage();
     if (registryLang.compareNoCase("english") != 0) {
       AsciiString lowerPath = path;
       lowerPath.toLower();
       const char *englishPtr = strstr(lowerPath.str(), "english\\");
-      if (englishPtr == nullptr) englishPtr = strstr(lowerPath.str(), "english/");
+      if (englishPtr == nullptr)
+        englishPtr = strstr(lowerPath.str(), "english/");
 
       if (englishPtr != nullptr) {
         const Bool isLangFile =
@@ -175,7 +175,8 @@ ArchiveFile *Win32BIGFileSystem::openArchiveFile(const Char *filename) {
         if (!isLangFile) {
           int englishPos = (int)(englishPtr - lowerPath.str());
           AsciiString prefix(path.str(), englishPos);
-          AsciiString relativePath(path.str() + englishPos + 8); // Skip "English/" segment
+          AsciiString relativePath(path.str() + englishPos +
+                                   8); // Skip "English/" segment
 
           // Layer 1: Global root fallback (Fixes internal references)
           // e.g. Data/Audio/English/ -> Data/Audio/
@@ -183,10 +184,11 @@ ArchiveFile *Win32BIGFileSystem::openArchiveFile(const Char *filename) {
           strippedPath.format("%s%s", prefix.str(), relativePath.str());
           archiveFile->addFile(strippedPath, fileInfo);
 
-          // Layer 2: Localized folder fallback (Fixes engine-specific localized searches)
-          // e.g. Data/Audio/English/ -> Data/Audio/Swedish/
+          // Layer 2: Localized folder fallback (Fixes engine-specific localized
+          // searches) e.g. Data/Audio/English/ -> Data/Audio/Swedish/
           AsciiString localizedPath;
-          localizedPath.format("%s%s\\%s", prefix.str(), registryLang.str(), relativePath.str());
+          localizedPath.format("%s%s\\%s", prefix.str(), registryLang.str(),
+                               relativePath.str());
           archiveFile->addFile(localizedPath, fileInfo);
         }
       }
@@ -245,12 +247,8 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir,
   FilenameListIter it = filenameList.begin();
   while (it != filenameList.end()) {
 #if RTS_ZEROHOUR
-    // TheSuperHackers @bugfix bobtista 18/11/2025 Skip duplicate INIZH.big in
-    // Data\INI to prevent CRC mismatches. English, Chinese, and Korean SKUs
-    // shipped with two INIZH.big files (one in Run directory, one in
-    // Run\Data\INI). The DeleteFile cleanup doesn't work on EA App/Origin
-    // installs because the folder is not writable, so we skip loading it
-    // instead.
+    // TheSuperHackers @bugfix bobtista 18/11/2025 Skip duplicate INIZH.big in Data\INI to prevent CRC mismatches.
+    // Polypheides @fix Polypheides 18/03/2026 - Explicitly skip both backslash and forward slash paths.
     if (it->endsWithNoCase("Data\\INI\\INIZH.big") ||
         it->endsWithNoCase("Data/INI/INIZH.big")) {
       it++;

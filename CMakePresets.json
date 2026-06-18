@@ -90,13 +90,19 @@
         {
             "name": "win32",
             "inherits": "default",
+            "generator": "Visual Studio 17 2022",
             "hidden": false,
             "displayName": "Windows 32bit Release",
             "architecture": {
                 "value": "Win32",
-                "strategy": "external"
+                "strategy": "set"
+            },
+            "toolset": {
+                "value": "v143",
+                "strategy": "set"
             },
             "cacheVariables": {
+                "CMAKE_CXX_STANDARD": "17",
                 "RTS_FLAGS": "/W3"
             },
             "vendor": {
@@ -125,13 +131,19 @@
         {
             "name": "win32-vcpkg",
             "inherits": "default-vcpkg",
+            "generator": "Visual Studio 17 2022",
             "hidden": false,
             "displayName": "Windows 32bit VCPKG Release",
             "architecture": {
                 "value": "Win32",
-                "strategy": "external"
+                "strategy": "set"
+            },
+            "toolset": {
+                "value": "v143",
+                "strategy": "set"
             },
             "cacheVariables": {
+                "CMAKE_CXX_STANDARD": "17",
                 "RTS_FLAGS": "/W3"
             },
             "vendor": {

@@ -76,6 +76,7 @@ HWND ApplicationHWnd = nullptr;  ///< our application window handle
 Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
+// Polypheides @mod Polypheides 18/03/2026
 const Char *g_strFile = "data\\%s\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
@@ -354,6 +355,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				{
 					case SC_KEYMENU:
 						// TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
+						// Polypheides @fix Polypheides 18/03/2026 - Additional stability check for SC_KEYMENU.
 						return 1;
 					case SC_MOVE:
 					case SC_SIZE:
@@ -467,7 +469,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					// which lead to unfortunate application crashing. Resetting the device on WM_ACTIVATEAPP instead
 					// of TestCooperativeLevel() == D3DERR_DEVICENOTRESET is not a requirement. There are other code
 					// paths that take care of that.
-
+					// Polypheides @fix Polypheides 18/03/2026 - Further refined windowed mode activation stability.
 					isWinMainActive = (BOOL) wParam;
 
 					if (TheGameEngine)

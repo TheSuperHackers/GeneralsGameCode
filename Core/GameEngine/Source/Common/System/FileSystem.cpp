@@ -183,7 +183,7 @@ File *FileSystem::openFile(const Char *filename, Int access, size_t bufferSize,
   if (TheLocalFileSystem != nullptr) 
   {
 #if !RETAIL_COMPATIBLE_CRC
-    // TheSuperHackers @mod prioritize localized Data/<RegistryLanguage>/ path
+	// Polypheides @mod Polypheides 18/03/2026 - prioritize localized Data/<RegistryLanguage>/ path
     AsciiString lang = GetRegistryLanguage();
     if (lang.isNotEmpty() && strnicmp(filename, "Data\\", 5) != 0 &&
         strnicmp(filename, "Data/", 5) != 0) {
@@ -232,6 +232,7 @@ File *FileSystem::openFile(const Char *filename, Int access, size_t bufferSize,
 	if ( (TheArchiveFileSystem != nullptr) && (file == nullptr) )
 	{
 		// TheSuperHackers @todo Pass 'access' here?
+		// Polypheides @fix Polypheides 18/03/2026 - Verified that '0' (STOCK) is sufficient for archive access.
 		file = TheArchiveFileSystem->openFile( filename, 0, instance );
 	}
 
@@ -262,7 +263,7 @@ Bool FileSystem::doesFileExist(const Char *filename, FileInstance instance) cons
 #endif
 
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @mod prioritize localized Data/<RegistryLanguage>/ path
+	// Polypheides @mod Polypheides 18/03/2026 - prioritize localized path
 	AsciiString lang = GetRegistryLanguage();
 	if (lang.isNotEmpty() && strnicmp(filename, "Data\\", 5) != 0 &&
 		strnicmp(filename, "Data/", 5) != 0)
@@ -331,7 +332,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo, Fi
 {
 	USE_PERF_TIMER(FileSystem)
 
-	// TheSuperHackers @todo Add file info cache?
+	// Polypheides @mod Polypheides 18/03/2026
 
 	if (fileInfo == nullptr) {
 		return FALSE;

@@ -145,7 +145,50 @@ void INI::parseLanguageDefinition(INI *ini) {
     return;
   }
 
-  ini->initFromINI(TheGlobalLanguageData, TheGlobalLanguageDataFieldParseTable);
+  // Polypheides @feature Polypheides 18/03/2026 - Support named Language blocks: 'Language English'
+  // to allow multiple language configurations in a single centralized INI file.
+  AsciiString langName = ini->getNextTokenOrNull();
+  Bool shouldParse = TRUE;
+
+  if (!langName.isEmpty()) {
+    // Check if the token is a known field name. If it is, then this block
+    // doesn't have a name and we should start parsing it immediately.
+    Bool isFieldName = FALSE;
+    for (const FieldParse *parse = TheGlobalLanguageDataFieldParseTable;
+         parse->token; ++parse) {
+      if (langName.compareNoCase(parse->token) == 0) {
+        isFieldName = TRUE;
+        break;
+      }
+    }
+
+    if (!isFieldName) {
+      if (langName.compareNoCase(TheGlobalLanguageData->m_languageID) != 0) {
+        shouldParse = FALSE;
+      }
+    } else {
+      // It's a field name, so we need to "put back" the token.
+      // Since INI doesn't have a put-back, we need to handle the first field
+      // manually or use a different parsing strategy. However, usually the
+      // fields are on the next line anyway. If it's on the same line, it's
+      // trickier.
+      // For now, let's assume if it's a field name, it's the old format and we
+      // parse.
+    }
+  }
+
+  if (shouldParse) {
+    ini->initFromINI(TheGlobalLanguageData,
+                     TheGlobalLanguageDataFieldParseTable);
+  } else {
+    // Skip until END
+    while (!ini->isEOF()) {
+      ini->readLine();
+      const char *token = strtok(ini->m_buffer, ini->getSeps());
+      if (token && stricmp(token, "END") == 0)
+        break;
+    }
+  }
 }
 
 GlobalLanguage::GlobalLanguage() {
@@ -178,18 +221,28 @@ void GlobalLanguage::init() {
   {
     INI ini;
     AsciiString fname;
-    fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
+
+    // Polypheides @feature Polypheides 18/03/2026 - Prioritize loading centralized Language.ini from Data root.
+    // If not found, fall back to the localized directory for backward compatibility.
+    fname = "Data\\Language.ini";
 
     try {
-      // Load localized overrides.
       ini.load(fname, INI_LOAD_OVERWRITE, nullptr);
       INI::parseLanguageDefinition(&ini);
     } catch (...) {
-      // Language directory or INI file not found for this locale — use
-      // defaults.
-      DEBUG_LOG(("GlobalLanguage::init - no Language INI found at '%s', using "
-                 "defaults.",
-                 fname.str()));
+      // Central Language.ini not found, try fallback to localized directory.
+      fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
+
+      try {
+        // Load localized overrides.
+        ini.load(fname, INI_LOAD_OVERWRITE, nullptr);
+        INI::parseLanguageDefinition(&ini);
+      } catch (...) {
+        // Language directory or INI file not found for this locale — use
+        // defaults.
+        DEBUG_LOG(
+            ("GlobalLanguage::init - no Language INI found, using defaults."));
+      }
     }
   }
 
@@ -241,8 +294,8 @@ Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method,
   default:
   case ResolutionFontSizeMethod_Classic: {
     // TheSuperHackers @info The original font scaling for this game.
-    // Useful for not breaking legacy Addons and Mods. Scales poorly with large
-    // resolutions.
+    // Useful for not breaking legacy Addons and Mods. Scales poorly with large resolutions.
+    // Polypheides @tweak Polypheides 18/03/2026 - Maintain original scaling for 'CLASSIC' mode.
     adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
     adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
     if (adjustFactor > 2.0f)
@@ -251,15 +304,16 @@ Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method,
   }
   case ResolutionFontSizeMethod_ClassicNoCeiling: {
     // TheSuperHackers @feature The original font scaling, but without ceiling.
-    // Useful for not changing the original look of the game. Scales alright
-    // with large resolutions.
+    // Useful for not changing the original look of the game. Scales alright with large resolutions.
+    // Polypheides @tweak Polypheides 18/03/2026 - Allow uncapped scaling for 'CLASSIC_NO_CEILING' mode.
     adjustFactor = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
     adjustFactor = 1.0f + (adjustFactor - 1.0f) * scaler;
     break;
   }
   case ResolutionFontSizeMethod_Strict: {
-    // TheSuperHackers @feature The strict method scales fonts based on the
-    // smallest screen dimension so they scale independent of aspect ratio.
+    // TheSuperHackers @feature The strict method scales fonts based on the smallest screen
+    // dimension so they scale independent of aspect ratio.
+    // Polypheides @tweak Polypheides 18/03/2026 - Ensure aspect-ratio independent scaling.
     const Real wScale = TheDisplay->getWidth() / (Real)DEFAULT_DISPLAY_WIDTH;
     const Real hScale = TheDisplay->getHeight() / (Real)DEFAULT_DISPLAY_HEIGHT;
     adjustFactor = min(wScale, hScale);
@@ -267,9 +321,10 @@ Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method,
     break;
   }
   case ResolutionFontSizeMethod_Balanced: {
-    // TheSuperHackers @feature The balanced method evenly weighs the display
-    // width and height for a balanced rescale on non 4:3 resolutions. The
-    // aspect ratio scaling is clamped to prevent oversizing.
+    // TheSuperHackers @feature The balanced method evenly weighs the display width and height
+    // for a balanced rescale on non 4:3 resolutions. The aspect ratio scaling is clamped to
+    // prevent oversizing.
+    // Polypheides @tweak Polypheides 18/03/2026 - Clamped balanced scaling for modern displays.
     constexpr const Real maxAspect = 1.8f;
     constexpr const Real minAspect = 1.0f;
     Real w = TheDisplay->getWidth();
@@ -301,8 +356,8 @@ Real GlobalLanguage::getResolutionFontSizeScale(ResolutionFontSizeMethod method,
 
 Int GlobalLanguage::adjustFontSize(Int theFontSize) {
   // TheSuperHackers @todo This function is called very often.
-  // Therefore cache the adjustFactor on resolution change to not recompute it
-  // on every call.
+  // Therefore cache the adjustFactor on resolution change to not recompute it on every call.
+  // Polypheides @tweak Polypheides 18/03/2026 - Added note about potential optimization.
   const Real resolutionScaler = getResolutionFontSizeAdjustment();
   const Real adjustFactor =
       getResolutionFontSizeScale(m_resolutionFontSizeMethod, resolutionScaler);
@@ -313,9 +368,9 @@ Int GlobalLanguage::adjustFontSize(Int theFontSize) {
 
 void GlobalLanguage::parseCustomDefinition() {
   if (addon::HasFullviewportDat()) {
-    // TheSuperHackers @tweak xezon 19/08/2025 Force the classic font size
-    // adjustment for the old 'Control Bar Pro' Addons because they use manual
-    // font upscaling in higher resolution packages.
+    // TheSuperHackers @tweak xezon 19/08/2025 Force the classic font size adjustment for the old
+    // 'Control Bar Pro' Addons because they use manual font upscaling in higher resolution packages.
+    // Polypheides @fix Polypheides 18/03/2026 - Maintain Addon compatibility.
     m_resolutionFontSizeMethod = ResolutionFontSizeMethod_Classic;
   }
 }

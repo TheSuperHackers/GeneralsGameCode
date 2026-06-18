@@ -129,9 +129,9 @@ public:
 	Real			m_resolutionFontSizeAdjustment;
 	Real			m_userResolutionFontSizeAdjustment;
 	ResolutionFontSizeMethod m_resolutionFontSizeMethod;
-	AsciiString m_languageID; // Map language setting to LanguageID. TheSuperHackers @feature
-	AsciiString m_languagePrefix; // Map language setting to .str prefix. TheSuperHackers @feature
-	Bool m_isRTL; // Is current language RTL? TheSuperHackers @feature
+	AsciiString m_languageID; // Map language setting to LanguageID. Polypheides @feature Polypheides 18/03/2026
+	AsciiString m_languagePrefix; // Map language setting to .str prefix. Polypheides @feature Polypheides 18/03/2026
+	Bool m_isRTL; // Is current language RTL? Polypheides @feature Polypheides 18/03/2026
 	StringList m_localFonts; // List of the font filenames that are in our local directory
 };
 

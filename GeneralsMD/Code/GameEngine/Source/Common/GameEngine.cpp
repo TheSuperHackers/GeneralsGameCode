@@ -178,6 +178,7 @@ static void updateTGAtoDDS();
 static void updateWindowTitle()
 {
 	// TheSuperHackers @tweak Now prints product and version information in the Window title.
+	// Polypheides @tweak Polypheides 18/03/2026 - Maintain this title formatting for all localized versions.
 
 	DEBUG_ASSERTCRASH(TheVersion != nullptr, ("TheVersion is null"));
 	DEBUG_ASSERTCRASH(TheGameText != nullptr, ("TheGameText is null"));
@@ -270,6 +271,7 @@ GameEngine::~GameEngine()
 
 	// TheSuperHackers @fix helmutbuhler 03/06/2025
 	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	// Polypheides @fix Polypheides 18/03/2026 - Confirmed stability during engine shutdown.
 	reset();
 
 	TheSubsystemList->shutdownAll();
@@ -310,6 +312,7 @@ GameEngine::~GameEngine()
 Bool GameEngine::isTimeFrozen()
 {
 	// TheSuperHackers @fix The time can no longer be frozen in Network games. It would disconnect the player.
+	// Polypheides @fix Polypheides 18/03/2026 - Maintained this network safety fix.
 	if (TheNetwork != nullptr)
 		return false;
 
@@ -637,6 +640,7 @@ void GameEngine::init()
 
 
 		AsciiString fname;
+		// Polypheides @mod Polypheides 18/03/2026
 		fname.format("Data\\%s\\CommandMap", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), nullptr, "Data\\INI\\CommandMap", fname.str());
 

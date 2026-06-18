@@ -154,7 +154,7 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 		// draw the text
 		if(textWidth < width)
 		{
-			if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL)
+			if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL) // Polypheides @mod Polypheides 18/03/2026
 			{
 				text->draw( (x + width - textWidth), y, textColor, textDropColor );
 				cursorPos = x + width - textWidth;
@@ -191,7 +191,7 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 
 		x+= 5;
 		// draw the text
-		if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL)
+		if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL) // Polypheides @mod Polypheides 18/03/2026
 		{
 			text->draw( (x + width - textWidth), y, textColor, textDropColor );
 			cursorPos = x + width - textWidth;

@@ -1792,16 +1792,27 @@ FontCharsClass::Free_Character_Arrays ()
 	}
 }
 
+// Polypheides @feature Polypheides 18/03/2026 - BiDi/RTL Support
 bool Render2DSentenceClass::Is_RTL_Char(WCHAR ch)
 {
-	// Arabic
-	if (ch >= 0x0600 && ch <= 0x06FF) return true;
-	if (ch >= 0x0750 && ch <= 0x07FF) return true;
-	if (ch >= 0x08A0 && ch <= 0x08FF) return true;
-	if (ch >= 0xFB50 && ch <= 0xFDFF) return true;
-	if (ch >= 0xFE70 && ch <= 0xFEFF) return true;
 	// Hebrew
 	if (ch >= 0x0590 && ch <= 0x05FF) return true;
+	// Arabic blocks (Core, Supplement, Extended-A)
+	if (ch >= 0x0600 && ch <= 0x08FF) return true;
+	// Syriac
+	if (ch >= 0x0700 && ch <= 0x074F) return true;
+	// Thaana (Divehi)
+	if (ch >= 0x0780 && ch <= 0x07BF) return true;
+	// N'Ko
+	if (ch >= 0x07C0 && ch <= 0x07FF) return true;
+	// Samaritan
+	if (ch >= 0x0800 && ch <= 0x083F) return true;
+	// Mandaic
+	if (ch >= 0x0840 && ch <= 0x085F) return true;
+	// Arabic Presentation Forms (A & B)
+	if (ch >= 0xFB50 && ch <= 0xFDFF) return true;
+	if (ch >= 0xFE70 && ch <= 0xFEFF) return true;
+
 	return false;
 }
 

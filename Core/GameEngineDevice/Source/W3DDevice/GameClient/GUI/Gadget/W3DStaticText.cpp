@@ -120,7 +120,7 @@ static void drawStaticTextText( GameWindow *window, WinInstanceData *instData,
 	{
 		textPos.x = origin.x + (size.x / 2) - (textWidth / 2);
 	}
-	else if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL)
+	else if (TheGlobalLanguageData && TheGlobalLanguageData->m_isRTL) // Polypheides @mod Polypheides 18/03/2026
 	{
 		textPos.x = origin.x + size.x - textWidth - tData->leftMargin;
 	}
