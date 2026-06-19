@@ -49,7 +49,7 @@
 //-------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpdateModuleData::buildFieldParse(p);
+	UpdateModuleData::buildFieldParse(p);
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "AssistingClipSize",		INI::parseInt,		nullptr, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
@@ -58,14 +58,15 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "LaserToTarget",				INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
 {
-	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
+	m_laserFromAssisted = nullptr;
+	m_laserToTarget = nullptr;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -137,6 +138,11 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime AssistedTargetingUpdate::update()
 {
+	const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
+
+	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
+	m_laserToTarget = TheThingFactory->findTemplate( d->m_laserToTargetName );
+
 	return UPDATE_SLEEP_FOREVER;
 }
 
@@ -174,8 +180,11 @@ void AssistedTargetingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdate::loadPostProcess()
 {
+	const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
+
+	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
+	m_laserToTarget = TheThingFactory->findTemplate( d->m_laserToTargetName );
 
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }
