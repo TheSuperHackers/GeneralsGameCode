@@ -49,6 +49,7 @@
 #include "statistics.h"
 #include <wwprofile.h>
 #include <algorithm>
+#include <list>
 
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
@@ -150,7 +151,7 @@ void Sort(TempIndexStruct *begin, TempIndexStruct *end)
 
 // ----------------------------------------------------------------------------
 
-class SortingNodeStruct : public DLNodeClass<SortingNodeStruct>
+class SortingNodeStruct
 {
 	W3DMPO_CODE(SortingNodeStruct)
 
@@ -166,20 +167,18 @@ public:
 	unsigned short vertex_count;			// Number of vertices used in vb
 };
 
-static DLListClass<SortingNodeStruct> sorted_list;
-static DLListClass<SortingNodeStruct> clean_list;
+static std::list<SortingNodeStruct*> sorted_list;
+static std::list<SortingNodeStruct*> clean_list;
 static unsigned total_sorting_vertices;
 
 static SortingNodeStruct* Get_Sorting_Struct()
 {
-
-	SortingNodeStruct* state=clean_list.Head();
-	if (state) {
-		state->Remove();
+	if (!clean_list.empty()) {
+		SortingNodeStruct* state = clean_list.front();
+		clean_list.pop_front();
 		return state;
 	}
-	state=W3DNEW SortingNodeStruct();
-	return state;
+	return W3DNEW SortingNodeStruct();
 }
 
 // ----------------------------------------------------------------------------
@@ -258,18 +257,15 @@ void SortingRendererClass::Insert_Triangles(
 
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
-	SortingNodeStruct* node=sorted_list.Head();
-	while (node) {
-		if (state->transformed_center.Z>node->transformed_center.Z) {
-			if (sorted_list.Head()==sorted_list.Tail())
-				sorted_list.Add_Head(state);
-			else
-				state->Insert_Before(node);
+	std::list<SortingNodeStruct*>::iterator node = sorted_list.begin();
+	while (node != sorted_list.end()) {
+		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
+			sorted_list.insert(node, state);
 			break;
 		}
-		node=node->Succ();
+		++node;
 	}
-	if (!node) sorted_list.Add_Tail(state);
+	if (node == sorted_list.end()) sorted_list.push_back(state);
 
 #ifdef WWDEBUG
 	unsigned short* indices=nullptr;
@@ -577,7 +573,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	for (unsigned node_id=0;node_id<overlapping_node_count;++node_id) {
 		SortingNodeStruct* state=overlapping_nodes[node_id];
 		Release_Refs(state);
-		clean_list.Add_Head(state);
+		clean_list.push_front(state);
 	}
 	overlapping_node_count=0;
 	overlapping_polygon_count=0;
@@ -597,8 +593,9 @@ void SortingRendererClass::Flush()
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,old_world);
 
-	while (SortingNodeStruct* state=sorted_list.Head()) {
-		state->Remove();
+	while (!sorted_list.empty()) {
+		SortingNodeStruct* state = sorted_list.front();
+		sorted_list.pop_front();
 
 		if ((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 			(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)) {
@@ -609,7 +606,7 @@ void SortingRendererClass::Flush()
 			DX8Wrapper::Draw_Triangles(state->start_index,state->polygon_count,state->min_vertex_index,state->vertex_count);
 			DX8Wrapper::Release_Render_State();
 			Release_Refs(state);
-			clean_list.Add_Head(state);
+			clean_list.push_front(state);
 		}
 	}
 
@@ -635,22 +632,20 @@ void SortingRendererClass::Flush()
 
 void SortingRendererClass::Deinit()
 {
-	SortingNodeStruct *head = nullptr;
-
 	//
 	//	Flush the sorted list
 	//
-	while ((head = sorted_list.Head ()) != nullptr) {
-		sorted_list.Remove_Head ();
-		delete head;
+	while (!sorted_list.empty()) {
+		delete sorted_list.front();
+		sorted_list.pop_front();
 	}
 
 	//
 	//	Flush the clean list
 	//
-	while ((head = clean_list.Head ()) != nullptr) {
-		clean_list.Remove_Head ();
-		delete head;
+	while (!clean_list.empty()) {
+		delete clean_list.front();
+		clean_list.pop_front();
 	}
 
 	delete[] temp_index_array;
@@ -717,16 +712,13 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
-	SortingNodeStruct* node=sorted_list.Head();
-	while (node) {
-		if (state->transformed_center.Z>node->transformed_center.Z) {
-			if (sorted_list.Head()==sorted_list.Tail())
-				sorted_list.Add_Head(state);
-			else
-				state->Insert_Before(node);
+	std::list<SortingNodeStruct*>::iterator node = sorted_list.begin();
+	while (node != sorted_list.end()) {
+		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
+			sorted_list.insert(node, state);
 			break;
 		}
-		node=node->Succ();
+		++node;
 	}
-	if (!node) sorted_list.Add_Tail(state);
+	if (node == sorted_list.end()) sorted_list.push_back(state);
 }
