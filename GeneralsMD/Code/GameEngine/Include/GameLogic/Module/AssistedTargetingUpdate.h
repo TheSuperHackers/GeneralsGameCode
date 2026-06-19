@@ -39,8 +39,8 @@ public:
 	Int m_clipSize;
 	WeaponSlotType m_weaponSlot;
 
-  AsciiString m_laserFromAssistedName;
-  AsciiString m_laserToTargetName;
+	AsciiString m_laserFromAssistedName;
+	AsciiString m_laserToTargetName;
 
 	AssistedTargetingUpdateModuleData()
 	{
@@ -76,6 +76,4 @@ private:
 
 	const ThingTemplate *m_laserFromAssisted;
 	const ThingTemplate *m_laserToTarget;
-
-
 };

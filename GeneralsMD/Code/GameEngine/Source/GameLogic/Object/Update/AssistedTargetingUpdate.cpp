@@ -101,7 +101,6 @@ void AssistedTargetingUpdate::assistAttack( const Object *requestingObject, Obje
 	me->setWeaponLock( md->m_weaponSlot, LOCKED_TEMPORARILY );
 	me->getAI()->aiAttackObject( victimObject, md->m_clipSize, CMD_FROM_AI );
 
-
 	if( m_laserFromAssisted )
 		makeFeedbackLaser( m_laserFromAssisted, requestingObject, me );
 	if( m_laserToTarget )
