@@ -265,7 +265,10 @@ void SortingRendererClass::Insert_Triangles(
 		}
 		++node;
 	}
-	if (node == sorted_list.end()) sorted_list.push_back(state);
+	if (node == sorted_list.end())
+	{
+		sorted_list.push_back(state);
+	}
 
 #ifdef WWDEBUG
 	unsigned short* indices=nullptr;
@@ -720,5 +723,8 @@ void SortingRendererClass::Insert_VolumeParticle(
 		}
 		++node;
 	}
-	if (node == sorted_list.end()) sorted_list.push_back(state);
+	if (node == sorted_list.end())
+	{
+		sorted_list.push_back(state);
+	}
 }
