@@ -287,15 +287,22 @@ void TransitionGroup::update( void )
 	const Int step = (newFrame > prevFrame) ? 1 : -1;
 	for( Int frame = prevFrame + step; frame != newFrame + step; frame += step )
 	{
+		Bool isFinished = TRUE;
 		TransitionWindowList::iterator it = m_transitionWindowList.begin();
 		while (it != m_transitionWindowList.end())
 		{
 			TransitionWindow *tWin = *it;
 			tWin->update(frame);
+
+			if( tWin->isFinished() == FALSE )
+			{
+				isFinished = FALSE;
+			}
+
 			it++;
 		}
 
-		if( isFinished() )
+		if( isFinished )
 		{
 			break;
 		}
