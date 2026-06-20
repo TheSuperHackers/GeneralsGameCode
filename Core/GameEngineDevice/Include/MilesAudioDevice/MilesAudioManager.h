@@ -274,8 +274,8 @@ class MilesAudioManager : public AudioManager
 		void stopAllAudioImmediately();
 		void freeAllMilesHandles();
 
-		HSAMPLE getFirst2DSample( AudioEventRTS *event );
-		H3DSAMPLE getFirst3DSample( AudioEventRTS *event );
+		HSAMPLE getAvailable2DSample( AudioEventRTS *event );
+		H3DSAMPLE getAvailable3DSample( AudioEventRTS *event );
 
 		void adjustPlayingVolume( PlayingAudio *audio );
 

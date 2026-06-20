@@ -714,7 +714,7 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				H3DSAMPLE sample3D;
 				if( !handleToKill || foundSoundToReplace )
 				{
-					sample3D = getFirst3DSample( event );
+					sample3D = getAvailable3DSample( event );
 					if( !sample3D )
 					{
 						//If we don't have an available sample, kill the lowest priority assuming we have one that is lower
@@ -723,7 +723,7 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 						//in which case we need to attempt to find another sound to kill.
 						if( killLowestPrioritySoundImmediately( event ) )
 						{
-							sample3D = getFirst3DSample( event );
+							sample3D = getAvailable3DSample( event );
 						}
 					}
 				}
@@ -779,7 +779,7 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 				HSAMPLE sample;
 				if( !handleToKill || foundSoundToReplace )
 				{
-					sample = getFirst2DSample(event);
+					sample = getAvailable2DSample(event);
 					if( !sample )
 					{
 						//If we don't have an available sample, kill the lowest priority assuming we have one that is lower
@@ -788,7 +788,7 @@ void MilesAudioManager::playAudioEvent( AudioRequest* req )
 						//in which case we need to attempt to find another sound to kill.
 						if( killLowestPrioritySoundImmediately( event ) )
 						{
-							sample = getFirst2DSample( event );
+							sample = getAvailable2DSample( event );
 						}
 					}
 					}
@@ -1180,7 +1180,7 @@ void MilesAudioManager::freeAllMilesHandles()
 }
 
 //-------------------------------------------------------------------------------------------------
-HSAMPLE MilesAudioManager::getFirst2DSample( AudioEventRTS *event )
+HSAMPLE MilesAudioManager::getAvailable2DSample( AudioEventRTS *event )
 {
 	if (!m_availableSamples.empty()) {
 		HSAMPLE retSample = m_availableSamples.back();
@@ -1193,7 +1193,7 @@ HSAMPLE MilesAudioManager::getFirst2DSample( AudioEventRTS *event )
 }
 
 //-------------------------------------------------------------------------------------------------
-H3DSAMPLE MilesAudioManager::getFirst3DSample( AudioEventRTS *event )
+H3DSAMPLE MilesAudioManager::getAvailable3DSample( AudioEventRTS *event )
 {
 	if (!m_available3DSamples.empty()) {
 		H3DSAMPLE retSample = m_available3DSamples.back();
@@ -2825,7 +2825,7 @@ void *MilesAudioManager::getHandleForBink()
 		PlayingAudio *aud = allocatePlayingAudio();
 		aud->m_audioEventRTS = NEW AudioEventRTS("BinkHandle");	// poolify
 		getInfoForAudioEvent(aud->m_audioEventRTS);
-		aud->m_sample = getFirst2DSample(aud->m_audioEventRTS);
+		aud->m_sample = getAvailable2DSample(aud->m_audioEventRTS);
 		aud->m_type = PAT_Sample;
 
 		if (!aud->m_sample) {
