@@ -28,6 +28,7 @@ class SortingRendererClass
 	static bool _EnableTriangleDraw;
 
 	static void Flush_Sorting_Pool();
+	static void Insert_To_Sorted_List(SortingNodeStruct* state);
 	static void Insert_To_Sorting_Pool(SortingNodeStruct* state);
 
 public:

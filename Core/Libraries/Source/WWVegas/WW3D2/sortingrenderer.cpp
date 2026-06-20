@@ -251,22 +251,7 @@ void SortingRendererClass::Insert_Triangles(
 		&mtx);
 	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
 
-
-	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
-
-	SortingNodeStructList::iterator node;
-	for (node = sorted_list.begin(); node != sorted_list.end(); ++node)
-	{
-		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
-			sorted_list.insert(node, state);
-			break;
-		}
-	}
-
-	if (node == sorted_list.end())
-	{
-		sorted_list.push_back(state);
-	}
+	Insert_To_Sorted_List(state);
 
 #ifdef WWDEBUG
 	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
@@ -333,6 +318,23 @@ static unsigned overlapping_polygon_count;
 static unsigned overlapping_vertex_count;
 static const unsigned MAX_OVERLAPPING_NODES=4096;
 static SortingNodeStruct* overlapping_nodes[MAX_OVERLAPPING_NODES];
+
+// ----------------------------------------------------------------------------
+
+void SortingRendererClass::Insert_To_Sorted_List(SortingNodeStruct *state)
+{
+	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
+
+	for (SortingNodeStructList::iterator node = sorted_list.begin(); node != sorted_list.end(); ++node)
+	{
+		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
+			sorted_list.insert(node, state);
+			return;
+		}
+	}
+
+	sorted_list.push_back(state);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -715,19 +717,5 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	//THE TRANSFORMED CENTER[2] IS THE ZBUFFER DEPTH
 
-	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
-
-	SortingNodeStructList::iterator node;
-	for (node = sorted_list.begin(); node != sorted_list.end(); ++node)
-	{
-		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
-			sorted_list.insert(node, state);
-			break;
-		}
-	}
-
-	if (node == sorted_list.end())
-	{
-		sorted_list.push_back(state);
-	}
+	Insert_To_Sorted_List(state);
 }
