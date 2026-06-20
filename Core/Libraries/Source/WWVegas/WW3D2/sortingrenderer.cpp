@@ -242,11 +242,37 @@ void SortingRendererClass::Insert_Triangles(
 	state->min_vertex_index=min_vertex_index;
 	state->vertex_count=vertex_count;
 
+	D3DXMATRIX mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
+	D3DXVECTOR3 vec=(D3DXVECTOR3&)state->bounding_sphere.Center;
+	D3DXVECTOR4 transformed_vec;
+	D3DXVec3Transform(
+		&transformed_vec,
+		&vec,
+		&mtx);
+	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
+
+
+	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
+
+	SortingNodeStructList::iterator node;
+	for (node = sorted_list.begin(); node != sorted_list.end(); ++node)
+	{
+		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
+			sorted_list.insert(node, state);
+			break;
+		}
+	}
+
+	if (node == sorted_list.end())
+	{
+		sorted_list.push_back(state);
+	}
+
+#ifdef WWDEBUG
 	SortingVertexBufferClass* vertex_buffer=static_cast<SortingVertexBufferClass*>(state->sorting_state.vertex_buffers[0]);
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
-#ifdef WWDEBUG
 	unsigned short* indices=nullptr;
 	SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
 	WWASSERT(index_buffer);
@@ -264,28 +290,6 @@ void SortingRendererClass::Insert_Triangles(
 		WWASSERT(idx3<state->vertex_count);
 	}
 #endif // WWDEBUG
-
-	D3DXMATRIX mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
-	D3DXVECTOR3 vec=(D3DXVECTOR3&)state->bounding_sphere.Center;
-	D3DXVECTOR4 transformed_vec;
-	D3DXVec3Transform(
-		&transformed_vec,
-		&vec,
-		&mtx);
-	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
-
-
-	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
-
-	for (SortingNodeStructList::iterator node = sorted_list.begin(); node != sorted_list.end(); ++node)
-	{
-		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
-			sorted_list.insert(node, state);
-			return;
-		}
-	}
-
-	sorted_list.push_back(state);
 }
 
 // ----------------------------------------------------------------------------
@@ -713,13 +717,17 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
-	for (SortingNodeStructList::iterator node = sorted_list.begin(); node != sorted_list.end(); ++node)
+	SortingNodeStructList::iterator node;
+	for (node = sorted_list.begin(); node != sorted_list.end(); ++node)
 	{
 		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
 			sorted_list.insert(node, state);
-			return;
+			break;
 		}
 	}
 
-	sorted_list.push_back(state);
+	if (node == sorted_list.end())
+	{
+		sorted_list.push_back(state);
+	}
 }
