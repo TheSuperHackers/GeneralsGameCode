@@ -43,6 +43,7 @@
 #include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/LANAPICallbacks.h"
+#include "GameNetwork/MapDownloadHook.h"
 #include "GameNetwork/GameMessageParser.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/networkutil.h"
@@ -1500,6 +1501,75 @@ Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
 	return true;
 }
 
+// TheSuperHackers @feature Ensure the replay's map is installed before headless
+// playback. A .rep only carries the map identity (name + CRC) in its header, not
+// the .map bytes, so a replay recorded on a map this machine doesn't have would
+// otherwise loadMap() into empty/black terrain and produce a bogus simulation.
+//
+// findReplayMapByCRC mirrors the live-observer lookup: the MapCache is keyed by
+// lowercased filename, but the replay header only knows the map by CRC, so scan.
+static const MapMetaData *findReplayMapByCRC(UnsignedInt crc)
+{
+	if (!TheMapCache || crc == 0)
+		return NULL;
+
+	for (MapCache::iterator it = TheMapCache->begin(); it != TheMapCache->end(); ++it)
+	{
+		if (it->second.m_CRC == crc)
+			return &it->second;
+	}
+	return NULL;
+}
+
+// When running headless, fetch the replay's map from the cncstats CDN if it's
+// not already installed, using the same TheMapDownloadHook as the LAN/WOL lobby
+// join path. Best-effort: on any failure we log and let playback proceed so it
+// surfaces its own error rather than aborting the run here.
+static void ensureReplayMapAvailable(const GameInfo *gameInfo)
+{
+	if (!gameInfo || !TheMapCache)
+		return;
+
+	AsciiString mapName = gameInfo->getMap();		// real (resolved) map path
+	UnsignedInt mapCRC  = gameInfo->getMapCRC();
+	Int         mapMask = gameInfo->getMapContentsMask();
+
+	// Already installed? CRC is the exact key; fall back to filename lookup.
+	if (findReplayMapByCRC(mapCRC) != NULL)
+		return;
+	if (!mapName.isEmpty() && TheMapCache->findMap(mapName) != NULL)
+		return;
+
+	// Missing locally. We need the CRC, a real install path, and the download
+	// hook to fetch it; the hook is null in classic Generals builds.
+	if (mapCRC == 0 || mapName.isEmpty() || TheMapDownloadHook == NULL)
+	{
+		printf("Map '%s' (crc %u) is missing and cannot be downloaded.\n", mapName.str(), mapCRC);
+		fflush(stdout);
+		DEBUG_LOG(("ensureReplayMapAvailable - map '%s' missing and not fetchable (crc=%u hook=%d)",
+			mapName.str(), mapCRC, TheMapDownloadHook != NULL));
+		return;
+	}
+
+	printf("Downloading map '%s' (crc %u) from CDN for replay playback...\n", mapName.str(), mapCRC);
+	fflush(stdout);
+
+	// 0x7E = all sidecars (preview|ini|str|solo|assets|readme); use the header's
+	// mask when present, otherwise ask for everything. The hook CRC-verifies the
+	// .map bytes and refreshes MapCache on success.
+	UnsignedInt mask = (mapMask != 0) ? (UnsignedInt)mapMask : 0x7E;
+	if (!TheMapDownloadHook(mapName, mapCRC, mask))
+	{
+		printf("Map download failed for '%s' (crc %u); playback may fail.\n", mapName.str(), mapCRC);
+		fflush(stdout);
+		DEBUG_LOG(("ensureReplayMapAvailable - CDN download failed (crc=%u path='%s')", mapCRC, mapName.str()));
+		return;
+	}
+
+	printf("Map '%s' installed.\n", mapName.str());
+	fflush(stdout);
+}
+
 /**
  * Start playback of the file. Return true or false depending on if the file is
  * a valid replay file or not.
@@ -1574,6 +1644,13 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 #endif
 
 	TheWritableGlobalData->m_pendingFile = m_gameInfo.getMap();
+
+	// When playing back headless (e.g. -headless -replay against the stats
+	// server), the referenced map may not be installed on this machine. Pull it
+	// from the CDN now, before the engine tries to loadMap() it, so the
+	// simulation runs on the real terrain instead of empty fallback terrain.
+	if (TheGlobalData && TheGlobalData->m_headless)
+		ensureReplayMapAvailable(&m_gameInfo);
 
 #ifdef DEBUG_LOGGING
 	if (header.localPlayerIndex >= 0)
