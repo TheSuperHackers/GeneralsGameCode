@@ -219,8 +219,8 @@ class AudioManager : public SubsystemInterface
 		virtual UnsignedInt getNum2DSamples() const = 0;
 		virtual UnsignedInt getNum3DSamples() const = 0;
 		virtual UnsignedInt getNumStreams() const = 0;
-		virtual UnsignedInt getAvailable2DSamples() const = 0;
-		virtual UnsignedInt getAvailable3DSamples() const = 0;
+		virtual UnsignedInt getNumAvailable2DSamples() const = 0;
+		virtual UnsignedInt getNumAvailable3DSamples() const = 0;
 
 		// Device Dependent calls to determine sound prioritization info
 		virtual Bool doesViolateLimit( AudioEventRTS *event ) const = 0;

@@ -165,8 +165,8 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		dd->printf("Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No"));
 		dd->printf("Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No"));
 		dd->printf("Channels Available: ");
-		dd->printf("%u Sounds    ", getAvailable2DSamples());
-		dd->printf("%u 3D Sounds\n", getAvailable3DSamples());
+		dd->printf("%u Sounds    ", getNumAvailable2DSamples());
+		dd->printf("%u 3D Sounds\n", getNumAvailable3DSamples());
 		dd->printf("Volume: ");
 		dd->printf("Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f));
 		dd->printf("3DSound: %d    ", REAL_TO_INT(m_sound3DVolume * 100.0f));
@@ -195,8 +195,8 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 		fprintf( fp, "Speech: %s    ", (isOn(AudioAffect_Speech) ? "Yes" : "No") );
 		fprintf( fp, "Music: %s\n", (isOn(AudioAffect_Music) ? "Yes" : "No") );
 		fprintf( fp, "Channels Available: " );
-		fprintf( fp, "%u Sounds    ", getAvailable2DSamples() );
-		fprintf( fp, "%u 3D Sounds\n", getAvailable3DSamples() );
+		fprintf( fp, "%u Sounds    ", getNumAvailable2DSamples() );
+		fprintf( fp, "%u 3D Sounds\n", getNumAvailable3DSamples() );
 		fprintf( fp, "Volume: ");
 		fprintf( fp, "Sound: %d    ", REAL_TO_INT(m_soundVolume * 100.0f) );
 		fprintf( fp, "3DSound: %d    ", REAL_TO_INT(m_sound3DVolume * 100.0f) );
@@ -1743,13 +1743,13 @@ UnsignedInt MilesAudioManager::getNumStreams() const
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt MilesAudioManager::getAvailable2DSamples() const
+UnsignedInt MilesAudioManager::getNumAvailable2DSamples() const
 {
 	return (UnsignedInt)m_availableSamples.size();
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt MilesAudioManager::getAvailable3DSamples() const
+UnsignedInt MilesAudioManager::getNumAvailable3DSamples() const
 {
 	return (UnsignedInt)m_available3DSamples.size();
 }

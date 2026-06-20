@@ -195,8 +195,8 @@ class MilesAudioManager : public AudioManager
 		virtual UnsignedInt getNum2DSamples() const override;
 		virtual UnsignedInt getNum3DSamples() const override;
 		virtual UnsignedInt getNumStreams() const override;
-		virtual UnsignedInt getAvailable2DSamples() const override;
-		virtual UnsignedInt getAvailable3DSamples() const override;
+		virtual UnsignedInt getNumAvailable2DSamples() const override;
+		virtual UnsignedInt getNumAvailable3DSamples() const override;
 
 		virtual Bool doesViolateLimit( AudioEventRTS *event ) const override;
 		virtual Bool isPlayingLowerPriority( AudioEventRTS *event ) const override;
@@ -370,8 +370,8 @@ class MilesAudioManagerDummy : public MilesAudioManager
 	virtual UnsignedInt getNum2DSamples() const override { return 0; }
 	virtual UnsignedInt getNum3DSamples() const override { return 0; }
 	virtual UnsignedInt getNumStreams() const override { return 0; }
-	virtual UnsignedInt getAvailable2DSamples() const override { return 0; }
-	virtual UnsignedInt getAvailable3DSamples() const override { return 0; }
+	virtual UnsignedInt getNumAvailable2DSamples() const override { return 0; }
+	virtual UnsignedInt getNumAvailable3DSamples() const override { return 0; }
 	virtual Bool doesViolateLimit(AudioEventRTS* event) const override { return false; }
 	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const override { return false; }
 	virtual Bool isPlayingAlready(AudioEventRTS* event) const override { return false; }

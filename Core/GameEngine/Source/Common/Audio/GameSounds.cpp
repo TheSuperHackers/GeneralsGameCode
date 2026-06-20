@@ -226,19 +226,19 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 
 	if (event->isPositionalAudio())
 	{
-		if (TheAudio->getAvailable3DSamples() > 0)
+		if (TheAudio->getNumAvailable3DSamples() > 0)
 		{
 			return true;
 		}
 #ifdef INTENSIVE_AUDIO_DEBUG
 		DEBUG_LOG(("- %d samples playing, %d samples available",
-			TheAudio->getNum3DSamples() - TheAudio->getAvailable3DSamples(), TheAudio->getNum3DSamples()));
+			TheAudio->getNum3DSamples() - TheAudio->getNumAvailable3DSamples(), TheAudio->getNum3DSamples()));
 #endif
 	}
 	else
 	{
 		// its a UI sound (and thus, 2-D)
-		if (TheAudio->getAvailable2DSamples() > 0)
+		if (TheAudio->getNumAvailable2DSamples() > 0)
 		{
 			return true;
 		}
