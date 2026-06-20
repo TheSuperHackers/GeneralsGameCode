@@ -45,14 +45,6 @@ public:
 		unsigned short min_vertex_index,
 		unsigned short vertex_count);
 
-	static void Insert_VolumeParticle(
-		const SphereClass& bounding_sphere,
-		unsigned short start_index,
-		unsigned short polygon_count,
-		unsigned short min_vertex_index,
-		unsigned short vertex_count,
-		unsigned short layerCount);
-
 	static void Flush();
 	static void Deinit();
 
