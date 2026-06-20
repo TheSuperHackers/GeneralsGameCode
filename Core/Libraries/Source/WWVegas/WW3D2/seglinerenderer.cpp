@@ -1181,7 +1181,7 @@ void SegLineRendererClass::Render
 		DX8Wrapper::Set_Shader(shader);
 
 		if (sorting) {
-			SortingRendererClass::Insert_Triangles(obj_sphere,0,tidx,0,vnum);
+			SortingRendererClass::Insert_Triangles(&obj_sphere,0,tidx,0,vnum);
 		} else {
 			DX8Wrapper::Draw_Triangles(0,tidx,0,vnum);
 		}

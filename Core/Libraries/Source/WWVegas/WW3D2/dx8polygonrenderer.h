@@ -143,7 +143,7 @@ inline void DX8PolygonRendererClass::Render_Sorted(/*const Matrix3D & tm,*/int b
 
 	DX8Wrapper::Set_Index_Buffer_Index_Offset(base_vertex_offset);
 	SortingRendererClass::Insert_Triangles(
-		bounding_sphere,
+		&bounding_sphere,
 		index_offset,
 		index_count/3,
 		min_vertex_index,

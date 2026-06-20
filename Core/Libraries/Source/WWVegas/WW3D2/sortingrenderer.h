@@ -33,7 +33,7 @@ class SortingRendererClass
 
 public:
 	static void Insert_Triangles(
-		const SphereClass& bounding_sphere,
+		const SphereClass* bounding_sphere,
 		unsigned short start_index,
 		unsigned short polygon_count,
 		unsigned short min_vertex_index,
