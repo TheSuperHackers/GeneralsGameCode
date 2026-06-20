@@ -167,8 +167,9 @@ public:
 	unsigned short vertex_count;			// Number of vertices used in vb
 };
 
-static std::list<SortingNodeStruct*> sorted_list;
-static std::list<SortingNodeStruct*> clean_list;
+typedef std::list<SortingNodeStruct*> SortingNodeStructList;
+static SortingNodeStructList sorted_list;
+static SortingNodeStructList clean_list;
 static unsigned total_sorting_vertices;
 
 static SortingNodeStruct* Get_Sorting_Struct()
@@ -245,31 +246,6 @@ void SortingRendererClass::Insert_Triangles(
 	WWASSERT(vertex_buffer);
 	WWASSERT(state->vertex_count<=vertex_buffer->Get_Vertex_Count());
 
-	D3DXMATRIX mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
-	D3DXVECTOR3 vec=(D3DXVECTOR3&)state->bounding_sphere.Center;
-	D3DXVECTOR4 transformed_vec;
-	D3DXVec3Transform(
-		&transformed_vec,
-		&vec,
-		&mtx);
-	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
-
-
-	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
-
-	std::list<SortingNodeStruct*>::iterator node = sorted_list.begin();
-	while (node != sorted_list.end()) {
-		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
-			sorted_list.insert(node, state);
-			break;
-		}
-		++node;
-	}
-	if (node == sorted_list.end())
-	{
-		sorted_list.push_back(state);
-	}
-
 #ifdef WWDEBUG
 	unsigned short* indices=nullptr;
 	SortingIndexBufferClass* index_buffer=static_cast<SortingIndexBufferClass*>(state->sorting_state.index_buffer);
@@ -288,6 +264,28 @@ void SortingRendererClass::Insert_Triangles(
 		WWASSERT(idx3<state->vertex_count);
 	}
 #endif // WWDEBUG
+
+	D3DXMATRIX mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
+	D3DXVECTOR3 vec=(D3DXVECTOR3&)state->bounding_sphere.Center;
+	D3DXVECTOR4 transformed_vec;
+	D3DXVec3Transform(
+		&transformed_vec,
+		&vec,
+		&mtx);
+	state->transformed_center=Vector3(transformed_vec[0],transformed_vec[1],transformed_vec[2]);
+
+
+	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
+
+	for (SortingNodeStructList::iterator node = sorted_list.begin(); node != sorted_list.end(); ++node)
+	{
+		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
+			sorted_list.insert(node, state);
+			return;
+		}
+	}
+
+	sorted_list.push_back(state);
 }
 
 // ----------------------------------------------------------------------------
@@ -715,16 +713,13 @@ void SortingRendererClass::Insert_VolumeParticle(
 
 	/// @todo lorenzen sez use a bucket sort here... and stop copying so much data so many times
 
-	std::list<SortingNodeStruct*>::iterator node = sorted_list.begin();
-	while (node != sorted_list.end()) {
+	for (SortingNodeStructList::iterator node = sorted_list.begin(); node != sorted_list.end(); ++node)
+	{
 		if (state->transformed_center.Z > (*node)->transformed_center.Z) {
 			sorted_list.insert(node, state);
-			break;
+			return;
 		}
-		++node;
 	}
-	if (node == sorted_list.end())
-	{
-		sorted_list.push_back(state);
-	}
+
+	sorted_list.push_back(state);
 }
