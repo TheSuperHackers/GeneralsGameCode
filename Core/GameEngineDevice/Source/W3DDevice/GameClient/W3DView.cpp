@@ -1719,14 +1719,14 @@ void W3DView::getAxisAlignedViewRegion(Region3D &axisAlignedRegion)
 		// take those 4 corners projected into the world and create an axis aligned bounding
 		// box, we will use this box to iterate the drawables in 3D space
 		//
-		axisAlignedRegion.setFromPointsNoZ(box, ARRAY_SIZE(box));
+		axisAlignedRegion.setXYFromPoints(box, ARRAY_SIZE(box));
 	}
 	else
 	{
 		if( WorldHeightMap *heightMap = TheTerrainRenderObject->getMap() )
 		{
 			const Region2D region = heightMap->getDrawRegion2D();
-			axisAlignedRegion.set(region);
+			axisAlignedRegion.setXY(region);
 		}
 		else
 		{

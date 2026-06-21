@@ -542,7 +542,8 @@ struct Region3D
 		return lo.is(value) && hi.is(value);
 	}
 
-	void set(const Region2D &region)
+	// Set XY from a 2D region and leave Z unchanged.
+	void setXY(const Region2D &region)
 	{
 		lo.x = region.lo.x;
 		lo.y = region.lo.y;
@@ -550,7 +551,8 @@ struct Region3D
 		hi.y = region.hi.y;
 	}
 
-	void setFromPointsNoZ(const Coord3D* points, Int count)
+	// Set XY from any amount of points and leave Z unchanged.
+	void setXYFromPoints(const Coord3D* points, Int count)
 	{
 		lo.x = points[0].x;
 		lo.y = points[0].y;
