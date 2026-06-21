@@ -1300,12 +1300,12 @@ void TestWaterUpdate()
 					ShaderClass::Invalidate();
 				}
 
-				pauseWaves=TRUE;
-
 //			char buffer[64];
 //			sprintf(buffer,"\n%d,%d,%d,%d",mouseAnchor.x, mouseAnchor.y, screenPoint.x, screenPoint.y);
 //			OutputDebugString (buffer);
 			}
+
+			pauseWaves=TRUE;
 		}
 	}
 }
