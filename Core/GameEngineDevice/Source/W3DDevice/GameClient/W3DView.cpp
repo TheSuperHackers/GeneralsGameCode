@@ -2623,8 +2623,8 @@ void W3DView::lookAt( const Coord3D *o )
 		rayEnd -= rayStart;	//vector camera to world space point
 		rayEnd.Normalize();	//make unit vector
 		rayEnd *= sqr(m_3DCamera->Get_Depth());	//adjust length to reach far clip plane and beyond
-		rayEnd += rayStart;	//get point on far clip plane along ray from camera.
 		rayStart.Set(pos.x, pos.y, pos.z);
+		rayEnd += rayStart;	//get point on far clip plane along ray from camera.
 		lineseg.Set(rayStart,rayEnd);
 
 		RayCollisionTestClass raytest(lineseg,&result);
