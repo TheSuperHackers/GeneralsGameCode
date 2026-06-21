@@ -53,6 +53,13 @@
 ** sign of the D value is inverted.
 */
 
+enum PlaneIntersectionType CPP_11(: int)
+{
+	PlaneIntersectionType_None = 0, // No intersection when the line is parallel to the plane
+	PlaneIntersectionType_InsideSegment = 1, // The segment INSIDE point A and B intersects the plane
+	PlaneIntersectionType_OutsideLine = 2, // The infinite line OUTSIDE point A and B intersects the plane
+};
+
 class PlaneClass
 {
 public:
@@ -81,7 +88,7 @@ public:
 	inline void Set(const Vector3 & normal,const Vector3 & point);
 	inline void Set(const Vector3 & point1,const Vector3 & point2,const Vector3 & point3);
 
-	bool Compute_Intersection(const Vector3 & p0,const Vector3 & p1,float * set_t) const;
+	PlaneIntersectionType Compute_Intersection(const Vector3 & p0,const Vector3 & p1,float * set_t) const;
 	bool In_Front(const Vector3 & point) const;
 	bool In_Front(const SphereClass & sphere) const;
 	bool In_Front_Or_Intersecting(const SphereClass & sphere) const;
@@ -148,7 +155,7 @@ inline void PlaneClass::Set(const Vector3 & point1, const Vector3 & point2, cons
 	}
 }
 
-inline bool PlaneClass::Compute_Intersection(const Vector3 & p0,const Vector3 & p1,float * set_t) const
+inline PlaneIntersectionType PlaneClass::Compute_Intersection(const Vector3 & p0,const Vector3 & p1,float * set_t) const
 {
 	float num,den;
 	den = Vector3::Dot_Product(N,p1-p0);
@@ -157,7 +164,7 @@ inline bool PlaneClass::Compute_Intersection(const Vector3 & p0,const Vector3 & 
 	** If the denominator is zero, the ray is parallel to the plane
 	*/
 	if (den == 0.0f) {
-		return false;
+		return PlaneIntersectionType_None;
 	}
 
 	num = -(Vector3::Dot_Product(N,p0) - D);
@@ -169,10 +176,10 @@ inline bool PlaneClass::Compute_Intersection(const Vector3 & p0,const Vector3 & 
 	** the plane but the segment does not
 	*/
 	if ((*set_t < 0.0f) || (*set_t > 1.0f)) {
-		return false;
+		return PlaneIntersectionType_OutsideLine;
 	}
 
-	return true;
+	return PlaneIntersectionType_InsideSegment;
 }
 
 inline bool PlaneClass::In_Front(const Vector3 & point) const

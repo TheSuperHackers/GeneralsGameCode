@@ -450,9 +450,11 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				{
 					Coord3D position;
 
-					TheTacticalView->screenToTerrain( &pixel, &position );
-					mouseoverMessage = TheMessageStream->appendMessage( GameMessage::MSG_MOUSEOVER_LOCATION_HINT );
-					mouseoverMessage->appendLocationArgument( position );
+					if( TheTacticalView->screenToTerrain( &pixel, &position ) )
+					{
+						mouseoverMessage = TheMessageStream->appendMessage( GameMessage::MSG_MOUSEOVER_LOCATION_HINT );
+						mouseoverMessage->appendLocationArgument( position );
+					}
 				}
 			}
 

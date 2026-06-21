@@ -80,7 +80,11 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				Coord3D world;
 
 				// translate mouse position to world position
-				TheTacticalView->screenToTerrain( &mouse, &world );
+				if( !TheTacticalView->screenToTerrain( &mouse, &world ) )
+				{
+					TheInGameUI->placeBuildAvailable( nullptr, nullptr );
+					break;
+				}
 
 				//
 				// placing things causes a dozer to go over and build it ... get the dozer in question
@@ -163,8 +167,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 			if (build && TheInGameUI->isPlacementAnchored())
 			{
 				GameMessage *placeMsg;
-//				Player *player = ThePlayerList->getLocalPlayer();
-				Coord3D world;
+				Coord3D worldStart, worldEnd;
 				Real angle;
 				ICoord2D anchorStart, anchorEnd;
 				Bool isLineBuild = TheBuildAssistant->isLineBuildTemplate( build );
@@ -176,7 +179,12 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				TheInGameUI->getPlacementPoints( &anchorStart, &anchorEnd );
 
 				// translate the screen position of start to world target location
-				TheTacticalView->screenToTerrain( &anchorStart, &world );
+				if( !TheTacticalView->screenToTerrain( &anchorStart, &worldStart ) )
+					break;
+
+				if( isLineBuild )
+					if( !TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd ) )
+						break;
 
 				Object *builderObj = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
 
@@ -217,7 +225,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 
 				// check to see if this is a legal location to build something at
 				LegalBuildCode lbc;
-				lbc = TheBuildAssistant->isLocationLegalToBuild( &world,
+				lbc = TheBuildAssistant->isLocationLegalToBuild( &worldStart,
 																												 build,
 																												 angle,
 																												 BuildAssistant::USE_QUICK_PATHFIND |
@@ -244,7 +252,7 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 								//dozer/worker.
 								placeMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_SPECIAL_POWER_AT_LOCATION );
 								placeMsg->appendIntegerArgument( commandButton->getSpecialPowerTemplate()->getID() ); //The ID of the special power template.
-								placeMsg->appendLocationArgument( world ); //Position of special to be fired.
+								placeMsg->appendLocationArgument( worldStart ); //Position of special to be fired.
 								placeMsg->appendRealArgument( angle ); //Angle of special to be fired.
 								placeMsg->appendObjectIDArgument( INVALID_ID ); //There is no object in the way.
 								placeMsg->appendIntegerArgument( commandButton->getOptions() ); //Command button options.
@@ -268,15 +276,11 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 						placeMsg = TheMessageStream->appendMessage( GameMessage::MSG_DOZER_CONSTRUCT );
 
 					placeMsg->appendIntegerArgument(build->getTemplateID());
-					placeMsg->appendLocationArgument(world);
+					placeMsg->appendLocationArgument(worldStart);
 					placeMsg->appendRealArgument(angle);
 					if( isLineBuild )
 					{
-						Coord3D worldEnd;
-
-						TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd );
 						placeMsg->appendLocationArgument( worldEnd );
-
 					}
 
 					pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), placeMsg->getType() );

@@ -542,6 +542,14 @@ struct Region3D
 		return lo.is(value) && hi.is(value);
 	}
 
+	void set(const Region2D &region)
+	{
+		lo.x = region.lo.x;
+		lo.y = region.lo.y;
+		hi.x = region.hi.x;
+		hi.y = region.hi.y;
+	}
+
 	void setFromPointsNoZ(const Coord3D* points, Int count)
 	{
 		lo.x = points[0].x;

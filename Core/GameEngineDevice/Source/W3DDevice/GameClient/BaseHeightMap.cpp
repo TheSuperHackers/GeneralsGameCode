@@ -1381,7 +1381,7 @@ Bool BaseHeightMapRenderObjClass::getMaximumVisibleBox(const FrustumClass &frust
 	ClippedCorners[0]=frustum.Corners[0];
 	for (Int i=0; i<4; i++)
 	{	ClippedCorners[i]=frustum.Corners[i];
-		if (groundPlane.Compute_Intersection(frustum.Corners[i],frustum.Corners[i+4],&clipFraction))
+		if (groundPlane.Compute_Intersection(frustum.Corners[i],frustum.Corners[i+4],&clipFraction) == PlaneIntersectionType_InsideSegment)
 		{	//edge intersects the terrain
 			ClippedCorners[i+4]=frustum.Corners[i]+(frustum.Corners[i+4]-frustum.Corners[i])*clipFraction;
 		}

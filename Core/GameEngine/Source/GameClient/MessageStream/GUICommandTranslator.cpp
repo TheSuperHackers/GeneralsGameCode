@@ -141,20 +141,19 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		Coord3D world;
 
 		// translate the mouse location into world coords
-		TheTacticalView->screenToTerrain( mouse, &world );
+		if (TheTacticalView->screenToTerrain( mouse, &world ))
+		{
+			// create the message and append arguments
+			msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
+			msg->appendIntegerArgument( command->getWeaponSlot() );
+			msg->appendLocationArgument( world );
+			msg->appendIntegerArgument( command->getMaxShotsToFire() );
 
-		// create the message and append arguments
-		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
-		msg->appendIntegerArgument( command->getWeaponSlot() );
-		msg->appendLocationArgument( world );
-		msg->appendIntegerArgument( command->getMaxShotsToFire() );
-
-		//Also append the object ID (incase weapon doesn't like obstacles on land).
-		Object *target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
-		ObjectID targetID = target ? target->getID() : INVALID_ID;
-		msg->appendObjectIDArgument( targetID );
-
-
+			//Also append the object ID (incase weapon doesn't like obstacles on land).
+			Object *target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
+			ObjectID targetID = target ? target->getID() : INVALID_ID;
+			msg->appendObjectIDArgument( targetID );
+		}
 	}
 	else if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
@@ -233,7 +232,8 @@ static CommandStatus doGuardCommand( const CommandButton *command, GuardMode gua
 		if (BitIsSet( command->getOptions(), NEED_TARGET_POS ))
 		{
 			// translate the mouse location into world coords
-			TheTacticalView->screenToTerrain( mouse, &world );
+			if( !TheTacticalView->screenToTerrain( mouse, &world ) )
+				return COMMAND_COMPLETE;
 		}
 		else
 		{
@@ -277,7 +277,8 @@ static CommandStatus doAttackMoveCommand( const CommandButton *command, const IC
 
 	// convert mouse point to world coords
 	Coord3D world;
-	TheTacticalView->screenToTerrain( mouse, &world );
+	if( !TheTacticalView->screenToTerrain( mouse, &world ) )
+		return COMMAND_COMPLETE;
 
 	// send the message to set the rally point
 	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_ATTACKMOVETO );
@@ -316,7 +317,8 @@ static CommandStatus doSetRallyPointCommand( const CommandButton *command, const
 
 	// convert mouse point to world coords
 	Coord3D world;
-	TheTacticalView->screenToTerrain( mouse, &world );
+	if( !TheTacticalView->screenToTerrain( mouse, &world ) )
+		return COMMAND_COMPLETE;
 
 	// send the message to set the rally point
 	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_SET_RALLY_POINT );
@@ -339,7 +341,8 @@ static CommandStatus doPlaceBeacon( const CommandButton *command, const ICoord2D
 
 	// convert mouse point to world coords
 	Coord3D world;
-	TheTacticalView->screenToTerrain( mouse, &world );
+	if( !TheTacticalView->screenToTerrain( mouse, &world ) )
+		return COMMAND_COMPLETE;
 
 	// send the message to set the rally point
 	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_PLACE_BEACON );
@@ -414,14 +417,15 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 						if (BitIsSet(command->getOptions(), NEED_TARGET_POS)) {
 							Coord3D worldPos;
 
-							TheTacticalView->screenToTerrain(&mouse, &worldPos);
+							if( TheTacticalView->screenToTerrain(&mouse, &worldPos) )
+							{
+								GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_EVACUATE);
+								msg->appendLocationArgument(worldPos);
 
-							GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_EVACUATE);
-							msg->appendLocationArgument(worldPos);
+								pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
 
-							pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
-
-							commandStatus = COMMAND_COMPLETE;
+								commandStatus = COMMAND_COMPLETE;
+							}
 						}
 
 						break;
