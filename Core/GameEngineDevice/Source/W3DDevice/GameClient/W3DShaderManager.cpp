@@ -1423,7 +1423,8 @@ Int MaskTextureShader::set(Int pass)
 	D3DXMatrixInverse(&inv, &det, &curView);
 
 	D3DXMATRIX scale,offset,offsetTextureCenter;
-	Coord3D centerPos(0,0,0);
+	Coord3D centerPos;
+	centerPos.zero();
 
 	//Find center of projection (this should be returned from some other filter, etc. but
 	//for now assume terrain location at center of screen.
