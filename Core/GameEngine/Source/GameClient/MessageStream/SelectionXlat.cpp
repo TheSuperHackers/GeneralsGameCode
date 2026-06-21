@@ -382,625 +382,61 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 	switch (t)
 	{
 		case GameMessage::MSG_META_BEGIN_FORCEATTACK:
-			TheInGameUI->setForceAttackMode( true );
+		{
+			disp = onMetaBeginForceattack(msg);
 			break;
-
+		}
 		case GameMessage::MSG_META_END_FORCEATTACK:
-			TheInGameUI->setForceAttackMode( false );
+		{
+			disp = onMetaEndForceattack(msg);
 			break;
-
-		//-----------------------------------------------------------------------------
+		}
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
 		{
-			ICoord2D pixel;
-			pixel = msg->getArgument( 0 )->pixel;
-
-
-			// modifier appears to be unused, and the argument doesn't exist.  jba.
-			//Int modifier = msg->getArgument( 1 )->integer;
-
-			if (m_leftMouseButtonIsDown)
-			{
-				ICoord2D delta;
-
-				delta.x = abs(pixel.x - m_selectFeedbackAnchor.x);
-				delta.y = abs(pixel.y - m_selectFeedbackAnchor.y);
-
-				// if mouse has moved while left button is down, begin drag selection
-				if (delta.x > TheMouse->m_dragTolerance || delta.y > TheMouse->m_dragTolerance)
-				{
-					if (m_dragSelecting == false)
-					{
-						m_dragSelecting = true;
-						TheTacticalView->setMouseLock( TRUE );
-						TheInGameUI->setSelecting( TRUE );
-					}
-				}
-
-				// create "hint" messages defining selection region under construction
-				if (m_dragSelecting)
-				{
-					// insert area selection "hint" message into stream
-					GameMessage *hintMsg = TheMessageStream->appendMessage( GameMessage::MSG_BEGIN_AREA_SELECTION_HINT );
-
-					// build rectangular region defined by the drag selection
-					IRegion2D pixelRegion;
-					buildRegion( &m_selectFeedbackAnchor, &pixel, &pixelRegion );
-					hintMsg->appendPixelRegionArgument( pixelRegion );
-				}
-			}
-			else //left button is not down (not drag select)
-			{
-				// insert Mouseover hint into stream for CommandTranslator and HintSpy to see.
-				GameMessage *mouseoverMessage;
-
-				//Kris: We want to show information such as the popup text on objects that are forceattackable even
-				//      when we're not in force attackable mode!
-				UnsignedInt pickType = getPickTypesForContext( true /*TheInGameUI->isInForceAttackMode()*/ );
-
-				Drawable *underCursor = TheTacticalView->pickDrawable( &pixel, TheInGameUI->isInForceAttackMode(), (PickType) pickType );
-				Object *objUnderCursor = underCursor ? underCursor->getObject() : nullptr;
-
-				if( objUnderCursor && (!objUnderCursor->isEffectivelyDead() || objUnderCursor->isKindOf( KINDOF_ALWAYS_SELECTABLE )) )
-				{
-					mouseoverMessage = TheMessageStream->appendMessage( GameMessage::MSG_MOUSEOVER_DRAWABLE_HINT );
-					mouseoverMessage->appendDrawableIDArgument( underCursor->getID() );
-				}
-				else// else this is a mouseover terrain
-				{
-					Coord3D position;
-
-					if( TheTacticalView->screenToTerrain( &pixel, &position ) )
-					{
-						mouseoverMessage = TheMessageStream->appendMessage( GameMessage::MSG_MOUSEOVER_LOCATION_HINT );
-						mouseoverMessage->appendLocationArgument( position );
-					}
-				}
-			}
-
+			disp = onRawMousePosition(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSE_LEFT_DOUBLE_CLICK:
 		{
-			Int modifiers = msg->getArgument(1)->integer;
-
-			// Pressing ctrl is disallowed for double clicking
-			if (TheInGameUI->isInForceAttackMode())
-				break;
-
-			const IRegion2D& region = msg->getArgument(0)->pixelRegion;
-
-			// Single point. If there's a unit in there, double click will select all of them.
-			if (region.height() == 0 && region.width() == 0)
-			{
-				Bool selectAcrossMap = (BitIsSet(modifiers, KEY_STATE_ALT) ? TRUE : FALSE);
-
-				// only allow things that are selectable. Also, we aren't allowed to
-				Drawable *picked = TheTacticalView->pickDrawable( &region.lo, FALSE, PICK_TYPE_SELECTABLE);
-
-				// If there wasn't anyone to pick, then we want to propagate this double click.
-				if (picked == nullptr)
-					break;
-
-				if (!picked->isMassSelectable())
-					break;
-
-				Object *pickedObj = picked->getObject();
-
-				// We have to have an object in order to be able to do interesting double click stuff on
-				// him. Also, if it is a structure, it is already selected, so don't select all the units
-				// like him.
-				if (pickedObj == nullptr || !pickedObj->isLocallyControlled())
-					break;
-
-				// Ok. The logic is a little bit weird here. What we need to do is deselect everything
-				// except for this one picked thing. Store off the old selection, pick the single clicked thing.
-				// Then if
-				DrawableList listOfSelectedDrawables;
-				if (TheInGameUI->isInPreferSelectionMode()) {
-					listOfSelectedDrawables	= *TheInGameUI->getAllSelectedDrawables();
-				}
-
-				// Pick just that one guy.
-				selectSingleDrawableWithoutSound(picked);
-
-				// Yay. Either select across the screen or the world depending on selectAcrossMap
-				if (selectAcrossMap)
-					TheInGameUI->selectMatchingAcrossMap();
-				else
-					TheInGameUI->selectMatchingAcrossScreen();
-
-				// emit "picked" message
-				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
-				pickMsg->appendDrawableIDArgument( picked->getID() );  /// note we are putting in a drawable id
-
-				if (TheInGameUI->isInPreferSelectionMode() && !listOfSelectedDrawables.empty()) {
-					GameMessage *selectMore = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND );
-					selectMore->appendBooleanArgument(FALSE);
-					for (DrawableListIt it = listOfSelectedDrawables.begin(); it != listOfSelectedDrawables.end(); ++it) {
-						Drawable *draw = *it;
-						if (draw && draw->isSelectable()) {
-							TheInGameUI->selectDrawable(draw);
-							selectMore->appendObjectIDArgument(draw->getObject()->getID());
-						}
-					}
-				}
-
-				disp = DESTROY_MESSAGE;
-			}
+			disp = onMouseLeftDoubleClick(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSEOVER_DRAWABLE_HINT:
 		{
-			if (TheInGameUI->isScrolling()) {
-				// dont show this now.
-				break;
-			}
-
-			DrawableID id = msg->getArgument(0)->drawableID;
-			Drawable *draw = TheGameClient->findDrawableByID(id);
-			if (!draw) {
-				break;
-			}
-
-			GameMessage::Type msgType = TheGameClient->evaluateContextCommand(draw, draw->getPosition(), CommandTranslator::EVALUATE_ONLY);
-			if( msgType == GameMessage::MSG_INVALID )
-			{
-				TheInGameUI->createMouseoverHint(msg); // this sets the cursor
-				disp = DESTROY_MESSAGE;
-				const CommandButton *command = TheInGameUI->getGUICommand();
-
-				Bool ignoreCommand = FALSE;
-				if( command )
-				{
-					if( command->getCommandType() == GUI_COMMAND_ATTACK_MOVE ||
-							command->getCommandType() == GUI_COMMAND_GUARD ||
-							command->getCommandType() == GUI_COMMAND_GUARD_WITHOUT_PURSUIT ||
-							command->getCommandType() == GUI_COMMAND_GUARD_FLYING_UNITS_ONLY )
-					{
-						//These GUI commands can take care of themselves -- don't let
-						//the selection translator meddle.
-						ignoreCommand = TRUE;
-					}
-				}
-				if( !ignoreCommand && !draw->getTemplate()->isKindOf( KINDOF_SHRUBBERY ) )
-				{
-					if( CanSelectDrawable( draw, FALSE ) )
-					{
-						TheMouse->setCursor(Mouse::SELECTING);
-					}
-					else
-					{
-						TheMouse->setCursor( Mouse::ARROW );
-					}
-				}
-			}
-
+			disp = onMouseoverDrawableHint(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_MOUSE_LEFT_CLICK:
 		{
-			// If the quit menu is visible, we need to not process left clicks through the selection translator.
-			if (TheInGameUI->isQuitMenuVisible())
-			{
-				disp = DESTROY_MESSAGE;
-				break;
-			}
-
-			// Basically, we need to first determine if there are any drawables in the region of interest.
-			// If there aren't then this click should move forward.
-			IRegion2D selectionRegion = msg->getArgument(0)->pixelRegion;
-			Bool isPoint = (selectionRegion.height() == 0 && selectionRegion.width() == 0);
-
-			DrawableList drawablesThatWillSelect;
-			PickDrawableStruct pds;
-			pds.drawableListToFill = &drawablesThatWillSelect;
-			pds.isPointSelection = isPoint;
-			TheTacticalView->iterateDrawablesInRegion(&selectionRegion, addDrawableToList, &pds);
-
-			if (drawablesThatWillSelect.empty())
-			{
-				break;
-			}
-
-			// if there were drawables in the region, then we should determine if there is a context
-			// sensitive command that should take place. If there is, then this isn't a selection thing
-			const DrawableList *currentList = TheInGameUI->getAllSelectedDrawables();
-			if (!currentlyLookingForSelection())
-			{
-				break;
-			}
-
-			SelectionInfo si;
-			if (contextCommandForNewSelection(currentList, &drawablesThatWillSelect, &si, isPoint))
-			{
-				break;
-			}
-
-			// There isn't a context command, so this is a selection thing. Now, based on the keys,
-			// determine whether or not we should create a new group, or append these guys to our existing
-			// group.
-
-			Bool addToGroup = TheInGameUI->isInPreferSelectionMode();
-
-			if (si.currentCountEnemies > 0 ||
-					si.currentCountCivilians > 0 ||
-					si.currentCountFriends > 0 ||
-					si.currentCountMineBuildings > 0)
-			{
-				// force a new group creation
-				addToGroup = FALSE;
-			}
-
-			// If there are any of my units, then select those.
-			if (si.newCountMine > 0)
-			{
-				si.selectMine = TRUE;
-
-        // EXACTLY ONE CLICKED OR DRAGGED BUILDING
-				if ( si.newCountMineBuildings == 1 && si.newCountMine == 1 )
-				{
-					addToGroup = FALSE;
-					si.selectMineBuildings = TRUE;
-        }
-        else if ( si.newCountMineBuildings > 0 )////////////// SO SORRY, I KNOW THIS IS MICKEY MOUSE ///////////////////
-        { // What we are after here is to allow the drag select to get the building,
-          // if the other things in the list are going to be ignored anyway
-          // so we find out whether the other things are not selectible
-          // this came up with the new AmericaBuildingFireBase, which shows its contained
-          // but does not let you select them. The selection is propagated to the container
-          // in new code in SelectionInfo.cpp, in the static addDrawableToList();
-          // -Mark Lorenzen, 6/12/03
-          Bool onlyTheOneBuildingIsSelectableAnyway = TRUE;
-          DrawableID buildingID = INVALID_DRAWABLE_ID;
-          for (DrawableListIt it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
-				  {
-            const Drawable *d = *it;
-            if ( d->isKindOf( KINDOF_STRUCTURE ) )
-            {// make sure there is really only the one building in the list, as it may be multiply listed
-
-              if ( buildingID == INVALID_DRAWABLE_ID ) // this is the first building
-                buildingID = d->getID();
-              else if ( buildingID != d->getID() )//oops, more than one building!
-                onlyTheOneBuildingIsSelectableAnyway = FALSE;
-            }
-					  else if ( d->isSelectable() )
-              onlyTheOneBuildingIsSelectableAnyway = FALSE;
-
-            if ( ! onlyTheOneBuildingIsSelectableAnyway )
-              break;
-          }
-          if ( onlyTheOneBuildingIsSelectableAnyway )
-          {
-					  addToGroup = FALSE;
-					  si.selectMineBuildings = TRUE;
-          }
-				}
-
-			}
-			else if (si.newCountEnemies > 0 && si.newCountCivilians > 0 && si.newCountFriends > 0)
-			{
-				// No go here
-				break;
-			}
-			else if (si.newCountEnemies == 1)
-			{
-				addToGroup = FALSE;
-				si.selectEnemies = TRUE;
-			}
-			else if (si.newCountCivilians == 1)
-			{
-				addToGroup = FALSE;
-				si.selectCivilians = TRUE;
-			}
-			else if (si.newCountFriends == 1)
-			{
-				addToGroup = FALSE;
-				si.selectFriends = TRUE;
-			}
-
-			// If we're not going to select anything, just bail now.
-			if (!(si.selectMine || si.selectEnemies || si.selectCivilians || si.selectFriends))
-			{
-				break;
-			}
-
-			// If we've made it here, its time to do some selecting.
-			disp = DESTROY_MESSAGE;
-
-			// Whenever we manually select something, reset the last selected group.
-			m_lastGroupSelGroup = -1;
-
-			if (TheInGameUI->isInPreferSelectionMode() && isPoint && areAllSelected(drawablesThatWillSelect))
-			{
-				// If this was a point, shift was pressed and we already have that unit selected, then we
-				// need to deselect those units.
-				GameMessage *newMsg = TheMessageStream->appendMessage(GameMessage::MSG_REMOVE_FROM_SELECTED_GROUP);
-				Drawable *draw = nullptr;
-				DrawableListIt it;
-				for (it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
-				{
-					draw = *it;
-					if (!draw)
-					{
-						continue;
-					}
-
-					Object *objToDeselect = draw->getObject();
-					if (!objToDeselect)
-					{
-						continue;
-					}
-
-					newMsg->appendObjectIDArgument(objToDeselect->getID());
-					TheInGameUI->deselectDrawable(draw);
-				}
-			}
-			else
-			{
-				if (!addToGroup)
-				{
-					deselectAll();
-				}
-
-				GameMessage *newMsg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP);
-				newMsg->appendBooleanArgument(!addToGroup);
-
-				Player *localPlayer = ThePlayerList->getLocalPlayer();
-
-				Int newDrawablesSelected = 0;
-				Drawable *draw = nullptr;
-				DrawableListIt it;
-				for (it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
-				{
-					draw = *it;
-					if (!draw)
-					{
-						continue;
-					}
-
-					Object *obj = draw->getObject();
-					if (!obj)
-					{
-						continue;
-					}
-
-					if (obj && obj->getContainedBy() != nullptr)
-					{
-						// we're contained, and so we shouldn't be selectable.
-						continue;
-					}
-
-					Drawable *drawToSelect = nullptr;
-					ObjectID objToAppend = INVALID_ID;
-					if (si.selectMine && obj->isLocallyControlled())
-					{
-						if (!obj->isKindOf(KINDOF_STRUCTURE) || si.selectMineBuildings)
-						{
-							drawToSelect = draw;
-							objToAppend = obj->getID();
-						}
-					}
-					else
-					{
-						Relationship rel = localPlayer->getRelationship(obj->getTeam());
-						if (si.selectEnemies && rel == ENEMIES)
-						{
-							drawToSelect = draw;
-							objToAppend = obj->getID();
-						}
-						else if (si.selectCivilians && rel == NEUTRAL)
-						{
-							drawToSelect = draw;
-							objToAppend = obj->getID();
-						}
-						else if (si.selectFriends && rel == ALLIES)
-						{
-							drawToSelect = draw;
-							objToAppend = obj->getID();
-						}
-					}
-
-					if (drawToSelect && objToAppend != INVALID_ID)
-					{
-						newMsg->appendObjectIDArgument(objToAppend);
-						TheInGameUI->selectDrawable(drawToSelect);
-						++newDrawablesSelected;
-					}
-				}
-
-				if( newDrawablesSelected > 1 )
-				{
-					localPlayer->getAcademyStats()->recordDragSelection();
-				}
-
-				if (newDrawablesSelected == 1 && draw)
-				{
-#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-          if (m_HandOfGodSelectionMode && draw)
-					{
-						Object* obj = draw->getObject();
-						if (obj)
-						{
-							TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
-							GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_KILL_OBJECT );
-							msg->appendObjectIDArgument(obj->getID());
-						}
-						disp = DESTROY_MESSAGE;
-						break;
-					}
-#endif
-
-#if defined(RTS_DEBUG)
-          if (TheHurtSelectionMode && draw)
-					{
-						Object* obj = draw->getObject();
-						if (obj)
-						{
-							TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
-							GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_HURT_OBJECT );
-							msg->appendObjectIDArgument(obj->getID());
-						}
-						disp = DESTROY_MESSAGE;
-						break;
-					}
-
-#ifdef DEBUG_OBJECT_ID_EXISTS
-					if (TheDebugSelectionMode && draw && draw->getObject())
-					{
-						if (TheObjectIDToDebug == 0)
-						{
-							TheObjectIDToDebug = draw->getObject()->getID();
-							AsciiString msg;
-							msg.format("Item %s %08x selected for debugging",draw->getTemplate()->getName().str(),TheObjectIDToDebug);
-							UnicodeString msgu;
-							msgu.translate(msg);
-							TheInGameUI->message(msgu);
-							disp = DESTROY_MESSAGE;
-							break;
-						}
-					}
-#endif // DEBUG_OBJECT_ID_EXISTS
-#endif // RTS_DEBUG
-				}
-			}
-
-			if (disp == DESTROY_MESSAGE)
-				TheInGameUI->clearAttackMoveToMode();
-
+			disp = onMouseLeftClick(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		// Note that the raw left messages are only used to draw feedback now when
 		// appropriate. All actual selection code takes place in
 		// MSG_MOUSE_LEFT_CLICK & MSG_MOUSE_LEFT_DOUBLE_CLICK
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:
 		{
-			// cannot actually start area selection yet - have to wait for cursor to move a bit
-			m_leftMouseButtonIsDown = true;
-			m_selectFeedbackAnchor = msg->getArgument( 0 )->pixel;
+			disp = onRawMouseLeftButtonDown(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		// Note that the raw left messages are only used to draw feedback now when
 		// appropriate. All actual selection code takes place in
 		// MSG_MOUSE_LEFT_CLICK & MSG_MOUSE_LEFT_DOUBLE_CLICK
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_UP:
 		{
-			m_leftMouseButtonIsDown = FALSE;
-
-			if (m_dragSelecting) {
-				// Stop drag selecting now, thanks.
-				m_dragSelecting = FALSE;
-
-				TheTacticalView->setMouseLock( FALSE );
-				TheInGameUI->setSelecting( FALSE );
-				TheInGameUI->endAreaSelectHint(nullptr);
-
-				// insert area selection message into stream
-				GameMessage *dragMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
-
-				IRegion2D selectionRegion;
-				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
-				dragMsg->appendPixelRegionArgument( selectionRegion );
-			}
-			else
-			{
-				// left click behavior (not right drag)
-
-				//Added support to cancel the GUI command without deselecting the unit(s) involved
-				//when you right click.
-				if( !TheInGameUI->getGUICommand() && !TheKeyboard->isShift() && !TheKeyboard->isCtrl() && !TheKeyboard->isAlt() )
-				{
-					//No GUI command mode, so deselect everyone if we're in alternate mouse mode.
-					if( TheGlobalData->m_useAlternateMouse && TheInGameUI->getPendingPlaceSourceObjectID() == INVALID_ID )
-					{
-						if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
-						{
-							deselectAll();
-							m_lastGroupSelGroup = -1;
-						}
-						else
-						{
-							//Prevent deselection of unit if it just issued some type of UI order such as attack move, guard,
-							//initiating construction of a new structure.
-							TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( FALSE );
-						}
-					}
-				}
-			}
-
+			disp = onRawMouseLeftButtonUp(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
 		{
-			// There are three ways in which we can ignore this as a deselect:
-			// 1) 2-D position on screen
-			// 2) Time has exceeded the time which we allow for this to be a click.
-			// 3) 3-D camera position has changed
-			m_deselectFeedbackAnchor = msg->getArgument( 0 )->pixel;
-			m_lastClick = (UnsignedInt) msg->getArgument( 2 )->integer;
-			m_deselectDownCameraPosition = TheTacticalView->getPosition();
-
+			disp = onRawMouseRightButtonDown(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
-			Coord3D cameraPos = TheTacticalView->getPosition();
-			cameraPos.sub(m_deselectDownCameraPosition);
-
-			ICoord2D pixel = msg->getArgument( 0 )->pixel;
-			UnsignedInt currentTime = (UnsignedInt) msg->getArgument( 2 )->integer;
-
-			// right click behavior (not right drag)
-			if (TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime))
-			{
-				//Added support to cancel the GUI command without deselecting the unit(s) involved
-				//when you right click.
-				if( TheInGameUI->getGUICommand() )
-				{
-					//Cancel GUI command mode... don't deselect units.
-					TheInGameUI->setGUICommand( nullptr );
-
-					//With a GUI command cancel, we want no other behavior.
-					disp = DESTROY_MESSAGE;
-					TheInGameUI->setScrolling( FALSE );
-				}
-				else
-				{
-					//In alternate mouse mode, right click still cancels building placement.
-					// TheSuperHackers @tweak Stubbjax 08/08/2025 Canceling building placement no longer deselects the builder.
-					if (TheInGameUI->getPendingPlaceSourceObjectID() != INVALID_ID)
-					{
-						TheInGameUI->placeBuildAvailable(nullptr, nullptr);
-						TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick(FALSE);
-						disp = DESTROY_MESSAGE;
-						TheInGameUI->setScrolling(FALSE);
-					}
-					else if (!TheGlobalData->m_useAlternateMouse)
-					{
-						//No GUI command mode, so deselect everyone if we're in regular mouse mode.
-						deselectAll();
-					}
-				}
-			}
-
+			disp = onRawMouseRightButtonUp(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_META_CREATE_TEAM0:
 		case GameMessage::MSG_META_CREATE_TEAM1:
 		case GameMessage::MSG_META_CREATE_TEAM2:
@@ -1012,27 +448,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_CREATE_TEAM8:
 		case GameMessage::MSG_META_CREATE_TEAM9:
 		{
-			Int group = t - GameMessage::MSG_META_CREATE_TEAM0;
-			if ( group >= 0 && group < 10 )
-			{
-				DEBUG_LOG(("META: create team %d",group));
-				// Assign selected items to a group
-				GameMessage *newmsg = TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_CREATE_TEAM0 + group));
-				Drawable *drawable = TheGameClient->getDrawableList();
-				while (drawable != nullptr)
-				{
-					if (drawable->isSelected() && drawable->getObject() && drawable->getObject()->isLocallyControlled())
-					{
-						newmsg->appendObjectIDArgument(drawable->getObject()->getID());
-					}
-					drawable = drawable->getNextDrawable();
-				}
-			}
-			disp = DESTROY_MESSAGE;
+			disp = onMetaCreateTeam(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_TEAM0:
 		case GameMessage::MSG_META_SELECT_TEAM1:
 		case GameMessage::MSG_META_SELECT_TEAM2:
@@ -1044,76 +462,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_SELECT_TEAM8:
 		case GameMessage::MSG_META_SELECT_TEAM9:
 		{
-			Int group = t - GameMessage::MSG_META_SELECT_TEAM0;
-			if ( group >= 0 && group < 10 )
-			{
-				DEBUG_LOG(("META: select team %d",group));
-
-				UnsignedInt now = timeGetTime();
-				if ( m_lastGroupSelTime == 0 )
-				{
-					m_lastGroupSelTime = now;
-				}
-
-				Bool performSelection = TRUE;
-
-				// check for double-press to jump view
-				if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
-				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
-					// TheSuperHackers @bugfix Stubbjax 26/05/2025 Perform selection on double-press
-					// if the group or part of it is somehow deselected between presses.
-					performSelection = FALSE;
-					Player *player = ThePlayerList->getLocalPlayer();
-					if (player)
-					{
-						Squad *selectedSquad = player->getHotkeySquad(group);
-						if (selectedSquad != nullptr)
-						{
-							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
-							if (numObjs > 0)
-							{
-								// if there's someone in the group, center the camera on them.
-								Drawable* drawable = objlist[numObjs - 1]->getDrawable();
-								TheTacticalView->userLookAt( drawable->getPosition() );
-								performSelection = !TheInGameUI->areAllObjectsSelected( objlist );
-							}
-						}
-					}
-				}
-
-				if ( performSelection )
-				{
-					TheInGameUI->deselectAllDrawables( false ); //No need to post message because we're just creating a new group!
-
-					// no need to send two messages for selecting the same group.
-					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_SELECT_TEAM0 + group));
-					Player *player = ThePlayerList->getLocalPlayer();
-					if (player)
-					{
-						Squad *selectedSquad = player->getHotkeySquad(group);
-						if (selectedSquad != nullptr)
-						{
-							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
-							for (Int i = 0; i < numObjs; ++i)
-							{
-								if( objlist[i]->getControllingPlayer() == player )
-								{
-									TheInGameUI->selectDrawable(objlist[i]->getDrawable());
-								}
-							}
-						}
-					}
-				}
-				m_lastGroupSelTime = now;
-				m_lastGroupSelGroup = group;
-			}
-			disp = DESTROY_MESSAGE;
+			disp = onMetaSelectTeam(msg);
 			break;
 		}
-
 		case GameMessage::MSG_META_ADD_TEAM0:
 		case GameMessage::MSG_META_ADD_TEAM1:
 		case GameMessage::MSG_META_ADD_TEAM2:
@@ -1125,83 +476,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_ADD_TEAM8:
 		case GameMessage::MSG_META_ADD_TEAM9:
 		{
-			Int group = t - GameMessage::MSG_META_ADD_TEAM0;
-			if ( group >= 0 && group < 10 )
-			{
-				DEBUG_LOG(("META: select team %d",group));
-
-				UnsignedInt now = timeGetTime();
-				if ( m_lastGroupSelTime == 0 )
-				{
-					m_lastGroupSelTime = now;
-				}
-
-				// check for double-press to jump view
-
-				if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
-				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
-					Player *player = ThePlayerList->getLocalPlayer();
-					if (player)
-					{
-						Squad *selectedSquad = player->getHotkeySquad(group);
-						if (selectedSquad != nullptr)
-						{
-							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
-							if (numObjs > 0)
-							{
-								// if there's someone in the group, center the camera on them.
-								TheTacticalView->userLookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
-							}
-						}
-					}
-
-				}
-				else
-				{
-
-					Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-					if( draw && draw->isKindOf( KINDOF_STRUCTURE ) )
-					{
-						//Kris: Jan 12, 2005
-						//Can't select other units if you have a structure selected. So deselect the structure to prevent
-						//group force attack exploit.
-						TheInGameUI->deselectAllDrawables();
-					}
-
-					// no need to send two messages for selecting the same group.
-					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_ADD_TEAM0 + group));
-					Player *player = ThePlayerList->getLocalPlayer();
-					if (player)
-					{
-						Squad *selectedSquad = player->getHotkeySquad(group);
-						if (selectedSquad != nullptr)
-						{
-							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
-
-							// TheSuperHackers @bugfix skyaero 22/07/2025 Can't select other units if you have a structure selected. So deselect the structure to prevent group force attack exploit.
-							if (numObjs > 0 && objlist[0]->getDrawable()->isKindOf(KINDOF_STRUCTURE))
-							{
-								TheInGameUI->deselectAllDrawables();
-							}
-
-							for (Int i = 0; i < numObjs; ++i)
-							{
-								TheInGameUI->selectDrawable(objlist[i]->getDrawable());
-							}
-						}
-					}
-				}
-				m_lastGroupSelTime = now;
-				m_lastGroupSelGroup = group;
-			}
-			disp = DESTROY_MESSAGE;
+			disp = onMetaAddTeam(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_META_VIEW_TEAM0:
 		case GameMessage::MSG_META_VIEW_TEAM1:
 		case GameMessage::MSG_META_VIEW_TEAM2:
@@ -1213,92 +490,35 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_META_VIEW_TEAM8:
 		case GameMessage::MSG_META_VIEW_TEAM9:
 		{
-			Int group = t - GameMessage::MSG_META_VIEW_TEAM0;
-			if ( group >= 1 && group <= 10 )
-			{
-				DEBUG_LOG(("META: view team %d",group));
-				Player *player = ThePlayerList->getLocalPlayer();
-				if (player)
-				{
-					Squad *selectedSquad = player->getHotkeySquad(group);
-					if (selectedSquad != nullptr)
-					{
-						VecObjectPtr objlist = selectedSquad->getLiveObjects();
-						Int numObjs = objlist.size();
-						if (numObjs > 0)
-						{
-							// if there's someone in the group, center the camera on them.
-							TheTacticalView->userLookAt( objlist[ numObjs-1 ]->getDrawable()->getPosition() );
-						}
-					}
-				}
-			}
-			disp = DESTROY_MESSAGE;
+			disp = onMetaViewTeam(msg);
 			break;
 		}
-
-		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_OPTIONS:
 		{
-			// stop drawing selection feedback, as we're going to ignore the selection.
-			m_leftMouseButtonIsDown = FALSE;
-			// let this message drop through, the commandXLat will show the options screen itself.
+			disp = onMetaOptions(msg);
 			break;
 		}
-
-
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+		case GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE: //NOTICE THE DIFFERENT NAME!!!!!!!!!!!!!!!!!!!!!!!!!!ML
+		{
+			disp = onCheatToggleHandOfGodMode(msg);
+			break;
+		}
+#endif
 #if defined(RTS_DEBUG)
-		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
-			if ( !TheGameLogic->isInMultiplayerGame() )
-			{
-				m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
-				TheInGameUI->message( L"Meta Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
-				disp = DESTROY_MESSAGE;
-			}
+			disp = onMetaDemoToggleHandOfGodMode(msg);
 			break;
 		}
-#endif
-
-#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-		//-----------------------------------------------------------------------------------------
-		case GameMessage::MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE://NOTICE THE DIFFERENT NAME!!!!!!!!!!!!!!!!!!!!!!!!!!ML
-		{
-			if ( !TheGameLogic->isInMultiplayerGame() )
-			{
-				m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
-				TheInGameUI->message( L"Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
-				disp = DESTROY_MESSAGE;
-			}
-			break;
-		}
-#endif
-
-#if defined(RTS_DEBUG)
-		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
-			if ( !TheGameLogic->isInMultiplayerGame() )
-			{
-				TheHurtSelectionMode = !TheHurtSelectionMode;
-				TheInGameUI->message( L"Hurt-Me Mode is %s", TheHurtSelectionMode ? L"ON" : L"OFF" );
-				disp = DESTROY_MESSAGE;
-			}
+			disp = onMetaDemoToggleHurtMeMode(msg);
 			break;
 		}
-#endif
-
-#if defined(RTS_DEBUG)
-		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{
-			TheDebugSelectionMode = !TheDebugSelectionMode;
-			TheInGameUI->message( L"Debug-Selected-Item Mode is %s", TheDebugSelectionMode ? L"ON" : L"OFF" );
-		#ifdef DEBUG_OBJECT_ID_EXISTS
-			TheObjectIDToDebug = INVALID_ID;
-		#endif
-			disp = DESTROY_MESSAGE;
+			disp = onMetaDemoDebugSelection(msg);
 			break;
 		}
 #endif
@@ -1307,6 +527,879 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 	return disp;
 }
 
+GameMessageDisposition SelectionTranslator::onMetaBeginForceattack(MAYBE_UNUSED const GameMessage *msg)
+{
+	TheInGameUI->setForceAttackMode( true );
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaEndForceattack(MAYBE_UNUSED const GameMessage *msg)
+{
+	TheInGameUI->setForceAttackMode( false );
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onRawMousePosition(MAYBE_UNUSED const GameMessage *msg)
+{
+	ICoord2D pixel;
+	pixel = msg->getArgument( 0 )->pixel;
+
+	// modifier appears to be unused, and the argument doesn't exist.  jba.
+	//Int modifier = msg->getArgument( 1 )->integer;
+
+	if (m_leftMouseButtonIsDown)
+	{
+		ICoord2D delta;
+
+		delta.x = abs(pixel.x - m_selectFeedbackAnchor.x);
+		delta.y = abs(pixel.y - m_selectFeedbackAnchor.y);
+
+		// if mouse has moved while left button is down, begin drag selection
+		if (delta.x > TheMouse->m_dragTolerance || delta.y > TheMouse->m_dragTolerance)
+		{
+			if (m_dragSelecting == false)
+			{
+				m_dragSelecting = true;
+				TheTacticalView->setMouseLock( TRUE );
+				TheInGameUI->setSelecting( TRUE );
+			}
+		}
+
+		// create "hint" messages defining selection region under construction
+		if (m_dragSelecting)
+		{
+			// insert area selection "hint" message into stream
+			GameMessage *hintMsg = TheMessageStream->appendMessage( GameMessage::MSG_BEGIN_AREA_SELECTION_HINT );
+
+			// build rectangular region defined by the drag selection
+			IRegion2D pixelRegion;
+			buildRegion( &m_selectFeedbackAnchor, &pixel, &pixelRegion );
+			hintMsg->appendPixelRegionArgument( pixelRegion );
+		}
+	}
+	else //left button is not down (not drag select)
+	{
+		// insert Mouseover hint into stream for CommandTranslator and HintSpy to see.
+		GameMessage *mouseoverMessage;
+
+		//Kris: We want to show information such as the popup text on objects that are forceattackable even
+		//      when we're not in force attackable mode!
+		UnsignedInt pickType = getPickTypesForContext( true /*TheInGameUI->isInForceAttackMode()*/ );
+
+		Drawable *underCursor = TheTacticalView->pickDrawable( &pixel, TheInGameUI->isInForceAttackMode(), (PickType) pickType );
+		Object *objUnderCursor = underCursor ? underCursor->getObject() : nullptr;
+
+		if( objUnderCursor && (!objUnderCursor->isEffectivelyDead() || objUnderCursor->isKindOf( KINDOF_ALWAYS_SELECTABLE )) )
+		{
+			mouseoverMessage = TheMessageStream->appendMessage( GameMessage::MSG_MOUSEOVER_DRAWABLE_HINT );
+			mouseoverMessage->appendDrawableIDArgument( underCursor->getID() );
+		}
+		else// else this is a mouseover terrain
+		{
+			Coord3D position;
+
+			if( TheTacticalView->screenToTerrain( &pixel, &position ) )
+			{
+				mouseoverMessage = TheMessageStream->appendMessage( GameMessage::MSG_MOUSEOVER_LOCATION_HINT );
+				mouseoverMessage->appendLocationArgument( position );
+			}
+		}
+	}
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMouseLeftDoubleClick(MAYBE_UNUSED const GameMessage *msg)
+{
+	Int modifiers = msg->getArgument(1)->integer;
+
+	// Pressing ctrl is disallowed for double clicking
+	if (TheInGameUI->isInForceAttackMode())
+		return KEEP_MESSAGE;
+
+	const IRegion2D& region = msg->getArgument(0)->pixelRegion;
+
+	// Single point. If there's a unit in there, double click will select all of them.
+	Bool singlePoint = region.height() == 0 && region.width() == 0;
+
+	if (!singlePoint)
+		return KEEP_MESSAGE;
+
+	Bool selectAcrossMap = (BitIsSet(modifiers, KEY_STATE_ALT) ? TRUE : FALSE);
+
+	// only allow things that are selectable. Also, we aren't allowed to
+	Drawable *picked = TheTacticalView->pickDrawable( &region.lo, FALSE, PICK_TYPE_SELECTABLE);
+
+	// If there wasn't anyone to pick, then we want to propagate this double click.
+	if (picked == nullptr)
+		return KEEP_MESSAGE;
+
+	if (!picked->isMassSelectable())
+		return KEEP_MESSAGE;
+
+	Object *pickedObj = picked->getObject();
+
+	// We have to have an object in order to be able to do interesting double click stuff on
+	// him. Also, if it is a structure, it is already selected, so don't select all the units
+	// like him.
+	if (pickedObj == nullptr || !pickedObj->isLocallyControlled())
+		return KEEP_MESSAGE;
+
+	// Ok. The logic is a little bit weird here. What we need to do is deselect everything
+	// except for this one picked thing. Store off the old selection, pick the single clicked thing.
+	// Then if
+	DrawableList listOfSelectedDrawables;
+	if (TheInGameUI->isInPreferSelectionMode()) {
+		listOfSelectedDrawables	= *TheInGameUI->getAllSelectedDrawables();
+	}
+
+	// Pick just that one guy.
+	selectSingleDrawableWithoutSound(picked);
+
+	// Yay. Either select across the screen or the world depending on selectAcrossMap
+	if (selectAcrossMap)
+		TheInGameUI->selectMatchingAcrossMap();
+	else
+		TheInGameUI->selectMatchingAcrossScreen();
+
+	// emit "picked" message
+	GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
+	pickMsg->appendDrawableIDArgument( picked->getID() );  /// note we are putting in a drawable id
+
+	if (TheInGameUI->isInPreferSelectionMode() && !listOfSelectedDrawables.empty()) {
+		GameMessage *selectMore = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND );
+		selectMore->appendBooleanArgument(FALSE);
+		for (DrawableListIt it = listOfSelectedDrawables.begin(); it != listOfSelectedDrawables.end(); ++it) {
+			Drawable *draw = *it;
+			if (draw && draw->isSelectable()) {
+				TheInGameUI->selectDrawable(draw);
+				selectMore->appendObjectIDArgument(draw->getObject()->getID());
+			}
+		}
+	}
+
+	return DESTROY_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMouseoverDrawableHint(MAYBE_UNUSED const GameMessage *msg)
+{
+	if (TheInGameUI->isScrolling())
+	{
+		// dont show this now.
+		return KEEP_MESSAGE;
+	}
+
+	DrawableID id = msg->getArgument(0)->drawableID;
+	Drawable *draw = TheGameClient->findDrawableByID(id);
+	if (!draw)
+	{
+		return KEEP_MESSAGE;
+	}
+
+	GameMessage::Type msgType = TheGameClient->evaluateContextCommand(draw, draw->getPosition(), CommandTranslator::EVALUATE_ONLY);
+	if( msgType != GameMessage::MSG_INVALID )
+	{
+		return KEEP_MESSAGE;
+	}
+
+	TheInGameUI->createMouseoverHint(msg); // this sets the cursor
+	const CommandButton *command = TheInGameUI->getGUICommand();
+
+	Bool ignoreCommand = FALSE;
+	if( command )
+	{
+		if( command->getCommandType() == GUI_COMMAND_ATTACK_MOVE ||
+				command->getCommandType() == GUI_COMMAND_GUARD ||
+				command->getCommandType() == GUI_COMMAND_GUARD_WITHOUT_PURSUIT ||
+				command->getCommandType() == GUI_COMMAND_GUARD_FLYING_UNITS_ONLY )
+		{
+			//These GUI commands can take care of themselves -- don't let
+			//the selection translator meddle.
+			ignoreCommand = TRUE;
+		}
+	}
+	if( !ignoreCommand && !draw->getTemplate()->isKindOf( KINDOF_SHRUBBERY ) )
+	{
+		if( CanSelectDrawable( draw, FALSE ) )
+		{
+			TheMouse->setCursor(Mouse::SELECTING);
+		}
+		else
+		{
+			TheMouse->setCursor( Mouse::ARROW );
+		}
+	}
+
+	return DESTROY_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const GameMessage *msg)
+{
+	// If the quit menu is visible, we need to not process left clicks through the selection translator.
+	if (TheInGameUI->isQuitMenuVisible())
+	{
+		return DESTROY_MESSAGE;
+	}
+
+	// Basically, we need to first determine if there are any drawables in the region of interest.
+	// If there aren't then this click should move forward.
+	IRegion2D selectionRegion = msg->getArgument(0)->pixelRegion;
+	Bool isPoint = (selectionRegion.height() == 0 && selectionRegion.width() == 0);
+
+	DrawableList drawablesThatWillSelect;
+	PickDrawableStruct pds;
+	pds.drawableListToFill = &drawablesThatWillSelect;
+	pds.isPointSelection = isPoint;
+	TheTacticalView->iterateDrawablesInRegion(&selectionRegion, addDrawableToList, &pds);
+
+	if (drawablesThatWillSelect.empty())
+	{
+		return KEEP_MESSAGE;
+	}
+
+	// if there were drawables in the region, then we should determine if there is a context
+	// sensitive command that should take place. If there is, then this isn't a selection thing
+	const DrawableList *currentList = TheInGameUI->getAllSelectedDrawables();
+	if (!currentlyLookingForSelection())
+	{
+		return KEEP_MESSAGE;
+	}
+
+	SelectionInfo si;
+	if (contextCommandForNewSelection(currentList, &drawablesThatWillSelect, &si, isPoint))
+	{
+		return KEEP_MESSAGE;
+	}
+
+	// There isn't a context command, so this is a selection thing. Now, based on the keys,
+	// determine whether or not we should create a new group, or append these guys to our existing
+	// group.
+
+	Bool addToGroup = TheInGameUI->isInPreferSelectionMode();
+
+	if (si.currentCountEnemies > 0 ||
+			si.currentCountCivilians > 0 ||
+			si.currentCountFriends > 0 ||
+			si.currentCountMineBuildings > 0)
+	{
+		// force a new group creation
+		addToGroup = FALSE;
+	}
+
+	// If there are any of my units, then select those.
+	if (si.newCountMine > 0)
+	{
+		si.selectMine = TRUE;
+
+		// EXACTLY ONE CLICKED OR DRAGGED BUILDING
+		if ( si.newCountMineBuildings == 1 && si.newCountMine == 1 )
+		{
+			addToGroup = FALSE;
+			si.selectMineBuildings = TRUE;
+		}
+		else if ( si.newCountMineBuildings > 0 )////////////// SO SORRY, I KNOW THIS IS MICKEY MOUSE ///////////////////
+		{ // What we are after here is to allow the drag select to get the building,
+			// if the other things in the list are going to be ignored anyway
+			// so we find out whether the other things are not selectable
+			// this came up with the new AmericaBuildingFireBase, which shows its contained
+			// but does not let you select them. The selection is propagated to the container
+			// in new code in SelectionInfo.cpp, in the static addDrawableToList();
+			// -Mark Lorenzen, 6/12/03
+			Bool onlyTheOneBuildingIsSelectableAnyway = TRUE;
+			DrawableID buildingID = INVALID_DRAWABLE_ID;
+			for (DrawableListIt it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
+			{
+				const Drawable *d = *it;
+				if ( d->isKindOf( KINDOF_STRUCTURE ) )
+				{// make sure there is really only the one building in the list, as it may be multiply listed
+
+					if ( buildingID == INVALID_DRAWABLE_ID ) // this is the first building
+						buildingID = d->getID();
+					else if ( buildingID != d->getID() )//oops, more than one building!
+						onlyTheOneBuildingIsSelectableAnyway = FALSE;
+				}
+				else if ( d->isSelectable() )
+					onlyTheOneBuildingIsSelectableAnyway = FALSE;
+
+				if ( ! onlyTheOneBuildingIsSelectableAnyway )
+					break;
+			}
+			if ( onlyTheOneBuildingIsSelectableAnyway )
+			{
+				addToGroup = FALSE;
+				si.selectMineBuildings = TRUE;
+			}
+		}
+
+	}
+	else if (si.newCountEnemies > 0 && si.newCountCivilians > 0 && si.newCountFriends > 0)
+	{
+		// No go here
+		return KEEP_MESSAGE;
+	}
+	else if (si.newCountEnemies == 1)
+	{
+		addToGroup = FALSE;
+		si.selectEnemies = TRUE;
+	}
+	else if (si.newCountCivilians == 1)
+	{
+		addToGroup = FALSE;
+		si.selectCivilians = TRUE;
+	}
+	else if (si.newCountFriends == 1)
+	{
+		addToGroup = FALSE;
+		si.selectFriends = TRUE;
+	}
+
+	// If we're not going to select anything, just bail now.
+	if (!(si.selectMine || si.selectEnemies || si.selectCivilians || si.selectFriends))
+	{
+		return KEEP_MESSAGE;
+	}
+
+	// If we've made it here, its time to do some selecting.
+
+	// Whenever we manually select something, reset the last selected group.
+	m_lastGroupSelGroup = -1;
+
+	if (TheInGameUI->isInPreferSelectionMode() && isPoint && areAllSelected(drawablesThatWillSelect))
+	{
+		// If this was a point, shift was pressed and we already have that unit selected, then we
+		// need to deselect those units.
+		GameMessage *newMsg = TheMessageStream->appendMessage(GameMessage::MSG_REMOVE_FROM_SELECTED_GROUP);
+		Drawable *draw = nullptr;
+		DrawableListIt it;
+		for (it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
+		{
+			draw = *it;
+			if (!draw)
+			{
+				continue;
+			}
+
+			Object *objToDeselect = draw->getObject();
+			if (!objToDeselect)
+			{
+				continue;
+			}
+
+			newMsg->appendObjectIDArgument(objToDeselect->getID());
+			TheInGameUI->deselectDrawable(draw);
+		}
+	}
+	else
+	{
+		if (!addToGroup)
+		{
+			deselectAll();
+		}
+
+		GameMessage *newMsg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP);
+		newMsg->appendBooleanArgument(!addToGroup);
+
+		Player *localPlayer = ThePlayerList->getLocalPlayer();
+
+		Int newDrawablesSelected = 0;
+		Drawable *draw = nullptr;
+		DrawableListIt it;
+		for (it = drawablesThatWillSelect.begin(); it != drawablesThatWillSelect.end(); ++it)
+		{
+			draw = *it;
+			if (!draw)
+			{
+				continue;
+			}
+
+			Object *obj = draw->getObject();
+			if (!obj)
+			{
+				continue;
+			}
+
+			if (obj && obj->getContainedBy() != nullptr)
+			{
+				// we're contained, and so we shouldn't be selectable.
+				continue;
+			}
+
+			Drawable *drawToSelect = nullptr;
+			ObjectID objToAppend = INVALID_ID;
+			if (si.selectMine && obj->isLocallyControlled())
+			{
+				if (!obj->isKindOf(KINDOF_STRUCTURE) || si.selectMineBuildings)
+				{
+					drawToSelect = draw;
+					objToAppend = obj->getID();
+				}
+			}
+			else
+			{
+				Relationship rel = localPlayer->getRelationship(obj->getTeam());
+				if (si.selectEnemies && rel == ENEMIES)
+				{
+					drawToSelect = draw;
+					objToAppend = obj->getID();
+				}
+				else if (si.selectCivilians && rel == NEUTRAL)
+				{
+					drawToSelect = draw;
+					objToAppend = obj->getID();
+				}
+				else if (si.selectFriends && rel == ALLIES)
+				{
+					drawToSelect = draw;
+					objToAppend = obj->getID();
+				}
+			}
+
+			if (drawToSelect && objToAppend != INVALID_ID)
+			{
+				newMsg->appendObjectIDArgument(objToAppend);
+				TheInGameUI->selectDrawable(drawToSelect);
+				++newDrawablesSelected;
+			}
+		}
+
+		if( newDrawablesSelected > 1 )
+		{
+			localPlayer->getAcademyStats()->recordDragSelection();
+		}
+
+		if (newDrawablesSelected == 1 && draw)
+		{
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+			if (m_HandOfGodSelectionMode && draw)
+			{
+				Object* obj = draw->getObject();
+				if (obj)
+				{
+					TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
+					GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_KILL_OBJECT );
+					msg->appendObjectIDArgument(obj->getID());
+				}
+				return DESTROY_MESSAGE;
+			}
+#endif
+
+#if defined(RTS_DEBUG)
+			if (TheHurtSelectionMode && draw)
+			{
+				Object* obj = draw->getObject();
+				if (obj)
+				{
+					TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
+					GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_HURT_OBJECT );
+					msg->appendObjectIDArgument(obj->getID());
+				}
+				return DESTROY_MESSAGE;
+			}
+
+#ifdef DEBUG_OBJECT_ID_EXISTS
+			if (TheDebugSelectionMode && draw && draw->getObject())
+			{
+				if (TheObjectIDToDebug == 0)
+				{
+					TheObjectIDToDebug = draw->getObject()->getID();
+					AsciiString msg;
+					msg.format("Item %s %08x selected for debugging",draw->getTemplate()->getName().str(),TheObjectIDToDebug);
+					UnicodeString msgu;
+					msgu.translate(msg);
+					TheInGameUI->message(msgu);
+
+					return DESTROY_MESSAGE;
+				}
+			}
+#endif // DEBUG_OBJECT_ID_EXISTS
+
+#endif // RTS_DEBUG
+		}
+	}
+
+	TheInGameUI->clearAttackMoveToMode();
+
+	return DESTROY_MESSAGE;
+}
+
+
+GameMessageDisposition SelectionTranslator::onRawMouseLeftButtonDown(MAYBE_UNUSED const GameMessage *msg)
+{
+	// cannot actually start area selection yet - have to wait for cursor to move a bit
+	m_leftMouseButtonIsDown = true;
+	m_selectFeedbackAnchor = msg->getArgument( 0 )->pixel;
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onRawMouseLeftButtonUp(MAYBE_UNUSED const GameMessage *msg)
+{
+	m_leftMouseButtonIsDown = FALSE;
+
+	if (m_dragSelecting) {
+		// Stop drag selecting now, thanks.
+		m_dragSelecting = FALSE;
+
+		TheTacticalView->setMouseLock( FALSE );
+		TheInGameUI->setSelecting( FALSE );
+		TheInGameUI->endAreaSelectHint(nullptr);
+
+		// insert area selection message into stream
+		GameMessage *dragMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
+
+		IRegion2D selectionRegion;
+		buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
+		dragMsg->appendPixelRegionArgument( selectionRegion );
+	}
+	else
+	{
+		// left click behavior (not right drag)
+
+		//Added support to cancel the GUI command without deselecting the unit(s) involved
+		//when you right click.
+		if( !TheInGameUI->getGUICommand() && !TheKeyboard->isShift() && !TheKeyboard->isCtrl() && !TheKeyboard->isAlt() )
+		{
+			//No GUI command mode, so deselect everyone if we're in alternate mouse mode.
+			if( TheGlobalData->m_useAlternateMouse && TheInGameUI->getPendingPlaceSourceObjectID() == INVALID_ID )
+			{
+				if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
+				{
+					deselectAll();
+					m_lastGroupSelGroup = -1;
+				}
+				else
+				{
+					//Prevent deselection of unit if it just issued some type of UI order such as attack move, guard,
+					//initiating construction of a new structure.
+					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( FALSE );
+				}
+			}
+		}
+	}
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onRawMouseRightButtonDown(MAYBE_UNUSED const GameMessage *msg)
+{
+	// There are three ways in which we can ignore this as a deselect:
+	// 1) 2-D position on screen
+	// 2) Time has exceeded the time which we allow for this to be a click.
+	// 3) 3-D camera position has changed
+	m_deselectFeedbackAnchor = msg->getArgument( 0 )->pixel;
+	m_lastClick = (UnsignedInt) msg->getArgument( 2 )->integer;
+	m_deselectDownCameraPosition = TheTacticalView->getPosition();
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onRawMouseRightButtonUp(MAYBE_UNUSED const GameMessage *msg)
+{
+	Coord3D cameraPos = TheTacticalView->getPosition();
+	cameraPos.sub(m_deselectDownCameraPosition);
+
+	ICoord2D pixel = msg->getArgument( 0 )->pixel;
+	UnsignedInt currentTime = (UnsignedInt) msg->getArgument( 2 )->integer;
+
+	// right click behavior (not right drag)
+	if (TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime))
+	{
+		//Added support to cancel the GUI command without deselecting the unit(s) involved
+		//when you right click.
+		if( TheInGameUI->getGUICommand() )
+		{
+			//Cancel GUI command mode... don't deselect units.
+			TheInGameUI->setGUICommand( nullptr );
+			TheInGameUI->setScrolling( FALSE );
+
+			//With a GUI command cancel, we want no other behavior.
+			return DESTROY_MESSAGE;
+		}
+		else
+		{
+			//In alternate mouse mode, right click still cancels building placement.
+			// TheSuperHackers @tweak Stubbjax 08/08/2025 Canceling building placement no longer deselects the builder.
+			if (TheInGameUI->getPendingPlaceSourceObjectID() != INVALID_ID)
+			{
+				TheInGameUI->placeBuildAvailable(nullptr, nullptr);
+				TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick(FALSE);
+				TheInGameUI->setScrolling(FALSE);
+
+				return DESTROY_MESSAGE;
+			}
+			else if (!TheGlobalData->m_useAlternateMouse)
+			{
+				//No GUI command mode, so deselect everyone if we're in regular mouse mode.
+				deselectAll();
+			}
+		}
+	}
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaCreateTeam(MAYBE_UNUSED const GameMessage *msg)
+{
+	Int group = msg->getType() - GameMessage::MSG_META_CREATE_TEAM0;
+	if ( group >= 0 && group < 10 )
+	{
+		DEBUG_LOG(("META: create team %d",group));
+		// Assign selected items to a group
+		GameMessage *newmsg = TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_CREATE_TEAM0 + group));
+		Drawable *drawable = TheGameClient->getDrawableList();
+		while (drawable != nullptr)
+		{
+			if (drawable->isSelected() && drawable->getObject() && drawable->getObject()->isLocallyControlled())
+			{
+				newmsg->appendObjectIDArgument(drawable->getObject()->getID());
+			}
+			drawable = drawable->getNextDrawable();
+		}
+	}
+
+	return DESTROY_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaSelectTeam(MAYBE_UNUSED const GameMessage *msg)
+{
+	Int group = msg->getType() - GameMessage::MSG_META_SELECT_TEAM0;
+	if ( group >= 0 && group < 10 )
+	{
+		DEBUG_LOG(("META: select team %d",group));
+
+		UnsignedInt now = timeGetTime();
+		if ( m_lastGroupSelTime == 0 )
+		{
+			m_lastGroupSelTime = now;
+		}
+
+		Bool performSelection = TRUE;
+
+		// check for double-press to jump view
+		if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
+		{
+			DEBUG_LOG(("META: DOUBLETAP select team %d",group));
+			// TheSuperHackers @bugfix Stubbjax 26/05/2025 Perform selection on double-press
+			// if the group or part of it is somehow deselected between presses.
+			performSelection = FALSE;
+			Player *player = ThePlayerList->getLocalPlayer();
+			if (player)
+			{
+				Squad *selectedSquad = player->getHotkeySquad(group);
+				if (selectedSquad != nullptr)
+				{
+					VecObjectPtr objlist = selectedSquad->getLiveObjects();
+					Int numObjs = objlist.size();
+					if (numObjs > 0)
+					{
+						// if there's someone in the group, center the camera on them.
+						Drawable* drawable = objlist[numObjs - 1]->getDrawable();
+						TheTacticalView->userLookAt( drawable->getPosition() );
+						performSelection = !TheInGameUI->areAllObjectsSelected( objlist );
+					}
+				}
+			}
+		}
+
+		if ( performSelection )
+		{
+			TheInGameUI->deselectAllDrawables( false ); //No need to post message because we're just creating a new group!
+
+			// no need to send two messages for selecting the same group.
+			TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_SELECT_TEAM0 + group));
+			Player *player = ThePlayerList->getLocalPlayer();
+			if (player)
+			{
+				Squad *selectedSquad = player->getHotkeySquad(group);
+				if (selectedSquad != nullptr)
+				{
+					VecObjectPtr objlist = selectedSquad->getLiveObjects();
+					Int numObjs = objlist.size();
+					for (Int i = 0; i < numObjs; ++i)
+					{
+						if( objlist[i]->getControllingPlayer() == player )
+						{
+							TheInGameUI->selectDrawable(objlist[i]->getDrawable());
+						}
+					}
+				}
+			}
+		}
+		m_lastGroupSelTime = now;
+		m_lastGroupSelGroup = group;
+	}
+
+	return DESTROY_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaAddTeam(MAYBE_UNUSED const GameMessage *msg)
+{
+	Int group = msg->getType() - GameMessage::MSG_META_ADD_TEAM0;
+	if ( group >= 0 && group < 10 )
+	{
+		DEBUG_LOG(("META: select team %d",group));
+
+		UnsignedInt now = timeGetTime();
+		if ( m_lastGroupSelTime == 0 )
+		{
+			m_lastGroupSelTime = now;
+		}
+
+		// check for double-press to jump view
+
+		if ( now - m_lastGroupSelTime < TheGlobalData->m_doubleClickTimeMS && group == m_lastGroupSelGroup )
+		{
+			DEBUG_LOG(("META: DOUBLETAP select team %d",group));
+			Player *player = ThePlayerList->getLocalPlayer();
+			if (player)
+			{
+				Squad *selectedSquad = player->getHotkeySquad(group);
+				if (selectedSquad != nullptr)
+				{
+					VecObjectPtr objlist = selectedSquad->getLiveObjects();
+					Int numObjs = objlist.size();
+					if (numObjs > 0)
+					{
+						// if there's someone in the group, center the camera on them.
+						TheTacticalView->userLookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
+					}
+				}
+			}
+
+		}
+		else
+		{
+
+			Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+			if( draw && draw->isKindOf( KINDOF_STRUCTURE ) )
+			{
+				//Kris: Jan 12, 2005
+				//Can't select other units if you have a structure selected. So deselect the structure to prevent
+				//group force attack exploit.
+				TheInGameUI->deselectAllDrawables();
+			}
+
+			// no need to send two messages for selecting the same group.
+			TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_ADD_TEAM0 + group));
+			Player *player = ThePlayerList->getLocalPlayer();
+			if (player)
+			{
+				Squad *selectedSquad = player->getHotkeySquad(group);
+				if (selectedSquad != nullptr)
+				{
+					VecObjectPtr objlist = selectedSquad->getLiveObjects();
+					Int numObjs = objlist.size();
+
+					// TheSuperHackers @bugfix skyaero 22/07/2025 Can't select other units if you have a structure selected. So deselect the structure to prevent group force attack exploit.
+					if (numObjs > 0 && objlist[0]->getDrawable()->isKindOf(KINDOF_STRUCTURE))
+					{
+						TheInGameUI->deselectAllDrawables();
+					}
+
+					for (Int i = 0; i < numObjs; ++i)
+					{
+						TheInGameUI->selectDrawable(objlist[i]->getDrawable());
+					}
+				}
+			}
+		}
+		m_lastGroupSelTime = now;
+		m_lastGroupSelGroup = group;
+	}
+
+	return DESTROY_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaViewTeam(MAYBE_UNUSED const GameMessage *msg)
+{
+	Int group = msg->getType() - GameMessage::MSG_META_VIEW_TEAM0;
+	if ( group >= 1 && group <= 10 )
+	{
+		DEBUG_LOG(("META: view team %d",group));
+		Player *player = ThePlayerList->getLocalPlayer();
+		if (player)
+		{
+			Squad *selectedSquad = player->getHotkeySquad(group);
+			if (selectedSquad != nullptr)
+			{
+				VecObjectPtr objlist = selectedSquad->getLiveObjects();
+				Int numObjs = objlist.size();
+				if (numObjs > 0)
+				{
+					// if there's someone in the group, center the camera on them.
+					TheTacticalView->userLookAt( objlist[ numObjs-1 ]->getDrawable()->getPosition() );
+				}
+			}
+		}
+	}
+
+	return DESTROY_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaOptions(MAYBE_UNUSED const GameMessage *msg)
+{
+	// stop drawing selection feedback, as we're going to ignore the selection.
+	m_leftMouseButtonIsDown = FALSE;
+
+	// let this message drop through, the commandXLat will show the options screen itself.
+	return KEEP_MESSAGE;
+}
+
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
+GameMessageDisposition SelectionTranslator::onCheatToggleHandOfGodMode(MAYBE_UNUSED const GameMessage *msg)
+{
+	if ( !TheGameLogic->isInMultiplayerGame() )
+	{
+		m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
+		TheInGameUI->message( L"Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
+		return DESTROY_MESSAGE;
+	}
+
+	return KEEP_MESSAGE;
+}
+
+#endif // defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
+#if defined(RTS_DEBUG)
+
+GameMessageDisposition SelectionTranslator::onMetaDemoToggleHandOfGodMode(MAYBE_UNUSED const GameMessage *msg)
+{
+	if ( !TheGameLogic->isInMultiplayerGame() )
+	{
+		m_HandOfGodSelectionMode = !m_HandOfGodSelectionMode;
+		TheInGameUI->message( L"Meta Hand-Of-God Mode is %s", m_HandOfGodSelectionMode ? L"ON" : L"OFF" );
+		return DESTROY_MESSAGE;
+	}
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaDemoToggleHurtMeMode(MAYBE_UNUSED const GameMessage *msg)
+{
+	if ( !TheGameLogic->isInMultiplayerGame() )
+	{
+		TheHurtSelectionMode = !TheHurtSelectionMode;
+		TheInGameUI->message( L"Hurt-Me Mode is %s", TheHurtSelectionMode ? L"ON" : L"OFF" );
+		return DESTROY_MESSAGE;
+	}
+
+	return KEEP_MESSAGE;
+}
+
+GameMessageDisposition SelectionTranslator::onMetaDemoDebugSelection(MAYBE_UNUSED const GameMessage *msg)
+{
+	TheDebugSelectionMode = !TheDebugSelectionMode;
+	TheInGameUI->message( L"Debug-Selected-Item Mode is %s", TheDebugSelectionMode ? L"ON" : L"OFF" );
+#ifdef DEBUG_OBJECT_ID_EXISTS
+	TheObjectIDToDebug = INVALID_ID;
+#endif
+	return DESTROY_MESSAGE;
+}
+
+#endif // defined(RTS_DEBUG)
 
 //setDragSelecting(Bool dragSelect)
 //Added to fix the drag selection problem in control bar

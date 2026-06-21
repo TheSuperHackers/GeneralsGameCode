@@ -72,6 +72,30 @@ public:
   Bool isHandOfGodSelectionMode() { return m_HandOfGodSelectionMode; };
 #endif
 
+private:
+	GameMessageDisposition onMetaBeginForceattack(const GameMessage *msg);
+	GameMessageDisposition onMetaEndForceattack(const GameMessage *msg);
+	GameMessageDisposition onRawMousePosition(const GameMessage *msg);
+	GameMessageDisposition onMouseLeftDoubleClick(const GameMessage *msg);
+	GameMessageDisposition onMouseoverDrawableHint(const GameMessage *msg);
+	GameMessageDisposition onMouseLeftClick(const GameMessage *msg);
+	GameMessageDisposition onRawMouseLeftButtonDown(const GameMessage *msg);
+	GameMessageDisposition onRawMouseLeftButtonUp(const GameMessage *msg);
+	GameMessageDisposition onRawMouseRightButtonDown(const GameMessage *msg);
+	GameMessageDisposition onRawMouseRightButtonUp(const GameMessage *msg);
+	GameMessageDisposition onMetaCreateTeam(const GameMessage *msg);
+	GameMessageDisposition onMetaSelectTeam(const GameMessage *msg);
+	GameMessageDisposition onMetaAddTeam(const GameMessage *msg);
+	GameMessageDisposition onMetaViewTeam(const GameMessage *msg);
+	GameMessageDisposition onMetaOptions(const GameMessage *msg);
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	GameMessageDisposition onCheatToggleHandOfGodMode(const GameMessage *msg);
+#endif
+#if defined(RTS_DEBUG)
+	GameMessageDisposition onMetaDemoToggleHandOfGodMode(const GameMessage *msg);
+	GameMessageDisposition onMetaDemoToggleHurtMeMode(const GameMessage *msg);
+	GameMessageDisposition onMetaDemoDebugSelection(const GameMessage *msg);
+#endif
 };
 
 Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting );
