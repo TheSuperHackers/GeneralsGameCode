@@ -145,7 +145,7 @@ UpdateSleepTime AssistedTargetingUpdate::update()
 	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
 
 
-	m_laserToTarget =TheThingFactory->findTemplate( d->m_laserFromAssistedName );
+	m_laserToTarget = TheThingFactory->findTemplate( d->m_laserToTargetName );
 
 
 	return UPDATE_SLEEP_FOREVER;
@@ -188,7 +188,7 @@ void AssistedTargetingUpdate::loadPostProcess()
   const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
 
 	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
-	m_laserToTarget =TheThingFactory->findTemplate( d->m_laserFromAssistedName );
+	m_laserToTarget = TheThingFactory->findTemplate( d->m_laserToTargetName );
 
 	// extend base class
 	UpdateModule::loadPostProcess();
