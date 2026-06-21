@@ -176,10 +176,10 @@ public:
 																				void *userData ) override {return 0;};
   virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) override { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual Bool screenToTerrain( const ICoord2D *screen, Coord3D *world ) override { return false; }
-	virtual PlaneIntersectionType screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override { return PlaneIntersectionType_None; }
-	virtual PlaneIntersectionType getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
+	virtual PlaneClass::IntersectionResType screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) override { return PlaneClass::NO_INTERSECTION; }
+	virtual PlaneClass::IntersectionResType getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 																							Coord3D *bottomRight, Coord3D *bottomLeft,
-																							Real z, ViewportClass viewPort = ViewportClass() ) override { return PlaneIntersectionType_None; }
+																							Real z, ViewportClass viewPort = ViewportClass() ) override { return PlaneClass::NO_INTERSECTION; }
 
 	virtual void drawView() override {};															///< Render the world visible in this view.
 	virtual void updateView() override {};															///< Render the world visible in this view.

@@ -125,7 +125,7 @@ public:
 	/// Project the 4 corners of this view into the world and return each point as a parameter,
 	/// the world points are at the requested Z. Returns whether all corner view rays intersect
 	/// with the Z plane.
-	virtual PlaneIntersectionType getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
+	virtual PlaneClass::IntersectionResType getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 																							Coord3D *bottomRight, Coord3D *bottomLeft,
 																							Real z, ViewportClass viewPort = ViewportClass() );
 
@@ -246,7 +246,7 @@ public:
 	virtual Bool screenToTerrain( const ICoord2D *screen, Coord3D *world ) = 0;
 
 	/// Transform screen point to the viewed world position at the specified world Z height. Returns the type of the intersection.
-	virtual PlaneIntersectionType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) = 0;
+	virtual PlaneClass::IntersectionResType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) = 0;
 
 	virtual void getLocation ( ViewLocation *location );								///< write the view's current location in to the view location object
 	virtual void setLocation ( const ViewLocation *location );					///< set the view's current location from to the view location object
@@ -411,7 +411,7 @@ public:
 		return WTS_INVALID;
 	}
 	virtual Bool screenToTerrain( const ICoord2D *screen, Coord3D *world ) override { return false; }
-	virtual PlaneIntersectionType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) override { return PlaneIntersectionType_None; }
+	virtual PlaneClass::IntersectionResType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) override { return PlaneClass::NO_INTERSECTION; }
 	virtual void drawView() override {}
 	virtual void updateView() override {}
 	virtual void stepView() override {}

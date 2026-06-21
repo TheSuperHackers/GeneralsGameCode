@@ -189,7 +189,7 @@ void W3DRadar::reconstructViewBox()
 	//  1-------2
 	//   \     /
 	//    4---3
-	if( TheTacticalView->getScreenCornerWorldPointsAtZ(&world[0], &world[1], &world[2], &world[3], getTerrainAverageZ()) == PlaneIntersectionType_None )
+	if( TheTacticalView->getScreenCornerWorldPointsAtZ(&world[0], &world[1], &world[2], &world[3], getTerrainAverageZ()) == PlaneClass::NO_INTERSECTION )
 		return;
 
 	// convert each of the 4 points in the world to radar cell positions
@@ -302,7 +302,7 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 
 	// convert top left of screen into world position
 	TheTacticalView->getOrigin( &ulScreen.x, &ulScreen.y );
-	if( TheTacticalView->screenToWorldAtZ( &ulScreen, &ulWorld, getTerrainAverageZ() ) == PlaneIntersectionType_None )
+	if( TheTacticalView->screenToWorldAtZ( &ulScreen, &ulWorld, getTerrainAverageZ() ) == PlaneClass::NO_INTERSECTION )
 		return;
 
 	// convert world to radar coords

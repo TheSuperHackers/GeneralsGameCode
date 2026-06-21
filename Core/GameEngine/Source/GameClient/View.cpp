@@ -243,12 +243,12 @@ Bool View::isUserControlLocked() const
 /** project the 4 corners of this view into the world and return each point as a parameter,
 		the world points are at the requested Z */
 //-------------------------------------------------------------------------------------------------
-PlaneIntersectionType View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
+PlaneClass::IntersectionResType View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coord3D *topRight,
 																					Coord3D *bottomRight, Coord3D *bottomLeft,
 																					Real z, ViewportClass viewPort )
 {
 	if( topLeft == nullptr || topRight == nullptr || bottomRight == nullptr || bottomLeft == nullptr)
-		return PlaneIntersectionType_None;
+		return PlaneClass::NO_INTERSECTION;
 
 	ICoord2D screenTopLeft;
 	ICoord2D screenTopRight;
@@ -270,27 +270,27 @@ PlaneIntersectionType View::getScreenCornerWorldPointsAtZ( Coord3D *topLeft, Coo
 	screenBottomLeft.x = origin.x + viewWidth * viewPort.Min.X;
 	screenBottomLeft.y = origin.y + viewHeight * viewPort.Max.Y;
 
-	PlaneIntersectionType result = PlaneIntersectionType_InsideSegment;
-	PlaneIntersectionType insersectionType[4];
-	insersectionType[0] = screenToWorldAtZ( &screenTopLeft, topLeft, z );
-	insersectionType[1] = screenToWorldAtZ( &screenTopRight, topRight, z );
-	insersectionType[2] = screenToWorldAtZ( &screenBottomRight, bottomRight, z );
-	insersectionType[3] = screenToWorldAtZ( &screenBottomLeft, bottomLeft, z );
+	PlaneClass::IntersectionResType combinedResult = PlaneClass::INSIDE_SEGMENT;
+	PlaneClass::IntersectionResType individualResults[4];
+	individualResults[0] = screenToWorldAtZ( &screenTopLeft, topLeft, z );
+	individualResults[1] = screenToWorldAtZ( &screenTopRight, topRight, z );
+	individualResults[2] = screenToWorldAtZ( &screenBottomRight, bottomRight, z );
+	individualResults[3] = screenToWorldAtZ( &screenBottomLeft, bottomLeft, z );
 
 	for( Int i = 0; i < 4; ++i )
 	{
-		if( insersectionType[i] == PlaneIntersectionType_None )
+		if( individualResults[i] == PlaneClass::NO_INTERSECTION )
 		{
-			result = PlaneIntersectionType_None;
+			combinedResult = PlaneClass::NO_INTERSECTION;
 			break;
 		}
-		if( insersectionType[i] == PlaneIntersectionType_OutsideLine )
+		if( individualResults[i] == PlaneClass::OUTSIDE_LINE )
 		{
-			result = PlaneIntersectionType_OutsideLine;
+			combinedResult = PlaneClass::OUTSIDE_LINE;
 		}
 	}
 
-	return result;
+	return combinedResult;
 }
 
 // ------------------------------------------------------------------------------------------------

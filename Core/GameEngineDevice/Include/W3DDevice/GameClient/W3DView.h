@@ -219,7 +219,7 @@ public:
 
   virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) override;	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual Bool screenToTerrain( const ICoord2D *screen, Coord3D *world ) override;
-	virtual PlaneIntersectionType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) override;
+	virtual PlaneClass::IntersectionResType screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z ) override;
 
 	CameraClass *get3DCamera() const { return m_3DCamera; }
 

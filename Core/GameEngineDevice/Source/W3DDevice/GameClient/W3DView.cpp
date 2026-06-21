@@ -1713,7 +1713,7 @@ void W3DView::getAxisAlignedViewRegion(Region3D &axisAlignedRegion)
 	//   \     /
 	//    4---3
 	Coord3D box[ 4 ];
-	if( getScreenCornerWorldPointsAtZ( &box[ 0 ], &box[ 1 ], &box[ 2 ], &box[ 3 ], 0.0f ) == PlaneIntersectionType_InsideSegment )
+	if( getScreenCornerWorldPointsAtZ( &box[ 0 ], &box[ 1 ], &box[ 2 ], &box[ 3 ], 0.0f ) == PlaneClass::INSIDE_SEGMENT )
 	{
 		//
 		// take those 4 corners projected into the world and create an axis aligned bounding
@@ -3651,7 +3651,7 @@ void W3DView::shake( const Coord3D *epicenter, CameraShakeType shakeType )
 // TheSuperHackers @fix Now returns whether a Z plane intersection exists to let callers handle the
 // failure condition.
 //-------------------------------------------------------------------------------------------------
-PlaneIntersectionType W3DView::screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z )
+PlaneClass::IntersectionResType W3DView::screenToWorldAtZ( const ICoord2D *screen, Coord3D *world, Real z )
 {
 	Vector3 rayStart, rayEnd;
 
@@ -3661,9 +3661,9 @@ PlaneIntersectionType W3DView::screenToWorldAtZ( const ICoord2D *screen, Coord3D
 	plane.N = Vector3(0, 0, 1);
 	plane.D = z;
 	float t;
-	PlaneIntersectionType intersectionType = plane.Compute_Intersection(rayStart, rayEnd, &t);
+	PlaneClass::IntersectionResType intersectionType = plane.Compute_Intersection(rayStart, rayEnd, &t);
 
-	if (intersectionType != PlaneIntersectionType_None)
+	if (intersectionType != PlaneClass::NO_INTERSECTION)
 	{
 		Vector3 intersectPos;
 		intersectPos = rayStart + (rayEnd-rayStart) * t;
