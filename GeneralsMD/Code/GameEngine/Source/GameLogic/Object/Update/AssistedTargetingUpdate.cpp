@@ -119,9 +119,6 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 	if( !laser )
 		return;
 
-	// Give it a good basis in reality to ensure it can draw when on screen.
-	laser->setPosition(from->getPosition());
-
 	Drawable *draw = laser->getDrawable();
 	static const NameKeyType key_LaserUpdate = NAMEKEY( "LaserUpdate" );
 	LaserUpdate *update = (LaserUpdate*)draw->findClientUpdateModule( key_LaserUpdate );
@@ -130,6 +127,9 @@ void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTempl
 		TheGameLogic->destroyObject( laser );
 		return;
 	}
+
+	// Give it a good basis in reality to ensure it can draw when on screen.
+	laser->setPosition(from->getPosition());
 
 	update->initLaser( getObject(), to, from->getPosition(), to->getPosition(), "" );
 }
