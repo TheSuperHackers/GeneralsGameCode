@@ -610,7 +610,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 		{
 			// TheSuperHackers @bugfix Stubbjax 22/06/2026 Only allow targeting Stinger Sites when they contain Soldiers.
 			SpawnBehaviorInterface* spawnInterface = victimObj->getSpawnBehaviorInterface();
-			if (spawnInterface && spawnInterface->getSlaveCount() == 0)
+			if (spawnInterface && spawnInterface->getSlaveCount() <= 0)
 				return 0.0f;
 		}
 #endif
