@@ -74,6 +74,7 @@
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Module/SpawnBehavior.h"
 #include "GameLogic/TerrainLogic.h"
 
 #define RATIONALIZE_ATTACK_RANGE
@@ -604,6 +605,15 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
       if ( victimObj->getContain()->getContainCount() == 0 )
         return 0.0f;
     }
+#if !RETAIL_COMPATIBLE_CRC
+		else
+		{
+			// TheSuperHackers @bugfix Stubbjax 22/06/2026 Only allow targeting Stinger Sites when they contain Soldiers.
+			SpawnBehaviorInterface* spawnInterface = victimObj->getSpawnBehaviorInterface();
+			if (spawnInterface && spawnInterface->getSlaveCount() == 0)
+				return 0.0f;
+		}
+#endif
   }
 
 
