@@ -51,10 +51,12 @@ private:
 	Bool m_teamExists;				///< is there a currently selected "team"?
 
 	// these are for determining if a drag occurred or it was just a sloppy click
-	ICoord2D m_mouseRightDragAnchor;		// the location of a possible mouse drag start
-	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
-	UnsignedInt m_mouseRightDown;	// when the mouse down happened
-	UnsignedInt m_mouseRightUp;		// when the mouse up happened
+	ICoord2D m_rightMouseDownAnchor;		// the location of a possible mouse drag start
+	ICoord2D m_rightMouseUpAnchor;			// the location of a possible mouse drag end
+	UnsignedInt m_rightMouseDownTimeMs;	// when the mouse down happened
+	UnsignedInt m_rightMouseUpTimeMs;		// when the mouse up happened
+	Coord3D m_rightMouseDownCameraPos;
+	Coord3D m_rightMouseUpCameraPos;
 
 	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
 	GameMessage::Type createAttackMessage( Drawable *draw, Drawable *other, CommandEvaluateType commandType );

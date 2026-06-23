@@ -259,12 +259,10 @@ SelectionTranslator::SelectionTranslator()
 	m_dragSelecting = FALSE;
 	m_lastGroupSelTime = 0;
 	m_lastGroupSelGroup = -1;
-	m_selectFeedbackAnchor.x = 0;
-	m_selectFeedbackAnchor.y = 0;
-	m_deselectFeedbackAnchor.x = 0;
-	m_deselectFeedbackAnchor.y = 0;
-	m_lastClick = 0;
-	m_deselectDownCameraPosition.zero();
+	m_leftMouseDownAnchor.zero();
+	m_rightMouseDownAnchor.zero();
+	m_rightMouseDownTimeMs = 0;
+	m_rightMouseDownCameraPos.zero();
 	m_displayedMaxWarning = FALSE;
 	m_selectCountMap.clear();
 
@@ -553,8 +551,8 @@ GameMessageDisposition SelectionTranslator::onRawMousePosition(MAYBE_UNUSED cons
 	{
 		ICoord2D delta;
 
-		delta.x = abs(pixel.x - m_selectFeedbackAnchor.x);
-		delta.y = abs(pixel.y - m_selectFeedbackAnchor.y);
+		delta.x = abs(pixel.x - m_leftMouseDownAnchor.x);
+		delta.y = abs(pixel.y - m_leftMouseDownAnchor.y);
 
 		// if mouse has moved while left button is down, begin drag selection
 		if (delta.x > TheMouse->m_dragTolerance || delta.y > TheMouse->m_dragTolerance)
@@ -575,7 +573,7 @@ GameMessageDisposition SelectionTranslator::onRawMousePosition(MAYBE_UNUSED cons
 
 			// build rectangular region defined by the drag selection
 			IRegion2D pixelRegion;
-			buildRegion( &m_selectFeedbackAnchor, &pixel, &pixelRegion );
+			buildRegion( &m_leftMouseDownAnchor, &pixel, &pixelRegion );
 			hintMsg->appendPixelRegionArgument( pixelRegion );
 		}
 	}
@@ -1028,7 +1026,7 @@ GameMessageDisposition SelectionTranslator::onRawMouseLeftButtonDown(MAYBE_UNUSE
 {
 	// cannot actually start area selection yet - have to wait for cursor to move a bit
 	m_leftMouseButtonIsDown = true;
-	m_selectFeedbackAnchor = msg->getArgument( 0 )->pixel;
+	m_leftMouseDownAnchor = msg->getArgument( 0 )->pixel;
 
 	return KEEP_MESSAGE;
 }
@@ -1049,7 +1047,7 @@ GameMessageDisposition SelectionTranslator::onRawMouseLeftButtonUp(MAYBE_UNUSED 
 		GameMessage *dragMsg = TheMessageStream->appendMessage( GameMessage::MSG_END_AREA_SELECTION_HINT );
 
 		IRegion2D selectionRegion;
-		buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
+		buildRegion( &m_leftMouseDownAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
 		dragMsg->appendPixelRegionArgument( selectionRegion );
 	}
 	else
@@ -1087,23 +1085,21 @@ GameMessageDisposition SelectionTranslator::onRawMouseRightButtonDown(MAYBE_UNUS
 	// 1) 2-D position on screen
 	// 2) Time has exceeded the time which we allow for this to be a click.
 	// 3) 3-D camera position has changed
-	m_deselectFeedbackAnchor = msg->getArgument( 0 )->pixel;
-	m_lastClick = (UnsignedInt) msg->getArgument( 2 )->integer;
-	m_deselectDownCameraPosition = TheTacticalView->getPosition();
+	m_rightMouseDownAnchor = msg->getArgument( 0 )->pixel;
+	m_rightMouseDownTimeMs = (UnsignedInt) msg->getArgument( 2 )->integer;
+	m_rightMouseDownCameraPos = TheTacticalView->getPosition();
 
 	return KEEP_MESSAGE;
 }
 
 GameMessageDisposition SelectionTranslator::onRawMouseRightButtonUp(MAYBE_UNUSED const GameMessage *msg)
 {
-	Coord3D cameraPos = TheTacticalView->getPosition();
-	cameraPos.sub(m_deselectDownCameraPosition);
-
-	ICoord2D pixel = msg->getArgument( 0 )->pixel;
-	UnsignedInt currentTime = (UnsignedInt) msg->getArgument( 2 )->integer;
+	const ICoord2D anchor = msg->getArgument( 0 )->pixel;
+	const UnsignedInt timeMs = (UnsignedInt) msg->getArgument( 2 )->integer;
+	const Coord3D cameraPos = TheTacticalView->getPosition();
 
 	// right click behavior (not right drag)
-	if (TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime))
+	if (TheMouse->isClick(m_rightMouseDownAnchor, anchor, m_rightMouseDownCameraPos, cameraPos, m_rightMouseDownTimeMs, timeMs))
 	{
 		//Added support to cancel the GUI command without deselecting the unit(s) involved
 		//when you right click.
