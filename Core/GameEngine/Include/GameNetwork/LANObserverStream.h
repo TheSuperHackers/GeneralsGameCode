@@ -147,6 +147,7 @@ private:
 	FILE*        m_writeHandle;
 	AsciiString  m_localPath;
 	UnsignedInt  m_bytesWritten;      // total bytes appended to local file
+	UnsignedInt  m_connectStartedAt;  // ms timestamp of connect kickoff (connect deadline)
 
 	// Snapshot header progress. Bytes accumulate into m_headerBuf until the
 	// full LANObserverStreamHeader has arrived, then snapshotSize is parsed.

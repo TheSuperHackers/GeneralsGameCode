@@ -87,6 +87,10 @@ static const UnsignedInt OBS_SEND_CHUNK_BYTES = 256 * 1024;
 // few ticks of burst so a slow socket drain doesn't immediately starve
 // the next disk read.
 static const UnsignedInt OBS_SEND_BUF_HIGH_WATER = 4 * 1024 * 1024;
+// Max time to wait for a non-blocking connect to complete before giving up.
+// A LAN handshake completes in well under a millisecond; this generous ceiling
+// only trips when the host is genuinely unreachable or not listening.
+static const UnsignedInt OBS_CONNECT_TIMEOUT_MS = 8000;
 
 
 // =====================================================================
@@ -353,6 +357,7 @@ LANObserverClient::LANObserverClient()
 	, m_socketFd(-1)
 	, m_writeHandle(NULL)
 	, m_bytesWritten(0)
+	, m_connectStartedAt(0)
 	, m_headerBytesRead(0)
 	, m_snapshotSize(0)
 	, m_snapshotBytesRead(0)
@@ -418,6 +423,7 @@ Bool LANObserverClient::connect(UnsignedInt ipNetworkOrder, UnsignedShort port, 
 	m_socketFd = fd;
 	m_localPath = localPath;
 	m_state = STATE_CONNECTING;
+	m_connectStartedAt = timeGetTime();
 	LANObsLog("LANObserverClient: TCP connect kickoff to %u.%u.%u.%u:%u (fd=%d)",
 		(ipNetworkOrder) & 0xff, (ipNetworkOrder>>8) & 0xff,
 		(ipNetworkOrder>>16) & 0xff, (ipNetworkOrder>>24) & 0xff, port, fd);
@@ -439,6 +445,7 @@ void LANObserverClient::close()
 	}
 	m_state = STATE_IDLE;
 	m_bytesWritten      = 0;
+	m_connectStartedAt  = 0;
 	m_headerBytesRead   = 0;
 	m_snapshotSize      = 0;
 	m_snapshotBytesRead = 0;
@@ -449,26 +456,62 @@ void LANObserverClient::update()
 	if (m_socketFd == -1 || m_state == STATE_IDLE || m_state == STATE_CLOSED)
 		return;
 
-	// CONNECTING: probe with a zero-byte recv to detect failure, or with a
-	// non-blocking second connect() which returns EISCONN once established.
+	// CONNECTING: a non-blocking connect completes asynchronously. The correct
+	// (and cross-platform) way to detect completion is select() on the write
+	// set: the socket becomes writable once the handshake finishes (success)
+	// or the connect errors (failure, also signalled via the exception set).
+	// We then confirm via SO_ERROR. A recv() probe is wrong here: while the
+	// handshake is still in flight recv() returns WSAENOTCONN (10057) on
+	// Windows / ENOTCONN on POSIX, which the old code misread as a hard
+	// failure and gave up on the very first tick instead of waiting.
 	if (m_state == STATE_CONNECTING)
 	{
-		struct sockaddr_in dummy;
-		memset(&dummy, 0, sizeof(dummy));
-		// Cheap probe: try recv(0). Either we get WOULDBLOCK (still in
-		// flight) or we read 0 (connected, no data yet) or a real error.
-		char probe;
-		Int rc = (Int)recv(m_socketFd, &probe, 0, 0);
-		Int err = SOCK_ERR_LAST;
-		if (rc < 0 && err != SOCK_ERR_WOULDBLOCK)
+		fd_set wfds, efds;
+		FD_ZERO(&wfds);
+		FD_ZERO(&efds);
+		FD_SET(m_socketFd, &wfds);
+		FD_SET(m_socketFd, &efds);
+		struct timeval tv;
+		tv.tv_sec  = 0;
+		tv.tv_usec = 0; // non-blocking poll; we re-check every tick
+		Int sel = select(m_socketFd + 1, NULL, &wfds, &efds, &tv);
+		if (sel == SOCKET_ERROR)
 		{
-			LANObsLog("LANObserverClient: TCP connect FAILED in poll (err=%d) - host not listening / unreachable", err);
-			DEBUG_LOG(("LANObserverClient - connect failed in poll (%d)", err));
+			Int err = SOCK_ERR_LAST;
+			LANObsLog("LANObserverClient: TCP connect select() error (err=%d)", err);
+			DEBUG_LOG(("LANObserverClient - connect select error (%d)", err));
 			m_state = STATE_CLOSED;
 			return;
 		}
-		// Optimistically transition to BUFFERING; the actual handshake we
-		// detect via the snapshot-size header arriving below.
+		if (sel == 0)
+		{
+			// Neither writable nor errored yet: handshake still in flight.
+			// Keep waiting across ticks until it completes or we hit the
+			// connect deadline.
+			if (timeGetTime() - m_connectStartedAt > OBS_CONNECT_TIMEOUT_MS)
+			{
+				LANObsLog("LANObserverClient: TCP connect TIMED OUT after %ums - host not listening / unreachable",
+					OBS_CONNECT_TIMEOUT_MS);
+				DEBUG_LOG(("LANObserverClient - connect timed out"));
+				m_state = STATE_CLOSED;
+			}
+			return;
+		}
+		// Socket is ready. An errored connect shows up in the exception set
+		// (Windows) and/or as a non-zero SO_ERROR (both platforms).
+		Int soErr = 0;
+		int optLen = sizeof(soErr); // socklen_t missing in VC6 winsock; int works on both
+		if (FD_ISSET(m_socketFd, &efds)
+		    || getsockopt(m_socketFd, SOL_SOCKET, SO_ERROR, (char*)&soErr, &optLen) == SOCKET_ERROR
+		    || soErr != 0)
+		{
+			LANObsLog("LANObserverClient: TCP connect FAILED (SO_ERROR=%d) - host not listening / unreachable", soErr);
+			DEBUG_LOG(("LANObserverClient - connect failed (SO_ERROR=%d)", soErr));
+			m_state = STATE_CLOSED;
+			return;
+		}
+		// Handshake complete. Transition to BUFFERING; the snapshot-size
+		// header is detected as it arrives via the recv loop below.
 		LANObsLog("LANObserverClient: TCP connected; waiting for snapshot header");
 		m_state = STATE_BUFFERING;
 		// fall through to recv below
