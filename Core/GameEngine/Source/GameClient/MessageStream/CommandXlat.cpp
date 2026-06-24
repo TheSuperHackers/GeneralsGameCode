@@ -3899,7 +3899,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				// create the message and append arguments for a guard location
 				Coord3D pos;
-				if (!TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ))
+				if( !TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ) )
 					break;
 
 				GameMessage *newMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
@@ -3930,7 +3930,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				// translate from screen coordinates to terrain coords
 				Coord3D pos;
-				if (!TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ))
+				if( !TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ) )
 					break;
 
 				const CommandButton *command = TheInGameUI->getGUICommand();
@@ -3972,7 +3972,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				// create the message and append arguments for a guard location
 				Coord3D pos;
-				if (!TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ))
+				if( !TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ) )
 					break;
 
 				GameMessage *newMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
