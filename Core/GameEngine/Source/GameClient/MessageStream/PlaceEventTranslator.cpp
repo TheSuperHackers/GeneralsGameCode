@@ -182,9 +182,8 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 				if( !TheTacticalView->screenToTerrain( &anchorStart, &worldStart ) )
 					break;
 
-				if( isLineBuild )
-					if( !TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd ) )
-						break;
+				if( isLineBuild && !TheTacticalView->screenToTerrain( &anchorEnd, &worldEnd ) )
+					break;
 
 				Object *builderObj = TheGameLogic->findObjectByID( TheInGameUI->getPendingPlaceSourceObjectID() );
 
