@@ -3898,10 +3898,11 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			if( TheGlobalData->m_useAlternateMouse && TheGlobalData->m_doubleClickAttackMove )
 			{
 				// create the message and append arguments for a guard location
-				GameMessage *newMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
 				Coord3D pos;
 				if (!TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ))
 					break;
+
+				GameMessage *newMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
 				newMsg->appendLocationArgument(pos);
 				newMsg->appendIntegerArgument(GUARDMODE_NORMAL);
 
@@ -3970,10 +3971,11 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			if( !TheGlobalData->m_useAlternateMouse && TheGlobalData->m_doubleClickAttackMove )
 			{
 				// create the message and append arguments for a guard location
-				GameMessage *newMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
 				Coord3D pos;
 				if (!TheTacticalView->screenToTerrain( &msg->getArgument( 0 )->pixel, &pos ))
 					break;
+
+				GameMessage *newMsg = TheMessageStream->appendMessage( GameMessage::MSG_DO_GUARD_POSITION );
 				newMsg->appendLocationArgument(pos);
 				newMsg->appendIntegerArgument(GUARDMODE_NORMAL);
 
