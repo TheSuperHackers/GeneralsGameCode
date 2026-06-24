@@ -141,19 +141,19 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 		Coord3D world;
 
 		// translate the mouse location into world coords
-		if (TheTacticalView->screenToTerrain( mouse, &world ))
-		{
-			// create the message and append arguments
-			msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
-			msg->appendIntegerArgument( command->getWeaponSlot() );
-			msg->appendLocationArgument( world );
-			msg->appendIntegerArgument( command->getMaxShotsToFire() );
+		if( !TheTacticalView->screenToTerrain( mouse, &world ) )
+			return COMMAND_COMPLETE;
 
-			//Also append the object ID (incase weapon doesn't like obstacles on land).
-			Object *target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
-			ObjectID targetID = target ? target->getID() : INVALID_ID;
-			msg->appendObjectIDArgument( targetID );
-		}
+		// create the message and append arguments
+		msg = TheMessageStream->appendMessage( GameMessage::MSG_DO_WEAPON_AT_LOCATION );
+		msg->appendIntegerArgument( command->getWeaponSlot() );
+		msg->appendLocationArgument( world );
+		msg->appendIntegerArgument( command->getMaxShotsToFire() );
+
+		//Also append the object ID (incase weapon doesn't like obstacles on land).
+		Object *target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
+		ObjectID targetID = target ? target->getID() : INVALID_ID;
+		msg->appendObjectIDArgument( targetID );
 	}
 	else if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
