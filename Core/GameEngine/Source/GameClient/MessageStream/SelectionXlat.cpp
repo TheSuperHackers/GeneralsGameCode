@@ -264,7 +264,6 @@ SelectionTranslator::SelectionTranslator()
 	m_deselectFeedbackAnchor.x = 0;
 	m_deselectFeedbackAnchor.y = 0;
 	m_lastClick = 0;
-	m_deselectDownCameraPosition.zero();
 	m_displayedMaxWarning = FALSE;
 	m_selectCountMap.clear();
 
@@ -944,13 +943,11 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_DOWN:
 		{
-			// There are three ways in which we can ignore this as a deselect:
+			// There are two ways in which we can ignore this as a deselect:
 			// 1) 2-D position on screen
 			// 2) Time has exceeded the time which we allow for this to be a click.
-			// 3) 3-D camera position has changed
 			m_deselectFeedbackAnchor = msg->getArgument( 0 )->pixel;
 			m_lastClick = (UnsignedInt) msg->getArgument( 2 )->integer;
-			m_deselectDownCameraPosition = TheTacticalView->getPosition();
 
 			break;
 		}
@@ -958,14 +955,11 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		//-----------------------------------------------------------------------------
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
-			Coord3D cameraPos = TheTacticalView->getPosition();
-			cameraPos.sub(m_deselectDownCameraPosition);
-
 			ICoord2D pixel = msg->getArgument( 0 )->pixel;
 			UnsignedInt currentTime = (UnsignedInt) msg->getArgument( 2 )->integer;
 
 			// right click behavior (not right drag)
-			if (TheMouse->isClick(&m_deselectFeedbackAnchor, &pixel, m_lastClick, currentTime))
+			if (TheMouse->isClick(m_deselectFeedbackAnchor, pixel, m_lastClick, currentTime))
 			{
 				//Added support to cancel the GUI command without deselecting the unit(s) involved
 				//when you right click.

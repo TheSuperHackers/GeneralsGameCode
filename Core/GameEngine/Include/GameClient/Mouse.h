@@ -321,7 +321,9 @@ public:
 	void onGameModeChanged(GameMode prev, GameMode next);
 	void onGamePaused(Bool paused);
 
-	Bool isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt previousMouseClick, UnsignedInt currentMouseClick);
+	Bool isClick(const ICoord2D &mouseAnchor0, const ICoord2D &mouseAnchor1, UnsignedInt mouseClickTimeMs0, UnsignedInt mouseClickTimeMs1);
+
+	Real getDragToleranceAdjustedForScrollFactor() const;
 
 	AsciiString m_tooltipFontName;		///< tooltip font
 	Int m_tooltipFontSize;						///< tooltip font

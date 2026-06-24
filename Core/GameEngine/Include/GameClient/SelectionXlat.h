@@ -53,8 +53,6 @@ private:
 
 	SelectCountMap m_selectCountMap;
 
-	Coord3D m_deselectDownCameraPosition;
-
 	Bool selectFriends( Drawable *draw, GameMessage *createTeamMsg, Bool dragSelecting );
 	Bool killThemKillThemAll( Drawable *draw, GameMessage *killThemAllMsg );
 

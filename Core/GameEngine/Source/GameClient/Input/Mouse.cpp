@@ -384,24 +384,33 @@ void Mouse::checkForDrag()
 //-------------------------------------------------------------------------------------------------
 /** Check for mouse click, using allowed drag forgiveness */
 //-------------------------------------------------------------------------------------------------
-Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt previousMouseClick, UnsignedInt currentMouseClick)
+Bool Mouse::isClick(const ICoord2D &mouseAnchor0, const ICoord2D &mouseAnchor1, UnsignedInt mouseClickTimeMs0, UnsignedInt mouseClickTimeMs1)
 {
-	ICoord2D delta;
-	delta.x = anchor->x - dest->x;
-	delta.y = anchor->y - dest->y;
+	const ICoord2D mouseAnchorDelta = mouseAnchor1 - mouseAnchor0;
+	const UnsignedInt timeMsDelta = mouseClickTimeMs1 - mouseClickTimeMs0;
 
+	// TheSuperHackers @bugfix Use the adjusted drag tolerance to prevent too far tolerances with high scroll factors,
+	// because higher scroll speeds will travel further by the delta.
+	const Real dragTolerance = getDragToleranceAdjustedForScrollFactor();
 
-	// if the mouse hasn't moved further than the tolerance distance
-	// or the click took less than the tolerance duration
-	if (	abs(delta.x) > m_dragTolerance
-		||	abs(delta.y) > m_dragTolerance
-		||	currentMouseClick - previousMouseClick > m_dragToleranceMS)
+	// If the click took less than the tolerance duration
+	// or the mouse hasn't moved further than the tolerance distance
+	// TheSuperHackers @bugfix Now compares the distance in a circle instead of a rectangle.
+	if ( timeMsDelta > m_dragToleranceMS || mouseAnchorDelta.lengthSqr() > sqr(dragTolerance) )
 	{
 		return FALSE;
 	}
 	return TRUE;
 }
 
+
+//-------------------------------------------------------------------------------------------------
+/** Get the scroll speed factor adjusted drag tolerance */
+//-------------------------------------------------------------------------------------------------
+Real Mouse::getDragToleranceAdjustedForScrollFactor() const
+{
+	return m_dragTolerance * (TheGlobalData->m_keyboardDefaultScrollFactor / TheGlobalData->m_keyboardScrollFactor);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
