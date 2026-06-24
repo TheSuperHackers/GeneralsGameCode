@@ -423,9 +423,9 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 								msg->appendLocationArgument(worldPos);
 
 								pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
-
-								commandStatus = COMMAND_COMPLETE;
 							}
+
+							commandStatus = COMMAND_COMPLETE;
 						}
 
 						break;
