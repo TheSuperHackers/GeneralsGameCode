@@ -1402,9 +1402,16 @@ void W3DDisplay::gatherDebugStats()
 		//display the x and y mouse coordinates
 		const MouseIO *mouseIO = TheMouse->getMouseStatus();
 		Coord3D worldPos;
-		TheTacticalView->screenToTerrain(&mouseIO->pos, &worldPos);
-		unibuffer.format( L"Mouse position: screen: (%d, %d), world: (%g, %g, %g)", mouseIO->pos.x, mouseIO->pos.y,
-			worldPos.x, worldPos.y, worldPos.z);
+		if( TheTacticalView->screenToTerrain(&mouseIO->pos, &worldPos) )
+		{
+			unibuffer.format( L"Mouse position: screen: (%d, %d), world: (%g, %g, %g)",
+				mouseIO->pos.x, mouseIO->pos.y, worldPos.x, worldPos.y, worldPos.z);
+		}
+		else
+		{
+			unibuffer.format( L"Mouse position: screen: (%d, %d), world: none",
+				mouseIO->pos.x, mouseIO->pos.y);
+		}
 		m_displayStrings[MousePosition]->setText( unibuffer );
 
 		//display the number of particles in the world and being displayed on screen
