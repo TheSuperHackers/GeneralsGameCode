@@ -176,7 +176,10 @@ static Bool fileSystemPrefersArchive(const Char *filename)
 	if (filename == nullptr) return FALSE;
 	AsciiString name(filename);
 	return (name.compareNoCase("Data\\Scripts\\SkirmishScripts.scb") == 0)
-		|| (name.compareNoCase("Data/Scripts/SkirmishScripts.scb") == 0);
+		|| (name.compareNoCase("Data/Scripts/SkirmishScripts.scb") == 0)
+		// Empty bad-word list shipped in our .big disables the profanity filter;
+		// it must beat the retail loose langdata.dat in the install root.
+		|| (name.compareNoCase("langdata.dat") == 0);
 }
 
 //============================================================================
