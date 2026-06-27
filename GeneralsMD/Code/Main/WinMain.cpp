@@ -30,7 +30,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-// SYSTEM INCLUDES ////////////////////////////////////////////////////////////
+#ifndef WINVER
+#define WINVER 0x0500
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
 #define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
 #include <windows.h>
 #include <stdlib.h>
@@ -51,15 +56,20 @@
 #include "Common/GameMemory.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
+#include "Common/OptionPreferences.h"
 #include "Common/PlayerList.h"
 #include "Common/Registry.h"
 #include "Common/Team.h"
 #include "GameClient/ClientInstance.h"
+#include "GameClient/Display.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"  ///< @todo for demo, remove
+#include "GameClient/GameWindowTransitions.h"
+#include "GameClient/HeaderTemplate.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/IMEManager.h"
+#include "GameClient/View.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/version.h"
@@ -290,6 +300,91 @@ static const char *messageToString(unsigned int message)
 }
 #endif
 
+volatile bool g_inInternalResize = false;
+volatile bool g_resizePending = false;
+static bool g_inSizeMove = false;
+static Int g_savedWindowedWidth = 800;
+static Int g_savedWindowedHeight = 600;
+
+struct InternalResizeGuard
+{
+	InternalResizeGuard() { g_inInternalResize = true; }
+	~InternalResizeGuard() { g_inInternalResize = false; }
+};
+
+extern void reflowAllWindows(Int newScreenWidth, Int newScreenHeight);
+
+static void performLiveResize(HWND hWnd)
+{
+	InternalResizeGuard guard;
+	if (gInitializing)
+	{
+		return;
+	}
+
+	RECT rect;
+	if (GetClientRect(hWnd, &rect))
+	{
+		Int newWidth = rect.right - rect.left;
+		Int newHeight = rect.bottom - rect.top;
+
+		if (newWidth <= 0 || newHeight <= 0)
+		{
+			return;
+		}
+
+		bool windowedChanged = (TheDisplay && TheDisplay->getWindowed() != TheGlobalData->m_windowed);
+		if (TheGlobalData && (newWidth != TheGlobalData->m_xResolution || newHeight != TheGlobalData->m_yResolution || windowedChanged))
+		{
+			if (TheDisplay && TheDisplay->setDisplayMode(newWidth, newHeight, TheDisplay->getBitDepth(), TheGlobalData->m_windowed))
+			{
+				if (TheWritableGlobalData)
+				{
+					TheWritableGlobalData->m_xResolution = newWidth;
+					TheWritableGlobalData->m_yResolution = newHeight;
+				}
+
+				if (TheGlobalData->m_windowed)
+				{
+					g_savedWindowedWidth = newWidth;
+					g_savedWindowedHeight = newHeight;
+				}
+
+				if (TheTacticalView)
+				{
+					TheTacticalView->setWidth(newWidth);
+					TheTacticalView->setHeight(newHeight);
+				}
+
+				if (TheHeaderTemplateManager)
+					TheHeaderTemplateManager->onResolutionChanged();
+
+				if (TheMouse)
+					TheMouse->onResolutionChanged();
+
+				if (TheTransitionHandler)
+					TheTransitionHandler->reset();
+
+				reflowAllWindows(newWidth, newHeight);
+
+				if (TheInGameUI)
+				{
+					TheInGameUI->recreateControlBar();
+				}
+			}
+		}
+	}
+}
+
+void checkAndApplyDeferredResize()
+{
+	if (g_resizePending)
+	{
+		g_resizePending = false;
+		performLiveResize(ApplicationHWnd);
+	}
+}
+
 // WndProc ====================================================================
 /** Window Procedure */
 //=============================================================================
@@ -359,11 +454,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						return 1;
 					case SC_MOVE:
 					case SC_SIZE:
-					case SC_MAXIMIZE:
 					case SC_MONITORPOWER:
 						if( !TheGlobalData->m_windowed )
 							return 1;
 						break;
+					case SC_MAXIMIZE:
+						if( !TheGlobalData->m_windowed )
+							return 1;
+						else
+						{
+							SendMessage(hWnd, WM_SYSKEYDOWN, VK_RETURN, 1 << 29);
+							return 0;
+						}
 				}
 				break;
 
@@ -410,6 +512,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				break;
 			}
 
+			case WM_ENTERSIZEMOVE:
+				g_inSizeMove = true;
+				break;
+
+			case WM_EXITSIZEMOVE:
+				g_inSizeMove = false;
+				if (!g_inInternalResize)
+				{
+					g_resizePending = true;
+				}
+				break;
+
 			//-------------------------------------------------------------------------
 			case WM_SIZE:
 			{
@@ -419,6 +533,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 				if (TheMouse)
 					TheMouse->refreshCursorCapture();
+
+				if (!g_inInternalResize && !g_inSizeMove && wParam != SIZE_MINIMIZED)
+				{
+					g_resizePending = true;
+				}
 
 				break;
 			}
@@ -662,6 +781,67 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				break;
 			}
 #endif
+			case WM_SYSKEYDOWN:
+			{
+				if (wParam == VK_RETURN && (lParam & (1 << 29)) && !(lParam & (1 << 30)))
+				{
+					if (TheGameEngine && !TheGameEngine->getQuitting() && TheDisplay)
+					{
+						TheWritableGlobalData->m_windowed = !TheGlobalData->m_windowed;
+
+						DWORD windowStyle = WS_POPUP | WS_VISIBLE;
+						DWORD exStyle = 0;
+						Int resX = 0;
+						Int resY = 0;
+
+						MONITORINFO mi = { sizeof(MONITORINFO) };
+						GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
+
+						if (TheGlobalData->m_windowed)
+						{
+							windowStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_THICKFRAME | WS_CAPTION;
+							resX = g_savedWindowedWidth;
+							resY = g_savedWindowedHeight;
+						}
+						else
+						{
+							windowStyle |= WS_SYSMENU;
+							exStyle |= WS_EX_TOPMOST;
+							resX = mi.rcMonitor.right - mi.rcMonitor.left;
+							resY = mi.rcMonitor.bottom - mi.rcMonitor.top;
+						}
+
+						RECT windowRect = { 0, 0, resX, resY };
+						AdjustWindowRect(&windowRect, windowStyle, FALSE);
+						int width = windowRect.right - windowRect.left;
+						int height = windowRect.bottom - windowRect.top;
+
+						int x = 0, y = 0;
+						if (TheGlobalData->m_windowed)
+						{
+							x = max(mi.rcWork.left, mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2);
+							y = max(mi.rcWork.top, mi.rcWork.top + (mi.rcWork.bottom - mi.rcWork.top - height) / 2);
+						}
+						else
+						{
+							x = mi.rcMonitor.left;
+							y = mi.rcMonitor.top;
+						}
+
+						OptionPreferences optionPref;
+						optionPref.setWindowed(TheGlobalData->m_windowed);
+						optionPref.write();
+
+						SetWindowLong(hWnd, GWL_STYLE, windowStyle);
+						SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+						SetWindowPos(hWnd, TheGlobalData->m_windowed ? HWND_NOTOPMOST : HWND_TOPMOST, 
+									 x, y, width, height, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+						UpdateWindow(hWnd);
+					}
+					return 0;
+				}
+				break;
+			}
 		}
 
 	}
@@ -711,7 +891,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed)
-		windowStyle |= WS_MINIMIZEBOX | WS_SYSMENU | WS_DLGFRAME | WS_CAPTION;
+		windowStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_THICKFRAME | WS_CAPTION;
 	else
 		windowStyle |= WS_EX_TOPMOST | WS_SYSMENU;
 

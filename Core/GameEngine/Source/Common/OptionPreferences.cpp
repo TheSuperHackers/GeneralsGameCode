@@ -762,6 +762,23 @@ void OptionPreferences::getResolution(Int *xres, Int *yres)
 	*yres=selectedYRes;
 }
 
+Bool OptionPreferences::getWindowed() const
+{
+	OptionPreferences::const_iterator it = find("Windowed");
+	if (it == end())
+		return FALSE;
+
+	if (stricmp(it->second.str(), "yes") == 0) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void OptionPreferences::setWindowed(Bool windowed)
+{
+	insert(std::make_pair(AsciiString("Windowed"), AsciiString(windowed ? "yes" : "no")));
+}
+
 Real OptionPreferences::getMusicVolume()
 {
 	OptionPreferences::const_iterator it = find("MusicVolume");

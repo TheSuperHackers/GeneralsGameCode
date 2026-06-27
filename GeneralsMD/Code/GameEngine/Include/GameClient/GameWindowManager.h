@@ -65,6 +65,19 @@ public:
 	std::list<GameWindow *> windows;						///< list of top-level windows in the layout
 };
 
+struct WindowLayoutRules
+{
+	Int unscaledScreenX;
+	Int unscaledScreenY;
+	Int unscaledScreenWidth;
+	Int unscaledScreenHeight;
+	Int createResX;
+	Int createResY;
+};
+
+extern std::map<GameWindow*, WindowLayoutRules> g_windowLayoutRegistry;
+
+
 //-------------------------------------------------------------------------------------------------
 /** There exists a singleton GameWindowManager that defines how we can
 	* interact with the game windowing system */

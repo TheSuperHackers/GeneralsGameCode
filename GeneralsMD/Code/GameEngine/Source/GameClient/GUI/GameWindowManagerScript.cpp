@@ -71,8 +71,22 @@
 #include "GameClient/GadgetSlider.h"
 #include "GameClient/GameText.h"
 #include "GameClient/HeaderTemplate.h"
+#include <map>
 
+std::map<GameWindow*, WindowLayoutRules> g_windowLayoutRegistry;
 
+struct TempParsedRect
+{
+	Int x;
+	Int y;
+	Int w;
+	Int h;
+	Int resX;
+	Int resY;
+	Bool valid;
+};
+
+static TempParsedRect g_tempParsedRect = { 0, 0, 0, 0, 0, 0, FALSE };
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -520,6 +534,13 @@ static Bool parseScreenRect( const char *token, char *buffer,
 	scanInt( c, createRes.x );
 	c = strtok( nullptr, seps );  // y creation resolution
 	scanInt( c, createRes.y );
+	g_tempParsedRect.x = screenRegion.lo.x;
+	g_tempParsedRect.y = screenRegion.lo.y;
+	g_tempParsedRect.w = screenRegion.hi.x - screenRegion.lo.x;
+	g_tempParsedRect.h = screenRegion.hi.y - screenRegion.lo.y;
+	g_tempParsedRect.resX = createRes.x;
+	g_tempParsedRect.resY = createRes.y;
+	g_tempParsedRect.valid = TRUE;
 
 	//
 	// shrink or expand the screen region by the ratio of the current
@@ -2128,6 +2149,19 @@ static GameWindow *createWindow( char *type,
   // If there is a parent window, send it the SCRIPT_CREATE message
   if( window && parent )
 		TheWindowManager->winSendInputMsg( parent, GWM_SCRIPT_CREATE, id, 0 );
+
+	if (window && g_tempParsedRect.valid)
+	{
+		WindowLayoutRules rules;
+		rules.unscaledScreenX = g_tempParsedRect.x;
+		rules.unscaledScreenY = g_tempParsedRect.y;
+		rules.unscaledScreenWidth = g_tempParsedRect.w;
+		rules.unscaledScreenHeight = g_tempParsedRect.h;
+		rules.createResX = g_tempParsedRect.resX;
+		rules.createResY = g_tempParsedRect.resY;
+		g_windowLayoutRegistry[window] = rules;
+		g_tempParsedRect.valid = FALSE;
+	}
 
   return window;
 

@@ -3016,6 +3016,11 @@ void ControlBar::togglePurchaseScience()
 		hidePurchaseScience();
 }
 
+Bool ControlBar::isPurchaseScienceVisible() const
+{
+	return m_contextParent[ CP_PURCHASE_SCIENCE ] && !m_contextParent[ CP_PURCHASE_SCIENCE ]->winIsHidden();
+}
+
 void ControlBar::toggleControlBarStage()
 {
 	if(m_currentControlBarStage == CONTROL_BAR_STAGE_DEFAULT )
