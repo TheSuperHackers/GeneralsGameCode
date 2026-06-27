@@ -293,12 +293,7 @@ void TransitionGroup::update( void )
 		{
 			TransitionWindow *tWin = *it;
 			tWin->update(frame);
-
-			if( tWin->isFinished() == FALSE )
-			{
-				isFinished = FALSE;
-			}
-
+			isFinished &= tWin->isFinished();
 			it++;
 		}
 
