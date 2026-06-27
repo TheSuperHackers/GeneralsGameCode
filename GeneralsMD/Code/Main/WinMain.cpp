@@ -69,6 +69,7 @@
 #include "GameClient/HeaderTemplate.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/IMEManager.h"
+#include "GameClient/Shell.h"
 #include "GameClient/View.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
@@ -333,10 +334,11 @@ static void performLiveResize(HWND hWnd)
 			return;
 		}
 
-		bool windowedChanged = (TheDisplay && TheDisplay->getWindowed() != TheGlobalData->m_windowed);
+		bool desiredD3DWindowed = TheDisplay ? (TheDisplay->getWindowed() || TheGlobalData->m_windowed) : TheGlobalData->m_windowed;
+		bool windowedChanged = (TheDisplay && TheDisplay->getWindowed() != desiredD3DWindowed);
 		if (TheGlobalData && (newWidth != TheGlobalData->m_xResolution || newHeight != TheGlobalData->m_yResolution || windowedChanged))
 		{
-			if (TheDisplay && TheDisplay->setDisplayMode(newWidth, newHeight, TheDisplay->getBitDepth(), TheGlobalData->m_windowed))
+			if (TheDisplay && TheDisplay->setDisplayMode(newWidth, newHeight, TheDisplay->getBitDepth(), desiredD3DWindowed))
 			{
 				if (TheWritableGlobalData)
 				{
@@ -371,14 +373,44 @@ static void performLiveResize(HWND hWnd)
 				{
 					TheInGameUI->recreateControlBar();
 				}
+
+				OptionPreferences optionPref;
+				optionPref.setWindowed(TheGlobalData->m_windowed);
+				AsciiString resString;
+				resString.format("%d %d", newWidth, newHeight);
+				optionPref.setAsciiString("Resolution", resString);
+				optionPref.write();
 			}
 		}
 	}
 }
 
+static bool isResizeSafe()
+{
+	if (!TheGameEngine || TheGameEngine->getQuitting())
+	{
+		return false;
+	}
+
+	if (TheShell && TheShell->getScreenCount() > 0)
+	{
+		if (TheShell->isAnimFinished())
+		{
+			return true;
+		}
+	}
+
+	if (TheGameLogic && TheGameLogic->isInGame() && !TheGameLogic->isInShellGame())
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void checkAndApplyDeferredResize()
 {
-	if (g_resizePending)
+	if (g_resizePending && isResizeSafe())
 	{
 		g_resizePending = false;
 		performLiveResize(ApplicationHWnd);
@@ -387,6 +419,11 @@ void checkAndApplyDeferredResize()
 
 static void toggleFullscreen(HWND hWnd)
 {
+	if (!isResizeSafe())
+	{
+		return;
+	}
+
 	if (TheGameEngine && !TheGameEngine->getQuitting() && TheDisplay)
 	{
 		TheWritableGlobalData->m_windowed = !TheGlobalData->m_windowed;
@@ -429,10 +466,6 @@ static void toggleFullscreen(HWND hWnd)
 			x = mi.rcMonitor.left;
 			y = mi.rcMonitor.top;
 		}
-
-		OptionPreferences optionPref;
-		optionPref.setWindowed(TheGlobalData->m_windowed);
-		optionPref.write();
 
 		SetWindowLong(hWnd, GWL_STYLE, windowStyle);
 		SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
@@ -789,9 +822,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 			case WM_PAINT:
 			{
+				PAINTSTRUCT paint;
+				HDC dc = ::BeginPaint(hWnd, &paint);
 				if (gDoPaint) {
-					PAINTSTRUCT paint;
-					HDC dc = ::BeginPaint(hWnd, &paint);
 #if 0
 					::SetTextColor(dc, RGB(255,255,255));
 					::SetBkColor(dc, RGB(0,0,0));
@@ -806,10 +839,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						::DeleteDC(tmpDC);
 						::RestoreDC(dc, savContext);
 					}
-					::EndPaint(hWnd, &paint);
-					return TRUE;
 				}
-				break;
+				::EndPaint(hWnd, &paint);
+				return TRUE;
 			}
 
 			case WM_ERASEBKGND:
@@ -891,6 +923,12 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	DWORD windowStyle;
 	Int startWidth = DEFAULT_DISPLAY_WIDTH,
 			startHeight = DEFAULT_DISPLAY_HEIGHT;
+
+	if (TheGlobalData)
+	{
+		g_savedWindowedWidth = TheGlobalData->m_xResolution;
+		g_savedWindowedHeight = TheGlobalData->m_yResolution;
+	}
 
 	// register the window class
 
