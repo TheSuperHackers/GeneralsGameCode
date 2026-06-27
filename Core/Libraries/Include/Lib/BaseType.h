@@ -457,11 +457,11 @@ struct Coord3D
 		return x == value && y == value && z == value;
 	}
 
-	void add( const Coord3D *a )
+	void add( const Coord3D &a )
 	{
-		x += a->x;
-		y += a->y;
-		z += a->z;
+		x += a.x;
+		y += a.y;
+		z += a.z;
 	}
 
 	void sub( const Coord3D &a )

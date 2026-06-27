@@ -304,7 +304,7 @@ void SlavedUpdate::doAttackLogic( const Object *target )
 
 		//Now that we have calculated the vector relative to me, add it to my position to get my goal.
 		attackPosition.set( *master->getPosition() );
-		attackPosition.add( &vector );
+		attackPosition.add( vector );
 	}
 	else
 	{
@@ -367,7 +367,7 @@ void SlavedUpdate::doScoutLogic( const Coord3D *mastersDestination )
 
 		//Now that we have calculated the vector relative to me, add it to my position to get my goal.
 		scoutPosition.set( *master->getPosition() );
-		scoutPosition.add( &vector );
+		scoutPosition.add( vector );
 	}
 	else
 	{
@@ -628,7 +628,7 @@ void SlavedUpdate::setRepairState( RepairStates repairState )
 						//Get the bone position
 						if( draw->getPristineBonePositions( data->m_weldingFXBone.str(), 0, &pos, nullptr, 1 ) )
 						{
-							pos.add( obj->getPosition() );
+							pos.add( *obj->getPosition() );
 						}
 						else
 						{

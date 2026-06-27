@@ -326,7 +326,7 @@ void AudioManager::update()
 	//Set the microphone to be the ground position adjusted for terrain plus the vector we just calculated.
 	Coord3D microphonePos;
 	microphonePos.set( cameraPivot );
-	microphonePos.add( &groundToCameraVector );
+	microphonePos.add( groundToCameraVector );
 
 	//Viola! A properly placed microphone.
 	setListenerPosition( &microphonePos, &lookTo );

@@ -314,7 +314,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 				{
 					pos.set( *physics->getVelocity() );
 					pos.scale( data->m_velocityFactor );
-					pos.add( other->getPosition() );
+					pos.add( *other->getPosition() );
 
 					//Recalculate the distance.
 					fDist = sqrt( ThePartitionManager->getDistanceSquared( me, other, FROM_CENTER_2D ) );

@@ -297,7 +297,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update()
 					else
 					{
 						//Increment the number of fighters and their position.
-						fighterCentroidPos.add( member->getPosition() );
+						fighterCentroidPos.add( *member->getPosition() );
 						fightingMembers++;
 
 						if( !ai->isMoving() )
@@ -350,7 +350,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update()
 
 			Coord3D transportGoalPos;
 			transportGoalPos.set( designatedTargetPos );
-			transportGoalPos.add( &vector );
+			transportGoalPos.add( vector );
 
 			Real distanceSqrd = ThePartitionManager->getDistanceSquared( transport, &transportGoalPos, FROM_CENTER_2D );
 			if( distanceSqrd > 40.0f * 40.0f )

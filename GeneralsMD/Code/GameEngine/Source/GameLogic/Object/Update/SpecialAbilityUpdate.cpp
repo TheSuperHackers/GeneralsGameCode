@@ -1786,7 +1786,7 @@ void SpecialAbilityUpdate::finishAbility()
 
 			if( data->m_flipObjectAfterUnpacking || data->m_flipObjectAfterPacking )
 			{
-				pos.add( &dir );
+				pos.add( dir );
 			}
 			else
 			{
@@ -1808,7 +1808,7 @@ void SpecialAbilityUpdate::finishAbility()
 						dir.normalize();
 						dir.scale(data->m_fleeRangeAfterCompletion);
 						pos = *mine->getPosition();
-						pos.add(&dir);
+						pos.add(dir);
 					}
 				}
 			}

@@ -381,7 +381,7 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 							wayOutPoint.normalize();
 							wayOutPoint.scale( 99999.9f );
 							Real wayOutLength = wayOutPoint.length();
-							wayOutPoint.add(&naturalRallyPoint);
+							wayOutPoint.add(naturalRallyPoint);
 
 
 							//if the rallypoint is closer to the wayoutpoint than it is to the natural rally point then we definitely do not wrap

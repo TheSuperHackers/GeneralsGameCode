@@ -914,7 +914,7 @@ void SpawnBehavior::computeAggregateStates()
 
 			spawnWeaponBonus = currentSpawn->getWeaponBonusCondition();
 
-			avgSpawnPos.add(currentSpawn->getPosition());
+			avgSpawnPos.add(*currentSpawn->getPosition());
 
 			BodyModuleInterface *body = currentSpawn->getBodyModule();
 			acrHealth    += body->getHealth();

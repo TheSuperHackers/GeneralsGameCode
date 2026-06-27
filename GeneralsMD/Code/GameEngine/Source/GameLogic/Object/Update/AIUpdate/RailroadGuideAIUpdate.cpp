@@ -955,7 +955,7 @@ void RailroadBehavior::createCarriages()
 	Coord3D myHitchLoc  = *self->getPosition();
 	Coord3D hitchOffset = *self->getUnitDirectionVector2D();//copy that
 	hitchOffset.scale ( - maxRadius );// negative, since I want the back, not the front
-	myHitchLoc.add( & hitchOffset );
+	myHitchLoc.add( hitchOffset );
 
 
 	PartitionFilterIsValidCarriage pfivc(self, md);
@@ -1116,7 +1116,7 @@ void RailroadBehavior::hitchNewCarriagebyProximity( ObjectID locoID, TrainTrack 
 	Coord3D myHitchLoc  = *self->getPosition();
 	Coord3D hitchOffset = *self->getUnitDirectionVector2D();//copy that
 	hitchOffset.scale ( - maxRadius );// negative, since I want the back, not the front
-	myHitchLoc.add( & hitchOffset );
+	myHitchLoc.add( hitchOffset );
 
 	PartitionFilterIsValidCarriage pfivc(self, md);
 	PartitionFilter *filters[] = { &pfivc, nullptr };
@@ -1487,7 +1487,7 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 				delta.sub( thisPointPos );
 				delta.normalize();
 				delta.scale( difference );
-				thisPointPos.add( &delta );
+				thisPointPos.add( delta );
 
 				*pos = thisPointPos;//copy out
 				return;

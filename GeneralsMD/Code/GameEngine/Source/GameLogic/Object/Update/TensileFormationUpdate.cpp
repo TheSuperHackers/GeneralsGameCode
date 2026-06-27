@@ -281,7 +281,7 @@ UpdateSleepTime TensileFormationUpdate::update()
 	Real steepness = 1.0f - normal.z;
 	slope.scale( 0.3f + steepness);
 
-	m_inertia.add( &slope );
+	m_inertia.add( slope );
 
 	Real friction = 0.95f;
 	m_inertia.scale( friction );
@@ -322,7 +322,7 @@ UpdateSleepTime TensileFormationUpdate::update()
 			newPos.z = MIN( m_lowestSlideElevation, TheTerrainLogic->getGroundHeight(newPos.x, newPos.y) );//rest on surface here
 
 			tensor.normalize();
-			tensorSum.add( &tensor );
+			tensorSum.add( tensor );
 
 		}
 

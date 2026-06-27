@@ -297,7 +297,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				//that to calculate our height -- middle point is the highest).
 				Coord3D lineMiddle;
 				lineMiddle.set( lineStart );
-				lineMiddle.add( &lineEnd );
+				lineMiddle.add( lineEnd );
 				lineMiddle.scale( 0.5 );
 
 				//The half length is used to scale with the distance from middle to
@@ -324,13 +324,13 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				vector.set( lineVector );
 				vector.scale( startSegmentRatio );
 				segmentStart.set( lineStart );
-				segmentStart.add( &vector );
+				segmentStart.add( vector );
 
 				//Calculate our end segment position on the *ground*.
 				vector.set( lineVector );
 				vector.scale( endSegmentRatio );
 				segmentEnd.set( lineStart );
-				segmentEnd.add( &vector );
+				segmentEnd.add( vector );
 
 				//--------------------------------------------------------------------------------
 				//Now at this point, we have our segment line in the level positions that we want.

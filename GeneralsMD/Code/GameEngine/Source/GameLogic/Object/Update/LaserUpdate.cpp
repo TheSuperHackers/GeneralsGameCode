@@ -405,7 +405,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	if( parent == nullptr )
 	{
 		posToUse.set( *startPos );
-		posToUse.add( endPos );
+		posToUse.add( *endPos );
 		posToUse.scale( 0.5 );
 	}
 	else

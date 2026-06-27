@@ -218,7 +218,7 @@ UpdateSleepTime DeliverPayloadAIUpdate::update()
 					Coord3D strafePoint = *getTargetPos();
 					strafePoint.sub( backwards );
 
-					strafePoint.add( &velocity );
+					strafePoint.add( velocity );
 					strafePoint.z = TheTerrainLogic->getGroundHeight( strafePoint.x, strafePoint.y );
 
 					// lock it just till the weapon is empty or the attack is "done"
@@ -836,7 +836,7 @@ StateReturnType DeliveringState::update() // Kick a dude out every so often
 
 							Coord3D backPosition = *owner->getPhysics()->getVelocity();
 							backPosition.scale( -1.0f );
-							backPosition.add( payload->getPosition() );
+							backPosition.add( *payload->getPosition() );
 							payload->setPosition( &backPosition );
 						}
 

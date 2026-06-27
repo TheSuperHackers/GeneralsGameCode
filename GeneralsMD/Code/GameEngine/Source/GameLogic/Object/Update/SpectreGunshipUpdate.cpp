@@ -638,7 +638,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
               m_okToFireHowitzerCounter = ZERO;
               delta.normalize();
               delta.scale( data->m_strafingIncrement );
-              m_gattlingTargetPosition.add( &delta );
+              m_gattlingTargetPosition.add( delta );
             }
 
 
@@ -793,7 +793,7 @@ void SpectreGunshipUpdate::disengageAndDepartAO( Object *gunship )
     Real mapSize = 99999.0f;
     exitPoint.x *= mapSize;
     exitPoint.y *= mapSize;
-    exitPoint.add( gunship->getPosition() );
+    exitPoint.add( *gunship->getPosition() );
 
     shipAI->aiMoveToPosition( &exitPoint, CMD_FROM_AI );
 
