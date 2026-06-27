@@ -660,14 +660,14 @@ Bool CommandButton::isValidToUseOn(const Object *sourceObj, const Object *target
 	Coord3D pos;
 	if( targetLocation )
 	{
-		pos.set( targetLocation );
+		pos.set( *targetLocation );
 	}
 
 	if( BitIsSet( m_options, NEED_TARGET_POS ) && !targetLocation )
 	{
 		if( targetObj )
 		{
-			pos.set( targetObj->getPosition() );
+			pos.set( *targetObj->getPosition() );
 		}
 		else
 		{

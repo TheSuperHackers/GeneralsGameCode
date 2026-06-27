@@ -937,7 +937,7 @@ void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 {
 	if (that != nullptr)
 	{
-		that->m_vel.add(&m_vel);
+		that->m_vel.add(m_vel);
 		that->m_velMag = INVALID_VEL_MAG;
 	}
 }
@@ -946,7 +946,7 @@ void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 void PhysicsBehavior::addVelocityTo( const Coord3D *vel)
 {
 	if (vel != nullptr)
-		m_vel.add( vel );
+		m_vel.add( *vel );
 }
 
 //-------------------------------------------------------------------------------------------------
