@@ -357,7 +357,7 @@ void MobMemberSlavedUpdate::doCatchUpLogic( Coord3D *pos )
 	// recalc where we want to be if we wander around
 	Real randomDirection = GameLogicRandomValue( 0, 2*PI );
 	Real randomRadius = GameLogicRandomValue( 0, data->m_noNeedToCatchUpRadius );
-	nuPos.set(pos);
+	nuPos.set(*pos);
 	nuPos.x += randomRadius * Cos( randomDirection );
 	nuPos.y += randomRadius * Sin( randomDirection );
 	nuPos.z = TheTerrainLogic->getGroundHeight( nuPos.x, nuPos.y );

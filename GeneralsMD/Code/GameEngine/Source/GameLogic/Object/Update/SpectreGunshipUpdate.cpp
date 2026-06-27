@@ -177,7 +177,7 @@ void SpectreGunshipUpdate::onObjectCreated()
 	}
 
 	m_specialPowerModule = obj->getSpecialPowerModule( data->m_specialPowerTemplate );
-  m_satellitePosition.set( obj->getPosition() );
+  m_satellitePosition.set( *obj->getPosition() );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -193,15 +193,15 @@ Bool SpectreGunshipUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemp
 
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
-		m_initialTargetPosition.set( targetPos );
-		m_overrideTargetDestination.set( targetPos );
-    m_gattlingTargetPosition.set( targetPos );
+		m_initialTargetPosition.set( *targetPos );
+		m_overrideTargetDestination.set( *targetPos );
+    m_gattlingTargetPosition.set( *targetPos );
 	}
 	else
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_specialPowerModule->setReadyFrame( now );
-   	m_initialTargetPosition.set( targetPos );
+   	m_initialTargetPosition.set( *targetPos );
 		setLogicalStatus( GUNSHIP_STATUS_INSERTING );
 	}
 

@@ -312,7 +312,7 @@ Object* PointDefenseLaserUpdate::scanClosestTarget()
 				PhysicsBehavior *physics = other->getPhysics();
 				if( physics )
 				{
-					pos.set( physics->getVelocity() );
+					pos.set( *physics->getVelocity() );
 					pos.scale( data->m_velocityFactor );
 					pos.add( other->getPosition() );
 

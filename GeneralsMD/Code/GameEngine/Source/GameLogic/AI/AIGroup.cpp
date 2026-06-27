@@ -2276,7 +2276,7 @@ void AIGroup::groupAttackPosition( const Coord3D *pos, Int maxShotsToFire, Comma
 		if( !pos )
 		{
 			//If you specify a nullptr position, it means you are attacking your own location.
-			attackPos.set( (*i)->getPosition() );
+			attackPos.set( *(*i)->getPosition() );
 		}
 
 		//This code allows garrisoned buildings to force attack a ground position

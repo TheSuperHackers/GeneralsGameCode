@@ -302,7 +302,7 @@ void AudioManager::update()
 	//of making sure we only go a certain percentage towards the camera or the desired height, whichever occurs first.
 	Coord3D cameraPos = TheTacticalView->get3DCameraPosition();
 	Coord3D groundToCameraVector;
-	groundToCameraVector.set( &cameraPos );
+	groundToCameraVector.set( cameraPos );
 	groundToCameraVector.sub( &cameraPivot );
 	Real bestScaleFactor;
 
@@ -325,7 +325,7 @@ void AudioManager::update()
 
 	//Set the microphone to be the ground position adjusted for terrain plus the vector we just calculated.
 	Coord3D microphonePos;
-	microphonePos.set( &cameraPivot );
+	microphonePos.set( cameraPivot );
 	microphonePos.add( &groundToCameraVector );
 
 	//Viola! A properly placed microphone.

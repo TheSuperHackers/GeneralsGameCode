@@ -576,7 +576,7 @@ void RailroadBehavior::loadTrackData()
 		trackPoint.m_isStation = scanner->getName().endsWith("Station");
 		trackPoint.m_isDisembark = scanner->getName().endsWith("Disembark");
 		trackPoint.m_isPingPong = FALSE;
-		trackPoint.m_position.set( scanner->getLocation() );
+		trackPoint.m_position.set( *scanner->getLocation() );
 		trackPoint.m_handle = scanner->getID();
 		track->push_back( trackPoint );
 	}
@@ -610,7 +610,7 @@ void RailroadBehavior::loadTrackData()
 				trackPoint.m_isStation = anotherWaypoint->getName().endsWith("Station");
 				trackPoint.m_isPingPong = scanner->getName().endsWith("PingPong");
 				trackPoint.m_isDisembark = scanner->getName().endsWith("Disembark");
-				trackPoint.m_position.set( anotherWaypoint->getLocation() );
+				trackPoint.m_position.set( *anotherWaypoint->getLocation() );
 				trackPoint.m_handle = scanner->getID();
 				track->push_back( trackPoint );
 

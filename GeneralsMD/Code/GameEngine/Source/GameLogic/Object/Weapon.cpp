@@ -902,7 +902,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		}
 		else
 		{
-			targetPos.set( victimPos );
+			targetPos.set( *victimPos );
 		}
 		Real reAngle = getWeaponRecoilAmount();
 		Real reDir = reAngle != 0.0f ? (atan2(victimPos->y - sourcePos->y, victimPos->x - sourcePos->x)) : 0.0f;
@@ -1020,7 +1020,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 				//adjust the laser's position to prevent it from hitting the ground.
 				if( victimObj )
 				{
-					projectileDestination.set( victimObj->getPosition() );
+					projectileDestination.set( *victimObj->getPosition() );
 				}
 				firingWeapon->createLaser( sourceObj, victimObj, &projectileDestination );
 			}
@@ -1471,7 +1471,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 			damageDirection.zero();
 			if( curVictim && source )
 			{
-				damageDirection.set( curVictim->getPosition() );
+				damageDirection.set( *curVictim->getPosition() );
 				damageDirection.sub( source->getPosition() );
 			}
 

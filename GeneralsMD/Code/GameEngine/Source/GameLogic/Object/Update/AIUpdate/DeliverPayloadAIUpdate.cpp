@@ -306,8 +306,8 @@ void DeliverPayloadAIUpdate::deliverPayloadViaModuleData( const Coord3D *moveToP
 	//****************************************************
 
 	DeliverPayloadData dpData;
-	dpData.m_dropOffset.set( &data->m_dropOffset );
-	dpData.m_dropVariance.set( &data->m_dropVariance );
+	dpData.m_dropOffset.set( data->m_dropOffset );
+	dpData.m_dropVariance.set( data->m_dropVariance );
 	dpData.m_distToTarget						= data->m_maxDistanceToTarget;
 	dpData.m_maxAttempts						= data->m_maxNumberAttempts;
 	dpData.m_dropDelay							= data->m_dropDelay;

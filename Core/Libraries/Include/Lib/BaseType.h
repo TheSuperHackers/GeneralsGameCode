@@ -471,11 +471,11 @@ struct Coord3D
 		z -= a->z;
 	}
 
-	void set( const Coord3D *a )
+	void set( const Coord3D &a )
 	{
-		x = a->x;
-		y = a->y;
-		z = a->z;
+		x = a.x;
+		y = a.y;
+		z = a.z;
 	}
 
 	void set( Real ax, Real ay, Real az )

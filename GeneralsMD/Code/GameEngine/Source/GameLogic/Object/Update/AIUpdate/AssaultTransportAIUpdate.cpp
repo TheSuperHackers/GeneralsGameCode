@@ -343,13 +343,13 @@ UpdateSleepTime AssaultTransportAIUpdate::update()
 			//Calculate a vector from the target passed the fighters to be at a safe place
 			//to be as a transport.
 			Coord3D vector;
-			vector.set( &fighterCentroidPos );
+			vector.set( fighterCentroidPos );
 			vector.sub( &designatedTargetPos );
 			vector.normalize();
 			vector.scale( 150.0f );
 
 			Coord3D transportGoalPos;
-			transportGoalPos.set( &designatedTargetPos );
+			transportGoalPos.set( designatedTargetPos );
 			transportGoalPos.add( &vector );
 
 			Real distanceSqrd = ThePartitionManager->getDistanceSquared( transport, &transportGoalPos, FROM_CENTER_2D );
