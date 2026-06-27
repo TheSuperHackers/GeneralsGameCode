@@ -4074,10 +4074,13 @@ void reflowWindowTree(GameWindow *win, Int newScreenWidth, Int newScreenHeight)
 		{
 			const WindowLayoutRules &rules = it->second;
 			
-			Int newScreenX = (Int)(rules.unscaledScreenX * ((Real)newScreenWidth / (Real)rules.createResX));
-			Int newScreenY = (Int)(rules.unscaledScreenY * ((Real)newScreenHeight / (Real)rules.createResY));
-			Int newWidth = (Int)(rules.unscaledScreenWidth * ((Real)newScreenWidth / (Real)rules.createResX));
-			Int newHeight = (Int)(rules.unscaledScreenHeight * ((Real)newScreenHeight / (Real)rules.createResY));
+			Real scaleX = (rules.createResX > 0) ? ((Real)newScreenWidth / (Real)rules.createResX) : 1.0f;
+			Real scaleY = (rules.createResY > 0) ? ((Real)newScreenHeight / (Real)rules.createResY) : 1.0f;
+
+			Int newScreenX = (Int)(rules.unscaledScreenX * scaleX);
+			Int newScreenY = (Int)(rules.unscaledScreenY * scaleY);
+			Int newWidth = (Int)(rules.unscaledScreenWidth * scaleX);
+			Int newHeight = (Int)(rules.unscaledScreenHeight * scaleY);
 			
 			Int newRelX = newScreenX;
 			Int newRelY = newScreenY;

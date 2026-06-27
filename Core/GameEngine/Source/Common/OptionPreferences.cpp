@@ -776,7 +776,7 @@ Bool OptionPreferences::getWindowed() const
 
 void OptionPreferences::setWindowed(Bool windowed)
 {
-	insert(std::make_pair(AsciiString("Windowed"), AsciiString(windowed ? "yes" : "no")));
+	setBool("Windowed", windowed);
 }
 
 Real OptionPreferences::getMusicVolume()
