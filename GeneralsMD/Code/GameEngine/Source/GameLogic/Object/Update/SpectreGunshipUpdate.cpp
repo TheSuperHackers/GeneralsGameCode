@@ -406,7 +406,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
         //perigee is the point in the orbital arc nearest the satellite being captured
         Coord3D perigee = *gunship->getPosition();
-        perigee.sub( &m_initialTargetPosition );
+        perigee.sub( m_initialTargetPosition );
         perigee.z = zero;
         Real distanceToTarget = perigee.length();
         perigee.normalize();
@@ -442,7 +442,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
         //Constrain Target Override to the targeting radius
         Coord3D overrideTargetDelta = m_initialTargetPosition;
-        overrideTargetDelta.sub( &m_overrideTargetDestination );
+        overrideTargetDelta.sub( m_overrideTargetDestination );
         if ( overrideTargetDelta.length() > constraintRadius )
         {
           overrideTargetDelta.normalize();
@@ -626,7 +626,7 @@ UpdateSleepTime SpectreGunshipUpdate::update()
 
 
             Coord3D delta = m_positionToShootAt;
-            delta.sub( &m_gattlingTargetPosition );
+            delta.sub( m_gattlingTargetPosition );
             Real dist = delta.length();
             if ( dist < data->m_strafingIncrement )
             {

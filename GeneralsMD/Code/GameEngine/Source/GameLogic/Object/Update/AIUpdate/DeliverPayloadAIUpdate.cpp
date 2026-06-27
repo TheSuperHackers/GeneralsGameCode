@@ -216,7 +216,7 @@ UpdateSleepTime DeliverPayloadAIUpdate::update()
 					backwards.scale( 0.33f );
 
 					Coord3D strafePoint = *getTargetPos();
-					strafePoint.sub( &backwards );
+					strafePoint.sub( backwards );
 
 					strafePoint.add( &velocity );
 					strafePoint.z = TheTerrainLogic->getGroundHeight( strafePoint.x, strafePoint.y );

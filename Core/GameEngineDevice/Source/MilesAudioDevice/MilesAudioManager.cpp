@@ -139,7 +139,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 	Coord3D lookPos = TheTacticalView->getPosition();
 	const Coord3D *mikePos = TheAudio->getListenerPosition();
 	Coord3D distanceVector = TheTacticalView->get3DCameraPosition();
-	distanceVector.sub( mikePos );
+	distanceVector.sub( *mikePos );
 
 	Int now = TheGameLogic->getFrame();
 	static Int lastCheck = now;
@@ -307,7 +307,7 @@ void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FIL
 			if( pos )
 			{
 				Coord3D vector = *microphonePos;
-				vector.sub( pos );
+				vector.sub( *pos );
 				dist = vector.length();
 				sprintf( distStr, "%d", REAL_TO_INT( dist ) );
 			}
@@ -2555,7 +2555,7 @@ Real MilesAudioManager::getEffectiveVolume(AudioEventRTS *event) const
 			if (pos)
 			{
 				Coord3D distance = m_listenerPosition;
-				distance.sub(pos);
+				distance.sub(*pos);
 				Real objMinDistance;
 				Real objMaxDistance;
 

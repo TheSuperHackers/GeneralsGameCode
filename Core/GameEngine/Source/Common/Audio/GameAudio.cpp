@@ -303,7 +303,7 @@ void AudioManager::update()
 	Coord3D cameraPos = TheTacticalView->get3DCameraPosition();
 	Coord3D groundToCameraVector;
 	groundToCameraVector.set( cameraPos );
-	groundToCameraVector.sub( &cameraPivot );
+	groundToCameraVector.sub( cameraPivot );
 	Real bestScaleFactor;
 
 	if( cameraPos.z <= desiredHeightAbs || groundToCameraVector.z <= 0.0f )
@@ -345,7 +345,7 @@ void AudioManager::update()
 	{
 		//How far away is the camera from the microphone?
 		Coord3D vector = cameraPos;
-		vector.sub( &microphonePos );
+		vector.sub( microphonePos );
 		Real dist = vector.length();
 
 		if( dist < minDist )

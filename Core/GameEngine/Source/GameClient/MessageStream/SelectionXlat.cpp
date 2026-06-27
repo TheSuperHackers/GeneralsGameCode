@@ -957,7 +957,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		case GameMessage::MSG_RAW_MOUSE_RIGHT_BUTTON_UP:
 		{
 			Coord3D cameraPos = TheTacticalView->getPosition();
-			cameraPos.sub(&m_deselectDownCameraPosition);
+			cameraPos.sub(m_deselectDownCameraPosition);
 
 			ICoord2D pixel = msg->getArgument( 0 )->pixel;
 			UnsignedInt currentTime = (UnsignedInt) msg->getArgument( 2 )->integer;

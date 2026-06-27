@@ -1977,7 +1977,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 				// If the move is a short distance, just do a find closest path to our current
 				// position.  This will unstack us if we are on top of another unit. jba.
 				Coord3D objPos = *getObject()->getPosition();
-				goal.sub(&objPos);
+				goal.sub(objPos);
 				if (goal.length()<3*PATHFIND_CELL_SIZE_F) {
 					destroyPath();
 					TheAI->pathfinder()->adjustDestination(getObject(), m_locomotorSet, &objPos);

@@ -290,7 +290,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 				//Get the length of the line
 				lineVector.set( lineEnd );
-				lineVector.sub( &lineStart );
+				lineVector.sub( lineStart );
 				Real lineLength = lineVector.length();
 
 				//Get the middle point (we'll use this to determine how far we are from
@@ -339,7 +339,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 				//Calculate the distance from midpoint for the start positions.
 				vector.set( lineMiddle );
-				vector.sub( &segmentStart );
+				vector.sub( segmentStart );
 				Real dist = vector.length();
 				Real scaledRadians = dist / halfLength * PI * 0.5f;
 				Real height = cos( scaledRadians );
@@ -348,7 +348,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 				//Now do the same thing for the end position.
 				vector.set( lineMiddle );
-				vector.sub( &segmentEnd );
+				vector.sub( segmentEnd );
 				dist = vector.length();
 				scaledRadians = dist / halfLength * PI * 0.5f;
 				height = cos( scaledRadians );

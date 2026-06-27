@@ -352,7 +352,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 
 	//figure out the relative slope between them and me
 	Coord3D delta = *theirLoc;
-	delta.sub( myLoc );
+	delta.sub( *myLoc );
 	delta.normalize();
 	Real dot = delta.x * myDir->x + delta.y * myDir->y + delta.z * myDir->z;
 
@@ -1484,7 +1484,7 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 
 				Coord3D delta        = nextPoint->m_position;
 
-				delta.sub( &thisPointPos );
+				delta.sub( thisPointPos );
 				delta.normalize();
 				delta.scale( difference );
 				thisPointPos.add( &delta );

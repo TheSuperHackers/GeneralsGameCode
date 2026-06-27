@@ -313,7 +313,7 @@ UpdateSleepTime TensileFormationUpdate::update()
 
 			Coord3D tensor = m_links[ t ].tensor;
 
-			desiredPos.sub( &tensor );
+			desiredPos.sub( tensor );
 
 			//Coord3D desiredPos = { theirPos->x - m_links[ t ].tensor.x, theirPos->y - m_links[ t ].tensor.y, theirPos->z - m_links[ t ].tensor.z };
 

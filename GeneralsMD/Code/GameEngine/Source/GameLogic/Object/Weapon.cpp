@@ -1472,7 +1472,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 			if( curVictim && source )
 			{
 				damageDirection.set( *curVictim->getPosition() );
-				damageDirection.sub( source->getPosition() );
+				damageDirection.sub( *source->getPosition() );
 			}
 
 			Real allowedAngle = getRadiusDamageAngle();

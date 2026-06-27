@@ -344,7 +344,7 @@ UpdateSleepTime AssaultTransportAIUpdate::update()
 			//to be as a transport.
 			Coord3D vector;
 			vector.set( fighterCentroidPos );
-			vector.sub( &designatedTargetPos );
+			vector.sub( designatedTargetPos );
 			vector.normalize();
 			vector.scale( 150.0f );
 

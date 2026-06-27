@@ -174,7 +174,7 @@ Bool SoundManager::canPlayNow( AudioEventRTS *event )
 		const Coord3D *pos = event->getCurrentPosition();
 		if (pos)
 		{
-			distance.sub(pos);
+			distance.sub(*pos);
 			if (distance.length() >= event->getAudioEventInfo()->m_maxDistance)
 			{
 #ifdef INTENSIVE_AUDIO_DEBUG

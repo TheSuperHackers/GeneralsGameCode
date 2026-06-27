@@ -536,7 +536,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 
 				Coord3D buildingToInitialTargetVector;
 				buildingToInitialTargetVector.set( m_initialTargetPosition );
-				buildingToInitialTargetVector.sub( me->getPosition() );
+				buildingToInitialTargetVector.sub( *me->getPosition() );
 				Real targetDistance = buildingToInitialTargetVector.length();
 
 				//Calculate the point position assuming the target position is on the x axis relative to the building.
@@ -584,7 +584,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 
 				//Calculate the distance from our current position to our target dest.
 				Coord3D vector = m_overrideTargetDestination;
-				vector.sub( &m_currentTargetPosition );
+				vector.sub( m_currentTargetPosition );
 				Real distance = vector.length();
 				if( distance < speed )
 				{

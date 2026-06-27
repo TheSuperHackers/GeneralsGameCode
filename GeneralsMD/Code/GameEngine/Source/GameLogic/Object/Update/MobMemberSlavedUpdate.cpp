@@ -225,7 +225,7 @@ UpdateSleepTime MobMemberSlavedUpdate::update()
 			else
 			{
 				Coord3D goalDelta = *myAI->getGoalPosition();
-				goalDelta.sub( &nuPos );
+				goalDelta.sub( nuPos );
 
 				if ( goalDelta.length() > 5.0f * PATHFIND_CELL_SIZE_F )// only if I am not headed there already
 				{

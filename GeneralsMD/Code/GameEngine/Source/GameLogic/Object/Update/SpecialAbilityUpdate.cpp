@@ -1790,7 +1790,7 @@ void SpecialAbilityUpdate::finishAbility()
 			}
 			else
 			{
-				pos.sub( &dir );
+				pos.sub( dir );
 			}
 			// Now check for mines.  Normally we are fleeing from a bomb we just planted.
 			// It is not good to run back towards the previous mine we just planted about

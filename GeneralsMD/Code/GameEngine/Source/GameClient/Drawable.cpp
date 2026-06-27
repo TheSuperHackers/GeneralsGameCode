@@ -4469,7 +4469,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod, Bool onlyIfPe
 			  {
 				  //Check if it's close enough to try playing (optimization)
 				  Coord3D vector = *getPosition();
-				  vector.sub( TheAudio->getListenerPosition() );
+				  vector.sub( *TheAudio->getListenerPosition() );
 				  Real distSqr = vector.lengthSqr();
 				  if( distSqr < sqr( info->m_maxDistance ) )
 				  {

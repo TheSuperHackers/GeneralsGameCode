@@ -120,7 +120,7 @@ void RulerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	} else { //m_rulerType == RULER_LINE
 		Coord3D diff;
 		diff.set(cpt);
-		diff.sub(&m_downPt3d);
+		diff.sub(m_downPt3d);
 		m_savedLength = diff.length();
 		RulerOptions::setWidth(m_savedLength);
 		pView->doRulerFeedback(RULER_LINE);

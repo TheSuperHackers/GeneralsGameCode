@@ -298,7 +298,7 @@ void SlavedUpdate::doAttackLogic( const Object *target )
 		//The distance is too far, so calculate the best allowable position.
 		Coord3D vector;
 		vector.set( *targetPos );
-		vector.sub( master->getPosition() );
+		vector.sub( *master->getPosition() );
 		vector.normalize();
 		vector.scale( data->m_attackRange );
 
@@ -361,7 +361,7 @@ void SlavedUpdate::doScoutLogic( const Coord3D *mastersDestination )
 		//The distance is too far, so calculate the best allowable position.
 		Coord3D vector;
 		vector.set( *mastersDestination );
-		vector.sub( master->getPosition() );
+		vector.sub( *master->getPosition() );
 		vector.normalize();
 		vector.scale( data->m_scoutRange );
 

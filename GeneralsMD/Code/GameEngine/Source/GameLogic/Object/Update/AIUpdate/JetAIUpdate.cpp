@@ -868,7 +868,7 @@ public:
 			ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 			pp->calcPPInfo( jet->getID(), &ppinfo );
 			Coord3D vector = ppinfo.runwayEnd;
-			vector.sub( jet->getPosition() );
+			vector.sub( *jet->getPosition() );
 			Real dist = vector.length();
 
 			Real ratio = 1.0f - (dist / ppinfo.runwayTakeoffDist);
