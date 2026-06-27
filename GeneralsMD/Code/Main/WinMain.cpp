@@ -458,8 +458,10 @@ static void toggleFullscreen(HWND hWnd)
 		LONG x = 0, y = 0;
 		if (TheGlobalData->m_windowed)
 		{
-			x = max(mi.rcWork.left, mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2);
-			y = max(mi.rcWork.top, mi.rcWork.top + (mi.rcWork.bottom - mi.rcWork.top - height) / 2);
+			LONG targetX = mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2;
+			LONG targetY = mi.rcWork.top + (mi.rcWork.bottom - mi.rcWork.top - height) / 2;
+			x = (mi.rcWork.left > targetX) ? mi.rcWork.left : targetX;
+			y = (mi.rcWork.top > targetY) ? mi.rcWork.top : targetY;
 		}
 		else
 		{
