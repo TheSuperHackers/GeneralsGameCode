@@ -813,10 +813,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 
 						RECT windowRect = { 0, 0, resX, resY };
 						AdjustWindowRect(&windowRect, windowStyle, FALSE);
-						int width = windowRect.right - windowRect.left;
-						int height = windowRect.bottom - windowRect.top;
+						LONG width = windowRect.right - windowRect.left;
+						LONG height = windowRect.bottom - windowRect.top;
 
-						int x = 0, y = 0;
+						LONG x = 0, y = 0;
 						if (TheGlobalData->m_windowed)
 						{
 							x = max(mi.rcWork.left, mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2);
