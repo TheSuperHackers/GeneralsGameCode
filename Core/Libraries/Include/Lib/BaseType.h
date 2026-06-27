@@ -438,11 +438,11 @@ struct Coord3D
 		}
 	}
 
-	static void crossProduct( const Coord3D *a, const Coord3D *b, Coord3D *r )
+	static void crossProduct( const Coord3D &a, const Coord3D &b, Coord3D &r )
 	{
-		r->x = (a->y * b->z - a->z * b->y);
-		r->y = (a->z * b->x - a->x * b->z);
-		r->z = (a->x * b->y - a->y * b->x);
+		r.x = (a.y * b.z - a.z * b.y);
+		r.y = (a.z * b.x - a.x * b.z);
+		r.z = (a.x * b.y - a.y * b.x);
 	}
 
 	void zero()

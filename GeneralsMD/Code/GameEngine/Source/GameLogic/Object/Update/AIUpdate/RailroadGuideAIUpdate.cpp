@@ -405,7 +405,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 
 	const Coord3D up = {0,0,1};
 	Coord3D cross;
-	myDir->crossProduct( myDir, &up, &cross );
+	myDir->crossProduct( *myDir, up, cross );
 
 	delta.normalize();
 	Real deviationCOG = cross.x * delta.x + cross.y * delta.y + cross.z * delta.z;
@@ -1236,7 +1236,7 @@ void alignToTerrain( Real angle, const Coord3D& pos, const Coord3D& normal, Matr
 	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero"));
 
 	// now computing the y vector is trivial.
-	y.crossProduct( &z, &x, &y );
+	y.crossProduct( z, x, y );
 	y.normalize();
 
 	mtx.Set(  x.x, y.x, z.x, pos.x,
