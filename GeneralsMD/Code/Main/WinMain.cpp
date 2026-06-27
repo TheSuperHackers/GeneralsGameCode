@@ -385,6 +385,63 @@ void checkAndApplyDeferredResize()
 	}
 }
 
+static void toggleFullscreen(HWND hWnd)
+{
+	if (TheGameEngine && !TheGameEngine->getQuitting() && TheDisplay)
+	{
+		TheWritableGlobalData->m_windowed = !TheGlobalData->m_windowed;
+
+		DWORD windowStyle = WS_POPUP | WS_VISIBLE;
+		DWORD exStyle = 0;
+		Int resX = 0;
+		Int resY = 0;
+
+		MONITORINFO mi = { sizeof(MONITORINFO) };
+		GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
+
+		if (TheGlobalData->m_windowed)
+		{
+			windowStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_THICKFRAME | WS_CAPTION;
+			resX = g_savedWindowedWidth;
+			resY = g_savedWindowedHeight;
+		}
+		else
+		{
+			windowStyle |= WS_SYSMENU;
+			exStyle |= WS_EX_TOPMOST;
+			resX = mi.rcMonitor.right - mi.rcMonitor.left;
+			resY = mi.rcMonitor.bottom - mi.rcMonitor.top;
+		}
+
+		RECT windowRect = { 0, 0, resX, resY };
+		AdjustWindowRect(&windowRect, windowStyle, FALSE);
+		LONG width = windowRect.right - windowRect.left;
+		LONG height = windowRect.bottom - windowRect.top;
+
+		LONG x = 0, y = 0;
+		if (TheGlobalData->m_windowed)
+		{
+			x = max(mi.rcWork.left, mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2);
+			y = max(mi.rcWork.top, mi.rcWork.top + (mi.rcWork.bottom - mi.rcWork.top - height) / 2);
+		}
+		else
+		{
+			x = mi.rcMonitor.left;
+			y = mi.rcMonitor.top;
+		}
+
+		OptionPreferences optionPref;
+		optionPref.setWindowed(TheGlobalData->m_windowed);
+		optionPref.write();
+
+		SetWindowLong(hWnd, GWL_STYLE, windowStyle);
+		SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
+		SetWindowPos(hWnd, TheGlobalData->m_windowed ? HWND_NOTOPMOST : HWND_TOPMOST, 
+					 x, y, width, height, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+		UpdateWindow(hWnd);
+	}
+}
+
 // WndProc ====================================================================
 /** Window Procedure */
 //=============================================================================
@@ -463,7 +520,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 							return 1;
 						else
 						{
-							SendMessage(hWnd, WM_SYSKEYDOWN, VK_RETURN, 1 << 29);
+							toggleFullscreen(hWnd);
 							return 0;
 						}
 				}
@@ -638,6 +695,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						PostQuitMessage( 0 );
 						break;
 					}
+					case VK_F11:
+					{
+						if (!(lParam & (1 << 30)))
+						{
+							toggleFullscreen(hWnd);
+						}
+						break;
+					}
 				}
 				return 0;
 			}
@@ -785,59 +850,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			{
 				if (wParam == VK_RETURN && (lParam & (1 << 29)) && !(lParam & (1 << 30)))
 				{
-					if (TheGameEngine && !TheGameEngine->getQuitting() && TheDisplay)
-					{
-						TheWritableGlobalData->m_windowed = !TheGlobalData->m_windowed;
-
-						DWORD windowStyle = WS_POPUP | WS_VISIBLE;
-						DWORD exStyle = 0;
-						Int resX = 0;
-						Int resY = 0;
-
-						MONITORINFO mi = { sizeof(MONITORINFO) };
-						GetMonitorInfo(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi);
-
-						if (TheGlobalData->m_windowed)
-						{
-							windowStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU | WS_THICKFRAME | WS_CAPTION;
-							resX = g_savedWindowedWidth;
-							resY = g_savedWindowedHeight;
-						}
-						else
-						{
-							windowStyle |= WS_SYSMENU;
-							exStyle |= WS_EX_TOPMOST;
-							resX = mi.rcMonitor.right - mi.rcMonitor.left;
-							resY = mi.rcMonitor.bottom - mi.rcMonitor.top;
-						}
-
-						RECT windowRect = { 0, 0, resX, resY };
-						AdjustWindowRect(&windowRect, windowStyle, FALSE);
-						LONG width = windowRect.right - windowRect.left;
-						LONG height = windowRect.bottom - windowRect.top;
-
-						LONG x = 0, y = 0;
-						if (TheGlobalData->m_windowed)
-						{
-							x = max(mi.rcWork.left, mi.rcWork.left + (mi.rcWork.right - mi.rcWork.left - width) / 2);
-							y = max(mi.rcWork.top, mi.rcWork.top + (mi.rcWork.bottom - mi.rcWork.top - height) / 2);
-						}
-						else
-						{
-							x = mi.rcMonitor.left;
-							y = mi.rcMonitor.top;
-						}
-
-						OptionPreferences optionPref;
-						optionPref.setWindowed(TheGlobalData->m_windowed);
-						optionPref.write();
-
-						SetWindowLong(hWnd, GWL_STYLE, windowStyle);
-						SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
-						SetWindowPos(hWnd, TheGlobalData->m_windowed ? HWND_NOTOPMOST : HWND_TOPMOST, 
-									 x, y, width, height, SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-						UpdateWindow(hWnd);
-					}
+					toggleFullscreen(hWnd);
 					return 0;
 				}
 				break;
