@@ -582,17 +582,17 @@ struct Region3D
 		}
 	}
 
-	Bool isInRegionNoZ( const Coord3D *query ) const
+	Bool isInRegionNoZ( const Coord3D &query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x) &&
-					 (lo.y < query->y) && (query->y < hi.y);
+		return (lo.x < query.x) && (query.x < hi.x) &&
+					 (lo.y < query.y) && (query.y < hi.y);
 	}
 
-	Bool isInRegion( const Coord3D *query ) const
+	Bool isInRegion( const Coord3D &query ) const
 	{
-		return (lo.x < query->x) && (query->x < hi.x) &&
-					 (lo.y < query->y) && (query->y < hi.y) &&
-					 (lo.z < query->z) && (query->z < hi.z);
+		return (lo.x < query.x) && (query.x < hi.x) &&
+					 (lo.y < query.y) && (query.y < hi.y) &&
+					 (lo.z < query.z) && (query.z < hi.z);
 	}
 };
 

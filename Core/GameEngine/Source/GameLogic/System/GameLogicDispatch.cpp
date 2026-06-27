@@ -2069,7 +2069,7 @@ bool GameLogic::onPlaceBeacon(MAYBE_UNUSED GameMessage *msg)
 	Coord3D pos = msg->getArgument( 0 )->location;
 	Region3D r;
 	TheTerrainLogic->getExtent(&r);
-	if (!r.isInRegionNoZ(&pos))
+	if (!r.isInRegionNoZ(pos))
 		pos = TheTerrainLogic->findClosestEdgePoint(&pos);
 	const ThingTemplate *thing = TheThingFactory->findTemplate( msgPlayer->getPlayerTemplate()->getBeaconTemplate() );
 
