@@ -5515,33 +5515,27 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 		// get data
 		WorldAnimationData *wad = *it;
 
-		// update portion ... only when the game is in motion
-		if( TheGameLogic->isGamePaused() == FALSE )
+		//
+		// see if it's time to expire this animation based on animation type and options or
+		// the expire frame
+		//
+		if( TheGameLogic->getFrame() >= wad->m_expireFrame ||
+				(BitIsSet( wad->m_options, WORLD_ANIM_PLAY_ONCE_AND_DESTROY ) &&
+				 BitIsSet( wad->m_anim->getStatus(), ANIM_2D_STATUS_COMPLETE )) )
 		{
 
-			//
-			// see if it's time to expire this animation based on animation type and options or
-			// the expire frame
-			//
-			if( TheGameLogic->getFrame() >= wad->m_expireFrame ||
-					(BitIsSet( wad->m_options, WORLD_ANIM_PLAY_ONCE_AND_DESTROY ) &&
-					 BitIsSet( wad->m_anim->getStatus(), ANIM_2D_STATUS_COMPLETE )) )
-			{
+			// delete this element and continue
+			deleteInstance(wad->m_anim);
+			delete wad;
+			it = m_worldAnimationList.erase( it );
+			continue;
 
-				// delete this element and continue
-				deleteInstance(wad->m_anim);
-				delete wad;
-				it = m_worldAnimationList.erase( it );
-				continue;
+		}
 
-			}
-
-			// update the Z value
-			if( wad->m_zRisePerSecond )
-			{
-				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND * zRiseTimeScale;
-			}
-
+		// update the Z value
+		if( wad->m_zRisePerSecond )
+		{
+			wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND * zRiseTimeScale;
 		}
 
 		//
