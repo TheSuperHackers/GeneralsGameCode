@@ -884,3 +884,13 @@ Bool OptionPreferences::getShowMoneyPerMinute() const
 	}
 	return FALSE;
 }
+
+Real OptionPreferences::getMenuTransitionSpeed()
+{
+	OptionPreferences::const_iterator it = find("MenuTransitionSpeed");
+	if (it == end())
+		return 1.0f;
+
+	Real speed = (Real) atof(it->second.str());
+	return clamp(0.1f, speed, 10.0f);
+}

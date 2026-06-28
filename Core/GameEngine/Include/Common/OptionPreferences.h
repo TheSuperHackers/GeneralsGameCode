@@ -129,4 +129,6 @@ public:
 	Real getResolutionFontAdjustment();
 
 	Bool getShowMoneyPerMinute() const;
+
+	Real getMenuTransitionSpeed();
 };
