@@ -1024,7 +1024,6 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 	return DESTROY_MESSAGE;
 }
 
-
 GameMessageDisposition SelectionTranslator::onRawMouseLeftButtonDown(MAYBE_UNUSED const GameMessage *msg)
 {
 	// cannot actually start area selection yet - have to wait for cursor to move a bit
