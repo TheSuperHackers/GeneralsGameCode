@@ -885,7 +885,7 @@ Bool OptionPreferences::getShowMoneyPerMinute() const
 	return FALSE;
 }
 
-Real OptionPreferences::getMenuTransitionSpeed()
+Real OptionPreferences::getMenuTransitionSpeed() const
 {
 	OptionPreferences::const_iterator it = find("MenuTransitionSpeed");
 	if (it == end())
