@@ -956,7 +956,7 @@ GlobalData::GlobalData()
 	m_showMoneyPerMinute = FALSE;
 	m_allowMoneyPerMinuteForPlayer = FALSE;
 
-	m_menuTransitionSpeed = 1.0f;
+	m_gameWindowTransitionSpeed = 1.0f;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -1219,7 +1219,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
 	TheWritableGlobalData->m_playerInfoListFontSize = optionPref.getPlayerInfoListFontSize();
 	TheWritableGlobalData->m_showMoneyPerMinute = optionPref.getShowMoneyPerMinute();
-	TheWritableGlobalData->m_menuTransitionSpeed = optionPref.getMenuTransitionSpeed();
+	TheWritableGlobalData->m_gameWindowTransitionSpeed = optionPref.getGameWindowTransitionSpeed();
 
 	TheWritableGlobalData->m_antiAliasLevel = optionPref.getAntiAliasing();
 	TheWritableGlobalData->m_textureFilteringMode = optionPref.getTextureFilterMode();
