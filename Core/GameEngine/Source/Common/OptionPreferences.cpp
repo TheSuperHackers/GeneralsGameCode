@@ -885,12 +885,14 @@ Bool OptionPreferences::getShowMoneyPerMinute() const
 	return FALSE;
 }
 
-Real OptionPreferences::getMenuTransitionSpeed() const
+Real OptionPreferences::getGameWindowTransitionSpeed() const
 {
-	OptionPreferences::const_iterator it = find("MenuTransitionSpeed");
+	OptionPreferences::const_iterator it = find("GameWindowTransitionSpeed");
 	if (it == end())
 		return 1.0f;
 
 	Real speed = (Real) atof(it->second.str());
-	return clamp(0.1f, speed, 10.0f);
+	if (speed <= 0.0f)
+		return 1.0f;
+	return min(speed, 1000.0f);
 }

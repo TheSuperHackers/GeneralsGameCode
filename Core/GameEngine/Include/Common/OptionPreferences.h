@@ -130,5 +130,5 @@ public:
 
 	Bool getShowMoneyPerMinute() const;
 
-	Real getMenuTransitionSpeed() const;
+	Real getGameWindowTransitionSpeed() const;
 };
