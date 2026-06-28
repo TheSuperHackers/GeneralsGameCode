@@ -657,7 +657,7 @@ void W3DView::getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *ray
 	m_3DCamera->Un_Project(*rayEnd,Vector2(logX,logY));	//get world space point
 	*rayEnd -= *rayStart;	//vector camera to world space point
 	rayEnd->Normalize();	//make unit vector
-	*rayEnd *= sqr(m_3DCamera->Get_Depth());	//adjust length to reach far clip plane and beyond
+	*rayEnd *= m_3DCamera->Get_Depth() * 2;	//adjust length to reach far clip plane and beyond
 	*rayEnd += *rayStart;	//get point on far clip plane along ray from camera.
 }
 
@@ -2622,7 +2622,7 @@ void W3DView::lookAt( const Coord3D *o )
 		m_3DCamera->Un_Project(rayEnd,Vector2(0.0f,0.0f));	//get world space point
 		rayEnd -= rayStart;	//vector camera to world space point
 		rayEnd.Normalize();	//make unit vector
-		rayEnd *= sqr(m_3DCamera->Get_Depth());	//adjust length to reach far clip plane and beyond
+		rayEnd *= m_3DCamera->Get_Depth() * 2;	//adjust length to reach far clip plane and beyond
 		rayStart.Set(pos.x, pos.y, pos.z);
 		rayEnd += rayStart;	//get point on far clip plane along ray from camera.
 		lineseg.Set(rayStart,rayEnd);
