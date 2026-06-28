@@ -678,6 +678,8 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	Bool hit = false;
 	Int X,Y;
 	Vector3 normal,P0,P1,P2,P3;
+	Bool hasP0 = false;
+	Bool hasP1 = false;
 
 	if (!m_map)
 		return false;	//need valid pointer to heightmap samples
@@ -700,18 +702,22 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 	lineseg=raytest.Ray;
 
-	{
+	Int p;
+	for (p=0; p<3; p++) {
 		//find intersection point of ray and terrain bounding box
+		result.Reset();
 		result.ComputeContactPoint=true;
-		Int contactCount=0;
+		Bool newP0 = false;
+		Bool newP1 = false;
 
 		if (CollisionMath::Collide(lineseg,hbox,&result))
 		{
 			//ray intersects terrain or starts inside the terrain.
 			if (!result.StartBad)	//check if start point inside terrain
 			{
-				P0 = result.ContactPoint;			//make intersection point the new start of the ray.
-				++contactCount;
+				newP0 = P0 != result.ContactPoint;
+				hasP0 = true;
+				P0 = result.ContactPoint;	//make intersection point the new start of the ray.
 			}
 
 			//reverse direction of original ray and clip again to extent of heightmap
@@ -722,14 +728,15 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 			{
 				if (!result.StartBad)	//check if end point inside terrain
 				{
+					newP1 = P1 != result.ContactPoint;
+					hasP1 = true;
 					P1 = result.ContactPoint;	//make intersection point the new end point of ray
-					++contactCount;
 				}
 			}
 		}
 
-		if (contactCount != 2)
-			return false;
+		if (!newP0 || !newP1)
+			break;
 
 		// Take the 2D bounding box of ray and check heights
 		// inside this box for intersection.
@@ -765,6 +772,9 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 		MinMaxAABoxClass mmbox(minPt, maxPt);
 		hbox.Init(mmbox);
 	}
+
+	if (!hasP0 || !hasP1)
+		return false;
 
 	raytest.Result->ComputeContactPoint=true;	//tell CollisionMath that we need point.
 
