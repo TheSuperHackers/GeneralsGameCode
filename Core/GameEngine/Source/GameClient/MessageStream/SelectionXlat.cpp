@@ -383,12 +383,12 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 	{
 		case GameMessage::MSG_META_BEGIN_FORCEATTACK:
 		{
-			disp = onMetaBeginForceattack(msg);
+			disp = onMetaBeginForceAttack(msg);
 			break;
 		}
 		case GameMessage::MSG_META_END_FORCEATTACK:
 		{
-			disp = onMetaEndForceattack(msg);
+			disp = onMetaEndForceAttack(msg);
 			break;
 		}
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
@@ -527,14 +527,14 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 	return disp;
 }
 
-GameMessageDisposition SelectionTranslator::onMetaBeginForceattack(MAYBE_UNUSED const GameMessage *msg)
+GameMessageDisposition SelectionTranslator::onMetaBeginForceAttack(MAYBE_UNUSED const GameMessage *msg)
 {
 	TheInGameUI->setForceAttackMode( true );
 
 	return KEEP_MESSAGE;
 }
 
-GameMessageDisposition SelectionTranslator::onMetaEndForceattack(MAYBE_UNUSED const GameMessage *msg)
+GameMessageDisposition SelectionTranslator::onMetaEndForceAttack(MAYBE_UNUSED const GameMessage *msg)
 {
 	TheInGameUI->setForceAttackMode( false );
 

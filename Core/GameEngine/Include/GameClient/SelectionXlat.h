@@ -73,8 +73,8 @@ public:
 #endif
 
 private:
-	GameMessageDisposition onMetaBeginForceattack(const GameMessage *msg);
-	GameMessageDisposition onMetaEndForceattack(const GameMessage *msg);
+	GameMessageDisposition onMetaBeginForceAttack(const GameMessage *msg);
+	GameMessageDisposition onMetaEndForceAttack(const GameMessage *msg);
 	GameMessageDisposition onRawMousePosition(const GameMessage *msg);
 	GameMessageDisposition onMouseLeftDoubleClick(const GameMessage *msg);
 	GameMessageDisposition onMouseoverDrawableHint(const GameMessage *msg);
