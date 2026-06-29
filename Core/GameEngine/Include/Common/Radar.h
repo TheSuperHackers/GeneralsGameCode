@@ -117,6 +117,7 @@ protected:
 	Object *m_object;				///< the object
 	RadarObject *m_next;		///< next radar object
 	Color m_color;					///< color to draw for this object on the radar
+	UnsignedInt m_lastUnderAttackAlarmFrame;	///< last logic frame this object's under-attack alarm fired
 
 };
 

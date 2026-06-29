@@ -64,7 +64,7 @@
 #endif
 
 #ifndef PRESERVE_RADAR_WARNING_SUPPRESSION
-#define PRESERVE_RADAR_WARNING_SUPPRESSION (1)
+#define PRESERVE_RADAR_WARNING_SUPPRESSION (0) // Per-object cooldown in tryUnderAttackEvent supersedes this map-wide suppression.
 #endif
 
 #ifndef PRESERVE_STRUCTURE_STEALTH_DURING_REPAIR

@@ -100,6 +100,7 @@ RadarObject::RadarObject()
 	m_object = nullptr;
 	m_next = nullptr;
 	m_color = GameMakeColor( 255, 255, 255, 255 );
+	m_lastUnderAttackAlarmFrame = 0xFFFFFFFF;
 
 }
 
@@ -1046,8 +1047,20 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 	if( obj == nullptr )
 		return;
 
+	// Per-object cooldown: each unit can alarm at most once per suppression window.
+	// This prevents a single object (e.g. a supply plane) from re-triggering the alarm
+	// every time the global event window expires.
+	const UnsignedInt framesBetweenAlarms = LOGICFRAMES_PER_SECOND * 10;
+	UnsignedInt currentFrame = TheGameLogic->getFrame();
+	RadarObject *radarData = obj->friend_getRadarData();
+	if( radarData && currentFrame - radarData->m_lastUnderAttackAlarmFrame < framesBetweenAlarms )
+		return;
+
 	// try to create the event
 	Bool eventCreated = tryEvent( RADAR_EVENT_UNDER_ATTACK, obj->getPosition() );
+
+	if( eventCreated && radarData )
+		radarData->m_lastUnderAttackAlarmFrame = currentFrame;
 
 	// if event created, do some more feedback
 	if( eventCreated )
