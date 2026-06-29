@@ -4306,6 +4306,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 	* 4: Added m_ambientSoundEnabled flag
 	* 5: save full mtx, not pos+orient.
 	* 6: TheSuperHackers @bugfix Removed m_prevTintStatus because loading its value is unnecessary and undesirable
+	* 7: TheSuperHackers @tweak Changed m_timeElapsedFade and wheel airborne timers from integer to Real for frame-rate independent timing
 	*/
 // ------------------------------------------------------------------------------------------------
 void Drawable::xfer( Xfer *xfer )
