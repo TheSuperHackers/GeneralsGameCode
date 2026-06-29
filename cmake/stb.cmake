@@ -1,5 +1,4 @@
-# TheSuperHackers @bobtista 02/11/2025
-# STB single-file public domain libraries for image encoding
+# TheSuperHackers @build bobtista 02/11/2025 STB single-file public domain libraries for image encoding
 # https://github.com/nothings/stb
 
 find_package(Stb CONFIG QUIET)
