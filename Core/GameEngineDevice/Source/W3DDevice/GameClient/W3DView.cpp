@@ -3717,30 +3717,54 @@ void W3DView::Add_Camera_Shake (const Coord3D & position,float radius,float dura
 	CameraShakerSystem.Add_Camera_Shake(vpos,radius,duration,power);
 }
 
+bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
+{
+	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
+	{
+		DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
+
+		if (const WorldHeightMap *heightMap = TheTerrainRenderObject->getMap())
+		{
+			dimensions.x = heightMap->getXExtent();
+			dimensions.y = heightMap->getYExtent();
+			return true;
+		}
+
+		return false;
+	}
+
+	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
+
+	if (cameraPitch > ViewDefaultLowPitchRadians || !m_isUserControlled)
+	{
+		// TheSuperHackers @info The scripted camera always uses the regular draw sizes
+		// and uses terrain oversize if it needs to enlarge.
+		dimensions.x = WorldHeightMap::NORMAL_DRAW_WIDTH;
+		dimensions.y = WorldHeightMap::NORMAL_DRAW_HEIGHT;
+		return true;
+	}
+
+	// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
+	// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
+	dimensions.x = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
+	dimensions.y = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
+	return true;
+}
+
 void W3DView::updateTerrain()
 {
 	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
 
+	ICoord2D drawSize;
+
+	if (getDesiredTerrainDrawSize(drawSize))
+	{
+		TheTerrainRenderObject->setTerrainDrawSize(drawSize.x, drawSize.y);
+	}
+
 	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
+
 	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
-	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
-	Int drawWidth;
-	Int drawHeight;
-
-	if (cameraPitch > ViewDefaultLowPitchRadians)
-	{
-		drawWidth = WorldHeightMap::NORMAL_DRAW_WIDTH;
-		drawHeight = WorldHeightMap::NORMAL_DRAW_HEIGHT;
-	}
-	else
-	{
-		// TheSuperHackers @tweak xezon 31/12/2025 Increases visible terrain area when lowering the camera pitch.
-		// Note: The default camera pitch in Generals was 37.5, which we prefer to keep the normal draw size for.
-		drawWidth = WorldHeightMap::LOW_ANGLE_DRAW_WIDTH;
-		drawHeight = WorldHeightMap::LOW_ANGLE_DRAW_HEIGHT;
-	}
-
-	TheTerrainRenderObject->setTerrainDrawSize(drawWidth, drawHeight);
 	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);
 
 	if (it)

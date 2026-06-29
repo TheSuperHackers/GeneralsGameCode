@@ -242,8 +242,8 @@ public:  // height map info.
 	UnsignedByte *getDataPtr() {return m_data;}
 
 
-	Int getXExtent() {return m_width;}	///<number of vertices in x
-	Int getYExtent() {return m_height;}	///<number of vertices in y
+	Int getXExtent() const {return m_width;}	///<number of vertices in x
+	Int getYExtent() const {return m_height;}	///<number of vertices in y
 
 	Region2D getDrawRegion2D();
 
