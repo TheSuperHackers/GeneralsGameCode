@@ -1681,7 +1681,8 @@ const Image *ControlBar::getStarImage()
 		return nullptr;
 	}
 
-	if(TheGameLogic->getFrame()% LOGICFRAMES_PER_SECOND > LOGICFRAMES_PER_SECOND/2)
+	// TheSuperHackers @bugfix Use wall-clock time so blink rate is frame-rate independent.
+	if(timeGetTime() % 1000 > 500)
 	{
 		GadgetButtonSetEnabledImage(win, m_generalButtonHighlight);
 		return nullptr;
