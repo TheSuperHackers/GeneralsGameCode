@@ -340,7 +340,7 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 		m_shroud->reset();	//need reset here since initHeightData will load new shroud.
 
 	BaseHeightMapRenderObjClass *newROBJ = nullptr;
-	if (TheGlobalData->m_terrainLOD==7) {
+	if (TheGlobalData->m_terrainLOD == TERRAIN_LOD_MAX) {
 		newROBJ = TheHeightMap;
 		if (newROBJ==nullptr) {
 			newROBJ = NEW_REF( HeightMapRenderObjClass, () );
@@ -351,8 +351,7 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 			newROBJ = NEW_REF( FlatHeightMapRenderObjClass, () );
 		}
 	}
-	if (TheGlobalData->m_terrainLOD == 5)
-		newROBJ = nullptr;
+
 	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 	if (pMyScene) {
 		pMyScene->Remove_Render_Object(this);

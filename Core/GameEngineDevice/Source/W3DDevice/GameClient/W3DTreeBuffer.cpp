@@ -810,73 +810,7 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 				Vector3 normal(0.0f,0.0f,1.0f);
 				diffuse = doLighting(&normal, objectLighting, &emissive, 0xFFFFFFFF, 1.0f);
 			}
-	/*
-	 *
-			// If we are doing reduced resolution terrain, do reduced
-			// poly trees.
-			Bool doPanel = (TheGlobalData->m_useHalfHeightMap || TheGlobalData->m_stretchTerrain);
 
-			if (doPanel) {
-				if (m_trees[curTree].rotates) {
-					theSin = -lookAtVector.X;
-					theCos = lookAtVector.Y;
-				}
-				// panel start is index offset, there are 3 index per triangle.
-				if (m_trees[curTree].panelStart/3 + 2 > numIndex) {
-					continue; // not enough polygons for the offset.  jba.
-				}
-				for (j=0; j<6; j++) {
-					i = ((Int *)pPoly)[j+m_trees[curTree].panelStart];
-					if (m_curNumTreeVertices >= MAX_TREE_VERTEX)
-						break;
-
-					// Update the uv values.  The W3D models each have their own texture, and
-					// we use one texture with all images in one, so we have to change the uvs to
-					// match.
-					Real U, V;
-					if (type==SHRUB) {
-						// shrub texture is tucked in the corner
-						U = ((512-64)+uvs[i].U*64.0f)/512.0f;
-						V = ((256-64)+uvs[i].V*64.0f)/256.0f;
-					} else if (type==FENCE) {
-						U = uvs[i].U*0.5f;
-						V = 1.0f + uvs[i].V;
-					} else {
-						U = typeOffset+uvs[i].U*0.5f;
-						V = uvs[i].V;
-					}
-
-					curVb->u1 = U;
-					curVb->v1 = V/2.0;
-					Vector3 vLoc;
-					vLoc.X = pVert[i].X*scale*theCos - pVert[i].Y*scale*theSin;
-					vLoc.Y = pVert[i].Y*scale*theCos + pVert[i].X*scale*theSin;
-
-					vLoc.X += loc.X;
-					vLoc.Y += loc.Y;
-					vLoc.Z = loc.Z + pVert[i].Z*scale;
-
-					curVb->x = vLoc.X;
-					curVb->y = vLoc.Y;
-					curVb->z = vLoc.Z;
-					if (doVertexLighting) {
-						curVb->diffuse = doLighting(&vLoc, shadeR, shadeG, shadeB, m_trees[curTree].bounds, pDynamicLightsIterator);
-					} else {
-						curVb->diffuse = diffuse;
-					}
-					curVb++;
-					m_curNumTreeVertices++;
-				}
-
-				for (i=0; i<6; i++) {
-					if (m_curNumTreeIndices+4 > MAX_TREE_INDEX)
-						break;
-					curIb--;
-					*curIb = startVertex + i;
-					m_curNumTreeIndices++;
-				}
-			} else {
-	 */
 			Real Uscale = m_treeTypes[type].m_tileWidth * (Real)TILE_PIXEL_EXTENT / (Real)m_textureWidth;
 			Real Vscale = m_treeTypes[type].m_tileWidth * (Real)TILE_PIXEL_EXTENT / (Real)m_textureHeight;
 			Real UOffset = m_treeTypes[type].m_textureOrigin.x/(Real)m_textureWidth;

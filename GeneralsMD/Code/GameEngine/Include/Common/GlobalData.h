@@ -132,8 +132,8 @@ public:
 	Bool m_trilinearTerrainTex;
 	Bool m_multiPassTerrain;
 	Bool m_adjustCliffTextures;
-	Bool m_stretchTerrain;
-	Bool m_useHalfHeightMap;
+	Bool m_stretchTerrain; // TheSuperHackers @info Legacy, unused
+	Bool m_useHalfHeightMap; // TheSuperHackers @info Legacy, unused
 	Bool m_drawEntireTerrain;
 	_TerrainLOD m_terrainLOD;
 	Bool m_enableDynamicLOD;

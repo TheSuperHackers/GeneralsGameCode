@@ -487,10 +487,6 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 		m_sourceTiles[i]=nullptr;
 		m_edgeTiles[i]=nullptr;
 	}
-	if (TheGlobalData && TheGlobalData->m_stretchTerrain) {
-		m_drawWidthX=STRETCH_DRAW_WIDTH;
-		m_drawHeightY=STRETCH_DRAW_HEIGHT;
-	}
 
 	DataChunkInput file( pStrm );
 
@@ -2224,10 +2220,6 @@ WorldHeightMap::DrawArea WorldHeightMap::createDrawArea(Int xOrg, Int yOrg)
 	area.sizeX = m_drawWidthX;
 	area.sizeY = m_drawHeightY;
 
-	if (TheGlobalData && TheGlobalData->m_stretchTerrain) {
-		area.sizeX = STRETCH_DRAW_WIDTH;
-		area.sizeY = STRETCH_DRAW_HEIGHT;
-	}
 	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain) {
 		area.sizeX = m_width;
 		area.sizeY = m_height;
