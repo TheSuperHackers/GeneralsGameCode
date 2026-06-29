@@ -31,7 +31,6 @@ struct ScreenshotThreadData
 	unsigned int width;
 	unsigned int height;
 	char pathname[_MAX_PATH];
-	char leafname[_MAX_FNAME];
 	int quality;
 	ScreenshotFormat format;
 };
@@ -136,7 +135,6 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	threadData->quality = quality;
 	threadData->format = format;
 	strlcpy(threadData->pathname, pathname, ARRAY_SIZE(threadData->pathname));
-	strlcpy(threadData->leafname, leafname, ARRAY_SIZE(threadData->leafname));
 
 	DWORD threadId;
 	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
