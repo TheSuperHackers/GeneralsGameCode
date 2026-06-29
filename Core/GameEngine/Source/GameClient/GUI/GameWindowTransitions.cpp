@@ -276,7 +276,7 @@ void TransitionGroup::update()
 	// Step every integer frame between the old and new accumulator value so discrete-state-machine
 	// transitions cannot skip a state when the render frame rate dips below the base rate.
 	// TheSuperHackers @feature bobtista 28/06/2026 Scale by the user game window transition speed preference.
-	const Real timeScale = TheFramePacer->getBaseOverUpdateFpsRatio() * TheGlobalData->m_gameWindowTransitionSpeed;
+	const Real timeScale = TheFramePacer->getBaseOverUpdateFpsRatio() * TheGlobalData->m_gameWindowTransitionSpeedMultiplier;
 	const Int prevFrame = (Int)m_currentFrame;
 	m_currentFrame += m_directionMultiplier * timeScale;
 	const Int newFrame = (Int)m_currentFrame;
