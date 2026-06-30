@@ -1213,16 +1213,15 @@ void HeightMapRenderObjClass::setTerrainDrawSize(Int width, Int height)
 	// lighting) every frame and badly degrading performance. DrawEntireTerrain takes precedence.
 	if (TheGlobalData && TheGlobalData->m_stretchTerrain)
 	{
-		width = WorldHeightMap::STRETCH_DRAW_WIDTH;
-		height = WorldHeightMap::STRETCH_DRAW_HEIGHT;
+		width = std::min((Int)WorldHeightMap::STRETCH_DRAW_WIDTH, m_map->getXExtent());
+		height = std::min((Int)WorldHeightMap::STRETCH_DRAW_HEIGHT, m_map->getYExtent());
 	}
+
 	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain)
 	{
 		width = m_map->getXExtent();
 		height = m_map->getYExtent();
 	}
-	width = std::min(width, m_map->getXExtent());
-	height = std::min(height, m_map->getYExtent());
 
 	if (width == m_map->getDrawWidth() && height == m_map->getDrawHeight())
 		return;
