@@ -926,10 +926,10 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 	DX8Wrapper::Set_Shader(Shader);
 	DX8Wrapper::Set_Texture(0,Texture);
 
-	// TheSuperHackers @perf stephanmeesters 27/06/2026
+	// TheSuperHackers @bugfix stephanmeesters 30/06/2026
 	// Enable sorting if the primitives are translucent and alpha testing is not enabled.
-	// However, do not apply sorting for ground-aligned (i.e. non-billboard) particles.
-	// This is for performance reasons and because ground-aligned particles do not generally benefit from back-to-front sorting.
+	// However, do not apply sorting to ground-aligned particles. This improves performance and resolves rendering
+	// artifacts caused by clipping between ground-aligned particles and billboard particles.
 	const bool sort = Billboard &&
 	                  Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO &&
 	                  Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE &&
@@ -1841,7 +1841,9 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 		DX8Wrapper::Set_Shader(Shader);
 		DX8Wrapper::Set_Texture(0,Texture);
 
+		// TheSuperHackers @info stephanmeesters 30/06/2026
 		// Enable sorting if the primitives are translucent and alpha testing is not enabled.
+		// Volumetric particles that are ground-aligned must have sorting enabled.
 		const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
 
 		IndexBufferClass *indexbuffer;
