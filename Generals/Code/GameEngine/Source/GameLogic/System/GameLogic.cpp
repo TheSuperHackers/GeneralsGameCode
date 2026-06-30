@@ -1958,7 +1958,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 			{
 				TheDisplay->draw();
 				setFPMode();
-				Sleep(33);
+				TheFramePacer->update();
 			}
 
 		}
