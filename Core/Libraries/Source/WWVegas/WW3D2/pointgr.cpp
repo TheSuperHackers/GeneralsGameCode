@@ -1841,7 +1841,8 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 		DX8Wrapper::Set_Texture(0,Texture);
 
 		// Enable sorting if the primitives are translucent and alpha testing is not enabled.
-		// TheSuperHackers @info Volumetric particles that are ground-aligned must have sorting enabled.
+		// TheSuperHackers @info Volumetric particles, both billboarded and ground-aligned, must have sorting enabled to
+		// ensure accurate alpha-blending because these particles have stacked layers that don't face the camera straight on.
 		const bool sort = (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO) && (Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE) && (WW3D::Is_Sorting_Enabled());
 
 		IndexBufferClass *indexbuffer;
