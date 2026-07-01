@@ -136,9 +136,9 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/ClientRandomValue.h
 #    Include/GameClient/Color.h
 #    Include/GameClient/CommandXlat.h
-    Include/GameClient/ControlBar.h
-    Include/GameClient/ControlBarResizer.h
-    Include/GameClient/ControlBarScheme.h
+#    Include/GameClient/ControlBar.h
+#    Include/GameClient/ControlBarResizer.h
+#    Include/GameClient/ControlBarScheme.h
 #    Include/GameClient/Credits.h
 #    Include/GameClient/DebugDisplay.h
     Include/GameClient/Diplomacy.h
@@ -655,18 +655,18 @@ set(GAMEENGINE_SRC
 #    Source/GameClient/GraphDraw.cpp
     Source/GameClient/GUI/AnimateWindowManager.cpp
 #    Source/GameClient/GUI/ChallengeGenerals.cpp
-    Source/GameClient/GUI/ControlBar/ControlBar.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarCommand.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarCommandProcessing.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarMultiSelect.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarObserver.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarOCLTimer.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarPrintPositions.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarResizer.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarScheme.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarStructureInventory.cpp
-    Source/GameClient/GUI/ControlBar/ControlBarUnderConstruction.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBar.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarBeacon.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarCommand.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarCommandProcessing.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarMultiSelect.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarObserver.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarOCLTimer.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarPrintPositions.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarResizer.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarScheme.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarStructureInventory.cpp
+#    Source/GameClient/GUI/ControlBar/ControlBarUnderConstruction.cpp
     Source/GameClient/GUI/DisconnectMenu/DisconnectMenu.cpp
     Source/GameClient/GUI/EstablishConnectionsMenu/EstablishConnectionsMenu.cpp
 #    Source/GameClient/GUI/Gadget/GadgetCheckBox.cpp
@@ -687,8 +687,8 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/GameWindowManagerScript.cpp
 #    Source/GameClient/GUI/GameWindowTransitions.cpp
     Source/GameClient/GUI/GameWindowTransitionsStyles.cpp
-    Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
-    Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
+#    Source/GameClient/GUI/GUICallbacks/ControlBarCallback.cpp
+#    Source/GameClient/GUI/GUICallbacks/ControlBarPopupDescription.cpp
     Source/GameClient/GUI/GUICallbacks/Diplomacy.cpp
     Source/GameClient/GUI/GUICallbacks/ExtendedMessageBox.cpp
     Source/GameClient/GUI/GUICallbacks/GeneralsExpPoints.cpp
