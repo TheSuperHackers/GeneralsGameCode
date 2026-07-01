@@ -354,14 +354,21 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 							break;
 						case CANMAKE_MAXED_OUT_FOR_PLAYER:
 							descrip.concat( L"\n\n" );
-              if ( thingTemplate->isKindOf( KINDOF_STRUCTURE ) )
-              {
-                descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildBuildingBecauseMaximumNumber" ) );
-              }
-              else
-              {
-  							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber" ) );
-              }
+							if ( thingTemplate->isKindOf( KINDOF_STRUCTURE ) )
+							{
+								bool exists;
+								UnicodeString text = TheGameText->fetch("TOOLTIP:TooltipCannotBuildBuildingBecauseMaximumNumber", &exists);
+								if (!exists)
+								{
+									// TheSuperHackers @info The prior string does not exist in Generals.
+									text = TheGameText->fetch("TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber");
+								}
+								descrip.concat(text);
+							}
+							else
+							{
+								descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber" ) );
+							}
 							break;
 						//case CANMAKE_NO_PREREQ:
 						//	descrip.concat( L"\n\n" );

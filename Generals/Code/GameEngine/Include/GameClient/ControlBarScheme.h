@@ -232,6 +232,8 @@ public:
 
 	Image *m_commandMarkerImage;
 
+	Image *m_powerPurchaseImage;
+
 	typedef std::list< ControlBarSchemeImage* > ControlBarSchemeImageList;
 	ControlBarSchemeImageList m_layer[MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS];
 

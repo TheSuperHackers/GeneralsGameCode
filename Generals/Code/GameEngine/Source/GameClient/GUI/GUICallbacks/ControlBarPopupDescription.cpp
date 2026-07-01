@@ -252,6 +252,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 	Bool firstRequirement = true;
 	const ProductionPrerequisite *prereq;
 	Bool fireScienceButton = false;
+	UnsignedInt costToBuild = 0;
 
 	if(commandButton)
 	{
@@ -259,40 +260,50 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		const UpgradeTemplate *upgradeTemplate = commandButton->getUpgradeTemplate();
 
 		ScienceType	st = SCIENCE_INVALID;
-		if(commandButton->getScienceVec().size() > 1)
+		if( commandButton->getCommandType() != GUI_COMMAND_PLAYER_UPGRADE &&
+				commandButton->getCommandType() != GUI_COMMAND_OBJECT_UPGRADE )
 		{
-			for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
+			if( commandButton->getScienceVec().size() > 1 )
 			{
-				st = commandButton->getScienceVec()[ j ];
-
-				if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE )
+				for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 				{
-					if( !player->hasScience( st ) && j > 0 )
+					st = commandButton->getScienceVec()[ j ];
+
+					if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE )
 					{
-						//If we're not looking at a command button that purchases a science, then
-						//it means we are looking at a command button that can USE the science. This
-						//means we want to get the description for the previous science -- the one
-						//we can use, not purchase!
-						st = commandButton->getScienceVec()[ j - 1 ];
+						if( !player->hasScience( st ) && j > 0 )
+						{
+							//If we're not looking at a command button that purchases a science, then
+							//it means we are looking at a command button that can USE the science. This
+							//means we want to get the description for the previous science -- the one
+							//we can use, not purchase!
+							st = commandButton->getScienceVec()[ j - 1 ];
+						}
+
+						//Now that we got the science for the button that executes the science, we need
+						//to generate a simpler help text!
+						fireScienceButton = TRUE;
+
+						break;
 					}
-
-					//Now that we got the science for the button that executes the science, we need
-					//to generate a simpler help text!
-					fireScienceButton = true;
-
-					break;
-				}
-				else if( !player->hasScience( st ) )
-				{
-					//Purchase science case. The first science we run into that we don't have, that's the
-					//one we'll want to show!
-					break;
+					else if( !player->hasScience( st ) )
+					{
+						//Purchase science case. The first science we run into that we don't have, that's the
+						//one we'll want to show!
+						break;
+					}
 				}
 			}
-		}
-		else if(commandButton->getScienceVec().size()  == 1 )
-		{
-			st = commandButton->getScienceVec()[ 0 ];
+			else if(commandButton->getScienceVec().size() == 1 )
+			{
+				st = commandButton->getScienceVec()[ 0 ];
+				if( commandButton->getCommandType() != GUI_COMMAND_PURCHASE_SCIENCE )
+				{
+					//Now that we got the science for the button that executes the science, we need
+					//to generate a simpler help text!
+					fireScienceButton = TRUE;
+				}
+			}
 		}
 
 		if( commandButton->getDescriptionLabel().isNotEmpty() )
@@ -323,7 +334,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 					}
 				}
 
-				//Special case: When building units, the CanMakeType determines reasons for not being able to buy stuff.
+				//Special case: When building units & buildings, the CanMakeType determines reasons for not being able to buy stuff.
 				else if( thingTemplate )
 				{
 					CanMakeType makeType = TheBuildAssistant->canMakeUnit( selectedObject, commandButton->getThingTemplate() );
@@ -343,7 +354,21 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 							break;
 						case CANMAKE_MAXED_OUT_FOR_PLAYER:
 							descrip.concat( L"\n\n" );
-							descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber" ) );
+							if ( thingTemplate->isKindOf( KINDOF_STRUCTURE ) )
+							{
+								bool exists;
+								UnicodeString text = TheGameText->fetch("TOOLTIP:TooltipCannotBuildBuildingBecauseMaximumNumber", &exists);
+								if (!exists)
+								{
+									// TheSuperHackers @info The prior string does not exist in Generals.
+									text = TheGameText->fetch("TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber");
+								}
+								descrip.concat(text);
+							}
+							else
+							{
+								descrip.concat( TheGameText->fetch( "TOOLTIP:TooltipCannotBuildUnitBecauseMaximumNumber" ) );
+							}
 							break;
 						//case CANMAKE_NO_PREREQ:
 						//	descrip.concat( L"\n\n" );
@@ -384,7 +409,11 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			//prerequisites.
 
 			//Format the cost only when we have to pay for it.
-			cost.format(TheGameText->fetch("TOOLTIP:Cost"), thingTemplate->calcCostToBuild(player));
+			costToBuild = thingTemplate->calcCostToBuild( player );
+			if( costToBuild > 0 )
+			{
+				cost.format( TheGameText->fetch("TOOLTIP:Cost"), costToBuild );
+			}
 
 			// ask each prerequisite to give us a list of the non satisfied prerequisites
 			for( Int i=0; i<thingTemplate->getPrereqCount(); i++ )
@@ -416,13 +445,11 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		{
 			//We are looking at an upgrade purchase icon. Maybe we already purchased it?
 
-			Bool hasUpgradeAlready = false;
-			Bool hasConflictingUpgrade = false;
+			Bool hasUpgradeAlready = player->hasUpgradeComplete( upgradeTemplate );
+			Bool hasConflictingUpgrade = FALSE;
+			Bool missingScience = FALSE;
 			Bool playerUpgradeButton = commandButton->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE;
 			Bool objectUpgradeButton = commandButton->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE;
-
-			//Check if the local player has the specified upgrade
-			hasUpgradeAlready = player->hasUpgradeComplete( upgradeTemplate );
 
 			if( !hasUpgradeAlready )
 			{
@@ -466,14 +493,43 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			}
 			else if( !hasUpgradeAlready )
 			{
+
+				//Do we have a prerequisite science?
+				for( size_t i = 0; i < commandButton->getScienceVec().size(); i++ )
+				{
+					ScienceType st = commandButton->getScienceVec()[ i ];
+					if( !player->hasScience( st ) )
+					{
+						missingScience = TRUE;
+						break;
+					}
+				}
+
 				//Determine the cost of the upgrade.
-				cost.format(TheGameText->fetch("TOOLTIP:Cost"),upgradeTemplate->calcCostToBuild(player));
+				costToBuild = upgradeTemplate->calcCostToBuild( player );
+				if( costToBuild > 0 )
+				{
+					cost.format( TheGameText->fetch("TOOLTIP:Cost"), costToBuild );
+				}
+
+				if( missingScience )
+				{
+					if( !descrip.isEmpty() )
+						descrip.concat(L"\n");
+					requiresFormat.format( TheGameText->fetch( "CONTROLBAR:Requirements" ).str(), TheGameText->fetch( "CONTROLBAR:GeneralsPromotion" ).str() );
+					descrip.concat( requiresFormat );
+				}
 			}
 		}
 		else if( st != SCIENCE_INVALID && !fireScienceButton )
 		{
 			TheScienceStore->getNameAndDescription(st, name, descrip);
-			cost.format(TheGameText->fetch("TOOLTIP:ScienceCost"),TheScienceStore->getSciencePurchaseCost(st));
+
+			costToBuild = TheScienceStore->getSciencePurchaseCost( st );
+			if( costToBuild > 0 )
+			{
+				cost.format( TheGameText->fetch("TOOLTIP:ScienceCost"), costToBuild );
+			}
 
 			// ask each prerequisite to give us a list of the non satisfied prerequisites
 			if( thingTemplate )
@@ -551,8 +607,17 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 	win = TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextCost"));
 	if(win)
 	{
-		GadgetStaticTextSetText(win, cost);
+		if( costToBuild > 0 )
+		{
+			win->winHide( FALSE );
+			GadgetStaticTextSetText(win, cost);
+		}
+		else
+		{
+			win->winHide( TRUE );
+		}
 	}
+
 	win = TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextDescription"));
 	if(win)
 	{
