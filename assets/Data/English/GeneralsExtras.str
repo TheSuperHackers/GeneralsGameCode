@@ -179,3 +179,14 @@ END
 GUI:ScoreEfficiency
 "Efficiency"
 END
+
+// LAN lobby "Enforce Random" checkbox: while checked, the host locks every
+// occupied slot's faction and team to Random (color stays selectable). The
+// Randomize button can still assign concrete factions/teams afterwards.
+GUI:EnforceRandom
+"Enforce Random"
+END
+
+TOOLTIP:EnforceRandom
+"Lock all players to random faction and random team"
+END

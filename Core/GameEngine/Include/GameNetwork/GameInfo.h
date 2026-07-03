@@ -275,6 +275,12 @@ public:
   inline Bool oldFactionsOnly() const;
   inline void setOldFactionsOnly( Bool oldFactionsOnly );
 
+	// Enforce-random lobby flag: while set, every occupied slot's faction and
+	// team are locked to Random (the Randomize button may still assign
+	// concrete values). Host-controlled, LAN lobby only.
+	inline Bool getEnforceRandom() const;
+	inline void setEnforceRandom( Bool enforceRandom );
+
 protected:
 	Int m_preorderMask;
 	Int m_crcInterval;
@@ -301,6 +307,7 @@ protected:
 	// when this header is edited).
 	AsciiString m_resumeReplayFile;
 	UnsignedInt m_resumeHandoffFrame;
+	Bool m_enforceRandom;
 };
 
 extern GameInfo *TheGameInfo;
@@ -322,6 +329,8 @@ const Money&GameInfo::getStartingCash() const         { return m_startingCash; }
 UnsignedShort GameInfo::getSuperweaponRestriction() const { return m_superweaponRestriction; }
 Bool        GameInfo::oldFactionsOnly() const           { return m_oldFactionsOnly; }
 void        GameInfo::setOldFactionsOnly( Bool oldFactionsOnly ) { m_oldFactionsOnly = oldFactionsOnly; }
+Bool        GameInfo::getEnforceRandom() const          { return m_enforceRandom; }
+void        GameInfo::setEnforceRandom( Bool enforceRandom ) { m_enforceRandom = enforceRandom; }
 
 AsciiString GameInfoToAsciiString( const GameInfo *game );
 Bool ParseAsciiStringToGameInfo( GameInfo *game, AsciiString options );

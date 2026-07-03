@@ -83,15 +83,24 @@ void EnableAcceptControls(Bool Enabled, GameInfo *myGame, GameWindow *comboPlaye
 		}
 		comboColor[slotNum]->winEnable(Enabled && !isObserver);
 	}
+	// While the host has enforce-random set, faction and team stay locked to
+	// Random for everyone (color remains selectable).
+	Bool enforceRandom = myGame->getEnforceRandom();
 	if(comboPlayerTemplate[slotNum])
-		comboPlayerTemplate[slotNum]->winEnable(Enabled);
+	{
+		if (enforceRandom)
+		{
+			GadgetComboBoxHideList(comboPlayerTemplate[slotNum]);
+		}
+		comboPlayerTemplate[slotNum]->winEnable(Enabled && !enforceRandom);
+	}
 	if(comboTeam[slotNum])
 	{
-		if (isObserver)
+		if (isObserver || enforceRandom)
 		{
 			GadgetComboBoxHideList(comboTeam[slotNum]);
 		}
-		comboTeam[slotNum]->winEnable(Enabled && !isObserver);
+		comboTeam[slotNum]->winEnable(Enabled && !isObserver && !enforceRandom);
 	}
 
 	Bool canChooseStartSpot = FALSE;

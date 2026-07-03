@@ -321,6 +321,7 @@ void GameInfo::reset()
   m_startingCash = TheGlobalData->m_defaultStartingCash;
 	m_resumeReplayFile.clear();
 	m_resumeHandoffFrame = 0;
+	m_enforceRandom = FALSE;
 
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
@@ -944,6 +945,13 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 		optionsString.concat(resume);
 	}
 
+	// Enforce-random lobby flag. Only emitted when set so games without it
+	// still round-trip bit-identically through the serializer.
+	if (game->getEnforceRandom())
+	{
+		optionsString.concat("ER=1;");
+	}
+
 	//add player info for each slot
 	optionsString.concat(slotListID);
 	optionsString.concat('=');
@@ -1039,6 +1047,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
   UnsignedShort restriction = 0; // Always the default
 	AsciiString resumeReplayFile;
 	UnsignedInt resumeHandoffFrame = 0;
+	Bool enforceRandom = FALSE;
 
 	Bool sawMap = FALSE;
 	Bool sawMapCRC = FALSE;
@@ -1143,6 +1152,10 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		else if (key.compare("RHF") == 0)
 		{
 			resumeHandoffFrame = (UnsignedInt)strtoul(val.str(), nullptr, 10);
+		}
+		else if (key.compare("ER") == 0)
+		{
+			enforceRandom = (atoi(val.str()) != 0);
 		}
 		else if (key.compare("C") == 0)
 		{
@@ -1542,6 +1555,7 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 		game->setOldFactionsOnly(oldFactionsOnly);
 		game->setResumeReplayFile(resumeReplayFile);
 		game->setResumeHandoffFrame(resumeHandoffFrame);
+		game->setEnforceRandom(enforceRandom);
 
 		return true;
 	}

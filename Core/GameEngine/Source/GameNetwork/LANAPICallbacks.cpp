@@ -411,7 +411,14 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				}
 				else if (key == "PlayerTemplate")
 				{
-					if (val >= PLAYERTEMPLATE_MIN && val < ThePlayerTemplateStore->getPlayerTemplateCount() && val != slot->getPlayerTemplate())
+					// While enforce-random is set, only Random (and Observer) are
+					// allowed; concrete faction requests (including the preferred
+					// faction a joiner sends right after joining) are rejected.
+					if (m_currentGame->getEnforceRandom() && val >= 0)
+					{
+						DEBUG_LOG(("Rejecting PlayerTemplate %d because enforce random is set", val));
+					}
+					else if (val >= PLAYERTEMPLATE_MIN && val < ThePlayerTemplateStore->getPlayerTemplateCount() && val != slot->getPlayerTemplate())
 					{
 						slot->setPlayerTemplate(val);
 						if (val == PLAYERTEMPLATE_OBSERVER)
@@ -456,7 +463,12 @@ void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString op
 				}
 				else if (key == "Team")
 				{
-					if (val >= -1 && val < MAX_SLOTS/2 && val != slot->getTeamNumber() && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
+					// While enforce-random is set, only a random team (-1) is allowed.
+					if (m_currentGame->getEnforceRandom() && val != -1)
+					{
+						DEBUG_LOG(("Rejecting team %d because enforce random is set", val));
+					}
+					else if (val >= -1 && val < MAX_SLOTS/2 && val != slot->getTeamNumber() && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
 					{
 						slot->setTeamNumber(val);
 						change = true;

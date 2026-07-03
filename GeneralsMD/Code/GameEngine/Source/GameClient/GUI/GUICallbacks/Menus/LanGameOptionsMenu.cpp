@@ -132,6 +132,7 @@ static NameKeyType buttonSelectMapID = NAMEKEY_INVALID;
 static NameKeyType buttonMapVoteID = NAMEKEY_INVALID;
 static NameKeyType buttonResumeFromReplayID = NAMEKEY_INVALID;
 static NameKeyType checkboxLimitSuperweaponsID = NAMEKEY_INVALID;
+static NameKeyType checkboxEnforceRandomID = NAMEKEY_INVALID;
 static NameKeyType comboBoxStartingCashID = NAMEKEY_INVALID;
 static NameKeyType windowMapID = NAMEKEY_INVALID;
 // Window Pointers ------------------------------------------------------------------------
@@ -146,6 +147,7 @@ static GameWindow *buttonEmote = nullptr;
 static GameWindow *textEntryChat = nullptr;
 static GameWindow *textEntryMapDisplay = nullptr;
 static GameWindow *checkboxLimitSuperweapons = nullptr;
+static GameWindow *checkboxEnforceRandom = nullptr;
 static GameWindow *comboBoxStartingCash = nullptr;
 static GameWindow *windowMap = nullptr;
 
@@ -901,6 +903,46 @@ static void handleLimitSuperweaponsClick()
   }
 }
 
+static void handleEnforceRandomClick()
+{
+  LANGameInfo *myGame = TheLAN->GetMyGame();
+
+  if (myGame)
+  {
+    Bool checked = GadgetCheckBoxIsChecked( checkboxEnforceRandom );
+    myGame->setEnforceRandom( checked );
+
+    if (checked)
+    {
+      // Snap every occupied, non-observer slot to random faction and random
+      // team. Color is left alone. The Randomize button may still assign
+      // concrete values afterwards; the dropdowns stay locked until the
+      // host unchecks the box.
+      for (Int i = 0; i < MAX_SLOTS; i++)
+      {
+        GameSlot *slot = myGame->getSlot(i);
+        if (!slot || !slot->isOccupied())
+          continue;
+        if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
+          continue;
+        slot->setPlayerTemplate( PLAYERTEMPLATE_RANDOM );
+        slot->setTeamNumber( -1 );
+      }
+    }
+    myGame->resetAccepted();
+
+    if (myGame->amIHost())
+    {
+      if (!s_isIniting)
+      {
+        // send around a new slotlist
+        TheLAN->RequestGameOptions(GenerateGameOptionsString(), true);
+        lanUpdateSlotList(); // Update the accepted button UI
+      }
+    }
+  }
+}
+
 void lanUpdateSlotList()
 {
 	if(!AreSlotListUpdatesEnabled() || s_isIniting)
@@ -929,6 +971,7 @@ void InitLanGameGadgets()
 	buttonMapVoteID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonMapVote" );
 	buttonResumeFromReplayID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ButtonResumeFromReplay" );
   checkboxLimitSuperweaponsID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:CheckboxLimitSuperweapons" );
+  checkboxEnforceRandomID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:CheckboxEnforceRandom" );
   comboBoxStartingCashID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:ComboBoxStartingCash" );
 	windowMapID = TheNameKeyGenerator->nameToKey( "LanGameOptionsMenu.wnd:MapWindow" );
 
@@ -961,6 +1004,8 @@ void InitLanGameGadgets()
 	DEBUG_ASSERTCRASH(textEntryMapDisplay, ("Could not find the textEntryMapDisplay"));
   checkboxLimitSuperweapons = TheWindowManager->winGetWindowFromId( parentLanGameOptions, checkboxLimitSuperweaponsID );
   DEBUG_ASSERTCRASH(checkboxLimitSuperweapons, ("Could not find the checkboxLimitSuperweapons"));
+  // Checkbox is optional: only present in builds of the .wnd that include the new entry. Guard access with nullptr checks.
+  checkboxEnforceRandom = TheWindowManager->winGetWindowFromId( parentLanGameOptions, checkboxEnforceRandomID );
   comboBoxStartingCash = TheWindowManager->winGetWindowFromId( parentLanGameOptions, comboBoxStartingCashID );
   DEBUG_ASSERTCRASH(comboBoxStartingCash, ("Could not find the comboBoxStartingCash"));
 	PopulateStartingCashComboBox(comboBoxStartingCash, TheLAN->GetMyGame());
@@ -1067,6 +1112,7 @@ void DeinitLanGameGadgets()
 	textEntryChat = nullptr;
 	textEntryMapDisplay = nullptr;
   checkboxLimitSuperweapons = nullptr;
+  checkboxEnforceRandom = nullptr;
   comboBoxStartingCash = nullptr;
 	if (windowMap)
 	{
@@ -1163,6 +1209,8 @@ void LanGameOptionsMenuInit( WindowLayout *layout, void *userData )
 			buttonMapVote->winEnable( FALSE );
 		buttonRandomize->winEnable( FALSE );
     checkboxLimitSuperweapons->winEnable( FALSE ); // Can look but only host can touch
+    if (checkboxEnforceRandom)
+      checkboxEnforceRandom->winEnable( FALSE );   // Ditto
     comboBoxStartingCash->winEnable( FALSE );      // Ditto
 		TheLAN->GetMyGame()->setMapCRC( TheLAN->GetMyGame()->getMapCRC() );		// force a recheck
 		TheLAN->GetMyGame()->setMapSize( TheLAN->GetMyGame()->getMapSize() ); // of if we have the map
@@ -1251,6 +1299,8 @@ void updateGameOptions()
 		GadgetStaticTextSetText(textEntryMapDisplay, mapDisplayName);
 
     GadgetCheckBoxSetChecked( checkboxLimitSuperweapons, theGame->getSuperweaponRestriction() != 0 );
+    if (checkboxEnforceRandom)
+      GadgetCheckBoxSetChecked( checkboxEnforceRandom, theGame->getEnforceRandom() );
 		Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
     Int index = 0;
     for ( ; index < itemCount; index++ )
@@ -2033,6 +2083,10 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
         else if ( controlID == checkboxLimitSuperweaponsID )
         {
           handleLimitSuperweaponsClick();
+        }
+        else if ( controlID == checkboxEnforceRandomID )
+        {
+          handleEnforceRandomClick();
         }
 				else
 				{
