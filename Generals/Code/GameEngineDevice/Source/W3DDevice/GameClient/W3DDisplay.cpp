@@ -41,7 +41,6 @@ static void drawFramerateBar();
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "W3DDevice/GameClient/W3DScreenshot.h"
 #include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
 #include "Common/GlobalData.h"
