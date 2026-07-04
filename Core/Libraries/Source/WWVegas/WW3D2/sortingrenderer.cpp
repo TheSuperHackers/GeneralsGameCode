@@ -606,9 +606,10 @@ void SortingRendererClass::Flush()
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,old_world);
 
-	// TheSuperHackers @perf stephanmeesters 04/07/2026 Splice nodes that have no bounding information (Z=0.0) into the sorted list.
+	// TheSuperHackers @perf stephanmeesters 04/07/2026
+	// Splice nodes that have no bounding information (Z=0.0) at the correct location into the sorted list.
 	SortingNodeStructList::iterator node = sorted_list.begin();
-	while (node != sorted_list.end() && (*node)->transformed_center.Z <= 0.0f) {
+	while (node != sorted_list.end() && (*node)->transformed_center.Z > 0.0f) {
 		++node;
 	}
 	sorted_list.splice(node, splicing_list);
