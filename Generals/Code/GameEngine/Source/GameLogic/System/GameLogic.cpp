@@ -3193,6 +3193,12 @@ void GameLogic::update()
 		TheScriptEngine->UPDATE();
 	}
 
+	// TheSuperHackers @info Updates the frozen time status because it may have changed after the script engine update.
+	TheFramePacer->setTimeFrozen(TheGameEngine->isTimeFrozen());
+
+	if (TheFramePacer->isTimeFrozen())
+		return;
+
 	// Note - TerrainLogic update needs to happen after ScriptEngine update, but before object updates.  jba.
 	// This way changes in bridges are noted in the script engine before being cleared in TerrainLogic->update
 	{
