@@ -226,7 +226,7 @@ ViewerSceneClass::Get_Bounding_Sphere ()
 	// Iterate through every object in the scene, adding its
 	// bounding sphere to the current bounding sphere. The sum of
 	// the bounding spheres will be the scene's bounding sphere.
-	SphereClass bounding_sphere(Vector3(0,0,0), 0.0f);
+	SphereClass bounding_sphere;
 	SceneIterator *it = Create_Iterator();
 	assert(it);
 	for (; !it->Is_Done(); it->Next())

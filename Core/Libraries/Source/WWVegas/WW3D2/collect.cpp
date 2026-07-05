@@ -809,7 +809,7 @@ void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 {
 	int i;
 	if (SubObjects.Count() <= 0) {
-		BoundSphere = SphereClass(Vector3(0,0,0),0);
+		BoundSphere = SphereClass();
 		BoundBox.Center.Set(0,0,0);
 		BoundBox.Extent.Set(0,0,0);
 		return;

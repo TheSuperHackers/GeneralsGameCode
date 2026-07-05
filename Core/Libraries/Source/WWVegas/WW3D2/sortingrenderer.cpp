@@ -296,8 +296,7 @@ void SortingRendererClass::Insert_Triangles(
 	unsigned short min_vertex_index,
 	unsigned short vertex_count)
 {
-	SphereClass sphere(Vector3(0.0f,0.0f,0.0f),0.0f);
-	Insert_Triangles(sphere,start_index,polygon_count,min_vertex_index,vertex_count);
+	Insert_Triangles(SphereClass(),start_index,polygon_count,min_vertex_index,vertex_count);
 }
 
 // ----------------------------------------------------------------------------
