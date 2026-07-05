@@ -3258,7 +3258,6 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 	Int numRenderedShadows = 0;
 
  	AABoxClass bbox;
-	SphereClass bsphere;
 
  	//Get a bounding box around our visible universe.  Bounded by terrain and the sky
  	//so much tighter fitting volume than what's actually visible.  This will cull
