@@ -329,7 +329,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		// If no texture, shader or material arrays for this pass just draw and go to next pass
 		if (!texture_array0 && !texture_array1 && !material_array && !shader_array) {
 			if (buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) {
-				SortingRendererClass::Insert_Triangles(&sphere,0, DynamicMeshPNum, 0, DynamicMeshVNum);
+				SortingRendererClass::Insert_Triangles(sphere,0, DynamicMeshPNum, 0, DynamicMeshVNum);
 			}
 			else {
 				DX8Wrapper::Draw_Triangles(0, DynamicMeshPNum, 0, DynamicMeshVNum);
@@ -365,7 +365,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 			if (done || texture_changed || material_changed || shader_changed) {
 				if (buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) {
 					SortingRendererClass::Insert_Triangles(
-						&sphere,
+						sphere,
 						(start_tri_idx * 3),
 						(1 + cur_tri_idx - start_tri_idx),
 						min_vert_idx,
