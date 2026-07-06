@@ -2180,51 +2180,53 @@ void W3DModelDraw::adjustAnimation(const ModelConditionInfo* prevState, Real pre
 
 		const W3DAnimationInfo& animInfo = m_curState->m_animations[m_whichAnimInCurState];
 
-		HAnimClass* animHandle = animInfo.getAnimHandle();	// note that this now returns an ADDREFED handle, which must be released by the caller!
-		if (m_renderObject && animHandle)
+		if (m_renderObject)
 		{
-			Int startFrame = 0;
-			if (m_curState->m_mode == RenderObjClass::ANIM_MODE_ONCE_BACKWARDS ||
-					m_curState->m_mode == RenderObjClass::ANIM_MODE_LOOP_BACKWARDS)
+			HAnimClass* animHandle = animInfo.getAnimHandle();	// note that this now returns an ADDREFED handle, which must be released by the caller!
+			if (animHandle)
 			{
-				startFrame = animHandle->Get_Num_Frames()-1;
-			}
+				Int startFrame = 0;
+				if (m_curState->m_mode == RenderObjClass::ANIM_MODE_ONCE_BACKWARDS ||
+						m_curState->m_mode == RenderObjClass::ANIM_MODE_LOOP_BACKWARDS)
+				{
+					startFrame = animHandle->Get_Num_Frames()-1;
+				}
 
-			if (testFlagBit(m_curState->m_flags, RANDOMIZE_START_FRAME))
-			{
-				startFrame = GameClientRandomValue(0, animHandle->Get_Num_Frames()-1);
-			}
-			else if (testFlagBit(m_curState->m_flags, START_FRAME_FIRST))
-			{
-				startFrame = 0;
-			}
-			else if (testFlagBit(m_curState->m_flags, START_FRAME_LAST))
-			{
-				startFrame = animHandle->Get_Num_Frames()-1;
-			}
-			// order is important here: MAINTAIN_FRAME_ACROSS_STATES is overridden by the other bits, above.
-			else if (isAnyMaintainFrameFlagSet(m_curState->m_flags) &&
-					prevState &&
-					prevState != m_curState &&
-					isAnyMaintainFrameFlagSet(prevState->m_flags) &&
-					isCommonMaintainFrameFlagSet(m_curState->m_flags, prevState->m_flags) &&
-					prevAnimFraction >= 0.0)
-			{
-				startFrame = REAL_TO_INT(prevAnimFraction * animHandle->Get_Num_Frames()-1);
-			}
+				if (testFlagBit(m_curState->m_flags, RANDOMIZE_START_FRAME))
+				{
+					startFrame = GameClientRandomValue(0, animHandle->Get_Num_Frames()-1);
+				}
+				else if (testFlagBit(m_curState->m_flags, START_FRAME_FIRST))
+				{
+					startFrame = 0;
+				}
+				else if (testFlagBit(m_curState->m_flags, START_FRAME_LAST))
+				{
+					startFrame = animHandle->Get_Num_Frames()-1;
+				}
+				// order is important here: MAINTAIN_FRAME_ACROSS_STATES is overridden by the other bits, above.
+				else if (isAnyMaintainFrameFlagSet(m_curState->m_flags) &&
+						prevState &&
+						prevState != m_curState &&
+						isAnyMaintainFrameFlagSet(prevState->m_flags) &&
+						isCommonMaintainFrameFlagSet(m_curState->m_flags, prevState->m_flags) &&
+						prevAnimFraction >= 0.0)
+				{
+					startFrame = REAL_TO_INT(prevAnimFraction * animHandle->Get_Num_Frames()-1);
+				}
 
-			m_renderObject->Set_Animation(animHandle, startFrame, m_curState->m_mode);
-			REF_PTR_RELEASE(animHandle);
-			animHandle = nullptr;
+				m_renderObject->Set_Animation(animHandle, startFrame, m_curState->m_mode);
+				REF_PTR_RELEASE(animHandle);
+				animHandle = nullptr;
 
-			if (m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
-			{
-				HLodClass *hlod = (HLodClass*)m_renderObject;
-				Real factor = GameClientRandomValueReal( m_curState->m_animMinSpeedFactor, m_curState->m_animMaxSpeedFactor );
-				hlod->Set_Animation_Frame_Rate_Multiplier( factor );
+				if (m_renderObject->Class_ID() == RenderObjClass::CLASSID_HLOD)
+				{
+					HLodClass *hlod = (HLodClass*)m_renderObject;
+					Real factor = GameClientRandomValueReal( m_curState->m_animMinSpeedFactor, m_curState->m_animMaxSpeedFactor );
+					hlod->Set_Animation_Frame_Rate_Multiplier( factor );
+				}
 			}
 		}
-
 	}
 	else
 	{

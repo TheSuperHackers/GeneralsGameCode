@@ -760,7 +760,7 @@ UpdateSleepTime BridgeBehavior::update()
 				else if ( bridge && bridgeTemplate && bridgeInfo)//we have valid Terrain data for the bridge
 					getRandomSurfacePosition( bridgeTemplate, bridgeInfo, &pos );
 				else
-					pos.set( getObject()->getPosition() );
+					pos.set( *getObject()->getPosition() );
 
 
 				// launch the fx list
@@ -824,7 +824,7 @@ UpdateSleepTime BridgeBehavior::update()
 					if ( bridge && bridgeTemplate && bridgeInfo )//we have valid Terrain data for the bridge
 						getRandomSurfacePosition( bridgeTemplate, bridgeInfo, &pos );
 					else
-						pos.set( getObject()->getPosition() );
+						pos.set( *getObject()->getPosition() );
 
 					// launch the fx list
 					ObjectCreationList::create( (*oclIt).ocl, us, &pos, nullptr );

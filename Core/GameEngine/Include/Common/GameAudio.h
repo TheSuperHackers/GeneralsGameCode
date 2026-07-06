@@ -66,7 +66,7 @@ struct AudioRequest;
 struct AudioSettings;
 struct MiscAudio;
 
-typedef std::hash_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString> > AudioEventInfoHash;
+typedef std::hash_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> AudioEventInfoHash;
 typedef AudioEventInfoHash::iterator AudioEventInfoHashIt;
 typedef UnsignedInt AudioHandle;
 
@@ -177,11 +177,10 @@ class AudioManager : public SubsystemInterface
 		AsciiString prevTrackName(const AsciiString& currentTrack );
 
 		// changing music tracks
-		virtual void nextMusicTrack() = 0;
-		virtual void prevMusicTrack() = 0;
+		virtual AsciiString nextMusicTrack() = 0;
+		virtual AsciiString prevMusicTrack() = 0;
 		virtual Bool isMusicPlaying() const = 0;
 		virtual Bool hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const = 0;
-		virtual AsciiString getMusicTrackName() const = 0;
 
 		virtual void setAudioEventEnabled( AsciiString eventToAffect, Bool enable );
 		virtual void setAudioEventVolumeOverride( AsciiString eventToAffect, Real newVolume );
@@ -220,6 +219,8 @@ class AudioManager : public SubsystemInterface
 		virtual UnsignedInt getNum2DSamples() const = 0;
 		virtual UnsignedInt getNum3DSamples() const = 0;
 		virtual UnsignedInt getNumStreams() const = 0;
+		virtual UnsignedInt getNumAvailable2DSamples() const = 0;
+		virtual UnsignedInt getNumAvailable3DSamples() const = 0;
 
 		// Device Dependent calls to determine sound prioritization info
 		virtual Bool doesViolateLimit( AudioEventRTS *event ) const = 0;
@@ -338,7 +339,7 @@ class AudioManager : public SubsystemInterface
 
 		AudioEventInfoHash m_allAudioEventInfo;
 		AudioHandle theAudioHandlePool;
-		std::list<std::pair<AsciiString, Real> > m_adjustedVolumes;
+		std::list<std::pair<AsciiString, Real>/**/> m_adjustedVolumes;
 
 		Real m_musicVolume;
 		Real m_soundVolume;

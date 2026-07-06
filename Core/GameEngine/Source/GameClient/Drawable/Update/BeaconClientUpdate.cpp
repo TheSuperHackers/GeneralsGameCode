@@ -94,9 +94,7 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 			AsciiString templateName;
 			templateName.format("BeaconSmoke%6.6X", (0xffffff & obj->getIndicatorColor()));
 			const ParticleSystemTemplate *particleTemplate = TheParticleSystemManager->findTemplate( templateName );
-
-			DEBUG_ASSERTCRASH(particleTemplate, ("Could not find particle system %s", templateName.str()));
-
+			DEBUG_ASSERTCRASH(TheParticleSystemManager->isDummy() || particleTemplate, ("Could not find particle system %s", templateName.str()));
 			if (particleTemplate)
 			{
 				system = TheParticleSystemManager->createParticleSystem( particleTemplate );
@@ -107,7 +105,7 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 			{// THis this will whip up a new particle system to match the house color provided
 				templateName.format("BeaconSmokeFFFFFF");
 				const ParticleSystemTemplate *failsafeTemplate = TheParticleSystemManager->findTemplate( templateName );
-				DEBUG_ASSERTCRASH(failsafeTemplate, ("Doh, this is bad \n I Could not even find the white particle system to make a failsafe system out of."));
+				DEBUG_ASSERTCRASH(TheParticleSystemManager->isDummy() || failsafeTemplate, ("Doh, this is bad \n I Could not even find the white particle system to make a failsafe system out of."));
 				system = TheParticleSystemManager->createParticleSystem( failsafeTemplate );
 				if (system)
 				{

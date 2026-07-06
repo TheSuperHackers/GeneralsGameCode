@@ -104,6 +104,8 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( file->read( buffer, fileSize ) != fileSize )
 	{
 
+		delete[] buffer;
+
 		DEBUG_CRASH(( "embedPristineMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
@@ -161,6 +163,8 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	if( fread( buffer, 1, fileSize, fp ) != fileSize )
 	{
 
+		delete[] buffer;
+
 		DEBUG_CRASH(( "embedInUseMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
@@ -215,6 +219,8 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	// write contents of buffer to new file
 	if( fwrite( buffer, 1, dataSize, fp ) != dataSize )
 	{
+
+		delete[] buffer;
 
 		DEBUG_CRASH(( "extractAndSaveMap - Error writing to file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;

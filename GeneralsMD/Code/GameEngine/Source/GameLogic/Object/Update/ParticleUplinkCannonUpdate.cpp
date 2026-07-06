@@ -253,8 +253,8 @@ void ParticleUplinkCannonUpdate::onObjectCreated()
 	}
 
 	m_specialPowerModule = obj->getSpecialPowerModule( data->m_specialPowerTemplate );
-	m_connectorNodePosition.set( obj->getPosition() );
-	m_laserOriginPosition.set( obj->getPosition() );
+	m_connectorNodePosition.set( *obj->getPosition() );
+	m_laserOriginPosition.set( *obj->getPosition() );
 
 	//Create instances of the sounds required.
 	m_powerupSound.setEventName( data->m_powerupSoundName );
@@ -289,9 +289,9 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 #if !RETAIL_COMPATIBLE_CRC
 		m_scriptedWaypointMode = FALSE;
 #endif
-		m_initialTargetPosition.set( targetPos );
-		m_overrideTargetDestination.set( targetPos );
-		m_currentTargetPosition.set( targetPos );
+		m_initialTargetPosition.set( *targetPos );
+		m_overrideTargetDestination.set( *targetPos );
+		m_currentTargetPosition.set( *targetPos );
 	}
 	else if( way )
 	{
@@ -299,7 +299,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		UnsignedInt now = TheGameLogic->getFrame();
 
 		Coord3D pos;
-		pos.set( way->getLocation() );
+		pos.set( *way->getLocation() );
 
 		m_startAttackFrame = max( now, (UnsignedInt)1 );
 #if !RETAIL_COMPATIBLE_CRC
@@ -309,8 +309,8 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		m_laserStatus = LASERSTATUS_NONE;
 		setLogicalStatus( STATUS_READY_TO_FIRE );
 		m_specialPowerModule->setReadyFrame( now );
-		m_initialTargetPosition.set( &pos );
-		m_currentTargetPosition.set( &pos );
+		m_initialTargetPosition.set( pos );
+		m_currentTargetPosition.set( pos );
 
 		Int linkCount = way->getNumLinks();
 		Int which = GameLogicRandomValue( 0, linkCount-1 );
@@ -318,7 +318,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		if( next )
 		{
 			m_nextDestWaypointID = next->getID();
-			m_overrideTargetDestination.set( next->getLocation() );
+			m_overrideTargetDestination.set( *next->getLocation() );
 		}
 		else
 		{
@@ -335,17 +335,17 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		Coord3D pos;
 		if( targetPos )
 		{
-			pos.set( targetPos );
+			pos.set( *targetPos );
 		}
 		else if( targetObj )
 		{
-			pos.set( targetObj->getPosition() );
+			pos.set( *targetObj->getPosition() );
 		}
 #if !RETAIL_COMPATIBLE_CRC
 		m_manualTargetMode = FALSE;
 		m_scriptedWaypointMode = FALSE;
 #endif
-		m_initialTargetPosition.set( &pos );
+		m_initialTargetPosition.set( pos );
 		m_startAttackFrame = max( now, (UnsignedInt)1 );
 		m_laserStatus = LASERSTATUS_NONE;
 		setLogicalStatus( STATUS_READY_TO_FIRE );
@@ -535,8 +535,8 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				Real cxHeight = height * data->m_swathOfDeathAmplitude;
 
 				Coord3D buildingToInitialTargetVector;
-				buildingToInitialTargetVector.set( &m_initialTargetPosition );
-				buildingToInitialTargetVector.sub( me->getPosition() );
+				buildingToInitialTargetVector.set( m_initialTargetPosition );
+				buildingToInitialTargetVector.sub( *me->getPosition() );
 				Real targetDistance = buildingToInitialTargetVector.length();
 
 				//Calculate the point position assuming the target position is on the x axis relative to the building.
@@ -584,7 +584,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 
 				//Calculate the distance from our current position to our target dest.
 				Coord3D vector = m_overrideTargetDestination;
-				vector.sub( &m_currentTargetPosition );
+				vector.sub( m_currentTargetPosition );
 				Real distance = vector.length();
 				if( distance < speed )
 				{
@@ -606,7 +606,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 							if ( way )
 							{
 								m_nextDestWaypointID = way->getID();
-								m_overrideTargetDestination.set(way->getLocation());
+								m_overrideTargetDestination.set(*way->getLocation());
 							}
 							else
 							{
@@ -629,7 +629,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			m_currentTargetPosition.z = TheTerrainLogic->getGroundHeight( m_currentTargetPosition.x, m_currentTargetPosition.y );
 
 			Coord3D orbitPosition;
-			orbitPosition.set( &m_currentTargetPosition );
+			orbitPosition.set( m_currentTargetPosition );
 			orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 
 			Real scorchRadius = 0.0f;
@@ -1003,7 +1003,7 @@ void ParticleUplinkCannonUpdate::createGroundToOrbitLaser( UnsignedInt growthFra
 				if( update )
 				{
 					Coord3D orbitPosition;
-					orbitPosition.set( &m_laserOriginPosition );
+					orbitPosition.set( m_laserOriginPosition );
 					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, nullptr, &m_laserOriginPosition, &orbitPosition, "", growthFrames );
 				}
@@ -1042,7 +1042,7 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 				if( update )
 				{
 					Coord3D orbitPosition;
-					orbitPosition.set( &m_initialTargetPosition );
+					orbitPosition.set( m_initialTargetPosition );
 					orbitPosition.z += ORBITAL_BEAM_Z_OFFSET;
 					update->initLaser( nullptr, nullptr, &orbitPosition, &m_initialTargetPosition, "", growthFrames );
 				}

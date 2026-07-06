@@ -293,10 +293,6 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	** Now, read in all of the other chunks (motion channels).
 	*/
-	TimeCodedMotionChannelClass * tc_chan;
-	AdaptiveDeltaMotionChannelClass * ad_chan;
-	TimeCodedBitChannelClass * newbitchan;
-
 	while (cload.Open_Chunk()) {
 
 		switch (cload.Cur_Chunk_ID()) {
@@ -306,7 +302,8 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 				switch ( Flavor ) {
 
 					case ANIM_FLAVOR_TIMECODED:
-
+					{
+						TimeCodedMotionChannelClass* tc_chan = nullptr;
 						if (!read_channel(cload,&tc_chan)) {
 							goto Error;
 						}
@@ -322,8 +319,11 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 						}
 
 						break;
+					}
 
 					case ANIM_FLAVOR_ADAPTIVE_DELTA:
+					{
+						AdaptiveDeltaMotionChannelClass* ad_chan = nullptr;
 						if (!read_channel(cload,&ad_chan)) {
 							goto Error;
 						}
@@ -338,10 +338,13 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
 						}
 						break;
+					}
 				}
 				break;
 
 			case W3D_CHUNK_COMPRESSED_BIT_CHANNEL:
+			{
+				TimeCodedBitChannelClass* newbitchan = nullptr;
 				if (!read_bit_channel(cload,&newbitchan)) {
 					goto Error;
 				}
@@ -357,6 +360,7 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 				}
 
 				break;
+			}
 
 			default:
 				break;
@@ -387,20 +391,32 @@ Error:
  *=============================================================================================*/
 bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,TimeCodedMotionChannelClass * * newchan)
 {
-	*newchan = W3DNEW TimeCodedMotionChannelClass;
-	bool result = (*newchan)->Load_W3D(cload);
-
-	return result;
-
+	TimeCodedMotionChannelClass* channel = W3DNEW TimeCodedMotionChannelClass;
+	if (channel->Load_W3D(cload))
+	{
+		*newchan = channel;
+		return true;
+	}
+	else
+	{
+		delete channel;
+		return false;
+	}
 }
 
 bool HCompressedAnimClass::read_channel(ChunkLoadClass & cload,AdaptiveDeltaMotionChannelClass * * newchan)
 {
-	*newchan = W3DNEW AdaptiveDeltaMotionChannelClass;
-	bool result = (*newchan)->Load_W3D(cload);
-
-	return result;
-
+	AdaptiveDeltaMotionChannelClass* channel = W3DNEW AdaptiveDeltaMotionChannelClass;
+	if (channel->Load_W3D(cload))
+	{
+		*newchan = channel;
+		return true;
+	}
+	else
+	{
+		delete channel;
+		return false;
+	}
 }
 
 
@@ -483,11 +499,17 @@ void HCompressedAnimClass::add_channel(AdaptiveDeltaMotionChannelClass * newchan
  *=============================================================================================*/
 bool HCompressedAnimClass::read_bit_channel(ChunkLoadClass & cload,TimeCodedBitChannelClass * * newchan)
 {
-	*newchan = W3DNEW TimeCodedBitChannelClass;
-	bool result = (*newchan)->Load_W3D(cload);
-
-	return result;
-
+	TimeCodedBitChannelClass* channel = W3DNEW TimeCodedBitChannelClass;
+	if (channel->Load_W3D(cload))
+	{
+		*newchan = channel;
+		return true;
+	}
+	else
+	{
+		delete channel;
+		return false;
+	}
 }
 
 

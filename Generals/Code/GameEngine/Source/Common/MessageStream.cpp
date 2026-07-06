@@ -56,9 +56,6 @@ GameMessage::GameMessage( GameMessage::Type type )
 {
 	m_playerIndex = ThePlayerList->getLocalPlayer()->getPlayerIndex();
 	m_type = type;
-	m_argList = nullptr;
-	m_argTail = nullptr;
-	m_argCount = 0;
 	m_list = nullptr;
 }
 
@@ -69,12 +66,8 @@ GameMessage::GameMessage( GameMessage::Type type )
 GameMessage::~GameMessage()
 {
 	// free all arguments
-	GameMessageArgument *arg, *nextArg;
-
-	for( arg = m_argList; arg; arg=nextArg )
-	{
-		nextArg = arg->m_next;
-		deleteInstance(arg);
+	for( size_t i = 0; i < m_argList.size(); ++i ) {
+		deleteInstance(m_argList[i]);
 	}
 
 	// detach message from list
@@ -84,14 +77,11 @@ GameMessage::~GameMessage()
 
 /**
  * Return the given argument union.
- * @todo This should be a more list-like interface.  Very inefficient.
  */
 const GameMessageArgumentType *GameMessage::getArgument( Int argIndex ) const
 {
-	int i=0;
-	for( GameMessageArgument *a = m_argList; a; a=a->m_next, i++ )
-		if (i == argIndex)
-			return &a->m_data;
+	if (static_cast<size_t>(argIndex) < m_argList.size())
+		return &m_argList[argIndex]->m_data;
 
 	DEBUG_CRASH(("argument not found"));
 	static const GameMessageArgumentType zero = { 0 };
@@ -103,17 +93,9 @@ const GameMessageArgumentType *GameMessage::getArgument( Int argIndex ) const
  */
 GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex ) const
 {
-	if (argIndex >= m_argCount) {
-		return ARGUMENTDATATYPE_UNKNOWN;
-	}
-	int i=0;
-	GameMessageArgument *a = m_argList;
-	for (; a && (i < argIndex); a=a->m_next, ++i );
+	if (static_cast<size_t>(argIndex) < m_argList.size())
+		return m_argList[argIndex]->m_type;
 
-	if (a != nullptr)
-	{
-		return a->m_type;
-	}
 	return ARGUMENTDATATYPE_UNKNOWN;
 }
 
@@ -124,21 +106,12 @@ GameMessageArgument *GameMessage::allocArg()
 {
 	// allocate a new argument
 	GameMessageArgument *arg = newInstance(GameMessageArgument);
+	m_argList.push_back(arg);
 
-	// add to end of argument list
-	if (m_argTail)
-		m_argTail->m_next = arg;
-	else
-	{
-		m_argList = arg;
-		m_argTail = arg;
-	}
-
-	arg->m_next = nullptr;
-	m_argTail = arg;
-
-	m_argCount++;
-
+	DEBUG_ASSERTCRASH(
+		m_argList.size() <= 255,
+		("If a GameMessage needs more than 255 arguments, it needs to be split up into multiple GameMessage's.")
+	);
 	return arg;
 }
 
@@ -377,12 +350,36 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 	CASE_LABEL(MSG_META_BEGIN_CAMERA_ZOOM_OUT)
 	CASE_LABEL(MSG_META_END_CAMERA_ZOOM_OUT)
 	CASE_LABEL(MSG_META_CAMERA_RESET)
+	CASE_LABEL(MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE)
 	CASE_LABEL(MSG_META_TOGGLE_FAST_FORWARD_REPLAY)
 	CASE_LABEL(MSG_META_TOGGLE_PAUSE)
 	CASE_LABEL(MSG_META_TOGGLE_PAUSE_ALT)
 	CASE_LABEL(MSG_META_STEP_FRAME)
 	CASE_LABEL(MSG_META_STEP_FRAME_ALT)
 	CASE_LABEL(MSG_META_DEMO_INSTANT_QUIT)
+
+#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT1)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT2)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT3)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT4)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT5)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT6)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT7)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT8)
+	CASE_LABEL(MSG_CHEAT_RUNSCRIPT9)
+	CASE_LABEL(MSG_CHEAT_TOGGLE_SPECIAL_POWER_DELAYS)
+	CASE_LABEL(MSG_CHEAT_SWITCH_TEAMS)
+	CASE_LABEL(MSG_CHEAT_KILL_SELECTION)
+	CASE_LABEL(MSG_CHEAT_TOGGLE_HAND_OF_GOD_MODE)
+	CASE_LABEL(MSG_CHEAT_INSTANT_BUILD)
+	CASE_LABEL(MSG_CHEAT_DESHROUD)
+	CASE_LABEL(MSG_CHEAT_ADD_CASH)
+	CASE_LABEL(MSG_CHEAT_GIVE_ALL_SCIENCES)
+	CASE_LABEL(MSG_CHEAT_GIVE_SCIENCEPURCHASEPOINTS)
+	CASE_LABEL(MSG_CHEAT_SHOW_HEALTH)
+	CASE_LABEL(MSG_CHEAT_TOGGLE_MESSAGE_TEXT)
+#endif
 
 #if defined(RTS_DEBUG)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS)
@@ -441,10 +438,12 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 	CASE_LABEL(MSG_META_DEMO_ENSHROUD)
 	CASE_LABEL(MSG_META_DEMO_DESHROUD)
 	CASE_LABEL(MSG_META_DEBUG_SHOW_EXTENTS)
+	CASE_LABEL(MSG_META_DEBUG_SHOW_AUDIO_LOCATIONS)
 	CASE_LABEL(MSG_META_DEBUG_SHOW_HEALTH)
 	CASE_LABEL(MSG_META_DEBUG_GIVE_VETERANCY)
 	CASE_LABEL(MSG_META_DEBUG_TAKE_VETERANCY)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_AI_DEBUG)
+	CASE_LABEL(MSG_META_DEMO_TOGGLE_SUPPLY_CENTER_PLACEMENT)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_CAMERA_DEBUG)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_AVI)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_BW_VIEW)
@@ -494,6 +493,9 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 	CASE_LABEL(MSG_META_DEBUG_TOGGLE_NETWORK)
 	CASE_LABEL(MSG_META_DEBUG_DUMP_PLAYER_OBJECTS)
 	CASE_LABEL(MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS)
+	CASE_LABEL(MSG_META_DEBUG_OBJECT_ID_PERFORMANCE)
+	CASE_LABEL(MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE)
+	CASE_LABEL(MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE)
 	CASE_LABEL(MSG_META_DEBUG_WIN)
 	CASE_LABEL(MSG_META_DEMO_TOGGLE_DEBUG_STATS)
 #endif // defined(RTS_DEBUG)
@@ -529,6 +531,7 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 	CASE_LABEL(MSG_DO_ATTACKMOVETO_HINT)
 	CASE_LABEL(MSG_ADD_WAYPOINT_HINT)
 	CASE_LABEL(MSG_HIJACK_HINT)
+	CASE_LABEL(MSG_SABOTAGE_HINT)
 	CASE_LABEL(MSG_FIREBOMB_HINT)
 	CASE_LABEL(MSG_CONVERT_TO_CARBOMB_HINT)
 	CASE_LABEL(MSG_CAPTUREBUILDING_HINT)
@@ -642,9 +645,10 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 	CASE_LABEL(MSG_CREATE_FORMATION)
 	CASE_LABEL(MSG_LOGIC_CRC)
 	CASE_LABEL(MSG_SET_MINE_CLEARING_DETAIL)
+	CASE_LABEL(MSG_ENABLE_RETALIATION_MODE)
 	CASE_LABEL(MSG_BEGIN_DEBUG_NETWORK_MESSAGES)
 
-#if defined(RTS_DEBUG)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	CASE_LABEL(MSG_DEBUG_KILL_SELECTION)
 	CASE_LABEL(MSG_DEBUG_HURT_OBJECT)
 	CASE_LABEL(MSG_DEBUG_KILL_OBJECT)
@@ -1006,7 +1010,6 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 			// TheSuperHackers @tweak Debug cheats are now multiplayer compatible. Happy cheating Munkees :)
 			return false;
 
-		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS:
 		case GameMessage::MSG_META_DEMO_SWITCH_TEAMS_BETWEEN_CHINA_USA:
 		case GameMessage::MSG_META_DEMO_KILL_ALL_ENEMIES:

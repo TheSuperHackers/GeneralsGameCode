@@ -333,9 +333,9 @@ public:
 
 			Coord3D startPos = *primary;
 			Coord3D moveToPos = *secondary;
-			startPos.add( &offset );
+			startPos.add( offset );
 			//Also give our moveToPos the same offset to maintain perfect formation.
-			moveToPos.add( &offset );
+			moveToPos.add( offset );
 
 			Coord3D targetPos = *secondary;
 

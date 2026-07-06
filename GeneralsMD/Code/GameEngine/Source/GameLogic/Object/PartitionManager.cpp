@@ -3974,7 +3974,7 @@ Bool PartitionManager::findPositionAround( const Coord3D *center,
 	TheTerrainLogic->getMaximumPathfindExtent(&extent);
 	// If the goal is off the map, it is a scripted setup, so just
 	// use the center.
-	if (!extent.isInRegionNoZ(center)) {
+	if (!extent.isInRegionNoZ(*center)) {
 		*result = *center;
 		return true;
 	}

@@ -654,7 +654,7 @@ Bool WeaponTemplate::shouldProjectileCollideWith(
 	// horrible special case for airplanes sitting on airfields: the projectile might
 	// "collide" with the airfield's (invisible) collision geometry when a resting plane
 	// is targeted. we don't want this. special case it:
-	if (thingWeCollidedWith->isKindOf(KINDOF_AIRFIELD))
+	if (thingWeCollidedWith->isKindOf(KINDOF_FS_AIRFIELD))
 	{
 		//
 		// ok, so if we are an airfield, and our intended victim has a reserved space
@@ -870,7 +870,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		}
 		else
 		{
-			targetPos.set( victimPos );
+			targetPos.set( *victimPos );
 		}
 		Real reAngle = getWeaponRecoilAmount();
 		Real reDir = reAngle != 0.0f ? (WWMath::Atan2(victimPos->y - sourcePos->y, victimPos->x - sourcePos->x)) : 0.0f;

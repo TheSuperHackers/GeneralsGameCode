@@ -23,6 +23,7 @@
 #include "Common/AsciiString.h"
 #include "Common/GameAudio.h"
 #include "mss/mss.h"
+#include "mutex.h"
 
 class AudioEventRTS;
 
@@ -39,8 +40,8 @@ enum PlayingAudioType CPP_11(: Int)
 enum PlayingStatus CPP_11(: Int)
 {
 	PS_Playing,
-	PS_Stopped,
-	PS_Paused
+	PS_Stopping, ///< Is about to be stopped
+	PS_Stopped, ///< Is about to be released
 };
 
 enum PlayingWhich CPP_11(: Int)
@@ -60,22 +61,26 @@ struct PlayingAudio
 		HSTREAM m_stream;
 	};
 
-	PlayingAudioType m_type;
-	volatile PlayingStatus m_status;	// This member is adjusted by another running thread.
 	AudioEventRTS *m_audioEventRTS;
-	void *m_file;		// The file that was opened to play this
-	Bool m_requestStop;
+	void *m_file; // The file that was opened to play this
+	PlayingAudioType m_type;
+	volatile PlayingStatus m_status; // This member is adjusted by another running thread.
+	Short m_framesFaded;
+	Bool m_fade;
 	Bool m_cleanupAudioEventRTS;
-	Int m_framesFaded;
 
-	PlayingAudio() :
-		m_type(PAT_INVALID),
-		m_audioEventRTS(nullptr),
-		m_requestStop(false),
-		m_cleanupAudioEventRTS(true),
-		m_sample(nullptr),
-		m_framesFaded(0)
-	{ }
+	PlayingAudio()
+		: m_sample(nullptr)
+		, m_audioEventRTS(nullptr)
+		, m_file(nullptr)
+		, m_type(PAT_INVALID)
+		, m_status(PS_Playing)
+		, m_framesFaded(0)
+		, m_fade(false)
+		, m_cleanupAudioEventRTS(true)
+	{}
+
+	static_assert(sizeof(m_status) == sizeof(long), "Must be size of long, because it is used with Interlocked functions");
 };
 
 struct ProviderInfo
@@ -98,7 +103,7 @@ struct OpenAudioFile
 	const AudioEventInfo *m_eventInfo;	// Not mutable, unlike the one on AudioEventRTS.
 };
 
-typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString> > OpenFilesHash;
+typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> OpenFilesHash;
 typedef OpenFilesHash::iterator OpenFilesHashIt;
 
 class AudioFileCache
@@ -114,7 +119,7 @@ class AudioFileCache
 		// End Protected by mutex
 
 		// Note: These functions should be used for informational purposes only. For speed reasons,
-		// they are not protected by the mutex, so they are not guarenteed to be valid if called from
+		// they are not protected by the mutex, so they are not guaranteed to be valid if called from
 		// outside the audio cache. They should be used as a rough estimate only.
 		UnsignedInt getCurrentlyUsedSize() const { return m_currentlyUsedSize; }
 		UnsignedInt getMaxSize() const { return m_maxSize; }
@@ -150,12 +155,10 @@ class MilesAudioManager : public AudioManager
 		MilesAudioManager();
 		virtual ~MilesAudioManager() override;
 
-
-		virtual void nextMusicTrack() override;
-		virtual void prevMusicTrack() override;
+		virtual AsciiString nextMusicTrack() override;
+		virtual AsciiString prevMusicTrack() override;
 		virtual Bool isMusicPlaying() const override;
 		virtual Bool hasMusicTrackCompleted( const AsciiString& trackName, Int numberOfTimes ) const override;
-		virtual AsciiString getMusicTrackName() const override;
 
 		virtual void openDevice() override;
 		virtual void closeDevice() override;
@@ -172,8 +175,8 @@ class MilesAudioManager : public AudioManager
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
 		virtual Bool isCurrentlyPlaying( AudioHandle handle ) override;
 
-		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags ) override;
-		virtual PlayingAudio *findPlayingAudioFrom( UnsignedInt audioCompleted, UnsignedInt flags );
+		virtual void notifyOfAudioCompletion( UnsignedInt handle, UnsignedInt flags ) override;
+		virtual PlayingAudio *findPlayingAudioFrom( UnsignedInt handle, UnsignedInt flags );
 
 		virtual UnsignedInt getProviderCount() const override;
 		virtual AsciiString getProviderName( UnsignedInt providerNum ) const override;
@@ -192,6 +195,8 @@ class MilesAudioManager : public AudioManager
 		virtual UnsignedInt getNum2DSamples() const override;
 		virtual UnsignedInt getNum3DSamples() const override;
 		virtual UnsignedInt getNumStreams() const override;
+		virtual UnsignedInt getNumAvailable2DSamples() const override;
+		virtual UnsignedInt getNumAvailable3DSamples() const override;
 
 		virtual Bool doesViolateLimit( AudioEventRTS *event ) const override;
 		virtual Bool isPlayingLowerPriority( AudioEventRTS *event ) const override;
@@ -208,7 +213,6 @@ class MilesAudioManager : public AudioManager
 		virtual void processRequestList() override;
 		virtual void processPlayingList();
 		virtual void processFadingList();
-		virtual void processStoppedList();
 
 		Bool shouldProcessRequestThisFrame( AudioRequest *req ) const;
 		void adjustRequest( AudioRequest *req );
@@ -243,7 +247,6 @@ class MilesAudioManager : public AudioManager
 		void *playSample( AudioEventRTS *event, HSAMPLE sample );
 		void *playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D );
 
-	protected:
 		void buildProviderList();
 		void createListener();
 		void initDelayFilter();
@@ -251,7 +254,7 @@ class MilesAudioManager : public AudioManager
 		void initSamplePools();
 		void processRequest( AudioRequest *req );
 
-		void playAudioEvent( AudioEventRTS *event );
+		void playAudioEvent( AudioRequest* req );
 		void stopAudioEvent( AudioHandle handle );
 		void pauseAudioEvent( AudioHandle handle );
 
@@ -261,18 +264,23 @@ class MilesAudioManager : public AudioManager
 		PlayingAudio *allocatePlayingAudio();
 		void releaseMilesHandles( PlayingAudio *release );
 		void releasePlayingAudio( PlayingAudio *release );
+		void stopPlayingAudio( PlayingAudio *release );
+		void fadePlayingAudio( PlayingAudio *playing );
 
+		PlayingAudio *findActiveMusic( const AsciiString *trackName = nullptr );
+		const PlayingAudio *findActiveMusic( const AsciiString* trackName = nullptr ) const;
+
+		void releasePlayingAudioInListIfStopped(std::list<PlayingAudio *> &list, CriticalSectionClass &cs);
 		void stopAllAudioImmediately();
 		void freeAllMilesHandles();
 
-		HSAMPLE getFirst2DSample( AudioEventRTS *event );
-		H3DSAMPLE getFirst3DSample( AudioEventRTS *event );
+		HSAMPLE getAvailable2DSample( AudioEventRTS *event );
+		H3DSAMPLE getAvailable3DSample( AudioEventRTS *event );
 
 		void adjustPlayingVolume( PlayingAudio *audio );
 
 		void stopAllSpeech();
 
-	protected:
 		void initFilters( HSAMPLE sample, AudioEventRTS *eventInfo );
 		void initFilters3D( H3DSAMPLE sample, AudioEventRTS *eventInfo, const Coord3D *pos );
 
@@ -295,25 +303,25 @@ class MilesAudioManager : public AudioManager
 
 		// Available handles for play. Note that there aren't handles open in advance for
 		// streaming things, only 2-D and 3-D sounds.
-		std::list<HSAMPLE> m_availableSamples;
-		std::list<H3DSAMPLE> m_available3DSamples;
+		std::vector<HSAMPLE> m_availableSamples;
+		std::vector<H3DSAMPLE> m_available3DSamples;
 
-		// Currently Playing stuff. Useful if we have to preempt it.
+		// Currently Playing audio. Useful if we have to preempt it.
 		// This should rarely if ever happen, as we mirror this in Sounds, and attempt to
 		// keep preemption from taking place here.
 		std::list<PlayingAudio *> m_playingSounds;
 		std::list<PlayingAudio *> m_playing3DSounds;
 		std::list<PlayingAudio *> m_playingStreams;
 
-		// Currently fading stuff. At this point, we just want to let it finish fading, when it is
-		// done it should be added to the completed list, then "freed" and the counts should be updated
-		// on the next update
+		// Currently fading music. We just let it finish fading, then release it.
 		std::list<PlayingAudio *> m_fadingAudio;
 
-		// Stuff that is done playing (either because it has finished or because it was killed)
-		// This stuff should be cleaned up during the next update cycle. This includes updating counts
-		// in the sound engine
-		std::list<PlayingAudio *> m_stoppedAudio;
+		// TheSuperHackers @fix Erasing from PlayingAudio lists on main thread is not safe when the MSS Timer thread
+		// needs to iterate the same lists. The critical sections are used to guard writes that will invalidate iterators.
+		CriticalSectionClass m_playingSoundsCS;
+		CriticalSectionClass m_playing3DSoundsCS;
+		CriticalSectionClass m_playingStreamsCS;
+		CriticalSectionClass m_fadingAudioCS;
 
 		AudioFileCache *m_audioCache;
 		PlayingAudio *m_binkHandle;
@@ -343,17 +351,16 @@ class MilesAudioManagerDummy : public MilesAudioManager
 	virtual void resumeAudio(AudioAffect which) override {}
 	virtual void pauseAmbient(Bool shouldPause) override {}
 	virtual void killAudioEventImmediately(AudioHandle audioEvent) override {}
-	virtual void nextMusicTrack() override {}
-	virtual void prevMusicTrack() override {}
+	virtual AsciiString nextMusicTrack() override { return AsciiString::TheEmptyString; }
+	virtual AsciiString prevMusicTrack() override { return AsciiString::TheEmptyString; }
 	virtual Bool isMusicPlaying() const override { return false; }
 	virtual Bool hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const override { return false; }
-	virtual AsciiString getMusicTrackName() const override { return ""; }
 	//virtual void openDevice() override {}
 	//virtual void closeDevice() override {}
 	//virtual void* getDevice() override { return nullptr; }
 	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) override {}
 	virtual UnsignedInt getProviderCount() const override { return 0; };
-	virtual AsciiString getProviderName(UnsignedInt providerNum) const override { return ""; }
+	virtual AsciiString getProviderName(UnsignedInt providerNum) const override { return AsciiString::TheEmptyString; }
 	virtual UnsignedInt getProviderIndex(AsciiString providerName) const override { return 0; }
 	virtual void selectProvider(UnsignedInt providerNdx) override {}
 	virtual void unselectProvider() override {}
@@ -363,6 +370,8 @@ class MilesAudioManagerDummy : public MilesAudioManager
 	virtual UnsignedInt getNum2DSamples() const override { return 0; }
 	virtual UnsignedInt getNum3DSamples() const override { return 0; }
 	virtual UnsignedInt getNumStreams() const override { return 0; }
+	virtual UnsignedInt getNumAvailable2DSamples() const override { return 0; }
+	virtual UnsignedInt getNumAvailable3DSamples() const override { return 0; }
 	virtual Bool doesViolateLimit(AudioEventRTS* event) const override { return false; }
 	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const override { return false; }
 	virtual Bool isPlayingAlready(AudioEventRTS* event) const override { return false; }

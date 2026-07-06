@@ -849,7 +849,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	/* You just can't never build off the map, regardless of options.  jba. */
 	Region3D mapExtent;
 	TheTerrainLogic->getMaximumPathfindExtent(&mapExtent);
-	if (!mapExtent.isInRegionNoZ(worldPos)) {
+	if (!mapExtent.isInRegionNoZ(*worldPos)) {
 		return LBC_RESTRICTED_TERRAIN;
 	}
 

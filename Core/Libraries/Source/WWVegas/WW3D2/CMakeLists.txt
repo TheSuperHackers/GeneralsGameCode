@@ -181,8 +181,8 @@ set(WW3D2_SRC
     shdlib.h
     snappts.cpp
     snapPts.h
-    #sortingrenderer.cpp
-    #sortingrenderer.h
+    sortingrenderer.cpp
+    sortingrenderer.h
     soundlibrarybridge.h
     soundrobj.cpp
     soundrobj.h

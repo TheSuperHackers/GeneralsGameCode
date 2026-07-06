@@ -35,6 +35,7 @@
 #include "Common/STLTypedefs.h"
 #include "Common/ObjectStatusTypes.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
 
 /*
@@ -294,6 +295,79 @@ private:
 	void remakeSleepyUpdate();
 	void validateSleepyUpdate() const;
 
+	bool onNewGame(GameMessage *msg);
+	bool onClearGameData(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onBeginPathBuild(GameMessage *msg);
+	bool onEndPathBuild(GameMessage *msg);
+	bool onSetRallyPoint(GameMessage *msg);
+	bool onDoWeapon(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onCombatdropAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onCombatdropAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoWeaponAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoSwitchWeapons(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onSetMineClearingDetail(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onEnableRetaliationMode(GameMessage *msg);
+	bool onDoWeaponAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoSpecialPower(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoSpecialPowerAtLocation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoSpecialPowerAtObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoAttackmoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoForcemoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoMoveto(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onAddWaypoint(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoGuardPosition(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoGuardObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoStop(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoScatter(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onCreateFormation(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onClearIngamePopupMessage(GameMessage *msg);
+	bool onDoCheer(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+#if defined(RTS_DEBUG) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+	bool onDebugKillSelection(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDebugHurtObject(GameMessage *msg);
+	bool onDebugKillObject(GameMessage *msg);
+#endif
+	bool onEnter(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onExit(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onEvacuate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onExecuteRailedTransport(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onInternetHack(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onGetRepaired(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDock(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onGetHealed(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoRepair(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onResumeConstruction(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoSpecialPowerOverrideDestination(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoAttackObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoForceAttackObject(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDoForceAttackGround(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onQueueUpgrade(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onCancelUpgrade(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onQueueUnitCreate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onCancelUnitCreate(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDozerConstruct(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onDozerCancelConstruct(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onSell(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onToggleOvercharge(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+#ifdef ALLOW_SURRENDER
+	bool onDoSurrender(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onPickUpPrisoner(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onReturnToPrison(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+#endif
+	bool onCreateSelectedGroup(GameMessage *msg);
+	bool onRemoveFromSelectedGroup(GameMessage *msg);
+	bool onDestroySelectedGroup(GameMessage *msg);
+	bool onPlaceBeacon(GameMessage *msg);
+	bool onRemoveBeacon(GameMessage *msg);
+	bool onSetBeaconText(GameMessage *msg, AIGroupPtr &currentlySelectedGroup);
+	bool onSelfDestruct(GameMessage *msg);
+	bool onSetReplayCamera(GameMessage *msg);
+	bool onCreateTeam(GameMessage *msg);
+	bool onSelectTeam(GameMessage *msg);
+	bool onAddTeam(GameMessage *msg);
+	bool onLogicCrc(GameMessage *msg);
+	bool onPurchaseScience(GameMessage *msg);
+
 	static void createOptimizedTree(const ThingTemplate *thingTemplate, Coord3D *pos, Real angle);
 
 private:
@@ -302,13 +376,13 @@ private:
 		overrides to thing template buildable status. doesn't really belong here,
 		but has to go somewhere. (srj)
 	*/
-	typedef std::hash_map< AsciiString, BuildableStatus, rts::hash<AsciiString>, rts::equal_to<AsciiString> > BuildableMap;
+	typedef std::hash_map< AsciiString, BuildableStatus, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> BuildableMap;
 	BuildableMap m_thingTemplateBuildableOverrides;
 
 	/**
 		overrides to control bars. doesn't really belong here, but has to go somewhere. (srj)
 	*/
-	typedef std::hash_map< AsciiString, ConstCommandButtonPtr, rts::hash<AsciiString>, rts::equal_to<AsciiString> > ControlBarOverrideMap;
+	typedef std::hash_map< AsciiString, ConstCommandButtonPtr, rts::hash<AsciiString>, rts::equal_to<AsciiString>/**/> ControlBarOverrideMap;
 	ControlBarOverrideMap m_controlBarOverrides;
 
 	Real m_width, m_height;																	///< Dimensions of the world
@@ -316,7 +390,8 @@ private:
 
 	// CRC cache system -----------------------------------------------------------------------------
 	UnsignedInt	m_CRC;																			///< Cache of previous CRC value
-	std::map<Int, UnsignedInt> m_cachedCRCs;								///< CRCs we've seen this frame
+	typedef std::map<Int, UnsignedInt> CachedCRCMap;
+	CachedCRCMap m_cachedCRCs;															///< CRCs we've seen this frame
 	Bool m_shouldValidateCRCs;															///< Should we validate CRCs this frame?
 	//-----------------------------------------------------------------------------------------------
 	//Bool m_loadingScene;

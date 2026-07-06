@@ -150,13 +150,13 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
-/******CHANGE*******/		m_initialTargetPosition.set( targetPos );
+/******CHANGE*******/		m_initialTargetPosition.set( *targetPos );
 	}
 	else
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_specialPowerModule->setReadyFrame( now );
-/******CHANGE*******/   	m_initialTargetPosition.set( targetPos );
+/******CHANGE*******/   	m_initialTargetPosition.set( *targetPos );
 //		setLogicalStatus( GUNSHIPDEPLOY_STATUS_INSERTING );
 	}
 
@@ -205,7 +205,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 
       // HERE WE NEED TO CREATE THE POINT FURTHER OFF THE MAP SO WE CANT SEE THE LAME HOVER AND ACCELERATE BEHAVIOR
     Coord3D deltaToCreationPoint = m_initialTargetPosition;
-    deltaToCreationPoint.sub( &creationCoord );
+    deltaToCreationPoint.sub( creationCoord );
     Real distanceFromTarget = deltaToCreationPoint.length();
     deltaToCreationPoint.normalize();
     deltaToCreationPoint.x *= ( distanceFromTarget + data->m_gunshipOrbitRadius );
