@@ -1029,6 +1029,7 @@ private:
 
 
 	Bool m_genStarFlash;
+	Real m_genStarFlashAccumSec;
 	Int m_lastFlashedAtPointValue;
 
 	ICoord2D m_controlBarForegroundMarkerPos;
