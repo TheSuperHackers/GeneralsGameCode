@@ -72,7 +72,7 @@ public:
 	Bool getRightMouseScrollWithAlternateMouseEnabled() const;
 	Bool getRetaliationModeEnabled();
 	Bool getDoubleClickAttackMoveEnabled();
-	Int getJPEGQuality();
+	Int getJPEGQuality() const;
 	Real getScrollFactor();
 	Bool getDrawScrollAnchor();
 	Bool getMoveScrollAnchor();

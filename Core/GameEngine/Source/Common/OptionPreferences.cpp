@@ -239,14 +239,16 @@ Bool OptionPreferences::getDoubleClickAttackMoveEnabled()
 	return FALSE;
 }
 
-Int OptionPreferences::getJPEGQuality()
+Int OptionPreferences::getJPEGQuality() const
 {
 	OptionPreferences::const_iterator it = find("JPEGQuality");
 	if (it == end())
 		return 80;
 
+	// TheSuperHackers @tweak bobtista 08/07/2026 Cap the quality at 95, because JPEG quality
+	// above that increases the file size significantly with no visible benefit.
 	Int quality = atoi(it->second.str());
-	return clamp(1, quality, 100);
+	return clamp(1, quality, 95);
 }
 
 Real OptionPreferences::getScrollFactor()
