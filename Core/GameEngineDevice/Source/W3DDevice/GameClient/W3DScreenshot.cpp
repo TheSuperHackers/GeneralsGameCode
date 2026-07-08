@@ -66,9 +66,12 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 
 void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 {
+	static const char* const ScreenshotFormatExtensions[] = { "jpg", "png" };
+	static_assert(ARRAY_SIZE(ScreenshotFormatExtensions) == SCREENSHOT_FORMAT_COUNT, "Incorrect array size");
+
 	char leafname[_MAX_FNAME];
 	char pathname[_MAX_PATH];
-	const char* extension = (format == SCREENSHOT_JPEG) ? "jpg" : "png";
+	const char* extension = ScreenshotFormatExtensions[format];
 
 	SYSTEMTIME st;
 	GetLocalTime(&st);

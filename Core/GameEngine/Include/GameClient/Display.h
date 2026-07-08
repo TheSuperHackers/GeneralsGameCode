@@ -36,7 +36,9 @@
 enum ScreenshotFormat
 {
 	SCREENSHOT_JPEG,
-	SCREENSHOT_PNG
+	SCREENSHOT_PNG,
+
+	SCREENSHOT_FORMAT_COUNT
 };
 
 struct ShroudLevel
