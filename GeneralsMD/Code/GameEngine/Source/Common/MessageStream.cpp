@@ -994,7 +994,7 @@ void MessageStream::removeTranslator( TranslatorID id )
 // ------------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
 
-Bool isInvalidDebugCommand( GameMessage::Type t )
+static Bool isInvalidDebugCommand( GameMessage::Type t )
 {
 	// see if this is something that should be prevented in multiplayer games
 	// Don't reject this stuff in skirmish games.
