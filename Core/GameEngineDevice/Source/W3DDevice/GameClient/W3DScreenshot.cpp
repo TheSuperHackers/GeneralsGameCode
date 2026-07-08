@@ -26,6 +26,11 @@
 
 struct ScreenshotThreadData
 {
+	~ScreenshotThreadData()
+	{
+		delete [] imageData;
+	}
+
 	unsigned char* imageData;
 	unsigned int width;
 	unsigned int height;
@@ -38,26 +43,25 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
 	ScreenshotThreadData* data = (ScreenshotThreadData*)param;
 
-	int result = 0;
+	int success = 0;
 	switch (data->format)
 	{
 		case SCREENSHOT_JPEG:
-			result = stbi_write_jpg(data->pathname, data->width, data->height, 3, data->imageData, data->quality);
+			success = stbi_write_jpg(data->pathname, data->width, data->height, 3, data->imageData, data->quality);
 			break;
 		case SCREENSHOT_PNG:
-			result = stbi_write_png(data->pathname, data->width, data->height, 3, data->imageData, data->width * 3);
+			success = stbi_write_png(data->pathname, data->width, data->height, 3, data->imageData, data->width * 3);
 			break;
 	}
 
-	if (!result)
+	if (!success)
 	{
 		DEBUG_LOG(("Failed to write screenshot %s", data->pathname));
 	}
 
-	delete [] data->imageData;
 	delete data;
 
-	return 0;
+	return success;
 }
 
 void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
@@ -177,7 +181,6 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	}
 	else
 	{
-		delete [] threadData->imageData;
 		delete threadData;
 	}
 }
