@@ -77,7 +77,7 @@ public:
 	inline void Add_Sphere(const SphereClass & s);
 	inline void Transform(const Matrix3D & tm);
 	inline float Volume() const;
-	inline bool IsEmpty() const;
+	inline bool Is_Valid() const;
 
 	inline SphereClass & operator += (const SphereClass & s);
 	inline SphereClass & operator *= (const Matrix3D & m);
@@ -303,7 +303,7 @@ inline void SphereClass::Re_Center(const Vector3 & center)
  *=============================================================================================*/
 inline void SphereClass::Add_Sphere(const SphereClass & s)
 {
-	if (s.IsEmpty()) return;
+	if (!s.Is_Valid()) return;
 
 	float dist = (s.Center - Center).Length();
 	if (dist == 0.0f) {
@@ -453,12 +453,12 @@ inline bool Spheres_Intersect(const SphereClass & s0,const SphereClass & s1)
  *=============================================================================================*/
 inline SphereClass Add_Spheres(const SphereClass & s0, const SphereClass & s1)
 {
-	if (s0.IsEmpty()) {
-		return s1;
-	} else {
+	if (s0.Is_Valid()) {
 		SphereClass result(s0);
 		result.Add_Sphere(s1);
 		return result;
+	} else {
+		return s1;
 	}
 }
 
@@ -541,7 +541,7 @@ inline SphereClass operator * (const Matrix3D & m, const SphereClass & s)
 	return Transform_Sphere(m,s);
 }
 
-inline bool SphereClass::IsEmpty() const
+inline bool SphereClass::Is_Valid() const
 {
-	return Radius <= 0.0;
+	return Radius > 0.0;
 }
