@@ -41,6 +41,7 @@ static void drawFramerateBar();
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "W3DDevice/GameClient/W3DScreenshot.h"
 #include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
 #include "Common/GlobalData.h"
@@ -2945,6 +2946,11 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 void W3DDisplay::toggleMovieCapture()
 {
 	WW3D::Toggle_Movie_Capture("Movie",30);
+}
+
+void W3DDisplay::takeScreenShot(ScreenshotFormat format)
+{
+	W3D_TakeCompressedScreenshot(format);
 }
 
 

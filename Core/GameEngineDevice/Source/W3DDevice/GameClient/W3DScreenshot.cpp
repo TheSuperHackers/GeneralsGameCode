@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 */
 
 #include "W3DDevice/GameClient/W3DScreenshot.h"
-#include "W3DDevice/GameClient/W3DDisplay.h"
 #include "Common/GlobalData.h"
 #include "GameClient/GameText.h"
 #include "GameClient/InGameUI.h"
@@ -151,9 +150,4 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 		delete [] threadData->imageData;
 		delete threadData;
 	}
-}
-
-void W3DDisplay::takeScreenShot(ScreenshotFormat format)
-{
-	W3D_TakeCompressedScreenshot(format);
 }
