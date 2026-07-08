@@ -70,7 +70,11 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	GetLocalTime(&st);
 	sprintf(leafname, "sshot_%04d%02d%02d_%02d%02d%02d_%03d.%s",
 		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
+	// TheSuperHackers @feature bobtista 08/07/2026 Save screenshots into a Screenshots subfolder
+	// to keep them out of the User Data root.
 	strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
+	strlcat(pathname, "Screenshots\\", ARRAY_SIZE(pathname));
+	CreateDirectory(pathname, nullptr);
 	strlcat(pathname, leafname, ARRAY_SIZE(pathname));
 
 	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
