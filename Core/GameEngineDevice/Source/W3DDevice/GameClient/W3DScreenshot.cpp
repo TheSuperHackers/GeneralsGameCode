@@ -80,6 +80,18 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	SurfaceClass::SurfaceDescription surfaceDesc;
 	surface->Get_Description(surfaceDesc);
 
+	// TheSuperHackers @bugfix bobtista 08/07/2026 Support the 16 bit back buffer format that the
+	// game uses when running in 16 bit color mode. Reading it with the 32 bit stride read garbage.
+	const bool is32Bit = surfaceDesc.Format == WW3D_FORMAT_A8R8G8B8 || surfaceDesc.Format == WW3D_FORMAT_X8R8G8B8;
+	const bool is16Bit = surfaceDesc.Format == WW3D_FORMAT_R5G6B5;
+
+	if (!is32Bit && !is16Bit)
+	{
+		DEBUG_LOG(("Screenshot does not support back buffer format %d", (int)surfaceDesc.Format));
+		surface->Release_Ref();
+		return;
+	}
+
 	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
 	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), nullptr, 0, surfaceCopy->Peek_D3D_Surface(), nullptr);
 
@@ -99,22 +111,41 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 		return;
 	}
 
-	unsigned int x, y, index, index2;
+	unsigned int x, y, index;
 	unsigned int width = surfaceDesc.Width;
 	unsigned int height = surfaceDesc.Height;
 
 	unsigned char* image = new unsigned char[3 * width * height];
 
-	for (y = 0; y < height; y++)
+	if (is32Bit)
 	{
-		for (x = 0; x < width; x++)
+		// Convert A8R8G8B8/X8R8G8B8 to R8G8B8
+		for (y = 0; y < height; y++)
 		{
-			index = 3 * (x + y * width);
-			index2 = y * lrect.Pitch + 4 * x;
-
-			image[index]     = *((unsigned char*)lrect.pBits + index2 + 2);
-			image[index + 1] = *((unsigned char*)lrect.pBits + index2 + 1);
-			image[index + 2] = *((unsigned char*)lrect.pBits + index2 + 0);
+			const unsigned char* srcLine = (const unsigned char*)lrect.pBits + y * lrect.Pitch;
+			for (x = 0; x < width; x++)
+			{
+				index = 3 * (x + y * width);
+				image[index]     = srcLine[4 * x + 2];
+				image[index + 1] = srcLine[4 * x + 1];
+				image[index + 2] = srcLine[4 * x + 0];
+			}
+		}
+	}
+	else
+	{
+		// Convert R5G6B5 to R8G8B8
+		for (y = 0; y < height; y++)
+		{
+			const unsigned short* srcLine = (const unsigned short*)((const unsigned char*)lrect.pBits + y * lrect.Pitch);
+			for (x = 0; x < width; x++)
+			{
+				const unsigned short rgb = srcLine[x];
+				index = 3 * (x + y * width);
+				image[index]     = (unsigned char)((rgb & 0xF800) >> 8);
+				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3);
+				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3);
+			}
 		}
 	}
 
