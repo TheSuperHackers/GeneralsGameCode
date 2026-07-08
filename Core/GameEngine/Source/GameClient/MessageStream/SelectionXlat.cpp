@@ -218,14 +218,14 @@ static Bool canSelectWrapper( Drawable *draw, void *userData )
 static Bool selectSingleDrawableWithoutSound( Drawable *draw )
 {
 
-	// since we are single selecting a drawable, unselect everything else
-	TheInGameUI->deselectAllDrawables();
-
-	// do the drawable selection
-	TheInGameUI->selectDrawable( draw );
-
 	Object *obj = draw->getObject();
 	if (obj != nullptr) {
+		// since we are single selecting a drawable, unselect everything else
+		TheInGameUI->deselectAllDrawables();
+
+		// do the drawable selection
+		TheInGameUI->selectDrawable(draw);
+
 		GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
 		msg->appendBooleanArgument(TRUE);
 		msg->appendObjectIDArgument(obj->getID());
