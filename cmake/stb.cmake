@@ -1,5 +1,4 @@
-# TheSuperHackers @build bobtista 02/11/2025 STB single-file public domain libraries for image encoding
-# https://github.com/nothings/stb
+# TheSuperHackers @build bobtista 02/11/2025 Fetch the stb library for writing JPEG and PNG screenshots.
 
 find_package(Stb CONFIG QUIET)
 
