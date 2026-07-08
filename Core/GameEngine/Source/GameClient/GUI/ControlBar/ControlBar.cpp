@@ -905,7 +905,7 @@ ControlBar::ControlBar()
 	m_currContext = CB_CONTEXT_NONE;
 	m_defaultControlBarPosition.x = m_defaultControlBarPosition.y = 0;
 	m_genStarFlash = FALSE;
-	m_genStarFlashAccumSec = 0.0f;
+	m_genStarFlashTimeAccumulator = 0.0f;
 	m_genStarOff = nullptr;
 	m_genStarOn  = nullptr;
 	m_UIDirty    = FALSE;
@@ -1684,13 +1684,13 @@ const Image *ControlBar::getStarImage()
 	}
 
 	// TheSuperHackers @tweak bobtista 27/06/2026 Blink on a wall-clock cycle so the rate is independent of render frame rate and logic time scale.
-	m_genStarFlashAccumSec += TheFramePacer->getUpdateTime();
-	const Real blinkPeriodSec = 1.0f;
-	while( m_genStarFlashAccumSec >= blinkPeriodSec )
+	m_genStarFlashTimeAccumulator += TheFramePacer->getUpdateTime();
+	const Real blinkPeriodSeconds = 1.0f;
+	while( m_genStarFlashTimeAccumulator >= blinkPeriodSeconds )
 	{
-		m_genStarFlashAccumSec -= blinkPeriodSec;
+		m_genStarFlashTimeAccumulator -= blinkPeriodSeconds;
 	}
-	if( m_genStarFlashAccumSec >= blinkPeriodSec / 2 )
+	if( m_genStarFlashTimeAccumulator >= blinkPeriodSeconds / 2 )
 	{
 		GadgetButtonSetEnabledImage(win, m_generalButtonHighlight);
 		return nullptr;
