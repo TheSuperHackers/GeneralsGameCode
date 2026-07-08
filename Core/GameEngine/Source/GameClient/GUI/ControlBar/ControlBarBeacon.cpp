@@ -97,7 +97,7 @@ WindowMsgHandledType BeaconWindowInput( GameWindow *window, UnsignedInt msg,
 {
 	if (msg == GWM_CHAR && mData1 == KEY_ESC)
 	{
-		TheInGameUI->deselectAllDrawables(TRUE); // there should only be one beacon and nothing else selected
+		TheInGameUI->deselectAllDrawables(); // there should only be one beacon and nothing else selected
 		return MSG_HANDLED;
 	}
 

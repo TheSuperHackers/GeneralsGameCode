@@ -1188,7 +1188,7 @@ GameMessageDisposition SelectionTranslator::onMetaSelectTeam(MAYBE_UNUSED const 
 
 		if ( performSelection )
 		{
-			TheInGameUI->deselectAllDrawables( false ); //No need to post message because we're just creating a new group!
+			TheInGameUI->deselectAllDrawables();
 
 			// no need to send two messages for selecting the same group.
 			TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_SELECT_TEAM0 + group));
