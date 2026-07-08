@@ -3737,7 +3737,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_TAKE_SCREENSHOT:
 		{
 			if (TheDisplay)
-				TheDisplay->takeScreenShot(SCREENSHOT_JPEG);
+				TheDisplay->takeScreenShot(SCREENSHOT_JPEG, TheGlobalData->m_jpegQuality);
 			disp = DESTROY_MESSAGE;
 			break;
 		}

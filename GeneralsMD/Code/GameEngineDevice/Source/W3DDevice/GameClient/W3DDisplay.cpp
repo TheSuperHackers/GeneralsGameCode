@@ -3060,9 +3060,9 @@ void W3DDisplay::toggleMovieCapture()
 	WW3D::Toggle_Movie_Capture("Movie",30);
 }
 
-void W3DDisplay::takeScreenShot(ScreenshotFormat format)
+void W3DDisplay::takeScreenShot(ScreenshotFormat format, Int jpegQuality)
 {
-	W3D_TakeCompressedScreenshot(format);
+	W3D_TakeCompressedScreenshot(format, jpegQuality);
 }
 
 

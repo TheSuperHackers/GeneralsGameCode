@@ -20,5 +20,5 @@
 
 #include "GameClient/Display.h"
 
-void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality = 0);
+void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality);
 

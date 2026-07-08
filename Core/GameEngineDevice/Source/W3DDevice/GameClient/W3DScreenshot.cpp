@@ -60,7 +60,7 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	return 0;
 }
 
-void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
+void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 {
 	char leafname[_MAX_FNAME];
 	char pathname[_MAX_PATH];
@@ -153,16 +153,11 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, int quality)
 	surfaceCopy->Release_Ref();
 	surfaceCopy = nullptr;
 
-	if (quality <= 0 && format == SCREENSHOT_JPEG)
-	{
-		quality = TheGlobalData->m_jpegQuality;
-	}
-
 	ScreenshotThreadData* threadData = new ScreenshotThreadData();
 	threadData->imageData = image;
 	threadData->width = width;
 	threadData->height = height;
-	threadData->quality = quality;
+	threadData->quality = jpegQuality;
 	threadData->format = format;
 	strlcpy(threadData->pathname, pathname, ARRAY_SIZE(threadData->pathname));
 
