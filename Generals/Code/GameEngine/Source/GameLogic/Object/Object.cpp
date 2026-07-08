@@ -1770,9 +1770,9 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 			!BitIsSet(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) &&
 			m_radarData != nullptr &&
 			isLocallyControlled()
-			#if !PRESERVE_CARGO_PLANE_ATTACK_WARNINGS
-				&& getTemplate()->getName() != "AmericaJetCargoPlane"
-			#endif
+#if !PRESERVE_CARGO_PLANE_ATTACK_WARNINGS
+			&& getTemplate()->getName() != "AmericaJetCargoPlane"
+#endif
 			)
 		TheRadar->tryUnderAttackEvent( this );
 
