@@ -27,6 +27,10 @@
 #define PRESERVE_BUILDING_RESUMPTION_DELAY (0) // The fix for this unfavorable behavior was approved by the Game Design Committee.
 #endif
 
+#ifndef PRESERVE_CARGO_PLANE_ATTACK_WARNINGS
+#define PRESERVE_CARGO_PLANE_ATTACK_WARNINGS (0)
+#endif
+
 #ifndef PRESERVE_CHINOOK_PASSENGER_DUMPING
 #define PRESERVE_CHINOOK_PASSENGER_DUMPING (1)
 #endif
