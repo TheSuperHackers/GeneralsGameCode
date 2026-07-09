@@ -144,7 +144,7 @@ public:
 	Bool m_clientRetaliationModeEnabled;
 	Bool m_doubleClickAttackMove;
 	Bool m_rightMouseAlwaysScrolls;
-	Int m_jpegQuality; // TheSuperHackers @feature bobtista 09/07/2026 Quality for JPEG screenshots.
+	Int m_jpegQuality; // TheSuperHackers @feature Quality for JPEG screenshots.
 	Bool m_useWaterPlane;
 	Bool m_useCloudPlane;
 	Bool m_useShadowVolumes;

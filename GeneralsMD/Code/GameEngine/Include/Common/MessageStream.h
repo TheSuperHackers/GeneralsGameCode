@@ -257,8 +257,7 @@ public:
 		MSG_META_END_PREFER_SELECTION,							///< The Shift key has been released.
 
 		MSG_META_TAKE_SCREENSHOT,										///< take JPEG screenshot
-		// TheSuperHackers @feature bobtista 09/07/2026 New message type for taking PNG screenshots.
-		MSG_META_TAKE_SCREENSHOT_PNG,							///< take lossless PNG screenshot
+		MSG_META_TAKE_SCREENSHOT_PNG,							///< TheSuperHackers @feature Take lossless PNG screenshot
 		MSG_META_ALL_CHEER,													///< Yay! :)
 		MSG_META_TOGGLE_ATTACKMOVE,									///< enter attack-move mode
 
