@@ -48,7 +48,7 @@ struct ScreenshotThreadData
 
 static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
-	ScreenshotThreadData* data = (ScreenshotThreadData*)param;
+	ScreenshotThreadData* data = static_cast<ScreenshotThreadData*>(param);
 
 	// TheSuperHackers @feature bobtista 08/07/2026 Save screenshots into a Screenshots subfolder
 	// to keep the user data root folder tidy.
@@ -68,25 +68,26 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	if (!data->is16Bit)
 	{
 		// Convert A8R8G8B8/X8R8G8B8 to R8G8B8
-		for (y = 0; y < height; y++)
+		for (y = 0; y < height; ++y)
 		{
-			const unsigned char* srcLine = data->pixelData + y * width * 4;
-			for (x = 0; x < width; x++)
+			const unsigned int* srcLine = reinterpret_cast<const unsigned int*>(data->pixelData + y * width * 4);
+			for (x = 0; x < width; ++x)
 			{
+				const unsigned int argb = srcLine[x];
 				index = 3 * (x + y * width);
-				image[index + 0] = srcLine[4 * x + 2];
-				image[index + 1] = srcLine[4 * x + 1];
-				image[index + 2] = srcLine[4 * x + 0];
+				image[index + 0] = (unsigned char)((argb >> 16) & 0xFF); // r
+				image[index + 1] = (unsigned char)((argb >> 8) & 0xFF);  // g
+				image[index + 2] = (unsigned char)((argb >> 0) & 0xFF);  // b
 			}
 		}
 	}
 	else
 	{
 		// Convert R5G6B5 to R8G8B8
-		for (y = 0; y < height; y++)
+		for (y = 0; y < height; ++y)
 		{
-			const unsigned short* srcLine = (const unsigned short*)(data->pixelData + y * width * 2);
-			for (x = 0; x < width; x++)
+			const unsigned short* srcLine = reinterpret_cast<const unsigned short*>(data->pixelData + y * width * 2);
+			for (x = 0; x < width; ++x)
 			{
 				const unsigned short rgb = srcLine[x];
 				index = 3 * (x + y * width);
@@ -180,9 +181,9 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	const unsigned int bytesPerPixel = is32Bit ? 4 : 2;
 	unsigned char* pixels = new unsigned char[bytesPerPixel * width * height];
 
-	for (y = 0; y < height; y++)
+	for (y = 0; y < height; ++y)
 	{
-		memcpy(pixels + y * width * bytesPerPixel, (const unsigned char*)lrect.pBits + y * lrect.Pitch, width * bytesPerPixel);
+		memcpy(pixels + y * width * bytesPerPixel, reinterpret_cast<const unsigned char*>(lrect.pBits) + y * lrect.Pitch, width * bytesPerPixel);
 	}
 
 	surfaceCopy->Unlock();
