@@ -40,7 +40,7 @@ struct ScreenshotThreadData
 	unsigned int width;
 	unsigned int height;
 	bool is16Bit;
-	char directory[_MAX_PATH];
+	char userDataDirectory[_MAX_PATH];
 	char leafname[_MAX_FNAME];
 	int quality;
 	ScreenshotFormat format;
@@ -50,10 +50,12 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
 	ScreenshotThreadData* data = (ScreenshotThreadData*)param;
 
-	CreateDirectory(data->directory, nullptr);
-
+	// TheSuperHackers @feature bobtista 08/07/2026 Save screenshots into a Screenshots subfolder
+	// to keep them out of the User Data root.
 	char pathname[_MAX_PATH];
-	strlcpy(pathname, data->directory, ARRAY_SIZE(pathname));
+	strlcpy(pathname, data->userDataDirectory, ARRAY_SIZE(pathname));
+	strlcat(pathname, "Screenshots\\", ARRAY_SIZE(pathname));
+	CreateDirectory(pathname, nullptr);
 	strlcat(pathname, data->leafname, ARRAY_SIZE(pathname));
 
 	const unsigned int width = data->width;
@@ -131,12 +133,6 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	sprintf(leafname, "sshot_%04d%02d%02d_%02d%02d%02d_%03d.%s",
 		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
 
-	// TheSuperHackers @feature bobtista 08/07/2026 Save screenshots into a Screenshots subfolder
-	// to keep them out of the User Data root.
-	char directory[_MAX_PATH];
-	strlcpy(directory, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(directory));
-	strlcat(directory, "Screenshots\\", ARRAY_SIZE(directory));
-
 	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
 	// Originally this code took the front buffer and tried to lock it. This does not work when the
 	// render view clips outside the desktop boundaries. It crashed the game.
@@ -200,7 +196,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	threadData->is16Bit = is16Bit;
 	threadData->quality = jpegQuality;
 	threadData->format = format;
-	strlcpy(threadData->directory, directory, ARRAY_SIZE(threadData->directory));
+	strlcpy(threadData->userDataDirectory, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(threadData->userDataDirectory));
 	strlcpy(threadData->leafname, leafname, ARRAY_SIZE(threadData->leafname));
 
 	DWORD threadId;
