@@ -245,7 +245,7 @@ Int OptionPreferences::getJPEGQuality() const
 	if (it == end())
 		return 80;
 
-	// TheSuperHackers @feature bobtista 08/07/2026 Cap the quality at 95, because JPEG quality
+	// TheSuperHackers @info bobtista 08/07/2026 Cap the quality at 95, because JPEG quality
 	// above that increases the file size significantly with no visible benefit.
 	Int quality = atoi(it->second.str());
 	return clamp(1, quality, 95);
