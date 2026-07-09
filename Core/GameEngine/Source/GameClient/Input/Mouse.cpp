@@ -388,7 +388,7 @@ Bool Mouse::isClick(
 	UnsignedInt mouseClickTimeMs0,
 	UnsignedInt mouseClickTimeMs1,
 	const ICoord2D &mouseAnchor0,
-	const ICoord2D &mouseAnchor1)
+	const ICoord2D &mouseAnchor1) const
 {
 	const ICoord2D mouseAnchorDelta = mouseAnchor1 - mouseAnchor0;
 	const UnsignedInt timeMsDelta = mouseClickTimeMs1 - mouseClickTimeMs0;
@@ -412,7 +412,7 @@ Bool Mouse::isClick(
 	const ICoord2D &mouseAnchor0,
 	const ICoord2D &mouseAnchor1,
 	const Coord3D &cameraPos0,
-	const Coord3D &cameraPos1)
+	const Coord3D &cameraPos1) const
 {
 	if ( !isClick(mouseClickTimeMs0, mouseClickTimeMs1, mouseAnchor0, mouseAnchor1) )
 	{
