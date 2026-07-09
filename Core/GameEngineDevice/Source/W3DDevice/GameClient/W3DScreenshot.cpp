@@ -26,15 +26,22 @@
 
 struct ScreenshotThreadData
 {
-	~ScreenshotThreadData()
+	ScreenshotThreadData()
+		: pixelData(nullptr)
 	{
-		delete [] imageData;
 	}
 
-	unsigned char* imageData;
+	~ScreenshotThreadData()
+	{
+		delete [] pixelData;
+	}
+
+	unsigned char* pixelData;
 	unsigned int width;
 	unsigned int height;
-	char pathname[_MAX_PATH];
+	bool is16Bit;
+	char directory[_MAX_PATH];
+	char leafname[_MAX_FNAME];
 	int quality;
 	ScreenshotFormat format;
 };
@@ -43,22 +50,68 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
 	ScreenshotThreadData* data = (ScreenshotThreadData*)param;
 
+	CreateDirectory(data->directory, nullptr);
+
+	char pathname[_MAX_PATH];
+	strlcpy(pathname, data->directory, ARRAY_SIZE(pathname));
+	strlcat(pathname, data->leafname, ARRAY_SIZE(pathname));
+
+	const unsigned int width = data->width;
+	const unsigned int height = data->height;
+	unsigned int x, y, index;
+
+	// Convert to R8G8B8 for stb_image_write.
+	unsigned char* image = new unsigned char[3 * width * height];
+
+	if (!data->is16Bit)
+	{
+		// Convert A8R8G8B8/X8R8G8B8 to R8G8B8
+		for (y = 0; y < height; y++)
+		{
+			const unsigned char* srcLine = data->pixelData + y * width * 4;
+			for (x = 0; x < width; x++)
+			{
+				index = 3 * (x + y * width);
+				image[index + 0] = srcLine[4 * x + 2];
+				image[index + 1] = srcLine[4 * x + 1];
+				image[index + 2] = srcLine[4 * x + 0];
+			}
+		}
+	}
+	else
+	{
+		// Convert R5G6B5 to R8G8B8
+		for (y = 0; y < height; y++)
+		{
+			const unsigned short* srcLine = (const unsigned short*)(data->pixelData + y * width * 2);
+			for (x = 0; x < width; x++)
+			{
+				const unsigned short rgb = srcLine[x];
+				index = 3 * (x + y * width);
+				image[index + 0] = (unsigned char)((rgb & 0xF800) >> 8);
+				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3);
+				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3);
+			}
+		}
+	}
+
 	int success = 0;
 	switch (data->format)
 	{
 		case SCREENSHOT_JPEG:
-			success = stbi_write_jpg(data->pathname, data->width, data->height, 3, data->imageData, data->quality);
+			success = stbi_write_jpg(pathname, width, height, 3, image, data->quality);
 			break;
 		case SCREENSHOT_PNG:
-			success = stbi_write_png(data->pathname, data->width, data->height, 3, data->imageData, data->width * 3);
+			success = stbi_write_png(pathname, width, height, 3, image, width * 3);
 			break;
 	}
 
 	if (!success)
 	{
-		DEBUG_LOG(("Failed to write screenshot %s", data->pathname));
+		DEBUG_LOG(("Failed to write screenshot %s", pathname));
 	}
 
+	delete [] image;
 	delete data;
 
 	return success;
@@ -69,20 +122,20 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	static const char* const ScreenshotFormatExtensions[] = { "jpg", "png" };
 	static_assert(ARRAY_SIZE(ScreenshotFormatExtensions) == SCREENSHOT_FORMAT_COUNT, "Incorrect array size");
 
+	// The filename is created here because the success message below shows it.
 	char leafname[_MAX_FNAME];
-	char pathname[_MAX_PATH];
 	const char* extension = ScreenshotFormatExtensions[format];
 
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	sprintf(leafname, "sshot_%04d%02d%02d_%02d%02d%02d_%03d.%s",
 		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
+
 	// TheSuperHackers @feature bobtista 08/07/2026 Save screenshots into a Screenshots subfolder
 	// to keep them out of the User Data root.
-	strlcpy(pathname, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(pathname));
-	strlcat(pathname, "Screenshots\\", ARRAY_SIZE(pathname));
-	CreateDirectory(pathname, nullptr);
-	strlcat(pathname, leafname, ARRAY_SIZE(pathname));
+	char directory[_MAX_PATH];
+	strlcpy(directory, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(directory));
+	strlcat(directory, "Screenshots\\", ARRAY_SIZE(directory));
 
 	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
 	// Originally this code took the front buffer and tried to lock it. This does not work when the
@@ -122,42 +175,18 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 		return;
 	}
 
-	unsigned int x, y, index;
+	unsigned int y;
 	unsigned int width = surfaceDesc.Width;
 	unsigned int height = surfaceDesc.Height;
 
-	unsigned char* image = new unsigned char[3 * width * height];
+	// Copy the surface rows into a tightly packed buffer. The pixel conversion and all file
+	// operations are done on the screenshot thread to keep the main thread cheap.
+	const unsigned int bytesPerPixel = is32Bit ? 4 : 2;
+	unsigned char* pixels = new unsigned char[bytesPerPixel * width * height];
 
-	if (is32Bit)
+	for (y = 0; y < height; y++)
 	{
-		// Convert A8R8G8B8/X8R8G8B8 to R8G8B8
-		for (y = 0; y < height; y++)
-		{
-			const unsigned char* srcLine = (const unsigned char*)lrect.pBits + y * lrect.Pitch;
-			for (x = 0; x < width; x++)
-			{
-				index = 3 * (x + y * width);
-				image[index]     = srcLine[4 * x + 2];
-				image[index + 1] = srcLine[4 * x + 1];
-				image[index + 2] = srcLine[4 * x + 0];
-			}
-		}
-	}
-	else
-	{
-		// Convert R5G6B5 to R8G8B8
-		for (y = 0; y < height; y++)
-		{
-			const unsigned short* srcLine = (const unsigned short*)((const unsigned char*)lrect.pBits + y * lrect.Pitch);
-			for (x = 0; x < width; x++)
-			{
-				const unsigned short rgb = srcLine[x];
-				index = 3 * (x + y * width);
-				image[index]     = (unsigned char)((rgb & 0xF800) >> 8);
-				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3);
-				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3);
-			}
-		}
+		memcpy(pixels + y * width * bytesPerPixel, (const unsigned char*)lrect.pBits + y * lrect.Pitch, width * bytesPerPixel);
 	}
 
 	surfaceCopy->Unlock();
@@ -165,12 +194,14 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	surfaceCopy = nullptr;
 
 	ScreenshotThreadData* threadData = new ScreenshotThreadData();
-	threadData->imageData = image;
+	threadData->pixelData = pixels;
 	threadData->width = width;
 	threadData->height = height;
+	threadData->is16Bit = is16Bit;
 	threadData->quality = jpegQuality;
 	threadData->format = format;
-	strlcpy(threadData->pathname, pathname, ARRAY_SIZE(threadData->pathname));
+	strlcpy(threadData->directory, directory, ARRAY_SIZE(threadData->directory));
+	strlcpy(threadData->leafname, leafname, ARRAY_SIZE(threadData->leafname));
 
 	DWORD threadId;
 	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
