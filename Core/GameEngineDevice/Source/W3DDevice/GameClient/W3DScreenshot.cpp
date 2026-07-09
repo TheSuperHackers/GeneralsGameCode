@@ -51,7 +51,7 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	ScreenshotThreadData* data = (ScreenshotThreadData*)param;
 
 	// TheSuperHackers @feature bobtista 08/07/2026 Save screenshots into a Screenshots subfolder
-	// to keep them out of the User Data root.
+	// to keep the user data root folder tidy.
 	char pathname[_MAX_PATH];
 	strlcpy(pathname, data->userDataDirectory, ARRAY_SIZE(pathname));
 	strlcat(pathname, "Screenshots\\", ARRAY_SIZE(pathname));
