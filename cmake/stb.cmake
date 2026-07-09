@@ -1,4 +1,4 @@
-# TheSuperHackers @build bobtista 02/11/2025 Fetch the stb library for writing JPEG and PNG screenshots.
+# Fetch the stb library for writing JPEG and PNG screenshots.
 
 find_package(Stb CONFIG QUIET)
 
