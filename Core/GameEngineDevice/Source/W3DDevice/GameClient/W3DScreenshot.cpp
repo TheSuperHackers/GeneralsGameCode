@@ -46,6 +46,11 @@ struct ScreenshotThreadData
 	ScreenshotFormat format;
 };
 
+// TheInGameUI is not thread safe, so the screenshot thread cannot show the success message
+// itself. It posts the written filename here and the main thread shows the message in
+// W3D_UpdateScreenshotMessages.
+static void* volatile s_screenshotWrittenLeafname = nullptr;
+
 static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
 	ScreenshotThreadData* data = static_cast<ScreenshotThreadData*>(param);
@@ -109,7 +114,14 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 			break;
 	}
 
-	if (!success)
+	if (success)
+	{
+		char* leafname = new char[_MAX_FNAME];
+		strlcpy(leafname, data->leafname, _MAX_FNAME);
+		char* oldLeafname = static_cast<char*>(InterlockedExchangePointer(&s_screenshotWrittenLeafname, leafname));
+		delete [] oldLeafname;
+	}
+	else
 	{
 		DEBUG_LOG(("Failed to write screenshot %s", pathname));
 	}
@@ -120,12 +132,24 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	return success;
 }
 
+void W3D_UpdateScreenshotMessages()
+{
+	char* leafname = static_cast<char*>(InterlockedExchangePointer(&s_screenshotWrittenLeafname, nullptr));
+	if (leafname != nullptr)
+	{
+		UnicodeString ufileName;
+		ufileName.translate(leafname);
+		TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
+		delete [] leafname;
+	}
+}
+
 void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 {
 	static const char* const ScreenshotFormatExtensions[] = { "jpg", "png" };
 	static_assert(ARRAY_SIZE(ScreenshotFormatExtensions) == SCREENSHOT_FORMAT_COUNT, "Incorrect array size");
 
-	// The filename is created here because the success message below shows it.
+	// The filename is created here so the timestamp matches the capture time.
 	char leafname[_MAX_FNAME];
 	const char* extension = ScreenshotFormatExtensions[format];
 
@@ -205,10 +229,6 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	if (hThread)
 	{
 		CloseHandle(hThread);
-
-		UnicodeString ufileName;
-		ufileName.translate(leafname);
-		TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 	}
 	else
 	{

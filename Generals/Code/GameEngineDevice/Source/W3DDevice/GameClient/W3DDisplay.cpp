@@ -1735,6 +1735,9 @@ void W3DDisplay::draw()
 	if (TheGlobalData->m_headless)
 		return;
 
+	// TheSuperHackers @feature bobtista 10/07/2026 Show messages for screenshots finished by the screenshot thread.
+	W3D_UpdateScreenshotMessages();
+
 	updateAverageFPS();
 	if (TheGlobalData->m_enableDynamicLOD && TheGameLogic->getShowDynamicLOD())
 	{
