@@ -75,9 +75,9 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 			{
 				const unsigned int argb = srcLine[x];
 				index = 3 * (x + y * width);
-				image[index + 0] = (unsigned char)((argb >> 16) & 0xFF); // r
-				image[index + 1] = (unsigned char)((argb >> 8) & 0xFF);  // g
-				image[index + 2] = (unsigned char)((argb >> 0) & 0xFF);  // b
+				image[index + 0] = (unsigned char)(argb >> 16); // r
+				image[index + 1] = (unsigned char)(argb >> 8);  // g
+				image[index + 2] = (unsigned char)(argb >> 0);  // b
 			}
 		}
 	}
@@ -91,9 +91,9 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 			{
 				const unsigned short rgb = srcLine[x];
 				index = 3 * (x + y * width);
-				image[index + 0] = (unsigned char)((rgb & 0xF800) >> 8);
-				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3);
-				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3);
+				image[index + 0] = (unsigned char)((rgb & 0xF800) >> 8); // r
+				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3); // g
+				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3); // b
 			}
 		}
 	}
