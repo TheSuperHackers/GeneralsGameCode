@@ -22,6 +22,7 @@
 #include "GameClient/InGameUI.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/surfaceclass.h"
+#include <Utility/interlocked_adapter.h>
 #include <stb_image_write.h>
 
 struct ScreenshotThreadData

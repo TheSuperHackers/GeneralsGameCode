@@ -25,4 +25,9 @@ inline long InterlockedCompareExchange(long volatile *Destination, long Exchange
 	return (long)InterlockedCompareExchange((PVOID*)Destination, (PVOID)Exchange, (PVOID)Comparand);
 }
 
+inline PVOID InterlockedExchangePointer(PVOID volatile *Target, PVOID Value)
+{
+	return (PVOID)InterlockedExchange((LPLONG)Target, (LONG)Value);
+}
+
 #endif
