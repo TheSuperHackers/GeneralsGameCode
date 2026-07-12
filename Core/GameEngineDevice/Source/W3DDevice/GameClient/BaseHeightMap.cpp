@@ -700,12 +700,14 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	const Int borderSize = m_map->getBorderSizeInline();
 	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH + borderSize; // Allow picking past the edge for scrolling & objects.
 
-	Real rayMinHeight = std::min(raytest.Ray.Get_P0().Z, raytest.Ray.Get_P1().Z);
-	Real rayMaxHeight = std::max(raytest.Ray.Get_P0().Z, raytest.Ray.Get_P1().Z);
+	const Real rayMinHeight = std::min(raytest.Ray.Get_P0().Z, raytest.Ray.Get_P1().Z);
+	const Real rayMaxHeight = std::max(raytest.Ray.Get_P0().Z, raytest.Ray.Get_P1().Z);
+	const Real rayHeightDelta = rayMaxHeight - rayMinHeight;
+	const Real rayHeightMargin = std::min(1.0f, rayHeightDelta * 0.49f);
 	Real mapMinHeight = MAP_HEIGHT_SCALE * m_map->getMinHeightValue(); // Begin with min map height.
 	Real mapMaxHeight = MAP_HEIGHT_SCALE * m_map->getMaxHeightValue(); // Begin with max map height.
-	mapMinHeight = std::max(mapMinHeight, rayMinHeight + 1.0f); // But not lower than the ray end plus a margin.
-	mapMaxHeight = std::min(mapMaxHeight, rayMaxHeight - 1.0f); // But not higher than the ray start minus a margin.
+	mapMinHeight = std::max(mapMinHeight, rayMinHeight + rayHeightMargin); // But not lower than the ray end plus a margin.
+	mapMaxHeight = std::min(mapMaxHeight, rayMaxHeight - rayHeightMargin); // But not higher than the ray start minus a margin.
 
 	// The first hit box is very rough and is only meant to narrow the search.
 	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), mapMinHeight);
