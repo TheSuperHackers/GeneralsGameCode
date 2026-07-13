@@ -245,10 +245,10 @@ Int OptionPreferences::getJPEGQuality() const
 	if (it == end())
 		return 80;
 
-	// TheSuperHackers @info bobtista 08/07/2026 Cap the quality at 95, because JPEG quality
-	// above that increases the file size significantly with no visible benefit.
+	// TheSuperHackers @info bobtista 13/07/2026 Clamp the quality to 80-95: above 95 the file
+	// size increases significantly with no visible benefit, below 80 the image degrades visibly.
 	Int quality = atoi(it->second.str());
-	return clamp(1, quality, 95);
+	return clamp(80, quality, 95);
 }
 
 Real OptionPreferences::getScrollFactor()
