@@ -1,6 +1,8 @@
 # Fetch the stb library for writing JPEG and PNG screenshots.
 
-find_package(Stb CONFIG QUIET)
+# vcpkg provides stb through a find module (FindStb.cmake), not a config package,
+# so the search must not be restricted to CONFIG mode.
+find_package(Stb QUIET)
 
 if(NOT Stb_FOUND)
 	include(FetchContent)
