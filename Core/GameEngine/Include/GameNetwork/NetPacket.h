@@ -62,7 +62,7 @@ public:
 	NetCommandList *getCommandList();
 
 	static NetCommandRef *ConstructNetCommandMsgFromRawData(const UnsignedByte *data, UnsignedInt dataLength);
-	static NetPacketList ConstructBigCommandPacketList(NetCommandRef *ref);
+	static NetCommandList *ConstructBigCommandList(NetCommandRef *ref);
 
 	UnsignedByte *getData();
 	Int getLength();

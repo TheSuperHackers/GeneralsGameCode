@@ -150,40 +150,25 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		packet->reset();
 
 		NetCommandRef *tempref = NEW_NETCOMMANDREF(msg);
+		if (packet.addCommand(tempref)) {
+			deleteInstance(tempref);
+			tempref = nullptr;
+		} else {
+			tempref->setRelay(relay);
 
-		Bool msgFits = packet->addCommand(tempref);
-		deleteInstance(tempref); // delete the temporary reference.
-		tempref = nullptr;
-
-		if (!msgFits) {
-			NetCommandRef *origref = NEW_NETCOMMANDREF(msg);
-			origref->setRelay(relay);
 			// the message doesn't fit in a single packet, need to split it up.
-			NetPacketList packetList = NetPacket::ConstructBigCommandPacketList(origref);
-			NetPacketListIter tempPacketPtr = packetList.begin();
-
-			while (tempPacketPtr != packetList.end()) {
-				NetPacket *tempPacket = (*tempPacketPtr);
-
-				NetCommandList *list = tempPacket->getCommandList();
-				NetCommandRef *ref1 = list->getFirstMessage();
-				while (ref1 != nullptr) {
-					NetCommandRef *ref2 = m_netCommandList->addMessage(ref1->getCommand());
+			if (NetCommandList* list = NetPacket::ConstructBigCommandList(tempref)) {
+				for (NetCommandRef* ref1 = list->getFirstMessage(); ref1 != nullptr; ref1 = ref1->getNext()) {
+					NetCommandRef* ref2 = m_netCommandList->addMessage(ref1->getCommand());
 					ref2->setRelay(relay);
-
-					ref1 = ref1->getNext();
 				}
-
-				deleteInstance(tempPacket);
-				tempPacket = nullptr;
-				++tempPacketPtr;
 
 				deleteInstance(list);
 				list = nullptr;
 			}
 
-			deleteInstance(origref);
-			origref = nullptr;
+			deleteInstance(tempref);
+			tempref = nullptr;
 
 			return;
 		}
