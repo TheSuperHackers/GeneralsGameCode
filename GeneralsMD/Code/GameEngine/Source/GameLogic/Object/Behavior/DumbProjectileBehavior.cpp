@@ -444,7 +444,7 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 	if (recalcNumSegments)
 	{
 		Real flightDistance = flightCurve.getApproximateLength();
-		m_flightPathSegments = WWMath::Ceil( flightDistance / m_flightPathSpeed );
+		m_flightPathSegments = (Int)WWMath::Ceil( WWMath::Div_FixNaN(flightDistance, m_flightPathSpeed, 1.0f) );
 	}
 
 	// TheSuperHackers @info The way flight paths are used requires at least two curve points.
