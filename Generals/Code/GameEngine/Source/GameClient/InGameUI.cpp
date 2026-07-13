@@ -3512,9 +3512,10 @@ void InGameUI::deselectDrawable( Drawable *draw )
 //-------------------------------------------------------------------------------------------------
 /** Clear all drawables' "select" status */
 //-------------------------------------------------------------------------------------------------
-void InGameUI::deselectAllDrawables( Bool postMsg )
+void InGameUI::deselectAllDrawables()
 {
 	const DrawableList *selected = getAllSelectedDrawables();
+	const Bool hadSelectedDrawables = !selected->empty();
 
 	// loop through all the selected drawables
 	for ( DrawableListCIt it = selected->begin(); it != selected->end(); )
@@ -3535,16 +3536,11 @@ void InGameUI::deselectAllDrawables( Bool postMsg )
 	// our selection can no longer consist of exactly one angry mob
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;
 
-
-	///@todo don't we want to not emit this message if there wasn't a group at all? (CBD)
-	/** @todo also, we probably are sending this message too much, we should come up with
-	some kind of "selections are dirty" status that we can check once per frame and send
-	the correct group info over the network ... could be tricky tho (or impossible) given
-	the order of operations of things happening in the code (CBD) */
-	if( postMsg )
+	// TheSuperHackers @tweak Only send this message when objects were previously selected.
+	if (hadSelectedDrawables)
 	{
 		// TheSuperHackers @tweak Originally this message had one boolean argument, but it wasn't used for anything.
-		TheMessageStream->appendMessage( GameMessage::MSG_DESTROY_SELECTED_GROUP );
+		TheMessageStream->appendMessage(GameMessage::MSG_DESTROY_SELECTED_GROUP);
 	}
 }
 
