@@ -196,11 +196,11 @@ UpdateSleepTime SlavedUpdate::update()
 	if( data->m_repairRatePerSecond > 0.0f )
 	{
 		BodyModuleInterface *body = master->getBodyModule();
-		if( body )
+		if (body)
 		{
 			Real health = body->getHealth();
 			Real maxHealth = body->getMaxHealth();
-			healthPercentage = (Int)(health / maxHealth * 100.0f);
+			healthPercentage = (Int)(WWMath::Div_FixNaN(health, maxHealth, 0.0f) * 100.0f);
 		}
 	}
 

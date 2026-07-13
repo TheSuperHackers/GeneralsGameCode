@@ -1115,7 +1115,7 @@ void BridgeBehavior::createScaffolding()
 	// to the center area of the bridge
 	//
 	Real tileDistance = leftVector.length();
-	Int numObjects = REAL_TO_INT_CEIL( tileDistance / spacing ) + 1;
+	Int numObjects = REAL_TO_INT_CEIL( WWMath::Div_FixNaN(tileDistance, spacing, 0.0f) ) + 1;
 
 	//
 	// given the number of objects that we need to tile across the whole bridge, we will

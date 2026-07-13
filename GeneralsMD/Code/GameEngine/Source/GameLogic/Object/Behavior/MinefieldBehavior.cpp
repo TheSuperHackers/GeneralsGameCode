@@ -457,7 +457,7 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 
 	for (;;)
 	{
-		Real virtualMinesExpectedF = ((Real)d->m_numVirtualMines * body->getHealth() / body->getMaxHealth());
+		Real virtualMinesExpectedF = WWMath::Div_FixNaN((Real)d->m_numVirtualMines * body->getHealth(), body->getMaxHealth(), 0.0f);
 		Int virtualMinesExpected =
 			damageInfo->in.m_damageType == DAMAGE_HEALING ?
 			REAL_TO_INT_FLOOR(virtualMinesExpectedF) :

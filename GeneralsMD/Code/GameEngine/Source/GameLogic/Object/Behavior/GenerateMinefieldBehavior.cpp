@@ -252,7 +252,7 @@ void GenerateMinefieldBehavior::placeMinesAlongLine(const Coord3D& posStart, con
 	Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
 	Real mineDiameter = mineRadius * 2.0f;
 	Real mineJitter = mineRadius*d->m_randomJitter;
-	Int numMines = REAL_TO_INT_CEIL(len / mineDiameter);
+	Int numMines = REAL_TO_INT_CEIL(WWMath::Div_FixNaN(len, mineDiameter, 1.0f));
 	if (numMines < 1)
 		numMines = 1;
 	Real inc = len/numMines;
@@ -312,7 +312,7 @@ void GenerateMinefieldBehavior::placeMinesAroundCircle(const Coord3D& pos, Real 
 	Real mineRadius = mineTemplate->getTemplateGeometryInfo().getBoundingCircleRadius();
 	Real mineDiameter = mineRadius * 2.0f;
 	Real mineJitter = mineRadius*d->m_randomJitter;
-	Int numMines = REAL_TO_INT_CEIL(circum / mineDiameter);
+	Int numMines = REAL_TO_INT_CEIL(WWMath::Div_FixNaN(circum, mineDiameter, 1.0f));
 	if (numMines < 1)
 		numMines = 1;
 	Real angleInc = (2*PI)/numMines;

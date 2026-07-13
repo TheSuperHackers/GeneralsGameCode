@@ -343,7 +343,7 @@ Object* CommandButtonHuntUpdate::scanClosestTarget()
 				if (info) curPriority = info->getPriority(other->getTemplate());
 				if (curPriority == 0)
 					continue; // don't attack 0 priority targets.
-				Int modifier = dist/TheAI->getAiData()->m_attackPriorityDistanceModifier;
+				Int modifier = (Int)WWMath::Div_FixNaN(dist, TheAI->getAiData()->m_attackPriorityDistanceModifier, 0.0f);
 				Int modPriority = curPriority-modifier;
 				if (modPriority < 1)
 					modPriority = 1;
