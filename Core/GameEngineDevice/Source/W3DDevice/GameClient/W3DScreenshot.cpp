@@ -40,6 +40,7 @@ struct ScreenshotThreadData
 	unsigned char* pixelData;
 	unsigned int width;
 	unsigned int height;
+	unsigned int pitch;
 	bool is16Bit;
 	char userDataDirectory[_MAX_PATH];
 	char leafname[_MAX_FNAME];
@@ -76,7 +77,7 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 		// Convert A8R8G8B8/X8R8G8B8 to R8G8B8
 		for (y = 0; y < height; ++y)
 		{
-			const unsigned int* srcLine = reinterpret_cast<const unsigned int*>(data->pixelData + y * width * 4);
+			const unsigned int* srcLine = reinterpret_cast<const unsigned int*>(data->pixelData + y * data->pitch);
 			for (x = 0; x < width; ++x)
 			{
 				const unsigned int argb = srcLine[x];
@@ -92,7 +93,7 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 		// Convert R5G6B5 to R8G8B8
 		for (y = 0; y < height; ++y)
 		{
-			const unsigned short* srcLine = reinterpret_cast<const unsigned short*>(data->pixelData + y * width * 2);
+			const unsigned short* srcLine = reinterpret_cast<const unsigned short*>(data->pixelData + y * data->pitch);
 			for (x = 0; x < width; ++x)
 			{
 				const unsigned short rgb = srcLine[x];
@@ -197,19 +198,15 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 		return;
 	}
 
-	unsigned int y;
 	unsigned int width = surfaceDesc.Width;
 	unsigned int height = surfaceDesc.Height;
+	unsigned int pitch = lrect.Pitch;
 
-	// Copy the surface rows into a tightly packed buffer. The pixel conversion and all file
-	// operations are done on the screenshot thread to keep the main thread cheap.
-	const unsigned int bytesPerPixel = is32Bit ? 4 : 2;
-	unsigned char* pixels = new unsigned char[bytesPerPixel * width * height];
-
-	for (y = 0; y < height; ++y)
-	{
-		memcpy(pixels + y * width * bytesPerPixel, reinterpret_cast<const unsigned char*>(lrect.pBits) + y * lrect.Pitch, width * bytesPerPixel);
-	}
+	// Copy the locked surface with a single memcpy, including any row padding. The pixel
+	// conversion and all file operations are done on the screenshot thread to keep the
+	// main thread cheap.
+	unsigned char* pixels = new unsigned char[pitch * height];
+	memcpy(pixels, lrect.pBits, pitch * height);
 
 	surfaceCopy->Unlock();
 	surfaceCopy->Release_Ref();
@@ -219,6 +216,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	threadData->pixelData = pixels;
 	threadData->width = width;
 	threadData->height = height;
+	threadData->pitch = pitch;
 	threadData->is16Bit = is16Bit;
 	threadData->quality = jpegQuality;
 	threadData->format = format;
