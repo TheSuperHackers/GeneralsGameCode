@@ -37,7 +37,7 @@ struct ScreenshotThreadData
 		delete [] pixelData;
 	}
 
-	unsigned char* pixelData;
+	unsigned char* pixelData; // is owner
 	unsigned int width;
 	unsigned int height;
 	unsigned int pitch;
@@ -198,25 +198,21 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 		return;
 	}
 
-	unsigned int width = surfaceDesc.Width;
-	unsigned int height = surfaceDesc.Height;
-	unsigned int pitch = lrect.Pitch;
+	ScreenshotThreadData* threadData = new ScreenshotThreadData();
+	threadData->width = surfaceDesc.Width;
+	threadData->height = surfaceDesc.Height;
+	threadData->pitch = lrect.Pitch;
 
 	// Copy the locked surface with a single memcpy, including any row padding. The pixel
 	// conversion and all file operations are done on the screenshot thread to keep the
 	// main thread cheap.
-	unsigned char* pixels = new unsigned char[pitch * height];
-	memcpy(pixels, lrect.pBits, pitch * height);
+	threadData->pixelData = new unsigned char[threadData->pitch * threadData->height];
+	memcpy(threadData->pixelData, lrect.pBits, threadData->pitch * threadData->height);
 
 	surfaceCopy->Unlock();
 	surfaceCopy->Release_Ref();
 	surfaceCopy = nullptr;
 
-	ScreenshotThreadData* threadData = new ScreenshotThreadData();
-	threadData->pixelData = pixels;
-	threadData->width = width;
-	threadData->height = height;
-	threadData->pitch = pitch;
 	threadData->is16Bit = is16Bit;
 	threadData->quality = jpegQuality;
 	threadData->format = format;

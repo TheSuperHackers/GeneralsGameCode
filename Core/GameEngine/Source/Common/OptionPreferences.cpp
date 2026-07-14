@@ -239,11 +239,11 @@ Bool OptionPreferences::getDoubleClickAttackMoveEnabled()
 	return FALSE;
 }
 
-Int OptionPreferences::getJPEGQuality() const
+Int OptionPreferences::getJpegQuality() const
 {
-	OptionPreferences::const_iterator it = find("JPEGQuality");
+	OptionPreferences::const_iterator it = find("JpegQuality");
 	if (it == end())
-		return 80;
+		return DEFAULT_JPEG_QUALITY;
 
 	// TheSuperHackers @info bobtista 14/07/2026 Clamp the quality to 50-95: above 95 the file
 	// size increases significantly with no visible benefit, below 50 the image degrades visibly.
