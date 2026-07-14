@@ -48,10 +48,16 @@ struct ScreenshotThreadData
 	ScreenshotFormat format;
 };
 
-// TheInGameUI is not thread safe, so the screenshot thread cannot show the success message
-// itself. It posts the written filename here and the main thread shows the message in
-// W3D_UpdateScreenshotMessages.
-static void* volatile s_screenshotWrittenLeafname = nullptr;
+// TheInGameUI is not thread safe, so the screenshot threads cannot show the success message
+// themselves. Each thread pushes the written filename onto this list and the main thread
+// shows all pending messages in W3D_UpdateScreenshotMessages, so no message is lost when
+// multiple screenshot threads finish within the same frame.
+struct ScreenshotWrittenMessage
+{
+	ScreenshotWrittenMessage* next;
+	char leafname[_MAX_FNAME];
+};
+static ScreenshotWrittenMessage* volatile s_screenshotWrittenList = nullptr;
 
 static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
@@ -118,10 +124,16 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 
 	if (success)
 	{
-		char* leafname = new char[_MAX_FNAME];
-		strlcpy(leafname, data->leafname, _MAX_FNAME);
-		char* oldLeafname = static_cast<char*>(InterlockedExchangePointer(&s_screenshotWrittenLeafname, leafname));
-		delete [] oldLeafname;
+		ScreenshotWrittenMessage* message = new ScreenshotWrittenMessage;
+		strlcpy(message->leafname, data->leafname, ARRAY_SIZE(message->leafname));
+		ScreenshotWrittenMessage* head;
+		do
+		{
+			head = s_screenshotWrittenList;
+			message->next = head;
+		}
+		while (InterlockedCompareExchangePointer(
+			reinterpret_cast<void* volatile*>(&s_screenshotWrittenList), message, head) != head);
 	}
 	else
 	{
@@ -136,13 +148,27 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 
 void W3D_UpdateScreenshotMessages()
 {
-	char* leafname = static_cast<char*>(InterlockedExchangePointer(&s_screenshotWrittenLeafname, nullptr));
-	if (leafname != nullptr)
+	ScreenshotWrittenMessage* list = static_cast<ScreenshotWrittenMessage*>(
+		InterlockedExchangePointer(reinterpret_cast<void* volatile*>(&s_screenshotWrittenList), nullptr));
+
+	// The list is pushed in completion order, so reverse it to show the oldest message first.
+	ScreenshotWrittenMessage* reversed = nullptr;
+	while (list != nullptr)
+	{
+		ScreenshotWrittenMessage* next = list->next;
+		list->next = reversed;
+		reversed = list;
+		list = next;
+	}
+
+	while (reversed != nullptr)
 	{
 		UnicodeString ufileName;
-		ufileName.translate(leafname);
+		ufileName.translate(reversed->leafname);
 		TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
-		delete [] leafname;
+		ScreenshotWrittenMessage* next = reversed->next;
+		delete reversed;
+		reversed = next;
 	}
 }
 
@@ -202,6 +228,11 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	threadData->width = surfaceDesc.Width;
 	threadData->height = surfaceDesc.Height;
 	threadData->pitch = lrect.Pitch;
+	threadData->is16Bit = is16Bit;
+	threadData->quality = jpegQuality;
+	threadData->format = format;
+	strlcpy(threadData->userDataDirectory, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(threadData->userDataDirectory));
+	strlcpy(threadData->leafname, leafname, ARRAY_SIZE(threadData->leafname));
 
 	// Copy the locked surface with a single memcpy, including any row padding. The pixel
 	// conversion and all file operations are done on the screenshot thread to keep the
@@ -212,12 +243,6 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	surfaceCopy->Unlock();
 	surfaceCopy->Release_Ref();
 	surfaceCopy = nullptr;
-
-	threadData->is16Bit = is16Bit;
-	threadData->quality = jpegQuality;
-	threadData->format = format;
-	strlcpy(threadData->userDataDirectory, TheGlobalData->getPath_UserData().str(), ARRAY_SIZE(threadData->userDataDirectory));
-	strlcpy(threadData->leafname, leafname, ARRAY_SIZE(threadData->leafname));
 
 	DWORD threadId;
 	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);

@@ -41,6 +41,8 @@ enum ScreenshotFormat
 	SCREENSHOT_FORMAT_COUNT
 };
 
+const Int DEFAULT_JPEG_QUALITY = 80;
+
 struct ShroudLevel
 {
 	Short m_currentShroud;		///< A Value of 1 means shrouded.  0 is not.  Negative is the count of people looking.
@@ -180,7 +182,7 @@ public:
 	virtual void preloadModelAssets( AsciiString model ) = 0;	///< preload model asset
 	virtual void preloadTextureAssets( AsciiString texture ) = 0;	///< preload texture asset
 
-	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality = 80) = 0;			///< saves screenshot in specified format
+	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality = DEFAULT_JPEG_QUALITY) = 0;			///< saves screenshot in specified format
 	virtual void toggleMovieCapture() = 0;							///< starts saving frames to an avi or frame sequence
 	virtual void toggleLetterBox() = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off

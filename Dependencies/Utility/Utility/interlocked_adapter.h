@@ -30,4 +30,9 @@ inline PVOID InterlockedExchangePointer(PVOID volatile *Target, PVOID Value)
 	return (PVOID)InterlockedExchange((LPLONG)Target, (LONG)Value);
 }
 
+inline PVOID InterlockedCompareExchangePointer(PVOID volatile *Destination, PVOID Exchange, PVOID Comparand)
+{
+	return InterlockedCompareExchange((PVOID*)Destination, Exchange, Comparand);
+}
+
 #endif

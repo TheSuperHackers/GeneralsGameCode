@@ -38,6 +38,7 @@
 #include "Common/OptionPreferences.h"
 
 #include "GameClient/ClientInstance.h"
+#include "GameClient/Display.h"
 #include "GameClient/LookAtXlat.h"
 #include "GameClient/Mouse.h"
 
