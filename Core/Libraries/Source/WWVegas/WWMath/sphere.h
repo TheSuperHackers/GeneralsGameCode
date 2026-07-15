@@ -543,5 +543,5 @@ inline SphereClass operator * (const Matrix3D & m, const SphereClass & s)
 
 inline bool SphereClass::Is_Valid() const
 {
-	return Radius > 0.0;
+	return Radius > 0.0f;
 }
