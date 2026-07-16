@@ -61,6 +61,7 @@ public:
 	void update();
 	void draw();
 
+	Bool skipCurrentIntroStage();
 	Bool isDone() const { return m_currentState == IntroState_Done; }
 
 private:
