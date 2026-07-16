@@ -22,7 +22,7 @@
 #include "GameClient/InGameUI.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/surfaceclass.h"
-#include <Utility/interlocked_adapter.h>
+#include <Utility/mpsc_intrusive_queue.h>
 #include <stb_image_write.h>
 
 struct ScreenshotThreadData
@@ -49,7 +49,7 @@ struct ScreenshotThreadData
 };
 
 // TheInGameUI is not thread safe, so the screenshot threads cannot show the success message
-// themselves. Each thread pushes the written filename onto this list and the main thread
+// themselves. Each thread pushes the written filename onto this queue and the main thread
 // shows all pending messages in W3D_UpdateScreenshotMessages, so no message is lost when
 // multiple screenshot threads finish within the same frame.
 struct ScreenshotWrittenMessage
@@ -57,7 +57,7 @@ struct ScreenshotWrittenMessage
 	ScreenshotWrittenMessage* next;
 	char leafname[_MAX_FNAME];
 };
-static ScreenshotWrittenMessage* volatile s_screenshotWrittenList = nullptr;
+static MPSCIntrusiveQueue<ScreenshotWrittenMessage> s_screenshotWrittenQueue;
 
 static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 {
@@ -126,14 +126,7 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	{
 		ScreenshotWrittenMessage* message = new ScreenshotWrittenMessage;
 		strlcpy(message->leafname, data->leafname, ARRAY_SIZE(message->leafname));
-		ScreenshotWrittenMessage* head;
-		do
-		{
-			head = s_screenshotWrittenList;
-			message->next = head;
-		}
-		while (InterlockedCompareExchangePointer(
-			reinterpret_cast<void* volatile*>(&s_screenshotWrittenList), message, head) != head);
+		s_screenshotWrittenQueue.Push(message);
 	}
 	else
 	{
@@ -148,27 +141,15 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 
 void W3D_UpdateScreenshotMessages()
 {
-	ScreenshotWrittenMessage* list = static_cast<ScreenshotWrittenMessage*>(
-		InterlockedExchangePointer(reinterpret_cast<void* volatile*>(&s_screenshotWrittenList), nullptr));
-
-	// The list is pushed in completion order, so reverse it to show the oldest message first.
-	ScreenshotWrittenMessage* reversed = nullptr;
-	while (list != nullptr)
-	{
-		ScreenshotWrittenMessage* next = list->next;
-		list->next = reversed;
-		reversed = list;
-		list = next;
-	}
-
-	while (reversed != nullptr)
+	ScreenshotWrittenMessage* message = s_screenshotWrittenQueue.Flush();
+	while (message != nullptr)
 	{
 		UnicodeString ufileName;
-		ufileName.translate(reversed->leafname);
+		ufileName.translate(message->leafname);
 		TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
-		ScreenshotWrittenMessage* next = reversed->next;
-		delete reversed;
-		reversed = next;
+		ScreenshotWrittenMessage* next = message->next;
+		delete message;
+		message = next;
 	}
 }
 
