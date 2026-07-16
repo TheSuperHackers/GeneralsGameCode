@@ -41,7 +41,7 @@ enum ScreenshotFormat
 	SCREENSHOT_FORMAT_COUNT
 };
 
-const Int DEFAULT_JPEG_QUALITY = 80;
+constexpr const Int DEFAULT_JPEG_QUALITY = 80;
 
 struct ShroudLevel
 {

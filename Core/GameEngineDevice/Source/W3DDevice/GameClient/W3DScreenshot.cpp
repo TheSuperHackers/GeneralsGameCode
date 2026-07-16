@@ -154,7 +154,7 @@ void W3D_UpdateScreenshotMessages()
 
 void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 {
-	static const char* const ScreenshotFormatExtensions[] = { "jpg", "png" };
+	static constexpr const char* const ScreenshotFormatExtensions[] = { "jpg", "png" };
 	static_assert(ARRAY_SIZE(ScreenshotFormatExtensions) == SCREENSHOT_FORMAT_COUNT, "Incorrect array size");
 
 	// The filename is created here so the timestamp matches the capture time.
