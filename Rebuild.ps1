@@ -1,9 +1,19 @@
+param(
+    [switch]$Clean
+)
+
 $ErrorActionPreference = "Stop"
 
 Write-Host "Initializing MSVC environment and building project..." -ForegroundColor Cyan
 
+$buildArgs = "--build build/win32 --config Release --target install"
+if ($Clean) {
+    Write-Host "Clean build requested (--clean-first)." -ForegroundColor Yellow
+    $buildArgs += " --clean-first"
+}
+
 # The command to initialize MSVC environment and then run CMake build & install
-$cmd = "call `"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat`" x86 && cmake --build build/win32 --config Release --target install"
+$cmd = "call `"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat`" x86 && cmake $buildArgs"
 cmd.exe /c $cmd
 
 if ($LASTEXITCODE -eq 0) {

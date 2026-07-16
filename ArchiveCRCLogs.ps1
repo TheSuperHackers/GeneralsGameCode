@@ -37,17 +37,28 @@ $SearchDirs = @($GameDir, "$GameDir\CRCLogs", $DocsDir, "D:\OKJI\dev\GeneralsGam
 
 # Purge previous-run logs (matching $LogPatterns) from every search dir, so a
 # fresh replay starts with empty diagnostics. Only called before a --rep_def run.
+# $BulkDir (the CRCLogs dump folder, tens of thousands of DebugFrame_*.txt) is
+# wiped in one Remove-Item call instead of per-file glob matching - the per-file
+# loop took minutes there.
 function Remove-PreviousLogs {
-    param([string[]]$Dirs, [string[]]$Patterns)
+    param([string[]]$Dirs, [string[]]$Patterns, [string]$BulkDir)
     $purged = 0
     foreach ($dir in $Dirs) {
-        if (Test-Path $dir) {
-            foreach ($pattern in $Patterns) {
-                Get-ChildItem -Path $dir -Filter $pattern -File -ErrorAction SilentlyContinue | ForEach-Object {
-                    Write-Host "  purge -> $($_.FullName)" -ForegroundColor DarkGray
-                    Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue
-                    $script:purgedCount++
-                }
+        if (-not (Test-Path $dir)) { continue }
+
+        if ($BulkDir -and ($dir -eq $BulkDir)) {
+            $count = (Get-ChildItem -Path $dir -File -ErrorAction SilentlyContinue | Measure-Object).Count
+            Write-Host "  purge (bulk) -> $dir ($count files)" -ForegroundColor DarkGray
+            Remove-Item -Path "$dir\*" -Recurse -Force -ErrorAction SilentlyContinue
+            $script:purgedCount += $count
+            continue
+        }
+
+        foreach ($pattern in $Patterns) {
+            Get-ChildItem -Path $dir -Filter $pattern -File -ErrorAction SilentlyContinue | ForEach-Object {
+                Write-Host "  purge -> $($_.FullName)" -ForegroundColor DarkGray
+                Remove-Item -Path $_.FullName -Force -ErrorAction SilentlyContinue
+                $script:purgedCount++
             }
         }
     }
@@ -62,7 +73,7 @@ if ($RunReplayDef) {
     if (Test-Path $exePath) {
         Write-Host "Purging previous-run logs before replay..." -ForegroundColor Cyan
         $script:purgedCount = 0
-        Remove-PreviousLogs -Dirs $SearchDirs -Patterns $LogPatterns
+        Remove-PreviousLogs -Dirs $SearchDirs -Patterns $LogPatterns -BulkDir "$GameDir\CRCLogs"
         Write-Host "  purged $script:purgedCount file(s)." -ForegroundColor DarkGray
 
         Write-Host "Running headless replay playback (--rep_def)..." -ForegroundColor Cyan
