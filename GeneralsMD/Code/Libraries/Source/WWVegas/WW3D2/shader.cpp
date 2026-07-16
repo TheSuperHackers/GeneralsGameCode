@@ -42,9 +42,9 @@
 
 #include "shader.h"
 #include "w3d_file.h"
-#include "wwdebug.h"
-#include "dx8wrapper.h"
-#include "dx8caps.h"
+#include "WWDebug/wwdebug.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8caps.h"
 
 
 bool ShaderClass::ShaderDirty=true;

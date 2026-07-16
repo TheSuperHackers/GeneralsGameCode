@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "rendobj.h"
-#include "vertmaterial.h"
+#include "WWLib/always.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/vertmaterial.h"
 #include "Lib/BaseType.h"
 
 #if defined(RTS_DEBUG)

@@ -36,13 +36,13 @@
 
 #pragma once
 
-#include "rendobj.h"
-#include "RANDOM.h"
+#include "WW3D2/rendobj.h"
+#include "WWLib/RANDOM.h"
 #include "part_buf.h"
-#include "quat.h"
+#include "WWMath/quat.h"
 #include "w3d_file.h"
-#include "w3derr.h"
-#include "v3_rnd.h"
+#include "WW3D2/w3derr.h"
+#include "WWMath/v3_rnd.h"
 
 // Forward declarations
 class ParticleEmitterDefClass;

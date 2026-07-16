@@ -45,10 +45,10 @@
 
 
 #include "htreemgr.h"
-#include "htree.h"
-#include "chunkio.h"
-#include "wwmemlog.h"
-#include "w3dexclusionlist.h"
+#include "WW3D2/htree.h"
+#include "WWLib/chunkio.h"
+#include "WWDebug/wwmemlog.h"
+#include "WW3D2/w3dexclusionlist.h"
 
 
 /***********************************************************************************************

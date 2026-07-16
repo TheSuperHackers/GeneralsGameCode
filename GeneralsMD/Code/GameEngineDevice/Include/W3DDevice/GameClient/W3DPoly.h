@@ -45,9 +45,9 @@
 
 #pragma once
 
-#include "vector3.h"
-#include "plane.h"
-#include "simplevec.h"
+#include "WWMath/vector3.h"
+#include "WWMath/plane.h"
+#include "WWLib/simplevec.h"
 
 //-------------------------------------------------------------------------------------------------
 /**VisPolyClass - This class is used to clip a polygon to a plane.  Useful for manually

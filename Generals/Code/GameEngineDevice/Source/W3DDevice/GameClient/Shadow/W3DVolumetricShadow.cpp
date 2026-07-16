@@ -38,7 +38,7 @@
 #include <assert.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "always.h"
+#include "WWLib/always.h"
 #include "GameClient/View.h"
 #include "WW3D2/camera.h"
 #include "WW3D2/light.h"

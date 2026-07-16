@@ -204,8 +204,8 @@ target_precompile_headers(z_gameenginedevice PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     [["Common/STLTypedefs.h"]]
     [["Common/SubsystemInterface.h"]]
-    [["INI.h"]]
-    [["WWCommon.h"]]
+    [["WWLib/INI.h"]]
+    [["WWLib/WWCommon.h"]]
     <windows.h>
 )
 

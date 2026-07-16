@@ -37,17 +37,17 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "sharebuf.h"
+#include "WWLib/sharebuf.h"
 #include "linegrp.h"
-#include "texture.h"
+#include "WW3D2/texture.h"
 #include "vertmaterial.h"
-#include "dx8wrapper.h"
-#include "wwmath.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WWMath/wwmath.h"
 #include "rinfo.h"
 #include "camera.h"
-#include "dx8indexbuffer.h"
-#include "dx8vertexbuffer.h"
-#include "sortingrenderer.h"
+#include "WW3D2/dx8indexbuffer.h"
+#include "WW3D2/dx8vertexbuffer.h"
+#include "WW3D2/sortingrenderer.h"
 
 // Line groups are a rendering primitive similar to point groups
 // They are tetrahedra which are aligned with the view plane with their centers

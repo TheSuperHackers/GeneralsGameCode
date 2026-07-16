@@ -34,7 +34,7 @@
 #include "Common/TerrainTypes.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
-#include "rendobj.h"
+#include "WW3D2/rendobj.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "Common/WellKnownKeys.h"

@@ -39,14 +39,14 @@
 
 #pragma once
 
-#include "always.h"
-#include "bittype.h"
+#include "WWLib/always.h"
+#include "WWLib/bittype.h"
 #include "ww3d.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "shader.h"
-#include "Vector.h"
-#include "matrix3d.h"
-#include "matrix4.h"
+#include "WWLib/Vector.h"
+#include "WWMath/matrix3d.h"
+#include "WWMath/matrix4.h"
 
 
 class MaterialPassClass;

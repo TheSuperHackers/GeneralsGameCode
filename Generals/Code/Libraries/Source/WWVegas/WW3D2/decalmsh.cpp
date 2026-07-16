@@ -52,17 +52,17 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "decalmsh.h"
-#include "decalsys.h"
+#include "WW3D2/decalsys.h"
 #include "rinfo.h"
 #include "mesh.h"
 #include "meshmdl.h"
-#include "plane.h"
-#include "statistics.h"
-#include "dx8vertexbuffer.h"
-#include "dx8indexbuffer.h"
-#include "simplevec.h"
-#include "texture.h"
-#include "dx8wrapper.h"
+#include "WWMath/plane.h"
+#include "WW3D2/statistics.h"
+#include "WW3D2/dx8vertexbuffer.h"
+#include "WW3D2/dx8indexbuffer.h"
+#include "WWLib/simplevec.h"
+#include "WW3D2/texture.h"
+#include "WW3D2/dx8wrapper.h"
 
 #define DISABLE_CLIPPING	0
 

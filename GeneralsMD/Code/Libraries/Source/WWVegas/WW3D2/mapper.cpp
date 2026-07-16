@@ -37,17 +37,17 @@
 
 #include "mapper.h"
 #include "ww3d.h"
-#include "INI.h"
-#include "chunkio.h"
-#include "w3derr.h"
+#include "WWLib/INI.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/w3derr.h"
 #include "meshmatdesc.h"
-#include "dx8wrapper.h"
-#include "wwdebug.h"
-#include "matinfo.h"
-#include "rendobj.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WWDebug/wwdebug.h"
+#include "WW3D2/matinfo.h"
+#include "WW3D2/rendobj.h"
 #include "mesh.h"
-#include <RANDOM.h>
-#include <bound.h>
+#include <WWLib/RANDOM.h>
+#include <WWLib/bound.h>
 
 Random4Class rand4;
 

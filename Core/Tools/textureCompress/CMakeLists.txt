@@ -9,7 +9,7 @@ set_target_properties(core_texturecompress PROPERTIES OUTPUT_NAME texturecompres
 target_sources(core_texturecompress PRIVATE ${TEXTURECOMPRESS_SRC})
 
 target_link_libraries(core_texturecompress PRIVATE
-    core_wwlib
+    core_wwvegas
     corei_always
 )
 

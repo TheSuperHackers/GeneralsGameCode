@@ -35,11 +35,11 @@
 
 #include "part_ldr.h"
 #include "part_emt.h"
-#include "w3derr.h"
-#include "chunkio.h"
-#include "win.h"		// for lstrcpy, can this be improved?
+#include "WW3D2/w3derr.h"
+#include "WWLib/chunkio.h"
+#include "WWLib/win.h"		// for lstrcpy, can this be improved?
 #include "assetmgr.h"
-#include "texture.h"
+#include "WW3D2/texture.h"
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(pointer) { delete pointer; pointer = nullptr; }

@@ -14,13 +14,6 @@ target_link_libraries(core_wwcommon INTERFACE
 
 target_include_directories(core_wwcommon INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    WW3D2
-    WWAudio
-    WWDebug
-    # WWDownload # is not added because headers are included as "WWDownload/file.h"
-    WWLib
-    WWMath
-    WWSaveLoad
 )
 
 add_subdirectory(WW3D2)
@@ -37,13 +30,6 @@ add_library(core_wwvegas INTERFACE)
 
 target_include_directories(core_wwvegas INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    WW3D2
-    WWAudio
-    WWDebug
-    # WWDownload # is not added because headers are included as "WWDownload/file.h"
-    WWLib
-    WWMath
-    WWSaveLoad
 )
 
 target_link_libraries(core_wwvegas INTERFACE

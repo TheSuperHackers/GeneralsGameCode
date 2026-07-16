@@ -8,13 +8,13 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     elseif(MSVC)
         # Use midl for MSVC builds
         add_custom_command(
-            OUTPUT BrowserEngine_i.c BrowserEngine.h
-            COMMAND midl.exe "${CMAKE_CURRENT_LIST_DIR}\\BrowserEngine.idl" /header BrowserEngine.h /iid BrowserEngine_i.c
+            OUTPUT BrowserEngine_i.c BrowserEngine.h BrowserEngine.tlb
+            COMMAND midl.exe "${CMAKE_CURRENT_LIST_DIR}\\BrowserEngine.idl" /header BrowserEngine.h /iid BrowserEngine_i.c /tlb BrowserEngine.tlb
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             DEPENDS "${CMAKE_CURRENT_LIST_DIR}/BrowserEngine.idl"
             VERBATIM
         )
-        add_library(core_browserenginewin STATIC BrowserEngine_i.c)
+        add_library(core_browserenginewin STATIC BrowserEngine_i.c BrowserEngine.h BrowserEngine.tlb)
     else()
         message(FATAL_ERROR 
             "EABrowserEngine requires an IDL compiler for Windows builds:\n"

@@ -42,7 +42,6 @@ target_link_libraries(core_particleeditor PRIVATE
     corei_always_no_pch
     corei_gameengine_include
     corei_libraries_source_wwvegas
-    corei_libraries_source_wwvegas_wwlib
     stlport
 )
 

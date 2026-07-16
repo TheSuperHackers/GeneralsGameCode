@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "rendobj.h"
-#include "w3derr.h"
+#include "WWLib/always.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/w3derr.h"
 
 class ChunkLoadClass;
 class ChunkSaveClass;

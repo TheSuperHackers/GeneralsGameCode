@@ -86,16 +86,16 @@
 
 
 #include "meshgeometry.h"
-#include "aabtree.h"
-#include "chunkio.h"
-#include "aabox.h"
-#include "obbox.h"
-#include "sphere.h"
-#include "plane.h"
-#include "wwdebug.h"
-#include "wwmemlog.h"
+#include "WW3D2/aabtree.h"
+#include "WWLib/chunkio.h"
+#include "WWMath/aabox.h"
+#include "WWMath/obbox.h"
+#include "WWMath/sphere.h"
+#include "WWMath/plane.h"
+#include "WWDebug/wwdebug.h"
+#include "WWDebug/wwmemlog.h"
 #include "w3d_file.h"
-#include "vp.h"
+#include "WWMath/vp.h"
 
 
 #if (OPTIMIZE_PLANEEQ_RAM)

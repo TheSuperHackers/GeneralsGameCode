@@ -52,9 +52,9 @@
 
 #include "hrawanim.h"
 #include "motchan.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "assetmgr.h"
-#include "htree.h"
+#include "WW3D2/htree.h"
 
 /***********************************************************************************************
  * NodeMotionStruct::NodeMotionStruct -- constructor                                           *

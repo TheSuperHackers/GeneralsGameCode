@@ -48,8 +48,8 @@
 
 #include "W3DDevice/GameClient/W3DRoadBuffer.h"
 
-#include <assetmgr.h>
-#include <texture.h>
+#include <WW3D2/assetmgr.h>
+#include <WW3D2/texture.h>
 #include "Common/GlobalData.h"
 #include "Common/RandomValue.h"
 //#include "Common/GameFileSystem.h"

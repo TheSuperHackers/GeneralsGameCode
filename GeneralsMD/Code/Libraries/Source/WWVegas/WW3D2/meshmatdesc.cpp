@@ -37,11 +37,11 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "meshmatdesc.h"
-#include "texture.h"
+#include "WW3D2/texture.h"
 #include "vertmaterial.h"
-#include "realcrc.h"
-#include	"dx8wrapper.h"
-#include "dx8caps.h"
+#include "WWLib/realcrc.h"
+#include	"WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8caps.h"
 #include "meshmdl.h"
 
 

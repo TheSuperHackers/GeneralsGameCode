@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 
 class DX8Wrapper;
 struct W3dMaterial3Struct;

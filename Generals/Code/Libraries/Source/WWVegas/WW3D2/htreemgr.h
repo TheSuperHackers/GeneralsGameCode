@@ -37,8 +37,8 @@
 
 #pragma once
 
-#include "always.h"
-#include "bittype.h"
+#include "WWLib/always.h"
+#include "WWLib/bittype.h"
 
 class FileClass;
 class ChunkLoadClass;

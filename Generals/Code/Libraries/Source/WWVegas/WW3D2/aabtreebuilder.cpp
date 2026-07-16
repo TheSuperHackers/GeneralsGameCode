@@ -58,7 +58,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "aabtreebuilder.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "w3d_file.h"
 #include <stdlib.h>
 #include <assert.h>

@@ -45,12 +45,12 @@
 #include	<stddef.h>
 #include	<stdlib.h>
 
-#include	"win.h"
+#include	"WWLib/win.h"
 
 #define	NULL_HANDLE		INVALID_HANDLE_VALUE
 #define	HANDLE_TYPE		HANDLE
 
-#include "WWFILE.h"
+#include "WWLib/WWFILE.h"
 
 #ifdef NEVER
 	/*

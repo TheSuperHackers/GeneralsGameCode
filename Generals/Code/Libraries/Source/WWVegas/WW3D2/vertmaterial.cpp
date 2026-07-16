@@ -38,14 +38,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "vertmaterial.h"
-#include "realcrc.h"
-#include "wwdebug.h"
-#include "w3d_util.h"
-#include "chunkio.h"
-#include "w3derr.h"
-#include "INI.h"
-#include "XSTRAW.h"
-#include "dx8wrapper.h"
+#include "WWLib/realcrc.h"
+#include "WWDebug/wwdebug.h"
+#include "WW3D2/w3d_util.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/w3derr.h"
+#include "WWLib/INI.h"
+#include "WWLib/XSTRAW.h"
+#include "WW3D2/dx8wrapper.h"
 
 
 static unsigned int unique=1;

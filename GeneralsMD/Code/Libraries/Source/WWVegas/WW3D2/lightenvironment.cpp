@@ -38,10 +38,10 @@
 
 
 #include "lightenvironment.h"
-#include "matrix3d.h"
+#include "WWMath/matrix3d.h"
 #include "camera.h"
 #include "light.h"
-#include "colorspace.h"
+#include "WW3D2/colorspace.h"
 
 /*
 ** Constants

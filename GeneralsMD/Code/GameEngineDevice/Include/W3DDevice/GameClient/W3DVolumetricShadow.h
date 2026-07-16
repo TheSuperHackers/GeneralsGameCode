@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "matrix4.h"
+#include "WWMath/matrix4.h"
 #include "W3DDevice/GameClient/W3DBufferManager.h"
 #include "GameClient/Shadow.h"
 

@@ -36,7 +36,7 @@
 #include <io.h>
 #include <sys/stat.h>
 #include <sys/utime.h>
-#include <trim.h>
+#include <WWLib/trim.h>
 
 static const char *nodxtPrefix[] = {
 	"zhca",

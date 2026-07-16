@@ -24,7 +24,7 @@
 #include "MainFrm.h"
 #include "OpenMap.h"
 #include "SplashScreen.h"
-#include "textureloader.h"
+#include "WW3D2/textureloader.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
 #include "WBFrameWnd.h"

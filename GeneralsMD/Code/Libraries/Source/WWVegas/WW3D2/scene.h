@@ -36,10 +36,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "vector3.h"
-#include "robjlist.h"
-#include "wwdebug.h"
+#include "WWLib/always.h"
+#include "WWMath/vector3.h"
+#include "WW3D2/robjlist.h"
+#include "WWDebug/wwdebug.h"
 
 class	RenderObjClass;
 class	RenderInfoClass;

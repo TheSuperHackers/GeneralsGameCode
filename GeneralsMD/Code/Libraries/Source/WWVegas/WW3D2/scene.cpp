@@ -62,15 +62,15 @@
 
 
 #include "scene.h"
-#include "plane.h"
+#include "WWMath/plane.h"
 #include "camera.h"
 #include "ww3d.h"
 #include "rinfo.h"
-#include "chunkio.h"
-#include "dx8renderer.h"
-#include "dx8wrapper.h"
-#include "sortingrenderer.h"
-#include "coltest.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/sortingrenderer.h"
+#include "WW3D2/coltest.h"
 
 
 /*

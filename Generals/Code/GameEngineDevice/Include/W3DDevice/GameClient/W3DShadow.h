@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "matrix4.h"
+#include "WWMath/matrix4.h"
 #include "GameClient/Shadow.h"
 
 class Drawable;	//forward reference

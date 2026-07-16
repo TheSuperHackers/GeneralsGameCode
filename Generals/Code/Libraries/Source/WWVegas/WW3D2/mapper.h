@@ -39,13 +39,13 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "w3d_file.h"
-#include "w3derr.h"
-#include "vector2.h"
-#include "vector3.h"
+#include "WW3D2/w3derr.h"
+#include "WWMath/vector2.h"
+#include "WWMath/vector3.h"
 #include "ww3d.h"
-#include "matrix4.h"
+#include "WWMath/matrix4.h"
 
 class INIClass;
 

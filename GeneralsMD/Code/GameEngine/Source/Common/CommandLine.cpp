@@ -35,7 +35,7 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
-#include "trim.h"
+#include "WWLib/trim.h"
 
 
 

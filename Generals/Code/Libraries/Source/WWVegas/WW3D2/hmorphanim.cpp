@@ -38,12 +38,12 @@
 
 #include "hmorphanim.h"
 #include "w3d_file.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 #include "assetmgr.h"
-#include "htree.h"
-#include "wwstring.h"
-#include "textfile.h"
-#include "simplevec.h"
+#include "WW3D2/htree.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/textfile.h"
+#include "WWLib/simplevec.h"
 
 
 

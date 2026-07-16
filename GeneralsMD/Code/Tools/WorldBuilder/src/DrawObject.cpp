@@ -21,13 +21,13 @@
 #include "DrawObject.h"
 
 #include <stdlib.h>
-#include <assetmgr.h>
-#include <texture.h>
-#include <tri.h>
-#include <colmath.h>
-#include <coltest.h>
-#include <rinfo.h>
-#include <camera.h>
+#include <WW3D2/assetmgr.h>
+#include <WW3D2/texture.h>
+#include <WWMath/tri.h>
+#include <WWMath/colmath.h>
+#include <WW3D2/coltest.h>
+#include <WW3D2/rinfo.h>
+#include <WW3D2/camera.h>
 #include "Common/GlobalData.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
@@ -53,7 +53,7 @@
 #include "Common/BorderColors.h"
 #include "Common/ThingTemplate.h"
 #include "W3DDevice/Common/W3DConvert.h"
-#include "render2d.h"
+#include "WW3D2/render2d.h"
 #include "GameLogic/Weapon.h"
 #include "Common/AudioEventInfo.h"
 

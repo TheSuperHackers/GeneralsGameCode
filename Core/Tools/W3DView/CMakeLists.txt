@@ -173,9 +173,9 @@ target_sources(corei_w3dview INTERFACE ${W3DVIEW_SRC})
 target_precompile_headers(corei_w3dview INTERFACE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
     "StdAfx.h"
-    [["always.h"]]
-    [["STLUtils.h"]]
-    [["WWCommon.h"]]
+    [["WWLib/always.h"]]
+    [["WWLib/STLUtils.h"]]
+    [["WWLib/WWCommon.h"]]
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

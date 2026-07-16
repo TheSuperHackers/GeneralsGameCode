@@ -59,13 +59,13 @@
 
 
 #include "animobj.h"
-#include "htree.h"
+#include "WW3D2/htree.h"
 #include "assetmgr.h"
-#include "hanim.h"
-#include "hcanim.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/hcanim.h"
 #include "ww3d.h"
-#include "wwmemlog.h"
-#include "animatedsoundmgr.h"
+#include "WWDebug/wwmemlog.h"
+#include "WW3D2/animatedsoundmgr.h"
 
 
 /***********************************************************************************************

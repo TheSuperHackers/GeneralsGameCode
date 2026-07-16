@@ -128,13 +128,13 @@
 
 #include "hlod.h"
 #include "assetmgr.h"
-#include "hmdldef.h"
-#include "w3derr.h"
-#include "chunkio.h"
-#include "predlod.h"
+#include "WW3D2/hmdldef.h"
+#include "WW3D2/w3derr.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/predlod.h"
 #include "rinfo.h"
-#include <win.h>
-#include "sphere.h"
+#include <WWLib/win.h>
+#include "WWMath/sphere.h"
 #include "boxrobj.h"
 
 
