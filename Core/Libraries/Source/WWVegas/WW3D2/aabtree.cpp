@@ -63,15 +63,15 @@
 
 
 #include "aabtree.h"
-#include "aabtreebuilder.h"
-#include "wwdebug.h"
-#include "tri.h"
-#include "meshgeometry.h"
+#include "WW3D2/aabtreebuilder.h"
+#include "WWDebug/wwdebug.h"
+#include "WWMath/tri.h"
+#include "WW3D2/meshgeometry.h"
 #include "coltest.h"
 #include "inttest.h"
-#include "colmathinlines.h"
-#include "w3d_file.h"
-#include "chunkio.h"
+#include "WWMath/colmathinlines.h"
+#include "WW3D2/w3d_file.h"
+#include "WWLib/chunkio.h"
 
 
 

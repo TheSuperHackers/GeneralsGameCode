@@ -38,13 +38,13 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include <stdlib.h>
 #include "parametertypes.h"
-#include "Vector.h"
-#include "wwstring.h"
-#include "bittype.h"
-#include "obbox.h"
+#include "WWLib/Vector.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/bittype.h"
+#include "WWMath/obbox.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

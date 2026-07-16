@@ -22,7 +22,7 @@
 #ifndef INTERSEC_INL
 #define INTERSEC_INL
 
-#include "camera.h"
+#include "WW3D2/camera.h"
 
 
 /// debug code that will be tossed

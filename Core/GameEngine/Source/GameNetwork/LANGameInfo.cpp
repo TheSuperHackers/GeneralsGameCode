@@ -34,7 +34,7 @@
 #include "GameNetwork/LANGameInfo.h"
 #include "GameNetwork/LANAPICallbacks.h"
 #include "Common/MultiplayerSettings.h"
-#include "strtok_r.h"
+#include "WWLib/strtok_r.h"
 /*
 #include "GameNetwork/LAN.h"
 #include "GameNetwork/LANGame.h"

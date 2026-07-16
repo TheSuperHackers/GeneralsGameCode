@@ -43,7 +43,7 @@
 #include "GameNetwork/GameSpy/StagingRoomGameInfo.h"
 #include "GameNetwork/LANAPI.h"						// for testing packet size
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
-#include "strtok_r.h"
+#include "WWLib/strtok_r.h"
 
 
 

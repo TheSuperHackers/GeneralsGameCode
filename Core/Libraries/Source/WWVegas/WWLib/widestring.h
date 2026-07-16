@@ -38,7 +38,7 @@
 
 #include <stdarg.h>
 #include "always.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "win.h"
 #include "wwstring.h"
 #include "trim.h"

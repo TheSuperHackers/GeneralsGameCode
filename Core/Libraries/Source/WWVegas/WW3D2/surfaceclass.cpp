@@ -50,9 +50,9 @@
 #include "surfaceclass.h"
 #include "formconv.h"
 #include "dx8wrapper.h"
-#include "vector2i.h"
+#include "WWMath/vector2i.h"
 #include "colorspace.h"
-#include "bound.h"
+#include "WWLib/bound.h"
 #include <d3dx8.h>
 
 void Convert_Pixel(Vector3 &rgb, const SurfaceClass::SurfaceDescription &sd, const unsigned char * pixel)

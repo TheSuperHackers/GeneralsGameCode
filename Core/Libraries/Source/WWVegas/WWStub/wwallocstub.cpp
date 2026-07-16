@@ -18,7 +18,7 @@
 
 // TheSuperHackers @build feliwir 15/04/2025 Simple allocator implementation useful for tools
 
-#include "always.h"
+#include "WWLib/always.h"
 #include <stdlib.h>
 
 #ifdef _OPERATOR_NEW_DEFINED_

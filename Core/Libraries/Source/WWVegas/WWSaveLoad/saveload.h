@@ -36,10 +36,10 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "pointerremap.h"
-#include "bittype.h"
-#include "SLIST.h"
+#include "WWLib/bittype.h"
+#include "WWLib/SLIST.h"
 
 class RefCountClass;
 class SaveLoadSubSystemClass;

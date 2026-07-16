@@ -49,10 +49,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "matrix3d.h"
+#include "WWLib/always.h"
+#include "WWMath/matrix3d.h"
 #include "layer.h"
-#include "sphere.h"
+#include "WWMath/sphere.h"
 #include "coltype.h"
 
 

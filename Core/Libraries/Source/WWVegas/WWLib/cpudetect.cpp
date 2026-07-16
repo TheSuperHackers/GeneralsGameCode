@@ -18,7 +18,7 @@
 
 #include "cpudetect.h"
 #include "wwstring.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "thread.h"
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
 #include "systimer.h"

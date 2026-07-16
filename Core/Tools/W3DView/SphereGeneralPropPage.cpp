@@ -23,8 +23,8 @@
 #include "W3DView.h"
 #include "SphereGeneralPropPage.h"
 #include "Utils.h"
-#include "assetmgr.h"
-#include "texture.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/texture.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

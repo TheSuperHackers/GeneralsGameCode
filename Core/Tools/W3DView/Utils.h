@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Vector.h"
+#include "WWLib/Vector.h"
 
 // Forward declarations
 class RenderObjClass;

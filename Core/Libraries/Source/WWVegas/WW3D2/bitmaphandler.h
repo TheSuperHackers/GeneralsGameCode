@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "ww3dformat.h"
-#include "vector3.h"
+#include "WWMath/vector3.h"
 #include "colorspace.h"
 
 void Bitmap_Assert(bool condition);

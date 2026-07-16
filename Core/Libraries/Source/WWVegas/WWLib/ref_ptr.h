@@ -37,7 +37,7 @@
 #pragma once
 
 #include "always.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 /*
 	RefCountPtr<T> is a smart pointer for reference counted objects.

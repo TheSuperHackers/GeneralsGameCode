@@ -34,10 +34,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "vector4.h"
-#include "widestring.h"
-#include "rect.h"
+#include "WWLib/always.h"
+#include "WWMath/vector4.h"
+#include "WWLib/widestring.h"
+#include "WWMath/rect.h"
 
 class TextureClass;
 class SurfaceClass;

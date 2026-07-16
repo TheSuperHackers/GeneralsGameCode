@@ -36,10 +36,10 @@
 
 
 #include "w3d_util.h"
-#include "vector3.h"
-#include "vector4.h"
-#include "quat.h"
-#include "shader.h"
+#include "WWMath/vector3.h"
+#include "WWMath/vector4.h"
+#include "WWMath/quat.h"
+#include "WW3D2/shader.h"
 
 
 void	W3dUtilityClass::Convert_Vector(const W3dVectorStruct & v,Vector3 * set)

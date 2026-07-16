@@ -21,7 +21,7 @@
 #pragma once
 
 #include "GameClient/Smudge.h"
-#include "sharebuf.h"
+#include "WWLib/sharebuf.h"
 
 class SmudgeGroupClass;	//forward reference.
 class Vector3;

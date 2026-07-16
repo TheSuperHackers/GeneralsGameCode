@@ -34,7 +34,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "VolumeRandomDialog.h"
-#include "v3_rnd.h"
+#include "WWMath/v3_rnd.h"
 #include "Utils.h"
 
 #ifdef RTS_DEBUG

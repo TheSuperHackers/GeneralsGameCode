@@ -32,9 +32,9 @@
 
 #pragma once
 
-#include "Vector.h"
-#include "part_ldr.h"
-#include "part_emt.h"
+#include "WWLib/Vector.h"
+#include "WW3D2/part_ldr.h"
+#include "WW3D2/part_emt.h"
 
 
 /////////////////////////////////////////////////////////////////////

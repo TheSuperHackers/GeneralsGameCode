@@ -41,8 +41,8 @@
 
 #pragma once
 
-#include "always.h"
-#include "wwstring.h"
+#include "WWLib/always.h"
+#include "WWLib/wwstring.h"
 
 class Vector4;
 class Targa;

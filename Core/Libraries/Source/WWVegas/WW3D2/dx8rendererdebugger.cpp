@@ -17,9 +17,9 @@
 */
 
 #include "dx8rendererdebugger.h"
-#include "hashtemplate.h"
-#include "mesh.h"
-#include "meshmdl.h"
+#include "WWLib/hashtemplate.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 
 static HashTemplateClass<unsigned, MeshClass*> MeshHash;
 

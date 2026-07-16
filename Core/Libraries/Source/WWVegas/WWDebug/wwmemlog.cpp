@@ -38,11 +38,11 @@
  *   WWMemoryLogClass::Release_Memory -- frees memory                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "wwmemlog.h"
 #include "wwdebug.h"
-#include "Vector.h"
-#include "FastAllocator.h"
+#include "WWLib/Vector.h"
+#include "WWLib/FastAllocator.h"
 
 #define USE_FAST_ALLOCATOR
 

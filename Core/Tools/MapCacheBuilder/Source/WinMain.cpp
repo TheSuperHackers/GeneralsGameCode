@@ -102,7 +102,7 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
-#include "trim.h"
+#include "WWLib/trim.h"
 
 
 // DEFINES ////////////////////////////////////////////////////////////////////

@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 
 /*
 ** enum of all the WW3D class IDs.

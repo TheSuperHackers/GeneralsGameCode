@@ -22,9 +22,9 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "EditLODDialog.h"
-#include "distlod.h"
+#include "WW3D2/distlod.h"
 #include "Utils.h"
-#include "rendobj.h"
+#include "WW3D2/rendobj.h"
 #include "W3DViewDoc.h"
 
 

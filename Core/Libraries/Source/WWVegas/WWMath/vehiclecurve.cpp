@@ -37,9 +37,9 @@
 #include "vehiclecurve.h"
 #include "vector3.h"
 #include "matrix3d.h"
-#include "persistfactory.h"
+#include "WWSaveLoad/persistfactory.h"
 #include "wwmathids.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwmemlog.h"
 
 
 //////////////////////////////////////////////////////////////////////

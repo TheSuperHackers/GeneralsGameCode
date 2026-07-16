@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "BackgroundObjectDialog.h"
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 #include "Utils.h"
 #include "W3DViewDoc.h"
 

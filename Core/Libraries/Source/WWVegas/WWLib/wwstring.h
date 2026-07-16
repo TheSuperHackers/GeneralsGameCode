@@ -41,7 +41,7 @@
 #include "win.h"
 #include <stdarg.h>
 #include "trim.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #ifdef _WIN32
 #include <tchar.h>
 #endif

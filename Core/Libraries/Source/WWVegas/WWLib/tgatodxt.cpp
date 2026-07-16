@@ -41,7 +41,7 @@
 #include "nvdxtlib.h"
 #include "TARGA.h"
 #include "tgatodxt.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include <io.h>
 #include	<stdlib.h>
 

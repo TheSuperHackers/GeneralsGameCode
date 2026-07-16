@@ -39,8 +39,8 @@
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
 #include "sortingrenderer.h"
-#include "rinfo.h"
-#include "camera.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/camera.h"
 #include "dx8fvf.h"
 
 

@@ -39,8 +39,8 @@
 
 #pragma once
 
-#include "always.h"
-#include "multilist.h"
+#include "WWLib/always.h"
+#include "WWLib/multilist.h"
 
 
 /*

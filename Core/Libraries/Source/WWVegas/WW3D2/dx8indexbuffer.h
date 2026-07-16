@@ -38,9 +38,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "wwdebug.h"
-#include "sphere.h"
+#include "WWLib/always.h"
+#include "WWDebug/wwdebug.h"
+#include "WWMath/sphere.h"
 
 class DX8Wrapper;
 class SortingRendererClass;

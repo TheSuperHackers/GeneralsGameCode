@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "vector3.h"
-#include "RANDOM.h"
+#include "WWLib/RANDOM.h"
 #include <limits.h>
 
 /*

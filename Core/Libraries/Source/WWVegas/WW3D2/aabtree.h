@@ -39,17 +39,17 @@
 
 #pragma once
 
-#include "always.h"
-#include "simplevec.h"
-#include "vector3.h"
-#include "Vector3i.h"
-#include "aaplane.h"
-#include "bittype.h"
-#include "colmath.h"
-#include "wwdebug.h"
-#include "aabtreebuilder.h"
-#include "obbox.h"
-#include <tri.h>
+#include "WWLib/always.h"
+#include "WWLib/simplevec.h"
+#include "WWMath/vector3.h"
+#include "WWMath/Vector3i.h"
+#include "WWMath/aaplane.h"
+#include "WWLib/bittype.h"
+#include "WWMath/colmath.h"
+#include "WWDebug/wwdebug.h"
+#include "WW3D2/aabtreebuilder.h"
+#include "WWMath/obbox.h"
+#include <WWMath/tri.h>
 #include <float.h>
 
 

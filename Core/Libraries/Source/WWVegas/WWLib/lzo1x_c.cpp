@@ -63,7 +63,7 @@
 #include	"always.h"
 #include	"lzo1x.h"
 #include	"lzo_conf.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include	<assert.h>
 
 #if !defined(LZO1X) && !defined(LZO1Y)

@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include "saveloadids.h"
-#include "definitionclassids.h"
+#include "WWSaveLoad/saveloadids.h"
+#include "WWSaveLoad/definitionclassids.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

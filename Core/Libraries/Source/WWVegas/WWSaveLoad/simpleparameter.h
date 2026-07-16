@@ -36,12 +36,12 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "parameter.h"
-#include "vector2.h"
-#include "vector3.h"
-#include "matrix3d.h"
-#include "rect.h"
+#include "WWMath/vector2.h"
+#include "WWMath/vector3.h"
+#include "WWMath/matrix3d.h"
+#include "WWMath/rect.h"
 #include <float.h>
 
 

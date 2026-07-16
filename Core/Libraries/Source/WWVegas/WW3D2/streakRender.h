@@ -38,11 +38,11 @@
 
 #pragma once
 
-#include "always.h"
-#include "shader.h"
+#include "WWLib/always.h"
+#include "WW3D2/shader.h"
 #include "texture.h"
-#include "matrix3d.h"
-#include "vector2.h"
+#include "WWMath/matrix3d.h"
+#include "WWMath/vector2.h"
 
 class RenderInfoClass;
 class SphereClass;

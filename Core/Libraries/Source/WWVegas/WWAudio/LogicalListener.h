@@ -33,9 +33,9 @@
 #pragma once
 
 #include "SoundSceneObj.h"
-#include "bittype.h"
-#include "vector3.h"
-#include "matrix3d.h"
+#include "WWLib/bittype.h"
+#include "WWMath/vector3.h"
+#include "WWMath/matrix3d.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 //

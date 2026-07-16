@@ -38,11 +38,11 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "TextureMgrDialog.h"
-#include "Mesh.h"
-#include "MatInfo.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/matinfo.h"
 #include "TextureSettingsDialog.h"
-#include "AssetMgr.h"
-#include "texture.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/texture.h"
 
 
 #ifdef RTS_DEBUG

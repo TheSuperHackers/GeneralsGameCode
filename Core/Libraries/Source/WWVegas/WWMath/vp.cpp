@@ -41,8 +41,8 @@
 #include "vector4.h"
 #include "matrix3d.h"
 #include "matrix4.h"
-#include "wwdebug.h"
-#include "cpudetect.h"
+#include "WWDebug/wwdebug.h"
+#include "WWLib/cpudetect.h"
 #include <memory.h>
 
 #define SHUFFLE(x, y, z, w)	(((x)&3)<< 6|((y)&3)<<4|((z)&3)<< 2|((w)&3))

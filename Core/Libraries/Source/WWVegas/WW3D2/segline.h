@@ -37,8 +37,8 @@
 #pragma once
 
 #include "rendobj.h"
-#include "shader.h"
-#include "simplevec.h"
+#include "WW3D2/shader.h"
+#include "WWLib/simplevec.h"
 #include "seglinerenderer.h"
 
 

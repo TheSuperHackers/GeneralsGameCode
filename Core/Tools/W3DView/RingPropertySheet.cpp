@@ -24,7 +24,7 @@
 #include "RingPropertySheet.h"
 #include "Utils.h"
 #include "W3DViewDoc.h"
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 #include "DataTreeView.h"
 
 #ifdef RTS_DEBUG

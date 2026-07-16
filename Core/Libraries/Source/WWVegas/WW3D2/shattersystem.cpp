@@ -37,16 +37,16 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "shattersystem.h"
-#include "assetmgr.h"
-#include "mesh.h"
-#include "meshmdl.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 #include "dynamesh.h"
 #include "htree.h"
-#include "plane.h"
-#include "simplevec.h"
-#include "wwstring.h"
-#include "vp.h"
-#include "meshmatdesc.h"
+#include "WWMath/plane.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/wwstring.h"
+#include "WWMath/vp.h"
+#include "WW3D2/meshmatdesc.h"
 #include <stdlib.h>
 
 /*

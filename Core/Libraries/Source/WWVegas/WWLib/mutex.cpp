@@ -17,7 +17,7 @@
 */
 
 #include "mutex.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #ifdef _WIN32
 #include <windows.h>
 #endif

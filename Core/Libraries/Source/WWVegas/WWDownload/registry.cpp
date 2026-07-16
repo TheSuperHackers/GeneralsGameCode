@@ -22,7 +22,7 @@
 
 #include "Registry.h"
 #include <string>
-#include "win.h"
+#include "WWLib/win.h"
 
 bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::string& val)
 {

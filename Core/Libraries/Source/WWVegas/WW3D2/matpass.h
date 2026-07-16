@@ -39,8 +39,8 @@
 
 #pragma once
 
-#include "always.h"
-#include "shader.h"
+#include "WWLib/always.h"
+#include "WW3D2/shader.h"
 
 class TextureClass;
 class VertexMaterialClass;

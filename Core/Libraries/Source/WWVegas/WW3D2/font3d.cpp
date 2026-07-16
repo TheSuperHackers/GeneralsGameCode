@@ -38,13 +38,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "font3d.h"
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 #include "texture.h"
 #include <assert.h>
-#include <wwdebug.h>
+#include <WWDebug/wwdebug.h>
 #include "surfaceclass.h"
 #include "texture.h"
-#include "vector2i.h"
+#include "WWMath/vector2i.h"
 
 static	SurfaceClass	*_surface;
 

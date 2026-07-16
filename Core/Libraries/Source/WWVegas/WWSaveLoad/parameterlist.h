@@ -36,10 +36,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "Vector.h"
+#include "WWLib/always.h"
+#include "WWLib/Vector.h"
 #include "parameter.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 //

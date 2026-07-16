@@ -39,9 +39,9 @@
 
 #pragma once
 
-#include "simplevec.h"
-#include "Vector.h"
-#include "hashtemplate.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/Vector.h"
+#include "WWLib/hashtemplate.h"
 
 
 //////////////////////////////////////////////////////////////////////

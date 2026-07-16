@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "PlaySoundDialog.h"
 #include "Utils.h"
-#include "AudibleSound.h"
+#include "WWAudio/AudibleSound.h"
 
 
 #ifdef RTS_DEBUG

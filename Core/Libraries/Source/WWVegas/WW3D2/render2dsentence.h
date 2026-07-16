@@ -36,12 +36,12 @@
 
 #pragma once
 
-#include "always.h"
-#include "render2d.h"
-#include "Vector.h"
-#include "vector2i.h"
-#include "wwstring.h"
-#include "win.h"
+#include "WWLib/always.h"
+#include "WW3D2/render2d.h"
+#include "WWLib/Vector.h"
+#include "WWMath/vector2i.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/win.h"
 
 /*
 ** FontCharsClass

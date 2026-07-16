@@ -36,10 +36,10 @@
 
 
 #include "tcbspline.h"
-#include "wwdebug.h"
-#include "persistfactory.h"
+#include "WWDebug/wwdebug.h"
+#include "WWSaveLoad/persistfactory.h"
 #include "wwmathids.h"
-#include "wwhack.h"
+#include "WWDebug/wwhack.h"
 
 
 /*

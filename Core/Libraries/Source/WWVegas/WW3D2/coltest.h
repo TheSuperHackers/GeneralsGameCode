@@ -39,13 +39,13 @@
 
 #pragma once
 
-#include "always.h"
-#include "castres.h"
-#include "lineseg.h"
-#include "aabox.h"
-#include "obbox.h"
-#include "tri.h"
-#include "colmath.h"
+#include "WWLib/always.h"
+#include "WWMath/castres.h"
+#include "WWMath/lineseg.h"
+#include "WWMath/aabox.h"
+#include "WWMath/obbox.h"
+#include "WWMath/tri.h"
+#include "WWMath/colmath.h"
 #include "coltype.h"
 
 class RenderObjClass;

@@ -38,13 +38,13 @@
 
 #if noWWAUDIO //(gth) removing dependency on wwaudio
 
-#include "AudibleSound.h"
-#include "Sound3D.h"
-#include "WWAudio.h"
-#include "ffactory.h"
-#include "WWFILE.h"
-#include "chunkio.h"
-#include "scene.h"
+#include "WWAudio/AudibleSound.h"
+#include "WWAudio/Sound3D.h"
+#include "WWAudio/WWAudio.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/WWFILE.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/scene.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -35,8 +35,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "cullsys.h"
-#include "wwdebug.h"
-#include "wwprofile.h"
+#include "WWDebug/wwdebug.h"
+#include "WWDebug/wwprofile.h"
 
 
 /*************************************************************************

@@ -37,11 +37,11 @@
 
 #pragma once
 
-#include "always.h"
-#include "quat.h"
-#include "w3d_file.h"
-#include "SLIST.h"
-#include "Vector.h"
+#include "WWLib/always.h"
+#include "WWMath/quat.h"
+#include "WW3D2/w3d_file.h"
+#include "WWLib/SLIST.h"
+#include "WWLib/Vector.h"
 #include "hanim.h"
 
 struct NodeCompressedMotionStruct;

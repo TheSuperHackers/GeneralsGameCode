@@ -36,15 +36,15 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
 
-#include "Vector.h"
+#include "WWLib/Vector.h"
 #include "SoundBuffer.h"
 #include "AudioEvents.h"
-#include "wwstring.h"
+#include "WWLib/wwstring.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Forward declaration

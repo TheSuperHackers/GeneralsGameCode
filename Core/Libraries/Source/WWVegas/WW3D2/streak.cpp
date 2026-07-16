@@ -35,17 +35,17 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "streak.h"
-#include "ww3d.h"
-#include "rinfo.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/rinfo.h"
 #include "predlod.h"
-#include "v3_rnd.h"
+#include "WWMath/v3_rnd.h"
 #include "texture.h"
 #include "coltest.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "texture.h"
 #include "dx8wrapper.h"
-#include "vp.h"
-#include "Vector3i.h"
+#include "WWMath/vp.h"
+#include "WWMath/Vector3i.h"
 #include "sortingrenderer.h"
 
 static SegLineRendererClass _LineRenderer;

@@ -23,7 +23,7 @@
 #include "W3DView.h"
 #include "EmitterPhysicsPropPage.h"
 #include "Utils.h"
-#include "part_emt.h"
+#include "WW3D2/part_emt.h"
 #include "VolumeRandomDialog.h"
 #include "EmitterInstanceList.h"
 

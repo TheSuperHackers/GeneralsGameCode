@@ -22,8 +22,8 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "EmitterUserPropPage.h"
-#include "w3d_file.h"
-#include "part_emt.h"
+#include "WW3D2/w3d_file.h"
+#include "WW3D2/part_emt.h"
 #include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG

@@ -39,7 +39,7 @@
 #pragma once
 
 #include "robjlist.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 
 class RenderInfoClass;
 

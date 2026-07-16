@@ -37,7 +37,7 @@
 // Include files
 //
 #include "always.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "mutex.h"
 #include <malloc.h>
 #include <stddef.h> //size_t & ptrdiff_t definition

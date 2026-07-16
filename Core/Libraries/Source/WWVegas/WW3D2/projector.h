@@ -39,11 +39,11 @@
 
 #pragma once
 
-#include "always.h"
-#include "matrix3d.h"
-#include "matrix4.h"
-#include "aabox.h"
-#include "obbox.h"
+#include "WWLib/always.h"
+#include "WWMath/matrix3d.h"
+#include "WWMath/matrix4.h"
+#include "WWMath/aabox.h"
+#include "WWMath/obbox.h"
 
 
 class MatrixMapperClass;

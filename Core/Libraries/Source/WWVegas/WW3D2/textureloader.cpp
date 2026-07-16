@@ -39,26 +39,26 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "textureloader.h"
-#include "mutex.h"
-#include "thread.h"
-#include "wwdebug.h"
+#include "WWLib/mutex.h"
+#include "WWLib/thread.h"
+#include "WWDebug/wwdebug.h"
 #include "texture.h"
-#include "ffactory.h"
-#include "wwstring.h"
-#include	"bufffile.h"
-#include "ww3d.h"
-#include "assetmgr.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/wwstring.h"
+#include	"WWLib/bufffile.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/assetmgr.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
 #include "missingtexture.h"
-#include "TARGA.h"
+#include "WWLib/TARGA.h"
 #include <d3dx8tex.h>
-#include "wwmemlog.h"
+#include "WWDebug/wwmemlog.h"
 #include "formconv.h"
 #include "texturethumbnail.h"
-#include "ddsfile.h"
+#include "WW3D2/ddsfile.h"
 #include "bitmaphandler.h"
-#include "wwprofile.h"
+#include "WWDebug/wwprofile.h"
 
 bool TextureLoader::TextureLoadSuspended;
 int TextureLoader::TextureInactiveOverrideTime = 0;

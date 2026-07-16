@@ -36,11 +36,11 @@
 
 
 #include "SoundBuffer.h"
-#include "RAWFILE.h"
-#include "wwdebug.h"
+#include "WWLib/RAWFILE.h"
+#include "WWDebug/wwdebug.h"
 #include "Utils.h"
-#include "ffactory.h"
-#include "win.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/win.h"
 
 
 

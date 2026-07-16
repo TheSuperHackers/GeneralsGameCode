@@ -40,7 +40,7 @@
 #include "parameter.h"
 #include "parametertypes.h"
 #include "simpleparameter.h"
-#include "wwstring.h"
+#include "WWLib/wwstring.h"
 #include "definitionclassids.h"
 
 

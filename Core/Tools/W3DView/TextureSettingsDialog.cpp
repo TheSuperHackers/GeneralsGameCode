@@ -32,11 +32,11 @@
 
 
 #include "StdAfx.h"
-#include "Texture.h"
+#include "WW3D2/texture.h"
 #include "W3DView.h"
 #include "TextureSettingsDialog.h"
 #include "Utils.h"
-#include "AssetMgr.h"
+#include "WW3D2/assetmgr.h"
 
 /*#ifdef RTS_DEBUG
 #define new DEBUG_NEW

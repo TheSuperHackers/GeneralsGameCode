@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include "simplevec.h"
-#include "bittype.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/bittype.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////

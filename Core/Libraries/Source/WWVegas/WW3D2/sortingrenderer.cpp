@@ -42,12 +42,12 @@
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
-#include "vertmaterial.h"
+#include "WW3D2/vertmaterial.h"
 #include "texture.h"
 #include "d3d8.h"
 #include "d3dx8math.h"
 #include "statistics.h"
-#include <wwprofile.h>
+#include <WWDebug/wwprofile.h>
 #include <algorithm>
 #include <list>
 

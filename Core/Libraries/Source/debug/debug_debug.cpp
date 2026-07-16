@@ -33,7 +33,7 @@
 #include "internal_io.h"
 #include <stdlib.h>
 #include <windows.h>
-#include <WWCommon.h>
+#include <WWLib/WWCommon.h>
 #include <new>      // needed for placement new prototype
 
 // a little dummy variable that makes the linker actually include

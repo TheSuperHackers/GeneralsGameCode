@@ -38,10 +38,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "matrix3d.h"
-#include "matrix4.h"
-#include "obbox.h"
+#include "WWLib/always.h"
+#include "WWMath/matrix3d.h"
+#include "WWMath/matrix4.h"
+#include "WWMath/obbox.h"
 #include "robjlist.h"
 #include "matpass.h"
 #include "projector.h"

@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "EmitterColorPropPage.h"
-#include "part_emt.h"
+#include "WW3D2/part_emt.h"
 #include "Utils.h"
 #include "OpacitySettingsDialog.h"
 #include "ColorUtils.h"

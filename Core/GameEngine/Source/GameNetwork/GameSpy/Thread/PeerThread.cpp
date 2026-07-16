@@ -41,9 +41,9 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpy/ThreadUtils.h"
 
-#include "strtok_r.h"
-#include "mutex.h"
-#include "thread.h"
+#include "WWLib/strtok_r.h"
+#include "WWLib/mutex.h"
+#include "WWLib/thread.h"
 
 #include "Common/MiniLog.h"
 

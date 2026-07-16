@@ -55,12 +55,12 @@
 #include "Common/UnicodeString.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
-#include "texture.h"
-#include "colmath.h"
-#include "coltest.h"
-#include "rinfo.h"
-#include "camera.h"
-#include "assetmgr.h"
+#include "WW3D2/texture.h"
+#include "WWMath/colmath.h"
+#include "WW3D2/coltest.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/assetmgr.h"
 #include "WW3D2/dx8wrapper.h"
 
 //number of vertex pages allocated - allows double buffering of vertex updates.

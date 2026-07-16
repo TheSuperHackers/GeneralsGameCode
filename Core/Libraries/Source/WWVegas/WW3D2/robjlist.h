@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "multilist.h"
-#include "wwdebug.h"
+#include "WWLib/always.h"
+#include "WWLib/multilist.h"
+#include "WWDebug/wwdebug.h"
 
 class RenderObjClass;
 

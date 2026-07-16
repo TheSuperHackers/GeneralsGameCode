@@ -49,9 +49,9 @@
 
 #include "decalsys.h"
 #include "rendobj.h"
-#include "mesh.h"
-#include "decalmsh.h"
-#include "matrixmapper.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/decalmsh.h"
+#include "WW3D2/matrixmapper.h"
 #include "texture.h"
 
 

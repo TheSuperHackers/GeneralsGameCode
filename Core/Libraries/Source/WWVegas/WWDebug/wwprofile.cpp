@@ -49,17 +49,17 @@
  *   WWProfileManager::Release_In_Order_Iterator -- Return an "in-order" iterator              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "wwprofile.h"
-#include "FastAllocator.h"
+#include "WWLib/FastAllocator.h"
 #include "wwdebug.h"
 //#include "systimer.h"
-#include "systimer.h"
-#include "RAWFILE.h"
-#include "ffactory.h"
-#include "simplevec.h"
-#include "cpudetect.h"
-#include "hashtemplate.h"
+#include "WWLib/systimer.h"
+#include "WWLib/RAWFILE.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/cpudetect.h"
+#include "WWLib/hashtemplate.h"
 #include <Utility/intrin_compat.h>
 
 static SimpleDynVecClass<WWProfileHierarchyNodeClass*> ProfileCollectVector;

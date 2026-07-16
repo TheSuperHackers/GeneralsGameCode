@@ -26,8 +26,8 @@
 #include "AnimReportPage.h"
 
 
-#include "hanim.h"
-#include "htree.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/htree.h"
 #include "Utils.h"
 
 

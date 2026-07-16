@@ -27,7 +27,7 @@
 #include "StdAfx.h"
 
 #include "Globals.h"
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 #include "ViewerAssetMgr.h"
 
 // Main asset manager for the application.

@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "Vector.h"
-#include "vector3.h"
+#include "WWLib/always.h"
+#include "WWLib/Vector.h"
+#include "WWMath/vector3.h"
 #include "w3derr.h"
 
 

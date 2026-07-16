@@ -48,11 +48,11 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "line3d.h"
-#include "vertmaterial.h"
-#include "shader.h"
-#include "wwdebug.h"
-#include "ww3d.h"
-#include "rinfo.h"
+#include "WW3D2/vertmaterial.h"
+#include "WW3D2/shader.h"
+#include "WWDebug/wwdebug.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/rinfo.h"
 #include "dx8wrapper.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"

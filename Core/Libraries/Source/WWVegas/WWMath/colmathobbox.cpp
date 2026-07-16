@@ -46,7 +46,7 @@
 #include "sphere.h"
 #include "aabox.h"
 #include "obbox.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 
 

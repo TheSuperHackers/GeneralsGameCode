@@ -25,11 +25,11 @@
 #include "AdvancedAnimSheet.h"
 #include "AnimMixingPage.h"
 
-#include "rendobj.h"
-#include "htree.h"
-#include "hanim.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/htree.h"
+#include "WW3D2/hanim.h"
 #include "Utils.h"
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

@@ -44,19 +44,19 @@
 #include <d3d8.h>
 #include <d3dx8core.h>
 #include "dx8wrapper.h"
-#include "TARGA.h"
-#include <nstrdup.h>
-#include "w3d_file.h"
-#include "assetmgr.h"
+#include "WWLib/TARGA.h"
+#include <WWLib/nstrdup.h>
+#include "WW3D2/w3d_file.h"
+#include "WW3D2/assetmgr.h"
 #include "formconv.h"
 #include "textureloader.h"
 #include "missingtexture.h"
-#include "ffactory.h"
+#include "WWLib/ffactory.h"
 #include "dx8caps.h"
 #include "dx8texman.h"
-#include "meshmatdesc.h"
+#include "WW3D2/meshmatdesc.h"
 #include "texturethumbnail.h"
-#include "wwprofile.h"
+#include "WWDebug/wwprofile.h"
 
 const unsigned DEFAULT_INACTIVATION_TIME=20000;
 

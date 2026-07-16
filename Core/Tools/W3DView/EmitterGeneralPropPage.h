@@ -22,7 +22,7 @@
 //
 
 #include "resource.h"
-#include "shader.h"
+#include "WW3D2/shader.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

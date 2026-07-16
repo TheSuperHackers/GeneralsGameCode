@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <vector3.h>
+#include <WWMath/vector3.h>
 
 class TextureClass;
 class INIClass;

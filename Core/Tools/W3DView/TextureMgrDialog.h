@@ -36,12 +36,12 @@
 
 #pragma once
 
-#include "Vector.h"
-#include "RendObj.h"
+#include "WWLib/Vector.h"
+#include "WW3D2/rendobj.h"
 #include "Utils.h"
 #include "Resource.h"
 #include "DialogToolbar.h"
-#include "texture.h"
+#include "WW3D2/texture.h"
 
 // Forward declarations
 class MeshClass;
