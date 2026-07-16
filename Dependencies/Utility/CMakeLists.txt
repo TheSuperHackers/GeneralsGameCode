@@ -8,7 +8,6 @@ set(UTILITY_SRC
     Utility/intrin_compat.h
     Utility/iostream_adapter.h
     Utility/mem_compat.h
-    Utility/mpsc_intrusive_queue.h
     Utility/sstream_adapter.h
     Utility/stdint_adapter.h
     Utility/stdio_adapter.h

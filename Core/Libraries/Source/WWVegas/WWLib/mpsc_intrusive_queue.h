@@ -19,8 +19,8 @@
 #pragma once
 
 // Requires <windows.h> to be included first for the Interlocked intrinsics.
-#include "interlocked_adapter.h"
-#include "CppMacros.h"
+#include "Utility/interlocked_adapter.h"
+#include "Utility/CppMacros.h"
 
 // Lock-free intrusive queue for multiple producer threads and a single consumer thread,
 // using the same algorithm as the Win32 InterlockedPushEntrySList/InterlockedFlushSList
