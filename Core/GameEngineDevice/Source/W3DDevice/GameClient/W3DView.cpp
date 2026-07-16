@@ -3721,7 +3721,8 @@ void W3DView::updateTerrain()
 {
 	DEBUG_ASSERTCRASH(TheTerrainRenderObject != nullptr, ("TheTerrainRenderObject is null"));
 
-	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
+	RefRenderObjListClass* lightlist = W3DDisplay::m_3DScene->getLightList();
+	RefRenderObjListIterator it(lightlist);
 	const Vector3 cameraPivot(m_pos.x, m_pos.y, m_pos.z);
 	const Real cameraPitch = asin(fabs(m_3DCamera->Get_Forward_Dir().Z));
 	Int drawWidth;
@@ -3741,11 +3742,5 @@ void W3DView::updateTerrain()
 	}
 
 	TheTerrainRenderObject->setTerrainDrawSize(drawWidth, drawHeight);
-	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, it);
-
-	if (it)
-	{
-		W3DDisplay::m_3DScene->destroyLightsIterator(it);
-		it = nullptr;
-	}
+	TheTerrainRenderObject->updateCenter(m_3DCamera, &cameraPivot, &it);
 }

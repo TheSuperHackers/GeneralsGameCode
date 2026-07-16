@@ -2128,12 +2128,9 @@ Int BaseHeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 
 	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 	if (pMyScene) {
-		RefRenderObjListIterator *it = pMyScene->createLightsIterator();
-		doTheLight(&vertex, lightRay, &normalAtTexel, it, 1.0f);
-		if (it) {
-		 pMyScene->destroyLightsIterator(it);
-		 it = nullptr;
-		}
+		RefRenderObjListClass *lightlist = pMyScene->getLightList();
+		RefRenderObjListIterator it(lightlist);
+		doTheLight(&vertex, lightRay, &normalAtTexel, &it, 1.0f);
 	} else {
 		doTheLight(&vertex, lightRay, &normalAtTexel, nullptr, 1.0f);
 	}
