@@ -41,7 +41,6 @@ static void drawFramerateBar();
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
-#include "W3DDevice/GameClient/W3DScreenshot.h"
 #include "Common/FramePacer.h"
 #include "Common/ThingFactory.h"
 #include "Common/GlobalData.h"
@@ -81,6 +80,7 @@ static void drawFramerateBar();
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DDebugDisplay.h"
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
+#include "W3DDevice/GameClient/W3DScreenshot.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "WWMath/wwmath.h"
 #include "WWLib/registry.h"

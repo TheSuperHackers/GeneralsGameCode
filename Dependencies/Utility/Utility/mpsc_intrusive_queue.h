@@ -20,6 +20,7 @@
 
 // Requires <windows.h> to be included first for the Interlocked intrinsics.
 #include "interlocked_adapter.h"
+#include "CppMacros.h"
 
 // Lock-free intrusive queue for multiple producer threads and a single consumer thread,
 // using the same algorithm as the Win32 InterlockedPushEntrySList/InterlockedFlushSList
@@ -71,8 +72,8 @@ public:
 	}
 
 private:
-	MPSCIntrusiveQueue(const MPSCIntrusiveQueue&);
-	MPSCIntrusiveQueue& operator=(const MPSCIntrusiveQueue&);
+	MPSCIntrusiveQueue(const MPSCIntrusiveQueue&) CPP_11(= delete);
+	MPSCIntrusiveQueue& operator=(const MPSCIntrusiveQueue&) CPP_11(= delete);
 
 	T* volatile m_head;
 };

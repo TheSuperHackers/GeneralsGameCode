@@ -34,7 +34,7 @@ struct ScreenshotThreadData
 
 	~ScreenshotThreadData()
 	{
-		delete [] pixelData;
+		delete[] pixelData;
 	}
 
 	unsigned char* pixelData; // is owner
@@ -73,7 +73,6 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 
 	const unsigned int width = data->width;
 	const unsigned int height = data->height;
-	unsigned int x, y, index;
 
 	// Convert to R8G8B8 for stb_image_write.
 	unsigned char* image = new unsigned char[3 * width * height];
@@ -81,13 +80,13 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	if (!data->is16Bit)
 	{
 		// Convert A8R8G8B8/X8R8G8B8 to R8G8B8
-		for (y = 0; y < height; ++y)
+		for (unsigned int y = 0; y < height; ++y)
 		{
 			const unsigned int* srcLine = reinterpret_cast<const unsigned int*>(data->pixelData + y * data->pitch);
-			for (x = 0; x < width; ++x)
+			for (unsigned int x = 0; x < width; ++x)
 			{
 				const unsigned int argb = srcLine[x];
-				index = 3 * (x + y * width);
+				const unsigned int index = 3 * (x + y * width);
 				image[index + 0] = (unsigned char)(argb >> 16); // r
 				image[index + 1] = (unsigned char)(argb >> 8);  // g
 				image[index + 2] = (unsigned char)(argb >> 0);  // b
@@ -97,13 +96,13 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 	else
 	{
 		// Convert R5G6B5 to R8G8B8
-		for (y = 0; y < height; ++y)
+		for (unsigned int y = 0; y < height; ++y)
 		{
 			const unsigned short* srcLine = reinterpret_cast<const unsigned short*>(data->pixelData + y * data->pitch);
-			for (x = 0; x < width; ++x)
+			for (unsigned int x = 0; x < width; ++x)
 			{
 				const unsigned short rgb = srcLine[x];
-				index = 3 * (x + y * width);
+				const unsigned int index = 3 * (x + y * width);
 				image[index + 0] = (unsigned char)((rgb & 0xF800) >> 8); // r
 				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3); // g
 				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3); // b
@@ -133,7 +132,7 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 		DEBUG_LOG(("Failed to write screenshot %s", pathname));
 	}
 
-	delete [] image;
+	delete[] image;
 	delete data;
 
 	return success;
@@ -226,7 +225,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	surfaceCopy = nullptr;
 
 	DWORD threadId;
-	HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
+	const HANDLE hThread = CreateThread(nullptr, 0, screenshotThreadFunc, threadData, 0, &threadId);
 	if (hThread)
 	{
 		CloseHandle(hThread);

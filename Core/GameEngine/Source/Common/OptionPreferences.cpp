@@ -248,7 +248,7 @@ Int OptionPreferences::getJpegQuality() const
 
 	// TheSuperHackers @info bobtista 14/07/2026 Clamp the quality to 50-95: above 95 the file
 	// size increases significantly with no visible benefit, below 50 the image degrades visibly.
-	Int quality = atoi(it->second.str());
+	const Int quality = atoi(it->second.str());
 	return clamp(50, quality, 95);
 }
 

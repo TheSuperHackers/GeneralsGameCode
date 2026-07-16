@@ -27,12 +27,12 @@ inline long InterlockedCompareExchange(long volatile *Destination, long Exchange
 
 inline PVOID InterlockedExchangePointer(PVOID volatile *Target, PVOID Value)
 {
-	return (PVOID)InterlockedExchange((LPLONG)Target, (LONG)Value);
+	return reinterpret_cast<PVOID>(InterlockedExchange(reinterpret_cast<LPLONG>(Target), reinterpret_cast<LONG>(Value)));
 }
 
 inline PVOID InterlockedCompareExchangePointer(PVOID volatile *Destination, PVOID Exchange, PVOID Comparand)
 {
-	return InterlockedCompareExchange((PVOID*)Destination, Exchange, Comparand);
+	return InterlockedCompareExchange(reinterpret_cast<PVOID*>(Destination), Exchange, Comparand);
 }
 
 #endif
