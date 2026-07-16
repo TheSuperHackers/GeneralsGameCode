@@ -8,7 +8,7 @@ if(NOT Stb_FOUND)
 	include(FetchContent)
 	FetchContent_Declare(
 		stb
-		GIT_REPOSITORY https://github.com/nothings/stb.git
+		GIT_REPOSITORY https://github.com/TheSuperHackers/stb.git
 		GIT_TAG        5c205738c191bcb0abc65c4febfa9bd25ff35234
 	)
 
