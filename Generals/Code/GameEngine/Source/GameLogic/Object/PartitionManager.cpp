@@ -3195,20 +3195,34 @@ Int PartitionManager::calcMinRadius(const ICoord2D& cur)
 		so it really shouldn't matter... (I hope)
 	*/
 
+#if RETAIL_COMPATIBLE_CRC
+	double minDistSqr = 1e12;				// double, not real
+#else
 	Real minDistSqr = 1e12f;
+#endif
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
+#if RETAIL_COMPATIBLE_CRC
+			double dx = centerPos[i].x - otherPos[j].x;
+			double dy = centerPos[i].y - otherPos[j].y;
+			double curDistSqr = dx*dx + dy*dy;
+#else
 			Real dx = centerPos[i].x - otherPos[j].x;
 			Real dy = centerPos[i].y - otherPos[j].y;
 			Real curDistSqr = dx*dx + dy*dy;
+#endif
 			if (minDistSqr > curDistSqr)
 				minDistSqr = curDistSqr;
 		}
 	}
 
+#if RETAIL_COMPATIBLE_CRC
+	double dist = WWMath::Sqrtf(minDistSqr);
+#else
 	Real dist = WWMath::Sqrtf(minDistSqr);
+#endif
 	Int minRadius = REAL_TO_INT_CEIL( dist / m_cellSize );
 
 	return minRadius;
@@ -3223,9 +3237,15 @@ void PartitionManager::calcRadiusVec()
 	Int cx = getCellCountX();
 	Int cy = getCellCountY();
 
+#if RETAIL_COMPATIBLE_CRC
+	double dx = (double)cx * (double)cellSize;
+	double dy = (double)cy * (double)cellSize;
+	double maxPossibleDist = WWMath::Sqrt(dx*dx + dy*dy);
+#else
 	Real dx = (Real)cx * cellSize;
 	Real dy = (Real)cy * cellSize;
 	Real maxPossibleDist = WWMath::Sqrtf(dx*dx + dy*dy);
+#endif
 
 	m_maxGcoRadius = REAL_TO_INT_CEIL(maxPossibleDist / cellSize);
 
@@ -5712,7 +5732,7 @@ void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;
@@ -5740,7 +5760,7 @@ void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;
@@ -5768,7 +5788,7 @@ void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;
@@ -5796,7 +5816,7 @@ void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;

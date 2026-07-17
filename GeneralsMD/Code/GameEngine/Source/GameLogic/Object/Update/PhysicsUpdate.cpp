@@ -29,7 +29,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 // please talk to MDC (x36804) before taking this out
-#define NO_DEBUG_CRC
+//#define NO_DEBUG_CRC
 
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"

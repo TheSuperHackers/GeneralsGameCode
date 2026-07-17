@@ -715,7 +715,7 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 
 		Real distSqr = ThePartitionManager->getDistanceSquared(me, theEnemy, FROM_BOUNDINGSPHERE_2D);
 		Real dist = WWMath::Sqrtf(distSqr);
-		Int modifier = (Int)WWMath::Div_FixNaN(dist, getAiData()->m_attackPriorityDistanceModifier, 0.0f);
+		Int modifier = (Int)WWMath::Div_Safe(dist, getAiData()->m_attackPriorityDistanceModifier, 0.0f);
 		Int modPriority = curPriority-modifier;
 		if (modPriority < 1)
 			modPriority = 1;
