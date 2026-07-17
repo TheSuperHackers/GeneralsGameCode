@@ -214,8 +214,8 @@ static WWINLINE float Byte_To_Unit_Float(unsigned char byte) { return ((float)by
 
 static WWINLINE float Normalize_Angle(float angle); // Normalizes the angle to the range -PI..PI
 
-static WWINLINE float Div_FixNaN(float dividend, float divisor, float fallback = 0.0f);
-static WWINLINE double Div_FixNaN(double dividend, double divisor, double fallback = 0.0);
+static WWINLINE float Div_Safe(float dividend, float divisor, float fallback = 0.0f);
+static WWINLINE double Div_Safe(double dividend, double divisor, double fallback = 0.0);
 
 };
 
@@ -1123,7 +1123,7 @@ WWINLINE float WWMath::Normalize_Angle(float angle)
 	return angle - (WWMATH_TWO_PI * Floor((angle + WWMATH_PI) / WWMATH_TWO_PI));
 }
 
-WWINLINE float WWMath::Div_FixNaN(float dividend, float divisor, float fallback)
+WWINLINE float WWMath::Div_Safe(float dividend, float divisor, float fallback)
 {
 #if USE_DETERMINISTIC_MATH
 	return (divisor == 0.0f) ? fallback : dividend / divisor;
@@ -1132,10 +1132,10 @@ WWINLINE float WWMath::Div_FixNaN(float dividend, float divisor, float fallback)
 #endif
 }
 
-WWINLINE double WWMath::Div_FixNaN(double dividend, double divisor, double fallback)
+WWINLINE double WWMath::Div_Safe(double dividend, double divisor, double fallback)
 {
 #if USE_DETERMINISTIC_MATH
-	return (double) ((divisor == 0.0) ? (float) fallback : (float) dividend / (float) divisor);
+	return (divisor == 0.0) ? fallback : dividend / divisor;
 #else
 	return dividend / divisor;
 #endif

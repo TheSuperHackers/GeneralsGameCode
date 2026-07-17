@@ -200,7 +200,7 @@ UpdateSleepTime SlavedUpdate::update()
 		{
 			Real health = body->getHealth();
 			Real maxHealth = body->getMaxHealth();
-			healthPercentage = (Int)(WWMath::Div_FixNaN(health, maxHealth, 0.0f) * 100.0f);
+			healthPercentage = (Int)(WWMath::Div_Safe(health, maxHealth, 0.0f) * 100.0f);
 		}
 	}
 
