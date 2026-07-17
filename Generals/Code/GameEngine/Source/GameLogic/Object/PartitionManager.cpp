@@ -5732,7 +5732,7 @@ void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;
@@ -5760,7 +5760,7 @@ void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;
@@ -5788,7 +5788,7 @@ void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;
@@ -5816,7 +5816,7 @@ void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms)
 		if (x < 0 || x >= ThePartitionManager->m_cellCountX)
 			continue;
 
-		distance = WWMath::Sqrt( WWMath::Pow(x - parms->xCenter, 2) + WWMath::Pow(y - parms->yCenter, 2) );
+		distance = WWMath::Sqrt( WWMath::Sqr(x - parms->xCenter) + WWMath::Sqr(y - parms->yCenter) );
 		mulVal = 1 - distance / parms->radius;
 		if (mulVal < 0.0f)
 			mulVal = 0.0f;

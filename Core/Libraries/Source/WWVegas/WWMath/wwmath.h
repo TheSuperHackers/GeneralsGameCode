@@ -104,6 +104,7 @@ static void			Shutdown();
 
 static WWINLINE double Pow(double x, double y);
 static WWINLINE float  Powf(float x, float y);
+static WWINLINE double Sqr(float x);
 static WWINLINE float  Sqrt_Legacy(float val);
 static WWINLINE float  Sqrt(float x);
 	static WWINLINE float  Sqrt(int x);
@@ -225,6 +226,15 @@ WWINLINE double WWMath::Pow(double x, double y)
 	return gm_pow(x, y);
 #else
 	return pow(x, y);
+#endif
+}
+
+WWINLINE double WWMath::Sqr(float x)
+{
+#if USE_DETERMINISTIC_MATH
+	return (double)(x * x);
+#else
+	return Pow((double)x, 2.0);
 #endif
 }
 
