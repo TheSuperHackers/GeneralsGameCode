@@ -703,19 +703,12 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	const Int borderSize = m_map->getBorderSizeInline();
 	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH + borderSize; // Allow picking past the edge for scrolling & objects.
 
-	const Real rayMinHeight = std::min(raytest.Ray.Get_P0().Z, raytest.Ray.Get_P1().Z);
-	const Real rayMaxHeight = std::max(raytest.Ray.Get_P0().Z, raytest.Ray.Get_P1().Z);
-	const Real rayHeightDelta = rayMaxHeight - rayMinHeight;
-	const Real rayHeightMargin = std::min(1.0f, rayHeightDelta * 0.49f);
-	Real mapMinHeight = MAP_HEIGHT_SCALE * m_map->getMinHeightValue(); // Begin with min map height.
-	Real mapMaxHeight = MAP_HEIGHT_SCALE * m_map->getMaxHeightValue(); // Begin with max map height.
-	mapMinHeight = std::max(mapMinHeight, rayMinHeight + rayHeightMargin); // But not lower than the ray end plus a margin.
-	mapMaxHeight = std::min(mapMaxHeight, rayMaxHeight - rayHeightMargin); // But not higher than the ray start minus a margin.
-
 	// The first hit box is very rough and is only meant to narrow the search.
-	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), mapMinHeight);
-	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang), MAP_XY_FACTOR*(m_map->getYExtent()+overhang), mapMaxHeight);
-	MinMaxAABoxClass mmbox(minPt, maxPt);
+	const Real mapMinHeight = MAP_HEIGHT_SCALE * m_map->getMinHeightValue();
+	const Real mapMaxHeight = MAP_HEIGHT_SCALE * m_map->getMaxHeightValue();
+	const Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), mapMinHeight);
+	const Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang), MAP_XY_FACTOR*(m_map->getYExtent()+overhang), mapMaxHeight);
+	const MinMaxAABoxClass mmbox(minPt, maxPt);
 	hbox.Init(mmbox);
 
 	lineseg=raytest.Ray;
@@ -730,8 +723,8 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		if (CollisionMath::Collide(lineseg,hbox,&result))
 		{
-			//ray intersects terrain or starts inside the terrain.
-			if (!result.StartBad)	//check if start point inside terrain
+			// Go ahead if point is not starting inside terrain or it is the first rough box collision.
+			if (!result.StartBad || terrainIntersectionIteration == 0)
 			{
 				newP0 = P0 != result.ContactPoint;
 				P0 = result.ContactPoint;	//make intersection point the new start of the ray.
@@ -744,7 +737,8 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 			lineseg2.Set(lineseg.Get_P1(),lineseg.Get_P0());	//reverse line segment
 			if (CollisionMath::Collide(lineseg2,hbox,&result))
 			{
-				if (!result.StartBad)	//check if end point inside terrain
+				// Go ahead if point is not starting inside terrain or it is the first rough box collision.
+				if (!result.StartBad || terrainIntersectionIteration == 0)
 				{
 					newP1 = P1 != result.ContactPoint;
 					P1 = result.ContactPoint;	//make intersection point the new end point of ray
