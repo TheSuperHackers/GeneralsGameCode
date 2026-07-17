@@ -671,8 +671,8 @@ opposite corners of the map would check every polygon in the map).
 (ala line drawing).  We should also try making the search in a front->back order
 relative to the ray so we can early exit as soon as we have a hit.
 */
-// TheSuperHackers @fix This function now creates its initial hit box
-// with dimensions that fit into the ray cast and no longer falls back to an
+// TheSuperHackers @fix The ray cast can now correctly collide with the initial
+// hit box even if the ray starts inside of it and no longer falls back to an
 // infinitely large search region if the initial box cannot be collided with.
 //=============================================================================
 bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
