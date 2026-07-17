@@ -22,7 +22,7 @@
 #include "GameClient/InGameUI.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/surfaceclass.h"
-#include "mpsc_intrusive_queue.h"
+#include "WWLib/mpsc_intrusive_queue.h"
 #include <stb_image_write.h>
 
 struct ScreenshotThreadData
