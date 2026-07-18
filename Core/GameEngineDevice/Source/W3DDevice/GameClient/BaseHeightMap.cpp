@@ -675,8 +675,8 @@ opposite corners of the map would check every polygon in the map).
 relative to the ray so we can early exit as soon as we have a hit.
 */
 // TheSuperHackers @fix The ray cast can now correctly collide with the initial
-// hit box even if the ray starts inside of it and no longer falls back to an
-// infinitely large search region if the initial box cannot be collided with.
+// hit boxes even if the ray starts inside of it and no longer falls back to an
+// infinitely large search region if the initial boxes cannot be collided with.
 //=============================================================================
 bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 {
@@ -703,7 +703,7 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	const Int borderSize = m_map->getBorderSizeInline();
 	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH + borderSize; // Allow picking past the edge for scrolling & objects.
 
-	// The first hit box is very rough and is only meant to narrow the search.
+	// The initial hit boxes are very rough and are only meant to narrow the search before the triangle intersection.
 	const Real mapMinHeight = MAP_HEIGHT_SCALE * m_map->getMinHeightValue();
 	const Real mapMaxHeight = MAP_HEIGHT_SCALE * m_map->getMaxHeightValue();
 	const Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), mapMinHeight);
@@ -723,13 +723,9 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		if (CollisionMath::Collide(lineseg,hbox,&result))
 		{
-			// Go ahead if point is not starting inside terrain or it is the first rough box collision.
-			if (!result.StartBad || terrainIntersectionIteration == 0)
-			{
-				newP0 = P0 != result.ContactPoint;
-				P0 = result.ContactPoint;	//make intersection point the new start of the ray.
-				++P0HitCount;
-			}
+			newP0 = P0 != result.ContactPoint;
+			P0 = result.ContactPoint;	//make intersection point the new start of the ray.
+			++P0HitCount;
 
 			//reverse direction of original ray and clip again to extent of heightmap
 			result.Fraction=1.0f;	//reset the result
@@ -737,13 +733,9 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 			lineseg2.Set(lineseg.Get_P1(),lineseg.Get_P0());	//reverse line segment
 			if (CollisionMath::Collide(lineseg2,hbox,&result))
 			{
-				// Go ahead if point is not starting inside terrain or it is the first rough box collision.
-				if (!result.StartBad || terrainIntersectionIteration == 0)
-				{
-					newP1 = P1 != result.ContactPoint;
-					P1 = result.ContactPoint;	//make intersection point the new end point of ray
-					++P1HitCount;
-				}
+				newP1 = P1 != result.ContactPoint;
+				P1 = result.ContactPoint;	//make intersection point the new end point of ray
+				++P1HitCount;
 			}
 		}
 
@@ -793,10 +785,6 @@ bool BaseHeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 		MinMaxAABoxClass mmbox(minPt, maxPt);
 		hbox.Init(mmbox);
 	}
-
-	// Needs at least 2 hit counts for a proper terrain collision.
-	if (P0HitCount < 2 || P1HitCount < 2)
-		return false;
 
 	raytest.Result->ComputeContactPoint=true;	//tell CollisionMath that we need point.
 
