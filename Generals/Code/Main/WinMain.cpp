@@ -58,6 +58,9 @@
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"  ///< @todo for demo, remove
 #include "GameClient/Mouse.h"
+#include "GameClient/LookAtXlat.h"
+#include "GameClient/SelectionXlat.h"
+#include "GameClient/View.h"
 #include "GameClient/IMEManager.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
@@ -452,6 +455,45 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 						TheMouse->onCursorMovedOutside();
 					}
 				}
+
+				// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Windows delivers no mouse
+				// button-up events for buttons that were held when focus is lost (alt tab, or
+				// clicking outside the window while cursor lock is disabled), so mouse-drag
+				// gesture latches stayed stuck until the next matching button-up inside the
+				// window. Explicitly cancel each latch here with its existing cancellation
+				// path, rather than synthesizing fake button-up events, because a fake
+				// button-up would falsely confirm a real action (complete an area selection,
+				// or confirm a building placement) instead of harmlessly canceling it.
+				// (github.com/TheSuperHackers/GeneralsGameCode issues #2733, #2734, #2735)
+
+				// Cancel an in-progress RMB drag-scroll or MMB rotate/pitch of the camera.
+				if (TheLookAtTranslator)
+					TheLookAtTranslator->resetModes();
+
+				// Cancel an in-progress left-drag area selection. This mirrors the teardown
+				// GameWindow already performs when a drag-select ends on the control bar.
+				if (TheSelectionTranslator)
+				{
+					TheSelectionTranslator->setLeftMouseButton(FALSE);
+					TheSelectionTranslator->setDragSelecting(FALSE);
+
+					if (TheTacticalView)
+						TheTacticalView->setMouseLock( FALSE );
+
+					if (TheInGameUI)
+					{
+						TheInGameUI->setSelecting( FALSE );
+						TheInGameUI->endAreaSelectHint(nullptr);
+					}
+				}
+
+				// Unhook a building placement angle-drag anchor (left button held to rotate a
+				// building before placing it). This keeps the pending placement itself alive
+				// and mirrors the existing "unhook the anchor so they can try again" path in
+				// PlaceEventTranslator, so the next click starts a fresh anchor instead of
+				// being misinterpreted.
+				if (TheInGameUI)
+					TheInGameUI->setPlacementStart( nullptr );
 
 				break;
 			}
