@@ -115,7 +115,6 @@ Smudge *SmudgeManager::findSmudge(Smudge::Identifier identifier)
 
 SmudgeSet::SmudgeSet()
 {
-	m_usedSmudgeCount=0;
 }
 
 SmudgeSet::~SmudgeSet()
@@ -134,7 +133,6 @@ void SmudgeSet::reset()
 	}
 
 	m_usedSmudgeMap.clear();
-	m_usedSmudgeCount = 0;
 }
 
 void SmudgeSet::resetDraw()
@@ -160,7 +158,6 @@ Smudge *SmudgeSet::addSmudgeToSet(Smudge::Identifier identifier)
 	smudge->m_identifier = identifier;
 	m_usedSmudgeList.push_back(smudge);	//add to used list.
 	m_usedSmudgeMap[identifier] = smudge;
-	m_usedSmudgeCount++;
 	return smudge;
 }
 
