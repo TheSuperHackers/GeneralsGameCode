@@ -301,6 +301,13 @@ private:
 	Real getDesiredZoom(Real x, Real y) const;
 	Real getMaxHeight(Real x, Real y) const;
 	Real getMaxZoom(Real x, Real y) const;
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Reference zoom for SCRIPTED camera moves
+	// (mission intro cutscenes, doSetupCamera/cameraModFinalZoom, resetCamera), which express
+	// their zoom as a fraction of this value. getMaxZoom() is anchored to the full, raised
+	// MaxCameraHeight (e.g. 1200), which made scripted "zoom = 1.0" cutscenes zoom out 4x more
+	// than their retail-tuned design. This anchors scripted zoom to DefaultCameraHeight instead
+	// (clamped to never exceed the actual max), independent of the manual zoom-out ceiling.
+	Real getScriptZoomReference(Real x, Real y) const;
 	void updateCameraTransform(); ///< update the transform matrix of m_3DCamera, based on m_pos & m_angle
 	void updateCameraClipPlanes(const Matrix3D &transform);
 	void setCameraTransform(const Matrix3D &transform);

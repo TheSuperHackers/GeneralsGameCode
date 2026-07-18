@@ -723,6 +723,19 @@ Real W3DView::getMaxZoom(Real x, Real y) const
 }
 
 //-------------------------------------------------------------------------------------------------
+Real W3DView::getScriptZoomReference(Real x, Real y) const
+{
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 See declaration comment in W3DView.h.
+	const Real referenceHeightAboveGround = min(TheGlobalData->m_defaultCameraHeight, m_maxHeightAboveGround);
+	const Real referenceHeight =
+#if PRESERVE_RETAIL_SCRIPTED_CAMERA
+		!m_isUserControlled ? (getHeightAroundPos(x, y) + referenceHeightAboveGround) :
+#endif
+		(m_pos.z + referenceHeightAboveGround);
+	return referenceHeight / getCameraOffsetZ();
+}
+
+//-------------------------------------------------------------------------------------------------
 /** set the transform matrix of m_3DCamera, based on m_pos & m_angle */
 //-------------------------------------------------------------------------------------------------
 void W3DView::updateCameraTransform()
@@ -2873,16 +2886,20 @@ void W3DView::pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real 
 //-------------------------------------------------------------------------------------------------
 void W3DView::cameraModFinalZoom( Real finalZoom, Real easeIn, Real easeOut )
 {
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Was getMaxZoom(), anchored to the full,
+	// raised MaxCameraHeight - made scripted "zoom = 1.0" mission-intro cutscenes zoom out
+	// proportionally to the raised manual zoom-out ceiling instead of their retail-tuned
+	// design. getScriptZoomReference() anchors this to DefaultCameraHeight instead.
 	if (hasScriptedState(Scripted_Rotate))
 	{
 		Real time = (m_rcInfo.numFrames + m_rcInfo.numHoldFrames - m_rcInfo.curFrame)*TheW3DFrameLengthInMsec;
-		zoomCamera( finalZoom*getMaxZoom(m_pos.x, m_pos.y), time, time*easeIn, time*easeOut );
+		zoomCamera( finalZoom*getScriptZoomReference(m_pos.x, m_pos.y), time, time*easeIn, time*easeOut );
 	}
 	if (hasScriptedState(Scripted_MoveOnWaypointPath))
 	{
 		Coord3D pos = m_mcwpInfo.waypoints[m_mcwpInfo.numWaypoints];
 		Real time = m_mcwpInfo.totalTimeMilliseconds - m_mcwpInfo.elapsedTimeMilliseconds;
-		zoomCamera( finalZoom*getMaxZoom(pos.x, pos.y), time, time*easeIn, time*easeOut );
+		zoomCamera( finalZoom*getScriptZoomReference(pos.x, pos.y), time, time*easeIn, time*easeOut );
 	}
 }
 
@@ -3117,7 +3134,8 @@ void W3DView::resetCamera(const Coord3D *location, Int milliseconds, Real easeIn
 	// m_mcwpInfo.cameraAngle[2] = m_defaultAngle;
 	View::setAngle(m_mcwpInfo.cameraAngle[0]);
 
-	zoomCamera( getMaxZoom(location->x, location->y), milliseconds, easeIn, easeOut );
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Was getMaxZoom() - see cameraModFinalZoom().
+	zoomCamera( getScriptZoomReference(location->x, location->y), milliseconds, easeIn, easeOut );
 
 	pitchCamera( 1.0f, milliseconds, easeIn, easeOut );
 }
