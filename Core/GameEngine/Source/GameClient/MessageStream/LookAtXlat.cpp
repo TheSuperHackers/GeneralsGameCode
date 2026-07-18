@@ -290,6 +290,12 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			m_middleButtonDownTimeMsec = now;
 
 			m_isRotating = true;
+			// TheSuperHackers @feature ZsoltFeher 18/07/2026 Camera pitch was previously a
+			// debug-only tool (bound to KEY_COMMA in CommandMapDebug.ini, RTS_DEBUG-only).
+			// Exposed to players here by piggybacking on the existing middle-mouse-drag
+			// rotate gesture: horizontal drag still rotates (m_isRotating, unchanged),
+			// vertical drag now also pitches (m_isPitching, previously unreachable).
+			m_isPitching = true;
 			m_anchor = msg->getArgument( 0 )->pixel;
 			m_anchorAngle = TheTacticalView->getAngle();
 			m_originalAnchor = msg->getArgument( 0 )->pixel;
@@ -307,6 +313,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			const UnsignedInt PIXEL_OFFSET = 5;
 
 			m_isRotating = false;
+			m_isPitching = false;
 			Int dx = m_currentPos.x-m_originalAnchor.x;
 			if (dx<0) dx = -dx;
 			Int dy = m_currentPos.y-m_originalAnchor.y;
