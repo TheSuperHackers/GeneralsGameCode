@@ -42,6 +42,12 @@ Int GameMain()
 	// initialize the game engine using factory function
 	TheFramePacer = new FramePacer();
 	TheFramePacer->enableFramesPerSecondLimit(TRUE);
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Decouple simulation speed from render frame
+	// rate by default. Without this, raising the render FPS limit also speeds up game logic
+	// (unit/aircraft movement), since FramePacer::getActualLogicTimeScaleFps() falls back to an
+	// uncapped value aligned to render FPS whenever logic time scale is disabled. Network games
+	// are unaffected, they use TheNetwork->getFrameRate() instead.
+	TheFramePacer->enableLogicTimeScale(TRUE);
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init();
 
