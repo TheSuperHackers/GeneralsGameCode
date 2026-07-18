@@ -64,7 +64,9 @@ protected:
 	void* Vertices;
 
 	// This class can't be used directly, so constructor as to be protected
-	VertexBufferLockClass(VertexBufferClass* vertex_buffer_) : VertexBuffer(vertex_buffer_) {}
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Initialize Vertices to null so a failed
+	// buffer lock leaves a reliably null pointer for callers to test, rather than stack garbage.
+	VertexBufferLockClass(VertexBufferClass* vertex_buffer_) : VertexBuffer(vertex_buffer_), Vertices(nullptr) {}
 public:
 	void* Get_Vertex_Array() { return Vertices; }
 };

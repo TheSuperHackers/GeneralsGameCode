@@ -825,6 +825,17 @@ Try improving the fit to vertical surfaces like cliffs.
 	{
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexBuffer);
 		VertexFormatXYZDUV1 *verts = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
+
+		// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 The vertex buffer lock can fail
+		// (for example on a lost device), leaving no vertex array to write to. Skip drawing
+		// the track marks this frame instead of crashing on a null pointer dereference.
+		if (verts == nullptr)
+		{
+			DEBUG_LOG(("TerrainTracksRenderObjClassSystem::flush - vertex buffer lock failed, skipping track marks this frame"));
+			m_edgesToFlush=0;
+			return;
+		}
+
 		trackStartIndex=0;
 
 		mod=m_usedModules;
