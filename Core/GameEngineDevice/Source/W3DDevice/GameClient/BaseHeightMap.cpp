@@ -1285,7 +1285,19 @@ Bool BaseHeightMapRenderObjClass::showAsVisibleCliff(Int xIndex, Int yIndex) con
 
 	Int xSize = m_map->getXExtent();
 
-	return m_showAsVisibleCliff[xIndex + yIndex * xSize];
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Guard against reading past the end of
+	// m_showAsVisibleCliff. This vector is cleared on every map reset and is only (re)built by
+	// updateViewImpassableAreas(), so it can be empty (or sized for a previous map) when the
+	// impassable areas debug overlay is enabled in game. Indexing the empty std::vector<bool>
+	// dereferenced its null internal storage and crashed while drawing passable areas.
+	// See GitHub issue #254.
+	const size_t index = (size_t)xIndex + (size_t)yIndex * (size_t)xSize;
+	if (index >= m_showAsVisibleCliff.size())
+	{
+		return false;
+	}
+
+	return m_showAsVisibleCliff[index];
 }
 
 //=============================================================================

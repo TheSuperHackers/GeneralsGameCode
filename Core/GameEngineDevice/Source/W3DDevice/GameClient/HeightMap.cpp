@@ -320,6 +320,16 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, VERTEX_FORMAT *
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif
 
+		// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Build the visible cliff lookup table before
+		// it is read below via showAsVisibleCliff(). In game, updateViewImpassableAreas() was only
+		// ever called from doPartialUpdate() (terrain deformation), so enabling the impassable
+		// areas debug overlay usually read an unallocated (empty) table and crashed, and only
+		// worked on the rare occasions the table happened to be built. See GitHub issue #254.
+		if (m_showImpassableAreas &&
+				m_showAsVisibleCliff.size() != (size_t)pMap->getXExtent() * (size_t)pMap->getYExtent()) {
+			updateViewImpassableAreas();
+		}
+
 		DX8VertexBufferClass::WriteLockClass lockVtxBuffer(pVB);
 		VERTEX_FORMAT *vbHardware = (VERTEX_FORMAT*)lockVtxBuffer.Get_Vertex_Array();
 		VERTEX_FORMAT *vBase = data;
