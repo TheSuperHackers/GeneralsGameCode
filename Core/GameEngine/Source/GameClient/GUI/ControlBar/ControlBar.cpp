@@ -88,6 +88,8 @@
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 ControlBar *TheControlBar = nullptr;
 
+Xfer *ControlBar::s_iniLoadCRC = nullptr;
+
 const Image* ControlBar::m_rankVeteranIcon	= nullptr;
 const Image* ControlBar::m_rankEliteIcon		= nullptr;
 const Image* ControlBar::m_rankHeroicIcon		= nullptr;
@@ -1069,7 +1071,9 @@ void ControlBar::init()
 	ini.loadFileDirectory( "Data\\INI\\CommandButton", INI_LOAD_OVERWRITE, nullptr );
 
 	// load the command sets
-	ini.loadFileDirectory( "Data\\INI\\CommandSet", INI_LOAD_OVERWRITE, nullptr );
+	// TheSuperHackers @bugfix Include CommandSet.ini in the INI load CRC check (GitHub issue #80).
+	// s_iniLoadCRC is set by GameEngine::init while the INI CRC is accumulating and is null otherwise.
+	ini.loadFileDirectory( "Data\\INI\\CommandSet", INI_LOAD_OVERWRITE, s_iniLoadCRC );
 
 	// post process step after loading the command buttons and command sets
 	postProcessCommands();

@@ -57,6 +57,7 @@ class UpgradeTemplate;
 class ControlBarResizer;
 class GameWindowTransitionsHandler;
 class DisplayString;
+class Xfer;
 
 enum ProductionID CPP_11(: Int);
 
@@ -659,6 +660,11 @@ public:
 	virtual void reset() override;					///< from subsystem interface
 	virtual void update() override;				///< from subsystem interface
 
+	// TheSuperHackers @bugfix Include CommandSet.ini in the INI load CRC check (GitHub issue #80).
+	// GameEngine::init sets this Xfer while the INI CRC is accumulating, so that ControlBar::init
+	// includes the CommandSet INI data in the CRC. It is null outside of that window.
+	static void setIniLoadCRC( Xfer *xfer ) { s_iniLoadCRC = xfer; }
+
 	/// mark the UI as dirty so the context of everything is re-evaluated
 	void markUIDirty();
 
@@ -787,6 +793,8 @@ public:
 	void drawSpecialPowerShortcutMultiplierText();
 
 protected:
+	static Xfer *s_iniLoadCRC;	///< accumulates the INI CRC during engine initialization, see setIniLoadCRC
+
 	void updateRadarAttackGlow ();
 
 	void setDefaultControlBarConfig();

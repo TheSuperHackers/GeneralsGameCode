@@ -86,6 +86,7 @@
 #include "GameLogic/SidesList.h"
 
 #include "GameClient/ClientInstance.h"
+#include "GameClient/ControlBar.h"
 #include "GameClient/FXList.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/Keyboard.h"
@@ -597,7 +598,18 @@ void GameEngine::init()
 #endif
 
 		initSubsystem(TheUpgradeCenter,"TheUpgradeCenter", MSGNEW("GameEngineSubsystem") UpgradeCenter, &xferCRC, "Data\\INI\\Default\\Upgrade", "Data\\INI\\Upgrade");
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix Include CommandSet.ini in the INI load CRC check (GitHub issue #80).
+		// CommandSet.ini is loaded by ControlBar::init during TheGameClient initialization, which
+		// previously bypassed the CRC accumulation. Hand the CRC Xfer to ControlBar for this window.
+		// Note that including it changes the final m_iniCRC and therefore breaks online/LAN lobby
+		// compatibility with retail 1.04 and older builds, hence the RETAIL_COMPATIBLE_CRC guard.
+		ControlBar::setIniLoadCRC(&xferCRC);
+#endif
 		initSubsystem(TheGameClient,"TheGameClient", createGameClient(), nullptr);
+#if !RETAIL_COMPATIBLE_CRC
+		ControlBar::setIniLoadCRC(nullptr);
+#endif
 
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
