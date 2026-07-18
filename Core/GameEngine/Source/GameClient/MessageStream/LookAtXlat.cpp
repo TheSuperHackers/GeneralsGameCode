@@ -668,6 +668,14 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_META_SAVE_VIEW7:
 		case GameMessage::MSG_META_SAVE_VIEW8:
 		{
+			// TheSuperHackers @bugfix Do not allow the user to set a camera view bookmark while
+			// input is disabled (e.g. during a scripted camera scene).
+			if ( TheInGameUI && TheInGameUI->getInputEnabled() == FALSE )
+			{
+				disp = DESTROY_MESSAGE;
+				break;
+			}
+
 			Int slot = t - GameMessage::MSG_META_SAVE_VIEW1 + 1;
 			if ( slot > 0 && slot <= MAX_VIEW_LOCS )
 			{
@@ -690,6 +698,15 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 		case GameMessage::MSG_META_VIEW_VIEW7:
 		case GameMessage::MSG_META_VIEW_VIEW8:
 		{
+			// TheSuperHackers @bugfix Do not allow the user to jump the camera to a bookmarked view
+			// while input is disabled (e.g. during a scripted camera scene). Otherwise it would be
+			// possible to call user camera actions during scripted camera scenes.
+			if ( TheInGameUI && TheInGameUI->getInputEnabled() == FALSE )
+			{
+				disp = DESTROY_MESSAGE;
+				break;
+			}
+
 			Int slot = t - GameMessage::MSG_META_VIEW_VIEW1 + 1;
 			if ( slot > 0 && slot <= MAX_VIEW_LOCS )
 			{
@@ -771,6 +788,15 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 
 void LookAtTranslator::resetModes()
 {
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 If a scroll (e.g. an RMB drag) is in
+	// progress, tear it down completely via stopScrolling() instead of just clearing the local
+	// flag. Clearing only m_isScrolling left TheInGameUI's scrolling state, the tactical view
+	// mouse lock and the scroll cursor stuck, both when scripts disable input mid-scroll and
+	// when the window loses focus during an RMB camera drag.
+	// (github.com/TheSuperHackers/GeneralsGameCode issue #2733)
+	if (m_isScrolling)
+		stopScrolling();
+
 	m_isScrolling = FALSE;
 	m_isRotating = FALSE;
 	m_isPitching = FALSE;
