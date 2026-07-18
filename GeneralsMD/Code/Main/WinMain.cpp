@@ -73,6 +73,21 @@
 
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
+
+// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 On hybrid-GPU systems (notebooks with an
+// integrated GPU plus a dedicated GPU), the game was rendered on the default GPU, which is
+// typically the weak integrated one, leaving the strong dedicated GPU unused and performance
+// poor. NVIDIA (Optimus) and AMD (PowerXpress/Enduro) drivers look for these exported symbols
+// by name in the launched executable and, when present, route the process to the
+// high-performance GPU. The values 0x00000001 (NVIDIA) and 1 (AMD) are the documented
+// "prefer high-performance GPU" values. This is the standard, widely-used technique adopted
+// by virtually every Windows game affected by hybrid-GPU switching, and works even though
+// DirectX 8 itself has no GPU-preference concept. See GitHub issue #880.
+extern "C" {
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
 HWND ApplicationHWnd = nullptr;  ///< our application window handle
 Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
