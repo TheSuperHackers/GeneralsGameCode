@@ -1754,8 +1754,24 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera, const Vector3 *c
 		}
 		calcVis(frustum, m_map, minX-WIDE_STEP/2, minY-WIDE_STEP/2, maxX+WIDE_STEP/2, maxY+WIDE_STEP/2, limit);
 
-		newOrgX = (visMaxX+visMinX)/2 - m_x/2;
-		newOrgY = (visMaxY+visMinY)/2 - m_y/2;
+		// TheSuperHackers @fix Guard against the frustum-based visibility scan finding no terrain tiles.
+		// This degenerates when the camera is very far from the terrain or at an extreme scripted cutscene
+		// angle (e.g. the USA Mission 3 MOAB-drop and mission intro reveal cutscenes): the coarse frustum
+		// sampling in calcVis can miss the visible terrain strip, leaving visMin/visMax at their initial
+		// inverted values. The old code then computed newOrg from (0 + mapExtent)/2, snapping the small
+		// rendered terrain window to the map center - away from where the camera is actually looking - so the
+		// on-screen terrain was left undrawn and appeared black while units/structures still rendered.
+		// In that case, fall back to centering the draw window on the camera look-at position instead.
+		if (visMaxX < visMinX || visMaxY < visMinY)
+		{
+			newOrgX = WWMath::Round(cameraPivot->X/MAP_XY_FACTOR) - m_x/2 + m_map->getBorderSizeInline();
+			newOrgY = WWMath::Round(cameraPivot->Y/MAP_XY_FACTOR) - m_y/2 + m_map->getBorderSizeInline();
+		}
+		else
+		{
+			newOrgX = (visMaxX+visMinX)/2 - m_x/2;
+			newOrgY = (visMaxY+visMinY)/2 - m_y/2;
+		}
 	}
 	else
 	{
