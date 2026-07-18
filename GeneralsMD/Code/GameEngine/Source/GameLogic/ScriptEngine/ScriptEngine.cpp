@@ -66,7 +66,14 @@ static Bool st_AppIsFast = false;
 static void _appendMessage(const AsciiString& str, Bool isTrueMessage = true, Bool shouldPause = false);
 static void _adjustVariable(const AsciiString& str, Int value, Bool shouldPause = false);
 static void _updateFrameNumber();
+// TheSuperHackers @build ZsoltFeher 18/07/2026 Guard the Win32-only DebugWindow.dll/
+// ParticleEditor.dll dev-tool bridge behind _WIN32 so this file compiles on non-Windows
+// platforms. No behavior change on Windows.
+#ifdef _WIN32
 static HMODULE st_DebugDLL;
+#else
+static void* st_DebugDLL = nullptr;
+#endif
 // That's it for debugger window
 
 // These are for particle editor
@@ -92,7 +99,11 @@ static void _writeOutINI();
 extern void _writeSingleParticleSystem( File *out, ParticleSystemTemplate *particleTemplate );
 static void _reloadTextures();
 
+#ifdef _WIN32
 static HMODULE st_ParticleDLL;
+#else
+static void* st_ParticleDLL = nullptr;
+#endif
 ParticleSystem *st_particleSystem;
 Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSystem if the particle system has infinite life
 #define ARBITRARY_BUFF_SIZE	128
@@ -471,6 +482,7 @@ m_ChooseVictimAlwaysUsesNormal(false)
 //-------------------------------------------------------------------------------------------------
 ScriptEngine::~ScriptEngine()
 {
+#ifdef _WIN32
 	if (st_DebugDLL) {
 		FARPROC proc = GetProcAddress(st_DebugDLL, "DestroyDebugDialog");
 		if (proc) {
@@ -490,6 +502,7 @@ ScriptEngine::~ScriptEngine()
 		FreeLibrary(st_ParticleDLL);
 		st_ParticleDLL = nullptr;
 	}
+#endif
 
 #ifdef DO_VTUNE_STUFF
 	_cleanUpVTune();
@@ -517,6 +530,7 @@ ScriptEngine::~ScriptEngine()
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::init()
 {
+#ifdef _WIN32
 	if (TheGlobalData->m_windowed)
 		if (TheGlobalData->m_scriptDebug) {
 			st_DebugDLL = LoadLibrary("DebugWindow.dll");
@@ -543,6 +557,7 @@ void ScriptEngine::init()
 			proc();
 		}
 	}
+#endif
 
 #ifdef DO_VTUNE_STUFF
 	_initVTune();
@@ -8434,6 +8449,7 @@ void ScriptEngine::doUnfreezeTime()
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::isTimeFrozenDebug()
 {
+#ifdef _WIN32
 	typedef Bool (*funcptr)();
 
 	if (st_DebugDLL) {
@@ -8451,6 +8467,9 @@ Bool ScriptEngine::isTimeFrozenDebug()
 		return !st_CanAppCont;
 	}
 	return false;
+#else
+	return false;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -8458,6 +8477,7 @@ Bool ScriptEngine::isTimeFrozenDebug()
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::isTimeFast()
 {
+#ifdef _WIN32
 	typedef Bool (*funcptr)();
 
 	if (st_DebugDLL) {
@@ -8480,10 +8500,14 @@ Bool ScriptEngine::isTimeFast()
 		}
 	}
 	return false;
+#else
+	return false;
+#endif
 }
 
 void ScriptEngine::forceUnfreezeTime()
 {
+#ifdef _WIN32
 	typedef void (*funcptr)();
 
 	if (st_DebugDLL) {
@@ -8492,6 +8516,7 @@ void ScriptEngine::forceUnfreezeTime()
 			((funcptr)proc)();
 		}
 	}
+#endif
 }
 
 void ScriptEngine::AppendDebugMessage(const AsciiString& strToAdd, Bool forcePause)
@@ -8499,6 +8524,7 @@ void ScriptEngine::AppendDebugMessage(const AsciiString& strToAdd, Bool forcePau
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("-SCRIPT- %d %s", TheGameLogic->getFrame(), strToAdd.str()));
 #endif
+#ifdef _WIN32
 	typedef void (*funcptr)(const char*);
 	if (!st_DebugDLL) {
 		return;
@@ -8518,6 +8544,7 @@ void ScriptEngine::AppendDebugMessage(const AsciiString& strToAdd, Bool forcePau
 	msg.format("%d ", TheGameLogic->getFrame());
 	msg.concat(strToAdd);
 	((funcptr)proc)(msg.str());
+#endif
 }
 
 void ScriptEngine::AdjustDebugVariableData(const AsciiString& variableName, Int value, Bool forcePause)
@@ -9375,6 +9402,7 @@ void _appendMessage(const AsciiString& str, Bool isTrueMessage, Bool shouldPause
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("-SCRIPT- %s", msg.str()));
 #endif
+#ifdef _WIN32
 	if (!st_DebugDLL) {
 		return;
 	}
@@ -9390,11 +9418,13 @@ void _appendMessage(const AsciiString& str, Bool isTrueMessage, Bool shouldPause
 	}
 
 	((funcptr)proc)(msg.str());
+#endif
 }
 
 void _adjustVariable(const AsciiString& str, Int value, Bool shouldPause)
 {
 	typedef void (*funcptr)(const char*, const char*);
+#ifdef _WIN32
 	if (!st_DebugDLL) {
 		return;
 	}
@@ -9414,12 +9444,14 @@ void _adjustVariable(const AsciiString& str, Int value, Bool shouldPause)
 	sprintf(buff, "%d", value);
 
 	((funcptr)proc)(str.str(), buff);
+#endif
 }
 
 void _updateFrameNumber()
 {
 	if (TheScriptEngine->isTimeFast()) return;
 	typedef void (*funcptr)(int);
+#ifdef _WIN32
 	if (!st_DebugDLL) {
 		return;
 	}
@@ -9433,11 +9465,13 @@ void _updateFrameNumber()
 	UnsignedInt frameNum = TheGameLogic->getFrame();
 
 	((funcptr)proc)(frameNum);
+#endif
 }
 
 void _appendAllParticleSystems()
 {
 	typedef void (*funcptr)(const char*);
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return;
 	}
@@ -9461,12 +9495,14 @@ void _appendAllParticleSystems()
 	for (; begin != end; ++begin) {
 		((funcptr)proc)((*begin).first.str());
 	}
+#endif
 }
 
 // all ThingTemplates can be thrown with a particle system, so...
 void _appendAllThingTemplates()
 {
 	typedef void (*funcptr)(const char*);
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return;
 	}
@@ -9489,7 +9525,7 @@ void _appendAllThingTemplates()
 		((funcptr)proc)(pTemplate->getName().str());
 		pTemplate = pTemplate->friend_getNextTemplate();
 	}
-
+#endif
 }
 
 
@@ -9497,6 +9533,7 @@ void _addUpdatedParticleSystem( AsciiString particleSystemName )
 {
 	typedef void (*funcptr)(const char*);
 	typedef void (*funcptr2)(ParticleSystemTemplate*);
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return;
 	}
@@ -9524,12 +9561,14 @@ void _addUpdatedParticleSystem( AsciiString particleSystemName )
 
 	((funcptr)proc)(pTemplate->getName().str());
 	((funcptr2)proc2)(pTemplate);
+#endif
 }
 
 AsciiString _getParticleSystemName()
 {
 	typedef void (*funcptr)(char*);
 
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return AsciiString::TheEmptyString;
 	}
@@ -9545,12 +9584,16 @@ AsciiString _getParticleSystemName()
 	((funcptr) proc)(buff);
 
 	return AsciiString(buff);
+#else
+	return AsciiString::TheEmptyString;
+#endif
 }
 
 void _updatePanelParameters( ParticleSystemTemplate *particleTemplate )
 {
 	typedef void (*funcptr)(ParticleSystemTemplate*);
 
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return;
 	}
@@ -9562,12 +9605,14 @@ void _updatePanelParameters( ParticleSystemTemplate *particleTemplate )
 	}
 
 	((funcptr) proc)(particleTemplate);
+#endif
 }
 
 void _updateAsciiStringParmsToSystem( ParticleSystemTemplate *particleTemplate )
 {
 	typedef void (*funcptr)(int, char*, ParticleSystemTemplate **);
 
+#ifdef _WIN32
 	if (!st_ParticleDLL || !particleTemplate) {
 		return;
 	}
@@ -9597,12 +9642,14 @@ void _updateAsciiStringParmsToSystem( ParticleSystemTemplate *particleTemplate )
 	if (otherTemp == particleTemplate) {
 		particleTemplate->m_attachedSystemName.set(buff);
 	}
+#endif
 }
 
 extern void _updateAsciiStringParmsFromSystem( ParticleSystemTemplate *particleTemplate )
 {
 	typedef void (*funcptr)(int, const char*, ParticleSystemTemplate**);
 
+#ifdef _WIN32
 	if (!st_ParticleDLL || !particleTemplate) {
 		return;
 	}
@@ -9617,7 +9664,7 @@ extern void _updateAsciiStringParmsFromSystem( ParticleSystemTemplate *particleT
 	((funcptr) proc)(0, particleTemplate->m_particleTypeName.str(), nullptr);	// PARM_ParticleTypeName
 	((funcptr) proc)(1, particleTemplate->m_slaveSystemName.str(), nullptr);	// PARM_SlaveSystemName
 	((funcptr) proc)(2, particleTemplate->m_attachedSystemName.str(), nullptr);	// PARM_AttachedSystemName
-
+#endif
 }
 
 #define BACKUP_FILE_NAME	"Data\\INI\\ParticleSystem"
@@ -10106,6 +10153,7 @@ static int _getEditorBehavior()
 {
 	typedef int (*funcptr)();
 
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return 0x00;
 	}
@@ -10118,6 +10166,9 @@ static int _getEditorBehavior()
 	}
 
 	return ((funcptr)proc)();
+#else
+	return 0x00;
+#endif
 }
 
 static void _updateAndSetCurrentSystem()
@@ -10251,6 +10302,7 @@ static int _getNewCurrentParticleCap()
 {
 	typedef int (*funcptr)();
 
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return -1;
 	}
@@ -10263,12 +10315,16 @@ static int _getNewCurrentParticleCap()
 	}
 
 	return ((funcptr)proc)();
+#else
+	return -1;
+#endif
 }
 
 static void _updateCurrentParticleCap()
 {
 	typedef void (*funcptr)( int );
 
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return;
 	}
@@ -10281,12 +10337,14 @@ static void _updateCurrentParticleCap()
 	}
 
 	((funcptr)proc)(TheGlobalData->m_maxParticleCount);
+#endif
 }
 
 static void _updateCurrentParticleCount()
 {
 	typedef void (*funcptr)( int );
 
+#ifdef _WIN32
 	if (!st_ParticleDLL) {
 		return;
 	}
@@ -10299,6 +10357,7 @@ static void _updateCurrentParticleCount()
 	}
 
 	((funcptr)proc)(TheParticleSystemManager->getParticleCount());
+#endif
 }
 
 static void _reloadTextures()
