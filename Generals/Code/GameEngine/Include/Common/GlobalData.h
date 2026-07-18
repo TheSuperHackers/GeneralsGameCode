@@ -191,6 +191,11 @@ public:
 #endif
 	Real m_maxCameraHeight;
 	Real m_minCameraHeight;
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Separate, independently tunable "default
+	// view" height. W3DView::setZoomToDefault() previously equated default zoom with max zoom,
+	// which silently broke once MaxCameraHeight was raised well beyond its original design
+	// range (e.g. mission intro cutscenes zooming out to the new, much higher, max).
+	Real m_defaultCameraHeight;
 	Real m_terrainHeightAtEdgeOfMap;
 	Real m_unitDamagedThresh;
 	Real m_unitReallyDamagedThresh;
