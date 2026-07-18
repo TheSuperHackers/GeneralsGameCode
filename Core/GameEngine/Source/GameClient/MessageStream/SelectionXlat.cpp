@@ -1301,7 +1301,12 @@ GameMessageDisposition SelectionTranslator::onMetaAddTeam(MAYBE_UNUSED const Gam
 GameMessageDisposition SelectionTranslator::onMetaViewTeam(MAYBE_UNUSED const GameMessage *msg)
 {
 	Int group = msg->getType() - GameMessage::MSG_META_VIEW_TEAM0;
-	if ( group >= 1 && group <= 10 )
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Range check was `group >= 1 && group <= 10`,
+	// inconsistent with the identical pattern in onMetaCreateTeam/onMetaSelectTeam (both
+	// `group >= 0 && group < 10`) - team 0's view hotkey silently did nothing, and group == 10
+	// could reach getHotkeySquad() out of the valid 0-9 range.
+	// (github.com/TheSuperHackers/GeneralsGameCode issue #2842)
+	if ( group >= 0 && group < 10 )
 	{
 		DEBUG_LOG(("META: view team %d",group));
 		Player *player = ThePlayerList->getLocalPlayer();
