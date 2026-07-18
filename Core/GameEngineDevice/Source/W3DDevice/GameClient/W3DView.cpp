@@ -2275,9 +2275,19 @@ void W3DView::setZoom(Real z)
 //-------------------------------------------------------------------------------------------------
 void W3DView::setZoomToDefault()
 {
-	// default zoom has to be max, otherwise players will just zoom to max always
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Default zoom previously always equaled max
+	// zoom (m_maxHeightAboveGround), which silently broke once MaxCameraHeight was raised well
+	// beyond its original design range - anything relying on "default zoom" (e.g. mission intro
+	// cutscenes) would zoom out to the new, much higher, max. DefaultCameraHeight is a separate,
+	// independently tunable value (clamped to never exceed the actual max) so raising the
+	// zoom-out ceiling no longer drags the default view out with it.
+	const Real savedMaxHeightAboveGround = m_maxHeightAboveGround;
+	m_maxHeightAboveGround = min(TheGlobalData->m_defaultCameraHeight, m_maxHeightAboveGround);
+
 	m_heightAboveGround = m_maxHeightAboveGround;
 	m_zoom = getMaxZoom(m_pos.x, m_pos.y);
+
+	m_maxHeightAboveGround = savedMaxHeightAboveGround;
 
 	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
