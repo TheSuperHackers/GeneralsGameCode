@@ -344,10 +344,11 @@ Real DeliverPayloadAIUpdate::calcMinTurnRadius(Real* timeToTravelThatDist) const
 
 		so we just eliminate the middleman:
 	*/
-	Real minTurnRadius = (maxTurnRate > 0.0f) ? (maxSpeed / maxTurnRate) : 999999.0f;
+	// determine required turn radius based on our current speed and max turn rate
+	Real minTurnRadius = WWMath::Div_Safe(maxSpeed, maxTurnRate, 999999.0f);
 
 	if (timeToTravelThatDist)
-		*timeToTravelThatDist = minTurnRadius / maxSpeed;
+		*timeToTravelThatDist = WWMath::Div_Safe(minTurnRadius, maxSpeed, 999999.0f);
 
 	return minTurnRadius;
 }

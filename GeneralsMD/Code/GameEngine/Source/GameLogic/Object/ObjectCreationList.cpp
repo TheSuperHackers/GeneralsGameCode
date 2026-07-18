@@ -33,7 +33,7 @@
 #define DEFINE_SHADOW_NAMES								// for TheShadowNames[]
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
-#define NO_DEBUG_CRC
+//#define NO_DEBUG_CRC
 
 #include "Common/AudioEventRTS.h"
 #include "Common/DrawModule.h"

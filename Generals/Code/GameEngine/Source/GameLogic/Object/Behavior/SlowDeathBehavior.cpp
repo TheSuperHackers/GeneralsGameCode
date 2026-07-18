@@ -179,8 +179,9 @@ Int SlowDeathBehavior::getProbabilityModifier( const DamageInfo *damageInfo ) co
 	// severly killed, and more sedate ones when only slightly killed.
 	// eg ( 200 hp max, had 10 left, took 50 damage, 40 overkill, (40/200) * 100 = 20 overkill %)
 	Int overkillDamage = damageInfo->out.m_actualDamageDealt - damageInfo->out.m_actualDamageClipped;
-	Real overkillPercent = (float)overkillDamage / (float)getObject()->getBodyModule()->getMaxHealth();
-	Int overkillModifier = overkillPercent * getSlowDeathBehaviorModuleData()->m_modifierBonusPerOverkillPercent;
+	Real maxHealth = getObject()->getBodyModule()->getMaxHealth();
+	Real overkillPercent = WWMath::Div_Safe((float)overkillDamage, maxHealth, 0.0f);
+	Int overkillModifier = (Int)(overkillPercent * getSlowDeathBehaviorModuleData()->m_modifierBonusPerOverkillPercent);
 
 	return max( getSlowDeathBehaviorModuleData()->m_probabilityModifier + overkillModifier, 1 );
 }
