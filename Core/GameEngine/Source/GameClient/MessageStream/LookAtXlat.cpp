@@ -369,6 +369,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				}
 			}
 
+			// rotate the view up/down
+			// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Must run before the rotate block:
+			// the rotate block overwrites m_anchor with the current mouse position, which would
+			// zero out this block's vertical delta (m_currentPos.y - m_anchor.y) and prevent
+			// pitch from ever engaging while dragging with the middle mouse button.
+			if (m_isPitching)
+			{
+				constexpr const Real Scale = 0.01f;
+				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
+				TheTacticalView->userSetPitch( TheTacticalView->getPitch() - angle );
+				m_anchor = msg->getArgument( 0 )->pixel;
+			}
+
 			// rotate the view
 			if (m_isRotating)
 			{
@@ -385,15 +398,6 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 				}
 
 				TheTacticalView->userSetAngle(targetAngle);
-				m_anchor = msg->getArgument( 0 )->pixel;
-			}
-
-			// rotate the view up/down
-			if (m_isPitching)
-			{
-				constexpr const Real Scale = 0.01f;
-				const Real angle = Scale * (m_currentPos.y - m_anchor.y);
-				TheTacticalView->userSetPitch( TheTacticalView->getPitch() - angle );
 				m_anchor = msg->getArgument( 0 )->pixel;
 			}
 
