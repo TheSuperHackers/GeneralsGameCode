@@ -180,6 +180,7 @@ protected:
 	AsciiString m_pendingPushName;													///< layout name to be pushed
 	Bool m_isShellActive;																		///< TRUE when the shell is active
 	Bool m_shellMapOn;																			///< TRUE when the shell map is on
+	Bool m_isDeconstructing;																///< TRUE while the shell is being torn down, revealed screens must not be re-initialized then
 	AnimateWindowManager *m_animateWindowManager;						///< The animate Window Manager
 	ShellMenuSchemeManager *m_schemeManager;								///< The Shell Scheme Manager
 

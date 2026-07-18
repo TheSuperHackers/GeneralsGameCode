@@ -77,6 +77,7 @@ void Shell::construct()
 	m_pendingPushName.set( "" );
 	m_isShellActive = TRUE;
 	m_shellMapOn = FALSE;
+	m_isDeconstructing = FALSE;
 	m_background = nullptr;
 	m_clearBackground = FALSE;
 	m_animateWindowManager = NEW AnimateWindowManager;
@@ -90,6 +91,16 @@ void Shell::construct()
 //-------------------------------------------------------------------------------------------------
 void Shell::deconstruct()
 {
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Popping a screen normally runs the init
+	// callback of the newly revealed screen below it. During shell teardown this must not
+	// happen: the shell is destroyed from GameClient's destructor in the reverse-order
+	// subsystem shutdown, so subsystems initialized after TheGameClient (such as TheGameState)
+	// are already destroyed. When the application quit while in-game with the ESC menu chain
+	// still on the shell stack (e.g. closing the game with the window X button), popping those
+	// screens re-initialized the revealed save/load menu, which read from the already destroyed
+	// TheGameState and crashed. See GitHub issue #2777.
+	m_isDeconstructing = TRUE;
+
 	WindowLayout *newTop = top();
 	while(newTop)
 	{
@@ -205,15 +216,15 @@ void Shell::update()
 
 		}
 
-		// Update the animate window manager
-		m_animateWindowManager->update();
-
 		m_schemeManager->update();
 
 		// mark last time we ran the updates
 		lastUpdate = now;
 
 	}
+
+	// TheSuperHackers @tweak bobtista 08/07/2026 Update the animate window manager every frame, it paces itself now
+	m_animateWindowManager->update();
 
 }
 
@@ -701,8 +712,11 @@ void Shell::doPop( Bool impendingPush )
 	}
 
 	// run the init for the new top of the stack if present
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Skip the init while the shell is being torn
+	// down, because screen init callbacks use engine subsystems that are already destroyed at
+	// that point. See GitHub issue #2777.
 	WindowLayout *newTop = top();
-	if( newTop && !impendingPush )
+	if( newTop && !impendingPush && !m_isDeconstructing )
 	{
 		newTop->runInit( nullptr );
 		//newTop->bringForward();
