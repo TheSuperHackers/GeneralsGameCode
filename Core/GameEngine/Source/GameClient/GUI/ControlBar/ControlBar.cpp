@@ -958,6 +958,7 @@ ControlBar::ControlBar()
 	m_generalsScreenAnimate = nullptr;
 	m_animateWindowManagerForGenShortcuts = nullptr;
 	m_flash = FALSE;
+	m_lastCommandFlashFrame = 0xFFFFFFFF;
 	m_toggleButtonUpIn = nullptr;
 	m_toggleButtonUpOn = nullptr;
 	m_toggleButtonUpPushed = nullptr;
@@ -1486,6 +1487,15 @@ void ControlBar::update()
 	// check flashing
 	if( m_flash )
 	{
+		// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 getFrame() % 10 == 0 was a level check,
+		// not an edge check, so it stayed true for every render frame spanning the same logic
+		// frame - draining the flash counter far too fast once render FPS was raised above the
+		// logic tick rate. Only advance once per distinct logic frame.
+		const UnsignedInt currentFlashFrame = TheGameClient->getFrame();
+		const Bool isNewFlashFrame = (currentFlashFrame != m_lastCommandFlashFrame) && (currentFlashFrame % 10 == 0);
+		if (isNewFlashFrame)
+			m_lastCommandFlashFrame = currentFlashFrame;
+
 		// go through all the command buttons to see which one needs to flash
 		for( Int i = 0; i < MAX_COMMANDS_PER_SET; ++i )
 		{
@@ -1495,7 +1505,7 @@ void ControlBar::update()
 				const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(button);
 				if( commandButton != nullptr )
 				{
-					if( commandButton->getFlashCount() > 0 && TheGameClient->getFrame() % 10 == 0 )
+					if( commandButton->getFlashCount() > 0 && isNewFlashFrame )
 					{
 						if( commandButton->getFlashCount() % 2 == 0 )
 						{

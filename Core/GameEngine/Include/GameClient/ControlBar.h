@@ -963,6 +963,10 @@ protected:
 
 	//cameo flash
 	Bool m_flash;                                       ///< tells update whether or not to check for flash
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Tracks the last logic frame the command
+	// button flash was updated on, so the flash only advances once per logic frame instead of
+	// once per render frame (which drained the flash counter too fast at raised render FPS).
+	UnsignedInt m_lastCommandFlashFrame;
 
 	Bool m_sideSelectAnimateDown;
 	ICoord2D m_animateDownWin1Size;
