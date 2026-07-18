@@ -2736,6 +2736,7 @@ void W3DView::rotateCamera(Real rotations, Int milliseconds, Real easeIn, Real e
 		m_rcInfo.numFrames = 1;
 	}
 	m_rcInfo.curFrame = 0;
+	m_rcInfo.frameAccumulator = 0.0f;
 	addScriptedState(Scripted_Rotate);
 	m_rcInfo.angle.startAngle = m_angle;
 	m_rcInfo.angle.endAngle = m_angle + 2*PI*rotations;
@@ -2765,6 +2766,7 @@ void W3DView::rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMi
 		m_rcInfo.numFrames = 1;
 	}
 	m_rcInfo.curFrame = 0;
+	m_rcInfo.frameAccumulator = 0.0f;
 	addScriptedState(Scripted_Rotate);
 	m_rcInfo.target.targetObjectID = id;
 	m_rcInfo.startTimeMultiplier = m_timeMultiplier;
@@ -2809,6 +2811,7 @@ void W3DView::rotateCameraTowardPosition(const Coord3D *pLoc, Int milliseconds, 
 	}
 
 	m_rcInfo.curFrame = 0;
+	m_rcInfo.frameAccumulator = 0.0f;
 	addScriptedState(Scripted_Rotate);
 	m_rcInfo.angle.startAngle = m_angle;
 	// TheSuperHackers @todo Investigate if the non Generals code is correct for Zero Hour.
@@ -2836,6 +2839,7 @@ void W3DView::zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real ea
 		m_zcInfo.numFrames = 1;
 	}
 	m_zcInfo.curFrame = 0;
+	m_zcInfo.frameAccumulator = 0.0f;
 	addScriptedState(Scripted_Zoom);
 	m_zcInfo.startZoom = m_zoom;
 	m_zcInfo.endZoom = finalZoom;
@@ -2852,6 +2856,7 @@ void W3DView::pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real 
 		m_pcInfo.numFrames = 1;
 	}
 	m_pcInfo.curFrame = 0;
+	m_pcInfo.frameAccumulator = 0.0f;
 	addScriptedState(Scripted_Pitch);
 	m_pcInfo.startPitch = m_FXPitch;
 	m_pcInfo.endPitch = finalPitch;
@@ -3283,6 +3288,16 @@ static Real makeQuadraticS(Real t)
 // ------------------------------------------------------------------------------------------------
 void W3DView::rotateCameraOneFrame()
 {
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 curFrame previously advanced by 1 every call,
+	// but this function is called once per render frame, so raising render FPS above the logic
+	// tick rate made scripted camera rotations complete N times too fast. Only advance curFrame
+	// once enough real logic time has accumulated, matching the decoupling already applied to
+	// moveAlongWaypointPath() below.
+	m_rcInfo.frameAccumulator += TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime) / TheW3DFrameLengthInMsec;
+	if (m_rcInfo.frameAccumulator < 1.0f)
+		return;
+	m_rcInfo.frameAccumulator -= 1.0f;
+
 	m_rcInfo.curFrame++;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_rcInfo.curFrame >= m_rcInfo.numFrames + m_rcInfo.numHoldFrames) {
@@ -3354,6 +3369,13 @@ void W3DView::rotateCameraOneFrame()
 // ------------------------------------------------------------------------------------------------
 void W3DView::zoomCameraOneFrame()
 {
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 See rotateCameraOneFrame() above - same
+	// render-rate-coupling bug, same fix.
+	m_zcInfo.frameAccumulator += TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime) / TheW3DFrameLengthInMsec;
+	if (m_zcInfo.frameAccumulator < 1.0f)
+		return;
+	m_zcInfo.frameAccumulator -= 1.0f;
+
 	m_zcInfo.curFrame++;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_zcInfo.curFrame >= m_zcInfo.numFrames) {
@@ -3380,6 +3402,13 @@ void W3DView::zoomCameraOneFrame()
 // ------------------------------------------------------------------------------------------------
 void W3DView::pitchCameraOneFrame()
 {
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 See rotateCameraOneFrame() above - same
+	// render-rate-coupling bug, same fix.
+	m_pcInfo.frameAccumulator += TheFramePacer->getLogicTimeStepMilliseconds(FramePacer::IgnoreFrozenTime) / TheW3DFrameLengthInMsec;
+	if (m_pcInfo.frameAccumulator < 1.0f)
+		return;
+	m_pcInfo.frameAccumulator -= 1.0f;
+
 	m_pcInfo.curFrame++;
 	if (TheGlobalData->m_disableCameraMovement) {
 		if (m_pcInfo.curFrame >= m_pcInfo.numFrames) {

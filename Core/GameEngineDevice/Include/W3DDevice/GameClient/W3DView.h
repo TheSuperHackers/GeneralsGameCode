@@ -77,6 +77,7 @@ typedef struct
 {
 	Int			numFrames;						///< Number of frames to rotate.
 	Int			curFrame;							///< Current frame.
+	Real		frameAccumulator;			///< TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Fractional logic frames elapsed since curFrame last advanced, so curFrame steps at the logic tick rate rather than once per render call.
 	Int			startTimeMultiplier;
 	Int			endTimeMultiplier;
 	Int			numHoldFrames;				///< Number of frames to hold the camera before finishing the movement
@@ -102,6 +103,7 @@ typedef struct
 {
 	Int			numFrames;						///< Number of frames to pitch.
 	Int			curFrame;							///< Current frame.
+	Real		frameAccumulator;			///< TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Fractional logic frames elapsed since curFrame last advanced, so curFrame steps at the logic tick rate rather than once per render call.
 	Real		angle;
 	Real		startPitch;
 	Real		endPitch;
@@ -116,6 +118,7 @@ typedef struct
 {
 	Int			numFrames;						///< Number of frames to zoom.
 	Int			curFrame;							///< Current frame.
+	Real		frameAccumulator;			///< TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Fractional logic frames elapsed since curFrame last advanced, so curFrame steps at the logic tick rate rather than once per render call.
 	Real		startZoom;
 	Real		endZoom;
 	Int			startTimeMultiplier;
