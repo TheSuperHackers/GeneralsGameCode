@@ -40,6 +40,7 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
+#include <string.h>
 
 /*
 ** Some global constants.
@@ -104,8 +105,8 @@ static WWINLINE float Fabs(float val)
 	return *(float*)&value;
 }
 
-static WWINLINE int Float_To_Int_Chop(const float& f);
-static WWINLINE int Float_To_Int_Floor(const float& f);
+static WWINLINE int Float_To_Int_Chop(float f);
+static WWINLINE int Float_To_Int_Floor(float f);
 
 #if defined(_MSC_VER) && defined(_M_IX86)
 static WWINLINE float Cos(float val);
@@ -580,9 +581,10 @@ WWINLINE float WWMath::Sqrt(float val)
 }
 #endif
 
-WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
+WWINLINE int WWMath::Float_To_Int_Chop(float f)
 {
-    int a	= *reinterpret_cast<const int*>(&f);				// take bit pattern of float into a register
+    int a;
+    memcpy(&a, &f, sizeof(a));										// take bit pattern of float into a register (memcpy avoids strict-aliasing UB and compiles to a single move)
     int sign	= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
     int mantissa	= (a&((1<<23)-1))|(1<<23);						// extract mantissa and add the hidden bit
     int exponent	= ((a&0x7fffffff)>>23)-127;					// extract the exponent
@@ -590,9 +592,10 @@ WWINLINE int WWMath::Float_To_Int_Chop(const float& f)
     return ((r ^ (sign)) - sign ) &~ (exponent>>31);			// add original sign. If exponent was negative, make return value 0.
 }
 
-WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
+WWINLINE int WWMath::Float_To_Int_Floor (float f)
 {
-	int a			= *reinterpret_cast<const int*>(&f);			// take bit pattern of float into a register
+	int a;
+	memcpy(&a, &f, sizeof(a));											// take bit pattern of float into a register (memcpy avoids strict-aliasing UB and compiles to a single move)
 	int sign		= (a>>31);												// sign = 0xFFFFFFFF if original value is negative, 0 if positive
 	a&=0x7fffffff;															// we don't need the sign any more
 
