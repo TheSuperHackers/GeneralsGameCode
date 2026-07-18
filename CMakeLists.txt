@@ -84,6 +84,13 @@ add_subdirectory(resources)
 
 add_subdirectory(Core)
 
+# Opt-in unit test harness (CTest + doctest). Not available on VC6, since
+# doctest requires C++11 or newer.
+if(RTS_BUILD_TESTS AND NOT IS_VS6_BUILD)
+    enable_testing()
+    add_subdirectory(Tests)
+endif()
+
 # Add main build targets
 if(RTS_BUILD_ZEROHOUR)
     add_subdirectory(GeneralsMD)
