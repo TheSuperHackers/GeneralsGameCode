@@ -79,7 +79,9 @@ public:
 
 	enum
 	{
-		ZoomHeightPerSecond = 10,
+		// TheSuperHackers @tweak ZsoltFeher 18/07/2026 Bumped 4x to keep mouse-wheel zoom
+		// speed proportional to a raised MaxCameraHeight (e.g. default 310 raised to 1200).
+		ZoomHeightPerSecond = 40,
 	};
 
 	/// Add an impulse force to shake the camera
