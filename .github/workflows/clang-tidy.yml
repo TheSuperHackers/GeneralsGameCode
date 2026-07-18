@@ -1,0 +1,99 @@
+name: Clang-Tidy (Advisory)
+
+# Advisory-only static analysis. This workflow is intentionally non-blocking:
+# continue-on-error is set on the job and the analysis step so failures/warnings
+# never fail the check or block merges. Do not add this workflow as a required
+# status check in branch protection settings.
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.cpp'
+      - '**/*.cxx'
+      - '**/*.cc'
+      - '**/*.c'
+      - '**/*.h'
+      - '**/*.hpp'
+      - '.clang-tidy'
+      - '.github/workflows/clang-tidy.yml'
+      - 'scripts/run-clang-tidy.py'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  clang-tidy:
+    name: Clang-Tidy Changed Files
+    runs-on: windows-2022
+    timeout-minutes: 30
+    # Non-blocking: this job's outcome must never gate merges.
+    continue-on-error: true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Determine Changed C++ Files
+        id: changed-files
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ -z "$BASE_SHA" ] || [ -z "$HEAD_SHA" ]; then
+            echo "Not a pull_request event with base/head SHAs; skipping changed-file detection."
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git diff --name-only --diff-filter=d "$BASE_SHA" "$HEAD_SHA" -- \
+            '*.cpp' '*.cxx' '*.cc' '*.c' '*.h' '*.hpp' > changed_files.txt
+
+          echo "Changed C++ source/header files:"
+          cat changed_files.txt
+
+          if [ -s changed_files.txt ]; then
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set Up VC2022 Environment
+        if: steps.changed-files.outputs.has-changes == 'true'
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+        with:
+          arch: x86
+
+      - name: Configure PCH-Free Compile Database
+        if: steps.changed-files.outputs.has-changes == 'true'
+        shell: pwsh
+        run: |
+          # PCH must be disabled for clang-tidy to parse the compile_commands.json correctly.
+          cmake -B build/clang-tidy -G Ninja `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON `
+            -DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON
+
+      - name: Run Clang-Tidy on Changed Files
+        id: clang-tidy
+        if: steps.changed-files.outputs.has-changes == 'true'
+        shell: bash
+        # Advisory-only: never fail the workflow on lint findings.
+        continue-on-error: true
+        run: |
+          mapfile -t files < changed_files.txt
+          python scripts/run-clang-tidy.py --verbose "${files[@]}"
+
+      - name: Skip (No Changed C++ Files)
+        if: steps.changed-files.outputs.has-changes != 'true'
+        shell: bash
+        run: echo "No changed C++ source/header files to analyze."
