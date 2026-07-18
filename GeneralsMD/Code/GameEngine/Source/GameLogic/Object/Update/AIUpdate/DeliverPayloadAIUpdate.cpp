@@ -1121,6 +1121,38 @@ StateReturnType RecoverFromOffMapState::update() // Success if we should try aga
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------------
+/** Xfer method
+	* Version Info:
+	* 1: Initial version
+	* 2: TheSuperHackers @bugfix Save facingDirectionUponDelivery. It was never saved, so after
+	*    loading it was zero, making the deviation test in update() kill the plane as soon as it
+	*    turned while heading off the map.
+	*/
+// ------------------------------------------------------------------------------------------------
+void HeadOffMapState::xfer( Xfer *xfer )
+{
+	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
+
+	if( version >= 2 )
+	{
+		xfer->xferCoord3D( &facingDirectionUponDelivery );
+	}
+	else if( xfer->getXferMode() == XFER_LOAD )
+	{
+		// TheSuperHackers @bugfix Older saves did not store this vector. Approximate it with the
+		// current facing direction so the plane is not killed for deviating from a zero vector.
+		getMachineOwner()->getUnitDirectionVector3D( facingDirectionUponDelivery );
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 StateReturnType HeadOffMapState::onEnter() // Give move order out of town
 {
