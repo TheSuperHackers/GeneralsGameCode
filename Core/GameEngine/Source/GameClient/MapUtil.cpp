@@ -437,7 +437,7 @@ void MapCache::updateCache()
 	// Load user map cache first.
 	if (m_doLoadUserMapCacheINI)
 	{
-		loadMapsFromMapCacheINI(userMapDir);
+		loadMapsFromMapCacheINI(userMapDir, TRUE);
 		m_doLoadUserMapCacheINI = FALSE;
 	}
 
@@ -452,7 +452,7 @@ void MapCache::updateCache()
 	// This overwrites matching user maps to prevent munkees getting rowdy :)
 	if (m_doLoadStandardMapCacheINI)
 	{
-		loadMapsFromMapCacheINI(mapDir);
+		loadMapsFromMapCacheINI(mapDir, FALSE);
 		m_doLoadStandardMapCacheINI = FALSE;
 	}
 }
@@ -496,7 +496,7 @@ Bool MapCache::clearUnseenMaps( const AsciiString &mapDir )
 	return erasedSomething;
 }
 
-void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir )
+void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir, Bool isUserMapCache )
 {
 	INI ini;
 	AsciiString fname;
@@ -504,7 +504,24 @@ void MapCache::loadMapsFromMapCacheINI( const AsciiString &mapDir )
 
 	if (TheFileSystem->doesFileExist(fname.str()))
 	{
-		ini.load( fname, INI_LOAD_OVERWRITE, nullptr );
+		try
+		{
+			ini.load( fname, INI_LOAD_OVERWRITE, nullptr );
+		}
+		catch (...)
+		{
+			// TheSuperHackers @bugfix The user map cache is a disposable, auto-generated local file.
+			// If it is corrupted, delete it and let the cache rebuild from the maps on disk,
+			// instead of terminating with a release crash on startup. The standard map cache is
+			// regular game data and cannot be regenerated here, so its errors remain fatal.
+			if (!isUserMapCache || remove(fname.str()) != 0)
+			{
+				// propagate the exception.
+				throw;
+			}
+
+			DEBUG_LOG(("MapCache::loadMapsFromMapCacheINI - deleted corrupted map cache file '%s', the map cache will be rebuilt from the maps on disk", fname.str()));
+		}
 	}
 }
 

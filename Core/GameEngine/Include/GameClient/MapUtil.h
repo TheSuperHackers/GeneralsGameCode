@@ -118,7 +118,7 @@ public:
 private:
 	void prepareUnseenMaps(const AsciiString &mapDir);
 	Bool clearUnseenMaps(const AsciiString &mapDir);
-	void loadMapsFromMapCacheINI(const AsciiString &mapDir);
+	void loadMapsFromMapCacheINI(const AsciiString &mapDir, Bool isUserMapCache);
 	Bool loadMapsFromDisk(const AsciiString &mapDir, Bool isOfficial, Bool filterByAllowedMaps = FALSE); // returns true if we needed to (re)parse a map
 	Bool addMap(const AsciiString &mapDir, const AsciiString &fname, const AsciiString &lowerFname, FileInfo &fileInfo, Bool isOfficial); ///< returns true if it had to (re)parse the map
 	void writeCacheINI(const AsciiString &mapDir);
