@@ -752,7 +752,14 @@ void Keyboard::resetKeys()
 
 	// TheSuperHackers @fix Caball009 13/12/2025 Fix bug where game remains in waypoint mode
 	// because the key up state for the alt key is not detected after alt tab.
-	refreshAltKeys();
+	// TheSuperHackers @fix 18/07/2026 Generalized from the ALT keys to every held key.
+	// When focus is lost (alt tab, or clicking outside the window while cursor lock is
+	// disabled), Windows delivers no key-up for keys that were held at that moment, so any
+	// translator latch driven by a raw key-up stays stuck forever. Synthesizing a key-up for
+	// every currently held key clears them all through the normal input path: arrow-key camera
+	// scroll (LookAtXlat scrollDir, issues #2732/#2733) and the CTRL force-attack mode
+	// (MetaEvent -> END_FORCEATTACK, issue #2734), in addition to the ALT waypoint mode.
+	releaseHeldKeys();
 
 	memset( m_keys, 0, sizeof( m_keys ) );
 	memset( m_keyStatus, 0, sizeof( m_keyStatus ) );
@@ -765,21 +772,20 @@ void Keyboard::resetKeys()
 }
 
 //-------------------------------------------------------------------------------------------------
-// Refresh the state of the alt keys, necessary after alt tab
+// Synthesize a raw key-up event for every currently held key, necessary after focus loss
+// (alt tab / clicking outside the window) because Windows sends no key-up for keys that were
+// held at that moment, which would otherwise leave translator hold-state latches stuck.
 //-------------------------------------------------------------------------------------------------
-void Keyboard::refreshAltKeys() const
+void Keyboard::releaseHeldKeys() const
 {
-	if (BitIsSet(m_keyStatus[KEY_LALT].state, KEY_STATE_DOWN))
+	for (Int key = KEY_NONE + 1; key < KEY_COUNT; ++key)
 	{
-		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_LALT);
-		msg->appendIntegerArgument(KEY_STATE_UP);
-	}
-	if (BitIsSet(m_keyStatus[KEY_RALT].state, KEY_STATE_DOWN))
-	{
-		GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
-		msg->appendIntegerArgument(KEY_RALT);
-		msg->appendIntegerArgument(KEY_STATE_UP);
+		if (BitIsSet(m_keyStatus[key].state, KEY_STATE_DOWN))
+		{
+			GameMessage* msg = TheMessageStream->appendMessage(GameMessage::MSG_RAW_KEY_UP);
+			msg->appendIntegerArgument(key);
+			msg->appendIntegerArgument(KEY_STATE_UP);
+		}
 	}
 }
 

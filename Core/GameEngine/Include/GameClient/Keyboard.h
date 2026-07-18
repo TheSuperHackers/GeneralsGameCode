@@ -124,7 +124,7 @@ public:
 	WideChar getPrintableKey( KeyDefType key, Int state );
 	enum { MAX_KEY_STATES = 3};
 private:
-	void refreshAltKeys() const;									///< refresh the state of the alt keys, necessary after alt tab
+	void releaseHeldKeys() const;									///< synthesize key-up events for all held keys, necessary after focus loss
 protected:
 
 	/** get the key data for a single key, KEY_NONE should be returned when
