@@ -61,7 +61,7 @@ report bugs, and contribute to the project!
 
 ## Building the Game Yourself
 
-We provide support for building the project on Windows and Linux. For detailed build instructions, check the
+We provide support for building the project on Windows and Linux. For local build setup and CMake preset details, see [docs/SETUP.md](docs/SETUP.md). For detailed build instructions, check the
 [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which includes guides for VS6, VS2022,
 Docker, CLion, and links to forks supporting additional versions.
 
