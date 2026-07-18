@@ -1428,6 +1428,7 @@ WeaponStore::WeaponStore()
 //-------------------------------------------------------------------------------------------------
 WeaponStore::~WeaponStore()
 {
+	deleteAllPendingWeapons();
 	deleteAllDelayedDamage();
 
 	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
@@ -1536,8 +1537,32 @@ WeaponTemplate *WeaponStore::newOverride(WeaponTemplate *weaponTemplate)
 }
 
 //-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix 18/07/2026 Queues a Weapon for deletion at a point where it can no
+// longer be executing on the call stack. WeaponSet::updateWeaponSet can be reached from within
+// Weapon::privateFireWeapon (dealing damage can score a kill, which can raise the attacker's
+// veterancy level and change its weapon set flags), so deleting the replaced Weapon immediately
+// would free the very Weapon still executing its fire, causing a use-after-free. See GitHub #941.
+void WeaponStore::deleteWeaponLater(Weapon* weapon)
+{
+	if (weapon != nullptr)
+		m_weaponsPendingDelete.push_back(weapon);
+}
+
+//-------------------------------------------------------------------------------------------------
+void WeaponStore::deleteAllPendingWeapons()
+{
+	for (size_t i = 0; i < m_weaponsPendingDelete.size(); ++i)
+		deleteInstance(m_weaponsPendingDelete[i]);
+	m_weaponsPendingDelete.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
 void WeaponStore::update()
 {
+	// TheSuperHackers @bugfix 18/07/2026 Delete weapons that were replaced during this frame.
+	// This runs in the end-of-frame cleanup of GameLogic::update, when no Weapon is firing.
+	deleteAllPendingWeapons();
+
 	for (std::list<WeaponDelayedDamageInfo>::iterator ddi = m_weaponDDI.begin(); ddi != m_weaponDDI.end(); )
 	{
 		UnsignedInt curFrame = TheGameLogic->getFrame();
@@ -1588,6 +1613,7 @@ void WeaponStore::reset()
 		}
 	}
 
+	deleteAllPendingWeapons();
 	deleteAllDelayedDamage();
 	resetWeaponTemplates();
 }

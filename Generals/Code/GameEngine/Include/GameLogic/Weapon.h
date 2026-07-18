@@ -824,6 +824,11 @@ public:
 		return newInstance(Weapon)(tmpl, wslot);	// my, that was easy
 	}
 
+	// TheSuperHackers @bugfix 18/07/2026 Queues a Weapon for deletion at the start of the next
+	// WeaponStore update, when no Weapon can be executing its fire on the call stack. Use this
+	// instead of an immediate deleteInstance whenever the Weapon may currently be firing.
+	void deleteWeaponLater(Weapon* weapon);
+
 	void createAndFireTempWeapon(const WeaponTemplate* w, const Object *source, const Coord3D* pos);
 	void createAndFireTempWeapon(const WeaponTemplate* w, const Object *source, Object *target);
 
@@ -839,6 +844,7 @@ protected:
 	WeaponTemplate *newOverride( WeaponTemplate *weaponTemplate );
 
 	void deleteAllDelayedDamage();
+	void deleteAllPendingWeapons();
 	void resetWeaponTemplates();
 	void setDelayedDamage(const WeaponTemplate *weapon, const Coord3D* pos, UnsignedInt whichFrame, ObjectID sourceID, ObjectID victimID, const WeaponBonus& bonus);
 
@@ -868,6 +874,10 @@ private:
 	WeaponTemplateMap m_weaponTemplateHashMap;
 
 	std::list<WeaponDelayedDamageInfo> m_weaponDDI;
+
+	// TheSuperHackers @bugfix 18/07/2026 Weapons queued by deleteWeaponLater, deleted at the
+	// start of the next WeaponStore update (see deleteAllPendingWeapons).
+	std::vector<Weapon*> m_weaponsPendingDelete;
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////

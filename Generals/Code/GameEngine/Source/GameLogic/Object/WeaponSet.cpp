@@ -324,7 +324,13 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		m_hasDamageWeapon = false;
 		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
 		{
-			deleteInstance(m_weapons[i]);
+			// TheSuperHackers @bugfix 18/07/2026 Defer the deletion of the replaced Weapon.
+			// updateWeaponSet can be reached from within Weapon::privateFireWeapon of this very
+			// Weapon: dealing damage can score a kill, raise the attacker's veterancy level and
+			// thereby change its weapon set flags. Deleting the Weapon here would free it while
+			// it is still executing its fire on the call stack, causing a use-after-free.
+			// Instead, the WeaponStore deletes it in the end-of-frame cleanup. See GitHub #941.
+			TheWeaponStore->deleteWeaponLater(m_weapons[i]);
 			m_weapons[i] = nullptr;
 
 			if (set->getNth((WeaponSlotType)i))
