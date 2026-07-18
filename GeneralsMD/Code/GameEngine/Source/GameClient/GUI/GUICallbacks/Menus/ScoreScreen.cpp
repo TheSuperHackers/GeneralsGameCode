@@ -215,6 +215,21 @@ void startNextCampaignGame()
 			TheGameLogic->clearGameData();
 	}
 
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 The logic update must not be halted to
+	// process MSG_NEW_GAME, mirroring the identical fix already applied to GameLogic::exitGame().
+	// Without this, MSG_NEW_GAME can be silently dropped by processCommandList() if the game
+	// logic is paused or script-time-frozen when Continue/Play Again is clicked, since
+	// GameEngine::update() only runs GameLogic::update() while canUpdateGameLogic() is true, and
+	// GameLogic::update() itself early-returns on frozen time before reaching
+	// processCommandList(). (github.com/TheSuperHackers/GeneralsGameCode issue #2534)
+	if (TheGameLogic)
+		TheGameLogic->setGamePaused(FALSE);
+	if (TheScriptEngine)
+	{
+		TheScriptEngine->forceUnfreezeTime();
+		TheScriptEngine->doUnfreezeTime();
+	}
+
 	// send a message to the logic for a new game
 	GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
 	msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
