@@ -515,6 +515,35 @@ void GameClient::update()
 
 			TheShell->showShellMap(TRUE);
 			TheShell->showShell();
+
+			// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 With -startMission the two shell calls
+			// above are suppressed (see Shell::showShell), so MainMenuInit never runs and never
+			// clears m_breakTheMovie, which Intro::doPostIntro just set. Left set, it disables the
+			// entire render block in W3DDisplay::draw forever, freezing the screen on the last
+			// presented frame while audio keeps playing. Clear it here, and consume the
+			// -startMission fields so the shell behaves normally again afterwards
+			// (e.g. score screen and menus once the mission ends).
+			if (TheGlobalData->m_debugStartMission.isNotEmpty())
+			{
+				TheWritableGlobalData->m_breakTheMovie = FALSE;
+				TheWritableGlobalData->m_debugStartCampaign.clear();
+				TheWritableGlobalData->m_debugStartMission.clear();
+
+				// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Because the two shell calls above
+				// were suppressed, Menus/MainMenu.wnd was never pushed onto the (still empty) shell
+				// screen stack the way it would be on a normal boot. That leaves the shell with
+				// nothing to fall back on: later, when the player exits the mission back to the
+				// main menu, GameLogic::clearGameData() pushes Menus/ScoreScreen.wnd on top and its
+				// "OK" button just pops the top of the stack -- popping the ONLY screen leaves a
+				// permanently blank, menu-less shell for the rest of the session. Re-invoke
+				// showShell() now that the guard fields above are cleared and m_shellMapOn was
+				// forced FALSE at boot (see GameEngine::init), so it pushes Menus/MainMenu.wnd
+				// here. It gets hidden again a few lines later this same frame by
+				// GameLogic::prepareNewGame()'s TheShell->hideShell() call (run during
+				// TheMessageStream->propagateMessages(), which happens after GameClient::update()
+				// returns), so it is never actually drawn.
+				TheShell->showShell();
+			}
 		}
 	}
 

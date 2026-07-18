@@ -272,6 +272,12 @@ void CampaignManager::setCampaignAndMission( AsciiString campaign, AsciiString m
 	CampaignListIt it;
 	it = m_campaignList.begin();
 	campaign.toLower();
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Mission names are stored lowercased by
+	// Campaign::newMission(), but this lookup compared against the caller's original casing
+	// (case-sensitive AsciiString::compare in Campaign::getMission()), so any caller passing
+	// mission names as they appear in Campaign.ini (e.g. "Mission05") would silently fail to
+	// find the mission.
+	mission.toLower();
 	while	( it != m_campaignList.end())
 	{
 		Campaign *camp = *it;

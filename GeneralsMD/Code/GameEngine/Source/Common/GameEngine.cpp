@@ -473,6 +473,30 @@ void GameEngine::init()
 		// special-case: parse command-line parameters after loading global data
 		CommandLine::parseCommandLineForEngineInit();
 
+		// TheSuperHackers @feature ZsoltFeher 18/07/2026 Skip the EA/SuperHackers boot trailer
+		// when jumping straight to a mission via -startMission, since it would otherwise still
+		// be playing when the mission's map load (queued further below) tries to start. This is
+		// unrelated to the mission's own scripted intro cutscene (IntroMovie=...), which is a
+		// separate, later mechanism unaffected by this flag. TheGameClient (and thus the Intro
+		// object, which reads m_playIntro in its constructor) is not created until later, so this
+		// must be set here rather than alongside the rest of the -startMission handling below.
+		// The Sizzle promotional movie must be skipped as well: once the mission's load screen
+		// activates, m_loadScreenRender suppresses fullscreen movie rendering in W3DDisplay::draw,
+		// so the Sizzle would play invisibly (audio only) while TheDisplay->isMoviePlaying() blocks
+		// the deferred map load in GameLogic::update for the movie's entire duration.
+		// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Also disable the animated shell map
+		// background, mirroring -file (see the -file block further below). Shell::showShell()'s
+		// own Menus/MainMenu.wnd push (see GameClient.cpp) only fires while m_shellMapOn is FALSE;
+		// leaving it TRUE means nothing ever seeds the shell screen stack, so later exiting a
+		// -startMission game back to the main menu pops the only screen on the stack and leaves
+		// a permanently blank, menu-less shell for the rest of the session.
+		if (TheGlobalData->m_debugStartMission.isEmpty() == FALSE)
+		{
+			TheWritableGlobalData->m_playIntro = FALSE;
+			TheWritableGlobalData->m_playSizzle = FALSE;
+			TheWritableGlobalData->m_shellMapOn = FALSE;
+		}
+
 		TheArchiveFileSystem->loadMods();
 
 		// doesn't require resets so just create a single instance here.
@@ -748,6 +772,15 @@ void GameEngine::init()
 				msg->appendIntegerArgument(TheCampaignManager->getGameDifficulty());
 				msg->appendIntegerArgument(0);
 				InitRandom(0);
+			}
+			else
+			{
+				// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 If the campaign/mission name
+				// could not be resolved (e.g. a typo), clear these so the Shell.cpp guards that
+				// key off m_debugStartMission fall back to the normal main menu instead of
+				// leaving the player on a blank screen with no menu and no mission.
+				TheWritableGlobalData->m_debugStartCampaign.clear();
+				TheWritableGlobalData->m_debugStartMission.clear();
 			}
 		}
 
