@@ -97,13 +97,6 @@ SmudgeSet *SmudgeManager::addSmudgeSet()
 	return set;
 }
 
-void SmudgeManager::removeSmudgeSet(SmudgeSet *&smudgeSet)
-{
-	smudgeSet->Remove();	//remove from used list
-	m_freeSmudgeSetList.Add_Head(smudgeSet);	//add to free list.
-	smudgeSet = nullptr;
-}
-
 Smudge *SmudgeManager::findSmudge(Smudge::Identifier identifier)
 {
 	SmudgeSet *smudgeSet = m_usedSmudgeSetList.Head();
@@ -163,15 +156,6 @@ Smudge *SmudgeSet::addSmudgeToSet(Smudge::Identifier identifier)
 	m_usedSmudgeMap[identifier] = smudge;
 	m_usedSmudgeCount++;
 	return smudge;
-}
-
-void SmudgeSet::removeSmudgeFromSet(Smudge *&smudge)
-{
-	m_usedSmudgeMap.erase(smudge->m_identifier);
-	smudge->Remove();	//remove from used list.
-	m_freeSmudgeList.Add_Head(smudge);	//add to free list
-	smudge = nullptr;
-	m_usedSmudgeCount--;
 }
 
 Smudge *SmudgeSet::findSmudge(Smudge::Identifier identifier)

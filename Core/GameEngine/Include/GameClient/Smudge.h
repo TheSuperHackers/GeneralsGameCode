@@ -71,7 +71,6 @@ struct SmudgeSet : public DLNodeClass<SmudgeSet>
 	void resetDraw();
 
 	Smudge *addSmudgeToSet(Smudge::Identifier identifier); ///< add and return a smudge to the set with the given identifier
-	void removeSmudgeFromSet(Smudge *&smudge); ///< remove and invalidate the given smudge
 	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge that belongs to this identifier
 
 	DLListClass<Smudge> &getUsedSmudgeList() { return m_usedSmudgeList;}
@@ -100,7 +99,6 @@ public:
 	void resetDraw(); ///< reset whether all smudges need to be drawn
 
 	SmudgeSet *addSmudgeSet(); ///< add and return a new smudge set
-	void removeSmudgeSet(SmudgeSet *&smudgeSet); ///< remove and invalidate the given smudge set
 	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge from any smudge set
 	Int getSmudgeCountLastFrame() {return m_smudgeCountLastFrame;} ///<return number of smudges submitted last frame.
 	Bool getHardwareSupport() { return m_hardwareSupportStatus != SMUDGE_SUPPORT_NO;}
