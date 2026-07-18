@@ -499,7 +499,7 @@ WWINLINE float WWMath::Atan(float x)
 WWINLINE double WWMath::Atan(double x)
 {
 #if USE_DETERMINISTIC_MATH
-	return gm_atan(x);
+	return (double) gm_atanf((float)x);
 #else
 	return atan(x);
 #endif
@@ -535,7 +535,7 @@ WWINLINE float WWMath::Atan2(float x, float y)
 WWINLINE double WWMath::Atan2(double x, double y)
 {
 #if USE_DETERMINISTIC_MATH
-	return gm_atan2(x, y);
+	return (double) gm_atan2f((float)x, (float)y);
 #else
 	return atan2(x, y);
 #endif
