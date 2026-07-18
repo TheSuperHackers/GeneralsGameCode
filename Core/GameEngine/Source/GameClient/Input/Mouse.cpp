@@ -670,7 +670,13 @@ void Mouse::reset()
   if ( m_cursorTextDisplayString )
   	m_cursorTextDisplayString->reset();
 
-	blockCapture(CursorCaptureBlockReason_NoInit);
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Mouse::reset() previously blocked cursor
+	// capture via CursorCaptureBlockReason_NoInit and never unblocked it again, permanently
+	// breaking screen-edge scrolling (which requires isCursorCaptured()) for the rest of the
+	// session whenever reset() ran mid-game (e.g. on window focus loss/regain), not just at
+	// shutdown. initCapture() re-reads current preferences and correctly restores capture
+	// availability.
+	initCapture();
 
 }
 
