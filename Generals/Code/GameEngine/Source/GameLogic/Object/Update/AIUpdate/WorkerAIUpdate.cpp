@@ -1463,7 +1463,10 @@ void WorkerAIUpdate::xfer( Xfer *xfer )
 	xfer->xferSnapshot(m_dozerMachine);
 	xfer->xferUser(&m_currentTask, sizeof(m_currentTask));
 
-	if (currentVersion >= 2)
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Test against the version read from the save file,
+	// not the current version, otherwise a build with RETAIL_COMPATIBLE_XFER_SAVE disabled reads data
+	// that is not present in a version 1 save file, corrupting the remainder of the load.
+	if (version >= 2)
 	{
 		xfer->xferUser(&m_previousTask, sizeof(m_previousTask));
 		xfer->xferUser(&m_previousTaskInfo, sizeof(m_previousTaskInfo));

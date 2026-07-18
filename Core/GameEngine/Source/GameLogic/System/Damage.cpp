@@ -153,7 +153,11 @@ void DamageInfoInput::xfer( Xfer *xfer )
 	xfer->xferReal( &m_amount );
 
 	// kill no matter what (old versions default to FALSE).
-	if( currentVersion >= 2 )
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Test against the version read from the save file,
+	// not the current version, otherwise a Generals build with RETAIL_COMPATIBLE_XFER_SAVE disabled
+	// reads data that is not present in a version 1 save file, corrupting the remainder of the load.
+	// Zero Hour is unaffected because it always saved version 3.
+	if( version >= 2 )
 	{
 		xfer->xferBool( &m_kill );
 	}

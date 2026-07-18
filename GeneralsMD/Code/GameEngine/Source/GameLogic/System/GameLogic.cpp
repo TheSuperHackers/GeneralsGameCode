@@ -2604,7 +2604,30 @@ void GameLogic::processDestroyList()
 		{
 			// have to re-get idx each time since each call to erase might change others.
 			Int idx = sleepyUpdatesForThisObject[numSUO]->friend_getIndexInLogic();
-			DEBUG_ASSERTCRASH(m_sleepyUpdates[idx] == sleepyUpdatesForThisObject[numSUO], ("Hmm, expected update mismatch here"));
+
+			// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Look up the module's real position when its cached
+			// index is invalid, instead of indexing the vector out of bounds. When a save game load fails after
+			// objects were already created, UpdateModule::xfer has reset the indices to -1 but
+			// GameLogic::loadPostProcess never ran to rebuild them, so the modules still sit in m_sleepyUpdates
+			// with stale indices. The out of bounds access then crashed the game in the load failure cleanup
+			// before it could show the load error message to the user.
+			const Int sleepyCount = m_sleepyUpdates.size();
+			if (idx < 0 || idx >= sleepyCount || m_sleepyUpdates[idx] != sleepyUpdatesForThisObject[numSUO])
+			{
+				idx = -1;
+				for (Int search = 0; search < sleepyCount; ++search)
+				{
+					if (m_sleepyUpdates[search] == sleepyUpdatesForThisObject[numSUO])
+					{
+						idx = search;
+						break;
+					}
+				}
+				DEBUG_ASSERTCRASH(idx != -1, ("Hmm, expected to find the sleepy update module here"));
+				if (idx == -1)
+					continue;
+			}
+
 			eraseSleepyUpdate(idx);
 			DEBUG_ASSERTCRASH(sleepyUpdatesForThisObject[numSUO]->friend_getIndexInLogic() == -1, ("Hmm, expected index to be -1 here"));
 		}
