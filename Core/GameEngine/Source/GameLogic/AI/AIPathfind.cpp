@@ -1725,8 +1725,34 @@ void PathfindCell::forwardInsertionSortRetailCompatible(PathfindCellList& list)
 	PathfindCell* currentCell = list.m_head;
 	PathfindCell* previousCell = nullptr;
 	UnsignedInt cellCount = 0;
-	while (currentCell && cellCount < PATHFIND_CELLS_PER_FRAME && currentCell->m_info->m_totalCost <= m_info->m_totalCost)
+	while (currentCell)
 	{
+		// TheSuperHackers @bugfix 18/07/2026 The retail compatible pathfinding can leave dangling open list pointers
+		// that link a cell without PathfindCellInfo onto the open list. A retail client crashes here on a null pointer access.
+		// To recover, insert this cell at the current position, drop the unreachable corrupted remainder of the list
+		// and schedule a forced cleanup that releases the orphaned cells when the current pathfind finishes.
+		// Relates to issues #2637 and #2799.
+		if (currentCell->m_info == nullptr)
+		{
+			s_forceCleanCells = true;
+			if (previousCell)
+			{
+				previousCell->m_info->m_nextOpen = this->m_info;
+				m_info->m_prevOpen = previousCell->m_info;
+			}
+			else
+			{
+				// the corrupted cell is the list head, so the whole list is dropped
+				list.m_head = this;
+				m_info->m_prevOpen = nullptr;
+			}
+			m_info->m_nextOpen = nullptr;
+			return;
+		}
+
+		if (cellCount >= PATHFIND_CELLS_PER_FRAME || currentCell->m_info->m_totalCost > m_info->m_totalCost)
+			break;
+
 		cellCount++;
 		previousCell = currentCell;
 		currentCell = currentCell->getNextOpen();
@@ -1972,6 +1998,18 @@ void PathfindCell::putOnClosedList( PathfindCellList &list )
 	{
 		m_info->m_closed = FALSE;
 		m_info->m_closed = TRUE;
+
+#if RETAIL_COMPATIBLE_PATHFINDING
+		// TheSuperHackers @bugfix 18/07/2026 The retail compatible pathfinding can leave dangling closed list pointers
+		// that link a cell without PathfindCellInfo at the closed list head. A retail client crashes here on a null pointer access.
+		// To recover, drop the corrupted list and schedule a forced cleanup that releases the orphaned cells
+		// when the current pathfind finishes. Relates to issues #2637 and #2799.
+		if (!s_useFixedPathfinding && list.m_head && list.m_head->m_info == nullptr)
+		{
+			s_forceCleanCells = true;
+			list.m_head = nullptr;
+		}
+#endif
 
 		m_info->m_prevOpen = nullptr;
 		m_info->m_nextOpen = list.m_head ? list.m_head->m_info : nullptr;
@@ -5006,6 +5044,9 @@ void Pathfinder::cleanOpenAndClosedLists() {
 	// TheSuperHackers @info this is here as the map cells are contained within the pathfinder and cannot be cleaned externally.
 	// If the crash mode within PathfindCell::releaseOpenList is hit, it will set s_forceCleanCells to allow the system to cleanly recover.
 	if (s_forceCleanCells) {
+		// TheSuperHackers @bugfix 18/07/2026 Also switch to the fixed pathfinding here, because s_forceCleanCells can now
+		// be set by crash mode detections deep inside an ongoing pathfind, which cannot safely switch mid search.
+		s_useFixedPathfinding = true;
 		forceCleanCells();
 		// TheSuperHackers @info cells on the closed list are forcefully cleaned up by this point
 		s_forceCleanCells = false;
@@ -5021,6 +5062,8 @@ void Pathfinder::cleanOpenAndClosedLists() {
 	// TheSuperHackers @info this is here and performs the same function as the above block, but for when the crash occurs within the closed list.
 	// If the crash mode within PathfindCell::releaseClosedList is hit, it will set s_forceCleanCells to allow the system to cleanly recover.
 	if (s_forceCleanCells) {
+		// TheSuperHackers @bugfix 18/07/2026 Also switch to the fixed pathfinding here, see the comment above.
+		s_useFixedPathfinding = true;
 		forceCleanCells();
 		s_forceCleanCells = false;
 	}
@@ -8892,6 +8935,20 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 		Real dx;
 		Real dy;
 		Real distSqr;
+
+#if RETAIL_COMPATIBLE_PATHFINDING
+		// TheSuperHackers @bugfix 18/07/2026 This is here to catch a retail pathfinding crash point and to recover from it.
+		// A cell has gotten onto the open list without pathfinding info due to a dangling m_open pointer on the previous listed cell,
+		// so we need to force a cleanup before popping it crashes in PathfindCell::removeFromOpenList.
+		// Relates to issues #2637 and #2799.
+		if (!s_useFixedPathfinding && !m_openList.getHead()->hasInfo()) {
+			s_useFixedPathfinding = true;
+			forceCleanCells();
+			m_isTunneling = false;
+			return nullptr;
+		}
+#endif
+
 		// take head cell off of open list - it has lowest estimated total path cost
 		parentCell = m_openList.getHead();
 		parentCell->removeFromOpenList(m_openList);
