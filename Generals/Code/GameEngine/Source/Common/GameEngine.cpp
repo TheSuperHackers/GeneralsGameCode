@@ -83,6 +83,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
+#include "GameClient/CampaignManager.h"
 #include "GameClient/ClientInstance.h"
 #include "GameClient/FXList.h"
 #include "GameClient/GameClient.h"
@@ -560,6 +561,24 @@ void GameEngine::init()
 				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
 				msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
 				msg->appendIntegerArgument(DIFFICULTY_NORMAL);
+				msg->appendIntegerArgument(0);
+				InitRandom(0);
+			}
+		}
+
+		// TheSuperHackers @feature ZsoltFeher 18/07/2026 Jump directly to any campaign mission via
+		// CampaignManager, so shellmap, intro, and mission progression state all remain correct
+		// (unlike -file, which bypasses CampaignManager entirely).
+		if (TheGlobalData->m_debugStartMission.isEmpty() == FALSE && TheCampaignManager)
+		{
+			TheCampaignManager->setCampaignAndMission(TheGlobalData->m_debugStartCampaign, TheGlobalData->m_debugStartMission);
+			if (TheCampaignManager->getCurrentMission())
+			{
+				TheWritableGlobalData->m_pendingFile = TheCampaignManager->getCurrentMap();
+
+				GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+				msg->appendIntegerArgument(GAME_SINGLE_PLAYER);
+				msg->appendIntegerArgument(TheCampaignManager->getGameDifficulty());
 				msg->appendIntegerArgument(0);
 				InitRandom(0);
 			}

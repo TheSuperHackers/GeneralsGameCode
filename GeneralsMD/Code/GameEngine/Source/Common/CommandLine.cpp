@@ -671,14 +671,7 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
-#if defined(RTS_DEBUG)
-Int parseDisplayDebug(char *args[], int)
-{
-	TheWritableGlobalData->m_displayDebug = TRUE;
-
-	return 1;
-}
-
+// TheSuperHackers @tweak Now available in Release builds so a map can be launched from the command line.
 Int parseFile(char *args[], int num)
 {
 	if (num > 1)
@@ -687,6 +680,27 @@ Int parseFile(char *args[], int num)
 		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_initialFile);
 	}
 	return 2;
+}
+
+// TheSuperHackers @feature ZsoltFeher 18/07/2026 Jumps directly to a specific campaign mission
+// via CampaignManager, unlike -file this keeps shellmap/intro/progression state correct so the
+// mission's own cutscenes and "next mission" transition behave exactly as in normal play.
+Int parseStartMission(char *args[], int num)
+{
+	if (num > 2)
+	{
+		TheWritableGlobalData->m_debugStartCampaign = args[1];
+		TheWritableGlobalData->m_debugStartMission = args[2];
+	}
+	return 3;
+}
+
+#if defined(RTS_DEBUG)
+Int parseDisplayDebug(char *args[], int)
+{
+	TheWritableGlobalData->m_displayDebug = TRUE;
+
+	return 1;
 }
 
 
@@ -1148,6 +1162,8 @@ static CommandLineParam paramsForEngineInit[] =
 {
 	{ "-nologo", parseNoLogo }, // TheSuperHackers @tweak Is now available in Release builds.
 	{ "-noshellmap", parseNoShellMap },
+	{ "-file", parseFile }, // TheSuperHackers @tweak Is now available in Release builds.
+	{ "-startMission", parseStartMission }, // TheSuperHackers @feature Jump to any campaign mission via CampaignManager.
 	{ "-noShellAnim", parseNoWindowAnimation }, // TheSuperHackers @tweak Is now available in Release builds.
 	{ "-xres", parseXRes },
 	{ "-yres", parseYRes },
@@ -1253,7 +1269,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-jabber", parseJabber },
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
-	{ "-file", parseFile },
 
 //	{ "-preload", parsePreload },
 

@@ -352,6 +352,11 @@ public:
 	Bool m_buildMapCache;
 	AsciiString m_initialFile;				///< If this is specified, load a specific map from the command-line
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
+	// TheSuperHackers @feature ZsoltFeher 18/07/2026 Debug entry point to start any campaign mission
+	// directly, going through CampaignManager (unlike -file) so shellmap, intro, and mission
+	// progression state all remain correct.
+	AsciiString m_debugStartCampaign;	///< If this and m_debugStartMission are specified, jump to this campaign
+	AsciiString m_debugStartMission;		///< If this and m_debugStartCampaign are specified, jump to this mission
 
 	std::vector<AsciiString> m_simulateReplays; ///< If not empty, simulate this list of replays and exit.
 	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or SIMULATE_REPLAYS_SEQUENTIAL for sequential simulation

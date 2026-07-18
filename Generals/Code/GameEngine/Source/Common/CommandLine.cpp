@@ -689,6 +689,19 @@ Int parseFile(char *args[], int num)
 	return 2;
 }
 
+// TheSuperHackers @feature ZsoltFeher 18/07/2026 Jumps directly to a specific campaign mission
+// via CampaignManager, unlike -file this keeps shellmap/intro/progression state correct so the
+// mission's own cutscenes and "next mission" transition behave exactly as in normal play.
+Int parseStartMission(char *args[], int num)
+{
+	if (num > 2)
+	{
+		TheWritableGlobalData->m_debugStartCampaign = args[1];
+		TheWritableGlobalData->m_debugStartMission = args[2];
+	}
+	return 3;
+}
+
 
 Int parsePreloadEverything( char *args[], int num )
 {
@@ -1254,6 +1267,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
+	{ "-startMission", parseStartMission }, // TheSuperHackers @feature Jump to any campaign mission via CampaignManager.
 
 //	{ "-preload", parsePreload },
 
