@@ -57,6 +57,7 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 #include "GameClient/ProcessAnimateWindow.h"
+#include "Common/FramePacer.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -133,6 +134,7 @@ AnimateWindowManager::AnimateWindowManager()
 	m_winList.clear();
 	m_needsUpdate = FALSE;
 	m_reverse = FALSE;
+	m_frameAccumulator = 0.0f;
 	m_winMustFinishList.clear();
 }
 AnimateWindowManager::~AnimateWindowManager()
@@ -159,6 +161,7 @@ void AnimateWindowManager::init()
 	clearWinList(m_winMustFinishList);
 	m_needsUpdate = FALSE;
 	m_reverse = FALSE;
+	m_frameAccumulator = 0.0f;
 }
 
 void AnimateWindowManager::reset()
@@ -168,9 +171,23 @@ void AnimateWindowManager::reset()
 	clearWinList(m_winMustFinishList);
 	m_needsUpdate = FALSE;
 	m_reverse = FALSE;
+	m_frameAccumulator = 0.0f;
 }
 
+// TheSuperHackers @tweak bobtista 27/06/2026 Decouple GUI window-move animations from the render frame rate
 void AnimateWindowManager::update()
+{
+	m_frameAccumulator += TheFramePacer->getBaseOverUpdateFpsRatio();
+	Int steps = (Int)m_frameAccumulator;
+	m_frameAccumulator -= (Real)steps;
+
+	while (steps-- > 0)
+	{
+		step();
+	}
+}
+
+void AnimateWindowManager::step()
 {
 
 	ProcessAnimateWindow *processAnim = nullptr;
