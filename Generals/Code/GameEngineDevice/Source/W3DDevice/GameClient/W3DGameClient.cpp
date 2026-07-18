@@ -201,7 +201,10 @@ void W3DGameClient::setTextureLOD( Int level )
 {
 	if (WW3D::Get_Texture_Reduction() != level)
 	{
-		WW3D::Set_Texture_Reduction(level, 6);
+		// TheSuperHackers @bugfix Since the WW3D2 texture code merge, the second argument is a
+		// minimum texture dimension in pixels (as in Zero Hour), no longer a minimum mip level
+		// count. Passing the legacy value 6 over-reduced small textures. Use 32 to match Zero Hour.
+		WW3D::Set_Texture_Reduction(level, 32);
 
 		//I commented this out because we're no longer using terrain LOD.  So I
 		//stole this function and keys to adjust the texture resolution instead. -MW
