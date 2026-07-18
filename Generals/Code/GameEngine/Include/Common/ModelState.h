@@ -31,6 +31,7 @@
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "Common/BitFlags.h"
+#include "Common/BitFlagsIO.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -79,6 +80,8 @@
 	"forbidden" conditions.
 
 */
+
+#define NUM_MODELCONDITION_DOOR_STATES 4
 
 //-------------------------------------------------------------------------------------------------
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"
@@ -204,6 +207,33 @@ enum ModelConditionFlagType CPP_11(: Int)
 
 	MODELCONDITION_PREORDER,
 
+	// New in Zero Hour:
+
+	MODELCONDITION_CENTER_TO_LEFT,
+	MODELCONDITION_LEFT_TO_CENTER,
+	MODELCONDITION_CENTER_TO_RIGHT,
+	MODELCONDITION_RIGHT_TO_CENTER,
+
+	MODELCONDITION_RIDER1,	//Added these for different riders
+	MODELCONDITION_RIDER2,
+	MODELCONDITION_RIDER3,
+	MODELCONDITION_RIDER4,
+	MODELCONDITION_RIDER5,
+	MODELCONDITION_RIDER6,
+	MODELCONDITION_RIDER7,
+	MODELCONDITION_RIDER8,
+
+	MODELCONDITION_STUNNED_FLAILING, // Daniel Teh's idea, added by Lorenzen, 5/28/03
+	MODELCONDITION_STUNNED,
+	MODELCONDITION_SECOND_LIFE,
+	MODELCONDITION_JAMMED,	///< Jammed as in missile jammed by ECM
+	MODELCONDITION_ARMORSET_CRATEUPGRADE_ONE,
+	MODELCONDITION_ARMORSET_CRATEUPGRADE_TWO,
+
+	MODELCONDITION_USER_1,		///< Wildcard flag to use with upgrade modules or other random little things
+	MODELCONDITION_USER_2,
+
+	MODELCONDITION_DISGUISED,
 //
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!

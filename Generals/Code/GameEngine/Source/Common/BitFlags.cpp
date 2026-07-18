@@ -25,7 +25,7 @@
 // FILE: BitFlags.cpp ///////////////////////////////////////////////////////////
 //
 // Used to set detail levels of various game systems.
-//  Steven Johnson Wilczynski, Sept 2002
+//  Steven Johnson, Sept 2002
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -146,6 +146,32 @@ const char* const ModelConditionFlags::s_bitNameList[] =
 
 	"PREORDER",
 
+	"CENTER_TO_LEFT",
+	"LEFT_TO_CENTER",
+	"CENTER_TO_RIGHT",
+	"RIGHT_TO_CENTER",
+
+	"RIDER1",	//Kris: Added these for different combat-bike riders, but feel free to use these for anything.
+	"RIDER2",
+	"RIDER3",
+	"RIDER4",
+	"RIDER5",
+	"RIDER6",
+	"RIDER7",
+	"RIDER8",
+
+  "STUNNED_FLAILING", // Daniel Teh's idea, added by Lorenzen, 5/28/03
+	"STUNNED",
+	"SECOND_LIFE",
+	"JAMMED",
+	"ARMORSET_CRATEUPGRADE_ONE",
+	"ARMORSET_CRATEUPGRADE_TWO",
+
+	"USER_1",
+	"USER_2",
+
+	"DISGUISED",
+
 	nullptr
 };
 static_assert(ARRAY_SIZE(ModelConditionFlags::s_bitNameList) == ModelConditionFlags::NumBits + 1, "Incorrect array size");
@@ -158,6 +184,9 @@ const char* const ArmorSetFlags::s_bitNameList[] =
 	"HERO",
 	"PLAYER_UPGRADE",
 	"WEAK_VERSUS_BASEDEFENSES",
+	"SECOND_LIFE",
+	"CRATE_UPGRADE_ONE",
+	"CRATE_UPGRADE_TWO",
 
 	nullptr
 };
