@@ -1,0 +1,27 @@
+name: Docker Linux Build
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/docker-build.sh'
+      - 'resources/dockerbuild/**'
+      - '.github/workflows/docker-build.yml'
+  schedule:
+    - cron: '0 4 * * 1'
+
+jobs:
+  docker-build:
+    name: Build Zero Hour via Docker (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Build via Docker
+        run: ./scripts/docker-build.sh
