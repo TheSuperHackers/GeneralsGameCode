@@ -15,8 +15,8 @@ set(GAMEENGINE_SRC
 #    Include/Common/BattleHonors.h
 #    Include/Common/BezFwdIterator.h
 #    Include/Common/BezierSegment.h
-#    Include/Common/BitFlags.h
-#    Include/Common/BitFlagsIO.h
+    Include/Common/BitFlags.h
+    Include/Common/BitFlagsIO.h
 #    Include/Common/BorderColors.h
 #    Include/Common/BuildAssistant.h
 #    Include/Common/ClientUpdateModule.h
@@ -568,7 +568,7 @@ set(GAMEENGINE_SRC
     #Source/Common/Audio/urllaunch.cpp # unused
 #    Source/Common/Bezier/BezFwdIterator.cpp
 #    Source/Common/Bezier/BezierSegment.cpp
-#    Source/Common/BitFlags.cpp
+    Source/Common/BitFlags.cpp
 #    Source/Common/CommandLine.cpp
     Source/Common/crc.cpp
     Source/Common/CRCDebug.cpp

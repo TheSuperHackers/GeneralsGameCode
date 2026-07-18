@@ -616,6 +616,10 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWeapon.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWeapon.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/INI/INIWebpageURL.cpp", Game.CORE, "GameEngine/Source/Common/INI/INIWebpageURL.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/BitFlags.h", Game.CORE, "GameEngine/Include/Common/BitFlags.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/BitFlagsIO.h", Game.CORE, "GameEngine/Include/Common/BitFlagsIO.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/BitFlags.cpp", Game.CORE, "GameEngine/Source/Common/BitFlags.cpp")
+
     return
 
 
