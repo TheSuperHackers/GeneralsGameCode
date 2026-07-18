@@ -2239,6 +2239,7 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 	// if we're in a load game, don't fade yet
 	if(loadingSaveGame == FALSE && TheTransitionHandler != nullptr && m_loadScreen)
 	{
+		TheFramePacer->reset();
 		TheTransitionHandler->setGroup("FadeWholeScreen");
 		while(!TheTransitionHandler->isFinished())
 		{
