@@ -77,7 +77,10 @@ static Bool scrollDir[4] = { false, false, false, false };
 constexpr const Real SCROLL_MULTIPLIER = 2.0f;
 constexpr const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
 
-static const Int edgeScrollSize = 3;
+// TheSuperHackers @tweak ZsoltFeher 18/07/2026 Widened from 3px to make edge-scroll easier
+// to trigger reliably, especially in fullscreen where hitting the exact physical screen edge
+// can be imprecise.
+static const Int edgeScrollSize = 15;
 
 static Mouse::MouseCursor prevCursor = Mouse::ARROW;
 
