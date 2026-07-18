@@ -26,12 +26,16 @@
 // W3D Particle System implementation
 // Author: Michael S. Booth, November 2001
 
+#include "Common/GlobalData.h"
 #include "GameClient/Color.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/W3DSmudge.h"
+#include "W3DDevice/GameClient/W3DSnow.h"
 #include "WW3D2/camera.h"
+
 
 //------------------------------------------------------------------------------ Performance Timers
 //#include "Common/PerfMetrics.h"
@@ -111,7 +115,6 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 	/// @todo lorenzen sez: this should be debug only:
 	m_onScreenParticleCount = 0;
 
-
  	const FrustumClass & frustum = rinfo.Camera.Get_Frustum();
 	AABoxClass bbox;
 
@@ -134,6 +137,13 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 	m_fieldParticleCount = 0;
 
+	const Bool drawSmudge = TheSmudgeManager && TheSmudgeManager->getHardwareSupport() && TheGlobalData->m_useHeatEffects;
+
+	if (drawSmudge)
+	{
+		TheSmudgeManager->resetDraw();
+	}
+
 	ParticleSystemManager::ParticleSystemList &particleSysList = TheParticleSystemManager->getAllParticleSystems();
 	for( ParticleSystemManager::ParticleSystemListIt it = particleSysList.begin(); it != particleSysList.end(); ++it)
 	{
@@ -146,6 +156,35 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		if (sys->isUsingDrawables())
 			continue;
 
+		//temporary hack that checks if texture name starts with "SMUD" - if so, we can assume it's a smudge type
+		if (/*sys->isUsingSmudge()*/ *((DWORD *)sys->getParticleTypeName().str()) == 0x44554D53)
+		{
+			if (drawSmudge)
+			{
+				for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
+				{
+					const Coord3D *pos = p->getPosition();
+					Real psize = p->getSize();
+
+					//Cull particle to edges of screen and terrain.
+					if (WWMath::Fabs( pos->x - bcX ) > ( beX + psize ) )
+						continue;
+
+					if (WWMath::Fabs( pos->y - bcY ) > ( beY + psize ) )
+						continue;
+
+					if (WWMath::Fabs( pos->z - bcZ ) > ( beZ + psize ) )
+						continue;
+
+					if (Smudge *smudge = TheSmudgeManager->findSmudge(p))
+					{
+						// The particle is in view. Draw the smudge!
+						smudge->m_draw = true;
+					}
+				}
+			}
+			continue;
+		}
 
 		/// @todo lorenzen sez: declare these outside the sys loop, and put some in registers
 		// initialize them here still, of course
@@ -164,10 +203,6 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 		//set-up all the per-particle
 		for (Particle *p = sys->getFirstParticle(); p; p = p->m_systemNext)
 		{
-			// do not attempt to render totally invisible particles
-			if (p->isInvisible())
-				continue;
-
 			pos = p->getPosition();
 			psize = p->getSize();
 
@@ -328,4 +363,14 @@ void W3DParticleSystemManager::doParticles(RenderInfoClass &rinfo)
 
 		/// @todo lorenzen sez: this should be debug only:
 	TheParticleSystemManager->setOnScreenParticleCount(m_onScreenParticleCount);
+
+	//Draw any particles belonging to weather effects
+	if (TheSnowManager)
+		((W3DSnowManager *)TheSnowManager)->render(rinfo);
+
+	//Now process screen smudges which are particles that distort the background behind them.
+	if(TheSmudgeManager)
+	{
+		((W3DSmudgeManager *)TheSmudgeManager)->render(rinfo);
+	}
 }
