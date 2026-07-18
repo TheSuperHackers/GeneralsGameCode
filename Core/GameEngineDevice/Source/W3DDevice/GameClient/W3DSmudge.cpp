@@ -310,6 +310,11 @@ Bool W3DSmudgeManager::testHardwareSupport()
 
 void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 {
+	// TheSuperHackers @perf stephanmeesters 14/08/2026 Early return when we have no smudge sets
+	// or if there are no smudges in the global smudge set.
+	if(m_usedSmudgeSetList.empty() || m_usedSmudgeSetList.front()->getUsedSmudgeCount() == 0)
+		return;
+
 	//Verify that the card supports the effect.
 	if (!testHardwareSupport())
 		return;
@@ -365,11 +370,8 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	SmudgeSetDeque::iterator setIt=m_usedSmudgeSetList.begin();	//first set that didn't fit into render batch.
 	Int count = 0;
 
-	if (setIt != m_usedSmudgeSetList.end())
-	{
-		//there are possibly some smudges to render, so make sure background particles have finished drawing.
-		SortingRendererClass::Flush();	//draw sorted translucent polys like particles.
-	}
+	// make sure background particles have finished drawing.
+	SortingRendererClass::Flush();	//draw sorted translucent polys like particles.
 
 	for(; setIt != m_usedSmudgeSetList.end(); ++setIt)
 	{
