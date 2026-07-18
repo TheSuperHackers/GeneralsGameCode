@@ -21,13 +21,13 @@
 #pragma once
 
 #include <Utility/hash_map_adapter.h>
-#include "WW3D2/dllist.h"
 #include "WWMath/vector2.h"
 #include "WWMath/vector3.h"
+#include <deque>
 
 #define SET_SMUDGE_PARAMETERS(smudge,pos,offset,size,opacity) (smudge->m_pos=pos;smudge->m_offset=offset;smudge->m_size=size;smudge->m_opacity=opacity;)
 
-struct Smudge : public DLNodeClass<Smudge>
+struct Smudge
 {
 	typedef void *Identifier;
 
@@ -48,6 +48,8 @@ struct Smudge : public DLNodeClass<Smudge>
 	smudgeVertex m_verts[5];	//5 vertices of this smudge (in counter-clockwise order, starting at top-left, ending in center.)
 };
 
+typedef std::deque<Smudge*> SmudgeQueue;
+
 #ifdef USING_STLPORT
 namespace std
 {
@@ -58,7 +60,7 @@ namespace std
 }
 #endif // USING_STLPORT
 
-struct SmudgeSet : public DLNodeClass<SmudgeSet>
+struct SmudgeSet
 {
 	friend class SmudgeManager;
 
@@ -73,17 +75,19 @@ struct SmudgeSet : public DLNodeClass<SmudgeSet>
 	Smudge *addSmudgeToSet(Smudge::Identifier identifier); ///< add and return a smudge to the set with the given identifier
 	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge that belongs to this identifier
 
-	DLListClass<Smudge> &getUsedSmudgeList() { return m_usedSmudgeList;}
+	SmudgeQueue& getUsedSmudgeList() { return m_usedSmudgeList; }
 	Int getUsedSmudgeCount() { return m_usedSmudgeCount; }	///<active smudges that need rendering.
 
 private:
 	typedef std::hash_map<Smudge::Identifier, Smudge *> SmudgeIdToPtrMap;
 
-	DLListClass<Smudge> m_usedSmudgeList;	///<list of smudges in this set.
+	SmudgeQueue m_usedSmudgeList;	///<list of smudges in this set.
 	SmudgeIdToPtrMap m_usedSmudgeMap;
-	static DLListClass<Smudge> m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
+	static SmudgeQueue m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
 	Int m_usedSmudgeCount;
 };
+
+typedef std::deque<SmudgeSet*> SmudgeSetQueue;
 
 class SmudgeManager
 {
@@ -109,8 +113,8 @@ protected:
 
 	HardwareSmudgeSupport m_hardwareSupportStatus;///< flag whether we verified that the effect is supported by hardware.
 
-	DLListClass<SmudgeSet> m_usedSmudgeSetList;	///<used SmudgeSets
-	DLListClass<SmudgeSet> m_freeSmudgeSetList;	///<unused SmudgeSets ready for re-use.
+	SmudgeSetQueue m_usedSmudgeSetList;	///<used SmudgeSets
+	SmudgeSetQueue m_freeSmudgeSetList;	///<unused SmudgeSets ready for re-use.
 	Int m_smudgeCountLastFrame;	//number of total smudges in manager last frame.
 };
 
