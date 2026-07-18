@@ -323,6 +323,10 @@ static unsigned overlapping_node_count;
 static unsigned overlapping_polygon_count;
 static unsigned overlapping_vertex_count;
 static const unsigned MAX_OVERLAPPING_NODES=4096;
+// TheSuperHackers @fix 18/07/2026 The sorting pool copies all node vertices into one combined
+// dynamic vertex buffer that is addressed with 16-bit indices, so the pool must never
+// accumulate more vertices than fit in an unsigned short.
+static const unsigned MAX_SORTING_VERTEX_COUNT=65535;
 static SortingNodeStruct* overlapping_nodes[MAX_OVERLAPPING_NODES];
 
 // ----------------------------------------------------------------------------
@@ -346,6 +350,19 @@ void SortingRendererClass::Insert_To_Sorted_List(SortingNodeStruct *state)
 
 void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 {
+	// TheSuperHackers @fix 18/07/2026
+	// Flush the pool early when adding this node would push the accumulated vertex count past
+	// the 16-bit limit of the combined dynamic vertex buffer. Exceeding it silently truncated
+	// the buffer allocation size (DynamicVBAccessClass takes an unsigned short) and wrapped the
+	// 16-bit triangle indices, corrupting memory and crashing. Nodes arrive here sorted
+	// back-to-front, so flushing in batches preserves the draw order of transparent geometry.
+	if (overlapping_node_count > 0 && overlapping_vertex_count + (unsigned)state->vertex_count > MAX_SORTING_VERTEX_COUNT) {
+		bool old_enable=DX8Wrapper::_Is_Triangle_Draw_Enabled();
+		DX8Wrapper::_Enable_Triangle_Draw(_EnableTriangleDraw);
+		Flush_Sorting_Pool();
+		DX8Wrapper::_Enable_Triangle_Draw(old_enable);
+	}
+
 	if (overlapping_node_count>=MAX_OVERLAPPING_NODES) {
 		Release_Refs(state);
 		delete state;
@@ -426,6 +443,10 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	if (overlapping_vertex_count > vertexAllocCount)
 		vertexAllocCount = overlapping_vertex_count;
 	WWASSERT(DEFAULT_SORTING_VERTEX_COUNT == 1 || vertexAllocCount <= DEFAULT_SORTING_VERTEX_COUNT);
+	// TheSuperHackers @fix 18/07/2026 The combined vertex buffer uses 16-bit indices and the
+	// DynamicVBAccessClass constructor takes an unsigned short, so the pooled vertex count must
+	// fit in 16 bits. Insert_To_Sorting_Pool guarantees this by flushing the pool in batches.
+	WWASSERT(vertexAllocCount <= MAX_SORTING_VERTEX_COUNT);
 	DynamicVBAccessClass dyn_vb_access(BUFFER_TYPE_DYNAMIC_DX8,dynamic_fvf_type,vertexAllocCount/*overlapping_vertex_count*/);
 	{
 		DynamicVBAccessClass::WriteLockClass lock(&dyn_vb_access);
