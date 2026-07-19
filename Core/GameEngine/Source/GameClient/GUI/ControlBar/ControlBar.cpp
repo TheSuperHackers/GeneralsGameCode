@@ -2560,6 +2560,20 @@ void ControlBar::postProcessCommands()
 	}
 }
 
+#if !RETAIL_COMPATIBLE_CRC
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix c001ac1d 07/19/2026 postProcessCommands() is otherwise only ever called
+// once, from init(), at game startup, so a CommandButton added or edited via a custom map's map.ini
+// never got its ButtonImage resolved. TheControlBar is not registered with TheSubsystemList (it is
+// constructed and owned separately), so this must be called explicitly after a map.ini load rather
+// than automatically via TheSubsystemList->postProcessLoadAll(). (GitHub issue #276)
+//-------------------------------------------------------------------------------------------------
+void ControlBar::postProcessLoad()
+{
+	postProcessCommands();
+}
+#endif
+
 //-------------------------------------------------------------------------------------------------
 /** set the command for the button identified by the window name
 	* NOTE that parent may be nullptr, it only helps to speed up the search for a particular

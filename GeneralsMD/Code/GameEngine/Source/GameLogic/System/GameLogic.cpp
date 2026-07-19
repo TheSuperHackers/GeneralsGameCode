@@ -1353,6 +1353,22 @@ void GameLogic::tryStartNewGame( Bool loadingSaveGame )
 	// before loading the map, load the map.ini file in the same directory.
 	loadMapINI( TheGlobalData->m_mapName );
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix c001ac1d 07/19/2026 A custom map's map.ini can add or edit data (e.g.
+	// Weapon ProjectileObject references, CommandButton entries) that some subsystems only resolve
+	// once, in a post-process step that normally only runs right after their initial startup INI load
+	// (e.g. WeaponStore::postProcessLoad() fixing up ProjectileObject references, or ControlBar's
+	// command button image caching). Since map.ini loads after that initial post-process step already
+	// ran, any new or edited data from map.ini never got its post-process step, e.g. projectiles
+	// silently failing to launch or new command buttons showing no image. Re-run post-processing for
+	// every subsystem, and separately for TheControlBar (which is not registered with
+	// TheSubsystemList), now that map.ini has been loaded. (GitHub issue #276)
+	if (TheSubsystemList)
+		TheSubsystemList->postProcessLoadAll();
+	if (TheControlBar)
+		TheControlBar->postProcessLoad();
+#endif
+
 	// load a map
 	TheTerrainLogic->loadMap( TheGlobalData->m_mapName, false );
 	// anytime the world's size changes, must reset the partition mgr

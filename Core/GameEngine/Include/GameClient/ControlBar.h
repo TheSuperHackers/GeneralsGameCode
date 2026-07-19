@@ -658,6 +658,13 @@ public:
 	virtual void init() override;					///< from subsystem interface
 	virtual void reset() override;					///< from subsystem interface
 	virtual void update() override;				///< from subsystem interface
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix c001ac1d 07/19/2026 Re-run command button post-processing (button images,
+	// among other things) after a map.ini has loaded new/edited CommandButton or CommandSet entries.
+	// postProcessCommands() is otherwise only ever called once, from init(), at game startup, so any
+	// command button added or edited via map.ini never got its image resolved. (GitHub issue #276)
+	virtual void postProcessLoad() override;
+#endif
 
 	/// mark the UI as dirty so the context of everything is re-evaluated
 	void markUIDirty();
