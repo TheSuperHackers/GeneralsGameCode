@@ -256,6 +256,13 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 				other->isKindOf( KINDOF_FS_FACTORY ) ||
 				other->isKindOf( KINDOF_FS_BASE_DEFENSE ) ||
 				other->isKindOf( KINDOF_FS_TECHNOLOGY ) ||
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix 19/07/2026 Also destroy supply centers, internet centers and fake
+				// buildings, so the train destroys all faction building types on collision, as intended.
+				other->isKindOf( KINDOF_FS_SUPPLY_CENTER ) ||
+				other->isKindOf( KINDOF_FS_INTERNET_CENTER ) ||
+				other->isKindOf( KINDOF_FS_FAKE ) ||
+#endif
 				other->isKindOf( KINDOF_REBUILD_HOLE ) )
 		{
 			playImpactSound(other, other->getPosition());
