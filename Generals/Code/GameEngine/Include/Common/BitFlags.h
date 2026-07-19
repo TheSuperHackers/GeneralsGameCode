@@ -45,7 +45,7 @@ class AsciiString;
 	So we wrap to correct this, but leave the bitset "exposed" so that we can use all the non-ctor
 	functions on it directly (since it doesn't overload operator= to do the "wrong" thing, strangely enough)
 */
-template <size_t NUMBITS>
+template <size_t NUMBITS, typename TAG>
 class BitFlags
 {
 private:
