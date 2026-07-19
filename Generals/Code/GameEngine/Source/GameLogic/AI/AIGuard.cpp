@@ -40,6 +40,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
+#include "Common/Player.h"
 #include "Common/Team.h"
 #include "Common/Xfer.h"
 #include "GameLogic/AI.h"
@@ -233,6 +234,14 @@ Bool AIGuardMachine::lookForInnerTarget()
 	PartitionFilterSameMapStatus				filterMapStatus(owner);
 	PartitionFilterPolygonTrigger				f3(area);
 	PartitionFilterIsFlying							f4;
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Guard Mode target acquisition scanned for enemies
+	// through fog of war, causing guarding units to visibly turn and lock onto (and thus reveal) enemies
+	// that were not actually visible yet. Apply the same UNFOGGED restriction that normal auto-acquire
+	// targeting (AIUpdateInterface::getNextMoodTarget) already uses for human-controlled players. (GitHub issue #86)
+	Player* controllingPlayer = owner->getControllingPlayer();
+	PartitionFilterFreeOfFog f5(controllingPlayer ? controllingPlayer->getPlayerIndex() : 0);
+#endif
 
 	PartitionFilter *filters[16];
 	Int count = 0;
@@ -240,6 +249,16 @@ Bool AIGuardMachine::lookForInnerTarget()
 	filters[count++] = &f1;
 	filters[count++] = &f2;
 	filters[count++] = &filterMapStatus;
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Only apply the UNFOGGED restriction for human-controlled
+	// players, matching AIUpdateInterface::getNextMoodTarget()'s behavior of leaving computer AI players'
+	// targeting unaffected by shroud. (GitHub issue #86)
+	if (controllingPlayer && controllingPlayer->getPlayerType() == PLAYER_HUMAN)
+	{
+		filters[count++] = &f5;
+	}
+#endif
 
 	Real visionRange = AIGuardMachine::getStdGuardRange(owner);
 

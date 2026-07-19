@@ -354,6 +354,15 @@ static Object *TunnelNetworkScan(Object *owner)
 		PartitionFilterRelationship					f1(owner, PartitionFilterRelationship::ALLOW_ENEMIES);
 		PartitionFilterPossibleToAttack			f2(ATTACK_NEW_TARGET, owner, CMD_FROM_AI);
 		PartitionFilterSameMapStatus				filterMapStatus(owner);
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Tunnel Network Guard target acquisition scanned for
+		// enemies through fog of war, causing guarding units to visibly turn and lock onto (and thus reveal)
+		// enemies that were not actually visible yet. Apply the same UNFOGGED restriction that normal
+		// auto-acquire targeting (AIUpdateInterface::getNextMoodTarget) already uses for human-controlled
+		// players. (GitHub issue #86)
+		Player* controllingPlayer = owner->getControllingPlayer();
+		PartitionFilterFreeOfFog filterFogged(controllingPlayer ? controllingPlayer->getPlayerIndex() : 0);
+#endif
 
 		PartitionFilter *filters[16];
 		Int count = 0;
@@ -361,6 +370,16 @@ static Object *TunnelNetworkScan(Object *owner)
 		filters[count++] = &f1;
 		filters[count++] = &f2;
 		filters[count++] = &filterMapStatus;
+
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Only apply the UNFOGGED restriction for human-controlled
+		// players, matching AIUpdateInterface::getNextMoodTarget()'s behavior of leaving computer AI players'
+		// targeting unaffected by shroud. (GitHub issue #86)
+		if (controllingPlayer && controllingPlayer->getPlayerType() == PLAYER_HUMAN)
+		{
+			filters[count++] = &filterFogged;
+		}
+#endif
 
 		Real visionRange = AITNGuardMachine::getStdGuardRange(owner);
 
