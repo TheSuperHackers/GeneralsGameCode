@@ -237,6 +237,7 @@ public:
 	virtual void reset() override;												///< subsystem interface
 	virtual void update() override { }										///< subsystem interface
 
+	void deleteAllUpgrades();
 	UpgradeTemplate *firstUpgradeTemplate(); ///< return the first upgrade template
 	const UpgradeTemplate *findUpgradeByKey( NameKeyType key ) const; ///< find upgrade by name key
 	const UpgradeTemplate *findUpgrade( const AsciiString& name ) const; ///< find and return upgrade by name

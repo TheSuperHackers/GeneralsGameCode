@@ -34,6 +34,7 @@
 #include "Common/Upgrade.h"
 #include "Common/Player.h"
 #include "Common/Xfer.h"
+#include "Common/XferCRC.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/Image.h"
 
@@ -233,23 +234,7 @@ UpgradeCenter::UpgradeCenter()
 //-------------------------------------------------------------------------------------------------
 UpgradeCenter::~UpgradeCenter()
 {
-
-	// delete all the upgrades loaded from the INI database
-	UpgradeTemplate *next;
-	while( m_upgradeList )
-	{
-
-		// get next
-		next = m_upgradeList->friend_getNext();
-
-		// delete head of list
-		deleteInstance(m_upgradeList);
-
-		// set head to next element
-		m_upgradeList = next;
-
-	}
-
+	deleteAllUpgrades();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -281,6 +266,23 @@ void UpgradeCenter::init()
 //-------------------------------------------------------------------------------------------------
 void UpgradeCenter::reset()
 {
+	// TheSuperHackers @bugfix helmutbuhler 07/19/2026 A custom map's map.ini can override upgrade
+	// templates (e.g. BuildTime/BuildCost on an existing Upgrade). Those overrides were never undone,
+	// so an upgrade template's data stayed permanently mutated for the rest of the client session --
+	// including for any subsequent match that does NOT use that map.ini, which mismatches against
+	// other clients whose UpgradeTemplate data was never touched. Undo this by discarding every loaded
+	// upgrade and reloading the original INI files, exactly as they were loaded at startup, before
+	// anything else in reset() (e.g. button image caching) can observe stale, overridden data.
+	// (GitHub issue #1436; upstream fix authored by helmutbuhler in PR #1749, ported here since that
+	// PR remains open pending an unrelated, unresolved architectural discussion about INI overrides.)
+	deleteAllUpgrades();
+	init();
+	XferCRC xferCRC;
+	xferCRC.open("lightCRC");
+	INI ini;
+	ini.loadFileDirectory("Data\\INI\\Default\\Upgrade", INI_LOAD_OVERWRITE, &xferCRC);
+	ini.loadFileDirectory("Data\\INI\\Upgrade", INI_LOAD_OVERWRITE, &xferCRC);
+
 	if( TheMappedImageCollection && !buttonImagesCached )
 	{
 		UpgradeTemplate *upgrade;
@@ -290,6 +292,30 @@ void UpgradeCenter::reset()
 		}
 		buttonImagesCached = TRUE;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void UpgradeCenter::deleteAllUpgrades()
+{
+	// delete all the upgrades loaded from the INI database
+	UpgradeTemplate *next;
+	while( m_upgradeList )
+	{
+
+		// get next
+		next = m_upgradeList->friend_getNext();
+
+		// delete head of list
+		deleteInstance(m_upgradeList);
+
+		// set head to next element
+		m_upgradeList = next;
+
+	}
+	m_upgradeList = nullptr;
+	m_nextTemplateMaskBit = 0;
+	buttonImagesCached = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
