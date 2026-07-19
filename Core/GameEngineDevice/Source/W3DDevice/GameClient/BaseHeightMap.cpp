@@ -1435,11 +1435,22 @@ RenderObjClass *	 BaseHeightMapRenderObjClass::Clone() const
 //=============================================================================
 void BaseHeightMapRenderObjClass::loadRoadsAndBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 {
-	if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
-		return;	//device not ready to render anything
+	// TheSuperHackers @bugfix ZsoltFeher 18/07/2026 Do not skip bridge registration when the D3D
+	// device is lost (e.g. the fullscreen game is minimized/tabbed out while the map loads).
+	// This function is called exactly once per map load from W3DTerrainLogic::newMap() and is the
+	// only place that registers bridges with the game logic (loadBridges -> addBridgeToLogic).
+	// The old code returned early on a lost device, so a client that was tabbed out during load
+	// ended up with no bridge objects at all - bridges neither rendered nor spawned, units could
+	// not cross, and multiplayer games mismatched against clients that loaded normally (GH #242).
+	// Bridge registration is device-independent: mesh/texture assets are created lazily on the
+	// CPU side (headless mode runs this same path with no device at all), and the bridge vertex
+	// buffers are (re)filled later by W3DBridgeBuffer::updateCenter() once rendering resumes.
+	// Keep the device guard for the roads only, they are purely visual and are reloaded by
+	// ReAcquireResources() after the device reset.
+	const Bool deviceReady = !(DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK);
 
 #ifdef DO_ROADS
-	if (m_roadBuffer) {
+	if (m_roadBuffer && deviceReady) {
 		m_roadBuffer->loadRoads();
 	}
 #endif
