@@ -1663,7 +1663,14 @@ void AIGroup::groupMoveToPosition( const Coord3D *p_posIn, Bool addWaypoint, Com
 		isFormation = false;
 		if (!addWaypoint) {
 			Int dx = (max.x-min.x)/PATHFIND_CELL_SIZE_F;
+#if RETAIL_COMPATIBLE_AIGROUP
 			Int dy = (max.x-min.x)/PATHFIND_CELL_SIZE_F;
+#else
+			// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Compute the group rectangle height from the
+			// y extents instead of reusing the x extents, so the cell count reflects the actual group
+			// area rather than its width squared. (GitHub issue #2462)
+			Int dy = (max.y-min.y)/PATHFIND_CELL_SIZE_F;
+#endif
 			Int cells = (dx*dy);
 			if (cells<2000) {
 				groupTightenToPosition(pos, false, cmdSource);
