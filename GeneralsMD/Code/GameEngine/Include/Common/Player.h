@@ -221,7 +221,7 @@ public:
 
 	void deletePlayerAI();
 
-	UnicodeString getPlayerDisplayName() { return m_playerDisplayName; }
+	UnicodeString getPlayerDisplayName() const { return m_playerDisplayName; }
 	NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
 
 	AsciiString getSide() const { return m_side; }

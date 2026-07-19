@@ -256,7 +256,7 @@ GameLogic::GameLogic()
 		m_progressCompleteTimeout[i] = 0;
 	}
 
-	m_shouldValidateCRCs = FALSE;
+	m_validationModeCRC = CRCMODE_NONE;
 
 	m_startNewGame = FALSE;
 
@@ -2632,11 +2632,9 @@ void GameLogic::processDestroyList()
 void GameLogic::processCommandList( CommandList *list )
 {
 	m_cachedCRCs.clear();
-	m_shouldValidateCRCs = FALSE;
+	m_validationModeCRC = CRCMODE_NONE;
 
-	GameMessage* msg;
-
-	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
+	for( GameMessage* msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
 #ifdef RTS_DEBUG
 		DEBUG_ASSERTCRASH(msg != nullptr && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
@@ -2644,69 +2642,79 @@ void GameLogic::processCommandList( CommandList *list )
 		logicMessageDispatcher( msg, nullptr );
 	}
 
-	if (m_shouldValidateCRCs && !TheNetwork->sawCRCMismatch())
+	if (m_validationModeCRC == CRCMODE_NETWORK)
 	{
-		Bool sawCRCMismatch = FALSE;
-		Int numPlayers = 0;
-		DEBUG_ASSERTCRASH(TheNetwork, ("No Network!"));
-		if (TheNetwork)
+		checkForMismatch();
+	}
+	else if (m_validationModeCRC == CRCMODE_REPLAY)
+	{
+		TheRecorder->checkForMismatch();
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::checkForMismatch()
+{
+	DEBUG_ASSERTCRASH(TheNetwork, ("No Network!"));
+
+	Bool sawCRCMismatch = FALSE;
+	UnsignedInt numPlayers = 0;
+
+	for (Int i=0; i<MAX_SLOTS; ++i)
+	{
+		if (TheNetwork->isPlayerConnected(i))
+			++numPlayers;
+	}
+
+	if (m_cachedCRCs.size() < numPlayers)
+	{
+		DEBUG_CRASH(("Not enough CRCs!"));
+		sawCRCMismatch = TRUE;
+	}
+	else
+	{
+		Bool hasReferenceCRC = FALSE;
+		UnsignedInt referenceCRC = 0;
+
+		for (CachedCRCMap::const_iterator it = m_cachedCRCs.begin(); it != m_cachedCRCs.end(); ++it)
 		{
-			for (Int i=0; i<MAX_SLOTS; ++i)
+			// TheSuperHackers @bugfix Caball009 14/06/2026 Check if player is still connected,
+			// to avoid spurious mismatches at low CRC intervals, e.g. every frame.
+			if (!TheNetwork->isPlayerConnected(it->first))
+				continue;
+
+			const UnsignedInt crc = it->second;
+
+			if (!hasReferenceCRC)
 			{
-				if (TheNetwork->isPlayerConnected(i))
-					++numPlayers;
+				hasReferenceCRC = TRUE;
+				referenceCRC = crc;
+				continue;
 			}
 
-			if (m_cachedCRCs.size() < numPlayers)
+			if (referenceCRC != crc)
 			{
-				DEBUG_CRASH(("Not enough CRCs!"));
+				DEBUG_CRASH(("CRC mismatch!"));
 				sawCRCMismatch = TRUE;
 			}
-			else
-			{
-				Bool hasReferenceCRC = FALSE;
-				UnsignedInt referenceCRC = 0;
-
-				for (CachedCRCMap::const_iterator it = m_cachedCRCs.begin(); it != m_cachedCRCs.end(); ++it)
-				{
-					// TheSuperHackers @bugfix Caball009 14/06/2026 Check if player is still connected,
-					// to avoid spurious mismatches at low CRC intervals, e.g. every frame.
-					if (!TheNetwork->isPlayerConnected(it->first))
-						continue;
-
-					const UnsignedInt crc = it->second;
-
-					if (!hasReferenceCRC)
-					{
-						hasReferenceCRC = TRUE;
-						referenceCRC = crc;
-						continue;
-					}
-
-					if (referenceCRC != crc)
-					{
-						DEBUG_CRASH(("CRC mismatch!"));
-						sawCRCMismatch = TRUE;
-					}
-				}
-			}
-		}
-
-		if (sawCRCMismatch)
-		{
-#ifdef DEBUG_LOGGING
-			DEBUG_LOG(("CRC Mismatch - saw %d CRCs from %d players", m_cachedCRCs.size(), numPlayers));
-			for (CachedCRCMap::const_iterator crcIt = m_cachedCRCs.begin(); crcIt != m_cachedCRCs.end(); ++crcIt)
-			{
-				Player *player = ThePlayerList->getNthPlayer(crcIt->first);
-				DEBUG_LOG(("CRC from player %d (%ls) = %X", crcIt->first,
-					player?player->getPlayerDisplayName().str():L"<NONE>", crcIt->second));
-			}
-#endif // DEBUG_LOGGING
-			TheNetwork->setSawCRCMismatch();
 		}
 	}
 
+	if (sawCRCMismatch)
+	{
+#ifdef DEBUG_LOGGING
+		DEBUG_LOG(("CRC Mismatch - saw %d CRCs from %d players", m_cachedCRCs.size(), numPlayers));
+		for (CachedCRCMap::const_iterator crcIt = m_cachedCRCs.begin(); crcIt != m_cachedCRCs.end(); ++crcIt)
+		{
+			const Player* player = ThePlayerList->getNthPlayer(crcIt->first);
+			DEBUG_LOG(("CRC from player %d (%ls) = %X", crcIt->first,
+				player ? player->getPlayerDisplayName().str() : L"<NONE>", crcIt->second));
+		}
+#endif // DEBUG_LOGGING
+
+		TheNetwork->setSawCRCMismatch();
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3770,11 +3778,16 @@ void GameLogic::update()
 	if (generateForSolo || generateForMP)
 	{
 		m_CRC = getCRC( CRC_RECALC );
-		bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 
 		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_LOGIC_CRC);
 		msg->appendIntegerArgument(m_CRC);
+
+#if RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @tweak Caball009 21/06/2026 Playback argument serves no purpose anymore
+		// other than to be able play replays from newer retail compatible builds on older builds or retail.
+		const bool isPlayback = (TheRecorder && TheRecorder->isPlaybackMode());
 		msg->appendBooleanArgument(isPlayback);
+#endif
 
 		// TheSuperHackers @info helmutbuhler 13/04/2025
 		// During replay simulation, we bypass TheMessageStream and instead put the CRC message
@@ -3784,7 +3797,7 @@ void GameLogic::update()
 			messageList = TheCommandList;
 		messageList->appendMessage(msg);
 
-		DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", isPlayback ? "Playback " : "", m_frame, m_CRC));
+		DEBUG_LOG(("Appended %sCRC on frame %d: %8.8X", (TheRecorder && TheRecorder->isPlaybackMode()) ? "Playback " : "", m_frame, m_CRC));
 	}
 
 	// collect stats

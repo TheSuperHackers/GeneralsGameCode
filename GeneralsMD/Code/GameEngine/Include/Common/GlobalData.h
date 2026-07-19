@@ -379,6 +379,8 @@ public:
 
 	Bool m_incrementalAGPBuf;
 
+	UnsignedByte m_replayCRCCheckMode;///< flag to control whose CRC messages are allowed to trigger a mismatch during replay playback
+
 	UnsignedInt m_iniCRC;							///< CRC of important INI files
 	UnsignedInt m_exeCRC;							///< CRC of the executable
 

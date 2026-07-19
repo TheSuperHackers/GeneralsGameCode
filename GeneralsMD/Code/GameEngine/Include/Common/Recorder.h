@@ -66,21 +66,63 @@ protected:
 	// corresponding replay CRC messages arrive. This class implements that queue.
 	class CRCInfo
 	{
+		enum CPP_11(: Byte)
+		{
+			CRC_LOCALPLAYER_SINGLEMISMATCH  =  0, // never ignore mismatch caused by local player (original behavior)
+			CRC_ALLPLAYERS_SINGLEMISMATCH   = -1, // never ignore mismatch caused by any player (default behavior)
+			CRC_ALLPLAYERS_MULTIPLEMISMATCH = -2, // ignore mismatch unless indicated by multiple or all players (optional behavior)
+		};
+
 	public:
+		struct MismatchData
+		{
+			enum CPP_11(: Byte)
+			{
+				PLAYER_PLAYBACK = -1,
+				PLAYER_UNKNOWN  = -2,
+			};
+
+			MismatchData() :
+				mismatched(false),
+				playerIndex(0),
+				queueSize(0),
+				playbackCRC(0),
+				playerCRC(0)
+			{}
+
+			MismatchData(Byte playerIndex, UnsignedShort queueSize, UnsignedInt playbackCRC, UnsignedInt playerCRC) :
+				mismatched(true),
+				playerIndex(playerIndex),
+				queueSize(queueSize),
+				playbackCRC(playbackCRC),
+				playerCRC(playerCRC)
+			{}
+
+			Bool mismatched;
+			Byte playerIndex;
+			UnsignedShort queueSize;
+			UnsignedInt playbackCRC;
+			UnsignedInt playerCRC;
+		};
+
 		CRCInfo();
-		CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
-		void addCRC(UnsignedInt val);
-		UnsignedInt readCRC();
-		int GetQueueSize() const { return m_data.size(); }
-		UnsignedInt getLocalPlayer() const { return m_localPlayer; }
-		void setSawCRCMismatch() { m_sawCRCMismatch = TRUE; }
-		Bool sawCRCMismatch() const { return m_sawCRCMismatch; }
+		void init(Bool isMultiplayer, Int localPlayerIndex);
+		void pushPlaybackCRC(UnsignedInt val);
+		void pushPlayerCRC(Int playerIndex, UnsignedInt val);
+		void setSawCRCMismatch();
+		Bool sawCRCMismatch() const;
+		Byte getLocalPlayerIndex() const;
+		MismatchData generateMismatchData();
 
 	protected:
-		Bool m_sawCRCMismatch;
+		UnsignedInt getLargestQueueSize() const;
+		UnsignedInt popPlaybackCRC();
+
 		Bool m_skippedOne;
-		UnsignedInt m_localPlayer;
-		std::list<UnsignedInt> m_data;
+		Bool m_sawCRCMismatch;
+		Byte m_localPlayerIndex;
+		std::list<UnsignedInt> m_playbackData;
+		std::vector<UnsignedInt> m_playerData[MAX_PLAYER_COUNT];
 	};
 
 public:
@@ -110,8 +152,9 @@ public:
 #endif
 	Bool isPlaybackInProgress() const;
 
-public:
-	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
+	void handlePlaybackCRCMessage(UnsignedInt newCRC);
+	void handlePlayerCRCMessage(Int playerIndex, UnsignedInt newCRC);
+	void checkForMismatch();
 
 	// read in info relating to a replay, conditionally setting up m_file for playback
 	struct ReplayHeader

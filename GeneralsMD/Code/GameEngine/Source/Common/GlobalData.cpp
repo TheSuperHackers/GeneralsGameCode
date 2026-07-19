@@ -1028,6 +1028,8 @@ GlobalData::GlobalData()
 
 	m_animateWindows = TRUE;
 
+	m_replayCRCCheckMode = 0;
+
 	m_iniCRC = 0;
 	m_exeCRC = 0;
 

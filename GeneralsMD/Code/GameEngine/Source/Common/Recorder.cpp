@@ -101,19 +101,43 @@ static FILE* openStatsLogFile()
 #endif
 
 RecorderClass::CRCInfo::CRCInfo() :
-	m_sawCRCMismatch(FALSE),
-	m_skippedOne(FALSE),
-	m_localPlayer(0)
-{}
-
-RecorderClass::CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
+	m_skippedOne(false),
+	m_sawCRCMismatch(false),
+	m_localPlayerIndex(CRC_ALLPLAYERS_SINGLEMISMATCH)
 {
-	m_sawCRCMismatch = FALSE;
-	m_skippedOne = !isMultiplayer;
-	m_localPlayer = localPlayer;
+	static_assert(ARRAY_SIZE(m_playerData) == MAX_PLAYER_COUNT, "array size must be equal to player count");
 }
 
-void RecorderClass::CRCInfo::addCRC(UnsignedInt val)
+void RecorderClass::CRCInfo::init(Bool isMultiplayer, Int localPlayerIndex)
+{
+	DEBUG_ASSERTCRASH((localPlayerIndex >= 0 && localPlayerIndex < MAX_PLAYER_COUNT),
+		("replay local player index is unexpected"));
+
+	m_skippedOne = !isMultiplayer;
+	m_sawCRCMismatch = false;
+
+	if (TheGlobalData->m_replayCRCCheckMode == 2)
+	{
+		m_localPlayerIndex = static_cast<Byte>(localPlayerIndex);
+	}
+	else if (TheGlobalData->m_replayCRCCheckMode == 1)
+	{
+		m_localPlayerIndex = CRC_ALLPLAYERS_MULTIPLEMISMATCH;
+	}
+	else
+	{
+		m_localPlayerIndex = CRC_ALLPLAYERS_SINGLEMISMATCH;
+	}
+
+	m_playbackData.clear();
+
+	for (size_t i = 0; i < ARRAY_SIZE(m_playerData); ++i)
+	{
+		m_playerData[i].clear();
+	}
+}
+
+void RecorderClass::CRCInfo::pushPlaybackCRC(UnsignedInt val)
 {
 	// TheSuperHackers @fix helmutbuhler 03/04/2025
 	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
@@ -126,22 +150,130 @@ void RecorderClass::CRCInfo::addCRC(UnsignedInt val)
 		return;
 	}
 
-	m_data.push_back(val);
-	//DEBUG_LOG(("CRCInfo::addCRC() - crc %8.8X pushes list to %d entries (full=%d)", val, m_data.size(), !m_data.empty()));
+	m_playbackData.push_back(val);
+	//DEBUG_LOG(("CRCInfo::pushPlaybackCRC() - crc %8.8X pushes list to %d entries", val, m_playbackData.size()));
 }
 
-UnsignedInt RecorderClass::CRCInfo::readCRC()
+void RecorderClass::CRCInfo::pushPlayerCRC(Int playerIndex, UnsignedInt val)
 {
-	if (m_data.empty())
+	if (const Bool isAllowedToAddPlayerCRC = (m_localPlayerIndex < CRC_LOCALPLAYER_SINGLEMISMATCH || playerIndex == m_localPlayerIndex))
 	{
-		DEBUG_LOG(("CRCInfo::readCRC() - bailing, full=0, size=%d", m_data.size()));
+		const UnsignedInt index = static_cast<UnsignedInt>(playerIndex);
+		if (index < ARRAY_SIZE(m_playerData))
+		{
+			m_playerData[index].push_back(val);
+			//DEBUG_LOG(("CRCInfo::pushPlayerCRC() - crc %8.8X pushes list to %d entries", val, m_playerData[index].size()));
+		}
+	}
+}
+
+void RecorderClass::CRCInfo::setSawCRCMismatch()
+{
+	m_sawCRCMismatch = TRUE;
+}
+
+Bool RecorderClass::CRCInfo::sawCRCMismatch() const
+{
+	return m_sawCRCMismatch;
+}
+
+Byte RecorderClass::CRCInfo::getLocalPlayerIndex() const
+{
+	return m_localPlayerIndex;
+}
+
+RecorderClass::CRCInfo::MismatchData RecorderClass::CRCInfo::generateMismatchData()
+{
+	CRCInfo::MismatchData mmData;
+
+	for (size_t largestQueueSize = getLargestQueueSize(), j = 0; j < largestQueueSize; ++j)
+	{
+		const UnsignedInt playbackCRC = popPlaybackCRC();
+		UnsignedInt playerCount = 0;
+		UnsignedInt mismatchPlayerCount = 0;
+
+		for (size_t i = 0; i < ARRAY_SIZE(m_playerData); ++i)
+		{
+			if (j >= m_playerData[i].size())
+				continue;
+
+			++playerCount;
+
+			const UnsignedInt playerCRC = m_playerData[i][j];
+			if (playbackCRC == playerCRC)
+				continue;
+
+			++mismatchPlayerCount;
+
+			if (!mmData.mismatched)
+			{
+				mmData = CRCInfo::MismatchData(static_cast<Byte>(i),
+					static_cast<UnsignedShort>(m_playbackData.size()), playbackCRC, playerCRC);
+			}
+		}
+
+		if (mmData.mismatched)
+		{
+			const Bool ignoreMismatch = (m_localPlayerIndex == CRC_ALLPLAYERS_MULTIPLEMISMATCH && playerCount >= 2 && mismatchPlayerCount <= 1);
+			if (ignoreMismatch)
+			{
+				mmData.mismatched = FALSE;
+			}
+			else
+			{
+				if (const Bool allPlayersMismatch = (playerCount >= 2 && playerCount == mismatchPlayerCount))
+				{
+					mmData.playerIndex = CRCInfo::MismatchData::PLAYER_PLAYBACK;
+				}
+				else if (const Bool cannotAttributeMismatch = (playerCount <= 1 || mismatchPlayerCount >= 2))
+				{
+					mmData.playerIndex = CRCInfo::MismatchData::PLAYER_UNKNOWN;
+				}
+
+				// leave the playback data in a valid state in case the caller ignores the mismatch
+				while (!m_playbackData.empty() && ++j < largestQueueSize)
+				{
+					m_playbackData.pop_front();
+				}
+
+				break;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(m_playerData); ++i)
+	{
+		m_playerData[i].clear();
+	}
+
+	return mmData;
+}
+
+UnsignedInt RecorderClass::CRCInfo::getLargestQueueSize() const
+{
+	UnsignedInt size = 0;
+	for (size_t i = 0; i < ARRAY_SIZE(m_playerData); ++i)
+	{
+		if (m_playerData[i].size() > size)
+		{
+			size = m_playerData[i].size();
+		}
+	}
+
+	return size;
+}
+
+UnsignedInt RecorderClass::CRCInfo::popPlaybackCRC()
+{
+	if (m_playbackData.empty())
+	{
 		return 0;
 	}
 
-	UnsignedInt val = m_data.front();
-	m_data.pop_front();
-	//DEBUG_LOG(("CRCInfo::readCRC() - returning %8.8X, full=%d, size=%d", val, !m_data.empty(), m_data.size()));
-	return val;
+	const UnsignedInt crc = m_playbackData.front();
+	m_playbackData.pop_front();
+
+	return crc;
 }
 
 void RecorderClass::logGameStart(AsciiString options)
@@ -981,71 +1113,70 @@ Bool RecorderClass::sawCRCMismatch() const
 	return m_crcInfo.sawCRCMismatch();
 }
 
-void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback)
+void RecorderClass::handlePlaybackCRCMessage(UnsignedInt newCRC)
 {
-	if (fromPlayback)
-	{
-		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Adding CRC of %X from %d to m_crcInfo", newCRC, playerIndex));
-		m_crcInfo.addCRC(newCRC);
-		return;
-	}
+	m_crcInfo.pushPlaybackCRC(newCRC);
 
-	Int localPlayerIndex = m_crcInfo.getLocalPlayer();
-	Bool samePlayer = FALSE;
-	AsciiString playerName;
-	playerName.format("player%d", localPlayerIndex);
-	const Player *p = ThePlayerList->getNthPlayer(playerIndex);
-	if (!p || (p->getPlayerNameKey() == NAMEKEY(playerName)))
-		samePlayer = TRUE;
-	if (samePlayer || (localPlayerIndex < 0))
+	//DEBUG_LOG(("RecorderClass::handlePlaybackCRCMessage() - Adding CRC of %X from playback to m_crcInfo", newCRC));
+}
+
+void RecorderClass::handlePlayerCRCMessage(Int playerIndex, UnsignedInt newCRC)
+{
+	m_crcInfo.pushPlayerCRC(playerIndex, newCRC);
+
+	//DEBUG_LOG(("RecorderClass::handlePlayerCRCMessage() - Adding CRC of %X from %d to m_crcInfo", newCRC, playerIndex));
+}
+
+void RecorderClass::checkForMismatch()
+{
+	const CRCInfo::MismatchData mmData = m_crcInfo.generateMismatchData();
+	if (mmData.mismatched)
 	{
-		UnsignedInt playbackCRC = m_crcInfo.readCRC();
-		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of InGame:%8.8X Replay:%8.8X Frame:%d from Player %d",
-		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo.GetQueueSize()-1, playerIndex));
-		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo.sawCRCMismatch())
+		// Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
+		// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
+		// virtually every replay, the assumption is our CRC checking is faulty. Since we're at the
+		// tail end of patch season, let's just disable the message, and hope the users believe the
+		// problem is fixed. -MDC 3/20/2003
+		//
+		// TheSuperHackers @tweak helmutbuhler 03/04/2025
+		// More than 20 years later, but finally fixed and re-enabled!
+		TheInGameUI->message("GUI:CRCMismatch");
+
+		// TheSuperHackers @info helmutbuhler 03/04/2025
+		// Note: We subtract the queue size from the frame number. This way we calculate the correct frame
+		// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
+		const UnsignedInt mismatchFrame = TheGameLogic->getFrame() - mmData.queueSize - 1;
+
+		// Now also prints a UI message for it.
+		const Player* player = ThePlayerList->getNthPlayer(mmData.playerIndex);
+		const UnicodeString mismatchDetailsStr = TheGameText->FETCH_OR_SUBSTITUTE("GUI:CRCMismatchDetails",
+			L"InGame:%8.8X Replay:%8.8X Frame:%d Player:%ls");
+		TheInGameUI->message(mismatchDetailsStr, mmData.playbackCRC, mmData.playerCRC, mismatchFrame, player
+			? player->getPlayerDisplayName().str()
+			: mmData.playerIndex == CRCInfo::MismatchData::PLAYER_PLAYBACK ? L"Playback" : L"Unknown");
+
+		DEBUG_LOG(("Replay has gone out of sync!\nInGame:%8.8X Replay:%8.8X\nFrame:%d\nPlayer:%ls",
+			mmData.playbackCRC, mmData.playerCRC, mismatchFrame, player
+			? player->getPlayerDisplayName().str()
+			: mmData.playerIndex == CRCInfo::MismatchData::PLAYER_PLAYBACK ? L"Playback" : L"Unknown"));
+
+		// Print mismatch in case we are simulating replays from console.
+		printf("CRC Mismatch in Frame %d, Local PlayerIndex %d, Mismatch PlayerIndex %d\n",
+			mismatchFrame, m_crcInfo.getLocalPlayerIndex(), mmData.playerIndex);
+
+		// TheSuperHackers @tweak Pause the game on mismatch.
+		// But not when a window with focus is opened, because that can make resuming difficult.
+		if (TheWindowManager->winGetFocus() == nullptr)
 		{
-			//Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
-			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
-			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
-			// tail end of patch season, let's just disable the message, and hope the users believe the
-			// problem is fixed. -MDC 3/20/2003
-			//
-			// TheSuperHackers @tweak helmutbuhler 03/04/2025
-			// More than 20 years later, but finally fixed and re-enabled!
-			TheInGameUI->message("GUI:CRCMismatch");
+			const Bool pause = TRUE;
+			const Bool pauseMusic = FALSE;
+			const Bool pauseInput = FALSE;
+			TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
 
-			// TheSuperHackers @info helmutbuhler 03/04/2025
-			// Note: We subtract the queue size from the frame number. This way we calculate the correct frame
-			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
-			const UnsignedInt mismatchFrame = TheGameLogic->getFrame() - m_crcInfo.GetQueueSize() - 1;
-
-			// Now also prints a UI message for it.
-			const UnicodeString mismatchDetailsStr = TheGameText->FETCH_OR_SUBSTITUTE("GUI:CRCMismatchDetails", L"InGame:%8.8X Replay:%8.8X Frame:%d");
-			TheInGameUI->message(mismatchDetailsStr, playbackCRC, newCRC, mismatchFrame);
-
-			DEBUG_LOG(("Replay has gone out of sync!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
-				playbackCRC, newCRC, mismatchFrame));
-
-			// Print Mismatch in case we are simulating replays from console.
-			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
-
-			// TheSuperHackers @tweak Pause the game on mismatch.
-			// But not when a window with focus is opened, because that can make resuming difficult.
-			if (TheWindowManager->winGetFocus() == nullptr)
-			{
-				Bool pause = TRUE;
-				Bool pauseMusic = FALSE;
-				Bool pauseInput = FALSE;
-				TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
-
-				// Mark this mismatch as seen when we had the chance to pause once.
-				m_crcInfo.setSawCRCMismatch();
-			}
+			// Mark this mismatch as seen when we had the chance to pause once.
+			m_crcInfo.setSawCRCMismatch();
 		}
-		return;
 	}
-
-	//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Skipping CRC of %8.8X from %d (our index is %d)", newCRC, playerIndex, localPlayerIndex));
 }
 
 /**
@@ -1160,10 +1291,10 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	}
 #endif
 
-	Bool isMultiplayer = m_gameInfo.getSlot(header.localPlayerIndex)->getIP() != 0;
-	m_crcInfo = CRCInfo(header.localPlayerIndex, isMultiplayer);
+	const Bool isMultiplayer = m_gameInfo.getSlot(header.localPlayerIndex)->getIP() != 0;
+	m_crcInfo.init(isMultiplayer, header.localPlayerIndex);
 	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
-	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", m_crcInfo.getLocalPlayer(), REPLAY_CRC_INTERVAL));
+	DEBUG_LOG(("Player index is %d, replay CRC interval is %d", header.localPlayerIndex, REPLAY_CRC_INTERVAL));
 
 	Int difficulty = 0;
 	m_file->read(&difficulty, sizeof(difficulty));

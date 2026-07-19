@@ -2383,6 +2383,9 @@ bool GameLogic::onLogicCrc(MAYBE_UNUSED GameMessage *msg)
 	Player *msgPlayer = getMessagePlayer(msg);
 	if (TheNetwork)
 	{
+		if (TheNetwork->sawCRCMismatch())
+			return false;
+
 		Int slotIndex = -1;
 		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
@@ -2401,26 +2404,41 @@ bool GameLogic::onLogicCrc(MAYBE_UNUSED GameMessage *msg)
 #if defined(RTS_DEBUG)
 			// don't even put this in release, cause someone might hack it.
 			if (!TheDebugIgnoreSyncErrors)
-			{
 #endif
-				m_shouldValidateCRCs = TRUE;
-#if defined(RTS_DEBUG)
-			}
-#endif
+				m_validationModeCRC = CRCMODE_NETWORK;
 		}
 
-		UnsignedInt newCRC = msg->getArgument(0)->integer;
+		const UnsignedInt newCRC = msg->getArgument(0)->integer;
 		//DEBUG_LOG(("Received CRC of %8.8X from %ls on frame %d", newCRC,
 			//msgPlayer->getPlayerDisplayName().str(), m_frame));
+
 		m_cachedCRCs[msgPlayer->getPlayerIndex()] = newCRC;
 	}
 	else if (TheRecorder && TheRecorder->isPlaybackMode())
 	{
-		UnsignedInt newCRC = msg->getArgument(0)->integer;
-		//DEBUG_LOG(("Saw CRC of %X from player %d.  Our CRC is %X.  Arg count is %d",
+#if RETAIL_COMPATIBLE_CRC
+		DEBUG_ASSERTCRASH(msg->getArgument(1)->boolean == msgPlayer->isLocalPlayer(),
+			("CRC message origin is unexpected; playback message argument doesn't match message player index"));
+#endif
+
+		if (TheRecorder->sawCRCMismatch())
+			return false;
+
+		const UnsignedInt newCRC = msg->getArgument(0)->integer;
+		//DEBUG_LOG(("Saw CRC of %X from player %d. Our CRC is %X. Arg count is %d",
 			//newCRC, msgPlayer->getPlayerIndex(), getCRC(), msg->getArgumentCount()));
 
-		TheRecorder->handleCRCMessage(newCRC, msgPlayer->getPlayerIndex(), (msg->getArgument(1)->boolean));
+		if (msgPlayer->isLocalPlayer())
+		{
+			// TheSuperHackers @info The replay observer / playback player is the local player during playback mode.
+			TheRecorder->handlePlaybackCRCMessage(newCRC);
+		}
+		else
+		{
+			TheRecorder->handlePlayerCRCMessage(msgPlayer->getPlayerIndex(), newCRC);
+
+			m_validationModeCRC = CRCMODE_REPLAY;
+		}
 	}
 
 	return true;
