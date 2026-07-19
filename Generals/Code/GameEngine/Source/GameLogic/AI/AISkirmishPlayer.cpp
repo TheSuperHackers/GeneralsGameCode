@@ -137,6 +137,10 @@ void AISkirmishPlayer::processBaseBuilding()
 							if (priorID == spawnerID) {
 								DEBUG_LOG(("AI Found hole to rebuild %s", curPlan->getName().str()));
 								info->setObjectID(obj->getID());
+#if !RETAIL_COMPATIBLE_CRC
+								// TheSuperHackers @bugfix 18/07/2026 Stop scanning once the matching rebuild hole is found.
+								break;
+#endif
 							}
 						}
  					}
@@ -182,6 +186,12 @@ void AISkirmishPlayer::processBaseBuilding()
 					info->setObjectTimestamp(0); // ready to build.
 				}
 			}
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix 18/07/2026 Re-fetch the building, because the object ID may have been
+			// updated to a GLA rebuild hole above. The hole rebuilds the structure autonomously, so the
+			// entry must be treated as already built and skipped, instead of being considered missing.
+			bldg = TheGameLogic->findObjectByID( info->getObjectID() );
+#endif
 			if (bldg) {
 				continue; // already built.
 			}
@@ -215,7 +225,14 @@ void AISkirmishPlayer::processBaseBuilding()
 				}
 				continue;
 			}
+#if RETAIL_COMPATIBLE_CRC
 			if (TheBuildAssistant->canMakeUnit(dozer, bldgPlan)!=CANMAKE_OK) {
+#else
+			// TheSuperHackers @bugfix 18/07/2026 Check buildability of the entry currently being evaluated
+			// (curPlan) instead of the accumulated candidate (bldgPlan), which starts as null and
+			// blocked all automatic build entries from ever becoming candidates.
+			if (TheBuildAssistant->canMakeUnit(dozer, curPlan)!=CANMAKE_OK) {
+#endif
 				if (info->isBuildable()) {
 					AsciiString bldgName = info->getTemplateName();
 					bldgName.concat(" - Dozer unable to build - money or technology missing.");
@@ -510,12 +527,25 @@ void AISkirmishPlayer::acquireEnemy()
 					// Some ai is already targeting this guy.  Add a distance penalty.
 					curDistSqr += (500*500);
 				}
+#if RETAIL_COMPATIBLE_CRC
 				if (somePlayer->isSkirmishAIPlayer() && (somePlayer->getCurrentEnemy()==m_player)) {
 					// he is attacking me.  So I will (gently) prefer to attack him.
 					curDistSqr -= (25*25);
 					if (curDistSqr<0) curDistSqr = 0;
 				}
+#endif
 			}
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix 18/07/2026 Apply the retaliation bonus to the candidate that is
+			// attacking us. Previously the check tested the inner loop player instead of the candidate,
+			// so the bonus was applied to unrelated candidates, while the actual attacker, skipped by
+			// the k==i check, never received it.
+			if (curPlayer->isSkirmishAIPlayer() && (curPlayer->getCurrentEnemy()==m_player)) {
+				// he is attacking me.  So I will (gently) prefer to attack him.
+				curDistSqr -= (25*25);
+				if (curDistSqr<0) curDistSqr = 0;
+			}
+#endif
 
 			// Ai enemy - will take if we don't get a better offer.
 			if (curDistSqr<bestDistanceSqr) {
@@ -662,7 +692,22 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 			}
 		}
 
+#if RETAIL_COMPATIBLE_CRC
 		if (angle > PI/3) break;
+#else
+		// TheSuperHackers @bugfix 18/07/2026 Limit both sides of the defense arc to 60 degrees.
+		// The previous check never triggered for the negative (right side) angles, allowing one
+		// placement outside the intended sector, and it left the placement counter stuck once the
+		// left side reached the limit, permanently stopping base defense construction.
+		if (fabs(angle) > PI/3) {
+			if (flank) {
+				m_curFlankBaseDefense++;
+			} else {
+				m_curFrontBaseDefense++;
+			}
+			break;
+		}
+#endif
 		Real s = sin(angle);
 		Real c = cos(angle);
 
@@ -866,9 +911,15 @@ void AISkirmishPlayer::doBaseBuilding()
 				m_readyToBuildStructure = true;
 				m_buildDelay = 0;
 			}
+#if RETAIL_COMPATIBLE_CRC
 			if (m_structureTimer > 3*LOGICFRAMES_PER_SECOND) {
 				m_structureTimer = 3*LOGICFRAMES_PER_SECOND;
 			}
+#else
+			// TheSuperHackers @bugfix 18/07/2026 Removed the hardcoded 3 second timer cap that overrode
+			// the structure build delay configured via AIData.ini
+			// (StructureSeconds and the StructuresWealthyRate/StructuresPoorRate modifiers).
+#endif
 		}
 		// This timer is to keep from banging on the logic each frame.  If something interesting
 		// happens, like a building is added or a unit finished, the timers are shortcut.
@@ -918,9 +969,15 @@ void AISkirmishPlayer::doTeamBuilding()
 				m_readyToBuildTeam = true;
 				m_teamDelay = 0;
 			}
+#if RETAIL_COMPATIBLE_CRC
 			if (m_teamTimer > 3*LOGICFRAMES_PER_SECOND) {
 				m_teamTimer = 3*LOGICFRAMES_PER_SECOND;
 			}
+#else
+			// TheSuperHackers @bugfix 18/07/2026 Removed the hardcoded 3 second timer cap that overrode
+			// the team build delay configured via AIData.ini
+			// (TeamSeconds and the TeamsWealthyRate/TeamsPoorRate modifiers).
+#endif
 		}
 
 		// This timer is to keep from banging on the logic each frame.  If something interesting
@@ -1175,13 +1232,18 @@ void AISkirmishPlayer::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
 	* Version Info;
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: TheSuperHackers @bugfix 18/07/2026 Save the current enemy and the next enemy check frame */
 // ------------------------------------------------------------------------------------------------
 void AISkirmishPlayer::xfer( Xfer *xfer )
 {
 
 	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1211,6 +1273,26 @@ void AISkirmishPlayer::xfer( Xfer *xfer )
 
 	// right flank right defense angle
 	xfer->xferReal( &m_curRightFlankRightDefenseAngle );
+
+	// TheSuperHackers @bugfix 18/07/2026 Restore the current enemy and the next enemy check frame.
+	// Previously these were not saved, causing the AI to forget its chosen enemy and re-acquire
+	// an enemy from scratch immediately after loading a save.
+	if (version >= 2)
+	{
+		// frame to check enemy
+		xfer->xferUnsignedInt( &m_frameToCheckEnemy );
+
+		// current enemy, stored as a player index
+		Int enemyIndex = m_currentEnemy ? m_currentEnemy->getPlayerIndex() : PLAYER_INDEX_INVALID;
+		xfer->xferInt( &enemyIndex );
+		if (xfer->getXferMode() == XFER_LOAD)
+		{
+			if (enemyIndex >= 0 && enemyIndex < ThePlayerList->getPlayerCount())
+				m_currentEnemy = ThePlayerList->getNthPlayer( enemyIndex );
+			else
+				m_currentEnemy = nullptr;
+		}
+	}
 
 }
 

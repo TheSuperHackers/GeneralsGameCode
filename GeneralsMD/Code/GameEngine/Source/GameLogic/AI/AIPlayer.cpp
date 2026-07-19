@@ -343,6 +343,18 @@ void AIPlayer::queueSupplyTruck()
 				info->setCurrentGatherers(curGatherers);
 			}
 		} else {
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix 18/07/2026 Don't reattach loose harvesters to GLA rebuild holes.
+			// The build list entry can point at a rebuild hole (KINDOF_REBUILD_HOLE), which is not a
+			// valid dock, so ordering a harvester to dock there leaves it stuck. The servicing branch
+			// above already skips rebuild holes; this branch was missing the check.
+			{
+				Object *center = TheGameLogic->findObjectByID(info->getObjectID());
+				if (center && center->isKindOf(KINDOF_REBUILD_HOLE)) {
+					continue;
+				}
+			}
+#endif
 			/* See if we have any "loose" harvesters (cause my supply center got nuked.) */
 			Player::PlayerTeamList::const_iterator it;
 			for (it = m_player->getPlayerTeams()->begin(); it != m_player->getPlayerTeams()->end(); ++it) {
@@ -935,7 +947,14 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 //-------------------------------------------------------------------------------------------------
 Bool AIPlayer::isSupplySourceAttacked()
 {
+#if RETAIL_COMPATIBLE_CRC
 	const Int SCAN_RATE = 10; // don't scan more often than every 10 seconds.
+#else
+	// TheSuperHackers @bugfix 18/07/2026 SCAN_RATE is compared against frame counts but was specified
+	// in seconds, shrinking the intended 10 second attack memory window to 10 frames (0.33 seconds),
+	// making the AI forget attacks on its supply lines almost immediately.
+	const Int SCAN_RATE = 10 * LOGICFRAMES_PER_SECOND; // don't scan more often than every 10 seconds.
+#endif
 	UnsignedInt curFrame = TheGameLogic->getFrame();
 	if (curFrame==0) {
 		m_supplySourceAttackCheckFrame = curFrame+SCAN_RATE;
