@@ -286,7 +286,19 @@ AsciiString SkirmishPreferences::getPreferredMap()
 
 	ret = QuotedPrintableToAsciiString(it->second);
 	ret.trim();
-	if (ret.isEmpty() || !isValidMap(ret, TRUE))
+
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 The Skirmish menu also allows selecting
+	// single-player mission maps for testing (see reallyDoStart(), which derives isSkirmish
+	// from the map's own m_isMultiplayer flag). Validating the saved map against a hardcoded
+	// isMultiplayer=TRUE caused the last-played mission map to always fail validation and be
+	// replaced by the default multiplayer map. Look up the map's actual type instead so the
+	// last-played map (mission or multiplayer) is correctly restored as the default selection.
+	Bool isMultiplayer = TRUE;
+	const MapMetaData *md = TheMapCache ? TheMapCache->findMap(ret) : nullptr;
+	if (md)
+		isMultiplayer = md->m_isMultiplayer;
+
+	if (ret.isEmpty() || !isValidMap(ret, isMultiplayer))
 	{
 		ret = getDefaultMap(TRUE);
 		return ret;
