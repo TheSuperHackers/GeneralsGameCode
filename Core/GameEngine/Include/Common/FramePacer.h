@@ -49,6 +49,8 @@ public:
 
 	Real getUpdateTime() const; ///< Get the last update delta time in seconds.
 	Real getUpdateFps() const; ///< Get the last update fps.
+	Real getSmoothedUpdateTime() const; ///< Get the exponentially smoothed update delta time in seconds. Preferred for scaling visible motion to avoid jitter.
+	Real getSmoothedUpdateFps() const; ///< Get the exponentially smoothed update fps.
 	Real getBaseOverUpdateFpsRatio(Real minUpdateFps = 5.0f); ///< Get the last engine base over update fps ratio. Used to scale user inputs to a frame rate independent speed.
 
 	void setTimeFrozen(Bool frozen); ///< Set time frozen. Allows scripted camera movement.
@@ -74,6 +76,7 @@ protected:
 	Int m_logicTimeScaleFPS; ///< Maximum frames per second for logic time scale
 
 	Real m_updateTime; ///< Last update delta time in seconds
+	Real m_smoothedUpdateTime; ///< Exponentially smoothed update delta time in seconds
 
 	Bool m_enableFpsLimit;
 	Bool m_enableLogicTimeScale;

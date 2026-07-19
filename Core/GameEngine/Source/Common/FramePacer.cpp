@@ -38,6 +38,7 @@ FramePacer::FramePacer()
 	m_maxFPS = BaseFps;
 	m_logicTimeScaleFPS = LOGICFRAMES_PER_SECOND;
 	m_updateTime = 1.0f / (Real)BaseFps; // initialized to something to avoid division by zero on first use
+	m_smoothedUpdateTime = m_updateTime;
 	m_enableFpsLimit = FALSE;
 	m_enableLogicTimeScale = FALSE;
 	m_isTimeFrozen = FALSE;
@@ -56,6 +57,17 @@ void FramePacer::update()
 	// with higher resolution counters to cap the frame rate more accurately to the desired limit.
 	const UnsignedInt maxFps = getActualFramesPerSecondLimit();// allowFpsLimit ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
 	m_updateTime = m_frameRateLimit.wait(maxFps);
+
+	// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Maintain an exponentially smoothed frame time
+	// alongside the raw frame time. Scaling visible motion (camera scroll, scripted camera moves,
+	// client fades) by the raw time of the previous frame turns every frame time spike into a
+	// single oversized movement step on the following frame, which is visible as stuttering and
+	// far jumps during heavy scenes even when the average frame rate is high. See GitHub #1942.
+	// The smoothing uses a ~100 ms time constant, so it converges quickly after real frame rate
+	// changes but suppresses per-frame jitter.
+	const Real smoothTimeConstant = 0.1f;
+	const Real alpha = std::min(1.0f, m_updateTime / smoothTimeConstant);
+	m_smoothedUpdateTime += (m_updateTime - m_smoothedUpdateTime) * alpha;
 }
 
 void FramePacer::setFramesPerSecondLimit( Int fps )
@@ -118,11 +130,23 @@ Real FramePacer::getUpdateFps()  const
 	return 1.0f / m_updateTime;
 }
 
+Real FramePacer::getSmoothedUpdateTime() const
+{
+	return m_smoothedUpdateTime;
+}
+
+Real FramePacer::getSmoothedUpdateFps() const
+{
+	return 1.0f / m_smoothedUpdateTime;
+}
+
 Real FramePacer::getBaseOverUpdateFpsRatio(Real minUpdateFps)
 {
 	// Update fps is floored to default 5 fps, 200 ms.
 	// Useful to prevent insane ratios on frame spikes/stalls.
-	return (Real)BaseFps / std::max(getUpdateFps(), minUpdateFps);
+	// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Use the smoothed update fps so that single
+	// frame time spikes do not translate into oversized movement steps on the next frame. See GitHub #1942.
+	return (Real)BaseFps / std::max(getSmoothedUpdateFps(), minUpdateFps);
 }
 
 void FramePacer::setTimeFrozen(Bool frozen)
@@ -200,7 +224,12 @@ Real FramePacer::getActualLogicTimeScaleOverFpsRatio(LogicTimeQueryFlags flags) 
 {
 	// TheSuperHackers @info Clamps ratio to min 1, because the logic
 	// frame rate is currently capped by the render frame rate.
-	return min(1.0f, (Real)getActualLogicTimeScaleFps(flags) / getUpdateFps());
+	// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Use the smoothed update fps so that render side
+	// steps (scripted camera movement, client fades) advance evenly across frames instead of
+	// jumping after frame time spikes. See GitHub #1942. The raw update time remains in use for
+	// the logic time accumulator in GameEngine, which needs the exact frame time to keep the
+	// long-run logic rate correct.
+	return min(1.0f, (Real)getActualLogicTimeScaleFps(flags) / getSmoothedUpdateFps());
 }
 
 Real FramePacer::getLogicTimeStepSeconds(LogicTimeQueryFlags flags) const
