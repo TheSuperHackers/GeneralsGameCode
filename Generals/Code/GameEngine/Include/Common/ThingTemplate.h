@@ -575,6 +575,11 @@ public:
 	/// calculate how much money it will take the given player to build this unit
 	Int calcCostToBuild( const Player* player) const;
 
+	/// calculate the monetary value of a single unit of this type for the given player.
+	/// This is the build cost divided by the production batch quantity, if any (see
+	/// ProductionUpdate QuantityModifier, e.g. China Red Guards build two per purchase).
+	Int calcProductionValue( const Player* player) const;
+
 	/// Used only by Skirmish AI. Everyone else should call calcCostToBuild.
 	Int friend_getBuildCost() const { return m_buildCost; }
 

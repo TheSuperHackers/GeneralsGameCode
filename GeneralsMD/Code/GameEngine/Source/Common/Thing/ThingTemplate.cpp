@@ -65,6 +65,7 @@
 
 #include "GameLogic/Armor.h"
 #include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/Module/ProductionUpdate.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Powers.h"
@@ -1555,6 +1556,44 @@ Int ThingTemplate::calcCostToBuild( const Player* player) const
 	Real factionModifier = 1 + player->getProductionCostChangePercent( getName() );
 	factionModifier *= player->getProductionCostChangeBasedOnKindOf( m_kindof );
 	return getBuildCost() * factionModifier * player->getHandicap()->getHandicap(Handicap::BUILDCOST, this);
+}
+
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @feature 19/07/2026 Units can be produced in batches for a shared cost via a
+// factory's ProductionUpdate QuantityModifier (e.g. China Red Guards build two per purchase).
+// The monetary value of a single unit is then just its share of the batch production cost.
+//-------------------------------------------------------------------------------------------------
+Int ThingTemplate::calcProductionValue( const Player* player) const
+{
+	Int cost = calcCostToBuild( player );
+
+	Int quantity = 1;
+	for( const ThingTemplate* factoryTemplate = TheThingFactory->firstTemplate();
+			 factoryTemplate != nullptr;
+			 factoryTemplate = factoryTemplate->friend_getNextTemplate() )
+	{
+		const ModuleInfo& moduleInfo = factoryTemplate->getBehaviorModuleInfo();
+		for( Int i = 0; i < moduleInfo.getCount(); ++i )
+		{
+			if( moduleInfo.getNthName( i ) != "ProductionUpdate" )
+				continue;
+
+			const ProductionUpdateModuleData* data = static_cast<const ProductionUpdateModuleData*>( moduleInfo.getNthData( i ) );
+			for( std::vector<QuantityModifier>::const_iterator it = data->m_quantityModifiers.begin(); it != data->m_quantityModifiers.end(); ++it )
+			{
+				const ThingTemplate* productionTemplate = TheThingFactory->findTemplate( it->m_templateName );
+				if( productionTemplate && productionTemplate->isEquivalentTo( this ) && it->m_quantity > quantity )
+				{
+					quantity = it->m_quantity;
+				}
+			}
+		}
+	}
+
+	if( quantity > 1 )
+		cost /= quantity;
+
+	return cost;
 }
 
 //-------------------------------------------------------------------------------------------------

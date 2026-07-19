@@ -2362,10 +2362,17 @@ void Player::doBountyForKill(const Object* killer, const Object* victim)
 	if (victim->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
 		return;
 
-	Int costToBuild = victim->getTemplate()->calcCostToBuild(victim->getControllingPlayer());
 #if RETAIL_COMPATIBLE_CRC
+	Int costToBuild = victim->getTemplate()->calcCostToBuild(victim->getControllingPlayer());
 	Int bounty = REAL_TO_INT_CEIL(costToBuild * m_cashBountyPercent);
 #else
+	if (m_cashBountyPercent == 0.0f)
+		return;
+
+	// TheSuperHackers @bugfix 19/07/2026 Use the per-unit production value instead of the full build
+	// cost, so batch-produced units (e.g. China Red Guards, built two per purchase) no longer award
+	// a bounty based on the cost of the whole batch.
+	Int costToBuild = victim->getTemplate()->calcProductionValue(victim->getControllingPlayer());
 	// TheSuperHackers @bugfix Stubbjax 20/02/2026 Subtract epsilon to ensure bounty is rounded up correctly.
 	Int bounty = ceil((costToBuild * m_cashBountyPercent) - WWMATH_EPSILON);
 #endif
