@@ -681,12 +681,23 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 
 	// load the save data
 	Bool error = FALSE;
+	// TheSuperHackers @bugfix Loading a save file whose Xfer version is higher than this build
+	// understands is intentionally unsupported (see Xfer::xferVersion), so it is not treated as a
+	// crash bug. Distinguish that specific failure here so the player gets a clear explanation
+	// instead of the generic "file is corrupt or unreadable" message.
+	Bool versionTooNew = FALSE;
 	try
 	{
 
 		// load file
 		xferSaveData( &xferLoad, SNAPSHOT_SAVELOAD );
 
+	}
+	catch( XferStatus xferStatus )
+	{
+		error = TRUE;
+		if( xferStatus == XFER_INVALID_VERSION )
+			versionTooNew = TRUE;
 	}
 	catch( ... )
 	{
@@ -722,7 +733,12 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 		ufilepath.translate(filepath);
 
 		UnicodeString msg;
-		msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
+		if( versionTooNew )
+			msg = TheGameText->FETCH_OR_SUBSTITUTE_FORMAT( "GUI:ErrorLoadingGameNewerVersion",
+				L"This save game was created by a newer version of the game and cannot be loaded here. Please update your game.\n\n%ls",
+				ufilepath.str() );
+		else
+			msg.format( TheGameText->fetch("GUI:ErrorLoadingGame"), ufilepath.str() );
 
 		MessageBoxOk(TheGameText->fetch("GUI:Error"), msg, nullptr);
 
