@@ -129,6 +129,7 @@ protected:
 	static IDirect3DTexture8 *m_renderTexture;		///<texture into which rendering will be redirected.
 	static IDirect3DSurface8 *m_newRenderSurface;	///<new render target inside m_renderTexture
 	static IDirect3DSurface8 *m_oldDepthSurface;	///<previous depth buffer surface
+	static IDirect3DSurface8 *m_newDepthSurface;	///<non-multisampled depth buffer used while rendering to m_renderTexture (only needed when MSAA is active)
 
 
 };

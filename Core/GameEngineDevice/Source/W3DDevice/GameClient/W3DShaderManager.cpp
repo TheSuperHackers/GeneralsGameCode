@@ -113,6 +113,7 @@ IDirect3DSurface8 *W3DShaderManager::m_oldRenderSurface=nullptr;	///<previous re
 IDirect3DTexture8 *W3DShaderManager::m_renderTexture=nullptr;		///<texture into which rendering will be redirected.
 IDirect3DSurface8 *W3DShaderManager::m_newRenderSurface=nullptr;	///<new render target inside m_renderTexture
 IDirect3DSurface8 *W3DShaderManager::m_oldDepthSurface=nullptr;	///<previous depth buffer surface
+IDirect3DSurface8 *W3DShaderManager::m_newDepthSurface=nullptr;	///<non-multisampled depth buffer used while rendering to m_renderTexture
 /*===========================================================================================*/
 /*=========      Screen Shaders	=============================================================*/
 /*===========================================================================================*/
@@ -2569,6 +2570,7 @@ W3DShaderManager::W3DShaderManager()
 	m_renderTexture = nullptr;
 	m_newRenderSurface = nullptr;
 	m_oldDepthSurface = nullptr;
+	m_newDepthSurface = nullptr;
 	m_renderingToTexture = false;
 	Int i;
 	for (i=0; i<W3DShaderManager::ST_MAX; i++)
@@ -2607,18 +2609,8 @@ void W3DShaderManager::init()
 			return;
 
 		m_oldRenderSurface->GetDesc(&desc);
-		
-		// TheSuperHackers @bugfix Redirecting rendering to a non-multisampled texture
-		// while using a multisampled depth buffer is an API violation in DX8.
-		if (desc.MultiSampleType == D3DMULTISAMPLE_NONE)
-		{
-			hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture);
-		}
-		else
-		{
-			// Force failure path to avoid MSAA mismatch
-			hr = E_FAIL;
-		}
+
+		hr=DX8Wrapper::_Get_D3D_Device8()->CreateTexture(desc.Width,desc.Height,1,D3DUSAGE_RENDERTARGET,desc.Format,D3DPOOL_DEFAULT,&m_renderTexture);
 
 		if (hr != S_OK)
 		{
@@ -2632,10 +2624,25 @@ void W3DShaderManager::init()
 				m_newRenderSurface = nullptr;
 			}	else {
 				hr = DX8Wrapper::_Get_D3D_Device8()->GetDepthStencilSurface(&m_oldDepthSurface);
+
+				// TheSuperHackers @bugfix Redirecting rendering to a non-multisampled texture while using a
+				// multisampled depth buffer is an API violation in DX8, which previously disabled all
+				// render-to-texture screen filters (motion blur zoom, black & white, crossfade) when MSAA is
+				// enabled. Create a matching non-multisampled depth buffer to use while rendering to the texture.
+				if (hr == S_OK && desc.MultiSampleType != D3DMULTISAMPLE_NONE)
+				{
+					D3DSURFACE_DESC depthDesc;
+					m_oldDepthSurface->GetDesc(&depthDesc);
+					hr = DX8Wrapper::_Get_D3D_Device8()->CreateDepthStencilSurface(desc.Width,desc.Height,depthDesc.Format,D3DMULTISAMPLE_NONE,&m_newDepthSurface);
+					if (hr != S_OK)
+						m_newDepthSurface = nullptr;
+				}
+
 				if (hr != S_OK)
 				{
 					SAFE_RELEASE(m_newRenderSurface);
 					SAFE_RELEASE(m_renderTexture);
+					SAFE_RELEASE(m_oldDepthSurface);
 					m_oldDepthSurface = nullptr;
 				}
 			}
@@ -2677,6 +2684,7 @@ void W3DShaderManager::shutdown()
 	SAFE_RELEASE(m_renderTexture);
 	SAFE_RELEASE(m_oldRenderSurface);
 	SAFE_RELEASE(m_oldDepthSurface);
+	SAFE_RELEASE(m_newDepthSurface);
 	m_currentShader = ST_INVALID;
 	m_currentFilter = FT_NULL_FILTER;
 	//release any assets associated with a shader (vertex/pixel shaders, textures, etc.)
@@ -2834,7 +2842,12 @@ void W3DShaderManager::startRenderToTexture()
 	DEBUG_ASSERTCRASH(!m_renderingToTexture, ("Already rendering to texture - cannot nest calls."));
 
 	if (m_renderingToTexture || m_newRenderSurface==nullptr || m_oldDepthSurface==nullptr) return;
-	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(m_newRenderSurface,m_oldDepthSurface);
+
+	// TheSuperHackers @bugfix Use the dedicated non-multisampled depth buffer when the back buffer
+	// is multisampled, because pairing a non-multisampled render target with a multisampled depth
+	// buffer is invalid in DX8.
+	IDirect3DSurface8 *depthSurface = m_newDepthSurface ? m_newDepthSurface : m_oldDepthSurface;
+	HRESULT hr = DX8Wrapper::_Get_D3D_Device8()->SetRenderTarget(m_newRenderSurface,depthSurface);
 
 	// TheSuperHackers @bugfix If SetRenderTarget fails (e.g. due to MSAA forced by driver
 	// profile causing a depth buffer mismatch that D3DSURFACE_DESC doesn't report), permanently
@@ -2846,6 +2859,7 @@ void W3DShaderManager::startRenderToTexture()
 		SAFE_RELEASE(m_renderTexture);
 		SAFE_RELEASE(m_oldRenderSurface);
 		SAFE_RELEASE(m_oldDepthSurface);
+		SAFE_RELEASE(m_newDepthSurface);
 		return;
 	}
 
