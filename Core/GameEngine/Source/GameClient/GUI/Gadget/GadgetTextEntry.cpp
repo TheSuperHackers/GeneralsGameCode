@@ -151,6 +151,18 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 
 			switch( mData1 )
 			{
+				// --------------------------------------------------------------------
+				// TheSuperHackers @bugfix Ignore the CTRL and ALT modifier keys themselves.
+				// Their key-down passes through above (it carries the CONTROL/ALT state bit),
+				// but their key-up does not, and was consumed here. The consumed raw key-up
+				// then never reached MetaEventTranslator, leaving hold-state latches stuck,
+				// e.g. CTRL force attack mode while the beacon text entry has focus (#986).
+				case KEY_LCTRL:
+				case KEY_RCTRL:
+				case KEY_LALT:
+				case KEY_RALT:
+					return MSG_IGNORED;
+
 				/*
 				// --------------------------------------------------------------------
 				case KEY_KPENTER:
