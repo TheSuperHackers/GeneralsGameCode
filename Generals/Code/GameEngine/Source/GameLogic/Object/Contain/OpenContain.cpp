@@ -747,6 +747,16 @@ void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *n
 	if (ai->getEnterTarget() != getObject())
 		return;
 
+	// TheSuperHackers @bugfix An infantry unit entering an unmanned vehicle is meant to capture
+	// it and become its pilot (see PhysicsBehavior::onCollide), not ride along as a passenger.
+	// PartitionContactList::processContactList() can call either object's onCollide() first, so
+	// if this collision is handled here before the infantry's own onCollide() runs, we must not
+	// containerize the infantry: doing so would make PhysicsBehavior::onCollide() see the infantry
+	// as already contained by us and bail out (via the getContainedBy() early-return), leaving the
+	// vehicle un-captured while the infantry silently becomes a normal (uncontrolled) passenger.
+	if( other->isKindOf( KINDOF_INFANTRY ) && getObject()->isDisabledByType( DISABLED_UNMANNED ) )
+		return;
+
 	// last-minute change: don't allow units from multiple (different) players to occupy the same
 	// unit. so eject everyone else if they aren't controlled by the same player. (srj)
 	for( ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); )
