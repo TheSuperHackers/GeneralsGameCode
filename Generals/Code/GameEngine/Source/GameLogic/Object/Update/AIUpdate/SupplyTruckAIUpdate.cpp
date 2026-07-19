@@ -662,6 +662,20 @@ TheInGameUI->DEBUG_addFloatingText("exiting docking state", getMachineOwner()->g
 
 	if (update->isForcedIntoWantingState())
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 A freshly produced supply gatherer is armed with
+		// a one-shot "auto-gather" latch that fires the next time it goes idle. If the player has already
+		// issued their own command (e.g. moved the unit away right after it spawned) before that latch
+		// resolved, letting it fire anyway would silently override the player's order once their command
+		// finishes and the unit goes idle. Dismiss the latch instead, the same way it is already dismissed
+		// once the unit actually enters the wanting/docking states.
+		if (ai->getLastCommandSource() == CMD_FROM_PLAYER)
+		{
+			update->setForceWantingState(false);
+			return false;
+		}
+#endif
+
 #ifdef DEBUG_SUPPLY_STATE
 AsciiString tmp;
 tmp.format("isForcedIntoWantingState returns true (%s)",statenames[thisState->getID()]);
