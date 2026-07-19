@@ -2198,6 +2198,53 @@ Bool Weapon::computeApproachTarget(const Object *source, const Object *target, c
 	}
 }
 
+#if !RETAIL_COMPATIBLE_CRC
+//-------------------------------------------------------------------------------------------------
+// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 All of the "am I in weapon range" checks below measure
+// distance to a target by taking the raw center-to-center distance and subtracting the target's
+// getGeometryInfo().getBoundingCircleRadius(). For GEOMETRY_BOX targets that radius is the box's
+// circumscribed (diagonal) radius, sqrt(majorRadius^2 + minorRadius^2), which only equals the true
+// distance from the box's center to its surface when approaching squarely at a corner; from any other
+// angle -- including straight at a face -- it overstates the box's real footprint. That makes an
+// attacker with a large/oblong box-geometry target (such as the GLA Reinforcement Pad) believe it is
+// within weapon range while still farther from the target's actual surface than the weapon -- and any
+// fuel/lifetime-limited homing projectile it fires, such as the GLA Rocket Buggy's rockets -- can really
+// reach, so shots fired from max range fall short. Cylinder/sphere targets are unaffected because their
+// bounding circle radius already equals their true radius in every direction, which is why other tech
+// buildings were not affected. This computes the true nearest-surface distance for box targets the same
+// way GeometryInfo::isPointInFootprint() already does elsewhere in the engine (treating the box as
+// axis-aligned), instead of relying on the circular approximation. Returns a negative value when the
+// target is not a box, so callers know to keep using the generic bounding-circle-based distance.
+// (GitHub issue #142)
+static Real getSquaredSurfaceDistanceForBoxTarget( const Coord3D *sourcePos, Real sourceBoundingCircleRadius, const Object *target )
+{
+	const GeometryInfo& targetGeom = target->getGeometryInfo();
+	if( targetGeom.getGeomType() != GEOMETRY_BOX )
+		return -1.0f;
+
+	const Coord3D *targetPos = target->getPosition();
+	Real halfX = targetGeom.getMajorRadius();
+	Real halfY = targetGeom.getMinorRadius();
+
+	Real clampedX = sourcePos->x;
+	if( clampedX < targetPos->x - halfX ) clampedX = targetPos->x - halfX;
+	else if( clampedX > targetPos->x + halfX ) clampedX = targetPos->x + halfX;
+
+	Real clampedY = sourcePos->y;
+	if( clampedY < targetPos->y - halfY ) clampedY = targetPos->y - halfY;
+	else if( clampedY > targetPos->y + halfY ) clampedY = targetPos->y + halfY;
+
+	Real dx = sourcePos->x - clampedX;
+	Real dy = sourcePos->y - clampedY;
+	Real distToSurface = sqrtf( sqr(dx) + sqr(dy) );
+
+	Real shrunken = distToSurface - sourceBoundingCircleRadius;
+	if( shrunken <= 0.0f )
+		return 0.0f;
+	return sqr(shrunken);
+}
+#endif
+
 //-------------------------------------------------------------------------------------------------
 //Special case attack range calculate that fakes moving the object (to a garrisoned point) without
 //actually moving the object. This is used to help determine if a garrisoned unit not yet
@@ -2208,7 +2255,16 @@ Bool Weapon::isSourceObjectWithGoalPositionWithinAttackRange( const Object *sour
 
 	Real distSqr;
 	if( target )
+	{
 		distSqr = ThePartitionManager->getGoalDistanceSquared( source, goalPos, target, ATTACK_RANGE_CALC_TYPE );
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 use the true box-surface distance instead of the
+		// circumscribed-circle approximation for box-geometry targets. (GitHub issue #142)
+		Real boxDistSqr = getSquaredSurfaceDistanceForBoxTarget( goalPos, source->getGeometryInfo().getBoundingCircleRadius(), target );
+		if( boxDistSqr >= 0.0f )
+			distSqr = boxDistSqr;
+#endif
+	}
 	else if( targetPos )
 		distSqr = ThePartitionManager->getGoalDistanceSquared( source, goalPos, targetPos, ATTACK_RANGE_CALC_TYPE );
 	else
@@ -2253,6 +2309,13 @@ Bool Weapon::isWithinAttackRange(const Object *source, const Object *target) con
 	if( !target->isKindOf(KINDOF_BRIDGE) )
 	{
 		distSqr = ThePartitionManager->getDistanceSquared( source, target, ATTACK_RANGE_CALC_TYPE );
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 use the true box-surface distance instead of the
+		// circumscribed-circle approximation for box-geometry targets. (GitHub issue #142)
+		Real boxDistSqr = getSquaredSurfaceDistanceForBoxTarget( source->getPosition(), source->getGeometryInfo().getBoundingCircleRadius(), target );
+		if( boxDistSqr >= 0.0f )
+			distSqr = boxDistSqr;
+#endif
 	}
 	else
 	{
@@ -2360,6 +2423,13 @@ Bool Weapon::isGoalPosWithinAttackRange(const Object *source, const Coord3D* goa
 		else
 		{
 			distSqr = ThePartitionManager->getGoalDistanceSquared( source, goalPos, target, ATTACK_RANGE_CALC_TYPE );
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 use the true box-surface distance instead of the
+			// circumscribed-circle approximation for box-geometry targets. (GitHub issue #142)
+			Real boxDistSqr = getSquaredSurfaceDistanceForBoxTarget( goalPos, source->getGeometryInfo().getBoundingCircleRadius(), target );
+			if( boxDistSqr >= 0.0f )
+				distSqr = boxDistSqr;
+#endif
 		}
 	}
 	else
