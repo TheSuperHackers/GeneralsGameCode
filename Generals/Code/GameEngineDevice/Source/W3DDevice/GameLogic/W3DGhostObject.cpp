@@ -362,6 +362,14 @@ void W3DGhostObject::snapShot(int playerIndex)
 			//as for build-ups that are currently disabled.
 			if (robj)
 			{
+				// TheSuperHackers @bugfix The render object's transform is only refreshed while its
+				// drawable is actually drawn, which is not the case while it is obscured by the shroud
+				// of the currently rendered player. Snapshots can now be taken for players other than
+				// the rendered local player, so the transform can be stale here, most notably carrying
+				// an outdated construction height offset that would leave the ghost object vertically
+				// offset. Refresh the transform from the drawable before taking the snapshot.
+				w3dDraw->reactToTransformChange(draw->getTransformMatrix(), draw->getPosition(), draw->getOrientation());
+
 				if (snap == nullptr)
 				{
 					snap = NEW W3DRenderObjectSnapshot(robj, &m_drawableInfo);	// poolify
