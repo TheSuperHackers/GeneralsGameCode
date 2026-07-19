@@ -1802,7 +1802,13 @@ AGAIN:
   	//
 	//PredictiveLODOptimizerClass::Optimize_LODs( 5000 );
 
-	Bool freezeTime = TheFramePacer->isTimeFrozen() || TheFramePacer->isGameHalted();
+	// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Keep the halted state separate from the frozen
+	// time. When the game is halted (e.g. the network is stalling), the scripted camera does not
+	// advance, so the render loop below would never see the camera movement finish and would spin
+	// forever, never returning to the engine loop that services the network. Render a single frame
+	// and return instead. Fixes a multiplayer freeze during scripted camera intros/outros (#1995).
+	const Bool gameHalted = TheFramePacer->isGameHalted();
+	Bool freezeTime = TheFramePacer->isTimeFrozen() || gameHalted;
 
 	/// @todo: I'm assuming the first view is our main 3D view.
 	W3DView *primaryW3DView=(W3DView *)getFirstView();
@@ -2005,7 +2011,7 @@ AGAIN:
 			freezeTime = false; // We're frozen for debug or for pause, and need to continue out of the loop.
 		}
 
-	} while (freezeTime && !TheTacticalView->isCameraMovementFinished());
+	} while (freezeTime && !gameHalted && !TheTacticalView->isCameraMovementFinished());
 
 #ifdef EXTENDED_STATS
 	if (DX8Wrapper::stats.m_disableOverhead) {
