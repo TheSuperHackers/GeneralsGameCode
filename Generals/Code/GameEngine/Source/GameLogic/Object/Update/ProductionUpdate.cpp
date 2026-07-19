@@ -712,9 +712,19 @@ UpdateSleepTime ProductionUpdate::update()
 		totalProductionFrames = production->m_upgradeToResearch->calcTimeToBuild( player );
 
 	// figure out our percent complete
+#if RETAIL_COMPATIBLE_CRC
 	production->m_percentComplete = INT_TO_REAL( production->m_framesUnderConstruction ) /
 																	INT_TO_REAL( totalProductionFrames ) *
 																	100.0f;
+#else
+	// TheSuperHackers @bugfix 19/07/2026 Accumulate build progress at the current production speed
+	// instead of recomputing it from the total elapsed frames. Previously, when the production speed
+	// changed mid-build (for example the low power penalty ending because a power plant came online),
+	// the new speed was retroactively applied to the already elapsed build time as well, causing
+	// queued items to instantly jump forward in progress. Now a speed change only affects the
+	// remaining build time.
+	production->m_percentComplete += 100.0f / INT_TO_REAL( totalProductionFrames );
+#endif
 
 	// if we've reached 100% or more we're done, tada!
 	if( production->m_percentComplete >= 100.0f )
