@@ -551,4 +551,18 @@ void HelicopterSlowDeathBehavior::loadPostProcess()
 	// extend base class
 	SlowDeathBehavior::loadPostProcess();
 
+	// TheSuperHackers @bugfix 19/07/2026 Restart the death sound loop when the helicopter is still
+	// crashing and has not yet hit the ground, because playing sounds are not saved and would
+	// otherwise stay silent after loading a save game.
+	if( isSlowDeathActivated() && m_hitGroundFrame == 0 )
+	{
+		m_deathSound = getHelicopterSlowDeathBehaviorModuleData()->m_deathSound;
+
+		if( m_deathSound.getEventName().isNotEmpty() )
+		{
+			m_deathSound.setObjectID( getObject()->getID() );
+			m_deathSound.setPlayingHandle( TheAudio->addAudioEvent( &m_deathSound ) );
+		}
+	}
+
 }

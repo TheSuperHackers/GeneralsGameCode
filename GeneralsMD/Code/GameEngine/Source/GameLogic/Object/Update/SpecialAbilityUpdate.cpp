@@ -2081,4 +2081,18 @@ void SpecialAbilityUpdate::loadPostProcess()
 	// extend base class
 	UpdateModule::loadPostProcess();
 
+	// TheSuperHackers @bugfix 19/07/2026 Restart the preparation sound loop when the special ability
+	// is still preparing, because playing sounds are not saved and would otherwise stay silent after
+	// loading a save game.
+	if( m_active && !isPreparationComplete() )
+	{
+		const SpecialAbilityUpdateModuleData *data = getSpecialAbilityUpdateModuleData();
+		if( data->m_prepSoundLoop.getEventName().isNotEmpty() )
+		{
+			m_prepSoundLoop = data->m_prepSoundLoop;
+			m_prepSoundLoop.setObjectID( getObject()->getID() );
+			m_prepSoundLoop.setPlayingHandle( TheAudio->addAudioEvent( &m_prepSoundLoop ) );
+		}
+	}
+
 }

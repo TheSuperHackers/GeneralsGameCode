@@ -230,6 +230,18 @@ void HackInternetAIUpdate::loadPostProcess()
 {
  // extend base class
 	AIUpdateInterface::loadPostProcess();
+
+	// TheSuperHackers @bugfix 19/07/2026 Replay the unpack or pack sound when still unpacking or
+	// packing, because playing sounds are not saved and would otherwise stay silent after loading
+	// a save game. The sound is replayed from its beginning.
+	const StateID currentState = getStateMachine()->getCurrentStateID();
+	if( currentState == UNPACKING || currentState == PACKING )
+	{
+		Object *owner = getObject();
+		AudioEventRTS sound = *owner->getTemplate()->getPerUnitSound( currentState == UNPACKING ? "UnitUnpack" : "UnitPack" );
+		sound.setObjectID( owner->getID() );
+		TheAudio->addAudioEvent( &sound );
+	}
 }
 
 

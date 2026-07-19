@@ -337,4 +337,9 @@ void FlammableUpdate::loadPostProcess()
 	// extend base class
 	UpdateModule::loadPostProcess();
 
+	// TheSuperHackers @bugfix 19/07/2026 Restart the burning sound when the object is still aflame,
+	// because playing sounds are not saved and would otherwise stay silent after loading a save game.
+	if( m_status == FS_AFLAME )
+		startBurningSound();
+
 }

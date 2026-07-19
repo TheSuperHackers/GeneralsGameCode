@@ -336,4 +336,13 @@ void MissileLauncherBuildingUpdate::loadPostProcess()
 	// extend base class
 	UpdateModule::loadPostProcess();
 
+	// TheSuperHackers @bugfix 19/07/2026 Restart the door open idle sound when the door is still open,
+	// because playing sounds are not saved and would otherwise stay silent after loading a save game.
+	if( m_doorState == DOOR_OPEN &&
+			m_openIdleAudio.getEventName().isNotEmpty() && !m_openIdleAudio.isCurrentlyPlaying() )
+	{
+		m_openIdleAudio.setObjectID( getObject()->getID() );
+		m_openIdleAudio.setPlayingHandle( TheAudio->addAudioEvent( &m_openIdleAudio ) );
+	}
+
 }

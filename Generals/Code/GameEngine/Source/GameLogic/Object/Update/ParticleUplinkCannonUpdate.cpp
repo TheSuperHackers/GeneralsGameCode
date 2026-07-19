@@ -1466,37 +1466,41 @@ void ParticleUplinkCannonUpdate::loadPostProcess()
 				DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID" ));
 			}
 		}
+	}
 
-		// TheSuperHackers @bugfix stephanmeesters 13/02/2026
-		// For retail game compatibility, this fixes an issue where particle cannon sounds are not audible after saveload.
-		if( (m_status == STATUS_CHARGING || m_status == STATUS_PREPARING || m_status == STATUS_ALMOST_READY) &&
-			m_powerupSound.getEventName().isNotEmpty() )
+	// TheSuperHackers @bugfix stephanmeesters 13/02/2026
+	// This fixes an issue where particle cannon sounds are not audible after saveload.
+	// TheSuperHackers @bugfix 19/07/2026 Restart the sounds for all save versions, because the
+	// playing sounds are not saved in any version. Also no longer restart the firing and
+	// annihilation sounds while the cannon is already packing, because the firing sequence is
+	// about to end then and restarting these loud sounds from their beginning plays a strange
+	// sound right after loading.
+	if( (m_status == STATUS_CHARGING || m_status == STATUS_PREPARING || m_status == STATUS_ALMOST_READY) &&
+		m_powerupSound.getEventName().isNotEmpty() )
+	{
+		m_powerupSound.setObjectID( getObject()->getID() );
+		m_powerupSound.setPlayingHandle( TheAudio->addAudioEvent( &m_powerupSound ) );
+	}
+
+	if( (m_status == STATUS_PREPARING || m_status == STATUS_ALMOST_READY || m_status == STATUS_READY_TO_FIRE || m_status == STATUS_PREFIRE) &&
+		m_unpackToReadySound.getEventName().isNotEmpty() )
+	{
+		m_unpackToReadySound.setObjectID( getObject()->getID() );
+		m_unpackToReadySound.setPlayingHandle( TheAudio->addAudioEvent( &m_unpackToReadySound ) );
+	}
+
+	if( m_status == STATUS_FIRING || m_status == STATUS_POSTFIRE )
+	{
+		if( m_firingToIdleSound.getEventName().isNotEmpty() )
 		{
-			m_powerupSound.setObjectID( getObject()->getID() );
-			m_powerupSound.setPlayingHandle( TheAudio->addAudioEvent( &m_powerupSound ) );
+			m_firingToIdleSound.setObjectID( getObject()->getID() );
+			m_firingToIdleSound.setPlayingHandle( TheAudio->addAudioEvent( &m_firingToIdleSound ) );
 		}
 
-		if( (m_status == STATUS_PREPARING || m_status == STATUS_ALMOST_READY || m_status == STATUS_READY_TO_FIRE || m_status == STATUS_PREFIRE) &&
-			m_unpackToReadySound.getEventName().isNotEmpty() )
+		if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID && m_annihilationSound.getEventName().isNotEmpty() )
 		{
-			m_unpackToReadySound.setObjectID( getObject()->getID() );
-			m_unpackToReadySound.setPlayingHandle( TheAudio->addAudioEvent( &m_unpackToReadySound ) );
-		}
-
-		if( m_status == STATUS_FIRING || m_status == STATUS_POSTFIRE ||
-			(m_status == STATUS_PACKING && (m_laserStatus == LASERSTATUS_DECAYING || m_laserStatus == LASERSTATUS_DEAD)) )
-		{
-			if( m_firingToIdleSound.getEventName().isNotEmpty() )
-			{
-				m_firingToIdleSound.setObjectID( getObject()->getID() );
-				m_firingToIdleSound.setPlayingHandle( TheAudio->addAudioEvent( &m_firingToIdleSound ) );
-			}
-
-			if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID && m_annihilationSound.getEventName().isNotEmpty() )
-			{
-				m_annihilationSound.setDrawableID( m_orbitToTargetBeamID );
-				m_annihilationSound.setPlayingHandle( TheAudio->addAudioEvent( &m_annihilationSound ) );
-			}
+			m_annihilationSound.setDrawableID( m_orbitToTargetBeamID );
+			m_annihilationSound.setPlayingHandle( TheAudio->addAudioEvent( &m_annihilationSound ) );
 		}
 	}
 
