@@ -114,6 +114,16 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 //--------------------------------------------------------------------------------------------------------
 void TunnelContain::harmAndForceExitAllContained( DamageInfo *info )
 {
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 A Tunnel Network entrance that is still under
+	// construction (a scaffold) is not yet a functional entrance into the shared TunnelTracker pool.
+	// Weapons that harm/force-exit a structure's occupants (e.g. Bunker Buster bombs) must not be
+	// able to reach units that entered the network through a different, already-completed entrance
+	// just because they happened to hit an unfinished scaffold elsewhere on the map.
+	if( getObject()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		return;
+#endif
+
 	Player *owningPlayer = getObject()->getControllingPlayer();
 
 	if(!owningPlayer->getTunnelSystem())
@@ -155,6 +165,17 @@ void TunnelContain::killAllContained()
 	// to the host container, which then attempts to remove all remaining occupants
 	// on the death of the host container. This is reproducible by shooting with
 	// Neutron Shells on a GLA Tunnel containing GLA Terrorists.
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 A Tunnel Network entrance that is still under
+	// construction (a scaffold) is not yet a functional entrance into the shared TunnelTracker pool.
+	// Without this check, hitting an unfinished scaffold with a Neutron Shell (NeutronBlastBehavior
+	// calls killAllContained() unconditionally on any contain module it finds) or a Bunker Buster
+	// bomb kills every unit in the whole shared network, including units that entered through a
+	// completely different, already-completed entrance elsewhere on the map.
+	if( getObject()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		return;
+#endif
 
 	Player *owningPlayer = getObject()->getControllingPlayer();
 
