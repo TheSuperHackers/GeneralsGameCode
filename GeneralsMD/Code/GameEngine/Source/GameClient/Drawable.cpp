@@ -5512,7 +5512,13 @@ void TintEnvelope::update()
 		{
 			const Vector3 decayRate = m_decayRate * timeScale;
 
-			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON) 
+			// TheSuperHackers @bugfix Also rest when the decay step no longer opposes the current
+			// color. The decay direction is derived from the peak color, so when a new flash was
+			// played before the previous one finished, the current color is not parallel to the
+			// peak color and the length check alone can miss the rest window. The color then
+			// marches past zero into large negative values, turning the object permanently black.
+			if (decayRate.Length() > m_currentColor.Length() || m_currentColor.Length() <= FADE_RATE_EPSILON
+				|| Vector3::Dot_Product(decayRate, m_currentColor) >= 0.0f)
 			{
 				// We are at rest
 				m_envState = ENVELOPE_STATE_REST;
