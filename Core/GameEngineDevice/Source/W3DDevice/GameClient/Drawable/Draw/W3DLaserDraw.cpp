@@ -341,8 +341,16 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				vector.set( lineMiddle );
 				vector.sub( segmentStart );
 				Real dist = vector.length();
-				Real scaledRadians = dist / halfLength * PI * 0.5f;
-				Real height = cos( scaledRadians );
+				// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Guard against a zero-length line (start == end,
+				// e.g. before the laser has ever been positioned by LaserUpdate::initLaser()). Without this,
+				// dist/halfLength evaluates to 0.0f/0.0f == NaN, which then poisons segmentStart.z via cos(NaN)
+				// and propagates NaN into the points handed to SegmentedLineClass::Set_Points().
+				Real height = 0.0f;
+				if( halfLength > 0.0f )
+				{
+					Real scaledRadians = dist / halfLength * PI * 0.5f;
+					height = cos( scaledRadians );
+				}
 				height *= data->m_arcHeight;
 				segmentStart.z += height;
 
@@ -350,8 +358,13 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				vector.set( lineMiddle );
 				vector.sub( segmentEnd );
 				dist = vector.length();
-				scaledRadians = dist / halfLength * PI * 0.5f;
-				height = cos( scaledRadians );
+				// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Same zero-length-line guard as above.
+				height = 0.0f;
+				if( halfLength > 0.0f )
+				{
+					Real scaledRadians = dist / halfLength * PI * 0.5f;
+					height = cos( scaledRadians );
+				}
 				height *= data->m_arcHeight;
 				segmentEnd.z += height;
 
