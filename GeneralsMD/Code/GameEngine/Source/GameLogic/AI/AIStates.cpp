@@ -72,6 +72,12 @@
 
 static Bool cannotPossiblyAttackObject( State *thisState, void* userData );
 
+#if !RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 See cannotPossiblyAttackPosition() below for the reason
+// this condition function exists. (GitHub issue #193)
+static Bool cannotPossiblyAttackPosition( State *thisState, void* userData );
+#endif
+
 //----------------------------------------------------------------------------------------------------------
 AICommandParms::AICommandParms(AICommandType cmd, CommandSourceType cmdSource) :
 	m_cmd(cmd),
@@ -288,6 +294,15 @@ AttackStateMachine::AttackStateMachine( Object *obj, AIAttackState* att, AsciiSt
 	static const StateConditionInfo positionConditions[] =
 	{
 		StateConditionInfo(outOfWeaponRangePosition, AttackStateMachine::CHASE_TARGET, nullptr),
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Unlike the object-target conditions, the
+		// position-target (force-fire-ground) conditions never re-checked isAbleToAttack() every
+		// frame, so a unit that started force-firing at a ground position kept firing even after it
+		// became unable to (e.g. a passenger of a transport that itself got loaded into another
+		// transport that does not allow passengers to fire, such as a Humvee driven into a Chinook).
+		// See cannotPossiblyAttackObject() above, which already does this for object targets. (GitHub issue #193)
+		StateConditionInfo(cannotPossiblyAttackPosition, EXIT_MACHINE_WITH_FAILURE, nullptr),
+#endif
 		StateConditionInfo(nullptr, INVALID_STATE_ID, nullptr)
 	};
 
@@ -1254,6 +1269,29 @@ static Bool cannotPossiblyAttackObject( State *thisState, void* userData )
 	return FALSE;
 }
 
+#if !RETAIL_COMPATIBLE_CRC
+/**
+ * TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Position-target (force-fire-ground) equivalent of
+ * cannotPossiblyAttackObject() above. Without this, a unit ordered to force-fire at a ground
+ * position never re-validated isAbleToAttack() while looping between AIM_AT_TARGET and FIRE_WEAPON,
+ * so it kept firing forever even after becoming unable to, e.g. after the transport that carries it
+ * (which allows it to fire) is itself loaded into another transport that does not allow its
+ * passengers to fire (a Humvee carrying a force-firing Rocket Trooper driven into a Chinook).
+ * isAbleToAttack() already walks the container chain via ContainModuleInterface::isPassengerAllowedToFire(),
+ * it just was never being called again once the position attack was underway. (GitHub issue #193)
+ */
+static Bool cannotPossiblyAttackPosition( State *thisState, void* userData )
+{
+	Object *obj = thisState->getMachineOwner();
+
+	if (obj && !obj->isAbleToAttack())
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+}
+#endif
 
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
