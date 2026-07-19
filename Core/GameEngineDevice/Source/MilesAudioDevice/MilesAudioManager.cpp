@@ -54,6 +54,8 @@
 #include "Common/CRCDebug.h"
 #include "Common/GlobalData.h"
 #include "Common/ScopedMutex.h"
+// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Added to re-check shroud status for already-playing looped positional sounds (see #60)
+#include "Common/GameUtility.h"
 
 #include "GameClient/DebugDisplay.h"
 #include "GameClient/Drawable.h"
@@ -63,6 +65,8 @@
 
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/TerrainLogic.h"
+// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Added to re-check shroud status for already-playing looped positional sounds (see #60)
+#include "GameLogic/PartitionManager.h"
 
 #include "Common/file.h"
 
@@ -2200,7 +2204,20 @@ void MilesAudioManager::processPlayingList()
 				volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
 				Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL)
 					|| playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
-				if( volForConsideration < m_audioSettings->m_minVolume && !playAnyways )
+
+				// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Looped sounds with the "shrouded" Type
+				// flag were only shroud-checked once at playback start (see canPlayNow() in GameSounds.cpp).
+				// Once playing, this per-frame loop only re-evaluated distance/volume, so a looped sound
+				// (e.g. Helix/Comanche rotor loop) kept playing audibly after its source became shrouded
+				// while still within range. Re-check shroud status here every frame, same as at start, and
+				// stop the sound if it has become shrouded. This only affects sounds whose Type includes
+				// "shrouded"; other looped sounds are unaffected. (#60)
+				Bool becameShrouded = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_SHROUDED)
+					&& !playAnyways
+					&& ThePartitionManager != nullptr
+					&& ThePartitionManager->getShroudStatusForPlayer( rts::getObservedOrLocalPlayerIndex_Safe(), pos ) != CELLSHROUD_CLEAR;
+
+				if( ( volForConsideration < m_audioSettings->m_minVolume && !playAnyways ) || becameShrouded )
 				{
 					stopPlayingAudio(playing);
 				}
