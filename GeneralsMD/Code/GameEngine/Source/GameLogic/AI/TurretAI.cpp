@@ -146,17 +146,25 @@ void TurretStateMachine::crc( Xfer *xfer )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Xfer Method */
+/** Xfer Method
+	* Version Info:
+	* 1: Initial version
+	* 2: TheSuperHackers @bugfix bobtista 19/07/2026 Serialize the base StateMachine state.
+	*    Without this the turret reverts to its default state on load.
+	*/
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::xfer( Xfer *xfer )
 {
-	// TheSuperHackers @bugfix bobtista 19/07/2026 Bump to version 2 to serialize the base
-	// StateMachine state. Without this the turret reverts to its default state on load.
-	XferVersion cv = 2;
-	XferVersion v = cv;
-	xfer->xferVersion( &v, cv );
+	// version
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
+	XferVersion version = currentVersion;
+	xfer->xferVersion( &version, currentVersion );
 
-	if (v >= 2)
+	if (version >= 2)
 	{
 		StateMachine::xfer(xfer);
 	}
