@@ -210,6 +210,13 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 			selectedPtr = (LANGameInfo *)GadgetListBoxGetItemData(gameListbox, selectedIndex, 0);
 		}
 
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Preserve the user's scroll position across the
+		// full clear-and-repopulate below. Without this, the LAN lobby game list jumps back to the top
+		// any time any game is created/closed anywhere on the network, even if the user is mid-scroll
+		// and the change is unrelated to what they're looking at. This mirrors the equivalent save/restore
+		// already done for the GameSpy/WOL online lobby list in RefreshGameListBox() (LobbyUtils.cpp).
+		Int prevTopVisible = GadgetListBoxGetTopVisibleEntry(gameListbox);
+
 		GadgetListBoxReset(gameListbox);
 
 		while (gameList)
@@ -237,6 +244,11 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 			GadgetListBoxSetSelected(gameListbox, indexToSelect);
 		else
 			HideGameInfoWindow(TRUE);
+
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Restore the scroll position saved off above.
+		// GadgetListBoxSetTopVisibleEntry() internally clamps to the (possibly now shorter) list, so
+		// this is safe even if games were removed above the user's previous scroll position.
+		GadgetListBoxSetTopVisibleEntry(gameListbox, prevTopVisible);
 	}
 }
 
