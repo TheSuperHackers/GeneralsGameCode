@@ -2051,8 +2051,38 @@ void Weapon::onWeaponBonusChange(const Object *source)
 
 	if( needUpdate )
 	{
+#if RETAIL_COMPATIBLE_CRC
 		m_whenLastReloadStarted = TheGameLogic->getFrame();
 		m_whenWeCanFireAgain = m_whenLastReloadStarted + newDelay;
+#else
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Preserve reload progress proportionally instead of
+		// unconditionally resetting the reload timer to the current frame. Previously, any weapon-affecting
+		// bonus (e.g. the Propaganda Center's rate-of-fire bonus) being added to or removed from a unit while
+		// its weapon was mid-reload discarded all reload progress and restarted the reload from the current
+		// frame using the new duration, which let players fire slow-reloading weapons (e.g. the Nuke Cannon)
+		// far more often than intended by simply toggling the bonus on and off. (GitHub issue #89)
+		const UnsignedInt now = TheGameLogic->getFrame();
+		const Int oldTotal = (Int)m_whenWeCanFireAgain - (Int)m_whenLastReloadStarted;
+		Int newRemaining = newDelay;
+		if (oldTotal > 0)
+		{
+			Int oldRemaining = (Int)m_whenWeCanFireAgain - (Int)now;
+			if (oldRemaining < 0)
+				oldRemaining = 0;
+			newRemaining = (oldRemaining * newDelay) / oldTotal;
+		}
+		if (newRemaining < 0)
+			newRemaining = 0;
+		else if (newRemaining > newDelay)
+			newRemaining = newDelay;
+
+		Int newStart = (Int)now + newRemaining - newDelay;
+		if (newStart < 0)
+			newStart = 0;
+
+		m_whenWeCanFireAgain = now + (UnsignedInt)newRemaining;
+		m_whenLastReloadStarted = (UnsignedInt)newStart;
+#endif
 
 		if (source->isReloadTimeShared())
 		{
