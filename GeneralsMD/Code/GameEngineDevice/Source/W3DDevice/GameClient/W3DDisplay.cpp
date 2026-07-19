@@ -962,7 +962,10 @@ void W3DDisplay::init()
 			m_nativeDebugDisplay->setFontWidth( 9 );
 		}
 
-		DX8WebBrowser::Initialize();
+		// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 No longer initializes the embedded web browser.
+		// The retail game never uses it, because the TheWebBrowser subsystem is disabled in GameEngine::init,
+		// but loading BrowserEngine.dll here could crash the game in that DLL on application shutdown.
+		// DX8WebBrowser::Initialize();
 	}
 
 	// we're now online
