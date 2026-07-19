@@ -33,6 +33,7 @@
 
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
+#include "Common/Team.h"
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
@@ -149,6 +150,17 @@ void NeutronBlastBehavior::neutronBlastToObject( Object *obj )
 			Drawable* draw = obj->getDrawable();
 			if (draw)
 				draw->setTerrainDecal(TERRAIN_DECAL_NONE);
+
+			// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Notify the team that it permanently lost
+			// this member before converting it to the neutral team, so that map scripts counting unit
+			// losses via the team's OnUnitDestroyed script still fire when a vehicle is neutralized
+			// rather than destroyed. Otherwise missions that require an exact number of team member
+			// deaths can never complete, e.g. the ZH China mission 4 wave counters when vehicles are
+			// hit by Neutron Shells (GitHub issue #1441). Left unconditional (not gated behind
+			// RETAIL_COMPATIBLE_CRC) since this only affects single-player campaign mission scripting,
+			// with no multiplayer/replay determinism concern.
+			if( obj->getTeam() )
+				obj->getTeam()->notifyTeamOfObjectDeath();
 
 			// Convert it to the neutral team so it renders gray giving visual representation that it is unmanned.
 			obj->setTeam( ThePlayerList->getNeutralPlayer()->getDefaultTeam() );
