@@ -420,8 +420,18 @@ void SpecialPowerModule::startPowerRecharge()
 	}
 	else
 	{
+#if RETAIL_COMPATIBLE_CRC
 		// set the frame we will be 100% available on now
 		m_availableOnFrame = TheGameLogic->getFrame() + getSpecialPowerTemplate()->getReloadTime();
+#else
+		// TheSuperHackers @bugfix Skyaero42 19/07/2026 Setting m_availableOnFrame directly leaves
+		// m_pausedOnFrame stale. If the special power's structure was paused (e.g. subdued by a Microwave
+		// Tank) at any point before construction completed, the frame count it was paused for gets added
+		// on top of this fresh ready frame the next time the pause is resolved, making the countdown start
+		// far longer than the template's reload time. setReadyFrame() sets both fields correctly, matching
+		// how a script-driven ready-frame change is already handled. (GitHub issue #215)
+		setReadyFrame(TheGameLogic->getFrame() + getSpecialPowerTemplate()->getReloadTime());
+#endif
 	}
 }
 
