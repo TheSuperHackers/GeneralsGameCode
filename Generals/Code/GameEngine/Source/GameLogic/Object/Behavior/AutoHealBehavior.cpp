@@ -275,6 +275,16 @@ void AutoHealBehavior::pulseHealObject( Object *obj )
 
 	if ( data->m_radius == 0.0f )
 		obj->attemptHealing(data->m_healingAmount, getObject());
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 A SingleBurst radius heal is a one-time pulse, not a
+	// persistent aura. It must not compete for the target's sole-healing-benefactor slot, which exists only
+	// to stop several simultaneous copies of the same *continuous* aura (Ambulance) from re-healing a target
+	// every pulse. Previously a burst heal reaching a target already claimed by an aura was entirely
+	// swallowed, and a burst heal landing first would itself claim the target and swallow the aura's very
+	// next pulse (GitHub issue #240).
+	else if ( data->m_singleBurst )
+		obj->attemptHealing(data->m_healingAmount, getObject());
+#endif
 	else
 		obj->attemptHealingFromSoleBenefactor( data->m_healingAmount, getObject(), data->m_healingDelay );
 
