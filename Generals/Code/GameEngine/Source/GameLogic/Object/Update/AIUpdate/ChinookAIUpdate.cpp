@@ -1080,6 +1080,18 @@ UpdateSleepTime ChinookAIUpdate::update()
 			}
 		}
 	}
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix diqezit 07/19/2026 SupplyTruckAIUpdate::isIdle() returns false while this
+	// Chinook is guarding or attacking, so the landing trigger above never ran, and units could never be
+	// loaded into (or evacuated from) a guarding/attacking Chinook -- they would only get in/out if the
+	// player explicitly pressed Stop first. Allow landing for waiting passengers even while not idle, as
+	// long as we're in stable level flight with no pending command or in-progress airfield healing, so we
+	// don't interrupt those. (GitHub issue #54)
+	else if (waitingToEnterOrExit && m_flightStatus == CHINOOK_FLYING && !m_hasPendingCommand && m_airfieldForHealing == INVALID_ID)
+	{
+		setMyState(LANDING, nullptr, nullptr, CMD_FROM_AI);
+	}
+#endif
 
 	return SupplyTruckAIUpdate::update();
 }
