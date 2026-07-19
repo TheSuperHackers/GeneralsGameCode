@@ -3107,6 +3107,19 @@ void AIUpdateInterface::privateIdle(CommandSourceType cmdSource)
 			for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
 			{
 				Object* obj = *it;
+
+#if !RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Do not forward the Stop command to
+				// hacker passengers of an Internet Center. Unlike a real Stop order, there is nothing
+				// that ever re-issues the hack command afterwards (the only other place that resumes
+				// hacking is ActiveBody::onSubdualChange(), which is specific to the EMP/subdual
+				// disable-and-recover case), so forwarding Stop here would permanently and silently
+				// stop the hackers from generating any more cash, e.g. when Stop is pressed on the
+				// Internet Center itself, including by accident via the Sat Hack hotkey conflict.
+				if (obj && obj->isKindOf(KINDOF_MONEY_HACKER) && getObject()->isKindOf(KINDOF_FS_INTERNET_CENTER))
+					continue;
+#endif
+
 				AIUpdateInterface* ai = obj ? obj->getAI() : nullptr;
 				if (ai)
 					ai->aiIdle(cmdSource);
