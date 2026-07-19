@@ -201,6 +201,14 @@ private:
 	GarrisonPointData		m_garrisonPointData[ MAX_GARRISON_POINTS ];		///< the garrison point placement data
 	Int									m_garrisonPointsInUse;
 	Coord3D							m_garrisonPoint[ MAX_GARRISON_POINT_CONDITIONS ][ MAX_GARRISON_POINTS ];		///< the garrison point positions (in world coords) for pristine, damaged, and really damaged
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Number of real FIREPOINT bones found in the art
+	// for each damage condition. Garrison point indices beyond this count are padding slots that
+	// default to the structure's own (ground-level) position instead of a real muzzle bone. That
+	// padding position is used below/inside the building's footprint and can cause self-damage from
+	// splash weapons and an unfairly short effective firing range. See putObjectAtGarrisonPoint().
+	Int									m_garrisonPointBoneCount[ MAX_GARRISON_POINT_CONDITIONS ];
+#endif
 	Coord3D							m_exitRallyPoint;												///< Point to rally at when exiting structure (if possible)
 
 	Bool		m_garrisonPointsInitialized;							///< TRUE once we have loaded the garrison point positions from the art

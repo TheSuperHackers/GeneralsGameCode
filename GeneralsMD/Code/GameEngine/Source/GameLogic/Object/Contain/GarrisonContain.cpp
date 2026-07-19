@@ -177,7 +177,23 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 	}
 
 	// get the position we're going to use
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 If this garrison point index has no matching
+	// real FIREPOINT bone in the art (i.e. it is one of the padding slots that default to the
+	// structure's own ground-level position), reuse the closest real fire point bone instead, the
+	// same way OpenContain::putObjAtNextFirePoint() already reuses fire points for TransportContain
+	// passengers. Without this, garrisoned units beyond the number of fire ports on the model fire
+	// from underneath/inside the building, which both damages themselves with splash weapons and
+	// gives them a shorter effective firing range than an attacker measuring to the building's
+	// actual geometry edge.
+	Int realBoneCount = m_garrisonPointBoneCount[ conditionIndex ];
+	Int effectivePointIndex = ( realBoneCount > 0 && pointIndex >= realBoneCount )
+														 ? ( pointIndex % realBoneCount )
+														 : pointIndex;
+	Coord3D pos = m_garrisonPoint[ conditionIndex ][ effectivePointIndex ];
+#else
 	Coord3D pos = m_garrisonPoint[ conditionIndex ][ pointIndex ];
+#endif
 
 	// set the object position
 	obj->setPosition( &pos );
@@ -525,6 +541,13 @@ GarrisonContain::GarrisonContain( Thing *thing, const ModuleData *moduleData ) :
 			m_garrisonPoint[ j ][ i ].zero();
 
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Initialize the per-condition real fire point
+	// bone counts used to avoid firing from the structure's padding/ground-level garrison points.
+	for( j = 0; j < MAX_GARRISON_POINT_CONDITIONS; ++j )
+		m_garrisonPointBoneCount[ j ] = 0;
+#endif
 
 	m_rallyValid = FALSE;
 	m_exitRallyPoint.zero();
@@ -1354,6 +1377,12 @@ void GarrisonContain::loadGarrisonPoints()
 		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], nullptr);
 
 		if ( count > 0) gBonesFound = TRUE;
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Remember how many of the garrison point
+		// slots are backed by a real FIREPOINT bone, so excess occupants can reuse a real bone
+		// instead of the padding position (see putObjectAtGarrisonPoint()).
+		m_garrisonPointBoneCount[ conditionIndex ] = count;
+#endif
 
 		// damaged garrisoned
 		clearFlags.clear();
@@ -1368,6 +1397,10 @@ void GarrisonContain::loadGarrisonPoints()
 		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], nullptr);
 
 		if ( count > 0) gBonesFound = TRUE;
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 See identical comment above for GARRISON_POINT_PRISTINE.
+		m_garrisonPointBoneCount[ conditionIndex ] = count;
+#endif
 
 		// really damaged garrisoned
 		clearFlags.clear();
@@ -1382,6 +1415,10 @@ void GarrisonContain::loadGarrisonPoints()
 		count = structure->getMultiLogicalBonePosition("FIREPOINT", MAX_GARRISON_POINTS, m_garrisonPoint[ conditionIndex ], nullptr);
 
 		if ( count > 0) gBonesFound = TRUE;
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 See identical comment above for GARRISON_POINT_PRISTINE.
+		m_garrisonPointBoneCount[ conditionIndex ] = count;
+#endif
 
 		// restore the original condition flags
 		draw->replaceModelConditionFlags( originalFlags );
@@ -1801,7 +1838,12 @@ void GarrisonContain::xfer( Xfer *xfer )
 	Int i;
 
 	// version
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Bumped to 2 to persist m_garrisonPointBoneCount.
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
+#else
+	XferVersion currentVersion = 2;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1910,6 +1952,14 @@ void GarrisonContain::xfer( Xfer *xfer )
 
 	// garrison points initialized
 	xfer->xferBool( &m_garrisonPointsInitialized );
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Persist the real fire point bone counts so the
+	// fire-port reuse fix in putObjectAtGarrisonPoint() stays correct after a save/load, instead of
+	// silently reverting to the padding/ground-level position until this object is recreated.
+	if( version >= 2 )
+		xfer->xferUser( m_garrisonPointBoneCount, sizeof( Int ) * MAX_GARRISON_POINT_CONDITIONS );
+#endif
 
 	// rally valid
 	xfer->xferBool( &m_rallyValid );
