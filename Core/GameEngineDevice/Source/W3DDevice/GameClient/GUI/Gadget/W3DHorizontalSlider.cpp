@@ -351,8 +351,10 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 
 		leftImageRight = leftImageLeft					= GadgetSliderGetDisabledImageLeft( window );
 		rightImageRight = rightImageLeft				= GadgetSliderGetDisabledImageRight( window );
-//		centerImageRight = centerImageLeft				= GadgetSliderGetDisabledImageCenter( window );
-//		smallCenterImageRight = smallCenterImageLeft	= GadgetSliderGetDisabledImageSmallCenter( window );
+		// TheSuperHackers @fix Restores the disabled center image assignments, which were commented
+		// out in the original code and left these pointers uninitialized on the disabled code path.
+		centerImageRight = centerImageLeft				= GadgetSliderGetDisabledImageCenter( window );
+		smallCenterImageRight = smallCenterImageLeft	= GadgetSliderGetDisabledImageSmallCenter( window );
 
 	}
 	else //if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
