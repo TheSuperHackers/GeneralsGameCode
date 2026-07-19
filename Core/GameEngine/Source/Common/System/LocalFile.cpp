@@ -52,6 +52,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "Common/LocalFile.h"
 #include "Common/RAMFile.h"
@@ -731,7 +732,25 @@ char* LocalFile::readEntireAndClose()
 	UnsignedInt fileSize = size();
 	char* buffer = NEW char[fileSize];
 
-	read(buffer, fileSize);
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Handle partial or failed reads gracefully.
+	// A cloud-backed file (e.g. an OneDrive/Dropbox/Google Drive placeholder that is only available
+	// online) can report a valid size but then fail to fully read its contents when the sync provider
+	// is paused or there is no internet connection. Previously the return value of read() was ignored,
+	// leaving the tail of the buffer filled with uninitialized heap memory that callers (INI loading,
+	// map cache building, ...) would then parse as if it were valid file data, risking a hang or crash.
+	// Zero-fill anything that could not be read so callers observe deterministic, well-defined data
+	// instead of garbage.
+	const Int bytesRead = read(buffer, fileSize);
+	if (bytesRead < 0)
+	{
+		DEBUG_LOG(("LocalFile::readEntireAndClose - failed to read file '%s'", getName()));
+		memset(buffer, 0, fileSize);
+	}
+	else if ((UnsignedInt)bytesRead < fileSize)
+	{
+		DEBUG_LOG(("LocalFile::readEntireAndClose - short read on file '%s' (%d of %u bytes read)", getName(), bytesRead, fileSize));
+		memset(buffer + bytesRead, 0, fileSize - bytesRead);
+	}
 
 	close();
 

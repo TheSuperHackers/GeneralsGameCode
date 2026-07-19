@@ -629,7 +629,29 @@ Bool MapCache::addMap(
 
 	DEBUG_LOG(("MapCache::addMap(): caching '%s' because '%s' was not found", fname.str(), lowerFname.str()));
 
-	loadMap(fname); // Just load for querying the data, since we aren't playing this map.
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Do not abort the entire game launch when a single
+	// user map cannot be read or parsed during map cache building. A corrupt map file, or a cloud-backed
+	// placeholder (OneDrive, Dropbox, Google Drive, ...) whose contents are unavailable while the sync
+	// provider is paused or offline, previously threw ERROR_CORRUPT_FILE_FORMAT out of loadMap (or made
+	// loadMap fail to open the file). That exception propagated all the way up to GameEngine::init and
+	// was turned into a RELEASE_CRASH, preventing the game from launching at all. Skip the offending map
+	// instead so cache building and the game can continue.
+	Bool mapLoaded = FALSE;
+	try
+	{
+		mapLoaded = loadMap(fname); // Just load for querying the data, since we aren't playing this map.
+	}
+	catch (...)
+	{
+		DEBUG_LOG(("MapCache::addMap - exception while loading map '%s'; skipping it during cache build", fname.str()));
+		mapLoaded = FALSE;
+	}
+
+	if (!mapLoaded)
+	{
+		resetMap();
+		return FALSE;
+	}
 
 	// The map is now loaded.  Pick out what we need.
 	MapMetaData md;
