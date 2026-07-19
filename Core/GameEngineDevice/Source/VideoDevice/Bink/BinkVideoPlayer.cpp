@@ -96,6 +96,27 @@
 //         Private Functions
 //----------------------------------------------------------------------------
 
+// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Compute the Bink audio volume from the
+// speech (voice) volume setting. Bink expects 0..32768, where 32768 is full volume.
+// The 0.8 scale matches the original game's intended movie loudness. The original
+// formula could never go below 327 (about 1 percent), so movie audio remained audible
+// with the voice slider at 0. Clamp to a minimum of 1 instead, which is inaudible,
+// but never pass 0, as Bink will interpret that as "play at full volume".
+static Int calculateMovieAudioVolume()
+{
+	Int volume = (Int) (TheAudio->getVolume(AudioAffect_Speech) * 0.8f * 32768.0f);
+
+	if (volume < 1)
+	{
+		volume = 1;
+	}
+	else if (volume > 32768)
+	{
+		volume = 32768;
+	}
+
+	return volume;
+}
 
 
 //----------------------------------------------------------------------------
@@ -202,12 +223,10 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		stream->m_player = this;
 		m_firstStream = stream;
 
-		// never let volume go to 0, as Bink will interpret that as "play at full volume".
-		Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
-		Int volume = (32768*mod)/100;
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d -> %d",
-			TheAudio->getVolume(AudioAffect_Speech), mod, volume));
-		BinkSetVolume( stream->m_handle,0, volume);
+		Int volume = calculateMovieAudioVolume();
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d",
+			TheAudio->getVolume(AudioAffect_Speech), volume));
+		BinkSetVolume( stream->m_handle, 0, volume );
 		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume"));
 	}
 
@@ -343,6 +362,13 @@ Bool BinkVideoStream::isFrameReady()
 void BinkVideoStream::frameDecompress()
 {
 		BinkDoFrame( m_handle );
+
+		// TheSuperHackers @bugfix ZsoltFeher 19/07/2026 Reapply the audio volume on every decoded
+		// frame. The volume set once on stream creation did not reliably take effect, so movie
+		// audio played at full volume regardless of the Options volume sliders. Reapplying it
+		// during playback keeps movie audio in sync with the speech (voice) volume setting and
+		// also makes volume changes take effect while a movie is playing.
+		BinkSetVolume( m_handle, 0, calculateMovieAudioVolume() );
 }
 
 //============================================================================
