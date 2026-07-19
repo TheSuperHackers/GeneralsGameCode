@@ -318,6 +318,14 @@ void BaseHeightMapRenderObjClass::setTextureLOD(Int lod)
 		m_treeBuffer->setTextureLOD(lod);
 	if (m_map)
 		m_map->setTextureLOD(lod);
+#ifdef DO_SCORCH
+	// TheSuperHackers @bugfix The scorch texture is created directly and is not registered
+	// with the asset manager, so WW3D::_Invalidate_Textures() never refreshes it when the
+	// texture reduction changes at runtime. Invalidate it here so it reloads its mip chain
+	// with the currently active texture reduction.
+	if (m_scorchTexture)
+		m_scorchTexture->Invalidate();
+#endif
 }
 
 //=============================================================================
