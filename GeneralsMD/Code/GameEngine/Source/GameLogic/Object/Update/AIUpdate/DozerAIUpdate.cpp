@@ -1589,6 +1589,12 @@ UpdateSleepTime DozerAIUpdate::update()
 	if( getObject()->isEffectivelyDead() )
 		return UPDATE_SLEEP_NONE;
 
+	// TheSuperHackers @bugfix 18/07/2026 Pause the Dozer's build/repair behavior while it is
+	// contained (e.g. loaded into a transport). Without this, a Dozer ordered into a vehicle mid-task
+	// keeps ticking construction/repair progress despite being stowed away.
+	if( getObject()->isContained() )
+		return UPDATE_SLEEP_NONE;
+
 	// get and validate our current task
 	DozerTask currentTask = getCurrentTask();
 	if( currentTask != DOZER_TASK_INVALID )

@@ -261,6 +261,12 @@ UpdateSleepTime WorkerAIUpdate::update()
 	if( getObject()->isEffectivelyDead() )
 		return UPDATE_SLEEP_NONE;
 
+	// TheSuperHackers @bugfix 18/07/2026 Pause the Worker's build/repair/supply behavior while it is
+	// contained (e.g. loaded into a transport). Without this, a Worker ordered into a vehicle mid-task
+	// keeps ticking construction/repair progress and delivering supplies despite being stowed away.
+	if( getObject()->isContained() )
+		return UPDATE_SLEEP_NONE;
+
 	// run our own state machine, and the appropriate sub machine
 	m_workerMachine->updateStateMachine();
 
