@@ -36,8 +36,8 @@
 //-------------------------------------------------------------------------------------------------
 
 /*
-template <size_t NUMBITS>
-void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
+template <size_t NUMBITS, typename TAG>
+void BitFlags<NUMBITS, TAG>::buildDescription( AsciiString* str ) const
 {
 	if ( str == nullptr )
 		return;//sanity
