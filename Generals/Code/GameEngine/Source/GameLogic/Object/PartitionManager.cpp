@@ -3867,6 +3867,20 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 			if( them == options->ignoreObject )
 				continue;  // continue in the object iterator for loop
 
+#if !RETAIL_COMPATIBLE_CRC
+			// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Mines never block movement or occupy pathfind
+			// cells (see Pathfinder::classifyObjectFootprint, which explicitly skips KINDOF_MINE objects
+			// when building the pathfind obstacle map -- units are meant to walk right over a mine to
+			// trigger it, not be blocked by it). findPositionAround's object-overlap check did not honor
+			// that same rule, so a stealthed, non-blocking mine merely sitting near a candidate cell would
+			// cause that cell to be rejected as "occupied", pushing the search outward to a farther, worse
+			// position for ANY caller (own, ally, or enemy unit) of this generic position-finding function.
+			// This was most visible with China Supply Trucks pathing badly around their own Nuke General
+			// mines near the Supply Center/Dock. (GitHub issue #2776)
+			if( them->isKindOf( KINDOF_MINE ) )
+				continue;  // continue in the object iterator for loop
+#endif
+
 			// relationship checks
 			if( options->relationshipObject )
 			{
