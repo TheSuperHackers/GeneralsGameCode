@@ -3744,8 +3744,20 @@ void Object::xfer( Xfer *xfer )
 			DEBUG_CRASH(( "Object::xfer - Unable to load team" ));
 			throw SC_INVALID_DATA;
 		}
+		// TheSuperHackers @bugfix Caball009 19/07/2026 Temporarily clear m_modulesReady so that
+		// Player::becomingTeamMember does not re-apply battle plan bonuses (Strategy Center) while
+		// restoring the team. The bonus effects are already contained in the saved object state
+		// (vision range, shroud clearing range, weapon bonus condition, body damage scalar), so
+		// re-applying them here would double the sight range scalar and trigger a shroud look at
+		// the wrong time, corrupting the sighting data that must stay in sync with the saved
+		// partition cell shroud state. This left the map shroud bugged after loading a game with
+		// an active Search And Destroy battle plan.
+		m_modulesReady = false;
+
 		const Bool restoring = true;
 		setOrRestoreTeam( team, restoring );
+
+		m_modulesReady = true;
 	}
 
 	// special model condition until
