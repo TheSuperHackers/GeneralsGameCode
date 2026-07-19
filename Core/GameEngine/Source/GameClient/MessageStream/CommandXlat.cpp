@@ -401,6 +401,11 @@ static CanAttackResult canObjectForceAttack( Object *obj, const Object *victim, 
 static CanAttackResult canAnyForceAttack(const DrawableList *allSelected, const Object *victim, const Coord3D *pos )
 {
 	// check to make sure that allSelected can attack obj.
+	// TheSuperHackers @bugfix 19/07/2026 Evaluate every selected object instead of just the first
+	// one. Previously the whole group's ability to force attack was gated by the first object in
+	// the selection list, so a single unit without a weapon (e.g. a Sentry Drone built before a
+	// Humvee) prevented the entire group from force firing.
+	CanAttackResult bestResult = ATTACKRESULT_NOT_POSSIBLE;
 	for (DrawableListCIt cit = allSelected->begin(); cit != allSelected->end(); ++cit)
 	{
 		Drawable *draw = *cit;
@@ -415,10 +420,21 @@ static CanAttackResult canAnyForceAttack(const DrawableList *allSelected, const 
 			continue;
 		}
 
-		return canObjectForceAttack( obj, victim, pos );
+		CanAttackResult result = canObjectForceAttack( obj, victim, pos );
+
+		// CanAttackResult is ordered from worst to best scenario, so keep the best result found.
+		if (result > bestResult)
+		{
+			bestResult = result;
+
+			if (bestResult == ATTACKRESULT_POSSIBLE)
+			{
+				break;
+			}
+		}
 	}
 
-	return ATTACKRESULT_NOT_POSSIBLE;
+	return bestResult;
 }
 
 //-------------------------------------------------------------------------------------------------
