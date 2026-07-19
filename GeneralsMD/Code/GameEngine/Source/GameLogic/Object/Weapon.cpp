@@ -2968,6 +2968,15 @@ static void makeAssistanceRequest( Object *requestOf, void *userData )
 	if( requestOf == requestData->m_requestingObject )
 		return;
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Don't assist-fire if the assisting turret is also the
+	// intended victim. Without this check a turret damaging one of its own kind would request assistance
+	// from its victim, locking the victim's long range secondary weapon and, since it cannot fire at itself,
+	// causing it to acquire a new out-of-normal-range target instead. (GitHub issue #370)
+	if( requestOf == requestData->m_victimObject )
+		return;
+#endif
+
 	// Only request of our kind of people
 	if( !requestOf->getTemplate()->isEquivalentTo( requestData->m_requestingObject->getTemplate() ) )
 		return;

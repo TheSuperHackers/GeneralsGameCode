@@ -5510,6 +5510,15 @@ void AIAttackState::onExit( StateExitType status )
 
 	obj->clearLeechRangeModeForAllWeapons();
 
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 LOCKED_TEMPORARILY is documented (see WeaponSet.h) to last
+	// until the clip is empty "or current attack state exits", but this exit path never actually released it,
+	// unlike AIHuntState::onExit(). This left an assist-fire request's long range secondary weapon permanently
+	// locked in if the attack state was left before the clip emptied and before the victim died, e.g. via a
+	// stop command, causing the turret to keep using its long range weapon to acquire out-of-range targets. (GitHub issue #370)
+	obj->releaseWeaponLock(LOCKED_TEMPORARILY);
+#endif
+
 	AIUpdateInterface *ai = obj->getAI();
 	if (ai)
 	{

@@ -3433,6 +3433,13 @@ void AIUpdateInterface::privateAttackObject( Object *victim, Int maxShotsToFire,
 
 	if (!victim)
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 The victim can go away (die) between an assist-fire
+		// request temporarily locking our weapon to the long range secondary and this command actually being
+		// processed. Release that temporary lock here so we fall back to our normal weapon range instead of
+		// keeping the long range weapon locked and using it to acquire an out-of-normal-range target. (GitHub issue #370)
+		getObject()->releaseWeaponLock( LOCKED_TEMPORARILY );
+#endif
 		// Hard to kill em if they're already dead.  jba
 		return;
 	}
@@ -3452,6 +3459,11 @@ void AIUpdateInterface::privateAttackObject( Object *victim, Int maxShotsToFire,
 void AIUpdateInterface::privateForceAttackObject( Object *victim, Int maxShotsToFire, CommandSourceType cmdSource )
 {
 	if (!victim) {
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Release a stale temporary weapon lock (e.g. from an
+		// assist-fire request) when the victim is gone, so we fall back to our normal weapon range. (GitHub issue #370)
+		getObject()->releaseWeaponLock( LOCKED_TEMPORARILY );
+#endif
 		return;
 	}
 
@@ -3470,6 +3482,11 @@ void AIUpdateInterface::privateForceAttackObject( Object *victim, Int maxShotsTo
 void AIUpdateInterface::privateGuardRetaliate( Object *victim, const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 {
 	if (!victim) {
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Release a stale temporary weapon lock (e.g. from an
+		// assist-fire request) when the victim is gone, so we fall back to our normal weapon range. (GitHub issue #370)
+		getObject()->releaseWeaponLock( LOCKED_TEMPORARILY );
+#endif
 		return;
 	}
 
