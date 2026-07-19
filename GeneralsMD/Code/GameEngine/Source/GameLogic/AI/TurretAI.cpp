@@ -150,10 +150,16 @@ void TurretStateMachine::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::xfer( Xfer *xfer )
 {
-	XferVersion cv = 1;
+	// TheSuperHackers @bugfix bobtista 19/07/2026 Bump to version 2 to serialize the base
+	// StateMachine state. Without this the turret reverts to its default state on load.
+	XferVersion cv = 2;
 	XferVersion v = cv;
 	xfer->xferVersion( &v, cv );
 
+	if (v >= 2)
+	{
+		StateMachine::xfer(xfer);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -161,6 +167,7 @@ void TurretStateMachine::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TurretStateMachine::loadPostProcess()
 {
+	StateMachine::loadPostProcess();
 }
 
 //----------------------------------------------------------------------------------------------------------
