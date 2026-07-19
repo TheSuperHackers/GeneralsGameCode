@@ -1962,6 +1962,16 @@ AGAIN:
 			if (TheW3DProjectedShadowManager)
 				TheW3DProjectedShadowManager->updateRenderTargetTextures();
 		}
+		else
+		{
+			// TheSuperHackers @bugfix Continue updating the ParticleSystemManager while the Direct3D
+			// device is not cooperating, for example when the Windows account is locked. The game logic
+			// keeps creating new particle systems in that state, but destroyed particle systems are only
+			// deallocated by this update. Skipping it lets particle systems accumulate without bound,
+			// which eventually freezes the game or crashes it with out of memory (#2263).
+			// The particle system update is device independent and updates at most once per logic frame.
+			TheParticleSystemManager->update();
+		}
 
 		Debug_Statistics::End_Statistics();	//record number of polygons rendered in RenderTargetTextures.
 
