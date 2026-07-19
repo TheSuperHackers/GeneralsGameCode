@@ -569,7 +569,16 @@ void LocomotorStore::reset()
 		Overridable *locoTemp = it->second->deleteOverrides();
 		if (!locoTemp)
 		{
-			m_locomotorTemplates.erase(it);
+			// TheSuperHackers @bugfix Locomotor templates created solely by a map's map.ini
+			// (INI_LOAD_CREATE_OVERRIDES with no pre-existing base template) are marked as
+			// overrides and stored directly in m_locomotorTemplates. deleteOverrides() deletes
+			// such an entry and returns nullptr, so it must be erased here. std::map::erase()
+			// invalidates the erased iterator, so the loop must not go on to compare/increment
+			// it afterwards; capture the next iterator from erase()'s return value instead.
+			// Loading a save game always calls TheGameEngine->reset() (see GameState::loadGame),
+			// so any map with a custom map.ini-only Locomotor would corrupt this map and crash
+			// or misbehave on the very next load.
+			it = m_locomotorTemplates.erase(it);
 		}
 		else
 		{
