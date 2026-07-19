@@ -4822,6 +4822,15 @@ void TintEnvelope::update()
 			if (attackRate.Length() > delta.Length() || delta.Length() <= FADE_RATE_EPSILON)
 			{
 				// We are at the peak
+				// TheSuperHackers @bugfix Snap the current color to the peak color on arrival. With the
+				// tint time step decoupled from the render update, the attack overshoot check can trigger
+				// before the current color has actually reached the peak, leaving it off the peak color.
+				// The decay direction is derived from the peak color, so decaying a non-parallel color
+				// can push individual color components negative, briefly tinting the object black or in
+				// a dark wrong color when flashes overlap (e.g. selecting a building while it is being
+				// captured).
+				m_currentColor.Set( m_peakColor );
+				m_affect = TRUE;
 				if ( m_sustainCounter )
 				{
 					m_envState = ENVELOPE_STATE_SUSTAIN;
