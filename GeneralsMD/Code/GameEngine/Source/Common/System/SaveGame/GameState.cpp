@@ -31,6 +31,7 @@
 #include "PreRTS.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "Common/FramePacer.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/GameStateMap.h"
@@ -39,6 +40,7 @@
 #include "Common/PlayerList.h"
 #include "Common/RandomValue.h"
 #include "Common/Radar.h"
+#include "Common/SkirmishPreferences.h"
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/XferLoad.h"
@@ -673,6 +675,26 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 
 	// clear out the game engine
 	TheGameEngine->reset();
+
+	// TheSuperHackers @bugfix Caball009/ZsoltFeher 19/07/2026 Use the Game Speed from the skirmish
+	// settings instead of the default frame rate after the game engine reset, matching the frame
+	// rate selection of a newly started skirmish game (see reallyDoStart and GameLogic::onNewGame).
+	// Without this, loaded save games always play at the GameData.ini default frame rate.
+	// Mission saves are excluded because they start a new game through MSG_NEW_GAME without a
+	// frame rate argument, like regular campaign missions.
+	if( gameInfo.saveGameInfo.saveFileType != SAVE_FILE_TYPE_MISSION )
+	{
+		Int maxFPS = SkirmishPreferences().getInt( "FPS", TheGlobalData->m_framesPerSecondLimit );
+
+		// slider positions above the highest labeled value (60) mean "no limit"
+		if( maxFPS > 60 )
+			maxFPS = 1000;
+		if( maxFPS < 15 )
+			maxFPS = 15;
+
+		TheFramePacer->setFramesPerSecondLimit( maxFPS );
+		TheWritableGlobalData->m_useFpsLimit = true;
+	}
 
 	// lock creation of new ghost objects
 	TheGhostObjectManager->saveLockGhostObjects( TRUE );
