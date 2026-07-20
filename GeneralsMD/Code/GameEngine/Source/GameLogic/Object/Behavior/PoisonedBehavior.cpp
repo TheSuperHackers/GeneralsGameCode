@@ -72,6 +72,7 @@ PoisonedBehavior::PoisonedBehavior( Thing *thing, const ModuleData* moduleData )
 	m_poisonDamageAmount = 0.0f;
 	m_poisonSource = INVALID_ID;
 	m_deathType = DEATH_POISONED;
+	m_dealingPeriodicDamage = FALSE;
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 }
 
@@ -87,7 +88,16 @@ PoisonedBehavior::~PoisonedBehavior()
 void PoisonedBehavior::onDamage( DamageInfo *damageInfo )
 {
 	if( damageInfo->in.m_damageType == DAMAGE_POISON )
+	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Our own periodic poison damage-over-time tick
+		// (see update()) now deals real POISON damage so that POISON resistance applies to it. Ignore
+		// it here so it does not re-arm/re-trigger this same PoisonedBehavior instance on ourselves.
+		if( m_dealingPeriodicDamage )
+			return;
+#endif
 		startPoisonedEffects( damageInfo );
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -119,10 +129,24 @@ UpdateSleepTime PoisonedBehavior::update()
 		DamageInfo damage;
 		damage.in.m_amount = m_poisonDamageAmount;
 		damage.in.m_sourceID = m_poisonSource;
+#if RETAIL_COMPATIBLE_CRC
 		damage.in.m_damageType = DAMAGE_UNRESISTABLE; // Not poison, as that will infect us again
+#else
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Deal actual POISON damage on the periodic tick
+		// so the target's POISON resistance (e.g. Chemical Suits) is properly applied. This used to be
+		// UNRESISTABLE to avoid re-triggering ourselves; onDamage() now guards against that explicitly
+		// via a self-source check instead.
+		damage.in.m_damageType = DAMAGE_POISON;
+#endif
 		damage.in.m_damageFXOverride = DAMAGE_POISON; // but this will ensure that the right effect is played
 		damage.in.m_deathType = m_deathType;
+#if !RETAIL_COMPATIBLE_CRC
+		m_dealingPeriodicDamage = TRUE;
+#endif
 		getObject()->attemptDamage( &damage );
+#if !RETAIL_COMPATIBLE_CRC
+		m_dealingPeriodicDamage = FALSE;
+#endif
 
 		m_poisonDamageFrame = now + d->m_poisonDamageIntervalData;
 	}

@@ -91,5 +91,10 @@ private:
 	Real					m_poisonDamageAmount;
 	ObjectID			m_poisonSource;
 	DeathType			m_deathType;
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Reentrancy guard so our own periodic poison
+	// damage-over-time tick (see update()) does not re-trigger onDamage() on ourselves now that
+	// it deals real POISON damage. damage.in.m_sourceID cannot be used for this since it is set
+	// to the original poisoner (for XP credit), which could legitimately re-poison us again.
+	Bool					m_dealingPeriodicDamage;
 
 };
