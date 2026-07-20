@@ -48,9 +48,10 @@ FloodFillTool::FloodFillTool() :
 /// Destructor
 FloodFillTool::~FloodFillTool()
 {
-	if (m_cliffCursor) {
-		::DestroyCursor(m_cliffCursor);
-	}
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 m_cliffCursor is loaded via
+	// AfxGetApp()->LoadCursor(MAKEINTRESOURCE(IDC_CLIFF)), which returns a shared, system-cached
+	// handle that must not be passed to DestroyCursor() (see Tool::~Tool() and issue #1220).
+	// Leave it alone; the system owns it.
 }
 
 

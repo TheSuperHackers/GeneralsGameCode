@@ -43,9 +43,15 @@ Tool::Tool(Int toolID, Int cursorID)
 /// Destructor
 Tool::~Tool()
 {
-	if (m_cursor) {
-		::DestroyCursor(m_cursor);
-	}
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 m_cursor is always populated via
+	// AfxGetApp()->LoadCursor(MAKEINTRESOURCE(m_cursorID)) in setCursor() below. Per the Win32
+	// LoadCursor() documentation, resource-loaded cursors are shared/cached by the system per
+	// (module, resource ID) and must never be passed to DestroyCursor(); only cursors created
+	// with CreateCursor() or LoadImage(..., LR_LOADFROMFILE) are caller-owned. This also matters
+	// because several sibling Tool subclasses share the same cursor resource ID (e.g. BrushTool,
+	// FeatherTool, MoundTool and DigTool all use IDC_BRUSH_CROSS; PointerTool and BorderTool both
+	// use IDC_POINTER) and are all destroyed independently, so destroying m_cursor here would
+	// repeatedly destroy the one handle they all share (see issue #1220).
 }
 
 

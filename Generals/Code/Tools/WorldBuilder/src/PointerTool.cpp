@@ -102,12 +102,10 @@ PointerTool::PointerTool() :
 PointerTool::~PointerTool()
 {
 	REF_PTR_RELEASE(m_modifyUndoable); // belongs to pDoc now.
-	if (m_rotateCursor) {
-		::DestroyCursor(m_rotateCursor);
-	}
-	if (m_moveCursor) {
-		::DestroyCursor(m_moveCursor);
-	}
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 m_rotateCursor/m_moveCursor are loaded via
+	// AfxGetApp()->LoadCursor(MAKEINTRESOURCE(...)), which returns a shared, system-cached
+	// handle that must not be passed to DestroyCursor() (see Tool::~Tool() and issue #1220).
+	// Leave them alone; the system owns them.
 }
 
 /// See if a single obj is selected that has properties.

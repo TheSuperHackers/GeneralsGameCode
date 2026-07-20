@@ -59,12 +59,10 @@ PolygonTool::PolygonTool() :
 /// Destructor
 PolygonTool::~PolygonTool()
 {
-	if (m_poly_plusCursor) {
-		::DestroyCursor(m_poly_plusCursor);
-	}
-	if (m_poly_moveCursor) {
-		::DestroyCursor(m_poly_moveCursor);
-	}
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 m_poly_plusCursor/m_poly_moveCursor are
+	// loaded via AfxGetApp()->LoadCursor(MAKEINTRESOURCE(...)), which returns a shared, system-
+	// cached handle that must not be passed to DestroyCursor() (see Tool::~Tool() and issue
+	// #1220). Leave them alone; the system owns them.
 }
 
 /// Clears it's is active flag.
