@@ -531,7 +531,8 @@ void OpenContain::iterateContained( ContainIterateFunc func, void *userData, Boo
 Object* OpenContain::getClosestRider( const Coord3D *pos )
 {
 	Object *closest = nullptr;
-	Real closestDistance;
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 closestDistance was uninitialized
+	Real closestDistance = FLT_MAX;
 
 	for(ContainedItemsList::const_iterator it = m_containList.begin(); it != m_containList.end(); ++it)
 	{
