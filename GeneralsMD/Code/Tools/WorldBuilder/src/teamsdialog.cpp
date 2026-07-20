@@ -336,10 +336,21 @@ void CTeamsDialog::UpdateTeamsList()
 	Bool selected = false;
 	Int inserted = 0;
 
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Populating the list one InsertItem()/SetItemText()
+	// call at a time triggers a synchronous redraw/layout on every single call by default. With many
+	// teams (reported as 20-30+, GitHub issue #415) this made the Team Builder tab -- and its sub-tabs,
+	// since they share the same message loop -- lag heavily or become unresponsive while rebuilding.
+	// Disable redraws for the duration of the rebuild and repaint once at the end instead.
+	pList->SetRedraw(FALSE);
+
+	// AsciiString created once per call instead of once per team below (playerNameForUI() does not
+	// depend on the loop variable).
+	AsciiString curPlayerName = playerNameForUI(m_sides, which);
+
 	for (Int i=0; i<numTeams; i++)
 	{
 		TeamsInfo *ti = m_sides.getTeamInfo(i);
-		if (ti->getDict()->getAsciiString(TheKey_teamOwner) == playerNameForUI(m_sides, which).str())
+		if (ti->getDict()->getAsciiString(TheKey_teamOwner) == curPlayerName)
 		{
 			Bool exists;
 			AsciiString teamName = teamNameForUI(m_sides, i);
@@ -372,6 +383,9 @@ void CTeamsDialog::UpdateTeamsList()
 			pList->EnsureVisible(0, false);
 		}
 	}
+
+	pList->SetRedraw(TRUE);
+	pList->Invalidate();
 }
 
 void CTeamsDialog::OnSelchangePlayerList()
