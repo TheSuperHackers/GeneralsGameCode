@@ -23,6 +23,7 @@
 #include "WorldBuilder.h"
 #include "teamsdialog.h"
 #include "CFixTeamOwnerDialog.h"
+#include "mapobjectprops.h"
 
 #include "Common/WellKnownKeys.h"
 #include "GameLogic/SidesList.h"
@@ -427,9 +428,13 @@ void CTeamsDialog::OnCopyteam()
 
 void CTeamsDialog::OnSelectTeamMembers()
 {
+	// TheSuperHackers @bugfix Caball009 07/20/2026 The <neutral> player (m_curTeam == -1) has no real
+	// team info, so m_sides.getTeamInfo(m_curTeam) returns nullptr and dereferencing ->getDict() crashed
+	// WorldBuilder. Neutral map objects are tagged with NEUTRAL_TEAM_INTERNAL_STR as their
+	// TheKey_originalOwner (see GroveTool.cpp/RoadTool.cpp/ScorchTool.cpp), so use that directly instead
+	// of looking up a (nonexistent) team's dictionary. (GitHub issue #1358)
 	Int count = 0;
-	Dict d = *m_sides.getTeamInfo(m_curTeam)->getDict();
-	AsciiString teamName = d.getAsciiString(TheKey_teamName);
+	AsciiString teamName = (m_curTeam == -1) ? NEUTRAL_TEAM_INTERNAL_STR : m_sides.getTeamInfo(m_curTeam)->getDict()->getAsciiString(TheKey_teamName);
 	Coord3D pos;
 	MapObject *pObj;
 	for (pObj=MapObject::getFirstMapObject(); pObj; pObj=pObj->getNext()) {
