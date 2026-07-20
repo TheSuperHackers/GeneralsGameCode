@@ -721,6 +721,10 @@ LegalBuildCode BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos
 		{
 			if (them->testStatus(OBJECT_STATUS_IS_USING_ABILITY) || (them->getAI() && them->getAI()->isBusy()))
 			{
+				// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Draw the faction bib here too, matching every other
+				// LBC_OBJECTS_IN_THE_WAY return path in this function, so the player gets visual feedback on why
+				// placement is blocked.
+				TheTerrainVisual->addFactionBib( them, TRUE );
 				return LBC_OBJECTS_IN_THE_WAY;
 			}
 		}
