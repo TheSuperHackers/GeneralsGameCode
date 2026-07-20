@@ -69,6 +69,13 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		Coord3D new3DPoint;
 		pView->viewToDocCoords(viewPt, &new3DPoint, false);
 
+		current.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
+		current.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
+
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 These clamps used to run before the assignments
+		// above and were therefore dead code (immediately overwritten), so a newly-added border being
+		// dragged towards the origin could be given negative extents. Clamp after assigning from the
+		// mouse position instead. (GitHub issue #413)
 		if (current.x < 0) {
 			current.x = 0;
 		}
@@ -77,8 +84,6 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 			current.y = 0;
 		}
 
-		current.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
-		current.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
 		pDoc->changeBoundary(count - 1, &current);
 		return;
 	}
@@ -170,6 +175,21 @@ void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	if (m_addingNewBorder) {
 		m_addingNewBorder = false;
 		// Do the undoable on the last border
+
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 A newly-added border can also end up degenerate
+		// (zero or, before the mouseMoved() clamp-order fix above, negative extents) if it's dragged
+		// straight back onto the origin before release -- the same permanently-invisible-and-unpickable
+		// outcome the modify-path cleanup below already handles. This is never boundary 0 (the default
+		// border is created once by the map constructor, never via this add-new-border path), so no
+		// index-0 protection is needed here. (GitHub issue #413)
+		Int newNdx = pDoc->getNumBoundaries() - 1;
+		if (newNdx >= 0) {
+			ICoord2D newBorder;
+			pDoc->getBoundary(newNdx, &newBorder);
+			if (newBorder.x <= 0 || newBorder.y <= 0) {
+				pDoc->removeBoundary(newNdx);
+			}
+		}
 	}
 
 	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 A boundary is anchored at the origin (0,0), so
@@ -185,6 +205,15 @@ void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 		// border (see the m_modifyBorderNdx == 0 clamp in mouseMoved() above, which already prevents it
 		// from reaching zero width/height by dragging in the first place). (GitHub issue #312)
 		if (m_modifyBorderNdx != 0 && (currentBorder.x == 0 || currentBorder.y == 0)) {
+			// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Map scripts can reference a boundary by its
+			// raw list index (Parameter::BOUNDARY). Removing anything other than the last boundary shifts
+			// every later boundary's index down by one, silently retargeting any script that referenced
+			// one of them. Warn the user so they know to double check their scripts; removing the actual
+			// last boundary (as the add-new-border path above always does) never shifts anything, so no
+			// warning is needed there. (GitHub issue #413)
+			if (m_modifyBorderNdx != pDoc->getNumBoundaries() - 1) {
+				::AfxMessageBox(_T("Removing this boundary will shift the index of every boundary after it. If any map scripts reference boundaries by number, please double check them."), MB_OK | MB_ICONWARNING);
+			}
 			pDoc->removeBoundary(m_modifyBorderNdx);
 		}
 		m_modifyBorderNdx = -1;

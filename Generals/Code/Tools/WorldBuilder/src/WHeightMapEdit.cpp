@@ -3460,6 +3460,16 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 	}
 
 	(*outNdx) = -1;
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 This not-found path never wrote *outHandle at all,
+	// leaving callers' handle output (e.g. BorderTool::mouseDown()'s local `motion`) as uninitialized
+	// stack garbage whenever no boundary handle was near the click point -- the same defect class as
+	// #470's uninitialized Coord3D read. It happened to be harmless in the current BorderTool caller
+	// (which only acts on the handle when *outNdx >= 0, and this path always sets *outNdx = -1), but is
+	// still undefined behavior. Matches GeneralsMD's equivalent write (also null-checked to respect the
+	// "outHandle can be null" contract documented on this function's declaration).
+	if (outHandle) {
+		(*outHandle) = -1;
+	}
 }
 
 

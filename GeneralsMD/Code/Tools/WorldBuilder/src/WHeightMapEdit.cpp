@@ -3432,5 +3432,9 @@ void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *ou
 	}
 
 	(*outNdx) = -1;
-	(*outHandle) = -1;
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Respect the "outHandle can be null" contract
+	// documented on this function's declaration; this write was previously unconditional.
+	if (outHandle) {
+		(*outHandle) = -1;
+	}
 }
