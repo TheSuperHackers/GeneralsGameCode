@@ -1144,13 +1144,23 @@ UpdateSleepTime ChinookAIUpdate::update()
 			}
 		}
 #if !RETAIL_COMPATIBLE_CRC
-		// TheSuperHackers @bugfix diqezit 07/19/2026 SupplyTruckAIUpdate::isIdle() returns false while
-		// this Chinook/Helix is guarding or attacking, so the landing trigger above never ran, and units
-		// could never be loaded into (or evacuated from) a guarding/attacking Chinook or Helix -- they
-		// would only get in/out if the player explicitly pressed Stop first. Allow landing for waiting
-		// passengers even while not idle, as long as we're in stable level flight with no pending
-		// command or in-progress airfield healing, so we don't interrupt those. (GitHub issue #54)
-		else if (waitingToEnterOrExit && m_flightStatus == CHINOOK_FLYING && !m_hasPendingCommand && m_airfieldForHealing == INVALID_ID)
+		// TheSuperHackers @bugfix diqezit 07/19/2026 [narrowed ZsoltFeher 07/20/2026 after fable-model
+		// review] SupplyTruckAIUpdate::isIdle() returns false while this Chinook/Helix is guarding or
+		// attacking, so the landing trigger above never ran, and units could never be loaded into (or
+		// evacuated from) a guarding/attacking Chinook or Helix -- they would only get in/out if the
+		// player explicitly pressed Stop first. Allow landing for waiting passengers even while not
+		// idle, but ONLY while in a generic (non-Chinook-specific) AI state such as guard or attack --
+		// getAIStateType() < ChinookAIStateType_FIRST excludes every one of this class's own states
+		// (TAKING_OFF, LANDING, MOVE_TO_AND_EVAC, MOVE_TO_COMBAT_DROP, etc; see the enum's own "must be
+		// distinct numerically from AIStateType" comment above). Without this exclusion, a Chinook
+		// actively executing a player-issued move-and-evacuate or combat-drop order -- itself not idle,
+		// and (for move-and-evacuate specifically) only entered in the first place because
+		// waitingToEnterOrExit was already true, see aiDoCommand()'s AICMD_MOVE_TO_POSITION_AND_EVACUATE
+		// handling elsewhere in this file -- would have that in-progress order cancelled and be
+		// force-landed at its CURRENT position on the very next frame, instead of at the player's
+		// ordered destination. (GitHub issue #54)
+		else if (waitingToEnterOrExit && m_flightStatus == CHINOOK_FLYING && !m_hasPendingCommand && m_airfieldForHealing == INVALID_ID
+			&& getAIStateType() < ChinookAIStateType_FIRST)
 		{
 			setMyState(LANDING, nullptr, nullptr, CMD_FROM_AI);
 		}

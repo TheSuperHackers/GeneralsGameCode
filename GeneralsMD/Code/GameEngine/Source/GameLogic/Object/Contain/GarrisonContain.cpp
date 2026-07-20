@@ -1838,8 +1838,15 @@ void GarrisonContain::xfer( Xfer *xfer )
 	Int i;
 
 	// version
-	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Bumped to 2 to persist m_garrisonPointBoneCount.
-#if RETAIL_COMPATIBLE_XFER_SAVE
+	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 [fixed gating ZsoltFeher 07/20/2026 after
+	// fable-model review: RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE are independent
+	// macros, so gating the version bump on XFER_SAVE alone while the field xfer below was gated on
+	// CRC alone meant a RETAIL_COMPATIBLE_XFER_SAVE=0, RETAIL_COMPATIBLE_CRC=1 build stamped saves as
+	// version 2 without actually writing the new field, corrupting every subsequent field read on
+	// load. Match the combined-macro convention already used for this exact situation elsewhere (see
+	// JetAIUpdate.cpp's m_afterburners/m_resetTimer version-2 gating).] Bumped to 2 to persist
+	// m_garrisonPointBoneCount.
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	XferVersion currentVersion = 1;
 #else
 	XferVersion currentVersion = 2;
@@ -1953,10 +1960,11 @@ void GarrisonContain::xfer( Xfer *xfer )
 	// garrison points initialized
 	xfer->xferBool( &m_garrisonPointsInitialized );
 
-#if !RETAIL_COMPATIBLE_CRC
+#if !(RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE)
 	// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Persist the real fire point bone counts so the
 	// fire-port reuse fix in putObjectAtGarrisonPoint() stays correct after a save/load, instead of
-	// silently reverting to the padding/ground-level position until this object is recreated.
+	// silently reverting to the padding/ground-level position until this object is recreated. Gated
+	// to match the version-bump condition above exactly (see the comment there).
 	if( version >= 2 )
 		xfer->xferUser( m_garrisonPointBoneCount, sizeof( Int ) * MAX_GARRISON_POINT_CONDITIONS );
 #endif

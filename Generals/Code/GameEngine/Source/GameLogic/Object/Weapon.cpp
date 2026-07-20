@@ -397,6 +397,15 @@ void WeaponTemplate::postProcessLoad()
 		return;
 	}
 
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 postProcessLoad() must be safe to call more than
+	// once: TheSubsystemList->postProcessLoadAll() (see GameLogic::tryStartNewGame, GitHub issue #276)
+	// re-runs every registered subsystem's postProcessLoad() after a map.ini load, and WeaponStore's
+	// override calls this for every WeaponTemplate. The OCL name strings below used to be cleared
+	// after being resolved the first time, so any second call saw them as empty and nulled out
+	// m_fireOCLs/m_projectileDetonationOCLs for every weapon in the game -- silently deleting every
+	// weapon's fire/detonation OCL effects (which spawn real objects, simulation-relevant) from the
+	// second postProcessLoad() call onward. Keep the name strings intact so re-resolving is idempotent,
+	// matching the pattern ThingTemplate::resolveNames() already documents for this exact hazard.
 	if (m_projectileName.isEmpty())
 	{
 		m_projectileTmpl = nullptr;
@@ -419,7 +428,6 @@ void WeaponTemplate::postProcessLoad()
 			m_fireOCLs[i] = TheObjectCreationListStore->findObjectCreationList(m_fireOCLNames[i].str() );
 			DEBUG_ASSERTCRASH(m_fireOCLs[i], ("OCL %s not found in a weapon!",m_fireOCLNames[i].str()));
 		}
-		m_fireOCLNames[i].clear();
 
 		// And the other OCL if there is one
 		if (m_projectileDetonationOCLNames[i].isEmpty() )
@@ -431,7 +439,6 @@ void WeaponTemplate::postProcessLoad()
 			m_projectileDetonationOCLs[i] = TheObjectCreationListStore->findObjectCreationList(m_projectileDetonationOCLNames[i].str() );
 			DEBUG_ASSERTCRASH(m_projectileDetonationOCLs[i], ("OCL %s not found in a weapon!",m_projectileDetonationOCLNames[i].str()));
 		}
-		m_projectileDetonationOCLNames[i].clear();
 	}
 
 }
