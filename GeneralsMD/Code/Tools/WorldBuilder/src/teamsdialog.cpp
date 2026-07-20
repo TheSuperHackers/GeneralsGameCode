@@ -227,10 +227,29 @@ void CTeamsDialog::OnOK()
 	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
 
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 AddAndDoUndoable() below runs SidesListUndoable::Do(),
+	// which refreshes the BuildList options panel via BuildList::update() -> loadSides() -> updateCurSide()
+	// -> OnSelchangeBuildList(). That refresh has the side effect of calling PointerTool::clearSelection(),
+	// which wipes out any MapObject selection (e.g. made via the "Select Team Members" button) just before
+	// closing the dialog. OnCancel() never runs this code path, so the selection survived there but was
+	// silently lost on OK. Snapshot the selected map objects and restore them afterward so OK matches
+	// Cancel's behavior. (GitHub issue #1391)
+	std::vector<MapObject*> previouslySelectedObjects;
+	for (MapObject *pObj = MapObject::getFirstMapObject(); pObj; pObj = pObj->getNext()) {
+		if (pObj->isSelected()) {
+			previouslySelectedObjects.push_back(pObj);
+		}
+	}
+
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	SidesListUndoable *pUndo = new SidesListUndoable(m_sides, pDoc);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Restore the selection that AddAndDoUndoable() cleared.
+	for (std::vector<MapObject*>::const_iterator it = previouslySelectedObjects.begin(); it != previouslySelectedObjects.end(); ++it) {
+		(*it)->setSelected(true);
+	}
 
 	thePrevCurTeam = m_curTeam;
 
