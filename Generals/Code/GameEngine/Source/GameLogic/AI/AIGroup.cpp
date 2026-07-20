@@ -2976,12 +2976,65 @@ void AIGroup::setMineClearingDetail( Bool set )
 	}
 }
 
-Bool AIGroup::setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType )
+#if !RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 A GUI_COMMAND_SWITCH_WEAPON / GUI_COMMAND_FIRE_WEAPON
+// message only carries a raw weapon slot index, not the identity of the command button that produced
+// it. When a mixed-unit-type group is selected and a command button that belongs to only one of those
+// unit types is clicked, the raw slot index used to be applied to every member of the group regardless
+// of whether that member's own command set actually exposes that slot, which could unlock a weapon
+// slot on a completely unrelated unit type that was never meant to be reachable this way (originally
+// reported for the Zero Hour Missile Defender, GitHub issue #873; the underlying mechanism is generic
+// and applies here too). Guard against this by only honoring the weapon lock for members whose own
+// command set actually contains a switch/fire-weapon button for that slot. This must only be applied
+// to the actual GUI command-button-driven callers (onDoWeapon/onDoWeaponAtObject/onDoSwitchWeapons/
+// onDoWeaponAtLocation in GameLogicDispatch.cpp), NOT unconditionally inside setWeaponLockForGroup()
+// itself -- that function is also called from the force-attack-position path with a dev comment
+// explaining it force-locks PRIMARY_WEAPON on the whole group specifically so units don't reset to
+// primary weapon mode while force-attacking. Most units have no explicit "switch to primary" command
+// button (only a "switch to secondary" one, since primary is the default), so applying this filter
+// there would silently defeat that unrelated mechanism for nearly every unit. See the
+// filterByCommandAvailability parameter below.
+static Bool objectHasCommandButtonForWeaponSlot( Object *obj, WeaponSlotType weaponSlot )
+{
+	if( !obj )
+		return false;
+
+	const CommandSet *commandSet = TheControlBar->findCommandSet( obj->getCommandSetString() );
+	if( !commandSet )
+		return false;
+
+	for( Int i = 0; i < MAX_COMMANDS_PER_SET; ++i )
+	{
+		const CommandButton *commandButton = commandSet->getCommandButton(i);
+		if( !commandButton )
+			continue;
+
+		GUICommandType type = commandButton->getCommandType();
+		if( (type == GUI_COMMAND_SWITCH_WEAPON || type == GUI_COMMAND_FIRE_WEAPON)
+			&& commandButton->getWeaponSlot() == weaponSlot )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+#endif
+
+Bool AIGroup::setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType, Bool filterByCommandAvailability )
 {
 	Bool any = false;
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only skip members lacking a matching command
+		// button when the caller explicitly opted in (see objectHasCommandButtonForWeaponSlot() above
+		// for why this can't be unconditional). (GitHub issue #873)
+		if( filterByCommandAvailability && !objectHasCommandButtonForWeaponSlot( *i, weaponSlot ) )
+			continue;
+#endif
+
 		if ((*i)->setWeaponLock( weaponSlot, lockType ))
 			any = true;
 	}

@@ -982,7 +982,10 @@ bool GameLogic::onDoWeapon(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &currentlyS
 	Int maxShotsToFire = msg->getArgument( 1 )->integer;
 
 	// lock it just till the weapon is empty or the attack is "done"
-	if( currentlySelectedGroup && currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY ))
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only apply the weapon lock to group members whose
+	// own command set actually has a button for this slot -- this message only carries a raw slot
+	// index, not which button/unit type produced it. (GitHub issue #873)
+	if( currentlySelectedGroup && currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY, TRUE ))
 	{
 		currentlySelectedGroup->groupAttackPosition( nullptr, maxShotsToFire, CMD_FROM_PLAYER );
 	}
@@ -1051,7 +1054,10 @@ bool GameLogic::onDoWeaponAtObject(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &cu
 	if( currentlySelectedGroup )
 	{
 			// lock it just till the weapon is empty or the attack is "done"
-		if (currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY ))
+			// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only apply the weapon lock to group members
+			// whose own command set actually has a button for this slot -- this message only carries a
+			// raw slot index, not which button/unit type produced it. (GitHub issue #873)
+		if (currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY, TRUE ))
 			currentlySelectedGroup->groupAttackObject( targetObject, maxShotsToFire, CMD_FROM_PLAYER );
 	}
 
@@ -1063,8 +1069,11 @@ bool GameLogic::onDoSwitchWeapons(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &cur
 	// use the selected group
 	WeaponSlotType weaponSlot = (WeaponSlotType)msg->getArgument( 0 )->integer;
 	// lock until un-switched, or switched to something else.
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only apply the weapon lock to group members whose
+	// own command set actually has a button for this slot -- this message only carries a raw slot
+	// index, not which button/unit type produced it. (GitHub issue #873)
 	if( currentlySelectedGroup )
-		currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_PERMANENTLY );
+		currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_PERMANENTLY, TRUE );
 
 	return true;
 }
@@ -1118,7 +1127,10 @@ bool GameLogic::onDoWeaponAtLocation(MAYBE_UNUSED GameMessage *msg, AIGroupPtr &
 	if( currentlySelectedGroup )
 	{
 			// lock it just till the weapon is empty or the attack is "done"
-		if (currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY ))
+			// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only apply the weapon lock to group members
+			// whose own command set actually has a button for this slot -- this message only carries a
+			// raw slot index, not which button/unit type produced it. (GitHub issue #873)
+		if (currentlySelectedGroup->setWeaponLockForGroup( weaponSlot, LOCKED_TEMPORARILY, TRUE ))
 			currentlySelectedGroup->groupAttackPosition( &targetLoc, maxShotsToFire, CMD_FROM_PLAYER );
 	}
 

@@ -971,7 +971,11 @@ public:
 	void recomputeGroupSpeed() { m_dirty = true; }
 
 	void setMineClearingDetail( Bool set );
-	Bool setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType ); ///< Set the groups' weapon choice.
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Added filterByCommandAvailability (default FALSE,
+	// preserving the original unconditional lock behavior for existing callers) so only the GUI
+	// command-button-driven callers opt into skipping members without a matching command button.
+	// See the comment on objectHasCommandButtonForWeaponSlot() in AIGroup.cpp. (GitHub issue #873)
+	Bool setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType, Bool filterByCommandAvailability = FALSE ); ///< Set the groups' weapon choice.
 	void releaseWeaponLockForGroup(WeaponLockType lockType);///< Clear each guys weapon choice
 	void setWeaponSetFlag( WeaponSetType wst );
 

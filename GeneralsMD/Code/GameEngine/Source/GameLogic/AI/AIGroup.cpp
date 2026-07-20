@@ -3068,16 +3068,26 @@ void AIGroup::setMineClearingDetail( Bool set )
 	}
 }
 
-// TheSuperHackers @bugfix 07/19/2026 A GUI_COMMAND_SWITCH_WEAPON / GUI_COMMAND_FIRE_WEAPON message only
-// carries a raw weapon slot index, not the identity of the command button that produced it. When a
-// mixed-unit-type group is selected (e.g. Rangers together with Missile Defenders) and a command button
-// that belongs to only one of those unit types is clicked (such as the Ranger's "switch to flashbang
-// grenades" button, which targets SECONDARY_WEAPON), the raw slot index used to be applied to every
-// member of the group regardless of whether that member's own command set actually exposes that slot.
-// This let the Missile Defender's secondary weapon (its laser-guided missile, normally only reachable
-// through its own laser-lock targeting logic) get permanently unlocked and fired like a normal weapon,
-// i.e. "rapid fire without laser locking" (#873). Guard against this by only honoring the weapon lock
-// for members whose own command set actually contains a switch/fire-weapon button for that slot.
+#if !RETAIL_COMPATIBLE_CRC
+// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 A GUI_COMMAND_SWITCH_WEAPON / GUI_COMMAND_FIRE_WEAPON
+// message only carries a raw weapon slot index, not the identity of the command button that produced
+// it. When a mixed-unit-type group is selected (e.g. Rangers together with Missile Defenders) and a
+// command button that belongs to only one of those unit types is clicked (such as the Ranger's "switch
+// to flashbang grenades" button, which targets SECONDARY_WEAPON), the raw slot index used to be applied
+// to every member of the group regardless of whether that member's own command set actually exposes
+// that slot. This let the Missile Defender's secondary weapon (its laser-guided missile, normally only
+// reachable through its own laser-lock targeting logic) get permanently unlocked and fired like a
+// normal weapon, i.e. "rapid fire without laser locking" (#873). Guard against this by only honoring
+// the weapon lock for members whose own command set actually contains a switch/fire-weapon button for
+// that slot. This must only be applied to the actual GUI command-button-driven callers
+// (onDoWeapon/onDoWeaponAtObject/onDoSwitchWeapons/onDoWeaponAtLocation in GameLogicDispatch.cpp), NOT
+// unconditionally inside setWeaponLockForGroup() itself -- that function is also called from the
+// force-attack-position path with a dev comment explaining it force-locks PRIMARY_WEAPON on the whole
+// group specifically so Rangers/Scud Launchers/the Toxin Tractor don't reset to primary weapon mode
+// while force-attacking. Most units have no explicit "switch to primary" command button (only a
+// "switch to secondary" one, since primary is the default), so applying this filter there would
+// silently defeat that unrelated mechanism for nearly every unit. See the filterByCommandAvailability
+// parameter below.
 static Bool objectHasCommandButtonForWeaponSlot( Object *obj, WeaponSlotType weaponSlot )
 {
 	if( !obj )
@@ -3103,16 +3113,21 @@ static Bool objectHasCommandButtonForWeaponSlot( Object *obj, WeaponSlotType wea
 
 	return false;
 }
+#endif
 
-Bool AIGroup::setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType )
+Bool AIGroup::setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType, Bool filterByCommandAvailability )
 {
 	Bool any = false;
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); ++i )
 	{
-		// Only lock the weapon slot for members that actually expose it via their own command set.
-		if( !objectHasCommandButtonForWeaponSlot( *i, weaponSlot ) )
+#if !RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @bugfix ZsoltFeher 07/19/2026 Only skip members lacking a matching command
+		// button when the caller explicitly opted in (see objectHasCommandButtonForWeaponSlot() above
+		// for why this can't be unconditional). (GitHub issue #873)
+		if( filterByCommandAvailability && !objectHasCommandButtonForWeaponSlot( *i, weaponSlot ) )
 			continue;
+#endif
 
 		if ((*i)->setWeaponLock( weaponSlot, lockType ))
 			any = true;
