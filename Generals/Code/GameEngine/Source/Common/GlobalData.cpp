@@ -1009,7 +1009,6 @@ GlobalData::GlobalData()
 	m_shellMapOn =TRUE;
 	m_playIntro = TRUE;
 	m_playSizzle = TRUE;
-	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;
 
 	m_keyboardDefaultScrollFactor = m_keyboardScrollFactor = 0.5f;

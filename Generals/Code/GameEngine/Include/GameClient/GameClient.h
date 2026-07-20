@@ -150,6 +150,8 @@ public:
 	UnsignedInt getRenderedObjectCount() const { return m_renderedObjectCount; }
 	void incrementRenderedObjectCount() { m_renderedObjectCount++; }
 
+	Bool skipCurrentIntroStage();
+
 	static Bool isMovieAbortRequested();
 
 protected:
