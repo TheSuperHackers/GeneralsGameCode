@@ -2344,13 +2344,15 @@ void WbView3d::drawLabels(HDC hdc)
 					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists); break;
 					default: name.clear();
 				}
-				// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only use pos for waypoint path
-				// labels when waypoints are actually shown. When m_showWaypoints is false, pos is
-				// left uninitialized for waypoint MapObjects (the isWaypoint()+m_showWaypoints
-				// branch above is skipped and waypoints have no ThingTemplate), so using pos here
-				// read garbage stack memory and crashed WorldBuilder when hiding waypoints while
-				// labels were still shown.
-				if (!name.isEmpty() && m_showWaypoints) {
+				// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only use pos for a waypoint's own path
+				// labels when waypoints are actually shown. When m_showWaypoints is false, pos is left
+				// uninitialized for waypoint MapObjects (the isWaypoint()+m_showWaypoints branch above
+				// is skipped and waypoints have no ThingTemplate), so using pos here read garbage stack
+				// memory and crashed WorldBuilder when hiding waypoints while labels were still shown.
+				// Gated on isWaypoint() specifically (not applied to regular objects) since a regular
+				// object's name label always has a validly-assigned pos regardless of m_showWaypoints,
+				// via the getThingTemplate() branch above, and should keep rendering either way.
+				if (!name.isEmpty() && (!pMapObj->isWaypoint() || m_showWaypoints)) {
 					CPoint pt;
 					Vector3 world, screen;
 					world.Set( pos.x+MAP_XY_FACTOR/2, pos.y, pos.z );

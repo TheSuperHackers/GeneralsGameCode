@@ -429,10 +429,11 @@ void CTeamsDialog::OnCopyteam()
 void CTeamsDialog::OnSelectTeamMembers()
 {
 	// TheSuperHackers @bugfix Caball009 07/20/2026 The <neutral> player (m_curTeam == -1) has no real
-	// team info, so m_sides.getTeamInfo(m_curTeam) returns nullptr and dereferencing ->getDict() crashed
-	// WorldBuilder. Neutral map objects are tagged with NEUTRAL_TEAM_INTERNAL_STR as their
-	// TheKey_originalOwner (see GroveTool.cpp/RoadTool.cpp/ScorchTool.cpp), so use that directly instead
-	// of looking up a (nonexistent) team's dictionary. (GitHub issue #1358)
+	// team info. m_sides.getTeamInfo(m_curTeam) has no valid entry for team == -1, so it hits its
+	// out-of-range path (DEBUG_CRASH + throw), crashing WorldBuilder. Neutral map objects are tagged
+	// with NEUTRAL_TEAM_INTERNAL_STR as their TheKey_originalOwner (see
+	// GroveTool.cpp/RoadTool.cpp/ScorchTool.cpp), so use that directly instead of looking up a
+	// (nonexistent) team's dictionary. (GitHub issue #1358)
 	Int count = 0;
 	AsciiString teamName = (m_curTeam == -1) ? NEUTRAL_TEAM_INTERNAL_STR : m_sides.getTeamInfo(m_curTeam)->getDict()->getAsciiString(TheKey_teamName);
 	Coord3D pos;
