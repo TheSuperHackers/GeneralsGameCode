@@ -473,6 +473,13 @@ public:
 
 	void postProcessLoad();
 
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 m_historicDamage/m_historicDamageTriggerId are
+	// runtime state shared by every Weapon instance using this template (see PR #1727), but
+	// WeaponTemplate itself is never part of the Snapshot/xfer system. Weapon::xfer() calls this on
+	// its own m_template so the data actually gets persisted (#1754), instead of silently resetting
+	// on every save/load (e.g. Inferno Cannon historic bonus).
+	void xferHistoricDamageData(Xfer* xfer) const;
+
 protected:
 
 	// actually deal out the damage.

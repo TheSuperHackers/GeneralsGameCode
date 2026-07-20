@@ -1322,6 +1322,58 @@ void WeaponTemplate::processHistoricDamage(const Object* source, const Coord3D* 
 }
 #endif
 
+// ------------------------------------------------------------------------------------------------
+/** Xfer the historic damage tracking data (m_historicDamage / m_historicDamageTriggerId).
+	* TheSuperHackers @bugfix ZsoltFeher 07/20/2026 This state is intentionally shared across every
+	* Weapon instance that uses this template (it tracks nearby damage instances from *any* such
+	* Weapon to decide when to fire a historic bonus weapon, e.g. the Inferno Cannon firestorm - see
+	* PR #1727), but WeaponTemplate itself is not part of the Snapshot/xfer system. Weapon::xfer()
+	* calls this on its own m_template, so every Weapon instance sharing a template writes/reads the
+	* exact same values within a single save/load pass, and the data is no longer silently reset on
+	* load (#1754). */
+// ------------------------------------------------------------------------------------------------
+void WeaponTemplate::xferHistoricDamageData(Xfer* xfer) const
+{
+	// trigger id
+	xfer->xferUnsignedInt(&m_historicDamageTriggerId);
+
+	// entry count
+	UnsignedShort count = (UnsignedShort)m_historicDamage.size();
+	xfer->xferUnsignedShort(&count);
+
+	if (xfer->getXferMode() == XFER_SAVE)
+	{
+		for (HistoricWeaponDamageList::const_iterator it = m_historicDamage.begin(); it != m_historicDamage.end(); ++it)
+		{
+			UnsignedInt frame = it->frame;
+			Coord3D location = it->location;
+			UnsignedInt triggerId = it->triggerId;
+
+			xfer->xferUnsignedInt(&frame);
+			xfer->xferCoord3D(&location);
+			xfer->xferUnsignedInt(&triggerId);
+		}
+	}
+	else
+	{
+		m_historicDamage.clear();
+		for (UnsignedShort i = 0; i < count; ++i)
+		{
+			UnsignedInt frame = 0;
+			Coord3D location = { 0.0f, 0.0f, 0.0f };
+			UnsignedInt triggerId = 0;
+
+			xfer->xferUnsignedInt(&frame);
+			xfer->xferCoord3D(&location);
+			xfer->xferUnsignedInt(&triggerId);
+
+			HistoricWeaponDamageInfo info(frame, location);
+			info.triggerId = triggerId;
+			m_historicDamage.push_back(info);
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, const Coord3D *pos, const WeaponBonus& bonus, Bool isProjectileDetonation) const
 {
@@ -3434,12 +3486,22 @@ void Weapon::crc( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 /** Xfer
 	* Version Info:
-	* 1: Initial version */
+	* 1: Initial version
+	* 2: Added template name
+	* 3: Added m_suspendFXFrame
+	* 4: (non-retail-compatible only) Added WeaponTemplate historic damage data, see #1754 */
 // ------------------------------------------------------------------------------------------------
 void Weapon::xfer( Xfer *xfer )
 {
 	// version
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Version bump gated behind RETAIL_COMPATIBLE_CRC /
+	// RETAIL_COMPATIBLE_XFER_SAVE so retail-compatible builds keep writing/reading identical save
+	// data (matches the convention already used in GarrisonContain::xfer).
+#if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 3;
+#else
+	const XferVersion currentVersion = 4;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3536,6 +3598,15 @@ void Weapon::xfer( Xfer *xfer )
 
 	// leech weapon range active
 	xfer->xferBool( &m_leechWeaponRangeActive );
+
+#if !(RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE)
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Persist the WeaponTemplate's historic damage
+	// tracking data (m_historicDamage / m_historicDamageTriggerId), which drives historic bonus
+	// weapons such as the Inferno Cannon's firestorm. It previously was not xfer'ed at all, so it
+	// silently reset after every save/load (#1754). Gated to match the version bump above exactly.
+	if( version >= 4 )
+		m_template->xferHistoricDamageData( xfer );
+#endif
 
 }
 
