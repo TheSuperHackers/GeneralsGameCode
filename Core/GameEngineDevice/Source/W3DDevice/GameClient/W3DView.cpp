@@ -3767,9 +3767,9 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
 	// zooms out. The size is snapped to whole vertex-buffer tiles so the terrain reallocates only when a
 	// zoom threshold is crossed, and a single square size keeps it stable as the camera rotates.
 	//
-	// Only the user-controlled camera is grown this way; the scripted camera keeps the regular draw sizes
-	// (see above) and relies on terrain oversize.
-	const WorldHeightMap *map = m_isUserControlled ? TheTerrainRenderObject->getMap() : nullptr;
+	// This also applies to the scripted camera (for example the main menu shell map), whose view can reach
+	// past the regular draw window and would otherwise leave the ground uncovered.
+	const WorldHeightMap *map = TheTerrainRenderObject->getMap();
 	if (map)
 	{
 		const Matrix3D &cameraTransform = m_3DCamera->Get_Transform();
