@@ -55,12 +55,15 @@ WaterTool::WaterTool()
 /// Destructor
 WaterTool::~WaterTool()
 {
-	if (m_poly_plusCursor) {
-		::DestroyCursor(m_poly_plusCursor);
-	}
-	if (m_poly_moveCursor) {
-		::DestroyCursor(m_poly_moveCursor);
-	}
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 WaterTool does not declare its own
+	// m_poly_plusCursor/m_poly_moveCursor; it reuses the protected HCURSOR members inherited
+	// from PolygonTool. Destroying them here left the handles non-null, so the implicitly
+	// invoked PolygonTool::~PolygonTool() that runs right after this body destroyed the same
+	// already-destroyed HCURSOR handles a second time. This double DestroyCursor() call is
+	// the same shutdown-time heap corruption reported for Generals WorldBuilder (issue #1220);
+	// it is normally masked here because CWorldBuilderApp::~CWorldBuilderApp() calls _exit(0)
+	// before these Tool destructors ever run. The base class destructor already frees these
+	// members, so this derived destructor must leave them alone.
 }
 
 /// Clears it's is active flag.
