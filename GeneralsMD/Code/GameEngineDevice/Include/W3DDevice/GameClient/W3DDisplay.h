@@ -122,7 +122,7 @@ public:
 
 	virtual VideoBuffer*	createVideoBuffer() override;							///< Create a video buffer that can be used for this display
 
-	virtual void takeScreenShot() override;						//save screenshot to file
+	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality) override;	//save screenshot in specified format
 	virtual void toggleMovieCapture() override;			//enable AVI or frame capture mode.
 
 	virtual void toggleLetterBox() override;	///<enabled letter-boxed display

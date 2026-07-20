@@ -385,29 +385,48 @@ void Mouse::checkForDrag()
 /** Check for mouse click, using allowed drag forgiveness */
 //-------------------------------------------------------------------------------------------------
 Bool Mouse::isClick(
-	const ICoord2D &mouseAnchor0,
-	const ICoord2D &mouseAnchor1,
-	const Coord3D &cameraPos0,
-	const Coord3D &cameraPos1,
 	UnsignedInt mouseClickTimeMs0,
-	UnsignedInt mouseClickTimeMs1)
+	UnsignedInt mouseClickTimeMs1,
+	const ICoord2D &mouseAnchor0,
+	const ICoord2D &mouseAnchor1) const
 {
 	const ICoord2D mouseAnchorDelta = mouseAnchor1 - mouseAnchor0;
-	const Coord3D cameraPosDelta = cameraPos1 - cameraPos0;
 	const UnsignedInt timeMsDelta = mouseClickTimeMs1 - mouseClickTimeMs0;
 
 	// if the mouse hasn't moved further than the tolerance distance
 	// or the click took less than the tolerance duration
 	// TheSuperHackers @bugfix Now compares the distance in a circle instead of a rectangle.
-	if ( timeMsDelta > m_dragToleranceMS
-		|| mouseAnchorDelta.lengthSqr() > sqr(m_dragTolerance)
-		|| cameraPosDelta.lengthSqr() > sqr(m_dragTolerance3D) )
+	if ( timeMsDelta > m_dragToleranceMS || mouseAnchorDelta.lengthSqr() > sqr(m_dragTolerance) )
 	{
 		return FALSE;
 	}
 	return TRUE;
 }
 
+//-------------------------------------------------------------------------------------------------
+/** Check for mouse click with 3d drag tolerance, using allowed drag forgiveness */
+//-------------------------------------------------------------------------------------------------
+Bool Mouse::isClick(
+	UnsignedInt mouseClickTimeMs0,
+	UnsignedInt mouseClickTimeMs1,
+	const ICoord2D &mouseAnchor0,
+	const ICoord2D &mouseAnchor1,
+	const Coord3D &cameraPos0,
+	const Coord3D &cameraPos1) const
+{
+	if ( !isClick(mouseClickTimeMs0, mouseClickTimeMs1, mouseAnchor0, mouseAnchor1) )
+	{
+		return FALSE;
+	}
+
+	const Coord3D cameraPosDelta = cameraPos1 - cameraPos0;
+
+	if ( cameraPosDelta.lengthSqr() > sqr(m_dragTolerance3D) )
+	{
+		return FALSE;
+	}
+	return TRUE;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

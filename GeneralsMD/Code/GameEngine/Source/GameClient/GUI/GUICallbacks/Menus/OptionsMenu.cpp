@@ -855,6 +855,16 @@ static void saveOptions()
 	}
 
 	//-------------------------------------------------------------------------------------------------
+	// Set JPEG screenshot quality
+	{
+		Int quality = pref->getJpegQuality();
+		AsciiString prefString;
+		prefString.format("%d", quality);
+		(*pref)["JpegQuality"] = prefString;
+		TheWritableGlobalData->m_jpegQuality = quality;
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	// Resolution
 	//
 	// TheSuperHackers @bugfix xezon 12/06/2025 Now performs the resolution change at the very end of

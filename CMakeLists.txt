@@ -68,6 +68,7 @@ if (NOT IS_VS6_BUILD)
     include(cmake/gamemath.cmake)
 endif()
 include(cmake/lzhl.cmake)
+include(cmake/stb.cmake)
 
 if (IS_VS6_BUILD)
     # The original max sdk does not compile against a modern compiler.

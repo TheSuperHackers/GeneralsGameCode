@@ -17,7 +17,7 @@
 */
 
 #include "saveloadstatus.h"
-#include "mutex.h"
+#include "WWLib/mutex.h"
 
 #define MAX_STATUS_TEXT_ID 2
 

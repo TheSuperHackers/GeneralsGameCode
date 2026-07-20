@@ -44,6 +44,7 @@ class Drawable;
 class FontLibrary;
 class GameWindowManager;
 class InGameUI;
+class Intro;
 class Keyboard;
 class Mouse;
 class ParticleSystemManager;
@@ -87,6 +88,7 @@ public:
 	// subsystem methods
 	virtual void init() override;																					///< Initialize resources
 	virtual void update() override;																				///< Updates the GUI, display, audio, etc
+	virtual void draw() override;
 	virtual void reset() override;																					///< reset system
 
 	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number
@@ -173,6 +175,7 @@ protected:
 
 private:
 
+	Intro* m_intro;
 	UnsignedInt m_renderedObjectCount;													///< Keeps track of the number of rendered objects -- resets each frame.
 
 	//---------------------------------------------------------------------------

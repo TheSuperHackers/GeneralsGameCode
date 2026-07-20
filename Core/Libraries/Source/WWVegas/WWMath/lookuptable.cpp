@@ -38,10 +38,10 @@
 
 #include "lookuptable.h"
 #include "curve.h"
-#include "WWFILE.h"
-#include "ffactory.h"
-#include "chunkio.h"
-#include "persistfactory.h"
+#include "WWLib/WWFILE.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/chunkio.h"
+#include "WWSaveLoad/persistfactory.h"
 #include "vector2.h"
 
 

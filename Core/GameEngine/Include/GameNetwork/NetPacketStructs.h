@@ -19,7 +19,7 @@
 #pragma once
 
 #include "GameNetwork/NetworkDefs.h"
-#include "stringex.h"
+#include "WWLib/stringex.h"
 
 class AsciiString;
 class UnicodeString;

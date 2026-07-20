@@ -37,9 +37,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "Vector.h"
-#include "wwdebug.h"
+#include "WWLib/always.h"
+#include "WWLib/Vector.h"
+#include "WWDebug/wwdebug.h"
 
 
 /*

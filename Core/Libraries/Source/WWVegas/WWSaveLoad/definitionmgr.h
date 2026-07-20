@@ -36,14 +36,14 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "saveload.h"
 #include "saveloadsubsystem.h"
 #include "saveloadids.h"
-#include "wwdebug.h"
-#include "wwstring.h"
-#include "hashtemplate.h"
-#include "Vector.h"
+#include "WWDebug/wwdebug.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/hashtemplate.h"
+#include "WWLib/Vector.h"
 
 
 // Forward declarations

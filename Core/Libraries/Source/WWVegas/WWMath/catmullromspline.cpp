@@ -44,9 +44,9 @@
 
 
 #include "catmullromspline.h"
-#include "persistfactory.h"
+#include "WWSaveLoad/persistfactory.h"
 #include "wwmathids.h"
-#include "wwhack.h"
+#include "WWDebug/wwhack.h"
 
 /*
 ** Force-Link this module because the linker can't detect that we actually need it...

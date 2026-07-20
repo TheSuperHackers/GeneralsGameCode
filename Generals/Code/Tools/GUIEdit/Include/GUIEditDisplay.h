@@ -101,7 +101,7 @@ public:
 	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) override { }
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
 																Int endX, Int endY ) override { }
-	virtual void takeScreenShot() override { }
+	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality) override { }
 	virtual void toggleMovieCapture() override {}
 
 	// methods that we need to stub

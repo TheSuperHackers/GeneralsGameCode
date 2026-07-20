@@ -54,7 +54,7 @@
 #include "colmath.h"
 #include "obbox.h"
 #include "tri.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 
 /*

@@ -36,8 +36,8 @@
 
 
 #include "aabtreecull.h"
-#include "chunkio.h"
-#include "iostruct.h"
+#include "WWLib/chunkio.h"
+#include "WWLib/iostruct.h"
 #include "sphere.h"
 #include "colmath.h"
 #include "colmathinlines.h"

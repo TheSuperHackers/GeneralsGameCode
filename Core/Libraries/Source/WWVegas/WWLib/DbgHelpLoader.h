@@ -20,11 +20,11 @@
 
 #include "always.h"
 
-#include <win.h>
+#include <WWLib/win.h>
 #include <imagehlp.h> // Must be included after Windows.h
 #include <set>
 #ifdef RTS_ENABLE_CRASHDUMP
-#include <DbgHelpLoader_minidump.h>
+#include <WWLib/DbgHelpLoader_minidump.h>
 #endif
 
 #include "mutex.h"

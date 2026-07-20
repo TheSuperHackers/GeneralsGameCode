@@ -55,8 +55,6 @@ private:
 	ICoord2D m_rightMouseUpAnchor;			// the location of a possible mouse drag end
 	UnsignedInt m_rightMouseDownTimeMs;	// when the mouse down happened
 	UnsignedInt m_rightMouseUpTimeMs;		// when the mouse up happened
-	Coord3D m_rightMouseDownCameraPos;
-	Coord3D m_rightMouseUpCameraPos;
 
 	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
 	GameMessage::Type createAttackMessage( Drawable *draw, Drawable *other, CommandEvaluateType commandType );

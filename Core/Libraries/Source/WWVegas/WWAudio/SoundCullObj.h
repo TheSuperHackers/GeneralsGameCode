@@ -36,11 +36,11 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "SoundSceneObj.h"
-#include "cullsys.h"
-#include "mempool.h"
-#include "multilist.h"
+#include "WWMath/cullsys.h"
+#include "WWLib/mempool.h"
+#include "WWLib/multilist.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

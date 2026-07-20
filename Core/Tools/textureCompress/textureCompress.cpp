@@ -94,7 +94,7 @@ static void debugLog(const char *fmt, ...)
 
 #else
 
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x)
 
 #endif // RTS_DEBUG
 

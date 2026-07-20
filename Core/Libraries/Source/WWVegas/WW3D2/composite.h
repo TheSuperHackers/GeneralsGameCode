@@ -37,7 +37,7 @@
 #pragma once
 
 #include "rendobj.h"
-#include "wwstring.h"
+#include "WWLib/wwstring.h"
 
 /*
 ** CompositeRenderObjClass

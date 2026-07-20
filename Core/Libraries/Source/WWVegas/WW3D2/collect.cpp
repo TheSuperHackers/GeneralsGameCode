@@ -72,12 +72,12 @@
 
 
 #include "collect.h"
-#include "chunkio.h"
-#include "camera.h"
-#include "wwdebug.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/camera.h"
+#include "WWDebug/wwdebug.h"
 #include "snapPts.h"
-#include "assetmgr.h"
-#include "ww3d.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/ww3d.h"
 #include "w3derr.h"
 //#include "sr.hpp"
 
@@ -809,7 +809,7 @@ void CollectionClass::Update_Obj_Space_Bounding_Volumes()
 {
 	int i;
 	if (SubObjects.Count() <= 0) {
-		BoundSphere = SphereClass(Vector3(0,0,0),0);
+		BoundSphere = SphereClass();
 		BoundBox.Center.Set(0,0,0);
 		BoundBox.Extent.Set(0,0,0);
 		return;

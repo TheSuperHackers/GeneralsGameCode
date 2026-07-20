@@ -32,7 +32,7 @@ void DebugLog( const char *fmt, ... );
 
 #else // DEBUG
 
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x)
 
 #endif // DEBUG
 

@@ -38,9 +38,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "vector3.h"
-#include "bittype.h"
+#include "WWLib/always.h"
+#include "WWMath/vector3.h"
+#include "WWLib/bittype.h"
 #include "w3derr.h"
 
 class MeshModelClass;

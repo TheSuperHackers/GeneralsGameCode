@@ -58,8 +58,8 @@
 #include "MPU.h"
 //#include "commando\nat.h"
 #include "thread.h"
-#include "wwdebug.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwdebug.h"
+#include "WWDebug/wwmemlog.h"
 
 #include	<conio.h>
 #include	<imagehlp.h>

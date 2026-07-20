@@ -17,7 +17,7 @@
 */
 
 #include "bitmaphandler.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "colorspace.h"
 
 void Bitmap_Assert(bool condition)

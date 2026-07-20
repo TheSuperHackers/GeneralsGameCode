@@ -96,7 +96,7 @@ enum DamageType CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-typedef BitFlags<DAMAGE_NUM_TYPES> DamageTypeFlags;
+typedef BitFlags<DAMAGE_NUM_TYPES, struct DamageTypeFlagsTag> DamageTypeFlags;
 
 inline Bool getDamageTypeFlag(DamageTypeFlags flags, DamageType dt)
 {

@@ -35,7 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwstring.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwmemlog.h"
 #include "mutex.h"
 
 

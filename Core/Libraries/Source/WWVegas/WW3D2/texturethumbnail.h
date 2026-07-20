@@ -20,9 +20,9 @@
 
 #pragma once
 
-#include "always.h"
-#include "wwstring.h"
-#include "hashtemplate.h"
+#include "WWLib/always.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/hashtemplate.h"
 #include "dllist.h"
 #include "ww3dformat.h"
 

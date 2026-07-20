@@ -17,9 +17,9 @@
 */
 
 #include "assetstatus.h"
-#include "hashtemplate.h"
-#include "wwstring.h"
-#include "RAWFILE.h"
+#include "WWLib/hashtemplate.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/RAWFILE.h"
 
 AssetStatusClass AssetStatusClass::Instance;
 

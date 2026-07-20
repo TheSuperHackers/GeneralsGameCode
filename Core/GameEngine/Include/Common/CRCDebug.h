@@ -103,23 +103,23 @@
 
 #else // DEBUG_CRC
 
-	#define DUMPVEL {}
-	#define DUMPACCEL {}
-	#define DUMPVECTOR3(x) {}
-	#define DUMPVECTOR3NAMED(x, y) {}
-	#define DUMPCOORD3D(x) {}
-	#define DUMPCOORD3DNAMED(x, y) {}
-	#define DUMPMATRIX3D(x) {}
-	#define DUMPMATRIX3DNAMED(x, y) {}
+	#define DUMPVEL
+	#define DUMPACCEL
+	#define DUMPVECTOR3(x)
+	#define DUMPVECTOR3NAMED(x, y)
+	#define DUMPCOORD3D(x)
+	#define DUMPCOORD3DNAMED(x, y)
+	#define DUMPMATRIX3D(x)
+	#define DUMPMATRIX3DNAMED(x, y)
 
-	#define DUMPREAL(x) {}
-	#define DUMPREALNAMED(x, y) {}
+	#define DUMPREAL(x)
+	#define DUMPREALNAMED(x, y)
 
-	#define CRCDEBUG_LOG(x) {}
-	#define CRCDUMP_LOG(x) {}
-	#define CRCGEN_LOG(x) {}
+	#define CRCDEBUG_LOG(x)
+	#define CRCDUMP_LOG(x)
+	#define CRCGEN_LOG(x)
 
-	#define VERIFY_CRC {}
+	#define VERIFY_CRC
 
 #endif
 

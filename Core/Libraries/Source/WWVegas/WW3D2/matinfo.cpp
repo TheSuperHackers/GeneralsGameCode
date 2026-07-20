@@ -36,8 +36,8 @@
 
 
 #include "matinfo.h"
-#include "wwdebug.h"
-#include "meshmdl.h"
+#include "WWDebug/wwdebug.h"
+#include "WW3D2/meshmdl.h"
 #include "texture.h"
 
 MaterialInfoClass::MaterialInfoClass()

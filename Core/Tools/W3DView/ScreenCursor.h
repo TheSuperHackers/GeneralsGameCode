@@ -33,8 +33,8 @@
 #pragma once
 
 #include "resource.h"
-#include "rendobj.h"
-#include "Vector3i.h"
+#include "WW3D2/rendobj.h"
+#include "WWMath/Vector3i.h"
 
 // Forward declarations
 class VertexMaterialClass;

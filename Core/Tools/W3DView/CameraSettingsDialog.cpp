@@ -25,7 +25,7 @@
 #include "GraphicView.h"
 #include "CameraSettingsDialog.h"
 #include "Utils.h"
-#include "camera.h"
+#include "WW3D2/camera.h"
 #include "ViewerScene.h"
 
 

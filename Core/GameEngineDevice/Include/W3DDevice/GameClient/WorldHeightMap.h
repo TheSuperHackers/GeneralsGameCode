@@ -123,8 +123,6 @@ public:
 	enum {
 		NORMAL_DRAW_WIDTH = 1 + 4*VERTEX_BUFFER_TILE_LENGTH,
 		NORMAL_DRAW_HEIGHT = 1 + 4*VERTEX_BUFFER_TILE_LENGTH,
-		STRETCH_DRAW_WIDTH = 1 + 2*VERTEX_BUFFER_TILE_LENGTH,
-		STRETCH_DRAW_HEIGHT = 1 + 2*VERTEX_BUFFER_TILE_LENGTH,
 		LOW_ANGLE_DRAW_WIDTH = 1 + (NORMAL_DRAW_WIDTH-1) * 2,
 		LOW_ANGLE_DRAW_HEIGHT = 1 + (NORMAL_DRAW_HEIGHT-1) * 2,
 	};
@@ -244,8 +242,8 @@ public:  // height map info.
 	UnsignedByte *getDataPtr() {return m_data;}
 
 
-	Int getXExtent() {return m_width;}	///<number of vertices in x
-	Int getYExtent() {return m_height;}	///<number of vertices in y
+	Int getXExtent() const {return m_width;}	///<number of vertices in x
+	Int getYExtent() const {return m_height;}	///<number of vertices in y
 
 	Region2D getDrawRegion2D();
 

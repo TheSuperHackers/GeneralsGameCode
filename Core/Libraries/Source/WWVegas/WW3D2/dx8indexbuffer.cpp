@@ -41,9 +41,9 @@
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
-#include "sphere.h"
-#include "thread.h"
-#include "wwmemlog.h"
+#include "WWMath/sphere.h"
+#include "WWLib/thread.h"
+#include "WWDebug/wwmemlog.h"
 
 #define DEFAULT_IB_SIZE 5000
 

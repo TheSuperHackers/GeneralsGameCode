@@ -58,9 +58,9 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "vector3.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #ifdef _UNIX
 #include "osdep.h"
 #endif

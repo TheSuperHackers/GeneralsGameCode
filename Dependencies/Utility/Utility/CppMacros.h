@@ -27,8 +27,10 @@
 
 #if __cplusplus >= 201103L
 #define CPP_11(code) code
+#define FUNCTION_DELETE = delete
 #else
 #define CPP_11(code)
+#define FUNCTION_DELETE
 #define static_assert(expr, msg)
 #define constexpr
 #define noexcept

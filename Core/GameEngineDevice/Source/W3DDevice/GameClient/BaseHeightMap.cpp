@@ -47,13 +47,13 @@
 //-----------------------------------------------------------------------------
 
 #include <stdlib.h>
-#include <assetmgr.h>
-#include <texture.h>
-#include <tri.h>
-#include <colmath.h>
-#include <coltest.h>
-#include <rinfo.h>
-#include <camera.h>
+#include <WW3D2/assetmgr.h>
+#include <WW3D2/texture.h>
+#include <WWMath/tri.h>
+#include <WWMath/colmath.h>
+#include <WW3D2/coltest.h>
+#include <WW3D2/rinfo.h>
+#include <WW3D2/camera.h>
 #include <d3dx8core.h>
 
 #include "Common/GlobalData.h"
@@ -340,7 +340,7 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 		m_shroud->reset();	//need reset here since initHeightData will load new shroud.
 
 	BaseHeightMapRenderObjClass *newROBJ = nullptr;
-	if (TheGlobalData->m_terrainLOD==7) {
+	if (TheGlobalData->m_terrainLOD == TERRAIN_LOD_MAX) {
 		newROBJ = TheHeightMap;
 		if (newROBJ==nullptr) {
 			newROBJ = NEW_REF( HeightMapRenderObjClass, () );
@@ -351,8 +351,7 @@ void BaseHeightMapRenderObjClass::adjustTerrainLOD(Int adj)
 			newROBJ = NEW_REF( FlatHeightMapRenderObjClass, () );
 		}
 	}
-	if (TheGlobalData->m_terrainLOD == 5)
-		newROBJ = nullptr;
+
 	RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 	if (pMyScene) {
 		pMyScene->Remove_Render_Object(this);

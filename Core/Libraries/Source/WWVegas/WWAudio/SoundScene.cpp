@@ -39,11 +39,11 @@
 #include "SoundCullObj.h"
 #include "LogicalSound.h"
 #include "LogicalListener.h"
-#include "chunkio.h"
-#include "persistfactory.h"
-#include "wwprofile.h"
+#include "WWLib/chunkio.h"
+#include "WWSaveLoad/persistfactory.h"
+#include "WWDebug/wwprofile.h"
 #include "Threads.h"
-#include "wwmemlog.h"
+#include "WWDebug/wwmemlog.h"
 
 
 DEFINE_AUTO_POOL(SoundSceneClass::AudibleInfoClass, 64);

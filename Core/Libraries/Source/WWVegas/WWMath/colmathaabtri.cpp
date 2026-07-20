@@ -50,7 +50,7 @@
 #include "colmath.h"
 #include "aabox.h"
 #include "tri.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 
 /*

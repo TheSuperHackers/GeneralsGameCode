@@ -24,14 +24,14 @@
 
 #pragma once
 
-#include "always.h"
-#include "rendobj.h"
-#include "w3d_file.h"
-#include "dx8vertexbuffer.h"
-#include "dx8indexbuffer.h"
-#include "dx8wrapper.h"
-#include "shader.h"
-#include "vertmaterial.h"
+#include "WWLib/always.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/w3d_file.h"
+#include "WW3D2/dx8vertexbuffer.h"
+#include "WW3D2/dx8indexbuffer.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/shader.h"
+#include "WW3D2/vertmaterial.h"
 #include "Lib/BaseType.h"
 #include "Common/GameType.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
@@ -94,6 +94,8 @@ protected:
 	VERTEX_FORMAT *m_vertexBufferBackup; ///< In memory copy of the vertex buffer data for quick update of dynamic lighting.
 	Int m_originX; ///<  Origin point in the grid.  Slides around.
 	Int m_originY; ///< Origin point in the grid.  Slides around.
+	Int m_desiredDrawWidth; // Regular draw width requested by the view system.
+	Int m_desiredDrawHeight; // Regular draw height requested by the view system.
 	Int m_oversizeDrawWidth; // Oversize draw width required by mission scripts for cinematic sequences.
 	Int m_oversizeDrawHeight; // Oversize draw height required by mission scripts for cinematic sequences.
 	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in a VB tile.

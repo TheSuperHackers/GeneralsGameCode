@@ -122,10 +122,10 @@ will you be ready to leave grasshopper.
 // They are defined to {} for consistency when DEBUG is defined
 
 #define DBG(X)
-#define DBGSTREAM(X)  {}
-#define PVAR(v)       {}
-#define DBGMSG(X)     {}
-#define VERBOSE(X)    {}
+#define DBGSTREAM(X)
+#define PVAR(v)
+#define DBGMSG(X)
+#define VERBOSE(X)
 
 #else  // DEBUG _is_ defined
 

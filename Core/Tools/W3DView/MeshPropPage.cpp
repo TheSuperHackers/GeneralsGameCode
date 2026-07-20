@@ -22,11 +22,11 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "MeshPropPage.h"
-#include "rendobj.h"
-#include "assetmgr.h"
-#include "mesh.h"
-#include "meshmdl.h"
-#include "w3d_file.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
+#include "WW3D2/w3d_file.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

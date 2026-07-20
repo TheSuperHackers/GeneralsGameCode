@@ -37,8 +37,8 @@
 
 #include "hermitespline.h"
 #include "wwmathids.h"
-#include "persistfactory.h"
-#include "wwhack.h"
+#include "WWSaveLoad/persistfactory.h"
+#include "WWDebug/wwhack.h"
 
 
 /*

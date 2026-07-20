@@ -196,8 +196,8 @@ void dumpBattlePlanBonuses(const BattlePlanBonusesData *b, AsciiString name, con
 		kindofMaskAsAsciiString(b->m_invalidKindOf).str()));
 }
 #else
-#define DUMPBATTLEPLANBONUSES(x,y,z) {}
-#define CRCDUMPBATTLEPLANBONUSES(x,y,z) {}
+#define DUMPBATTLEPLANBONUSES(x,y,z)
+#define CRCDUMPBATTLEPLANBONUSES(x,y,z)
 #endif // DEBUG_CRC
 
 // ------------------------------------------------------------------------------------------------

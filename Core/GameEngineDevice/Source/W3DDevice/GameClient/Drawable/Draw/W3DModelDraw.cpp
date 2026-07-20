@@ -181,11 +181,11 @@ LogClass BonePosLog("bonePositions.txt");
 
 #else // DEBUG_CRC
 
-#define BONEPOS_LOG(x) {}
-#define BONEPOS_DUMPMATRIX3D(x) {}
-#define BONEPOS_DUMPMATRIX3DNAMED(x, y) {}
-#define BONEPOS_DUMPREAL(x) {}
-#define BONEPOS_DUMPREALNAMED(x, y) {}
+#define BONEPOS_LOG(x)
+#define BONEPOS_DUMPMATRIX3D(x)
+#define BONEPOS_DUMPMATRIX3DNAMED(x, y)
+#define BONEPOS_DUMPREAL(x)
+#define BONEPOS_DUMPREALNAMED(x, y)
 
 #endif // DEBUG_CRC
 

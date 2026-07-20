@@ -27,18 +27,18 @@
 #include "W3DViewView.h"
 #include "Utils.h"
 #include "ColorUtils.h"
-#include "verchk.h"
-#include "wwmath.h"
-#include "WWAudio.h"
+#include "WWLib/verchk.h"
+#include "WWMath/wwmath.h"
+#include "WWAudio/WWAudio.h"
 #include "ViewerAssetMgr.h"
 #include "Globals.h"
 #include "AnimatedSoundOptionsDialog.h"
-#include "animatedsoundmgr.h"
+#include "WW3D2/animatedsoundmgr.h"
 
 
 #undef STRICT
-#include "ww3d.h"
-#include "assetmgr.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/assetmgr.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

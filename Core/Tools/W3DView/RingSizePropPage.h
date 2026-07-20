@@ -22,7 +22,7 @@
 //
 
 #include "resource.h"
-#include "ringobj.h"
+#include "WW3D2/ringobj.h"
 #include "ColorBar.h"
 
 /////////////////////////////////////////////////////////////////////////////

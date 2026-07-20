@@ -1447,7 +1447,10 @@ protected:
 			if (TheGlobalData->m_preloadAssets)
 				debrisModelNamesGlobalHack.push_back(token);
 			debrisNugget->m_names.push_back(AsciiString(token));
+
+#if RETAIL_COMPATIBLE_CRC
 			token = ini->getNextTokenOrNull();
+#endif
 		}
 	}
 

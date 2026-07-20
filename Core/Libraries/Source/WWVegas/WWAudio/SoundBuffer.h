@@ -40,7 +40,7 @@
 #include "mss.h"
 #pragma warning (pop)
 
-#include "always.h"
+#include "WWLib/always.h"
 
 
 // Forward declarations

@@ -55,7 +55,7 @@ enum ArmorSetType CPP_11(: Int)
 };
 
 //-------------------------------------------------------------------------------------------------
-typedef BitFlags<ARMORSET_COUNT> ArmorSetFlags;
+typedef BitFlags<ARMORSET_COUNT, struct ArmorSetFlagsTag> ArmorSetFlags;
 
 //-------------------------------------------------------------------------------------------------
 class ArmorTemplateSet

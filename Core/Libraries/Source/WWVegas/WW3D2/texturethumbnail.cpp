@@ -17,16 +17,16 @@
 */
 
 #include "texturethumbnail.h"
-#include "hashtemplate.h"
+#include "WWLib/hashtemplate.h"
 #include "missingtexture.h"
-#include "TARGA.h"
+#include "WWLib/TARGA.h"
 #include "ww3dformat.h"
-#include "ddsfile.h"
+#include "WW3D2/ddsfile.h"
 #include "textureloader.h"
 #include "bitmaphandler.h"
-#include "ffactory.h"
-#include "RAWFILE.h"
-#include "wwprofile.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/RAWFILE.h"
+#include "WWDebug/wwprofile.h"
 #include <windows.h>
 
 static DLListClass<ThumbnailManagerClass> ThumbnailManagerList;

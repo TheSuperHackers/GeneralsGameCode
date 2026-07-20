@@ -22,7 +22,7 @@
 //
 
 #include "resource.h"
-#include "vector3.h"
+#include "WWMath/vector3.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

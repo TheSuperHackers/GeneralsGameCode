@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "EmitterParticlePropPage.h"
-#include "part_emt.h"
+#include "WW3D2/part_emt.h"
 #include "Utils.h"
 #include "Vector3RndCombo.h"
 #include "VolumeRandomDialog.h"

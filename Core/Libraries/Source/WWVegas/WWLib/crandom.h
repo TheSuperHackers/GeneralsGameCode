@@ -45,7 +45,7 @@
 #endif
 
 #ifndef	WWDEBUG_H
-	#include "wwdebug.h"
+	#include "WWDebug/wwdebug.h"
 #endif
 
 #define	CRANDOM_FLOAT_RANGE			0x1000

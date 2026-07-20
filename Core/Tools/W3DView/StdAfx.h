@@ -25,7 +25,7 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-#include "always.h"
+#include "WWLib/always.h"
 
 // TheSuperHackers @build jlallas384 05/04/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
 #define _d3d9TYPES_H_

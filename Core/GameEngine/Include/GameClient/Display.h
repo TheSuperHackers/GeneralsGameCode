@@ -33,6 +33,16 @@
 #include "GameClient/GameFont.h"
 #include "GameClient/View.h"
 
+enum ScreenshotFormat
+{
+	SCREENSHOT_JPEG,
+	SCREENSHOT_PNG,
+
+	SCREENSHOT_FORMAT_COUNT
+};
+
+constexpr const Int DEFAULT_JPEG_QUALITY = 80;
+
 struct ShroudLevel
 {
 	Short m_currentShroud;		///< A Value of 1 means shrouded.  0 is not.  Negative is the count of people looking.
@@ -153,7 +163,6 @@ public:
 													Int endX, Int endY ) = 0;
 
 	/// FullScreen video playback
-	virtual void playLogoMovie( AsciiString movieName, Int minMovieLength, Int minCopyrightLength );
 	virtual void playMovie( AsciiString movieName );
 	virtual void stopMovie();
 	virtual Bool isMoviePlaying();
@@ -172,7 +181,7 @@ public:
 	virtual void preloadModelAssets( AsciiString model ) = 0;	///< preload model asset
 	virtual void preloadTextureAssets( AsciiString texture ) = 0;	///< preload texture asset
 
-	virtual void takeScreenShot() = 0;										///< saves screenshot to a file
+	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality = DEFAULT_JPEG_QUALITY) = 0;			///< saves screenshot in specified format
 	virtual void toggleMovieCapture() = 0;							///< starts saving frames to an avi or frame sequence
 	virtual void toggleLetterBox() = 0;										///< enabled letter-boxed display
 	virtual void enableLetterBox(Bool enable) = 0;						///< forces letter-boxed display on/off
@@ -216,11 +225,6 @@ protected:
 	Real	m_letterBoxFadeLevel;	///<tracks the current alpha level for fading letter-boxed mode in/out.
 	Bool	m_letterBoxEnabled;		///<current state of letterbox
 	UnsignedInt	m_letterBoxFadeStartTime;		///< time of letterbox fade start
-	Int		m_movieHoldTime;									///< time that we hold on the last frame of the movie
-	Int		m_copyrightHoldTime;							///< time that the copyright must be on the screen
-	UnsignedInt m_elapsedMovieTime;					///< used to make sure we show the stuff long enough
-	UnsignedInt m_elapsedCopywriteTime;			///< Hold on the last frame until both have expired
-	DisplayString *m_copyrightDisplayString;///< this'll hold the display string
 };
 
 // the singleton

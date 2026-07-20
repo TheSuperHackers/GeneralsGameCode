@@ -19,7 +19,7 @@
 #pragma once
 
 #include "resource.h"
-#include "WWAudio.h"
+#include "WWAudio/WWAudio.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

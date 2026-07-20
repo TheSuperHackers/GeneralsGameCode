@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "wwstring.h"
+#include "WWLib/wwstring.h"
 #include "resource.h"
-#include "soundrobj.h"
+#include "WW3D2/soundrobj.h"
 
 /////////////////////////////////////////////////////////////////////
 //	Forward declarations

@@ -95,7 +95,7 @@ enum ObjectStatusTypes CPP_11(: Int)
 
 };
 
-typedef BitFlags<OBJECT_STATUS_COUNT>	ObjectStatusMaskType;
+typedef BitFlags<OBJECT_STATUS_COUNT, struct ObjectStatusMaskTypeTag>	ObjectStatusMaskType;
 
 #define MAKE_OBJECT_STATUS_MASK(k) ObjectStatusMaskType(ObjectStatusMaskType::kInit, (k))
 #define MAKE_OBJECT_STATUS_MASK2(k,a) ObjectStatusMaskType(ObjectStatusMaskType::kInit, (k), (a))

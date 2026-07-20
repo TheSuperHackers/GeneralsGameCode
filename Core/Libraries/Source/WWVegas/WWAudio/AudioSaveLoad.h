@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "saveloadsubsystem.h"
-#include "Vector.h"
-#include "bittype.h"
+#include "WWSaveLoad/saveloadsubsystem.h"
+#include "WWLib/Vector.h"
+#include "WWLib/bittype.h"
 
 
 // Singleton instances

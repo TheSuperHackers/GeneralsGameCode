@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "saveloadids.h"
+#include "WWSaveLoad/saveloadids.h"
 
 /*
 ** These are the chunk-id's used by all persistent objects in WW3D.  The persistent object

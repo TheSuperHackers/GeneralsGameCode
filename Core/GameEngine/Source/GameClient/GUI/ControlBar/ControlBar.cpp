@@ -36,6 +36,7 @@
 #define DEFINE_RADIUSCURSOR_NAMES
 
 #include "Common/ActionManager.h"
+#include "Common/FramePacer.h"
 #include "Common/GameType.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/NameKeyGenerator.h"
@@ -904,6 +905,7 @@ ControlBar::ControlBar()
 	m_currContext = CB_CONTEXT_NONE;
 	m_defaultControlBarPosition.x = m_defaultControlBarPosition.y = 0;
 	m_genStarFlash = FALSE;
+	m_genStarFlashTimeAccumulator = 0.0f;
 	m_genStarOff = nullptr;
 	m_genStarOn  = nullptr;
 	m_UIDirty    = FALSE;
@@ -1681,7 +1683,14 @@ const Image *ControlBar::getStarImage()
 		return nullptr;
 	}
 
-	if(TheGameLogic->getFrame()% LOGICFRAMES_PER_SECOND > LOGICFRAMES_PER_SECOND/2)
+	// TheSuperHackers @tweak bobtista 27/06/2026 Blink on a wall-clock cycle so the rate is independent of render frame rate and logic time scale.
+	m_genStarFlashTimeAccumulator += TheFramePacer->getUpdateTime();
+	const Real blinkPeriodSeconds = 1.0f;
+	while( m_genStarFlashTimeAccumulator >= blinkPeriodSeconds )
+	{
+		m_genStarFlashTimeAccumulator -= blinkPeriodSeconds;
+	}
+	if( m_genStarFlashTimeAccumulator >= blinkPeriodSeconds / 2 )
 	{
 		GadgetButtonSetEnabledImage(win, m_generalButtonHighlight);
 		return nullptr;

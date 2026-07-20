@@ -487,10 +487,6 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 		m_sourceTiles[i]=nullptr;
 		m_edgeTiles[i]=nullptr;
 	}
-	if (TheGlobalData && TheGlobalData->m_stretchTerrain) {
-		m_drawWidthX=STRETCH_DRAW_WIDTH;
-		m_drawHeightY=STRETCH_DRAW_HEIGHT;
-	}
 
 	DataChunkInput file( pStrm );
 
@@ -529,10 +525,7 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 			}
 		}
 	}
-	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain) {
-		m_drawWidthX=m_width;
-		m_drawHeightY=m_height;
-	}
+
 	if (m_drawWidthX > m_width) {
 		m_drawWidthX = m_width;
 	}
@@ -2221,19 +2214,8 @@ Region2D WorldHeightMap::getDrawRegion2D()
 WorldHeightMap::DrawArea WorldHeightMap::createDrawArea(Int xOrg, Int yOrg)
 {
 	DrawArea area;
-	area.sizeX = m_drawWidthX;
-	area.sizeY = m_drawHeightY;
-
-	if (TheGlobalData && TheGlobalData->m_stretchTerrain) {
-		area.sizeX = STRETCH_DRAW_WIDTH;
-		area.sizeY = STRETCH_DRAW_HEIGHT;
-	}
-	if (TheGlobalData && TheGlobalData->m_drawEntireTerrain) {
-		area.sizeX = m_width;
-		area.sizeY = m_height;
-	}
-	area.sizeX = std::min(area.sizeX, m_width);
-	area.sizeY = std::min(area.sizeY, m_height);
+	area.sizeX = std::min(m_drawWidthX, m_width);
+	area.sizeY = std::min(m_drawHeightY, m_height);
 	area.originX = clamp(0, xOrg, m_width - area.sizeX);
 	area.originY = clamp(0, yOrg, m_height - area.sizeY);
 

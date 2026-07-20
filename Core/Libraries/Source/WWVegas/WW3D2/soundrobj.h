@@ -42,11 +42,11 @@
 #if noWWAUDIO // (gth) removing dependency on WWAUDIO
 
 #include "rendobj.h"
-#include "wwstring.h"
+#include "WWLib/wwstring.h"
 #include "proto.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "w3derr.h"
-#include "AudibleSound.h"
+#include "WWAudio/AudibleSound.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

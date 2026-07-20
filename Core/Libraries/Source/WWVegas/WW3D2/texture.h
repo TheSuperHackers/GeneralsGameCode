@@ -41,12 +41,12 @@
 
 #pragma once
 
-#include "always.h"
-#include "chunkio.h"
+#include "WWLib/always.h"
+#include "WWLib/chunkio.h"
 #include "surfaceclass.h"
 #include "ww3dformat.h"
-#include "wwstring.h"
-#include "vector3.h"
+#include "WWLib/wwstring.h"
+#include "WWMath/vector3.h"
 #include "texturefilter.h"
 
 struct IDirect3DBaseTexture8;

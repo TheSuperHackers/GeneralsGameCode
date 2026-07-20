@@ -41,10 +41,10 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include <d3d8.h>
 #ifdef WWDEBUG
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #endif
 
 class StringClass;

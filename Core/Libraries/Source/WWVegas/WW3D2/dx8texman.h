@@ -39,12 +39,12 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "texture.h"
 #include "dx8wrapper.h"
 #include "ww3dformat.h"
 #include "dx8list.h"
-#include "multilist.h"
+#include "WWLib/multilist.h"
 
 class DX8TextureManagerClass;
 

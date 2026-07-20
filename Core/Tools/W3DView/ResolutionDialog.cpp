@@ -22,11 +22,11 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "ResolutionDialog.h"
-#include "ww3d.h"
+#include "WW3D2/ww3d.h"
 #include "Globals.h"
 #include "GraphicView.h"
 #include "Utils.h"
-#include "rddesc.h"
+#include "WW3D2/rddesc.h"
 
 
 

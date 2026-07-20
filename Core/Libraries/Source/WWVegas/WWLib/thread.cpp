@@ -19,7 +19,7 @@
 
 #include "thread.h"
 #include "Except.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #pragma warning ( push )
 #pragma warning ( disable : 4201 )
 #include "systimer.h"

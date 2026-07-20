@@ -22,7 +22,7 @@
 //
 
 #include "resource.h"
-#include "Vector.h"
+#include "WWLib/Vector.h"
 
 // Forward declarations
 class HModelClass;

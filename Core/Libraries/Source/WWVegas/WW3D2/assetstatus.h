@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "always.h"
-#include "hashtemplate.h"
+#include "WWLib/always.h"
+#include "WWLib/hashtemplate.h"
 
 class AssetStatusClass
 {

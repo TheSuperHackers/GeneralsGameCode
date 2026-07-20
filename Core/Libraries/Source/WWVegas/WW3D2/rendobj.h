@@ -40,12 +40,12 @@
 
 #pragma once
 
-#include "always.h"
-#include "sphere.h"
+#include "WWLib/always.h"
+#include "WWMath/sphere.h"
 #include "coltype.h"
-#include "aabox.h"
-#include "persist.h"
-#include "multilist.h"
+#include "WWMath/aabox.h"
+#include "WWSaveLoad/persist.h"
+#include "WWLib/multilist.h"
 #include "robjlist.h"
 #include <float.h>
 

@@ -22,13 +22,13 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "OpacityVectorDialog.h"
-#include "wwmath.h"
-#include "vector3.h"
-#include "sphereobj.h"
-#include "ringobj.h"
+#include "WWMath/wwmath.h"
+#include "WWMath/vector3.h"
+#include "WW3D2/sphereobj.h"
+#include "WW3D2/ringobj.h"
 #include "ColorBar.h"
-#include "euler.h"
-#include "matrix3.h"
+#include "WWMath/euler.h"
+#include "WWMath/matrix3.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

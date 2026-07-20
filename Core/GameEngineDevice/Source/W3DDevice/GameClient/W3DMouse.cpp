@@ -34,7 +34,7 @@
 #include "WW3D2/hanim.h"
 #include "WW3D2/camera.h"
 
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DMouse.h"
@@ -44,8 +44,8 @@
 #include "GameClient/Display.h"
 #include "GameClient/Image.h"
 #include "GameClient/InGameUI.h"
-#include "mutex.h"
-#include "thread.h"
+#include "WWLib/mutex.h"
+#include "WWLib/thread.h"
 
 
 //Since there can't be more than 1 mouse, might as well keep these static.

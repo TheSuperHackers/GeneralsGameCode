@@ -34,8 +34,8 @@
 
 #pragma once
 
-#include "meshgeometry.h"
-#include "meshmatdesc.h"
+#include "WW3D2/meshgeometry.h"
+#include "WW3D2/meshmatdesc.h"
 #include "matinfo.h"
 #include "rendobj.h"
 #include "polyinfo.h"

@@ -22,7 +22,7 @@
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "GammaDialog.h"
-#include "dx8wrapper.h"
+#include "WW3D2/dx8wrapper.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

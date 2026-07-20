@@ -38,7 +38,7 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 
 class StringClass;
 class MeshClass;

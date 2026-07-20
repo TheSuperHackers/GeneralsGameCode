@@ -160,10 +160,7 @@ typedef enum _TerrainLOD CPP_11(: Int)
 {
 	TERRAIN_LOD_INVALID,
 	TERRAIN_LOD_MIN,  // note that this is less than max
-	TERRAIN_LOD_STRETCH_NO_CLOUDS,
-	TERRAIN_LOD_HALF_CLOUDS,
 	TERRAIN_LOD_NO_CLOUDS,
-	TERRAIN_LOD_STRETCH_CLOUDS,
 	TERRAIN_LOD_NO_WATER,
 	TERRAIN_LOD_MAX,  // note that this is larger than min
 	TERRAIN_LOD_AUTOMATIC,
@@ -177,10 +174,7 @@ static const char *const TerrainLODNames[] =
 {
 	"NONE",
 	"MIN",
-	"STRETCH_NO_CLOUDS",
-	"HALF_CLOUDS",
 	"NO_CLOUDS",
-	"STRETCH_CLOUDS",
 	"NO_WATER",
 	"MAX",
 	"AUTOMATIC",

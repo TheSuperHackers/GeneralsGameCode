@@ -30,7 +30,7 @@
 #define NoxRead fread
 #define DbgMalloc malloc
 #define DbgFree free
-#define DEBUG_LOG(x) {}
+#define DEBUG_LOG(x)
 
 Bool DecompressFile		(char *infile, char *outfile)
 {

@@ -212,32 +212,20 @@ static Bool canSelectWrapper( Drawable *draw, void *userData )
 
 //-----------------------------------------------------------------------------
 /**
- * Deselect all drawables, and emit a "TEAM_DESTROY" message, since
- * the "team" was the group of currently selected units.
- */
-static void deselectAll()
-{
-
-	// deselect it all
-	TheInGameUI->deselectAllDrawables();
-}
-
-//-----------------------------------------------------------------------------
-/**
  * Select the given drawable, without playing its sound.
  * Returns true.
  */
 static Bool selectSingleDrawableWithoutSound( Drawable *draw )
 {
 
-	// since we are single selecting a drawable, unselect everything else
-	deselectAll();
-
-	// do the drawable selection
-	TheInGameUI->selectDrawable( draw );
-
 	Object *obj = draw->getObject();
 	if (obj != nullptr) {
+		// since we are single selecting a drawable, unselect everything else
+		TheInGameUI->deselectAllDrawables();
+
+		// do the drawable selection
+		TheInGameUI->selectDrawable(draw);
+
 		GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND);
 		msg->appendBooleanArgument(TRUE);
 		msg->appendObjectIDArgument(obj->getID());
@@ -893,7 +881,7 @@ GameMessageDisposition SelectionTranslator::onMouseLeftClick(MAYBE_UNUSED const 
 	{
 		if (!addToGroup)
 		{
-			deselectAll();
+			TheInGameUI->deselectAllDrawables();
 		}
 
 		GameMessage *newMsg = TheMessageStream->appendMessage(GameMessage::MSG_CREATE_SELECTED_GROUP);
@@ -1063,7 +1051,7 @@ GameMessageDisposition SelectionTranslator::onRawMouseLeftButtonUp(MAYBE_UNUSED 
 			{
 				if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
 				{
-					deselectAll();
+					TheInGameUI->deselectAllDrawables();
 					m_lastGroupSelGroup = -1;
 				}
 				else
@@ -1099,7 +1087,10 @@ GameMessageDisposition SelectionTranslator::onRawMouseRightButtonUp(MAYBE_UNUSED
 	const Coord3D cameraPos = TheTacticalView->getPosition();
 
 	// right click behavior (not right drag)
-	if (TheMouse->isClick(m_rightMouseDownAnchor, anchor, m_rightMouseDownCameraPos, cameraPos, m_rightMouseDownTimeMs, timeMs))
+	if (TheMouse->isClick(
+		m_rightMouseDownTimeMs, timeMs,
+		m_rightMouseDownAnchor, anchor,
+		m_rightMouseDownCameraPos, cameraPos))
 	{
 		//Added support to cancel the GUI command without deselecting the unit(s) involved
 		//when you right click.
@@ -1127,7 +1118,7 @@ GameMessageDisposition SelectionTranslator::onRawMouseRightButtonUp(MAYBE_UNUSED
 			else if (!TheGlobalData->m_useAlternateMouse)
 			{
 				//No GUI command mode, so deselect everyone if we're in regular mouse mode.
-				deselectAll();
+				TheInGameUI->deselectAllDrawables();
 			}
 		}
 	}
@@ -1200,7 +1191,7 @@ GameMessageDisposition SelectionTranslator::onMetaSelectTeam(MAYBE_UNUSED const 
 
 		if ( performSelection )
 		{
-			TheInGameUI->deselectAllDrawables( false ); //No need to post message because we're just creating a new group!
+			TheInGameUI->deselectAllDrawables();
 
 			// no need to send two messages for selecting the same group.
 			TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_SELECT_TEAM0 + group));

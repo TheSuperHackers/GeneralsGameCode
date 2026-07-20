@@ -326,6 +326,7 @@ private:
 	void pitchCameraOneFrame();							///< Do one frame of a pitch camera movement.
 	void getAxisAlignedViewRegion(Region3D &axisAlignedRegion);	///< Find 3D Region enclosing all possible drawables.
 	void calcDeltaScroll(Coord2D &screenDelta);
+	bool getDesiredTerrainDrawSize(ICoord2D &dimensions) const;
 	void updateTerrain();
 
 	// (gth) C&C3 animation controlled camera feature

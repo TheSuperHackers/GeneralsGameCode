@@ -45,7 +45,7 @@
 #pragma once
 
 #include "bittype.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "mutex.h"
 #include <new>
 #include <stdlib.h>

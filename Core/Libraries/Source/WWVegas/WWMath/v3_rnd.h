@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "vector3.h"
-#include "RANDOM.h"
+#include "WWLib/RANDOM.h"
 #include <limits.h>
 
 /*
@@ -125,7 +125,7 @@ class Vector3SolidBoxRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidBoxRandomizer & operator = (const Vector3SolidBoxRandomizer&) CPP_11(= delete);
+		Vector3SolidBoxRandomizer & operator = (const Vector3SolidBoxRandomizer&) FUNCTION_DELETE;
 
 		Vector3	Extents;
 };
@@ -156,7 +156,7 @@ class Vector3SolidSphereRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidSphereRandomizer & operator = (const Vector3SolidSphereRandomizer&) CPP_11(= delete);
+		Vector3SolidSphereRandomizer & operator = (const Vector3SolidSphereRandomizer&) FUNCTION_DELETE;
 
 		float	Radius;
 };
@@ -187,7 +187,7 @@ class Vector3HollowSphereRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3HollowSphereRandomizer & operator = (const Vector3HollowSphereRandomizer&) CPP_11(= delete);
+		Vector3HollowSphereRandomizer & operator = (const Vector3HollowSphereRandomizer&) FUNCTION_DELETE;
 
 		float	Radius;
 };
@@ -219,7 +219,7 @@ class Vector3SolidCylinderRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidCylinderRandomizer & operator = (const Vector3SolidCylinderRandomizer&) CPP_11(= delete);
+		Vector3SolidCylinderRandomizer & operator = (const Vector3SolidCylinderRandomizer&) FUNCTION_DELETE;
 
 		float	Extent;
 		float	Radius;

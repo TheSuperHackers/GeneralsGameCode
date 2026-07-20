@@ -337,6 +337,7 @@ const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 	CASE_LABEL(MSG_META_BEGIN_PREFER_SELECTION)
 	CASE_LABEL(MSG_META_END_PREFER_SELECTION)
 	CASE_LABEL(MSG_META_TAKE_SCREENSHOT)
+	CASE_LABEL(MSG_META_TAKE_SCREENSHOT_PNG)
 	CASE_LABEL(MSG_META_ALL_CHEER)
 	CASE_LABEL(MSG_META_TOGGLE_ATTACKMOVE)
 	CASE_LABEL(MSG_META_BEGIN_CAMERA_ROTATE_LEFT)
@@ -994,7 +995,7 @@ void MessageStream::removeTranslator( TranslatorID id )
 // ------------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
 
-Bool isInvalidDebugCommand( GameMessage::Type t )
+static Bool isInvalidDebugCommand( GameMessage::Type t )
 {
 	// see if this is something that should be prevented in multiplayer games
 	// Don't reject this stuff in skirmish games.
@@ -1081,6 +1082,16 @@ void MessageStream::propagateMessages()
 	{
 		for( msg=m_firstMessage; msg; msg=next )
 		{
+			// TheSuperHackers @tweak Delete messages that we know are redundant. This can reduce network traffic.
+			// @info If there is a need to look back on previous messages, then first invalidate the messages in this loop
+			// before deleting them later.
+			if (isRedundantMessage(msg))
+			{
+				next = msg->next();
+				deleteInstance(msg);
+				continue;
+			}
+
 			if (ss->m_translator
 #if defined(RTS_DEBUG)
 				&& !isInvalidDebugCommand(msg->getType())
@@ -1088,16 +1099,15 @@ void MessageStream::propagateMessages()
 				)
 			{
 				GameMessageDisposition disp = ss->m_translator->translateGameMessage(msg);
-				next = msg->next();
 				if (disp == DESTROY_MESSAGE)
 				{
+					next = msg->next();
 					deleteInstance(msg);
+					continue;
 				}
 			}
-			else
-			{
-				next = msg->next();
-			}
+
+			next = msg->next();
 		}
 	}
 
@@ -1111,6 +1121,47 @@ void MessageStream::propagateMessages()
 
 }
 
+Bool MessageStream::isRedundantMessage(const GameMessage *msg) const
+{
+	switch (msg->getType())
+	{
+	case GameMessage::MSG_DESTROY_SELECTED_GROUP:
+	{
+		const GameMessage* msgNext = msg->next();
+		if (!msgNext)
+			break;
+
+		switch (msgNext->getType())
+		{
+		case GameMessage::MSG_CREATE_SELECTED_GROUP:
+		case GameMessage::MSG_CREATE_SELECTED_GROUP_NO_SOUND:
+			if (msgNext->getArgumentCount() >= 1)
+			{
+				const Bool newGroup = msgNext->getArgument(0)->boolean;
+				if (newGroup)
+					return true;
+			}
+			break;
+		case GameMessage::MSG_DESTROY_SELECTED_GROUP:
+			return true;
+		case GameMessage::MSG_SELECT_TEAM0:
+		case GameMessage::MSG_SELECT_TEAM1:
+		case GameMessage::MSG_SELECT_TEAM2:
+		case GameMessage::MSG_SELECT_TEAM3:
+		case GameMessage::MSG_SELECT_TEAM4:
+		case GameMessage::MSG_SELECT_TEAM5:
+		case GameMessage::MSG_SELECT_TEAM6:
+		case GameMessage::MSG_SELECT_TEAM7:
+		case GameMessage::MSG_SELECT_TEAM8:
+		case GameMessage::MSG_SELECT_TEAM9:
+			return true;
+		}
+		break;
+	}
+	}
+
+	return false;
+}
 
 //------------------------------------------------------------------------------------------------
 // CommandList

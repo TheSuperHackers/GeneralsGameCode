@@ -22,9 +22,9 @@
 //
 
 #include "resource.h"
-#include "vector3.h"
+#include "WWMath/vector3.h"
 #include "ColorBar.h"
-#include "part_emt.h"
+#include "WW3D2/part_emt.h"
 
 // Forward declarations
 class EmitterInstanceListClass;

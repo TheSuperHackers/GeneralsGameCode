@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "dynamesh.h"
 
 // sgc : wwlib and wwmath contain different rect.h files...

@@ -56,7 +56,7 @@
 
 
 #include "composite.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include <stdlib.h>
 
 

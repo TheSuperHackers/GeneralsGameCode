@@ -36,10 +36,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "Vector.h"
+#include "WWLib/always.h"
+#include "WWLib/Vector.h"
 #include "vector3.h"
-#include "persist.h"
+#include "WWSaveLoad/persist.h"
 
 class ChunkLoadClass;
 class ChunkSaveClass;

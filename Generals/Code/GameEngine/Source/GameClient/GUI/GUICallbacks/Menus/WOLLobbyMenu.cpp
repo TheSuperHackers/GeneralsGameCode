@@ -78,7 +78,7 @@ void refreshPlayerList( Bool forceRefresh = FALSE );
 static LogClass s_perfLog("Perf.txt");
 #define PERF_LOG(x) s_perfLog.log x
 #else // DEBUG_LOGGING
-#define PERF_LOG(x) {}
+#define PERF_LOG(x)
 #endif // DEBUG_LOGGING
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////

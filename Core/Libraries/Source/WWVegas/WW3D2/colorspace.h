@@ -39,7 +39,7 @@
 #pragma once
 
 #include "dx8wrapper.h"
-#include <wwmath.h>
+#include <WWMath/wwmath.h>
 
 void RGB_To_HSV(Vector3 &hsv,const Vector3 &rgb);
 void HSV_To_RGB(Vector3 &rgb, const Vector3 &hsv);

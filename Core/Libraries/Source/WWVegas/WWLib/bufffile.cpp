@@ -36,7 +36,7 @@
 
 #include	"always.h"
 #include	"bufffile.h"
-#include	"wwdebug.h"
+#include	"WWDebug/wwdebug.h"
 
 int		BufferedFileClass::_DesiredBufferSize	=	1024*16;
 

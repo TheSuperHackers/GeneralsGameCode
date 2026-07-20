@@ -26,7 +26,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Compression.h"
-#include "strtok_r.h"
+#include "WWLib/strtok_r.h"
 #include "Common/AudioEventRTS.h"
 #include "Common/CRCDebug.h"
 #include "Common/Debug.h"
@@ -53,7 +53,7 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameClient/DisconnectMenu.h"
 #include "GameClient/InGameUI.h"
-#include "TARGA.h"
+#include "WWLib/TARGA.h"
 
 static Bool hasValidTransferFileExtension(const AsciiString& filePath)
 {

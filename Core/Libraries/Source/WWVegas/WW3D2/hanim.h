@@ -37,13 +37,13 @@
 
 #pragma once
 
-#include "always.h"
-#include "quat.h"
-#include "w3d_file.h"
-#include "hash.h"
-#include "mempool.h"
-#include <SLIST.h>
-#include <Vector.h>
+#include "WWLib/always.h"
+#include "WWMath/quat.h"
+#include "WW3D2/w3d_file.h"
+#include "WWLib/hash.h"
+#include "WWLib/mempool.h"
+#include <WWLib/SLIST.h>
+#include <WWLib/Vector.h>
 
 struct NodeMotionStruct;
 class MotionChannelClass;

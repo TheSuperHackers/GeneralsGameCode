@@ -41,14 +41,14 @@
 #pragma warning (pop)
 
 //#include <malloc.h>
-#include "always.h"
-#include "vector3.h"
-#include "matrix3d.h"
-#include "RAWFILE.h"
+#include "WWLib/always.h"
+#include "WWMath/vector3.h"
+#include "WWMath/matrix3d.h"
+#include "WWLib/RAWFILE.h"
 #include "SoundSceneObj.h"
-#include "Vector.h"
-#include "wwstring.h"
-#include "definition.h"
+#include "WWLib/Vector.h"
+#include "WWLib/wwstring.h"
+#include "WWSaveLoad/definition.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////

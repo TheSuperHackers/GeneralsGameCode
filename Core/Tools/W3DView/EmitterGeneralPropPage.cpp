@@ -23,10 +23,10 @@
 #include "W3DView.h"
 #include "EmitterGeneralPropPage.h"
 #include "EmitterPropertySheet.h"
-#include "part_emt.h"
+#include "WW3D2/part_emt.h"
 #include "Utils.h"
-#include "texture.h"
-#include "shader.h"
+#include "WW3D2/texture.h"
+#include "WW3D2/shader.h"
 #include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG

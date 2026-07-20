@@ -60,10 +60,10 @@ public:
 
 
 #include "w3d_dep.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include <assert.h>
-#include <chunkio.h>
-#include "ffactory.h"
+#include <WWLib/chunkio.h>
+#include "WWLib/ffactory.h"
 
 
 /*

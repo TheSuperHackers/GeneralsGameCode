@@ -38,7 +38,7 @@
 
 #include "lzo.h"
 #include "mutex.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include <stdlib.h>
 
 /*

@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "vector3.h"
-#include "bittype.h"
+#include "WWLib/bittype.h"
 
 
 /**

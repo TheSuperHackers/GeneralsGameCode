@@ -36,7 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hash.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "realcrc.h"
 
 /*

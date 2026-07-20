@@ -33,7 +33,7 @@
 #include "internal_io.h"
 #include <stdlib.h>
 #include <windows.h>
-#include <WWCommon.h>
+#include <WWLib/WWCommon.h>
 #include <new>      // needed for placement new prototype
 
 DebugIOFlat::OutputStream::OutputStream(const char *filename, unsigned maxSize):

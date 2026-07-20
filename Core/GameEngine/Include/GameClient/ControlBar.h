@@ -1029,6 +1029,7 @@ private:
 
 
 	Bool m_genStarFlash;
+	Real m_genStarFlashTimeAccumulator; ///< Frame time accumulated within the current star blink cycle, in seconds
 	Int m_lastFlashedAtPointValue;
 
 	ICoord2D m_controlBarForegroundMarkerPos;

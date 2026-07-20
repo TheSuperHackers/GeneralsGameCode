@@ -22,7 +22,7 @@
 //
 
 #include "resource.h"
-#include "sphereobj.h"
+#include "WW3D2/sphereobj.h"
 #include "ColorBar.h"
 
 /////////////////////////////////////////////////////////////////////////////

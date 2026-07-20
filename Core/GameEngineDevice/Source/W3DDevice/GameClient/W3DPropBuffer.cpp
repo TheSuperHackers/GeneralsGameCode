@@ -48,7 +48,7 @@
 
 #include "W3DDevice/GameClient/W3DPropBuffer.h"
 
-#include <assetmgr.h>
+#include <WW3D2/assetmgr.h>
 #include "Common/GameUtility.h"
 #include "Common/Geometry.h"
 #include "Common/PerfTimer.h"

@@ -75,7 +75,7 @@ static LogClass s_perfLog("QMPerf.txt");
 static Bool s_inQM = FALSE;
 #define PERF_LOG(x) s_perfLog.log x
 #else // DEBUG_LOGGING
-#define PERF_LOG(x) {}
+#define PERF_LOG(x)
 #endif // DEBUG_LOGGING
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////

@@ -35,7 +35,7 @@
 #include <time.h>
 #include <direct.h>
 #include <errno.h>
-#include <WWCommon.h>
+#include <WWLib/WWCommon.h>
 //#include "wlib/wstring.h"
 
 #include "DownloadDebug.h"

@@ -38,15 +38,15 @@
 
 #pragma once
 
-#include "always.h"
-#include "matrix3d.h"
-#include "matrix4.h"
-#include "Vector3i.h"
-#include "vector3.h"
-#include "simplevec.h"
-#include "bittype.h"
-#include "plane.h"
-#include "meshgeometry.h"
+#include "WWLib/always.h"
+#include "WWMath/matrix3d.h"
+#include "WWMath/matrix4.h"
+#include "WWMath/Vector3i.h"
+#include "WWMath/vector3.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/bittype.h"
+#include "WWMath/plane.h"
+#include "WW3D2/meshgeometry.h"
 
 
 class CameraClass;

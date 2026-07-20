@@ -243,7 +243,7 @@ enum ModelConditionFlagType CPP_11(: Int)
 
 //-------------------------------------------------------------------------------------------------
 
-typedef BitFlags<MODELCONDITION_COUNT> ModelConditionFlags;
+typedef BitFlags<MODELCONDITION_COUNT, struct ModelConditionFlagsTag> ModelConditionFlags;
 
 #define MAKE_MODELCONDITION_MASK(k) ModelConditionFlags(ModelConditionFlags::kInit, (k))
 #define MAKE_MODELCONDITION_MASK2(k,a) ModelConditionFlags(ModelConditionFlags::kInit, (k), (a))

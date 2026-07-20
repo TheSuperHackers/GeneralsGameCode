@@ -41,22 +41,22 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "dllist.h"
 #include "d3d8.h"
-#include "matrix4.h"
+#include "WWMath/matrix4.h"
 #include "statistics.h"
-#include "wwstring.h"
-#include "lightenvironment.h"
-#include "shader.h"
-#include "vector4.h"
-#include "cpudetect.h"
+#include "WWLib/wwstring.h"
+#include "WW3D2/lightenvironment.h"
+#include "WW3D2/shader.h"
+#include "WWMath/vector4.h"
+#include "WWLib/cpudetect.h"
 #include "dx8caps.h"
 
 #include "texture.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
-#include "vertmaterial.h"
+#include "WW3D2/vertmaterial.h"
 
 /*
 ** Registry value names

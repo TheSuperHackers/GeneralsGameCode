@@ -36,8 +36,8 @@
 //-------------------------------------------------------------------------------------------------
 
 /*
-template <size_t NUMBITS>
-void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
+template <size_t NUMBITS, typename TAG>
+void BitFlags<NUMBITS, TAG>::buildDescription( AsciiString* str ) const
 {
 	if ( str == nullptr )
 		return;//sanity
@@ -56,8 +56,8 @@ void BitFlags<NUMBITS>::buildDescription( AsciiString* str ) const
 */
 
 //-------------------------------------------------------------------------------------------------
-template <size_t NUMBITS>
-void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
+template <size_t NUMBITS, typename TAG>
+void BitFlags<NUMBITS, TAG>::parse(INI* ini, AsciiString* str)
 {
 //	m_bits.reset();
 	if (str)
@@ -129,16 +129,16 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-template <size_t NUMBITS>
-/*static*/ void BitFlags<NUMBITS>::parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
+template <size_t NUMBITS, typename TAG>
+/*static*/ void BitFlags<NUMBITS, TAG>::parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
 {
 	((BitFlags*)store)->parse(ini, nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-template <size_t NUMBITS>
-/*static*/ void BitFlags<NUMBITS>::parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
+template <size_t NUMBITS, typename TAG>
+/*static*/ void BitFlags<NUMBITS, TAG>::parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/)
 {
 	const char *token = ini->getNextToken();
 	Int bitIndex = INI::scanIndexList(token, s_bitNameList);	// this throws if the token is not found
@@ -152,8 +152,8 @@ template <size_t NUMBITS>
 	* Version Info:
 	* 1: Initial version */
 //-------------------------------------------------------------------------------------------------
-template <size_t NUMBITS>
-void BitFlags<NUMBITS>::xfer(Xfer* xfer)
+template <size_t NUMBITS, typename TAG>
+void BitFlags<NUMBITS, TAG>::xfer(Xfer* xfer)
 {
 	// this deserves a version number
 	XferVersion currentVersion = 1;

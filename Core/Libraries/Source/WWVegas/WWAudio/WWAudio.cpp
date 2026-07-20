@@ -35,26 +35,26 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "always.h"
+#include "WWLib/always.h"
 #include <windows.h>
 #include "WWAudio.h"
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 #include "Utils.h"
-#include "realcrc.h"
+#include "WWLib/realcrc.h"
 #include "SoundBuffer.h"
 #include "AudibleSound.h"
 #include "Sound3D.h"
-#include "RAWFILE.h"
+#include "WWLib/RAWFILE.h"
 #include "SoundScene.h"
 #include "SoundPseudo3D.h"
-#include "ffactory.h"
-#include "registry.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/registry.h"
 #include "Threads.h"
 #include "LogicalSound.h"
 #include "LogicalListener.h"
-#include "definitionclassids.h"
-#include "wwmemlog.h"
-#include "wwprofile.h"
+#include "WWSaveLoad/definitionclassids.h"
+#include "WWDebug/wwmemlog.h"
+#include "WWDebug/wwprofile.h"
 
 
 #ifdef G_CODE_BASE

@@ -47,8 +47,8 @@
 
 
 #include "matpass.h"
-#include "vertmaterial.h"
-#include "shader.h"
+#include "WW3D2/vertmaterial.h"
+#include "WW3D2/shader.h"
 #include "texture.h"
 #include "statistics.h"
 #include "dx8wrapper.h"

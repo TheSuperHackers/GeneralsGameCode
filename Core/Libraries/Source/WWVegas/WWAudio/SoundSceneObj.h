@@ -34,12 +34,12 @@
 
 #pragma once
 
-#include "always.h"
+#include "WWLib/always.h"
 #include "WWAudio.h"
-#include "bittype.h"
-#include "persist.h"
-#include "multilist.h"
-#include "mutex.h"
+#include "WWLib/bittype.h"
+#include "WWSaveLoad/persist.h"
+#include "WWLib/multilist.h"
+#include "WWLib/mutex.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Forward declarations

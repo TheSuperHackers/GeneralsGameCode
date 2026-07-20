@@ -39,9 +39,9 @@
 
 
 #include "meshdam.h"
-#include "w3d_file.h"
+#include "WW3D2/w3d_file.h"
 #include "w3derr.h"
-#include "chunkio.h"
+#include "WWLib/chunkio.h"
 //#include <sr.hpp>
 
 

@@ -78,15 +78,15 @@
 
 
 #include "distlod.h"
-#include "nstrdup.h"
-#include "ww3d.h"
-#include "assetmgr.h"
-#include "camera.h"
+#include "WWLib/nstrdup.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/camera.h"
 #include "w3derr.h"
-#include "wwdebug.h"
-#include "chunkio.h"
-#include "hlod.h"
-#include "rinfo.h"
+#include "WWDebug/wwdebug.h"
+#include "WWLib/chunkio.h"
+#include "WW3D2/hlod.h"
+#include "WW3D2/rinfo.h"
 #include "coltest.h"
 #include "inttest.h"
 

@@ -61,7 +61,7 @@ enum DisabledType CPP_11(: Int)
 	DISABLED_ANY = 65535		///< Do not use this value for setting disabled types (read-only)
 };
 
-typedef BitFlags<DISABLED_COUNT>	DisabledMaskType;
+typedef BitFlags<DISABLED_COUNT, struct DisabledMaskTypeTag>	DisabledMaskType;
 
 #define MAKE_DISABLED_MASK(k) DisabledMaskType(DisabledMaskType::kInit, (k))
 #define MAKE_DISABLED_MASK2(k,a) DisabledMaskType(DisabledMaskType::kInit, (k), (a))

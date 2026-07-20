@@ -41,9 +41,9 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpy/ThreadUtils.h"
 
-#include "strtok_r.h"
-#include "mutex.h"
-#include "thread.h"
+#include "WWLib/strtok_r.h"
+#include "WWLib/mutex.h"
+#include "WWLib/thread.h"
 
 #include "Common/MiniLog.h"
 
@@ -59,7 +59,7 @@ void CheckServers(PEER peer);
 static LogClass s_pingLog("Ping.txt");
 #define PING_LOG(x) s_pingLog.log x
 #else // DEBUG_LOGGING
-#define PING_LOG(x) {}
+#define PING_LOG(x)
 #endif // DEBUG_LOGGING
 
 #ifdef DEBUG_LOGGING
@@ -69,7 +69,7 @@ static LogClass s_stateChangedLog("StateChanged.txt");
 
 #else // DEBUG_LOGGING
 
-#define STATECHANGED_LOG(x) {}
+#define STATECHANGED_LOG(x)
 
 #endif // DEBUG_LOGGING
 

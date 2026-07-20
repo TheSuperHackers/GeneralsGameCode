@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "mutex.h"
-#include "thread.h"
+#include "WWLib/mutex.h"
+#include "WWLib/thread.h"
 
 class GameSpyThreadClass : public ThreadClass
 {

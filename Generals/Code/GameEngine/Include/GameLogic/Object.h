@@ -777,7 +777,7 @@ private:
 };
 
 // deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
-void deleteInstance(Object* object) CPP_11(= delete);
+void deleteInstance(Object* object) FUNCTION_DELETE;
 
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
 AsciiString DebugDescribeObject(const Object *obj);

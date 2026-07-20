@@ -38,20 +38,20 @@
 //
 
 #include "animatedsoundmgr.h"
-#include "INI.h"
-#include "inisup.h"
-#include "ffactory.h"
-#include "WWFILE.h"
-#include "definition.h"
-#include "definitionmgr.h"
-#include "definitionclassids.h"
-#include "WWAudio.h"
-#include "AudibleSound.h"
+#include "WWLib/INI.h"
+#include "WWLib/inisup.h"
+#include "WWLib/ffactory.h"
+#include "WWLib/WWFILE.h"
+#include "WWSaveLoad/definition.h"
+#include "WWSaveLoad/definitionmgr.h"
+#include "WWSaveLoad/definitionclassids.h"
+#include "WWAudio/WWAudio.h"
+#include "WWAudio/AudibleSound.h"
 #include "htree.h"
 #include "hanim.h"
 #include "soundlibrarybridge.h"
 
-#include "wwdebug.h"
+#include "WWDebug/wwdebug.h"
 
 //////////////////////////////////////////////////////////////////////
 //	Static member initialization

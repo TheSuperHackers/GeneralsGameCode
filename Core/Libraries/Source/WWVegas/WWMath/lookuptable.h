@@ -38,10 +38,10 @@
 
 #pragma once
 
-#include "always.h"
-#include "simplevec.h"
-#include "wwstring.h"
-#include "multilist.h"
+#include "WWLib/always.h"
+#include "WWLib/simplevec.h"
+#include "WWLib/wwstring.h"
+#include "WWLib/multilist.h"
 #include "wwmath.h"
 
 

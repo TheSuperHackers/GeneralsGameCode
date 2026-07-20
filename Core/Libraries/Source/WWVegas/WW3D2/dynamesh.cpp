@@ -39,8 +39,8 @@
 #include "dx8indexbuffer.h"
 #include "dx8wrapper.h"
 #include "sortingrenderer.h"
-#include "rinfo.h"
-#include "camera.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/camera.h"
 #include "dx8fvf.h"
 
 
@@ -323,7 +323,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 			DX8Wrapper::Set_Shader(MatDesc->Get_Single_Shader(pass));
 		}
 
-		SphereClass sphere(Vector3(0.0f,0.0f,0.0f),0.0f);
+		SphereClass sphere;
 		Get_Bounding_Sphere(&sphere);
 
 		// If no texture, shader or material arrays for this pass just draw and go to next pass

@@ -75,6 +75,7 @@ set(WWLIB_SRC
     #md5.h
     mempool.h
     mmsys.h
+    mpsc_intrusive_queue.h
     multilist.cpp
     multilist.h
     mutex.cpp

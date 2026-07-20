@@ -37,8 +37,8 @@
 
 
 #include "intersec.h"
-#include "camera.h"
-#include "scene.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/scene.h"
 #include "intersec.inl"
 
 

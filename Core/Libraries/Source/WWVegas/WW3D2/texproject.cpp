@@ -75,20 +75,20 @@
 
 
 #include "texproject.h"
-#include "vertmaterial.h"
-#include "shader.h"
+#include "WW3D2/vertmaterial.h"
+#include "WW3D2/shader.h"
 #include "texture.h"
 #include "rendobj.h"
-#include "rinfo.h"
-#include "camera.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/camera.h"
 #include "matpass.h"
 #include "bwrender.h"
-#include "assetmgr.h"
+#include "WW3D2/assetmgr.h"
 #include "dx8wrapper.h"
 
 
 // DEBUG DEBUG
-#include "MPU.h"
+#include "WWLib/MPU.h"
 
 #define DEBUG_SHADOW_RENDERING					0
 //#define DEFAULT_TEXTURE_SIZE						64

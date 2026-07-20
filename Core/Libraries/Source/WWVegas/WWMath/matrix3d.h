@@ -84,7 +84,7 @@
 #include "osdep.h"
 #endif
 
-#include "always.h"
+#include "WWLib/always.h"
 #include <assert.h>
 #include "vector2.h"
 #include "vector3.h"

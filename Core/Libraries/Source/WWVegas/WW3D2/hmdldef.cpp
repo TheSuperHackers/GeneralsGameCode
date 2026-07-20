@@ -38,8 +38,8 @@
 
 #include "hmdldef.h"
 #include <assert.h>
-#include "w3d_file.h"
-#include "chunkio.h"
+#include "WW3D2/w3d_file.h"
+#include "WWLib/chunkio.h"
 #include "snapPts.h"
 
 

@@ -25,4 +25,16 @@ inline long InterlockedCompareExchange(long volatile *Destination, long Exchange
 	return (long)InterlockedCompareExchange((PVOID*)Destination, (PVOID)Exchange, (PVOID)Comparand);
 }
 
+// The VC6 SDK signatures take non-volatile pointers, so the volatile qualifier
+// must be removed with const_cast before reinterpret_cast can change the type.
+inline PVOID InterlockedExchangePointer(PVOID volatile *Target, PVOID Value)
+{
+	return reinterpret_cast<PVOID>(InterlockedExchange(reinterpret_cast<LPLONG>(const_cast<PVOID*>(Target)), reinterpret_cast<LONG>(Value)));
+}
+
+inline PVOID InterlockedCompareExchangePointer(PVOID volatile *Destination, PVOID Exchange, PVOID Comparand)
+{
+	return InterlockedCompareExchange(const_cast<PVOID*>(Destination), Exchange, Comparand);
+}
+
 #endif

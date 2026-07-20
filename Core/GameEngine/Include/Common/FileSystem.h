@@ -53,7 +53,7 @@
 
 #include <Utility/hash_map_adapter.h>
 
-#include "mutex.h"
+#include "WWLib/mutex.h"
 
 //----------------------------------------------------------------------------
 //           Forward References
