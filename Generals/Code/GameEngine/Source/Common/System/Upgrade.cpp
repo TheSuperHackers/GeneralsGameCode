@@ -266,17 +266,34 @@ void UpgradeCenter::init()
 //-------------------------------------------------------------------------------------------------
 void UpgradeCenter::reset()
 {
-	// TheSuperHackers @bugfix helmutbuhler 07/19/2026 A custom map's map.ini can override upgrade
-	// templates (e.g. BuildTime/BuildCost on an existing Upgrade). Those overrides were never undone,
-	// so an upgrade template's data stayed permanently mutated for the rest of the client session --
-	// including for any subsequent match that does NOT use that map.ini, which mismatches against
-	// other clients whose UpgradeTemplate data was never touched. Undo this by discarding every loaded
-	// upgrade and reloading the original INI files, exactly as they were loaded at startup, before
-	// anything else in reset() (e.g. button image caching) can observe stale, overridden data.
+	// TheSuperHackers @bugfix helmutbuhler 07/19/2026 [revised ZsoltFeher 07/20/2026 after fable-model
+	// review] A custom map's map.ini can override upgrade templates (e.g. BuildTime/BuildCost on an
+	// existing Upgrade). Those overrides were never undone, so an upgrade template's data stayed
+	// permanently mutated for the rest of the client session -- including for any subsequent match that
+	// does NOT use that map.ini, which mismatches against other clients whose UpgradeTemplate data was
+	// never touched.
+	//
+	// The original port of this fix deleted every UpgradeTemplate and recreated them from scratch
+	// before reloading. That is unsafe: CommandButton::m_upgradeTemplate (ControlBar.h) is a raw
+	// UpgradeTemplate* resolved once at ControlBar::init() startup and never re-resolved on reset
+	// (ControlBar::reset() only removes map.ini command button/set OVERRIDES, it doesn't touch the base
+	// buttons' cached pointers) -- deleting and recreating the pointed-to objects left those as
+	// dangling pointers, silently "working" only because of a LIFO memory-pool allocator coincidentally
+	// reusing the same addresses in the same order, which is not guaranteed once the loaded upgrade set
+	// isn't identical to what was loaded at startup.
+	//
+	// UpgradeCenter::parseUpgradeDefinition() already finds an existing UpgradeTemplate by name and
+	// updates its fields in place via ini->initFromINI(), only allocating a new instance if no upgrade
+	// with that name exists yet -- exactly like ThingTemplate's own field-level overwrite semantics,
+	// just without a separate override/restore layer (per Caball009's investigation on this same issue:
+	// "UpgradeTemplate has no override feature like ThingTemplate"). So simply re-running the original
+	// INI load below, without deleting anything first, already restores every EXISTING upgrade's fields
+	// to their pristine values in place, with no object recreated and no pointer invalidated. A
+	// completely new Upgrade type introduced only by a map.ini (not overriding an existing name) is
+	// left in the list rather than being torn down -- a much smaller, inert leftover than a dangling
+	// pointer, and outside this issue's reported scope (existing upgrades being mutated).
 	// (GitHub issue #1436; upstream fix authored by helmutbuhler in PR #1749, ported here since that
 	// PR remains open pending an unrelated, unresolved architectural discussion about INI overrides.)
-	deleteAllUpgrades();
-	init();
 	XferCRC xferCRC;
 	xferCRC.open("lightCRC");
 	INI ini;

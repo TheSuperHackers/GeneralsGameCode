@@ -2237,7 +2237,21 @@ void Player::setUnitsShouldIdleOrResume(Bool idle)
 					{
 						SupplyTruckAIInterface* supplyTruckAI = ai->getSupplyTruckAIInterface();
 						if( supplyTruckAI )
+						{
 							supplyTruckAI->setForceWantingState(true);
+#if !RETAIL_COMPATIBLE_CRC
+							// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 This script action re-arms the
+							// same auto-gather latch that SupplyTruckStateMachine::isForcedIntoWantingState()
+							// (SupplyTruckAIUpdate.cpp) dismisses if the truck's last command came from the
+							// player -- a fix for issue #45. Without this, a truck the player had commanded
+							// at any earlier point (however long ago, regardless of what it's done since)
+							// would have this script-driven "resume gathering" order silently dismissed as
+							// if it were the player's own stale command. Record this as the truck's most
+							// recent command source so it's correctly treated as fresh AI/script authority
+							// over the unit, not a leftover player command. (GitHub issue #45)
+							ai->friend_setLastCommandSource(CMD_FROM_SCRIPT);
+#endif
+						}
 					}
 				}
 			}
