@@ -135,7 +135,7 @@ UpdateSleepTime PoisonedBehavior::update()
 		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Deal actual POISON damage on the periodic tick
 		// so the target's POISON resistance (e.g. Chemical Suits) is properly applied. This used to be
 		// UNRESISTABLE to avoid re-triggering ourselves; onDamage() now guards against that explicitly
-		// via a self-source check instead.
+		// via the m_dealingPeriodicDamage reentrancy flag instead.
 		damage.in.m_damageType = DAMAGE_POISON;
 #endif
 		damage.in.m_deathType = m_deathType;
