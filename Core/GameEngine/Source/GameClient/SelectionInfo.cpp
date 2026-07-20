@@ -90,7 +90,13 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 	Bool forceFire = TheInGameUI->isInForceAttackMode();
 	Bool forceMove = TheInGameUI->isInForceMoveToMode();
 
-	if (forceFire || forceMove) {
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Only skip context-command evaluation (and thus
+	// leave SelectionInfo unpopulated) for a single-point click while force-attack/force-move (CTRL)
+	// is held, so that click can fall through to the ground/unit force-attack handling in CommandXlat.
+	// Previously this bailed out unconditionally, which meant a real CTRL+drag box-select never got
+	// its SelectionInfo counts populated either, so the drag selected nothing and did not force-fire.
+	// (github.com/TheSuperHackers/GeneralsGameCode issue #2098)
+	if ((forceFire || forceMove) && selectionIsPoint) {
 		return FALSE;
 	}
 
