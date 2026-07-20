@@ -3358,6 +3358,22 @@ void WorldHeightMapEdit::removeLastBoundary()
 	m_boundaries.pop_back();
 }
 
+// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Added to allow removing a specific boundary, not just
+// the most recently added one. Previously the only way to get rid of an unwanted boundary was
+// removeLastBoundary() (last-added only) or dragging its corners together, which just left a
+// degenerate (zero width or height) entry permanently in m_boundaries -- findBoundaryNear() already
+// explicitly skips zero-sized boundaries, so once collapsed this way a boundary could never again be
+// selected or actually removed. (GitHub issue #413)
+void WorldHeightMapEdit::removeBoundary(Int ndx)
+{
+	if (ndx < 0 || ndx >= m_boundaries.size()) {
+		DEBUG_CRASH(("Invalid border remove request. jkmcd"));
+		return;
+	}
+
+	m_boundaries.erase(m_boundaries.begin() + ndx);
+}
+
 void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle)
 {
 	if (!outNdx) {

@@ -2595,6 +2595,11 @@ void CWorldBuilderDoc::removeLastBoundary()
 	m_heightMap->removeLastBoundary();
 }
 
+void CWorldBuilderDoc::removeBoundary(Int ndx)
+{
+	m_heightMap->removeBoundary(ndx);
+}
+
 void CWorldBuilderDoc::findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle)
 {
 	m_heightMap->findBoundaryNear(pt, okDistance, outNdx, outHandle);

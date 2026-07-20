@@ -156,4 +156,19 @@ void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 		m_addingNewBorder = false;
 		// Do the undoable on the last border
 	}
+
+	// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 A boundary is anchored at the origin (0,0), so
+	// dragging its opposite corner onto the origin collapses it to zero width or height. That used to
+	// leave a degenerate, permanently invisible and unselectable entry in the boundary list forever
+	// (findBoundaryNear() already skips zero-sized boundaries, so it could never be picked again).
+	// Actually remove it here instead, completing what dragging the corners together was clearly meant
+	// to do: get rid of an unwanted boundary. (GitHub issue #413)
+	if (m_modifyBorderNdx >= 0) {
+		ICoord2D currentBorder;
+		pDoc->getBoundary(m_modifyBorderNdx, &currentBorder);
+		if (currentBorder.x == 0 || currentBorder.y == 0) {
+			pDoc->removeBoundary(m_modifyBorderNdx);
+		}
+		m_modifyBorderNdx = -1;
+	}
 }
