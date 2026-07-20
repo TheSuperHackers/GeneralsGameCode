@@ -113,6 +113,21 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 			currentBorder.y = 0;
 		}
 
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Boundary 0 is the default/main border, always
+		// created spanning the whole map when a new map is made, and other systems (e.g. shroud) rely on
+		// at least one non-degenerate boundary existing. Unlike any other boundary, collapsing it to zero
+		// width/height by dragging it into the origin permanently breaks the map (always shrouded) with
+		// no way to bring it back, since it's the one boundary that can never simply be re-added by the
+		// user like any other. Never let it be dragged smaller than 1x1. (GitHub issue #312)
+		if (m_modifyBorderNdx == 0) {
+			if (currentBorder.x < 1) {
+				currentBorder.x = 1;
+			}
+
+			if (currentBorder.y < 1) {
+				currentBorder.y = 1;
+			}
+		}
 
 		pDoc->changeBoundary(m_modifyBorderNdx, &currentBorder);
 	}
@@ -180,7 +195,10 @@ void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	if (m_modifyBorderNdx >= 0) {
 		ICoord2D currentBorder;
 		pDoc->getBoundary(m_modifyBorderNdx, &currentBorder);
-		if (currentBorder.x == 0 || currentBorder.y == 0) {
+		// TheSuperHackers @bugfix ZsoltFeher 07/20/2026 Never auto-remove boundary 0, the default/main
+		// border (see the m_modifyBorderNdx == 0 clamp in mouseMoved() above, which already prevents it
+		// from reaching zero width/height by dragging in the first place). (GitHub issue #312)
+		if (m_modifyBorderNdx != 0 && (currentBorder.x == 0 || currentBorder.y == 0)) {
 			pDoc->removeBoundary(m_modifyBorderNdx);
 		}
 		m_modifyBorderNdx = -1;
