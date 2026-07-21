@@ -1684,7 +1684,8 @@ void FlightDeckBehavior::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_startedProductionFrame );
 	xfer->xferUnsignedInt( &m_nextAllowedProductionFrame );
 	xfer->xferObjectID( &m_designatedTarget );
-	Int commandType;
+	// TheSuperHackers @bugfix bobtista 22/07/2026 Seed the temporary from the live command so saving writes the real order and does not overwrite m_designatedCommand with an uninitialized value.
+	Int commandType = (Int)m_designatedCommand;
 	xfer->xferInt( &commandType );
 	m_designatedCommand = (AICommandType)commandType;
 	xfer->xferCoord3D( &m_designatedPosition );
