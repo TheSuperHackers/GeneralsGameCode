@@ -1701,7 +1701,8 @@ void FlightDeckBehavior::xfer( Xfer *xfer )
 			xfer->xferUnsignedInt( &m_rampUpFrame[ i ] );
 			xfer->xferUnsignedInt( &m_catapultSystemFrame[ i ] );
 			xfer->xferUnsignedInt( &m_lowerRampFrame[ i ] );
-			xfer->xferBool( &m_rampUp[ MAX_RUNWAYS ] );
+			// TheSuperHackers @bugfix bobtista 22/07/2026 Index the ramp state by runway instead of reading and writing one element past the array.
+			xfer->xferBool( &m_rampUp[ i ] );
 		}
 		else
 		{
