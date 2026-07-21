@@ -913,6 +913,13 @@ Int populateMapListboxNoReset( GameWindow *listbox, Bool useSystemMaps, Bool isM
 	if (!listbox)
 		return -1;
 
+	// TheSuperHackers @feature pberthold 14/07/2026 Grow the map list to hold every cached map,
+	// so none are silently dropped. The capacity otherwise comes from the window's LISTBOXDATA
+	// LENGTH and caps large collections (Skirmish/LAN/Online, all titles and mods).
+	const Int neededListLength = (Int)TheMapCache->size();
+	if (neededListLength > GadgetListBoxGetListLength( listbox ))
+		GadgetListBoxSetListLength( listbox, neededListLength );
+
 	MapListBoxData lbData;
 	lbData.listbox = listbox;
 	lbData.numLength = GadgetListBoxGetListLength( listbox );
