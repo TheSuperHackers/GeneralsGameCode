@@ -124,6 +124,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	if (!isDieApplicable(damageInfo))
 		return;
 
+#if RETAIL_COMPATIBLE_CRC
 	AIUpdateInterface* ai = getObject()->getAIUpdateInterface();
 	if (ai)
 	{
@@ -132,6 +133,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 			return;
 		ai->markAsDead();
 	}
+#endif
 
 	const InstantDeathBehaviorModuleData* d = getInstantDeathBehaviorModuleData();
 
@@ -169,6 +171,19 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 			TheWeaponStore->createAndFireTempWeapon(wt, getObject(), getObject()->getPosition());
 		}
 	}
+
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 21/07/2026 Allow multiple InstantDeathBehaviors to be processed.
+	// Multiple FXListDie, CreateObjectDie and FireWeaponWhenDeadBehavior modules are already supported.
+	AIUpdateInterface* ai = getObject()->getAIUpdateInterface();
+	if (ai)
+	{
+		// has another AI already handled us. (hopefully another InstantDeathBehavior)
+		if (ai->isAiInDeadState())
+			return;
+		ai->markAsDead();
+	}
+#endif
 
 	TheGameLogic->destroyObject(getObject());
 }
