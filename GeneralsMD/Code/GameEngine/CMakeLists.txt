@@ -198,6 +198,7 @@ set(GAMEENGINE_SRC
 #    Include/GameClient/LookAtXlat.h
 #    Include/GameClient/MapUtil.h
     Include/GameClient/MessageBox.h
+    Include/GameClient/SaveLoadFeedback.h
 #    Include/GameClient/MetaEvent.h
 #    Include/GameClient/Module/AnimatedParticleSysBoneClientUpdate.h
 #    Include/GameClient/Module/BeaconClientUpdate.h
@@ -779,6 +780,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/GUICallbacks/Menus/WOLWelcomeMenu.cpp
     Source/GameClient/GUI/GUICallbacks/MessageBox.cpp
     Source/GameClient/GUI/GUICallbacks/ReplayControls.cpp
+    Source/GameClient/GUI/GUICallbacks/SaveLoadFeedback.cpp
 #    Source/GameClient/GUI/HeaderTemplate.cpp
 #    Source/GameClient/GUI/IMEManager.cpp
 #    Source/GameClient/GUI/LoadScreen.cpp
