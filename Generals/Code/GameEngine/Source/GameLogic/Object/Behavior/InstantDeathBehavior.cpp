@@ -159,16 +159,23 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 		ObjectCreationList::create(ocl, getObject(), nullptr);
 	}
 
-	listSize = d->m_weapons.size();
-	if (listSize > 0)
+#if !RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix Stubbjax 23/07/2026 Prevent firing weapons when a scaffold is cancelled
+	// or destroyed. This logic matches the condition in the FireWeaponWhenDeadBehavior module.
+	if (!getObject()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+#endif
 	{
-		idx = (size_t)GameLogicRandomValue(0, listSize-1);
-		const WeaponTemplateVec& v = d->m_weapons;
-		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
-		const WeaponTemplate* wt = v[idx];
-		if (wt)
+		listSize = d->m_weapons.size();
+		if (listSize > 0)
 		{
-			TheWeaponStore->createAndFireTempWeapon(wt, getObject(), getObject()->getPosition());
+			idx = (size_t)GameLogicRandomValue(0, listSize-1);
+			const WeaponTemplateVec& v = d->m_weapons;
+			DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
+			const WeaponTemplate* wt = v[idx];
+			if (wt)
+			{
+				TheWeaponStore->createAndFireTempWeapon(wt, getObject(), getObject()->getPosition());
+			}
 		}
 	}
 
