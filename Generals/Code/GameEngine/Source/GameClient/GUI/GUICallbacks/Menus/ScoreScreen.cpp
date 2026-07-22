@@ -74,6 +74,7 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameClient/Display.h"
 #include "GameClient/GUICallbacks.h"
+#include "GameClient/SaveLoadFeedback.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Gadget.h"
@@ -763,7 +764,9 @@ void finishSinglePlayerInit()
 			GadgetButtonSetText(buttonContinue, TheGameText->fetch("GUI:SaveAndContinue"));
 
 			// auto save game
-			TheGameState->missionSave();
+			AsciiString filename;
+			SaveCode result = TheGameState->missionSave( &filename );
+			presentSaveResult( result, filename );
 			if(staticTextGameSaved)
 				staticTextGameSaved->winHide(FALSE);
 		}
