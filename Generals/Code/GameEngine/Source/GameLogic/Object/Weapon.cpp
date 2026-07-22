@@ -586,12 +586,20 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 	// hmm.. must be shooting a firebase or such, if there is noone home to take the bullet, return 0!
 	if ( victimObj->isKindOf( KINDOF_STRUCTURE) && damageType == DAMAGE_SNIPER )
 	{
+#if PRESERVE_SNIPING_EMPTY_STINGER_SITES
+		if (victimObj->getContain())
+		{
+			if (victimObj->getContain()->getContainCount() == 0)
+				return 0.0f;
+		}
+#else
 		// TheSuperHackers @bugfix Stubbjax 22/06/2026 Only allow targeting Stinger Sites when they contain Soldiers.
 		const Bool hasOccupants = victimObj->getContain() && victimObj->getContain()->getContainCount() > 0;
 		const Bool hasSlaves = victimObj->getSpawnBehaviorInterface() && victimObj->getSpawnBehaviorInterface()->getSlaveCount() > 0;
 
 		if (!hasOccupants && !hasSlaves)
 			return 0.0f;
+#endif
 	}
 #endif
 

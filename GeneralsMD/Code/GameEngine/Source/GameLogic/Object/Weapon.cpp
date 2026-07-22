@@ -601,7 +601,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
   if ( victimObj->isKindOf( KINDOF_STRUCTURE) && damageType == DAMAGE_SNIPER )
   {
 
-#if RETAIL_COMPATIBLE_CRC
+#if RETAIL_COMPATIBLE_CRC || PRESERVE_SNIPING_EMPTY_STINGER_SITES
     if ( victimObj->getContain() )
     {
       if ( victimObj->getContain()->getContainCount() == 0 )
