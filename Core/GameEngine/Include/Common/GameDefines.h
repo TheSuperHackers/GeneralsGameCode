@@ -91,6 +91,11 @@
 #define PRESERVE_RETAIL_PARTICLES (1) // Preserve original look of particles present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
+// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects.
+#ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
+#define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED (1)
+#endif
+
 #ifndef RETAIL_COMPATIBLE_CRC
 #define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
