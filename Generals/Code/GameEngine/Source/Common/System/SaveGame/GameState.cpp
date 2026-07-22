@@ -73,6 +73,13 @@ static const Int MAX_SAVE_FILE_NUMBER  =  99999999;
 #define GAME_STATE_BLOCK_STRING "CHUNK_GameState"  // block of save game data with game info data
 #define CAMPAIGN_BLOCK_STRING "CHUNK_Campaign"		 // block of game data that has campaign info
 
+static Bool isHeadlessOmittedBlock( const AsciiString &blockName )
+{
+	return blockName.compareNoCase( "CHUNK_ParticleSystem" ) == 0 ||
+		blockName.compareNoCase( "CHUNK_TerrainVisual" ) == 0 ||
+		blockName.compareNoCase( "CHUNK_GhostObject" ) == 0;
+}
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SaveGameInfo::SaveGameInfo()
@@ -1351,6 +1358,10 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			blockName = blockInfo->blockName;
 
 			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
+			if( TheGlobalData->m_headless && isHeadlessOmittedBlock( blockName ) )
+			{
+				continue;
+			}
 
 			//
 			// for mission save files, we only save the game state block and campaign manager
@@ -1448,8 +1459,15 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 					// read block start
 					blockSize = xfer->beginBlock();
 
-					// parse this data
-					xfer->xferSnapshot( blockInfo->snapshot );
+					if( TheGlobalData->m_headless && isHeadlessOmittedBlock( token ) )
+					{
+						xfer->skip( blockSize );
+					}
+					else
+					{
+						// parse this data
+						xfer->xferSnapshot( blockInfo->snapshot );
+					}
 
 					// read block end
 					xfer->endBlock();

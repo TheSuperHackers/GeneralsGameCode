@@ -719,6 +719,19 @@ Int parseVTune ( char *args[], int num )
 
 #endif // defined(RTS_DEBUG)
 
+// TheSuperHackers @feature bobtista 22/07/2026 Load a save game file from the command line.
+Int parseLoadSave(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_loadSaveGame = args[1];
+		TheWritableGlobalData->m_shellMapOn = FALSE;
+		TheWritableGlobalData->m_playIntro = FALSE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
+	}
+	return 2;
+}
+
 //=============================================================================
 //=============================================================================
 
@@ -1159,6 +1172,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
+	{ "-loadsave", parseLoadSave },
 
 	// TheSuperHackers @feature xezon 03/08/2025 Force full viewport for 'Control Bar Pro' Addons like GenTool did it.
 	{ "-forcefullviewport", parseFullViewport },

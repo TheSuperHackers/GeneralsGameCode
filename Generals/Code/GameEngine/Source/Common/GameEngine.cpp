@@ -774,6 +774,35 @@ void GameEngine::execute()
 	DWORD startTime = timeGetTime() / 1000;
 #endif
 
+	// TheSuperHackers @feature bobtista 22/07/2026 Load a save game directly from the command line.
+	if (TheGlobalData->m_loadSaveGame.isNotEmpty())
+	{
+		AvailableGameInfo gameInfo;
+		gameInfo.filename = TheGlobalData->m_loadSaveGame;
+		gameInfo.next = nullptr;
+		gameInfo.prev = nullptr;
+
+		AsciiString fullPath = TheGameState->getFilePathInSaveDirectory(gameInfo.filename);
+		TheGameState->getSaveGameInfoFromFile(fullPath, &gameInfo.saveGameInfo);
+		TheGameLogic->prepareNewGame(GAME_SINGLE_PLAYER, DIFFICULTY_NORMAL, 0);
+
+		AsciiString filename = gameInfo.filename;
+		SaveCode result = TheGameState->loadGame(gameInfo);
+		TheWritableGlobalData->m_loadSaveGame.clear();
+		if (result == SC_OK)
+		{
+			if (TheShell)
+			{
+				TheShell->hideShell();
+			}
+		}
+		else
+		{
+			DEBUG_LOG(("Failed to load save game '%s'", filename.str()));
+			m_quitting = TRUE;
+		}
+	}
+
 	// pretty basic for now
 	while( !m_quitting )
 	{
