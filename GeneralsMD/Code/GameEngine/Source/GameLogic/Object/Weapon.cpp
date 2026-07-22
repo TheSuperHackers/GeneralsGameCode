@@ -609,8 +609,8 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
     }
 #else
 		// TheSuperHackers @bugfix Stubbjax 22/06/2026 Only allow targeting Stinger Sites when they contain Soldiers.
-		Bool hasOccupants = victimObj->getContain() && victimObj->getContain()->getContainCount() > 0;
-		Bool hasSlaves = victimObj->getSpawnBehaviorInterface() && victimObj->getSpawnBehaviorInterface()->getSlaveCount() > 0;
+		const Bool hasOccupants = victimObj->getContain() && victimObj->getContain()->getContainCount() > 0;
+		const Bool hasSlaves = victimObj->getSpawnBehaviorInterface() && victimObj->getSpawnBehaviorInterface()->getSlaveCount() > 0;
 
 		if (!hasOccupants && !hasSlaves)
 			return 0.0f;
