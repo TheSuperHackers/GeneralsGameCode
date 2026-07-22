@@ -614,6 +614,7 @@ protected:
 
 					newPos.x = primary->x + offset.x + radius * cos(angle);
 					newPos.y = primary->y + offset.y + radius * sin(angle);
+					newPos.z = primary->z + offset.z;
 					if( m_createAtGroundHeight && TheTerrainLogic )
 					{
 						//old way:
