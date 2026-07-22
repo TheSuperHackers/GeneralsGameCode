@@ -4776,7 +4776,61 @@ void PartitionManager::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void PartitionManager::loadPostProcess()
 {
+	// TheSuperHackers @bugfix coolswood 23/07/2026 Rebuild the shroud grid on save load so
+	// objects re-apply their lookers. After load the per-cell shroud counters and the pending
+	// undo-queue are restored from the file, but nothing re-applied the object looks that those
+	// counters represent. When the restored undo-queue drains (~m_unlookPersistDuration frames
+	// later) removeLooker fires at every queued position. Static structures never re-look, so
+	// their cells drop to FOGGED and the player's own base becomes gray, unselectable ghosts.
+	// The restored m_partitionLastLook and the cell counters also disagree, so any later
+	// handleShroud() would double-count. The fix mirrors the established
+	// TerrainLogic::setActiveBoundary rebuild: drain the queue, snapshot the explored (FOGGED)
+	// and permanently-revealed (CLEAR) cells, tear the cell grid down to the all-shrouded
+	// default, then make every object re-look fresh onto the clean grid. After this the
+	// undo-queue is empty, every live object owns its looker, and static structures stay CLEAR.
+	ShroudStatusStoreRestore partitionStore;
 
+	// Flush the restored undo-queue so lingering undoes do not fire after the rebuild.
+	processEntirePendingUndoShroudRevealQueue();
+
+	// Remember cells that are explored-but-not-visible (FOGGED).
+	storeFoggedCells(partitionStore, TRUE);
+
+	// Release ghost-object partition data before the cell grid is torn down.
+	TheGhostObjectManager->releasePartitionData();
+
+	// Invalidate every object's sighting state so the later unlook()/unshroud() inside
+	// handleShroud() are no-ops instead of queueing double-undoes or double-counting.
+	for (Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
+		obj->friend_prepareForMapBoundaryAdjust();
+
+	// Remember cells that are CLEAR (permanently revealed) after the queue drain.
+	storeFoggedCells(partitionStore, FALSE);
+
+	// Rebuild the cell grid: shutdown deletes m_cells, init re-allocates every cell at
+	// the fully-shrouded default (m_currentShroud = 1).
+	reset();
+	init();
+
+	// Restore permanently-revealed cells with extra lookers.
+	restoreFoggedCells(partitionStore, FALSE);
+
+	// Prevent new ghost objects from being created while the existing ones are restored.
+	TheGhostObjectManager->lockGhostObjects(TRUE);
+
+	// Re-register and re-look every object onto the clean grid. handleShroud() now does
+	// unlook (no-op, SightingInfo is invalid) + look (fresh doShroudReveal), so each object
+	// owns exactly one looker and the undo-queue stays empty.
+	for (Object *obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
+		obj->friend_notifyOfNewMapBoundary();
+
+	// Restore explored-but-not-visible (FOGGED) cells and ghost-object partition data.
+	restoreFoggedCells(partitionStore, TRUE);
+	TheGhostObjectManager->restorePartitionData();
+	TheGhostObjectManager->lockGhostObjects(FALSE);
+
+	// Redraw the display/radar from the rebuilt cell state.
+	refreshShroudForLocalPlayer();
 }
 
 //-----------------------------------------------------------------------------
