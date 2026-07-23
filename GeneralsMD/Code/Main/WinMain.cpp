@@ -77,12 +77,12 @@
 // GLOBALS ////////////////////////////////////////////////////////////////////
 HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
 HWND ApplicationHWnd = nullptr;  ///< our application window handle
-Win32Mouse *TheWin32Mouse = nullptr;  ///< for the WndProc() only
+extern Win32Mouse *TheWin32Mouse;  ///< defined in AppMain.cpp
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
-const Char *g_strFile = "data\\Generals.str";
-const Char *g_csfFile = "data\\%s\\Generals.csf";
-const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
+extern const Char *g_strFile;
+extern const Char *g_csfFile;
+extern const char *gAppPrefix;
 
 static Bool gInitializing = false;
 static Bool gDoPaint = true;
@@ -851,6 +851,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	//	WWDebug_Install_Message_Handler(WWDebug_Message_Callback);
 	//	WWDebug_Install_Assert_Handler(WWAssert_Callback);
 
+		if (!AppMain::initBeforeWindow())
+		{
+			return exitcode;
+		}
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
 		char filePath[_MAX_PATH];

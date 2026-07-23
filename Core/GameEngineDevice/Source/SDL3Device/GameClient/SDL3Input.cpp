@@ -392,7 +392,10 @@ void SDL3Keyboard::init() { Keyboard::init(); }
 void SDL3Keyboard::reset() { Keyboard::reset(); }
 void SDL3Keyboard::update() { Keyboard::update(); }
 
-Bool SDL3Keyboard::getCapsState() { return false; }
+Bool SDL3Keyboard::getCapsState()
+{
+	return (SDL_GetModState() & SDL_KMOD_CAPS) != 0;
+}
 
 void SDL3Keyboard::getKey(KeyboardIO* key)
 {
@@ -417,7 +420,7 @@ void SDL3Keyboard::getKey(KeyboardIO* key)
 	key->key = keyDef;
 	key->status = KeyboardIO::STATUS_UNUSED;
 	key->state = keyEvent.down ? KEY_STATE_DOWN : KEY_STATE_UP;
-	key->keyDownTimeMsec = keyEvent.down ? (Uint32)SDL_GetTicks() : 0;
+	key->keyDownTimeMsec = keyEvent.down ? timeGetTime() : 0;
 
 	SDL_Keymod mod = keyEvent.mod;
 	if (mod & SDL_KMOD_LSHIFT)
@@ -836,6 +839,28 @@ void SDL3InputManager::closeGamepad()
 {
 	if (m_gamepad)
 	{
+		if (m_state.stickLeft) virtualPulseKey(SDL_SCANCODE_LEFT, false);
+		if (m_state.stickRight) virtualPulseKey(SDL_SCANCODE_RIGHT, false);
+		if (m_state.stickUp) virtualPulseKey(SDL_SCANCODE_UP, false);
+		if (m_state.stickDown) virtualPulseKey(SDL_SCANCODE_DOWN, false);
+
+		if (m_state.ltDown) virtualPulseKey(SDL_SCANCODE_PAGEUP, false);
+		if (m_state.rtDown) virtualPulseKey(SDL_SCANCODE_PAGEDOWN, false);
+
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_SOUTH]) virtualPulseKey(SDL_SCANCODE_RETURN, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_EAST]) virtualPulseKey(SDL_SCANCODE_ESCAPE, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_WEST]) virtualPulseKey(SDL_SCANCODE_X, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_NORTH]) virtualPulseKey(SDL_SCANCODE_E, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_LEFT_SHOULDER]) virtualPulseKey(SDL_SCANCODE_Q, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER]) virtualPulseKey(SDL_SCANCODE_E, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_UP]) virtualPulseKey(SDL_SCANCODE_1, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_DOWN]) virtualPulseKey(SDL_SCANCODE_2, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_LEFT]) virtualPulseKey(SDL_SCANCODE_3, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_RIGHT]) virtualPulseKey(SDL_SCANCODE_4, false);
+
+		m_state = GamepadState();
+		m_lastUpdateTime = 0;
+
 		SDL_CloseGamepad(m_gamepad);
 		m_gamepad = nullptr;
 	}
