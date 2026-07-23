@@ -40,6 +40,7 @@
 #include <dbt.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
+#include "AppMain.h"
 #include "WinMain.h"
 #include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
@@ -62,16 +63,8 @@
 #include "GameClient/IMEManager.h"
 #include "Common/version.h"
 #include "BuildVersion.h"
-
-#if RTS_SDL3_ENABLE
-    #include <SDL3/SDL.h>
-    #include "SDL3Device/Common/SDL3GameEngine.h"
-    #include "GameClient/Keyboard.h"
-    SDL_Window* TheSDL3Window = nullptr;
-#else
-    #include "Win32Device/Common/Win32GameEngine.h"
-	#include "Win32Device/GameClient/Win32Mouse.h"
-#endif
+#include "Win32Device/Common/Win32GameEngine.h"
+#include "Win32Device/GameClient/Win32Mouse.h"
 
 #include "GeneratedVersion.h"
 #include "resource.h"
@@ -483,9 +476,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 					// paths that take care of that.
 
 					isWinMainActive = (BOOL) wParam;
-
-					if (TheGameEngine)
-						TheGameEngine->setIsActive(isWinMainActive);
+					AppMain::setAppActive(isWinMainActive);
 
 					if (isWinMainActive)
 					{
@@ -855,166 +846,34 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined(RTS_DEBUG) || defined RTS_PROFILE_LEGACY
-
-			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
-		const char *fileName = "Install_Final.bmp";
-		static const char *localizedPathFormat = "Data/%s/";
-		sprintf(filePath,localizedPathFormat, GetRegistryLanguage().str());
-		strlcat(filePath, fileName, ARRAY_SIZE(filePath));
-		FILE *fileImage = fopen(filePath, "r");
-		if (fileImage) {
-			fclose(fileImage);
-			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-#if RTS_SDL3_ENABLE
-			gLoadScreenSurface = SDL_LoadBMP(filePath);
-#endif
-		}
-		else {
-			gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, fileName, IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-#if RTS_SDL3_ENABLE
-			gLoadScreenSurface = SDL_LoadBMP(fileName);
-#endif
-		}
-#else
+		AppMain::getSplashFilePath(filePath, sizeof(filePath));
+		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, filePath, IMAGE_BITMAP, 0, 0, LR_SHARED | LR_LOADFROMFILE);
 
-		// in release, the file only ever lives in the root dir
-		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
-#if RTS_SDL3_ENABLE
-		gLoadScreenSurface = SDL_LoadBMP("Install_Final.bmp");
-#endif
-#endif
-
-#ifdef RTS_ENABLE_CRASHDUMP
-		// Initialize minidump facilities - requires TheGlobalData so performed after parseCommandLineForStartup
-		MiniDumper::initMiniDumper(TheGlobalData->getPath_UserData());
-#endif
-
-		// register windows class and create application window
-#if RTS_SDL3_ENABLE
-		if (!TheGlobalData->m_headless)
-		{
-			if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD))
-			{
-				DEBUG_LOG(("SDL_Init failed: %s", SDL_GetError()));
-				return exitcode;
-			}
-
-			Uint32 flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
-			if (!TheGlobalData->m_windowed) flags |= SDL_WINDOW_FULLSCREEN;
-
-			TheSDL3Window = SDL_CreateWindow("Command & Conquer Generals", 800, 600, flags);
-			if (!TheSDL3Window)
-			{
-				DEBUG_LOG(("SDL_CreateWindow failed: %s", SDL_GetError()));
-				return exitcode;
-			}
-
-			// Retrieve the native HWND from the SDL window for D3D compatibility
-			SDL_PropertiesID props = SDL_GetWindowProperties(TheSDL3Window);
-			ApplicationHWnd = (HWND)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
-			
-			// Set initial window size from global data if available
-			Int startWidth = TheGlobalData->m_xResolution;
-			Int startHeight = TheGlobalData->m_yResolution;
-			if (startWidth > 0 && startHeight > 0)
-			{
-				SDL_SetWindowSize(TheSDL3Window, startWidth, startHeight);
-			}
-			
-			SDL_ShowWindow(TheSDL3Window);
-			isWinMainActive = true;
-
-			// Draw the splash screen immediately for SDL3 using safe software surface (8-line modernization)
-			if (gLoadScreenSurface != nullptr)
-			{
-				SDL_Surface* screen = SDL_GetWindowSurface(TheSDL3Window);
-				if (screen)
-				{
-					SDL_ClearSurface(screen, 0.0f, 0.0f, 0.0f, 1.0f);
-					float bitmapAspect = 800.0f / 600.0f;
-					int drawWidth = (float)screen->w / screen->h > bitmapAspect ? (int)(screen->h * bitmapAspect) : screen->w;
-					int drawHeight = (float)screen->w / screen->h > bitmapAspect ? screen->h : (int)(screen->w / bitmapAspect);
-					SDL_Rect destRect = { (screen->w - drawWidth) / 2, (screen->h - drawHeight) / 2, drawWidth, drawHeight };
-					SDL_BlitSurfaceScaled(gLoadScreenSurface, NULL, screen, &destRect, SDL_SCALEMODE_LINEAR);
-					SDL_UpdateWindowSurface(TheSDL3Window);
-				}
-			}
-
-		}
-#else
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 		{
+			AppMain::shutdown();
 			return exitcode;
 		}
-#endif
 
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
 
-#if RTS_SDL3_ENABLE
-		if (gLoadScreenSurface != nullptr) {
-			SDL_DestroySurface(gLoadScreenSurface);
-			gLoadScreenSurface = nullptr;
-		}
-#else
 		if (gLoadScreenBitmap != nullptr) {
 			::DeleteObject(gLoadScreenBitmap);
 			gLoadScreenBitmap = nullptr;
 		}
-#endif
 
-
-		// BGC - initialize COM
-	//	OleInitialize(nullptr);
-
-
-
-		// Set up version info
-		TheVersion = NEW Version;
-		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
-			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
-			AsciiString(__TIME__), AsciiString(__DATE__));
-
-		// TheSuperHackers @refactor The instance mutex now lives in its own class.
-
-		if (!rts::ClientInstance::initialize())
+		if (!AppMain::initAfterWindow())
 		{
-			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), nullptr);
-			if (ccwindow)
-			{
-				SetForegroundWindow(ccwindow);
-				ShowWindow(ccwindow, SW_RESTORE);
-			}
-
-			DEBUG_LOG(("Generals is already running...Bail!"));
-			delete TheVersion;
-			TheVersion = nullptr;
-			shutdownMemoryManager();
+			AppMain::shutdown();
 			return exitcode;
 		}
-		DEBUG_LOG(("Create Generals Mutex okay."));
-
-		DEBUG_LOG(("CRC message is %d", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
-		exitcode = GameMain();
+		exitcode = AppMain::run();
 
-		delete TheVersion;
-		TheVersion = nullptr;
-
-	#ifdef MEMORYPOOL_DEBUG
-		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
-	#endif
-	#if defined(RTS_DEBUG)
-		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
-	#endif
-
-		shutdownMemoryManager();
-
-		// BGC - shut down COM
-	//	OleUninitialize();
+		AppMain::shutdown();
 	}
 	catch (...)
 	{
@@ -1037,18 +896,12 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 //=============================================================================
 GameEngine *CreateGameEngine()
 {
-#if RTS_SDL3_ENABLE
-	SDL3GameEngine *engine = NEW SDL3GameEngine;
-	engine->setIsActive(isWinMainActive);
-	return engine;
-#else
 	Win32GameEngine *engine;
 
 	engine = NEW Win32GameEngine;
 	//game engine may not have existed when app got focus so make sure it
 	//knows about current focus state.
-	engine->setIsActive(isWinMainActive);
+	engine->setIsActive(AppMain::isAppActive());
 
 	return engine;
-#endif
 }
