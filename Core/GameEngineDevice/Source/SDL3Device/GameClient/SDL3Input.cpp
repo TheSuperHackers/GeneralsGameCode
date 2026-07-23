@@ -899,11 +899,28 @@ void SDL3InputManager::virtualPulseKey(SDL_Scancode scancode, bool down)
 
 void SDL3InputManager::virtualPulseMouse(Uint8 button, bool down)
 {
+	static Uint64 lastClickTime[3] = {0, 0, 0};
+	Uint64 now = SDL_GetTicks();
+
 	SDL_Event clickEvent;
 	memset(&clickEvent, 0, sizeof(clickEvent));
 	clickEvent.type = down ? SDL_EVENT_MOUSE_BUTTON_DOWN : SDL_EVENT_MOUSE_BUTTON_UP;
 	clickEvent.button.button = button;
-	clickEvent.button.clicks = 1;
+
+	int buttonIdx = (button == SDL_BUTTON_LEFT) ? 0 : ((button == SDL_BUTTON_RIGHT) ? 1 : 2);
+	if (down)
+	{
+		if (now - lastClickTime[buttonIdx] < 350)
+			clickEvent.button.clicks = 2;
+		else
+			clickEvent.button.clicks = 1;
+		lastClickTime[buttonIdx] = now;
+	}
+	else
+	{
+		clickEvent.button.clicks = 1;
+	}
+
 	clickEvent.button.down = down;
 
 	float mx, my;

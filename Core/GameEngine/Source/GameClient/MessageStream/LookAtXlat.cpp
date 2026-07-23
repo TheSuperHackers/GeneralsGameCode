@@ -86,7 +86,7 @@ static Mouse::MouseCursor prevCursor = Mouse::ARROW;
 //-----------------------------------------------------------------------------
 void LookAtTranslator::setScrolling( ScrollType scrollType )
 {
-	if (!m_isScrolling)
+	if (!m_isScrolling && TheStatsCollector != nullptr)
 		TheStatsCollector->startScrollTime();
 
 	m_isScrolling = true;
@@ -96,12 +96,11 @@ void LookAtTranslator::setScrolling( ScrollType scrollType )
 //-----------------------------------------------------------------------------
 void LookAtTranslator::stopScrolling()
 {
-	m_isScrolling = false;
-	m_scrollType = SCROLL_NONE;
-
-	if (m_isScrolling)
+	if (m_isScrolling && TheStatsCollector != nullptr)
 		TheStatsCollector->endScrollTime();
 
+	m_isScrolling = false;
+	m_scrollType = SCROLL_NONE;
 }
 
 //-----------------------------------------------------------------------------
