@@ -353,7 +353,8 @@ void SDL3Mouse::scaleMouseCoordinates(int rawX, int rawY, Uint32 windowID, int& 
 	}
 
 	int winW = 0, winH = 0;
-	SDL_GetWindowSizeInPixels(window, &winW, &winH);
+	// Mouse events are delivered in logical window points, so scale against logical window size
+	SDL_GetWindowSize(window, &winW, &winH);
 
 	int intW = TheDisplay->getWidth();
 	int intH = TheDisplay->getHeight();
