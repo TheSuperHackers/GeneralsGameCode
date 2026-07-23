@@ -306,9 +306,7 @@ void W3DDisplayString::setFont( GameFont *font )
 	// set the font in our renderer
 	m_textRenderer.Set_Font( static_cast<FontCharsClass *>(m_font->fontData) );
 
-	// TheSuperHackers @fix bobtista 19/07/2026 Guard against null bold font to prevent crash when font loading fails
-	GameFont *boldFont = TheFontLibrary->getFont( font->nameString, font->pointSize, TRUE );
-	if( boldFont != nullptr )
+	if( GameFont *boldFont = TheFontLibrary->getFont( font->nameString, font->pointSize, TRUE ) )
 	{
 		m_textRendererHotKey.Set_Font( static_cast<FontCharsClass *>(boldFont->fontData) );
 	}
