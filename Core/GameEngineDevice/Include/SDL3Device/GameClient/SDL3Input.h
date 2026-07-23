@@ -130,7 +130,10 @@ public:
 	static constexpr float AXIS_MAX = 32767.0f;
 	static constexpr int TRIGGER_THRESHOLD = 16384;
 	static constexpr float DEFAULT_DEADZONE = 0.15f;
-	static constexpr float DEFAULT_CURSOR_SPEED = 800.0f;
+	static constexpr float DESIGNED_WINDOW_HEIGHT = 1440.0f;
+	static constexpr float DEFAULT_CURSOR_SPEED = 1226.6667f;
+	static constexpr float DEFAULT_CURSOR_ACCELERATION = 7200.0f;
+	static constexpr float DEFAULT_CURSOR_DECELERATION = 14400.0f;
 
 private:
 	struct GamepadState
@@ -176,7 +179,10 @@ private:
 	// Gamepad state
 	GamepadState m_state;
 
-	Bool m_precisionMode;
 	Uint64 m_lastUpdateTime;
+	float m_cursorVelocityX;
+	float m_cursorVelocityY;
+	float m_cursorRemainderX;
+	float m_cursorRemainderY;
 	Bool m_isQuitting;
 };
