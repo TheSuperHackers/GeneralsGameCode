@@ -16,14 +16,13 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Lib/BaseType.h"
 #include "SDL3Main.h"
 
-#include <cstdio>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
 #include "AppMain.h"
-#include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/GlobalData.h"

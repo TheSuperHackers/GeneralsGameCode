@@ -16,15 +16,12 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Lib/BaseType.h"
 #include "AppMain.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <cstdlib>
-#include <cstdio>
 #include <crtdbg.h>
-
-#include "Lib/BaseType.h"
 #include "Common/CommandLine.h"
 #include "Common/CriticalSection.h"
 #include "Common/Debug.h"
@@ -161,7 +158,7 @@ void getSplashFilePath(Char* outBuffer, UnsignedInt bufferSize)
 		return;
 
 	const char* fileName = "Install_Final.bmp";
-	snprintf(outBuffer, bufferSize, "Data/%s/%s", GetRegistryLanguage().str(), fileName);
+	sprintf(outBuffer, "Data/%s/%s", GetRegistryLanguage().str(), fileName);
 	FILE* fileImage = fopen(outBuffer, "rb");
 	if (fileImage)
 	{
@@ -169,7 +166,7 @@ void getSplashFilePath(Char* outBuffer, UnsignedInt bufferSize)
 	}
 	else
 	{
-		snprintf(outBuffer, bufferSize, "%s", fileName);
+		sprintf(outBuffer, "%s", fileName);
 	}
 }
 
