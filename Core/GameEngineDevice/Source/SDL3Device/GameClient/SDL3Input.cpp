@@ -66,10 +66,10 @@ void SDL3Mouse::init()
 {
 	Mouse::init();
 
-	m_inputMovesAbsolute = TRUE;
+	m_inputMovesAbsolute = true;
 
 	// Show cursor by default
-	setVisibility(TRUE);
+	setVisibility(true);
 }
 
 void SDL3Mouse::reset()
@@ -77,7 +77,7 @@ void SDL3Mouse::reset()
 	Mouse::reset();
 
 	releaseCapture();
-	setVisibility(TRUE);
+	setVisibility(true);
 }
 
 void SDL3Mouse::update()
@@ -326,7 +326,7 @@ void SDL3Mouse::translateEvent(const SDL_Event& event, MouseIO* result)
 			rawX = (int)mx;
 			rawY = (int)my;
 			windowID = event.wheel.windowID;
-			result->wheelPos = (Int)(event.wheel.y * 120);    // MOUSE_WHEEL_DELTA
+			result->wheelPos = (Int)(event.wheel.y * MOUSE_WHEEL_DELTA);
 			break;
 		}
 
@@ -392,7 +392,7 @@ void SDL3Keyboard::init() { Keyboard::init(); }
 void SDL3Keyboard::reset() { Keyboard::reset(); }
 void SDL3Keyboard::update() { Keyboard::update(); }
 
-Bool SDL3Keyboard::getCapsState() { return FALSE; }
+Bool SDL3Keyboard::getCapsState() { return false; }
 
 void SDL3Keyboard::getKey(KeyboardIO* key)
 {
@@ -675,9 +675,9 @@ SDL3InputManager::SDL3InputManager(SDL_Window* window)
 	, m_keyNextFree(0)
 	, m_keyNextGet(0)
 	, m_gamepad(nullptr)
-	, m_precisionMode(FALSE)
+	, m_precisionMode(false)
 	, m_lastUpdateTime(0)
-	, m_isQuitting(FALSE)
+	, m_isQuitting(false)
 {
 	memset(m_mouseEvents, 0, sizeof(m_mouseEvents));
 	memset(m_keyEvents, 0, sizeof(m_keyEvents));
@@ -772,27 +772,27 @@ void SDL3InputManager::update()
 Bool SDL3InputManager::getNextMouseEvent(SDL_Event& outEvent)
 {
 	if (m_mouseEvents[m_mouseNextGet].type == SDL_EVENT_FIRST)
-		return FALSE;
+		return false;
 
 	SDL_Event* event = &m_mouseEvents[m_mouseNextGet];
 	m_mouseNextGet = (m_mouseNextGet + 1) % MAX_MOUSE_EVENTS;
 
 	outEvent = *event;
 	event->type = SDL_EVENT_FIRST;
-	return TRUE;
+	return true;
 }
 
 Bool SDL3InputManager::getNextKeyboardEvent(SDL_Event& outEvent)
 {
 	if (m_keyEvents[m_keyNextGet].type == SDL_EVENT_FIRST)
-		return FALSE;
+		return false;
 
 	SDL_Event* event = &m_keyEvents[m_keyNextGet];
 	m_keyNextGet = (m_keyNextGet + 1) % MAX_KEY_EVENTS;
 
 	outEvent = *event;
 	event->type = SDL_EVENT_FIRST;
-	return TRUE;
+	return true;
 }
 
 void SDL3InputManager::addMouseSDLEvent(const SDL_Event& event)
@@ -954,25 +954,25 @@ void SDL3InputManager::processGamepadInput()
 		SDL_GAMEPAD_BUTTON_INVALID,
 		m_state.stickLeft,
 		rx < -DEADZONE,
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_LEFT, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_LEFT, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_INVALID,
 		m_state.stickRight,
 		rx > DEADZONE,
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_RIGHT, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_RIGHT, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_INVALID,
 		m_state.stickUp,
 		ry < -DEADZONE,
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_UP, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_UP, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_INVALID,
 		m_state.stickDown,
 		ry > DEADZONE,
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_DOWN, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_DOWN, d); }
 	);
 
 	// 3. BUTTONS & D-PAD (Actions & Hotkeys)
@@ -980,84 +980,84 @@ void SDL3InputManager::processGamepadInput()
 		SDL_GAMEPAD_BUTTON_SOUTH,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_SOUTH],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_SOUTH),
-		[&](bool d) { virtualPulseMouse(SDL_BUTTON_LEFT, d); }
+		[this](bool d) { virtualPulseMouse(SDL_BUTTON_LEFT, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_EAST,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_EAST],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_EAST),
-		[&](bool d) { virtualPulseMouse(SDL_BUTTON_RIGHT, d); }
+		[this](bool d) { virtualPulseMouse(SDL_BUTTON_RIGHT, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_WEST,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_WEST],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_WEST),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_A, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_A, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_NORTH,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_NORTH],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_NORTH),
-		[&](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_STOP); }
+		[this](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_STOP); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_LEFT_SHOULDER,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_LEFT_SHOULDER],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_LEFT_SHOULDER),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_Q, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_Q, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_LSHIFT, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_LSHIFT, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_START,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_START],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_START),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_ESCAPE, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_ESCAPE, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_BACK,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_BACK],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_BACK),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_SPACE, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_SPACE, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_DPAD_LEFT,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_LEFT],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_DPAD_LEFT),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_1, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_1, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_DPAD_UP,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_UP],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_DPAD_UP),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_2, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_2, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_DPAD_RIGHT,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_RIGHT],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_3, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_3, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_DPAD_DOWN,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_DOWN],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_DPAD_DOWN),
-		[&](bool d) { virtualPulseKey(SDL_SCANCODE_4, d); }
+		[this](bool d) { virtualPulseKey(SDL_SCANCODE_4, d); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_LEFT_STICK,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_LEFT_STICK],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_LEFT_STICK),
-		[&](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER); }
+		[this](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_RIGHT_STICK,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_RIGHT_STICK],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_RIGHT_STICK),
-		[&](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_VIEW_COMMAND_CENTER); }
+		[this](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_VIEW_COMMAND_CENTER); }
 	);
 }

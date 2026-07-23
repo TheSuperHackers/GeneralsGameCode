@@ -359,13 +359,15 @@ FunctionLexicon* SDL3GameEngine::createFunctionLexicon()
 
 Radar* SDL3GameEngine::createRadar(Bool dummy)
 {
-	(void)dummy;
+	if (dummy)
+		return NEW RadarDummy;
 	return NEW W3DRadar;
 }
 
 ParticleSystemManager* SDL3GameEngine::createParticleSystemManager(Bool dummy)
 {
-	(void)dummy;
+	if (dummy)
+		return NEW ParticleSystemManagerDummy;
 	return NEW W3DParticleSystemManager;
 }
 
