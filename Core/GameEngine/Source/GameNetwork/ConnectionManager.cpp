@@ -459,20 +459,18 @@ void ConnectionManager::destroyGameMessages() {
  * assumption that a command will only be relayed once.
  */
 void ConnectionManager::doRelay() {
-	NetPacket *packet = nullptr;
-
 	for (size_t i = 0; i < ARRAY_SIZE(m_transport->m_inBuffer); ++i) {
 		if (m_transport->m_inBuffer[i].length > 0) {
 			// This transport buffer has yet to be processed.
 
 			// make a NetPacket out of this data so it can be broken up into individual commands.
-			packet = newInstance(NetPacket)(&(m_transport->m_inBuffer[i]));
+			NetPacket packet(m_transport->m_inBuffer[i]);
 
-			//DEBUG_LOG(("ConnectionManager::doRelay() - got a packet with %d commands", packet->getNumCommands()));
-			//LOGBUFFER( packet->getData(), packet->getLength() );
+			//DEBUG_LOG(("ConnectionManager::doRelay() - got a packet with %d commands", packet.getNumCommands()));
+			//LOGBUFFER( packet.getData(), packet.getLength() );
 
 			// Get the command list from the packet.
-			NetCommandList *cmdList = packet->getCommandList();
+			NetCommandList *cmdList = packet.getCommandList();
 
 			// Iterate through the commands in this packet and send them to the proper connections.
 			for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext()) {
@@ -486,10 +484,6 @@ void ConnectionManager::doRelay() {
 					sendRemoteCommand(cmd);
 				}
 			}
-
-			// Delete this packet since we won't be needing it anymore.
-			deleteInstance(packet);
-			packet = nullptr;
 
 			deleteInstance(cmdList);
 			cmdList = nullptr;
@@ -510,10 +504,6 @@ void ConnectionManager::doRelay() {
 			sendRemoteCommand(cmd);
 		}
 	}
-
-	// Delete this packet since we won't be needing it anymore.
-	deleteInstance(packet);
-	packet = nullptr;
 
 	deleteInstance(cmdList);
 	cmdList = nullptr;

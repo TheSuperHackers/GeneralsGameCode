@@ -522,7 +522,6 @@ static PoolSizeRec PoolSizes[] =
 	{ "Campaign", 32, 32 },
 	{ "Mission", 32, 32 },
 	{ "ModalWindow", 32, 32 },
-	{ "NetPacket", 32, 32 },
 	{ "AISideInfo", 32, 32 },
 	{ "AISideBuildList", 32, 32 },
 	{ "MetaMapRec", 256, 32 },
