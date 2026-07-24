@@ -89,8 +89,6 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	// create the buffer for the huge message and fill the buffer with that message.
 	ref->getCommand()->copyBytesForNetPacket(bigPacketData, *ref);
 
-	NetCommandList* commandList = newInstance(NetCommandList);
-
 	// create the wrapper command message we'll be using.
 	NetWrapperCommandMsg *wrapperMsg = newInstance(NetWrapperCommandMsg);
 	// get the amount of space needed for the wrapper message, not including the wrapped command data.
@@ -101,6 +99,8 @@ NetCommandList *NetPacket::ConstructBigCommandList(NetCommandRef *ref)
 	if ((bufferSize % commandSizePerPacket) > 0) {
 		++numChunks;
 	}
+
+	NetCommandList* commandList = newInstance(NetCommandList);
 
 	UnsignedInt currentChunk = 0;
 	UnsignedInt bigPacketCurrentOffset = 0;
