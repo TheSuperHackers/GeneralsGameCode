@@ -3765,7 +3765,8 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
 	// enough to span them. At normal zoom the footprint is smaller than the normal window, so this is a
 	// no-op and behavior is unchanged; the window only grows - bounded by the map extent - as the camera
 	// zooms out. The size is snapped to whole vertex-buffer tiles so the terrain reallocates only when a
-	// zoom threshold is crossed, and a single square size keeps it stable as the camera rotates.
+	// zoom threshold is crossed, and a single square size avoids swapping the draw dimensions as the
+	// camera rotates.
 	//
 	// This also applies to the scripted camera (for example the main menu shell map), whose view can reach
 	// past the regular draw window and would otherwise leave the ground uncovered.
@@ -3830,17 +3831,25 @@ bool W3DView::getDesiredTerrainDrawSize(ICoord2D &dimensions) const
 			}
 		}
 
-		// Use a single square size (the larger footprint dimension) so the window does not reallocate as the
-		// camera rotates, plus one tile block of margin to match the search padding updateCenter() applies.
+		// Use a single square size (the larger footprint dimension) so the window covers the footprint at
+		// any camera yaw without swapping its X and Y extents. Add a small margin for the centering
+		// tolerance: updateCenter() only recenters the window once it has drifted by more than a couple of
+		// tiles (CENTER_LIMIT), so the drawn window can trail the footprint by that much.
 		const Real footprintSpanX = footprintMaxX - footprintMinX;
 		const Real footprintSpanY = footprintMaxY - footprintMinY;
 		const Real footprintSpan = (footprintSpanX > footprintSpanY) ? footprintSpanX : footprintSpanY;
-		Int footprintTiles = (Int)(footprintSpan / MAP_XY_FACTOR) + 1 + VERTEX_BUFFER_TILE_LENGTH;
-		if (footprintTiles > mapExtent)
-			footprintTiles = mapExtent;
+		const Int centeringMarginTiles = 4;
+		const Int footprintTiles = (Int)(footprintSpan / MAP_XY_FACTOR) + centeringMarginTiles;
 
-		// Snap up to 1 + N * VERTEX_BUFFER_TILE_LENGTH to match the engine's tile-based draw sizes.
-		const Int zoomDrawSize = ((footprintTiles - 1 + VERTEX_BUFFER_TILE_LENGTH) / VERTEX_BUFFER_TILE_LENGTH) * VERTEX_BUFFER_TILE_LENGTH + 1;
+		// Snap up to the smallest tile-based draw size (1 + N * VERTEX_BUFFER_TILE_LENGTH) that still covers
+		// the footprint. Growing only to the required block count - rather than always adding a whole spare
+		// block - keeps this a no-op at normal zoom and avoids drawing an extra ring of terrain blocks.
+		Int blocks = (footprintTiles + VERTEX_BUFFER_TILE_LENGTH - 1) / VERTEX_BUFFER_TILE_LENGTH;
+		if (blocks < 1)
+			blocks = 1;
+		Int zoomDrawSize = 1 + blocks * VERTEX_BUFFER_TILE_LENGTH;
+		if (zoomDrawSize > mapExtent)
+			zoomDrawSize = mapExtent;
 		if (zoomDrawSize > dimensions.x)
 			dimensions.x = zoomDrawSize;
 		if (zoomDrawSize > dimensions.y)
