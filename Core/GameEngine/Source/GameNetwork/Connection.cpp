@@ -152,8 +152,9 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 			// the message doesn't fit in a single packet, need to split it up.
 			if (NetCommandList* list = NetPacket::ConstructBigCommandList(tempref)) {
 				for (NetCommandRef* ref1 = list->getFirstMessage(); ref1 != nullptr; ref1 = ref1->getNext()) {
-					NetCommandRef* ref2 = m_netCommandList->addMessage(ref1->getCommand());
-					ref2->setRelay(relay);
+					if (NetCommandRef* ref2 = m_netCommandList->addMessage(ref1->getCommand())) {
+						ref2->setRelay(relay);
+					}
 				}
 
 				deleteInstance(list);
