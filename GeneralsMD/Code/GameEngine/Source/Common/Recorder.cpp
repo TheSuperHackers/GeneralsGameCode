@@ -1091,8 +1091,6 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		}
 	}
 
-	m_mode = RECORDERMODETYPE_PLAYBACK;
-
 	ReplayHeader header;
 	header.forPlayback = TRUE;
 	header.filename = filename;
@@ -1201,6 +1199,11 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		TheCommandList->appendMessage( msg );
 		InitRandom( m_gameInfo.getSeed() );
 	}
+
+	// TheSuperHackers @bugfix bobtista 25/07/2026 Enter playback mode only once the playback is ready.
+	// Previously a failed open left the recorder in playback mode with a NULL m_file, and the next
+	// update dereferenced it, for example when the replay is deleted during the version mismatch prompt.
+	m_mode = RECORDERMODETYPE_PLAYBACK;
 
 	m_currentReplayFilename = filename;
 	m_playbackFrameCount = header.frameCount;
