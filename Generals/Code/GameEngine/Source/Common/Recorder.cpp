@@ -1145,8 +1145,6 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	DEBUG_ASSERTCRASH(!exeDifferent && !iniDifferent, (debugString.str()));
 #endif
 
-	TheWritableGlobalData->m_pendingFile = m_gameInfo.getMap();
-
 #ifdef DEBUG_LOGGING
 	if (header.localPlayerIndex >= 0)
 	{
@@ -1179,6 +1177,13 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	TheCommandList->reset();
 
 	readNextFrame();
+	// readNextFrame() closes m_file via stopPlayback() if the first frame cannot be read.
+	if(m_file == nullptr)
+	{
+		return FALSE;
+	}
+
+	TheWritableGlobalData->m_pendingFile = m_gameInfo.getMap();
 
 	// send a message to the logic for a new game
 	if (!m_doingAnalysis)
