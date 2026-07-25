@@ -1684,8 +1684,6 @@ void FlightDeckBehavior::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_startedProductionFrame );
 	xfer->xferUnsignedInt( &m_nextAllowedProductionFrame );
 	xfer->xferObjectID( &m_designatedTarget );
-	// TheSuperHackers @bugfix bobtista 22/07/2026 Initialize the transfer value so saving does not
-	// overwrite m_designatedCommand with an uninitialized value.
 	Int commandType = (Int)m_designatedCommand;
 	xfer->xferInt( &commandType );
 	m_designatedCommand = (AICommandType)commandType;
