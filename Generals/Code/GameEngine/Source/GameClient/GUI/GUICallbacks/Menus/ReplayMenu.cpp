@@ -548,7 +548,7 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 
 }
 
-static void showReplayLoadFailedAndRefreshList()
+static void handleReplayLoadFailure()
 {
 	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayLoadFailedTitle", L"REPLAY CANNOT BE LOADED");
 	UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayLoadFailed", L"The replay file could not be opened or is invalid.");
@@ -594,7 +594,7 @@ void reallyLoadReplay()
 
 	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
 	{
-		showReplayLoadFailedAndRefreshList();
+		handleReplayLoadFailure();
 		return;
 	}
 
@@ -613,7 +613,7 @@ void reallyLoadReplay()
 	}
 	else
 	{
-		showReplayLoadFailedAndRefreshList();
+		handleReplayLoadFailure();
 	}
 }
 
@@ -630,7 +630,7 @@ static void loadReplay(UnicodeString filename)
 	{
 		// TheSuperHackers @bugfix Prompts a message box when the replay was deleted by the user while the Replay Menu was opened.
 
-		showReplayLoadFailedAndRefreshList();
+		handleReplayLoadFailure();
 	}
 	else if(mapData == nullptr)
 	{
@@ -657,7 +657,7 @@ static void loadReplay(UnicodeString filename)
 		}
 		else
 		{
-			showReplayLoadFailedAndRefreshList();
+			handleReplayLoadFailure();
 		}
 	}
 }
