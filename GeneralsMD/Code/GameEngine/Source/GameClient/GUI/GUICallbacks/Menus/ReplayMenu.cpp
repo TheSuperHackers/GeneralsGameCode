@@ -559,6 +559,14 @@ static void showReplayLoadFailedAndRefreshList()
 	PopulateReplayFileListbox(listboxReplayFiles);
 }
 
+static void showReplayMapNotFound()
+{
+	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFoundTitle", L"MAP NOT FOUND");
+	UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFound", L"This replay cannot be loaded because the map was not found on this device.");
+
+	MessageBoxOk(title, body, nullptr);
+}
+
 //-------------------------------------------------------------------------------------------------
 
 void reallyLoadReplay()
@@ -587,6 +595,12 @@ void reallyLoadReplay()
 	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
 	{
 		showReplayLoadFailedAndRefreshList();
+		return;
+	}
+
+	if(mapData == nullptr)
+	{
+		showReplayMapNotFound();
 		return;
 	}
 
@@ -622,10 +636,7 @@ static void loadReplay(UnicodeString filename)
 	{
 		// TheSuperHackers @bugfix Prompts a message box when the map used by the replay was not found.
 
-		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFoundTitle", L"MAP NOT FOUND");
-		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFound", L"This replay cannot be loaded because the map was not found on this device.");
-
-		MessageBoxOk(title, body, nullptr);
+		showReplayMapNotFound();
 	}
 	else if(!TheRecorder->replayMatchesGameVersion(header))
 	{
