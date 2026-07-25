@@ -548,6 +548,19 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 
 }
 
+static void showReplayNotFoundAndRefreshList()
+{
+	UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
+	UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
+
+	MessageBoxOk(title, body, nullptr);
+
+	GadgetListBoxReset(listboxReplayFiles);
+	PopulateReplayFileListbox(listboxReplayFiles);
+}
+
+//-------------------------------------------------------------------------------------------------
+
 void reallyLoadReplay()
 {
 	UnicodeString filename;
@@ -573,13 +586,7 @@ void reallyLoadReplay()
 
 	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
 	{
-		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
-		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
-
-		MessageBoxOk(title, body, nullptr);
-
-		GadgetListBoxReset(listboxReplayFiles);
-		PopulateReplayFileListbox(listboxReplayFiles);
+		showReplayNotFoundAndRefreshList();
 		return;
 	}
 
@@ -589,6 +596,10 @@ void reallyLoadReplay()
 		{
 			parentReplayMenu->winHide(TRUE);
 		}
+	}
+	else
+	{
+		showReplayNotFoundAndRefreshList();
 	}
 }
 
@@ -605,10 +616,7 @@ static void loadReplay(UnicodeString filename)
 	{
 		// TheSuperHackers @bugfix Prompts a message box when the replay was deleted by the user while the Replay Menu was opened.
 
-		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
-		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
-
-		MessageBoxOk(title, body, nullptr);
+		showReplayNotFoundAndRefreshList();
 	}
 	else if(mapData == nullptr)
 	{
@@ -627,11 +635,18 @@ static void loadReplay(UnicodeString filename)
 	}
 	else
 	{
-		TheRecorder->playbackFile(asciiFilename);
-
-		if(parentReplayMenu != nullptr)
+		// TheSuperHackers @bugfix bobtista 25/07/2026 Keep the Replay Menu open when the playback
+		// could not be started, for example when the replay was deleted after it was validated above.
+		if(TheRecorder->playbackFile(asciiFilename))
 		{
-			parentReplayMenu->winHide(TRUE);
+			if(parentReplayMenu != nullptr)
+			{
+				parentReplayMenu->winHide(TRUE);
+			}
+		}
+		else
+		{
+			showReplayNotFoundAndRefreshList();
 		}
 	}
 }
