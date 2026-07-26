@@ -128,7 +128,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	// seek to the beginning of the directory listing.
 	fp->seek(0x10, File::START);
 	// read in each directory listing.
-	ArchivedFileInfo *fileInfo = NEW ArchivedFileInfo;
+	ArchivedFileInfo fileInfo;
 
 	for (Int i = 0; i < numLittleFiles; ++i) {
 		Int filesize = 0;
@@ -139,9 +139,9 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 		filesize = betoh(filesize);
 		fileOffset = betoh(fileOffset);
 
-		fileInfo->m_archiveFilename = archiveFileName;
-		fileInfo->m_offset = fileOffset;
-		fileInfo->m_size = filesize;
+		fileInfo.m_archiveFilename = archiveFileName;
+		fileInfo.m_offset = fileOffset;
+		fileInfo.m_size = filesize;
 
 		// read in the path name of the file.
 		Int pathIndex = -1;
@@ -155,8 +155,8 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 			--filenameIndex;
 		}
 
-		fileInfo->m_filename = (char *)(buffer + filenameIndex + 1);
-		fileInfo->m_filename.toLower();
+		fileInfo.m_filename = (char *)(buffer + filenameIndex + 1);
+		fileInfo.m_filename.toLower();
 		buffer[filenameIndex + 1] = 0;
 
 		AsciiString path;
@@ -164,16 +164,13 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 
 		AsciiString debugpath;
 		debugpath = path;
-		debugpath.concat(fileInfo->m_filename);
+		debugpath.concat(fileInfo.m_filename);
 //		DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
 
-		archiveFile->addFile(path, fileInfo);
+		archiveFile->addFile(path, &fileInfo);
 	}
 
 	archiveFile->attachFile(fp);
-
-	delete fileInfo;
-	fileInfo = nullptr;
 
 	// leave fp open as the archive file will be using it.
 
