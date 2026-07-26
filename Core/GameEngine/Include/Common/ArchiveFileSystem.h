@@ -143,9 +143,6 @@ public:
 
 	virtual Bool	loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) = 0;
 
-	// Unprotected this for copy-protection routines
-	ArchiveFile* getArchiveFile(const AsciiString& filename, FileInstance instance = 0) const;
-
 	void loadMods();
 
 	ArchivedDirectoryInfo* friend_getArchivedDirectoryInfo(const Char* directory);
@@ -160,6 +157,7 @@ protected:
 		AsciiString lastToken; ///< Synonymous for file name if the search directory was a file path
 	};
 
+	ArchiveFile* getArchiveFile(const AsciiString& filename, FileInstance instance = 0) const;
 	ArchivedDirectoryInfoResult getArchivedDirectoryInfo(const Char* directory);
 
 	virtual void loadIntoDirectoryTree(ArchiveFile *archiveFile, Bool overwrite = FALSE);	///< load the archive file's header information and apply it to the global archive directory tree.
