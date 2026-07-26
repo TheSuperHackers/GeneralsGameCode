@@ -2100,16 +2100,12 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 	if (m_propBuffer) {
 		m_propBuffer->drawProps(rinfo);
 	}
-	#ifdef DO_SCORCH
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
 
-		ShaderClass::Invalidate();
-		if (!ShaderClass::Is_Backface_Culling_Inverted()) {
-			drawScorches();
-		}
-	#endif
+		drawScorches();
+
 		DX8Wrapper::Set_Texture(0,nullptr);
 		DX8Wrapper::Set_Texture(1,nullptr);
 		m_stageTwoTexture->restore();
