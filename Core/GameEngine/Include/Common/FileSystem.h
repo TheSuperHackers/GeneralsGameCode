@@ -173,8 +173,8 @@ protected:
 	};
 	typedef std::hash_map<
 		rts::string_key<AsciiString>, FileExistData,
-		rts::string_key_hash<AsciiString>,
-		rts::string_key_equal<AsciiString>/**/> FileExistMap;
+		rts::string_key_hash,
+		rts::string_key_equal> FileExistMap;
 
 	mutable FileExistMap m_fileExist;
 	mutable FastCriticalSectionClass m_fileExistMutex;
