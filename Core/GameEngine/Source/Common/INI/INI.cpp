@@ -189,7 +189,7 @@ INI::INI()
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
+UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadType, Xfer *pXfer, LoadFlags loadFlags )
 {
 	UnsignedInt filesRead = 0;
 
@@ -214,10 +214,11 @@ UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadTyp
 	}
 
 	// Load any additional ini files from a "filename" directory and its subdirectories.
-	filesRead += loadDirectory(iniDir, loadType, pXfer, subdirs);
+	filesRead += loadDirectory(iniDir, loadType, pXfer, loadFlags & ~LoadFlags_ExpectFileFound);
 
 	// Expect to open and load at least one file.
-	if (filesRead == 0)
+	const Bool expectFileFound = (loadFlags & LoadFlags_ExpectFileFound) != 0;
+	if (expectFileFound && filesRead == 0)
 	{
 		throw INI_CANT_OPEN_FILE;
 	}
@@ -230,7 +231,7 @@ UnsignedInt INI::loadFileDirectory( AsciiString fileDirName, INILoadType loadTyp
 	* If we are to load subdirectories, we will load them *after* we load all the
 	* files in the current directory */
 //-------------------------------------------------------------------------------------------------
-UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, Bool subdirs )
+UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer *pXfer, LoadFlags loadFlags )
 {
 	UnsignedInt filesRead = 0;
 
@@ -238,6 +239,7 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 	if( dirName.isEmpty() )
 		throw INI_INVALID_DIRECTORY;
 
+	const Bool subdirs = (loadFlags & LoadFlags_SearchSubDirs) != 0;
 	FilenameList filenameList;
 	dirName.concat('\\');
 	TheFileSystem->getFileListInDirectory(dirName, "*.ini", filenameList, subdirs);
@@ -266,6 +268,13 @@ UnsignedInt INI::loadDirectory( AsciiString dirName, INILoadType loadType, Xfer 
 			filesRead += load( *it, loadType, pXfer );
 		}
 		++it;
+	}
+
+	// Expect to open and load at least one file.
+	const Bool expectFileFound = (loadFlags & LoadFlags_ExpectFileFound) != 0;
+	if (expectFileFound && filesRead == 0)
+	{
+		throw INI_CANT_OPEN_FILE;
 	}
 
 	return filesRead;
