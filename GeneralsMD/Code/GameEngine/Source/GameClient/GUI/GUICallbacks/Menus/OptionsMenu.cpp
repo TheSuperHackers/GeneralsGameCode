@@ -982,9 +982,12 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	buttonFirewallRefreshID	= TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:ButtonFirewallRefresh" );
 	buttonFirewallRefresh		= TheWindowManager->winGetWindowFromId( nullptr, buttonFirewallRefreshID);
 
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak 26/07/2026 Hide the obsolete Send Delay check box
 	GameWindow *checkSendDelay = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:CheckSendDelay"));
 	if (checkSendDelay)
 		checkSendDelay->winHide(TRUE);
+#endif
 
 	checkDrawAnchorID       = TheNameKeyGenerator->nameToKey( "OptionsMenu.wnd:CheckBoxDrawAnchor" );
 	checkDrawAnchor				 = TheWindowManager->winGetWindowFromId( nullptr, checkDrawAnchorID);
