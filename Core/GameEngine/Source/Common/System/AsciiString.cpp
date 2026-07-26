@@ -51,6 +51,9 @@
 
 /*static*/ const AsciiString AsciiString::TheEmptyString;
 
+namespace
+{
+
 //-----------------------------------------------------------------------------
 inline char* skipSeps(char* p, const char* seps)
 {
@@ -83,6 +86,37 @@ inline char* skipNonWhitespace(char* p)
 	return p;
 }
 
+
+//-----------------------------------------------------------------------------
+struct StringCaseInfo
+{
+	StringCaseInfo()
+		: length(0)
+		, lowercaseCount(0)
+		, uppercaseCount(0)
+	{}
+
+	size_t length;
+	size_t lowercaseCount;
+	size_t uppercaseCount;
+};
+
+static StringCaseInfo getStringCaseInfo(const char *str)
+{
+	StringCaseInfo info;
+	const char* begin = str;
+	while (*str)
+	{
+		info.lowercaseCount += (size_t)(bool)islower((unsigned char)*str);
+		info.uppercaseCount += (size_t)(bool)isupper((unsigned char)*str);
+		++str;
+	}
+	info.length = static_cast<size_t>(str - begin);
+	return info;
+}
+
+} // namespace
+
 // -----------------------------------------------------
 AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data)
 {
@@ -96,7 +130,8 @@ AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data
 #ifdef RTS_DEBUG
 void AsciiString::validate() const
 {
-	if (!m_data) return;
+	if (!m_data)
+		return;
 	DEBUG_ASSERTCRASH(m_data->m_refCount > 0, ("m_refCount is zero"));
 	DEBUG_ASSERTCRASH(m_data->m_refCount < 32000, ("m_refCount is suspiciously large"));
 	DEBUG_ASSERTCRASH(m_data->m_numCharsAllocated > 0, ("m_numCharsAllocated is zero"));
@@ -370,19 +405,24 @@ void AsciiString::trimEnd(const char c)
 void AsciiString::toLower()
 {
 	validate();
-	if (m_data)
-	{
-		char buf[MAX_FORMAT_BUF_LEN];
-		strcpy(buf, peek());
 
-		char *c = buf;
-		while (c && *c)
-		{
-			*c = tolower(*c);
-			c++;
-		}
-		set(buf);
+	if (m_data == nullptr)
+		return;
+
+	const StringCaseInfo info = getStringCaseInfo(m_data->peek());
+
+	if (info.uppercaseCount == 0)
+		return;
+
+	ensureUniqueBufferOfSize(info.length + 1, true, nullptr, nullptr);
+
+	char* str = m_data->peek();
+	while (*str)
+	{
+		*str = tolower((unsigned char)*str);
+		++str;
 	}
+
 	validate();
 }
 
