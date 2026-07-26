@@ -64,10 +64,15 @@ public:
 	void									getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const;
 
 	void									addFile(const AsciiString& path, const ArchivedFileInfo *fileInfo); ///< add this file to our directory tree.
+	Bool									ignoreFile(const AsciiString& filename, Bool ignore);
+	Bool									ignoreDirectory(const AsciiString& directory, Bool ignore);
 
 protected:
 	void									getFileListInDirectory(const DetailedArchivedDirectoryInfo *dirInfo, const AsciiString& currentDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const;
 	const ArchivedFileInfo *		getArchivedFileInfo(const AsciiString& filename) const;	///< return the ArchivedFileInfo from the directory tree.
+
+private:
+	void									ignoreDirectory(DetailedArchivedDirectoryInfo *dirInfo, Bool ignore);
 
 protected:
 	File *m_file; ///< file pointer to the archive file on disk.  Kept open so we don't have to continuously open and close the file all the time.

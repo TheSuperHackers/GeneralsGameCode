@@ -180,3 +180,17 @@ inline const wchar_t* getExtension(const wchar_t* path)
 
 	return lastDot;
 }
+
+// Returns whether the given path is assumed to be a file path or directory path.
+// Requirements for file path are: Must contain a dot in the trailing name after the last slash.
+inline bool isFilePath(const char* path)
+{
+	return getExtension(path) != nullptr;
+}
+
+// Returns whether the given path is assumed to be a file path or directory path.
+// Requirements for file path are: Must contain a dot in the trailing name after the last slash.
+inline bool isFilePath(const wchar_t* path)
+{
+	return getExtension(path) != nullptr;
+}

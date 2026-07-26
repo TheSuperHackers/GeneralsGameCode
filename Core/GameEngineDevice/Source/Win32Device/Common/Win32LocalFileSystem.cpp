@@ -51,6 +51,10 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t b
 		return nullptr;
 	}
 
+	if (isFileIgnored(filename)) {
+		return nullptr;
+	}
+
 	if (access & File::WRITE) {
 		// if opening the file for writing, we need to make sure the directory is there
 		// before we try to create the file.
@@ -116,6 +120,11 @@ void Win32LocalFileSystem::reset()
 Bool Win32LocalFileSystem::doesFileExist(const Char *filename) const
 {
 	//USE_PERF_TIMER(Win32LocalFileSystem_doesFileExist)
+
+	if (isFileIgnored(filename)) {
+		return FALSE;
+	}
+
 	if (_access(filename, 0) == 0) {
 		return TRUE;
 	}
@@ -127,6 +136,9 @@ void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDire
 {
 	AsciiString directory = originalDirectory;
 	directory.concat(currentDirectory);
+
+	if (isDirectoryIgnored(directory.str()))
+		return;
 
 	AsciiString asciisearch = directory;
 	asciisearch.concat(searchName);
@@ -142,6 +154,11 @@ void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDire
 				// a stl set should only allow one copy of each filename
 				AsciiString newFilename = directory;
 				newFilename.concat(findData.cFileName);
+
+				// skip parent directories because they were already tested before.
+				if (isFileIgnored(newFilename.str(), IgnoreFileTestFlags_SkipParentDirectories))
+					continue;
+
 				if (filenameList.find(newFilename) == filenameList.end()) {
 					filenameList.insert(newFilename);
 				}
@@ -176,6 +193,12 @@ void Win32LocalFileSystem::getFileListInDirectory(const AsciiString& currentDire
 
 Bool Win32LocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
+	if (filename.isEmpty())
+		return FALSE;
+
+	if (isFileIgnored(filename.str()))
+		return FALSE;
+
 	WIN32_FIND_DATA findData;
 	HANDLE findHandle = nullptr;
 	findHandle = FindFirstFile(filename.str(), &findData);

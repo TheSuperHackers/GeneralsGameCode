@@ -136,6 +136,10 @@ struct FileInfo {
 // from multiple threads.
 //
 // TheSuperHackers @feature Mauller 24/04/2026 Add extension removal functions
+//
+// TheSuperHackers @feature xezon 26/07/2026 Implements ignore functionality for files and directories in the local
+// and archive file systems. Can be called at any time during engine runtime. Can be controlled by data with
+// FileSystemIgnore definitions in Data/INI/FileSystem.ini .
 //===============================
 class FileSystem : public SubsystemInterface
 {
@@ -156,6 +160,9 @@ public:
 	Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo, FileInstance instance = 0) const; ///< fills in the FileInfo struct for the file given. returns TRUE if successful.
 
 	Bool createDirectory(AsciiString directory); ///< create a directory of the given name.
+
+	Bool ignoreFile(const AsciiString& filename, Bool ignore = true); ///< Ignore this file.
+	Bool ignoreDirectory(const AsciiString& directory, Bool ignore = true); ///< Ignore this directory and all its contents.
 
 	static AsciiString normalizePath(const AsciiString& path);	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
 	static Bool isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath);	///< determines if a file path is within a base path. Both paths must be absolute, but do not need to exist.

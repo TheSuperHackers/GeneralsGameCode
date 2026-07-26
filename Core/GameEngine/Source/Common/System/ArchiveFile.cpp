@@ -128,6 +128,59 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 	}
 }
 
+Bool ArchiveFile::ignoreFile(const AsciiString& filename, Bool ignore)
+{
+	ArchivedFileInfoPtrHashMap::iterator it = m_absFilenameToFileInfo.find(filename);
+	if (it == m_absFilenameToFileInfo.end()) {
+		return false;
+	}
+
+	it->second->m_ignore = ignore;
+	return true;
+}
+
+Bool ArchiveFile::ignoreDirectory(const AsciiString& directory, Bool ignore)
+{
+	DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
+
+	AsciiString token;
+	AsciiString tokenizer = directory;
+	tokenizer.toLower();
+	tokenizer.nextToken(&token, "\\/");
+
+	while (!token.isEmpty()) {
+		DetailedArchivedDirectoryInfoMap::iterator it = dirInfo->m_directories.find(token);
+		if (it == dirInfo->m_directories.end())
+			return false;
+		dirInfo = &it->second;
+		tokenizer.nextToken(&token, "\\/");
+	}
+
+	ignoreDirectory(dirInfo, ignore);
+	return true;
+}
+
+void ArchiveFile::ignoreDirectory(DetailedArchivedDirectoryInfo *dirInfo, Bool ignore)
+{
+	// Ignore this directory
+	dirInfo->m_ignore = ignore;
+
+	// Ignore all files in this directory
+	ArchivedFileInfoMap::iterator fileIt = dirInfo->m_files.begin();
+	for (; fileIt != dirInfo->m_files.end(); ++fileIt) {
+		ArchivedFileInfo &fileInfo = fileIt->second;
+		fileInfo.m_ignore = ignore;
+	}
+
+	// Ignore subdirectories and its files
+	DetailedArchivedDirectoryInfoMap::iterator dirIt = dirInfo->m_directories.begin();
+	for (; dirIt != dirInfo->m_directories.end(); ++dirIt) {
+		DetailedArchivedDirectoryInfo *tempDirInfo = &(dirIt->second);
+		tempDirInfo->m_ignore = ignore;
+		ignoreDirectory(tempDirInfo, ignore);
+	}
+}
+
 void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
 	const DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
@@ -144,6 +197,9 @@ void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, co
 			return;
 
 		dirInfo = &it->second;
+		if (dirInfo->m_ignore)
+			return;
+
 		tokenizer.nextToken(&token, "\\/");
 	}
 
@@ -155,6 +211,8 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 	DetailedArchivedDirectoryInfoMap::const_iterator diriter = dirInfo->m_directories.begin();
 	for (; diriter != dirInfo->m_directories.end(); ++diriter) {
 		const DetailedArchivedDirectoryInfo *tempDirInfo = &(diriter->second);
+		if (tempDirInfo->m_ignore)
+			continue;
 		AsciiString tempDirName = currentDirectory;
 		if (!tempDirName.isEmpty() && !tempDirName.endsWith("\\")) {
 			tempDirName.concat('\\');
@@ -166,6 +224,8 @@ void ArchiveFile::getFileListInDirectory(const DetailedArchivedDirectoryInfo *di
 	ArchivedFileInfoMap::const_iterator fileiter = dirInfo->m_files.begin();
 	for (; fileiter != dirInfo->m_files.end(); ++fileiter) {
 		const ArchivedFileInfo &fileInfo = fileiter->second;
+		if (fileInfo.m_ignore)
+			continue;
 		if (SearchStringMatches(fileInfo.m_filename, searchName)) {
 			AsciiString tempfilename;
 			tempfilename = currentDirectory;
@@ -194,6 +254,9 @@ const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& fil
 {
 	ArchivedFileInfoPtrHashMap::const_iterator it = m_absFilenameToFileInfo.find(filename);
 	if (it == m_absFilenameToFileInfo.end())
+		return nullptr;
+
+	if (it->second->m_ignore)
 		return nullptr;
 
 	return it->second;

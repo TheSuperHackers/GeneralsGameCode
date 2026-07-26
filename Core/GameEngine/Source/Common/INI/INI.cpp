@@ -110,6 +110,7 @@ static const BlockParse theTypeTable[] =
 	{ "DrawGroupInfo",                  INI::parseDrawGroupNumberDefinition },
 	{ "DynamicGameLOD",                 INI::parseDynamicGameLODDefinition },
 	{ "EvaEvent",                       INI::parseEvaEvent },
+	{ "FileSystemIgnore",               INI::parseFileSystemIgnoreDefinition },
 	{ "FXList",                         INI::parseFXListDefinition },
 	{ "GameData",                       INI::parseGameDataDefinition },
 	{ "HeaderTemplate",                 INI::parseHeaderTemplateDefinition },

@@ -134,6 +134,10 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access, size_t buf
 		return nullptr;
 	}
 
+	if (isFileIgnored(filename)) {
+		return nullptr;
+	}
+
 	std::filesystem::path path = fixFilenameFromWindowsPath(filename, access);
 
 	if (path.empty()) {
@@ -204,6 +208,10 @@ Bool StdLocalFileSystem::doesFileExist(const Char *filename) const
 		return FALSE;
 	}
 
+	if (isFileIgnored(filename)) {
+		return FALSE;
+	}
+
 	std::error_code ec;
 	return std::filesystem::exists(path, ec);
 }
@@ -212,6 +220,9 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 {
 	AsciiString directory = originalDirectory;
 	directory.concat(currentDirectory);
+
+	if (isDirectoryIgnored(directory.str()))
+		return;
 
 	AsciiString asciisearch = directory;
 	auto searchExt = std::filesystem::path(searchName.str()).extension();
@@ -243,6 +254,11 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 			// if we haven't already, add this filename to the list.
 			// a stl set should only allow one copy of each filename
 			AsciiString newFilename = iter->path().string().c_str();
+
+			// skip parent directories because they were already tested before.
+			if (isFileIgnored(newFilename.str(), IgnoreFileTestFlags_SkipParentDirectories))
+				continue;
+
 			if (filenameList.find(newFilename) == filenameList.end()) {
 				filenameList.insert(newFilename);
 			}
@@ -278,6 +294,9 @@ Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *file
 	if (path.empty()) {
 		return FALSE;
 	}
+
+	if (isFileIgnored(filename.str()))
+		return FALSE;
 
 	std::error_code ec;
 	auto file_size = std::filesystem::file_size(path, ec);

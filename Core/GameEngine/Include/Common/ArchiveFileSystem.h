@@ -102,6 +102,12 @@ public:
 	AsciiString												m_directoryName;
 	DetailedArchivedDirectoryInfoMap	m_directories;
 	ArchivedFileInfoMap								m_files;
+	Bool m_ignore;
+
+	DetailedArchivedDirectoryInfo()
+		: m_ignore(false)
+	{
+	}
 };
 
 class ArchivedFileInfo
@@ -111,10 +117,12 @@ public:
 	AsciiString m_archiveFilename;
 	UnsignedInt m_offset;
 	UnsignedInt m_size;
+	Bool m_ignore;
 
 	ArchivedFileInfo()
 		: m_offset(0)
 		, m_size(0)
+		, m_ignore(false)
 	{
 	}
 };
@@ -144,6 +152,9 @@ public:
 	virtual Bool	loadBigFilesFromDirectory(AsciiString dir, AsciiString fileMask, Bool overwrite = FALSE) = 0;
 
 	void loadMods();
+
+	Bool ignoreFile(const AsciiString& filename, Bool ignore = true); ///< Ignore all file instances with this name in the Archive System.
+	Bool ignoreDirectory(const AsciiString& directory, Bool ignore = true); ///< Ignore this directory and all its contents in the Archive System.
 
 	ArchivedDirectoryInfo* friend_getArchivedDirectoryInfo(const Char* directory);
 

@@ -62,7 +62,7 @@ File* Win32BIGFile::openFile( const Char *filename, Int access )
 {
 	const ArchivedFileInfo *fileInfo = getArchivedFileInfo(AsciiString(filename));
 
-	if (fileInfo == nullptr) {
+	if (fileInfo == nullptr || fileInfo->m_ignore) {
 		return nullptr;
 	}
 
