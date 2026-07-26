@@ -245,6 +245,48 @@ namespace rts
 		}
 	};
 
+	// TheSuperHackers @info Functor to compare equal paths with. Ignores case, type of slash and trailing slash.
+	struct equal_to_path
+	{
+		bool operator()(const char* __t1, const char* __t2) const noexcept
+		{
+			return comparePath(__t1, __t2) == 0;
+		}
+
+		bool operator()(const AsciiString& __t1, const AsciiString& __t2) const noexcept
+		{
+			return comparePath(__t1.str(), __t2.str()) == 0;
+		}
+	};
+
+	// TheSuperHackers @info Functor to compare lesser paths with. Ignores case, type of slash and trailing slash.
+	struct less_than_path
+	{
+		bool operator()(const char* __t1, const char* __t2) const noexcept
+		{
+			return comparePath(__t1, __t2) < 0;
+		}
+
+		bool operator()(const AsciiString& __t1, const AsciiString& __t2) const noexcept
+		{
+			return comparePath(__t1.str(), __t2.str()) < 0;
+		}
+	};
+
+	// TheSuperHackers @info Functor to hash paths with. Ignores case, type of slash and trailing slash.
+	struct hash_path
+	{
+		size_t operator()(const char* str) const noexcept
+		{
+			return hashPath(str);
+		}
+
+		size_t operator()(const AsciiString& str) const noexcept
+		{
+			return hashPath(str.str());
+		}
+	};
+
 	// TheSuperHackers @info Structs to help create maps that can use C strings for
 	// lookups without the need to allocate a string.
 	template <typename String>
@@ -297,6 +339,25 @@ namespace rts
 		bool operator()(const string_key<String>& a, const string_key<String>& b) const noexcept
 		{
 			return strcmp(a.c_str(), b.c_str()) == 0;
+		}
+	};
+
+	
+	struct string_key_hash_path
+	{
+		template <typename String>
+		size_t operator()(const string_key<String>& key) const noexcept
+		{
+			return hashPath(key.c_str());
+		}
+	};
+
+	struct string_key_equal_to_path
+	{
+		template <typename String>
+		bool operator()(const string_key<String>& a, const string_key<String>& b) const noexcept
+		{
+			return comparePath(a.c_str(), b.c_str()) == 0;
 		}
 	};
 

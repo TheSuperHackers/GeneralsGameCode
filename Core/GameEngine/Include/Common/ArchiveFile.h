@@ -46,6 +46,8 @@ class File;
 
 class ArchiveFile
 {
+	typedef std::hash_map<AsciiString, ArchivedFileInfo*, rts::hash_path, rts::equal_to_path> ArchivedFileInfoPtrHashMap; // Archived file name to archived file info ptr
+
 public:
 	ArchiveFile();
 	virtual ~ArchiveFile();
@@ -72,4 +74,5 @@ protected:
 
 private:
 	DetailedArchivedDirectoryInfo m_rootDirectory;
+	ArchivedFileInfoPtrHashMap m_absFilenameToFileInfo;
 };

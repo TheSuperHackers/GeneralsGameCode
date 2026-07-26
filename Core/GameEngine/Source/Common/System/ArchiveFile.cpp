@@ -117,7 +117,15 @@ void ArchiveFile::addFile(const AsciiString& path, const ArchivedFileInfo *fileI
 		tokenizer.nextToken(&token, "\\/");
 	}
 
-	dirInfo->m_files[fileInfo->m_filename] = *fileInfo;
+	typedef std::pair<ArchivedFileInfoMap::iterator, bool> Result;
+	const Result result = dirInfo->m_files.insert(std::make_pair(fileInfo->m_filename, *fileInfo));
+	if (result.second) {
+		AsciiString filename = path;
+		filename.concat(fileInfo->m_filename);
+		m_absFilenameToFileInfo[filename] = &result.first->second;
+
+		static_assert((std::is_same_v<decltype(dirInfo->m_files), std::map<AsciiString, ArchivedFileInfo>>), "Hash map expects stable references");
+	}
 }
 
 void ArchiveFile::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
@@ -184,36 +192,9 @@ void ArchiveFile::attachFile(File *file)
 
 const ArchivedFileInfo * ArchiveFile::getArchivedFileInfo(const AsciiString& filename) const
 {
-	const DetailedArchivedDirectoryInfo *dirInfo = &m_rootDirectory;
-
-	AsciiString token;
-	AsciiString tokenizer = filename;
-	tokenizer.toLower();
-	tokenizer.nextToken(&token, "\\/");
-
-	while (!token.find('.') || tokenizer.find('.'))
-	{
-		DetailedArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.find(token);
-		if (it != dirInfo->m_directories.end())
-		{
-			dirInfo = &it->second;
-		}
-		else
-		{
-			return nullptr;
-		}
-
-		tokenizer.nextToken(&token, "\\/");
-	}
-
-	ArchivedFileInfoMap::const_iterator it = dirInfo->m_files.find(token);
-	if (it != dirInfo->m_files.end())
-	{
-		return &it->second;
-	}
-	else
-	{
+	ArchivedFileInfoPtrHashMap::const_iterator it = m_absFilenameToFileInfo.find(filename);
+	if (it == m_absFilenameToFileInfo.end())
 		return nullptr;
-	}
 
+	return it->second;
 }
