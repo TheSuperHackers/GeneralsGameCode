@@ -1145,6 +1145,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		}
 	}
 
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak 26/07/2026 Hide the obsolete HTTP Proxy entry and its label
 	NameKeyType textEntryHTTPProxyID = TheNameKeyGenerator->nameToKey("OptionsMenu.wnd:TextEntryHTTPProxy");
 	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, textEntryHTTPProxyID);
 	if (textEntryHTTPProxy)
@@ -1154,6 +1156,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GameWindow *staticTextHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, staticTextHTTPProxyID);
 	if (staticTextHTTPProxy)
 		staticTextHTTPProxy->winHide(TRUE);
+#endif
 
 	// Firewall Port Override
 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
