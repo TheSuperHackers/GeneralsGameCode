@@ -184,10 +184,10 @@ Bool Win32LocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fi
 		return FALSE;
 	}
 
-	fileInfo->timestampHigh = findData.ftLastWriteTime.dwHighDateTime;
-	fileInfo->timestampLow = findData.ftLastWriteTime.dwLowDateTime;
 	fileInfo->sizeHigh = findData.nFileSizeHigh;
 	fileInfo->sizeLow = findData.nFileSizeLow;
+	fileInfo->timestampHigh = findData.ftLastWriteTime.dwHighDateTime;
+	fileInfo->timestampLow = findData.ftLastWriteTime.dwLowDateTime;
 
 	FindClose(findHandle);
 
