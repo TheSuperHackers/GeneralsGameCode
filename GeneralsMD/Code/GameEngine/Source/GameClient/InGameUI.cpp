@@ -6329,6 +6329,9 @@ void InGameUI::drawPlayerInfoList()
 			{
 				if (column == PlayerInfoList::ValueType_MoneyPerMinute)
 				{
+					if (!showMoneyPerMinute)
+						continue;
+
 					playerInfoListValue = formatIncomeValue(currentValues[column]);
 				}
 				else
@@ -6361,7 +6364,7 @@ void InGameUI::drawPlayerInfoList()
 	Int labelX = baseX;
 	for (column = 0; column < PlayerInfoList::LabelType_Count; ++column)
 	{
-		if (!showMoneyPerMinute && column == PlayerInfoList::LabelType_MoneyPerMinute)
+		if (column == PlayerInfoList::LabelType_MoneyPerMinute && !showMoneyPerMinute)
 			continue;
 
 		labelWidths[column] = m_playerInfoList.labels[column]->getWidth();
@@ -6376,7 +6379,7 @@ void InGameUI::drawPlayerInfoList()
 
 		for (column = 0; column < PlayerInfoList::LabelType_Count; ++column)
 		{
-			if (!showMoneyPerMinute && column == PlayerInfoList::LabelType_MoneyPerMinute)
+			if (column == PlayerInfoList::LabelType_MoneyPerMinute && !showMoneyPerMinute)
 				continue;
 
 			m_playerInfoList.labels[column]->draw(columnLabelX[column], drawY, m_playerInfoListLabelColor, m_playerInfoListDropColor);
