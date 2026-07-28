@@ -41,7 +41,7 @@
 /*
 **
 */
-float		WWMath::Random_Float(void)
+float		WWMath::Random_Float()
 {
 	return ((float)(rand() & 0xFFF)) / (float)(0xFFF);
 }

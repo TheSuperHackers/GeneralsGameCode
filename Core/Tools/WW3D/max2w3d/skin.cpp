@@ -157,7 +157,7 @@ SkinWSMObjectClass::SkinWSMObjectClass()
 	pblock = nullptr;
 }
 
-SkinWSMObjectClass::~SkinWSMObjectClass(void)
+SkinWSMObjectClass::~SkinWSMObjectClass()
 {
 	assert(!((InterfacePtr == nullptr) && (SotHWND != nullptr)));
 	if (SotHWND != nullptr) {
@@ -307,7 +307,7 @@ RefResult SkinWSMObjectClass::NotifyRefChanged(Interval changeInt,RefTargetHandl
 	return(REF_SUCCEED);
 }
 
-CreateMouseCallBack * SkinWSMObjectClass::GetCreateMouseCallBack(void)
+CreateMouseCallBack * SkinWSMObjectClass::GetCreateMouseCallBack()
 {
 	/*
 	** The "CreateMouseCallback" is used when creating the
@@ -491,7 +491,7 @@ void SkinWSMObjectClass::Remove_Bones(INodeTab & nodetab)
 	}
 }
 
-void SkinWSMObjectClass::Update_Bone_List(void)
+void SkinWSMObjectClass::Update_Bone_List()
 {
 	assert(BoneListHWND != nullptr);
 
@@ -596,7 +596,7 @@ int SkinWSMObjectClass::Find_Closest_Bone(const Point3 & vertex)
 **
 *******************************************************************************/
 
-SkinModifierClass::SkinModifierClass(void)
+SkinModifierClass::SkinModifierClass()
 {
 	Default_Init();
 }
@@ -617,7 +617,7 @@ SkinModifierClass::SkinModifierClass(INode * node,SkinWSMObjectClass * skin_obj)
 
 }
 
-void SkinModifierClass::Default_Init(void)
+void SkinModifierClass::Default_Init()
 {
 	SubObjSelLevel = VERTEX_SEL_LEVEL;
 	WSMObjectRef = nullptr;
@@ -1392,7 +1392,7 @@ void SkinModifierClass::RemoveSubSelSet(TSTR &setname)
 	Install_Named_Selection_Sets();
 }
 
-void SkinModifierClass::Create_Named_Selection_Sets(void)
+void SkinModifierClass::Create_Named_Selection_Sets()
 {
 	/*
 	** This function creates a named selection set of vertices
@@ -1439,7 +1439,7 @@ void SkinModifierClass::Create_Named_Selection_Sets(void)
 	nodes.DisposeTemporary();
 }
 
-void SkinModifierClass::Install_Named_Selection_Sets(void)
+void SkinModifierClass::Install_Named_Selection_Sets()
 {
 	/*
 	** If we are in sub-object selection mode add the sets
@@ -1525,7 +1525,7 @@ void SkinModifierClass::Auto_Attach_Verts(BOOL all)
 	}
 }
 
-void SkinModifierClass::Unlink_Verts(void)
+void SkinModifierClass::Unlink_Verts()
 {
 	assert(InterfacePtr);
 
@@ -1571,7 +1571,7 @@ void SkinModifierClass::Unlink_Verts(void)
 **
 ****************************************************************************/
 
-void SkinModifierClass::Install_Bone_Influence_Dialog(void)
+void SkinModifierClass::Install_Bone_Influence_Dialog()
 {
 	if (BoneInfluenceHWND != nullptr) return;
 
@@ -1598,7 +1598,7 @@ void SkinModifierClass::Install_Bone_Influence_Dialog(void)
 				0);
 }
 
-void SkinModifierClass::Remove_Bone_Influence_Dialog(void)
+void SkinModifierClass::Remove_Bone_Influence_Dialog()
 {
 	/*
 	** If it is currently up, remove the bone influences dialog

@@ -107,7 +107,7 @@ public:
 	{
 	}
 
-	virtual ~MeshGeometryExportTaskClass(void)
+	virtual ~MeshGeometryExportTaskClass()
 	{
 	}
 
@@ -148,7 +148,7 @@ public:
 	** new unique names.  These meshes are flagged and then new names are generated prior
 	** to exporting.
 	*/
-	bool	Is_Name_Dirty(void)				{ return NameDirty; }
+	bool	Is_Name_Dirty()				{ return NameDirty; }
 	void	Set_Name_Dirty(bool onoff)		{ NameDirty = onoff; }
 
 	/*
@@ -159,18 +159,18 @@ public:
 	/*
 	** Optimization functions
 	*/
-	bool	Is_Single_Material(void);
-	Mtl *	Get_Single_Material(void);
+	bool	Is_Single_Material();
+	Mtl *	Get_Single_Material();
 	void	Split(DynamicVectorClass<MeshGeometryExportTaskClass *> & simple_meshes);
 	void	Reduce_To_Single_Material(int mat_id);
-	bool	Can_Combine(void);
+	bool	Can_Combine();
 	bool	Can_Combine_With(MeshGeometryExportTaskClass * other_mesh);
 	void	Combine_Mesh(MeshGeometryExportTaskClass * other_mesh);
 
 protected:
 
-	virtual int			Get_Geometry_Type(void) { return MESH; }
-	void					Update_Cached_Data(void);
+	virtual int			Get_Geometry_Type() { return MESH; }
+	void					Update_Cached_Data();
 
 	Mesh					MeshData;			// Copy of the mesh data to be exported.
 	W3DAppData2Struct	ExportOptions;		// Copy of the export options in case we want to change them during optimization
@@ -221,7 +221,7 @@ public:
 
 protected:
 
-	virtual int	Get_Geometry_Type(void) { return COLLISIONBOX; }
+	virtual int	Get_Geometry_Type() { return COLLISIONBOX; }
 
 };
 
@@ -262,7 +262,7 @@ public:
 
 protected:
 
-	virtual int	Get_Geometry_Type(void) { return DAZZLE; }
+	virtual int	Get_Geometry_Type() { return DAZZLE; }
 
 };
 
@@ -293,7 +293,7 @@ public:
 
 protected:
 
-	virtual int	Get_Geometry_Type(void) { return NULLOBJ; }
+	virtual int	Get_Geometry_Type() { return NULLOBJ; }
 
 };
 
@@ -320,14 +320,14 @@ public:
 		context.ProgressMeter->Add_Increment();
 	};
 
-	virtual bool Is_Aggregate(void)
+	virtual bool Is_Aggregate()
 	{
 		return true;
 	}
 
 protected:
 
-	virtual int	Get_Geometry_Type(void) { return AGGREGATE; }
+	virtual int	Get_Geometry_Type() { return AGGREGATE; }
 
 };
 
@@ -365,11 +365,11 @@ public:
 		context.ProgressMeter->Add_Increment();
 	};
 
-	virtual bool Is_Proxy(void) { return true; }
+	virtual bool Is_Proxy() { return true; }
 
 protected:
 
-	virtual int	Get_Geometry_Type(void) { return PROXY; }
+	virtual int	Get_Geometry_Type() { return PROXY; }
 
 };
 
@@ -456,7 +456,7 @@ GeometryExportTaskClass::GeometryExportTaskClass(const GeometryExportTaskClass &
  *                                                                                             *
  * HISTORY:                                                                                    *
  *=============================================================================================*/
-GeometryExportTaskClass::~GeometryExportTaskClass(void)
+GeometryExportTaskClass::~GeometryExportTaskClass()
 {
 }
 
@@ -739,7 +739,7 @@ void GeometryExportTaskClass::Generate_Name(char * root,int index,GeometryExport
  * HISTORY:                                                                                    *
  *   10/23/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
+void	MeshGeometryExportTaskClass::Update_Cached_Data()
 {
 	SingleMtl = nullptr;
 	Mtl *	nodemtl = Node->GetMtl();
@@ -836,7 +836,7 @@ void	MeshGeometryExportTaskClass::Update_Cached_Data(void)
  * HISTORY:                                                                                    *
  *   10/20/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool MeshGeometryExportTaskClass::Is_Single_Material(void)
+bool MeshGeometryExportTaskClass::Is_Single_Material()
 {
 	return ((SingleMtl != nullptr) || (Node->GetMtl() == nullptr));
 }
@@ -854,7 +854,7 @@ bool MeshGeometryExportTaskClass::Is_Single_Material(void)
  * HISTORY:                                                                                    *
  *   10/23/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-Mtl* MeshGeometryExportTaskClass::Get_Single_Material(void)
+Mtl* MeshGeometryExportTaskClass::Get_Single_Material()
 {
 	return SingleMtl;
 }
@@ -970,7 +970,7 @@ void MeshGeometryExportTaskClass::Reduce_To_Single_Material(int mat_id)
  * HISTORY:                                                                                    *
  *   10/24/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-bool MeshGeometryExportTaskClass::Can_Combine(void)
+bool MeshGeometryExportTaskClass::Can_Combine()
 {
 	/*
 	** This mesh can't combine at all if:

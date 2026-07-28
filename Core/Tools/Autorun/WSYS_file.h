@@ -109,7 +109,7 @@ class File
 
 
 		virtual Bool	open( const Char *filename, Int access = 0 );				///< Open a file for access
-		virtual void	close( void );																			///< Close the file !!! File object no longer valid after this call !!!
+		virtual void	close();																			///< Close the file !!! File object no longer valid after this call !!!
 
 		virtual Int		read( void *buffer, Int bytes ) = 0 ;						/**< Read the specified number of bytes from the file in to the
 																																			  *  memory pointed at by buffer. Returns the number of bytes read.
@@ -130,16 +130,16 @@ class File
 																																				*  END: means seek the specified number of bytes back from the end of the file
 																																				*/
 		virtual Bool	printf ( const Char *format, ...);									///< Prints formatted string to text file
-		virtual Int		size( void );																				///< Returns the size of the file
-		virtual Int		position( void );																		///< Returns the current read/write position
+		virtual Int		size();																				///< Returns the size of the file
+		virtual Int		position();																		///< Returns the current read/write position
 
 
 		void					setName( const Char *name );												///< Set the name of the file
-		Char*					getName( void );																		///< Returns a pointer to the name of the file
+		Char*					getName();																		///< Returns a pointer to the name of the file
 		Bool					getName( Char *buffer, Int max );										///< Copies the name of the file to the buffer
-		Int						getAccess( void );																	///< Returns file's access flags
+		Int						getAccess();																	///< Returns file's access flags
 
-		void					deleteOnClose ( void );															///< Causes the File object to delete itself when it closes
+		void					deleteOnClose ();															///< Causes the File object to delete itself when it closes
 };
 
 
@@ -149,9 +149,9 @@ class File
 //           Inlining
 //----------------------------------------------------------------------------
 
-inline Char* File::getName( void ) { return m_name;};
-inline Int File::getAccess( void ) { return m_access;};
-inline void File::deleteOnClose( void ) { m_deleteOnClose = TRUE;};
+inline Char* File::getName() { return m_name;};
+inline Int File::getAccess() { return m_access;};
+inline void File::deleteOnClose() { m_deleteOnClose = TRUE;};
 
 
 

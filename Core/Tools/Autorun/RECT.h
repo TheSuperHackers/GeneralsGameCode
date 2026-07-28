@@ -52,7 +52,7 @@ template<class T>
 class TRect
 {
 	public:
-		TRect(void) {}		// Default constructor does nothing by design.
+		TRect() {}		// Default constructor does nothing by design.
 		TRect(T x, T y, T w, T h) : X(x), Y(y), Width(w), Height(h) {}
 		TRect(TPoint2D<T> const & point, T w, T h) : X(point.X), Y(point.Y), Width(w), Height(h) {}
 
@@ -82,28 +82,28 @@ class TRect
 		/*
 		**	Determine is rectangle is valid.
 		*/
-		bool Is_Valid(void) const {return(Width > 0 && Height > 0);}
+		bool Is_Valid() const {return(Width > 0 && Height > 0);}
 		__declspec(property(get=Is_Valid)) bool IsValid;
 
 		/*
 		**	Returns size of rectangle if each discrete location within it is presumed
 		**	to be of size 1.
 		*/
-		int Size(void) const {return(int(Width) * int(Height));}
+		int Size() const {return(int(Width) * int(Height));}
 
 		/*
 		**	Fetch points of rectangle (used as a convenience for the programmer).
 		*/
-		TPoint2D<T> Top_Left(void) const {return(TPoint2D<T>(X, Y));}
+		TPoint2D<T> Top_Left() const {return(TPoint2D<T>(X, Y));}
 		__declspec(property(get=Top_Left)) TPoint2D<T> TopLeft;
 
-		TPoint2D<T> Top_Right(void) const {return(TPoint2D<T>(T(X + Width - 1), Y));}
+		TPoint2D<T> Top_Right() const {return(TPoint2D<T>(T(X + Width - 1), Y));}
 		__declspec(property(get=Top_Right)) TPoint2D<T> TopRight;
 
-		TPoint2D<T> Bottom_Left(void) const {return(TPoint2D<T>(X, T(Y + Height - 1)));}
+		TPoint2D<T> Bottom_Left() const {return(TPoint2D<T>(X, T(Y + Height - 1)));}
 		__declspec(property(get=Bottom_Left)) TPoint2D<T> BottomLeft;
 
-		TPoint2D<T> Bottom_Right(void) const {return(TPoint2D<T>(T(X + Width - 1), T(Y + Height - 1)));}
+		TPoint2D<T> Bottom_Right() const {return(TPoint2D<T>(T(X + Width - 1), T(Y + Height - 1)));}
 		__declspec(property(get=Bottom_Right)) TPoint2D<T> BottomRight;
 
 

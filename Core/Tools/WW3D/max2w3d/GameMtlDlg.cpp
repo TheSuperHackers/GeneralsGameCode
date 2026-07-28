@@ -548,7 +548,7 @@ static BOOL CALLBACK PassCountPanelDlgProc(HWND hwndDlg, UINT msg, WPARAM wParam
 	return res;
 }
 
-void GameMtlDlg::Set_Pass_Count_Dialog(void)
+void GameMtlDlg::Set_Pass_Count_Dialog()
 {
 	int res = DialogBoxParam(
 		AppInstance,

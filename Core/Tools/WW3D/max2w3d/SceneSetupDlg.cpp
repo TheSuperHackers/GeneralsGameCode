@@ -123,7 +123,7 @@ bool SceneSetupDlg::ValidateEditFloat (int control_id)
 /////////////////////////////////////////////////////////////////////////////
 // SceneSetupDlg Public Methods
 
-int SceneSetupDlg::DoModal (void)
+int SceneSetupDlg::DoModal ()
 {
 	// Put up the dialog box.
 	BOOL result = DialogBoxParam(AppInstance, MAKEINTRESOURCE(IDD_SCENE_SETUP),

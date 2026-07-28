@@ -25,7 +25,7 @@ DBGHELP(SymInitialize,
 
 DBGHELP(SymGetOptions,
         DWORD,
-        (void))
+        ())
 
 DBGHELP(SymSetOptions,
         DWORD,

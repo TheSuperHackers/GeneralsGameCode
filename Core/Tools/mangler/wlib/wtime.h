@@ -65,28 +65,28 @@ class Wtime
     void      PrintDate(FILE *out) const;
     void      PrintDate(char *out) const;
 
-    uint32    GetSec(void) const;    // Get member variable 'sec'
-    uint32    GetUsec(void) const;   // Get member variable 'usec'
+    uint32    GetSec() const;    // Get member variable 'sec'
+    uint32    GetUsec() const;   // Get member variable 'usec'
     void      SetSec(uint32 newsec);
     void      SetUsec(uint32 newusec);
     void      Set(uint32 newsec,uint32 newusec);
     bit8      ParseDate(char *in);
     bit8      FormatTime(char *out, const char *format);
 
-    struct timeval   *GetTimeval(void);
+    struct timeval   *GetTimeval();
     void              GetTimevalMT(struct timeval &tv);
 
-    uint32    GetSecond(void) const; // Second (0- 60) (60 is for a leap second)
-    uint32    GetMinute(void) const; // Minute (0 - 59)
-    uint32    GetHour(void) const;   // Hour (0-23)
-    uint32    GetMDay(void) const;   // Day of Month (1-31)
-    uint32    GetWDay(void) const;   // Day of Week  (1-7)
-    uint32    GetYDay(void) const;   // Day of Year  (1-366)
-    uint32    GetMonth(void) const;  // Month (1-12)
-    uint32    GetYWeek(void) const;  // Week of Year (1-53)
-    uint32    GetYear(void) const;   // Year (e.g. 1997)
+    uint32    GetSecond() const; // Second (0- 60) (60 is for a leap second)
+    uint32    GetMinute() const; // Minute (0 - 59)
+    uint32    GetHour() const;   // Hour (0-23)
+    uint32    GetMDay() const;   // Day of Month (1-31)
+    uint32    GetWDay() const;   // Day of Week  (1-7)
+    uint32    GetYDay() const;   // Day of Year  (1-366)
+    uint32    GetMonth() const;  // Month (1-12)
+    uint32    GetYWeek() const;  // Week of Year (1-53)
+    uint32    GetYear() const;   // Year (e.g. 1997)
 
-    bit8      GetSign(void) const;  // 0 = pos   1 = neg
+    bit8      GetSign() const;  // 0 = pos   1 = neg
 
     int       Compare(const Wtime &other) const;
 

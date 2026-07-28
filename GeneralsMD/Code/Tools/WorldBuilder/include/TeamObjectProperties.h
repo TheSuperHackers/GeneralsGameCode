@@ -57,48 +57,48 @@ protected:
 	Dict* m_dictToEdit;
 
 #if 0 // Keys not implemented yet.  jba. [3/26/2003]//
-	void updateTheUI(void);
+	void updateTheUI();
 
 	// Generated message map functions
 	//{{AFX_MSG(TeamObjectProperties)
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
-	afx_msg void _HealthToDict(void);
-	afx_msg void _EnabledToDict(void);
-	afx_msg void _IndestructibleToDict(void);
-	afx_msg void _UnsellableToDict(void);
-	afx_msg void _PoweredToDict(void);
-	afx_msg void _AggressivenessToDict(void);
-	afx_msg void _VisibilityToDict(void);
-	afx_msg void _VeterancyToDict(void);
-	afx_msg void _ShroudClearingDistanceToDict(void);
-	afx_msg void _RecruitableAIToDict(void);
-	afx_msg void _SelectableToDict(void);
-	afx_msg void _WeatherToDict(void);
-	afx_msg void _TimeToDict(void);
+	afx_msg void _HealthToDict();
+	afx_msg void _EnabledToDict();
+	afx_msg void _IndestructibleToDict();
+	afx_msg void _UnsellableToDict();
+	afx_msg void _PoweredToDict();
+	afx_msg void _AggressivenessToDict();
+	afx_msg void _VisibilityToDict();
+	afx_msg void _VeterancyToDict();
+	afx_msg void _ShroudClearingDistanceToDict();
+	afx_msg void _RecruitableAIToDict();
+	afx_msg void _SelectableToDict();
+	afx_msg void _WeatherToDict();
+	afx_msg void _TimeToDict();
 	afx_msg void _HPsToDict();
-	afx_msg void _StoppingDistanceToDict(void);
-	afx_msg void _UpdateTeamMembers(void);
+	afx_msg void _StoppingDistanceToDict();
+	afx_msg void _UpdateTeamMembers();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-	void _DictToHealth(void);
-	void _DictToHPs(void);
-	void _DictToEnabled(void);
-	void _DictToDestructible(void);
-	void _DictToUnsellable(void);
-	void _DictToPowered(void);
-	void _DictToAggressiveness(void);
-	void _DictToVisibilityRange(void);
-	void _DictToVeterancy(void);
-	void _DictToShroudClearingDistance(void);
+	void _DictToHealth();
+	void _DictToHPs();
+	void _DictToEnabled();
+	void _DictToDestructible();
+	void _DictToUnsellable();
+	void _DictToPowered();
+	void _DictToAggressiveness();
+	void _DictToVisibilityRange();
+	void _DictToVeterancy();
+	void _DictToShroudClearingDistance();
 	void _DictToRecruitableAI();
-	void _DictToSelectable(void);
-	void _DictToWeather(void);
-	void _DictToTime(void);
-	void _DictToStoppingDistance(void);
-	void _PropertiesToDict(void);
+	void _DictToSelectable();
+	void _DictToWeather();
+	void _DictToTime();
+	void _DictToStoppingDistance();
+	void _PropertiesToDict();
 #endif
 };
 

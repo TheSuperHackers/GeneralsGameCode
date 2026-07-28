@@ -99,7 +99,7 @@ class EulerAnglesClass
 
 public:
 
-	EulerAnglesClass(void) : Order(0) { Angle[0] = 0.0; Angle[1] = 0.0; Angle[2] = 0.0; };
+	EulerAnglesClass() : Order(0) { Angle[0] = 0.0; Angle[1] = 0.0; Angle[2] = 0.0; };
 	EulerAnglesClass(const Matrix3 & from,int order);
 	void		From_Matrix(const Matrix3 & from,int order);
 	void		To_Matrix(Matrix3 & M);

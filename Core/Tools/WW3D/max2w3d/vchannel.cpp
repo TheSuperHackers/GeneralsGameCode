@@ -131,7 +131,7 @@ VectorChannelClass::VectorChannelClass
 
 }
 
-VectorChannelClass::~VectorChannelClass(void)
+VectorChannelClass::~VectorChannelClass()
 {
 	if (Data) {
 		delete[] Data;
@@ -746,7 +746,7 @@ bool VectorChannelClass::is_identity(float32 * vec)
 	}
 }
 
-void VectorChannelClass::compute_range(void)
+void VectorChannelClass::compute_range()
 {
 	Begin = 0;
 	while ((Begin < MaxFrames) && (is_identity(Get_Vector(Begin)))) {

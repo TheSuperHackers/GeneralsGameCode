@@ -56,14 +56,14 @@ void GetTimezoneInfo(const char * &timezone_str, int &timezone_offset) {
 #endif
 }
 
-const char * TimezoneString(void) {
+const char * TimezoneString() {
 	const char *timezone_str;
 	int timezone_offset;
 	GetTimezoneInfo(timezone_str, timezone_offset);
 	return timezone_str;
 }
 
-int TimezoneOffset(void) {
+int TimezoneOffset() {
 	const char *timezone_str;
 	int timezone_offset;
 	GetTimezoneInfo(timezone_str, timezone_offset);

@@ -77,8 +77,8 @@ class Xtime
     void      PrintDate(char *out) const;
 **********/
 
-    sint32    getDay(void) const;    // Get days since year 0
-    sint32    getMsec(void) const;   // Get milliseconds into the day
+    sint32    getDay() const;    // Get days since year 0
+    sint32    getMsec() const;   // Get milliseconds into the day
 
     void      setDay(sint32 day);
     void      setMsec(sint32 msec);
@@ -90,15 +90,15 @@ class Xtime
     bit8      getTimeval(struct timeval &tv);
 
     // All of these may return -1 if the time is invalid
-    int    getSecond(void) const; // Second (0-60) (60 is for a leap second)
-    int    getMinute(void) const; // Minute (0-59)
-    int    getHour(void) const;   // Hour (0-23)
-    int    getMDay(void) const;   // Day of Month (1-31)
-    int    getWDay(void) const;   // Day of Week  (1-7)
-    int    getYDay(void) const;   // Day of Year  (1-366)  (366 = leap yr)
-    int    getMonth(void) const;  // Month (1-12)
-    int    getYWeek(void) const;  // Week of Year (1-53)
-    int    getYear(void) const;   // Year (e.g. 1997)
+    int    getSecond() const; // Second (0-60) (60 is for a leap second)
+    int    getMinute() const; // Minute (0-59)
+    int    getHour() const;   // Hour (0-23)
+    int    getMDay() const;   // Day of Month (1-31)
+    int    getWDay() const;   // Day of Week  (1-7)
+    int    getYDay() const;   // Day of Year  (1-366)  (366 = leap yr)
+    int    getMonth() const;  // Month (1-12)
+    int    getYWeek() const;  // Week of Year (1-53)
+    int    getYear() const;   // Year (e.g. 1997)
 
     // Modify the time components.  Return FALSE if fail
     bit8      setSecond(sint32 sec);
@@ -108,7 +108,7 @@ class Xtime
     bit8      setMonth(sint32 month);
     bit8      setMDay(sint32 mday);
 
-    void      normalize(void);  // move msec overflows to the day
+    void      normalize();  // move msec overflows to the day
 
     // Compare two times
     int       compare(const Xtime &other) const;

@@ -497,7 +497,7 @@ BOOL GameMtlTextureDlg::Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, 
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlTextureDlg::ReloadDialog(void)
+void GameMtlTextureDlg::ReloadDialog()
 {
 	DebugPrint("GameMtlTextureDlg::ReloadDialog\n");
 	assert(Stage0FramesSpin && Stage1FramesSpin && Stage0RateSpin && Stage1RateSpin);
@@ -644,7 +644,7 @@ void GameMtlTextureDlg::Enable_Stage(int stage,BOOL onoff)
  * HISTORY:                                                                                    *
  *   11/23/98   GTH : Created.                                                                 *
  *=============================================================================================*/
-void GameMtlTextureDlg::Update_Texture_Buttons(void)
+void GameMtlTextureDlg::Update_Texture_Buttons()
 {
 	Texmap * texmap;
 	texmap = TheMtl->Get_Texture(PassIndex,0);

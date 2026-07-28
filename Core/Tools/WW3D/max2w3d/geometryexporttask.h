@@ -60,20 +60,20 @@ public:
 
 	GeometryExportTaskClass(INode * node,GeometryExportContextClass & context);
 	GeometryExportTaskClass(const GeometryExportTaskClass & that);
-	virtual ~GeometryExportTaskClass(void);
+	virtual ~GeometryExportTaskClass();
 
 	virtual void							Export_Geometry(GeometryExportContextClass & context) = 0;
 
 	/*
 	** Accessors
 	*/
-	char *									Get_Name(void)								{ return Name; }
-	char *									Get_Container_Name(void)				{ return ContainerName; }
+	char *									Get_Name()								{ return Name; }
+	char *									Get_Container_Name()				{ return ContainerName; }
 	void										Get_Full_Name(char * buffer,int size);
 
-	int										Get_Bone_Index(void)						{ return BoneIndex; }
-	INode *									Get_Object_Node(void)					{ return Node; }
-	Matrix3									Get_Export_Transform(void)				{ return ExportSpace; }
+	int										Get_Bone_Index()						{ return BoneIndex; }
+	INode *									Get_Object_Node()					{ return Node; }
+	Matrix3									Get_Export_Transform()				{ return ExportSpace; }
 
 	void										Set_Name(char * name)					{ strncpy(Name,name,sizeof(Name)); }
 	void										Set_Container_Name(char * name)		{ strncpy(ContainerName,name,sizeof(ContainerName)); }
@@ -99,14 +99,14 @@ public:
 	** as "additional models" rather than being placed in the normal LOD arrays).  This virtual
 	** can be used to detect "aggregate" models.
 	*/
-	virtual bool							Is_Aggregate(void)						{ return false; }
+	virtual bool							Is_Aggregate()						{ return false; }
 
 	/*
 	** Proxy Detection. A "proxy" is a reference (by name) to an external game object that should
 	** be instantiated at the specified transform.  Like the aggregates, these had to unfortunately
 	** be handled with special cases and therefore have this virtual function devoted solely to them.
 	*/
-	virtual bool							Is_Proxy(void)								{ return false; }
+	virtual bool							Is_Proxy()								{ return false; }
 
 	/*
 	** Virtual Constructor
@@ -135,7 +135,7 @@ protected:
 		AGGREGATE,
 		PROXY,
 	};
-	virtual int	Get_Geometry_Type(void) = 0;
+	virtual int	Get_Geometry_Type() = 0;
 
 protected:
 

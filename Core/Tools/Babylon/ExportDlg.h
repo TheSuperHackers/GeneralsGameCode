@@ -36,9 +36,9 @@ class CExportDlg : public CDialog
 // Construction
 public:
 
-	LangID			Language ( void )			{ return langid; };
-	char*				Filename ( void )			{ return filename; };
-	TROPTIONS*	Options ( void )			{ return &options; };
+	LangID			Language ()			{ return langid; };
+	char*				Filename ()			{ return filename; };
+	TROPTIONS*	Options ()			{ return &options; };
 
 	CExportDlg(CWnd* pParent = nullptr);   // standard constructor
 

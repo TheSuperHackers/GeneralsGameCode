@@ -430,7 +430,7 @@ MeshSaveClass::MeshSaveClass
  * HISTORY:                                                                                    *
  *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-MeshSaveClass::~MeshSaveClass(void)
+MeshSaveClass::~MeshSaveClass()
 {
 	if (UserText) {
 		delete[] UserText;
@@ -2103,7 +2103,7 @@ void MeshSaveClass::create_materials(Mtl * nodemtl,DWORD wirecolor, char *materi
  * HISTORY:                                                                                    *
  *   08/01/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void MeshSaveClass::compute_bounding_volumes(void)
+void MeshSaveClass::compute_bounding_volumes()
 {
 	Vector3 min,max,center;
 	float radius;

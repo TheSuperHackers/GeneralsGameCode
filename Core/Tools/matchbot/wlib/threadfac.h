@@ -109,7 +109,7 @@ class Runnable
            };
 
            // Is there a thread running in this class?
-           static bit8 isRunning(void);
+           static bit8 isRunning();
 
            // Get the count of threads running inside this class
            static int    getThreadCount();

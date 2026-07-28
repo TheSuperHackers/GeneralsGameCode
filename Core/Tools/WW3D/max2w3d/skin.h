@@ -132,7 +132,7 @@ public:
 	void Add_Bones(INodeTab & nodetab);
 	void Remove_Bone(INode * node);
 	void Remove_Bones(INodeTab & nodetab);
-	void Update_Bone_List(void);
+	void Update_Bone_List();
 
 	/*
 	** Converting between bone indexes and reference indexes
@@ -145,12 +145,12 @@ public:
 	/*
 	** External access to the bones
 	*/
-	int Num_Bones(void) { return BoneTab.Count(); }
+	int Num_Bones() { return BoneTab.Count(); }
 	INode * Get_Bone(int idx) { return BoneTab[idx]; }
-	INodeTab & Get_Bone_List(void) { return BoneTab; }
+	INodeTab & Get_Bone_List() { return BoneTab; }
 	int Find_Bone(INode * node);
-	int Get_Base_Pose_Frame(void) { return BasePoseFrame; }
-	int Get_Base_Pose_Time(void) { return BasePoseFrame * GetTicksPerFrame(); }
+	int Get_Base_Pose_Frame() { return BasePoseFrame; }
+	int Get_Base_Pose_Time() { return BasePoseFrame * GetTicksPerFrame(); }
 	int Find_Closest_Bone(const Point3 & vertex);
 
 	/*
@@ -217,13 +217,13 @@ class SkinModifierClass : public Modifier, BonePickerUserClass
 
 public:
 
-	SkinModifierClass(void);
+	SkinModifierClass();
 	SkinModifierClass(INode * node,SkinWSMObjectClass * skin_obj);
 #if defined W3D_MAX4		//defined as in the project (.dsp)
 	ISubObjType *GetSubObjType(int i);
 	int NumSubObjTypes();
 #endif
-	void								Default_Init(void);
+	void								Default_Init();
 
 	/*
 	** From Animatable
@@ -312,10 +312,10 @@ public:
 	virtual void ActivateSubSelSet(TSTR &setName);
 	virtual void NewSetFromCurSel(TSTR &setName);
 	virtual void RemoveSubSelSet(TSTR &setName);
-	void Create_Named_Selection_Sets(void);
-	void Install_Named_Selection_Sets(void);
+	void Create_Named_Selection_Sets();
+	void Install_Named_Selection_Sets();
 
-	WSMObject * Get_WSMObject(void) { return (WSMObject*)GetReference(OBJ_REF); }
+	WSMObject * Get_WSMObject() { return (WSMObject*)GetReference(OBJ_REF); }
 	Interval Get_Validity(TimeValue t);
 
 	/*
@@ -332,15 +332,15 @@ public:
 	/*
 	** Unlink selected verts (links them to the root or origin)
 	*/
-	void Unlink_Verts(void);
+	void Unlink_Verts();
 
 private:
 
 	/*
 	** Windows dialog management and communication functions
 	*/
-	void Install_Bone_Influence_Dialog(void);
-	void Remove_Bone_Influence_Dialog(void);
+	void Install_Bone_Influence_Dialog();
+	void Remove_Bone_Influence_Dialog();
 
 	BOOL Bone_Influence_Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 

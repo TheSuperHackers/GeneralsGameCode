@@ -63,7 +63,7 @@ class INodeListEntryClass
 public:
 
 	INodeListEntryClass(INode * n,TimeValue /*time*/) { Node = n; }
-	~INodeListEntryClass(void) {}
+	~INodeListEntryClass() {}
 
 	INode							* Node;
 	INodeListEntryClass		* Next;
@@ -183,7 +183,7 @@ INodeListClass::INodeListClass(INodeListClass & copyfrom,TimeValue time,INodeFil
  * HISTORY:                                                                                    *
  *   06/09/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-INodeListClass::~INodeListClass(void)
+INodeListClass::~INodeListClass()
 {
 	while (ListHead)
 	{

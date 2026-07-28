@@ -54,7 +54,7 @@ public:
 	Vector3	N;
 	float		D;
 
-	PlaneClass(void) : N(0.0f,0.0f,1.0f), D(0.0f) { }
+	PlaneClass() : N(0.0f,0.0f,1.0f), D(0.0f) { }
 	PlaneClass(float a,float b,float c,float d) : N(a,b,c),D(d) { }
 	PlaneClass(const Vector3 & normal,float dist) : N(normal), D(dist) { }
 

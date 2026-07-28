@@ -78,11 +78,11 @@ class VectorChannelClass
 public:
 
 	VectorChannelClass(uint32 id,int maxframes,uint32 flags,int vectorlength,float32 * identvec);
-	~VectorChannelClass(void);
+	~VectorChannelClass();
 
 	void		Set_Vector(int framenumber,float32 * vector);
 	float *	Get_Vector(int frameidx);
-	bool		Is_Empty(void) { return IsEmpty; }
+	bool		Is_Empty() { return IsEmpty; }
 	void		SetSaveOptions(bool compress, int flavor, float Terr, float Rerr, bool reduce, int reduce_percent);
 	bool		Save(ChunkSaveClass & csave, BitChannelClass *binmov);
 	void		ClearInvisibleData(BitChannelClass *vis);
@@ -119,7 +119,7 @@ private:
 	bool is_identity(float32 * vec);
 
 	// This function finds the start and end of the "non-identity" data
-	void compute_range(void);
+	void compute_range();
 
 	// compress functions
 	void		compress(W3dTimeCodedAnimChannelStruct * c);

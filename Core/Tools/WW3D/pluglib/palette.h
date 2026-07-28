@@ -49,7 +49,7 @@ class PaletteClass
 			COLOR_COUNT=256			// Number of color indices on the palette.
 		};
 
-		PaletteClass(void) {};
+		PaletteClass() {};
 		PaletteClass(RGBClass const & rgb);
 		PaletteClass(unsigned char *binary_palette);
 
@@ -60,8 +60,8 @@ class PaletteClass
 		int operator == (PaletteClass const & palette) const;
 		int operator != (PaletteClass const & palette) const {return(!(operator ==(palette)));};
 		PaletteClass & operator = (PaletteClass const & palette);
-		operator const unsigned char * (void) const {return((const unsigned char *)&Palette[0]);};
-		operator unsigned char * (void) {return((unsigned char *)&Palette[0]);};
+		operator const unsigned char * () const {return((const unsigned char *)&Palette[0]);};
+		operator unsigned char * () {return((unsigned char *)&Palette[0]);};
 
 		void Adjust(int ratio);
 		void Adjust(int ratio, PaletteClass const & palette);

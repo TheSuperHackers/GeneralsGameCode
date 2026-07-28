@@ -65,7 +65,7 @@ END_MESSAGE_MAP()
 // CViewDBsDlg message handlers
 
 static int label_count;
-static void progress_cb ( void )
+static void progress_cb ()
 {
 	label_count++;
 	if ( MainDLG )
@@ -74,7 +74,7 @@ static void progress_cb ( void )
 	}
 }
 
-HTREEITEM VIEWDBSII::create_full_view ( void )
+HTREEITEM VIEWDBSII::create_full_view ()
 {
 	CTreeCtrl *tc = ( CTreeCtrl *) GetDlgItem ( IDC_TREEVIEW );
 	HTREEITEM	root;
@@ -118,7 +118,7 @@ HTREEITEM VIEWDBSII::create_full_view ( void )
 	return root;
 }
 
-HTREEITEM VIEWDBSII::create_changes_view ( void )
+HTREEITEM VIEWDBSII::create_changes_view ()
 {
 	CTreeCtrl *tc = ( CTreeCtrl *) GetDlgItem ( IDC_TREEVIEW );
 	HTREEITEM	root;

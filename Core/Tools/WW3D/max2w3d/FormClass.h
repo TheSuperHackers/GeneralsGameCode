@@ -42,15 +42,15 @@
 class FormClass : public ParamDlg
 {
 	public:
-		FormClass (void)
+		FormClass ()
 			: m_hWnd (nullptr) {}
-		~FormClass (void) {}
+		~FormClass () {}
 
 		HWND						Create_Form (HWND parent_wnd, UINT template_id);
 		void						Show (bool show_flag = true) { ::ShowWindow (m_hWnd, show_flag ? SW_SHOW : SW_HIDE); }
 		virtual BOOL			Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam) = 0;
-		HWND						Get_Hwnd(void) { return m_hWnd; }
-		virtual void			Invalidate(void) { InvalidateRect(m_hWnd,nullptr,0); }
+		HWND						Get_Hwnd() { return m_hWnd; }
+		virtual void			Invalidate() { InvalidateRect(m_hWnd,nullptr,0); }
 
 	protected:
 

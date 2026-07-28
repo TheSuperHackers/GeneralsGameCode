@@ -76,7 +76,7 @@ static void print_to_log_and_update_progress ( const char *text )
 	mainDlg->SetProgress ( cb_count );
 }
 
-static void cb_progress ( void )
+static void cb_progress ()
 {
 	cb_count++;
 	mainDlg->SetProgress ( cb_count );
@@ -109,7 +109,7 @@ static void init_info ( INFO *info )
 
 static int progress_count;
 
-static void progress_cb ( void )
+static void progress_cb ()
 {
 	progress_count++;
 	if ( MainDLG )
@@ -1035,7 +1035,7 @@ static int getLabelCount( char *filename )
 	return count;
 }
 
-int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) ( void ) )
+int CBabylonDlg::LoadStrFile ( TransDB *db, const char *filename, void (*cb) () )
 {
 	FILE *file = nullptr;
 	BabylonLabel *label = nullptr;
@@ -1149,7 +1149,7 @@ exit:
 
 }
 
-int		CBabylonDlg::CanProceed ( void )
+int		CBabylonDlg::CanProceed ()
 {
 
 	if ( MainDB->IsChanged ())
@@ -1184,7 +1184,7 @@ retry:
 }
 
 
-int		CBabylonDlg::CanOperate ( void )
+int		CBabylonDlg::CanOperate ()
 {
 	if ( operate_always )
 	{

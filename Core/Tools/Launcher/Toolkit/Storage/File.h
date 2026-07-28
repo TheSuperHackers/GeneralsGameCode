@@ -70,13 +70,13 @@ class File : public Stream
 		virtual ~File();
 
 		//! Retrieve name of file
-		const UString& GetName(void) const;
+		const UString& GetName() const;
 
 		//! Associate a name to the file
 		virtual void SetName(const UString& name);
 
 		//! Retrieve file access rights
-		virtual ERights GetRights(void) const;
+		virtual ERights GetRights() const;
 
 		//! Set file access rights
 		virtual void SetRights(ERights rights);
@@ -85,7 +85,7 @@ class File : public Stream
 		virtual bool IsAvailable(bool force = false);
 
 		//! Check if te file is open
-		virtual bool IsOpen(void) const;
+		virtual bool IsOpen() const;
 
 		//! Open the file for access.
 		virtual EFileError Open(ERights rights);
@@ -94,13 +94,13 @@ class File : public Stream
 		virtual EFileError Open(const UString& name, ERights rights);
 
 		//! Close the file
-		virtual void Close(void);
+		virtual void Close();
 
 		//! Create a new file
-		virtual EFileError Create(void);
+		virtual EFileError Create();
 
 		//! Delete an existing file
-		virtual EFileError Delete(void);
+		virtual EFileError Delete();
 
 		//! Load the file into memory
 		virtual EFileError Load(void*& outBuffer, UInt32& outSize);
@@ -116,19 +116,19 @@ class File : public Stream
 		//-----------------------------------------------------------------------
 
 		//! Get the length of the file
-		virtual UInt32 GetLength(void);
+		virtual UInt32 GetLength();
 
 		//! Set the length of the file
 		virtual void SetLength(UInt32 length);
 
 		//! Get file position marker
-		virtual UInt32 GetMarker(void);
+		virtual UInt32 GetMarker();
 
 		//! Set file position marker
 		virtual void SetMarker(Int32 offset, EStreamFrom from);
 
 		//! End of file test
-		virtual bool AtEnd(void);
+		virtual bool AtEnd();
 
 		//! Read bytes from the file
 		virtual UInt32 GetBytes(void* ptr, UInt32 bytes);
@@ -140,7 +140,7 @@ class File : public Stream
 		virtual UInt32 PeekBytes(void* ptr, UInt32 bytes);
 
 		//! Flush the stream
-		virtual void Flush(void);
+		virtual void Flush();
 
 	private:
 		UString mName;

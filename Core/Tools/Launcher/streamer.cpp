@@ -94,7 +94,7 @@ int Streamer::overflow(int c)
 }
 
 // This is a write only stream, this should never happen
-int Streamer::underflow(void)
+int Streamer::underflow()
 {
   return(EOF);
 }

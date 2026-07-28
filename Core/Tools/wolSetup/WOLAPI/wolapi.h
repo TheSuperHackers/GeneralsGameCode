@@ -219,7 +219,7 @@ EXTERN_C const IID IID_IRTPatcher;
             /* [string][in] */ LPCSTR destpath,
             /* [string][in] */ LPCSTR filename) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages() = 0;
 
     };
 
@@ -633,7 +633,7 @@ EXTERN_C const IID IID_IChat;
     IChat : public IUnknown
     {
     public:
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestServerList(
             /* [in] */ unsigned long SKU,
@@ -657,9 +657,9 @@ EXTERN_C const IID IID_IChat;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelJoin(
             /* [in] */ Channel __RPC_FAR *channel) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelLeave( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelLeave() = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserList( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserList() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPublicMessage(
             /* [in] */ LPCSTR message) = 0;
@@ -668,7 +668,7 @@ EXTERN_C const IID IID_IChat;
             /* [in] */ User __RPC_FAR *users,
             /* [in] */ LPCSTR message) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLogout( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLogout() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestPrivateGameOptions(
             /* [in] */ User __RPC_FAR *users,
@@ -728,7 +728,7 @@ EXTERN_C const IID IID_IChat;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetChannelFilter(
             int channelType) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestGameEnd( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestGameEnd() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetLangFilter(
             int onoff) = 0;
@@ -774,7 +774,7 @@ EXTERN_C const IID IID_IChat;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetChannelExInfo(
             LPCSTR info) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE StopAutoping( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE StopAutoping() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSquadInfo(
             unsigned long id) = 0;
@@ -812,7 +812,7 @@ EXTERN_C const IID IID_IChat;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE SetCodepageFilter(
             int filter) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyList( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyList() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestBuddyAdd(
             User __RPC_FAR *newbuddy) = 0;
@@ -842,12 +842,12 @@ EXTERN_C const IID IID_IChat;
             unsigned int currentPlayers,
             unsigned int maxPlayers) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestServerTime( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestServerTime() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestInsiderStatus(
             User __RPC_FAR *users) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetLocalIP( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSetLocalIP() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestSquadByName(
             LPCSTR name) = 0;
@@ -3554,9 +3554,9 @@ EXTERN_C const IID IID_IDownload;
             LPCSTR localfile,
             LPCSTR regkey) = 0;
 
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Abort( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Abort() = 0;
 
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PumpMessages() = 0;
 
     };
 
@@ -3689,7 +3689,7 @@ EXTERN_C const IID IID_IDownloadEvent;
     IDownloadEvent : public IUnknown
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnEnd( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnEnd() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnError(
             int error) = 0;
@@ -3700,7 +3700,7 @@ EXTERN_C const IID IID_IDownloadEvent;
             int timetaken,
             int timeleft) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnQueryResume( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnQueryResume() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE OnStatusUpdate(
             int status) = 0;
@@ -3901,7 +3901,7 @@ EXTERN_C const IID IID_INetUtil;
             int timeout,
             int __RPC_FAR *handle) = 0;
 
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE PumpMessages() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE GetAvgPing(
             unsigned long ip,
@@ -4662,7 +4662,7 @@ EXTERN_C const IID IID_IChat2;
     IChat2 : public IUnknown
     {
     public:
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE PumpMessages() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestConnection(
             Server __RPC_FAR *server,
@@ -4676,7 +4676,7 @@ EXTERN_C const IID IID_IChat2;
             GID id,
             GTYPE __RPC_FAR *type) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelList( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelList() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelJoin(
             LPCSTR name) = 0;
@@ -4687,7 +4687,7 @@ EXTERN_C const IID IID_IChat2;
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestUserList(
             Channel __RPC_FAR *chan) = 0;
 
-        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLogout( void) = 0;
+        virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestLogout() = 0;
 
         virtual /* [helpstring] */ HRESULT STDMETHODCALLTYPE RequestChannelCreate(
             Channel __RPC_FAR *chan) = 0;
@@ -5271,13 +5271,13 @@ EXTERN_C const IID IID_IIGROptions;
     IIGROptions : public IUnknown
     {
     public:
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Init( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Init() = 0;
 
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Auto_Login_Allowed( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Auto_Login_Allowed() = 0;
 
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Storing_Nicks_Allowed( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Storing_Nicks_Allowed() = 0;
 
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Running_Reg_App_Allowed( void) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Is_Running_Reg_App_Allowed() = 0;
 
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Set_Options(
             unsigned int options) = 0;

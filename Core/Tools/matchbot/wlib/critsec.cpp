@@ -93,7 +93,7 @@ sint32 CritSec::lock(int *refcount) RO
 }
 
 // The "unlock" function release the critical section.
-sint32 CritSec::unlock(void) RO
+sint32 CritSec::unlock() RO
 {
  #ifdef _UNIX
     sint32	status = 0;

@@ -169,7 +169,7 @@ MotionClass::MotionClass
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-void MotionClass::init(void)
+void MotionClass::init()
 {
 	int i,j;
 
@@ -292,7 +292,7 @@ void MotionClass::init(void)
  * HISTORY:                                                                                    *
  *   10/26/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-MotionClass::~MotionClass(void)
+MotionClass::~MotionClass()
 {
 	int i;
 

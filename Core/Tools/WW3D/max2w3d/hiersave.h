@@ -109,8 +109,8 @@ public:
 
 	bool				Save(ChunkSaveClass & csave);
 	bool				Load(ChunkLoadClass & cload);
-	int				Num_Nodes(void) const { return CurNode; }
-	const char *	Get_Name(void) const;
+	int				Num_Nodes() const { return CurNode; }
+	const char *	Get_Name() const;
 	const char *	Get_Node_Name(int node) const;
 
 	// get ahold of the max inode
@@ -163,5 +163,5 @@ private:
 
 	Matrix3	get_relative_transform(int nodeidx) const;
 	Matrix3	fixup_matrix(const Matrix3 & src) const;
-	void	 	Free(void);
+	void	 	Free();
 };

@@ -111,7 +111,7 @@ static vertexstruct intersect(
 						const vertexstruct &	p1,
 						const PlaneClass &	plane);
 
-static void clear_scan_table(void);
+static void clear_scan_table();
 
 static void fixup_scan_table(
 						int						y0,
@@ -650,7 +650,7 @@ static vertexstruct intersect
  * HISTORY:                                                                                    *
  *   06/10/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-static void clear_scan_table(void)
+static void clear_scan_table()
 {
 	memset(_scantab,0,sizeof(_scantab));
 	for (int i=0; i<256; i++) {

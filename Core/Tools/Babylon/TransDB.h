@@ -102,14 +102,14 @@ class CWaveInfo
 
 	public:
 
-	CWaveInfo ( void );
-	int						Valid		( void )									{ return wave_valid; };
-	DWORD					Lo			( void )									{ return wave_size_lo; };
-	DWORD					Hi			( void )									{ return wave_size_hi; };
+	CWaveInfo ();
+	int						Valid		()									{ return wave_valid; };
+	DWORD					Lo			()									{ return wave_size_lo; };
+	DWORD					Hi			()									{ return wave_size_hi; };
 	void					SetValid( int new_valid )					{ wave_valid = new_valid; };
 	void					SetLo		( DWORD new_lo )					{ wave_size_lo = new_lo; };
 	void					SetHi		( DWORD new_hi )					{ wave_size_hi = new_hi; };
-	int						Missing ( void )									{ return missing; };
+	int						Missing ()									{ return missing; };
 	void					SetMissing ( int val )						{ missing = val;  };
 };
 
@@ -123,19 +123,19 @@ class DBAttribs
 
 	public:
 
-	DBAttribs( void )													{ parent = nullptr; changed = FALSE; processed = FALSE; match = nullptr; };
+	DBAttribs()													{ parent = nullptr; changed = FALSE; processed = FALSE; match = nullptr; };
 
 	void	SetParent ( DBAttribs *new_parent )	{ parent = new_parent; };
-	int		IsChanged ( void )									{ return changed; };
-	void	Changed ( void )										{ changed = TRUE; if ( parent ) parent->Changed(); };
-	void	NotChanged ( void )									{ changed = FALSE; };
-	char	ChangedSymbol ( void )							{ return changed ? '*' :' '; };
-	int		IsProcessed ( void )								{ return processed; };
-	void	Processed ( void )									{ processed = TRUE; };
-	void	NotProcessed ( void )								{ processed = FALSE; };
-	void*	Matched ( void )										{ return match; };
+	int		IsChanged ()									{ return changed; };
+	void	Changed ()										{ changed = TRUE; if ( parent ) parent->Changed(); };
+	void	NotChanged ()									{ changed = FALSE; };
+	char	ChangedSymbol ()							{ return changed ? '*' :' '; };
+	int		IsProcessed ()								{ return processed; };
+	void	Processed ()									{ processed = TRUE; };
+	void	NotProcessed ()								{ processed = FALSE; };
+	void*	Matched ()										{ return match; };
 	void	Match ( void* new_match )						{ match = new_match; };
-	void	NotMatched ( void )									{ match = nullptr; };
+	void	NotMatched ()									{ match = nullptr; };
 
 
 };
@@ -159,34 +159,34 @@ class Translation : public DBAttribs
 
 	CWaveInfo			WaveInfo;
 
-	Translation ( void );
+	Translation ();
 	~Translation ( );
 
 	void					SetDB				( TransDB *new_db );
-	Translation*	Clone				( void );
+	Translation*	Clone				();
 	void					SetLangID		( LangID new_id )					{ langid = new_id; };
-	TransDB*			DB					( void )									{ return db; };
-	void					ClearChanges (void)										{ NotChanged(); };
-	void					ClearProcessed (void)									{ NotProcessed(); };
-	void					ClearMatched (void)										{ NotMatched(); };
-	int						Clear				( void )									{ return 0;};
+	TransDB*			DB					()									{ return db; };
+	void					ClearChanges ()										{ NotChanged(); };
+	void					ClearProcessed ()									{ NotProcessed(); };
+	void					ClearMatched ()										{ NotMatched(); };
+	int						Clear				()									{ return 0;};
 	void					Set					( OLECHAR *string )				{ text->Set ( string ); Changed();};
 	void					Set					( char *string )					{ text->Set ( string ); Changed(); };
-	OLECHAR*			Get					( void )									{ return text->Get (); };
-	int						Len					( void )									{ return text->Len (); };
-	char*					GetSB				( void )									{ return text->GetSB (); };
+	OLECHAR*			Get					()									{ return text->Get (); };
+	int						Len					()									{ return text->Len (); };
+	char*					GetSB				()									{ return text->GetSB (); };
 	void					SetComment	( OLECHAR *string )				{ comment->Set ( string ); Changed(); };
 	void					SetComment	( char *string )					{ comment->Set ( string ); Changed(); };
-	OLECHAR*			Comment			( void )									{ return comment->Get(); };
-	char*					CommentSB		( void )									{ return comment->GetSB(); };
-	int						Revision		( void )									{ return revision; };
+	OLECHAR*			Comment			()									{ return comment->Get(); };
+	char*					CommentSB		()									{ return comment->GetSB(); };
+	int						Revision		()									{ return revision; };
 	void					SetRevision	( int new_rev )						{ revision = new_rev; Changed(); };
-	LangID				GetLangID		( void )									{ return langid; };
-	const char*		Language		( void )									{ return GetLangName ( langid );};
+	LangID				GetLangID		()									{ return langid; };
+	const char*		Language		()									{ return GetLangName ( langid );};
 	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE );
 	int						TooLong			( int maxlen );
 	int						ValidateFormat ( BabylonText *text );
-	int						IsSent ( void );
+	int						IsSent ();
 	void						Sent ( int val );
 };
 
@@ -205,12 +205,12 @@ class BabylonText : public DBAttribs
 	int						retranslate;
 	int						sent;
 
-	void init ( void );
+	void init ();
 
 	public:
 	CWaveInfo			WaveInfo;
 
-	BabylonText( void );
+	BabylonText();
 	~BabylonText( );
 
 	void					AddTranslation ( Translation *trans );
@@ -218,45 +218,45 @@ class BabylonText : public DBAttribs
 	Translation*	NextTranslation ( ListSearch &sh );
 	Translation*	GetTranslation ( LangID langid );
 	void					SetDB				( TransDB *new_db );
-	void					ClearChanges ( void );
-	void					ClearProcessed ( void );
-	void					ClearMatched ( void );
-	int						Clear				( void );
-	BabylonText*			Clone				( void );
-	void					Remove			( void );
-	void					AssignID		( void );
+	void					ClearChanges ();
+	void					ClearProcessed ();
+	void					ClearMatched ();
+	int						Clear				();
+	BabylonText*			Clone				();
+	void					Remove			();
+	void					AssignID		();
 	void					Set					( OLECHAR *string );
 	void					Set					( char *string );
 	void					SetID				( int new_id )						{ id = new_id; Changed(); };
-	int						ID					( void )									{ return id; };
-	void					LockText		( void )									{ text->Lock(); };
-	TransDB*			DB					( void )									{ return db; };
-	OLECHAR*			Get					( void )									{ return text->Get (); } ;
-	int						Len					( void )									{ return text->Len (); };
-	char*					GetSB				( void )									{ return text->GetSB (); } ;
+	int						ID					()									{ return id; };
+	void					LockText		()									{ text->Lock(); };
+	TransDB*			DB					()									{ return db; };
+	OLECHAR*			Get					()									{ return text->Get (); } ;
+	int						Len					()									{ return text->Len (); };
+	char*					GetSB				()									{ return text->GetSB (); } ;
 	void					SetWave			( OLECHAR *string )				{ wavefile->Set ( string ); Changed(); InvalidateAllWaves (); };
 	void					SetWave			( char *string )					{ wavefile->Set ( string ); Changed(); InvalidateAllWaves (); };
 	void					SetLabel		( BabylonLabel *new_label )		{ label = new_label; };
 	void					SetRetranslate ( int flag = TRUE )		{ retranslate = flag;};
-	int						Retranslate ( void )									{ return retranslate; };
-	OLECHAR*			Wave				( void )									{ return wavefile->Get (); } ;
-	char*					WaveSB			( void )									{ return wavefile->GetSB (); } ;
-	BabylonLabel*			Label				( void )									{ return label; } ;
-	int						Revision		( void )									{ return revision; } ;
+	int						Retranslate ()									{ return retranslate; };
+	OLECHAR*			Wave				()									{ return wavefile->Get (); } ;
+	char*					WaveSB			()									{ return wavefile->GetSB (); } ;
+	BabylonLabel*			Label				()									{ return label; } ;
+	int						Revision		()									{ return revision; } ;
 	void					SetRevision	( int new_rev )						{ revision = new_rev; Changed(); } ;
-	void					IncRevision ( void )									{ revision++; Changed(); };
+	void					IncRevision ()									{ revision++; Changed(); };
 	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE );
-	int						LineNumber	( void )									{ return line_number; };
+	int						LineNumber	()									{ return line_number; };
 	void					SetLineNumber	( int line )						{ line_number = line; Changed(); };
-	void					FormatMetaString ( void )							{ text->FormatMetaString (); Changed();};
-	int						IsDialog ( void );
+	void					FormatMetaString ()							{ text->FormatMetaString (); Changed();};
+	int						IsDialog ();
 	int						DialogIsPresent ( const char *path, LangID langid = LANGID_US  );
 	int						DialogIsValid ( const char *path, LangID langid = LANGID_US, int check = TRUE );
 	int						ValidateDialog( const char *path, LangID langid = LANGID_US );
-	void					InvalidateAllWaves ( void );
-	void					InvalidateWave ( void );
+	void					InvalidateAllWaves ();
+	void					InvalidateWave ();
 	void					InvalidateWave ( LangID langid );
-	int						IsSent ( void );
+	int						IsSent ();
 	void						Sent ( int val );
 
 };
@@ -276,33 +276,33 @@ class BabylonLabel : public DBAttribs
 	unsigned int	line_number;
 	List					text;
 
-	void init ( void );
+	void init ();
 
 	public:
 
-	BabylonLabel ( void );
+	BabylonLabel ();
 	~BabylonLabel ( );
 
-	int						Clear				( void );
-	void					ClearChanges ( void );
-	void					ClearProcessed ( void );
-	void					ClearMatched ( void );
-	int						AllMatched	( void );
-	void					Remove			( void );
+	int						Clear				();
+	void					ClearChanges ();
+	void					ClearProcessed ();
+	void					ClearMatched ();
+	int						AllMatched	();
+	void					Remove			();
 	void					AddText			( BabylonText *new_text );
 	void					RemoveText	( BabylonText *new_text );
 	BabylonText*			FirstText		( ListSearch& sh );
 	BabylonText*			NextText		( ListSearch& sh);
 	BabylonText*			FindText		( OLECHAR *find_text );
 	void					SetDB				( TransDB *new_db );
-	BabylonLabel*			Clone				( void );
-	int						NumStrings	( void )									{ return text.NumItems(); };
+	BabylonLabel*			Clone				();
+	int						NumStrings	()									{ return text.NumItems(); };
 	void					SetMaxLen		( int max )								{ max_len = max; Changed(); };
-	int						MaxLen			( void )									{ return max_len; };
+	int						MaxLen			()									{ return max_len; };
 	void					SetLineNumber( int line )							{ line_number = line; Changed(); };
-	int						LineNumber	( void )									{ return line_number; };
-	TransDB*			DB					( void )									{ return db;};
-	void					LockName		( void )									{ name->Lock(); };
+	int						LineNumber	()									{ return line_number; };
+	TransDB*			DB					()									{ return db;};
+	void					LockName		()									{ name->Lock(); };
 	void					SetName			( OLECHAR *string )				{ name->Set ( string ); Changed(); };
 	void					SetName			( char *string )					{ name->Set ( string ); Changed(); };
 	void					SetComment	( OLECHAR *string )				{ comment->Set ( string ); Changed(); };
@@ -314,18 +314,18 @@ class BabylonLabel : public DBAttribs
 	void					SetListener	( char *string )					{ listener->Set ( string ); Changed(); };
 	void					SetListener	( OLECHAR *string )				{ listener->Set ( string ); Changed(); };
 
-	OLECHAR*			Name				( void )									{ return name->Get (); };
-	OLECHAR*			Comment			( void )									{ return comment->Get(); };
-	OLECHAR*			Context			( void )									{ return context->Get(); };
-	OLECHAR*			Speaker			( void )									{ return speaker->Get(); };
-	OLECHAR*			Listener		( void )									{ return listener->Get(); };
+	OLECHAR*			Name				()									{ return name->Get (); };
+	OLECHAR*			Comment			()									{ return comment->Get(); };
+	OLECHAR*			Context			()									{ return context->Get(); };
+	OLECHAR*			Speaker			()									{ return speaker->Get(); };
+	OLECHAR*			Listener		()									{ return listener->Get(); };
 
 
-	char*					NameSB	 		( void )									{ return name->GetSB (); };
-	char*					CommentSB		( void )									{ return comment->GetSB(); };
-	char*					ContextSB		( void )									{ return context->GetSB(); };
-	char*					SpeakerSB		( void )									{ return speaker->GetSB(); };
-	char*					ListenerSB	( void )									{ return listener->GetSB(); };
+	char*					NameSB	 		()									{ return name->GetSB (); };
+	char*					CommentSB		()									{ return comment->GetSB(); };
+	char*					ContextSB		()									{ return context->GetSB(); };
+	char*					SpeakerSB		()									{ return speaker->GetSB(); };
+	char*					ListenerSB	()									{ return listener->GetSB(); };
 
 	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE );
 
@@ -360,7 +360,7 @@ class TransDB : public DBAttribs
 	~TransDB ( );
 
 	void					InvalidateDialog( LangID langid );
-	void					VerifyDialog( LangID langid, void (*cb) ( void ) = nullptr  );
+	void					VerifyDialog( LangID langid, void (*cb) () = nullptr  );
 	int						ReportDialog( DLGREPORT *report, LangID langid, void (*print) ( const char *)= nullptr, PMASK pmask= PMASK_ALL );
 	int						ReportTranslations( TRNREPORT *report, LangID langid, void (*print) ( const char *) = nullptr, PMASK pmask = PMASK_ALL );
 	void					ReportDuplicates ( CBabylonDlg *dlg = nullptr );
@@ -371,11 +371,11 @@ class TransDB : public DBAttribs
 	void					RemoveText	( BabylonText *text );
 	void					RemoveObsolete	( BabylonText *text );
 	int						Errors		( CBabylonDlg *dlg = nullptr );
-	int						HasErrors ( void ) { return checked_for_errors ? last_error_count != 0 : FALSE; };
+	int						HasErrors () { return checked_for_errors ? last_error_count != 0 : FALSE; };
 	int						Warnings		( CBabylonDlg *dlg = nullptr );
-	int						NumLabelsChanged	( void );
-	int						NumLabels		( void );
-	int						NumObsolete		( void ) { return num_obsolete; };
+	int						NumLabelsChanged	();
+	int						NumLabels		();
+	int						NumObsolete		() { return num_obsolete; };
 	BabylonLabel*			FirstLabel	( ListSearch& sh );
 	BabylonLabel*			NextLabel		( ListSearch& sh);
 	BabylonText*			FirstObsolete	( ListSearch& sh );
@@ -384,24 +384,24 @@ class TransDB : public DBAttribs
 	BabylonText*			FindText		( OLECHAR *text );
 	BabylonText*			FindSubText	( OLECHAR *text, int item = 0 );
 	BabylonText*			FindText		( int id );
-	BabylonText*			FindNextText ( void );
+	BabylonText*			FindNextText ();
 	BabylonText*			FindObsolete		( OLECHAR *text );
-	BabylonText*			FindNextObsolete ( void );
-	int						Clear				( void );
-	void					ClearChanges ( void );
-	void					ClearProcessed ( void );
-	void					ClearMatched ( void );
-	TransDB*			Next				( void );
-	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE, void (*cb) ( void ) = nullptr );
-	char*					Name				( void )							{ return name;};
-	void					EnableIDs		( void )							{ next_string_id = START_STRING_ID; };
-	int						NewID				( void )							{ if ( next_string_id != -1)  return next_string_id++; else return -1; };
-	int						ID					( void )							{ return next_string_id; };
+	BabylonText*			FindNextObsolete ();
+	int						Clear				();
+	void					ClearChanges ();
+	void					ClearProcessed ();
+	void					ClearMatched ();
+	TransDB*			Next				();
+	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE, void (*cb) () = nullptr );
+	char*					Name				()							{ return name;};
+	void					EnableIDs		()							{ next_string_id = START_STRING_ID; };
+	int						NewID				()							{ if ( next_string_id != -1)  return next_string_id++; else return -1; };
+	int						ID					()							{ return next_string_id; };
 	void					SetID				( int new_id )				{ next_string_id = new_id; };
-	int						IsValid			( void )							{ return valid; };
-	void					InValid			( void )							{ valid = FALSE; };
-	int						DuplicatesAllowed ( void )				{ return flags & TRANSDB_OPTION_DUP_TEXT;};
-	int						MultiTextAllowed ( void )					{ return flags & TRANSDB_OPTION_MULTI_TEXT;};
+	int						IsValid			()							{ return valid; };
+	void					InValid			()							{ valid = FALSE; };
+	int						DuplicatesAllowed ()				{ return flags & TRANSDB_OPTION_DUP_TEXT;};
+	int						MultiTextAllowed ()					{ return flags & TRANSDB_OPTION_MULTI_TEXT;};
 	void					AllowDupiclates ( int yes = TRUE) { yes ? flags |= TRANSDB_OPTION_DUP_TEXT : flags &= ~(TRANSDB_OPTION_DUP_TEXT ); };
 	void					AllowMultiText  ( int yes = TRUE) { yes ? flags |= TRANSDB_OPTION_MULTI_TEXT : flags &= ~(TRANSDB_OPTION_MULTI_TEXT ); };
 };
@@ -415,11 +415,11 @@ class DupNode : public ListNode
 	public:
 	DupNode ( BabylonText *dup, BabylonText *orig ) { original = orig; duplicate = dup, SetPriority ( orig->LineNumber ());};
 
-	BabylonText *Duplicate ( void ) { return duplicate; };
-	BabylonText *Original ( void ) { return original; };
+	BabylonText *Duplicate () { return duplicate; };
+	BabylonText *Original () { return original; };
 
 };
 
 
 
-extern TransDB* FirstTransDB ( void );
+extern TransDB* FirstTransDB ();

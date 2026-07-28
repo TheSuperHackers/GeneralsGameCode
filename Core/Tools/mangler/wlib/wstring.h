@@ -40,7 +40,7 @@ class Wstring
            Wstring(const char *string);
           ~Wstring();
 
-   void    clear(void);
+   void    clear();
 
    bit8    cat(const char *string);
    bit8    cat(uint32 size,const char *string);
@@ -49,10 +49,10 @@ class Wstring
    void    cellCopy(OUT char *dest, uint32 len);
    char    remove(sint32 pos, sint32 count);
    bit8    removeChar(char c);
-   void    removeSpaces(void);
-   const char *get(void) const;
+   void    removeSpaces();
+   const char *get() const;
    char    get(uint32 index) const;
-   uint32  length(void) const;
+   uint32  length() const;
    bit8    insert(char c, uint32 pos);
    bit8    insert(const char *instring, uint32 pos);
    bit8    beautifyNumber();
@@ -62,8 +62,8 @@ class Wstring
    bit8    set(char c, uint32 index);
    char    setFormatted(const char *str, ...);		// Added by Joe Howes
    void    setSize(sint32 bytes);  // create an empty string
-   void    toLower(void);
-   void    toUpper(void);
+   void    toLower();
+   void    toUpper();
    bit8    truncate(uint32 len);
    bit8    truncate(char c);  // trunc after char c
    sint32  getToken(int offset,const char *delim,Wstring &out) const;

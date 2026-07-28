@@ -92,13 +92,13 @@ Dictionary(uint32 (*hashFn)(const K &key)) :
 
                   ~Dictionary();
 
-  void             clear(void);
+  void             clear();
   bit8             add(IN K &key,IN V &value);
   bool             getValue(IN K &key, OUT V &value) RO;
   bool             getPointer(IN K &key, OUT V **value) RO;  // ptr to internal storage (Careful!)
   void             print(FILE *out) RO;
-  uint32           getSize(void) RO;
-  uint32           getEntries(void) RO;
+  uint32           getSize() RO;
+  uint32           getEntries() RO;
   bit8             contains(IN K &key) RO;
   bit8             updateValue(IN K &key,IN V &value);
   bit8             remove(IN K &key,OUT V &value);
@@ -109,8 +109,8 @@ Dictionary(uint32 (*hashFn)(const K &key)) :
   Dictionary<K,V>  &operator=(Dictionary<K,V> &other);
 
  private:
-  void             shrink(void);  // halve the number of slots
-  void             expand(void);  // double the number of slots
+  void             shrink();  // halve the number of slots
+  void             expand();  // double the number of slots
 
 
   DNode<K,V>     **table;      // This stores the lists at each slot
@@ -309,13 +309,13 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
 
 // Return the current size of the hash table
 template <class K,class V>
-uint32 Dictionary<K,V>::getSize(void) RO
+uint32 Dictionary<K,V>::getSize() RO
 { return(size); }
 
 
 // Return the current number of entries in the table
 template <class K,class V>
-uint32 Dictionary<K,V>::getEntries(void) RO
+uint32 Dictionary<K,V>::getEntries() RO
 { return(entries); }
 
 
@@ -597,7 +597,7 @@ bool Dictionary<K,V>::getPointer(IN K &key,OUT V **valptr) RO
 
 // Shrink the hash table by a factor of 2 (and relocate entries)
 template <class K,class V>
-void Dictionary<K,V>::shrink(void)
+void Dictionary<K,V>::shrink()
 {
   int    i;
   int    oldsize;
@@ -636,7 +636,7 @@ void Dictionary<K,V>::shrink(void)
 
 
 template <class K,class V>
-void Dictionary<K,V>::expand(void)
+void Dictionary<K,V>::expand()
 {
   int    i;
   int    oldsize;

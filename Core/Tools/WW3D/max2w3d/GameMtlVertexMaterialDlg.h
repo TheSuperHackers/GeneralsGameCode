@@ -52,7 +52,7 @@ public:
 	virtual BOOL		Dialog_Proc (HWND dlg_wnd, UINT message, WPARAM wparam, LPARAM lparam);
 
 	void					ActivateDlg(BOOL onoff);
-	void					ReloadDialog(void);
+	void					ReloadDialog();
 
 private:
 

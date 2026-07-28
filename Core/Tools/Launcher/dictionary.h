@@ -63,12 +63,12 @@ class Dictionary
                    Dictionary(uint32 (* hashFn)(K &key));
                   ~Dictionary();
 
-  void             clear(void);
+  void             clear();
   bit8             add(IN K &key,IN V &value);
   bit8             getValue(IN K &key, OUT V &value);
   void             print(IN FILE *out) const;
-  uint32           getSize(void) const;
-  uint32           getEntries(void) const;
+  uint32           getSize() const;
+  uint32           getEntries() const;
   bit8             contains(IN K &key);
   bit8             updateValue(IN K &key,IN V &value);
   bit8             remove(IN K &key,OUT V &value);
@@ -77,8 +77,8 @@ class Dictionary
   bit8             iterate(INOUT int &index,INOUT int &offset, OUT V &value) const;
 
  private:
-  void             shrink(void);  // halve the number of slots
-  void             expand(void);  // double the number of slots
+  void             shrink();  // halve the number of slots
+  void             expand();  // double the number of slots
 
 
   DNode<K,V>     **table;      // This stores the lists at each slot
@@ -242,13 +242,13 @@ bit8 Dictionary<K,V>::iterate(INOUT int &index,INOUT int &offset,
 
 // Return the current size of the hash table
 template <class K,class V>
-uint32 Dictionary<K,V>::getSize(void) const
+uint32 Dictionary<K,V>::getSize() const
 { return(size); }
 
 
 // Return the current number of entries in the table
 template <class K,class V>
-uint32 Dictionary<K,V>::getEntries(void) const
+uint32 Dictionary<K,V>::getEntries() const
 { return(entries); }
 
 
@@ -506,7 +506,7 @@ bit8 Dictionary<K,V>::getValue(IN K &key,OUT V &value)
 
 // Shrink the hash table by a factor of 2 (and relocate entries)
 template <class K,class V>
-void Dictionary<K,V>::shrink(void)
+void Dictionary<K,V>::shrink()
 {
   int    i;
   int    oldsize;
@@ -545,7 +545,7 @@ void Dictionary<K,V>::shrink(void)
 
 
 template <class K,class V>
-void Dictionary<K,V>::expand(void)
+void Dictionary<K,V>::expand()
 {
   int    i;
   int    oldsize;

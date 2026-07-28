@@ -46,7 +46,7 @@ class CritSec
                ~CritSec();
 
   sint32		lock(int *refcount=nullptr) RO;
-  sint32		unlock(void) RO;
+  sint32		unlock() RO;
 
  protected:
   #ifdef _WIN32

@@ -144,8 +144,8 @@ public:
 	Directory(const std::string& dirPath);
 	~Directory() {}
 
-	FileInfoSet* getFiles( void );
-	FileInfoSet* getSubdirs( void );
+	FileInfoSet* getFiles();
+	FileInfoSet* getSubdirs();
 
 protected:
 	std::string m_dirPath;
@@ -256,12 +256,12 @@ Directory::Directory( const std::string& dirPath ) : m_dirPath(dirPath)
 	SetCurrentDirectory( currDir );
 }
 
-FileInfoSet* Directory::getFiles( void )
+FileInfoSet* Directory::getFiles()
 {
 	return &m_files;
 }
 
-FileInfoSet* Directory::getSubdirs( void )
+FileInfoSet* Directory::getSubdirs()
 {
 	return &m_subdirs;
 }

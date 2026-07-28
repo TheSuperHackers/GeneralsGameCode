@@ -337,7 +337,7 @@ error:
 	return ok;
 }
 
-int LoadMainDB(TransDB *db, const char *filename, void (*cb) (void) )
+int LoadMainDB(TransDB *db, const char *filename, void (*cb) () )
 {
 	BabylonLabel	*label = nullptr;
 	BabylonText		*text = nullptr;

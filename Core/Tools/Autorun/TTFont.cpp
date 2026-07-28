@@ -559,7 +559,7 @@ UINT TTFontClass::Get_Double_Byte_Char	( const char *string, int *num_bytes ) co
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int TTFontClass::Get_Width( void ) const
+int TTFontClass::Get_Width() const
 {
 	return( MaxCharWidth - Overhang );
 }
@@ -579,7 +579,7 @@ int TTFontClass::Get_Width( void ) const
  * HISTORY:                                                                                    *
  *   05/26/1997 JLB : Created.                                                                 *
  *=============================================================================================*/
-int TTFontClass::Get_Height( void ) const
+int TTFontClass::Get_Height() const
 {
 	return( Height );
 }
@@ -1396,7 +1396,7 @@ FontManagerClass::FontManagerClass ( HDC hdc )
  * HISTORY:                                                                                    *
  *   03/26/1998 MML : Created.                                                                 *
  *=============================================================================================*/
-FontManagerClass::~FontManagerClass ( void )
+FontManagerClass::~FontManagerClass ()
 {
 	delete TTButtonFontPtr;
 	TTButtonFontPtr = nullptr;

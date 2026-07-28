@@ -67,7 +67,7 @@ class ArrayList
                   ~ArrayList();
 
   // Remove all entries from the lsit
-  void             clear(void);
+  void             clear();
 
   // Add a node after the zero based 'pos'
   bit8             add(IN T &node,sint32 pos);
@@ -97,7 +97,7 @@ class ArrayList
   bit8             getPointer(OUT T **node,sint32 pos) RO;
 
   // Get the number of entries in the list
-  sint32           length(void) RO;
+  sint32           length() RO;
 
   // UNSAFE! for classes, see note below!
   bit8             setSize(sint32 newsize, IN T &filler);
@@ -120,8 +120,8 @@ class ArrayList
     INITIAL_SIZE = 10
   };
 
-  bit8             growVector(void);   // Expand the number of slots
-  bit8             shrinkVector(void); // Reduce the number of slots
+  bit8             growVector();   // Expand the number of slots
+  bit8             shrinkVector(); // Reduce the number of slots
 };
 
 
@@ -627,14 +627,14 @@ void ArrayList<T>::print(FILE *out)
 
 // Return the current length of the list
 template <class T>
-sint32 ArrayList<T>::length(void) RO
+sint32 ArrayList<T>::length() RO
 {
   return(Entries_);
 }
 
 // Grow the vector by a factor of 2X
 template <class T>
-bit8 ArrayList<T>::growVector(void)
+bit8 ArrayList<T>::growVector()
 {
   if (Entries_ < Slots_)   // Don't grow until we're at 100% usage
     return(FALSE);
@@ -668,7 +668,7 @@ bit8 ArrayList<T>::growVector(void)
 
 // Shrink the vector by a factor of 2X
 template <class T>
-bit8 ArrayList<T>::shrinkVector(void)
+bit8 ArrayList<T>::shrinkVector()
 {
   //fprintf(stderr,"Shrink called\n");
 

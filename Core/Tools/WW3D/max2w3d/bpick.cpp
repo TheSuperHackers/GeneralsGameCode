@@ -144,12 +144,12 @@ void BonePickerClass::proc(INodeTab & nodetab)
 	BoneList = nullptr;
 }
 
-TCHAR * BonePickerClass::dialogTitle(void)
+TCHAR * BonePickerClass::dialogTitle()
 {
 	return Get_String(IDS_PICK_BONE_DIALOG_TITLE);
 }
 
-TCHAR * BonePickerClass::buttonText(void)
+TCHAR * BonePickerClass::buttonText()
 {
 	return Get_String(IDS_PICK_BONE_BUTTON_TEXT);
 }

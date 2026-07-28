@@ -20,6 +20,6 @@
 
 #include"winblows.h"
 #include<commctrl.h>
-HWND Create_Patch_Dialog(void);
+HWND Create_Patch_Dialog();
 
 extern HWND PatchDialog;

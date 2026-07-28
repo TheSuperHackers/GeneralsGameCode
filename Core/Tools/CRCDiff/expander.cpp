@@ -36,7 +36,7 @@ void Expander::addExpansion( const std::string& key, const std::string val )
 	m_expansions[key] = val;
 }
 
-void Expander::clear( void )
+void Expander::clear()
 {
 	m_expansions.clear();
 }

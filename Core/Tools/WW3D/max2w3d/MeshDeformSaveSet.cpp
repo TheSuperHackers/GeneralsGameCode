@@ -45,7 +45,7 @@
 //
 ////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSaveSetClass::Reset (void)
+MeshDeformSaveSetClass::Reset ()
 {
 	//
 	//	Free all the keyframe pointers in our list
@@ -86,7 +86,7 @@ MeshDeformSaveSetClass::Begin_Keyframe (float state)
 //
 ////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSaveSetClass::End_Keyframe (void)
+MeshDeformSaveSetClass::End_Keyframe ()
 {
 	m_CurrentKeyFrame = nullptr;
 }

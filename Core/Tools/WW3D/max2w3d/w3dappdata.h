@@ -185,27 +185,27 @@ inline bool Is_Proxy(INode &node)
 */
 struct W3DAppData0Struct
 {
-	W3DAppData0Struct(void) : ExportFlags(DEFAULT_EXPORT_FLAGS) {}
+	W3DAppData0Struct() : ExportFlags(DEFAULT_EXPORT_FLAGS) {}
 
-	bool	Is_Bone(void)							{ return (ExportFlags & EXPORT_BONE_FLAG) == EXPORT_BONE_FLAG; }
-	bool	Is_Geometry(void)						{ return (ExportFlags & EXPORT_GEOMETRY_FLAG) == EXPORT_GEOMETRY_FLAG; }
+	bool	Is_Bone()							{ return (ExportFlags & EXPORT_BONE_FLAG) == EXPORT_BONE_FLAG; }
+	bool	Is_Geometry()						{ return (ExportFlags & EXPORT_GEOMETRY_FLAG) == EXPORT_GEOMETRY_FLAG; }
 
-	bool	Is_Normal_Mesh(void)					{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_NORMAL_MESH; }
-	bool	Is_Camera_Aligned_Mesh(void)		{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_CAMERA_ALIGNED; }
-	bool	Is_Camera_Oriented_Mesh(void)		{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_CAMERA_ORIENTED; }
-	bool	Is_Collision_AABox(void)			{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_AABOX; }
-	bool	Is_Collision_OBBox(void)			{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_OBBOX; }
-	bool	Is_Null(void)							{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_NULL; }
+	bool	Is_Normal_Mesh()					{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_NORMAL_MESH; }
+	bool	Is_Camera_Aligned_Mesh()		{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_CAMERA_ALIGNED; }
+	bool	Is_Camera_Oriented_Mesh()		{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_CAMERA_ORIENTED; }
+	bool	Is_Collision_AABox()			{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_AABOX; }
+	bool	Is_Collision_OBBox()			{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_OBBOX; }
+	bool	Is_Null()							{ return (ExportFlags & GEOMETRY_TYPE_MASK) == GEOMETRY_TYPE_NULL; }
 
-	bool	Is_Physical_Collision(void)		{ return (ExportFlags & COLLISION_TYPE_PHYSICAL) == COLLISION_TYPE_PHYSICAL; }
-	bool	Is_Projectile_Collision(void)		{ return (ExportFlags & COLLISION_TYPE_PROJECTILE) == COLLISION_TYPE_PROJECTILE; }
-	bool	Is_Vis_Collision(void)				{ return (ExportFlags & COLLISION_TYPE_VIS) == COLLISION_TYPE_VIS; }
+	bool	Is_Physical_Collision()		{ return (ExportFlags & COLLISION_TYPE_PHYSICAL) == COLLISION_TYPE_PHYSICAL; }
+	bool	Is_Projectile_Collision()		{ return (ExportFlags & COLLISION_TYPE_PROJECTILE) == COLLISION_TYPE_PROJECTILE; }
+	bool	Is_Vis_Collision()				{ return (ExportFlags & COLLISION_TYPE_VIS) == COLLISION_TYPE_VIS; }
 
-	bool	Is_Hidden(void)						{ return (ExportFlags & EXPORT_HIDDEN_FLAG) == EXPORT_HIDDEN_FLAG; }
-	bool	Is_Two_Sided(void)					{ return (ExportFlags & EXPORT_TWO_SIDED_FLAG) == EXPORT_TWO_SIDED_FLAG; }
-	bool	Is_Vertex_Alpha(void)				{ return (ExportFlags & EXPORT_VERTEX_ALPHA_FLAG) == EXPORT_VERTEX_ALPHA_FLAG; }
-	bool	Is_ZNormals(void)						{ return (ExportFlags & EXPORT_ZNORMALS_FLAG) == EXPORT_ZNORMALS_FLAG; }
-	bool	Is_Shadow(void)						{ return (ExportFlags & EXPORT_CAST_SHADOW_FLAG) == EXPORT_CAST_SHADOW_FLAG; }
+	bool	Is_Hidden()						{ return (ExportFlags & EXPORT_HIDDEN_FLAG) == EXPORT_HIDDEN_FLAG; }
+	bool	Is_Two_Sided()					{ return (ExportFlags & EXPORT_TWO_SIDED_FLAG) == EXPORT_TWO_SIDED_FLAG; }
+	bool	Is_Vertex_Alpha()				{ return (ExportFlags & EXPORT_VERTEX_ALPHA_FLAG) == EXPORT_VERTEX_ALPHA_FLAG; }
+	bool	Is_ZNormals()						{ return (ExportFlags & EXPORT_ZNORMALS_FLAG) == EXPORT_ZNORMALS_FLAG; }
+	bool	Is_Shadow()						{ return (ExportFlags & EXPORT_CAST_SHADOW_FLAG) == EXPORT_CAST_SHADOW_FLAG; }
 
 	unsigned short ExportFlags;	// what was I thinking??? (gth)
 };
@@ -226,7 +226,7 @@ struct W3DAppData0Struct
 
 struct W3DAppData1Struct
 {
-	W3DAppData1Struct(void) : DamageRegion(NO_DAMAGE_REGION) { }
+	W3DAppData1Struct() : DamageRegion(NO_DAMAGE_REGION) { }
 
 	/*
 	** NO_DAMAGE_REGION means the object isn't part of
@@ -251,13 +251,13 @@ struct W3DAppData1Struct
 
 struct W3DAppData2Struct
 {
-	W3DAppData2Struct(void);
+	W3DAppData2Struct();
 	W3DAppData2Struct(W3DAppData0Struct & olddata);
 
-	void	Init_With_Mesh_Defaults(void);
-	void	Init_With_Other_Defaults(void);
+	void	Init_With_Mesh_Defaults();
+	void	Init_With_Other_Defaults();
 	void	Init_From_AppData0(W3DAppData0Struct & olddata);
-	void	Update_Version(void);
+	void	Update_Version();
 
 	enum GeometryTypeEnum
 	{
@@ -274,31 +274,31 @@ struct W3DAppData2Struct
 	/*
 	** Read Access
 	*/
-	bool	Is_Bone(void) const							{ return (ExportFlags & EXPORT_TRANSFORM) == EXPORT_TRANSFORM; }
-	bool	Is_Geometry(void)	const						{ return (ExportFlags & EXPORT_GEOMETRY) == EXPORT_GEOMETRY; }
+	bool	Is_Bone() const							{ return (ExportFlags & EXPORT_TRANSFORM) == EXPORT_TRANSFORM; }
+	bool	Is_Geometry()	const						{ return (ExportFlags & EXPORT_GEOMETRY) == EXPORT_GEOMETRY; }
 
-	int	Get_Geometry_Type(void)	const				{ return GeometryType; }
-	bool	Is_Normal_Mesh(void)	const					{ return GeometryType == GEO_TYPE_NORMAL_MESH; }
-	bool	Is_Camera_Aligned_Mesh(void) const		{ return GeometryType == GEO_TYPE_CAMERA_ALIGNED; }
-	bool	Is_Camera_Oriented_Mesh(void) const		{ return GeometryType == GEO_TYPE_CAMERA_ORIENTED; }
-	bool	Is_Collision_AABox(void) const			{ return GeometryType == GEO_TYPE_AABOX; }
-	bool	Is_Collision_OBBox(void) const			{ return GeometryType == GEO_TYPE_OBBOX; }
-	bool	Is_Null(void) const							{ return GeometryType == GEO_TYPE_NULL; }
-	bool	Is_Dazzle(void) const 						{ return GeometryType == GEO_TYPE_DAZZLE; }
+	int	Get_Geometry_Type()	const				{ return GeometryType; }
+	bool	Is_Normal_Mesh()	const					{ return GeometryType == GEO_TYPE_NORMAL_MESH; }
+	bool	Is_Camera_Aligned_Mesh() const		{ return GeometryType == GEO_TYPE_CAMERA_ALIGNED; }
+	bool	Is_Camera_Oriented_Mesh() const		{ return GeometryType == GEO_TYPE_CAMERA_ORIENTED; }
+	bool	Is_Collision_AABox() const			{ return GeometryType == GEO_TYPE_AABOX; }
+	bool	Is_Collision_OBBox() const			{ return GeometryType == GEO_TYPE_OBBOX; }
+	bool	Is_Null() const							{ return GeometryType == GEO_TYPE_NULL; }
+	bool	Is_Dazzle() const 						{ return GeometryType == GEO_TYPE_DAZZLE; }
 
-	bool	Is_Hidden_Enabled(void) const				{ return (GeometryFlags & GEOMETRY_FLAG_HIDDEN) == GEOMETRY_FLAG_HIDDEN; }
-	bool	Is_Two_Sided_Enabled(void) const			{ return (GeometryFlags & GEOMETRY_FLAG_TWO_SIDED) == GEOMETRY_FLAG_TWO_SIDED; }
-	bool	Is_Vertex_Alpha_Enabled(void) const		{ return (GeometryFlags & GEOMETRY_FLAG_VERTEX_ALPHA) == GEOMETRY_FLAG_VERTEX_ALPHA; }
-	bool	Is_ZNormals_Enabled(void) const			{ return (GeometryFlags & GEOMETRY_FLAG_ZNORMALS) == GEOMETRY_FLAG_ZNORMALS; }
-	bool	Is_Shadow_Enabled(void) const				{ return (GeometryFlags & GEOMETRY_FLAG_CAST_SHADOW) == GEOMETRY_FLAG_CAST_SHADOW; }
-	bool	Is_Shatterable_Enabled(void) const		{ return (GeometryFlags & GEOMETRY_FLAG_SHATTERABLE) == GEOMETRY_FLAG_SHATTERABLE; }
-	bool	Is_NPatchable_Enabled(void) const		{ return (GeometryFlags & GEOMETRY_FLAG_NPATCHABLE) == GEOMETRY_FLAG_NPATCHABLE; }
+	bool	Is_Hidden_Enabled() const				{ return (GeometryFlags & GEOMETRY_FLAG_HIDDEN) == GEOMETRY_FLAG_HIDDEN; }
+	bool	Is_Two_Sided_Enabled() const			{ return (GeometryFlags & GEOMETRY_FLAG_TWO_SIDED) == GEOMETRY_FLAG_TWO_SIDED; }
+	bool	Is_Vertex_Alpha_Enabled() const		{ return (GeometryFlags & GEOMETRY_FLAG_VERTEX_ALPHA) == GEOMETRY_FLAG_VERTEX_ALPHA; }
+	bool	Is_ZNormals_Enabled() const			{ return (GeometryFlags & GEOMETRY_FLAG_ZNORMALS) == GEOMETRY_FLAG_ZNORMALS; }
+	bool	Is_Shadow_Enabled() const				{ return (GeometryFlags & GEOMETRY_FLAG_CAST_SHADOW) == GEOMETRY_FLAG_CAST_SHADOW; }
+	bool	Is_Shatterable_Enabled() const		{ return (GeometryFlags & GEOMETRY_FLAG_SHATTERABLE) == GEOMETRY_FLAG_SHATTERABLE; }
+	bool	Is_NPatchable_Enabled() const		{ return (GeometryFlags & GEOMETRY_FLAG_NPATCHABLE) == GEOMETRY_FLAG_NPATCHABLE; }
 
-	bool	Is_Physical_Collision_Enabled(void) const		{ return (CollisionFlags & COLLISION_FLAG_PHYSICAL) == COLLISION_FLAG_PHYSICAL; }
-	bool	Is_Projectile_Collision_Enabled(void) const	{ return (CollisionFlags & COLLISION_FLAG_PROJECTILE) == COLLISION_FLAG_PROJECTILE; }
-	bool	Is_Vis_Collision_Enabled(void) const			{ return (CollisionFlags & COLLISION_FLAG_VIS) == COLLISION_FLAG_VIS; }
-	bool	Is_Camera_Collision_Enabled(void) const		{ return (CollisionFlags & COLLISION_FLAG_CAMERA) == COLLISION_FLAG_CAMERA; }
-	bool	Is_Vehicle_Collision_Enabled(void) const		{ return (CollisionFlags & COLLISION_FLAG_VEHICLE) == COLLISION_FLAG_VEHICLE; }
+	bool	Is_Physical_Collision_Enabled() const		{ return (CollisionFlags & COLLISION_FLAG_PHYSICAL) == COLLISION_FLAG_PHYSICAL; }
+	bool	Is_Projectile_Collision_Enabled() const	{ return (CollisionFlags & COLLISION_FLAG_PROJECTILE) == COLLISION_FLAG_PROJECTILE; }
+	bool	Is_Vis_Collision_Enabled() const			{ return (CollisionFlags & COLLISION_FLAG_VIS) == COLLISION_FLAG_VIS; }
+	bool	Is_Camera_Collision_Enabled() const		{ return (CollisionFlags & COLLISION_FLAG_CAMERA) == COLLISION_FLAG_CAMERA; }
+	bool	Is_Vehicle_Collision_Enabled() const		{ return (CollisionFlags & COLLISION_FLAG_VEHICLE) == COLLISION_FLAG_VEHICLE; }
 
 	/*
 	** Write Access
@@ -338,7 +338,7 @@ struct W3DAppData2Struct
 protected:
 
 	void	Set_Version(int ver)								{ ExportFlags &= ~VERSION_MASK; ExportFlags |= (ver<<VERSION_SHIFT); }
-	int	Get_Version(void)									{ return (ExportFlags & VERSION_MASK)>>VERSION_SHIFT; }
+	int	Get_Version()									{ return (ExportFlags & VERSION_MASK)>>VERSION_SHIFT; }
 
 	enum ExportFlagsEnum
 	{
@@ -394,7 +394,7 @@ struct W3DDazzleAppDataStruct
 	/*
 	** Constructor, zeros everything, then initializes DazzleType to "DEFAULT"
 	*/
-	W3DDazzleAppDataStruct(void);
+	W3DDazzleAppDataStruct();
 
 	/*
 	** Get the W3DAppData2Struct for a given INode and create one if

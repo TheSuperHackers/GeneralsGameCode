@@ -74,7 +74,7 @@ VertexRestoreClass::VertexRestoreClass
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-VertexRestoreClass::Free_Vertex_Array (void)
+VertexRestoreClass::Free_Vertex_Array ()
 {
 	m_VertexList.Delete_All ();
 	m_RedoVertexList.Delete_All ();
@@ -123,7 +123,7 @@ VertexRestoreClass::Restore (int is_undo)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-VertexRestoreClass::Redo (void)
+VertexRestoreClass::Redo ()
 {
 	assert (m_pMesh != nullptr);
 	assert (m_pModData != nullptr);
@@ -155,7 +155,7 @@ VertexRestoreClass::Redo (void)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-VertexRestoreClass::EndHold (void)
+VertexRestoreClass::EndHold ()
 {
 	//
 	//	Record the position of all the verts we are about to change

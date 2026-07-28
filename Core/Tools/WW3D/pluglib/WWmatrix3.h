@@ -71,7 +71,7 @@ public:
 	/*
 	** Constructors
 	*/
-	Matrix3(void) {};
+	Matrix3() {};
 	Matrix3(const Matrix3 & m);
 
 	explicit Matrix3(bool identity);
@@ -111,9 +111,9 @@ public:
 	/*
 	** Transpose and Inverse
 	*/
-	Matrix3	Transpose	(void) const;
-	Matrix3	Inverse		(void) const;
-	float		Determinant	(void) const;
+	Matrix3	Transpose	() const;
+	Matrix3	Inverse		() const;
+	float		Determinant	() const;
 
 	/*
 	** Assignment operators
@@ -127,7 +127,7 @@ public:
 	Matrix3 & operator *= (float d);
 	Matrix3 & operator /= (float d);
 
-	void	Make_Identity(void);
+	void	Make_Identity();
 
 	/*
 	** Automatically concatenate a rotation onto the current matrix
@@ -147,17 +147,17 @@ public:
 	** cannot be used to re-build a matrx.  Use the EulerAnglesClass
 	** to convert a matrix into a set of three Euler angles.
 	*/
-	float Get_X_Rotation(void) const;
-	float Get_Y_Rotation(void) const;
-	float Get_Z_Rotation(void) const;
+	float Get_X_Rotation() const;
+	float Get_Y_Rotation() const;
+	float Get_Z_Rotation() const;
 
 	/*
 	** These functions return a vector representing the direction an
    ** axis is pointing.
    */
-	Vector3 Get_X_Vector(void) const;
-	Vector3 Get_Y_Vector(void) const;
-	Vector3 Get_Z_Vector(void) const;
+	Vector3 Get_X_Vector() const;
+	Vector3 Get_Y_Vector() const;
+	Vector3 Get_Z_Vector() const;
 	void Get_X_Vector(Vector3 * set_x) const;
 	void Get_Y_Vector(Vector3 * set_y) const;
 	void Get_Z_Vector(Vector3 * set_z) const;
@@ -218,8 +218,8 @@ public:
 	/*
 	** Check whether a matrix is orthogonal, make it orthogonal
 	*/
-	int	Is_Orthogonal(void) const;
-	void	Re_Orthogonalize(void);
+	int	Is_Orthogonal() const;
+	void	Re_Orthogonalize();
 
 	/*
 	** Miscellaneous
@@ -311,7 +311,7 @@ inline void Matrix3::Set(const Vector3 & r0, const Vector3 & r1, const Vector3 &
 	Row[2] = r2;
 }
 
-inline void Matrix3::Make_Identity(void)
+inline void Matrix3::Make_Identity()
 {
 	Row[0].Set(1.0f,0.0f,0.0f);
 	Row[1].Set(0.0f,1.0f,0.0f);
@@ -471,7 +471,7 @@ inline Matrix3 Matrix3::Inverse() const    // Gauss-Jordan elimination with part
  * HISTORY:                                                                                    *
  *   1/7/20     DRM : Created.                                                                 *
  *=============================================================================================*/
-inline float Matrix3::Determinant(void) const
+inline float Matrix3::Determinant() const
 {
 	return   Row[0][0] * (Row[1][1] * Row[2][2] - Row[1][2] * Row[2][1])
 		    - Row[0][1] * (Row[1][0] * Row[2][2] - Row[1][2] * Row[2][0])
@@ -580,7 +580,7 @@ inline Matrix3& Matrix3::operator /= (float d)
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline float Matrix3::Get_X_Rotation(void) const
+inline float Matrix3::Get_X_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(0.0,1.0,0.0);
 	return atan2(v[2], v[1]);
@@ -598,7 +598,7 @@ inline float Matrix3::Get_X_Rotation(void) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline float Matrix3::Get_Y_Rotation(void) const
+inline float Matrix3::Get_Y_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(0.0,0.0,1.0);
 	return atan2(v[0],v[2]);
@@ -616,23 +616,23 @@ inline float Matrix3::Get_Y_Rotation(void) const
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline float Matrix3::Get_Z_Rotation(void) const
+inline float Matrix3::Get_Z_Rotation() const
 {
 	Vector3 v = (*this) * Vector3(1.0,0.0,0.0);
 	return atan2(v[1],v[0]);
 }
 
-inline Vector3 Matrix3::Get_X_Vector(void) const
+inline Vector3 Matrix3::Get_X_Vector() const
 {
    return Vector3(Row[0][0], Row[1][0], Row[2][0]);
 }
 
-inline Vector3 Matrix3::Get_Y_Vector(void) const
+inline Vector3 Matrix3::Get_Y_Vector() const
 {
    return Vector3(Row[0][1], Row[1][1], Row[2][1]);
 }
 
-inline Vector3 Matrix3::Get_Z_Vector(void) const
+inline Vector3 Matrix3::Get_Z_Vector() const
 {
    return Vector3(Row[0][2], Row[1][2], Row[2][2]);
 }

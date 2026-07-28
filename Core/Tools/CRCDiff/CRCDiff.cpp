@@ -32,7 +32,7 @@ std::string tableRow;
 
 //=============================================================================
 
-static void exitWait(void)
+static void exitWait()
 {
 	system("PAUSE");
 }
@@ -83,7 +83,7 @@ static std::string readInFile(const char *fname) {
 
 static FILE *ofp = nullptr;
 
-void dumpQueued(void);
+void dumpQueued();
 
 static void outputLine(const char *line)
 {
@@ -167,7 +167,7 @@ static void queueLine(int frame, int index, const char *line1)
 	//cout << buf << endl;
 }
 
-void dumpQueued(void)
+void dumpQueued()
 {
 	while (!queuedLines.empty())
 	{

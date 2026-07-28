@@ -61,28 +61,28 @@ class MeshDeformPanelClass
 				m_pMeshDeformer (nullptr),
 				m_pLockSetsButton (nullptr),
 				m_pMaxSetsEdit (nullptr)				{ }
-		virtual ~MeshDeformPanelClass (void)	{ }
+		virtual ~MeshDeformPanelClass ()	{ }
 
 		//////////////////////////////////////////////////////////////////////
 		// Public methods
 		//////////////////////////////////////////////////////////////////////
 
 		// Inline accessors
-		IColorSwatch *				Get_Color_Swatch (void) const			{ return m_pColorSwatch; }
-		COLORREF						Get_Vertex_Color (void) const			{ return m_pColorSwatch->GetColor (); }
+		IColorSwatch *				Get_Color_Swatch () const			{ return m_pColorSwatch; }
+		COLORREF						Get_Vertex_Color () const			{ return m_pColorSwatch->GetColor (); }
 		void							Set_Vertex_Color (COLORREF color)	{ m_pColorSwatch->SetColor (color); }
 		void							Set_Deformer (MeshDeformClass *obj);
-		BOOL							Is_Edit_Mode (void) const				{ return (::SendDlgItemMessage (m_hWnd, IDC_STATE_SLIDER, TBM_GETPOS, 0, 0L) > 0); }
-		BOOL							Are_Sets_Tied (void) const				{ return m_pLockSetsButton->IsChecked (); }
-		int							Get_Current_Set (void) const			{ return ::SendDlgItemMessage (m_hWnd, IDC_CURRENT_SET_SLIDER, TBM_GETPOS, 0, 0L); }
+		BOOL							Is_Edit_Mode () const				{ return (::SendDlgItemMessage (m_hWnd, IDC_STATE_SLIDER, TBM_GETPOS, 0, 0L) > 0); }
+		BOOL							Are_Sets_Tied () const				{ return m_pLockSetsButton->IsChecked (); }
+		int							Get_Current_Set () const			{ return ::SendDlgItemMessage (m_hWnd, IDC_CURRENT_SET_SLIDER, TBM_GETPOS, 0, 0L); }
 		void							Set_Current_Set (int set, bool notify = false);
 		void							Set_Max_Sets (int max, bool notify = false);
 		void							Set_Current_State (float state);
 		void							Set_Auto_Apply_Check (bool onoff)	{ ::SendDlgItemMessage (m_hWnd, IDC_MANUALAPPLY, BM_SETCHECK, (WPARAM)(!onoff), 0L); }
-		bool							Get_Auto_Apply_Check (void) const	{ return ::SendDlgItemMessage (m_hWnd, IDC_MANUALAPPLY, BM_GETCHECK, 0, 0L) == 0; }
+		bool							Get_Auto_Apply_Check () const	{ return ::SendDlgItemMessage (m_hWnd, IDC_MANUALAPPLY, BM_GETCHECK, 0, 0L) == 0; }
 
 		// Update methods
-		void							Update_Vertex_Color (void);
+		void							Update_Vertex_Color ();
 
 		//////////////////////////////////////////////////////////////////////
 		// Static methods

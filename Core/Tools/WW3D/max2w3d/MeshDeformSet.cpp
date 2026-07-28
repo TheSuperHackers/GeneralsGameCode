@@ -55,7 +55,7 @@ const int MAX_DEFORM_KEY_FRAMES			= 10;
 //	~MeshDeformSetClass
 //
 ///////////////////////////////////////////////////////////////////////////
-MeshDeformSetClass::~MeshDeformSetClass (void)
+MeshDeformSetClass::~MeshDeformSetClass ()
 {
 	SAFE_DELETE (m_pMesh);
 	SAFE_DELETE (m_pVertexArray);
@@ -144,7 +144,7 @@ MeshDeformSetClass::Set_Vertex_Color
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSetClass::Update_Set_Members (void)
+MeshDeformSetClass::Update_Set_Members ()
 {
 	//
 	//	Examine each keyframe
@@ -274,7 +274,7 @@ MeshDeformSetClass::Reset_Key_Frame_Colors (int keyframe)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSetClass::Update_Current_Data (void)
+MeshDeformSetClass::Update_Current_Data ()
 {
 	DEFORM_LIST &vertices		= m_KeyFrames[m_CurrentKeyFrame]->vertices;
 	DEFORM_LIST &colors			= m_KeyFrames[m_CurrentKeyFrame]->colors;
@@ -416,7 +416,7 @@ MeshDeformSetClass::Update_Key_Frame (int key_frame)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSetClass::Init_Key_Frames (void)
+MeshDeformSetClass::Init_Key_Frames ()
 {
 	//
 	// For now, add all the key frames upfront
@@ -434,7 +434,7 @@ MeshDeformSetClass::Init_Key_Frames (void)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSetClass::Free_Key_Frames (void)
+MeshDeformSetClass::Free_Key_Frames ()
 {
 	//
 	// Loop through and free all the key frames
@@ -1085,7 +1085,7 @@ MeshDeformSetClass::Update_Members (DEFORM_CHANNELS flags)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSetClass::Select_Members (void)
+MeshDeformSetClass::Select_Members ()
 {
 	//
 	// Loop through and select the necessary verts
@@ -1102,7 +1102,7 @@ MeshDeformSetClass::Select_Members (void)
 //
 ///////////////////////////////////////////////////////////////////////////
 void
-MeshDeformSetClass::Restore_Members (void)
+MeshDeformSetClass::Restore_Members ()
 {
 /*
 	//
@@ -1163,7 +1163,7 @@ MeshDeformSetClass::Restore_Members (void)
 //
 ///////////////////////////////////////////////////////////////////////////
 bool
-MeshDeformSetClass::Is_Empty (void) const
+MeshDeformSetClass::Is_Empty () const
 {
 	bool is_empty = true;
 

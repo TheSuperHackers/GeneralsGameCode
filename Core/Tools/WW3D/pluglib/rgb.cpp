@@ -144,7 +144,7 @@ int RGBClass::Difference(RGBClass const & rgb) const
  * HISTORY:                                                                                    *
  *   02/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-RGBClass::operator HSVClass (void) const
+RGBClass::operator HSVClass () const
 {
 	int hue;
 	int saturation;

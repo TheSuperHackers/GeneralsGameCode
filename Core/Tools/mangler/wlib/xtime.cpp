@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 //
 // Construct with current clock time
 //
-Xtime::Xtime(void)
+Xtime::Xtime()
 {
   update();
 }
@@ -265,7 +265,7 @@ void Xtime::addSeconds(sint32 seconds)
 // If msec is > 1 days worth, adjust the day count
 //   & decrement the msec counter until OK.
 //
-void Xtime::normalize(void)
+void Xtime::normalize()
 {
   day_+=(msec_/86400000);
   msec_%=86400000;
@@ -281,7 +281,7 @@ void Xtime::normalize(void)
 // Update time to hold the current clock time
 // (breaks in 2038 :-)
 //
-void Xtime::update(void)
+void Xtime::update()
 {
   day_=719528;  // day_s from year 0 to Jan1, 1970
   msec_=0;
@@ -623,13 +623,13 @@ void Xtime::PrintDate(char *out) const
 ********************************************/
 
 // Get day_s since year 0
-sint32 Xtime::getDay(void) const
+sint32 Xtime::getDay() const
 {
   return(day_);
 }
 
 // Get msecs since start of day
-sint32 Xtime::getMsec(void) const
+sint32 Xtime::getMsec() const
 {
   return(msec_);
 }
@@ -686,7 +686,7 @@ bit8 Xtime::setTime(int month, int mday, int year, int hour, int minute, int sec
 
 
 
-int Xtime::getYDay(void) const   // Day of Year  (1-366)  (366 = leap yr)
+int Xtime::getYDay() const   // Day of Year  (1-366)  (366 = leap yr)
 {
 	int year;
 	sint32 dayofyear;
@@ -738,32 +738,32 @@ bit8 Xtime::getTime(int &month, int &mday, int &year, int &hour, int &minute, in
 // These are for getting components of the time in the
 //   standard ranges.  Like Day 1-31, Second 0-59, etc...
 //
-int Xtime::getSecond(void) const
+int Xtime::getSecond() const
 {
   int month,mday,year,hour,minute,second;
   getTime(month, mday, year, hour, minute, second);
   return(second);
 }
-int Xtime::getMinute(void) const
+int Xtime::getMinute() const
 {
   int month,mday,year,hour,minute,second;
   getTime(month, mday, year, hour, minute, second);
   return(minute);
 }
-int Xtime::getHour(void) const
+int Xtime::getHour() const
 {
   int month,mday,year,hour,minute,second;
   getTime(month, mday, year, hour, minute, second);
   return(hour);
 }
-int Xtime::getMDay(void) const
+int Xtime::getMDay() const
 {
   int month,mday,year,hour,minute,second;
   getTime(month, mday, year, hour, minute, second);
   return(mday);
 }
 
-int Xtime::getMonth(void) const
+int Xtime::getMonth() const
 {
   int month,mday,year,hour,minute,second;
   getTime(month, mday, year, hour, minute, second);
@@ -771,7 +771,7 @@ int Xtime::getMonth(void) const
 }
 
 // based at year 0 (real 0, not 1970)
-int Xtime::getYear(void) const
+int Xtime::getYear() const
 {
   int month,mday,year,hour,minute,second;
   getTime(month, mday, year, hour, minute, second);

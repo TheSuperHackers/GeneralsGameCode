@@ -64,7 +64,7 @@ InputDlg::InputDlg (HWND hWndParent)
 /////////////////////////////////////////////////////////////////////////////
 // InputDlg Methods
 
-int InputDlg::DoModal (void)
+int InputDlg::DoModal ()
 {
 	// Put up the dialog box.
 	BOOL result = DialogBoxParam(AppInstance, MAKEINTRESOURCE(IDD),
@@ -200,7 +200,7 @@ LRESULT InputDlg::OnInitDialog (WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-BOOL InputDlg::OnOK (void)
+BOOL InputDlg::OnOK ()
 {
 	// Update our copy of what the user typed.
 	HWND hEdit = GetDlgItem(m_hWnd, IDC_VALUE);

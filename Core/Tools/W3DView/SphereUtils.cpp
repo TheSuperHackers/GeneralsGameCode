@@ -112,7 +112,7 @@ SphereKeysClass::Add_Key (W3dSphereKeyFrameStruct &keys)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereKeysClass::Free_Keys (void)
+SphereKeysClass::Free_Keys ()
 {
 	SAFE_DELETE_ARRAY (m_Keys);
 	m_KeyCount	= 0;
@@ -126,7 +126,7 @@ SphereKeysClass::Free_Keys (void)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereKeysClass::Detach (void)
+SphereKeysClass::Detach ()
 {
 	m_Keys		= nullptr;
 	m_KeyCount	= 0;
@@ -169,7 +169,7 @@ Key_Compare (const void *arg1, const void *arg2)
 //
 /////////////////////////////////////////////////////////////
 void
-SphereKeysClass::Sort (void)
+SphereKeysClass::Sort ()
 {
 	if (m_Keys != nullptr && m_KeyCount > 0) {
 		::qsort (m_Keys, m_KeyCount, sizeof (W3dSphereKeyFrameStruct), Key_Compare);

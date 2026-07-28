@@ -191,7 +191,7 @@ error:
 	*/
 //=================================================================
 
-void StdFile::close( void )
+void StdFile::close()
 {
 	File::close();
 }

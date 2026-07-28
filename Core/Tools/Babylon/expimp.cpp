@@ -40,7 +40,7 @@ static OLECHAR oletrans[100*1024];
 static CBabylonDlg *progress_dlg;
 static int progress_count;
 
-static void progress_cb ( void )
+static void progress_cb ()
 {
 	progress_count ++;
 
@@ -212,7 +212,7 @@ static void writeText ( BabylonText *text, int row )
 	writeLabel ( label, row );
 }
 
-static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (*cb) (void ), int write )
+static int export_trans ( TransDB *db, LangID langid, TROPTIONS *options, void (*cb) (), int write )
 {
 	BabylonLabel *label;
 	BabylonText *text;
@@ -539,7 +539,7 @@ int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPT
 }
 
 
-static int import_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBabylonDlg *dlg )
+static int import_trans ( TransDB *db, LangID langid, void (*cb) (), CBabylonDlg *dlg )
 {
 	int row = 3;
 	int id;
@@ -734,7 +734,7 @@ done:
 	return count;
 }
 
-static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) ( void ), CBabylonDlg *dlg )
+static int update_sent_trans ( TransDB *db, LangID langid, void (*cb) (), CBabylonDlg *dlg )
 {
 	int row = 3;
 	int id;

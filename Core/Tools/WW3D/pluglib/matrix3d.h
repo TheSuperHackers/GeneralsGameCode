@@ -117,7 +117,7 @@ class	Matrix3D
 public:
 
 	// Constructors
-	Matrix3D(void) {}
+	Matrix3D() {}
 
 	explicit Matrix3D(bool init) { if (init) Make_Identity(); }
 
@@ -197,16 +197,16 @@ public:
  	Vector4 & operator [] (int i) { return Row[i]; }
 	const Vector4 & operator [] (int i) const { return Row[i]; }
 
-	Vector3 Get_Translation(void) const { return Vector3(Row[0][3],Row[1][3],Row[2][3]); }
+	Vector3 Get_Translation() const { return Vector3(Row[0][3],Row[1][3],Row[2][3]); }
 	void Get_Translation(Vector3 * set) const { set->X = Row[0][3]; set->Y = Row[1][3]; set->Z = Row[2][3]; }
 	void Set_Translation(const Vector3 & t)  { Row[0][3] = t[0]; Row[1][3] = t[1];Row[2][3] = t[2]; }
 
 	void Set_Rotation(const Matrix3 & m);
 	void Set_Rotation(const Quaternion & q);
 
-	float Get_X_Translation(void) const { return Row[0][3]; };
-	float Get_Y_Translation(void) const { return Row[1][3]; };
-	float Get_Z_Translation(void) const { return Row[2][3]; };
+	float Get_X_Translation() const { return Row[0][3]; };
+	float Get_Y_Translation() const { return Row[1][3]; };
+	float Get_Z_Translation() const { return Row[2][3]; };
 
 	void Set_X_Translation(float x) { Row[0][3] = x; };
 	void Set_Y_Translation(float y) { Row[1][3] = y; };
@@ -221,14 +221,14 @@ public:
 	// matrix has been rotated about a given axis.  These functions
 	// cannot be used to re-build a matrx.  Use the EulerAnglesClass
 	// to convert a matrix into a set of three Euler angles.
-	float Get_X_Rotation(void) const;
-	float Get_Y_Rotation(void) const;
-	float Get_Z_Rotation(void) const;
+	float Get_X_Rotation() const;
+	float Get_Y_Rotation() const;
+	float Get_Z_Rotation() const;
 
 	// Each of the transformation methods performs an
 	// "optimized" post-multiplication with the current matrix.
 	// All angles are assumed to be radians.
-	void	Make_Identity(void);
+	void	Make_Identity();
 	void	Translate(float x,float y,float z);
 	void	Translate(const Vector3 &t);
    void  Translate_X(float x);
@@ -308,8 +308,8 @@ public:
 	static void	Inverse_Rotate_Vector(const Matrix3D & tm,const Vector3 & in,Vector3 * out);
 
 	// Check whether a matrix is orthogonal or FORCE it to be :-)
-	int	Is_Orthogonal(void) const;
-	void	Re_Orthogonalize(void);
+	int	Is_Orthogonal() const;
+	void	Re_Orthogonalize();
 
 	// some static matrices which are sometimes useful
 	static const Matrix3D		Identity;
@@ -591,7 +591,7 @@ inline void Matrix3D::Set(const Vector3 & position)
  * HISTORY:                                                                                    *
  *   02/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-inline void Matrix3D::Make_Identity(void)
+inline void Matrix3D::Make_Identity()
 {
 	Row[0].Set(1.0f,0.0f,0.0f,0.0f);
 	Row[1].Set(0.0f,1.0f,0.0f,0.0f);

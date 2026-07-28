@@ -110,7 +110,7 @@ MeshConnectionsClass::MeshConnectionsClass
  * HISTORY:                                                                                    *
  *   07/24/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-MeshConnectionsClass::~MeshConnectionsClass(void)
+MeshConnectionsClass::~MeshConnectionsClass()
 {
 }
 

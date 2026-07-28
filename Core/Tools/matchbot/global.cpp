@@ -21,7 +21,7 @@
 
 GlobalClass Global;
 
-GlobalClass::GlobalClass(void)
+GlobalClass::GlobalClass()
 {}
 
 bool GlobalClass::ReadFile(const char *fname)

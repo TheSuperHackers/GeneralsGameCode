@@ -28,14 +28,14 @@ public:
 	{}
 
 
-	int Int(void);
-	double Double(void);
+	int Int();
+	double Double();
 	int Int(int low, int high);
 	double Double(double low, double high);
 
 private:
 
-	unsigned int randomValue( void );
+	unsigned int randomValue();
 	unsigned int seed[6];
 
 };

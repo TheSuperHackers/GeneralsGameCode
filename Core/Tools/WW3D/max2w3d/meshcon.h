@@ -68,7 +68,7 @@ class GeometryExportContextClass;
 
 struct ConnectionStruct
 {
-	ConnectionStruct(void) : BoneIndex(0),MeshINode(nullptr)
+	ConnectionStruct() : BoneIndex(0),MeshINode(nullptr)
 	{
 		memset(ObjectName,0,sizeof(ObjectName));
 	}
@@ -95,21 +95,21 @@ public:
 	MeshConnectionsClass(	DynamicVectorClass<GeometryExportTaskClass *> sub_objects,
 									GeometryExportContextClass & context );
 
-	~MeshConnectionsClass(void);
+	~MeshConnectionsClass();
 
 	/*
 	** Get the name of the mesh connections object (will be
 	** the name of the runtime HierarchyModel that this
 	** object is describing.
 	*/
-	const char * Get_Name(void) const			{ return Name; }
+	const char * Get_Name() const			{ return Name; }
 
 	/*
 	** Get the total number of meshes (of all types).
 	*/
-	int Get_Sub_Object_Count (void) const		{ return SubObjects.Count(); }
-	int Get_Aggregate_Count(void) const			{ return Aggregates.Count(); }
-	int Get_Proxy_Count(void) const				{ return ProxyObjects.Count(); }
+	int Get_Sub_Object_Count () const		{ return SubObjects.Count(); }
+	int Get_Aggregate_Count() const			{ return Aggregates.Count(); }
+	int Get_Proxy_Count() const				{ return ProxyObjects.Count(); }
 
 	/*
 	** Retrieve data about the mesh of the given index.
@@ -125,7 +125,7 @@ public:
 	/*
 	** Returns the origin node used by this model.
 	*/
-	INode * Get_Origin (void) const				{ return Origin; }
+	INode * Get_Origin () const				{ return Origin; }
 
 private:
 

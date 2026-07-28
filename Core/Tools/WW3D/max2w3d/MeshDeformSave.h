@@ -68,9 +68,9 @@ class MeshDeformSaveClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public constructors/destructors
 		//////////////////////////////////////////////////////////////////////
-		MeshDeformSaveClass (void)
+		MeshDeformSaveClass ()
 			:	m_AlphaPasses (0)			{ }
-		~MeshDeformSaveClass (void)	{ Reset (); }
+		~MeshDeformSaveClass ()	{ Reset (); }
 
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
@@ -81,12 +81,12 @@ class MeshDeformSaveClass
 		//void					Re_Index (MeshBuilderClass &builder);
 		bool					Export (ChunkSaveClass &chunk_save);
 
-		void					Reset (void);
-		bool					Is_Empty (void) const					{ return m_DeformSets.Count () == 0; }
+		void					Reset ();
+		bool					Is_Empty () const					{ return m_DeformSets.Count () == 0; }
 
-		bool					Does_Deformer_Modify_DCG (void);
+		bool					Does_Deformer_Modify_DCG ();
 
-		unsigned int		Get_Alpha_Passes (void) const					{ return m_AlphaPasses; }
+		unsigned int		Get_Alpha_Passes () const					{ return m_AlphaPasses; }
 		void					Set_Alpha_Passes (unsigned int pass_mask)	{ m_AlphaPasses = pass_mask; }
 
 	protected:
