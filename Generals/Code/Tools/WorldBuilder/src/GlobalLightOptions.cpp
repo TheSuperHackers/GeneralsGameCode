@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -937,7 +937,7 @@ void GlobalLightOptions::OnShowWindow(BOOL bShow, UINT nStatus)
 	stuffValuesIntoFields(K_SUN);
 	stuffValuesIntoFields(K_ACCENT1);
 	stuffValuesIntoFields(K_ACCENT2);
-	if (!IsWindowVisible()) {
+	if (!bShow) {
 		WbView3d * pView = CWorldBuilderDoc::GetActive3DView();
 		if (pView) {
 			Coord3D lightRay;

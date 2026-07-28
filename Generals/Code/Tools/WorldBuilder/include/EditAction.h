@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -62,6 +62,7 @@ protected:
 	CRichEditCtrl m_myEditCtrl;
 	CHARRANGE m_curLinkChrg;
 	Int				m_curEditParameter;
+	CTreeCtrl	m_actionTreeView;
 
 protected:
 

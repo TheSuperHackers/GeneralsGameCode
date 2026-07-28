@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -167,6 +167,8 @@ void WaterOptions::OnChangeWaterEdit()
 				if (pTrig->isValid()) {
 					didMatch = true;
 				} else {
+					// Keep layer membership in sync when discarding the invalid trigger.
+					TheLayersList->removePolygonTriggerFromLayersList(pTrig);
 					PolygonTrigger::removePolygonTrigger(pTrig);
 				}
 				break;

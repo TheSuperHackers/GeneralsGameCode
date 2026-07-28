@@ -167,6 +167,8 @@ void WaterOptions::OnChangeWaterEdit()
 				if (pTrig->isValid()) {
 					didMatch = true;
 				} else {
+					// Keep layer membership in sync when discarding the invalid trigger.
+					TheLayersList->removePolygonTriggerFromLayersList(pTrig);
 					PolygonTrigger::removePolygonTrigger(pTrig);
 				}
 				break;

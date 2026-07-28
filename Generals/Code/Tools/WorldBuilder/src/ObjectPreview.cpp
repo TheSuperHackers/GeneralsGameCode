@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -197,7 +197,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 	}
 	// set render object, or create if we need to
 	if( modelName.isEmpty() == FALSE &&
-			strncmp( modelName.str(), "No ", 3 ) != 0 )
+			strncmp( modelName.str(), "No ", 3 ) )
 	{
 	 	WW3DAssetManager *pMgr = W3DAssetManager::Get_Instance();
 		model = pMgr->Create_Render_Obj(modelName.str());

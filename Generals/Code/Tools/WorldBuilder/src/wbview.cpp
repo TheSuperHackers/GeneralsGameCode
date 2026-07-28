@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,9 @@
 //
 
 #include "StdAfx.h"
+#include "resource.h"
 #include "CUndoable.h"
+#include "CFixTeamOwnerDialog.h"
 #include "WorldBuilder.h"
 #include "WorldBuilderDoc.h"
 #include "wbview.h"
@@ -32,6 +34,7 @@
 #include "GlobalLightOptions.h"
 #include "playerlistdlg.h"
 #include "teamsdialog.h"
+#include "LayersList.h"
 
 Bool WbView::m_snapToGrid = false;
 
@@ -46,7 +49,8 @@ WbView::WbView() :
 	m_hysteresis(0),
 	m_lockAngle(false),
 	m_doLightFeedback(FALSE),
-	m_pickConstraint(ES_NONE)
+	m_pickConstraint(ES_NONE),
+	m_doRulerFeedback(RULER_NONE)
 {
 	Int showWay = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowWaypoints", 1);
 	m_showWaypoints = (showWay!=0);
@@ -105,6 +109,7 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_COMMAND(ID_EDIT_PLAYERLIST, OnEditPlayerlist)
 	ON_COMMAND(ID_EDIT_WORLDINFO, OnEditWorldinfo)
 	ON_COMMAND(ID_EDIT_TEAMLIST, OnEditTeamlist)
+	ON_COMMAND(ID_TEAM_EDIT, OnEditTeamlist)
 	ON_UPDATE_COMMAND_UI(ID_OBJECTPROPERTIES_REFLECTSINMIRROR, OnUpdateObjectpropertiesReflectsinmirror)
 	ON_COMMAND(ID_EDIT_PICKSTRUCTS, OnPickStructures)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PICKSTRUCTS, OnUpdatePickStructures)
@@ -208,6 +213,19 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 	if (CMainFrame::GetMainFrame()->isAutoSaving()) {
 		return;
 	}
+
+	if (m_doRulerFeedback != RULER_NONE) {
+		// If the user is measuring stuff, no need to do the rest of the text.
+		CString str;
+		if (m_doRulerFeedback == RULER_CIRCLE) {
+			str.Format("Diameter (in feet): %f", m_rulerLength * 2.0f);
+		} else {
+			str.Format("Length (in feet): %f", m_rulerLength);
+		}
+		CMainFrame::GetMainFrame()->SetMessageText(str);
+		return;
+	}
+
 	// Generate the status text display with coordinates and height.
 	Coord3D cpt;
 	viewToDocCoords(viewPt, &cpt);
@@ -244,7 +262,12 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 	}
 	Real height = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, nullptr);
 	CString str, str2, str3;
-	str.Format("%d object(s), ", totalObjects);
+	// If a layer has been activated, display it.
+	if (strcmp(AsciiString::TheEmptyString.str(), LayersList::TheActiveLayerName.c_str()) != 0) {
+		str.Format("Active Layer: (%s)    %d object(s), ", LayersList::TheActiveLayerName.c_str(), totalObjects);
+	} else {
+		str.Format("%d object(s), ", totalObjects);
+	}
 	str2.Format("%d waypoint(s), ", totalWaypoints);
 	str3.Format("(%.2f,%.2f), height %.2f", cpt.x, cpt.y, height);
 	str += str2;
@@ -910,25 +933,116 @@ void WbView::OnUpdateShowNames(CCmdUI* pCmdUI)
 
 void WbView::OnValidationFixTeams()
 {
-	std::vector<Dict *> allTeamDicts;
-	Int numTeams = TheSidesList->getNumTeams();
-	// Get all team dicts in the map
-	for (Int i = 0; i < numTeams; ++i)
+	Bool anyFixes = false;
+	Int i;
+	// Check for duplicate teams.
+	for (i = 0; i < TheSidesList->getNumTeams(); ++i)
 	{
-		allTeamDicts.push_back(TheSidesList->getTeamInfo(i)->getDict());
+		Dict *d = TheSidesList->getTeamInfo(i)->getDict();
+
+		AsciiString tname = d->getAsciiString(TheKey_teamName);
+		Int j;
+		for (j=0; j<i; j++) {
+			Dict *prevd = TheSidesList->getTeamInfo(j)->getDict();
+			if (prevd->getAsciiString(TheKey_teamName).compare(tname)==0) {
+				anyFixes = true;
+				CString msg;
+				msg.Format(IDS_DUPLICATE_TEAM_REMOVED, tname.str());
+				AfxMessageBox(msg, MB_OK);
+				TheSidesList->removeTeam(i);
+				i--;
+				break;
+			}
+		}
 	}
 
-	Dict newDict;
-	newDict.setBool(TheKey_teamExecutesActionsOnCreate, false);
+	// Check for teams with invalid owners.
+	for (i = 0; i < TheSidesList->getNumTeams(); ++i)
+	{
+		Dict *d = TheSidesList->getTeamInfo(i)->getDict();
+		AsciiString oname = d->getAsciiString(TheKey_teamOwner);
+		AsciiString tname = d->getAsciiString(TheKey_teamName);
+		SidesInfo* pSide = TheSidesList->findSideInfo(oname);
+		Bool found = pSide!=nullptr;
+		if (!found) {
+				CString msg;
+				msg.Format(IDS_PLAYERLESS_TEAM_REMOVED, tname.str(), oname.str());
+				AfxMessageBox(msg, MB_OK);
+				anyFixes = true;
+				TheSidesList->removeTeam(i);
+				i--;
+		}
+	}
 
-	// Now, do the Undoable
-	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-	DictItemUndoable *pUndo = new DictItemUndoable(&allTeamDicts.front(), newDict, newDict.getNthKey(0), allTeamDicts.size(), pDoc, true);
-	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+	// Check for objects with invalid teams. [8/8/2003]
+	MapObject *pMapObj;
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		// there is no validation code for these items as of yet.
+		if (pMapObj->isScorch() || pMapObj->isWaypoint() || pMapObj->isLight() || pMapObj->getFlag(FLAG_ROAD_FLAGS) || pMapObj->getFlag(FLAG_BRIDGE_FLAGS))
+		{
+			continue;
+		}
 
-	// Show a message indicating success.
-	AfxMessageBox(IDS_TEAMS_FIXED);
+		if (pMapObj->getThingTemplate()==nullptr) {
+			continue; // Objects that don't have templates don't need teams. [8/8/2003]
+		}
+		// at this point, only objects with models and teams should be left to process
+
+		AsciiString name = pMapObj->getName();
+		AsciiString tmplName = pMapObj->getThingTemplate()->getName();
+
+		// the following code verifies and fixes the team name, player name, and faction linkages
+		Bool teamExists;
+		AsciiString teamName = pMapObj->getProperties()->getAsciiString(TheKey_originalOwner, &teamExists);
+		if (teamExists) {
+			TeamsInfo *teamInfo = TheSidesList->findTeamInfo(teamName);
+			if (teamInfo) {
+				AsciiString teamOwner = teamInfo->getDict()->getAsciiString(TheKey_teamOwner);
+				SidesInfo* pSide = TheSidesList->findSideInfo(teamOwner);
+				if (!pSide) {
+					teamExists = false;
+					DEBUG_LOG(("Side '%s' could not be found in sides list!", teamOwner.str()));
+				}
+			} else {
+				// Couldn't find team. [8/8/2003]
+				teamExists = false;
+			}
+		} else {
+			// Object doesn't even have a team name at all.  bad. jba. [8/8/2003]
+			teamExists = false;
+		}
+		if (!teamExists) {
+			// Query the user for a player, and stick it on the default team. [8/8/2003]
+			AsciiString warning;
+			warning.format("Object '%s' named '%s' on team '%s' - team doesn't exist.  Select player for object...",
+				tmplName.str(), name.str(), teamName.str());
+
+			anyFixes = true;
+			::AfxMessageBox(warning.str(), MB_OK);
+			TeamsInfo ti;
+			CFixTeamOwnerDialog fix(&ti, TheSidesList);
+			if (fix.DoModal() == IDOK) {
+				if (fix.pickedValidTeam()) {
+					AsciiString team;
+					team.set("team");
+					team.concat(fix.getSelectedOwner());
+					if (TheSidesList->findTeamInfo(team)==nullptr) {
+						team.set("team"); // neutral.
+					}
+					pMapObj->getProperties()->setAsciiString(TheKey_originalOwner,  team);
+				}
+			}
+		}
+	}
+
+
+	if (anyFixes) {
+		// Show a message indicating success.
+		AfxMessageBox(IDS_TEAMS_FIXED, MB_OK|MB_ICONWARNING);
+	} else {
+		AfxMessageBox(IDS_NO_PROBLEMS, MB_OK);
+	}
 }
 
 void WbView::OnShowTerrain()
@@ -963,3 +1077,9 @@ int WbView::OnCreate(LPCREATESTRUCT lpcs)
 	return CView::OnCreate(lpcs);
 }
 
+void WbView::rulerFeedbackInfo(Coord3D &point1, Coord3D &point2, Real dist)
+{
+	m_rulerPoints[0] = point1;
+	m_rulerPoints[1] = point2;
+	m_rulerLength = dist;
+}

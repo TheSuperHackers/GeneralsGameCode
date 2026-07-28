@@ -18,56 +18,55 @@
 
 #pragma once
 
-// OpenMap.h : header file
+// RulerOptions.h : header file
 //
-
-#define MAP_OPENSAVE_PANEL_SECTION "MapOpenSavePanel"
-
-typedef struct {
-	CString filename;
-	Bool		browse;
-} TOpenMapInfo;
+#include "OptionsPanel.h"
 
 /////////////////////////////////////////////////////////////////////////////
-// OpenMap dialog
+// RulerOptions dialog
 
-class OpenMap : public CDialog
+class RulerOptions : public COptionsPanel
 {
+
 // Construction
 public:
-	OpenMap(TOpenMapInfo *pInfo, CWnd* pParent = nullptr);   // standard constructor
+
+	RulerOptions(CWnd* pParent = nullptr);   // standard constructor
 
 // Dialog Data
-	//{{AFX_DATA(OpenMap)
-	enum { IDD = IDD_OPEN_MAP };
+	//{{AFX_DATA(RulerOptions)
+	enum { IDD = IDD_RULER_OPTIONS };
 		// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(OpenMap)
+	//{{AFX_VIRTUAL(RulerOptions)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	TOpenMapInfo *m_pInfo;
-	void populateMapListbox( Bool systemMaps );
-	Bool m_usingSystemDir;
-protected:
 
 	// Generated message map functions
-	//{{AFX_MSG(OpenMap)
-	afx_msg void OnBrowse();
-	afx_msg void OnSystemMaps();
-	afx_msg void OnUserMaps();
-	virtual void OnOK() override;
+	//{{AFX_MSG(RulerOptions)
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnDblclkOpenList();
+	afx_msg void OnChangeWidthEdit();
+	afx_msg void OnChangeCheckRuler();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	static RulerOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+
+	Bool		m_updating; ///<true if the ui is updating itself.
+
+public:
+	static void setWidth(Real width);
 };
 
 //{{AFX_INSERT_LOCATION}}

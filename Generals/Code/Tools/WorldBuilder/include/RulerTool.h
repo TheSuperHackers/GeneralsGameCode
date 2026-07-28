@@ -16,41 +16,40 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FenceTool.h
-// Texture tiling tools for worldbuilder.
-// Author: John Ahlquist, April 2001
+// RulerTool.h
+// Author: Mike Lytle, January 2003
 
 #pragma once
 
 #include "Tool.h"
-class WorldHeightMapEdit;
-class MapObject;
-class Vector3;
-/*************************************************************************/
-/**                             FenceTool
-	 Does the fence tool operation.
-***************************************************************************/
-class FenceTool : public Tool
+
+class RulerTool : public Tool
 {
 protected:
-	CPoint		m_downPt2d;
 	Coord3D		m_downPt3d;
-	MapObject *m_mapObjectList;
-	Real			m_curObjectWidth;
-	Real			m_curObjectOffset;
-	Int				m_objectCount;
+	int				m_rulerType;
+	WbView*		m_View;
+	Real			m_savedLength;
+
+	static RulerTool*	m_staticThis;
 
 public:
-	FenceTool();
-	virtual ~FenceTool() override;
-
-protected:
-	void updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView, CWorldBuilderDoc *pDoc, Bool checkPlayers);
+	RulerTool();
+	virtual ~RulerTool() override;
 
 public:
+	/// Clear the selection on activate or deactivate.
+	virtual void activate() override;
+	virtual void deactivate() override;
+
+	virtual void setCursor() override;
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
 	virtual void mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void activate() override; ///< Become the current tool.
-	virtual void deactivate() override; ///< Become not the current tool.
+	virtual Bool followsTerrain() override {return false;};
+
+	static void setLength(Real length);
+	static Bool switchType();
+	static int	getType();
+	static Real getLength();
+
 };

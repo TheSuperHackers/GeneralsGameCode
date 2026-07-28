@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,8 @@
 class MeshClass;
 class PolygonTrigger;
 class WaterRenderObjClass;
+class MapObject;
+class Render2DClass;
 //
 // DrawObject: Draws 3d feedback for tools & objects.
 //
@@ -77,12 +79,14 @@ public:
 //	void								Set_Flag(unsigned int flag, Bool onoff) { Flags &= (~flag); if (onoff) Flags |= flag; }
 
 	Int freeMapResources();
+	int initData();
 
-	void setDrawObjects(Bool val, Bool waypoints, Bool poly) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly;}
+  void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly; m_drawBoundingBoxes = bounding; m_drawSightRanges = sight; m_drawWeaponRanges = weapon; m_drawSoundRanges = sound; m_drawTestArtHighlight = testart, m_drawLetterbox = letterbox;}
 	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}
 	static void setDoMeshFeedback(Bool val) { m_meshFeedback = val; }
 	static void setDoRampFeedback(Bool val) { m_rampFeedback = val; }
 	static void setDoBoundaryFeedback(Bool val) { m_boundaryFeedback = val; }
+
 	static void setDoAmbientSoundFeedback(Bool val) { m_ambientSoundFeedback = val; }
 
 	static void setBrushFeedbackParms(Bool square, Int width, Int featherWidth)
@@ -122,6 +126,12 @@ protected:
 	Bool											m_drawObjects;
 	Bool											m_drawWaypoints;
 	Bool											m_drawPolygonAreas;
+	Bool											m_drawBoundingBoxes;
+	Bool											m_drawSightRanges;
+	Bool											m_drawWeaponRanges;
+  Bool                      m_drawSoundRanges;
+	Bool											m_drawTestArtHighlight;
+	Bool											m_drawLetterbox;
 
 	DX8VertexBufferClass			*m_vertexFeedback;	///< Vertex buffer for brush feedback.
 	DX8IndexBufferClass				*m_indexFeedback;	///< indices defining a triangle strip for the feedback on terrain
@@ -132,6 +142,8 @@ protected:
 
 	MeshClass									*m_moldMesh;		///< W3D mesh model for the mold.
 	SphereClass								m_moldMeshBounds;				///< Bounding sphere for mold mesh.
+	Render2DClass							*m_lineRenderer;		//< Used to render 2D lines for bounding boxes.
+	CPoint										m_winSize;				//< Holds the size of the window.
 
 protected: // static state vars.
 	static Bool								m_squareFeedback;	///< True for square brush feedback, false for round.
@@ -155,7 +167,7 @@ protected: // static state vars.
 	static Real								m_rampWidth;
 
 protected:
-	int initData();
+  void addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera );
 	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
 	void updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOpen);
 	void updateFeedbackVB();
@@ -165,6 +177,12 @@ protected:
 	void updateForWater();
 	void updateBoundaryVB();
 	void updateAmbientSoundVB();
+	void updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera);
+	void updateVBWithSightRange(MapObject *pMapObj, CameraClass* camera);
+	void updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera);
+	void updateVBWithTestArtHighlight(MapObject *pMapObj, CameraClass* camera);
+  void updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera);
+	bool worldToScreen(const Coord3D *w, ICoord2D *s, CameraClass* camera);
 
 };
 

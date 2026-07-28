@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@
 #include "TeamGeneric.h"
 #include "TeamIdentity.h"
 #include "TeamReinforcement.h"
+#include "TeamObjectProperties.h"
 #include "WorldBuilderDoc.h"
 #include "CUndoable.h"
 #include "wbview3d.h"
@@ -296,7 +297,7 @@ void CTeamsDialog::OnDeleteteam()
 void CTeamsDialog::OnEditTemplate()
 {
 	CPropertySheet editDialog;
-	editDialog.Construct("Edit Team:");
+	editDialog.Construct("Edit Team Template.");
 	TeamIdentity identity;
 	identity.setTeamDict(m_sides.getTeamInfo(m_curTeam)->getDict());
 	identity.setSidesList(&m_sides);
@@ -308,10 +309,13 @@ void CTeamsDialog::OnEditTemplate()
 	TeamGeneric generic;
 	generic.setTeamDict(m_sides.getTeamInfo(m_curTeam)->getDict());
 
+	TeamObjectProperties object(m_sides.getTeamInfo(m_curTeam)->getDict());
+
 	editDialog.AddPage(&identity);
 	editDialog.AddPage(&reinforcements);
 	editDialog.AddPage(&behavior);
 	editDialog.AddPage(&generic);
+	editDialog.AddPage(&object);
 
 	if (IDOK == editDialog.DoModal()) {
 	}

@@ -170,6 +170,7 @@ BOOL EditCondition::OnInitDialog()
 			selItem = item;
 		}
 
+#if RTS_ZEROHOUR
 		name = pTemplate->getName2().str();
 		count = 0;
 		if (pTemplate->getName2().isEmpty()) continue;
@@ -202,6 +203,7 @@ BOOL EditCondition::OnInitDialog()
 		ins.item.pszText = (char*)name;
 		ins.item.cchTextMax = 0;
 		m_conditionTreeView.InsertItem(&ins);
+#endif
 	}
 	m_conditionTreeView.Select(selItem, TVGN_FIRSTVISIBLE);
 	m_conditionTreeView.SelectItem(selItem);
@@ -233,7 +235,7 @@ void EditCondition::formatConditionText(Int parameterNdx) {
 
 	m_myEditCtrl.SetSel(0, 1000);
 	m_myEditCtrl.SetSelectionCharFormat(cf);
- 	//m_myEditCtrl.SetReadOnly();
+	//m_myEditCtrl.SetReadOnly();
 	// Set up the links.
 	cf.dwMask =  CFE_UNDERLINE | CFM_LINK | CFM_COLOR;
 
@@ -358,7 +360,7 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 				AsciiString strings[MAX_PARMS];
 				Int numStrings = m_condition->getUiStrings(strings);
 				Int i;
- 				Bool match = false;
+				Bool match = false;
 				for (i=0; i<MAX_PARMS; i++) {
 					if (i<numStrings) {
 						curChar += strings[i].getLength();

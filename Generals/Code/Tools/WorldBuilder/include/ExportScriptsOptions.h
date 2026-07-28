@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -50,12 +50,14 @@ protected:
 	static Bool m_waypoints;
 	static Bool m_triggers;
 	static Bool m_allScripts;
+	static Bool m_sides;
 
 public:
 	Bool getDoUnits() {return m_units;}
 	Bool getDoWaypoints() {return m_waypoints;}
 	Bool getDoTriggers() {return m_triggers;}
 	Bool getDoAllScripts() {return m_allScripts;}
+	Bool getDoSides() {return m_sides;}
 
 protected:
 

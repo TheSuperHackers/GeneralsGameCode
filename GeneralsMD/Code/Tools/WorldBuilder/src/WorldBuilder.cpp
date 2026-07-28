@@ -378,7 +378,9 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	initSubsystem(TheScriptEngine, (ScriptEngine*)(new ScriptEngine()));
 
+#if RTS_ZEROHOUR
 	TheScriptEngine->turnBreezeOff(); // stop the tree sway.
+#endif
 
 	//  [2/11/2003]
 	ini.loadFileDirectory( "Data\\Scripts\\Scripts", INI_LOAD_OVERWRITE, nullptr );

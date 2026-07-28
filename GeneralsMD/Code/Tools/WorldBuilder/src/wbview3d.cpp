@@ -2168,6 +2168,14 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_COMMAND(ID_VIEW_SHOWMACROTEXTURE, OnViewShowmacrotexture)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWMACROTEXTURE, OnUpdateViewShowmacrotexture)
 	ON_COMMAND(ID_EDIT_SELECTMACROTEXTURE, OnEditSelectmacrotexture)
+	ON_COMMAND(ID_LOOK_EAST, OnLookEast)
+	ON_UPDATE_COMMAND_UI(ID_LOOK_EAST, OnUpdateLookEast)
+	ON_COMMAND(ID_LOOK_NORTH, OnLookNorth)
+	ON_UPDATE_COMMAND_UI(ID_LOOK_NORTH, OnUpdateLookNorth)
+	ON_COMMAND(ID_LOOK_SOUTH, OnLookSouth)
+	ON_UPDATE_COMMAND_UI(ID_LOOK_SOUTH, OnUpdateLookSouth)
+	ON_COMMAND(ID_LOOK_WEST, OnLookWest)
+	ON_UPDATE_COMMAND_UI(ID_LOOK_WEST, OnUpdateLookWest)
 	ON_COMMAND(ID_VIEW_SHOWSOFTWATER, OnViewShowSoftWater)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWEXTRABLENDS, OnUpdateViewShowExtraBlends)
 	ON_COMMAND(ID_VIEW_SHOWEXTRABLENDS, OnViewExtraBlends)
@@ -2929,6 +2937,46 @@ void WbView3d::OnEditSelectmacrotexture()
 
 }
 
+void WbView3d::OnLookEast()
+{
+	m_cameraAngle = -PI / 2;
+}
+
+void WbView3d::OnUpdateLookEast(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_cameraAngle == -PI / 2 ? 1 : 0);
+}
+
+void WbView3d::OnLookNorth()
+{
+	m_cameraAngle = 0;
+}
+
+void WbView3d::OnUpdateLookNorth(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_cameraAngle == 0 ? 1 : 0);
+}
+
+void WbView3d::OnLookSouth()
+{
+	m_cameraAngle = PI;
+}
+
+void WbView3d::OnUpdateLookSouth(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_cameraAngle == PI ? 1 : 0);
+}
+
+void WbView3d::OnLookWest()
+{
+	m_cameraAngle = PI / 2;
+}
+
+void WbView3d::OnUpdateLookWest(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_cameraAngle == PI / 2 ? 1 : 0);
+}
+
 void WbView3d::OnViewShowshadows()
 {
 	m_showShadows = !m_showShadows;
@@ -3260,4 +3308,3 @@ void WbView3d::OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI)
 {
   pCmdUI->SetCheck(m_showSoundCircles ? 1 : 0);
 }
-

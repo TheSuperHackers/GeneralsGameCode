@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -15,6 +15,7 @@
 **	You should have received a copy of the GNU General Public License
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 
 // WbView3d.h
 // Class to encapsulate height map.
@@ -137,6 +138,16 @@ protected:
 	afx_msg void OnUpdateViewPartialmapsize128x128(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowModels();
 	afx_msg void OnUpdateViewShowModels(CCmdUI* pCmdUI);
+	afx_msg void OnViewBoundingBoxes();
+	afx_msg void OnUpdateViewBoundingBoxes(CCmdUI* pCmdUI);
+	afx_msg void OnViewSightRanges();
+	afx_msg void OnUpdateViewSightRanges(CCmdUI* pCmdUI);
+	afx_msg void OnViewWeaponRanges();
+	afx_msg void OnUpdateViewWeaponRanges(CCmdUI* pCmdUI);
+	afx_msg void OnHighlightTestArt();
+	afx_msg void OnUpdateHighlightTestArt(CCmdUI* pCmdUI);
+	afx_msg void OnShowLetterbox();
+	afx_msg void OnUpdateShowLetterbox(CCmdUI* pCmdUI);
 	afx_msg void OnViewLayersList();
 	afx_msg void OnUpdateViewLayersList(CCmdUI* pCmdUI);
 	afx_msg void OnViewGarrisoned();
@@ -145,7 +156,9 @@ protected:
 	afx_msg void OnUpdateViewShowMapBoundaries(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowAmbientSounds();
 	afx_msg void OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI);
-	//}}AFX_MSG
+  afx_msg void OnViewShowSoundCircles();
+  afx_msg void OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI);
+  //}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -199,6 +212,12 @@ private:
 	Bool										m_showLayersList;	///< Flag whether the layers list is visible or not.
 	Bool										m_showMapBoundaries;	///< Flag whether to show all the map boundaries or not
 	Bool										m_showAmbientSounds;	///< Flag whether to show all the ambient sounds or not
+  Bool										m_showSoundCircles;	///< Flag whether to show the minimum and maximum radii of the ambient sounds attached to the selected object
+	Bool										m_showBoundingBoxes;
+	Bool										m_showSightRanges;
+	Bool										m_showWeaponRanges;
+	Bool										m_highlightTestArt;
+	Bool										m_showLetterbox;
 
 
 	ID3DXFont*							m3DFont;
@@ -211,6 +230,7 @@ protected:
 	void init3dScene();
 	void initAssets();
 	void initWW3D();
+  void drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color );
 	void drawLabels(HDC hdc);
 	void drawLabels();
 	void shutdownWW3D();
@@ -220,6 +240,7 @@ protected:
 	void updateHysteresis();
 	void updateLights();
 	void updateScorches();
+	void updateTrees();
 
 public:
 	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain=true) override;
@@ -247,10 +268,12 @@ public:
 	virtual void pitchCamera(Real delta) override;
 	void setCameraPitch(Real absolutePitch);
 	Real getCameraPitch();
+	Real getCurrentZoom(); //WST 10/17/2002
 	Real getHeightAboveGround() { return m_actualHeightAboveGround; }
 	Vector3 getCameraSource() { return m_cameraSource; }
 	Vector3 getCameraTarget() { return m_cameraTarget; }
 	Real getCameraAngle() { return m_cameraAngle; }
+	CPoint getActualWinSize() {return m_actualWinSize;}
 
 	virtual MapObject *picked3dObjectInView(CPoint viewPt) override;
 	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt) override;
@@ -290,6 +313,16 @@ public:
 
 	void togglePitchAndRotation() { m_doPitch = !m_doPitch; }
 	virtual Bool isDoingPitch() override { return m_doPitch; }
+	void setShowBoundingBoxes(Bool toggle) {m_showBoundingBoxes = toggle;}
+	Bool getShowBoundingBoxes() { return m_showBoundingBoxes;}
+	void setShowSightRanges(Bool toggle) {m_showSightRanges = toggle;}
+	Bool getShowSightRanges() { return m_showSightRanges;}
+	void setShowWeaponRanges(Bool toggle) {m_showWeaponRanges = toggle;}
+	Bool getShowWeaponRanges() { return m_showWeaponRanges;}
+	void setHighlightTestArt(Bool toggle) {m_highlightTestArt = toggle;}
+	Bool getHighlightTestArt() { return m_highlightTestArt;}
+	void setShowLetterbox(Bool toggle) {m_showLetterbox = toggle;}
+	Bool getShowLetterbox() { return m_showLetterbox;}
 };
 
 inline UINT WbView3d::getLastDrawTime() { return m_time; }

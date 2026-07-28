@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ Bool ExportScriptsOptions::m_units = true;
 Bool ExportScriptsOptions::m_waypoints = true;
 Bool ExportScriptsOptions::m_triggers = true;
 Bool ExportScriptsOptions::m_allScripts = false;
+Bool ExportScriptsOptions::m_sides = true;
 
 ExportScriptsOptions::ExportScriptsOptions(CWnd* pParent /*=nullptr*/)
 	: CDialog(ExportScriptsOptions::IDD, pParent)
@@ -68,6 +69,9 @@ void ExportScriptsOptions::OnOK()
 	m_triggers = pButton->GetCheck()==1;
 	pButton = (CButton*)GetDlgItem(IDC_ALL_SCRIPTS);
 	m_allScripts = pButton->GetCheck()==1;
+	pButton = (CButton*)GetDlgItem(IDC_SIDES);
+	m_sides = pButton->GetCheck()==1;
+
 
 	CDialog::OnOK();
 }
@@ -86,6 +90,8 @@ BOOL ExportScriptsOptions::OnInitDialog()
 	pButton->SetCheck(m_allScripts?1:0);
 	pButton = (CButton*)GetDlgItem(IDC_SELECTED_SCRIPTS);
 	pButton->SetCheck(m_allScripts?0:1);
+	pButton = (CButton*)GetDlgItem(IDC_SIDES);
+	pButton->SetCheck(m_sides?1:0);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

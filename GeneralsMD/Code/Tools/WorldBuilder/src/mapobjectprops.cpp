@@ -665,7 +665,7 @@ void MapObjectProps::PopSliderFinished(const long sliderID, long theVal)
 		case IDC_ANGLE_POPUP:
       if ( m_posUndoable != nullptr )
       {
-  			REF_PTR_RELEASE(m_posUndoable); // belongs to pDoc now.
+			REF_PTR_RELEASE(m_posUndoable); // belongs to pDoc now.
       }
 			m_posUndoable = nullptr;
 			break;
@@ -2890,4 +2890,3 @@ void MapObjectProps::OnKillfocusMAPOBJECTXYPosition()
 {
   SetPosition();
 }
-

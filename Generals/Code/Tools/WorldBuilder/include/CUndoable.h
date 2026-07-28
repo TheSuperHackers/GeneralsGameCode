@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -383,4 +383,28 @@ public:
 		virtual ~DeletePolygonUndoable() override;
 		virtual void Do() override;
 		virtual void Undo() override;
+};
+
+///                            MultipleUndoable
+/**
+  * An undoable that doesn't do anything; it just consolidates a number of other
+  * Undoables in a single logical undo step.
+  */
+class MultipleUndoable : public Undoable
+{
+protected:
+  Undoable * m_undoableList; //< The head of the list of undoables, in the order they should be done. Reverse order for undoes
+public:
+		MultipleUndoable();
+    // destructor.
+    virtual ~MultipleUndoable() override;
+
+    /** Add other undoables in the order you would want them UNdone; e.g. in the reverse order you want them done
+      * The MultipleUndoable object will then own the pointers.
+      */
+    void addUndoable( Undoable * undoable );
+
+    virtual void Do() override;
+    virtual void Undo() override;
+    virtual void Redo() override;
 };

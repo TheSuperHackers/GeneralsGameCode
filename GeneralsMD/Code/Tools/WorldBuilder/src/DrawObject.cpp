@@ -2227,7 +2227,7 @@ if (pMapObj->isSelected()) {
 		}
 	}
 	if (m_drawPolygonAreas) {
- 		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+		DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 		Int selected;
 		for (selected = 0; selected < 2; selected++) {
 			for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
@@ -2338,7 +2338,7 @@ if (pMapObj->isSelected()) {
 	}
 
 	DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 	Matrix3D tmReset(Transform);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tmReset);
 
@@ -2350,7 +2350,7 @@ if (pMapObj->isSelected()) {
 			DX8Wrapper::Set_Shader(m_shaderClass);
 			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
 			DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
+			DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 		}
 	}
 

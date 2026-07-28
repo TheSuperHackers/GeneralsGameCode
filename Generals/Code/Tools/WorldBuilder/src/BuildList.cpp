@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -737,15 +737,15 @@ void BuildList::OnExport()
 	static FILE *theLogFile = nullptr;
 	Bool open = false;
 	try {
-		char buffer[ _MAX_PATH ];
-		::GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
-		if (char *pEnd = strrchr(buffer, '\\'))
+		char buffer[_MAX_PATH];
+		::GetModuleFileName(nullptr, buffer, sizeof(buffer));
+		if (char* pEnd = strrchr(buffer, '\\'))
 		{
 			*(pEnd + 1) = 0;
 		}
 
-		SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide);
-		Dict *d = TheSidesList->getSideInfo(m_curSide)->getDict();
+		SidesInfo* pSide = TheSidesList->getSideInfo(m_curSide);
+		Dict* d = TheSidesList->getSideInfo(m_curSide)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
 		strlcat(buffer, name.str(), ARRAY_SIZE(buffer));
 		strlcat(buffer, "_BuildList.ini", ARRAY_SIZE(buffer));

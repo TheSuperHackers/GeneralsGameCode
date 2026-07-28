@@ -434,7 +434,7 @@ void CMainFrame::onEditScripts()
 	m_scriptDialog = new ScriptDialog(this);
 	m_scriptDialog->Create(IDD_ScriptDialog, this);
 	m_scriptDialog->SetWindowPos(nullptr, frameRect.left, frameRect.top, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
- 	m_scriptDialog->GetWindowRect(&frameRect);
+	m_scriptDialog->GetWindowRect(&frameRect);
 	m_scriptDialog->ShowWindow(SW_SHOWNA);
 }
 
@@ -525,4 +525,3 @@ void CMainFrame::handleCameraChange()
 {
 	m_cameraOptions.update();
 }
-

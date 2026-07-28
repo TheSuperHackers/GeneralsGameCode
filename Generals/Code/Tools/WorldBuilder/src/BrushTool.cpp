@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 // BrushTool.cpp
 // Texture tiling tool for worldbuilder.
 // Author: John Ahlquist, April 2001
+
 
 #include "StdAfx.h"
 #include "resource.h"

@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -53,6 +53,8 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CameraOptions)
 	afx_msg void OnCameraReset();
+	afx_msg void OnDropWaypointButton();
+	afx_msg void OnCenterOnSelectedButton();
 	afx_msg void OnMove(int x, int y);
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnChangePitchEdit();

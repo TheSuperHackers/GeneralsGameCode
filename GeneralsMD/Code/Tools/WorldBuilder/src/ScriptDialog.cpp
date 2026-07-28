@@ -41,6 +41,7 @@
 #include "Common/ThingFactory.h"
 #include "WaypointOptions.h"
 #include "Common/UnicodeString.h"
+#include "LayersList.h"
 
 
 static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
@@ -1410,7 +1411,8 @@ void ScriptDialog::OnSave()
 		chunkWriter.closeDataChunk();
 
 		/***************POLYGON TRIGGERS DATA ***************/
-		chunkWriter.openDataChunk("PolygonTriggers", 	K_TRIGGERS_VERSION_3);
+		// Version 4 preserves polygon trigger layer assignments in script bundles.
+		chunkWriter.openDataChunk("PolygonTriggers", 	K_TRIGGERS_VERSION_4);
 
 			PolygonTrigger *pTrig;
 			Int count = 0;
@@ -1423,6 +1425,7 @@ void ScriptDialog::OnSave()
 			for (pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 				if (!pTrig->doExportWithScripts()) continue;
 				chunkWriter.writeAsciiString(pTrig->getTriggerName());
+				chunkWriter.writeAsciiString(pTrig->getLayerName());
 				chunkWriter.writeInt(pTrig->getID());
 				chunkWriter.writeByte(pTrig->isWaterArea());
 				chunkWriter.writeByte(pTrig->isRiver());
@@ -1558,6 +1561,8 @@ void ScriptDialog::OnLoad()
 		for (pTrig=m_firstTrigger; pTrig; pTrig = pNextTrig) {
 			pNextTrig = pTrig->getNext();
 			pTrig->setNextPoly(nullptr);
+			// Register the imported trigger with its serialized WorldBuilder layer.
+			TheLayersList->addPolygonTriggerToLayersList(pTrig, pTrig->getLayerName());
 			PolygonTrigger::addPolygonTrigger(pTrig);
 		}
 
@@ -1634,7 +1639,7 @@ void ScriptDialog::OnLoad()
 
 
 	} catch(...) {
-   	  	DEBUG_CRASH(("threw exception in ScriptDialog::OnLoad"));
+		DEBUG_CRASH(("threw exception in ScriptDialog::OnLoad"));
 	}
 }
 
@@ -1858,6 +1863,7 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 	Int triggerID;
 //	Int maxTriggerId = 0;
 	AsciiString triggerName;
+	AsciiString layerName;
 	// Remove any existing polygon triggers, if any.
 	ScriptDialog *pThis = (ScriptDialog *)userData;
 	pThis->m_firstTrigger = nullptr;
@@ -1869,6 +1875,9 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 		count--;
 		Bool isWater = false;
 		triggerName = file.readAsciiString();
+		if (info->version >= K_TRIGGERS_VERSION_4) {
+			layerName = file.readAsciiString();
+		}
 		triggerID = file.readInt();
 		if (info->version >= K_TRIGGERS_VERSION_2) {
 			isWater = file.readByte();
@@ -1882,6 +1891,9 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 		numPoints = file.readInt();
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(numPoints+1);
 		pTrig->setTriggerName(triggerName);
+		if (info->version >= K_TRIGGERS_VERSION_4) {
+			pTrig->setLayerName(layerName);
+		}
 		pTrig->setWaterArea(isWater);
 		pTrig->setRiver(isRiver);
 		pTrig->setRiverStart(riverStart);

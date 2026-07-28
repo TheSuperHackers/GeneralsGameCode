@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -233,6 +233,28 @@ HTREEITEM EditObjectParameter::findOrAdd(HTREEITEM parent, const char *pLabel)
 	return(child);
 }
 
+BOOL EditObjectParameter::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
+{
+	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
+
+	// Handle events from the tree control.
+	if (pHdr->hdr.idFrom == IDC_TERRAIN_TREEVIEW) {
+		if (pHdr->hdr.code == TVN_KEYDOWN) {
+			NMTVKEYDOWN	*pKey = (NMTVKEYDOWN*)lParam;
+			Int key = pKey->wVKey;
+			if (key==VK_SHIFT || key==VK_SPACE) {
+				HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
+				if (!m_objectTreeView.ItemHasChildren(hItem)) {
+					hItem = m_objectTreeView.GetParentItem(hItem);
+				}
+				m_objectTreeView.Expand(hItem, TVE_TOGGLE);
+				return 0;
+			}
+			return 0;
+		}
+	}
+	return CDialog::OnNotify(wParam, lParam, pResult);
+}
 
 void EditObjectParameter::OnOK()
 {
