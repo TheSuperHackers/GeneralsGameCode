@@ -84,7 +84,11 @@ IDB_DownArrow           BITMAP  DISCARDABLE     "IDB_DownArrow.bmp"
 IDB_FOLDER              BITMAP  DISCARDABLE     "folder.bmp"
 IDB_ROAD_CORNERS        BITMAP  DISCARDABLE     "IDB_ROAD_CORNERS.bmp"
 IDB_FOLDERSCRIPT        BITMAP  DISCARDABLE     "foldersc.bmp"
-IDB_WORLDBUILDERSPLASH  BITMAP  DISCARDABLE     "WorldBuilder.bmp"
+#if RTS_GENERALS
+IDB_WORLDBUILDERSPLASH  BITMAP  DISCARDABLE     "WorldBuilderV.bmp"
+#elif RTS_ZEROHOUR
+IDB_WORLDBUILDERSPLASH  BITMAP  DISCARDABLE     "WorldBuilderZH.bmp"
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
