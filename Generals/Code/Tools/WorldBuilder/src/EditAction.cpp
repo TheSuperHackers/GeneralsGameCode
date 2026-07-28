@@ -50,10 +50,41 @@ void EditAction::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(EditAction, CDialog)
 	//{{AFX_MSG_MAP(EditAction)
-	ON_CBN_SELCHANGE(IDC_CONDITION_TYPE, OnSelchangeScriptActionType)
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+/** Locate the child item in tree item parent with name pLabel.  If not
+found, add it.  Either way, return child. */
+static HTREEITEM findOrAdd(CTreeCtrl *tree, HTREEITEM parent, const char *pLabel)
+{
+	TVINSERTSTRUCT ins;
+	char buffer[_MAX_PATH];
+	::memset(&ins, 0, sizeof(ins));
+	HTREEITEM child = tree->GetChildItem(parent);
+	while (child != nullptr) {
+		ins.item.mask = TVIF_HANDLE|TVIF_TEXT;
+		ins.item.hItem = child;
+		ins.item.pszText = buffer;
+		ins.item.cchTextMax = sizeof(buffer)-2;
+		tree->GetItem(&ins.item);
+		if (strcmp(buffer, pLabel) == 0) {
+			return(child);
+		}
+		child = tree->GetNextSiblingItem(child);
+	}
+
+	// not found, so add it.
+	::memset(&ins, 0, sizeof(ins));
+	ins.hParent = parent;
+	ins.hInsertAfter = TVI_SORT;
+	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+	ins.item.lParam = -1;
+	ins.item.pszText = (char*)pLabel;
+	ins.item.cchTextMax = strlen(pLabel);
+	child = tree->InsertItem(&ins);
+	return(child);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // EditAction message handlers
@@ -65,39 +96,117 @@ BOOL EditAction::OnInitDialog()
 
 
 //	CDC *pDc =GetDC();
+	CRect rect;
+
+	CTreeCtrl *pTree = (CTreeCtrl *)GetDlgItem(IDC_ACTION_TREE);
+	pTree->GetWindowRect(&rect);
+
+	ScreenToClient(&rect);
+	m_actionTreeView.Create(TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS|
+		TVS_SHOWSELALWAYS|TVS_DISABLEDRAGDROP|WS_TABSTOP, rect, this, IDC_ACTION_TREE);
+	m_actionTreeView.ShowWindow(SW_SHOW);
+	pTree->DestroyWindow();
 
 	CWnd *pWnd = GetDlgItem(IDC_RICH_EDIT_HERE);
-	CRect rect;
 	pWnd->GetWindowRect(&rect);
 
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
-	m_myEditCtrl.Create(WS_CHILD | ES_MULTILINE, rect, this, IDC_RICH_EDIT_HERE+1);
+	m_myEditCtrl.Create(WS_CHILD | WS_TABSTOP | ES_MULTILINE, rect, this, IDC_RICH_EDIT_HERE+1);
 	m_myEditCtrl.ShowWindow(SW_SHOW);
-	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE);
+	m_myEditCtrl.SetEventMask(m_myEditCtrl.GetEventMask() | ENM_LINK | ENM_SELCHANGE | ENM_KEYEVENTS);
 
-	CComboBox *pCmbo = (CComboBox *)GetDlgItem(IDC_CONDITION_TYPE);
-	pCmbo->ResetContent();
 	Int i;
+	HTREEITEM selItem = nullptr;
 	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
 		const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(i);
-		Int ndx = pCmbo->AddString(pTemplate->getName().str());
+		char prefix[_MAX_PATH];
+		const char *name = pTemplate->getName().str();
+
+		Int count = 0;
+		HTREEITEM parent = TVI_ROOT;
+		do {
+			count = 0;
+			const char *nameStart = name;
+			while (*name && *name != '/') {
+				count++;
+				name++;
+			}
+			if (*name=='/') {
+				count++;
+				name++;
+			} else {
+				name = nameStart;
+				count = 0;
+			}
+			if (count>0) {
+				strlcpy(prefix, nameStart, count);
+				parent = findOrAdd(&m_actionTreeView, parent, prefix);
+			}
+		} while (count>0);
+
+		TVINSERTSTRUCT ins;
+		::memset(&ins, 0, sizeof(ins));
+		ins.hParent = parent;
+		ins.hInsertAfter = TVI_SORT;
+		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+		ins.item.lParam = i;
+		ins.item.pszText = (char*)name;
+		ins.item.cchTextMax = 0;
+		HTREEITEM item = m_actionTreeView.InsertItem(&ins);
 		if (i == m_action->getActionType()) {
-			pCmbo->SetCurSel(ndx);
+			selItem = item;
 		}
+
+#if !RTS_GENERALS
+		name = pTemplate->getName2().str();
+		count = 0;
+		if (pTemplate->getName2().isEmpty()) continue;
+		parent = TVI_ROOT;
+		do {
+			count = 0;
+			const char *nameStart = name;
+			while (*name && *name != '/') {
+				count++;
+				name++;
+			}
+			if (*name=='/') {
+				count++;
+				name++;
+			} else {
+				name = nameStart;
+				count = 0;
+			}
+			if (count>0) {
+				strlcpy(prefix, nameStart, count);
+				parent = findOrAdd(&m_actionTreeView, parent, prefix);
+			}
+		} while (count>0);
+
+		::memset(&ins, 0, sizeof(ins));
+		ins.hParent = parent;
+		ins.hInsertAfter = TVI_SORT;
+		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+		ins.item.lParam = i;
+		ins.item.pszText = (char*)name;
+		ins.item.cchTextMax = 0;
+		m_actionTreeView.InsertItem(&ins);
+#endif
 	}
+	m_actionTreeView.Select(selItem, TVGN_FIRSTVISIBLE);
+	m_actionTreeView.SelectItem(selItem);
 	m_action->setWarnings(false);
 	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	m_myEditCtrl.SetSel(-1, -1);
-	formatScriptActionText(-1);
+	formatScriptActionText(0);
+	m_actionTreeView.SetFocus();
 
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
-void EditAction::formatScriptActionText(Int parameterNdx)
-{
+void EditAction::formatScriptActionText(Int parameterNdx) {
 	CHARFORMAT2 cf;
 	m_updating = true;
 	long startSel, endSel;
@@ -114,12 +223,13 @@ void EditAction::formatScriptActionText(Int parameterNdx)
 
 	m_myEditCtrl.SetSel(0, 1000);
 	m_myEditCtrl.SetSelectionCharFormat(cf);
- 	m_myEditCtrl.SetReadOnly();
+	//m_myEditCtrl.SetReadOnly();
 	// Set up the links.
 	cf.dwMask =  CFE_UNDERLINE | CFM_LINK | CFM_COLOR;
 
 	cf.dwEffects = CFE_LINK | CFE_UNDERLINE;
 	cf.crTextColor = RGB(0,0,255);
+	m_curEditParameter = parameterNdx;
 
 	AsciiString strings[MAX_PARMS];
 	Int curChar = 0;
@@ -133,10 +243,13 @@ void EditAction::formatScriptActionText(Int parameterNdx)
 			curChar += strings[i].getLength();
 		}
 		if (i<m_action->getNumParameters()) {
-			warningText.concat(EditParameter::getWarningText(m_action->getParameter(i)));
+			warningText.concat(EditParameter::getWarningText(m_action->getParameter(i), false));
 			informationText.concat(EditParameter::getInfoText(m_action->getParameter(i)));
 			numChars = m_action->getParameter(i)->getUiText().getLength();
-			if (numChars==0) continue;
+			if (curChar==0) {
+				curChar++;
+				numChars--;
+			}
 			m_myEditCtrl.SetSel(curChar, curChar+numChars);
 			if (i==parameterNdx) {
 				startSel = curChar;
@@ -175,6 +288,8 @@ void EditAction::formatScriptActionText(Int parameterNdx)
 
 	m_modifiedTextColor = false;
 	m_myEditCtrl.SetSel(startSel, endSel);
+	m_curLinkChrg.cpMax = endSel;
+	m_curLinkChrg.cpMin = startSel;
 	m_updating = false;
 }
 
@@ -182,125 +297,159 @@ void EditAction::formatScriptActionText(Int parameterNdx)
 
 BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
-	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1)
-	{
+	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
+
+	// Handle events from the tree control.
+	if (pHdr->hdr.idFrom == IDC_ACTION_TREE) {
+		if (pHdr->hdr.code == TVN_SELCHANGED) {
+			char buffer[_MAX_PATH];
+			HTREEITEM hItem = m_actionTreeView.GetSelectedItem();
+			TVITEM item;
+			::memset(&item, 0, sizeof(item));
+			item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
+			item.hItem = hItem;
+			item.pszText = buffer;
+			item.cchTextMax = sizeof(buffer)-2;
+			m_actionTreeView.GetItem(&item);
+			if (item.lParam >= 0) {
+				enum ScriptAction::ScriptActionType actionType = (enum ScriptAction::ScriptActionType)item.lParam;
+				if (m_action->getActionType() != actionType) {
+					m_action->setActionType( actionType );
+					m_myEditCtrl.SetWindowText(m_action->getUiText().str());
+					formatScriptActionText(0);
+				}
+			}
+		} else if (pHdr->hdr.code == TVN_KEYDOWN) {
+			NMTVKEYDOWN	*pKey = (NMTVKEYDOWN*)lParam;
+			Int key = pKey->wVKey;
+			if (key==VK_SHIFT || key==VK_SPACE) {
+				HTREEITEM hItem = m_actionTreeView.GetSelectedItem();
+				if (!m_actionTreeView.ItemHasChildren(hItem)) {
+					hItem = m_actionTreeView.GetParentItem(hItem);
+				}
+				m_actionTreeView.Expand(hItem, TVE_TOGGLE);
+				return 0;
+			}
+			return 0;
+		}
+		return TRUE;
+	}
+
+	// Handle events from the rich edit control containing the action pieces.
+	if (LOWORD(wParam) == IDC_RICH_EDIT_HERE+1) {
 		NMHDR *pHdr = (NMHDR *)lParam;
-		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_LINK)
-		{
-			ENLINK *pLink = (ENLINK *)pHdr;
-			CHARRANGE chrg = pLink->chrg;
-			if (pLink->msg == WM_LBUTTONDOWN)
-			{
+		if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd) {
+			if (pHdr->code == EN_LINK) {
+				ENLINK *pLink = (ENLINK *)pHdr;
+				CHARRANGE chrg = pLink->chrg;
 				// Determine which parameter.
 				Int numChars = 0;
 				Int curChar = 0;
 				AsciiString strings[MAX_PARMS];
 				Int numStrings = m_action->getUiStrings(strings);
 				Int i;
-				for (i=0; i<MAX_PARMS; i++)
-				{
-					if (i<numStrings)
-					{
+				Bool match = false;
+				for (i=0; i<MAX_PARMS; i++) {
+					if (i<numStrings) {
 						curChar += strings[i].getLength();
 					}
-					if (i<m_action->getNumParameters())
-					{
+					if (i<m_action->getNumParameters()) {
 						numChars = m_action->getParameter(i)->getUiText().getLength();
-						if (curChar == chrg.cpMin && curChar+numChars == chrg.cpMax)
-						{
-							//Kris:
-							//Before we edit the parameter, there is a new prerequisite for parameters
-							//but only a few will ever care. We will store what we perceive as the unit,
-							//and for simplicity, we'll store the first occurrence of the unit, although
-							//this can change in the future should the need arise.
-							AsciiString unitName;
-							for( int j = 0; j < MAX_PARMS; j++ )
-							{
-								Parameter *parameter = m_action->getParameter( j );
-								if( parameter && parameter->getParameterType() == Parameter::UNIT )
-								{
-									unitName = parameter->getString();
-									break;
-								}
-							}
-
-							if( EditParameter::edit( m_action->getParameter(i), unitName ) == IDOK )
-							{
-								m_myEditCtrl.SetWindowText(m_action->getUiText().str());
-								m_curEditParameter = i;
-								this->PostMessage(WM_TIMER, 0, 0);
-							}
-							return true;
+						match = (curChar+numChars/2 > chrg.cpMin && curChar+numChars/2 < chrg.cpMax);
+						if (match) {
+							m_curEditParameter = i;
+							break;
 						}
 						curChar += numChars;
 					}
 				}
-			}
-			CHARRANGE curChrg;
-			m_myEditCtrl.GetSel(curChrg);
-			if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax)
-			{
+				if (pLink->msg == WM_LBUTTONDOWN)
+				{
+					// Determine which parameter.
+					if (match)
+					{
+						if( m_action->getParameter( m_curEditParameter )->getParameterType() == Parameter::COMMANDBUTTON_ABILITY )
+						{
+							EditParameter::edit(m_action->getParameter(m_curEditParameter), 0, m_action->getParameter(0)->getString() );
+						}
+						else
+						{
+							EditParameter::edit(m_action->getParameter(m_curEditParameter), 0 );
+						}
+						m_myEditCtrl.SetWindowText(m_action->getUiText().str());
+						this->PostMessage(WM_TIMER, 0, 0);
+						return true;
+					}
+				}
+				CHARRANGE curChrg;
+				m_myEditCtrl.GetSel(curChrg);
+				if (curChrg.cpMin == chrg.cpMin && curChrg.cpMax == chrg.cpMax) {
+					return true;
+				}
+				if (m_modifiedTextColor) {
+					formatScriptActionText(m_curEditParameter);
+				}
+				m_curLinkChrg = chrg;
+				m_myEditCtrl.SetSel(chrg.cpMin, chrg.cpMax);
+				m_myEditCtrl.SetFocus();
+				CHARFORMAT cf;
+				memset(&cf, 0, sizeof(cf));
+				cf.cbSize = sizeof(cf);
+				cf.dwMask = CFM_COLOR;
+				cf.crTextColor = RGB(0,0,0);
+				m_myEditCtrl.SetSelectionCharFormat(cf);
+				m_modifiedTextColor = true;
 				return true;
-			}
-			if (m_modifiedTextColor)
-			{
-				formatScriptActionText(-1);
-			}
-			m_curLinkChrg = chrg;
-			m_myEditCtrl.SetSel(chrg.cpMin, chrg.cpMax);
-			CHARFORMAT cf;
-			memset(&cf, 0, sizeof(cf));
-			cf.cbSize = sizeof(cf);
-			cf.dwMask = CFM_COLOR;
-			cf.crTextColor = RGB(0,0,0);
-			m_myEditCtrl.SetSelectionCharFormat(cf);
-			m_modifiedTextColor = true;
-			return true;
-		}
-		else 	if (pHdr->hwndFrom == m_myEditCtrl.m_hWnd && pHdr->code == EN_SELCHANGE)
-		{
-			if (m_updating)
-			{
-				return true;
-			}
-			CHARRANGE curChrg;
-			m_myEditCtrl.GetSel(curChrg);
-			if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax)
-			{
-				return true;
-			}
-			if (m_modifiedTextColor)
-			{
-				formatScriptActionText(-1);
+			}	else 	if (pHdr->code == EN_SETFOCUS) {
+				this->PostMessage(WM_TIMER, 0, 0);
+			}	else 	if (pHdr->code == EN_SELCHANGE) {
+				if (m_updating) {
+					return true;
+				}
+				CHARRANGE curChrg;
+				m_myEditCtrl.GetSel(curChrg);
+				if (curChrg.cpMin == m_curLinkChrg.cpMin && curChrg.cpMax == m_curLinkChrg.cpMax) {
+					return true;
+				}
+				m_myEditCtrl.SetSel(m_curLinkChrg.cpMin, m_curLinkChrg.cpMax);
+				if (m_modifiedTextColor) {
+					this->PostMessage(WM_TIMER, 0, 0);
+				}
+			} else if (pHdr->code == EN_MSGFILTER) {
+				MSGFILTER *pFilter = (MSGFILTER *)pHdr;
+				if (pFilter->msg == WM_CHAR) {
+					Int keyPressed = pFilter->wParam;
+					if (keyPressed==VK_RETURN) {
+						return 1;
+					}
+					if (keyPressed==VK_RETURN || keyPressed == VK_TAB) {
+						m_curEditParameter++;
+						if (m_curEditParameter >= m_action->getNumParameters()) {
+							m_curEditParameter = 0;
+							return 1;
+						}
+						this->PostMessage(WM_TIMER, 0, 0);
+						return 0;
+					}
+					EditParameter::edit(m_action->getParameter(m_curEditParameter), keyPressed);
+					m_curEditParameter++;
+					if (m_curEditParameter >= m_action->getNumParameters()) {
+						m_curEditParameter = 0;
+					}
+					this->PostMessage(WM_TIMER, 0, 0);
+					return 0;
+				}
+				return 1;
 			}
 		}
 	}
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
-void EditAction::OnSelchangeScriptActionType()
-{
-	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_CONDITION_TYPE);
-	Int index = 0;
-	CString str;
-	pCombo->GetWindowText(str);
-	Int i;
-	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
-		const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(i);
-		if (str == pTemplate->getName().str()) {
-			index = i;
-			break;
-		}
-	}
-
-	m_action->setActionType((enum ScriptAction::ScriptActionType)i );
-	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
-	formatScriptActionText(-1);
-}
-
 /** Not actually a timer - just used to send a delayed message to self because rich
 edit control is stupid.  jba. */
 void EditAction::OnTimer(UINT nIDEvent)
 {
+	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 	formatScriptActionText(m_curEditParameter);
 }

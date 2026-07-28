@@ -45,12 +45,13 @@
 #include "CameraOptions.h"
 #include "ScorchOptions.h"
 #include "BuildList.h"
+#include "RulerOptions.h"
 
 #define TWO_D_WINDOW_SECTION "TwoDWindow"
 #define MAIN_FRAME_SECTION "MainFrame"
 
 class LayersList;
-
+class ScriptDialog;
 
 class CMainFrame : public CFrameWnd
 {
@@ -87,6 +88,7 @@ public:
 	void adjustWindowSize();
 	Bool isAutoSaving() {return m_autoSaving;};
 	void handleCameraChange();
+	void onEditScripts();
 
 protected:  // control bar embedded members
 	CStatusBar					m_wndStatusBar;
@@ -113,7 +115,8 @@ protected:  // control bar embedded members
 	GlobalLightOptions	m_globalLightOptions;
 	CameraOptions				m_cameraOptions;
 	LayersList*					m_layersList;
-
+	ScriptDialog*				m_scriptDialog;
+	RulerOptions				m_rulerOptions;
 
 	CWnd							*m_curOptions;
 	Int								m_curOptionsX;

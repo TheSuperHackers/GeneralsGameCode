@@ -1,3 +1,21 @@
+/*
+**	Command & Conquer Generals(tm)
+**	Copyright 2025 Electronic Arts Inc.
+**
+**	This program is free software: you can redistribute it and/or modify
+**	it under the terms of the GNU General Public License as published by
+**	the Free Software Foundation, either version 3 of the License, or
+**	(at your option) any later version.
+**
+**	This program is distributed in the hope that it will be useful,
+**	but WITHOUT ANY WARRANTY; without even the implied warranty of
+**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**	GNU General Public License for more details.
+**
+**	You should have received a copy of the GNU General Public License
+**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
 // Used by WorldBuilder.rc
@@ -114,6 +132,14 @@
 #define IDD_TeamGeneric                 229
 #define IDD_IMPASSABLEOPTIONS           230
 #define IDD_EULA_AGREEMENT              231
+#define IDD_RULER_OPTIONS               232
+#define IDD_TeamObjectProperties        233
+#define IDI_Selected                    234
+#define IDD_MAPOBJECT_PROPPAGE_GENERAL  235
+#define IDD_MAPOBJECT_PROPPAGE_LOGICAL  236
+#define IDD_MAPOBJECT_PROPPAGE_VISUAL   237
+#define IDD_MAPOBJECT_PROPPAGE_UPGRADES 238
+#define IDD_MAPOBJECT_PROPPAGE_SOUND    239
 #define IDC_HEIGHT_COMBO                1000
 #define IDC_CELL_WIDTH                  1001
 #define IDC_INITIAL_HEIGHT              1002
@@ -260,8 +286,11 @@
 #define IDC_COPY_SCRIPT                 1125
 #define IDC_DELETE                      1126
 #define IDC_SCRIPT_NAME                 1127
+#define IDC_VERIFY                      1127
 #define IDC_RICH_EDIT_HERE              1128
-#define IDC_CONDITION_LIST              1129
+#define IDC_PATCH_GC                    1129
+#define IDC_CONDITION_TREE              1130
+#define IDC_CONDITION_LIST              1130
 #define IDC_EDIT_CONDITION              1131
 #define IDC_CONDITION_TYPE              1132
 #define IDC_CAPTION                     1133
@@ -320,6 +349,7 @@
 #define IDC_MAPOBJECT_Selectable        1166
 #define IDC_PRODUCTION_EXECUTEACTIONS   1166
 #define IDC_PASSABLE_CHECK              1166
+#define IDC_AUTO_VERIFY                 1166
 #define IDC_EASY                        1167
 #define IDC_CHECK2                      1167
 #define IDC_LR_POPUP2                   1167
@@ -331,6 +361,7 @@
 #define IDC_TEAM_STARTS_FULL            1168
 #define IDC_WAYPOINT_BIDIRECTIONAL      1168
 #define IDC_GROUP_ACTIVE                1169
+#define IDC_MAPOBJECT_Selectable2       1169
 #define IDC_PLAYERDISPLAYNAME           1170
 #define IDC_CHECK4                      1170
 #define IDC_TRANSPORTS_RETURN           1170
@@ -382,12 +413,14 @@
 #define IDC_TeamGeneric_Script2         1199
 #define IDC_PASSABLE                    1199
 #define IDC_EVERY_FRAME                 1199
+#define IDC_SCALE_OFF                   1199
 #define IDC_MIN_UNIT7                   1200
 #define IDC_RADIO2                      1200
 #define IDC_USERMAPS                    1200
 #define IDC_TeamGeneric_Script3         1200
 #define IDC_IMPASSABLE                  1200
 #define IDC_EVERY_SECOND                1200
+#define IDC_SCALE_ON                    1200
 #define IDC_MAX_UNIT7                   1201
 #define IDC_RADIO3                      1201
 #define IDC_TeamGeneric_Script4         1201
@@ -517,6 +550,31 @@
 #define IDC_SCRIPT_PREFIX15             1313
 #define IDC_SCRIPT_PREFIX16             1314
 #define IDC_TeamGeneric_Script1         1315
+#define IDC_DROP_WAYPOINT_BUTTON        1316
+#define IDC_ACTION_TREE                 1326
+#define IDC_CENTER_ON_SELECTED          1327
+#define IDC_CHECK_RULER                 1328
+#define IDC_SIDES                       1329
+#define IDC_RULER_WIDTH                 1330
+#define IDC_UPDATE_TEAM_MEMBERS         1331
+#define IDC_USE_TEAM_DEFAULTS           1332
+#define IDC_LOOPING_CHECKBOX            1333
+#define IDC_ENABLED_CHECKBOX            1334
+#define IDC_CUSTOMIZE_CHECKBOX          1335
+#define IDC_MAPOBJECT_Scale             1336
+#define IDC_SOUND_COMBO                 1346
+#define IDC_LOOPCOUNT_EDIT              1347
+#define IDC_MIN_VOLUME_EDIT             1348
+#define IDC_PRIORITY_COMBO              1349
+#define IDC_MIN_RANGE_EDIT              1350
+#define IDC_MAX_RANGE_EDIT              1351
+#define IDC_VOLUME_EDIT                 1352
+#define IDC_MAPOBJECT_XYPosition        1353
+#define IDC_STATIC_MAPOBJECT_GENERAL    1379
+#define IDC_STATIC_MAPOBJECT_LOGICAL    1380
+#define IDC_STATIC_MAPOBJECT_SOUND      1381
+#define IDC_STATIC_MAPOBJECT_VISUAL     1382
+#define IDC_MAPOBJECT_DISTANCE          1383
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
@@ -575,10 +633,9 @@
 #define ID_MOLD_TOOL                    32955
 #define ID_VIEW_SHOWMACROTEXTURE        32956
 #define ID_EDIT_SELECTMACROTEXTURE      32957
-#define ID_LOOK_NORTH                   32958
-#define ID_LOOK_SOUTH                   32959
-#define ID_LOOK_WEST                    32960
-#define ID_LOOK_EAST                    32961
+#define ID_RULER_TOOL                   32958
+#define ID_SCRIPT_EDIT                  32959
+#define ID_TEAM_EDIT                    32960
 #define ID_LOCK_HORIZONTAL              32962
 #define ID_LOCK_VERTICAL                32963
 #define ID_WAYPOINT_TOOL                32964
@@ -622,6 +679,11 @@
 #define ID_EDIT_SELECTINVALIDTEAM       33005
 #define ID_FILE_DUMPTOFILE              33006
 #define ID_SCORCH_TOOL                  33007
+#define ID_VIEW_BOUNDINGBOXES           33008
+#define ID_VIEW_SIGHTRANGES             33009
+#define ID_VIEW_WEAPONRANGES            33010
+#define ID_HIGHLIGHT_TESTART            33011
+#define ID_SHOW_LETTERBOX               33012
 #define ID_TEXTURESIZING_REMOVECLIFFTEXMAPPING 33014
 #define ID_VIEW_LAYERS_LIST             33015
 #define ID_INSERTNEWLAYER               33017
@@ -653,6 +715,13 @@
 #define ID_EDIT_PICKSOUNDS              33341
 #define ID_VIEW_SHOW_TERRAIN            33342
 #define ID_VIEW_IMPASSABLEAREAOPTIONS   33343
+#define ID_SELECTLAYEROBJECT            33344
+#define ID_SELECTACTIVELAYER            33345
+#define ID_VIEW_SHOW_SOUND_CIRCLES      33346
+#define ID_LOOK_NORTH                   33347
+#define ID_LOOK_SOUTH                   33348
+#define ID_LOOK_WEST                    33349
+#define ID_LOOK_EAST                    33350
 #define IDS_NEW                         61446
 #define IDS_RESIZE                      61447
 #define IDS_REMOVING_INUSE_TEAM         61448
@@ -689,15 +758,20 @@
 #define IDS_EULA_AGREEMENT3             61478
 #define IDS_EULA_AGREEMENT4             61479
 #define IDS_EULA_AGREEMENT5             61480
+#define IDS_MAPOBJECT_PROPS_TITLE       61481
+#define IDS_NO_PROBLEMS                 61482
+#define IDS_DUPLICATE_TEAM_REMOVED      61483
+#define IDS_PLAYERLESS_TEAM_REMOVED     61484
+#define IDS_NEED_TO_FIX_TEAMS           61485
 
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        232
-#define _APS_NEXT_COMMAND_VALUE         33344
-#define _APS_NEXT_CONTROL_VALUE         1326
+#define _APS_NEXT_RESOURCE_VALUE        242
+#define _APS_NEXT_COMMAND_VALUE         33351
+#define _APS_NEXT_CONTROL_VALUE         1354
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -124,7 +124,7 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		return;
 	}
 
-	static Coord3D zero = {0.0f, 0.0f, 0.0f};
+	//static Coord3D zero = {0.0f, 0.0f, 0.0f};
 
 	Coord3D groundPt;
 	pView->viewToDocCoords(viewPt, &groundPt);
@@ -138,10 +138,24 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 
 	Int motion;
 	pDoc->findBoundaryNear(&groundPt, BOUNDARY_PICK_DISTANCE, &m_modifyBorderNdx, &motion);
-	if (motion == 0) {
+
+	// if bottom left boundary grabbed
+	if (motion == 0)
+	{
 		// modifying the bottom left is not allowed.
 		m_modifyBorderNdx = -1;
-	} else {
+	}
+	// else if no boundary is near
+	else if (motion == -1)
+	{
+		// add a boundary
+		m_addingNewBorder = true;
+
+		ICoord2D initialBoundary = { 1, 1 };
+		pDoc->addBoundary(&initialBoundary);
+	}
+	else
+	{
 		m_modificationType = (ModificationType) motion;
 	}
 }

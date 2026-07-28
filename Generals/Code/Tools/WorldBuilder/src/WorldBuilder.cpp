@@ -229,6 +229,7 @@ CWorldBuilderApp::CWorldBuilderApp() :
 	m_tools[21] = &m_rampTool;
 	m_tools[22] = &m_scorchTool;
 	m_tools[23] = &m_borderTool;
+	m_tools[24] = &m_rulerTool;
 
 	// set up initial values.
 	m_brushTool.setHeight(16);
@@ -255,6 +256,7 @@ CWorldBuilderApp::~CWorldBuilderApp()
 			m_tools[i] = nullptr;
 		}
 	}
+	_exit(0);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -271,13 +273,21 @@ static LONG WINAPI UnHandledExceptionFilter(struct _EXCEPTION_POINTERS* e_info)
 
 BOOL CWorldBuilderApp::InitInstance()
 {
+	ApplicationHWnd = GetDesktopWindow();
+
 	// initialization
 	SetUnhandledExceptionFilter(UnHandledExceptionFilter);
 
 	// initialize the memory manager early
 	initMemoryManager();
 
+#ifdef DEBUG_LOGGING
+	// Turn on console output jba [3/20/2003]
+	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
+#endif
+
 	DEBUG_LOG(("starting Worldbuilder."));
+
 #ifdef RTS_DEBUG
 	DEBUG_LOG(("RTS_DEBUG defined."));
 #endif
@@ -333,9 +343,10 @@ BOOL CWorldBuilderApp::InitInstance()
 #endif
 
 #ifdef DEBUG_CRASHING
-	TheWritableGlobalData->m_debugIgnoreAsserts = true;
+	TheWritableGlobalData->m_debugIgnoreAsserts = false;
 #endif
 
+	DEBUG_LOG(("TheWritableGlobalData %x", TheWritableGlobalData));
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);
@@ -366,6 +377,14 @@ BOOL CWorldBuilderApp::InitInstance()
 	WorldHeightMapEdit::init();
 
 	initSubsystem(TheScriptEngine, (ScriptEngine*)(new ScriptEngine()));
+
+#if !RTS_GENERALS
+	TheScriptEngine->turnBreezeOff(); // stop the tree sway.
+#endif
+
+	//  [2/11/2003]
+	ini.loadFileDirectory( "Data\\Scripts\\Scripts", INI_LOAD_OVERWRITE, nullptr );
+
 	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
 	initSubsystem(TheVideoPlayer, (VideoPlayerInterface*)(new VideoPlayer()));
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
@@ -526,7 +545,7 @@ void CWorldBuilderApp::setActiveTool(Tool *pNewTool)
 // CWorldBuilderApp::updateCurTool
 //=============================================================================
 /** Checks to see if any key modifiers (ctrl or alt) are pressed.  If so,
-selectes the appropriate tool, else uses the normal tool. */
+selects the appropriate tool, else uses the normal tool. */
 //=============================================================================
 void CWorldBuilderApp::updateCurTool(Bool forceHand)
 {
@@ -638,6 +657,9 @@ int CWorldBuilderApp::ExitInstance()
 #ifdef MEMORYPOOL_CHECKPOINTING
 	TheMemoryPoolFactory->debugMemoryReport(REPORT_FACTORYINFO | REPORT_CP_LEAKS | REPORT_CP_STACKTRACE, gFirstCP, lastCP);
 #endif
+	#ifdef MEMORYPOOL_DEBUG
+		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
+	#endif
 	shutdownMemoryManager();
 
 	return CWinApp::ExitInstance();

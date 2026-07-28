@@ -42,6 +42,7 @@
 #include "WaypointOptions.h"
 #include "Common/UnicodeString.h"
 
+
 static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
 
 #define SCRIPT_DIALOG_SECTION "ScriptDialog"
@@ -153,6 +154,7 @@ ScriptDialog::ScriptDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(ScriptDialog::IDD, pParent)
 {
 	m_draggingTreeView = false;
+	m_autoUpdateWarnings = true;
 	//{{AFX_DATA_INIT(ScriptDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -182,6 +184,9 @@ BEGIN_MESSAGE_MAP(ScriptDialog, CDialog)
 	ON_BN_CLICKED(IDC_EDIT_SCRIPT, OnEditScript)
 	ON_BN_CLICKED(IDC_COPY_SCRIPT, OnCopyScript)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
+	ON_BN_CLICKED(IDC_VERIFY, OnVerify)
+	ON_BN_CLICKED(IDC_PATCH_GC, OnPatchGC)
+	ON_BN_CLICKED(IDC_AUTO_VERIFY, OnAutoVerify)
 	ON_BN_CLICKED(IDC_SAVE, OnSave)
 	ON_BN_CLICKED(IDC_LOAD, OnLoad)
 	ON_NOTIFY(NM_DBLCLK, IDC_SCRIPT_TREE, OnDblclkScriptTree)
@@ -314,7 +319,7 @@ void ScriptDialog::updateScriptWarning(Script *pScript)
 			Int i;
 			for (i=0; i<pCondition->getNumParameters(); i++) {
 				AsciiString warning;
-				warning = EditParameter::getWarningText(pCondition->getParameter(i));
+				warning = EditParameter::getWarningText(pCondition->getParameter(i), FALSE);
 				if (!warning.isEmpty()) {
 					pScript->setWarnings(true);
 					pCondition->setWarnings(true);
@@ -328,7 +333,7 @@ void ScriptDialog::updateScriptWarning(Script *pScript)
 		Int i;
 		for (i=0; i<pAction->getNumParameters(); i++) {
 			AsciiString warning;
-			warning = EditParameter::getWarningText(pAction->getParameter(i));
+			warning = EditParameter::getWarningText(pAction->getParameter(i), TRUE);
 			if (!warning.isEmpty()) {
 				pScript->setWarnings(true);
 				pAction->setWarnings(true);
@@ -337,9 +342,42 @@ void ScriptDialog::updateScriptWarning(Script *pScript)
 	}
 }
 
-/** Updates the warning flags in the scripts, script groups & script conditions & actions. */
-void ScriptDialog::updateWarnings()
+void ScriptDialog::OnPatchGC()
 {
+	checkParametersForGC();
+	updateIcons(TVI_ROOT);
+/*  //Put up a dialog asking for search/replace parameters instead of hard-coded GC_ prefix.
+	ReplaceParameter editDlg();
+	if (IDOK==editDlg.DoModal())
+	{
+
+	}*/
+}
+
+/**Force a pass over all the scripts to make sure no warnings.  I moved this
+to user control because this function is VERY slow. 7-15-03 -MW*/
+void ScriptDialog::OnVerify()
+{
+	updateWarnings(true);	//force an update of warnings
+	updateIcons(TVI_ROOT);
+}
+
+void ScriptDialog::OnAutoVerify()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_AUTO_VERIFY);
+	m_autoUpdateWarnings=(pButton->GetCheck()==1);
+	::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "AutoVerifyScripts", m_autoUpdateWarnings?1:0);
+	//if user wants to check warnings manually, enable the verify button
+	CWnd *pWnd = GetDlgItem(IDC_VERIFY);
+	pWnd->EnableWindow(!m_autoUpdateWarnings);
+}
+
+/** Updates the warning flags in the scripts, script groups & script conditions & actions. */
+void ScriptDialog::updateWarnings(Bool forceUpdate)
+{
+	if (m_staticThis && m_staticThis->m_autoUpdateWarnings == false && forceUpdate == false)
+		return;	//user has disabled warnings to speed up the script editor
+
 	SidesList *sidesListP = TheSidesList;
 	Int i;
 	if (m_staticThis) sidesListP = &m_staticThis->m_sides;
@@ -362,9 +400,123 @@ void ScriptDialog::updateWarnings()
 	}
 }
 
+extern AsciiString ConvertToNonGCName(AsciiString name, Bool checkTemplate=true);
+
+void ScriptDialog::patchScriptParametersForGC(Script *pScript)
+{
+	AsciiString swapString;
+	pScript->setWarnings(false);
+	OrCondition *pOr;
+	for (pOr= pScript->getOrCondition(); pOr; pOr = pOr->getNextOrCondition()) {
+		Condition *pCondition;
+		for (pCondition = pOr->getFirstAndCondition(); pCondition; pCondition = pCondition->getNext()) {
+			pCondition->setWarnings(false);
+			Int i;
+			for (i=0; i<pCondition->getNumParameters(); i++) {
+				AsciiString warning;
+				Parameter *pParm = pCondition->getParameter(i);
+				warning = EditParameter::getWarningText(pParm, FALSE);
+				if (!warning.isEmpty()) {
+					if (pParm->getParameterType() == Parameter::OBJECT_TYPE)
+					{	//see if removing the GC prefix fixes this warning:
+						AsciiString uiString = pParm->getString();
+						if (uiString.isEmpty())
+							uiString = "???";
+						if (uiString.startsWith("GC_"))
+						{	swapString = ConvertToNonGCName(uiString, false);
+							pParm->friend_setString(swapString);
+							warning = EditParameter::getWarningText(pParm, FALSE);
+							if (!warning.isEmpty())
+							{	//Removing GC prefix didn't help, so restore original
+								pParm->friend_setString(uiString);
+							}
+							else
+								continue;	//warning was fixed so leave swapped parameter.
+						}
+					}
+					pScript->setWarnings(true);
+					pCondition->setWarnings(true);
+				}
+			}
+		}
+	}
+	ScriptAction *pAction;
+	for (pAction = pScript->getAction(); pAction; pAction = pAction->getNext()) {
+		pAction->setWarnings(false);
+		Int i;
+		for (i=0; i<pAction->getNumParameters(); i++) {
+			AsciiString warning;
+			Parameter *pParm=pAction->getParameter(i);
+			warning = EditParameter::getWarningText(pParm, TRUE);
+			if (!warning.isEmpty()) {
+				if (pParm->getParameterType() == Parameter::OBJECT_TYPE)
+				{	//see if removing the GC prefix fixes this warning:
+					AsciiString uiString = pParm->getString();
+					if (uiString.isEmpty())
+						uiString = "???";
+					if (uiString.startsWith("GC_"))
+					{	swapString = ConvertToNonGCName(uiString,false);
+						pParm->friend_setString(swapString);
+						warning = EditParameter::getWarningText(pParm, FALSE);
+						if (!warning.isEmpty())
+						{	//Removing GC prefix didn't help, so restore original
+							pParm->friend_setString(uiString);
+						}
+						else
+							continue;	//warning was fixed so leave swapped parameter.
+					}
+				}
+				pScript->setWarnings(true);
+				pAction->setWarnings(true);
+			}
+		}
+	}
+}
+
+/*Checks all script parameters for obsolete values (example: mission disk using GC_ templates)*/
+void ScriptDialog::checkParametersForGC()
+{
+	SidesList *sidesListP = TheSidesList;
+	Int i;
+	if (m_staticThis) sidesListP = &m_staticThis->m_sides;
+	for (i=0; i<sidesListP->getNumSides(); i++) {
+		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
+		Script *pScr;
+		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
+			updateScriptWarning(pScr);
+			if (pScr->hasWarnings())
+			{	//check if this is using invalid GC parameters
+				patchScriptParametersForGC(pScr);
+			}
+		}
+		ScriptGroup *pGroup;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
+			pGroup->setWarnings(false);
+			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
+				updateScriptWarning(pScr);
+				if (pScr->hasWarnings()) {
+					//check if this is using invalid GC parameters.
+					patchScriptParametersForGC(pScr);
+					if (pScr->hasWarnings())	//patching may have removed warning
+						pGroup->setWarnings(true);
+				}
+			}
+		}
+	}
+}
+
 BOOL ScriptDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
+	m_autoUpdateWarnings=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "AutoVerifyScripts", 1);
+
+	CButton *pButton = (CButton*)GetDlgItem(IDC_AUTO_VERIFY);
+	pButton->SetCheck(m_autoUpdateWarnings ? 1:0);
+
+	//if user wants to check warnings manually, enable the verify button
+	CWnd *pWnd = GetDlgItem(IDC_VERIFY);
+	pWnd->EnableWindow(!m_autoUpdateWarnings);
 
 	m_staticThis = this;
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
@@ -388,7 +540,7 @@ BOOL ScriptDialog::OnInitDialog()
 	m_sides = *TheSidesList;
 	EditParameter::setCurSidesList(&m_sides);
 	Int i;
-	updateWarnings();
+	updateWarnings(true);
 	if (pTree) {
 		m_imageList.Create(IDB_FOLDERSCRIPT, 16, 2, ILC_COLOR4);
 		pTree->SetImageList(&m_imageList, TVSIL_STATE);
@@ -1100,6 +1252,7 @@ void ScriptDialog::scanForWaypointsAndTeams(Script *pScript, Bool doUnits, Bool 
 }
 
 #define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1 1
+#define K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2 2
 
 /** Write out selected scripts, and possibly waypoints, trigger areas & teams. */
 void ScriptDialog::OnSave()
@@ -1108,6 +1261,7 @@ void ScriptDialog::OnSave()
 	Bool doTriggerAreas = true;
 	Bool doUnits = true;
 	Bool doAllScripts = true;
+	Bool doSides = true;
 	Int	 i;
 
 	ExportScriptsOptions optionsDlg;
@@ -1118,6 +1272,7 @@ void ScriptDialog::OnSave()
 	doUnits = optionsDlg.getDoUnits();
 	doTriggerAreas = optionsDlg.getDoTriggers();
 	doAllScripts = optionsDlg.getDoAllScripts();
+	doSides = optionsDlg.getDoSides();
 
 	Script *pScript = getCurScript();
 	ScriptGroup *pGroup = getCurGroup();
@@ -1211,12 +1366,19 @@ void ScriptDialog::OnSave()
 		ScriptList::WriteScriptsDataChunk(chunkWriter, scripts, numScriptLists);
 
 		/***************Players DATA ***************/
-		chunkWriter.openDataChunk("ScriptsPlayers", 	K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_1);
-		if (doAllScripts) {
+		chunkWriter.openDataChunk("ScriptsPlayers", 	K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2);
+		chunkWriter.writeInt(doSides);
+		if (doAllScripts || doSides) {
 			chunkWriter.writeInt(m_sides.getNumSides());
 			for (i=0; i<m_sides.getNumSides(); i++) {
 				AsciiString name = m_sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 				chunkWriter.writeAsciiString(name);
+
+				if (doSides) {
+					// The user has requested that the sides get exported.
+					chunkWriter.writeDict(*m_sides.getSideInfo(i)->getDict());
+				}
+
 			}
 		} else  {
 			chunkWriter.writeInt(1);
@@ -1410,6 +1572,7 @@ void ScriptDialog::OnLoad()
 			} else {
 				Int j;
 				for (j=0; j<m_sides.getNumSides(); j++) {
+					// Using i as an index assumes that i < m_sides.getNumSides.  Is that safe???
  					AsciiString name = m_sides.getSideInfo(i)->getDict()->getAsciiString(TheKey_playerName);
 					if (name == m_readPlayerNames[j]) {
 						curSide = j;
@@ -1455,12 +1618,20 @@ void ScriptDialog::OnLoad()
 				scripts[i]->discard(); /* Frees the script list, but none of it's children, as they have been
 															copied into the current scripts. */
 				scripts[i] = nullptr;
-				reloadPlayer(curSide, pSL);
+				//reloadPlayer(curSide, pSL);
 			} else {
 				deleteInstance(scripts[i]);
 				scripts[i] = nullptr;
 			}
 		}
+
+		for (i = 0; i < m_sides.getNumSides(); i++) {
+			// Make sure that the dialog tree is updated.
+			ScriptList *pSL = m_sides.getSideInfo(i)->getScriptList();
+			reloadPlayer(i, pSL);
+			updateIcons(TVI_ROOT);
+		}
+
 
 	} catch(...) {
 		DEBUG_CRASH(("threw exception in ScriptDialog::OnLoad"));
@@ -1607,15 +1778,19 @@ Bool ScriptDialog::ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info
 			TeamsInfo ti;
 			ti.init(&teamDict);
 			CFixTeamOwnerDialog fix(&ti, &pThis->m_sides);
+			bool nameSet = false;
 			if (fix.DoModal() == IDOK) {
 				if (fix.pickedValidTeam()) {
 					teamDict.setAsciiString(TheKey_teamOwner, fix.getSelectedOwner());
+					nameSet = true;
 				}
 			}
 
-			AsciiString neutralPlayerName; // neutral player name is empty string
-			// player doesn't exist, so add it to the neutral player.
-			teamDict.setAsciiString(TheKey_teamOwner, neutralPlayerName);
+			if (nameSet == false) {
+				AsciiString neutralPlayerName; // neutral player name is empty string
+				// player doesn't exist, so add it to the neutral player.
+				teamDict.setAsciiString(TheKey_teamOwner, neutralPlayerName);
+			}
 			pThis->m_sides.addTeam(&teamDict);
 		}
 	}
@@ -1632,11 +1807,38 @@ Bool ScriptDialog::ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info
 Bool ScriptDialog::ParsePlayersDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
 	ScriptDialog *pThis = (ScriptDialog *)userData;
+	Int readDicts = 0;
+	if (info->version >= K_PLAYERS_NAMES_FOR_SCRIPTS_VERSION_2) {
+		readDicts = file.readInt();
+	}
 	Int numNames = file.readInt();
 	Int i;
 	for (i=0; i<numNames; i++) {
 		if (i>=MAX_PLAYER_COUNT) break;
 		pThis->m_readPlayerNames[i] = file.readAsciiString();
+		if (readDicts) {
+			Dict sideDict = file.readDict();
+			bool nameFound = false;
+			for (Int j=0; j < pThis->m_sides.getNumSides(); j++) {
+				AsciiString name = pThis->m_sides.getSideInfo(j)->getDict()->getAsciiString(TheKey_playerName);
+
+				if (name == pThis->m_readPlayerNames[i]) {
+					// The side already exists so don't add it or overwrite the old data.
+					nameFound = true;
+					break;
+				}
+			}
+			if (nameFound == false) {
+				// This side doesn't currently exist, so add it.
+				pThis->m_sides.addSide(&sideDict);
+				ScriptList* pList = newInstance(ScriptList);
+				SidesInfo* sides = pThis->m_sides.findSideInfo(pThis->m_readPlayerNames[i]);
+				// A script list must be created.
+				sides->setScriptList(pList);
+				// Update the dialog.
+				pThis->addPlayer(i);
+			}
+		}
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
