@@ -24,6 +24,13 @@
 
 class Condition;
 class SidesList;
+
+class CMyTreeCtrl : public CTreeCtrl
+{
+public:
+	virtual LRESULT WindowProc( UINT message, WPARAM wParam, LPARAM lParam ) override;
+};
+
 /////////////////////////////////////////////////////////////////////////////
 // EditCondition dialog
 
@@ -61,6 +68,7 @@ protected:
 	CRichEditCtrl m_myEditCtrl;
 	CHARRANGE m_curLinkChrg;
 	Int				m_curEditParameter;
+	CTreeCtrl	m_conditionTreeView;
 
 protected:
 

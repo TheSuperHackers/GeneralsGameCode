@@ -45,7 +45,7 @@
 #include <WWMath/colmath.h>
 #include <WW3D2/coltest.h>
 
-
+#define dontUSE_FLAT_HEIGHT_MAP
 //-----------------------------------------------------------------------------
 //         Private Data
 //-----------------------------------------------------------------------------
@@ -68,9 +68,11 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 {
 	if (m_flattenHeights != flat) {
 		m_flattenHeights = flat;
+#ifndef USE_FLAT_HEIGHT_MAP
 		m_originX = 0;
 		m_originY = 0;
  		updateBlock(0, 0, m_x-1, m_y-1, m_map, nullptr);
+#endif
 	}
 }
 
@@ -83,6 +85,7 @@ void WBHeightMap::setFlattenHeights(Bool flat)
 /** Flattens the terrain for the top down view.. */
 //=============================================================================
 void WBHeightMap::flattenHeights() {
+#ifndef USE_FLAT_HEIGHT_MAP
 	Real theZ = THE_Z;
 	Int i, j;
 	for (j=0; j<m_numVBTilesY; j++)
@@ -96,6 +99,7 @@ void WBHeightMap::flattenHeights() {
 				vbHardware++;
 			}
 		}
+#endif
 }
 
 //=============================================================================
@@ -106,7 +110,7 @@ void WBHeightMap::flattenHeights() {
 Real WBHeightMap::getMaxCellHeight(Real x, Real y)
 {
 	if (!m_flattenHeights) {
-		return HeightMapRenderObjClass::getMaxCellHeight(x,y);
+		return BaseHeightMapRenderObjClass::getMaxCellHeight(x,y);
 	}
 	// If we are flattening the height, all z values aret THE_Z.  jba.
 	return THE_Z;
@@ -121,7 +125,7 @@ Real WBHeightMap::getMaxCellHeight(Real x, Real y)
 Real WBHeightMap::getHeightMapHeight(Real x, Real y, Coord3D* normal)
 {
 	if (!m_flattenHeights) {
-		return HeightMapRenderObjClass::getHeightMapHeight(x,y,normal);
+		return BaseHeightMapRenderObjClass::getHeightMapHeight(x,y,normal);
 	}
 	// If we are flattening the height, all z values aret THE_Z.  jba.
 	if (normal) {
@@ -144,7 +148,7 @@ Real WBHeightMap::getHeightMapHeight(Real x, Real y, Coord3D* normal)
 Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 {
 	if (!m_flattenHeights) {
-		return HeightMapRenderObjClass::Cast_Ray(raytest);
+		return BaseHeightMapRenderObjClass::Cast_Ray(raytest);
 	}
 	Real theZ = THE_Z;
 	TriClass tri;
@@ -163,7 +167,7 @@ Bool WBHeightMap::Cast_Ray(RayCollisionTestClass & raytest)
 	Int EndCellX;
  	Int StartCellY;
 	Int EndCellY;
-	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH; // Allow picking past the edge for scrolling & objects.
+	const Int overhang = 2*32; // Allow picking past the edge for scrolling & objects.
  	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
 	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang),
 		MAP_XY_FACTOR*(m_map->getYExtent()+overhang), MAP_HEIGHT_SCALE*m_map->getMaxHeightValue()+MAP_XY_FACTOR);
@@ -300,7 +304,11 @@ void WBHeightMap::Render(RenderInfoClass & rinfo)
 	if (m_flattenHeights) {
 		flattenHeights();
 	}
+#ifdef USE_FLAT_HEIGHT_MAP
+	FlatHeightMapRenderObjClass::Render(rinfo);
+#else
 	HeightMapRenderObjClass::Render(rinfo);
+#endif
 }
 
 

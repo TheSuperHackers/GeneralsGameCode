@@ -83,11 +83,12 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
 {
 	if (m != TRACK_L && m != TRACK_R) return;
-
+#define DONT_DO_FULL_UPDATE
+#ifdef DO_FULL_UPDATE
 	m_htMapEditCopy->optimizeTiles(); // force to optimize tileset
 	IRegion2D partialRange = {0,0,0,0};
 	pDoc->updateHeightMap(m_htMapEditCopy, false, partialRange);
-
+#endif
 	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
@@ -166,6 +167,9 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 		partialRange.hi.x = totalMaxX+1;
 		partialRange.lo.y = totalMinY;
 		partialRange.hi.y = totalMaxY+1;
+		if (fullUpdate) {
+			m_htMapEditCopy->optimizeTiles(); // force to optimize tileset
+		}
 		pDoc->updateHeightMap(m_htMapEditCopy, !fullUpdate, partialRange);
 	}
 	pView->UpdateWindow();

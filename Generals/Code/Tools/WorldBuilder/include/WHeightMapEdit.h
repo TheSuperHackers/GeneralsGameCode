@@ -137,8 +137,8 @@ public: // Editing methods.
 	void showTileStatusInfo(); ///< pops up a dialog box with tile mem usage.
 
 
-	Bool selectDuplicates(); ///< Selects any dupicate map objects.
-	Bool selectSimilar(); ///< Selects any dupicate map objects.
+	Bool selectDuplicates(); ///< Selects any duplicate map objects.
+	Bool selectSimilar(); ///< Selects any duplicate map objects.
 	Bool selectInvalidTeam(); ///< Selects any objects with invalid teams.
 
 	Bool resize(Int newXSize, Int newYSize, Int newHeight, Int newBorder, Bool anchorTop, Bool anchorBottom,

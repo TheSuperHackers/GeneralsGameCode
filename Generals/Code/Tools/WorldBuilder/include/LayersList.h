@@ -42,15 +42,20 @@
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
 class MapObject;
+class PolygonTrigger;
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 typedef std::list<MapObject*> ListMapObjectPtr;
 typedef ListMapObjectPtr::iterator ListMapObjectPtrIt;
 
+typedef std::list<PolygonTrigger*> ListPolygonTriggerPtr;
+typedef ListPolygonTriggerPtr::iterator ListPolygonTriggerPtrIt;
+
 struct Layer
 {
 	AsciiString layerName;
 	ListMapObjectPtr objectsInLayer;
+	ListPolygonTriggerPtr polygonTriggersInLayer;
 	Bool show;
 };
 
@@ -86,9 +91,12 @@ class LayersList : public CDialog
 
 		void resetLayers();
 		void addMapObjectToLayersList(IN MapObject *objToAdd, AsciiString layerToAddTo = AsciiString(TheDefaultLayerName.c_str()));
+		void addPolygonTriggerToLayersList(IN PolygonTrigger *triggerToAdd, AsciiString layerToAddTo = AsciiString(TheDefaultLayerName.c_str()));
 		AsciiString removeMapObjectFromLayersList(IN MapObject *objToRemove);
+		AsciiString removePolygonTriggerFromLayersList(IN PolygonTrigger *triggerToRemove);
 
 		void changeMapObjectLayer(IN MapObject *objToChange, AsciiString layerToPlaceOn);
+		void changePolygonTriggerLayer(IN PolygonTrigger *triggerToChange, AsciiString layerToPlaceOn);
 
 		void addLayerNamed(IN AsciiString layerToAdd);
 		void removeLayerNamed(IN AsciiString layerToRemove);
@@ -105,22 +113,32 @@ class LayersList : public CDialog
 		const ListLayer& GetAllLayers() const { return mLayers; }
 
 		static MapObject *findObjectByUID(AsciiString objectIDToFind);
+		static PolygonTrigger *findPolygonTriggerByUID(AsciiString objectIDToFind);
+		static Bool findAndSelectMapObject(AsciiString selectedItemAsciiString);
+		static Bool findAndSelectPolygonTrigger(AsciiString selectedItemAsciiString);
+		static void unselectAllMapObjects();
+		static void unselectAllPolygonTriggers();
+
+	public:
+		// This is a string because making it an AsciiString makes us barf on construction. :-(
+		static std::string TheDefaultLayerName;
+		static std::string ThePolygonTriggerLayerName;
+		static std::string TheDefaultNewLayerName;
+		static std::string TheActiveLayerName;
+		static const std::string TheUnmutableDefaultLayerName;
 
 	protected:
 		AsciiString mCurrentlyEditingLabel;
+
 		ListLayer mLayers;
 		CLLTreeCtrl *mTree;
 		CImageList mImageList;
 		Bool m_performUpdates;
+		Bool m_activatedLayer;
 
 
 		HTREEITEM findTreeLayerNamed(const AsciiString& nameToFind);
 		HTREEITEM findTreeObjectNamed(const AsciiString& objectToFind, HTREEITEM layerItem);
-
-		// This is a string because making it an AsciiString makes us barf on construction. :-(
-		static std::string TheDefaultLayerName;
-		static std::string TheDefaultNewLayerName;
-		static const std::string TheUnmutableDefaultLayerName;
 
 		// This function takes an MapObject, and does one of the following:
 		// 1) Return true if the MapObject can be found, and
@@ -128,6 +146,7 @@ class LayersList : public CDialog
 		//    MapObjectIt points to a valid MapObject iterator on the layerIts MapObjectsInLayer member
 		// 2) Returns false if the MapObject cannot be found.
 		Bool findMapObjectAndList(IN MapObject *MapObjectToFind, OUT ListLayerIt *layerIt = nullptr, OUT ListMapObjectPtrIt *MapObjectIt = nullptr);
+		Bool findPolygonTriggerAndList(IN PolygonTrigger *PolygonTriggerToFind, OUT ListLayerIt *layerIt = nullptr, OUT ListPolygonTriggerPtrIt *PolygonTriggerIt = nullptr);
 
 		// This function takes a layer name, and does one of the following:
 		// 1) Return true if the layer can be found, and
@@ -136,7 +155,11 @@ class LayersList : public CDialog
 		Bool findLayerNamed(IN AsciiString layerName, OUT ListLayerIt *layerIt = nullptr);
 
 		void addMapObjectToLayer(IN MapObject *objToAdd, IN ListLayerIt *layerIt);
+		void addPolygonTriggerToLayer(IN PolygonTrigger *objToAdd, IN ListLayerIt *layerIt);
 		void removeMapObjectFromLayer(IN MapObject *objToRemove, IN ListLayerIt *layerIt = nullptr, IN ListMapObjectPtrIt *MapObjectIt = nullptr);
+		void removePolygonTriggerFromLayer(IN PolygonTrigger *triggerToRemove, IN ListLayerIt *layerIt = nullptr, IN ListPolygonTriggerPtrIt *PolygonTriggerIt = nullptr);
+		void updateObjectRenderFlags(IN ListLayerIt *layerIt);
+		void updateTreeImages();
 
 	protected:
 		virtual void OnOK() override;
@@ -149,8 +172,10 @@ class LayersList : public CDialog
 		afx_msg void OnMergeLayer(UINT commandID);
 		afx_msg void OnMergeObject(UINT commandID);
 		afx_msg void OnMergeViewSelection(UINT commandID);
+		afx_msg void OnSelectActiveLayer();
 
 
+		afx_msg void OnSelectLayerObject();
 		afx_msg void OnNewLayer();
 		afx_msg void OnDeleteLayer();
 		afx_msg void OnHideShowLayer();

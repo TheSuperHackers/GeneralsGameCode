@@ -50,8 +50,8 @@ public:
 // Implementation
 
 public:
-	static Int edit( Parameter *pParm, AsciiString unitName = AsciiString::TheEmptyString );
-	static AsciiString getWarningText(Parameter *pParm);
+	static Int edit( Parameter *pParm, Int keyPressed, AsciiString unitName = AsciiString::TheEmptyString );
+	static AsciiString getWarningText(Parameter *pParm, Bool isAction);
 	static AsciiString getInfoText(Parameter *pParm);
 	static void setCurSidesList(SidesList *sidesListP) {m_sidesListP = sidesListP;};
 	static Bool loadScripts(CComboBox *pCombo, Bool subr, AsciiString match = AsciiString::TheEmptyString);
@@ -93,10 +93,10 @@ protected:
 	static Bool loadEmoticons( CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString );
 	static AsciiString getCreatedUnitTemplateName(AsciiString unitName);
 
-	void loadCounters(CComboBox *pCombo);
-	void loadConditionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo);
-	void loadActionParameter(Script *pScr, Parameter::ParameterType type, 	CComboBox *pCombo);
-	void loadFlags(CComboBox *pCombo);
+	static Bool loadCounters(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
+	static void loadConditionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo);
+	static Bool loadActionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo, AsciiString match);
+	static Bool loadFlags(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 
 
 protected:
@@ -106,11 +106,15 @@ protected:
 	Int					m_int;
 	Real				m_real;
 
+	Int					m_key; // key pressed to invoke the edit parameter dialog.
+
 	static SidesList *m_sidesListP;
 	static AsciiString m_selectedLocalizedString;
 
 protected:
+	Bool scanReal(CEdit *pEdit, Real scale);
 
+protected:
 	// Generated message map functions
 	//{{AFX_MSG(EditParameter)
 	afx_msg void OnChangeEdit();

@@ -27,6 +27,9 @@
 
 class MapObject;
 class ModifyObjectUndoable;
+class MultipleUndoable;
+class CWorldBuilderDoc;
+class MapObject;
 
 /////////////////////////////////////////////////////////////////////////////
 // External Defines
@@ -65,35 +68,62 @@ protected:
 
 	static MapObjectProps *TheMapObjectProps;
 
+	// Data common to all property pages
 	Dict* m_dictToEdit;
 	std::vector<Dict*> m_allSelectedDicts;
 	const char* m_title;
 	MapObject *m_selectedObject;
+	MapObject *m_dictSource; // Source object for m_dictToEdit. m_selectedObject is not always the current source
+	                         // of m_dictToEdit, and I don't understand why, so I'm making another MapObject pointer
+	                         // which is always kept in sync.
 
+	Real m_angle;
+	Real m_height;
+	Real m_scale;
+
+	WBPopupSliderButton m_heightSlider;
+	WBPopupSliderButton m_angleSlider;
+	WBPopupSliderButton m_scaleSlider;
+
+	Int              m_defaultEntryIndex; //< Index in the sound combobox of the entry labelled "default"
+	Bool             m_defaultIsNone; //< The default for this object is no sound
+	AsciiString      m_defaultEntryName; //< The original name of the default entry
+
+	ModifyObjectUndoable *m_posUndoable;
+	Coord3D m_position;
+
+	void deletePages();
 	void updateTheUI();
 	void enableButtons();
 	int getSel();
-	WBPopupSliderButton m_heightSlider;
-	WBPopupSliderButton m_angleSlider;
-	Real m_angle;
-	Real m_height;
-	ModifyObjectUndoable *m_posUndoable;
+
 
 	// Generated message map functions
 	//{{AFX_MSG(MapObjectProps)
-	afx_msg void OnSelchangeProperties();
 	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	afx_msg void OnSelchangeProperties();
 	afx_msg void OnEditprop();
 	afx_msg void OnNewprop();
 	afx_msg void OnRemoveprop();
 	afx_msg void OnDblclkProperties();
-	virtual void OnOK() override;
-	virtual void OnCancel() override;
+
 	afx_msg void _TeamToDict();
 	afx_msg void _NameToDict();
+	afx_msg void _ScriptToDict();
+	afx_msg void _WeatherToDict();
+	afx_msg void _TimeToDict();
+	afx_msg void _ScaleToDict();
+	afx_msg void SetZOffset();
+	afx_msg void SetAngle();
+	afx_msg void SetPosition();
+	afx_msg void OnScaleOn();
+	afx_msg void OnScaleOff();
+	afx_msg void OnKillfocusMAPOBJECTXYPosition();
+	afx_msg void _PrebuiltUpgradesToDict();
 	afx_msg void _HealthToDict();
 	afx_msg void _EnabledToDict();
-	afx_msg void _ScriptToDict();
 	afx_msg void _IndestructibleToDict();
 	afx_msg void _UnsellableToDict();
 	afx_msg void _TargetableToDict();
@@ -104,23 +134,32 @@ protected:
 	afx_msg void _ShroudClearingDistanceToDict();
 	afx_msg void _RecruitableAIToDict();
 	afx_msg void _SelectableToDict();
-	afx_msg void _WeatherToDict();
-	afx_msg void _TimeToDict();
-	afx_msg void _PrebuiltUpgradesToDict();
-	afx_msg void SetZOffset();
-	afx_msg void SetAngle();
 	afx_msg void _HPsToDict();
 	afx_msg void _StoppingDistanceToDict();
-	//}}AFX_MSG
+	afx_msg void attachedSoundToDict();
+	afx_msg void customizeToDict();
+	afx_msg void enabledToDict();
+	afx_msg void loopingToDict();
+	afx_msg void loopCountToDict();
+	afx_msg void minVolumeToDict();
+	afx_msg void volumeToDict();
+	afx_msg void minRangeToDict();
+	afx_msg void maxRangeToDict();
+	afx_msg void priorityToDict();
+		//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
-	void _DictToTeam();
 	void _DictToName();
+	void _DictToTeam();
+	void _DictToScript();
+	void _DictToScale();
+	void _DictToWeather();
+	void _DictToTime();
+	void _DictToPrebuiltUpgrades();
 	void _DictToHealth();
 	void _DictToHPs();
 	void _DictToEnabled();
-	void _DictToScript();
 	void _DictToDestructible();
 	void _DictToUnsellable();
 	void _DictToTargetable();
@@ -132,21 +171,38 @@ protected:
 	void _DictToShroudClearingDistance();
 	void _DictToRecruitableAI();
 	void _DictToSelectable();
-	void _DictToWeather();
-	void _DictToTime();
+	void _DictToStoppingDistance();
 	void ShowZOffset(MapObject* pMapObj);
 	void ShowAngle(MapObject* pMapObj);
-	void _DictToStoppingDistance();
-	void _DictToPrebuiltUpgrades();
+	void ShowPosition(MapObject* pMapObj);
+	void dictToAttachedSound();
+	void dictToCustomize();
+	void dictToEnabled();
+	void dictToLooping();
+	void dictToLoopCount();
+	void dictToMinVolume();
+	void dictToVolume();
+	void dictToMinRange();
+	void dictToMaxRange();
+	void dictToPriority();
 
-public:
+	void clearCustomizeFlag( CWorldBuilderDoc* pDoc, MultipleUndoable * ownerUndoable );
+
+	// Implementation of PopupSliderOwner callbacks
 	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
+public:
 	static MapObject *getSingleSelectedMapObject();
 	static void update();
 
+private:
+  /// Disallow copying: Object is not set up to be copied
+  MapObjectProps( const MapObjectProps & other ); // Deliberately undefined
+  MapObjectProps & operator=( const MapObjectProps & other ); // Deliberately undefined
+	void updateTheUI(MapObject *pMapObj);
+	void InitSound();
 };
 
 //{{AFX_INSERT_LOCATION}}

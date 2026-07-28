@@ -506,6 +506,30 @@ void WorldHeightMapEdit::loadImagesFromTerrainType( TerrainType *terrain )
 
 }
 
+Bool WorldHeightMapEdit::getRawTileData(Short tileNdx, Int width, UnsignedByte *buffer, Int bufLen)
+{
+	TileData *pSrc = nullptr;
+	if (tileNdx / 4 < NUM_SOURCE_TILES) {
+		pSrc = m_sourceTiles[tileNdx / 4];
+	}
+	if (bufLen < (width * width * TILE_BYTES_PER_PIXEL)) {
+		return false;
+	}
+	if (pSrc && pSrc->hasRGBDataForWidth(2 * width)) {
+		UnsignedByte *pSrcData = pSrc->getRGBDataForWidth(2 * width);
+		Int xOffset = (tileNdx & 1) ? width : 0;
+		Int yOffset = (tileNdx & 2) ? width : 0;
+		for (Int j = 0; j < width; ++j) {
+			UnsignedByte *pDestData = buffer + j * width * TILE_BYTES_PER_PIXEL;
+			UnsignedByte *pSrcRow = pSrcData + (j + yOffset) * width * TILE_BYTES_PER_PIXEL * 2;
+			pSrcRow += xOffset * TILE_BYTES_PER_PIXEL;
+			memcpy(pDestData, pSrcRow, width * TILE_BYTES_PER_PIXEL);
+		}
+		return true;
+	}
+	return false;
+}
+
 UnsignedByte * WorldHeightMapEdit::getPointerToClassTileData(Int texClass)
 {
 	TileData *pSrc = nullptr;
@@ -600,7 +624,11 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 	chunkWriter.closeDataChunk();
 
 	/***************BLEND TILE DATA ***************/
+#if RTS_GENERALS
+	chunkWriter.openDataChunk("BlendTileData", K_BLEND_TILE_VERSION_7);
+#else
 	chunkWriter.openDataChunk("BlendTileData", K_BLEND_TILE_VERSION_8);
+#endif
 		chunkWriter.writeInt(m_dataSize);
 		chunkWriter.writeArrayOfBytes((char*)m_tileNdxes, m_dataSize*sizeof(Short));
 		chunkWriter.writeArrayOfBytes((char*)m_blendTileNdxes, m_dataSize*sizeof(Short));

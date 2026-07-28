@@ -29,6 +29,7 @@
 #include "WW3D2/intersec.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "WW3D2/agg_def.h"
 #include "WW3D2/part_ldr.h"
 #include "WW3D2/hanim.h"
@@ -203,17 +204,17 @@ public:
 	virtual void initHeightForMap() override {};												///<  Init the camera height for the map at the current position.
 	virtual void scrollBy( Coord2D *delta ){};														///< Shift the view by the given delta
 	virtual void moveCameraTo(const Coord3D *o, Int frames, Int shutter,
-														Bool orient) {lookAt(o);};
+														Bool orient, Real easeIn, Real easeOut) override {lookAt(o);};
 	virtual void moveCameraAlongWaypointPath(Waypoint *way, Int frames, Int shutter,
-														Bool orient) {};
+														Bool orient, Real easeIn, Real easeOut) override {};
 	virtual Bool isCameraMovementFinished() override {return true;};
-	virtual void resetCamera(const Coord3D *location, Int frames) {}; ///< Move camera to location, and reset to default angle & zoom.
-	virtual void rotateCamera(Real rotations, Int frames) {}; ///< Rotate camera about current viewpoint.
-	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds) {};	///< Rotate camera to face an object, and hold on it
-	virtual void cameraModFinalZoom(Real finalZoom){};			 ///< Final zoom for current camera movement.
+	virtual void resetCamera(const Coord3D *location, Int frames, Real easeIn, Real easeOut) override {}; ///< Move camera to location, and reset to default angle & zoom.
+	virtual void rotateCamera(Real rotations, Int frames, Real easeIn, Real easeOut) override {}; ///< Rotate camera about current viewpoint.
+	virtual void rotateCameraTowardObject(ObjectID id, Int milliseconds, Int holdMilliseconds, Real easeIn, Real easeOut) override {};	///< Rotate camera to face an object, and hold on it
+	virtual void cameraModFinalZoom(Real finalZoom, Real easeIn, Real easeOut) override {};			 ///< Final zoom for current camera movement.
 	virtual void cameraModRollingAverage(Int framesToAverage) override {}; ///< Number of frames to average movement for current camera movement.
 	virtual void cameraModFinalTimeMultiplier(Int finalMultiplier) override {}; ///< Final time multiplier for current camera movement.
-	virtual void cameraModFinalPitch(Real finalPitch){};		 ///< Final pitch for current camera movement.
+	virtual void cameraModFinalPitch(Real finalPitch, Real easeIn, Real easeOut) override {};		 ///< Final pitch for current camera movement.
 	virtual void cameraModFreezeTime() override {}					///< Freezes time during the next camera movement.
 	virtual void cameraModFreezeAngle() override {}					///< Freezes time during the next camera movement.
 	virtual void cameraModLookToward(Coord3D *pLoc) override {}			///< Sets a look at point during camera movement.
@@ -223,8 +224,8 @@ public:
 	virtual Int	 getTimeMultiplier() override {return 1;};				///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) override {}; ///< Set the time multiplier.
 	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight) override {};
-	virtual void zoomCamera( Real finalZoom, Int milliseconds ) {};
-	virtual void pitchCamera( Real finalPitch, Int milliseconds ) {};
+	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut ) override {};
+	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut ) override {};
 
 	virtual void setAngle( Real angle ) override {};																///< Rotate the view around the up axis to the given angle
 	virtual Real getAngle() override { return 0; }
@@ -399,7 +400,13 @@ WbView3d::WbView3d() :
 	m_curTrackingZ(10),
 	m_ww3dInited(false),
 	m_showLayersList(false),
-	m_showMapBoundaries(false)
+	m_showMapBoundaries(false),
+	m_showBoundingBoxes(false),
+	m_showSightRanges(false),
+	m_showWeaponRanges(false),
+	m_highlightTestArt(false),
+	m_showLetterbox(false),
+  m_showSoundCircles(false)
 {
 	TheTacticalView = &bogusTacticalView;
 	m_actualWinSize.x = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
@@ -416,10 +423,17 @@ WbView3d::WbView3d() :
 	m_showEntireMap = (::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowEntireMap", 1) != 0);
 	m_projection = (::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowTopDownView", 0) != 0);
 	m_showShadows = (::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowShadows", 1) != 0);
+	TheWritableGlobalData->m_useShadowDecals = m_showShadows;
+	TheWritableGlobalData->m_useShadowVolumes = m_showShadows;
 	TheWritableGlobalData->m_showSoftWaterEdge = (::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoftWater", 1) != 0);
 	TheWritableGlobalData->m_use3WayTerrainBlends = (::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowExtraBlends", 1) > 1 ? 2 : 1);
 	setShowModels(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowModels", 1) != 0);
+	setShowBoundingBoxes(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowBoundingBoxes", 0) != 0);
+	setShowSightRanges(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSightRanges", 0) != 0);
+	setShowWeaponRanges(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowWeaponRanges", 0) != 0);
 	setShowGarrisoned(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowGarrisoned", 0) != 0);
+	setHighlightTestArt(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "HighlightTestArt", 0) != 0);
+	setShowLetterbox(::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowLetterbox", 0) != 0);
 }
 
 // ----------------------------------------------------------------------------
@@ -432,13 +446,27 @@ WbView3d::~WbView3d()
 			REF_PTR_RELEASE(m_lightFeedbackMesh[i]);
 		}
 	}
-
+	REF_PTR_RELEASE(m_drawObject) ;
+	REF_PTR_RELEASE(m_heightMapRenderObj);
 	W3DShaderManager::shutdown();
 	shutdownWW3D();
 }
 // ----------------------------------------------------------------------------
 void WbView3d::shutdownWW3D()
 {
+	delete m_intersector;
+	m_intersector = nullptr;
+
+	delete m_layer;
+	m_layer = nullptr;
+
+	delete m_buildLayer;
+	m_buildLayer = nullptr;
+
+	if (m3DFont) {
+		m3DFont->Release();
+		m3DFont = nullptr;
+	}
 	if (m_ww3dInited) {
 		m_lightList.Reset_List();
 
@@ -473,20 +501,6 @@ void WbView3d::shutdownWW3D()
 		WWMath::Shutdown();
 	}
 	m_ww3dInited = false;
-
-	delete m_intersector;
-	m_intersector = nullptr;
-
-	delete m_layer;
-	m_layer = nullptr;
-
-	delete m_buildLayer;
-	m_buildLayer = nullptr;
-
-	if (m3DFont) {
-		m3DFont->Release();
-		m3DFont = nullptr;
-	}
 }
 
 //=============================================================================
@@ -503,6 +517,9 @@ void WbView3d::ReleaseResources()
 		m3DFont->Release();
 	}
 	m3DFont = nullptr;
+	if (m_drawObject) {
+		m_drawObject->freeMapResources();
+	}
 }
 
 //=============================================================================
@@ -517,6 +534,7 @@ void WbView3d::ReAcquireResources()
 		TheTerrainRenderObject->loadRoadsAndBridges(nullptr,FALSE);
 		TheTerrainRenderObject->worldBuilderUpdateBridgeTowers( m_assetManager, m_scene );
 	}
+	m_drawObject->initData();
 	IDirect3DDevice8* pDev = DX8Wrapper::_Get_D3D_Device8();
 	if (pDev) {
 
@@ -637,7 +655,7 @@ void WbView3d::setupCamera()
 	pos.y = m_centerPt.Y* MAP_XY_FACTOR;
 	pos.z = m_centerPt.Z* MAP_XY_FACTOR;
 
-	Real groundLevel = getHeightAroundPos(m_heightMapRenderObj, pos.x, pos.y);
+	Real groundLevel = m_heightMapRenderObj?getHeightAroundPos(m_heightMapRenderObj, pos.x, pos.y) : 0;
 
 	// set position of camera itself
 	/*
@@ -703,7 +721,7 @@ void WbView3d::setupCamera()
 
 	// build new camera transform
 	camtransform.Make_Identity();
-	if (factor+zOffset < 0) {
+	if (factor < 0) { //WST 11/11/02. Fix camera flipping over when near the ground too early
 		targetPos = sourcePos + (sourcePos-targetPos);
 	}
 	camtransform.Look_At( sourcePos, targetPos, 0 );
@@ -715,17 +733,21 @@ void WbView3d::setupCamera()
 	m_camera->Get_Clip_Planes(nearZ, farZ);
 	m_camera->Set_Clip_Planes(lookDistance/200, lookDistance*3);
 
-	if (m_projection) {
-		camtransform.Make_Identity();
-		camtransform.Set_Translation(Vector3(targetPos.X, targetPos.Y, lookDistance));
-		m_heightMapRenderObj->setFlattenHeights(true);
-		//m_camera->Set_Projection_Type(CameraClass::ORTHO);
-	} else {
-		m_heightMapRenderObj->setFlattenHeights(false);
-		//m_camera->Set_Projection_Type(CameraClass::PERSPECTIVE);
+	if (m_heightMapRenderObj) {
+		if (m_projection) {
+			camtransform.Make_Identity();
+			camtransform.Set_Translation(Vector3(targetPos.X, targetPos.Y, lookDistance));
+			m_heightMapRenderObj->setFlattenHeights(true);
+			//m_camera->Set_Projection_Type(CameraClass::ORTHO);
+		} else {
+			m_heightMapRenderObj->setFlattenHeights(false);
+			//m_camera->Set_Projection_Type(CameraClass::PERSPECTIVE);
+		}
 	}
 	m_camera->Set_Transform( camtransform );
-	m_heightMapRenderObj->setDrawEntireMap(m_showEntireMap);
+	if (m_heightMapRenderObj) {
+		m_heightMapRenderObj->setDrawEntireMap(m_showEntireMap);
+	}
 // not needed, handled in OnSize
 //	m_camera->Set_Aspect_Ratio((float)m_actualWinSize.x/(float)m_actualWinSize.y);
 }
@@ -823,8 +845,11 @@ void WbView3d::resetRenderObjects()
 		TheW3DShadowManager->Reset();
 
 	updateLights();
-	if (m_heightMapRenderObj)
+	if (m_heightMapRenderObj) {
 		m_scene->Add_Render_Object(m_heightMapRenderObj);
+		m_heightMapRenderObj->removeAllTrees();
+		m_heightMapRenderObj->removeAllProps();
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -979,6 +1004,40 @@ void WbView3d::updateScorches()
 }
 
 // ----------------------------------------------------------------------------
+void WbView3d::updateTrees()
+{
+	TheTerrainRenderObject->removeAllTrees();
+	TheTerrainRenderObject->removeAllProps();
+	MapObject *pMapObj;
+	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
+	{
+		const ThingTemplate *tTemplate;
+
+		tTemplate = pMapObj->getThingTemplate();
+		if (tTemplate && tTemplate->isKindOf(KINDOF_OPTIMIZED_TREE) )
+		{
+			Real scale = tTemplate->getAssetScale();
+			const ModuleInfo& mi = tTemplate->getDrawModuleInfo();
+			if (mi.getCount() > 0)
+			{
+				const ModuleData* mdd = mi.getNthData(0);
+				AsciiString name = KEYNAME(mdd->getModuleTagNameKey());
+				const W3DTreeDrawModuleData* md = mdd ? mdd->getAsW3DTreeDrawModuleData(): nullptr;
+				if (md)
+				{
+					Coord3D pos = *pMapObj->getLocation();
+					if (m_heightMapRenderObj) {
+						pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, nullptr);
+						TheTerrainRenderObject->addTree((DrawableID)(Int)pMapObj, pos, scale, pMapObj->getAngle(),
+							0.0f /*no random scaling*/, md);
+					}
+				}
+			}
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
 void WbView3d::invalidateCellInView(int xIndex, int yIndex)
 {
 	Invalidate(false);	/// @todo be smarter about invaling the area
@@ -1001,7 +1060,7 @@ void WbView3d::updateFenceListObjects(MapObject *pObject)
 			AsciiString modelName = getModelNameAndScale(pMapObj, &scale, BODY_PRISTINE);
 			// set render object, or create if we need to
 			if( renderObj == nullptr && modelName.isEmpty() == FALSE &&
-					strncmp( modelName.str(), "No ", 3 ) != 0 )
+					strncmp( modelName.str(), "No ", 3 ) )
 			{
 
 				renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, 0);
@@ -1060,6 +1119,14 @@ AsciiString WbView3d::getBestModelName(const ThingTemplate* tt, const ModelCondi
 			if (md)
 			{
 				return md->getBestModelNameForWB(c);
+			}
+
+			// TheSuperHackers @bugfix ViTeXFTW 15/02/2026 Fix tree objects not showing a preview in
+			// WB object placer. The W3DTreeDraw module stores its model name differently from W3DModelDraw.
+			const W3DTreeDrawModuleData* treeData = mdd ? mdd->getAsW3DTreeDrawModuleData() : nullptr;
+			if (treeData)
+			{
+				return treeData->m_modelName;
 			}
 		}
 	}
@@ -1127,7 +1194,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 				}
 				// set render object, or create if we need to
 				if( renderObj == nullptr && modelName.isEmpty() == FALSE &&
-						strncmp( modelName.str(), "No ", 3 ) != 0 )
+						strncmp( modelName.str(), "No ", 3 ) )
 				{
 
 					renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, playerColor);
@@ -1289,6 +1356,7 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 {
 	++m_updateCount;
+	Bool updateAllTrees = false;
 	if (m_heightMapRenderObj == nullptr) {
 		m_heightMapRenderObj = NEW_REF(WBHeightMap,());
 
@@ -1306,6 +1374,7 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 	MapObject *pMapObj;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
 	{
+		if (found) break;
 		if (pMapObjIn == pMapObj)
 			found = true;
 		if (pMapObjIn != nullptr && !found) {
@@ -1330,6 +1399,15 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 		Coord3D loc = *pMapObj->getLocation();
 		loc.z += m_heightMapRenderObj->getHeightMapHeight(loc.x, loc.y, nullptr);
 
+		const ThingTemplate *tTemplate = pMapObj->getThingTemplate();
+		if (tTemplate && tTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
+			if (!m_heightMapRenderObj->updateTreePosition((DrawableID)(Int)pMapObj, loc, pMapObj->getAngle())) {
+				// Couldn't find it, so update them all. [5/27/2003]
+				updateAllTrees = true;
+			}
+			if (found) break;
+		}
+
 		RenderObjClass *renderObj=nullptr;
 		Shadow		   *shadowObj=nullptr;
 
@@ -1337,62 +1415,60 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 		Int playerColor = 0xFFFFFF;
 		BodyDamageType curDamageState = BODY_PRISTINE;
 		Bool isVehicle = false;
-		if (pMapObj)
+
+		Bool exists;
+		if (tTemplate && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
 		{
-			Bool exists;
-			const ThingTemplate* tt = pMapObj->getThingTemplate();
-			if (tt && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
-			{
-				isVehicle = tt->isKindOf(KINDOF_VEHICLE);
-				AsciiString objectTeamName = pMapObj->getProperties()->getAsciiString(TheKey_originalOwner, &exists);
-				if (exists) {
-					TeamsInfo *teamInfo = TheSidesList->findTeamInfo(objectTeamName);
-					if (teamInfo) {
-						AsciiString teamOwner = teamInfo->getDict()->getAsciiString(TheKey_teamOwner);
-						SidesInfo* pSide = TheSidesList->findSideInfo(teamOwner);
-						if (pSide) {
-							Bool hasColor = false;
-							Int color = pSide->getDict()->getInt(TheKey_playerColor, &hasColor);
-							if (hasColor) {
-								playerColor = color;
-							} else {
-								AsciiString tmplname = pSide->getDict()->getAsciiString(TheKey_playerFaction);
-								const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
-								if (pt) {
-									playerColor = pt->getPreferredColor()->getAsInt();
-								}
+			isVehicle = tTemplate->isKindOf(KINDOF_VEHICLE);
+			AsciiString objectTeamName = pMapObj->getProperties()->getAsciiString(TheKey_originalOwner, &exists);
+			if (exists) {
+				TeamsInfo *teamInfo = TheSidesList->findTeamInfo(objectTeamName);
+				if (teamInfo) {
+					AsciiString teamOwner = teamInfo->getDict()->getAsciiString(TheKey_teamOwner);
+					SidesInfo* pSide = TheSidesList->findSideInfo(teamOwner);
+					if (pSide) {
+						Bool hasColor = false;
+						Int color = pSide->getDict()->getInt(TheKey_playerColor, &hasColor);
+						if (hasColor) {
+							playerColor = color;
+						} else {
+							AsciiString tmplname = pSide->getDict()->getAsciiString(TheKey_playerFaction);
+							const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
+							if (pt) {
+								playerColor = pt->getPreferredColor()->getAsInt();
 							}
 						}
 					}
 				}
 			}
-			Int health = 100;
-			health = pMapObj->getProperties()->getInt(TheKey_objectInitialHealth, &exists);
-			Real ratio = health/100.0;
-			if (ratio > TheGlobalData->m_unitDamagedThresh)
-			{
-				curDamageState = BODY_PRISTINE;
-			}
-			else if (ratio > TheGlobalData->m_unitReallyDamagedThresh)
-			{
-				curDamageState = BODY_DAMAGED;
-			}
-			else if (ratio > 0.0f)
-			{
-				curDamageState = BODY_REALLYDAMAGED;
-			}
-			else
-			{
-				curDamageState = BODY_RUBBLE;
-			}
-
 		}
+		Int health = 100;
+		health = pMapObj->getProperties()->getInt(TheKey_objectInitialHealth, &exists);
+		Real ratio = health/100.0;
+		if (ratio > TheGlobalData->m_unitDamagedThresh)
+		{
+			curDamageState = BODY_PRISTINE;
+		}
+		else if (ratio > TheGlobalData->m_unitReallyDamagedThresh)
+		{
+			curDamageState = BODY_DAMAGED;
+		}
+		else if (ratio > 0.0f)
+		{
+			curDamageState = BODY_REALLYDAMAGED;
+		}
+		else
+		{
+			curDamageState = BODY_RUBBLE;
+		}
+
+
 		if (!renderObj) {
 			Real scale = 1.0;
 			AsciiString modelName = getModelNameAndScale(pMapObj, &scale, curDamageState);
 			// set render object, or create if we need to
 			if( renderObj == nullptr && modelName.isEmpty() == FALSE &&
-					strncmp( modelName.str(), "No ", 3 ) != 0 )
+					strncmp( modelName.str(), "No ", 3 ) )
 			{
 
 				if (!getShowModels()) {
@@ -1404,7 +1480,6 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 					Shadow::ShadowTypeInfo shadowInfo;
 					shadowInfo.allowUpdates=FALSE;	//shadow image will never update
 					shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
-					const ThingTemplate *tTemplate = pMapObj->getThingTemplate();
 					if (tTemplate && tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
 					{	//add correct type of shadow
 						strlcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str(), ARRAY_SIZE(shadowInfo.m_ShadowName));
@@ -1456,6 +1531,10 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 		if (pMapObjIn->getFlags() & (FLAG_ROAD_FLAGS|FLAG_BRIDGE_FLAGS)) {
 			isRoad = true;
 		}
+		const ThingTemplate *tTemplate = pMapObjIn->getThingTemplate();
+		if (tTemplate && tTemplate->isKindOf(KINDOF_OPTIMIZED_TREE)) {
+			updateAllTrees = true;
+		}
 	}
 	if (!found && pMapObjIn && pMapObjIn->getRenderObj()) {
 		if( m_showShadows ) {
@@ -1470,6 +1549,9 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 
 	if (isRoad) {
 		m_needToLoadRoads = true; // load roads next time we redraw.
+	}
+	if (updateAllTrees) {
+		updateTrees();
 	}
 	if (isLight) {
 		updateLights();
@@ -1488,7 +1570,6 @@ void WbView3d::updateHeightMapInView(WorldHeightMap *htMap, Bool partial, const 
 {
 	if (htMap == nullptr)
 		return;
-
 	++m_updateCount;
 
 	if (m_heightMapRenderObj == nullptr) {
@@ -1675,7 +1756,7 @@ Bool WbView3d::viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain)
 	if (WbApp()->isCurToolLocked()) {
 		followTerrain = WbApp()->getCurTool()->followsTerrain();
 	}
-	if (followTerrain) {
+	if (followTerrain && TheTerrainRenderObject) {
 		CastResultStruct castResult;
 		RayCollisionTestClass rayCollide(ray, &castResult) ;
 		if( TheTerrainRenderObject->Cast_Ray(rayCollide) )
@@ -1905,6 +1986,7 @@ void WbView3d::updateHysteresis()
 // ----------------------------------------------------------------------------
 Bool WbView3d::docToViewCoords(Coord3D curPt, CPoint* newPt)
 {
+	Bool coordInsideFrustum = true;
 	Vector3 world;
 	Vector3 screen;
 	newPt->x = -1000;
@@ -1914,7 +1996,11 @@ Bool WbView3d::docToViewCoords(Coord3D curPt, CPoint* newPt)
 	}
 
 	world.Set( curPt.x, curPt.y, curPt.z );
-	if (m_camera->Project( screen, world ) != CameraClass::INSIDE_FRUSTUM) return false;
+	if (m_camera->Project( screen, world ) != CameraClass::INSIDE_FRUSTUM) {
+		coordInsideFrustum = false;
+	} else {
+		coordInsideFrustum = true;
+	}
 
 	CRect rClient;
 	GetClientRect(&rClient);
@@ -1933,7 +2019,7 @@ Bool WbView3d::docToViewCoords(Coord3D curPt, CPoint* newPt)
 	newPt->x = rClient.left + sx;
 	newPt->y = rClient.top + sy;
 
-	return true;
+	return coordInsideFrustum;
 }
 
 // ----------------------------------------------------------------------------
@@ -1965,6 +2051,7 @@ void WbView3d::redraw()
 		Int curTicks = GetTickCount();
 		RefRenderObjListIterator lightListIt(&m_lightList);
 		m_heightMapRenderObj->updateCenter(m_camera, &m_cameraTarget, &lightListIt);
+		m_heightMapRenderObj->On_Frame_Update();
 		--m_updateCount;
 
 		curTicks = GetTickCount()-curTicks;
@@ -1975,7 +2062,8 @@ void WbView3d::redraw()
 	if (m_drawObject) {
 		m_drawObject->setDrawObjects(m_showObjects,
 			m_showWaypoints || WaypointTool::isActive(),
-			m_showPolygonTriggers || PolygonTool::isActive());
+			m_showPolygonTriggers || PolygonTool::isActive(),
+      m_showBoundingBoxes, m_showSightRanges, m_showWeaponRanges, m_showSoundCircles, m_highlightTestArt, m_showLetterbox);
 	}
 
 	WW3D::Update_Logic_Frame_Time(TheFramePacer->getLogicTimeStepMilliseconds());
@@ -2109,6 +2197,16 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_PARTIALMAPSIZE_128X128, OnUpdateViewPartialmapsize128x128)
 	ON_COMMAND(ID_VIEW_SHOWMODELS, OnViewShowModels)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWMODELS, OnUpdateViewShowModels)
+	ON_COMMAND(ID_VIEW_BOUNDINGBOXES, OnViewBoundingBoxes)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_BOUNDINGBOXES, OnUpdateViewBoundingBoxes)
+	ON_COMMAND(ID_VIEW_SIGHTRANGES, OnViewSightRanges)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SIGHTRANGES, OnUpdateViewSightRanges)
+	ON_COMMAND(ID_VIEW_WEAPONRANGES, OnViewWeaponRanges)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_WEAPONRANGES, OnUpdateViewWeaponRanges)
+	ON_COMMAND(ID_HIGHLIGHT_TESTART, OnHighlightTestArt)
+	ON_UPDATE_COMMAND_UI(ID_HIGHLIGHT_TESTART, OnUpdateHighlightTestArt)
+	ON_COMMAND(ID_SHOW_LETTERBOX, OnShowLetterbox)
+	ON_UPDATE_COMMAND_UI(ID_SHOW_LETTERBOX, OnUpdateShowLetterbox)
 	ON_COMMAND(ID_VIEW_GARRISONED, OnViewGarrisoned)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_GARRISONED, OnUpdateViewGarrisoned)
 	ON_COMMAND(ID_VIEW_LAYERS_LIST, OnViewLayersList)
@@ -2117,6 +2215,8 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWMAPBOUNDARIES, OnUpdateViewShowMapBoundaries)
 	ON_COMMAND(ID_VIEW_SHOWAMBIENTSOUNDS, OnViewShowAmbientSounds)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWAMBIENTSOUNDS, OnUpdateViewShowAmbientSounds)
+  ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
+  ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_SOUND_CIRCLES, OnUpdateViewShowSoundCircles)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -2258,6 +2358,7 @@ int WbView3d::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_showLayersList = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowLayersList", 0);
 	m_showMapBoundaries = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowMapBoundaries", 0);
 	m_showAmbientSounds = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowAmbientSounds", 0);
+  m_showSoundCircles = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", 0);
 
 	DrawObject::setDoBoundaryFeedback(m_showMapBoundaries);
 	DrawObject::setDoAmbientSoundFeedback(m_showAmbientSounds);
@@ -2281,6 +2382,48 @@ void WbView3d::OnPaint()
 	}
 	DX8Wrapper::SetCleanupHook(this);
 
+}
+
+//////////////////////////////////////////////////////////////////////////
+/// Draw a (not very good) circle into the hdc
+void WbView3d::drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color )
+{
+  CPoint rulerPoints[2];
+  Coord3D pnt;
+  Real angle = 0.0f;
+  Real inc = PI/4.0f;
+
+  // Create and select a correctly colored pen. Remember the old one so that it can be restored.
+  HPEN pen = CreatePen(PS_SOLID, 2, color);
+  HPEN penOld = (HPEN)SelectObject(hdc, pen);
+
+
+  // Get the starting point on the circumference of the circle.
+  pnt.x = centerPoint.x + radius * (Real)cosf(angle);
+  pnt.y = centerPoint.y + radius * (Real)sinf(angle);
+  pnt.z = centerPoint.z;
+  docToViewCoords(pnt, &rulerPoints[0]);
+
+  angle += inc;
+  for(; angle <= 2.0f * PI; angle += inc) {
+		// Get a new point on the circumference of the circle.
+		pnt.x = centerPoint.x + radius * (Real)cosf(angle);
+    pnt.y = centerPoint.y + radius * (Real)sinf(angle);
+    pnt.z = centerPoint.z;
+
+    docToViewCoords(pnt, &rulerPoints[1]);
+
+    ::Polyline(hdc, rulerPoints, 2);
+
+    // Remember the last point to use as the starting point for the next line.
+    rulerPoints[0].x = rulerPoints[1].x;
+    rulerPoints[0].y = rulerPoints[1].y;
+  }
+
+  // Restore previous pen.
+  SelectObject(hdc, penOld);
+  // Delete new pen.
+  DeleteObject(pen);
 }
 
 
@@ -2329,7 +2472,7 @@ void WbView3d::drawLabels(HDC hdc)
 				pos = *pMapObj->getLocation();
 				pos.z = m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, nullptr);
 			} else if (pMapObj->getThingTemplate() && !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS|FLAG_BRIDGE_FLAGS)) &&
-								 pMapObj->getRenderObj() == nullptr) {
+								 pMapObj->getRenderObj() == nullptr && !pMapObj->getThingTemplate()->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				name = pMapObj->getThingTemplate()->getName();
 				pos = *pMapObj->getLocation();
 				pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, nullptr);
@@ -2344,7 +2487,7 @@ void WbView3d::drawLabels(HDC hdc)
 					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists); break;
 					default: name.clear();
 				}
-				if (!name.isEmpty()) {
+				if (!name.isEmpty() && m_showWaypoints) {
 					CPoint pt;
 					Vector3 world, screen;
 					world.Set( pos.x+MAP_XY_FACTOR/2, pos.y, pos.z );
@@ -2414,6 +2557,28 @@ void WbView3d::drawLabels(HDC hdc)
 		::FrameRect(hdc, &m_feedbackBox, (HBRUSH)brush.GetSafeHandle());
 	}
 
+	if (hdc && m_doRulerFeedback) {
+		if (m_doRulerFeedback == RULER_LINE) {
+      // Change world coords to screen viewport coords.
+      CPoint rulerPoints[2];
+      docToViewCoords(m_rulerPoints[0], &rulerPoints[0]);
+      docToViewCoords(m_rulerPoints[1], &rulerPoints[1]);
+
+      // Create and select a green pen. Remember the old one so that it can be restored.
+      HPEN pen = CreatePen(PS_SOLID, 2, RGB(0,255,0));
+      HPEN penOld = (HPEN)SelectObject(hdc, pen);
+      // Draw the line ruler.
+			::Polyline(hdc, rulerPoints, 2);
+
+      // Restore previous pen.
+      SelectObject(hdc, penOld);
+      // Delete new pen.
+      DeleteObject(pen);
+		} else if (m_doRulerFeedback == RULER_CIRCLE) {
+      drawCircle( hdc, m_rulerPoints[0], m_rulerLength, RGB( 0, 255, 0 ) );
+		}
+	}
+
 	if (hdc && m_doLightFeedback)
 	{	//Draw Lines to indicate the direction of each light source
 //		Int LightColors[MAX_GLOBAL_LIGHTS]={RGB(255,0,0),RGB(0,255,0),RGB(0,0,255)};
@@ -2481,7 +2646,7 @@ void WbView3d::drawLabels(HDC hdc)
 	}
 	else
 	{	if (!m_doLightFeedback)
-		{	//not in light feedback mode.  Make sure the temporary feeback models are gone
+		{	//not in light feedback mode.  Make sure the temporary feedback models are gone
 
 			for (Int lIndex=0; lIndex<MAX_GLOBAL_LIGHTS; lIndex++)
 			{
@@ -2506,7 +2671,21 @@ void WbView3d::OnSize(UINT nType, int cx, int cy)
 BOOL WbView3d::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	if (m_trackingMode == TRACK_NONE) {
-		m_mouseWheelOffset += zDelta;
+
+		//WST 11/21/02 New Triple speed camera zoom request by designers
+		if (getCurrentZoom() > 2.0f)
+		{
+			m_mouseWheelOffset += zDelta;
+		}
+		else if (getCurrentZoom() > 1.0f)
+		{
+			m_mouseWheelOffset += zDelta/2;
+		}
+		else
+		{
+			m_mouseWheelOffset += zDelta/8;
+		}
+
 		MSG msg;
 		while (::PeekMessage(&msg, m_hWnd, WM_MOUSEWHEEL, WM_MOUSEWHEEL, PM_REMOVE)) {
 			zDelta = (short) HIWORD(msg.wParam);    // wheel rotation
@@ -2614,6 +2793,32 @@ void WbView3d::setCameraPitch(Real absolutePitch)
 Real WbView3d::getCameraPitch()
 {
 	return m_FXPitch;
+}
+
+
+//WST 10.17.2002 ----------------------------------------------------------------------------
+Real WbView3d::getCurrentZoom()
+{
+	float zOffset = - m_mouseWheelOffset / 1200; //WST 11/21/02 new triple speed camera zoom.
+	Real zoom = 1.0f;
+	if (zOffset != 0) {
+		Real zPos = (m_cameraOffset.length()-m_groundLevel)/m_cameraOffset.length();
+		Real zAbs = zOffset + zPos;
+		if (zAbs<0) zAbs = -zAbs;
+		if (zAbs<0.01) zAbs = 0.01f;
+		//DEBUG_LOG(("zOffset = %.2f, zAbs = %.2f, zPos = %.2f", zOffset, zAbs, zPos));
+		if (zOffset > 0) {
+			zOffset *= zAbs;
+		}	else if (zOffset < -0.3f) {
+			zOffset = -0.15f + zOffset/2.0f;
+		}
+		if (zOffset < -0.6f) {
+			zOffset = -0.3f + zOffset/2.0f;
+		}
+		//DEBUG_LOG(("zOffset = %.2f", zOffset));
+		zoom = zAbs;
+	}
+	return zoom;
 }
 
 // ----------------------------------------------------------------------------
@@ -2734,12 +2939,12 @@ void WbView3d::OnEditSelectmacrotexture()
 
 void WbView3d::OnLookEast()
 {
-	m_cameraAngle = -PI/2;
+	m_cameraAngle = -PI / 2;
 }
 
 void WbView3d::OnUpdateLookEast(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_cameraAngle==-PI/2?1:0);
+	pCmdUI->SetCheck(m_cameraAngle == -PI / 2 ? 1 : 0);
 }
 
 void WbView3d::OnLookNorth()
@@ -2749,28 +2954,27 @@ void WbView3d::OnLookNorth()
 
 void WbView3d::OnUpdateLookNorth(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_cameraAngle==0?1:0);
+	pCmdUI->SetCheck(m_cameraAngle == 0 ? 1 : 0);
 }
 
 void WbView3d::OnLookSouth()
 {
 	m_cameraAngle = PI;
-
 }
 
 void WbView3d::OnUpdateLookSouth(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_cameraAngle==PI?1:0);
+	pCmdUI->SetCheck(m_cameraAngle == PI ? 1 : 0);
 }
 
 void WbView3d::OnLookWest()
 {
-	m_cameraAngle = PI/2;
+	m_cameraAngle = PI / 2;
 }
 
 void WbView3d::OnUpdateLookWest(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_cameraAngle==PI/2?1:0);
+	pCmdUI->SetCheck(m_cameraAngle == PI / 2 ? 1 : 0);
 }
 
 void WbView3d::OnViewShowshadows()
@@ -2791,6 +2995,8 @@ void WbView3d::OnViewShowshadows()
 	} else {
 		TheW3DShadowManager->removeAllShadows();
 	}
+	TheWritableGlobalData->m_useShadowDecals = m_showShadows;
+	TheWritableGlobalData->m_useShadowVolumes = m_showShadows;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowShadows", m_showShadows?1:0);
 }
 
@@ -2861,6 +3067,77 @@ void WbView3d::OnUpdateViewShowModels(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(getShowModels()?1:0);
 }
+
+// MLL C&C3
+void WbView3d::OnViewBoundingBoxes()
+{
+	setShowBoundingBoxes(!getShowBoundingBoxes());
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowBoundingBoxes", getShowBoundingBoxes()?1:0);
+	resetRenderObjects();
+	invalObjectInView(nullptr);
+}
+// MLL C&C3
+void WbView3d::OnUpdateViewBoundingBoxes(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(getShowBoundingBoxes()?1:0);
+}
+
+
+// MLL C&C3
+void WbView3d::OnViewSightRanges()
+{
+	setShowSightRanges(!getShowSightRanges());
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSightRanges", getShowSightRanges()?1:0);
+	resetRenderObjects();
+	invalObjectInView(nullptr);
+}
+// MLL C&C3
+void WbView3d::OnUpdateViewSightRanges(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(getShowSightRanges()?1:0);
+}
+
+// MLL C&C3
+void WbView3d::OnViewWeaponRanges()
+{
+	setShowWeaponRanges(!getShowWeaponRanges());
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowWeaponRanges", getShowWeaponRanges()?1:0);
+	resetRenderObjects();
+	invalObjectInView(nullptr);
+}
+// MLL C&C3
+void WbView3d::OnUpdateViewWeaponRanges(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(getShowWeaponRanges()?1:0);
+}
+
+// MLL C&C3
+void WbView3d::OnHighlightTestArt()
+{
+	setHighlightTestArt(!getHighlightTestArt());
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "HighlightTestArt", getHighlightTestArt()?1:0);
+	resetRenderObjects();
+	invalObjectInView(nullptr);
+}
+// MLL C&C3
+void WbView3d::OnUpdateHighlightTestArt(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(getHighlightTestArt()?1:0);
+}
+
+
+// MLL C&C3
+void WbView3d::OnShowLetterbox()
+{
+	setShowLetterbox(!getShowLetterbox());
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowLetterBox", getShowLetterbox()?1:0);
+}
+// MLL C&C3
+void WbView3d::OnUpdateShowLetterbox(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(getShowLetterbox()?1:0);
+}
+
 
 void WbView3d::OnViewGarrisoned()
 {
@@ -3017,4 +3294,17 @@ void WbView3d::OnViewShowAmbientSounds()
 void WbView3d::OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_showAmbientSounds ? 1 : 0);
+}
+
+void WbView3d::OnViewShowSoundCircles()
+{
+  m_showSoundCircles = !m_showSoundCircles;
+  ::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", m_showSoundCircles ? 1 : 0);
+  resetRenderObjects();
+  invalObjectInView(nullptr);
+}
+
+void WbView3d::OnUpdateViewShowSoundCircles(CCmdUI* pCmdUI)
+{
+  pCmdUI->SetCheck(m_showSoundCircles ? 1 : 0);
 }

@@ -158,6 +158,7 @@ BOOL EditAction::OnInitDialog()
 			selItem = item;
 		}
 
+#if !RTS_GENERALS
 		name = pTemplate->getName2().str();
 		count = 0;
 		if (pTemplate->getName2().isEmpty()) continue;
@@ -190,6 +191,7 @@ BOOL EditAction::OnInitDialog()
 		ins.item.pszText = (char*)name;
 		ins.item.cchTextMax = 0;
 		m_actionTreeView.InsertItem(&ins);
+#endif
 	}
 	m_actionTreeView.Select(selItem, TVGN_FIRSTVISIBLE);
 	m_actionTreeView.SelectItem(selItem);

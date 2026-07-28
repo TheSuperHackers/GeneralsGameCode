@@ -431,6 +431,7 @@ public:
 
 	// Only Object can ask this.  Everyone else should ask the Object.  In fact, you really should ask the Object everything.
 	Real friend_getVisionRange() const { return m_visionRange; }  ///< get vision range
+	Real friend_calcVisionRange() const { return m_visionRange; }  ///< get vision range
 	Real friend_getShroudClearingRange() const { return m_shroudClearingRange; }  ///< get vision range for Shroud ONLY (Design requested split)
 
 	// This function is only for use by the AIUpdateModuleData::parseLocomotorSet function.
@@ -504,6 +505,8 @@ public:
 	const AudioEventRTS *getSoundPromotedElite() const				{ return getAudio(TTAUDIO_soundPromotedElite); }
 	const AudioEventRTS *getSoundPromotedHero() const					{ return getAudio(TTAUDIO_soundPromotedHero); }
 	const AudioEventRTS *getSoundFalling() const							{ return getAudio(TTAUDIO_soundFalling); }
+
+	Bool hasSoundAmbient() const                              { return hasAudio(TTAUDIO_soundAmbient); }
 
 	const AudioEventRTS *getPerUnitSound(const AsciiString& soundName) const;
 	const FXList* getPerUnitFX(const AsciiString& fxName) const;
@@ -609,6 +612,8 @@ public:
 	UnsignedByte getCrusherLevel() const { return m_crusherLevel; }
 
 	AsciiString getUpgradeCameoName( Int n)const{ return m_upgradeCameoUpgradeNames[n];	}
+
+	const WeaponTemplateSetVector& getWeaponTemplateSets() const {return m_weaponTemplateSets;}
 
 protected:
 
