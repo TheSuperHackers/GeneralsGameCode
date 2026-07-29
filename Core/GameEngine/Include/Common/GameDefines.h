@@ -101,6 +101,12 @@
 #define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED (1)
 #endif
 
+// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all scripted objects.
+// This setting is very relevant for legacy missions and cinematic sequences.
+#ifndef PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+#define PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED (1)
+#endif
+
 // Note: Retail compatibility must not be broken before this project officially does.
 // Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
 
