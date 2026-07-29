@@ -73,9 +73,9 @@ char DebugFile	[ MAX_PATH ] = { '\0' };
 //-----------------------------------------------------------------------------
 // non-class private functions in this module...
 //-----------------------------------------------------------------------------
-// int Get_Internal_File_Handle( void );
+// int Get_Internal_File_Handle();
 // #if( SUPPORT_STREAMS )
-//	 FILE *Get_Internal_File_Stream( void );
+//	 FILE *Get_Internal_File_Stream();
 // #endif
 
 

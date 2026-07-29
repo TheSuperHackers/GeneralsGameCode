@@ -1388,7 +1388,7 @@ BOOL CALLBACK Simple_Dialog_Proc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 /*
 
-STDMETHODIMP CDownloadEventSink::OnEnd(void)
+STDMETHODIMP CDownloadEventSink::OnEnd()
 {
   LogMsg("Finished!");
   g_Finished = 1;
@@ -1456,7 +1456,7 @@ STDMETHODIMP CDownloadEventSink::OnStatusUpdate(int status)
 //
 // Just tell the FTP module to go ahead and resume
 //
-STDMETHODIMP CDownloadEventSink::OnQueryResume(void)
+STDMETHODIMP CDownloadEventSink::OnQueryResume()
 {
   return(DOWNLOADEVENT_RESUME);
 }

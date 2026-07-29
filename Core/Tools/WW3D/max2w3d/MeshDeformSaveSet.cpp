@@ -156,7 +156,7 @@ MeshDeformSaveSetClass::Replace_Deform_Data
 //
 ////////////////////////////////////////////////////////////////////////
 /*int
-MeshDeformSaveSetClass::Get_Deform_Count (void) const
+MeshDeformSaveSetClass::Get_Deform_Count () const
 {
 	//
 	//	Count up all the deform entries for all the keyframes

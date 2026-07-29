@@ -59,4 +59,4 @@ const char*		Locale_GetString				( int StringID, char *String );
 const wchar_t*	Locale_GetString				( int StringID, wchar_t *String=nullptr );
 */
 bool			Locale_Use_Multi_Language_Files	();
-//int				Locale_Get_Language_ID 			( void )	{ return LanguageID; };
+//int				Locale_Get_Language_ID 			()	{ return LanguageID; };

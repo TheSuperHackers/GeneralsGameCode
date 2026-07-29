@@ -117,7 +117,7 @@ int LOCALE_isinitialized()
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_init(void)
+; int LOCALE_init()
 ;
 ; DESCRIPTION
 ;
@@ -170,7 +170,7 @@ int LOCALE_init()
 ;
 ; #include "realfont.h"
 ;
-; void LOCALE_restore(void)
+; void LOCALE_restore()
 ;
 ; DESCRIPTION
 ;
@@ -276,7 +276,7 @@ void LOCALE_setbank(int BankIndex)
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_getbank(void)
+; int LOCALE_getbank()
 ;
 ; DESCRIPTION
 ;
@@ -317,7 +317,7 @@ int LOCALE_getbank()
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_getbanklanguageid(void)
+; int LOCALE_getbanklanguageid()
 ;
 ; DESCRIPTION
 ;
@@ -358,7 +358,7 @@ int LOCALE_getbanklanguageid()
 ;
 ; #include "realfont.h"
 ;
-; int LOCALE_getbankstringcount(void)
+; int LOCALE_getbankstringcount()
 ;
 ; DESCRIPTION
 ;
@@ -611,7 +611,7 @@ int LOCALE_loadtable(const char* PathName, int LanguageID)
 ;
 ; #include "realfont.h"
 ;
-; void LOCALE_freetable(void)
+; void LOCALE_freetable()
 ;
 ; DESCRIPTION
 ;

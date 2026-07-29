@@ -79,7 +79,7 @@ class MeshDeformSetClass
 		//////////////////////////////////////////////////////////////////////
 		//	Public methods
 		//////////////////////////////////////////////////////////////////////
-		//virtual LocalModData *	Clone (void)	{ return new MeshDeformSetClass; }
+		//virtual LocalModData *	Clone ()	{ return new MeshDeformSetClass; }
 		void					Update_Mesh (TriObject &tri_obj);
 		void					Set_State (float state);
 
