@@ -1146,7 +1146,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 
 #if ENABLE_GUI_HACKS
-	// TheSuperHackers @tweak 26/07/2026 Hide the obsolete HTTP Proxy entry and its label
+	// TheSuperHackers @tweak 26/07/2026 The http proxy feature was obsoleted because it did nothing for the UDP game traffic or match sockets.
+	// Hide the relevant obsoleted UI elements accordingly.
 	NameKeyType textEntryHTTPProxyID = TheNameKeyGenerator->nameToKey("OptionsMenu.wnd:TextEntryHTTPProxy");
 	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(nullptr, textEntryHTTPProxyID);
 	if (textEntryHTTPProxy)
