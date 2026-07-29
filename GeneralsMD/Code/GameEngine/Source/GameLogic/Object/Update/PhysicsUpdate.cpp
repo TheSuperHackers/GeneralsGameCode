@@ -957,27 +957,38 @@ Real PhysicsBehavior::getVelocityMagnitude() const
 Real PhysicsBehavior::getForwardSpeed2D() const
 {
 	const Coord3D *dir = getObject()->getUnitDirectionVector2D();
-
 	Real vx = m_vel.x * dir->x;
 	Real vy = m_vel.y * dir->y;
-
 	Real dot = vx + vy;
 
 #if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
-	Real speed = (Real)sqrtf( vx*vx + vy*vy );
 
+	Real speed = (Real)sqrtf( vx*vx + vy*vy );
 	if (dot >= 0.0f)
 		return speed;
-
 	return -speed;
+
 #else
+
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (const AIUpdateInterface *ai = getObject()->getAIUpdateInterface())
+	{
+		if (ai->getLastCommandSource() == CMD_FROM_SCRIPT)
+		{
+			Real speed = (Real)sqrtf( vx*vx + vy*vy );
+			if (dot >= 0.0f)
+				return speed;
+			return -speed;
+		}
+	}
+#endif
+
 	// Inverse scale len by (1 + sqrt(2)) / 2 to adjust to the average of the former min/max movement speed.
 	// The inverse looks intuitively wrong, but it is correct, because the value returned by this function is
 	// used to determine the additional velocity needed to reach the target speed.
 	constexpr const Real DiagonalCompensation = 1.0f / 1.20710678f;
-	dot *= DiagonalCompensation;
+	return dot * DiagonalCompensation;
 
-	return dot;
 #endif
 }
 
@@ -989,28 +1000,39 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 Real PhysicsBehavior::getForwardSpeed3D() const
 {
 	Vector3 dir = getObject()->getTransformMatrix()->Get_X_Vector();
-
 	Real vx = m_vel.x * dir.X;
 	Real vy = m_vel.y * dir.Y;
 	Real vz = m_vel.z * dir.Z;
-
 	Real dot = vx + vy + vz;
 
 #if RETAIL_COMPATIBLE_CRC || PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
-	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
 
+	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
 	if (dot >= 0.0f)
 		return speed;
-
 	return -speed;
+
 #else
+
+#if PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+	if (const AIUpdateInterface *ai = getObject()->getAIUpdateInterface())
+	{
+		if (ai->getLastCommandSource() == CMD_FROM_SCRIPT)
+		{
+			Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
+			if (dot >= 0.0f)
+				return speed;
+			return -speed;
+		}
+	}
+#endif
+
 	// Inverse scale len by (1 + sqrt(3)) / 2 to adjust to the average of the former min/max movement speed.
 	// The inverse looks intuitively wrong, but it is correct, because the value returned by this function is
 	// used to determine the additional velocity needed to reach the target speed.
 	constexpr const Real DiagonalCompensation = 1.0f / 1.36602540f;
-	dot *= DiagonalCompensation;
+	return dot * DiagonalCompensation;
 
-	return dot;
 #endif
 }
 

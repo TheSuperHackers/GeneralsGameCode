@@ -87,8 +87,15 @@
 #define PRESERVE_RETAIL_SCRIPTED_CAMERA (1) // Retain scripted camera behavior present in retail Generals 1.08 and Zero Hour 1.04
 #endif
 
+// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all objects.
 #ifndef PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED
 #define PRESERVE_RETAIL_PHYSICS_FORWARD_SPEED (1)
+#endif
+
+// Whether to preserve the 1.41x speed discrepancy between straight and diagonal movements of all scripted objects.
+// This setting is very relevant for legacy missions and cinematic sequences.
+#ifndef PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED
+#define PRESERVE_RETAIL_SCRIPTED_PHYSICS_FORWARD_SPEED (1)
 #endif
 
 #ifndef RETAIL_COMPATIBLE_CRC
