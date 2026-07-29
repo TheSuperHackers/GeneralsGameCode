@@ -43,21 +43,18 @@ SmudgeManager::~SmudgeManager()
 {
 	reset();	//release all smudge sets and smudges to free pool.
 
-	SmudgeSet* head;
-
 	//free memory used by smudge sets
 	while (!m_freeSmudgeSetList.empty()) {
-		head = m_freeSmudgeSetList.front();
+		SmudgeSet* smudgeSet = m_freeSmudgeSetList.front();
 		m_freeSmudgeSetList.pop_front();
-		delete head;
+		delete smudgeSet;
 	}
 
-	Smudge* head2;
 	//free memory used by smudges
 	while (!SmudgeSet::m_freeSmudgeList.empty()) {
-		head2 = SmudgeSet::m_freeSmudgeList.front();
+		Smudge* smudge = SmudgeSet::m_freeSmudgeList.front();
 		SmudgeSet::m_freeSmudgeList.pop_front();
-		delete head2;
+		delete smudge;
 	}
 }
 
@@ -68,14 +65,12 @@ void SmudgeManager::init()
 
 void SmudgeManager::reset()
 {
-	SmudgeSet* head;
-
 	//Return all smudgeSets back to free pool.
 	while (!m_usedSmudgeSetList.empty()) {
-		head = m_usedSmudgeSetList.front();
+		SmudgeSet* smudgeSet = m_usedSmudgeSetList.front();
 		m_usedSmudgeSetList.pop_front();
-		head->reset();	//free all smudges.
-		m_freeSmudgeSetList.push_back(head);
+		smudgeSet->reset();	//free all smudges.
+		m_freeSmudgeSetList.push_back(smudgeSet);
 	}
 }
 
@@ -89,16 +84,16 @@ void SmudgeManager::resetDraw()
 
 SmudgeSet *SmudgeManager::addSmudgeSet()
 {
-	SmudgeSet* set;
 	if (!m_freeSmudgeSetList.empty()) {
-		set = m_freeSmudgeSetList.front();
+		SmudgeSet* smudgeSet = m_freeSmudgeSetList.front();
 		m_freeSmudgeSetList.pop_front();	//remove from free list
-		m_usedSmudgeSetList.push_back(set);	//add to used list.
-		return set;
+		m_usedSmudgeSetList.push_back(smudgeSet);	//add to used list.
+		return smudgeSet;
 	}
-	set=W3DNEW SmudgeSet();
-	m_usedSmudgeSetList.push_back(set);	//add to used list.
-	return set;
+
+	SmudgeSet* smudgeSet = W3DNEW SmudgeSet();
+	m_usedSmudgeSetList.push_back(smudgeSet);	//add to used list.
+	return smudgeSet;
 }
 
 Smudge *SmudgeManager::findSmudge(Smudge::Identifier identifier)
@@ -124,12 +119,10 @@ SmudgeSet::~SmudgeSet()
 
 void SmudgeSet::reset()
 {
-	Smudge* head;
-
 	while (!m_usedSmudgeList.empty()) {
-		head = m_usedSmudgeList.front();
+		Smudge* smudge = m_usedSmudgeList.front();
 		m_usedSmudgeList.pop_front();
-		m_freeSmudgeList.push_front(head);
+		m_freeSmudgeList.push_front(smudge);
 	}
 
 	m_usedSmudgeMap.clear();

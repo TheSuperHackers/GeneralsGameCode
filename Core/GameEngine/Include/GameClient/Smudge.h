@@ -76,7 +76,7 @@ struct SmudgeSet
 	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge that belongs to this identifier
 
 	SmudgeQueue& getUsedSmudgeList() { return m_usedSmudgeList; }
-	Int getUsedSmudgeCount() const { return m_usedSmudgeList.size(); }	///<active smudges that need rendering.
+	UnsignedInt getUsedSmudgeCount() const { return m_usedSmudgeList.size(); }	///<active smudges that need rendering.
 
 private:
 	typedef std::hash_map<Smudge::Identifier, Smudge *> SmudgeIdToPtrMap;
