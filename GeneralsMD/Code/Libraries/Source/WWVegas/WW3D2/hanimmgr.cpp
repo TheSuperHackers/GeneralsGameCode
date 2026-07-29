@@ -47,14 +47,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "hanimmgr.h"
-#include "WW3D2/hanim.h"
+#include "hanim.h"
 #include "hrawanim.h"
-#include "WW3D2/hcanim.h"
+#include "hcanim.h"
 #include "hmorphanim.h"
 #include "WWLib/chunkio.h"
 #include "WWDebug/wwmemlog.h"
-#include "WW3D2/w3dexclusionlist.h"
-#include "WW3D2/animatedsoundmgr.h"
+#include "w3dexclusionlist.h"
+#include "animatedsoundmgr.h"
 
 
 /***********************************************************************************************

@@ -21,10 +21,10 @@
 #include "WWLib/always.h"
 #include "WWMath/vector3.h"
 #include "WWMath/matrix3d.h"
-#include "WW3D2/rendobj.h"
+#include "rendobj.h"
 #include "WWLib/wwstring.h"
-#include "WW3D2/proto.h"
-#include "WW3D2/w3derr.h"
+#include "proto.h"
+#include "w3derr.h"
 #include "shader.h"
 #include "WWMath/matrix4.h"
 

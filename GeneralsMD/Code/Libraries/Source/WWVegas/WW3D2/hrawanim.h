@@ -39,7 +39,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/hanim.h"
+#include "hanim.h"
 
 class MotionChannelClass;
 class BitChannelClass;

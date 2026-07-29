@@ -41,7 +41,7 @@
 #include "WWMath/matrix3d.h"
 #include "camera.h"
 #include "light.h"
-#include "WW3D2/colorspace.h"
+#include "colorspace.h"
 
 /*
 ** Constants

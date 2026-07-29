@@ -38,10 +38,10 @@
 
 #include "animobj.h"
 #include "WWLib/Vector.h"
-#include "WW3D2/snapPts.h"
-#include "WW3D2/proto.h"
-#include "WW3D2/w3derr.h"
-#include "WW3D2/proxy.h"
+#include "snapPts.h"
+#include "proto.h"
+#include "w3derr.h"
+#include "proxy.h"
 
 
 class DistLODClass;

@@ -47,7 +47,7 @@
 #include "WWLib/bittype.h"
 #include "WWMath/colmath.h"
 #include "WWDebug/wwdebug.h"
-#include "WW3D2/aabtreebuilder.h"
+#include "aabtreebuilder.h"
 #include "WWMath/obbox.h"
 #include <WWMath/tri.h>
 #include <float.h>

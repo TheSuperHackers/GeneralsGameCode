@@ -37,11 +37,11 @@
 
 
 #include "hanim.h"
-#include "WW3D2/assetmgr.h"
+#include "assetmgr.h"
 #include "htree.h"
-#include "WW3D2/motchan.h"
+#include "motchan.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/w3d_file.h"
+#include "w3d_file.h"
 #include "WWDebug/wwdebug.h"
 #include <WWLib/nstrdup.h>
 

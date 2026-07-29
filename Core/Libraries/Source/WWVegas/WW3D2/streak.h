@@ -37,7 +37,7 @@
 #pragma once
 
 #include "rendobj.h"
-#include "WW3D2/shader.h"
+#include "shader.h"
 #include "WWLib/simplevec.h"
 #include "seglinerenderer.h"
 #include "streakRender.h"

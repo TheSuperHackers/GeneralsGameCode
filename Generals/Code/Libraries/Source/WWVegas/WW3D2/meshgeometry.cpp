@@ -86,7 +86,7 @@
 
 
 #include "meshgeometry.h"
-#include "WW3D2/aabtree.h"
+#include "aabtree.h"
 #include "WWLib/chunkio.h"
 #include "WWMath/aabox.h"
 #include "WWMath/obbox.h"

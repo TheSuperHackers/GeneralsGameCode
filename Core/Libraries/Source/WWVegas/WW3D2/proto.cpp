@@ -41,9 +41,9 @@
 
 
 #include "proto.h"
-#include "WW3D2/mesh.h"
+#include "mesh.h"
 #include "hmdldef.h"
-#include "WW3D2/hlod.h"
+#include "hlod.h"
 #include "w3derr.h"
 
 /*

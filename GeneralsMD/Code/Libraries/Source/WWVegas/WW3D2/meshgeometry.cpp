@@ -86,7 +86,7 @@
 
 
 #include "meshgeometry.h"
-#include "WW3D2/aabtree.h"
+#include "aabtree.h"
 #include "WWLib/chunkio.h"
 #include "WWMath/aabox.h"
 #include "WWMath/obbox.h"
@@ -96,7 +96,7 @@
 #include "WWDebug/wwmemlog.h"
 #include "w3d_file.h"
 #include "WWMath/vp.h"
-#include "WW3D2/htree.h"
+#include "htree.h"
 #include "WWMath/matrix4.h"
 #include "rinfo.h"
 #include "camera.h"

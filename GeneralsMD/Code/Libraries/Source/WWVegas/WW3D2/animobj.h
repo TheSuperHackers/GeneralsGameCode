@@ -41,9 +41,9 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/composite.h"
-#include "WW3D2/htree.h"
-#include "WW3D2/hanim.h"
+#include "composite.h"
+#include "htree.h"
+#include "hanim.h"
 
 class SkinClass;
 class RenderInfoClass;

@@ -21,10 +21,10 @@
 #include "ddsfile.h"
 #include "WWLib/ffactory.h"
 #include "WWLib/bufffile.h"
-#include "WW3D2/formconv.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/bitmaphandler.h"
-#include "WW3D2/colorspace.h"
+#include "formconv.h"
+#include "dx8wrapper.h"
+#include "bitmaphandler.h"
+#include "colorspace.h"
 #include <ddraw.h>
 
 // ----------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/ww3dformat.h"
+#include "ww3dformat.h"
 #include "WWLib/wwstring.h"
 #include "WWMath/vector3.h"
 

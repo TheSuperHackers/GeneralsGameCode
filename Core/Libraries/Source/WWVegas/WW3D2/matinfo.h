@@ -39,9 +39,9 @@
 #include "WWLib/always.h"
 #include "WWDebug/wwdebug.h"
 #include "WWLib/Vector.h"
-#include "WW3D2/vertmaterial.h"
+#include "vertmaterial.h"
 #include "texture.h"
-#include "WW3D2/shader.h"
+#include "shader.h"
 #ifdef _UNIX
 #include "osdep.h"
 #endif

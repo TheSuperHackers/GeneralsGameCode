@@ -46,15 +46,15 @@
 #include "dx8wrapper.h"
 #include "WWLib/TARGA.h"
 #include <WWLib/nstrdup.h>
-#include "WW3D2/w3d_file.h"
-#include "WW3D2/assetmgr.h"
+#include "w3d_file.h"
+#include "assetmgr.h"
 #include "formconv.h"
 #include "textureloader.h"
 #include "missingtexture.h"
 #include "WWLib/ffactory.h"
 #include "dx8caps.h"
 #include "dx8texman.h"
-#include "WW3D2/meshmatdesc.h"
+#include "meshmatdesc.h"
 #include "texturethumbnail.h"
 #include "WWDebug/wwprofile.h"
 

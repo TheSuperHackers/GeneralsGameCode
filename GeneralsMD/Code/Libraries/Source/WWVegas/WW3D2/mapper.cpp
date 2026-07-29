@@ -39,12 +39,12 @@
 #include "ww3d.h"
 #include "WWLib/INI.h"
 #include "WWLib/chunkio.h"
-#include "WW3D2/w3derr.h"
+#include "w3derr.h"
 #include "meshmatdesc.h"
-#include "WW3D2/dx8wrapper.h"
+#include "dx8wrapper.h"
 #include "WWDebug/wwdebug.h"
-#include "WW3D2/matinfo.h"
-#include "WW3D2/rendobj.h"
+#include "matinfo.h"
+#include "rendobj.h"
 #include "mesh.h"
 #include <WWLib/RANDOM.h>
 #include <WWLib/bound.h>

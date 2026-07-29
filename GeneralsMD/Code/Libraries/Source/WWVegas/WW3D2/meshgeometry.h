@@ -42,14 +42,14 @@
 #include "WWLib/bittype.h"
 #include "WWLib/simplevec.h"
 #include "WWLib/sharebuf.h"
-#include "WW3D2/w3derr.h"
+#include "w3derr.h"
 #include "WWMath/vector3.h"
 #include "WWMath/Vector3i.h"
 #include "WWMath/vector4.h"
 #include "WWDebug/wwdebug.h"
 #include "WWLib/multilist.h"
-#include "WW3D2/coltest.h"
-#include "WW3D2/inttest.h"
+#include "coltest.h"
+#include "inttest.h"
 
 
 class AABoxClass;

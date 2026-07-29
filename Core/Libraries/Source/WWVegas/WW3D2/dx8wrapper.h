@@ -47,8 +47,8 @@
 #include "WWMath/matrix4.h"
 #include "statistics.h"
 #include "WWLib/wwstring.h"
-#include "WW3D2/lightenvironment.h"
-#include "WW3D2/shader.h"
+#include "lightenvironment.h"
+#include "shader.h"
 #include "WWMath/vector4.h"
 #include "WWLib/cpudetect.h"
 #include "dx8caps.h"
@@ -56,7 +56,7 @@
 #include "texture.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
-#include "WW3D2/vertmaterial.h"
+#include "vertmaterial.h"
 
 /*
 ** Registry value names

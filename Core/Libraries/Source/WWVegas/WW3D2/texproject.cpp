@@ -75,15 +75,15 @@
 
 
 #include "texproject.h"
-#include "WW3D2/vertmaterial.h"
-#include "WW3D2/shader.h"
+#include "vertmaterial.h"
+#include "shader.h"
 #include "texture.h"
 #include "rendobj.h"
-#include "WW3D2/rinfo.h"
-#include "WW3D2/camera.h"
+#include "rinfo.h"
+#include "camera.h"
 #include "matpass.h"
 #include "bwrender.h"
-#include "WW3D2/assetmgr.h"
+#include "assetmgr.h"
 #include "dx8wrapper.h"
 
 

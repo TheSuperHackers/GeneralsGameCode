@@ -21,7 +21,7 @@
 #include "missingtexture.h"
 #include "WWLib/TARGA.h"
 #include "ww3dformat.h"
-#include "WW3D2/ddsfile.h"
+#include "ddsfile.h"
 #include "textureloader.h"
 #include "bitmaphandler.h"
 #include "WWLib/ffactory.h"

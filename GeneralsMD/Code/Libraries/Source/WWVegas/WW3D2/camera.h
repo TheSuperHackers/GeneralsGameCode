@@ -46,7 +46,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/rendobj.h"
+#include "rendobj.h"
 #include "WWMath/plane.h"
 #include "WWMath/frustum.h"
 #include "WWMath/obbox.h"

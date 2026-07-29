@@ -51,15 +51,15 @@
 #include "WWDebug/wwdebug.h"
 #include "WWDebug/wwprofile.h"
 #include "WWDebug/wwmemlog.h"
-#include "WW3D2/rinfo.h"
+#include "rinfo.h"
 #include "statistics.h"
-#include "WW3D2/meshmdl.h"
+#include "meshmdl.h"
 #include "WWMath/vp.h"
-#include "WW3D2/decalmsh.h"
+#include "decalmsh.h"
 #include "matpass.h"
-#include "WW3D2/camera.h"
+#include "camera.h"
 #include "stripoptimizer.h"
-#include "WW3D2/meshgeometry.h"
+#include "meshgeometry.h"
 
 /*
 ** Global Instance of the DX8MeshRender

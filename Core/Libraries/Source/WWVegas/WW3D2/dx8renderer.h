@@ -44,9 +44,9 @@
 #include "WWLib/simplevec.h"
 #include "WWLib/Vector.h"
 #include "dx8list.h"
-#include "WW3D2/shader.h"
+#include "shader.h"
 #include "dx8wrapper.h"
-#include "WW3D2/meshmatdesc.h"
+#include "meshmatdesc.h"
 
 class IndexBufferClass;
 class VertexBufferClass;

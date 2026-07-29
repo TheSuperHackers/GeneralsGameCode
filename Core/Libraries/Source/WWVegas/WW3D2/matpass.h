@@ -40,7 +40,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/shader.h"
+#include "shader.h"
 
 class TextureClass;
 class VertexMaterialClass;

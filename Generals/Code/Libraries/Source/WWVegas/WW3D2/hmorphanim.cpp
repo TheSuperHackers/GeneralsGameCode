@@ -40,7 +40,7 @@
 #include "w3d_file.h"
 #include "WWLib/chunkio.h"
 #include "assetmgr.h"
-#include "WW3D2/htree.h"
+#include "htree.h"
 #include "WWLib/wwstring.h"
 #include "WWLib/textfile.h"
 #include "WWLib/simplevec.h"

@@ -38,7 +38,7 @@
 
 #include "WWLib/always.h"
 #include "WWMath/vector3.h"
-#include "WW3D2/robjlist.h"
+#include "robjlist.h"
 #include "WWDebug/wwdebug.h"
 
 class	RenderObjClass;

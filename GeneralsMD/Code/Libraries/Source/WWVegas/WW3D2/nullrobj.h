@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include "WW3D2/rendobj.h"
-#include "WW3D2/proto.h"
+#include "rendobj.h"
+#include "proto.h"
 
 class Null3DObjClass : public RenderObjClass
 {

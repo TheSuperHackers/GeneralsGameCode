@@ -40,7 +40,7 @@
 #include "composite.h"
 #include "WWLib/Vector.h"
 #include "proto.h"
-#include "WW3D2/w3d_file.h"
+#include "w3d_file.h"
 #include "WWLib/wwstring.h"
 #include "proxy.h"
 

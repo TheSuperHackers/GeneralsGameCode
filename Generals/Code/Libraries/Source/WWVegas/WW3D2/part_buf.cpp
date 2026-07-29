@@ -40,7 +40,7 @@
 #include "rinfo.h"
 #include "scene.h"
 #include "camera.h"
-#include "WW3D2/predlod.h"
+#include "predlod.h"
 #include "WWMath/pot.h"
 #include "WWLib/bound.h"
 #include "WWLib/simplevec.h"
@@ -48,8 +48,8 @@
 #include "WWDebug/wwprofile.h"
 #include <limits.h>
 #include "WWMath/vp.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/dx8wrapper.h"
+#include "texture.h"
+#include "dx8wrapper.h"
 #include "WWMath/vector3.h"
 
 // A random permutation of the numbers 0 to 15 - used for LOD particle decimation.

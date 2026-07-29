@@ -87,35 +87,35 @@
 
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "WW3D2/texture.h"
-#include "WW3D2/font3d.h"
-#include "WW3D2/render2dsentence.h"		// for FontCharsClass
-#include "WW3D2/proto.h"
-#include "WW3D2/hanim.h"
-#include "WW3D2/hcanim.h"
-#include "WW3D2/htree.h"
-#include "WW3D2/collect.h"
+#include "texture.h"
+#include "font3d.h"
+#include "render2dsentence.h"		// for FontCharsClass
+#include "proto.h"
+#include "hanim.h"
+#include "hcanim.h"
+#include "htree.h"
+#include "collect.h"
 #include "ww3d.h"
 #include "WWLib/ffactory.h"
 #include "boxrobj.h"
 #include "nullrobj.h"
-#include "WW3D2/distlod.h"
+#include "distlod.h"
 #include "hlod.h"
-#include "WW3D2/agg_def.h"
+#include "agg_def.h"
 #include "WWLib/wwstring.h"
 #include "WWDebug/wwmemlog.h"
 #include "dazzle.h"
-#include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8renderer.h"
-#include "WW3D2/metalmap.h"
-#include "WW3D2/w3dexclusionlist.h"
+#include "dx8wrapper.h"
+#include "dx8renderer.h"
+#include "metalmap.h"
+#include "w3dexclusionlist.h"
 #include <WWLib/INI.h>
 #include <windows.h>
 #include <d3dx8core.h>
 #include "WWDebug/wwprofile.h"
-#include "WW3D2/assetstatus.h"
-#include "WW3D2/ringobj.h"
-#include "WW3D2/sphereobj.h"
+#include "assetstatus.h"
+#include "ringobj.h"
+#include "sphereobj.h"
 
 /*
 ** Static member variable which keeps track of the single instanced asset manager

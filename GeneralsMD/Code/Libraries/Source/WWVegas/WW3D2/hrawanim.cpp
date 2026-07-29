@@ -54,7 +54,7 @@
 #include "motchan.h"
 #include "WWLib/chunkio.h"
 #include "assetmgr.h"
-#include "WW3D2/htree.h"
+#include "htree.h"
 
 /***********************************************************************************************
  * NodeMotionStruct::NodeMotionStruct -- constructor                                           *

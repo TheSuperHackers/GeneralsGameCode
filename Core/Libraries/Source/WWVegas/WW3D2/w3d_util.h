@@ -37,7 +37,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "WW3D2/w3d_file.h"
+#include "w3d_file.h"
 
 class Vector3;
 class Vector4;

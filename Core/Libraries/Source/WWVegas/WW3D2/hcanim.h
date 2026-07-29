@@ -39,7 +39,7 @@
 
 #include "WWLib/always.h"
 #include "WWMath/quat.h"
-#include "WW3D2/w3d_file.h"
+#include "w3d_file.h"
 #include "WWLib/SLIST.h"
 #include "WWLib/Vector.h"
 #include "hanim.h"
