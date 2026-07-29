@@ -143,6 +143,8 @@ class FirewallHelperClass {
 			*/
 			FIREWALL_TYPE_SMART_MANGLING = 4,
 
+			FIREWALL_TYPE_UNUSED = 8,
+
 			/*
 			** This firewall has a simple absolute offset port allocation scheme.
 			*/

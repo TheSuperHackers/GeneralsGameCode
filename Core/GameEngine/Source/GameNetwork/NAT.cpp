@@ -619,7 +619,7 @@ void NAT::doThisConnectionRound() {
 			if (i == m_localNodeNumber) {
 				m_targetNodeNumber = targetNodeNumber;
 				DEBUG_LOG(("NAT::doThisConnectionRound - Local node is connecting to node %d", m_targetNodeNumber));
-#if defined(DEBUG_LOGGING)
+#if defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING)
 				UnsignedInt targetSlotIndex = m_connectionNodes[(m_connectionPairs[m_connectionPairIndex][m_connectionRound][i])].m_slotIndex;
 				GameSlot *targetSlot = m_slotList[targetSlotIndex];
 				GameSlot *localSlot = m_slotList[m_connectionNodes[m_localNodeNumber].m_slotIndex];
@@ -628,13 +628,9 @@ void NAT::doThisConnectionRound() {
 				DEBUG_ASSERTCRASH(targetSlot != nullptr, ("trying to negotiate with a null target slot, slot is %d", m_connectionPairs[m_connectionPairIndex][m_connectionRound][i]));
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot index = %d (%ls)", targetSlotIndex, m_slotList[targetSlotIndex]->getName().str()));
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot has NAT behavior 0x%8X, local slot has NAT behavior 0x%8X", targetSlot->getNATBehavior(), localSlot->getNATBehavior()));
-
-				UnsignedInt targetIP = targetSlot->getIP();
-				UnsignedInt localIP = localSlot->getIP();
-
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot has IP %d.%d.%d.%d  Local slot has IP %d.%d.%d.%d",
-							PRINTF_IP_AS_4_INTS(targetIP),
-							PRINTF_IP_AS_4_INTS(localIP)));
+							PRINTF_IP_AS_4_INTS(targetSlot->getIP()),
+							PRINTF_IP_AS_4_INTS(localSlot->getIP())));
 #endif
 
 				// figure out which port number I'm using for this connection
@@ -923,11 +919,8 @@ void NAT::gotMangledPort(Int nodeNumber, UnsignedShort mangledPort) {
 
 	targetSlot->setPort(mangledPort);
 	DEBUG_LOG(("NAT::gotMangledPort - got mangled port number %d from our target node (%ls)", mangledPort, targetSlot->getName().str()));
-#ifdef DEBUG_LOGGING
-	UnsignedInt ip = targetSlot->getIP();
-#endif
-	DEBUG_LOG(("NAT::gotMangledPort - send a PROBE. Sending to %d.%d.%d.%d:%d",
-							PRINTF_IP_AS_4_INTS(ip), targetSlot->getPort()));
+	DEBUG_LOG(("NAT::gotMangledPort - Send a PROBE to %d.%d.%d.%d:%d",
+							PRINTF_IP_AS_4_INTS(targetSlot->getIP()), targetSlot->getPort()));
 
 	sendAProbe(targetSlot->getIP(), targetSlot->getPort(), m_localNodeNumber);
 	notifyTargetOfProbe(targetSlot);

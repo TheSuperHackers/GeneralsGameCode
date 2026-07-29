@@ -983,7 +983,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	buttonFirewallRefresh		= TheWindowManager->winGetWindowFromId( nullptr, buttonFirewallRefreshID);
 
 #if ENABLE_GUI_HACKS
-	// TheSuperHackers @tweak 26/07/2026 Hide the obsolete Send Delay check box
+	// TheSuperHackers @tweak 26/07/2026 The Send Delay feature was obsoleted because it only worked around
+	// a source port remapping bug in early 2000s Netgear firewalls. Hide the obsoleted UI element accordingly.
 	GameWindow *checkSendDelay = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:CheckSendDelay"));
 	if (checkSendDelay)
 		checkSendDelay->winHide(TRUE);
