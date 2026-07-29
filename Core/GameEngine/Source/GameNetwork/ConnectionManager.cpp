@@ -764,9 +764,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
 //	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
 
-	AsciiString playerName;
-	playerName.format("player%d", msg->getPlayerID());
-	const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName ) );
+	const Player *player = ThePlayerList->getPlayerFromSlotIndex(playerID);
 	if (!player)
 	{
 		TheInGameUI->message(L"%ls", unitext.str());

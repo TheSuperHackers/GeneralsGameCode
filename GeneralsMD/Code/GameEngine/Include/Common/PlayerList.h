@@ -152,6 +152,7 @@ public:
 	PlayerMaskType getPlayersWithRelationship( Int srcPlayerIndex, UnsignedInt allowedRelationships );
 
 	Int getSlotIndex(Int playerIndex) const;
+	Player *getPlayerFromSlotIndex(Int slotIndex) const;
 
 protected:
 
