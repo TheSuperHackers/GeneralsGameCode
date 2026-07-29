@@ -2383,15 +2383,9 @@ bool GameLogic::onLogicCrc(MAYBE_UNUSED GameMessage *msg)
 	Player *msgPlayer = getMessagePlayer(msg);
 	if (TheNetwork)
 	{
-		Int slotIndex = -1;
-		for (Int i=0; i<MAX_SLOTS; ++i)
-		{
-			if (msgPlayer->getPlayerType() == PLAYER_HUMAN && TheNetwork->getPlayerName(i) == msgPlayer->getPlayerDisplayName())
-			{
-				slotIndex = i;
-				break;
-			}
-		}
+		const Int slotIndex = msgPlayer->getPlayerType() == PLAYER_HUMAN
+			? ThePlayerList->getSlotIndex(msgPlayer->getPlayerIndex())
+			: -1;
 
 		if (slotIndex < 0 || !TheNetwork->isPlayerConnected(slotIndex))
 			return false;

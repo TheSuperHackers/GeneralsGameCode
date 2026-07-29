@@ -213,19 +213,12 @@ void VictoryConditions::update()
 				TheAudio->addAudioEvent(&leftGameSound);
 			}
 
-			for (Int idx = 0; idx < MAX_SLOTS; ++idx)
+			const Int slotIndex = ThePlayerList->getSlotIndex(p->getPlayerIndex());
+			GameSlot *slot = TheGameInfo && slotIndex >= 0 ? TheGameInfo->getSlot(slotIndex) : nullptr;
+			if (slot && slot->isAI())
 			{
-				AsciiString pName;
-				pName.format("player%d", idx);
-				if (p->getPlayerNameKey() == NAMEKEY(pName))
-				{
-					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):nullptr;
-					if (slot && slot->isAI())
-					{
-						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
-						slot->setLastFrameInGame(TheGameLogic->getFrame());
-					}
-				}
+				DEBUG_LOG(("Marking AI player %s as defeated", TheNameKeyGenerator->keyToName(p->getPlayerNameKey()).str()));
+				slot->setLastFrameInGame(TheGameLogic->getFrame());
 			}
 
 			// destroy any remaining units (infantry if its a short game, for example)

@@ -989,12 +989,9 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 	}
 
 	Int localPlayerIndex = m_crcInfo.getLocalPlayer();
-	Bool samePlayer = FALSE;
-	AsciiString playerName;
-	playerName.format("player%d", localPlayerIndex);
 	const Player *p = ThePlayerList->getNthPlayer(playerIndex);
-	if (!p || (p->getPlayerNameKey() == NAMEKEY(playerName)))
-		samePlayer = TRUE;
+	const Int slotIndex = ThePlayerList->getSlotIndex(playerIndex);
+	const Bool samePlayer = !p || slotIndex == localPlayerIndex;
 	if (samePlayer || (localPlayerIndex < 0))
 	{
 		UnsignedInt playbackCRC = m_crcInfo.readCRC();
