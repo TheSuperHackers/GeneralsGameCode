@@ -508,6 +508,21 @@ Int PlayerList::getSlotIndex(Int playerIndex) const
 }
 
 //-----------------------------------------------------------------------------
+Player *PlayerList::getPlayerFromSlotIndex(Int slotIndex) const
+{
+	if (slotIndex >= 0 && slotIndex < MAX_SLOTS)
+	{
+		for (Int playerIndex = 0; playerIndex < m_playerCount; ++playerIndex)
+		{
+			if (getSlotIndex(playerIndex) == slotIndex)
+				return m_players[playerIndex];
+		}
+	}
+
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------
 void PlayerList::assignSlotIndices(const GameInfo& gameInfo)
 {
 	AsciiString playerName;

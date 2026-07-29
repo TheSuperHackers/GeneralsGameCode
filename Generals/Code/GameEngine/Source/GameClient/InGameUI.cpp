@@ -6165,7 +6165,6 @@ void InGameUI::drawPlayerInfoList()
 	const Int lineH = m_playerInfoList.labels[PlayerInfoList::LabelType_Team]->getFont()->height;
 	const Int columnGap = static_cast<Int>(lineH * (6.0f / 12.0f) + 0.5f);
 
-	AsciiString name;
 	UnicodeString playerInfoListValue;
 	Int rowCount = 0;
 	Int maxValueWidths[PlayerInfoList::LabelType_Count] = {0};
@@ -6176,9 +6175,7 @@ void InGameUI::drawPlayerInfoList()
 
 	for (Int slotIndex = 0; slotIndex < MAX_SLOTS && rowCount < MAX_PLAYER_COUNT; ++slotIndex)
 	{
-		name.format("player%d", slotIndex);
-		const NameKeyType key = TheNameKeyGenerator->nameToKey(name);
-		Player *player = ThePlayerList->findPlayerWithNameKey(key);
+		Player *player = ThePlayerList->getPlayerFromSlotIndex(slotIndex);
 		if (!player || player->isPlayerObserver())
 			continue;
 
