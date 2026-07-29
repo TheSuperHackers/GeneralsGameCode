@@ -27,6 +27,7 @@ if(RTS_BUILD_GENERALS_TOOLS OR RTS_BUILD_ZEROHOUR_TOOLS)
     add_subdirectory(ImagePacker)
     add_subdirectory(MapCacheBuilder)
     add_subdirectory(W3DView)
+    add_subdirectory(WorldBuilder)
 endif()
 
 # Add library interfaces here

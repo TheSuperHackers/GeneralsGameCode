@@ -712,6 +712,78 @@ DEFINE_KEY(objectGrantUpgrade)
 */
 DEFINE_KEY(uniqueID)
 
+/**
+	Which: MapObject Properties
+	Type: AsciiString
+	Usage: What ambient sound does this object have attached to it?
+         Missing means "Use the default sound for object type from INI"
+         Blank means "No ambient sound"
+*/
+DEFINE_KEY(objectSoundAmbient)
+
+/**
+	Which: MapObject Properties
+	Type: Bool
+	Usage: Does the ambient sound have customized flags & properties? Blank or false - use INI parameters for sound
+*/
+DEFINE_KEY(objectSoundAmbientCustomized)
+
+/**
+	Which: MapObject Properties
+	Type: Bool
+	Usage: Does the ambient sound start off playing?
+         Blank -- use default of true for looping sounds, false for non-looping sounds
+*/
+DEFINE_KEY(objectSoundAmbientEnabled)
+
+/**
+	Which: MapObject Properties
+	Type: Bool
+	Usage: Does the ambient sound loop? Blank -- use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientLooping)
+
+/**
+	Which: MapObject Properties
+	Type: Int
+	Usage: How many times does the sound loop (0 = forever)? Blank - use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientLoopCount)
+
+/**
+	Which: MapObject Properties
+	Type: Real
+	Usage: Minimum volume of sound. Blank - use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientMinVolume)
+
+/**
+	Which: MapObject Properties
+	Type: Real
+	Usage: Base volume of sound. Blank - use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientVolume)
+
+/**
+	Which: MapObject Properties
+	Type: Real
+	Usage: Minimum range of sound. Within this area, sound plays at full volume. Blank - use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientMinRange)
+
+/**
+	Which: MapObject Properties
+	Type: Real
+	Usage: Maximum range of sound. Sound drops to zero at this range Blank - use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientMaxRange)
+
+/**
+	Which: MapObject Properties
+	Type: Int
+	Usage: Priority of sound using the enum AudioPriority Blank - use default for sound
+*/
+DEFINE_KEY(objectSoundAmbientPriority)
 
 // ---------------------------------------------------------------------------------------
 // well-known keys in Player dicts.
