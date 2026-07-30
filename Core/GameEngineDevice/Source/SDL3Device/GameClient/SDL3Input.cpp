@@ -37,6 +37,7 @@
 #include "GameClient/Display.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/LookAtXlat.h"
+#include "GameClient/GameWindowManager.h"
 #include "GameLogic/GameLogic.h"
 #include "SDL3Device/Common/SDL3GameEngine.h"
 #include "SDL3Device/GameClient/SDL3Cursor.h"
@@ -50,7 +51,6 @@ SDL3Mouse::SDL3Mouse(SDL_Window* window)
 	, m_Window(window)
 	, m_IsCaptured(false)
 	, m_IsVisible(true)
-	, m_LostFocus(false)
 	, m_directionFrame(0)
 	, m_accumulatedDeltaX(0.0f)
 	, m_accumulatedDeltaY(0.0f)
@@ -84,11 +84,6 @@ void SDL3Mouse::reset()
 void SDL3Mouse::update()
 {
 	Mouse::update();
-
-	if (m_LostFocus)
-	{
-		return;
-	}
 
 	MouseCursor cursor = m_currentCursor;
 
@@ -212,6 +207,25 @@ void SDL3Mouse::loseFocus()
 void SDL3Mouse::regainFocus()
 {
 	Mouse::regainFocus();
+}
+
+void SDL3Mouse::syncPositionToSystemCursor()
+{
+	if (!m_Window)
+		return;
+
+	float mx = 0.0f;
+	float my = 0.0f;
+	SDL_GetMouseState(&mx, &my);
+
+	Uint32 windowID = SDL_GetWindowID(m_Window);
+	int scaledX = (int)mx;
+	int scaledY = (int)my;
+	scaleMouseCoordinates((int)mx, (int)my, windowID, scaledX, scaledY);
+
+	m_currMouse.pos.x = scaledX;
+	m_currMouse.pos.y = scaledY;
+	m_prevMouse.pos = m_currMouse.pos;
 }
 
 void SDL3Mouse::capture()
@@ -711,7 +725,14 @@ void SDL3InputManager::update()
 		{
 			case SDL_EVENT_QUIT:
 			case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-				m_isQuitting = true;
+				if (TheMessageStream && TheMessageStream->isReadyForMessages())
+				{
+					TheMessageStream->appendMessage(GameMessage::MSG_META_DEMO_INSTANT_QUIT);
+				}
+				else
+				{
+					m_isQuitting = true;
+				}
 				break;
 
 			case SDL_EVENT_GAMEPAD_ADDED:
@@ -725,14 +746,23 @@ void SDL3InputManager::update()
 				break;
 
 			case SDL_EVENT_WINDOW_FOCUS_GAINED:
+				if (TheGameEngine)
+					TheGameEngine->setIsActive(true);
+				if (TheKeyboard)
+					TheKeyboard->reset();
 				if (TheMouse)
 				{
 					TheMouse->regainFocus();
 					TheMouse->refreshCursorCapture();
+					TheMouse->syncPositionToSystemCursor();
 				}
 				break;
 
 			case SDL_EVENT_WINDOW_FOCUS_LOST:
+				if (TheGameEngine)
+					TheGameEngine->setIsActive(false);
+				if (TheKeyboard)
+					TheKeyboard->reset();
 				if (TheMouse)
 					TheMouse->loseFocus();
 				break;
@@ -757,7 +787,24 @@ void SDL3InputManager::update()
 			case SDL_EVENT_KEY_DOWN:
 			case SDL_EVENT_KEY_UP:
 				if (!event.key.repeat)
+				{
 					addKeyboardSDLEvent(event);
+					if (event.key.down && (event.key.scancode == SDL_SCANCODE_RETURN || event.key.scancode == SDL_SCANCODE_KP_ENTER))
+					{
+						if (TheWindowManager)
+						{
+							GameWindow* focus = TheWindowManager->winGetFocus();
+							if (focus)
+							{
+								const UnsignedInt style = focus->winGetStyle();
+								if (BitIsSet(style, GWS_ENTRY_FIELD) || BitIsSet(style, GWS_COMBO_BOX))
+								{
+									TheWindowManager->winSendInputMsg(focus, GWM_IME_CHAR, VK_RETURN, 0);
+								}
+							}
+						}
+					}
+				}
 				break;
 
 			case SDL_EVENT_TEXT_INPUT:
@@ -852,16 +899,17 @@ void SDL3InputManager::closeGamepad()
 		if (m_state.stickUp) virtualPulseKey(SDL_SCANCODE_UP, false);
 		if (m_state.stickDown) virtualPulseKey(SDL_SCANCODE_DOWN, false);
 
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_SOUTH]) virtualPulseKey(SDL_SCANCODE_RETURN, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_EAST]) virtualPulseKey(SDL_SCANCODE_ESCAPE, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_WEST]) virtualPulseKey(SDL_SCANCODE_X, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_NORTH]) virtualPulseKey(SDL_SCANCODE_E, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_SOUTH]) virtualPulseMouse(SDL_BUTTON_LEFT, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_EAST]) virtualPulseMouse(SDL_BUTTON_RIGHT, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_WEST]) virtualPulseKey(SDL_SCANCODE_A, false);
 		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_LEFT_SHOULDER]) virtualPulseKey(SDL_SCANCODE_Q, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER]) virtualPulseKey(SDL_SCANCODE_E, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_UP]) virtualPulseKey(SDL_SCANCODE_1, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_DOWN]) virtualPulseKey(SDL_SCANCODE_2, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_LEFT]) virtualPulseKey(SDL_SCANCODE_3, false);
-		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_RIGHT]) virtualPulseKey(SDL_SCANCODE_4, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER]) virtualPulseKey(SDL_SCANCODE_LSHIFT, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_START]) virtualPulseKey(SDL_SCANCODE_ESCAPE, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_BACK]) virtualPulseKey(SDL_SCANCODE_SPACE, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_UP]) virtualPulseKey(SDL_SCANCODE_2, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_DOWN]) virtualPulseKey(SDL_SCANCODE_4, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_LEFT]) virtualPulseKey(SDL_SCANCODE_1, false);
+		if (m_state.buttonState[SDL_GAMEPAD_BUTTON_DPAD_RIGHT]) virtualPulseKey(SDL_SCANCODE_3, false);
 
 		m_state = GamepadState();
 		m_lastUpdateTime = 0;
@@ -950,8 +998,17 @@ void SDL3InputManager::processGamepadInput()
 	if (!m_gamepad)
 		return;
 
+	const float DEADZONE = DEFAULT_DEADZONE;
+	float rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
+	float ry = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTY) / AXIS_MAX;
+
+	float lx_axis = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_LEFTX) / AXIS_MAX;
+	float ly_axis = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_LEFTY) / AXIS_MAX;
+	float stickMag_check = sqrtf(lx_axis * lx_axis + ly_axis * ly_axis);
+
+	bool hasStickInput = (stickMag_check > DEADZONE) || (SDL_fabsf(rx) > DEADZONE) || (SDL_fabsf(ry) > DEADZONE);
 	if (TheLookAtTranslator)
-		TheLookAtTranslator->setControllerInputActive(true);
+		TheLookAtTranslator->setControllerInputActive(hasStickInput);
 
 	Uint64 now = SDL_GetTicks();
 	float deltaTime = (now - m_lastUpdateTime) / 1000.0f;
@@ -959,12 +1016,11 @@ void SDL3InputManager::processGamepadInput()
 	if (deltaTime > 0.1f)
 		deltaTime = 0.1f;
 
-	const float DEADZONE = DEFAULT_DEADZONE;
 	float resolutionScale = 1.0f;
 	int windowWidth = 0;
 	int windowHeight = 0;
-	if (m_window && SDL_GetWindowSizeInPixels(m_window, &windowWidth, &windowHeight) && windowHeight > 0)
-		resolutionScale = windowHeight / DESIGNED_WINDOW_HEIGHT;
+	if (m_window && SDL_GetWindowSize(m_window, &windowWidth, &windowHeight) && windowHeight > 0)
+		resolutionScale = (float)windowHeight / DESIGNED_WINDOW_HEIGHT;
 
 	const float CURSOR_SPEED = DEFAULT_CURSOR_SPEED * resolutionScale;
 	const float CURSOR_ACCELERATION = DEFAULT_CURSOR_ACCELERATION * resolutionScale;
@@ -1081,8 +1137,8 @@ void SDL3InputManager::processGamepadInput()
 		m_cursorRemainderY = 0.0f;
 	}
 
-	float rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
-	float ry = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTY) / AXIS_MAX;
+	rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
+	ry = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTY) / AXIS_MAX;
 
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_INVALID,

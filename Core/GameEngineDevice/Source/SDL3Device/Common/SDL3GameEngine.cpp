@@ -255,7 +255,7 @@ void SDL3GameEngine::updateTextInputState()
 
 	GameWindow* focusedWindow = TheWindowManager->winGetFocus();
 	const Bool wantsTextInput =
-		focusedWindow != nullptr && BitIsSet(focusedWindow->winGetStyle(), GWS_ENTRY_FIELD);
+		focusedWindow != nullptr && (BitIsSet(focusedWindow->winGetStyle(), GWS_ENTRY_FIELD) || BitIsSet(focusedWindow->winGetStyle(), GWS_COMBO_BOX));
 
 	if (wantsTextInput)
 	{
