@@ -1332,8 +1332,6 @@ static void republishNATBehaviorIfChanged( void )
 	if (!TheGameSpyInfo->amIHost() && TheGameSpyPeerMessageQueue == nullptr)
 		return;
 
-	DEBUG_LOG(("republishNATBehaviorIfChanged - NAT behavior changed from %d to %d, republishing",
-		publishedNATBehavior, behavior));
 	publishedNATBehavior = behavior;
 
 	if (TheGameSpyInfo->amIHost())

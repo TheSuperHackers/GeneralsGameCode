@@ -87,6 +87,8 @@ FirewallHelperClass * createFirewallHelper()
 FirewallHelperClass::FirewallHelperClass()
 {
 	m_currentTry = 0;
+	m_detectionRetries = 0;
+	m_lastDetectionTime = 0;
 	m_numManglers = 0;
 	m_numResponses = 0;
 	m_packetID = 0;
@@ -489,6 +491,16 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
  *=============================================================================================*/
 void FirewallHelperClass::detectFirewallBehavior()
 {
+	UnsignedInt currentTime = timeGetTime();
+	if (m_detectionRetries >= 5) {
+		return;
+	}
+	if (m_lastDetectionTime != 0 && (currentTime - m_lastDetectionTime) < 5000) {
+		return;
+	}
+	m_lastDetectionTime = currentTime;
+	m_detectionRetries++;
+
 	reset();
 	m_currentTry = 0;
 	m_numManglers = 0;
