@@ -434,9 +434,7 @@ GlobalData* GlobalData::m_theOriginal = nullptr;
 	{ "ShellMapOn",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_shellMapOn ) },
 	{	"PlayIntro",									INI::parseBool,				nullptr,			offsetof( GlobalData, m_playIntro ) },
 
-	{ "FirewallBehavior",						INI::parseInt,				nullptr,			offsetof( GlobalData, m_firewallBehavior ) },
 	{ "FirewallPortOverride",				INI::parseInt,				nullptr,			offsetof( GlobalData, m_firewallPortOverride ) },
-	{	"FirewallPortAllocationDelta",INI::parseInt,				nullptr,			offsetof( GlobalData, m_firewallPortAllocationDelta) },
 
 	{	"GroupSelectMinSelectSize",		INI::parseInt,				nullptr,			offsetof( GlobalData, m_groupSelectMinSelectSize ) },
 	{	"GroupSelectVolumeBase",			INI::parseReal,				nullptr,			offsetof( GlobalData, m_groupSelectVolumeBase ) },
@@ -945,9 +943,7 @@ GlobalData::GlobalData()
 
 //	m_languageFilterPref = false;
 	m_languageFilterPref = true;
-	m_firewallBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
 	m_firewallPortOverride = 0;
-	m_firewallPortAllocationDelta = 0;
 	m_loadScreenDemo = FALSE;
 	m_disableRender = false;
 
@@ -1211,7 +1207,6 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	TheWritableGlobalData->m_drawScrollAnchor = optionPref.getDrawScrollAnchor();
 	TheWritableGlobalData->m_moveScrollAnchor = optionPref.getMoveScrollAnchor();
 	TheWritableGlobalData->m_defaultIP = optionPref.getLANIPAddress();
-	TheWritableGlobalData->m_firewallBehavior = optionPref.getFirewallBehavior();
 	TheWritableGlobalData->m_firewallPortAllocationDelta = optionPref.getFirewallPortAllocationDelta();
 	TheWritableGlobalData->m_firewallPortOverride = optionPref.getFirewallPortOverride();
 

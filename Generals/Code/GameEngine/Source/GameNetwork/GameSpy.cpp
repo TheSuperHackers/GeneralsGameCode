@@ -283,21 +283,7 @@ void GameSpyChat::update()
 		}
 
 		if (TheFirewallHelper != nullptr) {
-			if (TheFirewallHelper->behaviorDetectionUpdate()) {
-				TheGlobalData->m_firewallBehavior = TheFirewallHelper->getFirewallBehavior();
-				OptionPreferences *pref = NEW OptionPreferences;
-				char num[16];
-				num[0] = 0;
-				itoa(TheGlobalData->m_firewallBehavior, num, 10);
-				AsciiString numstr;
-				numstr = num;
-				(*pref)["FirewallBehavior"] = numstr;
-				pref->write();
-
-				// we are now done with the firewall helper
-				delete TheFirewallHelper;
-				TheFirewallHelper = nullptr;
-			}
+			TheFirewallHelper->behaviorDetectionUpdate();
 		}
 
 		UnsignedInt now = timeGetTime();
@@ -773,7 +759,7 @@ static void PlayerUTMCallback(PEER peer, const char * nick,
 				}
 				else if (key == "NAT")
 				{
-					if ((val >= FirewallHelperClass::FIREWALL_TYPE_SIMPLE) &&
+					if ((val >= FirewallHelperClass::FIREWALL_TYPE_UNKNOWN) &&
 							(val <= FirewallHelperClass::FIREWALL_TYPE_DESTINATION_PORT_DELTA))
 					{
 						slot->setNATBehavior((FirewallHelperClass::FirewallBehaviorType)val);
@@ -965,7 +951,8 @@ void JoinRoomCallback(PEER peer, PEERBool success, PEERJoinResult result, RoomTy
 					localIP = ntohl(localIP); // The IP returned from GetLocalChatConnectionAddress is in network byte order.
 					options.format("IP=%d", localIP);
 					peerUTMPlayer(TheGameSpyChat->getPeer(), hostName.str(), "REQ/", options.str(), PEERFalse);
-					options.format("NAT=%d", TheFirewallHelper->getFirewallBehavior());
+					FirewallHelperClass::FirewallBehaviorType natBehavior = (TheFirewallHelper != nullptr) ? TheFirewallHelper->getFirewallBehavior() : FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
+					options.format("NAT=%d", natBehavior);
 					peerUTMPlayer(TheGameSpyChat->getPeer(), hostName.str(), "REQ/", options.str(), PEERFalse);
 
 					// refresh the map cache

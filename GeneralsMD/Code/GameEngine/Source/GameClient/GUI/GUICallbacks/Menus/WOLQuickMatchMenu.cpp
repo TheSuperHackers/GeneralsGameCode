@@ -1021,6 +1021,11 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 		raiseMessageBoxes = false;
 	}
 
+	if (TheFirewallHelper != nullptr)
+	{
+		TheFirewallHelper->behaviorDetectionUpdate();
+	}
+
 	/// @todo: MDC handle disconnects in-game the same way as Custom Match!
 
 	if (TheShell->isAnimFinished() && !buttonPushed && TheGameSpyPeerMessageQueue)
@@ -1638,6 +1643,21 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 				}
 				else if ( controlID == buttonStartID )
 				{
+					if (TheFirewallHelper != nullptr)
+					{
+						if (!TheFirewallHelper->isBehaviorDetectionComplete())
+						{
+							TheGameSpyInfo->addText(TheGameText->fetch("GUI:UnknownConnectionState"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+							break;
+						}
+						else if (TheFirewallHelper->getFirewallBehavior() == FirewallHelperClass::FIREWALL_TYPE_UNKNOWN)
+						{
+							TheFirewallHelper->detectFirewallBehavior();
+							TheGameSpyInfo->addText(TheGameText->fetch("GUI:UnknownConnectionState"), GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
+							break;
+						}
+					}
+
 					PeerRequest req;
 					req.peerRequestType = PeerRequest::PEERREQUEST_STARTQUICKMATCH;
 					req.qmMaps.clear();
@@ -1756,8 +1776,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 						index = (Int)GadgetComboBoxGetItemData( comboBoxColor, selected );
 					req.QM.color = index;
 
-					OptionPreferences natPref;
-					req.QM.NAT = natPref.getFirewallBehavior();
+					req.QM.NAT = (TheFirewallHelper != nullptr) ? TheFirewallHelper->getFirewallBehavior() : FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
 
 					if (ladderIndex)
 					{

@@ -107,6 +107,8 @@ struct ManglerMessage {
 static const Int MAX_NUM_MANGLERS = 4;
 static const UnsignedShort MANGLER_PORT = 4321;
 
+static const UnsignedInt BEHAVIOR_DETECTION_WAIT_TIME = 6000;
+
 class FirewallHelperClass {
 
 	public:
@@ -171,20 +173,19 @@ class FirewallHelperClass {
 		FirewallHelperClass();
 		virtual ~FirewallHelperClass();
 		Bool detectFirewall();
-		UnsignedShort getRawFirewallBehavior() {return((UnsignedShort)m_behavior);}
-		Short getSourcePortAllocationDelta();
-		Int getFirewallHardness(FirewallBehaviorType behavior);
-		Int getFirewallRetries(FirewallBehaviorType behavior);
+		void detectFirewallBehavior();
+		UnsignedShort getRawFirewallBehavior() const {return((UnsignedShort)m_behavior);}
+		Short getSourcePortAllocationDelta() const;
+		Int getFirewallHardness(FirewallBehaviorType behavior) const;
+		Int getFirewallRetries(FirewallBehaviorType behavior) const;
 		void setSourcePortPoolStart(Int port) {m_sourcePortPool = port;};
-		Int getSourcePortPool() {return(m_sourcePortPool);};
-		void readFirewallBehavior();
+		Int getSourcePortPool() const {return(m_sourcePortPool);};
 		void reset();
 		Bool behaviorDetectionUpdate();
 
-		FirewallBehaviorType getFirewallBehavior();
-		void writeFirewallBehavior();
+		FirewallBehaviorType getFirewallBehavior() const;
 
-		void flagNeedToRefresh(Bool flag);
+		Bool isBehaviorDetectionComplete() const {return(m_currentState == DETECTIONSTATE_DONE);}
 
 		static void getManglerName(Int manglerIndex, Char *nameBuf);
 		Bool sendToManglerFromPort(UnsignedInt address, UnsignedShort port, UnsignedShort packetID, Bool blitzme = FALSE);
@@ -207,26 +208,23 @@ class FirewallHelperClass {
 		/*
 		** Behavior query functions.
 		*/
-		Bool isNAT() {
+		Bool isNAT() const {
 			if (m_behavior == FIREWALL_TYPE_UNKNOWN || (m_behavior & FIREWALL_TYPE_SIMPLE) != 0) {
 				return(FALSE);
 			}
 			return(TRUE);
 		};
 
-		Bool isNAT(FirewallBehaviorType behavior) {
+		Bool isNAT(FirewallBehaviorType behavior) const {
 			if (behavior == FIREWALL_TYPE_UNKNOWN || (behavior & FIREWALL_TYPE_SIMPLE) != 0) {
 				return(FALSE);
 			}
 			return(TRUE);
 		};
 
-
-
 	private:
 
 		Int getNATPortAllocationScheme(Int numPorts, UnsignedShort *originalPorts, UnsignedShort *mangledPorts, Bool &relativeDelta, Bool &looksGood);
-		void detectFirewallBehavior(/*Bool &canRecord*/);
 		Bool getReferencePort();
 
 		SpareSocketStruct * findSpareSocketByPort(UnsignedShort port);
@@ -240,19 +238,9 @@ class FirewallHelperClass {
 		FirewallBehaviorType m_behavior;
 
 		/*
-		** How did the firewall behave the last time we ran the game.
-		*/
-		FirewallBehaviorType m_lastBehavior;
-
-		/*
 		** What is the delta in our firewalls NAT port allocation scheme.
 		*/
 		Int m_sourcePortAllocationDelta;
-
-		/*
-		** What was the delta the last time we ran?
-		*/
-		Int m_lastSourcePortAllocationDelta;
 
 		/*
 		** Source ports used only to discover port allocation patterns.
@@ -287,3 +275,4 @@ class FirewallHelperClass {
 
 extern FirewallHelperClass *TheFirewallHelper;
 FirewallHelperClass * createFirewallHelper();
+

@@ -1148,6 +1148,68 @@ static Bool initDone = false;
 UnsignedInt lastSlotlistTime = 0;
 UnsignedInt enterTime = 0;
 Bool initialAcceptEnable = FALSE;
+
+static FirewallHelperClass::FirewallBehaviorType publishedNATBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
+static Bool hasPublishedNATBehavior = FALSE;
+
+static void republishNATBehaviorIfChanged( void )
+{
+	if (!hasPublishedNATBehavior || TheFirewallHelper == nullptr || TheGameSpyInfo == nullptr)
+		return;
+
+	if (!TheFirewallHelper->isBehaviorDetectionComplete())
+		return;
+
+	FirewallHelperClass::FirewallBehaviorType behavior = TheFirewallHelper->getFirewallBehavior();
+	if (behavior == publishedNATBehavior)
+		return;
+
+	GameSpyStagingRoom *game = TheGameSpyInfo->getCurrentStagingRoom();
+	if (game == nullptr)
+		return;
+
+	GameSpyGameSlot *hostSlot = game->getGameSpySlot(0);
+	if (hostSlot == nullptr)
+		return;
+
+	if (!TheGameSpyInfo->amIHost() && TheGameSpyPeerMessageQueue == nullptr)
+		return;
+
+	DEBUG_LOG(("republishNATBehaviorIfChanged - NAT behavior changed from %d to %d, republishing",
+		publishedNATBehavior, behavior));
+	publishedNATBehavior = behavior;
+
+	if (TheGameSpyInfo->amIHost())
+	{
+		hostSlot->setNATBehavior(behavior);
+		TheGameSpyInfo->setGameOptions();
+		WOLDisplaySlotList();
+
+		if (TheGameSpyPeerMessageQueue)
+		{
+			PeerRequest slReq;
+			slReq.peerRequestType = PeerRequest::PEERREQUEST_UTMROOM;
+			slReq.UTM.isStagingRoom = TRUE;
+			slReq.id = "SL/";
+			slReq.options = GameInfoToAsciiString(game).str();
+			TheGameSpyPeerMessageQueue->addRequest(slReq);
+		}
+	}
+	else
+	{
+		AsciiString aName, options;
+		aName.translate(hostSlot->getName());
+
+		PeerRequest req;
+		req.peerRequestType = PeerRequest::PEERREQUEST_UTMPLAYER;
+		req.UTM.isStagingRoom = TRUE;
+		req.id = "REQ/";
+		req.nick = aName.str();
+		options.format("NAT=%d", behavior);
+		req.options = options.str();
+		TheGameSpyPeerMessageQueue->addRequest(req);
+	}
+}
 //-------------------------------------------------------------------------------------------------
 /** Initialize the Lan Game Options Menu */
 //-------------------------------------------------------------------------------------------------
@@ -1208,11 +1270,13 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 	hostSlot->setAccept();
 	if (TheGameSpyInfo->amIHost())
 	{
-		OptionPreferences natPref;
 		CustomMatchPreferences customPref;
 		hostSlot->setColor( customPref.getPreferredColor() );
 		hostSlot->setPlayerTemplate( customPref.getPreferredFaction() );
-		hostSlot->setNATBehavior((FirewallHelperClass::FirewallBehaviorType)natPref.getFirewallBehavior());
+		FirewallHelperClass::FirewallBehaviorType natBehavior = (TheFirewallHelper != nullptr) ? TheFirewallHelper->getFirewallBehavior() : FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
+		publishedNATBehavior = natBehavior;
+		hasPublishedNATBehavior = TRUE;
+		hostSlot->setNATBehavior(natBehavior);
 		hostSlot->setPingString(TheGameSpyInfo->getPingString());
 		game->setMap(customPref.getPreferredMap());
 
@@ -1243,7 +1307,6 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 	}
 	else
 	{
-		OptionPreferences natPref;
 		CustomMatchPreferences customPref;
 		AsciiString options;
 		PeerRequest req;
@@ -1260,7 +1323,10 @@ void WOLGameSetupMenuInit( WindowLayout *layout, void *userData )
 		options.format("Color=%d", customPref.getPreferredColor());
 		req.options = options.str();
 		TheGameSpyPeerMessageQueue->addRequest(req);
-		options.format("NAT=%d", natPref.getFirewallBehavior());
+		FirewallHelperClass::FirewallBehaviorType natBehavior = (TheFirewallHelper != nullptr) ? TheFirewallHelper->getFirewallBehavior() : FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
+		publishedNATBehavior = natBehavior;
+		hasPublishedNATBehavior = TRUE;
+		options.format("NAT=%d", natBehavior);
 		req.options = options.str();
 		TheGameSpyPeerMessageQueue->addRequest(req);
 		options.format("Ping=%s", TheGameSpyInfo->getPingString().str());
@@ -1368,6 +1434,7 @@ void WOLGameSetupMenuShutdown( WindowLayout *layout, void *userData )
 		TheEstablishConnectionsMenu->endMenu();
 	}
 	initDone = false;
+	hasPublishedNATBehavior = FALSE;
 
 	isShuttingDown = true;
 
@@ -1416,6 +1483,17 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 	{
 		RaiseGSMessageBox();
 		raiseMessageBoxes = false;
+	}
+
+	if (TheFirewallHelper != nullptr)
+	{
+		TheFirewallHelper->behaviorDetectionUpdate();
+		republishNATBehaviorIfChanged();
+
+		if (TheFirewallHelper->isBehaviorDetectionComplete() && TheFirewallHelper->getFirewallBehavior() == FirewallHelperClass::FIREWALL_TYPE_UNKNOWN)
+		{
+			TheFirewallHelper->detectFirewallBehavior();
+		}
 	}
 
 	if (TheShell->isAnimFinished() && !buttonPushed && TheGameSpyPeerMessageQueue)
