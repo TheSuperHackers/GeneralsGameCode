@@ -269,7 +269,6 @@ class FirewallHelperClass {
 
 		Int m_numResponses;
 		Int m_currentTry;
-		Int m_detectionRetries;
 		UnsignedInt m_lastDetectionTime;
 };
 
