@@ -2292,6 +2292,16 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 									DEBUG_LOG(("Slot value is color=%d, PlayerTemplate=%d, startPos=%d, team=%d, IP=0x%8.8X",
 										slot->getColor(), slot->getPlayerTemplate(), slot->getStartPos(), slot->getTeamNumber(), slot->getIP()));
 									DEBUG_LOG(("Slot list updated to %s", GameInfoToAsciiString(game).str()));
+
+									if (TheGameSpyInfo->amIHost() && TheGameSpyPeerMessageQueue)
+									{
+										PeerRequest slReq;
+										slReq.peerRequestType = PeerRequest::PEERREQUEST_UTMROOM;
+										slReq.UTM.isStagingRoom = TRUE;
+										slReq.id = "SL/";
+										slReq.options = GameInfoToAsciiString(game).str();
+										TheGameSpyPeerMessageQueue->addRequest(slReq);
+									}
 								}
 							}
 						}
