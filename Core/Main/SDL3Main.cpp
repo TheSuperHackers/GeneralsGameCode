@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 			return exitcode;
 		}
 
-		Uint32 flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
+		Uint32 flags = SDL_WINDOW_HIDDEN;
 		if (!TheGlobalData->m_windowed)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
