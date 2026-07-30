@@ -315,12 +315,12 @@ struct InternalResizeGuard
 
 extern void reflowAllWindows(Int newScreenWidth, Int newScreenHeight);
 
-static void performLiveResize(HWND hWnd)
+static bool performLiveResize(HWND hWnd)
 {
 	InternalResizeGuard guard;
 	if (gInitializing)
 	{
-		return;
+		return false;
 	}
 
 	RECT rect;
@@ -331,7 +331,7 @@ static void performLiveResize(HWND hWnd)
 
 		if (newWidth <= 0 || newHeight <= 0)
 		{
-			return;
+			return false;
 		}
 
 		bool desiredD3DWindowed = TheDisplay ? (TheDisplay->getWindowed() || TheGlobalData->m_windowed) : TheGlobalData->m_windowed;
@@ -380,9 +380,14 @@ static void performLiveResize(HWND hWnd)
 				resString.format("%d %d", newWidth, newHeight);
 				optionPref.setAsciiString("Resolution", resString);
 				optionPref.write();
+
+				return true;
 			}
+			return false;
 		}
+		return true;
 	}
+	return false;
 }
 
 static bool isResizeSafe()
@@ -412,8 +417,10 @@ void checkAndApplyDeferredResize()
 {
 	if (g_resizePending && isResizeSafe())
 	{
-		g_resizePending = false;
-		performLiveResize(ApplicationHWnd);
+		if (performLiveResize(ApplicationHWnd))
+		{
+			g_resizePending = false;
+		}
 	}
 }
 
