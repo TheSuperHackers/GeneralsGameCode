@@ -180,8 +180,8 @@ private:
 	GamepadState m_state;
 
 	Uint64 m_lastUpdateTime;
-	float m_cursorVelocityX;
-	float m_cursorVelocityY;
+	float m_cursorSpeed;
+	float m_edgeAccelTimer;
 	float m_cursorRemainderX;
 	float m_cursorRemainderY;
 	Bool m_isQuitting;
