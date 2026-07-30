@@ -681,8 +681,8 @@ SDL3InputManager::SDL3InputManager(SDL_Window* window)
 	, m_keyNextGet(0)
 	, m_gamepad(nullptr)
 	, m_lastUpdateTime(0)
-	, m_cursorVelocityX(0.0f)
-	, m_cursorVelocityY(0.0f)
+	, m_cursorSpeed(0.0f)
+	, m_edgeAccelTimer(0.0f)
 	, m_cursorRemainderX(0.0f)
 	, m_cursorRemainderY(0.0f)
 	, m_isQuitting(false)
@@ -870,8 +870,8 @@ void SDL3InputManager::closeGamepad()
 		m_gamepad = nullptr;
 	}
 
-	m_cursorVelocityX = 0.0f;
-	m_cursorVelocityY = 0.0f;
+	m_cursorSpeed = 0.0f;
+	m_edgeAccelTimer = 0.0f;
 	m_cursorRemainderX = 0.0f;
 	m_cursorRemainderY = 0.0f;
 
@@ -991,60 +991,94 @@ void SDL3InputManager::processGamepadInput()
 	if (stickMagnitude > 1.0f)
 		stickMagnitude = 1.0f;
 
-	float targetVelocityX = 0.0f;
-	float targetVelocityY = 0.0f;
 	if (stickMagnitude > DEADZONE)
 	{
-		float speed = CURSOR_SPEED;
+		// Instant polar direction matching exact stick angle (0 rotational lag, 0 loops)
+		float dirX = lx / stickMagnitude;
+		float dirY = ly / stickMagnitude;
 
 		// Radially remove the deadzone, then use a smoothstep response curve.
 		float response = (stickMagnitude - DEADZONE) / (1.0f - DEADZONE);
 		response = response * response * (3.0f - 2.0f * response);
-		targetVelocityX = (lx / stickMagnitude) * speed * response;
-		targetVelocityY = (ly / stickMagnitude) * speed * response;
-	}
 
-	float velocityDeltaX = targetVelocityX - m_cursorVelocityX;
-	float velocityDeltaY = targetVelocityY - m_cursorVelocityY;
-	float velocityDeltaLength = sqrtf(velocityDeltaX * velocityDeltaX + velocityDeltaY * velocityDeltaY);
-	float acceleration = stickMagnitude > DEADZONE ? CURSOR_ACCELERATION : CURSOR_DECELERATION;
-	float maxVelocityChange = acceleration * deltaTime;
-	if (velocityDeltaLength > maxVelocityChange && velocityDeltaLength > 0.0f)
-	{
-		float changeScale = maxVelocityChange / velocityDeltaLength;
-		velocityDeltaX *= changeScale;
-		velocityDeltaY *= changeScale;
-	}
-	m_cursorVelocityX += velocityDeltaX;
-	m_cursorVelocityY += velocityDeltaY;
+		float targetSpeed = CURSOR_SPEED * response;
 
-	m_cursorRemainderX += m_cursorVelocityX * deltaTime;
-	m_cursorRemainderY += m_cursorVelocityY * deltaTime;
-	int cursorDeltaX = (int)m_cursorRemainderX;
-	int cursorDeltaY = (int)m_cursorRemainderY;
-	m_cursorRemainderX -= cursorDeltaX;
-	m_cursorRemainderY -= cursorDeltaY;
+		// Edge acceleration boost (1.75x speed after holding outer edge for > 0.25s)
+		const float EDGE_ACCEL_THRESHOLD = 0.85f;
+		const float EDGE_ACCEL_DELAY = 0.25f;
+		const float EDGE_ACCEL_RAMP_TIME = 0.35f;
+		const float MAX_BOOST_MULTIPLIER = 1.75f;
 
-	if (cursorDeltaX != 0 || cursorDeltaY != 0)
-	{
-		SDL_Event motionEvent;
-		memset(&motionEvent, 0, sizeof(motionEvent));
-		motionEvent.type = SDL_EVENT_MOUSE_MOTION;
-		motionEvent.motion.xrel = (float)cursorDeltaX;
-		motionEvent.motion.yrel = (float)cursorDeltaY;
-
-		float mx, my;
-		SDL_GetMouseState(&mx, &my);
-		motionEvent.motion.x = mx + cursorDeltaX;
-		motionEvent.motion.y = my + cursorDeltaY;
-
-		if (m_window)
+		if (stickMagnitude > EDGE_ACCEL_THRESHOLD)
 		{
-			motionEvent.motion.windowID = SDL_GetWindowID(m_window);
+			m_edgeAccelTimer += deltaTime;
+			if (m_edgeAccelTimer > EDGE_ACCEL_DELAY)
+			{
+				float rampProgress = (m_edgeAccelTimer - EDGE_ACCEL_DELAY) / EDGE_ACCEL_RAMP_TIME;
+				if (rampProgress > 1.0f)
+					rampProgress = 1.0f;
+				targetSpeed *= (1.0f + (MAX_BOOST_MULTIPLIER - 1.0f) * rampProgress);
+			}
+		}
+		else
+		{
+			m_edgeAccelTimer = 0.0f;
 		}
 
-		addMouseSDLEvent(motionEvent);
-		SDL_WarpMouseInWindow(m_window, motionEvent.motion.x, motionEvent.motion.y);
+		// Smooth scalar speed acceleration
+		if (m_cursorSpeed < targetSpeed)
+		{
+			m_cursorSpeed += CURSOR_ACCELERATION * deltaTime;
+			if (m_cursorSpeed > targetSpeed)
+				m_cursorSpeed = targetSpeed;
+		}
+		else if (m_cursorSpeed > targetSpeed)
+		{
+			m_cursorSpeed -= CURSOR_DECELERATION * deltaTime;
+			if (m_cursorSpeed < targetSpeed)
+				m_cursorSpeed = targetSpeed;
+		}
+
+		// Instant direction * smooth accelerated speed
+		float velocityX = dirX * m_cursorSpeed;
+		float velocityY = dirY * m_cursorSpeed;
+
+		m_cursorRemainderX += velocityX * deltaTime;
+		m_cursorRemainderY += velocityY * deltaTime;
+		int cursorDeltaX = (int)m_cursorRemainderX;
+		int cursorDeltaY = (int)m_cursorRemainderY;
+		m_cursorRemainderX -= cursorDeltaX;
+		m_cursorRemainderY -= cursorDeltaY;
+
+		if (cursorDeltaX != 0 || cursorDeltaY != 0)
+		{
+			SDL_Event motionEvent;
+			memset(&motionEvent, 0, sizeof(motionEvent));
+			motionEvent.type = SDL_EVENT_MOUSE_MOTION;
+			motionEvent.motion.xrel = (float)cursorDeltaX;
+			motionEvent.motion.yrel = (float)cursorDeltaY;
+
+			float mx, my;
+			SDL_GetMouseState(&mx, &my);
+			motionEvent.motion.x = mx + cursorDeltaX;
+			motionEvent.motion.y = my + cursorDeltaY;
+
+			if (m_window)
+			{
+				motionEvent.motion.windowID = SDL_GetWindowID(m_window);
+			}
+
+			addMouseSDLEvent(motionEvent);
+			SDL_WarpMouseInWindow(m_window, motionEvent.motion.x, motionEvent.motion.y);
+		}
+	}
+	else
+	{
+		// Instant stop on release (0 speed, 0 timer, 0 remainder)
+		m_cursorSpeed = 0.0f;
+		m_edgeAccelTimer = 0.0f;
+		m_cursorRemainderX = 0.0f;
+		m_cursorRemainderY = 0.0f;
 	}
 
 	float rx = SDL_GetGamepadAxis(m_gamepad, SDL_GAMEPAD_AXIS_RIGHTX) / AXIS_MAX;
