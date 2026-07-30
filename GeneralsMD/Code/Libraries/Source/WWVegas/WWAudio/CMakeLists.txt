@@ -5,4 +5,5 @@ target_link_libraries(z_wwaudio PRIVATE
     corei_wwaudio
     z_wwcommon
     zi_always
+    zi_ww3d2_include
 )

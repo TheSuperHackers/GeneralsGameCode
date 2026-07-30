@@ -238,11 +238,6 @@ set_target_properties(z_ww3d2 PROPERTIES OUTPUT_NAME ww3d2)
 
 target_sources(z_ww3d2 PRIVATE ${WW3D2_SRC})
 
-target_include_directories(z_ww3d2 PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    $<TARGET_PROPERTY:corei_ww3d2,INTERFACE_INCLUDE_DIRECTORIES>
-)
-
 target_compile_definitions(z_ww3d2 PRIVATE
     $<$<BOOL:${IS_VS6_BUILD}>:WINVER=0x0500>
 )
@@ -256,6 +251,10 @@ target_precompile_headers(z_ww3d2 PRIVATE
     [["WWLib/WWCommon.h"]]
     [["WWLib/wwstring.h"]]
     <windows.h>
+)
+
+target_link_libraries(z_ww3d2 PUBLIC
+    zi_ww3d2_include
 )
 
 target_link_libraries(z_ww3d2 PRIVATE
