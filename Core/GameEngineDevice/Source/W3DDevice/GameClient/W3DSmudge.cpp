@@ -362,7 +362,7 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 	//TODO: Optimize out this extra pass!
 	//TODO: Find size of screen rectangle that actually needs copying.
 
-	SmudgeSetQueue::iterator setIt=m_usedSmudgeSetList.begin();	//first set that didn't fit into render batch.
+	SmudgeSetDeque::iterator setIt=m_usedSmudgeSetList.begin();	//first set that didn't fit into render batch.
 	Int count = 0;
 
 	if (setIt != m_usedSmudgeSetList.end())
@@ -371,10 +371,10 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 		SortingRendererClass::Flush();	//draw sorted translucent polys like particles.
 	}
 
-	while (setIt != m_usedSmudgeSetList.end())
+	for(; setIt != m_usedSmudgeSetList.end(); ++setIt)
 	{
 		SmudgeSet* set=*setIt;
-		SmudgeQueue::iterator smudgeIt=set->getUsedSmudgeList().begin();
+		SmudgeDeque::iterator smudgeIt=set->getUsedSmudgeList().begin();
 
 		for (; smudgeIt != set->getUsedSmudgeList().end(); ++smudgeIt)
 		{
@@ -422,8 +422,6 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 			count++;	//increment visible smudge count.
 		}
-
-		++setIt;	//advance to next node.
 	}
 
 	m_smudgeCountLastFrame = count;
@@ -469,7 +467,7 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 	Int smudgesRemaining=count;
 	setIt=m_usedSmudgeSetList.begin();	//first smudge set that needs rendering.
-	SmudgeQueue::iterator remainingSmudge = (*setIt)->getUsedSmudgeList().begin();	//first smudge that needs rendering.
+	SmudgeDeque::iterator smudgeIt = (*setIt)->getUsedSmudgeList().begin();	//first smudge that needs rendering.
 
 	while (smudgesRemaining)	//keep drawing smudges until we run out.
 	{
@@ -488,14 +486,13 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 
 			while (setIt != m_usedSmudgeSetList.end())
 			{
-				SmudgeQueue& smudgeList = (*setIt)->getUsedSmudgeList();
+				SmudgeDeque& smudgeList = (*setIt)->getUsedSmudgeList();
 
-				while (remainingSmudge != smudgeList.end())
+				for(; smudgeIt != smudgeList.end(); ++smudgeIt)
 				{
-					Smudge* smudge = *remainingSmudge;
+					Smudge* smudge = *smudgeIt;
 					if (!smudge->m_draw)
 					{
-						++remainingSmudge;
 						continue;
 					}
 
@@ -528,13 +525,12 @@ void W3DSmudgeManager::render(RenderInfoClass &rinfo)
 					}
 
 					smudgesInRenderBatch++;
-					++remainingSmudge;
 				}
 
 				++setIt;	//advance to next node.
 
 				if (setIt != m_usedSmudgeSetList.end())	//start next batch at beginning of set.
-					remainingSmudge = (*setIt)->getUsedSmudgeList().begin();
+					smudgeIt = (*setIt)->getUsedSmudgeList().begin();
 			}
 		}
 

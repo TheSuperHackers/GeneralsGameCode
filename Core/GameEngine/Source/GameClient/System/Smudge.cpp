@@ -31,7 +31,7 @@
 #include "GameClient/Smudge.h"
 
 
-SmudgeQueue SmudgeSet::m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
+SmudgeDeque SmudgeSet::m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
 
 SmudgeManager::SmudgeManager()
 {
@@ -76,7 +76,7 @@ void SmudgeManager::reset()
 
 void SmudgeManager::resetDraw()
 {
-	for (SmudgeSetQueue::iterator it = m_usedSmudgeSetList.begin(); it != m_usedSmudgeSetList.end(); ++it) {
+	for (SmudgeSetDeque::iterator it = m_usedSmudgeSetList.begin(); it != m_usedSmudgeSetList.end(); ++it) {
 		SmudgeSet* smudgeSet = *it;
 		smudgeSet->resetDraw();
 	}
@@ -98,7 +98,7 @@ SmudgeSet *SmudgeManager::addSmudgeSet()
 
 Smudge *SmudgeManager::findSmudge(Smudge::Identifier identifier)
 {
-	for (SmudgeSetQueue::iterator it = m_usedSmudgeSetList.begin(); it != m_usedSmudgeSetList.end(); ++it) {
+	for (SmudgeSetDeque::iterator it = m_usedSmudgeSetList.begin(); it != m_usedSmudgeSetList.end(); ++it) {
 		SmudgeSet* smudgeSet = *it;
 		if (Smudge* smudge = smudgeSet->findSmudge(identifier)) {
 			return smudge;
@@ -122,7 +122,7 @@ void SmudgeSet::reset()
 	while (!m_usedSmudgeList.empty()) {
 		Smudge* smudge = m_usedSmudgeList.front();
 		m_usedSmudgeList.pop_front();
-		m_freeSmudgeList.push_front(smudge);
+		m_freeSmudgeList.push_front(smudge);	// add to free list
 	}
 
 	m_usedSmudgeMap.clear();
@@ -130,7 +130,7 @@ void SmudgeSet::reset()
 
 void SmudgeSet::resetDraw()
 {
-	for (SmudgeQueue::iterator it = m_usedSmudgeList.begin(); it != m_usedSmudgeList.end(); ++it) {
+	for (SmudgeDeque::iterator it = m_usedSmudgeList.begin(); it != m_usedSmudgeList.end(); ++it) {
 		Smudge* smudge = *it;
 		smudge->m_draw = false;
 	}

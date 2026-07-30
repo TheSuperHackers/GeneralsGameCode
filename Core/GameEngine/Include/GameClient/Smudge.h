@@ -48,7 +48,7 @@ struct Smudge
 	smudgeVertex m_verts[5];	//5 vertices of this smudge (in counter-clockwise order, starting at top-left, ending in center.)
 };
 
-typedef std::deque<Smudge*> SmudgeQueue;
+typedef std::deque<Smudge*> SmudgeDeque;
 
 #ifdef USING_STLPORT
 namespace std
@@ -75,18 +75,18 @@ struct SmudgeSet
 	Smudge *addSmudgeToSet(Smudge::Identifier identifier); ///< add and return a smudge to the set with the given identifier
 	Smudge *findSmudge(Smudge::Identifier identifier); ///< find the smudge that belongs to this identifier
 
-	SmudgeQueue& getUsedSmudgeList() { return m_usedSmudgeList; }
+	SmudgeDeque& getUsedSmudgeList() { return m_usedSmudgeList; }
 	UnsignedInt getUsedSmudgeCount() const { return m_usedSmudgeList.size(); }	///<active smudges that need rendering.
 
 private:
 	typedef std::hash_map<Smudge::Identifier, Smudge *> SmudgeIdToPtrMap;
 
-	SmudgeQueue m_usedSmudgeList;	///<list of smudges in this set.
+	SmudgeDeque m_usedSmudgeList;	///<list of smudges in this set.
 	SmudgeIdToPtrMap m_usedSmudgeMap;
-	static SmudgeQueue m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
+	static SmudgeDeque m_freeSmudgeList;	///<list of unused smudges for use by SmudgeSets.
 };
 
-typedef std::deque<SmudgeSet*> SmudgeSetQueue;
+typedef std::deque<SmudgeSet*> SmudgeSetDeque;
 
 class SmudgeManager
 {
@@ -112,8 +112,8 @@ protected:
 
 	HardwareSmudgeSupport m_hardwareSupportStatus;///< flag whether we verified that the effect is supported by hardware.
 
-	SmudgeSetQueue m_usedSmudgeSetList;	///<used SmudgeSets
-	SmudgeSetQueue m_freeSmudgeSetList;	///<unused SmudgeSets ready for re-use.
+	SmudgeSetDeque m_usedSmudgeSetList;	///<used SmudgeSets
+	SmudgeSetDeque m_freeSmudgeSetList;	///<unused SmudgeSets ready for re-use.
 	Int m_smudgeCountLastFrame;	//number of total smudges in manager last frame.
 };
 
