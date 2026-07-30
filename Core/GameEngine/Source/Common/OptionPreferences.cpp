@@ -451,30 +451,6 @@ Int OptionPreferences::getStaticGameDetail()
 	return TheGameLODManager->getStaticGameLODIndex(it->second);
 }
 
-Short OptionPreferences::getFirewallPortAllocationDelta()
-{
-	OptionPreferences::const_iterator it = find("FirewallPortAllocationDelta");
-	if (it == end()) {
-		return TheGlobalData->m_firewallPortAllocationDelta;
-	}
-
-	Short delta = atoi(it->second.str());
-	return delta;
-}
-
-UnsignedShort OptionPreferences::getFirewallPortOverride()
-{
-	OptionPreferences::const_iterator it = find("FirewallPortOverride");
-	if (it == end()) {
-		return TheGlobalData->m_firewallPortOverride;
-	}
-
-	Int portOverride = atoi(it->second.str());
-	if (portOverride < 0 || portOverride > 65535)
-		portOverride = 0;
-	return portOverride;
-}
-
 AsciiString OptionPreferences::getPreferred3DProvider()
 {
 	OptionPreferences::const_iterator it = find("3DAudioProvider");

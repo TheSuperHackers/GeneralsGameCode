@@ -84,8 +84,7 @@ public:
 	Bool getScreenEdgeScrollEnabledInWindowedApp() const;
 	Bool getScreenEdgeScrollEnabledInFullscreenApp() const;
 	ScreenEdgeScrollMode getScreenEdgeScrollMode() const;
-	Short getFirewallPortAllocationDelta();
-	UnsignedShort getFirewallPortOverride();
+
 	Bool usesSystemMapDir();
 	AsciiString getPreferred3DProvider();
 	AsciiString getSpeakerType();
