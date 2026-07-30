@@ -983,7 +983,8 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 	}
 #endif
 
-	// Inverse scale len by (1 + sqrt(2)) / 2 to adjust to the average of the former min/max movement speed.
+	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns scaled dot product instead of +-sqrtf(vx*vx+vy*vy)
+	// Inverse scales len by (1 + sqrt(2)) / 2 to adjust to the average of the former min/max movement speed.
 	// The inverse looks intuitively wrong, but it is correct, because the value returned by this function is
 	// used to determine the additional velocity needed to reach the target speed.
 	constexpr const Real DiagonalCompensation = 1.0f / 1.20710678f;
@@ -1027,7 +1028,8 @@ Real PhysicsBehavior::getForwardSpeed3D() const
 	}
 #endif
 
-	// Inverse scale len by (1 + sqrt(3)) / 2 to adjust to the average of the former min/max movement speed.
+	// TheSuperHackers @bugfix xezon 30/07/2026 Now returns scaled dot product instead of +-sqrtf(vx*vx+vy*vy+vz*vz)
+	// Inverse scales len by (1 + sqrt(3)) / 2 to adjust to the average of the former min/max movement speed.
 	// The inverse looks intuitively wrong, but it is correct, because the value returned by this function is
 	// used to determine the additional velocity needed to reach the target speed.
 	constexpr const Real DiagonalCompensation = 1.0f / 1.36602540f;
