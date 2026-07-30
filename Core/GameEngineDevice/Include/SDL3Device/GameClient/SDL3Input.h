@@ -55,6 +55,7 @@ public:
 	virtual void setVisibility(Bool visible) override;
 	virtual void loseFocus() override;
 	virtual void regainFocus() override;
+	virtual void syncPositionToSystemCursor() override;
 
 	// SDL3-specific methods
 	void addSDLEvent(SDL_Event* event);
@@ -74,7 +75,6 @@ private:
 	SDL_Window* m_Window;
 	Bool m_IsCaptured;
 	Bool m_IsVisible;
-	Bool m_LostFocus;
 
 	Int m_directionFrame;
 
