@@ -49,6 +49,33 @@ class RTS3DInterfaceScene;
 class TextureClass;
 
 
+class QuantizedUnsignedShort
+{
+public:
+	QuantizedUnsignedShort() : m_value(2083) {}
+	explicit QuantizedUnsignedShort(UnsignedShort val) : m_value(val) {}
+
+	static QuantizedUnsignedShort fromSeconds(Real seconds)
+	{
+		Int64 ticks = (Int64)(seconds * 62500.0f + 0.5f);
+		if (ticks >= 65535) return QuantizedUnsignedShort(65535);
+		if (ticks <= 0) return QuantizedUnsignedShort(1);
+		return QuantizedUnsignedShort((UnsignedShort)ticks);
+	}
+
+	UnsignedShort getValue() const { return m_value; }
+	void setValue(UnsignedShort val) { m_value = val; }
+
+	Real toFPS() const { return 62500.0f / (Real)m_value; }
+	Real toSeconds() const { return (Real)m_value / 62500.0f; }
+
+	operator UnsignedShort() const { return m_value; }
+
+private:
+	UnsignedShort m_value;
+};
+
+
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
   * all interaction with the screen and updating the display
@@ -181,7 +208,7 @@ protected:
 	Real m_currentFPS;		///<current fps value.
 
 	enum { FPS_HISTORY_SIZE = 4096 }; // degrades gracefully beyond this size
-	UnsignedShort m_durationHistory[FPS_HISTORY_SIZE];
+	QuantizedUnsignedShort m_durationHistory[FPS_HISTORY_SIZE];
 	Int  m_historyOffset;
 	Int  m_historyCount;
 	Int64 m_lastUpdateTime64;
