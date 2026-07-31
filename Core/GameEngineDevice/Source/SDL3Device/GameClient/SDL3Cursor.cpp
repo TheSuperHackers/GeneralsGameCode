@@ -66,7 +66,7 @@ void SDL3CursorManager::initResources(Mouse* mouse)
 
 	for (Int cursor = Mouse::FIRST_CURSOR; cursor < Mouse::NUM_MOUSE_CURSORS; cursor++)
 	{
-		for (Int direction = 0; direction < mouse->m_cursorInfo[cursor].numDirections; direction++)
+		for (Int direction = 0; direction < mouse->m_cursorInfo[cursor].numDirections && direction < MAX_2D_CURSOR_DIRECTIONS; direction++)
 		{
 			if (!m_cursorResources[cursor][direction] && !mouse->m_cursorInfo[cursor].textureName.isEmpty())
 			{
