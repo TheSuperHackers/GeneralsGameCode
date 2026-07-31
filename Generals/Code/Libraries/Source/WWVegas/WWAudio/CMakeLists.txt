@@ -5,5 +5,4 @@ target_link_libraries(g_wwaudio PRIVATE
     corei_wwaudio
     g_wwcommon
     gi_always
-    gi_ww3d2_include
 )
