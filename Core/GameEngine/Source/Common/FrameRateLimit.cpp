@@ -113,7 +113,7 @@ UnsignedInt RenderFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange ch
 
 UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value, UnsignedInt snapValue)
 {
-	UnsignedInt nextValue = s_fpsValues[ARRAY_SIZE(s_fpsValues) - 1]; // Defaults to Uncapped
+	UnsignedInt nextValue = RenderFpsPreset::UncappedFpsValue;
 
 	// Check if snapValue (e.g. current render FPS) is the next closest candidate
 	if (snapValue > value && snapValue < nextValue)

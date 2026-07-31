@@ -111,7 +111,8 @@ Bool FramePacer::isActualFramesPerSecondLimitEnabled() const
 
 Int FramePacer::getActualFramesPerSecondLimit() const
 {
-	return isActualFramesPerSecondLimitEnabled() ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
+	const Int limit = isActualFramesPerSecondLimitEnabled() ? getFramesPerSecondLimit() : RenderFpsPreset::UncappedFpsValue;
+	return (TheNetwork != nullptr) ? std::max(limit, static_cast<Int>(LOGICFRAMES_PER_SECOND)) : limit;
 }
 
 Real FramePacer::getUpdateTime()  const
