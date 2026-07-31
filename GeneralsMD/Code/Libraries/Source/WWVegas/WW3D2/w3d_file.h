@@ -2270,4 +2270,4 @@ struct W3dShdSubMeshHeaderStruct
 /*
 ** Include the obsolete structures and chunk ID's
 */
-#include "w3d_obsolete.h"
+#include "WW3D2/w3d_obsolete.h"

@@ -38,9 +38,9 @@
 
 #include "WWLib/always.h"
 #include "WWMath/vector3.h"
-#include "layer.h"
-#include "w3derr.h"
-#include "robjlist.h"
+#include "WW3D2/layer.h"
+#include "WW3D2/w3derr.h"
+#include "WW3D2/robjlist.h"
 
 class		SceneClass;
 class		CameraClass;

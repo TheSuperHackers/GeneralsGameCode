@@ -39,10 +39,10 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "meshmdl.h"
+#include "WW3D2/meshmdl.h"
 #include "dx8list.h"
 #include "sortingrenderer.h"
-#include "mesh.h"
+#include "WW3D2/mesh.h"
 #include "dx8wrapper.h"
 
 class DX8PolygonRendererClass;

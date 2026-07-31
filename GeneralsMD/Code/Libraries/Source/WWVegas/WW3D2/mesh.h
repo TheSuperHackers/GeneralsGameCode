@@ -38,9 +38,9 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "rendobj.h"
+#include "WW3D2/rendobj.h"
 #include "WWLib/bittype.h"
-#include "w3derr.h"
+#include "WW3D2/w3derr.h"
 #include "lightenvironment.h"	//added for 'Generals'
 
 class MeshBuilderClass;

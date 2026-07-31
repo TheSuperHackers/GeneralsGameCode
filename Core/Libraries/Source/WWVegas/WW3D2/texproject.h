@@ -44,7 +44,7 @@
 #include "WWMath/matrix4.h"
 #include "WWMath/obbox.h"
 #include "matpass.h"
-#include "matrixmapper.h"
+#include "WW3D2/matrixmapper.h"
 #include "WWMath/cullsys.h"
 #include "WWLib/multilist.h"
 #include "projector.h"

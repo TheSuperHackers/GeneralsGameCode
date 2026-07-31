@@ -36,12 +36,12 @@
 
 #pragma once
 
-#include "rendobj.h"
+#include "WW3D2/rendobj.h"
 #include "WWLib/RANDOM.h"
 #include "part_buf.h"
 #include "WWMath/quat.h"
 #include "w3d_file.h"
-#include "w3derr.h"
+#include "WW3D2/w3derr.h"
 #include "WWMath/v3_rnd.h"
 
 // Forward declarations

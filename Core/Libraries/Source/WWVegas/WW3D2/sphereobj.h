@@ -38,14 +38,14 @@
 
 #include "WWLib/always.h"
 #include "rendobj.h"
-#include "w3d_file.h"
-#include "shader.h"
+#include "WW3D2/w3d_file.h"
+#include "WW3D2/shader.h"
 #include "proto.h"
 #include "WWMath/obbox.h"
 #include	"WWMath/Vector3i.h"
 #include	"WWMath/quat.h"
 #include "prim_anim.h"
-#include "meshgeometry.h"
+#include "WW3D2/meshgeometry.h"
 
 class TextureClass;
 

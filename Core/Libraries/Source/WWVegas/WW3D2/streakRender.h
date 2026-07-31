@@ -39,7 +39,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "shader.h"
+#include "WW3D2/shader.h"
 #include "texture.h"
 #include "WWMath/matrix3d.h"
 #include "WWMath/vector2.h"

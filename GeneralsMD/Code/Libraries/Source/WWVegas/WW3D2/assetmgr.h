@@ -42,7 +42,7 @@
 #include "htreemgr.h"
 #include "hanimmgr.h"
 #include "WWLib/SLIST.h"
-#include "texture.h"
+#include "WW3D2/texture.h"
 #include "WWLib/hashtemplate.h"
 #include "WWLib/simplevec.h"
 

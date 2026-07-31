@@ -40,7 +40,7 @@
 #include "rendobj.h"
 #include "WWMath/vector3.h"
 #include "WWMath/vector4.h"
-#include "shader.h"
+#include "WW3D2/shader.h"
 
 class	VertexMaterialClass;
 class RenderInfoClass;

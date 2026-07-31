@@ -46,7 +46,7 @@
 #include "WWLib/simplevec.h"
 #include "WWLib/bittype.h"
 #include "WWMath/plane.h"
-#include "meshgeometry.h"
+#include "WW3D2/meshgeometry.h"
 
 
 class CameraClass;

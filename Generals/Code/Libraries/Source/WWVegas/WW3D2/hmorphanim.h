@@ -39,7 +39,7 @@
 #pragma once
 
 #include "WWLib/always.h"
-#include "hanim.h"
+#include "WW3D2/hanim.h"
 #include "WWLib/simplevec.h"
 
 class TimeCodedMorphKeysClass;
