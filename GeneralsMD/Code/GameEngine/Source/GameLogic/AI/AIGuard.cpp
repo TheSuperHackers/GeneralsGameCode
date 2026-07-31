@@ -454,7 +454,53 @@ StateReturnType AIGuardInnerState::update()
 			m_exitConditions.m_center = *targetToGuard->getPosition();
 		}
 
+		// TheSuperHackers @bugfix CookieLandProjects 31/07/2026 - This keeps deployed units from moving/undeploying immediately
+    // after killing a target if there are still more enemies available in the guard area.
+		// The original code would delete the attack state and create a new one, which would cause the unit to undeploy and move to the next target.
+#if RETAIL_COMPATIBLE_CRC
 		return m_attackState->update();
+#else
+		StateReturnType ret = m_attackState->update();
+
+		if (ret == STATE_CONTINUE || IS_STATE_SLEEP(ret))
+			return ret;
+
+		// Attack sub-state finished (success or failure).
+		// Clean it up.
+		m_attackState->onExit(EXIT_NORMAL);
+		deleteInstance(m_attackState);
+		m_attackState = nullptr;
+
+		// If attack finished successfully (target died), check instantly for another enemy in guard range.
+		if (ret == STATE_SUCCESS)
+		{
+			// If we find another enemy in guard range. Recreate the attack state and continue attacking.
+			if (getGuardMachine()->lookForInnerTarget())
+			{
+				Object* newTargetToGuard = getGuardMachine()->findTargetToGuardByID();
+				Coord3D pos = newTargetToGuard ? *newTargetToGuard->getPosition() : *getGuardMachine()->getPositionToGuard();
+				Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
+				if (nemesis)
+				{
+					m_exitConditions.m_center = pos;
+					m_exitConditions.m_radiusSqr = sqr(AIGuardMachine::getStdGuardRange(getMachineOwner()));
+					m_exitConditions.m_conditionsToConsider = (ExitConditions::ATTACK_ExitIfOutsideRadius |
+																								ExitConditions::ATTACK_ExitIfNoUnitFound);
+
+					m_attackState = newInstance(AIAttackState)(getMachine(), false, true, false, &m_exitConditions);
+					m_attackState->getMachine()->setGoalObject(nemesis);
+
+					StateReturnType enterRet = m_attackState->onEnter();
+					if (enterRet == STATE_CONTINUE)
+						return STATE_CONTINUE;
+					return enterRet;
+				}
+			}
+		}
+
+		// No new target found, state the attack states result (success/failure).
+		return ret;
+#endif
 	}
 	else if (m_enterState)
 	{
@@ -656,6 +702,27 @@ StateReturnType AIGuardReturnState::onEnter()
 	{
 		area->getCenterPoint(&m_goalPosition);
 	}
+
+  // TheSuperHackers @bugfix CookieLandProjects 31/07/2026 - This keeps deployed units from moving/undeploying even though we are already
+  // at the guard position.
+#if !RETAIL_COMPATIBLE_CRC
+	Object* owner = getMachineOwner();
+	if (owner && owner->getPosition())
+	{
+		Coord3D myPos = *owner->getPosition();
+		Coord3D delta;
+		delta.x = myPos.x - m_goalPosition.x;
+		delta.y = myPos.y - m_goalPosition.y;
+		delta.z = myPos.z - m_goalPosition.z;
+		Real closeSqr = sqr(CLOSE_ENOUGH);
+		if (delta.lengthSqr() <= closeSqr)
+		{
+			// Already close enough so dont move.
+			return STATE_SUCCESS;
+		}
+	}
+#endif
+
 	AIUpdateInterface *ai = getMachineOwner()->getAIUpdateInterface();
 	if (ai && ai->isDoingGroundMovement())
 	{
