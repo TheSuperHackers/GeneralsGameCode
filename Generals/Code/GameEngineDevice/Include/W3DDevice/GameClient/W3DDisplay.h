@@ -48,12 +48,11 @@ class RTS2DScene;
 class RTS3DInterfaceScene;
 class TextureClass;
 
+constexpr const Real TICKS_PER_SECOND = 62500.0f;
 
 class QuantizedUnsignedShort
 {
 public:
-	static constexpr Real TICKS_PER_SECOND = 62500.0f;
-
 	QuantizedUnsignedShort() : m_value(2083) {}
 	explicit QuantizedUnsignedShort(UnsignedShort val) : m_value(val) {}
 

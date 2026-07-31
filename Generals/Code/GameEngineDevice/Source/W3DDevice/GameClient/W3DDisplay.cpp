@@ -988,7 +988,7 @@ Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 {
 	UnsignedInt unitsSum = 0;
 	Int samples = 0;
-	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * QuantizedUnsignedShort::TICKS_PER_SECOND);
+	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * TICKS_PER_SECOND);
 
 	for (Int i = 0; i < m_historyCount; ++i)
 	{
@@ -1002,14 +1002,14 @@ Real W3DDisplay::calculateAverageFPS(Real windowSeconds)
 		}
 	}
 
-	return (unitsSum > 0) ? ((Real)samples * QuantizedUnsignedShort::TICKS_PER_SECOND / (Real)unitsSum) : m_currentFPS;
+	return (unitsSum > 0) ? ((Real)samples * TICKS_PER_SECOND / (Real)unitsSum) : m_currentFPS;
 }
 
 Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 {
 	UnsignedInt unitsSum = 0;
 	Int sampleCount = 0;
-	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * QuantizedUnsignedShort::TICKS_PER_SECOND);
+	const UnsignedInt windowUnits = (UnsignedInt)(windowSeconds * TICKS_PER_SECOND);
 	QuantizedUnsignedShort sortBuffer[FPS_HISTORY_SIZE];
 
 	Int i;
@@ -1040,7 +1040,7 @@ Real W3DDisplay::calculateLow1PercentFPS(Real windowSeconds)
 		durationUnitsSum += sortBuffer[i];
 	}
 
-	return (durationUnitsSum > 0) ? ((Real)bottomSampleCount * QuantizedUnsignedShort::TICKS_PER_SECOND / (Real)durationUnitsSum) : m_currentFPS;
+	return (durationUnitsSum > 0) ? ((Real)bottomSampleCount * TICKS_PER_SECOND / (Real)durationUnitsSum) : m_currentFPS;
 }
 
 void W3DDisplay::updatePerformanceMetrics()
