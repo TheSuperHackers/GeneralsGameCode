@@ -701,8 +701,10 @@ SDL3InputManager::SDL3InputManager(SDL_Window* window)
 	, m_cursorRemainderY(0.0f)
 	, m_isQuitting(false)
 {
-	memset(m_mouseEvents, 0, sizeof(m_mouseEvents));
-	memset(m_keyEvents, 0, sizeof(m_keyEvents));
+	for (int i = 0; i < MAX_MOUSE_EVENTS; ++i)
+		m_mouseEvents[i].type = SDL_EVENT_FIRST;
+	for (int i = 0; i < MAX_KEY_EVENTS; ++i)
+		m_keyEvents[i].type = SDL_EVENT_FIRST;
 	TheSDL3InputManager = this;
 
 	openFirstGamepad();
@@ -826,7 +828,7 @@ void SDL3InputManager::update()
 
 Bool SDL3InputManager::getNextMouseEvent(SDL_Event& outEvent)
 {
-	if (m_mouseEvents[m_mouseNextGet].type == SDL_EVENT_FIRST)
+	if (m_mouseNextGet == m_mouseNextFree)
 		return false;
 
 	SDL_Event* event = &m_mouseEvents[m_mouseNextGet];
@@ -839,7 +841,7 @@ Bool SDL3InputManager::getNextMouseEvent(SDL_Event& outEvent)
 
 Bool SDL3InputManager::getNextKeyboardEvent(SDL_Event& outEvent)
 {
-	if (m_keyEvents[m_keyNextGet].type == SDL_EVENT_FIRST)
+	if (m_keyNextGet == m_keyNextFree)
 		return false;
 
 	SDL_Event* event = &m_keyEvents[m_keyNextGet];
@@ -1188,7 +1190,7 @@ void SDL3InputManager::processGamepadInput()
 		SDL_GAMEPAD_BUTTON_NORTH,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_NORTH],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_NORTH),
-		[this](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_STOP); }
+		[this](bool d) { if (d && TheMessageStream && TheMessageStream->isReadyForMessages()) TheMessageStream->appendMessage(GameMessage::MSG_META_STOP); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_LEFT_SHOULDER,
@@ -1242,12 +1244,12 @@ void SDL3InputManager::processGamepadInput()
 		SDL_GAMEPAD_BUTTON_LEFT_STICK,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_LEFT_STICK],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_LEFT_STICK),
-		[this](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER); }
+		[this](bool d) { if (d && TheMessageStream && TheMessageStream->isReadyForMessages()) TheMessageStream->appendMessage(GameMessage::MSG_META_SELECT_NEXT_IDLE_WORKER); }
 	);
 	handleGamepadButton(
 		SDL_GAMEPAD_BUTTON_RIGHT_STICK,
 		m_state.buttonState[SDL_GAMEPAD_BUTTON_RIGHT_STICK],
 		SDL_GetGamepadButton(m_gamepad, SDL_GAMEPAD_BUTTON_RIGHT_STICK),
-		[this](bool d) { if (d) TheMessageStream->appendMessage(GameMessage::MSG_META_VIEW_COMMAND_CENTER); }
+		[this](bool d) { if (d && TheMessageStream && TheMessageStream->isReadyForMessages()) TheMessageStream->appendMessage(GameMessage::MSG_META_VIEW_COMMAND_CENTER); }
 	);
 }
