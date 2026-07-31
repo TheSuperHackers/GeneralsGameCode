@@ -52,12 +52,14 @@ class TextureClass;
 class QuantizedUnsignedShort
 {
 public:
+	static constexpr Real TICKS_PER_SECOND = 62500.0f;
+
 	QuantizedUnsignedShort() : m_value(2083) {}
 	explicit QuantizedUnsignedShort(UnsignedShort val) : m_value(val) {}
 
 	static QuantizedUnsignedShort fromSeconds(Real seconds)
 	{
-		Int64 ticks = (Int64)(seconds * 62500.0f + 0.5f);
+		Int64 ticks = (Int64)(seconds * TICKS_PER_SECOND + 0.5f);
 		if (ticks >= 65535) return QuantizedUnsignedShort(65535);
 		if (ticks <= 0) return QuantizedUnsignedShort(1);
 		return QuantizedUnsignedShort((UnsignedShort)ticks);
@@ -66,8 +68,8 @@ public:
 	UnsignedShort getValue() const { return m_value; }
 	void setValue(UnsignedShort val) { m_value = val; }
 
-	Real toFPS() const { return 62500.0f / (Real)m_value; }
-	Real toSeconds() const { return (Real)m_value / 62500.0f; }
+	Real toFPS() const { return TICKS_PER_SECOND / (Real)m_value; }
+	Real toSeconds() const { return (Real)m_value / TICKS_PER_SECOND; }
 
 	operator UnsignedShort() const { return m_value; }
 
