@@ -653,7 +653,7 @@ protected:
 private:
 
 	const Locomotor* getLocomotor() const;
-	void applySubFrameExtrapolation(const Coord3D* velocity);
+	void applySubFrameExtrapolation();
 
 	// note, these are lazily allocated!
 	TintEnvelope*		m_selectionFlashEnvelope;	///< used for selection flash, works WITH m_colorTintEnvelope
@@ -734,15 +734,16 @@ private:
 	Bool m_instanceIsIdentity;	///< If true, instance matrix can be skipped
 	Bool m_drawableFullyObscuredByShroud;	///<drawable is hidden by shroud/fog
 	Bool m_useExtrapolation;				///< True if currently gliding
-	const Coord3D* m_logicVelocityPtr;		///< Cached pointer to logic velocity for smoothing
+	Matrix3D m_prevLogicMtx;				///< Matrix recorded at logic frame N-1
+	Matrix3D m_currLogicMtx;				///< Matrix recorded at logic frame N
+	UnsignedInt m_lastSampledLogicFrame;	///< Last sampled logic frame tick
+	Bool m_hasInterpolationData;			///< True if valid prev & curr matrices exist
   Bool m_ambientSoundEnabled;
   Bool m_ambientSoundEnabledFromScript;
 
   Bool m_receivesDynamicLights;
 
-public:
-	void setLogicVelocity(const Coord3D* velocity);
-	static void clearLogicVelocity(Object* obj);
+private:
 
 #ifdef DIRTY_CONDITION_FLAGS
 	Bool m_isModelDirty;				///< if true, must call replaceModelConditionState() before drawing or accessing drawmodule info

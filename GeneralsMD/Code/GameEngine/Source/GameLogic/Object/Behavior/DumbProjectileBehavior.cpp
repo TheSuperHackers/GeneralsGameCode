@@ -121,7 +121,6 @@ DumbProjectileBehavior::DumbProjectileBehavior( Thing *thing, const ModuleData* 
 	m_extraBonusFlags = 0;
 
   m_hasDetonated = FALSE;
-  m_logicStepVelocity.zero();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -396,8 +395,6 @@ void DumbProjectileBehavior::projectileFireAtObjectOrPosition( const Object *vic
 		return;
 	}
 	m_currentFlightPathStep = 0;// We are at the first point, because the launching put us there
-	if (projectile->getDrawable())
-		projectile->getDrawable()->setLogicVelocity(&m_logicStepVelocity);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -575,12 +572,6 @@ void DumbProjectileBehavior::detonate()
 
 }
 
-void DumbProjectileBehavior::onDelete()
-{
-	Drawable::clearLogicVelocity(getObject());
-	UpdateModule::onDelete();
-}
-
 //-------------------------------------------------------------------------------------------------
 /**
  * Simulate one frame of a missile's behavior
@@ -588,7 +579,6 @@ void DumbProjectileBehavior::onDelete()
 UpdateSleepTime DumbProjectileBehavior::update()
 {
 	const DumbProjectileBehaviorModuleData* d = getDumbProjectileBehaviorModuleData();
-	m_logicStepVelocity.zero();
 
 	if (m_lifespanFrame != 0 && TheGameLogic->getFrame() >= m_lifespanFrame)
 	{
@@ -723,16 +713,6 @@ UpdateSleepTime DumbProjectileBehavior::update()
 	}
 
 	++m_currentFlightPathStep;
-
-	if (m_currentFlightPathStep < (Int)m_flightPath.size())
-	{
-		m_logicStepVelocity = m_flightPath[m_currentFlightPathStep];
-		m_logicStepVelocity.sub( &flightStep ); // flightStep is currentPos
-	}
-	else
-	{
-		m_logicStepVelocity.zero();
-	}
 
 	return UPDATE_SLEEP_NONE;//This no longer flys with physics, so it needs to not sleep
 }

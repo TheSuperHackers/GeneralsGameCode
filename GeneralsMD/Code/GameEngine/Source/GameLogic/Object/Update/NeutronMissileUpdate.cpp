@@ -125,7 +125,6 @@ NeutronMissileUpdate::NeutronMissileUpdate( Thing *thing, const ModuleData* modu
 	m_frameAtLaunch = 0;
 
 	m_exhaustSysTmpl = nullptr;
-	m_logicStepVelocity.zero();
 
 }
 
@@ -138,8 +137,6 @@ NeutronMissileUpdate::~NeutronMissileUpdate()
 //-------------------------------------------------------------------------------------------------
 void NeutronMissileUpdate::onDelete()
 {
-	Drawable::clearLogicVelocity(getObject());
-	UpdateModule::onDelete();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -246,8 +243,6 @@ void NeutronMissileUpdate::doLaunch()
 		getObject()->getExperienceTracker()->setExperienceSink( m_launcherID );
 
 		m_isLaunched = true;
-		if (getObject()->getDrawable())
-			getObject()->getDrawable()->setLogicVelocity(&m_logicStepVelocity);
 
 		if (getNeutronMissileUpdateModuleData()->m_targetFromDirectlyAbove)
 			m_reachedIntermediatePos = false;
@@ -266,8 +261,6 @@ void NeutronMissileUpdate::doLaunch()
 	pos.z += m_vel.z;
 
 	getObject()->setPosition( &pos );
-
-	m_logicStepVelocity = m_vel;
 
 	FXList::doFXObj(getNeutronMissileUpdateModuleData()->m_ignitionFX, getObject());
 
@@ -430,7 +423,6 @@ void NeutronMissileUpdate::doAttack()
 	getObject()->setTransformMatrix( &mx );
 	getObject()->setPosition( &pos );
 
-	m_logicStepVelocity = m_vel;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -534,12 +526,6 @@ UpdateSleepTime NeutronMissileUpdate::update()
 		normal.z = -1.0f;
 		getObject()->onCollide(nullptr, getObject()->getPosition(), &normal);
 	}
-
-	if (m_state == DEAD)
-	{
-		m_logicStepVelocity.zero();
-	}
-
 	return UPDATE_SLEEP_NONE;
 }
 
