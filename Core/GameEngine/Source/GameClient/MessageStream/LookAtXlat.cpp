@@ -86,18 +86,39 @@ static Mouse::MouseCursor prevCursor = Mouse::ARROW;
 //-----------------------------------------------------------------------------
 void LookAtTranslator::setScrolling( ScrollType scrollType )
 {
-	if (!m_isScrolling && TheStatsCollector != nullptr)
-		TheStatsCollector->startScrollTime();
+	if (TheInGameUI != nullptr && !TheInGameUI->getInputEnabled())
+		return;
+
+	if (!m_isScrolling)
+	{
+		if (TheMouse != nullptr)
+			prevCursor = TheMouse->getMouseCursor();
+		if (TheStatsCollector != nullptr)
+			TheStatsCollector->startScrollTime();
+	}
 
 	m_isScrolling = true;
+	if (TheInGameUI != nullptr)
+		TheInGameUI->setScrolling( TRUE );
+	if (TheTacticalView != nullptr)
+		TheTacticalView->setMouseLock( TRUE );
 	m_scrollType = scrollType;
 }
 
 //-----------------------------------------------------------------------------
 void LookAtTranslator::stopScrolling()
 {
-	if (m_isScrolling && TheStatsCollector != nullptr)
-		TheStatsCollector->endScrollTime();
+	if (m_isScrolling)
+	{
+		if (TheStatsCollector != nullptr)
+			TheStatsCollector->endScrollTime();
+		if (TheInGameUI != nullptr)
+			TheInGameUI->setScrolling( FALSE );
+		if (TheTacticalView != nullptr)
+			TheTacticalView->setMouseLock( FALSE );
+		if (TheMouse != nullptr)
+			TheMouse->setCursor( prevCursor );
+	}
 
 	m_isScrolling = false;
 	m_scrollType = SCROLL_NONE;
