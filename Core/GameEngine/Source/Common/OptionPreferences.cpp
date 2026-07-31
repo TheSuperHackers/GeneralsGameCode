@@ -152,34 +152,6 @@ void OptionPreferences::setLANIPAddress(UnsignedInt IP)
 	(*this)["IPAddress"] = tmp;
 }
 
-UnsignedInt OptionPreferences::getOnlineIPAddress()
-{
-	AsciiString selectedIP = (*this)["GameSpyIPAddress"];
-	IPEnumeration IPs;
-	EnumeratedIP *IPlist = IPs.getAddresses();
-	while (IPlist)
-	{
-		if (selectedIP.compareNoCase(IPlist->getIPstring()) == 0)
-		{
-			return IPlist->getIP();
-		}
-		IPlist = IPlist->getNext();
-	}
-	return TheGlobalData->m_defaultIP;
-}
-
-void OptionPreferences::setOnlineIPAddress(AsciiString IP)
-{
-	(*this)["GameSpyIPAddress"] = IP;
-}
-
-void OptionPreferences::setOnlineIPAddress(UnsignedInt IP)
-{
-	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
-	(*this)["GameSpyIPAddress"] = tmp;
-}
-
 Bool OptionPreferences::getArchiveReplaysEnabled() const
 {
 	OptionPreferences::const_iterator it = find("ArchiveReplays");

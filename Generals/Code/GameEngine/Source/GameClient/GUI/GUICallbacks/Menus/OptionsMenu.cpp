@@ -471,16 +471,6 @@ static void saveOptions()
 		}
 	}
 
-	if (comboBoxOnlineIP && comboBoxOnlineIP->winGetEnabled())
-	{
-		UnsignedInt ip;
-		GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
-		if (index>=0)
-		{
-			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
-			pref->setOnlineIPAddress(ip);
-		}
-	}
 
 	//-------------------------------------------------------------------------------------------------
 	// Firewall Port Override
@@ -1064,42 +1054,17 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		}
 	}
 
-	// And now the GameSpy one
+#if ENABLE_GUI_HACKS
+	// TheSuperHackers @tweak 31/07/2026 Manual Online IP selection was obsoleted because
+	// match sockets automatically use the system's default network routing table interface.
+	// Hide the obsoleted UI elements accordingly.
 	if (comboBoxOnlineIP)
-	{
-		UnsignedInt selectedIP = pref->getOnlineIPAddress();
-		UnicodeString str;
-		IPEnumeration IPs;
-		EnumeratedIP *IPlist = IPs.getAddresses();
-		Int index;
-		Int selectedIndex = -1;
-		Int count = 0;
-		GadgetComboBoxReset(comboBoxOnlineIP);
-		while (IPlist)
-		{
-			count++;
-			str.translate(IPlist->getIPstring());
-			index = GadgetComboBoxAddEntry(comboBoxOnlineIP, str, color);
-			GadgetComboBoxSetItemData(comboBoxOnlineIP, index, (void *)(IPlist->getIP()));
-			if (selectedIP == IPlist->getIP())
-			{
-				selectedIndex = index;
-			}
-			IPlist = IPlist->getNext();
-		}
-		if (selectedIndex >= 0)
-		{
-			GadgetComboBoxSetSelectedPos(comboBoxOnlineIP, selectedIndex);
-		}
-		else
-		{
-			GadgetComboBoxSetSelectedPos(comboBoxOnlineIP, 0);
-			if (IPs.getAddresses())
-			{
-				pref->setOnlineIPAddress(IPs.getAddresses()->getIPstring());
-			}
-		}
-	}
+		comboBoxOnlineIP->winHide(TRUE);
+
+	GameWindow *staticTextOnlineIP = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:StaticTextOnlineIP"));
+	if (staticTextOnlineIP)
+		staticTextOnlineIP->winHide(TRUE);
+#endif
 
 #if ENABLE_GUI_HACKS
 	// TheSuperHackers @tweak 26/07/2026 The http proxy feature was obsoleted because it did nothing for the UDP game traffic or match sockets.
