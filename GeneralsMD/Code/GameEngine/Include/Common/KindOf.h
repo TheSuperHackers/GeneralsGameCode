@@ -171,9 +171,10 @@ enum KindOfType CPP_11(: Int)
 	KINDOF_DEMOTRAP,								///< Added strictly only for disarming purposes. They don't act like mines which have rendering and selection implications!
 	KINDOF_CONSERVATIVE_BUILDING,		///< Conservative structures aren't considered part of your base for sneak attack boundary calculations...
 	KINDOF_IGNORE_DOCKING_BONES,		///< Structure will not look up docking bones. Patch 1.03 hack.
-	// TheSuperHackers @info TSH Kindofs
+
+	// TheSuperHackers @info New kinds for Mods
+
 	KINDOF_NO_ATTACK_WARNING,				///< does not trigger the under attack radar/EVA warning when damaged (e.g. cargo planes)
-	KINDOF_UNUSED_1,		///< padding to keep KINDOF_COUNT off other BitFlags counts, replace with the next new kindof
 
 	KINDOF_COUNT,										// total number of kindofs
 	KINDOF_FIRST = 0,
