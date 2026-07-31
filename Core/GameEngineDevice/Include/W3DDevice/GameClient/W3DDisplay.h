@@ -59,8 +59,14 @@ public:
 	static QuantizedUnsignedShort fromSeconds(Real seconds)
 	{
 		Int64 ticks = (Int64)(seconds * TICKS_PER_SECOND + 0.5f);
-		if (ticks >= 65535) return QuantizedUnsignedShort(65535);
-		if (ticks <= 0) return QuantizedUnsignedShort(1);
+		if (ticks >= 65535)
+		{
+			return QuantizedUnsignedShort(65535);
+		}
+		if (ticks <= 0)
+		{
+			return QuantizedUnsignedShort(1);
+		}
 		return QuantizedUnsignedShort((UnsignedShort)ticks);
 	}
 
