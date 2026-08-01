@@ -579,11 +579,13 @@ Bool TransportContain::isSpecificRiderFreeToExit(Object* specificObject)
 		return FALSE;
 
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix Stubbjax 02/03/2026 If our parent container is held, then we
-	// are not free to exit.
-	DEBUG_ASSERTCRASH(specificObject->getContainedBy(), ("rider must be contained"));
-	if (specificObject->getContainedBy()->isDisabledByType(DISABLED_HELD))
+	// TheSuperHackers @bugfix Stubbjax/bobtista 01/08/2026 We are not free to exit when our container
+	// is held inside another container. A container merely held in place on the terrain,
+	// eg the battle bus, can still unload passengers.
+	if (me->getContainedBy() != nullptr && me->isDisabledByType(DISABLED_HELD))
+	{
 		return FALSE;
+	}
 #endif
 
   // I can always kick people out if I am in the air, I know what I'm doing
