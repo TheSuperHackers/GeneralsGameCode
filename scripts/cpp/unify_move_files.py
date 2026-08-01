@@ -639,6 +639,9 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/TerrainTypes.cpp", Game.CORE, "GameEngine/Source/Common/TerrainTypes.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/version.h", Game.CORE, "GameEngine/Include/Common/version.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/version.cpp", Game.CORE, "GameEngine/Source/Common/version.cpp")
+    
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/CommandLine.h", Game.CORE, "GameEngine/Include/Common/CommandLine.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/CommandLine.cpp", Game.CORE, "GameEngine/Source/Common/CommandLine.cpp")
 
     return
 
