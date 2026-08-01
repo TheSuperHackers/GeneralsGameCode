@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -52,24 +52,23 @@
 
 #include "GameLogic/Module/GrantScienceUpgrade.h"
 
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void GrantScienceUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  UpgradeModuleData::buildFieldParse(p);
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "GrantScience",		INI::parseAsciiString,	nullptr, offsetof( GrantScienceUpgradeModuleData, m_grantScienceName ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "GrantScience", INI::parseAsciiString, nullptr, offsetof(GrantScienceUpgradeModuleData, m_grantScienceName) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-GrantScienceUpgrade::GrantScienceUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
+GrantScienceUpgrade::GrantScienceUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
 	m_scienceType = SCIENCE_INVALID;
 }
@@ -84,47 +83,43 @@ GrantScienceUpgrade::~GrantScienceUpgrade()
 //-------------------------------------------------------------------------------------------------
 void GrantScienceUpgrade::upgradeImplementation()
 {
-	if( m_scienceType == SCIENCE_INVALID )
+	if (m_scienceType == SCIENCE_INVALID)
 	{
-		const GrantScienceUpgradeModuleData *data = getGrantScienceUpgradeModuleData();
-		m_scienceType = TheScienceStore->getScienceFromInternalName( data->m_grantScienceName );
+		const GrantScienceUpgradeModuleData* data = getGrantScienceUpgradeModuleData();
+		m_scienceType = TheScienceStore->getScienceFromInternalName(data->m_grantScienceName);
 	}
 
-	Object *obj = getObject();
-	Player *player = obj->getControllingPlayer();
-	if( player )
+	Object* obj = getObject();
+	Player* player = obj->getControllingPlayer();
+	if (player)
 	{
-		player->grantScience( m_scienceType );
+		player->grantScience(m_scienceType);
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void GrantScienceUpgrade::crc( Xfer *xfer )
+void GrantScienceUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void GrantScienceUpgrade::xfer( Xfer *xfer )
+void GrantScienceUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -132,8 +127,6 @@ void GrantScienceUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GrantScienceUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

@@ -36,16 +36,16 @@ class Player;
 /*
  * bitfield for specifying which victory conditions will apply in multiplayer games
  */
-enum VictoryType CPP_11(: Int)
+enum VictoryType CPP_11( : Int)
 {
 	VICTORY_NOBUILDINGS = 1,
 	VICTORY_NOUNITS = 2,
 };
 
 /**
-  * VictoryConditionsInterface class - maintains information about the game setup and
-	* the contents of its slot list throughout the game.
-	*/
+ * VictoryConditionsInterface class - maintains information about the game setup and
+ * the contents of its slot list throughout the game.
+ */
 class VictoryConditionsInterface : public SubsystemInterface
 {
 public:
@@ -55,24 +55,24 @@ public:
 	virtual void reset() = 0;
 	virtual void update() = 0;
 
-	void setVictoryConditions( Int victoryConditions ) { m_victoryConditions = victoryConditions; }
+	void setVictoryConditions(Int victoryConditions) { m_victoryConditions = victoryConditions; }
 	Int getVictoryConditions() { return m_victoryConditions; }
 
-	virtual Bool hasAchievedVictory(Player *player) = 0;					///< has a specific player and his allies won?
-	virtual Bool hasBeenDefeated(Player *player) = 0;							///< has a specific player and his allies lost?
-	virtual Bool hasSinglePlayerBeenDefeated(Player *player) = 0;	///< has a specific player lost?
+	virtual Bool hasAchievedVictory(Player* player) = 0;    ///< has a specific player and his allies won?
+	virtual Bool hasBeenDefeated(Player* player) = 0;    ///< has a specific player and his allies lost?
+	virtual Bool hasSinglePlayerBeenDefeated(Player* player) = 0;    ///< has a specific player lost?
 
-	virtual void cachePlayerPtrs() = 0;											///< players have been created - cache the ones of interest
+	virtual void cachePlayerPtrs() = 0;    ///< players have been created - cache the ones of interest
 
-	virtual Bool isLocalAlliedVictory() = 0;								///< convenience function
-	virtual Bool isLocalAlliedDefeat() = 0;									///< convenience function
-	virtual Bool isLocalDefeat() = 0;												///< convenience function
-	virtual Bool amIObserver() = 0;													///< Am I an observer?( need this for scripts )
-	virtual UnsignedInt getEndFrame() = 0;									///< on which frame was the game effectively over?
+	virtual Bool isLocalAlliedVictory() = 0;    ///< convenience function
+	virtual Bool isLocalAlliedDefeat() = 0;    ///< convenience function
+	virtual Bool isLocalDefeat() = 0;    ///< convenience function
+	virtual Bool amIObserver() = 0;    ///< Am I an observer?( need this for scripts )
+	virtual UnsignedInt getEndFrame() = 0;    ///< on which frame was the game effectively over?
 protected:
 	Int m_victoryConditions;
 };
 
-VictoryConditionsInterface * createVictoryConditions();
+VictoryConditionsInterface* createVictoryConditions();
 
-extern VictoryConditionsInterface *TheVictoryConditions;
+extern VictoryConditionsInterface* TheVictoryConditions;

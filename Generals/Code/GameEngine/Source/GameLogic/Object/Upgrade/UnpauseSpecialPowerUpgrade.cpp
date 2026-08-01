@@ -48,15 +48,13 @@ UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 //-------------------------------------------------------------------------------------------------
 /* static */ void UnpauseSpecialPowerUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-	UpgradeModuleData::buildFieldParse( p );
+	UpgradeModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, nullptr, offsetof( UnpauseSpecialPowerUpgradeModuleData, m_specialPower ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, nullptr, offsetof(UnpauseSpecialPowerUpgradeModuleData, m_specialPower) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,17 +63,15 @@ UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-UnpauseSpecialPowerUpgrade::UnpauseSpecialPowerUpgrade( Thing *thing, const ModuleData* moduleData ) :
-							UpgradeModule( thing, moduleData )
+UnpauseSpecialPowerUpgrade::UnpauseSpecialPowerUpgrade(Thing* thing, const ModuleData* moduleData)
+  : UpgradeModule(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UnpauseSpecialPowerUpgrade::~UnpauseSpecialPowerUpgrade()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -86,40 +82,40 @@ void UnpauseSpecialPowerUpgrade::upgradeImplementation()
 	{
 		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
 		if (!sp)
+		{
 			continue;
+		}
 
-		if( sp->getSpecialPowerTemplate() == getUnpauseSpecialPowerUpgradeModuleData()->m_specialPower )
-			sp->pauseCountdown( FALSE );
+		if (sp->getSpecialPowerTemplate() == getUnpauseSpecialPowerUpgradeModuleData()->m_specialPower)
+		{
+			sp->pauseCountdown(FALSE);
+		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void UnpauseSpecialPowerUpgrade::crc( Xfer *xfer )
+void UnpauseSpecialPowerUpgrade::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpgradeModule::crc( xfer );
-
+	UpgradeModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void UnpauseSpecialPowerUpgrade::xfer( Xfer *xfer )
+void UnpauseSpecialPowerUpgrade::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpgradeModule::xfer( xfer );
-
+	UpgradeModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -127,8 +123,6 @@ void UnpauseSpecialPowerUpgrade::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void UnpauseSpecialPowerUpgrade::loadPostProcess()
 {
-
 	// extend base class
 	UpgradeModule::loadPostProcess();
-
 }

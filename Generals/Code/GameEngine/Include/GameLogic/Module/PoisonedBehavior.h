@@ -34,34 +34,30 @@
 #include "GameLogic/Module/DamageModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
-
 //-------------------------------------------------------------------------------------------------
 class PoisonedBehaviorModuleData : public UpdateModuleData
 {
 public:
-	UnsignedInt m_poisonDamageIntervalData; // How often I retake poison damage dealt me
-	UnsignedInt m_poisonDurationData;				// And how long after the last poison dose I am poisoned
+	UnsignedInt m_poisonDamageIntervalData;    // How often I retake poison damage dealt me
+	UnsignedInt m_poisonDurationData;    // And how long after the last poison dose I am poisoned
 
 	PoisonedBehaviorModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 private:
-
 };
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 class PoisonedBehavior : public UpdateModule,
-												 public DamageModuleInterface
+                         public DamageModuleInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PoisonedBehavior, "PoisonedBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PoisonedBehavior, PoisonedBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PoisonedBehavior, "PoisonedBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(PoisonedBehavior, PoisonedBehaviorModuleData)
 
 public:
-
-	PoisonedBehavior( Thing *thing, const ModuleData* moduleData );
+	PoisonedBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	static Int getInterfaceMask() { return UpdateModule::getInterfaceMask() | (MODULEINTERFACE_DAMAGE); }
@@ -70,9 +66,9 @@ public:
 	virtual DamageModuleInterface* getDamage() override { return this; }
 
 	// DamageModuleInterface
-	virtual void onDamage( DamageInfo *damageInfo ) override;
-	virtual void onHealing( DamageInfo *damageInfo ) override;
-	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override { }
+	virtual void onDamage(DamageInfo* damageInfo) override;
+	virtual void onHealing(DamageInfo* damageInfo) override;
+	virtual void onBodyDamageStateChange(const DamageInfo* damageInfo, BodyDamageType oldState, BodyDamageType newState) override {}
 
 	// UpdateInterface
 	virtual UpdateSleepTime update() override;
@@ -80,16 +76,14 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const override { return DISABLEDMASK_ALL; }
 
 protected:
-
-	void startPoisonedEffects( const DamageInfo *damageInfo );
+	void startPoisonedEffects(const DamageInfo* damageInfo);
 	void stopPoisonedEffects();
 	UpdateSleepTime calcSleepTime();
 
 private:
-	UnsignedInt		m_poisonDamageFrame;
-	UnsignedInt		m_poisonOverallStopFrame;
-	Real					m_poisonDamageAmount;
-	ObjectID			m_poisonSource;
-	DeathType			m_deathType;
-
+	UnsignedInt m_poisonDamageFrame;
+	UnsignedInt m_poisonOverallStopFrame;
+	Real m_poisonDamageAmount;
+	ObjectID m_poisonSource;
+	DeathType m_deathType;
 };

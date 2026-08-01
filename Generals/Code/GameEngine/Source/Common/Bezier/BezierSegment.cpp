@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 #include "PreRTS.h"
 #include "Common/BezierSegment.h"
 #include "Common/BezFwdIterator.h"
@@ -32,15 +31,17 @@
 //-------------------------------------------------------------------------------------------------
 BezierSegment::BezierSegment()
 {
-	for(int i=0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
+	{
 		m_controlPoints[i].zero();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 BezierSegment::BezierSegment(Real x0, Real y0, Real z0,
-														 Real x1, Real y1, Real z1,
-														 Real x2, Real y2, Real z2,
-														 Real x3, Real y3, Real z3)
+                             Real x1, Real y1, Real z1,
+                             Real x2, Real y2, Real z2,
+                             Real x3, Real y3, Real z3)
 {
 	m_controlPoints[0].x = x0;
 	m_controlPoints[0].y = y0;
@@ -94,15 +95,16 @@ BezierSegment::BezierSegment(Coord3D cp[4])
 	m_controlPoints[3] = cp[3];
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D *outResult) const
+void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D* outResult) const
 
 {
 	if (!outResult)
+	{
 		return;
+	}
 
-	D3DXVECTOR4	tVec(tValue * tValue * tValue, tValue * tValue, tValue, 1);
+	D3DXVECTOR4 tVec(tValue * tValue * tValue, tValue * tValue, tValue, 1);
 
 	D3DXVECTOR4 xCoords(m_controlPoints[0].x, m_controlPoints[1].x, m_controlPoints[2].x, m_controlPoints[3].x);
 	D3DXVECTOR4 yCoords(m_controlPoints[0].y, m_controlPoints[1].y, m_controlPoints[2].y, m_controlPoints[3].y);
@@ -117,9 +119,10 @@ void BezierSegment::evaluateBezSegmentAtT(Real tValue, Coord3D *outResult) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void BezierSegment::getSegmentPoints(Int numSegments, VecCoord3D *outResult) const
+void BezierSegment::getSegmentPoints(Int numSegments, VecCoord3D* outResult) const
 {
-	if (!outResult) {
+	if (!outResult)
+	{
 		return;
 	}
 
@@ -129,7 +132,8 @@ void BezierSegment::getSegmentPoints(Int numSegments, VecCoord3D *outResult) con
 	BezFwdIterator iter(numSegments, this);
 	iter.start();
 	Int i = 0;
-	while (!iter.done()) {
+	while (!iter.done())
+	{
 		(*outResult)[i] = iter.getCurrent();
 		++i;
 		iter.next();
@@ -143,41 +147,50 @@ void BezierSegment::getSegmentPoints(Int numSegments, VecCoord3D *outResult) con
 Real BezierSegment::getApproximateLength(Real withinTolerance) const
 {
 	/*
-		How this works:
-		We can determine the approximate length of a bezier segment by
-		L0 = |(P0,P1)| + |(P1,P2)| + |(P2,P3)|
-		L1 = |(P0,P3)|
+	  How this works:
+	  We can determine the approximate length of a bezier segment by
+	  L0 = |(P0,P1)| + |(P1,P2)| + |(P2,P3)|
+	  L1 = |(P0,P3)|
 
-		The length of the segment is approximately 1/2 L0 + 1/2 L1
+	  The length of the segment is approximately 1/2 L0 + 1/2 L1
 
-		P1__P2
-		/		 \
+	  P1__P2
+	  /		 \
 	 P0----P3
 
-		The error in this is L1 - L0. If the error is too much, then we subdivide the curve and
-		try again.
+	  The error in this is L1 - L0. If the error is too much, then we subdivide the curve and
+	  try again.
 	*/
 
-	Coord3D p0p1 = { m_controlPoints[1].x - m_controlPoints[0].x,
-									 m_controlPoints[1].y - m_controlPoints[0].y,
-									 m_controlPoints[1].z - m_controlPoints[0].z, };
+	Coord3D p0p1 = {
+		m_controlPoints[1].x - m_controlPoints[0].x,
+		m_controlPoints[1].y - m_controlPoints[0].y,
+		m_controlPoints[1].z - m_controlPoints[0].z,
+	};
 
-	Coord3D p1p2 = { m_controlPoints[2].x - m_controlPoints[1].x,
-									 m_controlPoints[2].y - m_controlPoints[1].y,
-									 m_controlPoints[2].z - m_controlPoints[1].z, };
+	Coord3D p1p2 = {
+		m_controlPoints[2].x - m_controlPoints[1].x,
+		m_controlPoints[2].y - m_controlPoints[1].y,
+		m_controlPoints[2].z - m_controlPoints[1].z,
+	};
 
-	Coord3D p2p3 = { m_controlPoints[3].x - m_controlPoints[2].x,
-									 m_controlPoints[3].y - m_controlPoints[2].y,
-									 m_controlPoints[3].z - m_controlPoints[2].z, };
+	Coord3D p2p3 = {
+		m_controlPoints[3].x - m_controlPoints[2].x,
+		m_controlPoints[3].y - m_controlPoints[2].y,
+		m_controlPoints[3].z - m_controlPoints[2].z,
+	};
 
-	Coord3D p0p3 = { m_controlPoints[3].x - m_controlPoints[0].x,
-									 m_controlPoints[3].y - m_controlPoints[0].y,
-									 m_controlPoints[3].z - m_controlPoints[0].z, };
+	Coord3D p0p3 = {
+		m_controlPoints[3].x - m_controlPoints[0].x,
+		m_controlPoints[3].y - m_controlPoints[0].y,
+		m_controlPoints[3].z - m_controlPoints[0].z,
+	};
 
 	Real length0 = p0p3.length();
 	Real length1 = p0p1.length() + p1p2.length() + p2p3.length();
 
-	if ((length1 - length0) > withinTolerance) {
+	if ((length1 - length0) > withinTolerance)
+	{
 		BezierSegment seg1, seg2;
 		splitSegmentAtT(0.5f, seg1, seg2);
 		return (seg1.getApproximateLength(withinTolerance) + seg2.getApproximateLength(withinTolerance));
@@ -187,21 +200,27 @@ Real BezierSegment::getApproximateLength(Real withinTolerance) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void BezierSegment::splitSegmentAtT(Real tValue, BezierSegment &outSeg1, BezierSegment &outSeg2) const
+void BezierSegment::splitSegmentAtT(Real tValue, BezierSegment& outSeg1, BezierSegment& outSeg2) const
 {
 	// I think there are faster ways to do this. Could someone clue me in?
 
-	Coord3D p0p1 = { m_controlPoints[1].x - m_controlPoints[0].x,
-									 m_controlPoints[1].y - m_controlPoints[0].y,
-									 m_controlPoints[1].z - m_controlPoints[0].z, };
+	Coord3D p0p1 = {
+		m_controlPoints[1].x - m_controlPoints[0].x,
+		m_controlPoints[1].y - m_controlPoints[0].y,
+		m_controlPoints[1].z - m_controlPoints[0].z,
+	};
 
-	Coord3D p1p2 = { m_controlPoints[2].x - m_controlPoints[1].x,
-									 m_controlPoints[2].y - m_controlPoints[1].y,
-									 m_controlPoints[2].z - m_controlPoints[1].z, };
+	Coord3D p1p2 = {
+		m_controlPoints[2].x - m_controlPoints[1].x,
+		m_controlPoints[2].y - m_controlPoints[1].y,
+		m_controlPoints[2].z - m_controlPoints[1].z,
+	};
 
-	Coord3D p2p3 = { m_controlPoints[3].x - m_controlPoints[2].x,
-									 m_controlPoints[3].y - m_controlPoints[2].y,
-									 m_controlPoints[3].z - m_controlPoints[2].z, };
+	Coord3D p2p3 = {
+		m_controlPoints[3].x - m_controlPoints[2].x,
+		m_controlPoints[3].y - m_controlPoints[2].y,
+		m_controlPoints[3].z - m_controlPoints[2].z,
+	};
 
 	p0p1.scale(tValue);
 	p1p2.scale(tValue);
@@ -211,13 +230,17 @@ void BezierSegment::splitSegmentAtT(Real tValue, BezierSegment &outSeg1, BezierS
 	p1p2.add(m_controlPoints[1]);
 	p2p3.add(m_controlPoints[2]);
 
-	Coord3D triLeft = { p1p2.x - p0p1.x,
-											p1p2.y - p0p1.y,
-											p1p2.z - p0p1.z, };
+	Coord3D triLeft = {
+		p1p2.x - p0p1.x,
+		p1p2.y - p0p1.y,
+		p1p2.z - p0p1.z,
+	};
 
-	Coord3D triRight = { p2p3.x - p1p2.x,
-											 p2p3.y - p1p2.y,
-											 p2p3.z - p1p2.z, };
+	Coord3D triRight = {
+		p2p3.x - p1p2.x,
+		p2p3.y - p1p2.y,
+		p2p3.z - p1p2.z,
+	};
 
 	triLeft.scale(tValue);
 	triRight.scale(tValue);
@@ -239,8 +262,7 @@ void BezierSegment::splitSegmentAtT(Real tValue, BezierSegment &outSeg1, BezierS
 //-------------------------------------------------------------------------------------------------
 // The Basis Matrix for a bezier segment
 const D3DXMATRIX BezierSegment::s_bezBasisMatrix(
-	-1.0f,  3.0f, -3.0f,  1.0f,
-	 3.0f, -6.0f,  3.0f,  0.0f,
-	-3.0f,  3.0f,  0.0f,  0.0f,
-	 1.0f,  0.0f,  0.0f,  0.0f
-);
+  -1.0f, 3.0f, -3.0f, 1.0f,
+  3.0f, -6.0f, 3.0f, 0.0f,
+  -3.0f, 3.0f, 0.0f, 0.0f,
+  1.0f, 0.0f, 0.0f, 0.0f);

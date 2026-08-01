@@ -39,18 +39,15 @@ class Thing;
 //-------------------------------------------------------------------------------------------------
 class SupplyCenterCreate : public CreateModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyCenterCreate, "SupplyCenterCreate" )
-	MAKE_STANDARD_MODULE_MACRO( SupplyCenterCreate )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(SupplyCenterCreate, "SupplyCenterCreate")
+	MAKE_STANDARD_MODULE_MACRO(SupplyCenterCreate)
 
 public:
-
-	SupplyCenterCreate( Thing *thing, const ModuleData* moduleData );
+	SupplyCenterCreate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onCreate() override;
-	virtual void onBuildComplete() override;	///< This is called when you are a finished game object
+	virtual void onBuildComplete() override;    ///< This is called when you are a finished game object
 
 protected:
-
 };

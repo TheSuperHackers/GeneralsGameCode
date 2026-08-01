@@ -21,13 +21,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef _WIN32
-#include <syslog.h>
+	#include <syslog.h>
 #endif
 #include <string.h>
 
 // Windows headers have a tendency to redefine IN
 #ifdef IN
-#undef IN
+	#undef IN
 #endif
 #define IN const
 
@@ -36,10 +36,10 @@
 // Windows doesn't have a syslog equivalent (does it?), so this class does little there
 class SyslogD : public OutputDevice
 {
- public:
-   SyslogD(char *ident,int logopt,int facility,int priority);
-   virtual int print(const char *str,int len);
+public:
+	SyslogD(char* ident, int logopt, int facility, int priority);
+	virtual int print(const char* str, int len);
 
- private:
-   int priority;
+private:
+	int priority;
 };

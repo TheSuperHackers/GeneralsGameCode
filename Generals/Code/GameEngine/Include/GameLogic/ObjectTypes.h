@@ -35,7 +35,7 @@
 class Player;
 
 class ObjectTypes : public MemoryPoolObject,
-										public Snapshot
+                    public Snapshot
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ObjectTypes, "ObjectTypes")
 private:
@@ -50,8 +50,8 @@ private:
 
 protected:
 	// snapshot methods
-	virtual void crc(Xfer *xfer) override;
-	virtual void xfer(Xfer *xfer) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 public:
@@ -60,8 +60,8 @@ public:
 
 public:
 	// Maintenance
-	void addObjectType(const AsciiString &objectType);
-	void removeObjectType(const AsciiString &objectType);
+	void addObjectType(const AsciiString& objectType);
+	void removeObjectType(const AsciiString& objectType);
 
 	// Which list is this again?
 	const AsciiString& getListName() const;
@@ -75,12 +75,12 @@ public:
 	size_t getListSize() const { return m_objectTypes.size(); }
 
 	// I'd like to loop through, please.
-	AsciiString getNthInList( size_t index ) const { return (index < getListSize()) ? m_objectTypes[index] : AsciiString::TheEmptyString; }
+	AsciiString getNthInList(size_t index) const { return (index < getListSize()) ? m_objectTypes[index] : AsciiString::TheEmptyString; }
 
 	// Prep two arrays for usage with Player::countObjectsByThingTemplate
-	Int prepForPlayerCounting( std::vector<const ThingTemplate *>& templates, std::vector<Int>& counts);
+	Int prepForPlayerCounting(std::vector<const ThingTemplate*>& templates, std::vector<Int>& counts);
 
 	// Can the player build any of the thing templates that we have names for?
-	Bool canBuildAny(Player *player);
+	Bool canBuildAny(Player* player);
 };
 EMPTY_DTOR(ObjectTypes)

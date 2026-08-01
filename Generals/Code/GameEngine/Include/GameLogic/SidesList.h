@@ -22,7 +22,6 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
 // SidesList.h
 // Class to encapsulate Sides and Build Lists for maps.
 // Author: John Ahlquist, November 2001
@@ -46,16 +45,16 @@ class Shadow;
 
 // ----------------------------------------------------------------------------------------------
 /**
-	This is a class that describes a Side, including build list.
-	Note that a side corresponds to a Player in the game.  The lightweight
-	Side is used to give the WB Editor somewhere to hang build lists.
+  This is a class that describes a Side, including build list.
+  Note that a side corresponds to a Player in the game.  The lightweight
+  Side is used to give the WB Editor somewhere to hang build lists.
 */
 class SidesInfo
 {
 protected:
-	BuildListInfo*	m_pBuildList;		///< linked list.
-	Dict						m_dict;					///< general player dict.
-	ScriptList			*m_scripts;			///< linked list.
+	BuildListInfo* m_pBuildList;    ///< linked list.
+	Dict m_dict;    ///< general player dict.
+	ScriptList* m_scripts;    ///< linked list.
 
 public:
 	SidesInfo();
@@ -64,13 +63,13 @@ public:
 	void init(const Dict* d);
 	void clear() { init(nullptr); }
 	Dict* getDict() { return &m_dict; }
-	void addToBuildList(BuildListInfo *pBuildList, Int position);
-	Int removeFromBuildList(BuildListInfo *pBuildList);
-	void reorderInBuildList(BuildListInfo *pBuildList, Int newPosition);
-	BuildListInfo* getBuildList() {return m_pBuildList;} ///< Gets the build list.
-	void releaseBuildList()  {m_pBuildList=nullptr;} ///< Used when the build list is passed to class Player.
-	ScriptList *getScriptList() {return(m_scripts);};
-	void setScriptList(ScriptList *pScriptList) {m_scripts = pScriptList;};
+	void addToBuildList(BuildListInfo* pBuildList, Int position);
+	Int removeFromBuildList(BuildListInfo* pBuildList);
+	void reorderInBuildList(BuildListInfo* pBuildList, Int newPosition);
+	BuildListInfo* getBuildList() { return m_pBuildList; }    ///< Gets the build list.
+	void releaseBuildList() { m_pBuildList = nullptr; }    ///< Used when the build list is passed to class Player.
+	ScriptList* getScriptList() { return (m_scripts); };
+	void setScriptList(ScriptList* pScriptList) { m_scripts = pScriptList; };
 
 	// ug, I hate having to overload stuff, but this makes it a lot easier to make copies safely
 	SidesInfo& operator=(const SidesInfo& that);
@@ -81,21 +80,28 @@ class TeamsInfo
 {
 private:
 	Dict m_dict;
+
 public:
 	Dict* getDict() { return &m_dict; }
-	void init(const Dict* d) { m_dict.clear(); if (d) m_dict = *d; }
+	void init(const Dict* d)
+	{
+		m_dict.clear();
+		if (d)
+		{
+			m_dict = *d;
+		}
+	}
 	void clear() { init(nullptr); }
 };
-
 
 // ----------------------------------------------------------------------------------------------
 // a wrapper class to make this a little cleaner.
 class TeamsInfoRec
 {
 private:
-	Int					m_numTeams;
-	Int					m_numTeamsAllocated;
-	TeamsInfo*	m_teams;
+	Int m_numTeams;
+	Int m_numTeamsAllocated;
+	TeamsInfo* m_teams;
 
 public:
 	TeamsInfoRec();
@@ -103,15 +109,15 @@ public:
 	~TeamsInfoRec();
 	TeamsInfoRec& operator=(const TeamsInfoRec& thatref);
 	void clear();
-	TeamsInfo *findTeamInfo(AsciiString name, Int* index);
+	TeamsInfo* findTeamInfo(AsciiString name, Int* index);
 	void addTeam(const Dict* d);
 	void removeTeam(Int i);
 	Int getNumTeams() const { return m_numTeams; }
-	TeamsInfo * getTeamInfo(Int team)
+	TeamsInfo* getTeamInfo(Int team)
 	{
-		if (team>=0&&team<m_numTeams)
+		if (team >= 0 && team < m_numTeams)
 		{
-			return(&m_teams[team]);
+			return (&m_teams[team]);
 		}
 		DEBUG_CRASH(("Out of range."));
 		throw ERROR_BAD_ARG;
@@ -121,57 +127,55 @@ public:
 
 // ----------------------------------------------------------------------------------------------
 /**
-	This is a singleton class that maintains the list of Sides.
-	In RTS it is associated with the Player singleton.
-	Note that a side corresponds to a Player in the game.  The lightweight
-	Side is used to give the WB Editor somewhere to hang build lists, as
-	it doesn't instantiate the Player subsystem
+  This is a singleton class that maintains the list of Sides.
+  In RTS it is associated with the Player singleton.
+  Note that a side corresponds to a Player in the game.  The lightweight
+  Side is used to give the WB Editor somewhere to hang build lists, as
+  it doesn't instantiate the Player subsystem
 
-	jba.
+  jba.
 */
 class SidesList : public SubsystemInterface,
-									public Snapshot
+                  public Snapshot
 {
-
 public:
-
 	SidesList();
 	virtual ~SidesList() override;
 
-	virtual void init() override { }
-	virtual void update() override { }
+	virtual void init() override {}
+	virtual void update() override {}
 	virtual void reset() override;
 
 	/// Reads sides (including build list info && player dicts.)
-	static Bool ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
+	static Bool ParseSidesDataChunk(DataChunkInput& file, DataChunkInfo* info, void* userData);
 	/// Writes sides (including build list info.)
-	static void WriteSidesDataChunk(DataChunkOutput &chunkWriter);
+	static void WriteSidesDataChunk(DataChunkOutput& chunkWriter);
 
 	Int getNumSides() { return m_numSides; }
 	void emptySides();
 	void addSide(const Dict* d);
 	void removeSide(Int i);
-	inline SidesInfo *getSideInfo(Int side);
-	inline SidesInfo *getSkirmishSideInfo(Int side);
+	inline SidesInfo* getSideInfo(Int side);
+	inline SidesInfo* getSkirmishSideInfo(Int side);
 	Int getNumSkirmishSides() { return m_numSkirmishSides; }
-	SidesInfo *findSideInfo(AsciiString name, Int* index = nullptr);
-	SidesInfo *findSkirmishSideInfo(AsciiString name, Int* index = nullptr);
+	SidesInfo* findSideInfo(AsciiString name, Int* index = nullptr);
+	SidesInfo* findSkirmishSideInfo(AsciiString name, Int* index = nullptr);
 
-	void prepareForMP_or_Skirmish(); // After a map is loaded, save & clear any players.
+	void prepareForMP_or_Skirmish();    // After a map is loaded, save & clear any players.
 
 	Int getNumTeams() { return m_teamrec.getNumTeams(); }
 	void emptyTeams();
 	void addTeam(const Dict* d);
 	void removeTeam(Int i);
 
-	inline TeamsInfo *getTeamInfo(Int team);
-	inline TeamsInfo *getSkirmishTeamInfo(Int team);
+	inline TeamsInfo* getTeamInfo(Int team);
+	inline TeamsInfo* getSkirmishTeamInfo(Int team);
 	Int getNumSkirmishTeams() { return m_skirmishTeamrec.getNumTeams(); }
- 	void addSkirmishTeam(const Dict* d);
+	void addSkirmishTeam(const Dict* d);
 
-	TeamsInfo *findTeamInfo(AsciiString name, Int* index = nullptr);
+	TeamsInfo* findTeamInfo(AsciiString name, Int* index = nullptr);
 
-	Bool isPlayerDefaultTeam(TeamsInfo *t);
+	Bool isPlayerDefaultTeam(TeamsInfo* t);
 
 	void clear();
 	Bool validateSides();
@@ -184,206 +188,225 @@ public:
 	};
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
-	Int					m_numSides;
-	SidesInfo		m_sides[MAX_PLAYER_COUNT];
+	Int m_numSides;
+	SidesInfo m_sides[MAX_PLAYER_COUNT];
 
-	Int					m_numSkirmishSides;
-	SidesInfo		m_skirmishSides[MAX_PLAYER_COUNT];
+	Int m_numSkirmishSides;
+	SidesInfo m_skirmishSides[MAX_PLAYER_COUNT];
 
-	TeamsInfoRec	m_teamrec;
-	TeamsInfoRec	m_skirmishTeamrec;
+	TeamsInfoRec m_teamrec;
+	TeamsInfoRec m_skirmishTeamrec;
 
 	Bool validateAllyEnemyList(const AsciiString& tname, AsciiString& allies);
 };
 
-
-inline TeamsInfo * SidesList::getTeamInfo(Int team)
+inline TeamsInfo* SidesList::getTeamInfo(Int team)
 {
 	return m_teamrec.getTeamInfo(team);
 }
 
-inline TeamsInfo * SidesList::getSkirmishTeamInfo(Int team)
+inline TeamsInfo* SidesList::getSkirmishTeamInfo(Int team)
 {
 	return m_skirmishTeamrec.getTeamInfo(team);
 }
 
-inline SidesInfo * SidesList::getSideInfo(Int side)
+inline SidesInfo* SidesList::getSideInfo(Int side)
 {
-	if (side>=0&&side<m_numSides)
+	if (side >= 0 && side < m_numSides)
 	{
-		return(&m_sides[side]);
+		return (&m_sides[side]);
 	}
 	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
 	return nullptr;
 }
 
-inline SidesInfo * SidesList::getSkirmishSideInfo(Int side)
+inline SidesInfo* SidesList::getSkirmishSideInfo(Int side)
 {
-	if (side>=0&&side<m_numSkirmishSides)
+	if (side >= 0 && side < m_numSkirmishSides)
 	{
-		return(&m_skirmishSides[side]);
+		return (&m_skirmishSides[side]);
 	}
 	DEBUG_CRASH(("Out of range."));
 	throw ERROR_BAD_ARG;
 	return nullptr;
 }
-
 
 // ----------------------------------------------------------------------------------------------
-extern SidesList *TheSidesList;	 ///< singleton instance of SidesList
-
+extern SidesList* TheSidesList;    ///< singleton instance of SidesList
 
 // ----------------------------------------------------------------------------------------------
 /**
-	This is a class that describes an entry in the build list.
+  This is a class that describes an entry in the build list.
 */
 class BuildListInfo : public MemoryPoolObject, public Snapshot
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(BuildListInfo, "BuildListInfo")
 
-// friend doesn't play well with MPO... it reveals delete, which shouldn't be visible, even to friends (srj)
-//friend class SidesInfo;  // This is essentially a component of the SidesInfo data structure.
-//friend class SidesList;  // This is essentially a component of the SidesInfo data structure.
-//friend class BuildList;  // This is the class in WB that edits build lists.
-//friend class BuildListTool; // Other class in wb that edits build lists.
-//friend class WBDocUndoable; // Other class in wb that edits build lists.
-//friend class Player;
-//friend class AISideBuildList;
-//friend class AISkirmishPlayer;
+	// friend doesn't play well with MPO... it reveals delete, which shouldn't be visible, even to friends (srj)
+	// friend class SidesInfo;  // This is essentially a component of the SidesInfo data structure.
+	// friend class SidesList;  // This is essentially a component of the SidesInfo data structure.
+	// friend class BuildList;  // This is the class in WB that edits build lists.
+	// friend class BuildListTool; // Other class in wb that edits build lists.
+	// friend class WBDocUndoable; // Other class in wb that edits build lists.
+	// friend class Player;
+	// friend class AISideBuildList;
+	// friend class AISkirmishPlayer;
 
 public:
-	enum {UNLIMITED_REBUILDS=0xFFFFFFFF};
-	enum {MAX_RESOURCE_GATHERERS = 10};
+	enum
+	{
+		UNLIMITED_REBUILDS = 0xFFFFFFFF
+	};
+	enum
+	{
+		MAX_RESOURCE_GATHERERS = 10
+	};
 	BuildListInfo();
 	//~BuildListInfo();								///< Note that deleting the head of a list deletes all linked objects in the list.
 
-	static void parseStructure(INI *ini, void *instance, void* /*store*/, const void* /*userData*/);
+	static void parseStructure(INI* ini, void* instance, void* /*store*/, const void* /*userData*/);
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
-	AsciiString			m_buildingName;			///< The name of this building.
-	AsciiString			m_templateName;			///< The thing template name for this model's info.
-	Coord3D					m_location;					///< The location of the object.
-	Coord2D					m_rallyPointOffset; ///< Offset to the natural rally point.
-	Real						m_angle;						///< Initial orientation of the building.
-	Bool						m_isInitiallyBuilt; ///< Whether the building is built at the start of the game.
-	UnsignedInt			m_numRebuilds;			///< Number of rebuilds allowed.
-	BuildListInfo*	m_nextBuildList;		///< linked list.
-	AsciiString		m_script;
-	Int				m_health;
-	Bool			m_whiner;
-	Bool			m_unsellable;
-	Bool			m_repairable;
-	Bool			m_automaticallyBuild;			///< If true, the ai will build.  If false, script has to enable this.
-
+	AsciiString m_buildingName;    ///< The name of this building.
+	AsciiString m_templateName;    ///< The thing template name for this model's info.
+	Coord3D m_location;    ///< The location of the object.
+	Coord2D m_rallyPointOffset;    ///< Offset to the natural rally point.
+	Real m_angle;    ///< Initial orientation of the building.
+	Bool m_isInitiallyBuilt;    ///< Whether the building is built at the start of the game.
+	UnsignedInt m_numRebuilds;    ///< Number of rebuilds allowed.
+	BuildListInfo* m_nextBuildList;    ///< linked list.
+	AsciiString m_script;
+	Int m_health;
+	Bool m_whiner;
+	Bool m_unsellable;
+	Bool m_repairable;
+	Bool m_automaticallyBuild;    ///< If true, the ai will build.  If false, script has to enable this.
 
 	// For WorldBuilder use only:
-	RenderObjClass	*m_renderObj;				///< object that renders in the 3d scene.
-	Shadow			*m_shadowObj;				///< object that renders shadows in the 3d scane.
-	Bool				m_selected;					///< True if the obj is selected in the editor.
+	RenderObjClass* m_renderObj;    ///< object that renders in the 3d scene.
+	Shadow* m_shadowObj;    ///< object that renders shadows in the 3d scane.
+	Bool m_selected;    ///< True if the obj is selected in the editor.
 
 	// For solo AI use only:
-	ObjectID m_objectID;								///< the object on the map instantiated by this info
-	UnsignedInt m_objectTimestamp;			///< frame when object was built
-	Bool		 m_underConstruction;				///< True if being constructed by dozer.
-	ObjectID m_resourceGatherers[MAX_RESOURCE_GATHERERS];	///< gatherers for this supply center type building.
-	Bool		 m_isSupplyBuilding;				///< Uses gatherers to get supplies.
-	Int			 m_desiredGatherers;				///< Number of gatherers desired.
-	Int			 m_currentGatherers;				///< Number of gatherers available.
-	Bool		 m_priorityBuild;						///< Is priority build.
+	ObjectID m_objectID;    ///< the object on the map instantiated by this info
+	UnsignedInt m_objectTimestamp;    ///< frame when object was built
+	Bool m_underConstruction;    ///< True if being constructed by dozer.
+	ObjectID m_resourceGatherers[MAX_RESOURCE_GATHERERS];    ///< gatherers for this supply center type building.
+	Bool m_isSupplyBuilding;    ///< Uses gatherers to get supplies.
+	Int m_desiredGatherers;    ///< Number of gatherers desired.
+	Int m_currentGatherers;    ///< Number of gatherers available.
+	Bool m_priorityBuild;    ///< Is priority build.
 
 public:
 	// srj sez: naughty public access to avoid 'friend' -- should be friend for JUST THESE, but hey
-	void setNumRebuilds(UnsignedInt numRebuilds) {m_numRebuilds = numRebuilds;}
-	void setNextBuildList(BuildListInfo *pNext) {m_nextBuildList = pNext;}
-	void setLocation(Coord3D loc) {m_location = loc;}
-	void setAngle(Real angle) {m_angle = angle;}
-	void setInitiallyBuilt(Bool built) {m_isInitiallyBuilt = built;}
-	void setBuildingName(AsciiString name) {m_buildingName = name;}
-	void setScript(AsciiString script) {m_script = script;}
-	void setHealth(Int health) {m_health = health;}
-	void setWhiner(Bool whiner) {m_whiner = whiner;}
-	void setUnsellable(Bool unsellable) {m_unsellable = unsellable;}
-	void setRepairable(Bool repairable) {m_repairable = repairable;}
+	void setNumRebuilds(UnsignedInt numRebuilds) { m_numRebuilds = numRebuilds; }
+	void setNextBuildList(BuildListInfo* pNext) { m_nextBuildList = pNext; }
+	void setLocation(Coord3D loc) { m_location = loc; }
+	void setAngle(Real angle) { m_angle = angle; }
+	void setInitiallyBuilt(Bool built) { m_isInitiallyBuilt = built; }
+	void setBuildingName(AsciiString name) { m_buildingName = name; }
+	void setScript(AsciiString script) { m_script = script; }
+	void setHealth(Int health) { m_health = health; }
+	void setWhiner(Bool whiner) { m_whiner = whiner; }
+	void setUnsellable(Bool unsellable) { m_unsellable = unsellable; }
+	void setRepairable(Bool repairable) { m_repairable = repairable; }
 
 public:
-	BuildListInfo *getNext() const {return m_nextBuildList;}
-	AsciiString getBuildingName() const {return m_buildingName;} ///< Gets the name.
-	AsciiString getTemplateName() const {return m_templateName;} ///< Gets the name.
-	void setTemplateName(AsciiString name) {m_templateName = name;}
-	Int getNumRebuilds() {return m_numRebuilds;}
+	BuildListInfo* getNext() const { return m_nextBuildList; }
+	AsciiString getBuildingName() const { return m_buildingName; }    ///< Gets the name.
+	AsciiString getTemplateName() const { return m_templateName; }    ///< Gets the name.
+	void setTemplateName(AsciiString name) { m_templateName = name; }
+	Int getNumRebuilds() { return m_numRebuilds; }
 	void decrementNumRebuilds();
 	void incrementNumRebuilds();
-	const Coord3D *getLocation() const {return &m_location;}
-	const Coord2D *getRallyOffset() const {return &m_rallyPointOffset;}
-	Real getAngle() const {return m_angle;}
-	Bool isInitiallyBuilt() {return m_isInitiallyBuilt;}
-	AsciiString getScript() {return m_script;}
-	Int getHealth() {return m_health;}
-	Bool getWhiner() {return m_whiner;}
-	Bool getUnsellable() {return m_unsellable;}
-	Bool getRepairable() {return m_repairable;}
+	const Coord3D* getLocation() const { return &m_location; }
+	const Coord2D* getRallyOffset() const { return &m_rallyPointOffset; }
+	Real getAngle() const { return m_angle; }
+	Bool isInitiallyBuilt() { return m_isInitiallyBuilt; }
+	AsciiString getScript() { return m_script; }
+	Int getHealth() { return m_health; }
+	Bool getWhiner() { return m_whiner; }
+	Bool getUnsellable() { return m_unsellable; }
+	Bool getRepairable() { return m_repairable; }
 
-	void setRenderObj(RenderObjClass *pObj) {m_renderObj = pObj;}
-	RenderObjClass *getRenderObj() {return m_renderObj;}
-	void setShadowObj(Shadow *pObj) {m_shadowObj = pObj;}
-	Shadow *getShadowObj() {return m_shadowObj;}
+	void setRenderObj(RenderObjClass* pObj) { m_renderObj = pObj; }
+	RenderObjClass* getRenderObj() { return m_renderObj; }
+	void setShadowObj(Shadow* pObj) { m_shadowObj = pObj; }
+	Shadow* getShadowObj() { return m_shadowObj; }
 
-	void setSelected(Bool sel) {m_selected = sel;}
-	Bool isSelected() {return m_selected;}
+	void setSelected(Bool sel) { m_selected = sel; }
+	Bool isSelected() { return m_selected; }
 
 	// used by the solo AI
-	void setObjectID( ObjectID objID ) { m_objectID = objID; }
+	void setObjectID(ObjectID objID) { m_objectID = objID; }
 	ObjectID getObjectID() const { return m_objectID; }
-	void setObjectTimestamp( UnsignedInt frame ) { m_objectTimestamp = frame; }
+	void setObjectTimestamp(UnsignedInt frame) { m_objectTimestamp = frame; }
 	UnsignedInt getObjectTimestamp() const { return m_objectTimestamp; }
-	Bool isBuildable();															///< returns true if has enough rebuilds left to build again
-	Bool isUnderConstruction() {return m_underConstruction;}
-	void setUnderConstruction(Bool construction) { m_underConstruction=construction;}
-	void markPriorityBuild() {m_priorityBuild = true; }
-	Bool isPriorityBuild() {return m_priorityBuild;}
-	Bool isAutomaticBuild() {return m_automaticallyBuild;}
+	Bool isBuildable();    ///< returns true if has enough rebuilds left to build again
+	Bool isUnderConstruction() { return m_underConstruction; }
+	void setUnderConstruction(Bool construction) { m_underConstruction = construction; }
+	void markPriorityBuild() { m_priorityBuild = true; }
+	Bool isPriorityBuild() { return m_priorityBuild; }
+	Bool isAutomaticBuild() { return m_automaticallyBuild; }
 
-	Bool isSupplyBuilding() {return m_isSupplyBuilding;}
-	void setSupplyBuilding(Bool isSupply) {m_isSupplyBuilding = isSupply;}
-	ObjectID getGathererID(Int ndx) {if (ndx>=0 && ndx < MAX_RESOURCE_GATHERERS) return m_resourceGatherers[ndx]; return INVALID_ID;}
-	void setGathererID(Int ndx, ObjectID id)  {if (ndx>=0 && ndx < MAX_RESOURCE_GATHERERS) m_resourceGatherers[ndx] = id;}
-	Int getDesiredGatherers() {return m_desiredGatherers;};
-	void setDesiredGatherers(Int desired) {m_desiredGatherers = desired;}
-	Int getCurrentGatherers() {return m_currentGatherers;};
-	void setCurrentGatherers(Int cur) {m_currentGatherers = cur;}
+	Bool isSupplyBuilding() { return m_isSupplyBuilding; }
+	void setSupplyBuilding(Bool isSupply) { m_isSupplyBuilding = isSupply; }
+	ObjectID getGathererID(Int ndx)
+	{
+		if (ndx >= 0 && ndx < MAX_RESOURCE_GATHERERS)
+		{
+			return m_resourceGatherers[ndx];
+		}
+		return INVALID_ID;
+	}
+	void setGathererID(Int ndx, ObjectID id)
+	{
+		if (ndx >= 0 && ndx < MAX_RESOURCE_GATHERERS)
+		{
+			m_resourceGatherers[ndx] = id;
+		}
+	}
+	Int getDesiredGatherers() { return m_desiredGatherers; };
+	void setDesiredGatherers(Int desired) { m_desiredGatherers = desired; }
+	Int getCurrentGatherers() { return m_currentGatherers; };
+	void setCurrentGatherers(Int cur) { m_currentGatherers = cur; }
 
-	BuildListInfo *duplicate();
+	BuildListInfo* duplicate();
 };
 
 inline void BuildListInfo::decrementNumRebuilds()
 {
 	if (m_numRebuilds > 0 && m_numRebuilds != UNLIMITED_REBUILDS)
+	{
 		m_numRebuilds--;
+	}
 }
 
 inline void BuildListInfo::incrementNumRebuilds()
 {
 	if (m_numRebuilds != UNLIMITED_REBUILDS)
+	{
 		m_numRebuilds++;
+	}
 }
 
 inline Bool BuildListInfo::isBuildable()
 {
 	if (getNumRebuilds() > 0 || getNumRebuilds() == BuildListInfo::UNLIMITED_REBUILDS)
+	{
 		return true;
+	}
 
 	return false;
 }

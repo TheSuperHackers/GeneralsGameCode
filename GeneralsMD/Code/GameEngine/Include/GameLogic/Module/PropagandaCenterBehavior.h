@@ -43,28 +43,23 @@ typedef BrainwashedIDList::iterator BrainwashedIDListIterator;
 // ------------------------------------------------------------------------------------------------
 class PropagandaCenterBehaviorModuleData : public PrisonBehaviorModuleData
 {
-
 public:
-
 	PropagandaCenterBehaviorModuleData();
 
-	static void buildFieldParse( MultiIniFieldParse &p );
+	static void buildFieldParse(MultiIniFieldParse& p);
 
-	UnsignedInt m_brainwashDuration;			///< how long (in frames) it takes to become brainwashed
-
+	UnsignedInt m_brainwashDuration;    ///< how long (in frames) it takes to become brainwashed
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class PropagandaCenterBehavior : public PrisonBehavior
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PropagandaCenterBehavior, "PropagandaCenterBehavior" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PropagandaCenterBehavior, PropagandaCenterBehaviorModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PropagandaCenterBehavior, "PropagandaCenterBehavior")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(PropagandaCenterBehavior, PropagandaCenterBehaviorModuleData)
 
 public:
-
-	PropagandaCenterBehavior( Thing *thing, const ModuleData *moduleData );
+	PropagandaCenterBehavior(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool object
 
 	// generic module methods
@@ -72,14 +67,12 @@ public:
 
 	// contain methods
 	virtual UpdateSleepTime update();
-	virtual void onRemoving( Object *obj );
+	virtual void onRemoving(Object* obj);
 
 protected:
-
-	ObjectID m_brainwashingSubjectID;								///< who we're currently brainwashing
-	UnsignedInt m_brainwashingSubjectStartFrame;		///< frame we started brainwashing
-	BrainwashedIDList m_brainwashedList;						///< list of objects we've brainwashed
-
+	ObjectID m_brainwashingSubjectID;    ///< who we're currently brainwashing
+	UnsignedInt m_brainwashingSubjectStartFrame;    ///< frame we started brainwashing
+	BrainwashedIDList m_brainwashedList;    ///< list of objects we've brainwashed
 };
 
 #endif

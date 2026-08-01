@@ -26,33 +26,33 @@
 
 class CWdumpDoc : public CDocument
 {
-//Moumine 1/2/2002    11:12:25 AM ---Need this as public in project W3dShellExt
-#if ! defined _W3DSHELLEXT
-protected: // create from serialization only
+// Moumine 1/2/2002    11:12:25 AM ---Need this as public in project W3dShellExt
+#if !defined _W3DSHELLEXT
+protected:    // create from serialization only
 #else
 public:
 #endif
 	CWdumpDoc();
+
 protected:
 	DECLARE_DYNCREATE(CWdumpDoc)
-	void Read_File(const char *filename);
+	void Read_File(const char* filename);
 
-// Attributes
+	// Attributes
 public:
 	ChunkData m_ChunkData;
-	ChunkItem *m_ChunkItem;
-// Operations
+	ChunkItem* m_ChunkItem;
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWdumpDoc)
-	public:
+public:
 	virtual BOOL OnNewDocument() override;
 	virtual void Serialize(CArchive& ar) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CWdumpDoc();
 #ifdef RTS_DEBUG
@@ -61,8 +61,7 @@ public:
 #endif
 
 protected:
-
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CWdumpDoc)
 	afx_msg void OnFileOpen();

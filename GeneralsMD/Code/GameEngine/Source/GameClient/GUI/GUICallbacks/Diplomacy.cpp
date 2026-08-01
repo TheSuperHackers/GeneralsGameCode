@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GlobalData.h"
 #include "Common/MultiplayerSettings.h"
@@ -57,7 +57,6 @@
 #include "GameNetwork/GameSpy/BuddyDefs.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
-
 //-------------------------------------------------------------------------------------------------
 
 static NameKeyType staticTextPlayerID[MAX_SLOTS];
@@ -68,34 +67,34 @@ static NameKeyType buttonMuteID[MAX_SLOTS];
 static NameKeyType buttonUnMuteID[MAX_SLOTS];
 static NameKeyType radioButtonInGameID = NAMEKEY_INVALID;
 static NameKeyType radioButtonBuddiesID = NAMEKEY_INVALID;
-static GameWindow *radioButtonInGame = nullptr;
-static GameWindow *radioButtonBuddies = nullptr;
+static GameWindow* radioButtonInGame = nullptr;
+static GameWindow* radioButtonBuddies = nullptr;
 static NameKeyType winInGameID = NAMEKEY_INVALID;
 static NameKeyType winBuddiesID = NAMEKEY_INVALID;
 static NameKeyType winSoloID = NAMEKEY_INVALID;
-static GameWindow *winInGame = nullptr;
-static GameWindow *winBuddies = nullptr;
-static GameWindow *winSolo = nullptr;
-static GameWindow *staticTextPlayer[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-static GameWindow *staticTextSide[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-static GameWindow *staticTextTeam[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-static GameWindow *staticTextStatus[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-static GameWindow *buttonMute[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-static GameWindow *buttonUnMute[MAX_SLOTS] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+static GameWindow* winInGame = nullptr;
+static GameWindow* winBuddies = nullptr;
+static GameWindow* winSolo = nullptr;
+static GameWindow* staticTextPlayer[MAX_SLOTS] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+static GameWindow* staticTextSide[MAX_SLOTS] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+static GameWindow* staticTextTeam[MAX_SLOTS] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+static GameWindow* staticTextStatus[MAX_SLOTS] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+static GameWindow* buttonMute[MAX_SLOTS] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+static GameWindow* buttonUnMute[MAX_SLOTS] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 static Int slotNumInRow[MAX_SLOTS];
 
 //-------------------------------------------------------------------------------------------------
 
-static WindowLayout *theLayout = nullptr;
-static GameWindow *theWindow = nullptr;
-static AnimateWindowManager *theAnimateWindowManager = nullptr;
-WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2);
+static WindowLayout* theLayout = nullptr;
+static GameWindow* theWindow = nullptr;
+static AnimateWindowManager* theAnimateWindowManager = nullptr;
+WindowMsgHandledType BuddyControlSystem(GameWindow* window, UnsignedInt msg,
+                                        WindowMsgData mData1, WindowMsgData mData2);
 void InitBuddyControls(Int type);
 void updateBuddyInfo();
 static void grabWindowPointers()
 {
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		AsciiString temp;
 		temp.format("Diplomacy.wnd:StaticTextPlayer%d", i);
@@ -124,7 +123,7 @@ static void grabWindowPointers()
 
 static void releaseWindowPointers()
 {
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		staticTextPlayer[i] = nullptr;
 		staticTextSide[i] = nullptr;
@@ -137,17 +136,18 @@ static void releaseWindowPointers()
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
 
-static void updateFunc( WindowLayout *layout, void *param )
+static void updateFunc(WindowLayout* layout, void* param)
 {
 	if (theAnimateWindowManager && TheGlobalData->m_animateWindows)
 	{
 		Bool wasFinished = theAnimateWindowManager->isFinished();
 		theAnimateWindowManager->update();
 		if (theAnimateWindowManager->isFinished() && !wasFinished && theAnimateWindowManager->isReversed())
-			theWindow->winHide( TRUE );
+		{
+			theWindow->winHide(TRUE);
+		}
 	}
 }
 
@@ -164,45 +164,58 @@ BriefingList* GetBriefingTextList()
 //-------------------------------------------------------------------------------------------------
 void UpdateDiplomacyBriefingText(AsciiString newText, Bool clear)
 {
-	GameWindow *listboxSolo = TheWindowManager->winGetWindowFromId(theWindow, NAMEKEY("Diplomacy.wnd:ListboxSolo"));
+	GameWindow* listboxSolo = TheWindowManager->winGetWindowFromId(theWindow, NAMEKEY("Diplomacy.wnd:ListboxSolo"));
 
 	if (clear)
 	{
 		theBriefingList.clear();
 		if (listboxSolo)
+		{
 			GadgetListBoxReset(listboxSolo);
+		}
 	}
 
 	if (newText.isEmpty())
+	{
 		return;
+	}
 
 	if (std::find(theBriefingList.begin(), theBriefingList.end(), newText) != theBriefingList.end())
+	{
 		return;
+	}
 
 	theBriefingList.push_back(newText);
 	if (!listboxSolo)
+	{
 		return;
+	}
 
 	UnicodeString translated = TheGameText->fetch(newText);
 
 	Int numEntries = GadgetListBoxGetNumEntries(listboxSolo);
-	GadgetListBoxAddEntryText(listboxSolo, translated, TheInGameUI->getMessageColor(numEntries%2), -1);
+	GadgetListBoxAddEntryText(listboxSolo, translated, TheInGameUI->getMessageColor(numEntries % 2), -1);
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ShowDiplomacy( Bool immediate )
+void ShowDiplomacy(Bool immediate)
 {
 	if (!TheInGameUI->getInputEnabled() || TheGameLogic->isIntroMoviePlaying() ||
-			TheGameLogic->isLoadingMap())
+	    TheGameLogic->isLoadingMap())
+	{
 		return;
-
+	}
 
 	if (TheInGameUI->isQuitMenuVisible())
+	{
 		return;
+	}
 
 	if (TheDisconnectMenu && TheDisconnectMenu->isScreenVisible())
+	{
 		return;
+	}
 
 	if (theWindow)
 	{
@@ -211,7 +224,7 @@ void ShowDiplomacy( Bool immediate )
 	}
 	else
 	{
-		theLayout = TheWindowManager->winCreateLayout( "Diplomacy.wnd" );
+		theLayout = TheWindowManager->winCreateLayout("Diplomacy.wnd");
 		theWindow = theLayout->getFirstWindow();
 		theLayout->setUpdate(updateFunc);
 		theAnimateWindowManager = NEW AnimateWindowManager;
@@ -228,14 +241,14 @@ void ShowDiplomacy( Bool immediate )
 
 		if (!TheRecorder->isMultiplayer())
 		{
-			GameWindow *listboxSolo = TheWindowManager->winGetWindowFromId(theWindow, NAMEKEY("Diplomacy.wnd:ListboxSolo"));
+			GameWindow* listboxSolo = TheWindowManager->winGetWindowFromId(theWindow, NAMEKEY("Diplomacy.wnd:ListboxSolo"));
 			if (listboxSolo)
 			{
 				for (BriefingList::iterator it = theBriefingList.begin(); it != theBriefingList.end(); ++it)
 				{
 					UnicodeString translated = TheGameText->fetch(*it);
 					Int numEntries = GadgetListBoxGetNumEntries(listboxSolo);
-					GadgetListBoxAddEntryText(listboxSolo, translated, TheInGameUI->getMessageColor(numEntries%2), -1);
+					GadgetListBoxAddEntryText(listboxSolo, translated, TheInGameUI->getMessageColor(numEntries % 2), -1);
 				}
 			}
 		}
@@ -260,13 +273,15 @@ void ShowDiplomacy( Bool immediate )
 
 	theAnimateWindowManager->reset();
 	if (!immediate && TheGlobalData->m_animateWindows)
-		theAnimateWindowManager->registerGameWindow( theWindow, WIN_ANIMATION_SLIDE_TOP, TRUE, 200 );
+	{
+		theAnimateWindowManager->registerGameWindow(theWindow, WIN_ANIMATION_SLIDE_TOP, TRUE, 200);
+	}
 
 	TheInGameUI->registerWindowLayout(theLayout);
 	grabWindowPointers();
 	PopulateInGameDiplomacyPopup();
 
-	if(TheGameSpyInfo && TheGameSpyInfo->getLocalProfileID() != 0)
+	if (TheGameSpyInfo && TheGameSpyInfo->getLocalProfileID() != 0)
 	{
 		radioButtonInGame->winHide(FALSE);
 		radioButtonBuddies->winHide(FALSE);
@@ -274,14 +289,13 @@ void ShowDiplomacy( Bool immediate )
 		PopulateOldBuddyMessages();
 		updateBuddyInfo();
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void ResetDiplomacy()
 {
-	if(theLayout)
+	if (theLayout)
 	{
 		TheInGameUI->unregisterWindowLayout(theLayout);
 		theLayout->destroyWindows();
@@ -297,7 +311,7 @@ void ResetDiplomacy()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void HideDiplomacy( Bool immediate )
+void HideDiplomacy(Bool immediate)
 {
 	releaseWindowPointers();
 	if (theWindow)
@@ -310,14 +324,16 @@ void HideDiplomacy( Bool immediate )
 		else
 		{
 			if (theAnimateWindowManager->isFinished())
+			{
 				theAnimateWindowManager->reverseAnimateWindow();
+			}
 		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void ToggleDiplomacy( Bool immediate )
+void ToggleDiplomacy(Bool immediate)
 {
 	// If we bring this up, let's hide the quit menu
 	HideQuitMenu();
@@ -326,71 +342,67 @@ void ToggleDiplomacy( Bool immediate )
 	{
 		Bool show = theWindow->winIsHidden();
 		if (show)
-			ShowDiplomacy( immediate );
+		{
+			ShowDiplomacy(immediate);
+		}
 		else
-			HideDiplomacy( immediate );
+		{
+			HideDiplomacy(immediate);
+		}
 	}
 	else
 	{
-		ShowDiplomacy( immediate );
+		ShowDiplomacy(immediate);
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DiplomacyInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType DiplomacyInput(GameWindow* window, UnsignedInt msg,
+                                    WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
-//			UnsignedByte state = mData2;
+			//			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
 					HideDiplomacy();
 					return MSG_HANDLED;
-					//return MSG_IGNORED;
+					// return MSG_IGNORED;
 				}
-
 			}
 
 			return MSG_HANDLED;
-
 		}
-
 	}
 
 	return MSG_IGNORED;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType DiplomacySystem(GameWindow* window, UnsignedInt msg,
+                                     WindowMsgData mData1, WindowMsgData mData2)
 {
-	if(BuddyControlSystem(window, msg, mData1, mData2) == MSG_HANDLED)
+	if (BuddyControlSystem(window, msg, mData1, mData2) == MSG_HANDLED)
 	{
 		return MSG_HANDLED;
 	}
-	switch( msg )
+	switch (msg)
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
 		{
-//			Bool focus = (Bool) mData1;
-			//if (focus)
-				//TheWindowManager->winSetGrabWindow( chatTextEntry );
+			//			Bool focus = (Bool) mData1;
+			// if (focus)
+			// TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
 		}
 
@@ -398,8 +410,10 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 		case GWM_INPUT_FOCUS:
 		{
 			// if we're given the opportunity to take the keyboard focus we must say we don't want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = FALSE;
+			if (mData1 == TRUE)
+			{
+				*(Bool*)mData2 = FALSE;
+			}
 
 			return MSG_HANDLED;
 		}
@@ -407,25 +421,25 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
-			GameWindow *control = (GameWindow *)mData1;
+			GameWindow* control = (GameWindow*)mData1;
 			NameKeyType controlID = (NameKeyType)control->winGetWindowId();
-			static NameKeyType buttonHideID = NAMEKEY( "Diplomacy.wnd:ButtonHide" );
+			static NameKeyType buttonHideID = NAMEKEY("Diplomacy.wnd:ButtonHide");
 			if (controlID == buttonHideID)
 			{
-				HideDiplomacy( FALSE );
+				HideDiplomacy(FALSE);
 			}
-			else if( controlID == radioButtonInGameID)
+			else if (controlID == radioButtonInGameID)
 			{
 				winInGame->winHide(FALSE);
 				winBuddies->winHide(TRUE);
 			}
-			else if( controlID == radioButtonBuddiesID)
+			else if (controlID == radioButtonBuddiesID)
 			{
 				winInGame->winHide(TRUE);
 				winBuddies->winHide(FALSE);
 			}
 
-			for (Int i=0; i<MAX_SLOTS; ++i)
+			for (Int i = 0; i < MAX_SLOTS; ++i)
 			{
 				if (controlID == buttonMuteID[i] && slotNumInRow[i] >= 0)
 				{
@@ -441,43 +455,47 @@ WindowMsgHandledType DiplomacySystem( GameWindow *window, UnsignedInt msg,
 				}
 			}
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;
-
 }
 
 void PopulateInGameDiplomacyPopup()
 {
 	if (!TheGameInfo)
+	{
 		return;
+	}
 
 	Int rowNum = 0;
-	for (Int slotNum=0; slotNum<MAX_SLOTS; ++slotNum)
+	for (Int slotNum = 0; slotNum < MAX_SLOTS; ++slotNum)
 	{
-		const GameSlot *slot = TheGameInfo->getConstSlot(slotNum);
+		const GameSlot* slot = TheGameInfo->getConstSlot(slotNum);
 		if (slot && slot->isOccupied())
 		{
 			Bool isInGame = false;
 			// Note - for skirmish, TheNetwork == nullptr.  jba.
-			if (TheNetwork &&	TheNetwork->isPlayerConnected(slotNum)) {
+			if (TheNetwork && TheNetwork->isPlayerConnected(slotNum))
+			{
 				isInGame = true;
-			} else if ((TheNetwork == nullptr) && slot->isHuman()) {
+			}
+			else if ((TheNetwork == nullptr) && slot->isHuman())
+			{
 				// this is a skirmish game and it is the human player.
 				isInGame = true;
 			}
 			if (slot->isAI())
+			{
 				isInGame = true;
+			}
 			AsciiString playerName;
 			playerName.format("player%d", slotNum);
-			Player *player = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
+			Player* player = ThePlayerList->findPlayerWithNameKey(NAMEKEY(playerName));
 			Bool isAlive = !TheVictoryConditions->hasSinglePlayerBeenDefeated(player);
 			Bool isObserver = player->isPlayerObserver();
 
@@ -497,9 +515,13 @@ void PopulateInGameDiplomacyPopup()
 			{
 				// can't mute self, AI players, or MIA humans
 				if (buttonMute[rowNum])
+				{
 					buttonMute[rowNum]->winHide(TRUE);
+				}
 				if (buttonUnMute[rowNum])
+				{
 					buttonUnMute[rowNum]->winHide(TRUE);
+				}
 			}
 
 			Color playerColor = TheMultiplayerSettings->getColor(slot->getApparentColor())->getColor();
@@ -512,22 +534,24 @@ void PopulateInGameDiplomacyPopup()
 
 			if (staticTextPlayer[rowNum])
 			{
-				staticTextPlayer[rowNum]->winSetEnabledTextColors( playerColor, backColor );
+				staticTextPlayer[rowNum]->winSetEnabledTextColors(playerColor, backColor);
 				GadgetStaticTextSetText(staticTextPlayer[rowNum], slot->getName());
 			}
 			if (staticTextSide[rowNum])
 			{
-				staticTextSide[rowNum]->winSetEnabledTextColors( playerColor, backColor );
-				GadgetStaticTextSetText(staticTextSide[rowNum], slot->getApparentPlayerTemplateDisplayName() );
+				staticTextSide[rowNum]->winSetEnabledTextColors(playerColor, backColor);
+				GadgetStaticTextSetText(staticTextSide[rowNum], slot->getApparentPlayerTemplateDisplayName());
 			}
 			if (staticTextTeam[rowNum])
 			{
-				staticTextTeam[rowNum]->winSetEnabledTextColors( playerColor, backColor );
+				staticTextTeam[rowNum]->winSetEnabledTextColors(playerColor, backColor);
 				AsciiString teamStr;
 				teamStr.format("Team:%d", slot->getTeamNumber() + 1);
 				if (slot->isAI() && slot->getTeamNumber() == -1)
+				{
 					teamStr = "Team:AI";
-				GadgetStaticTextSetText(staticTextTeam[rowNum], TheGameText->fetch(teamStr) );
+				}
+				GadgetStaticTextSetText(staticTextTeam[rowNum], TheGameText->fetch(teamStr));
 			}
 			if (staticTextStatus[rowNum])
 			{
@@ -536,19 +560,19 @@ void PopulateInGameDiplomacyPopup()
 				{
 					if (isAlive)
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( aliveColor, backColor );
+						staticTextStatus[rowNum]->winSetEnabledTextColors(aliveColor, backColor);
 						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerAlive"));
 					}
 					else
 					{
 						if (isObserver)
 						{
-							staticTextStatus[rowNum]->winSetEnabledTextColors( observerInGameColor, backColor );
+							staticTextStatus[rowNum]->winSetEnabledTextColors(observerInGameColor, backColor);
 							GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerObserver"));
 						}
 						else
 						{
-							staticTextStatus[rowNum]->winSetEnabledTextColors( deadColor, backColor );
+							staticTextStatus[rowNum]->winSetEnabledTextColors(deadColor, backColor);
 							GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerDead"));
 						}
 					}
@@ -558,12 +582,12 @@ void PopulateInGameDiplomacyPopup()
 					// not in game
 					if (isObserver)
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( observerGoneColor, backColor );
+						staticTextStatus[rowNum]->winSetEnabledTextColors(observerGoneColor, backColor);
 						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerObserverGone"));
 					}
 					else
 					{
-						staticTextStatus[rowNum]->winSetEnabledTextColors( goneColor, backColor );
+						staticTextStatus[rowNum]->winSetEnabledTextColors(goneColor, backColor);
 						GadgetStaticTextSetText(staticTextStatus[rowNum], TheGameText->fetch("GUI:PlayerGone"));
 					}
 				}
@@ -577,21 +601,30 @@ void PopulateInGameDiplomacyPopup()
 	{
 		slotNumInRow[rowNum] = -1;
 		if (staticTextPlayer[rowNum])
+		{
 			staticTextPlayer[rowNum]->winHide(TRUE);
+		}
 		if (staticTextSide[rowNum])
+		{
 			staticTextSide[rowNum]->winHide(TRUE);
+		}
 		if (staticTextTeam[rowNum])
+		{
 			staticTextTeam[rowNum]->winHide(TRUE);
+		}
 		if (staticTextStatus[rowNum])
+		{
 			staticTextStatus[rowNum]->winHide(TRUE);
+		}
 		if (buttonMute[rowNum])
+		{
 			buttonMute[rowNum]->winHide(TRUE);
+		}
 		if (buttonUnMute[rowNum])
+		{
 			buttonUnMute[rowNum]->winHide(TRUE);
+		}
 
 		++rowNum;
 	}
 }
-
-
-

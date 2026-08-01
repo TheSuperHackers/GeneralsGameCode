@@ -24,27 +24,27 @@
 
 class CWdumpView : public CView
 {
-protected: // create from serialization only
+protected:    // create from serialization only
 	CWdumpView();
 	DECLARE_DYNCREATE(CWdumpView)
 
-// Attributes
+	// Attributes
 public:
 	CWdumpDoc* GetDocument();
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWdumpView)
-	public:
-	virtual void OnDraw(CDC* pDC) override;  // overridden to draw this view
+public:
+	virtual void OnDraw(CDC* pDC) override;    // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	protected:
+
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CWdumpView();
 #ifdef RTS_DEBUG
@@ -53,19 +53,18 @@ public:
 #endif
 
 protected:
-
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CWdumpView)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef RTS_DEBUG  // debug version in wdumpView.cpp
+#ifndef RTS_DEBUG    // debug version in wdumpView.cpp
 inline CWdumpDoc* CWdumpView::GetDocument()
-   { return (CWdumpDoc*)m_pDocument; }
+{ return (CWdumpDoc*)m_pDocument; }
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

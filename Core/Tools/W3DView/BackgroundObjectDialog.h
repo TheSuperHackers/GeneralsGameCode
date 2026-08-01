@@ -26,27 +26,28 @@
 
 class CBackgroundObjectDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CBackgroundObjectDialog(CWnd* pParent = nullptr);   // standard constructor
+	CBackgroundObjectDialog(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CBackgroundObjectDialog)
-	enum { IDD = IDD_BACKGROUND_OBJECT };
-	CListCtrl	m_heirarchyListCtrl;
+	enum
+	{
+		IDD = IDD_BACKGROUND_OBJECT
+	};
+	CListCtrl m_heirarchyListCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CBackgroundObjectDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CBackgroundObjectDialog)
 	virtual BOOL OnInitDialog() override;

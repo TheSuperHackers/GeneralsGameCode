@@ -18,9 +18,8 @@
 
 #pragma once
 
-#include <cstddef> // std::size_t, std::ptrdiff_t
-#include <new> // std::bad_alloc
-
+#include <cstddef>    // std::size_t, std::ptrdiff_t
+#include <new>    // std::bad_alloc
 
 namespace stl
 {
@@ -31,7 +30,6 @@ template <typename T>
 class system_allocator
 {
 public:
-
 	typedef T value_type;
 	typedef T* pointer;
 	typedef const T* const_pointer;
@@ -63,11 +61,15 @@ public:
 	pointer allocate(size_type n, const void* = 0)
 	{
 		if (n > max_size())
+		{
 			throw std::bad_alloc();
+		}
 
 		void* p = GlobalAlloc(GMEM_FIXED, n * sizeof(T));
 		if (!p)
+		{
 			throw std::bad_alloc();
+		}
 		return static_cast<pointer>(p);
 	}
 
@@ -94,35 +96,38 @@ public:
 
 // Allocators of same type are always equal
 template <typename T1, typename T2>
-bool operator==(const system_allocator<T1>&, const system_allocator<T2>&) throw() {
+bool operator==(const system_allocator<T1>&, const system_allocator<T2>&) throw()
+{
 	return true;
 }
 
 template <typename T1, typename T2>
-bool operator!=(const system_allocator<T1>&, const system_allocator<T2>&) throw() {
+bool operator!=(const system_allocator<T1>&, const system_allocator<T2>&) throw()
+{
 	return false;
 }
 
-} // namespace stl
-
+}    // namespace stl
 
 #if defined(USING_STLPORT)
 
 // This tells STLport how to rebind system_allocator
 namespace std
 {
-	template <class _Tp1, class _Tp2>
-	struct __stl_alloc_rebind_helper;
+template <class _Tp1, class _Tp2>
+struct __stl_alloc_rebind_helper;
 
-	template <class Tp1, class Tp2>
-	inline stl::system_allocator<Tp2>& __stl_alloc_rebind(stl::system_allocator<Tp1>& a, const Tp2*) {
-		return *reinterpret_cast<stl::system_allocator<Tp2>*>(&a);
-	}
-
-	template <class Tp1, class Tp2>
-	inline const stl::system_allocator<Tp2>& __stl_alloc_rebind(const stl::system_allocator<Tp1>& a, const Tp2*) {
-		return *reinterpret_cast<const stl::system_allocator<Tp2>*>(&a);
-	}
+template <class Tp1, class Tp2>
+inline stl::system_allocator<Tp2>& __stl_alloc_rebind(stl::system_allocator<Tp1>& a, const Tp2*)
+{
+	return *reinterpret_cast<stl::system_allocator<Tp2>*>(&a);
 }
+
+template <class Tp1, class Tp2>
+inline const stl::system_allocator<Tp2>& __stl_alloc_rebind(const stl::system_allocator<Tp1>& a, const Tp2*)
+{
+	return *reinterpret_cast<const stl::system_allocator<Tp2>*>(&a);
+}
+}    // namespace std
 
 #endif

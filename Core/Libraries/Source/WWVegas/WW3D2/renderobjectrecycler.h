@@ -61,17 +61,13 @@ class Matrix3D;
 class RenderObjectRecyclerClass
 {
 public:
-
-	void					Reset();
-	RenderObjClass*	Get_Render_Object(const char * name,const Matrix3D & tm);
-	void					Return_Render_Object(RenderObjClass * obj);
+	void Reset();
+	RenderObjClass* Get_Render_Object(const char* name, const Matrix3D& tm);
+	void Return_Render_Object(RenderObjClass* obj);
 
 private:
+	void Insert_Inactive_Model(RenderObjClass* obj);
+	void Reset_Model(RenderObjClass* model);
 
-	void					Insert_Inactive_Model(RenderObjClass * obj);
-	void					Reset_Model(RenderObjClass * model);
-
-
-	RefRenderObjListClass	InactiveModels;
-
+	RefRenderObjListClass InactiveModels;
 };

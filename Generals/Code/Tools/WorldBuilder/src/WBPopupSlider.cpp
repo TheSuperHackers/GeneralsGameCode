@@ -29,12 +29,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // WBPopupSliderButton public member functions
 
-void WBPopupSliderButton::SetupPopSliderButton
-(
-	CWnd *pParentWnd,
-	long controlID,
-	PopupSliderOwner *pOwner
-)
+void WBPopupSliderButton::SetupPopSliderButton(
+  CWnd* pParentWnd,
+  long controlID,
+  PopupSliderOwner* pOwner)
 {
 	SubclassWindow(pParentWnd->GetDlgItem(controlID)->GetSafeHwnd());
 
@@ -42,19 +40,19 @@ void WBPopupSliderButton::SetupPopSliderButton
 	m_sliderStyle = SB_VERT;
 	m_owner = pOwner;
 
-	HBITMAP hBm = (HBITMAP) ::LoadImage((HINSTANCE) AfxGetResourceHandle(),
-								 MAKEINTRESOURCE(IDB_DownArrow),
-								 IMAGE_BITMAP, 0, 0,
-								 LR_LOADMAP3DCOLORS);
+	HBITMAP hBm = (HBITMAP)::LoadImage((HINSTANCE)AfxGetResourceHandle(),
+	                                   MAKEINTRESOURCE(IDB_DownArrow),
+	                                   IMAGE_BITMAP, 0, 0,
+	                                   LR_LOADMAP3DCOLORS);
 
-	HBITMAP hbmOld = (HBITMAP) SendMessage(BM_SETIMAGE, IMAGE_BITMAP, (LPARAM) hBm);
+	HBITMAP hbmOld = (HBITMAP)SendMessage(BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hBm);
 
 	if (hbmOld)
+	{
 		::DeleteObject(hbmOld);
+	}
 	hbmOld = nullptr;
-
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // WBPopupSliderButton
@@ -68,11 +66,10 @@ WBPopupSliderButton::~WBPopupSliderButton()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(WBPopupSliderButton, CButton)
-	//{{AFX_MSG_MAP(WBPopupSliderButton)
-	ON_WM_LBUTTONDOWN()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(WBPopupSliderButton)
+ON_WM_LBUTTONDOWN()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -80,46 +77,40 @@ END_MESSAGE_MAP()
 
 void WBPopupSliderButton::OnLButtonDown(UINT nFlags, CPoint point)
 {
-nFlags;
-point;
+	nFlags;
+	point;
 
 	// just create the slider; it will delete itself when the user is done scrolling
 	PopupSlider::New(this, m_sliderStyle, m_owner, m_controlID);
 }
 
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // defines and typedefs
 
-#define POPUP_SLIDER_SMALLDIMENSION					16
-#define POPUP_SLIDER_BIGDIMENSION					120
-#define SLIDER_INSET_AMOUNT							1
+#define POPUP_SLIDER_SMALLDIMENSION 16
+#define POPUP_SLIDER_BIGDIMENSION 120
+#define SLIDER_INSET_AMOUNT 1
 
 // two guesses what these are
-#define THUMB_ICON_WIDTH							5
-#define THUMB_ICON_HEIGHT							8
+#define THUMB_ICON_WIDTH 5
+#define THUMB_ICON_HEIGHT 8
 
 // the width between the end of the channel and the edge of the window
-#define CHANNEL_X_INSET_AMOUNT						5
+#define CHANNEL_X_INSET_AMOUNT 5
 
 // the height between the top of the thumb and the top of the window
-#define PIXELS_ABOVE_SLIDER							3
+#define PIXELS_ABOVE_SLIDER 3
 
 // the height between the top of the thumb and the top of the channel
-#define CHANNEL_BELOW_THUMB_TOP						1
+#define CHANNEL_BELOW_THUMB_TOP 1
 
 // the height between the bottom of the channel and the bottom of the thumb
-#define CHANNEL_ABOVE_THUMB_BOTTOM					3
+#define CHANNEL_ABOVE_THUMB_BOTTOM 3
 
 /////////////////////////////////////////////////////////////////////////////
 // PopupSlider static member variables
 
-PopupSlider *PopupSlider::gPopupSlider = nullptr;
-
+PopupSlider* PopupSlider::gPopupSlider = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // internal routines
@@ -130,12 +121,15 @@ PopupSlider *PopupSlider::gPopupSlider = nullptr;
 void PopupSlider::GetChannelRect(CRect* rect)
 {
 	GetClientRect(rect);
-	if(SB_HORZ == m_kind) {
+	if (SB_HORZ == m_kind)
+	{
 		rect->InflateRect(-CHANNEL_X_INSET_AMOUNT, 0);
 		rect->top = PIXELS_ABOVE_SLIDER + CHANNEL_BELOW_THUMB_TOP;
 		rect->bottom = THUMB_ICON_HEIGHT - (CHANNEL_BELOW_THUMB_TOP + CHANNEL_ABOVE_THUMB_BOTTOM);
 		rect->bottom += rect->top;
-	} else {
+	}
+	else
+	{
 		rect->InflateRect(0, -CHANNEL_X_INSET_AMOUNT);
 		rect->left = PIXELS_ABOVE_SLIDER + CHANNEL_BELOW_THUMB_TOP + 2;
 		rect->right = THUMB_ICON_HEIGHT - (CHANNEL_BELOW_THUMB_TOP + CHANNEL_ABOVE_THUMB_BOTTOM);
@@ -152,28 +146,43 @@ void PopupSlider::GetThumbIconRect(CRect* rect)
 
 	int along = m_curValue - m_lo;
 
-	if(SB_HORZ == m_kind) {
+	if (SB_HORZ == m_kind)
+	{
 		int thumbMiddle = along * channelRect.Width();
 		thumbMiddle /= range;
 		thumbMiddle += channelRect.left;
 
-		if (thumbMiddle < channelRect.left) thumbMiddle = channelRect.left;
-		if (thumbMiddle > channelRect.right) thumbMiddle = channelRect.right;
+		if (thumbMiddle < channelRect.left)
+		{
+			thumbMiddle = channelRect.left;
+		}
+		if (thumbMiddle > channelRect.right)
+		{
+			thumbMiddle = channelRect.right;
+		}
 
 		rect->top = channelRect.top - CHANNEL_BELOW_THUMB_TOP;
 		rect->bottom = channelRect.bottom + CHANNEL_ABOVE_THUMB_BOTTOM;
 		rect->left = thumbMiddle - (THUMB_ICON_WIDTH / 2);
 		rect->right = rect->left + THUMB_ICON_WIDTH;
-	} else {
+	}
+	else
+	{
 		int thumbMiddle = along * channelRect.Height();
 		thumbMiddle /= range;
 		thumbMiddle = channelRect.bottom - thumbMiddle;
 
-		if (thumbMiddle < channelRect.top) thumbMiddle = channelRect.top;
-		if (thumbMiddle > channelRect.bottom) thumbMiddle = channelRect.bottom;
+		if (thumbMiddle < channelRect.top)
+		{
+			thumbMiddle = channelRect.top;
+		}
+		if (thumbMiddle > channelRect.bottom)
+		{
+			thumbMiddle = channelRect.bottom;
+		}
 
 		rect->top = thumbMiddle - (THUMB_ICON_WIDTH / 2);
-		rect->bottom = thumbMiddle + (THUMB_ICON_WIDTH/2);
+		rect->bottom = thumbMiddle + (THUMB_ICON_WIDTH / 2);
 		rect->left = channelRect.left - CHANNEL_BELOW_THUMB_TOP;
 		rect->right = channelRect.right + CHANNEL_ABOVE_THUMB_BOTTOM;
 	}
@@ -185,21 +194,30 @@ void PopupSlider::MoveThumbUnderMouse(int xNew)
 	GetChannelRect(&channelRect);
 
 	int newVal = m_hi - m_lo;
-	if(SB_HORZ == m_kind) {
+	if (SB_HORZ == m_kind)
+	{
 		int along = xNew - channelRect.left;
 
 		newVal *= along;
 		newVal /= channelRect.Width();
 		newVal += m_lo;
-	} else {
+	}
+	else
+	{
 		int along = channelRect.bottom - xNew;
 
 		newVal *= along;
 		newVal /= channelRect.Height();
 		newVal += m_lo;
 	}
-	if (newVal < m_lo) newVal = m_lo;
-	if (newVal >  m_hi) newVal =  m_hi;
+	if (newVal < m_lo)
+	{
+		newVal = m_lo;
+	}
+	if (newVal > m_hi)
+	{
+		newVal = m_hi;
+	}
 
 	CRect iconRect;
 	GetThumbIconRect(&iconRect);
@@ -213,22 +231,22 @@ void PopupSlider::MoveThumbUnderMouse(int xNew)
 	InvalidateRect(&iconRect, FALSE);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // PopupSlider static member functions
 
-void PopupSlider::New(CWnd *pParentWnd, long kind,
-						  PopupSliderOwner *pSliderOwner,
-						  long sliderID)
+void PopupSlider::New(CWnd* pParentWnd, long kind,
+                      PopupSliderOwner* pSliderOwner,
+                      long sliderID)
 {
-	PopupSlider * pPopupSlider;
+	PopupSlider* pPopupSlider;
 
 	DEBUG_ASSERTCRASH(((SB_HORZ == kind) || (SB_VERT == kind)),
-					("PopupSlider - unexpected kind of slider!"));
+	                  ("PopupSlider - unexpected kind of slider!"));
 
 	DEBUG_ASSERTCRASH(pSliderOwner, ("slider owner is null!"));
 
-	try {
+	try
+	{
 		CRect rect;
 
 		pParentWnd->GetWindowRect(&rect);
@@ -241,10 +259,10 @@ void PopupSlider::New(CWnd *pParentWnd, long kind,
 		pPopupSlider->m_kind = kind;
 
 		pSliderOwner->GetPopSliderInfo(pPopupSlider->mSliderID,
-								&(pPopupSlider->m_lo),
-								&(pPopupSlider->m_hi),
-								&(pPopupSlider->m_lineSize),
-								&(pPopupSlider->m_curValue));
+		                               &(pPopupSlider->m_lo),
+		                               &(pPopupSlider->m_hi),
+		                               &(pPopupSlider->m_lineSize),
+		                               &(pPopupSlider->m_curValue));
 
 		DEBUG_ASSERTCRASH(pPopupSlider->m_hi != pPopupSlider->m_lo, ("PopupSlider: endpoint values are the same!"));
 		DEBUG_ASSERTCRASH(pPopupSlider->m_lineSize != 0, ("PopupSlider: line size is zero!"));
@@ -254,11 +272,12 @@ void PopupSlider::New(CWnd *pParentWnd, long kind,
 		/* if the slider is successfully created, it will
 		be deleted automatically by its PostNcDestroy
 		member function */
-	} catch (...) {
+	}
+	catch (...)
+	{
 		// don't rethrow
 		delete pPopupSlider;
 		pPopupSlider = nullptr;
-
 	}
 
 	gPopupSlider = pPopupSlider;
@@ -284,7 +303,8 @@ PopupSlider::PopupSlider()
 
 PopupSlider::~PopupSlider()
 {
-	if (mIcon) {
+	if (mIcon)
+	{
 		BOOL bRet = DestroyIcon(mIcon);
 		(void)bRet;
 		DEBUG_ASSERTCRASH(bRet != 0, ("Oops."));
@@ -293,18 +313,16 @@ PopupSlider::~PopupSlider()
 	}
 }
 
-
 BEGIN_MESSAGE_MAP(PopupSlider, CWnd)
-	//{{AFX_MSG_MAP(PopupSlider)
-	ON_WM_PAINT()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_DESTROY()
-	ON_WM_MOUSEMOVE()
-	ON_WM_KEYDOWN()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(PopupSlider)
+ON_WM_PAINT()
+ON_WM_LBUTTONDOWN()
+ON_WM_LBUTTONUP()
+ON_WM_DESTROY()
+ON_WM_MOUSEMOVE()
+ON_WM_KEYDOWN()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // PopupSlider message handlers
@@ -313,21 +331,22 @@ BOOL PopupSlider::Create(const RECT& rect, CWnd* pParentWnd)
 {
 	BOOL retVal;
 
-	try {
-		if (FALSE == m_brush3dFaceColor.CreateSolidBrush(GetSysColor(COLOR_3DFACE))) {
+	try
+	{
+		if (FALSE == m_brush3dFaceColor.CreateSolidBrush(GetSysColor(COLOR_3DFACE)))
+		{
 			throw(-1);
 		}
 
-		mIcon = (HICON) LoadImage(AfxGetResourceHandle(),
-				MAKEINTRESOURCE(IDI_Thumb),
-				IMAGE_ICON, 0, 0, LR_LOADMAP3DCOLORS);
-
+		mIcon = (HICON)LoadImage(AfxGetResourceHandle(),
+		                         MAKEINTRESOURCE(IDI_Thumb),
+		                         IMAGE_ICON, 0, 0, LR_LOADMAP3DCOLORS);
 
 		DWORD dwExStyle = WS_EX_TOPMOST;
 		DWORD dwStyle = WS_POPUP;
 		UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_BYTEALIGNCLIENT | CS_SAVEBITS;
 		HCURSOR hCursor = ::LoadCursor(nullptr, IDC_ARROW);
-		CString className = AfxRegisterWndClass(nClassStyle, hCursor, (HBRUSH) m_brush3dFaceColor);
+		CString className = AfxRegisterWndClass(nClassStyle, hCursor, (HBRUSH)m_brush3dFaceColor);
 
 		long winWidth, winHeight;
 
@@ -337,16 +356,18 @@ BOOL PopupSlider::Create(const RECT& rect, CWnd* pParentWnd)
 		CRect winRect(rect.right - winWidth, rect.bottom, rect.right, rect.bottom + winHeight);
 
 		// we'll just use "this" for the child ID
-		if (FALSE == CWnd::CreateEx(dwExStyle, (LPCTSTR) className, "",
-							  dwStyle, winRect.left, winRect.top,
-							  winRect.Width(), winRect.Height(),
-							  pParentWnd->GetSafeHwnd(),
-							  nullptr, nullptr))
+		if (FALSE == CWnd::CreateEx(dwExStyle, (LPCTSTR)className, "",
+		                            dwStyle, winRect.left, winRect.top,
+		                            winRect.Width(), winRect.Height(),
+		                            pParentWnd->GetSafeHwnd(),
+		                            nullptr, nullptr))
+		{
 			throw(-1);
-
+		}
 
 		// New code to center the slider's thumb under the parent window
-		if(pParentWnd) {
+		if (pParentWnd)
+		{
 			// Calculate the center of the parent window
 			CPoint parentWindowCenter;
 			GetCursorPos(&parentWindowCenter);
@@ -360,11 +381,15 @@ BOOL PopupSlider::Create(const RECT& rect, CWnd* pParentWnd)
 			// from the centers, calculate how far to move the window
 			int hAdjustToCenter = 0;
 			int vAdjustToCenter = 0;
-			if(SB_HORZ == m_kind)
+			if (SB_HORZ == m_kind)
+			{
 				hAdjustToCenter = parentWindowCenter.x - iconCenter.x;
+			}
 			// This may work for vertical sliders, but has not been tested
-			if(SB_VERT == m_kind)
+			if (SB_VERT == m_kind)
+			{
 				vAdjustToCenter = parentWindowCenter.y - iconCenter.y;
+			}
 
 			// Move the window
 			CRect myWindowRect;
@@ -374,14 +399,16 @@ BOOL PopupSlider::Create(const RECT& rect, CWnd* pParentWnd)
 		}
 
 		// finally, make sure the window appears on screen
-		//MakeSureWindowIsVisible(GetSafeHwnd());
+		// MakeSureWindowIsVisible(GetSafeHwnd());
 		ShowWindow(SW_SHOW);
 
 		SetCapture();
 
 		// success (we'll set the capture after all the failable operations)
 		retVal = TRUE;
-	} catch (...) {
+	}
+	catch (...)
+	{
 		// don't rethrow
 		retVal = FALSE;
 	}
@@ -391,14 +418,16 @@ BOOL PopupSlider::Create(const RECT& rect, CWnd* pParentWnd)
 
 void PopupSlider::PostNcDestroy()
 {
-	if (mSliderOwner && (m_valOnLastFinished != m_curValue)) {
+	if (mSliderOwner && (m_valOnLastFinished != m_curValue))
+	{
 		mSliderOwner->PopSliderFinished(mSliderID, m_curValue);
 	}
 
 	CWnd::PostNcDestroy();
 
 	// now that the window has gone away, delete ourselves
-	if (gPopupSlider == this) {
+	if (gPopupSlider == this)
+	{
 		delete gPopupSlider;
 		gPopupSlider = nullptr;
 	}
@@ -406,12 +435,12 @@ void PopupSlider::PostNcDestroy()
 
 void PopupSlider::OnPaint()
 {
-	CPaintDC dc(this); // device context for painting
+	CPaintDC dc(this);    // device context for painting
 	CRect rc;
 	CBrush cbr(GetSysColor(COLOR_BTNFACE));
-	CBrush *pCbrOld;
+	CBrush* pCbrOld;
 	CPen cpen(PS_NULL, 0, RGB(0x00, 0x00, 0x00));
-	CPen *pPenOld;
+	CPen* pPenOld;
 	COLORREF ulColor, brColor;
 
 	pCbrOld = dc.SelectObject(&cbr);
@@ -435,61 +464,79 @@ void PopupSlider::OnPaint()
 	channelRect.InflateRect(-1, -1);
 	dc.Draw3dRect(&channelRect, GetSysColor(COLOR_3DDKSHADOW), GetSysColor(COLOR_3DLIGHT));
 
-	if (mIcon) {
+	if (mIcon)
+	{
 		CRect iconRect;
 		GetThumbIconRect(&iconRect);
 		::DrawIconEx(dc.GetSafeHdc(), iconRect.left, iconRect.top,
-					 mIcon, 0, 0, 0, nullptr, DI_NORMAL);
+		             mIcon, 0, 0, 0, nullptr, DI_NORMAL);
 	}
 	// Do not call CWnd::OnPaint() for painting messages
 }
 
 void PopupSlider::OnLButtonDown(UINT nFlags, CPoint point)
 {
-nFlags;
+	nFlags;
 	CRect rc;
 	GetClientRect(&rc);
-	if (!mSetOrigPt) {
+	if (!mSetOrigPt)
+	{
 		mOrigPt = point;
 	}
 	mSetOrigPt = true;
 
-
-	if (rc.PtInRect((POINT) point)) {
+	if (rc.PtInRect((POINT)point))
+	{
 		CRect iconRect;
 		GetThumbIconRect(&iconRect);
 
 		// 990909: inflate the rect a little to make it easier to grab the thumb
-		if(SB_HORZ == m_kind) {
+		if (SB_HORZ == m_kind)
+		{
 			iconRect.InflateRect(3, 6);
-		} else {
+		}
+		else
+		{
 			iconRect.InflateRect(6, 3);
 		}
 
-		if (iconRect.PtInRect((POINT) point)) {
+		if (iconRect.PtInRect((POINT)point))
+		{
 			mDraggingThumb = true;
-		} else {
+		}
+		else
+		{
 			CRect channelRect;
 			GetChannelRect(&channelRect);
 
-			if (channelRect.PtInRect((POINT) point)) {
-				if(SB_HORZ == m_kind) {
+			if (channelRect.PtInRect((POINT)point))
+			{
+				if (SB_HORZ == m_kind)
+				{
 					MoveThumbUnderMouse(point.x);
-				} else {
+				}
+				else
+				{
 					MoveThumbUnderMouse(point.y);
 				}
 				mDraggingThumb = true;
 				mEverMoved = true;
 			}
 		}
-	} else {
-		try {
-			if (mSliderOwner) {
+	}
+	else
+	{
+		try
+		{
+			if (mSliderOwner)
+			{
 				mSliderOwner->PopSliderFinished(mSliderID, m_curValue);
 			}
 
 			m_valOnLastFinished = m_curValue;
-		} catch (...) {
+		}
+		catch (...)
+		{
 		}
 
 		// user clicked outside our area, close the windoid
@@ -499,25 +546,34 @@ nFlags;
 
 void PopupSlider::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (mDraggingThumb) {
+	if (mDraggingThumb)
+	{
 		mDraggingThumb = false;
 
-		if (mSliderOwner) {
-			try {
+		if (mSliderOwner)
+		{
+			try
+			{
 				mSliderOwner->PopSliderChanged(mSliderID, m_curValue);
-				if (mClickThrough && mEverMoved) {
+				if (mClickThrough && mEverMoved)
+				{
 					mSliderOwner->PopSliderFinished(mSliderID, m_curValue);
 				}
 
 				m_valOnLastFinished = m_curValue;
-			} catch (...) {
+			}
+			catch (...)
+			{
 			}
 		}
 
-		if (mClickThrough && mEverMoved) {
+		if (mClickThrough && mEverMoved)
+		{
 			PostMessage(WM_CLOSE, 0, 0);
 		}
-	} else {
+	}
+	else
+	{
 		CWnd::OnLButtonUp(nFlags, point);
 	}
 	mClickThrough = false;
@@ -531,50 +587,67 @@ void PopupSlider::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-
 void PopupSlider::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!mSetOrigPt) {
+	if (!mSetOrigPt)
+	{
 		mOrigPt = point;
 	}
 	mSetOrigPt = true;
-	if (mDraggingThumb) {
+	if (mDraggingThumb)
+	{
 		mEverMoved = true;
-		if(SB_HORZ == m_kind) {
+		if (SB_HORZ == m_kind)
+		{
 			MoveThumbUnderMouse(point.x);
-		} else {
+		}
+		else
+		{
 			MoveThumbUnderMouse(point.y);
 		}
 
-		if (mSliderOwner) {
+		if (mSliderOwner)
+		{
 			mSliderOwner->PopSliderChanged(mSliderID, m_curValue);
 		}
-	} else if (nFlags & MK_LBUTTON) {
+	}
+	else if (nFlags & MK_LBUTTON)
+	{
 		CRect rc;
 		GetChannelRect(&rc);
-		if(SB_HORZ == m_kind) {
+		if (SB_HORZ == m_kind)
+		{
 			rc.InflateRect(0, 6);
-		} else {
+		}
+		else
+		{
 			rc.InflateRect(6, 0);
 		}
 
-		if (rc.PtInRect(point)) {
+		if (rc.PtInRect(point))
+		{
 			// user just clicked thru, so mark the slider for click through
 			mDraggingThumb = true;
 
-			if(SB_HORZ == m_kind) {
-				if (mOrigPt.x != point.x) {
+			if (SB_HORZ == m_kind)
+			{
+				if (mOrigPt.x != point.x)
+				{
 					MoveThumbUnderMouse(point.x);
 				}
 				mClickThrough = true;
-			} else {
-				if (mOrigPt.y != point.y) {
+			}
+			else
+			{
+				if (mOrigPt.y != point.y)
+				{
 					MoveThumbUnderMouse(point.y);
 				}
 				mClickThrough = true;
 			}
 
-			if (mSliderOwner) {
+			if (mSliderOwner)
+			{
 				mSliderOwner->PopSliderChanged(mSliderID, m_curValue);
 			}
 		}
@@ -585,7 +658,8 @@ void PopupSlider::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 
-	if ((VK_RETURN == nChar) || (VK_ESCAPE == nChar)) {
+	if ((VK_RETURN == nChar) || (VK_ESCAPE == nChar))
+	{
 		// close the window
 		PostMessage(WM_CLOSE, 0, 0);
 	}

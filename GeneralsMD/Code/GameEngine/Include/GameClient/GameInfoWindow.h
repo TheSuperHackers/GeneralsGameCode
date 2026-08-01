@@ -34,7 +34,7 @@
 #include "GameNetwork/LANGameInfo.h"
 
 // Function Stubs for GameInfoWindow
-extern void CreateLANGameInfoWindow( GameWindow *sizeAndPosWin );
+extern void CreateLANGameInfoWindow(GameWindow* sizeAndPosWin);
 extern void DestroyGameInfoWindow();
-extern void RefreshGameInfoWindow(GameInfo *gameInfo, UnicodeString gameName);
+extern void RefreshGameInfoWindow(GameInfo* gameInfo, UnicodeString gameName);
 extern void HideGameInfoWindow(Bool hide);

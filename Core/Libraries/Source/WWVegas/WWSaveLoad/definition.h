@@ -47,7 +47,6 @@
 class ChunkSaveClass;
 class ChunkLoadClass;
 
-
 //////////////////////////////////////////////////////////////////////////////////
 //
 //	DefinitionClass
@@ -56,7 +55,6 @@ class ChunkLoadClass;
 class DefinitionClass : public PersistClass, public EditableClass
 {
 public:
-
 	/////////////////////////////////////////////////////////////////////
 	//	Editable interface requirements
 	/////////////////////////////////////////////////////////////////////
@@ -65,60 +63,58 @@ public:
 	/////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////
-	DefinitionClass ();
-	virtual ~DefinitionClass () override;
+	DefinitionClass();
+	virtual ~DefinitionClass() override;
 
 	/////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////
 
 	// Type identification
-	virtual uint32						Get_Class_ID () const = 0;
-	virtual uint32						Get_ID () const;
-	virtual void						Set_ID (uint32 id);
-	virtual PersistClass *			Create () const = 0;
+	virtual uint32 Get_Class_ID() const = 0;
+	virtual uint32 Get_ID() const;
+	virtual void Set_ID(uint32 id);
+	virtual PersistClass* Create() const = 0;
 
 	// Display name methods
-	virtual const char *				Get_Name () const;
-	virtual void						Set_Name (const char *new_name);
+	virtual const char* Get_Name() const;
+	virtual void Set_Name(const char* new_name);
 
 	// Validation methods
-	virtual bool						Is_Valid_Config (StringClass &message);
+	virtual bool Is_Valid_Config(StringClass& message);
 
 	// From PersistClass
-	virtual bool						Save (ChunkSaveClass &csave) override;
-	virtual bool						Load (ChunkLoadClass &cload) override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
 
 	// User data support
-	uint32								Get_User_Data () const		{ return m_GenericUserData; }
-	void									Set_User_Data (uint32 data)	{ m_GenericUserData = data; }
+	uint32 Get_User_Data() const { return m_GenericUserData; }
+	void Set_User_Data(uint32 data) { m_GenericUserData = data; }
 
 	// Save support
-	bool									Is_Save_Enabled () const	{ return m_SaveEnabled; }
-	void									Enable_Save (bool onoff)		{ m_SaveEnabled = onoff; }
+	bool Is_Save_Enabled() const { return m_SaveEnabled; }
+	void Enable_Save(bool onoff) { m_SaveEnabled = onoff; }
 
 protected:
-
 	/////////////////////////////////////////////////////////////////////
 	//	Protected member data
 	/////////////////////////////////////////////////////////////////////
-	int											m_DefinitionMgrLink;
+	int m_DefinitionMgrLink;
 
 private:
-
 	/////////////////////////////////////////////////////////////////////
 	//	Private methods
 	/////////////////////////////////////////////////////////////////////
-	bool											Save_Variables (ChunkSaveClass &csave);
-	bool											Load_Variables (ChunkLoadClass &cload);
+	bool Save_Variables(ChunkSaveClass& csave);
+	bool Load_Variables(ChunkLoadClass& cload);
 
 	/////////////////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////////////////
-	StringClass				m_Name;
-	uint32					m_ID;
-	uint32					m_GenericUserData;
-	bool						m_SaveEnabled;
+	StringClass m_Name;
+	uint32 m_ID;
+	uint32 m_GenericUserData;
+	bool m_SaveEnabled;
 
 	/////////////////////////////////////////////////////////////////////
 	//	Friends
@@ -126,31 +122,28 @@ private:
 	friend class DefinitionMgrClass;
 };
 
-
 /////////////////////////////////////////////////////////////////////
 //	DefinitionClass
 /////////////////////////////////////////////////////////////////////
-inline
-DefinitionClass::DefinitionClass ()
-	:	m_ID (0),
-		m_SaveEnabled (true),
-		m_DefinitionMgrLink (-1)
+inline DefinitionClass::DefinitionClass()
+  : m_ID(0)
+  , m_SaveEnabled(true)
+  , m_DefinitionMgrLink(-1)
 {
 }
 
 /////////////////////////////////////////////////////////////////////
 //	DefinitionClass
 /////////////////////////////////////////////////////////////////////
-inline
-DefinitionClass::~DefinitionClass ()
+inline DefinitionClass::~DefinitionClass()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //	Get_Name
 //////////////////////////////////////////////////////////////////////////////////
-inline const char *
-DefinitionClass::Get_Name () const
+inline const char*
+DefinitionClass::Get_Name() const
 {
 	return m_Name;
 }
@@ -159,7 +152,7 @@ DefinitionClass::Get_Name () const
 //	Set_Name
 //////////////////////////////////////////////////////////////////////////////////
 inline void
-DefinitionClass::Set_Name (const char *new_name)
+DefinitionClass::Set_Name(const char* new_name)
 {
 	m_Name = new_name;
 }
@@ -168,7 +161,7 @@ DefinitionClass::Set_Name (const char *new_name)
 //	Get_ID
 //////////////////////////////////////////////////////////////////////////////////
 inline uint32
-DefinitionClass::Get_ID () const
+DefinitionClass::Get_ID() const
 {
 	return m_ID;
 }
@@ -177,7 +170,7 @@ DefinitionClass::Get_ID () const
 //	Is_Valid_Config
 //////////////////////////////////////////////////////////////////////////////////
 inline bool
-DefinitionClass::Is_Valid_Config (StringClass &message)
+DefinitionClass::Is_Valid_Config(StringClass& message)
 {
 	return true;
 }

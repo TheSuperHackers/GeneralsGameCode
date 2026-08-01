@@ -50,32 +50,32 @@ class AudioEventRTS;
 
 class SoundManager : public SubsystemInterface
 {
-	public:
-		SoundManager();
-		virtual ~SoundManager() override;
+public:
+	SoundManager();
+	virtual ~SoundManager() override;
 
-		virtual void init() override;										///< Initializes the sounds system
-		virtual void postProcessLoad() override;
-		virtual void update() override;									///< Services sounds tasks. Called by AudioInterface
-		virtual void reset() override;										///< Reset the sounds system
+	virtual void init() override;    ///< Initializes the sounds system
+	virtual void postProcessLoad() override;
+	virtual void update() override;    ///< Services sounds tasks. Called by AudioInterface
+	virtual void reset() override;    ///< Reset the sounds system
 
-		virtual void loseFocus();								///< Called when application loses focus
-		virtual void regainFocus();							///< Called when application regains focus
+	virtual void loseFocus();    ///< Called when application loses focus
+	virtual void regainFocus();    ///< Called when application regains focus
 
-		virtual void setListenerPosition( const Coord3D *position );	///< Set the listener position for map3DSound() calculations
-		virtual void setViewRadius( Real viewRadius );///< Sets the radius of the view from the center of the screen in world coordinate units
-		virtual void setCameraAudibleDistance( Real audibleDistance );
-		virtual Real getCameraAudibleDistance();
+	virtual void setListenerPosition(const Coord3D* position);    ///< Set the listener position for map3DSound() calculations
+	virtual void setViewRadius(Real viewRadius);    ///< Sets the radius of the view from the center of the screen in world coordinate units
+	virtual void setCameraAudibleDistance(Real audibleDistance);
+	virtual Real getCameraAudibleDistance();
 
-		virtual void addAudioEvent(AudioEventRTS *&eventToAdd);	// pre-copied
+	virtual void addAudioEvent(AudioEventRTS*& eventToAdd);    // pre-copied
 
-		// empty string means that this sound wasn't found or some error occurred. CHECK FOR EMPTY STRING.
-		virtual AsciiString getFilenameForPlayFromAudioEvent( const AudioEventRTS *eventToGetFrom );
+	// empty string means that this sound wasn't found or some error occurred. CHECK FOR EMPTY STRING.
+	virtual AsciiString getFilenameForPlayFromAudioEvent(const AudioEventRTS* eventToGetFrom);
 
-		// called by this class and MilesAudioManager to determine if a sound can still be played
-		virtual Bool canPlayNow( AudioEventRTS *event );
+	// called by this class and MilesAudioManager to determine if a sound can still be played
+	virtual Bool canPlayNow(AudioEventRTS* event);
 
-	protected:
-		virtual Bool violatesVoice( AudioEventRTS *event );
-		virtual Bool isInterrupting( AudioEventRTS *event );
+protected:
+	virtual Bool violatesVoice(AudioEventRTS* event);
+	virtual Bool isInterrupting(AudioEventRTS* event);
 };

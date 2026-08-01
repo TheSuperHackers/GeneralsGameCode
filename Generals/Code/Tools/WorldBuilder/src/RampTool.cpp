@@ -45,12 +45,11 @@
 
 #include "GameClient/Line2D.h"
 
-
 #include "W3DDevice/GameClient/HeightMap.h"
 
-RampTool::RampTool() : Tool(ID_RAMPTOOL, IDC_RAMP )
+RampTool::RampTool()
+  : Tool(ID_RAMPTOOL, IDC_RAMP)
 {
-
 }
 
 void RampTool::activate()
@@ -72,15 +71,19 @@ Bool RampTool::followsTerrain()
 	return true;
 }
 
-void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (!((m == TRACK_L) && mIsMouseDown)) {
-		if (TheRampOptions->shouldApplyTheRamp()) {
+	if (!((m == TRACK_L) && mIsMouseDown))
+	{
+		if (TheRampOptions->shouldApplyTheRamp())
+		{
 			// Call me now for your free ramp application!
 			applyRamp(pDoc);
 			return;
 		}
-	} else if (m == TRACK_L) {
+	}
+	else if (m == TRACK_L)
+	{
 		Coord3D docPt;
 		pView->viewToDocCoords(viewPt, &docPt);
 		docPt.z = TheTerrainRenderObject->getHeightMapHeight(docPt.x, docPt.y, nullptr);
@@ -90,9 +93,10 @@ void RampTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	drawFeedback(&mEndPoint);
 }
 
-void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) {
+	if (m != TRACK_L)
+	{
 		return;
 	}
 
@@ -104,10 +108,10 @@ void RampTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 	mIsMouseDown = true;
 }
 
-void RampTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void RampTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-
-	if (!((m == TRACK_L) && mIsMouseDown)) {
+	if (!((m == TRACK_L) && mIsMouseDown))
+	{
 		return;
 	}
 
@@ -130,31 +134,34 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 	Coord3D bl, tl, br, tr;
 	VecHeightMapIndexes indices;
 
-	WorldHeightMapEdit *worldHeightDup = pDoc->GetHeightMap()->duplicate();
+	WorldHeightMapEdit* worldHeightDup = pDoc->GetHeightMap()->duplicate();
 
 	Real width = TheRampOptions->getRampWidth();
 
 	BuildRectFromSegmentAndWidth(&mStartPoint, &mEndPoint, width,
-															 &bl, &tl, &br, &tr);
+	                             &bl, &tl, &br, &tr);
 
-	if (bl == br || bl == tl) {
+	if (bl == br || bl == tl)
+	{
 		return;
 	}
 
 	getAllIndexesIn(&bl, &br, &tl, &tr, 0, pDoc, &indices);
 	int indiceCount = indices.size();
-	if (indiceCount == 0) {
+	if (indiceCount == 0)
+	{
 		return;
 	}
 
 	/*
-		This part is pretty straightforward. Determine the U value for the shortest segment from the
-		index's actual location to the segments from mStartPoint to mEndPoint, and then apply a
-		linear gradient factor according to the height from the beginning to the end of mStartPoint
-		and mEndPoint.
+	  This part is pretty straightforward. Determine the U value for the shortest segment from the
+	  index's actual location to the segments from mStartPoint to mEndPoint, and then apply a
+	  linear gradient factor according to the height from the beginning to the end of mStartPoint
+	  and mEndPoint.
 	*/
 
-	for (int i = 0; i < indiceCount; ++i) {
+	for (int i = 0; i < indiceCount; ++i)
+	{
 		Coord3D pt;
 		pDoc->getCoordFromCellIndex(indices[i], &pt);
 
@@ -166,20 +173,17 @@ void RampTool::applyRamp(CWorldBuilderDoc* pDoc)
 		ShortestDistancePointToSegment2D(&start, &end, &pt2D, nullptr, nullptr, &uVal);
 		Real height = mStartPoint.z + uVal * (mEndPoint.z - mStartPoint.z);
 
-		worldHeightDup->setHeight(indices[i].x, indices[i].y, (UnsignedByte) (height / MAP_HEIGHT_SCALE));
+		worldHeightDup->setHeight(indices[i].x, indices[i].y, (UnsignedByte)(height / MAP_HEIGHT_SCALE));
 	}
 
-	IRegion2D partialRange = {0,0,0,0};
+	IRegion2D partialRange = { 0, 0, 0, 0 };
 	pDoc->updateHeightMap(worldHeightDup, false, partialRange);
 
-	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, worldHeightDup);
+	WBDocUndoable* pUndo = new WBDocUndoable(pDoc, worldHeightDup);
 	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+	REF_PTR_RELEASE(pUndo);    // belongs to pDoc now.
 	REF_PTR_RELEASE(worldHeightDup);
-
 
 	// Once we've applied the ramp, its no longer a mutable thing, so blow away the feedback
 	DrawObject::setDoRampFeedback(false);
 }
-
-

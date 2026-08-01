@@ -34,14 +34,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #if 0
 
-
-#include "meshdam.h"
-#include "WW3D2/w3d_file.h"
-#include "w3derr.h"
-#include "WWLib/chunkio.h"
+	#include "meshdam.h"
+	#include "WW3D2/w3d_file.h"
+	#include "w3derr.h"
+	#include "WWLib/chunkio.h"
 //#include <sr.hpp>
 
 
@@ -103,7 +101,7 @@ DamageClass::~DamageClass()
  *=============================================================================================*/
 WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
-#if 0
+	#if 0
 	/*
 	** Open the first chunk, it should be the damage header
 	*/
@@ -178,7 +176,7 @@ WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh
 			return error;
 		}
 	}
-#endif
+	#endif
 
 	return WW3D_ERROR_OK;
 }
@@ -197,7 +195,7 @@ WW3DErrorType DamageClass::Load(ChunkLoadClass & cload,MeshModelClass * basemesh
  *=============================================================================================*/
 WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
-#if 0
+	#if 0
 	W3dMeshDamageVertexStruct dv;
 
 	for (int i=0; i<NumVerts; i++) {
@@ -215,7 +213,7 @@ WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass *
 		Verts[i].Vertex0.Set(sr_v[0],sr_v[1],sr_v[2]);
 		Verts[i].Vertex1.Set(dv.NewVertex.X,dv.NewVertex.Y,dv.NewVertex.Z);
 	}
-#endif
+	#endif
 	return WW3D_ERROR_OK;
 }
 
@@ -233,7 +231,7 @@ WW3DErrorType DamageClass::read_vertices(ChunkLoadClass & cload,MeshModelClass *
  *=============================================================================================*/
 WW3DErrorType DamageClass::read_colors(ChunkLoadClass & cload,MeshModelClass * basemesh)
 {
-#if 0
+	#if 0
 	W3dMeshDamageColorStruct dc;
 
 	for (int i=0; i<NumColors; i++) {
@@ -254,9 +252,8 @@ WW3DErrorType DamageClass::read_colors(ChunkLoadClass & cload,MeshModelClass * b
 		Colors[i].Color1.G = dc.NewColor.G;
 		Colors[i].Color1.B = dc.NewColor.B;
 	}
-#endif
+	#endif
 	return WW3D_ERROR_OK;
 }
 
-
-#endif //0
+#endif    // 0

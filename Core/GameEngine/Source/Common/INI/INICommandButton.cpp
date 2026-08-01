@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/INI.h"
 #include "Common/SpecialPower.h"
@@ -38,7 +38,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Parse a command button */
 //-------------------------------------------------------------------------------------------------
-void INI::parseCommandButtonDefinition( INI *ini )
+void INI::parseCommandButtonDefinition(INI* ini)
 {
 	ControlBar::parseCommandButtonDefinition(ini);
 }
@@ -46,64 +46,61 @@ void INI::parseCommandButtonDefinition( INI *ini )
 //-------------------------------------------------------------------------------------------------
 /** Parse a command button */
 //-------------------------------------------------------------------------------------------------
-void ControlBar::parseCommandButtonDefinition( INI *ini )
+void ControlBar::parseCommandButtonDefinition(INI* ini)
 {
 	// read the name
 	AsciiString name = ini->getNextToken();
 
 	// find existing item if present
-	CommandButton *button = TheControlBar->findNonConstCommandButton( name );
-	if( button == nullptr )
+	CommandButton* button = TheControlBar->findNonConstCommandButton(name);
+	if (button == nullptr)
 	{
 		// allocate a new item
-		button = TheControlBar->newCommandButton( name );
+		button = TheControlBar->newCommandButton(name);
 		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
 		{
 			button->markAsOverride();
 		}
 	}
-	else if( ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES )
+	else if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
-		DEBUG_CRASH(( "[LINE: %d in '%s'] Duplicate commandbutton %s found!", ini->getLineNum(), ini->getFilename().str(), name.str() ));
+		DEBUG_CRASH(("[LINE: %d in '%s'] Duplicate commandbutton %s found!", ini->getLineNum(), ini->getFilename().str(), name.str()));
 	}
 	else
 	{
-		button = TheControlBar->newCommandButtonOverride( button );
+		button = TheControlBar->newCommandButtonOverride(button);
 	}
 
 	// parse the ini definition
-	ini->initFromINI( button, button->getFieldParse() );
+	ini->initFromINI(button, button->getFieldParse());
 
-	const SpecialPowerTemplate *spTemplate = button->getSpecialPowerTemplate();
+	const SpecialPowerTemplate* spTemplate = button->getSpecialPowerTemplate();
 
 	// TheSuperHackers @tweak Make sure Special Power buttons have a Special Power template.
 	switch (button->getCommandType())
 	{
-	case GUI_COMMAND_SPECIAL_POWER:
-	case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
-	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT:
-	case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
-	{
-		DEBUG_ASSERTCRASH(spTemplate != nullptr,
-			("[LINE: %d in '%s'] CommandButton %s is a SPECIAL_POWER but is missing a SpecialPower field",
-				ini->getLineNum(), ini->getFilename().str(), name.str()));
-		break;
-	}
-	}
-
-	//Make sure buttons with special power templates also have the appropriate option set.
-	Bool needsTemplate = BitIsSet( button->getOptions(), NEED_SPECIAL_POWER_SCIENCE );
-	if( spTemplate && !needsTemplate )
-	{
-		DEBUG_CRASH( ("[LINE: %d in '%s'] CommandButton %s has SpecialPower = %s but the button also requires Options = NEED_SPECIAL_POWER_SCIENCE. Failure to do so will cause bugs such as invisible side shortcut buttons",
-			ini->getLineNum(), ini->getFilename().str(), name.str(), spTemplate->getName().str() ) );
-	}
-	else if( !spTemplate && needsTemplate )
-	{
-		DEBUG_CRASH( ("[LINE: %d in '%s'] CommandButton %s has Options = NEED_SPECIAL_POWER_SCIENCE but doesn't specify a SpecialPower = xxxx. Please evaluate INI.",
-			ini->getLineNum(), ini->getFilename().str(), name.str() ) );
+		case GUI_COMMAND_SPECIAL_POWER:
+		case GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT:
+		case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT:
+		case GUI_COMMAND_SPECIAL_POWER_CONSTRUCT_FROM_SHORTCUT:
+		{
+			DEBUG_ASSERTCRASH(spTemplate != nullptr,
+			                  ("[LINE: %d in '%s'] CommandButton %s is a SPECIAL_POWER but is missing a SpecialPower field",
+			                   ini->getLineNum(), ini->getFilename().str(), name.str()));
+			break;
+		}
 	}
 
+	// Make sure buttons with special power templates also have the appropriate option set.
+	Bool needsTemplate = BitIsSet(button->getOptions(), NEED_SPECIAL_POWER_SCIENCE);
+	if (spTemplate && !needsTemplate)
+	{
+		DEBUG_CRASH(("[LINE: %d in '%s'] CommandButton %s has SpecialPower = %s but the button also requires Options = NEED_SPECIAL_POWER_SCIENCE. Failure to do so will cause bugs such as invisible side shortcut buttons",
+		             ini->getLineNum(), ini->getFilename().str(), name.str(), spTemplate->getName().str()));
+	}
+	else if (!spTemplate && needsTemplate)
+	{
+		DEBUG_CRASH(("[LINE: %d in '%s'] CommandButton %s has Options = NEED_SPECIAL_POWER_SCIENCE but doesn't specify a SpecialPower = xxxx. Please evaluate INI.",
+		             ini->getLineNum(), ini->getFilename().str(), name.str()));
+	}
 }
-
-

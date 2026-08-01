@@ -24,27 +24,27 @@
 
 class CW3DViewView : public CView
 {
-protected: // create from serialization only
+protected:    // create from serialization only
 	CW3DViewView();
 	DECLARE_DYNCREATE(CW3DViewView)
 
-// Attributes
+	// Attributes
 public:
 	CW3DViewDoc* GetDocument();
 
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CW3DViewView)
-	public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
+public:
+	virtual void OnDraw(CDC* pDC);    // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	protected:
+
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CW3DViewView();
 #ifdef RTS_DEBUG
@@ -53,17 +53,16 @@ public:
 #endif
 
 protected:
-
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CW3DViewView)
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef RTS_DEBUG  // debug version in W3DViewView.cpp
+#ifndef RTS_DEBUG    // debug version in W3DViewView.cpp
 inline CW3DViewDoc* CW3DViewView::GetDocument()
-   { return (CW3DViewDoc*)m_pDocument; }
+{ return (CW3DViewDoc*)m_pDocument; }
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

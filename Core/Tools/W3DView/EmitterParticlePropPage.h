@@ -27,7 +27,7 @@
 
 // Forward delcarations
 class EmitterInstanceListClass;
-//class Vector3Randomizer;
+// class Vector3Randomizer;
 
 /////////////////////////////////////////////////////////////////////////////
 // EmitterParticlePropPageClass dialog
@@ -36,33 +36,36 @@ class EmitterParticlePropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterParticlePropPageClass)
 
-// Construction
+	// Construction
 public:
-	EmitterParticlePropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
-	~EmitterParticlePropPageClass ();
+	EmitterParticlePropPageClass(EmitterInstanceListClass* pemitter_list = nullptr);
+	~EmitterParticlePropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterParticlePropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_PARTICLE };
-	CSpinButtonCtrl	m_BurstSizeSpin;
-	CSpinButtonCtrl	m_EmitionRateSpin;
-	CSpinButtonCtrl	m_MaxParticlesSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_PARTICLE
+	};
+	CSpinButtonCtrl m_BurstSizeSpin;
+	CSpinButtonCtrl m_EmitionRateSpin;
+	CSpinButtonCtrl m_MaxParticlesSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterParticlePropPageClass)
-	public:
+public:
 	virtual BOOL OnApply() override;
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterParticlePropPageClass)
@@ -72,45 +75,46 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
+	//
+	//	Inline accessors
+	//
+	EmitterInstanceListClass* Get_Emitter() const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass* pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid() const { return m_bValid; }
 
-		//
-		//	Inline accessors
-		//
-		EmitterInstanceListClass *	Get_Emitter () const { return m_pEmitterList; }
-		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-		bool								Is_Data_Valid () const { return m_bValid; }
+	float Get_Rate() const { return m_Rate; }
+	int Get_Burst_Size() const { return m_BurstSize; }
+	int Get_Max_Particles() const { return m_MaxParticles; }
+	Vector3Randomizer* Get_Creation_Volume() const { return m_Randomizer->Clone(); }
 
-		float								Get_Rate () const				{ return m_Rate; }
-		int								Get_Burst_Size () const		{ return m_BurstSize; }
-		int								Get_Max_Particles () const	{ return m_MaxParticles; }
-		Vector3Randomizer *			Get_Creation_Volume () const	{ return m_Randomizer->Clone (); }
+protected:
+	/////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize();
 
-	protected:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void								Initialize ();
-
-	private:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterInstanceListClass *	m_pEmitterList;
-		bool								m_bValid;
-		float								m_Rate;
-		int								m_BurstSize;
-		int								m_MaxParticles;
-		Vector3Randomizer *			m_Randomizer;
+private:
+	/////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterInstanceListClass* m_pEmitterList;
+	bool m_bValid;
+	float m_Rate;
+	int m_BurstSize;
+	int m_MaxParticles;
+	Vector3Randomizer* m_Randomizer;
 };
 
 //{{AFX_INSERT_LOCATION}}

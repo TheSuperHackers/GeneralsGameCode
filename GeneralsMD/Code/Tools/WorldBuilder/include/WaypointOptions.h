@@ -31,30 +31,30 @@ class MovePolygonUndoable;
 
 class WaypointOptions : public COptionsPanel
 {
-
-// Construction
+	// Construction
 public:
-	WaypointOptions(CWnd* pParent = nullptr);   // standard constructor
+	WaypointOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(WaypointOptions)
-	enum { IDD = IDD_WAYPOINT_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_WAYPOINT_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(WaypointOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	virtual void OnOK() override {return;};  //!< Modeless dialogs don't OK, so eat this for modeless.
-	virtual void OnCancel() override {return;}; //!< Modeless dialogs don't close on ESC, so eat this for modeless.
+	virtual void OnOK() override { return; };    //!< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnCancel() override { return; };    //!< Modeless dialogs don't close on ESC, so eat this for modeless.
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(WaypointOptions)
 	virtual BOOL OnInitDialog() override;
@@ -70,22 +70,21 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	static WaypointOptions *m_staticThis;  ///< Reference to the floating panel so SetWidth and SetFeather can be static.
-	Bool		m_updating; ///<true if the ui is updating itself.
-	MovePolygonUndoable *m_moveUndoable;
-	Int									 m_originalHeight;
+	static WaypointOptions* m_staticThis;    ///< Reference to the floating panel so SetWidth and SetFeather can be static.
+	Bool m_updating;    ///< true if the ui is updating itself.
+	MovePolygonUndoable* m_moveUndoable;
+	Int m_originalHeight;
+
 protected:
 	void updateTheUI();
 	void changeWaypointLabel(Int editControlID, NameKeyType key);
 
 public:
 	static void update();
-	static MapObject *getSingleSelectedWaypoint();
-	static PolygonTrigger *getSingleSelectedPolygon();
+	static MapObject* getSingleSelectedWaypoint();
+	static PolygonTrigger* getSingleSelectedPolygon();
 	static Bool isUnique(AsciiString name, MapObject* theMapObj = nullptr);
 	static AsciiString GenerateUniqueName(Int id);
-
-
 };
 
 //{{AFX_INSERT_LOCATION}}

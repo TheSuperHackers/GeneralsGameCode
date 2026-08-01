@@ -34,34 +34,37 @@ class RingSizePropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(RingSizePropPageClass)
 
-// Construction
+	// Construction
 public:
-	RingSizePropPageClass(RingRenderObjClass *ring = nullptr);
+	RingSizePropPageClass(RingRenderObjClass* ring = nullptr);
 	~RingSizePropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(RingSizePropPageClass)
-	enum { IDD = IDD_PROP_PAGE_RING_SCALE };
-	CSpinButtonCtrl	m_InnerSizeXSpin;
-	CSpinButtonCtrl	m_InnerSizeYSpin;
-	CSpinButtonCtrl	m_OuterSizeXSpin;
-	CSpinButtonCtrl	m_OuterSizeYSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_RING_SCALE
+	};
+	CSpinButtonCtrl m_InnerSizeXSpin;
+	CSpinButtonCtrl m_InnerSizeYSpin;
+	CSpinButtonCtrl m_OuterSizeXSpin;
+	CSpinButtonCtrl m_OuterSizeYSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(RingSizePropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
 	virtual void OnCancel();
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(RingSizePropPageClass)
@@ -70,9 +73,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
@@ -81,39 +82,40 @@ public:
 	//	Inline accessors
 	//
 
-	RingRenderObjClass *		Get_Ring () const					{ return m_RenderObj; }
-	void							Set_Ring (RingRenderObjClass *ring)	{ m_RenderObj = ring; Initialize (); }
-	bool							Is_Data_Valid () const				{ return m_bValid; }
+	RingRenderObjClass* Get_Ring() const { return m_RenderObj; }
+	void Set_Ring(RingRenderObjClass* ring)
+	{
+		m_RenderObj = ring;
+		Initialize();
+	}
+	bool Is_Data_Valid() const { return m_bValid; }
 
 protected:
-
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void				Initialize ();
-	void				Update_Inner_Scale_Array ();
-	void				Update_Outer_Scale_Array ();
+	void Initialize();
+	void Update_Inner_Scale_Array();
+	void Update_Outer_Scale_Array();
 
 private:
-
 	/////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////
-	RingRenderObjClass *				m_RenderObj;
-	bool									m_bValid;
-	ColorBarClass *					m_InnerScaleXBar;
-	ColorBarClass *					m_InnerScaleYBar;
-	ColorBarClass *					m_OuterScaleXBar;
-	ColorBarClass *					m_OuterScaleYBar;
-	Vector2								m_InnerSize;
-	Vector2								m_OuterSize;
+	RingRenderObjClass* m_RenderObj;
+	bool m_bValid;
+	ColorBarClass* m_InnerScaleXBar;
+	ColorBarClass* m_InnerScaleYBar;
+	ColorBarClass* m_OuterScaleXBar;
+	ColorBarClass* m_OuterScaleYBar;
+	Vector2 m_InnerSize;
+	Vector2 m_OuterSize;
 
-	RingScaleChannelClass			m_InnerScaleChannel;
-	RingScaleChannelClass			m_OrigInnerScaleChannel;
+	RingScaleChannelClass m_InnerScaleChannel;
+	RingScaleChannelClass m_OrigInnerScaleChannel;
 
-	RingScaleChannelClass			m_OuterScaleChannel;
-	RingScaleChannelClass			m_OrigOuterScaleChannel;
-
+	RingScaleChannelClass m_OuterScaleChannel;
+	RingScaleChannelClass m_OrigOuterScaleChannel;
 };
 
 //{{AFX_INSERT_LOCATION}}

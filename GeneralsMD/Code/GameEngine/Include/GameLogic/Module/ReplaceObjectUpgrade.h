@@ -47,17 +47,14 @@ public:
 //-----------------------------------------------------------------------------
 class ReplaceObjectUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ReplaceObjectUpgrade, "ReplaceObjectUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ReplaceObjectUpgrade, ReplaceObjectUpgradeModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ReplaceObjectUpgrade, "ReplaceObjectUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(ReplaceObjectUpgrade, ReplaceObjectUpgradeModuleData);
 
 public:
-
-	ReplaceObjectUpgrade( Thing *thing, const ModuleData* moduleData );
+	ReplaceObjectUpgrade(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 protected:
-	virtual void upgradeImplementation( ) override; ///< Here's the actual work of Upgrading
+	virtual void upgradeImplementation() override;    ///< Here's the actual work of Upgrading
 	virtual Bool isSubObjectsUpgrade() override { return false; }
-
 };

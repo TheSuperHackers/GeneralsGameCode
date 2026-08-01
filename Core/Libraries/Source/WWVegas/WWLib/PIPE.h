@@ -45,27 +45,29 @@
 */
 class Pipe
 {
-	public:
-		Pipe() : ChainTo(0), ChainFrom(0) {}
-		virtual ~Pipe();
+public:
+	Pipe()
+	  : ChainTo(0)
+	  , ChainFrom(0)
+	{}
+	virtual ~Pipe();
 
-		virtual int Flush();
-		virtual int End() {return(Flush());}
-		virtual void Put_To(Pipe * pipe);
-		void Put_To(Pipe & pipe) {Put_To(&pipe);}
-		virtual int Put(void const * source, int slen);
+	virtual int Flush();
+	virtual int End() { return (Flush()); }
+	virtual void Put_To(Pipe* pipe);
+	void Put_To(Pipe& pipe) { Put_To(&pipe); }
+	virtual int Put(void const* source, int slen);
 
-		/*
-		**	Pointer to the next pipe segment in the chain.
-		*/
-		Pipe * ChainTo;
-		Pipe * ChainFrom;
+	/*
+	**	Pointer to the next pipe segment in the chain.
+	*/
+	Pipe* ChainTo;
+	Pipe* ChainFrom;
 
-	private:
-
-		/*
-		**	Disable the copy constructor and assignment operator.
-		*/
-		Pipe(Pipe & rvalue);
-		Pipe & operator = (Pipe const & pipe);
+private:
+	/*
+	**	Disable the copy constructor and assignment operator.
+	*/
+	Pipe(Pipe& rvalue);
+	Pipe& operator=(Pipe const& pipe);
 };

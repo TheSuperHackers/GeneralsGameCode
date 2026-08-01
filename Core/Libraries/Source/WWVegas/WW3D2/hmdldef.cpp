@@ -35,13 +35,11 @@
  *   HModelDefClass::HModelDefClass -- Constructor                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "hmdldef.h"
 #include <assert.h>
 #include "WW3D2/w3d_file.h"
 #include "WWLib/chunkio.h"
 #include "snapPts.h"
-
 
 /***********************************************************************************************
  * HModelDefClass::HModelDefClass -- Constructor                                               *
@@ -55,12 +53,11 @@
  * HISTORY:                                                                                    *
  *   12/15/97   GTH : Created.                                                                 *
  *=============================================================================================*/
-HModelDefClass::HModelDefClass() :
-	SubObjectCount(0),
-	SubObjects(nullptr),
-	SnapPoints(nullptr)
+HModelDefClass::HModelDefClass()
+  : SubObjectCount(0)
+  , SubObjects(nullptr)
+  , SnapPoints(nullptr)
 {
-
 }
 
 /***********************************************************************************************
@@ -98,12 +95,12 @@ void HModelDefClass::Free()
 	SubObjects = nullptr;
 	SubObjectCount = 0;
 
-	if (SnapPoints != nullptr) {
+	if (SnapPoints != nullptr)
+	{
 		SnapPoints->Release_Ref();
 		SnapPoints = nullptr;
 	}
 }
-
 
 /***********************************************************************************************
  * HModelDefClass::Load -- load a set of mesh connections from a file                          *
@@ -117,7 +114,7 @@ void HModelDefClass::Free()
  * HISTORY:                                                                                    *
  *   08/11/1997 GH  : Created.                                                                 *
  *=============================================================================================*/
-int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
+int HModelDefClass::Load_W3D(ChunkLoadClass& cload)
 {
 	bool pre30 = false;
 	int subobjcounter = 0;
@@ -127,11 +124,13 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	/*
 	**	Read the first chunk, it should be the header
 	*/
-	if (!cload.Open_Chunk()) {
+	if (!cload.Open_Chunk())
+	{
 		return false;
 	}
 
-	if (cload.Cur_Chunk_ID() != W3D_CHUNK_HMODEL_HEADER) {
+	if (cload.Cur_Chunk_ID() != W3D_CHUNK_HMODEL_HEADER)
+	{
 		goto Error;
 	}
 
@@ -139,7 +138,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	** read in the header
 	*/
 	W3dHModelHeaderStruct header;
-	if (cload.Read(&header,sizeof(W3dHModelHeaderStruct)) != sizeof(W3dHModelHeaderStruct)) {
+	if (cload.Read(&header, sizeof(W3dHModelHeaderStruct)) != sizeof(W3dHModelHeaderStruct))
+	{
 		goto Error;
 	}
 
@@ -160,7 +160,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	SubObjectCount = header.NumConnections;
 	SubObjects = W3DNEWARRAY HmdlNodeDefStruct[SubObjectCount];
-	if (SubObjects == nullptr) {
+	if (SubObjects == nullptr)
+	{
 		goto Error;
 	}
 
@@ -172,7 +173,8 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	** therefore, pre-3.0 files have to have it added and all of
 	** the indices adjusted
 	*/
-	if (header.Version < W3D_MAKE_VERSION(3,0)) {
+	if (header.Version < W3D_MAKE_VERSION(3, 0))
+	{
 		pre30 = true;
 	}
 
@@ -181,14 +183,15 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	subobjcounter = 0;
 
-	while (cload.Open_Chunk()) {
-
-		switch (cload.Cur_Chunk_ID()) {
-
+	while (cload.Open_Chunk())
+	{
+		switch (cload.Cur_Chunk_ID())
+		{
 			case W3D_CHUNK_NODE:
 			case W3D_CHUNK_COLLISION_NODE:
 			case W3D_CHUNK_SKIN_NODE:
-				if (!read_connection(cload,&(SubObjects[subobjcounter]),pre30)) {
+				if (!read_connection(cload, &(SubObjects[subobjcounter]), pre30))
+				{
 					goto Error;
 				}
 				subobjcounter++;
@@ -210,9 +213,7 @@ int HModelDefClass::Load_W3D(ChunkLoadClass & cload)
 Error:
 
 	return LOAD_ERROR;
-
 }
-
 
 /***********************************************************************************************
  * HModelDefClass::read_connection -- read a single connection from the file                   *
@@ -227,11 +228,11 @@ Error:
  *   08/11/1997 GH  : Created.                                                                 *
  *   10/22/97   GH  : Check for mesh connections with PivotID=-1                               *
  *=============================================================================================*/
-bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * node,bool pre30)
+bool HModelDefClass::read_connection(ChunkLoadClass& cload, HmdlNodeDefStruct* node, bool pre30)
 {
-
 	W3dHModelNodeStruct con;
-	if (cload.Read(&con,sizeof(W3dHModelNodeStruct)) != sizeof(W3dHModelNodeStruct)) {
+	if (cload.Read(&con, sizeof(W3dHModelNodeStruct)) != sizeof(W3dHModelNodeStruct))
+	{
 		return false;
 	}
 
@@ -240,17 +241,22 @@ bool HModelDefClass::read_connection(ChunkLoadClass & cload,HmdlNodeDefStruct * 
 	strlcat(node->RenderObjName, ".", ARRAY_SIZE(node->RenderObjName));
 	strlcat(node->RenderObjName, con.RenderObjName, ARRAY_SIZE(node->RenderObjName));
 
-	if (pre30) {
-		if (con.PivotIdx == 65535) {
+	if (pre30)
+	{
+		if (con.PivotIdx == 65535)
+		{
 			node->PivotID = 0;
-		} else {
+		}
+		else
+		{
 			node->PivotID = con.PivotIdx + 1;
 		}
-	} else {
+	}
+	else
+	{
 		assert(con.PivotIdx != 65535);
 		node->PivotID = con.PivotIdx;
 	}
 
 	return true;
 }
-

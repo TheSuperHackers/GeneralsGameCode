@@ -36,13 +36,13 @@
 
 #pragma once
 
-#pragma message ("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
+#pragma message("(gth) disabling TGAtoDXTClass temporarily so I can test the WW libs merge...")
 #if 0
 
 // Includes.
-#include "always.h"
-#include <windows.h>
-#include <winbase.h>
+	#include "always.h"
+	#include <windows.h>
+	#include <winbase.h>
 
 
 // Class declerations.
@@ -79,4 +79,4 @@ class TGAToDXTClass
 // Externals.
 extern TGAToDXTClass _TGAToDXTConverter;
 
-#endif //0
+#endif    // 0

@@ -45,10 +45,10 @@ public:
 	virtual ~GameSpyMiscPreferences() override;
 
 	Int getLocale();
-	void setLocale( Int val );
+	void setLocale(Int val);
 
 	AsciiString getCachedStats();
-	void setCachedStats( AsciiString val );
+	void setCachedStats(AsciiString val);
 
 	Bool getQuickMatchResLocked();
 

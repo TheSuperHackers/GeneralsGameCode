@@ -35,28 +35,30 @@
 
 //=============================================================================
 /** W3D implementation of the game display which is responsible for creating
-  * all interaction with the screen and updating the display
-	*/
+ * all interaction with the screen and updating the display
+ */
 class W3DParticleSystemManager : public ParticleSystemManager
 {
-
 public:
 	W3DParticleSystemManager();
 	virtual ~W3DParticleSystemManager() override;
 
-	virtual void doParticles(RenderInfoClass &rinfo) override;
+	virtual void doParticles(RenderInfoClass& rinfo) override;
 	virtual void queueParticleRender() override;
 	///< returns the number of particles shown on screen per frame
 	virtual Int getOnScreenParticleCount() override { return m_onScreenParticleCount; }
 
 private:
-	enum { MAX_POINTS_PER_GROUP = 512 };
+	enum
+	{
+		MAX_POINTS_PER_GROUP = 512
+	};
 
-	PointGroupClass *m_pointGroup;							///< the point group that contains all of the particles
-	StreakLineClass *m_streakLine;							///< the streak class that contains all of the streaks
-	ShareBufferClass<Vector3> *m_posBuffer;			///< array of particle positions
-	ShareBufferClass<Vector4> *m_RGBABuffer;		///< array of particle color and alpha
-	ShareBufferClass<float> *m_sizeBuffer;			///< array of particle sizes
-	ShareBufferClass<uint8> *m_angleBuffer;			///< array of particle orientations
-	Bool m_readyToRender;											///< if true, it is OK to render
+	PointGroupClass* m_pointGroup;    ///< the point group that contains all of the particles
+	StreakLineClass* m_streakLine;    ///< the streak class that contains all of the streaks
+	ShareBufferClass<Vector3>* m_posBuffer;    ///< array of particle positions
+	ShareBufferClass<Vector4>* m_RGBABuffer;    ///< array of particle color and alpha
+	ShareBufferClass<float>* m_sizeBuffer;    ///< array of particle sizes
+	ShareBufferClass<uint8>* m_angleBuffer;    ///< array of particle orientations
+	Bool m_readyToRender;    ///< if true, it is OK to render
 };

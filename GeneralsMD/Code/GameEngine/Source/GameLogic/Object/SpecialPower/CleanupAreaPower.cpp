@@ -42,7 +42,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"
@@ -60,59 +60,55 @@ CleanupAreaPowerModuleData::CleanupAreaPowerModuleData()
 //-------------------------------------------------------------------------------------------------
 void CleanupAreaPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "MaxMoveDistanceFromLocation",			INI::parseReal, nullptr, offsetof( CleanupAreaPowerModuleData, m_cleanupMoveRange ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "MaxMoveDistanceFromLocation", INI::parseReal, nullptr, offsetof(CleanupAreaPowerModuleData, m_cleanupMoveRange) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
 //-------------------------------------------------------------------------------------------------
-CleanupAreaPower::CleanupAreaPower( Thing *thing, const ModuleData* moduleData ) : SpecialPowerModule( thing, moduleData )
+CleanupAreaPower::CleanupAreaPower(Thing* thing, const ModuleData* moduleData)
+  : SpecialPowerModule(thing, moduleData)
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 CleanupAreaPower::~CleanupAreaPower()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
-void CleanupAreaPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
+void CleanupAreaPower::doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions)
 {
 	if (getObject()->isDisabled())
-		return;
-
-	Object *obj = getObject();
-	const CleanupAreaPowerModuleData *data = getCleanupAreaPowerModuleData();
-
-	static NameKeyType key_CleanupHazardUpdate = NAMEKEY( "CleanupHazardUpdate" );
-	CleanupHazardUpdate *update = (CleanupHazardUpdate*)obj->findUpdateModule( key_CleanupHazardUpdate );
-	if( update )
 	{
-		update->setCleanupAreaParameters( loc, data->m_cleanupMoveRange );
+		return;
+	}
+
+	Object* obj = getObject();
+	const CleanupAreaPowerModuleData* data = getCleanupAreaPowerModuleData();
+
+	static NameKeyType key_CleanupHazardUpdate = NAMEKEY("CleanupHazardUpdate");
+	CleanupHazardUpdate* update = (CleanupHazardUpdate*)obj->findUpdateModule(key_CleanupHazardUpdate);
+	if (update)
+	{
+		update->setCleanupAreaParameters(loc, data->m_cleanupMoveRange);
 	}
 	else
 	{
-		//This case will only happen should the ambulance not have a cleanuphazard update module.
-		DEBUG_CRASH( ("%s is attempting to use CleanupAreaPower, but requires a CleanupHazardUpdate module to work!", obj->getTemplate()->getName().str() ) );
+		// This case will only happen should the ambulance not have a cleanuphazard update module.
+		DEBUG_CRASH(("%s is attempting to use CleanupAreaPower, but requires a CleanupHazardUpdate module to work!", obj->getTemplate()->getName().str()));
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void CleanupAreaPower::crc( Xfer *xfer )
+void CleanupAreaPower::crc(Xfer* xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
-
+	SpecialPowerModule::crc(xfer);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -120,24 +116,20 @@ void CleanupAreaPower::crc( Xfer *xfer )
 // Version Info:
 // 1: Initial version
 //-------------------------------------------------------------------------------------------------
-void CleanupAreaPower::xfer( Xfer *xfer )
+void CleanupAreaPower::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
+	SpecialPowerModule::xfer(xfer);
 }
 
 //-------------------------------------------------------------------------------------------------
 void CleanupAreaPower::loadPostProcess()
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
-
 }

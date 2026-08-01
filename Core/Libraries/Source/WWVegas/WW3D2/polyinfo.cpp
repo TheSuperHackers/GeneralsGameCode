@@ -36,48 +36,56 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "polyinfo.h"
 #include "texture.h"
 #include "WW3D2/vertmaterial.h"
 #include "WW3D2/shader.h"
 
-void PolygonInfoClass::Set_Texture(TextureClass *texture)
+void PolygonInfoClass::Set_Texture(TextureClass* texture)
 {
-	if(texture)
+	if (texture)
+	{
 		texture->Add_Ref();
-	if(Texture)
+	}
+	if (Texture)
+	{
 		Texture->Release_Ref();
+	}
 	Texture = texture;
 }
-void PolygonInfoClass::Set_Vertex_Material(VertexMaterialClass *vertexMaterial)
+void PolygonInfoClass::Set_Vertex_Material(VertexMaterialClass* vertexMaterial)
 {
-	if(vertexMaterial)
+	if (vertexMaterial)
+	{
 		vertexMaterial->Add_Ref();
-	if(VertexMaterial)
+	}
+	if (VertexMaterial)
+	{
 		VertexMaterial->Release_Ref();
+	}
 
 	VertexMaterial = vertexMaterial;
 }
 
-void PolygonInfoClass::Set_Shader(ShaderClass *shader)
+void PolygonInfoClass::Set_Shader(ShaderClass* shader)
 {
 	delete Shader;
 
 	// todo : update for refcounted shaders
-	Shader = W3DNEW ShaderClass(* shader);
+	Shader = W3DNEW ShaderClass(*shader);
 }
-
 
 PolygonInfoClass::~PolygonInfoClass()
 {
-	if(Texture)
+	if (Texture)
+	{
 		Texture->Release_Ref();
-	if(VertexMaterial)
+	}
+	if (VertexMaterial)
+	{
 		VertexMaterial->Release_Ref();
+	}
 
 	// todo : update for refcounted shaders
 	delete Shader;
 }
-
-

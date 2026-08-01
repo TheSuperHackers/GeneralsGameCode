@@ -68,13 +68,14 @@ class MeshClass;
 //-----------------------------------------------------------------------------
 
 /// The individual data for a Bib.
-typedef struct {
-	Vector3			m_corners[4];				///< Drawing location
-	Bool				m_highlight;				///< Use the highlight texture.
-	Int					m_color;						///< Tint perhaps.
-	ObjectID		m_objectID;					///< The object id this bib corresponds to.
-	DrawableID	m_drawableID;				///< The object id this bib corresponds to.
-	Bool				m_unused;						///< True if this bib is currently unused.
+typedef struct
+{
+	Vector3 m_corners[4];    ///< Drawing location
+	Bool m_highlight;    ///< Use the highlight texture.
+	Int m_color;    ///< Tint perhaps.
+	ObjectID m_objectID;    ///< The object id this bib corresponds to.
+	DrawableID m_drawableID;    ///< The object id this bib corresponds to.
+	Bool m_unused;    ///< True if this bib is currently unused.
 } TBib;
 
 //
@@ -83,9 +84,9 @@ typedef struct {
 //
 class W3DBibBuffer
 {
-friend class BaseHeightMapRenderObjClass;
-public:
+	friend class BaseHeightMapRenderObjClass;
 
+public:
 	W3DBibBuffer();
 	~W3DBibBuffer();
 	/// Add a bib at location.  Name is the w3d model name.
@@ -103,28 +104,31 @@ public:
 	/// Called when the view changes, and sort key needs to be recalculated.
 	/// Normally sortKey gets calculated when a bib becomes visible.
 protected:
-	enum { INITIAL_BIB_VERTEX=256,
-					INITIAL_BIB_INDEX=384,
-					MAX_BIBS=1000};
-	DX8VertexBufferClass	*m_vertexBib;	///<Bib vertex buffer.
-	Int										m_vertexBibSize; ///< Num vertices in bib buffer.
-	DX8IndexBufferClass		*m_indexBib;	///<indices defining a triangles for the bib drawing.
-	Int							  		m_indexBibSize;	///<indices available in m_indexBib.
-	TextureClass *m_bibTexture;	///<Bibs texture
-	TextureClass *m_highlightBibTexture;	///<Bibs texture
-	Int			m_curNumBibVertices; ///<Number of vertices used in m_vertexBib.
-	Int			m_curNumBibIndices;	///<Number of indices used in b_indexBib;
-	Int			m_curNumNormalBibIndices; ///< Number of non-highlighted bib index.
-	Int			m_curNumNormalBibVertex; ///< Number of non-highlighted bib vertex.
+	enum
+	{
+		INITIAL_BIB_VERTEX = 256,
+		INITIAL_BIB_INDEX = 384,
+		MAX_BIBS = 1000
+	};
+	DX8VertexBufferClass* m_vertexBib;    ///< Bib vertex buffer.
+	Int m_vertexBibSize;    ///< Num vertices in bib buffer.
+	DX8IndexBufferClass* m_indexBib;    ///< indices defining a triangles for the bib drawing.
+	Int m_indexBibSize;    ///< indices available in m_indexBib.
+	TextureClass* m_bibTexture;    ///< Bibs texture
+	TextureClass* m_highlightBibTexture;    ///< Bibs texture
+	Int m_curNumBibVertices;    ///< Number of vertices used in m_vertexBib.
+	Int m_curNumBibIndices;    ///< Number of indices used in b_indexBib;
+	Int m_curNumNormalBibIndices;    ///< Number of non-highlighted bib index.
+	Int m_curNumNormalBibVertex;    ///< Number of non-highlighted bib vertex.
 
-	TBib	m_bibs[MAX_BIBS];			///< The bib buffer.  All bibs are stored here.
-	Int			m_numBibs;						///< Number of bibs in m_bibs.
-	Bool		m_anythingChanged;	///< Set to true if visibility or sorting changed.
-	Bool		m_updateAllKeys;  ///< Set to true when the view changes.
-	Bool		m_initialized;		///< True if the subsystem initialized.
-	Bool		m_isTerrainPass;  ///< True if the terrain was drawn in this W3D scene render pass.
+	TBib m_bibs[MAX_BIBS];    ///< The bib buffer.  All bibs are stored here.
+	Int m_numBibs;    ///< Number of bibs in m_bibs.
+	Bool m_anythingChanged;    ///< Set to true if visibility or sorting changed.
+	Bool m_updateAllKeys;    ///< Set to true when the view changes.
+	Bool m_initialized;    ///< True if the subsystem initialized.
+	Bool m_isTerrainPass;    ///< True if the terrain was drawn in this W3D scene render pass.
 
-	void loadBibsInVertexAndIndexBuffers(); ///< Fills the index and vertex buffers for drawing.
-	void allocateBibBuffers();							 ///< Allocates the buffers.
-	void freeBibBuffers();									 ///< Frees the index and vertex buffers.
+	void loadBibsInVertexAndIndexBuffers();    ///< Fills the index and vertex buffers for drawing.
+	void allocateBibBuffers();    ///< Allocates the buffers.
+	void freeBibBuffers();    ///< Frees the index and vertex buffers.
 };

@@ -18,28 +18,27 @@
 
 #include "DbgHelpLoader.h"
 
-
 DbgHelpLoader* DbgHelpLoader::Inst = nullptr;
 CriticalSectionClass DbgHelpLoader::CriticalSection;
 
 DbgHelpLoader::DbgHelpLoader()
-	: m_symInitialize(nullptr)
-	, m_symCleanup(nullptr)
-	, m_symLoadModule(nullptr)
-	, m_symUnloadModule(nullptr)
-	, m_symGetModuleBase(nullptr)
-	, m_symGetSymFromAddr(nullptr)
-	, m_symGetLineFromAddr(nullptr)
-	, m_symSetOptions(nullptr)
-	, m_symFunctionTableAccess(nullptr)
-	, m_stackWalk(nullptr)
+  : m_symInitialize(nullptr)
+  , m_symCleanup(nullptr)
+  , m_symLoadModule(nullptr)
+  , m_symUnloadModule(nullptr)
+  , m_symGetModuleBase(nullptr)
+  , m_symGetSymFromAddr(nullptr)
+  , m_symGetLineFromAddr(nullptr)
+  , m_symSetOptions(nullptr)
+  , m_symFunctionTableAccess(nullptr)
+  , m_stackWalk(nullptr)
 #ifdef RTS_ENABLE_CRASHDUMP
-	, m_miniDumpWriteDump(nullptr)
+  , m_miniDumpWriteDump(nullptr)
 #endif
-	, m_dllModule(HMODULE(nullptr))
-	, m_referenceCount(0)
-	, m_failed(false)
-	, m_loadedFromSystem(false)
+  , m_dllModule(HMODULE(nullptr))
+  , m_referenceCount(0)
+  , m_failed(false)
+  , m_loadedFromSystem(false)
 {
 }
 
@@ -84,11 +83,15 @@ bool DbgHelpLoader::load()
 
 	// Optimization: return early if it failed before.
 	if (Inst->m_failed)
+	{
 		return false;
+	}
 
 	// Return early if someone else already loaded it.
 	if (Inst->m_referenceCount > 1)
+	{
 		return true;
+	}
 
 	// Try load dbghelp.dll from the system directory first.
 	char dllFilename[MAX_PATH];
@@ -140,10 +143,14 @@ void DbgHelpLoader::unload()
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst == nullptr)
+	{
 		return;
+	}
 
 	if (--Inst->m_referenceCount != 0)
+	{
 		return;
+	}
 
 	freeResources();
 
@@ -185,14 +192,16 @@ void DbgHelpLoader::freeResources()
 }
 
 BOOL DbgHelpLoader::symInitialize(
-	HANDLE hProcess,
-	LPSTR UserSearchPath,
-	BOOL fInvadeProcess)
+  HANDLE hProcess,
+  LPSTR UserSearchPath,
+  BOOL fInvadeProcess)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst == nullptr)
+	{
 		return FALSE;
+	}
 
 	if (Inst->m_initializedProcesses.find(hProcess) != Inst->m_initializedProcesses.end())
 	{
@@ -214,12 +223,14 @@ BOOL DbgHelpLoader::symInitialize(
 }
 
 BOOL DbgHelpLoader::symCleanup(
-	HANDLE hProcess)
+  HANDLE hProcess)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst == nullptr)
+	{
 		return FALSE;
+	}
 
 	if (stl::find_and_erase(Inst->m_initializedProcesses, hProcess))
 	{
@@ -233,129 +244,147 @@ BOOL DbgHelpLoader::symCleanup(
 }
 
 BOOL DbgHelpLoader::symLoadModule(
-	HANDLE hProcess,
-	HANDLE hFile,
-	LPSTR ImageName,
-	LPSTR ModuleName,
-	DWORD BaseOfDll,
-	DWORD SizeOfDll)
+  HANDLE hProcess,
+  HANDLE hFile,
+  LPSTR ImageName,
+  LPSTR ModuleName,
+  DWORD BaseOfDll,
+  DWORD SizeOfDll)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symLoadModule)
+	{
 		return Inst->m_symLoadModule(hProcess, hFile, ImageName, ModuleName, BaseOfDll, SizeOfDll);
+	}
 
 	return FALSE;
 }
 
 DWORD DbgHelpLoader::symGetModuleBase(
-	HANDLE hProcess,
-	DWORD dwAddr)
+  HANDLE hProcess,
+  DWORD dwAddr)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symGetModuleBase)
+	{
 		return Inst->m_symGetModuleBase(hProcess, dwAddr);
+	}
 
 	return 0u;
 }
 
 BOOL DbgHelpLoader::symUnloadModule(
-	HANDLE hProcess,
-	DWORD BaseOfDll)
+  HANDLE hProcess,
+  DWORD BaseOfDll)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symUnloadModule)
+	{
 		return Inst->m_symUnloadModule(hProcess, BaseOfDll);
+	}
 
 	return FALSE;
 }
 
 BOOL DbgHelpLoader::symGetSymFromAddr(
-	HANDLE hProcess,
-	DWORD Address,
-	LPDWORD Displacement,
-	PIMAGEHLP_SYMBOL Symbol)
+  HANDLE hProcess,
+  DWORD Address,
+  LPDWORD Displacement,
+  PIMAGEHLP_SYMBOL Symbol)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symGetSymFromAddr)
+	{
 		return Inst->m_symGetSymFromAddr(hProcess, Address, Displacement, Symbol);
+	}
 
 	return FALSE;
 }
 
 BOOL DbgHelpLoader::symGetLineFromAddr(
-	HANDLE hProcess,
-	DWORD dwAddr,
-	PDWORD pdwDisplacement,
-	PIMAGEHLP_LINE Line)
+  HANDLE hProcess,
+  DWORD dwAddr,
+  PDWORD pdwDisplacement,
+  PIMAGEHLP_LINE Line)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symGetLineFromAddr)
+	{
 		return Inst->m_symGetLineFromAddr(hProcess, dwAddr, pdwDisplacement, Line);
+	}
 
 	return FALSE;
 }
 
 DWORD DbgHelpLoader::symSetOptions(
-	DWORD SymOptions)
+  DWORD SymOptions)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symSetOptions)
+	{
 		return Inst->m_symSetOptions(SymOptions);
+	}
 
 	return 0u;
 }
 
 LPVOID DbgHelpLoader::symFunctionTableAccess(
-	HANDLE hProcess,
-	DWORD AddrBase)
+  HANDLE hProcess,
+  DWORD AddrBase)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_symFunctionTableAccess)
+	{
 		return Inst->m_symFunctionTableAccess(hProcess, AddrBase);
+	}
 
 	return nullptr;
 }
 
 BOOL DbgHelpLoader::stackWalk(
-	DWORD MachineType,
-	HANDLE hProcess,
-	HANDLE hThread,
-	LPSTACKFRAME StackFrame,
-	LPVOID ContextRecord,
-	PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
-	PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
-	PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
-	PTRANSLATE_ADDRESS_ROUTINE TranslateAddress)
+  DWORD MachineType,
+  HANDLE hProcess,
+  HANDLE hThread,
+  LPSTACKFRAME StackFrame,
+  LPVOID ContextRecord,
+  PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+  PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
+  PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
+  PTRANSLATE_ADDRESS_ROUTINE TranslateAddress)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_stackWalk)
+	{
 		return Inst->m_stackWalk(MachineType, hProcess, hThread, StackFrame, ContextRecord, ReadMemoryRoutine, FunctionTableAccessRoutine, GetModuleBaseRoutine, TranslateAddress);
+	}
 
 	return FALSE;
 }
 
 #ifdef RTS_ENABLE_CRASHDUMP
 BOOL DbgHelpLoader::miniDumpWriteDump(
-	HANDLE hProcess,
-	DWORD ProcessId,
-	HANDLE hFile,
-	MINIDUMP_TYPE DumpType,
-	PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-	PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-	PMINIDUMP_CALLBACK_INFORMATION CallbackParam)
+  HANDLE hProcess,
+  DWORD ProcessId,
+  HANDLE hFile,
+  MINIDUMP_TYPE DumpType,
+  PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+  PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+  PMINIDUMP_CALLBACK_INFORMATION CallbackParam)
 {
 	CriticalSectionClass::LockClass lock(CriticalSection);
 
 	if (Inst != nullptr && Inst->m_miniDumpWriteDump)
+	{
 		return Inst->m_miniDumpWriteDump(hProcess, ProcessId, hFile, DumpType, ExceptionParam, UserStreamParam, CallbackParam);
+	}
 
 	return FALSE;
 }

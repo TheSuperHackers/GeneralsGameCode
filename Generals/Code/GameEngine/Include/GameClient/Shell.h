@@ -102,17 +102,15 @@ class AnimateWindowManager;
 class GameWindow;
 class ShellMenuSchemeManager;
 
-enum AnimTypes CPP_11(: Int);
+enum AnimTypes CPP_11( : Int);
 
 //-------------------------------------------------------------------------------------------------
 /** This is the interface to the shell system to load, display, and
-	* manage screen menu shell system layouts */
+ * manage screen menu shell system layouts */
 //-------------------------------------------------------------------------------------------------
 class Shell : public SubsystemInterface
 {
-
 public:
-
 	Shell();
 	virtual ~Shell() override;
 
@@ -124,64 +122,66 @@ public:
 
 	void recreateWindowLayouts();
 
-	void showShellMap(Bool useShellMap );										///< access function to turn on and off the shell map
+	void showShellMap(Bool useShellMap);    ///< access function to turn on and off the shell map
 
-	void hide( Bool hide );																	///< show/hide all shell layouts
+	void hide(Bool hide);    ///< show/hide all shell layouts
 
 	// pseudo-stack operations for manipulating layouts
-	void push( AsciiString filename, Bool shutdownImmediate = FALSE );	///< load new screen on top, optionally doing an immediate shutdown
-	void pop();																				///< pop top layout
-	void popImmediate();															///< pop now, don't wait for shutdown
-	void showShell( Bool runInit = TRUE );									///< init the top of stack
-	void hideShell();																	///< shutdown the top of stack
-	WindowLayout *top();															///< return top layout
+	void push(AsciiString filename, Bool shutdownImmediate = FALSE);    ///< load new screen on top, optionally doing an immediate shutdown
+	void pop();    ///< pop top layout
+	void popImmediate();    ///< pop now, don't wait for shutdown
+	void showShell(Bool runInit = TRUE);    ///< init the top of stack
+	void hideShell();    ///< shutdown the top of stack
+	WindowLayout* top();    ///< return top layout
 
-	void shutdownComplete( WindowLayout *layout, Bool impendingPush = FALSE );	///< layout has completed shutdown
+	void shutdownComplete(WindowLayout* layout, Bool impendingPush = FALSE);    ///< layout has completed shutdown
 
-	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
-	Bool isShellActive() { return m_isShellActive; }  ///<	Returns true if the shell is active
+	WindowLayout* findScreenByFilename(AsciiString filename);    ///< find screen
+	Bool isShellActive() { return m_isShellActive; }    ///<	Returns true if the shell is active
 
-	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
+	void registerWithAnimateManager(GameWindow* win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished();
 	void reverseAnimatewindow();
 	Bool isAnimReversed();
 
-	void loadScheme( AsciiString name );
-	ShellMenuSchemeManager *getShellMenuSchemeManager() { return m_schemeManager;	}
+	void loadScheme(AsciiString name);
+	ShellMenuSchemeManager* getShellMenuSchemeManager() { return m_schemeManager; }
 
-	Int getScreenCount() const { return m_screenCount; } ///< Return the current number of screens
-	WindowLayout *getScreenLayout( Int index ) const;
+	Int getScreenCount() const { return m_screenCount; }    ///< Return the current number of screens
+	WindowLayout* getScreenLayout(Int index) const;
 
-	WindowLayout *getSaveLoadMenuLayout();		///< create if necessary and return layout for save load menu
-	WindowLayout *getPopupReplayLayout();			///< create if necessary and return layout for replay save menu
-	WindowLayout *getOptionsLayout( Bool create );	///< return layout for options menu, create if necessary and we are allowed to.
-	void destroyOptionsLayout();							///< destroy the shell's options layout.
+	WindowLayout* getSaveLoadMenuLayout();    ///< create if necessary and return layout for save load menu
+	WindowLayout* getPopupReplayLayout();    ///< create if necessary and return layout for replay save menu
+	WindowLayout* getOptionsLayout(Bool create);    ///< return layout for options menu, create if necessary and we are allowed to.
+	void destroyOptionsLayout();    ///< destroy the shell's options layout.
 
 protected:
-
 	void construct();
 	void deconstruct();
 
-	void linkScreen( WindowLayout *screen );								///< link screen to list
-	void unlinkScreen( WindowLayout *screen );							///< remove screen from list
+	void linkScreen(WindowLayout* screen);    ///< link screen to list
+	void unlinkScreen(WindowLayout* screen);    ///< remove screen from list
 
-	void doPush( AsciiString layoutFile );									///< workhorse for push action
-	void doPop( Bool impendingPush );												///< workhorse for pop action
+	void doPush(AsciiString layoutFile);    ///< workhorse for push action
+	void doPop(Bool impendingPush);    ///< workhorse for pop action
 
-	enum { MAX_SHELL_STACK = 16 };													///< max simultaneous shell screens
-	WindowLayout *m_screenStack[ MAX_SHELL_STACK ];					///< the screen layout stack
-	Int m_screenCount;																			///< # of screens in screen stack
+	enum
+	{
+		MAX_SHELL_STACK = 16
+	};    ///< max simultaneous shell screens
+	WindowLayout* m_screenStack[MAX_SHELL_STACK];    ///< the screen layout stack
+	Int m_screenCount;    ///< # of screens in screen stack
 
-	WindowLayout *m_background;															///< The Background layout if the 3d shell isn't running
-	Bool m_clearBackground;																	///< Flag if we're going to clear the background or not
+	WindowLayout* m_background;    ///< The Background layout if the 3d shell isn't running
+	Bool m_clearBackground;    ///< Flag if we're going to clear the background or not
 
-	Bool m_pendingPush;																			///< TRUE when a push is pending
-	Bool m_pendingPop;																			///< TRUE when a pop is pending
-	AsciiString m_pendingPushName;													///< layout name to be pushed
-	Bool m_isShellActive;																		///< TRUE when the shell is active
-	Bool m_shellMapOn;																			///< TRUE when the shell map is on
-	AnimateWindowManager *m_animateWindowManager;						///< The animate Window Manager
-	ShellMenuSchemeManager *m_schemeManager;								///< The Shell Scheme Manager
+	Bool m_pendingPush;    ///< TRUE when a push is pending
+	Bool m_pendingPop;    ///< TRUE when a pop is pending
+	AsciiString m_pendingPushName;    ///< layout name to be pushed
+	Bool m_isShellActive;    ///< TRUE when the shell is active
+	Bool m_shellMapOn;    ///< TRUE when the shell map is on
+	AnimateWindowManager* m_animateWindowManager;    ///< The animate Window Manager
+	ShellMenuSchemeManager* m_schemeManager;    ///< The Shell Scheme Manager
 
 	//
 	// we keep a pointer to this layout so that we can simply just hide/unhide this
@@ -193,13 +193,12 @@ protected:
 	// This is a prime example why it's easier to just deal with windows by hiding and
 	// un-hiding them rather than actually creating and destroying them.
 	//
-	WindowLayout *m_saveLoadMenuLayout;											///< save/load menu layout
-	WindowLayout *m_popupReplayLayout;											///< replay save menu layout
-	WindowLayout *m_optionsLayout;													///< options menu layout
-
+	WindowLayout* m_saveLoadMenuLayout;    ///< save/load menu layout
+	WindowLayout* m_popupReplayLayout;    ///< replay save menu layout
+	WindowLayout* m_optionsLayout;    ///< options menu layout
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern Shell *TheShell;  ///< the shell external interface
+extern Shell* TheShell;    ///< the shell external interface

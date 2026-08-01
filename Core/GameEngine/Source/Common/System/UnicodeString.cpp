@@ -42,10 +42,9 @@
 //
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/CriticalSection.h"
-
 
 // -----------------------------------------------------
 
@@ -55,19 +54,25 @@
 #ifdef RTS_DEBUG
 void UnicodeString::validate() const
 {
-	if (!m_data) return;
+	if (!m_data)
+	{
+		return;
+	}
 	DEBUG_ASSERTCRASH(m_data->m_refCount > 0, ("m_refCount is zero"));
 	DEBUG_ASSERTCRASH(m_data->m_numCharsAllocated > 0, ("m_numCharsAllocated is zero"));
-	DEBUG_ASSERTCRASH(wcslen(m_data->peek())+1 <= m_data->m_numCharsAllocated,("str is too long for storage"));
+	DEBUG_ASSERTCRASH(wcslen(m_data->peek()) + 1 <= m_data->m_numCharsAllocated, ("str is too long for storage"));
 }
 #endif
 
 // -----------------------------------------------------
-UnicodeString::UnicodeString(const UnicodeString& stringSrc) : m_data(stringSrc.m_data)
+UnicodeString::UnicodeString(const UnicodeString& stringSrc)
+  : m_data(stringSrc.m_data)
 {
 	ScopedCriticalSection scopedCriticalSection(TheUnicodeStringCriticalSection);
 	if (m_data)
+	{
 		++m_data->m_refCount;
+	}
 	validate();
 }
 
@@ -79,8 +84,8 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	const int usableNumChars = numCharsNeeded - 1;
 
 	if (m_data &&
-			m_data->m_refCount == 1 &&
-			m_data->m_numCharsAllocated >= numCharsNeeded)
+	    m_data->m_refCount == 1 &&
+	    m_data->m_numCharsAllocated >= numCharsNeeded)
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
@@ -91,25 +96,31 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 			m_data->peek()[usableNumChars] = 0;
 		}
 		if (strToCat)
+		{
 			wcscat(m_data->peek(), strToCat);
+		}
 		return;
 	}
 
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
 	DEBUG_ASSERTCRASH(numCharsNeeded <= MAX_LEN, ("UnicodeString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d", MAX_LEN, numCharsNeeded));
-	int minBytes = sizeof(UnicodeStringData) + numCharsNeeded*sizeof(WideChar);
+	int minBytes = sizeof(UnicodeStringData) + numCharsNeeded * sizeof(WideChar);
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 	UnicodeStringData* newData = (UnicodeStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_UnicodeString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
-	newData->m_numCharsAllocated = (actualBytes - sizeof(UnicodeStringData))/sizeof(WideChar);
+	newData->m_numCharsAllocated = (actualBytes - sizeof(UnicodeStringData)) / sizeof(WideChar);
 #if defined(RTS_DEBUG)
-	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
+	newData->m_debugptr = newData->peek();    // just makes it easier to read in the debugger
 #endif
 
 	if (m_data && preserveData)
+	{
 		wcscpy(newData->peek(), m_data->peek());
+	}
 	else
+	{
 		newData->peek()[0] = 0;
+	}
 
 	// do these BEFORE releasing the old buffer, so that self-copies
 	// or self-cats will work correctly.
@@ -120,14 +131,15 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 		newData->peek()[usableNumChars] = 0;
 	}
 	if (strToCat)
+	{
 		wcscat(newData->peek(), strToCat);
+	}
 
 	releaseBuffer();
 	m_data = newData;
 
 	validate();
 }
-
 
 // -----------------------------------------------------
 void UnicodeString::releaseBuffer()
@@ -146,7 +158,8 @@ void UnicodeString::releaseBuffer()
 }
 
 // -----------------------------------------------------
-UnicodeString::UnicodeString(const WideChar* s) : m_data(nullptr)
+UnicodeString::UnicodeString(const WideChar* s)
+  : m_data(nullptr)
 {
 	int len = s ? (int)wcslen(s) : 0;
 	if (len > 0)
@@ -157,7 +170,8 @@ UnicodeString::UnicodeString(const WideChar* s) : m_data(nullptr)
 }
 
 // -----------------------------------------------------
-UnicodeString::UnicodeString(const WideChar* s, int len) : m_data(nullptr)
+UnicodeString::UnicodeString(const WideChar* s, int len)
+  : m_data(nullptr)
 {
 	if (len > 0)
 	{
@@ -177,7 +191,9 @@ void UnicodeString::set(const UnicodeString& stringSrc)
 		releaseBuffer();
 		m_data = stringSrc.m_data;
 		if (m_data)
+		{
 			++m_data->m_refCount;
+		}
 	}
 	validate();
 }
@@ -211,7 +227,7 @@ void UnicodeString::set(const WideChar* s, int len)
 WideChar* UnicodeString::getBufferForRead(Int len)
 {
 	validate();
-	DEBUG_ASSERTCRASH(len>0, ("No need to allocate 0 len strings."));
+	DEBUG_ASSERTCRASH(len > 0, ("No need to allocate 0 len strings."));
 	ensureUniqueBufferOfSize(len + 1, false, nullptr, nullptr);
 	validate();
 	return peek();
@@ -225,7 +241,9 @@ void UnicodeString::translate(const AsciiString& stringSrc)
 	clear();
 	Int len = stringSrc.getLength();
 	for (Int i = 0; i < len; i++)
+	{
 		concat((WideChar)stringSrc.getCharAt(i));
+	}
 	validate();
 }
 
@@ -235,7 +253,9 @@ void UnicodeString::concat(const WideChar* s)
 	validate();
 	int addlen = wcslen(s);
 	if (addlen == 0)
-		return;	// my, that was easy
+	{
+		return;    // my, that was easy
+	}
 
 	if (m_data)
 	{
@@ -255,7 +275,7 @@ void UnicodeString::trim()
 
 	if (m_data)
 	{
-		const WideChar *c = peek();
+		const WideChar* c = peek();
 
 		//	Strip leading white space from the string.
 		while (c && iswspace(*c))
@@ -366,9 +386,9 @@ void UnicodeString::format(UnicodeString format, ...)
 {
 	validate();
 	va_list args;
-  va_start(args, format);
+	va_start(args, format);
 	format_va(format, args);
-  va_end(args);
+	va_end(args);
 	validate();
 }
 
@@ -377,9 +397,9 @@ void UnicodeString::format(const WideChar* format, ...)
 {
 	validate();
 	va_list args;
-  va_start(args, format);
+	va_start(args, format);
 	format_va(format, args);
-  va_end(args);
+	va_end(args);
 	validate();
 }
 
@@ -394,7 +414,7 @@ void UnicodeString::format_va(const WideChar* format, va_list args)
 {
 	validate();
 	WideChar buf[MAX_FORMAT_BUF_LEN];
-	const int result = vswprintf(buf, sizeof(buf)/sizeof(WideChar), format, args);
+	const int result = vswprintf(buf, sizeof(buf) / sizeof(WideChar), format, args);
 	if (result >= 0)
 	{
 		set(buf);
@@ -434,10 +454,14 @@ Bool UnicodeString::endsWithNoCase(const WideChar* p) const
 Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 {
 	if (this->isEmpty() || tok == this)
+	{
 		return false;
+	}
 
 	if (delimiters.isEmpty())
+	{
 		delimiters = L" \t\n\r";
+	}
 
 	Int offset;
 
@@ -451,7 +475,7 @@ Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 	{
 		Int len = end - start;
 		WideChar* tmp = tok->getBufferForRead(len + 1);
-		memcpy(tmp, start, len*2);
+		memcpy(tmp, start, len * 2);
 		tmp[len] = 0;
 
 		this->set(end);

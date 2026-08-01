@@ -24,7 +24,7 @@
 
 // JetAIUpdate.cpp //////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_LOCOMOTORSET_NAMES
 
@@ -48,9 +48,8 @@
 
 const Real BIGNUM = 99999.0f;
 
-
 //-------------------------------------------------------------------------------------------------
-enum TaxiType CPP_11(: Int)
+enum TaxiType CPP_11( : Int)
 {
 	FROM_HANGAR,
 	FROM_PARKING,
@@ -58,7 +57,7 @@ enum TaxiType CPP_11(: Int)
 };
 
 //-------------------------------------------------------------------------------------------------
-enum JetAIStateType CPP_11(: Int)
+enum JetAIStateType CPP_11( : Int)
 {
 	// note that these must be distinct (numerically) from AIStateType. ick.
 	JETAISTATETYPE_FIRST = 1000,
@@ -88,14 +87,18 @@ static Bool isOutOfSpecialReloadAmmo(Object* jet)
 	// return true.
 	Int specials = 0;
 	Int out = 0;
-	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
+	for (Int i = 0; i < WEAPONSLOT_COUNT; i++)
 	{
 		Weapon* weapon = jet->getWeaponInWeaponSlot((WeaponSlotType)i);
 		if (weapon == nullptr || weapon->getReloadType() != RETURN_TO_BASE_TO_RELOAD)
+		{
 			continue;
+		}
 		++specials;
 		if (weapon->getStatus() == OUT_OF_AMMO)
+		{
 			++out;
+		}
 	}
 	return specials > 0 && out == specials;
 }
@@ -104,20 +107,28 @@ static Bool isOutOfSpecialReloadAmmo(Object* jet)
 static ParkingPlaceBehaviorInterface* getPP(ObjectID id, Object** airfieldPP = nullptr)
 {
 	if (airfieldPP)
+	{
 		*airfieldPP = nullptr;
+	}
 
-	Object* airfield = TheGameLogic->findObjectByID( id );
+	Object* airfield = TheGameLogic->findObjectByID(id);
 	if (airfield == nullptr || airfield->isEffectivelyDead() || !airfield->isKindOf(KINDOF_FS_AIRFIELD) || airfield->testStatus(OBJECT_STATUS_SOLD))
+	{
 		return nullptr;
+	}
 
 	if (airfieldPP)
+	{
 		*airfieldPP = airfield;
+	}
 
 	ParkingPlaceBehaviorInterface* pp = nullptr;
 	for (BehaviorModule** i = airfield->getBehaviorModules(); *i; ++i)
 	{
 		if ((pp = (*i)->getParkingPlaceBehaviorInterface()) != nullptr)
+		{
 			break;
+		}
 	}
 
 	return pp;
@@ -128,17 +139,23 @@ class PartitionFilterHasParkingPlace : public PartitionFilter
 {
 private:
 	ObjectID m_id;
+
 public:
-	PartitionFilterHasParkingPlace(ObjectID id) : m_id(id) { }
+	PartitionFilterHasParkingPlace(ObjectID id)
+	  : m_id(id)
+	{}
+
 protected:
 #if defined(RTS_DEBUG)
 	virtual const char* debugGetName() override { return "PartitionFilterHasParkingPlace"; }
 #endif
-	virtual Bool allow(Object *objOther) override
+	virtual Bool allow(Object* objOther) override
 	{
 		ParkingPlaceBehaviorInterface* pp = getPP(objOther->getID());
 		if (pp != nullptr && pp->reserveSpace(m_id, 0.0f, nullptr))
+		{
 			return true;
+		}
 		return false;
 	}
 };
@@ -146,15 +163,15 @@ protected:
 //-------------------------------------------------------------------------------------------------
 static Object* findSuitableAirfield(Object* jet)
 {
-	PartitionFilterAcceptByKindOf					filterKind(MAKE_KINDOF_MASK(KINDOF_FS_AIRFIELD), KINDOFMASK_NONE);
-	PartitionFilterRejectByObjectStatus		filterStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ), OBJECT_STATUS_MASK_NONE );
-	PartitionFilterRejectByObjectStatus		filterStatusTwo( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_SOLD ), OBJECT_STATUS_MASK_NONE ); // Independent to make it an OR
-	PartitionFilterRelationship						filterTeam(jet, PartitionFilterRelationship::ALLOW_ALLIES);
-	PartitionFilterAlive									filterAlive;
-	PartitionFilterSameMapStatus					filterMapStatus(jet);
-	PartitionFilterHasParkingPlace				filterPP(jet->getID());
+	PartitionFilterAcceptByKindOf filterKind(MAKE_KINDOF_MASK(KINDOF_FS_AIRFIELD), KINDOFMASK_NONE);
+	PartitionFilterRejectByObjectStatus filterStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_UNDER_CONSTRUCTION), OBJECT_STATUS_MASK_NONE);
+	PartitionFilterRejectByObjectStatus filterStatusTwo(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_SOLD), OBJECT_STATUS_MASK_NONE);    // Independent to make it an OR
+	PartitionFilterRelationship filterTeam(jet, PartitionFilterRelationship::ALLOW_ALLIES);
+	PartitionFilterAlive filterAlive;
+	PartitionFilterSameMapStatus filterMapStatus(jet);
+	PartitionFilterHasParkingPlace filterPP(jet->getID());
 
-	PartitionFilter *filters[16];
+	PartitionFilter* filters[16];
 	Int numFilters = 0;
 	filters[numFilters++] = &filterKind;
 	filters[numFilters++] = &filterStatus;
@@ -165,7 +182,7 @@ static Object* findSuitableAirfield(Object* jet)
 	filters[numFilters++] = &filterMapStatus;
 	filters[numFilters] = nullptr;
 
-	return ThePartitionManager->getClosestObject( jet, HUGE_DIST, FROM_CENTER_2D, filters );
+	return ThePartitionManager->getClosestObject(jet, HUGE_DIST, FROM_CENTER_2D, filters);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -174,29 +191,40 @@ static Object* findSuitableAirfield(Object* jet)
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: we have runway clearance
-	Failure: no runway clearance
+  Success: we have runway clearance
+  Failure: no runway clearance
 */
 class JetAwaitingRunwayState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetAwaitingRunwayState, "JetAwaitingRunwayState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override {};
-	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void crc(Xfer* xfer) override {};
+	virtual void xfer(Xfer* xfer) override
+	{
+		XferVersion cv = 1;
+		XferVersion v = cv;
+		xfer->xferVersion(&v, cv);
+	}
 	virtual void loadPostProcess() override {};
+
 private:
 	const Bool m_landing;
 
 public:
-	JetAwaitingRunwayState( StateMachine *machine, Bool landing ) : m_landing(landing), State( machine, "JetAwaitingRunwayState") { }
+	JetAwaitingRunwayState(StateMachine* machine, Bool landing)
+	  : m_landing(landing)
+	  , State(machine, "JetAwaitingRunwayState")
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		jetAI->friend_setTakeoffInProgress(!m_landing);
 		jetAI->friend_setLandingInProgress(m_landing);
@@ -208,11 +236,15 @@ public:
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
@@ -249,14 +281,13 @@ public:
 			jetAI->friend_setAllowCircling(false);
 		}
 	}
-
 };
 EMPTY_DTOR(JetAwaitingRunwayState)
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: a new suitable airfield has appeared
-	Failure: shouldn't normally happen
+  Success: a new suitable airfield has appeared
+  Failure: shouldn't normally happen
 */
 class JetOrHeliCirclingDeadAirfieldState : public State
 {
@@ -264,8 +295,13 @@ class JetOrHeliCirclingDeadAirfieldState : public State
 protected:
 	// snapshot interface	 STUBBED.
 	// The state will check immediately after a load game, but I think that's ok.  jba.
-	virtual void crc( Xfer *xfer ) override {};
-	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void crc(Xfer* xfer) override {};
+	virtual void xfer(Xfer* xfer) override
+	{
+		XferVersion cv = 1;
+		XferVersion v = cv;
+		xfer->xferVersion(&v, cv);
+	}
 	virtual void loadPostProcess() override {};
 
 private:
@@ -278,15 +314,16 @@ private:
 	};
 
 public:
-	JetOrHeliCirclingDeadAirfieldState( StateMachine *machine ) :
-		State( machine, "JetOrHeliCirclingDeadAirfieldState"),
-		m_checkAirfield(0) { }
+	JetOrHeliCirclingDeadAirfieldState(StateMachine* machine)
+	  : State(machine, "JetOrHeliCirclingDeadAirfieldState")
+	  , m_checkAirfield(0)
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 		{
 			return STATE_FAILURE;
 		}
@@ -305,10 +342,10 @@ public:
 
 		m_checkAirfield = HOW_OFTEN_TO_CHECK;
 
-		//Play the "low fuel" voice whenever the craft is circling above the airfield.
-		AudioEventRTS soundToPlay = *jet->getTemplate()->getPerUnitSound( "VoiceLowFuel" );
-		soundToPlay.setObjectID( jet->getID() );
-		TheAudio->addAudioEvent( &soundToPlay );
+		// Play the "low fuel" voice whenever the craft is circling above the airfield.
+		AudioEventRTS soundToPlay = *jet->getTemplate()->getPerUnitSound("VoiceLowFuel");
+		soundToPlay.setObjectID(jet->getID());
+		TheAudio->addAudioEvent(&soundToPlay);
 
 		return STATE_CONTINUE;
 	}
@@ -317,7 +354,7 @@ public:
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 		{
 			return STATE_FAILURE;
 		}
@@ -338,13 +375,13 @@ public:
 			damageInfo.in.m_deathType = DEATH_NORMAL;
 			damageInfo.in.m_sourceID = INVALID_ID;
 			damageInfo.in.m_amount = damageRate;
-			jet->attemptDamage( &damageInfo );
+			jet->attemptDamage(&damageInfo);
 		}
 
 		if (--m_checkAirfield <= 0)
 		{
 			m_checkAirfield = HOW_OFTEN_TO_CHECK;
-			Object* airfield = findSuitableAirfield( jet );
+			Object* airfield = findSuitableAirfield(jet);
 			if (airfield)
 			{
 				jet->setProducer(airfield);
@@ -354,26 +391,27 @@ public:
 
 		return STATE_CONTINUE;
 	}
-
 };
 EMPTY_DTOR(JetOrHeliCirclingDeadAirfieldState)
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: we returned to the dead-airfield location
-	Failure: shouldn't normally happen
+  Success: we returned to the dead-airfield location
+  Failure: shouldn't normally happen
 */
 class JetOrHeliReturningToDeadAirfieldState : public AIInternalMoveToState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetOrHeliReturningToDeadAirfieldState, "JetOrHeliReturningToDeadAirfieldState")
 public:
-	JetOrHeliReturningToDeadAirfieldState( StateMachine *machine ) : AIInternalMoveToState( machine, "JetOrHeliReturningToDeadAirfieldState") { }
+	JetOrHeliReturningToDeadAirfieldState(StateMachine* machine)
+	  : AIInternalMoveToState(machine, "JetOrHeliReturningToDeadAirfieldState")
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 		{
 			return STATE_FAILURE;
 		}
@@ -383,7 +421,6 @@ public:
 
 		return AIInternalMoveToState::onEnter();
 	}
-
 };
 EMPTY_DTOR(JetOrHeliReturningToDeadAirfieldState)
 
@@ -391,12 +428,10 @@ EMPTY_DTOR(JetOrHeliReturningToDeadAirfieldState)
 // This solution uses the
 // http://www.faqs.org/faqs/graphics/algorithms-faq/
 // Subject 1.03
-static Bool intersectInfiniteLine2D
-(
-	Real ax, Real ay, Real ao,
-	Real cx, Real cy, Real co,
-	Real& ix, Real& iy
-)
+static Bool intersectInfiniteLine2D(
+  Real ax, Real ay, Real ao,
+  Real cx, Real cy, Real co,
+  Real& ix, Real& iy)
 {
 	Real bx = ax + Cos(ao);
 	Real by = ay + Sin(ao);
@@ -411,7 +446,7 @@ static Bool intersectInfiniteLine2D
 	}
 
 	// The lines intersect.
-	Real r = ((ay - cy) * (dx - cx) - (ax - cx) * (dy - cy) ) / denom;
+	Real r = ((ay - cy) * (dx - cx) - (ax - cx) * (dy - cy)) / denom;
 	ix = ax + r * (bx - ax);
 	iy = ay + r * (by - ay);
 	return true;
@@ -419,23 +454,29 @@ static Bool intersectInfiniteLine2D
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: we are on the ground at the runway start
-	Failure: we are unable to get on the ground
+  Success: we are on the ground at the runway start
+  Failure: we are unable to get on the ground
 */
 class JetOrHeliTaxiState : public AIMoveOutOfTheWayState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetOrHeliTaxiState, "JetOrHeliTaxiState")
 private:
 	TaxiType m_taxiMode;
+
 public:
-	JetOrHeliTaxiState( StateMachine *machine, TaxiType m ) : m_taxiMode(m), AIMoveOutOfTheWayState( machine ) { }
+	JetOrHeliTaxiState(StateMachine* machine, TaxiType m)
+	  : m_taxiMode(m)
+	  , AIMoveOutOfTheWayState(machine)
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		jetAI->setCanPathThroughUnits(true);
 		jetAI->friend_setTakeoffInProgress(m_taxiMode != TO_PARKING);
@@ -449,56 +490,64 @@ public:
 		Object* airfield;
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step.
+		{
+			return STATE_SUCCESS;    // no airfield? just skip this step.
+		}
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
-			return STATE_FAILURE;	// full?
+		{
+			return STATE_FAILURE;    // full?
+		}
 
 		Coord3D intermedPt;
 		Bool intermed = false;
 		Real orient = atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
-		if (fabs(stdAngleDiff(orient, ppinfo.parkingOrientation)) > PI/128)
+		if (fabs(stdAngleDiff(orient, ppinfo.parkingOrientation)) > PI / 128)
 		{
 			intermedPt.z = (ppinfo.parkingSpace.z + ppinfo.runwayPrep.z) * 0.5f;
 			intermed = intersectInfiniteLine2D(
-				ppinfo.parkingSpace.x, ppinfo.parkingSpace.y, ppinfo.parkingOrientation,
-				ppinfo.runwayPrep.x, ppinfo.runwayPrep.y, ppinfo.parkingOrientation + PI/2,
-				intermedPt.x, intermedPt.y);
+			  ppinfo.parkingSpace.x, ppinfo.parkingSpace.y, ppinfo.parkingOrientation,
+			  ppinfo.runwayPrep.x, ppinfo.runwayPrep.y, ppinfo.parkingOrientation + PI / 2,
+			  intermedPt.x, intermedPt.y);
 		}
 
 		jetAI->destroyPath();
-		Path *movePath;
+		Path* movePath;
 		movePath = newInstance(Path);
 		Coord3D pos = *jet->getPosition();
-		movePath->prependNode( &pos, LAYER_GROUND );
+		movePath->prependNode(&pos, LAYER_GROUND);
 		movePath->markOptimized();
 
 		if (m_taxiMode == TO_PARKING)
 		{
-			movePath->appendNode( &ppinfo.runwayPrep, LAYER_GROUND );
+			movePath->appendNode(&ppinfo.runwayPrep, LAYER_GROUND);
 			if (intermed)
-				movePath->appendNode( &intermedPt, LAYER_GROUND );
-			movePath->appendNode( &ppinfo.parkingSpace, LAYER_GROUND );
+			{
+				movePath->appendNode(&intermedPt, LAYER_GROUND);
+			}
+			movePath->appendNode(&ppinfo.parkingSpace, LAYER_GROUND);
 		}
 		else if (m_taxiMode == FROM_PARKING)
 		{
 			if (intermed)
-				movePath->appendNode( &intermedPt, LAYER_GROUND );
-			movePath->appendNode( &ppinfo.runwayPrep, LAYER_GROUND );
-			movePath->appendNode( &ppinfo.runwayStart, LAYER_GROUND );
+			{
+				movePath->appendNode(&intermedPt, LAYER_GROUND);
+			}
+			movePath->appendNode(&ppinfo.runwayPrep, LAYER_GROUND);
+			movePath->appendNode(&ppinfo.runwayStart, LAYER_GROUND);
 		}
 		else if (m_taxiMode == FROM_HANGAR)
 		{
-			movePath->appendNode( &ppinfo.parkingSpace, LAYER_GROUND );
+			movePath->appendNode(&ppinfo.parkingSpace, LAYER_GROUND);
 		}
 
 		m_waitingForPath = FALSE;
 		TheAI->pathfinder()->setDebugPath(movePath);
 
-		setAdjustsDestination(false);	// precision is necessary
+		setAdjustsDestination(false);    // precision is necessary
 
-		jetAI->friend_setPath( movePath );
+		jetAI->friend_setPath(movePath);
 		DEBUG_ASSERTCRASH(jetAI->getCurLocomotor(), ("no loco"));
 		jetAI->getCurLocomotor()->setUsePreciseZPos(true);
 		jetAI->getCurLocomotor()->setUltraAccurate(true);
@@ -509,7 +558,7 @@ public:
 		return ret;
 	}
 
-	virtual void onExit( StateExitType status ) override
+	virtual void onExit(StateExitType status) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
@@ -526,39 +575,45 @@ public:
 
 		AIMoveOutOfTheWayState::onExit(status);
 	}
-
 };
 EMPTY_DTOR(JetOrHeliTaxiState)
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: we are on the ground at the runway start
-	Failure: we are unable to get on the ground
+  Success: we are on the ground at the runway start
+  Failure: we are unable to get on the ground
 */
 class JetTakeoffOrLandingState : public AIFollowPathState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetTakeoffOrLandingState, "JetTakeoffOrLandingState")
 private:
-	Real			m_maxLift;
-	Real			m_maxSpeed;
+	Real m_maxLift;
+	Real m_maxSpeed;
 #ifdef CIRCLE_FOR_LANDING
-	Coord3D		m_circleForLandingPos;
+	Coord3D m_circleForLandingPos;
 #endif
-	Bool			m_landing;
-	Bool			m_landingSoundPlayed;
+	Bool m_landing;
+	Bool m_landingSoundPlayed;
 
 public:
-	JetTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing), AIFollowPathState( machine, "JetTakeoffOrLandingState" ) { }
+	JetTakeoffOrLandingState(StateMachine* machine, Bool landing)
+	  : m_landing(landing)
+	  , AIFollowPathState(machine, "JetTakeoffOrLandingState")
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
 		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		jetAI->friend_setTakeoffInProgress(!m_landing);
 		jetAI->friend_setLandingInProgress(m_landing);
@@ -585,7 +640,9 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step
+		{
+			return STATE_SUCCESS;    // no airfield? just skip this step
+		}
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
@@ -609,7 +666,7 @@ public:
 		{
 #ifdef CIRCLE_FOR_LANDING
 			m_circleForLandingPos = ppinfo.runwayApproach;
-			m_circleForLandingPos.z = (ppinfo.runwayEnd.z + ppinfo.runwayApproach.z)*0.5f;
+			m_circleForLandingPos.z = (ppinfo.runwayEnd.z + ppinfo.runwayApproach.z) * 0.5f;
 #else
 			path.push_back(ppinfo.runwayApproach);
 #endif
@@ -623,10 +680,10 @@ public:
 			path.push_back(ppinfo.runwayApproach);
 		}
 
-		setAdjustsDestination(false);	// precision is necessary
-		setAdjustFinalDestination(false); // especially at the endpoint!
+		setAdjustsDestination(false);    // precision is necessary
+		setAdjustFinalDestination(false);    // especially at the endpoint!
 
-		jetAI->friend_setGoalPath( &path );
+		jetAI->friend_setGoalPath(&path);
 
 		StateReturnType ret = AIFollowPathState::onEnter();
 
@@ -637,11 +694,15 @@ public:
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		if (m_landing)
 		{
@@ -662,19 +723,19 @@ public:
 #endif
 			}
 
-			if( !m_landingSoundPlayed )
+			if (!m_landingSoundPlayed)
 			{
 				Real zPos = jet->getPosition()->z;
 				Real zSlop = 0.25f;
-				PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination( jet->getPosition() );
-				Real groundZ = TheTerrainLogic->getLayerHeight( jet->getPosition()->x, jet->getPosition()->y, layer );
+				PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination(jet->getPosition());
+				Real groundZ = TheTerrainLogic->getLayerHeight(jet->getPosition()->x, jet->getPosition()->y, layer);
 
-				if( zPos - zSlop <= groundZ )
+				if (zPos - zSlop <= groundZ)
 				{
 					m_landingSoundPlayed = TRUE;
 					AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_aircraftWheelScreech;
-					soundToPlay.setPosition( jet->getPosition() );
-					TheAudio->addAudioEvent( &soundToPlay );
+					soundToPlay.setPosition(jet->getPosition());
+					TheAudio->addAudioEvent(&soundToPlay);
 				}
 			}
 		}
@@ -682,12 +743,20 @@ public:
 		{
 			ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 			if (pp)
+			{
 				pp->transferRunwayReservationToNextInLineForTakeoff(jet->getID());
+			}
 
 			PhysicsBehavior* physics = jet->getPhysics();
 			Real ratio = physics->getVelocityMagnitude() / (m_maxSpeed * jetAI->friend_getTakeoffSpeedForMaxLift());
-			if (ratio < 0.0f) ratio = 0.0f;
-			if (ratio > 1.0f) ratio = 1.0f;
+			if (ratio < 0.0f)
+			{
+				ratio = 0.0f;
+			}
+			if (ratio > 1.0f)
+			{
+				ratio = 1.0f;
+			}
 			jetAI->getCurLocomotor()->setMaxLift(m_maxLift * ratio);
 		}
 
@@ -695,15 +764,17 @@ public:
 		return ret;
 	}
 
-	virtual void onExit( StateExitType status ) override
+	virtual void onExit(StateExitType status) override
 	{
 		AIFollowPathState::onExit(status);
 
 		// just in case.
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return;
+		}
 
 		jetAI->friend_setTakeoffInProgress(false);
 		jetAI->friend_setLandingInProgress(false);
@@ -719,7 +790,9 @@ public:
 			loco->setUltraAccurate(false);
 			// don't restore lift if dead -- this may fight with JetSlowDeathBehavior!
 			if (!jet->isEffectivelyDead())
+			{
 				loco->setMaxLift(BIGNUM);
+			}
 #ifdef CIRCLE_FOR_LANDING
 			loco->setAltitudeChangeThresholdForCircling(0);
 #endif
@@ -729,10 +802,14 @@ public:
 		if (!m_landing)
 		{
 			if (pp && !jetAI->friend_keepsParkingSpaceWhenAirborne())
+			{
 				pp->releaseSpace(jet->getID());
+			}
 		}
 		if (pp)
+		{
 			pp->releaseRunway(jet->getID());
+		}
 	}
 };
 EMPTY_DTOR(JetTakeoffOrLandingState)
@@ -740,30 +817,30 @@ EMPTY_DTOR(JetTakeoffOrLandingState)
 //-------------------------------------------------------------------------------------------------
 static Real calcDistSqr(const Coord3D& a, const Coord3D& b)
 {
-	return sqr(a.x-b.x) + sqr(a.y-b.y) + sqr(a.z-b.z);
+	return sqr(a.x - b.x) + sqr(a.y - b.y) + sqr(a.z - b.z);
 }
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: we are on the ground at the runway start
-	Failure: we are unable to get on the ground
+  Success: we are on the ground at the runway start
+  Failure: we are unable to get on the ground
 */
 class HeliTakeoffOrLandingState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeliTakeoffOrLandingState, "HeliTakeoffOrLandingState")
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override
+	virtual void crc(Xfer* xfer) override
 	{
 		// empty. jba.
 	}
 
-	virtual void xfer( Xfer *xfer ) override
+	virtual void xfer(Xfer* xfer) override
 	{
 		// version
 		XferVersion currentVersion = 1;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		// set on create. xfer->xferBool(&m_landing);
 		xfer->xferCoord3D(&m_path[0]);
@@ -778,24 +855,29 @@ protected:
 	}
 
 private:
-	Coord3D		m_path[2];
-	Int				m_index;
-	Coord3D		m_parkingLoc;
-	Real			m_parkingOrientation;
-	Bool			m_landing;
+	Coord3D m_path[2];
+	Int m_index;
+	Coord3D m_parkingLoc;
+	Real m_parkingOrientation;
+	Bool m_landing;
+
 public:
-	HeliTakeoffOrLandingState( StateMachine *machine, Bool landing ) : m_landing(landing),
-		State( machine, "HeliTakeoffOrLandingState" ), m_index(0)
-		{
-			m_parkingLoc.zero();
-		}
+	HeliTakeoffOrLandingState(StateMachine* machine, Bool landing)
+	  : m_landing(landing)
+	  , State(machine, "HeliTakeoffOrLandingState")
+	  , m_index(0)
+	{
+		m_parkingLoc.zero();
+	}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		jetAI->friend_setTakeoffInProgress(!m_landing);
 		jetAI->friend_setLandingInProgress(m_landing);
@@ -811,7 +893,9 @@ public:
 		Object* airfield;
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID(), &airfield);
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step
+		{
+			return STATE_SUCCESS;    // no airfield? just skip this step
+		}
 
 		Coord3D landingApproach;
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
@@ -833,7 +917,9 @@ public:
 		{
 			ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 			if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
+			{
 				return STATE_FAILURE;
+			}
 			m_parkingLoc = ppinfo.parkingSpace;
 			m_parkingOrientation = ppinfo.parkingOrientation;
 			landingApproach = m_parkingLoc;
@@ -860,11 +946,15 @@ public:
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 // I have disabled this because it is no longer necessary and is a bit funky lookin' (srj)
 #ifdef NOT_IN_USE
@@ -872,11 +962,11 @@ public:
 		jet->getPhysics()->scrubVelocity2D(0);
 		Coord3D hoverloc = m_path[m_index];
 		hoverloc.z = jet->getPosition()->z;
-#if 1
+	#if 1
 		Coord3D pos = *jet->getPosition();
 		Real dx = hoverloc.x - pos.x;
 		Real dy = hoverloc.y - pos.y;
-		Real dSqr = dx*dx+dy*dy;
+		Real dSqr = dx * dx + dy * dy;
 		const Real DARN_CLOSE = 0.25f;
 		if (dSqr < DARN_CLOSE)
 		{
@@ -885,14 +975,17 @@ public:
 		else
 		{
 			Real dist = sqrtf(dSqr);
-			if (dist<1) dist = 1;
-			pos.x += PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
-			pos.y += PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);
+			if (dist < 1)
+			{
+				dist = 1;
+			}
+			pos.x += PATHFIND_CELL_SIZE_F * dx / (dist * LOGICFRAMES_PER_SECOND);
+			pos.y += PATHFIND_CELL_SIZE_F * dy / (dist * LOGICFRAMES_PER_SECOND);
 			jet->setPosition(&pos);
 		}
-#else
+	#else
 		jet->setPosition(&hoverloc);
-#endif
+	#endif
 		jet->setOrientation(m_parkingOrientation);
 #endif
 
@@ -905,26 +998,32 @@ public:
 		jetAI->setLocomotorGoalPositionExplicit(m_path[m_index]);
 
 		const Real THRESH = 3.0f;
-		const Real THRESH_SQR = THRESH*THRESH;
+		const Real THRESH_SQR = THRESH * THRESH;
 		const Coord3D* a = jet->getPosition();
 		const Coord3D* b = &m_path[m_index];
 		Real distSqr = calcDistSqr(*a, *b);
 		if (distSqr <= THRESH_SQR)
+		{
 			++m_index;
+		}
 
 		if (m_index >= 2)
+		{
 			return STATE_SUCCESS;
+		}
 
 		return STATE_CONTINUE;
 	}
 
-	virtual void onExit( StateExitType status ) override
+	virtual void onExit(StateExitType status) override
 	{
 		// just in case.
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return;
+		}
 
 		jetAI->friend_setTakeoffInProgress(false);
 		jetAI->friend_setLandingInProgress(false);
@@ -939,7 +1038,9 @@ public:
 			loco->setUltraAccurate(false);
 			// don't restore lift if dead -- this may fight with JetSlowDeathBehavior!
 			if (!jet->isEffectivelyDead())
+			{
 				loco->setMaxLift(BIGNUM);
+			}
 		}
 
 		jetAI->ignoreObstacleID(INVALID_ID);
@@ -952,10 +1053,11 @@ public:
 		else
 		{
 			if (pp && !jetAI->friend_keepsParkingSpaceWhenAirborne())
+			{
 				pp->releaseSpace(jet->getID());
+			}
 		}
 	}
-
 };
 EMPTY_DTOR(HeliTakeoffOrLandingState)
 
@@ -965,19 +1067,28 @@ class JetOrHeliParkOrientState : public State
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetOrHeliParkOrientState, "JetOrHeliParkOrientState")
 protected:
 	// snapshot interface STUBBED.
-	virtual void crc( Xfer *xfer ) override {};
-	virtual void xfer( Xfer *xfer ) override {XferVersion cv = 1;	XferVersion v = cv; xfer->xferVersion( &v, cv );}
+	virtual void crc(Xfer* xfer) override {};
+	virtual void xfer(Xfer* xfer) override
+	{
+		XferVersion cv = 1;
+		XferVersion v = cv;
+		xfer->xferVersion(&v, cv);
+	}
 	virtual void loadPostProcess() override {};
 
 public:
-	JetOrHeliParkOrientState( StateMachine *machine ) : State( machine, "JetOrHeliParkOrientState") { }
+	JetOrHeliParkOrientState(StateMachine* machine)
+	  : State(machine, "JetOrHeliParkOrientState")
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		if (jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 		{
@@ -995,25 +1106,33 @@ public:
 	{
 		Object* jet = getMachineOwner();
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
 		{
 			return STATE_FAILURE;
 		}
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
+		{
 			return STATE_FAILURE;
+		}
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
+		{
 			return STATE_FAILURE;
+		}
 
 		const Real THRESH = 0.001f;
 		if (fabs(stdAngleDiff(jet->getOrientation(), ppinfo.parkingOrientation)) <= THRESH)
+		{
 			return STATE_SUCCESS;
+		}
 
 		// magically position it correctly.
 		jet->getPhysics()->scrubVelocity2D(0);
@@ -1026,12 +1145,14 @@ public:
 		return STATE_CONTINUE;
 	}
 
-	virtual void onExit( StateExitType status ) override
+	virtual void onExit(StateExitType status) override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return;
+		}
 
 		jetAI->friend_setTakeoffInProgress(false);
 		jetAI->friend_setLandingInProgress(false);
@@ -1046,12 +1167,12 @@ class JetPauseBeforeTakeoffState : public AIFaceState
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetPauseBeforeTakeoffState, "JetPauseBeforeTakeoffState")
 protected:
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override
+	virtual void crc(Xfer* xfer) override
 	{
 		// empty. jba.
 	}
 
-	virtual void xfer( Xfer *xfer ) override
+	virtual void xfer(Xfer* xfer) override
 	{
 		// version
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
@@ -1060,7 +1181,7 @@ protected:
 		XferVersion currentVersion = 2;
 #endif
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		// set on create. xfer->xferBool(&m_landing);
 		xfer->xferUnsignedInt(&m_whenTakeoff);
@@ -1091,12 +1212,12 @@ protected:
 	}
 
 private:
-	UnsignedInt		m_whenTakeoff;
-	UnsignedInt		m_whenTransfer;
-	ObjectID			m_waitedForTaxiID;
+	UnsignedInt m_whenTakeoff;
+	UnsignedInt m_whenTransfer;
+	ObjectID m_waitedForTaxiID;
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
-	Bool					m_resetTimer;
-	Bool					m_afterburners;
+	Bool m_resetTimer;
+	Bool m_afterburners;
 #endif
 
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
@@ -1111,11 +1232,15 @@ private:
 			{
 				Object* otherJet = TheGameLogic->findObjectByID(pp->getRunwayReservation(i));
 				if (otherJet == nullptr || otherJet == jet)
+				{
 					continue;
+				}
 
 				AIUpdateInterface* ai = otherJet->getAIUpdateInterface();
 				if (ai == nullptr)
+				{
 					continue;
+				}
 
 				if (ai->getCurrentStateID() == TAXI_TO_TAKEOFF)
 				{
@@ -1143,18 +1268,26 @@ private:
 			for (Int runway = 0; runway < runwayCount; ++runway)
 			{
 				if (runway == thisJetRunway)
+				{
 					continue;
+				}
 
 				Object* otherJet = TheGameLogic->findObjectByID(pp->getRunwayReservation(runway));
 				if (otherJet == nullptr)
+				{
 					continue;
+				}
 
 				AIUpdateInterface* ai = otherJet->getAIUpdateInterface();
 				if (ai == nullptr)
+				{
 					continue;
+				}
 
 				if (ai->getCurrentStateID() != TAXI_TO_TAKEOFF)
+				{
 					continue;
+				}
 
 				return otherJet;
 			}
@@ -1164,14 +1297,14 @@ private:
 #endif
 
 public:
-	JetPauseBeforeTakeoffState( StateMachine *machine )
-		: AIFaceState(machine, false)
-		, m_whenTakeoff(0)
-		, m_whenTransfer(0)
-		, m_waitedForTaxiID(INVALID_ID)
+	JetPauseBeforeTakeoffState(StateMachine* machine)
+	  : AIFaceState(machine, false)
+	  , m_whenTakeoff(0)
+	  , m_whenTransfer(0)
+	  , m_waitedForTaxiID(INVALID_ID)
 #if RETAIL_COMPATIBLE_CRC || RETAIL_COMPATIBLE_XFER_SAVE
-		, m_resetTimer(false)
-		, m_afterburners(false)
+	  , m_resetTimer(false)
+	  , m_afterburners(false)
 #endif
 	{
 		// nothing
@@ -1181,8 +1314,10 @@ public:
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		jetAI->friend_setTakeoffInProgress(true);
 		jetAI->friend_setLandingInProgress(false);
@@ -1197,11 +1332,15 @@ public:
 
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp == nullptr)
-			return STATE_SUCCESS;	// no airfield? just skip this step.
+		{
+			return STATE_SUCCESS;    // no airfield? just skip this step.
+		}
 
 		ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 		if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
-			return STATE_SUCCESS;	// full?
+		{
+			return STATE_SUCCESS;    // full?
+		}
 
 		getMachine()->setGoalPosition(&ppinfo.runwayEnd);
 
@@ -1214,13 +1353,17 @@ public:
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		// always call this.
 		StateReturnType superStatus = AIFaceState::update();
 
 		if (findWaiter())
+		{
 			return STATE_CONTINUE;
+		}
 
 		UnsignedInt now = TheGameLogic->getFrame();
 		if (!m_resetTimer)
@@ -1229,12 +1372,12 @@ public:
 			m_whenTakeoff = now + jetAI->friend_getTakeoffPause();
 			if (m_waitedForTaxiID == INVALID_ID)
 			{
-				m_waitedForTaxiID = jet->getID();	// just so we don't pick up anyone else
+				m_waitedForTaxiID = jet->getID();    // just so we don't pick up anyone else
 				m_whenTransfer = now + 1;
 			}
 			else
 			{
-				m_whenTransfer = now + 2;	// 2 seems odd, but is correct
+				m_whenTransfer = now + 2;    // 2 seems odd, but is correct
 			}
 			m_resetTimer = true;
 		}
@@ -1248,7 +1391,7 @@ public:
 		DEBUG_ASSERTCRASH(m_whenTakeoff != 0, ("hmm"));
 		DEBUG_ASSERTCRASH(m_whenTransfer != 0, ("hmm"));
 
-			// once we start the final wait, release the runways for guys behind us, so they can start taxiing
+		// once we start the final wait, release the runways for guys behind us, so they can start taxiing
 		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 		if (pp && now >= m_whenTransfer)
 		{
@@ -1256,7 +1399,9 @@ public:
 		}
 
 		if (now >= m_whenTakeoff)
+		{
 			return superStatus;
+		}
 
 		return STATE_CONTINUE;
 	}
@@ -1269,7 +1414,9 @@ public:
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
 
 		if (jet->isEffectivelyDead())
+		{
 			return STATE_FAILURE;
+		}
 
 		// always call this.
 		StateReturnType superStatus = AIFaceState::update();
@@ -1305,7 +1452,7 @@ public:
 			}
 			else
 			{
-				m_whenTransfer = now + 2; // 2 seems odd, but is correct
+				m_whenTransfer = now + 2;    // 2 seems odd, but is correct
 			}
 
 			// Take off soon, but not before the runway transfer.
@@ -1344,7 +1491,6 @@ public:
 		jetAI->friend_setLandingInProgress(false);
 		AIFaceState::onExit(status);
 	}
-
 };
 EMPTY_DTOR(JetPauseBeforeTakeoffState)
 
@@ -1353,23 +1499,22 @@ class JetOrHeliReloadAmmoState : public State
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetOrHeliReloadAmmoState, "JetOrHeliReloadAmmoState")
 private:
-	UnsignedInt		m_reloadTime;
-	UnsignedInt		m_reloadDoneFrame;
+	UnsignedInt m_reloadTime;
+	UnsignedInt m_reloadDoneFrame;
 
 protected:
-
 	// snapshot interface
-	virtual void crc( Xfer *xfer ) override
+	virtual void crc(Xfer* xfer) override
 	{
 		// empty. jba.
 	}
 
-	virtual void xfer( Xfer *xfer ) override
+	virtual void xfer(Xfer* xfer) override
 	{
 		// version
 		XferVersion currentVersion = 1;
 		XferVersion version = currentVersion;
-		xfer->xferVersion( &version, currentVersion );
+		xfer->xferVersion(&version, currentVersion);
 
 		// set on create. xfer->xferBool(&m_landing);
 		xfer->xferUnsignedInt(&m_reloadTime);
@@ -1381,25 +1526,31 @@ protected:
 	}
 
 public:
-	JetOrHeliReloadAmmoState( StateMachine *machine ) : State( machine, "JetOrHeliReloadAmmoState") { }
+	JetOrHeliReloadAmmoState(StateMachine* machine)
+	  : State(machine, "JetOrHeliReloadAmmoState")
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
 		Object* jet = getMachineOwner();
 		JetAIUpdate* jetAI = (JetAIUpdate*)jet->getAIUpdateInterface();
-		if( !jetAI )
+		if (!jetAI)
+		{
 			return STATE_FAILURE;
+		}
 
 		jetAI->friend_setTakeoffInProgress(false);
 		jetAI->friend_setLandingInProgress(false);
 		jetAI->friend_setUseSpecialReturnLoco(false);
 
 		m_reloadTime = 0;
-		for (Int i = 0; i < WEAPONSLOT_COUNT;	++i)
+		for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
 		{
 			const Weapon* w = jet->getWeaponInWeaponSlot((WeaponSlotType)i);
 			if (w == nullptr)
+			{
 				continue;
+			}
 
 			Int remaining = w->getRemainingAmmo();
 			Int clipSize = w->getClipSize();
@@ -1411,11 +1562,15 @@ public:
 				rt = (rt * needed) / clipSize;
 			}
 			if (rt > m_reloadTime)
+			{
 				m_reloadTime = rt;
+			}
 		}
 
 		if (m_reloadTime < 1)
+		{
 			m_reloadTime = 1;
+		}
 		m_reloadDoneFrame = m_reloadTime + TheGameLogic->getFrame();
 		return STATE_CONTINUE;
 	}
@@ -1425,23 +1580,33 @@ public:
 		Object* jet = getMachineOwner();
 		UnsignedInt now = TheGameLogic->getFrame();
 		Bool allDone = true;
-		for (Int i = 0; i < WEAPONSLOT_COUNT;	++i)
+		for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
 		{
 			Weapon* w = jet->getWeaponInWeaponSlot((WeaponSlotType)i);
 			if (w == nullptr)
+			{
 				continue;
+			}
 
 			if (now >= m_reloadDoneFrame)
+			{
 				w->setClipPercentFull(1.0f, false);
+			}
 			else
+			{
 				w->setClipPercentFull((Real)(m_reloadTime - (m_reloadDoneFrame - now)) / m_reloadTime, false);
+			}
 
 			if (w->getRemainingAmmo() != w->getClipSize())
+			{
 				allDone = false;
+			}
 		}
 
 		if (allDone)
+		{
 			return STATE_SUCCESS;
+		}
 
 		return STATE_CONTINUE;
 	}
@@ -1453,20 +1618,21 @@ public:
 		jetAI->friend_setTakeoffInProgress(false);
 		jetAI->friend_setLandingInProgress(false);
 	}
-
 };
 EMPTY_DTOR(JetOrHeliReloadAmmoState)
 
 //-------------------------------------------------------------------------------------------------
 /*
-	Success: we are close enough to a friendly airfield to land
-	Failure: we are unable to get close enough to a friendly airfield to land
+  Success: we are close enough to a friendly airfield to land
+  Failure: we are unable to get close enough to a friendly airfield to land
 */
 class JetOrHeliReturnForLandingState : public AIInternalMoveToState
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetOrHeliReturnForLandingState, "JetOrHeliReturnForLandingState")
 public:
-	JetOrHeliReturnForLandingState( StateMachine *machine ) : AIInternalMoveToState( machine, "JetOrHeliReturnForLandingState") { }
+	JetOrHeliReturnForLandingState(StateMachine* machine)
+	  : AIInternalMoveToState(machine, "JetOrHeliReturnForLandingState")
+	{}
 
 	virtual StateReturnType onEnter() override
 	{
@@ -1479,7 +1645,7 @@ public:
 			// nuke the producer id, since it's dead
 			jet->setProducer(nullptr);
 
-			Object* airfield = findSuitableAirfield( jet );
+			Object* airfield = findSuitableAirfield(jet);
 			pp = airfield ? getPP(airfield->getID()) : nullptr;
 			if (airfield && pp)
 			{
@@ -1499,11 +1665,13 @@ public:
 		{
 			ParkingPlaceBehaviorInterface::PPInfo ppinfo;
 			if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
+			{
 				return STATE_FAILURE;
+			}
 
 			m_goalPosition = jetAI->friend_needsRunway() ? ppinfo.runwayApproach : ppinfo.parkingSpace;
 		}
-		setAdjustsDestination(false);		// precision is necessary
+		setAdjustsDestination(false);    // precision is necessary
 
 		return AIInternalMoveToState::onEnter();
 	}
@@ -1517,29 +1685,29 @@ EMPTY_DTOR(JetOrHeliReturnForLandingState)
 //-------------------------------------------------------------------------------------------------
 class JetAIStateMachine : public AIStateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( JetAIStateMachine, "JetAIStateMachine" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetAIStateMachine, "JetAIStateMachine");
 
 public:
-	JetAIStateMachine( Object *owner, AsciiString name );
-
+	JetAIStateMachine(Object* owner, AsciiString name);
 };
 
 //-------------------------------------------------------------------------------------------------
-JetAIStateMachine::JetAIStateMachine(Object *owner, AsciiString name) : AIStateMachine(owner, name)
+JetAIStateMachine::JetAIStateMachine(Object* owner, AsciiString name)
+  : AIStateMachine(owner, name)
 {
-	defineState( RETURNING_FOR_LANDING, newInstance(JetOrHeliReturnForLandingState)( this ), LANDING_AWAIT_CLEARANCE, RETURN_TO_DEAD_AIRFIELD );
-	defineState( TAKING_OFF_AWAIT_CLEARANCE, newInstance(JetAwaitingRunwayState)( this, false ), TAXI_TO_TAKEOFF, AI_IDLE );
-	defineState( TAXI_TO_TAKEOFF, newInstance(JetOrHeliTaxiState)( this, FROM_PARKING ), PAUSE_BEFORE_TAKEOFF, AI_IDLE );
-	defineState( PAUSE_BEFORE_TAKEOFF, newInstance(JetPauseBeforeTakeoffState)( this ), TAKING_OFF, AI_IDLE );
-	defineState( TAKING_OFF, newInstance(JetTakeoffOrLandingState)( this, false ), AI_IDLE, AI_IDLE );
-	defineState( LANDING_AWAIT_CLEARANCE, newInstance(JetAwaitingRunwayState)( this, true ), LANDING, AI_IDLE );
-	defineState( LANDING, newInstance(JetTakeoffOrLandingState)( this, true ), TAXI_FROM_LANDING, AI_IDLE );
-	defineState( TAXI_FROM_LANDING, newInstance(JetOrHeliTaxiState)( this, TO_PARKING ), ORIENT_FOR_PARKING_PLACE, AI_IDLE );
-	defineState( TAXI_FROM_HANGAR, newInstance(JetOrHeliTaxiState)( this, FROM_HANGAR ), ORIENT_FOR_PARKING_PLACE, AI_IDLE );
-	defineState( ORIENT_FOR_PARKING_PLACE, newInstance(JetOrHeliParkOrientState)( this ), RELOAD_AMMO, AI_IDLE );
-	defineState( RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)( this ), AI_IDLE, AI_IDLE );
-	defineState( RETURN_TO_DEAD_AIRFIELD, newInstance(JetOrHeliReturningToDeadAirfieldState)( this ), CIRCLING_DEAD_AIRFIELD, RETURN_TO_DEAD_AIRFIELD );
-	defineState( CIRCLING_DEAD_AIRFIELD, newInstance(JetOrHeliCirclingDeadAirfieldState)( this ), AI_IDLE, AI_IDLE );
+	defineState(RETURNING_FOR_LANDING, newInstance(JetOrHeliReturnForLandingState)(this), LANDING_AWAIT_CLEARANCE, RETURN_TO_DEAD_AIRFIELD);
+	defineState(TAKING_OFF_AWAIT_CLEARANCE, newInstance(JetAwaitingRunwayState)(this, false), TAXI_TO_TAKEOFF, AI_IDLE);
+	defineState(TAXI_TO_TAKEOFF, newInstance(JetOrHeliTaxiState)(this, FROM_PARKING), PAUSE_BEFORE_TAKEOFF, AI_IDLE);
+	defineState(PAUSE_BEFORE_TAKEOFF, newInstance(JetPauseBeforeTakeoffState)(this), TAKING_OFF, AI_IDLE);
+	defineState(TAKING_OFF, newInstance(JetTakeoffOrLandingState)(this, false), AI_IDLE, AI_IDLE);
+	defineState(LANDING_AWAIT_CLEARANCE, newInstance(JetAwaitingRunwayState)(this, true), LANDING, AI_IDLE);
+	defineState(LANDING, newInstance(JetTakeoffOrLandingState)(this, true), TAXI_FROM_LANDING, AI_IDLE);
+	defineState(TAXI_FROM_LANDING, newInstance(JetOrHeliTaxiState)(this, TO_PARKING), ORIENT_FOR_PARKING_PLACE, AI_IDLE);
+	defineState(TAXI_FROM_HANGAR, newInstance(JetOrHeliTaxiState)(this, FROM_HANGAR), ORIENT_FOR_PARKING_PLACE, AI_IDLE);
+	defineState(ORIENT_FOR_PARKING_PLACE, newInstance(JetOrHeliParkOrientState)(this), RELOAD_AMMO, AI_IDLE);
+	defineState(RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)(this), AI_IDLE, AI_IDLE);
+	defineState(RETURN_TO_DEAD_AIRFIELD, newInstance(JetOrHeliReturningToDeadAirfieldState)(this), CIRCLING_DEAD_AIRFIELD, RETURN_TO_DEAD_AIRFIELD);
+	defineState(CIRCLING_DEAD_AIRFIELD, newInstance(JetOrHeliCirclingDeadAirfieldState)(this), AI_IDLE, AI_IDLE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1554,26 +1722,26 @@ JetAIStateMachine::~JetAIStateMachine()
 //-------------------------------------------------------------------------------------------------
 class HeliAIStateMachine : public AIStateMachine
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HeliAIStateMachine, "HeliAIStateMachine" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(HeliAIStateMachine, "HeliAIStateMachine");
 
 public:
-	HeliAIStateMachine( Object *owner, AsciiString name );
-
+	HeliAIStateMachine(Object* owner, AsciiString name);
 };
 
 //-------------------------------------------------------------------------------------------------
-HeliAIStateMachine::HeliAIStateMachine(Object *owner, AsciiString name) : AIStateMachine(owner, name)
+HeliAIStateMachine::HeliAIStateMachine(Object* owner, AsciiString name)
+  : AIStateMachine(owner, name)
 {
-	defineState( RETURNING_FOR_LANDING, newInstance(JetOrHeliReturnForLandingState)( this ), LANDING_AWAIT_CLEARANCE, RETURN_TO_DEAD_AIRFIELD );
-	defineState( TAKING_OFF_AWAIT_CLEARANCE, newInstance(SuccessState)( this ), TAKING_OFF, AI_IDLE );
-	defineState( TAKING_OFF, newInstance(HeliTakeoffOrLandingState)( this, false ), AI_IDLE, AI_IDLE );
-	defineState( LANDING_AWAIT_CLEARANCE, newInstance(SuccessState)( this ), ORIENT_FOR_PARKING_PLACE, AI_IDLE );
-	defineState( ORIENT_FOR_PARKING_PLACE, newInstance(JetOrHeliParkOrientState)( this ), LANDING, AI_IDLE );
-	defineState( LANDING, newInstance(HeliTakeoffOrLandingState)( this, true ), RELOAD_AMMO, AI_IDLE );
-	defineState( RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)( this ), AI_IDLE, AI_IDLE );
-	defineState( RETURN_TO_DEAD_AIRFIELD, newInstance(JetOrHeliReturningToDeadAirfieldState)( this ), CIRCLING_DEAD_AIRFIELD, RETURN_TO_DEAD_AIRFIELD );
-	defineState( CIRCLING_DEAD_AIRFIELD, newInstance(JetOrHeliCirclingDeadAirfieldState)( this ), AI_IDLE, AI_IDLE );
-	defineState( TAXI_FROM_HANGAR, newInstance(JetOrHeliTaxiState)( this, FROM_HANGAR ), AI_IDLE, AI_IDLE );
+	defineState(RETURNING_FOR_LANDING, newInstance(JetOrHeliReturnForLandingState)(this), LANDING_AWAIT_CLEARANCE, RETURN_TO_DEAD_AIRFIELD);
+	defineState(TAKING_OFF_AWAIT_CLEARANCE, newInstance(SuccessState)(this), TAKING_OFF, AI_IDLE);
+	defineState(TAKING_OFF, newInstance(HeliTakeoffOrLandingState)(this, false), AI_IDLE, AI_IDLE);
+	defineState(LANDING_AWAIT_CLEARANCE, newInstance(SuccessState)(this), ORIENT_FOR_PARKING_PLACE, AI_IDLE);
+	defineState(ORIENT_FOR_PARKING_PLACE, newInstance(JetOrHeliParkOrientState)(this), LANDING, AI_IDLE);
+	defineState(LANDING, newInstance(HeliTakeoffOrLandingState)(this, true), RELOAD_AMMO, AI_IDLE);
+	defineState(RELOAD_AMMO, newInstance(JetOrHeliReloadAmmoState)(this), AI_IDLE, AI_IDLE);
+	defineState(RETURN_TO_DEAD_AIRFIELD, newInstance(JetOrHeliReturningToDeadAirfieldState)(this), CIRCLING_DEAD_AIRFIELD, RETURN_TO_DEAD_AIRFIELD);
+	defineState(CIRCLING_DEAD_AIRFIELD, newInstance(JetOrHeliCirclingDeadAirfieldState)(this), AI_IDLE, AI_IDLE);
+	defineState(TAXI_FROM_HANGAR, newInstance(JetOrHeliTaxiState)(this, FROM_HANGAR), AI_IDLE, AI_IDLE);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1611,32 +1779,31 @@ JetAIUpdateModuleData::JetAIUpdateModuleData()
 //-------------------------------------------------------------------------------------------------
 /*static*/ void JetAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  AIUpdateModuleData::buildFieldParse(p);
+	AIUpdateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "OutOfAmmoDamagePerSecond",			INI::parsePercentToReal, nullptr, offsetof( JetAIUpdateModuleData, m_outOfAmmoDamagePerSecond ) },
-		{ "NeedsRunway",									INI::parseBool, nullptr, offsetof( JetAIUpdateModuleData, m_needsRunway ) },
-		{ "KeepsParkingSpaceWhenAirborne",INI::parseBool, nullptr, offsetof( JetAIUpdateModuleData, m_keepsParkingSpaceWhenAirborne ) },
-		{ "TakeoffSpeedForMaxLift",				INI::parsePercentToReal, nullptr, offsetof( JetAIUpdateModuleData, m_takeoffSpeedForMaxLift ) },
-		{ "TakeoffPause",									INI::parseDurationUnsignedInt, nullptr, offsetof( JetAIUpdateModuleData, m_takeoffPause ) },
-		{ "MinHeight",										INI::parseReal, nullptr, offsetof( JetAIUpdateModuleData, m_minHeight ) },
-		{ "ParkingOffset",								INI::parseReal, nullptr, offsetof( JetAIUpdateModuleData, m_parkingOffset ) },
-		{ "SneakyOffsetWhenAttacking",		INI::parseReal, nullptr, offsetof( JetAIUpdateModuleData, m_sneakyOffsetWhenAttacking ) },
-		{ "AttackLocomotorType",					INI::parseIndexList, TheLocomotorSetNames, offsetof( JetAIUpdateModuleData, m_attackingLoco ) },
-		{ "AttackLocomotorPersistTime",		INI::parseDurationUnsignedInt, nullptr, offsetof( JetAIUpdateModuleData, m_attackLocoPersistTime ) },
-		{ "AttackersMissPersistTime",			INI::parseDurationUnsignedInt, nullptr, offsetof( JetAIUpdateModuleData, m_attackersMissPersistTime ) },
-		{ "ReturnForAmmoLocomotorType",		INI::parseIndexList, TheLocomotorSetNames, offsetof( JetAIUpdateModuleData, m_returningLoco ) },
-		{ "LockonTime",										INI::parseDurationUnsignedInt, nullptr, offsetof( JetAIUpdateModuleData, m_lockonTime ) },
-		{ "LockonCursor",									INI::parseAsciiString, nullptr, offsetof( JetAIUpdateModuleData, m_lockonCursor ) },
-		{ "LockonInitialDist",						INI::parseReal, nullptr, offsetof( JetAIUpdateModuleData, m_lockonInitialDist ) },
-		{ "LockonFreq",										INI::parseReal, nullptr, offsetof( JetAIUpdateModuleData, m_lockonFreq ) },
-		{ "LockonAngleSpin",							INI::parseAngleReal, nullptr, offsetof( JetAIUpdateModuleData, m_lockonAngleSpin ) },
-		{ "LockonBlinky",									INI::parseBool, nullptr, offsetof( JetAIUpdateModuleData, m_lockonBlinky ) },
-		{ "ReturnToBaseIdleTime",					INI::parseDurationUnsignedInt, nullptr, offsetof( JetAIUpdateModuleData, m_returnToBaseIdleTime ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "OutOfAmmoDamagePerSecond", INI::parsePercentToReal, nullptr, offsetof(JetAIUpdateModuleData, m_outOfAmmoDamagePerSecond) },
+		{ "NeedsRunway", INI::parseBool, nullptr, offsetof(JetAIUpdateModuleData, m_needsRunway) },
+		{ "KeepsParkingSpaceWhenAirborne", INI::parseBool, nullptr, offsetof(JetAIUpdateModuleData, m_keepsParkingSpaceWhenAirborne) },
+		{ "TakeoffSpeedForMaxLift", INI::parsePercentToReal, nullptr, offsetof(JetAIUpdateModuleData, m_takeoffSpeedForMaxLift) },
+		{ "TakeoffPause", INI::parseDurationUnsignedInt, nullptr, offsetof(JetAIUpdateModuleData, m_takeoffPause) },
+		{ "MinHeight", INI::parseReal, nullptr, offsetof(JetAIUpdateModuleData, m_minHeight) },
+		{ "ParkingOffset", INI::parseReal, nullptr, offsetof(JetAIUpdateModuleData, m_parkingOffset) },
+		{ "SneakyOffsetWhenAttacking", INI::parseReal, nullptr, offsetof(JetAIUpdateModuleData, m_sneakyOffsetWhenAttacking) },
+		{ "AttackLocomotorType", INI::parseIndexList, TheLocomotorSetNames, offsetof(JetAIUpdateModuleData, m_attackingLoco) },
+		{ "AttackLocomotorPersistTime", INI::parseDurationUnsignedInt, nullptr, offsetof(JetAIUpdateModuleData, m_attackLocoPersistTime) },
+		{ "AttackersMissPersistTime", INI::parseDurationUnsignedInt, nullptr, offsetof(JetAIUpdateModuleData, m_attackersMissPersistTime) },
+		{ "ReturnForAmmoLocomotorType", INI::parseIndexList, TheLocomotorSetNames, offsetof(JetAIUpdateModuleData, m_returningLoco) },
+		{ "LockonTime", INI::parseDurationUnsignedInt, nullptr, offsetof(JetAIUpdateModuleData, m_lockonTime) },
+		{ "LockonCursor", INI::parseAsciiString, nullptr, offsetof(JetAIUpdateModuleData, m_lockonCursor) },
+		{ "LockonInitialDist", INI::parseReal, nullptr, offsetof(JetAIUpdateModuleData, m_lockonInitialDist) },
+		{ "LockonFreq", INI::parseReal, nullptr, offsetof(JetAIUpdateModuleData, m_lockonFreq) },
+		{ "LockonAngleSpin", INI::parseAngleReal, nullptr, offsetof(JetAIUpdateModuleData, m_lockonAngleSpin) },
+		{ "LockonBlinky", INI::parseBool, nullptr, offsetof(JetAIUpdateModuleData, m_lockonBlinky) },
+		{ "ReturnToBaseIdleTime", INI::parseDurationUnsignedInt, nullptr, offsetof(JetAIUpdateModuleData, m_returnToBaseIdleTime) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1647,13 +1814,18 @@ JetAIUpdateModuleData::JetAIUpdateModuleData()
 AIStateMachine* JetAIUpdate::makeStateMachine()
 {
 	if (getJetAIUpdateModuleData()->m_needsRunway)
-		return newInstance(JetAIStateMachine)( getObject(), "JetAIStateMachine");
+	{
+		return newInstance(JetAIStateMachine)(getObject(), "JetAIStateMachine");
+	}
 	else
-		return newInstance(HeliAIStateMachine)( getObject(), "HeliAIStateMachine");
+	{
+		return newInstance(HeliAIStateMachine)(getObject(), "HeliAIStateMachine");
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
-JetAIUpdate::JetAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
+JetAIUpdate::JetAIUpdate(Thing* thing, const ModuleData* moduleData)
+  : AIUpdateInterface(thing, moduleData)
 {
 	m_flags = 0;
 	m_afterburnerSound = *(getObject()->getTemplate()->getPerUnitSound("Afterburner"));
@@ -1685,7 +1857,9 @@ Bool JetAIUpdate::isIdle() const
 	// we need to do this because we enter an idle state briefly between takeoff/landing in these cases,
 	// but scripting relies on us never claiming to be "idle"...
 	if (getFlag(HAS_PENDING_COMMAND))
+	{
 		return false;
+	}
 
 	return AIUpdateInterface::isIdle();
 }
@@ -1704,27 +1878,35 @@ void JetAIUpdate::onDelete()
 	AIUpdateInterface::onDelete();
 	ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID());
 	if (pp)
+	{
 		pp->releaseSpace(getObject()->getID());
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 void JetAIUpdate::getProducerLocation()
 {
 	if (getFlag(HAS_PRODUCER_LOCATION))
+	{
 		return;
+	}
 
 	Object* jet = getObject();
-	Object* airfield = TheGameLogic->findObjectByID( jet->getProducerID() );
+	Object* airfield = TheGameLogic->findObjectByID(jet->getProducerID());
 	if (airfield == nullptr)
+	{
 		m_producerLocation = *jet->getPosition();
+	}
 	else
+	{
 		m_producerLocation = *airfield->getPosition();
+	}
 
 	/*
-		if we aren't allowed to fly, then we should be parked (or at least taxiing),
-		which implies we have a parking place reserved. If we don't, it's probably
-		because we were directly spawned via script (or directly placed on the map).
-		So, check to see if we have no parking place, and if not, quietly enable flight.
+	  if we aren't allowed to fly, then we should be parked (or at least taxiing),
+	  which implies we have a parking place reserved. If we don't, it's probably
+	  because we were directly spawned via script (or directly placed on the map).
+	  So, check to see if we have no parking place, and if not, quietly enable flight.
 	*/
 	ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
 	if (!pp || !pp->hasReservedSpace(jet->getID()))
@@ -1739,7 +1921,6 @@ void JetAIUpdate::getProducerLocation()
 	}
 
 	setFlag(HAS_PRODUCER_LOCATION, true);
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1766,26 +1947,26 @@ UpdateSleepTime JetAIUpdate::update()
 		if (pp != nullptr)
 		{
 			if (!getFlag(ALLOW_AIR_LOCO) &&
-					!getFlag(HAS_PENDING_COMMAND) &&
-						jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD) &&
-						jet->getBodyModule()->getHealth() == jet->getBodyModule()->getMaxHealth())
+			    !getFlag(HAS_PENDING_COMMAND) &&
+			    jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD) &&
+			    jet->getBodyModule()->getHealth() == jet->getBodyModule()->getMaxHealth())
 			{
 				// we're completely healed, so take off again
 				pp->setHealee(jet, false);
 				friend_setAllowAirLoco(true);
 				getStateMachine()->clear();
-				setLastCommandSource( CMD_FROM_AI );
-				getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
+				setLastCommandSource(CMD_FROM_AI);
+				getStateMachine()->setState(TAKING_OFF_AWAIT_CLEARANCE);
 
 #if !RETAIL_COMPATIBLE_CRC
 				// TheSuperHackers @bugfix arcticdolphin 02/03/2026 Move healed helicopter to rally point if present.
-				if (Object *airfield = TheGameLogic->findObjectByID( jet->getProducerID() ))
+				if (Object* airfield = TheGameLogic->findObjectByID(jet->getProducerID()))
 				{
-					if (ExitInterface *exitInterface = airfield->getObjectExitInterface())
+					if (ExitInterface* exitInterface = airfield->getObjectExitInterface())
 					{
-						if (const Coord3D *rallyPoint = exitInterface->getRallyPoint())
+						if (const Coord3D* rallyPoint = exitInterface->getRallyPoint())
 						{
-							aiMoveToPosition( rallyPoint, CMD_FROM_AI );
+							aiMoveToPosition(rallyPoint, CMD_FROM_AI);
 						}
 					}
 				}
@@ -1806,30 +1987,30 @@ UpdateSleepTime JetAIUpdate::update()
 			pruneDeadTargeters();
 
 			setFlag(USE_SPECIAL_RETURN_LOCO, true);
-			setLastCommandSource( CMD_FROM_AI );
+			setLastCommandSource(CMD_FROM_AI);
 			getStateMachine()->setState(RETURNING_FOR_LANDING);
 		}
 		else if (getFlag(HAS_PENDING_COMMAND)
-			// srj sez: if we are reloading ammo, wait will we are done before processing the pending command.
-			&& getStateMachine()->getCurrentStateID() != RELOAD_AMMO)
+		         // srj sez: if we are reloading ammo, wait will we are done before processing the pending command.
+		         && getStateMachine()->getCurrentStateID() != RELOAD_AMMO)
 		{
 			m_returnToBaseFrame = 0;
 
-			AICommandParms parms(AICMD_MOVE_TO_POSITION, CMD_FROM_AI);	// values don't matter, will be wiped by next line
+			AICommandParms parms(AICMD_MOVE_TO_POSITION, CMD_FROM_AI);    // values don't matter, will be wiped by next line
 			m_mostRecentCommand.reconstitute(parms);
 			setFlag(HAS_PENDING_COMMAND, false);
 
- 			aiDoCommand(&parms);
+			aiDoCommand(&parms);
 		}
 		else if (m_returnToBaseFrame != 0 && now >= m_returnToBaseFrame && getFlag(ALLOW_AIR_LOCO))
 		{
 			m_returnToBaseFrame = 0;
 			DEBUG_ASSERTCRASH(isOutOfSpecialReloadAmmo(jet) == false, ("Hmm, this seems unlikely -- isOutOfSpecialReloadAmmo(jet)==false"));
 			setFlag(USE_SPECIAL_RETURN_LOCO, false);
-			setLastCommandSource( CMD_FROM_AI );
+			setLastCommandSource(CMD_FROM_AI);
 			getStateMachine()->setState(RETURNING_FOR_LANDING);
 		}
-		else if (m_returnToBaseFrame  == 0 && d->m_returnToBaseIdleTime > 0 && getFlag(ALLOW_AIR_LOCO))
+		else if (m_returnToBaseFrame == 0 && d->m_returnToBaseIdleTime > 0 && getFlag(ALLOW_AIR_LOCO))
 		{
 			m_returnToBaseFrame = now + d->m_returnToBaseIdleTime;
 		}
@@ -1842,12 +2023,12 @@ UpdateSleepTime JetAIUpdate::update()
 		}
 		m_returnToBaseFrame = 0;
 		if (getFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD) &&
-						isOutOfSpecialReloadAmmo(jet) && getFlag(ALLOW_AIR_LOCO))
+		    isOutOfSpecialReloadAmmo(jet) && getFlag(ALLOW_AIR_LOCO))
 		{
 			setFlag(USE_SPECIAL_RETURN_LOCO, true);
 			setFlag(HAS_PENDING_COMMAND, true);
 			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, false);
-			setLastCommandSource( CMD_FROM_AI );
+			setLastCommandSource(CMD_FROM_AI);
 			getStateMachine()->setState(RETURNING_FOR_LANDING);
 		}
 	}
@@ -1858,8 +2039,8 @@ UpdateSleepTime JetAIUpdate::update()
 	{
 		StateID id = getStateMachine()->getCurrentStateID();
 		Bool needToCheckMinHeight = (id >= JETAISTATETYPE_FIRST && id <= JETAISTATETYPE_LAST) ||
-																	!jet->isAboveTerrain() ||
-																	!getFlag(ALLOW_AIR_LOCO);
+		                            !jet->isAboveTerrain() ||
+		                            !getFlag(ALLOW_AIR_LOCO);
 		if (needToCheckMinHeight)
 		{
 			Real ht = jet->isAboveTerrain() ? jet->getHeightAboveTerrain() : 0;
@@ -1882,9 +2063,13 @@ UpdateSleepTime JetAIUpdate::update()
 
 	PhysicsBehavior* physics = jet->getPhysics();
 	if (physics->getVelocityMagnitude() > 0 && getFlag(ALLOW_AIR_LOCO))
+	{
 		jet->setModelConditionState(MODELCONDITION_JETEXHAUST);
+	}
 	else
+	{
 		jet->clearModelConditionState(MODELCONDITION_JETEXHAUST);
+	}
 
 	if (jet->testStatus(OBJECT_STATUS_IS_ATTACKING))
 	{
@@ -1924,37 +2109,31 @@ UpdateSleepTime JetAIUpdate::update()
 		chooseLocomotorSet(d->m_returningLoco);
 	}
 
-
-	if( !jet->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )
+	if (!jet->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 	{
-		Drawable *draw = jet->getDrawable();
-		if( draw )
+		Drawable* draw = jet->getDrawable();
+		if (draw)
 		{
-			if( getFlag(TAKEOFF_IN_PROGRESS)
-					|| getFlag(LANDING_IN_PROGRESS)
-					|| getObject()->isSignificantlyAboveTerrain()
-					|| isMoving()
-					|| isWaitingForPath() )
+			if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS) || getObject()->isSignificantlyAboveTerrain() || isMoving() || isWaitingForPath())
 			{
-				if( !m_enginesOn )
+				if (!m_enginesOn)
 				{
-					//We just started moving, therefore turn on the engines!
-					draw->enableAmbientSound( TRUE );
+					// We just started moving, therefore turn on the engines!
+					draw->enableAmbientSound(TRUE);
 					m_enginesOn = TRUE;
 				}
 			}
-			else if( m_enginesOn )
+			else if (m_enginesOn)
 			{
-				//We're no longer moving, so turn off the engines!
-				draw->enableAmbientSound( FALSE );
+				// We're no longer moving, so turn off the engines!
+				draw->enableAmbientSound(FALSE);
 				m_enginesOn = FALSE;
 			}
 		}
 	}
 
-
-	/*UpdateSleepTime ret =*/ AIUpdateInterface::update();
-	//return (mine < ret) ? mine : ret;
+	/*UpdateSleepTime ret =*/AIUpdateInterface::update();
+	// return (mine < ret) ? mine : ret;
 	/// @todo srj -- someday, make sleepy. for now, must not sleep.
 	return UPDATE_SLEEP_NONE;
 }
@@ -1981,8 +2160,7 @@ Bool JetAIUpdate::chooseLocomotorSet(LocomotorSetType wst)
 //-------------------------------------------------------------------------------------------------
 void JetAIUpdate::setLocomotorGoalNone()
 {
-	if ((getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
-			&& getFlag(ALLOW_AIR_LOCO) && !getFlag(ALLOW_CIRCLING))
+	if ((getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS)) && getFlag(ALLOW_AIR_LOCO) && !getFlag(ALLOW_CIRCLING))
 	{
 		Object* jet = getObject();
 		Coord3D desiredPos = *jet->getPosition();
@@ -2024,7 +2202,7 @@ void JetAIUpdate::pruneDeadTargeters()
 {
 	if (!m_targetedBy.empty())
 	{
-		for (std::list<ObjectID>::iterator it = m_targetedBy.begin(); it != m_targetedBy.end(); /* empty */ )
+		for (std::list<ObjectID>::iterator it = m_targetedBy.begin(); it != m_targetedBy.end(); /* empty */)
 		{
 			if (TheGameLogic->findObjectByID(*it) == nullptr)
 			{
@@ -2042,7 +2220,9 @@ void JetAIUpdate::pruneDeadTargeters()
 void JetAIUpdate::positionLockon()
 {
 	if (!m_lockonDrawable)
+	{
 		return;
+	}
 
 	if (m_untargetableExpireFrame == 0)
 	{
@@ -2070,13 +2250,15 @@ void JetAIUpdate::positionLockon()
 	Real dx = getObject()->getPosition()->x - pos.x;
 	Real dy = getObject()->getPosition()->y - pos.y;
 	if (dx || dy)
+	{
 		m_lockonDrawable->setOrientation(atan2(dy, dx));
+	}
 
 	// the Gaussian sum, to avoid keeping a running total:
 	//
 	//		1+2+3+...n = n*(n+1)/2
 	//
-	Real elapsedTimeSumPrev = 0.5f * (elapsed-1) * (elapsed);
+	Real elapsedTimeSumPrev = 0.5f * (elapsed - 1) * (elapsed);
 	Real elapsedTimeSumCurr = elapsedTimeSumPrev + elapsed;
 	Real factor = d->m_lockonFreq / d->m_lockonTime;
 	Bool lastPhase = ((Int)(factor * elapsedTimeSumPrev) & 1) != 0;
@@ -2088,12 +2270,16 @@ void JetAIUpdate::positionLockon()
 		lockonSound.setObjectID(getObject()->getID());
 		TheAudio->addAudioEvent(&lockonSound);
 		if (d->m_lockonBlinky)
+		{
 			m_lockonDrawable->setDrawableHidden(false);
+		}
 	}
 	else
 	{
 		if (d->m_lockonBlinky)
+		{
 			m_lockonDrawable->setDrawableHidden(true);
+		}
 	}
 }
 
@@ -2101,7 +2287,9 @@ void JetAIUpdate::positionLockon()
 void JetAIUpdate::buildLockonDrawableIfNecessary()
 {
 	if (m_untargetableExpireFrame == 0)
+	{
 		return;
+	}
 
 	const JetAIUpdateModuleData* d = getJetAIUpdateModuleData();
 	if (d->m_lockonCursor.isNotEmpty() && m_lockonDrawable == nullptr)
@@ -2160,7 +2348,9 @@ Bool JetAIUpdate::isAllowedToMoveAwayFromUnit() const
 {
 	// parked (or landing) units don't get to do this.
 	if (!getFlag(ALLOW_AIR_LOCO) || getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS))
+	{
 		return false;
+	}
 
 	return AIUpdateInterface::isAllowedToMoveAwayFromUnit();
 }
@@ -2191,18 +2381,24 @@ Bool JetAIUpdate::getTreatAsAircraftForLocoDistToGoal() const
 /**
  * Follow the path defined by the given array of points
  */
-void JetAIUpdate::privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction )
+void JetAIUpdate::privateFollowPath(std::vector<Coord3D>* path, Object* ignoreObject, CommandSourceType cmdSource, Bool exitProduction)
 {
 	if (exitProduction)
 	{
 		getStateMachine()->clear();
-		if( ignoreObject )
-			ignoreObstacle( ignoreObject );
-		setLastCommandSource( cmdSource );
+		if (ignoreObject)
+		{
+			ignoreObstacle(ignoreObject);
+		}
+		setLastCommandSource(cmdSource);
 		if (getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
-			getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
+		{
+			getStateMachine()->setState(TAKING_OFF_AWAIT_CLEARANCE);
+		}
 		else
-			getStateMachine()->setState( TAXI_FROM_HANGAR );
+		{
+			getStateMachine()->setState(TAXI_FROM_HANGAR);
+		}
 	}
 	else
 	{
@@ -2211,14 +2407,14 @@ void JetAIUpdate::privateFollowPath( std::vector<Coord3D>* path, Object *ignoreO
 }
 
 //----------------------------------------------------------------------------------------
-void JetAIUpdate::privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource )
+void JetAIUpdate::privateFollowPathAppend(const Coord3D* pos, CommandSourceType cmdSource)
 {
 	// nothing yet... might need to override. not sure. (srj)
 	AIUpdateInterface::privateFollowPathAppend(pos, cmdSource);
 }
 
 //----------------------------------------------------------------------------------------
-void JetAIUpdate::doLandingCommand(Object *airfield, CommandSourceType cmdSource)
+void JetAIUpdate::doLandingCommand(Object* airfield, CommandSourceType cmdSource)
 {
 	if (getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 	{
@@ -2228,17 +2424,21 @@ void JetAIUpdate::doLandingCommand(Object *airfield, CommandSourceType cmdSource
 		FindPositionOptions options;
 		options.maxRadius = airfield->getGeometryInfo().getBoundingCircleRadius() * 10.0f;
 		if (ThePartitionManager->findPositionAround(&m_landingPosForHelipadStuff, &options, &tmp))
+		{
 			m_landingPosForHelipadStuff = tmp;
+		}
 	}
 
 	for (BehaviorModule** i = airfield->getBehaviorModules(); *i; ++i)
 	{
 		ParkingPlaceBehaviorInterface* pp = (*i)->getParkingPlaceBehaviorInterface();
 		if (pp == nullptr)
+		{
 			continue;
+		}
 
 		if (getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD) ||
-				pp->reserveSpace(getObject()->getID(), friend_getParkingOffset(), nullptr))
+		    pp->reserveSpace(getObject()->getID(), friend_getParkingOffset(), nullptr))
 		{
 			// if we had a space at another airfield, release it
 			ParkingPlaceBehaviorInterface* oldPP = getPP(getObject()->getProducerID());
@@ -2251,7 +2451,7 @@ void JetAIUpdate::doLandingCommand(Object *airfield, CommandSourceType cmdSource
 			DEBUG_ASSERTCRASH(isOutOfSpecialReloadAmmo(getObject()) == false, ("Hmm, this seems unlikely -- isOutOfSpecialReloadAmmo(jet)==false"));
 			setFlag(USE_SPECIAL_RETURN_LOCO, false);
 			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, false);
-			setLastCommandSource( cmdSource );
+			setLastCommandSource(cmdSource);
 			getStateMachine()->setState(RETURNING_FOR_LANDING);
 			return;
 		}
@@ -2262,21 +2462,27 @@ void JetAIUpdate::doLandingCommand(Object *airfield, CommandSourceType cmdSource
 void JetAIUpdate::notifyVictimIsDead()
 {
 	if (getJetAIUpdateModuleData()->m_needsRunway)
+	{
 		m_returnToBaseFrame = TheGameLogic->getFrame();
+	}
 }
 
 //----------------------------------------------------------------------------------------
 /**
  * Enter the given object
  */
-void JetAIUpdate::privateEnter( Object *objectToEnter, CommandSourceType cmdSource )
+void JetAIUpdate::privateEnter(Object* objectToEnter, CommandSourceType cmdSource)
 {
 	// we are already landing. just ignore it.
 	if (getFlag(LANDING_IN_PROGRESS))
+	{
 		return;
+	}
 
-	if( !TheActionManager->canEnterObject( getObject(), objectToEnter, cmdSource, DONT_CHECK_CAPACITY ) )
+	if (!TheActionManager->canEnterObject(getObject(), objectToEnter, cmdSource, DONT_CHECK_CAPACITY))
+	{
 		return;
+	}
 
 	doLandingCommand(objectToEnter, cmdSource);
 }
@@ -2285,27 +2491,30 @@ void JetAIUpdate::privateEnter( Object *objectToEnter, CommandSourceType cmdSour
 /**
  * Get repaired at the repair depot
  */
-void JetAIUpdate::privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource )
+void JetAIUpdate::privateGetRepaired(Object* repairDepot, CommandSourceType cmdSource)
 {
 	// we are already landing. just ignore it.
 	if (getFlag(LANDING_IN_PROGRESS))
+	{
 		return;
+	}
 
 	// sanity, if we can't get repaired from here get out of here
-	if( TheActionManager->canGetRepairedAt( getObject(), repairDepot, cmdSource ) == FALSE )
+	if (TheActionManager->canGetRepairedAt(getObject(), repairDepot, cmdSource) == FALSE)
+	{
 		return;
+	}
 
 	// dock with the repair depot
-	doLandingCommand( repairDepot, cmdSource );
-
+	doLandingCommand(repairDepot, cmdSource);
 }
 
 //-------------------------------------------------------------------------------------------------
 Bool JetAIUpdate::isParkedAt(const Object* obj) const
 {
 	if (!getFlag(ALLOW_AIR_LOCO) &&
-			!getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD) &&
-			obj != nullptr)
+	    !getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD) &&
+	    obj != nullptr)
 	{
 		Object* airfield;
 		ParkingPlaceBehaviorInterface* pp = getPP(getObject()->getProducerID(), &airfield);
@@ -2327,7 +2536,9 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 	getProducerLocation();
 
 	if (!isAllowedToRespondToAiCommands(parms))
+	{
 		return;
+	}
 
 	// note that we always store this, even if nothing will be "pending".
 	m_mostRecentCommand.store(*parms);
@@ -2382,9 +2593,11 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 
 				// if we're already parked at the airfield in question, just ignore.
 				if (isParkedAt(parms->m_obj))
+				{
 					return;
+				}
 
-				FALLTHROUGH; // else fall thru to the default case!
+				FALLTHROUGH;    // else fall thru to the default case!
 
 			default:
 			{
@@ -2393,8 +2606,8 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 				setFlag(HAS_PENDING_COMMAND, true);
 
 				getStateMachine()->clear();
-				setLastCommandSource( CMD_FROM_AI );
-				getStateMachine()->setState( TAKING_OFF_AWAIT_CLEARANCE );
+				setLastCommandSource(CMD_FROM_AI);
+				getStateMachine()->setState(TAKING_OFF_AWAIT_CLEARANCE);
 
 				return;
 			}
@@ -2450,7 +2663,7 @@ void JetAIUpdate::friend_enableAfterburners(Bool v)
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void JetAIUpdate::crc( Xfer *xfer )
+void JetAIUpdate::crc(Xfer* xfer)
 {
 	// extend base class
 	AIUpdateInterface::crc(xfer);
@@ -2458,20 +2671,18 @@ void JetAIUpdate::crc( Xfer *xfer )
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void JetAIUpdate::xfer( Xfer *xfer )
+void JetAIUpdate::xfer(Xfer* xfer)
 {
+	// version
+	XferVersion currentVersion = 2;
+	XferVersion version = currentVersion;
+	xfer->xferVersion(&version, currentVersion);
 
-  // version
-  XferVersion currentVersion = 2;
-  XferVersion version = currentVersion;
-  xfer->xferVersion( &version, currentVersion );
-
- // extend base class
+	// extend base class
 	AIUpdateInterface::xfer(xfer);
-
 
 	xfer->xferCoord3D(&m_producerLocation);
 	m_mostRecentCommand.doXfer(xfer);
@@ -2483,14 +2694,15 @@ void JetAIUpdate::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt(&m_untargetableExpireFrame);
 
 	// Set on create.
-	//AudioEventRTS						m_afterburnerSound;		///< Sound when afterburners on
+	// AudioEventRTS						m_afterburnerSound;		///< Sound when afterburners on
 
 	AsciiString drawName;
-	if (m_lockonDrawable) {
+	if (m_lockonDrawable)
+	{
 		drawName = m_lockonDrawable->getTemplate()->getName();
 	}
 	xfer->xferAsciiString(&drawName);
-	if (drawName.isNotEmpty() && m_lockonDrawable==nullptr)
+	if (drawName.isNotEmpty() && m_lockonDrawable == nullptr)
 	{
 		const ThingTemplate* tt = TheThingFactory->findTemplate(drawName);
 		if (tt)
@@ -2500,14 +2712,14 @@ void JetAIUpdate::xfer( Xfer *xfer )
 	}
 	xfer->xferInt(&m_flags);
 
-	if( version >= 2 )
+	if (version >= 2)
 	{
-		xfer->xferBool( &m_enginesOn );
+		xfer->xferBool(&m_enginesOn);
 	}
 	else
 	{
-		//We don't have to be accurate -- this is a patch.
-		if( getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS) || getObject()->isSignificantlyAboveTerrain() || getObject()->isKindOf( KINDOF_PRODUCED_AT_HELIPAD ) )
+		// We don't have to be accurate -- this is a patch.
+		if (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS) || getObject()->isSignificantlyAboveTerrain() || getObject()->isKindOf(KINDOF_PRODUCED_AT_HELIPAD))
 		{
 			m_enginesOn = TRUE;
 		}
@@ -2516,7 +2728,6 @@ void JetAIUpdate::xfer( Xfer *xfer )
 			m_enginesOn = FALSE;
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2524,12 +2735,12 @@ void JetAIUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void JetAIUpdate::loadPostProcess()
 {
-	//When drawables are created, so are their ambient sounds. After loading, only turn off the
-	//ambient sound if the engine is off.
-	if( !m_enginesOn )
+	// When drawables are created, so are their ambient sounds. After loading, only turn off the
+	// ambient sound if the engine is off.
+	if (!m_enginesOn)
 	{
-		Drawable *draw = getObject()->getDrawable();
-		if( draw )
+		Drawable* draw = getObject()->getDrawable();
+		if (draw)
 		{
 			draw->stopAmbientSound();
 		}

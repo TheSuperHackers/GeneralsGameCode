@@ -21,7 +21,6 @@
 #include "resource.h"
 #include "WWAudio/WWAudio.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // PlaySoundDialogClass
@@ -29,27 +28,28 @@
 /////////////////////////////////////////////////////////////////////////////
 class PlaySoundDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent = nullptr);   // standard constructor
+	PlaySoundDialogClass(LPCTSTR filename, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(PlaySoundDialogClass)
-	enum { IDD = IDD_PLAY_SOUND_EFFECT };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_PLAY_SOUND_EFFECT
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(PlaySoundDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(PlaySoundDialogClass)
 	afx_msg void OnPlaySoundEffect();
@@ -60,8 +60,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CString					Filename;
-	AudibleSoundClass *	SoundObj;
+	CString Filename;
+	AudibleSoundClass* SoundObj;
 };
 
 //{{AFX_INSERT_LOCATION}}

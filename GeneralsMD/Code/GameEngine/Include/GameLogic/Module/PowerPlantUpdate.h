@@ -36,63 +36,51 @@
 //-------------------------------------------------------------------------------------------------
 class PowerPlantUpdateModuleData : public UpdateModuleData
 {
-
 public:
-
 	PowerPlantUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    UpdateModuleData::buildFieldParse( p );
+		UpdateModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
+		static const FieldParse dataFieldParse[] = {
 
-			{ "RodsExtendTime", INI::parseDurationUnsignedInt, nullptr, offsetof( PowerPlantUpdateModuleData, m_rodsExtendTime ) },
+			{ "RodsExtendTime", INI::parseDurationUnsignedInt, nullptr, offsetof(PowerPlantUpdateModuleData, m_rodsExtendTime) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
-
+		p.add(dataFieldParse);
 	}
 
-  UnsignedInt m_rodsExtendTime;  ///< in frames, time it takes the rods to be built
-
+	UnsignedInt m_rodsExtendTime;    ///< in frames, time it takes the rods to be built
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class PowerPlantUpdateInterface
 {
-
 public:
-
-	virtual void extendRods( Bool extend ) = 0;
-
+	virtual void extendRods(Bool extend) = 0;
 };
 
 //-------------------------------------------------------------------------------------------------
 /** The Power Plant Update module */
 //-------------------------------------------------------------------------------------------------
 class PowerPlantUpdate : public UpdateModule,
-												 public PowerPlantUpdateInterface
+                         public PowerPlantUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PowerPlantUpdate, "PowerPlantUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PowerPlantUpdate, PowerPlantUpdateModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(PowerPlantUpdate, "PowerPlantUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(PowerPlantUpdate, PowerPlantUpdateModuleData);
 
 public:
-
-	PowerPlantUpdate( Thing *thing, const ModuleData* moduleData );
+	PowerPlantUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype defined by MemoryPoolObject
 
 	// interface housekeeping
 	virtual PowerPlantUpdateInterface* getPowerPlantUpdateInterface() override { return this; }
 
-	virtual void extendRods( Bool extend ) override;									 ///< extend the rods from this object
-	virtual UpdateSleepTime update() override; ///< Here's the actual work of Upgrading
+	virtual void extendRods(Bool extend) override;    ///< extend the rods from this object
+	virtual UpdateSleepTime update() override;    ///< Here's the actual work of Upgrading
 
 protected:
-
-	Bool m_extended;										 ///< TRUE when extend is all done
-
+	Bool m_extended;    ///< TRUE when extend is all done
 };

@@ -29,7 +29,7 @@
 // the game.
 // Author: Matthew D. Campbell, June 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/GameSpy/BuddyThread.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
@@ -38,7 +38,6 @@
 
 #include "WWLib/mutex.h"
 #include "WWLib/thread.h"
-
 
 //-------------------------------------------------------------------------
 
@@ -57,11 +56,11 @@ public:
 	virtual Bool isConnected() override;
 	virtual Bool isConnecting() override;
 
-	virtual void addRequest( const BuddyRequest& req ) override;
-	virtual Bool getRequest( BuddyRequest& req ) override;
+	virtual void addRequest(const BuddyRequest& req) override;
+	virtual Bool getRequest(BuddyRequest& req) override;
 
-	virtual void addResponse( const BuddyResponse& resp ) override;
-	virtual Bool getResponse( BuddyResponse& resp ) override;
+	virtual void addResponse(const BuddyResponse& resp) override;
+	virtual Bool getResponse(BuddyResponse& resp) override;
 
 	virtual GPProfile getLocalProfileID() override;
 
@@ -72,7 +71,7 @@ private:
 	MutexClass m_responseMutex;
 	RequestQueue m_requests;
 	ResponseQueue m_responses;
-	BuddyThreadClass *m_thread;
+	BuddyThreadClass* m_thread;
 };
 
 GameSpyBuddyMessageQueueInterface* GameSpyBuddyMessageQueueInterface::createNewMessageQueue()
@@ -80,24 +79,29 @@ GameSpyBuddyMessageQueueInterface* GameSpyBuddyMessageQueueInterface::createNewM
 	return NEW GameSpyBuddyMessageQueue;
 }
 
-GameSpyBuddyMessageQueueInterface *TheGameSpyBuddyMessageQueue;
-#define MESSAGE_QUEUE ((GameSpyBuddyMessageQueue *)TheGameSpyBuddyMessageQueue)
+GameSpyBuddyMessageQueueInterface* TheGameSpyBuddyMessageQueue;
+#define MESSAGE_QUEUE ((GameSpyBuddyMessageQueue*)TheGameSpyBuddyMessageQueue)
 
 //-------------------------------------------------------------------------
 
 class BuddyThreadClass : public ThreadClass
 {
-
 public:
-	BuddyThreadClass() : ThreadClass() { m_isNewAccount = m_isdeleting = m_isConnecting = m_isConnected = false; m_profileID = 0; m_lastErrorCode = 0; }
+	BuddyThreadClass()
+	  : ThreadClass()
+	{
+		m_isNewAccount = m_isdeleting = m_isConnecting = m_isConnected = false;
+		m_profileID = 0;
+		m_lastErrorCode = 0;
+	}
 
 	virtual void Thread_Function() override;
 
-	void errorCallback( GPConnection *con, GPErrorArg *arg );
-	void messageCallback( GPConnection *con, GPRecvBuddyMessageArg *arg );
-	void connectCallback( GPConnection *con, GPConnectResponseArg *arg );
-	void requestCallback( GPConnection *con, GPRecvBuddyRequestArg *arg );
-	void statusCallback( GPConnection *con, GPRecvBuddyStatusArg *arg );
+	void errorCallback(GPConnection* con, GPErrorArg* arg);
+	void messageCallback(GPConnection* con, GPRecvBuddyMessageArg* arg);
+	void connectCallback(GPConnection* con, GPConnectResponseArg* arg);
+	void requestCallback(GPConnection* con, GPRecvBuddyRequestArg* arg);
+	void statusCallback(GPConnection* con, GPRecvBuddyStatusArg* arg);
 
 	Bool isConnecting() { return m_isConnecting; }
 	Bool isConnected() { return m_isConnected; }
@@ -123,29 +127,31 @@ enum CallbackType
 	CALLBACK_RECVSTATUS,
 };
 
-void callbackWrapper( GPConnection *con, void *arg, void *param )
+void callbackWrapper(GPConnection* con, void* arg, void* param)
 {
 	CallbackType info = (CallbackType)(Int)param;
-	BuddyThreadClass *thread = MESSAGE_QUEUE->getThread() ? MESSAGE_QUEUE->getThread() : nullptr /*(TheGameSpyBuddyMessageQueue)?TheGameSpyBuddyMessageQueue->getThread():nullptr*/;
+	BuddyThreadClass* thread = MESSAGE_QUEUE->getThread() ? MESSAGE_QUEUE->getThread() : nullptr /*(TheGameSpyBuddyMessageQueue)?TheGameSpyBuddyMessageQueue->getThread():nullptr*/;
 	if (!thread)
+	{
 		return;
+	}
 
 	switch (info)
 	{
 		case CALLBACK_CONNECT:
-			thread->connectCallback( con, (GPConnectResponseArg *)arg );
+			thread->connectCallback(con, (GPConnectResponseArg*)arg);
 			break;
 		case CALLBACK_ERROR:
-			thread->errorCallback( con, (GPErrorArg *)arg );
+			thread->errorCallback(con, (GPErrorArg*)arg);
 			break;
 		case CALLBACK_RECVMESSAGE:
-			thread->messageCallback( con, (GPRecvBuddyMessageArg *)arg );
+			thread->messageCallback(con, (GPRecvBuddyMessageArg*)arg);
 			break;
 		case CALLBACK_RECVREQUEST:
-			thread->requestCallback( con, (GPRecvBuddyRequestArg *)arg );
+			thread->requestCallback(con, (GPRecvBuddyRequestArg*)arg);
 			break;
 		case CALLBACK_RECVSTATUS:
-			thread->statusCallback( con, (GPRecvBuddyStatusArg *)arg );
+			thread->statusCallback(con, (GPRecvBuddyStatusArg*)arg);
 			break;
 	}
 }
@@ -199,45 +205,57 @@ Bool GameSpyBuddyMessageQueue::isConnecting()
 	return (m_thread) ? m_thread->isConnecting() : false;
 }
 
-void GameSpyBuddyMessageQueue::addRequest( const BuddyRequest& req )
+void GameSpyBuddyMessageQueue::addRequest(const BuddyRequest& req)
 {
 	MutexClass::LockClass m(m_requestMutex);
 	if (m.Failed())
+	{
 		return;
+	}
 
 	m_requests.push(req);
 }
 
-Bool GameSpyBuddyMessageQueue::getRequest( BuddyRequest& req )
+Bool GameSpyBuddyMessageQueue::getRequest(BuddyRequest& req)
 {
 	MutexClass::LockClass m(m_requestMutex, 0);
 	if (m.Failed())
+	{
 		return false;
+	}
 
 	if (m_requests.empty())
+	{
 		return false;
+	}
 	req = m_requests.front();
 	m_requests.pop();
 	return true;
 }
 
-void GameSpyBuddyMessageQueue::addResponse( const BuddyResponse& resp )
+void GameSpyBuddyMessageQueue::addResponse(const BuddyResponse& resp)
 {
 	MutexClass::LockClass m(m_responseMutex);
 	if (m.Failed())
+	{
 		return;
+	}
 
 	m_responses.push(resp);
 }
 
-Bool GameSpyBuddyMessageQueue::getResponse( BuddyResponse& resp )
+Bool GameSpyBuddyMessageQueue::getResponse(BuddyResponse& resp)
 {
 	MutexClass::LockClass m(m_responseMutex, 0);
 	if (m.Failed())
+	{
 		return false;
+	}
 
 	if (m_responses.empty())
+	{
 		return false;
+	}
 	resp = m_responses.front();
 	m_responses.pop();
 	return true;
@@ -257,140 +275,147 @@ GPProfile GameSpyBuddyMessageQueue::getLocalProfileID()
 
 void BuddyThreadClass::Thread_Function()
 {
-	try {
-	GPConnection gpCon;
-	GPConnection *con = &gpCon;
-#if RTS_GENERALS
-	const int productID = 675;
-#elif RTS_ZEROHOUR
-	const int productID = 823;
-#endif
-	gpInitialize( con, productID, 0, GP_PARTNERID_GAMESPY );
-	m_isConnected = m_isConnecting = false;
-
-	gpSetCallback( con, GP_ERROR,								callbackWrapper,	(void *)CALLBACK_ERROR );
-	gpSetCallback( con, GP_RECV_BUDDY_MESSAGE,	callbackWrapper,	(void *)CALLBACK_RECVMESSAGE );
-	gpSetCallback( con, GP_RECV_BUDDY_REQUEST,	callbackWrapper,	(void *)CALLBACK_RECVREQUEST );
-	gpSetCallback( con, GP_RECV_BUDDY_STATUS,		callbackWrapper,	(void *)CALLBACK_RECVSTATUS );
-
-	GPEnum lastStatus = GP_OFFLINE;
-	std::string lastStatusString;
-
-	BuddyRequest incomingRequest;
-	while ( running )
+	try
 	{
-		// deal with requests
-		if (TheGameSpyBuddyMessageQueue->getRequest(incomingRequest))
-		{
-			switch (incomingRequest.buddyRequestType)
-			{
-			case BuddyRequest::BUDDYREQUEST_LOGIN:
-				m_isConnecting = true;
-				m_nick = incomingRequest.arg.login.nick;
-				m_email = incomingRequest.arg.login.email;
-				m_pass = incomingRequest.arg.login.password;
-				m_isConnected = (gpConnect( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
-					incomingRequest.arg.login.password, (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
-					GP_BLOCKING, callbackWrapper, (void *)CALLBACK_CONNECT ) == GP_NO_ERROR);
-				m_isConnecting = false;
-				break;
+		GPConnection gpCon;
+		GPConnection* con = &gpCon;
+#if RTS_GENERALS
+		const int productID = 675;
+#elif RTS_ZEROHOUR
+		const int productID = 823;
+#endif
+		gpInitialize(con, productID, 0, GP_PARTNERID_GAMESPY);
+		m_isConnected = m_isConnecting = false;
 
-			case BuddyRequest::BUDDYREQUEST_RELOGIN:
-				m_isConnecting = true;
-				m_isConnected = (gpConnect( con, m_nick.c_str(), m_email.c_str(), m_pass.c_str(), GP_FIREWALL,
-					GP_BLOCKING, callbackWrapper, (void *)CALLBACK_CONNECT ) == GP_NO_ERROR);
-				m_isConnecting = false;
-				break;
-			case BuddyRequest::BUDDYREQUEST_DELETEACCT:
-				m_isdeleting =  true;
-				// TheSuperHackers @tweak OmniBlade API was updated since Generals released to require a callback. Passing -1 will make our wrapper ignore this.
-				gpDeleteProfile( con, callbackWrapper, (void *)(-1) );
-				break;
-			case BuddyRequest::BUDDYREQUEST_LOGOUT:
-				m_isConnecting = m_isConnected = false;
-				gpDisconnect( con );
-				break;
-			case BuddyRequest::BUDDYREQUEST_MESSAGE:
+		gpSetCallback(con, GP_ERROR, callbackWrapper, (void*)CALLBACK_ERROR);
+		gpSetCallback(con, GP_RECV_BUDDY_MESSAGE, callbackWrapper, (void*)CALLBACK_RECVMESSAGE);
+		gpSetCallback(con, GP_RECV_BUDDY_REQUEST, callbackWrapper, (void*)CALLBACK_RECVREQUEST);
+		gpSetCallback(con, GP_RECV_BUDDY_STATUS, callbackWrapper, (void*)CALLBACK_RECVSTATUS);
+
+		GPEnum lastStatus = GP_OFFLINE;
+		std::string lastStatusString;
+
+		BuddyRequest incomingRequest;
+		while (running)
+		{
+			// deal with requests
+			if (TheGameSpyBuddyMessageQueue->getRequest(incomingRequest))
+			{
+				switch (incomingRequest.buddyRequestType)
 				{
-					std::string s = WideCharStringToMultiByte( incomingRequest.arg.message.text );
-					DEBUG_LOG(("Sending a buddy message to %d [%s]", incomingRequest.arg.message.recipient, s.c_str()));
-					gpSendBuddyMessage( con, incomingRequest.arg.message.recipient, s.c_str() );
-				}
-				break;
-			case BuddyRequest::BUDDYREQUEST_LOGINNEW:
-				{
-					m_isConnecting = true;
-					m_nick = incomingRequest.arg.login.nick;
-					m_email = incomingRequest.arg.login.email;
-					m_pass = incomingRequest.arg.login.password;
-					m_isNewAccount = TRUE;
-					// TheSuperHackers @tweak OmniBlade API was updated since Generals release to require uniquenick which is the same as nick and cdkey is an empty string here.
-					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
-						incomingRequest.arg.login.password, "", (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
-						GP_BLOCKING, callbackWrapper, (void *)CALLBACK_CONNECT ) == GP_NO_ERROR);
-					if (m_isNewAccount) // if we didn't re-login
-					{
-						gpSetInfoMask( con, GP_MASK_NONE ); // don't share info
-					}
-					m_isConnecting = false;
-				}
-				break;
-			case BuddyRequest::BUDDYREQUEST_ADDBUDDY:
-				{
-					std::string s = WideCharStringToMultiByte( incomingRequest.arg.addbuddy.text );
-					gpSendBuddyRequest( con, incomingRequest.arg.addbuddy.id, s.c_str() );
-				}
-				break;
-			case BuddyRequest::BUDDYREQUEST_DELBUDDY:
-				{
-					gpDeleteBuddy( con, incomingRequest.arg.profile.id );
-				}
-				break;
-			case BuddyRequest::BUDDYREQUEST_OKADD:
-				{
-					gpAuthBuddyRequest( con, incomingRequest.arg.profile.id );
-				}
-				break;
-			case BuddyRequest::BUDDYREQUEST_DENYADD:
-				{
-					gpDenyBuddyRequest( con, incomingRequest.arg.profile.id );
-				}
-				break;
-			case BuddyRequest::BUDDYREQUEST_SETSTATUS:
-				{
-					//don't blast our 'Loading' status with 'Online'.
-					if (lastStatus == GP_PLAYING && lastStatusString == "Loading" && incomingRequest.arg.status.status == GP_ONLINE)
+					case BuddyRequest::BUDDYREQUEST_LOGIN:
+						m_isConnecting = true;
+						m_nick = incomingRequest.arg.login.nick;
+						m_email = incomingRequest.arg.login.email;
+						m_pass = incomingRequest.arg.login.password;
+						m_isConnected = (gpConnect(con, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
+						                           incomingRequest.arg.login.password, (incomingRequest.arg.login.hasFirewall) ? GP_FIREWALL : GP_NO_FIREWALL,
+						                           GP_BLOCKING, callbackWrapper, (void*)CALLBACK_CONNECT) == GP_NO_ERROR);
+						m_isConnecting = false;
 						break;
 
-					DEBUG_LOG(("BUDDYREQUEST_SETSTATUS: status is now %d:%s/%s",
-						incomingRequest.arg.status.status, incomingRequest.arg.status.statusString, incomingRequest.arg.status.locationString));
-					gpSetStatus( con, incomingRequest.arg.status.status, incomingRequest.arg.status.statusString,
-						incomingRequest.arg.status.locationString );
-					lastStatus = incomingRequest.arg.status.status;
-					lastStatusString = incomingRequest.arg.status.statusString;
+					case BuddyRequest::BUDDYREQUEST_RELOGIN:
+						m_isConnecting = true;
+						m_isConnected = (gpConnect(con, m_nick.c_str(), m_email.c_str(), m_pass.c_str(), GP_FIREWALL,
+						                           GP_BLOCKING, callbackWrapper, (void*)CALLBACK_CONNECT) == GP_NO_ERROR);
+						m_isConnecting = false;
+						break;
+					case BuddyRequest::BUDDYREQUEST_DELETEACCT:
+						m_isdeleting = true;
+						// TheSuperHackers @tweak OmniBlade API was updated since Generals released to require a callback. Passing -1 will make our wrapper ignore this.
+						gpDeleteProfile(con, callbackWrapper, (void*)(-1));
+						break;
+					case BuddyRequest::BUDDYREQUEST_LOGOUT:
+						m_isConnecting = m_isConnected = false;
+						gpDisconnect(con);
+						break;
+					case BuddyRequest::BUDDYREQUEST_MESSAGE:
+					{
+						std::string s = WideCharStringToMultiByte(incomingRequest.arg.message.text);
+						DEBUG_LOG(("Sending a buddy message to %d [%s]", incomingRequest.arg.message.recipient, s.c_str()));
+						gpSendBuddyMessage(con, incomingRequest.arg.message.recipient, s.c_str());
+					}
+					break;
+					case BuddyRequest::BUDDYREQUEST_LOGINNEW:
+					{
+						m_isConnecting = true;
+						m_nick = incomingRequest.arg.login.nick;
+						m_email = incomingRequest.arg.login.email;
+						m_pass = incomingRequest.arg.login.password;
+						m_isNewAccount = TRUE;
+						// TheSuperHackers @tweak OmniBlade API was updated since Generals release to require uniquenick which is the same as nick and cdkey is an empty string here.
+						m_isConnected = (gpConnectNewUser(con, incomingRequest.arg.login.nick, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
+						                                  incomingRequest.arg.login.password, "", (incomingRequest.arg.login.hasFirewall) ? GP_FIREWALL : GP_NO_FIREWALL,
+						                                  GP_BLOCKING, callbackWrapper, (void*)CALLBACK_CONNECT) == GP_NO_ERROR);
+						if (m_isNewAccount)    // if we didn't re-login
+						{
+							gpSetInfoMask(con, GP_MASK_NONE);    // don't share info
+						}
+						m_isConnecting = false;
+					}
+					break;
+					case BuddyRequest::BUDDYREQUEST_ADDBUDDY:
+					{
+						std::string s = WideCharStringToMultiByte(incomingRequest.arg.addbuddy.text);
+						gpSendBuddyRequest(con, incomingRequest.arg.addbuddy.id, s.c_str());
+					}
+					break;
+					case BuddyRequest::BUDDYREQUEST_DELBUDDY:
+					{
+						gpDeleteBuddy(con, incomingRequest.arg.profile.id);
+					}
+					break;
+					case BuddyRequest::BUDDYREQUEST_OKADD:
+					{
+						gpAuthBuddyRequest(con, incomingRequest.arg.profile.id);
+					}
+					break;
+					case BuddyRequest::BUDDYREQUEST_DENYADD:
+					{
+						gpDenyBuddyRequest(con, incomingRequest.arg.profile.id);
+					}
+					break;
+					case BuddyRequest::BUDDYREQUEST_SETSTATUS:
+					{
+						// don't blast our 'Loading' status with 'Online'.
+						if (lastStatus == GP_PLAYING && lastStatusString == "Loading" && incomingRequest.arg.status.status == GP_ONLINE)
+						{
+							break;
+						}
+
+						DEBUG_LOG(("BUDDYREQUEST_SETSTATUS: status is now %d:%s/%s",
+						           incomingRequest.arg.status.status, incomingRequest.arg.status.statusString, incomingRequest.arg.status.locationString));
+						gpSetStatus(con, incomingRequest.arg.status.status, incomingRequest.arg.status.statusString,
+						            incomingRequest.arg.status.locationString);
+						lastStatus = incomingRequest.arg.status.status;
+						lastStatusString = incomingRequest.arg.status.statusString;
+					}
+					break;
 				}
-				break;
 			}
+
+			// update the network
+			GPEnum isConnected = GP_CONNECTED;
+			GPResult res = GP_NO_ERROR;
+			res = gpIsConnected(con, &isConnected);
+			if (isConnected == GP_CONNECTED && res == GP_NO_ERROR)
+			{
+				gpProcess(con);
+			}
+
+			// end our timeslice
+			Switch_Thread();
 		}
 
-		// update the network
-		GPEnum isConnected = GP_CONNECTED;
-		GPResult res = GP_NO_ERROR;
-		res = gpIsConnected( con, &isConnected );
-		if ( isConnected == GP_CONNECTED && res == GP_NO_ERROR )
-			gpProcess( con );
-
-		// end our timeslice
-		Switch_Thread();
+		gpDestroy(con);
 	}
-
-	gpDestroy( con );
-	} catch ( ... ) {
+	catch (...)
+	{
 		DEBUG_CRASH(("Exception in buddy thread!"));
 	}
 }
 
-void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
+void BuddyThreadClass::errorCallback(GPConnection* con, GPErrorArg* arg)
 {
 	// log the error
 	DEBUG_LOG(("GPErrorCallback"));
@@ -399,21 +424,27 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 	char errorCodeString[256];
 	char resultString[256];
 
-	#define RESULT(x) case x: strcpy(resultString, #x); break;
-	switch(arg->result)
+#define RESULT(x) \
+	case x: \
+		strcpy(resultString, #x); \
+		break;
+	switch (arg->result)
 	{
 		RESULT(GP_NO_ERROR)
 		RESULT(GP_MEMORY_ERROR)
 		RESULT(GP_PARAMETER_ERROR)
 		RESULT(GP_NETWORK_ERROR)
 		RESULT(GP_SERVER_ERROR)
-	default:
-		strcpy(resultString, "Unknown result!");
+		default:
+			strcpy(resultString, "Unknown result!");
 	}
-	#undef RESULT
+#undef RESULT
 
-	#define ERRORCODE(x) case x: strcpy(errorCodeString, #x); break;
-	switch(arg->errorCode)
+#define ERRORCODE(x) \
+	case x: \
+		strcpy(errorCodeString, #x); \
+		break;
+	switch (arg->errorCode)
 	{
 		ERRORCODE(GP_GENERAL)
 		ERRORCODE(GP_PARSE)
@@ -460,26 +491,26 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 		ERRORCODE(GP_DELPROFILE_LAST_PROFILE)
 		ERRORCODE(GP_SEARCH)
 		ERRORCODE(GP_SEARCH_CONNECTION_FAILED)
-	default:
-		strcpy(errorCodeString, "Unknown error code!");
+		default:
+			strcpy(errorCodeString, "Unknown error code!");
 	}
-	#undef ERRORCODE
+#undef ERRORCODE
 
-	if(arg->fatal)
+	if (arg->fatal)
 	{
-		DEBUG_LOG(( "-----------"));
-		DEBUG_LOG(( "GP FATAL ERROR"));
-		DEBUG_LOG(( "-----------"));
+		DEBUG_LOG(("-----------"));
+		DEBUG_LOG(("GP FATAL ERROR"));
+		DEBUG_LOG(("-----------"));
 	}
 	else
 	{
-		DEBUG_LOG(( "-----"));
-		DEBUG_LOG(( "GP ERROR"));
-		DEBUG_LOG(( "-----"));
+		DEBUG_LOG(("-----"));
+		DEBUG_LOG(("GP ERROR"));
+		DEBUG_LOG(("-----"));
 	}
-	DEBUG_LOG(( "RESULT: %s (%d)", resultString, arg->result));
-	DEBUG_LOG(( "ERROR CODE: %s (0x%X)", errorCodeString, arg->errorCode));
-	DEBUG_LOG(( "ERROR STRING: %s", arg->errorString));
+	DEBUG_LOG(("RESULT: %s (%d)", resultString, arg->result));
+	DEBUG_LOG(("ERROR CODE: %s (0x%X)", errorCodeString, arg->errorCode));
+	DEBUG_LOG(("ERROR STRING: %s", arg->errorString));
 
 	if (arg->fatal == GP_FATAL)
 	{
@@ -490,41 +521,41 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 		errorResponse.arg.error.fatal = arg->fatal;
 		strlcpy(errorResponse.arg.error.errorString, arg->errorString, MAX_BUDDY_CHAT_LEN);
 		m_isConnecting = m_isConnected = false;
-		TheGameSpyBuddyMessageQueue->addResponse( errorResponse );
+		TheGameSpyBuddyMessageQueue->addResponse(errorResponse);
 		if (m_isdeleting)
 		{
 			PeerRequest req;
 			req.peerRequestType = PeerRequest::PEERREQUEST_LOGOUT;
-			TheGameSpyPeerMessageQueue->addRequest( req );
+			TheGameSpyPeerMessageQueue->addRequest(req);
 			m_isdeleting = false;
 		}
 	}
 }
 
-static void getNickForMessage( GPConnection *con, GPGetInfoResponseArg *arg, void *param )
+static void getNickForMessage(GPConnection* con, GPGetInfoResponseArg* arg, void* param)
 {
-	BuddyResponse *resp = (BuddyResponse *)param;
+	BuddyResponse* resp = (BuddyResponse*)param;
 	static_assert(ARRAY_SIZE(resp->arg.message.nick) >= ARRAY_SIZE(arg->nick), "Incorrect array size");
 	strcpy(resp->arg.message.nick, arg->nick);
 }
 
-void BuddyThreadClass::messageCallback( GPConnection *con, GPRecvBuddyMessageArg *arg )
+void BuddyThreadClass::messageCallback(GPConnection* con, GPRecvBuddyMessageArg* arg)
 {
 	BuddyResponse messageResponse;
 	messageResponse.buddyResponseType = BuddyResponse::BUDDYRESPONSE_MESSAGE;
 	messageResponse.profile = arg->profile;
 
 	// get info about the person asking to be our buddy
-	gpGetInfo( con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getNickForMessage, &messageResponse);
+	gpGetInfo(con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getNickForMessage, &messageResponse);
 
-	std::wstring s = MultiByteToWideCharSingleLine( arg->message );
+	std::wstring s = MultiByteToWideCharSingleLine(arg->message);
 	wcslcpy(messageResponse.arg.message.text, s.c_str(), MAX_BUDDY_CHAT_LEN);
 	messageResponse.arg.message.date = arg->date;
 	DEBUG_LOG(("Got a buddy message from %d [%ls]", arg->profile, s.c_str()));
-	TheGameSpyBuddyMessageQueue->addResponse( messageResponse );
+	TheGameSpyBuddyMessageQueue->addResponse(messageResponse);
 }
 
-void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg *arg )
+void BuddyThreadClass::connectCallback(GPConnection* con, GPConnectResponseArg* arg)
 {
 	BuddyResponse loginResponse;
 	if (arg->result == GP_NO_ERROR)
@@ -532,7 +563,7 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 		loginResponse.buddyResponseType = BuddyResponse::BUDDYRESPONSE_LOGIN;
 		loginResponse.result = arg->result;
 		loginResponse.profile = arg->profile;
-		TheGameSpyBuddyMessageQueue->addResponse( loginResponse );
+		TheGameSpyBuddyMessageQueue->addResponse(loginResponse);
 		m_profileID = arg->profile;
 
 		if (!TheGameSpyPeerMessageQueue->isConnected() && !TheGameSpyPeerMessageQueue->isConnecting())
@@ -562,7 +593,7 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 				strlcpy(req.arg.login.email, m_email.c_str(), ARRAY_SIZE(req.arg.login.email));
 				strlcpy(req.arg.login.password, m_pass.c_str(), ARRAY_SIZE(req.arg.login.password));
 				req.arg.login.hasFirewall = true;
-				TheGameSpyBuddyMessageQueue->addRequest( req );
+				TheGameSpyBuddyMessageQueue->addRequest(req);
 				return;
 			}
 			DEBUG_LOG(("Buddy connect failed (%d/%d): posting a failed chat connect", arg->result, m_lastErrorCode));
@@ -571,42 +602,42 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 			resp.discon.reason = DISCONNECT_COULDNOTCONNECT;
 			switch (m_lastErrorCode)
 			{
-			case GP_LOGIN_TIMEOUT:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_TIMEOUT;
-				break;
-			case GP_LOGIN_BAD_NICK:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_NICK;
-				break;
-			case GP_LOGIN_BAD_EMAIL:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_EMAIL;
-				break;
-			case GP_LOGIN_BAD_PASSWORD:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_PASSWORD;
-				break;
-			case GP_LOGIN_BAD_PROFILE:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_PROFILE;
-				break;
-			case GP_LOGIN_PROFILE_DELETED:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_PROFILE_DELETED;
-				break;
-			case GP_LOGIN_CONNECTION_FAILED:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_CONNECTION_FAILED;
-				break;
-			case GP_LOGIN_SERVER_AUTH_FAILED:
-				resp.discon.reason = DISCONNECT_GP_LOGIN_SERVER_AUTH_FAILED;
-				break;
-			case GP_NEWUSER_BAD_NICK:
-				resp.discon.reason = DISCONNECT_GP_NEWUSER_BAD_NICK;
-				break;
-			case GP_NEWUSER_BAD_PASSWORD:
-				resp.discon.reason = DISCONNECT_GP_NEWUSER_BAD_PASSWORD;
-				break;
-			case GP_NEWPROFILE_BAD_NICK:
-				resp.discon.reason = DISCONNECT_GP_NEWPROFILE_BAD_NICK;
-				break;
-			case GP_NEWPROFILE_BAD_OLD_NICK:
-				resp.discon.reason = DISCONNECT_GP_NEWPROFILE_BAD_OLD_NICK;
-				break;
+				case GP_LOGIN_TIMEOUT:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_TIMEOUT;
+					break;
+				case GP_LOGIN_BAD_NICK:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_NICK;
+					break;
+				case GP_LOGIN_BAD_EMAIL:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_EMAIL;
+					break;
+				case GP_LOGIN_BAD_PASSWORD:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_PASSWORD;
+					break;
+				case GP_LOGIN_BAD_PROFILE:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_BAD_PROFILE;
+					break;
+				case GP_LOGIN_PROFILE_DELETED:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_PROFILE_DELETED;
+					break;
+				case GP_LOGIN_CONNECTION_FAILED:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_CONNECTION_FAILED;
+					break;
+				case GP_LOGIN_SERVER_AUTH_FAILED:
+					resp.discon.reason = DISCONNECT_GP_LOGIN_SERVER_AUTH_FAILED;
+					break;
+				case GP_NEWUSER_BAD_NICK:
+					resp.discon.reason = DISCONNECT_GP_NEWUSER_BAD_NICK;
+					break;
+				case GP_NEWUSER_BAD_PASSWORD:
+					resp.discon.reason = DISCONNECT_GP_NEWUSER_BAD_PASSWORD;
+					break;
+				case GP_NEWPROFILE_BAD_NICK:
+					resp.discon.reason = DISCONNECT_GP_NEWPROFILE_BAD_NICK;
+					break;
+				case GP_NEWPROFILE_BAD_OLD_NICK:
+					resp.discon.reason = DISCONNECT_GP_NEWPROFILE_BAD_OLD_NICK;
+					break;
 			}
 			TheGameSpyPeerMessageQueue->addResponse(resp);
 		}
@@ -615,9 +646,9 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 
 // -----------------------
 
-static void getInfoResponseForRequest( GPConnection *con, GPGetInfoResponseArg *arg, void *param )
+static void getInfoResponseForRequest(GPConnection* con, GPGetInfoResponseArg* arg, void* param)
 {
-	BuddyResponse *resp = (BuddyResponse *)param;
+	BuddyResponse* resp = (BuddyResponse*)param;
 	resp->profile = arg->profile;
 	static_assert(ARRAY_SIZE(resp->arg.request.nick) >= ARRAY_SIZE(arg->nick), "Incorrect array size");
 	static_assert(ARRAY_SIZE(resp->arg.request.email) >= ARRAY_SIZE(arg->email), "Incorrect array size");
@@ -627,26 +658,26 @@ static void getInfoResponseForRequest( GPConnection *con, GPGetInfoResponseArg *
 	strcpy(resp->arg.request.countrycode, arg->countrycode);
 }
 
-void BuddyThreadClass::requestCallback( GPConnection *con, GPRecvBuddyRequestArg *arg )
+void BuddyThreadClass::requestCallback(GPConnection* con, GPRecvBuddyRequestArg* arg)
 {
 	BuddyResponse response;
 	response.buddyResponseType = BuddyResponse::BUDDYRESPONSE_REQUEST;
 	response.profile = arg->profile;
 
 	// get info about the person asking to be our buddy
-	gpGetInfo( con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getInfoResponseForRequest, &response);
+	gpGetInfo(con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getInfoResponseForRequest, &response);
 
-	std::wstring s = MultiByteToWideCharSingleLine( arg->reason );
+	std::wstring s = MultiByteToWideCharSingleLine(arg->reason);
 	wcslcpy(response.arg.request.text, s.c_str(), GP_REASON_LEN);
 
-	TheGameSpyBuddyMessageQueue->addResponse( response );
+	TheGameSpyBuddyMessageQueue->addResponse(response);
 }
 
 // -----------------------
 
-static void getInfoResponseForStatus(GPConnection * connection, GPGetInfoResponseArg * arg, void * param)
+static void getInfoResponseForStatus(GPConnection* connection, GPGetInfoResponseArg* arg, void* param)
 {
-	BuddyResponse *resp = (BuddyResponse *)param;
+	BuddyResponse* resp = (BuddyResponse*)param;
 	resp->profile = arg->profile;
 	static_assert(ARRAY_SIZE(resp->arg.status.nick) >= ARRAY_SIZE(arg->nick), "Incorrect array size");
 	static_assert(ARRAY_SIZE(resp->arg.status.email) >= ARRAY_SIZE(arg->email), "Incorrect array size");
@@ -656,17 +687,17 @@ static void getInfoResponseForStatus(GPConnection * connection, GPGetInfoRespons
 	strcpy(resp->arg.status.countrycode, arg->countrycode);
 }
 
-void BuddyThreadClass::statusCallback( GPConnection *con, GPRecvBuddyStatusArg *arg )
+void BuddyThreadClass::statusCallback(GPConnection* con, GPRecvBuddyStatusArg* arg)
 {
 	BuddyResponse response;
 
 	// get user's name
 	response.buddyResponseType = BuddyResponse::BUDDYRESPONSE_STATUS;
-	gpGetInfo( con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getInfoResponseForStatus, &response);
+	gpGetInfo(con, arg->profile, GP_CHECK_CACHE, GP_BLOCKING, (GPCallback)getInfoResponseForStatus, &response);
 
 	// get user's status
 	GPBuddyStatus status;
-	gpGetBuddyStatus( con, arg->index, &status );
+	gpGetBuddyStatus(con, arg->index, &status);
 	static_assert(ARRAY_SIZE(response.arg.status.location) >= ARRAY_SIZE(status.locationString), "Incorrect array size");
 	static_assert(ARRAY_SIZE(response.arg.status.statusString) >= ARRAY_SIZE(status.statusString), "Incorrect array size");
 	strcpy(response.arg.status.location, status.locationString);
@@ -675,9 +706,7 @@ void BuddyThreadClass::statusCallback( GPConnection *con, GPRecvBuddyStatusArg *
 	DEBUG_LOG(("Got buddy status for %d(%s) - status %d", status.profile, response.arg.status.nick, status.status));
 
 	// relay to UI
-	TheGameSpyBuddyMessageQueue->addResponse( response );
+	TheGameSpyBuddyMessageQueue->addResponse(response);
 }
 
-
 //-------------------------------------------------------------------------
-

@@ -34,33 +34,36 @@ class SphereSizePropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(SphereSizePropPageClass)
 
-// Construction
+	// Construction
 public:
-	SphereSizePropPageClass(SphereRenderObjClass *sphere = nullptr);
+	SphereSizePropPageClass(SphereRenderObjClass* sphere = nullptr);
 	~SphereSizePropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(SphereSizePropPageClass)
-	enum { IDD = IDD_PROP_PAGE_SPHERE_SCALE };
-	CSpinButtonCtrl	m_SizeZSpin;
-	CSpinButtonCtrl	m_SizeYSpin;
-	CSpinButtonCtrl	m_SizeXSpin;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_SPHERE_SCALE
+	};
+	CSpinButtonCtrl m_SizeZSpin;
+	CSpinButtonCtrl m_SizeYSpin;
+	CSpinButtonCtrl m_SizeXSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SphereSizePropPageClass)
-	public:
+public:
 	virtual BOOL OnApply();
 	virtual void OnCancel();
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SphereSizePropPageClass)
@@ -69,9 +72,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
 public:
-
 	/////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////
@@ -80,32 +81,34 @@ public:
 	//	Inline accessors
 	//
 
-	SphereRenderObjClass *		Get_Sphere () const							{ return m_RenderObj; }
-	void								Set_Sphere (SphereRenderObjClass *sphere)	{ m_RenderObj = sphere; Initialize (); }
-	bool								Is_Data_Valid () const						{ return m_bValid; }
+	SphereRenderObjClass* Get_Sphere() const { return m_RenderObj; }
+	void Set_Sphere(SphereRenderObjClass* sphere)
+	{
+		m_RenderObj = sphere;
+		Initialize();
+	}
+	bool Is_Data_Valid() const { return m_bValid; }
 
 protected:
-
 	/////////////////////////////////////////////////////////
 	//	Protected methods
 	/////////////////////////////////////////////////////////
-	void				Initialize ();
-	void				Update_Scale_Array ();
+	void Initialize();
+	void Update_Scale_Array();
 
 private:
-
 	/////////////////////////////////////////////////////////
 	//	Private member data
 	/////////////////////////////////////////////////////////
-	SphereRenderObjClass *			m_RenderObj;
-	bool									m_bValid;
-	ColorBarClass *					m_ScaleXBar;
-	ColorBarClass *					m_ScaleYBar;
-	ColorBarClass *					m_ScaleZBar;
-	Vector3								m_Size;
+	SphereRenderObjClass* m_RenderObj;
+	bool m_bValid;
+	ColorBarClass* m_ScaleXBar;
+	ColorBarClass* m_ScaleYBar;
+	ColorBarClass* m_ScaleZBar;
+	Vector3 m_Size;
 
-	SphereScaleChannelClass			m_ScaleChannel;
-	SphereScaleChannelClass			m_OrigScaleChannel;
+	SphereScaleChannelClass m_ScaleChannel;
+	SphereScaleChannelClass m_OrigScaleChannel;
 };
 
 //{{AFX_INSERT_LOCATION}}

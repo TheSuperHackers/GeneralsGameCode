@@ -48,70 +48,66 @@
 #include "WWMath/v3_rnd.h"
 #include "WW3D2/meshgeometry.h"
 
-
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
 ** we will ensure that N is a power of two and that N >= 2^MAX_SEGLINE_SUBDIV_LEVELS, so that the
 ** subdivision logic can be inside the chunking loop.
 */
 
 #if MAX_SEGLINE_SUBDIV_LEVELS > 7
-#define SEGLINE_CHUNK_SIZE (1 << MAX_SEGLINE_SUBDIV_LEVELS)
+	#define SEGLINE_CHUNK_SIZE (1 << MAX_SEGLINE_SUBDIV_LEVELS)
 #else
-#define SEGLINE_CHUNK_SIZE (128)
+	#define SEGLINE_CHUNK_SIZE (128)
 #endif
-
 
 #define MAX_SEGLINE_POINT_BUFFER_SIZE (1 + SEGLINE_CHUNK_SIZE)
 // This macro depends on the assumption that each line segment is two polys.
 #define MAX_SEGLINE_POLY_BUFFER_SIZE (SEGLINE_CHUNK_SIZE * 2)
 
-
-
-
-SegLineRendererClass::SegLineRendererClass() :
-		Texture(nullptr),
-		Shader(ShaderClass::_PresetAdditiveSpriteShader),
-		Width(0.0f),
-		Color(Vector3(1,1,1)),
-		Opacity(1.0f),
-		SubdivisionLevel(0),
-		NoiseAmplitude(0.0f),
-		MergeAbortFactor(1.5f),
-		TextureTileFactor(1.0f),
-		LastUsedSyncTime(WW3D::Get_Logic_Time_Milliseconds()),
-		CurrentUVOffset(0.0f,0.0f),
-		UVOffsetDeltaPerMS(0.0f, 0.0f),
-		Bits(DEFAULT_BITS),
-		m_vertexBufferSize(0),
-		m_vertexBuffer(nullptr)
+SegLineRendererClass::SegLineRendererClass()
+  : Texture(nullptr)
+  , Shader(ShaderClass::_PresetAdditiveSpriteShader)
+  , Width(0.0f)
+  , Color(Vector3(1, 1, 1))
+  , Opacity(1.0f)
+  , SubdivisionLevel(0)
+  , NoiseAmplitude(0.0f)
+  , MergeAbortFactor(1.5f)
+  , TextureTileFactor(1.0f)
+  , LastUsedSyncTime(WW3D::Get_Logic_Time_Milliseconds())
+  , CurrentUVOffset(0.0f, 0.0f)
+  , UVOffsetDeltaPerMS(0.0f, 0.0f)
+  , Bits(DEFAULT_BITS)
+  , m_vertexBufferSize(0)
+  , m_vertexBuffer(nullptr)
 {
 	// EMPTY
 }
 
-SegLineRendererClass::SegLineRendererClass(const SegLineRendererClass & that) :
-		Texture(nullptr),
-		Shader(ShaderClass::_PresetAdditiveSpriteShader),
-		Width(0.0f),
-		Color(Vector3(1,1,1)),
-		Opacity(1.0f),
-		SubdivisionLevel(0),
-		NoiseAmplitude(0.0f),
-		MergeAbortFactor(1.5f),
-		TextureTileFactor(1.0f),
-		LastUsedSyncTime(that.LastUsedSyncTime),
-		CurrentUVOffset(0.0f,0.0f),
-		UVOffsetDeltaPerMS(0.0f, 0.0f),
-		Bits(DEFAULT_BITS),
-		m_vertexBufferSize(0),
-		m_vertexBuffer(nullptr)
+SegLineRendererClass::SegLineRendererClass(const SegLineRendererClass& that)
+  : Texture(nullptr)
+  , Shader(ShaderClass::_PresetAdditiveSpriteShader)
+  , Width(0.0f)
+  , Color(Vector3(1, 1, 1))
+  , Opacity(1.0f)
+  , SubdivisionLevel(0)
+  , NoiseAmplitude(0.0f)
+  , MergeAbortFactor(1.5f)
+  , TextureTileFactor(1.0f)
+  , LastUsedSyncTime(that.LastUsedSyncTime)
+  , CurrentUVOffset(0.0f, 0.0f)
+  , UVOffsetDeltaPerMS(0.0f, 0.0f)
+  , Bits(DEFAULT_BITS)
+  , m_vertexBufferSize(0)
+  , m_vertexBuffer(nullptr)
 {
 	*this = that;
 }
 
-SegLineRendererClass & SegLineRendererClass::operator = (const SegLineRendererClass & that)
+SegLineRendererClass& SegLineRendererClass::operator=(const SegLineRendererClass& that)
 {
-	if (this != &that) {
-		REF_PTR_SET(Texture,that.Texture);
+	if (this != &that)
+	{
+		REF_PTR_SET(Texture, that.Texture);
 		Shader = that.Shader;
 		Width = that.Width;
 		Color = that.Color;
@@ -132,10 +128,10 @@ SegLineRendererClass & SegLineRendererClass::operator = (const SegLineRendererCl
 SegLineRendererClass::~SegLineRendererClass()
 {
 	REF_PTR_RELEASE(Texture);
-	delete [] m_vertexBuffer;
+	delete[] m_vertexBuffer;
 }
 
-void SegLineRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
+void SegLineRendererClass::Init(const W3dEmitterLinePropertiesStruct& props)
 {
 	// translate the flags
 	Set_Merge_Intersections(props.Flags & W3D_ELINE_MERGE_INTERSECTIONS);
@@ -146,15 +142,15 @@ void SegLineRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
 	int texture_mode = ((props.Flags & W3D_ELINE_TEXTURE_MAP_MODE_MASK) >> W3D_ELINE_TEXTURE_MAP_MODE_OFFSET);
 	switch (texture_mode)
 	{
-	case W3D_ELINE_UNIFORM_WIDTH_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(UNIFORM_WIDTH_TEXTURE_MAP);
-		break;
-	case W3D_ELINE_UNIFORM_LENGTH_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(UNIFORM_LENGTH_TEXTURE_MAP);
-		break;
-	case W3D_ELINE_TILED_TEXTURE_MAP:
-		Set_Texture_Mapping_Mode(TILED_TEXTURE_MAP);
-		break;
+		case W3D_ELINE_UNIFORM_WIDTH_TEXTURE_MAP:
+			Set_Texture_Mapping_Mode(UNIFORM_WIDTH_TEXTURE_MAP);
+			break;
+		case W3D_ELINE_UNIFORM_LENGTH_TEXTURE_MAP:
+			Set_Texture_Mapping_Mode(UNIFORM_LENGTH_TEXTURE_MAP);
+			break;
+		case W3D_ELINE_TILED_TEXTURE_MAP:
+			Set_Texture_Mapping_Mode(TILED_TEXTURE_MAP);
+			break;
 	};
 
 	// install all other settings
@@ -162,24 +158,24 @@ void SegLineRendererClass::Init(const W3dEmitterLinePropertiesStruct & props)
 	Set_Noise_Amplitude(props.NoiseAmplitude);
 	Set_Merge_Abort_Factor(props.MergeAbortFactor);
 	Set_Texture_Tile_Factor(props.TextureTileFactor);
-	Set_UV_Offset_Rate(Vector2(props.UPerSec,props.VPerSec));
+	Set_UV_Offset_Rate(Vector2(props.UPerSec, props.VPerSec));
 }
 
-
-void SegLineRendererClass::Set_Texture(TextureClass *texture)
+void SegLineRendererClass::Set_Texture(TextureClass* texture)
 {
-	REF_PTR_SET(Texture,texture);
+	REF_PTR_SET(Texture, texture);
 }
 
-TextureClass * SegLineRendererClass::Get_Texture() const
+TextureClass* SegLineRendererClass::Get_Texture() const
 {
-	if (Texture != nullptr) {
+	if (Texture != nullptr)
+	{
 		Texture->Add_Ref();
 	}
 	return Texture;
 }
 
-void SegLineRendererClass::Set_Current_UV_Offset(const Vector2 & offset)
+void SegLineRendererClass::Set_Current_UV_Offset(const Vector2& offset)
 {
 	CurrentUVOffset = offset;
 }
@@ -190,10 +186,13 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 	// otherwise performance may be adversely affected.
 	///@todo: I raised this number and didn't see much difference on our min-spec. -MW
 	const static float MAX_LINE_TILING_FACTOR = 50.0f;
-	if (factor > MAX_LINE_TILING_FACTOR) {
+	if (factor > MAX_LINE_TILING_FACTOR)
+	{
 		WWDEBUG_SAY(("Texture (%s) Tile Factor (%.2f) too large in SegLineRendererClass!", Peek_Texture()->Get_Texture_Name().str(), TextureTileFactor));
 		factor = MAX_LINE_TILING_FACTOR;
-	} else {
+	}
+	else
+	{
 		factor = MAX(factor, 0.0f);
 	}
 	TextureTileFactor = factor;
@@ -202,27 +201,23 @@ void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
 void SegLineRendererClass::Reset_Line()
 {
 	LastUsedSyncTime = WW3D::Get_Logic_Time_Milliseconds();
-	CurrentUVOffset.Set(0.0f,0.0f);
+	CurrentUVOffset.Set(0.0f, 0.0f);
 }
 
-
-
-void SegLineRendererClass::Render
-(
-	RenderInfoClass & rinfo,
-	const Matrix3D & transform,
-	unsigned int num_points,
-	Vector3 * points,
-	const SphereClass & obj_sphere,
-	Vector4 * rgbas
-)
+void SegLineRendererClass::Render(
+  RenderInfoClass& rinfo,
+  const Matrix3D& transform,
+  unsigned int num_points,
+  Vector3* points,
+  const SphereClass& obj_sphere,
+  Vector4* rgbas)
 {
 	Matrix4x4 view;
-	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
+	DX8Wrapper::Get_Transform(D3DTS_VIEW, view);
 
 	Matrix4x4 identity(true);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);
+	DX8Wrapper::Set_Transform(D3DTS_WORLD, identity);
+	DX8Wrapper::Set_Transform(D3DTS_VIEW, identity);
 
 	/*
 	** Handle texture UV offset animation (done once for entire line).
@@ -254,21 +249,24 @@ void SegLineRendererClass::Render
 	// the chunk size below 2, since the chunk size must be at least two to the power of the
 	// maximum allowable number of subdivisions. The plus 1 is because #points = #segments + 1.
 	unsigned int chunk_size = (SEGLINE_CHUNK_SIZE >> SubdivisionLevel) + 1;
-	if (chunk_size > num_points) chunk_size = num_points;
+	if (chunk_size > num_points)
+	{
+		chunk_size = num_points;
+	}
 
 	// Chunk through the points (we increment by chunk_size - 1 because the last point of this
 	// chunk must be reused as the first point of the next chunk. This is also the reason we stop
 	// when chidx = NumPoints - 1: the last point has already been processed in the previous
 	// iteration so we don't need another one).
-	for (unsigned int chidx = 0; chidx < num_points - 1; chidx += (chunk_size - 1)) {
+	for (unsigned int chidx = 0; chidx < num_points - 1; chidx += (chunk_size - 1))
+	{
 		unsigned int point_cnt = num_points - chidx;
 		point_cnt = MIN(point_cnt, chunk_size);
 
 		// We use these different loop indices (which loop INSIDE a chunk) to improve readability:
-		unsigned int pidx;	// Point index
-		unsigned int sidx;	// Segment index
-		unsigned int iidx;	// Intersection index
-
+		unsigned int pidx;    // Point index
+		unsigned int sidx;    // Segment index
+		unsigned int iidx;    // Intersection index
 
 		/*
 		** Transform points in chunk from objectspace to eyespace:
@@ -276,20 +274,19 @@ void SegLineRendererClass::Render
 
 		Vector3 xformed_pts[MAX_SEGLINE_POINT_BUFFER_SIZE];
 
-		Matrix3D view2(	view[0].X,view[0].Y,view[0].Z,view[0].W,
-								view[1].X,view[1].Y,view[1].Z,view[1].W,
-								view[2].X,view[2].Y,view[2].Z,view[2].W);
+		Matrix3D view2(view[0].X, view[0].Y, view[0].Z, view[0].W,
+		               view[1].X, view[1].Y, view[1].Z, view[1].W,
+		               view[2].X, view[2].Y, view[2].Z, view[2].W);
 
 #ifdef ALLOW_TEMPORARIES
-		Matrix3D modelview=view2*transform;
+		Matrix3D modelview = view2 * transform;
 #else
 		Matrix3D modelview;
 		modelview.mul(view2, transform);
 #endif
 
 		VectorProcessorClass::Transform(&xformed_pts[0],
-			&points[chidx], modelview, point_cnt);
-
+		                                &points[chidx], modelview, point_cnt);
 
 		/*
 		** Prepare v parameter per point - used for texture mapping (esp. tiled mapping mode)
@@ -297,9 +294,11 @@ void SegLineRendererClass::Render
 
 		float base_tex_v[MAX_SEGLINE_POINT_BUFFER_SIZE];
 		float u_values[2];
-		switch (map_mode) {
+		switch (map_mode)
+		{
 			case UNIFORM_WIDTH_TEXTURE_MAP:
-				for (pidx = 0; pidx < point_cnt; pidx++) {
+				for (pidx = 0; pidx < point_cnt; pidx++)
+				{
 					// All 0
 					base_tex_v[pidx] = 0.0f;
 				}
@@ -307,7 +306,8 @@ void SegLineRendererClass::Render
 				u_values[1] = 1.0f;
 				break;
 			case UNIFORM_LENGTH_TEXTURE_MAP:
-				for (pidx = 0; pidx < point_cnt; pidx++) {
+				for (pidx = 0; pidx < point_cnt; pidx++)
+				{
 					// Increasing V
 					base_tex_v[pidx] = (float)(pidx + chidx) * TextureTileFactor;
 				}
@@ -315,7 +315,8 @@ void SegLineRendererClass::Render
 				u_values[1] = 0.0f;
 				break;
 			case TILED_TEXTURE_MAP:
-				for (pidx = 0; pidx < point_cnt; pidx++) {
+				for (pidx = 0; pidx < point_cnt; pidx++)
+				{
 					// Increasing V
 					base_tex_v[pidx] = (float)(pidx + chidx) * TextureTileFactor;
 				}
@@ -323,7 +324,6 @@ void SegLineRendererClass::Render
 				u_values[1] = 1.0f;
 				break;
 		}
-
 
 		/*
 		** Fractal noise recursive subdivision:
@@ -337,16 +337,15 @@ void SegLineRendererClass::Render
 		Vector4 subdiv_rgbas[MAX_SEGLINE_POINT_BUFFER_SIZE];
 		unsigned int sub_point_cnt;
 
-		Vector4 *rgbasPointer = rgbas ? &rgbas[ chidx ] : nullptr;
+		Vector4* rgbasPointer = rgbas ? &rgbas[chidx] : nullptr;
 
 		subdivision_util(point_cnt, xformed_pts, base_tex_v, &sub_point_cnt, xformed_subdiv_pts, subdiv_tex_v, rgbasPointer, subdiv_rgbas);
 
 		// Start using subdivided points from now on
-		Vector3 *points = xformed_subdiv_pts;
-		float *tex_v = subdiv_tex_v;
-		Vector4 *diffuse = subdiv_rgbas;
+		Vector3* points = xformed_subdiv_pts;
+		float* tex_v = subdiv_tex_v;
+		Vector4* diffuse = subdiv_rgbas;
 		point_cnt = sub_point_cnt;
-
 
 		/*
 		** Calculate line segment edge planes:
@@ -363,12 +362,13 @@ void SegLineRendererClass::Render
 		// Since the line has thickness, each segment has two edges. We name these 'top' and
 		// 'bottom' - note however that the top/bottom distinction does not relate to screen
 		// up/down and remains consistent throughout the segmented line.
-		enum SegmentEdge {
-			FIRST_EDGE     = 0,	// For loop conditions
-			TOP_EDGE			= 0,	// Top Edge
-			BOTTOM_EDGE		= 1,	// Bottom Edge
-			MAX_EDGE			= 1,	// For loop conditions
-			NUM_EDGES		= 2	// For array allocations
+		enum SegmentEdge
+		{
+			FIRST_EDGE = 0,    // For loop conditions
+			TOP_EDGE = 0,    // Top Edge
+			BOTTOM_EDGE = 1,    // Bottom Edge
+			MAX_EDGE = 1,    // For loop conditions
+			NUM_EDGES = 2    // For array allocations
 		};
 
 		bool switch_edges = false;
@@ -378,24 +378,26 @@ void SegLineRendererClass::Render
 		// the endpoint vertices. This is so we can merge intersections properly for the first and
 		// last points.
 
-		struct LineSegment {
-			Vector3	StartPlane;
-			Vector3	EdgePlane[NUM_EDGES];
+		struct LineSegment
+		{
+			Vector3 StartPlane;
+			Vector3 EdgePlane[NUM_EDGES];
 		};
 
 		// # segments = numpoints + 1 (numpoints - 1, plus two dummy segments)
 		LineSegment segment[MAX_SEGLINE_POINT_BUFFER_SIZE + 1];
 
 		// Intersections. This has data for two edges (top or bottom) intersecting.
-		struct LineSegmentIntersection  {
-			unsigned int	PointCount;			// How many points does this intersection represent
-			unsigned int	NextSegmentID;		// ID of segment after this intersection
-			Vector3			Direction;			// Calculated intersection direction line
-			Vector3			Point;				// Averaged 3D point on the line which this represents
-			float				TexV;					// Averaged texture V coordinate of points
-			Vector4			RGBA;					// Averaged RGBA of the points
-			bool				Fold;					// Does the line fold over at this intersection?
-			bool				Parallel;			// Edges at this intersection are parallel (or almost-)
+		struct LineSegmentIntersection
+		{
+			unsigned int PointCount;    // How many points does this intersection represent
+			unsigned int NextSegmentID;    // ID of segment after this intersection
+			Vector3 Direction;    // Calculated intersection direction line
+			Vector3 Point;    // Averaged 3D point on the line which this represents
+			float TexV;    // Averaged texture V coordinate of points
+			Vector4 RGBA;    // Averaged RGBA of the points
+			bool Fold;    // Does the line fold over at this intersection?
+			bool Parallel;    // Edges at this intersection are parallel (or almost-)
 		};
 
 		// Used to calculate the edge planes
@@ -410,10 +412,11 @@ void SegLineRendererClass::Render
 		// segment.
 		LineSegmentIntersection intersection[MAX_SEGLINE_POINT_BUFFER_SIZE + 1][NUM_EDGES];
 
-		for (sidx = 1; sidx < point_cnt; sidx++) {	// #segments = #points - 1 (+ 2 dummy segments)
+		for (sidx = 1; sidx < point_cnt; sidx++)
+		{    // #segments = #points - 1 (+ 2 dummy segments)
 
-			Vector3 &curr_point = points[sidx - 1];
-			Vector3 &next_point = points[sidx];
+			Vector3& curr_point = points[sidx - 1];
+			Vector3& next_point = points[sidx];
 			if (Equal_Within_Epsilon(curr_point, next_point, 0.0001f))
 			{
 				next_point.X += 0.001f;
@@ -421,7 +424,7 @@ void SegLineRendererClass::Render
 
 			// We temporarily store the segment direction in the segment's StartPlane (since it is
 			// used to calculate the StartPlane later).
-			Vector3 &segdir = segment[sidx].StartPlane;
+			Vector3& segdir = segment[sidx].StartPlane;
 			segdir = next_point - curr_point;
 			segdir.Normalize();
 
@@ -451,8 +454,8 @@ void SegLineRendererClass::Render
 			// between the planes defined by each line segment and the eyepoint) is less than 90
 			// degrees, switch the top and bottom edges for the current and subsequent segments and
 			// mark the intersection as having a fold
-			if (sidx > 1) {
-
+			if (sidx > 1)
+			{
 				Vector3 prev_plane;
 				Vector3::Cross_Product(points[sidx - 2], curr_point, &prev_plane);
 				prev_plane.Normalize();
@@ -461,33 +464,35 @@ void SegLineRendererClass::Render
 				Vector3::Cross_Product(curr_point, next_point, &curr_plane);
 				curr_plane.Normalize();
 
-				if (Vector3::Dot_Product(prev_plane, curr_plane) < 0.0f) {
+				if (Vector3::Dot_Product(prev_plane, curr_plane) < 0.0f)
+				{
 					switch_edges = !switch_edges;
 					intersection[sidx][TOP_EDGE].Fold = true;
 					intersection[sidx][BOTTOM_EDGE].Fold = true;
-				} else {
+				}
+				else
+				{
 					intersection[sidx][TOP_EDGE].Fold = false;
 					intersection[sidx][BOTTOM_EDGE].Fold = false;
 				}
 			}
 
-			if (switch_edges) {
+			if (switch_edges)
+			{
 				// We switch signs so the normals will always point inwards
 				segment[sidx].EdgePlane[TOP_EDGE] = -bottom_normal;
 				segment[sidx].EdgePlane[BOTTOM_EDGE] = -top_normal;
 			}
-
 		}
 
 		// The two dummy segments for the clipping edges of the first and last real segments will be
 		// defined later, with the first and last intersections.
 
-
 		/*
 		** Calculate segment edge intersections:
 		*/
 
-		unsigned int numsegs = point_cnt - 1;	// Doesn't include the two dummy segments
+		unsigned int numsegs = point_cnt - 1;    // Doesn't include the two dummy segments
 		unsigned int num_intersections[NUM_EDGES];
 
 		// These include the 1st, last point "intersections", not the pre-first dummy intersection
@@ -495,22 +500,22 @@ void SegLineRendererClass::Render
 		num_intersections[BOTTOM_EDGE] = point_cnt;
 
 		// Initialize pre-first point dummy intersection record (only NextSegmentID will be used).
-		intersection[0][TOP_EDGE].PointCount = 0;				// Should never be used
-		intersection[0][TOP_EDGE].NextSegmentID = 0;			// Points to first dummy segment
-		intersection[0][TOP_EDGE].Direction.Set(1,0,0);		// Should never be used
-		intersection[0][TOP_EDGE].Point.Set(0,0,0);			// Should never be used
-		intersection[0][TOP_EDGE].TexV = 0.0f;					// Should never be used
-		intersection[0][TOP_EDGE].RGBA.Set(0, 0, 0, 0);		// Should never be used
-		intersection[0][TOP_EDGE].Fold = true;					// Should never be used
-		intersection[0][TOP_EDGE].Parallel = false;			// Should never be used
-		intersection[0][BOTTOM_EDGE].PointCount = 0;			// Should never be used
-		intersection[0][BOTTOM_EDGE].NextSegmentID = 0;		// Points to first dummy segment
-		intersection[0][BOTTOM_EDGE].Point.Set(0,0,0);		// Should never be used
-		intersection[0][BOTTOM_EDGE].TexV = 0.0f;				// Should never be used
-		intersection[0][BOTTOM_EDGE].RGBA.Set(0, 0, 0, 0); // Should never be used
-		intersection[0][BOTTOM_EDGE].Direction.Set(1,0,0);	// Should never be used
-		intersection[0][BOTTOM_EDGE].Fold = true;				// Should never be used
-		intersection[0][BOTTOM_EDGE].Parallel = false;		// Should never be used
+		intersection[0][TOP_EDGE].PointCount = 0;    // Should never be used
+		intersection[0][TOP_EDGE].NextSegmentID = 0;    // Points to first dummy segment
+		intersection[0][TOP_EDGE].Direction.Set(1, 0, 0);    // Should never be used
+		intersection[0][TOP_EDGE].Point.Set(0, 0, 0);    // Should never be used
+		intersection[0][TOP_EDGE].TexV = 0.0f;    // Should never be used
+		intersection[0][TOP_EDGE].RGBA.Set(0, 0, 0, 0);    // Should never be used
+		intersection[0][TOP_EDGE].Fold = true;    // Should never be used
+		intersection[0][TOP_EDGE].Parallel = false;    // Should never be used
+		intersection[0][BOTTOM_EDGE].PointCount = 0;    // Should never be used
+		intersection[0][BOTTOM_EDGE].NextSegmentID = 0;    // Points to first dummy segment
+		intersection[0][BOTTOM_EDGE].Point.Set(0, 0, 0);    // Should never be used
+		intersection[0][BOTTOM_EDGE].TexV = 0.0f;    // Should never be used
+		intersection[0][BOTTOM_EDGE].RGBA.Set(0, 0, 0, 0);    // Should never be used
+		intersection[0][BOTTOM_EDGE].Direction.Set(1, 0, 0);    // Should never be used
+		intersection[0][BOTTOM_EDGE].Fold = true;    // Should never be used
+		intersection[0][BOTTOM_EDGE].Parallel = false;    // Should never be used
 
 		// Initialize first point "intersection" record.
 		intersection[1][TOP_EDGE].PointCount = 1;
@@ -534,8 +539,8 @@ void SegLineRendererClass::Render
 		Vector3 top;
 		Vector3 bottom;
 
-		Vector3 &first_point = points[0];
-		Vector3 *first_plane = &(segment[1].EdgePlane[0]);
+		Vector3& first_point = points[0];
+		Vector3* first_plane = &(segment[1].EdgePlane[0]);
 		top = first_point - first_plane[TOP_EDGE] * Vector3::Dot_Product(first_plane[TOP_EDGE], first_point);
 		top.Normalize();
 		intersection[1][TOP_EDGE].Direction = top;
@@ -544,14 +549,17 @@ void SegLineRendererClass::Render
 		intersection[1][BOTTOM_EDGE].Direction = bottom;
 
 		Vector3 segdir = points[1] - points[0];
-		segdir.Normalize();	// Is this needed? Probably not - remove later when all works
+		segdir.Normalize();    // Is this needed? Probably not - remove later when all works
 		Vector3 start_pl;
 		Vector3::Cross_Product(top, bottom, &start_pl);
 		start_pl.Normalize();
 		float dp = Vector3::Dot_Product(segdir, start_pl);
-		if (dp > 0.0f) {
+		if (dp > 0.0f)
+		{
 			segment[0].StartPlane = segment[0].EdgePlane[TOP_EDGE] = segment[0].EdgePlane[BOTTOM_EDGE] = start_pl;
-		} else {
+		}
+		else
+		{
 			segment[0].StartPlane = segment[0].EdgePlane[TOP_EDGE] = segment[0].EdgePlane[BOTTOM_EDGE] = -start_pl;
 		}
 
@@ -559,17 +567,17 @@ void SegLineRendererClass::Render
 		segment[1].StartPlane = segment[0].StartPlane;
 
 		// Initialize last point "intersection" record.
-		unsigned int last_isec = num_intersections[TOP_EDGE]; // Same # top, bottom intersections
+		unsigned int last_isec = num_intersections[TOP_EDGE];    // Same # top, bottom intersections
 
 		intersection[last_isec][TOP_EDGE].PointCount = 1;
-		intersection[last_isec][TOP_EDGE].NextSegmentID = numsegs + 1; // Last dummy segment
+		intersection[last_isec][TOP_EDGE].NextSegmentID = numsegs + 1;    // Last dummy segment
 		intersection[last_isec][TOP_EDGE].Point = points[point_cnt - 1];
 		intersection[last_isec][TOP_EDGE].TexV = tex_v[point_cnt - 1];
 		intersection[last_isec][TOP_EDGE].RGBA = diffuse[point_cnt - 1];
 		intersection[last_isec][TOP_EDGE].Fold = true;
 		intersection[last_isec][TOP_EDGE].Parallel = false;
 		intersection[last_isec][BOTTOM_EDGE].PointCount = 1;
-		intersection[last_isec][BOTTOM_EDGE].NextSegmentID = numsegs + 1;// Last dummy segment
+		intersection[last_isec][BOTTOM_EDGE].NextSegmentID = numsegs + 1;    // Last dummy segment
 		intersection[last_isec][BOTTOM_EDGE].Point = points[point_cnt - 1];
 		intersection[last_isec][BOTTOM_EDGE].TexV = tex_v[point_cnt - 1];
 		intersection[last_isec][BOTTOM_EDGE].RGBA = diffuse[point_cnt - 1];
@@ -579,8 +587,8 @@ void SegLineRendererClass::Render
 		// Find closest point to last top/bottom segment edge plane, and convert to direction vector
 		// and dummy segment edge vector
 
-		Vector3 &last_point = points[point_cnt - 1];
-		Vector3 *last_plane = &(segment[numsegs].EdgePlane[0]);
+		Vector3& last_point = points[point_cnt - 1];
+		Vector3* last_plane = &(segment[numsegs].EdgePlane[0]);
 		top = last_point - last_plane[TOP_EDGE] * Vector3::Dot_Product(last_plane[TOP_EDGE], last_point);
 		top.Normalize();
 		intersection[last_isec][TOP_EDGE].Direction = top;
@@ -589,16 +597,19 @@ void SegLineRendererClass::Render
 		intersection[last_isec][BOTTOM_EDGE].Direction = bottom;
 
 		segdir = points[point_cnt - 1] - points[point_cnt - 2];
-		segdir.Normalize();	// Is this needed? Probably not - remove later when all works
+		segdir.Normalize();    // Is this needed? Probably not - remove later when all works
 		Vector3::Cross_Product(top, bottom, &start_pl);
 		start_pl.Normalize();
 		dp = Vector3::Dot_Product(segdir, start_pl);
-		if (dp > 0.0f) {
+		if (dp > 0.0f)
+		{
 			segment[numsegs + 1].StartPlane = segment[numsegs + 1].EdgePlane[TOP_EDGE] =
-				segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = start_pl;
-		} else {
+			  segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = start_pl;
+		}
+		else
+		{
 			segment[numsegs + 1].StartPlane = segment[numsegs + 1].EdgePlane[TOP_EDGE] =
-				segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = -start_pl;
+			  segment[numsegs + 1].EdgePlane[BOTTOM_EDGE] = -start_pl;
 		}
 
 		// Calculate midpoint segment intersections. There are 2 segment intersections for each
@@ -612,10 +623,10 @@ void SegLineRendererClass::Render
 
 		float vdp;
 
-		for (iidx = 2; iidx < num_intersections[TOP_EDGE]; iidx++) {
-
+		for (iidx = 2; iidx < num_intersections[TOP_EDGE]; iidx++)
+		{
 			// Relevant midpoint:
-			Vector3 &midpoint = points[iidx - 1];
+			Vector3& midpoint = points[iidx - 1];
 			float mid_tex_v = tex_v[iidx - 1];
 			Vector4 mid_diffuse = diffuse[iidx - 1];
 
@@ -638,28 +649,32 @@ void SegLineRendererClass::Render
 
 			// Top:
 			vdp = Vector3::Dot_Product(segment[iidx - 1].EdgePlane[TOP_EDGE], segment[iidx].EdgePlane[TOP_EDGE]);
-			if (fabs(vdp) < parallel_factor) {
-
+			if (fabs(vdp) < parallel_factor)
+			{
 				// Not parallel - intersect planes to get line (get vector, normalize it, ensure it is
 				// pointing towards the midpoint)
 				Vector3::Cross_Product(segment[iidx - 1].EdgePlane[TOP_EDGE], segment[iidx].EdgePlane[TOP_EDGE],
-					&(intersection[iidx][TOP_EDGE].Direction));
+				                       &(intersection[iidx][TOP_EDGE].Direction));
 				intersection[iidx][TOP_EDGE].Direction.Normalize();
-				if (Vector3::Dot_Product(intersection[iidx][TOP_EDGE].Direction, midpoint) < 0.0f) {
+				if (Vector3::Dot_Product(intersection[iidx][TOP_EDGE].Direction, midpoint) < 0.0f)
+				{
 					intersection[iidx][TOP_EDGE].Direction = -intersection[iidx][TOP_EDGE].Direction;
 				}
 
 				intersection[iidx][TOP_EDGE].Parallel = false;
-
-			} else {
-
+			}
+			else
+			{
 				// Parallel (or almost): find point on av. plane closest to midpoint, convert to line
 
 				// Ensure average calculation is numerically stable:
 				Vector3 pl;
-				if (vdp > 0.0f) {
+				if (vdp > 0.0f)
+				{
 					pl = segment[iidx - 1].EdgePlane[TOP_EDGE] + segment[iidx].EdgePlane[TOP_EDGE];
-				} else {
+				}
+				else
+				{
 					pl = segment[iidx - 1].EdgePlane[TOP_EDGE] - segment[iidx].EdgePlane[TOP_EDGE];
 				}
 				pl.Normalize();
@@ -672,28 +687,32 @@ void SegLineRendererClass::Render
 
 			// Bottom:
 			vdp = Vector3::Dot_Product(segment[iidx - 1].EdgePlane[BOTTOM_EDGE], segment[iidx].EdgePlane[BOTTOM_EDGE]);
-			if (fabs(vdp) < parallel_factor) {
-
+			if (fabs(vdp) < parallel_factor)
+			{
 				// Not parallel - intersect planes to get line (get vector, normalize it, ensure it is
 				// pointing towards the midpoint)
 				Vector3::Cross_Product(segment[iidx - 1].EdgePlane[BOTTOM_EDGE], segment[iidx].EdgePlane[BOTTOM_EDGE],
-					&(intersection[iidx][BOTTOM_EDGE].Direction));
+				                       &(intersection[iidx][BOTTOM_EDGE].Direction));
 				intersection[iidx][BOTTOM_EDGE].Direction.Normalize();
-				if (Vector3::Dot_Product(intersection[iidx][BOTTOM_EDGE].Direction, midpoint) < 0.0f) {
+				if (Vector3::Dot_Product(intersection[iidx][BOTTOM_EDGE].Direction, midpoint) < 0.0f)
+				{
 					intersection[iidx][BOTTOM_EDGE].Direction = -intersection[iidx][BOTTOM_EDGE].Direction;
 				}
 
 				intersection[iidx][BOTTOM_EDGE].Parallel = false;
-
-			} else {
-
+			}
+			else
+			{
 				// Parallel (or almost): find point on av. plane closest to midpoint, convert to line
 
 				// Ensure average calculation is numerically stable:
 				Vector3 pl;
-				if (vdp > 0.0f) {
+				if (vdp > 0.0f)
+				{
 					pl = segment[iidx - 1].EdgePlane[BOTTOM_EDGE] + segment[iidx].EdgePlane[BOTTOM_EDGE];
-				} else {
+				}
+				else
+				{
 					pl = segment[iidx - 1].EdgePlane[BOTTOM_EDGE] - segment[iidx].EdgePlane[BOTTOM_EDGE];
 				}
 				pl.Normalize();
@@ -708,14 +727,15 @@ void SegLineRendererClass::Render
 			Vector3::Cross_Product(intersection[iidx][TOP_EDGE].Direction, intersection[iidx][BOTTOM_EDGE].Direction, &start_pl);
 			start_pl.Normalize();
 			dp = Vector3::Dot_Product(segment[iidx].StartPlane, start_pl);
-			if (dp > 0.0f) {
+			if (dp > 0.0f)
+			{
 				segment[iidx].StartPlane = start_pl;
-			} else {
+			}
+			else
+			{
 				segment[iidx].StartPlane = -start_pl;
 			}
-
 		}
-
 
 		/*
 		** Intersection merging: when an intersection is inside an adjacent segment and certain
@@ -723,8 +743,8 @@ void SegLineRendererClass::Render
 		** caused by the polys folding over on themselves.
 		*/
 
-		if (Is_Merge_Intersections()) {
-
+		if (Is_Merge_Intersections())
+		{
 			// Since we are merging the intersections in-place, we have two index variables, a "read
 			// index" and a "write index".
 			unsigned int iidx_r;
@@ -734,20 +754,21 @@ void SegLineRendererClass::Render
 			// for this is that one merge may cause the need for another merge elsewhere.
 			bool merged = true;
 
-			while (merged) {
-
+			while (merged)
+			{
 				merged = false;
 
 				SegmentEdge edge;
-				for (edge = FIRST_EDGE; edge <= MAX_EDGE; edge = (SegmentEdge)((int)edge + 1)) {
+				for (edge = FIRST_EDGE; edge <= MAX_EDGE; edge = (SegmentEdge)((int)edge + 1))
+				{
 					// Merge top and bottom edge intersections: loop through the intersections from the
 					// first intersection to the penultimate intersection, for each intersection check
 					// if it needs to be merged with the next one (which is why the loop doesn't go all
 					// the way to the last intersection). We start at 1 because 0 is the dummy
 					// "pre-first-point" intersection.
-					unsigned int num_isects = num_intersections[edge];	// Capture here because will change inside loop
-					for (iidx_r = 1, iidx_w = 1; iidx_r < num_isects; iidx_r++, iidx_w++) {
-
+					unsigned int num_isects = num_intersections[edge];    // Capture here because will change inside loop
+					for (iidx_r = 1, iidx_w = 1; iidx_r < num_isects; iidx_r++, iidx_w++)
+					{
 						// Check for either of two possible reasons to merge this intersection with the
 						// next: either the segment on the far side of the next intersection overlaps
 						// this intersection, or the previous segment overlaps the next intersection.
@@ -759,25 +780,25 @@ void SegLineRendererClass::Render
 						// Note: iidx_r is used for anything at or after the current position, iidx_w is
 						// used for anything before the current position (previous positions have
 						// potentially already been merged).
-						LineSegmentIntersection *curr_int = &(intersection[iidx_r][edge]);
-						LineSegmentIntersection *next_int = &(intersection[iidx_r + 1][edge]);
-						LineSegmentIntersection *write_int = &(intersection[iidx_w][edge]);
-						LineSegmentIntersection *prev_int = &(intersection[iidx_w - 1][edge]);
-						LineSegment *next_seg = &(segment[next_int->NextSegmentID]);
-						LineSegment *curr_seg = &(segment[curr_int->NextSegmentID]);
-						LineSegment *prev_seg = &(segment[prev_int->NextSegmentID]);
+						LineSegmentIntersection* curr_int = &(intersection[iidx_r][edge]);
+						LineSegmentIntersection* next_int = &(intersection[iidx_r + 1][edge]);
+						LineSegmentIntersection* write_int = &(intersection[iidx_w][edge]);
+						LineSegmentIntersection* prev_int = &(intersection[iidx_w - 1][edge]);
+						LineSegment* next_seg = &(segment[next_int->NextSegmentID]);
+						LineSegment* curr_seg = &(segment[curr_int->NextSegmentID]);
+						LineSegment* prev_seg = &(segment[prev_int->NextSegmentID]);
 
 						// If this intersection is inside both the start plane and the segment edge
 						// plane of the segment after the next intersection, merge this edge
 						// intersection and the next. We repeat merging until no longer needed.
 						// NOTE - we do not merge across a fold.
-						while	(	(!next_int->Fold &&
-										(Vector3::Dot_Product(curr_int->Direction, next_seg->StartPlane) > 0.0f) &&
-										(Vector3::Dot_Product(curr_int->Direction, next_seg->EdgePlane[edge]) > 0.0f )) ||
-									(!curr_int->Fold &&
-										(Vector3::Dot_Product(next_int->Direction, -curr_seg->StartPlane) > 0.0f) &&
-										(Vector3::Dot_Product(next_int->Direction, prev_seg->EdgePlane[edge]) > 0.0f )) ) {
-
+						while ((!next_int->Fold &&
+						        (Vector3::Dot_Product(curr_int->Direction, next_seg->StartPlane) > 0.0f) &&
+						        (Vector3::Dot_Product(curr_int->Direction, next_seg->EdgePlane[edge]) > 0.0f)) ||
+						       (!curr_int->Fold &&
+						        (Vector3::Dot_Product(next_int->Direction, -curr_seg->StartPlane) > 0.0f) &&
+						        (Vector3::Dot_Product(next_int->Direction, prev_seg->EdgePlane[edge]) > 0.0f)))
+						{
 							// First calculate location of merged intersection - this is so we can abort
 							// the merge if it yields funky results.
 
@@ -794,20 +815,21 @@ void SegLineRendererClass::Render
 							bool new_parallel;
 							Vector3 new_direction;
 							vdp = Vector3::Dot_Product(prev_seg->EdgePlane[edge], next_seg->EdgePlane[edge]);
-							if (fabs(vdp) < parallel_factor) {
-
+							if (fabs(vdp) < parallel_factor)
+							{
 								// Not parallel - intersect planes to get line (get vector, normalize it,
 								// ensure it is pointing towards the current point)
 								Vector3::Cross_Product(prev_seg->EdgePlane[edge], next_seg->EdgePlane[edge], &new_direction);
 								new_direction.Normalize();
-								if (Vector3::Dot_Product(new_direction, new_point) < 0.0f) {
+								if (Vector3::Dot_Product(new_direction, new_point) < 0.0f)
+								{
 									new_direction = -new_direction;
 								}
 
 								new_parallel = false;
-
-							} else {
-
+							}
+							else
+							{
 								// Parallel (or almost). If the current intersection is not parallel, take
 								// the average plane and intersect it with the skipped plane. If the
 								// current intersection is parallel, find the average plane, and find the
@@ -816,17 +838,23 @@ void SegLineRendererClass::Render
 
 								// Ensure average calculation is numerically stable:
 								Vector3 pl;
-								if (vdp > 0.0f) {
+								if (vdp > 0.0f)
+								{
 									pl = prev_seg->EdgePlane[edge] + next_seg->EdgePlane[edge];
-								} else {
+								}
+								else
+								{
 									pl = prev_seg->EdgePlane[edge] - next_seg->EdgePlane[edge];
 								}
 								pl.Normalize();
 
-								if (curr_int->Parallel) {
+								if (curr_int->Parallel)
+								{
 									new_direction = new_direction - pl * Vector3::Dot_Product(pl, new_direction);
 									new_direction.Normalize();
-								} else {
+								}
+								else
+								{
 									Vector3::Cross_Product(curr_seg->EdgePlane[edge], pl, &new_direction);
 									new_direction.Normalize();
 								}
@@ -837,15 +865,22 @@ void SegLineRendererClass::Render
 							// Now check to see if the merge caused any funky results - if so abort it.
 							// Currently we check to see if the distance of the direction from the two
 							// points is larger than the radius times the merge_abort factor.
-							if (MergeAbortFactor > 0.0f) {
+							if (MergeAbortFactor > 0.0f)
+							{
 								float abort_dist = radius * MergeAbortFactor;
 								float abort_dist2 = abort_dist * abort_dist;
 								Vector3 diff_curr = curr_int->Point -
-									new_direction * Vector3::Dot_Product(curr_int->Point, new_direction);
-								if (diff_curr.Length2() > abort_dist2) break;
+								                    new_direction * Vector3::Dot_Product(curr_int->Point, new_direction);
+								if (diff_curr.Length2() > abort_dist2)
+								{
+									break;
+								}
 								Vector3 next_curr = next_int->Point -
-									new_direction * Vector3::Dot_Product(next_int->Point, new_direction);
-								if (next_curr.Length2() > abort_dist2) break;
+								                    new_direction * Vector3::Dot_Product(next_int->Point, new_direction);
+								if (next_curr.Length2() > abort_dist2)
+								{
+									break;
+								}
 							}
 
 							// Merge edge intersections (curr_int and next_int) into curr_int
@@ -867,51 +902,51 @@ void SegLineRendererClass::Render
 							iidx_r++;
 
 							// If we are at the end then break:
-							if (iidx_r == num_isects) {
+							if (iidx_r == num_isects)
+							{
 								break;
 							}
 
 							// Advance next_int and next_seg.
 							next_int = &(intersection[iidx_r + 1][edge]);
 							next_seg = &(segment[next_int->NextSegmentID]);
-
 						}
 
 						// Copy from "read index" to "write index"
-						write_int->PointCount		= curr_int->PointCount;
-						write_int->NextSegmentID	= curr_int->NextSegmentID;
-						write_int->Point				= curr_int->Point;
-						write_int->TexV				= curr_int->TexV;
-						write_int->RGBA				= curr_int->RGBA;
-						write_int->Direction			= curr_int->Direction;
-						write_int->Fold				= curr_int->Fold;
-
+						write_int->PointCount = curr_int->PointCount;
+						write_int->NextSegmentID = curr_int->NextSegmentID;
+						write_int->Point = curr_int->Point;
+						write_int->TexV = curr_int->TexV;
+						write_int->RGBA = curr_int->RGBA;
+						write_int->Direction = curr_int->Direction;
+						write_int->Fold = curr_int->Fold;
 					}
 
 					// If iidx_r is exactly equal to num_isects (rather than being larger by one) at this
 					// point, this means that the last intersection was not merged with the previous one. In
 					// this case, we need to do one last copy:
-					if (iidx_r == num_isects) {
-						LineSegmentIntersection *write_int = &(intersection[iidx_w][edge]);
-						LineSegmentIntersection *curr_int = &(intersection[iidx_r][edge]);
-						write_int->PointCount		= curr_int->PointCount;
-						write_int->NextSegmentID	= curr_int->NextSegmentID;
-						write_int->Point				= curr_int->Point;
-						write_int->TexV				= curr_int->TexV;
-						write_int->RGBA				= curr_int->RGBA;
-						write_int->Direction			= curr_int->Direction;
-						write_int->Fold				= curr_int->Fold;
+					if (iidx_r == num_isects)
+					{
+						LineSegmentIntersection* write_int = &(intersection[iidx_w][edge]);
+						LineSegmentIntersection* curr_int = &(intersection[iidx_r][edge]);
+						write_int->PointCount = curr_int->PointCount;
+						write_int->NextSegmentID = curr_int->NextSegmentID;
+						write_int->Point = curr_int->Point;
+						write_int->TexV = curr_int->TexV;
+						write_int->RGBA = curr_int->RGBA;
+						write_int->Direction = curr_int->Direction;
+						write_int->Fold = curr_int->Fold;
 					}
 
 #ifdef ENABLE_WWDEBUGGING
 					// Testing code - ensure total PointCount fits the number of points
 					unsigned int total_cnt = 0;
-					for (unsigned int nidx = 0; nidx <= num_intersections[edge]; nidx++) {
+					for (unsigned int nidx = 0; nidx <= num_intersections[edge]; nidx++)
+					{
 						total_cnt += intersection[nidx][edge].PointCount;
 					}
 					assert(total_cnt == point_cnt);
 #endif
-
 				}
 			}
 		}
@@ -925,19 +960,19 @@ void SegLineRendererClass::Render
 
 		// Configure vertex array and setup renderer.
 		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];
-		VertexFormatXYZDUV1 *vArray = getVertexBuffer(vnum);
+		VertexFormatXYZDUV1* vArray = getVertexBuffer(vnum);
 		TriIndex v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
 
 		// Vertex and triangle indices
 		unsigned int vidx = 0;
 		unsigned int tidx = 0;
 
-// GENERALIZE FOR WHEN NO TEXTURE (DO NOT SET UV IN THESE CASES? NEED TO GENERALIZE FOR DIFFERENT TEXTURING MODES ANYWAY).
+		// GENERALIZE FOR WHEN NO TEXTURE (DO NOT SET UV IN THESE CASES? NEED TO GENERALIZE FOR DIFFERENT TEXTURING MODES ANYWAY).
 
 		// "Prime the pump" with two vertices (pick nearest point on each direction line):
-		Vector3 &top_dir = intersection[1][TOP_EDGE].Direction;
+		Vector3& top_dir = intersection[1][TOP_EDGE].Direction;
 		top = top_dir * Vector3::Dot_Product(points[0], top_dir);
-		Vector3 &bottom_dir = intersection[1][BOTTOM_EDGE].Direction;
+		Vector3& bottom_dir = intersection[1][BOTTOM_EDGE].Direction;
 		bottom = bottom_dir * Vector3::Dot_Product(points[0], bottom_dir);
 		vArray[vidx].x = top.X;
 		vArray[vidx].y = top.Y;
@@ -958,8 +993,8 @@ void SegLineRendererClass::Render
 		unsigned int last_bottom_vidx = 1;
 
 		// Loop over intersections, create new vertices and triangles.
-		unsigned int top_int_idx = 1;		// Skip "pre-first-point" dummy intersection
-		unsigned int bottom_int_idx = 1;	// Skip "pre-first-point" dummy intersection
+		unsigned int top_int_idx = 1;    // Skip "pre-first-point" dummy intersection
+		unsigned int bottom_int_idx = 1;    // Skip "pre-first-point" dummy intersection
 		pidx = 0;
 		unsigned int residual_top_points = intersection[1][TOP_EDGE].PointCount;
 		unsigned int residual_bottom_points = intersection[1][BOTTOM_EDGE].PointCount;
@@ -970,9 +1005,10 @@ void SegLineRendererClass::Render
 		residual_bottom_points -= delta;
 		pidx += delta;
 
-		for (; ; ) {
-
-			if (residual_top_points == 1 && residual_bottom_points == 1) {
+		for (;;)
+		{
+			if (residual_top_points == 1 && residual_bottom_points == 1)
+			{
 				// Advance both intersections, creating a tristrip segment
 				v_index_array[tidx].I = last_top_vidx;
 				v_index_array[tidx].J = last_bottom_vidx;
@@ -995,9 +1031,9 @@ void SegLineRendererClass::Render
 				pidx++;
 
 				// Generate two vertices for next point by picking nearest point on each direction line
-				Vector3 &top_dir = intersection[top_int_idx][TOP_EDGE].Direction;
+				Vector3& top_dir = intersection[top_int_idx][TOP_EDGE].Direction;
 				top = top_dir * Vector3::Dot_Product(points[pidx], top_dir);
-				Vector3 &bottom_dir = intersection[bottom_int_idx][BOTTOM_EDGE].Direction;
+				Vector3& bottom_dir = intersection[bottom_int_idx][BOTTOM_EDGE].Direction;
 				bottom = bottom_dir * Vector3::Dot_Product(points[pidx], bottom_dir);
 
 				vArray[vidx].x = top.X;
@@ -1014,9 +1050,12 @@ void SegLineRendererClass::Render
 				vArray[vidx].u1 = u_values[1] + uv_offset.X;
 				vArray[vidx].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV + uv_offset.Y;
 				vidx++;
-			} else {
+			}
+			else
+			{
 				// Exactly one of the pointcounts is greater than one - advance it and draw one triangle
-				if (residual_top_points > 1) {
+				if (residual_top_points > 1)
+				{
 					// Draw one triangle (fan segment)
 					v_index_array[tidx].I = last_top_vidx;
 					v_index_array[tidx].J = last_bottom_vidx;
@@ -1033,7 +1072,7 @@ void SegLineRendererClass::Render
 					pidx++;
 
 					// Generate bottom vertex by picking nearest point on bottom direction line
-					Vector3 &bottom_dir = intersection[bottom_int_idx][BOTTOM_EDGE].Direction;
+					Vector3& bottom_dir = intersection[bottom_int_idx][BOTTOM_EDGE].Direction;
 					bottom = bottom_dir * Vector3::Dot_Product(points[pidx], bottom_dir);
 
 					vArray[vidx].x = bottom.X;
@@ -1043,8 +1082,9 @@ void SegLineRendererClass::Render
 					vArray[vidx].u1 = u_values[1] + uv_offset.X;
 					vArray[vidx].v1 = intersection[bottom_int_idx][BOTTOM_EDGE].TexV + uv_offset.Y;
 					vidx++;
-				} else {
-
+				}
+				else
+				{
 					// residual_bottom_points > 1
 
 					// Draw one triangle (fan segment)
@@ -1063,7 +1103,7 @@ void SegLineRendererClass::Render
 					pidx++;
 
 					// Generate top vertex by picking nearest point on top direction line
-					Vector3 &top_dir = intersection[top_int_idx][TOP_EDGE].Direction;
+					Vector3& top_dir = intersection[top_int_idx][TOP_EDGE].Direction;
 					top = top_dir * Vector3::Dot_Product(points[pidx], top_dir);
 					vArray[vidx].x = top.X;
 					vArray[vidx].y = top.Y;
@@ -1082,8 +1122,9 @@ void SegLineRendererClass::Render
 			pidx += delta;
 
 			// Exit conditions
-			if (	(top_int_idx >= num_intersections[TOP_EDGE] && residual_top_points == 1) ||
-					(bottom_int_idx >= num_intersections[BOTTOM_EDGE] && residual_bottom_points == 1)) {
+			if ((top_int_idx >= num_intersections[TOP_EDGE] && residual_top_points == 1) ||
+			    (bottom_int_idx >= num_intersections[BOTTOM_EDGE] && residual_bottom_points == 1))
+			{
 				// Debugging check - if either intersection index is before end, both of them should be
 				// and the points should be before the end.
 				assert(top_int_idx == num_intersections[TOP_EDGE]);
@@ -1099,8 +1140,8 @@ void SegLineRendererClass::Render
 
 		// If color is not white or opacity not 100%, enable gradient in shader and in renderer - otherwise disable.
 		unsigned int rgba;
-		rgba=DX8Wrapper::Convert_Color(Color,Opacity);
-		bool rgba_all=(rgba==0xFFFFFFFF);
+		rgba = DX8Wrapper::Convert_Color(Color, Opacity);
+		bool rgba_all = (rgba == 0xFFFFFFFF);
 
 		// Enable sorting if sorting has not been disabled and line is translucent and alpha testing is not enabled.
 		bool sorting = (!Is_Sorting_Disabled()) && (Shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO && Shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_DISABLE);
@@ -1108,122 +1149,128 @@ void SegLineRendererClass::Render
 		ShaderClass shader = Shader;
 		shader.Set_Cull_Mode(ShaderClass::CULL_MODE_DISABLE);
 
-		VertexMaterialClass *mat;
+		VertexMaterialClass* mat;
 
 		// if there's a default color or an rgba array modulate
-		if (!rgba_all || (rgba != 0) ) {
+		if (!rgba_all || (rgba != 0))
+		{
 			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_MODULATE);
-			mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
-		} else {
+			mat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
+		}
+		else
+		{
 			// othewise it's texture only
 			shader.Set_Primary_Gradient(ShaderClass::GRADIENT_DISABLE);
-			mat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_NODIFFUSE);
+			mat = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_NODIFFUSE);
 		}
 
 		// If Texture is non-null enable texturing in shader - otherwise disable.
-		if (Texture) {
+		if (Texture)
+		{
 			shader.Set_Texturing(ShaderClass::TEXTURING_ENABLE);
-		} else {
+		}
+		else
+		{
 			shader.Set_Texturing(ShaderClass::TEXTURING_DISABLE);
 		}
-
 
 		/*
 		** Render
 		*/
 
-		DynamicVBAccessClass Verts((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),dynamic_fvf_type,vnum);
+		DynamicVBAccessClass Verts((sorting ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8), dynamic_fvf_type, vnum);
 		// Copy in the data to the  VB
 		{
 			DynamicVBAccessClass::WriteLockClass Lock(&Verts);
 			unsigned int i;
-			unsigned char *vb=(unsigned char*)Lock.Get_Formatted_Vertex_Array();
-			const FVFInfoClass& fvfinfo=Verts.FVF_Info();
+			unsigned char* vb = (unsigned char*)Lock.Get_Formatted_Vertex_Array();
+			const FVFInfoClass& fvfinfo = Verts.FVF_Info();
 
 			const unsigned int verticesOffset = fvfinfo.Get_Location_Offset();
 			const unsigned diffuseOffset = fvfinfo.Get_Diffuse_Offset();
 			const unsigned textureOffset = fvfinfo.Get_Tex_Offset(0);
 			const unsigned vbSize = fvfinfo.Get_FVF_Size();
 
-			for (i=0; i<vnum; i++)
+			for (i = 0; i < vnum; i++)
 			{
 				// Copy Locations
-				Vector3 *vertex = reinterpret_cast<Vector3 *>(vb + verticesOffset);
+				Vector3* vertex = reinterpret_cast<Vector3*>(vb + verticesOffset);
 				vertex->X = vArray[i].x;
 				vertex->Y = vArray[i].y;
 				vertex->Z = vArray[i].z;
-				*reinterpret_cast<unsigned int *>(vb + diffuseOffset) = vArray[i].diffuse;
-				Vector2 *texture = reinterpret_cast<Vector2 *>(vb + textureOffset);
+				*reinterpret_cast<unsigned int*>(vb + diffuseOffset) = vArray[i].diffuse;
+				Vector2* texture = reinterpret_cast<Vector2*>(vb + textureOffset);
 				texture->U = vArray[i].u1;
 				texture->V = vArray[i].v1;
 				vb += vbSize;
 			}
 		}
 
-		DynamicIBAccessClass ib_access((sorting?BUFFER_TYPE_DYNAMIC_SORTING:BUFFER_TYPE_DYNAMIC_DX8),tidx*3);
+		DynamicIBAccessClass ib_access((sorting ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8), tidx * 3);
 		{
 			unsigned int i;
 			DynamicIBAccessClass::WriteLockClass lock(&ib_access);
-			unsigned short* inds=lock.Get_Index_Array();
+			unsigned short* inds = lock.Get_Index_Array();
 
-			for (i=0; i<tidx; i++)
+			for (i = 0; i < tidx; i++)
 			{
-				*inds++=v_index_array[i].I;
-				*inds++=v_index_array[i].J;
-				*inds++=v_index_array[i].K;
+				*inds++ = v_index_array[i].I;
+				*inds++ = v_index_array[i].J;
+				*inds++ = v_index_array[i].K;
 			}
 		}
 
-		DX8Wrapper::Set_Index_Buffer(ib_access,0);
+		DX8Wrapper::Set_Index_Buffer(ib_access, 0);
 		DX8Wrapper::Set_Vertex_Buffer(Verts);
 		DX8Wrapper::Set_Material(mat);
-		DX8Wrapper::Set_Texture(0,Texture);
+		DX8Wrapper::Set_Texture(0, Texture);
 		DX8Wrapper::Set_Shader(shader);
 
-		if (sorting) {
-			SortingRendererClass::Insert_Triangles(obj_sphere,0,tidx,0,vnum);
-		} else {
-			DX8Wrapper::Draw_Triangles(0,tidx,0,vnum);
+		if (sorting)
+		{
+			SortingRendererClass::Insert_Triangles(obj_sphere, 0, tidx, 0, vnum);
+		}
+		else
+		{
+			DX8Wrapper::Draw_Triangles(0, tidx, 0, vnum);
 		}
 
 		REF_PTR_RELEASE(mat);
-
 	}
 
-	DX8Wrapper::Set_Transform(D3DTS_VIEW,view);
-
+	DX8Wrapper::Set_Transform(D3DTS_VIEW, view);
 }
 
-
-void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector3 *xformed_pts,
-	const float *base_tex_v, unsigned int *p_sub_point_cnt, Vector3 *xformed_subdiv_pts,
-	float *subdiv_tex_v, Vector4 *base_diffuse, Vector4 *subdiv_diffuse)
+void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector3* xformed_pts,
+                                            const float* base_tex_v, unsigned int* p_sub_point_cnt, Vector3* xformed_subdiv_pts,
+                                            float* subdiv_tex_v, Vector4* base_diffuse, Vector4* subdiv_diffuse)
 {
 	// CAUTION: freezing the random offsets will make it more readily apparent that the offsets
 	// are in camera space rather than worldspace.
 	int freeze_random = Is_Freeze_Random();
 	Random3Class randomize;
 	const float oo_int_max = 1.0f / (float)INT_MAX;
-	Vector3SolidBoxRandomizer randomizer(Vector3(1,1,1));
-	Vector3 randvec(0,0,0);
+	Vector3SolidBoxRandomizer randomizer(Vector3(1, 1, 1));
+	Vector3 randvec(0, 0, 0);
 	unsigned int sub_pidx = 0;
 
-	struct SegLineSubdivision {
-		Vector3			StartPos;
-		Vector3			EndPos;
-		float				StartTexV;	// V texture coordinate of start point
-		float				EndTexV;		// V texture coordinate of end point
-		Vector4			StartDiffuse;
-		Vector4			EndDiffuse;
-		float				Rand;
-		unsigned int	Level;		// Subdivision level
+	struct SegLineSubdivision
+	{
+		Vector3 StartPos;
+		Vector3 EndPos;
+		float StartTexV;    // V texture coordinate of start point
+		float EndTexV;    // V texture coordinate of end point
+		Vector4 StartDiffuse;
+		Vector4 EndDiffuse;
+		float Rand;
+		unsigned int Level;    // Subdivision level
 	};
 
-	SegLineSubdivision stack[2 * MAX_SEGLINE_SUBDIV_LEVELS];	// Maximum number needed
+	SegLineSubdivision stack[2 * MAX_SEGLINE_SUBDIV_LEVELS];    // Maximum number needed
 	int tos = 0;
 
-	for (unsigned int pidx = 0; pidx < point_cnt - 1; pidx++) {
-
+	for (unsigned int pidx = 0; pidx < point_cnt - 1; pidx++)
+	{
 		// Subdivide the (pidx, pidx + 1) segment. Produce pidx and all subdivided points up to
 		// (not including) pidx + 1.
 		tos = 0;
@@ -1232,10 +1279,13 @@ void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector
 		stack[0].StartTexV = base_tex_v[pidx];
 		stack[0].EndTexV = base_tex_v[pidx + 1];
 
-		if (base_diffuse) {
+		if (base_diffuse)
+		{
 			stack[0].StartDiffuse = base_diffuse[pidx];
-			stack[0].EndDiffuse = base_diffuse[pidx+1];
-		} else {
+			stack[0].EndDiffuse = base_diffuse[pidx + 1];
+		}
+		else
+		{
 			stack[0].StartDiffuse.Set(Color.X, Color.Y, Color.Z, Opacity);
 			stack[0].EndDiffuse = stack[0].StartDiffuse;
 		}
@@ -1243,8 +1293,10 @@ void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector
 		stack[0].Rand = NoiseAmplitude;
 		stack[0].Level = 0;
 
-		for (; tos >= 0;) {
-			if (stack[tos].Level == SubdivisionLevel) {
+		for (; tos >= 0;)
+		{
+			if (stack[tos].Level == SubdivisionLevel)
+			{
 				// Generate point location and texture V coordinate
 				xformed_subdiv_pts[sub_pidx] = stack[tos].StartPos;
 				subdiv_tex_v[sub_pidx] = stack[tos].StartTexV;
@@ -1254,11 +1306,16 @@ void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector
 
 				// Pop
 				tos--;
-			} else {
+			}
+			else
+			{
 				// Recurse down: pop existing entry and push two subdivided ones.
-				if (freeze_random) {
+				if (freeze_random)
+				{
 					randvec.Set(randomize * oo_int_max, randomize * oo_int_max, randomize * oo_int_max);
-				} else {
+				}
+				else
+				{
 					randomizer.Get_Vector(randvec);
 				}
 				stack[tos + 1].StartPos = stack[tos].StartPos;
@@ -1282,9 +1339,12 @@ void SegLineRendererClass::subdivision_util(unsigned int point_cnt, const Vector
 	// Last point
 	xformed_subdiv_pts[sub_pidx] = xformed_pts[point_cnt - 1];
 	subdiv_tex_v[sub_pidx] = base_tex_v[point_cnt - 1];
-	if (base_diffuse) {
+	if (base_diffuse)
+	{
 		subdiv_diffuse[sub_pidx] = base_diffuse[point_cnt - 1];
-	} else {
+	}
+	else
+	{
 		subdiv_diffuse[sub_pidx].Set(Color.X, Color.Y, Color.Z, Opacity);
 	}
 
@@ -1300,13 +1360,13 @@ void SegLineRendererClass::Scale(float scale)
 	NoiseAmplitude *= scale;
 }
 
-VertexFormatXYZDUV1 *SegLineRendererClass::getVertexBuffer(unsigned int number)
+VertexFormatXYZDUV1* SegLineRendererClass::getVertexBuffer(unsigned int number)
 {
 	// TODO: use a stl vector instead of our own array.
 	if (number > m_vertexBufferSize)
 	{
 		unsigned int numberToAlloc = number + (number >> 1);
-		delete [] m_vertexBuffer;
+		delete[] m_vertexBuffer;
 		m_vertexBuffer = W3DNEWARRAY VertexFormatXYZDUV1[numberToAlloc];
 		m_vertexBufferSize = numberToAlloc;
 	}

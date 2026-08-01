@@ -25,7 +25,7 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "Resource.h"		// main symbols
+#include "Resource.h"    // main symbols
 #include "DebugWindowExport.h"
 /////////////////////////////////////////////////////////////////////////////
 // CDebugWindowApp
@@ -36,28 +36,26 @@ class DebugWindowDialog;
 
 class CDebugWindowApp : public CWinApp
 {
-	public:
-		CDebugWindowApp();
-		~CDebugWindowApp();
-		DebugWindowDialog* GetDialogWindow();
-		void SetDialogWindow(DebugWindowDialog* pWnd);
+public:
+	CDebugWindowApp();
+	~CDebugWindowApp();
+	DebugWindowDialog* GetDialogWindow();
+	void SetDialogWindow(DebugWindowDialog* pWnd);
 
-	protected:
-		DebugWindowDialog* m_DialogWindow;
+protected:
+	DebugWindowDialog* m_DialogWindow;
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDebugWindowApp)
 	//}}AFX_VIRTUAL
 
 	//{{AFX_MSG(CDebugWindowApp)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 

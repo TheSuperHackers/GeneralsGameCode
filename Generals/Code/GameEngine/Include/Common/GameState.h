@@ -41,14 +41,14 @@ class GameWindow;
 class WindowLayout;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-typedef void (*IterateSaveFileCallback)( AsciiString filename, void *userData );
+typedef void (*IterateSaveFileCallback)(AsciiString filename, void* userData);
 
 // ------------------------------------------------------------------------------------------------
 /** The save/load window is used for a variety of formats, using this type during the
-	* save/load menu initialization you can make that menu allow loading only, or allow
-	* both saving and loading from the same menu */
+ * save/load menu initialization you can make that menu allow loading only, or allow
+ * both saving and loading from the same menu */
 // ------------------------------------------------------------------------------------------------
-enum SaveLoadLayoutType CPP_11(: Int)
+enum SaveLoadLayoutType CPP_11( : Int)
 {
 	SLLT_INVALID = 0,
 	SLLT_SAVE_AND_LOAD,
@@ -60,9 +60,8 @@ enum SaveLoadLayoutType CPP_11(: Int)
 // ------------------------------------------------------------------------------------------------
 struct SaveDate
 {
-
 	SaveDate() { year = month = day = dayOfWeek = hour = minute = second = milliseconds = 0; }
-	Bool isNewerThan( SaveDate *other );
+	Bool isNewerThan(SaveDate* other);
 
 	UnsignedShort year;
 	UnsignedShort month;
@@ -72,54 +71,48 @@ struct SaveDate
 	UnsignedShort minute;
 	UnsignedShort second;
 	UnsignedShort milliseconds;
-
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum SaveFileType CPP_11(: Int)
+enum SaveFileType CPP_11( : Int)
 {
-	SAVE_FILE_TYPE_NORMAL,		///< a regular save game at any arbitrary point in the game
-	SAVE_FILE_TYPE_MISSION,		///< a save game in between missions (a mission save)
+	SAVE_FILE_TYPE_NORMAL,    ///< a regular save game at any arbitrary point in the game
+	SAVE_FILE_TYPE_MISSION,    ///< a save game in between missions (a mission save)
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class SaveGameInfo
 {
-
 public:
-
 	SaveGameInfo();
 	~SaveGameInfo();
 
-	AsciiString saveGameMapName;			// map name of the "scratch pad" map extracted from save file
-	AsciiString pristineMapName;			// pristine map in the map or user maps directory
-	AsciiString mapLabel;							// pretty name of this level set in the editor
-	SaveDate date;										// date of file save
-	AsciiString campaignSide;					// which campaign side we're playing
-	Int missionNumber;								// mission number in campaign
-	UnicodeString description;				// user description for save game file
-	SaveFileType saveFileType;				// type of save file we're dealing with
-	AsciiString missionMapName;				// used for mission saves
-
+	AsciiString saveGameMapName;    // map name of the "scratch pad" map extracted from save file
+	AsciiString pristineMapName;    // pristine map in the map or user maps directory
+	AsciiString mapLabel;    // pretty name of this level set in the editor
+	SaveDate date;    // date of file save
+	AsciiString campaignSide;    // which campaign side we're playing
+	Int missionNumber;    // mission number in campaign
+	UnicodeString description;    // user description for save game file
+	SaveFileType saveFileType;    // type of save file we're dealing with
+	AsciiString missionMapName;    // used for mission saves
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 struct AvailableGameInfo
 {
-
 	AsciiString filename;
 	SaveGameInfo saveGameInfo;
-	AvailableGameInfo *next;
-	AvailableGameInfo *prev;
-
+	AvailableGameInfo* next;
+	AvailableGameInfo* prev;
 };
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum SaveCode CPP_11(: Int)
+enum SaveCode CPP_11( : Int)
 {
 	SC_INVALID = -1,
 	SC_OK,
@@ -132,7 +125,8 @@ enum SaveCode CPP_11(: Int)
 	SC_ERROR,
 };
 
-enum SnapshotType CPP_11(: Int) {
+enum SnapshotType CPP_11( : Int)
+{
 	SNAPSHOT_SAVELOAD,
 	SNAPSHOT_DEEPCRC_LOGICONLY,
 	SNAPSHOT_DEEPCRC,
@@ -142,41 +136,39 @@ enum SnapshotType CPP_11(: Int) {
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class GameState : public SubsystemInterface,
-									public Snapshot
+                  public Snapshot
 {
-
 public:
-
 	GameState();
 	virtual ~GameState() override;
 
 	// subsystem interface
 	virtual void init() override;
 	virtual void reset() override;
-	virtual void update() override { }
+	virtual void update() override {}
 
 	// save game methods
-	SaveCode saveGame( AsciiString filename,
-										 UnicodeString desc,
-										 SaveFileType saveType,
-										 SnapshotType which = SNAPSHOT_SAVELOAD  );  ///< save a game
-	SaveCode missionSave();																	 ///< do a in between mission save
-	SaveCode loadGame( AvailableGameInfo gameInfo );							 ///< load a save file
-	SaveGameInfo *getSaveGameInfo() { return &m_gameInfo; }
+	SaveCode saveGame(AsciiString filename,
+	                  UnicodeString desc,
+	                  SaveFileType saveType,
+	                  SnapshotType which = SNAPSHOT_SAVELOAD);    ///< save a game
+	SaveCode missionSave();    ///< do a in between mission save
+	SaveCode loadGame(AvailableGameInfo gameInfo);    ///< load a save file
+	SaveGameInfo* getSaveGameInfo() { return &m_gameInfo; }
 
 	// snapshot interaction
-	void addPostProcessSnapshot( Snapshot *snapshot );					///< add snapshot to post process load
+	void addPostProcessSnapshot(Snapshot* snapshot);    ///< add snapshot to post process load
 
 	// manipulating files
-	Bool doesSaveGameExist( AsciiString filename );							///< does the save file exist
-	void populateSaveGameListbox( GameWindow *listbox, SaveLoadLayoutType layoutType );	///< populate listbox with available save games
-	void getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *saveGameInfo );		///< get save game info from file
+	Bool doesSaveGameExist(AsciiString filename);    ///< does the save file exist
+	void populateSaveGameListbox(GameWindow* listbox, SaveLoadLayoutType layoutType);    ///< populate listbox with available save games
+	void getSaveGameInfoFromFile(AsciiString filename, SaveGameInfo* saveGameInfo);    ///< get save game info from file
 
-	void friend_xferSaveDataForCRC( Xfer *xfer, SnapshotType which );		///< This should only be called to DeepCRC sanity checking
+	void friend_xferSaveDataForCRC(Xfer* xfer, SnapshotType which);    ///< This should only be called to DeepCRC sanity checking
 
-	Bool isInLoadGame() { return m_isInLoadGame; } // Brutal hack to allow bone pos validation while loading games
+	Bool isInLoadGame() { return m_isInLoadGame; }    // Brutal hack to allow bone pos validation while loading games
 
-	void setPristineMapName( AsciiString name ) { m_gameInfo.pristineMapName = name; }
+	void setPristineMapName(AsciiString name) { m_gameInfo.pristineMapName = name; }
 	AsciiString getPristineMapName() { return m_gameInfo.pristineMapName; }
 
 	AsciiString getSaveDirectory() const;
@@ -189,49 +181,46 @@ public:
 	AsciiString getMapLeafName(const AsciiString& in) const;
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override { }
-	virtual void xfer( Xfer *xfer ) override;
-	virtual void loadPostProcess() override { }
+	virtual void crc(Xfer* xfer) override {}
+	virtual void xfer(Xfer* xfer) override;
+	virtual void loadPostProcess() override {}
 
 private:
+	AsciiString findNextSaveFilename(UnicodeString desc);    ///< find next acceptable filename for a new save game
+	void iterateSaveFiles(IterateSaveFileCallback callback, void* userData);    ///< iterate save files on disk
 
-	AsciiString findNextSaveFilename( UnicodeString desc );			///< find next acceptable filename for a new save game
-	void iterateSaveFiles( IterateSaveFileCallback callback, void *userData );	///< iterate save files on disk
+	void xferSaveData(Xfer* xfer, SnapshotType which);    ///< save/load the file data
 
-	void xferSaveData( Xfer *xfer, SnapshotType which );				///< save/load the file data
+	void gameStatePostProcessLoad();    ///< post process entry point after a game load
 
-	void gameStatePostProcessLoad();											///< post process entry point after a game load
-
-	void clearAvailableGames();		///< clear any available games resources we got in our list
+	void clearAvailableGames();    ///< clear any available games resources we got in our list
 
 	struct SnapshotBlock
 	{
-		Snapshot *snapshot;								///< the snapshot object that handles this block
-		AsciiString blockName;						///< the block name
+		Snapshot* snapshot;    ///< the snapshot object that handles this block
+		AsciiString blockName;    ///< the block name
 	};
 	typedef std::list< SnapshotBlock > SnapshotBlockList;
 	typedef SnapshotBlockList::iterator SnapshotBlockListIterator;
-	void addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, SnapshotType which );
-	SnapshotBlock *findBlockInfoByToken( AsciiString token, SnapshotType which );
+	void addSnapshotBlock(AsciiString blockName, Snapshot* snapshot, SnapshotType which);
+	SnapshotBlock* findBlockInfoByToken(AsciiString token, SnapshotType which);
 
-	SnapshotBlockList m_snapshotBlockList[SNAPSHOT_MAX];	///< list of snapshot blocks of save file data
-	SaveGameInfo m_gameInfo;						///< save game info struct
+	SnapshotBlockList m_snapshotBlockList[SNAPSHOT_MAX];    ///< list of snapshot blocks of save file data
+	SaveGameInfo m_gameInfo;    ///< save game info struct
 
-	typedef std::list< Snapshot * > SnapshotList;
+	typedef std::list< Snapshot* > SnapshotList;
 	typedef SnapshotList::iterator SnapshotListIterator;
 	typedef SnapshotList::reverse_iterator SnapshotListReverseIterator;
 	SnapshotList m_snapshotPostProcessList;
 
-	AvailableGameInfo *m_availableGames;		///< list of available games we can save over or load from
+	AvailableGameInfo* m_availableGames;    ///< list of available games we can save over or load from
 
-	Bool m_isInLoadGame; // Brutal hack to allow bone pos validation while loading games
+	Bool m_isInLoadGame;    // Brutal hack to allow bone pos validation while loading games
 };
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
-extern GameState *TheGameState;
-
+extern GameState* TheGameState;
 
 UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal);
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal);

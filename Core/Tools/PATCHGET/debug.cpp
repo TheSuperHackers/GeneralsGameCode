@@ -30,28 +30,32 @@ namespace patchget
 
 char* TheCurrentIgnoreCrashPtr;
 
-#define LARGE_BUFFER	8192
-static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
+#define LARGE_BUFFER 8192
+static char theBuffer[LARGE_BUFFER];    // make it big to avoid weird overflow bugs in debug mode
 
-static int doCrashBox(const char *buffer, bool logResult)
+static int doCrashBox(const char* buffer, bool logResult)
 {
 	int result;
 
-	result = ::MessageBox(nullptr, buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_APPLMODAL|MB_ICONWARNING);
+	result = ::MessageBox(nullptr, buffer, "Assertion Failure", MB_ABORTRETRYIGNORE | MB_APPLMODAL | MB_ICONWARNING);
 
-	switch(result)
+	switch (result)
 	{
 		case IDABORT:
 #ifdef DEBUG_LOGGING
 			if (logResult)
+			{
 				DebugLog("[Abort]");
+			}
 #endif
 			_exit(1);
 			break;
 		case IDRETRY:
 #ifdef DEBUG_LOGGING
 			if (logResult)
+			{
 				DebugLog("[Retry]");
+			}
 #endif
 			::DebugBreak();
 			break;
@@ -59,7 +63,9 @@ static int doCrashBox(const char *buffer, bool logResult)
 #ifdef DEBUG_LOGGING
 			// do nothing, just keep going
 			if (logResult)
+			{
 				DebugLog("[Ignore]");
+			}
 #endif
 			break;
 	}
@@ -68,39 +74,41 @@ static int doCrashBox(const char *buffer, bool logResult)
 
 #if defined(DEBUG) || defined(DEBUG_LOGGING)
 
-void DebugLog(const char *fmt, ...)
+void DebugLog(const char* fmt, ...)
 {
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(theBuffer, LARGE_BUFFER, fmt, va );
-	theBuffer[LARGE_BUFFER-1] = 0;
-	va_end( va );
+	va_start(va, fmt);
+	vsnprintf(theBuffer, LARGE_BUFFER, fmt, va);
+	theBuffer[LARGE_BUFFER - 1] = 0;
+	va_end(va);
 
 	OutputDebugString(theBuffer);
 	OutputDebugString("\n");
-	printf( "%s\n", theBuffer );
+	printf("%s\n", theBuffer);
 }
 
-#endif // defined(DEBUG) || defined(DEBUG_LOGGING)
+#endif    // defined(DEBUG) || defined(DEBUG_LOGGING)
 
 #ifdef DEBUG_CRASHING
 
-void DebugCrash(const char *format, ...)
+void DebugCrash(const char* format, ...)
 {
 	theBuffer[0] = 0;
 	strcat(theBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
-  va_start(arg, format);
-  vsprintf(theBuffer + strlen(theBuffer), format, arg);
-  va_end(arg);
+	va_start(arg, format);
+	vsprintf(theBuffer + strlen(theBuffer), format, arg);
+	va_end(arg);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
-		::MessageBox(nullptr, "String too long for debug buffers", "", MB_OK|MB_APPLMODAL);
+	{
+		::MessageBox(nullptr, "String too long for debug buffers", "", MB_OK | MB_APPLMODAL);
+	}
 
 	OutputDebugString(theBuffer);
 	OutputDebugString("\n");
-	printf( "%s\n", theBuffer );
+	printf("%s\n", theBuffer);
 
 	strcat(theBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
 
@@ -109,12 +117,14 @@ void DebugCrash(const char *format, ...)
 	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != nullptr)
 	{
 		int yn;
-		yn = ::MessageBox(nullptr, "Ignore this crash from now on?", "", MB_YESNO|MB_APPLMODAL);
+		yn = ::MessageBox(nullptr, "Ignore this crash from now on?", "", MB_YESNO | MB_APPLMODAL);
 		if (yn == IDYES)
+		{
 			*TheCurrentIgnoreCrashPtr = 1;
+		}
 	}
 }
 
 #endif
 
-} // namespace patchget
+}    // namespace patchget

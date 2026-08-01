@@ -62,13 +62,14 @@ class MatrixMapperClass : public TextureMapperClass
 {
 	W3DMPO_CODE(MatrixMapperClass)
 public:
-
-	enum {
-		INVERT_DEPTH_GRADIENT	= 0x00000001,
+	enum
+	{
+		INVERT_DEPTH_GRADIENT = 0x00000001,
 	};
 
-	enum MappingType {
-		ORTHO_PROJECTION			= 0,
+	enum MappingType
+	{
+		ORTHO_PROJECTION = 0,
 		PERSPECTIVE_PROJECTION,
 		DEPTH_GRADIENT,
 		NORMAL_GRADIENT
@@ -79,36 +80,39 @@ public:
 	/*
 	** Interface
 	*/
-	void						Set_Flag(uint32 flag,bool onoff);
-	bool						Get_Flag(uint32 flag) const;
+	void Set_Flag(uint32 flag, bool onoff);
+	bool Get_Flag(uint32 flag) const;
 
-	void						Set_Type(MappingType type);
-	MappingType				Get_Type();
+	void Set_Type(MappingType type);
+	MappingType Get_Type();
 
-	void						Set_Texture_Transform(const Matrix3D & view_to_texture,float texsize);
-	void						Set_Texture_Transform(const Matrix4x4 & view_to_texture,float texsize);
-	const Matrix4x4 &		Get_Texture_Transform() const;
+	void Set_Texture_Transform(const Matrix3D& view_to_texture, float texsize);
+	void Set_Texture_Transform(const Matrix4x4& view_to_texture, float texsize);
+	const Matrix4x4& Get_Texture_Transform() const;
 
-	void						Set_Gradient_U_Coord(float coord) { GradientUCoord = coord; }
-	float						Get_Gradient_U_Coord() { return GradientUCoord; }
+	void Set_Gradient_U_Coord(float coord) { GradientUCoord = coord; }
+	float Get_Gradient_U_Coord() { return GradientUCoord; }
 
-	void						Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq);
+	void Compute_Texture_Coordinate(const Vector3& point, Vector3* set_stq);
 
-	virtual TextureMapperClass*	Clone() const override { 	WWASSERT(0);	return nullptr; }
+	virtual TextureMapperClass* Clone() const override
+	{
+		WWASSERT(0);
+		return nullptr;
+	}
 
-	virtual void			Apply(int uv_array_index) override;
-	virtual void			Calculate_Texture_Matrix(Matrix4x4 &tex_matrix) override;
+	virtual void Apply(int uv_array_index) override;
+	virtual void Calculate_Texture_Matrix(Matrix4x4& tex_matrix) override;
 
 protected:
+	void Update_View_To_Pixel_Transform(float texsize);
 
-	void						Update_View_To_Pixel_Transform(float texsize);
-
-	uint32					Flags;
-	MappingType				Type;
-	Matrix4x4				ViewToTexture;
-	Matrix4x4					ViewToPixel;
-	Vector3					ViewSpaceProjectionNormal;
-	float						GradientUCoord;
+	uint32 Flags;
+	MappingType Type;
+	Matrix4x4 ViewToTexture;
+	Matrix4x4 ViewToPixel;
+	Vector3 ViewSpaceProjectionNormal;
+	float GradientUCoord;
 };
 
 /*
@@ -123,26 +127,27 @@ protected:
 class CompositeMatrixMapperClass : public MatrixMapperClass
 {
 public:
-
-	CompositeMatrixMapperClass(TextureMapperClass *internal_mapper, unsigned int stage);
-	CompositeMatrixMapperClass(const CompositeMatrixMapperClass & src);
+	CompositeMatrixMapperClass(TextureMapperClass* internal_mapper, unsigned int stage);
+	CompositeMatrixMapperClass(const CompositeMatrixMapperClass& src);
 	virtual ~CompositeMatrixMapperClass() override;
 
-	virtual TextureMapperClass *Clone() const override { return NEW_REF( CompositeMatrixMapperClass, (*this)); }
+	virtual TextureMapperClass* Clone() const override { return NEW_REF(CompositeMatrixMapperClass, (*this)); }
 
 	virtual void Apply(int uv_array_index) override;
-	virtual void Calculate_Texture_Matrix(Matrix4x4 &tex_matrix) override;
+	virtual void Calculate_Texture_Matrix(Matrix4x4& tex_matrix) override;
 
 protected:
-
-	TextureMapperClass *InternalMapper;
+	TextureMapperClass* InternalMapper;
 };
 
-inline void MatrixMapperClass::Set_Flag(uint32 flag,bool onoff)
+inline void MatrixMapperClass::Set_Flag(uint32 flag, bool onoff)
 {
-	if (onoff) {
+	if (onoff)
+	{
 		Flags |= flag;
-	} else {
+	}
+	else
+	{
 		Flags &= ~flag;
 	}
 }
@@ -162,7 +167,7 @@ inline MatrixMapperClass::MappingType MatrixMapperClass::Get_Type()
 	return Type;
 }
 
-inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform() const
+inline const Matrix4x4& MatrixMapperClass::Get_Texture_Transform() const
 {
 	return ViewToTexture;
 }

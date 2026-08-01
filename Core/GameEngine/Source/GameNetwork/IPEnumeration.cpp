@@ -22,7 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/networkutil.h"
@@ -42,7 +42,7 @@ IPEnumeration::~IPEnumeration()
 		m_isWinsockInitialized = false;
 	}
 
-	EnumeratedIP *ip = m_IPlist;
+	EnumeratedIP* ip = m_IPlist;
 	while (ip)
 	{
 		ip = ip->getNext();
@@ -51,10 +51,12 @@ IPEnumeration::~IPEnumeration()
 	}
 }
 
-EnumeratedIP * IPEnumeration::getAddresses()
+EnumeratedIP* IPEnumeration::getAddresses()
 {
 	if (m_IPlist)
+	{
 		return m_IPlist;
+	}
 
 	if (!m_isWinsockInitialized)
 	{
@@ -62,11 +64,13 @@ EnumeratedIP * IPEnumeration::getAddresses()
 		WSADATA wsadata;
 
 		int err = WSAStartup(verReq, &wsadata);
-		if (err != 0) {
+		if (err != 0)
+		{
 			return nullptr;
 		}
 
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
+		{
 			WSACleanup();
 			return nullptr;
 		}
@@ -102,30 +106,30 @@ EnumeratedIP * IPEnumeration::getAddresses()
 	{
 		const UnsignedInt id = rts::ClientInstance::getInstanceId();
 		addNewIP(
-			127,
-			(UnsignedByte)(id >> 16),
-			(UnsignedByte)(id >> 8),
-			(UnsignedByte)(id));
+		  127,
+		  (UnsignedByte)(id >> 16),
+		  (UnsignedByte)(id >> 8),
+		  (UnsignedByte)(id));
 	}
 
 	// construct a list of addresses
 	int numAddresses = 0;
-	char *entry;
-	while ( (entry = hostEnt->h_addr_list[numAddresses++]) != nullptr )
+	char* entry;
+	while ((entry = hostEnt->h_addr_list[numAddresses++]) != nullptr)
 	{
 		addNewIP(
-			(UnsignedByte)entry[0],
-			(UnsignedByte)entry[1],
-			(UnsignedByte)entry[2],
-			(UnsignedByte)entry[3]);
+		  (UnsignedByte)entry[0],
+		  (UnsignedByte)entry[1],
+		  (UnsignedByte)entry[2],
+		  (UnsignedByte)entry[3]);
 	}
 
 	return m_IPlist;
 }
 
-void IPEnumeration::addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d )
+void IPEnumeration::addNewIP(UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d)
 {
-	EnumeratedIP *newIP = newInstance(EnumeratedIP);
+	EnumeratedIP* newIP = newInstance(EnumeratedIP);
 
 	AsciiString str;
 	str.format("%d.%d.%d.%d", (int)a, (int)b, (int)c, (int)d);
@@ -152,7 +156,7 @@ void IPEnumeration::addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, Un
 		}
 		else
 		{
-			EnumeratedIP *p = m_IPlist;
+			EnumeratedIP* p = m_IPlist;
 			while (p->getNext() && p->getNext()->getIP() < newIP->getIP())
 			{
 				p = p->getNext();
@@ -171,11 +175,13 @@ AsciiString IPEnumeration::getMachineName()
 		WSADATA wsadata;
 
 		int err = WSAStartup(verReq, &wsadata);
-		if (err != 0) {
+		if (err != 0)
+		{
 			return "";
 		}
 
-		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2)) {
+		if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
+		{
 			WSACleanup();
 			return "";
 		}
@@ -192,5 +198,3 @@ AsciiString IPEnumeration::getMachineName()
 
 	return AsciiString(hostname);
 }
-
-

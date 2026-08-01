@@ -28,9 +28,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
-#define DEFINE_VETERANCY_NAMES				// for TheVeterancyNames[]
+#define DEFINE_VETERANCY_NAMES    // for TheVeterancyNames[]
 #include "Common/Player.h"
 #include "Common/Xfer.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -49,21 +49,21 @@ VeterancyGainCreateModuleData::VeterancyGainCreateModuleData()
 //-------------------------------------------------------------------------------------------------
 void VeterancyGainCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  CreateModuleData::buildFieldParse(p);
+	CreateModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "StartingLevel",		INI::parseIndexList,	TheVeterancyNames,	offsetof( VeterancyGainCreateModuleData, m_startingLevel ) },
-		{ "ScienceRequired",	INI::parseScience,		nullptr,								offsetof( VeterancyGainCreateModuleData, m_scienceRequired ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "StartingLevel", INI::parseIndexList, TheVeterancyNames, offsetof(VeterancyGainCreateModuleData, m_startingLevel) },
+		{ "ScienceRequired", INI::parseScience, nullptr, offsetof(VeterancyGainCreateModuleData, m_scienceRequired) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-VeterancyGainCreate::VeterancyGainCreate( Thing *thing, const ModuleData* moduleData ) : CreateModule( thing, moduleData )
+VeterancyGainCreate::VeterancyGainCreate(Thing* thing, const ModuleData* moduleData)
+  : CreateModule(thing, moduleData)
 {
 }
 
@@ -71,7 +71,6 @@ VeterancyGainCreate::VeterancyGainCreate( Thing *thing, const ModuleData* module
 //-------------------------------------------------------------------------------------------------
 VeterancyGainCreate::~VeterancyGainCreate()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -79,52 +78,46 @@ VeterancyGainCreate::~VeterancyGainCreate()
 //-------------------------------------------------------------------------------------------------
 void VeterancyGainCreate::onCreate()
 {
-
 	// When produced normally, this Object will ask the Player if the correct Science is known for it
 	// to set its level to the given level
 
-	const VeterancyGainCreateModuleData *md = getVeterancyGainCreateModuleData();
-	Player *myPlayer = getObject()->getControllingPlayer();
-	if( myPlayer && (md->m_scienceRequired == SCIENCE_INVALID ||
-									 myPlayer->hasScience( md->m_scienceRequired )) )
+	const VeterancyGainCreateModuleData* md = getVeterancyGainCreateModuleData();
+	Player* myPlayer = getObject()->getControllingPlayer();
+	if (myPlayer && (md->m_scienceRequired == SCIENCE_INVALID ||
+	                 myPlayer->hasScience(md->m_scienceRequired)))
 	{
 		ExperienceTracker* myExp = getObject()->getExperienceTracker();
-		if( myExp  &&  myExp->isTrainable() )
+		if (myExp && myExp->isTrainable())
 		{
 			// srj sez: use "setMin" here so that we never lose levels
-			myExp->setMinVeterancyLevel( md->m_startingLevel, false );// sVL can override isTrainable, but this module should not.
+			myExp->setMinVeterancyLevel(md->m_startingLevel, false);    // sVL can override isTrainable, but this module should not.
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void VeterancyGainCreate::crc( Xfer *xfer )
+void VeterancyGainCreate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	CreateModule::crc( xfer );
-
+	CreateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void VeterancyGainCreate::xfer( Xfer *xfer )
+void VeterancyGainCreate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	CreateModule::xfer( xfer );
-
+	CreateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -132,8 +125,6 @@ void VeterancyGainCreate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void VeterancyGainCreate::loadPostProcess()
 {
-
 	// extend base class
 	CreateModule::loadPostProcess();
-
 }

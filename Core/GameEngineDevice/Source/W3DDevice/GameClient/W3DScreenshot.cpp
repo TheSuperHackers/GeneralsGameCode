@@ -28,7 +28,7 @@
 struct ScreenshotThreadData
 {
 	ScreenshotThreadData()
-		: pixelData(nullptr)
+	  : pixelData(nullptr)
 	{
 	}
 
@@ -37,7 +37,7 @@ struct ScreenshotThreadData
 		delete[] pixelData;
 	}
 
-	unsigned char* pixelData; // is owner
+	unsigned char* pixelData;    // is owner
 	unsigned int width;
 	unsigned int height;
 	unsigned int pitch;
@@ -87,9 +87,9 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 			{
 				const unsigned int argb = srcLine[x];
 				const unsigned int index = 3 * (x + y * width);
-				image[index + 0] = (unsigned char)(argb >> 16); // r
-				image[index + 1] = (unsigned char)(argb >> 8);  // g
-				image[index + 2] = (unsigned char)(argb >> 0);  // b
+				image[index + 0] = (unsigned char)(argb >> 16);    // r
+				image[index + 1] = (unsigned char)(argb >> 8);    // g
+				image[index + 2] = (unsigned char)(argb >> 0);    // b
 			}
 		}
 	}
@@ -103,9 +103,9 @@ static DWORD WINAPI screenshotThreadFunc(LPVOID param)
 			{
 				const unsigned short rgb = srcLine[x];
 				const unsigned int index = 3 * (x + y * width);
-				image[index + 0] = (unsigned char)((rgb & 0xF800) >> 8); // r
-				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3); // g
-				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3); // b
+				image[index + 0] = (unsigned char)((rgb & 0xF800) >> 8);    // r
+				image[index + 1] = (unsigned char)((rgb & 0x07E0) >> 3);    // g
+				image[index + 2] = (unsigned char)((rgb & 0x001F) << 3);    // b
 			}
 		}
 	}
@@ -164,7 +164,7 @@ void W3D_TakeCompressedScreenshot(ScreenshotFormat format, Int jpegQuality)
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	sprintf(leafname, "sshot_%04d%02d%02d_%02d%02d%02d_%03d.%s",
-		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
+	        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, extension);
 
 	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
 	// Originally this code took the front buffer and tried to lock it. This does not work when the

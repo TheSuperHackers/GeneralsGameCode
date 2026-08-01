@@ -43,18 +43,21 @@
 
 class MoreParmsDialog : public CDialog
 {
-	public:
-		enum { IDD = IDD_PSEd_EditMoreParms };
-		MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = nullptr);
-		virtual ~MoreParmsDialog();
+public:
+	enum
+	{
+		IDD = IDD_PSEd_EditMoreParms
+	};
+	MoreParmsDialog(UINT nIDTemplate = MoreParmsDialog::IDD, CWnd* pParentWnd = nullptr);
+	virtual ~MoreParmsDialog();
 
-		void InitPanel();
+	void InitPanel();
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI );
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	void performUpdate(IN Bool toUI);
 
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };

@@ -26,33 +26,34 @@
 
 class CameraSettingsDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CameraSettingsDialogClass(CWnd* pParent = nullptr);   // standard constructor
+	CameraSettingsDialogClass(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CameraSettingsDialogClass)
-	enum { IDD = IDD_CAMERA_SETTINGS };
-	CSpinButtonCtrl	m_LensSpin;
-	CSpinButtonCtrl	m_FarClipSpin;
-	CSpinButtonCtrl	m_VFOVSpin;
-	CSpinButtonCtrl	m_NearClipSpin;
-	CSpinButtonCtrl	m_HFOVSpin;
+	enum
+	{
+		IDD = IDD_CAMERA_SETTINGS
+	};
+	CSpinButtonCtrl m_LensSpin;
+	CSpinButtonCtrl m_FarClipSpin;
+	CSpinButtonCtrl m_VFOVSpin;
+	CSpinButtonCtrl m_NearClipSpin;
+	CSpinButtonCtrl m_HFOVSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CameraSettingsDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) override;
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CameraSettingsDialogClass)
 	virtual BOOL OnInitDialog() override;
@@ -64,12 +65,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-
 	///////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////
-	void			Update_Camera_Lens ();
-	void			Update_FOV ();
+	void Update_Camera_Lens();
+	void Update_FOV();
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -44,15 +44,13 @@
 class MeshDeformPanelClass;
 class MeshDeformModData;
 
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //	Prototypes
 //
 ///////////////////////////////////////////////////////////////////////////
-ClassDesc *Get_Mesh_Deform_Desc ();
+ClassDesc* Get_Mesh_Deform_Desc();
 extern Class_ID _MeshDeformClassID;
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -61,136 +59,137 @@ extern Class_ID _MeshDeformClassID;
 ///////////////////////////////////////////////////////////////////////////
 class MeshDeformClass : public OSModifier
 {
-	public:
+public:
+	//////////////////////////////////////////////////////////////////////
+	//	Public constructors/destructors
+	//////////////////////////////////////////////////////////////////////
+	MeshDeformClass()
+	  : m_MaxInterface(nullptr)
+	  , m_ModeMove(nullptr)
+	  , m_ModeSelect(nullptr)
+	  , m_ModeRotate(nullptr)
+	  , m_ModeUScale(nullptr)
+	  , m_ModeNUScale(nullptr)
+	  , m_ModeSquash(nullptr)
+	  , m_DeformState(1.0F)
+	  , m_pPanel(nullptr)
+	  , m_CurrentSet(0)
+	  , m_bSetDirty(true)
+	  , m_VertColorChanging(false)
+	  , m_MaxSets(0)
+	  , m_hRollupWnd(nullptr)
+	{
+		SetName("WW Mesh Deformer");
+		Set_Max_Deform_Sets(1);
+	}
 
-		//////////////////////////////////////////////////////////////////////
-		//	Public constructors/destructors
-		//////////////////////////////////////////////////////////////////////
-		MeshDeformClass ()
-			:	m_MaxInterface (nullptr),
-				m_ModeMove (nullptr),
-				m_ModeSelect (nullptr),
-				m_ModeRotate (nullptr),
-				m_ModeUScale (nullptr),
-				m_ModeNUScale (nullptr),
-				m_ModeSquash (nullptr),
-				m_DeformState (1.0F),
-				m_pPanel (nullptr),
-				m_CurrentSet (0),
-				m_bSetDirty (true),
-				m_VertColorChanging (false),
-				m_MaxSets (0),
-				m_hRollupWnd (nullptr)			{ SetName ("WW Mesh Deformer"); Set_Max_Deform_Sets (1); }
-
-		virtual ~MeshDeformClass ()	{ }
-#if defined W3D_MAX4		//defined as in the project (.dsp)
-		NumSubObjTypes();
-		GetSubObjType();
+	virtual ~MeshDeformClass() {}
+#if defined W3D_MAX4    // defined as in the project (.dsp)
+	NumSubObjTypes();
+	GetSubObjType();
 #endif
-		//////////////////////////////////////////////////////////////////////
-		//	Public methods
-		//////////////////////////////////////////////////////////////////////
-		void							Set_Deform_State (float state = 1.0F);
-		float							Get_Deform_State () const					{ return m_DeformState; }
-		void							Set_Vertex_Color (const Point3 &color, bool button_up);
-		void							Get_Vertex_Color (Point3 &color);
-		void							Set_Max_Deform_Sets (int max);
-		int							Get_Max_Deform_Sets () const				{ return m_MaxSets; }
-		void							Set_Current_Set (int index, bool update_selection);
-		int							Get_Current_Set () const					{ return m_CurrentSet; }
-		void							Update_UI (MeshDeformModData *mod_data);
-		void							Auto_Apply (bool auto_apply = true);
+	//////////////////////////////////////////////////////////////////////
+	//	Public methods
+	//////////////////////////////////////////////////////////////////////
+	void Set_Deform_State(float state = 1.0F);
+	float Get_Deform_State() const { return m_DeformState; }
+	void Set_Vertex_Color(const Point3& color, bool button_up);
+	void Get_Vertex_Color(Point3& color);
+	void Set_Max_Deform_Sets(int max);
+	int Get_Max_Deform_Sets() const { return m_MaxSets; }
+	void Set_Current_Set(int index, bool update_selection);
+	int Get_Current_Set() const { return m_CurrentSet; }
+	void Update_UI(MeshDeformModData* mod_data);
+	void Auto_Apply(bool auto_apply = true);
 
-		//////////////////////////////////////////////////////////////////////
-		//	Base class overrides
-		//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//	Base class overrides
+	//////////////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////////////
-		// From Animatable
-		//////////////////////////////////////////////////////////////////////
-		void							DeleteThis () { delete this; }
-		void							GetClassName (TSTR& s) { s = TSTR(_T("WWDeform")); }
-		TCHAR *						GetObjectName () { return _T("WWDamage"); }
-		SClass_ID					SuperClassID () { return OSM_CLASS_ID; }
-		Class_ID						ClassID () { return _MeshDeformClassID; }
-		//RefTargetHandle			Clone(RemapDir& remap = NoRemap());
-		void							BeginEditParams (IObjParam  *ip, ULONG flags,Animatable *prev);
-		void							EndEditParams (IObjParam *ip, ULONG flags,Animatable *next);
+	//////////////////////////////////////////////////////////////////////
+	// From Animatable
+	//////////////////////////////////////////////////////////////////////
+	void DeleteThis() { delete this; }
+	void GetClassName(TSTR& s) { s = TSTR(_T("WWDeform")); }
+	TCHAR* GetObjectName() { return _T("WWDamage"); }
+	SClass_ID SuperClassID() { return OSM_CLASS_ID; }
+	Class_ID ClassID() { return _MeshDeformClassID; }
+	// RefTargetHandle			Clone(RemapDir& remap = NoRemap());
+	void BeginEditParams(IObjParam* ip, ULONG flags, Animatable* prev);
+	void EndEditParams(IObjParam* ip, ULONG flags, Animatable* next);
 
-		//////////////////////////////////////////////////////////////////////
-		// From Modifier
-		//////////////////////////////////////////////////////////////////////
-		ChannelMask					ChannelsUsed ();
-		ChannelMask					ChannelsChanged ();
-		void							ModifyObject (TimeValue t, ModContext &mod_context, ObjectState* os, INode *node);
-		BOOL							DependOnTopology (ModContext &mod_context) { return TRUE; }
-		int							NeedUseSubselButton () { return TRUE; }
-		Class_ID						InputType ();
+	//////////////////////////////////////////////////////////////////////
+	// From Modifier
+	//////////////////////////////////////////////////////////////////////
+	ChannelMask ChannelsUsed();
+	ChannelMask ChannelsChanged();
+	void ModifyObject(TimeValue t, ModContext& mod_context, ObjectState* os, INode* node);
+	BOOL DependOnTopology(ModContext& mod_context) { return TRUE; }
+	int NeedUseSubselButton() { return TRUE; }
+	Class_ID InputType();
 
-		//////////////////////////////////////////////////////////////////////
-		// From ReferenceMaker
-		//////////////////////////////////////////////////////////////////////
-		RefResult					NotifyRefChanged (Interval time, RefTargetHandle htarget, PartID &part_id, RefMessage mesage);
-		IOResult						SaveLocalData (ISave *save_obj, LocalModData *mod_context);
-		IOResult						LoadLocalData (ILoad *load_obj, LocalModData **mod_context);
+	//////////////////////////////////////////////////////////////////////
+	// From ReferenceMaker
+	//////////////////////////////////////////////////////////////////////
+	RefResult NotifyRefChanged(Interval time, RefTargetHandle htarget, PartID& part_id, RefMessage mesage);
+	IOResult SaveLocalData(ISave* save_obj, LocalModData* mod_context);
+	IOResult LoadLocalData(ILoad* load_obj, LocalModData** mod_context);
 
-		//////////////////////////////////////////////////////////////////////
-		// From BaseObject
-		//////////////////////////////////////////////////////////////////////
-		CreateMouseCallBack *	GetCreateMouseCallBack ();
-		void							ActivateSubobjSel (int level, XFormModes &modes);
-		int							HitTest (TimeValue time_value, INode * node, int type, int crossing, int flags, IPoint2 *point, ViewExp *viewport, ModContext *mod_context);
-		void							SelectSubComponent (HitRecord *hit_record, BOOL selected, BOOL all, BOOL invert);
+	//////////////////////////////////////////////////////////////////////
+	// From BaseObject
+	//////////////////////////////////////////////////////////////////////
+	CreateMouseCallBack* GetCreateMouseCallBack();
+	void ActivateSubobjSel(int level, XFormModes& modes);
+	int HitTest(TimeValue time_value, INode* node, int type, int crossing, int flags, IPoint2* point, ViewExp* viewport, ModContext* mod_context);
+	void SelectSubComponent(HitRecord* hit_record, BOOL selected, BOOL all, BOOL invert);
 
-		void							GetSubObjectCenters (SubObjAxisCallback *cb, TimeValue t, INode *node, ModContext *mc);
-		void							GetSubObjectTMs (SubObjAxisCallback *cb, TimeValue t, INode *node, ModContext *mc);
-		int							SubObjectIndex (HitRecord *hitRec) { return hitRec->hitInfo; }
-		void							ClearSelection (int selLevel);
+	void GetSubObjectCenters(SubObjAxisCallback* cb, TimeValue t, INode* node, ModContext* mc);
+	void GetSubObjectTMs(SubObjAxisCallback* cb, TimeValue t, INode* node, ModContext* mc);
+	int SubObjectIndex(HitRecord* hitRec) { return hitRec->hitInfo; }
+	void ClearSelection(int selLevel);
 
-		// Transformation management
-		void							Move (TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Point3 &point, BOOL local_origin);
-		void							Rotate (TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Quat &rotation, BOOL local_origin);
-		void							Scale (TimeValue time_val, Matrix3 &parent_tm, Matrix3 &tm_axis, Point3 &value, BOOL local_origin);
+	// Transformation management
+	void Move(TimeValue time_val, Matrix3& parent_tm, Matrix3& tm_axis, Point3& point, BOOL local_origin);
+	void Rotate(TimeValue time_val, Matrix3& parent_tm, Matrix3& tm_axis, Quat& rotation, BOOL local_origin);
+	void Scale(TimeValue time_val, Matrix3& parent_tm, Matrix3& tm_axis, Point3& value, BOOL local_origin);
 
-		void							TransformStart (TimeValue time_val);
-		void							TransformFinish (TimeValue time_val);
-		void							TransformCancel (TimeValue time_val);
-#if defined W3D_MAX4		//defined as in the project (.dsp)
-		ISubObjType *				GetSubObjType(int i) ;
+	void TransformStart(TimeValue time_val);
+	void TransformFinish(TimeValue time_val);
+	void TransformCancel(TimeValue time_val);
+#if defined W3D_MAX4    // defined as in the project (.dsp)
+	ISubObjType* GetSubObjType(int i);
 #endif
 
-	protected:
+protected:
+	//////////////////////////////////////////////////////////////////////
+	//	Protected methods
+	//////////////////////////////////////////////////////////////////////
+	void Update_Current_Set();
+	void Update_Set_Count();
 
-		//////////////////////////////////////////////////////////////////////
-		//	Protected methods
-		//////////////////////////////////////////////////////////////////////
-		void							Update_Current_Set ();
-		void							Update_Set_Count ();
+private:
+	//////////////////////////////////////////////////////////////////////
+	//	Private member data
+	//////////////////////////////////////////////////////////////////////
+	IObjParam* m_MaxInterface;
+	HWND m_hRollupWnd;
+	MeshDeformPanelClass* m_pPanel;
+	float m_DeformState;
+	bool m_VertColorChanging;
 
-	private:
+	// Mode handlers
+	SelectModBoxCMode* m_ModeSelect;
+	MoveModBoxCMode* m_ModeMove;
+	RotateModBoxCMode* m_ModeRotate;
+	UScaleModBoxCMode* m_ModeUScale;
+	NUScaleModBoxCMode* m_ModeNUScale;
+	SquashModBoxCMode* m_ModeSquash;
 
-		//////////////////////////////////////////////////////////////////////
-		//	Private member data
-		//////////////////////////////////////////////////////////////////////
-		IObjParam *					m_MaxInterface;
-		HWND							m_hRollupWnd;
-		MeshDeformPanelClass *	m_pPanel;
-		float							m_DeformState;
-		bool							m_VertColorChanging;
+	// Set management
+	bool m_bSetDirty;
+	int m_CurrentSet;
+	int m_MaxSets;
 
-		// Mode handlers
-		SelectModBoxCMode *		m_ModeSelect;
-		MoveModBoxCMode *			m_ModeMove;
-		RotateModBoxCMode *		m_ModeRotate;
-		UScaleModBoxCMode *		m_ModeUScale;
-		NUScaleModBoxCMode *		m_ModeNUScale;
-		SquashModBoxCMode *		m_ModeSquash;
-
-		// Set management
-		bool							m_bSetDirty;
-		int							m_CurrentSet;
-		int							m_MaxSets;
-
-		// Information
-		CStr							m_OperationName;
+	// Information
+	CStr m_OperationName;
 };

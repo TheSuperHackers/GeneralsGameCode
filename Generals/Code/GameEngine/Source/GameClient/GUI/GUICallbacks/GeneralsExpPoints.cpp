@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -62,67 +62,57 @@
 //-----------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsInput( GameWindow *window, UnsignedInt msg,
-																			WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GeneralsExpPointsInput(GameWindow* window, UnsignedInt msg,
+                                            WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
-			//Get rid of any building placement mode!
-			if( TheInGameUI )
+			// Get rid of any building placement mode!
+			if (TheInGameUI)
 			{
-				TheInGameUI->placeBuildAvailable( nullptr, nullptr );
+				TheInGameUI->placeBuildAvailable(nullptr, nullptr);
 			}
 			break;
 
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
-//			UnsignedByte state = mData2;
+			//			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
 					TheControlBar->hidePurchaseScience();
 					return MSG_HANDLED;
-					//return MSG_IGNORED;
+					// return MSG_IGNORED;
 				}
-
 			}
 
 			return MSG_HANDLED;
-
 		}
-
 	}
 
 	return MSG_HANDLED;
-
 }
-
-
 
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType GeneralsExpPointsSystem(GameWindow* window, UnsignedInt msg,
+                                             WindowMsgData mData1, WindowMsgData mData2)
 {
-
-	switch( msg )
+	switch (msg)
 	{
 		//---------------------------------------------------------------------------------------------
 		case GGM_FOCUS_CHANGE:
 		{
 			//			Bool focus = (Bool) mData1;
-			//if (focus)
-				//TheWindowManager->winSetGrabWindow( chatTextEntry );
+			// if (focus)
+			// TheWindowManager->winSetGrabWindow( chatTextEntry );
 			break;
 		}
 
@@ -130,8 +120,10 @@ WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt ms
 		case GWM_INPUT_FOCUS:
 		{
 			// if we're given the opportunity to take the keyboard focus we must say we don't want it
-			if( mData1 == TRUE )
-				*(Bool *)mData2 = FALSE;
+			if (mData1 == TRUE)
+			{
+				*(Bool*)mData2 = FALSE;
+			}
 
 			return MSG_HANDLED;
 		}
@@ -139,30 +131,28 @@ WindowMsgHandledType GeneralsExpPointsSystem( GameWindow *window, UnsignedInt ms
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
-			GameWindow *control = (GameWindow *)mData1;
+			GameWindow* control = (GameWindow*)mData1;
 			NameKeyType controlID = (NameKeyType)control->winGetWindowId();
-			static NameKeyType buttonExitID = NAMEKEY( "GeneralsExpPoints.wnd:ButtonExit" );
+			static NameKeyType buttonExitID = NAMEKEY("GeneralsExpPoints.wnd:ButtonExit");
 			if (controlID == buttonExitID)
 			{
 				TheControlBar->hidePurchaseScience();
 			}
 			else
-				TheControlBar->processContextSensitiveButtonClick( control, (GadgetGameMessage)msg );
+			{
+				TheControlBar->processContextSensitiveButtonClick(control, (GadgetGameMessage)msg);
+			}
 			break;
-
 		}
 
 		//---------------------------------------------------------------------------------------------
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;
-
 }
 
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-

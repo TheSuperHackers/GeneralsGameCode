@@ -39,7 +39,6 @@
 #include "curve.h"
 #include "WWLib/Vector.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	VehicleCurveClass
@@ -52,28 +51,28 @@
 class VehicleCurveClass : public Curve3DClass
 {
 public:
-
 	///////////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	///////////////////////////////////////////////////////////////////////////
-	VehicleCurveClass ()
-		:	m_IsDirty (true),
-			m_Radius (0),
-			m_LastTime (0),
-			m_Sharpness (0),
-			m_SharpnessPos (0, 0, 0),
-			Curve3DClass () { }
+	VehicleCurveClass()
+	  : m_IsDirty(true)
+	  , m_Radius(0)
+	  , m_LastTime(0)
+	  , m_Sharpness(0)
+	  , m_SharpnessPos(0, 0, 0)
+	  , Curve3DClass()
+	{}
 
-	VehicleCurveClass (float radius)
-		:	m_IsDirty (true),
-			m_Radius (radius),
-			m_LastTime (0),
-			m_Sharpness (0),
-			m_SharpnessPos (0, 0, 0),
-			Curve3DClass () { }
+	VehicleCurveClass(float radius)
+	  : m_IsDirty(true)
+	  , m_Radius(radius)
+	  , m_LastTime(0)
+	  , m_Sharpness(0)
+	  , m_SharpnessPos(0, 0, 0)
+	  , Curve3DClass()
+	{}
 
-	virtual ~VehicleCurveClass () override {}
-
+	virtual ~VehicleCurveClass() override {}
 
 	///////////////////////////////////////////////////////////////////////////
 	//	Public methods
@@ -82,116 +81,119 @@ public:
 	//
 	//	Initialization
 	//
-	void			Initialize_Arc (float radius);
+	void Initialize_Arc(float radius);
 
 	//
 	//	From Curve3DClass
 	//
-	virtual void			Evaluate (float time, Vector3 *set_val) override;
-	virtual void			Set_Key (int i,const Vector3 & point) override;
-	virtual int			Add_Key (const Vector3 & point,float t) override;
-	virtual void			Remove_Key (int i) override;
-	virtual void			Clear_Keys () override;
+	virtual void Evaluate(float time, Vector3* set_val) override;
+	virtual void Set_Key(int i, const Vector3& point) override;
+	virtual int Add_Key(const Vector3& point, float t) override;
+	virtual void Remove_Key(int i) override;
+	virtual void Clear_Keys() override;
 
 	//
 	//	Vehicle curve specific
 	//
-	float			Get_Current_Sharpness (Vector3 *position) const	{ *position = m_SharpnessPos; return m_Sharpness; }
-	float			Get_Last_Eval_Time () const						{ return m_LastTime; }
+	float Get_Current_Sharpness(Vector3* position) const
+	{
+		*position = m_SharpnessPos;
+		return m_Sharpness;
+	}
+	float Get_Last_Eval_Time() const { return m_LastTime; }
 
 	//
 	// Save-load support
 	//
-	virtual const PersistFactoryClass &	Get_Factory() const override;
-	virtual bool								Save(ChunkSaveClass &csave) override;
-	virtual bool								Load(ChunkLoadClass &cload) override;
+	virtual const PersistFactoryClass& Get_Factory() const override;
+	virtual bool Save(ChunkSaveClass& csave) override;
+	virtual bool Load(ChunkLoadClass& cload) override;
 
 protected:
-
 	///////////////////////////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////////////////////////
-	void			Update_Arc_List ();
-	void			Load_Variables (ChunkLoadClass &cload);
-
+	void Update_Arc_List();
+	void Load_Variables(ChunkLoadClass& cload);
 
 	///////////////////////////////////////////////////////////////////////////
 	//	Protected data types
 	///////////////////////////////////////////////////////////////////////////
 	typedef struct _ArcInfoStruct
 	{
-		Vector3	center;
-		Vector3	point_in;
-		Vector3	point_out;
-		float		point_angle;
-		float		radius;
-		float		angle_in_delta;
-		float		angle_out_delta;
+		Vector3 center;
+		Vector3 point_in;
+		Vector3 point_out;
+		float point_angle;
+		float radius;
+		float angle_in_delta;
+		float angle_out_delta;
 
-		_ArcInfoStruct ()
-			:	center (0, 0, 0),
-				point_in (0, 0, 0),
-				point_out (0, 0, 0),
-				point_angle (0),
-				radius (0),
-				angle_in_delta (0),
-				angle_out_delta (0)	{ }
+		_ArcInfoStruct()
+		  : center(0, 0, 0)
+		  , point_in(0, 0, 0)
+		  , point_out(0, 0, 0)
+		  , point_angle(0)
+		  , radius(0)
+		  , angle_in_delta(0)
+		  , angle_out_delta(0)
+		{}
 
-		bool operator== (const _ArcInfoStruct &src)	{ return false; }
-		bool operator!= (const _ArcInfoStruct &src)	{ return true; }
+		bool operator==(const _ArcInfoStruct& src) { return false; }
+		bool operator!=(const _ArcInfoStruct& src) { return true; }
 
 	} ArcInfoStruct;
 
-	typedef DynamicVectorClass<ArcInfoStruct>	ARC_LIST;
+	typedef DynamicVectorClass<ArcInfoStruct> ARC_LIST;
 
 	///////////////////////////////////////////////////////////////////////////
 	//	Protected member data
 	///////////////////////////////////////////////////////////////////////////
-	bool			m_IsDirty;
-	float			m_Radius;
-	ARC_LIST		m_ArcList;
+	bool m_IsDirty;
+	float m_Radius;
+	ARC_LIST m_ArcList;
 
-	float			m_LastTime;
-	float			m_Sharpness;
-	Vector3		m_SharpnessPos;
+	float m_LastTime;
+	float m_Sharpness;
+	Vector3 m_SharpnessPos;
 };
 
 ///////////////////////////////////////////////////////////////////////////
 //	Set_Key
 ///////////////////////////////////////////////////////////////////////////
 inline void
-VehicleCurveClass::Set_Key (int i,const Vector3 & point)
+VehicleCurveClass::Set_Key(int i, const Vector3& point)
 {
 	m_IsDirty = true;
-	Curve3DClass::Set_Key (i, point);
+	Curve3DClass::Set_Key(i, point);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //	Add_Key
 ///////////////////////////////////////////////////////////////////////////
 inline int
-VehicleCurveClass::Add_Key (const Vector3 & point,float t)
+VehicleCurveClass::Add_Key(const Vector3& point, float t)
 {
 	m_IsDirty = true;
-	return Curve3DClass::Add_Key (point, t);
+	return Curve3DClass::Add_Key(point, t);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //	Remove_Key
 ///////////////////////////////////////////////////////////////////////////
 inline void
-VehicleCurveClass::Remove_Key (int i)
+VehicleCurveClass::Remove_Key(int i)
 {
 	m_IsDirty = true;
-	Curve3DClass::Remove_Key (i);
+	Curve3DClass::Remove_Key(i);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //	Clear_Keys
 ///////////////////////////////////////////////////////////////////////////
 inline void
-VehicleCurveClass::Clear_Keys ()
+VehicleCurveClass::Clear_Keys()
 {
 	m_IsDirty = true;
-	Curve3DClass::Clear_Keys ();
+	Curve3DClass::Clear_Keys();
 }

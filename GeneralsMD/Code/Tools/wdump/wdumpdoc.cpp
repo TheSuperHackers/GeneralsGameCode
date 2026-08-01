@@ -23,10 +23,9 @@
 #include "wdump.h"
 #include "wdumpdoc.h"
 
-
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -36,9 +35,9 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CWdumpDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CWdumpDoc, CDocument)
-	//{{AFX_MSG_MAP(CWdumpDoc)
-	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWdumpDoc)
+ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -59,15 +58,15 @@ BOOL CWdumpDoc::OnNewDocument()
 	m_ChunkItem = nullptr;
 
 	if (!CDocument::OnNewDocument())
+	{
 		return FALSE;
+	}
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
 
 	return TRUE;
 }
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpDoc serialization
@@ -97,7 +96,7 @@ void CWdumpDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //RTS_DEBUG
+#endif    // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpDoc commands
@@ -106,28 +105,30 @@ void CWdumpDoc::OnFileOpen()
 {
 	static char szFilter[] = "W3D Files (*.w3d)|*.w3d|WLT Files (*.wlt)|*.wlt|WHT Files (*.wht)|*.wht|WHA Files (*.wha)|*.wha|WTM Files (*.wtm)|*.wtm|All Files (*.*)|*.*||";
 
-	CFileDialog f(	true,
-						nullptr,
-						nullptr,
-						OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-						szFilter);
+	CFileDialog f(true,
+	              nullptr,
+	              nullptr,
+	              OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+	              szFilter);
 
-	if(f.DoModal() != IDOK) return;
+	if (f.DoModal() != IDOK)
+	{
+		return;
+	}
 
 	// Add this filename to recent file list (MRU).
 	// NOTE: This call is not made by the framework.
 
-	//Moumine 1/2/2002    1:10:02 PM -- Project W3DShellExt needs to leave this out
-#if ! defined _W3DSHELLEXT
-	theApp.AddToRecentFileList (f.m_ofn.lpstrFile);
+	// Moumine 1/2/2002    1:10:02 PM -- Project W3DShellExt needs to leave this out
+#if !defined _W3DSHELLEXT
+	theApp.AddToRecentFileList(f.m_ofn.lpstrFile);
 #endif
 	m_ChunkItem = nullptr;
 	UpdateAllViews(nullptr);
 	Read_File(f.m_ofn.lpstrFile);
 }
 
-
-void CWdumpDoc::Read_File(const char *filename)
+void CWdumpDoc::Read_File(const char* filename)
 {
 	m_ChunkData.Load(filename);
 	m_ChunkItem = nullptr;

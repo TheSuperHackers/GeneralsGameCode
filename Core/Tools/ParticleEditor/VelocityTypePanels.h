@@ -46,89 +46,109 @@
 // VelocityPanelOrtho //////////////////////////////////////////////////////////
 class VelocityPanelOrtho : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_VelocityPanelOrtho};
-		virtual DWORD GetIDD() override { return IDD; }
-		VelocityPanelOrtho(UINT nIDTemplate = VelocityPanelOrtho::IDD, CWnd* pParentWnd = nullptr);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_VelocityPanelOrtho
+	};
+	virtual DWORD GetIDD() override { return IDD; }
+	VelocityPanelOrtho(UINT nIDTemplate = VelocityPanelOrtho::IDD, CWnd* pParentWnd = nullptr);
 
-		virtual void InitPanel() override;
+	virtual void InitPanel() override;
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		virtual void performUpdate( IN Bool toUI ) override;
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	virtual void performUpdate(IN Bool toUI) override;
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 // VelocityPanelSphere ////////////////////////////////////////////////////////
 class VelocityPanelSphere : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_VelocityPanelSphere};
-		virtual DWORD GetIDD() override { return IDD; }
-		VelocityPanelSphere(UINT nIDTemplate = VelocityPanelSphere::IDD, CWnd* pParentWnd = nullptr);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_VelocityPanelSphere
+	};
+	virtual DWORD GetIDD() override { return IDD; }
+	VelocityPanelSphere(UINT nIDTemplate = VelocityPanelSphere::IDD, CWnd* pParentWnd = nullptr);
 
-		virtual void InitPanel() override;
+	virtual void InitPanel() override;
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		virtual void performUpdate( IN Bool toUI ) override;
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	virtual void performUpdate(IN Bool toUI) override;
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 // VelocityPanelHemisphere //////////////////////////////////////////////////////////
 class VelocityPanelHemisphere : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_VelocityPanelHemisphere};
-		virtual DWORD GetIDD() override { return IDD; }
-		VelocityPanelHemisphere(UINT nIDTemplate = VelocityPanelHemisphere::IDD, CWnd* pParentWnd = nullptr);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_VelocityPanelHemisphere
+	};
+	virtual DWORD GetIDD() override { return IDD; }
+	VelocityPanelHemisphere(UINT nIDTemplate = VelocityPanelHemisphere::IDD, CWnd* pParentWnd = nullptr);
 
-		virtual void InitPanel() override;
+	virtual void InitPanel() override;
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		void performUpdate( IN Bool toUI ) override;
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	void performUpdate(IN Bool toUI) override;
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 // VelocityPanelCylinder //////////////////////////////////////////////////////
 class VelocityPanelCylinder : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_VelocityPanelCylinder};
-		virtual DWORD GetIDD() override { return IDD; }
-		VelocityPanelCylinder(UINT nIDTemplate = VelocityPanelCylinder::IDD, CWnd* pParentWnd = nullptr);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_VelocityPanelCylinder
+	};
+	virtual DWORD GetIDD() override { return IDD; }
+	VelocityPanelCylinder(UINT nIDTemplate = VelocityPanelCylinder::IDD, CWnd* pParentWnd = nullptr);
 
-		virtual void InitPanel() override;
+	virtual void InitPanel() override;
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		virtual void performUpdate( IN Bool toUI ) override;
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	virtual void performUpdate(IN Bool toUI) override;
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };
 
 // VelocityPanelOutward ///////////////////////////////////////////////////////////
 class VelocityPanelOutward : public ISwapablePanel
 {
-	public:
-		enum {IDD = IDD_PSEd_VelocityPanelOutward};
-		virtual DWORD GetIDD() override { return IDD; }
-		VelocityPanelOutward(UINT nIDTemplate = VelocityPanelOutward::IDD, CWnd* pParentWnd = nullptr);
+public:
+	enum
+	{
+		IDD = IDD_PSEd_VelocityPanelOutward
+	};
+	virtual DWORD GetIDD() override { return IDD; }
+	VelocityPanelOutward(UINT nIDTemplate = VelocityPanelOutward::IDD, CWnd* pParentWnd = nullptr);
 
-		virtual void InitPanel() override;
+	virtual void InitPanel() override;
 
-		// if true, updates the UI from the Particle System.
-		// if false, updates the Particle System from the UI
-		virtual void performUpdate( IN Bool toUI ) override;
-	protected:
-		afx_msg void OnParticleSystemEdit();
-		DECLARE_MESSAGE_MAP()
+	// if true, updates the UI from the Particle System.
+	// if false, updates the Particle System from the UI
+	virtual void performUpdate(IN Bool toUI) override;
+
+protected:
+	afx_msg void OnParticleSystemEdit();
+	DECLARE_MESSAGE_MAP()
 };

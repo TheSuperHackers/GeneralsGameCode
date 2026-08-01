@@ -34,12 +34,12 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"trim.h"
+#include "always.h"
+#include "trim.h"
 
 #ifdef _UNIX
-#include	<wctype.h>
-#endif // _UNIX
+	#include <wctype.h>
+#endif    // _UNIX
 
 /***********************************************************************************************
  * strtrim -- Trim leading and trailing white space off of string.                             *
@@ -58,24 +58,31 @@
  *=============================================================================================*/
 char* strtrim(char* buffer)
 {
-	if (buffer) {
+	if (buffer)
+	{
 		/* Strip leading white space from the string. */
 		char* source = buffer;
 
-		while ((*source != 0) && ((unsigned char)*source <= 32)) {
+		while ((*source != 0) && ((unsigned char)*source <= 32))
+		{
 			++source;
 		}
 
-		if (source != buffer) {
+		if (source != buffer)
+		{
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of string is copied to itself
-			memmove(buffer, source, strlen(source) +1);
+			memmove(buffer, source, strlen(source) + 1);
 		}
 
 		/* Clip trailing white space from the string. */
-		for (int index = strlen(buffer) - 1; index >= 0; --index) {
-			if ((*source != 0) && ((unsigned char)buffer[index] <= 32)) {
+		for (int index = strlen(buffer) - 1; index >= 0; --index)
+		{
+			if ((*source != 0) && ((unsigned char)buffer[index] <= 32))
+			{
 				buffer[index] = '\0';
-			} else {
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -84,27 +91,33 @@ char* strtrim(char* buffer)
 	return buffer;
 }
 
-
 wchar_t* wcstrim(wchar_t* buffer)
 {
-	if (buffer) {
+	if (buffer)
+	{
 		/* Strip leading white space from the string. */
 		wchar_t* source = buffer;
 
-		while ((*source != 0) && ((unsigned int)*source <= 32)) {
+		while ((*source != 0) && ((unsigned int)*source <= 32))
+		{
 			++source;
 		}
 
-		if (source != buffer) {
+		if (source != buffer)
+		{
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace wcscpy with safer memmove as memory regions can overlap when part of string is copied to itself
 			memmove(buffer, source, (wcslen(source) + 1) * sizeof(wchar_t));
 		}
 
 		/* Clip trailing white space from the string. */
-		for (int index = wcslen(buffer) - 1; index >= 0; --index) {
-			if ((*source != 0) && ((unsigned int)buffer[index] <= 32)) {
+		for (int index = wcslen(buffer) - 1; index >= 0; --index)
+		{
+			if ((*source != 0) && ((unsigned int)buffer[index] <= 32))
+			{
 				buffer[index] = L'\0';
-			} else {
+			}
+			else
+			{
 				break;
 			}
 		}

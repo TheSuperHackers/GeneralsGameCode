@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/ActionManager.h"
 #include "Common/Player.h"
@@ -52,13 +52,12 @@
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/ScriptEngine.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CommandButtonHuntUpdateModuleData::CommandButtonHuntUpdateModuleData()
 {
-	m_scanFrames				= LOGICFRAMES_PER_SECOND;
-	m_scanRange					= 9999.0f;
+	m_scanFrames = LOGICFRAMES_PER_SECOND;
+	m_scanRange = 9999.0f;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -66,19 +65,18 @@ CommandButtonHuntUpdateModuleData::CommandButtonHuntUpdateModuleData()
 {
 	ModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "ScanRate",							INI::parseDurationUnsignedInt,	nullptr, offsetof( CommandButtonHuntUpdateModuleData, m_scanFrames ) },
-		{ "ScanRange",						INI::parseReal,									nullptr, offsetof( CommandButtonHuntUpdateModuleData, m_scanRange ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "ScanRate", INI::parseDurationUnsignedInt, nullptr, offsetof(CommandButtonHuntUpdateModuleData, m_scanFrames) },
+		{ "ScanRange", INI::parseReal, nullptr, offsetof(CommandButtonHuntUpdateModuleData, m_scanRange) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
-CommandButtonHuntUpdate::CommandButtonHuntUpdate( Thing *thing, const ModuleData* moduleData ) :
-UpdateModule( thing, moduleData ),
-m_commandButton(nullptr)
+CommandButtonHuntUpdate::CommandButtonHuntUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
+  , m_commandButton(nullptr)
 {
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
 	m_commandButtonName = AsciiString::TheEmptyString;
@@ -88,35 +86,32 @@ m_commandButton(nullptr)
 //-------------------------------------------------------------------------------------------------
 CommandButtonHuntUpdate::~CommandButtonHuntUpdate()
 {
-
 }
-
 
 //-------------------------------------------------------------------------------------------------
 void CommandButtonHuntUpdate::onObjectCreated()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 void CommandButtonHuntUpdate::setCommandButton(const AsciiString& buttonName)
 {
-	Object *obj = getObject();
+	Object* obj = getObject();
 	m_commandButtonName = buttonName;
 	m_commandButton = nullptr;
-	const CommandSet *commandSet = TheControlBar->findCommandSet( obj->getCommandSetString() );
-	if( commandSet )
+	const CommandSet* commandSet = TheControlBar->findCommandSet(obj->getCommandSetString());
+	if (commandSet)
 	{
-		for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+		for (Int i = 0; i < MAX_COMMANDS_PER_SET; i++)
 		{
-			//Get the command button.
+			// Get the command button.
 			m_commandButton = commandSet->getCommandButton(i);
 
-			if( m_commandButton )
+			if (m_commandButton)
 			{
-				if( !m_commandButton->getName().isEmpty() )
+				if (!m_commandButton->getName().isEmpty())
 				{
-					if( m_commandButton->getName() == m_commandButtonName )
+					if (m_commandButton->getName() == m_commandButtonName)
 					{
 						break;
 					}
@@ -125,16 +120,20 @@ void CommandButtonHuntUpdate::setCommandButton(const AsciiString& buttonName)
 			m_commandButton = nullptr;
 		}
 	}
-	if (m_commandButton==nullptr) {
+	if (m_commandButton == nullptr)
+	{
 		return;
 	}
-	AIUpdateInterface *ai = obj->getAI();
-	if (ai==nullptr ) return;
+	AIUpdateInterface* ai = obj->getAI();
+	if (ai == nullptr)
+	{
+		return;
+	}
 
 	// Stop whatever we're doing.
 	ai->aiIdle(CMD_FROM_AI);
 	update();
-	setWakeFrame(obj, UPDATE_SLEEP_NONE); // wake up.
+	setWakeFrame(obj, UPDATE_SLEEP_NONE);    // wake up.
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -142,13 +141,16 @@ void CommandButtonHuntUpdate::setCommandButton(const AsciiString& buttonName)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime CommandButtonHuntUpdate::update()
 {
+	Object* obj = getObject();
 
-	Object *obj = getObject();
+	AIUpdateInterface* ai = obj->getAI();
+	if (ai == nullptr || m_commandButton == nullptr)
+	{
+		return UPDATE_SLEEP_FOREVER;
+	}
 
-	AIUpdateInterface *ai = obj->getAI();
-	if (ai==nullptr || m_commandButton==nullptr) return UPDATE_SLEEP_FOREVER;
-
-	if (ai->getLastCommandSource() != CMD_FROM_AI) {
+	if (ai->getLastCommandSource() != CMD_FROM_AI)
+	{
 		// If a script or the player (in this case should only be script, but either way)
 		// we quit hunting.
 		m_commandButton = nullptr;
@@ -156,7 +158,7 @@ UpdateSleepTime CommandButtonHuntUpdate::update()
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-	switch( m_commandButton->getCommandType() )
+	switch (m_commandButton->getCommandType())
 	{
 		case GUI_COMMAND_SPECIAL_POWER:
 			return huntSpecialPower(ai);
@@ -172,133 +174,159 @@ UpdateSleepTime CommandButtonHuntUpdate::update()
 //-------------------------------------------------------------------------------------------------
 /** Do a special power weapon. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime CommandButtonHuntUpdate::huntWeapon(AIUpdateInterface *ai)
+UpdateSleepTime CommandButtonHuntUpdate::huntWeapon(AIUpdateInterface* ai)
 {
-	Object *obj = getObject();
+	Object* obj = getObject();
 
-	if(  ai->isIdle() )
+	if (ai->isIdle())
 	{
 		ai->aiHunt(CMD_FROM_AI);
 	}
 	WeaponSlotType weaponSlot = m_commandButton->getWeaponSlot();
 	// lock it just till the weapon is empty or the attack is "done"
-	obj->setWeaponLock( weaponSlot, LOCKED_TEMPORARILY );
+	obj->setWeaponLock(weaponSlot, LOCKED_TEMPORARILY);
 	return UPDATE_SLEEP_NONE;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** Do a special power hunt. */
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime CommandButtonHuntUpdate::huntSpecialPower(AIUpdateInterface *ai)
+UpdateSleepTime CommandButtonHuntUpdate::huntSpecialPower(AIUpdateInterface* ai)
 {
-	Object *obj = getObject();
-	const CommandButtonHuntUpdateModuleData *data = getCommandButtonHuntUpdateModuleData();
-	if(  !ai->isIdle() )
+	Object* obj = getObject();
+	const CommandButtonHuntUpdateModuleData* data = getCommandButtonHuntUpdateModuleData();
+	if (!ai->isIdle())
 	{
 		return UPDATE_SLEEP(data->m_scanFrames);
 	}
-	const SpecialPowerTemplate *spTemplate = m_commandButton->getSpecialPowerTemplate();
-	if( spTemplate )
+	const SpecialPowerTemplate* spTemplate = m_commandButton->getSpecialPowerTemplate();
+	if (spTemplate)
 	{
-		SpecialAbilityUpdate* spUpdate = obj->findSpecialAbilityUpdate( spTemplate->getSpecialPowerType() );
-		if (spUpdate == nullptr) return UPDATE_SLEEP_FOREVER;
-		if (spUpdate->isActive()) {
+		SpecialAbilityUpdate* spUpdate = obj->findSpecialAbilityUpdate(spTemplate->getSpecialPowerType());
+		if (spUpdate == nullptr)
+		{
+			return UPDATE_SLEEP_FOREVER;
+		}
+		if (spUpdate->isActive())
+		{
 			return UPDATE_SLEEP(data->m_scanFrames);
 		}
 	}
-	//Periodic scanning (expensive)
-	Object *victim = scanClosestTarget();
-	if(victim)
+	// Periodic scanning (expensive)
+	Object* victim = scanClosestTarget();
+	if (victim)
 	{
-		obj->doCommandButtonAtObject( m_commandButton, victim, CMD_FROM_AI );
+		obj->doCommandButtonAtObject(m_commandButton, victim, CMD_FROM_AI);
 	}
 	return UPDATE_SLEEP(data->m_scanFrames);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 Object* CommandButtonHuntUpdate::scanClosestTarget()
 {
-	const CommandButtonHuntUpdateModuleData *data = getCommandButtonHuntUpdateModuleData();
-	Object *me = getObject();
+	const CommandButtonHuntUpdateModuleData* data = getCommandButtonHuntUpdateModuleData();
+	Object* me = getObject();
 
 	PartitionFilterAlive aliveFilter;
 
 	// only consider enemies.
-	PartitionFilterRelationship	filterTeam(me, PartitionFilterRelationship::ALLOW_ENEMIES);
+	PartitionFilterRelationship filterTeam(me, PartitionFilterRelationship::ALLOW_ENEMIES);
 	PartitionFilterSameMapStatus filterMapStatus(getObject());
 
-	PartitionFilter *filters[4];
+	PartitionFilter* filters[4];
 	filters[0] = &aliveFilter;
 	filters[1] = &filterMapStatus;
 	filters[2] = &filterTeam;
 	filters[3] = nullptr;
 
- 	const SpecialPowerTemplate *spTemplate = m_commandButton->getSpecialPowerTemplate();
-	if( !spTemplate ) return nullptr;  // isn't going to happen.
-	Bool isBlackLotusVehicleHack = 	(spTemplate->getSpecialPowerType() == SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK);
-	Bool isCaptureBuilding = 	(spTemplate->getSpecialPowerType() == SPECIAL_INFANTRY_CAPTURE_BUILDING);
-	if (isCaptureBuilding) {
-		filters[2] = nullptr;  // It's ok (in fact necessary for oil derricks) to capture special buildings.
+	const SpecialPowerTemplate* spTemplate = m_commandButton->getSpecialPowerTemplate();
+	if (!spTemplate)
+	{
+		return nullptr;    // isn't going to happen.
+	}
+	Bool isBlackLotusVehicleHack = (spTemplate->getSpecialPowerType() == SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK);
+	Bool isCaptureBuilding = (spTemplate->getSpecialPowerType() == SPECIAL_INFANTRY_CAPTURE_BUILDING);
+	if (isCaptureBuilding)
+	{
+		filters[2] = nullptr;    // It's ok (in fact necessary for oil derricks) to capture special buildings.
 	}
 
 	Bool isPlaceExplosive = false;
-	if (spTemplate->getSpecialPowerType() == SPECIAL_TIMED_CHARGES) isPlaceExplosive = true;
-	if (spTemplate->getSpecialPowerType() == SPECIAL_TANKHUNTER_TNT_ATTACK) isPlaceExplosive = true;
+	if (spTemplate->getSpecialPowerType() == SPECIAL_TIMED_CHARGES)
+	{
+		isPlaceExplosive = true;
+	}
+	if (spTemplate->getSpecialPowerType() == SPECIAL_TANKHUNTER_TNT_ATTACK)
+	{
+		isPlaceExplosive = true;
+	}
 
-
-	ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( me->getPosition(), data->m_scanRange,
-		FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR );
+	ObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(me->getPosition(), data->m_scanRange,
+	                                                                  FROM_CENTER_2D, filters, ITER_SORTED_NEAR_TO_FAR);
 	MemoryPoolObjectHolder hold(iter);
 
-	Object *bestTarget = nullptr;
-	Int			effectivePriority=0;
-	Int			actualPriority=0;
-	const AttackPriorityInfo *info=nullptr;
-	if (me->getAI()) {
+	Object* bestTarget = nullptr;
+	Int effectivePriority = 0;
+	Int actualPriority = 0;
+	const AttackPriorityInfo* info = nullptr;
+	if (me->getAI())
+	{
 		info = me->getAI()->getAttackInfo();
 	}
 
-	SpecialPowerModuleInterface *mod = me->getSpecialPowerModule( spTemplate );
-	if( mod )
+	SpecialPowerModuleInterface* mod = me->getSpecialPowerModule(spTemplate);
+	if (mod)
 	{
-		for( Object *other = iter->first(); other; other = iter->next() )
+		for (Object* other = iter->first(); other; other = iter->next())
 		{
-			if (other->isDisabled() && isBlackLotusVehicleHack) {
+			if (other->isDisabled() && isBlackLotusVehicleHack)
+			{
 				// The hack disables the vehicle, so we don't want to do it again.
 				continue;
 			}
-			if (isCaptureBuilding) {
-				if (me->getControllingPlayer() == other->getControllingPlayer()) {
-					continue; // no need to capture our own buildings.
+			if (isCaptureBuilding)
+			{
+				if (me->getControllingPlayer() == other->getControllingPlayer())
+				{
+					continue;    // no need to capture our own buildings.
 				}
-				if (me->getRelationship(other) == ALLIES) {
-					continue; // It's not polite to capture allies buildings.
+				if (me->getRelationship(other) == ALLIES)
+				{
+					continue;    // It's not polite to capture allies buildings.
 				}
 			}
-			if( TheActionManager->canDoSpecialPowerAtObject( me, other, CMD_FROM_AI, spTemplate, 0 ) )
+			if (TheActionManager->canDoSpecialPowerAtObject(me, other, CMD_FROM_AI, spTemplate, 0))
 			{
-				if (isPlaceExplosive) {
+				if (isPlaceExplosive)
+				{
 					Real range = spTemplate->getViewObjectRange();
 					// Don't target things near explosives... It's just not a good idea.
-					PartitionFilterSamePlayer filterPlayer( me->getControllingPlayer() );	// Look for our own mines.
+					PartitionFilterSamePlayer filterPlayer(me->getControllingPlayer());    // Look for our own mines.
 					PartitionFilterAcceptByKindOf filterKind(MAKE_KINDOF_MASK(KINDOF_MINE), KINDOFMASK_NONE);
-					PartitionFilter *filters[] = { &filterKind, &filterPlayer, nullptr };
-					Object *mine = ThePartitionManager->getClosestObject( other, range, FROM_BOUNDINGSPHERE_2D, filters );// could be null. this is ok.
-					if (mine) {
+					PartitionFilter* filters[] = { &filterKind, &filterPlayer, nullptr };
+					Object* mine = ThePartitionManager->getClosestObject(other, range, FROM_BOUNDINGSPHERE_2D, filters);    // could be null. this is ok.
+					if (mine)
+					{
 						continue;
 					}
 				}
 				Real distSqr = ThePartitionManager->getDistanceSquared(me, other, FROM_BOUNDINGSPHERE_2D);
 				Real dist = sqrt(distSqr);
 				Int curPriority = data->m_scanRange - dist;
-				if (info) curPriority = info->getPriority(other->getTemplate());
+				if (info)
+				{
+					curPriority = info->getPriority(other->getTemplate());
+				}
 				if (curPriority == 0)
-					continue; // don't attack 0 priority targets.
-				Int modifier = dist/TheAI->getAiData()->m_attackPriorityDistanceModifier;
-				Int modPriority = curPriority-modifier;
+				{
+					continue;    // don't attack 0 priority targets.
+				}
+				Int modifier = dist / TheAI->getAiData()->m_attackPriorityDistanceModifier;
+				Int modPriority = curPriority - modifier;
 				if (modPriority < 1)
+				{
 					modPriority = 1;
+				}
 				if (modPriority > effectivePriority)
 				{
 					effectivePriority = modPriority;
@@ -311,7 +339,6 @@ Object* CommandButtonHuntUpdate::scanClosestTarget()
 					actualPriority = curPriority;
 					bestTarget = other;
 				}
-
 			}
 		}
 	}
@@ -322,70 +349,58 @@ Object* CommandButtonHuntUpdate::scanClosestTarget()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CommandButtonHuntUpdate::crc( Xfer *xfer )
+void CommandButtonHuntUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CommandButtonHuntUpdate::xfer( Xfer *xfer )
+void CommandButtonHuntUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// command button name
-	xfer->xferAsciiString( &m_commandButtonName );
+	xfer->xferAsciiString(&m_commandButtonName);
 
 	// command button pointer (on loading only)
-	if( xfer->getXferMode() == XFER_LOAD )
+	if (xfer->getXferMode() == XFER_LOAD)
 	{
-
 		// initialize to no command button
 		m_commandButton = nullptr;
 
 		// find command button pointer if name is present
-		if( m_commandButtonName.isEmpty() == FALSE )
+		if (m_commandButtonName.isEmpty() == FALSE)
 		{
-			Object *us = getObject();
-			const CommandSet *commandSet = TheControlBar->findCommandSet( us->getCommandSetString() );
+			Object* us = getObject();
+			const CommandSet* commandSet = TheControlBar->findCommandSet(us->getCommandSetString());
 
-			if( commandSet )
+			if (commandSet)
 			{
-				const CommandButton *button;
+				const CommandButton* button;
 
-				for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+				for (Int i = 0; i < MAX_COMMANDS_PER_SET; i++)
 				{
-
 					button = commandSet->getCommandButton(i);
-					if( button && button->getName() == m_commandButtonName )
+					if (button && button->getName() == m_commandButtonName)
 					{
-
 						m_commandButton = button;
-						break;  // exit for, i
-
+						break;    // exit for, i
 					}
-
 				}
-
 			}
-
 		}
-
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -393,8 +408,6 @@ void CommandButtonHuntUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void CommandButtonHuntUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

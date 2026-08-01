@@ -24,7 +24,7 @@
 
 #pragma once
 
-enum CustomScenePassModes CPP_11(: Int)
+enum CustomScenePassModes CPP_11( : Int)
 {
 	SCENE_PASS_DEFAULT,
 	SCENE_PASS_ALPHA_MASK

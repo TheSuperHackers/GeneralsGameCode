@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/GameState.h"
 #include "Common/Team.h"
 #include "Common/ThingFactory.h"
@@ -51,95 +51,80 @@
 #include "GameLogic/ScriptActions.h"
 #include "GameLogic/ScriptEngine.h"
 
-
 ///@todo - do delayed script evaluations for team scripts. jba.
 
 // GLOBALS ////////////////////////////////////////////////////////////////////
-TeamFactory *TheTeamFactory = nullptr;
+TeamFactory* TheTeamFactory = nullptr;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 TeamRelationMap::TeamRelationMap()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 TeamRelationMap::~TeamRelationMap()
 {
-
 	// maek sure the data is clear
 	m_map.clear();
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void TeamRelationMap::crc( Xfer *xfer )
+void TeamRelationMap::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info;
-	* 1: Initial version */
+ * Version Info;
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void TeamRelationMap::xfer( Xfer *xfer )
+void TeamRelationMap::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// team relation count
 	TeamRelationMapType::iterator teamRelationIt;
 	UnsignedShort teamRelationCount = m_map.size();
-	xfer->xferUnsignedShort( &teamRelationCount );
+	xfer->xferUnsignedShort(&teamRelationCount);
 
 	// team relations
 	TeamID teamID;
 	Relationship r;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// go through all team relations
-		for( teamRelationIt = m_map.begin(); teamRelationIt != m_map.end(); ++teamRelationIt )
+		for (teamRelationIt = m_map.begin(); teamRelationIt != m_map.end(); ++teamRelationIt)
 		{
-
 			// write team ID
 			teamID = (*teamRelationIt).first;
-			xfer->xferUser( &teamID, sizeof( TeamID ) );
+			xfer->xferUser(&teamID, sizeof(TeamID));
 
 			// write relationship
 			r = (*teamRelationIt).second;
-			xfer->xferUser( &r, sizeof( Relationship ) );
-
+			xfer->xferUser(&r, sizeof(Relationship));
 		}
-
 	}
 	else
 	{
-
-		for( UnsignedShort i = 0; i < teamRelationCount; ++i )
+		for (UnsignedShort i = 0; i < teamRelationCount; ++i)
 		{
-
 			// read team ID
-			xfer->xferUser( &teamID, sizeof( TeamID ) );
+			xfer->xferUser(&teamID, sizeof(TeamID));
 
 			// read relationship
-			xfer->xferUser( &r, sizeof( Relationship ) );
+			xfer->xferUser(&r, sizeof(Relationship));
 
 			// assign relationship
 			m_map[teamID] = r;
-
 		}
-
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -147,7 +132,6 @@ void TeamRelationMap::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TeamRelationMap::loadPostProcess()
 {
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,10 +153,8 @@ static Bool locoSetMatches(LocomotorSurfaceTypeMask lstm, UnsignedInt surfaceBit
 // ------------------------------------------------------------------------
 TeamFactory::TeamFactory()
 {
-
 	m_uniqueTeamPrototypeID = TEAM_PROTOTYPE_ID_INVALID;
 	m_uniqueTeamID = TEAM_ID_INVALID;
-
 }
 
 // ------------------------------------------------------------------------
@@ -203,8 +185,8 @@ void TeamFactory::update()
 // ------------------------------------------------------------------------
 void TeamFactory::clear()
 {
-		// must remove it from the map before deleting the TeamProto, since
-		// the TeamProto will try to remove itself from the list when it goes away
+	// must remove it from the map before deleting the TeamProto, since
+	// the TeamProto will try to remove itself from the list when it goes away
 	TeamPrototypeMap tmp = m_prototypes;
 	m_prototypes.clear();
 	for (TeamPrototypeMap::iterator it = tmp.begin(); it != tmp.end(); ++it)
@@ -214,33 +196,35 @@ void TeamFactory::clear()
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::initFromSides(SidesList *sides)
+void TeamFactory::initFromSides(SidesList* sides)
 {
 	clear();
 
 	// create the teams we need.
-	for(Int i = 0; i < sides->getNumTeams(); i++)
+	for (Int i = 0; i < sides->getNumTeams(); i++)
 	{
-		Dict *d = sides->getTeamInfo(i)->getDict();
+		Dict* d = sides->getTeamInfo(i)->getDict();
 
 		AsciiString tname = d->getAsciiString(TheKey_teamName);
 		AsciiString oname = d->getAsciiString(TheKey_teamOwner);
 		Bool singleton = d->getBool(TheKey_teamIsSingleton);
 		initTeam(tname, oname, singleton, d);
 	}
-
 }
 
 // ------------------------------------------------------------------------
-void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bool isSingleton, Dict *d)
+void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bool isSingleton, Dict* d)
 {
-	DEBUG_ASSERTCRASH(findTeamPrototype(name)==nullptr,("team already exists"));
-	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
-	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)",name.str(),owner.str()));
+	DEBUG_ASSERTCRASH(findTeamPrototype(name) == nullptr, ("team already exists"));
+	Player* pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
+	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)", name.str(), owner.str()));
 	if (!pOwner)
+	{
 		pOwner = ThePlayerList->getNeutralPlayer();
-	/*TeamPrototype *tp =*/ newInstance(TeamPrototype)(this, name, pOwner, isSingleton, d, ++m_uniqueTeamPrototypeID);
-	if (isSingleton) {
+	}
+	/*TeamPrototype *tp =*/newInstance(TeamPrototype)(this, name, pOwner, isSingleton, d, ++m_uniqueTeamPrototypeID);
+	if (isSingleton)
+	{
 		// Create the singleton team.
 		createInactiveTeam(name);
 	}
@@ -253,8 +237,8 @@ void TeamFactory::addTeamPrototypeToList(TeamPrototype* team)
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
 	{
-		DEBUG_ASSERTCRASH((*it).second==team, ("TeamFactory::addTeamPrototypeToList: Team %s already exists... skipping.", team->getName().str()));
-		return;	// already present
+		DEBUG_ASSERTCRASH((*it).second == team, ("TeamFactory::addTeamPrototypeToList: Team %s already exists... skipping.", team->getName().str()));
+		return;    // already present
 	}
 
 	m_prototypes[nk] = team;
@@ -266,83 +250,92 @@ void TeamFactory::removeTeamPrototypeFromList(TeamPrototype* team)
 	NameKeyType nk = NAMEKEY(team->getName());
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
+	{
 		m_prototypes.erase(it);
+	}
 }
 
 // ------------------------------------------------------------------------
-TeamPrototype *TeamFactory::findTeamPrototype(const AsciiString& name)
+TeamPrototype* TeamFactory::findTeamPrototype(const AsciiString& name)
 {
 	NameKeyType nk = NAMEKEY(name);
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
+	{
 		return it->second;
+	}
 
 	return nullptr;
 }
 
 // ------------------------------------------------------------------------
-TeamPrototype *TeamFactory::findTeamPrototypeByID( TeamPrototypeID id )
+TeamPrototype* TeamFactory::findTeamPrototypeByID(TeamPrototypeID id)
 {
 	TeamPrototypeMap::iterator it;
-	TeamPrototype *prototype = nullptr;
+	TeamPrototype* prototype = nullptr;
 
-	for( it = m_prototypes.begin(); it != m_prototypes.end(); ++it )
+	for (it = m_prototypes.begin(); it != m_prototypes.end(); ++it)
 	{
-
 		prototype = it->second;
-		if( prototype->getID() == id )
+		if (prototype->getID() == id)
+		{
 			return prototype;
-
+		}
 	}
 
 	// not found
 	return nullptr;
-
 }
 
 // ------------------------------------------------------------------------
-Team *TeamFactory::findTeamByID( TeamID teamID )
+Team* TeamFactory::findTeamByID(TeamID teamID)
 {
-
 	// simple case
-	if( teamID == TEAM_ID_INVALID )
+	if (teamID == TEAM_ID_INVALID)
+	{
 		return nullptr;
+	}
 
 	// search all prototypes for the matching team ID
-	TeamPrototype *tp;
+	TeamPrototype* tp;
 	TeamPrototypeMap::iterator it;
-	Team *team;
-	for( it = m_prototypes.begin(); it != m_prototypes.end(); ++it )
+	Team* team;
+	for (it = m_prototypes.begin(); it != m_prototypes.end(); ++it)
 	{
 		tp = (*it).second;
-		team = tp->findTeamByID( teamID );
-		if( team )
+		team = tp->findTeamByID(teamID);
+		if (team)
+		{
 			return team;
+		}
 	}
 
 	return nullptr;
-
 }
 
 // ------------------------------------------------------------------------
 /** Creates an inactive team, suitable for adding members to as they are built.
 Call team->setActive() when all members are added. */
-Team *TeamFactory::createInactiveTeam(const AsciiString& name)
+Team* TeamFactory::createInactiveTeam(const AsciiString& name)
 {
-	TeamPrototype *tp = findTeamPrototype(name);
-	if (!tp) {
-		DEBUG_CRASH(( "Team prototype '%s' does not exist", name.str() ));
+	TeamPrototype* tp = findTeamPrototype(name);
+	if (!tp)
+	{
+		DEBUG_CRASH(("Team prototype '%s' does not exist", name.str()));
 		return nullptr;
 	}
 
-	Team *t = nullptr;
+	Team* t = nullptr;
 	if (tp->getIsSingleton())
 	{
 		t = tp->getFirstItemIn_TeamInstanceList();
-		if (t) {
-			if (tp->getTemplateInfo()->m_executeActions) {
-				const Script *script = TheScriptEngine->findScriptByName(tp->getTemplateInfo()->m_productionCondition);
-				if (script) {
+		if (t)
+		{
+			if (tp->getTemplateInfo()->m_executeActions)
+			{
+				const Script* script = TheScriptEngine->findScriptByName(tp->getTemplateInfo()->m_productionCondition);
+				if (script)
+				{
 					TheScriptEngine->friend_executeAction(script->getAction());
 				}
 			}
@@ -350,10 +343,12 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 		}
 	}
 
-	t = newInstance(Team)(tp, ++m_uniqueTeamID );
-	if (tp->getTemplateInfo()->m_executeActions) {
-		const Script *script = TheScriptEngine->findScriptByName(tp->getTemplateInfo()->m_productionCondition);
-		if (script) {
+	t = newInstance(Team)(tp, ++m_uniqueTeamID);
+	if (tp->getTemplateInfo()->m_executeActions)
+	{
+		const Script* script = TheScriptEngine->findScriptByName(tp->getTemplateInfo()->m_productionCondition);
+		if (script)
+		{
 			TheScriptEngine->friend_executeAction(script->getAction());
 		}
 	}
@@ -362,40 +357,46 @@ Team *TeamFactory::createInactiveTeam(const AsciiString& name)
 }
 
 // ------------------------------------------------------------------------
-Team *TeamFactory::createTeam(const AsciiString& name)
+Team* TeamFactory::createTeam(const AsciiString& name)
 {
-	Team *t = createInactiveTeam(name);
+	Team* t = createInactiveTeam(name);
 
 	if (t)
+	{
 		t->setActive();
+	}
 
 	return t;
 }
 
 // ------------------------------------------------------------------------
-Team *TeamFactory::createTeamOnPrototype( TeamPrototype *prototype )
+Team* TeamFactory::createTeamOnPrototype(TeamPrototype* prototype)
 {
-	if( prototype == nullptr )
+	if (prototype == nullptr)
+	{
 		throw ERROR_BAD_ARG;
+	}
 
-	Team *t = nullptr;
-	if( prototype->getIsSingleton() )
+	Team* t = nullptr;
+	if (prototype->getIsSingleton())
 	{
 		t = prototype->getFirstItemIn_TeamInstanceList();
-		if( t )
+		if (t)
+		{
 			return t;
+		}
 	}
-	t = newInstance(Team)( prototype, ++m_uniqueTeamID );
+	t = newInstance(Team)(prototype, ++m_uniqueTeamID);
 	t->setActive();
 	return t;
 }
 // ------------------------------------------------------------------------
 Team* TeamFactory::findTeam(const AsciiString& name)
 {
-	TeamPrototype *tp = findTeamPrototype(name);
+	TeamPrototype* tp = findTeamPrototype(name);
 	if (tp)
 	{
-		Team *t = tp->getFirstItemIn_TeamInstanceList();
+		Team* t = tp->getFirstItemIn_TeamInstanceList();
 		if (t == nullptr && !tp->getIsSingleton())
 		{
 			t = createInactiveTeam(name);
@@ -413,138 +414,125 @@ void TeamFactory::teamAboutToBeDeleted(Team* team)
 		it->second->teamAboutToBeDeleted(team);
 	}
 	if (ThePlayerList)
+	{
 		ThePlayerList->teamAboutToBeDeleted(team);
+	}
 }
 
 // ------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------
-void TeamFactory::crc( Xfer *xfer )
+void TeamFactory::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------
-void TeamFactory::xfer( Xfer *xfer )
+void TeamFactory::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// unique team ID counter
-	xfer->xferUser( &m_uniqueTeamID, sizeof( TeamID ) );
+	xfer->xferUser(&m_uniqueTeamID, sizeof(TeamID));
 
 	// how many team prototypes of data do we have to write
 	UnsignedShort prototypeCount = m_prototypes.size();
-	xfer->xferUnsignedShort( &prototypeCount );
+	xfer->xferUnsignedShort(&prototypeCount);
 
 	//
 	// prototypes cannot change in number during run time so the count should be the
 	// same as that already loaded into us from a map load
 	//
-	if( prototypeCount != m_prototypes.size() )
+	if (prototypeCount != m_prototypes.size())
 	{
-
-		DEBUG_CRASH(( "TeamFactory::xfer - Prototype count mismatch '%d should be '%d'",
-									prototypeCount, m_prototypes.size() ));
+		DEBUG_CRASH(("TeamFactory::xfer - Prototype count mismatch '%d should be '%d'",
+		             prototypeCount, m_prototypes.size()));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// xfer each of the prototype information
 	TeamPrototypeMap::iterator it;
 	TeamPrototypeID teamPrototypeID;
-	TeamPrototype *teamPrototype;
+	TeamPrototype* teamPrototype;
 	AsciiString prototypeName;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// iterate each prototype and xfer if it needs to be in the save file
-		for( it = m_prototypes.begin(); it != m_prototypes.end(); ++it )
+		for (it = m_prototypes.begin(); it != m_prototypes.end(); ++it)
 		{
-
 			// get prototype
 			teamPrototype = it->second;
 
 			// xfer prototype id
 			teamPrototypeID = teamPrototype->getID();
-			xfer->xferUser( &teamPrototypeID, sizeof( TeamPrototypeID ) );
+			xfer->xferUser(&teamPrototypeID, sizeof(TeamPrototypeID));
 
 			// xfer prototype data
-			xfer->xferSnapshot( teamPrototype );
-
+			xfer->xferSnapshot(teamPrototype);
 		}
-
 	}
 	else
 	{
-
 		// read all the team prototype info
-		for( UnsignedShort i = 0; i < prototypeCount; ++i )
+		for (UnsignedShort i = 0; i < prototypeCount; ++i)
 		{
-
 			// read prototype ID
-			xfer->xferUser( &teamPrototypeID, sizeof( TeamPrototypeID ) );
+			xfer->xferUser(&teamPrototypeID, sizeof(TeamPrototypeID));
 
 			// find the prototype
-			teamPrototype = findTeamPrototypeByID( teamPrototypeID );
+			teamPrototype = findTeamPrototypeByID(teamPrototypeID);
 
 			// sanity
-			if( teamPrototype == nullptr )
+			if (teamPrototype == nullptr)
 			{
-
-				DEBUG_CRASH(( "TeamFactory::xfer - Unable to find team prototype by id" ));
+				DEBUG_CRASH(("TeamFactory::xfer - Unable to find team prototype by id"));
 				throw SC_INVALID_DATA;
-
 			}
 
 			// xfer prototype data
-			xfer->xferSnapshot( teamPrototype );
-
+			xfer->xferSnapshot(teamPrototype);
 		}
-
 	}
 
-/*
-// SAVE_LOAD_DEBUG
-if( xfer->getXferMode() == XFER_SAVE )
-{
-
-FILE *fp = fopen( "TeamCheckSave.txt", "w+t" );
-if( fp == nullptr )
-	return;
-
-Object *obj;
-TeamPrototypeMap::iterator prototypeIt;
-TeamPrototype *prototype;
-Team *team;
-for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++prototypeIt )
-{
-	prototype = prototypeIt->second;
-fprintf( fp, "Prototype '%s' for player index '%d'\n", prototype->getName().str(), prototype->getControllingPlayer()->getPlayerIndex() );
-	for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() )
+	/*
+	// SAVE_LOAD_DEBUG
+	if( xfer->getXferMode() == XFER_SAVE )
 	{
-		team = teamIt.cur();
-fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->getID() );
-		for( DLINK_ITERATOR<Object> objIt = team->iterate_TeamMemberList(); !objIt.done(); objIt.advance() )
-		{
-			obj = objIt.cur();
-fprintf( fp, "    Member '%s', id '%d'\n", obj->getTemplate()->getName().str(), obj->getID() );
-		}
+
+	FILE *fp = fopen( "TeamCheckSave.txt", "w+t" );
+	if( fp == nullptr )
+	  return;
+
+	Object *obj;
+	TeamPrototypeMap::iterator prototypeIt;
+	TeamPrototype *prototype;
+	Team *team;
+	for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++prototypeIt )
+	{
+	  prototype = prototypeIt->second;
+	fprintf( fp, "Prototype '%s' for player index '%d'\n", prototype->getName().str(), prototype->getControllingPlayer()->getPlayerIndex() );
+	  for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() )
+	  {
+	    team = teamIt.cur();
+	fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->getID() );
+	    for( DLINK_ITERATOR<Object> objIt = team->iterate_TeamMemberList(); !objIt.done(); objIt.advance() )
+	    {
+	      obj = objIt.cur();
+	fprintf( fp, "    Member '%s', id '%d'\n", obj->getTemplate()->getName().str(), obj->getID() );
+	    }
+	  }
+
 	}
+	fclose( fp );
 
-}
-fclose( fp );
-
-}
-*/
-
+	}
+	*/
 }
 
 // ------------------------------------------------------------------------
@@ -552,69 +540,67 @@ fclose( fp );
 // ------------------------------------------------------------------------
 void TeamFactory::loadPostProcess()
 {
-
 	// set the next unique team and prototype ID to just over the highest one in use
 	m_uniqueTeamID = 0;
 	m_uniqueTeamPrototypeID = 0;
 	TeamPrototypeMap::iterator prototypeIt;
-	TeamPrototype *prototype;
-	Team *team;
-	for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++prototypeIt )
+	TeamPrototype* prototype;
+	Team* team;
+	for (prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++prototypeIt)
 	{
-
 		// get prototype
 		prototype = prototypeIt->second;
 
 		// do protype ID check
-		if( prototype->getID() >= m_uniqueTeamPrototypeID )
+		if (prototype->getID() >= m_uniqueTeamPrototypeID)
+		{
 			m_uniqueTeamPrototypeID = prototype->getID() + 1;
+		}
 
 		// iterate team instances on each prototype and do the team ID check
-		for( DLINK_ITERATOR<Team> iter = prototype->iterate_TeamInstanceList(); !iter.done(); iter.advance() )
+		for (DLINK_ITERATOR<Team> iter = prototype->iterate_TeamInstanceList(); !iter.done(); iter.advance())
 		{
-
 			team = iter.cur();
-			if( team->getID() >= m_uniqueTeamID )
+			if (team->getID() >= m_uniqueTeamID)
+			{
 				m_uniqueTeamID = team->getID() + 1;
-
+			}
 		}
-
 	}
 
-/*
-// SAVE_LOAD_DEBUG
-FILE *fp = fopen( "TeamCheckLoad.txt", "w+t" );
-if( fp == nullptr )
-	return;
+	/*
+	// SAVE_LOAD_DEBUG
+	FILE *fp = fopen( "TeamCheckLoad.txt", "w+t" );
+	if( fp == nullptr )
+	  return;
 
-Object *obj;
-for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++prototypeIt )
-{
-	prototype = prototypeIt->second;
-fprintf( fp, "Prototype '%s' for player index '%d'\n", prototype->getName().str(), prototype->getControllingPlayer()->getPlayerIndex() );
-	for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() )
+	Object *obj;
+	for( prototypeIt = m_prototypes.begin(); prototypeIt != m_prototypes.end(); ++prototypeIt )
 	{
-		team = teamIt.cur();
-fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->getID() );
-		team->reverse_TeamMemberList();
-		for( DLINK_ITERATOR<Object> objIt = team->iterate_TeamMemberList(); !objIt.done(); objIt.advance() )
-		{
-			obj = objIt.cur();
-fprintf( fp, "    Member '%s', id '%d'\n", obj->getTemplate()->getName().str(), obj->getID() );
-		}
+	  prototype = prototypeIt->second;
+	fprintf( fp, "Prototype '%s' for player index '%d'\n", prototype->getName().str(), prototype->getControllingPlayer()->getPlayerIndex() );
+	  for( DLINK_ITERATOR<Team> teamIt = prototype->iterate_TeamInstanceList(); !teamIt.done(); teamIt.advance() )
+	  {
+	    team = teamIt.cur();
+	fprintf( fp, "  Team Instance '%s', id is '%d'\n", team->getName().str(), team->getID() );
+	    team->reverse_TeamMemberList();
+	    for( DLINK_ITERATOR<Object> objIt = team->iterate_TeamMemberList(); !objIt.done(); objIt.advance() )
+	    {
+	      obj = objIt.cur();
+	fprintf( fp, "    Member '%s', id '%d'\n", obj->getTemplate()->getName().str(), obj->getID() );
+	    }
+	  }
+
 	}
-
-}
-fclose( fp );
-*/
-
+	fclose( fp );
+	*/
 }
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
-TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
-	m_numUnitsInfo(0)
+TeamTemplateInfo::TeamTemplateInfo(Dict* d)
+  : m_numUnitsInfo(0)
 {
 	Bool exists;
 	Int min, max;
@@ -622,7 +608,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount1, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount1, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType1, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -632,7 +619,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount2, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount2, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType2, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -642,7 +630,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount3, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount3, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType3, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -652,7 +641,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount4, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount4, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType4, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -662,7 +652,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount5, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount5, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType5, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -672,7 +663,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount6, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount6, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType6, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -682,7 +674,8 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	min = d->getInt(TheKey_teamUnitMinCount7, &exists);
 	max = d->getInt(TheKey_teamUnitMaxCount7, &exists);
 	templateName = d->getAsciiString(TheKey_teamUnitType7, &exists);
-	if (max>0 && exists) {
+	if (max > 0 && exists)
+	{
 		m_unitsInfo[m_numUnitsInfo].minUnits = min;
 		m_unitsInfo[m_numUnitsInfo].maxUnits = max;
 		m_unitsInfo[m_numUnitsInfo].unitThingName = templateName;
@@ -693,9 +686,12 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	m_homeLocation.x = m_homeLocation.y = 0;
 	m_homeLocation.z = 0;
 	m_hasHomeLocation = false;
-	if (exists) {
-		for (Waypoint *way = TheTerrainLogic->getFirstWaypoint(); way; way = way->getNext()) {
-			if (way->getName() == waypoint) {
+	if (exists)
+	{
+		for (Waypoint* way = TheTerrainLogic->getFirstWaypoint(); way; way = way->getNext())
+		{
+			if (way->getName() == waypoint)
+			{
 				m_homeLocation = *way->getLocation();
 				m_hasHomeLocation = true;
 			}
@@ -703,21 +699,23 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	}
 
 	m_scriptOnCreate = d->getAsciiString(TheKey_teamOnCreateScript, &exists);
-	m_isAIRecruitable	= d->getBool(TheKey_teamIsAIRecruitable, &exists);
-	if (!exists) {
+	m_isAIRecruitable = d->getBool(TheKey_teamIsAIRecruitable, &exists);
+	if (!exists)
+	{
 		m_isAIRecruitable = false;
 	}
-	m_isBaseDefense	= d->getBool(TheKey_teamIsBaseDefense, &exists);
-	m_isPerimeterDefense	= d->getBool(TheKey_teamIsPerimeterDefense, &exists);
+	m_isBaseDefense = d->getBool(TheKey_teamIsBaseDefense, &exists);
+	m_isPerimeterDefense = d->getBool(TheKey_teamIsPerimeterDefense, &exists);
 	m_automaticallyReinforce = d->getBool(TheKey_teamAutoReinforce, &exists);
 
-	Int interact	= d->getInt(TheKey_teamAggressiveness, &exists);
+	Int interact = d->getInt(TheKey_teamAggressiveness, &exists);
 	m_initialTeamAttitude = ATTITUDE_NORMAL;
-	if (exists) {
-		m_initialTeamAttitude = (AttitudeType) interact;
+	if (exists)
+	{
+		m_initialTeamAttitude = (AttitudeType)interact;
 	}
 
-	m_transportsReturn	= d->getBool(TheKey_teamTransportsReturn, &exists);
+	m_transportsReturn = d->getBool(TheKey_teamTransportsReturn, &exists);
 	m_avoidThreats = d->getBool(TheKey_teamAvoidThreats, &exists);
 
 	m_attackCommonTarget = d->getBool(TheKey_teamAttackCommonTarget, &exists);
@@ -740,17 +738,17 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	m_productionCondition = d->getAsciiString(TheKey_teamProductionCondition, &exists);
 	m_executeActions = d->getBool(TheKey_teamExecutesActionsOnCreate, &exists);
 
-
 	// Which scripts to attempt during run?
-	for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+	for (int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
+	{
 		AsciiString keyName;
 		keyName.format("%s%d", TheNameKeyGenerator->keyToName(TheKey_teamGenericScriptHook).str(), i);
 		m_teamGenericScripts[i] = d->getAsciiString(NAMEKEY(keyName), &exists);
-		if (!exists) {
+		if (!exists)
+		{
 			m_teamGenericScripts[i].clear();
 		}
 	}
-
 
 	// reinforcement team info.
 	m_transportUnitType = d->getAsciiString(TheKey_teamTransport, &exists);
@@ -763,27 +761,24 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 // ------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------
-void TeamTemplateInfo::crc( Xfer *xfer )
+void TeamTemplateInfo::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------
-void TeamTemplateInfo::xfer( Xfer *xfer )
+void TeamTemplateInfo::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// xfer the production priority
-	xfer->xferInt( &m_productionPriority );
-
+	xfer->xferInt(&m_productionPriority);
 }
 
 // ------------------------------------------------------------------------
@@ -791,7 +786,6 @@ void TeamTemplateInfo::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------
 void TeamTemplateInfo::loadPostProcess()
 {
-
 }
 
 // ------------------------------------------------------------------------
@@ -800,54 +794,63 @@ void TeamTemplateInfo::loadPostProcess()
 // ------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------
-TeamPrototype::TeamPrototype( TeamFactory *tf,
-															const AsciiString &name,
-															Player *ownerPlayer,
-															Bool isSingleton,
-															Dict *d,
-															TeamPrototypeID id ) :
-	m_id(id),
-	m_factory(tf),
-	m_name(name),
-	m_owningPlayer(ownerPlayer),
-	m_flags(isSingleton ? TeamPrototype::TEAM_SINGLETON : 0),
-	m_teamTemplate(d),
-	m_productionConditionAlwaysFalse(false),
-	m_productionConditionScript(nullptr)
+TeamPrototype::TeamPrototype(TeamFactory* tf,
+                             const AsciiString& name,
+                             Player* ownerPlayer,
+                             Bool isSingleton,
+                             Dict* d,
+                             TeamPrototypeID id)
+  : m_id(id)
+  , m_factory(tf)
+  , m_name(name)
+  , m_owningPlayer(ownerPlayer)
+  , m_flags(isSingleton ? TeamPrototype::TEAM_SINGLETON : 0)
+  , m_teamTemplate(d)
+  , m_productionConditionAlwaysFalse(false)
+  , m_productionConditionScript(nullptr)
 {
 	DEBUG_ASSERTCRASH(!(m_owningPlayer == nullptr), ("bad args to TeamPrototype ctor"));
 	if (m_factory)
+	{
 		m_factory->addTeamPrototypeToList(this);
+	}
 
 	if (m_owningPlayer)
+	{
 		m_owningPlayer->addTeamToList(this);
+	}
 
 	m_retrievedGenericScripts = false;
-	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
+	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
+	{
 		m_genericScriptsToRun[i] = nullptr;
 	}
 }
 
 // ------------------------------------------------------------------------
 
-	static void deleteTeamCallback(Team* o)
+static void deleteTeamCallback(Team* o)
+{
+	if (o)
 	{
-		if (o)
-		{
-			TheTeamFactory->teamAboutToBeDeleted(o);
-			deleteInstance(o);
-		}
+		TheTeamFactory->teamAboutToBeDeleted(o);
+		deleteInstance(o);
 	}
+}
 
 TeamPrototype::~TeamPrototype()
 {
 	removeAll_TeamInstanceList(deleteTeamCallback);
 
 	if (m_owningPlayer)
+	{
 		m_owningPlayer->removeTeamFromList(this);
+	}
 
 	if (m_factory)
+	{
 		m_factory->removeTeamPrototypeFromList(this);
+	}
 
 	deleteInstance(m_productionConditionScript);
 	m_productionConditionScript = nullptr;
@@ -860,32 +863,37 @@ TeamPrototype::~TeamPrototype()
 }
 
 // ------------------------------------------------------------------------
-Player *TeamPrototype::getControllingPlayer() const
+Player* TeamPrototype::getControllingPlayer() const
 {
 	return m_owningPlayer;
 }
 
 // ------------------------------------------------------------------------
-Team *TeamPrototype::findTeamByID( TeamID teamID )
+Team* TeamPrototype::findTeamByID(TeamID teamID)
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		if( iter.cur()->getID() == teamID )
+		if (iter.cur()->getID() == teamID)
+		{
 			return iter.cur();
+		}
 	}
 	return nullptr;
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::setControllingPlayer(Player *newController)
+void TeamPrototype::setControllingPlayer(Player* newController)
 {
 	DEBUG_ASSERTCRASH(newController, ("Attempted to set null player as team-owner, illegal."));
-	if (!newController) {
+	if (!newController)
+	{
 		return;
 	}
 
 	if (m_owningPlayer)
+	{
 		m_owningPlayer->removeTeamFromList(this);
+	}
 
 	m_owningPlayer = newController;
 
@@ -894,7 +902,7 @@ void TeamPrototype::setControllingPlayer(Player *newController)
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* const* things, Bool ignoreDead, Int *counts, Bool ignoreUnderConstruction) const
+void TeamPrototype::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* const* things, Bool ignoreDead, Int* counts, Bool ignoreUnderConstruction) const
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
@@ -907,25 +915,31 @@ void TeamPrototype::teamAboutToBeDeleted(Team* team)
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-//		iter.cur()->removeOverrideTeamRelationship(team);
-		iter.cur()->removeOverrideTeamRelationship(team ? team->getID() : TEAM_ID_INVALID );
+		//		iter.cur()->removeOverrideTeamRelationship(team);
+		iter.cur()->removeOverrideTeamRelationship(team ? team->getID() : TEAM_ID_INVALID);
 	}
 }
 
 // ------------------------------------------------------------------------
-Script *TeamPrototype::getGenericScript(Int scriptToRetrieve)
+Script* TeamPrototype::getGenericScript(Int scriptToRetrieve)
 {
-	if (!m_retrievedGenericScripts) {
-		m_retrievedGenericScripts = TRUE;	// set this to true so we won't do the lookup again.
+	if (!m_retrievedGenericScripts)
+	{
+		m_retrievedGenericScripts = TRUE;    // set this to true so we won't do the lookup again.
 		// Go get them from the script engine, and duplicate each one.
-		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-			const Script *tmpScript = nullptr;
-			Script *scriptToSave = nullptr;
-			if (!m_teamTemplate.m_teamGenericScripts[i].isEmpty()) {
+		for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
+		{
+			const Script* tmpScript = nullptr;
+			Script* scriptToSave = nullptr;
+			if (!m_teamTemplate.m_teamGenericScripts[i].isEmpty())
+			{
 				tmpScript = TheScriptEngine->findScriptByName(m_teamTemplate.m_teamGenericScripts[i]);
-				if (tmpScript) {
+				if (tmpScript)
+				{
 					scriptToSave = tmpScript->duplicate();
-				} else {
+				}
+				else
+				{
 					DEBUG_CRASH(("We attempted to find a generic script, but couldn't. ('%s')", m_teamTemplate.m_teamGenericScripts[i].str()));
 				}
 			}
@@ -956,7 +970,8 @@ void TeamPrototype::decreaseAIPriorityForFailure() const
 Int TeamPrototype::countBuildings()
 {
 	int retVal = 0;
-	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
+	{
 		retVal += iter.cur()->countBuildings();
 	}
 	return retVal;
@@ -966,7 +981,8 @@ Int TeamPrototype::countBuildings()
 Int TeamPrototype::countObjects(KindOfMaskType setMask, KindOfMaskType clearMask)
 {
 	int retVal = 0;
-	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
+	{
 		retVal += iter.cur()->countObjects(setMask, clearMask);
 	}
 	return retVal;
@@ -982,11 +998,11 @@ void TeamPrototype::healAllObjects()
 }
 
 // ------------------------------------------------------------------------
-void TeamPrototype::iterateObjects( ObjectIterateFunc func, void *userData )
+void TeamPrototype::iterateObjects(ObjectIterateFunc func, void* userData)
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		iter.cur()->iterateObjects( func, userData );
+		iter.cur()->iterateObjects(func, userData);
 	}
 }
 
@@ -998,18 +1014,22 @@ Int TeamPrototype::countTeamInstances()
 {
 	Int count = 0;
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
+	{
 		count++;
+	}
 
 	return count;
 }
-
 
 // ------------------------------------------------------------------------
 Bool TeamPrototype::hasAnyBuildings() const
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		if (iter.cur()->hasAnyBuildings()) return true;
+		if (iter.cur()->hasAnyBuildings())
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -1019,7 +1039,10 @@ Bool TeamPrototype::hasAnyBuildings(KindOfMaskType kindOf) const
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		if (iter.cur()->hasAnyBuildings(kindOf)) return true;
+		if (iter.cur()->hasAnyBuildings(kindOf))
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -1029,7 +1052,10 @@ Bool TeamPrototype::hasAnyUnits() const
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		if (iter.cur()->hasAnyUnits()) return true;
+		if (iter.cur()->hasAnyUnits())
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -1039,7 +1065,10 @@ Bool TeamPrototype::hasAnyObjects() const
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		if (iter.cur()->hasAnyObjects()) return true;
+		if (iter.cur()->hasAnyObjects())
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -1053,7 +1082,8 @@ void TeamPrototype::updateState()
 	}
 	/* remove empty teams. */
 	Bool done = false;
-	while (!done) {
+	while (!done)
+	{
 		done = true;
 		for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 		{
@@ -1062,7 +1092,7 @@ void TeamPrototype::updateState()
 				// Team has no members.
 				if (this->getIsSingleton())
 				{
-					continue; // Don't delete singleton teams, even if they are empty.
+					continue;    // Don't delete singleton teams, even if they are empty.
 				}
 
 				if (iter.cur()->getControllingPlayer() && iter.cur()->getControllingPlayer()->getDefaultTeam() == iter.cur())
@@ -1082,7 +1112,7 @@ void TeamPrototype::updateState()
 				deleteInstance(iter.cur());
 
 				done = false;
-				break; // Not sure what state the iterator is in after deleting a member of the list. jba
+				break;    // Not sure what state the iterator is in after deleting a member of the list. jba
 			}
 		}
 	}
@@ -1093,7 +1123,10 @@ Bool TeamPrototype::hasAnyBuildFacility() const
 {
 	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 	{
-		if (iter.cur()->hasAnyBuildFacility()) return true;
+		if (iter.cur()->hasAnyBuildFacility())
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -1107,7 +1140,6 @@ void TeamPrototype::damageTeamMembers(Real amount)
 	}
 }
 
-
 // ------------------------------------------------------------------------
 void TeamPrototype::moveTeamTo(Coord3D destination)
 {
@@ -1120,46 +1152,56 @@ void TeamPrototype::moveTeamTo(Coord3D destination)
 // ------------------------------------------------------------------------
 Bool TeamPrototype::evaluateProductionCondition()
 {
-	if (m_productionConditionAlwaysFalse) {
+	if (m_productionConditionAlwaysFalse)
+	{
 		// Set if we don't have a script.
 		return false;
 	}
-	if (m_productionConditionScript) {
+	if (m_productionConditionScript)
+	{
 		// If we are doing periodic evaluation, check the frame.
-		if (TheGameLogic->getFrame()<m_productionConditionScript->getFrameToEvaluate()) {
+		if (TheGameLogic->getFrame() < m_productionConditionScript->getFrameToEvaluate())
+		{
 			return false;
 		}
 		Int delaySeconds = m_productionConditionScript->getDelayEvalSeconds();
 
-		if (delaySeconds>0) {
-			m_productionConditionScript->setFrameToEvaluate(TheGameLogic->getFrame()+delaySeconds*LOGICFRAMES_PER_SECOND);
+		if (delaySeconds > 0)
+		{
+			m_productionConditionScript->setFrameToEvaluate(TheGameLogic->getFrame() + delaySeconds * LOGICFRAMES_PER_SECOND);
 		}
 		return TheScriptEngine->evaluateConditions(m_productionConditionScript, nullptr, getControllingPlayer());
 	}
 	// We don't have a script yet, so check for one.
-	if (m_teamTemplate.m_productionCondition.isEmpty()) {
+	if (m_teamTemplate.m_productionCondition.isEmpty())
+	{
 		// No script defined.
 		m_productionConditionAlwaysFalse = true;
 		return false;
 	}
-	const Script *pScript = TheScriptEngine->findScriptByName(m_teamTemplate.m_productionCondition);
-	if (pScript) {
+	const Script* pScript = TheScriptEngine->findScriptByName(m_teamTemplate.m_productionCondition);
+	if (pScript)
+	{
 		// Check difficulty.
-		switch (getControllingPlayer()->getPlayerDifficulty() ) {
+		switch (getControllingPlayer()->getPlayerDifficulty())
+		{
 			case DIFFICULTY_EASY:
-				if (!pScript->isEasy()) {
+				if (!pScript->isEasy())
+				{
 					m_productionConditionAlwaysFalse = true;
 					return false;
 				}
 				break;
 			case DIFFICULTY_NORMAL:
-				if (!pScript->isNormal()) {
+				if (!pScript->isNormal())
+				{
 					m_productionConditionAlwaysFalse = true;
 					return false;
 				}
 				break;
 			case DIFFICULTY_HARD:
-				if (!pScript->isHard()) {
+				if (!pScript->isHard())
+				{
 					m_productionConditionAlwaysFalse = true;
 					return false;
 				}
@@ -1179,84 +1221,81 @@ Bool TeamPrototype::evaluateProductionCondition()
 // ------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------
-void TeamPrototype::crc( Xfer *xfer )
+void TeamPrototype::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------
-void TeamPrototype::xfer( Xfer *xfer )
+void TeamPrototype::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 2;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// owning player index
 	Int owningPlayerIndex;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
+	{
 		owningPlayerIndex = m_owningPlayer->getPlayerIndex();
-	xfer->xferInt( &owningPlayerIndex );
-	m_owningPlayer = ThePlayerList->getNthPlayer( owningPlayerIndex );
+	}
+	xfer->xferInt(&owningPlayerIndex);
+	m_owningPlayer = ThePlayerList->getNthPlayer(owningPlayerIndex);
 
-	if (version>=2) {
+	if (version >= 2)
+	{
 		xfer->xferAsciiString(&m_attackPriorityName);
 	}
 
 	// production condition
-	xfer->xferBool( &m_productionConditionAlwaysFalse );
+	xfer->xferBool(&m_productionConditionAlwaysFalse);
 
 	// team template information
-	xfer->xferSnapshot( &m_teamTemplate );
+	xfer->xferSnapshot(&m_teamTemplate);
 
 	// xfer team instance count
 	UnsignedShort teamInstanceCount = 0;
-	for( DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance() )
+	for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
+	{
 		teamInstanceCount++;
-	xfer->xferUnsignedShort( &teamInstanceCount );
+	}
+	xfer->xferUnsignedShort(&teamInstanceCount);
 
 	// xfer team instances
-	Team *teamInstance;
+	Team* teamInstance;
 	TeamID teamID;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
-
 		// xfer each team instance
-		for( DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance() )
+		for (DLINK_ITERATOR<Team> iter = iterate_TeamInstanceList(); !iter.done(); iter.advance())
 		{
-
 			// get the team
 			teamInstance = iter.cur();
 
 			// write team id
 			teamID = teamInstance->getID();
-			xfer->xferUser( &teamID, sizeof( TeamID ) );
+			xfer->xferUser(&teamID, sizeof(TeamID));
 
 			// write team data
-			xfer->xferSnapshot( teamInstance );
-
+			xfer->xferSnapshot(teamInstance);
 		}
-
 	}
 	else
 	{
-
 		//
 		// there is no need to check to make sure the instance list is empty here ... see
 		// the large bock comment below where we find a team given an id
 		//
 
 		// read each block
-		for( UnsignedShort i = 0; i < teamInstanceCount; ++i )
+		for (UnsignedShort i = 0; i < teamInstanceCount; ++i)
 		{
-
 			// read team id
-			xfer->xferUser( &teamID, sizeof( TeamID ) );
+			xfer->xferUser(&teamID, sizeof(TeamID));
 
 			//
 			// find this team, if it's not there create it ... note that there will in fact
@@ -1264,25 +1303,20 @@ void TeamPrototype::xfer( Xfer *xfer )
 			// the map load.  But since the team ids are reset on the map load, they are
 			// created with exactly the same team IDs they had before
 			//
-			teamInstance = TheTeamFactory->findTeamByID( teamID );
-			if( teamInstance == nullptr )
+			teamInstance = TheTeamFactory->findTeamByID(teamID);
+			if (teamInstance == nullptr)
 			{
-
 				// create team
-				teamInstance = TheTeamFactory->createTeamOnPrototype( this );
+				teamInstance = TheTeamFactory->createTeamOnPrototype(this);
 
 				// restore original ID we read from the file
-				teamInstance->setID( teamID );
-
+				teamInstance->setID(teamID);
 			}
 
 			// xfer team data
-			xfer->xferSnapshot( teamInstance );
-
+			xfer->xferSnapshot(teamInstance);
 		}
-
 	}
-
 }
 
 // ------------------------------------------------------------------------
@@ -1290,7 +1324,6 @@ void TeamPrototype::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------
 void TeamPrototype::loadPostProcess()
 {
-
 }
 
 // ------------------------------------------------------------------------
@@ -1302,19 +1335,19 @@ void TeamPrototype::loadPostProcess()
 // ------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------
-Team::Team(TeamPrototype *proto, TeamID id ) :
-  m_id( id ),
-	m_proto(proto),
-	m_enteredOrExited(false),
-	m_active(false),
-	m_seeEnemy(false),
-	m_prevSeeEnemy(false),
-	m_checkEnemySighted(false),
-	m_isRecruitablitySet(false),
-	m_isRecruitable(false),
-	m_destroyThreshold(0),
-	m_curUnits(0),
-	m_wasIdle(false)
+Team::Team(TeamPrototype* proto, TeamID id)
+  : m_id(id)
+  , m_proto(proto)
+  , m_enteredOrExited(false)
+  , m_active(false)
+  , m_seeEnemy(false)
+  , m_prevSeeEnemy(false)
+  , m_checkEnemySighted(false)
+  , m_isRecruitablitySet(false)
+  , m_isRecruitable(false)
+  , m_destroyThreshold(0)
+  , m_curUnits(0)
+  , m_wasIdle(false)
 {
 	m_created = FALSE;
 	m_commonAttackTarget = INVALID_ID;
@@ -1327,9 +1360,9 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	{
 		proto->prependTo_TeamInstanceList(this);
 		if (!proto->getTemplateInfo()->m_scriptOnAllClear.isEmpty() ||
-				!proto->getTemplateInfo()->m_scriptOnEnemySighted.isEmpty())
+		    !proto->getTemplateInfo()->m_scriptOnEnemySighted.isEmpty())
 		{
-			m_checkEnemySighted = true;	 // Only keep track of enemy sighted if there is a script that cares.
+			m_checkEnemySighted = true;    // Only keep track of enemy sighted if there is a script that cares.
 		}
 
 		AsciiString teamName = proto->getName();
@@ -1341,22 +1374,22 @@ Team::Team(TeamPrototype *proto, TeamID id ) :
 	{
 		m_shouldAttemptGenericScript[i] = true;
 	}
-
-
 }
 
 // ------------------------------------------------------------------------
 Team::~Team()
 {
-//	DEBUG_ASSERTCRASH(getFirstItemIn_TeamMemberList() == nullptr, ("Team still has members in existence"));
+	//	DEBUG_ASSERTCRASH(getFirstItemIn_TeamMemberList() == nullptr, ("Team still has members in existence"));
 
 	TheScriptEngine->notifyOfTeamDestruction(this);
 
 	// Tell the players a team is going away.
 	Int i;
-	for (i=0; i<ThePlayerList->getPlayerCount(); i++) {
-		Player *plyr = ThePlayerList->getNthPlayer(i);
-		if (plyr) {
+	for (i = 0; i < ThePlayerList->getPlayerCount(); i++)
+	{
+		Player* plyr = ThePlayerList->getNthPlayer(i);
+		if (plyr)
+		{
 			plyr->preTeamDestroy(this);
 		}
 	}
@@ -1366,12 +1399,14 @@ Team::~Team()
 	{
 		tm->setTeam(nullptr);
 	}
-//this test is valid, but will generate a 'false positive' during game teardown
-//DEBUG_ASSERTCRASH(!(getControllingPlayer() && getControllingPlayer()->getDefaultTeam()==this),("I am still someones default team -- sure you want to delete me?"));
+	// this test is valid, but will generate a 'false positive' during game teardown
+	// DEBUG_ASSERTCRASH(!(getControllingPlayer() && getControllingPlayer()->getDefaultTeam()==this),("I am still someones default team -- sure you want to delete me?"));
 
 	DEBUG_ASSERTCRASH(m_proto, ("proto should not be null"));
 	if (m_proto && m_proto->isInList_TeamInstanceList(this))
+	{
 		m_proto->removeFrom_TeamInstanceList(this);
+	}
 
 	// delete the relation maps (the destructor clears the actual map if any data is present)
 	deleteInstance(m_teamRelations);
@@ -1379,17 +1414,16 @@ Team::~Team()
 
 	// make sure the xfer list is clear
 	m_xferMemberIDList.clear();
-
 }
 
 // ------------------------------------------------------------------------
-Player *Team::getControllingPlayer() const
+Player* Team::getControllingPlayer() const
 {
 	return m_proto->getControllingPlayer();
 }
 
 // ------------------------------------------------------------------------
-void Team::setControllingPlayer(Player *newController)
+void Team::setControllingPlayer(Player* newController)
 {
 	Player* oldOwner = m_proto->getControllingPlayer();
 	// nullptr is not allowed, but is caught by TeamPrototype::setControllingPlayer()
@@ -1405,11 +1439,13 @@ void Team::setControllingPlayer(Player *newController)
 	// Tell all members to redo their looking status, as their Player has changed, but they don't know.
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		Object *obj = iter.cur();
+		Object* obj = iter.cur();
 		if (!obj)
+		{
 			continue;
+		}
 
-		if constexpr (RETAIL_COMPATIBLE_CRC) // Not sure if necessary. But likely is.
+		if constexpr (RETAIL_COMPATIBLE_CRC)    // Not sure if necessary. But likely is.
 		{
 			obj->handlePartitionCellMaintenance();
 		}
@@ -1418,44 +1454,51 @@ void Team::setControllingPlayer(Player *newController)
 			obj->onCapture(oldOwner, newController);
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------
 void Team::setAttackPriorityName(AsciiString name)
 {
-	if (m_proto) m_proto->setAttackPriorityName(name);
+	if (m_proto)
+	{
+		m_proto->setAttackPriorityName(name);
+	}
 }
 
 // ------------------------------------------------------------------------
-void Team::getTeamAsAIGroup(AIGroup *pAIGroup)
+void Team::getTeamAsAIGroup(AIGroup* pAIGroup)
 {
-	if (!pAIGroup) {
+	if (!pAIGroup)
+	{
 		return;
 	}
 
 	// Should this clear out the pAIGroup that it receives? I don't think so, but that
 	// would go here if so. jkmcd
 
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		if (iter.cur()) {
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		if (iter.cur())
+		{
 			pAIGroup->add(iter.cur());
 		}
 	}
 }
 
-
 // ------------------------------------------------------------------------
 Int Team::getTargetableCount() const
 {
 	Int retVal = 0;
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *obj = iter.cur();
-		if (!obj) {
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* obj = iter.cur();
+		if (!obj)
+		{
 			continue;
 		}
 
-		if (obj->isEffectivelyDead() || (obj->getAIUpdateInterface() == nullptr && !obj->isKindOf(KINDOF_STRUCTURE))) {
+		if (obj->isEffectivelyDead() || (obj->getAIUpdateInterface() == nullptr && !obj->isKindOf(KINDOF_STRUCTURE)))
+		{
 			continue;
 		}
 
@@ -1466,7 +1509,7 @@ Int Team::getTargetableCount() const
 }
 
 // ------------------------------------------------------------------------
-Relationship Team::getRelationship(const Team *that) const
+Relationship Team::getRelationship(const Team* that) const
 {
 	// do we have an override for that particular team? if so, return it.
 	if (!m_teamRelations->m_map.empty() && that != nullptr)
@@ -1497,58 +1540,67 @@ Relationship Team::getRelationship(const Team *that) const
 }
 
 // ------------------------------------------------------------------------
-void Team::setTeamTargetObject(const Object *target)
+void Team::setTeamTargetObject(const Object* target)
 {
-	if (target==nullptr) {
+	if (target == nullptr)
+	{
 		m_commonAttackTarget = INVALID_ID;
 		return;
 	}
 	// Only ai players do common attack.
-	if (getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER) {
-		if (getControllingPlayer()->getPlayerDifficulty() == DIFFICULTY_EASY) {
-			return; // we don't do this for easy.  jba.
+	if (getControllingPlayer()->getPlayerType() == PLAYER_COMPUTER)
+	{
+		if (getControllingPlayer()->getPlayerDifficulty() == DIFFICULTY_EASY)
+		{
+			return;    // we don't do this for easy.  jba.
 		}
 		m_commonAttackTarget = target->getID();
 	}
 }
 
 // ------------------------------------------------------------------------
-Object *Team::getTeamTargetObject()
+Object* Team::getTeamTargetObject()
 {
-	if (m_commonAttackTarget == INVALID_ID) {
+	if (m_commonAttackTarget == INVALID_ID)
+	{
 		return nullptr;
 	}
-	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
-	if (target) {
-		//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!target->testStatus( OBJECT_STATUS_DETECTED ) &&
-			!target->testStatus( OBJECT_STATUS_DISGUISED ) )
+	Object* target = TheGameLogic->findObjectByID(m_commonAttackTarget);
+	if (target)
+	{
+		// If the enemy unit is stealthed and not detected, then we can't attack it!
+		if (target->testStatus(OBJECT_STATUS_STEALTHED) &&
+		    !target->testStatus(OBJECT_STATUS_DETECTED) &&
+		    !target->testStatus(OBJECT_STATUS_DISGUISED))
 		{
 			target = nullptr;
 		}
 	}
-	if (target && target->isEffectivelyDead()) {
+	if (target && target->isEffectivelyDead())
+	{
 		target = nullptr;
 	}
-	if (target && target->getContainedBy()) {
-		target = nullptr; // target entered a building or vehicle, so stop targeting.
+	if (target && target->getContainedBy())
+	{
+		target = nullptr;    // target entered a building or vehicle, so stop targeting.
 	}
-	if (target && target->isKindOf(KINDOF_AIRCRAFT)) {
+	if (target && target->isKindOf(KINDOF_AIRCRAFT))
+	{
 		// It is just generally bad to have an aircraft as the team target.
 		// Let team members acquire aircraft individually.  jba. [8/27/2003]
 		target = nullptr;
 	}
-	if (target == nullptr) {
+	if (target == nullptr)
+	{
 		m_commonAttackTarget = INVALID_ID;
 	}
 	return target;
 }
 
 // ------------------------------------------------------------------------
- void Team::setOverrideTeamRelationship( TeamID teamID, Relationship r)
+void Team::setOverrideTeamRelationship(TeamID teamID, Relationship r)
 {
-	if (teamID != TEAM_ID_INVALID )
+	if (teamID != TEAM_ID_INVALID)
 	{
 		// note that this creates the entry if it doesn't exist.
 		m_teamRelations->m_map[teamID] = r;
@@ -1556,7 +1608,7 @@ Object *Team::getTeamTargetObject()
 }
 
 // ------------------------------------------------------------------------
-Bool Team::removeOverrideTeamRelationship( TeamID teamID )
+Bool Team::removeOverrideTeamRelationship(TeamID teamID)
 {
 	if (!m_teamRelations->m_map.empty())
 	{
@@ -1579,7 +1631,7 @@ Bool Team::removeOverrideTeamRelationship( TeamID teamID )
 }
 
 // ------------------------------------------------------------------------
-void Team::setOverridePlayerRelationship( Int playerIndex, Relationship r )
+void Team::setOverridePlayerRelationship(Int playerIndex, Relationship r)
 {
 	if (playerIndex != PLAYER_INDEX_INVALID)
 	{
@@ -1589,7 +1641,7 @@ void Team::setOverridePlayerRelationship( Int playerIndex, Relationship r )
 }
 
 // ------------------------------------------------------------------------
-Bool Team::removeOverridePlayerRelationship( Int playerIndex )
+Bool Team::removeOverridePlayerRelationship(Int playerIndex)
 {
 	if (!m_playerRelations->m_map.empty())
 	{
@@ -1612,28 +1664,31 @@ Bool Team::removeOverridePlayerRelationship( Int playerIndex )
 }
 
 // ------------------------------------------------------------------------
-void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* const* things, Bool ignoreDead, Int *counts, Bool ignoreUnderConstruction) const
+void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* const* things, Bool ignoreDead, Int* counts, Bool ignoreUnderConstruction) const
 {
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		const ThingTemplate *objtmpl = iter.cur()->getTemplate();
+		const ThingTemplate* objtmpl = iter.cur()->getTemplate();
 		for (Int i = 0; i < numTmplates; ++i)
 		{
-			//Kris: Compare
-			if( !objtmpl->isEquivalentTo( things[i] ) )
+			// Kris: Compare
+			if (!objtmpl->isEquivalentTo(things[i]))
 			{
 				continue;
 			}
 
 			if (ignoreDead && iter.cur()->isEffectivelyDead())
+			{
 				continue;
+			}
 
-			if( ignoreUnderConstruction && iter.cur()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+			if (ignoreUnderConstruction && iter.cur()->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+			{
 				continue;
+			}
 
 			counts[i] += 1;
-			break;	// from 'next i', NOT 'next object'
-
+			break;    // from 'next i', NOT 'next object'
 		}
 	}
 }
@@ -1642,12 +1697,15 @@ void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* con
 Int Team::countBuildings()
 {
 	int retVal = 0;
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
 		const ThingTemplate* objtmpl = iter.cur()->getTemplate();
-		if (!objtmpl) {
+		if (!objtmpl)
+		{
 			continue;
 		}
-		if (objtmpl->isKindOf(KINDOF_STRUCTURE)) {
+		if (objtmpl->isKindOf(KINDOF_STRUCTURE))
+		{
 			++retVal;
 		}
 	}
@@ -1658,12 +1716,15 @@ Int Team::countBuildings()
 Int Team::countObjects(KindOfMaskType setMask, KindOfMaskType clearMask)
 {
 	int retVal = 0;
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
 		const ThingTemplate* objtmpl = iter.cur()->getTemplate();
-		if (!objtmpl) {
+		if (!objtmpl)
+		{
 			continue;
 		}
-		if (objtmpl->isKindOfMulti(setMask, clearMask)) {
+		if (objtmpl->isKindOfMulti(setMask, clearMask))
+		{
 			++retVal;
 		}
 	}
@@ -1680,11 +1741,11 @@ void Team::healAllObjects()
 }
 
 // ------------------------------------------------------------------------
-void Team::iterateObjects( ObjectIterateFunc func, void *userData )
+void Team::iterateObjects(ObjectIterateFunc func, void* userData)
 {
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		func( iter.cur(), userData );
+		func(iter.cur(), userData);
 	}
 }
 
@@ -1694,13 +1755,19 @@ Bool Team::hasAnyBuildings() const
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isDestroyed())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isKindOf(KINDOF_STRUCTURE))
+		{
 			return true;
+		}
 	}
 	return false;
 }
@@ -1711,14 +1778,20 @@ Bool Team::hasAnyBuildings(KindOfMaskType kindOf) const
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isDestroyed())
+		{
 			continue;
+		}
 
 		kindOf.set(KINDOF_STRUCTURE);
 		if (iter.cur()->isKindOfMulti(kindOf, KINDOFMASK_NONE))
+		{
 			return true;
+		}
 	}
 	return false;
 }
@@ -1729,19 +1802,32 @@ Bool Team::hasAnyUnits() const
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isDestroyed())
+		{
 			continue;
+		}
 
 		// If it's a structure, it's not  a unit.
-		if (iter.cur()->isKindOf(KINDOF_STRUCTURE)) continue;
+		if (iter.cur()->isKindOf(KINDOF_STRUCTURE))
+		{
+			continue;
+		}
 
 		// If it's a projectile, it's not  a unit.
-		if (iter.cur()->isKindOf(KINDOF_PROJECTILE)) continue;
+		if (iter.cur()->isKindOf(KINDOF_PROJECTILE))
+		{
+			continue;
+		}
 
 		// If it's a mine, it's not  a unit.
-		if (iter.cur()->isKindOf(KINDOF_MINE)) continue;
+		if (iter.cur()->isKindOf(KINDOF_MINE))
+		{
+			continue;
+		}
 
 		return true;
 	}
@@ -1751,14 +1837,19 @@ Bool Team::hasAnyUnits() const
 // ------------------------------------------------------------------------
 Bool Team::isIdle() const
 {
-	Bool idle = true; // assume idle.
+	Bool idle = true;    // assume idle.
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (!ai) continue; // Non-ai things are idle.
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (!ai)
+		{
+			continue;    // Non-ai things are idle.
+		}
 
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (!ai->isIdle())
 		{
@@ -1775,22 +1866,29 @@ Bool Team::hasAnyObjects() const
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
-
-		if (iter.cur()->isDestroyed())
-			continue;
-
-		if (iter.cur()->isKindOf(KINDOF_PROJECTILE)) {
-			continue; // shell & missiles don't count. jba.
 		}
 
-		if (iter.cur()->isKindOf(KINDOF_INERT)) {
+		if (iter.cur()->isDestroyed())
+		{
+			continue;
+		}
+
+		if (iter.cur()->isKindOf(KINDOF_PROJECTILE))
+		{
+			continue;    // shell & missiles don't count. jba.
+		}
+
+		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
 			// inert stuff doesn't count.  This is for radiation fields, which are living
 			// so they can be attacked by ambulances.
 			continue;
 		}
 
-		if (iter.cur()->isKindOf(KINDOF_MINE)) {
+		if (iter.cur()->isKindOf(KINDOF_MINE))
+		{
 			// Mines don't count.
 			continue;
 		}
@@ -1805,10 +1903,11 @@ Bool Team::hasAnyObjects() const
 void Team::updateState()
 {
 	m_enteredOrExited = false;
-	if (!m_active) {
+	if (!m_active)
+	{
 		return;
 	}
-	const TeamTemplateInfo *pInfo = m_proto->getTemplateInfo();
+	const TeamTemplateInfo* pInfo = m_proto->getTemplateInfo();
 	if (m_created)
 	{
 		m_created = false;
@@ -1819,53 +1918,66 @@ void Team::updateState()
 		}
 
 		// Set up info for the onDestroyed script, if needed.
-		if (!pInfo->m_scriptOnDestroyed.isEmpty() )
+		if (!pInfo->m_scriptOnDestroyed.isEmpty())
 		{
 			for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 			{
 				m_curUnits++;
 			}
 			m_destroyThreshold = m_curUnits - (m_curUnits * pInfo->m_destroyedThreshold);
-			if (m_destroyThreshold>m_curUnits-1) m_destroyThreshold = m_curUnits-1;
-			if (m_destroyThreshold<0) m_destroyThreshold = 0;
+			if (m_destroyThreshold > m_curUnits - 1)
+			{
+				m_destroyThreshold = m_curUnits - 1;
+			}
+			if (m_destroyThreshold < 0)
+			{
+				m_destroyThreshold = 0;
+			}
 		}
 	}
 
 	// Do enemy sighted/on clear checks.
-	if (m_checkEnemySighted) {
+	if (m_checkEnemySighted)
+	{
 		m_prevSeeEnemy = m_seeEnemy;
 		m_seeEnemy = false;
-		Bool anyAliveInTeam = false; // If we're all dead, don't do all clear.
+		Bool anyAliveInTeam = false;    // If we're all dead, don't do all clear.
 		// only consider enemies.
 		for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 		{
 			if (iter.cur()->isEffectivelyDead())
+			{
 				continue;
+			}
 
-			PartitionFilterRelationship	filterTeam(iter.cur(), PartitionFilterRelationship::ALLOW_ENEMIES);
+			PartitionFilterRelationship filterTeam(iter.cur(), PartitionFilterRelationship::ALLOW_ENEMIES);
 
 			// and only stuff that is not dead
 			PartitionFilterAlive filterAlive;
 			PartitionFilterSameMapStatus filterMapStatus(iter.cur());
 
-			PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterMapStatus, nullptr };
+			PartitionFilter* filters[] = { &filterTeam, &filterAlive, &filterMapStatus, nullptr };
 			Real visionRange = iter.cur()->getVisionRange();
 			anyAliveInTeam = true;
-			Object *pObj = ThePartitionManager->getClosestObject( iter.cur(), visionRange,
-				FROM_CENTER_2D, filters );
-			if (pObj) {
+			Object* pObj = ThePartitionManager->getClosestObject(iter.cur(), visionRange,
+			                                                     FROM_CENTER_2D, filters);
+			if (pObj)
+			{
 				m_seeEnemy = true;
 				break;
 			}
 		}
-		if (anyAliveInTeam) {
+		if (anyAliveInTeam)
+		{
 			if (m_prevSeeEnemy != m_seeEnemy)
 			{
 				if (m_seeEnemy)
 				{
 					// fire onEnemySighted
 					TheScriptEngine->runScript(pInfo->m_scriptOnEnemySighted, this);
-				} else {
+				}
+				else
+				{
 					// fire on all clear.
 					TheScriptEngine->runScript(pInfo->m_scriptOnAllClear, this);
 				}
@@ -1881,14 +1993,16 @@ void Team::updateState()
 		for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 		{
 			if (iter.cur()->isEffectivelyDead())
+			{
 				continue;
+			}
 
 			m_curUnits++;
 		}
 		if (m_curUnits != prevUnits && m_curUnits <= m_destroyThreshold)
 		{
 			TheScriptEngine->runScript(pInfo->m_scriptOnDestroyed, this);
-			m_destroyThreshold = -1; // don't trigger again.
+			m_destroyThreshold = -1;    // don't trigger again.
 		}
 	}
 
@@ -1896,16 +2010,21 @@ void Team::updateState()
 	if (!pInfo->m_scriptOnIdle.isEmpty())
 	{
 		Bool isIdle = true;
-		Bool anyAliveInTeam = false; // If we're all dead, don't do all clear.
+		Bool anyAliveInTeam = false;    // If we're all dead, don't do all clear.
 		for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 		{
-			if (iter.cur()->isEffectivelyDead()) {
+			if (iter.cur()->isEffectivelyDead())
+			{
 				continue;
 			}
-			AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-			if (!ai) continue;
+			AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+			if (!ai)
+			{
+				continue;
+			}
 			anyAliveInTeam = true;
-			if (!ai->isIdle()) {
+			if (!ai->isIdle())
+			{
 				isIdle = false;
 			}
 		}
@@ -1920,12 +2039,14 @@ void Team::updateState()
 // ------------------------------------------------------------------------
 void Team::notifyTeamOfObjectDeath()
 {
-	const TeamTemplateInfo *pInfo = m_proto->getTemplateInfo();
-	if (!pInfo) {
+	const TeamTemplateInfo* pInfo = m_proto->getTemplateInfo();
+	if (!pInfo)
+	{
 		return;
 	}
 
-	if (pInfo->m_scriptOnUnitDestroyed.isEmpty()) {
+	if (pInfo->m_scriptOnUnitDestroyed.isEmpty())
+	{
 		return;
 	}
 
@@ -1933,41 +2054,57 @@ void Team::notifyTeamOfObjectDeath()
 }
 
 // ------------------------------------------------------------------------
-Bool Team::didAllEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
+Bool Team::didAllEnter(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
 {
 	// If any units entered or exited, they set this flag.
-	if (!m_enteredOrExited) return false;
+	if (!m_enteredOrExited)
+	{
+		return false;
+	}
 
 	Bool anyConsidered = false;
 	Bool entered = false;
 	Bool outside = false;
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
 			const LocomotorSet& locoSet = ai->getLocomotorSet();
 			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
 					continue;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
 				continue;
 			}
 		}
 
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
 			continue;
+		}
 
-		if (iter.cur()->didEnter(pTrigger)) {
+		if (iter.cur()->didEnter(pTrigger))
+		{
 			entered = true;
-		} else {
-			if (!iter.cur()->isInside(pTrigger)) {
+		}
+		else
+		{
+			if (!iter.cur()->isInside(pTrigger))
+			{
 				outside = true;
 			}
 		}
@@ -1979,114 +2116,155 @@ Bool Team::didAllEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) co
 }
 
 // ------------------------------------------------------------------------
-Bool Team::didPartialEnter(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
-{
-	// If any units entered or exited, they set this flag.
-	if (!m_enteredOrExited) return false;
-
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
-	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
-			const LocomotorSet& locoSet = ai->getLocomotorSet();
-			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
-					continue;
-				}
-			}
-		} else {
-			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
-				continue;
-			}
-		}
-
-		if (iter.cur()->isEffectivelyDead())
-			continue;
-
-		if (iter.cur()->isKindOf(KINDOF_INERT))
-			continue;
-
-		if (iter.cur()->didEnter(pTrigger)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-// ------------------------------------------------------------------------
-Bool Team::didPartialExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
-{
-	// If any units entered or exited, they set this flag.
-	if (!m_enteredOrExited) return false;
-
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
-	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
-			const LocomotorSet& locoSet = ai->getLocomotorSet();
-			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
-					continue;
-				}
-			}
-		} else {
-			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
-				continue;
-			}
-		}
-
-		if (iter.cur()->isEffectivelyDead())
-			continue;
-
-		if (iter.cur()->isKindOf(KINDOF_INERT))
-			continue;
-
-		if (iter.cur()->didExit(pTrigger)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-// ------------------------------------------------------------------------
-Bool Team::didAllExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
+Bool Team::didPartialEnter(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
 {
 	// If any units entered or exited, they set this flag.
 	if (!m_enteredOrExited)
+	{
 		return false;
+	}
+
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
+			const LocomotorSet& locoSet = ai->getLocomotorSet();
+			{
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
+					continue;
+				}
+			}
+		}
+		else
+		{
+			// things without ai should consider themselves ground units
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
+				continue;
+			}
+		}
+
+		if (iter.cur()->isEffectivelyDead())
+		{
+			continue;
+		}
+
+		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
+			continue;
+		}
+
+		if (iter.cur()->didEnter(pTrigger))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+// ------------------------------------------------------------------------
+Bool Team::didPartialExit(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
+{
+	// If any units entered or exited, they set this flag.
+	if (!m_enteredOrExited)
+	{
+		return false;
+	}
+
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
+			const LocomotorSet& locoSet = ai->getLocomotorSet();
+			{
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
+					continue;
+				}
+			}
+		}
+		else
+		{
+			// things without ai should consider themselves ground units
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
+				continue;
+			}
+		}
+
+		if (iter.cur()->isEffectivelyDead())
+		{
+			continue;
+		}
+
+		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
+			continue;
+		}
+
+		if (iter.cur()->didExit(pTrigger))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+// ------------------------------------------------------------------------
+Bool Team::didAllExit(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
+{
+	// If any units entered or exited, they set this flag.
+	if (!m_enteredOrExited)
+	{
+		return false;
+	}
 
 	Bool anyConsidered = false;
 	Bool exited = false;
 	Bool inside = false;
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
 			const LocomotorSet& locoSet = ai->getLocomotorSet();
 			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
 					continue;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
 				continue;
 			}
 		}
 
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
 			continue;
+		}
 
-		if (iter.cur()->didExit(pTrigger)) {
+		if (iter.cur()->didExit(pTrigger))
+		{
 			exited = true;
-		} else {
-			if (iter.cur()->isInside(pTrigger)) {
+		}
+		else
+		{
+			if (iter.cur()->isInside(pTrigger))
+			{
 				inside = true;
 			}
 		}
@@ -2098,10 +2276,11 @@ Bool Team::didAllExit(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) con
 }
 
 // ------------------------------------------------------------------------
-Bool Team::allInside(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
+Bool Team::allInside(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
 {
 	// empty teams are not inside.
-	if (!hasAnyObjects()) {
+	if (!hasAnyObjects())
+	{
 		return false;
 	}
 
@@ -2109,29 +2288,38 @@ Bool Team::allInside(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) cons
 	Bool anyOutside = false;
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
 			const LocomotorSet& locoSet = ai->getLocomotorSet();
 			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
 					continue;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
 				continue;
 			}
 		}
 
-		if (iter.cur()->isEffectivelyDead()) {
+		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
 		}
 
 		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
 			continue;
+		}
 
-		if (!iter.cur()->isInside(pTrigger)) {
+		if (!iter.cur()->isInside(pTrigger))
+		{
 			anyOutside = true;
 		}
 
@@ -2142,36 +2330,45 @@ Bool Team::allInside(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) cons
 }
 
 // ------------------------------------------------------------------------
-Bool Team::noneInside(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
+Bool Team::noneInside(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
 {
 	Bool anyConsidered = false;
 	Bool anyInside = false;
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
 			const LocomotorSet& locoSet = ai->getLocomotorSet();
 			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
 					continue;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
 				continue;
 			}
 		}
 
 		// don't consider dead things.
-		if (iter.cur()->isEffectivelyDead()) {
+		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
 		}
 
 		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
 			continue;
+		}
 
-		if (iter.cur()->isInside(pTrigger)) {
+		if (iter.cur()->isInside(pTrigger))
+		{
 			anyInside = true;
 		}
 
@@ -2182,39 +2379,50 @@ Bool Team::noneInside(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) con
 }
 
 // ------------------------------------------------------------------------
-Bool Team::someInsideSomeOutside(PolygonTrigger *pTrigger, UnsignedInt whichToConsider) const
+Bool Team::someInsideSomeOutside(PolygonTrigger* pTrigger, UnsignedInt whichToConsider) const
 {
 	Bool anyConsidered = false;
 	Bool anyInside = false;
 	Bool anyOutside = false;
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		AIUpdateInterface *ai = iter.cur()->getAIUpdateInterface();
-		if (ai) {
+		AIUpdateInterface* ai = iter.cur()->getAIUpdateInterface();
+		if (ai)
+		{
 			const LocomotorSet& locoSet = ai->getLocomotorSet();
 			{
-				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider)) {
+				if (!locoSetMatches(locoSet.getValidSurfaces(), whichToConsider))
+				{
 					continue;
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// things without ai should consider themselves ground units
-			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider)) {
+			if (!locoSetMatches(LOCOMOTORSURFACE_GROUND, whichToConsider))
+			{
 				continue;
 			}
 		}
 
 		// don't consider dead things.
-		if (iter.cur()->isEffectivelyDead()) {
+		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
 		}
 
 		if (iter.cur()->isKindOf(KINDOF_INERT))
+		{
 			continue;
+		}
 
-		if (iter.cur()->isInside(pTrigger)) {
+		if (iter.cur()->isInside(pTrigger))
+		{
 			anyInside = true;
-		} else {
+		}
+		else
+		{
 			anyOutside = true;
 		}
 
@@ -2230,13 +2438,17 @@ const Coord3D* Team::getEstimateTeamPosition() const
 	// this doesn't actually calculate the team position, but rather estimates it by
 	// returning the position of the first member of the team
 	DLINK_ITERATOR<Object> iter = iterate_TeamMemberList();
-	Object *obj = iter.cur();
+	Object* obj = iter.cur();
 	if (!obj)
+	{
 		return nullptr;
+	}
 
-	const Coord3D *pos = iter.cur()->getPosition();
+	const Coord3D* pos = iter.cur()->getPosition();
 	if (!pos)
+	{
 		return nullptr;
+	}
 
 	return pos;
 }
@@ -2254,27 +2466,29 @@ void Team::deleteTeam(Bool ignoreDead)
 	// Of course, to prevent the exact same DLINK jumping bug, I must first record what guys I am going to
 	// Evacuate, or else after the first occupied building is emptied, he will move his Next into the
 	// same damn wrong team.
-	if( this == getControllingPlayer()->getDefaultTeam() )
+	if (this == getControllingPlayer()->getDefaultTeam())
 	{
-		std::list<Object *> guysToMakeEvacuate;
+		std::list<Object*> guysToMakeEvacuate;
 		for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 		{
-			Object *obj = iter.cur();
+			Object* obj = iter.cur();
 			if (!obj)
+			{
 				continue;
+			}
 
-			if( obj->getContain()  &&  (obj->getContain()->getContainCount() > 0) )
+			if (obj->getContain() && (obj->getContain()->getContainCount() > 0))
 			{
 				// Write them all down, so the DLINK track jumping doesn't screw me up here as well.
-				guysToMakeEvacuate.push_back( obj );
+				guysToMakeEvacuate.push_back(obj);
 			}
 		}
 
-		for( std::list<Object *>::iterator it = guysToMakeEvacuate.begin(); it != guysToMakeEvacuate.end(); /*nothing*/ )
+		for (std::list<Object*>::iterator it = guysToMakeEvacuate.begin(); it != guysToMakeEvacuate.end(); /*nothing*/)
 		{
-			Object *obj = *it;
+			Object* obj = *it;
 			it++;
-			if( obj->getContain() )
+			if (obj->getContain())
 			{
 				obj->getContain()->removeAllContained();
 			}
@@ -2285,8 +2499,9 @@ void Team::deleteTeam(Bool ignoreDead)
 	// the team itself will be deleted in updateState.
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		Object *obj = iter.cur();
-		if (!obj) {
+		Object* obj = iter.cur();
+		if (!obj)
+		{
 			continue;
 		}
 
@@ -2294,8 +2509,10 @@ void Team::deleteTeam(Bool ignoreDead)
 		// So yes, the Team will survive for a while, but it was going to anyway.  This is a script flag, so if
 		// they use it on a team with things that can't die, then yeah, the Team will last forever.  But then it is
 		// user error.
-		if( ignoreDead && obj->isEffectivelyDead() )
+		if (ignoreDead && obj->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		TheGameLogic->destroyObject(obj);
 	}
@@ -2303,11 +2520,17 @@ void Team::deleteTeam(Bool ignoreDead)
 
 // ------------------------------------------------------------------------
 /* Transfer our units to new team. */
-void Team::transferUnitsTo(Team *newTeam)
+void Team::transferUnitsTo(Team* newTeam)
 {
-	if (this == newTeam) return;
-	if (newTeam == nullptr) return;
-	Object *obj;
+	if (this == newTeam)
+	{
+		return;
+	}
+	if (newTeam == nullptr)
+	{
+		return;
+	}
+	Object* obj;
 	while ((obj = getFirstItemIn_TeamMemberList()) != nullptr)
 	{
 		obj->setTeam(newTeam);
@@ -2319,111 +2542,133 @@ static Bool isInBuildVariations(const ThingTemplate* ttWithVariations, const Thi
 {
 	const std::vector<AsciiString>& bv = ttWithVariations->getBuildVariations();
 	if (bv.empty())
+	{
 		return false;
+	}
 
 	for (std::vector<AsciiString>::const_iterator it = bv.begin(); it != bv.end(); ++it)
 	{
 		if (b->getName() == *it)
+		{
 			return true;
+		}
 	}
 	return false;
 }
 
 // ------------------------------------------------------------------------
 /* Try to recruit a unit from other teams of this player. */
-Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHome, Real maxDist)
+Object* Team::tryToRecruit(const ThingTemplate* tTemplate, const Coord3D* teamHome, Real maxDist)
 {
-	Player *myPlayer = getControllingPlayer();
-	Object *obj=nullptr;
-	Real distSqr = maxDist*maxDist;
-	Object *recruit = nullptr;
-	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
+	Player* myPlayer = getControllingPlayer();
+	Object* obj = nullptr;
+	Real distSqr = maxDist * maxDist;
+	Object* recruit = nullptr;
+	for (obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject())
 	{
 		if (!obj->getTemplate()->isEquivalentTo(tTemplate))
 		{
 			// it might be ok, if tTemplate is really just a "build-variations" template...
 			if (!isInBuildVariations(tTemplate, obj->getTemplate()))
+			{
 				continue;
+			}
 		}
 		if (obj->getControllingPlayer() != myPlayer)
+		{
 			continue;
-		Team *team = obj->getTeam();
+		}
+		Team* team = obj->getTeam();
 		Bool isDefaultTeam = false;
-		if (team == myPlayer->getDefaultTeam()) {
+		if (team == myPlayer->getDefaultTeam())
+		{
 			isDefaultTeam = true;
 		}
-		if (!team->isActive()) {
-			continue; // Team is building, so don't steal it's members yet.
+		if (!team->isActive())
+		{
+			continue;    // Team is building, so don't steal it's members yet.
 		}
-		if (team->getPrototype()->getTemplateInfo()->m_productionPriority>=getPrototype()->getTemplateInfo()->m_productionPriority) {
+		if (team->getPrototype()->getTemplateInfo()->m_productionPriority >= getPrototype()->getTemplateInfo()->m_productionPriority)
+		{
 			continue;
 		}
-		Bool teamIsRecruitable = isDefaultTeam;	 // Default team always recruitable.
-		if (team->getPrototype()->getTemplateInfo()->m_isAIRecruitable) {
+		Bool teamIsRecruitable = isDefaultTeam;    // Default team always recruitable.
+		if (team->getPrototype()->getTemplateInfo()->m_isAIRecruitable)
+		{
 			teamIsRecruitable = true;
 		}
 		// Check & see if individual team has been marked for recruitability.
-		if (team->m_isRecruitablitySet) {
+		if (team->m_isRecruitablitySet)
+		{
 			teamIsRecruitable = team->m_isRecruitable;
 		}
-		if (!teamIsRecruitable) {
+		if (!teamIsRecruitable)
+		{
 			continue;
 		}
-		if (obj->getAIUpdateInterface() && !obj->getAIUpdateInterface()->isRecruitable()) {
-			continue; // can't recruit this unit.
-		}
-		if( obj->isDisabledByType( DISABLED_HELD ) )
+		if (obj->getAIUpdateInterface() && !obj->getAIUpdateInterface()->isRecruitable())
 		{
-			continue; // Don't recruit held units.
+			continue;    // can't recruit this unit.
+		}
+		if (obj->isDisabledByType(DISABLED_HELD))
+		{
+			continue;    // Don't recruit held units.
 		}
 		Real dx, dy;
 		dx = teamHome->x - obj->getPosition()->x;
 		dy = teamHome->y - obj->getPosition()->y;
 
-		if (isDefaultTeam && recruit == nullptr) {
+		if (isDefaultTeam && recruit == nullptr)
+		{
 			recruit = obj;
-			distSqr = dx*dx+dy*dy;
+			distSqr = dx * dx + dy * dy;
 		}
 
-		if (dx*dx+dy*dy > distSqr) {
+		if (dx * dx + dy * dy > distSqr)
+		{
 			continue;
 		}
-		distSqr = dx*dx+dy*dy;
+		distSqr = dx * dx + dy * dy;
 		recruit = obj;
 	}
-	if (recruit!=nullptr) {
+	if (recruit != nullptr)
+	{
 		return recruit;
 	}
- 	return nullptr;
+	return nullptr;
 }
 
 // ------------------------------------------------------------------------
 void Team::evacuateTeam()
 {
-	std::list<Object *> objectsToProcess;
+	std::list<Object*> objectsToProcess;
 
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *obj = iter.cur();
-		if (!obj || obj->isDestroyed() || obj->isEffectivelyDead()) {
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* obj = iter.cur();
+		if (!obj || obj->isDestroyed() || obj->isEffectivelyDead())
+		{
 			continue;
 		}
 
-		ContainModuleInterface *cmi = obj->getContain();
+		ContainModuleInterface* cmi = obj->getContain();
 		UnsignedInt numContained = 0;
-		if (cmi != nullptr) {
+		if (cmi != nullptr)
+		{
 			numContained = cmi->getContainCount();
 		}
-		if (numContained > 0) {
+		if (numContained > 0)
+		{
 			objectsToProcess.push_back(obj);
 		}
 	}
 
 	// evacuate any containers
-	std::list<Object *>::iterator objIt;
+	std::list<Object*>::iterator objIt;
 	for (objIt = objectsToProcess.begin(); objIt != objectsToProcess.end(); ++objIt)
 	{
-		Object *obj = *objIt;
-		ContainModuleInterface *cmi = obj->getContain();
+		Object* obj = *objIt;
+		ContainModuleInterface* cmi = obj->getContain();
 		if (cmi)
 		{
 			cmi->removeAllContained();
@@ -2435,38 +2680,44 @@ void Team::evacuateTeam()
 // ------------------------------------------------------------------------
 void Team::killTeam()
 {
-	std::list<Object *> objectsToProcess;
+	std::list<Object*> objectsToProcess;
 
 	evacuateTeam();
 
 	// TheSuperHackers @bugfix Mauller 20/07/2025 the neutral player has no player template so we need to check for a null template
 	const PlayerTemplate* playerTemplate = getControllingPlayer()->getPlayerTemplate();
 	// beacons are effectively dead, so we need to destroy via a non-kill() method
-	const ThingTemplate* beaconTemplate = playerTemplate ? TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() ) : nullptr;
+	const ThingTemplate* beaconTemplate = playerTemplate ? TheThingFactory->findTemplate(playerTemplate->getBeaconTemplate()) : nullptr;
 
 	// now find objects to kill
-	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *obj = iter.cur();
+	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* obj = iter.cur();
 		if (!obj || obj->isDestroyed() || (obj->isEffectivelyDead() && !obj->getTemplate()->isEquivalentTo(beaconTemplate)))
 		{
 			continue;
 		}
-		Team *objTeam = obj->getTeam();
+		Team* objTeam = obj->getTeam();
 		// the object's team could change after having all the passengers get out.
-		if (objTeam == this) {
+		if (objTeam == this)
+		{
 			objectsToProcess.push_back(obj);
 		}
 	}
 
 	// and finally, kill things
-	std::list<Object *>::iterator objIt;
+	std::list<Object*>::iterator objIt;
 	for (objIt = objectsToProcess.begin(); objIt != objectsToProcess.end(); ++objIt)
 	{
-		Object *obj = *objIt;
+		Object* obj = *objIt;
 		if (obj->isKindOf(KINDOF_TECH_BUILDING))
+		{
 			obj->setTeam(ThePlayerList->getNeutralPlayer()->getDefaultTeam());
+		}
 		else
+		{
 			obj->kill();
+		}
 	}
 	objectsToProcess.clear();
 }
@@ -2477,24 +2728,30 @@ Bool Team::damageTeamMembers(Real amount)
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isDestroyed())
+		{
 			continue;
+		}
 
 		// do max amount of damage to object
-		if (amount < 0.0) {
+		if (amount < 0.0)
+		{
 			iter.cur()->kill();
-		} else {
+		}
+		else
+		{
 			DamageInfo damageInfo;
 
 			damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
 			damageInfo.in.m_deathType = DEATH_NORMAL;
 			damageInfo.in.m_sourceID = INVALID_ID;
 			damageInfo.in.m_amount = amount;
-			iter.cur()->attemptDamage( &damageInfo );
+			iter.cur()->attemptDamage(&damageInfo);
 		}
-
 	}
 	return false;
 }
@@ -2506,10 +2763,14 @@ void Team::moveTeamTo(Coord3D destination)
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
 		if (iter.cur()->isEffectivelyDead())
+		{
 			continue;
+		}
 
 		if (iter.cur()->isDestroyed())
+		{
 			continue;
+		}
 	}
 }
 
@@ -2518,27 +2779,34 @@ Bool Team::hasAnyBuildFacility() const
 {
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance())
 	{
-		const ThingTemplate *objtmpl = iter.cur()->getTemplate();
+		const ThingTemplate* objtmpl = iter.cur()->getTemplate();
 		if (objtmpl->isBuildFacility())
+		{
 			return true;
+		}
 	}
 	return false;
 }
 
 // ------------------------------------------------------------------------
-//DECLARE_PERF_TIMER(updateGenericScripts)
+// DECLARE_PERF_TIMER(updateGenericScripts)
 void Team::updateGenericScripts()
 {
-	//USE_PERF_TIMER(updateGenericScripts)
-	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i) {
-		if (m_shouldAttemptGenericScript[i]) {
+	// USE_PERF_TIMER(updateGenericScripts)
+	for (Int i = 0; i < MAX_GENERIC_SCRIPTS; ++i)
+	{
+		if (m_shouldAttemptGenericScript[i])
+		{
 			// Does the condition succeed? If so, run it. If it is a run once script, also mark that we
 			// shouldn't run it again.
-			Script *script = m_proto->getGenericScript(i);
-			if (script) {
-				if (TheScriptEngine->evaluateConditions(script, this)) {
+			Script* script = m_proto->getGenericScript(i);
+			if (script)
+			{
+				if (TheScriptEngine->evaluateConditions(script, this))
+				{
 					// It was successful.
-					if (script->isOneShot()) {
+					if (script->isOneShot())
+					{
 						m_shouldAttemptGenericScript[i] = false;
 					}
 					TheScriptEngine->friend_executeAction(script->getAction(), this);
@@ -2548,7 +2816,9 @@ void Team::updateGenericScripts()
 					msg.concat(getName());
 					TheScriptEngine->AppendDebugMessage(msg, false);
 				}
-			} else {
+			}
+			else
+			{
 				m_shouldAttemptGenericScript[i] = false;
 			}
 		}
@@ -2558,143 +2828,137 @@ void Team::updateGenericScripts()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void Team::crc( Xfer *xfer )
+void Team::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer Method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void Team::xfer( Xfer *xfer )
+void Team::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// xfer id, this is a sanity check as team id m_id should always be valid at this point
 	TeamID teamID = m_id;
-	xfer->xferUser( &teamID, sizeof( TeamID ) );
-	if( teamID != m_id )
+	xfer->xferUser(&teamID, sizeof(TeamID));
+	if (teamID != m_id)
 	{
-
-		DEBUG_CRASH(( "Team::xfer - TeamID mismatch.  Xfered '%d' but should be '%d'",
-									teamID, m_id ));
+		DEBUG_CRASH(("Team::xfer - TeamID mismatch.  Xfered '%d' but should be '%d'",
+		             teamID, m_id));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// member list count and data
 	ObjectID memberID;
 	UnsignedShort memberCount = 0;
-	for( DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList();
-			 objIt.done() == FALSE;
-			 objIt.advance() )
-		memberCount++;
-	xfer->xferUnsignedShort( &memberCount );
-	if( xfer->getXferMode() == XFER_SAVE )
+	for (DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList();
+	     objIt.done() == FALSE;
+	     objIt.advance())
 	{
-		Object *obj;
+		memberCount++;
+	}
+	xfer->xferUnsignedShort(&memberCount);
+	if (xfer->getXferMode() == XFER_SAVE)
+	{
+		Object* obj;
 
 		// save all member info
-		for( DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList();
-				 objIt.done() == FALSE;
-				 objIt.advance() )
+		for (DLINK_ITERATOR< Object > objIt = iterate_TeamMemberList();
+		     objIt.done() == FALSE;
+		     objIt.advance())
 		{
-
 			// get object
 			obj = objIt.cur();
 
 			// save id
 			memberID = obj->getID();
-			xfer->xferObjectID( &memberID );
-
+			xfer->xferObjectID(&memberID);
 		}
-
 	}
 	else
 	{
-
 		// load all members
-		for( UnsignedShort i = 0; i < memberCount; ++i )
+		for (UnsignedShort i = 0; i < memberCount; ++i)
 		{
-
 			// read ID
-			xfer->xferObjectID( &memberID );
+			xfer->xferObjectID(&memberID);
 
 			// put on pending list for later processing
-			m_xferMemberIDList.push_back( memberID );
-
+			m_xferMemberIDList.push_back(memberID);
 		}
-
 	}
 
 	// state
-	xfer->xferAsciiString( &m_state );
+	xfer->xferAsciiString(&m_state);
 
 	// entered or exited
-	xfer->xferBool( &m_enteredOrExited );
+	xfer->xferBool(&m_enteredOrExited);
 
 	// active status
-	xfer->xferBool( &m_active );
+	xfer->xferBool(&m_active);
 
 	// created flag
-	xfer->xferBool( &m_created );
+	xfer->xferBool(&m_created);
 
 	// check enemy sighted
-	xfer->xferBool( &m_checkEnemySighted );
+	xfer->xferBool(&m_checkEnemySighted);
 
 	// see enemy
-	xfer->xferBool( &m_seeEnemy );
+	xfer->xferBool(&m_seeEnemy);
 
 	// previous see enemy
-	xfer->xferBool( &m_prevSeeEnemy );
+	xfer->xferBool(&m_prevSeeEnemy);
 
 	// was idle
-	xfer->xferBool( &m_wasIdle );
+	xfer->xferBool(&m_wasIdle);
 
 	// destroy threshold
-	xfer->xferInt( &m_destroyThreshold );
+	xfer->xferInt(&m_destroyThreshold);
 
 	// current units
-	xfer->xferInt( &m_curUnits );
+	xfer->xferInt(&m_curUnits);
 
 	// waypoint
 	UnsignedInt currentWaypointID = m_currentWaypoint ? m_currentWaypoint->getID() : 0;
-	xfer->xferUnsignedInt( &currentWaypointID );
-	if( xfer->getXferMode() == XFER_LOAD )
-		m_currentWaypoint = TheTerrainLogic->getWaypointByID( currentWaypointID );
+	xfer->xferUnsignedInt(&currentWaypointID);
+	if (xfer->getXferMode() == XFER_LOAD)
+	{
+		m_currentWaypoint = TheTerrainLogic->getWaypointByID(currentWaypointID);
+	}
 
 	UnsignedShort shouldAttemptGenericScriptCount = MAX_GENERIC_SCRIPTS;
-	xfer->xferUnsignedShort( &shouldAttemptGenericScriptCount );
-	if ( shouldAttemptGenericScriptCount != MAX_GENERIC_SCRIPTS )
+	xfer->xferUnsignedShort(&shouldAttemptGenericScriptCount);
+	if (shouldAttemptGenericScriptCount != MAX_GENERIC_SCRIPTS)
 	{
 		DEBUG_CRASH(("Team::xfer - The number of allowable Generic scripts has changed, and this chunk needs to be versioned."));
 		throw SC_INVALID_DATA;
 	}
 
 	for (Int i = 0; i < shouldAttemptGenericScriptCount; ++i)
+	{
 		xfer->xferBool(&m_shouldAttemptGenericScript[i]);
+	}
 
 	// recruitability set
-	xfer->xferBool( &m_isRecruitablitySet );
+	xfer->xferBool(&m_isRecruitablitySet);
 
 	// is recruitable
-	xfer->xferBool( &m_isRecruitable );
+	xfer->xferBool(&m_isRecruitable);
 
 	// Common attack target.
-	xfer->xferObjectID( &m_commonAttackTarget );
+	xfer->xferObjectID(&m_commonAttackTarget);
 
 	// team relations
-	xfer->xferSnapshot( m_teamRelations );
+	xfer->xferSnapshot(m_teamRelations);
 
 	// player relations
-	xfer->xferSnapshot( m_playerRelations );
-
+	xfer->xferSnapshot(m_playerRelations);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2702,24 +2966,20 @@ void Team::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Team::loadPostProcess()
 {
-
 	//
 	// now that all objects have actually been loaded, populate the member list with
 	// real object pointers
 	//
-	Object *obj;
+	Object* obj;
 	std::list< ObjectID >::const_iterator it;
-	for( it = m_xferMemberIDList.begin(); it != m_xferMemberIDList.end(); ++it )
+	for (it = m_xferMemberIDList.begin(); it != m_xferMemberIDList.end(); ++it)
 	{
-
 		// find object
-		obj = TheGameLogic->findObjectByID( *it );
-		if( obj == nullptr )
+		obj = TheGameLogic->findObjectByID(*it);
+		if (obj == nullptr)
 		{
-
-			DEBUG_CRASH(( "Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'", *it ));
+			DEBUG_CRASH(("Team::loadPostProcess - Unable to post process object to member list, object ID = '%d'", *it));
 			throw SC_INVALID_DATA;
-
 		}
 
 		//
@@ -2728,28 +2988,21 @@ void Team::loadPostProcess()
 		// check everything here to make sure that all the objects that should be on the team,
 		// are in fact on the team
 		//
-		if( isInList_TeamMemberList( obj ) == FALSE )
+		if (isInList_TeamMemberList(obj) == FALSE)
 		{
-
-			DEBUG_CRASH(( "Team::loadPostProcess - Object '%s'(%d) should be in team list but is not",
-										obj->getTemplate()->getName().str(), obj->getID() ));
+			DEBUG_CRASH(("Team::loadPostProcess - Object '%s'(%d) should be in team list but is not",
+			             obj->getTemplate()->getName().str(), obj->getID()));
 			throw SC_INVALID_DATA;
-
 		}
-
 	}
 
 	// since we prepended the object member pointers, reverse that list so it's just like before
-//	reverse_TeamMemberList();
+	//	reverse_TeamMemberList();
 
 	// we're done with the xfer list now
 	m_xferMemberIDList.clear();
-
 }
 
-
-
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
-

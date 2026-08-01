@@ -24,27 +24,26 @@
 
 class CMainFrame : public CFrameWnd
 {
-protected: // create from serialization only
+protected:    // create from serialization only
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
 
-// Attributes
+	// Attributes
 protected:
 	CSplitterWnd m_SplitWnd;
-public:
 
-// Operations
 public:
-
-// Overrides
+	// Operations
+public:
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CMainFrame)
-	public:
+public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) override;
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CMainFrame();
 #ifdef RTS_DEBUG
@@ -52,16 +51,16 @@ public:
 	virtual void Dump(CDumpContext& dc) const override;
 #endif
 
-protected:  // control bar embedded members
-	CStatusBar  m_wndStatusBar;
-	CToolBar    m_wndToolBar;
+protected:    // control bar embedded members
+	CStatusBar m_wndStatusBar;
+	CToolBar m_wndToolBar;
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code!
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

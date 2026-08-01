@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -39,10 +39,8 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetTextEntry.h"
-//#include "GameNetwork/WOL.h"
-//#include "GameNetwork/WOLmenus.h"
-
-
+// #include "GameNetwork/WOL.h"
+// #include "GameNetwork/WOLmenus.h"
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
@@ -51,112 +49,100 @@ static NameKeyType buttonDisconnectID = NAMEKEY_INVALID;
 static NameKeyType buttonQuickmatchID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLQMScore = nullptr;
-static GameWindow *buttonDisconnect = nullptr;
-static GameWindow *buttonQuickmatch = nullptr;
+static GameWindow* parentWOLQMScore = nullptr;
+static GameWindow* buttonDisconnect = nullptr;
+static GameWindow* buttonQuickmatch = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOL Status Menu */
 //-------------------------------------------------------------------------------------------------
-void WOLQMScoreScreenInit( WindowLayout *layout, void *userData )
+void WOLQMScoreScreenInit(WindowLayout* layout, void* userData)
 {
-	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:WOLQMScoreScreenParent" );
-	buttonDisconnectID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonDisconnect" );
-	buttonQuickmatchID = TheNameKeyGenerator->nameToKey( "WOLQMScoreScreen.wnd:ButtonQuickMatch" );
-	parentWOLQMScore = TheWindowManager->winGetWindowFromId( nullptr, parentWOLQMScoreID );
-	buttonDisconnect = TheWindowManager->winGetWindowFromId( nullptr,  buttonDisconnectID);
-	buttonQuickmatch = TheWindowManager->winGetWindowFromId( nullptr,  buttonQuickmatchID);
+	parentWOLQMScoreID = TheNameKeyGenerator->nameToKey("WOLQMScoreScreen.wnd:WOLQMScoreScreenParent");
+	buttonDisconnectID = TheNameKeyGenerator->nameToKey("WOLQMScoreScreen.wnd:ButtonDisconnect");
+	buttonQuickmatchID = TheNameKeyGenerator->nameToKey("WOLQMScoreScreen.wnd:ButtonQuickMatch");
+	parentWOLQMScore = TheWindowManager->winGetWindowFromId(nullptr, parentWOLQMScoreID);
+	buttonDisconnect = TheWindowManager->winGetWindowFromId(nullptr, buttonDisconnectID);
+	buttonQuickmatch = TheWindowManager->winGetWindowFromId(nullptr, buttonQuickmatchID);
 
 	/*
 	if (WOL::TheWOL->getState() == WOL::WOLAPI_FATAL_ERROR)
 	{
-		// We can get to the score screen even though we've been disconnected.  Just hide
-		// any buttons that lead back into WOL.
+	  // We can get to the score screen even though we've been disconnected.  Just hide
+	  // any buttons that lead back into WOL.
 
-		buttonQuickmatch->winHide( TRUE );
+	  buttonQuickmatch->winHide( TRUE );
 	}
 	*/
 
 	// Show Menu
-	layout->hide( FALSE );
+	layout->hide(FALSE);
 
 	// Set Keyboard to Main Parent
-	TheWindowManager->winSetFocus( parentWOLQMScore );
+	TheWindowManager->winSetFocus(parentWOLQMScore);
 
-	//progressLayout = TheShell->top();
-
+	// progressLayout = TheShell->top();
 }
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu shutdown method */
 //-------------------------------------------------------------------------------------------------
-void WOLQMScoreScreenShutdown( WindowLayout *layout, void *userData )
+void WOLQMScoreScreenShutdown(WindowLayout* layout, void* userData)
 {
-
 	// hide menu
-	layout->hide( TRUE );
+	layout->hide(TRUE);
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
+	TheShell->shutdownComplete(layout);
 
-	//progressLayout = nullptr;
-
+	// progressLayout = nullptr;
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu update method */
 //-------------------------------------------------------------------------------------------------
-void WOLQMScoreScreenUpdate( WindowLayout * layout, void *userData)
+void WOLQMScoreScreenUpdate(WindowLayout* layout, void* userData)
 {
 	/*
 	if (WOL::TheWOL)
-		WOL::TheWOL->update();
+	  WOL::TheWOL->update();
 	*/
 }
 
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLQMScoreScreenInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLQMScoreScreenInput(GameWindow* window, UnsignedInt msg,
+                                           WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
-
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED,
+						                                   (WindowMsgData)buttonDisconnect, buttonDisconnectID);
 					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
-
 				}
-
 			}
-
 		}
-
 	}
 
 	return MSG_IGNORED;
@@ -165,74 +151,72 @@ WindowMsgHandledType WOLQMScoreScreenInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOL Status Menu window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLQMScoreScreenSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLQMScoreScreenSystem(GameWindow* window, UnsignedInt msg,
+                                            WindowMsgData mData1, WindowMsgData mData2)
 {
 	UnicodeString txtInput;
 
-	switch( msg )
+	switch (msg)
 	{
-
-
 		case GWM_CREATE:
-			{
-
-				break;
-			}
+		{
+			break;
+		}
 
 		case GWM_DESTROY:
-			{
-				break;
-			}
+		{
+			break;
+		}
 
 		case GWM_INPUT_FOCUS:
+		{
+			// if we're given the opportunity to take the keyboard focus we must say we want it
+			if (mData1 == TRUE)
 			{
-				// if we're given the opportunity to take the keyboard focus we must say we want it
-				if( mData1 == TRUE )
-					*(Bool *)mData2 = TRUE;
-
-				return MSG_HANDLED;
+				*(Bool*)mData2 = TRUE;
 			}
+
+			return MSG_HANDLED;
+		}
 
 		case GBM_SELECTED:
+		{
+			/*
+			GameWindow *control = (GameWindow *)mData1;
+			Int controlID = control->winGetWindowId();
+
+			if ( controlID == buttonDisconnectID )
 			{
-				/*
-				GameWindow *control = (GameWindow *)mData1;
-				Int controlID = control->winGetWindowId();
+			  //TheShell->pop();
+			  if (WOL::TheWOL->setState( WOL::WOLAPI_FATAL_ERROR ))
+			  {
+			    WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
+			  }
 
-				if ( controlID == buttonDisconnectID )
-				{
-					//TheShell->pop();
-					if (WOL::TheWOL->setState( WOL::WOLAPI_FATAL_ERROR ))
-					{
-						WOL::TheWOL->addCommand( WOL::WOLCOMMAND_RESET );  // don't display an error, log out, or anything
-					}
-
-				}
-				else if ( controlID == buttonQuickmatchID )
-				{
-					//TheShell->pop();
-					if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
-					{
-						if (WOL::TheWOL->setState( WOL::WOLAPI_TOURNAMENT ))
-						{
-							WOL::TheWOL->setScreen( WOL::WOLAPI_MENU_QUICKMATCH );
-							WOL::TheWOL->addCommand( WOL::WOLCOMMAND_FIND_MATCH_CHANNEL );
-						}
-					}
-
-				}
-				*/
-				break;
 			}
+			else if ( controlID == buttonQuickmatchID )
+			{
+			  //TheShell->pop();
+			  if (WOL::TheWOL->getState() != WOL::WOLAPI_FATAL_ERROR)
+			  {
+			    if (WOL::TheWOL->setState( WOL::WOLAPI_TOURNAMENT ))
+			    {
+			      WOL::TheWOL->setScreen( WOL::WOLAPI_MENU_QUICKMATCH );
+			      WOL::TheWOL->addCommand( WOL::WOLCOMMAND_FIND_MATCH_CHANNEL );
+			    }
+			  }
+
+			}
+			*/
+			break;
+		}
 
 		case GEM_EDIT_DONE:
-			{
-				break;
-			}
+		{
+			break;
+		}
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;

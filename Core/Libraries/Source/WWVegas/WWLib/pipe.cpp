@@ -38,11 +38,9 @@
  *   Pipe::~Pipe -- Destructor for pipe class object.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"always.h"
+#include "always.h"
 #include "PIPE.h"
-#include	<stddef.h>
-
+#include <stddef.h>
 
 /***********************************************************************************************
  * Pipe::~Pipe -- Destructor for pipe class object.                                            *
@@ -61,17 +59,18 @@
  *=============================================================================================*/
 Pipe::~Pipe()
 {
-	if (ChainTo != nullptr) {
+	if (ChainTo != nullptr)
+	{
 		ChainTo->ChainFrom = ChainFrom;
 	}
-	if (ChainFrom != nullptr) {
+	if (ChainFrom != nullptr)
+	{
 		ChainFrom->Put_To(ChainTo);
 	}
 
 	ChainFrom = nullptr;
 	ChainTo = nullptr;
 }
-
 
 /***********************************************************************************************
  * Pipe::Put_To -- Connect a pipe to flow data into from this pipe.                            *
@@ -88,26 +87,29 @@ Pipe::~Pipe()
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Pipe::Put_To(Pipe * pipe)
+void Pipe::Put_To(Pipe* pipe)
 {
-	if (ChainTo != pipe) {
-		if (pipe != nullptr && pipe->ChainFrom != nullptr) {
+	if (ChainTo != pipe)
+	{
+		if (pipe != nullptr && pipe->ChainFrom != nullptr)
+		{
 			pipe->ChainFrom->Put_To(nullptr);
 			pipe->ChainFrom = nullptr;
 		}
 
-		if (ChainTo != nullptr) {
+		if (ChainTo != nullptr)
+		{
 			ChainTo->ChainFrom = nullptr;
 			ChainTo->Flush();
 		}
 
 		ChainTo = pipe;
-		if (ChainTo != nullptr) {
+		if (ChainTo != nullptr)
+		{
 			ChainTo->ChainFrom = this;
 		}
 	}
 }
-
 
 /***********************************************************************************************
  * Pipe::Put -- Feed some data through the pipe.                                               *
@@ -127,14 +129,14 @@ void Pipe::Put_To(Pipe * pipe)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Pipe::Put(void const * source, int length)
+int Pipe::Put(void const* source, int length)
 {
-	if (ChainTo != nullptr) {
-		return(ChainTo->Put(source, length));
+	if (ChainTo != nullptr)
+	{
+		return (ChainTo->Put(source, length));
 	}
-	return(length);
+	return (length);
 }
-
 
 /***********************************************************************************************
  * Pipe::Flush -- Flush all pending data out the pipe.                                         *
@@ -156,10 +158,9 @@ int Pipe::Put(void const * source, int length)
  *=============================================================================================*/
 int Pipe::Flush()
 {
-	if (ChainTo != nullptr) {
-		return(ChainTo->Flush());
+	if (ChainTo != nullptr)
+	{
+		return (ChainTo->Flush());
 	}
-	return(0);
+	return (0);
 }
-
-

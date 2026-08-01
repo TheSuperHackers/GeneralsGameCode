@@ -21,7 +21,7 @@
 // CameraOptions.h : header file
 //
 
-#define  CAMERA_OPTIONS_PANEL_SECTION "CameraOptionsWindow"
+#define CAMERA_OPTIONS_PANEL_SECTION "CameraOptionsWindow"
 #include "WBPopupSlider.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -29,27 +29,28 @@
 
 class CameraOptions : public CDialog, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	CameraOptions(CWnd* pParent = nullptr);   // standard constructor
+	CameraOptions(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CameraOptions)
-	enum { IDD = IDD_CAMERA_OPTIONS };
-		// NOTE: the ClassWizard will add data members here
+	enum
+	{
+		IDD = IDD_CAMERA_OPTIONS
+	};
+	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CameraOptions)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(CameraOptions)
 	afx_msg void OnCameraReset();
@@ -63,25 +64,23 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	void	putInt( Int ctrlID, Int val );
-	void	putReal( Int ctrlID, Real val );
-	void	putAsciiString( Int ctrlID, AsciiString val );
-	BOOL	getReal( Int ctrlID, Real *rVal );
-	void	stuffValuesIntoFields();
-	void	applyCameraPitch( Real pitch );
+	void putInt(Int ctrlID, Int val);
+	void putReal(Int ctrlID, Real val);
+	void putAsciiString(Int ctrlID, AsciiString val);
+	BOOL getReal(Int ctrlID, Real* rVal);
+	void stuffValuesIntoFields();
+	void applyCameraPitch(Real pitch);
 
 	WBPopupSliderButton m_pitchPopup;
-	Bool	m_updating;
+	Bool m_updating;
 
-public: // popup slider interface.
-
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+public:    // popup slider interface.
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
 public:
 	void update();
-
 };
 
 //{{AFX_INSERT_LOCATION}}

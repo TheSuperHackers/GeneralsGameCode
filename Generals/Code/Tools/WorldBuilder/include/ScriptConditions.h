@@ -31,42 +31,44 @@ class ScriptConditionsDlg : public CPropertyPage
 {
 	DECLARE_DYNCREATE(ScriptConditionsDlg)
 
-// Construction
+	// Construction
 public:
 	ScriptConditionsDlg();
 	virtual ~ScriptConditionsDlg() override;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ScriptConditionsDlg)
-	enum { IDD = IDD_ScriptConditions };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	enum
+	{
+		IDD = IDD_ScriptConditions
+	};
+	// NOTE - ClassWizard will add data members here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(ScriptConditionsDlg)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
-	void setScript(Script *pScript) {m_script = pScript;}
+	void setScript(Script* pScript) { m_script = pScript; }
 
 protected:
-	Script *m_script;	 // Doesn't change.
-	OrCondition *m_orCondition; // Currently selected OR clause.
-	Condition		*m_condition;		// Currently selected condition.
-	Int					m_index; // Index of whatever is currently selected.
+	Script* m_script;    // Doesn't change.
+	OrCondition* m_orCondition;    // Currently selected OR clause.
+	Condition* m_condition;    // Currently selected condition.
+	Int m_index;    // Index of whatever is currently selected.
 
 protected:
 	void enableUI();
 	void loadList();
-	Int doMoveUp( OrCondition **outWhichNow );
-	Int doMoveDown( OrCondition **outWhichNow );
-	void setSel(OrCondition *pOr, Condition *pCond);
+	Int doMoveUp(OrCondition** outWhichNow);
+	Int doMoveDown(OrCondition** outWhichNow);
+	void setSel(OrCondition* pOr, Condition* pCond);
 
 protected:
 	// Generated message map functions
@@ -84,7 +86,6 @@ protected:
 	afx_msg void OnChangeEditComment();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 //{{AFX_INSERT_LOCATION}}

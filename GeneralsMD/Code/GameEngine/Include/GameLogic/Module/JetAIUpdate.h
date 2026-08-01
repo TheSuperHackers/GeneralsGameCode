@@ -32,36 +32,34 @@
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-
 
 //-------------------------------------------------------------------------------------------------
 class JetAIUpdateModuleData : public AIUpdateModuleData
 {
 public:
-	Real										m_outOfAmmoDamagePerSecond;				/**< amount of damage to take per SEC (not per frame) when out of ammo
-																																	note that it's expressed as a percent of max health, not an absolute */
-	Real										m_takeoffDistForMaxLift;					///< percent of distance from start (100%) to end (0%) that gives us max lift. Higher value lifts off sooner.
-	Real										m_minHeight;											///< how far off the ground to lift the drawable when taxiing
-	Real										m_parkingOffset;									///< tweaking the park loc
-	Real										m_sneakyOffsetWhenAttacking;			///< our sneaky offset when attacking (or zero)
-	Bool										m_keepsParkingSpaceWhenAirborne;	///< if t, keeps its parking space reservation even when airborne
-	Bool										m_needsRunway;										///< if t, needs runways to takeoff/land
-	UnsignedInt							m_takeoffPause;										///< pre-takeoff pause
-	LocomotorSetType				m_attackingLoco;									///< custom attacking loco
-	LocomotorSetType				m_returningLoco;									///< custom return-for-ammo loco
-	UnsignedInt							m_attackLocoPersistTime;					///< if we have a custom attack loco, it persists for this long after attack is done
-	UnsignedInt							m_attackersMissPersistTime;				///< how long after our attack we continue immunity
-	UnsignedInt							m_lockonTime;											///< time it takes for someone to lock-on to us.
-	AsciiString							m_lockonCursor;										///< template used for lockon.
-	Real										m_lockonInitialDist;							///< how far away the lockon cursor starts.
-	Real										m_lockonFreq;
-	Real										m_lockonAngleSpin;								///< how many times to spin around it
-	Real										m_lockonBlinky;
-	UnsignedInt							m_returnToBaseIdleTime;						///< if we're idle for this long, return to base
+	Real m_outOfAmmoDamagePerSecond; /**< amount of damage to take per SEC (not per frame) when out of ammo
+	                                       note that it's expressed as a percent of max health, not an absolute */
+	Real m_takeoffDistForMaxLift;    ///< percent of distance from start (100%) to end (0%) that gives us max lift. Higher value lifts off sooner.
+	Real m_minHeight;    ///< how far off the ground to lift the drawable when taxiing
+	Real m_parkingOffset;    ///< tweaking the park loc
+	Real m_sneakyOffsetWhenAttacking;    ///< our sneaky offset when attacking (or zero)
+	Bool m_keepsParkingSpaceWhenAirborne;    ///< if t, keeps its parking space reservation even when airborne
+	Bool m_needsRunway;    ///< if t, needs runways to takeoff/land
+	UnsignedInt m_takeoffPause;    ///< pre-takeoff pause
+	LocomotorSetType m_attackingLoco;    ///< custom attacking loco
+	LocomotorSetType m_returningLoco;    ///< custom return-for-ammo loco
+	UnsignedInt m_attackLocoPersistTime;    ///< if we have a custom attack loco, it persists for this long after attack is done
+	UnsignedInt m_attackersMissPersistTime;    ///< how long after our attack we continue immunity
+	UnsignedInt m_lockonTime;    ///< time it takes for someone to lock-on to us.
+	AsciiString m_lockonCursor;    ///< template used for lockon.
+	Real m_lockonInitialDist;    ///< how far away the lockon cursor starts.
+	Real m_lockonFreq;
+	Real m_lockonAngleSpin;    ///< how many times to spin around it
+	Real m_lockonBlinky;
+	UnsignedInt m_returnToBaseIdleTime;    ///< if we're idle for this long, return to base
 
 	JetAIUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -70,15 +68,13 @@ public:
 //-------------------------------------------------------------------------------------------------
 class JetAIUpdate : public AIUpdateInterface
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( JetAIUpdate, "JetAIUpdate" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( JetAIUpdate, JetAIUpdateModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(JetAIUpdate, "JetAIUpdate")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(JetAIUpdate, JetAIUpdateModuleData)
 
 	virtual UpdateSleepTime update() override;
 
 public:
-
-	JetAIUpdate( Thing *thing, const ModuleData* moduleData );
+	JetAIUpdate(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	virtual void onObjectCreated() override;
@@ -87,11 +83,11 @@ public:
 	virtual JetAIUpdate* getJetAIUpdate() override { return this; }
 	virtual const JetAIUpdate* getJetAIUpdate() const override { return this; }
 
- 	virtual void aiDoCommand(const AICommandParms* parms) override;
+	virtual void aiDoCommand(const AICommandParms* parms) override;
 	virtual Bool chooseLocomotorSet(LocomotorSetType wst) override;
 	virtual void setLocomotorGoalNone() override;
 	virtual Bool isIdle() const override;
-	virtual Bool isTaxiingToParking() const override; //only applies to jets interacting with runways.
+	virtual Bool isTaxiingToParking() const override;    // only applies to jets interacting with runways.
 	virtual Bool isReloading() const;
 
 	virtual Bool isAllowedToMoveAwayFromUnit() const override;
@@ -110,7 +106,7 @@ public:
 	Real friend_getMinHeight() const { return getJetAIUpdateModuleData()->m_minHeight; }
 	Real friend_getParkingOffset() const { return getJetAIUpdateModuleData()->m_parkingOffset; }
 	UnsignedInt friend_getTakeoffPause() const { return getJetAIUpdateModuleData()->m_takeoffPause; }
-	void friend_setGoalPath( std::vector<Coord3D>* path ) { getStateMachine()->setGoalPath(path); }
+	void friend_setGoalPath(std::vector<Coord3D>* path) { getStateMachine()->setGoalPath(path); }
 	void friend_setTakeoffInProgress(Bool v) { setFlag(TAKEOFF_IN_PROGRESS, v); }
 	void friend_setLandingInProgress(Bool v) { setFlag(LANDING_IN_PROGRESS, v); }
 	void friend_setTaxiInProgress(Bool v) { setFlag(TAXI_IN_PROGRESS, v); }
@@ -123,18 +119,17 @@ public:
 	{
 		return (getFlag(TAKEOFF_IN_PROGRESS) || getFlag(LANDING_IN_PROGRESS));
 	}
-	void friend_addWaypointToGoalPath( const Coord3D &pos );
+	void friend_addWaypointToGoalPath(const Coord3D& pos);
 	AICommandType friend_getPendingCommandType() const;
 	void friend_purgePendingCommand();
 
 protected:
-
 	virtual AIStateMachine* makeStateMachine() override;
 
-	virtual void privateFollowPath( std::vector<Coord3D>* path, Object *ignoreObject, CommandSourceType cmdSource, Bool exitProduction ) override;///< follow the path defined by the given array of points
-	virtual void privateFollowPathAppend( const Coord3D *pos, CommandSourceType cmdSource ) override;
-	virtual void privateEnter( Object *obj, CommandSourceType cmdSource ) override;							///< enter the given object
-	virtual void privateGetRepaired( Object *repairDepot, CommandSourceType cmdSource ) override;///< get repaired at repair depot
+	virtual void privateFollowPath(std::vector<Coord3D>* path, Object* ignoreObject, CommandSourceType cmdSource, Bool exitProduction) override;    ///< follow the path defined by the given array of points
+	virtual void privateFollowPathAppend(const Coord3D* pos, CommandSourceType cmdSource) override;
+	virtual void privateEnter(Object* obj, CommandSourceType cmdSource) override;    ///< enter the given object
+	virtual void privateGetRepaired(Object* repairDepot, CommandSourceType cmdSource) override;    ///< get repaired at repair depot
 
 	void pruneDeadTargeters();
 	void positionLockon();
@@ -143,7 +138,6 @@ protected:
 	Bool isParkedAt(const Object* obj) const;
 
 private:
-
 	enum FlagType
 	{
 		HAS_PENDING_COMMAND,
@@ -157,22 +151,22 @@ private:
 		TAXI_IN_PROGRESS
 	};
 
-	Coord3D									m_producerLocation;		///< remember this, so that if our producer dies, we have a place to circle aimlessly
-	AICommandParmsStorage		m_mostRecentCommand;
-	AudioEventRTS						m_afterburnerSound;		///< Sound when afterburners on
-	UnsignedInt							m_attackLocoExpireFrame;
-	UnsignedInt							m_attackersMissExpireFrame;
-	UnsignedInt							m_returnToBaseFrame;	///< if nonzero, return to base at this frame when we are idle, even if not out of ammo
-	std::list<ObjectID>			m_targetedBy;					///< object(s) currently targeting us, if any
-	UnsignedInt							m_untargetableExpireFrame;
-	Drawable*								m_lockonDrawable;
-	Int											m_flags;
-	Coord3D									m_landingPosForHelipadStuff;
-	Bool										m_enginesOn;					///<
+	Coord3D m_producerLocation;    ///< remember this, so that if our producer dies, we have a place to circle aimlessly
+	AICommandParmsStorage m_mostRecentCommand;
+	AudioEventRTS m_afterburnerSound;    ///< Sound when afterburners on
+	UnsignedInt m_attackLocoExpireFrame;
+	UnsignedInt m_attackersMissExpireFrame;
+	UnsignedInt m_returnToBaseFrame;    ///< if nonzero, return to base at this frame when we are idle, even if not out of ammo
+	std::list<ObjectID> m_targetedBy;    ///< object(s) currently targeting us, if any
+	UnsignedInt m_untargetableExpireFrame;
+	Drawable* m_lockonDrawable;
+	Int m_flags;
+	Coord3D m_landingPosForHelipadStuff;
+	Bool m_enginesOn;    ///<
 
 	void getProducerLocation();
 	void buildLockonDrawableIfNecessary();
-	void doLandingCommand(Object *airfield, CommandSourceType cmdSource);
+	void doLandingCommand(Object* airfield, CommandSourceType cmdSource);
 	Bool getFlag(FlagType f) const;
 	void setFlag(FlagType f, Bool v);
 };

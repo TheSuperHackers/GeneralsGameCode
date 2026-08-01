@@ -37,7 +37,6 @@ class ParticleEmitterClass;
 class EmitterInstanceListClass;
 class AssetInfoClass;
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //	EmitterPropertySheetClass
@@ -46,74 +45,69 @@ class EmitterPropertySheetClass : public CPropertySheet
 {
 	DECLARE_DYNAMIC(EmitterPropertySheetClass)
 
-// Construction
+	// Construction
 public:
-	EmitterPropertySheetClass (EmitterInstanceListClass *emitter_list, UINT nIDCaption, CWnd* pParentWnd = nullptr);
-	EmitterPropertySheetClass (EmitterInstanceListClass *emitter_list, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr);
+	EmitterPropertySheetClass(EmitterInstanceListClass* emitter_list, UINT nIDCaption, CWnd* pParentWnd = nullptr);
+	EmitterPropertySheetClass(EmitterInstanceListClass* emitter_list, LPCTSTR pszCaption, CWnd* pParentWnd = nullptr);
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(EmitterPropertySheetClass)
-	protected:
+protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~EmitterPropertySheetClass();
 
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(EmitterPropertySheetClass)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	//////////////////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	void Notify_Render_Mode_Changed(int new_mode);
 
-		//////////////////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		void							Notify_Render_Mode_Changed(int new_mode);
+protected:
+	//////////////////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize();
+	ParticleEmitterClass* Create_Emitter();
+	void Update_Emitter();
+	void Add_Emitter_To_Viewer();
+	void Create_New_Emitter();
 
-	protected:
+private:
+	//////////////////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterGeneralPropPageClass m_GeneralPage;
+	EmitterParticlePropPageClass m_ParticlePage;
+	EmitterPhysicsPropPageClass m_PhysicsPage;
+	EmitterColorPropPageClass m_ColorPage;
+	EmitterUserPropPageClass m_UserPage;
+	EmitterSizePropPageClass m_SizePage;
+	EmitterLinePropPageClass m_LinePage;
+	EmitterRotationPropPageClass m_RotationPage;
+	EmitterFramePropPageClass m_FramePage;
+	EmitterLineGroupPropPageClass m_LineGroupPage;
 
-		//////////////////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void							Initialize ();
-		ParticleEmitterClass *	Create_Emitter ();
-		void							Update_Emitter ();
-		void							Add_Emitter_To_Viewer ();
-		void							Create_New_Emitter ();
-
-	private:
-
-		//////////////////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterGeneralPropPageClass		m_GeneralPage;
-		EmitterParticlePropPageClass		m_ParticlePage;
-		EmitterPhysicsPropPageClass		m_PhysicsPage;
-		EmitterColorPropPageClass			m_ColorPage;
-		EmitterUserPropPageClass			m_UserPage;
-		EmitterSizePropPageClass			m_SizePage;
-		EmitterLinePropPageClass			m_LinePage;
-		EmitterRotationPropPageClass		m_RotationPage;
-		EmitterFramePropPageClass			m_FramePage;
-		EmitterLineGroupPropPageClass		m_LineGroupPage;
-
-		EmitterInstanceListClass *			m_pEmitterList;
-		CString									m_LastSavedName;
+	EmitterInstanceListClass* m_pEmitterList;
+	CString m_LastSavedName;
 };
 
 /////////////////////////////////////////////////////////////////////////////

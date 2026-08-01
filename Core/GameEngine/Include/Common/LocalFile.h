@@ -50,13 +50,12 @@
 #include "Common/file.h"
 
 #if USE_BUFFERED_IO
-#include "Utility/stdio_adapter.h"
+	#include "Utility/stdio_adapter.h"
 #endif
 
 //----------------------------------------------------------------------------
 //           Forward References
 //----------------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------------
 //           Type Defines
@@ -66,65 +65,58 @@
 // LocalFile
 //===============================
 /**
-  *	File abstraction for standard C file operators: open, close, lseek, read, write
-	*/
+ *	File abstraction for standard C file operators: open, close, lseek, read, write
+ */
 //===============================
 
 class LocalFile : public File
 {
 	MEMORY_POOL_GLUE_ABC(LocalFile)
-	private:
-
+private:
 #if USE_BUFFERED_IO
-		// srj sez: this was purely an experiment in optimization.
-		// at the present time, it doesn't appear to be a good one.
-		// TheSuperHackers @info It is a good optimization and will be
-		// significantly faster than unbuffered IO with small reads and writes.
-		FILE* m_file;
+	// srj sez: this was purely an experiment in optimization.
+	// at the present time, it doesn't appear to be a good one.
+	// TheSuperHackers @info It is a good optimization and will be
+	// significantly faster than unbuffered IO with small reads and writes.
+	FILE* m_file;
 #else
-		int m_handle;											///< Local C file handle
+	int m_handle;    ///< Local C file handle
 #endif
 
-	public:
+public:
+	LocalFile();
+	// virtual				~LocalFile();
 
-		LocalFile();
-		//virtual				~LocalFile();
+	virtual Bool open(const Char* filename, Int access = NONE, size_t bufferSize = BUFFERSIZE) override;    ///< Open a file for access
+	virtual void close() override;    ///< Close the file
+	virtual Int read(void* buffer, Int bytes) override;    ///< Read the specified number of bytes in to buffer: See File::read
+	virtual Int readChar() override;    ///< Read a character from the file
+	virtual Int readWideChar() override;    ///< Read a wide character from the file
+	virtual Int write(const void* buffer, Int bytes) override;    ///< Write the specified number of bytes from the buffer: See File::write
+	virtual Int writeFormat(const Char* format, ...) override;    ///< Write an unterminated formatted string to the file
+	virtual Int writeFormat(const WideChar* format, ...) override;    ///< Write an unterminated formatted string to the file
+	virtual Int writeChar(const Char* character) override;    ///< Write a character to the file
+	virtual Int writeChar(const WideChar* character) override;    ///< Write a wide character to the file
+	virtual Int seek(Int new_pos, seekMode mode = CURRENT) override;    ///< Set file position: See File::seek
+	virtual Bool flush() override;    ///< flush data to disk
+	virtual void nextLine(Char* buf = nullptr, Int bufSize = 0) override;    ///< moves file position to after the next new-line
+	virtual Bool scanInt(Int& newInt) override;    ///< return what gets read in as an integer at the current file position.
+	virtual Bool scanReal(Real& newReal) override;    ///< return what gets read in as a float at the current file position.
+	virtual Bool scanString(AsciiString& newString) override;    ///< return what gets read in as a string at the current file position.
+	/**
+	  Allocate a buffer large enough to hold entire file, read
+	  the entire file into the buffer, then close the file.
+	  the buffer is owned by the caller, who is responsible
+	  for freeing is (via delete[]). This is a Good Thing to
+	  use because it minimizes memory copies for BIG files.
+	*/
+	virtual char* readEntireAndClose() override;
+	virtual File* convertToRAMFile() override;
 
-
-		virtual Bool	open( const Char *filename, Int access = NONE, size_t bufferSize = BUFFERSIZE ) override; ///< Open a file for access
-		virtual void	close() override;																			///< Close the file
-		virtual Int		read( void *buffer, Int bytes ) override;										///< Read the specified number of bytes in to buffer: See File::read
-		virtual Int		readChar() override;																///< Read a character from the file
-		virtual Int		readWideChar() override;															///< Read a wide character from the file
-		virtual Int		write( const void *buffer, Int bytes ) override;							///< Write the specified number of bytes from the buffer: See File::write
-		virtual Int		writeFormat( const Char* format, ... ) override;							///< Write an unterminated formatted string to the file
-		virtual Int		writeFormat( const WideChar* format, ... ) override;						///< Write an unterminated formatted string to the file
-		virtual Int		writeChar( const Char* character ) override;								///< Write a character to the file
-		virtual Int		writeChar( const WideChar* character ) override;							///< Write a wide character to the file
-		virtual Int		seek( Int new_pos, seekMode mode = CURRENT ) override;				///< Set file position: See File::seek
-		virtual Bool	flush() override;													///< flush data to disk
-		virtual void	nextLine(Char *buf = nullptr, Int bufSize = 0) override;				///< moves file position to after the next new-line
-		virtual Bool	scanInt(Int &newInt) override;																///< return what gets read in as an integer at the current file position.
-		virtual Bool	scanReal(Real &newReal) override;														///< return what gets read in as a float at the current file position.
-		virtual	Bool	scanString(AsciiString &newString) override;									///< return what gets read in as a string at the current file position.
-		/**
-			Allocate a buffer large enough to hold entire file, read
-			the entire file into the buffer, then close the file.
-			the buffer is owned by the caller, who is responsible
-			for freeing is (via delete[]). This is a Good Thing to
-			use because it minimizes memory copies for BIG files.
-		*/
-		virtual char* readEntireAndClose() override;
-		virtual File* convertToRAMFile() override;
-
-	protected:
-
-		void closeWithoutDelete();
-		void closeFile();
+protected:
+	void closeWithoutDelete();
+	void closeFile();
 };
-
-
-
 
 //----------------------------------------------------------------------------
 //           Inlining

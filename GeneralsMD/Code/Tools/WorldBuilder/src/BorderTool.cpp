@@ -27,21 +27,20 @@
 
 const long BOUNDARY_PICK_DISTANCE = 5.0f;
 
-BorderTool::BorderTool() : Tool(ID_BORDERTOOL, IDC_POINTER),
-													 m_mouseDown(false),
-													 m_addingNewBorder(false),
-													 m_modifyBorderNdx(-1)
+BorderTool::BorderTool()
+  : Tool(ID_BORDERTOOL, IDC_POINTER)
+  , m_mouseDown(false)
+  , m_addingNewBorder(false)
+  , m_modifyBorderNdx(-1)
 
-{ }
+{}
 
 BorderTool::~BorderTool()
 {
-
 }
 
 void BorderTool::setCursor()
 {
-
 }
 
 void BorderTool::activate()
@@ -52,28 +51,32 @@ void BorderTool::activate()
 
 void BorderTool::deactivate()
 {
-	WbView3d *p3View = CWorldBuilderDoc::GetActive3DView();
+	WbView3d* p3View = CWorldBuilderDoc::GetActive3DView();
 	DrawObject::setDoBoundaryFeedback(p3View->getShowMapBoundaryFeedback());
 }
 
-void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) {
+	if (m != TRACK_L)
+	{
 		return;
 	}
 
-	if (m_addingNewBorder) {
+	if (m_addingNewBorder)
+	{
 		Int count = pDoc->getNumBoundaries();
 		ICoord2D current;
 		pDoc->getBoundary(count - 1, &current);
 		Coord3D new3DPoint;
 		pView->viewToDocCoords(viewPt, &new3DPoint, false);
 
-		if (current.x < 0) {
+		if (current.x < 0)
+		{
 			current.x = 0;
 		}
 
-		if (current.y < 0) {
+		if (current.y < 0)
+		{
 			current.y = 0;
 		}
 
@@ -83,7 +86,8 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		return;
 	}
 
-	if (m_modifyBorderNdx >= 0) {
+	if (m_modifyBorderNdx >= 0)
+	{
 		ICoord2D currentBorder;
 		pDoc->getBoundary(m_modifyBorderNdx, &currentBorder);
 
@@ -92,7 +96,9 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 
 		switch (m_modificationType)
 		{
-			case MOD_TYPE_INVALID: m_modifyBorderNdx = -1; return;
+			case MOD_TYPE_INVALID:
+				m_modifyBorderNdx = -1;
+				return;
 			case MOD_TYPE_UP:
 				currentBorder.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
 				break;
@@ -105,30 +111,33 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 				break;
 		}
 
-		if (currentBorder.x < 0) {
+		if (currentBorder.x < 0)
+		{
 			currentBorder.x = 0;
 		}
 
-		if (currentBorder.y < 0) {
+		if (currentBorder.y < 0)
+		{
 			currentBorder.y = 0;
 		}
-
 
 		pDoc->changeBoundary(m_modifyBorderNdx, &currentBorder);
 	}
 }
 
-void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) {
+	if (m != TRACK_L)
+	{
 		return;
 	}
 
-	//static Coord3D zero = {0.0f, 0.0f, 0.0f};
+	// static Coord3D zero = {0.0f, 0.0f, 0.0f};
 
 	Coord3D groundPt;
 	pView->viewToDocCoords(viewPt, &groundPt);
-	if (groundPt.length() < BOUNDARY_PICK_DISTANCE) {
+	if (groundPt.length() < BOUNDARY_PICK_DISTANCE)
+	{
 		m_addingNewBorder = true;
 
 		ICoord2D initialBoundary = { 1, 1 };
@@ -156,17 +165,19 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 	}
 	else
 	{
-		m_modificationType = (ModificationType) motion;
+		m_modificationType = (ModificationType)motion;
 	}
 }
 
-void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc)
+void BorderTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc)
 {
-	if (m != TRACK_L) {
+	if (m != TRACK_L)
+	{
 		return;
 	}
 
-	if (m_addingNewBorder) {
+	if (m_addingNewBorder)
+	{
 		m_addingNewBorder = false;
 		// Do the undoable on the last border
 	}

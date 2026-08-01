@@ -30,14 +30,19 @@
 #pragma once
 
 // make sure we're not omitting the frame pointer
-#pragma optimize("y",off)
+#pragma optimize("y", off)
 
 // We're doing our own little internal asserts for full debug
 // builds (until this library is proven & stable)
 #ifdef _DEBUG
-#  define __ASSERT(x) do { if (!(x)) DebugInternalAssert(__FILE__,__LINE__,#x); } while (0)
+	#define __ASSERT(x) \
+		do \
+		{ \
+			if (!(x)) \
+				DebugInternalAssert(__FILE__, __LINE__, #x); \
+		} while (0)
 #else
-#  define __ASSERT(x)
+	#define __ASSERT(x)
 #endif
 
 /** \internal
@@ -48,7 +53,7 @@
   \param line line number
   \param expr expression which failed
 */
-void DebugInternalAssert(const char *file, int line, const char *expr);
+void DebugInternalAssert(const char* file, int line, const char* expr);
 
 /** \internal
 
@@ -58,7 +63,7 @@ void DebugInternalAssert(const char *file, int line, const char *expr);
   \param numBytes number of bytes to allocate
   \return pointer to allocated memory
 */
-void *DebugAllocMemory(unsigned numBytes);
+void* DebugAllocMemory(unsigned numBytes);
 
 /** \internal
 
@@ -70,7 +75,7 @@ void *DebugAllocMemory(unsigned numBytes);
   \param newSize new size of block
   \return pointer to reallocated memory
 */
-void *DebugReAllocMemory(void *oldPtr, unsigned newSize);
+void* DebugReAllocMemory(void* oldPtr, unsigned newSize);
 
 /** \internal
 
@@ -79,18 +84,18 @@ void *DebugReAllocMemory(void *oldPtr, unsigned newSize);
 
   \param ptr memory block to free
 */
-void DebugFreeMemory(void *ptr);
+void DebugFreeMemory(void* ptr);
 
 /// \internal Command group: 'debug'
-class DebugCmdInterfaceDebug: public DebugCmdInterface
+class DebugCmdInterfaceDebug : public DebugCmdInterface
 {
 public:
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv);
+	virtual bool Execute(class Debug& dbg, const char* cmd, CommandMode cmdmode,
+	                     unsigned argn, const char* const* argv);
 
-  virtual void Delete()
-  {
-    this->~DebugCmdInterfaceDebug();
-    DebugFreeMemory(this);
-  }
+	virtual void Delete()
+	{
+		this->~DebugCmdInterfaceDebug();
+		DebugFreeMemory(this);
+	}
 };

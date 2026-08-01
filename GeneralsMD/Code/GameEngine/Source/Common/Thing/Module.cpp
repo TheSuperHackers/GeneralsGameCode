@@ -28,7 +28,7 @@
 //				 instances that we can assign to objects, drawables, and things to contain
 //				 data and code for specific events, or just to hold data
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/Module.h"
@@ -47,7 +47,6 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,9 +57,11 @@
 // it should also NEVER be called directly; it's only for use by ModuleFactory!
 /*static*/ ModuleData* Module::friend_newModuleData(INI* ini)
 {
-	ModuleData* data = MSGNEW("Module::friend_newModuleData") ModuleData;	// no need to memorypool these since we never allocate more than one of each
+	ModuleData* data = MSGNEW("Module::friend_newModuleData") ModuleData;    // no need to memorypool these since we never allocate more than one of each
 	if (ini)
-		ini->initFromINI(data, nullptr);	// this is just so that an "end" token is required
+	{
+		ini->initFromINI(data, nullptr);    // this is just so that an "end" token is required
+	}
 	return data;
 }
 
@@ -68,30 +69,26 @@
 // ------------------------------------------------------------------------------------------------
 Module::~Module()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void Module::crc( Xfer *xfer )
+void Module::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void Module::xfer( Xfer *xfer )
+void Module::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
-
+	xfer->xferVersion(&version, currentVersion);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -99,12 +96,12 @@ void Module::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void Module::loadPostProcess()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Module(moduleData)
+ObjectModule::ObjectModule(Thing* thing, const ModuleData* moduleData)
+  : Module(moduleData)
 {
 	if (!moduleData)
 	{
@@ -112,46 +109,40 @@ ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Modul
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to ObjectModule is null!") );
+	DEBUG_ASSERTCRASH(thing, ("Thing passed to ObjectModule is null!"));
 	m_object = AsObject(thing);
-	DEBUG_ASSERTCRASH( m_object, ("Thing passed to ObjectModule is not an Object!") );
-
+	DEBUG_ASSERTCRASH(m_object, ("Thing passed to ObjectModule is not an Object!"));
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ObjectModule::~ObjectModule()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void ObjectModule::crc( Xfer *xfer )
+void ObjectModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	Module::crc( xfer );
-
+	Module::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void ObjectModule::xfer( Xfer *xfer )
+void ObjectModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	Module::xfer( xfer );
-
+	Module::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -159,15 +150,14 @@ void ObjectModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void ObjectModule::loadPostProcess()
 {
-
 	// extend base class
 	Module::loadPostProcess();
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : Module(moduleData)
+DrawableModule::DrawableModule(Thing* thing, const ModuleData* moduleData)
+  : Module(moduleData)
 {
 	if (!moduleData)
 	{
@@ -175,46 +165,40 @@ DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : M
 		throw INI_INVALID_DATA;
 	}
 
-	DEBUG_ASSERTCRASH( thing, ("Thing passed to DrawableModule is null!") );
+	DEBUG_ASSERTCRASH(thing, ("Thing passed to DrawableModule is null!"));
 	m_drawable = AsDrawable(thing);
-	DEBUG_ASSERTCRASH( m_drawable, ("Thing passed to DrawableModule is not a Drawable!") );
-
+	DEBUG_ASSERTCRASH(m_drawable, ("Thing passed to DrawableModule is not a Drawable!"));
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 DrawableModule::~DrawableModule()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void DrawableModule::crc( Xfer *xfer )
+void DrawableModule::crc(Xfer* xfer)
 {
-
 	// extend base class
-	Module::crc( xfer );
-
+	Module::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void DrawableModule::xfer( Xfer *xfer )
+void DrawableModule::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	Module::xfer( xfer );
-
+	Module::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -222,10 +206,8 @@ void DrawableModule::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void DrawableModule::loadPostProcess()
 {
-
 	// extend base class
 	Module::loadPostProcess();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -244,15 +226,15 @@ void UpgradeMuxData::performUpgradeFX(Object* obj) const
 //-------------------------------------------------------------------------------------------------
 void UpgradeMuxData::muxDataProcessUpgradeRemoval(Object* obj) const
 {
-	if( !m_removalUpgradeNames.empty() )
+	if (!m_removalUpgradeNames.empty())
 	{
 		std::vector<AsciiString>::const_iterator it;
-		for( it = m_removalUpgradeNames.begin();
-					it != m_removalUpgradeNames.end();
-					it++)
+		for (it = m_removalUpgradeNames.begin();
+		     it != m_removalUpgradeNames.end();
+		     it++)
 		{
-			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate )
+			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade(*it);
+			if (!theTemplate)
 			{
 				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
@@ -264,10 +246,10 @@ void UpgradeMuxData::muxDataProcessUpgradeRemoval(Object* obj) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool UpgradeMuxData::isTriggeredBy(const std::string &upgrade) const
+Bool UpgradeMuxData::isTriggeredBy(const std::string& upgrade) const
 {
 	std::vector<AsciiString>::const_iterator it;
-	for( it = m_triggerUpgradeNames.begin(); it != m_triggerUpgradeNames.end();	++it)
+	for (it = m_triggerUpgradeNames.begin(); it != m_triggerUpgradeNames.end(); ++it)
 	{
 		AsciiString trigger = *it;
 		if (stricmp(trigger.str(), upgrade.c_str()) == 0)
@@ -289,39 +271,39 @@ void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, Upgr
 		m_conflictingMask.clear();
 
 		std::vector<AsciiString>::const_iterator it;
-		for( it = m_activationUpgradeNames.begin();
-					it != m_activationUpgradeNames.end();
-					it++)
+		for (it = m_activationUpgradeNames.begin();
+		     it != m_activationUpgradeNames.end();
+		     it++)
 		{
-			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate )
+			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade(*it);
+			if (!theTemplate)
 			{
 				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
 			}
 
-			m_activationMask.set( theTemplate->getUpgradeMask() );
+			m_activationMask.set(theTemplate->getUpgradeMask());
 		}
 
-		for( it = m_conflictingUpgradeNames.begin();
-					it != m_conflictingUpgradeNames.end();
-					it++)
+		for (it = m_conflictingUpgradeNames.begin();
+		     it != m_conflictingUpgradeNames.end();
+		     it++)
 		{
-			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate )
+			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade(*it);
+			if (!theTemplate)
 			{
 				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
 			}
 
-			m_conflictingMask.set( theTemplate->getUpgradeMask() );
+			m_conflictingMask.set(theTemplate->getUpgradeMask());
 		}
 
 		// We set the trigger upgrade names with the activationUpgradeNames entries to be used later.
 		// We have to do this because the activationUpgradeNames are toasted just below.
 		m_triggerUpgradeNames = m_activationUpgradeNames;
 
-		//Clear the names now that we've cached the values!
+		// Clear the names now that we've cached the values!
 		m_activationUpgradeNames.clear();
 		m_conflictingUpgradeNames.clear();
 	}

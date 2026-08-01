@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
@@ -48,17 +48,15 @@
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
 
-
 const Int MAX_IDX = 32;
 
 const Real BEGIN_MIDPOINT_RATIO = 0.35f;
 const Real END_MIDPOINT_RATIO = 0.65f;
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior( Thing *thing, const ModuleData* moduleData ) :
-	BehaviorModule( thing, moduleData )
+FireWeaponWhenDeadBehavior::FireWeaponWhenDeadBehavior(Thing* thing, const ModuleData* moduleData)
+  : BehaviorModule(thing, moduleData)
 {
 	if (getFireWeaponWhenDeadBehaviorModuleData()->m_initiallyActive)
 	{
@@ -75,32 +73,37 @@ FireWeaponWhenDeadBehavior::~FireWeaponWhenDeadBehavior()
 //-------------------------------------------------------------------------------------------------
 /** The die callback. */
 //-------------------------------------------------------------------------------------------------
-void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
+void FireWeaponWhenDeadBehavior::onDie(const DamageInfo* damageInfo)
 {
 	const FireWeaponWhenDeadBehaviorModuleData* d = getFireWeaponWhenDeadBehaviorModuleData();
-	Object *obj = getObject();
+	Object* obj = getObject();
 
 	if (!isUpgradeActive())
-		return;
-
-	// right type?
-	if (!d->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
-		return;
-
-	// This will never apply until built.  Otherwise canceling construction sets it off, and killing
-	// a one hitpoint one percent building will too.
-	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
-		return;
-
-
-	UpgradeMaskType activation, conflicting;
-	getUpgradeActivationMasks( activation, conflicting );
-
-	if( obj->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		return;
 	}
-	if( obj->getControllingPlayer() && obj->getControllingPlayer()->getCompletedUpgradeMask().testForAny( conflicting ) )
+
+	// right type?
+	if (!d->m_dieMuxData.isDieApplicable(getObject(), damageInfo))
+	{
+		return;
+	}
+
+	// This will never apply until built.  Otherwise canceling construction sets it off, and killing
+	// a one hitpoint one percent building will too.
+	if (obj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
+		return;
+	}
+
+	UpgradeMaskType activation, conflicting;
+	getUpgradeActivationMasks(activation, conflicting);
+
+	if (obj->getObjectCompletedUpgradeMask().testForAny(conflicting))
+	{
+		return;
+	}
+	if (obj->getControllingPlayer() && obj->getControllingPlayer()->getCompletedUpgradeMask().testForAny(conflicting))
 	{
 		return;
 	}
@@ -108,43 +111,39 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	if (d->m_deathWeapon)
 	{
 		// fire the default weapon
-	  TheWeaponStore->createAndFireTempWeapon(d->m_deathWeapon, obj, obj->getPosition());
+		TheWeaponStore->createAndFireTempWeapon(d->m_deathWeapon, obj, obj->getPosition());
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponWhenDeadBehavior::crc( Xfer *xfer )
+void FireWeaponWhenDeadBehavior::crc(Xfer* xfer)
 {
-
 	// extend base class
-	BehaviorModule::crc( xfer );
+	BehaviorModule::crc(xfer);
 
 	// extend upgrade mux
-	UpgradeMux::upgradeMuxCRC( xfer );
-
+	UpgradeMux::upgradeMuxCRC(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void FireWeaponWhenDeadBehavior::xfer( Xfer *xfer )
+void FireWeaponWhenDeadBehavior::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	BehaviorModule::xfer( xfer );
+	BehaviorModule::xfer(xfer);
 
 	// extend upgrade mux
-	UpgradeMux::upgradeMuxXfer( xfer );
-
+	UpgradeMux::upgradeMuxXfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -152,11 +151,9 @@ void FireWeaponWhenDeadBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void FireWeaponWhenDeadBehavior::loadPostProcess()
 {
-
 	// extend base class
 	BehaviorModule::loadPostProcess();
 
 	// extend upgrade mux
 	UpgradeMux::upgradeMuxLoadPostProcess();
-
 }

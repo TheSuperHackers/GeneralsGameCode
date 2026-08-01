@@ -18,72 +18,95 @@
 
 #pragma once
 
-const int LOWEST_PRIORITY = (int ) 0x80000000;
-const	int HIGHEST_PRIORITY = (int) 0x7fffffff;
+const int LOWEST_PRIORITY = (int)0x80000000;
+const int HIGHEST_PRIORITY = (int)0x7fffffff;
 const int NORMAL_PRIORITY = 0;
 
 class ListNode
 {
-	private:
-	ListNode	*next;
-	ListNode	*prev;
-	int				pri;		// node's priority
+private:
+	ListNode* next;
+	ListNode* prev;
+	int pri;    // node's priority
 
-	protected:
-	void			*item;	// item
+protected:
+	void* item;    // item
 
-	public:
-
-							ListNode		();
-	void				Append			( ListNode *node );
-	void				Prepend			( ListNode *node );
-	void				Link				( ListNode *node);
-	void				Remove			();
-	ListNode*		Next				();
-	ListNode*		Prev				();
-	ListNode*		NextLoop		();
-	ListNode*		PrevLoop		();
-	void*				Item				();
-	void				SetItem			( void *item );
-	int					InList			();
-	int					IsHead			();
-	int					Priority		();
-	void				SetPriority ( int new_pri );
-
-
+public:
+	ListNode();
+	void Append(ListNode* node);
+	void Prepend(ListNode* node);
+	void Link(ListNode* node);
+	void Remove();
+	ListNode* Next();
+	ListNode* Prev();
+	ListNode* NextLoop();
+	ListNode* PrevLoop();
+	void* Item();
+	void SetItem(void* item);
+	int InList();
+	int IsHead();
+	int Priority();
+	void SetPriority(int new_pri);
 };
 
-class List: public ListNode
+class List : public ListNode
 {
-
-	public:
-	List ();
-	void				AddToTail ( ListNode *node );
-	void				AddToHead ( ListNode *node );
-	void				Add				( ListNode *node );
-	void				Merge			( List *list );
-	int					NumItems  ();
-	void*				Item			( int list_index );
-	ListNode*		FirstNode ();
-	ListNode*		LastNode	();
-	int					IsEmpty		();
-	void				Empty			();
-	ListNode*		Find			( void *item );
-
+public:
+	List();
+	void AddToTail(ListNode* node);
+	void AddToHead(ListNode* node);
+	void Add(ListNode* node);
+	void Merge(List* list);
+	int NumItems();
+	void* Item(int list_index);
+	ListNode* FirstNode();
+	ListNode* LastNode();
+	int IsEmpty();
+	void Empty();
+	ListNode* Find(void* item);
 };
 
 class ListSearch
 {
-	List				*head;
-	ListNode		*node;
+	List* head;
+	ListNode* node;
 
-	public:
-
-	ListNode*		Next () { if (node) { node = node->Next ();} return node;};
-	ListNode*		Prev () { if (node) { node = node->Prev ();} return node;};
-	ListNode*		FirstNode () { node = head; return Next (); };
-	ListNode*		LastNode () { node = head; return Prev (); };
-	ListNode*		FirstNode ( List *new_head ) { node = head = new_head; return Next (); };
-	ListNode*		LastNode ( List *new_head) { node = head = new_head; return Prev (); };
-
+public:
+	ListNode* Next()
+	{
+		if (node)
+		{
+			node = node->Next();
+		}
+		return node;
+	};
+	ListNode* Prev()
+	{
+		if (node)
+		{
+			node = node->Prev();
+		}
+		return node;
+	};
+	ListNode* FirstNode()
+	{
+		node = head;
+		return Next();
+	};
+	ListNode* LastNode()
+	{
+		node = head;
+		return Prev();
+	};
+	ListNode* FirstNode(List* new_head)
+	{
+		node = head = new_head;
+		return Next();
+	};
+	ListNode* LastNode(List* new_head)
+	{
+		node = head = new_head;
+		return Prev();
+	};
 };

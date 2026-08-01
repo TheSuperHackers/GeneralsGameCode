@@ -69,7 +69,6 @@ public:
 	virtual ~IgnorePreferences() override;
 	void setIgnore(const AsciiString& userName, Int profileID, Bool ignore);
 	IgnorePrefMap getIgnores();
-
 };
 
 //-----------------------------------------------------------------------------

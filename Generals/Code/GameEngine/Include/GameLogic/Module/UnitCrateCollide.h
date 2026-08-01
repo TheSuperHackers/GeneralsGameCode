@@ -50,33 +50,29 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p)
 	{
-    CrateCollideModuleData::buildFieldParse(p);
+		CrateCollideModuleData::buildFieldParse(p);
 
-		static const FieldParse dataFieldParse[] =
-		{
-			{ "UnitCount",	INI::parseUnsignedInt,	nullptr, offsetof( UnitCrateCollideModuleData, m_unitCount ) },
-			{ "UnitName",		INI::parseAsciiString,	nullptr, offsetof( UnitCrateCollideModuleData, m_unitType ) },
+		static const FieldParse dataFieldParse[] = {
+			{ "UnitCount", INI::parseUnsignedInt, nullptr, offsetof(UnitCrateCollideModuleData, m_unitCount) },
+			{ "UnitName", INI::parseAsciiString, nullptr, offsetof(UnitCrateCollideModuleData, m_unitType) },
 			{ 0, 0, 0, 0 }
 		};
-    p.add(dataFieldParse);
-
+		p.add(dataFieldParse);
 	}
 };
 
 //-------------------------------------------------------------------------------------------------
 class UnitCrateCollide : public CrateCollide
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( UnitCrateCollide, "UnitCrateCollide" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( UnitCrateCollide, UnitCrateCollideModuleData );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(UnitCrateCollide, "UnitCrateCollide")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(UnitCrateCollide, UnitCrateCollideModuleData);
 
 public:
-
-	UnitCrateCollide( Thing *thing, const ModuleData* moduleData );
+	UnitCrateCollide(Thing* thing, const ModuleData* moduleData);
 	// virtual destructor prototype provided by memory pool declaration
 
 	/// This is the game logic execution function that all real CrateCollides will implement
-	virtual Bool executeCrateBehavior( Object *other ) override;
-protected:
+	virtual Bool executeCrateBehavior(Object* other) override;
 
+protected:
 };
