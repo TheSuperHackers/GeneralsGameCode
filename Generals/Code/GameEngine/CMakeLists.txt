@@ -22,13 +22,13 @@ set(GAMEENGINE_SRC
 #    Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
     Include/Common/CustomMatchPreferences.h
-    Include/Common/DamageFX.h
+#    Include/Common/DamageFX.h
     Include/Common/DataChunk.h
 #    Include/Common/Debug.h
-    Include/Common/Dict.h
+#    Include/Common/Dict.h
     Include/Common/Directory.h
     Include/Common/DisabledTypes.h
-    Include/Common/DiscreteCircle.h
+#    Include/Common/DiscreteCircle.h
     Include/Common/DrawModule.h
     Include/Common/encrypt.h
     Include/Common/Energy.h
@@ -56,15 +56,15 @@ set(GAMEENGINE_SRC
     Include/Common/INIException.h
     Include/Common/KindOf.h
     Include/Common/LadderPreferences.h
-    Include/Common/Language.h
+#    Include/Common/Language.h
     Include/Common/LatchRestore.h
     Include/Common/List.h
 #    Include/Common/LocalFile.h
 #    Include/Common/LocalFileSystem.h
 #    Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
-    Include/Common/MessageStream.h
-    Include/Common/MiniLog.h
+#    Include/Common/MessageStream.h
+#    Include/Common/MiniLog.h
 #    Include/Common/MiscAudio.h
     Include/Common/MissionStats.h
     Include/Common/ModelState.h
@@ -79,7 +79,7 @@ set(GAMEENGINE_SRC
     Include/Common/Override.h
     Include/Common/PartitionSolver.h
     Include/Common/PerfMetrics.h
-    Include/Common/PerfTimer.h
+#    Include/Common/PerfTimer.h
     Include/Common/Player.h
     Include/Common/PlayerList.h
     Include/Common/PlayerTemplate.h
@@ -110,7 +110,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/SubsystemInterface.h
     Include/Common/Team.h
     Include/Common/Terrain.h
-    Include/Common/TerrainTypes.h
+#    Include/Common/TerrainTypes.h
     Include/Common/Thing.h
     Include/Common/ThingFactory.h
     Include/Common/ThingSort.h
@@ -120,7 +120,7 @@ set(GAMEENGINE_SRC
     Include/Common/UnitTimings.h
     Include/Common/Upgrade.h
 #    Include/Common/UserPreferences.h
-    Include/Common/version.h
+#    Include/Common/version.h
     Include/Common/WellKnownKeys.h
 #    Include/Common/WorkerProcess.h
 #    Include/Common/Xfer.h
@@ -523,9 +523,9 @@ set(GAMEENGINE_SRC
     Source/Common/CommandLine.cpp
 #    Source/Common/crc.cpp
 #    Source/Common/CRCDebug.cpp
-    Source/Common/DamageFX.cpp
-    Source/Common/Dict.cpp
-    Source/Common/DiscreteCircle.cpp
+#    Source/Common/DamageFX.cpp
+#    Source/Common/Dict.cpp
+#    Source/Common/DiscreteCircle.cpp
     Source/Common/GameEngine.cpp
     Source/Common/GameLOD.cpp
     Source/Common/GameMain.cpp
@@ -558,13 +558,13 @@ set(GAMEENGINE_SRC
 #    Source/Common/INI/INIWater.cpp
 #    Source/Common/INI/INIWeapon.cpp
 #    Source/Common/INI/INIWebpageURL.cpp
-    Source/Common/Language.cpp
-    Source/Common/MessageStream.cpp
-    Source/Common/MiniLog.cpp
+#    Source/Common/Language.cpp
+#    Source/Common/MessageStream.cpp
+#    Source/Common/MiniLog.cpp
     Source/Common/MultiplayerSettings.cpp
     Source/Common/NameKeyGenerator.cpp
     Source/Common/PartitionSolver.cpp
-    Source/Common/PerfTimer.cpp
+#    Source/Common/PerfTimer.cpp
 #    Source/Common/RandomValue.cpp
     Source/Common/Recorder.cpp
     Source/Common/RTS/ActionManager.cpp
@@ -625,7 +625,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/XferCRC.cpp
 #    Source/Common/System/XferLoad.cpp
 #    Source/Common/System/XferSave.cpp
-    Source/Common/TerrainTypes.cpp
+#    Source/Common/TerrainTypes.cpp
     Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp
     Source/Common/Thing/ModuleFactory.cpp
@@ -633,7 +633,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ThingFactory.cpp
     Source/Common/Thing/ThingTemplate.cpp
 #    Source/Common/UserPreferences.cpp
-    Source/Common/version.cpp
+#    Source/Common/version.cpp
 #    Source/Common/WorkerProcess.cpp
 #    Source/GameClient/ClientInstance.cpp
 #    Source/GameClient/Color.cpp
