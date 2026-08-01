@@ -54,7 +54,7 @@ constexpr const Int MAX_GLOBAL_LIGHTS = 3;
 constexpr const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 
 //-------------------------------------------------------------------------------------------------
-class CommandLineData
+struct CommandLineData
 {
 	friend class CommandLine;
 	friend class GlobalData;
@@ -62,10 +62,12 @@ class CommandLineData
 	CommandLineData()
 		: m_hasParsedCommandLineForStartup(false)
 		, m_hasParsedCommandLineForEngineInit(false)
+		, m_windowedCommandLineSpecified(false)
 	{}
 
 	Bool m_hasParsedCommandLineForStartup;
 	Bool m_hasParsedCommandLineForEngineInit;
+	Bool m_windowedCommandLineSpecified;
 };
 
 //-------------------------------------------------------------------------------------------------

@@ -1244,20 +1244,12 @@ const char * DX8Wrapper::Get_Render_Device_Name(int device_index)
 bool DX8Wrapper::Set_Device_Resolution(int width,int height,int bits,int windowed, bool resize_window)
 {
 	if (D3DDevice != nullptr) {
+		int w = (width == -1) ? ResolutionWidth : width;
+		int h = (height == -1) ? ResolutionHeight : height;
+		int b = (bits == -1) ? BitDepth : bits;
+		int win = (windowed == -1) ? IsWindowed : windowed;
 
-		if (width != -1) {
-			_PresentParameters.BackBufferWidth = ResolutionWidth = width;
-		}
-		if (height != -1) {
-			_PresentParameters.BackBufferHeight = ResolutionHeight = height;
-		}
-		if (resize_window)
-		{
-			Resize_And_Position_Window();
-		}
-#pragma message("TODO: support changing windowed status and changing the bit depth")
-		WWDEBUG_SAY(("DX8Wrapper::Set_Device_Resolution is resetting the device."));
-		return Reset_Device();
+		return Set_Render_Device(CurRenderDevice, w, h, b, win, resize_window, true, true);
 	} else {
 		return false;
 	}

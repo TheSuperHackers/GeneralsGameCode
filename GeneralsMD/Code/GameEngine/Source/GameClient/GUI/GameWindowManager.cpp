@@ -1403,6 +1403,8 @@ Int GameWindowManager::winDestroy( GameWindow *window )
 	if( window == nullptr )
 		return WIN_ERR_INVALID_WINDOW;
 
+	g_windowLayoutRegistry.erase(window);
+
 	//
 	// we should never have edit data allocated in the window code, it's
 	// completely handled by the editor ONLY
@@ -4061,6 +4063,57 @@ GameWindow *GameWindowManagerDummy::winCreateFromScript(AsciiString filenameStri
 
 GameWindowDummy::~GameWindowDummy()
 {
+}
+
+void reflowWindowTree(GameWindow *win, Int newScreenWidth, Int newScreenHeight)
+{
+	while (win)
+	{
+		std::map<GameWindow*, WindowLayoutRules>::iterator it = g_windowLayoutRegistry.find(win);
+		if (it != g_windowLayoutRegistry.end())
+		{
+			const WindowLayoutRules &rules = it->second;
+			
+			Real scaleX = (rules.createResX > 0) ? ((Real)newScreenWidth / (Real)rules.createResX) : 1.0f;
+			Real scaleY = (rules.createResY > 0) ? ((Real)newScreenHeight / (Real)rules.createResY) : 1.0f;
+
+			Int newScreenX = (Int)(rules.unscaledScreenX * scaleX);
+			Int newScreenY = (Int)(rules.unscaledScreenY * scaleY);
+			Int newWidth = (Int)(rules.unscaledScreenWidth * scaleX);
+			Int newHeight = (Int)(rules.unscaledScreenHeight * scaleY);
+			
+			Int newRelX = newScreenX;
+			Int newRelY = newScreenY;
+			
+			GameWindow *parent = win->winGetParent();
+			if (parent)
+			{
+				Int parentScreenX = 0, parentScreenY = 0;
+				parent->winGetScreenPosition(&parentScreenX, &parentScreenY);
+				newRelX = newScreenX - parentScreenX;
+				newRelY = newScreenY - parentScreenY;
+			}
+			
+			win->winSetPosition(newRelX, newRelY);
+			win->winSetSize(newWidth, newHeight);
+		}
+		
+		if (win->winGetChild())
+		{
+			reflowWindowTree(win->winGetChild(), newScreenWidth, newScreenHeight);
+		}
+		
+		win = win->winGetNext();
+	}
+}
+
+void reflowAllWindows(Int newScreenWidth, Int newScreenHeight)
+{
+	if (TheWindowManager)
+	{
+		GameWindow *head = TheWindowManager->winGetWindowList();
+		reflowWindowTree(head, newScreenWidth, newScreenHeight);
+	}
 }
 
 
