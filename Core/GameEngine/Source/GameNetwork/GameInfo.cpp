@@ -44,6 +44,7 @@
 #include "GameNetwork/LANAPI.h"						// for testing packet size
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
 #include "WWLib/strtok_r.h"
+#include "WWMath/wwmath.h"
 #include <algorithm>
 #include <set>
 
@@ -935,11 +936,6 @@ static Int GetFirstUtf8CharacterByteLength(const AsciiString& string)
 	return characterLength;
 }
 
-static Int DivCeilPositive(Int numerator, Int denominator)
-{
-	return (numerator + denominator - 1) / denominator;
-}
-
 static Bool TruncatePlayerNames(AsciiString (&playerNames)[MAX_SLOTS], Int truncateByteCount)
 {
 	PlayerNameTruncationInfo truncationInfo[MAX_SLOTS];
@@ -947,12 +943,13 @@ static Bool TruncatePlayerNames(AsciiString (&playerNames)[MAX_SLOTS], Int trunc
 	Int remainingTruncatableByteCount = 0;
 
 	// Build truncatable byte count and player index pairs for the player names.
-	for (Int pi = 0; pi < MAX_SLOTS; ++pi)
+	for (Int playerIndex = 0; playerIndex < MAX_SLOTS; ++playerIndex)
 	{
-		minimumNameLengths[pi] = GetFirstUtf8CharacterByteLength(playerNames[pi]);
-		truncationInfo[pi].TruncatableByteCount = playerNames[pi].getLength() - minimumNameLengths[pi];
-		truncationInfo[pi].PlayerIndex = pi;
-		remainingTruncatableByteCount += truncationInfo[pi].TruncatableByteCount;
+		minimumNameLengths[playerIndex] = GetFirstUtf8CharacterByteLength(playerNames[playerIndex]);
+		truncationInfo[playerIndex].TruncatableByteCount =
+			playerNames[playerIndex].getLength() - minimumNameLengths[playerIndex];
+		truncationInfo[playerIndex].PlayerIndex = playerIndex;
+		remainingTruncatableByteCount += truncationInfo[playerIndex].TruncatableByteCount;
 	}
 
 	if (truncateByteCount > remainingTruncatableByteCount)
@@ -972,7 +969,7 @@ static Bool TruncatePlayerNames(AsciiString (&playerNames)[MAX_SLOTS], Int trunc
 
 		// Round the average up, so the final entry (the longest name) accounts for the rounding.
 		const Int averageTruncatableByteCount =
-			DivCeilPositive(remainingTruncatableByteCount - truncateByteCount, MAX_SLOTS - i);
+			WWMath::Div_Ceil(remainingTruncatableByteCount - truncateByteCount, MAX_SLOTS - i);
 		remainingTruncatableByteCount -= playerTruncatableByteCount;
 		if (playerTruncatableByteCount <= averageTruncatableByteCount)
 		{

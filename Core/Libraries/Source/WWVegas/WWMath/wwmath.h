@@ -40,6 +40,7 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
+#include <stdlib.h>
 
 /*
 ** Some global constants.
@@ -174,6 +175,7 @@ static WWINLINE bool			Is_Valid_Float(float x);
 static WWINLINE bool			Is_Valid_Double(double x);
 
 static WWINLINE float Normalize_Angle(float angle); // Normalizes the angle to the range -PI..PI
+static WWINLINE int Div_Ceil(const int num, const int den);
 
 };
 
@@ -671,4 +673,23 @@ WWINLINE float WWMath::Inv_Sqrt(float val)
 WWINLINE float WWMath::Normalize_Angle(float angle)
 {
 	return angle - (WWMATH_TWO_PI * Floor((angle + WWMATH_PI) / WWMATH_TWO_PI));
+}
+
+// ----------------------------------------------------------------------------
+// Ceiling-rounded integer division
+// ----------------------------------------------------------------------------
+WWINLINE int WWMath::Div_Ceil(const int num, const int den)
+{
+	WWASSERT(den != 0);
+	if (den == 0)
+	{
+		return 0;
+	}
+
+	const div_t res = ::div(num, den);
+	if (res.rem != 0 && ((res.rem > 0 && den > 0) || (res.rem < 0 && den < 0)))
+	{
+		return res.quot + 1;
+	}
+	return res.quot;
 }
