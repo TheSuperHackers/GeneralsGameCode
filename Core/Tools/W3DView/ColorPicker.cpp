@@ -28,86 +28,79 @@
 #include <math.h>
 #include "Utils.h"
 
-
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-
-//extern HINSTANCE _hinstance;
+// extern HINSTANCE _hinstance;
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // ColorPickerClass
 //
-ColorPickerClass::ColorPickerClass ()
-	: m_hBitmap (nullptr),
-	  m_iWidth (0),
-	  m_iHeight (0),
-	  m_CurrentPoint (0, 0),
-	  m_CurrentColor (0),
-	  m_bSelecting (false),
-	  m_pBits (nullptr),
-	  m_hMemDC (nullptr),
-	  m_CurrentHue (0),
-	  CWnd ()
+ColorPickerClass::ColorPickerClass()
+  : m_hBitmap(nullptr)
+  , m_iWidth(0)
+  , m_iHeight(0)
+  , m_CurrentPoint(0, 0)
+  , m_CurrentColor(0)
+  , m_bSelecting(false)
+  , m_pBits(nullptr)
+  , m_hMemDC(nullptr)
+  , m_CurrentHue(0)
+  , CWnd()
 {
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // ~ColorPickerClass
 //
-ColorPickerClass::~ColorPickerClass ()
+ColorPickerClass::~ColorPickerClass()
 {
-	if (m_hMemDC != nullptr) {
-		::DeleteObject (m_hMemDC);
+	if (m_hMemDC != nullptr)
+	{
+		::DeleteObject(m_hMemDC);
 		m_hMemDC = nullptr;
 	}
 
-	Free_Bitmap ();
+	Free_Bitmap();
 }
 
-
 BEGIN_MESSAGE_MAP(ColorPickerClass, CWnd)
-	//{{AFX_MSG_MAP(ColorPickerClass)
-	ON_WM_PAINT()
-	ON_WM_CREATE()
-	ON_WM_SIZE()
-	ON_WM_ERASEBKGND()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_MOUSEMOVE()
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(ColorPickerClass)
+ON_WM_PAINT()
+ON_WM_CREATE()
+ON_WM_SIZE()
+ON_WM_ERASEBKGND()
+ON_WM_LBUTTONDOWN()
+ON_WM_LBUTTONUP()
+ON_WM_MOUSEMOVE()
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnPaint
 //
-void
-ColorPickerClass::OnPaint ()
+void ColorPickerClass::OnPaint()
 {
-	CPaintDC dc (this);
+	CPaintDC dc(this);
 
-	if (m_hMemDC != nullptr) {
-
-		HBITMAP hold_bmp = (HBITMAP)::SelectObject (m_hMemDC, m_hBitmap);
+	if (m_hMemDC != nullptr)
+	{
+		HBITMAP hold_bmp = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
 
 		CRect rect;
-		GetClientRect (&rect);
-		::BitBlt (dc, 0, 0, rect.Width (), rect.Height (), m_hMemDC, 0, 0, SRCCOPY);
+		GetClientRect(&rect);
+		::BitBlt(dc, 0, 0, rect.Width(), rect.Height(), m_hMemDC, 0, 0, SRCCOPY);
 
-		::SelectObject (m_hMemDC, hold_bmp);
-		Paint_Marker ();
+		::SelectObject(m_hMemDC, hold_bmp);
+		Paint_Marker();
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -117,75 +110,71 @@ LRESULT WINAPI fnColorPickerProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM 
 //
 // RegisterColorPicker
 //
-void
-RegisterColorPicker (HINSTANCE hinst)
+void RegisterColorPicker(HINSTANCE hinst)
 {
 	// Has the class already been registered?
 	WNDCLASS wndclass = { 0 };
-	if (::GetClassInfo (hinst, "WWCOLORPICKER", &wndclass) == FALSE) {
-
+	if (::GetClassInfo(hinst, "WWCOLORPICKER", &wndclass) == FALSE)
+	{
 		wndclass.style = CS_GLOBALCLASS | CS_OWNDC | CS_VREDRAW | CS_HREDRAW;
 		wndclass.lpfnWndProc = fnColorPickerProc;
 		wndclass.hInstance = hinst;
 		wndclass.hbrBackground = (HBRUSH)COLOR_3DFACE + 1;
-		wndclass.hCursor = ::LoadCursor (nullptr, IDC_ARROW);
+		wndclass.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
 		wndclass.lpszClassName = "WWCOLORPICKER";
 
 		// Let the windows manager know about this global class
-		::RegisterClass (&wndclass);
+		::RegisterClass(&wndclass);
 	}
 }
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // fnColorPickerProc
 //
 LRESULT WINAPI
-fnColorPickerProc
-(
-	HWND hwnd,
-	UINT message,
-	WPARAM wparam,
-	LPARAM lparam
-)
+fnColorPickerProc(
+  HWND hwnd,
+  UINT message,
+  WPARAM wparam,
+  LPARAM lparam)
 {
-	//static ColorPickerClass *pwnd = nullptr;
-	//static bool bcreated = false;
+	// static ColorPickerClass *pwnd = nullptr;
+	// static bool bcreated = false;
 
 	switch (message)
 	{
 		case WM_CREATE:
 		{
 			LPCREATESTRUCT pcreate_info = (LPCREATESTRUCT)lparam;
-			if (pcreate_info != nullptr) {
-
+			if (pcreate_info != nullptr)
+			{
 				// Should we create a new class manager for this window?
-				ColorPickerClass *pwnd = (ColorPickerClass *)pcreate_info->lpCreateParams;
+				ColorPickerClass* pwnd = (ColorPickerClass*)pcreate_info->lpCreateParams;
 				BOOL created = FALSE;
-				if (pwnd == nullptr) {
+				if (pwnd == nullptr)
+				{
 					pwnd = new ColorPickerClass;
 					created = TRUE;
 				}
 
 				// Pull some hacks to get MFC to use the message map
-				pwnd->Attach (hwnd);
+				pwnd->Attach(hwnd);
 
 				// Let the window know its being created
-				pwnd->OnCreate (pcreate_info);
+				pwnd->OnCreate(pcreate_info);
 
-				WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
-				if (pOldWndProc) {
-					WNDPROC pold_proc = (WNDPROC)::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)::AfxGetAfxWndProc ());
-					ASSERT (pold_proc != nullptr);
+				WNDPROC* pOldWndProc = pwnd->GetSuperWndProcAddr();
+				if (pOldWndProc)
+				{
+					WNDPROC pold_proc = (WNDPROC)::SetWindowLong(hwnd, GWL_WNDPROC, (DWORD)::AfxGetAfxWndProc());
+					ASSERT(pold_proc != nullptr);
 					(*pOldWndProc) = pold_proc;
 				}
 
 				// Store some information in the window handle
-				::SetProp (hwnd, "CLASSPOINTER", (HANDLE)pwnd);
-				::SetProp (hwnd, "CREATED", (HANDLE)created);
+				::SetProp(hwnd, "CLASSPOINTER", (HANDLE)pwnd);
+				::SetProp(hwnd, "CREATED", (HANDLE)created);
 			}
 		}
 		break;
@@ -196,29 +185,32 @@ fnColorPickerProc
 
 			WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
 			if (pOldWndProc) {
-				::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
-				(*pOldWndProc) = nullptr;
+			  ::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
+			  (*pOldWndProc) = nullptr;
 			}
 
 			if (bcreated) {
-				delete pwnd;
-				pwnd = nullptr;
+			  delete pwnd;
+			  pwnd = nullptr;
 			}*/
 
 			// Get the creation information from the window handle
-			ColorPickerClass *pwnd = (ColorPickerClass *)::GetProp (hwnd, "CLASSPOINTER");
-			BOOL created = (BOOL)::GetProp (hwnd, "CREATED");
+			ColorPickerClass* pwnd = (ColorPickerClass*)::GetProp(hwnd, "CLASSPOINTER");
+			BOOL created = (BOOL)::GetProp(hwnd, "CREATED");
 
-			if (pwnd != nullptr) {
-				pwnd->Detach ();
+			if (pwnd != nullptr)
+			{
+				pwnd->Detach();
 
-				WNDPROC *pOldWndProc = pwnd->GetSuperWndProcAddr ();
-				if (pOldWndProc) {
-					::SetWindowLong (hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
+				WNDPROC* pOldWndProc = pwnd->GetSuperWndProcAddr();
+				if (pOldWndProc)
+				{
+					::SetWindowLong(hwnd, GWL_WNDPROC, (DWORD)(*pOldWndProc));
 					(*pOldWndProc) = nullptr;
 				}
 
-				if (created) {
+				if (created)
+				{
 					delete pwnd;
 					pwnd = nullptr;
 				}
@@ -228,84 +220,79 @@ fnColorPickerProc
 	}
 
 	// Allow default processing to occur
-	return ::DefWindowProc (hwnd, message, wparam, lparam);
+	return ::DefWindowProc(hwnd, message, wparam, lparam);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnCreate
 //
 /////////////////////////////////////////////////////////////////////////////
-int
-ColorPickerClass::OnCreate (LPCREATESTRUCT lpCreateStruct)
+int ColorPickerClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
+	}
 
-	m_hMemDC = 	::CreateCompatibleDC (nullptr);
-	Create_Bitmap ();
+	m_hMemDC = ::CreateCompatibleDC(nullptr);
+	Create_Bitmap();
 	return 0;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Create
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ColorPickerClass::Create
-(
-	LPCTSTR /*lpszClassName*/,
-	LPCTSTR lpszWindowName,
-	DWORD dwStyle,
-	const RECT &rect,
-	CWnd *pparent_wnd,
-	UINT nID,
-	CCreateContext * /*pContext*/
+BOOL ColorPickerClass::Create(
+  LPCTSTR /*lpszClassName*/,
+  LPCTSTR lpszWindowName,
+  DWORD dwStyle,
+  const RECT& rect,
+  CWnd* pparent_wnd,
+  UINT nID,
+  CCreateContext* /*pContext*/
 )
 {
 	// Create the window (it will force the message map and everthing)
 	HWND hparent_wnd = (pparent_wnd != nullptr) ? pparent_wnd->m_hWnd : nullptr;
-	HWND hwnd = ::CreateWindow ("WWCOLORPICKER",
-										 lpszWindowName,
-										 dwStyle,
-										 rect.left,
-										 rect.top,
-										 rect.right - rect.left,
-										 rect.bottom - rect.top,
-										 hparent_wnd,
-										 (HMENU)nID,
-										 ::AfxGetInstanceHandle (),
-										 this);
+	HWND hwnd = ::CreateWindow("WWCOLORPICKER",
+	                           lpszWindowName,
+	                           dwStyle,
+	                           rect.left,
+	                           rect.top,
+	                           rect.right - rect.left,
+	                           rect.bottom - rect.top,
+	                           hparent_wnd,
+	                           (HMENU)nID,
+	                           ::AfxGetInstanceHandle(),
+	                           this);
 
 	// Return the true/false result code
 	return (hwnd != nullptr);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Create_Bitmap
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Create_Bitmap ()
+void ColorPickerClass::Create_Bitmap()
 {
 	// Start fresh
-	Free_Bitmap ();
+	Free_Bitmap();
 
 	CRect rect;
-	GetClientRect (&rect);
-	m_iWidth = rect.Width ();
-	m_iHeight = rect.Height ();
+	GetClientRect(&rect);
+	m_iWidth = rect.Width();
+	m_iHeight = rect.Height();
 
 	// Set-up the fields of the BITMAPINFOHEADER
 	BITMAPINFOHEADER bitmap_info;
-	bitmap_info.biSize = sizeof (BITMAPINFOHEADER);
+	bitmap_info.biSize = sizeof(BITMAPINFOHEADER);
 	bitmap_info.biWidth = m_iWidth;
-	bitmap_info.biHeight = -m_iHeight; // Top-down DIB uses negative height
+	bitmap_info.biHeight = -m_iHeight;    // Top-down DIB uses negative height
 	bitmap_info.biPlanes = 1;
 	bitmap_info.biBitCount = 24;
 	bitmap_info.biCompression = BI_RGB;
@@ -316,47 +303,45 @@ ColorPickerClass::Create_Bitmap ()
 	bitmap_info.biClrImportant = 0;
 
 	// Get a temporary screen DC
-	HDC hscreen_dc = ::GetDC (nullptr);
+	HDC hscreen_dc = ::GetDC(nullptr);
 
 	// Create a bitmap that we can access the bits directly of
-	m_hBitmap = ::CreateDIBSection (hscreen_dc,
-											  (const BITMAPINFO *)&bitmap_info,
-											  DIB_RGB_COLORS,
-											  (void **)&m_pBits,
-											  nullptr,
-											  0L);
+	m_hBitmap = ::CreateDIBSection(hscreen_dc,
+	                               (const BITMAPINFO*)&bitmap_info,
+	                               DIB_RGB_COLORS,
+	                               (void**)&m_pBits,
+	                               nullptr,
+	                               0L);
 
 	// Release our temporary screen DC
-	::ReleaseDC (nullptr, hscreen_dc);
+	::ReleaseDC(nullptr, hscreen_dc);
 
 	// Paint the color range into this bitmap
-	Paint_DIB (m_iWidth, m_iHeight, m_pBits);
+	Paint_DIB(m_iWidth, m_iHeight, m_pBits);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Fill_Rect
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Fill_Rect
-(
-	UCHAR *pbits,
-	const RECT &rect,
-	COLORREF color,
-	int scanline_size
-)
+void ColorPickerClass::Fill_Rect(
+  UCHAR* pbits,
+  const RECT& rect,
+  COLORREF color,
+  int scanline_size)
 {
-	UCHAR red = GetRValue (color);
-	UCHAR green = GetRValue (color);
-	UCHAR blue = GetRValue (color);
+	UCHAR red = GetRValue(color);
+	UCHAR green = GetRValue(color);
+	UCHAR blue = GetRValue(color);
 
-	for (int irow = rect.top; irow < rect.bottom; irow ++) {
+	for (int irow = rect.top; irow < rect.bottom; irow++)
+	{
 		int index = irow * scanline_size;
 		index += (rect.left * 3);
 
-		for (int col = rect.left; col < rect.right; col ++) {
+		for (int col = rect.left; col < rect.right; col++)
+		{
 			pbits[index++] = blue;
 			pbits[index++] = green;
 			pbits[index++] = red;
@@ -364,25 +349,22 @@ ColorPickerClass::Fill_Rect
 	}
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Color_From_Point
 //
 /////////////////////////////////////////////////////////////////////////////
 COLORREF
-ColorPickerClass::Color_From_Point
-(
-	int x,
-	int y
-)
+ColorPickerClass::Color_From_Point(
+  int x,
+  int y)
 {
-	COLORREF color = RGB (0,0,0);
+	COLORREF color = RGB(0, 0, 0);
 
 	// x,y location inside boundaries?
 	if ((x >= 0) && (x < m_iWidth) &&
-		 (y >= 0) && (y < m_iHeight)) {
-
+	    (y >= 0) && (y < m_iHeight))
+	{
 		// Window's bitmaps are DWORD aligned, so make sure
 		// we take that into account.
 		int alignment_offset = (m_iWidth * 3) % 4;
@@ -396,11 +378,11 @@ ColorPickerClass::Color_From_Point
 		int red = m_pBits[index + 2];
 
 		// Turn the individual compenents into a color
-		color = RGB (red, green, blue);
+		color = RGB(red, green, blue);
 
 		RECT rect;
-		Calc_Display_Rect (rect);
-		int width = rect.right-rect.left;
+		Calc_Display_Rect(rect);
+		int width = rect.right - rect.left;
 		m_CurrentHue = ((float)x) / ((float)width);
 	}
 
@@ -408,45 +390,42 @@ ColorPickerClass::Color_From_Point
 	return color;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Polar_To_Rect
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-Polar_To_Rect (float radius, float angle, float &x, float &y)
+void Polar_To_Rect(float radius, float angle, float& x, float& y)
 {
 	x = radius * float(cos(angle));
 	y = radius * float(sin(angle));
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Rect_To_Polar
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-Rect_To_Polar (float x, float y, float &radius, float &angle)
+void Rect_To_Polar(float x, float y, float& radius, float& angle)
 {
-	if (x == 0 && y == 0) {
+	if (x == 0 && y == 0)
+	{
 		radius = 0;
 		angle = 0;
-	} else {
-		radius = (float)::sqrt ((x * x) + (y * y));
-		angle = (float)::atan2 (y, x);
+	}
+	else
+	{
+		radius = (float)::sqrt((x * x) + (y * y));
+		angle = (float)::atan2(y, x);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // RGB_to_Hue
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-RGB_to_Hue (int red_val, int green_val, int blue_val, float &hue, float &value)
+void RGB_to_Hue(int red_val, int green_val, int blue_val, float& hue, float& value)
 {
 	float red_radius = (float)red_val;
 	float green_radius = (float)green_val;
@@ -467,27 +446,29 @@ RGB_to_Hue (int red_val, int green_val, int blue_val, float &hue, float &value)
 	Color2D blue = { 0 };
 	Color2D result = { 0 };
 
-	::Polar_To_Rect (red_radius, red_angle, red.x, red.y);
-	::Polar_To_Rect (green_radius, green_angle, green.x, green.y);
-	::Polar_To_Rect (blue_radius, blue_angle, blue.x, blue.y);
+	::Polar_To_Rect(red_radius, red_angle, red.x, red.y);
+	::Polar_To_Rect(green_radius, green_angle, green.x, green.y);
+	::Polar_To_Rect(blue_radius, blue_angle, blue.x, blue.y);
 
 	result.x = red.x + green.x + blue.x;
 	result.y = red.y + green.y + blue.y;
 
 	float hue_angle = 0;
 	float hue_radius = 0;
-	::Rect_To_Polar (result.x, result.y, hue_radius, hue_angle);
+	::Rect_To_Polar(result.x, result.y, hue_radius, hue_angle);
 
 	hue = hue_angle / (3.14159265359F * 2.0F);
-	if (hue < 0) {
+	if (hue < 0)
+	{
 		hue += 1;
-	} else if (hue > 1) {
+	}
+	else if (hue > 1)
+	{
 		hue -= 1;
 	}
 
-	value = (float)::fabs (hue_radius / 255);
+	value = (float)::fabs(hue_radius / 255);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -495,7 +476,7 @@ RGB_to_Hue (int red_val, int green_val, int blue_val, float &hue, float &value)
 //
 /////////////////////////////////////////////////////////////////////////////
 CPoint
-ColorPickerClass::Point_From_Color (COLORREF color)
+ColorPickerClass::Point_From_Color(COLORREF color)
 {
 	// Window's bitmaps are DWORD aligned, so make sure
 	// we take that into account.
@@ -503,53 +484,50 @@ ColorPickerClass::Point_From_Color (COLORREF color)
 	alignment_offset = (alignment_offset != 0) ? (4 - alignment_offset) : 0;
 	int scanline_size = (m_iWidth * 3) + alignment_offset;
 
-	int red = GetRValue (color);
-	int green = GetGValue (color);
-	int blue = GetBValue (color);
+	int red = GetRValue(color);
+	int green = GetGValue(color);
+	int blue = GetBValue(color);
 
 	float hue = 0;
 	float value = 0;
-	RGB_to_Hue (red, green, blue, hue, value);
+	RGB_to_Hue(red, green, blue, hue, value);
 
 	RECT rect;
-	Calc_Display_Rect (rect);
-	int width = rect.right-rect.left;
-	int height = rect.bottom-rect.top;
+	Calc_Display_Rect(rect);
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
 
-	float whiteness = (float)min (min (red, green), blue);
+	float whiteness = (float)min(min(red, green), blue);
 	float percent = whiteness / 255;
 	float darkness = 0;
 
 	//
 	//	Determine what the 'darkness' of the hue should be
 	//
-	if (percent != 1) {
+	if (percent != 1)
+	{
 		float start_red = (red - whiteness) / (1 - percent);
 		float start_green = (green - whiteness) / (1 - percent);
 		float start_blue = (blue - whiteness) / (1 - percent);
-		darkness = max (max (start_red, start_green), start_blue);
+		darkness = max(max(start_red, start_green), start_blue);
 	}
 
 	int x = int(width * hue);
 	int y = ((255 - (int)darkness) * height) / 255;
 
 	// Return the point
-	return CPoint (x, y);
+	return CPoint(x, y);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Paint_DIB
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Paint_DIB
-(
-	int width,
-	int height,
-	UCHAR *pbits
-)
+void ColorPickerClass::Paint_DIB(
+  int width,
+  int height,
+  UCHAR* pbits)
 {
 	// Window's bitmaps are DWORD aligned, so make sure
 	// we take that into account.
@@ -560,41 +538,48 @@ ColorPickerClass::Paint_DIB
 	//
 	//	Paint the border (if any)
 	//
-	CRect rect (0, 0, width, height);
-	LONG lstyle = ::GetWindowLong (m_hWnd, GWL_STYLE);
-	if (lstyle & CPS_SUNKEN) {
-		::Draw_Sunken_Rect (pbits, rect, scanline_size);
-		rect.DeflateRect (1, 1);
-	} else if (lstyle & CPS_RAISED) {
-		::Draw_Raised_Rect (pbits, rect, scanline_size);
-		rect.DeflateRect (1, 1);
-	} else if (lstyle & WS_BORDER) {
-		::Frame_Rect (pbits, rect, RGB (255, 255, 255), scanline_size);
-		rect.DeflateRect (1, 1);
+	CRect rect(0, 0, width, height);
+	LONG lstyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
+	if (lstyle & CPS_SUNKEN)
+	{
+		::Draw_Sunken_Rect(pbits, rect, scanline_size);
+		rect.DeflateRect(1, 1);
+	}
+	else if (lstyle & CPS_RAISED)
+	{
+		::Draw_Raised_Rect(pbits, rect, scanline_size);
+		rect.DeflateRect(1, 1);
+	}
+	else if (lstyle & WS_BORDER)
+	{
+		::Frame_Rect(pbits, rect, RGB(255, 255, 255), scanline_size);
+		rect.DeflateRect(1, 1);
 	}
 
 	// Recalc the width and height (it could of changed)
-	width = rect.Width ();
-	height = rect.Height ();
+	width = rect.Width();
+	height = rect.Height();
 
 	// Build an array of column indices where we will switch color
 	// components...
 	int col_remainder = (width % 6);
 	int channel_switch_cols[6];
-	for (int channel = 0; channel < 6; channel ++) {
-
+	for (int channel = 0; channel < 6; channel++)
+	{
 		// Each column has at least X/6 pixels
 		channel_switch_cols[channel] = width / 6;
 
 		// Do we need to add a remainder to this col?
 		// (Occurs when the width isn't evenly divisible by 6)
-		if (col_remainder > 0) {
+		if (col_remainder > 0)
+		{
 			channel_switch_cols[channel] += 1;
-			col_remainder --;
+			col_remainder--;
 		}
 
 		// Add the previous column's switching index
-		if (channel > 0) {
+		if (channel > 0)
+		{
 			channel_switch_cols[channel] += channel_switch_cols[channel - 1];
 		}
 	}
@@ -607,17 +592,17 @@ ColorPickerClass::Paint_DIB
 	// Calculate some starting channel variables
 	int curr_channel = 0;
 	float curr_inc = (255.0F / ((float)channel_switch_cols[0]));
-	float *pcurr_component = &green;
+	float* pcurr_component = &green;
 
 	//
 	//	Paint the image
 	//
-	for (int icol = rect.left; icol < rect.right; icol ++) {
-
+	for (int icol = rect.left; icol < rect.right; icol++)
+	{
 		// Determine how much to 'darken' the current hue by for each row (goes to black)
-		float red_dec = -((float)(red) / (float)(height-1));
-		float green_dec = -((float)(green) / (float)(height-1));
-		float blue_dec = -((float)(blue) / (float)(height-1));
+		float red_dec = -((float)(red) / (float)(height - 1));
+		float green_dec = -((float)(green) / (float)(height - 1));
+		float blue_dec = -((float)(blue) / (float)(height - 1));
 
 		// Start with the normal hue color
 		float curr_red = red;
@@ -626,12 +611,12 @@ ColorPickerClass::Paint_DIB
 
 		// Paint all pixels in this row
 		int bitmap_index = (icol * 3) + (rect.left * scanline_size);
-		for (int irow = rect.top; irow < rect.bottom; irow ++) {
-
+		for (int irow = rect.top; irow < rect.bottom; irow++)
+		{
 			// Put these values into the bitmap
-			pbits[bitmap_index]		= UCHAR(((int)curr_blue) & 0xFF);
+			pbits[bitmap_index] = UCHAR(((int)curr_blue) & 0xFF);
 			pbits[bitmap_index + 1] = UCHAR(((int)curr_green) & 0xFF);
-			pbits[bitmap_index + 2]	= UCHAR(((int)curr_red) & 0xFF);
+			pbits[bitmap_index + 2] = UCHAR(((int)curr_red) & 0xFF);
 
 			// Determine the current red, green, and blue values
 			curr_red = curr_red + red_dec;
@@ -643,24 +628,33 @@ ColorPickerClass::Paint_DIB
 		}
 
 		// Is it time to switch to a new color channel?
-		if ((icol - rect.left) == channel_switch_cols[curr_channel]) {
-
+		if ((icol - rect.left) == channel_switch_cols[curr_channel])
+		{
 			// Recompute values for the new channel
-			curr_channel ++;
-			curr_inc = (255.0F / ((float)(channel_switch_cols[curr_channel] - channel_switch_cols[curr_channel-1])));
+			curr_channel++;
+			curr_inc = (255.0F / ((float)(channel_switch_cols[curr_channel] - channel_switch_cols[curr_channel - 1])));
 
 			// Which channel are we painting?
-			if (curr_channel == 1) {
+			if (curr_channel == 1)
+			{
 				pcurr_component = &red;
 				curr_inc = -curr_inc;
-			} else if (curr_channel == 2) {
+			}
+			else if (curr_channel == 2)
+			{
 				pcurr_component = &blue;
-			} else if (curr_channel == 3) {
+			}
+			else if (curr_channel == 3)
+			{
 				pcurr_component = &green;
 				curr_inc = -curr_inc;
-			} else if (curr_channel == 4) {
+			}
+			else if (curr_channel == 4)
+			{
 				pcurr_component = &red;
-			} else if (curr_channel == 5) {
+			}
+			else if (curr_channel == 5)
+			{
 				pcurr_component = &blue;
 				curr_inc = -curr_inc;
 			}
@@ -671,17 +665,16 @@ ColorPickerClass::Paint_DIB
 	}
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Free_Bitmap
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Free_Bitmap ()
+void ColorPickerClass::Free_Bitmap()
 {
-	if (m_hBitmap != nullptr) {
-		::DeleteObject (m_hBitmap);
+	if (m_hBitmap != nullptr)
+	{
+		::DeleteObject(m_hBitmap);
 		m_hBitmap = nullptr;
 		m_pBits = nullptr;
 	}
@@ -690,173 +683,156 @@ ColorPickerClass::Free_Bitmap ()
 	m_iHeight = 0;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnSize
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::OnSize
-(
-	UINT nType,
-	int cx,
-	int cy
-)
+void ColorPickerClass::OnSize(
+  UINT nType,
+  int cx,
+  int cy)
 {
 	// Allow the base class to process this message
-	CWnd::OnSize (nType, cx, cy);
+	CWnd::OnSize(nType, cx, cy);
 
 	// Recreate the BMP to reflect the new window size
-	Create_Bitmap ();
+	Create_Bitmap();
 
 	// Determine the new point based on the current color
-	//m_CurrentColor = RGB (128, 222, 199);
-	//m_CurrentPoint = Point_From_Color (m_CurrentColor);
+	// m_CurrentColor = RGB (128, 222, 199);
+	// m_CurrentPoint = Point_From_Color (m_CurrentColor);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnEraseBkgnd
 //
 /////////////////////////////////////////////////////////////////////////////
-BOOL
-ColorPickerClass::OnEraseBkgnd (CDC * /*pDC*/)
+BOOL ColorPickerClass::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnLButtonDown
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::OnLButtonDown
-(
-	UINT nFlags,
-	CPoint point
-)
+void ColorPickerClass::OnLButtonDown(
+  UINT nFlags,
+  CPoint point)
 {
-	SetCapture ();
+	SetCapture();
 	m_bSelecting = true;
 
 	RECT rect;
-	Calc_Display_Rect (rect);
-	ClientToScreen (&rect);
-	::ClipCursor (&rect);
+	Calc_Display_Rect(rect);
+	ClientToScreen(&rect);
+	::ClipCursor(&rect);
 
-	Erase_Marker ();
+	Erase_Marker();
 
 	m_CurrentPoint = point;
-	m_CurrentColor = Color_From_Point (point.x, point.y);
+	m_CurrentColor = Color_From_Point(point.x, point.y);
 
 	//
 	//	Notify the parent window that the user double-clicked
 	// one of the keyframes
 	//
-	LONG id = ::GetWindowLong (m_hWnd, GWL_ID);
+	LONG id = ::GetWindowLong(m_hWnd, GWL_ID);
 	CP_NMHDR notify_hdr = { nullptr };
 	notify_hdr.hdr.hwndFrom = m_hWnd;
 	notify_hdr.hdr.idFrom = id;
 	notify_hdr.hdr.code = CPN_COLORCHANGE;
-	notify_hdr.red		= GetRValue (m_CurrentColor);
-	notify_hdr.green	= GetGValue (m_CurrentColor);
-	notify_hdr.blue	= GetBValue (m_CurrentColor);
-	notify_hdr.hue		= m_CurrentHue;
-	::SendMessage (::GetParent (m_hWnd),
-						WM_NOTIFY,
-						id,
-						(LPARAM)&notify_hdr);
+	notify_hdr.red = GetRValue(m_CurrentColor);
+	notify_hdr.green = GetGValue(m_CurrentColor);
+	notify_hdr.blue = GetBValue(m_CurrentColor);
+	notify_hdr.hue = m_CurrentHue;
+	::SendMessage(::GetParent(m_hWnd),
+	              WM_NOTIFY,
+	              id,
+	              (LPARAM)&notify_hdr);
 
-	Paint_Marker ();
+	Paint_Marker();
 
 	// Allow the base class to process this message
-	CWnd::OnLButtonDown (nFlags, point);
+	CWnd::OnLButtonDown(nFlags, point);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnLButtonUp
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::OnLButtonUp
-(
-	UINT nFlags,
-	CPoint point
-)
+void ColorPickerClass::OnLButtonUp(
+  UINT nFlags,
+  CPoint point)
 {
-	if (m_bSelecting) {
-		::ClipCursor (nullptr);
-		ReleaseCapture ();
+	if (m_bSelecting)
+	{
+		::ClipCursor(nullptr);
+		ReleaseCapture();
 		m_bSelecting = false;
 	}
 
 	// Allow the base class to process this message
-	CWnd::OnLButtonUp (nFlags, point);
+	CWnd::OnLButtonUp(nFlags, point);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // OnMouseMove
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::OnMouseMove
-(
-	UINT nFlags,
-	CPoint point
-)
+void ColorPickerClass::OnMouseMove(
+  UINT nFlags,
+  CPoint point)
 {
-	if (m_bSelecting) {
-		Erase_Marker ();
+	if (m_bSelecting)
+	{
+		Erase_Marker();
 
 		m_CurrentPoint = point;
-		m_CurrentColor = Color_From_Point (point.x, point.y);
+		m_CurrentColor = Color_From_Point(point.x, point.y);
 
 		//
 		//	Notify the parent window that the user double-clicked
 		// one of the keyframes
 		//
-		LONG id = ::GetWindowLong (m_hWnd, GWL_ID);
+		LONG id = ::GetWindowLong(m_hWnd, GWL_ID);
 		CP_NMHDR notify_hdr = { nullptr };
 		notify_hdr.hdr.hwndFrom = m_hWnd;
 		notify_hdr.hdr.idFrom = id;
 		notify_hdr.hdr.code = CPN_COLORCHANGE;
-		notify_hdr.red		= GetRValue (m_CurrentColor);
-		notify_hdr.green	= GetGValue (m_CurrentColor);
-		notify_hdr.blue	= GetBValue (m_CurrentColor);
-		notify_hdr.hue		= m_CurrentHue;
-		::SendMessage (::GetParent (m_hWnd),
-							WM_NOTIFY,
-							id,
-							(LPARAM)&notify_hdr);
+		notify_hdr.red = GetRValue(m_CurrentColor);
+		notify_hdr.green = GetGValue(m_CurrentColor);
+		notify_hdr.blue = GetBValue(m_CurrentColor);
+		notify_hdr.hue = m_CurrentHue;
+		::SendMessage(::GetParent(m_hWnd),
+		              WM_NOTIFY,
+		              id,
+		              (LPARAM)&notify_hdr);
 
-		Paint_Marker ();
+		Paint_Marker();
 	}
 
 	// Allow the base class to process this message
-	CWnd::OnMouseMove (nFlags, point);
+	CWnd::OnMouseMove(nFlags, point);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Calc_Display_Rect
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Calc_Display_Rect (RECT &rect)
+void ColorPickerClass::Calc_Display_Rect(RECT& rect)
 {
-	GetClientRect (&rect);
+	GetClientRect(&rect);
 
-	LONG lstyle = ::GetWindowLong (m_hWnd, GWL_STYLE);
-	if ((lstyle & CPS_SUNKEN) || (lstyle & CPS_RAISED) || (lstyle & WS_BORDER)) {
+	LONG lstyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
+	if ((lstyle & CPS_SUNKEN) || (lstyle & CPS_RAISED) || (lstyle & WS_BORDER))
+	{
 		rect.left += 1;
 		rect.right -= 1;
 		rect.top += 1;
@@ -864,100 +840,92 @@ ColorPickerClass::Calc_Display_Rect (RECT &rect)
 	}
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Erase_Marker
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Erase_Marker ()
+void ColorPickerClass::Erase_Marker()
 {
-	HDC hdc = ::GetDC (m_hWnd);
-	if (m_hMemDC != nullptr) {
-
-		HBITMAP hold_bmp = (HBITMAP)::SelectObject (m_hMemDC, m_hBitmap);
+	HDC hdc = ::GetDC(m_hWnd);
+	if (m_hMemDC != nullptr)
+	{
+		HBITMAP hold_bmp = (HBITMAP)::SelectObject(m_hMemDC, m_hBitmap);
 
 		CRect rect;
-		GetClientRect (&rect);
-		::BitBlt (hdc,
-					 m_CurrentPoint.x - 5,
-					 m_CurrentPoint.y - 5,
-					 11,
-					 11,
-					 m_hMemDC,
-					 m_CurrentPoint.x - 5,
-					 m_CurrentPoint.y - 5,
-					 SRCCOPY);
+		GetClientRect(&rect);
+		::BitBlt(hdc,
+		         m_CurrentPoint.x - 5,
+		         m_CurrentPoint.y - 5,
+		         11,
+		         11,
+		         m_hMemDC,
+		         m_CurrentPoint.x - 5,
+		         m_CurrentPoint.y - 5,
+		         SRCCOPY);
 
-		::SelectObject (m_hMemDC, hold_bmp);
+		::SelectObject(m_hMemDC, hold_bmp);
 	}
 
-	::ReleaseDC (m_hWnd, hdc);
+	::ReleaseDC(m_hWnd, hdc);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Paint_Marker
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Paint_Marker ()
+void ColorPickerClass::Paint_Marker()
 {
-	HDC hdc = ::GetDC (m_hWnd);
-	if (m_hMemDC != nullptr) {
-
-		HBITMAP hmarker_bmp = ::LoadBitmap (::AfxGetResourceHandle (), MAKEINTRESOURCE (IDB_MARKER));
-		HBITMAP hold_bmp = (HBITMAP)::SelectObject (m_hMemDC, hmarker_bmp);
+	HDC hdc = ::GetDC(m_hWnd);
+	if (m_hMemDC != nullptr)
+	{
+		HBITMAP hmarker_bmp = ::LoadBitmap(::AfxGetResourceHandle(), MAKEINTRESOURCE(IDB_MARKER));
+		HBITMAP hold_bmp = (HBITMAP)::SelectObject(m_hMemDC, hmarker_bmp);
 
 		CRect rect;
-		GetClientRect (&rect);
-		::BitBlt (hdc,
-					 m_CurrentPoint.x - 5,
-					 m_CurrentPoint.y - 5,
-					 11,
-					 11,
-					 m_hMemDC,
-					 0,
-					 0,
-					 SRCINVERT);
+		GetClientRect(&rect);
+		::BitBlt(hdc,
+		         m_CurrentPoint.x - 5,
+		         m_CurrentPoint.y - 5,
+		         11,
+		         11,
+		         m_hMemDC,
+		         0,
+		         0,
+		         SRCINVERT);
 
-		::SelectObject (m_hMemDC, hold_bmp);
-		::DeleteObject (hmarker_bmp);
+		::SelectObject(m_hMemDC, hold_bmp);
+		::DeleteObject(hmarker_bmp);
 	}
 
-	::ReleaseDC (m_hWnd, hdc);
+	::ReleaseDC(m_hWnd, hdc);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Select_Color
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Select_Color (int red, int green, int blue)
+void ColorPickerClass::Select_Color(int red, int green, int blue)
 {
-	m_CurrentColor = RGB (red, green, blue);
-	m_CurrentPoint = Point_From_Color (m_CurrentColor);
-	m_CurrentColor = Color_From_Point (m_CurrentPoint.x, m_CurrentPoint.y);
+	m_CurrentColor = RGB(red, green, blue);
+	m_CurrentPoint = Point_From_Color(m_CurrentColor);
+	m_CurrentColor = Color_From_Point(m_CurrentPoint.x, m_CurrentPoint.y);
 
 	// Refresh the window
-	InvalidateRect (nullptr, FALSE);
-	UpdateWindow ();
+	InvalidateRect(nullptr, FALSE);
+	UpdateWindow();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Get_Current_Color
 //
 /////////////////////////////////////////////////////////////////////////////
-void
-ColorPickerClass::Get_Current_Color (int *red, int *green, int *blue)
+void ColorPickerClass::Get_Current_Color(int* red, int* green, int* blue)
 {
-	(*red)	= GetRValue (m_CurrentColor);
-	(*green)	= GetGValue (m_CurrentColor);
-	(*blue)	= GetBValue (m_CurrentColor);
+	(*red) = GetRValue(m_CurrentColor);
+	(*green) = GetGValue(m_CurrentColor);
+	(*blue) = GetBValue(m_CurrentColor);
 }

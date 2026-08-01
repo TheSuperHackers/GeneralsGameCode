@@ -28,11 +28,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #if (0)
 
-#pragma once
+	#pragma once
 
-// INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common/AsciiString.h"
-#include "Common/STLTypedefs.h"
+  // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
+	#include "Common/AsciiString.h"
+	#include "Common/STLTypedefs.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 
@@ -44,14 +44,14 @@ public:
 	FileInfo() {}
 	~FileInfo() {}
 
-	void set( const WIN32_FIND_DATA& info );
+	void set(const WIN32_FIND_DATA& info);
 
 	AsciiString filename;
 	time_t creationTime;
 	time_t accessTime;
 	time_t modTime;
 	DWORD attributes;
-	DWORD filesize;	// only care about 32 bits for our purposes
+	DWORD filesize;    // only care about 32 bits for our purposes
 
 protected:
 };

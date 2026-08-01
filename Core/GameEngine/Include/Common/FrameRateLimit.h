@@ -20,20 +20,18 @@
 
 #include "Common/GameCommon.h"
 
-
 class FrameRateLimit
 {
 public:
 	FrameRateLimit();
 
 	Real wait(UnsignedInt maxFps);
-	void reset(); ///< Move the timing anchor to now, discarding any time elapsed since the last call to wait.
+	void reset();    ///< Move the timing anchor to now, discarding any time elapsed since the last call to wait.
 
 private:
 	Int64 m_freq;
 	Int64 m_start;
 };
-
 
 enum FpsValueChange
 {
@@ -41,11 +39,10 @@ enum FpsValueChange
 	FpsValueChange_Decrease,
 };
 
-
 class RenderFpsPreset
 {
 public:
-	enum CPP_11(: UnsignedInt)
+	enum CPP_11( : UnsignedInt)
 	{
 		UncappedFpsValue = 1000000,
 	};
@@ -58,11 +55,10 @@ private:
 	static const UnsignedInt s_fpsValues[];
 };
 
-
 class LogicTimeScaleFpsPreset
 {
 public:
-	enum CPP_11(: UnsignedInt)
+	enum CPP_11( : UnsignedInt)
 	{
 #if RTS_DEBUG
 		MinFpsValue = 5,
@@ -76,4 +72,3 @@ public:
 	static UnsignedInt getPrevFpsValue(UnsignedInt value);
 	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
 };
-

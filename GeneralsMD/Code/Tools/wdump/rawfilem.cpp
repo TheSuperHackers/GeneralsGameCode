@@ -51,13 +51,12 @@
  *   RawFileMClass::Write -- Writes the specified data to the buffer specified.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"WWLib/always.h"
-#include	"rawfilem.h"
-#include	<direct.h>
-#include	<share.h>
-#include	<stddef.h>
-#include	<stdlib.h>
-
+#include "WWLib/always.h"
+#include "rawfilem.h"
+#include <direct.h>
+#include <share.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 /***********************************************************************************************
  * RawFileMClass::Error -- Handles displaying a file error message.                             *
@@ -82,10 +81,9 @@
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RawFileMClass::Error(int, int, char const * )
+void RawFileMClass::Error(int, int, char const*)
 {
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::RawFileMClass -- Simple constructor for a file object.                         *
@@ -104,18 +102,17 @@ void RawFileMClass::Error(int, int, char const * )
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RawFileMClass::RawFileMClass(char const * filename) :
-	Rights(0),
-	BiasStart(0),
-	BiasLength(-1),
-	Handle(NULL_HANDLE),
-	Filename(filename),
-	Date(0),
-	Time(0),
-	Allocated(false)
+RawFileMClass::RawFileMClass(char const* filename)
+  : Rights(0)
+  , BiasStart(0)
+  , BiasLength(-1)
+  , Handle(NULL_HANDLE)
+  , Filename(filename)
+  , Date(0)
+  , Time(0)
+  , Allocated(false)
 {
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Set_Name -- Manually sets the name for a file object.                         *
@@ -137,26 +134,30 @@ RawFileMClass::RawFileMClass(char const * filename) :
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-char const * RawFileMClass::Set_Name(char const * filename)
+char const* RawFileMClass::Set_Name(char const* filename)
 {
-	if (Allocated) {
-		free((char *)Filename);
+	if (Allocated)
+	{
+		free((char*)Filename);
 		Filename = nullptr;
 		Allocated = false;
 	}
 
-	if (filename == nullptr) return(nullptr);
+	if (filename == nullptr)
+	{
+		return (nullptr);
+	}
 
 	Bias(0);
 
 	Filename = strdup(filename);
-	if (Filename == nullptr) {
+	if (Filename == nullptr)
+	{
 		Error(ENOMEM, false, filename);
 	}
 	Allocated = true;
-	return(Filename);
+	return (Filename);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Open -- Assigns name and opens file in one operation.                         *
@@ -179,12 +180,11 @@ char const * RawFileMClass::Set_Name(char const * filename)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileMClass::Open(char const * filename, int rights)
+int RawFileMClass::Open(char const* filename, int rights)
 {
 	Set_Name(filename);
-	return(Open(rights));
+	return (Open(rights));
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Open -- Opens the file object with the rights specified.                      *
@@ -212,7 +212,8 @@ int RawFileMClass::Open(int rights)
 	**	Verify that there is a filename associated with this file object. If not, then this is a
 	**	big error condition.
 	*/
-	if (Filename == nullptr) {
+	if (Filename == nullptr)
+	{
 		Error(ENOENT, false);
 	}
 
@@ -225,13 +226,13 @@ int RawFileMClass::Open(int rights)
 	/*
 	**	Repetitively try to open the file. Abort if a fatal error condition occurs.
 	*/
-	for (;;) {
-
+	for (;;)
+	{
 		/*
 		**	Try to open the file according to the access rights specified.
 		*/
-		switch (rights) {
-
+		switch (rights)
+		{
 			/*
 			**	If the access rights are not recognized, then report this as
 			**	an invalid access code.
@@ -241,25 +242,26 @@ int RawFileMClass::Open(int rights)
 				break;
 
 			case READ:
-					Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-												nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+				Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+				                     nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 				break;
 
 			case WRITE:
-					Handle = CreateFileA(Filename, GENERIC_WRITE, 0,
-												nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+				Handle = CreateFileA(Filename, GENERIC_WRITE, 0,
+				                     nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				break;
 
-			case READ|WRITE:
-					Handle = CreateFileA(Filename, GENERIC_READ | GENERIC_WRITE, 0,
-												nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+			case READ | WRITE:
+				Handle = CreateFileA(Filename, GENERIC_READ | GENERIC_WRITE, 0,
+				                     nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 				break;
 		}
 
 		/*
 		**	Biased files must be positioned past the bias start position.
 		*/
-		if (BiasStart != 0 || BiasLength != -1) {
+		if (BiasStart != 0 || BiasLength != -1)
+		{
 			Seek(0, SEEK_SET);
 		}
 
@@ -268,18 +270,17 @@ int RawFileMClass::Open(int rights)
 		**	For the case of the file cannot be found, then allow a retry. All other cases
 		**	are fatal.
 		*/
-		if (Handle == NULL_HANDLE) {
-
-			return(false);
-//			Error(GetLastError(), false, Filename);
-//			continue;
+		if (Handle == NULL_HANDLE)
+		{
+			return (false);
+			//			Error(GetLastError(), false, Filename);
+			//			continue;
 		}
 		break;
 	}
 
-	return(true);
+	return (true);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Is_Available -- Checks to see if the specified file is available to open.     *
@@ -300,22 +301,29 @@ int RawFileMClass::Open(int rights)
  *=============================================================================================*/
 bool RawFileMClass::Is_Available(int forced)
 {
-	if (Filename == nullptr) return(false);
+	if (Filename == nullptr)
+	{
+		return (false);
+	}
 
 	/*
 	**	If the file is already open, then is must have already passed the availability check.
 	**	Return true in this case.
 	*/
-	if (Is_Open()) return(true);
+	if (Is_Open())
+	{
+		return (true);
+	}
 
 	/*
 	**	If this is a forced check, then go through the normal open channels, since those
 	**	channels ensure that the file must exist.
 	*/
-	if (forced) {
+	if (forced)
+	{
 		RawFileMClass::Open(READ);
 		RawFileMClass::Close();
-		return(true);
+		return (true);
 	}
 
 	/*
@@ -323,12 +331,13 @@ bool RawFileMClass::Is_Available(int forced)
 	**	CD-ROM, this routine will return a failure condition. In all but the missing file
 	**	condition, go through the normal error recover channels.
 	*/
-	for (;;) {
-
+	for (;;)
+	{
 		Handle = CreateFileA(Filename, GENERIC_READ, FILE_SHARE_READ,
-											nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-		if (Handle == NULL_HANDLE) {
-			return(false);
+		                     nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+		if (Handle == NULL_HANDLE)
+		{
+			return (false);
 		}
 		break;
 	}
@@ -336,14 +345,14 @@ bool RawFileMClass::Is_Available(int forced)
 	/*
 	**	Since the file could be opened, then close it and return that the file exists.
 	*/
-	if (!CloseHandle(Handle)) {
+	if (!CloseHandle(Handle))
+	{
 		Error(GetLastError(), false, Filename);
 	}
 	Handle = NULL_HANDLE;
 
-	return(true);
+	return (true);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Close -- Perform a closure of the file.                                       *
@@ -365,13 +374,14 @@ void RawFileMClass::Close()
 	**	If the file is open, then close it. If the file is already closed, then just return. This
 	**	isn't considered an error condition.
 	*/
-	if (Is_Open()) {
-
+	if (Is_Open())
+	{
 		/*
 		**	Try to close the file. If there was an error (who knows what that could be), then
 		**	call the error routine.
 		*/
-		if (!CloseHandle(Handle)) {
+		if (!CloseHandle(Handle))
+		{
 			Error(GetLastError(), false, Filename);
 		}
 
@@ -381,7 +391,6 @@ void RawFileMClass::Close()
 		Handle = NULL_HANDLE;
 	}
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Read -- Reads the specified number of bytes into a memory buffer.             *
@@ -405,22 +414,23 @@ void RawFileMClass::Close()
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileMClass::Read(void * buffer, int size)
+int RawFileMClass::Read(void* buffer, int size)
 {
-	long	bytesread = 0;			// Running count of the number of bytes read into the buffer.
-	int	opened = false;		// Was the file opened by this routine?
+	long bytesread = 0;    // Running count of the number of bytes read into the buffer.
+	int opened = false;    // Was the file opened by this routine?
 
 	/*
 	**	If the file isn't opened, open it. This serves as a convenience
 	**	for the programmer.
 	*/
-	if (!Is_Open()) {
-
+	if (!Is_Open())
+	{
 		/*
 		**	The error check here is moot. Open will never return unless it succeeded.
 		*/
-		if (!Open(READ)) {
-			return(0);
+		if (!Open(READ))
+		{
+			return (0);
 		}
 		opened = true;
 	}
@@ -429,15 +439,18 @@ int RawFileMClass::Read(void * buffer, int size)
 	**	A biased file has the requested read length limited to the bias length of
 	**	the file.
 	*/
-	if (BiasLength != -1) {
+	if (BiasLength != -1)
+	{
 		int remainder = BiasLength - Seek(0);
 		size = size < remainder ? size : remainder;
 	}
 
 	long total = 0;
-	while (size > 0) {
+	while (size > 0)
+	{
 		bytesread = 0;
-		if (!ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr)) {
+		if (!ReadFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr))
+		{
 			size -= bytesread;
 			total += bytesread;
 			Error(GetLastError(), true, Filename);
@@ -445,7 +458,10 @@ int RawFileMClass::Read(void * buffer, int size)
 		}
 		size -= bytesread;
 		total += bytesread;
-		if (bytesread == 0) break;
+		if (bytesread == 0)
+		{
+			break;
+		}
 	}
 	bytesread = total;
 
@@ -453,10 +469,12 @@ int RawFileMClass::Read(void * buffer, int size)
 	**	Close the file if it was opened by this routine and return
 	**	the actual number of bytes read into the buffer.
 	*/
-	if (opened) Close();
-	return(bytesread);
+	if (opened)
+	{
+		Close();
+	}
+	return (bytesread);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Write -- Writes the specified data to the buffer specified.                   *
@@ -476,32 +494,37 @@ int RawFileMClass::Read(void * buffer, int size)
  * HISTORY:                                                                                    *
  *   10/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RawFileMClass::Write(void const * buffer, int size)
+int RawFileMClass::Write(void const* buffer, int size)
 {
-	long	bytesread = 0;
-	int	opened = false;		// Was the file manually opened?
+	long bytesread = 0;
+	int opened = false;    // Was the file manually opened?
 
 	/*
 	**	Check to open status of the file. If the file is open, then merely write to
 	**	it. Otherwise, open the file for writing and then close the file when the
 	**	output is finished.
 	*/
-	if (!Is_Open()) {
-		if (!Open(WRITE)) {
-			return(0);
+	if (!Is_Open())
+	{
+		if (!Open(WRITE))
+		{
+			return (0);
 		}
 		opened = true;
 	}
 
-	if (!WriteFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr)) {
+	if (!WriteFile(Handle, buffer, size, &(unsigned long&)bytesread, nullptr))
+	{
 		Error(GetLastError(), false, Filename);
 	}
 
 	/*
 	**	Fixup the bias length if necessary.
 	*/
-	if (BiasLength != -1) {
-		if (Raw_Seek(0) > BiasStart+BiasLength) {
+	if (BiasLength != -1)
+	{
+		if (Raw_Seek(0) > BiasStart + BiasLength)
+		{
 			BiasLength = Raw_Seek(0) - BiasStart;
 		}
 	}
@@ -509,7 +532,8 @@ int RawFileMClass::Write(void const * buffer, int size)
 	/*
 	**	If this routine had to open the file, then close it before returning.
 	*/
-	if (opened) {
+	if (opened)
+	{
 		Close();
 	}
 
@@ -517,9 +541,8 @@ int RawFileMClass::Write(void const * buffer, int size)
 	**	Return with the number of bytes written. This will always be the number of bytes
 	**	requested, since the case of the disk being full is caught by this routine.
 	*/
-	return(bytesread);
+	return (bytesread);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Seek -- Reposition the file pointer as indicated.                             *
@@ -544,16 +567,18 @@ int RawFileMClass::Write(void const * buffer, int size)
  *=============================================================================================*/
 int RawFileMClass::Seek(int pos, int dir)
 {
-
 	/*
 	**	A file that is biased will have a seek operation modified so that the file appears to
 	**	exist only within the bias range. All bytes outside of this range appear to be
 	**	non-existent.
 	*/
-	if (BiasLength != -1) {
-		switch (dir) {
+	if (BiasLength != -1)
+	{
+		switch (dir)
+		{
 			case SEEK_SET:
-				if (pos > BiasLength) {
+				if (pos > BiasLength)
+				{
 					pos = BiasLength;
 				}
 				pos += BiasStart;
@@ -565,8 +590,8 @@ int RawFileMClass::Seek(int pos, int dir)
 			case SEEK_END:
 				dir = SEEK_SET;
 				pos += BiasStart + BiasLength;
-//				pos = (pos <= BiasStart+BiasLength) ? pos : BiasStart+BiasLength;
-//				pos = (pos >= BiasStart) ? pos : BiasStart;
+				//				pos = (pos <= BiasStart+BiasLength) ? pos : BiasStart+BiasLength;
+				//				pos = (pos >= BiasStart) ? pos : BiasStart;
 				break;
 		}
 
@@ -578,22 +603,23 @@ int RawFileMClass::Seek(int pos, int dir)
 		/*
 		**	Perform a final double check to make sure the file position fits with the bias range.
 		*/
-		if (newpos < 0) {
+		if (newpos < 0)
+		{
 			newpos = Raw_Seek(BiasStart, SEEK_SET) - BiasStart;
 		}
-		if (newpos > BiasLength) {
-			newpos = Raw_Seek(BiasStart+BiasLength, SEEK_SET) - BiasStart;
+		if (newpos > BiasLength)
+		{
+			newpos = Raw_Seek(BiasStart + BiasLength, SEEK_SET) - BiasStart;
 		}
-		return(newpos);
+		return (newpos);
 	}
 
 	/*
 	**	If the file is not biased in any fashion, then the normal seek logic will
 	**	work just fine.
 	*/
-	return(Raw_Seek(pos, dir));
+	return (Raw_Seek(pos, dir));
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Size -- Determines size of file (in bytes).                                   *
@@ -618,31 +644,34 @@ int RawFileMClass::Size()
 	/*
 	**	A biased file already has its length determined.
 	*/
-	if (BiasLength != -1) {
-		return(BiasLength);
+	if (BiasLength != -1)
+	{
+		return (BiasLength);
 	}
 
 	/*
 	**	If the file is open, then proceed normally.
 	*/
-	if (Is_Open()) {
-
+	if (Is_Open())
+	{
 		size = GetFileSize(Handle, nullptr);
 
 		/*
 		**	If there was in internal error, then call the error function.
 		*/
-		if (size == 0xFFFFFFFF) {
+		if (size == 0xFFFFFFFF)
+		{
 			Error(GetLastError(), false, Filename);
 		}
-
-	} else {
-
+	}
+	else
+	{
 		/*
 		**	If the file wasn't open, then open the file and call this routine again. Count on
 		**	the fact that the open function must succeed.
 		*/
-		if (Open()) {
+		if (Open())
+		{
 			size = Size();
 
 			/*
@@ -653,10 +682,9 @@ int RawFileMClass::Size()
 		}
 	}
 
-	BiasLength = size-BiasStart;
-	return(BiasLength);
+	BiasLength = size - BiasStart;
+	return (BiasLength);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Create -- Creates an empty file.                                              *
@@ -677,23 +705,23 @@ int RawFileMClass::Size()
 int RawFileMClass::Create()
 {
 	Close();
-	if (Open(WRITE)) {
-
+	if (Open(WRITE))
+	{
 		/*
 		**	A biased file must be at least as long as the bias offset. Seeking to the
 		**	appropriate start offset has the effect of lengthening the file to the
 		**	correct length.
 		*/
-		if (BiasLength != -1) {
+		if (BiasLength != -1)
+		{
 			Seek(0, SEEK_SET);
 		}
 
 		Close();
-		return(true);
+		return (true);
 	}
-	return(false);
+	return (false);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Delete -- Deletes the file object from the disk.                              *
@@ -723,7 +751,8 @@ int RawFileMClass::Delete()
 	**	If there is no filename associated with this object, then this indicates a fatal error
 	**	condition. Report this and abort.
 	*/
-	if (!Filename) {
+	if (!Filename)
+	{
 		Error(ENOENT, false);
 	}
 
@@ -731,21 +760,23 @@ int RawFileMClass::Delete()
 	**	Repetitively try to delete the file if possible. Either return with success, or
 	**	abort the program with an error.
 	*/
-	for (;;) {
-
+	for (;;)
+	{
 		/*
 		**	If the file is already missing, then return with this fact. No action is necessary.
 		**	This can occur as this section loops if the file exists on a floppy and the floppy
 		**	was removed, the file deleted on another machine, and then the floppy was
 		**	reinserted. Admittedly, this is a rare case, but is handled here.
 		*/
-		if (!Is_Available()) {
-			return(false);
+		if (!Is_Available())
+		{
+			return (false);
 		}
 
-		if (!DeleteFile(Filename)) {
+		if (!DeleteFile(Filename))
+		{
 			Error(GetLastError(), false, Filename);
-			return(false);
+			return (false);
 		}
 		break;
 	}
@@ -753,9 +784,8 @@ int RawFileMClass::Delete()
 	/*
 	**	DOS reports that the file was successfully deleted. Return with this fact.
 	*/
-	return(true);
+	return (true);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Get_Date_Time -- Gets the date and time the file was last modified.           *
@@ -777,15 +807,15 @@ unsigned long RawFileMClass::Get_Date_Time()
 {
 	BY_HANDLE_FILE_INFORMATION info;
 
-	if (GetFileInformationByHandle(Handle, &info)) {
+	if (GetFileInformationByHandle(Handle, &info))
+	{
 		WORD dosdate;
 		WORD dostime;
 		FileTimeToDosDateTime(&info.ftLastWriteTime, &dosdate, &dostime);
-		return((dosdate << 16) | dostime);
+		return ((dosdate << 16) | dostime);
 	}
-	return(0);
+	return (0);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Set_Date_Time -- Sets the date and time the file was last modified.           *
@@ -804,19 +834,21 @@ unsigned long RawFileMClass::Get_Date_Time()
  *=============================================================================================*/
 bool RawFileMClass::Set_Date_Time(unsigned long datetime)
 {
-	if (RawFileMClass::Is_Open()) {
+	if (RawFileMClass::Is_Open())
+	{
 		BY_HANDLE_FILE_INFORMATION info;
 
-		if (GetFileInformationByHandle(Handle, &info)) {
+		if (GetFileInformationByHandle(Handle, &info))
+		{
 			FILETIME filetime;
-			if (DosDateTimeToFileTime((WORD)(datetime >> 16), (WORD)(datetime & 0x0FFFF), &filetime)) {
-				return(SetFileTime(Handle, &info.ftCreationTime, &filetime, &filetime) != 0);
+			if (DosDateTimeToFileTime((WORD)(datetime >> 16), (WORD)(datetime & 0x0FFFF), &filetime))
+			{
+				return (SetFileTime(Handle, &info.ftCreationTime, &filetime, &filetime) != 0);
 			}
 		}
 	}
-	return(false);
+	return (false);
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Bias -- Bias a file with a specific starting position and length.             *
@@ -841,7 +873,8 @@ bool RawFileMClass::Set_Date_Time(unsigned long datetime)
  *=============================================================================================*/
 void RawFileMClass::Bias(int start, int length)
 {
-	if (start == 0) {
+	if (start == 0)
+	{
 		BiasStart = 0;
 		BiasLength = -1;
 		return;
@@ -849,7 +882,8 @@ void RawFileMClass::Bias(int start, int length)
 
 	BiasLength = RawFileMClass::Size();
 	BiasStart += start;
-	if (length != -1) {
+	if (length != -1)
+	{
 		BiasLength = BiasLength < length ? BiasLength : length;
 	}
 	BiasLength = BiasLength > 0 ? BiasLength : 0;
@@ -858,11 +892,11 @@ void RawFileMClass::Bias(int start, int length)
 	**	Move the current file offset to a legal position if necessary and the
 	**	file was open.
 	*/
-	if (Is_Open()) {
+	if (Is_Open())
+	{
 		RawFileMClass::Seek(0, SEEK_SET);
 	}
 }
-
 
 /***********************************************************************************************
  * RawFileMClass::Raw_Seek -- Performs a seek on the unbiased file                             *
@@ -887,11 +921,13 @@ int RawFileMClass::Raw_Seek(int pos, int dir)
 	/*
 	**	If the file isn't opened, then this is a fatal error condition.
 	*/
-	if (!Is_Open()) {
+	if (!Is_Open())
+	{
 		Error(EBADF, false, Filename);
 	}
 
-	switch (dir) {
+	switch (dir)
+	{
 		case SEEK_SET:
 			dir = FILE_BEGIN;
 			break;
@@ -910,7 +946,8 @@ int RawFileMClass::Raw_Seek(int pos, int dir)
 	/*
 	**	If there was an error in the seek, then bail with an error condition.
 	*/
-	if (pos == 0xFFFFFFFF) {
+	if (pos == 0xFFFFFFFF)
+	{
 		Error(GetLastError(), false, Filename);
 	}
 
@@ -918,5 +955,5 @@ int RawFileMClass::Raw_Seek(int pos, int dir)
 	**	Return with the new position of the file. This will range between zero and the number of
 	**	bytes the file contains.
 	*/
-	return(pos);
+	return (pos);
 }

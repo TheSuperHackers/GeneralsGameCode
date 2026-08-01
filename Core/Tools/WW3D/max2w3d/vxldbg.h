@@ -38,39 +38,36 @@
 #pragma once
 
 #ifndef ALWAYS_H
-#include "always.h"
+	#include "always.h"
 #endif
 
 #include <max.h>
 
 #ifndef SIMPDIB_H
-#include "simpdib.h"
+	#include "simpdib.h"
 #endif
 
 #ifndef VXL_H
-#include "vxl.h"
+	#include "vxl.h"
 #endif
-
 
 class VoxelDebugWindowClass
 {
 public:
-
-	VoxelDebugWindowClass(VoxelClass * vxl);
+	VoxelDebugWindowClass(VoxelClass* vxl);
 	~VoxelDebugWindowClass();
 
-	void	Display_Window();
-	bool	Dialog_Proc(HWND hWnd,UINT message,WPARAM wParam,LPARAM);
+	void Display_Window();
+	bool Dialog_Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM);
 
 private:
+	int CurLayer;
 
-	int						CurLayer;
-
-	SimpleDIBClass *		Bitmap;
-	VoxelClass *			Voxel;
-	HWND						WindowHWND;
-	HWND						ViewportHWND;
-	ISpinnerControl *		LayerSpin;
+	SimpleDIBClass* Bitmap;
+	VoxelClass* Voxel;
+	HWND WindowHWND;
+	HWND ViewportHWND;
+	ISpinnerControl* LayerSpin;
 
 	void update_display();
 };

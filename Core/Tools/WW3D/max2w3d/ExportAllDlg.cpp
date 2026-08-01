@@ -34,25 +34,20 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
 // ExportAllDlg.cpp : implementation file
 //
 
 #include "ExportAllDlg.h"
 #include <max.h>
 #include <assert.h>
-#include <shlobj.h>	// SHBrowseForFolder
+#include <shlobj.h>    // SHBrowseForFolder
 
-
-static BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
+static BOOL CALLBACK _thunk_dialog_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 /////////////////////////////////////////////////////////////////////////////
 // ExportAllDlg dialog
 
-
-ExportAllDlg::ExportAllDlg (Interface *max_interface)
+ExportAllDlg::ExportAllDlg(Interface* max_interface)
 {
 	m_Directory[0] = '\0';
 	m_Recursive = TRUE;
@@ -61,16 +56,15 @@ ExportAllDlg::ExportAllDlg (Interface *max_interface)
 	m_MaxInterface = max_interface;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // ExportAllDlg Methods
 
-int ExportAllDlg::DoModal ()
+int ExportAllDlg::DoModal()
 {
 	// Put up the dialog box.
 	BOOL result = DialogBoxParam(AppInstance, MAKEINTRESOURCE(IDD_EXPORT_ALL),
-							m_MaxInterface->GetMAXHWnd(), (DLGPROC)_thunk_dialog_proc,
-							(LPARAM)this);
+	                             m_MaxInterface->GetMAXHWnd(), (DLGPROC)_thunk_dialog_proc,
+	                             (LPARAM)this);
 
 	// Return IDOK if the user accepted the new settings.
 	return (result == 1) ? IDOK : IDCANCEL;
@@ -79,9 +73,9 @@ int ExportAllDlg::DoModal ()
 /////////////////////////////////////////////////////////////////////////////
 // ExportAllDlg DialogProc
 
-BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK _thunk_dialog_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static ExportAllDlg *dialog = nullptr;
+	static ExportAllDlg* dialog = nullptr;
 
 	if (uMsg == WM_INITDIALOG)
 	{
@@ -90,35 +84,37 @@ BOOL CALLBACK _thunk_dialog_proc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	}
 
 	if (dialog)
+	{
 		return dialog->DialogProc(hWnd, uMsg, wParam, lParam);
+	}
 	else
+	{
 		return 0;
+	}
 }
 
-BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK ExportAllDlg::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int code = HIWORD(wParam);
 
 	switch (uMsg)
 	{
-
 		/*******************************************************************
-		* WM_INITDIALOG
-		*
-		* Initialize all of the custom controls for the dialog box
-		*
-		*******************************************************************/
+		 * WM_INITDIALOG
+		 *
+		 * Initialize all of the custom controls for the dialog box
+		 *
+		 *******************************************************************/
 		case WM_INITDIALOG:
 
 			OnInitDialog();
 			return TRUE;
 
-
 		/*******************************************************************
-		* WM_COMMAND
-		*
-		*
-		*******************************************************************/
+		 * WM_COMMAND
+		 *
+		 *
+		 *******************************************************************/
 		case WM_COMMAND:
 
 			switch (LOWORD(wParam))
@@ -126,7 +122,9 @@ BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 				case IDOK:
 
 					if (OnOK() == FALSE)
+					{
 						return TRUE;
+					}
 
 					SetCursor(LoadCursor(nullptr, IDC_WAIT));
 					EndDialog(m_hWnd, 1);
@@ -139,10 +137,8 @@ BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 				case IDC_BROWSE:
 					OnBrowse();
 					return FALSE;
-
 			}
 			return TRUE;
-
 	}
 
 	return FALSE;
@@ -151,7 +147,7 @@ BOOL CALLBACK ExportAllDlg::DialogProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 /////////////////////////////////////////////////////////////////////////////
 // ExportAllDlg message handlers
 
-void ExportAllDlg::OnInitDialog ()
+void ExportAllDlg::OnInitDialog()
 {
 	CenterWindow(m_hWnd, m_MaxInterface->GetMAXHWnd());
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
@@ -167,8 +163,8 @@ void ExportAllDlg::OnInitDialog ()
 
 void ExportAllDlg::OnBrowse()
 {
-	char			folder_name[MAX_PATH];
-	BROWSEINFO	bi;
+	char folder_name[MAX_PATH];
+	BROWSEINFO bi;
 	ZeroMemory(&bi, sizeof(bi));
 	bi.hwndOwner = m_hWnd;
 	bi.pszDisplayName = folder_name;
@@ -187,23 +183,25 @@ void ExportAllDlg::OnBrowse()
 			SetWindowText(edit, folder_name);
 		}
 		else
+		{
 			MessageBox(m_hWnd, "Error getting pathname with SHGetPathFromIDList()",
-				"Error", MB_OK | MB_ICONSTOP);
+			           "Error", MB_OK | MB_ICONSTOP);
+		}
 	}
 }
 
-BOOL ExportAllDlg::OnOK ()
+BOOL ExportAllDlg::OnOK()
 {
 	// Get the directory chosen by the user. If none is entered,
 	// freak on the user.
-	char	dir[_MAX_PATH];
-	HWND	edit = GetDlgItem(m_hWnd, IDC_DIRECTORY);
+	char dir[_MAX_PATH];
+	HWND edit = GetDlgItem(m_hWnd, IDC_DIRECTORY);
 	assert(edit != nullptr);
 	if (GetWindowText(edit, dir, sizeof(dir)) == 0)
 	{
 		// The edit box is empty, that's not a valid choice.
 		MessageBox(m_hWnd, "You must choose a directory to export",
-			"Invalid Directory", MB_OK);
+		           "Invalid Directory", MB_OK);
 		SetFocus(edit);
 		return FALSE;
 	}
@@ -216,4 +214,3 @@ BOOL ExportAllDlg::OnOK ()
 
 	return TRUE;
 }
-

@@ -60,63 +60,61 @@ class VideoBuffer;
 //-----------------------------------------------------------------------------
 class GUIEditDisplay : public Display
 {
-
 public:
-
 	GUIEditDisplay();
 	virtual ~GUIEditDisplay() override;
 
-	virtual void draw() override { };
+	virtual void draw() override {};
 
 	/// draw a line on the display in pixel coordinates with the specified color
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
-												 Real lineWidth, UnsignedInt lineColor ) override;
-	virtual void drawLine( Int startX, Int startY, Int endX, Int endY,
-												 Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2 ) override { }
+	virtual void drawLine(Int startX, Int startY, Int endX, Int endY,
+	                      Real lineWidth, UnsignedInt lineColor) override;
+	virtual void drawLine(Int startX, Int startY, Int endX, Int endY,
+	                      Real lineWidth, UnsignedInt lineColor1, UnsignedInt lineColor2) override {}
 	/// draw a rect border on the display in pixel coordinates with the specified color
-	virtual void drawOpenRect( Int startX, Int startY, Int width, Int height,
-														 Real lineWidth, UnsignedInt lineColor ) override;
+	virtual void drawOpenRect(Int startX, Int startY, Int width, Int height,
+	                          Real lineWidth, UnsignedInt lineColor) override;
 	/// draw a filled rect on the display in pixel coords with the specified color
-	virtual void drawFillRect( Int startX, Int startY, Int width, Int height,
-														 UnsignedInt color ) override;
+	virtual void drawFillRect(Int startX, Int startY, Int width, Int height,
+	                          UnsignedInt color) override;
 
 	/// Draw a percentage of a rectangle, much like a clock
-	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) override { }
-	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) override { }
+	virtual void drawRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) override {}
+	virtual void drawRemainingRectClock(Int startX, Int startY, Int width, Int height, Int percent, UnsignedInt color) override {}
 
 	/// draw an image fit within the screen coordinates
-	virtual void drawImage( const Image *image, Int startX, Int startY,
-													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA) override;
+	virtual void drawImage(const Image* image, Int startX, Int startY,
+	                       Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode = DRAW_IMAGE_ALPHA) override;
 	/// image clipping support
-	virtual void setClipRegion( IRegion2D *region ) override;
+	virtual void setClipRegion(IRegion2D* region) override;
 	virtual Bool isClippingEnabled() override;
-	virtual void enableClipping( Bool onoff ) override;
+	virtual void enableClipping(Bool onoff) override;
 
 	// These are stub functions to allow compilation:
 
 	/// Create a video buffer that can be used for this display
-	virtual VideoBuffer*	createVideoBuffer() override { return nullptr; }
+	virtual VideoBuffer* createVideoBuffer() override { return nullptr; }
 
 	/// draw a video buffer fit within the screen coordinates
-	virtual void drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream ) override { }
-	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY,
-																Int endX, Int endY ) override { }
-	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality) override { }
+	virtual void drawScaledVideoBuffer(VideoBuffer* buffer, VideoStreamInterface* stream) override {}
+	virtual void drawVideoBuffer(VideoBuffer* buffer, Int startX, Int startY,
+	                             Int endX, Int endY) override {}
+	virtual void takeScreenShot(ScreenshotFormat format, Int jpegQuality) override {}
 	virtual void toggleMovieCapture() override {}
 
 	// methods that we need to stub
-	virtual void setTimeOfDay( TimeOfDay tod ) override {}
-	virtual void createLightPulse( const Coord3D *pos, const RGBColor *color, Real innerRadius, Real attenuationWidth,
-																 UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime ) override {}
+	virtual void setTimeOfDay(TimeOfDay tod) override {}
+	virtual void createLightPulse(const Coord3D* pos, const RGBColor* color, Real innerRadius, Real attenuationWidth,
+	                              UnsignedInt increaseFrameTime, UnsignedInt decayFrameTime) override {}
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) override {}
 	virtual void setBorderShroudLevel(UnsignedByte level) override {}
 	virtual void clearShroud() override {}
-	virtual void preloadModelAssets( AsciiString model ) override {}
-	virtual void preloadTextureAssets( AsciiString texture ) override {}
+	virtual void preloadModelAssets(AsciiString model) override {}
+	virtual void preloadTextureAssets(AsciiString texture) override {}
 	virtual void toggleLetterBox() override {}
 	virtual void enableLetterBox(Bool enable) override {}
 #if defined(RTS_DEBUG)
-	virtual void dumpModelAssets(const char *path) override {}
+	virtual void dumpModelAssets(const char* path) override {}
 #endif
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) override {}
 #if defined(RTS_DEBUG)
@@ -128,7 +126,6 @@ public:
 	virtual Int getLastFrameDrawCalls() override { return 0; }
 
 protected:
-
 };
 
 // INLINING ///////////////////////////////////////////////////////////////////

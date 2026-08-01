@@ -33,29 +33,47 @@
 #include "Lib/trig.h"
 
 //-----------------------------------------------------------------------------
-typedef wchar_t WideChar;  ///< multi-byte character representations
+typedef wchar_t WideChar;    ///< multi-byte character representations
 
 //-----------------------------------------------------------------------------
 template <typename NUM>
 inline NUM sqr(NUM x)
 {
-	return x*x;
+	return x * x;
 }
 
 template <typename NUM>
 inline NUM clamp(NUM lo, NUM val, NUM hi)
 {
-	if (val < lo) return lo;
-	else if (val > hi) return hi;
-	else return val;
+	if (val < lo)
+	{
+		return lo;
+	}
+	else if (val > hi)
+	{
+		return hi;
+	}
+	else
+	{
+		return val;
+	}
 }
 
 template <typename NUM>
 inline int sign(NUM x)
 {
-	if (x > 0) return 1;
-	else if (x < 0) return -1;
-	else return 0;
+	if (x > 0)
+	{
+		return 1;
+	}
+	else if (x < 0)
+	{
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 template <typename NUM>
@@ -80,13 +98,19 @@ inline PTR maxPtr(PTR x, PTR y) noexcept
 	static_assert(std::is_pointer<PTR>::value, "maxPtr is for pointer types only!");
 
 	if (x == nullptr)
+	{
 		return y;
+	}
 
 	if (y == nullptr)
+	{
 		return x;
+	}
 
 	if (x > y)
+	{
 		return x;
+	}
 
 	return y;
 }
@@ -97,13 +121,19 @@ inline PTR minPtr(PTR x, PTR y) noexcept
 	static_assert(std::is_pointer<PTR>::value, "minPtr is for pointer types only!");
 
 	if (x == nullptr)
+	{
 		return y;
+	}
 
 	if (y == nullptr)
+	{
 		return x;
+	}
 
 	if (x < y)
+	{
 		return x;
+	}
 
 	return y;
 }
@@ -112,15 +142,15 @@ inline PTR minPtr(PTR x, PTR y) noexcept
 // GameEngine code typically uses BaseType.h, but may include WWVegas headers (which define min/max in always.h).
 // Header guard prevents duplicate definitions. VC6's <algorithm> lacks std::min/std::max.
 #ifndef _MIN_MAX_TEMPLATES_DEFINED_
-#define _MIN_MAX_TEMPLATES_DEFINED_
+	#define _MIN_MAX_TEMPLATES_DEFINED_
 
-#ifdef min
-#undef min
-#endif
+	#ifdef min
+		#undef min
+	#endif
 
-#ifdef max
-#undef max
-#endif
+	#ifdef max
+		#undef max
+	#endif
 
 template <typename T>
 inline T min(T a, T b) { return (a < b) ? a : b; }
@@ -128,21 +158,21 @@ inline T min(T a, T b) { return (a < b) ? a : b; }
 template <typename T>
 inline T max(T a, T b) { return (a > b) ? a : b; }
 
-#endif // _MIN_MAX_TEMPLATES_DEFINED_
+#endif    // _MIN_MAX_TEMPLATES_DEFINED_
 
 //-----------------------------------------------------------------------------
-inline Real rad2deg(Real rad) { return rad * (180/PI); }
-inline Real deg2rad(Real rad) { return rad * (PI/180); }
+inline Real rad2deg(Real rad) { return rad * (180 / PI); }
+inline Real deg2rad(Real rad) { return rad * (PI / 180); }
 
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
 // TheSuperHackers @build xezon 17/03/2025 Renames BitTest to BitIsSet to prevent conflict with BitTest macro from winnt.h
-#define BitIsSet( x, i ) ( ( (x) & (i) ) != 0 )
-#define BitsAreSet( x, i ) ( ( (x) & (i) ) == (i) )
-#define BitSet( x, i ) ( (x) |= (i) )
-#define BitClear( x, i ) ( (x ) &= ~(i) )
-#define BitToggle( x, i ) ( (x) ^= (i) )
+#define BitIsSet(x, i) (((x) & (i)) != 0)
+#define BitsAreSet(x, i) (((x) & (i)) == (i))
+#define BitSet(x, i) ((x) |= (i))
+#define BitClear(x, i) ((x) &= ~(i))
+#define BitToggle(x, i) ((x) ^= (i))
 
 //-------------------------------------------------------------------------------------------------
 
@@ -170,8 +200,8 @@ __forceinline long fast_float2long_round(float f)
 __forceinline float fast_float_trunc(float f)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-  _asm
-  {
+	_asm
+	{
     mov ecx,[f]
     shr ecx,23
     mov eax,0xff800000
@@ -180,61 +210,65 @@ __forceinline float fast_float_trunc(float f)
     cmovc eax,ebx
     sar eax,cl
     and [f],eax
-  }
-  return f;
+	}
+	return f;
 #else
-  unsigned x = *(unsigned *)&f;
-  unsigned char exp = x >> 23;
-  int mask = exp < 127 ? 0 : 0xff800000;
-  exp -= 127;
-  mask >>= exp & 31;
-  x &= mask;
-  return *(float *)&x;
+	unsigned x = *(unsigned*)&f;
+	unsigned char exp = x >> 23;
+	int mask = exp < 127 ? 0 : 0xff800000;
+	exp -= 127;
+	mask >>= exp & 31;
+	x &= mask;
+	return *(float*)&x;
 #endif
 }
 
 // same here, fast floor function
 __forceinline float fast_float_floor(float f)
 {
-  static unsigned almost1=(126<<23)|0x7fffff;
-  if (*(unsigned *)&f &0x80000000)
-    f-=*(float *)&almost1;
-  return fast_float_trunc(f);
+	static unsigned almost1 = (126 << 23) | 0x7fffff;
+	if (*(unsigned*)&f & 0x80000000)
+	{
+		f -= *(float*)&almost1;
+	}
+	return fast_float_trunc(f);
 }
 
 // same here, fast ceil function
 __forceinline float fast_float_ceil(float f)
 {
-  static unsigned almost1=(126<<23)|0x7fffff;
-  if ( (*(unsigned *)&f &0x80000000)==0)
-    f+=*(float *)&almost1;
-  return fast_float_trunc(f);
+	static unsigned almost1 = (126 << 23) | 0x7fffff;
+	if ((*(unsigned*)&f & 0x80000000) == 0)
+	{
+		f += *(float*)&almost1;
+	}
+	return fast_float_trunc(f);
 }
 
 //-------------------------------------------------------------------------------------------------
-#define REAL_TO_INT(x)						((Int)(x))
-#define REAL_TO_UNSIGNEDINT(x)		((UnsignedInt)(x))
-#define REAL_TO_SHORT(x)					((Short)(x))
-#define REAL_TO_UNSIGNEDSHORT(x)	((UnsignedShort)(x))
-#define REAL_TO_BYTE(x)						((Byte)(x))
-#define REAL_TO_UNSIGNEDBYTE(x)		((UnsignedByte)(x))
-#define REAL_TO_CHAR(x)						((Char)(x))
-#define DOUBLE_TO_REAL(x)					((Real)(x))
-#define DOUBLE_TO_INT(x)					((Int)(x))
-#define INT_TO_REAL(x)						((Real)(x))
+#define REAL_TO_INT(x) ((Int)(x))
+#define REAL_TO_UNSIGNEDINT(x) ((UnsignedInt)(x))
+#define REAL_TO_SHORT(x) ((Short)(x))
+#define REAL_TO_UNSIGNEDSHORT(x) ((UnsignedShort)(x))
+#define REAL_TO_BYTE(x) ((Byte)(x))
+#define REAL_TO_UNSIGNEDBYTE(x) ((UnsignedByte)(x))
+#define REAL_TO_CHAR(x) ((Char)(x))
+#define DOUBLE_TO_REAL(x) ((Real)(x))
+#define DOUBLE_TO_INT(x) ((Int)(x))
+#define INT_TO_REAL(x) ((Real)(x))
 
 // once we've ceiled/floored, trunc and round are identical, and currently, round is faster... (srj)
 #if RTS_GENERALS /*&& RETAIL_COMPATIBLE_CRC*/
-#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(ceilf(x)))
-#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(floorf(x)))
+	#define REAL_TO_INT_CEIL(x) (fast_float2long_round(ceilf(x)))
+	#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(floorf(x)))
 #else
-#define REAL_TO_INT_CEIL(x)				(fast_float2long_round(fast_float_ceil(x)))
-#define REAL_TO_INT_FLOOR(x)			(fast_float2long_round(fast_float_floor(x)))
+	#define REAL_TO_INT_CEIL(x) (fast_float2long_round(fast_float_ceil(x)))
+	#define REAL_TO_INT_FLOOR(x) (fast_float2long_round(fast_float_floor(x)))
 #endif
 
-#define FAST_REAL_TRUNC(x)        fast_float_trunc(x)
-#define FAST_REAL_CEIL(x)         fast_float_ceil(x)
-#define FAST_REAL_FLOOR(x)        fast_float_floor(x)
+#define FAST_REAL_TRUNC(x) fast_float_trunc(x)
+#define FAST_REAL_CEIL(x) fast_float_ceil(x)
+#define FAST_REAL_FLOOR(x) fast_float_floor(x)
 
 //--------------------------------------------------------------------
 // Derived type definitions
@@ -246,7 +280,7 @@ __forceinline float fast_float_ceil(float f)
 // real-valued range defined by low and high values
 struct RealRange
 {
-	Real lo, hi;							// low and high values of the range
+	Real lo, hi;    // low and high values of the range
 
 	void zero()
 	{
@@ -261,10 +295,10 @@ struct RealRange
 
 	// combine the given range with us such that we now encompass
 	// both ranges
-	void combine( RealRange &other )
+	void combine(RealRange& other)
 	{
-		lo = min( lo, other.lo );
-		hi = max( hi, other.hi );
+		lo = min(lo, other.lo);
+		hi = max(hi, other.hi);
 	}
 };
 
@@ -283,64 +317,64 @@ struct Coord2D
 		return x == value && y == value;
 	}
 
-	Real length() const { return (Real)sqrt( x*x + y*y ); }
-	Real lengthSqr() const { return x*x + y*y; }
+	Real length() const { return (Real)sqrt(x * x + y * y); }
+	Real lengthSqr() const { return x * x + y * y; }
 
 	void normalize()
 	{
 		Real len = length();
-		if( len != 0 )
+		if (len != 0)
 		{
 			x /= len;
 			y /= len;
 		}
 	}
 
-	Real toAngle() const;  ///< turn 2D vector into angle (where angle 0 is down the +x axis)
+	Real toAngle() const;    ///< turn 2D vector into angle (where angle 0 is down the +x axis)
 
-	void add( const Coord2D &a )
+	void add(const Coord2D& a)
 	{
 		x += a.x;
 		y += a.y;
 	}
 
-	void sub( const Coord2D &a )
+	void sub(const Coord2D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 	}
 
-	void operator+=( const Coord2D &a )
+	void operator+=(const Coord2D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const Coord2D &a )
+	void operator-=(const Coord2D& a)
 	{
 		sub(a);
 	}
 
-	void set( const Coord2D &a )
+	void set(const Coord2D& a)
 	{
 		x = a.x;
 		y = a.y;
 	}
 
-	void set( Real ax, Real ay )
+	void set(Real ax, Real ay)
 	{
 		x = ax;
 		y = ay;
 	}
 };
 
-inline Coord2D operator+( const Coord2D &a, const Coord2D &b )
+inline Coord2D operator+(const Coord2D& a, const Coord2D& b)
 {
 	Coord2D c = a;
 	c.add(b);
 	return c;
 }
 
-inline Coord2D operator-( const Coord2D &a, const Coord2D &b )
+inline Coord2D operator-(const Coord2D& a, const Coord2D& b)
 {
 	Coord2D c = a;
 	c.sub(b);
@@ -359,7 +393,9 @@ inline Real Coord2D::toAngle() const
 
 	// normalize
 	if (dist == 0.0f)
+	{
 		return 0.0f;
+	}
 
 	Coord2D dir;
 	dir.x = 1.0f;
@@ -370,21 +406,27 @@ inline Real Coord2D::toAngle() const
 	vector.y *= distInv;
 
 	// dot of two unit vectors is cos of angle
-	Real c = dir.x*vector.x + dir.y*vector.y;
+	Real c = dir.x * vector.x + dir.y * vector.y;
 
 	// bound it in case of numerical error
 	if (c < -1.0)
+	{
 		c = -1.0;
+	}
 	else if (c > 1.0)
+	{
 		c = 1.0;
+	}
 
-	Real value = (Real)ACos( (Real)c );
+	Real value = (Real)ACos((Real)c);
 
 	// Determine sign by checking Z component of dir cross vector
 	// Note this is assumes 2D, and is identical to dotting the perpendicular of v with dir
 	Real perpZ = dir.x * vector.y - dir.y * vector.x;
 	if (perpZ < 0.0f)
+	{
 		value = -value;
+	}
 
 	// note: to make this 3D, 'dir' and 'vector' can be normalized and dotted just as they are
 	// to test sign, compute N = dir X vector, then P = N x dir, then S = P . vector, where sign of
@@ -394,14 +436,20 @@ inline Real Coord2D::toAngle() const
 #else
 	const Real len = length();
 	if (len == 0.0f)
+	{
 		return 0.0f;
+	}
 
-	Real c = x/len;
+	Real c = x / len;
 	// bound it in case of numerical error
 	if (c < -1.0f)
+	{
 		c = -1.0f;
+	}
 	else if (c > 1.0f)
+	{
 		c = 1.0f;
+	}
 
 	return y < 0.0f ? -ACos(c) : ACos(c);
 #endif
@@ -422,52 +470,52 @@ struct ICoord2D
 		return x == value && y == value;
 	}
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y) ); }
-	Int lengthSqr() const { return x*x + y*y; }
+	Int length() const { return (Int)sqrt((double)(x * x + y * y)); }
+	Int lengthSqr() const { return x * x + y * y; }
 
-	void add( const ICoord2D &a )
+	void add(const ICoord2D& a)
 	{
 		x += a.x;
 		y += a.y;
 	}
 
-	void sub( const ICoord2D &a )
+	void sub(const ICoord2D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 	}
 
-	void operator+=( const ICoord2D &a )
+	void operator+=(const ICoord2D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const ICoord2D &a )
+	void operator-=(const ICoord2D& a)
 	{
 		sub(a);
 	}
 
-	void set( const ICoord2D &a )
+	void set(const ICoord2D& a)
 	{
 		x = a.x;
 		y = a.y;
 	}
 
-	void set( Int ax, Int ay )
+	void set(Int ax, Int ay)
 	{
 		x = ax;
 		y = ay;
 	}
 };
 
-inline ICoord2D operator+( const ICoord2D &a, const ICoord2D &b )
+inline ICoord2D operator+(const ICoord2D& a, const ICoord2D& b)
 {
 	ICoord2D c = a;
 	c.add(b);
 	return c;
 }
 
-inline ICoord2D operator-( const ICoord2D &a, const ICoord2D &b )
+inline ICoord2D operator-(const ICoord2D& a, const ICoord2D& b)
 {
 	ICoord2D c = a;
 	c.sub(b);
@@ -476,7 +524,7 @@ inline ICoord2D operator-( const ICoord2D &a, const ICoord2D &b )
 
 struct Region2D
 {
-	Coord2D lo, hi;						// bounds of 2D rectangular region
+	Coord2D lo, hi;    // bounds of 2D rectangular region
 
 	void zero()
 	{
@@ -491,12 +539,12 @@ struct Region2D
 
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
-	Bool isInRegion( Real x, Real y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
+	Bool isInRegion(Real x, Real y) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };
 
 struct IRegion2D
 {
-	ICoord2D lo, hi;					// bounds of 2D rectangular region
+	ICoord2D lo, hi;    // bounds of 2D rectangular region
 
 	void zero()
 	{
@@ -511,22 +559,21 @@ struct IRegion2D
 
 	Int width() const { return hi.x - lo.x; }
 	Int height() const { return hi.y - lo.y; }
-	Bool isInRegion( Int x, Int y ) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
+	Bool isInRegion(Int x, Int y) const { return (lo.x < x) && (x < hi.x) && (lo.y < y) && (y < hi.y); }
 };
-
 
 struct Coord3D
 {
 	Real x, y, z;
 
-	Real length() const { return (Real)sqrt( x*x + y*y + z*z ); }
-	Real lengthSqr() const { return ( x*x + y*y + z*z ); }
+	Real length() const { return (Real)sqrt(x * x + y * y + z * z); }
+	Real lengthSqr() const { return (x * x + y * y + z * z); }
 
 	void normalize()
 	{
 		Real len = length();
 
-		if( len != 0 )
+		if (len != 0)
 		{
 			x /= len;
 			y /= len;
@@ -534,7 +581,7 @@ struct Coord3D
 		}
 	}
 
-	static void crossProduct( const Coord3D &a, const Coord3D &b, Coord3D &r )
+	static void crossProduct(const Coord3D& a, const Coord3D& b, Coord3D& r)
 	{
 		r.x = (a.y * b.z - a.z * b.y);
 		r.y = (a.z * b.x - a.x * b.z);
@@ -553,74 +600,74 @@ struct Coord3D
 		return x == value && y == value && z == value;
 	}
 
-	void add( const Coord3D &a )
+	void add(const Coord3D& a)
 	{
 		x += a.x;
 		y += a.y;
 		z += a.z;
 	}
 
-	void sub( const Coord3D &a )
+	void sub(const Coord3D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 		z -= a.z;
 	}
 
-	void operator+=( const Coord3D &a )
+	void operator+=(const Coord3D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const Coord3D &a )
+	void operator-=(const Coord3D& a)
 	{
 		sub(a);
 	}
 
-	void set( const Coord3D &a )
+	void set(const Coord3D& a)
 	{
 		x = a.x;
 		y = a.y;
 		z = a.z;
 	}
 
-	void set( Real ax, Real ay, Real az )
+	void set(Real ax, Real ay, Real az)
 	{
 		x = ax;
 		y = ay;
 		z = az;
 	}
 
-	void scale( Real scale )
+	void scale(Real scale)
 	{
 		x *= scale;
 		y *= scale;
 		z *= scale;
 	}
 
-	Bool equals( const Coord3D &r )
+	Bool equals(const Coord3D& r)
 	{
 		return (x == r.x &&
-						y == r.y &&
-						z == r.z);
+		        y == r.y &&
+		        z == r.z);
 	}
 
-	Bool operator==( const Coord3D &r ) const
+	Bool operator==(const Coord3D& r) const
 	{
 		return (x == r.x &&
-						y == r.y &&
-						z == r.z);
+		        y == r.y &&
+		        z == r.z);
 	}
 };
 
-inline Coord3D operator+( const Coord3D &a, const Coord3D &b )
+inline Coord3D operator+(const Coord3D& a, const Coord3D& b)
 {
 	Coord3D c = a;
 	c.add(b);
 	return c;
 }
 
-inline Coord3D operator-( const Coord3D &a, const Coord3D &b )
+inline Coord3D operator-(const Coord3D& a, const Coord3D& b)
 {
 	Coord3D c = a;
 	c.sub(b);
@@ -631,8 +678,8 @@ struct ICoord3D
 {
 	Int x, y, z;
 
-	Int length() const { return (Int)sqrt( (double)(x*x + y*y + z*z) ); }
-	Int lengthSqr() const { return x*x + y*y + z*z; }
+	Int length() const { return (Int)sqrt((double)(x * x + y * y + z * z)); }
+	Int lengthSqr() const { return x * x + y * y + z * z; }
 
 	void zero()
 	{
@@ -646,38 +693,38 @@ struct ICoord3D
 		return x == value && y == value && z == value;
 	}
 
-	void add( const ICoord3D &a )
+	void add(const ICoord3D& a)
 	{
 		x += a.x;
 		y += a.y;
 		z += a.z;
 	}
 
-	void sub( const ICoord3D &a )
+	void sub(const ICoord3D& a)
 	{
 		x -= a.x;
 		y -= a.y;
 		z -= a.z;
 	}
 
-	void operator+=( const ICoord3D &a )
+	void operator+=(const ICoord3D& a)
 	{
 		add(a);
 	}
 
-	void operator-=( const ICoord3D &a )
+	void operator-=(const ICoord3D& a)
 	{
 		sub(a);
 	}
 
-	void set( const ICoord3D &a )
+	void set(const ICoord3D& a)
 	{
 		x = a.x;
 		y = a.y;
 		z = a.z;
 	}
 
-	void set( Int ax, Int ay, Int az )
+	void set(Int ax, Int ay, Int az)
 	{
 		x = ax;
 		y = ay;
@@ -685,14 +732,14 @@ struct ICoord3D
 	}
 };
 
-inline ICoord3D operator+( const ICoord3D &a, const ICoord3D &b )
+inline ICoord3D operator+(const ICoord3D& a, const ICoord3D& b)
 {
 	ICoord3D c = a;
 	c.add(b);
 	return c;
 }
 
-inline ICoord3D operator-( const ICoord3D &a, const ICoord3D &b )
+inline ICoord3D operator-(const ICoord3D& a, const ICoord3D& b)
 {
 	ICoord3D c = a;
 	c.sub(b);
@@ -702,13 +749,17 @@ inline ICoord3D operator-( const ICoord3D &a, const ICoord3D &b )
 // For alternative see AABoxClass
 struct Region3D
 {
-	Coord3D lo, hi;						// axis-aligned bounding box
+	Coord3D lo, hi;    // axis-aligned bounding box
 
 	Real width() const { return hi.x - lo.x; }
 	Real height() const { return hi.y - lo.y; }
 	Real depth() const { return hi.z - lo.z; }
 
-	void zero() { lo.zero(); hi.zero(); }
+	void zero()
+	{
+		lo.zero();
+		hi.zero();
+	}
 
 	bool is(Real value) const
 	{
@@ -716,7 +767,7 @@ struct Region3D
 	}
 
 	// Set XY from a 2D region and leave Z unchanged.
-	void setXY(const Region2D &region)
+	void setXY(const Region2D& region)
 	{
 		lo.x = region.lo.x;
 		lo.y = region.lo.y;
@@ -734,13 +785,21 @@ struct Region3D
 		for (Int i = 1; i < count; ++i)
 		{
 			if (points[i].x < lo.x)
+			{
 				lo.x = points[i].x;
+			}
 			if (points[i].y < lo.y)
+			{
 				lo.y = points[i].y;
+			}
 			if (points[i].x > hi.x)
+			{
 				hi.x = points[i].x;
+			}
 			if (points[i].y > hi.y)
+			{
 				hi.y = points[i].y;
+			}
 		}
 	}
 
@@ -751,37 +810,49 @@ struct Region3D
 		for (Int i = 1; i < count; ++i)
 		{
 			if (points[i].x < lo.x)
+			{
 				lo.x = points[i].x;
+			}
 			if (points[i].y < lo.y)
+			{
 				lo.y = points[i].y;
+			}
 			if (points[i].z < lo.z)
+			{
 				lo.z = points[i].z;
+			}
 			if (points[i].x > hi.x)
+			{
 				hi.x = points[i].x;
+			}
 			if (points[i].y > hi.y)
+			{
 				hi.y = points[i].y;
+			}
 			if (points[i].z > hi.z)
+			{
 				hi.z = points[i].z;
+			}
 		}
 	}
 
-	Bool isInRegionNoZ( const Coord3D &query ) const
+	Bool isInRegionNoZ(const Coord3D& query) const
 	{
 		return (lo.x < query.x) && (query.x < hi.x) &&
-					 (lo.y < query.y) && (query.y < hi.y);
+		       (lo.y < query.y) && (query.y < hi.y);
 	}
 
-	Bool isInRegion( const Coord3D &query ) const
+	Bool isInRegion(const Coord3D& query) const
 	{
 		return (lo.x < query.x) && (query.x < hi.x) &&
-					 (lo.y < query.y) && (query.y < hi.y) &&
-					 (lo.z < query.z) && (query.z < hi.z);
+		       (lo.y < query.y) && (query.y < hi.y) &&
+		       (lo.z < query.z) && (query.z < hi.z);
 	}
 };
 
 struct IRegion3D
 {
-	ICoord3D lo, hi;					// axis-aligned bounding box
+	ICoord3D lo, hi;    // axis-aligned bounding box
 
 	void zero()
 	{
@@ -799,38 +870,31 @@ struct IRegion3D
 	Int depth() const { return hi.z - lo.z; }
 };
 
-
 struct RGBColor
 {
-	Real red, green, blue;		// range between 0 and 1
+	Real red, green, blue;    // range between 0 and 1
 
 	Int getAsInt() const
 	{
-		return
-			((Int)(red * 255.0) << 16) |
-			((Int)(green * 255.0) << 8) |
-			((Int)(blue * 255.0) << 0);
+		return ((Int)(red * 255.0) << 16) |
+		       ((Int)(green * 255.0) << 8) |
+		       ((Int)(blue * 255.0) << 0);
 	}
 
 	void setFromInt(Int c)
 	{
 		red = ((c >> 16) & 0xff) / 255.0f;
-		green = ((c >>  8) & 0xff) / 255.0f;
-		blue = ((c >>  0) & 0xff) / 255.0f;
+		green = ((c >> 8) & 0xff) / 255.0f;
+		blue = ((c >> 0) & 0xff) / 255.0f;
 	}
-
 };
 
 struct RGBAColorReal
 {
-
-	Real red, green, blue, alpha;  // range between 0.0 and 1.0
-
+	Real red, green, blue, alpha;    // range between 0.0 and 1.0
 };
 
 struct RGBAColorInt
 {
-
-	UnsignedInt red, green, blue, alpha;  // range between 0 and 255
-
+	UnsignedInt red, green, blue, alpha;    // range between 0 and 255
 };

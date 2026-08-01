@@ -67,103 +67,90 @@
 // PreviewProc ================================================================
 /** */
 //=============================================================================
-LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
-														  WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK PreviewProc(HWND hWnd, UINT message,
+                             WPARAM wParam, LPARAM lParam)
 {
-
-	switch( message )
+	switch (message)
 	{
-
 		case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
 			HDC hdc;
-			HBRUSH whiteBrush = (HBRUSH)GetStockObject( WHITE_BRUSH );
+			HBRUSH whiteBrush = (HBRUSH)GetStockObject(WHITE_BRUSH);
 
 			hdc = BeginPaint(hWnd, &ps);
 
-			SelectObject( hdc, GetStockObject( WHITE_PEN ) );
+			SelectObject(hdc, GetStockObject(WHITE_PEN));
 
 			// find the target texture page
-			TexturePage *page;
-			for( page = TheImagePacker->getFirstTexturePage();
-					 page;
-					 page = page->m_next )
+			TexturePage* page;
+			for (page = TheImagePacker->getFirstTexturePage();
+			     page;
+			     page = page->m_next)
 			{
-
 				// if this is not the target page, ignore it
-				if( page->getID() != TheImagePacker->getTargetPreviewPage() )
+				if (page->getID() != TheImagePacker->getTargetPreviewPage())
+				{
 					continue;
+				}
 
 				// draw image based on the generated texture or silhouette
-				if( TheImagePacker->getUseTexturePreview() )
+				if (TheImagePacker->getUseTexturePreview())
 				{
 					Int x, y;
 					Byte r, g, b;
 					HPEN prevPen, pen;
 
-					for( y = 0; y < page->getHeight(); y++ )
+					for (y = 0; y < page->getHeight(); y++)
 					{
-
-						for( x = 0; x < page->getWidth(); x++ )
+						for (x = 0; x < page->getWidth(); x++)
 						{
-
 							// get the color here
-							page->getPixel( x, y, &r, &g, &b );
+							page->getPixel(x, y, &r, &g, &b);
 
 							// create a new pen of the right color
-							pen = CreatePen( 1, 1, RGB( r, g, b ) );
+							pen = CreatePen(1, 1, RGB(r, g, b));
 
 							// select pen into hdc
-							prevPen = (HPEN)SelectObject( hdc, pen );
+							prevPen = (HPEN)SelectObject(hdc, pen);
 
 							// draw ... what is the Win32 put pixel function???
-							MoveToEx( hdc, x, y, nullptr );
-							LineTo( hdc, x + 1, y );
+							MoveToEx(hdc, x, y, nullptr);
+							LineTo(hdc, x + 1, y);
 
 							// put the old pen back
-							SelectObject( hdc, prevPen );
+							SelectObject(hdc, prevPen);
 
 							// delete the created pen
-							DeleteObject( pen );
-
+							DeleteObject(pen);
 						}
-
 					}
-
 				}
 				else
 				{
-
 					// go through all the images on this page
-					ImageInfo *image;
-					for( image = page->getFirstImage();
-							 image;
-							 image = image->m_nextPageImage )
+					ImageInfo* image;
+					for (image = page->getFirstImage();
+					     image;
+					     image = image->m_nextPageImage)
 					{
 						RECT rect;
 
-						rect.left		= image->m_pagePos.lo.x;
-						rect.top		= image->m_pagePos.lo.y;
-						rect.right	= image->m_pagePos.hi.x + 1;  // FillRect not inclusive
-						rect.bottom = image->m_pagePos.hi.y + 1;  // FillRect not inclusive
-						FillRect( hdc, &rect, whiteBrush );
-
+						rect.left = image->m_pagePos.lo.x;
+						rect.top = image->m_pagePos.lo.y;
+						rect.right = image->m_pagePos.hi.x + 1;    // FillRect not inclusive
+						rect.bottom = image->m_pagePos.hi.y + 1;    // FillRect not inclusive
+						FillRect(hdc, &rect, whiteBrush);
 					}
-
 				}
-
 			}
 
-			EndPaint( hWnd, &ps );
+			EndPaint(hWnd, &ps);
 			break;
-
 		}
-
 	}
 
-	return DefWindowProc( hWnd, message, wParam, lParam );
-
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 // MakePreviewDisplay =========================================================
@@ -172,47 +159,48 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 HWND MakePreviewDisplay()
 {
 	WNDCLASSEX wcex;
-	const char *className = "PreviewDisplay";
+	const char* className = "PreviewDisplay";
 	HWND hWnd;
 
-	wcex.cbSize = sizeof( WNDCLASSEX );
+	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style					= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc		= (WNDPROC)PreviewProc;
-	wcex.cbClsExtra			= 0;
-	wcex.cbWndExtra			= 0;
-	wcex.hInstance			= ApplicationHInstance;
-	wcex.hIcon					= nullptr;
-	wcex.hCursor				= LoadCursor( nullptr, IDC_ARROW );
-	wcex.hbrBackground	= (HBRUSH)GetStockObject( BLACK_BRUSH );
-	wcex.lpszMenuName		=	nullptr;
-	wcex.lpszClassName	= className;
-	wcex.hIconSm				= nullptr;
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = (WNDPROC)PreviewProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = ApplicationHInstance;
+	wcex.hIcon = nullptr;
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcex.lpszMenuName = nullptr;
+	wcex.lpszClassName = className;
+	wcex.hIconSm = nullptr;
 
-	RegisterClassEx( &wcex );
+	RegisterClassEx(&wcex);
 
 	// create app window and keep handle
-	hWnd = CreateWindowEx( 0,											// extended style
-												 className,							// window class name
-												 "Preview",							// window name
-												 PREVIEW_STYLE,					// window styles
-												 30,											// x position
-												 30,											// y position
-												 TheImagePacker->getTargetWidth(),
-												 TheImagePacker->getTargetHeight(),
-												 nullptr,									// parent
-												 nullptr,									// menu
-												 ApplicationHInstance,	// instance
-												 nullptr );								// creation data
+	hWnd = CreateWindowEx(0,    // extended style
+	                      className,    // window class name
+	                      "Preview",    // window name
+	                      PREVIEW_STYLE,    // window styles
+	                      30,    // x position
+	                      30,    // y position
+	                      TheImagePacker->getTargetWidth(),
+	                      TheImagePacker->getTargetHeight(),
+	                      nullptr,    // parent
+	                      nullptr,    // menu
+	                      ApplicationHInstance,    // instance
+	                      nullptr);    // creation data
 
-	if( hWnd == nullptr )
+	if (hWnd == nullptr)
+	{
 		return nullptr;
+	}
 
 	// display the window
-	ShowWindow( hWnd, SW_SHOW );
+	ShowWindow(hWnd, SW_SHOW);
 
 	return hWnd;
-
 }
 
 // UpdatePreviewWindow ========================================================
@@ -223,24 +211,28 @@ void UpdatePreviewWindow()
 	HWND preview;
 
 	// sanity
-	if( TheImagePacker == nullptr )
+	if (TheImagePacker == nullptr)
+	{
 		return;
+	}
 
 	// get preview window
 	preview = TheImagePacker->getPreviewWindow();
 
 	// if window not here don't bother
-	if( preview == nullptr )
+	if (preview == nullptr)
+	{
 		return;
+	}
 
 	// make the title
-	char title[ 256 ];
+	char title[256];
 
 	// construct title
-	sprintf( title, "Page #%d of %d",
-					 TheImagePacker->getTargetPreviewPage(),
-					 TheImagePacker->getPageCount() );
-	SetWindowText( preview, title );
+	sprintf(title, "Page #%d of %d",
+	        TheImagePacker->getTargetPreviewPage(),
+	        TheImagePacker->getPageCount());
+	SetWindowText(preview, title);
 
 	// adjust the window rect so the client area is the target packed size
 	RECT clientRect;
@@ -248,20 +240,19 @@ void UpdatePreviewWindow()
 
 	p.x = 0;
 	p.y = 0;
-	ClientToScreen( preview, &p );
+	ClientToScreen(preview, &p);
 	clientRect.left = p.x;
 	clientRect.right = clientRect.left + TheImagePacker->getTargetWidth();
 	clientRect.top = p.y;
 	clientRect.bottom = clientRect.top + TheImagePacker->getTargetHeight();
-	AdjustWindowRect( &clientRect, PREVIEW_STYLE, FALSE );
-	MoveWindow( preview,
-							clientRect.left,
-							clientRect.top,
-							clientRect.right - clientRect.left,
-							clientRect.bottom - clientRect.top,
-							TRUE );
+	AdjustWindowRect(&clientRect, PREVIEW_STYLE, FALSE);
+	MoveWindow(preview,
+	           clientRect.left,
+	           clientRect.top,
+	           clientRect.right - clientRect.left,
+	           clientRect.bottom - clientRect.top,
+	           TRUE);
 
 	// invalidate the client area for redraw
-	InvalidateRect( preview, nullptr, TRUE );
-
+	InvalidateRect(preview, nullptr, TRUE);
 }

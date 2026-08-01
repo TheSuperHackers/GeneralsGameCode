@@ -17,20 +17,20 @@
 */
 
 #ifdef _WIN32
-#include <process.h>
+	#include <process.h>
 #endif
 #include <cstdlib>
 #include <csignal>
 #include <Utility/iostream_adapter.h>
 
 #ifdef _WIN32
-#include <direct.h>
+	#include <direct.h>
 #else
-#include <sys/types.h>
-#include <sys/stat.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
 #endif
 
-//#define THREADSAFE_HEADER
+// #define THREADSAFE_HEADER
 
 #include <wstring.h>
 #include <wdebug.h>
@@ -49,16 +49,15 @@
 #ifdef _UNIX
 using namespace std;
 #else
-#define sleep(x) Sleep(1000 * (x))
+	#define sleep(x) Sleep(1000 * (x))
 #endif
 
-static const char *Program_Usage = "A config filename can be given on the command line (default=matchbot.cfg)\n";
-void logMonitor(void *);
-void paranoidLogMonitor(void *);
+static const char* Program_Usage = "A config filename can be given on the command line (default=matchbot.cfg)\n";
+void logMonitor(void*);
+void paranoidLogMonitor(void*);
 
-OutputDevice * output_device = nullptr;
-OutputDevice * paranoid_output_device = nullptr;
-
+OutputDevice* output_device = nullptr;
+OutputDevice* paranoid_output_device = nullptr;
 
 void Signal_Quit(int)
 {
@@ -109,26 +108,26 @@ int VerifyFileDescriptors(int requested)
 	return requested;
 }
 
+GeneralsMatcher* s_generalsMatcher = nullptr;
+GeneralsClientMatcher* s_generalsClientMatcher = nullptr;
 
-
-GeneralsMatcher *s_generalsMatcher = nullptr;
-GeneralsClientMatcher *s_generalsClientMatcher = nullptr;
-
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	Wstring config_fname = "matchbot.cfg";
 
 	// You can specify the config file on the command line
 	if (argc == 2)
+	{
 		config_fname = argv[1];
+	}
 
 	// Read the config file
-	FILE *fp;
+	FILE* fp;
 	if ((fp = fopen(config_fname.get(), "r")) == nullptr)
 	{
 		cerr << "\nCan't open the config file '" << config_fname.get() << "'\n\n";
 		cerr << Program_Usage << endl;
-		exit( -1);
+		exit(-1);
 	}
 	fclose(fp);
 
@@ -143,13 +142,17 @@ int main(int argc, char ** argv)
 		int append = 1;
 		Global.config.getInt("APPENDTOLOG", append);
 		if (append)
+		{
 			output_device = new FileD(output_file.get(), "a");
+		}
 		else
+		{
 			output_device = new FileD(output_file.get(), "w");
+		}
 		if (!output_device)
 		{
 			cerr << "Could not open " << output_file.get() << " for writing!" << endl;
-			exit( -1);
+			exit(-1);
 		}
 	}
 	else
@@ -170,7 +173,7 @@ int main(int argc, char ** argv)
 		if (!paranoid_output_device)
 		{
 			cerr << "Could not open " << paranoid_output_file.get() << " for writing!" << endl;
-			exit( -1);
+			exit(-1);
 		}
 	}
 	else
@@ -195,7 +198,7 @@ int main(int argc, char ** argv)
 		return 1;
 	}
 
-	if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) !=2))
+	if ((LOBYTE(wsadata.wVersion) != 2) || (HIBYTE(wsadata.wVersion) != 2))
 	{
 		ERRMSG("Winsock DLL is not 2.2");
 		WSACleanup();
@@ -213,11 +216,15 @@ int main(int argc, char ** argv)
 	// This is for test suites, so they can use
 	// the same config file as the corresponding
 	// matchbot.
-	const char *s = argv[0] + strlen(argv[0]);
+	const char* s = argv[0] + strlen(argv[0]);
 	while (s > argv[0] && *s != '/')
+	{
 		--s;
+	}
 	if (*s == '/')
+	{
 		++s;
+	}
 	Wstring exe = s;
 	exe.toLower();
 	DBGMSG("Executable file is [" << exe.get() << "]");
@@ -237,7 +244,7 @@ int main(int argc, char ** argv)
 	else
 	{
 		cerr << "\nNo valid GAME entry found!" << endl;
-		exit( -1);
+		exit(-1);
 	}
 
 	delete s_generalsMatcher;
@@ -255,18 +262,20 @@ int main(int argc, char ** argv)
 | midnight and create a new log file.  The old one gets put into the    |
 | logfiles directory.                                                   |
 `----------------------------------------------------------------------*/
-void logMonitor(void *)
+void logMonitor(void*)
 {
 #ifdef _UNIX
 	Xtime xtime;
 	time_t curtime;
-	//char timebuf[40];
+	// char timebuf[40];
 	char filenamebuf[128];
 	int delay = -1;
 	Global.config.getInt("ROTATEDELAY", delay);
 	DBGMSG("ROTATEDELAY: " << delay);
 	if (delay == -1)
-		return ;
+	{
+		return;
+	}
 	while (1)
 	{
 		curtime = time(nullptr);
@@ -291,7 +300,7 @@ void logMonitor(void *)
 			        xtime.getMDay(), xtime.getYear(), xtime.getHour(), xtime.getMinute(), xtime.getSecond());
 			rename(newfilename.get(), filenamebuf);
 			DBGMSG("Normal: Just been switched.  " << logfilename.get() << ", " << newfilename.get());
-			sleep(60*60*23); // sleep the next 23 hours
+			sleep(60 * 60 * 23);    // sleep the next 23 hours
 		}
 		sleep(300);
 	}
@@ -327,22 +336,23 @@ void rotateOutput()
 #endif
 	rename(newfilename.get(), filenamebuf);
 
-	DBGMSG("Normal: Just been switched.  " << logfilename.get() << ", " <<
-	       newfilename.get());
+	DBGMSG("Normal: Just been switched.  " << logfilename.get() << ", " << newfilename.get());
 }
 
-void paranoidLogMonitor(void *)
+void paranoidLogMonitor(void*)
 {
 #ifdef _UNIX
 	Xtime xtime;
 	time_t curtime;
-	//char timebuf[40];
+	// char timebuf[40];
 	char filenamebuf[128];
 	int delay = -1;
 	Global.config.getInt("ROTATEDELAY", delay);
 	PARANOIDMSG("ROTATEDELAY: " << delay);
 	if (delay == -1)
-		return ;
+	{
+		return;
+	}
 	while (1)
 	{
 		curtime = time(nullptr);
@@ -367,7 +377,7 @@ void paranoidLogMonitor(void *)
 			        xtime.getMDay(), xtime.getYear(), xtime.getHour(), xtime.getMinute(), xtime.getSecond());
 			rename(newfilename.get(), filenamebuf);
 			PARANOIDMSG("Paranoid: Just been switched.  " << logfilename.get() << ", " << newfilename.get());
-			sleep(60*60*23); // sleep the next 23 hours
+			sleep(60 * 60 * 23);    // sleep the next 23 hours
 		}
 		sleep(300);
 	}
@@ -403,8 +413,5 @@ void rotateParanoid()
 #endif
 	rename(newfilename.get(), filenamebuf);
 
-	PARANOIDMSG("Paranoid: Just been switched.  " << logfilename.get() << ", " <<
-	            newfilename.get());
+	PARANOIDMSG("Paranoid: Just been switched.  " << logfilename.get() << ", " << newfilename.get());
 }
-
-

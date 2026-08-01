@@ -30,93 +30,80 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "StdAfx.h"
 #include "W3DView.h"
 #include "AggregateNameDialog.h"
 #include "WW3D2/w3d_file.h"
 
-
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //	AggregateNameDialogClass
 //
-AggregateNameDialogClass::AggregateNameDialogClass (CWnd* pParent /*=nullptr*/)
-	: CDialog(AggregateNameDialogClass::IDD, pParent)
+AggregateNameDialogClass::AggregateNameDialogClass(CWnd* pParent /*=nullptr*/)
+  : CDialog(AggregateNameDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(AggregateNameDialogClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //	AggregateNameDialogClass
 //
-AggregateNameDialogClass::AggregateNameDialogClass
-(
-	UINT resource_id,
-	const CString &def_name,
-	CWnd *pParent
-)
-	: m_Name (def_name),
-	  CDialog (resource_id, pParent)
+AggregateNameDialogClass::AggregateNameDialogClass(
+  UINT resource_id,
+  const CString& def_name,
+  CWnd* pParent)
+  : m_Name(def_name)
+  , CDialog(resource_id, pParent)
 {
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 //	AggregateNameDialogClass
 //
-void
-AggregateNameDialogClass::DoDataExchange (CDataExchange* pDX)
+void AggregateNameDialogClass::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange (pDX);
+	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(AggregateNameDialogClass)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(AggregateNameDialogClass, CDialog)
-	//{{AFX_MSG_MAP(AggregateNameDialogClass)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(AggregateNameDialogClass)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 //	OnOK
 //
-void
-AggregateNameDialogClass::OnOK ()
+void AggregateNameDialogClass::OnOK()
 {
-	GetDlgItemText (IDC_AGGREGATE_NAME, m_Name);
-	CDialog::OnOK ();
+	GetDlgItemText(IDC_AGGREGATE_NAME, m_Name);
+	CDialog::OnOK();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 //	OnInitDialog
 //
-BOOL
-AggregateNameDialogClass::OnInitDialog ()
+BOOL AggregateNameDialogClass::OnInitDialog()
 {
 	// Allow the base class to process this message
-	CDialog::OnInitDialog ();
+	CDialog::OnInitDialog();
 
 	// Restrict the amount of text a user can type into the control
-	SendDlgItemMessage (IDC_AGGREGATE_NAME, EM_LIMITTEXT, (WPARAM)W3D_NAME_LEN-1);
-	SetDlgItemText (IDC_AGGREGATE_NAME, m_Name);
+	SendDlgItemMessage(IDC_AGGREGATE_NAME, EM_LIMITTEXT, (WPARAM)W3D_NAME_LEN - 1);
+	SetDlgItemText(IDC_AGGREGATE_NAME, m_Name);
 	return TRUE;
 }

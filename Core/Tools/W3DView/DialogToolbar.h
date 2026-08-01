@@ -44,28 +44,26 @@
 //
 class DialogToolbarClass : public CToolBar
 {
-	public:
-		DialogToolbarClass ();
-		virtual ~DialogToolbarClass () {}
+public:
+	DialogToolbarClass();
+	virtual ~DialogToolbarClass() {}
 
-// Form Data
+	// Form Data
 public:
 	//{{AFX_DATA(DialogToolbarClass)
 	//}}AFX_DATA
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(DialogToolbarClass)
-	protected:
+protected:
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const override;
@@ -79,16 +77,13 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	//virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-	BOOL OnNeedToolTipText (UINT id, NMHDR *pTTTStruct, LRESULT *pResult);
+	// virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	BOOL OnNeedToolTipText(UINT id, NMHDR* pTTTStruct, LRESULT* pResult);
 
-
-
-	public:
-
-		///////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
-		void						Enable_Button (int id, bool benable = true);
+public:
+	///////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
+	void Enable_Button(int id, bool benable = true);
 };

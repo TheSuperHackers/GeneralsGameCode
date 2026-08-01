@@ -39,10 +39,8 @@ struct CommandPacket;
 class GameMessage;
 class GameInfo;
 
-void ClearCommandPacket(UnsignedInt frame);										///< ClearCommandPacket clears the command packet at the start of the frame.
-CommandPacket *GetCommandPacket();											///< TheNetwork calls GetCommandPacket to get commands to send.
-
-
+void ClearCommandPacket(UnsignedInt frame);    ///< ClearCommandPacket clears the command packet at the start of the frame.
+CommandPacket* GetCommandPacket();    ///< TheNetwork calls GetCommandPacket to get commands to send.
 
 /**
  * Interface definition for the Network.
@@ -50,37 +48,36 @@ CommandPacket *GetCommandPacket();											///< TheNetwork calls GetCommandPac
 class NetworkInterface : public SubsystemInterface
 {
 protected:
-
 public:
-	virtual ~NetworkInterface() override { };
+	virtual ~NetworkInterface() override {};
 
-	static NetworkInterface * createNetwork();
+	static NetworkInterface* createNetwork();
 
-	virtual void liteupdate() = 0;															///< does a lightweight update for passing messages around.
+	virtual void liteupdate() = 0;    ///< does a lightweight update for passing messages around.
 
-	virtual void setLocalAddress(UnsignedInt ip, UnsignedInt port) = 0;	///< Tell the network what local ip and port to bind to.
-	virtual Bool isFrameDataReady() = 0;												///< Are the commands for the next frame available?
+	virtual void setLocalAddress(UnsignedInt ip, UnsignedInt port) = 0;    ///< Tell the network what local ip and port to bind to.
+	virtual Bool isFrameDataReady() = 0;    ///< Are the commands for the next frame available?
 	virtual Bool isStalling() = 0;
-	virtual void parseUserList( const GameInfo *game ) = 0;						///< Parse a userlist, creating connections
-	virtual void startGame() = 0;																	///< Sets the network game frame counter to -1
-	virtual UnsignedInt getRunAhead() = 0;												///< Get the current RunAhead value
-	virtual UnsignedInt getFrameRate() = 0;												///< Get the current allowed frame rate.
-	virtual UnsignedInt getPacketArrivalCushion() = 0;						///< Get the smallest packet arrival cushion since this was last called.
+	virtual void parseUserList(const GameInfo* game) = 0;    ///< Parse a userlist, creating connections
+	virtual void startGame() = 0;    ///< Sets the network game frame counter to -1
+	virtual UnsignedInt getRunAhead() = 0;    ///< Get the current RunAhead value
+	virtual UnsignedInt getFrameRate() = 0;    ///< Get the current allowed frame rate.
+	virtual UnsignedInt getPacketArrivalCushion() = 0;    ///< Get the smallest packet arrival cushion since this was last called.
 
 	// Chat functions
-	virtual void sendChat(UnicodeString text, Int playerMask) = 0;		///< Send a chat line using the normal system.
-	virtual void sendDisconnectChat(UnicodeString text) = 0;					///< Send a chat line using the disconnect manager.
+	virtual void sendChat(UnicodeString text, Int playerMask) = 0;    ///< Send a chat line using the normal system.
+	virtual void sendDisconnectChat(UnicodeString text) = 0;    ///< Send a chat line using the disconnect manager.
 
 	virtual void sendFile(AsciiString path, UnsignedByte playerMask, UnsignedShort commandID) = 0;
 	virtual UnsignedShort sendFileAnnounce(AsciiString path, UnsignedByte playerMask) = 0;
 	virtual Int getFileTransferProgress(Int playerID, AsciiString path) = 0;
 	virtual Bool areAllQueuesEmpty() = 0;
 
-	virtual void quitGame() = 0;																			///< Quit the game right now.
+	virtual void quitGame() = 0;    ///< Quit the game right now.
 
 	virtual void selfDestructPlayer(Int index) = 0;
 
-	virtual void voteForPlayerDisconnect(Int slot) = 0;								///< register a vote towards this player's disconnect.
+	virtual void voteForPlayerDisconnect(Int slot) = 0;    ///< register a vote towards this player's disconnect.
 	virtual Bool isPacketRouter() = 0;
 
 	// Bandwidth metrics
@@ -91,30 +88,30 @@ public:
 	virtual Real getUnknownBytesPerSecond() = 0;
 	virtual Real getUnknownPacketsPerSecond() = 0;
 
-	virtual void updateLoadProgress( Int percent ) = 0;
+	virtual void updateLoadProgress(Int percent) = 0;
 	virtual void loadProgressComplete() = 0;
 	virtual void sendTimeOutGameStart() = 0;
-	virtual UnsignedInt getLocalPlayerID()= 0;
-	virtual UnicodeString getPlayerName(Int playerNum)= 0;
+	virtual UnsignedInt getLocalPlayerID() = 0;
+	virtual UnicodeString getPlayerName(Int playerNum) = 0;
 	virtual Int getNumPlayers() = 0;
 
 	virtual Int getAverageFPS() = 0;
 	virtual Int getSlotAverageFPS(Int slot) = 0;
 
-	virtual void attachTransport(Transport *transport) = 0;
+	virtual void attachTransport(Transport* transport) = 0;
 	virtual void initTransport() = 0;
 	virtual Bool sawCRCMismatch() = 0;
 	virtual void setSawCRCMismatch() = 0;
 
 	virtual Bool isPlayerConnected(Int playerID) = 0;
 
-	virtual void notifyOthersOfCurrentFrame() = 0;					///< Tells all the other players what frame we are on.
-	virtual void notifyOthersOfNewFrame(UnsignedInt frame) = 0;							///< Tells all the other players that we are on a new frame.
+	virtual void notifyOthersOfCurrentFrame() = 0;    ///< Tells all the other players what frame we are on.
+	virtual void notifyOthersOfNewFrame(UnsignedInt frame) = 0;    ///< Tells all the other players that we are on a new frame.
 
-	virtual Int  getExecutionFrame() = 0;																			///< Returns the next valid frame for simultaneous command execution.
+	virtual Int getExecutionFrame() = 0;    ///< Returns the next valid frame for simultaneous command execution.
 
 #if defined(RTS_DEBUG)
-	virtual void toggleNetworkOn() = 0;													///< toggle whether or not to send network traffic.
+	virtual void toggleNetworkOn() = 0;    ///< toggle whether or not to send network traffic.
 #endif
 
 	// For disconnect blame assignment
@@ -122,7 +119,6 @@ public:
 	virtual Int getPingsSent() = 0;
 	virtual Int getPingsReceived() = 0;
 };
-
 
 /**
  * ResolveIP turns a string ("games2.westwood.com", or "192.168.0.1") into

@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -43,9 +43,10 @@
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-EnemyNearUpdate::EnemyNearUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData ),
-	m_enemyNear(false),
-	m_enemyScanDelay(0)
+EnemyNearUpdate::EnemyNearUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
+  , m_enemyNear(false)
+  , m_enemyScanDelay(0)
 {
 	// bias a random amount so everyone doesn't spike at once
 	m_enemyScanDelay += GameLogicRandomValue(0, getEnemyNearUpdateModuleData()->m_enemyScanDelayTime);
@@ -56,7 +57,6 @@ EnemyNearUpdate::EnemyNearUpdate( Thing *thing, const ModuleData* moduleData ) :
 EnemyNearUpdate::~EnemyNearUpdate()
 {
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /**
@@ -70,7 +70,7 @@ void EnemyNearUpdate::checkForEnemies()
 		m_enemyScanDelay = getEnemyNearUpdateModuleData()->m_enemyScanDelayTime;
 
 		Real visionRange = getObject()->getVisionRange();
-		Object* enemy = TheAI->findClosestEnemy( getObject(), visionRange, AI::CAN_SEE );
+		Object* enemy = TheAI->findClosestEnemy(getObject(), visionRange, AI::CAN_SEE);
 		m_enemyNear = (enemy != nullptr);
 	}
 	else
@@ -84,7 +84,7 @@ void EnemyNearUpdate::checkForEnemies()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime EnemyNearUpdate::update()
 {
-/// @todo srj use SLEEPY_UPDATE here
+	/// @todo srj use SLEEPY_UPDATE here
 	Bool enemyWasNear = m_enemyNear;
 
 	checkForEnemies();
@@ -92,16 +92,20 @@ UpdateSleepTime EnemyNearUpdate::update()
 	if (m_enemyNear && !enemyWasNear)
 	{
 		// change the state of the art to an "enemy near" state
-		Drawable *draw = getObject()->getDrawable();
-		if( draw )
-			draw->setModelConditionState( MODELCONDITION_ENEMYNEAR );
+		Drawable* draw = getObject()->getDrawable();
+		if (draw)
+		{
+			draw->setModelConditionState(MODELCONDITION_ENEMYNEAR);
+		}
 	}
 	else if (!m_enemyNear && enemyWasNear)
 	{
 		// change the state of the art to an idle state
-		Drawable *draw = getObject()->getDrawable();
-		if( draw )
-			draw->clearModelConditionState( MODELCONDITION_ENEMYNEAR );
+		Drawable* draw = getObject()->getDrawable();
+		if (draw)
+		{
+			draw->clearModelConditionState(MODELCONDITION_ENEMYNEAR);
+		}
 	}
 	return UPDATE_SLEEP_NONE;
 }
@@ -109,36 +113,32 @@ UpdateSleepTime EnemyNearUpdate::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void EnemyNearUpdate::crc( Xfer *xfer )
+void EnemyNearUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void EnemyNearUpdate::xfer( Xfer *xfer )
+void EnemyNearUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
+	UpdateModule::xfer(xfer);
 
 	// enemy scan delay
-	xfer->xferUnsignedInt( &m_enemyScanDelay );
+	xfer->xferUnsignedInt(&m_enemyScanDelay);
 
 	// enemy near
-	xfer->xferBool( &m_enemyNear );
-
+	xfer->xferBool(&m_enemyNear);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,8 +146,6 @@ void EnemyNearUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void EnemyNearUpdate::loadPostProcess()
 {
-
 	// extend base class
 	UpdateModule::loadPostProcess();
-
 }

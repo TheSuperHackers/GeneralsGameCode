@@ -27,8 +27,8 @@
 #include "Utils.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -37,23 +37,23 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(EmitterLinePropPageClass, CPropertyPage)
 
-EmitterLinePropPageClass::EmitterLinePropPageClass() :
-	CPropertyPage(EmitterLinePropPageClass::IDD),
-	m_pEmitterList(nullptr),
-	m_bValid(true),
-	m_MappingMode(W3D_EMITTER_RENDER_MODE_TRI_PARTICLES),
-	m_MergeIntersections(false),
-	m_EndCaps(false),
-	m_DisableSorting(false),
-	m_SubdivisionLevel(0),
-	m_NoiseAmplitude(0.0f),
-	m_MergeAbortFactor(0.0f),
-	m_TextureTileFactor(0.0f),
-	m_UPerSec(0.0f),
-	m_VPerSec(0.0f)
+EmitterLinePropPageClass::EmitterLinePropPageClass()
+  : CPropertyPage(EmitterLinePropPageClass::IDD)
+  , m_pEmitterList(nullptr)
+  , m_bValid(true)
+  , m_MappingMode(W3D_EMITTER_RENDER_MODE_TRI_PARTICLES)
+  , m_MergeIntersections(false)
+  , m_EndCaps(false)
+  , m_DisableSorting(false)
+  , m_SubdivisionLevel(0)
+  , m_NoiseAmplitude(0.0f)
+  , m_MergeAbortFactor(0.0f)
+  , m_TextureTileFactor(0.0f)
+  , m_UPerSec(0.0f)
+  , m_VPerSec(0.0f)
 {
 	//{{AFX_DATA_INIT(EmitterLinePropPageClass)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
 
@@ -75,25 +75,22 @@ void EmitterLinePropPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EmitterLinePropPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(EmitterLinePropPageClass)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterLinePropPageClass)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // EmitterLinePropPageClass message handlers
 
-
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
-void
-EmitterLinePropPageClass::Initialize ()
+void EmitterLinePropPageClass::Initialize()
 {
-	if (m_pEmitterList != nullptr) {
-
+	if (m_pEmitterList != nullptr)
+	{
 		//
 		// Read the settings from the emitter
 		//
@@ -117,25 +114,25 @@ BOOL EmitterLinePropPageClass::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	// Set up the spinner ranges
-	m_SubdivisionLevelSpin.SetRange(0,8);
+	m_SubdivisionLevelSpin.SetRange(0, 8);
 	m_SubdivisionLevelSpin.SetPos(m_SubdivisionLevel);
 
-	::Initialize_Spinner (m_NoiseAmplitudeSpin, m_NoiseAmplitude, -10000, 10000);
-	::Initialize_Spinner (m_MergeAbortFactorSpin, m_MergeAbortFactor, -10000, 10000);
-	::Initialize_Spinner (m_UVTilingSpin, m_TextureTileFactor, 0.0f,8.0f);
-	::Initialize_Spinner (m_UPerSecSpin, m_UPerSec, 0.0f,32.0f);
-	::Initialize_Spinner (m_VPerSecSpin, m_VPerSec, 0.0f,32.0f);
+	::Initialize_Spinner(m_NoiseAmplitudeSpin, m_NoiseAmplitude, -10000, 10000);
+	::Initialize_Spinner(m_MergeAbortFactorSpin, m_MergeAbortFactor, -10000, 10000);
+	::Initialize_Spinner(m_UVTilingSpin, m_TextureTileFactor, 0.0f, 8.0f);
+	::Initialize_Spinner(m_UPerSecSpin, m_UPerSec, 0.0f, 32.0f);
+	::Initialize_Spinner(m_VPerSecSpin, m_VPerSec, 0.0f, 32.0f);
 
 	// Set the combo box
 	m_MapModeCombo.SetCurSel(m_MappingMode);
 
 	// Set the checkboxes
-	SendDlgItemMessage (IDC_MERGE_INTERSECTIONS_CHECK, BM_SETCHECK, (WPARAM)(m_MergeIntersections != 0));
-	SendDlgItemMessage (IDC_END_CAPS_CHECK, BM_SETCHECK, (WPARAM)(m_EndCaps != 0));
-	SendDlgItemMessage (IDC_DISABLE_SORTING_CHECK, BM_SETCHECK, (WPARAM)(m_DisableSorting != 0));
+	SendDlgItemMessage(IDC_MERGE_INTERSECTIONS_CHECK, BM_SETCHECK, (WPARAM)(m_MergeIntersections != 0));
+	SendDlgItemMessage(IDC_END_CAPS_CHECK, BM_SETCHECK, (WPARAM)(m_EndCaps != 0));
+	SendDlgItemMessage(IDC_DISABLE_SORTING_CHECK, BM_SETCHECK, (WPARAM)(m_DisableSorting != 0));
 
 	bool enable = (m_pEmitterList->Get_Render_Mode() == W3D_EMITTER_RENDER_MODE_LINE);
-	::Enable_Dialog_Controls(m_hWnd,enable);
+	::Enable_Dialog_Controls(m_hWnd, enable);
 
 	return TRUE;
 }
@@ -145,41 +142,39 @@ BOOL EmitterLinePropPageClass::OnApply()
 	//
 	//	Get the data from the controls
 	//
-	m_SubdivisionLevel = GetDlgItemInt (IDC_SUBDIVISION_LEVEL_EDIT);
-	m_NoiseAmplitude = ::GetDlgItemFloat (m_hWnd, IDC_NOISE_AMPLITUDE_EDIT);
-	m_MergeAbortFactor = ::GetDlgItemFloat (m_hWnd, IDC_MERGE_ABORT_FACTOR_EDIT);
-	m_TextureTileFactor = ::GetDlgItemFloat (m_hWnd, IDC_UVTILING_EDIT);
-	m_UPerSec = ::GetDlgItemFloat (m_hWnd, IDC_UPERSEC_EDIT);
-	m_VPerSec = ::GetDlgItemFloat (m_hWnd, IDC_VPERSEC_EDIT);
+	m_SubdivisionLevel = GetDlgItemInt(IDC_SUBDIVISION_LEVEL_EDIT);
+	m_NoiseAmplitude = ::GetDlgItemFloat(m_hWnd, IDC_NOISE_AMPLITUDE_EDIT);
+	m_MergeAbortFactor = ::GetDlgItemFloat(m_hWnd, IDC_MERGE_ABORT_FACTOR_EDIT);
+	m_TextureTileFactor = ::GetDlgItemFloat(m_hWnd, IDC_UVTILING_EDIT);
+	m_UPerSec = ::GetDlgItemFloat(m_hWnd, IDC_UPERSEC_EDIT);
+	m_VPerSec = ::GetDlgItemFloat(m_hWnd, IDC_VPERSEC_EDIT);
 
-	m_MappingMode = SendDlgItemMessage (IDC_MAPMODE_COMBO, CB_GETCURSEL);
-	m_MergeIntersections = !!SendDlgItemMessage (IDC_MERGE_INTERSECTIONS_CHECK, BM_GETCHECK);
-	m_EndCaps = !!SendDlgItemMessage (IDC_END_CAPS_CHECK, BM_GETCHECK);
-	m_DisableSorting = !!SendDlgItemMessage (IDC_DISABLE_SORTING_CHECK, BM_GETCHECK);
+	m_MappingMode = SendDlgItemMessage(IDC_MAPMODE_COMBO, CB_GETCURSEL);
+	m_MergeIntersections = !!SendDlgItemMessage(IDC_MERGE_INTERSECTIONS_CHECK, BM_GETCHECK);
+	m_EndCaps = !!SendDlgItemMessage(IDC_END_CAPS_CHECK, BM_GETCHECK);
+	m_DisableSorting = !!SendDlgItemMessage(IDC_DISABLE_SORTING_CHECK, BM_GETCHECK);
 
 	//
 	//	Apply the changes to the emitter
 	//
-	m_pEmitterList->Set_Subdivision_Level (m_SubdivisionLevel);
-	m_pEmitterList->Set_Noise_Amplitude (m_NoiseAmplitude);
-	m_pEmitterList->Set_Merge_Abort_Factor (m_MergeAbortFactor);
-	m_pEmitterList->Set_Texture_Tile_Factor (m_TextureTileFactor);
-	m_pEmitterList->Set_UV_Offset_Rate (Vector2(m_UPerSec,m_VPerSec));
+	m_pEmitterList->Set_Subdivision_Level(m_SubdivisionLevel);
+	m_pEmitterList->Set_Noise_Amplitude(m_NoiseAmplitude);
+	m_pEmitterList->Set_Merge_Abort_Factor(m_MergeAbortFactor);
+	m_pEmitterList->Set_Texture_Tile_Factor(m_TextureTileFactor);
+	m_pEmitterList->Set_UV_Offset_Rate(Vector2(m_UPerSec, m_VPerSec));
 
-	m_pEmitterList->Set_Line_Texture_Mapping_Mode (m_MappingMode);
-	m_pEmitterList->Set_Merge_Intersections (m_MergeIntersections);
+	m_pEmitterList->Set_Line_Texture_Mapping_Mode(m_MappingMode);
+	m_pEmitterList->Set_Merge_Intersections(m_MergeIntersections);
 	m_pEmitterList->Set_Disable_Sorting(m_DisableSorting);
 	m_pEmitterList->Set_End_Caps(m_EndCaps);
-
 
 	// Allow the base class to process this message
 	return CPropertyPage::OnApply();
 }
 
-
 BOOL EmitterLinePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD (wParam))
+	switch (LOWORD(wParam))
 	{
 		// Check if any of the edit boxes were modified,
 		case IDC_SUBDIVISION_LEVEL_EDIT:
@@ -188,25 +183,27 @@ BOOL EmitterLinePropPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 		case IDC_UVTILING_EDIT:
 		case IDC_UPERSEC_EDIT:
 		case IDC_VPERSEC_EDIT:
-			if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 			break;
 
 		case IDC_MERGE_INTERSECTIONS_CHECK:
 		case IDC_END_CAPS_CHECK:
 		case IDC_DISABLE_SORTING_CHECK:
-			if (HIWORD (wParam) == BN_CLICKED) {
-				SetModified ();
+			if (HIWORD(wParam) == BN_CLICKED)
+			{
+				SetModified();
 			}
 			break;
 
 		case IDC_MAPMODE_COMBO:
-			if (HIWORD (wParam) == CBN_SELCHANGE) {
-				SetModified ();
+			if (HIWORD(wParam) == CBN_SELCHANGE)
+			{
+				SetModified();
 			}
 			break;
-
 	}
 
 	return CPropertyPage::OnCommand(wParam, lParam);
@@ -217,13 +214,14 @@ BOOL EmitterLinePropPageClass::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* p
 	//
 	//	Update the spinner control if necessary
 	//
-	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
+	NMHDR* pheader = (NMHDR*)lParam;
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS))
+	{
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
-		SetModified ();
+		::Update_Spinner_Buddy(pheader->hwndFrom, pupdown->iDelta);
+		SetModified();
 	}
 
 	// Allow the base class to process this message
-	return CPropertyPage::OnNotify (wParam, lParam, pResult);
+	return CPropertyPage::OnNotify(wParam, lParam, pResult);
 }

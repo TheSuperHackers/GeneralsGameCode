@@ -16,12 +16,12 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #ifdef RTS_ENABLE_CRASHDUMP
-#include "Common/MiniDumper.h"
-#include <wctype.h>
-#include "gitinfo.h"
+	#include "Common/MiniDumper.h"
+	#include <wctype.h>
+	#include "gitinfo.h"
 
 // Globals for storing the pointer to the exception
 _EXCEPTION_POINTERS* g_dumpException = nullptr;
@@ -93,7 +93,7 @@ void MiniDumper::TriggerMiniDump(DumpType dumpType)
 		return;
 	}
 
-#if defined(_MSC_VER)
+	#if defined(_MSC_VER)
 	// MSVC supports structured exception handling (__try/__except)
 	__try
 	{
@@ -104,13 +104,13 @@ void MiniDumper::TriggerMiniDump(DumpType dumpType)
 	{
 		TriggerMiniDumpForException(g_dumpException, dumpType);
 	}
-#elif defined(__GNUC__) && defined(_WIN32)
+	#elif defined(__GNUC__) && defined(_WIN32)
 	// GCC/MinGW-w64 doesn't support MSVC's __try/__except syntax
 	// Trigger dump directly without SEH support
 	DEBUG_LOG(("MiniDumper::TriggerMiniDump: SEH not supported on this compiler, skipping manual dump trigger."));
-#else
-	#error "MiniDumper::TriggerMiniDump: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
-#endif
+	#else
+		#error "MiniDumper::TriggerMiniDump: Unsupported compiler. This code requires MSVC or GCC/MinGW-w64 targeting Windows."
+	#endif
 }
 
 void MiniDumper::TriggerMiniDumpForException(_EXCEPTION_POINTERS* e_info, DumpType dumpType)
@@ -244,19 +244,19 @@ void MiniDumper::ShutdownDumpThread()
 		DWORD waitRet = ::WaitForSingleObject(m_dumpThread, 3000);
 		switch (waitRet)
 		{
-		case WAIT_OBJECT_0:
-			// Wait for thread exit was successful
-			break;
-		case WAIT_TIMEOUT:
-			DEBUG_LOG(("MiniDumper::ShutdownDumpThread: Waiting for dumping thread to exit timed out, killing thread", waitRet));
-			::TerminateThread(m_dumpThread, MiniDumperExitCode_ForcedTerminate);
-			break;
-		case WAIT_FAILED:
-			DEBUG_LOG(("MiniDumper::ShutdownDumpThread: Waiting for minidump triggering failed: status=%u, error=%u", waitRet, ::GetLastError()));
-			break;
-		default:
-			DEBUG_LOG(("MiniDumper::ShutdownDumpThread: Waiting for minidump triggering failed: status=%u", waitRet));
-			break;
+			case WAIT_OBJECT_0:
+				// Wait for thread exit was successful
+				break;
+			case WAIT_TIMEOUT:
+				DEBUG_LOG(("MiniDumper::ShutdownDumpThread: Waiting for dumping thread to exit timed out, killing thread", waitRet));
+				::TerminateThread(m_dumpThread, MiniDumperExitCode_ForcedTerminate);
+				break;
+			case WAIT_FAILED:
+				DEBUG_LOG(("MiniDumper::ShutdownDumpThread: Waiting for minidump triggering failed: status=%u, error=%u", waitRet, ::GetLastError()));
+				break;
+			default:
+				DEBUG_LOG(("MiniDumper::ShutdownDumpThread: Waiting for minidump triggering failed: status=%u", waitRet));
+				break;
 		}
 	}
 }
@@ -307,22 +307,22 @@ DWORD MiniDumper::ThreadProcInternal()
 		DWORD event = ::WaitForMultipleObjects(ARRAY_SIZE(waitEvents), waitEvents, FALSE, INFINITE);
 		switch (event)
 		{
-		case WAIT_OBJECT_0 + 0:
-			// A dump is requested (m_dumpRequested)
-			::ResetEvent(m_dumpComplete);
-			CreateMiniDump(m_requestedDumpType);
-			::ResetEvent(m_dumpRequested);
-			::SetEvent(m_dumpComplete);
-			break;
-		case WAIT_OBJECT_0 + 1:
-			// Quit (m_quitting)
-			return MiniDumperExitCode_Success;
-		case WAIT_FAILED:
-			DEBUG_LOG(("MiniDumper::ThreadProcInternal: Waiting for events failed: status=%u, error=%u", event, ::GetLastError()));
-			return MiniDumperExitCode_FailureWait;
-		default:
-			DEBUG_LOG(("MiniDumper::ThreadProcInternal: Waiting for events failed: status=%u", event));
-			return MiniDumperExitCode_FailureWait;
+			case WAIT_OBJECT_0 + 0:
+				// A dump is requested (m_dumpRequested)
+				::ResetEvent(m_dumpComplete);
+				CreateMiniDump(m_requestedDumpType);
+				::ResetEvent(m_dumpRequested);
+				::SetEvent(m_dumpComplete);
+				break;
+			case WAIT_OBJECT_0 + 1:
+				// Quit (m_quitting)
+				return MiniDumperExitCode_Success;
+			case WAIT_FAILED:
+				DEBUG_LOG(("MiniDumper::ThreadProcInternal: Waiting for events failed: status=%u, error=%u", event, ::GetLastError()));
+				return MiniDumperExitCode_FailureWait;
+			default:
+				DEBUG_LOG(("MiniDumper::ThreadProcInternal: Waiting for events failed: status=%u", event));
+				return MiniDumperExitCode_FailureWait;
 		}
 	}
 }
@@ -335,29 +335,28 @@ DWORD WINAPI MiniDumper::MiniDumpThreadProc(LPVOID lpParam)
 		return MiniDumperExitCode_FailureParam;
 	}
 
-	MiniDumper* dumper = static_cast<MiniDumper *>(lpParam);
+	MiniDumper* dumper = static_cast<MiniDumper*>(lpParam);
 	return dumper->ThreadProcInternal();
 }
-
 
 void MiniDumper::CreateMiniDump(DumpType dumpType)
 {
 	// Create a unique dump file name, using the path from m_dumpDir, in m_dumpFile
 	SYSTEMTIME sysTime;
 	::GetLocalTime(&sysTime);
-#if RTS_GENERALS
+	#if RTS_GENERALS
 	const Char product = 'G';
-#elif RTS_ZEROHOUR
+	#elif RTS_ZEROHOUR
 	const Char product = 'Z';
-#endif
+	#endif
 	Char dumpTypeSpecifier = static_cast<Char>(dumpType);
 	DWORD currentProcessId = ::GetCurrentProcessId();
 
 	// m_dumpDir is stored with trailing backslash in Initialize
 	snprintf(m_dumpFile, ARRAY_SIZE(m_dumpFile), "%s%s%c%c-%04d%02d%02d-%02d%02d%02d-%s-pid%ld.dmp",
-		m_dumpDir, DumpFileNamePrefix, dumpTypeSpecifier, product, sysTime.wYear, sysTime.wMonth,
-		sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
-		GitShortSHA1, currentProcessId);
+	         m_dumpDir, DumpFileNamePrefix, dumpTypeSpecifier, product, sysTime.wYear, sysTime.wMonth,
+	         sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond,
+	         GitShortSHA1, currentProcessId);
 
 	HANDLE dumpFile = ::CreateFile(m_dumpFile, GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (dumpFile == nullptr || dumpFile == INVALID_HANDLE_VALUE)
@@ -379,24 +378,24 @@ void MiniDumper::CreateMiniDump(DumpType dumpType)
 	int dumpTypeFlags = MiniDumpNormal;
 	switch (dumpType)
 	{
-	case DumpType_Full:
-		dumpTypeFlags |= MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpWithHandleData |
-			MiniDumpWithThreadInfo | MiniDumpWithFullMemoryInfo | MiniDumpWithPrivateReadWriteMemory;
-		FALLTHROUGH;
-	case DumpType_Minimal:
-		dumpTypeFlags |= MiniDumpWithIndirectlyReferencedMemory | MiniDumpScanMemory;
-		break;
+		case DumpType_Full:
+			dumpTypeFlags |= MiniDumpWithFullMemory | MiniDumpWithDataSegs | MiniDumpWithHandleData |
+			                 MiniDumpWithThreadInfo | MiniDumpWithFullMemoryInfo | MiniDumpWithPrivateReadWriteMemory;
+			FALLTHROUGH;
+		case DumpType_Minimal:
+			dumpTypeFlags |= MiniDumpWithIndirectlyReferencedMemory | MiniDumpScanMemory;
+			break;
 	}
 
 	MINIDUMP_TYPE miniDumpType = static_cast<MINIDUMP_TYPE>(dumpTypeFlags);
 	BOOL success = DbgHelpLoader::miniDumpWriteDump(
-		::GetCurrentProcess(),
-		currentProcessId,
-		dumpFile,
-		miniDumpType,
-		exceptionInfoPtr,
-		nullptr,
-		nullptr);
+	  ::GetCurrentProcess(),
+	  currentProcessId,
+	  dumpFile,
+	  miniDumpType,
+	  exceptionInfoPtr,
+	  nullptr,
+	  nullptr);
 
 	if (!success)
 	{

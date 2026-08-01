@@ -49,36 +49,30 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType CPP_11(: Int);
+enum ScienceType CPP_11( : Int);
 
 class FireWeaponPowerModuleData : public SpecialPowerModuleData
 {
-
 public:
-
 	FireWeaponPowerModuleData();
 
-	static void buildFieldParse( MultiIniFieldParse& p );
+	static void buildFieldParse(MultiIniFieldParse& p);
 
 	UnsignedInt m_maxShotsToFire;
 };
 
-
 //-------------------------------------------------------------------------------------------------
 class FireWeaponPower : public SpecialPowerModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireWeaponPower, "FireWeaponPower" )
-	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireWeaponPower, FireWeaponPowerModuleData )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(FireWeaponPower, "FireWeaponPower")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(FireWeaponPower, FireWeaponPowerModuleData)
 
 public:
+	FireWeaponPower(Thing* thing, const ModuleData* moduleData);
 
-	FireWeaponPower( Thing *thing, const ModuleData *moduleData );
-
-	virtual void doSpecialPower( UnsignedInt commandOptions ) override;
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) override;
-	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) override;
+	virtual void doSpecialPower(UnsignedInt commandOptions) override;
+	virtual void doSpecialPowerAtLocation(const Coord3D* loc, Real angle, UnsignedInt commandOptions) override;
+	virtual void doSpecialPowerAtObject(Object* obj, UnsignedInt commandOptions) override;
 
 protected:
-
 };

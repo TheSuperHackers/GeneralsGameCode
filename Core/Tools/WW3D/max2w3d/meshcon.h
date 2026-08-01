@@ -38,50 +38,49 @@
 #pragma once
 
 #ifndef ALWAYS_H
-#include "always.h"
+	#include "always.h"
 #endif
 
 #ifndef CHUNKIO_H
-#include "chunkio.h"
+	#include "chunkio.h"
 #endif
 
 #ifndef NODELIST_H
-#include "nodelist.h"
+	#include "nodelist.h"
 #endif
 
 #ifndef HIERSAVE_H
-#include "hiersave.h"
+	#include "hiersave.h"
 #endif
 
 #ifndef W3D_FILE
-#include "w3d_file.h"
+	#include "w3d_file.h"
 #endif
 
 #ifndef VECTOR_H
-#include "Vector.h"
+	#include "Vector.h"
 #endif
-
 
 class GeometryExportTaskClass;
 class GeometryExportContextClass;
 
-
 struct ConnectionStruct
 {
-	ConnectionStruct() : BoneIndex(0),MeshINode(nullptr)
+	ConnectionStruct()
+	  : BoneIndex(0)
+	  , MeshINode(nullptr)
 	{
-		memset(ObjectName,0,sizeof(ObjectName));
+		memset(ObjectName, 0, sizeof(ObjectName));
 	}
 
-	int							BoneIndex;
-	char							ObjectName[2*W3D_NAME_LEN];
-	INode	*						MeshINode;
+	int BoneIndex;
+	char ObjectName[2 * W3D_NAME_LEN];
+	INode* MeshINode;
 
 	// required by DynamicVectorClass...
-	operator == (const ConnectionStruct & that) { return false; }
-	operator != (const ConnectionStruct & that) { return !(*this==that); }
+	operator==(const ConnectionStruct & that) { return false; }
+	operator!=(const ConnectionStruct & that) { return !(*this == that); }
 };
-
 
 /**
 ** MeshConnectionsClass
@@ -91,9 +90,8 @@ struct ConnectionStruct
 class MeshConnectionsClass
 {
 public:
-
-	MeshConnectionsClass(	DynamicVectorClass<GeometryExportTaskClass *> sub_objects,
-									GeometryExportContextClass & context );
+	MeshConnectionsClass(DynamicVectorClass<GeometryExportTaskClass*> sub_objects,
+	                     GeometryExportContextClass& context);
 
 	~MeshConnectionsClass();
 
@@ -102,14 +100,14 @@ public:
 	** the name of the runtime HierarchyModel that this
 	** object is describing.
 	*/
-	const char * Get_Name() const			{ return Name; }
+	const char* Get_Name() const { return Name; }
 
 	/*
 	** Get the total number of meshes (of all types).
 	*/
-	int Get_Sub_Object_Count () const		{ return SubObjects.Count(); }
-	int Get_Aggregate_Count() const			{ return Aggregates.Count(); }
-	int Get_Proxy_Count() const				{ return ProxyObjects.Count(); }
+	int Get_Sub_Object_Count() const { return SubObjects.Count(); }
+	int Get_Aggregate_Count() const { return Aggregates.Count(); }
+	int Get_Proxy_Count() const { return ProxyObjects.Count(); }
 
 	/*
 	** Retrieve data about the mesh of the given index.
@@ -118,26 +116,23 @@ public:
 	** out_inode - mesh INode is passed by setting the INode* pointed to by this value. If this
 	**		parameter is null, the value is not passed back.
 	*/
-	bool Get_Sub_Object_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = nullptr);
-	bool Get_Aggregate_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = nullptr);
-	bool Get_Proxy_Data(int index, char **out_name, int *out_boneindex, INode **out_inode = nullptr);
+	bool Get_Sub_Object_Data(int index, char** out_name, int* out_boneindex, INode** out_inode = nullptr);
+	bool Get_Aggregate_Data(int index, char** out_name, int* out_boneindex, INode** out_inode = nullptr);
+	bool Get_Proxy_Data(int index, char** out_name, int* out_boneindex, INode** out_inode = nullptr);
 
 	/*
 	** Returns the origin node used by this model.
 	*/
-	INode * Get_Origin () const				{ return Origin; }
+	INode* Get_Origin() const { return Origin; }
 
 private:
+	TimeValue CurTime;
+	INode* Origin;
 
-	TimeValue							CurTime;
-	INode *								Origin;
-
-	char									Name[W3D_NAME_LEN];
+	char Name[W3D_NAME_LEN];
 
 	// array of SubObjects
-	DynamicVectorClass<ConnectionStruct>	SubObjects;
-	DynamicVectorClass<ConnectionStruct>	Aggregates;
-	DynamicVectorClass<ConnectionStruct>	ProxyObjects;
-
-
+	DynamicVectorClass<ConnectionStruct> SubObjects;
+	DynamicVectorClass<ConnectionStruct> Aggregates;
+	DynamicVectorClass<ConnectionStruct> ProxyObjects;
 };

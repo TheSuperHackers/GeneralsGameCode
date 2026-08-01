@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Player.h"
 #include "Common/Xfer.h"
@@ -68,7 +68,6 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 CashBountyPowerModuleData::CashBountyPowerModuleData()
@@ -82,7 +81,7 @@ CashBountyPowerModuleData::CashBountyPowerModuleData()
 #ifdef NOT_IN_USE
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ )
+static void parseBountyUpgradePair(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	CashBountyPowerModuleData::Upgrades up;
 
@@ -98,18 +97,16 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 //-------------------------------------------------------------------------------------------------
 /* static */ void CashBountyPowerModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-	SpecialPowerModuleData::buildFieldParse( p );
+	SpecialPowerModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
+	static const FieldParse dataFieldParse[] = {
 #ifdef NOT_IN_USE
-		{ "UpgradeBounty", parseBountyUpgradePair, nullptr, offsetof( CashBountyPowerModuleData, m_upgrades ) },
+		{ "UpgradeBounty", parseBountyUpgradePair, nullptr, offsetof(CashBountyPowerModuleData, m_upgrades) },
 #endif
-		{ "Bounty",			INI::parsePercentToReal, nullptr, offsetof( CashBountyPowerModuleData, m_defaultBounty ) },
+		{ "Bounty", INI::parsePercentToReal, nullptr, offsetof(CashBountyPowerModuleData, m_defaultBounty) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,8 +115,8 @@ static void parseBountyUpgradePair( INI* ini, void * /*instance*/, void *store, 
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) :
-							SpecialPowerModule( thing, moduleData )
+CashBountyPower::CashBountyPower(Thing* thing, const ModuleData* moduleData)
+  : SpecialPowerModule(thing, moduleData)
 {
 }
 
@@ -127,7 +124,6 @@ CashBountyPower::CashBountyPower( Thing *thing, const ModuleData* moduleData ) :
 //-------------------------------------------------------------------------------------------------
 CashBountyPower::~CashBountyPower()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -139,7 +135,9 @@ void CashBountyPower::onObjectCreated()
 	{
 		Real bounty = findBounty();
 		if (bounty > controller->getCashBounty())
+		{
 			controller->setCashBounty(bounty);
+		}
 	}
 }
 
@@ -153,11 +151,13 @@ Real CashBountyPower::findBounty() const
 	if (controller != nullptr)
 	{
 		for (std::vector<CashBountyPowerModuleData::Upgrades>::const_iterator it = d->m_upgrades.begin();
-					it != d->m_upgrades.end();
-					++it)
+		     it != d->m_upgrades.end();
+		     ++it)
 		{
 			if (controller->hasScience(it->m_science))
+			{
 				return it->m_bounty;
+			}
 		}
 	}
 #endif
@@ -175,37 +175,35 @@ void CashBountyPower::onSpecialPowerCreation()
 	{
 		Real bounty = findBounty();
 		if (bounty > controller->getCashBounty())
+		{
 			controller->setCashBounty(bounty);
+		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::crc( Xfer *xfer )
+void CashBountyPower::crc(Xfer* xfer)
 {
-
 	// extend base class
-	SpecialPowerModule::crc( xfer );
-
+	SpecialPowerModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void CashBountyPower::xfer( Xfer *xfer )
+void CashBountyPower::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	SpecialPowerModule::xfer( xfer );
-
+	SpecialPowerModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -213,8 +211,6 @@ void CashBountyPower::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void CashBountyPower::loadPostProcess()
 {
-
 	// extend base class
 	SpecialPowerModule::loadPostProcess();
-
 }

@@ -36,46 +36,47 @@ class MapObject;
 extern const char* NEUTRAL_TEAM_UI_STR;
 extern const char* NEUTRAL_TEAM_INTERNAL_STR;
 
-
 /////////////////////////////////////////////////////////////////////////////
 // MapObjectProps dialog
 
 class MapObjectProps : public COptionsPanel, public PopupSliderOwner
 {
-// Construction
+	// Construction
 public:
-	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);   // standard constructor
+	MapObjectProps(Dict* dictToEdit = nullptr, const char* title = nullptr, CWnd* pParent = nullptr);    // standard constructor
 	virtual ~MapObjectProps() override;
 	void makeMain();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(MapObjectProps)
-	enum { IDD = IDD_MAPOBJECT_PROPS };
+	enum
+	{
+		IDD = IDD_MAPOBJECT_PROPS
+	};
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MapObjectProps)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	void getAllSelectedDicts();
 	Dict** getAllSelectedDictsData();
 
-	static MapObjectProps *TheMapObjectProps;
+	static MapObjectProps* TheMapObjectProps;
 
 	// Data common to all property pages
 	Dict* m_dictToEdit;
 	std::vector<Dict*> m_allSelectedDicts;
 	const char* m_title;
-	MapObject *m_selectedObject;
-	MapObject *m_dictSource; // Source object for m_dictToEdit. m_selectedObject is not always the current source
-	                         // of m_dictToEdit, and I don't understand why, so I'm making another MapObject pointer
-	                         // which is always kept in sync.
+	MapObject* m_selectedObject;
+	MapObject* m_dictSource;    // Source object for m_dictToEdit. m_selectedObject is not always the current source
+	                            // of m_dictToEdit, and I don't understand why, so I'm making another MapObject pointer
+	                            // which is always kept in sync.
 
 	Real m_angle;
 	Real m_height;
@@ -85,18 +86,17 @@ protected:
 	WBPopupSliderButton m_angleSlider;
 	WBPopupSliderButton m_scaleSlider;
 
-	Int              m_defaultEntryIndex; //< Index in the sound combobox of the entry labelled "default"
-	Bool             m_defaultIsNone; //< The default for this object is no sound
-	AsciiString      m_defaultEntryName; //< The original name of the default entry
+	Int m_defaultEntryIndex;    //< Index in the sound combobox of the entry labelled "default"
+	Bool m_defaultIsNone;    //< The default for this object is no sound
+	AsciiString m_defaultEntryName;    //< The original name of the default entry
 
-	ModifyObjectUndoable *m_posUndoable;
+	ModifyObjectUndoable* m_posUndoable;
 	Coord3D m_position;
 
 	void deletePages();
 	void updateTheUI();
 	void enableButtons();
 	int getSel();
-
 
 	// Generated message map functions
 	//{{AFX_MSG(MapObjectProps)
@@ -146,7 +146,7 @@ protected:
 	afx_msg void minRangeToDict();
 	afx_msg void maxRangeToDict();
 	afx_msg void priorityToDict();
-		//}}AFX_MSG
+	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
@@ -186,22 +186,22 @@ protected:
 	void dictToMaxRange();
 	void dictToPriority();
 
-	void clearCustomizeFlag( CWorldBuilderDoc* pDoc, MultipleUndoable * ownerUndoable );
+	void clearCustomizeFlag(CWorldBuilderDoc* pDoc, MultipleUndoable* ownerUndoable);
 
 	// Implementation of PopupSliderOwner callbacks
-	virtual void GetPopSliderInfo(const long sliderID, long *pMin, long *pMax, long *pLineSize, long *pInitial) override;
+	virtual void GetPopSliderInfo(const long sliderID, long* pMin, long* pMax, long* pLineSize, long* pInitial) override;
 	virtual void PopSliderChanged(const long sliderID, long theVal) override;
 	virtual void PopSliderFinished(const long sliderID, long theVal) override;
 
 public:
-	static MapObject *getSingleSelectedMapObject();
+	static MapObject* getSingleSelectedMapObject();
 	static void update();
 
 private:
-  /// Disallow copying: Object is not set up to be copied
-  MapObjectProps( const MapObjectProps & other ); // Deliberately undefined
-  MapObjectProps & operator=( const MapObjectProps & other ); // Deliberately undefined
-	void updateTheUI(MapObject *pMapObj);
+	/// Disallow copying: Object is not set up to be copied
+	MapObjectProps(const MapObjectProps& other);    // Deliberately undefined
+	MapObjectProps& operator=(const MapObjectProps& other);    // Deliberately undefined
+	void updateTheUI(MapObject* pMapObj);
 	void InitSound();
 };
 

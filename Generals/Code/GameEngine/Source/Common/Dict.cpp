@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/Dict.h"
 #include "Common/GameMemory.h"
@@ -58,7 +58,7 @@ void Dict::DictPair::copyFrom(DictPair* that)
 		clear();
 	}
 
-	switch(newType)
+	switch (newType)
 	{
 		case DICT_BOOL:
 		case DICT_INT:
@@ -110,7 +110,10 @@ void Dict::DictPair::setNameAndType(NameKeyType key, Dict::DataType type)
 #ifdef RTS_DEBUG
 void Dict::validate() const
 {
-	if (!m_data) return;
+	if (!m_data)
+	{
+		return;
+	}
 	DEBUG_ASSERTCRASH(m_data->m_refCount > 0, ("m_refCount is zero"));
 	DEBUG_ASSERTCRASH(m_data->m_refCount < 32000, ("m_refCount is suspiciously large"));
 	DEBUG_ASSERTCRASH(m_data->m_numPairsAllocated > 0, ("m_numPairsAllocated is zero"));
@@ -124,9 +127,11 @@ void Dict::validate() const
 Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 {
 	DEBUG_ASSERTCRASH(key != NAMEKEY_INVALID, ("invalid namekey!"));
-	DEBUG_ASSERTCRASH((UnsignedInt)key < (1L<<23), ("namekey too large!"));
+	DEBUG_ASSERTCRASH((UnsignedInt)key < (1L << 23), ("namekey too large!"));
 	if (!m_data)
+	{
 		return nullptr;
+	}
 	DictPair* base = m_data->peek();
 	Int minIdx = 0;
 	Int maxIdx = m_data->m_numPairsUsed;
@@ -136,22 +141,28 @@ Dict::DictPair* Dict::findPairByKey(NameKeyType key) const
 		DictPair* mid = base + midIdx;
 		NameKeyType midKey = mid->getName();
 		if (key > midKey)
+		{
 			minIdx = midIdx + 1;
+		}
 		else if (key < midKey)
+		{
 			maxIdx = midIdx;
+		}
 		else
+		{
 			return mid;
+		}
 	}
 
 	return nullptr;
 }
 
 // -----------------------------------------------------
-Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPair *pairToTranslate)
+Dict::DictPair* Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPair* pairToTranslate)
 {
 	if (m_data &&
-			m_data->m_refCount == 1 &&
-			m_data->m_numPairsAllocated >= numPairsNeeded)
+	    m_data->m_refCount == 1 &&
+	    m_data->m_numPairsAllocated >= numPairsNeeded)
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		return pairToTranslate;
@@ -162,14 +173,14 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 	{
 		DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != nullptr, ("Cannot use dynamic memory allocator before its initialization. Check static initialization order."));
 		DEBUG_ASSERTCRASH(numPairsNeeded <= MAX_LEN, ("Dict::ensureUnique exceeds max pairs length %d with requested length %d", MAX_LEN, numPairsNeeded));
-		int minBytes = sizeof(Dict::DictPairData) + numPairsNeeded*sizeof(Dict::DictPair);
+		int minBytes = sizeof(Dict::DictPairData) + numPairsNeeded * sizeof(Dict::DictPair);
 		int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 		// note: be certain to alloc with zero; we'll take advantage of the fact that all-zero
 		// is a bit-pattern that happens to init all our pairs to legal values:
 		// type BOOL, key INVALID, value FALSE.
 		newData = (Dict::DictPairData*)TheDynamicMemoryAllocator->allocateBytes(actualBytes, "Dict::ensureUnique");
 		newData->m_refCount = 1;
-		newData->m_numPairsAllocated = (actualBytes - sizeof(Dict::DictPairData))/sizeof(Dict::DictPair);
+		newData->m_numPairsAllocated = (actualBytes - sizeof(Dict::DictPairData)) / sizeof(Dict::DictPair);
 		newData->m_numPairsUsed = 0;
 
 		if (preserveData && m_data)
@@ -177,24 +188,29 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 			Dict::DictPair* src = m_data->peek();
 			Dict::DictPair* dst = newData->peek();
 			for (Int i = 0; i < m_data->m_numPairsUsed; ++i, ++src, ++dst)
+			{
 				dst->copyFrom(src);
+			}
 			newData->m_numPairsUsed = m_data->m_numPairsUsed;
 		}
 	}
 
 	Int delta = 0;
 	if (pairToTranslate && m_data)
+	{
 		delta = pairToTranslate - m_data->peek();
+	}
 
 	releaseData();
 	m_data = newData;
 
 	if (pairToTranslate && m_data)
+	{
 		pairToTranslate = m_data->peek() + delta;
+	}
 
 	return pairToTranslate;
 }
-
 
 // -----------------------------------------------------
 void Dict::clear()
@@ -212,7 +228,9 @@ void Dict::releaseData()
 		{
 			Dict::DictPair* src = m_data->peek();
 			for (Int i = 0; i < m_data->m_numPairsUsed; ++i, ++src)
+			{
 				src->clear();
+			}
 			TheDynamicMemoryAllocator->freeBytes(m_data);
 		}
 		m_data = nullptr;
@@ -220,23 +238,26 @@ void Dict::releaseData()
 }
 
 // -----------------------------------------------------
-Dict::Dict(Int numPairsToPreAllocate) : m_data(nullptr)
+Dict::Dict(Int numPairsToPreAllocate)
+  : m_data(nullptr)
 {
-
 	/*
-		This class plays some skanky games, in the name of memory and code
-		efficiency; it assumes all the data types will fit into a pointer.
-		This is currently true, but if that assumption ever changes, all hell
-		will break loose. So we do a quick check to assure this...
+	  This class plays some skanky games, in the name of memory and code
+	  efficiency; it assumes all the data types will fit into a pointer.
+	  This is currently true, but if that assumption ever changes, all hell
+	  will break loose. So we do a quick check to assure this...
 	*/
 	DEBUG_ASSERTCRASH(sizeof(Bool) <= sizeof(void*) &&
-										sizeof(Int) <= sizeof(void*) &&
-										sizeof(Real) <= sizeof(void*) &&
-										sizeof(AsciiString) <= sizeof(void*) &&
-										sizeof(UnicodeString) <= sizeof(void*), ("oops, this code needs attention"));
+	                    sizeof(Int) <= sizeof(void*) &&
+	                    sizeof(Real) <= sizeof(void*) &&
+	                    sizeof(AsciiString) <= sizeof(void*) &&
+	                    sizeof(UnicodeString) <= sizeof(void*),
+	                  ("oops, this code needs attention"));
 
 	if (numPairsToPreAllocate)
-		ensureUnique(numPairsToPreAllocate, false, nullptr);	// will throw on error
+	{
+		ensureUnique(numPairsToPreAllocate, false, nullptr);    // will throw on error
+	}
 }
 
 // -----------------------------------------------------
@@ -248,7 +269,9 @@ Dict& Dict::operator=(const Dict& src)
 		releaseData();
 		m_data = src.m_data;
 		if (m_data)
+		{
 			++m_data->m_refCount;
+		}
 	}
 	validate();
 	return *this;
@@ -260,82 +283,114 @@ Dict::DataType Dict::getType(NameKeyType key) const
 	validate();
 	DictPair* pair = findPairByKey(key);
 	if (pair)
+	{
 		return pair->getType();
+	}
 	return DICT_NONE;
 }
 
 // -----------------------------------------------------
-Bool Dict::getBool(NameKeyType key, Bool *exists/*=nullptr*/) const
+Bool Dict::getBool(NameKeyType key, Bool* exists /*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
 	if (pair && pair->getType() == DICT_BOOL)
 	{
-		if (exists) *exists = true;
+		if (exists)
+		{
+			*exists = true;
+		}
 		return *pair->asBool();
 	}
-	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));	// only assert if they didn't check result
-	if (exists) *exists = false;
+	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));    // only assert if they didn't check result
+	if (exists)
+	{
+		*exists = false;
+	}
 	return false;
 }
 
 // -----------------------------------------------------
-Int Dict::getInt(NameKeyType key, Bool *exists/*=nullptr*/) const
+Int Dict::getInt(NameKeyType key, Bool* exists /*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
 	if (pair && pair->getType() == DICT_INT)
 	{
-		if (exists) *exists = true;
+		if (exists)
+		{
+			*exists = true;
+		}
 		return *pair->asInt();
 	}
-	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
-	if (exists) *exists = false;
+	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));    // only assert if they didn't check result
+	if (exists)
+	{
+		*exists = false;
+	}
 	return 0;
 }
 
 // -----------------------------------------------------
-Real Dict::getReal(NameKeyType key, Bool *exists/*=nullptr*/) const
+Real Dict::getReal(NameKeyType key, Bool* exists /*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
 	if (pair && pair->getType() == DICT_REAL)
 	{
-		if (exists) *exists = true;
+		if (exists)
+		{
+			*exists = true;
+		}
 		return *pair->asReal();
 	}
-	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
-	if (exists) *exists = false;
+	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));    // only assert if they didn't check result
+	if (exists)
+	{
+		*exists = false;
+	}
 	return 0.0f;
 }
 
 // -----------------------------------------------------
-AsciiString Dict::getAsciiString(NameKeyType key, Bool *exists/*=nullptr*/) const
+AsciiString Dict::getAsciiString(NameKeyType key, Bool* exists /*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
 	if (pair && pair->getType() == DICT_ASCIISTRING)
 	{
-		if (exists) *exists = true;
+		if (exists)
+		{
+			*exists = true;
+		}
 		return *pair->asAsciiString();
 	}
-	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
-	if (exists) *exists = false;
+	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));    // only assert if they didn't check result
+	if (exists)
+	{
+		*exists = false;
+	}
 	return AsciiString::TheEmptyString;
 }
 
 // -----------------------------------------------------
-UnicodeString Dict::getUnicodeString(NameKeyType key, Bool *exists/*=nullptr*/) const
+UnicodeString Dict::getUnicodeString(NameKeyType key, Bool* exists /*=nullptr*/) const
 {
 	validate();
 	DictPair* pair = findPairByKey(key);
 	if (pair && pair->getType() == DICT_UNICODESTRING)
 	{
-		if (exists) *exists = true;
+		if (exists)
+		{
+			*exists = true;
+		}
 		return *pair->asUnicodeString();
 	}
-	DEBUG_ASSERTCRASH(exists != nullptr,("dict key missing, or of wrong type"));	// only assert if they didn't check result
-	if (exists) *exists = false;
+	DEBUG_ASSERTCRASH(exists != nullptr, ("dict key missing, or of wrong type"));    // only assert if they didn't check result
+	if (exists)
+	{
+		*exists = false;
+	}
 	return UnicodeString::TheEmptyString;
 }
 
@@ -348,7 +403,9 @@ Bool Dict::getNthBool(Int n) const
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_BOOL)
+		{
 			return *pair->asBool();
+		}
 	}
 	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return false;
@@ -363,7 +420,9 @@ Int Dict::getNthInt(Int n) const
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_INT)
+		{
 			return *pair->asInt();
+		}
 	}
 	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return 0;
@@ -378,7 +437,9 @@ Real Dict::getNthReal(Int n) const
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_REAL)
+		{
 			return *pair->asReal();
+		}
 	}
 	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return 0.0f;
@@ -393,7 +454,9 @@ AsciiString Dict::getNthAsciiString(Int n) const
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_ASCIISTRING)
+		{
 			return *pair->asAsciiString();
+		}
 	}
 	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return AsciiString::TheEmptyString;
@@ -408,19 +471,23 @@ UnicodeString Dict::getNthUnicodeString(Int n) const
 	{
 		DictPair* pair = &m_data->peek()[n];
 		if (pair && pair->getType() == DICT_UNICODESTRING)
+		{
 			return *pair->asUnicodeString();
+		}
 	}
 	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return UnicodeString::TheEmptyString;
 }
 
 // -----------------------------------------------------
-Dict::DictPair *Dict::setPrep(NameKeyType key, Dict::DataType type)
+Dict::DictPair* Dict::setPrep(NameKeyType key, Dict::DataType type)
 {
 	DictPair* pair = findPairByKey(key);
 	Int pairsNeeded = getPairCount();
 	if (!pair)
+	{
 		++pairsNeeded;
+	}
 	pair = ensureUnique(pairsNeeded, true, pair);
 	if (!pair)
 	{
@@ -435,7 +502,9 @@ Dict::DictPair *Dict::setPrep(NameKeyType key, Dict::DataType type)
 void Dict::sortPairs()
 {
 	if (!m_data)
+	{
 		return;
+	}
 
 	// yer basic shellsort.
 	for (Int gap = m_data->m_numPairsUsed >> 1; gap > 0; gap >>= 1)
@@ -543,7 +612,9 @@ void Dict::copyPairFrom(const Dict& that, NameKeyType key)
 	else
 	{
 		if (this->findPairByKey(key))
+		{
 			this->remove(key);
+		}
 	}
 	this->validate();
 }

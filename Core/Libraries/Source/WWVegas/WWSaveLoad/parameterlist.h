@@ -46,65 +46,61 @@
 //	ParameterListClass
 //
 //////////////////////////////////////////////////////////////////////////////////
-class ParameterListClass : public DynamicVectorClass<ParameterClass *>
+class ParameterListClass : public DynamicVectorClass<ParameterClass*>
 {
-	using DynamicVectorClass<ParameterClass *>::Vector;
+	using DynamicVectorClass<ParameterClass*>::Vector;
 
 public:
-
 	/////////////////////////////////////////////////////////////////////
 	// Public constructurs/destructors
 	/////////////////////////////////////////////////////////////////////
-	virtual ~ParameterListClass () override;
+	virtual ~ParameterListClass() override;
 
 	/////////////////////////////////////////////////////////////////////
 	// Public methods
 	/////////////////////////////////////////////////////////////////////
-	void			Add (void *data, const char *param_name, ParameterClass::Type type);
-	void			Add (ParameterClass *parameter);
+	void Add(void* data, const char* param_name, ParameterClass::Type type);
+	void Add(ParameterClass* parameter);
 
 protected:
-
 	/////////////////////////////////////////////////////////////////////
 	// Protected methods
 	/////////////////////////////////////////////////////////////////////
-	void			Free_Parameters ();
+	void Free_Parameters();
 
 private:
-
 	/////////////////////////////////////////////////////////////////////
 	// Private member data
 	/////////////////////////////////////////////////////////////////////
-	//DynamicVectorClass<ParameterClass *>		m_Parameters;
+	// DynamicVectorClass<ParameterClass *>		m_Parameters;
 };
-
 
 /////////////////////////////////////////////////////////////////////
 // ~ParameterListClass
 /////////////////////////////////////////////////////////////////////
-inline
-ParameterListClass::~ParameterListClass ()
+inline ParameterListClass::~ParameterListClass()
 {
-	Free_Parameters ();
+	Free_Parameters();
 }
 
 /////////////////////////////////////////////////////////////////////
 // Add
 /////////////////////////////////////////////////////////////////////
 inline void
-ParameterListClass::Add (void *data, const char *param_name, ParameterClass::Type type)
+ParameterListClass::Add(void* data, const char* param_name, ParameterClass::Type type)
 {
 	//
 	//	Create a new parameter object
 	//
-	ParameterClass *new_param = ParameterClass::Construct (type, data, param_name);
+	ParameterClass* new_param = ParameterClass::Construct(type, data, param_name);
 
 	//
 	//	Add the new parameter object to our list
 	//
-	WWASSERT (new_param != nullptr);
-	if (new_param != nullptr) {
-		DynamicVectorClass<ParameterClass *>::Add (new_param);
+	WWASSERT(new_param != nullptr);
+	if (new_param != nullptr)
+	{
+		DynamicVectorClass<ParameterClass*>::Add(new_param);
 	}
 }
 
@@ -112,13 +108,14 @@ ParameterListClass::Add (void *data, const char *param_name, ParameterClass::Typ
 // Add
 /////////////////////////////////////////////////////////////////////
 inline void
-ParameterListClass::Add (ParameterClass *new_param)
+ParameterListClass::Add(ParameterClass* new_param)
 {
 	//
 	//	Add the new parameter object to our list
 	//
-	if (new_param != nullptr) {
-		DynamicVectorClass<ParameterClass *>::Add (new_param);
+	if (new_param != nullptr)
+	{
+		DynamicVectorClass<ParameterClass*>::Add(new_param);
 	}
 }
 
@@ -126,10 +123,11 @@ ParameterListClass::Add (ParameterClass *new_param)
 // Free_Parameters
 /////////////////////////////////////////////////////////////////////
 inline void
-ParameterListClass::Free_Parameters ()
+ParameterListClass::Free_Parameters()
 {
-	for (int index = 0; index < Count (); index ++) {
-		ParameterClass *param = Vector[index];
+	for (int index = 0; index < Count(); index++)
+	{
+		ParameterClass* param = Vector[index];
 
 		//
 		//	Free the parameter object
@@ -138,5 +136,5 @@ ParameterListClass::Free_Parameters ()
 	}
 
 	Delete_All();
-//	m_Parameters.Delete_All ();
+	//	m_Parameters.Delete_All ();
 }

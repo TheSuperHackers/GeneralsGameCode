@@ -41,4 +41,4 @@
 //	Prototypes
 //
 /////////////////////////////////////////////////////////////////////////
-bool Browse_For_Folder (HWND parent_wnd, LPCTSTR initial_path, CString &path);
+bool Browse_For_Folder(HWND parent_wnd, LPCTSTR initial_path, CString& path);

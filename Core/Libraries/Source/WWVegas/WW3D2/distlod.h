@@ -41,10 +41,9 @@
 #include "composite.h"
 #include "w3derr.h"
 
-class		ChunkLoadClass;
-struct	DistLODNodeDefStruct;
-class		DistLODDefClass;
-
+class ChunkLoadClass;
+struct DistLODNodeDefStruct;
+class DistLODDefClass;
 
 /*
 ** DistLODClass
@@ -61,31 +60,30 @@ class		DistLODDefClass;
 class DistLODClass : public CompositeRenderObjClass
 {
 public:
-
-	DistLODClass(const DistLODDefClass & desc);
-	DistLODClass(const DistLODClass & that);
+	DistLODClass(const DistLODDefClass& desc);
+	DistLODClass(const DistLODClass& that);
 	virtual ~DistLODClass() override;
-	virtual RenderObjClass *	Clone() const override { return W3DNEW DistLODClass(*this); }
-	virtual int						Class_ID()	const override { return CLASSID_DISTLOD; }
-	virtual int						Get_Num_Polys() const override;
+	virtual RenderObjClass* Clone() const override { return W3DNEW DistLODClass(*this); }
+	virtual int Class_ID() const override { return CLASSID_DISTLOD; }
+	virtual int Get_Num_Polys() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Rendering
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Render(RenderInfoClass & rinfo) override;
-	virtual void					Special_Render(SpecialRenderInfoClass & rinfo) override;
+	virtual void Render(RenderInfoClass& rinfo) override;
+	virtual void Special_Render(SpecialRenderInfoClass& rinfo) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - "Scene Graph"
 	// Access each LOD individually through Get_Sub_Object.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void 					Set_Transform(const Matrix3D &m) override;
-	virtual void 					Set_Position(const Vector3 &v) override;
+	virtual void Set_Transform(const Matrix3D& m) override;
+	virtual void Set_Position(const Vector3& v) override;
 
-	virtual int						Get_Num_Sub_Objects() const override;
-	virtual RenderObjClass *	Get_Sub_Object(int index) const override;
+	virtual int Get_Num_Sub_Objects() const override;
+	virtual RenderObjClass* Get_Sub_Object(int index) const override;
 
-	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index) override;
+	virtual int Add_Sub_Object_To_Bone(RenderObjClass* subobj, int bone_index) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Hierarchical Animation
@@ -94,67 +92,68 @@ public:
 	// animation-compatible) so the bone query functions simply pass to the top
 	// LOD.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual void					Set_Animation() override;
-	virtual void					Set_Animation( HAnimClass * motion, float frame, int anim_mode = ANIM_MODE_MANUAL) override;
-	virtual void					Set_Animation( HAnimClass * motion0,float frame0,HAnimClass * motion1,float frame1,float percentage) override;
-	virtual void					Set_Animation( HAnimComboClass * anim_combo) override;
-	virtual HAnimClass *			Peek_Animation() override;
-	virtual int						Get_Num_Bones() override;
-	virtual const char *			Get_Bone_Name(int bone_index) override;
-	virtual int						Get_Bone_Index(const char * bonename) override;
-	virtual const Matrix3D &	Get_Bone_Transform(const char * bonename) override;
-	virtual const Matrix3D &	Get_Bone_Transform(int boneindex) override;
-	virtual void					Capture_Bone(int bindex) override;
-	virtual void					Release_Bone(int bindex) override;
-	virtual bool					Is_Bone_Captured(int bindex) const override;
-	virtual void					Control_Bone(int bindex,const Matrix3D & tm,bool world_space_translation = false) override;
+	virtual void Set_Animation() override;
+	virtual void Set_Animation(HAnimClass* motion, float frame, int anim_mode = ANIM_MODE_MANUAL) override;
+	virtual void Set_Animation(HAnimClass* motion0, float frame0, HAnimClass* motion1, float frame1, float percentage) override;
+	virtual void Set_Animation(HAnimComboClass* anim_combo) override;
+	virtual HAnimClass* Peek_Animation() override;
+	virtual int Get_Num_Bones() override;
+	virtual const char* Get_Bone_Name(int bone_index) override;
+	virtual int Get_Bone_Index(const char* bonename) override;
+	virtual const Matrix3D& Get_Bone_Transform(const char* bonename) override;
+	virtual const Matrix3D& Get_Bone_Transform(int boneindex) override;
+	virtual void Capture_Bone(int bindex) override;
+	virtual void Release_Bone(int bindex) override;
+	virtual bool Is_Bone_Captured(int bindex) const override;
+	virtual void Control_Bone(int bindex, const Matrix3D& tm, bool world_space_translation = false) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Collision Detection, Ray Tracing
 	// Collision tests are performed on the top-level LOD.
 	/////////////////////////////////////////////////////////////////////////////
-	virtual bool					Cast_Ray(RayCollisionTestClass & raytest) override;
-	virtual bool					Cast_AABox(AABoxCollisionTestClass & boxtest) override;
-	virtual bool					Cast_OBBox(OBBoxCollisionTestClass & boxtest) override;
+	virtual bool Cast_Ray(RayCollisionTestClass& raytest) override;
+	virtual bool Cast_AABox(AABoxCollisionTestClass& boxtest) override;
+	virtual bool Cast_OBBox(OBBoxCollisionTestClass& boxtest) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Render Object Interface - Attributes, Options, Properties, etc
 	/////////////////////////////////////////////////////////////////////////////
-	virtual int						Get_Num_Snap_Points() override;
-	virtual void					Get_Snap_Point(int index,Vector3 * set) override;
-	virtual void					Scale(float scale) override;
-	virtual void					Scale(float scalex, float scaley, float scalez) override;
+	virtual int Get_Num_Snap_Points() override;
+	virtual void Get_Snap_Point(int index, Vector3* set) override;
+	virtual void Scale(float scale) override;
+	virtual void Scale(float scalex, float scaley, float scalez) override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// DistLOD Interface
 	/////////////////////////////////////////////////////////////////////////////
-	virtual float					Get_Switch_Up_Dist(int index) const { return Lods[index].ResUpDist; }
-	virtual float					Get_Switch_Down_Dist(int index) const { return Lods[index].ResDownDist; }
-	virtual void					Set_Switch_Up_Dist(int index, float dist) { Lods[index].ResUpDist = dist; }
-	virtual void					Set_Switch_Down_Dist(int index, float dist) { Lods[index].ResDownDist = dist; }
+	virtual float Get_Switch_Up_Dist(int index) const { return Lods[index].ResUpDist; }
+	virtual float Get_Switch_Down_Dist(int index) const { return Lods[index].ResDownDist; }
+	virtual void Set_Switch_Up_Dist(int index, float dist) { Lods[index].ResUpDist = dist; }
+	virtual void Set_Switch_Down_Dist(int index, float dist) { Lods[index].ResDownDist = dist; }
 
 private:
+	enum
+	{
+		HIGHEST_LOD = 0
+	};
 
-	enum { HIGHEST_LOD = 0 };
-
-	void								Free();
-	void								Update_Lod(const CameraClass & camera);
-	void								Increment_Lod();
-	void								Decrement_Lod();
+	void Free();
+	void Update_Lod(const CameraClass& camera);
+	void Increment_Lod();
+	void Decrement_Lod();
 
 	struct LODNodeClass
 	{
-		RenderObjClass *			Model;
-		float							ResUpDist;
-		float							ResDownDist;
+		RenderObjClass* Model;
+		float ResUpDist;
+		float ResDownDist;
 	};
 
-	int								LodCount;				// how many models are in this LOD object
-	int								CurLod;					// which model is currently used for rendering
-	int								VpPushLod;				// which model was used for the vp->push (in CurLod changes before the pop)
-	LODNodeClass *					Lods;						// one LODNodeClass for each level
+	int LodCount;    // how many models are in this LOD object
+	int CurLod;    // which model is currently used for rendering
+	int VpPushLod;    // which model was used for the vp->push (in CurLod changes before the pop)
+	LODNodeClass* Lods;    // one LODNodeClass for each level
 };
-
 
 /*
 ** Loaders for DistLODClass
@@ -162,9 +161,8 @@ private:
 class DistLODLoaderClass : public PrototypeLoaderClass
 {
 public:
-
-	virtual int						Chunk_Type () override { return W3D_CHUNK_LODMODEL; }
-	virtual PrototypeClass *	Load_W3D(ChunkLoadClass & cload) override;
+	virtual int Chunk_Type() override { return W3D_CHUNK_LODMODEL; }
+	virtual PrototypeClass* Load_W3D(ChunkLoadClass& cload) override;
 };
 
 /*
@@ -173,11 +171,15 @@ public:
 */
 struct DistLODNodeDefStruct
 {
-	DistLODNodeDefStruct() : Name(nullptr),ResDownDist(0.0f),ResUpDist(0.0f) {}
+	DistLODNodeDefStruct()
+	  : Name(nullptr)
+	  , ResDownDist(0.0f)
+	  , ResUpDist(0.0f)
+	{}
 
-	char *	Name;
-	float		ResDownDist;
-	float		ResUpDist;
+	char* Name;
+	float ResDownDist;
+	float ResUpDist;
 };
 
 /*
@@ -189,24 +191,22 @@ struct DistLODNodeDefStruct
 class DistLODDefClass
 {
 public:
-
 	DistLODDefClass();
-	DistLODDefClass(const char * name,int lodcount,DistLODNodeDefStruct * lods);
+	DistLODDefClass(const char* name, int lodcount, DistLODNodeDefStruct* lods);
 	~DistLODDefClass();
 
-	WW3DErrorType				Load_W3D(ChunkLoadClass & cload);
-	const char *				Get_Name() const { return Name; }
+	WW3DErrorType Load_W3D(ChunkLoadClass& cload);
+	const char* Get_Name() const { return Name; }
 
 private:
+	char* Name;
 
-	char * 						Name;
+	int LodCount;
+	DistLODNodeDefStruct* Lods;
 
-	int							LodCount;
-	DistLODNodeDefStruct *	Lods;
-
-	void							Free();
-	bool							read_header(ChunkLoadClass & cload);
-	bool							read_node(ChunkLoadClass & cload,DistLODNodeDefStruct * node);
+	void Free();
+	bool read_header(ChunkLoadClass& cload);
+	bool read_node(ChunkLoadClass& cload, DistLODNodeDefStruct* node);
 
 	friend class DistLODClass;
 };
@@ -218,21 +218,21 @@ class DistLODPrototypeClass : public PrototypeClass
 {
 	W3DMPO_CODE(DistLODPrototypeClass)
 public:
-	DistLODPrototypeClass( DistLODDefClass *def ) { Definition = def; }
+	DistLODPrototypeClass(DistLODDefClass* def) { Definition = def; }
 
-	virtual const char *			Get_Name() const override { return Definition->Get_Name(); }
-	virtual int								Get_Class_ID() const override { return RenderObjClass::CLASSID_DISTLOD; }
-	virtual RenderObjClass *	Create() override;
-	virtual void							DeleteSelf() override { delete this; }
+	virtual const char* Get_Name() const override { return Definition->Get_Name(); }
+	virtual int Get_Class_ID() const override { return RenderObjClass::CLASSID_DISTLOD; }
+	virtual RenderObjClass* Create() override;
+	virtual void DeleteSelf() override { delete this; }
 
 protected:
 	virtual ~DistLODPrototypeClass() override { delete Definition; }
 
 private:
-	DistLODDefClass *				Definition;
+	DistLODDefClass* Definition;
 };
 
 /*
 ** Instance of the loaders which the asset manager install
 */
-extern DistLODLoaderClass			_DistLODLoader;
+extern DistLODLoaderClass _DistLODLoader;

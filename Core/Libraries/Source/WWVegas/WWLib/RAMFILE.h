@@ -38,68 +38,66 @@
 
 #include "WWFILE.h"
 
-
 class RAMFileClass : public FileClass
 {
-	public:
-		RAMFileClass(void * buffer, int len);
-		virtual ~RAMFileClass() override;
+public:
+	RAMFileClass(void* buffer, int len);
+	virtual ~RAMFileClass() override;
 
-		virtual char const * File_Name() const override {return("UNKNOWN");}
-		virtual char const * Set_Name(char const * ) override {return(File_Name());}
-		virtual int Create() override;
-		virtual int Delete() override;
-		virtual bool Is_Available(int forced=false) override;
-		virtual bool Is_Open() const override;
-		virtual int Open(char const * filename, int access=READ) override;
-		virtual int Open(int access=READ) override;
-		virtual int Read(void * buffer, int size) override;
-		virtual int Seek(int pos, int dir=SEEK_CUR) override;
-		virtual int Size() override;
-		virtual int Write(void const * buffer, int size) override;
-		virtual void Close() override;
-		virtual unsigned long Get_Date_Time() override {return(0);}
-		virtual bool Set_Date_Time(unsigned long ) override {return(true);}
-		virtual void Error(int , int = false, char const * =nullptr) {}
-		virtual void Bias(int start, int length=-1);
+	virtual char const* File_Name() const override { return ("UNKNOWN"); }
+	virtual char const* Set_Name(char const*) override { return (File_Name()); }
+	virtual int Create() override;
+	virtual int Delete() override;
+	virtual bool Is_Available(int forced = false) override;
+	virtual bool Is_Open() const override;
+	virtual int Open(char const* filename, int access = READ) override;
+	virtual int Open(int access = READ) override;
+	virtual int Read(void* buffer, int size) override;
+	virtual int Seek(int pos, int dir = SEEK_CUR) override;
+	virtual int Size() override;
+	virtual int Write(void const* buffer, int size) override;
+	virtual void Close() override;
+	virtual unsigned long Get_Date_Time() override { return (0); }
+	virtual bool Set_Date_Time(unsigned long) override { return (true); }
+	virtual void Error(int, int = false, char const* = nullptr) {}
+	virtual void Bias(int start, int length = -1);
 
-		operator char const * () {return File_Name();}
+	operator char const*() { return File_Name(); }
 
-	private:
+private:
+	/*
+	**	Pointer to the buffer that the "file" will reside in.
+	*/
+	char* Buffer;
 
-		/*
-		**	Pointer to the buffer that the "file" will reside in.
-		*/
-		char * Buffer;
+	/*
+	**	The maximum size of the buffer. The file occupying the buffer
+	**	may be smaller than this size.
+	*/
+	int MaxLength;
 
-		/*
-		**	The maximum size of the buffer. The file occupying the buffer
-		**	may be smaller than this size.
-		*/
-		int MaxLength;
+	/*
+	**	The number of bytes in the sub-file occupying the buffer.
+	*/
+	int Length;
 
-		/*
-		**	The number of bytes in the sub-file occupying the buffer.
-		*/
-		int Length;
+	/*
+	**	The current file position offset within the buffer.
+	*/
+	int Offset;
 
-		/*
-		**	The current file position offset within the buffer.
-		*/
-		int Offset;
+	/*
+	**	The file was opened with this access mode.
+	*/
+	int Access;
 
-		/*
-		**	The file was opened with this access mode.
-		*/
-		int Access;
+	/*
+	**	Is the file currently open?
+	*/
+	bool IsOpen;
 
-		/*
-		**	Is the file currently open?
-		*/
-		bool IsOpen;
-
-		/*
-		**	Was the file buffer allocated during construction of this object?
-		*/
-		bool IsAllocated;
+	/*
+	**	Was the file buffer allocated during construction of this object?
+	*/
+	bool IsAllocated;
 };

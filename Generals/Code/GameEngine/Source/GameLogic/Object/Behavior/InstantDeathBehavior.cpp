@@ -27,9 +27,8 @@
 // Desc:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #define DEFINE_SLOWDEATHPHASE_NAMES
 
 #include "Common/Thing.h"
@@ -53,40 +52,40 @@
 InstantDeathBehaviorModuleData::InstantDeathBehaviorModuleData()
 {
 	// redundant.
-	//m_fx.clear();
-	//m_ocls.clear();
-	//m_weapons.clear();
+	// m_fx.clear();
+	// m_ocls.clear();
+	// m_weapons.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
-static void parseFX( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+static void parseFX(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		const FXList *fxl = TheFXListStore->findFXList((token));	// could be null! this is OK!
+		const FXList* fxl = TheFXListStore->findFXList((token));    // could be null! this is OK!
 		self->m_fx.push_back(fxl);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-static void parseOCL( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+static void parseOCL(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null! this is OK!
+		const ObjectCreationList* ocl = TheObjectCreationListStore->findObjectCreationList(token);    // could be null! this is OK!
 		self->m_ocls.push_back(ocl);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
-static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void* /*userData*/ )
+static void parseWeapon(INI* ini, void* instance, void* /*store*/, const void* /*userData*/)
 {
 	InstantDeathBehaviorModuleData* self = (InstantDeathBehaviorModuleData*)instance;
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		const WeaponTemplate *wt = TheWeaponStore->findWeaponTemplate(token);	// could be null! this is OK!
+		const WeaponTemplate* wt = TheWeaponStore->findWeaponTemplate(token);    // could be null! this is OK!
 		self->m_weapons.push_back(wt);
 	}
 }
@@ -94,21 +93,21 @@ static void parseWeapon( INI* ini, void *instance, void * /*store*/, const void*
 //-------------------------------------------------------------------------------------------------
 /*static*/ void InstantDeathBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
-  DieModuleData::buildFieldParse(p);
+	DieModuleData::buildFieldParse(p);
 
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "FX",										parseFX,													nullptr, 0 },
-		{ "OCL",									parseOCL,													nullptr, 0 },
-		{ "Weapon",								parseWeapon,											nullptr, 0 },
+	static const FieldParse dataFieldParse[] = {
+		{ "FX", parseFX, nullptr, 0 },
+		{ "OCL", parseOCL, nullptr, 0 },
+		{ "Weapon", parseWeapon, nullptr, 0 },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
-  p.add(dataFieldParse);
+	p.add(dataFieldParse);
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-InstantDeathBehavior::InstantDeathBehavior( Thing *thing, const ModuleData* moduleData ) : DieModule( thing, moduleData )
+InstantDeathBehavior::InstantDeathBehavior(Thing* thing, const ModuleData* moduleData)
+  : DieModule(thing, moduleData)
 {
 }
 
@@ -119,10 +118,12 @@ InstantDeathBehavior::~InstantDeathBehavior()
 }
 
 //-------------------------------------------------------------------------------------------------
-void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
+void InstantDeathBehavior::onDie(const DamageInfo* damageInfo)
 {
 	if (!isDieApplicable(damageInfo))
+	{
 		return;
+	}
 
 #if RETAIL_COMPATIBLE_CRC
 	AIUpdateInterface* ai = getObject()->getAIUpdateInterface();
@@ -130,7 +131,9 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	{
 		// has another AI already handled us. (hopefully another InstantDeathBehavior)
 		if (ai->isAiInDeadState())
+		{
 			return;
+		}
 		ai->markAsDead();
 	}
 #endif
@@ -142,9 +145,9 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	listSize = d->m_fx.size();
 	if (listSize > 0)
 	{
-		idx = (size_t)GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize - 1);
 		const FXListVec& v = d->m_fx;
-		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
+		DEBUG_ASSERTCRASH(idx >= 0 && idx < v.size(), ("bad idx"));
 		const FXList* fxl = v[idx];
 		FXList::doFXObj(fxl, getObject(), nullptr);
 	}
@@ -152,9 +155,9 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	listSize = d->m_ocls.size();
 	if (listSize > 0)
 	{
-		idx = (size_t)GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize - 1);
 		const OCLVec& v = d->m_ocls;
-		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
+		DEBUG_ASSERTCRASH(idx >= 0 && idx < v.size(), ("bad idx"));
 		const ObjectCreationList* ocl = v[idx];
 		ObjectCreationList::create(ocl, getObject(), nullptr);
 	}
@@ -168,9 +171,9 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 		listSize = d->m_weapons.size();
 		if (listSize > 0)
 		{
-			idx = (size_t)GameLogicRandomValue(0, listSize-1);
+			idx = (size_t)GameLogicRandomValue(0, listSize - 1);
 			const WeaponTemplateVec& v = d->m_weapons;
-			DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
+			DEBUG_ASSERTCRASH(idx >= 0 && idx < v.size(), ("bad idx"));
 			const WeaponTemplate* wt = v[idx];
 			if (wt)
 			{
@@ -187,7 +190,9 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	{
 		// has another AI already handled us. (hopefully another InstantDeathBehavior)
 		if (ai->isAiInDeadState())
+		{
 			return;
+		}
 		ai->markAsDead();
 	}
 #endif
@@ -198,30 +203,26 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void InstantDeathBehavior::crc( Xfer *xfer )
+void InstantDeathBehavior::crc(Xfer* xfer)
 {
-
 	// extend base class
-	DieModule::crc( xfer );
-
+	DieModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void InstantDeathBehavior::xfer( Xfer *xfer )
+void InstantDeathBehavior::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	DieModule::xfer( xfer );
-
+	DieModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -229,8 +230,6 @@ void InstantDeathBehavior::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void InstantDeathBehavior::loadPostProcess()
 {
-
 	// extend base class
 	DieModule::loadPostProcess();
-
 }

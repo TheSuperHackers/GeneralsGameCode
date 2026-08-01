@@ -20,7 +20,6 @@
 
 #include "always.h"
 
-
 // This class temporarily loads and unloads dbghelp.dll from the desired location to prevent
 // other code from potentially loading it from an undesired location.
 // This helps avoid crashing on boot using recent AMD/ATI drivers, which attempt to load and use
@@ -31,7 +30,6 @@
 class DbgHelpGuard
 {
 public:
-
 	DbgHelpGuard();
 	~DbgHelpGuard();
 
@@ -39,6 +37,5 @@ public:
 	void deactivate();
 
 private:
-
 	bool m_needsUnload;
 };

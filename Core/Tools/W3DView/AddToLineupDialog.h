@@ -28,28 +28,29 @@ class ViewerSceneClass;
 
 class CAddToLineupDialog : public CDialog
 {
-// Construction
+	// Construction
 public:
-	CAddToLineupDialog(ViewerSceneClass *scene, CWnd* pParent = nullptr);   // standard constructor
+	CAddToLineupDialog(ViewerSceneClass* scene, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAddToLineupDialog)
-	enum { IDD = IDD_ADD_TO_LINEUP };
-	CString	m_Object;
+	enum
+	{
+		IDD = IDD_ADD_TO_LINEUP
+	};
+	CString m_Object;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAddToLineupDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
-	ViewerSceneClass * m_pCScene;
+	ViewerSceneClass* m_pCScene;
 
 	// Generated message map functions
 	//{{AFX_MSG(CAddToLineupDialog)

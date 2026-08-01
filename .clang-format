@@ -1,0 +1,69 @@
+Language: Cpp
+Standard: c++20
+
+# 1. Non-Destructive Core Setting
+# ------------------------------------------------------------------------------
+# Completely disable automatic line wrapping to preserve manual formatting.
+ColumnLimit: 0
+
+# 2. Indentation & Tabs
+# ------------------------------------------------------------------------------
+UseTab: ForIndentation
+IndentWidth: 2
+TabWidth: 2
+ContinuationIndentWidth: 2
+AccessModifierOffset: -2
+IndentCaseLabels: true
+AlignTrailingComments: false
+SpacesBeforeTrailingComments: 4
+
+# 3. Braces Style: Allman
+# ------------------------------------------------------------------------------
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+AllowShortEnumsOnASingleLine: false
+InsertBraces: true
+
+# 4. Blank Lines Control
+# ------------------------------------------------------------------------------
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+
+# 5. Pointers & Spaces
+# ------------------------------------------------------------------------------
+PointerAlignment: Left
+SpacesInParentheses: false
+BreakConstructorInitializers: BeforeComma
+SpacesInAngles: Leave
+
+# 6. Legacy & Compatibility (VC6 / Custom Macros)
+# ------------------------------------------------------------------------------
+# Prevent expanding/collapsing short blocks and functions to minimize diffs
+AllowShortFunctionsOnASingleLine: All
+AllowShortBlocksOnASingleLine: Always
+AlignEscapedNewlines: DontAlign
+Cpp11BracedListStyle: false
+
+# Handle custom legacy macros so the parser doesn't break
+Macros:
+  - CPP_11(x)=x
+
+IndentPPDirectives: BeforeHash
+ConstructorInitializerIndentWidth: 2
+
+# 7. Includes
+# ------------------------------------------------------------------------------
+SortIncludes: false

@@ -24,8 +24,8 @@
 #include "AssetPropertySheet.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -38,36 +38,33 @@ IMPLEMENT_DYNAMIC(CAssetPropertySheet, CPropertySheet)
 //
 //  CAssetPropertySheet
 //
-CAssetPropertySheet::CAssetPropertySheet
-(
-    int iCaptionID,
-    CPropertyPage *pCPropertyPage,
-    CWnd *pCParentWnd
-)
-	: m_pCPropertyPage (pCPropertyPage),
-      CPropertySheet (iCaptionID, pCParentWnd)
+CAssetPropertySheet::CAssetPropertySheet(
+  int iCaptionID,
+  CPropertyPage* pCPropertyPage,
+  CWnd* pCParentWnd)
+  : m_pCPropertyPage(pCPropertyPage)
+  , CPropertySheet(iCaptionID, pCParentWnd)
 {
-    ASSERT (m_pCPropertyPage);
+	ASSERT(m_pCPropertyPage);
 
-    m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-    // Add this page to the property sheet
-    AddPage (m_pCPropertyPage);
+	// Add this page to the property sheet
+	AddPage(m_pCPropertyPage);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 //  :~CAssetPropertySheet
 //
-CAssetPropertySheet::~CAssetPropertySheet ()
+CAssetPropertySheet::~CAssetPropertySheet()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(CAssetPropertySheet, CPropertySheet)
-	//{{AFX_MSG_MAP(CAssetPropertySheet)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAssetPropertySheet)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

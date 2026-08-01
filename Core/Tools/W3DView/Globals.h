@@ -30,16 +30,15 @@
 //////////////////////////////////////////////////////
 //  Externs
 //////////////////////////////////////////////////////
-extern class ViewerAssetMgrClass *_TheAssetMgr;
+extern class ViewerAssetMgrClass* _TheAssetMgr;
 extern class CW3DViewApp theApp;
 extern int g_iDeviceIndex;
 extern int g_iBitsPerPixel;
 extern int g_iWidth;
 extern int g_iHeight;
 
-
 //////////////////////////////////////////////////////
 //  Contants
 //////////////////////////////////////////////////////
-const int DEFAULT_DEVICEINDEX       = 1;
-const int DEFAULT_BITSPERPIX        = 16;
+const int DEFAULT_DEVICEINDEX = 1;
+const int DEFAULT_BITSPERPIX = 16;

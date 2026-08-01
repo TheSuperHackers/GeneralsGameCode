@@ -41,11 +41,11 @@
 // with integers. NAMEKEY_INVALID is always a legal value, but all other values are dynamically
 // determined at runtime. (The generated code is basically identical, of course.)
 //-------------------------------------------------------------------------------------------------
-enum NameKeyType CPP_11(: Int)
+enum NameKeyType CPP_11( : Int)
 {
-	NAMEKEY_INVALID					= 0,
-	NAMEKEY_MAX							= 1<<23, // max ordinal value of a NameKey (some code relies on these fitting into 24 bits safely)
-	FORCE_NAMEKEYTYPE_LONG	= 0x7fffffff, // a trick to ensure the NameKeyType is a 32-bit int
+	NAMEKEY_INVALID = 0,
+	NAMEKEY_MAX = 1 << 23,    // max ordinal value of a NameKey (some code relies on these fitting into 24 bits safely)
+	FORCE_NAMEKEYTYPE_LONG = 0x7fffffff,    // a trick to ensure the NameKeyType is a 32-bit int
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -53,21 +53,22 @@ enum NameKeyType CPP_11(: Int)
 //-------------------------------------------------------------------------------------------------
 class Bucket : public MemoryPoolObject
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( Bucket, "NameKeyBucketPool" );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Bucket, "NameKeyBucketPool");
 
 public:
-
 	Bucket();
-//~Bucket();
+	//~Bucket();
 
-	Bucket				*m_nextInSocket;
-	NameKeyType		m_key;
-	AsciiString		m_nameString;
+	Bucket* m_nextInSocket;
+	NameKeyType m_key;
+	AsciiString m_nameString;
 };
 
-inline Bucket::Bucket() : m_nextInSocket(nullptr), m_key(NAMEKEY_INVALID) { }
-inline Bucket::~Bucket() { }
+inline Bucket::Bucket()
+  : m_nextInSocket(nullptr)
+  , m_key(NAMEKEY_INVALID)
+{}
+inline Bucket::~Bucket() {}
 
 //-------------------------------------------------------------------------------------------------
 // This class implements the conversion of an arbitrary string into a unique
@@ -79,15 +80,13 @@ inline Bucket::~Bucket() { }
 //-------------------------------------------------------------------------------------------------
 class NameKeyGenerator : public SubsystemInterface
 {
-
 public:
-
 	NameKeyGenerator();
 	virtual ~NameKeyGenerator() override;
 
 	virtual void init() override;
 	virtual void reset() override;
-	virtual void update() override { }
+	virtual void update() override {}
 
 	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const AsciiString& name);
@@ -95,7 +94,7 @@ public:
 
 	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const char* name);
-	NameKeyType nameToLowercaseKey(const char *name);
+	NameKeyType nameToLowercaseKey(const char* name);
 
 	// given a key, return the name. this is almost never needed,
 	// except for a few rare cases like object serialization. also
@@ -104,17 +103,16 @@ public:
 	AsciiString keyToName(NameKeyType key);
 
 	// Get a string out of the INI. Store it into a NameKeyType
-	static void parseStringAsNameKeyType( INI *ini, void *instance, void *store, const void* userData );
+	static void parseStringAsNameKeyType(INI* ini, void* instance, void* store, const void* userData);
 
 #if RETAIL_COMPATIBLE_CRC
-#if RTS_ZEROHOUR
+	#if RTS_ZEROHOUR
 	void syncNameKeyID();
-#endif
+	#endif
 	void verifyNameKeyID(UnsignedInt expectedNextID) const;
 #endif
 
 private:
-
 	enum
 	{
 		// socketcount should be prime, and not "close" to a power of 2, for best results.
@@ -127,15 +125,14 @@ private:
 
 	void freeSockets();
 
-	Bucket*				m_sockets[SOCKET_COUNT];			///< Catalog of all Buckets already generated
-	UnsignedInt		m_nextID;											///< Next available ID
-
+	Bucket* m_sockets[SOCKET_COUNT];    ///< Catalog of all Buckets already generated
+	UnsignedInt m_nextID;    ///< Next available ID
 };
 
 //-------------------------------------------------------------------------------------------------
 //           Externals
 //-------------------------------------------------------------------------------------------------
-extern NameKeyGenerator *TheNameKeyGenerator;  ///< just one namespace for now
+extern NameKeyGenerator* TheNameKeyGenerator;    ///< just one namespace for now
 
 // typing "TheNameKeyGenerator->nameToKey()" is awfully wordy. Here are shorter synonyms:
 inline NameKeyType NAMEKEY(const AsciiString& name) { return TheNameKeyGenerator->nameToKey(name); }
@@ -149,8 +146,12 @@ class StaticNameKey
 private:
 	mutable NameKeyType m_key;
 	const char* m_name;
+
 public:
-	StaticNameKey(const char* p) : m_key(NAMEKEY_INVALID), m_name(p) {}
+	StaticNameKey(const char* p)
+	  : m_key(NAMEKEY_INVALID)
+	  , m_name(p)
+	{}
 	NameKeyType key() const;
 	// ugh, this is a little hokey, but lets us pretend that a StaticNameKey == NameKeyType
 	operator NameKeyType() const { return key(); }

@@ -41,7 +41,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 class StringClass;
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 //	TextFileClass
@@ -53,23 +52,22 @@ class StringClass;
 class TextFileClass : public RawFileClass
 {
 public:
-
 	/////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////
-	TextFileClass ();
-	TextFileClass (char const *filename);
-	TextFileClass (const TextFileClass &src);
-	virtual ~TextFileClass () override;
+	TextFileClass();
+	TextFileClass(char const* filename);
+	TextFileClass(const TextFileClass& src);
+	virtual ~TextFileClass() override;
 
 	/////////////////////////////////////////////////////////////////
 	//	Public operators
 	/////////////////////////////////////////////////////////////////
-	const TextFileClass &operator= (const TextFileClass &src);
+	const TextFileClass& operator=(const TextFileClass& src);
 
 	/////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////
-	bool			Read_Line (StringClass &string);
-	bool			Write_Line (const StringClass &string);
+	bool Read_Line(StringClass& string);
+	bool Write_Line(const StringClass& string);
 };

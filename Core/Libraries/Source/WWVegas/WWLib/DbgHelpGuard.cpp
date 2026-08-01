@@ -20,9 +20,8 @@
 
 #include "DbgHelpLoader.h"
 
-
 DbgHelpGuard::DbgHelpGuard()
-	: m_needsUnload(false)
+  : m_needsUnload(false)
 {
 	activate();
 }

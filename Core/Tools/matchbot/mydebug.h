@@ -60,14 +60,14 @@ will you be ready to leave grasshopper.
 #include <Utility/sstream_adapter.h>
 
 #ifdef USE_SEM
-#include "sem4.h"
+	#include "sem4.h"
 #else
-#include "critsec.h"
+	#include "critsec.h"
 #endif
 #include "odevice.h"
 #include "streamer.h"
 #include "xtime.h"
-#include "timezone.h" // MDC
+#include "timezone.h"    // MDC
 #include "filed.h"
 
 // This is needed because the streams return a pointer.  Every time you
@@ -80,40 +80,38 @@ will you be ready to leave grasshopper.
 
 #ifdef USE_SEM
 extern Sem4 MyDebugLibSemaphore;
-#define MYDEBUGLOCK MyDebugLibSemaphore.Wait()
-#define MYDEBUGUNLOCK MyDebugLibSemaphore.Post()
+	#define MYDEBUGLOCK MyDebugLibSemaphore.Wait()
+	#define MYDEBUGUNLOCK MyDebugLibSemaphore.Post()
 #else
 extern CritSec MyDebugLibSemaphore;
-#define MYDEBUGLOCK MyDebugLibSemaphore.lock()
-#define MYDEBUGUNLOCK MyDebugLibSemaphore.unlock()
+	#define MYDEBUGLOCK MyDebugLibSemaphore.lock()
+	#define MYDEBUGUNLOCK MyDebugLibSemaphore.unlock()
 #endif
 
 // Print an information message
-#define PARANOIDMSG(X)\
-{\
-char     timebuf[40]; \
-Xtime now; \
-now -= TimezoneOffset(); \
-now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
-MYDEBUGLOCK; \
-if (MyMsgManager::paranoidStream()) \
-(*(MyMsgManager::paranoidStream())) << "HACK " << timebuf << " [" << \
-__FILE__ <<  " " << __LINE__ << "] " << X << endl; \
-MYDEBUGUNLOCK; \
-}
+#define PARANOIDMSG(X) \
+	{ \
+		char timebuf[40]; \
+		Xtime now; \
+		now -= TimezoneOffset(); \
+		now.FormatTime(timebuf, "mm/dd/yy hh:mm:ss"); \
+		MYDEBUGLOCK; \
+		if (MyMsgManager::paranoidStream()) \
+			(*(MyMsgManager::paranoidStream())) << "HACK " << timebuf << " [" << __FILE__ << " " << __LINE__ << "] " << X << endl; \
+		MYDEBUGUNLOCK; \
+	}
 
 // Just get a stream to the information device, no extra junk
-#define PARANOIDSTREAM(X)\
-{\
-MYDEBUGLOCK; \
-if (MyMsgManager::paranoidStream()) \
-(*(MyMsgManager::paranoidStream())) << X;\
-MYDEBUGUNLOCK; \
-}
+#define PARANOIDSTREAM(X) \
+	{ \
+		MYDEBUGLOCK; \
+		if (MyMsgManager::paranoidStream()) \
+			(*(MyMsgManager::paranoidStream())) << X; \
+		MYDEBUGUNLOCK; \
+	}
 
-
-//#undef MYDEBUGLOCK
-//#undef MYDEBUGUNLOCK
+// #undef MYDEBUGLOCK
+// #undef MYDEBUGUNLOCK
 
 class MyMsgManager
 {
@@ -121,11 +119,11 @@ protected:
 	MyMsgManager();
 
 public:
-	static int                 setAllStreams(OutputDevice *device);
-	static int                 setParanoidStream(OutputDevice *device);
-	static int                 ReplaceAllStreams(FileD *output_device, const char *device_filename, const char *copy_filename);
+	static int setAllStreams(OutputDevice* device);
+	static int setParanoidStream(OutputDevice* device);
+	static int ReplaceAllStreams(FileD* output_device, const char* device_filename, const char* copy_filename);
 
-	static void                enableParanoid(int flag);
+	static void enableParanoid(int flag);
 
-	static ostream            *paranoidStream();
+	static ostream* paranoidStream();
 };

@@ -27,7 +27,6 @@
 /////////////////////////////////////////////////////////////////////
 class AudibleSoundClass;
 
-
 /////////////////////////////////////////////////////////////////////
 //
 //	SoundEditDialogClass
@@ -36,31 +35,32 @@ class AudibleSoundClass;
 class SoundEditDialogClass : public CDialog
 {
 public:
-	SoundEditDialogClass (CWnd *parent);
-	virtual ~SoundEditDialogClass ();
+	SoundEditDialogClass(CWnd* parent);
+	virtual ~SoundEditDialogClass();
 
-// Form Data
+	// Form Data
 public:
 	//{{AFX_DATA(SoundEditDialogClass)
-	enum { IDD = IDD_SOUND_EDIT };
-	CSliderCtrl	VolumeSlider;
-	CSliderCtrl	PrioritySlider;
+	enum
+	{
+		IDD = IDD_SOUND_EDIT
+	};
+	CSliderCtrl VolumeSlider;
+	CSliderCtrl PrioritySlider;
 	//}}AFX_DATA
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SoundEditDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 #ifdef RTS_DEBUG
 	virtual void AssertValid() const override;
@@ -80,30 +80,33 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-
 	///////////////////////////////////////////////////////
 	//	Public methods
 	///////////////////////////////////////////////////////
-	void							Set_Sound (SoundRenderObjClass *sound)	{ REF_PTR_SET (SoundRObj, sound); }
-	SoundRenderObjClass *	Get_Sound () const						{ if (SoundRObj != nullptr) SoundRObj->Add_Ref (); return SoundRObj; }
+	void Set_Sound(SoundRenderObjClass* sound) { REF_PTR_SET(SoundRObj, sound); }
+	SoundRenderObjClass* Get_Sound() const
+	{
+		if (SoundRObj != nullptr)
+		{
+			SoundRObj->Add_Ref();
+		}
+		return SoundRObj;
+	}
 
 protected:
-
 	///////////////////////////////////////////////////////
 	//	Protected methods
 	///////////////////////////////////////////////////////
-	void							Update_Enable_State ();
-	AudibleSoundClass *		Create_Sound_Object ();
+	void Update_Enable_State();
+	AudibleSoundClass* Create_Sound_Object();
 
 private:
-
 	///////////////////////////////////////////////////////
 	//	Private member data
 	///////////////////////////////////////////////////////
-	SoundRenderObjClass *	SoundRObj;
-	StringClass					OldName;
+	SoundRenderObjClass* SoundRObj;
+	StringClass OldName;
 };
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

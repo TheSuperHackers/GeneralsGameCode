@@ -33,28 +33,31 @@ class EmitterUserPropPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(EmitterUserPropPageClass)
 
-// Construction
+	// Construction
 public:
-	EmitterUserPropPageClass (EmitterInstanceListClass *pemitter_list = nullptr);
-	~EmitterUserPropPageClass ();
+	EmitterUserPropPageClass(EmitterInstanceListClass* pemitter_list = nullptr);
+	~EmitterUserPropPageClass();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(EmitterUserPropPageClass)
-	enum { IDD = IDD_PROP_PAGE_EMITTER_USER };
-	CComboBox	m_TypeCombo;
+	enum
+	{
+		IDD = IDD_PROP_PAGE_EMITTER_USER
+	};
+	CComboBox m_TypeCombo;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(EmitterUserPropPageClass)
-	public:
+public:
 	virtual BOOL OnApply() override;
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(EmitterUserPropPageClass)
@@ -64,45 +67,45 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	/////////////////////////////////////////////////////////
+	//
+	//	Public methods
+	//
 
-		/////////////////////////////////////////////////////////
-		//
-		//	Public methods
-		//
+	//
+	//	Inline accessors
+	//
+	EmitterInstanceListClass* Get_Emitter() const { return m_pEmitterList; }
+	void Set_Emitter(EmitterInstanceListClass* pemitter_list)
+	{
+		m_pEmitterList = pemitter_list;
+		Initialize();
+	}
+	bool Is_Data_Valid() const { return m_bValid; }
 
-		//
-		//	Inline accessors
-		//
-		EmitterInstanceListClass *	Get_Emitter () const { return m_pEmitterList; }
-		void								Set_Emitter (EmitterInstanceListClass *pemitter_list) { m_pEmitterList = pemitter_list; Initialize (); }
-		bool								Is_Data_Valid () const { return m_bValid; }
+	int Get_Type() const { return m_iType; }
+	const CString& Get_String() const { return m_UserString; }
+	void Set_Type(int type) { m_iType = type; }
+	void Set_String(LPCTSTR string) { m_UserString = string; }
 
-		int								Get_Type () const			{ return m_iType; }
-		const CString &				Get_String () const			{ return m_UserString; }
-		void								Set_Type (int type)				{ m_iType = type; }
-		void								Set_String (LPCTSTR string)	{ m_UserString = string; }
+protected:
+	/////////////////////////////////////////////////////////
+	//
+	//	Protected methods
+	//
+	void Initialize();
 
+private:
+	/////////////////////////////////////////////////////////
+	//
+	//	Private member data
+	//
+	EmitterInstanceListClass* m_pEmitterList;
+	bool m_bValid;
 
-	protected:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Protected methods
-		//
-		void								Initialize ();
-
-	private:
-
-		/////////////////////////////////////////////////////////
-		//
-		//	Private member data
-		//
-		EmitterInstanceListClass *	m_pEmitterList;
-		bool								m_bValid;
-
-		int								m_iType;
-		CString							m_UserString;
+	int m_iType;
+	CString m_UserString;
 };
 
 //{{AFX_INSERT_LOCATION}}

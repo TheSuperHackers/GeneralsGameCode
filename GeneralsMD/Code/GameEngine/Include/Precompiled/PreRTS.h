@@ -30,10 +30,9 @@
 
 //-----------------------------------------------------------------------------
 // srj sez: this must come first, first, first.
-#define _STLP_USE_NEWALLOC					1
-//#define _STLP_USE_CUSTOM_NEWALLOC		STLSpecialAlloc
+#define _STLP_USE_NEWALLOC 1
+// #define _STLP_USE_CUSTOM_NEWALLOC		STLSpecialAlloc
 class STLSpecialAlloc;
-
 
 // We actually don't use Windows for much other than timeGetTime, but it was included in 40
 // different .cpp files, so I bit the bullet and included it here.
@@ -42,7 +41,7 @@ class STLSpecialAlloc;
 #define WIN32_LEAN_AND_MEAN
 // TheSuperHackers @build JohnsterID 05/01/2026 Add ATL compatibility for MinGW-w64 builds
 #if defined(__GNUC__) && defined(_WIN32)
-    #include <Utility/atl_compat.h>
+	#include <Utility/atl_compat.h>
 #endif
 #include <atlbase.h>
 #include <windows.h>
@@ -58,7 +57,7 @@ class STLSpecialAlloc;
 #include <limits.h>
 #include <lmcons.h>
 #if defined(_MSC_VER) && _MSC_VER < 1300
-#include <mapicode.h>
+	#include <mapicode.h>
 #endif
 #include <math.h>
 #include <memory.h>
@@ -84,23 +83,23 @@ class STLSpecialAlloc;
 #include <winreg.h>
 
 #ifndef DIRECTINPUT_VERSION
-#	define DIRECTINPUT_VERSION	0x800
+	#define DIRECTINPUT_VERSION 0x800
 #endif
 
 #include <dinput.h>
 
 //------------------------------------------------------------------------------------ STL Includes
 // srj sez: no, include STLTypesdefs below, instead, thanks
-//#include <algorithm>
-//#include <bitset>
-//#include <hash_map>
-//#include <list>
-//#include <map>
-//#include <queue>
-//#include <set>
-//#include <stack>
-//#include <string>
-//#include <vector>
+// #include <algorithm>
+// #include <bitset>
+// #include <hash_map>
+// #include <list>
+// #include <map>
+// #include <queue>
+// #include <set>
+// #include <stack>
+// #include <string>
+// #include <vector>
 
 //------------------------------------------------------------------------------------ RTS Includes
 // Icky. These have to be in this order.
@@ -130,5 +129,5 @@ class STLSpecialAlloc;
 #include "Common/UnicodeString.h"
 
 #if defined(__GNUC__) && defined(_WIN32)
-    #pragma GCC diagnostic pop
+	#pragma GCC diagnostic pop
 #endif

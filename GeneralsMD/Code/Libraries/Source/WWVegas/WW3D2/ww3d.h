@@ -42,25 +42,29 @@
 #include "WW3D2/w3derr.h"
 #include "WW3D2/robjlist.h"
 
-class		SceneClass;
-class		CameraClass;
-class		ShaderClass;
-class		DX8Wrapper;
+class SceneClass;
+class CameraClass;
+class ShaderClass;
+class DX8Wrapper;
 
-struct	RenderStatistics;
-class		FrameGrabClass;
-class		VertexMaterialClass;
-class		ExtraMaterialPassClass;
-class		RenderInfoClass;
-class		RenderDeviceDescClass;
-class		StringClass;
-class		LightEnvironmentClass;
-class		MaterialPassClass;
-class 	StaticSortListClass;
+struct RenderStatistics;
+class FrameGrabClass;
+class VertexMaterialClass;
+class ExtraMaterialPassClass;
+class RenderInfoClass;
+class RenderDeviceDescClass;
+class StringClass;
+class LightEnvironmentClass;
+class MaterialPassClass;
+class StaticSortListClass;
 
 #define MESH_RENDER_SNAPSHOT_ENABLED
-#define SNAPSHOT_SAY(x) if (WW3D::Is_Snapshot_Activated()) { WWDEBUG_SAY(x); }
-//#define SNAPSHOT_SAY(x)
+#define SNAPSHOT_SAY(x) \
+	if (WW3D::Is_Snapshot_Activated()) \
+	{ \
+		WWDEBUG_SAY(x); \
+	}
+// #define SNAPSHOT_SAY(x)
 
 /**
 ** WW3D
@@ -71,21 +75,23 @@ class 	StaticSortListClass;
 class WW3D
 {
 public:
-
-	enum MultiSampleModeEnum {
+	enum MultiSampleModeEnum
+	{
 		MULTISAMPLE_MODE_NONE = 0,
 		MULTISAMPLE_MODE_2X = 2,
 		MULTISAMPLE_MODE_4X = 4,
 		MULTISAMPLE_MODE_8X = 8
 	};
 
-	enum PrelitModeEnum {
+	enum PrelitModeEnum
+	{
 		PRELIT_MODE_VERTEX,
 		PRELIT_MODE_LIGHTMAP_MULTI_PASS,
 		PRELIT_MODE_LIGHTMAP_MULTI_TEXTURE
 	};
 
-	enum MeshDrawModeEnum {
+	enum MeshDrawModeEnum
+	{
 		MESH_DRAW_MODE_OLD,
 		MESH_DRAW_MODE_NEW,
 		MESH_DRAW_MODE_DEBUG_DRAW,
@@ -95,56 +101,57 @@ public:
 		MESH_DRAW_MODE_DX8_ONLY
 	};
 
-	enum NPatchesGapFillingModeEnum {
+	enum NPatchesGapFillingModeEnum
+	{
 		NPATCHES_GAP_FILLING_DISABLED,
 		NPATCHES_GAP_FILLING_ENABLED,
 		NPATCHES_GAP_FILLING_FORCE
 	};
 
-	enum ScreenShotFormatEnum {
+	enum ScreenShotFormatEnum
+	{
 		TGA,
 		BMP
 	};
 
+	static WW3DErrorType Init(void* hwnd, char* defaultpal = nullptr, bool lite = false);
+	static WW3DErrorType Shutdown();
+	static bool Is_Initted() { return IsInitted; }
 
-	static WW3DErrorType		Init(void * hwnd, char *defaultpal = nullptr, bool lite = false);
-	static WW3DErrorType		Shutdown();
-	static bool					Is_Initted()								{ return IsInitted; }
+	static int Get_Render_Device_Count();
+	static const char* Get_Render_Device_Name(int device_index);
+	static const RenderDeviceDescClass& Get_Render_Device_Desc(int device = -1);
 
-	static int					Get_Render_Device_Count();
-	static const char *		Get_Render_Device_Name(int device_index);
-	static const RenderDeviceDescClass &								Get_Render_Device_Desc(int device = -1);
+	static int Get_Render_Device();
+	static WW3DErrorType Set_Render_Device(int dev = -1, int resx = -1, int resy = -1, int bits = -1, int windowed = -1, bool resize_window = false, bool reset_device = false, bool restore_assets = true);
+	static WW3DErrorType Set_Render_Device(const char* dev_name, int resx = -1, int resy = -1, int bits = -1, int windowed = -1, bool resize_window = false);
+	static WW3DErrorType Set_Next_Render_Device();
+	static WW3DErrorType Set_Any_Render_Device();
 
-	static int					Get_Render_Device();
-	static WW3DErrorType		Set_Render_Device( int dev=-1, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false, bool reset_device=false, bool restore_assets=true);
-	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );
-	static WW3DErrorType		Set_Next_Render_Device();
-	static WW3DErrorType		Set_Any_Render_Device();
+	static void Get_Pixel_Center(float& x, float& y);
+	static void Get_Render_Target_Resolution(int& set_w, int& set_h, int& get_bits, bool& get_windowed);
+	static void Get_Device_Resolution(int& set_w, int& set_h, int& get_bits, bool& get_windowed);
+	static WW3DErrorType Set_Device_Resolution(int w = -1, int h = -1, int bits = -1, int windowed = -1, bool resize_window = false);
 
-	static void					Get_Pixel_Center(float &x, float &y);
-	static void					Get_Render_Target_Resolution(int & set_w,int & set_h,int & get_bits,bool & get_windowed);
-	static void					Get_Device_Resolution(int & set_w,int & set_h,int & get_bits,bool & get_windowed);
-	static WW3DErrorType		Set_Device_Resolution(int w=-1,int h=-1,int bits=-1,int windowed=-1, bool resize_window=false );
+	static bool Is_Windowed();
+	static WW3DErrorType Toggle_Windowed();
+	static void Set_Window(void* hwnd);
+	static void* Get_Window();
 
-	static bool					Is_Windowed();
-	static WW3DErrorType		Toggle_Windowed ();
-	static void					Set_Window( void *hwnd );
-	static void *				Get_Window();
+	static WW3DErrorType On_Activate_App();
+	static WW3DErrorType On_Deactivate_App();
 
-	static WW3DErrorType		On_Activate_App();
-	static WW3DErrorType		On_Deactivate_App();
-
-	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key );
-	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth );
-	static WW3DErrorType		Registry_Load_Render_Device( const char * sub_key, bool resize_window = false );
-	static bool					Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int& texture_depth);
+	static WW3DErrorType Registry_Save_Render_Device(const char* sub_key);
+	static WW3DErrorType Registry_Save_Render_Device(const char* sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth);
+	static WW3DErrorType Registry_Load_Render_Device(const char* sub_key, bool resize_window = false);
+	static bool Registry_Load_Render_Device(const char* sub_key, char* device, int device_len, int& width, int& height, int& depth, int& windowed, int& texture_depth);
 
 	// 0 = bilinear, 1 = trilinear, 2 = anisotropic
-	static void					Set_Texture_Filter(int filter);
-	static int					Get_Texture_Filter() { return TextureFilter; }
+	static void Set_Texture_Filter(int filter);
+	static int Get_Texture_Filter() { return TextureFilter; }
 
-	static void					Set_Anisotropy_Level(int level);
-	static int					Get_Anisotropy_Level() { return AnisotropyLevel; }
+	static void Set_Anisotropy_Level(int level);
+	static int Get_Anisotropy_Level() { return AnisotropyLevel; }
 
 	/*
 	** Rendering functions
@@ -153,16 +160,16 @@ public:
 	** special cases like generating a shadow texture for an object.  Basically this function will have the
 	** entire scene rendering overhead.
 	*/
-	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f, void(*network_callback)() = nullptr);
-	static WW3DErrorType		Render(const LayerListClass & layerlist);
-	static WW3DErrorType		Render(const LayerClass & layer);
-	static WW3DErrorType		Render(SceneClass * scene,CameraClass * cam,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
-	static WW3DErrorType		Render(RenderObjClass & obj,RenderInfoClass & rinfo);
-	static void					Flush(RenderInfoClass & rinfo);	// NOTE: "normal" usage should *NEVER* require the user to call this function
+	static WW3DErrorType Begin_Render(bool clear = false, bool clearz = true, const Vector3& color = Vector3(0, 0, 0), float dest_alpha = 0.0f, void (*network_callback)() = nullptr);
+	static WW3DErrorType Render(const LayerListClass& layerlist);
+	static WW3DErrorType Render(const LayerClass& layer);
+	static WW3DErrorType Render(SceneClass* scene, CameraClass* cam, bool clear = false, bool clearz = false, const Vector3& color = Vector3(0, 0, 0));
+	static WW3DErrorType Render(RenderObjClass& obj, RenderInfoClass& rinfo);
+	static void Flush(RenderInfoClass& rinfo);    // NOTE: "normal" usage should *NEVER* require the user to call this function
 
-	static WW3DErrorType		End_Render(bool flip_frame = true);
+	static WW3DErrorType End_Render(bool flip_frame = true);
 
-	static bool					Is_Rendering() { return( IsRendering ); }
+	static bool Is_Rendering() { return (IsRendering); }
 
 	static void Flip_To_Primary();
 
@@ -174,55 +181,55 @@ public:
 	** By calling the Sync function, the application can move the ww3d library time forward.  This
 	** will control things like animated uv-offset mappers and render object animations.
 	*/
-	static void						Sync(bool step);
+	static void Sync(bool step);
 
 	// Total sync time in milliseconds. Advances in full logic time steps only.
-	static unsigned int		Get_Sync_Time() { return SyncTime; }
+	static unsigned int Get_Sync_Time() { return SyncTime; }
 
 	// Current sync frame time in milliseconds. Can be zero when the logic has not stepped forward in the current render update.
-	static unsigned int		Get_Sync_Frame_Time() { return SyncTime - PreviousSyncTime; }
+	static unsigned int Get_Sync_Frame_Time() { return SyncTime - PreviousSyncTime; }
 
 	// Fractional sync frame time. Accumulates for as long as the sync frame is not stepped forward.
-	static unsigned int		Get_Fractional_Sync_Milliseconds() { return (unsigned int)FractionalSyncMs; }
+	static unsigned int Get_Fractional_Sync_Milliseconds() { return (unsigned int)FractionalSyncMs; }
 
 	// Total logic time in milliseconds. Can include fractions of a logic step. Is rounded to integer.
-	static unsigned int		Get_Logic_Time_Milliseconds() { return SyncTime + (unsigned int)FractionalSyncMs; }
+	static unsigned int Get_Logic_Time_Milliseconds() { return SyncTime + (unsigned int)FractionalSyncMs; }
 
 	// Logic time step in milliseconds. Can be a fraction of a logic step.
-	static float					Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
+	static float Get_Logic_Frame_Time_Milliseconds() { return LogicFrameTimeMs; }
 
 	// Logic time step in seconds. Can be a fraction of a logic step.
-	static float					Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
+	static float Get_Logic_Frame_Time_Seconds() { return LogicFrameTimeMs * 0.001f; }
 
 	// Returns the render frame count.
-	static unsigned int		Get_Frame_Count() { return FrameCount; }
+	static unsigned int Get_Frame_Count() { return FrameCount; }
 
-	static unsigned int		Get_Last_Frame_Poly_Count();
-	static unsigned int		Get_Last_Frame_Vertex_Count();
+	static unsigned int Get_Last_Frame_Poly_Count();
+	static unsigned int Get_Last_Frame_Vertex_Count();
 
 	/*
 	** Screen/Movie capturing
 	** These functions allow you to create screenshots and movies.
 	*/
-	static void					Make_Screen_Shot( const char * filename = "ScreenShot", const float gamma = 1.3f, const ScreenShotFormatEnum format = TGA);
-	static void					Start_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
-	static void					Stop_Movie_Capture();
-	static void					Toggle_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
-	static void					Start_Single_Frame_Movie_Capture(const char *filename_base = "Frames");
-	static void					Capture_Next_Movie_Frame();
-	static void					Update_Movie_Capture();
-	static float				Get_Movie_Capture_Frame_Rate();
-	static void					Pause_Movie(bool mode);
-	static bool					Is_Movie_Paused();
-	static bool					Is_Recording_Next_Frame();
-	static bool					Is_Movie_Ready();
+	static void Make_Screen_Shot(const char* filename = "ScreenShot", const float gamma = 1.3f, const ScreenShotFormatEnum format = TGA);
+	static void Start_Movie_Capture(const char* filename_base = "Movie", float frame_rate = 15);
+	static void Stop_Movie_Capture();
+	static void Toggle_Movie_Capture(const char* filename_base = "Movie", float frame_rate = 15);
+	static void Start_Single_Frame_Movie_Capture(const char* filename_base = "Frames");
+	static void Capture_Next_Movie_Frame();
+	static void Update_Movie_Capture();
+	static float Get_Movie_Capture_Frame_Rate();
+	static void Pause_Movie(bool mode);
+	static bool Is_Movie_Paused();
+	static bool Is_Recording_Next_Frame();
+	static bool Is_Movie_Ready();
 
-   /*
-	** Set_Ext_Swap_Interval - how many vertical retraces to wait before flipping frames
-	** Get_Ext_Swap_Interval - what is our current setting for the swap interval?
-	*/
-	static void             Set_Ext_Swap_Interval(long swap);
-   static long             Get_Ext_Swap_Interval();
+	/*
+	 ** Set_Ext_Swap_Interval - how many vertical retraces to wait before flipping frames
+	 ** Get_Ext_Swap_Interval - what is our current setting for the swap interval?
+	 */
+	static void Set_Ext_Swap_Interval(long swap);
+	static long Get_Ext_Swap_Interval();
 
 	/*
 	** Texture Reduction - all currently loaded textures can be de-resed on the fly
@@ -230,74 +237,74 @@ public:
 	** all textures to be half their normal resolution.  Passing in 3 causes them to
 	** be cut in half twice, etc
 	*/
-	static void					Set_Texture_Reduction( int value, int min_dim=1 );
-	static int					Get_Texture_Reduction();
-	static int					Get_Texture_Min_Dimension();
-	static void					Enable_Large_Texture_Extra_Reduction(bool onoff);
-	static bool					Is_Large_Texture_Extra_Reduction_Enabled();
-	static void					_Invalidate_Mesh_Cache();
-	static void					_Invalidate_Textures();
+	static void Set_Texture_Reduction(int value, int min_dim = 1);
+	static int Get_Texture_Reduction();
+	static int Get_Texture_Min_Dimension();
+	static void Enable_Large_Texture_Extra_Reduction(bool onoff);
+	static bool Is_Large_Texture_Extra_Reduction_Enabled();
+	static void _Invalidate_Mesh_Cache();
+	static void _Invalidate_Textures();
 
-	static void					Set_Thumbnail_Enabled(bool b) { ThumbnailEnabled=b; }
-	static bool					Get_Thumbnail_Enabled() { return ThumbnailEnabled; }
+	static void Set_Thumbnail_Enabled(bool b) { ThumbnailEnabled = b; }
+	static bool Get_Thumbnail_Enabled() { return ThumbnailEnabled; }
 
-	static void					Enable_Sorting(bool onoff);
-	static bool					Is_Sorting_Enabled()					{ return IsSortingEnabled; }
+	static void Enable_Sorting(bool onoff);
+	static bool Is_Sorting_Enabled() { return IsSortingEnabled; }
 
-	static void					Set_Screen_UV_Bias( bool onoff )			{ IsScreenUVBiased = onoff; }
-	static bool					Is_Screen_UV_Biased()				{ return IsScreenUVBiased; }
+	static void Set_Screen_UV_Bias(bool onoff) { IsScreenUVBiased = onoff; }
+	static bool Is_Screen_UV_Biased() { return IsScreenUVBiased; }
 
-	static void					Set_Collision_Box_Display_Mask(int mask);
-	static int					Get_Collision_Box_Display_Mask();
+	static void Set_Collision_Box_Display_Mask(int mask);
+	static int Get_Collision_Box_Display_Mask();
 
-	static void					Set_Default_Native_Screen_Size(float dnss)	{ DefaultNativeScreenSize = dnss; }
-	static float				Get_Default_Native_Screen_Size()			{ return DefaultNativeScreenSize; }
+	static void Set_Default_Native_Screen_Size(float dnss) { DefaultNativeScreenSize = dnss; }
+	static float Get_Default_Native_Screen_Size() { return DefaultNativeScreenSize; }
 
-	static void					Normalize_Coordinates(int x, int y, float &fx, float &fy); // convert pixel coordinates to 0..1 screen coordinates
+	static void Normalize_Coordinates(int x, int y, float& fx, float& fy);    // convert pixel coordinates to 0..1 screen coordinates
 
-	static VertexMaterialClass *	Peek_Default_Debug_Material();
-	static ShaderClass		Peek_Default_Debug_Shader();
-	static ShaderClass		Peek_Backface_Debug_Shader();
-	static ShaderClass		Peek_Lightmap_Debug_Shader();
+	static VertexMaterialClass* Peek_Default_Debug_Material();
+	static ShaderClass Peek_Default_Debug_Shader();
+	static ShaderClass Peek_Backface_Debug_Shader();
+	static ShaderClass Peek_Lightmap_Debug_Shader();
 
-	static void					Set_Prelit_Mode (PrelitModeEnum mode)			{ PrelitMode = mode; }
-	static PrelitModeEnum 	Get_Prelit_Mode ()									{ return (PrelitMode); }
-	static bool					Supports_Prelit_Mode (PrelitModeEnum mode)	{ return (true); }
-	static void					Expose_Prelit (bool onoff)							{ ExposePrelit = onoff; }
-	static bool					Expose_Prelit ()										{ return (ExposePrelit); }
+	static void Set_Prelit_Mode(PrelitModeEnum mode) { PrelitMode = mode; }
+	static PrelitModeEnum Get_Prelit_Mode() { return (PrelitMode); }
+	static bool Supports_Prelit_Mode(PrelitModeEnum mode) { return (true); }
+	static void Expose_Prelit(bool onoff) { ExposePrelit = onoff; }
+	static bool Expose_Prelit() { return (ExposePrelit); }
 
-	static void					Set_Texture_Bitdepth(int bitdepth);
-	static int					Get_Texture_Bitdepth();
+	static void Set_Texture_Bitdepth(int bitdepth);
+	static int Get_Texture_Bitdepth();
 
-	static void					Set_MSAA_Mode(MultiSampleModeEnum mode);
+	static void Set_MSAA_Mode(MultiSampleModeEnum mode);
 	static MultiSampleModeEnum Get_MSAA_Mode();
 
-	static void					Set_Mesh_Draw_Mode (MeshDrawModeEnum mode)	{ MeshDrawMode = mode; }
-	static MeshDrawModeEnum Get_Mesh_Draw_Mode ()								{ return (MeshDrawMode); }
+	static void Set_Mesh_Draw_Mode(MeshDrawModeEnum mode) { MeshDrawMode = mode; }
+	static MeshDrawModeEnum Get_Mesh_Draw_Mode() { return (MeshDrawMode); }
 
-	static void					Set_NPatches_Gap_Filling_Mode (NPatchesGapFillingModeEnum mode);
-	static NPatchesGapFillingModeEnum 	Get_NPatches_Gap_Filling_Mode () { return (NPatchesGapFillingMode); }
+	static void Set_NPatches_Gap_Filling_Mode(NPatchesGapFillingModeEnum mode);
+	static NPatchesGapFillingModeEnum Get_NPatches_Gap_Filling_Mode() { return (NPatchesGapFillingMode); }
 
-	static void					Set_NPatches_Level(unsigned level);
-	static unsigned			Get_NPatches_Level() { return NPatchesLevel; }
+	static void Set_NPatches_Level(unsigned level);
+	static unsigned Get_NPatches_Level() { return NPatchesLevel; }
 
-	static void					Enable_Texturing(bool b);
-	static bool					Is_Texturing_Enabled() { return IsTexturingEnabled; }
-	static bool					Is_Coloring_Enabled() { return (IsColoringEnabled == 0) ? false : true; }
-	static void					Enable_Coloring(unsigned int color);	///<when non-zero color is passed, it will override vertex colors
+	static void Enable_Texturing(bool b);
+	static bool Is_Texturing_Enabled() { return IsTexturingEnabled; }
+	static bool Is_Coloring_Enabled() { return (IsColoringEnabled == 0) ? false : true; }
+	static void Enable_Coloring(unsigned int color);    ///< when non-zero color is passed, it will override vertex colors
 
-	static int					Get_Last_Frame_Memory_Allocation_Count() { return LastFrameMemoryAllocations; }
-	static int					Get_Last_Frame_Memory_Free_Count() { return LastFrameMemoryFrees; }
+	static int Get_Last_Frame_Memory_Allocation_Count() { return LastFrameMemoryAllocations; }
+	static int Get_Last_Frame_Memory_Free_Count() { return LastFrameMemoryFrees; }
 
 	/*
 	** Decal control
 	** These global settings can control whether decals are rendered at all and
 	** at what distance to stop rendering/creating decals
 	*/
-	static void					Enable_Decals(bool onoff)					{ AreDecalsEnabled = onoff; }
-	static bool					Are_Decals_Enabled()					{ return AreDecalsEnabled; }
-	static void					Set_Decal_Rejection_Distance(float d)	{ DecalRejectionDistance = d; }
-	static float				Get_Decal_Rejection_Distance()		{ return DecalRejectionDistance; }
+	static void Enable_Decals(bool onoff) { AreDecalsEnabled = onoff; }
+	static bool Are_Decals_Enabled() { return AreDecalsEnabled; }
+	static void Set_Decal_Rejection_Distance(float d) { DecalRejectionDistance = d; }
+	static float Get_Decal_Rejection_Distance() { return DecalRejectionDistance; }
 
 	/*
 	** Static sort lists. The ability to temporarily set a different static
@@ -306,48 +313,47 @@ public:
 	** sort at a certain sort level). After this override is called, the
 	** default sort list must be restored.
 	*/
-	static void					Enable_Static_Sort_Lists(bool onoff)	{ AreStaticSortListsEnabled = onoff; }
-	static bool					Are_Static_Sort_Lists_Enabled()		{ return AreStaticSortListsEnabled; }
-	static void					Enable_Munge_Sort_On_Load(bool onoff)	{ MungeSortOnLoad=onoff; }
-	static bool					Is_Munge_Sort_On_Load_Enabled()		{ return MungeSortOnLoad; }
-	static void					Add_To_Static_Sort_List(RenderObjClass *robj, unsigned int sort_level);
-	static void					Render_And_Clear_Static_Sort_Lists(RenderInfoClass & rinfo);
-	static void					Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list);
-	static void					Reset_Current_Static_Sort_Lists_To_Default();
+	static void Enable_Static_Sort_Lists(bool onoff) { AreStaticSortListsEnabled = onoff; }
+	static bool Are_Static_Sort_Lists_Enabled() { return AreStaticSortListsEnabled; }
+	static void Enable_Munge_Sort_On_Load(bool onoff) { MungeSortOnLoad = onoff; }
+	static bool Is_Munge_Sort_On_Load_Enabled() { return MungeSortOnLoad; }
+	static void Add_To_Static_Sort_List(RenderObjClass* robj, unsigned int sort_level);
+	static void Render_And_Clear_Static_Sort_Lists(RenderInfoClass& rinfo);
+	static void Override_Current_Static_Sort_Lists(StaticSortListClass* sort_list);
+	static void Reset_Current_Static_Sort_Lists_To_Default();
 
 	/*
 	** Overbright modify on load - when this mode is set meshes will be
 	** modified at load time. All shaders which originally had the primary
 	** gradient set to MODULATE will be changed to MODULATE2X instead.
 	*/
-	static void					Enable_Overbright_Modify_On_Load(bool onoff)	{ OverbrightModifyOnLoad = onoff; }
-	static bool					Is_Overbright_Modify_On_Load_Enabled()	{ return OverbrightModifyOnLoad; }
+	static void Enable_Overbright_Modify_On_Load(bool onoff) { OverbrightModifyOnLoad = onoff; }
+	static bool Is_Overbright_Modify_On_Load_Enabled() { return OverbrightModifyOnLoad; }
 
-	static bool					Is_Snapshot_Activated()						{ return SnapshotActivated; }
-	static void					Activate_Snapshot(bool b)					{ SnapshotActivated=b; }
+	static bool Is_Snapshot_Activated() { return SnapshotActivated; }
+	static void Activate_Snapshot(bool b) { SnapshotActivated = b; }
 
 	// These clock all the time under user control, and are used to update
-   // Stats.UserStat* when performance sampling is enabled.
-   static long             UserStat0;
-   static long             UserStat1;
-   static long             UserStat2;
+	// Stats.UserStat* when performance sampling is enabled.
+	static long UserStat0;
+	static long UserStat1;
+	static long UserStat2;
 
 	// Gamma control
-	static void					Set_Gamma(float gamma,float bright,float contrast,bool calibrate=true);
+	static void Set_Gamma(float gamma, float bright, float contrast, bool calibrate = true);
 
 private:
-
 	enum
 	{
-		DEFAULT_RESOLUTION_WIDTH =			640,
-		DEFAULT_RESOLUTION_HEIGHT =		480,
-		DEFAULT_BIT_DEPTH =					16
+		DEFAULT_RESOLUTION_WIDTH = 640,
+		DEFAULT_RESOLUTION_HEIGHT = 480,
+		DEFAULT_BIT_DEPTH = 16
 	};
 
-	static void					Read_Gerd_Render_Device_Description(RenderDeviceDescClass &desc);
-	static void					Update_Pixel_Center();
-	static void					Allocate_Debug_Resources();
-	static void					Release_Debug_Resources();
+	static void Read_Gerd_Render_Device_Description(RenderDeviceDescClass& desc);
+	static void Update_Pixel_Center();
+	static void Allocate_Debug_Resources();
+	static void Release_Debug_Resources();
 
 	// Logic frame time, in milliseconds
 	static float LogicFrameTimeMs;
@@ -367,50 +373,50 @@ private:
 	// the frame interval.
 	static unsigned int PreviousSyncTime;
 
-	static float						PixelCenterX;
-	static float						PixelCenterY;
+	static float PixelCenterX;
+	static float PixelCenterY;
 
-	static bool							IsInitted;
-	static bool							IsRendering;
-	static bool							IsCapturing;
-	static bool							IsSortingEnabled;
-	static bool							IsScreenUVBiased;
-	static bool							IsBackfaceDebugEnabled;
+	static bool IsInitted;
+	static bool IsRendering;
+	static bool IsCapturing;
+	static bool IsSortingEnabled;
+	static bool IsScreenUVBiased;
+	static bool IsBackfaceDebugEnabled;
 
-	static bool							AreDecalsEnabled;
-	static float						DecalRejectionDistance;
+	static bool AreDecalsEnabled;
+	static float DecalRejectionDistance;
 
-	static bool							AreStaticSortListsEnabled;
-	static bool							MungeSortOnLoad;
+	static bool AreStaticSortListsEnabled;
+	static bool MungeSortOnLoad;
 
-	static bool							OverbrightModifyOnLoad;
+	static bool OverbrightModifyOnLoad;
 
-	static FrameGrabClass *			Movie;
-	static bool							PauseRecord;
-	static bool							RecordNextFrame;
-	static int							FrameCount;
+	static FrameGrabClass* Movie;
+	static bool PauseRecord;
+	static bool RecordNextFrame;
+	static int FrameCount;
 
-	static VertexMaterialClass *	DefaultDebugMaterial;
-	static VertexMaterialClass *	BackfaceDebugMaterial;
-	static ShaderClass				DefaultDebugShader;
-	static ShaderClass				LightmapDebugShader;
+	static VertexMaterialClass* DefaultDebugMaterial;
+	static VertexMaterialClass* BackfaceDebugMaterial;
+	static ShaderClass DefaultDebugShader;
+	static ShaderClass LightmapDebugShader;
 
-	static PrelitModeEnum			PrelitMode;
-	static bool							ExposePrelit;
+	static PrelitModeEnum PrelitMode;
+	static bool ExposePrelit;
 
-	static int							TextureFilter;
-	static int							AnisotropyLevel;
+	static int TextureFilter;
+	static int AnisotropyLevel;
 
-	static bool							SnapshotActivated;
-	static bool							ThumbnailEnabled;
+	static bool SnapshotActivated;
+	static bool ThumbnailEnabled;
 
-	static MeshDrawModeEnum			MeshDrawMode;
+	static MeshDrawModeEnum MeshDrawMode;
 	static NPatchesGapFillingModeEnum NPatchesGapFillingMode;
 	static unsigned NPatchesLevel;
-	static bool							IsTexturingEnabled;
-	static bool							IsColoringEnabled;
+	static bool IsTexturingEnabled;
+	static bool IsColoringEnabled;
 
-	static bool							Lite;
+	static bool Lite;
 
 	// This is the default native screen size which will be set for each
 	// RenderObject on construction. The native screen size is the screen size
@@ -418,20 +424,19 @@ private:
 	// texture resizing algorithm (may be used in future for other things).
 	// If the default is overridden, it will usually be in the asset manager
 	// post-load callback.
-	static float						DefaultNativeScreenSize;
+	static float DefaultNativeScreenSize;
 
 	// For meshes which have a static sorting order. These will get drawn
 	// after opaque meshes and before normally sorted meshes. The 'current'
 	// pointer is so the application can temporarily set a different set of
 	// static sort lists to be used temporarily. This is for specialised uses.
-	static StaticSortListClass * DefaultStaticSortLists;
-	static StaticSortListClass * CurrentStaticSortLists;
+	static StaticSortListClass* DefaultStaticSortLists;
+	static StaticSortListClass* CurrentStaticSortLists;
 
 	// Memory allocation statistics
-	static int							LastFrameMemoryAllocations;
-	static int							LastFrameMemoryFrees;
+	static int LastFrameMemoryAllocations;
+	static int LastFrameMemoryFrees;
 };
-
 
 /*
 ** RenderStatistics
@@ -440,45 +445,45 @@ private:
 */
 struct RenderStatistics
 {
-		// General statistics
-		double	ElapsedSeconds;
-      int      FramesRendered;
+	// General statistics
+	double ElapsedSeconds;
+	int FramesRendered;
 
-		// Geometry engine statistics
-		double	TrianglesReceived;
-		double	TrianglesSubmitted;
-		double	TrianglesSorted;
-		double	VerticesReceived;
-		double	VerticesSubmitted;
+	// Geometry engine statistics
+	double TrianglesReceived;
+	double TrianglesSubmitted;
+	double TrianglesSorted;
+	double VerticesReceived;
+	double VerticesSubmitted;
 
-		// State change statistics
-		double	ViewStateChanges;
-		double	DrawStateChanges;
-		double	TextureChanges;
-		double	TextureParameterChanges;
-		double	TexturesCreated;
-		double	PaletteChanges;
-		double	ShaderChanges;
-		double	DrawCommands;
-		double	TrianglesClipRemoved;
-		double	TrianglesClipCreated;
-		double	DeviceDriverCalls;
+	// State change statistics
+	double ViewStateChanges;
+	double DrawStateChanges;
+	double TextureChanges;
+	double TextureParameterChanges;
+	double TexturesCreated;
+	double PaletteChanges;
+	double ShaderChanges;
+	double DrawCommands;
+	double TrianglesClipRemoved;
+	double TrianglesClipCreated;
+	double DeviceDriverCalls;
 
-		// Rendering device statistics
-		double	TextureTransfers;
-		double	PixelsDrawn;
-		double	PixelsRejected;
+	// Rendering device statistics
+	double TextureTransfers;
+	double PixelsDrawn;
+	double PixelsRejected;
 
-		// Surface cache statistics
-		long		Hits;
-		long		Misses;
-		long		Insertions;
-		long		Removals;
-		long		MemUsed;
-		long		MaxMemory;
+	// Surface cache statistics
+	long Hits;
+	long Misses;
+	long Insertions;
+	long Removals;
+	long MemUsed;
+	long MaxMemory;
 
-      // User stats (can be used to see how often a function is called, etc.)
-      long     UserStat0;
-      long     UserStat1;
-      long     UserStat2;
+	// User stats (can be used to see how often a function is called, etc.)
+	long UserStat0;
+	long UserStat1;
+	long UserStat2;
 };

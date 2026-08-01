@@ -34,7 +34,7 @@
 // in the documentation. I don't want that (it would expose some
 // internals) so I'm putting all comments for the following macros
 // here...
-#ifdef DOXYGEN // defined if Doxygen is running
+#ifdef DOXYGEN    // defined if Doxygen is running
 
 /**
   \addtogroup debug_macros Debugging and logging macros
@@ -58,7 +58,7 @@
 
     \param expr expression, trigger assert window if false
   */
-  #define DASSERT(expr)
+	#define DASSERT(expr)
 
   /**
     \brief Assert macro with custom message.
@@ -76,7 +76,7 @@
     \param msg custom message stream, see \ref debug_stream
 
   */
-  #define DASSERT_MSG(expr,msg)
+	#define DASSERT_MSG(expr, msg)
 
   /**
     \brief Compile time assertion.
@@ -98,7 +98,7 @@ debug.cpp(15) : error C2027: use of undefined type 'StaticAssertionFailed< ?? >'
 
     \param expr expression which can be evaluated at compile time
   */
-  #define DCTASSERT(expr)
+	#define DCTASSERT(expr)
 
   /**
     \brief Function macro, checks if the given expression is true, returns false if not.
@@ -113,7 +113,7 @@ debug.cpp(15) : error C2027: use of undefined type 'StaticAssertionFailed< ?? >'
 
     \param expr expression which will always be checked
   */
-  #define DCHECK(expr)
+	#define DCHECK(expr)
 
   /**
     \brief Function macro, \ref DCHECK with additional message on failure.
@@ -126,7 +126,7 @@ debug.cpp(15) : error C2027: use of undefined type 'StaticAssertionFailed< ?? >'
     \param expr expression which will always be checked
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DCHECK_MSG(expr,msg)
+	#define DCHECK_MSG(expr, msg)
 
   /**
     \brief Macro for precondition-checks.
@@ -142,7 +142,7 @@ DFAIL_IF(!ptrval) return;
 
     \param cond condition which is checked for failure
   */
-  #define DFAIL_IF(cond)
+	#define DFAIL_IF(cond)
 
   /**
     \brief Convenience macro, \ref DFAIL_IF with additional message on failure.
@@ -159,7 +159,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
     \param cond condition which is checked for failure
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DFAIL_IF_MSG(cond,msg)
+	#define DFAIL_IF_MSG(cond, msg)
 
   /**
     \brief Writes a message to the log file.
@@ -172,7 +172,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
 
     \param what message, see \ref debug_stream
   */
-  #define DLOG(what)
+	#define DLOG(what)
 
   /**
     \brief Adds a description for the current file if used for logging.
@@ -180,7 +180,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
     \note This macro must be used in a CPP file in file scope only.
     \param descr a short static description of what gets logged in the current file
   */
-  #define DLOG_DESCR(descr)
+	#define DLOG_DESCR(descr)
 
   /**
     \brief Writes a message to the log file using a custom log group.
@@ -196,7 +196,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
     \param group logging group, without quotes
     \param what message, see \ref debug_stream
   */
-  #define DLOG_GROUP(group,what)
+	#define DLOG_GROUP(group, what)
 
   /**
     \brief Adds a description for a custom log group
@@ -205,7 +205,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
     \param group logging group, without quotes
     \param descr a short static description of what gets logged in the specified log group
   */
-  #define DLOG_GROUP_DESCR(group,descr)
+	#define DLOG_GROUP_DESCR(group, descr)
 
   /**
     \brief Unconditionally aborts the program in debug/internal builds.
@@ -214,7 +214,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
 
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DCRASH(msg)
+	#define DCRASH(msg)
 
   /**
     \brief Unconditional program exit that is active in release builds as well.
@@ -224,7 +224,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
 
     \param msg custom message stream, see \ref debug_stream
   */
-  #define DCRASH_RELEASE(msg)
+	#define DCRASH_RELEASE(msg)
 
   /**
     \brief Unconditional assert.
@@ -246,7 +246,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
     \endcode
     Gets removed in release builds.
   */
-  #define DFAIL()
+	#define DFAIL()
 
   /**
     \brief Function macro, determines if logging is active for current file or not.
@@ -264,7 +264,7 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
 
     \return true if logging is active, false if not
   */
-  #define D_ISLOG()
+	#define D_ISLOG()
 
   /**
     \brief Function macro, determines if logging is active for the specified log group or not.
@@ -275,102 +275,107 @@ DFAIL_IF_MSG(!ptrval,"pointer must not be null") return;
     \param group logging group, without quotes
     \return true if logging is active, false if not
   */
-  #define D_ISLOG_GROUP(group)
+	#define D_ISLOG_GROUP(group)
 
 ///@}
 
 #elif defined(RTS_DEBUG)
 
-  #define DASSERT(expr) \
-    ((void)( Debug::SkipNext() || \
-             (expr) || \
-             Debug::AssertBegin(__FILE__,__LINE__,#expr).AssertDone() ))
+	#define DASSERT(expr) \
+		((void)(Debug::SkipNext() || \
+		        (expr) || \
+		        Debug::AssertBegin(__FILE__, __LINE__, #expr).AssertDone()))
 
-  #define DASSERT_MSG(expr,msg) \
-    ((void)( Debug::SkipNext() || \
-             (expr) || \
-             ( Debug::AssertBegin(__FILE__,__LINE__,#expr) << ": " << msg ).AssertDone() ))
+	#define DASSERT_MSG(expr, msg) \
+		((void)(Debug::SkipNext() || \
+		        (expr) || \
+		        (Debug::AssertBegin(__FILE__, __LINE__, #expr) << ": " << msg).AssertDone()))
 
-  #define DCHECK(expr) \
-    ( (expr) || \
-      Debug::SkipNext() || \
-      Debug::CheckBegin(__FILE__,__LINE__,#expr).CheckDone() )
+	#define DCHECK(expr) \
+		((expr) || \
+		 Debug::SkipNext() || \
+		 Debug::CheckBegin(__FILE__, __LINE__, #expr).CheckDone())
 
-  #define DCHECK_MSG(expr,msg) \
-    ( (expr) || \
-      Debug::SkipNext() || \
-      ( Debug::CheckBegin(__FILE__,__LINE__,#expr) << ": " << msg ).CheckDone() )
+	#define DCHECK_MSG(expr, msg) \
+		((expr) || \
+		 Debug::SkipNext() || \
+		 (Debug::CheckBegin(__FILE__, __LINE__, #expr) << ": " << msg).CheckDone())
 
-  #define DFAIL_IF(cond) \
-    if (!DCHECK(!(cond)))
+	#define DFAIL_IF(cond) \
+		if (!DCHECK(!(cond)))
 
-  #define DFAIL_IF_MSG(cond,msg) \
-    if (!DCHECK_MSG(!(cond),msg))
+	#define DFAIL_IF_MSG(cond, msg) \
+		if (!DCHECK_MSG(!(cond), msg))
 
-  #define DLOG(what) \
-    ((void)( Debug::SkipNext() || \
-             ( Debug::LogBegin(__FILE__) << what ).LogDone() ))
+	#define DLOG(what) \
+		((void)(Debug::SkipNext() || \
+		        (Debug::LogBegin(__FILE__) << what).LogDone()))
 
-  #define DLOG_DESCR(descr) \
-    static Debug::LogDescription _LogDescr_FILE(__FILE__,descr);
+	#define DLOG_DESCR(descr) \
+		static Debug::LogDescription _LogDescr_FILE(__FILE__, descr);
 
-  #define DLOG_GROUP(group,what) \
-    ((void)( Debug::SkipNext() || \
-             ( Debug::LogBegin(#group) << what ).LogDone() ))
+	#define DLOG_GROUP(group, what) \
+		((void)(Debug::SkipNext() || \
+		        (Debug::LogBegin(#group) << what).LogDone()))
 
-  #define DLOG_GROUP_DESCR(group,descr) \
-    static Debug::LogDescription(#group,descr) _LogDescr_Grp_##group
+	#define DLOG_GROUP_DESCR(group, descr) \
+		static Debug::LogDescription(#group, descr) _LogDescr_Grp_##group
 
-  #define DCRASH(msg) \
-    (Debug::SkipNext() || (Debug::CrashBegin(__FILE__,__LINE__) << msg).CrashDone(false))
+	#define DCRASH(msg) \
+		(Debug::SkipNext() || (Debug::CrashBegin(__FILE__, __LINE__) << msg).CrashDone(false))
 
-  #define DCRASH_RELEASE(msg) \
-    (Debug::SkipNext(),(Debug::CrashBegin(__FILE__,__LINE__) << msg).CrashDone(true))
+	#define DCRASH_RELEASE(msg) \
+		(Debug::SkipNext(), (Debug::CrashBegin(__FILE__, __LINE__) << msg).CrashDone(true))
 
-  #define DFAIL() \
-    Debug::AssertBegin(__FILE__,__LINE__,nullptr).AssertDone()
+	#define DFAIL() \
+		Debug::AssertBegin(__FILE__, __LINE__, nullptr).AssertDone()
 
-  #define D_ISLOG() \
-    Debug::IsLogEnabled(__FILE__)
+	#define D_ISLOG() \
+		Debug::IsLogEnabled(__FILE__)
 
-  #define D_ISLOG_GROUP(group) \
-    Debug::IsLogEnabled(#group)
+	#define D_ISLOG_GROUP(group) \
+		Debug::IsLogEnabled(#group)
 
 #else
 
-  #define DASSERT(expr)           ((void)0)
-  #define DASSERT_MSG(expr,msg)   ((void)0)
-  #define DCHECK(expr)            (expr)
-  #define DCHECK_MSG(expr,msg)    (expr)
-  #define DFAIL_IF(cond)          if (cond)
-  #define DFAIL_IF_MSG(cond,msg)  if (cond)
-  #define DLOG(what)              ((void)0)
-  #define DLOG_DESCR(descr)
-  #define DLOG_GROUP(group,what)  ((void)0)
-  #define DLOG_GROUP_DESCR(g,d)
-  #define DCRASH(msg)             ((void)0)
-  #define DCRASH_RELEASE(msg)     (Debug::SkipNext(),(Debug::CrashBegin(nullptr,0) << msg).CrashDone(true))
-  #define DFAIL()                 ((void)0)
-  #define D_ISLOG()               false
-  #define D_ISLOG_GROUP(group)    false
+	#define DASSERT(expr) ((void)0)
+	#define DASSERT_MSG(expr, msg) ((void)0)
+	#define DCHECK(expr) (expr)
+	#define DCHECK_MSG(expr, msg) (expr)
+	#define DFAIL_IF(cond) if (cond)
+	#define DFAIL_IF_MSG(cond, msg) if (cond)
+	#define DLOG(what) ((void)0)
+	#define DLOG_DESCR(descr)
+	#define DLOG_GROUP(group, what) ((void)0)
+	#define DLOG_GROUP_DESCR(g, d)
+	#define DCRASH(msg) ((void)0)
+	#define DCRASH_RELEASE(msg) (Debug::SkipNext(), (Debug::CrashBegin(nullptr, 0) << msg).CrashDone(true))
+	#define DFAIL() ((void)0)
+	#define D_ISLOG() false
+	#define D_ISLOG_GROUP(group) false
 
 #endif
 
 // put these helper templates in a namespace...
 namespace _Debug
 {
-  template<bool> struct StaticAssertionFailed;
-  template<> struct StaticAssertionFailed<true> {};
-  template<int x> struct StaticAssertionTest {};
+template <bool>
+struct StaticAssertionFailed;
+template <>
+struct StaticAssertionFailed<true>
+{};
+template <int x>
+struct StaticAssertionTest
+{};
 
-  #define DCTASSERT(expr)         typedef ::_Debug::StaticAssertionTest< \
-                                    sizeof(::_Debug::StaticAssertionFailed< (bool)(expr) >) \
-                                    > DebugStaticAssertTypedef__;
-};
+#define DCTASSERT(expr) typedef ::_Debug::StaticAssertionTest< \
+	sizeof(::_Debug::StaticAssertionFailed< (bool)(expr) >) > \
+	DebugStaticAssertTypedef__;
+};    // namespace _Debug
 
 // These are stolen from the WW3D Debug file. REALLY useful. :-)
 #define STRING_IT(a) #a
-#define TOKEN_IT(a) STRING_IT(,##a)
+#define TOKEN_IT(a) STRING_IT(, ##a)
 
 /**
   The macro MESSAGE allows user to put:
@@ -386,4 +391,4 @@ sourcefname.cpp (123) : Hello world
   will be printed everytime it is compiled.  Very useful to put comments in code that cannot
   be forgotten.
 */
-#define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
+#define MESSAGE(a) message(__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)

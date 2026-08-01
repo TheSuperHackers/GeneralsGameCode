@@ -26,8 +26,8 @@
 #include "wdview.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -37,10 +37,10 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CWdumpView, CView)
 
 BEGIN_MESSAGE_MAP(CWdumpView, CView)
-	//{{AFX_MSG_MAP(CWdumpView)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CWdumpView)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,6 @@ END_MESSAGE_MAP()
 CWdumpView::CWdumpView()
 {
 	// TODO: add construction code here
-
 }
 
 CWdumpView::~CWdumpView()
@@ -89,12 +88,12 @@ void CWdumpView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-CWdumpDoc* CWdumpView::GetDocument() // non-debug version is inline
+CWdumpDoc* CWdumpView::GetDocument()    // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CWdumpDoc)));
 	return (CWdumpDoc*)m_pDocument;
 }
-#endif //RTS_DEBUG
+#endif    // RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpView message handlers

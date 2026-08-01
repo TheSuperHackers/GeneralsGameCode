@@ -28,35 +28,36 @@
 // Forward declarations.
 class Dict;
 
-
 // External Defines
 
 class TeamObjectProperties : public CPropertyPage
 {
-// Construction
+	// Construction
 public:
 	TeamObjectProperties(Dict* dictToEdit = nullptr);
 	virtual ~TeamObjectProperties() override;
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(MapObjectProps)
-	enum { IDD = IDD_TeamObjectProperties };
+	enum
+	{
+		IDD = IDD_TeamObjectProperties
+	};
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(TeamObjectProperties)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	Dict* m_dictToEdit;
 
-#if 0 // Keys not implemented yet.  jba. [3/26/2003]//
+#if 0    // Keys not implemented yet.  jba. [3/26/2003]//
 	void updateTheUI();
 
 	// Generated message map functions

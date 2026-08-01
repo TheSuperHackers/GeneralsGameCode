@@ -29,28 +29,31 @@
 
 #pragma once
 
-class ProfileCmdInterface: public DebugCmdInterface
+class ProfileCmdInterface : public DebugCmdInterface
 {
-  struct Factory
-  {
-    ProfileResultInterface* (*func)(int, const char * const *);
-    const char *name,*arg;
-  };
+	struct Factory
+	{
+		ProfileResultInterface* (*func)(int, const char* const*);
+		const char *name, *arg;
+	};
 
-  static unsigned numResIf;
-  static Factory *resIf;
+	static unsigned numResIf;
+	static Factory* resIf;
 
-  unsigned numResFunc; // optimizer bug: must be declared volatile!
-  ProfileResultInterface **resFunc;
+	unsigned numResFunc;    // optimizer bug: must be declared volatile!
+	ProfileResultInterface** resFunc;
 
 public:
-  ProfileCmdInterface(): numResFunc(0), resFunc(0) {}
+	ProfileCmdInterface()
+	  : numResFunc(0)
+	  , resFunc(0)
+	{}
 
-  static void AddResultFunction(ProfileResultInterface* (*func)(int, const char * const *),
-                                const char *name, const char *arg);
-  void RunResultFunctions();
+	static void AddResultFunction(ProfileResultInterface* (*func)(int, const char* const*),
+	                              const char* name, const char* arg);
+	void RunResultFunctions();
 
-  virtual bool Execute(class Debug& dbg, const char *cmd, CommandMode cmdmode,
-                       unsigned argn, const char * const * argv);
-  virtual void Delete() {}
+	virtual bool Execute(class Debug& dbg, const char* cmd, CommandMode cmdmode,
+	                     unsigned argn, const char* const* argv);
+	virtual void Delete() {}
 };

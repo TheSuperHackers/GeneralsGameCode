@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 #include "Common/Player.h"
@@ -41,21 +41,16 @@
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
 #include "GameLogic/Module/LaserUpdate.h"
 
-
-
-
-
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
 	UpdateModuleData::buildFieldParse(p);
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "AssistingClipSize",		INI::parseInt,		nullptr, offsetof( AssistedTargetingUpdateModuleData, m_clipSize ) },
-		{ "AssistingWeaponSlot",	INI::parseLookupList,	TheWeaponSlotTypeNamesLookupList, offsetof( AssistedTargetingUpdateModuleData, m_weaponSlot ) },
-		{ "LaserFromAssisted",		INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserFromAssistedName ) },
-		{ "LaserToTarget",				INI::parseAsciiString,				nullptr, offsetof( AssistedTargetingUpdateModuleData, m_laserToTargetName ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "AssistingClipSize", INI::parseInt, nullptr, offsetof(AssistedTargetingUpdateModuleData, m_clipSize) },
+		{ "AssistingWeaponSlot", INI::parseLookupList, TheWeaponSlotTypeNamesLookupList, offsetof(AssistedTargetingUpdateModuleData, m_weaponSlot) },
+		{ "LaserFromAssisted", INI::parseAsciiString, nullptr, offsetof(AssistedTargetingUpdateModuleData, m_laserFromAssistedName) },
+		{ "LaserToTarget", INI::parseAsciiString, nullptr, offsetof(AssistedTargetingUpdateModuleData, m_laserToTargetName) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
@@ -63,7 +58,8 @@ void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-AssistedTargetingUpdate::AssistedTargetingUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateModule( thing, moduleData )
+AssistedTargetingUpdate::AssistedTargetingUpdate(Thing* thing, const ModuleData* moduleData)
+  : UpdateModule(thing, moduleData)
 {
 	m_laserFromAssisted = nullptr;
 	m_laserToTarget = nullptr;
@@ -80,9 +76,11 @@ AssistedTargetingUpdate::~AssistedTargetingUpdate()
 Bool AssistedTargetingUpdate::isFreeToAssist() const
 {
 	// The reload times of my two weapons are tied together, so Ready is indicative of either.
-	const Object *me = getObject();
-	if( !me->isAbleToAttack() )
-		return FALSE;// This will cover under construction among other things
+	const Object* me = getObject();
+	if (!me->isAbleToAttack())
+	{
+		return FALSE;    // This will cover under construction among other things
+	}
 
 	Bool ready = me->getCurrentWeapon() && me->getCurrentWeapon()->getStatus() == READY_TO_FIRE;
 	return ready;
@@ -90,58 +88,68 @@ Bool AssistedTargetingUpdate::isFreeToAssist() const
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::assistAttack( const Object *requestingObject, Object *victimObject )
+void AssistedTargetingUpdate::assistAttack(const Object* requestingObject, Object* victimObject)
 {
-	const AssistedTargetingUpdateModuleData *md = getAssistedTargetingUpdateModuleData();
-	Object *me = getObject();
-	if( !me->getAI() )
+	const AssistedTargetingUpdateModuleData* md = getAssistedTargetingUpdateModuleData();
+	Object* me = getObject();
+	if (!me->getAI())
+	{
 		return;
+	}
 
 	// lock it just till the weapon is empty or the attack is "done"
-	me->setWeaponLock( md->m_weaponSlot, LOCKED_TEMPORARILY );
-	me->getAI()->aiAttackObject( victimObject, md->m_clipSize, CMD_FROM_AI );
+	me->setWeaponLock(md->m_weaponSlot, LOCKED_TEMPORARILY);
+	me->getAI()->aiAttackObject(victimObject, md->m_clipSize, CMD_FROM_AI);
 
-	if( m_laserFromAssisted )
-		makeFeedbackLaser( m_laserFromAssisted, requestingObject, me );
-	if( m_laserToTarget )
-		makeFeedbackLaser( m_laserToTarget, me, victimObject );
+	if (m_laserFromAssisted)
+	{
+		makeFeedbackLaser(m_laserFromAssisted, requestingObject, me);
+	}
+	if (m_laserToTarget)
+	{
+		makeFeedbackLaser(m_laserToTarget, me, victimObject);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::makeFeedbackLaser( const ThingTemplate *laserTemplate, const Object *from, const Object *to )
+void AssistedTargetingUpdate::makeFeedbackLaser(const ThingTemplate* laserTemplate, const Object* from, const Object* to)
 {
-	if( !getObject()->getControllingPlayer() )
-		return;
-
-	Team *laserTeam = getObject()->getControllingPlayer()->getDefaultTeam();
-	Object *laser = TheThingFactory->newObject( laserTemplate, laserTeam );
-	if( !laser )
-		return;
-
-	Drawable *draw = laser->getDrawable();
-	static const NameKeyType key_LaserUpdate = NAMEKEY( "LaserUpdate" );
-	LaserUpdate *update = (LaserUpdate*)draw->findClientUpdateModule( key_LaserUpdate );
-	if( !update )
+	if (!getObject()->getControllingPlayer())
 	{
-		TheGameLogic->destroyObject( laser );
+		return;
+	}
+
+	Team* laserTeam = getObject()->getControllingPlayer()->getDefaultTeam();
+	Object* laser = TheThingFactory->newObject(laserTemplate, laserTeam);
+	if (!laser)
+	{
+		return;
+	}
+
+	Drawable* draw = laser->getDrawable();
+	static const NameKeyType key_LaserUpdate = NAMEKEY("LaserUpdate");
+	LaserUpdate* update = (LaserUpdate*)draw->findClientUpdateModule(key_LaserUpdate);
+	if (!update)
+	{
+		TheGameLogic->destroyObject(laser);
 		return;
 	}
 
 	/** @todo In case they increase the duration of these, initLaser should be able to take
-			Objects as args instead of positions.
+	    Objects as args instead of positions.
 	*/
-	update->initLaser( getObject(), from->getPosition(), to->getPosition() );
+	update->initLaser(getObject(), from->getPosition(), to->getPosition());
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime AssistedTargetingUpdate::update()
 {
-	const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
+	const AssistedTargetingUpdateModuleData* d = getAssistedTargetingUpdateModuleData();
 
-	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
-	m_laserToTarget = TheThingFactory->findTemplate( d->m_laserToTargetName );
+	m_laserFromAssisted = TheThingFactory->findTemplate(d->m_laserFromAssistedName);
+	m_laserToTarget = TheThingFactory->findTemplate(d->m_laserToTargetName);
 
 	return UPDATE_SLEEP_FOREVER;
 }
@@ -149,30 +157,26 @@ UpdateSleepTime AssistedTargetingUpdate::update()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::crc( Xfer *xfer )
+void AssistedTargetingUpdate::crc(Xfer* xfer)
 {
-
 	// extend base class
-	UpdateModule::crc( xfer );
-
+	UpdateModule::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void AssistedTargetingUpdate::xfer( Xfer *xfer )
+void AssistedTargetingUpdate::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	UpdateModule::xfer( xfer );
-
+	UpdateModule::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -180,10 +184,10 @@ void AssistedTargetingUpdate::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdate::loadPostProcess()
 {
-	const AssistedTargetingUpdateModuleData *d = getAssistedTargetingUpdateModuleData();
+	const AssistedTargetingUpdateModuleData* d = getAssistedTargetingUpdateModuleData();
 
-	m_laserFromAssisted = TheThingFactory->findTemplate( d->m_laserFromAssistedName );
-	m_laserToTarget = TheThingFactory->findTemplate( d->m_laserToTargetName );
+	m_laserFromAssisted = TheThingFactory->findTemplate(d->m_laserFromAssistedName);
+	m_laserToTarget = TheThingFactory->findTemplate(d->m_laserToTargetName);
 
 	// extend base class
 	UpdateModule::loadPostProcess();

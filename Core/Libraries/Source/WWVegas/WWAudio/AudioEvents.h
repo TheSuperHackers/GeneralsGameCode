@@ -39,7 +39,6 @@
 #include "WWLib/simplevec.h"
 #include "WWLib/bittype.h"
 
-
 /////////////////////////////////////////////////////////////////////////////////
 //	Forward declarations
 /////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +47,6 @@ class LogicalListenerClass;
 class LogicalSoundClass;
 class AudibleSoundClass;
 class StringClass;
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -60,11 +58,10 @@ class StringClass;
 // Callback declarations.  These functions are called when a registered event occurs
 // in the sound library/
 //
-typedef void (__stdcall  *LPFNSOSCALLBACK)		(SoundSceneObjClass *sound_obj, uint32 user_param);
-typedef void (__stdcall  *LPFNEOSCALLBACK)		(SoundSceneObjClass *sound_obj, uint32 user_param);
-typedef void (__stdcall  *LPFNHEARDCALLBACK)	(LogicalListenerClass *listener, LogicalSoundClass *sound_obj, uint32 user_param);
-typedef void (__stdcall  *LPFNTEXTCALLBACK)	(AudibleSoundClass *sound_obj, const StringClass &text, uint32 user_param);
-
+typedef void(__stdcall* LPFNSOSCALLBACK)(SoundSceneObjClass* sound_obj, uint32 user_param);
+typedef void(__stdcall* LPFNEOSCALLBACK)(SoundSceneObjClass* sound_obj, uint32 user_param);
+typedef void(__stdcall* LPFNHEARDCALLBACK)(LogicalListenerClass* listener, LogicalSoundClass* sound_obj, uint32 user_param);
+typedef void(__stdcall* LPFNTEXTCALLBACK)(AudibleSoundClass* sound_obj, const StringClass& text, uint32 user_param);
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -83,35 +80,31 @@ typedef void (__stdcall  *LPFNTEXTCALLBACK)	(AudibleSoundClass *sound_obj, const
 /////////////////////////////////////////////////////////////////////////////////
 class AudioCallbackClass
 {
-
 public:
-
 	/////////////////////////////////////////////////////////////////////////////////
 	//	Event identifiers
 	/////////////////////////////////////////////////////////////////////////////////
 	typedef enum
 	{
-		EVENT_NONE					= 0x0000,
-		EVENT_SOUND_STARTED		= 0x0001,
-		EVENT_SOUND_ENDED			= 0x0002,
-		EVENT_LOGICAL_HEARD		= 0x0004
+		EVENT_NONE = 0x0000,
+		EVENT_SOUND_STARTED = 0x0001,
+		EVENT_SOUND_ENDED = 0x0002,
+		EVENT_LOGICAL_HEARD = 0x0004
 	} EVENTS;
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//	Overrideables (callback-methods)
 	/////////////////////////////////////////////////////////////////////////////////
-	virtual void	On_Sound_Started (SoundSceneObjClass *sound_obj)	{ }
-	virtual void	On_Sound_Ended (SoundSceneObjClass *sound_obj)		{ }
-	virtual void	On_Logical_Heard (LogicalListenerClass *listener, LogicalSoundClass *sound_obj)	{ }
+	virtual void On_Sound_Started(SoundSceneObjClass* sound_obj) {}
+	virtual void On_Sound_Ended(SoundSceneObjClass* sound_obj) {}
+	virtual void On_Logical_Heard(LogicalListenerClass* listener, LogicalSoundClass* sound_obj) {}
 };
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //
 //	Internal implementation
 //
 /////////////////////////////////////////////////////////////////////////////////
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -125,63 +118,63 @@ public:
 template <class T>
 struct AUDIO_CALLBACK_STRUCT
 {
-	T					callback_ptr;
-	uint32			user_data;
+	T callback_ptr;
+	uint32 user_data;
 
-	AUDIO_CALLBACK_STRUCT ()
-		:	callback_ptr (nullptr), user_data (0)	{}
+	AUDIO_CALLBACK_STRUCT()
+	  : callback_ptr(nullptr)
+	  , user_data(0)
+	{}
 
-	AUDIO_CALLBACK_STRUCT (T _ptr, uint32 _data)
-		:	callback_ptr (_ptr), user_data (_data) {}
-
+	AUDIO_CALLBACK_STRUCT(T _ptr, uint32 _data)
+	  : callback_ptr(_ptr)
+	  , user_data(_data)
+	{}
 };
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //	Protected structures
 /////////////////////////////////////////////////////////////////////////////////
 template <class T>
-class AudioCallbackListClass : public SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T>/**/>
+class AudioCallbackListClass : public SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> /**/>
 {
-	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T>/**/>::Vector;
-	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T>/**/>::ActiveCount;
-	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T>/**/>::Delete;
-	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T>/**/>::Add;
+	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> /**/>::Vector;
+	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> /**/>::ActiveCount;
+	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> /**/>::Delete;
+	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> /**/>::Add;
 
 public:
-
 	/////////////////////////////////////////////////////////////////////////////////
 	//	Public constructors/destructors
 	/////////////////////////////////////////////////////////////////////////////////
-	AudioCallbackListClass ()					{ }
-	virtual ~AudioCallbackListClass () override { }
+	AudioCallbackListClass() {}
+	virtual ~AudioCallbackListClass() override {}
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//	Public methods
 	/////////////////////////////////////////////////////////////////////////////////
-	void			Add_Callback (T pointer, uint32 user_data);
-	T				Get_Callback (int index, uint32 *user_data);
-	void			Remove_Callback (T pointer);
+	void Add_Callback(T pointer, uint32 user_data);
+	T Get_Callback(int index, uint32* user_data);
+	void Remove_Callback(T pointer);
 };
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //	Add_Callback
 /////////////////////////////////////////////////////////////////////////////////
-template <class T> void
-AudioCallbackListClass<T>::Add_Callback (T pointer, uint32 user_data)
+template <class T>
+void AudioCallbackListClass<T>::Add_Callback(T pointer, uint32 user_data)
 {
-	Add ( AUDIO_CALLBACK_STRUCT<T> (pointer, user_data));
+	Add(AUDIO_CALLBACK_STRUCT<T>(pointer, user_data));
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //	Get_Callback
 /////////////////////////////////////////////////////////////////////////////////
-template <class T> T
-AudioCallbackListClass<T>::Get_Callback (int index, uint32 *user_data)
+template <class T>
+T AudioCallbackListClass<T>::Get_Callback(int index, uint32* user_data)
 {
-	if (user_data != nullptr) {
+	if (user_data != nullptr)
+	{
 		(*user_data) = Vector[index].user_data;
 	}
 
@@ -191,12 +184,14 @@ AudioCallbackListClass<T>::Get_Callback (int index, uint32 *user_data)
 /////////////////////////////////////////////////////////////////////////////////
 //	Remove_Callback
 /////////////////////////////////////////////////////////////////////////////////
-template <class T> void
-AudioCallbackListClass<T>::Remove_Callback (T pointer)
+template <class T>
+void AudioCallbackListClass<T>::Remove_Callback(T pointer)
 {
-	for (int index = 0; index < ActiveCount; index ++) {
-		if (Vector[index].callback_ptr == pointer) {
-			Delete (index);
+	for (int index = 0; index < ActiveCount; index++)
+	{
+		if (Vector[index].callback_ptr == pointer)
+		{
+			Delete(index);
 			break;
 		}
 	}

@@ -42,117 +42,117 @@
 */
 class DebugIOInterface
 {
-  // no copy/assign op
-  DebugIOInterface(const DebugIOInterface&);
-  DebugIOInterface& operator=(const DebugIOInterface&);
+	// no copy/assign op
+	DebugIOInterface(const DebugIOInterface&);
+	DebugIOInterface& operator=(const DebugIOInterface&);
 
 protected:
-  /**
-    \brief I/O class destructor.
+	/**
+	  \brief I/O class destructor.
 
-    The destructor must always be protected. Destruction is
-    done by calling the Delete member function.
-  */
-  virtual ~DebugIOInterface() {}
+	  The destructor must always be protected. Destruction is
+	  done by calling the Delete member function.
+	*/
+	virtual ~DebugIOInterface() {}
 
 public:
-  // interface only so no functionality here
-  explicit DebugIOInterface() {}
+	// interface only so no functionality here
+	explicit DebugIOInterface() {}
 
-  /// List of possible log string types
-  enum StringType
-  {
-    /// DASSERT etc
-    Assert = 0,
+	/// List of possible log string types
+	enum StringType
+	{
+		/// DASSERT etc
+		Assert = 0,
 
-    /// DCHECK etc
-    Check,
+		/// DCHECK etc
+		Check,
 
-    /// DLOG etc
-    Log,
+		/// DLOG etc
+		Log,
 
-    /// DCRASH etc
-    Crash,
+		/// DCRASH etc
+		Crash,
 
-    /// Exception
-    Exception,
+		/// Exception
+		Exception,
 
-    /// Regular command reply
-    CmdReply,
+		/// Regular command reply
+		CmdReply,
 
-    /// Structured command reply, see \ref debug_structcmd
-    StructuredCmdReply,
+		/// Structured command reply, see \ref debug_structcmd
+		StructuredCmdReply,
 
-    /// some other message
-    Other,
+		/// some other message
+		Other,
 
-    MAX
-  };
+		MAX
+	};
 
-  /**
-    \brief Retrieves up to the given number of characters from a command input source.
+	/**
+	  \brief Retrieves up to the given number of characters from a command input source.
 
-    This source can be e.g. keyboard or a network pipe. This function must
-    not block.
+	  This source can be e.g. keyboard or a network pipe. This function must
+	  not block.
 
-    \param buf buffer to place read characters in
-    \param maxchar maximum number of characters to return
-    \return numbers of characters written to buffer
-    \note There is no terminating NUL char written to the buffer
-  */
-  virtual int Read(char *buf, int maxchar)=0;
+	  \param buf buffer to place read characters in
+	  \param maxchar maximum number of characters to return
+	  \return numbers of characters written to buffer
+	  \note There is no terminating NUL char written to the buffer
+	*/
+	virtual int Read(char* buf, int maxchar) = 0;
 
-  /**
-    \brief Write out some characters differentiated by the log string type.
+	/**
+	  \brief Write out some characters differentiated by the log string type.
 
-    \param type possible string type
-    \param src string source, may be nullptr, content depends on type:
-                <table><tr>
-                  <td><b>type</b></td><td><b>src</b></td></tr><tr>
-                  <td>Assert</td><td>file(line)</td></tr><tr>
-                  <td>Check</td><td>file(line)</td></tr><tr>
-                  <td>Log</td><td>log group</td></tr><tr>
-                  <td>Crash</td><td>file(line)</td></tr><tr>
-                  <td>Exception</td><td>nullptr</td></tr><tr>
-                  <td>CmdReply</td><td>group.command</td></tr><tr>
-                  <td>StructuredCmdReply</td><td>group.command</td></tr><tr>
-                  <td>Other</td><td>nullptr</td>
-                </tr></table>
-    \param str string to output, NUL delimited, if nullptr then simply flush
-               output (if applicable)
-  */
-  virtual void Write(StringType type, const char *src, const char *str)=0;
+	  \param type possible string type
+	  \param src string source, may be nullptr, content depends on type:
+	              <table><tr>
+	                <td><b>type</b></td><td><b>src</b></td></tr><tr>
+	                <td>Assert</td><td>file(line)</td></tr><tr>
+	                <td>Check</td><td>file(line)</td></tr><tr>
+	                <td>Log</td><td>log group</td></tr><tr>
+	                <td>Crash</td><td>file(line)</td></tr><tr>
+	                <td>Exception</td><td>nullptr</td></tr><tr>
+	                <td>CmdReply</td><td>group.command</td></tr><tr>
+	                <td>StructuredCmdReply</td><td>group.command</td></tr><tr>
+	                <td>Other</td><td>nullptr</td>
+	              </tr></table>
+	  \param str string to output, NUL delimited, if nullptr then simply flush
+	             output (if applicable)
+	*/
+	virtual void Write(StringType type, const char* src, const char* str) = 0;
 
-  /**
-    \brief Emergency shutdown function.
+	/**
+	  \brief Emergency shutdown function.
 
-    This function gets called during an exception and should perform the
-    absolute bare minimum (e.g. just flushing and closing the output file).
-  */
-  virtual void EmergencyFlush()=0;
+	  This function gets called during an exception and should perform the
+	  absolute bare minimum (e.g. just flushing and closing the output file).
+	*/
+	virtual void EmergencyFlush() = 0;
 
-  /**
-    \brief I/O class specific command.
+	/**
+	  \brief I/O class specific command.
 
-    All io \<class\> commands are passed into this function, with the
-    exception of remove which results in simply calling the class
-    destructor.
+	  All io \<class\> commands are passed into this function, with the
+	  exception of remove which results in simply calling the class
+	  destructor.
 
-    \param dbg debug instance
-    \param cmd command issued
-    \param structuredCmd true if structured command reply, false if not
-    \param argn number of additional arguments passed in
-    \param argv argument list
-  */
-  virtual void Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
-                       unsigned argn, const char * const * argv)=0;
+	  \param dbg debug instance
+	  \param cmd command issued
+	  \param structuredCmd true if structured command reply, false if not
+	  \param argn number of additional arguments passed in
+	  \param argv argument list
+	*/
+	virtual void Execute(class Debug& dbg, const char* cmd, bool structuredCmd,
+	                     unsigned argn, const char* const* argv) = 0;
 
-  /**
-    \brief Destroys the current I/O class instance.
+	/**
+	  \brief Destroys the current I/O class instance.
 
-    Use this function instead of just delete'ing the instance.
-  */
-  virtual void Delete()=0;
+	  Use this function instead of just delete'ing the instance.
+	*/
+	virtual void Delete() = 0;
 };
 
 /**
@@ -169,7 +169,7 @@ public:
     \param type type name of class we're implementing
     \note This macro changes the access method to private.
   */
-  #define DEBUG_DECLARE_IO_INTERFACE(type)
+	#define DEBUG_DECLARE_IO_INTERFACE(type)
 
   /**
     \brief Helper macro for registering I/O class factory with
@@ -180,17 +180,17 @@ public:
     \param descr short I/O class description
     \param type type name of class we're implementing
   */
-  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type)
+	#define DEBUG_IMPLEMENT_IO_INTERFACE(io_id, descr, type)
 
 #else
 
-  #define DEBUG_DECLARE_IO_INTERFACE(type) \
-    public: \
-      static bool __RegisterClassFactory; \
-      static DebugIOInterface *__ClassFactory() { return new type; }
+	#define DEBUG_DECLARE_IO_INTERFACE(type) \
+	public: \
+		static bool __RegisterClassFactory; \
+		static DebugIOInterface* __ClassFactory() { return new type; }
 
-  #define DEBUG_IMPLEMENT_IO_INTERFACE(io_id,descr,type) \
-    static bool type::__RegisterClassFactory=Debug::AddIOFactory(#io_id,descr,type::__ClassFactory);
+	#define DEBUG_IMPLEMENT_IO_INTERFACE(io_id, descr, type) \
+		static bool type::__RegisterClassFactory = Debug::AddIOFactory(#io_id, descr, type::__ClassFactory);
 
 #endif
 

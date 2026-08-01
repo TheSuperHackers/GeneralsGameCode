@@ -26,28 +26,29 @@
 
 class GammaDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	GammaDialogClass(CWnd* pParent = nullptr);   // standard constructor
+	GammaDialogClass(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(GammaDialogClass)
-	enum { IDD = IDD_GAMMA_DIALOG };
-	CSliderCtrl	m_gammaslider;
-	int		m_gamma;
+	enum
+	{
+		IDD = IDD_GAMMA_DIALOG
+	};
+	CSliderCtrl m_gammaslider;
+	int m_gamma;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(GammaDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(GammaDialogClass)
 	virtual BOOL OnInitDialog();

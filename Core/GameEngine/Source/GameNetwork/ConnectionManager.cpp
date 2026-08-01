@@ -22,8 +22,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Compression.h"
 #include "WWLib/strtok_r.h"
@@ -104,8 +103,7 @@ struct TransferFileRule
 	UnsignedInt maxSize;
 };
 
-static const TransferFileRule transferFileRules[TransferFileType_Count] =
-{
+static const TransferFileRule transferFileRules[TransferFileType_Count] = {
 	{ ".map", 5 * 1024 * 1024 },
 	{ ".ini", 2 * 1024 * 1024 },
 	{ ".str", 512 * 1024 },
@@ -153,46 +151,44 @@ static Bool hasValidTransferFileContent(const AsciiString& filePath, const Unsig
 	// Extension-specific content validation
 	switch (fileType)
 	{
-	case TransferFileType_Map:
-		break;
+		case TransferFileType_Map:
+			break;
 
-	case TransferFileType_Ini:
-	{
-		for (UnsignedInt i = 0; i < dataSize; ++i)
+		case TransferFileType_Ini:
 		{
-			if (data[i] == 0)
+			for (UnsignedInt i = 0; i < dataSize; ++i)
 			{
-				DEBUG_LOG(("INI file '%s' contains null bytes (likely binary).", filePath.str()));
+				if (data[i] == 0)
+				{
+					DEBUG_LOG(("INI file '%s' contains null bytes (likely binary).", filePath.str()));
+					return false;
+				}
+			}
+			break;
+		}
+
+		case TransferFileType_Tga:
+		{
+			if (dataSize < sizeof(TGAHeader) + sizeof(TGA2Footer))
+			{
+				DEBUG_LOG(("TGA file '%s' is too small to be valid.", filePath.str()));
 				return false;
 			}
+			TGA2Footer footer;
+			memcpy(&footer, data + dataSize - sizeof(footer), sizeof(footer));
+			const Bool isTGA2 = memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) == 0 && footer.RsvdChar == '.' && footer.BZST == '\0';
+			if (!isTGA2)
+			{
+				DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));
+				return false;
+			}
+			break;
 		}
-		break;
-	}
 
-	case TransferFileType_Tga:
-	{
-		if (dataSize < sizeof(TGAHeader) + sizeof(TGA2Footer))
+		default:
 		{
-			DEBUG_LOG(("TGA file '%s' is too small to be valid.", filePath.str()));
-			return false;
+			break;
 		}
-		TGA2Footer footer;
-		memcpy(&footer, data + dataSize - sizeof(footer), sizeof(footer));
-		const Bool isTGA2 = memcmp(footer.Signature, TGA2_SIGNATURE, sizeof(footer.Signature)) == 0
-			&& footer.RsvdChar == '.'
-			&& footer.BZST == '\0';
-		if (!isTGA2)
-		{
-			DEBUG_LOG(("TGA file '%s' is missing TRUEVISION-XFILE footer signature.", filePath.str()));
-			return false;
-		}
-		break;
-	}
-
-	default:
-	{
-		break;
-	}
 	}
 
 	return true;
@@ -211,12 +207,14 @@ ConnectionManager::~ConnectionManager()
 	m_transport = nullptr;
 
 	Int i = 0;
-	for (; i < MAX_SLOTS; ++i) {
+	for (; i < MAX_SLOTS; ++i)
+	{
 		deleteInstance(m_frameData[i]);
 		m_frameData[i] = nullptr;
 	}
 
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		deleteInstance(m_connections[i]);
 		m_connections[i] = nullptr;
 	}
@@ -239,7 +237,8 @@ ConnectionManager::~ConnectionManager()
 
 	s_fileCommandMap.clear();
 	s_fileRecipientMaskMap.clear();
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		s_fileProgressMap[i].clear();
 	}
 }
@@ -249,7 +248,8 @@ ConnectionManager::~ConnectionManager()
  */
 ConnectionManager::ConnectionManager()
 {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
 		m_frameData[i] = nullptr;
 	}
 	m_transport = nullptr;
@@ -268,23 +268,26 @@ ConnectionManager::ConnectionManager()
  */
 void ConnectionManager::init()
 {
-//	if (m_transport == nullptr) {
-//		m_transport = new Transport;
-//	}
-//	m_transport->reset();
+	//	if (m_transport == nullptr) {
+	//		m_transport = new Transport;
+	//	}
+	//	m_transport->reset();
 
 	UnsignedInt i = 0;
-	for (; i < MAX_SLOTS; ++i) {
+	for (; i < MAX_SLOTS; ++i)
+	{
 		m_connections[i] = nullptr;
 	}
 
-	if (m_pendingCommands == nullptr) {
+	if (m_pendingCommands == nullptr)
+	{
 		m_pendingCommands = newInstance(NetCommandList);
 		m_pendingCommands->init();
 	}
 	m_pendingCommands->reset();
 
-	if (m_relayedCommands == nullptr) {
+	if (m_relayedCommands == nullptr)
+	{
 		m_relayedCommands = newInstance(NetCommandList);
 		m_relayedCommands->init();
 	}
@@ -294,24 +297,28 @@ void ConnectionManager::init()
 #ifdef MEMORYPOOL_DEBUG
 	TheMemoryPoolFactory->debugSetInitFillerIndex(m_localSlot);
 #endif
-	m_packetRouterSlot = 0; /// @todo The LAN/WOL interface should be telling us who the packet router is based on machine specs passed around through game options.
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	m_packetRouterSlot = 0;    /// @todo The LAN/WOL interface should be telling us who the packet router is based on machine specs passed around through game options.
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		m_packetRouterFallback[i] = -1;
 	}
 
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		deleteInstance(m_frameData[i]);
 		m_frameData[i] = nullptr;
 	}
 
-//	m_averageFps = 30;			// since 30 fps is the desired rate, we'll start off at that.
-//	m_averageLatency = (Real)0.2; // 200ms seems like a good starting point.
+	//	m_averageFps = 30;			// since 30 fps is the desired rate, we'll start off at that.
+	//	m_averageLatency = (Real)0.2; // 200ms seems like a good starting point.
 
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		m_fpsAverages[i] = -1;
 	}
-	for (i = 0; i < MAX_SLOTS; ++i) {
-		m_latencyAverages[i] = 0.0; // using zero since all floating point standards should be able to specify 0.0 accurately.
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
+		m_latencyAverages[i] = 0.0;    // using zero since all floating point standards should be able to specify 0.0 accurately.
 	}
 	m_smallestPacketArrivalCushion = -1;
 
@@ -331,7 +338,8 @@ void ConnectionManager::init()
 
 	s_fileCommandMap.clear();
 	s_fileRecipientMaskMap.clear();
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < MAX_SLOTS; ++i)
+	{
 		s_fileProgressMap[i].clear();
 	}
 }
@@ -341,39 +349,43 @@ void ConnectionManager::init()
  */
 void ConnectionManager::reset()
 {
-//	if (m_transport == nullptr) {
-//		m_transport = new Transport;
-//	}
-//	m_transport->reset();
+	//	if (m_transport == nullptr) {
+	//		m_transport = new Transport;
+	//	}
+	//	m_transport->reset();
 
 	delete m_transport;
 	m_transport = nullptr;
 
 	UnsignedInt i = 0;
-	for (; i < (UnsignedInt)MAX_SLOTS; ++i) {
+	for (; i < (UnsignedInt)MAX_SLOTS; ++i)
+	{
 		deleteInstance(m_connections[i]);
 		m_connections[i] = nullptr;
 	}
 
-	for (i=0; i<(UnsignedInt)MAX_SLOTS; ++i)
+	for (i = 0; i < (UnsignedInt)MAX_SLOTS; ++i)
 	{
 		deleteInstance(m_frameData[i]);
 		m_frameData[i] = nullptr;
 	}
 
-	if (m_pendingCommands == nullptr) {
+	if (m_pendingCommands == nullptr)
+	{
 		m_pendingCommands = newInstance(NetCommandList);
 		m_pendingCommands->init();
 	}
 	m_pendingCommands->reset();
 
-	if (m_relayedCommands == nullptr) {
+	if (m_relayedCommands == nullptr)
+	{
 		m_relayedCommands = newInstance(NetCommandList);
 		m_relayedCommands->init();
 	}
 	m_relayedCommands->reset();
 
-	if (m_netCommandWrapperList == nullptr) {
+	if (m_netCommandWrapperList == nullptr)
+	{
 		m_netCommandWrapperList = newInstance(NetCommandWrapperList);
 		m_netCommandWrapperList->init();
 	}
@@ -385,14 +397,17 @@ void ConnectionManager::reset()
 #endif
 	m_packetRouterSlot = -1;
 
-	for (i = 0; i < TheGlobalData->m_networkFPSHistoryLength; ++i) {
+	for (i = 0; i < TheGlobalData->m_networkFPSHistoryLength; ++i)
+	{
 		m_fpsAverages[i] = -1;
 	}
-	for (i = 0; i < TheGlobalData->m_networkLatencyHistoryLength; ++i) {
+	for (i = 0; i < TheGlobalData->m_networkLatencyHistoryLength; ++i)
+	{
 		m_latencyAverages[i] = 0.0;
 	}
 
-	for (i = 0; i < (UnsignedInt)MAX_SLOTS; ++i) {
+	for (i = 0; i < (UnsignedInt)MAX_SLOTS; ++i)
+	{
 		m_packetRouterFallback[i] = -1;
 	}
 
@@ -401,26 +416,27 @@ void ConnectionManager::reset()
 
 UnsignedInt ConnectionManager::getPingFrame()
 {
-	return (m_disconnectManager)?m_disconnectManager->getPingFrame():0;
+	return (m_disconnectManager) ? m_disconnectManager->getPingFrame() : 0;
 }
 
 Int ConnectionManager::getPingsSent()
 {
-	return (m_disconnectManager)?m_disconnectManager->getPingsSent():0;
+	return (m_disconnectManager) ? m_disconnectManager->getPingsSent() : 0;
 }
 
 Int ConnectionManager::getPingsReceived()
 {
-	return (m_disconnectManager)?m_disconnectManager->getPingsReceived():0;
+	return (m_disconnectManager) ? m_disconnectManager->getPingsReceived() : 0;
 }
 
-Bool ConnectionManager::isPlayerConnected( Int playerID )
+Bool ConnectionManager::isPlayerConnected(Int playerID)
 {
-	DEBUG_ASSERTCRASH( playerID < MAX_SLOTS, ("ConnectionManager::isPlayerConnected - %d is an invalid player number", playerID) );
-	return ( playerID == m_localSlot || (m_connections[playerID] && !m_connections[playerID]->isQuitting()) );
+	DEBUG_ASSERTCRASH(playerID < MAX_SLOTS, ("ConnectionManager::isPlayerConnected - %d is an invalid player number", playerID));
+	return (playerID == m_localSlot || (m_connections[playerID] && !m_connections[playerID]->isQuitting()));
 }
 
-void ConnectionManager::attachTransport(Transport *transport) {
+void ConnectionManager::attachTransport(Transport* transport)
+{
 	delete m_transport;
 	m_transport = transport;
 }
@@ -429,10 +445,13 @@ void ConnectionManager::attachTransport(Transport *transport) {
  * zero out the command counts for the given frames.  Presently this is used for
  * the start of a game since there won't be any commands for the first few frames due to runahead.
  */
-void ConnectionManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames) {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_frameData[i] != nullptr) {
-//			DEBUG_LOG(("Calling zeroFrames on player %d, starting frame %d, numFrames %d", i, startingFrame, numFrames));
+void ConnectionManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFrames)
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_frameData[i] != nullptr)
+		{
+			//			DEBUG_LOG(("Calling zeroFrames on player %d, starting frame %d, numFrames %d", i, startingFrame, numFrames));
 			m_frameData[i]->zeroFrames(startingFrame, numFrames);
 		}
 	}
@@ -441,12 +460,15 @@ void ConnectionManager::zeroFrames(UnsignedInt startingFrame, UnsignedInt numFra
 /**
  * Destroy any game messages that are left over due to the run ahead.
  */
-void ConnectionManager::destroyGameMessages() {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+void ConnectionManager::destroyGameMessages()
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
 		// Need to destroy these game messages because when the game ends, there are
 		// still some game messages left over because of the run ahead aspect of
 		// network play.
-		if (m_frameData[i] != nullptr) {
+		if (m_frameData[i] != nullptr)
+		{
 			m_frameData[i]->destroyGameMessages();
 		}
 	}
@@ -458,31 +480,37 @@ void ConnectionManager::destroyGameMessages() {
  * Get those commands and relay them to the appropriate Connection(s). We make the
  * assumption that a command will only be relayed once.
  */
-void ConnectionManager::doRelay() {
-	NetPacket *packet = nullptr;
+void ConnectionManager::doRelay()
+{
+	NetPacket* packet = nullptr;
 
-	for (size_t i = 0; i < ARRAY_SIZE(m_transport->m_inBuffer); ++i) {
-		if (m_transport->m_inBuffer[i].length > 0) {
+	for (size_t i = 0; i < ARRAY_SIZE(m_transport->m_inBuffer); ++i)
+	{
+		if (m_transport->m_inBuffer[i].length > 0)
+		{
 			// This transport buffer has yet to be processed.
 
 			// make a NetPacket out of this data so it can be broken up into individual commands.
 			packet = newInstance(NetPacket)(&(m_transport->m_inBuffer[i]));
 
-			//DEBUG_LOG(("ConnectionManager::doRelay() - got a packet with %d commands", packet->getNumCommands()));
-			//LOGBUFFER( packet->getData(), packet->getLength() );
+			// DEBUG_LOG(("ConnectionManager::doRelay() - got a packet with %d commands", packet->getNumCommands()));
+			// LOGBUFFER( packet->getData(), packet->getLength() );
 
 			// Get the command list from the packet.
-			NetCommandList *cmdList = packet->getCommandList();
+			NetCommandList* cmdList = packet->getCommandList();
 
 			// Iterate through the commands in this packet and send them to the proper connections.
-			for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext()) {
-				//DEBUG_LOG(("ConnectionManager::doRelay() - Looking at a command of type %s",
-					//GetNetCommandTypeAsString(cmd->getCommand()->getNetCommandType())));
+			for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext())
+			{
+				// DEBUG_LOG(("ConnectionManager::doRelay() - Looking at a command of type %s",
+				// GetNetCommandTypeAsString(cmd->getCommand()->getNetCommandType())));
 
-				if (CommandRequiresAck(cmd->getCommand())) {
+				if (CommandRequiresAck(cmd->getCommand()))
+				{
 					ackCommand(cmd, m_localSlot);
 				}
-				if (!processNetCommand(cmd)) {
+				if (!processNetCommand(cmd))
+				{
 					sendRemoteCommand(cmd);
 				}
 			}
@@ -496,17 +524,22 @@ void ConnectionManager::doRelay() {
 
 			// signal that this has been processed.
 			m_transport->m_inBuffer[i].length = 0;
-		} else {
+		}
+		else
+		{
 			break;
 		}
 	}
 
-	NetCommandList *cmdList = m_netCommandWrapperList->getReadyCommands();
-	for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext()) {
-		if (CommandRequiresAck(cmd->getCommand())) {
+	NetCommandList* cmdList = m_netCommandWrapperList->getReadyCommands();
+	for (NetCommandRef* cmd = cmdList->getFirstMessage(); cmd; cmd = cmd->getNext())
+	{
+		if (CommandRequiresAck(cmd->getCommand()))
+		{
 			ackCommand(cmd, m_localSlot);
 		}
-		if (!processNetCommand(cmd)) {
+		if (!processNetCommand(cmd))
+		{
 			sendRemoteCommand(cmd);
 		}
 	}
@@ -523,36 +556,43 @@ void ConnectionManager::doRelay() {
  * This is where the non-synchronized network commands should be processed.
  * Return TRUE if the command should not be relayed. Return FALSE if it should be relayed.
  */
-Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
-	NetCommandMsg *msg = ref->getCommand();
+Bool ConnectionManager::processNetCommand(NetCommandRef* ref)
+{
+	NetCommandMsg* msg = ref->getCommand();
 	NetCommandType cmdType = msg->getNetCommandType();
 
 	// Handle ACK commands first (before connection validation)
 	if ((cmdType == NETCOMMANDTYPE_ACKSTAGE1) ||
-			(cmdType == NETCOMMANDTYPE_ACKSTAGE2) ||
-			(cmdType == NETCOMMANDTYPE_ACKBOTH)) {
+	    (cmdType == NETCOMMANDTYPE_ACKSTAGE2) ||
+	    (cmdType == NETCOMMANDTYPE_ACKBOTH))
+	{
 		processAck(msg);
 		return FALSE;
 	}
 
 	// Early validation checks
-	if (msg->getPlayerID() >= MAX_SLOTS) {
+	if (msg->getPlayerID() >= MAX_SLOTS)
+	{
 		return TRUE;
 	}
 
-	if ((m_connections[msg->getPlayerID()] == nullptr) && (msg->getPlayerID() != m_localSlot)) {
+	if ((m_connections[msg->getPlayerID()] == nullptr) && (msg->getPlayerID() != m_localSlot))
+	{
 		// if this is from a player that is no longer in the game, then ignore them.
 		return TRUE;
 	}
 
 	// Handle WRAPPER commands (before second connection validation)
-	if (cmdType == NETCOMMANDTYPE_WRAPPER) {
-		processWrapper(ref); // need to send the NetCommandRef since we have to construct the relay for the wrapped command.
+	if (cmdType == NETCOMMANDTYPE_WRAPPER)
+	{
+		processWrapper(ref);    // need to send the NetCommandRef since we have to construct the relay for the wrapped command.
 		return FALSE;
 	}
 
-	if (msg->getPlayerID() != m_localSlot) {
-		if (m_connections[msg->getPlayerID()] == nullptr) {
+	if (msg->getPlayerID() != m_localSlot)
+	{
+		if (m_connections[msg->getPlayerID()] == nullptr)
+		{
 			return TRUE;
 		}
 	}
@@ -563,23 +603,27 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	// This was a fix for a command count bug where a command would be
 	// executed, then a command for that old frame would be added to the
 	// FrameData for that frame + 256, and would screw up the command count.
-	if (IsCommandSynchronized(cmdType)) {
-		if (ref->getCommand()->getExecutionFrame() < TheGameLogic->getFrame()) {
+	if (IsCommandSynchronized(cmdType))
+	{
+		if (ref->getCommand()->getExecutionFrame() < TheGameLogic->getFrame())
+		{
 			return TRUE;
 		}
 	}
 
 	// Handle disconnect commands as a range
-	if ((cmdType > NETCOMMANDTYPE_DISCONNECTSTART) && (cmdType < NETCOMMANDTYPE_DISCONNECTEND)) {
+	if ((cmdType > NETCOMMANDTYPE_DISCONNECTSTART) && (cmdType < NETCOMMANDTYPE_DISCONNECTEND))
+	{
 		m_disconnectManager->processDisconnectCommand(ref, this);
 		return TRUE;
 	}
 
 	// Process command by type
-	switch (cmdType) {
-
-		case NETCOMMANDTYPE_FRAMEINFO: {
-			processFrameInfo((NetFrameCommandMsg *)msg);
+	switch (cmdType)
+	{
+		case NETCOMMANDTYPE_FRAMEINFO:
+		{
+			processFrameInfo((NetFrameCommandMsg*)msg);
 			// need to set the relay so we don't send it to ourselves.
 			UnsignedByte relay = ref->getRelay();
 			relay = relay & (0xff ^ (1 << m_localSlot));
@@ -587,9 +631,10 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 			return FALSE;
 		}
 
-		case NETCOMMANDTYPE_PROGRESS: {
-			//DEBUG_LOG(("ConnectionManager::processNetCommand - got a progress net command from player %d", msg->getPlayerID()));
-			processProgress((NetProgressCommandMsg *) msg);
+		case NETCOMMANDTYPE_PROGRESS:
+		{
+			// DEBUG_LOG(("ConnectionManager::processNetCommand - got a progress net command from player %d", msg->getPlayerID()));
+			processProgress((NetProgressCommandMsg*)msg);
 			// need to set the relay so we don't send it to ourselves.
 			UnsignedByte relay = ref->getRelay();
 			relay = relay & (0xff ^ (1 << m_localSlot));
@@ -603,14 +648,14 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 			return FALSE;
 
 		case NETCOMMANDTYPE_RUNAHEADMETRICS:
-			processRunAheadMetrics((NetRunAheadMetricsCommandMsg *)msg);
+			processRunAheadMetrics((NetRunAheadMetricsCommandMsg*)msg);
 			return TRUE;
 
 		case NETCOMMANDTYPE_KEEPALIVE:
 			return TRUE;
 
 		case NETCOMMANDTYPE_DISCONNECTCHAT:
-			processDisconnectChat((NetDisconnectChatCommandMsg *)msg);
+			processDisconnectChat((NetDisconnectChatCommandMsg*)msg);
 			return FALSE;
 
 		case NETCOMMANDTYPE_LOADCOMPLETE:
@@ -619,23 +664,23 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 			return FALSE;
 
 		case NETCOMMANDTYPE_CHAT:
-			processChat((NetChatCommandMsg *)msg);
+			processChat((NetChatCommandMsg*)msg);
 			return FALSE;
 
 		case NETCOMMANDTYPE_FILE:
-			processFile((NetFileCommandMsg *)msg);
+			processFile((NetFileCommandMsg*)msg);
 			return FALSE;
 
 		case NETCOMMANDTYPE_FILEANNOUNCE:
-			processFileAnnounce((NetFileAnnounceCommandMsg *)msg);
+			processFileAnnounce((NetFileAnnounceCommandMsg*)msg);
 			return FALSE;
 
 		case NETCOMMANDTYPE_FILEPROGRESS:
-			processFileProgress((NetFileProgressCommandMsg *)msg);
+			processFileProgress((NetFileProgressCommandMsg*)msg);
 			return FALSE;
 
 		case NETCOMMANDTYPE_FRAMERESENDREQUEST:
-			processFrameResendRequest((NetFrameResendRequestCommandMsg *)msg);
+			processFrameResendRequest((NetFrameResendRequestCommandMsg*)msg);
 			return TRUE;
 
 		default:
@@ -643,15 +688,18 @@ Bool ConnectionManager::processNetCommand(NetCommandRef *ref) {
 	}
 }
 
-void ConnectionManager::processFrameResendRequest(NetFrameResendRequestCommandMsg *msg) {
+void ConnectionManager::processFrameResendRequest(NetFrameResendRequestCommandMsg* msg)
+{
 	// first make sure this is a valid slot
 	const UnsignedInt playerID = msg->getPlayerID();
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
 
 	// make sure this player is still in our game.
-	if ((m_connections[playerID] == nullptr) || (m_connections[playerID]->isQuitting() == TRUE)) {
+	if ((m_connections[playerID] == nullptr) || (m_connections[playerID]->isQuitting() == TRUE))
+	{
 		return;
 	}
 
@@ -661,12 +709,12 @@ void ConnectionManager::processFrameResendRequest(NetFrameResendRequestCommandMs
 /**
  * We have received a wrapper for a command too big to fit in a packet.
  */
-void ConnectionManager::processWrapper(NetCommandRef *ref)
+void ConnectionManager::processWrapper(NetCommandRef* ref)
 {
-	NetWrapperCommandMsg *wrapperMsg = (NetWrapperCommandMsg *)(ref->getCommand());
+	NetWrapperCommandMsg* wrapperMsg = (NetWrapperCommandMsg*)(ref->getCommand());
 	UnsignedShort commandID = wrapperMsg->getWrappedCommandID();
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - wrapped commandID is %d, commandID is %d",
-		commandID, wrapperMsg->getID()));
+	                                  commandID, wrapperMsg->getID()));
 	Int origProgress = 0;
 	FileCommandMap::iterator fcIt = s_fileCommandMap.find(commandID);
 	if (fcIt != s_fileCommandMap.end())
@@ -674,7 +722,7 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 		origProgress = s_fileProgressMap[m_localSlot][commandID];
 	}
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - origProgress[%d] == %d for command %d",
-		m_localSlot, origProgress, commandID));
+	                                  m_localSlot, origProgress, commandID));
 
 	m_netCommandWrapperList->processWrapper(ref);
 
@@ -682,14 +730,14 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 	{
 		Int newProgress = m_netCommandWrapperList->getPercentComplete(commandID);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - newProgress[%d] == %d for command %d",
-			m_localSlot, newProgress, commandID));
+		                                  m_localSlot, newProgress, commandID));
 		if (newProgress > origProgress && newProgress < 100)
 		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - sending a NetFileProgressCommandMsg"));
 			s_fileProgressMap[m_localSlot][commandID] = newProgress;
 
 			Int progressMask = 0xff ^ (1 << m_localSlot);
-			NetFileProgressCommandMsg *msg = newInstance(NetFileProgressCommandMsg);
+			NetFileProgressCommandMsg* msg = newInstance(NetFileProgressCommandMsg);
 			msg->setPlayerID(m_localSlot);
 			msg->setID(0);
 			if (DoesCommandRequireACommandID(msg->getNetCommandType()))
@@ -708,17 +756,20 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 /**
  * A client has sent us their run ahead metrics, lets store them away for future calculations.
  */
-void ConnectionManager::processRunAheadMetrics(NetRunAheadMetricsCommandMsg *msg)
+void ConnectionManager::processRunAheadMetrics(NetRunAheadMetricsCommandMsg* msg)
 {
 	const UnsignedInt playerID = msg->getPlayerID();
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
-	if (isPlayerConnected(playerID)) {
+	if (isPlayerConnected(playerID))
+	{
 		m_latencyAverages[playerID] = msg->getAverageLatency();
 		m_fpsAverages[playerID] = msg->getAverageFps();
-		//DEBUG_LOG(("ConnectionManager::processRunAheadMetrics - player %d, fps = %d, latency = %f", player, msg->getAverageFps(), msg->getAverageLatency()));
-		if (m_fpsAverages[playerID] > 100) {
+		// DEBUG_LOG(("ConnectionManager::processRunAheadMetrics - player %d, fps = %d, latency = %f", player, msg->getAverageFps(), msg->getAverageLatency()));
+		if (m_fpsAverages[playerID] > 100)
+		{
 			// limit the reported frame rate average to 100.  This is done because if a
 			// user alt-tab's out of the game their frame rate climbs to in the neighborhood of
 			// 300, that was deemed "ugly" by the powers that be.
@@ -727,46 +778,54 @@ void ConnectionManager::processRunAheadMetrics(NetRunAheadMetricsCommandMsg *msg
 	}
 }
 
-void ConnectionManager::processDisconnectChat(NetDisconnectChatCommandMsg *msg)
+void ConnectionManager::processDisconnectChat(NetDisconnectChatCommandMsg* msg)
 {
 	UnicodeString unitext;
 	UnicodeString name;
 	const UnsignedInt playerID = msg->getPlayerID();
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
-	if (playerID == m_localSlot) {
+	if (playerID == m_localSlot)
+	{
 		name = m_localUser->GetName();
-	} else if (isPlayerConnected(playerID)) {
+	}
+	else if (isPlayerConnected(playerID))
+	{
 		name = m_connections[playerID]->getUser()->GetName();
 	}
 	unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
-//	DEBUG_LOG(("ConnectionManager::processDisconnectChat - got message from player %d, message is %ls", playerID, unitext.str()));
-	TheDisconnectMenu->showChat(unitext); // <-- need to implement this
+	//	DEBUG_LOG(("ConnectionManager::processDisconnectChat - got message from player %d, message is %ls", playerID, unitext.str()));
+	TheDisconnectMenu->showChat(unitext);    // <-- need to implement this
 }
 
-void ConnectionManager::processChat(NetChatCommandMsg *msg)
+void ConnectionManager::processChat(NetChatCommandMsg* msg)
 {
 	UnicodeString unitext;
 	UnicodeString name;
 	const UnsignedInt playerID = msg->getPlayerID();
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
-	//DEBUG_LOG(("processChat(): playerID = %d", playerID));
-	if (playerID == m_localSlot) {
+	// DEBUG_LOG(("processChat(): playerID = %d", playerID));
+	if (playerID == m_localSlot)
+	{
 		name = m_localUser->GetName();
-		//DEBUG_LOG(("connection is null, using %ls", name.str()));
-	} else if ((m_connections[playerID] != nullptr) && (m_connections[playerID]->isQuitting() == FALSE)) {
+		// DEBUG_LOG(("connection is null, using %ls", name.str()));
+	}
+	else if ((m_connections[playerID] != nullptr) && (m_connections[playerID]->isQuitting() == FALSE))
+	{
 		name = m_connections[playerID]->getUser()->GetName();
-		//DEBUG_LOG(("connection is non-null, using %ls", name.str()));
+		// DEBUG_LOG(("connection is non-null, using %ls", name.str()));
 	}
 	unitext.format(L"[%ls] %ls", name.str(), msg->getText().str());
-//	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
+	//	DEBUG_LOG(("ConnectionManager::processChat - got message from player %d (mask %8.8X), message is %ls", playerID, msg->getPlayerMask(), unitext.str()));
 
 	AsciiString playerName;
 	playerName.format("player%d", msg->getPlayerID());
-	const Player *player = ThePlayerList->findPlayerWithNameKey( TheNameKeyGenerator->nameToKey( playerName ) );
+	const Player* player = ThePlayerList->findPlayerWithNameKey(TheNameKeyGenerator->nameToKey(playerName));
 	if (!player)
 	{
 		TheInGameUI->message(L"%ls", unitext.str());
@@ -777,7 +836,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	Bool amIObserver = !ThePlayerList->getLocalPlayer()->isPlayerActive();
 	Bool canSeeChat = (amIObserver || !fromObserver) && !TheGameInfo->getConstSlot(playerID)->isMuted();
 
-	if ( ((1<<m_localSlot) & msg->getPlayerMask() ) && canSeeChat  )
+	if (((1 << m_localSlot) & msg->getPlayerMask()) && canSeeChat)
 	{
 		RGBColor rgb;
 		rgb.setFromInt(player->getPlayerColor());
@@ -789,7 +848,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 	}
 }
 
-void ConnectionManager::processFile(NetFileCommandMsg *msg)
+void ConnectionManager::processFile(NetFileCommandMsg* msg)
 {
 #ifdef DEBUG_LOGGING
 	UnicodeString log;
@@ -817,10 +876,10 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	if (TheFileSystem->doesFileExist(realFileName.str()))
 	{
 		DEBUG_LOG(("File exists already!"));
-		//return;
+		// return;
 	}
 
-	UnsignedByte *buf = msg->getFileData();
+	UnsignedByte* buf = msg->getFileData();
 	Int len = msg->getFileLength();
 
 	// uncompress Targas
@@ -829,7 +888,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	if (msg->getPortableFilename().endsWith(".tga") && CompressionManager::isDataCompressed(buf, len))
 	{
 		Int uncompLen = CompressionManager::getUncompressedSize(buf, len);
-		UnsignedByte *uncompBuffer = NEW UnsignedByte[uncompLen];
+		UnsignedByte* uncompBuffer = NEW UnsignedByte[uncompLen];
 		Int actualLen = CompressionManager::decompressData(buf, len, uncompBuffer, uncompLen);
 		if (actualLen == uncompLen)
 		{
@@ -841,10 +900,10 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 		else
 		{
 			DEBUG_LOG(("Failed to uncompress Targa after map transfer"));
-			delete[] uncompBuffer; // failed to decompress, so just use the source
+			delete[] uncompBuffer;    // failed to decompress, so just use the source
 		}
 	}
-#endif // COMPRESS_TARGAS
+#endif    // COMPRESS_TARGAS
 
 	// TheSuperHackers @security bobtista 12/02/2026 Validate file content in memory before writing to disk
 	if (!hasValidTransferFileContent(realFileName, buf, len))
@@ -856,18 +915,17 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 			delete[] buf;
 			buf = nullptr;
 		}
-#endif // COMPRESS_TARGAS
+#endif    // COMPRESS_TARGAS
 		return;
 	}
 
-	File *fp = TheFileSystem->openFile(realFileName.str(), File::CREATE | File::BINARY | File::WRITE);
+	File* fp = TheFileSystem->openFile(realFileName.str(), File::CREATE | File::BINARY | File::WRITE);
 	if (fp)
 	{
 		fp->write(buf, len);
 		fp->close();
 		fp = nullptr;
 		DEBUG_LOG(("Wrote %d bytes to file %s!", len, realFileName.str()));
-
 	}
 	else
 	{
@@ -882,7 +940,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	s_fileProgressMap[m_localSlot][commandID] = newProgress;
 
 	Int progressMask = 0xff ^ (1 << m_localSlot);
-	NetFileProgressCommandMsg *progressMsg = newInstance(NetFileProgressCommandMsg);
+	NetFileProgressCommandMsg* progressMsg = newInstance(NetFileProgressCommandMsg);
 	progressMsg->setPlayerID(m_localSlot);
 	progressMsg->setID(0);
 	if (DoesCommandRequireACommandID(progressMsg->getNetCommandType()))
@@ -901,34 +959,35 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 		delete[] buf;
 		buf = nullptr;
 	}
-#endif // COMPRESS_TARGAS
+#endif    // COMPRESS_TARGAS
 }
 
-void ConnectionManager::processFileAnnounce(NetFileAnnounceCommandMsg *msg)
+void ConnectionManager::processFileAnnounce(NetFileAnnounceCommandMsg* msg)
 {
 	DEBUG_LOG(("ConnectionManager::processFileAnnounce() - expecting '%s' (%s) in command %d", msg->getPortableFilename().str(), msg->getRealFilename().str(), msg->getFileID()));
 	s_fileCommandMap[msg->getFileID()] = msg->getRealFilename();
 	s_fileRecipientMaskMap[msg->getFileID()] = msg->getPlayerMask();
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		if ( (1<<i) & msg->getPlayerMask() )
+		if ((1 << i) & msg->getPlayerMask())
 		{
 			s_fileProgressMap[i][msg->getFileID()] = 0;
 		}
 		else
 		{
-			s_fileProgressMap[i][msg->getFileID()] = 100; // they don't need to get it, so they're already done.
+			s_fileProgressMap[i][msg->getFileID()] = 100;    // they don't need to get it, so they're already done.
 		}
 	}
 }
 
-void ConnectionManager::processFileProgress(NetFileProgressCommandMsg *msg)
+void ConnectionManager::processFileProgress(NetFileProgressCommandMsg* msg)
 {
 	DEBUG_LOG(("ConnectionManager::processFileProgress() - command %d is at %d%%",
-		msg->getFileID(), msg->getProgress()));
+	           msg->getFileID(), msg->getProgress()));
 
 	const UnsignedInt playerID = msg->getPlayerID();
-	if (playerID >= MAX_SLOTS) {
+	if (playerID >= MAX_SLOTS)
+	{
 		return;
 	}
 	const UnsignedShort fileID = msg->getFileID();
@@ -936,17 +995,17 @@ void ConnectionManager::processFileProgress(NetFileProgressCommandMsg *msg)
 	s_fileProgressMap[playerID][fileID] = max(oldProgress, msg->getProgress());
 }
 
-void ConnectionManager::processProgress( NetProgressCommandMsg *msg )
+void ConnectionManager::processProgress(NetProgressCommandMsg* msg)
 {
 	TheGameLogic->processProgress(msg->getPlayerID(), msg->getPercentage());
 }
 
-void ConnectionManager::processLoadComplete( NetCommandMsg *msg )
+void ConnectionManager::processLoadComplete(NetCommandMsg* msg)
 {
 	TheGameLogic->processProgressComplete(msg->getPlayerID());
 }
 
-void ConnectionManager::processTimeOutGameStart( NetCommandMsg *msg )
+void ConnectionManager::processTimeOutGameStart(NetCommandMsg* msg)
 {
 	TheGameLogic->timeOutGameStart();
 }
@@ -954,14 +1013,17 @@ void ConnectionManager::processTimeOutGameStart( NetCommandMsg *msg )
 /**
  * Another client has sent us the command count for a new frame.
  */
-void ConnectionManager::processFrameInfo(NetFrameCommandMsg *msg) {
-	//stupid frame info, why don't you process yourself?
+void ConnectionManager::processFrameInfo(NetFrameCommandMsg* msg)
+{
+	// stupid frame info, why don't you process yourself?
 
 	const UnsignedInt playerID = msg->getPlayerID();
 
-	if (playerID < MAX_SLOTS) {
-		if (m_frameData[playerID] != nullptr) {
-//			DEBUG_LOG(("ConnectionManager::processFrameInfo - player %d, frame %d, command count %d, received on frame %d", playerID, msg->getExecutionFrame(), msg->getCommandCount(), TheGameLogic->getFrame()));
+	if (playerID < MAX_SLOTS)
+	{
+		if (m_frameData[playerID] != nullptr)
+		{
+			//			DEBUG_LOG(("ConnectionManager::processFrameInfo - player %d, frame %d, command count %d, received on frame %d", playerID, msg->getExecutionFrame(), msg->getCommandCount(), TheGameLogic->getFrame()));
 			m_frameData[playerID]->setFrameCommandCount(msg->getExecutionFrame(), msg->getCommandCount());
 		}
 	}
@@ -971,31 +1033,39 @@ void ConnectionManager::processFrameInfo(NetFrameCommandMsg *msg) {
  * We just got a stage 1 ack from someone.  So we should remove it from the connection that sent it so
  * it doesn't keep resending it.
  */
-void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
+void ConnectionManager::processAckStage1(NetCommandMsg* msg)
+{
 #if defined(RTS_DEBUG)
 	Bool doDebug = (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) ? TRUE : FALSE;
 #endif
 
 	const UnsignedInt playerID = msg->getPlayerID();
-	NetCommandRef *ref = nullptr;
+	NetCommandRef* ref = nullptr;
 
 #if defined(RTS_DEBUG)
-	if (doDebug == TRUE) {
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processAck - processing ack for command %d from player %d", ((NetAckStage1CommandMsg *)msg)->getCommandID(), playerID));
+	if (doDebug == TRUE)
+	{
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processAck - processing ack for command %d from player %d", ((NetAckStage1CommandMsg*)msg)->getCommandID(), playerID));
 	}
 #endif
 
-	if (playerID < MAX_SLOTS) {
-		if (m_connections[playerID] != nullptr) {
+	if (playerID < MAX_SLOTS)
+	{
+		if (m_connections[playerID] != nullptr)
+		{
 			ref = m_connections[playerID]->processAck(msg);
 		}
-	} else {
+	}
+	else
+	{
 		DEBUG_CRASH(("ConnectionManager::processAck - %d is an invalid player number", playerID));
 	}
 
-	if (ref != nullptr) {
-		if (ref->getCommand()->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
-			m_frameMetrics.processLatencyResponse(((NetFrameCommandMsg *)(ref->getCommand()))->getExecutionFrame());
+	if (ref != nullptr)
+	{
+		if (ref->getCommand()->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO)
+		{
+			m_frameMetrics.processLatencyResponse(((NetFrameCommandMsg*)(ref->getCommand()))->getExecutionFrame());
 		}
 
 		deleteInstance(ref);
@@ -1007,47 +1077,60 @@ void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
  * We just got a stage 2 ack from someone.  So remove it from the pending commands list so it doesn't
  * get sent in the case of a new packet router.
  */
-void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
+void ConnectionManager::processAckStage2(NetCommandMsg* msg)
+{
 	UnsignedShort commandID = 0;
 	UnsignedByte playerID = 0;
-	if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) {
-		commandID = ((NetAckStage2CommandMsg *)msg)->getCommandID();
-		playerID = ((NetAckStage2CommandMsg *)msg)->getOriginalPlayerID();
-	} else if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH) {
-		commandID = ((NetAckBothCommandMsg *)msg)->getCommandID();
-		playerID = ((NetAckBothCommandMsg *)msg)->getOriginalPlayerID();
-	} else {
+	if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2)
+	{
+		commandID = ((NetAckStage2CommandMsg*)msg)->getCommandID();
+		playerID = ((NetAckStage2CommandMsg*)msg)->getOriginalPlayerID();
+	}
+	else if (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH)
+	{
+		commandID = ((NetAckBothCommandMsg*)msg)->getCommandID();
+		playerID = ((NetAckBothCommandMsg*)msg)->getOriginalPlayerID();
+	}
+	else
+	{
 		return;
 	}
 
-	NetCommandRef *ref = m_pendingCommands->findMessage(commandID, playerID);
-	if (ref != nullptr) {
-		//DEBUG_LOG(("ConnectionManager::processAckStage2 - removing command %d from the pending commands list.", commandID));
+	NetCommandRef* ref = m_pendingCommands->findMessage(commandID, playerID);
+	if (ref != nullptr)
+	{
+		// DEBUG_LOG(("ConnectionManager::processAckStage2 - removing command %d from the pending commands list.", commandID));
 		DEBUG_ASSERTCRASH((m_localSlot == playerID), ("Found a command in the pending commands list that wasn't originated by the local player"));
 		m_pendingCommands->removeMessage(ref);
 		deleteInstance(ref);
 		ref = nullptr;
-	} else {
-		//DEBUG_LOG(("ConnectionManager::processAckStage2 - Couldn't find command %d from player %d in the pending commands list.", commandID, playerID));
+	}
+	else
+	{
+		// DEBUG_LOG(("ConnectionManager::processAckStage2 - Couldn't find command %d from player %d in the pending commands list.", commandID, playerID));
 	}
 
 	ref = m_relayedCommands->findMessage(commandID, playerID);
-	if (ref != nullptr) {
-		//DEBUG_LOG(("ConnectionManager::processAckStage2 - found command ID %d from player %d in the relayed commands list.", commandID, playerID));
+	if (ref != nullptr)
+	{
+		// DEBUG_LOG(("ConnectionManager::processAckStage2 - found command ID %d from player %d in the relayed commands list.", commandID, playerID));
 		UnsignedByte prevRelay = ref->getRelay();
 		UnsignedByte relay = prevRelay & ~(1 << msg->getPlayerID());
-		//DEBUG_LOG(("ConnectionManager::processAckStage2 - relay was %d and is now %d", relay, prevRelay));
-		if (relay == 0) {
-			//DEBUG_LOG(("ConnectionManager::processAckStage2 - relay is 0, removing command from the relayed commands list."));
+		// DEBUG_LOG(("ConnectionManager::processAckStage2 - relay was %d and is now %d", relay, prevRelay));
+		if (relay == 0)
+		{
+			// DEBUG_LOG(("ConnectionManager::processAckStage2 - relay is 0, removing command from the relayed commands list."));
 			m_relayedCommands->removeMessage(ref);
-			NetAckStage2CommandMsg *ackmsg = newInstance(NetAckStage2CommandMsg)(ref->getCommand());
+			NetAckStage2CommandMsg* ackmsg = newInstance(NetAckStage2CommandMsg)(ref->getCommand());
 			sendLocalCommand(ackmsg, 1 << ackmsg->getOriginalPlayerID());
 			deleteInstance(ref);
 			ref = nullptr;
 
 			ackmsg->detach();
 			ackmsg = nullptr;
-		} else {
+		}
+		else
+		{
 			ref->setRelay(relay);
 		}
 	}
@@ -1056,11 +1139,14 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 /**
  * We just got a "both" ack from someone.  So process it as both a stage 1 and stage 2 ack.
  */
-void ConnectionManager::processAck(NetCommandMsg *msg) {
-	if ((msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) || (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH)) {
+void ConnectionManager::processAck(NetCommandMsg* msg)
+{
+	if ((msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE1) || (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH))
+	{
 		processAckStage1(msg);
 	}
-	if ((msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) || (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH)) {
+	if ((msg->getNetCommandType() == NETCOMMANDTYPE_ACKSTAGE2) || (msg->getNetCommandType() == NETCOMMANDTYPE_ACKBOTH))
+	{
 		processAckStage2(msg);
 	}
 }
@@ -1075,22 +1161,25 @@ void ConnectionManager::processAck(NetCommandMsg *msg) {
  *
  * If we are leaving and are also the packet router, it will return the PLAYERLEAVECODE_LOCAL return code.
  */
-PlayerLeaveCode ConnectionManager::processPlayerLeave(NetPlayerLeaveCommandMsg *msg) {
+PlayerLeaveCode ConnectionManager::processPlayerLeave(NetPlayerLeaveCommandMsg* msg)
+{
 	UnsignedByte playerID = msg->getLeavingPlayerID();
-	if ((playerID != m_localSlot) && (m_connections[playerID] != nullptr)) {
+	if ((playerID != m_localSlot) && (m_connections[playerID] != nullptr))
+	{
 		DEBUG_LOG(("ConnectionManager::processPlayerLeave() - setQuitting() on player %d on frame %d", playerID, TheGameLogic->getFrame()));
 		m_connections[playerID]->setQuitting();
 	}
 	DEBUG_ASSERTCRASH(m_frameData[playerID]->getIsQuitting() == FALSE, ("Player %d is already quitting", playerID));
-	if ((playerID != m_localSlot) && (m_frameData[playerID] != nullptr) && (m_frameData[playerID]->getIsQuitting() == FALSE)) {
-		DEBUG_LOG(("ConnectionManager::processPlayerLeave - setQuitFrame on player %d for frame %d", playerID, TheGameLogic->getFrame()+1));
+	if ((playerID != m_localSlot) && (m_frameData[playerID] != nullptr) && (m_frameData[playerID]->getIsQuitting() == FALSE))
+	{
+		DEBUG_LOG(("ConnectionManager::processPlayerLeave - setQuitFrame on player %d for frame %d", playerID, TheGameLogic->getFrame() + 1));
 		m_frameData[playerID]->setQuitFrame(TheGameLogic->getFrame() + FRAMES_TO_KEEP + 1);
 	}
 
 	if (playerID == m_localSlot)
 	{
 		// we're leaving, so mark our connections and frame datas to go away.
-		for (Int i=0; i<MAX_SLOTS; ++i)
+		for (Int i = 0; i < MAX_SLOTS; ++i)
 		{
 			if (m_connections[i])
 			{
@@ -1103,30 +1192,39 @@ PlayerLeaveCode ConnectionManager::processPlayerLeave(NetPlayerLeaveCommandMsg *
 	PlayerLeaveCode code = disconnectPlayer(playerID);
 	DEBUG_LOG(("ConnectionManager::processPlayerLeave() - just disconnected player %d with ret code %d", playerID, code));
 	if (code == PLAYERLEAVECODE_PACKETROUTER)
+	{
 		resendPendingCommands();
+	}
 
 	PopulateInGameDiplomacyPopup();
 	return code;
 }
 
-UnsignedInt ConnectionManager::getPacketRouterFallbackSlot(Int packetRouterNumber) {
-	if ((packetRouterNumber >= 0) && (packetRouterNumber < MAX_SLOTS)) {
+UnsignedInt ConnectionManager::getPacketRouterFallbackSlot(Int packetRouterNumber)
+{
+	if ((packetRouterNumber >= 0) && (packetRouterNumber < MAX_SLOTS))
+	{
 		return m_packetRouterFallback[packetRouterNumber];
 	}
 	return MAX_SLOTS;
 }
 
-UnsignedInt ConnectionManager::getPacketRouterSlot() {
+UnsignedInt ConnectionManager::getPacketRouterSlot()
+{
 	return m_packetRouterSlot;
 }
 
-Bool ConnectionManager::areAllQueuesEmpty() {
+Bool ConnectionManager::areAllQueuesEmpty()
+{
 	Bool retval = TRUE;
-	for (Int i = 0; (i < MAX_SLOTS) && retval; ++i) {
-		if (m_connections[i] != nullptr) {
-			if (m_connections[i]->isQueueEmpty() == FALSE) {
-				//DEBUG_LOG(("ConnectionManager::areAllQueuesEmpty() - m_connections[%d] is not empty", i));
-				//m_connections[i]->debugPrintCommands();
+	for (Int i = 0; (i < MAX_SLOTS) && retval; ++i)
+	{
+		if (m_connections[i] != nullptr)
+		{
+			if (m_connections[i]->isQueueEmpty() == FALSE)
+			{
+				// DEBUG_LOG(("ConnectionManager::areAllQueuesEmpty() - m_connections[%d] is not empty", i));
+				// m_connections[i]->debugPrintCommands();
 				retval = FALSE;
 			}
 		}
@@ -1135,7 +1233,8 @@ Bool ConnectionManager::areAllQueuesEmpty() {
 	return retval;
 }
 
-Bool ConnectionManager::canILeave() {
+Bool ConnectionManager::canILeave()
+{
 	return areAllQueuesEmpty();
 }
 
@@ -1143,12 +1242,14 @@ Bool ConnectionManager::canILeave() {
  * The local player is leaving. Tell the local player as well as the other players
  * to remove this player at the specified frame.
  */
-void ConnectionManager::handleLocalPlayerLeaving(UnsignedInt frame) {
-	NetPlayerLeaveCommandMsg *msg = newInstance(NetPlayerLeaveCommandMsg);
+void ConnectionManager::handleLocalPlayerLeaving(UnsignedInt frame)
+{
+	NetPlayerLeaveCommandMsg* msg = newInstance(NetPlayerLeaveCommandMsg);
 
 	msg->setLeavingPlayerID(m_localSlot);
 	msg->setExecutionFrame(frame);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 	msg->setPlayerID(m_localSlot);
@@ -1164,17 +1265,20 @@ void ConnectionManager::handleLocalPlayerLeaving(UnsignedInt frame) {
 /**
  * We just got a message that needs to be ack'd, so ack it!
  */
-void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
-	NetCommandMsg *msg = ref->getCommand();
-	NetCommandMsg *ackmsg;
+void ConnectionManager::ackCommand(NetCommandRef* ref, UnsignedInt localSlot)
+{
+	NetCommandMsg* msg = ref->getCommand();
+	NetCommandMsg* ackmsg;
 	UnsignedShort commandID;
 	UnsignedByte originalPlayerID;
 	UnsignedByte sendRelay = 0;
 
 	// Make send relay a bitmask for the connections that the relay will actually be sent to. This is
 	// necessary to determine whether or not we have to wait to send a stage 2 ack.
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE))) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)))
+		{
 			sendRelay = sendRelay | (1 << i);
 		}
 	}
@@ -1184,59 +1288,83 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 #endif
 
 	sendRelay = sendRelay & ref->getRelay();
-	if (sendRelay == 0) {
-		NetAckBothCommandMsg *bothmsg = newInstance(NetAckBothCommandMsg)(ref->getCommand());
+	if (sendRelay == 0)
+	{
+		NetAckBothCommandMsg* bothmsg = newInstance(NetAckBothCommandMsg)(ref->getCommand());
 		ackmsg = bothmsg;
 		commandID = bothmsg->getCommandID();
 		originalPlayerID = bothmsg->getOriginalPlayerID();
 #if defined(RTS_DEBUG)
-		if (doDebug) {
+		if (doDebug)
+		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::ackCommand - doing ack both for command %d from player %d", bothmsg->getCommandID(), bothmsg->getOriginalPlayerID()));
 		}
 #endif
-	} else {
-		NetAckStage1CommandMsg *stage1msg = newInstance(NetAckStage1CommandMsg)(ref->getCommand());
+	}
+	else
+	{
+		NetAckStage1CommandMsg* stage1msg = newInstance(NetAckStage1CommandMsg)(ref->getCommand());
 		ackmsg = stage1msg;
 		commandID = stage1msg->getCommandID();
 		originalPlayerID = stage1msg->getOriginalPlayerID();
 #if defined(RTS_DEBUG)
-		if (doDebug) {
+		if (doDebug)
+		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::ackCommand - doing ack stage 1 for command %d from player %d", stage1msg->getCommandID(), stage1msg->getOriginalPlayerID()));
 		}
 #endif
 	}
 
-	ackmsg->setPlayerID(localSlot); // Tell the player who this ack is coming from.
+	ackmsg->setPlayerID(localSlot);    // Tell the player who this ack is coming from.
 
-	if (CommandRequiresDirectSend(msg) && CommandRequiresAck(msg)) {
+	if (CommandRequiresDirectSend(msg) && CommandRequiresAck(msg))
+	{
 		// Send this ack directly back to the sending player, don't go through the packet router.
-		if (msg->getPlayerID() < MAX_SLOTS) {
-			if (m_connections[msg->getPlayerID()] != nullptr) {
+		if (msg->getPlayerID() < MAX_SLOTS)
+		{
+			if (m_connections[msg->getPlayerID()] != nullptr)
+			{
 				m_connections[msg->getPlayerID()]->sendNetCommandMsg(ackmsg, 1 << msg->getPlayerID());
 			}
 		}
-	} else {
+	}
+	else
+	{
 		// The local connection may be the packet router, in that case, the connection would be null.  So do something about it!
-		if ((m_packetRouterSlot >= 0) && (m_packetRouterSlot < MAX_SLOTS)) {
-			if (m_connections[m_packetRouterSlot] != nullptr) {
-//				DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d to packet router.", commandID, m_packetRouterSlot));
+		if ((m_packetRouterSlot >= 0) && (m_packetRouterSlot < MAX_SLOTS))
+		{
+			if (m_connections[m_packetRouterSlot] != nullptr)
+			{
+				//				DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d to packet router.", commandID, m_packetRouterSlot));
 				m_connections[m_packetRouterSlot]->sendNetCommandMsg(ackmsg, 1 << m_packetRouterSlot);
-			} else if (m_localSlot == m_packetRouterSlot) {
+			}
+			else if (m_localSlot == m_packetRouterSlot)
+			{
 				// we are the packet router, send the ack to the player that sent the command.
-				if (msg->getPlayerID() < MAX_SLOTS) {
-					if (m_connections[msg->getPlayerID()] != nullptr) {
-//						DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d directly to player.", commandID, msg->getPlayerID()));
+				if (msg->getPlayerID() < MAX_SLOTS)
+				{
+					if (m_connections[msg->getPlayerID()] != nullptr)
+					{
+						//						DEBUG_LOG(("ConnectionManager::ackCommand - acking command %d from player %d directly to player.", commandID, msg->getPlayerID()));
 						m_connections[msg->getPlayerID()]->sendNetCommandMsg(ackmsg, 1 << msg->getPlayerID());
-					} else {
-	//					DEBUG_CRASH(("Connection to player is null"));
 					}
-				} else {
+					else
+					{
+						//					DEBUG_CRASH(("Connection to player is null"));
+					}
+				}
+				else
+				{
 					DEBUG_CRASH(("Command sent by an invalid player ID."));
 				}
-			} else {
+			}
+			else
+			{
 				DEBUG_CRASH(("Connection to packet router is null"));
 			}
-		} else {
+		}
+		else
+		{
 			DEBUG_CRASH(("I don't know who the packet router is."));
 		}
 	}
@@ -1248,51 +1376,62 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
  * This is where we relay a command from one client to others (including ourselves).
  * This should only be done by the current packet router.
  */
-void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
+void ConnectionManager::sendRemoteCommand(NetCommandRef* msg)
+{
 	UnsignedByte actualRelay = 0;
-	if (msg->getCommand() == nullptr) {
+	if (msg->getCommand() == nullptr)
+	{
 		return;
 	}
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - sending net command %d of type %s from player %d, relay is 0x%x",
-		msg->getCommand()->getID(), GetNetCommandTypeAsString(msg->getCommand()->getNetCommandType()), msg->getCommand()->getPlayerID(), msg->getRelay()));
+	                                  msg->getCommand()->getID(), GetNetCommandTypeAsString(msg->getCommand()->getNetCommandType()), msg->getCommand()->getPlayerID(), msg->getRelay()));
 
 	const UnsignedByte relay = msg->getRelay();
 	const UnsignedInt playerID = msg->getCommand()->getPlayerID();
-	FrameDataManager *frameDataMgr = playerID < MAX_SLOTS ? m_frameData[playerID] : nullptr;
-	if ((relay & (1 << m_localSlot)) && (frameDataMgr != nullptr)) {
-		if (IsCommandSynchronized(msg->getCommand()->getNetCommandType())) {
+	FrameDataManager* frameDataMgr = playerID < MAX_SLOTS ? m_frameData[playerID] : nullptr;
+	if ((relay & (1 << m_localSlot)) && (frameDataMgr != nullptr))
+	{
+		if (IsCommandSynchronized(msg->getCommand()->getNetCommandType()))
+		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - adding net command of type %s to player %d for frame %d", GetNetCommandTypeAsString(msg->getCommand()->getNetCommandType()), msg->getCommand()->getPlayerID(), msg->getCommand()->getExecutionFrame()));
 			frameDataMgr->addNetCommandMsg(msg->getCommand());
 		}
 	}
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((relay & (1 << i)) && ((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE))) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if ((relay & (1 << i)) && ((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)))
+		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - relaying command %d to player %d", msg->getCommand()->getID(), i));
 			m_connections[i]->sendNetCommandMsg(msg->getCommand(), 1 << i);
 			actualRelay = actualRelay | (1 << i);
 		}
 	}
 
-	if ((actualRelay != 0) && (CommandRequiresAck(msg->getCommand()) == TRUE)) {
-		NetCommandRef *ref = m_relayedCommands->addMessage(msg->getCommand());
-		if (ref != nullptr) {
+	if ((actualRelay != 0) && (CommandRequiresAck(msg->getCommand()) == TRUE))
+	{
+		NetCommandRef* ref = m_relayedCommands->addMessage(msg->getCommand());
+		if (ref != nullptr)
+		{
 			ref->setRelay(actualRelay);
-			//DEBUG_LOG(("ConnectionManager::sendRemoteCommand - command %d added to relayed commands with relay %d", msg->getCommand()->getID(), ref->getRelay()));
+			// DEBUG_LOG(("ConnectionManager::sendRemoteCommand - command %d added to relayed commands with relay %d", msg->getCommand()->getID(), ref->getRelay()));
 		}
 	}
 
 	// Do some metrics to find the minimum packet arrival cushion.
-	if (IsCommandSynchronized(msg->getCommand()->getNetCommandType())) {
-//		DEBUG_LOG(("ConnectionManager::sendRemoteCommand - about to call allCommandsReady"));
-		if (allCommandsReady(msg->getCommand()->getExecutionFrame(), TRUE)) {
+	if (IsCommandSynchronized(msg->getCommand()->getNetCommandType()))
+	{
+		//		DEBUG_LOG(("ConnectionManager::sendRemoteCommand - about to call allCommandsReady"));
+		if (allCommandsReady(msg->getCommand()->getExecutionFrame(), TRUE))
+		{
 			UnsignedInt cushion = msg->getCommand()->getExecutionFrame() - TheGameLogic->getFrame();
-			if ((cushion < m_smallestPacketArrivalCushion) || (m_smallestPacketArrivalCushion == -1)) {
+			if ((cushion < m_smallestPacketArrivalCushion) || (m_smallestPacketArrivalCushion == -1))
+			{
 				m_smallestPacketArrivalCushion = cushion;
 			}
 			m_frameMetrics.addCushion(cushion);
-//			DEBUG_LOG(("Adding %d to cushion for frame %d", cushion, msg->getCommand()->getExecutionFrame()));
+			//			DEBUG_LOG(("Adding %d to cushion for frame %d", cushion, msg->getCommand()->getExecutionFrame()));
 		}
 	}
 }
@@ -1302,16 +1441,18 @@ void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
  * Update the connections. Tell them to do the receive and send.  Also relay
  * commands to their final destinations as necessary.
  */
-void ConnectionManager::update(Bool isInGame) {
-//
-// 1. do this
-// 2. do that
-// 3. do something else
-// 4. blow something up
-// 5. bust some cap
-//
+void ConnectionManager::update(Bool isInGame)
+{
+	//
+	// 1. do this
+	// 2. do that
+	// 3. do something else
+	// 4. blow something up
+	// 5. bust some cap
+	//
 
-	if ((m_localAddr == 0) || (m_localPort == 0)) {
+	if ((m_localAddr == 0) || (m_localPort == 0))
+	{
 		// we don't have a local address or port yet, this is bad.
 		DEBUG_ASSERTCRASH((m_localAddr != 0) && (m_localPort != 0), ("ConnectionManager doesn't have a local address."));
 		return;
@@ -1319,7 +1460,8 @@ void ConnectionManager::update(Bool isInGame) {
 
 	m_transport->doRecv();
 
-	if (isInGame) {
+	if (isInGame)
+	{
 		m_disconnectManager->update(this);
 	}
 
@@ -1329,8 +1471,10 @@ void ConnectionManager::update(Bool isInGame) {
 	// send any necessary keep-alive packets.
 	doKeepAlive();
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != nullptr) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_connections[i] != nullptr)
+		{
 			/*
 			if (m_connections[i]->isQueueEmpty() == FALSE) {
 //				DEBUG_LOG(("ConnectionManager::update - calling doSend on connection %d", i));
@@ -1347,8 +1491,10 @@ void ConnectionManager::update(Bool isInGame) {
 			}
 		}
 
-		if ((m_frameData[i] != nullptr) && (m_frameData[i]->getIsQuitting() == TRUE)) {
-			if (m_frameData[i]->getQuitFrame() == TheGameLogic->getFrame()) {
+		if ((m_frameData[i] != nullptr) && (m_frameData[i]->getIsQuitting() == TRUE))
+		{
+			if (m_frameData[i]->getQuitFrame() == TheGameLogic->getFrame())
+			{
 				DEBUG_LOG(("ConnectionManager::update - deleting frame data for slot %d on quitting frame %d", i, m_frameData[i]->getQuitFrame()));
 				deleteInstance(m_frameData[i]);
 				m_frameData[i] = nullptr;
@@ -1359,32 +1505,39 @@ void ConnectionManager::update(Bool isInGame) {
 	m_transport->doSend();
 }
 
-void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didSelfSlug, Int nextExecutionFrame) {
+void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didSelfSlug, Int nextExecutionFrame)
+{
 	static time_t lasttimesent = 0;
 	time_t curTime = timeGetTime();
 
-	if ((lasttimesent == 0) || ((curTime - lasttimesent) > TheGlobalData->m_networkRunAheadMetricsTime)) {
-		if (m_localSlot == m_packetRouterSlot) {
+	if ((lasttimesent == 0) || ((curTime - lasttimesent) > TheGlobalData->m_networkRunAheadMetricsTime))
+	{
+		if (m_localSlot == m_packetRouterSlot)
+		{
 			// We are the packet router, time to compute a new run ahead for this game.
 			m_latencyAverages[m_localSlot] = m_frameMetrics.getAverageLatency();
 
 			// since we are now using the display frame rate rather than the logic frame rate to get our average FPS,
 			// it doesn't make sense to send the desired logic frame rate if we "slugged" ourself.
-//			if (didSelfSlug) {
-//				m_fpsAverages[m_localSlot] = frameRate;
-//			} else {
-				m_fpsAverages[m_localSlot] = m_frameMetrics.getAverageFPS();
-//			}
-			if (didSelfSlug) {
-				//DEBUG_LOG(("ConnectionManager::updateRunAhead - local player run ahead metrics, fps = %d, actual fps = %d, latency = %f, didSelfSlug = true", m_fpsAverages[m_localSlot], m_frameMetrics.getAverageFPS(), m_latencyAverages[m_localSlot]));
-			} else {
-				//DEBUG_LOG(("ConnectionManager::updateRunAhead - local player run ahead metrics, fps = %d, latency = %f, didSelfSlug = false", m_fpsAverages[m_localSlot], m_latencyAverages[m_localSlot]));
+			//			if (didSelfSlug) {
+			//				m_fpsAverages[m_localSlot] = frameRate;
+			//			} else {
+			m_fpsAverages[m_localSlot] = m_frameMetrics.getAverageFPS();
+			//			}
+			if (didSelfSlug)
+			{
+				// DEBUG_LOG(("ConnectionManager::updateRunAhead - local player run ahead metrics, fps = %d, actual fps = %d, latency = %f, didSelfSlug = true", m_fpsAverages[m_localSlot], m_frameMetrics.getAverageFPS(), m_latencyAverages[m_localSlot]));
+			}
+			else
+			{
+				// DEBUG_LOG(("ConnectionManager::updateRunAhead - local player run ahead metrics, fps = %d, latency = %f, didSelfSlug = false", m_fpsAverages[m_localSlot], m_latencyAverages[m_localSlot]));
 			}
 			Int minFps;
 			Int minFpsPlayer;
 			getMinimumFps(minFps, minFpsPlayer);
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::updateRunAhead - max latency = %f, min fps = %d, min fps player = %d old FPS = %d", getMaximumLatency(), minFps, minFpsPlayer, frameRate));
-			if ((minFps >= ((frameRate * 9) / 10)) && (minFps < frameRate)) {
+			if ((minFps >= ((frameRate * 9) / 10)) && (minFps < frameRate))
+			{
 				// if the minimum fps is within 10% of the desired framerate, then keep the current minimum fps.
 				minFps = frameRate;
 			}
@@ -1396,16 +1549,17 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 			// TheSuperHackers @bugfix Mauller 21/08/2025 calculate the runahead so it always follows the latency
 			// The runahead should always be rounded up to the next integer value to prevent variations in latency from causing stutter
 			// The network slack pushes the runahead up to the next value when the latency is within the slack percentage of the current runahead
-			const Real runAheadSlackScale = 1.0f + ( (Real)TheGlobalData->m_networkRunAheadSlack / 100.0f );
-			Int newRunAhead = ceilf( getMaximumLatency() * runAheadSlackScale * (Real)minFps );
+			const Real runAheadSlackScale = 1.0f + ((Real)TheGlobalData->m_networkRunAheadSlack / 100.0f);
+			Int newRunAhead = ceilf(getMaximumLatency() * runAheadSlackScale * (Real)minFps);
 
 			// TheSuperHackers @info if the runahead goes below 3 logic frames it can start to introduce stutter
 			// We also limit the upper range of the runahead to prevent it getting out of hand
 			newRunAhead = clamp<Int>(MIN_RUNAHEAD, newRunAhead, MAX_FRAMES_AHEAD / 2);
 
-			NetRunAheadCommandMsg *msg = newInstance(NetRunAheadCommandMsg);
+			NetRunAheadCommandMsg* msg = newInstance(NetRunAheadCommandMsg);
 			msg->setPlayerID(m_localSlot);
-			if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+			if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+			{
 				msg->setID(GenerateNextCommandID());
 			}
 
@@ -1419,20 +1573,24 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 			// didn't change for the first time till frame 31.  This creates an extra command
 			// for frame 56 that isn't accounted for in the frame command count that is sent
 			// out in the NetFrameCommandMsg.  sheesh.
-			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead)) {
+			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead))
+			{
 				msg->setExecutionFrame(nextExecutionFrame);
-			} else {
+			}
+			else
+			{
 				msg->setExecutionFrame(TheGameLogic->getFrame() + oldRunAhead);
 			}
 
 			msg->setRunAhead(newRunAhead);
 			msg->setFrameRate(minFps);
-			//DEBUG_LOG(("ConnectionManager::updateRunAhead - new run ahead = %d, new frame rate = %d, execution frame %d", newRunAhead, minFps, msg->getExecutionFrame()));
-			sendLocalCommand(msg, 0xff ^ (1 << minFpsPlayer)); // Send the packet to everyone but the lowest FPS player.
+			// DEBUG_LOG(("ConnectionManager::updateRunAhead - new run ahead = %d, new frame rate = %d, execution frame %d", newRunAhead, minFps, msg->getExecutionFrame()));
+			sendLocalCommand(msg, 0xff ^ (1 << minFpsPlayer));    // Send the packet to everyone but the lowest FPS player.
 
-			NetRunAheadCommandMsg *msg2 = newInstance(NetRunAheadCommandMsg);
+			NetRunAheadCommandMsg* msg2 = newInstance(NetRunAheadCommandMsg);
 			msg2->setPlayerID(m_localSlot);
-			if (DoesCommandRequireACommandID(msg2->getNetCommandType())) {
+			if (DoesCommandRequireACommandID(msg2->getNetCommandType()))
+			{
 				/*
 				 * Ok there needs to be a big friggin comment about this change...
 				 * What happens is that the two run ahead commands get sent to different players
@@ -1448,23 +1606,28 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 				 * when the commands are copied places for the disconnect screen they will be seen as the
 				 * same command, and all will be good.
 				 */
-//				msg2->setID(GenerateNextCommandID());
+				//				msg2->setID(GenerateNextCommandID());
 				msg2->setID(msg->getID());
 			}
-			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead)) {
+			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead))
+			{
 				msg2->setExecutionFrame(nextExecutionFrame);
-			} else {
+			}
+			else
+			{
 				msg2->setExecutionFrame(TheGameLogic->getFrame() + oldRunAhead);
 			}
 
 			// Let the player with the slowest FPS run a little faster than the other computers...
 			// just in case they are able to.  Then we might be able to run the game faster which would be good.
 			Int newMinFps = (minFps * 11) / 10;
-			if (newMinFps == minFps) {
+			if (newMinFps == minFps)
+			{
 				newMinFps = minFps + 1;
 			}
-			if (newMinFps > 30) {
-				newMinFps = 30; // Cap FPS to 30.
+			if (newMinFps > 30)
+			{
+				newMinFps = 30;    // Cap FPS to 30.
 			}
 			msg2->setRunAhead(newRunAhead);
 			msg2->setFrameRate(newMinFps);
@@ -1473,25 +1636,31 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 
 			msg->detach();
 			msg2->detach();
-		} else {
+		}
+		else
+		{
 			// We are not the packet router, send our metrics info to the packet router.
-			NetRunAheadMetricsCommandMsg *msg = newInstance(NetRunAheadMetricsCommandMsg);
+			NetRunAheadMetricsCommandMsg* msg = newInstance(NetRunAheadMetricsCommandMsg);
 			msg->setPlayerID(m_localSlot);
-			if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+			if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+			{
 				msg->setID(GenerateNextCommandID());
 			}
 			msg->setAverageLatency(m_frameMetrics.getAverageLatency());
 
 			// see above for explanation.
-//			if (didSelfSlug) {
-//				msg->setAverageFps(frameRate);
-//			} else {
-				msg->setAverageFps(m_frameMetrics.getAverageFPS());
-//			}
-			if (didSelfSlug) {
-				//DEBUG_LOG(("ConnectionManager::updateRunAhead - average latency = %f, average fps = %d, actual fps = %d, didSelfSlug = true", m_frameMetrics.getAverageLatency(), m_frameMetrics.getAverageFPS(), m_frameMetrics.getAverageFPS()));
-			} else {
-				//DEBUG_LOG(("ConnectionManager::updateRunAhead - average latency = %f, average fps = %d, didSelfSlug = false", m_frameMetrics.getAverageLatency(), m_frameMetrics.getAverageFPS()));
+			//			if (didSelfSlug) {
+			//				msg->setAverageFps(frameRate);
+			//			} else {
+			msg->setAverageFps(m_frameMetrics.getAverageFPS());
+			//			}
+			if (didSelfSlug)
+			{
+				// DEBUG_LOG(("ConnectionManager::updateRunAhead - average latency = %f, average fps = %d, actual fps = %d, didSelfSlug = true", m_frameMetrics.getAverageLatency(), m_frameMetrics.getAverageFPS(), m_frameMetrics.getAverageFPS()));
+			}
+			else
+			{
+				// DEBUG_LOG(("ConnectionManager::updateRunAhead - average latency = %f, average fps = %d, didSelfSlug = false", m_frameMetrics.getAverageLatency(), m_frameMetrics.getAverageFPS()));
 			}
 			m_connections[m_packetRouterSlot]->sendNetCommandMsg(msg, 1 << m_packetRouterSlot);
 			msg->detach();
@@ -1500,19 +1669,24 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 	}
 }
 
-Real ConnectionManager::getMaximumLatency() {
-
+Real ConnectionManager::getMaximumLatency()
+{
 	Real lat1 = 0.0f;
 	Real lat2 = 0.0f;
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (isPlayerConnected(i)) {
-			if (m_latencyAverages[i] != 0.0f) {
-				if (m_latencyAverages[i] > lat1) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (isPlayerConnected(i))
+		{
+			if (m_latencyAverages[i] != 0.0f)
+			{
+				if (m_latencyAverages[i] > lat1)
+				{
 					lat2 = lat1;
 					lat1 = m_latencyAverages[i];
 				}
-				else if (m_latencyAverages[i] > lat2) {
+				else if (m_latencyAverages[i] > lat2)
+				{
 					lat2 = m_latencyAverages[i];
 				}
 			}
@@ -1522,41 +1696,50 @@ Real ConnectionManager::getMaximumLatency() {
 	return (lat1 + lat2) / 2.0f;
 }
 
-void ConnectionManager::getMinimumFps(Int &minFps, Int &minFpsPlayer) {
+void ConnectionManager::getMinimumFps(Int& minFps, Int& minFpsPlayer)
+{
 	minFps = -1;
 	minFpsPlayer = -1;
-//	DEBUG_LOG_RAW(("ConnectionManager::getMinimumFps -"));
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((m_connections[i] != nullptr) || (i == m_localSlot)) {
-//			DEBUG_LOG_RAW((" %d: %d,", i, m_fpsAverages[i]));
-			if (m_fpsAverages[i] != -1) {
-				if ((minFps == -1) || (m_fpsAverages[i] < minFps)) {
+	//	DEBUG_LOG_RAW(("ConnectionManager::getMinimumFps -"));
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if ((m_connections[i] != nullptr) || (i == m_localSlot))
+		{
+			//			DEBUG_LOG_RAW((" %d: %d,", i, m_fpsAverages[i]));
+			if (m_fpsAverages[i] != -1)
+			{
+				if ((minFps == -1) || (m_fpsAverages[i] < minFps))
+				{
 					minFps = m_fpsAverages[i];
 					minFpsPlayer = i;
 				}
 			}
 		}
 	}
-//	DEBUG_LOG_RAW(("\n"));
+	//	DEBUG_LOG_RAW(("\n"));
 }
 
-UnsignedInt ConnectionManager::getMinimumCushion() {
+UnsignedInt ConnectionManager::getMinimumCushion()
+{
 	return m_frameMetrics.getMinimumCushion();
 }
 
 /**
  * The commands for the given frame are all ready, time to send out our command count for that frame.
  */
-void ConnectionManager::processFrameTick(UnsignedInt frame) {
-	if ((m_frameData[m_localSlot] == nullptr) || (m_frameData[m_localSlot]->getIsQuitting() == TRUE)) {
+void ConnectionManager::processFrameTick(UnsignedInt frame)
+{
+	if ((m_frameData[m_localSlot] == nullptr) || (m_frameData[m_localSlot]->getIsQuitting() == TRUE))
+	{
 		// if the local frame data stuff is null, we must be leaving the game.
 		return;
 	}
 	UnsignedShort commandCount = m_frameData[m_localSlot]->getCommandCount(frame);
-	NetFrameCommandMsg *msg = newInstance(NetFrameCommandMsg);
+	NetFrameCommandMsg* msg = newInstance(NetFrameCommandMsg);
 	msg->setExecutionFrame(frame);
 	msg->setCommandCount(commandCount);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 	msg->setPlayerID(m_localSlot);
@@ -1573,7 +1756,8 @@ void ConnectionManager::processFrameTick(UnsignedInt frame) {
 /**
  * Set the local address.
  */
-void ConnectionManager::setLocalAddress(UnsignedInt ip, UnsignedInt port) {
+void ConnectionManager::setLocalAddress(UnsignedInt ip, UnsignedInt port)
+{
 	DEBUG_LOG(("ConnectionManager::setLocalAddress() - local address is %X:%d", ip, port));
 	m_localAddr = ip;
 	m_localPort = port;
@@ -1582,7 +1766,8 @@ void ConnectionManager::setLocalAddress(UnsignedInt ip, UnsignedInt port) {
 /**
  * Initialize the transport object
  */
-void ConnectionManager::initTransport() {
+void ConnectionManager::initTransport()
+{
 	DEBUG_ASSERTCRASH((m_transport == nullptr), ("m_transport already exists when trying to init it."));
 	DEBUG_LOG(("ConnectionManager::initTransport - Initializing Transport"));
 
@@ -1597,13 +1782,15 @@ void ConnectionManager::initTransport() {
  * the game.  This is also where the local commands are put into the frame data for
  * future execution.
  */
-void ConnectionManager::sendLocalGameMessage(GameMessage *msg, UnsignedInt frame) {
+void ConnectionManager::sendLocalGameMessage(GameMessage* msg, UnsignedInt frame)
+{
 	UnsignedShort currentID = 0;
-	if (DoesCommandRequireACommandID(NETCOMMANDTYPE_GAMECOMMAND)) {
+	if (DoesCommandRequireACommandID(NETCOMMANDTYPE_GAMECOMMAND))
+	{
 		currentID = GenerateNextCommandID();
 	}
 
-	NetCommandMsg *netmsg = newInstance(NetGameCommandMsg)(msg);
+	NetCommandMsg* netmsg = newInstance(NetGameCommandMsg)(msg);
 	netmsg->setExecutionFrame(frame);
 	netmsg->setPlayerID(m_localSlot);
 	netmsg->setID(currentID);
@@ -1617,69 +1804,85 @@ void ConnectionManager::sendLocalGameMessage(GameMessage *msg, UnsignedInt frame
  * This is a NetCommandMsg that originated on the local computer. Send this to everyone specified
  * in the relay field.  Commands sent in this way go through the packet router.
  */
-void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay /* = 0xff by default*/) {
-	if (CommandRequiresDirectSend(msg) || (m_packetRouterSlot < 0) || (m_packetRouterSlot >= MAX_SLOTS) || (m_connections[m_packetRouterSlot] == nullptr)) {
+void ConnectionManager::sendLocalCommand(NetCommandMsg* msg, UnsignedByte relay /* = 0xff by default*/)
+{
+	if (CommandRequiresDirectSend(msg) || (m_packetRouterSlot < 0) || (m_packetRouterSlot >= MAX_SLOTS) || (m_connections[m_packetRouterSlot] == nullptr))
+	{
 		sendLocalCommandDirect(msg, relay);
 		return;
 	}
 	msg->attach();
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommand - sending net command %d of type %s", msg->getID(),
-		GetNetCommandTypeAsString(msg->getNetCommandType())));
+	                                  GetNetCommandTypeAsString(msg->getNetCommandType())));
 
-	if (relay & (1 << m_localSlot)) {
+	if (relay & (1 << m_localSlot))
+	{
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommand - adding net command of type %s to player %d for frame %d", GetNetCommandTypeAsString(msg->getNetCommandType()), msg->getPlayerID(), msg->getExecutionFrame()));
 		m_frameData[m_localSlot]->addNetCommandMsg(msg);
 	}
 
 	// Send the packet to everyone else
-	if (m_localSlot == m_packetRouterSlot) {
+	if (m_localSlot == m_packetRouterSlot)
+	{
 		// I am the packet router, I need to send this packet to everyone individually.
-		for (Int i = 0; i < MAX_SLOTS; ++i) {
+		for (Int i = 0; i < MAX_SLOTS; ++i)
+		{
 			// Send it to all open connections.
-			if (((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)) && (relay & (1 << i))) {
+			if (((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)) && (relay & (1 << i)))
+			{
 				// Set the relay mask to only go to this player so he knows not to relay it to anyone else.
 				UnsignedByte temprelay = 1 << i;
-				m_connections[i]->sendNetCommandMsg(msg, temprelay); // This will create a new copy of netmsg for this connection.
+				m_connections[i]->sendNetCommandMsg(msg, temprelay);    // This will create a new copy of netmsg for this connection.
 			}
 		}
-	} else {
+	}
+	else
+	{
 		// Send the command to everyone else via the packet router.
-		UnsignedByte temprelay = relay & ~(1 << m_localSlot);	// Tell the packet router to relay the message to everyone but myself.
-														// Hopefully the packet router is smart enough to not send it
-														// to slots that are not in the game.
+		UnsignedByte temprelay = relay & ~(1 << m_localSlot);    // Tell the packet router to relay the message to everyone but myself.
+		                                                         // Hopefully the packet router is smart enough to not send it
+		                                                         // to slots that are not in the game.
 
-		m_connections[m_packetRouterSlot]->sendNetCommandMsg(msg, temprelay); // This will create a new copy of netmsg for this connection.
+		m_connections[m_packetRouterSlot]->sendNetCommandMsg(msg, temprelay);    // This will create a new copy of netmsg for this connection.
 
-		if (CommandRequiresAck(msg)) {
-			NetCommandRef *ref = m_pendingCommands->addMessage(msg);
-			//DEBUG_LOG(("ConnectionManager::sendLocalCommand - added command %d to pending commands list.", msg->getID()));
-			if (ref != nullptr) {
+		if (CommandRequiresAck(msg))
+		{
+			NetCommandRef* ref = m_pendingCommands->addMessage(msg);
+			// DEBUG_LOG(("ConnectionManager::sendLocalCommand - added command %d to pending commands list.", msg->getID()));
+			if (ref != nullptr)
+			{
 				ref->setRelay(temprelay);
 			}
 		}
 	}
 
-	msg->detach(); // detach from the command msg.
+	msg->detach();    // detach from the command msg.
 }
 
 /**
  * This is a NetCommandMsg that originated on the local computer.  Send this to everyone specified
  * in the relay field.  Commands sent in this way do not go through the packet router.
  */
-void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte relay) {
+void ConnectionManager::sendLocalCommandDirect(NetCommandMsg* msg, UnsignedByte relay)
+{
 	msg->attach();
 
-	if (((relay & (1 << m_localSlot)) != 0) && (m_frameData[m_localSlot] != nullptr)) {
-		if (IsCommandSynchronized(msg->getNetCommandType()) == TRUE) {
+	if (((relay & (1 << m_localSlot)) != 0) && (m_frameData[m_localSlot] != nullptr))
+	{
+		if (IsCommandSynchronized(msg->getNetCommandType()) == TRUE)
+		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommandDirect - adding net command of type %s to player %d for frame %d", GetNetCommandTypeAsString(msg->getNetCommandType()), msg->getPlayerID(), msg->getExecutionFrame()));
 			m_frameData[m_localSlot]->addNetCommandMsg(msg);
 		}
 	}
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((relay & (1 << i)) != 0) {
-			if ((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE)) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if ((relay & (1 << i)) != 0)
+		{
+			if ((m_connections[i] != nullptr) && (m_connections[i]->isQuitting() == FALSE))
+			{
 				UnsignedByte temprelay = 1 << i;
 				m_connections[i]->sendNetCommandMsg(msg, temprelay);
 				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommandDirect - Sending direct command %d of type %s to player %d", msg->getID(), GetNetCommandTypeAsString(msg->getNetCommandType()), i));
@@ -1695,48 +1898,58 @@ Int commandsReadyDebugSpewage = 0;
 /**
  * Returns true if all the commands for the given frame are ready to be executed.
  */
-Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* = FALSE */) {
+Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* = FALSE */)
+{
 	Bool retval = TRUE;
 	FrameDataReturnType frameRetVal = FRAMEDATA_NOTREADY;
-//	retval = FALSE;  // ****for testing purposes only!!!!!!****
+	//	retval = FALSE;  // ****for testing purposes only!!!!!!****
 	Int i = 0;
-	for (; (i < MAX_SLOTS) && retval; ++i) {
-		if ((m_frameData[i] != nullptr) && (m_frameData[i]->getIsQuitting() == FALSE)) {
-/*
-			if (!(m_frameData[i]->allCommandsReady(frame, (frame != commandsReadyDebugSpewage) && (justTesting == FALSE)))) {
-				if ((frame != commandsReadyDebugSpewage) && (justTesting == FALSE)) {
-					DEBUG_LOG(("ConnectionManager::allCommandsReady, frame %d player %d not ready.", frame, i));
-					commandsReadyDebugSpewage = frame;
-				}
-				retval = FALSE;
-			} else {
-//				DEBUG_LOG(("ConnectionManager::allCommandsReady, frame %d player %d is ready.", frame, i));
-			}
-*/
+	for (; (i < MAX_SLOTS) && retval; ++i)
+	{
+		if ((m_frameData[i] != nullptr) && (m_frameData[i]->getIsQuitting() == FALSE))
+		{
+			/*
+			      if (!(m_frameData[i]->allCommandsReady(frame, (frame != commandsReadyDebugSpewage) && (justTesting == FALSE)))) {
+			        if ((frame != commandsReadyDebugSpewage) && (justTesting == FALSE)) {
+			          DEBUG_LOG(("ConnectionManager::allCommandsReady, frame %d player %d not ready.", frame, i));
+			          commandsReadyDebugSpewage = frame;
+			        }
+			        retval = FALSE;
+			      } else {
+			//				DEBUG_LOG(("ConnectionManager::allCommandsReady, frame %d player %d is ready.", frame, i));
+			      }
+			*/
 
 			frameRetVal = m_frameData[i]->allCommandsReady(frame, (frame != commandsReadyDebugSpewage) && (justTesting == FALSE));
-			if (frameRetVal == FRAMEDATA_NOTREADY) {
+			if (frameRetVal == FRAMEDATA_NOTREADY)
+			{
 				retval = FALSE;
-			} else if (frameRetVal == FRAMEDATA_RESEND) {
+			}
+			else if (frameRetVal == FRAMEDATA_RESEND)
+			{
 				requestFrameDataResend(i, frame);
 				retval = FALSE;
 			}
 		}
 	}
 
-	if (frameRetVal == FRAMEDATA_RESEND) {
+	if (frameRetVal == FRAMEDATA_RESEND)
+	{
 		// this frame's data is really screwed up, we need to clean it out so it can be resent to us.
-		for (i = 0; i < MAX_SLOTS; ++i) {
-			if ((m_frameData[i] != nullptr) && (i != m_localSlot)) {
+		for (i = 0; i < MAX_SLOTS; ++i)
+		{
+			if ((m_frameData[i] != nullptr) && (i != m_localSlot))
+			{
 				m_frameData[i]->resetFrame(frame, FALSE);
 			}
 		}
 	}
 
-	if ((retval == TRUE) && (justTesting == FALSE)) {
+	if ((retval == TRUE) && (justTesting == FALSE))
+	{
 		m_disconnectManager->allCommandsReady(TheGameLogic->getFrame(), this);
-		retval = m_disconnectManager->allowedToContinue(); // allow the disconnect manager to keep us on this frame
-																											// in case we are waiting for a new packet router or something.
+		retval = m_disconnectManager->allowedToContinue();    // allow the disconnect manager to keep us on this frame
+		                                                      // in case we are waiting for a new packet router or something.
 	}
 
 	return retval;
@@ -1747,7 +1960,6 @@ void ConnectionManager::handleAllCommandsReady()
 	m_disconnectManager->allCommandsReady(TheGameLogic->getFrame(), this, FALSE);
 }
 
-
 /**
  * Only call this after making sure that all the commands are there for this frame.
  * After calling this the commands for this frame will be removed from the connection.
@@ -1757,36 +1969,43 @@ void ConnectionManager::handleAllCommandsReady()
  *       frames so we can potentially send those commands to the other players in the
  *       game so they can catch up.
  */
-NetCommandList *ConnectionManager::getFrameCommandList(UnsignedInt frame)
+NetCommandList* ConnectionManager::getFrameCommandList(UnsignedInt frame)
 {
-	NetCommandList *retlist = newInstance(NetCommandList);
+	NetCommandList* retlist = newInstance(NetCommandList);
 	retlist->init();
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_frameData[i] != nullptr) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_frameData[i] != nullptr)
+		{
 			retlist->appendList(m_frameData[i]->getFrameCommandList(frame));
-			if (frame > FRAMES_TO_KEEP) {
-				m_frameData[i]->resetFrame(frame - FRAMES_TO_KEEP);	// After getting the commands for that frame from this
-													// FrameDataManager object, we need to tell it that we're
-													// done with the messages for that frame.
+			if (frame > FRAMES_TO_KEEP)
+			{
+				m_frameData[i]->resetFrame(frame - FRAMES_TO_KEEP);    // After getting the commands for that frame from this
+				                                                       // FrameDataManager object, we need to tell it that we're
+				                                                       // done with the messages for that frame.
 				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("getFrameCommandList - called reset frame on player %d for frame %d", i, frame - FRAMES_TO_KEEP));
 			}
 		}
 	}
 
-	return retlist; // retlist deallocated by calling function.
+	return retlist;    // retlist deallocated by calling function.
 }
 
-void ConnectionManager::setFrameGrouping(time_t frameGrouping) {
+void ConnectionManager::setFrameGrouping(time_t frameGrouping)
+{
 	// Since we are the packet router, we should send more packets per second since we
 	// may become the latency bottleneck for sending packets from one player to the next.
 	// This is probably ok since the packet router should have the fastest connection of all
 	// the players in the game.
-	if (m_localSlot == m_packetRouterSlot) {
+	if (m_localSlot == m_packetRouterSlot)
+	{
 		frameGrouping = frameGrouping / 2;
 	}
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != nullptr) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_connections[i] != nullptr)
+		{
 			m_connections[i]->setFrameGrouping(frameGrouping);
 		}
 	}
@@ -1794,76 +2013,85 @@ void ConnectionManager::setFrameGrouping(time_t frameGrouping) {
 
 /*
 void ConnectionManager::determineRouterFallbackPlan() {
-	memset(m_packetRouterFallback, 0, sizeof(m_packetRouterFallback));
-	Int curnum = 1;
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != nullptr) {
-			m_packetRouterFallback[i] = curnum;
-			if (curnum == 1) {
-				m_packetRouterSlot = i;
-			}
-			++curnum;
-		}
-	}
+  memset(m_packetRouterFallback, 0, sizeof(m_packetRouterFallback));
+  Int curnum = 1;
+  for (Int i = 0; i < MAX_SLOTS; ++i) {
+    if (m_connections[i] != nullptr) {
+      m_packetRouterFallback[i] = curnum;
+      if (curnum == 1) {
+        m_packetRouterSlot = i;
+      }
+      ++curnum;
+    }
+  }
 }
 */
 
-void ConnectionManager::doKeepAlive() {
+void ConnectionManager::doKeepAlive()
+{
 	static Int nextIndex = 0;
 	static time_t startTime = 0;
 
 	time_t curTime = timeGetTime();
 
-	if (startTime == 0) {
+	if (startTime == 0)
+	{
 		startTime = curTime;
 		return;
 	}
 
 	time_t numSeconds = (curTime - startTime) / 1000;
 
-	while ((nextIndex <= numSeconds) && (nextIndex < MAX_SLOTS)) {
-//		DEBUG_LOG(("ConnectionManager::doKeepAlive - trying to send keep alive message to player %d", nextIndex));
-		if (m_connections[nextIndex] != nullptr) {
-			NetKeepAliveCommandMsg *msg = newInstance(NetKeepAliveCommandMsg);
+	while ((nextIndex <= numSeconds) && (nextIndex < MAX_SLOTS))
+	{
+		//		DEBUG_LOG(("ConnectionManager::doKeepAlive - trying to send keep alive message to player %d", nextIndex));
+		if (m_connections[nextIndex] != nullptr)
+		{
+			NetKeepAliveCommandMsg* msg = newInstance(NetKeepAliveCommandMsg);
 			msg->setPlayerID(m_localSlot);
-			if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
+			if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE)
+			{
 				msg->setID(GenerateNextCommandID());
 			}
-//			DEBUG_LOG(("ConnectionManager::doKeepAlive - sending keep alive message to player %d", nextIndex));
+			//			DEBUG_LOG(("ConnectionManager::doKeepAlive - sending keep alive message to player %d", nextIndex));
 			sendLocalCommandDirect(msg, 1 << nextIndex);
 			msg->detach();
 		}
 		++nextIndex;
 	}
-	if (nextIndex == MAX_SLOTS) {
+	if (nextIndex == MAX_SLOTS)
+	{
 		nextIndex = 0;
 		startTime = curTime;
 	}
 }
 
-PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
+PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot)
+{
 	// Need to do the deletion of the slot's connection and frame data here.
 	PlayerLeaveCode retval = PLAYERLEAVECODE_CLIENT;
 	DEBUG_LOG(("ConnectionManager::disconnectPlayer - disconnecting slot %d on frame %d", slot, TheGameLogic->getFrame()));
 
-	if ((slot < 0) || (slot >= MAX_SLOTS)) {
+	if ((slot < 0) || (slot >= MAX_SLOTS))
+	{
 		return PLAYERLEAVECODE_UNKNOWN;
 	}
 
 	if (TheGameInfo)
 	{
-		GameSlot *gSlot = TheGameInfo->getSlot( slot );
+		GameSlot* gSlot = TheGameInfo->getSlot(slot);
 		if (gSlot && !gSlot->lastFrameInGame())
 		{
 			DEBUG_LOG(("ConnectionManager::disconnectPlayer(%d) - slot is last in the game on frame %d",
-				slot, TheGameLogic->getFrame()));
+			           slot, TheGameLogic->getFrame()));
 			gSlot->setLastFrameInGame(TheGameLogic->getFrame());
 		}
 	}
 
 	UnicodeString unicodeName;
 	unicodeName = getPlayerName(slot);
-	if (!unicodeName.isEmpty() && m_connections[slot]) {
+	if (!unicodeName.isEmpty() && m_connections[slot])
+	{
 		TheInGameUI->message("Network:PlayerLeftGame", unicodeName.str());
 
 		// People are boneheads. Also play a sound
@@ -1871,25 +2099,29 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 		TheAudio->addAudioEvent(&leftGameSound);
 	}
 
-	if ((m_frameData[slot] != nullptr) && (m_frameData[slot]->getIsQuitting() == FALSE)) {
+	if ((m_frameData[slot] != nullptr) && (m_frameData[slot]->getIsQuitting() == FALSE))
+	{
 		DEBUG_LOG(("ConnectionManager::disconnectPlayer - deleting player %d frame data", slot));
 		deleteInstance(m_frameData[slot]);
 		m_frameData[slot] = nullptr;
 	}
 
-	if (m_connections[slot] != nullptr && !m_connections[slot]->isQuitting()) {
+	if (m_connections[slot] != nullptr && !m_connections[slot]->isQuitting())
+	{
 		DEBUG_LOG(("ConnectionManager::disconnectPlayer - deleting player %d connection", slot));
 		deleteInstance(m_connections[slot]);
 		m_connections[slot] = nullptr;
 	}
 
-//	if (playerID == m_localSlot) {
-//		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
-//	}
+	//	if (playerID == m_localSlot) {
+	//		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
+	//	}
 
-	if (slot == m_packetRouterSlot) {
+	if (slot == m_packetRouterSlot)
+	{
 		Int index = 0;
-		while ((index < (MAX_SLOTS-1)) && (m_packetRouterFallback[index] != m_packetRouterSlot)) {
+		while ((index < (MAX_SLOTS - 1)) && (m_packetRouterFallback[index] != m_packetRouterSlot))
+		{
 			++index;
 		}
 		++index;
@@ -1897,40 +2129,45 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 		DEBUG_LOG(("Packet router left.  New packet router is slot %d", m_packetRouterSlot));
 		retval = PLAYERLEAVECODE_PACKETROUTER;
 	}
-	if (m_localSlot == slot) {
+	if (m_localSlot == slot)
+	{
 		DEBUG_LOG(("Disconnecting self"));
 		retval = PLAYERLEAVECODE_LOCAL;
 	}
 
 	// Take the player out of the fallback plan
 	Int fallbackindex = 0;
-	while ((fallbackindex < MAX_SLOTS) && (m_packetRouterFallback[fallbackindex] != slot)) {
+	while ((fallbackindex < MAX_SLOTS) && (m_packetRouterFallback[fallbackindex] != slot))
+	{
 		++fallbackindex;
 	}
 
-	for (Int i = fallbackindex; i < MAX_SLOTS-1; ++i) {
-		m_packetRouterFallback[i] = m_packetRouterFallback[i+1];
+	for (Int i = fallbackindex; i < MAX_SLOTS - 1; ++i)
+	{
+		m_packetRouterFallback[i] = m_packetRouterFallback[i + 1];
 	}
-	m_packetRouterFallback[MAX_SLOTS-1] = -1;
+	m_packetRouterFallback[MAX_SLOTS - 1] = -1;
 
 	return retval;
 }
 
-void ConnectionManager::quitGame() {
+void ConnectionManager::quitGame()
+{
 	// Need to do the NetDisconnectPlayerCommandMsg creation and sending here.
-	NetDisconnectPlayerCommandMsg *disconnectMsg = newInstance(NetDisconnectPlayerCommandMsg);
+	NetDisconnectPlayerCommandMsg* disconnectMsg = newInstance(NetDisconnectPlayerCommandMsg);
 	disconnectMsg->setDisconnectSlot(m_localSlot);
 	disconnectMsg->setDisconnectFrame(TheGameLogic->getFrame());
 	disconnectMsg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(disconnectMsg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(disconnectMsg->getNetCommandType()))
+	{
 		disconnectMsg->setID(GenerateNextCommandID());
 	}
-	//DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer - about to send disconnect command"));
+	// DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer - about to send disconnect command"));
 	sendLocalCommandDirect(disconnectMsg, 0xff ^ (1 << m_localSlot));
 
-	//DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer - about to flush connections"));
-	flushConnections(); // need to do this so our packet actually gets sent before the connections are deleted.
-	//DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer - done flushing connections"));
+	// DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer - about to flush connections"));
+	flushConnections();    // need to do this so our packet actually gets sent before the connections are deleted.
+	// DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer - done flushing connections"));
 
 	disconnectMsg->detach();
 
@@ -1941,7 +2178,7 @@ void ConnectionManager::quitGame() {
 	{
 		for (Int i = 0; i < MAX_SLOTS; ++i)
 		{
-			GameSlot *gSlot = TheGameInfo->getSlot( i );
+			GameSlot* gSlot = TheGameInfo->getSlot(i);
 			if (gSlot && !gSlot->lastFrameInGame())
 			{
 				gSlot->markAsDisconnected();
@@ -1953,11 +2190,14 @@ void ConnectionManager::quitGame() {
 	disconnectLocalPlayer();
 }
 
-void ConnectionManager::disconnectLocalPlayer() {
+void ConnectionManager::disconnectLocalPlayer()
+{
 	// kill the frame data and the connections for all the other players.
 	DEBUG_LOG(("ConnectionManager::disconnectLocalPlayer()"));
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (i != m_localSlot) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (i != m_localSlot)
+		{
 			disconnectPlayer(i);
 		}
 	}
@@ -1966,10 +2206,13 @@ void ConnectionManager::disconnectLocalPlayer() {
 /**
  * Takes all the commands that are ready to send and sends them right now.
  */
-void ConnectionManager::flushConnections() {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != nullptr) {
-//			DEBUG_LOG(("ConnectionManager::flushConnections - flushing connection to player %d", i));
+void ConnectionManager::flushConnections()
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_connections[i] != nullptr)
+		{
+			//			DEBUG_LOG(("ConnectionManager::flushConnections - flushing connection to player %d", i));
 			/*
 			if (m_connections[i]->isQueueEmpty()) {
 //				DEBUG_LOG(("ConnectionManager::flushConnections - connection queue empty"));
@@ -1979,34 +2222,43 @@ void ConnectionManager::flushConnections() {
 		}
 	}
 
-	if (m_transport != nullptr) {
+	if (m_transport != nullptr)
+	{
 		m_transport->doSend();
 	}
 }
 
-void ConnectionManager::resendPendingCommands() {
-	//DEBUG_LOG(("ConnectionManager::resendPendingCommands()"));
-	if (m_pendingCommands == nullptr) {
+void ConnectionManager::resendPendingCommands()
+{
+	// DEBUG_LOG(("ConnectionManager::resendPendingCommands()"));
+	if (m_pendingCommands == nullptr)
+	{
 		return;
 	}
 
-	NetCommandRef *ref = m_pendingCommands->getFirstMessage();
-	while (ref != nullptr) {
-		//DEBUG_LOG(("ConnectionManager::resendPendingCommands - resending command %d", ref->getCommand()->getID()));
+	NetCommandRef* ref = m_pendingCommands->getFirstMessage();
+	while (ref != nullptr)
+	{
+		// DEBUG_LOG(("ConnectionManager::resendPendingCommands - resending command %d", ref->getCommand()->getID()));
 		sendLocalCommand(ref->getCommand(), ref->getRelay());
 		ref = ref->getNext();
 	}
 }
 
-UnsignedInt ConnectionManager::getLocalPlayerID() {
+UnsignedInt ConnectionManager::getLocalPlayerID()
+{
 	return m_localSlot;
 }
 
-UnicodeString ConnectionManager::getPlayerName(Int playerNum) {
+UnicodeString ConnectionManager::getPlayerName(Int playerNum)
+{
 	UnicodeString retval;
-	if( playerNum == m_localSlot ) {
+	if (playerNum == m_localSlot)
+	{
 		retval = m_localUser->GetName();
-	}	else if (((m_connections[playerNum] != nullptr) && (m_connections[playerNum]->isQuitting() == FALSE))) {
+	}
+	else if (((m_connections[playerNum] != nullptr) && (m_connections[playerNum]->isQuitting() == FALSE)))
+	{
 		retval = m_connections[playerNum]->getUser()->GetName();
 	}
 	return retval;
@@ -2016,24 +2268,26 @@ UnicodeString ConnectionManager::getPlayerName(Int playerNum) {
  * Take a user list and make connections and frame data manager objects for each of the players.
  * For now, this is also how we'll determine the packet router fallback plan.
  */
-void ConnectionManager::parseUserList(const GameInfo *game)
+void ConnectionManager::parseUserList(const GameInfo* game)
 {
 	if (!game)
+	{
 		return;
+	}
 
 	Int i;
 	Int numUsers = 0;
 	m_localSlot = -1;
 	DEBUG_LOG(("Local slot is %d", game->getLocalSlotNum()));
-	for (i=0; i<MAX_SLOTS; ++i)
+	for (i = 0; i < MAX_SLOTS; ++i)
 	{
-		const GameSlot *slot = game->getConstSlot(i);	// badness, but since we cast right back to const, we should be ok
+		const GameSlot* slot = game->getConstSlot(i);    // badness, but since we cast right back to const, we should be ok
 		if (slot->isHuman())
 		{
 			if (game->getLocalSlotNum() == i)
 			{
 				m_localSlot = i;
-   			m_localUser->setName(slot->getName());
+				m_localUser->setName(slot->getName());
 			}
 
 			if (m_localSlot != i)
@@ -2041,7 +2295,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 				m_connections[i] = newInstance(Connection)();
 				m_connections[i]->init();
 				m_connections[i]->attachTransport(m_transport);
-//				UnsignedShort port = (TheNAT)?TheNAT->getSlotPort(i):8088;
+				//				UnsignedShort port = (TheNAT)?TheNAT->getSlotPort(i):8088;
 				UnsignedShort port = slot->getPort();
 				m_connections[i]->setUser(newInstance(User)(slot->getName(), slot->getIP(), port));
 				m_frameData[i] = newInstance(FrameDataManager)(FALSE);
@@ -2058,7 +2312,6 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 			m_packetRouterFallback[numUsers] = i;
 
 			++numUsers;
-
 		}
 	}
 #ifdef MEMORYPOOL_DEBUG
@@ -2068,14 +2321,14 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 	/*
 	if ( numUsers < 2 || m_localSlot == -1 )
 	{
-		DEBUG_CRASH(("FAILED parseUserList - network game won't work as expected"));
-		return;
+	  DEBUG_CRASH(("FAILED parseUserList - network game won't work as expected"));
+	  return;
 	}
 
 	char * list = strdup(buf);
 	char *listPtr = list;
 	if (!list)
-		return;
+	  return;
 
 	User users[MAX_SLOTS];
 	int localUser = -1;
@@ -2083,7 +2336,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 
 	for (i=0; i<MAX_SLOTS; i++)
 	{
-		users[i].setName("");
+	  users[i].setName("");
 	}
 
 	char *userStr, *nameStr, *addrStr, *portStr;
@@ -2092,60 +2345,60 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 	char *listPos;
 
 	DEBUG_LOG(("ConnectionManager::parseUserList - looking for local user at %d.%d.%d.%d:%d",
-		PRINTF_IP_AS_4_INTS(m_localAddr),
-		m_localPort));
+	  PRINTF_IP_AS_4_INTS(m_localAddr),
+	  m_localPort));
 
 	int numUsers = 0;
 	while ( (userStr=strtok_r(listPtr, ",", &listPos)) != nullptr )
 	{
-		listPtr = nullptr;
-		char *pos = nullptr;
+	  listPtr = nullptr;
+	  char *pos = nullptr;
 
-		nameStr = strtok_r(userStr, "@", &pos);
-		addrStr = strtok_r(nullptr, "@:", &pos);
-		portStr = strtok_r(nullptr, ": ", &pos);
+	  nameStr = strtok_r(userStr, "@", &pos);
+	  addrStr = strtok_r(nullptr, "@:", &pos);
+	  portStr = strtok_r(nullptr, ": ", &pos);
 
-		if (!portStr || numUsers >= MAX_SLOTS)
-		{
-			DEBUG_LOG(("ConnectionManager::parseUserList - (numUsers = %d) FAILED parseUserList with list [%s]", numUsers, buf));
-			return;
-		}
+	  if (!portStr || numUsers >= MAX_SLOTS)
+	  {
+	    DEBUG_LOG(("ConnectionManager::parseUserList - (numUsers = %d) FAILED parseUserList with list [%s]", numUsers, buf));
+	    return;
+	  }
 
-		addrAsciiStr = addrStr;
-		UnsignedInt addr = ResolveIP(addrAsciiStr);
-		UnsignedInt port = atoi(portStr);
+	  addrAsciiStr = addrStr;
+	  UnsignedInt addr = ResolveIP(addrAsciiStr);
+	  UnsignedInt port = atoi(portStr);
 
 //		if ((m_localAddr != addr) || (m_localPort != port)) {
-		if (loginName.compare(nameStr) != 0) {
-			m_connections[numUsers] = newInstance(Connection)();
-			m_connections[numUsers]->init();
-			m_connections[numUsers]->attachTransport(m_transport);
-			m_connections[numUsers]->setUser(newInstance(User)(nameStr, addr, port));
+	  if (loginName.compare(nameStr) != 0) {
+	    m_connections[numUsers] = newInstance(Connection)();
+	    m_connections[numUsers]->init();
+	    m_connections[numUsers]->attachTransport(m_transport);
+	    m_connections[numUsers]->setUser(newInstance(User)(nameStr, addr, port));
 
-			m_frameData[numUsers] = newInstance(FrameDataManager)(FALSE);
+	    m_frameData[numUsers] = newInstance(FrameDataManager)(FALSE);
 
-			DEBUG_LOG(("ConnectionManager::parseUserList - User %d is %s", numUsers, nameStr));
-		} else {
-			m_localSlot = numUsers;
-			m_localUser.setName(nameStr);
+	    DEBUG_LOG(("ConnectionManager::parseUserList - User %d is %s", numUsers, nameStr));
+	  } else {
+	    m_localSlot = numUsers;
+	    m_localUser.setName(nameStr);
 
-			DEBUG_LOG(("ConnectionManager::parseUserList - User %d is %s", numUsers, nameStr));
-			DEBUG_LOG(("Local user is %d", m_localSlot));
+	    DEBUG_LOG(("ConnectionManager::parseUserList - User %d is %s", numUsers, nameStr));
+	    DEBUG_LOG(("Local user is %d", m_localSlot));
 
-			m_frameData[numUsers] = newInstance(FrameDataManager)(TRUE);
-		}
-		m_frameData[numUsers]->init();
-		m_frameData[numUsers]->reset();
+	    m_frameData[numUsers] = newInstance(FrameDataManager)(TRUE);
+	  }
+	  m_frameData[numUsers]->init();
+	  m_frameData[numUsers]->reset();
 
-		m_packetRouterFallback[numUsers] = numUsers;
+	  m_packetRouterFallback[numUsers] = numUsers;
 
-		numUsers++;
+	  numUsers++;
 	}
 
 	if (numUsers < 2 || m_localSlot == -1)
 	{
-		DEBUG_LOG(("ConnectionManager::parseUserList - FAILED (local user = %d, num players = %d) with list [%s]", m_localSlot, numUsers, buf));
-		return;
+	  DEBUG_LOG(("ConnectionManager::parseUserList - FAILED (local user = %d, num players = %d) with list [%s]", m_localSlot, numUsers, buf));
+	  return;
 	}
 
 	free(list); // from the strdup above.
@@ -2159,9 +2412,13 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 Real ConnectionManager::getIncomingBytesPerSecond()
 {
 	if (m_transport)
+	{
 		return m_transport->getIncomingBytesPerSecond();
+	}
 	else
-	  return 0.0;
+	{
+		return 0.0;
+	}
 }
 
 /**
@@ -2170,9 +2427,13 @@ Real ConnectionManager::getIncomingBytesPerSecond()
 Real ConnectionManager::getIncomingPacketsPerSecond()
 {
 	if (m_transport)
+	{
 		return m_transport->getIncomingPacketsPerSecond();
+	}
 	else
-	  return 0.0;
+	{
+		return 0.0;
+	}
 }
 
 /**
@@ -2181,9 +2442,13 @@ Real ConnectionManager::getIncomingPacketsPerSecond()
 Real ConnectionManager::getOutgoingBytesPerSecond()
 {
 	if (m_transport)
+	{
 		return m_transport->getOutgoingBytesPerSecond();
+	}
 	else
-	  return 0.0;
+	{
+		return 0.0;
+	}
 }
 
 /**
@@ -2191,10 +2456,13 @@ Real ConnectionManager::getOutgoingBytesPerSecond()
  */
 Real ConnectionManager::getOutgoingPacketsPerSecond()
 {
-	if (m_transport) {
+	if (m_transport)
+	{
 		return m_transport->getOutgoingPacketsPerSecond();
-	} else {
-	  return 0.0;
+	}
+	else
+	{
+		return 0.0;
 	}
 }
 
@@ -2204,9 +2472,13 @@ Real ConnectionManager::getOutgoingPacketsPerSecond()
 Real ConnectionManager::getUnknownBytesPerSecond()
 {
 	if (m_transport)
+	{
 		return m_transport->getUnknownBytesPerSecond();
+	}
 	else
-	  return 0.0;
+	{
+		return 0.0;
+	}
 }
 
 /**
@@ -2215,15 +2487,20 @@ Real ConnectionManager::getUnknownBytesPerSecond()
 Real ConnectionManager::getUnknownPacketsPerSecond()
 {
 	if (m_transport)
+	{
 		return m_transport->getUnknownPacketsPerSecond();
+	}
 	else
-	  return 0.0;
+	{
+		return 0.0;
+	}
 }
 
 /**
  * Return the smallest packet arrival cushion since this was last called.
  */
-UnsignedInt ConnectionManager::getPacketArrivalCushion() {
+UnsignedInt ConnectionManager::getPacketArrivalCushion()
+{
 	UnsignedInt retval = m_smallestPacketArrivalCushion;
 	m_smallestPacketArrivalCushion = -1;
 	return retval;
@@ -2231,7 +2508,7 @@ UnsignedInt ConnectionManager::getPacketArrivalCushion() {
 
 void ConnectionManager::sendChat(UnicodeString text, Int playerMask, UnsignedInt executionFrame)
 {
-	NetChatCommandMsg *msg = newInstance(NetChatCommandMsg);
+	NetChatCommandMsg* msg = newInstance(NetChatCommandMsg);
 	msg->setText(text);
 	msg->setPlayerMask(playerMask);
 	msg->setPlayerID(m_localSlot);
@@ -2249,10 +2526,12 @@ void ConnectionManager::sendChat(UnicodeString text, Int playerMask, UnsignedInt
 	msg->detach();
 }
 
-void ConnectionManager::sendDisconnectChat(UnicodeString text) {
-	NetDisconnectChatCommandMsg *msg = newInstance(NetDisconnectChatCommandMsg);
+void ConnectionManager::sendDisconnectChat(UnicodeString text)
+{
+	NetDisconnectChatCommandMsg* msg = newInstance(NetDisconnectChatCommandMsg);
 	msg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 	msg->setText(text);
@@ -2263,23 +2542,26 @@ void ConnectionManager::sendDisconnectChat(UnicodeString text) {
 
 UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte playerMask)
 {
-	File *theFile = TheLocalFileSystem->openFile(path.str());
+	File* theFile = TheLocalFileSystem->openFile(path.str());
 	if (!theFile || !theFile->size())
 	{
 		UnicodeString log;
 		log.format(L"Not sending file '%hs' to %X", path.str(), playerMask);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls", log.str()));
 		if (TheLAN)
+		{
 			TheLAN->OnChat(L"sendFile", 0, log, LANAPI::LANCHAT_SYSTEM);
+		}
 		return 0;
 	}
 
 	theFile->close();
 
 	Int announceMask = 0xff ^ (1 << m_localSlot);
-	NetFileAnnounceCommandMsg *announceMsg = newInstance(NetFileAnnounceCommandMsg);
+	NetFileAnnounceCommandMsg* announceMsg = newInstance(NetFileAnnounceCommandMsg);
 	announceMsg->setPlayerID(m_localSlot);
-	if (DoesCommandRequireACommandID(announceMsg->getNetCommandType()) == TRUE) {
+	if (DoesCommandRequireACommandID(announceMsg->getNetCommandType()) == TRUE)
+	{
 		announceMsg->setID(GenerateNextCommandID());
 	}
 	announceMsg->setRealFilename(path);
@@ -2287,10 +2569,10 @@ UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte
 	UnsignedShort fileID = GenerateNextCommandID();
 	announceMsg->setFileID(fileID);
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFileAnnounce() - creating announce message with ID of %d from %d to mask %X for '%s' going to %X as command %d",
-		announceMsg->getID(), announceMsg->getPlayerID(), announceMask, announceMsg->getRealFilename().str(),
-		announceMsg->getPlayerMask(), announceMsg->getFileID()));
+	                                  announceMsg->getID(), announceMsg->getPlayerID(), announceMask, announceMsg->getRealFilename().str(),
+	                                  announceMsg->getPlayerMask(), announceMsg->getFileID()));
 
-	processFileAnnounce(announceMsg); // set up things for the host
+	processFileAnnounce(announceMsg);    // set up things for the host
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file announce to %X", announceMask));
 	sendLocalCommand(announceMsg, announceMask);
@@ -2301,29 +2583,33 @@ UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte
 
 void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, UnsignedShort commandID)
 {
-	File *theFile = TheLocalFileSystem->openFile(path.str());
+	File* theFile = TheLocalFileSystem->openFile(path.str());
 	if (!theFile || !theFile->size())
 	{
 		UnicodeString log;
 		log.format(L"Not sending file '%hs' to %X", path.str(), playerMask);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls", log.str()));
 		if (TheLAN)
+		{
 			TheLAN->OnChat(L"sendFile", 0, log, LANAPI::LANCHAT_SYSTEM);
+		}
 		return;
 	}
 
 	Int len = theFile->size();
-	char *buf = theFile->readEntireAndClose();
+	char* buf = theFile->readEntireAndClose();
 	NetCommandDataChunk rawDataChunk(buf, len);
 
 	// compress Targas
 #ifdef COMPRESS_TARGAS
-	char *compressedBuf = nullptr;
-	Int compressedLen = path.endsWith(".tga")?CompressionManager::getMaxCompressedSize(len, CompressionManager::getPreferredCompression()):0;
+	char* compressedBuf = nullptr;
+	Int compressedLen = path.endsWith(".tga") ? CompressionManager::getMaxCompressedSize(len, CompressionManager::getPreferredCompression()) : 0;
 	Int compressedSize = 0;
 	if (compressedLen)
+	{
 		compressedSize = CompressionManager::compressData(CompressionManager::getPreferredCompression(),
-		buf, len, compressedBuf, compressedLen);
+		                                                  buf, len, compressedBuf, compressedLen);
+	}
 
 	if (!compressedSize)
 	{
@@ -2332,9 +2618,9 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	}
 
 	NetCommandDataChunk compressedDataChunk(compressedBuf, compressedSize);
-#endif // COMPRESS_TARGAS
+#endif    // COMPRESS_TARGAS
 
-	NetFileCommandMsg *fileMsg = newInstance(NetFileCommandMsg);
+	NetFileCommandMsg* fileMsg = newInstance(NetFileCommandMsg);
 	fileMsg->setPlayerID(m_localSlot);
 	fileMsg->setID(commandID);
 	fileMsg->setRealFilename(path);
@@ -2343,17 +2629,17 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	if (compressedBuf)
 	{
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Compressed '%s' from %d to %d (%g%%) before transfer", path.str(), len, compressedSize,
-			(Real)compressedSize/(Real)len*100.0f));
+		                                  (Real)compressedSize / (Real)len * 100.0f));
 		fileMsg->setFileData(compressedDataChunk);
 	}
 	else
-#endif // COMPRESS_TARGAS
+#endif    // COMPRESS_TARGAS
 	{
 		fileMsg->setFileData(rawDataChunk);
 	}
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFile() - creating file message with ID of %d for '%s' going to %X from %d, size of %d",
-		fileMsg->getID(), fileMsg->getRealFilename().str(), playerMask, fileMsg->getPlayerID(), fileMsg->getFileLength()));
+	                                  fileMsg->getID(), fileMsg->getRealFilename().str(), playerMask, fileMsg->getPlayerID(), fileMsg->getFileLength()));
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file: '%s', len %d, to %X", path.str(), len, playerMask));
 
@@ -2367,7 +2653,7 @@ Int ConnectionManager::getFileTransferProgress(Int playerID, AsciiString path)
 	FileCommandMap::iterator commandIt = s_fileCommandMap.begin();
 	while (commandIt != s_fileCommandMap.end())
 	{
-		//DEBUG_LOG(("ConnectionManager::getFileTransferProgress(%s): looking at existing transfer of '%s'",
+		// DEBUG_LOG(("ConnectionManager::getFileTransferProgress(%s): looking at existing transfer of '%s'",
 		//	path.str(), commandIt->second.str()));
 		if (commandIt->second == path)
 		{
@@ -2375,14 +2661,15 @@ Int ConnectionManager::getFileTransferProgress(Int playerID, AsciiString path)
 		}
 		++commandIt;
 	}
-	//DEBUG_LOG(("Falling back to 0, since we couldn't find the map"));
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::getFileTransferProgress: path %s not found",path.str()));
+	// DEBUG_LOG(("Falling back to 0, since we couldn't find the map"));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::getFileTransferProgress: path %s not found", path.str()));
 	return 0;
 }
 
-
-void ConnectionManager::voteForPlayerDisconnect(Int slot) {
-	if (m_disconnectManager != nullptr) {
+void ConnectionManager::voteForPlayerDisconnect(Int slot)
+{
+	if (m_disconnectManager != nullptr)
+	{
 		m_disconnectManager->voteForPlayerDisconnect(slot, this);
 	}
 }
@@ -2392,7 +2679,8 @@ Int ConnectionManager::getNumPlayers()
 	Int retval = 0;
 	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
-		if (isPlayerConnected(i)) {
+		if (isPlayerConnected(i))
+		{
 			++retval;
 		}
 	}
@@ -2400,12 +2688,13 @@ Int ConnectionManager::getNumPlayers()
 	return retval;
 }
 
-void ConnectionManager::updateLoadProgress( Int progress )
+void ConnectionManager::updateLoadProgress(Int progress)
 {
-	NetProgressCommandMsg *msg = newInstance(NetProgressCommandMsg);
-	msg->setPercentage( progress );
-	msg->setPlayerID( m_localSlot );
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
+	NetProgressCommandMsg* msg = newInstance(NetProgressCommandMsg);
+	msg->setPercentage(progress);
+	msg->setPlayerID(m_localSlot);
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE)
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 	processProgress(msg);
@@ -2416,9 +2705,10 @@ void ConnectionManager::updateLoadProgress( Int progress )
 
 void ConnectionManager::loadProgressComplete()
 {
-	NetLoadCompleteCommandMsg *msg = newInstance(NetLoadCompleteCommandMsg);
-	msg->setPlayerID( m_localSlot );
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
+	NetLoadCompleteCommandMsg* msg = newInstance(NetLoadCompleteCommandMsg);
+	msg->setPlayerID(m_localSlot);
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE)
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 	processLoadComplete(msg);
@@ -2429,9 +2719,10 @@ void ConnectionManager::loadProgressComplete()
 
 void ConnectionManager::sendTimeOutGameStart()
 {
-	NetTimeOutGameStartCommandMsg *msg = newInstance(NetTimeOutGameStartCommandMsg);
-	msg->setPlayerID( m_localSlot );
-	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE) {
+	NetTimeOutGameStartCommandMsg* msg = newInstance(NetTimeOutGameStartCommandMsg);
+	msg->setPlayerID(m_localSlot);
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()) == TRUE)
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 	processTimeOutGameStart(msg);
@@ -2450,11 +2741,14 @@ Int ConnectionManager::getAverageFPS()
 	return m_frameMetrics.getAverageFPS();
 }
 
-Int ConnectionManager::getSlotAverageFPS(Int slot) {
-	if ((slot < 0) || (slot >= MAX_SLOTS)) {
+Int ConnectionManager::getSlotAverageFPS(Int slot)
+{
+	if ((slot < 0) || (slot >= MAX_SLOTS))
+	{
 		return -1;
 	}
-	if ((m_packetRouterSlot != m_localSlot) && (slot == m_localSlot)) {
+	if ((m_packetRouterSlot != m_localSlot) && (slot == m_localSlot))
+	{
 		// our framerate data isn't valid for other players unless we are the
 		// packet router, so don't fake someone out.
 		return -1;
@@ -2463,10 +2757,13 @@ Int ConnectionManager::getSlotAverageFPS(Int slot) {
 }
 
 #if defined(RTS_DEBUG)
-void ConnectionManager::debugPrintConnectionCommands() {
+void ConnectionManager::debugPrintConnectionCommands()
+{
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - begin commands"));
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if (m_connections[i] != nullptr) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if (m_connections[i] != nullptr)
+		{
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - commands for connection %d", i));
 			m_connections[i]->debugPrintCommands();
 		}
@@ -2475,18 +2772,20 @@ void ConnectionManager::debugPrintConnectionCommands() {
 }
 #endif
 
-void ConnectionManager::notifyOthersOfCurrentFrame(Int frame) {
-	NetDisconnectFrameCommandMsg *msg = newInstance(NetDisconnectFrameCommandMsg);
+void ConnectionManager::notifyOthersOfCurrentFrame(Int frame)
+{
+	NetDisconnectFrameCommandMsg* msg = newInstance(NetDisconnectFrameCommandMsg);
 
 	msg->setPlayerID(m_localSlot);
 	msg->setDisconnectFrame(frame);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::notifyOthersOfCurrentFrame - sending disconnect frame of %d, command ID = %d", frame, msg->getID()));
 	sendLocalCommandDirect(msg, 0xff ^ (1 << m_localSlot));
-	NetCommandRef *ref = NEW_NETCOMMANDREF(msg);
+	NetCommandRef* ref = NEW_NETCOMMANDREF(msg);
 	ref->setRelay(1 << m_localSlot);
 	m_disconnectManager->processDisconnectCommand(ref, this);
 	deleteInstance(ref);
@@ -2499,17 +2798,19 @@ void ConnectionManager::notifyOthersOfCurrentFrame(Int frame) {
 #endif
 }
 
-void ConnectionManager::notifyOthersOfNewFrame(UnsignedInt frame) {
-	NetDisconnectScreenOffCommandMsg *msg = newInstance(NetDisconnectScreenOffCommandMsg);
+void ConnectionManager::notifyOthersOfNewFrame(UnsignedInt frame)
+{
+	NetDisconnectScreenOffCommandMsg* msg = newInstance(NetDisconnectScreenOffCommandMsg);
 
 	msg->setPlayerID(m_localSlot);
 	msg->setNewFrame(frame);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 
 	sendLocalCommandDirect(msg, 0xff ^ (1 << m_localSlot));
-	NetCommandRef *ref = NEW_NETCOMMANDREF(msg);
+	NetCommandRef* ref = NEW_NETCOMMANDREF(msg);
 	ref->setRelay(1 << m_localSlot);
 	m_disconnectManager->processDisconnectCommand(ref, this);
 	deleteInstance(ref);
@@ -2517,16 +2818,20 @@ void ConnectionManager::notifyOthersOfNewFrame(UnsignedInt frame) {
 	msg->detach();
 }
 
-void ConnectionManager::sendFrameDataToPlayer(UnsignedInt playerID, UnsignedInt startingFrame) {
+void ConnectionManager::sendFrameDataToPlayer(UnsignedInt playerID, UnsignedInt startingFrame)
+{
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending frame data to player %d starting with frame %d", playerID, startingFrame));
-	for (UnsignedInt frame = startingFrame; frame < TheGameLogic->getFrame(); ++frame) {
+	for (UnsignedInt frame = startingFrame; frame < TheGameLogic->getFrame(); ++frame)
+	{
 		sendSingleFrameToPlayer(playerID, frame);
 	}
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - done sending commands to player %d", playerID));
 }
 
-void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedInt frame) {
-	if ((TheGameLogic->getFrame() - FRAMES_TO_KEEP) > frame) {
+void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedInt frame)
+{
+	if ((TheGameLogic->getFrame() - FRAMES_TO_KEEP) > frame)
+	{
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendSingleFrameToPlayer - player %d requested frame %d when we are on frame %d, this is too far in the past.", playerID, frame, TheGameLogic->getFrame()));
 		return;
 	}
@@ -2534,22 +2839,27 @@ void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedIn
 	UnsignedByte relay = 1 << playerID;
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending data for frame %d", frame));
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
-		if ((m_frameData[i] != nullptr) && (i != playerID)) { // no need to send his own commands to him.
-			NetCommandList *list = m_frameData[i]->getFrameCommandList(frame);
-			if (list != nullptr) {
-				NetCommandRef *ref = list->getFirstMessage();
-				while (ref != nullptr) {
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		if ((m_frameData[i] != nullptr) && (i != playerID))
+		{    // no need to send his own commands to him.
+			NetCommandList* list = m_frameData[i]->getFrameCommandList(frame);
+			if (list != nullptr)
+			{
+				NetCommandRef* ref = list->getFirstMessage();
+				while (ref != nullptr)
+				{
 					DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending command %d from player %d to player %d using relay 0x%x", ref->getCommand()->getID(), i, playerID, relay));
 					sendLocalCommandDirect(ref->getCommand(), relay);
 					ref = ref->getNext();
 				}
 			}
 			UnsignedInt frameCommandCount = m_frameData[i]->getFrameCommandCount(frame);
-			NetFrameCommandMsg *msg = newInstance(NetFrameCommandMsg);
+			NetFrameCommandMsg* msg = newInstance(NetFrameCommandMsg);
 			msg->setExecutionFrame(frame);
 			msg->setCommandCount(frameCommandCount);
-			if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+			if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+			{
 				msg->setID(GenerateNextCommandID());
 			}
 			msg->setPlayerID(i);
@@ -2560,31 +2870,38 @@ void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedIn
 	}
 }
 
-UnsignedInt ConnectionManager::getNextPacketRouterSlot(UnsignedInt playerID) {
+UnsignedInt ConnectionManager::getNextPacketRouterSlot(UnsignedInt playerID)
+{
 	Int index = 0;
-	while ((index < (MAX_SLOTS-1)) && (m_packetRouterFallback[index] != playerID)) {
+	while ((index < (MAX_SLOTS - 1)) && (m_packetRouterFallback[index] != playerID))
+	{
 		++index;
 	}
 	++index;
 	return m_packetRouterFallback[index];
 }
 
-void ConnectionManager::requestFrameDataResend(Int playerID, UnsignedInt frame) {
-	NetFrameResendRequestCommandMsg *msg = newInstance(NetFrameResendRequestCommandMsg);
+void ConnectionManager::requestFrameDataResend(Int playerID, UnsignedInt frame)
+{
+	NetFrameResendRequestCommandMsg* msg = newInstance(NetFrameResendRequestCommandMsg);
 	msg->setPlayerID(m_localSlot);
 	msg->setFrameToResend(frame);
-	if (DoesCommandRequireACommandID(msg->getNetCommandType())) {
+	if (DoesCommandRequireACommandID(msg->getNetCommandType()))
+	{
 		msg->setID(GenerateNextCommandID());
 	}
 
-	if (isPlayerConnected(playerID) == FALSE) {
+	if (isPlayerConnected(playerID) == FALSE)
+	{
 		playerID = 0;
-		while ((playerID < MAX_SLOTS) && (isPlayerConnected(playerID) == FALSE)) {
+		while ((playerID < MAX_SLOTS) && (isPlayerConnected(playerID) == FALSE))
+		{
 			++playerID;
 		}
 	}
 
-	if (playerID < MAX_SLOTS) {
+	if (playerID < MAX_SLOTS)
+	{
 		sendLocalCommandDirect(msg, 1 << playerID);
 	}
 

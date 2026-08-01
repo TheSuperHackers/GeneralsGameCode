@@ -55,132 +55,167 @@
 ** would hurt performance.
 */
 
-class LODHeapNode {
-	public:
-		LODHeapNode()												{ Item = nullptr; }
-		LODHeapNode (float key)										{ Item = nullptr; Key = key; }
-		LODHeapNode (RenderObjClass * item, float key)		{ Item = item; Key = key; }
+class LODHeapNode
+{
+public:
+	LODHeapNode() { Item = nullptr; }
+	LODHeapNode(float key)
+	{
+		Item = nullptr;
+		Key = key;
+	}
+	LODHeapNode(RenderObjClass* item, float key)
+	{
+		Item = item;
+		Key = key;
+	}
 
-		~LODHeapNode()											{ }
+	~LODHeapNode() {}
 
-		RenderObjClass *	Get_Item()							{ return(Item); }
+	RenderObjClass* Get_Item() { return (Item); }
 
-		float						Get_Key()						{ return(Key); }
-		void						Set_Key(float key)				{ Key = key; }
+	float Get_Key() { return (Key); }
+	void Set_Key(float key) { Key = key; }
 
-		int operator <		(const LODHeapNode& node)	{ return(Key < node.Key); }
-		int operator <=	(const LODHeapNode& node)	{ return(Key <= node.Key); }
-		int operator >		(const LODHeapNode& node)	{ return(Key > node.Key); }
-		int operator >=	(const LODHeapNode& node)	{ return(Key >= node.Key); }
-		int operator ==	(const LODHeapNode& node)	{ return(Key == node.Key); }
-		int operator !=	(const LODHeapNode& node)	{ return(Key != node.Key); }
+	int operator<(const LODHeapNode& node) { return (Key < node.Key); }
+	int operator<=(const LODHeapNode& node) { return (Key <= node.Key); }
+	int operator>(const LODHeapNode& node) { return (Key > node.Key); }
+	int operator>=(const LODHeapNode& node) { return (Key >= node.Key); }
+	int operator==(const LODHeapNode& node) { return (Key == node.Key); }
+	int operator!=(const LODHeapNode& node) { return (Key != node.Key); }
 
-	private:
-		RenderObjClass *Item;
-		float Key;
+private:
+	RenderObjClass* Item;
+	float Key;
 };
 
 // A Heap implemented as a complete binary tree in an array.
-class LODHeap {
-	public:
-		// This constructor receives an array of HeapNodes and arranges it to
-		// fulfil the heap condition. Note: the array will be used inside the
-		// heap, so it should never be used or deleted outside. The resulting
-		// heap is full - no nodes can be added until some are removed.
-		LODHeap(int count, LODHeapNode *NodeArray) {
-			Nodes = NodeArray;
-			Num = Max = count;
-			// Now build a heap from the array by working backwards, building
-			// subheaps from the bottom up. (starting at the middle of the array
-			// since the single-node subtrees at the leaves are already heaps)
-			int index;
-			for (index = Num/2; index >= 1; index--) Downheap(index);
+class LODHeap
+{
+public:
+	// This constructor receives an array of HeapNodes and arranges it to
+	// fulfil the heap condition. Note: the array will be used inside the
+	// heap, so it should never be used or deleted outside. The resulting
+	// heap is full - no nodes can be added until some are removed.
+	LODHeap(int count, LODHeapNode* NodeArray)
+	{
+		Nodes = NodeArray;
+		Num = Max = count;
+		// Now build a heap from the array by working backwards, building
+		// subheaps from the bottom up. (starting at the middle of the array
+		// since the single-node subtrees at the leaves are already heaps)
+		int index;
+		for (index = Num / 2; index >= 1; index--)
+		{
+			Downheap(index);
 		}
+	}
 
-		~LODHeap() {
-//			delete []Nodes;
-		}
+	~LODHeap()
+	{
+		//			delete []Nodes;
+	}
 
-		LODHeapNode	*Top() {
-			return &(Nodes[1]);
-		}
+	LODHeapNode* Top()
+	{
+		return &(Nodes[1]);
+	}
 
-		// This changes the key value of the entry at the top of the heap and
-		// adjusts the heap accordingly.
-		void Change_Key_Top(float new_key) {
-			Nodes[1].Set_Key(new_key);
-			Downheap(1);
-		}
+	// This changes the key value of the entry at the top of the heap and
+	// adjusts the heap accordingly.
+	void Change_Key_Top(float new_key)
+	{
+		Nodes[1].Set_Key(new_key);
+		Downheap(1);
+	}
 
-		// This searches for an entry which has a certain Item value, and
-		// changes its key to a new one. The heap is then adjusted accordingly.
-		void Change_Key(RenderObjClass *item, float new_key) {
-			for (int i=1; i <= Num; i++) {
-				if (Nodes[i].Get_Item() == item) {
-					float old_key = Nodes[i].Get_Key();
-					Nodes[i].Set_Key(new_key);
-					// If the key has been decreased, adjust the node downwards.
-					// Otherwise, adjust it upwards.
-					if (new_key < old_key) Downheap(i);
-					else Upheap(i);
-					break;
+	// This searches for an entry which has a certain Item value, and
+	// changes its key to a new one. The heap is then adjusted accordingly.
+	void Change_Key(RenderObjClass* item, float new_key)
+	{
+		for (int i = 1; i <= Num; i++)
+		{
+			if (Nodes[i].Get_Item() == item)
+			{
+				float old_key = Nodes[i].Get_Key();
+				Nodes[i].Set_Key(new_key);
+				// If the key has been decreased, adjust the node downwards.
+				// Otherwise, adjust it upwards.
+				if (new_key < old_key)
+				{
+					Downheap(i);
 				}
+				else
+				{
+					Upheap(i);
+				}
+				break;
 			}
 		}
+	}
 
-	private:
-		LODHeap() {}	// Just to ensure the default constructor is not used.
+private:
+	LODHeap() {}    // Just to ensure the default constructor is not used.
 
-		// The node and key arrays have one extra entry because entry [0] is
-		// reserved for various uses.
-		LODHeapNode *		Nodes;	// The nodes
+	// The node and key arrays have one extra entry because entry [0] is
+	// reserved for various uses.
+	LODHeapNode* Nodes;    // The nodes
 
-		int					Max;		// The maximum number of nodes
-		int					Num;		// the current number of nodes
+	int Max;    // The maximum number of nodes
+	int Num;    // the current number of nodes
 
-		// Two utility methods used by various other methods: both take a
-		// single entry which violates the heap condition and moves it in the
-		// heap until the heap condition is fulfilled.
+	// Two utility methods used by various other methods: both take a
+	// single entry which violates the heap condition and moves it in the
+	// heap until the heap condition is fulfilled.
 
-		// Upheap takes an entry with a (possibly) overlarge key and moves it
-		// up until the heap condition is satisfied. (this is a private
-		// method, so no error checking is needed).
-		// Note that Upheap puts a sentinel in Nodes[0].
-		void Upheap(int index) {
-			LODHeapNode node = Nodes[index];
-			Nodes[0].Set_Key(FLT_MAX);
-			while (Nodes[index/2] <= node) {
-				Nodes[index] = Nodes[index/2];
-				index = index/2;
-			}
-			Nodes[index] = node;
+	// Upheap takes an entry with a (possibly) overlarge key and moves it
+	// up until the heap condition is satisfied. (this is a private
+	// method, so no error checking is needed).
+	// Note that Upheap puts a sentinel in Nodes[0].
+	void Upheap(int index)
+	{
+		LODHeapNode node = Nodes[index];
+		Nodes[0].Set_Key(FLT_MAX);
+		while (Nodes[index / 2] <= node)
+		{
+			Nodes[index] = Nodes[index / 2];
+			index = index / 2;
 		}
+		Nodes[index] = node;
+	}
 
-		// Downheap takes an entry with a (possibly) oversmall key and moves it
-		// down until the heap condition is satisfied. (this is a private
-		// method, so no error checking is needed).
-		void Downheap(int index) {
-			LODHeapNode node = Nodes[index];
-			while (index <= Num/2) {
-				int child_index = index + index;
-				if ((child_index < Num) && (Nodes[child_index] < Nodes[child_index+1])) child_index++;
-				if (node >= Nodes[child_index]) break;
-				Nodes[index] = Nodes[child_index];
-				index = child_index;
+	// Downheap takes an entry with a (possibly) oversmall key and moves it
+	// down until the heap condition is satisfied. (this is a private
+	// method, so no error checking is needed).
+	void Downheap(int index)
+	{
+		LODHeapNode node = Nodes[index];
+		while (index <= Num / 2)
+		{
+			int child_index = index + index;
+			if ((child_index < Num) && (Nodes[child_index] < Nodes[child_index + 1]))
+			{
+				child_index++;
 			}
-			Nodes[index] = node;
+			if (node >= Nodes[child_index])
+			{
+				break;
+			}
+			Nodes[index] = Nodes[child_index];
+			index = child_index;
 		}
+		Nodes[index] = node;
+	}
 };
 
 // Static PredictiveLODOptimizerClass data members:
-RenderObjClass **	PredictiveLODOptimizerClass::ObjectArray = nullptr;
-int					PredictiveLODOptimizerClass::ArraySize = 0;
-int					PredictiveLODOptimizerClass::NumObjects = 0;
-float					PredictiveLODOptimizerClass::TotalCost = 0.0f;
-LODHeapNode *		PredictiveLODOptimizerClass::VisibleObjArray1;
-LODHeapNode	*		PredictiveLODOptimizerClass::VisibleObjArray2;
-int					PredictiveLODOptimizerClass::VisibleObjArraySize;
-
+RenderObjClass** PredictiveLODOptimizerClass::ObjectArray = nullptr;
+int PredictiveLODOptimizerClass::ArraySize = 0;
+int PredictiveLODOptimizerClass::NumObjects = 0;
+float PredictiveLODOptimizerClass::TotalCost = 0.0f;
+LODHeapNode* PredictiveLODOptimizerClass::VisibleObjArray1;
+LODHeapNode* PredictiveLODOptimizerClass::VisibleObjArray2;
+int PredictiveLODOptimizerClass::VisibleObjArraySize;
 
 /**************************************************************************
  * PredictiveLODOptimizerClass::Clear -- clear object list and total cost *
@@ -196,10 +231,13 @@ int					PredictiveLODOptimizerClass::VisibleObjArraySize;
  *========================================================================*/
 void PredictiveLODOptimizerClass::Clear()
 {
-	if (ObjectArray) {
+	if (ObjectArray)
+	{
 		// Release refs to all objects in the list:
-		for (int i = 0; i < NumObjects; i++) {
-			if (ObjectArray[i]) {
+		for (int i = 0; i < NumObjects; i++)
+		{
+			if (ObjectArray[i])
+			{
 				ObjectArray[i]->Release_Ref();
 				ObjectArray[i] = nullptr;
 			}
@@ -209,7 +247,6 @@ void PredictiveLODOptimizerClass::Clear()
 	TotalCost = 0.0f;
 	NumObjects = 0;
 }
-
 
 /**************************************************************************
  * PredictiveLODOptimizerClass::Add_Object -- adds object to list, cost   *
@@ -223,21 +260,25 @@ void PredictiveLODOptimizerClass::Clear()
  * HISTORY:                                                               *
  *   03/12/1999 NH  : Created.                                            *
  *========================================================================*/
-void PredictiveLODOptimizerClass::Add_Object(RenderObjClass *robj)
+void PredictiveLODOptimizerClass::Add_Object(RenderObjClass* robj)
 {
 	// If array present but too small, free it and copy it to new array.
-	if (ObjectArray) {
-		if (ArraySize <= NumObjects) {
+	if (ObjectArray)
+	{
+		if (ArraySize <= NumObjects)
+		{
 			int new_array_size = NumObjects + 100;
-			RenderObjClass **new_array = W3DNEWARRAY RenderObjClass *[new_array_size];
-			memcpy(new_array, ObjectArray, sizeof(RenderObjClass *) * NumObjects);
-			delete [] ObjectArray;
+			RenderObjClass** new_array = W3DNEWARRAY RenderObjClass* [new_array_size];
+			memcpy(new_array, ObjectArray, sizeof(RenderObjClass*) * NumObjects);
+			delete[] ObjectArray;
 			ObjectArray = new_array;
 			ArraySize = new_array_size;
 		}
-	} else {
+	}
+	else
+	{
 		// Create new object array.
-		ObjectArray = W3DNEWARRAY RenderObjClass *[100];
+		ObjectArray = W3DNEWARRAY RenderObjClass* [100];
 	}
 
 	// Copy pointer and add ref
@@ -247,11 +288,10 @@ void PredictiveLODOptimizerClass::Add_Object(RenderObjClass *robj)
 
 	float cost = robj->Get_Cost();
 	// Some sanity checking so one object doesn't mess up the entire scene
-	WWASSERT (cost >= 0.0f);
-	WWASSERT (cost < 1.0e6);
+	WWASSERT(cost >= 0.0f);
+	WWASSERT(cost < 1.0e6);
 	TotalCost += cost;
 }
-
 
 /**************************************************************************
  * PredictiveLODOptimizerClass::Optimize_LODs -- does LOD optimization    *
@@ -276,17 +316,21 @@ void PredictiveLODOptimizerClass::Add_Object(RenderObjClass *robj)
  *========================================================================*/
 void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 {
-	if (!ObjectArray || NumObjects == 0) return;
+	if (!ObjectArray || NumObjects == 0)
+	{
+		return;
+	}
 
 	AllocVisibleObjArrays(NumObjects);
 
 	// Allocate and fill arrays. (one extra entry since the zeroth entry is not used).
-//	LODHeapNode *visible_obj_array1 = W3DNEWARRAY LODHeapNode[NumObjects + 1];
-//	LODHeapNode *visible_obj_array2 = W3DNEWARRAY LODHeapNode[NumObjects + 1];
+	//	LODHeapNode *visible_obj_array1 = W3DNEWARRAY LODHeapNode[NumObjects + 1];
+	//	LODHeapNode *visible_obj_array2 = W3DNEWARRAY LODHeapNode[NumObjects + 1];
 
 	// Insert objects into arrays: (0th entry reserved for sentinel values)
-	for (int i = 0; i < NumObjects; i++) {
-		RenderObjClass *robj = ObjectArray[i];
+	for (int i = 0; i < NumObjects; i++)
+	{
+		RenderObjClass* robj = ObjectArray[i];
 		// We use minus Value for the first queue to make it ordered by minimum Value.
 		VisibleObjArray1[i + 1] = LODHeapNode(robj, -(robj->Get_Value()));
 		VisibleObjArray2[i + 1] = LODHeapNode(robj, robj->Get_Post_Increment_Value());
@@ -296,29 +340,32 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 	LODHeap min_current_value_queue(NumObjects, VisibleObjArray1);
 	LODHeap max_post_increment_value_queue(NumObjects, VisibleObjArray2);
 	// These memory areas now are pointed to within the heaps:
-//	visible_obj_array1 = nullptr;
-//	visible_obj_array2 = nullptr;
+	//	visible_obj_array1 = nullptr;
+	//	visible_obj_array2 = nullptr;
 
 	// Main loop: iteratively increment/decrement tuples.
 	bool done = false;
 	RenderObjClass *max_data, *min_data;
 
-	while (!done) {
+	while (!done)
+	{
 		// Initialize max_data and min_data so comparison at end of loop uses correct values.
 		max_data = nullptr;
 		min_data = nullptr;
 
 		// Increment incrementable tuple with maximum next value.
-		if (TotalCost <= max_cost) {
+		if (TotalCost <= max_cost)
+		{
 			// If tuple with maximum next value is already at maximum lod, all
 			// tuples are (since AT_MAX_LOD is smaller than any Value), so stop.
-			if (max_post_increment_value_queue.Top()->Get_Key() == RenderObjClass::AT_MAX_LOD) {
+			if (max_post_increment_value_queue.Top()->Get_Key() == RenderObjClass::AT_MAX_LOD)
+			{
 				done = true;
 				break;
 			}
 
 			// Get (incrementable) tuple with maximum next value.
-		 	max_data = max_post_increment_value_queue.Top()->Get_Item();
+			max_data = max_post_increment_value_queue.Top()->Get_Item();
 
 			// Increment tuple (and update TotalCost accordingly).
 			TotalCost -= max_data->Get_Cost();
@@ -331,17 +378,19 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 		}
 
 		// Decrement decerementable tuples with minimum current value.
-		while (TotalCost > max_cost) {
+		while (TotalCost > max_cost)
+		{
 			// If tuple with minimum current value is already at minimum lod, all
 			// tuples are (since AT_MIN_LOD is smaller than any (negated) Value),
 			// so stop.
-			if (min_current_value_queue.Top()->Get_Key() == -RenderObjClass::AT_MIN_LOD) {
+			if (min_current_value_queue.Top()->Get_Key() == -RenderObjClass::AT_MIN_LOD)
+			{
 				done = true;
 				break;
 			}
 
 			// Get (decrementable) tuple with minimum current value.
-		 	min_data = min_current_value_queue.Top()->Get_Item();
+			min_data = min_current_value_queue.Top()->Get_Item();
 
 			// Decrement tuple (and update TotalCost accordingly).
 			TotalCost -= min_data->Get_Cost();
@@ -353,7 +402,8 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 			max_post_increment_value_queue.Change_Key(min_data, min_data->Get_Post_Increment_Value());
 
 			// Check termination criterion (same tuple incremented and decremented).
-			if (max_data == min_data) {
+			if (max_data == min_data)
+			{
 				done = true;
 				break;
 			}
@@ -363,7 +413,6 @@ void PredictiveLODOptimizerClass::Optimize_LODs(float max_cost)
 	// Clear optimizer:
 	Clear();
 }
-
 
 /**************************************************************************
  * PredictiveLODOptimizerClass::Free -- releases all memory used.         *
@@ -381,24 +430,24 @@ void PredictiveLODOptimizerClass::Free()
 {
 	Clear();
 
-	delete [] ObjectArray;
+	delete[] ObjectArray;
 	ObjectArray = nullptr;
 	ArraySize = 0;
 
 	// Only the array number one has been allocated...
 	delete[] VisibleObjArray1;
-	VisibleObjArray1=nullptr;
-	VisibleObjArray2=nullptr;
+	VisibleObjArray1 = nullptr;
+	VisibleObjArray2 = nullptr;
 	VisibleObjArraySize = 0;
 }
 
 void PredictiveLODOptimizerClass::AllocVisibleObjArrays(int num_objects)
 {
-	if (VisibleObjArraySize<num_objects) {
-		VisibleObjArraySize=num_objects;
-		delete[] VisibleObjArray1;	// Only the first array is actually allocated
-		VisibleObjArray1=W3DNEWARRAY LODHeapNode[2*(num_objects + 1)];
-		VisibleObjArray2=VisibleObjArray1+(num_objects + 1);
+	if (VisibleObjArraySize < num_objects)
+	{
+		VisibleObjArraySize = num_objects;
+		delete[] VisibleObjArray1;    // Only the first array is actually allocated
+		VisibleObjArray1 = W3DNEWARRAY LODHeapNode[2 * (num_objects + 1)];
+		VisibleObjArray2 = VisibleObjArray1 + (num_objects + 1);
 	}
 }
-

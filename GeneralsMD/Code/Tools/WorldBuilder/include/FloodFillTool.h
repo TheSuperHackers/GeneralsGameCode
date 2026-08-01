@@ -35,16 +35,15 @@ public:
 	virtual ~FloodFillTool() override;
 
 protected:
-	Int			m_textureClassToDraw; ///< The texture to fill with.  Foreground for mousedDown, background for mouseDownRt.
+	Int m_textureClassToDraw;    ///< The texture to fill with.  Foreground for mousedDown, background for mouseDownRt.
 	HCURSOR m_cliffCursor;
 	static Bool m_adjustCliffTextures;
 
 public:
-	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) override;
-	virtual void activate() override; ///< Become the current tool.
+	virtual void mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc* pDoc) override;
+	virtual void activate() override;    ///< Become the current tool.
 	virtual void setCursor() override;
 
-	Bool getAdjustCliffs() {return m_adjustCliffTextures;}
-	void setAdjustCliffs(Bool val) {m_adjustCliffTextures = val;}
-
+	Bool getAdjustCliffs() { return m_adjustCliffTextures; }
+	void setAdjustCliffs(Bool val) { m_adjustCliffTextures = val; }
 };

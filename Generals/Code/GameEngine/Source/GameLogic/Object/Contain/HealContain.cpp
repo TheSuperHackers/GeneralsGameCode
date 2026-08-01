@@ -28,7 +28,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/Xfer.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/GameLogic.h"
@@ -45,26 +45,21 @@
 // ------------------------------------------------------------------------------------------------
 HealContainModuleData::HealContainModuleData()
 {
-
 	m_framesForFullHeal = 0;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 /*static*/ void HealContainModuleData::buildFieldParse(MultiIniFieldParse& p)
 {
+	OpenContainModuleData::buildFieldParse(p);
 
-  OpenContainModuleData::buildFieldParse( p );
-
-	static const FieldParse dataFieldParse[] =
-	{
-		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, nullptr, offsetof( HealContainModuleData, m_framesForFullHeal ) },
+	static const FieldParse dataFieldParse[] = {
+		{ "TimeForFullHeal", INI::parseDurationUnsignedInt, nullptr, offsetof(HealContainModuleData, m_framesForFullHeal) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 
-  p.add(dataFieldParse);
-
+	p.add(dataFieldParse);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,17 +68,15 @@ HealContainModuleData::HealContainModuleData()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-HealContain::HealContain( Thing *thing, const ModuleData *moduleData )
-					 : OpenContain( thing, moduleData )
+HealContain::HealContain(Thing* thing, const ModuleData* moduleData)
+  : OpenContain(thing, moduleData)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 HealContain::~HealContain()
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -91,23 +84,21 @@ HealContain::~HealContain()
 // ------------------------------------------------------------------------------------------------
 UpdateSleepTime HealContain::update()
 {
-
 	// extending functionality
-	/*UpdateSleepTime result =*/ OpenContain::update();
+	/*UpdateSleepTime result =*/OpenContain::update();
 
 	// get the module data
-	const HealContainModuleData *modData = getHealContainModuleData();
+	const HealContainModuleData* modData = getHealContainModuleData();
 
 	//
 	// for each of our objects, we give them a little health each frame so that when the
 	// the TimeTillHealed is up, the object will exit and be fully healed
 	//
 	Bool doneHealing;
-	Object *obj;
+	Object* obj;
 	ContainedItemsList::const_iterator it = getContainList().begin();
-	while( it != getContainList().end() )
+	while (it != getContainList().end())
 	{
-
 		// get the object
 		obj = *it;
 
@@ -115,26 +106,26 @@ UpdateSleepTime HealContain::update()
 		++it;
 
 		// do the healing on this object
-		doneHealing = doHeal( obj, modData->m_framesForFullHeal );
+		doneHealing = doHeal(obj, modData->m_framesForFullHeal);
 
 		// if we're done healing, we need to remove us from the healing container
-		if( doneHealing == TRUE )
+		if (doneHealing == TRUE)
 		{
 			ExitDoorType exitDoor = reserveDoorForExit(obj->getTemplate(), obj);
 			if (exitDoor != DOOR_NONE_AVAILABLE)
-				exitObjectViaDoor( obj, exitDoor );
+			{
+				exitObjectViaDoor(obj, exitDoor);
+			}
 		}
-
 	}
 
 	return UPDATE_SLEEP_NONE;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Do the healing for a single object for a single frame. */
 // ------------------------------------------------------------------------------------------------
-Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
+Bool HealContain::doHeal(Object* obj, UnsignedInt framesForFullHeal)
 {
 	Bool doneHealing = FALSE;
 
@@ -145,25 +136,22 @@ Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
 	healInfo.in.m_sourceID = getObject()->getID();
 
 	// get body module of the thing to heal
-	BodyModuleInterface *body = obj->getBodyModule();
+	BodyModuleInterface* body = obj->getBodyModule();
 
 	// if we've been in here long enough ... set our health to max
-	if( TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal )
+	if (TheGameLogic->getFrame() - obj->getContainedByFrame() >= framesForFullHeal)
 	{
-
 		// set the amount to max just to be sure we're at the top
 		healInfo.in.m_amount = body->getMaxHealth();
 
 		// set max health
-		body->attemptHealing( &healInfo );
+		body->attemptHealing(&healInfo);
 
 		// we're done healing
 		doneHealing = TRUE;
-
 	}
 	else
 	{
-
 		//
 		// given the *whole* time it would take to heal this object, lets pretend that the
 		// object is at zero health ... and give it a sliver of health as if it were at 0 health
@@ -172,42 +160,36 @@ Bool HealContain::doHeal( Object *obj, UnsignedInt framesForFullHeal )
 		healInfo.in.m_amount = body->getMaxHealth() / (Real)framesForFullHeal;
 
 		// do the healing
-		body->attemptHealing( &healInfo );
-
+		body->attemptHealing(&healInfo);
 	}
 
 	// return if we're done healing
 	return doneHealing;
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void HealContain::crc( Xfer *xfer )
+void HealContain::crc(Xfer* xfer)
 {
-
 	// extend base class
-	OpenContain::crc( xfer );
-
+	OpenContain::crc(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void HealContain::xfer( Xfer *xfer )
+void HealContain::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// extend base class
-	OpenContain::xfer( xfer );
-
+	OpenContain::xfer(xfer);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -215,8 +197,6 @@ void HealContain::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void HealContain::loadPostProcess()
 {
-
 	// extend base class
 	OpenContain::loadPostProcess();
-
 }

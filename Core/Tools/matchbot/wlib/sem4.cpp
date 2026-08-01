@@ -31,108 +31,127 @@ This is useful because the constructor will automatically call sem_init
 
 Sem4::Sem4()
 {
-#ifndef _WIN32
-  sem_init(&sem,1,1);
-#else
-  sem = CreateSemaphore(nullptr, 1, 1, nullptr);
-#endif
+	#ifndef _WIN32
+	sem_init(&sem, 1, 1);
+	#else
+	sem = CreateSemaphore(nullptr, 1, 1, nullptr);
+	#endif
 }
 
 Sem4::Sem4(uint32 value)
 {
-#ifndef _WIN32
-  sem_init(&sem,1,value);
-#else
-  sem = CreateSemaphore(nullptr, value, value, nullptr);
-#endif
+	#ifndef _WIN32
+	sem_init(&sem, 1, value);
+	#else
+	sem = CreateSemaphore(nullptr, value, value, nullptr);
+	#endif
 }
 
 Sem4::~Sem4()
 {
-#ifndef _WIN32
-  sem_destroy(&sem);
-#else
-  if (sem) CloseHandle(sem);
-#endif
+	#ifndef _WIN32
+	sem_destroy(&sem);
+	#else
+	if (sem)
+	{
+		CloseHandle(sem);
+	}
+	#endif
 }
 
-sint32  Sem4::Wait() const
+sint32 Sem4::Wait() const
 {
-#ifndef _WIN32
-	return(sem_wait((sem_t *)&sem));
-#else
+	#ifndef _WIN32
+	return (sem_wait((sem_t*)&sem));
+	#else
 	if (!sem)
-		return -1; // no semaphore!
+	{
+		return -1;    // no semaphore!
+	}
 
 	DWORD dwWaitResult = WaitForSingleObject(sem, INFINITE);
-	switch (dwWaitResult) {
-	case WAIT_OBJECT_0: // The semaphore object was signaled.
-		return 0;
-		break;
-	case WAIT_TIMEOUT: // Should not happen ;)
-		return -1;
-		break;
+	switch (dwWaitResult)
+	{
+		case WAIT_OBJECT_0:    // The semaphore object was signaled.
+			return 0;
+			break;
+		case WAIT_TIMEOUT:    // Should not happen ;)
+			return -1;
+			break;
 	}
 	return -1;
-#endif
+	#endif
 }
 
 sint32 Sem4::Post() const
 {
-#ifndef _WIN32
-  return(sem_post((sem_t *)&sem));
-#else
-  if (!sem)
-	  return -1;
-  if (!ReleaseSemaphore(sem, 1 ,nullptr))
-	  return -1;
-  return 0;
-#endif
+	#ifndef _WIN32
+	return (sem_post((sem_t*)&sem));
+	#else
+	if (!sem)
+	{
+		return -1;
+	}
+	if (!ReleaseSemaphore(sem, 1, nullptr))
+	{
+		return -1;
+	}
+	return 0;
+	#endif
 }
 
 sint32 Sem4::TryWait() const
 {
-#ifndef _WIN32
-  return(sem_trywait((sem_t *)&sem));
-#else
+	#ifndef _WIN32
+	return (sem_trywait((sem_t*)&sem));
+	#else
 	if (!sem)
+	{
 		return -1;
+	}
 	DWORD dwWaitResult = WaitForSingleObject(sem, 0L);
-	switch (dwWaitResult) {
-	case WAIT_OBJECT_0: // The semaphore object was signaled.
-		return 0;
-		break;
-	case WAIT_TIMEOUT:
-		return -1;
-		break;
+	switch (dwWaitResult)
+	{
+		case WAIT_OBJECT_0:    // The semaphore object was signaled.
+			return 0;
+			break;
+		case WAIT_TIMEOUT:
+			return -1;
+			break;
 	}
 	return -1;
-#endif
+	#endif
 }
 
-sint32 Sem4::GetValue(int *sval) const
+sint32 Sem4::GetValue(int* sval) const
 {
-#ifndef _WIN32
-  return(sem_getvalue((sem_t *)&sem,sval));
-#else
+	#ifndef _WIN32
+	return (sem_getvalue((sem_t*)&sem, sval));
+	#else
 	if (!sem)
+	{
 		return -1;
+	}
 	long prev;
 	if (!ReleaseSemaphore(sem, 0, &prev))
+	{
 		return -1;
+	}
 	if (sval)
+	{
 		*sval = prev;
+	}
 	return 0;
-#endif
+	#endif
 }
 
 sint32 Sem4::Destroy()
 {
-#ifndef _WIN32
-  return(sem_destroy(&sem));
-#else
-  return CloseHandle(sem);
-#endif
+	#ifndef _WIN32
+	return (sem_destroy(&sem));
+	#else
+	return CloseHandle(sem);
+	#endif
 }
 
 #else
@@ -153,30 +172,29 @@ Sem4::~Sem4()
 {
 }
 
-sint32  Sem4::Wait() const
+sint32 Sem4::Wait() const
 {
-  return(0);
+	return (0);
 }
 
 sint32 Sem4::Post() const
 {
-  return(0);
+	return (0);
 }
 
 sint32 Sem4::TryWait() const
 {
-  return(0);
+	return (0);
 }
 
-sint32 Sem4::GetValue(int *) const
+sint32 Sem4::GetValue(int*) const
 {
-  return(0);
+	return (0);
 }
 
 sint32 Sem4::Destroy()
 {
-  return(0);
+	return (0);
 }
 
 #endif
-

@@ -27,7 +27,7 @@
 // Author: John Ahlquist, Nov. 2001
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "Common/MapObject.h"
@@ -60,13 +60,13 @@
 #include "GameLogic/Scripts.h"
 #include "GameLogic/VictoryConditions.h"
 
-
 class ObjectTypesTemp
 {
 public:
 	ObjectTypes* m_types;
 
-	ObjectTypesTemp() : m_types(nullptr)
+	ObjectTypesTemp()
+	  : m_types(nullptr)
 	{
 		m_types = newInstance(ObjectTypes);
 	}
@@ -80,32 +80,38 @@ public:
 // STATICS ////////////////////////////////////////////////////////////////////////////////////////
 namespace rts
 {
-	template<typename T>
-		T sum(std::vector<T>& vecOfValues )
+template <typename T>
+T sum(std::vector<T>& vecOfValues)
+{
+	T retVal = 0;
+	typename std::vector<T>::iterator it;
+	for (it = vecOfValues.begin(); it != vecOfValues.end(); ++it)
 	{
-		T retVal = 0;
-		typename std::vector<T>::iterator it;
-		for (it = vecOfValues.begin(); it != vecOfValues.end(); ++it) {
-			retVal += (*it);
-		}
-		return retVal;
+		retVal += (*it);
 	}
-};
+	return retVal;
+}
+};    // namespace rts
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
-ScriptConditionsInterface *TheScriptConditions = nullptr;
+ScriptConditionsInterface* TheScriptConditions = nullptr;
 
 class TransportStatus : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(TransportStatus, "TransportStatus")
 public:
-	TransportStatus *	m_nextStatus;
-	ObjectID					m_objID;
-	UnsignedInt				m_frameNumber;
-	Int								m_unitCount;
+	TransportStatus* m_nextStatus;
+	ObjectID m_objID;
+	UnsignedInt m_frameNumber;
+	Int m_unitCount;
 
 public:
-	TransportStatus() : m_objID(INVALID_ID), m_frameNumber(0), m_unitCount(0), m_nextStatus(nullptr) {}
+	TransportStatus()
+	  : m_objID(INVALID_ID)
+	  , m_frameNumber(0)
+	  , m_unitCount(0)
+	  , m_nextStatus(nullptr)
+	{}
 	//~TransportStatus();
 };
 
@@ -116,20 +122,19 @@ TransportStatus::~TransportStatus()
 }
 
 //-------------------------------------------------------------------------------------------------
-static TransportStatus *s_transportStatuses;
+static TransportStatus* s_transportStatuses;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ScriptConditions::ScriptConditions()
 {
-
 }
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 ScriptConditions::~ScriptConditions()
 {
-	reset(); // just in case.
+	reset();    // just in case.
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -137,9 +142,7 @@ ScriptConditions::~ScriptConditions()
 //-------------------------------------------------------------------------------------------------
 void ScriptConditions::init()
 {
-
 	reset();
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -147,7 +150,6 @@ void ScriptConditions::init()
 //-------------------------------------------------------------------------------------------------
 void ScriptConditions::reset()
 {
-
 	deleteInstance(s_transportStatuses);
 	s_transportStatuses = nullptr;
 	// Empty for now.  jba.
@@ -158,30 +160,35 @@ void ScriptConditions::reset()
 //-------------------------------------------------------------------------------------------------
 void ScriptConditions::update()
 {
-
 	// Empty for now. jba
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** Finds the player by the name in the parameter, and if found caches the player mask in the
 parameter so we don't have to do a name search.  May return null if the player doesn't exist.*/
 //-------------------------------------------------------------------------------------------------
-Player *ScriptConditions::playerFromParam(Parameter *pSideParm)
+Player* ScriptConditions::playerFromParam(Parameter* pSideParm)
 {
 	DEBUG_ASSERTCRASH(Parameter::SIDE == pSideParm->getParameterType(), ("Wrong parameter type."));
-	Player *pPlayer=nullptr;
+	Player* pPlayer = nullptr;
 	UnsignedInt mask = (UnsignedInt)pSideParm->getInt();
-	if (mask) {
+	if (mask)
+	{
 		pPlayer = ThePlayerList->getPlayerFromMask(mask);
-	} else {
+	}
+	else
+	{
 		pPlayer = TheScriptEngine->getPlayerFromAsciiString(pSideParm->getString());
-		if (pPlayer) {
+		if (pPlayer)
+		{
 			// Enemy player can change dynamically, so don't cache the player mask.  jba.
-			if (pSideParm->getString()!=THIS_PLAYER_ENEMY) {
+			if (pSideParm->getString() != THIS_PLAYER_ENEMY)
+			{
 				mask = pPlayer->getPlayerMask();
 			}
-		} else {
+		}
+		else
+		{
 			mask = 0xFFFF0000;
 		}
 		pSideParm->friend_setInt((Int)mask);
@@ -193,76 +200,85 @@ Player *ScriptConditions::playerFromParam(Parameter *pSideParm)
 //-------------------------------------------------------------------------------------------------
 /** objectTypesFromParam */
 //-------------------------------------------------------------------------------------------------
-void ScriptConditions::objectTypesFromParam(Parameter *pTypeParm, ObjectTypes *outObjectTypes)
+void ScriptConditions::objectTypesFromParam(Parameter* pTypeParm, ObjectTypes* outObjectTypes)
 {
-	if (!(pTypeParm && outObjectTypes)) {
+	if (!(pTypeParm && outObjectTypes))
+	{
 		return;
 	}
 
 	AsciiString str = pTypeParm->getString();
 
-	if (str.isEmpty()) {
+	if (str.isEmpty())
+	{
 		return;
 	}
 
-	ObjectTypes *types = TheScriptEngine->getObjectTypes(str);
-	if (!types) {
+	ObjectTypes* types = TheScriptEngine->getObjectTypes(str);
+	if (!types)
+	{
 		(*outObjectTypes).addObjectType(str);
-	} else {
+	}
+	else
+	{
 		(*outObjectTypes) = (*types);
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** evaluateAllDestroyed */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateAllDestroyed(Parameter *pSideParm )
+Bool ScriptConditions::evaluateAllDestroyed(Parameter* pSideParm)
 {
-	Player *pPlayer = playerFromParam(pSideParm);
-	if (pPlayer) {
+	Player* pPlayer = playerFromParam(pSideParm);
+	if (pPlayer)
+	{
 		return (!pPlayer->hasAnyObjects());
 	}
-	return true; // Non existent player is all destroyed. :)
+	return true;    // Non existent player is all destroyed. :)
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateAllBuildFacilitiesDestroyed */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateAllBuildFacilitiesDestroyed(Parameter *pSideParm )
+Bool ScriptConditions::evaluateAllBuildFacilitiesDestroyed(Parameter* pSideParm)
 {
-	Player *pPlayer = playerFromParam(pSideParm);
-	if (pPlayer) {
+	Player* pPlayer = playerFromParam(pSideParm);
+	if (pPlayer)
+	{
 		return (!pPlayer->hasAnyBuildFacility());
 	}
-	return true; // Non existent player is all destroyed. :)
+	return true;    // Non existent player is all destroyed. :)
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateIsDestroyed */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateIsDestroyed(Parameter *pTeamParm)
+Bool ScriptConditions::evaluateIsDestroyed(Parameter* pTeamParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)
-	if (theTeam) {
+	if (theTeam)
+	{
 		return (!theTeam->hasAnyObjects());
 	}
-	return false; // Non existent team is not destroyed.
+	return false;    // Non existent team is not destroyed.
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateBridgeBroken */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateBridgeBroken(Parameter *pBridgeParm)
+Bool ScriptConditions::evaluateBridgeBroken(Parameter* pBridgeParm)
 {
-	if (!TheTerrainLogic->anyBridgesDamageStatesChanged()) {
+	if (!TheTerrainLogic->anyBridgesDamageStatesChanged())
+	{
 		// Don't bother checking if no bridges changed damage states.
 		return false;
 	}
-	Object *theBridge = TheScriptEngine->getUnitNamed( pBridgeParm->getString() );
-	if (theBridge) {
+	Object* theBridge = TheScriptEngine->getUnitNamed(pBridgeParm->getString());
+	if (theBridge)
+	{
 		return (TheTerrainLogic->isBridgeBroken(theBridge));
 	}
 	return false;
@@ -271,14 +287,16 @@ Bool ScriptConditions::evaluateBridgeBroken(Parameter *pBridgeParm)
 //-------------------------------------------------------------------------------------------------
 /** evaluateBridgeRepaired */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateBridgeRepaired(Parameter *pBridgeParm)
+Bool ScriptConditions::evaluateBridgeRepaired(Parameter* pBridgeParm)
 {
-	if (!TheTerrainLogic->anyBridgesDamageStatesChanged()) {
+	if (!TheTerrainLogic->anyBridgesDamageStatesChanged())
+	{
 		// Don't bother checking if no bridges changed damage states.
 		return false;
 	}
-	Object *theBridge = TheScriptEngine->getUnitNamed( pBridgeParm->getString() );
-	if (theBridge) {
+	Object* theBridge = TheScriptEngine->getUnitNamed(pBridgeParm->getString());
+	if (theBridge)
+	{
 		return (TheTerrainLogic->isBridgeRepaired(theBridge));
 	}
 	return false;
@@ -287,40 +305,9 @@ Bool ScriptConditions::evaluateBridgeRepaired(Parameter *pBridgeParm)
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedUnitDestroyed */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedUnitDestroyed(Parameter *pUnitParm)
+Bool ScriptConditions::evaluateNamedUnitDestroyed(Parameter* pUnitParm)
 {
-	Object *theUnit = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (theUnit)
-	{
-		return theUnit->isEffectivelyDead();
-	}
-
-	if (TheScriptEngine->didUnitExist(pUnitParm->getString())) {
-		return true;
-	}
-	return false; // Non existent unit is not destroyed.
-}
-
-//-------------------------------------------------------------------------------------------------
-/** evaluateNamedUnitExists */
-//-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedUnitExists(Parameter *pUnitParm)
-{
-	Object *theUnit = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (theUnit)
-	{
-		return !theUnit->isEffectivelyDead();
-	}
-
-	return false; // Doesn't exist.
-}
-
-//-------------------------------------------------------------------------------------------------
-/** evaluateNamedUnitDying */
-//-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedUnitDying(Parameter *pUnitParm)
-{
-	Object *theUnit = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
+	Object* theUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
 	if (theUnit)
 	{
 		return theUnit->isEffectivelyDead();
@@ -328,175 +315,257 @@ Bool ScriptConditions::evaluateNamedUnitDying(Parameter *pUnitParm)
 
 	if (TheScriptEngine->didUnitExist(pUnitParm->getString()))
 	{
-		return false; // already totally killed
+		return true;
 	}
-	return false; // Non existent unit is not dying.
+	return false;    // Non existent unit is not destroyed.
+}
+
+//-------------------------------------------------------------------------------------------------
+/** evaluateNamedUnitExists */
+//-------------------------------------------------------------------------------------------------
+Bool ScriptConditions::evaluateNamedUnitExists(Parameter* pUnitParm)
+{
+	Object* theUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (theUnit)
+	{
+		return !theUnit->isEffectivelyDead();
+	}
+
+	return false;    // Doesn't exist.
+}
+
+//-------------------------------------------------------------------------------------------------
+/** evaluateNamedUnitDying */
+//-------------------------------------------------------------------------------------------------
+Bool ScriptConditions::evaluateNamedUnitDying(Parameter* pUnitParm)
+{
+	Object* theUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (theUnit)
+	{
+		return theUnit->isEffectivelyDead();
+	}
+
+	if (TheScriptEngine->didUnitExist(pUnitParm->getString()))
+	{
+		return false;    // already totally killed
+	}
+	return false;    // Non existent unit is not dying.
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedUnitTotallyDead */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedUnitTotallyDead(Parameter *pUnitParm)
+Bool ScriptConditions::evaluateNamedUnitTotallyDead(Parameter* pUnitParm)
 {
-	Object *theUnit = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (theUnit) {
-		return false; // if the unit still exists, it isn't totally dead.
+	Object* theUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (theUnit)
+	{
+		return false;    // if the unit still exists, it isn't totally dead.
 	}
 
-	if (TheScriptEngine->didUnitExist(pUnitParm->getString())) {
+	if (TheScriptEngine->didUnitExist(pUnitParm->getString()))
+	{
 		// Did exist, now it doesn't.  So it is really, really dead.
-		return true; // totally killed
+		return true;    // totally killed
 	}
-	return false; // Non existent unit is not dead.
+	return false;    // Non existent unit is not dead.
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateHasUnits */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateHasUnits(Parameter *pTeamParm)
+Bool ScriptConditions::evaluateHasUnits(Parameter* pTeamParm)
 {
 	AsciiString desiredTeamName = pTeamParm->getString();
 	// If they are calling a <this team> condition, do it.
-	if (desiredTeamName == THIS_TEAM) {
-		Team *theTeam = TheScriptEngine->getTeamNamed( desiredTeamName );
+	if (desiredTeamName == THIS_TEAM)
+	{
+		Team* theTeam = TheScriptEngine->getTeamNamed(desiredTeamName);
 		// The team is the team based on the name, and the calling team (if any) and the team that
 		// is being considered for the condition.  jba. :)
-		if (theTeam) {
+		if (theTeam)
+		{
 			return (theTeam->hasAnyUnits());
 		}
-		return false; // Non existent team has no units.
+		return false;    // Non existent team has no units.
 	}
-	Team *thisTeam = TheScriptEngine->getTeamNamed(THIS_TEAM);
-	if (thisTeam && thisTeam->getName()==desiredTeamName)	{
+	Team* thisTeam = TheScriptEngine->getTeamNamed(THIS_TEAM);
+	if (thisTeam && thisTeam->getName() == desiredTeamName)
+	{
 		return thisTeam->hasAnyUnits();
 	}
 
 	// It isn't THIS_TEAM, and doesn't match the THIS_TEAM, so check if any team with this name
 	// has units.
-	TeamPrototype *pProto = nullptr;
+	TeamPrototype* pProto = nullptr;
 	pProto = TheTeamFactory->findTeamPrototype(desiredTeamName);
 
-	if (pProto) {
+	if (pProto)
+	{
 		// We have a team referred to in the conditions.  Iterate over the instances of the team,
 		// applying the script conditions (and possibly actions) to each instance of the team.
-		for (DLINK_ITERATOR<Team> iter = pProto->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			if (iter.cur()->hasAnyUnits()) {
+		for (DLINK_ITERATOR<Team> iter = pProto->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			if (iter.cur()->hasAnyUnits())
+			{
 				return true;
 			}
 		}
 	}
-	return false; // Non existent team has no units.
+	return false;    // Non existent team has no units.
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateUnitsEntered */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamInsideAreaPartially(Parameter *pTeamParm, Parameter *pTriggerAreaParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamInsideAreaPartially(Parameter* pTeamParm, Parameter* pTriggerAreaParm, Parameter* pTypeParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)
 	AsciiString triggerName = pTriggerAreaParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerAreaParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerAreaParm->getString());
 
-	if (pTrig == nullptr) return false;
-	if (theTeam) {
-		return (theTeam->someInsideSomeOutside(pTrig, (UnsignedInt) pTypeParm->getInt()) ||
-						theTeam->allInside(pTrig, (UnsignedInt) pTypeParm->getInt()));
+	if (pTrig == nullptr)
+	{
+		return false;
 	}
-	return false; // Non existent team isn't in trigger area. :)
+	if (theTeam)
+	{
+		return (theTeam->someInsideSomeOutside(pTrig, (UnsignedInt)pTypeParm->getInt()) ||
+		        theTeam->allInside(pTrig, (UnsignedInt)pTypeParm->getInt()));
+	}
+	return false;    // Non existent team isn't in trigger area. :)
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedInsideArea */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedInsideArea(Parameter *pUnitParm, Parameter *pTriggerAreaParm )
+Bool ScriptConditions::evaluateNamedInsideArea(Parameter* pUnitParm, Parameter* pTriggerAreaParm)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
+	Object* theObj = TheScriptEngine->getUnitNamed(pUnitParm->getString());
 
-	if (!theObj) {
+	if (!theObj)
+	{
 		return false;
 	}
 
 	AsciiString triggerName = pTriggerAreaParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerAreaParm->getString());
-	if (pTrig == nullptr) return false;
-	if (theObj) {
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerAreaParm->getString());
+	if (pTrig == nullptr)
+	{
+		return false;
+	}
+	if (theObj)
+	{
 		Coord3D pCoord = *theObj->getPosition();
 		ICoord3D iCoord;
-		iCoord.x = pCoord.x; iCoord.y = pCoord.y; iCoord.z = pCoord.z;
+		iCoord.x = pCoord.x;
+		iCoord.y = pCoord.y;
+		iCoord.z = pCoord.z;
 		return pTrig->pointInTrigger(iCoord);
 	}
-	return false; // Non existent team isn't in trigger area. :)
+	return false;    // Non existent team isn't in trigger area. :)
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasUnitTypeInArea */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasUnitTypeInArea(Condition *pCondition, Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pCountParm, Parameter *pTypeParm, Parameter *pTriggerParm )
+Bool ScriptConditions::evaluatePlayerHasUnitTypeInArea(Condition* pCondition, Parameter* pPlayerParm, Parameter* pComparisonParm, Parameter* pCountParm, Parameter* pTypeParm, Parameter* pTriggerParm)
 {
 	AsciiString triggerName = pTriggerParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	if (pTrig == nullptr) return false;
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	if (pTrig == nullptr)
+	{
+		return false;
+	}
 
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 	Player::PlayerTeamList::const_iterator it;
 	Bool anyChanges = false;
 
+	if (pCondition->getCustomData() == 0)
+	{
+		anyChanges = true;
+	}
 
-	if (pCondition->getCustomData() == 0) anyChanges = true;
-
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		if (anyChanges) break;
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			if (anyChanges) break;
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		if (anyChanges)
+		{
+			break;
+		}
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			if (anyChanges)
+			{
+				break;
+			}
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			if (team->didEnterOrExit()) {
+			if (team->didEnterOrExit())
+			{
 				anyChanges = true;
 			}
 		}
 	}
 
-	if (TheScriptEngine->getFrameObjectCountChanged() > pCondition->getCustomFrame()) {
-		anyChanges = true; // Objects were added/deleted last frame, so count could have changed.  jba.
+	if (TheScriptEngine->getFrameObjectCountChanged() > pCondition->getCustomFrame())
+	{
+		anyChanges = true;    // Objects were added/deleted last frame, so count could have changed.  jba.
 	}
 
-	if (!anyChanges) {
-		if (pCondition->getCustomData()==-1) return false;
-		if (pCondition->getCustomData()==1) return true;
+	if (!anyChanges)
+	{
+		if (pCondition->getCustomData() == -1)
+		{
+			return false;
+		}
+		if (pCondition->getCustomData() == 1)
+		{
+			return true;
+		}
 	}
 
 	ObjectTypesTemp types;
 	objectTypesFromParam(pTypeParm, types.m_types);
 
 	Int count = 0;
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-				Object *pObj = iter.cur();
-				if (!pObj) {
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+			{
+				Object* pObj = iter.cur();
+				if (!pObj)
+				{
 					continue;
 				}
 
-				if (types.m_types->isInSet(pObj->getTemplate())) {
-					if (pObj->isInside(pTrig)) {
-
+				if (types.m_types->isInSet(pObj->getTemplate()))
+				{
+					if (pObj->isInside(pTrig))
+					{
 						//
 						// dead objects will not be considered, except crates ... they are "dead" cause
 						// they have no body and health, but are a class of object we want to
 						// trigger this stuff
 						//
-						if (!(pObj->isEffectivelyDead() || pObj->isKindOf(KINDOF_INERT)) || pObj->isKindOf( KINDOF_CRATE ) ) {
+						if (!(pObj->isEffectivelyDead() || pObj->isKindOf(KINDOF_INERT)) || pObj->isKindOf(KINDOF_CRATE))
+						{
 							count++;
 						}
 					}
@@ -508,16 +577,29 @@ Bool ScriptConditions::evaluatePlayerHasUnitTypeInArea(Condition *pCondition, Pa
 	Bool comparison = false;
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :			comparison = (count < pCountParm->getInt()); break;
-		case Parameter::LESS_EQUAL :		comparison = (count <= pCountParm->getInt()); break;
-		case Parameter::EQUAL :					comparison = (count == pCountParm->getInt()); break;
-		case Parameter::GREATER_EQUAL :	comparison = (count >= pCountParm->getInt()); break;
-		case Parameter::GREATER :				comparison = (count > pCountParm->getInt()); break;
-		case Parameter::NOT_EQUAL :			comparison = (count != pCountParm->getInt()); break;
+		case Parameter::LESS_THAN:
+			comparison = (count < pCountParm->getInt());
+			break;
+		case Parameter::LESS_EQUAL:
+			comparison = (count <= pCountParm->getInt());
+			break;
+		case Parameter::EQUAL:
+			comparison = (count == pCountParm->getInt());
+			break;
+		case Parameter::GREATER_EQUAL:
+			comparison = (count >= pCountParm->getInt());
+			break;
+		case Parameter::GREATER:
+			comparison = (count > pCountParm->getInt());
+			break;
+		case Parameter::NOT_EQUAL:
+			comparison = (count != pCountParm->getInt());
+			break;
 	}
-	pCondition->setCustomData(-1); // false.
-	if (comparison) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (comparison)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	pCondition->setCustomFrame(TheScriptEngine->getFrameObjectCountChanged());
 	return comparison;
@@ -526,62 +608,92 @@ Bool ScriptConditions::evaluatePlayerHasUnitTypeInArea(Condition *pCondition, Pa
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasUnitKindInArea */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasUnitKindInArea(Condition *pCondition, Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pCountParm, Parameter *pKindParm, Parameter *pTriggerParm )
+Bool ScriptConditions::evaluatePlayerHasUnitKindInArea(Condition* pCondition, Parameter* pPlayerParm, Parameter* pComparisonParm, Parameter* pCountParm, Parameter* pKindParm, Parameter* pTriggerParm)
 {
 	AsciiString triggerName = pTriggerParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	if (pTrig == nullptr) return false;
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	if (pTrig == nullptr)
+	{
+		return false;
+	}
 
 	KindOfType kind = (KindOfType)pKindParm->getInt();
 
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	Player::PlayerTeamList::const_iterator it;
 	Bool anyChanges = false;
-	if (pCondition->getCustomData() == 0) anyChanges = true;
+	if (pCondition->getCustomData() == 0)
+	{
+		anyChanges = true;
+	}
 
-
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		if (anyChanges) break;
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			if (anyChanges) break;
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		if (anyChanges)
+		{
+			break;
+		}
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			if (anyChanges)
+			{
+				break;
+			}
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			if (team->didEnterOrExit()) {
+			if (team->didEnterOrExit())
+			{
 				anyChanges = true;
 			}
 		}
 	}
-	if (TheScriptEngine->getFrameObjectCountChanged() > pCondition->getCustomFrame()) {
-		anyChanges = true; // Objects were added/deleted since we cached, so count could have changed.  jba.
+	if (TheScriptEngine->getFrameObjectCountChanged() > pCondition->getCustomFrame())
+	{
+		anyChanges = true;    // Objects were added/deleted since we cached, so count could have changed.  jba.
 	}
-	if (!anyChanges) {
-		if (pCondition->getCustomData()==-1) return false;
-		if (pCondition->getCustomData()==1) return true;
-
+	if (!anyChanges)
+	{
+		if (pCondition->getCustomData() == -1)
+		{
+			return false;
+		}
+		if (pCondition->getCustomData() == 1)
+		{
+			return true;
+		}
 	}
-
 
 	Int count = 0;
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-				Object *pObj = iter.cur();
-				if (!pObj) {
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+			{
+				Object* pObj = iter.cur();
+				if (!pObj)
+				{
 					continue;
 				}
-				if (pObj->isKindOf(kind)) {
-					if (pObj->isInside(pTrig)) {
-						if (!(pObj->isEffectivelyDead() || pObj->isKindOf(KINDOF_INERT))) {
+				if (pObj->isKindOf(kind))
+				{
+					if (pObj->isInside(pTrig))
+					{
+						if (!(pObj->isEffectivelyDead() || pObj->isKindOf(KINDOF_INERT)))
+						{
 							count++;
 						}
 					}
@@ -593,12 +705,24 @@ Bool ScriptConditions::evaluatePlayerHasUnitKindInArea(Condition *pCondition, Pa
 	Bool comparison = false;
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :			comparison = (count < pCountParm->getInt()); break;
-		case Parameter::LESS_EQUAL :		comparison = (count <= pCountParm->getInt()); break;
-		case Parameter::EQUAL :					comparison = (count == pCountParm->getInt()); break;
-		case Parameter::GREATER_EQUAL :	comparison = (count >= pCountParm->getInt()); break;
-		case Parameter::GREATER :				comparison = (count > pCountParm->getInt()); break;
-		case Parameter::NOT_EQUAL :			comparison = (count != pCountParm->getInt()); break;
+		case Parameter::LESS_THAN:
+			comparison = (count < pCountParm->getInt());
+			break;
+		case Parameter::LESS_EQUAL:
+			comparison = (count <= pCountParm->getInt());
+			break;
+		case Parameter::EQUAL:
+			comparison = (count == pCountParm->getInt());
+			break;
+		case Parameter::GREATER_EQUAL:
+			comparison = (count >= pCountParm->getInt());
+			break;
+		case Parameter::GREATER:
+			comparison = (count > pCountParm->getInt());
+			break;
+		case Parameter::NOT_EQUAL:
+			comparison = (count != pCountParm->getInt());
+			break;
 	}
 	pCondition->setCustomData(TheScriptEngine->getFrameObjectCountChanged());
 	return comparison;
@@ -607,39 +731,40 @@ Bool ScriptConditions::evaluatePlayerHasUnitKindInArea(Condition *pCondition, Pa
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamStateIs */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamStateIs(Parameter *pTeamParm, Parameter *pStateParm )
+Bool ScriptConditions::evaluateTeamStateIs(Parameter* pTeamParm, Parameter* pStateParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)
 	AsciiString stateName = pStateParm->getString();
-	if (theTeam) {
+	if (theTeam)
+	{
 		return (theTeam->getState() == stateName);
 	}
-	return false; // Non existent team isn't in any state.
+	return false;    // Non existent team isn't in any state.
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamStateIsNot */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamStateIsNot(Parameter *pTeamParm, Parameter *pStateParm )
+Bool ScriptConditions::evaluateTeamStateIsNot(Parameter* pTeamParm, Parameter* pStateParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)
 	AsciiString stateName = pStateParm->getString();
-	if (theTeam) {
+	if (theTeam)
+	{
 		return (!(theTeam->getState() == stateName));
 	}
-	return false; // Non existent team isn't in any state.
+	return false;    // Non existent team isn't in any state.
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedOutsideArea */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter *pTriggerParm)
-{// This is actually NamedUnitInside(...)
+Bool ScriptConditions::evaluateNamedOutsideArea(Parameter* pUnitParm, Parameter* pTriggerParm)
+{    // This is actually NamedUnitInside(...)
 
 	return !evaluateNamedInsideArea(pUnitParm, pTriggerParm);
 }
@@ -647,67 +772,73 @@ Bool ScriptConditions::evaluateNamedOutsideArea(Parameter *pUnitParm, Parameter 
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamInsideAreaEntirely */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamInsideAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
-{// This is actually TeamInside(...)
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
+Bool ScriptConditions::evaluateTeamInsideAreaEntirely(Parameter* pTeamParm, Parameter* pTriggerParm, Parameter* pTypeParm)
+{    // This is actually TeamInside(...)
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// is being considered for the condition.  jba. :)
 	AsciiString triggerName = pTriggerParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
 	if (pTrig == nullptr)
+	{
 		return false;
+	}
 
-	if (theTeam) {
+	if (theTeam)
+	{
 		return theTeam->allInside(pTrig, (UnsignedInt)pTypeParm->getInt());
 	}
-	return false; // Non existent team isn't in trigger area. :)
+	return false;    // Non existent team isn't in trigger area. :)
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamOutsideAreaEntirely */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamOutsideAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamOutsideAreaEntirely(Parameter* pTeamParm, Parameter* pTriggerParm, Parameter* pTypeParm)
 {
 	return !(evaluateTeamInsideAreaEntirely(pTeamParm, pTriggerParm, pTypeParm) ||
-					 evaluateTeamInsideAreaPartially(pTeamParm, pTriggerParm, pTypeParm));
+	         evaluateTeamInsideAreaPartially(pTeamParm, pTriggerParm, pTypeParm));
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedAttackedByType */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedAttackedByType(Parameter *pUnitParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateNamedAttackedByType(Parameter* pUnitParm, Parameter* pTypeParm)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
 	BodyModuleInterface* theBodyModule = theObj->getBodyModule();
-	if (!theBodyModule) {
+	if (!theBodyModule)
+	{
 		return false;
 	}
 
 	const DamageInfo* lastDamageInfo = theBodyModule->getLastDamageInfo();
 
-	if (!lastDamageInfo) {
+	if (!lastDamageInfo)
+	{
 		return false;
 	}
 
-	const ThingTemplate *attackerTemplate = lastDamageInfo->in.m_sourceTemplate;
-	if( attackerTemplate )
+	const ThingTemplate* attackerTemplate = lastDamageInfo->in.m_sourceTemplate;
+	if (attackerTemplate)
 	{
-		//New system... we don't care if the attacker is alive or dead... we just want the type right?
+		// New system... we don't care if the attacker is alive or dead... we just want the type right?
 		ObjectTypesTemp types;
 		objectTypesFromParam(pTypeParm, types.m_types);
-		if( types.m_types->isInSet( attackerTemplate ) )
+		if (types.m_types->isInSet(attackerTemplate))
 		{
 			return TRUE;
 		}
 	}
 	else
 	{
-		//Old system... just incase m_sourceTemplate doesn't get set, don't want to foobar the logic.
+		// Old system... just incase m_sourceTemplate doesn't get set, don't want to foobar the logic.
 		ObjectID id = lastDamageInfo->in.m_sourceID;
 		Object* pAttacker = TheGameLogic->findObjectByID(id);
 		if (!pAttacker || !pAttacker->getTemplate())
@@ -716,7 +847,7 @@ Bool ScriptConditions::evaluateNamedAttackedByType(Parameter *pUnitParm, Paramet
 		}
 		ObjectTypesTemp types;
 		objectTypesFromParam(pTypeParm, types.m_types);
-		if( types.m_types->isInSet( pAttacker->getTemplate()->getName() ) )
+		if (types.m_types->isInSet(pAttacker->getTemplate()->getName()))
 		{
 			return TRUE;
 		}
@@ -728,62 +859,66 @@ Bool ScriptConditions::evaluateNamedAttackedByType(Parameter *pUnitParm, Paramet
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamAttackedByType */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamAttackedByType(Parameter *pTeamParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamAttackedByType(Parameter* pTeamParm, Parameter* pTypeParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!theTeam) {
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (!theTeam)
+	{
 		return FALSE;
 	}
 
 	ObjectTypesTemp types;
 	objectTypesFromParam(pTypeParm, types.m_types);
 
-	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *pCur = iter.cur();
-		if (!pCur) {
+	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* pCur = iter.cur();
+		if (!pCur)
+		{
 			continue;
 		}
 
 		BodyModuleInterface* theBodyModule = pCur->getBodyModule();
-		if (!theBodyModule) {
+		if (!theBodyModule)
+		{
 			continue;
 		}
 
 		const DamageInfo* lastDamageInfo = theBodyModule->getLastDamageInfo();
 
-		if (!lastDamageInfo) {
+		if (!lastDamageInfo)
+		{
 			continue;
 		}
 
 		ObjectTypesTemp types;
 		objectTypesFromParam(pTypeParm, types.m_types);
 
-		const ThingTemplate *attackerTemplate = lastDamageInfo->in.m_sourceTemplate;
-		if( attackerTemplate )
+		const ThingTemplate* attackerTemplate = lastDamageInfo->in.m_sourceTemplate;
+		if (attackerTemplate)
 		{
-			//New system... we don't care if the attacker is alive or dead... we just want the type right?
-			if( types.m_types->isInSet( attackerTemplate ) )
+			// New system... we don't care if the attacker is alive or dead... we just want the type right?
+			if (types.m_types->isInSet(attackerTemplate))
 			{
 				return TRUE;
 			}
 		}
 		else
 		{
-			//Old system... just incase m_sourceTemplate doesn't get set, don't want to foobar the logic.
+			// Old system... just incase m_sourceTemplate doesn't get set, don't want to foobar the logic.
 			ObjectID id = lastDamageInfo->in.m_sourceID;
 			Object* pAttacker = TheGameLogic->findObjectByID(id);
 			if (!pAttacker || !pAttacker->getTemplate())
 			{
-				//Kris: Woah... do not return false here... because we need to iterate other team members!
-				//return FALSE;
+				// Kris: Woah... do not return false here... because we need to iterate other team members!
+				// return FALSE;
 				continue;
 			}
-			if( types.m_types->isInSet( pAttacker->getTemplate()->getName() ) )
+			if (types.m_types->isInSet(pAttacker->getTemplate()->getName()))
 			{
 				return TRUE;
 			}
 		}
-
 	}
 
 	return FALSE;
@@ -792,36 +927,45 @@ Bool ScriptConditions::evaluateTeamAttackedByType(Parameter *pTeamParm, Paramete
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedAttackedByPlayer */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedAttackedByPlayer(Parameter *pUnitParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluateNamedAttackedByPlayer(Parameter* pUnitParm, Parameter* pPlayerParm)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
 	BodyModuleInterface* theBodyModule = theObj->getBodyModule();
-	if (!theBodyModule) {
+	if (!theBodyModule)
+	{
 		return false;
 	}
 
 	const DamageInfo* lastDamageInfo = theBodyModule->getLastDamageInfo();
 
-	if (!lastDamageInfo) {
+	if (!lastDamageInfo)
+	{
 		return false;
 	}
 
 	ObjectID id = lastDamageInfo->in.m_sourceID;
 	Object* pAttacker = TheGameLogic->findObjectByID(id);
-	Player *pPlayer = nullptr;
-	if (lastDamageInfo->in.m_sourcePlayerMask) {
+	Player* pPlayer = nullptr;
+	if (lastDamageInfo->in.m_sourcePlayerMask)
+	{
 		pPlayer = ThePlayerList->getPlayerFromMask(lastDamageInfo->in.m_sourcePlayerMask);
 	}
-	if (pPlayer || pAttacker) {
-		Player *victimPlayer = playerFromParam(pPlayerParm);
-		if (pPlayer == victimPlayer) {
+	if (pPlayer || pAttacker)
+	{
+		Player* victimPlayer = playerFromParam(pPlayerParm);
+		if (pPlayer == victimPlayer)
+		{
 			return true;
 		}
-		if (!pAttacker) return false; // wasn't attacked.
+		if (!pAttacker)
+		{
+			return false;    // wasn't attacked.
+		}
 		return (pAttacker->getControllingPlayer() == victimPlayer);
 	}
 	return false;
@@ -830,36 +974,43 @@ Bool ScriptConditions::evaluateNamedAttackedByPlayer(Parameter *pUnitParm, Param
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamAttackedByPlayer */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamAttackedByPlayer(Parameter *pTeamParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluateTeamAttackedByPlayer(Parameter* pTeamParm, Parameter* pPlayerParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!theTeam) {
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (!theTeam)
+	{
 		return false;
 	}
 
-	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *pCur = iter.cur();
-		if (!pCur) {
+	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* pCur = iter.cur();
+		if (!pCur)
+		{
 			continue;
 		}
 		BodyModuleInterface* theBodyModule = pCur->getBodyModule();
-		if (!theBodyModule) {
+		if (!theBodyModule)
+		{
 			continue;
 		}
 
 		const DamageInfo* lastDamageInfo = theBodyModule->getLastDamageInfo();
 
-		if (!lastDamageInfo) {
+		if (!lastDamageInfo)
+		{
 			continue;
 		}
 
 		ObjectID id = lastDamageInfo->in.m_sourceID;
 		Object* pAttacker = TheGameLogic->findObjectByID(id);
-		if (!pAttacker) {
+		if (!pAttacker)
+		{
 			continue;
 		}
 
-		if (pAttacker->getControllingPlayer() == playerFromParam(pPlayerParm)) {
+		if (pAttacker->getControllingPlayer() == playerFromParam(pPlayerParm))
+		{
 			return true;
 		}
 	}
@@ -870,23 +1021,33 @@ Bool ScriptConditions::evaluateTeamAttackedByPlayer(Parameter *pTeamParm, Parame
 //-------------------------------------------------------------------------------------------------
 /** evaluateBuiltByPlayer */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateBuiltByPlayer(Condition *pCondition, Parameter* pTypeParm, Parameter* pPlayerParm)
+Bool ScriptConditions::evaluateBuiltByPlayer(Condition* pCondition, Parameter* pTypeParm, Parameter* pPlayerParm)
 {
-	if (pCondition->getCustomData()!=0) {
+	if (pCondition->getCustomData() != 0)
+	{
 		// We have a cached value.
-		if (TheScriptEngine->getFrameObjectCountChanged() == pCondition->getCustomFrame()) {
+		if (TheScriptEngine->getFrameObjectCountChanged() == pCondition->getCustomFrame())
+		{
 			// object count hasn't changed.  Use cached value.
-			if (pCondition->getCustomData()==1) return true;
-			if (pCondition->getCustomData()==-1) return false;
+			if (pCondition->getCustomData() == 1)
+			{
+				return true;
+			}
+			if (pCondition->getCustomData() == -1)
+			{
+				return false;
+			}
 		}
 	}
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	const ThingTemplate* pTemplate = TheThingFactory->findTemplate(pTypeParm->getString());
-	if (!pTemplate) {
+	if (!pTemplate)
+	{
 		return false;
 	}
 
@@ -894,19 +1055,23 @@ Bool ScriptConditions::evaluateBuiltByPlayer(Condition *pCondition, Parameter* p
 	objectTypesFromParam(pTypeParm, types.m_types);
 
 	std::vector<Int> counts;
-	std::vector<const ThingTemplate *> templates;
+	std::vector<const ThingTemplate*> templates;
 
 	Int numTemplates = types.m_types->prepForPlayerCounting(templates, counts);
-	if (numTemplates > 0) {
+	if (numTemplates > 0)
+	{
 		pPlayer->countObjectsByThingTemplate(numTemplates, &(*templates.begin()), false, &(*counts.begin()));
-	} else {
+	}
+	else
+	{
 		return 0;
 	}
 
 	Int sumOfObjs = rts::sum(counts);
-	pCondition->setCustomData(-1); // false.
-	if (sumOfObjs != 0) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (sumOfObjs != 0)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	pCondition->setCustomFrame(TheScriptEngine->getFrameObjectCountChanged());
 	return (sumOfObjs != 0);
@@ -927,36 +1092,47 @@ Bool ScriptConditions::evaluateNamedCreated(Parameter* pUnitParm)
 //-------------------------------------------------------------------------------------------------
 Bool ScriptConditions::evaluateTeamCreated(Parameter* pTeamParm)
 {
-	Team *pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (pTeam) {
+	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (pTeam)
+	{
 		return pTeam->isCreated();
 	}
-	return ( false );
+	return (false);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateUnitHealth */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateUnitHealth(Parameter *pUnitParm, Parameter* pComparisonParm, Parameter *pHealthPercent)
+Bool ScriptConditions::evaluateUnitHealth(Parameter* pUnitParm, Parameter* pComparisonParm, Parameter* pHealthPercent)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
-	if (!theObj->getBodyModule()) return false;
+	if (!theObj->getBodyModule())
+	{
+		return false;
+	}
 
 	Real curHealth = theObj->getBodyModule()->getHealth();
 	Real initialHealth = theObj->getBodyModule()->getInitialHealth();
-	Int curPercent = (curHealth*100 + initialHealth/2)/initialHealth;
+	Int curPercent = (curHealth * 100 + initialHealth / 2) / initialHealth;
 
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :			return (curPercent < pHealthPercent->getInt());
-		case Parameter::LESS_EQUAL :		return (curPercent <= pHealthPercent->getInt());
-		case Parameter::EQUAL :					return (curPercent == pHealthPercent->getInt());
-		case Parameter::GREATER_EQUAL :	return (curPercent >= pHealthPercent->getInt());
-		case Parameter::GREATER :				return (curPercent > pHealthPercent->getInt());
-		case Parameter::NOT_EQUAL :			return (curPercent != pHealthPercent->getInt());
+		case Parameter::LESS_THAN:
+			return (curPercent < pHealthPercent->getInt());
+		case Parameter::LESS_EQUAL:
+			return (curPercent <= pHealthPercent->getInt());
+		case Parameter::EQUAL:
+			return (curPercent == pHealthPercent->getInt());
+		case Parameter::GREATER_EQUAL:
+			return (curPercent >= pHealthPercent->getInt());
+		case Parameter::GREATER:
+			return (curPercent > pHealthPercent->getInt());
+		case Parameter::NOT_EQUAL:
+			return (curPercent != pHealthPercent->getInt());
 	}
 
 	return false;
@@ -965,22 +1141,36 @@ Bool ScriptConditions::evaluateUnitHealth(Parameter *pUnitParm, Parameter* pComp
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasCredits */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasCredits(Parameter *pCreditsParm, Parameter* pComparisonParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluatePlayerHasCredits(Parameter* pCreditsParm, Parameter* pComparisonParm, Parameter* pPlayerParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
-	if (pPlayer && pPlayer->getMoney()) {
+	if (pPlayer && pPlayer->getMoney())
+	{
 		switch (pComparisonParm->getInt())
 		{
-			case Parameter::LESS_THAN :			return (pCreditsParm->getInt() < pPlayer->getMoney()->countMoney()); break;
-			case Parameter::LESS_EQUAL :		return (pCreditsParm->getInt() <= pPlayer->getMoney()->countMoney()); break;
-			case Parameter::EQUAL :					return (pCreditsParm->getInt() == pPlayer->getMoney()->countMoney()); break;
-			case Parameter::GREATER_EQUAL :	return (pCreditsParm->getInt() >= pPlayer->getMoney()->countMoney()); break;
-			case Parameter::GREATER :				return (pCreditsParm->getInt() > pPlayer->getMoney()->countMoney()); break;
-			case Parameter::NOT_EQUAL :			return (pCreditsParm->getInt() != pPlayer->getMoney()->countMoney()); break;
+			case Parameter::LESS_THAN:
+				return (pCreditsParm->getInt() < pPlayer->getMoney()->countMoney());
+				break;
+			case Parameter::LESS_EQUAL:
+				return (pCreditsParm->getInt() <= pPlayer->getMoney()->countMoney());
+				break;
+			case Parameter::EQUAL:
+				return (pCreditsParm->getInt() == pPlayer->getMoney()->countMoney());
+				break;
+			case Parameter::GREATER_EQUAL:
+				return (pCreditsParm->getInt() >= pPlayer->getMoney()->countMoney());
+				break;
+			case Parameter::GREATER:
+				return (pCreditsParm->getInt() > pPlayer->getMoney()->countMoney());
+				break;
+			case Parameter::NOT_EQUAL:
+				return (pCreditsParm->getInt() != pPlayer->getMoney()->countMoney());
+				break;
 		}
 	}
 
@@ -990,29 +1180,33 @@ Bool ScriptConditions::evaluatePlayerHasCredits(Parameter *pCreditsParm, Paramet
 //-------------------------------------------------------------------------------------------------
 /** evaluateBuildingEntered */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateBuildingEntered( Parameter *pPlayerParm, Parameter *pItemParm )
+Bool ScriptConditions::evaluateBuildingEntered(Parameter* pPlayerParm, Parameter* pItemParm)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pItemParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pItemParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
-	ContainModuleInterface *contain = theObj->getContain();
-	if( !contain )
+	ContainModuleInterface* contain = theObj->getContain();
+	if (!contain)
 	{
-		DEBUG_CRASH( ("evaluateBuildingEntered script condition -- building doesn't have a container.") );
+		DEBUG_CRASH(("evaluateBuildingEntered script condition -- building doesn't have a container."));
 		return false;
 	}
 	PlayerMaskType playerMask = theObj->getContain()->getPlayerWhoEntered();
-	if (playerMask==0) {
+	if (playerMask == 0)
+	{
 		return false;
 	}
 
-	Player *pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	Player* pPlayer = playerFromParam(pPlayerParm);
+	if (!pPlayer)
+	{
 		return false;
 	}
-	if (playerMask == pPlayer->getPlayerMask()) {
+	if (playerMask == pPlayer->getPlayerMask())
+	{
 		return true;
 	}
 	return false;
@@ -1021,19 +1215,21 @@ Bool ScriptConditions::evaluateBuildingEntered( Parameter *pPlayerParm, Paramete
 //-------------------------------------------------------------------------------------------------
 /** evaluateIsBuildingEmpty */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateIsBuildingEmpty( Parameter *pItemParm )
+Bool ScriptConditions::evaluateIsBuildingEmpty(Parameter* pItemParm)
 {
-
-	Object *theBuilding = TheScriptEngine->getUnitNamed(pItemParm->getString());
-	if (!theBuilding) {
+	Object* theBuilding = TheScriptEngine->getUnitNamed(pItemParm->getString());
+	if (!theBuilding)
+	{
 		return false;
 	}
 
 	ContainModuleInterface* contain = theBuilding->getContain();
-	if (!contain) {
+	if (!contain)
+	{
 		return false;
 	}
-	if (contain->getContainCount() > 0) {
+	if (contain->getContainCount() > 0)
+	{
 		return false;
 	}
 	return true;
@@ -1042,22 +1238,24 @@ Bool ScriptConditions::evaluateIsBuildingEmpty( Parameter *pItemParm )
 //-------------------------------------------------------------------------------------------------
 /** evaluateEnemySighted */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAllianceParm, Parameter* pPlayerParm)
+Bool ScriptConditions::evaluateEnemySighted(Parameter* pItemParm, Parameter* pAllianceParm, Parameter* pPlayerParm)
 {
-
-	Object *theObj = TheScriptEngine->getUnitNamed( pItemParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pItemParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
-	Player *pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	Player* pPlayer = playerFromParam(pPlayerParm);
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	// filter out appropriately based on alliances
 	Int relationDescriber;
-	switch (pAllianceParm->getInt()) {
+	switch (pAllianceParm->getInt())
+	{
 		case Parameter::REL_NEUTRAL:
 			relationDescriber = PartitionFilterRelationship::ALLOW_NEUTRAL;
 			break;
@@ -1072,28 +1270,29 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 			relationDescriber = 0;
 			break;
 	}
-	PartitionFilterRelationship	filterTeam(theObj, relationDescriber);
+	PartitionFilterRelationship filterTeam(theObj, relationDescriber);
 
 	// and only stuff that is not dead
 	PartitionFilterAlive filterAlive;
 
 	// and only nonstealthed items.
-	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ),
-																										 MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_DETECTED, OBJECT_STATUS_DISGUISED ) );
+	PartitionFilterRejectByObjectStatus filterStealth(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_STEALTHED),
+	                                                  MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_DETECTED, OBJECT_STATUS_DISGUISED));
 
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
 
-	PartitionFilter *filters[] = { &filterTeam, &filterAlive, &filterStealth, &filterMapStatus, nullptr };
+	PartitionFilter* filters[] = { &filterTeam, &filterAlive, &filterStealth, &filterMapStatus, nullptr };
 
 	Real visionRange = theObj->getVisionRange();
 
-	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(
-								theObj, visionRange, FROM_CENTER_2D, filters);
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(
+	  theObj, visionRange, FROM_CENTER_2D, filters);
 	MemoryPoolObjectHolder hold(iter);
-	for (Object *them = iter->first(); them; them = iter->next())
+	for (Object* them = iter->first(); them; them = iter->next())
 	{
-		if (them->getControllingPlayer() == pPlayer) {
+		if (them->getControllingPlayer() == pPlayer)
+		{
 			return true;
 		}
 	}
@@ -1103,16 +1302,17 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 //-------------------------------------------------------------------------------------------------
 /** evaluateTypeSighted */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTypeParm, Parameter* pPlayerParm)
+Bool ScriptConditions::evaluateTypeSighted(Parameter* pItemParm, Parameter* pTypeParm, Parameter* pPlayerParm)
 {
-
-	Object *theObj = TheScriptEngine->getUnitNamed( pItemParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pItemParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
-	Player *pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	Player* pPlayer = playerFromParam(pPlayerParm);
+	if (!pPlayer)
+	{
 		return false;
 	}
 
@@ -1123,24 +1323,27 @@ Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTyp
 	PartitionFilterAlive filterAlive;
 
 	// and only nonstealthed items.
-	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ),
-																										 MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_DETECTED, OBJECT_STATUS_DISGUISED ) );
+	PartitionFilterRejectByObjectStatus filterStealth(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_STEALTHED),
+	                                                  MAKE_OBJECT_STATUS_MASK2(OBJECT_STATUS_DETECTED, OBJECT_STATUS_DISGUISED));
 
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
 
-	PartitionFilter *filters[] = { &filterAlive, &filterStealth, &filterMapStatus, nullptr };
+	PartitionFilter* filters[] = { &filterAlive, &filterStealth, &filterMapStatus, nullptr };
 
 	Real visionRange = theObj->getVisionRange();
 
-	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(
-								theObj, visionRange, FROM_CENTER_2D, filters);
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(
+	  theObj, visionRange, FROM_CENTER_2D, filters);
 	MemoryPoolObjectHolder hold(iter);
-	for (Object *them = iter->first(); them; them = iter->next())
+	for (Object* them = iter->first(); them; them = iter->next())
 	{
-		if (them->getControllingPlayer() == pPlayer) {
+		if (them->getControllingPlayer() == pPlayer)
+		{
 			if (types.m_types->isInSet(them->getTemplate()->getName()))
+			{
 				return true;
+			}
 		}
 	}
 	return false;
@@ -1149,28 +1352,30 @@ Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTyp
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedDiscovered */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedDiscovered(Parameter *pItemParm, Parameter* pPlayerParm)
+Bool ScriptConditions::evaluateNamedDiscovered(Parameter* pItemParm, Parameter* pPlayerParm)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pItemParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pItemParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
-	Player *pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	Player* pPlayer = playerFromParam(pPlayerParm);
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	// We are held, so we are not visible.
-	if( theObj->isDisabledByType( DISABLED_HELD ) )
+	if (theObj->isDisabledByType(DISABLED_HELD))
 	{
 		return false;
 	}
 
 	// If we are stealthed we are not visible.
-	if( theObj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) &&
-			!theObj->getStatusBits().test( OBJECT_STATUS_DETECTED ) &&
-			!theObj->getStatusBits().test( OBJECT_STATUS_DISGUISED ) )
+	if (theObj->getStatusBits().test(OBJECT_STATUS_STEALTHED) &&
+	    !theObj->getStatusBits().test(OBJECT_STATUS_DETECTED) &&
+	    !theObj->getStatusBits().test(OBJECT_STATUS_DISGUISED))
 	{
 		return false;
 	}
@@ -1181,40 +1386,45 @@ Bool ScriptConditions::evaluateNamedDiscovered(Parameter *pItemParm, Parameter* 
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamDiscovered */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamDiscovered(Parameter *pTeamParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluateTeamDiscovered(Parameter* pTeamParm, Parameter* pPlayerParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
-	if (!theTeam) {
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (!theTeam)
+	{
 		return false;
 	}
 
-	Player *pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	Player* pPlayer = playerFromParam(pPlayerParm);
+	if (!pPlayer)
+	{
 		return false;
 	}
 
-	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *pObj = iter.cur();
-		if (!pObj) {
+	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* pObj = iter.cur();
+		if (!pObj)
+		{
 			continue;
 		}
 
 		// We are held, so we are not visible.
-		if( pObj->isDisabledByType( DISABLED_HELD ) )
+		if (pObj->isDisabledByType(DISABLED_HELD))
 		{
 			continue;
 		}
 
 		// If we are stealthed we are not visible.
-		if( pObj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) &&
-				!pObj->getStatusBits().test( OBJECT_STATUS_DETECTED ) &&
-				!pObj->getStatusBits().test( OBJECT_STATUS_DISGUISED ) )
+		if (pObj->getStatusBits().test(OBJECT_STATUS_STEALTHED) &&
+		    !pObj->getStatusBits().test(OBJECT_STATUS_DETECTED) &&
+		    !pObj->getStatusBits().test(OBJECT_STATUS_DISGUISED))
 		{
 			continue;
 		}
 		ObjectShroudStatus shroud = pObj->getShroudedStatus(pPlayer->getPlayerIndex());
 
-		if (shroud == OBJECTSHROUD_CLEAR || shroud == OBJECTSHROUD_PARTIAL_CLEAR) {
+		if (shroud == OBJECTSHROUD_CLEAR || shroud == OBJECTSHROUD_PARTIAL_CLEAR)
+		{
 			return true;
 		}
 	}
@@ -1225,25 +1435,26 @@ Bool ScriptConditions::evaluateTeamDiscovered(Parameter *pTeamParm, Parameter *p
 //-------------------------------------------------------------------------------------------------
 /** evaluateMissionAttempts */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateMissionAttempts(Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pAttemptsParm)
+Bool ScriptConditions::evaluateMissionAttempts(Parameter* pPlayerParm, Parameter* pComparisonParm, Parameter* pAttemptsParm)
 {
-//Player* pPlayer = playerFromParam(pPlayerParm);
+	// Player* pPlayer = playerFromParam(pPlayerParm);
 	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedOwnedByPlayer */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedOwnedByPlayer(Parameter *pUnitParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluateNamedOwnedByPlayer(Parameter* pUnitParm, Parameter* pPlayerParm)
 {
-
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	Object* pObj = TheScriptEngine->getUnitNamed(pUnitParm->getString());
-	if (!pObj) {
+	if (!pObj)
+	{
 		return false;
 	}
 
@@ -1253,29 +1464,31 @@ Bool ScriptConditions::evaluateNamedOwnedByPlayer(Parameter *pUnitParm, Paramete
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamOwnedByPlayer */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamOwnedByPlayer(Parameter *pTeamParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluateTeamOwnedByPlayer(Parameter* pTeamParm, Parameter* pPlayerParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!pTeam) {
+	if (!pTeam)
+	{
 		return false;
 	}
 
 	return (pTeam->getControllingPlayer() == pPlayer);
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasNOrFewerBuildings */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasNOrFewerBuildings(Parameter *pBuildingCountParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluatePlayerHasNOrFewerBuildings(Parameter* pBuildingCountParm, Parameter* pPlayerParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
@@ -1285,10 +1498,11 @@ Bool ScriptConditions::evaluatePlayerHasNOrFewerBuildings(Parameter *pBuildingCo
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasNOrFewerFactionBuildings */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasNOrFewerFactionBuildings(Parameter *pBuildingCountParm, Parameter *pPlayerParm)
+Bool ScriptConditions::evaluatePlayerHasNOrFewerFactionBuildings(Parameter* pBuildingCountParm, Parameter* pPlayerParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
@@ -1301,15 +1515,17 @@ Bool ScriptConditions::evaluatePlayerHasNOrFewerFactionBuildings(Parameter *pBui
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasPower */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasPower(Parameter *pPlayerParm)
+Bool ScriptConditions::evaluatePlayerHasPower(Parameter* pPlayerParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 
 	Energy* pPlayersEnergy = pPlayer->getEnergy();
-	if (!pPlayersEnergy) {
+	if (!pPlayersEnergy)
+	{
 		return false;
 	}
 	return pPlayersEnergy->hasSufficientPower();
@@ -1318,26 +1534,41 @@ Bool ScriptConditions::evaluatePlayerHasPower(Parameter *pPlayerParm)
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedReachedWaypointsEnd */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedReachedWaypointsEnd(Parameter *pUnitParm, Parameter* pWaypointPathParm)
+Bool ScriptConditions::evaluateNamedReachedWaypointsEnd(Parameter* pUnitParm, Parameter* pWaypointPathParm)
 {
-	Object *theObj = TheScriptEngine->getUnitNamed( pUnitParm->getString() );
-	if (!theObj) {
+	Object* theObj = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (!theObj)
+	{
 		return false;
 	}
 
-	AIUpdateInterface *ai = theObj->getAIUpdateInterface();
+	AIUpdateInterface* ai = theObj->getAIUpdateInterface();
 	if (!ai)
+	{
 		return false;
+	}
 
-	const Waypoint *targetWay = ai->getCompletedWaypoint();
+	const Waypoint* targetWay = ai->getCompletedWaypoint();
 
-	if (!targetWay) return false;
+	if (!targetWay)
+	{
+		return false;
+	}
 
-	AsciiString	pathName = pWaypointPathParm->getString();
+	AsciiString pathName = pWaypointPathParm->getString();
 
-	if (targetWay->getPathLabel1() == pathName) return true;
-	if (targetWay->getPathLabel2() == pathName) return true;
-	if (targetWay->getPathLabel3() == pathName) return true;
+	if (targetWay->getPathLabel1() == pathName)
+	{
+		return true;
+	}
+	if (targetWay->getPathLabel2() == pathName)
+	{
+		return true;
+	}
+	if (targetWay->getPathLabel3() == pathName)
+	{
+		return true;
+	}
 
 	return false;
 }
@@ -1345,41 +1576,60 @@ Bool ScriptConditions::evaluateNamedReachedWaypointsEnd(Parameter *pUnitParm, Pa
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamReachedWaypointsEnd */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamReachedWaypointsEnd(Parameter *pTeamParm, Parameter* pWaypointPathParm)
+Bool ScriptConditions::evaluateTeamReachedWaypointsEnd(Parameter* pTeamParm, Parameter* pWaypointPathParm)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
-	if (!theTeam) {
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (!theTeam)
+	{
 		return false;
 	}
 
-	AsciiString	pathName = pWaypointPathParm->getString();
+	AsciiString pathName = pWaypointPathParm->getString();
 	Bool anyAtEnd = false;
 	Bool anyNotAtEnd = false;
 	// Note - This returns true if any of the team completed the path.  This is as the current
 	// implementation tends to do group pathfinding by default, so we trigger when the leader actually thinks
 	// that he has reached the end of the waypoint path.
-//int i = 0;
-	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *pObj = iter.cur();
-		if (!pObj) {
+	// int i = 0;
+	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* pObj = iter.cur();
+		if (!pObj)
+		{
 			continue;
 		}
-		AIUpdateInterface *ai = pObj->getAIUpdateInterface();
-		if (!ai) continue; // in case there are any rocks or trees in the team :)
+		AIUpdateInterface* ai = pObj->getAIUpdateInterface();
+		if (!ai)
+		{
+			continue;    // in case there are any rocks or trees in the team :)
+		}
 
-		const Waypoint *targetWay = ai->getCompletedWaypoint();
+		const Waypoint* targetWay = ai->getCompletedWaypoint();
 
-		if (!targetWay) {
+		if (!targetWay)
+		{
 			anyNotAtEnd = true;
 			continue;
 		}
 		Bool found = false;
-		if (targetWay->getPathLabel1() == pathName) found = true;
-		if (targetWay->getPathLabel2() == pathName) found = true;
-		if (targetWay->getPathLabel3() == pathName) found = true;
-		if (found) {
+		if (targetWay->getPathLabel1() == pathName)
+		{
+			found = true;
+		}
+		if (targetWay->getPathLabel2() == pathName)
+		{
+			found = true;
+		}
+		if (targetWay->getPathLabel3() == pathName)
+		{
+			found = true;
+		}
+		if (found)
+		{
 			anyAtEnd = true;
-		} else {
+		}
+		else
+		{
 			anyNotAtEnd = true;
 		}
 	}
@@ -1389,45 +1639,55 @@ Bool ScriptConditions::evaluateTeamReachedWaypointsEnd(Parameter *pTeamParm, Par
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedSelected */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedSelected(Condition *pCondition, Parameter *pUnitParm)
+Bool ScriptConditions::evaluateNamedSelected(Condition* pCondition, Parameter* pUnitParm)
 {
 	if (TheGameEngine->isMultiplayerSession())
 	{
 		return false;
 	}
 
-
 	Bool anyChanges = false;
-	if (pCondition->getCustomData() == 0) anyChanges = true;
-
-
-	if (TheInGameUI->getFrameSelectionChanged() != pCondition->getCustomFrame()) {
-		anyChanges = true; // Selection changed since we cached the value.  jba.
+	if (pCondition->getCustomData() == 0)
+	{
+		anyChanges = true;
 	}
-	if (!anyChanges) {
-		if (pCondition->getCustomData()==-1) return false;
-		if (pCondition->getCustomData()==1) return true;
+
+	if (TheInGameUI->getFrameSelectionChanged() != pCondition->getCustomFrame())
+	{
+		anyChanges = true;    // Selection changed since we cached the value.  jba.
+	}
+	if (!anyChanges)
+	{
+		if (pCondition->getCustomData() == -1)
+		{
+			return false;
+		}
+		if (pCondition->getCustomData() == 1)
+		{
+			return true;
+		}
 	}
 
 	Bool isSelected = false;
-	const DrawableList *selected = TheInGameUI->getAllSelectedDrawables();
+	const DrawableList* selected = TheInGameUI->getAllSelectedDrawables();
 
 	// loop through all the selected drawables
-	Drawable *draw;
-	for( DrawableListCIt it = selected->begin(); it != selected->end(); ++it )
+	Drawable* draw;
+	for (DrawableListCIt it = selected->begin(); it != selected->end(); ++it)
 	{
 		draw = *it;
 
-		if (draw->getObject()->getName() == (pUnitParm->getString())) {
+		if (draw->getObject()->getName() == (pUnitParm->getString()))
+		{
 			isSelected = true;
 			break;
 		}
-
 	}
 
-	pCondition->setCustomData(-1); // false.
-	if (isSelected) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (isSelected)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	pCondition->setCustomFrame(TheInGameUI->getFrameSelectionChanged());
 	return isSelected;
@@ -1436,7 +1696,7 @@ Bool ScriptConditions::evaluateNamedSelected(Condition *pCondition, Parameter *p
 //-------------------------------------------------------------------------------------------------
 /** evaluateVideoHasCompleted */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateVideoHasCompleted(Parameter *pVideoParm)
+Bool ScriptConditions::evaluateVideoHasCompleted(Parameter* pVideoParm)
 {
 	return TheScriptEngine->isVideoComplete(pVideoParm->getString(), true);
 }
@@ -1444,7 +1704,7 @@ Bool ScriptConditions::evaluateVideoHasCompleted(Parameter *pVideoParm)
 //-------------------------------------------------------------------------------------------------
 /** evaluateSpeechHasCompleted */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSpeechHasCompleted(Parameter *pSpeechParm)
+Bool ScriptConditions::evaluateSpeechHasCompleted(Parameter* pSpeechParm)
 {
 	return TheScriptEngine->isSpeechComplete(pSpeechParm->getString(), true);
 }
@@ -1452,7 +1712,7 @@ Bool ScriptConditions::evaluateSpeechHasCompleted(Parameter *pSpeechParm)
 //-------------------------------------------------------------------------------------------------
 /** evaluateAudioHasCompleted */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateAudioHasCompleted(Parameter *pAudioParm)
+Bool ScriptConditions::evaluateAudioHasCompleted(Parameter* pAudioParm)
 {
 	return TheScriptEngine->isAudioComplete(pAudioParm->getString(), true);
 }
@@ -1460,9 +1720,9 @@ Bool ScriptConditions::evaluateAudioHasCompleted(Parameter *pAudioParm)
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerSpecialPowerFromUnitTriggered */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitTriggered(Parameter *pPlayerParm, Parameter *pSpecialPowerParm, Parameter* pUnitParm)
+Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitTriggered(Parameter* pPlayerParm, Parameter* pSpecialPowerParm, Parameter* pUnitParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	ObjectID sourceID = INVALID_ID;
 	if (pUnitParm)
 	{
@@ -1485,9 +1745,9 @@ Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitTriggered(Parameter *pP
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerSpecialPowerFromUnitMidway */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitMidway(Parameter *pPlayerParm, Parameter *pSpecialPowerParm, Parameter* pUnitParm)
+Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitMidway(Parameter* pPlayerParm, Parameter* pSpecialPowerParm, Parameter* pUnitParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	ObjectID sourceID = INVALID_ID;
 	if (pUnitParm)
 	{
@@ -1510,9 +1770,9 @@ Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitMidway(Parameter *pPlay
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerSpecialPowerFromUnitComplete */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitComplete(Parameter *pPlayerParm, Parameter *pSpecialPowerParm, Parameter* pUnitParm)
+Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitComplete(Parameter* pPlayerParm, Parameter* pSpecialPowerParm, Parameter* pUnitParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	ObjectID sourceID = INVALID_ID;
 	if (pUnitParm)
 	{
@@ -1535,9 +1795,9 @@ Bool ScriptConditions::evaluatePlayerSpecialPowerFromUnitComplete(Parameter *pPl
 //-------------------------------------------------------------------------------------------------
 /** evaluateUpgradeFromUnitComplete */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateUpgradeFromUnitComplete(Parameter *pPlayerParm, Parameter *pUpgradeParm, Parameter* pUnitParm)
+Bool ScriptConditions::evaluateUpgradeFromUnitComplete(Parameter* pPlayerParm, Parameter* pUpgradeParm, Parameter* pUnitParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	ObjectID sourceID = INVALID_ID;
 	if (pUnitParm)
 	{
@@ -1560,14 +1820,16 @@ Bool ScriptConditions::evaluateUpgradeFromUnitComplete(Parameter *pPlayerParm, P
 //-------------------------------------------------------------------------------------------------
 /** evaluateScienceAcquired */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateScienceAcquired(Parameter *pPlayerParm, Parameter *pScienceParm)
+Bool ScriptConditions::evaluateScienceAcquired(Parameter* pPlayerParm, Parameter* pScienceParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	if (pPlayer)
 	{
 		ScienceType science = TheScienceStore->getScienceFromInternalName(pScienceParm->getString());
 		if (science == SCIENCE_INVALID)
+		{
 			return FALSE;
+		}
 		return TheScriptEngine->isScienceAcquired(pPlayer->getPlayerIndex(), science, TRUE);
 	}
 	return FALSE;
@@ -1576,14 +1838,16 @@ Bool ScriptConditions::evaluateScienceAcquired(Parameter *pPlayerParm, Parameter
 //-------------------------------------------------------------------------------------------------
 /** evaluateCanPurchaseScience */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateCanPurchaseScience(Parameter *pPlayerParm, Parameter *pScienceParm)
+Bool ScriptConditions::evaluateCanPurchaseScience(Parameter* pPlayerParm, Parameter* pScienceParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	if (pPlayer)
 	{
 		ScienceType science = TheScienceStore->getScienceFromInternalName(pScienceParm->getString());
 		if (science == SCIENCE_INVALID)
+		{
 			return FALSE;
+		}
 		return pPlayer->isCapableOfPurchasingScience(science);
 	}
 	return FALSE;
@@ -1592,9 +1856,9 @@ Bool ScriptConditions::evaluateCanPurchaseScience(Parameter *pPlayerParm, Parame
 //-------------------------------------------------------------------------------------------------
 /** evaluateSciencePurchasePoints */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSciencePurchasePoints(Parameter *pPlayerParm, Parameter *pSciencePointParm)
+Bool ScriptConditions::evaluateSciencePurchasePoints(Parameter* pPlayerParm, Parameter* pSciencePointParm)
 {
-	Player *pPlayer = playerFromParam(pPlayerParm);
+	Player* pPlayer = playerFromParam(pPlayerParm);
 	if (pPlayer)
 	{
 		Int pointsNeeded = pSciencePointParm->getInt();
@@ -1606,20 +1870,21 @@ Bool ScriptConditions::evaluateSciencePurchasePoints(Parameter *pPlayerParm, Par
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedHasFreeContainerSlots */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedHasFreeContainerSlots(Parameter *pUnitParm)
+Bool ScriptConditions::evaluateNamedHasFreeContainerSlots(Parameter* pUnitParm)
 {
 	Object* pUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
-	if (!pUnit) {
+	if (!pUnit)
+	{
 		return false;
 	}
 
-	ContainModuleInterface *contain = pUnit->getContain();
-	if( contain )
+	ContainModuleInterface* contain = pUnit->getContain();
+	if (contain)
 	{
 		UnsignedInt max = contain->getContainMax();
 		UnsignedInt cur = contain->getContainCount();
 
-		if( cur < max )
+		if (cur < max)
 		{
 			return TRUE;
 		}
@@ -1627,24 +1892,26 @@ Bool ScriptConditions::evaluateNamedHasFreeContainerSlots(Parameter *pUnitParm)
 	return FALSE;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedEnteredArea */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedEnteredArea(Parameter *pUnitParm, Parameter *pTriggerParm)
+Bool ScriptConditions::evaluateNamedEnteredArea(Parameter* pUnitParm, Parameter* pTriggerParm)
 {
 	Object* pUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
-	if (!pUnit) {
+	if (!pUnit)
+	{
 		return false;
 	}
 
-	if (pUnit->isKindOf(KINDOF_INERT)) {
+	if (pUnit->isKindOf(KINDOF_INERT))
+	{
 		return false;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (!pTrig) {
+	if (!pTrig)
+	{
 		return false;
 	}
 
@@ -1654,16 +1921,18 @@ Bool ScriptConditions::evaluateNamedEnteredArea(Parameter *pUnitParm, Parameter 
 //-------------------------------------------------------------------------------------------------
 /** evaluateNamedExitedArea */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateNamedExitedArea(Parameter *pUnitParm, Parameter *pTriggerParm)
+Bool ScriptConditions::evaluateNamedExitedArea(Parameter* pUnitParm, Parameter* pTriggerParm)
 {
 	Object* pUnit = TheScriptEngine->getUnitNamed(pUnitParm->getString());
-	if (!pUnit) {
+	if (!pUnit)
+	{
 		return false;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (!pTrig) {
+	if (!pTrig)
+	{
 		return false;
 	}
 
@@ -1673,16 +1942,18 @@ Bool ScriptConditions::evaluateNamedExitedArea(Parameter *pUnitParm, Parameter *
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamEnteredAreaEntirely */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamEnteredAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamEnteredAreaEntirely(Parameter* pTeamParm, Parameter* pTriggerParm, Parameter* pTypeParm)
 {
 	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!pTeam) {
+	if (!pTeam)
+	{
 		return false;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (pTrig) {
+	if (pTrig)
+	{
 		return pTeam->didAllEnter(pTrig, (UnsignedInt)pTypeParm->getInt());
 	}
 
@@ -1692,16 +1963,18 @@ Bool ScriptConditions::evaluateTeamEnteredAreaEntirely(Parameter *pTeamParm, Par
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamEnteredAreaPartially */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamEnteredAreaPartially(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamEnteredAreaPartially(Parameter* pTeamParm, Parameter* pTriggerParm, Parameter* pTypeParm)
 {
 	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!pTeam) {
+	if (!pTeam)
+	{
 		return false;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (pTrig) {
+	if (pTrig)
+	{
 		return pTeam->didPartialEnter(pTrig, (UnsignedInt)pTypeParm->getInt());
 	}
 
@@ -1711,16 +1984,18 @@ Bool ScriptConditions::evaluateTeamEnteredAreaPartially(Parameter *pTeamParm, Pa
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamExitedAreaEntirely */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamExitedAreaEntirely(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamExitedAreaEntirely(Parameter* pTeamParm, Parameter* pTriggerParm, Parameter* pTypeParm)
 {
 	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!pTeam) {
+	if (!pTeam)
+	{
 		return false;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (!pTrig) {
+	if (!pTrig)
+	{
 		return false;
 	}
 
@@ -1730,16 +2005,18 @@ Bool ScriptConditions::evaluateTeamExitedAreaEntirely(Parameter *pTeamParm, Para
 //-------------------------------------------------------------------------------------------------
 /** evaluateTeamExitedAreaPartially */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamExitedAreaPartially(Parameter *pTeamParm, Parameter *pTriggerParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluateTeamExitedAreaPartially(Parameter* pTeamParm, Parameter* pTriggerParm, Parameter* pTypeParm)
 {
 	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!pTeam) {
+	if (!pTeam)
+	{
 		return false;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (!pTrig) {
+	if (!pTrig)
+	{
 		return false;
 	}
 
@@ -1773,19 +2050,19 @@ Bool ScriptConditions::evaluateMultiplayerPlayerDefeat()
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerUnitCondition */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pCountParm, Parameter *pUnitTypeParm)
+Bool ScriptConditions::evaluatePlayerUnitCondition(Condition* pCondition, Parameter* pPlayerParm, Parameter* pComparisonParm, Parameter* pCountParm, Parameter* pUnitTypeParm)
 {
-	if (pCondition->getCustomData()!=0)
+	if (pCondition->getCustomData() != 0)
 	{
 		// We have a cached value.
-		if( TheScriptEngine->getFrameObjectCountChanged() == pCondition->getCustomFrame() )
+		if (TheScriptEngine->getFrameObjectCountChanged() == pCondition->getCustomFrame())
 		{
 			// object count hasn't changed since we cached.  Use cached value.
-			if( pCondition->getCustomData() == 1 )
+			if (pCondition->getCustomData() == 1)
 			{
 				return true;
 			}
-			if( pCondition->getCustomData() == -1 )
+			if (pCondition->getCustomData() == -1)
 			{
 				return false;
 			}
@@ -1802,7 +2079,7 @@ Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parame
 	objectTypesFromParam(pUnitTypeParm, types.m_types);
 
 	std::vector<Int> counts;
-	std::vector<const ThingTemplate *> templates;
+	std::vector<const ThingTemplate*> templates;
 
 	Int numObjs = types.m_types->prepForPlayerCounting(templates, counts);
 	Int count = 0;
@@ -1816,32 +2093,32 @@ Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parame
 	Bool comparison = false;
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :
+		case Parameter::LESS_THAN:
 			comparison = (count < pCountParm->getInt());
 			break;
-		case Parameter::LESS_EQUAL :
+		case Parameter::LESS_EQUAL:
 			comparison = (count <= pCountParm->getInt());
 			break;
-		case Parameter::EQUAL :
+		case Parameter::EQUAL:
 			comparison = (count == pCountParm->getInt());
 			break;
-		case Parameter::GREATER_EQUAL :
+		case Parameter::GREATER_EQUAL:
 			comparison = (count >= pCountParm->getInt());
 			break;
-		case Parameter::GREATER :
+		case Parameter::GREATER:
 			comparison = (count > pCountParm->getInt());
 			break;
-		case Parameter::NOT_EQUAL :
+		case Parameter::NOT_EQUAL:
 			comparison = (count != pCountParm->getInt());
 			break;
 		default:
 			DEBUG_CRASH(("ScriptConditions::evaluatePlayerUnitCondition: Invalid comparison type. (jkmcd)"));
 			break;
 	}
-	pCondition->setCustomData(-1); // false.
+	pCondition->setCustomData(-1);    // false.
 	if (comparison)
 	{
-		pCondition->setCustomData(1); // true.
+		pCondition->setCustomData(1);    // true.
 	}
 	pCondition->setCustomFrame(TheScriptEngine->getFrameObjectCountChanged());
 	return comparison;
@@ -1850,44 +2127,58 @@ Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parame
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasComparisonPercentPower */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasComparisonPercentPower(Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pPercentParm)
+Bool ScriptConditions::evaluatePlayerHasComparisonPercentPower(Parameter* pPlayerParm, Parameter* pComparisonParm, Parameter* pPercentParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 	Real powerRatio = pPlayer->getEnergy()->getEnergySupplyRatio();
-	Real testRatio = pPercentParm->getInt()/100.0f;
+	Real testRatio = pPercentParm->getInt() / 100.0f;
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :			return (powerRatio < testRatio);
-		case Parameter::LESS_EQUAL :		return (powerRatio <= testRatio);
-		case Parameter::EQUAL :					return (powerRatio == testRatio);
-		case Parameter::GREATER_EQUAL :	return (powerRatio >= testRatio);
-		case Parameter::GREATER :				return (powerRatio > testRatio);
-		case Parameter::NOT_EQUAL:			return (powerRatio != testRatio);
+		case Parameter::LESS_THAN:
+			return (powerRatio < testRatio);
+		case Parameter::LESS_EQUAL:
+			return (powerRatio <= testRatio);
+		case Parameter::EQUAL:
+			return (powerRatio == testRatio);
+		case Parameter::GREATER_EQUAL:
+			return (powerRatio >= testRatio);
+		case Parameter::GREATER:
+			return (powerRatio > testRatio);
+		case Parameter::NOT_EQUAL:
+			return (powerRatio != testRatio);
 	}
 	return false;
 }
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerHasComparisonValueExcessPower */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerHasComparisonValueExcessPower(Parameter *pPlayerParm, Parameter *pComparisonParm, Parameter *pKWHParm)
+Bool ScriptConditions::evaluatePlayerHasComparisonValueExcessPower(Parameter* pPlayerParm, Parameter* pComparisonParm, Parameter* pKWHParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 	Int desiredKilowattExcess = pKWHParm->getInt();
 	Int actualKilowats = pPlayer->getEnergy()->getProduction() - pPlayer->getEnergy()->getConsumption();
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :			return (actualKilowats < desiredKilowattExcess);
-		case Parameter::LESS_EQUAL :		return (actualKilowats <= desiredKilowattExcess);
-		case Parameter::EQUAL :					return (actualKilowats == desiredKilowattExcess);
-		case Parameter::GREATER_EQUAL :	return (actualKilowats >= desiredKilowattExcess);
-		case Parameter::GREATER :				return (actualKilowats > desiredKilowattExcess);
-		case Parameter::NOT_EQUAL:			return (actualKilowats != desiredKilowattExcess);
+		case Parameter::LESS_THAN:
+			return (actualKilowats < desiredKilowattExcess);
+		case Parameter::LESS_EQUAL:
+			return (actualKilowats <= desiredKilowattExcess);
+		case Parameter::EQUAL:
+			return (actualKilowats == desiredKilowattExcess);
+		case Parameter::GREATER_EQUAL:
+			return (actualKilowats >= desiredKilowattExcess);
+		case Parameter::GREATER:
+			return (actualKilowats > desiredKilowattExcess);
+		case Parameter::NOT_EQUAL:
+			return (actualKilowats != desiredKilowattExcess);
 	}
 	return false;
 }
@@ -1895,46 +2186,68 @@ Bool ScriptConditions::evaluatePlayerHasComparisonValueExcessPower(Parameter *pP
 //-------------------------------------------------------------------------------------------------
 /** evaluateSkirmishSpecialPowerIsReady - does any unit have this special power ready to use? */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishPlayerParm, Parameter *pPower)
+Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter* pSkirmishPlayerParm, Parameter* pPower)
 {
-	if (pPower->getInt() == -1) return false;
-	if (pPower->getInt()>0 && pPower->getInt()>TheGameLogic->getFrame()) {
+	if (pPower->getInt() == -1)
+	{
 		return false;
 	}
-	Int nextFrame = TheGameLogic->getFrame() + 10*LOGICFRAMES_PER_SECOND;
-	const SpecialPowerTemplate *power = TheSpecialPowerStore->findSpecialPowerTemplate(pPower->getString());
-	if (power==nullptr) {
-		pPower->friend_setInt(-1); // flag as never true.
+	if (pPower->getInt() > 0 && pPower->getInt() > TheGameLogic->getFrame())
+	{
+		return false;
+	}
+	Int nextFrame = TheGameLogic->getFrame() + 10 * LOGICFRAMES_PER_SECOND;
+	const SpecialPowerTemplate* power = TheSpecialPowerStore->findSpecialPowerTemplate(pPower->getString());
+	if (power == nullptr)
+	{
+		pPower->friend_setInt(-1);    // flag as never true.
 		return false;
 	}
 	Bool found = false;
 	Player::PlayerTeamList::const_iterator it;
-	Player *pPlayer = playerFromParam(pSkirmishPlayerParm);
-	if (pPlayer==nullptr)
+	Player* pPlayer = playerFromParam(pSkirmishPlayerParm);
+	if (pPlayer == nullptr)
+	{
 		return false;
+	}
 
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) continue;
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-				Object *pObj = iter.cur();
-				if (!pObj) continue;
-				if( pObj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
+				continue;
+			}
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+			{
+				Object* pObj = iter.cur();
+				if (!pObj)
 				{
-					continue; // can't fire if under construction or disabled.
+					continue;
 				}
-				SpecialPowerModuleInterface *mod = pObj->getSpecialPowerModule(power);
+				if (pObj->getStatusBits().test(OBJECT_STATUS_UNDER_CONSTRUCTION) || pObj->isDisabled())
+				{
+					continue;    // can't fire if under construction or disabled.
+				}
+				SpecialPowerModuleInterface* mod = pObj->getSpecialPowerModule(power);
 				if (mod)
 				{
-					if (!TheSpecialPowerStore->canUseSpecialPower(pObj, power)) {
+					if (!TheSpecialPowerStore->canUseSpecialPower(pObj, power))
+					{
 						continue;
 					}
 					found = true;
-					if (mod->isReady()) return true;
-					if (mod->getReadyFrame()<nextFrame) nextFrame = mod->getReadyFrame();
+					if (mod->isReady())
+					{
+						return true;
+					}
+					if (mod->getReadyFrame() < nextFrame)
+					{
+						nextFrame = mod->getReadyFrame();
+					}
 				}
-
 			}
 		}
 	}
@@ -1942,16 +2255,16 @@ Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishP
 	return false;
 }
 
-
 //-------------------------------------------------------------------------------------------------
 /** evaluatePlayerDestroyedNOrMoreBuildings */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerDestroyedNOrMoreBuildings(Parameter *pPlayerParm, Parameter *pNumParm, Parameter *pOpponentParm)
+Bool ScriptConditions::evaluatePlayerDestroyedNOrMoreBuildings(Parameter* pPlayerParm, Parameter* pNumParm, Parameter* pOpponentParm)
 {
 	Player* pPlayer = playerFromParam(pPlayerParm);
 	Player* pOpponent = playerFromParam(pOpponentParm);
-//Int N = pNumParm->getInt();
-	if (!pPlayer || !pOpponent) {
+	// Int N = pNumParm->getInt();
+	if (!pPlayer || !pOpponent)
+	{
 		return false;
 	}
 
@@ -1962,32 +2275,34 @@ Bool ScriptConditions::evaluatePlayerDestroyedNOrMoreBuildings(Parameter *pPlaye
 //-------------------------------------------------------------------------------------------------
 /** evaluateUnitHasEmptied */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateUnitHasEmptied(Parameter *pUnitParm)
+Bool ScriptConditions::evaluateUnitHasEmptied(Parameter* pUnitParm)
 {
-	Object *object = TheScriptEngine->getUnitNamed(pUnitParm->getString());
-	if (!object) {
+	Object* object = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (!object)
+	{
 		return false;
 	}
 
 	// have we checked this one before?
-	TransportStatus *stats = s_transportStatuses;
-	while (stats) {
-		if (stats->m_objID == object->getID()) {
+	TransportStatus* stats = s_transportStatuses;
+	while (stats)
+	{
+		if (stats->m_objID == object->getID())
+		{
 			break;
 		}
 
 		stats = stats->m_nextStatus;
 	}
 
-	ContainModuleInterface *cmi = object->getContain();
+	ContainModuleInterface* cmi = object->getContain();
 	Int numPeeps = cmi ? cmi->getContainCount() : 0;
 
 	UnsignedInt frameNum = TheGameLogic->getFrame();
 
-
 	if (stats == nullptr)
 	{
-		TransportStatus *transportStatus = newInstance(TransportStatus);
+		TransportStatus* transportStatus = newInstance(TransportStatus);
 		transportStatus->m_objID = object->getID();
 		transportStatus->m_frameNumber = frameNum;
 		transportStatus->m_unitCount = numPeeps;
@@ -1996,8 +2311,10 @@ Bool ScriptConditions::evaluateUnitHasEmptied(Parameter *pUnitParm)
 		return false;
 	}
 
-	if (stats->m_frameNumber == frameNum - 1) {
-		if (stats->m_unitCount > 0 && numPeeps == 0) {
+	if (stats->m_frameNumber == frameNum - 1)
+	{
+		if (stats->m_unitCount > 0 && numPeeps == 0)
+		{
 			// don't actually update the info on this round, because we want to make sure that
 			// multiple calls to this in the same frame actually work.
 			return true;
@@ -2011,36 +2328,46 @@ Bool ScriptConditions::evaluateUnitHasEmptied(Parameter *pUnitParm)
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamIsContained(Parameter *pTeamParm, Bool allContained)
+Bool ScriptConditions::evaluateTeamIsContained(Parameter* pTeamParm, Bool allContained)
 {
 	Team* pTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
-	if (!pTeam) {
+	if (!pTeam)
+	{
 		return false;
 	}
 
 	Bool anyConsidered = FALSE;
-	for (DLINK_ITERATOR<Object> iter = pTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *obj = iter.cur();
-		if (!obj) {
+	for (DLINK_ITERATOR<Object> iter = pTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* obj = iter.cur();
+		if (!obj)
+		{
 			continue;
 		}
 
 		Bool isContained = (obj->getContainedBy() != nullptr);
-		if (!isContained) {
+		if (!isContained)
+		{
 			// we could still be exiting, in which case we should pretend like we are contained.
 
-			AIUpdateInterface *ai = obj->getAIUpdateInterface();
-			if (ai) {
+			AIUpdateInterface* ai = obj->getAIUpdateInterface();
+			if (ai)
+			{
 				isContained = (isContained && (ai->getCurrentStateID() == AI_EXIT));
 			}
 		}
 
-		if (isContained) {
-			if (!allContained) {
+		if (isContained)
+		{
+			if (!allContained)
+			{
 				return TRUE;
 			}
-		} else {
-			if (allContained) {
+		}
+		else
+		{
+			if (allContained)
+			{
 				return FALSE;
 			}
 		}
@@ -2048,7 +2375,8 @@ Bool ScriptConditions::evaluateTeamIsContained(Parameter *pTeamParm, Bool allCon
 		anyConsidered = TRUE;
 	}
 
-	if (anyConsidered) {
+	if (anyConsidered)
+	{
 		return allContained;
 	}
 
@@ -2056,45 +2384,49 @@ Bool ScriptConditions::evaluateTeamIsContained(Parameter *pTeamParm, Bool allCon
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateUnitHasObjectStatus(Parameter *pUnitParm, Parameter *pObjectStatus)
+Bool ScriptConditions::evaluateUnitHasObjectStatus(Parameter* pUnitParm, Parameter* pObjectStatus)
 {
-	Object *object = TheScriptEngine->getUnitNamed(pUnitParm->getString());
-	if (!object) {
+	Object* object = TheScriptEngine->getUnitNamed(pUnitParm->getString());
+	if (!object)
+	{
 		return false;
 	}
 
-	return( object->getStatusBits().testForAny( pObjectStatus->getStatus() ) );
+	return (object->getStatusBits().testForAny(pObjectStatus->getStatus()));
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateTeamHasObjectStatus(Parameter *pTeamParm, Parameter *pObjectStatus, Bool entireTeam)
+Bool ScriptConditions::evaluateTeamHasObjectStatus(Parameter* pTeamParm, Parameter* pObjectStatus, Bool entireTeam)
 {
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
-	if (!theTeam) {
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (!theTeam)
+	{
 		return false;
 	}
 
-	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *pObj = iter.cur();
-		if (!pObj) {
+	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* pObj = iter.cur();
+		if (!pObj)
+		{
 			return false;
 		}
 
 		ObjectStatusMaskType objStatus = pObjectStatus->getStatus();
-		Bool currObjHasStatus = pObj->getStatusBits().testForAny( objStatus );
+		Bool currObjHasStatus = pObj->getStatusBits().testForAny(objStatus);
 
-		if( entireTeam && !currObjHasStatus )
+		if (entireTeam && !currObjHasStatus)
 		{
 			return false;
 		}
-		else if( !entireTeam && currObjHasStatus )
+		else if (!entireTeam && currObjHasStatus)
 		{
 			return true;
 		}
-
 	}
 
-	if (entireTeam) {
+	if (entireTeam)
+	{
 		return true;
 	}
 
@@ -2105,61 +2437,91 @@ Bool ScriptConditions::evaluateTeamHasObjectStatus(Parameter *pTeamParm, Paramet
 // @todo: PERF_EVALUATE Get a perf timer on this. Should we adjust this function so that it runs like
 // evaluatePlayerHasUnitKindInArea
 // ?
-Bool ScriptConditions::evaluateSkirmishValueInArea(Condition *pCondition, Parameter *pSkirmishPlayerParm, Parameter *pComparisonParm, Parameter *pMoneyParm, Parameter *pTriggerParm)
+Bool ScriptConditions::evaluateSkirmishValueInArea(Condition* pCondition, Parameter* pSkirmishPlayerParm, Parameter* pComparisonParm, Parameter* pMoneyParm, Parameter* pTriggerParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return false;
 	}
 
 	AsciiString triggerName = pTriggerParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 
-	if (!pTrig) {
+	if (!pTrig)
+	{
 		return false;
 	}
 
 	Player::PlayerTeamList::const_iterator it;
 	Bool anyChanges = false;
-	if (pCondition->getCustomData() == 0) anyChanges = true;
+	if (pCondition->getCustomData() == 0)
+	{
+		anyChanges = true;
+	}
 
-
-	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it) {
-		if (anyChanges) break;
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			if (anyChanges) break;
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it)
+	{
+		if (anyChanges)
+		{
+			break;
+		}
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			if (anyChanges)
+			{
+				break;
+			}
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			if (team->didEnterOrExit()) {
+			if (team->didEnterOrExit())
+			{
 				anyChanges = true;
 			}
 		}
 	}
-	if (TheScriptEngine->getFrameObjectCountChanged() != pCondition->getCustomFrame()) {
-		anyChanges = true; // Objects were added/deleted since we cached, so count could have changed.  jba.
+	if (TheScriptEngine->getFrameObjectCountChanged() != pCondition->getCustomFrame())
+	{
+		anyChanges = true;    // Objects were added/deleted since we cached, so count could have changed.  jba.
 	}
-	if (!anyChanges) {
-		if (pCondition->getCustomData()==-1) return false;
-		if (pCondition->getCustomData()==1) return true;
+	if (!anyChanges)
+	{
+		if (pCondition->getCustomData() == -1)
+		{
+			return false;
+		}
+		if (pCondition->getCustomData() == 1)
+		{
+			return true;
+		}
 	}
 	Int totalCost = 0;
-	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-				Object *pObj = iter.cur();
-				if (!pObj) {
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+			{
+				Object* pObj = iter.cur();
+				if (!pObj)
+				{
 					continue;
 				}
-				if (!pObj->isKindOf(KINDOF_INERT) && pObj->isInside(pTrig)) {
-					if (!pObj->isEffectivelyDead()) {
-						const ThingTemplate *tt = pObj->getTemplate();
-						if (!tt) {
+				if (!pObj->isKindOf(KINDOF_INERT) && pObj->isInside(pTrig))
+				{
+					if (!pObj->isEffectivelyDead())
+					{
+						const ThingTemplate* tt = pObj->getTemplate();
+						if (!tt)
+						{
 							continue;
 						}
 						totalCost += tt->friend_getBuildCost();
@@ -2172,29 +2534,43 @@ Bool ScriptConditions::evaluateSkirmishValueInArea(Condition *pCondition, Parame
 	Bool comparison = false;
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN :			comparison = (totalCost < pMoneyParm->getInt()); break;
-		case Parameter::LESS_EQUAL :		comparison = (totalCost <= pMoneyParm->getInt()); break;
-		case Parameter::EQUAL :					comparison = (totalCost == pMoneyParm->getInt()); break;
-		case Parameter::GREATER_EQUAL :	comparison = (totalCost >= pMoneyParm->getInt()); break;
-		case Parameter::GREATER :				comparison = (totalCost > pMoneyParm->getInt()); break;
-		case Parameter::NOT_EQUAL :			comparison = (totalCost != pMoneyParm->getInt()); break;
+		case Parameter::LESS_THAN:
+			comparison = (totalCost < pMoneyParm->getInt());
+			break;
+		case Parameter::LESS_EQUAL:
+			comparison = (totalCost <= pMoneyParm->getInt());
+			break;
+		case Parameter::EQUAL:
+			comparison = (totalCost == pMoneyParm->getInt());
+			break;
+		case Parameter::GREATER_EQUAL:
+			comparison = (totalCost >= pMoneyParm->getInt());
+			break;
+		case Parameter::GREATER:
+			comparison = (totalCost > pMoneyParm->getInt());
+			break;
+		case Parameter::NOT_EQUAL:
+			comparison = (totalCost != pMoneyParm->getInt());
+			break;
 		default:
 			DEBUG_CRASH(("ScriptConditions::evaluateSkirmishValueInArea: Invalid comparison type. (jkmcd)"));
 			break;
 	}
-	pCondition->setCustomData(-1); // false.
-	if (comparison) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (comparison)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	pCondition->setCustomFrame(TheScriptEngine->getFrameObjectCountChanged());
 	return comparison;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerIsFaction(Parameter *pSkirmishPlayerParm, Parameter *pFactionParm)
+Bool ScriptConditions::evaluateSkirmishPlayerIsFaction(Parameter* pSkirmishPlayerParm, Parameter* pFactionParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return false;
 	}
 
@@ -2202,15 +2578,17 @@ Bool ScriptConditions::evaluateSkirmishPlayerIsFaction(Parameter *pSkirmishPlaye
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter *pSkirmishPlayerParm, Parameter *pDistanceParm, Parameter *pLocationParm, Parameter *pValueParm)
+Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter* pSkirmishPlayerParm, Parameter* pDistanceParm, Parameter* pLocationParm, Parameter* pValueParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return false;
 	}
 
-	PolygonTrigger *trigger = TheScriptEngine->getQualifiedTriggerAreaByName(pLocationParm->getString());
-	if (!trigger) {
+	PolygonTrigger* trigger = TheScriptEngine->getQualifiedTriggerAreaByName(pLocationParm->getString());
+	if (!trigger)
+	{
 		return false;
 	}
 
@@ -2224,21 +2602,24 @@ Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter
 	PartitionFilterPlayerAffiliation f2(player, ALLOW_NEUTRAL, true);
 	PartitionFilterOnMap filterMapStatus;
 
-	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, nullptr };
+	PartitionFilter* filters[] = { &f1, &f2, &filterMapStatus, nullptr };
 
-	SimpleObjectIterator *iter = ThePartitionManager->iterateObjectsInRange(&center, distance, FROM_CENTER_2D, filters, ITER_FASTEST);
+	SimpleObjectIterator* iter = ThePartitionManager->iterateObjectsInRange(&center, distance, FROM_CENTER_2D, filters, ITER_FASTEST);
 	MemoryPoolObjectHolder hold(iter);
 
 	Real maxValue = 0;
-	for (Object *them = iter->first(); them; them = iter->next()) {
+	for (Object* them = iter->first(); them; them = iter->next())
+	{
 		static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
-		SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*) them->findUpdateModule( key_warehouseUpdate );
-		if (!warehouseModule) {
+		SupplyWarehouseDockUpdate* warehouseModule = (SupplyWarehouseDockUpdate*)them->findUpdateModule(key_warehouseUpdate);
+		if (!warehouseModule)
+		{
 			continue;
 		}
 
 		Real value = player->getSupplyBoxValue() * warehouseModule->getBoxesStored();
-		if (value > maxValue) {
+		if (value > maxValue)
+		{
 			maxValue = value;
 		}
 	}
@@ -2250,18 +2631,26 @@ Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter
 // @todo: PERF_EVALUATE PERF_WARNING
 // If this is called multiple times per frame, the cost could add up. This will infrequently (read:
 // never) change, so it shouldn't be called very often. jkmcd
-Bool ScriptConditions::evaluateSkirmishPlayerTechBuildingWithinDistancePerimeter(Condition *pCondition, Parameter *pSkirmishPlayerParm, Parameter *pDistanceParm, Parameter *pLocationParm)
+Bool ScriptConditions::evaluateSkirmishPlayerTechBuildingWithinDistancePerimeter(Condition* pCondition, Parameter* pSkirmishPlayerParm, Parameter* pDistanceParm, Parameter* pLocationParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return false;
 	}
 	// If we have a cached value, return it. [8/8/2003]
-	if (pCondition->getCustomData()==1) return true;
-	if (pCondition->getCustomData()==-1) return false;
+	if (pCondition->getCustomData() == 1)
+	{
+		return true;
+	}
+	if (pCondition->getCustomData() == -1)
+	{
+		return false;
+	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pLocationParm->getString());
-	if (!pTrig) {
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pLocationParm->getString());
+	if (!pTrig)
+	{
 		return false;
 	}
 
@@ -2271,50 +2660,62 @@ Bool ScriptConditions::evaluateSkirmishPlayerTechBuildingWithinDistancePerimeter
 
 	PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_TECH_BUILDING), KINDOFMASK_NONE);
 	PartitionFilterPlayerAffiliation f2(player, ALLOW_ALLIES, false);
-	PartitionFilterPlayer f3(player, false);	// Don't find your own units, as our affiliation to self is neutral.
+	PartitionFilterPlayer f3(player, false);    // Don't find your own units, as our affiliation to self is neutral.
 	PartitionFilterOnMap filterMapStatus;
 
-
-	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
+	PartitionFilter* filters[] = { &f1, &f2, &f3, &filterMapStatus, nullptr };
 
 	Bool comparison = ThePartitionManager->getClosestObject(&center, radius, FROM_CENTER_2D, filters) != nullptr;
-	pCondition->setCustomData(-1); // false.
-	if (comparison) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (comparison)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	return comparison;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishCommandButtonIsReady( Parameter * /* pSkirmishPlayerParm */, Parameter *pTeamParm, Parameter *pCommandButtonParm, Bool allReady )
+Bool ScriptConditions::evaluateSkirmishCommandButtonIsReady(Parameter* /* pSkirmishPlayerParm */, Parameter* pTeamParm, Parameter* pCommandButtonParm, Bool allReady)
 {
 	// In this one case, the pSkirmishPlayerParm isn't used.
-	Team *theTeam = TheScriptEngine->getTeamNamed( pTeamParm->getString() );
-	if (!theTeam) {
+	Team* theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
+	if (!theTeam)
+	{
 		return false;
 	}
 
-	const CommandButton *commandButton = TheControlBar->findCommandButton( pCommandButtonParm->getString() );
-	if( !commandButton ) {
+	const CommandButton* commandButton = TheControlBar->findCommandButton(pCommandButtonParm->getString());
+	if (!commandButton)
+	{
 		return false;
 	}
 
-	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-		Object *pObj = iter.cur();
-		if (commandButton->getSpecialPowerTemplate()) {
-			if( !pObj->hasSpecialPower( commandButton->getSpecialPowerTemplate()->getSpecialPowerType() ) ) {
+	for (DLINK_ITERATOR<Object> iter = theTeam->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	{
+		Object* pObj = iter.cur();
+		if (commandButton->getSpecialPowerTemplate())
+		{
+			if (!pObj->hasSpecialPower(commandButton->getSpecialPowerTemplate()->getSpecialPowerType()))
+			{
 				continue;
 			}
-		} else if (!commandButton->getUpgradeTemplate()) {
+		}
+		else if (!commandButton->getUpgradeTemplate())
+		{
 			continue;
 		}
 
-		if (commandButton->isReady(pObj)) {
-			if (!allReady) {
+		if (commandButton->isReady(pObj))
+		{
+			if (!allReady)
+			{
 				return true;
 			}
-		} else {
-			if (allReady) {
+		}
+		else
+		{
+			if (allReady)
+			{
 				return false;
 			}
 		}
@@ -2324,10 +2725,11 @@ Bool ScriptConditions::evaluateSkirmishCommandButtonIsReady( Parameter * /* pSki
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishUnownedFactionUnitComparison( Parameter * /*pSkirmishPlayerParm*/, Parameter *pComparisonParm, Parameter *pCountParm )
+Bool ScriptConditions::evaluateSkirmishUnownedFactionUnitComparison(Parameter* /*pSkirmishPlayerParm*/, Parameter* pComparisonParm, Parameter* pCountParm)
 {
-	Player *player = ThePlayerList->getNeutralPlayer();
-	if (!player) {
+	Player* player = ThePlayerList->getNeutralPlayer();
+	if (!player)
+	{
 		return FALSE;
 	}
 
@@ -2335,20 +2737,25 @@ Bool ScriptConditions::evaluateSkirmishUnownedFactionUnitComparison( Parameter *
 	// have more than one team.
 	Int numFactionUnits = 0;
 	Player::PlayerTeamList::const_iterator it;
-	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
 
-			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance()) {
-				Object *obj = objIter.cur();
-				if (!obj) {
+			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance())
+			{
+				Object* obj = objIter.cur();
+				if (!obj)
+				{
 					continue;
 				}
 
-				if( obj->isDisabledByType( DISABLED_UNMANNED ) )
+				if (obj->isDisabledByType(DISABLED_UNMANNED))
 				{
 					++numFactionUnits;
 				}
@@ -2358,12 +2765,24 @@ Bool ScriptConditions::evaluateSkirmishUnownedFactionUnitComparison( Parameter *
 
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN			:	return numFactionUnits < pCountParm->getInt();	break;
-		case Parameter::LESS_EQUAL		:	return numFactionUnits <= pCountParm->getInt(); break;
-		case Parameter::EQUAL					:	return numFactionUnits == pCountParm->getInt(); break;
-		case Parameter::GREATER_EQUAL :	return numFactionUnits >= pCountParm->getInt(); break;
-		case Parameter::GREATER				:	return numFactionUnits > pCountParm->getInt();	break;
-		case Parameter::NOT_EQUAL			:	return numFactionUnits != pCountParm->getInt();	break;
+		case Parameter::LESS_THAN:
+			return numFactionUnits < pCountParm->getInt();
+			break;
+		case Parameter::LESS_EQUAL:
+			return numFactionUnits <= pCountParm->getInt();
+			break;
+		case Parameter::EQUAL:
+			return numFactionUnits == pCountParm->getInt();
+			break;
+		case Parameter::GREATER_EQUAL:
+			return numFactionUnits >= pCountParm->getInt();
+			break;
+		case Parameter::GREATER:
+			return numFactionUnits > pCountParm->getInt();
+			break;
+		case Parameter::NOT_EQUAL:
+			return numFactionUnits != pCountParm->getInt();
+			break;
 	}
 
 	DEBUG_CRASH(("ScriptConditions::evaluateSkirmishUnownedFactionUnitComparison: Invalid comparison type. (jkmcd)"));
@@ -2371,10 +2790,11 @@ Bool ScriptConditions::evaluateSkirmishUnownedFactionUnitComparison( Parameter *
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerHasPrereqsToBuild( Parameter *pSkirmishPlayerParm, Parameter *pObjectTypeParm )
+Bool ScriptConditions::evaluateSkirmishPlayerHasPrereqsToBuild(Parameter* pSkirmishPlayerParm, Parameter* pObjectTypeParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
@@ -2385,10 +2805,11 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasPrereqsToBuild( Parameter *pSkir
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonGarrisoned(Parameter *pSkirmishPlayerParm, Parameter *pComparisonParm, Parameter *pCountParm )
+Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonGarrisoned(Parameter* pSkirmishPlayerParm, Parameter* pComparisonParm, Parameter* pCountParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
@@ -2396,25 +2817,32 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonGarrisoned(Parameter *
 	// @todo: PERF_EVALUATE
 	Int numGarrisonedBuildings = 0;
 	Player::PlayerTeamList::const_iterator it;
-	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
 
-			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance()) {
-				Object *obj = objIter.cur();
-				if (!obj) {
+			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance())
+			{
+				Object* obj = objIter.cur();
+				if (!obj)
+				{
 					continue;
 				}
 
-				ContainModuleInterface *cmi = obj->getContain();
-				if (!cmi) {
+				ContainModuleInterface* cmi = obj->getContain();
+				if (!cmi)
+				{
 					continue;
 				}
 
-				if (cmi->isGarrisonable() && cmi->getContainCount() > 0) {
+				if (cmi->isGarrisonable() && cmi->getContainCount() > 0)
+				{
 					++numGarrisonedBuildings;
 				}
 			}
@@ -2423,12 +2851,24 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonGarrisoned(Parameter *
 
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN			:	return numGarrisonedBuildings < pCountParm->getInt();	break;
-		case Parameter::LESS_EQUAL		:	return numGarrisonedBuildings <= pCountParm->getInt(); break;
-		case Parameter::EQUAL					:	return numGarrisonedBuildings == pCountParm->getInt(); break;
-		case Parameter::GREATER_EQUAL :	return numGarrisonedBuildings >= pCountParm->getInt(); break;
-		case Parameter::GREATER				:	return numGarrisonedBuildings > pCountParm->getInt();	break;
-		case Parameter::NOT_EQUAL			:	return numGarrisonedBuildings != pCountParm->getInt();	break;
+		case Parameter::LESS_THAN:
+			return numGarrisonedBuildings < pCountParm->getInt();
+			break;
+		case Parameter::LESS_EQUAL:
+			return numGarrisonedBuildings <= pCountParm->getInt();
+			break;
+		case Parameter::EQUAL:
+			return numGarrisonedBuildings == pCountParm->getInt();
+			break;
+		case Parameter::GREATER_EQUAL:
+			return numGarrisonedBuildings >= pCountParm->getInt();
+			break;
+		case Parameter::GREATER:
+			return numGarrisonedBuildings > pCountParm->getInt();
+			break;
+		case Parameter::NOT_EQUAL:
+			return numGarrisonedBuildings != pCountParm->getInt();
+			break;
 	}
 
 	DEBUG_CRASH(("ScriptConditions::evaluateSkirmishPlayerHasComparisonGarrisoned: Invalid comparison type. (jkmcd)"));
@@ -2436,10 +2876,11 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonGarrisoned(Parameter *
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits(Parameter *pSkirmishPlayerParm, Parameter *pComparisonParm, Parameter *pCountParm )
+Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits(Parameter* pSkirmishPlayerParm, Parameter* pComparisonParm, Parameter* pCountParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
@@ -2447,20 +2888,26 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits(Paramete
 	// @todo: PERF_EVALUATE
 	Int numCapturedUnits = 0;
 	Player::PlayerTeamList::const_iterator it;
-	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
 
-			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance()) {
-				Object *obj = objIter.cur();
-				if (!obj) {
+			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance())
+			{
+				Object* obj = objIter.cur();
+				if (!obj)
+				{
 					continue;
 				}
 
-				if (obj->isCaptured()) {
+				if (obj->isCaptured())
+				{
 					++numCapturedUnits;
 				}
 			}
@@ -2469,12 +2916,24 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits(Paramete
 
 	switch (pComparisonParm->getInt())
 	{
-		case Parameter::LESS_THAN			:	return numCapturedUnits < pCountParm->getInt();	break;
-		case Parameter::LESS_EQUAL		:	return numCapturedUnits <= pCountParm->getInt(); break;
-		case Parameter::EQUAL					:	return numCapturedUnits == pCountParm->getInt(); break;
-		case Parameter::GREATER_EQUAL :	return numCapturedUnits >= pCountParm->getInt(); break;
-		case Parameter::GREATER				:	return numCapturedUnits > pCountParm->getInt();	break;
-		case Parameter::NOT_EQUAL			:	return numCapturedUnits != pCountParm->getInt();	break;
+		case Parameter::LESS_THAN:
+			return numCapturedUnits < pCountParm->getInt();
+			break;
+		case Parameter::LESS_EQUAL:
+			return numCapturedUnits <= pCountParm->getInt();
+			break;
+		case Parameter::EQUAL:
+			return numCapturedUnits == pCountParm->getInt();
+			break;
+		case Parameter::GREATER_EQUAL:
+			return numCapturedUnits >= pCountParm->getInt();
+			break;
+		case Parameter::GREATER:
+			return numCapturedUnits > pCountParm->getInt();
+			break;
+		case Parameter::NOT_EQUAL:
+			return numCapturedUnits != pCountParm->getInt();
+			break;
 	}
 
 	DEBUG_CRASH(("ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits: Invalid comparison type. (jkmcd)"));
@@ -2482,71 +2941,101 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasComparisonCapturedUnits(Paramete
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishNamedAreaExists(Parameter *, Parameter *pTriggerParm)
+Bool ScriptConditions::evaluateSkirmishNamedAreaExists(Parameter*, Parameter* pTriggerParm)
 {
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
 	return (pTrig != nullptr);
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerHasUnitsInArea(Condition *pCondition, Parameter *pSkirmishPlayerParm, Parameter *pTriggerParm )
+Bool ScriptConditions::evaluateSkirmishPlayerHasUnitsInArea(Condition* pCondition, Parameter* pSkirmishPlayerParm, Parameter* pTriggerParm)
 {
 	AsciiString triggerName = pTriggerParm->getString();
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	if (pTrig == nullptr) return false;
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	if (pTrig == nullptr)
+	{
+		return false;
+	}
 
 	Player* pPlayer = playerFromParam(pSkirmishPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer)
+	{
 		return false;
 	}
 	Player::PlayerTeamList::const_iterator it;
 	Bool anyChanges = false;
 
+	if (pCondition->getCustomData() == 0)
+	{
+		anyChanges = true;
+	}
 
-	if (pCondition->getCustomData() == 0) anyChanges = true;
-
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		if (anyChanges) break;
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			if (anyChanges) break;
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		if (anyChanges)
+		{
+			break;
+		}
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			if (anyChanges)
+			{
+				break;
+			}
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			if (team->didEnterOrExit()) {
+			if (team->didEnterOrExit())
+			{
 				anyChanges = true;
 			}
 		}
 	}
 
-	if (TheScriptEngine->getFrameObjectCountChanged() > pCondition->getCustomFrame()) {
-		anyChanges = true; // Objects were added/deleted last frame, so count could have changed.  jba.
+	if (TheScriptEngine->getFrameObjectCountChanged() > pCondition->getCustomFrame())
+	{
+		anyChanges = true;    // Objects were added/deleted last frame, so count could have changed.  jba.
 	}
 
-	if (!anyChanges) {
-		if (pCondition->getCustomData()==-1) return false;
-		if (pCondition->getCustomData()==1) return true;
+	if (!anyChanges)
+	{
+		if (pCondition->getCustomData() == -1)
+		{
+			return false;
+		}
+		if (pCondition->getCustomData() == 1)
+		{
+			return true;
+		}
 	}
 
 	Int count = 0;
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
-				Object *pObj = iter.cur();
-				if (!pObj) {
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+			{
+				Object* pObj = iter.cur();
+				if (!pObj)
+				{
 					continue;
 				}
 
-				if (pObj->isInside(pTrig)) {
-
+				if (pObj->isInside(pTrig))
+				{
 					//
 					// dead objects will not be considered.
 					//
-					if (!(pObj->isEffectivelyDead() || pObj->isKindOf(KINDOF_INERT) || pObj->isKindOf(KINDOF_PROJECTILE)) ) {
+					if (!(pObj->isEffectivelyDead() || pObj->isKindOf(KINDOF_INERT) || pObj->isKindOf(KINDOF_PROJECTILE)))
+					{
 						count++;
 					}
 				}
@@ -2555,68 +3044,82 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasUnitsInArea(Condition *pConditio
 	}
 
 	Bool comparison = count > 0;
-	pCondition->setCustomData(-1); // false.
-	if (comparison) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (comparison)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	pCondition->setCustomFrame(TheScriptEngine->getFrameObjectCountChanged());
 	return comparison;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishSupplySourceSafe(Condition *pCondition, Parameter *pSkirmishPlayerParm, Parameter *pMinSupplyAmount )
+Bool ScriptConditions::evaluateSkirmishSupplySourceSafe(Condition* pCondition, Parameter* pSkirmishPlayerParm, Parameter* pMinSupplyAmount)
 {
 	// Trigger every 2*LOGICFRAMES_PER_SECOND. jba.
 	Bool anyChanges = (TheGameLogic->getFrame() > pCondition->getCustomFrame());
-	if (!anyChanges) {
-		if (pCondition->getCustomData()==-1) return false;
-		if (pCondition->getCustomData()==1) return true;
+	if (!anyChanges)
+	{
+		if (pCondition->getCustomData() == -1)
+		{
+			return false;
+		}
+		if (pCondition->getCustomData() == 1)
+		{
+			return true;
+		}
 	}
-	pCondition->setCustomFrame(TheGameLogic->getFrame()+2*LOGICFRAMES_PER_SECOND);
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	pCondition->setCustomFrame(TheGameLogic->getFrame() + 2 * LOGICFRAMES_PER_SECOND);
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 	Bool isSafe = player->isSupplySourceSafe(pMinSupplyAmount->getInt());
-	pCondition->setCustomData(-1); // false.
-	if (isSafe) {
-		pCondition->setCustomData(1); // true.
+	pCondition->setCustomData(-1);    // false.
+	if (isSafe)
+	{
+		pCondition->setCustomData(1);    // true.
 	}
 	return isSafe;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishSupplySourceAttacked(Parameter *pSkirmishPlayerParm)
+Bool ScriptConditions::evaluateSkirmishSupplySourceAttacked(Parameter* pSkirmishPlayerParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 	return player->isSupplySourceAttacked();
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishStartPosition(Parameter *pSkirmishPlayerParm, Parameter *pStartNdx)
+Bool ScriptConditions::evaluateSkirmishStartPosition(Parameter* pSkirmishPlayerParm, Parameter* pStartNdx)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
-	Int ndx = pStartNdx->getInt()-1;  // externally 1, 2, 3, internally 0, 1, 2.
+	Int ndx = pStartNdx->getInt() - 1;    // externally 1, 2, 3, internally 0, 1, 2.
 	Int startNdx = player->getMpStartIndex();
 	return ndx == startNdx;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerHasBeenAttackedByPlayer(Parameter *pSkirmishPlayerParm, Parameter *pAttackedByParm )
+Bool ScriptConditions::evaluateSkirmishPlayerHasBeenAttackedByPlayer(Parameter* pSkirmishPlayerParm, Parameter* pAttackedByParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
-	Player *srcPlayer = playerFromParam(pAttackedByParm);
-	if (!srcPlayer ) {
+	Player* srcPlayer = playerFromParam(pAttackedByParm);
+	if (!srcPlayer)
+	{
 		return FALSE;
 	}
 
@@ -2624,16 +3127,18 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasBeenAttackedByPlayer(Parameter *
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerIsOutsideArea(Condition *pCondition, Parameter *pSkirmishPlayerParm, Parameter *pTriggerParm )
+Bool ScriptConditions::evaluateSkirmishPlayerIsOutsideArea(Condition* pCondition, Parameter* pSkirmishPlayerParm, Parameter* pTriggerParm)
 {
 	// Even though these will be prechecked in the other function, we want to preflight here as well.
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
-	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
-	if (!pTrig) {
+	PolygonTrigger* pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(pTriggerParm->getString());
+	if (!pTrig)
+	{
 		return FALSE;
 	}
 
@@ -2641,36 +3146,44 @@ Bool ScriptConditions::evaluateSkirmishPlayerIsOutsideArea(Condition *pCondition
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateSkirmishPlayerHasDiscoveredPlayer(Parameter *pSkirmishPlayerParm, Parameter *pDiscoveredByParm )
+Bool ScriptConditions::evaluateSkirmishPlayerHasDiscoveredPlayer(Parameter* pSkirmishPlayerParm, Parameter* pDiscoveredByParm)
 {
-	Player *player = playerFromParam(pSkirmishPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pSkirmishPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
-	Player *discoveredBy = playerFromParam(pDiscoveredByParm);
-	if (!discoveredBy) {
+	Player* discoveredBy = playerFromParam(pDiscoveredByParm);
+	if (!discoveredBy)
+	{
 		return FALSE;
 	}
 
 	Int discoveredByIndex = discoveredBy->getPlayerIndex();
 
 	Player::PlayerTeamList::const_iterator it;
-	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
-			Team *team = iter.cur();
-			if (!team) {
+	for (it = player->getPlayerTeams()->begin(); it != player->getPlayerTeams()->end(); ++it)
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance())
+		{
+			Team* team = iter.cur();
+			if (!team)
+			{
 				continue;
 			}
 
-			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance()) {
-				Object *obj = objIter.cur();
-				if (!obj) {
+			for (DLINK_ITERATOR<Object> objIter = team->iterate_TeamMemberList(); !objIter.done(); objIter.advance())
+			{
+				Object* obj = objIter.cur();
+				if (!obj)
+				{
 					continue;
 				}
 
 				ObjectShroudStatus shroudStatus = obj->getShroudedStatus(discoveredByIndex);
-				if (shroudStatus == OBJECTSHROUD_CLEAR || shroudStatus == OBJECTSHROUD_PARTIAL_CLEAR) {
+				if (shroudStatus == OBJECTSHROUD_CLEAR || shroudStatus == OBJECTSHROUD_PARTIAL_CLEAR)
+				{
 					return TRUE;
 				}
 			}
@@ -2681,17 +3194,18 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasDiscoveredPlayer(Parameter *pSki
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateMusicHasCompleted(Parameter *pMusicParm, Parameter *pIntParm)
+Bool ScriptConditions::evaluateMusicHasCompleted(Parameter* pMusicParm, Parameter* pIntParm)
 {
 	AsciiString str = pMusicParm->getString();
 	return TheAudio->hasMusicTrackCompleted(str, pIntParm->getInt());
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluatePlayerLostObjectType(Parameter *pPlayerParm, Parameter *pTypeParm)
+Bool ScriptConditions::evaluatePlayerLostObjectType(Parameter* pPlayerParm, Parameter* pTypeParm)
 {
-	Player *player = playerFromParam(pPlayerParm);
-	if (!player) {
+	Player* player = playerFromParam(pPlayerParm);
+	if (!player)
+	{
 		return FALSE;
 	}
 
@@ -2699,19 +3213,23 @@ Bool ScriptConditions::evaluatePlayerLostObjectType(Parameter *pPlayerParm, Para
 	objectTypesFromParam(pTypeParm, objs.m_types);
 
 	std::vector<Int> counts;
-	std::vector<const ThingTemplate *> templates;
+	std::vector<const ThingTemplate*> templates;
 
 	Int numTemplates = objs.m_types->prepForPlayerCounting(templates, counts);
-	if (numTemplates > 0) {
+	if (numTemplates > 0)
+	{
 		player->countObjectsByThingTemplate(numTemplates, &(*templates.begin()), true, &(*counts.begin()));
-	} else {
+	}
+	else
+	{
 		return FALSE;
 	}
 
 	Int sumOfObjs = rts::sum(counts);
 	Int currentCount = TheScriptEngine->getObjectCount(player->getPlayerIndex(), pTypeParm->getString());
 
-	if (sumOfObjs != currentCount) {
+	if (sumOfObjs != currentCount)
+	{
 		TheScriptEngine->setObjectCount(player->getPlayerIndex(), pTypeParm->getString(), sumOfObjs);
 	}
 
@@ -2721,9 +3239,10 @@ Bool ScriptConditions::evaluatePlayerLostObjectType(Parameter *pPlayerParm, Para
 //-------------------------------------------------------------------------------------------------
 /** Evaluate a condition */
 //-------------------------------------------------------------------------------------------------
-Bool ScriptConditions::evaluateCondition( Condition *pCondition )
+Bool ScriptConditions::evaluateCondition(Condition* pCondition)
 {
-	switch (pCondition->getConditionType()) {
+	switch (pCondition->getConditionType())
+	{
 		default:
 			DEBUG_CRASH(("Unknown ScriptCondition type %d", pCondition->getConditionType()));
 			return false;
@@ -2790,7 +3309,8 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			Int numParameters = pCondition->getNumParameters();
 			DEBUG_ASSERTCRASH(numParameters == 3, ("'Condition: [Unit] Unit has sighted a(n) friendly/neutral/enemy unit belonging to a side.' has too few parameters. Please fix in WB. (jkmcd)"));
 
-			if (numParameters < 3) {
+			if (numParameters < 3)
+			{
 				return false;
 			}
 
@@ -2883,7 +3403,8 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			Int numParameters = pCondition->getNumParameters();
 			DEBUG_ASSERTCRASH(numParameters == 5, ("'Condition: [Player] has (comparison) unit type in an area' has too few parameters. Please fix in WB. (jkmcd)"));
 
-			if (numParameters < 5) {
+			if (numParameters < 5)
+			{
 				return false;
 			}
 
@@ -2894,7 +3415,8 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 			Int numParameters = pCondition->getNumParameters();
 			DEBUG_ASSERTCRASH(numParameters == 5, ("'Condition: [Player] has (comparison) kind of unit or structure in an area' has too few parameters. Please fix in WB. (jkmcd)"));
 
-			if (numParameters < 5) {
+			if (numParameters < 5)
+			{
 				return false;
 			}
 
@@ -2980,9 +3502,5 @@ Bool ScriptConditions::evaluateCondition( Condition *pCondition )
 
 		case Condition::PLAYER_LOST_OBJECT_TYPE:
 			return evaluatePlayerLostObjectType(pCondition->getParameter(0), pCondition->getParameter(1));
-
-
 	}
 }
-
-

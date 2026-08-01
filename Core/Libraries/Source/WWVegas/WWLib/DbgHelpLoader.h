@@ -21,10 +21,10 @@
 #include "always.h"
 
 #include <WWLib/win.h>
-#include <imagehlp.h> // Must be included after Windows.h
+#include <imagehlp.h>    // Must be included after Windows.h
 #include <set>
 #ifdef RTS_ENABLE_CRASHDUMP
-#include <WWLib/DbgHelpLoader_minidump.h>
+	#include <WWLib/DbgHelpLoader_minidump.h>
 #endif
 
 #include "mutex.h"
@@ -36,15 +36,13 @@
 class DbgHelpLoader
 {
 private:
-
-	static DbgHelpLoader* Inst; // Is singleton class
-	static CriticalSectionClass CriticalSection; // Required because dbg help is not thread safe for the most part
+	static DbgHelpLoader* Inst;    // Is singleton class
+	static CriticalSectionClass CriticalSection;    // Required because dbg help is not thread safe for the most part
 
 	DbgHelpLoader();
 	~DbgHelpLoader();
 
 public:
-
 	// Returns whether dbghelp.dll is loaded
 	static bool isLoaded();
 
@@ -59,137 +57,136 @@ public:
 	static void unload();
 
 	static BOOL WINAPI symInitialize(
-		HANDLE hProcess,
-		LPSTR UserSearchPath,
-		BOOL fInvadeProcess);
+	  HANDLE hProcess,
+	  LPSTR UserSearchPath,
+	  BOOL fInvadeProcess);
 
 	static BOOL WINAPI symCleanup(
-		HANDLE hProcess);
+	  HANDLE hProcess);
 
 	static BOOL WINAPI symLoadModule(
-		HANDLE hProcess,
-		HANDLE hFile,
-		LPSTR ImageName,
-		LPSTR ModuleName,
-		DWORD BaseOfDll,
-		DWORD SizeOfDll);
+	  HANDLE hProcess,
+	  HANDLE hFile,
+	  LPSTR ImageName,
+	  LPSTR ModuleName,
+	  DWORD BaseOfDll,
+	  DWORD SizeOfDll);
 
 	static DWORD WINAPI symGetModuleBase(
-		HANDLE hProcess,
-		DWORD dwAddr);
+	  HANDLE hProcess,
+	  DWORD dwAddr);
 
 	static BOOL WINAPI symUnloadModule(
-		HANDLE hProcess,
-		DWORD BaseOfDll);
+	  HANDLE hProcess,
+	  DWORD BaseOfDll);
 
 	static BOOL WINAPI symGetSymFromAddr(
-		HANDLE hProcess,
-		DWORD Address,
-		LPDWORD Displacement,
-		PIMAGEHLP_SYMBOL Symbol);
+	  HANDLE hProcess,
+	  DWORD Address,
+	  LPDWORD Displacement,
+	  PIMAGEHLP_SYMBOL Symbol);
 
 	static BOOL WINAPI symGetLineFromAddr(
-		HANDLE hProcess,
-		DWORD dwAddr,
-		PDWORD pdwDisplacement,
-		PIMAGEHLP_LINE Line);
+	  HANDLE hProcess,
+	  DWORD dwAddr,
+	  PDWORD pdwDisplacement,
+	  PIMAGEHLP_LINE Line);
 
 	static DWORD WINAPI symSetOptions(
-		DWORD SymOptions);
+	  DWORD SymOptions);
 
 	static LPVOID WINAPI symFunctionTableAccess(
-		HANDLE hProcess,
-		DWORD AddrBase);
+	  HANDLE hProcess,
+	  DWORD AddrBase);
 
 	static BOOL WINAPI stackWalk(
-		DWORD MachineType,
-		HANDLE hProcess,
-		HANDLE hThread,
-		LPSTACKFRAME StackFrame,
-		LPVOID ContextRecord,
-		PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
-		PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
-		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
-		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+	  DWORD MachineType,
+	  HANDLE hProcess,
+	  HANDLE hThread,
+	  LPSTACKFRAME StackFrame,
+	  LPVOID ContextRecord,
+	  PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+	  PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
+	  PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
+	  PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
 #ifdef RTS_ENABLE_CRASHDUMP
 	static BOOL WINAPI miniDumpWriteDump(
-		HANDLE hProcess,
-		DWORD ProcessId,
-		HANDLE hFile,
-		MINIDUMP_TYPE DumpType,
-		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-		PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+	  HANDLE hProcess,
+	  DWORD ProcessId,
+	  HANDLE hFile,
+	  MINIDUMP_TYPE DumpType,
+	  PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+	  PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+	  PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
 #endif
 
 private:
-
 	static void freeResources();
 
-	typedef BOOL (WINAPI *SymInitialize_t) (
-		HANDLE hProcess,
-		LPSTR UserSearchPath,
-		BOOL fInvadeProcess);
+	typedef BOOL(WINAPI* SymInitialize_t)(
+	  HANDLE hProcess,
+	  LPSTR UserSearchPath,
+	  BOOL fInvadeProcess);
 
-	typedef BOOL (WINAPI *SymCleanup_t) (
-		HANDLE hProcess);
+	typedef BOOL(WINAPI* SymCleanup_t)(
+	  HANDLE hProcess);
 
-	typedef BOOL (WINAPI *SymLoadModule_t) (
-		HANDLE hProcess,
-		HANDLE hFile,
-		LPSTR ImageName,
-		LPSTR ModuleName,
-		DWORD BaseOfDll,
-		DWORD SizeOfDll);
+	typedef BOOL(WINAPI* SymLoadModule_t)(
+	  HANDLE hProcess,
+	  HANDLE hFile,
+	  LPSTR ImageName,
+	  LPSTR ModuleName,
+	  DWORD BaseOfDll,
+	  DWORD SizeOfDll);
 
-	typedef DWORD (WINAPI *SymGetModuleBase_t) (
-		HANDLE hProcess,
-		DWORD dwAddr);
+	typedef DWORD(WINAPI* SymGetModuleBase_t)(
+	  HANDLE hProcess,
+	  DWORD dwAddr);
 
-	typedef BOOL (WINAPI *SymUnloadModule_t) (
-		HANDLE hProcess,
-		DWORD BaseOfDll);
+	typedef BOOL(WINAPI* SymUnloadModule_t)(
+	  HANDLE hProcess,
+	  DWORD BaseOfDll);
 
-	typedef BOOL (WINAPI *SymGetSymFromAddr_t) (
-		HANDLE hProcess,
-		DWORD Address,
-		LPDWORD Displacement,
-		PIMAGEHLP_SYMBOL Symbol);
+	typedef BOOL(WINAPI* SymGetSymFromAddr_t)(
+	  HANDLE hProcess,
+	  DWORD Address,
+	  LPDWORD Displacement,
+	  PIMAGEHLP_SYMBOL Symbol);
 
-	typedef BOOL (WINAPI* SymGetLineFromAddr_t) (
-		HANDLE hProcess,
-		DWORD dwAddr,
-		PDWORD pdwDisplacement,
-		PIMAGEHLP_LINE Line);
+	typedef BOOL(WINAPI* SymGetLineFromAddr_t)(
+	  HANDLE hProcess,
+	  DWORD dwAddr,
+	  PDWORD pdwDisplacement,
+	  PIMAGEHLP_LINE Line);
 
-	typedef DWORD (WINAPI *SymSetOptions_t) (
-		DWORD SymOptions);
+	typedef DWORD(WINAPI* SymSetOptions_t)(
+	  DWORD SymOptions);
 
-	typedef LPVOID (WINAPI *SymFunctionTableAccess_t) (
-		HANDLE hProcess,
-		DWORD AddrBase);
+	typedef LPVOID(WINAPI* SymFunctionTableAccess_t)(
+	  HANDLE hProcess,
+	  DWORD AddrBase);
 
-	typedef BOOL (WINAPI *StackWalk_t) (
-		DWORD MachineType,
-		HANDLE hProcess,
-		HANDLE hThread,
-		LPSTACKFRAME StackFrame,
-		LPVOID ContextRecord,
-		PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
-		PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
-		PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
-		PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+	typedef BOOL(WINAPI* StackWalk_t)(
+	  DWORD MachineType,
+	  HANDLE hProcess,
+	  HANDLE hThread,
+	  LPSTACKFRAME StackFrame,
+	  LPVOID ContextRecord,
+	  PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine,
+	  PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine,
+	  PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine,
+	  PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
 
 #ifdef RTS_ENABLE_CRASHDUMP
 	typedef BOOL(WINAPI* MiniDumpWriteDump_t)(
-		HANDLE hProcess,
-		DWORD ProcessId,
-		HANDLE hFile,
-		MINIDUMP_TYPE DumpType,
-		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-		PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+	  HANDLE hProcess,
+	  DWORD ProcessId,
+	  HANDLE hFile,
+	  MINIDUMP_TYPE DumpType,
+	  PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+	  PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+	  PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
 #endif
 
 	SymInitialize_t m_symInitialize;
@@ -206,7 +203,7 @@ private:
 	MiniDumpWriteDump_t m_miniDumpWriteDump;
 #endif
 
-	typedef std::set<HANDLE, std::less<HANDLE>, stl::system_allocator<HANDLE>/**/> Processes;
+	typedef std::set<HANDLE, std::less<HANDLE>, stl::system_allocator<HANDLE> /**/> Processes;
 
 	Processes m_initializedProcesses;
 	HMODULE m_dllModule;

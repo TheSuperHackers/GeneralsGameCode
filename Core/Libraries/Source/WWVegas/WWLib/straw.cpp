@@ -37,10 +37,9 @@
  *   Straw::~Straw -- Destructor for a straw segment.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
+#include "always.h"
 #include "STRAW.h"
-#include	<stddef.h>
-
+#include <stddef.h>
 
 /***********************************************************************************************
  * Straw::~Straw -- Destructor for a straw segment.                                            *
@@ -60,17 +59,18 @@
  *=============================================================================================*/
 Straw::~Straw()
 {
-	if (ChainTo != nullptr) {
+	if (ChainTo != nullptr)
+	{
 		ChainTo->ChainFrom = ChainFrom;
 	}
-	if (ChainFrom != nullptr) {
+	if (ChainFrom != nullptr)
+	{
 		ChainFrom->Get_From(ChainTo);
 	}
 
 	ChainFrom = nullptr;
 	ChainTo = nullptr;
 }
-
 
 /***********************************************************************************************
  * Straw::Get_From -- Connect one straw segment to another.                                    *
@@ -88,25 +88,28 @@ Straw::~Straw()
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Straw::Get_From(Straw * straw)
+void Straw::Get_From(Straw* straw)
 {
-	if (ChainTo != straw) {
-		if (straw != nullptr && straw->ChainFrom != nullptr) {
+	if (ChainTo != straw)
+	{
+		if (straw != nullptr && straw->ChainFrom != nullptr)
+		{
 			straw->ChainFrom->Get_From(nullptr);
 			straw->ChainFrom = nullptr;
 		}
 
-		if (ChainTo != nullptr) {
+		if (ChainTo != nullptr)
+		{
 			ChainTo->ChainFrom = nullptr;
 		}
 
 		ChainTo = straw;
-		if (ChainTo != nullptr) {
+		if (ChainTo != nullptr)
+		{
 			ChainTo->ChainFrom = this;
 		}
 	}
 }
-
 
 /***********************************************************************************************
  * Straw::Get -- Fetch some data from the straw chain.                                         *
@@ -128,12 +131,11 @@ void Straw::Get_From(Straw * straw)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Straw::Get(void * source, int slen)
+int Straw::Get(void* source, int slen)
 {
-	if (ChainTo != nullptr) {
-		return(ChainTo->Get(source, slen));
+	if (ChainTo != nullptr)
+	{
+		return (ChainTo->Get(source, slen));
 	}
-	return(0);
+	return (0);
 }
-
-

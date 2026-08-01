@@ -27,16 +27,16 @@
 // Author: Matthew D. Campbell, January 2003
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 #include "Common/MiniLog.h"
 
 #ifdef DEBUG_LOGGING
 
-LogClass::LogClass(const char *fname)
+LogClass::LogClass(const char* fname)
 {
-	char buffer[ _MAX_PATH ];
-	GetModuleFileName( nullptr, buffer, sizeof( buffer ) );
-	if (char *pEnd = strrchr(buffer, '\\'))
+	char buffer[_MAX_PATH];
+	GetModuleFileName(nullptr, buffer, sizeof(buffer));
+	if (char* pEnd = strrchr(buffer, '\\'))
 	{
 		*pEnd = 0;
 	}
@@ -53,10 +53,12 @@ LogClass::~LogClass()
 	}
 }
 
-void LogClass::log(const char *fmt, ...)
+void LogClass::log(const char* fmt, ...)
 {
 	if (!m_fp)
+	{
 		return;
+	}
 	static char buf[1024];
 	static Int lastFrame = 0;
 	static Int lastIndex = 0;
@@ -67,11 +69,11 @@ void LogClass::log(const char *fmt, ...)
 	}
 
 	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buf, 1024, fmt, va );
-	va_end( va );
+	va_start(va, fmt);
+	vsnprintf(buf, 1024, fmt, va);
+	va_end(va);
 
-	char *tmp = buf;
+	char* tmp = buf;
 	while (tmp && *tmp)
 	{
 		if (*tmp == '\r' || *tmp == '\n')
@@ -85,4 +87,4 @@ void LogClass::log(const char *fmt, ...)
 	fflush(m_fp);
 }
 
-#endif // DEBUG_LOGGING
+#endif    // DEBUG_LOGGING

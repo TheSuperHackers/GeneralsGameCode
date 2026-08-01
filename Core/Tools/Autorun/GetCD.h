@@ -31,157 +31,159 @@
 
 #pragma once
 
-extern const char *	_CD_Volume_Label[];
-extern int		_Num_Volumes;
-
-
+extern const char* _CD_Volume_Label[];
+extern int _Num_Volumes;
 
 #ifdef NOT_FOR_WIN95
 
-/* ==================================================================== */
-/* Defines */
-/* ==================================================================== */
-#define	CHLEFT				0
-#define	CHRIGHT				1
-#define	CHBOTH				2
-#define	AUDIO_START_MIN		1
-#define	AUDIO_START_SEC		44
+  /* ==================================================================== */
+  /* Defines */
+  /* ==================================================================== */
+	#define CHLEFT 0
+	#define CHRIGHT 1
+	#define CHBOTH 2
+	#define AUDIO_START_MIN 1
+	#define AUDIO_START_SEC 44
 
-struct SEGSEL {
-	unsigned short seg ;
-	unsigned short sel ;
+struct SEGSEL
+{
+	unsigned short seg;
+	unsigned short sel;
 };
 
-extern "C" int 	DPMI_real_alloc	( UINT , SEGSEL * , USHORT * ) ;
-extern "C" int 	DPMI_real_free	( SEGSEL  ) ;
-extern "C" void	DPMI_real_intr	( int , union REGS * , struct SREGS * );
-extern "C" void	DPMI_real_call	( void * funct , union REGS * , struct SREGS * );
+extern "C" int DPMI_real_alloc(UINT, SEGSEL*, USHORT*);
+extern "C" int DPMI_real_free(SEGSEL);
+extern "C" void DPMI_real_intr(int, union REGS*, struct SREGS*);
+extern "C" void DPMI_real_call(void* funct, union REGS*, struct SREGS*);
 
-/* ==================================================================== */
-/* Data structures */
-/* ==================================================================== */
+  /* ==================================================================== */
+  /* Data structures */
+  /* ==================================================================== */
 
-//-----------------------------------------------------------------------------
-// Audio Track Info request block
-//-----------------------------------------------------------------------------
-#pragma pack(push, 1)
-struct	TinfoType {
-	UBYTE		Length;
-	UBYTE		SubCd;
-	UBYTE		Command;
-	UWORD		Status;
-	UBYTE		Rsvd[8];
-	UBYTE		MDescr;
+  //-----------------------------------------------------------------------------
+  // Audio Track Info request block
+  //-----------------------------------------------------------------------------
+	#pragma pack(push, 1)
+struct TinfoType
+{
+	UBYTE Length;
+	UBYTE SubCd;
+	UBYTE Command;
+	UWORD Status;
+	UBYTE Rsvd[8];
+	UBYTE MDescr;
 
-	UWORD		TrnsAdOff;
-	UWORD		TrnsAdSeg;
+	UWORD TrnsAdOff;
+	UWORD TrnsAdSeg;
 
-	UWORD		CntTrns;
-	UWORD		StSect;
+	UWORD CntTrns;
+	UWORD StSect;
 
-	UWORD		VolIDOff;
-	UWORD		VolIDSeg;
+	UWORD VolIDOff;
+	UWORD VolIDSeg;
 
-	UBYTE		TrInfo;
-	UBYTE		Track;
-	ULONG		Start;
-	UBYTE		TrCtrl;
+	UBYTE TrInfo;
+	UBYTE Track;
+	ULONG Start;
+	UBYTE TrCtrl;
 };
-#pragma pack(pop)
+	#pragma pack(pop)
 
-//-----------------------------------------------------------------------------
-// Audio Track Status Control Block
-//-----------------------------------------------------------------------------
-#pragma pack(push, 1)
-struct	StatType {
-	UBYTE		Length;
-	UBYTE		SubCd;
-	UBYTE		Command;
-	UWORD		Status;
-	UBYTE		Rsvd[8];
-	UBYTE		MDescr;
+  //-----------------------------------------------------------------------------
+  // Audio Track Status Control Block
+  //-----------------------------------------------------------------------------
+	#pragma pack(push, 1)
+struct StatType
+{
+	UBYTE Length;
+	UBYTE SubCd;
+	UBYTE Command;
+	UWORD Status;
+	UBYTE Rsvd[8];
+	UBYTE MDescr;
 
-	UWORD		TrnsAdOff;
-	UWORD		TrnsAdSeg;
+	UWORD TrnsAdOff;
+	UWORD TrnsAdSeg;
 
-	UWORD		CntTrns;
-	UWORD		StSect;
+	UWORD CntTrns;
+	UWORD StSect;
 
-	UWORD		VolIDOff;
-	UWORD		VolIDSeg;
+	UWORD VolIDOff;
+	UWORD VolIDSeg;
 
-	UBYTE		StatInfo;
-	UWORD		Stat;
-	ULONG		Start;
-	ULONG		End;
+	UBYTE StatInfo;
+	UWORD Stat;
+	ULONG Start;
+	ULONG End;
 };
-#pragma pack(pop)
+	#pragma pack(pop)
 
-//-----------------------------------------------------------------------------
-// Audio Track Volume control block
-//-----------------------------------------------------------------------------
-#pragma pack(push, 1)
-struct	VolmType	{
-	UBYTE		Length;
-	UBYTE		SubCd;
-	UBYTE		Command;
-	UWORD		Status;
-	UBYTE		Rsvd[8];
-	UBYTE		MDescr;
+  //-----------------------------------------------------------------------------
+  // Audio Track Volume control block
+  //-----------------------------------------------------------------------------
+	#pragma pack(push, 1)
+struct VolmType
+{
+	UBYTE Length;
+	UBYTE SubCd;
+	UBYTE Command;
+	UWORD Status;
+	UBYTE Rsvd[8];
+	UBYTE MDescr;
 
-	UWORD		TrnsAdOff;
-	UWORD		TrnsAdSeg;
+	UWORD TrnsAdOff;
+	UWORD TrnsAdSeg;
 
-	UWORD		CntTrns;
-	UWORD		StSect;
+	UWORD CntTrns;
+	UWORD StSect;
 
-	UWORD		VolIDOff;
-	UWORD		VolIDSeg;
+	UWORD VolIDOff;
+	UWORD VolIDSeg;
 
-	UBYTE		TrInfo;
-	UBYTE		In0;
-	UBYTE		Vol0;
-	UBYTE		In1;
-	UBYTE		Vol1;
-	UBYTE		In2;
-	UBYTE		Vol2;
-	UBYTE		In3;
-	UBYTE		Vol3;
+	UBYTE TrInfo;
+	UBYTE In0;
+	UBYTE Vol0;
+	UBYTE In1;
+	UBYTE Vol1;
+	UBYTE In2;
+	UBYTE Vol2;
+	UBYTE In3;
+	UBYTE Vol3;
 };
-#pragma pack(pop)
+	#pragma pack(pop)
 
-//-----------------------------------------------------------------------------
-// Audio Track Play request block
-//-----------------------------------------------------------------------------
-#pragma pack(push, 1)
-struct	PlayType {
-	UBYTE		Length;
-	UBYTE		SubCd;
-	UBYTE		Command;
-	UWORD		Status;
-	UBYTE		Rsvd[8];
-	UBYTE		AddrMd;
-	ULONG		Start;
-	ULONG		CntSect;
+  //-----------------------------------------------------------------------------
+  // Audio Track Play request block
+  //-----------------------------------------------------------------------------
+	#pragma pack(push, 1)
+struct PlayType
+{
+	UBYTE Length;
+	UBYTE SubCd;
+	UBYTE Command;
+	UWORD Status;
+	UBYTE Rsvd[8];
+	UBYTE AddrMd;
+	ULONG Start;
+	ULONG CntSect;
 };
-#pragma pack(pop)
+	#pragma pack(pop)
 
-
-//-----------------------------------------------------------------------------
-// Audio Track Stop request block
-//-----------------------------------------------------------------------------
-#pragma pack(push, 1)
-struct	StopType {
-	UBYTE		Length;
-	UBYTE		SubCd;
-	UBYTE		Command;
-	UWORD		Status;
-	UBYTE		Rsvd[8];
+  //-----------------------------------------------------------------------------
+  // Audio Track Stop request block
+  //-----------------------------------------------------------------------------
+	#pragma pack(push, 1)
+struct StopType
+{
+	UBYTE Length;
+	UBYTE SubCd;
+	UBYTE Command;
+	UWORD Status;
+	UBYTE Rsvd[8];
 };
-#pragma pack(pop)
+	#pragma pack(pop)
 
-#endif	//NOT_FOR_WIN95
-
+#endif    // NOT_FOR_WIN95
 
 /****************************************************************************
  * GetCDClass -- object which will return logical CD drive					*
@@ -190,30 +192,29 @@ struct	StopType {
  *   06/04/1994 SW : Created.												*
  *==========================================================================*/
 
-#define MAX_CD_DRIVES	26
-#define NO_CD_DRIVE		-1
+#define MAX_CD_DRIVES 26
+#define NO_CD_DRIVE -1
 
-class	GetCDClass
+class GetCDClass
 {
-	public:
-		GetCDClass	();							// This is the default constructor
-		~GetCDClass	();							// This is the destructor
+public:
+	GetCDClass();    // This is the default constructor
+	~GetCDClass();    // This is the destructor
 
-		inline	int		Get_First_CD_Drive		();
-		inline	int		Get_Next_CD_Drive		();
-		inline	int		Get_Number_Of_Drives	()	{ return( CDCount ); };
-		inline	int		Get_Index				()	{ return( CDIndex ); };
-		inline	void	Reset_Index				()	{ CDIndex = 0; };
+	inline int Get_First_CD_Drive();
+	inline int Get_Next_CD_Drive();
+	inline int Get_Number_Of_Drives() { return (CDCount); };
+	inline int Get_Index() { return (CDIndex); };
+	inline void Reset_Index() { CDIndex = 0; };
 
-		int		Get_CD_Drive_For_This_Volume	( const char *volume_name );
-		const char *	Get_Volume_For_This_CD_Drive	( const char *path, char *volume_name );
-		const char *	Get_Volume_Label				( int index );
+	int Get_CD_Drive_For_This_Volume(const char* volume_name);
+	const char* Get_Volume_For_This_CD_Drive(const char* path, char* volume_name);
+	const char* Get_Volume_Label(int index);
 
-	protected:
-
-		int	CDDrives[ MAX_CD_DRIVES ];					//Array containing CD drive letters
-		int	CDCount;									//Number of available CD drives
-		int	CDIndex;									//Index of current location
+protected:
+	int CDDrives[MAX_CD_DRIVES];    // Array containing CD drive letters
+	int CDCount;    // Number of available CD drives
+	int CDIndex;    // Index of current location
 };
 
 /****************************************************************************
@@ -251,16 +252,19 @@ inline int GetCDClass::Get_First_CD_Drive()
 
 inline int GetCDClass::Get_Next_CD_Drive()
 {
-	if (CDCount){
-		if (CDIndex >= CDCount) {
+	if (CDCount)
+	{
+		if (CDIndex >= CDCount)
+		{
 			CDIndex = 0;
 		}
 		return (CDDrives[CDIndex++]);
-	} else {
+	}
+	else
+	{
 		return (-1);
 	}
 }
-
 
 /************************************************************************************
  * RedBookClass -- adds red book functionality													*
@@ -275,42 +279,40 @@ inline int GetCDClass::Get_Next_CD_Drive()
 #ifdef NOT_FOR_WIN95
 class RedBookClass : public GetCDClass
 {
-	public:
+public:
+	RedBookClass();    // This is the default constructor
+	~RedBookClass();    // This is the destructor
+	ULONG RedToHS(ULONG i);
+	ULONG MSFtoRed(UBYTE m, UBYTE s, UBYTE f);
+	void FullCDVolume(UBYTE chan);
+	void PlayTrack(UWORD track);
+	void Play_CD_MSL(UWORD min_sec, UWORD len);
+	void PlayMSF(UBYTE startM, UBYTE startS, UBYTE startF,
+	             UBYTE endM, UBYTE endS, UBYTE endF, UBYTE chan);
+	UWORD CheckCDMusic();
+	void StopCDMusic();
 
-		RedBookClass();					// This is the default constructor
-		~RedBookClass();					// This is the destructor
-		ULONG		RedToHS(ULONG i);
-		ULONG		MSFtoRed(UBYTE m, UBYTE s, UBYTE f);
-		void		FullCDVolume(UBYTE chan);
-		void		PlayTrack(UWORD track);
-		void		Play_CD_MSL(UWORD min_sec, UWORD len);
-		void		PlayMSF(UBYTE startM, UBYTE startS, UBYTE startF,
-						UBYTE endM, UBYTE endS, UBYTE endF, UBYTE chan);
-		UWORD		CheckCDMusic();
-		void		StopCDMusic();
+private:
+	SEGSEL Tinfo_addrp;
+	SEGSEL Stat_addrp;
+	SEGSEL Stop_addrp;
+	SEGSEL Volm_addrp;
+	SEGSEL Play_addrp;
 
-	private:
-
-		SEGSEL	Tinfo_addrp;
-		SEGSEL	Stat_addrp;
-		SEGSEL	Stop_addrp;
-		SEGSEL	Volm_addrp;
-		SEGSEL	Play_addrp;
-
-		StopType 	Stop;
-		PlayType	Play;
-		VolmType	Volm;
-		StatType	Stat;
-		TinfoType	Tinfo;
+	StopType Stop;
+	PlayType Play;
+	VolmType Volm;
+	StatType Stat;
+	TinfoType Tinfo;
 };
 
-#endif	//NOT_FOR_WIN95
+#endif    // NOT_FOR_WIN95
 
 /***************************** End of Playcd.h ****************************/
 
-extern GetCDClass		CDList;
+extern GetCDClass CDList;
 
 //-----------------------------------------------------------------------------
 // Functions
 //-----------------------------------------------------------------------------
-bool  CD_Volume_Verification ( int cd_drive, char *volume_label, char *volume_to_find );
+bool CD_Volume_Verification(int cd_drive, char* volume_label, char* volume_to_find);

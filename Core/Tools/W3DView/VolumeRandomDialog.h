@@ -31,33 +31,34 @@ class Vector3Randomizer;
 /////////////////////////////////////////////////////////////////////////////
 class VolumeRandomDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	VolumeRandomDialogClass (Vector3Randomizer *randomizer, CWnd *pParent = nullptr);   // standard constructor
+	VolumeRandomDialogClass(Vector3Randomizer* randomizer, CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(VolumeRandomDialogClass)
-	enum { IDD = IDD_VOLUME_RANDOMIZER };
-	CSpinButtonCtrl	m_SphereRadiusSpin;
-	CSpinButtonCtrl	m_CylinderRadiusSpin;
-	CSpinButtonCtrl	m_CylinderHeightSpin;
-	CSpinButtonCtrl	m_BoxZSpin;
-	CSpinButtonCtrl	m_BoxYSpin;
-	CSpinButtonCtrl	m_BoxXSpin;
+	enum
+	{
+		IDD = IDD_VOLUME_RANDOMIZER
+	};
+	CSpinButtonCtrl m_SphereRadiusSpin;
+	CSpinButtonCtrl m_CylinderRadiusSpin;
+	CSpinButtonCtrl m_CylinderHeightSpin;
+	CSpinButtonCtrl m_BoxZSpin;
+	CSpinButtonCtrl m_BoxYSpin;
+	CSpinButtonCtrl m_BoxXSpin;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(VolumeRandomDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(VolumeRandomDialogClass)
 	virtual void OnOK();
@@ -68,26 +69,23 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	public:
+public:
+	//////////////////////////////////////////////////////////////////////////////
+	//	Public methods
+	//////////////////////////////////////////////////////////////////////////////
+	Vector3Randomizer* Get_Randomizer() const { return m_Randomizer; }
 
-		//////////////////////////////////////////////////////////////////////////////
-		//	Public methods
-		//////////////////////////////////////////////////////////////////////////////
-		Vector3Randomizer *	Get_Randomizer () const { return m_Randomizer; }
+protected:
+	//////////////////////////////////////////////////////////////////////////////
+	//	Protected methods
+	//////////////////////////////////////////////////////////////////////////////
+	void Update_Enable_State();
 
-	protected:
-
-		//////////////////////////////////////////////////////////////////////////////
-		//	Protected methods
-		//////////////////////////////////////////////////////////////////////////////
-		void						Update_Enable_State ();
-
-	private:
-
-		//////////////////////////////////////////////////////////////////////////////
-		//	Private member data
-		//////////////////////////////////////////////////////////////////////////////
-		Vector3Randomizer *	m_Randomizer;
+private:
+	//////////////////////////////////////////////////////////////////////////////
+	//	Private member data
+	//////////////////////////////////////////////////////////////////////////////
+	Vector3Randomizer* m_Randomizer;
 };
 
 //{{AFX_INSERT_LOCATION}}

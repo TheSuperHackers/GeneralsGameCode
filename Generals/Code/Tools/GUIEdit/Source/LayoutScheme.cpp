@@ -78,12 +78,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-static LayoutScheme *theScheme = nullptr;
+static LayoutScheme* theScheme = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUBLIC DATA ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-LayoutScheme *TheDefaultScheme = nullptr;
+LayoutScheme* TheDefaultScheme = nullptr;
 
 // PRIVATE PROTOTYPES /////////////////////////////////////////////////////////
 
@@ -94,196 +94,194 @@ LayoutScheme *TheDefaultScheme = nullptr;
 // loadSchemeDataToDialog =====================================================
 /** Load the current data in theScheme to the dialog layout */
 //=============================================================================
-static void loadSchemeDataToDialog( HWND hWndDialog )
+static void loadSchemeDataToDialog(HWND hWndDialog)
 {
-
 	// load the name of the current scheme
-	SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME,
-									theScheme->getSchemeFilename() );
+	SetDlgItemText(hWndDialog, STATIC_CURRENT_SCHEME,
+	               theScheme->getSchemeFilename());
 
 	// load the state combo box with every option available
-	SendDlgItemMessage( hWndDialog, COMBO_STATE, CB_RESETCONTENT, 0, 0 );
-	LoadStateCombo( GWS_PUSH_BUTTON |
-									GWS_RADIO_BUTTON |
-									GWS_CHECK_BOX |
-									GWS_PROGRESS_BAR |
-									GWS_SCROLL_LISTBOX |
-									GWS_HORZ_SLIDER |
-									GWS_VERT_SLIDER |
-									GWS_STATIC_TEXT |
-									GWS_ENTRY_FIELD |
-									GWS_USER_WINDOW |
-									GWS_COMBO_BOX,
-									GetDlgItem( hWndDialog, COMBO_STATE ) );
+	SendDlgItemMessage(hWndDialog, COMBO_STATE, CB_RESETCONTENT, 0, 0);
+	LoadStateCombo(GWS_PUSH_BUTTON |
+	                 GWS_RADIO_BUTTON |
+	                 GWS_CHECK_BOX |
+	                 GWS_PROGRESS_BAR |
+	                 GWS_SCROLL_LISTBOX |
+	                 GWS_HORZ_SLIDER |
+	                 GWS_VERT_SLIDER |
+	                 GWS_STATIC_TEXT |
+	                 GWS_ENTRY_FIELD |
+	                 GWS_USER_WINDOW |
+	                 GWS_COMBO_BOX,
+	               GetDlgItem(hWndDialog, COMBO_STATE));
 
 	// load the image combo box with the images from the gui collection
-	SendDlgItemMessage( hWndDialog, COMBO_IMAGE, CB_RESETCONTENT, 0, 0 );
-	LoadImageListComboBox( GetDlgItem( hWndDialog, COMBO_IMAGE ) );
+	SendDlgItemMessage(hWndDialog, COMBO_IMAGE, CB_RESETCONTENT, 0, 0);
+	LoadImageListComboBox(GetDlgItem(hWndDialog, COMBO_IMAGE));
 
 	//
 	// load our own internal table of images and colors to the
 	// property dialog tables
 	//
 	Int i;
-	ImageAndColorInfo *info;
-	for( i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++ )
+	ImageAndColorInfo* info;
+	for (i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++)
 	{
-
-		info = theScheme->getImageAndColor( (StateIdentifier)i );
-		assert( info );
-		StoreImageAndColor( info->stateID,
-												info->image,
-												info->color,
-												info->borderColor );
-
+		info = theScheme->getImageAndColor((StateIdentifier)i);
+		assert(info);
+		StoreImageAndColor(info->stateID,
+		                   info->image,
+		                   info->color,
+		                   info->borderColor);
 	}
 
 	// switch to the generic state
-	SwitchToState( GENERIC_ENABLED, hWndDialog );
+	SwitchToState(GENERIC_ENABLED, hWndDialog);
 
 	// load the text color combo
-	SendDlgItemMessage( hWndDialog, COMBO_TEXT_STATE, CB_RESETCONTENT, 0, 0 );
-	LoadTextStateCombo( GetDlgItem( hWndDialog, COMBO_TEXT_STATE ),
-											theScheme->getEnabledTextColor(),
-											theScheme->getEnabledTextBorderColor(),
-											theScheme->getDisabledTextColor(),
-											theScheme->getDisabledTextBorderColor(),
-											theScheme->getHiliteTextColor(),
-											theScheme->getHiliteTextBorderColor() );
+	SendDlgItemMessage(hWndDialog, COMBO_TEXT_STATE, CB_RESETCONTENT, 0, 0);
+	LoadTextStateCombo(GetDlgItem(hWndDialog, COMBO_TEXT_STATE),
+	                   theScheme->getEnabledTextColor(),
+	                   theScheme->getEnabledTextBorderColor(),
+	                   theScheme->getDisabledTextColor(),
+	                   theScheme->getDisabledTextBorderColor(),
+	                   theScheme->getHiliteTextColor(),
+	                   theScheme->getHiliteTextBorderColor());
 
 	// load the font combo if present
-	SendDlgItemMessage( hWndDialog, COMBO_FONT, CB_RESETCONTENT, 0, 0 );
-	LoadFontCombo( GetDlgItem( hWndDialog, COMBO_FONT ), theScheme->getFont() );
-
+	SendDlgItemMessage(hWndDialog, COMBO_FONT, CB_RESETCONTENT, 0, 0);
+	LoadFontCombo(GetDlgItem(hWndDialog, COMBO_FONT), theScheme->getFont());
 }
 
 // saveData ===================================================================
 //=============================================================================
-static void saveData( HWND hWndDialog )
+static void saveData(HWND hWndDialog)
 {
-
 	//
 	// copy the image and color data from the property tables to our
 	// own
 	//
 	Int i;
-	ImageAndColorInfo *info;
-	for( i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++ )
+	ImageAndColorInfo* info;
+	for (i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++)
 	{
-
-	info = GetStateInfo( (StateIdentifier)i );
-	assert( info );
-	theScheme->storeImageAndColor( info->stateID,
-																 info->image,
-																 info->color,
-																 info->borderColor );
-
+		info = GetStateInfo((StateIdentifier)i);
+		assert(info);
+		theScheme->storeImageAndColor(info->stateID,
+		                              info->image,
+		                              info->color,
+		                              info->borderColor);
 	}
 
 	// save default text colors
-	theScheme->setEnabledTextColor( GetPropsEnabledTextColor() );
-	theScheme->setEnabledTextBorderColor( GetPropsEnabledTextBorderColor() );
-	theScheme->setDisabledTextColor( GetPropsDisabledTextColor() );
-	theScheme->setDisabledTextBorderColor( GetPropsDisabledTextBorderColor() );
-	theScheme->setHiliteTextColor( GetPropsHiliteTextColor() );
-	theScheme->setHiliteTextBorderColor( GetPropsHiliteTextBorderColor() );
+	theScheme->setEnabledTextColor(GetPropsEnabledTextColor());
+	theScheme->setEnabledTextBorderColor(GetPropsEnabledTextBorderColor());
+	theScheme->setDisabledTextColor(GetPropsDisabledTextColor());
+	theScheme->setDisabledTextBorderColor(GetPropsDisabledTextBorderColor());
+	theScheme->setHiliteTextColor(GetPropsHiliteTextColor());
+	theScheme->setHiliteTextBorderColor(GetPropsHiliteTextBorderColor());
 
 	// save the font
-	theScheme->setFont( GetSelectedFontFromCombo( GetDlgItem( hWndDialog, COMBO_FONT ) ) );
-
+	theScheme->setFont(GetSelectedFontFromCombo(GetDlgItem(hWndDialog, COMBO_FONT)));
 }
 
 // saveAsDialog ===============================================================
 /** Bring up the standard windows browser save as dialog and return
-	* filename selected */
+ * filename selected */
 //=============================================================================
-char *saveAsDialog()
+char* saveAsDialog()
 {
-	static char filename[ _MAX_PATH ];
-  OPENFILENAME ofn;
-  Bool returnCode;
-  char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"  \
-                  "All Files (*.*)\0*.*\0\0" ;
+	static char filename[_MAX_PATH];
+	OPENFILENAME ofn;
+	Bool returnCode;
+	char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"
+	                "All Files (*.*)\0*.*\0\0";
 
-  ofn.lStructSize       = sizeof( OPENFILENAME );
-  ofn.hwndOwner         = TheEditor->getWindowHandle();
-  ofn.hInstance         = nullptr;
-  ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = nullptr;
-  ofn.nMaxCustFilter    = 0;
-  ofn.nFilterIndex      = 0;
-  ofn.lpstrFile         = filename;
-  ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = nullptr;
-  ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = nullptr;
-  ofn.lpstrTitle        = nullptr;
-  ofn.Flags             = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-  ofn.nFileOffset       = 0;
-  ofn.nFileExtension    = 0;
-  ofn.lpstrDefExt       = "ls";
-  ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = nullptr ;
-  ofn.lpTemplateName    = nullptr ;
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = TheEditor->getWindowHandle();
+	ofn.hInstance = nullptr;
+	ofn.lpstrFilter = filter;
+	ofn.lpstrCustomFilter = nullptr;
+	ofn.nMaxCustFilter = 0;
+	ofn.nFilterIndex = 0;
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = _MAX_PATH;
+	ofn.lpstrFileTitle = nullptr;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = nullptr;
+	ofn.lpstrTitle = nullptr;
+	ofn.Flags = OFN_NOREADONLYRETURN | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.nFileOffset = 0;
+	ofn.nFileExtension = 0;
+	ofn.lpstrDefExt = "ls";
+	ofn.lCustData = 0L;
+	ofn.lpfnHook = nullptr;
+	ofn.lpTemplateName = nullptr;
 
-  returnCode = GetSaveFileName( &ofn );
+	returnCode = GetSaveFileName(&ofn);
 
-  if( returnCode )
+	if (returnCode)
+	{
 		return filename;
+	}
 	else
+	{
 		return nullptr;
-
+	}
 }
 
 // openDialog =================================================================
 /** Bring up the standard windows browser open dialog and return
-	* filename selected */
+ * filename selected */
 //=============================================================================
-char *openDialog()
+char* openDialog()
 {
-	static char filename[ _MAX_PATH ];
-  OPENFILENAME ofn;
-  Bool returnCode;
-  char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"  \
-                  "All Files (*.*)\0*.*\0\0" ;
+	static char filename[_MAX_PATH];
+	OPENFILENAME ofn;
+	Bool returnCode;
+	char filter[] = "Layout Scheme Files (*.ls)\0*.ls\0"
+	                "All Files (*.*)\0*.*\0\0";
 
-  ofn.lStructSize       = sizeof( OPENFILENAME );
-  ofn.hwndOwner         = TheEditor->getWindowHandle();
-  ofn.hInstance         = nullptr;
-  ofn.lpstrFilter       = filter;
-  ofn.lpstrCustomFilter = nullptr;
-  ofn.nMaxCustFilter    = 0;
-  ofn.nFilterIndex      = 0;
-  ofn.lpstrFile         = filename;
-  ofn.nMaxFile          = _MAX_PATH;
-  ofn.lpstrFileTitle    = nullptr;
-  ofn.nMaxFileTitle     = 0;
-  ofn.lpstrInitialDir   = nullptr;
-  ofn.lpstrTitle        = nullptr;
-  ofn.Flags             = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-  ofn.nFileOffset       = 0;
-  ofn.nFileExtension    = 0;
-  ofn.lpstrDefExt       = "ls";
-  ofn.lCustData         = 0L ;
-  ofn.lpfnHook          = nullptr ;
-  ofn.lpTemplateName    = nullptr ;
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = TheEditor->getWindowHandle();
+	ofn.hInstance = nullptr;
+	ofn.lpstrFilter = filter;
+	ofn.lpstrCustomFilter = nullptr;
+	ofn.nMaxCustFilter = 0;
+	ofn.nFilterIndex = 0;
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = _MAX_PATH;
+	ofn.lpstrFileTitle = nullptr;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = nullptr;
+	ofn.lpstrTitle = nullptr;
+	ofn.Flags = OFN_NOREADONLYRETURN | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+	ofn.nFileOffset = 0;
+	ofn.nFileExtension = 0;
+	ofn.lpstrDefExt = "ls";
+	ofn.lCustData = 0L;
+	ofn.lpfnHook = nullptr;
+	ofn.lpTemplateName = nullptr;
 
-  returnCode = GetOpenFileName( &ofn );
+	returnCode = GetOpenFileName(&ofn);
 
-  if( returnCode )
+	if (returnCode)
+	{
 		return filename;
+	}
 	else
+	{
 		return nullptr;
-
+	}
 }
 
 // layoutSchemeCallback =======================================================
 /** Dialog callback for layout scheme dialog */
 //=============================================================================
-static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
-																							UINT message,
-																							WPARAM wParam,
-																							LPARAM lParam )
+static LRESULT CALLBACK layoutSchemeCallback(HWND hWndDialog,
+                                             UINT message,
+                                             WPARAM wParam,
+                                             LPARAM lParam)
 {
 	Int returnCode;
 
@@ -291,33 +289,31 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 	// this is largely based on the property dialog code so lets just
 	// let the default handle code work here too
 	//
-	if( HandleCommonDialogMessages( hWndDialog, message,
-																	wParam, lParam, &returnCode ) == TRUE )
-		return returnCode;
-
-	switch( message )
+	if (HandleCommonDialogMessages(hWndDialog, message,
+	                               wParam, lParam, &returnCode) == TRUE)
 	{
+		return returnCode;
+	}
 
+	switch (message)
+	{
 		// ------------------------------------------------------------------------
 		case WM_INITDIALOG:
 		{
-
 			// load the dialog engine and items with the current data of the scheme
-			loadSchemeDataToDialog( hWndDialog );
+			loadSchemeDataToDialog(hWndDialog);
 			break;
-
 		}
 
 		// ------------------------------------------------------------------------
-    case WM_COMMAND:
-    {
-//			Int notifyCode = HIWORD( wParam );  // notification code
-			Int controlID = LOWORD( wParam );  // control ID
-//			HWND hWndControl = (HWND)lParam;  // control window handle
+		case WM_COMMAND:
+		{
+			//			Int notifyCode = HIWORD( wParam );  // notification code
+			Int controlID = LOWORD(wParam);    // control ID
+			//			HWND hWndControl = (HWND)lParam;  // control window handle
 
-			switch( controlID )
+			switch (controlID)
 			{
-
 				// --------------------------------------------------------------------
 				case BUTTON_APPLY_SCHEME:
 				{
@@ -329,10 +325,12 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					// layout, because this is such a large sweeping change we will
 					// ask them if they are sure
 					//
-					result = MessageBox( nullptr, "This will apply these scheme color and image settings to ALL windows and gadgets currently loaded in the edit window.  Are you sure you want to proceed?",
-															 "Are You Sure?", MB_YESNO | MB_ICONWARNING );
-					if( result == IDNO )
+					result = MessageBox(nullptr, "This will apply these scheme color and image settings to ALL windows and gadgets currently loaded in the edit window.  Are you sure you want to proceed?",
+					                    "Are You Sure?", MB_YESNO | MB_ICONWARNING);
+					if (result == IDNO)
+					{
 						break;
+					}
 
 					//
 					// change all the windows to have the settings loaded in the
@@ -343,93 +341,78 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 					// and apply those changes to controls without changing the
 					// current layout scheme.
 					//
-					theScheme->applyPropertyTablesToWindow( TheWindowManager->winGetWindowList() );
+					theScheme->applyPropertyTablesToWindow(TheWindowManager->winGetWindowList());
 
 					//
 					// also apply these changes to the window lists in the clipboard
 					// just to be complete
 					//
-					theScheme->applyPropertyTablesToWindow( TheGUIEditWindowManager->getClipboardList() );
-					theScheme->applyPropertyTablesToWindow( TheGUIEditWindowManager->getClipboardDupeList() );
+					theScheme->applyPropertyTablesToWindow(TheGUIEditWindowManager->getClipboardList());
+					theScheme->applyPropertyTablesToWindow(TheGUIEditWindowManager->getClipboardDupeList());
 
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_SAVE:
 				{
-					char *filename = saveAsDialog();
+					char* filename = saveAsDialog();
 
-					if( theScheme && filename )
+					if (theScheme && filename)
 					{
-
-						saveData( hWndDialog );
-						theScheme->saveScheme( filename );
-						SetDlgItemText( hWndDialog, STATIC_CURRENT_SCHEME,
-														theScheme->getSchemeFilename() );
-
+						saveData(hWndDialog);
+						theScheme->saveScheme(filename);
+						SetDlgItemText(hWndDialog, STATIC_CURRENT_SCHEME,
+						               theScheme->getSchemeFilename());
 					}
 
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
 				case BUTTON_LOAD:
 				{
-					char *filename = openDialog();
+					char* filename = openDialog();
 
-					if( theScheme && filename )
+					if (theScheme && filename)
 					{
-
 						// load the new data
-						if( theScheme->loadScheme( filename ) )
+						if (theScheme->loadScheme(filename))
 						{
-
 							// load the dialog engine and items with the current data of the scheme
-							loadSchemeDataToDialog( hWndDialog );
-
+							loadSchemeDataToDialog(hWndDialog);
 						}
 						else
 						{
-
-							MessageBox( TheEditor->getWindowHandle(),
-													"Unable to open scheme file.", "Error", MB_OK );
-
+							MessageBox(TheEditor->getWindowHandle(),
+							           "Unable to open scheme file.", "Error", MB_OK);
 						}
-
 					}
 
 					break;
-
 				}
 
 				// --------------------------------------------------------------------
 				case IDOK:
 
-					saveData( hWndDialog );
-					theScheme->saveScheme( theScheme->getSchemeFilename() );
-					EndDialog( hWndDialog, TRUE );
+					saveData(hWndDialog);
+					theScheme->saveScheme(theScheme->getSchemeFilename());
+					EndDialog(hWndDialog, TRUE);
 					break;
 
 				// --------------------------------------------------------------------
 				case IDCANCEL:
 
 					// do nothing, just get outta here!
-					EndDialog( hWndDialog, FALSE );
+					EndDialog(hWndDialog, FALSE);
 					break;
-
 			}
 
 			break;
-
 		}
-
 	}
 
 	return 0;
-
 }
 
 // LayoutScheme::applyPropertyTablesToWindow ==================================
@@ -437,1037 +420,1001 @@ static LRESULT CALLBACK layoutSchemeCallback( HWND hWndDialog,
 used for "property editing" to all appropriate windows currently
 loaded in the editor */
 //=============================================================================
-void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
+void LayoutScheme::applyPropertyTablesToWindow(GameWindow* root)
 {
-
 	// end recursion
-	if( root == nullptr )
+	if (root == nullptr)
+	{
 		return;
+	}
 
 	// apply changes to this window
-	ImageAndColorInfo *info;
+	ImageAndColorInfo* info;
 
-	if( BitIsSet( root->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if (BitIsSet(root->winGetStyle(), GWS_PUSH_BUTTON))
 	{
+		info = GetStateInfo(BUTTON_ENABLED);
+		GadgetButtonSetEnabledImage(root, info->image);
+		GadgetButtonSetEnabledColor(root, info->color);
+		GadgetButtonSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(BUTTON_ENABLED_PUSHED);
+		GadgetButtonSetEnabledSelectedImage(root, info->image);
+		GadgetButtonSetEnabledSelectedColor(root, info->color);
+		GadgetButtonSetEnabledSelectedBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( BUTTON_ENABLED );
-		GadgetButtonSetEnabledImage( root, info->image );
-		GadgetButtonSetEnabledColor( root, info->color );
-		GadgetButtonSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( BUTTON_ENABLED_PUSHED );
-		GadgetButtonSetEnabledSelectedImage( root, info->image );
-		GadgetButtonSetEnabledSelectedColor( root, info->color );
-		GadgetButtonSetEnabledSelectedBorderColor( root, info->borderColor );
+		info = GetStateInfo(BUTTON_DISABLED);
+		GadgetButtonSetDisabledImage(root, info->image);
+		GadgetButtonSetDisabledColor(root, info->color);
+		GadgetButtonSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(BUTTON_DISABLED_PUSHED);
+		GadgetButtonSetDisabledSelectedImage(root, info->image);
+		GadgetButtonSetDisabledSelectedColor(root, info->color);
+		GadgetButtonSetDisabledSelectedBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( BUTTON_DISABLED );
-		GadgetButtonSetDisabledImage( root, info->image );
-		GadgetButtonSetDisabledColor( root, info->color );
-		GadgetButtonSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( BUTTON_DISABLED_PUSHED );
-		GadgetButtonSetDisabledSelectedImage( root, info->image );
-		GadgetButtonSetDisabledSelectedColor( root, info->color );
-		GadgetButtonSetDisabledSelectedBorderColor( root, info->borderColor );
-
-		info = GetStateInfo( BUTTON_HILITE );
-		GadgetButtonSetHiliteImage( root, info->image );
-		GadgetButtonSetHiliteColor( root, info->color );
-		GadgetButtonSetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( BUTTON_HILITE_PUSHED );
-		GadgetButtonSetHiliteSelectedImage( root, info->image );
-		GadgetButtonSetHiliteSelectedColor( root, info->color );
-		GadgetButtonSetHiliteSelectedBorderColor( root, info->borderColor );
-
+		info = GetStateInfo(BUTTON_HILITE);
+		GadgetButtonSetHiliteImage(root, info->image);
+		GadgetButtonSetHiliteColor(root, info->color);
+		GadgetButtonSetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(BUTTON_HILITE_PUSHED);
+		GadgetButtonSetHiliteSelectedImage(root, info->image);
+		GadgetButtonSetHiliteSelectedColor(root, info->color);
+		GadgetButtonSetHiliteSelectedBorderColor(root, info->borderColor);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_RADIO_BUTTON))
 	{
+		info = GetStateInfo(RADIO_ENABLED);
+		GadgetRadioSetEnabledImage(root, info->image);
+		GadgetRadioSetEnabledColor(root, info->color);
+		GadgetRadioSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(RADIO_ENABLED_UNCHECKED_BOX);
+		GadgetRadioSetEnabledUncheckedBoxImage(root, info->image);
+		GadgetRadioSetEnabledUncheckedBoxColor(root, info->color);
+		GadgetRadioSetEnabledUncheckedBoxBorderColor(root, info->borderColor);
+		info = GetStateInfo(RADIO_ENABLED_CHECKED_BOX);
+		GadgetRadioSetEnabledCheckedBoxImage(root, info->image);
+		GadgetRadioSetEnabledCheckedBoxColor(root, info->color);
+		GadgetRadioSetEnabledCheckedBoxBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( RADIO_ENABLED );
-		GadgetRadioSetEnabledImage( root, info->image );
-		GadgetRadioSetEnabledColor( root, info->color );
-		GadgetRadioSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( RADIO_ENABLED_UNCHECKED_BOX );
-		GadgetRadioSetEnabledUncheckedBoxImage( root, info->image );
-		GadgetRadioSetEnabledUncheckedBoxColor( root, info->color );
-		GadgetRadioSetEnabledUncheckedBoxBorderColor( root, info->borderColor );
-		info = GetStateInfo( RADIO_ENABLED_CHECKED_BOX );
-		GadgetRadioSetEnabledCheckedBoxImage( root, info->image );
-		GadgetRadioSetEnabledCheckedBoxColor( root, info->color );
-		GadgetRadioSetEnabledCheckedBoxBorderColor( root, info->borderColor );
+		info = GetStateInfo(RADIO_DISABLED);
+		GadgetRadioSetDisabledImage(root, info->image);
+		GadgetRadioSetDisabledColor(root, info->color);
+		GadgetRadioSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(RADIO_DISABLED_UNCHECKED_BOX);
+		GadgetRadioSetDisabledUncheckedBoxImage(root, info->image);
+		GadgetRadioSetDisabledUncheckedBoxColor(root, info->color);
+		GadgetRadioSetDisabledUncheckedBoxBorderColor(root, info->borderColor);
+		info = GetStateInfo(RADIO_DISABLED_CHECKED_BOX);
+		GadgetRadioSetDisabledCheckedBoxImage(root, info->image);
+		GadgetRadioSetDisabledCheckedBoxColor(root, info->color);
+		GadgetRadioSetDisabledCheckedBoxBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( RADIO_DISABLED );
-		GadgetRadioSetDisabledImage( root, info->image );
-		GadgetRadioSetDisabledColor( root, info->color );
-		GadgetRadioSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( RADIO_DISABLED_UNCHECKED_BOX );
-		GadgetRadioSetDisabledUncheckedBoxImage( root, info->image );
-		GadgetRadioSetDisabledUncheckedBoxColor( root, info->color );
-		GadgetRadioSetDisabledUncheckedBoxBorderColor( root, info->borderColor );
-		info = GetStateInfo( RADIO_DISABLED_CHECKED_BOX );
-		GadgetRadioSetDisabledCheckedBoxImage( root, info->image );
-		GadgetRadioSetDisabledCheckedBoxColor( root, info->color );
-		GadgetRadioSetDisabledCheckedBoxBorderColor( root, info->borderColor );
-
-		info = GetStateInfo( RADIO_HILITE );
-		GadgetRadioSetHiliteImage( root, info->image );
-		GadgetRadioSetHiliteColor( root, info->color );
-		GadgetRadioSetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( RADIO_HILITE_UNCHECKED_BOX );
-		GadgetRadioSetHiliteUncheckedBoxImage( root, info->image );
-		GadgetRadioSetHiliteUncheckedBoxColor( root, info->color );
-		GadgetRadioSetHiliteUncheckedBoxBorderColor( root, info->borderColor );
-		info = GetStateInfo( RADIO_HILITE_CHECKED_BOX );
-		GadgetRadioSetHiliteCheckedBoxImage( root, info->image );
-		GadgetRadioSetHiliteCheckedBoxColor( root, info->color );
-		GadgetRadioSetHiliteCheckedBoxBorderColor( root, info->borderColor );
-
+		info = GetStateInfo(RADIO_HILITE);
+		GadgetRadioSetHiliteImage(root, info->image);
+		GadgetRadioSetHiliteColor(root, info->color);
+		GadgetRadioSetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(RADIO_HILITE_UNCHECKED_BOX);
+		GadgetRadioSetHiliteUncheckedBoxImage(root, info->image);
+		GadgetRadioSetHiliteUncheckedBoxColor(root, info->color);
+		GadgetRadioSetHiliteUncheckedBoxBorderColor(root, info->borderColor);
+		info = GetStateInfo(RADIO_HILITE_CHECKED_BOX);
+		GadgetRadioSetHiliteCheckedBoxImage(root, info->image);
+		GadgetRadioSetHiliteCheckedBoxColor(root, info->color);
+		GadgetRadioSetHiliteCheckedBoxBorderColor(root, info->borderColor);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_CHECK_BOX ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_CHECK_BOX))
 	{
+		info = GetStateInfo(CHECK_BOX_ENABLED);
+		GadgetCheckBoxSetEnabledImage(root, info->image);
+		GadgetCheckBoxSetEnabledColor(root, info->color);
+		GadgetCheckBoxSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(CHECK_BOX_ENABLED_UNCHECKED_BOX);
+		GadgetCheckBoxSetEnabledUncheckedBoxImage(root, info->image);
+		GadgetCheckBoxSetEnabledUncheckedBoxColor(root, info->color);
+		GadgetCheckBoxSetEnabledUncheckedBoxBorderColor(root, info->borderColor);
+		info = GetStateInfo(CHECK_BOX_ENABLED_CHECKED_BOX);
+		GadgetCheckBoxSetEnabledCheckedBoxImage(root, info->image);
+		GadgetCheckBoxSetEnabledCheckedBoxColor(root, info->color);
+		GadgetCheckBoxSetEnabledCheckedBoxBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( CHECK_BOX_ENABLED );
-		GadgetCheckBoxSetEnabledImage( root, info->image );
-		GadgetCheckBoxSetEnabledColor( root, info->color );
-		GadgetCheckBoxSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( CHECK_BOX_ENABLED_UNCHECKED_BOX );
-		GadgetCheckBoxSetEnabledUncheckedBoxImage( root, info->image );
-		GadgetCheckBoxSetEnabledUncheckedBoxColor( root, info->color );
-		GadgetCheckBoxSetEnabledUncheckedBoxBorderColor( root, info->borderColor );
-		info = GetStateInfo( CHECK_BOX_ENABLED_CHECKED_BOX );
-		GadgetCheckBoxSetEnabledCheckedBoxImage( root, info->image );
-		GadgetCheckBoxSetEnabledCheckedBoxColor( root, info->color );
-		GadgetCheckBoxSetEnabledCheckedBoxBorderColor( root, info->borderColor );
+		info = GetStateInfo(CHECK_BOX_DISABLED);
+		GadgetCheckBoxSetDisabledImage(root, info->image);
+		GadgetCheckBoxSetDisabledColor(root, info->color);
+		GadgetCheckBoxSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(CHECK_BOX_DISABLED_UNCHECKED_BOX);
+		GadgetCheckBoxSetDisabledUncheckedBoxImage(root, info->image);
+		GadgetCheckBoxSetDisabledUncheckedBoxColor(root, info->color);
+		GadgetCheckBoxSetDisabledUncheckedBoxBorderColor(root, info->borderColor);
+		info = GetStateInfo(CHECK_BOX_DISABLED_CHECKED_BOX);
+		GadgetCheckBoxSetDisabledCheckedBoxImage(root, info->image);
+		GadgetCheckBoxSetDisabledCheckedBoxColor(root, info->color);
+		GadgetCheckBoxSetDisabledCheckedBoxBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( CHECK_BOX_DISABLED );
-		GadgetCheckBoxSetDisabledImage( root, info->image );
-		GadgetCheckBoxSetDisabledColor( root, info->color );
-		GadgetCheckBoxSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( CHECK_BOX_DISABLED_UNCHECKED_BOX );
-		GadgetCheckBoxSetDisabledUncheckedBoxImage( root, info->image );
-		GadgetCheckBoxSetDisabledUncheckedBoxColor( root, info->color );
-		GadgetCheckBoxSetDisabledUncheckedBoxBorderColor( root, info->borderColor );
-		info = GetStateInfo( CHECK_BOX_DISABLED_CHECKED_BOX );
-		GadgetCheckBoxSetDisabledCheckedBoxImage( root, info->image );
-		GadgetCheckBoxSetDisabledCheckedBoxColor( root, info->color );
-		GadgetCheckBoxSetDisabledCheckedBoxBorderColor( root, info->borderColor );
-
-		info = GetStateInfo( CHECK_BOX_HILITE );
-		GadgetCheckBoxSetHiliteImage( root, info->image );
-		GadgetCheckBoxSetHiliteColor( root, info->color );
-		GadgetCheckBoxSetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( CHECK_BOX_HILITE_UNCHECKED_BOX );
-		GadgetCheckBoxSetHiliteUncheckedBoxImage( root, info->image );
-		GadgetCheckBoxSetHiliteUncheckedBoxColor( root, info->color );
-		GadgetCheckBoxSetHiliteUncheckedBoxBorderColor( root, info->borderColor );
-		info = GetStateInfo( CHECK_BOX_HILITE_CHECKED_BOX );
-		GadgetCheckBoxSetHiliteCheckedBoxImage( root, info->image );
-		GadgetCheckBoxSetHiliteCheckedBoxColor( root, info->color );
-		GadgetCheckBoxSetHiliteCheckedBoxBorderColor( root, info->borderColor );
-
+		info = GetStateInfo(CHECK_BOX_HILITE);
+		GadgetCheckBoxSetHiliteImage(root, info->image);
+		GadgetCheckBoxSetHiliteColor(root, info->color);
+		GadgetCheckBoxSetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(CHECK_BOX_HILITE_UNCHECKED_BOX);
+		GadgetCheckBoxSetHiliteUncheckedBoxImage(root, info->image);
+		GadgetCheckBoxSetHiliteUncheckedBoxColor(root, info->color);
+		GadgetCheckBoxSetHiliteUncheckedBoxBorderColor(root, info->borderColor);
+		info = GetStateInfo(CHECK_BOX_HILITE_CHECKED_BOX);
+		GadgetCheckBoxSetHiliteCheckedBoxImage(root, info->image);
+		GadgetCheckBoxSetHiliteCheckedBoxColor(root, info->color);
+		GadgetCheckBoxSetHiliteCheckedBoxBorderColor(root, info->borderColor);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_VERT_SLIDER ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_VERT_SLIDER))
 	{
+		info = GetStateInfo(VSLIDER_ENABLED_TOP);
+		GadgetSliderSetEnabledImageTop(root, info->image);
+		GadgetSliderSetEnabledColor(root, info->color);
+		GadgetSliderSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(VSLIDER_ENABLED_BOTTOM);
+		GadgetSliderSetEnabledImageBottom(root, info->image);
+		info = GetStateInfo(VSLIDER_ENABLED_CENTER);
+		GadgetSliderSetEnabledImageCenter(root, info->image);
+		info = GetStateInfo(VSLIDER_ENABLED_SMALL_CENTER);
+		GadgetSliderSetEnabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( VSLIDER_ENABLED_TOP );
-		GadgetSliderSetEnabledImageTop( root, info->image );
-		GadgetSliderSetEnabledColor( root, info->color );
-		GadgetSliderSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( VSLIDER_ENABLED_BOTTOM );
-		GadgetSliderSetEnabledImageBottom( root, info->image );
-		info = GetStateInfo( VSLIDER_ENABLED_CENTER );
-		GadgetSliderSetEnabledImageCenter( root, info->image );
-		info = GetStateInfo( VSLIDER_ENABLED_SMALL_CENTER );
-		GadgetSliderSetEnabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(VSLIDER_DISABLED_TOP);
+		GadgetSliderSetDisabledImageTop(root, info->image);
+		GadgetSliderSetDisabledColor(root, info->color);
+		GadgetSliderSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(VSLIDER_DISABLED_BOTTOM);
+		GadgetSliderSetDisabledImageBottom(root, info->image);
+		info = GetStateInfo(VSLIDER_DISABLED_CENTER);
+		GadgetSliderSetDisabledImageCenter(root, info->image);
+		info = GetStateInfo(VSLIDER_DISABLED_SMALL_CENTER);
+		GadgetSliderSetDisabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( VSLIDER_DISABLED_TOP );
-		GadgetSliderSetDisabledImageTop( root, info->image );
-		GadgetSliderSetDisabledColor( root, info->color );
-		GadgetSliderSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( VSLIDER_DISABLED_BOTTOM );
-		GadgetSliderSetDisabledImageBottom( root, info->image );
-		info = GetStateInfo( VSLIDER_DISABLED_CENTER );
-		GadgetSliderSetDisabledImageCenter( root, info->image );
-		info = GetStateInfo( VSLIDER_DISABLED_SMALL_CENTER );
-		GadgetSliderSetDisabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(VSLIDER_HILITE_TOP);
+		GadgetSliderSetDisabledImageTop(root, info->image);
+		GadgetSliderSetDisabledColor(root, info->color);
+		GadgetSliderSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(VSLIDER_HILITE_BOTTOM);
+		GadgetSliderSetDisabledImageBottom(root, info->image);
+		info = GetStateInfo(VSLIDER_HILITE_CENTER);
+		GadgetSliderSetDisabledImageCenter(root, info->image);
+		info = GetStateInfo(VSLIDER_HILITE_SMALL_CENTER);
+		GadgetSliderSetDisabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( VSLIDER_HILITE_TOP );
-		GadgetSliderSetDisabledImageTop( root, info->image );
-		GadgetSliderSetDisabledColor( root, info->color );
-		GadgetSliderSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( VSLIDER_HILITE_BOTTOM );
-		GadgetSliderSetDisabledImageBottom( root, info->image );
-		info = GetStateInfo( VSLIDER_HILITE_CENTER );
-		GadgetSliderSetDisabledImageCenter( root, info->image );
-		info = GetStateInfo( VSLIDER_HILITE_SMALL_CENTER );
-		GadgetSliderSetDisabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(VSLIDER_THUMB_ENABLED);
+		GadgetSliderSetEnabledThumbImage(root, info->image);
+		GadgetSliderSetEnabledThumbColor(root, info->color);
+		GadgetSliderSetEnabledThumbBorderColor(root, info->borderColor);
+		info = GetStateInfo(VSLIDER_THUMB_ENABLED_PUSHED);
+		GadgetSliderSetEnabledSelectedThumbImage(root, info->image);
+		GadgetSliderSetEnabledSelectedThumbColor(root, info->color);
+		GadgetSliderSetEnabledSelectedThumbBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( VSLIDER_THUMB_ENABLED );
-		GadgetSliderSetEnabledThumbImage( root, info->image );
-		GadgetSliderSetEnabledThumbColor( root, info->color );
-		GadgetSliderSetEnabledThumbBorderColor( root, info->borderColor );
-		info = GetStateInfo( VSLIDER_THUMB_ENABLED_PUSHED );
-		GadgetSliderSetEnabledSelectedThumbImage( root, info->image );
-		GadgetSliderSetEnabledSelectedThumbColor( root, info->color );
-		GadgetSliderSetEnabledSelectedThumbBorderColor( root, info->borderColor );
+		info = GetStateInfo(VSLIDER_THUMB_DISABLED);
+		GadgetSliderSetDisabledThumbImage(root, info->image);
+		GadgetSliderSetDisabledThumbColor(root, info->color);
+		GadgetSliderSetDisabledThumbBorderColor(root, info->borderColor);
+		info = GetStateInfo(VSLIDER_THUMB_DISABLED_PUSHED);
+		GadgetSliderSetDisabledSelectedThumbImage(root, info->image);
+		GadgetSliderSetDisabledSelectedThumbColor(root, info->color);
+		GadgetSliderSetDisabledSelectedThumbBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( VSLIDER_THUMB_DISABLED );
-		GadgetSliderSetDisabledThumbImage( root, info->image );
-		GadgetSliderSetDisabledThumbColor( root, info->color );
-		GadgetSliderSetDisabledThumbBorderColor( root, info->borderColor );
-		info = GetStateInfo( VSLIDER_THUMB_DISABLED_PUSHED );
-		GadgetSliderSetDisabledSelectedThumbImage( root, info->image );
-		GadgetSliderSetDisabledSelectedThumbColor( root, info->color );
-		GadgetSliderSetDisabledSelectedThumbBorderColor( root, info->borderColor );
-
-		info = GetStateInfo( VSLIDER_THUMB_HILITE );
-		GadgetSliderSetHiliteThumbImage( root, info->image );
-		GadgetSliderSetHiliteThumbColor( root, info->color );
-		GadgetSliderSetHiliteThumbBorderColor( root, info->borderColor );
-		info = GetStateInfo( VSLIDER_THUMB_HILITE_PUSHED );
-		GadgetSliderSetHiliteSelectedThumbImage( root, info->image );
-		GadgetSliderSetHiliteSelectedThumbColor( root, info->color );
-		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
-
+		info = GetStateInfo(VSLIDER_THUMB_HILITE);
+		GadgetSliderSetHiliteThumbImage(root, info->image);
+		GadgetSliderSetHiliteThumbColor(root, info->color);
+		GadgetSliderSetHiliteThumbBorderColor(root, info->borderColor);
+		info = GetStateInfo(VSLIDER_THUMB_HILITE_PUSHED);
+		GadgetSliderSetHiliteSelectedThumbImage(root, info->image);
+		GadgetSliderSetHiliteSelectedThumbColor(root, info->color);
+		GadgetSliderSetHiliteSelectedThumbBorderColor(root, info->borderColor);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_HORZ_SLIDER ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_HORZ_SLIDER))
 	{
+		info = GetStateInfo(HSLIDER_ENABLED_LEFT);
+		GadgetSliderSetEnabledImageLeft(root, info->image);
+		GadgetSliderSetEnabledColor(root, info->color);
+		GadgetSliderSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(HSLIDER_ENABLED_RIGHT);
+		GadgetSliderSetEnabledImageRight(root, info->image);
+		info = GetStateInfo(HSLIDER_ENABLED_CENTER);
+		GadgetSliderSetEnabledImageCenter(root, info->image);
+		info = GetStateInfo(HSLIDER_ENABLED_SMALL_CENTER);
+		GadgetSliderSetEnabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( HSLIDER_ENABLED_LEFT );
-		GadgetSliderSetEnabledImageLeft( root, info->image );
-		GadgetSliderSetEnabledColor( root, info->color );
-		GadgetSliderSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( HSLIDER_ENABLED_RIGHT );
-		GadgetSliderSetEnabledImageRight( root, info->image );
-		info = GetStateInfo( HSLIDER_ENABLED_CENTER );
-		GadgetSliderSetEnabledImageCenter( root, info->image );
-		info = GetStateInfo( HSLIDER_ENABLED_SMALL_CENTER );
-		GadgetSliderSetEnabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(HSLIDER_DISABLED_LEFT);
+		GadgetSliderSetDisabledImageLeft(root, info->image);
+		GadgetSliderSetDisabledColor(root, info->color);
+		GadgetSliderSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(HSLIDER_DISABLED_RIGHT);
+		GadgetSliderSetDisabledImageRight(root, info->image);
+		info = GetStateInfo(HSLIDER_DISABLED_CENTER);
+		GadgetSliderSetDisabledImageCenter(root, info->image);
+		info = GetStateInfo(HSLIDER_DISABLED_SMALL_CENTER);
+		GadgetSliderSetDisabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( HSLIDER_DISABLED_LEFT );
-		GadgetSliderSetDisabledImageLeft( root, info->image );
-		GadgetSliderSetDisabledColor( root, info->color );
-		GadgetSliderSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( HSLIDER_DISABLED_RIGHT );
-		GadgetSliderSetDisabledImageRight( root, info->image );
-		info = GetStateInfo( HSLIDER_DISABLED_CENTER );
-		GadgetSliderSetDisabledImageCenter( root, info->image );
-		info = GetStateInfo( HSLIDER_DISABLED_SMALL_CENTER );
-		GadgetSliderSetDisabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(HSLIDER_HILITE_LEFT);
+		GadgetSliderSetDisabledImageLeft(root, info->image);
+		GadgetSliderSetDisabledColor(root, info->color);
+		GadgetSliderSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(HSLIDER_HILITE_RIGHT);
+		GadgetSliderSetDisabledImageRight(root, info->image);
+		info = GetStateInfo(HSLIDER_HILITE_CENTER);
+		GadgetSliderSetDisabledImageCenter(root, info->image);
+		info = GetStateInfo(HSLIDER_HILITE_SMALL_CENTER);
+		GadgetSliderSetDisabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( HSLIDER_HILITE_LEFT );
-		GadgetSliderSetDisabledImageLeft( root, info->image );
-		GadgetSliderSetDisabledColor( root, info->color );
-		GadgetSliderSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( HSLIDER_HILITE_RIGHT );
-		GadgetSliderSetDisabledImageRight( root, info->image );
-		info = GetStateInfo( HSLIDER_HILITE_CENTER );
-		GadgetSliderSetDisabledImageCenter( root, info->image );
-		info = GetStateInfo( HSLIDER_HILITE_SMALL_CENTER );
-		GadgetSliderSetDisabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(HSLIDER_THUMB_ENABLED);
+		GadgetSliderSetEnabledThumbImage(root, info->image);
+		GadgetSliderSetEnabledThumbColor(root, info->color);
+		GadgetSliderSetEnabledThumbBorderColor(root, info->borderColor);
+		info = GetStateInfo(HSLIDER_THUMB_ENABLED_PUSHED);
+		GadgetSliderSetEnabledSelectedThumbImage(root, info->image);
+		GadgetSliderSetEnabledSelectedThumbColor(root, info->color);
+		GadgetSliderSetEnabledSelectedThumbBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( HSLIDER_THUMB_ENABLED );
-		GadgetSliderSetEnabledThumbImage( root, info->image );
-		GadgetSliderSetEnabledThumbColor( root, info->color );
-		GadgetSliderSetEnabledThumbBorderColor( root, info->borderColor );
-		info = GetStateInfo( HSLIDER_THUMB_ENABLED_PUSHED );
-		GadgetSliderSetEnabledSelectedThumbImage( root, info->image );
-		GadgetSliderSetEnabledSelectedThumbColor( root, info->color );
-		GadgetSliderSetEnabledSelectedThumbBorderColor( root, info->borderColor );
+		info = GetStateInfo(HSLIDER_THUMB_DISABLED);
+		GadgetSliderSetDisabledThumbImage(root, info->image);
+		GadgetSliderSetDisabledThumbColor(root, info->color);
+		GadgetSliderSetDisabledThumbBorderColor(root, info->borderColor);
+		info = GetStateInfo(HSLIDER_THUMB_DISABLED_PUSHED);
+		GadgetSliderSetDisabledSelectedThumbImage(root, info->image);
+		GadgetSliderSetDisabledSelectedThumbColor(root, info->color);
+		GadgetSliderSetDisabledSelectedThumbBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( HSLIDER_THUMB_DISABLED );
-		GadgetSliderSetDisabledThumbImage( root, info->image );
-		GadgetSliderSetDisabledThumbColor( root, info->color );
-		GadgetSliderSetDisabledThumbBorderColor( root, info->borderColor );
-		info = GetStateInfo( HSLIDER_THUMB_DISABLED_PUSHED );
-		GadgetSliderSetDisabledSelectedThumbImage( root, info->image );
-		GadgetSliderSetDisabledSelectedThumbColor( root, info->color );
-		GadgetSliderSetDisabledSelectedThumbBorderColor( root, info->borderColor );
-
-		info = GetStateInfo( HSLIDER_THUMB_HILITE );
-		GadgetSliderSetHiliteThumbImage( root, info->image );
-		GadgetSliderSetHiliteThumbColor( root, info->color );
-		GadgetSliderSetHiliteThumbBorderColor( root, info->borderColor );
-		info = GetStateInfo( HSLIDER_THUMB_HILITE_PUSHED );
-		GadgetSliderSetHiliteSelectedThumbImage( root, info->image );
-		GadgetSliderSetHiliteSelectedThumbColor( root, info->color );
-		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
-
+		info = GetStateInfo(HSLIDER_THUMB_HILITE);
+		GadgetSliderSetHiliteThumbImage(root, info->image);
+		GadgetSliderSetHiliteThumbColor(root, info->color);
+		GadgetSliderSetHiliteThumbBorderColor(root, info->borderColor);
+		info = GetStateInfo(HSLIDER_THUMB_HILITE_PUSHED);
+		GadgetSliderSetHiliteSelectedThumbImage(root, info->image);
+		GadgetSliderSetHiliteSelectedThumbColor(root, info->color);
+		GadgetSliderSetHiliteSelectedThumbBorderColor(root, info->borderColor);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_SCROLL_LISTBOX))
 	{
+		info = GetStateInfo(LISTBOX_ENABLED);
+		GadgetListBoxSetEnabledImage(root, info->image);
+		GadgetListBoxSetEnabledColor(root, info->color);
+		GadgetListBoxSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(LISTBOX_ENABLED_SELECTED_ITEM_LEFT);
+		GadgetListBoxSetEnabledSelectedItemImageLeft(root, info->image);
+		GadgetListBoxSetEnabledSelectedItemColor(root, info->color);
+		GadgetListBoxSetEnabledSelectedItemBorderColor(root, info->borderColor);
+		info = GetStateInfo(LISTBOX_ENABLED_SELECTED_ITEM_RIGHT);
+		GadgetListBoxSetEnabledSelectedItemImageRight(root, info->image);
+		info = GetStateInfo(LISTBOX_ENABLED_SELECTED_ITEM_CENTER);
+		GadgetListBoxSetEnabledSelectedItemImageCenter(root, info->image);
+		info = GetStateInfo(LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER);
+		GadgetListBoxSetEnabledSelectedItemImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( LISTBOX_ENABLED );
-		GadgetListBoxSetEnabledImage( root, info->image );
-		GadgetListBoxSetEnabledColor( root, info->color );
-		GadgetListBoxSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( LISTBOX_ENABLED_SELECTED_ITEM_LEFT );
-		GadgetListBoxSetEnabledSelectedItemImageLeft( root, info->image );
-		GadgetListBoxSetEnabledSelectedItemColor( root, info->color );
-		GadgetListBoxSetEnabledSelectedItemBorderColor( root, info->borderColor );
-		info = GetStateInfo( LISTBOX_ENABLED_SELECTED_ITEM_RIGHT );
-		GadgetListBoxSetEnabledSelectedItemImageRight( root, info->image );
-		info = GetStateInfo( LISTBOX_ENABLED_SELECTED_ITEM_CENTER );
-		GadgetListBoxSetEnabledSelectedItemImageCenter( root, info->image );
-		info = GetStateInfo( LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER );
-		GadgetListBoxSetEnabledSelectedItemImageSmallCenter( root, info->image );
+		info = GetStateInfo(LISTBOX_DISABLED);
+		GadgetListBoxSetDisabledImage(root, info->image);
+		GadgetListBoxSetDisabledColor(root, info->color);
+		GadgetListBoxSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(LISTBOX_DISABLED_SELECTED_ITEM_LEFT);
+		GadgetListBoxSetDisabledSelectedItemImageLeft(root, info->image);
+		GadgetListBoxSetDisabledSelectedItemColor(root, info->color);
+		GadgetListBoxSetDisabledSelectedItemBorderColor(root, info->borderColor);
+		info = GetStateInfo(LISTBOX_DISABLED_SELECTED_ITEM_RIGHT);
+		GadgetListBoxSetDisabledSelectedItemImageRight(root, info->image);
+		info = GetStateInfo(LISTBOX_DISABLED_SELECTED_ITEM_CENTER);
+		GadgetListBoxSetDisabledSelectedItemImageCenter(root, info->image);
+		info = GetStateInfo(LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER);
+		GadgetListBoxSetDisabledSelectedItemImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( LISTBOX_DISABLED );
-		GadgetListBoxSetDisabledImage( root, info->image );
-		GadgetListBoxSetDisabledColor( root, info->color );
-		GadgetListBoxSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( LISTBOX_DISABLED_SELECTED_ITEM_LEFT );
-		GadgetListBoxSetDisabledSelectedItemImageLeft( root, info->image );
-		GadgetListBoxSetDisabledSelectedItemColor( root, info->color );
-		GadgetListBoxSetDisabledSelectedItemBorderColor( root, info->borderColor );
-		info = GetStateInfo( LISTBOX_DISABLED_SELECTED_ITEM_RIGHT );
-		GadgetListBoxSetDisabledSelectedItemImageRight( root, info->image );
-		info = GetStateInfo( LISTBOX_DISABLED_SELECTED_ITEM_CENTER );
-		GadgetListBoxSetDisabledSelectedItemImageCenter( root, info->image );
-		info = GetStateInfo( LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER );
-		GadgetListBoxSetDisabledSelectedItemImageSmallCenter( root, info->image );
+		info = GetStateInfo(LISTBOX_HILITE);
+		GadgetListBoxSetHiliteImage(root, info->image);
+		GadgetListBoxSetHiliteColor(root, info->color);
+		GadgetListBoxSetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(LISTBOX_HILITE_SELECTED_ITEM_LEFT);
+		GadgetListBoxSetHiliteSelectedItemImageLeft(root, info->image);
+		GadgetListBoxSetHiliteSelectedItemColor(root, info->color);
+		GadgetListBoxSetHiliteSelectedItemBorderColor(root, info->borderColor);
+		info = GetStateInfo(LISTBOX_HILITE_SELECTED_ITEM_RIGHT);
+		GadgetListBoxSetHiliteSelectedItemImageRight(root, info->image);
+		info = GetStateInfo(LISTBOX_HILITE_SELECTED_ITEM_CENTER);
+		GadgetListBoxSetHiliteSelectedItemImageCenter(root, info->image);
+		info = GetStateInfo(LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER);
+		GadgetListBoxSetHiliteSelectedItemImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( LISTBOX_HILITE );
-		GadgetListBoxSetHiliteImage( root, info->image );
-		GadgetListBoxSetHiliteColor( root, info->color );
-		GadgetListBoxSetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( LISTBOX_HILITE_SELECTED_ITEM_LEFT );
-		GadgetListBoxSetHiliteSelectedItemImageLeft( root, info->image );
-		GadgetListBoxSetHiliteSelectedItemColor( root, info->color );
-		GadgetListBoxSetHiliteSelectedItemBorderColor( root, info->borderColor );
-		info = GetStateInfo( LISTBOX_HILITE_SELECTED_ITEM_RIGHT );
-		GadgetListBoxSetHiliteSelectedItemImageRight( root, info->image );
-		info = GetStateInfo( LISTBOX_HILITE_SELECTED_ITEM_CENTER );
-		GadgetListBoxSetHiliteSelectedItemImageCenter( root, info->image );
-		info = GetStateInfo( LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER );
-		GadgetListBoxSetHiliteSelectedItemImageSmallCenter( root, info->image );
-
-		GameWindow *upButton = GadgetListBoxGetUpButton( root );
-		if( upButton )
+		GameWindow* upButton = GadgetListBoxGetUpButton(root);
+		if (upButton)
 		{
+			info = GetStateInfo(LISTBOX_UP_BUTTON_ENABLED);
+			GadgetButtonSetEnabledImage(upButton, info->image);
+			GadgetButtonSetEnabledColor(upButton, info->color);
+			GadgetButtonSetEnabledBorderColor(upButton, info->borderColor);
+			info = GetStateInfo(LISTBOX_UP_BUTTON_ENABLED_PUSHED);
+			GadgetButtonSetEnabledSelectedImage(upButton, info->image);
+			GadgetButtonSetEnabledSelectedColor(upButton, info->color);
+			GadgetButtonSetEnabledSelectedBorderColor(upButton, info->borderColor);
 
-			info = GetStateInfo( LISTBOX_UP_BUTTON_ENABLED );
-			GadgetButtonSetEnabledImage( upButton, info->image );
-			GadgetButtonSetEnabledColor( upButton, info->color );
-			GadgetButtonSetEnabledBorderColor( upButton, info->borderColor );
-			info = GetStateInfo( LISTBOX_UP_BUTTON_ENABLED_PUSHED );
-			GadgetButtonSetEnabledSelectedImage( upButton, info->image );
-			GadgetButtonSetEnabledSelectedColor( upButton, info->color );
-			GadgetButtonSetEnabledSelectedBorderColor( upButton, info->borderColor );
+			info = GetStateInfo(LISTBOX_UP_BUTTON_DISABLED);
+			GadgetButtonSetDisabledImage(upButton, info->image);
+			GadgetButtonSetDisabledColor(upButton, info->color);
+			GadgetButtonSetDisabledBorderColor(upButton, info->borderColor);
+			info = GetStateInfo(LISTBOX_UP_BUTTON_DISABLED_PUSHED);
+			GadgetButtonSetDisabledSelectedImage(upButton, info->image);
+			GadgetButtonSetDisabledSelectedColor(upButton, info->color);
+			GadgetButtonSetDisabledSelectedBorderColor(upButton, info->borderColor);
 
-			info = GetStateInfo( LISTBOX_UP_BUTTON_DISABLED );
-			GadgetButtonSetDisabledImage( upButton, info->image );
-			GadgetButtonSetDisabledColor( upButton, info->color );
-			GadgetButtonSetDisabledBorderColor( upButton, info->borderColor );
-			info = GetStateInfo( LISTBOX_UP_BUTTON_DISABLED_PUSHED );
-			GadgetButtonSetDisabledSelectedImage( upButton, info->image );
-			GadgetButtonSetDisabledSelectedColor( upButton, info->color );
-			GadgetButtonSetDisabledSelectedBorderColor( upButton, info->borderColor );
-
-			info = GetStateInfo( LISTBOX_UP_BUTTON_HILITE );
-			GadgetButtonSetHiliteImage( upButton, info->image );
-			GadgetButtonSetHiliteColor( upButton, info->color );
-			GadgetButtonSetHiliteBorderColor( upButton, info->borderColor );
-			info = GetStateInfo( LISTBOX_UP_BUTTON_HILITE_PUSHED );
-			GadgetButtonSetHiliteSelectedImage( upButton, info->image );
-			GadgetButtonSetHiliteSelectedColor( upButton, info->color );
-			GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
-
+			info = GetStateInfo(LISTBOX_UP_BUTTON_HILITE);
+			GadgetButtonSetHiliteImage(upButton, info->image);
+			GadgetButtonSetHiliteColor(upButton, info->color);
+			GadgetButtonSetHiliteBorderColor(upButton, info->borderColor);
+			info = GetStateInfo(LISTBOX_UP_BUTTON_HILITE_PUSHED);
+			GadgetButtonSetHiliteSelectedImage(upButton, info->image);
+			GadgetButtonSetHiliteSelectedColor(upButton, info->color);
+			GadgetButtonSetHiliteSelectedBorderColor(upButton, info->borderColor);
 		}
 
-		GameWindow *downButton = GadgetListBoxGetDownButton( root );
-		if( downButton )
+		GameWindow* downButton = GadgetListBoxGetDownButton(root);
+		if (downButton)
 		{
+			info = GetStateInfo(LISTBOX_DOWN_BUTTON_ENABLED);
+			GadgetButtonSetEnabledImage(downButton, info->image);
+			GadgetButtonSetEnabledColor(downButton, info->color);
+			GadgetButtonSetEnabledBorderColor(downButton, info->borderColor);
+			info = GetStateInfo(LISTBOX_DOWN_BUTTON_ENABLED_PUSHED);
+			GadgetButtonSetEnabledSelectedImage(downButton, info->image);
+			GadgetButtonSetEnabledSelectedColor(downButton, info->color);
+			GadgetButtonSetEnabledSelectedBorderColor(downButton, info->borderColor);
 
-			info = GetStateInfo( LISTBOX_DOWN_BUTTON_ENABLED );
-			GadgetButtonSetEnabledImage( downButton, info->image );
-			GadgetButtonSetEnabledColor( downButton, info->color );
-			GadgetButtonSetEnabledBorderColor( downButton, info->borderColor );
-			info = GetStateInfo( LISTBOX_DOWN_BUTTON_ENABLED_PUSHED );
-			GadgetButtonSetEnabledSelectedImage( downButton, info->image );
-			GadgetButtonSetEnabledSelectedColor( downButton, info->color );
-			GadgetButtonSetEnabledSelectedBorderColor( downButton, info->borderColor );
+			info = GetStateInfo(LISTBOX_DOWN_BUTTON_DISABLED);
+			GadgetButtonSetDisabledImage(downButton, info->image);
+			GadgetButtonSetDisabledColor(downButton, info->color);
+			GadgetButtonSetDisabledBorderColor(downButton, info->borderColor);
+			info = GetStateInfo(LISTBOX_DOWN_BUTTON_DISABLED_PUSHED);
+			GadgetButtonSetDisabledSelectedImage(downButton, info->image);
+			GadgetButtonSetDisabledSelectedColor(downButton, info->color);
+			GadgetButtonSetDisabledSelectedBorderColor(downButton, info->borderColor);
 
-			info = GetStateInfo( LISTBOX_DOWN_BUTTON_DISABLED );
-			GadgetButtonSetDisabledImage( downButton, info->image );
-			GadgetButtonSetDisabledColor( downButton, info->color );
-			GadgetButtonSetDisabledBorderColor( downButton, info->borderColor );
-			info = GetStateInfo( LISTBOX_DOWN_BUTTON_DISABLED_PUSHED );
-			GadgetButtonSetDisabledSelectedImage( downButton, info->image );
-			GadgetButtonSetDisabledSelectedColor( downButton, info->color );
-			GadgetButtonSetDisabledSelectedBorderColor( downButton, info->borderColor );
-
-			info = GetStateInfo( LISTBOX_DOWN_BUTTON_HILITE );
-			GadgetButtonSetHiliteImage( downButton, info->image );
-			GadgetButtonSetHiliteColor( downButton, info->color );
-			GadgetButtonSetHiliteBorderColor( downButton, info->borderColor );
-			info = GetStateInfo( LISTBOX_DOWN_BUTTON_HILITE_PUSHED );
-			GadgetButtonSetHiliteSelectedImage( downButton, info->image );
-			GadgetButtonSetHiliteSelectedColor( downButton, info->color );
-			GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
-
+			info = GetStateInfo(LISTBOX_DOWN_BUTTON_HILITE);
+			GadgetButtonSetHiliteImage(downButton, info->image);
+			GadgetButtonSetHiliteColor(downButton, info->color);
+			GadgetButtonSetHiliteBorderColor(downButton, info->borderColor);
+			info = GetStateInfo(LISTBOX_DOWN_BUTTON_HILITE_PUSHED);
+			GadgetButtonSetHiliteSelectedImage(downButton, info->image);
+			GadgetButtonSetHiliteSelectedColor(downButton, info->color);
+			GadgetButtonSetHiliteSelectedBorderColor(downButton, info->borderColor);
 		}
 
-		GameWindow *slider = GadgetListBoxGetSlider( root );
-		if( slider )
+		GameWindow* slider = GadgetListBoxGetSlider(root);
+		if (slider)
 		{
+			info = GetStateInfo(LISTBOX_SLIDER_ENABLED_TOP);
+			GadgetSliderSetEnabledImageTop(slider, info->image);
+			GadgetSliderSetEnabledColor(slider, info->color);
+			GadgetSliderSetEnabledBorderColor(slider, info->borderColor);
+			info = GetStateInfo(LISTBOX_SLIDER_ENABLED_BOTTOM);
+			GadgetSliderSetEnabledImageBottom(slider, info->image);
+			info = GetStateInfo(LISTBOX_SLIDER_ENABLED_CENTER);
+			GadgetSliderSetEnabledImageCenter(slider, info->image);
+			info = GetStateInfo(LISTBOX_SLIDER_ENABLED_SMALL_CENTER);
+			GadgetSliderSetEnabledImageSmallCenter(slider, info->image);
 
-			info = GetStateInfo( LISTBOX_SLIDER_ENABLED_TOP );
-			GadgetSliderSetEnabledImageTop( slider, info->image );
-			GadgetSliderSetEnabledColor( slider, info->color );
-			GadgetSliderSetEnabledBorderColor( slider, info->borderColor );
-			info = GetStateInfo( LISTBOX_SLIDER_ENABLED_BOTTOM );
-			GadgetSliderSetEnabledImageBottom( slider, info->image );
-			info = GetStateInfo( LISTBOX_SLIDER_ENABLED_CENTER );
-			GadgetSliderSetEnabledImageCenter( slider, info->image );
-			info = GetStateInfo( LISTBOX_SLIDER_ENABLED_SMALL_CENTER );
-			GadgetSliderSetEnabledImageSmallCenter( slider, info->image );
+			info = GetStateInfo(LISTBOX_SLIDER_DISABLED_TOP);
+			GadgetSliderSetDisabledImageTop(slider, info->image);
+			GadgetSliderSetDisabledColor(slider, info->color);
+			GadgetSliderSetDisabledBorderColor(slider, info->borderColor);
+			info = GetStateInfo(LISTBOX_SLIDER_DISABLED_BOTTOM);
+			GadgetSliderSetDisabledImageBottom(slider, info->image);
+			info = GetStateInfo(LISTBOX_SLIDER_DISABLED_CENTER);
+			GadgetSliderSetDisabledImageCenter(slider, info->image);
+			info = GetStateInfo(LISTBOX_SLIDER_DISABLED_SMALL_CENTER);
+			GadgetSliderSetDisabledImageSmallCenter(slider, info->image);
 
-			info = GetStateInfo( LISTBOX_SLIDER_DISABLED_TOP );
-			GadgetSliderSetDisabledImageTop( slider, info->image );
-			GadgetSliderSetDisabledColor( slider, info->color );
-			GadgetSliderSetDisabledBorderColor( slider, info->borderColor );
-			info = GetStateInfo( LISTBOX_SLIDER_DISABLED_BOTTOM );
-			GadgetSliderSetDisabledImageBottom( slider, info->image );
-			info = GetStateInfo( LISTBOX_SLIDER_DISABLED_CENTER );
-			GadgetSliderSetDisabledImageCenter( slider, info->image );
-			info = GetStateInfo( LISTBOX_SLIDER_DISABLED_SMALL_CENTER );
-			GadgetSliderSetDisabledImageSmallCenter( slider, info->image );
+			info = GetStateInfo(LISTBOX_SLIDER_HILITE_TOP);
+			GadgetSliderSetDisabledImageTop(slider, info->image);
+			GadgetSliderSetDisabledColor(slider, info->color);
+			GadgetSliderSetDisabledBorderColor(slider, info->borderColor);
+			info = GetStateInfo(LISTBOX_SLIDER_HILITE_BOTTOM);
+			GadgetSliderSetDisabledImageBottom(slider, info->image);
+			info = GetStateInfo(LISTBOX_SLIDER_HILITE_CENTER);
+			GadgetSliderSetDisabledImageCenter(slider, info->image);
+			info = GetStateInfo(LISTBOX_SLIDER_HILITE_SMALL_CENTER);
+			GadgetSliderSetDisabledImageSmallCenter(slider, info->image);
 
-			info = GetStateInfo( LISTBOX_SLIDER_HILITE_TOP );
-			GadgetSliderSetDisabledImageTop( slider, info->image );
-			GadgetSliderSetDisabledColor( slider, info->color );
-			GadgetSliderSetDisabledBorderColor( slider, info->borderColor );
-			info = GetStateInfo( LISTBOX_SLIDER_HILITE_BOTTOM );
-			GadgetSliderSetDisabledImageBottom( slider, info->image );
-			info = GetStateInfo( LISTBOX_SLIDER_HILITE_CENTER );
-			GadgetSliderSetDisabledImageCenter( slider, info->image );
-			info = GetStateInfo( LISTBOX_SLIDER_HILITE_SMALL_CENTER );
-			GadgetSliderSetDisabledImageSmallCenter( slider, info->image );
+			info = GetStateInfo(LISTBOX_SLIDER_THUMB_ENABLED);
+			GadgetSliderSetEnabledThumbImage(slider, info->image);
+			GadgetSliderSetEnabledThumbColor(slider, info->color);
+			GadgetSliderSetEnabledThumbBorderColor(slider, info->borderColor);
+			info = GetStateInfo(LISTBOX_SLIDER_THUMB_ENABLED_PUSHED);
+			GadgetSliderSetEnabledSelectedThumbImage(slider, info->image);
+			GadgetSliderSetEnabledSelectedThumbColor(slider, info->color);
+			GadgetSliderSetEnabledSelectedThumbBorderColor(slider, info->borderColor);
 
-			info = GetStateInfo( LISTBOX_SLIDER_THUMB_ENABLED );
-			GadgetSliderSetEnabledThumbImage( slider, info->image );
-			GadgetSliderSetEnabledThumbColor( slider, info->color );
-			GadgetSliderSetEnabledThumbBorderColor( slider, info->borderColor );
-			info = GetStateInfo( LISTBOX_SLIDER_THUMB_ENABLED_PUSHED );
-			GadgetSliderSetEnabledSelectedThumbImage( slider, info->image );
-			GadgetSliderSetEnabledSelectedThumbColor( slider, info->color );
-			GadgetSliderSetEnabledSelectedThumbBorderColor( slider, info->borderColor );
+			info = GetStateInfo(LISTBOX_SLIDER_THUMB_DISABLED);
+			GadgetSliderSetDisabledThumbImage(slider, info->image);
+			GadgetSliderSetDisabledThumbColor(slider, info->color);
+			GadgetSliderSetDisabledThumbBorderColor(slider, info->borderColor);
+			info = GetStateInfo(LISTBOX_SLIDER_THUMB_DISABLED_PUSHED);
+			GadgetSliderSetDisabledSelectedThumbImage(slider, info->image);
+			GadgetSliderSetDisabledSelectedThumbColor(slider, info->color);
+			GadgetSliderSetDisabledSelectedThumbBorderColor(slider, info->borderColor);
 
-			info = GetStateInfo( LISTBOX_SLIDER_THUMB_DISABLED );
-			GadgetSliderSetDisabledThumbImage( slider, info->image );
-			GadgetSliderSetDisabledThumbColor( slider, info->color );
-			GadgetSliderSetDisabledThumbBorderColor( slider, info->borderColor );
-			info = GetStateInfo( LISTBOX_SLIDER_THUMB_DISABLED_PUSHED );
-			GadgetSliderSetDisabledSelectedThumbImage( slider, info->image );
-			GadgetSliderSetDisabledSelectedThumbColor( slider, info->color );
-			GadgetSliderSetDisabledSelectedThumbBorderColor( slider, info->borderColor );
-
-			info = GetStateInfo( LISTBOX_SLIDER_THUMB_HILITE );
-			GadgetSliderSetHiliteThumbImage( slider, info->image );
-			GadgetSliderSetHiliteThumbColor( slider, info->color );
-			GadgetSliderSetHiliteThumbBorderColor( slider, info->borderColor );
-			info = GetStateInfo( LISTBOX_SLIDER_THUMB_HILITE_PUSHED );
-			GadgetSliderSetHiliteSelectedThumbImage( slider, info->image );
-			GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
-			GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
-
+			info = GetStateInfo(LISTBOX_SLIDER_THUMB_HILITE);
+			GadgetSliderSetHiliteThumbImage(slider, info->image);
+			GadgetSliderSetHiliteThumbColor(slider, info->color);
+			GadgetSliderSetHiliteThumbBorderColor(slider, info->borderColor);
+			info = GetStateInfo(LISTBOX_SLIDER_THUMB_HILITE_PUSHED);
+			GadgetSliderSetHiliteSelectedThumbImage(slider, info->image);
+			GadgetSliderSetHiliteSelectedThumbColor(slider, info->color);
+			GadgetSliderSetHiliteSelectedThumbBorderColor(slider, info->borderColor);
 		}
-
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_COMBO_BOX ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_COMBO_BOX))
 	{
-		info = GetStateInfo( COMBOBOX_ENABLED );
-		GadgetListBoxSetEnabledImage( root, info->image );
-		GadgetListBoxSetEnabledColor( root, info->color );
-		GadgetListBoxSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( COMBOBOX_ENABLED_SELECTED_ITEM_LEFT );
-		GadgetListBoxSetEnabledSelectedItemImageLeft( root, info->image );
-		GadgetListBoxSetEnabledSelectedItemColor( root, info->color );
-		GadgetListBoxSetEnabledSelectedItemBorderColor( root, info->borderColor );
-		info = GetStateInfo( COMBOBOX_ENABLED_SELECTED_ITEM_RIGHT );
-		GadgetListBoxSetEnabledSelectedItemImageRight( root, info->image );
-		info = GetStateInfo( COMBOBOX_ENABLED_SELECTED_ITEM_CENTER );
-		GadgetListBoxSetEnabledSelectedItemImageCenter( root, info->image );
-		info = GetStateInfo( COMBOBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER );
-		GadgetListBoxSetEnabledSelectedItemImageSmallCenter( root, info->image );
+		info = GetStateInfo(COMBOBOX_ENABLED);
+		GadgetListBoxSetEnabledImage(root, info->image);
+		GadgetListBoxSetEnabledColor(root, info->color);
+		GadgetListBoxSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(COMBOBOX_ENABLED_SELECTED_ITEM_LEFT);
+		GadgetListBoxSetEnabledSelectedItemImageLeft(root, info->image);
+		GadgetListBoxSetEnabledSelectedItemColor(root, info->color);
+		GadgetListBoxSetEnabledSelectedItemBorderColor(root, info->borderColor);
+		info = GetStateInfo(COMBOBOX_ENABLED_SELECTED_ITEM_RIGHT);
+		GadgetListBoxSetEnabledSelectedItemImageRight(root, info->image);
+		info = GetStateInfo(COMBOBOX_ENABLED_SELECTED_ITEM_CENTER);
+		GadgetListBoxSetEnabledSelectedItemImageCenter(root, info->image);
+		info = GetStateInfo(COMBOBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER);
+		GadgetListBoxSetEnabledSelectedItemImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( COMBOBOX_DISABLED );
-		GadgetListBoxSetDisabledImage( root, info->image );
-		GadgetListBoxSetDisabledColor( root, info->color );
-		GadgetListBoxSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( COMBOBOX_DISABLED_SELECTED_ITEM_LEFT );
-		GadgetListBoxSetDisabledSelectedItemImageLeft( root, info->image );
-		GadgetListBoxSetDisabledSelectedItemColor( root, info->color );
-		GadgetListBoxSetDisabledSelectedItemBorderColor( root, info->borderColor );
-		info = GetStateInfo( COMBOBOX_DISABLED_SELECTED_ITEM_RIGHT );
-		GadgetListBoxSetDisabledSelectedItemImageRight( root, info->image );
-		info = GetStateInfo( COMBOBOX_DISABLED_SELECTED_ITEM_CENTER );
-		GadgetListBoxSetDisabledSelectedItemImageCenter( root, info->image );
-		info = GetStateInfo( COMBOBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER );
-		GadgetListBoxSetDisabledSelectedItemImageSmallCenter( root, info->image );
+		info = GetStateInfo(COMBOBOX_DISABLED);
+		GadgetListBoxSetDisabledImage(root, info->image);
+		GadgetListBoxSetDisabledColor(root, info->color);
+		GadgetListBoxSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(COMBOBOX_DISABLED_SELECTED_ITEM_LEFT);
+		GadgetListBoxSetDisabledSelectedItemImageLeft(root, info->image);
+		GadgetListBoxSetDisabledSelectedItemColor(root, info->color);
+		GadgetListBoxSetDisabledSelectedItemBorderColor(root, info->borderColor);
+		info = GetStateInfo(COMBOBOX_DISABLED_SELECTED_ITEM_RIGHT);
+		GadgetListBoxSetDisabledSelectedItemImageRight(root, info->image);
+		info = GetStateInfo(COMBOBOX_DISABLED_SELECTED_ITEM_CENTER);
+		GadgetListBoxSetDisabledSelectedItemImageCenter(root, info->image);
+		info = GetStateInfo(COMBOBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER);
+		GadgetListBoxSetDisabledSelectedItemImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( COMBOBOX_HILITE );
-		GadgetListBoxSetHiliteImage( root, info->image );
-		GadgetListBoxSetHiliteColor( root, info->color );
-		GadgetListBoxSetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( COMBOBOX_HILITE_SELECTED_ITEM_LEFT );
-		GadgetListBoxSetHiliteSelectedItemImageLeft( root, info->image );
-		GadgetListBoxSetHiliteSelectedItemColor( root, info->color );
-		GadgetListBoxSetHiliteSelectedItemBorderColor( root, info->borderColor );
-		info = GetStateInfo( COMBOBOX_HILITE_SELECTED_ITEM_RIGHT );
-		GadgetListBoxSetHiliteSelectedItemImageRight( root, info->image );
-		info = GetStateInfo( COMBOBOX_HILITE_SELECTED_ITEM_CENTER );
-		GadgetListBoxSetHiliteSelectedItemImageCenter( root, info->image );
-		info = GetStateInfo( COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER );
-		GadgetListBoxSetHiliteSelectedItemImageSmallCenter( root, info->image );
+		info = GetStateInfo(COMBOBOX_HILITE);
+		GadgetListBoxSetHiliteImage(root, info->image);
+		GadgetListBoxSetHiliteColor(root, info->color);
+		GadgetListBoxSetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(COMBOBOX_HILITE_SELECTED_ITEM_LEFT);
+		GadgetListBoxSetHiliteSelectedItemImageLeft(root, info->image);
+		GadgetListBoxSetHiliteSelectedItemColor(root, info->color);
+		GadgetListBoxSetHiliteSelectedItemBorderColor(root, info->borderColor);
+		info = GetStateInfo(COMBOBOX_HILITE_SELECTED_ITEM_RIGHT);
+		GadgetListBoxSetHiliteSelectedItemImageRight(root, info->image);
+		info = GetStateInfo(COMBOBOX_HILITE_SELECTED_ITEM_CENTER);
+		GadgetListBoxSetHiliteSelectedItemImageCenter(root, info->image);
+		info = GetStateInfo(COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER);
+		GadgetListBoxSetHiliteSelectedItemImageSmallCenter(root, info->image);
 
-		GameWindow *dropDownButton = GadgetComboBoxGetDropDownButton( root );
-		if( dropDownButton )
+		GameWindow* dropDownButton = GadgetComboBoxGetDropDownButton(root);
+		if (dropDownButton)
 		{
-			info = GetStateInfo( COMBOBOX_DROP_DOWN_BUTTON_ENABLED );
-			GadgetButtonSetEnabledImage( dropDownButton, info->image );
-			GadgetButtonSetEnabledColor( dropDownButton, info->color );
-			GadgetButtonSetEnabledBorderColor( dropDownButton, info->borderColor );
-			info = GetStateInfo( COMBOBOX_DROP_DOWN_BUTTON_ENABLED_PUSHED );
-			GadgetButtonSetEnabledSelectedImage( dropDownButton, info->image );
-			GadgetButtonSetEnabledSelectedColor( dropDownButton, info->color );
-			GadgetButtonSetEnabledSelectedBorderColor( dropDownButton, info->borderColor );
+			info = GetStateInfo(COMBOBOX_DROP_DOWN_BUTTON_ENABLED);
+			GadgetButtonSetEnabledImage(dropDownButton, info->image);
+			GadgetButtonSetEnabledColor(dropDownButton, info->color);
+			GadgetButtonSetEnabledBorderColor(dropDownButton, info->borderColor);
+			info = GetStateInfo(COMBOBOX_DROP_DOWN_BUTTON_ENABLED_PUSHED);
+			GadgetButtonSetEnabledSelectedImage(dropDownButton, info->image);
+			GadgetButtonSetEnabledSelectedColor(dropDownButton, info->color);
+			GadgetButtonSetEnabledSelectedBorderColor(dropDownButton, info->borderColor);
 
-			info = GetStateInfo( COMBOBOX_DROP_DOWN_BUTTON_DISABLED );
-			GadgetButtonSetDisabledImage( dropDownButton, info->image );
-			GadgetButtonSetDisabledColor( dropDownButton, info->color );
-			GadgetButtonSetDisabledBorderColor( dropDownButton, info->borderColor );
-			info = GetStateInfo( COMBOBOX_DROP_DOWN_BUTTON_DISABLED_PUSHED );
-			GadgetButtonSetDisabledSelectedImage( dropDownButton, info->image );
-			GadgetButtonSetDisabledSelectedColor( dropDownButton, info->color );
-			GadgetButtonSetDisabledSelectedBorderColor( dropDownButton, info->borderColor );
+			info = GetStateInfo(COMBOBOX_DROP_DOWN_BUTTON_DISABLED);
+			GadgetButtonSetDisabledImage(dropDownButton, info->image);
+			GadgetButtonSetDisabledColor(dropDownButton, info->color);
+			GadgetButtonSetDisabledBorderColor(dropDownButton, info->borderColor);
+			info = GetStateInfo(COMBOBOX_DROP_DOWN_BUTTON_DISABLED_PUSHED);
+			GadgetButtonSetDisabledSelectedImage(dropDownButton, info->image);
+			GadgetButtonSetDisabledSelectedColor(dropDownButton, info->color);
+			GadgetButtonSetDisabledSelectedBorderColor(dropDownButton, info->borderColor);
 
-			info = GetStateInfo( COMBOBOX_DROP_DOWN_BUTTON_HILITE );
-			GadgetButtonSetHiliteImage( dropDownButton, info->image );
-			GadgetButtonSetHiliteColor( dropDownButton, info->color );
-			GadgetButtonSetHiliteBorderColor( dropDownButton, info->borderColor );
-			info = GetStateInfo( COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED );
-			GadgetButtonSetHiliteSelectedImage( dropDownButton, info->image );
-			GadgetButtonSetHiliteSelectedColor( dropDownButton, info->color );
-			GadgetButtonSetHiliteSelectedBorderColor( dropDownButton, info->borderColor );
+			info = GetStateInfo(COMBOBOX_DROP_DOWN_BUTTON_HILITE);
+			GadgetButtonSetHiliteImage(dropDownButton, info->image);
+			GadgetButtonSetHiliteColor(dropDownButton, info->color);
+			GadgetButtonSetHiliteBorderColor(dropDownButton, info->borderColor);
+			info = GetStateInfo(COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED);
+			GadgetButtonSetHiliteSelectedImage(dropDownButton, info->image);
+			GadgetButtonSetHiliteSelectedColor(dropDownButton, info->color);
+			GadgetButtonSetHiliteSelectedBorderColor(dropDownButton, info->borderColor);
 		}
 
-		GameWindow *editBox = GadgetComboBoxGetEditBox( root );
-		if ( editBox )
+		GameWindow* editBox = GadgetComboBoxGetEditBox(root);
+		if (editBox)
 		{
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_ENABLED_LEFT );
-			GadgetTextEntrySetEnabledImageLeft( editBox, info->image );
-			GadgetTextEntrySetEnabledColor( editBox, info->color );
-			GadgetTextEntrySetEnabledBorderColor( editBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_ENABLED_RIGHT );
-			GadgetTextEntrySetEnabledImageRight( editBox, info->image );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_ENABLED_CENTER );
-			GadgetTextEntrySetEnabledImageCenter( editBox, info->image );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_ENABLED_SMALL_CENTER );
-			GadgetTextEntrySetEnabledImageSmallCenter( editBox, info->image );
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_ENABLED_LEFT);
+			GadgetTextEntrySetEnabledImageLeft(editBox, info->image);
+			GadgetTextEntrySetEnabledColor(editBox, info->color);
+			GadgetTextEntrySetEnabledBorderColor(editBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_ENABLED_RIGHT);
+			GadgetTextEntrySetEnabledImageRight(editBox, info->image);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_ENABLED_CENTER);
+			GadgetTextEntrySetEnabledImageCenter(editBox, info->image);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_ENABLED_SMALL_CENTER);
+			GadgetTextEntrySetEnabledImageSmallCenter(editBox, info->image);
 
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_DISABLED_LEFT );
-			GadgetTextEntrySetDisabledImageLeft( editBox, info->image );
-			GadgetTextEntrySetDisabledColor( editBox, info->color );
-			GadgetTextEntrySetDisabledBorderColor( editBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_DISABLED_RIGHT );
-			GadgetTextEntrySetDisabledImageRight( editBox, info->image );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_DISABLED_CENTER );
-			GadgetTextEntrySetDisabledImageCenter( editBox, info->image );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_DISABLED_SMALL_CENTER );
-			GadgetTextEntrySetDisabledImageSmallCenter( editBox, info->image );
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_DISABLED_LEFT);
+			GadgetTextEntrySetDisabledImageLeft(editBox, info->image);
+			GadgetTextEntrySetDisabledColor(editBox, info->color);
+			GadgetTextEntrySetDisabledBorderColor(editBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_DISABLED_RIGHT);
+			GadgetTextEntrySetDisabledImageRight(editBox, info->image);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_DISABLED_CENTER);
+			GadgetTextEntrySetDisabledImageCenter(editBox, info->image);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_DISABLED_SMALL_CENTER);
+			GadgetTextEntrySetDisabledImageSmallCenter(editBox, info->image);
 
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_HILITE_LEFT );
-			GadgetTextEntrySetHiliteImageLeft( editBox, info->image );
-			GadgetTextEntrySetHiliteColor( editBox, info->color );
-			GadgetTextEntrySetHiliteBorderColor( editBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_HILITE_RIGHT );
-			GadgetTextEntrySetHiliteImageRight( editBox, info->image );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_HILITE_CENTER );
-			GadgetTextEntrySetHiliteImageCenter( editBox, info->image );
-			info = GetStateInfo( COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER );
-			GadgetTextEntrySetHiliteImageSmallCenter( editBox, info->image );
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_HILITE_LEFT);
+			GadgetTextEntrySetHiliteImageLeft(editBox, info->image);
+			GadgetTextEntrySetHiliteColor(editBox, info->color);
+			GadgetTextEntrySetHiliteBorderColor(editBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_HILITE_RIGHT);
+			GadgetTextEntrySetHiliteImageRight(editBox, info->image);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_HILITE_CENTER);
+			GadgetTextEntrySetHiliteImageCenter(editBox, info->image);
+			info = GetStateInfo(COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER);
+			GadgetTextEntrySetHiliteImageSmallCenter(editBox, info->image);
 		}
 
-		GameWindow *listBox = GadgetComboBoxGetListBox( root );
-		if( listBox )
+		GameWindow* listBox = GadgetComboBoxGetListBox(root);
+		if (listBox)
 		{
-			info = GetStateInfo( COMBOBOX_LISTBOX_ENABLED );
-			GadgetListBoxSetEnabledImage( listBox, info->image );
-			GadgetListBoxSetEnabledColor( listBox, info->color );
-			GadgetListBoxSetEnabledBorderColor( listBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT );
-			GadgetListBoxSetEnabledSelectedItemImageLeft( listBox, info->image );
-			GadgetListBoxSetEnabledSelectedItemColor( listBox, info->color );
-			GadgetListBoxSetEnabledSelectedItemBorderColor( listBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT );
-			GadgetListBoxSetEnabledSelectedItemImageRight( listBox, info->image );
-			info = GetStateInfo( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_CENTER );
-			GadgetListBoxSetEnabledSelectedItemImageCenter( listBox, info->image );
-			info = GetStateInfo( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER );
-			GadgetListBoxSetEnabledSelectedItemImageSmallCenter( listBox, info->image );
+			info = GetStateInfo(COMBOBOX_LISTBOX_ENABLED);
+			GadgetListBoxSetEnabledImage(listBox, info->image);
+			GadgetListBoxSetEnabledColor(listBox, info->color);
+			GadgetListBoxSetEnabledBorderColor(listBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT);
+			GadgetListBoxSetEnabledSelectedItemImageLeft(listBox, info->image);
+			GadgetListBoxSetEnabledSelectedItemColor(listBox, info->color);
+			GadgetListBoxSetEnabledSelectedItemBorderColor(listBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT);
+			GadgetListBoxSetEnabledSelectedItemImageRight(listBox, info->image);
+			info = GetStateInfo(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_CENTER);
+			GadgetListBoxSetEnabledSelectedItemImageCenter(listBox, info->image);
+			info = GetStateInfo(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER);
+			GadgetListBoxSetEnabledSelectedItemImageSmallCenter(listBox, info->image);
 
-			info = GetStateInfo( COMBOBOX_LISTBOX_DISABLED );
-			GadgetListBoxSetDisabledImage( listBox, info->image );
-			GadgetListBoxSetDisabledColor( listBox, info->color );
-			GadgetListBoxSetDisabledBorderColor( listBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_LEFT );
-			GadgetListBoxSetDisabledSelectedItemImageLeft( listBox, info->image );
-			GadgetListBoxSetDisabledSelectedItemColor( listBox, info->color );
-			GadgetListBoxSetDisabledSelectedItemBorderColor( listBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_RIGHT );
-			GadgetListBoxSetDisabledSelectedItemImageRight( listBox, info->image );
-			info = GetStateInfo( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_CENTER );
-			GadgetListBoxSetDisabledSelectedItemImageCenter( listBox, info->image );
-			info = GetStateInfo( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER );
-			GadgetListBoxSetDisabledSelectedItemImageSmallCenter( listBox, info->image );
+			info = GetStateInfo(COMBOBOX_LISTBOX_DISABLED);
+			GadgetListBoxSetDisabledImage(listBox, info->image);
+			GadgetListBoxSetDisabledColor(listBox, info->color);
+			GadgetListBoxSetDisabledBorderColor(listBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_LEFT);
+			GadgetListBoxSetDisabledSelectedItemImageLeft(listBox, info->image);
+			GadgetListBoxSetDisabledSelectedItemColor(listBox, info->color);
+			GadgetListBoxSetDisabledSelectedItemBorderColor(listBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_RIGHT);
+			GadgetListBoxSetDisabledSelectedItemImageRight(listBox, info->image);
+			info = GetStateInfo(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_CENTER);
+			GadgetListBoxSetDisabledSelectedItemImageCenter(listBox, info->image);
+			info = GetStateInfo(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER);
+			GadgetListBoxSetDisabledSelectedItemImageSmallCenter(listBox, info->image);
 
-			info = GetStateInfo( COMBOBOX_LISTBOX_HILITE );
-			GadgetListBoxSetHiliteImage( listBox, info->image );
-			GadgetListBoxSetHiliteColor( listBox, info->color );
-			GadgetListBoxSetHiliteBorderColor( listBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_LEFT );
-			GadgetListBoxSetHiliteSelectedItemImageLeft( listBox, info->image );
-			GadgetListBoxSetHiliteSelectedItemColor( listBox, info->color );
-			GadgetListBoxSetHiliteSelectedItemBorderColor( listBox, info->borderColor );
-			info = GetStateInfo( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_RIGHT );
-			GadgetListBoxSetHiliteSelectedItemImageRight( listBox, info->image );
-			info = GetStateInfo( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER );
-			GadgetListBoxSetHiliteSelectedItemImageCenter( listBox, info->image );
-			info = GetStateInfo( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER );
-			GadgetListBoxSetHiliteSelectedItemImageSmallCenter( listBox, info->image );
+			info = GetStateInfo(COMBOBOX_LISTBOX_HILITE);
+			GadgetListBoxSetHiliteImage(listBox, info->image);
+			GadgetListBoxSetHiliteColor(listBox, info->color);
+			GadgetListBoxSetHiliteBorderColor(listBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_LEFT);
+			GadgetListBoxSetHiliteSelectedItemImageLeft(listBox, info->image);
+			GadgetListBoxSetHiliteSelectedItemColor(listBox, info->color);
+			GadgetListBoxSetHiliteSelectedItemBorderColor(listBox, info->borderColor);
+			info = GetStateInfo(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_RIGHT);
+			GadgetListBoxSetHiliteSelectedItemImageRight(listBox, info->image);
+			info = GetStateInfo(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER);
+			GadgetListBoxSetHiliteSelectedItemImageCenter(listBox, info->image);
+			info = GetStateInfo(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER);
+			GadgetListBoxSetHiliteSelectedItemImageSmallCenter(listBox, info->image);
 
-			GameWindow *upButton = GadgetListBoxGetUpButton( listBox );
-			if( upButton )
+			GameWindow* upButton = GadgetListBoxGetUpButton(listBox);
+			if (upButton)
 			{
+				info = GetStateInfo(COMBOBOX_LISTBOX_UP_BUTTON_ENABLED);
+				GadgetButtonSetEnabledImage(upButton, info->image);
+				GadgetButtonSetEnabledColor(upButton, info->color);
+				GadgetButtonSetEnabledBorderColor(upButton, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_UP_BUTTON_ENABLED_PUSHED);
+				GadgetButtonSetEnabledSelectedImage(upButton, info->image);
+				GadgetButtonSetEnabledSelectedColor(upButton, info->color);
+				GadgetButtonSetEnabledSelectedBorderColor(upButton, info->borderColor);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_UP_BUTTON_ENABLED );
-				GadgetButtonSetEnabledImage( upButton, info->image );
-				GadgetButtonSetEnabledColor( upButton, info->color );
-				GadgetButtonSetEnabledBorderColor( upButton, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_UP_BUTTON_ENABLED_PUSHED );
-				GadgetButtonSetEnabledSelectedImage( upButton, info->image );
-				GadgetButtonSetEnabledSelectedColor( upButton, info->color );
-				GadgetButtonSetEnabledSelectedBorderColor( upButton, info->borderColor );
+				info = GetStateInfo(COMBOBOX_LISTBOX_UP_BUTTON_DISABLED);
+				GadgetButtonSetDisabledImage(upButton, info->image);
+				GadgetButtonSetDisabledColor(upButton, info->color);
+				GadgetButtonSetDisabledBorderColor(upButton, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_UP_BUTTON_DISABLED_PUSHED);
+				GadgetButtonSetDisabledSelectedImage(upButton, info->image);
+				GadgetButtonSetDisabledSelectedColor(upButton, info->color);
+				GadgetButtonSetDisabledSelectedBorderColor(upButton, info->borderColor);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_UP_BUTTON_DISABLED );
-				GadgetButtonSetDisabledImage( upButton, info->image );
-				GadgetButtonSetDisabledColor( upButton, info->color );
-				GadgetButtonSetDisabledBorderColor( upButton, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_UP_BUTTON_DISABLED_PUSHED );
-				GadgetButtonSetDisabledSelectedImage( upButton, info->image );
-				GadgetButtonSetDisabledSelectedColor( upButton, info->color );
-				GadgetButtonSetDisabledSelectedBorderColor( upButton, info->borderColor );
-
-				info = GetStateInfo( COMBOBOX_LISTBOX_UP_BUTTON_HILITE );
-				GadgetButtonSetHiliteImage( upButton, info->image );
-				GadgetButtonSetHiliteColor( upButton, info->color );
-				GadgetButtonSetHiliteBorderColor( upButton, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED );
-				GadgetButtonSetHiliteSelectedImage( upButton, info->image );
-				GadgetButtonSetHiliteSelectedColor( upButton, info->color );
-				GadgetButtonSetHiliteSelectedBorderColor( upButton, info->borderColor );
-
+				info = GetStateInfo(COMBOBOX_LISTBOX_UP_BUTTON_HILITE);
+				GadgetButtonSetHiliteImage(upButton, info->image);
+				GadgetButtonSetHiliteColor(upButton, info->color);
+				GadgetButtonSetHiliteBorderColor(upButton, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED);
+				GadgetButtonSetHiliteSelectedImage(upButton, info->image);
+				GadgetButtonSetHiliteSelectedColor(upButton, info->color);
+				GadgetButtonSetHiliteSelectedBorderColor(upButton, info->borderColor);
 			}
 
-			GameWindow *downButton = GadgetListBoxGetDownButton( listBox );
-			if( downButton )
+			GameWindow* downButton = GadgetListBoxGetDownButton(listBox);
+			if (downButton)
 			{
+				info = GetStateInfo(COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED);
+				GadgetButtonSetEnabledImage(downButton, info->image);
+				GadgetButtonSetEnabledColor(downButton, info->color);
+				GadgetButtonSetEnabledBorderColor(downButton, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED_PUSHED);
+				GadgetButtonSetEnabledSelectedImage(downButton, info->image);
+				GadgetButtonSetEnabledSelectedColor(downButton, info->color);
+				GadgetButtonSetEnabledSelectedBorderColor(downButton, info->borderColor);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED );
-				GadgetButtonSetEnabledImage( downButton, info->image );
-				GadgetButtonSetEnabledColor( downButton, info->color );
-				GadgetButtonSetEnabledBorderColor( downButton, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED_PUSHED );
-				GadgetButtonSetEnabledSelectedImage( downButton, info->image );
-				GadgetButtonSetEnabledSelectedColor( downButton, info->color );
-				GadgetButtonSetEnabledSelectedBorderColor( downButton, info->borderColor );
+				info = GetStateInfo(COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED);
+				GadgetButtonSetDisabledImage(downButton, info->image);
+				GadgetButtonSetDisabledColor(downButton, info->color);
+				GadgetButtonSetDisabledBorderColor(downButton, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED_PUSHED);
+				GadgetButtonSetDisabledSelectedImage(downButton, info->image);
+				GadgetButtonSetDisabledSelectedColor(downButton, info->color);
+				GadgetButtonSetDisabledSelectedBorderColor(downButton, info->borderColor);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED );
-				GadgetButtonSetDisabledImage( downButton, info->image );
-				GadgetButtonSetDisabledColor( downButton, info->color );
-				GadgetButtonSetDisabledBorderColor( downButton, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED_PUSHED );
-				GadgetButtonSetDisabledSelectedImage( downButton, info->image );
-				GadgetButtonSetDisabledSelectedColor( downButton, info->color );
-				GadgetButtonSetDisabledSelectedBorderColor( downButton, info->borderColor );
-
-				info = GetStateInfo( COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE );
-				GadgetButtonSetHiliteImage( downButton, info->image );
-				GadgetButtonSetHiliteColor( downButton, info->color );
-				GadgetButtonSetHiliteBorderColor( downButton, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED );
-				GadgetButtonSetHiliteSelectedImage( downButton, info->image );
-				GadgetButtonSetHiliteSelectedColor( downButton, info->color );
-				GadgetButtonSetHiliteSelectedBorderColor( downButton, info->borderColor );
-
+				info = GetStateInfo(COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE);
+				GadgetButtonSetHiliteImage(downButton, info->image);
+				GadgetButtonSetHiliteColor(downButton, info->color);
+				GadgetButtonSetHiliteBorderColor(downButton, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED);
+				GadgetButtonSetHiliteSelectedImage(downButton, info->image);
+				GadgetButtonSetHiliteSelectedColor(downButton, info->color);
+				GadgetButtonSetHiliteSelectedBorderColor(downButton, info->borderColor);
 			}
 
-			GameWindow *slider = GadgetListBoxGetSlider( listBox );
-			if( slider )
+			GameWindow* slider = GadgetListBoxGetSlider(listBox);
+			if (slider)
 			{
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_ENABLED_TOP);
+				GadgetSliderSetEnabledImageTop(slider, info->image);
+				GadgetSliderSetEnabledColor(slider, info->color);
+				GadgetSliderSetEnabledBorderColor(slider, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_ENABLED_BOTTOM);
+				GadgetSliderSetEnabledImageBottom(slider, info->image);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_ENABLED_CENTER);
+				GadgetSliderSetEnabledImageCenter(slider, info->image);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_ENABLED_SMALL_CENTER);
+				GadgetSliderSetEnabledImageSmallCenter(slider, info->image);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_ENABLED_TOP );
-				GadgetSliderSetEnabledImageTop( slider, info->image );
-				GadgetSliderSetEnabledColor( slider, info->color );
-				GadgetSliderSetEnabledBorderColor( slider, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_ENABLED_BOTTOM );
-				GadgetSliderSetEnabledImageBottom( slider, info->image );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_ENABLED_CENTER );
-				GadgetSliderSetEnabledImageCenter( slider, info->image );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_ENABLED_SMALL_CENTER );
-				GadgetSliderSetEnabledImageSmallCenter( slider, info->image );
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_DISABLED_TOP);
+				GadgetSliderSetDisabledImageTop(slider, info->image);
+				GadgetSliderSetDisabledColor(slider, info->color);
+				GadgetSliderSetDisabledBorderColor(slider, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_DISABLED_BOTTOM);
+				GadgetSliderSetDisabledImageBottom(slider, info->image);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_DISABLED_CENTER);
+				GadgetSliderSetDisabledImageCenter(slider, info->image);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_DISABLED_SMALL_CENTER);
+				GadgetSliderSetDisabledImageSmallCenter(slider, info->image);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_DISABLED_TOP );
-				GadgetSliderSetDisabledImageTop( slider, info->image );
-				GadgetSliderSetDisabledColor( slider, info->color );
-				GadgetSliderSetDisabledBorderColor( slider, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_DISABLED_BOTTOM );
-				GadgetSliderSetDisabledImageBottom( slider, info->image );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_DISABLED_CENTER );
-				GadgetSliderSetDisabledImageCenter( slider, info->image );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_DISABLED_SMALL_CENTER );
-				GadgetSliderSetDisabledImageSmallCenter( slider, info->image );
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_HILITE_TOP);
+				GadgetSliderSetDisabledImageTop(slider, info->image);
+				GadgetSliderSetDisabledColor(slider, info->color);
+				GadgetSliderSetDisabledBorderColor(slider, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM);
+				GadgetSliderSetDisabledImageBottom(slider, info->image);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER);
+				GadgetSliderSetDisabledImageCenter(slider, info->image);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER);
+				GadgetSliderSetDisabledImageSmallCenter(slider, info->image);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_HILITE_TOP );
-				GadgetSliderSetDisabledImageTop( slider, info->image );
-				GadgetSliderSetDisabledColor( slider, info->color );
-				GadgetSliderSetDisabledBorderColor( slider, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM );
-				GadgetSliderSetDisabledImageBottom( slider, info->image );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER );
-				GadgetSliderSetDisabledImageCenter( slider, info->image );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER );
-				GadgetSliderSetDisabledImageSmallCenter( slider, info->image );
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED);
+				GadgetSliderSetEnabledThumbImage(slider, info->image);
+				GadgetSliderSetEnabledThumbColor(slider, info->color);
+				GadgetSliderSetEnabledThumbBorderColor(slider, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED);
+				GadgetSliderSetEnabledSelectedThumbImage(slider, info->image);
+				GadgetSliderSetEnabledSelectedThumbColor(slider, info->color);
+				GadgetSliderSetEnabledSelectedThumbBorderColor(slider, info->borderColor);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED );
-				GadgetSliderSetEnabledThumbImage( slider, info->image );
-				GadgetSliderSetEnabledThumbColor( slider, info->color );
-				GadgetSliderSetEnabledThumbBorderColor( slider, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED );
-				GadgetSliderSetEnabledSelectedThumbImage( slider, info->image );
-				GadgetSliderSetEnabledSelectedThumbColor( slider, info->color );
-				GadgetSliderSetEnabledSelectedThumbBorderColor( slider, info->borderColor );
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED);
+				GadgetSliderSetDisabledThumbImage(slider, info->image);
+				GadgetSliderSetDisabledThumbColor(slider, info->color);
+				GadgetSliderSetDisabledThumbBorderColor(slider, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED_PUSHED);
+				GadgetSliderSetDisabledSelectedThumbImage(slider, info->image);
+				GadgetSliderSetDisabledSelectedThumbColor(slider, info->color);
+				GadgetSliderSetDisabledSelectedThumbBorderColor(slider, info->borderColor);
 
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED );
-				GadgetSliderSetDisabledThumbImage( slider, info->image );
-				GadgetSliderSetDisabledThumbColor( slider, info->color );
-				GadgetSliderSetDisabledThumbBorderColor( slider, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED_PUSHED );
-				GadgetSliderSetDisabledSelectedThumbImage( slider, info->image );
-				GadgetSliderSetDisabledSelectedThumbColor( slider, info->color );
-				GadgetSliderSetDisabledSelectedThumbBorderColor( slider, info->borderColor );
-
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE );
-				GadgetSliderSetHiliteThumbImage( slider, info->image );
-				GadgetSliderSetHiliteThumbColor( slider, info->color );
-				GadgetSliderSetHiliteThumbBorderColor( slider, info->borderColor );
-				info = GetStateInfo( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED );
-				GadgetSliderSetHiliteSelectedThumbImage( slider, info->image );
-				GadgetSliderSetHiliteSelectedThumbColor( slider, info->color );
-				GadgetSliderSetHiliteSelectedThumbBorderColor( slider, info->borderColor );
-
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE);
+				GadgetSliderSetHiliteThumbImage(slider, info->image);
+				GadgetSliderSetHiliteThumbColor(slider, info->color);
+				GadgetSliderSetHiliteThumbBorderColor(slider, info->borderColor);
+				info = GetStateInfo(COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED);
+				GadgetSliderSetHiliteSelectedThumbImage(slider, info->image);
+				GadgetSliderSetHiliteSelectedThumbColor(slider, info->color);
+				GadgetSliderSetHiliteSelectedThumbBorderColor(slider, info->borderColor);
 			}
 		}
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_ENTRY_FIELD))
 	{
+		info = GetStateInfo(TEXT_ENTRY_ENABLED_LEFT);
+		GadgetTextEntrySetEnabledImageLeft(root, info->image);
+		GadgetTextEntrySetEnabledColor(root, info->color);
+		GadgetTextEntrySetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(TEXT_ENTRY_ENABLED_RIGHT);
+		GadgetTextEntrySetEnabledImageRight(root, info->image);
+		info = GetStateInfo(TEXT_ENTRY_ENABLED_CENTER);
+		GadgetTextEntrySetEnabledImageCenter(root, info->image);
+		info = GetStateInfo(TEXT_ENTRY_ENABLED_SMALL_CENTER);
+		GadgetTextEntrySetEnabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( TEXT_ENTRY_ENABLED_LEFT );
-		GadgetTextEntrySetEnabledImageLeft( root, info->image );
-		GadgetTextEntrySetEnabledColor( root, info->color );
-		GadgetTextEntrySetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( TEXT_ENTRY_ENABLED_RIGHT );
-		GadgetTextEntrySetEnabledImageRight( root, info->image );
-		info = GetStateInfo( TEXT_ENTRY_ENABLED_CENTER );
-		GadgetTextEntrySetEnabledImageCenter( root, info->image );
-		info = GetStateInfo( TEXT_ENTRY_ENABLED_SMALL_CENTER );
-		GadgetTextEntrySetEnabledImageSmallCenter( root, info->image );
+		info = GetStateInfo(TEXT_ENTRY_DISABLED_LEFT);
+		GadgetTextEntrySetDisabledImageLeft(root, info->image);
+		GadgetTextEntrySetDisabledColor(root, info->color);
+		GadgetTextEntrySetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(TEXT_ENTRY_DISABLED_RIGHT);
+		GadgetTextEntrySetDisabledImageRight(root, info->image);
+		info = GetStateInfo(TEXT_ENTRY_DISABLED_CENTER);
+		GadgetTextEntrySetDisabledImageCenter(root, info->image);
+		info = GetStateInfo(TEXT_ENTRY_DISABLED_SMALL_CENTER);
+		GadgetTextEntrySetDisabledImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( TEXT_ENTRY_DISABLED_LEFT );
-		GadgetTextEntrySetDisabledImageLeft( root, info->image );
-		GadgetTextEntrySetDisabledColor( root, info->color );
-		GadgetTextEntrySetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( TEXT_ENTRY_DISABLED_RIGHT );
-		GadgetTextEntrySetDisabledImageRight( root, info->image );
-		info = GetStateInfo( TEXT_ENTRY_DISABLED_CENTER );
-		GadgetTextEntrySetDisabledImageCenter( root, info->image );
-		info = GetStateInfo( TEXT_ENTRY_DISABLED_SMALL_CENTER );
-		GadgetTextEntrySetDisabledImageSmallCenter( root, info->image );
-
-		info = GetStateInfo( TEXT_ENTRY_HILITE_LEFT );
-		GadgetTextEntrySetHiliteImageLeft( root, info->image );
-		GadgetTextEntrySetHiliteColor( root, info->color );
-		GadgetTextEntrySetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( TEXT_ENTRY_HILITE_RIGHT );
-		GadgetTextEntrySetHiliteImageRight( root, info->image );
-		info = GetStateInfo( TEXT_ENTRY_HILITE_CENTER );
-		GadgetTextEntrySetHiliteImageCenter( root, info->image );
-		info = GetStateInfo( TEXT_ENTRY_HILITE_SMALL_CENTER );
-		GadgetTextEntrySetHiliteImageSmallCenter( root, info->image );
-
+		info = GetStateInfo(TEXT_ENTRY_HILITE_LEFT);
+		GadgetTextEntrySetHiliteImageLeft(root, info->image);
+		GadgetTextEntrySetHiliteColor(root, info->color);
+		GadgetTextEntrySetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(TEXT_ENTRY_HILITE_RIGHT);
+		GadgetTextEntrySetHiliteImageRight(root, info->image);
+		info = GetStateInfo(TEXT_ENTRY_HILITE_CENTER);
+		GadgetTextEntrySetHiliteImageCenter(root, info->image);
+		info = GetStateInfo(TEXT_ENTRY_HILITE_SMALL_CENTER);
+		GadgetTextEntrySetHiliteImageSmallCenter(root, info->image);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_STATIC_TEXT))
 	{
+		info = GetStateInfo(STATIC_TEXT_ENABLED);
+		GadgetStaticTextSetEnabledImage(root, info->image);
+		GadgetStaticTextSetEnabledColor(root, info->color);
+		GadgetStaticTextSetEnabledBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( STATIC_TEXT_ENABLED );
-		GadgetStaticTextSetEnabledImage( root, info->image );
-		GadgetStaticTextSetEnabledColor( root, info->color );
-		GadgetStaticTextSetEnabledBorderColor( root, info->borderColor );
+		info = GetStateInfo(STATIC_TEXT_DISABLED);
+		GadgetStaticTextSetDisabledImage(root, info->image);
+		GadgetStaticTextSetDisabledColor(root, info->color);
+		GadgetStaticTextSetDisabledBorderColor(root, info->borderColor);
 
-		info = GetStateInfo( STATIC_TEXT_DISABLED );
-		GadgetStaticTextSetDisabledImage( root, info->image );
-		GadgetStaticTextSetDisabledColor( root, info->color );
-		GadgetStaticTextSetDisabledBorderColor( root, info->borderColor );
-
-		info = GetStateInfo( STATIC_TEXT_HILITE );
-		GadgetStaticTextSetHiliteImage( root, info->image );
-		GadgetStaticTextSetHiliteColor( root, info->color );
-		GadgetStaticTextSetHiliteBorderColor( root, info->borderColor );
-
+		info = GetStateInfo(STATIC_TEXT_HILITE);
+		GadgetStaticTextSetHiliteImage(root, info->image);
+		GadgetStaticTextSetHiliteColor(root, info->color);
+		GadgetStaticTextSetHiliteBorderColor(root, info->borderColor);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_PROGRESS_BAR ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_PROGRESS_BAR))
 	{
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_LEFT);
+		GadgetProgressBarSetEnabledImageLeft(root, info->image);
+		GadgetProgressBarSetEnabledColor(root, info->color);
+		GadgetProgressBarSetEnabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_RIGHT);
+		GadgetProgressBarSetEnabledImageRight(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_CENTER);
+		GadgetProgressBarSetEnabledImageCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_SMALL_CENTER);
+		GadgetProgressBarSetEnabledImageSmallCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_BAR_LEFT);
+		GadgetProgressBarSetEnabledBarImageLeft(root, info->image);
+		GadgetProgressBarSetEnabledBarColor(root, info->color);
+		GadgetProgressBarSetEnabledBarBorderColor(root, info->borderColor);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_BAR_RIGHT);
+		GadgetProgressBarSetEnabledBarImageRight(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_BAR_CENTER);
+		GadgetProgressBarSetEnabledBarImageCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_ENABLED_BAR_SMALL_CENTER);
+		GadgetProgressBarSetEnabledBarImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_LEFT );
-		GadgetProgressBarSetEnabledImageLeft( root, info->image );
-		GadgetProgressBarSetEnabledColor( root, info->color );
-		GadgetProgressBarSetEnabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_RIGHT );
-		GadgetProgressBarSetEnabledImageRight( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_CENTER );
-		GadgetProgressBarSetEnabledImageCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_SMALL_CENTER );
-		GadgetProgressBarSetEnabledImageSmallCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_BAR_LEFT );
-		GadgetProgressBarSetEnabledBarImageLeft( root, info->image );
-		GadgetProgressBarSetEnabledBarColor( root, info->color );
-		GadgetProgressBarSetEnabledBarBorderColor( root, info->borderColor );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_BAR_RIGHT );
-		GadgetProgressBarSetEnabledBarImageRight( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_BAR_CENTER );
-		GadgetProgressBarSetEnabledBarImageCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_ENABLED_BAR_SMALL_CENTER );
-		GadgetProgressBarSetEnabledBarImageSmallCenter( root, info->image );
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_LEFT);
+		GadgetProgressBarSetDisabledImageLeft(root, info->image);
+		GadgetProgressBarSetDisabledColor(root, info->color);
+		GadgetProgressBarSetDisabledBorderColor(root, info->borderColor);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_RIGHT);
+		GadgetProgressBarSetDisabledImageRight(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_CENTER);
+		GadgetProgressBarSetDisabledImageCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_SMALL_CENTER);
+		GadgetProgressBarSetDisabledImageSmallCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_BAR_LEFT);
+		GadgetProgressBarSetDisabledBarImageLeft(root, info->image);
+		GadgetProgressBarSetDisabledBarColor(root, info->color);
+		GadgetProgressBarSetDisabledBarBorderColor(root, info->borderColor);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_BAR_RIGHT);
+		GadgetProgressBarSetDisabledBarImageRight(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_BAR_CENTER);
+		GadgetProgressBarSetDisabledBarImageCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_DISABLED_BAR_SMALL_CENTER);
+		GadgetProgressBarSetDisabledBarImageSmallCenter(root, info->image);
 
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_LEFT );
-		GadgetProgressBarSetDisabledImageLeft( root, info->image );
-		GadgetProgressBarSetDisabledColor( root, info->color );
-		GadgetProgressBarSetDisabledBorderColor( root, info->borderColor );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_RIGHT );
-		GadgetProgressBarSetDisabledImageRight( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_CENTER );
-		GadgetProgressBarSetDisabledImageCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_SMALL_CENTER );
-		GadgetProgressBarSetDisabledImageSmallCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_BAR_LEFT );
-		GadgetProgressBarSetDisabledBarImageLeft( root, info->image );
-		GadgetProgressBarSetDisabledBarColor( root, info->color );
-		GadgetProgressBarSetDisabledBarBorderColor( root, info->borderColor );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_BAR_RIGHT );
-		GadgetProgressBarSetDisabledBarImageRight( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_BAR_CENTER );
-		GadgetProgressBarSetDisabledBarImageCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_DISABLED_BAR_SMALL_CENTER );
-		GadgetProgressBarSetDisabledBarImageSmallCenter( root, info->image );
-
-		info = GetStateInfo( PROGRESS_BAR_HILITE_LEFT );
-		GadgetProgressBarSetHiliteImageLeft( root, info->image );
-		GadgetProgressBarSetHiliteColor( root, info->color );
-		GadgetProgressBarSetHiliteBorderColor( root, info->borderColor );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_RIGHT );
-		GadgetProgressBarSetHiliteImageRight( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_CENTER );
-		GadgetProgressBarSetHiliteImageCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_SMALL_CENTER );
-		GadgetProgressBarSetHiliteImageSmallCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_BAR_LEFT );
-		GadgetProgressBarSetHiliteBarImageLeft( root, info->image );
-		GadgetProgressBarSetHiliteBarColor( root, info->color );
-		GadgetProgressBarSetHiliteBarBorderColor( root, info->borderColor );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_BAR_RIGHT );
-		GadgetProgressBarSetHiliteBarImageRight( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_BAR_CENTER );
-		GadgetProgressBarSetHiliteBarImageCenter( root, info->image );
-		info = GetStateInfo( PROGRESS_BAR_HILITE_BAR_SMALL_CENTER );
-		GadgetProgressBarSetHiliteBarImageSmallCenter( root, info->image );
-
+		info = GetStateInfo(PROGRESS_BAR_HILITE_LEFT);
+		GadgetProgressBarSetHiliteImageLeft(root, info->image);
+		GadgetProgressBarSetHiliteColor(root, info->color);
+		GadgetProgressBarSetHiliteBorderColor(root, info->borderColor);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_RIGHT);
+		GadgetProgressBarSetHiliteImageRight(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_CENTER);
+		GadgetProgressBarSetHiliteImageCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_SMALL_CENTER);
+		GadgetProgressBarSetHiliteImageSmallCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_BAR_LEFT);
+		GadgetProgressBarSetHiliteBarImageLeft(root, info->image);
+		GadgetProgressBarSetHiliteBarColor(root, info->color);
+		GadgetProgressBarSetHiliteBarBorderColor(root, info->borderColor);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_BAR_RIGHT);
+		GadgetProgressBarSetHiliteBarImageRight(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_BAR_CENTER);
+		GadgetProgressBarSetHiliteBarImageCenter(root, info->image);
+		info = GetStateInfo(PROGRESS_BAR_HILITE_BAR_SMALL_CENTER);
+		GadgetProgressBarSetHiliteBarImageSmallCenter(root, info->image);
 	}
-	else if( BitIsSet( root->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if (BitIsSet(root->winGetStyle(), GWS_TAB_CONTROL))
 	{
-		info = GetStateInfo( TC_TAB_0_ENABLED );
-		GadgetTabControlSetEnabledImageTabZero( root, info->image );
-		GadgetTabControlSetEnabledColorTabZero( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabZero( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_0_ENABLED);
+		GadgetTabControlSetEnabledImageTabZero(root, info->image);
+		GadgetTabControlSetEnabledColorTabZero(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabZero(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_1_ENABLED );
-		GadgetTabControlSetEnabledImageTabOne( root, info->image );
-		GadgetTabControlSetEnabledColorTabOne( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabOne( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_1_ENABLED);
+		GadgetTabControlSetEnabledImageTabOne(root, info->image);
+		GadgetTabControlSetEnabledColorTabOne(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabOne(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_2_ENABLED );
-		GadgetTabControlSetEnabledImageTabTwo( root, info->image );
-		GadgetTabControlSetEnabledColorTabTwo( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabTwo( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_2_ENABLED);
+		GadgetTabControlSetEnabledImageTabTwo(root, info->image);
+		GadgetTabControlSetEnabledColorTabTwo(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabTwo(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_3_ENABLED );
-		GadgetTabControlSetEnabledImageTabThree( root, info->image );
-		GadgetTabControlSetEnabledColorTabThree( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabThree( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_3_ENABLED);
+		GadgetTabControlSetEnabledImageTabThree(root, info->image);
+		GadgetTabControlSetEnabledColorTabThree(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabThree(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_4_ENABLED );
-		GadgetTabControlSetEnabledImageTabFour( root, info->image );
-		GadgetTabControlSetEnabledColorTabFour( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabFour( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_4_ENABLED);
+		GadgetTabControlSetEnabledImageTabFour(root, info->image);
+		GadgetTabControlSetEnabledColorTabFour(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabFour(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_5_ENABLED );
-		GadgetTabControlSetEnabledImageTabFive( root, info->image );
-		GadgetTabControlSetEnabledColorTabFive( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabFive( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_5_ENABLED);
+		GadgetTabControlSetEnabledImageTabFive(root, info->image);
+		GadgetTabControlSetEnabledColorTabFive(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabFive(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_6_ENABLED );
-		GadgetTabControlSetEnabledImageTabSix( root, info->image );
-		GadgetTabControlSetEnabledColorTabSix( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabSix( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_6_ENABLED);
+		GadgetTabControlSetEnabledImageTabSix(root, info->image);
+		GadgetTabControlSetEnabledColorTabSix(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabSix(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_7_ENABLED );
-		GadgetTabControlSetEnabledImageTabSeven( root, info->image );
-		GadgetTabControlSetEnabledColorTabSeven( root, info->color );
-		GadgetTabControlSetEnabledBorderColorTabSeven( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_7_ENABLED);
+		GadgetTabControlSetEnabledImageTabSeven(root, info->image);
+		GadgetTabControlSetEnabledColorTabSeven(root, info->color);
+		GadgetTabControlSetEnabledBorderColorTabSeven(root, info->borderColor);
 
-		info = GetStateInfo( TAB_CONTROL_ENABLED );
-		GadgetTabControlSetEnabledImageBackground( root, info->image );
-		GadgetTabControlSetEnabledColorBackground( root, info->color );
-		GadgetTabControlSetEnabledBorderColorBackground( root, info->borderColor );
+		info = GetStateInfo(TAB_CONTROL_ENABLED);
+		GadgetTabControlSetEnabledImageBackground(root, info->image);
+		GadgetTabControlSetEnabledColorBackground(root, info->color);
+		GadgetTabControlSetEnabledBorderColorBackground(root, info->borderColor);
 
+		info = GetStateInfo(TC_TAB_0_DISABLED);
+		GadgetTabControlSetDisabledImageTabZero(root, info->image);
+		GadgetTabControlSetDisabledColorTabZero(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabZero(root, info->borderColor);
 
+		info = GetStateInfo(TC_TAB_1_DISABLED);
+		GadgetTabControlSetDisabledImageTabOne(root, info->image);
+		GadgetTabControlSetDisabledColorTabOne(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabOne(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_0_DISABLED );
-		GadgetTabControlSetDisabledImageTabZero( root, info->image );
-		GadgetTabControlSetDisabledColorTabZero( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabZero( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_2_DISABLED);
+		GadgetTabControlSetDisabledImageTabTwo(root, info->image);
+		GadgetTabControlSetDisabledColorTabTwo(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabTwo(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_1_DISABLED );
-		GadgetTabControlSetDisabledImageTabOne( root, info->image );
-		GadgetTabControlSetDisabledColorTabOne( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabOne( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_3_DISABLED);
+		GadgetTabControlSetDisabledImageTabThree(root, info->image);
+		GadgetTabControlSetDisabledColorTabThree(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabThree(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_2_DISABLED );
-		GadgetTabControlSetDisabledImageTabTwo( root, info->image );
-		GadgetTabControlSetDisabledColorTabTwo( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabTwo( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_4_DISABLED);
+		GadgetTabControlSetDisabledImageTabFour(root, info->image);
+		GadgetTabControlSetDisabledColorTabFour(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabFour(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_3_DISABLED );
-		GadgetTabControlSetDisabledImageTabThree( root, info->image );
-		GadgetTabControlSetDisabledColorTabThree( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabThree( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_5_DISABLED);
+		GadgetTabControlSetDisabledImageTabFive(root, info->image);
+		GadgetTabControlSetDisabledColorTabFive(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabFive(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_4_DISABLED );
-		GadgetTabControlSetDisabledImageTabFour( root, info->image );
-		GadgetTabControlSetDisabledColorTabFour( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabFour( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_6_DISABLED);
+		GadgetTabControlSetDisabledImageTabSix(root, info->image);
+		GadgetTabControlSetDisabledColorTabSix(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabSix(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_5_DISABLED );
-		GadgetTabControlSetDisabledImageTabFive( root, info->image );
-		GadgetTabControlSetDisabledColorTabFive( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabFive( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_7_DISABLED);
+		GadgetTabControlSetDisabledImageTabSeven(root, info->image);
+		GadgetTabControlSetDisabledColorTabSeven(root, info->color);
+		GadgetTabControlSetDisabledBorderColorTabSeven(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_6_DISABLED );
-		GadgetTabControlSetDisabledImageTabSix( root, info->image );
-		GadgetTabControlSetDisabledColorTabSix( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabSix( root, info->borderColor );
+		info = GetStateInfo(TAB_CONTROL_DISABLED);
+		GadgetTabControlSetDisabledImageBackground(root, info->image);
+		GadgetTabControlSetDisabledColorBackground(root, info->color);
+		GadgetTabControlSetDisabledBorderColorBackground(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_7_DISABLED );
-		GadgetTabControlSetDisabledImageTabSeven( root, info->image );
-		GadgetTabControlSetDisabledColorTabSeven( root, info->color );
-		GadgetTabControlSetDisabledBorderColorTabSeven( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_0_HILITE);
+		GadgetTabControlSetHiliteImageTabZero(root, info->image);
+		GadgetTabControlSetHiliteColorTabZero(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabZero(root, info->borderColor);
 
-		info = GetStateInfo( TAB_CONTROL_DISABLED );
-		GadgetTabControlSetDisabledImageBackground( root, info->image );
-		GadgetTabControlSetDisabledColorBackground( root, info->color );
-		GadgetTabControlSetDisabledBorderColorBackground( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_1_HILITE);
+		GadgetTabControlSetHiliteImageTabOne(root, info->image);
+		GadgetTabControlSetHiliteColorTabOne(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabOne(root, info->borderColor);
 
+		info = GetStateInfo(TC_TAB_2_HILITE);
+		GadgetTabControlSetHiliteImageTabTwo(root, info->image);
+		GadgetTabControlSetHiliteColorTabTwo(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabTwo(root, info->borderColor);
 
+		info = GetStateInfo(TC_TAB_3_HILITE);
+		GadgetTabControlSetHiliteImageTabThree(root, info->image);
+		GadgetTabControlSetHiliteColorTabThree(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabThree(root, info->borderColor);
 
+		info = GetStateInfo(TC_TAB_4_HILITE);
+		GadgetTabControlSetHiliteImageTabFour(root, info->image);
+		GadgetTabControlSetHiliteColorTabFour(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabFour(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_0_HILITE );
-		GadgetTabControlSetHiliteImageTabZero( root, info->image );
-		GadgetTabControlSetHiliteColorTabZero( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabZero( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_5_HILITE);
+		GadgetTabControlSetHiliteImageTabFive(root, info->image);
+		GadgetTabControlSetHiliteColorTabFive(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabFive(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_1_HILITE );
-		GadgetTabControlSetHiliteImageTabOne( root, info->image );
-		GadgetTabControlSetHiliteColorTabOne( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabOne( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_6_HILITE);
+		GadgetTabControlSetHiliteImageTabSix(root, info->image);
+		GadgetTabControlSetHiliteColorTabSix(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabSix(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_2_HILITE );
-		GadgetTabControlSetHiliteImageTabTwo( root, info->image );
-		GadgetTabControlSetHiliteColorTabTwo( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabTwo( root, info->borderColor );
+		info = GetStateInfo(TC_TAB_7_HILITE);
+		GadgetTabControlSetHiliteImageTabSeven(root, info->image);
+		GadgetTabControlSetHiliteColorTabSeven(root, info->color);
+		GadgetTabControlSetHiliteBorderColorTabSeven(root, info->borderColor);
 
-		info = GetStateInfo( TC_TAB_3_HILITE );
-		GadgetTabControlSetHiliteImageTabThree( root, info->image );
-		GadgetTabControlSetHiliteColorTabThree( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabThree( root, info->borderColor );
-
-		info = GetStateInfo( TC_TAB_4_HILITE );
-		GadgetTabControlSetHiliteImageTabFour( root, info->image );
-		GadgetTabControlSetHiliteColorTabFour( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabFour( root, info->borderColor );
-
-		info = GetStateInfo( TC_TAB_5_HILITE );
-		GadgetTabControlSetHiliteImageTabFive( root, info->image );
-		GadgetTabControlSetHiliteColorTabFive( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabFive( root, info->borderColor );
-
-		info = GetStateInfo( TC_TAB_6_HILITE );
-		GadgetTabControlSetHiliteImageTabSix( root, info->image );
-		GadgetTabControlSetHiliteColorTabSix( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabSix( root, info->borderColor );
-
-		info = GetStateInfo( TC_TAB_7_HILITE );
-		GadgetTabControlSetHiliteImageTabSeven( root, info->image );
-		GadgetTabControlSetHiliteColorTabSeven( root, info->color );
-		GadgetTabControlSetHiliteBorderColorTabSeven( root, info->borderColor );
-
-		info = GetStateInfo( TAB_CONTROL_HILITE );
-		GadgetTabControlSetHiliteImageBackground( root, info->image );
-		GadgetTabControlSetHiliteColorBackground( root, info->color );
-		GadgetTabControlSetHiliteBorderColorBackground( root, info->borderColor );
-
+		info = GetStateInfo(TAB_CONTROL_HILITE);
+		GadgetTabControlSetHiliteImageBackground(root, info->image);
+		GadgetTabControlSetHiliteColorBackground(root, info->color);
+		GadgetTabControlSetHiliteBorderColorBackground(root, info->borderColor);
 	}
 	else
 	{
+		info = GetStateInfo(GENERIC_ENABLED);
+		root->winSetEnabledImage(0, info->image);
+		root->winSetEnabledColor(0, info->color);
+		root->winSetEnabledBorderColor(0, info->borderColor);
 
-		info = GetStateInfo( GENERIC_ENABLED );
-		root->winSetEnabledImage( 0, info->image );
-		root->winSetEnabledColor( 0, info->color );
-		root->winSetEnabledBorderColor( 0, info->borderColor );
+		info = GetStateInfo(GENERIC_DISABLED);
+		root->winSetDisabledImage(0, info->image);
+		root->winSetDisabledColor(0, info->color);
+		root->winSetDisabledBorderColor(0, info->borderColor);
 
-		info = GetStateInfo( GENERIC_DISABLED );
-		root->winSetDisabledImage( 0, info->image );
-		root->winSetDisabledColor( 0, info->color );
-		root->winSetDisabledBorderColor( 0, info->borderColor );
-
-		info = GetStateInfo( GENERIC_HILITE );
-		root->winSetHiliteImage( 0, info->image );
-		root->winSetHiliteColor( 0, info->color );
-		root->winSetHiliteBorderColor( 0, info->borderColor );
-
+		info = GetStateInfo(GENERIC_HILITE);
+		root->winSetHiliteImage(0, info->image);
+		root->winSetHiliteColor(0, info->color);
+		root->winSetHiliteBorderColor(0, info->borderColor);
 	}
 
 	//
 	// apply changes to children of this window, unless this
 	// window is a gadget itself, those are "atomic" units remember ;)
 	//
-	if( TheEditor->windowIsGadget( root ) == FALSE )
-		applyPropertyTablesToWindow( root->winGetChild() );
+	if (TheEditor->windowIsGadget(root) == FALSE)
+	{
+		applyPropertyTablesToWindow(root->winGetChild());
+	}
 
 	// on to the next window
-	applyPropertyTablesToWindow( root->winGetNext() );
+	applyPropertyTablesToWindow(root->winGetNext());
 
 	// force an update of the edit window
 	TheEditWindow->draw();
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1479,9 +1426,8 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 //=============================================================================
 LayoutScheme::LayoutScheme()
 {
-
-	strcpy( m_schemeFilename, "Default.ls" );
-	memset( &m_imageAndColorTable, 0, sizeof( ImageAndColorInfo ) * NUM_STATE_IDENTIFIERS );
+	strcpy(m_schemeFilename, "Default.ls");
+	memset(&m_imageAndColorTable, 0, sizeof(ImageAndColorInfo) * NUM_STATE_IDENTIFIERS);
 	m_enabledText.color = GAME_COLOR_UNDEFINED;
 	m_enabledText.borderColor = GAME_COLOR_UNDEFINED;
 	m_disabledText.color = GAME_COLOR_UNDEFINED;
@@ -1489,7 +1435,6 @@ LayoutScheme::LayoutScheme()
 	m_hiliteText.color = GAME_COLOR_UNDEFINED;
 	m_hiliteText.borderColor = GAME_COLOR_UNDEFINED;
 	m_font = nullptr;
-
 }
 
 // LayoutScheme::~LayoutScheme ================================================
@@ -1500,20 +1445,15 @@ LayoutScheme::~LayoutScheme()
 	Int i;
 
 	// free all the state name strings
-	for( i = 0; i < NUM_STATE_IDENTIFIERS; i++ )
+	for (i = 0; i < NUM_STATE_IDENTIFIERS; i++)
 	{
-
-		if( m_imageAndColorTable[ i ].stateNameBuffer )
+		if (m_imageAndColorTable[i].stateNameBuffer)
 		{
-
-			delete [] m_imageAndColorTable[ i ].stateNameBuffer;
-			m_imageAndColorTable[ i ].stateNameBuffer = nullptr;
-			m_imageAndColorTable[ i ].stateName = nullptr;
-
+			delete[] m_imageAndColorTable[i].stateNameBuffer;
+			m_imageAndColorTable[i].stateNameBuffer = nullptr;
+			m_imageAndColorTable[i].stateName = nullptr;
 		}
-
 	}
-
 }
 
 // LayoutScheme::init =========================================================
@@ -1522,621 +1462,617 @@ LayoutScheme::~LayoutScheme()
 void LayoutScheme::init()
 {
 	Int i;
-	ImageAndColorInfo *info;
+	ImageAndColorInfo* info;
 
 	// just up the default state values
-	for( i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++ )
+	for (i = FIRST_VALID_IDENTIFIER; i < NUM_STATE_IDENTIFIERS; i++)
 	{
-
 		// get info from the static table created for property editing
-		info = GetStateInfo( (StateIdentifier)i );
-		assert( info );
-		m_imageAndColorTable[ i ].windowType = info->windowType;
-		m_imageAndColorTable[ i ].stateID = info->stateID;
-		m_imageAndColorTable[ i ].image = info->image;
-		m_imageAndColorTable[ i ].color = info->color;
-		m_imageAndColorTable[ i ].borderColor = info->borderColor;
-		m_imageAndColorTable[ i ].stateNameBuffer = new char[strlen( info->stateName ) + 1];
-		m_imageAndColorTable[ i ].stateName = m_imageAndColorTable[ i ].stateNameBuffer;
-		strcpy(m_imageAndColorTable[ i ].stateNameBuffer, info->stateName );
-
+		info = GetStateInfo((StateIdentifier)i);
+		assert(info);
+		m_imageAndColorTable[i].windowType = info->windowType;
+		m_imageAndColorTable[i].stateID = info->stateID;
+		m_imageAndColorTable[i].image = info->image;
+		m_imageAndColorTable[i].color = info->color;
+		m_imageAndColorTable[i].borderColor = info->borderColor;
+		m_imageAndColorTable[i].stateNameBuffer = new char[strlen(info->stateName) + 1];
+		m_imageAndColorTable[i].stateName = m_imageAndColorTable[i].stateNameBuffer;
+		strcpy(m_imageAndColorTable[i].stateNameBuffer, info->stateName);
 	}
 
 	// assign a default set of colors
 	UnsignedByte alpha = 255;
-	Color red					= GameMakeColor( 255,   0,   0, alpha );
-	Color darkRed			= GameMakeColor( 128,   0,   0, alpha );
-	Color lightRed		= GameMakeColor( 255, 128, 128, alpha );
-	Color green				= GameMakeColor(   0, 255,   0, alpha );
-	Color darkGreen		= GameMakeColor(   0, 128,   0, alpha );
-	Color lightGreen	= GameMakeColor( 128, 255, 128, alpha );
-	Color blue				= GameMakeColor(   0,   0, 255, alpha );
-	Color darkBlue		= GameMakeColor(   0,   0, 128, alpha );
-	Color lightBlue		= GameMakeColor( 128, 128, 255, alpha );
-//	Color purple			= GameMakeColor( 255,   0, 255, alpha );
-//	Color darkPurple	= GameMakeColor( 128,   0, 128, alpha );
-//	Color lightPurple	= GameMakeColor( 255, 128, 255, alpha );
-	Color yellow			= GameMakeColor( 255, 255,   0, alpha );
-//	Color darkYellow	= GameMakeColor( 128, 128,   0, alpha );
-//	Color lightYellow	= GameMakeColor( 255, 255, 128, alpha );
-//	Color cyan				= GameMakeColor(   0, 255, 255, alpha );
-//	Color darkCyan		= GameMakeColor(  64, 128, 128, alpha );
-//	Color lightCyan		= GameMakeColor( 128, 255, 255, alpha );
-	Color gray				= GameMakeColor( 128, 128, 128, alpha );
-	Color darkGray		= GameMakeColor(  64,  64,  64, alpha );
-	Color lightGray		= GameMakeColor( 192, 192, 192, alpha );
-	Color black				= GameMakeColor(   0,   0,   0, alpha );
-	Color white				= GameMakeColor( 254, 254, 254, alpha );
-	const Image *image;
+	Color red = GameMakeColor(255, 0, 0, alpha);
+	Color darkRed = GameMakeColor(128, 0, 0, alpha);
+	Color lightRed = GameMakeColor(255, 128, 128, alpha);
+	Color green = GameMakeColor(0, 255, 0, alpha);
+	Color darkGreen = GameMakeColor(0, 128, 0, alpha);
+	Color lightGreen = GameMakeColor(128, 255, 128, alpha);
+	Color blue = GameMakeColor(0, 0, 255, alpha);
+	Color darkBlue = GameMakeColor(0, 0, 128, alpha);
+	Color lightBlue = GameMakeColor(128, 128, 255, alpha);
+	//	Color purple			= GameMakeColor( 255,   0, 255, alpha );
+	//	Color darkPurple	= GameMakeColor( 128,   0, 128, alpha );
+	//	Color lightPurple	= GameMakeColor( 255, 128, 255, alpha );
+	Color yellow = GameMakeColor(255, 255, 0, alpha);
+	//	Color darkYellow	= GameMakeColor( 128, 128,   0, alpha );
+	//	Color lightYellow	= GameMakeColor( 255, 255, 128, alpha );
+	//	Color cyan				= GameMakeColor(   0, 255, 255, alpha );
+	//	Color darkCyan		= GameMakeColor(  64, 128, 128, alpha );
+	//	Color lightCyan		= GameMakeColor( 128, 255, 255, alpha );
+	Color gray = GameMakeColor(128, 128, 128, alpha);
+	Color darkGray = GameMakeColor(64, 64, 64, alpha);
+	Color lightGray = GameMakeColor(192, 192, 192, alpha);
+	Color black = GameMakeColor(0, 0, 0, alpha);
+	Color white = GameMakeColor(254, 254, 254, alpha);
+	const Image* image;
 
 	// push button
-	image = TheMappedImageCollection->findImageByName( "PushButtonEnabled" );
-	storeImageAndColor( BUTTON_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "PushButtonEnabledSelected" );
-	storeImageAndColor( BUTTON_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "PushButtonDisabled" );
-	storeImageAndColor( BUTTON_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "PushButtonDisabledSelected" );
-	storeImageAndColor( BUTTON_DISABLED_PUSHED, image, lightGray, gray );
-	image = TheMappedImageCollection->findImageByName( "PushButtonHilite" );
-	storeImageAndColor( BUTTON_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "PushButtonHiliteSelected" );
-	storeImageAndColor( BUTTON_HILITE_PUSHED, image, yellow, white );
+	image = TheMappedImageCollection->findImageByName("PushButtonEnabled");
+	storeImageAndColor(BUTTON_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("PushButtonEnabledSelected");
+	storeImageAndColor(BUTTON_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("PushButtonDisabled");
+	storeImageAndColor(BUTTON_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("PushButtonDisabledSelected");
+	storeImageAndColor(BUTTON_DISABLED_PUSHED, image, lightGray, gray);
+	image = TheMappedImageCollection->findImageByName("PushButtonHilite");
+	storeImageAndColor(BUTTON_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("PushButtonHiliteSelected");
+	storeImageAndColor(BUTTON_HILITE_PUSHED, image, yellow, white);
 
 	// radio button
-	image = TheMappedImageCollection->findImageByName( "RadioButtonEnabled" );
-	storeImageAndColor( RADIO_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "RadioButtonEnabledBoxUnselected" );
-	storeImageAndColor( RADIO_ENABLED_UNCHECKED_BOX, image, darkRed, black );
-	image = TheMappedImageCollection->findImageByName( "RadioButtonEnabledBoxSelected" );
-	storeImageAndColor( RADIO_ENABLED_CHECKED_BOX, image, blue, lightBlue );
+	image = TheMappedImageCollection->findImageByName("RadioButtonEnabled");
+	storeImageAndColor(RADIO_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("RadioButtonEnabledBoxUnselected");
+	storeImageAndColor(RADIO_ENABLED_UNCHECKED_BOX, image, darkRed, black);
+	image = TheMappedImageCollection->findImageByName("RadioButtonEnabledBoxSelected");
+	storeImageAndColor(RADIO_ENABLED_CHECKED_BOX, image, blue, lightBlue);
 
-	image = TheMappedImageCollection->findImageByName( "RadioButtonDisabled" );
-	storeImageAndColor( RADIO_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "RadioButtonDisabledBoxUnselected" );
-	storeImageAndColor( RADIO_DISABLED_UNCHECKED_BOX, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "RadioButtonDisabledBoxSelected" );
-	storeImageAndColor( RADIO_DISABLED_CHECKED_BOX, image, darkGray, white );
+	image = TheMappedImageCollection->findImageByName("RadioButtonDisabled");
+	storeImageAndColor(RADIO_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("RadioButtonDisabledBoxUnselected");
+	storeImageAndColor(RADIO_DISABLED_UNCHECKED_BOX, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("RadioButtonDisabledBoxSelected");
+	storeImageAndColor(RADIO_DISABLED_CHECKED_BOX, image, darkGray, white);
 
-	image = TheMappedImageCollection->findImageByName( "RadioButtonHilite" );
-	storeImageAndColor( RADIO_HILITE, image, green, lightGreen );
-	image = TheMappedImageCollection->findImageByName( "RadioButtonHiliteBoxUnselected" );
-	storeImageAndColor( RADIO_HILITE_UNCHECKED_BOX, image, darkGreen, lightGreen );
-	image = TheMappedImageCollection->findImageByName( "RadioButtonHiliteBoxSelected" );
-	storeImageAndColor( RADIO_HILITE_CHECKED_BOX, image, yellow, white );
+	image = TheMappedImageCollection->findImageByName("RadioButtonHilite");
+	storeImageAndColor(RADIO_HILITE, image, green, lightGreen);
+	image = TheMappedImageCollection->findImageByName("RadioButtonHiliteBoxUnselected");
+	storeImageAndColor(RADIO_HILITE_UNCHECKED_BOX, image, darkGreen, lightGreen);
+	image = TheMappedImageCollection->findImageByName("RadioButtonHiliteBoxSelected");
+	storeImageAndColor(RADIO_HILITE_CHECKED_BOX, image, yellow, white);
 
 	// check box
-	image = TheMappedImageCollection->findImageByName( "CheckBoxEnabled" );
-	storeImageAndColor( CHECK_BOX_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "CheckBoxEnabledBoxUnselected" );
-	storeImageAndColor( CHECK_BOX_ENABLED_UNCHECKED_BOX, image, WIN_COLOR_UNDEFINED, lightBlue );
-	image = TheMappedImageCollection->findImageByName( "CheckBoxEnabledBoxSelected" );
-	storeImageAndColor( CHECK_BOX_ENABLED_CHECKED_BOX, image, blue, lightBlue );
+	image = TheMappedImageCollection->findImageByName("CheckBoxEnabled");
+	storeImageAndColor(CHECK_BOX_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("CheckBoxEnabledBoxUnselected");
+	storeImageAndColor(CHECK_BOX_ENABLED_UNCHECKED_BOX, image, WIN_COLOR_UNDEFINED, lightBlue);
+	image = TheMappedImageCollection->findImageByName("CheckBoxEnabledBoxSelected");
+	storeImageAndColor(CHECK_BOX_ENABLED_CHECKED_BOX, image, blue, lightBlue);
 
-	image = TheMappedImageCollection->findImageByName( "CheckBoxDisabled" );
-	storeImageAndColor( CHECK_BOX_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "CheckBoxDisabledBoxUnselected" );
-	storeImageAndColor( CHECK_BOX_DISABLED_UNCHECKED_BOX, image, WIN_COLOR_UNDEFINED, lightGray );
-	image = TheMappedImageCollection->findImageByName( "CheckBoxDisabledBoxSelected" );
-	storeImageAndColor( CHECK_BOX_DISABLED_CHECKED_BOX, image, darkGray, white );
+	image = TheMappedImageCollection->findImageByName("CheckBoxDisabled");
+	storeImageAndColor(CHECK_BOX_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("CheckBoxDisabledBoxUnselected");
+	storeImageAndColor(CHECK_BOX_DISABLED_UNCHECKED_BOX, image, WIN_COLOR_UNDEFINED, lightGray);
+	image = TheMappedImageCollection->findImageByName("CheckBoxDisabledBoxSelected");
+	storeImageAndColor(CHECK_BOX_DISABLED_CHECKED_BOX, image, darkGray, white);
 
-	image = TheMappedImageCollection->findImageByName( "CheckBoxHilite" );
-	storeImageAndColor( CHECK_BOX_HILITE, image, green, lightGreen );
-	image = TheMappedImageCollection->findImageByName( "CheckBoxHiliteBoxUnselected" );
-	storeImageAndColor( CHECK_BOX_HILITE_UNCHECKED_BOX, image, WIN_COLOR_UNDEFINED, lightBlue );
-	image = TheMappedImageCollection->findImageByName( "CheckBoxHiliteBoxSelected" );
-	storeImageAndColor( CHECK_BOX_HILITE_CHECKED_BOX, image, yellow, white );
+	image = TheMappedImageCollection->findImageByName("CheckBoxHilite");
+	storeImageAndColor(CHECK_BOX_HILITE, image, green, lightGreen);
+	image = TheMappedImageCollection->findImageByName("CheckBoxHiliteBoxUnselected");
+	storeImageAndColor(CHECK_BOX_HILITE_UNCHECKED_BOX, image, WIN_COLOR_UNDEFINED, lightBlue);
+	image = TheMappedImageCollection->findImageByName("CheckBoxHiliteBoxSelected");
+	storeImageAndColor(CHECK_BOX_HILITE_CHECKED_BOX, image, yellow, white);
 
 	// horz slider
-	image = TheMappedImageCollection->findImageByName( "HSliderEnabledLeftEnd" );
-	storeImageAndColor( HSLIDER_ENABLED_LEFT, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "HSliderEnabledRightEnd" );
-	storeImageAndColor( HSLIDER_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "HSliderEnabledRepeatingCenter" );
-	storeImageAndColor( HSLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "HSliderEnabledSmallRepeatingCenter" );
-	storeImageAndColor( HSLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("HSliderEnabledLeftEnd");
+	storeImageAndColor(HSLIDER_ENABLED_LEFT, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("HSliderEnabledRightEnd");
+	storeImageAndColor(HSLIDER_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("HSliderEnabledRepeatingCenter");
+	storeImageAndColor(HSLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("HSliderEnabledSmallRepeatingCenter");
+	storeImageAndColor(HSLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "HSliderDisabledLeftEnd" );
-	storeImageAndColor( HSLIDER_DISABLED_LEFT, image, gray, darkGray );
-	image = TheMappedImageCollection->findImageByName( "HSliderDisabledRightEnd" );
-	storeImageAndColor( HSLIDER_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "HSliderDisabledRepeatingCenter" );
-	storeImageAndColor( HSLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "HSliderDisabledSmallRepeatingCenter" );
-	storeImageAndColor( HSLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("HSliderDisabledLeftEnd");
+	storeImageAndColor(HSLIDER_DISABLED_LEFT, image, gray, darkGray);
+	image = TheMappedImageCollection->findImageByName("HSliderDisabledRightEnd");
+	storeImageAndColor(HSLIDER_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("HSliderDisabledRepeatingCenter");
+	storeImageAndColor(HSLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("HSliderDisabledSmallRepeatingCenter");
+	storeImageAndColor(HSLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "HSliderHiliteLeftEnd" );
-	storeImageAndColor( HSLIDER_HILITE_LEFT, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "HSliderHiliteRightEnd" );
-	storeImageAndColor( HSLIDER_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "HSliderHiliteRepeatingCenter" );
-	storeImageAndColor( HSLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "HSliderHiliteSmallRepeatingCenter" );
-	storeImageAndColor( HSLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("HSliderHiliteLeftEnd");
+	storeImageAndColor(HSLIDER_HILITE_LEFT, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("HSliderHiliteRightEnd");
+	storeImageAndColor(HSLIDER_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("HSliderHiliteRepeatingCenter");
+	storeImageAndColor(HSLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("HSliderHiliteSmallRepeatingCenter");
+	storeImageAndColor(HSLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "HSliderThumbEnabled" );
-	storeImageAndColor( HSLIDER_THUMB_ENABLED, image, lightRed, red );
-	image = TheMappedImageCollection->findImageByName( "HSliderThumbEnabledSelected" );
-	storeImageAndColor( HSLIDER_THUMB_ENABLED_PUSHED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "HSliderThumbDisabled" );
-	storeImageAndColor( HSLIDER_THUMB_DISABLED, image, darkGray, gray );
-	image = TheMappedImageCollection->findImageByName( "HSliderThumbDisabledSelected" );
-	storeImageAndColor( HSLIDER_THUMB_DISABLED_PUSHED, image, black, darkGray );
-	image = TheMappedImageCollection->findImageByName( "HSliderThumbHilite" );
-	storeImageAndColor( HSLIDER_THUMB_HILITE, image, green, lightGreen );
-	image = TheMappedImageCollection->findImageByName( "HSliderThumbHiliteSelected" );
-	storeImageAndColor( HSLIDER_THUMB_HILITE_PUSHED, image, blue, lightBlue );
+	image = TheMappedImageCollection->findImageByName("HSliderThumbEnabled");
+	storeImageAndColor(HSLIDER_THUMB_ENABLED, image, lightRed, red);
+	image = TheMappedImageCollection->findImageByName("HSliderThumbEnabledSelected");
+	storeImageAndColor(HSLIDER_THUMB_ENABLED_PUSHED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("HSliderThumbDisabled");
+	storeImageAndColor(HSLIDER_THUMB_DISABLED, image, darkGray, gray);
+	image = TheMappedImageCollection->findImageByName("HSliderThumbDisabledSelected");
+	storeImageAndColor(HSLIDER_THUMB_DISABLED_PUSHED, image, black, darkGray);
+	image = TheMappedImageCollection->findImageByName("HSliderThumbHilite");
+	storeImageAndColor(HSLIDER_THUMB_HILITE, image, green, lightGreen);
+	image = TheMappedImageCollection->findImageByName("HSliderThumbHiliteSelected");
+	storeImageAndColor(HSLIDER_THUMB_HILITE_PUSHED, image, blue, lightBlue);
 
 	// vert slider
-	image = TheMappedImageCollection->findImageByName( "VSliderEnabledTopEnd" );
-	storeImageAndColor( VSLIDER_ENABLED_TOP, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderEnabledBottomEnd" );
-	storeImageAndColor( VSLIDER_ENABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderEnabledRepeatingCenter" );
-	storeImageAndColor( VSLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderEnabledSmallRepeatingCenter" );
-	storeImageAndColor( VSLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderEnabledTopEnd");
+	storeImageAndColor(VSLIDER_ENABLED_TOP, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderEnabledBottomEnd");
+	storeImageAndColor(VSLIDER_ENABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderEnabledRepeatingCenter");
+	storeImageAndColor(VSLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderEnabledSmallRepeatingCenter");
+	storeImageAndColor(VSLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderDisabledTopEnd" );
-	storeImageAndColor( VSLIDER_DISABLED_TOP, image, gray, darkGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderDisabledBottomEnd" );
-	storeImageAndColor( VSLIDER_DISABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderDisabledRepeatingCenter" );
-	storeImageAndColor( VSLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderDisabledSmallRepeatingCenter" );
-	storeImageAndColor( VSLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderDisabledTopEnd");
+	storeImageAndColor(VSLIDER_DISABLED_TOP, image, gray, darkGray);
+	image = TheMappedImageCollection->findImageByName("VSliderDisabledBottomEnd");
+	storeImageAndColor(VSLIDER_DISABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderDisabledRepeatingCenter");
+	storeImageAndColor(VSLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderDisabledSmallRepeatingCenter");
+	storeImageAndColor(VSLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderHiliteTopEnd" );
-	storeImageAndColor( VSLIDER_HILITE_TOP, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderHiliteBottomEnd" );
-	storeImageAndColor( VSLIDER_HILITE_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderHiliteRepeatingCenter" );
-	storeImageAndColor( VSLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderHiliteSmallRepeatingCenter" );
-	storeImageAndColor( VSLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderHiliteTopEnd");
+	storeImageAndColor(VSLIDER_HILITE_TOP, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderHiliteBottomEnd");
+	storeImageAndColor(VSLIDER_HILITE_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderHiliteRepeatingCenter");
+	storeImageAndColor(VSLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderHiliteSmallRepeatingCenter");
+	storeImageAndColor(VSLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-
-	image = TheMappedImageCollection->findImageByName( "VSliderThumbEnabled" );
-	storeImageAndColor( VSLIDER_THUMB_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderThumbEnabledSelected" );
-	storeImageAndColor( VSLIDER_THUMB_ENABLED_PUSHED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderThumbDisabled" );
-	storeImageAndColor( VSLIDER_THUMB_DISABLED, image, darkGray, gray );
-	image = TheMappedImageCollection->findImageByName( "VSliderThumbDisabledSelected" );
-	storeImageAndColor( VSLIDER_THUMB_DISABLED_PUSHED, image, black, darkGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderThumbHilite" );
-	storeImageAndColor( VSLIDER_THUMB_HILITE, image, green, lightGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderThumbHiliteSelected" );
-	storeImageAndColor( VSLIDER_THUMB_HILITE_PUSHED, image, blue, lightBlue );
+	image = TheMappedImageCollection->findImageByName("VSliderThumbEnabled");
+	storeImageAndColor(VSLIDER_THUMB_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderThumbEnabledSelected");
+	storeImageAndColor(VSLIDER_THUMB_ENABLED_PUSHED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderThumbDisabled");
+	storeImageAndColor(VSLIDER_THUMB_DISABLED, image, darkGray, gray);
+	image = TheMappedImageCollection->findImageByName("VSliderThumbDisabledSelected");
+	storeImageAndColor(VSLIDER_THUMB_DISABLED_PUSHED, image, black, darkGray);
+	image = TheMappedImageCollection->findImageByName("VSliderThumbHilite");
+	storeImageAndColor(VSLIDER_THUMB_HILITE, image, green, lightGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderThumbHiliteSelected");
+	storeImageAndColor(VSLIDER_THUMB_HILITE_PUSHED, image, blue, lightBlue);
 
 	// listbox
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabled" );
-	storeImageAndColor( LISTBOX_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemLeftEnd" );
-	storeImageAndColor( LISTBOX_ENABLED_SELECTED_ITEM_LEFT, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemRightEnd" );
-	storeImageAndColor( LISTBOX_ENABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemRepeatingCenter" );
-	storeImageAndColor( LISTBOX_ENABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabled" );
-	storeImageAndColor( LISTBOX_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemLeftEnd" );
-	storeImageAndColor( LISTBOX_DISABLED_SELECTED_ITEM_LEFT, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemRightEnd" );
-	storeImageAndColor( LISTBOX_DISABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemRepeatingCenter" );
-	storeImageAndColor( LISTBOX_DISABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHilite" );
-	storeImageAndColor( LISTBOX_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemLeftEnd" );
-	storeImageAndColor( LISTBOX_HILITE_SELECTED_ITEM_LEFT, image, white, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemRightEnd" );
-	storeImageAndColor( LISTBOX_HILITE_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemRepeatingCenter" );
-	storeImageAndColor( LISTBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabled");
+	storeImageAndColor(LISTBOX_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemLeftEnd");
+	storeImageAndColor(LISTBOX_ENABLED_SELECTED_ITEM_LEFT, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemRightEnd");
+	storeImageAndColor(LISTBOX_ENABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemRepeatingCenter");
+	storeImageAndColor(LISTBOX_ENABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabled");
+	storeImageAndColor(LISTBOX_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemLeftEnd");
+	storeImageAndColor(LISTBOX_DISABLED_SELECTED_ITEM_LEFT, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemRightEnd");
+	storeImageAndColor(LISTBOX_DISABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemRepeatingCenter");
+	storeImageAndColor(LISTBOX_DISABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHilite");
+	storeImageAndColor(LISTBOX_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemLeftEnd");
+	storeImageAndColor(LISTBOX_HILITE_SELECTED_ITEM_LEFT, image, white, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemRightEnd");
+	storeImageAndColor(LISTBOX_HILITE_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemRepeatingCenter");
+	storeImageAndColor(LISTBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonEnabled" );
-	storeImageAndColor( LISTBOX_UP_BUTTON_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonEnabled" );
-	storeImageAndColor( LISTBOX_UP_BUTTON_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonDisabled" );
-	storeImageAndColor( LISTBOX_UP_BUTTON_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonDisabled" );
-	storeImageAndColor( LISTBOX_UP_BUTTON_DISABLED_PUSHED, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonHilite" );
-	storeImageAndColor( LISTBOX_UP_BUTTON_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonHiliteSelected" );
-	storeImageAndColor( LISTBOX_UP_BUTTON_HILITE_PUSHED, image, white, darkGreen );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonEnabled");
+	storeImageAndColor(LISTBOX_UP_BUTTON_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonEnabled");
+	storeImageAndColor(LISTBOX_UP_BUTTON_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonDisabled");
+	storeImageAndColor(LISTBOX_UP_BUTTON_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonDisabled");
+	storeImageAndColor(LISTBOX_UP_BUTTON_DISABLED_PUSHED, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonHilite");
+	storeImageAndColor(LISTBOX_UP_BUTTON_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonHiliteSelected");
+	storeImageAndColor(LISTBOX_UP_BUTTON_HILITE_PUSHED, image, white, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonEnabled" );
-	storeImageAndColor( LISTBOX_DOWN_BUTTON_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonEnabled" );
-	storeImageAndColor( LISTBOX_DOWN_BUTTON_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonDisabled" );
-	storeImageAndColor( LISTBOX_DOWN_BUTTON_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonDisabled" );
-	storeImageAndColor( LISTBOX_DOWN_BUTTON_DISABLED_PUSHED, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonHilite" );
-	storeImageAndColor( LISTBOX_DOWN_BUTTON_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonHiliteSelected" );
-	storeImageAndColor( LISTBOX_DOWN_BUTTON_HILITE_PUSHED, image, white, darkGreen );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonEnabled");
+	storeImageAndColor(LISTBOX_DOWN_BUTTON_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonEnabled");
+	storeImageAndColor(LISTBOX_DOWN_BUTTON_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonDisabled");
+	storeImageAndColor(LISTBOX_DOWN_BUTTON_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonDisabled");
+	storeImageAndColor(LISTBOX_DOWN_BUTTON_DISABLED_PUSHED, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonHilite");
+	storeImageAndColor(LISTBOX_DOWN_BUTTON_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonHiliteSelected");
+	storeImageAndColor(LISTBOX_DOWN_BUTTON_HILITE_PUSHED, image, white, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledTopEnd" );
-	storeImageAndColor( LISTBOX_SLIDER_ENABLED_TOP, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledBottomEnd" );
-	storeImageAndColor( LISTBOX_SLIDER_ENABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledRepeatingCenter" );
-	storeImageAndColor( LISTBOX_SLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledSmallRepeatingCenter" );
-	storeImageAndColor( LISTBOX_SLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledTopEnd");
+	storeImageAndColor(LISTBOX_SLIDER_ENABLED_TOP, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledBottomEnd");
+	storeImageAndColor(LISTBOX_SLIDER_ENABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledRepeatingCenter");
+	storeImageAndColor(LISTBOX_SLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledSmallRepeatingCenter");
+	storeImageAndColor(LISTBOX_SLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledTopEnd" );
-	storeImageAndColor( LISTBOX_SLIDER_DISABLED_TOP, image, gray, darkGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledBottomEnd" );
-	storeImageAndColor( LISTBOX_SLIDER_DISABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledRepeatingCenter" );
-	storeImageAndColor( LISTBOX_SLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledSmallRepeatingCenter" );
-	storeImageAndColor( LISTBOX_SLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledTopEnd");
+	storeImageAndColor(LISTBOX_SLIDER_DISABLED_TOP, image, gray, darkGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledBottomEnd");
+	storeImageAndColor(LISTBOX_SLIDER_DISABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledRepeatingCenter");
+	storeImageAndColor(LISTBOX_SLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledSmallRepeatingCenter");
+	storeImageAndColor(LISTBOX_SLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteTopEnd" );
-	storeImageAndColor( LISTBOX_SLIDER_HILITE_TOP, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteBottomEnd" );
-	storeImageAndColor( LISTBOX_SLIDER_HILITE_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteRepeatingCenter" );
-	storeImageAndColor( LISTBOX_SLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteSmallRepeatingCenter" );
-	storeImageAndColor( LISTBOX_SLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteTopEnd");
+	storeImageAndColor(LISTBOX_SLIDER_HILITE_TOP, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteBottomEnd");
+	storeImageAndColor(LISTBOX_SLIDER_HILITE_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteRepeatingCenter");
+	storeImageAndColor(LISTBOX_SLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteSmallRepeatingCenter");
+	storeImageAndColor(LISTBOX_SLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbEnabled" );
-	storeImageAndColor( LISTBOX_SLIDER_THUMB_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbEnabled" );
-	storeImageAndColor( LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbDisabled" );
-	storeImageAndColor( LISTBOX_SLIDER_THUMB_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbDisabled" );
-	storeImageAndColor( LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbHilite" );
-	storeImageAndColor( LISTBOX_SLIDER_THUMB_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbHiliteSelected" );
-	storeImageAndColor( LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, white, darkGreen );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbEnabled");
+	storeImageAndColor(LISTBOX_SLIDER_THUMB_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbEnabled");
+	storeImageAndColor(LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbDisabled");
+	storeImageAndColor(LISTBOX_SLIDER_THUMB_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbDisabled");
+	storeImageAndColor(LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbHilite");
+	storeImageAndColor(LISTBOX_SLIDER_THUMB_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbHiliteSelected");
+	storeImageAndColor(LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, white, darkGreen);
 
 	// Combo Box
 	//---------------------------------------------------------------------------
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabled" );
-	storeImageAndColor( COMBOBOX_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemLeftEnd" );
-	storeImageAndColor( COMBOBOX_ENABLED_SELECTED_ITEM_LEFT, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemRightEnd" );
-	storeImageAndColor( COMBOBOX_ENABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_ENABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabled" );
-	storeImageAndColor( COMBOBOX_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemLeftEnd" );
-	storeImageAndColor( COMBOBOX_DISABLED_SELECTED_ITEM_LEFT, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemRightEnd" );
-	storeImageAndColor( COMBOBOX_DISABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_DISABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHilite" );
-	storeImageAndColor( COMBOBOX_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemLeftEnd" );
-	storeImageAndColor( COMBOBOX_HILITE_SELECTED_ITEM_LEFT, image, white, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemRightEnd" );
-	storeImageAndColor( COMBOBOX_HILITE_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabled");
+	storeImageAndColor(COMBOBOX_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemLeftEnd");
+	storeImageAndColor(COMBOBOX_ENABLED_SELECTED_ITEM_LEFT, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemRightEnd");
+	storeImageAndColor(COMBOBOX_ENABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemRepeatingCenter");
+	storeImageAndColor(COMBOBOX_ENABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabled");
+	storeImageAndColor(COMBOBOX_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemLeftEnd");
+	storeImageAndColor(COMBOBOX_DISABLED_SELECTED_ITEM_LEFT, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemRightEnd");
+	storeImageAndColor(COMBOBOX_DISABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemRepeatingCenter");
+	storeImageAndColor(COMBOBOX_DISABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHilite");
+	storeImageAndColor(COMBOBOX_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemLeftEnd");
+	storeImageAndColor(COMBOBOX_HILITE_SELECTED_ITEM_LEFT, image, white, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemRightEnd");
+	storeImageAndColor(COMBOBOX_HILITE_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemRepeatingCenter");
+	storeImageAndColor(COMBOBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonEnabled" );
-	storeImageAndColor( COMBOBOX_DROP_DOWN_BUTTON_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonEnabled" );
-	storeImageAndColor( COMBOBOX_DROP_DOWN_BUTTON_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonDisabled" );
-	storeImageAndColor( COMBOBOX_DROP_DOWN_BUTTON_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonDisabled" );
-	storeImageAndColor( COMBOBOX_DROP_DOWN_BUTTON_DISABLED_PUSHED, image, lightGray, gray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonHilite" );
-	storeImageAndColor( COMBOBOX_DROP_DOWN_BUTTON_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonHilite" );
-	storeImageAndColor( COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED, image, yellow, white );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonEnabled");
+	storeImageAndColor(COMBOBOX_DROP_DOWN_BUTTON_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonEnabled");
+	storeImageAndColor(COMBOBOX_DROP_DOWN_BUTTON_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonDisabled");
+	storeImageAndColor(COMBOBOX_DROP_DOWN_BUTTON_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonDisabled");
+	storeImageAndColor(COMBOBOX_DROP_DOWN_BUTTON_DISABLED_PUSHED, image, lightGray, gray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonHilite");
+	storeImageAndColor(COMBOBOX_DROP_DOWN_BUTTON_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonHilite");
+	storeImageAndColor(COMBOBOX_DROP_DOWN_BUTTON_HILITE_PUSHED, image, yellow, white);
 
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledLeftEnd" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_ENABLED_LEFT, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledRightEnd" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledLeftEnd" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_DISABLED_LEFT, image, gray, black );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledRightEnd" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteLeftEnd" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_LEFT, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteRightEnd" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledLeftEnd");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_ENABLED_LEFT, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledRightEnd");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledRepeatingCenter");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledLeftEnd");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_DISABLED_LEFT, image, gray, black);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledRightEnd");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledRepeatingCenter");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteLeftEnd");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_HILITE_LEFT, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteRightEnd");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteRepeatingCenter");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_EDIT_BOX_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemLeftEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemRightEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxEnabledSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemLeftEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_LEFT, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemRightEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxDisabledSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHilite" );
-	storeImageAndColor( COMBOBOX_LISTBOX_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemLeftEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_LEFT, image, white, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemRightEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ListBoxHiliteSelectedItemSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemLeftEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_LEFT, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemRightEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxEnabledSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_ENABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemLeftEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_LEFT, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemRightEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxDisabledSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_DISABLED_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHilite");
+	storeImageAndColor(COMBOBOX_LISTBOX_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemLeftEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_LEFT, image, white, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemRightEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ListBoxHiliteSelectedItemSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_HILITE_SELECTED_ITEM_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_DISABLED_PUSHED, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonHilite" );
-	storeImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeUpButtonHiliteSelected" );
-	storeImageAndColor( COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED, image, white, darkGreen );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_UP_BUTTON_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_UP_BUTTON_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_UP_BUTTON_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_UP_BUTTON_DISABLED_PUSHED, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonHilite");
+	storeImageAndColor(COMBOBOX_LISTBOX_UP_BUTTON_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeUpButtonHiliteSelected");
+	storeImageAndColor(COMBOBOX_LISTBOX_UP_BUTTON_HILITE_PUSHED, image, white, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED_PUSHED, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonHilite" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDownButtonHiliteSelected" );
-	storeImageAndColor( COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED, image, white, darkGreen );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_DOWN_BUTTON_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_DOWN_BUTTON_DISABLED_PUSHED, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonHilite");
+	storeImageAndColor(COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDownButtonHiliteSelected");
+	storeImageAndColor(COMBOBOX_LISTBOX_DOWN_BUTTON_HILITE_PUSHED, image, white, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledTopEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_ENABLED_TOP, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledBottomEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_ENABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeEnabledSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledTopEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_ENABLED_TOP, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledBottomEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_ENABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeEnabledSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledTopEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_DISABLED_TOP, image, gray, darkGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledBottomEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_DISABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeDisabledSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledTopEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_DISABLED_TOP, image, gray, darkGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledBottomEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_DISABLED_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeDisabledSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteTopEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_HILITE_TOP, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteBottomEnd" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeHiliteSmallRepeatingCenter" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteTopEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_HILITE_TOP, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteBottomEnd");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_HILITE_BOTTOM, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeHiliteSmallRepeatingCenter");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbEnabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbDisabled" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbHilite" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "VSliderLargeThumbHiliteSelected" );
-	storeImageAndColor( COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, white, darkGreen );
-
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbEnabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_THUMB_ENABLED_PUSHED, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbDisabled");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_THUMB_DISABLED_PUSHED, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbHilite");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("VSliderLargeThumbHiliteSelected");
+	storeImageAndColor(COMBOBOX_LISTBOX_SLIDER_THUMB_HILITE_PUSHED, image, white, darkGreen);
 
 	// progress bar
 	//---------------------------------------------------------------------------
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledLeftEnd" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_LEFT, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledRightEnd" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledSmallRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledLeftEnd");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_LEFT, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledRightEnd");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledSmallRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledBarLeftEnd" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_BAR_LEFT, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledBarRightEnd" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_BAR_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledBarRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_BAR_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarEnabledBarSmallRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_ENABLED_BAR_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-
-	//---------------------------------------------------------------------------
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledLeftEnd" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_LEFT, image, darkGray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledRightEnd" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledSmallRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledBarLeftEnd" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_BAR_LEFT, image, lightGray, white );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledBarRightEnd" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_BAR_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledBarRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_BAR_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarDisabledBarSmallRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_DISABLED_BAR_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledBarLeftEnd");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_BAR_LEFT, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledBarRightEnd");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_BAR_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledBarRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_BAR_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarEnabledBarSmallRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_ENABLED_BAR_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
 	//---------------------------------------------------------------------------
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteLeftEnd" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_LEFT, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteRightEnd" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteSmallRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledLeftEnd");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_LEFT, image, darkGray, lightGray);
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledRightEnd");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledSmallRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteBarLeftEnd" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_BAR_LEFT, image, yellow, white );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteBarRightEnd" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_BAR_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteBarRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_BAR_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "ProgressBarHiliteBarSmallRepeatingCenter" );
-	storeImageAndColor( PROGRESS_BAR_HILITE_BAR_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledBarLeftEnd");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_BAR_LEFT, image, lightGray, white);
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledBarRightEnd");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_BAR_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledBarRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_BAR_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarDisabledBarSmallRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_DISABLED_BAR_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+
+	//---------------------------------------------------------------------------
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteLeftEnd");
+	storeImageAndColor(PROGRESS_BAR_HILITE_LEFT, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteRightEnd");
+	storeImageAndColor(PROGRESS_BAR_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteSmallRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteBarLeftEnd");
+	storeImageAndColor(PROGRESS_BAR_HILITE_BAR_LEFT, image, yellow, white);
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteBarRightEnd");
+	storeImageAndColor(PROGRESS_BAR_HILITE_BAR_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteBarRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_HILITE_BAR_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("ProgressBarHiliteBarSmallRepeatingCenter");
+	storeImageAndColor(PROGRESS_BAR_HILITE_BAR_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
 	// static text
 	//---------------------------------------------------------------------------
-	image = TheMappedImageCollection->findImageByName( "StaticTextEnabled" );
-	storeImageAndColor( STATIC_TEXT_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "StaticTextDisabled" );
-	storeImageAndColor( STATIC_TEXT_DISABLED, image, darkGray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "StaticTextHilite" );
-	storeImageAndColor( STATIC_TEXT_HILITE, image, darkGreen, lightGreen );
+	image = TheMappedImageCollection->findImageByName("StaticTextEnabled");
+	storeImageAndColor(STATIC_TEXT_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("StaticTextDisabled");
+	storeImageAndColor(STATIC_TEXT_DISABLED, image, darkGray, lightGray);
+	image = TheMappedImageCollection->findImageByName("StaticTextHilite");
+	storeImageAndColor(STATIC_TEXT_HILITE, image, darkGreen, lightGreen);
 
 	// text entry
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledLeftEnd" );
-	storeImageAndColor( TEXT_ENTRY_ENABLED_LEFT, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledRightEnd" );
-	storeImageAndColor( TEXT_ENTRY_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledRepeatingCenter" );
-	storeImageAndColor( TEXT_ENTRY_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryEnabledSmallRepeatingCenter" );
-	storeImageAndColor( TEXT_ENTRY_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledLeftEnd");
+	storeImageAndColor(TEXT_ENTRY_ENABLED_LEFT, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledRightEnd");
+	storeImageAndColor(TEXT_ENTRY_ENABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledRepeatingCenter");
+	storeImageAndColor(TEXT_ENTRY_ENABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryEnabledSmallRepeatingCenter");
+	storeImageAndColor(TEXT_ENTRY_ENABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledLeftEnd" );
-	storeImageAndColor( TEXT_ENTRY_DISABLED_LEFT, image, gray, black );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledRightEnd" );
-	storeImageAndColor( TEXT_ENTRY_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledRepeatingCenter" );
-	storeImageAndColor( TEXT_ENTRY_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryDisabledSmallRepeatingCenter" );
-	storeImageAndColor( TEXT_ENTRY_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledLeftEnd");
+	storeImageAndColor(TEXT_ENTRY_DISABLED_LEFT, image, gray, black);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledRightEnd");
+	storeImageAndColor(TEXT_ENTRY_DISABLED_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledRepeatingCenter");
+	storeImageAndColor(TEXT_ENTRY_DISABLED_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryDisabledSmallRepeatingCenter");
+	storeImageAndColor(TEXT_ENTRY_DISABLED_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteLeftEnd" );
-	storeImageAndColor( TEXT_ENTRY_HILITE_LEFT, image, green, darkGreen );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteRightEnd" );
-	storeImageAndColor( TEXT_ENTRY_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteRepeatingCenter" );
-	storeImageAndColor( TEXT_ENTRY_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
-	image = TheMappedImageCollection->findImageByName( "TextEntryHiliteSmallRepeatingCenter" );
-	storeImageAndColor( TEXT_ENTRY_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED );
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteLeftEnd");
+	storeImageAndColor(TEXT_ENTRY_HILITE_LEFT, image, green, darkGreen);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteRightEnd");
+	storeImageAndColor(TEXT_ENTRY_HILITE_RIGHT, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteRepeatingCenter");
+	storeImageAndColor(TEXT_ENTRY_HILITE_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
+	image = TheMappedImageCollection->findImageByName("TextEntryHiliteSmallRepeatingCenter");
+	storeImageAndColor(TEXT_ENTRY_HILITE_SMALL_CENTER, image, WIN_COLOR_UNDEFINED, WIN_COLOR_UNDEFINED);
 
 	// Tab Control
-	image = TheMappedImageCollection->findImageByName( "TabControlZeroEnabled" );
-	storeImageAndColor( TC_TAB_0_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlZeroDisabled" );
-	storeImageAndColor( TC_TAB_0_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlZeroHilite" );
-	storeImageAndColor( TC_TAB_0_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlZeroEnabled");
+	storeImageAndColor(TC_TAB_0_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlZeroDisabled");
+	storeImageAndColor(TC_TAB_0_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlZeroHilite");
+	storeImageAndColor(TC_TAB_0_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlOneEnabled" );
-	storeImageAndColor( TC_TAB_1_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlOneDisabled" );
-	storeImageAndColor( TC_TAB_1_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlOneHilite" );
-	storeImageAndColor( TC_TAB_1_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlOneEnabled");
+	storeImageAndColor(TC_TAB_1_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlOneDisabled");
+	storeImageAndColor(TC_TAB_1_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlOneHilite");
+	storeImageAndColor(TC_TAB_1_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlTwoEnabled" );
-	storeImageAndColor( TC_TAB_2_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlTwoDisabled" );
-	storeImageAndColor( TC_TAB_2_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlTwoHilite" );
-	storeImageAndColor( TC_TAB_2_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlTwoEnabled");
+	storeImageAndColor(TC_TAB_2_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlTwoDisabled");
+	storeImageAndColor(TC_TAB_2_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlTwoHilite");
+	storeImageAndColor(TC_TAB_2_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlThreeEnabled" );
-	storeImageAndColor( TC_TAB_3_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlThreeDisabled" );
-	storeImageAndColor( TC_TAB_3_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlThreeHilite" );
-	storeImageAndColor( TC_TAB_3_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlThreeEnabled");
+	storeImageAndColor(TC_TAB_3_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlThreeDisabled");
+	storeImageAndColor(TC_TAB_3_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlThreeHilite");
+	storeImageAndColor(TC_TAB_3_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlFourEnabled" );
-	storeImageAndColor( TC_TAB_4_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlFourDisabled" );
-	storeImageAndColor( TC_TAB_4_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlFourHilite" );
-	storeImageAndColor( TC_TAB_4_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlFourEnabled");
+	storeImageAndColor(TC_TAB_4_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlFourDisabled");
+	storeImageAndColor(TC_TAB_4_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlFourHilite");
+	storeImageAndColor(TC_TAB_4_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlFiveEnabled" );
-	storeImageAndColor( TC_TAB_5_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlFiveDisabled" );
-	storeImageAndColor( TC_TAB_5_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlFiveHilite" );
-	storeImageAndColor( TC_TAB_5_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlFiveEnabled");
+	storeImageAndColor(TC_TAB_5_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlFiveDisabled");
+	storeImageAndColor(TC_TAB_5_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlFiveHilite");
+	storeImageAndColor(TC_TAB_5_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlSixEnabled" );
-	storeImageAndColor( TC_TAB_6_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlSixDisabled" );
-	storeImageAndColor( TC_TAB_6_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlSixHilite" );
-	storeImageAndColor( TC_TAB_6_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlSixEnabled");
+	storeImageAndColor(TC_TAB_6_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlSixDisabled");
+	storeImageAndColor(TC_TAB_6_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlSixHilite");
+	storeImageAndColor(TC_TAB_6_HILITE, image, green, darkGreen);
 
-	image = TheMappedImageCollection->findImageByName( "TabControlSevenEnabled" );
-	storeImageAndColor( TC_TAB_7_ENABLED, image, red, lightRed );
-	image = TheMappedImageCollection->findImageByName( "TabControlSevenDisabled" );
-	storeImageAndColor( TC_TAB_7_DISABLED, image, gray, lightGray );
-	image = TheMappedImageCollection->findImageByName( "TabControlSevenHilite" );
-	storeImageAndColor( TC_TAB_7_HILITE, image, green, darkGreen );
+	image = TheMappedImageCollection->findImageByName("TabControlSevenEnabled");
+	storeImageAndColor(TC_TAB_7_ENABLED, image, red, lightRed);
+	image = TheMappedImageCollection->findImageByName("TabControlSevenDisabled");
+	storeImageAndColor(TC_TAB_7_DISABLED, image, gray, lightGray);
+	image = TheMappedImageCollection->findImageByName("TabControlSevenHilite");
+	storeImageAndColor(TC_TAB_7_HILITE, image, green, darkGreen);
 
-	storeImageAndColor( TAB_CONTROL_ENABLED, nullptr, black, white );
-	storeImageAndColor( TAB_CONTROL_DISABLED, nullptr, darkGray, white );
-	storeImageAndColor( TAB_CONTROL_HILITE, nullptr, black, white );
+	storeImageAndColor(TAB_CONTROL_ENABLED, nullptr, black, white);
+	storeImageAndColor(TAB_CONTROL_DISABLED, nullptr, darkGray, white);
+	storeImageAndColor(TAB_CONTROL_HILITE, nullptr, black, white);
 
 	// generic
-	storeImageAndColor( GENERIC_ENABLED, nullptr, darkBlue, white );
-	storeImageAndColor( GENERIC_DISABLED, nullptr, darkGray, white );
-	storeImageAndColor( GENERIC_HILITE, nullptr, lightBlue, white );
+	storeImageAndColor(GENERIC_ENABLED, nullptr, darkBlue, white);
+	storeImageAndColor(GENERIC_DISABLED, nullptr, darkGray, white);
+	storeImageAndColor(GENERIC_HILITE, nullptr, lightBlue, white);
 
 	// default text colors
 	m_enabledText.color = white;
@@ -2147,7 +2083,7 @@ void LayoutScheme::init()
 	m_hiliteText.borderColor = darkBlue;
 
 	// default font
-	m_font = TheWindowManager->winFindFont( "Times New Roman", 14, FALSE );
+	m_font = TheWindowManager->winFindFont("Times New Roman", 14, FALSE);
 }
 
 // LayoutScheme::openDialog ===================================================
@@ -2155,294 +2091,274 @@ void LayoutScheme::init()
 //=============================================================================
 void LayoutScheme::openDialog()
 {
-
 	// save the scheme instance we're going to open the dialog on
 	theScheme = this;
 
 	// create the dialog box
-	DialogBox( TheEditor->getInstance(), (LPCTSTR)LAYOUT_SCHEME_DIALOG,
-						 TheEditor->getWindowHandle(), (DLGPROC)layoutSchemeCallback );
+	DialogBox(TheEditor->getInstance(), (LPCTSTR)LAYOUT_SCHEME_DIALOG,
+	          TheEditor->getWindowHandle(), (DLGPROC)layoutSchemeCallback);
 
 	theScheme = nullptr;
-
 }
 
 // LayoutScheme::findEntry ====================================================
 /** Find the entry for the state */
 //=============================================================================
-ImageAndColorInfo *LayoutScheme::findEntry( StateIdentifier id )
+ImageAndColorInfo* LayoutScheme::findEntry(StateIdentifier id)
 {
-
 	// sanity
-	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
+	if (id < 0 || id >= NUM_STATE_IDENTIFIERS)
 	{
-
-		DEBUG_LOG(( "Illegal state to to layout 'findEntry' '%d'", id ));
-		assert( 0 );
+		DEBUG_LOG(("Illegal state to to layout 'findEntry' '%d'", id));
+		assert(0);
 		return nullptr;
-
 	}
 
 	// search the state table
-	for( Int i = 0; i < NUM_STATE_IDENTIFIERS; i++ )
+	for (Int i = 0; i < NUM_STATE_IDENTIFIERS; i++)
 	{
-
-		if( m_imageAndColorTable[ i ].stateID == id )
-			return &m_imageAndColorTable[ i ];
-
+		if (m_imageAndColorTable[i].stateID == id)
+		{
+			return &m_imageAndColorTable[i];
+		}
 	}
 
-	return nullptr;  // not found
-
+	return nullptr;    // not found
 }
 
 // LayoutScheme::getImageAndColor =============================================
 /** Get the color and color info for the state */
 //=============================================================================
-ImageAndColorInfo *LayoutScheme::getImageAndColor( StateIdentifier id )
+ImageAndColorInfo* LayoutScheme::getImageAndColor(StateIdentifier id)
 {
-
 	// sanity
-	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
+	if (id < 0 || id >= NUM_STATE_IDENTIFIERS)
 	{
-
-		DEBUG_LOG(( "getImageAndColor: Illegal state '%d'", id ));
-		assert( 0 );
+		DEBUG_LOG(("getImageAndColor: Illegal state '%d'", id));
+		assert(0);
 		return nullptr;
-
 	}
 
 	// return the entry for the state
-	return findEntry( id );
-
+	return findEntry(id);
 }
 
 // LayoutScheme::storeImageAndColor ===========================================
 /** Store the image and colors of the specific state in our own data array */
 //=============================================================================
-void LayoutScheme::storeImageAndColor( StateIdentifier id, const Image *image,
-																			 Color color, Color borderColor )
+void LayoutScheme::storeImageAndColor(StateIdentifier id, const Image* image,
+                                      Color color, Color borderColor)
 {
-
 	// sanity
-	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
+	if (id < 0 || id >= NUM_STATE_IDENTIFIERS)
 	{
-
-		DEBUG_LOG(( "Illegal state identifier in layout scheme store image and color '%d'", id ));
-		assert( 0 );
+		DEBUG_LOG(("Illegal state identifier in layout scheme store image and color '%d'", id));
+		assert(0);
 		return;
-
 	}
 
 	// store the info
-	ImageAndColorInfo *entry = findEntry( id );
-	if( entry )
+	ImageAndColorInfo* entry = findEntry(id);
+	if (entry)
 	{
-
 		entry->image = image;
 		entry->color = color;
 		entry->borderColor = borderColor;
-
 	}
-
 }
 
 // LayoutScheme::saveScheme ===================================================
 /** Save the scheme to the filename provided */
 //=============================================================================
-Bool LayoutScheme::saveScheme( char *filename )
+Bool LayoutScheme::saveScheme(char* filename)
 {
-	FILE *fp;
+	FILE* fp;
 	UnsignedByte colorR, colorG, colorB, colorA,
-							 bColorR, bColorG, bColorB, bColorA;
+	  bColorR, bColorG, bColorB, bColorA;
 
 	// open the file
-	fp = fopen( filename, "w" );
-	if( fp == nullptr )
+	fp = fopen(filename, "w");
+	if (fp == nullptr)
 	{
-
-		DEBUG_LOG(( "saveScheme: Unable to open file '%s'", filename ));
-		MessageBox( TheEditor->getWindowHandle(),
-								"Unable to open scheme for for saving.  Read only?", "Save Error", MB_OK );
+		DEBUG_LOG(("saveScheme: Unable to open file '%s'", filename));
+		MessageBox(TheEditor->getWindowHandle(),
+		           "Unable to open scheme for for saving.  Read only?", "Save Error", MB_OK);
 		return FALSE;
-
 	}
 
 	// save the filename we're using now
-	setSchemeFilename( filename );
+	setSchemeFilename(filename);
 
 	// write header
-	fprintf( fp, "Window Layout Scheme: Version '%d'\n", SCHEME_VERSION );
+	fprintf(fp, "Window Layout Scheme: Version '%d'\n", SCHEME_VERSION);
 
 	// write default text colors
-	GameGetColorComponents( m_enabledText.color, &colorR, &colorG, &colorB, &colorA );
-	fprintf( fp, "Enabled Text: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA );
-	GameGetColorComponents( m_enabledText.borderColor, &colorR, &colorG, &colorB, &colorA );
-	fprintf( fp, "Enabled Text Border: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA );
+	GameGetColorComponents(m_enabledText.color, &colorR, &colorG, &colorB, &colorA);
+	fprintf(fp, "Enabled Text: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA);
+	GameGetColorComponents(m_enabledText.borderColor, &colorR, &colorG, &colorB, &colorA);
+	fprintf(fp, "Enabled Text Border: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA);
 
-	GameGetColorComponents( m_disabledText.color, &colorR, &colorG, &colorB, &colorA );
-	fprintf( fp, "Disabled Text: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA );
-	GameGetColorComponents( m_disabledText.borderColor, &colorR, &colorG, &colorB, &colorA );
-	fprintf( fp, "Disabled Text Border: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA );
+	GameGetColorComponents(m_disabledText.color, &colorR, &colorG, &colorB, &colorA);
+	fprintf(fp, "Disabled Text: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA);
+	GameGetColorComponents(m_disabledText.borderColor, &colorR, &colorG, &colorB, &colorA);
+	fprintf(fp, "Disabled Text Border: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA);
 
-	GameGetColorComponents( m_hiliteText.color, &colorR, &colorG, &colorB, &colorA );
-	fprintf( fp, "Hilite Text: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA );
-	GameGetColorComponents( m_hiliteText.borderColor, &colorR, &colorG, &colorB, &colorA );
-	fprintf( fp, "Hilite Text Border: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA );
+	GameGetColorComponents(m_hiliteText.color, &colorR, &colorG, &colorB, &colorA);
+	fprintf(fp, "Hilite Text: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA);
+	GameGetColorComponents(m_hiliteText.borderColor, &colorR, &colorG, &colorB, &colorA);
+	fprintf(fp, "Hilite Text Border: (%d,%d,%d,%d)\n", colorR, colorG, colorB, colorA);
 
 	// write default font
-	char fontBuffer[ 256 ];
-	if( m_font )
-		sprintf( fontBuffer, "\"%s\" Size: %d Bold: %d",
-						 m_font->nameString.str(), m_font->pointSize, m_font->bold );
+	char fontBuffer[256];
+	if (m_font)
+	{
+		sprintf(fontBuffer, "\"%s\" Size: %d Bold: %d",
+		        m_font->nameString.str(), m_font->pointSize, m_font->bold);
+	}
 	else
-		sprintf( fontBuffer, "\"None\" Size: 0 Bold: 0" );
-	fprintf( fp, "Default Font: %s\n", fontBuffer );
+	{
+		sprintf(fontBuffer, "\"None\" Size: 0 Bold: 0");
+	}
+	fprintf(fp, "Default Font: %s\n", fontBuffer);
 
 	// write all the data for all the states
-	fprintf( fp, "Number of states: %d\n", NUM_STATE_IDENTIFIERS );
-	ImageAndColorInfo *info;
-	for( Int i = 0; i < NUM_STATE_IDENTIFIERS; i++ )
+	fprintf(fp, "Number of states: %d\n", NUM_STATE_IDENTIFIERS);
+	ImageAndColorInfo* info;
+	for (Int i = 0; i < NUM_STATE_IDENTIFIERS; i++)
 	{
-
 		// get the info
-		info = findEntry( (StateIdentifier)i );
-		assert( info );
+		info = findEntry((StateIdentifier)i);
+		assert(info);
 
 		// get the color data in more RGB friendly output
-		GameGetColorComponents( info->color, &colorR, &colorG,
-														&colorB, &colorA );
-		GameGetColorComponents( info->borderColor, &bColorR, &bColorG,
-														&bColorB, &bColorA );
+		GameGetColorComponents(info->color, &colorR, &colorG,
+		                       &colorB, &colorA);
+		GameGetColorComponents(info->borderColor, &bColorR, &bColorG,
+		                       &bColorB, &bColorA);
 
 		// output it
-		fprintf( fp, "%d: Image: %s Color: (%d,%d,%d,%d) Border: (%d,%d,%d,%d)\n",
-						 i, info->image ? info->image->getName().str() : "NONE", colorR, colorG, colorB, colorA,
-						 bColorR, bColorG, bColorB, bColorA );
-
+		fprintf(fp, "%d: Image: %s Color: (%d,%d,%d,%d) Border: (%d,%d,%d,%d)\n",
+		        i, info->image ? info->image->getName().str() : "NONE", colorR, colorG, colorB, colorA,
+		        bColorR, bColorG, bColorB, bColorA);
 	}
 
 	// close the file
-	fclose( fp );
+	fclose(fp);
 
 	return TRUE;
-
 }
 
 // LayoutScheme::loadScheme ===================================================
 /** Load the layout scheme into this class instance */
 //=============================================================================
-Bool LayoutScheme::loadScheme( char *filename )
+Bool LayoutScheme::loadScheme(char* filename)
 {
-	FILE *fp;
+	FILE* fp;
 	UnsignedByte colorR, colorG, colorB, colorA,
-							 bColorR, bColorG, bColorB, bColorA;
+	  bColorR, bColorG, bColorB, bColorA;
 
 	// open the file
-	fp = fopen( filename, "r" );
-	if( fp == nullptr )
+	fp = fopen(filename, "r");
+	if (fp == nullptr)
+	{
 		return FALSE;
+	}
 
 	// save the filename we're using now
-	setSchemeFilename( filename );
+	setSchemeFilename(filename);
 
 	// write header
 	Int version;
-	if (fscanf( fp, "Window Layout Scheme: Version '%d'\n", &version ) == 1)
+	if (fscanf(fp, "Window Layout Scheme: Version '%d'\n", &version) == 1)
 	{
-		if( version != SCHEME_VERSION )
+		if (version != SCHEME_VERSION)
 		{
-
-			DEBUG_LOG(( "loadScheme: Old layout file version '%d'", version ));
-			MessageBox( TheEditor->getWindowHandle(),
-									"Old layout version, cannot open.", "Old File", MB_OK );
+			DEBUG_LOG(("loadScheme: Old layout file version '%d'", version));
+			MessageBox(TheEditor->getWindowHandle(),
+			           "Old layout version, cannot open.", "Old File", MB_OK);
 			return FALSE;
-
 		}
 	}
 	// default text colors
-	if (fscanf( fp, "Enabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	if (fscanf(fp, "Enabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA) == 4)
 	{
-		m_enabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+		m_enabledText.color = GameMakeColor(colorR, colorG, colorB, colorA);
 	}
-	if (fscanf( fp, "Enabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	if (fscanf(fp, "Enabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA) == 4)
 	{
-		m_enabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+		m_enabledText.borderColor = GameMakeColor(colorR, colorG, colorB, colorA);
 	}
-	if (fscanf( fp, "Disabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	if (fscanf(fp, "Disabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA) == 4)
 	{
-		m_disabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+		m_disabledText.color = GameMakeColor(colorR, colorG, colorB, colorA);
 	}
-	if (fscanf( fp, "Disabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	if (fscanf(fp, "Disabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA) == 4)
 	{
-		m_disabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+		m_disabledText.borderColor = GameMakeColor(colorR, colorG, colorB, colorA);
 	}
-	if (fscanf( fp, "Hilite Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	if (fscanf(fp, "Hilite Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA) == 4)
 	{
-		m_hiliteText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+		m_hiliteText.color = GameMakeColor(colorR, colorG, colorB, colorA);
 	}
-	if (fscanf( fp, "Hilite Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	if (fscanf(fp, "Hilite Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA) == 4)
 	{
-		m_hiliteText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+		m_hiliteText.borderColor = GameMakeColor(colorR, colorG, colorB, colorA);
 	}
 
 	// default font
-	char fontBuffer[ 256 ];
+	char fontBuffer[256];
 	Int size, bold;
-	char c = fgetc( fp );
+	char c = fgetc(fp);
 
 	// skip past the first quote
-	while( c != '\"' )
-		c = fgetc( fp );
-	c = fgetc( fp );  // the quote itself
+	while (c != '\"')
+	{
+		c = fgetc(fp);
+	}
+	c = fgetc(fp);    // the quote itself
 
 	// copy the name till the next quote is read
 	Int index = 0;
-	while( c != '\"' )
+	while (c != '\"')
 	{
-
-		fontBuffer[ index++ ] = c;
-		c = fgetc( fp );
-
+		fontBuffer[index++] = c;
+		c = fgetc(fp);
 	}
-	fontBuffer[ index ] = '\0';
-	c = fgetc( fp );  // the end quite itself
+	fontBuffer[index] = '\0';
+	c = fgetc(fp);    // the end quite itself
 
 	// read the size and bold data elements
-	if(fscanf( fp, " Size: %i Bold: %i\n", &size, &bold ) == 2)
+	if (fscanf(fp, " Size: %i Bold: %i\n", &size, &bold) == 2)
 	{
 		// set the font
-		m_font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
+		m_font = TheFontLibrary->getFont(AsciiString(fontBuffer), size, bold);
 	}
 
 	// all the data for all the states
 	Int numStates, state;
-	char imageBuffer[ 128 ];
-	if (fscanf( fp, "Number of states: %i\n", &numStates ) == 1)
+	char imageBuffer[128];
+	if (fscanf(fp, "Number of states: %i\n", &numStates) == 1)
 	{
-		for( Int i = 0; i < numStates; i++ )
+		for (Int i = 0; i < numStates; i++)
 		{
-
 			// read all the data
-			if( fscanf( fp, "%d: Image: %s Color: (%hhu,%hhu,%hhu,%hhu) Border: (%hhu,%hhu,%hhu,%hhu)\n",
-							&state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
-							&bColorR, &bColorG, &bColorB, &bColorA ) == 10)
+			if (fscanf(fp, "%d: Image: %s Color: (%hhu,%hhu,%hhu,%hhu) Border: (%hhu,%hhu,%hhu,%hhu)\n",
+			           &state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
+			           &bColorR, &bColorG, &bColorB, &bColorA) == 10)
 			{
 				// sanity
-				assert( state == i );
+				assert(state == i);
 
 				// store the info
-				storeImageAndColor( (StateIdentifier)state,
-														TheMappedImageCollection->findImageByName( imageBuffer ),
-														GameMakeColor( colorR, colorG, colorB, colorA ),
-														GameMakeColor( bColorR, bColorG, bColorB, bColorA ) );
+				storeImageAndColor((StateIdentifier)state,
+				                   TheMappedImageCollection->findImageByName(imageBuffer),
+				                   GameMakeColor(colorR, colorG, colorB, colorA),
+				                   GameMakeColor(bColorR, bColorG, bColorB, bColorA));
 			}
 		}
 	}
 	// close the file
-	fclose( fp );
+	fclose(fp);
 
 	return TRUE;
-
 }
-

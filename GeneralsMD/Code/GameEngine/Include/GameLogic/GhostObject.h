@@ -36,38 +36,38 @@
 
 class Object;
 class PartitionData;
-enum GeometryType CPP_11(: Int);
-enum ObjectID CPP_11(: Int);
+enum GeometryType CPP_11( : Int);
+enum ObjectID CPP_11( : Int);
 
 class GhostObject : public Snapshot
 {
 public:
 	GhostObject();
 	virtual ~GhostObject();
-	virtual void snapShot(int playerIndex)=0;
-	virtual void updateParentObject(Object *object, PartitionData *mod)=0;
-	virtual void freeSnapShot(int playerIndex)=0;
-	PartitionData *friend_getPartitionData() const {return m_partitionData;}
-	GeometryType getGeometryType() const {return m_parentGeometryType;}
-	Bool getGeometrySmall() const {return m_parentGeometryIsSmall;}
-	Real getGeometryMajorRadius() const {return m_parentGeometryMajorRadius;}
-	Real getGeometryMinorRadius() const {return m_parentGeometryminorRadius;}
-	Real getParentAngle() const {return m_parentAngle;}
-	const Coord3D *getParentPosition() const {return &m_parentPosition;}
+	virtual void snapShot(int playerIndex) = 0;
+	virtual void updateParentObject(Object* object, PartitionData* mod) = 0;
+	virtual void freeSnapShot(int playerIndex) = 0;
+	PartitionData* friend_getPartitionData() const { return m_partitionData; }
+	GeometryType getGeometryType() const { return m_parentGeometryType; }
+	Bool getGeometrySmall() const { return m_parentGeometryIsSmall; }
+	Real getGeometryMajorRadius() const { return m_parentGeometryMajorRadius; }
+	Real getGeometryMinorRadius() const { return m_parentGeometryminorRadius; }
+	Real getParentAngle() const { return m_parentAngle; }
+	const Coord3D* getParentPosition() const { return &m_parentPosition; }
 
 protected:
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
-	Object *m_parentObject;		///< object which we are ghosting
+	Object* m_parentObject;    ///< object which we are ghosting
 	GeometryType m_parentGeometryType;
 	Bool m_parentGeometryIsSmall;
 	Real m_parentGeometryMajorRadius;
 	Real m_parentGeometryminorRadius;
 	Real m_parentAngle;
 	Coord3D m_parentPosition;
-	PartitionData	*m_partitionData;	///< our PartitionData
+	PartitionData* m_partitionData;    ///< our PartitionData
 };
 
 class GhostObjectManager : public Snapshot
@@ -77,26 +77,26 @@ public:
 	virtual ~GhostObjectManager();
 
 	virtual void reset();
-	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd);
-	virtual void removeGhostObject(GhostObject *mod);
+	virtual GhostObject* addGhostObject(Object* object, PartitionData* pd);
+	virtual void removeGhostObject(GhostObject* mod);
 	virtual void setLocalPlayerIndex(int playerIndex) { m_localPlayer = playerIndex; }
-	int getLocalPlayerIndex()	{ return m_localPlayer; }
-	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount);
-	virtual void releasePartitionData();	///<saves data needed to later rebuild partition manager data.
-	virtual void restorePartitionData();	///<restores ghost objects into the partition manager.
-	void lockGhostObjects(Bool enableLock) {m_lockGhostObjects=enableLock;}	///<temporary lock on creating new ghost objects. Only used by map border resizing!
-	void saveLockGhostObjects(Bool enableLock) {m_saveLockGhostObjects=enableLock;}
-	inline Bool trackAllPlayers() const; ///< returns whether the ghost object status is tracked for all players or for the local player only
+	int getLocalPlayerIndex() { return m_localPlayer; }
+	virtual void updateOrphanedObjects(int* playerIndexList, int playerIndexCount);
+	virtual void releasePartitionData();    ///< saves data needed to later rebuild partition manager data.
+	virtual void restorePartitionData();    ///< restores ghost objects into the partition manager.
+	void lockGhostObjects(Bool enableLock) { m_lockGhostObjects = enableLock; }    ///< temporary lock on creating new ghost objects. Only used by map border resizing!
+	void saveLockGhostObjects(Bool enableLock) { m_saveLockGhostObjects = enableLock; }
+	inline Bool trackAllPlayers() const;    ///< returns whether the ghost object status is tracked for all players or for the local player only
 
 protected:
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 	Int m_localPlayer;
 	Bool m_lockGhostObjects;
-	Bool m_saveLockGhostObjects;	///< used to lock the ghost object system during a save/load
-	Bool m_trackAllPlayers; ///< if enabled, tracks ghost object status for all players, otherwise for the local player only
+	Bool m_saveLockGhostObjects;    ///< used to lock the ghost object system during a save/load
+	Bool m_trackAllPlayers;    ///< if enabled, tracks ghost object status for all players, otherwise for the local player only
 };
 
 inline Bool GhostObjectManager::trackAllPlayers() const
@@ -115,12 +115,12 @@ class GhostObjectManagerDummy : public GhostObjectManager
 {
 public:
 	virtual void reset() override {}
-	virtual GhostObject *addGhostObject(Object *object, PartitionData *pd) override { return nullptr; }
-	virtual void removeGhostObject(GhostObject *mod) override {}
-	virtual void updateOrphanedObjects(int *playerIndexList, int playerIndexCount) override {}
+	virtual GhostObject* addGhostObject(Object* object, PartitionData* pd) override { return nullptr; }
+	virtual void removeGhostObject(GhostObject* mod) override {}
+	virtual void updateOrphanedObjects(int* playerIndexList, int playerIndexCount) override {}
 	virtual void releasePartitionData() override {}
 	virtual void restorePartitionData() override {}
 };
 
 // the singleton
-extern GhostObjectManager *TheGhostObjectManager;
+extern GhostObjectManager* TheGhostObjectManager;

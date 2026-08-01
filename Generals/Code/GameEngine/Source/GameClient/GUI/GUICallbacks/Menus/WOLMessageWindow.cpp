@@ -29,7 +29,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
 #include "GameClient/WindowLayout.h"
@@ -40,9 +40,7 @@
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetTextEntry.h"
 #include "GameNetwork/IPEnumeration.h"
-//#include "GameNetwork/WOL.h"
-
-
+// #include "GameNetwork/WOL.h"
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 // window ids ------------------------------------------------------------------------------
@@ -50,97 +48,83 @@ static NameKeyType parentWOLMessageWindowID = NAMEKEY_INVALID;
 static NameKeyType buttonCancelID = NAMEKEY_INVALID;
 
 // Window Pointers ------------------------------------------------------------------------
-static GameWindow *parentWOLMessageWindow = nullptr;
-static GameWindow *buttonCancel = nullptr;
-
+static GameWindow* parentWOLMessageWindow = nullptr;
+static GameWindow* buttonCancel = nullptr;
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the WOLMessage Window */
 //-------------------------------------------------------------------------------------------------
-void WOLMessageWindowInit( WindowLayout *layout, void *userData )
+void WOLMessageWindowInit(WindowLayout* layout, void* userData)
 {
-	parentWOLMessageWindowID = TheNameKeyGenerator->nameToKey( "WOLMessageWindow.wnd:WOLMessageWindowParent" );
-	buttonCancelID = TheNameKeyGenerator->nameToKey( "WOLMessageWindow.wnd:ButtonCancel" );
-	parentWOLMessageWindow = TheWindowManager->winGetWindowFromId( nullptr, parentWOLMessageWindowID );
-	buttonCancel = TheWindowManager->winGetWindowFromId( nullptr,  buttonCancelID);
-
+	parentWOLMessageWindowID = TheNameKeyGenerator->nameToKey("WOLMessageWindow.wnd:WOLMessageWindowParent");
+	buttonCancelID = TheNameKeyGenerator->nameToKey("WOLMessageWindow.wnd:ButtonCancel");
+	parentWOLMessageWindow = TheWindowManager->winGetWindowFromId(nullptr, parentWOLMessageWindowID);
+	buttonCancel = TheWindowManager->winGetWindowFromId(nullptr, buttonCancelID);
 
 	// Show Menu
-	layout->hide( FALSE );
+	layout->hide(FALSE);
 
 	// Set Keyboard to Main Parent
-	TheWindowManager->winSetFocus( parentWOLMessageWindow );
-
+	TheWindowManager->winSetFocus(parentWOLMessageWindow);
 }
 
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window shutdown method */
 //-------------------------------------------------------------------------------------------------
-void WOLMessageWindowShutdown( WindowLayout *layout, void *userData )
+void WOLMessageWindowShutdown(WindowLayout* layout, void* userData)
 {
-
 	// hide menu
-	layout->hide( TRUE );
+	layout->hide(TRUE);
 
 	// our shutdown is complete
-	TheShell->shutdownComplete( layout );
+	TheShell->shutdownComplete(layout);
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window update method */
 //-------------------------------------------------------------------------------------------------
-void WOLMessageWindowUpdate( WindowLayout * layout, void *userData)
+void WOLMessageWindowUpdate(WindowLayout* layout, void* userData)
 {
 	/*
 	if (WOL::TheWOL)
-		WOL::TheWOL->update();
+	  WOL::TheWOL->update();
 	*/
-
 }
 
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window input callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLMessageWindowInput( GameWindow *window, UnsignedInt msg,
-																			 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLMessageWindowInput(GameWindow* window, UnsignedInt msg,
+                                           WindowMsgData mData1, WindowMsgData mData2)
 {
-	switch( msg )
+	switch (msg)
 	{
-
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
 			UnsignedByte key = mData1;
 			UnsignedByte state = mData2;
 
-			switch( key )
+			switch (key)
 			{
-
 				// ----------------------------------------------------------------------------------------
 				case KEY_ESC:
 				{
-
 					//
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitIsSet( state, KEY_STATE_UP ) )
+					if (BitIsSet(state, KEY_STATE_UP))
 					{
-						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED,
-																							(WindowMsgData)buttonCancel, buttonCancelID );
-
+						TheWindowManager->winSendSystemMsg(window, GBM_SELECTED,
+						                                   (WindowMsgData)buttonCancel, buttonCancelID);
 					}
 
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
-
 				}
-
 			}
-
 		}
-
 	}
 
 	return MSG_IGNORED;
@@ -149,47 +133,45 @@ WindowMsgHandledType WOLMessageWindowInput( GameWindow *window, UnsignedInt msg,
 //-------------------------------------------------------------------------------------------------
 /** WOLMessage Window window system callback */
 //-------------------------------------------------------------------------------------------------
-WindowMsgHandledType WOLMessageWindowSystem( GameWindow *window, UnsignedInt msg,
-														 WindowMsgData mData1, WindowMsgData mData2 )
+WindowMsgHandledType WOLMessageWindowSystem(GameWindow* window, UnsignedInt msg,
+                                            WindowMsgData mData1, WindowMsgData mData2)
 {
 	UnicodeString txtInput;
 
-	switch( msg )
+	switch (msg)
 	{
-
-
 		case GWM_CREATE:
-			{
-
-				break;
-			}
+		{
+			break;
+		}
 
 		case GWM_DESTROY:
-			{
-				break;
-			}
+		{
+			break;
+		}
 
 		case GWM_INPUT_FOCUS:
+		{
+			// if we're givin the opportunity to take the keyboard focus we must say we want it
+			if (mData1 == TRUE)
 			{
-				// if we're givin the opportunity to take the keyboard focus we must say we want it
-				if( mData1 == TRUE )
-					*(Bool *)mData2 = TRUE;
-
-				return MSG_HANDLED;
+				*(Bool*)mData2 = TRUE;
 			}
+
+			return MSG_HANDLED;
+		}
 
 		case GBM_SELECTED:
-			{
-				break;
-			}
+		{
+			break;
+		}
 
 		case GEM_EDIT_DONE:
-			{
-				break;
-			}
+		{
+			break;
+		}
 		default:
 			return MSG_IGNORED;
-
 	}
 
 	return MSG_HANDLED;

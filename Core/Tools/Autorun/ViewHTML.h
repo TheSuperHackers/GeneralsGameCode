@@ -17,20 +17,20 @@
 */
 
 /******************************************************************************
-*
-* FILE
-*     $Archive: /Renegade Setup/Autorun/ViewHTML.h $
-*
-* DESCRIPTION
-*
-* PROGRAMMER
-*     $Author: Maria_l $
-*
-* VERSION INFO
-*     $Modtime: 8/14/00 7:53p $
-*     $Revision: 3 $
-*
-******************************************************************************/
+ *
+ * FILE
+ *     $Archive: /Renegade Setup/Autorun/ViewHTML.h $
+ *
+ * DESCRIPTION
+ *
+ * PROGRAMMER
+ *     $Author: Maria_l $
+ *
+ * VERSION INFO
+ *     $Modtime: 8/14/00 7:53p $
+ *     $Revision: 3 $
+ *
+ ******************************************************************************/
 
 #pragma once
 

@@ -31,21 +31,21 @@
 #include "Utility/intrin_compat.h"
 
 #if defined(RTS_DEBUG)
-	/*
-		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
-		for running in this mode. Only enable it for local builds for testing purposes! (srj)
-	*/
+  /*
+    NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
+    for running in this mode. Only enable it for local builds for testing purposes! (srj)
+  */
 	#define NO_PERF_TIMERS
 #else
 	#define NO_PERF_TIMERS
 #endif
 
-#include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
+#include "Common/GameCommon.h"    // ensure we get DUMP_PERF_STATS, or not
 
 #ifdef PERF_TIMERS
-#include "GameLogic/GameLogic.h"
-#include "Common/PerfMetrics.h"
-#include "Common/GlobalData.h"
+	#include "GameLogic/GameLogic.h"
+	#include "Common/PerfMetrics.h"
+	#include "Common/GlobalData.h"
 #endif
 
 // Forward Declarations
@@ -55,7 +55,7 @@ class DebugDisplayInterface;
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#define NO_USE_QPF	// non-QPF is much faster.
+#define NO_USE_QPF    // non-QPF is much faster.
 
 #if defined(PERF_TIMERS) || defined(DUMP_PERF_STATS)
 //-------------------------------------------------------------------------------------------------
@@ -67,11 +67,11 @@ void GetPrecisionTimerTicksPerSec(Int64* t);
 //-------------------------------------------------------------------------------------------------
 __forceinline void GetPrecisionTimer(Int64* t)
 {
-#ifdef USE_QPF
+	#ifdef USE_QPF
 	QueryPerformanceCounter((LARGE_INTEGER*)t);
-#else
+	#else
 	*t = _rdtsc();
-#endif
+	#endif
 }
 #endif
 
@@ -86,8 +86,8 @@ class PerfGather
 {
 public:
 	// If net only (default), subtract perf timers running inside. [8/12/2003]
-	PerfGather( const char *identifier, Bool netOnly=true );
-	virtual ~PerfGather( );
+	PerfGather(const char* identifier, Bool netOnly = true);
+	virtual ~PerfGather();
 
 	__forceinline void startTimer();
 	__forceinline void stopTimer();
@@ -108,26 +108,28 @@ public:
 	void reset();
 
 private:
-
-	enum { MAX_ACTIVE_STACK = 256 };
+	enum
+	{
+		MAX_ACTIVE_STACK = 256
+	};
 	static PerfGather* m_active[MAX_ACTIVE_STACK];
 	static PerfGather** m_activeHead;
-	static Int64 s_stopStartOverhead;	// overhead for stop+start a timer
+	static Int64 s_stopStartOverhead;    // overhead for stop+start a timer
 
 	static PerfGather*& getHeadPtr();
 
 	void addToList();
 	void removeFromList();
 
-	const char*		m_identifier;
-	Int64					m_startTime;
-	Int64					m_runningTimeGross;
-	Int64					m_runningTimeNet;
-	Int						m_callCount;
-	PerfGather*		m_next;
-	PerfGather*		m_prev;
-	Bool					m_ignore;
-	Bool					m_netTimeOnly;
+	const char* m_identifier;
+	Int64 m_startTime;
+	Int64 m_runningTimeGross;
+	Int64 m_runningTimeNet;
+	Int m_callCount;
+	PerfGather* m_next;
+	PerfGather* m_prev;
+	Bool m_ignore;
+	Bool m_netTimeOnly;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -152,18 +154,19 @@ void PerfGather::stopTimer()
 
 	++m_callCount;
 
-#ifdef RTS_DEBUG
+	#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(*m_activeHead != nullptr, ("m_activeHead is null, uh oh"));
 	DEBUG_ASSERTCRASH(*m_activeHead == this, ("I am not the active timer, uh oh"));
-	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));
-#endif
+	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK - 1], ("active under/over flow"));
+	#endif
 	--m_activeHead;
 
 	if (*m_activeHead)
 	{
 		// don't add the time it took for us to actually get the ticks (in startTimer) to our parent...
 		(*m_activeHead)->m_runningTimeGross -= (s_stopStartOverhead);
-		if ((*m_activeHead)->m_netTimeOnly) {
+		if ((*m_activeHead)->m_netTimeOnly)
+		{
 			(*m_activeHead)->m_runningTimeNet -= (runTime + s_stopStartOverhead);
 		}
 	}
@@ -178,13 +181,15 @@ class AutoPerfGather
 {
 private:
 	PerfGather& m_g;
+
 public:
 	__forceinline AutoPerfGather(PerfGather& g);
 	__forceinline ~AutoPerfGather();
 };
 
 //-------------------------------------------------------------------------------------------------
-AutoPerfGather::AutoPerfGather(PerfGather& g) : m_g(g)
+AutoPerfGather::AutoPerfGather(PerfGather& g)
+  : m_g(g)
 {
 	m_g.startTimer();
 }
@@ -201,14 +206,16 @@ class AutoPerfGatherIgnore
 private:
 	static Bool s_ignoring;
 	PerfGather& m_g;
-	Bool				m_oldIgnore;
+	Bool m_oldIgnore;
+
 public:
 	__forceinline AutoPerfGatherIgnore(PerfGather& g);
 	__forceinline ~AutoPerfGatherIgnore();
 };
 
 //-------------------------------------------------------------------------------------------------
-AutoPerfGatherIgnore::AutoPerfGatherIgnore(PerfGather& g) : m_g(g)
+AutoPerfGatherIgnore::AutoPerfGatherIgnore(PerfGather& g)
+  : m_g(g)
 {
 	m_oldIgnore = s_ignoring;
 	s_ignoring = true;
@@ -222,16 +229,18 @@ AutoPerfGatherIgnore::~AutoPerfGatherIgnore()
 	m_g.stopTimer();
 
 	if (s_ignoring)
+	{
 		m_g.reset();
+	}
 
 	s_ignoring = m_oldIgnore;
 }
 
-//-------------------------------------------------------------------------------------------------
-#define DECLARE_TOTAL_PERF_TIMER(id)					static PerfGather s_##id(#id, false);
-#define DECLARE_PERF_TIMER(id)					static PerfGather s_##id(#id);
-#define USE_PERF_TIMER(id)							AutoPerfGather a_##id(s_##id);
-#define IGNORE_PERF_TIMER(id)						AutoPerfGatherIgnore a_##id(s_##id);
+  //-------------------------------------------------------------------------------------------------
+	#define DECLARE_TOTAL_PERF_TIMER(id) static PerfGather s_##id(#id, false);
+	#define DECLARE_PERF_TIMER(id) static PerfGather s_##id(#id);
+	#define USE_PERF_TIMER(id) AutoPerfGather a_##id(s_##id);
+	#define IGNORE_PERF_TIMER(id) AutoPerfGatherIgnore a_##id(s_##id);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -241,8 +250,8 @@ AutoPerfGatherIgnore::~AutoPerfGatherIgnore()
 class PerfTimer
 {
 public:
-	PerfTimer( const char *identifier, Bool crashWithInfo = true, Int startFrame = 0, Int endFrame = -1);
-	virtual ~PerfTimer( );
+	PerfTimer(const char* identifier, Bool crashWithInfo = true, Int startFrame = 0, Int endFrame = -1);
+	virtual ~PerfTimer();
 	__forceinline void startTimer();
 	__forceinline void stopTimer();
 
@@ -254,19 +263,19 @@ protected:
 	void showMetrics();
 
 protected:
-	const char *m_identifier;
+	const char* m_identifier;
 	Bool m_crashWithInfo;
 	UnsignedInt m_startFrame;
 	UnsignedInt m_endFrame;
-	UnsignedInt m_lastFrame;	// last frame we got data from
+	UnsignedInt m_lastFrame;    // last frame we got data from
 	Bool m_outputInfo;
 
 	// total running time so far.
 	Int64 m_runningTime;
 	Int m_callCount;
 
-	friend void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
-	friend void EndStatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
+	friend void StatMetricsDisplay(DebugDisplayInterface* dd, void*, FILE* fp);
+	friend void EndStatMetricsDisplay(DebugDisplayInterface* dd, void*, FILE* fp);
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -292,13 +301,15 @@ void PerfTimer::stopTimer()
 		m_lastFrame = frm;
 	}
 
-
-	if (TheGlobalData && TheGlobalData->m_showMetrics && m_endFrame > m_startFrame + PERFMETRICS_BETWEEN_METRICS) {
+	if (TheGlobalData && TheGlobalData->m_showMetrics && m_endFrame > m_startFrame + PERFMETRICS_BETWEEN_METRICS)
+	{
 		m_endFrame = m_startFrame + PERFMETRICS_BETWEEN_METRICS;
 	}
 
-	if (m_endFrame > 0 && frm >= m_endFrame) {
-		if (TheGlobalData->m_showMetrics) {
+	if (m_endFrame > 0 && frm >= m_endFrame)
+	{
+		if (TheGlobalData->m_showMetrics)
+		{
 			showMetrics();
 		}
 
@@ -306,15 +317,14 @@ void PerfTimer::stopTimer()
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
-extern void StatMetricsDisplay( DebugDisplayInterface *dd, void *, FILE *fp );
+extern void StatMetricsDisplay(DebugDisplayInterface* dd, void*, FILE* fp);
 
-#else		// PERF_TIMERS
+#else    // PERF_TIMERS
 
 	#define DECLARE_PERF_TIMER(id)
-	#define  DECLARE_TOTAL_PERF_TIMER(id)
+	#define DECLARE_TOTAL_PERF_TIMER(id)
 	#define USE_PERF_TIMER(id)
 	#define IGNORE_PERF_TIMER(id)
 
-#endif	// PERF_TIMERS
+#endif    // PERF_TIMERS

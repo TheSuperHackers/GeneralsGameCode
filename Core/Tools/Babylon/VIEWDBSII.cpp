@@ -24,37 +24,34 @@
 #include "VIEWDBSII.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
 // VIEWDBSII dialog
 
-
 VIEWDBSII::VIEWDBSII(CWnd* pParent /*=nullptr*/)
-	: CDialog(VIEWDBSII::IDD, pParent)
+  : CDialog(VIEWDBSII::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(VIEWDBSII)
-		// NOTE: the ClassWizard will add member initialization here
+	// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 }
-
 
 void VIEWDBSII::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(VIEWDBSII)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(VIEWDBSII, CDialog)
-	//{{AFX_MSG_MAP(VIEWDBSII)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(VIEWDBSII)
+// NOTE: the ClassWizard will add message map macros here
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

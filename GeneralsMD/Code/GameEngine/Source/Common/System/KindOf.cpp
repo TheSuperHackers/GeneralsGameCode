@@ -31,9 +31,8 @@
 #include "Common/KindOf.h"
 #include "Common/BitFlagsIO.h"
 
-template<>
-const char* const KindOfMaskType::s_bitNameList[] =
-{
+template <>
+const char* const KindOfMaskType::s_bitNameList[] = {
 	"OBSTACLE",
 	"SELECTABLE",
 	"IMMOBILE",
@@ -141,11 +140,11 @@ const char* const KindOfMaskType::s_bitNameList[] =
 	"FS_STRATEGY_CENTER",
 	"MONEY_HACKER",
 	"ARMOR_SALVAGER",
-  "REVEALS_ENEMY_PATHS",
+	"REVEALS_ENEMY_PATHS",
 	"BOOBY_TRAP",
 	"FS_FAKE",
 	"FS_INTERNET_CENTER",
-  "BLAST_CRATER",
+	"BLAST_CRATER",
 	"PROP",
 	"OPTIMIZED_TREE",
 	"FS_ADVANCED_TECH",
@@ -183,5 +182,5 @@ static const Int fsList[] = {
 	KINDOF_FS_AIRFIELD,
 };
 
-KindOfMaskType KINDOFMASK_NONE;	// inits to all zeroes
+KindOfMaskType KINDOFMASK_NONE;    // inits to all zeroes
 KindOfMaskType KINDOFMASK_FS(KindOfMaskType::kInit, fsList, ARRAY_SIZE(fsList));

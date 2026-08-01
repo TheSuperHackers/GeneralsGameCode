@@ -39,31 +39,32 @@
 #include "GameClient/GameClient.h"
 #include "GameClient/KeyDefs.h"
 
+//-------------------------------------------------------------------------------------------------
+SelectionInfo::SelectionInfo()
+  : currentCountEnemies(0)
+  , currentCountCivilians(0)
+  , currentCountMine(0)
+  , currentCountMineInfantry(0)
+  , currentCountMineBuildings(0)
+  , currentCountFriends(0)
+  , newCountEnemies(0)
+  , newCountCivilians(0)
+  , newCountCrates(0)
+  , newCountMine(0)
+  , newCountMineBuildings(0)
+  , newCountFriends(0)
+  , newCountGarrisonableBuildings(0)
+  , selectEnemies(FALSE)
+  , selectCivilians(FALSE)
+  , selectMine(FALSE)
+  , selectMineBuildings(FALSE)
+  , selectFriends(FALSE)
+{}
 
 //-------------------------------------------------------------------------------------------------
-SelectionInfo::SelectionInfo() :
-	currentCountEnemies(0),
-	currentCountCivilians(0),
-	currentCountMine(0),
-	currentCountMineInfantry(0),
-	currentCountMineBuildings(0),
-	currentCountFriends(0),
-	newCountEnemies(0),
-	newCountCivilians(0),
-	newCountCrates(0),
-	newCountMine(0),
-	newCountMineBuildings(0),
-	newCountFriends(0),
-	newCountGarrisonableBuildings(0),
-	selectEnemies(FALSE),
-	selectCivilians(FALSE),
-	selectMine(FALSE),
-	selectMineBuildings(FALSE),
-	selectFriends(FALSE)
-{ }
-
-//-------------------------------------------------------------------------------------------------
-PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr), isPointSelection(FALSE)
+PickDrawableStruct::PickDrawableStruct()
+  : drawableListToFill(nullptr)
+  , isPointSelection(FALSE)
 {
 	forceAttackMode = TheInGameUI->isInForceAttackMode();
 	UnsignedInt pickType = getPickTypesForContext(forceAttackMode);
@@ -79,90 +80,120 @@ PickDrawableStruct::PickDrawableStruct() : drawableListToFill(nullptr), isPointS
  * Given a list of currently selected things and a list of things that are currently under
  * the selection (pointer or drag), generate some useful information about each.
  */
-extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedDrawables,
-																					const DrawableList *newlySelectedDrawables,
-																					SelectionInfo *outSelectionInfo,
-																					Bool selectionIsPoint)
+extern Bool contextCommandForNewSelection(const DrawableList* currentlySelectedDrawables,
+                                          const DrawableList* newlySelectedDrawables,
+                                          SelectionInfo* outSelectionInfo,
+                                          Bool selectionIsPoint)
 {
 	if (!(currentlySelectedDrawables && newlySelectedDrawables && outSelectionInfo))
+	{
 		return FALSE;
+	}
 
 	Bool forceFire = TheInGameUI->isInForceAttackMode();
 	Bool forceMove = TheInGameUI->isInForceMoveToMode();
 
-	if (forceFire || forceMove) {
+	if (forceFire || forceMove)
+	{
 		return FALSE;
 	}
 
-
-	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	Player* localPlayer = ThePlayerList->getLocalPlayer();
 	DrawableListCIt it;
-	for (it = currentlySelectedDrawables->begin(); it != currentlySelectedDrawables->end(); ++it) {
-		if (!(*it)) {
+	for (it = currentlySelectedDrawables->begin(); it != currentlySelectedDrawables->end(); ++it)
+	{
+		if (!(*it))
+		{
 			continue;
 		}
 
-		Object *obj = (*it)->getObject();
-		if (!obj) {
+		Object* obj = (*it)->getObject();
+		if (!obj)
+		{
 			continue;
 		}
 
-		if (obj->isLocallyControlled()) {
+		if (obj->isLocallyControlled())
+		{
 			++outSelectionInfo->currentCountMine;
-			if (obj->isKindOf(KINDOF_INFANTRY)) {
+			if (obj->isKindOf(KINDOF_INFANTRY))
+			{
 				++outSelectionInfo->currentCountMineInfantry;
-			} else if (obj->isKindOf(KINDOF_STRUCTURE)) {
+			}
+			else if (obj->isKindOf(KINDOF_STRUCTURE))
+			{
 				++outSelectionInfo->currentCountMineBuildings;
 			}
-		} else {
+		}
+		else
+		{
 			Relationship rel = localPlayer->getRelationship(obj->getTeam());
-			if (rel == ALLIES) {
+			if (rel == ALLIES)
+			{
 				++outSelectionInfo->currentCountFriends;
-			} else if (rel == ENEMIES) {
+			}
+			else if (rel == ENEMIES)
+			{
 				++outSelectionInfo->currentCountEnemies;
-			} else if (rel == NEUTRAL) {
+			}
+			else if (rel == NEUTRAL)
+			{
 				++outSelectionInfo->currentCountCivilians;
 			}
 		}
 	}
 
-	Drawable *newMine = nullptr;
-	Drawable *newFriendly = nullptr;
-	Drawable *newEnemy = nullptr;
-	Drawable *newCivilian = nullptr;
+	Drawable* newMine = nullptr;
+	Drawable* newFriendly = nullptr;
+	Drawable* newEnemy = nullptr;
+	Drawable* newCivilian = nullptr;
 
-	for (it = newlySelectedDrawables->begin(); it != newlySelectedDrawables->end(); ++it) {
-		if (!(*it)) {
+	for (it = newlySelectedDrawables->begin(); it != newlySelectedDrawables->end(); ++it)
+	{
+		if (!(*it))
+		{
 			continue;
 		}
 
-		Object *obj = (*it)->getObject();
-		if (!obj) {
+		Object* obj = (*it)->getObject();
+		if (!obj)
+		{
 			continue;
 		}
 
-		if (TheActionManager->canPlayerGarrison(localPlayer, obj, CMD_FROM_PLAYER)) {
+		if (TheActionManager->canPlayerGarrison(localPlayer, obj, CMD_FROM_PLAYER))
+		{
 			++outSelectionInfo->newCountGarrisonableBuildings;
 		}
-		if (obj->isKindOf(KINDOF_CRATE)) {
+		if (obj->isKindOf(KINDOF_CRATE))
+		{
 			++outSelectionInfo->newCountCrates;
 		}
 
-		if (obj->isLocallyControlled()) {
+		if (obj->isLocallyControlled())
+		{
 			++outSelectionInfo->newCountMine;
 			newMine = *it;
-			if (obj->isKindOf(KINDOF_STRUCTURE)) {
+			if (obj->isKindOf(KINDOF_STRUCTURE))
+			{
 				++outSelectionInfo->newCountMineBuildings;
 			}
-		} else {
+		}
+		else
+		{
 			Relationship rel = localPlayer->getRelationship(obj->getTeam());
-			if (rel == ALLIES) {
+			if (rel == ALLIES)
+			{
 				newFriendly = *it;
 				++outSelectionInfo->newCountFriends;
-			} else if (rel == ENEMIES) {
+			}
+			else if (rel == ENEMIES)
+			{
 				newEnemy = *it;
 				++outSelectionInfo->newCountEnemies;
-			} else if (rel == NEUTRAL) {
+			}
+			else if (rel == NEUTRAL)
+			{
 				newCivilian = *it;
 				++outSelectionInfo->newCountCivilians;
 			}
@@ -173,65 +204,81 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 	DEBUG_ASSERTCRASH(outSelectionInfo->currentCountFriends <= 1, ("Selection bug. jkmcd"));
 	DEBUG_ASSERTCRASH(outSelectionInfo->currentCountCivilians <= 1, ("Selection bug. jkmcd"));
 
-	if (outSelectionInfo->currentCountEnemies > 0) {
+	if (outSelectionInfo->currentCountEnemies > 0)
+	{
 		// If we have an enemy selected, there are no context sensitive commands
 		return FALSE;
 	}
 
-	if (outSelectionInfo->currentCountFriends > 0) {
+	if (outSelectionInfo->currentCountFriends > 0)
+	{
 		return FALSE;
 	}
 
-	if (outSelectionInfo->currentCountCivilians > 0) {
+	if (outSelectionInfo->currentCountCivilians > 0)
+	{
 		return FALSE;
 	}
 
-	if (TheGlobalData->m_useAlternateMouse) {
+	if (TheGlobalData->m_useAlternateMouse)
+	{
 		// context sensitive commands never apply when selecting in alternate mouse mode
 		return FALSE;
 	}
 
-	if (outSelectionInfo->currentCountMine > 0) {
-		if (outSelectionInfo->newCountEnemies > 0) {
-			if (outSelectionInfo->newCountEnemies == 1 && selectionIsPoint) {
+	if (outSelectionInfo->currentCountMine > 0)
+	{
+		if (outSelectionInfo->newCountEnemies > 0)
+		{
+			if (outSelectionInfo->newCountEnemies == 1 && selectionIsPoint)
+			{
 				return TheGameClient->evaluateContextCommand(newEnemy, newEnemy->getPosition(), CommandTranslator::EVALUATE_ONLY) != GameMessage::MSG_INVALID;
 			}
 
 			return selectionIsPoint;
 		}
 
-		if (outSelectionInfo->newCountMine > 0) {
-			if (outSelectionInfo->newCountMine == 1 && selectionIsPoint && !TheInGameUI->isInPreferSelectionMode()) {
+		if (outSelectionInfo->newCountMine > 0)
+		{
+			if (outSelectionInfo->newCountMine == 1 && selectionIsPoint && !TheInGameUI->isInPreferSelectionMode())
+			{
 				return TheGameClient->evaluateContextCommand(newMine, newMine->getPosition(), CommandTranslator::EVALUATE_ONLY) != GameMessage::MSG_INVALID;
 			}
 
 			return FALSE;
 		}
 
-		if (outSelectionInfo->newCountFriends > 0) {
-			if (outSelectionInfo->newCountFriends == 1 && selectionIsPoint) {
+		if (outSelectionInfo->newCountFriends > 0)
+		{
+			if (outSelectionInfo->newCountFriends == 1 && selectionIsPoint)
+			{
 				return TheGameClient->evaluateContextCommand(newFriendly, newFriendly->getPosition(), CommandTranslator::EVALUATE_ONLY) != GameMessage::MSG_INVALID;
 			}
 			return FALSE;
 		}
 
-		if (outSelectionInfo->currentCountMineInfantry > 0 && outSelectionInfo->newCountGarrisonableBuildings == 1) {
+		if (outSelectionInfo->currentCountMineInfantry > 0 && outSelectionInfo->newCountGarrisonableBuildings == 1)
+		{
 			return TRUE;
 		}
 
-		if (outSelectionInfo->newCountCivilians > 0) {
-			if (outSelectionInfo->newCountCivilians == 1 && selectionIsPoint) {
+		if (outSelectionInfo->newCountCivilians > 0)
+		{
+			if (outSelectionInfo->newCountCivilians == 1 && selectionIsPoint)
+			{
 				return TheGameClient->evaluateContextCommand(newCivilian, newCivilian->getPosition(), CommandTranslator::EVALUATE_ONLY) != GameMessage::MSG_INVALID;
 			}
 			return FALSE;
 		}
 
-		if (outSelectionInfo->newCountCrates > 0) {
+		if (outSelectionInfo->newCountCrates > 0)
+		{
 			return (outSelectionInfo->newCountCrates == 1 && selectionIsPoint);
 		}
 	}
 
-	if (outSelectionInfo->currentCountMine == 0) {
+	if (outSelectionInfo->currentCountMine == 0)
+	{
 		return FALSE;
 	}
 
@@ -239,92 +286,107 @@ extern Bool contextCommandForNewSelection(const DrawableList *currentlySelectedD
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt getPickTypesForContext( Bool forceAttackMode )
+UnsignedInt getPickTypesForContext(Bool forceAttackMode)
 {
 	UnsignedInt types = PICK_TYPE_SELECTABLE;
 
 	if (forceAttackMode)
+	{
 		types |= PICK_TYPE_FORCEATTACKABLE;
+	}
 
 	//
 	// if we have a gui context command that allows for a shrubbery target then we want to
 	// pick that type too (generally shrubbery aren't pickable cause it would get in
 	// the way with movement and general selection)
 	//
-	const CommandButton *command = TheInGameUI->getGUICommand();
+	const CommandButton* command = TheInGameUI->getGUICommand();
 
-	if (command != nullptr) {
-		if (BitIsSet( command->getOptions(), ALLOW_MINE_TARGET)) {
+	if (command != nullptr)
+	{
+		if (BitIsSet(command->getOptions(), ALLOW_MINE_TARGET))
+		{
 			types |= PICK_TYPE_MINES;
 		}
 
-		if (BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) ) {
+		if (BitIsSet(command->getOptions(), ALLOW_SHRUBBERY_TARGET))
+		{
 			types |= PICK_TYPE_SHRUBBERY;
 		}
-	} else {
+	}
+	else
+	{
 		types |= getPickTypesForCurrentSelection(forceAttackMode);
 	}
 
 	return types;
-
 }
 
 //-------------------------------------------------------------------------------------------------
-UnsignedInt getPickTypesForCurrentSelection( Bool forceAttackMode )
+UnsignedInt getPickTypesForCurrentSelection(Bool forceAttackMode)
 {
 	UnsignedInt retVal = 0;
-	if (!TheInGameUI->areSelectedObjectsControllable()) {
+	if (!TheInGameUI->areSelectedObjectsControllable())
+	{
 		return retVal;
 	}
 
-	const DrawableList *allSelectedDrawables = TheInGameUI->getAllSelectedDrawables();
+	const DrawableList* allSelectedDrawables = TheInGameUI->getAllSelectedDrawables();
 
-	for (DrawableListCIt cit = allSelectedDrawables->begin(); cit != allSelectedDrawables->end(); ++cit) {
-		Drawable *draw = *cit;
-		if (!draw) {
+	for (DrawableListCIt cit = allSelectedDrawables->begin(); cit != allSelectedDrawables->end(); ++cit)
+	{
+		Drawable* draw = *cit;
+		if (!draw)
+		{
 			continue;
 		}
 
-		Object *obj = draw->getObject();
-		if (!obj) {
+		Object* obj = draw->getObject();
+		if (!obj)
+		{
 			continue;
 		}
 
-// srj sez: thanks to new, area-effect disarming, we NO LONGER want to do this...
-//		if (obj->hasWeaponToDealDamageType(DAMAGE_DISARM)) {
-//			retVal |= PICK_TYPE_MINES;
-//		}
+		// srj sez: thanks to new, area-effect disarming, we NO LONGER want to do this...
+		//		if (obj->hasWeaponToDealDamageType(DAMAGE_DISARM)) {
+		//			retVal |= PICK_TYPE_MINES;
+		//		}
 
-		if (obj->hasWeaponToDealDamageType(DAMAGE_FLAME) && forceAttackMode ) {
+		if (obj->hasWeaponToDealDamageType(DAMAGE_FLAME) && forceAttackMode)
+		{
 			retVal |= PICK_TYPE_SHRUBBERY;
 		}
 
 		// For efficiency.
-		if (BitIsSet(retVal, PICK_TYPE_MINES | PICK_TYPE_SHRUBBERY)) {
+		if (BitIsSet(retVal, PICK_TYPE_MINES | PICK_TYPE_SHRUBBERY))
+		{
 			break;
 		}
 	}
 
 	return retVal;
-
 }
 
 //-------------------------------------------------------------------------------------------------
 void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 {
-	if (BitIsSet(pickTypes, PICK_TYPE_SELECTABLE)) {
+	if (BitIsSet(pickTypes, PICK_TYPE_SELECTABLE))
+	{
 		outMask.set(KINDOF_SELECTABLE);
 	}
 
-	if (BitIsSet(pickTypes, PICK_TYPE_SHRUBBERY)) {
+	if (BitIsSet(pickTypes, PICK_TYPE_SHRUBBERY))
+	{
 		outMask.set(KINDOF_SHRUBBERY);
 	}
 
-	if (BitIsSet(pickTypes, PICK_TYPE_MINES)) {
+	if (BitIsSet(pickTypes, PICK_TYPE_MINES))
+	{
 		outMask.set(KINDOF_MINE);
 	}
 
-	if (BitIsSet(pickTypes, PICK_TYPE_FORCEATTACKABLE)) {
+	if (BitIsSet(pickTypes, PICK_TYPE_FORCEATTACKABLE))
+	{
 		outMask.set(KINDOF_FORCEATTACKABLE);
 	}
 }
@@ -332,18 +394,21 @@ void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 //-------------------------------------------------------------------------------------------------
 // Given a drawable, add it to an stl list specified by userData.
 // Useful for iterateDrawablesInRegion.
-Bool addDrawableToList( Drawable *draw, void *userData )
+Bool addDrawableToList(Drawable* draw, void* userData)
 {
-	PickDrawableStruct *pds = (PickDrawableStruct *) userData;
+	PickDrawableStruct* pds = (PickDrawableStruct*)userData;
 #if defined(RTS_DEBUG)
-	if (TheGlobalData->m_allowUnselectableSelection) {
+	if (TheGlobalData->m_allowUnselectableSelection)
+	{
 		pds->drawableListToFill->push_back(draw);
 		return TRUE;
 	}
 #endif
 
 	if (!pds->drawableListToFill)
+	{
 		return FALSE;
+	}
 
 #if !RTS_GENERALS || !PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION
 	// TheSuperHackers @info
@@ -351,30 +416,40 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	// fog. Some players exploit this bug to determine where an opponent's units are and consider this
 	// an important feature and an advanced skill to pull off, so we must leave the exploit.
 	if (draw->getFullyObscuredByShroud())
+	{
 		return FALSE;
+	}
 
 	if (draw->isDrawableEffectivelyHidden())
+	{
 		return FALSE;
+	}
 #endif
 
 	if (!draw->getTemplate()->isAnyKindOf(pds->kindofsToMatch))
+	{
 		return FALSE;
+	}
 
 	if (!draw->isSelectable())
-  {
-    const Object *obj = draw->getObject();
-    if ( obj && obj->getContainedBy() )//hmm, interesting... he is not selectable but he is contained
-    {// What we are after here is to propagate the selection the selection ti the container
-      // if the container is non-enclosing... see also SelectionXlat, in the left_click case
+	{
+		const Object* obj = draw->getObject();
+		if (obj && obj->getContainedBy())    // hmm, interesting... he is not selectable but he is contained
+		{    // What we are after here is to propagate the selection the selection ti the container
+			// if the container is non-enclosing... see also SelectionXlat, in the left_click case
 
-      ContainModuleInterface *contain = obj->getContainedBy()->getContain();
-      Drawable *containDraw = obj->getContainedBy()->getDrawable();
-      if (contain && ! contain->isEnclosingContainerFor( obj ) && containDraw )
-        return addDrawableToList( containDraw, userData );
-    }
-    else
-      return FALSE;
-  }
+			ContainModuleInterface* contain = obj->getContainedBy()->getContain();
+			Drawable* containDraw = obj->getContainedBy()->getDrawable();
+			if (contain && !contain->isEnclosingContainerFor(obj) && containDraw)
+			{
+				return addDrawableToList(containDraw, userData);
+			}
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
 
 #if !RTS_GENERALS && PRESERVE_OCCUPANT_DETECTION_VIA_DRAG_SELECTION
 	// TheSuperHackers @info
@@ -384,11 +459,17 @@ Bool addDrawableToList( Drawable *draw, void *userData )
 	// feature and an advanced skill to pull off, so we must leave the exploit.
 	if (!pds->isPointSelection)
 	{
-		const Object *obj = draw->getObject();
+		const Object* obj = draw->getObject();
 		if (obj)
+		{
 			if (!obj->isLocallyControlled())
+			{
 				if (obj->getContain() && draw->getObject()->getContain()->getContainCount() > 0)
+				{
 					return FALSE;
+				}
+			}
+		}
 	}
 #endif
 

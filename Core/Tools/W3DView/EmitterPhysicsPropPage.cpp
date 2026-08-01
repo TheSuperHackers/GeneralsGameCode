@@ -28,8 +28,8 @@
 #include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
@@ -43,40 +43,37 @@ IMPLEMENT_DYNCREATE(EmitterPhysicsPropPageClass, CPropertyPage)
 //  EmitterPhysicsPropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass (EmitterInstanceListClass *pemitter)
-	: m_pEmitterList (nullptr),
-	  m_bValid (true),
-	  m_Velocity (0, 0, 1),
-	  m_Acceleration (0, 0, 0),
-	  m_OutFactor (0),
-	  m_InheritanceFactor (0),
-	  m_Randomizer (nullptr),
-	  CPropertyPage(EmitterPhysicsPropPageClass::IDD)
+EmitterPhysicsPropPageClass::EmitterPhysicsPropPageClass(EmitterInstanceListClass* pemitter)
+  : m_pEmitterList(nullptr)
+  , m_bValid(true)
+  , m_Velocity(0, 0, 1)
+  , m_Acceleration(0, 0, 0)
+  , m_OutFactor(0)
+  , m_InheritanceFactor(0)
+  , m_Randomizer(nullptr)
+  , CPropertyPage(EmitterPhysicsPropPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(EmitterPhysicsPropPageClass)
 	//}}AFX_DATA_INIT
-	Initialize ();
+	Initialize();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  ~EmitterPhysicsPropPageClass
 //
 /////////////////////////////////////////////////////////////
-EmitterPhysicsPropPageClass::~EmitterPhysicsPropPageClass ()
+EmitterPhysicsPropPageClass::~EmitterPhysicsPropPageClass()
 {
-	SAFE_DELETE (m_Randomizer);
+	SAFE_DELETE(m_Randomizer);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  DoDataExchange
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterPhysicsPropPageClass::DoDataExchange (CDataExchange* pDX)
+void EmitterPhysicsPropPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	// Allow the base class to process this message
 	CPropertyPage::DoDataExchange(pDX);
@@ -92,173 +89,161 @@ EmitterPhysicsPropPageClass::DoDataExchange (CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(EmitterPhysicsPropPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(EmitterPhysicsPropPageClass)
-	ON_BN_CLICKED(IDC_SPECIFY_VELOCITY_RANDOM, OnSpecifyVelocityRandom)
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(EmitterPhysicsPropPageClass)
+ON_BN_CLICKED(IDC_SPECIFY_VELOCITY_RANDOM, OnSpecifyVelocityRandom)
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////
 //
 //  Initialize
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterPhysicsPropPageClass::Initialize ()
+void EmitterPhysicsPropPageClass::Initialize()
 {
-	SAFE_DELETE (m_Randomizer);
-	if (m_pEmitterList != nullptr) {
-
+	SAFE_DELETE(m_Randomizer);
+	if (m_pEmitterList != nullptr)
+	{
 		//
 		// Get the emitter's settings
 		//
-		m_Velocity				= m_pEmitterList->Get_Velocity ();
-		m_Acceleration			= m_pEmitterList->Get_Acceleration ();
-		m_OutFactor				= m_pEmitterList->Get_Outward_Vel ();
-		m_InheritanceFactor	= m_pEmitterList->Get_Vel_Inherit ();
-		m_Randomizer			= m_pEmitterList->Get_Velocity_Random ();
+		m_Velocity = m_pEmitterList->Get_Velocity();
+		m_Acceleration = m_pEmitterList->Get_Acceleration();
+		m_OutFactor = m_pEmitterList->Get_Outward_Vel();
+		m_InheritanceFactor = m_pEmitterList->Get_Vel_Inherit();
+		m_Randomizer = m_pEmitterList->Get_Velocity_Random();
 	}
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnInitDialog
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterPhysicsPropPageClass::OnInitDialog ()
+BOOL EmitterPhysicsPropPageClass::OnInitDialog()
 {
 	// Allow the base class to process this message
-	CPropertyPage::OnInitDialog ();
+	CPropertyPage::OnInitDialog();
 
 	//
 	//	Setup the velocity controls
 	//
-	::Initialize_Spinner (m_OutSpin, m_OutFactor, -10000, 10000);
-	::Initialize_Spinner (m_InheritanceSpin, m_InheritanceFactor, -10000, 10000);
-	::Initialize_Spinner (m_VelocityXSpin, m_Velocity.X, -10000, 10000);
-	::Initialize_Spinner (m_VelocityYSpin, m_Velocity.Y, -10000, 10000);
-	::Initialize_Spinner (m_VelocityZSpin, m_Velocity.Z, -10000, 10000);
+	::Initialize_Spinner(m_OutSpin, m_OutFactor, -10000, 10000);
+	::Initialize_Spinner(m_InheritanceSpin, m_InheritanceFactor, -10000, 10000);
+	::Initialize_Spinner(m_VelocityXSpin, m_Velocity.X, -10000, 10000);
+	::Initialize_Spinner(m_VelocityYSpin, m_Velocity.Y, -10000, 10000);
+	::Initialize_Spinner(m_VelocityZSpin, m_Velocity.Z, -10000, 10000);
 
 	//
 	//	Setup the acceleration controls
 	//
-	::Initialize_Spinner (m_AccelXSpin, m_Acceleration.X, -10000, 10000);
-	::Initialize_Spinner (m_AccelYSpin, m_Acceleration.Y, -10000, 10000);
-	::Initialize_Spinner (m_AccelZSpin, m_Acceleration.Z, -10000, 10000);
+	::Initialize_Spinner(m_AccelXSpin, m_Acceleration.X, -10000, 10000);
+	::Initialize_Spinner(m_AccelYSpin, m_Acceleration.Y, -10000, 10000);
+	::Initialize_Spinner(m_AccelZSpin, m_Acceleration.Z, -10000, 10000);
 	return TRUE;
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnApply
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterPhysicsPropPageClass::OnApply ()
+BOOL EmitterPhysicsPropPageClass::OnApply()
 {
 	//
 	//	Read the velocity settings
 	//
-	m_Velocity.X = ::GetDlgItemFloat (m_hWnd, IDC_VELOCITY_X_EDIT);
-	m_Velocity.Y = ::GetDlgItemFloat (m_hWnd, IDC_VELOCITY_Y_EDIT);
-	m_Velocity.Z = ::GetDlgItemFloat (m_hWnd, IDC_VELOCITY_Z_EDIT);
-	m_OutFactor = ::GetDlgItemFloat (m_hWnd, IDC_OUT_FACTOR_SPIN);
-	m_InheritanceFactor = ::GetDlgItemFloat (m_hWnd, IDC_INHERITANCE_FACTOR_SPIN);
+	m_Velocity.X = ::GetDlgItemFloat(m_hWnd, IDC_VELOCITY_X_EDIT);
+	m_Velocity.Y = ::GetDlgItemFloat(m_hWnd, IDC_VELOCITY_Y_EDIT);
+	m_Velocity.Z = ::GetDlgItemFloat(m_hWnd, IDC_VELOCITY_Z_EDIT);
+	m_OutFactor = ::GetDlgItemFloat(m_hWnd, IDC_OUT_FACTOR_SPIN);
+	m_InheritanceFactor = ::GetDlgItemFloat(m_hWnd, IDC_INHERITANCE_FACTOR_SPIN);
 
 	//
 	//	Read the acceleration settings
 	//
-	m_Acceleration.X = ::GetDlgItemFloat (m_hWnd, IDC_ACCELERATION_X_EDIT);
-	m_Acceleration.Y = ::GetDlgItemFloat (m_hWnd, IDC_ACCELERATION_Y_EDIT);
-	m_Acceleration.Z = ::GetDlgItemFloat (m_hWnd, IDC_ACCELERATION_Z_EDIT);
+	m_Acceleration.X = ::GetDlgItemFloat(m_hWnd, IDC_ACCELERATION_X_EDIT);
+	m_Acceleration.Y = ::GetDlgItemFloat(m_hWnd, IDC_ACCELERATION_Y_EDIT);
+	m_Acceleration.Z = ::GetDlgItemFloat(m_hWnd, IDC_ACCELERATION_Z_EDIT);
 
 	// Allow the base class to process this message
-	return CPropertyPage::OnApply ();
+	return CPropertyPage::OnApply();
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnNotify
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterPhysicsPropPageClass::OnNotify
-(
-	WPARAM wParam,
-	LPARAM lParam,
-	LRESULT *pResult
-)
+BOOL EmitterPhysicsPropPageClass::OnNotify(
+  WPARAM wParam,
+  LPARAM lParam,
+  LRESULT* pResult)
 {
 	//
 	//	Update the spinner control if necessary
 	//
-	NMHDR *pheader = (NMHDR *)lParam;
-	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS)) {
+	NMHDR* pheader = (NMHDR*)lParam;
+	if ((pheader != nullptr) && (pheader->code == UDN_DELTAPOS))
+	{
 		LPNMUPDOWN pupdown = (LPNMUPDOWN)lParam;
-		::Update_Spinner_Buddy (pheader->hwndFrom, pupdown->iDelta);
-		On_Setting_Changed (wParam);
+		::Update_Spinner_Buddy(pheader->hwndFrom, pupdown->iDelta);
+		On_Setting_Changed(wParam);
 	}
 
 	// Allow the base class to process this message
-	return CPropertyPage::OnNotify (wParam, lParam, pResult);
+	return CPropertyPage::OnNotify(wParam, lParam, pResult);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnSpecifyCreationVolume
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom ()
+void EmitterPhysicsPropPageClass::OnSpecifyVelocityRandom()
 {
-	VolumeRandomDialogClass dialog (m_Randomizer, this);
-	if (dialog.DoModal () == IDOK) {
-
+	VolumeRandomDialogClass dialog(m_Randomizer, this);
+	if (dialog.DoModal() == IDOK)
+	{
 		//
 		//	Get the new randomizer from the dialog
 		//
-		SAFE_DELETE (m_Randomizer);
-		m_Randomizer = dialog.Get_Randomizer ();
-		if (m_Randomizer != nullptr) {
-			m_pEmitterList->Set_Velocity_Random (m_Randomizer->Clone ());
-			SetModified ();
+		SAFE_DELETE(m_Randomizer);
+		m_Randomizer = dialog.Get_Randomizer();
+		if (m_Randomizer != nullptr)
+		{
+			m_pEmitterList->Set_Velocity_Random(m_Randomizer->Clone());
+			SetModified();
 		}
 	}
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  OnCommand
 //
 /////////////////////////////////////////////////////////////
-BOOL
-EmitterPhysicsPropPageClass::OnCommand
-(
-	WPARAM wParam,
-	LPARAM lParam
-)
+BOOL EmitterPhysicsPropPageClass::OnCommand(
+  WPARAM wParam,
+  LPARAM lParam)
 {
-	switch (LOWORD (wParam))
+	switch (LOWORD(wParam))
 	{
 		case IDC_VELOCITY_X_EDIT:
 		case IDC_VELOCITY_Y_EDIT:
 		case IDC_VELOCITY_Z_EDIT:
 		{
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
-				On_Setting_Changed (LOWORD (wParam));
-			} else if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
+				On_Setting_Changed(LOWORD(wParam));
+			}
+			else if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 		}
 		break;
@@ -268,12 +253,15 @@ EmitterPhysicsPropPageClass::OnCommand
 		case IDC_ACCELERATION_Z_EDIT:
 		{
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
-				On_Setting_Changed (LOWORD (wParam));
-			} else if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
+				On_Setting_Changed(LOWORD(wParam));
+			}
+			else if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 		}
 		break;
@@ -281,12 +269,15 @@ EmitterPhysicsPropPageClass::OnCommand
 		case IDC_INHERITANCE_FACTOR_EDIT:
 		{
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
-				On_Setting_Changed (LOWORD (wParam));
-			} else if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
+				On_Setting_Changed(LOWORD(wParam));
+			}
+			else if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 		}
 		break;
@@ -294,28 +285,29 @@ EmitterPhysicsPropPageClass::OnCommand
 		case IDC_OUT_FACTOR_EDIT:
 		{
 			// Update the emitter
-			if ((HIWORD (wParam) == EN_KILLFOCUS) &&
-				 SendDlgItemMessage (LOWORD (wParam), EM_GETMODIFY)) {
-				SendDlgItemMessage (LOWORD (wParam), EM_SETMODIFY, (WPARAM)0);
-				On_Setting_Changed (LOWORD (wParam));
-			} else if (HIWORD (wParam) == EN_CHANGE) {
-				SetModified ();
+			if ((HIWORD(wParam) == EN_KILLFOCUS) &&
+			    SendDlgItemMessage(LOWORD(wParam), EM_GETMODIFY))
+			{
+				SendDlgItemMessage(LOWORD(wParam), EM_SETMODIFY, (WPARAM)0);
+				On_Setting_Changed(LOWORD(wParam));
+			}
+			else if (HIWORD(wParam) == EN_CHANGE)
+			{
+				SetModified();
 			}
 		}
 		break;
 	}
 
-	return CPropertyPage::OnCommand (wParam, lParam);
+	return CPropertyPage::OnCommand(wParam, lParam);
 }
-
 
 /////////////////////////////////////////////////////////////
 //
 //  On_Setting_Changed
 //
 /////////////////////////////////////////////////////////////
-void
-EmitterPhysicsPropPageClass::On_Setting_Changed (UINT ctrl_id)
+void EmitterPhysicsPropPageClass::On_Setting_Changed(UINT ctrl_id)
 {
 	switch (ctrl_id)
 	{
@@ -327,11 +319,11 @@ EmitterPhysicsPropPageClass::On_Setting_Changed (UINT ctrl_id)
 		case IDC_VELOCITY_Z_SPIN:
 		{
 			Vector3 velocity;
-			velocity.X = ::GetDlgItemFloat (m_hWnd, IDC_VELOCITY_X_EDIT);
-			velocity.Y = ::GetDlgItemFloat (m_hWnd, IDC_VELOCITY_Y_EDIT);
-			velocity.Z = ::GetDlgItemFloat (m_hWnd, IDC_VELOCITY_Z_EDIT);
-			m_pEmitterList->Set_Velocity (velocity);
-			SetModified ();
+			velocity.X = ::GetDlgItemFloat(m_hWnd, IDC_VELOCITY_X_EDIT);
+			velocity.Y = ::GetDlgItemFloat(m_hWnd, IDC_VELOCITY_Y_EDIT);
+			velocity.Z = ::GetDlgItemFloat(m_hWnd, IDC_VELOCITY_Z_EDIT);
+			m_pEmitterList->Set_Velocity(velocity);
+			SetModified();
 		}
 		break;
 
@@ -343,31 +335,30 @@ EmitterPhysicsPropPageClass::On_Setting_Changed (UINT ctrl_id)
 		case IDC_ACCELERATION_Z_SPIN:
 		{
 			Vector3 acceleration;
-			acceleration.X = ::GetDlgItemFloat (m_hWnd, IDC_ACCELERATION_X_EDIT);
-			acceleration.Y = ::GetDlgItemFloat (m_hWnd, IDC_ACCELERATION_Y_EDIT);
-			acceleration.Z = ::GetDlgItemFloat (m_hWnd, IDC_ACCELERATION_Z_EDIT);
-			m_pEmitterList->Set_Acceleration (acceleration);
-			SetModified ();
+			acceleration.X = ::GetDlgItemFloat(m_hWnd, IDC_ACCELERATION_X_EDIT);
+			acceleration.Y = ::GetDlgItemFloat(m_hWnd, IDC_ACCELERATION_Y_EDIT);
+			acceleration.Z = ::GetDlgItemFloat(m_hWnd, IDC_ACCELERATION_Z_EDIT);
+			m_pEmitterList->Set_Acceleration(acceleration);
+			SetModified();
 		}
 		break;
 
 		case IDC_INHERITANCE_FACTOR_EDIT:
 		case IDC_INHERITANCE_FACTOR_SPIN:
 		{
-			float value = ::GetDlgItemFloat (m_hWnd, IDC_INHERITANCE_FACTOR_EDIT);
-			m_pEmitterList->Set_Vel_Inherit (value);
-			SetModified ();
+			float value = ::GetDlgItemFloat(m_hWnd, IDC_INHERITANCE_FACTOR_EDIT);
+			m_pEmitterList->Set_Vel_Inherit(value);
+			SetModified();
 		}
 		break;
 
 		case IDC_OUT_FACTOR_EDIT:
 		case IDC_OUT_FACTOR_SPIN:
 		{
-			float value = ::GetDlgItemFloat (m_hWnd, IDC_OUT_FACTOR_EDIT);
-			m_pEmitterList->Set_Outward_Vel (value);
-			SetModified ();
+			float value = ::GetDlgItemFloat(m_hWnd, IDC_OUT_FACTOR_EDIT);
+			m_pEmitterList->Set_Outward_Vel(value);
+			SetModified();
 		}
 		break;
 	}
 }
-

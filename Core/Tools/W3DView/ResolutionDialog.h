@@ -20,7 +20,6 @@
 
 #include "resource.h"
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // ResolutionDialogClass
@@ -28,27 +27,28 @@
 /////////////////////////////////////////////////////////////////////////////
 class ResolutionDialogClass : public CDialog
 {
-// Construction
+	// Construction
 public:
-	ResolutionDialogClass(CWnd* pParent = nullptr);   // standard constructor
+	ResolutionDialogClass(CWnd* pParent = nullptr);    // standard constructor
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(ResolutionDialogClass)
-	enum { IDD = IDD_RESOLUTION };
-	CListCtrl	m_ListCtrl;
+	enum
+	{
+		IDD = IDD_RESOLUTION
+	};
+	CListCtrl m_ListCtrl;
 	//}}AFX_DATA
 
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(ResolutionDialogClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
-
 	// Generated message map functions
 	//{{AFX_MSG(ResolutionDialogClass)
 	virtual BOOL OnInitDialog();
@@ -57,23 +57,23 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-/*public:
+	/*public:
 
-	///////////////////////////////////////////////////////////////////
-	//	Public methods
-	///////////////////////////////////////////////////////////////////
-	int		Get_Width ();
-	int		Get_Height ();
-	int		Get_BPP ();
+	  ///////////////////////////////////////////////////////////////////
+	  //	Public methods
+	  ///////////////////////////////////////////////////////////////////
+	  int		Get_Width ();
+	  int		Get_Height ();
+	  int		Get_BPP ();
 
-private:
+	private:
 
-	///////////////////////////////////////////////////////////////////
-	//	Private member data
-	///////////////////////////////////////////////////////////////////
-	int m_Width;
-	int m_Height;
-	int m_BPP;*/
+	  ///////////////////////////////////////////////////////////////////
+	  //	Private member data
+	  ///////////////////////////////////////////////////////////////////
+	  int m_Width;
+	  int m_Height;
+	  int m_BPP;*/
 };
 
 //{{AFX_INSERT_LOCATION}}

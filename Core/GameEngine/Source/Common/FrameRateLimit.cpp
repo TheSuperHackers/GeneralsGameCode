@@ -19,7 +19,6 @@
 #include "PreRTS.h"
 #include "Common/FrameRateLimit.h"
 
-
 FrameRateLimit::FrameRateLimit()
 {
 	LARGE_INTEGER freq;
@@ -37,7 +36,7 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	QueryPerformanceCounter(&tick);
 	double elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
 	const double targetSeconds = 1.0 / maxFps;
-	const double sleepSeconds = targetSeconds - elapsedSeconds - 0.002; // leave ~2ms for spin wait
+	const double sleepSeconds = targetSeconds - elapsedSeconds - 0.002;    // leave ~2ms for spin wait
 
 	if (sleepSeconds > 0.0)
 	{
@@ -51,8 +50,7 @@ Real FrameRateLimit::wait(UnsignedInt maxFps)
 	{
 		QueryPerformanceCounter(&tick);
 		elapsedSeconds = static_cast<double>(tick.QuadPart - m_start) / m_freq;
-	}
-	while (elapsedSeconds < targetSeconds);
+	} while (elapsedSeconds < targetSeconds);
 
 	m_start = tick.QuadPart;
 	return (Real)elapsedSeconds;
@@ -65,9 +63,9 @@ void FrameRateLimit::reset()
 	m_start = tick.QuadPart;
 }
 
-
 const UnsignedInt RenderFpsPreset::s_fpsValues[] = {
-	30, 50, 56, 60, 65, 70, 72, 75, 80, 85, 90, 100, 110, 120, 144, 240, 480, UncappedFpsValue };
+	30, 50, 56, 60, 65, 70, 72, 75, 80, 85, 90, 100, 110, 120, 144, 240, 480, UncappedFpsValue
+};
 
 static_assert(LOGICFRAMES_PER_SECOND <= 30, "Min FPS values need to be revisited!");
 
@@ -103,12 +101,13 @@ UnsignedInt RenderFpsPreset::changeFpsValue(UnsignedInt value, FpsValueChange ch
 {
 	switch (change)
 	{
-	default:
-	case FpsValueChange_Increase: return getNextFpsValue(value);
-	case FpsValueChange_Decrease: return getPrevFpsValue(value);
+		default:
+		case FpsValueChange_Increase:
+			return getNextFpsValue(value);
+		case FpsValueChange_Decrease:
+			return getPrevFpsValue(value);
 	}
 }
-
 
 UnsignedInt LogicTimeScaleFpsPreset::getNextFpsValue(UnsignedInt value)
 {
@@ -131,8 +130,10 @@ UnsignedInt LogicTimeScaleFpsPreset::changeFpsValue(UnsignedInt value, FpsValueC
 {
 	switch (change)
 	{
-	default:
-	case FpsValueChange_Increase: return getNextFpsValue(value);
-	case FpsValueChange_Decrease: return getPrevFpsValue(value);
+		default:
+		case FpsValueChange_Increase:
+			return getNextFpsValue(value);
+		case FpsValueChange_Decrease:
+			return getPrevFpsValue(value);
 	}
 }

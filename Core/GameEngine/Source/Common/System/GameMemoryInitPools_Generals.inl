@@ -18,8 +18,7 @@
 
 // And please be careful of duplicates.  They are not rejected.
 // not const -- we might override from INI
-static PoolSizeRec PoolSizes[] =
-{
+static PoolSizeRec PoolSizes[] = {
 	{ "PartitionContactListNode", 2048, 512 },
 	{ "BattleshipUpdate", 32, 32 },
 	{ "FlyToDestAndDestroyUpdate", 32, 32 },
@@ -31,10 +30,10 @@ static PoolSizeRec PoolSizes[] =
 	{ "ProductionPrerequisitePool", 1024, 32 },
 	{ "RadarObject", 512, 32 },
 	{ "ResourceGatheringManager", 16, 16 },
-	{ "SightingInfo", 8192, 2048 },// Looks big, but all 3000 objects used to have 4 just built in.
+	{ "SightingInfo", 8192, 2048 },    // Looks big, but all 3000 objects used to have 4 just built in.
 	{ "SpecialPowerTemplate", 64, 32 },
 	{ "StateMachinePool", 32, 32 },
-	{ "TeamPool", 128, 32 },	// if you increase this, increase player/team relation map pools
+	{ "TeamPool", 128, 32 },    // if you increase this, increase player/team relation map pools
 	{ "PlayerRelationMapPool", 128, 32 },
 	{ "TeamRelationMapPool", 128, 32 },
 	{ "TeamPrototypePool", 256, 32 },
@@ -53,7 +52,11 @@ static PoolSizeRec PoolSizes[] =
 	{ "ParticlePool", 4096, 256 },
 	{ "ParticleSystemTemplatePool", 768, 32 },
 	{ "ParticleSystemPool", 1024, 32 },
-	{ "TerrainRoadType", 64, 64, },
+	{
+	  "TerrainRoadType",
+	  64,
+	  64,
+	},
 	{ "WindowLayoutPool", 32, 32 },
 	{ "AnimatedParticleSysBoneClientUpdate", 16, 16 },
 	{ "SwayClientUpdate", 4096, 32 },
@@ -69,12 +72,12 @@ static PoolSizeRec PoolSizes[] =
 	{ "TeamInQueue", 32, 32 },
 	{ "AIPlayer", 8, 8 },
 	{ "AISkirmishPlayer", 8, 8 },
-	{ "AIStateMachine",  600, 32 },
-	{ "JetAIStateMachine",  64, 32 },
-	{ "HeliAIStateMachine",  64, 32 },
+	{ "AIStateMachine", 600, 32 },
+	{ "JetAIStateMachine", 64, 32 },
+	{ "HeliAIStateMachine", 64, 32 },
 	{ "AIAttackMoveStateMachine", 2048, 32 },
 	{ "AIAttackThenIdleStateMachine", 512, 32 },
-	{ "AttackStateMachine",  512, 32 },
+	{ "AttackStateMachine", 512, 32 },
 	{ "CrateTemplate", 32, 32 },
 	{ "ExperienceTrackerPool", 4096, 256 },
 	{ "FiringTrackerPool", 4096, 256 },
@@ -86,7 +89,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "SubdualDamageHelper", 1500, 256 },
 	{ "TempWeaponBonusHelper", 4096, 256 },
 	{ "Locomotor", 2048, 32 },
-	{ "LocomotorTemplate", 128, 32	},
+	{ "LocomotorTemplate", 128, 32 },
 	{ "ObjectPool", 4096, 32 },
 	{ "SimpleObjectIteratorPool", 32, 32 },
 	{ "SimpleObjectIteratorClumpPool", 4096, 32 },
@@ -126,7 +129,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "DeliverPayloadAIUpdate", 32, 32 },
 	{ "DeletionUpdate", 128, 32 },
 	{ "SmartBombTargetHomingUpdate", 8, 8 },
-	{ "DynamicAudioEventInfo", 16, 256 }, // Note: some levels have none, some have lots. Since all are allocated at level load time, we can set this low for the levels with none.
+	{ "DynamicAudioEventInfo", 16, 256 },    // Note: some levels have none, some have lots. Since all are allocated at level load time, we can set this low for the levels with none.
 	{ "HackInternetStateMachine", 32, 32 },
 	{ "HackInternetAIUpdate", 32, 32 },
 	{ "MissileAIUpdate", 512, 32 },
@@ -155,8 +158,16 @@ static PoolSizeRec PoolSizes[] =
 	{ "ParkingPlaceBehavior", 32, 32 },
 	{ "FlightDeckBehavior", 8, 8 },
 #ifdef ALLOW_SURRENDER
-	{ "POWTruckAIUpdate", 32, 32, },
-	{ "POWTruckBehavior", 32, 32, },
+	{
+	  "POWTruckAIUpdate",
+	  32,
+	  32,
+	},
+	{
+	  "POWTruckBehavior",
+	  32,
+	  32,
+	},
 	{ "PrisonBehavior", 32, 32 },
 	{ "PrisonVisual", 32, 32 },
 	{ "PropagandaCenterBehavior", 16, 16 },
@@ -241,7 +252,7 @@ static PoolSizeRec PoolSizes[] =
 	{ "MissileLauncherBuildingUpdate", 32, 32 },
 	{ "SquishCollide", 512, 32 },
 	{ "StructureBody", 512, 64 },
-	{ "HiveStructureBody", 64, 32 }, //Stinger sites
+	{ "HiveStructureBody", 64, 32 },    // Stinger sites
 	{ "StructureCollapseUpdate", 32, 32 },
 	{ "StructureToppleUpdate", 32, 32 },
 	{ "SupplyCenterCreate", 32, 32 },
@@ -320,7 +331,11 @@ static PoolSizeRec PoolSizes[] =
 	{ "OCLSpecialPower", 32, 32 },
 	{ "FireWeaponPower", 32, 32 },
 #ifdef ALLOW_DEMORALIZE
-	{ "DemoralizeSpecialPower", 16, 16, },
+	{
+	  "DemoralizeSpecialPower",
+	  16,
+	  16,
+	},
 #endif
 	{ "CashHackSpecialPower", 32, 32 },
 	{ "CommandSetUpgrade", 32, 32 },
@@ -655,8 +670,8 @@ static PoolSizeRec PoolSizes[] =
 	{ "DynamicMeshModel", 32, 32 },
 	{ "GapFillerClass", 32, 32 },
 	{ "FontCharsClass", 64, 32 },
-	{ "ThumbnailManagerClass", 32, 32},
-	{ "SmudgeSet", 32, 32},
-	{ "Smudge", 128, 32},
+	{ "ThumbnailManagerClass", 32, 32 },
+	{ "SmudgeSet", 32, 32 },
+	{ "Smudge", 128, 32 },
 	{ 0, 0, 0 }
 };

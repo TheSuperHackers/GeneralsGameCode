@@ -38,36 +38,35 @@ class INI;
 
 //-------------------------------------------------------------------------------------------------
 /** Geometry type descriptions, keep this in the same order as GeometryNames[] below
-	*
-	* NOTE: Do *NOT* change the order of these defines unless you update the
-	* partition manager ... in particular theCollideTestProcs depend on the
-	* order of this geometry and the fact that the values start at 1
-	*/
+ *
+ * NOTE: Do *NOT* change the order of these defines unless you update the
+ * partition manager ... in particular theCollideTestProcs depend on the
+ * order of this geometry and the fact that the values start at 1
+ */
 //-------------------------------------------------------------------------------------------------
-enum GeometryType CPP_11(: Int)
+enum GeometryType CPP_11( : Int)
 {
-	GEOMETRY_SPHERE,			///< partition/collision testing as sphere. (majorRadius = radius)
-	GEOMETRY_CYLINDER,		///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
-	GEOMETRY_BOX,					///< partition/collision testing as rectangular box (majorRadius = half len in forward dir; minorRadius = half len in side dir; height = height)
+	GEOMETRY_SPHERE,    ///< partition/collision testing as sphere. (majorRadius = radius)
+	GEOMETRY_CYLINDER,    ///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
+	GEOMETRY_BOX,    ///< partition/collision testing as rectangular box (majorRadius = half len in forward dir; minorRadius = half len in side dir; height = height)
 
 	GEOMETRY_NUM_TYPES,
 	GEOMETRY_FIRST = 0
 };
 
 #ifdef DEFINE_GEOMETRY_NAMES
-static const char *const GeometryNames[] =
-{
+static const char* const GeometryNames[] = {
 	"SPHERE",
 	"CYLINDER",
 	"BOX",
 	nullptr
 };
 static_assert(ARRAY_SIZE(GeometryNames) == GEOMETRY_NUM_TYPES + 1, "Incorrect array size");
-#endif  // end DEFINE_GEOMETRY_NAMES
+#endif    // end DEFINE_GEOMETRY_NAMES
 
 //-------------------------------------------------------------------------------------------------
 #if defined(RTS_DEBUG)
-enum ExtentModType CPP_11(: Int)
+enum ExtentModType CPP_11( : Int)
 {
 	EXTENTMOD_INVALID = 0,
 	EXTENTMOD_TYPE = 1,
@@ -85,30 +84,28 @@ class GeometryInfo : public Snapshot
 {
 private:
 	GeometryType m_type;
-	Bool m_isSmall;						///< if true, geometry is assumed to fit in a single partition cell
+	Bool m_isSmall;    ///< if true, geometry is assumed to fit in a single partition cell
 	Real m_height;
 	Real m_majorRadius;
 	Real m_minorRadius;
 
-	Real m_boundingCircleRadius;	///< not in INI file -- size of bounding circle (2d)
-	Real m_boundingSphereRadius;	///< not in INI -- size of bounding sphere (3d)
+	Real m_boundingCircleRadius;    ///< not in INI file -- size of bounding circle (2d)
+	Real m_boundingSphereRadius;    ///< not in INI -- size of bounding sphere (3d)
 
 	void calcBoundingStuff();
 
 protected:
-
 	// snapshot methods
-	virtual void crc( Xfer *xfer ) override;
-	virtual void xfer( Xfer *xfer ) override;
+	virtual void crc(Xfer* xfer) override;
+	virtual void xfer(Xfer* xfer) override;
 	virtual void loadPostProcess() override;
 
 public:
-
-	static void parseGeometryType( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
-	static void parseGeometryIsSmall( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
-	static void parseGeometryHeight( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
-	static void parseGeometryMajorRadius( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
-	static void parseGeometryMinorRadius( INI* ini, void * /*instance*/, void *store, const void* /*userData*/ );
+	static void parseGeometryType(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);
+	static void parseGeometryIsSmall(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);
+	static void parseGeometryHeight(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);
+	static void parseGeometryMajorRadius(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);
+	static void parseGeometryMinorRadius(INI* ini, void* /*instance*/, void* store, const void* /*userData*/);
 
 	GeometryInfo(GeometryType type, Bool isSmall, Real height, Real majorRadius, Real minorRadius)
 	{
@@ -135,12 +132,12 @@ public:
 
 	GeometryType getGeomType() const { return m_type; }
 	Bool getIsSmall() const { return m_isSmall; }
-	Real getMajorRadius() const { return m_majorRadius; }	// x-axis
-	Real getMinorRadius() const { return m_minorRadius; }	// y-axis
+	Real getMajorRadius() const { return m_majorRadius; }    // x-axis
+	Real getMinorRadius() const { return m_minorRadius; }    // y-axis
 
 	// this has been removed and should never need to be called...
 	// you should generally call getMaxHeightAbovePosition() instead. (srj)
-	//inline Real getGeomHeight() const { return m_height; }				// z-axis
+	// inline Real getGeomHeight() const { return m_height; }				// z-axis
 
 	Real getBoundingCircleRadius() const { return m_boundingCircleRadius; }
 	Real getBoundingSphereRadius() const { return m_boundingSphereRadius; }
@@ -164,16 +161,16 @@ public:
 	// given an object with this geom, located at 'pos', and another obj with the given
 	// pos & geom, calc the min and max pitches from this to that.
 	void calcPitches(const Coord3D& thisPos, const GeometryInfo& that, const Coord3D& thatPos,
-		Real& minPitch, Real& maxPitch) const;
+	                 Real& minPitch, Real& maxPitch) const;
 
 	/// expand the 2d footprint
 	void expandFootprint(Real radius);
 
 	/// get the 2d bounding box
-	void get2DBounds(const Coord3D& geomCenter, Real angle, Region2D& bounds	) const;
+	void get2DBounds(const Coord3D& geomCenter, Real angle, Region2D& bounds) const;
 
 	void makeRandomOffsetWithinFootprint(Coord3D& pt, const RandomValueClass& random = LogicRandomValueClass()) const;
-	void makeRandomOffsetOnPerimeter(Coord3D& pt) const; ///< Chooses a random point on the extent border. Uses game logic random!
+	void makeRandomOffsetOnPerimeter(Coord3D& pt) const;    ///< Chooses a random point on the extent border. Uses game logic random!
 
 	void clipPointToFootprint(const Coord3D& geomCenter, Coord3D& ptToClip) const;
 
@@ -186,5 +183,4 @@ public:
 	void tweakExtents(ExtentModType extentModType, Real extentModAmount);
 	AsciiString getDescriptiveString() const;
 #endif
-
 };

@@ -26,7 +26,7 @@
 // The part of a Player's brain that holds the communal Passenger list of all tunnels.
 // Author: Graham Smallwood, March, 2002
 
-#include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
+#include "PreRTS.h"    // This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -45,7 +45,6 @@
 
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/TunnelContain.h"
-
 
 // ------------------------------------------------------------------------
 TunnelTracker::TunnelTracker()
@@ -66,13 +65,13 @@ TunnelTracker::~TunnelTracker()
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::iterateContained( ContainIterateFunc func, void *userData, Bool reverse )
+void TunnelTracker::iterateContained(ContainIterateFunc func, void* userData, Bool reverse)
 {
 	if (reverse)
 	{
 		// note that this has to be smart enough to handle items in the list being deleted
 		// via the callback function.
-		for(ContainedItemsList::reverse_iterator it = m_containList.rbegin(); it != m_containList.rend(); )
+		for (ContainedItemsList::reverse_iterator it = m_containList.rbegin(); it != m_containList.rend();)
 		{
 			// save the obj...
 			Object* obj = *it;
@@ -82,14 +81,14 @@ void TunnelTracker::iterateContained( ContainIterateFunc func, void *userData, B
 			++it;
 
 			// call it
-			(*func)( obj, userData );
+			(*func)(obj, userData);
 		}
 	}
 	else
 	{
 		// note that this has to be smart enough to handle items in the list being deleted
 		// via the callback function.
-		for(ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); )
+		for (ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end();)
 		{
 			// save the obj...
 			Object* obj = *it;
@@ -99,7 +98,7 @@ void TunnelTracker::iterateContained( ContainIterateFunc func, void *userData, B
 			++it;
 
 			// call it
-			(*func)( obj, userData );
+			(*func)(obj, userData);
 		}
 	}
 }
@@ -118,44 +117,54 @@ void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::updateNemesis(const Object *target)
+void TunnelTracker::updateNemesis(const Object* target)
 {
-	if (getCurNemesis()==nullptr) {
-		if (target) {
+	if (getCurNemesis() == nullptr)
+	{
+		if (target)
+		{
 			if (target->isKindOf(KINDOF_VEHICLE) || target->isKindOf(KINDOF_STRUCTURE) ||
-				target->isKindOf(KINDOF_INFANTRY) || target->isKindOf(KINDOF_AIRCRAFT)) {
-					m_curNemesisID = target->getID();
-					m_nemesisTimestamp = TheGameLogic->getFrame();
+			    target->isKindOf(KINDOF_INFANTRY) || target->isKindOf(KINDOF_AIRCRAFT))
+			{
+				m_curNemesisID = target->getID();
+				m_nemesisTimestamp = TheGameLogic->getFrame();
 			}
 		}
-	} else if (getCurNemesis()==target) {
+	}
+	else if (getCurNemesis() == target)
+	{
 		m_nemesisTimestamp = TheGameLogic->getFrame();
 	}
 }
 
 // ------------------------------------------------------------------------
-Object *TunnelTracker::getCurNemesis()
+Object* TunnelTracker::getCurNemesis()
 {
-	if (m_curNemesisID == INVALID_ID) {
+	if (m_curNemesisID == INVALID_ID)
+	{
 		return nullptr;
 	}
-	if (m_nemesisTimestamp + 4*LOGICFRAMES_PER_SECOND < TheGameLogic->getFrame()) {
+	if (m_nemesisTimestamp + 4 * LOGICFRAMES_PER_SECOND < TheGameLogic->getFrame())
+	{
 		m_curNemesisID = INVALID_ID;
 		return nullptr;
 	}
-	Object *target = TheGameLogic->findObjectByID(m_curNemesisID);
-	if (target) {
-		//If the enemy unit is stealthed and not detected, then we can't attack it!
-	if( target->testStatus( OBJECT_STATUS_STEALTHED ) &&
-			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+	Object* target = TheGameLogic->findObjectByID(m_curNemesisID);
+	if (target)
+	{
+		// If the enemy unit is stealthed and not detected, then we can't attack it!
+		if (target->testStatus(OBJECT_STATUS_STEALTHED) &&
+		    !target->testStatus(OBJECT_STATUS_DETECTED))
 		{
 			target = nullptr;
 		}
 	}
-	if (target && target->isEffectivelyDead()) {
+	if (target && target->isEffectivelyDead())
+	{
 		target = nullptr;
 	}
-	if (target == nullptr) {
+	if (target == nullptr)
+	{
 		m_curNemesisID = INVALID_ID;
 	}
 	return target;
@@ -164,15 +173,15 @@ Object *TunnelTracker::getCurNemesis()
 // ------------------------------------------------------------------------
 Bool TunnelTracker::isValidContainerFor(const Object* obj, Bool checkCapacity) const
 {
-	//October 11, 2002 -- Kris : Dustin wants ALL units to be able to use tunnels!
-	// srj sez: um, except aircraft.
+	// October 11, 2002 -- Kris : Dustin wants ALL units to be able to use tunnels!
+	//  srj sez: um, except aircraft.
 	if (obj && !obj->isKindOf(KINDOF_AIRCRAFT))
 	{
 		if (checkCapacity)
 		{
 			Int containMax = getContainMax();
 			Int containCount = getContainCount();
-			return ( containCount < containMax );
+			return (containCount < containMax);
 		}
 		else
 		{
@@ -183,7 +192,7 @@ Bool TunnelTracker::isValidContainerFor(const Object* obj, Bool checkCapacity) c
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::addToContainList( Object *obj )
+void TunnelTracker::addToContainList(Object* obj)
 {
 	m_containList.push_back(obj);
 	++m_containListSize;
@@ -195,9 +204,8 @@ void TunnelTracker::addToContainList( Object *obj )
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::removeFromContain( Object *obj, Bool exposeStealthUnits )
+void TunnelTracker::removeFromContain(Object* obj, Bool exposeStealthUnits)
 {
-
 	ContainedItemsList::iterator it = std::find(m_containList.begin(), m_containList.end(), obj);
 	if (it != m_containList.end())
 	{
@@ -211,25 +219,24 @@ void TunnelTracker::removeFromContain( Object *obj, Bool exposeStealthUnits )
 			--m_heroUnitsContained;
 		}
 	}
-
 }
 
 // ------------------------------------------------------------------------
-Bool TunnelTracker::isInContainer( Object *obj )
+Bool TunnelTracker::isInContainer(Object* obj)
 {
-	return (std::find(m_containList.begin(), m_containList.end(), obj) != m_containList.end()) ;
+	return (std::find(m_containList.begin(), m_containList.end(), obj) != m_containList.end());
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::onTunnelCreated( const Object *newTunnel )
+void TunnelTracker::onTunnelCreated(const Object* newTunnel)
 {
 	m_tunnelCount++;
-	m_tunnelIDs.push_back( newTunnel->getID() );
+	m_tunnelIDs.push_back(newTunnel->getID());
 	m_needsFullHealTimeUpdate = true;
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
+void TunnelTracker::onTunnelDestroyed(const Object* deadTunnel)
 {
 	{
 		std::list<ObjectID>::iterator it = std::find(m_tunnelIDs.begin(), m_tunnelIDs.end(), deadTunnel->getID());
@@ -244,39 +251,41 @@ void TunnelTracker::onTunnelDestroyed( const Object *deadTunnel )
 		m_needsFullHealTimeUpdate = true;
 	}
 
-	if( m_tunnelCount == 0 )
+	if (m_tunnelCount == 0)
 	{
 		// Kill everyone in our contain list.  Cave in!
-		iterateContained( destroyObject, nullptr, FALSE );
+		iterateContained(destroyObject, nullptr, FALSE);
 		m_containList.clear();
 		m_containListSize = 0;
 	}
 	else
 	{
-		Object *validTunnel = TheGameLogic->findObjectByID( m_tunnelIDs.front() );
+		Object* validTunnel = TheGameLogic->findObjectByID(m_tunnelIDs.front());
 		// Otherwise, make sure nobody inside remembers the dead tunnel as the one they entered
 		// (scripts need to use so there must be something valid here)
-		for(ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); )
+		for (ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end();)
 		{
 			Object* obj = *it;
 			++it;
-			if( obj->getContainedBy() == deadTunnel )
-				obj->onContainedBy( validTunnel );
+			if (obj->getContainedBy() == deadTunnel)
+			{
+				obj->onContainedBy(validTunnel);
+			}
 		}
 	}
 }
 
 // ------------------------------------------------------------------------
-void TunnelTracker::destroyObject( Object *obj, void * )
+void TunnelTracker::destroyObject(Object* obj, void*)
 {
 	// Now that tunnels consider ContainedBy to be "the tunnel you entered", I need to say goodbye
 	// like other contain types so they don't look us up on their deletion and crash
-	obj->onRemovedFrom( obj->getContainedBy() );
-	TheGameLogic->destroyObject( obj );
+	obj->onRemovedFrom(obj->getContainedBy());
+	TheGameLogic->destroyObject(obj);
 }
 
 // ------------------------------------------------------------------------
-	// heal all the objects within the tunnel system using the iterateContained function
+// heal all the objects within the tunnel system using the iterateContained function
 #if RETAIL_COMPATIBLE_CRC || PRESERVE_TUNNEL_HEAL_STACKING
 void TunnelTracker::healObjects(Real frames)
 {
@@ -296,13 +305,12 @@ void TunnelTracker::healObjects()
 #endif
 
 // ------------------------------------------------------------------------
-	// heal one object within the tunnel network system
-void TunnelTracker::healObject( Object *obj, void *frames)
+// heal one object within the tunnel network system
+void TunnelTracker::healObject(Object* obj, void* frames)
 {
-
-	//get the number of frames to heal
+	// get the number of frames to heal
 #if RETAIL_COMPATIBLE_CRC || PRESERVE_TUNNEL_HEAL_STACKING
-	Real *framesForFullHeal = (Real*)frames;
+	Real* framesForFullHeal = (Real*)frames;
 #else
 	UnsignedInt* framesForFullHeal = (UnsignedInt*)frames;
 #endif
@@ -311,21 +319,19 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 	DamageInfo healInfo;
 	healInfo.in.m_damageType = DAMAGE_HEALING;
 	healInfo.in.m_deathType = DEATH_NONE;
-	//healInfo.in.m_sourceID = getObject()->getID();
+	// healInfo.in.m_sourceID = getObject()->getID();
 
 	// get body module of the thing to heal
-	BodyModuleInterface *body = obj->getBodyModule();
+	BodyModuleInterface* body = obj->getBodyModule();
 
 	// if we've been in here long enough ... set our health to max
-	if( TheGameLogic->getFrame() - obj->getContainedByFrame() >= *framesForFullHeal )
+	if (TheGameLogic->getFrame() - obj->getContainedByFrame() >= *framesForFullHeal)
 	{
-
 		// set the amount to max just to be sure we're at the top
 		healInfo.in.m_amount = body->getMaxHealth();
 
 		// set max health
-		body->attemptHealing( &healInfo );
-
+		body->attemptHealing(&healInfo);
 	}
 	else
 	{
@@ -337,8 +343,7 @@ void TunnelTracker::healObject( Object *obj, void *frames)
 		healInfo.in.m_amount = body->getMaxHealth() / *framesForFullHeal;
 
 		// do the healing
-		body->attemptHealing( &healInfo );
-
+		body->attemptHealing(&healInfo);
 	}
 }
 
@@ -350,18 +355,24 @@ void TunnelTracker::updateFullHealTime()
 	{
 		const Object* tunnelObj = TheGameLogic->findObjectByID(*it);
 		if (!tunnelObj)
+		{
 			continue;
+		}
 
 		const ContainModuleInterface* contain = tunnelObj->getContain();
 		DEBUG_ASSERTCRASH(contain != nullptr, ("Contain module is null"));
 
 		if (!contain->isTunnelContain())
+		{
 			continue;
+		}
 
 		const TunnelContain* tunnelContain = static_cast<const TunnelContain*>(contain);
 		const UnsignedInt framesForFullHeal = tunnelContain->getFullTimeForHeal();
 		if (framesForFullHeal < minFrames)
+		{
 			minFrames = framesForFullHeal;
+		}
 	}
 
 	m_framesForFullHeal = minFrames;
@@ -370,62 +381,53 @@ void TunnelTracker::updateFullHealTime()
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
-void TunnelTracker::crc( Xfer *xfer )
+void TunnelTracker::crc(Xfer* xfer)
 {
-
 }
 
 // ------------------------------------------------------------------------------------------------
 /** Xfer method
-	* Version Info:
-	* 1: Initial version */
+ * Version Info:
+ * 1: Initial version */
 // ------------------------------------------------------------------------------------------------
-void TunnelTracker::xfer( Xfer *xfer )
+void TunnelTracker::xfer(Xfer* xfer)
 {
-
 	// version
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
-	xfer->xferVersion( &version, currentVersion );
+	xfer->xferVersion(&version, currentVersion);
 
 	// tunnel object id list
-	xfer->xferSTLObjectIDList( &m_tunnelIDs );
+	xfer->xferSTLObjectIDList(&m_tunnelIDs);
 
 	// contain list count
-	xfer->xferInt( &m_containListSize );
+	xfer->xferInt(&m_containListSize);
 
 	// contain list data
 	ObjectID objectID;
-	if( xfer->getXferMode() == XFER_SAVE )
+	if (xfer->getXferMode() == XFER_SAVE)
 	{
 		ContainedItemsList::const_iterator it;
 
-		for( it = m_containList.begin(); it != m_containList.end(); ++it )
+		for (it = m_containList.begin(); it != m_containList.end(); ++it)
 		{
-
 			objectID = (*it)->getID();
-			xfer->xferObjectID( &objectID );
-
+			xfer->xferObjectID(&objectID);
 		}
-
 	}
 	else
 	{
-
-		for( UnsignedShort i = 0; i < m_containListSize; ++i )
+		for (UnsignedShort i = 0; i < m_containListSize; ++i)
 		{
-
-			xfer->xferObjectID( &objectID );
-			m_xferContainList.push_back( objectID );
-
+			xfer->xferObjectID(&objectID);
+			m_xferContainList.push_back(objectID);
 		}
 
 		m_needsFullHealTimeUpdate = true;
 	}
 
 	// tunnel count
-	xfer->xferUnsignedInt( &m_tunnelCount );
-
+	xfer->xferUnsignedInt(&m_tunnelCount);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -433,35 +435,29 @@ void TunnelTracker::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void TunnelTracker::loadPostProcess()
 {
-
 	// sanity, the contain list should be empty until we post process the id list
-	if( !m_containList.empty() )
+	if (!m_containList.empty())
 	{
-
-		DEBUG_CRASH(( "TunnelTracker::loadPostProcess - m_containList should be empty but is not" ));
+		DEBUG_CRASH(("TunnelTracker::loadPostProcess - m_containList should be empty but is not"));
 		throw SC_INVALID_DATA;
-
 	}
 
 	// translate each object ids on the xferContainList into real object pointers in the contain list
 	m_containListSize = 0;
 	m_heroUnitsContained = 0;
-	Object *obj;
+	Object* obj;
 	std::list< ObjectID >::const_iterator it;
-	for( it = m_xferContainList.begin(); it != m_xferContainList.end(); ++it )
+	for (it = m_xferContainList.begin(); it != m_xferContainList.end(); ++it)
 	{
-
-		obj = TheGameLogic->findObjectByID( *it );
-		if( obj == nullptr )
+		obj = TheGameLogic->findObjectByID(*it);
+		if (obj == nullptr)
 		{
-
-			DEBUG_CRASH(( "TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it ));
+			DEBUG_CRASH(("TunnelTracker::loadPostProcess - Unable to find object ID '%d'", *it));
 			throw SC_INVALID_DATA;
-
 		}
 
 		// push on the back of the contain list
-		addToContainList( obj );
+		addToContainList(obj);
 
 		// Crap.  This is in OpenContain as a fix, but not here.
 		{
@@ -469,20 +465,22 @@ void TunnelTracker::loadPostProcess()
 			obj->leaveGroup();
 
 			// remove rider from partition manager
-			ThePartitionManager->unRegisterObject( obj );
+			ThePartitionManager->unRegisterObject(obj);
 
 			// hide the drawable associated with rider
-			if( obj->getDrawable() )
-				obj->getDrawable()->setDrawableHidden( true );
+			if (obj->getDrawable())
+			{
+				obj->getDrawable()->setDrawableHidden(true);
+			}
 
 			// remove object from pathfind map
-			if( TheAI )
-				TheAI->pathfinder()->removeObjectFromPathfindMap( obj );
-
+			if (TheAI)
+			{
+				TheAI->pathfinder()->removeObjectFromPathfindMap(obj);
+			}
 		}
 	}
 
 	// we're done with the xfer contain list now
 	m_xferContainList.clear();
-
 }

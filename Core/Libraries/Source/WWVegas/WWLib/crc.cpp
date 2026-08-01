@@ -36,9 +36,8 @@
  *   CRCEngine::operator() -- Submits an arbitrary data block to the CRC engine.               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
+#include "always.h"
 #include "CRC.h"
-
 
 /***********************************************************************************************
  * CRCEngine::operator() -- Submits one byte of data to the CRC engine.                        *
@@ -58,17 +57,17 @@
  * HISTORY:                                                                                    *
  *   03/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void CRCEngine::operator() (char datum)
+void CRCEngine::operator()(char datum)
 {
 	StagingBuffer.Buffer[Index++] = datum;
 
-	if (Index == sizeof(long))  {
+	if (Index == sizeof(long))
+	{
 		CRC = Value();
 		StagingBuffer.Composite = 0;
 		Index = 0;
 	}
 }
-
 
 /***********************************************************************************************
  * CRCEngine::operator() -- Submits an arbitrary data block to the CRC engine.                 *
@@ -88,10 +87,11 @@ void CRCEngine::operator() (char datum)
  * HISTORY:                                                                                    *
  *   03/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CRCEngine::operator() (void const * buffer, int length)
+long CRCEngine::operator()(void const* buffer, int length)
 {
-	if (buffer != nullptr && length > 0)  {
-		char const * dataptr = (char const *)buffer;
+	if (buffer != nullptr && length > 0)
+	{
+		char const* dataptr = (char const*)buffer;
 		int bytes_left = length;
 
 		/*
@@ -100,7 +100,8 @@ long CRCEngine::operator() (void const * buffer, int length)
 		**	buffer. The bulk of the data block will be processed by the high
 		**	speed longword processing loop.
 		*/
-		while (bytes_left && Buffer_Needs_Data()) {
+		while (bytes_left && Buffer_Needs_Data())
+		{
 			operator()(*dataptr);
 			dataptr++;
 			bytes_left--;
@@ -110,9 +111,10 @@ long CRCEngine::operator() (void const * buffer, int length)
 		**	Perform the fast 'bulk' processing by reading long word sized
 		**	data blocks.
 		*/
-		long const * longptr = (long const *)dataptr;
-		int longcount = bytes_left / sizeof(long);		// Whole 'long' elements remaining.
-		while (longcount--) {
+		long const* longptr = (long const*)dataptr;
+		int longcount = bytes_left / sizeof(long);    // Whole 'long' elements remaining.
+		while (longcount--)
+		{
 			CRC = _lrotl(CRC, 1) + *longptr++;
 			bytes_left -= sizeof(long);
 		}
@@ -121,8 +123,9 @@ long CRCEngine::operator() (void const * buffer, int length)
 		**	If there are remainder bytes, then process these by adding them
 		**	to the staging buffer.
 		*/
-		dataptr = (char const *)longptr;
-		while (bytes_left) {
+		dataptr = (char const*)longptr;
+		while (bytes_left)
+		{
 			operator()(*dataptr);
 			dataptr++;
 			bytes_left--;
@@ -132,11 +135,10 @@ long CRCEngine::operator() (void const * buffer, int length)
 	/*
 	**	Return the current CRC value.
 	*/
-	return(Value());
+	return (Value());
 }
 //    CRC for poly 0x04C11DB7
-unsigned long  CRC::_Table[ 256 ] =
-{
+unsigned long CRC::_Table[256] = {
 	0x00000000L, 0x77073096L, 0xEE0E612CL, 0x990951BAL,
 	0x076DC419L, 0x706AF48FL, 0xE963A535L, 0x9E6495A3L,
 	0x0EDB8832L, 0x79DCB8A4L, 0xE0D5E91EL, 0x97D2D988L,
@@ -203,20 +205,22 @@ unsigned long  CRC::_Table[ 256 ] =
 	0xB40BBE37L, 0xC30C8EA1L, 0x5A05DF1BL, 0x2D02EF8DL
 };
 
-unsigned long	CRC::Memory( unsigned char *data, unsigned long length, unsigned long crc )
+unsigned long CRC::Memory(unsigned char* data, unsigned long length, unsigned long crc)
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
-	while ( length-- ) {
-		crc = CRC32( *data++, crc );					// calc crc for each byte
+	crc ^= 0xFFFFFFFF;    // invert previous CRC
+	while (length--)
+	{
+		crc = CRC32(*data++, crc);    // calc crc for each byte
 	}
-	return (crc ^ 0xFFFFFFFF); 						// invert new CRC and return it
+	return (crc ^ 0xFFFFFFFF);    // invert new CRC and return it
 }
 
-unsigned long	CRC::String( const char *string, unsigned long crc)
+unsigned long CRC::String(const char* string, unsigned long crc)
 {
- 	crc ^= 0xFFFFFFFF;									// invert previous CRC
-	while ( *string )	{
-		crc = CRC32( *string++, crc );				// calc crc for each byte
+	crc ^= 0xFFFFFFFF;    // invert previous CRC
+	while (*string)
+	{
+		crc = CRC32(*string++, crc);    // calc crc for each byte
 	}
-	return (crc ^ 0xFFFFFFFF); 						// invert new CRC and return it
+	return (crc ^ 0xFFFFFFFF);    // invert new CRC and return it
 }

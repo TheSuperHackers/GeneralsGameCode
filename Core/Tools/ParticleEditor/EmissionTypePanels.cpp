@@ -36,29 +36,27 @@
 #include "ParticleEditorDialog.h"
 
 // Defines ////////////////////////////////////////////////////////////////////
-#define		ARBITRARY_BUFF_SIZE		128
-
+#define ARBITRARY_BUFF_SIZE 128
 
 // EmissionPanelLine //////////////////////////////////////////////////////////
-EmissionPanelPoint::EmissionPanelPoint(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+EmissionPanelPoint::EmissionPanelPoint(UINT nIDTemplate, CWnd* pParentWnd)
+  : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
 void EmissionPanelPoint::InitPanel()
 {
-
 }
 
-void EmissionPanelPoint::performUpdate( IN Bool toUI )
+void EmissionPanelPoint::performUpdate(IN Bool toUI)
 {
-
 }
 
 void EmissionPanelPoint::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -68,42 +66,45 @@ void EmissionPanelPoint::OnParticleSystemEdit()
 BEGIN_MESSAGE_MAP(EmissionPanelPoint, ISwapablePanel)
 END_MESSAGE_MAP()
 
-
 // Defines ////////////////////////////////////////////////////////////////////
-#define		ARBITRARY_BUFF_SIZE		128
+#define ARBITRARY_BUFF_SIZE 128
 
 // EmissionPanelLine //////////////////////////////////////////////////////////
-EmissionPanelLine::EmissionPanelLine(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+EmissionPanelLine::EmissionPanelLine(UINT nIDTemplate, CWnd* pParentWnd)
+  : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
 void EmissionPanelLine::InitPanel()
 {
-
 }
 
-void EmissionPanelLine::performUpdate( IN Bool toUI )
+void EmissionPanelLine::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
-	{ // update line parameters
+	{    // update line parameters
 		Real linePoint;
-		CWnd *pWnd;
+		CWnd* pWnd;
 
 		// first X1
 		pWnd = GetDlgItem(IDC_PSEd_LineStartX);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getLineFromSystem(0, linePoint);
 
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				linePoint = atof(buff);
 				pParent->updateLineToSystem(0, linePoint);
@@ -112,13 +113,17 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 
 		// now the Y1
 		pWnd = GetDlgItem(IDC_PSEd_LineStartY);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getLineFromSystem(1, linePoint);
 
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				linePoint = atof(buff);
 				pParent->updateLineToSystem(1, linePoint);
@@ -127,13 +132,17 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 
 		// now the Z1
 		pWnd = GetDlgItem(IDC_PSEd_LineStartZ);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getLineFromSystem(2, linePoint);
 
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				linePoint = atof(buff);
 				pParent->updateLineToSystem(2, linePoint);
@@ -142,13 +151,17 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 
 		// first the X2
 		pWnd = GetDlgItem(IDC_PSEd_LineEndX);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getLineFromSystem(3, linePoint);
 
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				linePoint = atof(buff);
 				pParent->updateLineToSystem(3, linePoint);
@@ -157,13 +170,17 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 
 		// now the Y2
 		pWnd = GetDlgItem(IDC_PSEd_LineEndY);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getLineFromSystem(4, linePoint);
 
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				linePoint = atof(buff);
 				pParent->updateLineToSystem(4, linePoint);
@@ -172,26 +189,30 @@ void EmissionPanelLine::performUpdate( IN Bool toUI )
 
 		// the Z2
 		pWnd = GetDlgItem(IDC_PSEd_LineEndZ);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getLineFromSystem(5, linePoint);
 
 				sprintf(buff, FORMAT_STRING, linePoint);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				linePoint = atof(buff);
 				pParent->updateLineToSystem(5, linePoint);
 			}
 		}
 	}
-
 }
 
 void EmissionPanelLine::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -199,48 +220,51 @@ void EmissionPanelLine::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(EmissionPanelLine, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_LineStartX, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_LineStartY, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_LineStartZ, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_LineEndX, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_LineEndY, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_LineEndZ, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_LineStartX, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_LineStartY, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_LineStartZ, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_LineEndX, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_LineEndY, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_LineEndZ, OnParticleSystemEdit)
 
 END_MESSAGE_MAP()
 
-
 // EmissionPanelBox ///////////////////////////////////////////////////////////
-EmissionPanelBox::EmissionPanelBox(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+EmissionPanelBox::EmissionPanelBox(UINT nIDTemplate, CWnd* pParentWnd)
+  : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
 void EmissionPanelBox::InitPanel()
 {
-
 }
 
-void EmissionPanelBox::performUpdate( IN Bool toUI )
+void EmissionPanelBox::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
-	{ // update half size of box
+	{    // update half size of box
 		Real halfSize;
-		CWnd *pWnd;
+		CWnd* pWnd;
 
 		// first the X
 		pWnd = GetDlgItem(IDC_PSEd_BoxHalfSizeX);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getHalfSizeFromSystem(0, halfSize);
 
 				sprintf(buff, FORMAT_STRING, halfSize);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				halfSize = atof(buff);
 				pParent->updateHalfSizeToSystem(0, halfSize);
@@ -249,13 +273,17 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 
 		// now the Y
 		pWnd = GetDlgItem(IDC_PSEd_BoxHalfSizeY);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getHalfSizeFromSystem(1, halfSize);
 
 				sprintf(buff, FORMAT_STRING, halfSize);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				halfSize = atof(buff);
 				pParent->updateHalfSizeToSystem(1, halfSize);
@@ -264,13 +292,17 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 
 		// finally, the Z
 		pWnd = GetDlgItem(IDC_PSEd_BoxHalfSizeZ);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getHalfSizeFromSystem(2, halfSize);
 
 				sprintf(buff, FORMAT_STRING, halfSize);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				halfSize = atof(buff);
 				pParent->updateHalfSizeToSystem(2, halfSize);
@@ -281,8 +313,9 @@ void EmissionPanelBox::performUpdate( IN Bool toUI )
 
 void EmissionPanelBox::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -290,45 +323,47 @@ void EmissionPanelBox::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(EmissionPanelBox, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_BoxHalfSizeX, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_BoxHalfSizeY, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_BoxHalfSizeZ, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_BoxHalfSizeX, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_BoxHalfSizeY, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_BoxHalfSizeZ, OnParticleSystemEdit)
 END_MESSAGE_MAP()
 
-
 // EmissionPanelSphere ////////////////////////////////////////////////////////
-EmissionPanelSphere::EmissionPanelSphere(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+EmissionPanelSphere::EmissionPanelSphere(UINT nIDTemplate, CWnd* pParentWnd)
+  : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
 void EmissionPanelSphere::InitPanel()
 {
-
 }
 
-void EmissionPanelSphere::performUpdate( IN Bool toUI )
+void EmissionPanelSphere::performUpdate(IN Bool toUI)
 {
-
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
-	{ // update sphere radius
+	{    // update sphere radius
 		Real radius;
-		CWnd *pWnd;
+		CWnd* pWnd;
 
 		// first the X
 		pWnd = GetDlgItem(IDC_PSEd_SphereRadius);
-		if (pWnd) {
-			if (toUI) {
+		if (pWnd)
+		{
+			if (toUI)
+			{
 				pParent->getHalfSizeFromSystem(0, radius);
 
 				sprintf(buff, FORMAT_STRING, radius);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				radius = atof(buff);
 				pParent->updateHalfSizeToSystem(0, radius);
@@ -339,8 +374,9 @@ void EmissionPanelSphere::performUpdate( IN Bool toUI )
 
 void EmissionPanelSphere::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -348,43 +384,45 @@ void EmissionPanelSphere::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(EmissionPanelSphere, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_SphereRadius, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_SphereRadius, OnParticleSystemEdit)
 END_MESSAGE_MAP()
 
-
-
 // EmissionPanelCylinder //////////////////////////////////////////////////////
-EmissionPanelCylinder::EmissionPanelCylinder(UINT nIDTemplate, CWnd* pParentWnd) : ISwapablePanel(nIDTemplate, pParentWnd)
+EmissionPanelCylinder::EmissionPanelCylinder(UINT nIDTemplate, CWnd* pParentWnd)
+  : ISwapablePanel(nIDTemplate, pParentWnd)
 {
-
 }
 
 void EmissionPanelCylinder::InitPanel()
 {
-
 }
 
-void EmissionPanelCylinder::performUpdate( IN Bool toUI )
+void EmissionPanelCylinder::performUpdate(IN Bool toUI)
 {
 	static char buff[ARBITRARY_BUFF_SIZE];
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
-	{ // update cylinder parameters
-		CWnd *pWnd;
+	{    // update cylinder parameters
+		CWnd* pWnd;
 
 		// first the Radius
 		pWnd = GetDlgItem(IDC_PSEd_CylRadius);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Real radius;
-			if (toUI) {
+			if (toUI)
+			{
 				pParent->getCylinderRadiusFromSystem(radius);
 
 				sprintf(buff, FORMAT_STRING, radius);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				radius = atof(buff);
 				pParent->updateCylinderRadiusToSystem(radius);
@@ -393,15 +431,18 @@ void EmissionPanelCylinder::performUpdate( IN Bool toUI )
 
 		// now the Length
 		pWnd = GetDlgItem(IDC_PSEd_CylLength);
-		if (pWnd) {
+		if (pWnd)
+		{
 			Real length;
-			if (toUI) {
-
+			if (toUI)
+			{
 				pParent->getCylinderLengthFromSystem(length);
 
 				sprintf(buff, FORMAT_STRING, length);
 				pWnd->SetWindowText(buff);
-			} else {
+			}
+			else
+			{
 				pWnd->GetWindowText(buff, ARBITRARY_BUFF_SIZE - 1);
 				length = atof(buff);
 				pParent->updateCylinderLengthToSystem(length);
@@ -412,8 +453,9 @@ void EmissionPanelCylinder::performUpdate( IN Bool toUI )
 
 void EmissionPanelCylinder::OnParticleSystemEdit()
 {
-	DebugWindowDialog *pParent = (DebugWindowDialog*) GetParent();
-	if (!pParent) {
+	DebugWindowDialog* pParent = (DebugWindowDialog*)GetParent();
+	if (!pParent)
+	{
 		return;
 	}
 
@@ -421,6 +463,6 @@ void EmissionPanelCylinder::OnParticleSystemEdit()
 }
 
 BEGIN_MESSAGE_MAP(EmissionPanelCylinder, ISwapablePanel)
-	ON_EN_KILLFOCUS(IDC_PSEd_CylRadius, OnParticleSystemEdit)
-	ON_EN_KILLFOCUS(IDC_PSEd_CylLength, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CylRadius, OnParticleSystemEdit)
+ON_EN_KILLFOCUS(IDC_PSEd_CylLength, OnParticleSystemEdit)
 END_MESSAGE_MAP()

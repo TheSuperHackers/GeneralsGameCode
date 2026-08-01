@@ -32,16 +32,16 @@
 #include "Lib/BaseType.h"
 
 // do NOT use these functions directly, rather use the macros below
-extern Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line );
+extern Int GetGameLogicRandomValue(int lo, int hi, const char* file, int line);
 extern Int GetGameLogicRandomValueUnchanged(int lo, int hi, const char* file, int line);
-extern Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line );
+extern Real GetGameLogicRandomValueReal(Real lo, Real hi, const char* file, int line);
 extern Real GetGameLogicRandomValueRealUnchanged(Real lo, Real hi, const char* file, int line);
 
 // use these macros to access the random value functions
-#define GameLogicRandomValue( lo, hi ) GetGameLogicRandomValue( lo, hi, __FILE__, __LINE__ )
-#define GameLogicRandomValueUnchanged( lo, hi ) GetGameLogicRandomValueUnchanged( lo, hi, __FILE__, __LINE__ )
-#define GameLogicRandomValueReal( lo, hi ) GetGameLogicRandomValueReal( lo, hi, __FILE__, __LINE__ )
-#define GameLogicRandomValueRealUnchanged( lo, hi ) GetGameLogicRandomValueRealUnchanged( lo, hi, __FILE__, __LINE__ )
+#define GameLogicRandomValue(lo, hi) GetGameLogicRandomValue(lo, hi, __FILE__, __LINE__)
+#define GameLogicRandomValueUnchanged(lo, hi) GetGameLogicRandomValueUnchanged(lo, hi, __FILE__, __LINE__)
+#define GameLogicRandomValueReal(lo, hi) GetGameLogicRandomValueReal(lo, hi, __FILE__, __LINE__)
+#define GameLogicRandomValueRealUnchanged(lo, hi) GetGameLogicRandomValueRealUnchanged(lo, hi, __FILE__, __LINE__)
 
 //--------------------------------------------------------------------------------------------------------------
 class CColorAlphaDialog;
@@ -69,27 +69,32 @@ public:
 	 */
 	enum DistributionType
 	{
-		CONSTANT, UNIFORM, GAUSSIAN, TRIANGULAR, LOW_BIAS, HIGH_BIAS,
+		CONSTANT,
+		UNIFORM,
+		GAUSSIAN,
+		TRIANGULAR,
+		LOW_BIAS,
+		HIGH_BIAS,
 		DISTRIBUTION_COUNT
 	};
 
-	static const char *const DistributionTypeNames[];
+	static const char* const DistributionTypeNames[];
 
 	/// define the range of random values, and the distribution of values
-	void setRange( Real low, Real high, DistributionType type = UNIFORM );
+	void setRange(Real low, Real high, DistributionType type = UNIFORM);
 
-	Real getValue() const;														///< return a value from the random distribution
+	Real getValue() const;    ///< return a value from the random distribution
 	Real getMinimumValue() const { return m_low; }
 	Real getMaximumValue() const { return m_high; }
 	DistributionType getDistributionType() const { return m_type; }
+
 protected:
-	DistributionType m_type;																		///< the kind of random distribution
-	Real m_low, m_high;																					///< the range of random values
+	DistributionType m_type;    ///< the kind of random distribution
+	Real m_low, m_high;    ///< the range of random values
 
 	// These two friends are for particle editing.
 	friend CColorAlphaDialog;
 	friend DebugWindowDialog;
-
 };
 
 //--------------------------------------------------------------------------------------------------------------

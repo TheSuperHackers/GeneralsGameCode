@@ -29,42 +29,43 @@
 #include "fcntl.h"
 
 #ifdef RTS_DEBUG
-#define new DEBUG_NEW
-#undef THIS_FILE
+	#define new DEBUG_NEW
+	#undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-HINSTANCE ApplicationHInstance = nullptr;  ///< our application instance
+HINSTANCE ApplicationHInstance = nullptr;    ///< our application instance
 
 /// just to satisfy the game libraries we link to
 HWND ApplicationHWnd = nullptr;
 
-const char *gAppPrefix = "wd_";
+const char* gAppPrefix = "wd_";
 
 // Where are the default string files?
-const char *g_strFile = "data\\Generals.str";
-const char *g_csfFile = "data\\%s\\Generals.csf";
+const char* g_strFile = "data\\Generals.str";
+const char* g_csfFile = "data\\%s\\Generals.csf";
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpApp
 
 BEGIN_MESSAGE_MAP(CWdumpApp, CWinApp)
-	//{{AFX_MSG_MAP(CWdumpApp)
-	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
-		//    DO NOT EDIT what you see in these blocks of generated code!
-	//}}AFX_MSG_MAP
-	// Standard file based document commands
-	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
+//{{AFX_MSG_MAP(CWdumpApp)
+ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+// NOTE - the ClassWizard will add and remove mapping macros here.
+//    DO NOT EDIT what you see in these blocks of generated code!
+//}}AFX_MSG_MAP
+// Standard file based document commands
+ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpApp construction
 
 CWdumpApp::CWdumpApp()
-: DumpTextures(false), NoWindow(false), TextureDumpFile(nullptr)
+  : DumpTextures(false)
+  , NoWindow(false)
+  , TextureDumpFile(nullptr)
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -78,16 +79,18 @@ CWdumpApp theApp;
 // private class declaration of a CCommandLineInfo class that knows about our special options
 class CWDumpCommandLineInfo : public CCommandLineInfo
 {
-	virtual void ParseParam(const TCHAR* pszParam,BOOL bFlag,BOOL bLast) override
+	virtual void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast) override
 	{
 		if (bFlag)
 		{
-			if(pszParam[0] == 't') {
+			if (pszParam[0] == 't')
+			{
 				theApp.DumpTextures = true;
 				ParseLast(bLast);
 				return;
 			}
-			if(pszParam[0] == 'q') {
+			if (pszParam[0] == 'q')
+			{
 				theApp.NoWindow = true;
 				ParseLast(bLast);
 				return;
@@ -96,9 +99,7 @@ class CWDumpCommandLineInfo : public CCommandLineInfo
 
 		CCommandLineInfo::ParseParam(pszParam, bFlag, bLast);
 	}
-
 };
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpApp initialization
@@ -111,9 +112,9 @@ BOOL CWdumpApp::InitInstance()
 	//  the specific initialization routines you do not need.
 
 #ifdef _AFXDLL
-	Enable3dControls();			// Call this when using MFC in a shared DLL
+	Enable3dControls();    // Call this when using MFC in a shared DLL
 #else
-	Enable3dControlsStatic();	// Call this when linking to MFC statically
+	Enable3dControlsStatic();    // Call this when linking to MFC statically
 #endif
 
 	// Change the registry key under which our settings are stored.
@@ -121,17 +122,17 @@ BOOL CWdumpApp::InitInstance()
 	// such as the name of your company or organization.
 	SetRegistryKey(_T("Westwood Studios"));
 
-	LoadStdProfileSettings();  // Load standard INI file options (including MRU)
+	LoadStdProfileSettings();    // Load standard INI file options (including MRU)
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
 
 	CSingleDocTemplate* pDocTemplate;
 	pDocTemplate = new CSingleDocTemplate(
-		IDR_MAINFRAME,
-		RUNTIME_CLASS(CWdumpDoc),
-		RUNTIME_CLASS(CMainFrame),       // main SDI frame window
-		RUNTIME_CLASS(CWdumpView));
+	  IDR_MAINFRAME,
+	  RUNTIME_CLASS(CWdumpDoc),
+	  RUNTIME_CLASS(CMainFrame),    // main SDI frame window
+	  RUNTIME_CLASS(CWdumpView));
 	AddDocTemplate(pDocTemplate);
 
 	// Parse command line for standard shell commands, DDE, file open
@@ -139,52 +140,57 @@ BOOL CWdumpApp::InitInstance()
 	ParseCommandLine(cmdInfo);
 
 	// note: if any other dump types are enabled, they should probably open different files.
-	if(DumpTextures) {
+	if (DumpTextures)
+	{
 		TextureDumpFile = fopen("textures.txt", "a");
 	}
 
-	if(NoWindow) {
-		if(cmdInfo.m_nShellCommand == CWDumpCommandLineInfo::FileOpen) {
-			const char *c = strrchr(cmdInfo.m_strFileName, '\\');
-			if(c == nullptr)
-				c = (LPCTSTR) cmdInfo.m_strFileName;
-			if(*c == '\\')
+	if (NoWindow)
+	{
+		if (cmdInfo.m_nShellCommand == CWDumpCommandLineInfo::FileOpen)
+		{
+			const char* c = strrchr(cmdInfo.m_strFileName, '\\');
+			if (c == nullptr)
+			{
+				c = (LPCTSTR)cmdInfo.m_strFileName;
+			}
+			if (*c == '\\')
+			{
 				c++;
+			}
 
 			Filename = c;
 
+			/*			STARTUPINFO info;
+			      GetStartupInfo(&info);
 
+			      if(info.hStdOutput == nullptr) {
+			        AllocConsole();                  // Allocate console window
+			        freopen("CONOUT$", "a", stdout);
+			        freopen("CONIN$", "r", stdin);
+			      } else {
+			        int CrtInput;
+			        int CrtOutput;
+			        if ( (CrtInput  =_open_osfhandle((long) info.hStdInput, _O_RDONLY)) != -1) {
+			          if ( (CrtOutput = _open_osfhandle((long) info.hStdOutput, _O_APPEND)) != -1) {
+			            _dup2( CrtInput, 0);
+			            _dup2( CrtOutput, 1);
+			          }
+			        }
 
-/*			STARTUPINFO info;
-			GetStartupInfo(&info);
+			//				stdin = (struct _iobuf * ) info.hStdInput;
+			//				stdout = (struct _iobuf * ) info.hStdOutput;
+			      }
+			*/
 
-			if(info.hStdOutput == nullptr) {
-				AllocConsole();                  // Allocate console window
-				freopen("CONOUT$", "a", stdout);
-				freopen("CONIN$", "r", stdin);
-			} else {
-				int CrtInput;
-				int CrtOutput;
-				if ( (CrtInput  =_open_osfhandle((long) info.hStdInput, _O_RDONLY)) != -1) {
-					if ( (CrtOutput = _open_osfhandle((long) info.hStdOutput, _O_APPEND)) != -1) {
-						_dup2( CrtInput, 0);
-						_dup2( CrtOutput, 1);
-					}
-				}
+			CWdumpDoc* doc = (CWdumpDoc*)pDocTemplate->OpenDocumentFile(cmdInfo.m_strFileName, FALSE);
 
-//				stdin = (struct _iobuf * ) info.hStdInput;
-//				stdout = (struct _iobuf * ) info.hStdOutput;
-			}
-*/
-
-			CWdumpDoc *doc = (CWdumpDoc *) pDocTemplate->OpenDocumentFile(cmdInfo.m_strFileName, FALSE);
-
-/*			if(info.hStdOutput == nullptr) {
-				printf("Press return to close this window..");
-				getchar();
-				FreeConsole();
-			}
-*/
+			/*			if(info.hStdOutput == nullptr) {
+			        printf("Press return to close this window..");
+			        getchar();
+			        FreeConsole();
+			      }
+			*/
 
 			CloseAllDocuments(TRUE);
 			PostQuitMessage(0);
@@ -194,14 +200,15 @@ BOOL CWdumpApp::InitInstance()
 
 	// Dispatch commands specified on the command line
 	if (!ProcessShellCommand(cmdInfo))
+	{
 		return FALSE;
-
+	}
 
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
 
 	POSITION p = pDocTemplate->GetFirstDocPosition();
-	CWdumpDoc *doc = (CWdumpDoc *) pDocTemplate->GetNextDoc(p);
+	CWdumpDoc* doc = (CWdumpDoc*)pDocTemplate->GetNextDoc(p);
 	doc->UpdateAllViews(nullptr);
 
 	return TRUE;
@@ -215,26 +222,30 @@ class CAboutDlg : public CDialog
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(CAboutDlg)
-	enum { IDD = IDD_ABOUTBOX };
+	enum
+	{
+		IDD = IDD_ABOUTBOX
+	};
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CAboutDlg)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 	//{{AFX_MSG(CAboutDlg)
-		// No message handlers
+	// No message handlers
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
 
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
+CAboutDlg::CAboutDlg()
+  : CDialog(CAboutDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CAboutDlg)
 	//}}AFX_DATA_INIT
@@ -248,9 +259,9 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-	//{{AFX_MSG_MAP(CAboutDlg)
-		// No message handlers
-	//}}AFX_MSG_MAP
+//{{AFX_MSG_MAP(CAboutDlg)
+// No message handlers
+//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 // App command to run the dialog

@@ -30,15 +30,13 @@
 #include "WW3D2/rendobj.h"
 #include "LODDefs.h"
 
-
 ///////////////////////////////////////////////////////////
 //
 //  Constants
 //
-const DWORD SAVE_SETTINGS_LIGHT     = 0x00000001;
-const DWORD SAVE_SETTINGS_BACK      = 0x00000002;
-const DWORD SAVE_SETTINGS_CAMERA    = 0x00000004;
-
+const DWORD SAVE_SETTINGS_LIGHT = 0x00000001;
+const DWORD SAVE_SETTINGS_BACK = 0x00000002;
+const DWORD SAVE_SETTINGS_CAMERA = 0x00000004;
 
 // Forward declarations
 class ParticleEmitterClass;
@@ -59,7 +57,6 @@ class EmitterInstanceListClass;
 class ScreenCursorClass;
 class DazzleLayerClass;
 
-
 /////////////////////////////////////////////////////////////////////
 //
 //  CW3DViewDoc
@@ -67,26 +64,24 @@ class DazzleLayerClass;
 /////////////////////////////////////////////////////////////////////
 class CW3DViewDoc : public CDocument
 {
-protected: // create from serialization only
+protected:    // create from serialization only
 	CW3DViewDoc();
 	DECLARE_DYNCREATE(CW3DViewDoc)
 
-// Attributes
+	// Attributes
 public:
-
-// Operations
+	// Operations
 public:
-
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CW3DViewDoc)
-	public:
+public:
 	virtual BOOL OnNewDocument() override;
 	virtual void Serialize(CArchive& ar) override;
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CW3DViewDoc();
 #ifdef RTS_DEBUG
@@ -95,237 +90,235 @@ public:
 #endif
 
 protected:
-
-// Generated message map functions
+	// Generated message map functions
 protected:
 	//{{AFX_MSG(CW3DViewDoc)
-		// NOTE - the ClassWizard will add and remove member functions here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//    DO NOT EDIT what you see in these blocks of generated code !
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void SetChannelQCompression(bool bCompress){	m_bCompress_channel_Q = bCompress;}
+	void SetChannelQCompression(bool bCompress) { m_bCompress_channel_Q = bCompress; }
 	//
 	//  Accessors
 	//
-	CameraClass *			Get2DCamera () const				{ return m_pC2DCamera; }
-	CameraClass *			GetBackObjectCamera () const		{ return m_pCBackObjectCamera; }
-	SceneClass *			Get2DScene () const					{ return m_pC2DScene; }
-	SceneClass *			GetCursorScene () const			{ return m_pCursorScene; }
-	ViewerSceneClass *	GetScene () const					{ return m_pCScene; }
-	SceneClass *			GetBackObjectScene () const		{ return m_pCBackObjectScene; }
-	LightClass *			GetSceneLight () const				{ return m_pCSceneLight; }
-	RenderObjClass *		GetDisplayedObject () const		{ return m_pCRenderObj; }
-	HAnimClass *			GetCurrentAnimation () const		{ return m_pCAnimation; }
-	const HTreeClass *	Get_Current_HTree () const;
+	CameraClass* Get2DCamera() const { return m_pC2DCamera; }
+	CameraClass* GetBackObjectCamera() const { return m_pCBackObjectCamera; }
+	SceneClass* Get2DScene() const { return m_pC2DScene; }
+	SceneClass* GetCursorScene() const { return m_pCursorScene; }
+	ViewerSceneClass* GetScene() const { return m_pCScene; }
+	SceneClass* GetBackObjectScene() const { return m_pCBackObjectScene; }
+	LightClass* GetSceneLight() const { return m_pCSceneLight; }
+	RenderObjClass* GetDisplayedObject() const { return m_pCRenderObj; }
+	HAnimClass* GetCurrentAnimation() const { return m_pCAnimation; }
+	const HTreeClass* Get_Current_HTree() const;
 
 	//
 	// Creation/destruction methods
 	//
-	void					InitScene ();
-	void					LoadAssetsFromFile (LPCTSTR lpszPathName);
-	HLodPrototypeClass *GenerateLOD (LPCTSTR pszLODBaseName, LOD_NAMING_TYPE type);
-	void					CleanupResources ();
-	bool					Is_Initialized ()	{ return m_IsInitialized; }
+	void InitScene();
+	void LoadAssetsFromFile(LPCTSTR lpszPathName);
+	HLodPrototypeClass* GenerateLOD(LPCTSTR pszLODBaseName, LOD_NAMING_TYPE type);
+	void CleanupResources();
+	bool Is_Initialized() { return m_IsInitialized; }
 
-	void					Reload_Displayed_Object ();
-	void					Display_Emitter (ParticleEmitterClass *pemitter = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
-	void					DisplayObject (RenderObjClass *pCModel = nullptr, bool use_global_reset_flag = true, bool allow_reset = true, bool add_ghost = false);
-	BOOL					SaveSettings (LPCTSTR pszFilename, DWORD dwSettingsMask);
-	BOOL					LoadSettings (LPCTSTR pszFileName);
-	CGraphicView *		GetGraphicView ();
-	CDataTreeView *	GetDataTreeView ();
+	void Reload_Displayed_Object();
+	void Display_Emitter(ParticleEmitterClass* pemitter = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
+	void DisplayObject(RenderObjClass* pCModel = nullptr, bool use_global_reset_flag = true, bool allow_reset = true, bool add_ghost = false);
+	BOOL SaveSettings(LPCTSTR pszFilename, DWORD dwSettingsMask);
+	BOOL LoadSettings(LPCTSTR pszFileName);
+	CGraphicView* GetGraphicView();
+	CDataTreeView* GetDataTreeView();
 
-	void					Build_Emitter_List (EmitterInstanceListClass *emitter_list, LPCTSTR emitter_name, RenderObjClass *render_obj = nullptr);
+	void Build_Emitter_List(EmitterInstanceListClass* emitter_list, LPCTSTR emitter_name, RenderObjClass* render_obj = nullptr);
 
 	//
 	//  Animation methods
 	//
-	void					Make_Movie ();
-	void					ResetAnimation ();
-	void					StepAnimation (int frame_inc = 1);
-	void					PlayAnimation (RenderObjClass *pobj, LPCTSTR panim_name = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
-	void					PlayAnimation (RenderObjClass *pobj, HAnimComboClass *pcombo, bool use_global_reset_flag = true, bool allow_reset = true);
-	void					UpdateFrame (float time_slice);
-	void					SetAnimationBlend (BOOL bBlend)	{ m_bAnimBlend = bBlend; }
-	bool					GetChannelQCompression(){ return m_bCompress_channel_Q;}
-	int					GetChannelQnBytes(){return m_nChannelQnBytes;}
-	void					SetChannelQnBytes(int n_bytes){m_nChannelQnBytes = n_bytes;}
-	BOOL					GetAnimationBlend () const	{ return m_bAnimBlend; }
-	bool					Is_Camera_Animated () const	{ return m_bAnimateCamera; }
-	void					Animate_Camera (bool banimate);
-	void					Import_Facial_Animation (const CString &hierarchy_name, const CString &filename);
-	void					Play_Animation_Sound ();
+	void Make_Movie();
+	void ResetAnimation();
+	void StepAnimation(int frame_inc = 1);
+	void PlayAnimation(RenderObjClass* pobj, LPCTSTR panim_name = nullptr, bool use_global_reset_flag = true, bool allow_reset = true);
+	void PlayAnimation(RenderObjClass* pobj, HAnimComboClass* pcombo, bool use_global_reset_flag = true, bool allow_reset = true);
+	void UpdateFrame(float time_slice);
+	void SetAnimationBlend(BOOL bBlend) { m_bAnimBlend = bBlend; }
+	bool GetChannelQCompression() { return m_bCompress_channel_Q; }
+	int GetChannelQnBytes() { return m_nChannelQnBytes; }
+	void SetChannelQnBytes(int n_bytes) { m_nChannelQnBytes = n_bytes; }
+	BOOL GetAnimationBlend() const { return m_bAnimBlend; }
+	bool Is_Camera_Animated() const { return m_bAnimateCamera; }
+	void Animate_Camera(bool banimate);
+	void Import_Facial_Animation(const CString& hierarchy_name, const CString& filename);
+	void Play_Animation_Sound();
 
 	//
 	//	Camera methods
 	//
-	bool					Is_Camera_Auto_Reset_On () const	{ return m_bAutoCameraReset; }
-	void					Turn_Camera_Auto_Reset_On (bool onoff) { m_bAutoCameraReset = onoff; }
+	bool Is_Camera_Auto_Reset_On() const { return m_bAutoCameraReset; }
+	void Turn_Camera_Auto_Reset_On(bool onoff) { m_bAutoCameraReset = onoff; }
 
 	//
 	//  Background color methods
 	//
-	const Vector3 &	GetBackgroundColor () const								{ return m_backgroundColor; }
-	void					SetBackgroundColor (const Vector3 &backgroundColor);
+	const Vector3& GetBackgroundColor() const { return m_backgroundColor; }
+	void SetBackgroundColor(const Vector3& backgroundColor);
 
 	//
 	//  Background BMP methods
 	//
-	const CString &	GetBackgroundBMP  () const						{ return m_stringBackgroundBMP; }
-	void					SetBackgroundBMP  (LPCTSTR pszBackgroundBMP);
+	const CString& GetBackgroundBMP() const { return m_stringBackgroundBMP; }
+	void SetBackgroundBMP(LPCTSTR pszBackgroundBMP);
 
 	//
 	//  Background Object methods
 	//
-	const CString &	GetBackgroundObjectName () const				{ return m_stringBackgroundObject; }
-	void					SetBackgroundObject (LPCTSTR pszBackgroundObjectName);
+	const CString& GetBackgroundObjectName() const { return m_stringBackgroundObject; }
+	void SetBackgroundObject(LPCTSTR pszBackgroundObjectName);
 
 	//
 	//  Fogging methods
 	//
-	bool					IsFogEnabled () const								{ return m_bFogEnabled; }
-	void					EnableFog (bool enable=true);
+	bool IsFogEnabled() const { return m_bFogEnabled; }
+	void EnableFog(bool enable = true);
 
 	//
 	//	Scene methods
 	//
-	void					Remove_Object_From_Scene (RenderObjClass *prender_obj = nullptr);
+	void Remove_Object_From_Scene(RenderObjClass* prender_obj = nullptr);
 
 	//
 	//	Emitter serialization methods
 	//
-	bool					Save_Selected_Emitter ();
-	bool					Save_Current_Emitter (const CString &filename);
+	bool Save_Selected_Emitter();
+	bool Save_Current_Emitter(const CString& filename);
 
 	//
 	//	Primitive serialization methods
 	//
-	bool					Save_Selected_Primitive ();
-	bool					Save_Current_Sphere (const CString &filename);
-	bool					Save_Current_Ring (const CString &filename);
+	bool Save_Selected_Primitive();
+	bool Save_Current_Sphere(const CString& filename);
+	bool Save_Current_Ring(const CString& filename);
 
 	//
 	//	Aggregate methods
 	//
-	void					Auto_Assign_Bones ();
-	bool					Save_Selected_Aggregate ();
-	bool					Save_Current_Aggregate (const CString &filename);
+	void Auto_Assign_Bones();
+	bool Save_Selected_Aggregate();
+	bool Save_Current_Aggregate(const CString& filename);
 
 	//
 	//	Sound object methods
 	//
-	bool					Save_Selected_Sound_Object ();
-	bool					Save_Current_Sound_Object (const CString &filename);
+	bool Save_Selected_Sound_Object();
+	bool Save_Current_Sound_Object(const CString& filename);
 
 	//
 	//  LOD methods
 	//
-	bool					Save_Current_LOD (const CString &filename);
-	bool					Save_Selected_LOD ();
-	void					Switch_LOD (int increment = 1, RenderObjClass *render_obj = nullptr);
+	bool Save_Current_LOD(const CString& filename);
+	bool Save_Selected_LOD();
+	void Switch_LOD(int increment = 1, RenderObjClass* render_obj = nullptr);
 
 	//
 	// Alternate Material interface.
 	//
-	void					Toggle_Alternate_Materials(RenderObjClass * obj = nullptr);
+	void Toggle_Alternate_Materials(RenderObjClass* obj = nullptr);
 
 	//
 	//	Prototype methods
 	//
-	void					Update_Aggregate_Prototype (RenderObjClass &render_obj);
-	void					Update_LOD_Prototype (HLodClass &hlod);
+	void Update_Aggregate_Prototype(RenderObjClass& render_obj);
+	void Update_LOD_Prototype(HLodClass& hlod);
 
 	//
 	//	Cursor management
 	//
-	void					Show_Cursor (bool onoff);
-	void					Set_Cursor (LPCTSTR resource_name);
-	bool					Is_Cursor_Shown () const;
-	void					Create_Cursor ();
+	void Show_Cursor(bool onoff);
+	void Set_Cursor(LPCTSTR resource_name);
+	bool Is_Cursor_Shown() const;
+	void Create_Cursor();
 
 	//
 	//	Particle methods
 	//
-	int					Count_Particles (RenderObjClass *render_obj = nullptr);
-	void					Update_Particle_Count ();
+	int Count_Particles(RenderObjClass* render_obj = nullptr);
+	void Update_Particle_Count();
 
 	//
 	//	Manual settings
 	//
-	void					Set_Manual_FOV (bool manual)			{ m_ManualFOV = manual; }
-	void					Set_Manul_Clip_Planes  (bool manual){ m_ManualClipPlanes = manual; }
-	bool					Is_FOV_Manual () const				{ return m_ManualFOV; }
-	bool					Are_Clip_Planes_Manual () const	{ return m_ManualClipPlanes; }
+	void Set_Manual_FOV(bool manual) { m_ManualFOV = manual; }
+	void Set_Manul_Clip_Planes(bool manual) { m_ManualClipPlanes = manual; }
+	bool Is_FOV_Manual() const { return m_ManualFOV; }
+	bool Are_Clip_Planes_Manual() const { return m_ManualClipPlanes; }
 
-	void					Update_Camera ();
-	void					Save_Camera_Settings ();
-	void					Load_Camera_Settings ();
+	void Update_Camera();
+	void Save_Camera_Settings();
+	void Load_Camera_Settings();
 
 	//
 	//	File methods
 	//
-	void					Copy_Assets_To_Dir (LPCTSTR directory);
-	bool					Lookup_Path (LPCTSTR asset_name, CString &path);
-	const char *		Get_Last_Path () const { return (m_LastPath.IsEmpty () ? nullptr : (const char *)m_LastPath); }
+	void Copy_Assets_To_Dir(LPCTSTR directory);
+	bool Lookup_Path(LPCTSTR asset_name, CString& path);
+	const char* Get_Last_Path() const { return (m_LastPath.IsEmpty() ? nullptr : (const char*)m_LastPath); }
 
 	//
 	//	Texture search paths
 	//
-	const CString &	Get_Texture_Path1 () const { return m_TexturePath1; }
-	const CString &	Get_Texture_Path2 () const { return m_TexturePath2; }
+	const CString& Get_Texture_Path1() const { return m_TexturePath1; }
+	const CString& Get_Texture_Path2() const { return m_TexturePath2; }
 
-	void					Set_Texture_Path1 (LPCTSTR path);
-	void					Set_Texture_Path2 (LPCTSTR path);
+	void Set_Texture_Path1(LPCTSTR path);
+	void Set_Texture_Path2(LPCTSTR path);
 
 	//
 	// Dazzle rendering support
 	//
-	void					Render_Dazzles(CameraClass * camera);
+	void Render_Dazzles(CameraClass* camera);
 
 private:
-
 	//////////////////////////////////////////////////////////////////
 	//  Private member data
 	//////////////////////////////////////////////////////////////////
-	ViewerSceneClass *	m_pCScene;
-	SceneClass *			m_pC2DScene;
-	SceneClass *			m_pCursorScene;
-	SceneClass *			m_pCBackObjectScene;
-	DazzleLayerClass *	m_pDazzleLayer;
-	RenderObjClass *		m_pCRenderObj;
-	RenderObjClass *		m_pCBackgroundObject;
-	HAnimClass *			m_pCAnimation;
-	HAnimComboClass *		m_pCAnimCombo;
-	LightClass *			m_pCSceneLight;
-	Bitmap2DObjClass *	m_pCBackgroundBMP;
-	CameraClass *			m_pC2DCamera;
-	CameraClass *			m_pCBackObjectCamera;
-	ScreenCursorClass *	m_pCursor;
-	Vector3					m_backgroundColor;
-	CString					m_stringBackgroundBMP;
-	CString					m_stringBackgroundObject;
+	ViewerSceneClass* m_pCScene;
+	SceneClass* m_pC2DScene;
+	SceneClass* m_pCursorScene;
+	SceneClass* m_pCBackObjectScene;
+	DazzleLayerClass* m_pDazzleLayer;
+	RenderObjClass* m_pCRenderObj;
+	RenderObjClass* m_pCBackgroundObject;
+	HAnimClass* m_pCAnimation;
+	HAnimComboClass* m_pCAnimCombo;
+	LightClass* m_pCSceneLight;
+	Bitmap2DObjClass* m_pCBackgroundBMP;
+	CameraClass* m_pC2DCamera;
+	CameraClass* m_pCBackObjectCamera;
+	ScreenCursorClass* m_pCursor;
+	Vector3 m_backgroundColor;
+	CString m_stringBackgroundBMP;
+	CString m_stringBackgroundObject;
 
-	bool						m_bCompress_channel_Q;
-	int						m_nChannelQnBytes;
-	float						m_CurrentFrame;
-	float						m_animTime;
-	BOOL						m_bAnimBlend;
-	bool						m_bAnimateCamera;
-	bool						m_bAutoCameraReset;
-	bool						m_bOneTimeReset;
-	bool						m_ManualFOV;
-	bool						m_ManualClipPlanes;
-	bool						m_IsInitialized;
-	bool						m_bFogEnabled;
+	bool m_bCompress_channel_Q;
+	int m_nChannelQnBytes;
+	float m_CurrentFrame;
+	float m_animTime;
+	BOOL m_bAnimBlend;
+	bool m_bAnimateCamera;
+	bool m_bAutoCameraReset;
+	bool m_bOneTimeReset;
+	bool m_ManualFOV;
+	bool m_ManualClipPlanes;
+	bool m_IsInitialized;
+	bool m_bFogEnabled;
 
-	CString					m_TexturePath1;
-	CString					m_TexturePath2;
+	CString m_TexturePath1;
+	CString m_TexturePath2;
 
-	CString					m_LastPath;
+	CString m_LastPath;
 
-	DynamicVectorClass<CString>	m_LoadList;
+	DynamicVectorClass<CString> m_LoadList;
 };
 
 /////////////////////////////////////////////////////////////////////////////
