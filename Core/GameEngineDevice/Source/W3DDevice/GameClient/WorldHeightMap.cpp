@@ -2203,8 +2203,8 @@ TerrainTextureClass *WorldHeightMap::getFlatTexture(Int xCell, Int yCell, Int ce
 Region2D WorldHeightMap::getDrawRegion2D()
 {
 	// Get region in heightmap space
-	const Int loX = getDrawOrgX() - getBorderSize();
-	const Int loY = getDrawOrgY() - getBorderSize();
+	const Int loX = getDrawOrgX() - getBorderSizeInline();
+	const Int loY = getDrawOrgY() - getBorderSizeInline();
 	const Int hiX = loX + getDrawWidth();
 	const Int hiY = loY + getDrawHeight();
 
