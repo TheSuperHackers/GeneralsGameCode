@@ -355,6 +355,8 @@ public:
 	std::vector<AsciiString> m_simulateReplays; ///< If not empty, simulate this list of replays and exit.
 	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or SIMULATE_REPLAYS_SEQUENTIAL for sequential simulation
 
+	AsciiString m_writeReplayList; ///< If not empty, write out list of replays in this subfolder into a csv file (TheSuperHackers @feature helmutbuhler 24/05/2025)
+
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
 	WeaponBonusSet* m_weaponBonusSet;
