@@ -1061,7 +1061,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	if (comboBoxOnlineIP)
 		comboBoxOnlineIP->winHide(TRUE);
 
-	GameWindow *staticTextOnlineIP = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:StaticTextOnlineIP"));
+	GameWindow *staticTextOnlineIP = TheWindowManager->winGetWindowFromId(nullptr, NAMEKEY("OptionsMenu.wnd:StaticTextOnlineIpAddresses"));
 	if (staticTextOnlineIP)
 		staticTextOnlineIP->winHide(TRUE);
 #endif
