@@ -112,6 +112,12 @@ void Win32GameEngine::update()
 				break; // keep running.
 			}
 		}
+
+    // When we are alt-tabbed out... the MilesAudioManager seems to go into a coma sometimes
+    // and not regain focus properly when we come back. This seems to wake it up nicely.
+    AudioAffect aa = (AudioAffect)0x10;
+		TheAudio->setVolume(TheAudio->getVolume( aa ), aa );
+
 	}
 
 	// allow windows to perform regular windows maintenance stuff like msgs
@@ -121,7 +127,7 @@ void Win32GameEngine::update()
 
 //-------------------------------------------------------------------------------------------------
 /** This function may be called from within this application to let
-  * Microsoft Windows do its message processing and dispatching.  Presumeably
+  * Microsoft Windows do its message processing and dispatching.  Presumably
 	* we would call this at least once each time around the game loop to keep
 	* Windows services from backing up */
 //-------------------------------------------------------------------------------------------------
