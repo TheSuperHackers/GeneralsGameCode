@@ -152,18 +152,17 @@ Bool FramePacer::isGameHalted() const
 	return m_isGameHalted;
 }
 
-void FramePacer::setLogicTimeScaleFps( Int fps )
-{
-	m_logicTimeScaleFPS = fps;
-}
-
 Int FramePacer::getLogicTimeScaleFps() const
 {
 	return m_logicTimeScaleFPS;
 }
 
-void FramePacer::enableLogicTimeScale( Bool enable )
+void FramePacer::enableLogicTimeScale( Bool enable, Int fps )
 {
+	if (fps >= 0)
+	{
+		m_logicTimeScaleFPS = fps;
+	}
 	m_enableLogicTimeScale = enable;
 }
 

@@ -160,6 +160,7 @@ UnsignedInt LogicTimeScaleFpsPreset::getPrevFpsValue(UnsignedInt value, Unsigned
 			{
 				prevValue = fpsValue;
 			}
+
 			break;
 		}
 	}

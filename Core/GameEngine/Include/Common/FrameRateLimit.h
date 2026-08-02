@@ -50,11 +50,12 @@ public:
 		UncappedFpsValue = 1000000,
 	};
 
-	static UnsignedInt getNextFpsValue(UnsignedInt value);
-	static UnsignedInt getPrevFpsValue(UnsignedInt value);
 	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change);
 
 private:
+	static UnsignedInt getNextFpsValue(UnsignedInt value);
+	static UnsignedInt getPrevFpsValue(UnsignedInt value);
+
 	static const UnsignedInt s_fpsValues[];
 };
 
@@ -63,11 +64,12 @@ class LogicTimeScaleFpsPreset
 {
 public:
 
-	static UnsignedInt getNextFpsValue(UnsignedInt value, UnsignedInt snapValue = 0);
-	static UnsignedInt getPrevFpsValue(UnsignedInt value, UnsignedInt snapValue = 0);
 	static UnsignedInt changeFpsValue(UnsignedInt value, FpsValueChange change, UnsignedInt snapValue = 0);
 
 private:
+	static UnsignedInt getNextFpsValue(UnsignedInt value, UnsignedInt snapValue = 0);
+	static UnsignedInt getPrevFpsValue(UnsignedInt value, UnsignedInt snapValue = 0);
+
 	static const UnsignedInt s_fpsValues[];
 };
 
