@@ -412,6 +412,10 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/GameClient/Win32DIMouse.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/GameClient/Win32DIMouse.cpp")
     #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/GameClient/Win32Mouse.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/GameClient/Win32Mouse.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Include/Win32Device/Common/Win32GameEngine.h", Game.CORE, "GameEngineDevice/Include/Win32Device/Common/Win32GameEngine.h")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/Common/Win32GameEngine.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/Common/Win32GameEngine.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngineDevice/Source/Win32Device/Common/Win32OSDisplay.cpp", Game.CORE, "GameEngineDevice/Source/Win32Device/Common/Win32OSDisplay.cpp")
+
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/GameFont.h", Game.CORE, "GameEngine/Include/GameClient/GameFont.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/GameWindow.h", Game.CORE, "GameEngine/Include/GameClient/GameWindow.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/GameClient/GameWindowGlobal.h", Game.CORE, "GameEngine/Include/GameClient/GameWindowGlobal.h")
