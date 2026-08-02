@@ -556,7 +556,7 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/User.h
     Include/GameNetwork/WOLBrowser/FEBDispatch.h
     Include/GameNetwork/WOLBrowser/WebBrowser.h
-#    Include/Precompiled/PreRTS.h
+    Include/Precompiled/PreRTS.h
     Source/Common/AddonCompat.cpp
     Source/Common/Audio/AudioEventRTS.cpp
     Source/Common/Audio/AudioRequest.cpp
@@ -1146,7 +1146,7 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/udp.cpp
     Source/GameNetwork/User.cpp
     Source/GameNetwork/WOLBrowser/WebBrowser.cpp
-#    Source/Precompiled/PreRTS.cpp
+    Source/Precompiled/PreRTS.cpp
 )
 
 if(RTS_GAMEMEMORY_ENABLE)
@@ -1174,7 +1174,7 @@ add_library(corei_gameengine_public INTERFACE)
 target_sources(corei_gameengine_private INTERFACE ${GAMEENGINE_SRC})
 
 target_include_directories(corei_gameengine_private INTERFACE
-#    Include/Precompiled
+    Include/Precompiled
 )
 
 target_link_libraries(corei_gameengine_private INTERFACE
@@ -1186,7 +1186,7 @@ target_compile_definitions(corei_gameengine_private INTERFACE
 )
 
 target_precompile_headers(corei_gameengine_private INTERFACE
-#    Include/Precompiled/PreRTS.h
+    Include/Precompiled/PreRTS.h
 )
 
 target_include_directories(corei_gameengine_public INTERFACE

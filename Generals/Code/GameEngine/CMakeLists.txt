@@ -509,7 +509,7 @@ set(GAMEENGINE_SRC
 #    Include/GameNetwork/User.h
 #    Include/GameNetwork/WOLBrowser/FEBDispatch.h
 #    Include/GameNetwork/WOLBrowser/WebBrowser.h
-    Include/Precompiled/PreRTS.h
+#    Include/Precompiled/PreRTS.h
 #    Source/Common/Audio/AudioEventRTS.cpp
 #    Source/Common/Audio/AudioRequest.cpp
 #    Source/Common/Audio/GameAudio.cpp
@@ -1052,7 +1052,7 @@ set(GAMEENGINE_SRC
 #    Source/GameNetwork/udp.cpp
 #    Source/GameNetwork/User.cpp
 #    Source/GameNetwork/WOLBrowser/WebBrowser.cpp
-    Source/Precompiled/PreRTS.cpp
+#    Source/Precompiled/PreRTS.cpp
 )
 
 if(RTS_GAMEMEMORY_ENABLE)
@@ -1096,5 +1096,5 @@ target_link_libraries(g_gameengine PUBLIC
 
 target_precompile_headers(g_gameengine PRIVATE
     [["Utility/CppMacros.h"]] # Must be first, to be removed when abandoning VC6
-    Include/Precompiled/PreRTS.h
+#    Include/Precompiled/PreRTS.h
 )
