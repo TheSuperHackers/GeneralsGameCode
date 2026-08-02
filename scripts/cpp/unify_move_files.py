@@ -643,6 +643,11 @@ def main():
     #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/CommandLine.h", Game.CORE, "GameEngine/Include/Common/CommandLine.h")
     #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/CommandLine.cpp", Game.CORE, "GameEngine/Source/Common/CommandLine.cpp")
 
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/BezFwdIterator.h", Game.CORE, "GameEngine/Include/Common/BezFwdIterator.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Include/Common/BezierSegment.h", Game.CORE, "GameEngine/Include/Common/BezierSegment.h")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Bezier/BezFwdIterator.cpp", Game.CORE, "GameEngine/Source/Common/Bezier/BezFwdIterator.cpp")
+    #unify_file(Game.ZEROHOUR, "GameEngine/Source/Common/Bezier/BezierSegment.cpp", Game.CORE, "GameEngine/Source/Common/Bezier/BezierSegment.cpp")
+
     return
 
 
