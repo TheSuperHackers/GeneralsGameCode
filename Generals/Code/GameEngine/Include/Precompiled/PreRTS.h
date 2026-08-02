@@ -124,6 +124,7 @@ class STLSpecialAlloc;
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/ClientRandomValue.h"
 #include "GameLogic/LogicRandomValue.h"
+#include "Common/ObjectStatusTypes.h"
 
 #include "Common/Thing.h"
 #include "Common/UnicodeString.h"
