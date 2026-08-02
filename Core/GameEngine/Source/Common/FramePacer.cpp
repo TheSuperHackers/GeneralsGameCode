@@ -70,6 +70,17 @@ void FramePacer::setFramesPerSecondLimit( Int fps )
 	m_maxFPS = fps;
 }
 
+UnsignedInt FramePacer::changeFramesPerSecondLimit( FpsValueChange change )
+{
+	UnsignedInt maxRenderFps = getFramesPerSecondLimit();
+	maxRenderFps = RenderFpsPreset::changeFpsValue(maxRenderFps, change);
+
+	setFramesPerSecondLimit(maxRenderFps);
+	TheWritableGlobalData->m_useFpsLimit = (maxRenderFps != RenderFpsPreset::UncappedFpsValue);
+
+	return maxRenderFps;
+}
+
 Int FramePacer::getFramesPerSecondLimit()  const
 {
 	return m_maxFPS;
@@ -155,6 +166,32 @@ Bool FramePacer::isGameHalted() const
 Int FramePacer::getLogicTimeScaleFps() const
 {
 	return m_logicTimeScaleFPS;
+}
+
+UnsignedInt FramePacer::changeLogicTimeScaleFps( FpsValueChange change )
+{
+	const UnsignedInt maxRenderFps = getFramesPerSecondLimit();
+	UnsignedInt logicTimeScaleFps = getLogicTimeScaleFps();
+
+	if (!isLogicTimeScaleEnabled())
+	{
+		logicTimeScaleFps = maxRenderFps;
+	}
+
+	logicTimeScaleFps = LogicTimeScaleFpsPreset::changeFpsValue(logicTimeScaleFps, change, maxRenderFps);
+
+	// Ensure logic FPS never exceeds render FPS
+	if (logicTimeScaleFps > maxRenderFps && logicTimeScaleFps != RenderFpsPreset::UncappedFpsValue)
+	{
+		logicTimeScaleFps = maxRenderFps;
+	}
+
+	const bool enableTimescale = (logicTimeScaleFps < maxRenderFps);
+
+	// TheSuperHackers @info Preserve the last real FPS in m_logicTimeScaleFPS so re-enabling timescale resumes from a sane value.
+	enableLogicTimeScale(enableTimescale, enableTimescale ? (Int)logicTimeScaleFps : -1);
+
+	return getLogicTimeScaleFps();
 }
 
 void FramePacer::enableLogicTimeScale( Bool enable, Int fps )

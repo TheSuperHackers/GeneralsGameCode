@@ -182,11 +182,7 @@ Bool hasThingsInProduction(PlayerType playerType)
 
 bool changeMaxRenderFps(FpsValueChange change)
 {
-	UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
-	maxRenderFps = RenderFpsPreset::changeFpsValue(maxRenderFps, change);
-
-	TheFramePacer->setFramesPerSecondLimit(maxRenderFps);
-	TheWritableGlobalData->m_useFpsLimit = (maxRenderFps != RenderFpsPreset::UncappedFpsValue);
+	const UnsignedInt maxRenderFps = TheFramePacer->changeFramesPerSecondLimit(change);
 
 	UnicodeString message;
 
@@ -209,27 +205,7 @@ bool changeLogicTimeScale(FpsValueChange change)
 	if (TheNetwork != nullptr)
 		return false;
 
-	const UnsignedInt maxRenderFps = TheFramePacer->getFramesPerSecondLimit();
-	UnsignedInt logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
-
-	if (!TheFramePacer->isLogicTimeScaleEnabled())
-	{
-		logicTimeScaleFps = maxRenderFps;
-	}
-
-	logicTimeScaleFps = LogicTimeScaleFpsPreset::changeFpsValue(logicTimeScaleFps, change, maxRenderFps);
-
-	// Ensure logic FPS never exceeds render FPS
-	if (logicTimeScaleFps > maxRenderFps && logicTimeScaleFps != RenderFpsPreset::UncappedFpsValue)
-	{
-		logicTimeScaleFps = maxRenderFps;
-	}
-
-	const bool enableTimescale = (logicTimeScaleFps < maxRenderFps);
-
-	// TheSuperHackers @info Preserve the last real FPS in m_logicTimeScaleFPS so re-enabling timescale resumes from a sane value.
-	TheFramePacer->enableLogicTimeScale(enableTimescale, enableTimescale ? (Int)logicTimeScaleFps : -1);
-	logicTimeScaleFps = TheFramePacer->getLogicTimeScaleFps();
+	const UnsignedInt logicTimeScaleFps = TheFramePacer->changeLogicTimeScaleFps(change);
 	const UnsignedInt actualLogicTimeScaleFps = TheFramePacer->getActualLogicTimeScaleFps();
 	const Real actualLogicTimeScaleRatio = TheFramePacer->getActualLogicTimeScaleRatio();
 
