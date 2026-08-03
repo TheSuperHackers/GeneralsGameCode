@@ -134,14 +134,18 @@ static bool isCommandIdNewer(UnsignedShort newVal, UnsignedShort oldVal)
 #endif
 }
 
-static bool isCommandOrderedAfter(const NetCommandMsg *candidate, const NetCommandMsg *reference)
+static bool isCommandOrderedAfter(const NetCommandMsg* candidate, const NetCommandMsg* reference)
 {
-	if (candidate->getNetCommandType() != reference->getNetCommandType()) {
+	if (candidate->getNetCommandType() != reference->getNetCommandType())
+	{
 		return candidate->getNetCommandType() > reference->getNetCommandType();
 	}
-	if (candidate->getPlayerID() != reference->getPlayerID()) {
+
+	if (candidate->getPlayerID() != reference->getPlayerID())
+	{
 		return candidate->getPlayerID() > reference->getPlayerID();
 	}
+
 	return isCommandIdNewer(candidate->getSortNumber(), reference->getSortNumber());
 }
 
@@ -177,9 +181,9 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		// Messages that are inserted in order should just be put in one right after the other.
 		// So saving the placement of the last message inserted can give us a huge boost in
 		// efficiency.
-		NetCommandMsg *command = msg->getCommand();
-		NetCommandMsg *lastCommand = m_lastMessageInserted->getCommand();
-		NetCommandRef *nextCommandRef = m_lastMessageInserted->getNext();
+		NetCommandMsg* command = msg->getCommand();
+		NetCommandMsg* lastCommand = m_lastMessageInserted->getCommand();
+		NetCommandRef* nextCommandRef = m_lastMessageInserted->getNext();
 
 		// TheSuperHackers @bugfix CryoTheRenegade 03/08/2026 Keep both cached
 		// insertion boundaries consistent with the full scan's polymorphic sort key.
@@ -187,14 +191,17 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 			&& lastCommand->getPlayerID() == command->getPlayerID()
 			&& isCommandIdNewer(command->getSortNumber(), lastCommand->getSortNumber());
 
-		if (canInsertAfterLast && nextCommandRef != nullptr) {
+		if (canInsertAfterLast && nextCommandRef != nullptr)
+		{
 			canInsertAfterLast = isCommandOrderedAfter(nextCommandRef->getCommand(), command);
 		}
 
-		if (canInsertAfterLast) {
+		if (canInsertAfterLast)
+		{
 
 			// Make sure this command isn't already in the list.
-			if (isEqualCommandMsg(lastCommand, command)) {
+			if (isEqualCommandMsg(lastCommand, command))
+			{
 
 				// This command is already in the list, don't duplicate it.
 				deleteInstance(msg);
@@ -206,9 +213,13 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 			msg->setPrev(m_lastMessageInserted);
 			m_lastMessageInserted->setNext(msg);
 
-			if (nextCommandRef == nullptr) {
+			if (nextCommandRef == nullptr)
+			{
+				// this means that m_lastMessageInserted == m_last, so m_last should point to the msg that is being inserted.
 				m_last = msg;
-			} else {
+			}
+			else
+			{
 				nextCommandRef->setPrev(msg);
 			}
 
@@ -317,16 +328,19 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 
 	// TheSuperHackers @bugfix CryoTheRenegade 03/08/2026 Equal sort numbers can
 	// represent different ACKs, so check the entire equal-sort run for duplicates.
-	NetCommandRef *equalSortMsg = tempmsg;
+	NetCommandRef* equalSortMsg = tempmsg;
 	while (equalSortMsg != nullptr
 		&& msg->getCommand()->getNetCommandType() == equalSortMsg->getCommand()->getNetCommandType()
 		&& msg->getCommand()->getPlayerID() == equalSortMsg->getCommand()->getPlayerID()
-		&& msg->getCommand()->getSortNumber() == equalSortMsg->getCommand()->getSortNumber()) {
-		if (isEqualCommandMsg(equalSortMsg->getCommand(), msg->getCommand())) {
+		&& msg->getCommand()->getSortNumber() == equalSortMsg->getCommand()->getSortNumber())
+	{
+		if (isEqualCommandMsg(equalSortMsg->getCommand(), msg->getCommand()))
+		{
 			deleteInstance(msg);
 			msg = nullptr;
 			return nullptr;
 		}
+
 		equalSortMsg = equalSortMsg->getNext();
 	}
 
