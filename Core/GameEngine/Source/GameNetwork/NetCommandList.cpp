@@ -181,6 +181,8 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		NetCommandMsg *lastCommand = m_lastMessageInserted->getCommand();
 		NetCommandRef *nextCommandRef = m_lastMessageInserted->getNext();
 
+		// TheSuperHackers @bugfix CryoTheRenegade 03/08/2026 Keep both cached
+		// insertion boundaries consistent with the full scan's polymorphic sort key.
 		bool canInsertAfterLast = lastCommand->getNetCommandType() == command->getNetCommandType()
 			&& lastCommand->getPlayerID() == command->getPlayerID()
 			&& isCommandIdNewer(command->getSortNumber(), lastCommand->getSortNumber());
@@ -313,8 +315,8 @@ NetCommandRef * NetCommandList::addMessage(NetCommandRef *&msg) {
 		tempmsg = tempmsg->getNext();
 	}
 
-	// Equal sort numbers can represent different ACKs, so check the entire
-	// equal-sort run before inserting another message.
+	// TheSuperHackers @bugfix CryoTheRenegade 03/08/2026 Equal sort numbers can
+	// represent different ACKs, so check the entire equal-sort run for duplicates.
 	NetCommandRef *equalSortMsg = tempmsg;
 	while (equalSortMsg != nullptr
 		&& msg->getCommand()->getNetCommandType() == equalSortMsg->getCommand()->getNetCommandType()
