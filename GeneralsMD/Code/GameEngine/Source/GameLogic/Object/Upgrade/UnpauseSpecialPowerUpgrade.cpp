@@ -33,6 +33,7 @@
 #include "PreRTS.h"
 #include "Common/SpecialPower.h"
 #include "Common/Xfer.h"
+#include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/Module/UnpauseSpecialPowerUpgrade.h"
@@ -42,6 +43,7 @@
 UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 {
 	m_specialPower = nullptr;
+	m_hasInitialReloadTime = true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -53,6 +55,7 @@ UnpauseSpecialPowerUpgradeModuleData::UnpauseSpecialPowerUpgradeModuleData()
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "SpecialPowerTemplate", INI::parseSpecialPowerTemplate, nullptr, offsetof( UnpauseSpecialPowerUpgradeModuleData, m_specialPower ) },
+		{ "HasInitialReloadTime", INI::parseBool, nullptr, offsetof( UnpauseSpecialPowerUpgradeModuleData, m_hasInitialReloadTime) },
 		{ nullptr, nullptr, nullptr, 0 }
 	};
 	p.add(dataFieldParse);
@@ -89,7 +92,15 @@ void UnpauseSpecialPowerUpgrade::upgradeImplementation()
 			continue;
 
 		if( sp->getSpecialPowerTemplate() == getUnpauseSpecialPowerUpgradeModuleData()->m_specialPower )
+		{
 			sp->pauseCountdown( FALSE );
+
+			if (!getUnpauseSpecialPowerUpgradeModuleData()->m_hasInitialReloadTime)
+			{
+				UnsignedInt now = TheGameLogic->getFrame();
+				sp->setReadyFrame(now);
+			}
+		}
 	}
 }
 
