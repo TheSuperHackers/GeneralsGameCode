@@ -30,6 +30,8 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include <string.h>
+
 #define DEFINE_DEATH_NAMES
 #define DEFINE_WEAPONBONUSCONDITION_NAMES
 #define DEFINE_WEAPONBONUSFIELD_NAMES
@@ -1672,6 +1674,16 @@ WeaponTemplate *WeaponStore::newWeaponTemplate(AsciiString name)
 	WeaponTemplate *wt = newInstance(WeaponTemplate);
 	wt->m_name = name;
 	wt->m_nameKey = TheNameKeyGenerator->nameToKey( name );
+
+#if !RETAIL_COMPATIBLE_CRC && !PRESERVE_MISSING_AURORA_SECOND_EXPLOSION
+	// TheSuperHackers @bugfix Okladnoj 03/08/2026 Force MissileCallsOnDie; missing in INI breaks second explosion.
+	if (strcmp(name.str(), "SupW_AuroraFuelBombWeapon") == 0)
+	{
+		wt->m_dieOnDetonate = TRUE;
+		DEBUG_LOG(("WeaponStore::newWeaponTemplate() - forcing MissileCallsOnDie for %s", name.str()));
+	}
+#endif
+
 	m_weaponTemplateVector.push_back(wt);
 	m_weaponTemplateHashMap[wt->m_nameKey] = wt;
 
