@@ -579,10 +579,10 @@ Bool TransportContain::isSpecificRiderFreeToExit(Object* specificObject)
 		return FALSE;
 
 #if !RETAIL_COMPATIBLE_CRC
-	// TheSuperHackers @bugfix Stubbjax/bobtista 01/08/2026 We are not free to exit when our container
-	// is held inside another container. A container merely held in place on the terrain,
+	// TheSuperHackers @bugfix Stubbjax/bobtista 01/08/2026 Riders are not free to exit when their
+	// container is contained by another object. A container merely held in place on the terrain,
 	// eg the battle bus, can still unload passengers.
-	if (me->getContainedBy() != nullptr && me->isDisabledByType(DISABLED_HELD))
+	if (me->getContainedBy() != nullptr)
 	{
 		return FALSE;
 	}
